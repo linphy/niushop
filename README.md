@@ -56,7 +56,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 5.绑定码云评论并点赞支持可获得单商户V4基础版授权
 
-6.本基础版本后台源码全部开源，小程序为uniapp编译版，如需小程序源码，请点击下方图片邀请好友获取。
+6.本基础版本后台源码全部开源，小程序为uniapp编译版，如需小程序源码，请点击下方图片马上获取。
 
 <a href='https://www.niushop.com.cn/authorization.html' target="_blank"><img src="https://images.gitee.com/uploads/images/2020/0730/142951_31bfea65_6569472.png"/></a>
 
