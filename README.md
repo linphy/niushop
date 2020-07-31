@@ -22,7 +22,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 ### 推荐阿里云服务器配置
 
-阿里云领取2000元代金劵：[<a href="https://promotion.aliyun.com/ntms/yunparter/personal-center.html#/month-task">https://www.aliyun.com</a>]
+阿里云领取2000元代金劵：[<a href="https://www.aliyun.com/minisite/goods?userCode=hvxtm3ee">马上领取</a>]
 
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0728/121430_7e0741df_6569472.png "fuwuqi.png")
 
