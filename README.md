@@ -12,7 +12,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 ### 操作指南
 
- [Niushop开源商城单商户V4使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4/1830082)
+ [Niushop开源商城单商户V4使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842076)
  | [api文档地址](https://www.kancloud.cn/niucloud/niushop_b2c_v4_api/1830441)
  | [二开手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4_develop/1830902)
  | [论坛地址](https://bbs.niushop.com.cn/forum.php)
