@@ -36,7 +36,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 5. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121708_74c55984_6569472.png"/>&nbsp;&nbsp;代码全部开源，方便企业扩展自身业务需求
 
 ### :tw-1f427: QQ交流群
- Niushop商城qq开发群1:<a href="http://wpa.qq.com/msgrd?v=3&uin=480373854&site=qq&menu=yes" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群2:<a href="http://wpa.qq.com/msgrd?V=1&Uin=你的bai29507902  &Site=你的网站&Menu=yes" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群3:<a href="http://wpa.qq.com/msgrd?V=1&Uin=你的bai43972244   &Site=你的网站&Menu=yes" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>
+ Niushop商城qq开发群1:<a href="https://jq.qq.com/?_wv=1027&k=VrVzi1FI" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群2:<a href="http://wpa.qq.com/msgrd?V=1&Uin=你的bai29507902  &Site=你的网站&Menu=yes" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群3:<a href="http://wpa.qq.com/msgrd?V=1&Uin=你的bai43972244   &Site=你的网站&Menu=yes" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>
 
 ###  内测演示二维码
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0730/171648_45fa2e6d_6569472.png "扫码111.png")
