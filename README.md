@@ -24,7 +24,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 阿里云2000元代金劵：<a href="https://www.aliyun.com/minisite/goods?userCode=hvxtm3ee">马上领取</a>
 
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0728/121430_7e0741df_6569472.png "fuwuqi.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0731/095424_ac477fe3_6569472.png "fuwuqi.png")
 
 ### 商城特色:fire:
 强大的营销功能模块，丰富的行业模板和装修组件，快速搭建最适合自己的电商平台，轻松获客、裂变。开启电商运营之路。
