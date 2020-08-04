@@ -41,8 +41,8 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 ###  内测演示二维码
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0730/171648_45fa2e6d_6569472.png "扫码111.png")
 
-####   :fire:  内测演示站后台:[<a href='https://cs.b2c.niuteam.cn/shop/index/index.html' target="_blank"> 查看 </a>]       
-<a href='https://cs.b2c.niuteam.cn/shop/index/index.html' target="_blank">https://cs.b2c.niuteam.cn/shop/index/index.html</a>  账号：admin  密码：123456
+####   :fire:  内测演示站后台:[<a href='https://uniapp.v4.niuteam.cn/shop/index/index.html' target="_blank"> 查看 </a>]       
+<a href='https://uniapp.v4.niuteam.cn/shop/index/index.html' target="_blank">https://uniapp.v4.niuteam.cn/shop/index/index.html</a>  账号：admin  密码：123456
 
 ### :tw-1f50a: 开源版使用须知
 
