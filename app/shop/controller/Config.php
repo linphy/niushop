@@ -42,7 +42,7 @@ class Config extends BaseShop
                 'copyright_link' => '',
                 'copyright_desc' => ''
             ];
-            if ($auth_info['code'] == 0) {
+            if ($auth_info['code'] >= 0) {
                 $data['logo'] = $logo ?: $copyright['data']['value']['logo'];
                 $data['company_name'] = input('company_name', '');
                 $data['copyright_link'] = input('copyright_link', '');
@@ -52,7 +52,7 @@ class Config extends BaseShop
             $res = $config_model->setCopyright($data, $this->site_id, $this->app_module);
             return $res;
         }
-        $this->assign('is_auth', ($auth_info['code'] == 0 ? 1 : 0));
+        $this->assign('is_auth', ($auth_info['code'] >= 0 ? 1 : 0));
         $this->assign('copyright_config', $copyright['data']['value']);
         return $this->fetch('config/copyright');
     }
