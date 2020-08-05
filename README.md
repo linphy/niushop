@@ -39,10 +39,10 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
  Niushop商城qq开发群1:<a href="https://jq.qq.com/?_wv=1027&k=VrVzi1FI" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群2:<a href="https://jq.qq.com/?_wv=1027&k=MCtjz6B9" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群3:<a href="https://jq.qq.com/?_wv=1027&k=H9FLIfTP" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>
 
 ###  内测演示二维码
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0730/171648_45fa2e6d_6569472.png "扫码111.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0805/103000_8b403e1c_6569472.png "扫码111.png")
 
-####   :fire:  内测演示站后台:[<a href='https://uniapp.v4.niuteam.cn/shop/index/index.html' target="_blank"> 查看 </a>]       
-<a href='https://uniapp.v4.niuteam.cn/shop/index/index.html' target="_blank">https://uniapp.v4.niuteam.cn/shop/index/index.html</a>  账号：admin  密码：123456
+####   :fire:  内测演示站后台:[<a href='https://cs.b2c.niuteam.cn/shop/index/index.html' target="_blank"> 查看 </a>]       
+<a href='https://cs.b2c.niuteam.cn/shop/index/index.html' target="_blank">https://cs.b2c.niuteam.cn/shop/index/index.html</a>  账号：admin  密码：123456
 
 ### :tw-1f50a: 开源版使用须知
 
