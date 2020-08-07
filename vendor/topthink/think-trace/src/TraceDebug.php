@@ -57,7 +57,7 @@ class TraceDebug
     public function handle($request, Closure $next)
     {
         $debug = $this->app->isDebug();
-        $debug = false;
+        
         // 注册日志监听
         if ($debug) {
             $this->log = [];
