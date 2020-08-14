@@ -34,7 +34,7 @@ class Template extends BaseShop
             $template_id = input('template_id', '');
             $status = input('status', '');
 
-            $res = $sms_model->enableTemplate($template_id, $status, $sms_config);
+            $res = $sms_model->enableTemplate($template_id, $status, $sms_config,$this->site_id, $this->app_module);
             return $res;
         }
 

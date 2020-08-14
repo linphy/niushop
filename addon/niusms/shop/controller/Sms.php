@@ -58,7 +58,7 @@ class Sms extends BaseShop
                         $sms_config[ 'value' ][ 'signature' ] = '';
                     }
                     $this->assign("sms_config", $sms_config);
-                    $signature_status = $this->querySignature();
+                    $signature_status = $sms_model->querySignature($this->site_id, $this->app_module);
                     $this->assign("signature_status", $signature_status);
                     return $this->fetch("sms/index");
                 } else {
@@ -155,7 +155,7 @@ class Sms extends BaseShop
             if ($res[ 'code' ] >= 0) {
                 //添加关闭短信充值订单事件
                 $cron = new Cron();
-                $execute_time = ( time() + ( 60 * 1 ) );
+                $execute_time = ( time() + ( 60 * 15 ) );
                 $cron->addCron(1, 0, "关闭短信充值订单", "CloseSmsPayment", $execute_time, $res[ 'data' ][ 'out_trade_no' ]);
 //                event('CloseSmsPayment', [ 'relate_id' => $res[ 'data' ][ 'out_trade_no' ] ], true);
             }
@@ -231,27 +231,6 @@ class Sms extends BaseShop
         $is_use = input("is_use", 0);
         $result = $config_model->modifyConfigIsUse($is_use, $this->site_id, $this->app_module);
         return $result;
-    }
-
-    /**
-     * 查询短信签名报备状态
-     * @return mixed
-     */
-    public function querySignature()
-    {
-        $sms_model = new SmsModel();
-        $config_model = new ConfigModel();
-        $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module);
-        $sms_config = $sms_config[ 'data' ][ 'value' ];
-        $tKey = time();
-        $data = [
-            'username' => $sms_config[ 'username' ],
-            'password' => md5(md5($sms_config[ 'password' ]) . $tKey),
-            'tKey' => $tKey,
-            'sign' => input('signature', $sms_config[ 'signature' ]),//短信签名
-        ];
-        $res = $sms_model->querySignature($data);
-        return $res;
     }
 
     /**

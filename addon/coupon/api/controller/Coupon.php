@@ -197,4 +197,19 @@ class Coupon extends BaseApi
         }
         return $this->response($list);
     }
+
+    /**
+     * 查询优惠券通过优惠券类型id
+     */
+    public function couponById(){
+        $id = $this->params['id'] ?? 0;
+        $coupon_model    = new CouponModel();
+        $condition       = [
+            ['site_id', '=', $this->site_id],
+            ['status', '=', 1],
+            ['coupon_type_id', 'in', $id]
+        ];
+        $list = $coupon_model->getCouponTypeList($condition, "coupon_type_id,type,site_id,coupon_name,money,discount,max_fetch,at_least,end_time,validity_type,fixed_term,goods_type,discount_limit", "money desc", "");
+        return $this->response($list);
+    }
 }

@@ -1,5 +1,6 @@
 {
   "usingComponents": {
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
+    "ns-show-toast": "/components/ns-show-toast/ns-show-toast",
+    "loading-cover": "/components/loading-cover/loading-cover"
   }
 }

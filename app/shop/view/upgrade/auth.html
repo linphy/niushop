@@ -2,7 +2,9 @@
 
 {block name="resources"}
 <style type="text/css">
-.no-auth{padding: 100px 0;text-align: center;}
+.auth-form {padding-top: 150px;text-align: center;}
+.auth-form .layui-input {display: inline-block;}
+.auth-tips {font-size: 12px;color: #666;width: 544px;margin: 5px auto;}
 </style>
 {/block}
 
@@ -63,9 +65,46 @@
         </div>
     </div>
     {else/}
-    <div class="no-auth">您目前尚未授权，<a href="https://www.niushop.com.cn/authorization.html#Tab4" target="_blank" class="ns-text-color">前往授权</a></div>
+    <div>
+        <div class="auth-form">
+            <input type="" name="auth_code" class="layui-input ns-len-long" placeholder="请输入您的授权码">
+            <button class="layui-btn ns-bg-color" onclick="auth()">绑定授权</button>
+        </div>
+        <div class="auth-tips">
+            请在上方输入框内输入您的授权码，如果没有授权码请到<a href="https://www.niushop.com.cn/authorization.html#Tab4" target="_blank" class="ns-text-color">Niushop官网</a>获取授权
+        </div>
+    </div>
     {/if}   
 {/block}
 
 {block name="script"}
+<script type="text/javascript">
+    var isSub = false;
+    function auth(){
+        var authCode = $('.auth-form [name="auth_code"]').val();
+        if (!/[\S]+/.test(authCode)) {
+            layer.msg('请输入您的授权码') 
+            return;  
+        }
+        if (isSub) return;
+        isSub = true;
+
+        $.ajax({
+            type: 'POST',
+            url: ns.url("shop/upgrade/auth"),
+            data: {
+                code: authCode
+            },
+            dataType: 'JSON',
+            success: function (res) {
+                if (res.code == 1) {
+                    location.reload();
+                } else {
+                    isSub = false;
+                    layer.msg('未查找到该授权码');
+                }
+            }
+        });        
+    }
+</script>
 {/block}

@@ -17,6 +17,7 @@ use EasyWeChat\Factory;
 use think\facade\Cache;
 use addon\weapp\model\Config as WeappConfigModel;
 use addon\wxoplatform\model\Config as WxOplatformConfigModel;
+use app\model\web\Config as WebConfig;
 
 /**
  * 微信小程序配置
@@ -334,8 +335,11 @@ class Weapp extends BaseModel
         $api_config = $api_model->getApiConfig();
         $api_config = $api_config['data'];
 
+        $web_config_model = new WebConfig();
+        $web_config = $web_config_model ->getMapConfig();
+        $web_config = $web_config['data']['value'];
+
         $patterns     = [
-            '/\{\{\$siteId\}\}/',
             '/\{\{\$baseUrl\}\}/',
             '/\{\{\$imgDomain\}\}/',
             '/\{\{\$h5Domain\}\}/',
@@ -344,11 +348,10 @@ class Weapp extends BaseModel
             '/\{\{\$publicKey\}\}/'
         ];
         $replacements = [
-            $site_id,
             ROOT_URL,
             ROOT_URL,
             ROOT_URL . '/h5',
-            '',
+            $web_config['tencent_map_key'] ?? '',
             $api_config['is_use'] ?? 0,
             $api_config['value']['public_key'] ?? ''
         ];

@@ -202,7 +202,7 @@
 <!-- 商品信息 -->
 <script type="text/html" id="goods_info">
 	<div class="ns-table-title">
-		{{# if('{$promotion}'  == "bargain"){ }}
+		{{# if('{$promotion}'  == "bargain" || '{$promotion}'  == "pintuan"){ }}
 		<div class="layui-hide">{{ d.goods_name = d.sku_name }}{{ d.goods_image = d.sku_image }}</div>
 		{{# } }}
 
@@ -353,12 +353,12 @@
 				width: '47%',
 				templet: '#goods_info'
 			}, {
-				field: 'goods_price',
+				field: 'price',
 				title: '商品原价',
 				unresize: 'false',
 				width: '15%',
 				templet: function(data) {
-					return '￥'+ data.goods_price;
+					return '￥'+ data.price;
 				}
 			}, {
 				field: 'groupbuy_price',

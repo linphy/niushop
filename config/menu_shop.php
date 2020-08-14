@@ -1863,7 +1863,16 @@ return [
 							],
 						],
 					],
-				
+                    [
+                        'name' => 'MAP_CONFIG',
+                        'title' => '地图配置',
+                        'url' => 'shop/config/map',
+                        'parent' => '',
+                        'is_show' => 1,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 10
+                    ]
 				]
 			],
             [

@@ -14,6 +14,7 @@ namespace app\model\web;
 
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
+use app\model\system\Upgrade;
 
 /**
  * 网站系统性设置
@@ -127,6 +128,75 @@ class Config extends BaseModel
                 'icp'            => '',
                 'gov_record'     => '',
                 'gov_url'        => '',
+            ];
+        } else {
+            $upgrade_model = new Upgrade();
+            $auth_info = $upgrade_model->authInfo();
+            if (is_null($auth_info) || $auth_info['code'] != 1) {
+                $res['data']['value']['logo'] = '';
+                $res['data']['value']['company_name'] = '';
+                $res['data']['value']['copyright_link'] = '';
+                $res['data']['value']['copyright_desc'] = '';
+            }
+        }
+        return $res;
+    }
+
+    /**
+ * 授权设置
+ * @param $data
+ * @param int $site_id
+ * @param string $app_model
+ * @return array
+ */
+    public function setAuth($data, $site_id = 1, $app_model = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '授权设置', 1, [['site_id', '=', $site_id], ['app_module', '=', $app_model], ['config_key', '=', 'AUTH']]);
+        return $res;
+    }
+
+    /**
+     * 获取授权设置
+     * @return array
+     */
+    public function getAuth($site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'AUTH']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'code'           => '',
+            ];
+        }
+        return $res;
+    }
+
+    /**
+     * 地图设置
+     * @param $data
+     * @param int $site_id
+     * @param string $app_model
+     * @return array
+     */
+    public function setMapConfig($data, $site_id = 1, $app_model = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '地图设置', 1, [['site_id', '=', $site_id], ['app_module', '=', $app_model], ['config_key', '=', 'MAP_CONFIG']]);
+        return $res;
+    }
+
+    /**
+     * 获取地图设置
+     * @return array
+     */
+    public function getMapConfig($site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'MAP_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'tencent_map_key' => '',
             ];
         }
         return $res;

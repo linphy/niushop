@@ -201,7 +201,7 @@
                     unresize: 'false',
                     width: '10%',
 					templet: function(data){
-						return data.max_fetch + '张/人';
+						return data.max_fetch == 0 ? '无领取限制' : data.max_fetch + '张/人';
 					}
                 }, {
                     title: '有效期限',

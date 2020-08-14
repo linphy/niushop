@@ -6,8 +6,8 @@ class Kdniao
 {
     private $EBusinessID; // 授权key
     private $AppKey; // 快递100分配的公司编码
-    private $order_url = 'http://api.kdniao.com/api/Eorderservice'; //电子面单url
-    private $print_url = 'http://www.kdniao.com/External/PrintOrder.aspx'; //电子面单批量打印url
+    private $order_url = 'https://api.kdniao.com/api/Eorderservice'; //电子面单url
+    private $print_url = 'https://www.kdniao.com/External/PrintOrder.aspx'; //电子面单批量打印url
 
     public function __construct($config){
         $this->EBusinessID = $config["EBusinessID"];

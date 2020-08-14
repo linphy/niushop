@@ -697,7 +697,7 @@
 				"./zh-cn/point/list.js": "59f5",
 				"./zh-cn/point/order_detail.js": "ef44",
 				"./zh-cn/point/order_list.js": "657e",
-				"./zh-cn/point/payment.js": "8a29",
+				"./zh-cn/point/payment.js": "8a291",
 				"./zh-cn/point/result.js": "a71b",
 				"./zh-cn/recharge/detail.js": "d921",
 				"./zh-cn/recharge/list.js": "6437",
@@ -2473,7 +2473,7 @@
 							var t = this.$store.state,
 								i = this.$store.getters;
 							if (e) {
-								var o = L(this.$store, "mapState", e);
+								var o = R(this.$store, "mapState", e);
 								if (!o) return;
 								t = o.context.state, i = o.context.getters
 							}
@@ -2492,7 +2492,7 @@
 							while (i--) t[i] = arguments[i];
 							var o = this.$store.commit;
 							if (e) {
-								var n = L(this.$store, "mapMutations", e);
+								var n = R(this.$store, "mapMutations", e);
 								if (!n) return;
 								o = n.context.commit
 							}
@@ -2506,7 +2506,7 @@
 						var o = t.key,
 							r = t.val;
 						r = e + r, i[o] = function() {
-							if (!e || L(this.$store, "mapGetters", e)) return this.$store.getters[r]
+							if (!e || R(this.$store, "mapGetters", e)) return this.$store.getters[r]
 						}, i[o].vuex = !0
 					})), i
 				})),
@@ -2521,7 +2521,7 @@
 							while (i--) t[i] = arguments[i];
 							var o = this.$store.dispatch;
 							if (e) {
-								var n = L(this.$store, "mapActions", e);
+								var n = R(this.$store, "mapActions", e);
 								if (!n) return;
 								o = n.context.dispatch
 							}
@@ -2558,11 +2558,11 @@
 				}
 			}
 
-			function L(e, t, i) {
+			function R(e, t, i) {
 				var o = e._modulesNamespaceMap[i];
 				return o
 			}
-			var R = {
+			var L = {
 				Store: p,
 				install: T,
 				version: "3.0.1",
@@ -2572,7 +2572,7 @@
 				mapActions: E,
 				createNamespacedHelpers: M
 			};
-			t["default"] = R
+			t["default"] = L
 		},
 		"30b7": function(e, t, i) {
 			"use strict";
@@ -4234,7 +4234,7 @@
 			"use strict";
 			Object.defineProperty(t, "__esModule", {
 				value: !0
-			}), t.createApp = bt, t.createComponent = Pt, t.createPage = $t, t.default = void 0;
+			}), t.createApp = Dt, t.createComponent = Tt, t.createPage = Pt, t.default = void 0;
 			var o = r(i("66fd"));
 
 			function r(e) {
@@ -4408,11 +4408,11 @@
 				}))
 			}
 
-			function L(e, t) {
+			function R(e, t) {
 				"string" === typeof e && w(t) ? j(I[e] || (I[e] = {}), t) : w(e) && j(x, e)
 			}
 
-			function R(e, t) {
+			function L(e, t) {
 				"string" === typeof e ? w(t) ? A(I[e], t) : delete I[e] : w(e) && A(x, e)
 			}
 
@@ -4429,7 +4429,7 @@
 			function B(e, t) {
 				for (var i = !1, o = 0; o < e.length; o++) {
 					var r = e[o];
-					if (i) i = Promise.then(N(r));
+					if (i) i = Promise.resolve(N(r));
 					else {
 						var n = r(t);
 						if (U(n) && (i = Promise.resolve(n)), !1 === n) return {
@@ -4574,7 +4574,7 @@
 			function ue(e, t) {
 				if (0 === ae && ce(), e = Number(e), 0 === e) return 0;
 				var i = e / re * (t || ae);
-				return i < 0 && (i = -i), i = Math.floor(i + oe), 0 === i ? 1 !== se && ne ? .5 : 1 : e < 0 ? -i : i
+				return i < 0 && (i = -i), i = Math.floor(i + oe), 0 === i && (i = 1 !== se && ne ? .5 : 1), e < 0 ? -i : i
 			}
 			var de = {
 					promiseInterceptor: H
@@ -4582,8 +4582,8 @@
 				le = Object.freeze({
 					__proto__: null,
 					upx2px: ue,
-					addInterceptor: L,
-					removeInterceptor: R,
+					addInterceptor: R,
+					removeInterceptor: L,
 					interceptors: de
 				}),
 				he = {
@@ -4625,7 +4625,7 @@
 						returnValue: fe
 					}
 				},
-				ge = ["vibrate"],
+				ge = ["vibrate", "preloadPage", "unPreloadPage", "loadSubPackage"],
 				me = [],
 				ve = ["success", "fail", "cancel", "complete"];
 
@@ -4646,7 +4646,7 @@
 							var s = i[a];
 							b(s) && (s = s(t[a], t, n)), s ? D(s) ? n[s] = t[a] : w(s) && (n[s.name ? s.name : a] = s.value) : console.warn(
 								"微信小程序 ".concat(e, "暂不支持").concat(a))
-						} else -1 !== ve.indexOf(a) ? n[a] = _e(e, t[a], o) : r || (n[a] = t[a]);
+						} else -1 !== ve.indexOf(a) ? b(t[a]) && (n[a] = _e(e, t[a], o)) : r || (n[a] = t[a]);
 					return n
 				}
 				return b(t) && (t = _e(e, t, o)), t
@@ -4715,10 +4715,10 @@
 					getProvider: $e
 				}),
 				Te = function() {
-					return "function" === typeof getUniEmitter ? getUniEmitter : function() {
+					var e;
+					return function() {
 						return e || (e = new o.default), e
-					};
-					var e
+					}
 				}();
 
 			function xe(e, t, i) {
@@ -4750,8 +4750,8 @@
 				Ae = Object.freeze({
 					__proto__: null
 				}),
-				Le = Page,
-				Re = Component,
+				Re = Page,
+				Le = Component,
 				Ne = /:/g,
 				Ue = C((function(e) {
 					return P(e.replace(Ne, "-"))
@@ -4779,12 +4779,14 @@
 			}
 			Page = function() {
 				var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
-				return qe("onLoad", e), Le(e)
+				return qe("onLoad", e), Re(e)
 			}, Component = function() {
 				var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
-				return qe("created", e), Re(e)
+				return qe("created", e), Le(e)
 			};
-			var Ve = ["onPullDownRefresh", "onReachBottom", "onShareAppMessage", "onPageScroll", "onResize", "onTabItemTap"];
+			var Ve = ["onPullDownRefresh", "onReachBottom", "onAddToFavorites", "onShareTimeline", "onShareAppMessage",
+				"onPageScroll", "onResize", "onTabItemTap"
+			];
 
 			function Fe(e, t) {
 				var i = e.$mp[e.mpType];
@@ -4944,14 +4946,14 @@
 					var o = t[0],
 						r = t[2];
 					if (o || "undefined" !== typeof r) {
-						var n = t[1],
-							a = t[3],
-							s = o ? e.__get_value(o, i) : i;
-						Number.isInteger(s) ? i = r : n ? Array.isArray(s) ? i = s.find((function(t) {
-							return e.__get_value(n, t) === r
-						})) : w(s) ? i = Object.keys(s).find((function(t) {
-							return e.__get_value(n, s[t]) === r
-						})) : console.error("v-for 暂不支持循环数据：", s) : i = s[r], a && (i = e.__get_value(a, i))
+						var n, a = t[1],
+							s = t[3];
+						Number.isInteger(o) ? n = o : o ? "string" === typeof o && o && (n = 0 === o.indexOf("#s#") ? o.substr(3) :
+							e.__get_value(o, i)) : n = i, Number.isInteger(n) ? i = r : a ? Array.isArray(n) ? i = n.find((function(t) {
+							return e.__get_value(a, t) === r
+						})) : w(n) ? i = Object.keys(n).find((function(t) {
+							return e.__get_value(a, n[t]) === r
+						})) : console.error("v-for 暂不支持循环数据：", n) : i = n[r], s && (i = e.__get_value(s, i))
 					}
 				})), i
 			}
@@ -4959,8 +4961,9 @@
 			function ot(e, t, i) {
 				var o = {};
 				return Array.isArray(t) && t.length && t.forEach((function(t, r) {
-					"string" === typeof t ? t ? "$event" === t ? o["$" + r] = i : 0 === t.indexOf("$event.") ? o["$" + r] = e.__get_value(
-						t.replace("$event.", ""), i) : o["$" + r] = e.__get_value(t) : o["$" + r] = e : o["$" + r] = it(e, t)
+					"string" === typeof t ? t ? "$event" === t ? o["$" + r] = i : "arguments" === t ? i.detail && i.detail.__args__ ?
+						o["$" + r] = i.detail.__args__ : o["$" + r] = [i] : 0 === t.indexOf("$event.") ? o["$" + r] = e.__get_value(
+							t.replace("$event.", ""), i) : o["$" + r] = e.__get_value(t) : o["$" + r] = e : o["$" + r] = it(e, t)
 				})), o
 			}
 
@@ -4996,6 +4999,12 @@
 			}
 
 			function ut(e) {
+				var t = e.$parent;
+				while (t && t.$parent && (t.$options.generic || t.$parent.$options.generic || t.$scope._$vuePid)) t = t.$parent;
+				return t && t.$parent
+			}
+
+			function dt(e) {
 				var t = this;
 				e = tt(e);
 				var i = (e.currentTarget || e.target).dataset;
@@ -5014,8 +5023,8 @@
 						var o = i[0];
 						if (o) {
 							var r = t.$vm;
-							if (r.$options.generic && r.$parent && r.$parent.$parent && (r = r.$parent.$parent), "$emit" === o)
-								return void r.$emit.apply(r, nt(t.$vm, e, i[1], i[2], s, o));
+							if (r.$options.generic && (r = ut(r) || r), "$emit" === o) return void r.$emit.apply(r, nt(t.$vm, e, i[
+								1], i[2], s, o));
 							var a = r[o];
 							if (!b(a)) throw new Error(" _vm.".concat(o, " is not a function"));
 							if (c) {
@@ -5027,9 +5036,9 @@
 					}))
 				})), "input" === r && 1 === n.length && "undefined" !== typeof n[0] ? n[0] : void 0
 			}
-			var dt = ["onShow", "onHide", "onError", "onPageNotFound"];
+			var lt = ["onShow", "onHide", "onError", "onPageNotFound", "onThemeChange", "onUnhandledRejection"];
 
-			function lt(e, t) {
+			function ht(e, t) {
 				var i = t.mocks,
 					r = t.initRefs;
 				e.$options.store && (o.default.prototype.$store = e.$options.store), o.default.prototype.mpHost = "mp-weixin", o
@@ -5054,32 +5063,32 @@
 				var a = e.$options.methods;
 				return a && Object.keys(a).forEach((function(e) {
 					n[e] = a[e]
-				})), He(n, dt), n
+				})), He(n, lt), n
 			}
-			var ht = ["__route__", "__wxExparserNodeId__", "__wxWebviewId__"];
+			var ft = ["__route__", "__wxExparserNodeId__", "__wxWebviewId__"];
 
-			function ft(e, t) {
+			function pt(e, t) {
 				for (var i, o = e.$children, r = o.length - 1; r >= 0; r--) {
 					var n = o[r];
 					if (n.$scope._$vueId === t) return n
 				}
 				for (var a = o.length - 1; a >= 0; a--)
-					if (i = ft(o[a], t), i) return i
+					if (i = pt(o[a], t), i) return i
 			}
 
-			function pt(e) {
+			function gt(e) {
 				return Behavior(e)
 			}
 
-			function gt() {
+			function mt() {
 				return !!this.route
 			}
 
-			function mt(e) {
+			function vt(e) {
 				this.triggerEvent("__l", e)
 			}
 
-			function vt(e) {
+			function _t(e) {
 				var t = e.$scope;
 				Object.defineProperty(e, "$refs", {
 					get: function() {
@@ -5098,25 +5107,25 @@
 				})
 			}
 
-			function _t(e) {
+			function yt(e) {
 				var t, i = e.detail || e.value,
 					o = i.vuePid,
 					r = i.vueOptions;
-				o && (t = ft(this.$vm, o)), t || (t = this.$vm), r.parent = t
-			}
-
-			function yt(e) {
-				return lt(e, {
-					mocks: ht,
-					initRefs: vt
-				})
+				o && (t = pt(this.$vm, o)), t || (t = this.$vm), r.parent = t
 			}
 
 			function bt(e) {
-				return App(yt(e)), e
+				return ht(e, {
+					mocks: ft,
+					initRefs: _t
+				})
 			}
 
 			function Dt(e) {
+				return App(bt(e)), e
+			}
+
+			function wt(e) {
 				var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
 					i = t.isPage,
 					r = t.initRelation,
@@ -5132,7 +5141,7 @@
 				var h = {
 					options: l,
 					data: Xe(d, o.default.prototype),
-					behaviors: Ye(d, pt),
+					behaviors: Ye(d, gt),
 					properties: et(d.props, !1, d.__file),
 					lifetimes: {
 						attached: function() {
@@ -5166,8 +5175,8 @@
 						}
 					},
 					methods: {
-						__l: _t,
-						__e: ut
+						__l: yt,
+						__e: dt
 					}
 				};
 				return d.externalClasses && (h.externalClasses = d.externalClasses), Array.isArray(d.wxsCallMethods) && d.wxsCallMethods
@@ -5178,67 +5187,67 @@
 					})), i ? h : [h, u]
 			}
 
-			function wt(e) {
-				return Dt(e, {
-					isPage: gt,
-					initRelation: mt
+			function St(e) {
+				return wt(e, {
+					isPage: mt,
+					initRelation: vt
 				})
 			}
-			var St = ["onShow", "onHide", "onUnload"];
+			var kt = ["onShow", "onHide", "onUnload"];
 
-			function kt(e, t) {
+			function Ct(e, t) {
 				t.isPage, t.initRelation;
-				var i = wt(e);
-				return He(i.methods, St, e), i.methods.onLoad = function(e) {
+				var i = St(e);
+				return He(i.methods, kt, e), i.methods.onLoad = function(e) {
 					this.$vm.$mp.query = e, this.$vm.__call_hook("onLoad", e)
 				}, i
 			}
 
-			function Ct(e) {
-				return kt(e, {
-					isPage: gt,
-					initRelation: mt
+			function $t(e) {
+				return Ct(e, {
+					isPage: mt,
+					initRelation: vt
 				})
 			}
 
-			function $t(e) {
-				return Component(Ct(e))
+			function Pt(e) {
+				return Component($t(e))
 			}
 
-			function Pt(e) {
-				return Component(wt(e))
+			function Tt(e) {
+				return Component(St(e))
 			}
-			St.push.apply(St, Ve), ge.forEach((function(e) {
+			kt.push.apply(kt, Ve), ge.forEach((function(e) {
 				pe[e] = !1
 			})), me.forEach((function(e) {
 				var t = pe[e] && pe[e].name ? pe[e].name : e;
 				wx.canIUse(t) || (pe[e] = !1)
 			}));
-			var Tt = {};
-			"undefined" !== typeof Proxy ? Tt = new Proxy({}, {
+			var xt = {};
+			"undefined" !== typeof Proxy ? xt = new Proxy({}, {
 				get: function(e, t) {
-					return e[t] ? e[t] : le[t] ? le[t] : Ae[t] ? ie(t, Ae[t]) : Pe[t] ? ie(t, Pe[t]) : we[t] ? ie(t, we[t]) : je[
-						t] ? je[t] : S(wx, t) || S(pe, t) ? ie(t, De(t, wx[t])) : void 0
+					return S(e, t) ? e[t] : le[t] ? le[t] : Ae[t] ? ie(t, Ae[t]) : Pe[t] ? ie(t, Pe[t]) : we[t] ? ie(t, we[t]) :
+						je[t] ? je[t] : S(wx, t) || S(pe, t) ? ie(t, De(t, wx[t])) : void 0
 				},
 				set: function(e, t, i) {
 					return e[t] = i, !0
 				}
 			}) : (Object.keys(le).forEach((function(e) {
-				Tt[e] = le[e]
+				xt[e] = le[e]
 			})), Object.keys(we).forEach((function(e) {
-				Tt[e] = ie(e, we[e])
+				xt[e] = ie(e, we[e])
 			})), Object.keys(Pe).forEach((function(e) {
-				Tt[e] = ie(e, we[e])
+				xt[e] = ie(e, we[e])
 			})), Object.keys(je).forEach((function(e) {
-				Tt[e] = je[e]
+				xt[e] = je[e]
 			})), Object.keys(Ae).forEach((function(e) {
-				Tt[e] = ie(e, Ae[e])
+				xt[e] = ie(e, Ae[e])
 			})), Object.keys(wx).forEach((function(e) {
-				(S(wx, e) || S(pe, e)) && (Tt[e] = ie(e, De(e, wx[e])))
-			}))), wx.createApp = bt, wx.createPage = $t, wx.createComponent = Pt;
-			var xt = Tt,
-				It = xt;
-			t.default = It
+				(S(wx, e) || S(pe, e)) && (xt[e] = ie(e, De(e, wx[e])))
+			}))), wx.createApp = Dt, wx.createPage = Pt, wx.createComponent = Tt;
+			var It = xt,
+				Ot = It;
+			t.default = Ot
 		},
 		"54f2": function(e, t, i) {
 			"use strict";
@@ -7919,7 +7928,7 @@
 							return e
 						};
 
-					function L(e, t) {
+					function R(e, t) {
 						if (e === t) return !0;
 						var i = c(e),
 							o = c(t);
@@ -7928,23 +7937,23 @@
 							var r = Array.isArray(e),
 								n = Array.isArray(t);
 							if (r && n) return e.length === t.length && e.every((function(e, i) {
-								return L(e, t[i])
+								return R(e, t[i])
 							}));
 							if (e instanceof Date && t instanceof Date) return e.getTime() === t.getTime();
 							if (r || n) return !1;
 							var a = Object.keys(e),
 								s = Object.keys(t);
 							return a.length === s.length && a.every((function(i) {
-								return L(e[i], t[i])
+								return R(e[i], t[i])
 							}))
 						} catch (u) {
 							return !1
 						}
 					}
 
-					function R(e, t) {
+					function L(e, t) {
 						for (var i = 0; i < e.length; i++)
-							if (L(e[i], t)) return i;
+							if (R(e[i], t)) return i;
 						return -1
 					}
 
@@ -8047,7 +8056,7 @@
 					var ue = M,
 						de = 0,
 						le = function() {
-							"undefined" !== typeof SharedObject ? this.id = SharedObject.uid++ : this.id = de++, this.subs = []
+							this.id = de++, this.subs = []
 						};
 
 					function he(e) {
@@ -8059,16 +8068,15 @@
 							.length - 1]
 					}
 					le.prototype.addSub = function(e) {
-							this.subs.push(e)
-						}, le.prototype.removeSub = function(e) {
-							_(this.subs, e)
-						}, le.prototype.depend = function() {
-							le.SharedObject.target && le.SharedObject.target.addDep(this)
-						}, le.prototype.notify = function() {
-							var e = this.subs.slice();
-							for (var t = 0, i = e.length; t < i; t++) e[t].update()
-						}, le.SharedObject = "undefined" !== typeof SharedObject ? SharedObject : {}, le.SharedObject.target = null,
-						le.SharedObject.targetStack = [];
+						this.subs.push(e)
+					}, le.prototype.removeSub = function(e) {
+						_(this.subs, e)
+					}, le.prototype.depend = function() {
+						le.SharedObject.target && le.SharedObject.target.addDep(this)
+					}, le.prototype.notify = function() {
+						var e = this.subs.slice();
+						for (var t = 0, i = e.length; t < i; t++) e[t].update()
+					}, le.SharedObject = {}, le.SharedObject.target = null, le.SharedObject.targetStack = [];
 					var pe = function(e, t, i, o, r, n, a, s) {
 							this.tag = e, this.data = t, this.children = i, this.text = o, this.elm = r, this.ns = void 0, this.context =
 								n, this.fnContext = void 0, this.fnOptions = void 0, this.fnScopeId = void 0, this.key = t && t.key, this.componentOptions =
@@ -8218,12 +8226,12 @@
 						} : t : e
 					}
 
-					function Le(e, t) {
+					function Re(e, t) {
 						var i = t ? e ? e.concat(t) : Array.isArray(t) ? t : [t] : e;
-						return i ? Re(i) : i
+						return i ? Le(i) : i
 					}
 
-					function Re(e) {
+					function Le(e) {
 						for (var t = [], i = 0; i < e.length; i++) - 1 === t.indexOf(e[i]) && t.push(e[i]);
 						return t
 					}
@@ -8235,7 +8243,7 @@
 					Me.data = function(e, t, i) {
 						return i ? Ae(e, t, i) : t && "function" !== typeof t ? e : Ae(e, t)
 					}, B.forEach((function(e) {
-						Me[e] = Le
+						Me[e] = Re
 					})), U.forEach((function(e) {
 						Me[e + "s"] = Ne
 					})), Me.watch = function(e, t, i, o) {
@@ -8742,14 +8750,14 @@
 						return e
 					}
 
-					function Lt(e, t) {
+					function Rt(e, t) {
 						var i = this._staticTrees || (this._staticTrees = []),
 							o = i[e];
 						return o && !t ? o : (o = i[e] = this.$options.staticRenderFns[e].call(this._renderProxy, null, this), Nt(o,
 							"__static__" + e, !1), o)
 					}
 
-					function Rt(e, t, i) {
+					function Lt(e, t, i) {
 						return Nt(e, "__once__" + t + (i ? "_" + i : ""), !0), e
 					}
 
@@ -8800,7 +8808,7 @@
 					}
 
 					function zt(e) {
-						e._o = Rt, e._n = g, e._s = p, e._l = It, e._t = Ot, e._q = L, e._i = R, e._m = Lt, e._f = Et, e._k = jt, e._b =
+						e._o = Lt, e._n = g, e._s = p, e._l = It, e._t = Ot, e._q = R, e._i = L, e._m = Rt, e._f = Et, e._k = jt, e._b =
 							At, e._v = ve, e._e = me, e._u = qt, e._g = Bt, e._d = Vt, e._p = Ft
 					}
 
@@ -9243,11 +9251,11 @@
 						Mi = [],
 						ji = {},
 						Ai = !1,
-						Li = !1,
-						Ri = 0;
+						Ri = !1,
+						Li = 0;
 
 					function Ni() {
-						Ri = Ei.length = Mi.length = 0, ji = {}, Ai = Li = !1
+						Li = Ei.length = Mi.length = 0, ji = {}, Ai = Ri = !1
 					}
 					var Ui = Date.now;
 					if (X && !Q) {
@@ -9259,9 +9267,9 @@
 
 					function qi() {
 						var e, t;
-						for (Ui(), Li = !0, Ei.sort((function(e, t) {
+						for (Ui(), Ri = !0, Ei.sort((function(e, t) {
 								return e.id - t.id
-							})), Ri = 0; Ri < Ei.length; Ri++) e = Ei[Ri], e.before && e.before(), t = e.id, ji[t] = null, e.run();
+							})), Li = 0; Li < Ei.length; Li++) e = Ei[Li], e.before && e.before(), t = e.id, ji[t] = null, e.run();
 						var i = Mi.slice(),
 							o = Ei.slice();
 						Ni(), zi(i), Vi(o), ne && q.devtools && ne.emit("flush")
@@ -9287,9 +9295,9 @@
 					function Hi(e) {
 						var t = e.id;
 						if (null == ji[t]) {
-							if (ji[t] = !0, Li) {
+							if (ji[t] = !0, Ri) {
 								var i = Ei.length - 1;
-								while (i > Ri && Ei[i].id > e.id) i--;
+								while (i > Li && Ei[i].id > e.id) i--;
 								Ei.splice(i + 1, 0, e)
 							} else Ei.push(e);
 							Ai || (Ai = !0, ct(qi))
@@ -9712,8 +9720,8 @@
 
 					function Mo(e, t) {
 						if (e !== t) {
-							var i = Lo(e),
-								o = Lo(t);
+							var i = Ro(e),
+								o = Ro(t);
 							if (i == Oo && o == Oo) {
 								if (Object.keys(e).length >= Object.keys(t).length)
 									for (var r in t) {
@@ -9728,16 +9736,16 @@
 
 					function jo(e, t, i, o) {
 						if (e !== t) {
-							var r = Lo(e),
-								n = Lo(t);
+							var r = Ro(e),
+								n = Ro(t);
 							if (r == Oo)
 								if (n != Oo || Object.keys(e).length < Object.keys(t).length) Ao(o, i, e);
 								else {
 									var a = function(r) {
 										var n = e[r],
 											a = t[r],
-											s = Lo(n),
-											c = Lo(a);
+											s = Ro(n),
+											c = Ro(a);
 										if (s != Io && s != Oo) n != t[r] && Ao(o, ("" == i ? "" : i + ".") + r, n);
 										else if (s == Io) c != Io ? Ao(o, ("" == i ? "" : i + ".") + r, n) : n.length < a.length ? Ao(o, ("" == i ?
 											"" : i + ".") + r, n) : n.forEach((function(e, t) {
@@ -9760,11 +9768,11 @@
 						e[t] = i
 					}
 
-					function Lo(e) {
+					function Ro(e) {
 						return Object.prototype.toString.call(e)
 					}
 
-					function Ro(e) {
+					function Lo(e) {
 						if (e.__next_tick_callbacks && e.__next_tick_callbacks.length) {
 							if (Object({
 									NODE_ENV: "production",
@@ -9822,10 +9830,14 @@
 					function Bo(e) {
 						var t = Object.create(null),
 							i = [].concat(Object.keys(e._data || {}), Object.keys(e._computedWatchers || {}));
-						return i.reduce((function(t, i) {
-								return t[i] = e[i], t
-							}), t), Object.assign(t, e.$mp.data || {}), Array.isArray(e.$options.behaviors) && -1 !== e.$options.behaviors
-							.indexOf("uni://form-field") && (t["name"] = e.name, t["value"] = e.value), JSON.parse(JSON.stringify(t))
+						i.reduce((function(t, i) {
+							return t[i] = e[i], t
+						}), t);
+						var o = e.__secret_vfa_state__ && e.__secret_vfa_state__.rawBindings;
+						return o && Object.keys(o).forEach((function(i) {
+							t[i] = e[i]
+						})), Object.assign(t, e.$mp.data || {}), Array.isArray(e.$options.behaviors) && -1 !== e.$options.behaviors.indexOf(
+							"uni://form-field") && (t["name"] = e.name, t["value"] = e.value), JSON.parse(JSON.stringify(t))
 					}
 					var qo = function(e, t) {
 						var i = this;
@@ -9849,8 +9861,8 @@
 								BASE_URL: "/"
 							}).VUE_APP_DEBUG && console.log("[" + +new Date + "][" + (o.is || o.route) + "][" + this._uid + "]差量更新",
 								JSON.stringify(a)), this.__next_tick_pending = !0, o.setData(a, (function() {
-								i.__next_tick_pending = !1, Ro(i)
-							}))) : Ro(this)
+								i.__next_tick_pending = !1, Lo(i)
+							}))) : Lo(this)
 						}
 					};
 
@@ -9917,10 +9929,10 @@
 					}
 
 					function Qo(e) {
-						e.config.errorHandler = function(e) {
-							console.error(e);
-							var t = getApp();
-							t && t.onError && t.onError(e)
+						e.config.errorHandler = function(t, i, o) {
+							e.util.warn("Error in " + o + ': "' + t.toString() + '"', i), console.error(t);
+							var r = getApp();
+							r && r.onError && r.onError(t)
 						};
 						var t = e.prototype.$emit;
 						e.prototype.$emit = function(e) {
@@ -9976,8 +9988,9 @@
 							return []
 						}
 					}
-					var er = ["onLaunch", "onShow", "onHide", "onUniNViewMessage", "onError", "onLoad", "onReady", "onUnload",
-						"onPullDownRefresh", "onReachBottom", "onTabItemTap", "onShareAppMessage", "onResize", "onPageScroll",
+					var er = ["onLaunch", "onShow", "onHide", "onUniNViewMessage", "onPageNotFound", "onThemeChange", "onError",
+						"onUnhandledRejection", "onLoad", "onReady", "onUnload", "onPullDownRefresh", "onReachBottom", "onTabItemTap",
+						"onAddToFavorites", "onShareTimeline", "onShareAppMessage", "onResize", "onPageScroll",
 						"onNavigationBarButtonTap", "onBackPress", "onNavigationBarSearchInputChanged",
 						"onNavigationBarSearchInputConfirmed", "onNavigationBarSearchInputClicked", "onPageShow", "onPageHide",
 						"onPageResize"
@@ -10376,17 +10389,18 @@
 				Object.defineProperty(t, "__esModule", {
 					value: !0
 				}), t.default = void 0;
-				var o = a(i("4795")),
-					r = a(i("a67f")),
-					n = a(i("c841"));
+				var o = s(i("4795")),
+					r = s(i("a67f")),
+					n = s(i("c841")),
+					a = s(i("9922"));
 
-				function a(e) {
+				function s(e) {
 					return e && e.__esModule ? e : {
 						default: e
 					}
 				}
 
-				function s(e, t, i, o, r, n, a) {
+				function c(e, t, i, o, r, n, a) {
 					try {
 						var s = e[n](a),
 							c = s.value
@@ -10396,7 +10410,7 @@
 					s.done ? t(c) : Promise.resolve(c).then(o, r)
 				}
 
-				function c(e) {
+				function u(e) {
 					return function() {
 						var t = this,
 							i = arguments;
@@ -10404,17 +10418,17 @@
 							var n = e.apply(t, i);
 
 							function a(e) {
-								s(n, o, r, a, c, "next", e)
+								c(n, o, r, a, s, "next", e)
 							}
 
-							function c(e) {
-								s(n, o, r, a, c, "throw", e)
+							function s(e) {
+								c(n, o, r, a, s, "throw", e)
 							}
 							a(void 0)
 						}))
 					}
 				}
-				var u = {
+				var d = {
 					redirectTo: function(t, i, o) {
 						for (var r = t, n = ["/pages/index/index/index", "/pages/goods/category/category", "/pages/goods/cart/cart",
 								"/pages/member/index/index"
@@ -10532,42 +10546,42 @@
 						}
 					},
 					upload: function(t, i, n) {
-						var a = "weapp",
-							s = "微信小程序",
-							u = {
+						var s = "weapp",
+							c = "微信小程序",
+							d = {
 								token: e.getStorageSync("token"),
-								app_type: a,
-								app_type_name: s
+								app_type: s,
+								app_type_name: c
 							};
-						if (u = Object.assign(u, i), r.default.apiSecurity) {
-							var d = new JSEncrypt;
-							d.setPublicKey(r.default.publicKey);
-							var l = encodeURIComponent(d.encryptLong(JSON.stringify(u)));
-							u = {
-								encrypt: l
+						if (d = Object.assign(d, i), r.default.apiSecurity) {
+							var l = new a.default;
+							l.setPublicKey(r.default.publicKey);
+							var h = encodeURIComponent(l.encryptLong(JSON.stringify(d)));
+							d = {
+								encrypt: h
 							}
 						}
-						var h = t,
-							f = this;
+						var f = t,
+							p = this;
 						e.chooseImage({
-							count: h,
+							count: f,
 							sizeType: ["compressed"],
 							sourceType: ["album", "camera"],
 							success: function() {
-								var e = c(o.default.mark((function e(t) {
-									var r, a, s, c, d;
+								var e = u(o.default.mark((function e(t) {
+									var r, a, s, c, u;
 									return o.default.wrap((function(e) {
 										while (1) switch (e.prev = e.next) {
 											case 0:
-												r = t.tempFilePaths, a = u, s = [], c = 0;
+												r = t.tempFilePaths, a = d, s = [], c = 0;
 											case 4:
 												if (!(c < r.length)) {
 													e.next = 12;
 													break
 												}
-												return e.next = 7, f.upload_file_server(r[c], a, i.path);
+												return e.next = 7, p.upload_file_server(r[c], a, i.path);
 											case 7:
-												d = e.sent, s.push(d);
+												u = e.sent, s.push(u);
 											case 9:
 												c++, e.next = 4;
 												break;
@@ -10689,7 +10703,7 @@
 						return t || (t = 0), Number(e).toFixed(t)
 					}
 				};
-				t.default = u
+				t.default = d
 			}).call(this, i("543d")["default"])
 		},
 		"798a": function(e, t, i) {
@@ -10850,7 +10864,7 @@
 			};
 			t.lang = o
 		},
-		"8a29": function(e, t, i) {
+		"8a291": function(e, t, i) {
 			"use strict";
 			Object.defineProperty(t, "__esModule", {
 				value: !0
@@ -12406,7 +12420,7 @@
 							return this.abs().divRemTo(t, null, i), this.s < 0 && i.compareTo(e.ZERO) > 0 && t.subTo(i, i), i
 						}, e.prototype.modPowInt = function(e, t) {
 							var i;
-							return i = e < 256 || t.isEven() ? new A(t) : new L(t), this.exp(e, i)
+							return i = e < 256 || t.isEven() ? new A(t) : new R(t), this.exp(e, i)
 						}, e.prototype.clone = function() {
 							var e = N();
 							return this.copyTo(e), e
@@ -12504,8 +12518,8 @@
 							var i, o, r = e.bitLength(),
 								n = W(1);
 							if (r <= 0) return n;
-							i = r < 18 ? 1 : r < 48 ? 3 : r < 144 ? 4 : r < 768 ? 5 : 6, o = r < 8 ? new A(t) : t.isEven() ? new R(t) :
-								new L(t);
+							i = r < 18 ? 1 : r < 48 ? 3 : r < 144 ? 4 : r < 768 ? 5 : 6, o = r < 8 ? new A(t) : t.isEven() ? new L(t) :
+								new R(t);
 							var a = [],
 								s = 3,
 								c = i - 1,
@@ -12919,7 +12933,7 @@
 							e.squareTo(t), this.reduce(t)
 						}, e
 					}(),
-					L = function() {
+					R = function() {
 						function e(e) {
 							this.m = e, this.mp = e.invDigit(), this.mpl = 32767 & this.mp, this.mph = this.mp >> 15, this.um = (1 << e
 								.DB - 15) - 1, this.mt2 = 2 * e.t
@@ -12946,7 +12960,7 @@
 							e.squareTo(t), this.reduce(t)
 						}, e
 					}(),
-					R = function() {
+					L = function() {
 						function e(e) {
 							this.m = e, this.r2 = N(), this.q3 = N(), M.ONE.dlShiftTo(2 * e.t, this.r2), this.mu = this.r2.divide(e)
 						}
@@ -14998,7 +15012,7 @@
 					h5Domain: "{{$h5Domain}}",
 					mpKey: "{{$mpKey}}",
 					apiSecurity: Boolean(parseInt('{{$apiSecurity}}')),
-					publicKey: `{{$publicKey}}`
+					publicKey: `{{$publicKey}}`,
 				},
 				r = o;
 			t.default = r
@@ -16459,11 +16473,9 @@
 							}
 						},
 						NavReturn: function() {
-							var e = this;
 							"all" == this.indent ? this.back ? this.$util.redirectTo(this.back, {}, "redirectTo") : this.$util.redirectTo(
-								"/pages/member/index/index", {}, "reLaunch") : (setTimeout((function() {
-								e.indent = "all"
-							}), 2e3), this.customNavTitle = this.$lang("title"), this.initFormData())
+								"/pages/member/index/index", {}, "reLaunch") : (this.indent = "all", this.customNavTitle = this.$lang(
+								"title"), this.initFormData())
 						},
 						getCaptcha: function() {
 							var e = this;

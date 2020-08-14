@@ -212,7 +212,7 @@ class Goodssku extends BaseApi
             ['gs.site_id', '=', $this->site_id]
         ];
         $goods     = new Goods();
-        $field     = 'gs.goods_id,gs.sku_id,gs.sku_name,gs.price,gs.market_price,gs.discount_price,gs.stock,gs.sale_num,gs.sku_image,gs.goods_name,gs.site_id,gs.is_free_shipping,gs.introduction,gs.promotion_type,g.goods_image';
+        $field     = 'gs.goods_id,gs.sku_id,gs.sku_name,gs.price,gs.market_price,gs.discount_price,gs.stock,(gs.sale_num + gs.virtual_sale) as sale_num,gs.sku_image,gs.goods_name,gs.site_id,gs.is_free_shipping,gs.introduction,gs.promotion_type,g.goods_image';
         $alias     = 'gs';
         $join      = [
             ['goods g', 'gs.sku_id = g.sku_id', 'inner']

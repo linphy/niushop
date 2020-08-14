@@ -12,8 +12,9 @@
 
 namespace addon\niusms\model;
 
-use app\model\BaseModel;
 use addon\niusms\model\Config as ConfigModel;
+use addon\niusms\model\Sms as SmsModel;
+use app\model\BaseModel;
 
 /**
  * 牛云短信
@@ -30,6 +31,29 @@ class Sms extends BaseModel
         '审核不通过'
     ];
 
+    private $error_msg = [
+        4000 => '短信余额不足',
+        4001 => '用户名错误',
+        4002 => '密码不能为空',
+        4004 => '手机号码错误',
+        4006 => 'IP鉴权错误',
+        4007 => '短信账号被禁用',
+        4008 => '时间戳格式错误',
+        4009 => '密码错误',
+        4013 => '定时时间错误',
+        4014 => '模板错误',
+        4015 => '扩展号错误',
+        4019 => '用户类型错误',
+        4023 => '签名错误',
+        4025 => '模板变量内容为空',
+        4026 => '手机号码数最大2000个',
+        4027 => '模板变量内容最大200组',
+        4029 => '请使用post请求',
+        4030 => 'Content-Type请使用application/json',
+        9998 => 'JSON解析错误',
+        9999 => '非法请求'
+    ];
+
     public function getAuditStatus()
     {
         return $this->audit_status;
@@ -37,11 +61,22 @@ class Sms extends BaseModel
 
     /**
      * 查询短信签名报备状态
-     * @param $data
-     * @return mixed
+     * @param $site_id
+     * @param $app_module
+     * @return array|mixed
      */
-    public function querySignature($data)
+    public function querySignature($site_id, $app_module)
     {
+        $config_model = new ConfigModel();
+        $sms_config = $config_model->getSmsConfig($site_id, $app_module);
+        $sms_config = $sms_config[ 'data' ][ 'value' ];
+        $tKey = time();
+        $data = [
+            'username' => $sms_config[ 'username' ],
+            'password' => md5(md5($sms_config[ 'password' ]) . $tKey),
+            'tKey' => $tKey,
+            'sign' => input('signature', $sms_config[ 'signature' ]),//短信签名
+        ];
         $url = 'https://api.mix2.zthysms.com/sms/v1/sign/query';
         $res = $this->sendSms($url, $data);
         return $res;
@@ -122,7 +157,7 @@ class Sms extends BaseModel
      * @param $sms_config
      * @return array|mixed
      */
-    public function enableTemplate($template_id, $status, $sms_config)
+    public function enableTemplate($template_id, $status, $sms_config, $site_id, $app_module)
     {
         //获取模板信息
         $template_info = model('sms_template')->getInfo([ [ 'template_id', '=', $template_id ] ]);
@@ -137,7 +172,12 @@ class Sms extends BaseModel
         model('sms_template')->startTrans();
         try {
 
-            if ($template_info[ 'tem_id' ] == 0 || ( $template_info[ 'audit_status' ] != 0 && $template_info[ 'audit_status' ] != 2 )) {
+            $signature_status = $this->querySignature($site_id, $app_module);
+            if ($signature_status[ 'auditResult' ] != 2) {
+                return $this->error('', $signature_status[ 'auditMsg' ]);
+            }
+
+            if ($template_info[ 'tem_id' ] == 0) {
 
                 $data = [
                     'username' => $sms_config[ 'username' ],
@@ -309,7 +349,7 @@ class Sms extends BaseModel
 
             $sms_info = $params[ "message_info" ][ "sms_json_array" ];//消息类型模板 短信模板信息
             if (empty($sms_info)) return $this->error([], "消息模板尚未配置");
-            if ($sms_info['audit_status'] != 2)  return $this->error([], "消息模板尚未审核通过");
+            if ($sms_info[ 'audit_status' ] != 2) return $this->error([], "消息模板尚未审核通过");
 
             $time = time();
             $data = [
@@ -327,7 +367,7 @@ class Sms extends BaseModel
             if ($result[ 'code' ] == 200) {
                 return $this->success([ "addon" => "niusms", "addon_name" => "牛云短信", "content" => $sms_info[ "template_content" ] ]);
             } else {
-                return $this->error([], $result[ 'msg' ]);
+                return $this->error([], $this->error_msg[ $result[ 'code' ] ] ?? $result[ 'msg' ]);
             }
         }
     }

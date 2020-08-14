@@ -43,7 +43,7 @@ class Config extends BaseShop
                 'copyright_desc' => ''
             ];
             if ($auth_info['code'] >= 0) {
-                $data['logo'] = $logo ?: $copyright['data']['value']['logo'];
+                $data['logo'] = input('logo', '');
                 $data['company_name'] = input('company_name', '');
                 $data['copyright_link'] = input('copyright_link', '');
                 $data['copyright_desc'] = input('copyright_desc', '');
@@ -156,5 +156,23 @@ class Config extends BaseShop
         if (request()->isAjax()) {
             return RSA::getSecretKey();
         }
+    }
+
+    /**
+     * 地图配置
+     * @return mixed
+     */
+    public function map(){
+        $config_model = new ConfigModel();
+        if (request()->isAjax()) {
+            $tencent_map_key = input("tencent_map_key", "");
+            $result = $config_model->setMapConfig([
+                'tencent_map_key' => $tencent_map_key
+            ]);
+            return $result;
+        }
+        $config = $config_model->getMapConfig();
+        $this->assign('info', $config['data']['value']);
+        return $this->fetch('config/map');
     }
 }

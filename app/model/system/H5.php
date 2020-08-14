@@ -13,6 +13,7 @@ namespace app\model\system;
 
 use app\model\BaseModel;
 use think\Exception;
+use app\model\web\Config;
 
 class H5 extends BaseModel
 {
@@ -76,8 +77,11 @@ class H5 extends BaseModel
         $api_config = $api_model->getApiConfig();
         $api_config = $api_config['data'];
 
+        $web_config_model = new Config();
+        $web_config = $web_config_model ->getMapConfig();
+        $web_config = $web_config['data']['value'];
+
         $patterns     = [
-            '/\{\{\$siteId\}\}/',
             '/\{\{\$baseUrl\}\}/',
             '/\{\{\$imgDomain\}\}/',
             '/\{\{\$h5Domain\}\}/',
@@ -86,11 +90,10 @@ class H5 extends BaseModel
             '/\{\{\$publicKey\}\}/'
         ];
         $replacements = [
-            0,
             ROOT_URL,
             ROOT_URL,
             ROOT_URL . '/h5',
-            '',
+            $web_config['tencent_map_key'] ?? '',
             $api_config['is_use'] ?? 0,
             $api_config['value']['public_key'] ?? ''
         ];

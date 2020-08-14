@@ -48,7 +48,7 @@
 	<div class="ns-table-btn">
 		{{#  if(d.is_admin == 1){ }}
 		<span class="ns-cursor ns-text-color-dark-gray ns-margin">系统用户不可编辑</span>
-		{{#  }else if(d.group_id == 2 || d.uid == {$user_info['uid']}){ }}
+		{{#  }else if(d.uid == {$user_info['uid']}){ }}
 		<a class="layui-btn" lay-event="reset_pass">重置密码</a>
 		{{#  }else{ }}
 		<a class="layui-btn" lay-event="edit">编辑</a>

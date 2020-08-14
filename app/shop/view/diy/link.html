@@ -80,6 +80,10 @@
         text-align: right;
         border-top: 1px solid #f2f2f2;
     }
+    .link-box .custom-link{
+        width: 360px;
+        margin: 100px auto 0;
+    }
 </style>
 
 <div class="link-box">
@@ -139,7 +143,6 @@
             success : function(data) {
                 var list = data.list;
                 var data_link = data.link;
-                console.log(list.length)
                 var html = '';
                 if (list.length > 0){
                     for (var i = 0; i < list.length; i++){
@@ -224,7 +227,7 @@
                         var html = '';
                         html += `<div class="ns-table-title">`;
                             html += `<div class="ns-title-pic" id="goods_img_{{data.goods_id}}">`;
-                                html += `<img layer-src src="{{ns.img(data.sku_image.split(',')[0], 'small')}}"/>`;
+                                html += `<img layer-src src="${ns.img(data.sku_image.split(',')[0], 'small')}"/>`;
                             html += `</div>`;
                             html += `<div class="ns-title-content">`;
                                 html += `<a href="javascript:;" class="ns-multi-line-hiding ns-text-color" title="${data.sku_name}">${data.sku_name}</a>`;
@@ -239,7 +242,7 @@
                     unresize: 'false',
                     width: '15%'
                 },{
-                    field: 'goods_stock',
+                    field: 'stock',
                     title: '库存',
                     unresize: 'false',
                     width: '15%'
@@ -390,28 +393,29 @@
 
     }
 
-    //自定义链接
-    $("body").on("click", "dt[data-ident='CUSTOM_LINK']", function () {
-        customIdent = true;
-        var html = '';
-        html += '<div class="layui-form custom-link">';
+    $(function () {
+        //自定义链接
+        $("body").on("click", "dt[data-ident='CUSTOM_LINK']", function () {
+            customIdent = true;
+            var html = '';
+            html += '<div class="layui-form custom-link">';
             html += '<div class="layui-form-item">';
-                html += '<label class="layui-form-label sm"><span class="required">*</span>链接名称</label>';
-                html += '<div class="layui-input-inline">';
-                    html += '<input type="text" name="title" class="layui-input ns-len-mid" required>';
-                html += '</div>';
+            html += '<label class="layui-form-label sm"><span class="required">*</span>链接名称</label>';
+            html += '<div class="layui-input-inline">';
+            html += '<input type="text" name="title" class="layui-input ns-len-mid" required>';
+            html += '</div>';
             html += '</div>';
             html += '<div class="layui-form-item">';
-                html += '<label class="layui-form-label sm"><span class="required">*</span>跳转路径</label>';
-                html += '<div class="layui-input-inline">';
-                    html += '<input type="text" name="wap_url" class="layui-input ns-len-mid">';
-                html += '</div>';
+            html += '<label class="layui-form-label sm"><span class="required">*</span>跳转路径</label>';
+            html += '<div class="layui-input-inline">';
+            html += '<input type="text" name="wap_url" class="layui-input ns-len-mid">';
             html += '</div>';
-        html += '</div>';
+            html += '</div>';
+            html += '</div>';
 
-        $(".link-right").html(html);
+            $(".link-right").html(html);
+        });
     });
-
 
 
 

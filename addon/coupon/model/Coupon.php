@@ -297,7 +297,6 @@ class Coupon extends BaseModel
         return $this->success($result);
     }
 
-
     /**
      * 定时关闭
      * @return mixed

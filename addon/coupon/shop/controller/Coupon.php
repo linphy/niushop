@@ -45,7 +45,7 @@ class Coupon extends BaseShop
                 'image'          => input('image', ''),//优惠券图片
                 'validity_type'  => input('validity_type', ''),//有效期类型 0固定时间 1领取之日起
                 'fixed_term'     => input('fixed_term', ''),//领取之日起N天内有效
-                'is_show'        => input('is_show', 1),//是否允许直接领取 1:是 0：否 允许直接领取，用户才可以在手机端和PC端进行领取，否则只能以活动的形式发放。
+                'is_show'        => input('is_show', 0),//是否允许直接领取 1:是 0：否 允许直接领取，用户才可以在手机端和PC端进行领取，否则只能以活动的形式发放。
             ];
 
             $coupon_type_model = new CouponTypeModel();
@@ -79,7 +79,7 @@ class Coupon extends BaseShop
                 'image'          => input('image', ''),//优惠券图片
                 'validity_type'  => input('validity_type', ''),//有效期类型 0固定时间 1领取之日起
                 'fixed_term'     => input('fixed_term', ''),//领取之日起N天内有效
-                'is_show'        => input('is_show', 1),//是否允许直接领取 1:是 0：否 允许直接领取，用户才可以在手机端和PC端进行领取，否则只能以活动的形式发放。
+                'is_show'        => input('is_show', 0),//是否允许直接领取 1:是 0：否 允许直接领取，用户才可以在手机端和PC端进行领取，否则只能以活动的形式发放。
             ];
             $coupon_type_id = input('coupon_type_id', 0);
 

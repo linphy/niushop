@@ -20,6 +20,7 @@ use app\model\system\Upgrade as UpgradeModel;
 use think\facade\Cache;
 use think\facade\Db;
 use app\model\system\Addon;
+use app\model\web\Config;
 
 /**
  * 系统升级
@@ -33,6 +34,16 @@ class Upgrade extends BaseShop
      */
     public function auth()
     {
+        if (request()->isAjax()) {
+            $code = input('code', '');
+            $upgrade_model = new UpgradeModel($code);
+            $res = $upgrade_model->authInfo();
+            if ($res['code'] == 1) {
+                $config = new Config();
+                $config->setAuth(['code' => $code]);
+            }
+            return is_null($res) ? error() : $res;
+        }
         $this->forthMenu();
 
         //系统信息 获取自配置文件
@@ -358,6 +369,7 @@ class Upgrade extends BaseShop
         ini_set("memory_limit", "-1");
         set_time_limit(300);
 
+        $action_type = input('action_type', 'upgrade');
         $system_upgrade_info = session('system_upgrade_info');
         $download_file_index = input('download_file_index', 0);
         $file_path           = $system_upgrade_info['files'][$download_file_index]['file_path'];
@@ -391,6 +403,10 @@ class Upgrade extends BaseShop
             $dir_path = dirname($file_path);
             $dir_make = dir_mkdir($download_root . '/' . $dir_path);
             if ($dir_make) {
+                if ($action_type == 'download' && $download_file_index == 0 && !empty($system_upgrade_info['sqls'])) {
+                    $sqls = str_replace("{{prefix}}", config("database.connections.mysql.prefix"), $system_upgrade_info['sqls']);
+                    file_put_contents("upload/upgrade/{$upgrade_no}/upgrade.sql", $sqls);
+                }
                 if (!empty($info)) {
                     $temp_path = $download_root . '/' . $file_path;
                     if (preg_match('/[\x{4e00}-\x{9fa5}]/u', $temp_path) > 0) {

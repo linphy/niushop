@@ -15,6 +15,7 @@ namespace app\model\goods;
 use app\model\BaseModel;
 use app\model\order\OrderCommon;
 use app\model\system\Stat;
+use addon\discount\model\Discount;
 
 /**
  * 虚拟商品
@@ -207,6 +208,9 @@ class VirtualGoods extends BaseModel
             if (!empty($data['goods_sku_data'][0]['sku_id'])) {
                 //修改sku商品
                 foreach ($data['goods_sku_data'] as $item) {
+                    $discount_model       = new Discount();
+                    $discount_info_result = $discount_model->getDiscountGoodsInfo([['pdg.sku_id', '=', $item['sku_id']], ['pd.status', '=', 1]], 'id');
+                    $discount_info        = $discount_info_result['data'];
 
                     $sku_data = array(
                         'sku_name'        => $data['goods_name'] . ' ' . $item['spec_name'],
@@ -216,7 +220,6 @@ class VirtualGoods extends BaseModel
                         'price'           => $item['price'],
                         'market_price'    => $item['market_price'],
                         'cost_price'      => $item['cost_price'],
-//						'discount_price' => $item['price'],//sku折扣价（默认等于单价）
                         'stock'           => $item['stock'],
                         'sku_image'       => $item['sku_image'],
                         'sku_images'      => $item['sku_images'],
@@ -225,7 +228,9 @@ class VirtualGoods extends BaseModel
                         'max_buy'         => $data['max_buy'],
                         'min_buy'         => $data['min_buy']
                     );
-
+                    if (empty($discount_info)) {
+                        $sku_data['discount_price'] = $item['price'];
+                    }
                     model('goods_sku')->update(array_merge($sku_data, $common_data), [['sku_id', '=', $item['sku_id'], ['goods_class', '=', $this->goods_class['id']]]]);
 
                 }

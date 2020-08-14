@@ -122,7 +122,7 @@ class User extends BaseShop
             );
             $user_info_result = $user_model->getUserInfo($condition);
             $user_info        = $user_info_result["data"];
-            $this->assign("user_info", $user_info);
+            $this->assign("edit_user_info", $user_info);
 
             //用户组
             $group_model       = new Group();

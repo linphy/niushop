@@ -1,693 +1,281 @@
 ﻿SET NAMES 'utf8';
 
---
---
---
 DROP TABLE IF EXISTS addon;
 
---
---
---
 DROP TABLE IF EXISTS addon_quick;
 
---
---
---
 DROP TABLE IF EXISTS adv;
 
---
---
---
 DROP TABLE IF EXISTS adv_position;
 
---
---
---
 DROP TABLE IF EXISTS album;
 
---
---
---
 DROP TABLE IF EXISTS album_pic;
 
---
---
---
 DROP TABLE IF EXISTS area;
 
---
---
---
 DROP TABLE IF EXISTS config;
 
---
---
---
 DROP TABLE IF EXISTS cron;
 
---
---
---
 DROP TABLE IF EXISTS cron_log;
 
---
---
---
 DROP TABLE IF EXISTS div_template;
 
---
---
---
 DROP TABLE IF EXISTS diy_view_temp;
 
---
---
---
 DROP TABLE IF EXISTS diy_view_util;
 
---
---
---
 DROP TABLE IF EXISTS document;
 
---
---
---
 DROP TABLE IF EXISTS express_company;
 
---
---
---
 DROP TABLE IF EXISTS express_company_template;
 
---
---
---
 DROP TABLE IF EXISTS express_delivery_package;
 
---
---
---
 DROP TABLE IF EXISTS express_electronicsheet;
 
---
---
---
 DROP TABLE IF EXISTS express_template;
 
---
---
---
 DROP TABLE IF EXISTS express_template_item;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_account;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_apply;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_goods;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_goods_collect;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_goods_sku;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_level;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_order;
 
---
---
---
 DROP TABLE IF EXISTS fenxiao_withdraw;
 
---
---
---
 DROP TABLE IF EXISTS goods;
 
---
---
---
 DROP TABLE IF EXISTS goods_attribute;
 
---
---
---
 DROP TABLE IF EXISTS goods_attribute_value;
 
---
---
---
 DROP TABLE IF EXISTS goods_attr_class;
 
---
---
---
 DROP TABLE IF EXISTS goods_browse;
 
---
---
---
 DROP TABLE IF EXISTS goods_cart;
 
---
---
---
 DROP TABLE IF EXISTS goods_category;
 
---
---
---
 DROP TABLE IF EXISTS goods_collect;
 
---
---
---
 DROP TABLE IF EXISTS goods_evaluate;
 
---
---
---
 DROP TABLE IF EXISTS goods_label;
 
---
---
---
 DROP TABLE IF EXISTS goods_service;
 
---
---
---
 DROP TABLE IF EXISTS goods_sku;
 
---
---
---
 DROP TABLE IF EXISTS goods_virtual;
 
---
---
---
 DROP TABLE IF EXISTS `group`;
 
---
---
---
 DROP TABLE IF EXISTS help;
 
---
---
---
 DROP TABLE IF EXISTS help_class;
 
---
---
---
 DROP TABLE IF EXISTS link;
 
---
---
---
-DROP TABLE IF EXISTS `local`;
+DROP TABLE IF EXISTS local;
 
---
---
---
 DROP TABLE IF EXISTS local_delivery_package;
 
---
---
---
 DROP TABLE IF EXISTS member;
 
---
---
---
 DROP TABLE IF EXISTS member_account;
 
---
---
---
 DROP TABLE IF EXISTS member_address;
 
---
---
---
 DROP TABLE IF EXISTS member_auth;
 
---
---
---
 DROP TABLE IF EXISTS member_bank_account;
 
---
---
---
 DROP TABLE IF EXISTS member_label;
 
---
---
---
 DROP TABLE IF EXISTS member_level;
 
---
---
---
 DROP TABLE IF EXISTS member_log;
 
---
---
---
 DROP TABLE IF EXISTS member_recharge;
 
---
---
---
 DROP TABLE IF EXISTS member_recharge_card;
 
---
---
---
 DROP TABLE IF EXISTS member_recharge_order;
 
---
---
---
 DROP TABLE IF EXISTS member_withdraw;
 
---
---
---
 DROP TABLE IF EXISTS menu;
 
---
---
---
 DROP TABLE IF EXISTS message;
 
---
---
---
 DROP TABLE IF EXISTS message_email_records;
 
---
---
---
 DROP TABLE IF EXISTS message_send_log;
 
---
---
---
 DROP TABLE IF EXISTS message_sms_records;
 
---
---
---
 DROP TABLE IF EXISTS message_template;
 
---
---
---
 DROP TABLE IF EXISTS message_variable;
 
---
---
---
 DROP TABLE IF EXISTS message_wechat_records;
 
---
---
---
 DROP TABLE IF EXISTS notes;
 
---
---
---
 DROP TABLE IF EXISTS notes_dianzan_record;
 
---
---
---
 DROP TABLE IF EXISTS notes_group;
 
---
---
---
 DROP TABLE IF EXISTS notice;
 
---
---
---
 DROP TABLE IF EXISTS `order`;
 
---
---
---
 DROP TABLE IF EXISTS order_goods;
 
---
---
---
 DROP TABLE IF EXISTS order_log;
 
---
---
---
 DROP TABLE IF EXISTS order_promotion_detail;
 
---
---
---
 DROP TABLE IF EXISTS order_refund_log;
 
---
---
---
 DROP TABLE IF EXISTS pay;
 
---
---
---
 DROP TABLE IF EXISTS pay_refund;
 
---
---
---
 DROP TABLE IF EXISTS printer;
 
---
---
---
 DROP TABLE IF EXISTS printer_template;
 
---
---
---
 DROP TABLE IF EXISTS promotion_bargain;
 
---
---
---
 DROP TABLE IF EXISTS promotion_bargain_goods;
 
---
---
---
 DROP TABLE IF EXISTS promotion_bargain_launch;
 
---
---
---
 DROP TABLE IF EXISTS promotion_bargain_record;
 
---
---
---
 DROP TABLE IF EXISTS promotion_bundling;
 
---
---
---
 DROP TABLE IF EXISTS promotion_bundling_goods;
 
---
---
---
 DROP TABLE IF EXISTS promotion_coupon;
 
---
---
---
 DROP TABLE IF EXISTS promotion_coupon_type;
 
---
---
---
 DROP TABLE IF EXISTS promotion_discount;
 
---
---
---
 DROP TABLE IF EXISTS promotion_discount_goods;
 
---
---
---
 DROP TABLE IF EXISTS promotion_exchange;
 
---
---
---
 DROP TABLE IF EXISTS promotion_exchange_order;
 
---
---
---
 DROP TABLE IF EXISTS promotion_freeshipping;
 
---
---
---
 DROP TABLE IF EXISTS promotion_games;
 
---
---
---
 DROP TABLE IF EXISTS promotion_games_award;
 
---
---
---
 DROP TABLE IF EXISTS promotion_games_draw_record;
 
---
---
---
 DROP TABLE IF EXISTS promotion_groupbuy;
 
---
---
---
 DROP TABLE IF EXISTS promotion_manjian;
 
---
---
---
 DROP TABLE IF EXISTS promotion_manjian_goods;
 
---
---
---
 DROP TABLE IF EXISTS promotion_mansong_record;
 
---
---
---
 DROP TABLE IF EXISTS promotion_pintuan;
 
---
---
---
 DROP TABLE IF EXISTS promotion_pintuan_goods;
 
---
---
---
 DROP TABLE IF EXISTS promotion_pintuan_group;
 
---
---
---
 DROP TABLE IF EXISTS promotion_pintuan_order;
 
---
---
---
 DROP TABLE IF EXISTS promotion_seckill;
 
---
---
---
 DROP TABLE IF EXISTS promotion_seckill_goods;
 
---
---
---
 DROP TABLE IF EXISTS promotion_topic;
 
---
---
---
 DROP TABLE IF EXISTS promotion_topic_goods;
 
---
---
---
 DROP TABLE IF EXISTS shop;
 
---
---
---
 DROP TABLE IF EXISTS shop_address;
 
---
---
---
 DROP TABLE IF EXISTS site;
 
---
---
---
 DROP TABLE IF EXISTS site_diy_view;
 
---
---
---
 DROP TABLE IF EXISTS sms_template;
 
---
---
---
 DROP TABLE IF EXISTS stat_shop;
 
---
---
---
 DROP TABLE IF EXISTS store;
 
---
---
---
 DROP TABLE IF EXISTS store_goods;
 
---
---
---
 DROP TABLE IF EXISTS store_goods_sku;
 
---
---
---
 DROP TABLE IF EXISTS store_member;
 
---
---
---
 DROP TABLE IF EXISTS store_settlement;
 
---
---
---
 DROP TABLE IF EXISTS supplier;
 
---
---
---
 DROP TABLE IF EXISTS sys_upgrade_log;
 
---
---
---
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS user;
 
---
---
---
 DROP TABLE IF EXISTS user_log;
 
---
---
---
 DROP TABLE IF EXISTS v3_upgrade_log;
 
---
---
---
 DROP TABLE IF EXISTS verifier;
 
---
---
---
 DROP TABLE IF EXISTS verify;
 
---
---
---
 DROP TABLE IF EXISTS weapp_audit_record;
 
---
---
---
 DROP TABLE IF EXISTS weapp_experiencer;
 
---
---
---
 DROP TABLE IF EXISTS weapp_goods;
 
---
---
---
 DROP TABLE IF EXISTS weapp_live_room;
 
---
---
---
 DROP TABLE IF EXISTS wechat_fans;
 
---
---
---
 DROP TABLE IF EXISTS wechat_fans_tag;
 
---
---
---
 DROP TABLE IF EXISTS wechat_mass_recording;
 
---
---
---
 DROP TABLE IF EXISTS wechat_media;
 
---
---
---
 DROP TABLE IF EXISTS wechat_qrcode;
 
---
---
---
 DROP TABLE IF EXISTS wechat_replay_rule;
 
-
 --
---  `ns_wechat_replay_rule`
+-- `wechat_replay_rule`
 --
 CREATE TABLE wechat_replay_rule (
   rule_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -707,7 +295,7 @@ COMMENT = '微信回复规则',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_wechat_qrcode`
+-- `wechat_qrcode`
 --
 CREATE TABLE wechat_qrcode (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '实例ID',
@@ -735,7 +323,7 @@ COMMENT = '微信推广二维码模板管理',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_wechat_media`
+-- `wechat_media`
 --
 CREATE TABLE wechat_media (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -754,7 +342,7 @@ COMMENT = '微信素材表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_wechat_mass_recording`
+-- `wechat_mass_recording`
 --
 CREATE TABLE wechat_mass_recording (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -774,7 +362,7 @@ COMMENT = '微信消息记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_wechat_fans_tag`
+-- `wechat_fans_tag`
 --
 CREATE TABLE wechat_fans_tag (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -790,13 +378,13 @@ COMMENT = '微信粉丝标签表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_wechat_fans_tag` on table `ns_wechat_fans_tag`
+-- Create index `IDX_ns_wechat_fans_tag` on table `wechat_fans_tag`
 --
 ALTER TABLE wechat_fans_tag
 ADD INDEX IDX_ns_wechat_fans_tag (tag_id);
 
 --
---  `ns_wechat_fans`
+-- `wechat_fans`
 --
 CREATE TABLE wechat_fans (
   fans_id int(11) NOT NULL AUTO_INCREMENT COMMENT '粉丝ID',
@@ -832,13 +420,13 @@ COMMENT = '微信粉丝列表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_weixin_fans` on table `ns_wechat_fans`
+-- Create index `IDX_ns_weixin_fans` on table `wechat_fans`
 --
 ALTER TABLE wechat_fans
 ADD INDEX IDX_ns_weixin_fans (unionid, openid);
 
 --
---  `ns_weapp_live_room`
+-- `weapp_live_room`
 --
 CREATE TABLE weapp_live_room (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -852,8 +440,8 @@ CREATE TABLE weapp_live_room (
   anchor_name varchar(255) NOT NULL COMMENT '主播昵称',
   goods text NOT NULL COMMENT '直播间商品',
   live_status varchar(255) NOT NULL COMMENT 'live_status  101: 直播中, 102: 未开始, 103: 已结束, 104: 禁播, 105: 暂停中, 106: 异常, 107: 已过期',
-  anchor_img varchar(1000) NOT NULL COMMENT '主播头像',
-  banner varchar(1000) NOT NULL COMMENT '直播间横幅',
+  anchor_img varchar(1000) NOT NULL DEFAULT '' COMMENT '主播头像',
+  banner varchar(1000) NOT NULL DEFAULT '' COMMENT '直播间横幅',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -863,20 +451,20 @@ COMMENT = '小程序直播直播间表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_weapp_goods`
+-- `weapp_goods`
 --
 CREATE TABLE weapp_goods (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL COMMENT '站点id',
-  goods_id int(11) NOT NULL COMMENT '小程序商品库商品id 非商城商品id',
-  name varchar(2000) NOT NULL COMMENT '商品名称',
-  cover_img varchar(2000) NOT NULL COMMENT '商品图片链接',
-  price decimal(10, 2) NOT NULL COMMENT '商品价格',
-  status int(255) NOT NULL COMMENT '商品状态，0：未审核。1：审核中，2：审核通过，3：审核驳回',
-  url varchar(2000) NOT NULL COMMENT '商品小程序链接',
-  audit_id int(11) NOT NULL COMMENT '审核单id',
-  sku_id int(11) NOT NULL COMMENT '商品sku_id',
-  third_party_tag int(1) NOT NULL COMMENT '商品来源 0在小程序平台添加的商品  1/2通过api添加的商品',
+  goods_id int(11) NOT NULL DEFAULT 0 COMMENT '小程序商品库商品id 非商城商品id',
+  name varchar(2000) NOT NULL DEFAULT '' COMMENT '商品名称',
+  cover_img varchar(2000) NOT NULL DEFAULT '' COMMENT '商品图片链接',
+  price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品价格',
+  status int(255) NOT NULL DEFAULT 0 COMMENT '商品状态，0：未审核。1：审核中，2：审核通过，3：审核驳回',
+  url varchar(2000) NOT NULL DEFAULT '' COMMENT '商品小程序链接',
+  audit_id int(11) NOT NULL DEFAULT 0 COMMENT '审核单id',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品sku_id',
+  third_party_tag int(1) NOT NULL DEFAULT 1 COMMENT '商品来源 0在小程序平台添加的商品  1/2通过api添加的商品',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -885,7 +473,7 @@ COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_weapp_experiencer`
+-- `weapp_experiencer`
 --
 CREATE TABLE weapp_experiencer (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -902,7 +490,7 @@ COMMENT = '微信小程序体验者',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_weapp_audit_record`
+-- `weapp_audit_record`
 --
 CREATE TABLE weapp_audit_record (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '审核id',
@@ -923,7 +511,7 @@ COMMENT = '小程序审核记录表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_verify`
+-- `verify`
 --
 CREATE TABLE verify (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -947,7 +535,7 @@ COMMENT = '核销编码管理',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_verifier`
+-- `verifier`
 --
 CREATE TABLE verifier (
   verifier_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '核销员id',
@@ -966,7 +554,7 @@ COMMENT = '核销员（商品或订单商品）',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_v3_upgrade_log`
+-- `v3_upgrade_log`
 --
 CREATE TABLE v3_upgrade_log (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -984,7 +572,7 @@ COMMENT = 'v3Tov4迁移数据日志',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_user_log`
+-- `user_log`
 --
 CREATE TABLE user_log (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1005,15 +593,15 @@ COMMENT = '用户操作日志',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_user_log` on table `ns_user_log`
+-- Create index `IDX_ns_user_log` on table `user_log`
 --
 ALTER TABLE user_log
 ADD INDEX IDX_ns_user_log (uid, site_id);
 
 --
---  `ns_user`
+-- `user`
 --
-CREATE TABLE `user` (
+CREATE TABLE user (
   uid int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   sys_uid int(11) NOT NULL DEFAULT 0 COMMENT '系统用户id',
   app_module varchar(255) NOT NULL DEFAULT '' COMMENT '应用模块',
@@ -1039,31 +627,31 @@ COMMENT = '站点后台用户表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_user` on table `ns_user`
+-- Create index `IDX_ns_user` on table `user`
 --
-ALTER TABLE `user`
+ALTER TABLE user
 ADD INDEX IDX_ns_user (group_id, app_module);
 
 --
---  `IDX_ns_user_member_id` on table `ns_user`
+-- Create index `IDX_ns_user_member_id` on table `user`
 --
-ALTER TABLE `user`
+ALTER TABLE user
 ADD INDEX IDX_ns_user_member_id (member_id);
 
 --
---  `IDX_ns_user_site_id` on table `ns_user`
+-- Create index `IDX_ns_user_site_id` on table `user`
 --
-ALTER TABLE `user`
+ALTER TABLE user
 ADD INDEX IDX_ns_user_site_id (site_id);
 
 --
---  `IDX_ns_user_username` on table `ns_user`
+-- Create index `IDX_ns_user_username` on table `user`
 --
-ALTER TABLE `user`
+ALTER TABLE user
 ADD INDEX IDX_ns_user_username (username);
 
 --
---  `ns_sys_upgrade_log`
+-- `sys_upgrade_log`
 --
 CREATE TABLE sys_upgrade_log (
   log_id int(11) NOT NULL AUTO_INCREMENT,
@@ -1083,7 +671,7 @@ COMMENT = '系统升级日志',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_supplier`
+-- `supplier`
 --
 CREATE TABLE supplier (
   supplier_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1116,7 +704,7 @@ COMMENT = '供应商',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_store_settlement`
+-- `store_settlement`
 --
 CREATE TABLE store_settlement (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1147,7 +735,7 @@ COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_store_member`
+-- `store_member`
 --
 CREATE TABLE store_member (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1167,7 +755,7 @@ COMMENT = '门店会员管理',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_store_goods_sku`
+-- `store_goods_sku`
 --
 CREATE TABLE store_goods_sku (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -1187,7 +775,7 @@ COMMENT = '门店sku表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_store_goods`
+-- `store_goods`
 --
 CREATE TABLE store_goods (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1206,7 +794,7 @@ COMMENT = '门店商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_store`
+-- `store`
 --
 CREATE TABLE store (
   store_id int(11) NOT NULL AUTO_INCREMENT COMMENT '门店站点id',
@@ -1246,7 +834,7 @@ COMMENT = '线下门店表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_stat_shop`
+-- `stat_shop`
 --
 CREATE TABLE stat_shop (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1279,37 +867,63 @@ COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_stat_shop_day` on table `ns_stat_shop`
+-- Create index `IDX_ns_stat_shop_day` on table `stat_shop`
 --
 ALTER TABLE stat_shop
 ADD INDEX IDX_ns_stat_shop_day (day);
 
 --
---  `IDX_ns_stat_shop_day_time` on table `ns_stat_shop`
+-- Create index `IDX_ns_stat_shop_day_time` on table `stat_shop`
 --
 ALTER TABLE stat_shop
 ADD INDEX IDX_ns_stat_shop_day_time (day_time);
 
 --
---  `IDX_ns_stat_shop_month` on table `ns_stat_shop`
+-- Create index `IDX_ns_stat_shop_month` on table `stat_shop`
 --
 ALTER TABLE stat_shop
 ADD INDEX IDX_ns_stat_shop_month (month);
 
 --
---  `IDX_ns_stat_shop_site_id` on table `ns_stat_shop`
+-- Create index `IDX_ns_stat_shop_site_id` on table `stat_shop`
 --
 ALTER TABLE stat_shop
 ADD INDEX IDX_ns_stat_shop_site_id (site_id);
 
 --
---  `IDX_ns_stat_shop_year` on table `ns_stat_shop`
+-- Create index `IDX_ns_stat_shop_year` on table `stat_shop`
 --
 ALTER TABLE stat_shop
 ADD INDEX IDX_ns_stat_shop_year (year);
 
 --
---  `ns_site_diy_view`
+-- `sms_template`
+--
+CREATE TABLE sms_template (
+  template_id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  tem_id int(11) NOT NULL DEFAULT 0 COMMENT '返回的模板id',
+  keywords varchar(255) NOT NULL DEFAULT '',
+  template_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '模板类型（1验证码  2行业通知  3营销推广 ）',
+  template_name varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
+  template_content varchar(255) NOT NULL DEFAULT '' COMMENT '模板内容',
+  param_json varchar(255) NOT NULL DEFAULT '' COMMENT '模板变量json',
+  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '启用状态（1 启用，0 禁用）',
+  audit_status tinyint(1) NOT NULL DEFAULT 0 COMMENT '审核状态（0 未审核，1 待审核，2 审核通过， 3 审核不通过）',
+  create_time int(11) NOT NULL DEFAULT 0,
+  update_time int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (template_id)
+)
+ENGINE = INNODB,
+AUTO_INCREMENT = 20,
+AVG_ROW_LENGTH = 862,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '牛云短信模板',
+ROW_FORMAT = DYNAMIC;
+
+--
+-- `site_diy_view`
 --
 CREATE TABLE site_diy_view (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1332,36 +946,13 @@ COMMENT = '店铺自定义模板表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_nc_site_diy_view` on table `ns_site_diy_view`
+-- Create index `IDX_nc_site_diy_view` on table `site_diy_view`
 --
 ALTER TABLE site_diy_view
 ADD INDEX IDX_nc_site_diy_view (site_id, name);
 
-
-CREATE TABLE sms_template (
-  template_id int(11) NOT NULL AUTO_INCREMENT,
-  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
-  tem_id int(11) NOT NULL DEFAULT 0 COMMENT '返回的模板id',
-  keywords varchar(255) NOT NULL DEFAULT '',
-  template_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '模板类型（1验证码  2行业通知  3营销推广 ）',
-  template_name varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
-  template_content varchar(255) NOT NULL DEFAULT '' COMMENT '模板内容',
-  param_json varchar(255) NOT NULL DEFAULT '' COMMENT '模板变量json',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '启用状态（1 启用，0 禁用）',
-  audit_status tinyint(1) NOT NULL DEFAULT 0 COMMENT '审核状态（0 未审核，1 待审核，2 审核通过， 3 审核不通过）',
-  create_time int(11) NOT NULL DEFAULT 0,
-  update_time int(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY (template_id)
-)
-ENGINE = INNODB,
-CHARACTER SET utf8,
-COLLATE utf8_general_ci,
-COMMENT = '牛云短信模板',
-ROW_FORMAT = DYNAMIC;
-
-
 --
---  `ns_site`
+-- `site`
 --
 CREATE TABLE site (
   site_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '站点id',
@@ -1382,7 +973,7 @@ COMMENT = '站点基础表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_shop_address`
+-- `shop_address`
 --
 CREATE TABLE shop_address (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -1409,7 +1000,7 @@ COMMENT = '商家地址库',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_shop`
+-- `shop`
 --
 CREATE TABLE shop (
   site_id int(11) NOT NULL,
@@ -1451,7 +1042,7 @@ COMMENT = '店铺表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_topic_goods`
+-- `promotion_topic_goods`
 --
 CREATE TABLE promotion_topic_goods (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1470,7 +1061,7 @@ COMMENT = '限时折扣商品列表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_topic`
+-- `promotion_topic`
 --
 CREATE TABLE promotion_topic (
   topic_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1493,7 +1084,7 @@ COMMENT = '专题活动',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_seckill_goods`
+-- `promotion_seckill_goods`
 --
 CREATE TABLE promotion_seckill_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1511,7 +1102,7 @@ COMMENT = '秒杀参与商品',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_seckill`
+-- `promotion_seckill`
 --
 CREATE TABLE promotion_seckill (
   seckill_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1532,7 +1123,7 @@ COMMENT = '秒杀活动',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_pintuan_order`
+-- `promotion_pintuan_order`
 --
 CREATE TABLE promotion_pintuan_order (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -1556,7 +1147,7 @@ COMMENT = '拼团订单',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_pintuan_group`
+-- `promotion_pintuan_group`
 --
 CREATE TABLE promotion_pintuan_group (
   group_id int(11) NOT NULL AUTO_INCREMENT COMMENT '拼团分组id',
@@ -1585,7 +1176,7 @@ COMMENT = '拼团组',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_pintuan_goods`
+-- `promotion_pintuan_goods`
 --
 CREATE TABLE promotion_pintuan_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1604,7 +1195,7 @@ COMMENT = '拼团商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_pintuan`
+-- `promotion_pintuan`
 --
 CREATE TABLE promotion_pintuan (
   pintuan_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '拼团id',
@@ -1638,7 +1229,7 @@ COMMENT = '拼团活动表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_mansong_record`
+-- `promotion_mansong_record`
 --
 CREATE TABLE promotion_mansong_record (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -1660,7 +1251,7 @@ COMMENT = '满送记录表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_manjian_goods`
+-- `promotion_manjian_goods`
 --
 CREATE TABLE promotion_manjian_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1681,7 +1272,7 @@ COMMENT = '满减商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_manjian`
+-- `promotion_manjian`
 --
 CREATE TABLE promotion_manjian (
   manjian_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1706,19 +1297,19 @@ COMMENT = '满减活动',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_promotion_manjian_site_id` on table `ns_promotion_manjian`
+-- Create index `IDX_ns_promotion_manjian_site_id` on table `promotion_manjian`
 --
 ALTER TABLE promotion_manjian
 ADD INDEX IDX_ns_promotion_manjian_site_id (site_id);
 
 --
---  `IDX_ns_promotion_manjian_status` on table `ns_promotion_manjian`
+-- Create index `IDX_ns_promotion_manjian_status` on table `promotion_manjian`
 --
 ALTER TABLE promotion_manjian
 ADD INDEX IDX_ns_promotion_manjian_status (status);
 
 --
---  `ns_promotion_groupbuy`
+-- `promotion_groupbuy`
 --
 CREATE TABLE promotion_groupbuy (
   groupbuy_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1726,7 +1317,7 @@ CREATE TABLE promotion_groupbuy (
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '店铺名称',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品ID',
   goods_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
-  goods_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
+  goods_image varchar(1000) NOT NULL DEFAULT '' COMMENT '商品图片',
   is_virtual_goods tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
   goods_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品原价',
   groupbuy_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '团购价',
@@ -1747,7 +1338,7 @@ COMMENT = '团购',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_games_draw_record`
+-- `promotion_games_draw_record`
 --
 CREATE TABLE promotion_games_draw_record (
   record_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1777,7 +1368,7 @@ COMMENT = '抽奖记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_games_award`
+-- `promotion_games_award`
 --
 CREATE TABLE promotion_games_award (
   award_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1804,7 +1395,7 @@ COMMENT = '游戏奖品',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_games`
+-- `promotion_games`
 --
 CREATE TABLE promotion_games (
   game_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '游戏id',
@@ -1837,7 +1428,7 @@ COLLATE utf8_general_ci,
 COMMENT = '营销游戏（概率游戏）';
 
 --
---  `ns_promotion_freeshipping`
+-- `promotion_freeshipping`
 --
 CREATE TABLE promotion_freeshipping (
   freeshipping_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1857,7 +1448,7 @@ COMMENT = '满额包邮',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_exchange_order`
+-- `promotion_exchange_order`
 --
 CREATE TABLE promotion_exchange_order (
   order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1914,7 +1505,7 @@ COMMENT = '积分兑换订单',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_exchange`
+-- `promotion_exchange`
 --
 CREATE TABLE promotion_exchange (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1945,7 +1536,7 @@ COMMENT = '积分兑换',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_discount_goods`
+-- `promotion_discount_goods`
 --
 CREATE TABLE promotion_discount_goods (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1967,7 +1558,7 @@ COMMENT = '限时折扣商品列表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_discount`
+-- `promotion_discount`
 --
 CREATE TABLE promotion_discount (
   discount_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -1989,7 +1580,7 @@ COMMENT = '限时折扣',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_coupon_type`
+-- `promotion_coupon_type`
 --
 CREATE TABLE promotion_coupon_type (
   coupon_type_id int(11) NOT NULL AUTO_INCREMENT COMMENT '优惠券类型Id',
@@ -2045,13 +1636,13 @@ COMMENT = '优惠券类型表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_promotion_coupon_type_site_id` on table `ns_promotion_coupon_type`
+-- Create index `IDX_ns_promotion_coupon_type_site_id` on table `promotion_coupon_type`
 --
 ALTER TABLE promotion_coupon_type
 ADD INDEX IDX_ns_promotion_coupon_type_site_id (site_id);
 
 --
---  `ns_promotion_coupon`
+-- `promotion_coupon`
 --
 CREATE TABLE promotion_coupon (
   coupon_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '优惠券id',
@@ -2092,31 +1683,31 @@ COMMENT = '优惠券表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_promotion_coupon_coupon_type_id` on table `ns_promotion_coupon`
+-- Create index `IDX_ns_promotion_coupon_coupon_type_id` on table `promotion_coupon`
 --
 ALTER TABLE promotion_coupon
 ADD INDEX IDX_ns_promotion_coupon_coupon_type_id (coupon_type_id);
 
 --
---  `IDX_ns_promotion_coupon_end_time` on table `ns_promotion_coupon`
+-- Create index `IDX_ns_promotion_coupon_end_time` on table `promotion_coupon`
 --
 ALTER TABLE promotion_coupon
 ADD INDEX IDX_ns_promotion_coupon_end_time (end_time);
 
 --
---  `IDX_ns_promotion_coupon_member_id` on table `ns_promotion_coupon`
+-- Create index `IDX_ns_promotion_coupon_member_id` on table `promotion_coupon`
 --
 ALTER TABLE promotion_coupon
 ADD INDEX IDX_ns_promotion_coupon_member_id (member_id);
 
 --
---  `IDX_ns_promotion_coupon_site_id` on table `ns_promotion_coupon`
+-- Create index `IDX_ns_promotion_coupon_site_id` on table `promotion_coupon`
 --
 ALTER TABLE promotion_coupon
 ADD INDEX IDX_ns_promotion_coupon_site_id (site_id);
 
 --
---  `ns_promotion_bundling_goods`
+-- `promotion_bundling_goods`
 --
 CREATE TABLE promotion_bundling_goods (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2136,7 +1727,7 @@ COMMENT = '组合套餐活动商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_bundling`
+-- `promotion_bundling`
 --
 CREATE TABLE promotion_bundling (
   bl_id int(11) NOT NULL AUTO_INCREMENT COMMENT '组合ID',
@@ -2157,7 +1748,7 @@ COMMENT = '组合套餐活动表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_bargain_record`
+-- `promotion_bargain_record`
 --
 CREATE TABLE promotion_bargain_record (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2175,7 +1766,7 @@ COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_bargain_launch`
+-- `promotion_bargain_launch`
 --
 CREATE TABLE promotion_bargain_launch (
   launch_id int(11) NOT NULL AUTO_INCREMENT,
@@ -2211,7 +1802,7 @@ COMMENT = '砍价发起表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_promotion_bargain_goods`
+-- `promotion_bargain_goods`
 --
 CREATE TABLE promotion_bargain_goods (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -2228,7 +1819,7 @@ CREATE TABLE promotion_bargain_goods (
   bargain_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
   bargain_num int(11) NOT NULL DEFAULT 0 COMMENT '帮砍价人数',
   bargain_time int(11) NOT NULL DEFAULT 1 COMMENT '砍价有效期',
-  remark text CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL COMMENT '活动规则说明',
+  remark text NOT NULL COMMENT '活动规则说明',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
   status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3已关闭）',
@@ -2242,7 +1833,7 @@ COLLATE utf8_general_ci,
 COMMENT = '砍价活动表';
 
 --
---  `ns_promotion_bargain`
+-- `promotion_bargain`
 --
 CREATE TABLE promotion_bargain (
   bargain_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '砍价id',
@@ -2269,7 +1860,7 @@ COLLATE utf8_general_ci,
 COMMENT = '砍价活动表';
 
 --
---  `ns_printer_template`
+-- `printer_template`
 --
 CREATE TABLE printer_template (
   template_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2300,7 +1891,7 @@ COMMENT = '打印机模板',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_printer`
+-- `printer`
 --
 CREATE TABLE printer (
   printer_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2325,7 +1916,7 @@ COMMENT = '小票打印机',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_pay_refund`
+-- `pay_refund`
 --
 CREATE TABLE pay_refund (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2346,7 +1937,7 @@ COMMENT = '退款记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_pay`
+-- `pay`
 --
 CREATE TABLE pay (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2375,7 +1966,7 @@ COMMENT = '支付记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_order_refund_log`
+-- `order_refund_log`
 --
 CREATE TABLE order_refund_log (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2397,7 +1988,7 @@ COMMENT = '订单退款操作表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_order_promotion_detail`
+-- `order_promotion_detail`
 --
 CREATE TABLE order_promotion_detail (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2419,7 +2010,7 @@ COMMENT = '订单满减优惠表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_order_log`
+-- `order_log`
 --
 CREATE TABLE order_log (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2440,7 +2031,7 @@ COMMENT = '订单操作表(传统表，不用设计)',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_order_goods`
+-- `order_goods`
 --
 CREATE TABLE order_goods (
   order_goods_id int(11) NOT NULL AUTO_INCREMENT,
@@ -2501,7 +2092,7 @@ COMMENT = '订单商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_order`
+-- `order`
 --
 CREATE TABLE `order` (
   order_id int(11) NOT NULL AUTO_INCREMENT,
@@ -2603,7 +2194,7 @@ COMMENT = '订单表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_notice`
+-- `notice`
 --
 CREATE TABLE notice (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2624,7 +2215,7 @@ COMMENT = '公告',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_notes_group`
+-- `notes_group`
 --
 CREATE TABLE notes_group (
   group_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2644,7 +2235,7 @@ COMMENT = '笔记分组',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_notes_dianzan_record`
+-- `notes_dianzan_record`
 --
 CREATE TABLE notes_dianzan_record (
   record_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2659,19 +2250,19 @@ COMMENT = '笔记点赞记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_notes_dianzan_record_member_id` on table `ns_notes_dianzan_record`
+-- Create index `IDX_ns_notes_dianzan_record_member_id` on table `notes_dianzan_record`
 --
 ALTER TABLE notes_dianzan_record
 ADD INDEX IDX_ns_notes_dianzan_record_member_id (member_id);
 
 --
---  `IDX_ns_notes_dianzan_record_note_id` on table `ns_notes_dianzan_record`
+-- Create index `IDX_ns_notes_dianzan_record_note_id` on table `notes_dianzan_record`
 --
 ALTER TABLE notes_dianzan_record
 ADD INDEX IDX_ns_notes_dianzan_record_note_id (note_id);
 
 --
---  `ns_notes`
+-- `notes`
 --
 CREATE TABLE notes (
   note_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2704,19 +2295,19 @@ COMMENT = '店铺笔记',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_promotion_notes_group_id` on table `ns_notes`
+-- Create index `IDX_ns_promotion_notes_group_id` on table `notes`
 --
 ALTER TABLE notes
 ADD INDEX IDX_ns_promotion_notes_group_id (group_id);
 
 --
---  `IDX_ns_promotion_notes_site_id` on table `ns_notes`
+-- Create index `IDX_ns_promotion_notes_site_id` on table `notes`
 --
 ALTER TABLE notes
 ADD INDEX IDX_ns_promotion_notes_site_id (site_id);
 
 --
---  `ns_message_wechat_records`
+-- `message_wechat_records`
 --
 CREATE TABLE message_wechat_records (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2739,7 +2330,7 @@ COMMENT = '微信公众号消息发送记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_message_variable`
+-- `message_variable`
 --
 CREATE TABLE message_variable (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2757,7 +2348,7 @@ COMMENT = '消息模板变量',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_message_template`
+-- `message_template`
 --
 CREATE TABLE message_template (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2784,7 +2375,7 @@ COMMENT = '消息管理',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_message_sms_records`
+-- `message_sms_records`
 --
 CREATE TABLE message_sms_records (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2812,7 +2403,7 @@ COMMENT = '短信消息发送记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_message_send_log`
+-- `message_send_log`
 --
 CREATE TABLE message_send_log (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2835,7 +2426,7 @@ COMMENT = '消息发送日志',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_message_email_records`
+-- `message_email_records`
 --
 CREATE TABLE message_email_records (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2858,7 +2449,7 @@ COMMENT = '邮箱信息发送记录',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_message`
+-- `message`
 --
 CREATE TABLE message (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -2880,7 +2471,7 @@ COMMENT = '消息管理',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_menu`
+-- `menu`
 --
 CREATE TABLE menu (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
@@ -2907,7 +2498,7 @@ COMMENT = '菜单表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_withdraw`
+-- `member_withdraw`
 --
 CREATE TABLE member_withdraw (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -2945,7 +2536,7 @@ COMMENT = '会员提现表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_recharge_order`
+-- `member_recharge_order`
 --
 CREATE TABLE member_recharge_order (
   order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2981,7 +2572,7 @@ COMMENT = '充值卡订单',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_recharge_card`
+-- `member_recharge_card`
 --
 CREATE TABLE member_recharge_card (
   card_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3014,7 +2605,7 @@ COMMENT = '充值卡',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_recharge`
+-- `member_recharge`
 --
 CREATE TABLE member_recharge (
   recharge_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3040,7 +2631,7 @@ COMMENT = '会员充值套餐',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_log`
+-- `member_log`
 --
 CREATE TABLE member_log (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3058,7 +2649,7 @@ COMMENT = '会员操作日志表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_level`
+-- `member_level`
 --
 CREATE TABLE member_level (
   level_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '会员等级',
@@ -3083,7 +2674,7 @@ COMMENT = '会员等级',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_label`
+-- `member_label`
 --
 CREATE TABLE member_label (
   label_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '标签id',
@@ -3102,13 +2693,13 @@ COMMENT = '会员标签',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_nc_member_label_label_id` on table `ns_member_label`
+-- Create index `IDX_nc_member_label_label_id` on table `member_label`
 --
 ALTER TABLE member_label
 ADD INDEX IDX_nc_member_label_label_id (label_id);
 
 --
---  `ns_member_bank_account`
+-- `member_bank_account`
 --
 CREATE TABLE member_bank_account (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -3130,7 +2721,7 @@ COMMENT = '会员提现账号',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_auth`
+-- `member_auth`
 --
 CREATE TABLE member_auth (
   auth_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -3155,7 +2746,7 @@ COMMENT = '会员实名认证表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_address`
+-- `member_address`
 --
 CREATE TABLE member_address (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3182,7 +2773,7 @@ COMMENT = '用户地址管理',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_member_account`
+-- `member_account`
 --
 CREATE TABLE member_account (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3207,31 +2798,31 @@ COMMENT = '账户流水',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_ns_member_account_account_type` on table `ns_member_account`
+-- Create index `IDX_ns_member_account_account_type` on table `member_account`
 --
 ALTER TABLE member_account
 ADD INDEX IDX_ns_member_account_account_type (account_type);
 
 --
---  `IDX_ns_member_account_create_time` on table `ns_member_account`
+-- Create index `IDX_ns_member_account_create_time` on table `member_account`
 --
 ALTER TABLE member_account
 ADD INDEX IDX_ns_member_account_create_time (create_time);
 
 --
---  `IDX_ns_member_account_from_type` on table `ns_member_account`
+-- Create index `IDX_ns_member_account_from_type` on table `member_account`
 --
 ALTER TABLE member_account
 ADD INDEX IDX_ns_member_account_from_type (from_type);
 
 --
---  `IDX_ns_member_account_member_id` on table `ns_member_account`
+-- Create index `IDX_ns_member_account_member_id` on table `member_account`
 --
 ALTER TABLE member_account
 ADD INDEX IDX_ns_member_account_member_id (member_id);
 
 --
---  `ns_member`
+-- `member`
 --
 CREATE TABLE member (
   member_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -3295,43 +2886,43 @@ COMMENT = '系统用户表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `IDX_sys_user_user_email` on table `ns_member`
+-- Create index `IDX_sys_user_user_email` on table `member`
 --
 ALTER TABLE member
 ADD INDEX IDX_sys_user_user_email (email);
 
 --
---  `IDX_sys_user_user_name` on table `ns_member`
+-- Create index `IDX_sys_user_user_name` on table `member`
 --
 ALTER TABLE member
 ADD INDEX IDX_sys_user_user_name (username);
 
 --
---  `IDX_sys_user_user_password` on table `ns_member`
+-- Create index `IDX_sys_user_user_password` on table `member`
 --
 ALTER TABLE member
 ADD INDEX IDX_sys_user_user_password (password);
 
 --
---  `IDX_sys_user_user_tel` on table `ns_member`
+-- Create index `IDX_sys_user_user_tel` on table `member`
 --
 ALTER TABLE member
 ADD INDEX IDX_sys_user_user_tel (mobile);
 
 --
---  `IDX_sys_user_wx_openid` on table `ns_member`
+-- Create index `IDX_sys_user_wx_openid` on table `member`
 --
 ALTER TABLE member
 ADD INDEX IDX_sys_user_wx_openid (wx_openid);
 
 --
---  `IDX_sys_user_wx_unionid` on table `ns_member`
+-- Create index `IDX_sys_user_wx_unionid` on table `member`
 --
 ALTER TABLE member
 ADD INDEX IDX_sys_user_wx_unionid (wx_unionid);
 
 --
---  `ns_local_delivery_package`
+-- `local_delivery_package`
 --
 CREATE TABLE local_delivery_package (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -3356,9 +2947,9 @@ COMMENT = '外卖配送物流信息表',
 ROW_FORMAT = DYNAMIC;
 
 --
---  `ns_local`
+-- `local`
 --
-CREATE TABLE `local` (
+CREATE TABLE local (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   type varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'default' COMMENT '配送方式  default 商家自配送  other 第三方配送',
@@ -3387,7 +2978,7 @@ COMMENT = '本地配送设置',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_link`
+-- `link`
 --
 CREATE TABLE link (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -3410,13 +3001,13 @@ COMMENT = '链接入口',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_nc_link` on table `ns_link`
+-- Create index `IDX_nc_link` on table `link`
 --
 ALTER TABLE link
 ADD INDEX IDX_nc_link (addon_name);
 
 --
--- `ns_help_class`
+-- `help_class`
 --
 CREATE TABLE help_class (
   class_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -3435,7 +3026,7 @@ COMMENT = '帮助类型',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_help`
+-- `help`
 --
 CREATE TABLE help (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键id',
@@ -3458,7 +3049,7 @@ COMMENT = '帮助文章表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_group`
+-- `group`
 --
 CREATE TABLE `group` (
   group_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -3480,7 +3071,7 @@ COMMENT = '用户组表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods_virtual`
+-- `goods_virtual`
 --
 CREATE TABLE goods_virtual (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -3503,7 +3094,7 @@ COMMENT = '用户虚拟商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods_sku`
+-- `goods_sku`
 --
 CREATE TABLE goods_sku (
   sku_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品sku_id',
@@ -3575,31 +3166,31 @@ COMMENT = '商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_ns_goods_goods_class` on table `ns_goods_sku`
+-- Create index `IDX_ns_goods_goods_class` on table `goods_sku`
 --
 ALTER TABLE goods_sku
 ADD INDEX IDX_ns_goods_goods_class (goods_class);
 
 --
--- `IDX_ns_goods_is_delete` on table `ns_goods_sku`
+-- Create index `IDX_ns_goods_is_delete` on table `goods_sku`
 --
 ALTER TABLE goods_sku
 ADD INDEX IDX_ns_goods_is_delete (is_delete);
 
 --
--- `IDX_ns_goods_site_id` on table `ns_goods_sku`
+-- Create index `IDX_ns_goods_site_id` on table `goods_sku`
 --
 ALTER TABLE goods_sku
 ADD INDEX IDX_ns_goods_site_id (site_id);
 
 --
--- `IDX_ns_goods_sort` on table `ns_goods_sku`
+-- Create index `IDX_ns_goods_sort` on table `goods_sku`
 --
 ALTER TABLE goods_sku
 ADD INDEX IDX_ns_goods_sort (sort);
 
 --
--- `ns_goods_service`
+-- `goods_service`
 --
 CREATE TABLE goods_service (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3617,7 +3208,7 @@ COMMENT = '商品服务',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods_label`
+-- `goods_label`
 --
 CREATE TABLE goods_label (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -3635,7 +3226,7 @@ COLLATE utf8_general_ci,
 COMMENT = '商品标签';
 
 --
--- `ns_goods_evaluate`
+-- `goods_evaluate`
 --
 CREATE TABLE goods_evaluate (
   evaluate_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '评价ID',
@@ -3676,7 +3267,7 @@ COMMENT = '商品评价表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods_collect`
+-- `goods_collect`
 --
 CREATE TABLE goods_collect (
   collect_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -3698,19 +3289,19 @@ COMMENT = '商品收藏表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_ns_goods_collect_member_id` on table `ns_goods_collect`
+-- Create index `IDX_ns_goods_collect_member_id` on table `goods_collect`
 --
 ALTER TABLE goods_collect
 ADD INDEX IDX_ns_goods_collect_member_id (member_id);
 
 --
--- `IDX_ns_goods_collect_sku_id` on table `ns_goods_collect`
+-- Create index `IDX_ns_goods_collect_sku_id` on table `goods_collect`
 --
 ALTER TABLE goods_collect
 ADD INDEX IDX_ns_goods_collect_sku_id (sku_id);
 
 --
--- `ns_goods_category`
+-- `goods_category`
 --
 CREATE TABLE goods_category (
   category_id int(11) NOT NULL AUTO_INCREMENT,
@@ -3741,13 +3332,13 @@ COMMENT = ' 商品分类',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `pid_level` on table `ns_goods_category`
+-- Create index `pid_level` on table `goods_category`
 --
 ALTER TABLE goods_category
 ADD INDEX pid_level (pid, level);
 
 --
--- `ns_goods_cart`
+-- `goods_cart`
 --
 CREATE TABLE goods_cart (
   cart_id int(11) NOT NULL AUTO_INCREMENT,
@@ -3764,13 +3355,13 @@ COMMENT = ' 购物车',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_ns_goods_cart_member_id` on table `ns_goods_cart`
+-- Create index `IDX_ns_goods_cart_member_id` on table `goods_cart`
 --
 ALTER TABLE goods_cart
 ADD INDEX IDX_ns_goods_cart_member_id (member_id);
 
 --
--- `ns_goods_browse`
+-- `goods_browse`
 --
 CREATE TABLE goods_browse (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -3788,19 +3379,19 @@ COMMENT = '商品浏览历史',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_ns_goods_browse_member_id` on table `ns_goods_browse`
+-- Create index `IDX_ns_goods_browse_member_id` on table `goods_browse`
 --
 ALTER TABLE goods_browse
 ADD INDEX IDX_ns_goods_browse_member_id (member_id);
 
 --
--- `IDX_ns_goods_browse_sku_id` on table `ns_goods_browse`
+-- Create index `IDX_ns_goods_browse_sku_id` on table `goods_browse`
 --
 ALTER TABLE goods_browse
 ADD INDEX IDX_ns_goods_browse_sku_id (sku_id);
 
 --
--- `ns_goods_attr_class`
+-- `goods_attr_class`
 --
 CREATE TABLE goods_attr_class (
   class_id int(11) NOT NULL AUTO_INCREMENT,
@@ -3816,7 +3407,7 @@ COMMENT = ' 商品类型',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods_attribute_value`
+-- `goods_attribute_value`
 --
 CREATE TABLE goods_attribute_value (
   attr_value_id int(11) NOT NULL AUTO_INCREMENT,
@@ -3833,7 +3424,7 @@ COMMENT = '商品属性值表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods_attribute`
+-- `goods_attribute`
 --
 CREATE TABLE goods_attribute (
   attr_id int(11) NOT NULL AUTO_INCREMENT,
@@ -3857,7 +3448,7 @@ COMMENT = '商品属性',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_goods`
+-- `goods`
 --
 CREATE TABLE goods (
   goods_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品id',
@@ -3868,7 +3459,7 @@ CREATE TABLE goods (
   goods_attr_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品类型名称',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '所属店铺名称',
-  goods_image varchar(500) NOT NULL DEFAULT '' COMMENT '商品主图路径',
+  goods_image varchar(1000) NOT NULL DEFAULT '' COMMENT '商品主图路径',
   goods_content text DEFAULT NULL COMMENT '商品详情',
   goods_state tinyint(4) NOT NULL DEFAULT 1 COMMENT '商品状态（1.正常0下架）',
   category_id varchar(255) NOT NULL DEFAULT '' COMMENT '商品分类id,逗号隔开',
@@ -3922,43 +3513,43 @@ COMMENT = '商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_ns_goods_category_id` on table `ns_goods`
+-- Create index `IDX_ns_goods_category_id` on table `goods`
 --
 ALTER TABLE goods
 ADD INDEX IDX_ns_goods_category_id (category_id);
 
 --
--- `IDX_ns_goods_goods_class` on table `ns_goods`
+-- Create index `IDX_ns_goods_goods_class` on table `goods`
 --
 ALTER TABLE goods
 ADD INDEX IDX_ns_goods_goods_class (goods_class);
 
 --
--- `IDX_ns_goods_is_delete` on table `ns_goods`
+-- Create index `IDX_ns_goods_is_delete` on table `goods`
 --
 ALTER TABLE goods
 ADD INDEX IDX_ns_goods_is_delete (is_delete);
 
 --
--- `IDX_ns_goods_site_id` on table `ns_goods`
+-- Create index `IDX_ns_goods_site_id` on table `goods`
 --
 ALTER TABLE goods
 ADD INDEX IDX_ns_goods_site_id (site_id);
 
 --
--- `IDX_ns_goods_sku_id` on table `ns_goods`
+-- Create index `IDX_ns_goods_sku_id` on table `goods`
 --
 ALTER TABLE goods
 ADD INDEX IDX_ns_goods_sku_id (sku_id);
 
 --
--- `IDX_ns_goods_sort` on table `ns_goods`
+-- Create index `IDX_ns_goods_sort` on table `goods`
 --
 ALTER TABLE goods
 ADD INDEX IDX_ns_goods_sort (sort);
 
 --
--- `ns_fenxiao_withdraw`
+-- `fenxiao_withdraw`
 --
 CREATE TABLE fenxiao_withdraw (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -3995,7 +3586,7 @@ COMMENT = '会员余额提现记录表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_fenxiao_order`
+-- `fenxiao_order`
 --
 CREATE TABLE fenxiao_order (
   fenxiao_order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4041,7 +3632,7 @@ COMMENT = '分销配置表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_fenxiao_level`
+-- `fenxiao_level`
 --
 CREATE TABLE fenxiao_level (
   level_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4074,7 +3665,7 @@ COMMENT = '分销等级配置表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_fenxiao_goods_sku`
+-- `fenxiao_goods_sku`
 --
 CREATE TABLE fenxiao_goods_sku (
   goods_sku_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4096,7 +3687,7 @@ COMMENT = '分销商品sku表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_fenxiao_goods_collect`
+-- `fenxiao_goods_collect`
 --
 CREATE TABLE fenxiao_goods_collect (
   collect_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4115,19 +3706,19 @@ COMMENT = '分销商关注商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_ns_fenxiao_goods_collect_member_id` on table `ns_fenxiao_goods_collect`
+-- Create index `IDX_ns_fenxiao_goods_collect_member_id` on table `fenxiao_goods_collect`
 --
 ALTER TABLE fenxiao_goods_collect
 ADD INDEX IDX_ns_fenxiao_goods_collect_member_id (member_id);
 
 --
--- `IDX_ns_fenxiao_goods_collect_sku_id` on table `ns_fenxiao_goods_collect`
+-- Create index `IDX_ns_fenxiao_goods_collect_sku_id` on table `fenxiao_goods_collect`
 --
 ALTER TABLE fenxiao_goods_collect
 ADD INDEX IDX_ns_fenxiao_goods_collect_sku_id (sku_id);
 
 --
--- `ns_fenxiao_goods`
+-- `fenxiao_goods`
 --
 CREATE TABLE fenxiao_goods (
   fenxiao_goods_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4145,7 +3736,7 @@ COMMENT = '分销商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_fenxiao_apply`
+-- `fenxiao_apply`
 --
 CREATE TABLE fenxiao_apply (
   apply_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4173,7 +3764,7 @@ COMMENT = '分销商申请表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_fenxiao_account`
+-- `fenxiao_account`
 --
 CREATE TABLE fenxiao_account (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4193,7 +3784,7 @@ COLLATE utf8_general_ci,
 COMMENT = '分销商流水表';
 
 --
--- `ns_fenxiao`
+-- `fenxiao`
 --
 CREATE TABLE fenxiao (
   fenxiao_id int(11) NOT NULL AUTO_INCREMENT,
@@ -4228,7 +3819,7 @@ COMMENT = '分销商表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_express_template_item`
+-- `express_template_item`
 --
 CREATE TABLE express_template_item (
   item_id int(11) NOT NULL AUTO_INCREMENT,
@@ -4249,7 +3840,7 @@ COMMENT = '运费模板细节',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_express_template`
+-- `express_template`
 --
 CREATE TABLE express_template (
   template_id int(11) NOT NULL AUTO_INCREMENT,
@@ -4269,7 +3860,7 @@ COMMENT = '运费模板',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_express_electronicsheet`
+-- `express_electronicsheet`
 --
 CREATE TABLE express_electronicsheet (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4299,7 +3890,7 @@ COMMENT = '电子面单',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_express_delivery_package`
+-- `express_delivery_package`
 --
 CREATE TABLE express_delivery_package (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -4329,7 +3920,7 @@ COMMENT = '商品订单物流信息表（多次发货）',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_express_company_template`
+-- `express_company_template`
 --
 CREATE TABLE express_company_template (
   company_id int(11) NOT NULL AUTO_INCREMENT,
@@ -4362,7 +3953,7 @@ COMMENT = '系统物流公司表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_express_company`
+-- `express_company`
 --
 CREATE TABLE express_company (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -4388,7 +3979,7 @@ COMMENT = '店铺物流公司',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_document`
+-- `document`
 --
 CREATE TABLE document (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4408,7 +3999,7 @@ COMMENT = '系统配置性相关文件',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_diy_view_util`
+-- `diy_view_util`
 --
 CREATE TABLE diy_view_util (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -4430,31 +4021,31 @@ COMMENT = '自定义模板组件',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_nc_diy_view_util_controller` on table `ns_diy_view_util`
+-- Create index `IDX_nc_diy_view_util_controller` on table `diy_view_util`
 --
 ALTER TABLE diy_view_util
 ADD INDEX IDX_nc_diy_view_util_controller (controller);
 
 --
--- `IDX_nc_diy_view_util_sort` on table `ns_diy_view_util`
+-- Create index `IDX_nc_diy_view_util_sort` on table `diy_view_util`
 --
 ALTER TABLE diy_view_util
 ADD INDEX IDX_nc_diy_view_util_sort (sort);
 
 --
--- `IDX_nc_diy_view_util_type` on table `ns_diy_view_util`
+-- Create index `IDX_nc_diy_view_util_type` on table `diy_view_util`
 --
 ALTER TABLE diy_view_util
 ADD INDEX IDX_nc_diy_view_util_type (type);
 
 --
--- `name` on table `ns_diy_view_util`
+-- Create index `name` on table `diy_view_util`
 --
 ALTER TABLE diy_view_util
 ADD UNIQUE INDEX name (name);
 
 --
--- `ns_diy_view_temp`
+-- `diy_view_temp`
 --
 CREATE TABLE diy_view_temp (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -4474,25 +4065,25 @@ COMMENT = '插件中的自定义模板',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_nc_diy_view_temp_addon_name` on table `ns_diy_view_temp`
+-- Create index `IDX_nc_diy_view_temp_addon_name` on table `diy_view_temp`
 --
 ALTER TABLE diy_view_temp
 ADD INDEX IDX_nc_diy_view_temp_addon_name (addon_name);
 
 --
--- `IDX_nc_diy_view_temp_name` on table `ns_diy_view_temp`
+-- Create index `IDX_nc_diy_view_temp_name` on table `diy_view_temp`
 --
 ALTER TABLE diy_view_temp
 ADD INDEX IDX_nc_diy_view_temp_name (name);
 
 --
--- `IDX_nc_diy_view_temp_type` on table `ns_diy_view_temp`
+-- Create index `IDX_nc_diy_view_temp_type` on table `diy_view_temp`
 --
 ALTER TABLE diy_view_temp
 ADD INDEX IDX_nc_diy_view_temp_type (type);
 
 --
--- `ns_div_template`
+-- `div_template`
 --
 CREATE TABLE div_template (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -4510,7 +4101,7 @@ COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_cron_log`
+-- `cron_log`
 --
 CREATE TABLE cron_log (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4529,13 +4120,13 @@ COMMENT = '事件执行记录',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_nc_cron_execute_list_execute_time` on table `ns_cron_log`
+-- Create index `IDX_nc_cron_execute_list_execute_time` on table `cron_log`
 --
 ALTER TABLE cron_log
 ADD INDEX IDX_nc_cron_execute_list_execute_time (execute_time);
 
 --
--- `ns_cron`
+-- `cron`
 --
 CREATE TABLE cron (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4556,13 +4147,13 @@ COMMENT = '计划任务表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_sys_cron_execute_time` on table `ns_cron`
+-- Create index `IDX_sys_cron_execute_time` on table `cron`
 --
 ALTER TABLE cron
 ADD INDEX IDX_sys_cron_execute_time (execute_time);
 
 --
--- `ns_config`
+-- `config`
 --
 CREATE TABLE config (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4583,13 +4174,13 @@ COMMENT = '系统配置表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_sys_config_site_id` on table `ns_config`
+-- Create index `IDX_sys_config_site_id` on table `config`
 --
 ALTER TABLE config
 ADD UNIQUE INDEX IDX_sys_config_site_id (site_id, app_module, config_key);
 
 --
--- `ns_area`
+-- `area`
 --
 CREATE TABLE area (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4612,31 +4203,31 @@ COMMENT = '地址表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_nc_area` on table `ns_area`
+-- Create index `IDX_nc_area` on table `area`
 --
 ALTER TABLE area
 ADD INDEX IDX_nc_area (name, shortname);
 
 --
--- `level` on table `ns_area`
+-- Create index `level` on table `area`
 --
 ALTER TABLE area
 ADD INDEX level (level, sort, status);
 
 --
--- `longitude` on table `ns_area`
+-- Create index `longitude` on table `area`
 --
 ALTER TABLE area
 ADD INDEX longitude (longitude, latitude);
 
 --
--- `pid` on table `ns_area`
+-- Create index `pid` on table `area`
 --
 ALTER TABLE area
 ADD INDEX pid (pid);
 
 --
--- `ns_album_pic`
+-- `album_pic`
 --
 CREATE TABLE album_pic (
   pic_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4655,13 +4246,13 @@ COMMENT = '相册图片表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_sys_album_pic_site_id` on table `ns_album_pic`
+-- Create index `IDX_sys_album_pic_site_id` on table `album_pic`
 --
 ALTER TABLE album_pic
 ADD INDEX IDX_sys_album_pic_site_id (site_id);
 
 --
--- `ns_album`
+-- `album`
 --
 CREATE TABLE album (
   album_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -4683,25 +4274,25 @@ COMMENT = '相册表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `IDX_sys_album_is_default` on table `ns_album`
+-- Create index `IDX_sys_album_is_default` on table `album`
 --
 ALTER TABLE album
 ADD INDEX IDX_sys_album_is_default (is_default);
 
 --
--- `IDX_sys_album_site_id` on table `ns_album`
+-- Create index `IDX_sys_album_site_id` on table `album`
 --
 ALTER TABLE album
 ADD INDEX IDX_sys_album_site_id (site_id);
 
 --
--- `IDX_sys_album_sort` on table `ns_album`
+-- Create index `IDX_sys_album_sort` on table `album`
 --
 ALTER TABLE album
 ADD INDEX IDX_sys_album_sort (sort);
 
 --
--- `ns_adv_position`
+-- `adv_position`
 --
 CREATE TABLE adv_position (
   ap_id mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '广告位置id',
@@ -4723,7 +4314,7 @@ COMMENT = '广告位表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_adv`
+-- `adv`
 --
 CREATE TABLE adv (
   adv_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4744,7 +4335,7 @@ COMMENT = '广告表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `ns_addon_quick`
+-- `addon_quick`
 --
 CREATE TABLE addon_quick (
   id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4768,13 +4359,13 @@ COMMENT = '插件表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `UK_nc_addons_name` on table `ns_addon_quick`
+-- Create index `UK_nc_addons_name` on table `addon_quick`
 --
 ALTER TABLE addon_quick
 ADD UNIQUE INDEX UK_nc_addons_name (name);
 
 --
--- `ns_addon`
+-- `addon`
 --
 CREATE TABLE addon (
   id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -4798,358 +4389,37 @@ COMMENT = '插件表',
 ROW_FORMAT = DYNAMIC;
 
 --
--- `UK_nc_addons_name` on table `ns_addon`
+-- Create index `UK_nc_addons_name` on table `addon`
 --
 ALTER TABLE addon
 ADD UNIQUE INDEX UK_nc_addons_name (name);
 
 --
--- Dumping data for table ns_wechat_replay_rule
---
--- Table niushop_b2c_v4_0730_0910.ns_wechat_replay_rule does not contain any data (it is empty)
-
---
--- Dumping data for table ns_wechat_qrcode
---
--- Table niushop_b2c_v4_0730_0910.ns_wechat_qrcode does not contain any data (it is empty)
-
---
--- Dumping data for table ns_wechat_media
---
--- Table niushop_b2c_v4_0730_0910.ns_wechat_media does not contain any data (it is empty)
-
---
--- Dumping data for table ns_wechat_mass_recording
---
--- Table niushop_b2c_v4_0730_0910.ns_wechat_mass_recording does not contain any data (it is empty)
-
---
--- Dumping data for table ns_wechat_fans_tag
---
--- Table niushop_b2c_v4_0730_0910.ns_wechat_fans_tag does not contain any data (it is empty)
-
---
--- Dumping data for table ns_wechat_fans
---
--- Table niushop_b2c_v4_0730_0910.ns_wechat_fans does not contain any data (it is empty)
-
---
--- Dumping data for table ns_weapp_live_room
---
--- Table niushop_b2c_v4_0730_0910.ns_weapp_live_room does not contain any data (it is empty)
-
---
--- Dumping data for table ns_weapp_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_weapp_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_weapp_experiencer
---
--- Table niushop_b2c_v4_0730_0910.ns_weapp_experiencer does not contain any data (it is empty)
-
---
--- Dumping data for table ns_weapp_audit_record
---
--- Table niushop_b2c_v4_0730_0910.ns_weapp_audit_record does not contain any data (it is empty)
-
---
--- Dumping data for table ns_verify
---
--- Table niushop_b2c_v4_0730_0910.ns_verify does not contain any data (it is empty)
-
---
--- Dumping data for table ns_verifier
---
--- Table niushop_b2c_v4_0730_0910.ns_verifier does not contain any data (it is empty)
-
---
--- Dumping data for table ns_v3_upgrade_log
---
--- Table niushop_b2c_v4_0730_0910.ns_v3_upgrade_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_user_log
---
--- Table niushop_b2c_v4_0730_0910.ns_user_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_user
---
--- Table niushop_b2c_v4_0730_0910.ns_user does not contain any data (it is empty)
-
---
--- Dumping data for table ns_sys_upgrade_log
---
--- Table niushop_b2c_v4_0730_0910.ns_sys_upgrade_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_supplier
---
--- Table niushop_b2c_v4_0730_0910.ns_supplier does not contain any data (it is empty)
-
---
--- Dumping data for table ns_store_settlement
---
--- Table niushop_b2c_v4_0730_0910.ns_store_settlement does not contain any data (it is empty)
-
---
--- Dumping data for table ns_store_member
---
--- Table niushop_b2c_v4_0730_0910.ns_store_member does not contain any data (it is empty)
-
---
--- Dumping data for table ns_store_goods_sku
---
--- Table niushop_b2c_v4_0730_0910.ns_store_goods_sku does not contain any data (it is empty)
-
---
--- Dumping data for table ns_store_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_store_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_store
---
--- Table niushop_b2c_v4_0730_0910.ns_store does not contain any data (it is empty)
-
---
--- Dumping data for table ns_stat_shop
---
--- Table niushop_b2c_v4_0730_0910.ns_stat_shop does not contain any data (it is empty)
-
---
--- Dumping data for table ns_site_diy_view
---
--- Table niushop_b2c_v4_0730_0910.ns_site_diy_view does not contain any data (it is empty)
-
---
--- Dumping data for table ns_site
---
--- Table niushop_b2c_v4_0730_0910.ns_site does not contain any data (it is empty)
-
---
--- Dumping data for table ns_shop_address
---
--- Table niushop_b2c_v4_0730_0910.ns_shop_address does not contain any data (it is empty)
-
---
--- Dumping data for table ns_shop
---
--- Table niushop_b2c_v4_0730_0910.ns_shop does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_topic_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_topic_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_topic
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_topic does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_seckill_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_seckill_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_seckill
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_seckill does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_pintuan_order
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_pintuan_order does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_pintuan_group
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_pintuan_group does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_pintuan_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_pintuan_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_pintuan
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_pintuan does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_mansong_record
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_mansong_record does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_manjian_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_manjian_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_manjian
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_manjian does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_groupbuy
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_groupbuy does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_games_draw_record
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_games_draw_record does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_games_award
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_games_award does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_games
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_games does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_freeshipping
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_freeshipping does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_exchange_order
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_exchange_order does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_exchange
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_exchange does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_discount_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_discount_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_discount
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_discount does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_coupon_type
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_coupon_type does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_coupon
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_coupon does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_bundling_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_bundling_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_bundling
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_bundling does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_bargain_record
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_bargain_record does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_bargain_launch
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_bargain_launch does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_bargain_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_bargain_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_promotion_bargain
---
--- Table niushop_b2c_v4_0730_0910.ns_promotion_bargain does not contain any data (it is empty)
-
---
--- Dumping data for table ns_printer_template
---
--- Table niushop_b2c_v4_0730_0910.ns_printer_template does not contain any data (it is empty)
-
---
--- Dumping data for table ns_printer
---
--- Table niushop_b2c_v4_0730_0910.ns_printer does not contain any data (it is empty)
-
---
--- Dumping data for table ns_pay_refund
---
--- Table niushop_b2c_v4_0730_0910.ns_pay_refund does not contain any data (it is empty)
-
---
--- Dumping data for table ns_pay
---
--- Table niushop_b2c_v4_0730_0910.ns_pay does not contain any data (it is empty)
-
---
--- Dumping data for table ns_order_refund_log
---
--- Table niushop_b2c_v4_0730_0910.ns_order_refund_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_order_promotion_detail
---
--- Table niushop_b2c_v4_0730_0910.ns_order_promotion_detail does not contain any data (it is empty)
-
---
--- Dumping data for table ns_order_log
---
--- Table niushop_b2c_v4_0730_0910.ns_order_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_order_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_order_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_order
---
--- Table niushop_b2c_v4_0730_0910.ns_order does not contain any data (it is empty)
-
---
--- Dumping data for table ns_notice
---
--- Table niushop_b2c_v4_0730_0910.ns_notice does not contain any data (it is empty)
-
---
--- Dumping data for table ns_notes_group
---
--- Table niushop_b2c_v4_0730_0910.ns_notes_group does not contain any data (it is empty)
-
---
--- Dumping data for table ns_notes_dianzan_record
---
--- Table niushop_b2c_v4_0730_0910.ns_notes_dianzan_record does not contain any data (it is empty)
-
---
--- Dumping data for table ns_notes
---
--- Table niushop_b2c_v4_0730_0910.ns_notes does not contain any data (it is empty)
-
---
--- Dumping data for table ns_message_wechat_records
---
--- Table niushop_b2c_v4_0730_0910.ns_message_wechat_records does not contain any data (it is empty)
-
---
--- Dumping data for table ns_message_variable
+-- Dumping data for table sms_template
+--
+INSERT INTO sms_template VALUES
+(1, 1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596437584),
+(2, 1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 1, 0, 0, 1596427379),
+(3, 1, 0, 'ORDER_COMPLETE', 2, '订单完成通知', '尊敬的会员，您的订单{orderno}，交易成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427376),
+(4, 1, 0, 'ORDER_PAY', 2, '订单支付通知', '亲爱的{username},你的订单号为{orderno}的订单已成功支付,支付金额{ordermoney}', '{"username":"others","orderno":"other_number","ordermoney":"amount"}', 1, 0, 0, 1596428621),
+(5, 1, 0, 'ORDER_DELIVERY', 2, '订单发货通知', '尊敬的会员，您的订单已发货，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596427369),
+(6, 1, 0, 'ORDER_TAKE_DELIVERY', 2, '订单收货通知', '尊敬的会员，您的订单{orderno}，收货成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427365),
+(7, 1, 0, 'ORDER_REFUND_AGREE', 2, '商家同意退款', '尊敬的会员，您的订单{orderno}，商家同意退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427356),
+(8, 1, 0, 'ORDER_REFUND_REFUSE', 2, '商家拒绝退款', '尊敬的会员，您的订单{orderno}，商家拒绝退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427352),
+(9, 1, 0, 'VERIFY', 2, '核销取货', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427347),
+(10, 1, 0, 'REGISTER_CODE', 1, '注册验证', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426737),
+(11, 1, 0, 'REGISTER_SUCCESS', 2, '注册成功', '尊敬的{username},您以成功注册为{shopname}用户。', '{"username":"others","shopname":"others"}', 1, 0, 0, 1596426734),
+(12, 1, 0, 'FIND_PASSWORD', 1, '找回密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426730),
+(13, 1, 0, 'LOGIN', 2, '会员登录', '尊敬的{name}，您的账号登陆成功。', '{"name":"others"}', 1, 0, 0, 1596426726),
+(14, 1, 0, 'MEMBER_BIND', 1, '账户绑定', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426723),
+(15, 1, 0, 'LOGIN_CODE', 1, '动态码登录', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426719),
+(16, 1, 0, 'MEMBER_PAY_PASSWORD', 1, '支付密码修改', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426716),
+(17, 1, 0, 'SET_PASSWORD', 1, '设置密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426714),
+(18, 1, 0, 'BUYER_REFUND', 2, '买家已退货提醒', '订单号为{orderno}，买家退货。', '{"orderno":"other_number"}', 1, 0, 0, 1596436982),
+(19, 1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 1, 0, 0, 1596437579);
+
+--
+-- Dumping data for table message_variable
 --
 INSERT INTO message_variable VALUES
 (1, '店铺名称', 'shopname', ',REGISTER,NEW_ORDER,LOGIN,'),
@@ -5157,9 +4427,9 @@ INSERT INTO message_variable VALUES
 (3, '验证码', 'number', ',REGISTER,LOGIN,');
 
 --
--- Dumping data for table ns_message_template
+-- Dumping data for table message_template
 --
-INSERT INTO message_template(id, addon, keywords, title, message_type, message_json, sms_addon, sms_json, sms_content, wechat_json, weapp_json, aliapp_json, support_type) VALUES
+INSERT INTO message_template VALUES
 (1, '', 'ORDER_CREATE', '订单创建通知', 1, '{"orderno":"订单号"}', '', '', '', '{"template_id_short":"OPENTM401874876","template_id":"gX4RlhMwl-lyGdfUujvR_NFcezUSyIhpSgGQB7hyjtg","headtext":"123","bottomtext":"456","headtextcolor":"#9a13e8","bottomtextcolor":"#7e2b2b","content":"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}\\n\\u4ea7\\u54c1\\u8be6\\u60c5\\uff1a{{keyword3.DATA}}\\n\\u9700\\u652f\\u4ed8\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u6536\\u8d27\\u8be6\\u60c5\\uff1a{{keyword5.DATA}}"}', '', '', 'sms,wechat'),
 (2, '', 'ORDER_CLOSE', '订单关闭通知', 1, '{"orderno":"订单号"}', '', '', '', '{"template_id_short":"OPENTM205543831","template_id":"v3WG7D2sXYbFxSr34tn4H37mYOod6le3aCrc9Ifr0co","headtext":"456","bottomtext":"789","headtextcolor":"#dc6a13","bottomtextcolor":"#2a9a08","content":"\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u5173\\u95ed\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}"}', '', '', 'sms,wechat'),
 (3, '', 'ORDER_COMPLETE', '订单完成通知', 1, '{"orderno":"订单号"}', '', '', '', '{"template_id_short":"OPENTM412034601","template_id":"VhtPPIYyYkS93uuZ7CKqYqApnB3YmtrA8mVBTC6gd1k","headtext":"您的订单已完成。","bottomtext":"详情请登录公众号查看。","headtextcolor":"#fe0000","bottomtextcolor":"#1f7af2","content":"订单单号：{{keyword1.DATA}}\\n订单商品：{{keyword2.DATA}}\\n下单时间：{{keyword3.DATA}}"}', '', '', 'sms,wechat'),
@@ -5180,318 +4450,8 @@ INSERT INTO message_template(id, addon, keywords, title, message_type, message_j
 (18, '', 'MEMBER_PAY_PASSWORD', '支付密码修改', 1, '{"code":"验证码"}', '', '', '', '', '', '', 'sms'),
 (19, '', 'SET_PASSWORD', '设置密码', 1, '{"code":"验证码"}', '', '', '', '', '', '', 'sms');
 
-INSERT INTO sms_template(site_id, tem_id, keywords, template_type, template_name, template_content, param_json, status, audit_status, create_time, update_time) VALUES
-(1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596437584),
-(1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 1, 0, 0, 1596427379),
-(1, 0, 'ORDER_COMPLETE', 2, '订单完成通知', '尊敬的会员，您的订单{orderno}，交易成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427376),
-(1, 0, 'ORDER_PAY', 2, '订单支付通知', '亲爱的{username},你的订单号为{orderno}的订单已成功支付,支付金额{ordermoney}', '{"username":"others","orderno":"other_number","ordermoney":"amount"}', 1, 0, 0, 1596428621),
-(1, 0, 'ORDER_DELIVERY', 2, '订单发货通知', '尊敬的会员，您的订单已发货，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596427369),
-(1, 0, 'ORDER_TAKE_DELIVERY', 2, '订单收货通知', '尊敬的会员，您的订单{orderno}，收货成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427365),
-(1, 0, 'ORDER_REFUND_AGREE', 2, '商家同意退款', '尊敬的会员，您的订单{orderno}，商家同意退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427356),
-(1, 0, 'ORDER_REFUND_REFUSE', 2, '商家拒绝退款', '尊敬的会员，您的订单{orderno}，商家拒绝退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427352),
-(1, 0, 'VERIFY', 2, '核销取货', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427347),
-(1, 0, 'REGISTER_CODE', 1, '注册验证', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426737),
-(1, 0, 'REGISTER_SUCCESS', 2, '注册成功', '尊敬的{username},您以成功注册为{shopname}用户。', '{"username":"others","shopname":"others"}', 1, 0, 0, 1596426734),
-(1, 0, 'FIND_PASSWORD', 1, '找回密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426730),
-(1, 0, 'LOGIN', 2, '会员登录', '尊敬的{name}，您的账号登陆成功。', '{"name":"others"}', 1, 0, 0, 1596426726),
-(1, 0, 'MEMBER_BIND', 1, '账户绑定', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426723),
-(1, 0, 'LOGIN_CODE', 1, '动态码登录', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426719),
-(1, 0, 'MEMBER_PAY_PASSWORD', 1, '支付密码修改', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426716),
-(1, 0, 'SET_PASSWORD', 1, '设置密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426714),
-(1, 0, 'BUYER_REFUND', 2, '买家已退货提醒', '订单号为{orderno}，买家退货。', '{"orderno":"other_number"}', 1, 0, 0, 1596436982),
-(1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 1, 0, 0, 1596437579);
 --
--- Dumping data for table ns_message_sms_records
---
--- Table niushop_b2c_v4_0730_0910.ns_message_sms_records does not contain any data (it is empty)
-
---
--- Dumping data for table ns_message_send_log
---
--- Table niushop_b2c_v4_0730_0910.ns_message_send_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_message_email_records
---
--- Table niushop_b2c_v4_0730_0910.ns_message_email_records does not contain any data (it is empty)
-
---
--- Dumping data for table ns_message
---
--- Table niushop_b2c_v4_0730_0910.ns_message does not contain any data (it is empty)
-
---
--- Dumping data for table ns_menu
---
--- Table niushop_b2c_v4_0730_0910.ns_menu does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_withdraw
---
--- Table niushop_b2c_v4_0730_0910.ns_member_withdraw does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_recharge_order
---
--- Table niushop_b2c_v4_0730_0910.ns_member_recharge_order does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_recharge_card
---
--- Table niushop_b2c_v4_0730_0910.ns_member_recharge_card does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_recharge
---
--- Table niushop_b2c_v4_0730_0910.ns_member_recharge does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_log
---
--- Table niushop_b2c_v4_0730_0910.ns_member_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_level
---
--- Table niushop_b2c_v4_0730_0910.ns_member_level does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_label
---
--- Table niushop_b2c_v4_0730_0910.ns_member_label does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_bank_account
---
--- Table niushop_b2c_v4_0730_0910.ns_member_bank_account does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_auth
---
--- Table niushop_b2c_v4_0730_0910.ns_member_auth does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_address
---
--- Table niushop_b2c_v4_0730_0910.ns_member_address does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member_account
---
--- Table niushop_b2c_v4_0730_0910.ns_member_account does not contain any data (it is empty)
-
---
--- Dumping data for table ns_member
---
--- Table niushop_b2c_v4_0730_0910.ns_member does not contain any data (it is empty)
-
---
--- Dumping data for table ns_local_delivery_package
---
--- Table niushop_b2c_v4_0730_0910.ns_local_delivery_package does not contain any data (it is empty)
-
---
--- Dumping data for table ns_local
---
--- Table niushop_b2c_v4_0730_0910.ns_local does not contain any data (it is empty)
-
---
--- Dumping data for table ns_link
---
--- Table niushop_b2c_v4_0730_0910.ns_link does not contain any data (it is empty)
-
---
--- Dumping data for table ns_help_class
---
--- Table niushop_b2c_v4_0730_0910.ns_help_class does not contain any data (it is empty)
-
---
--- Dumping data for table ns_help
---
--- Table niushop_b2c_v4_0730_0910.ns_help does not contain any data (it is empty)
-
---
--- Dumping data for table ns_group
---
--- Table niushop_b2c_v4_0730_0910.ns_group does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_virtual
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_virtual does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_sku
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_sku does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_service
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_service does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_label
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_label does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_evaluate
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_evaluate does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_collect
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_collect does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_category
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_category does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_cart
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_cart does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_browse
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_browse does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_attr_class
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_attr_class does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_attribute_value
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_attribute_value does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods_attribute
---
--- Table niushop_b2c_v4_0730_0910.ns_goods_attribute does not contain any data (it is empty)
-
---
--- Dumping data for table ns_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_withdraw
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_withdraw does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_order
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_order does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_level
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_level does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_goods_sku
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_goods_sku does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_goods_collect
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_goods_collect does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_goods
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_goods does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_apply
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_apply does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao_account
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao_account does not contain any data (it is empty)
-
---
--- Dumping data for table ns_fenxiao
---
--- Table niushop_b2c_v4_0730_0910.ns_fenxiao does not contain any data (it is empty)
-
---
--- Dumping data for table ns_express_template_item
---
--- Table niushop_b2c_v4_0730_0910.ns_express_template_item does not contain any data (it is empty)
-
---
--- Dumping data for table ns_express_template
---
--- Table niushop_b2c_v4_0730_0910.ns_express_template does not contain any data (it is empty)
-
---
--- Dumping data for table ns_express_electronicsheet
---
--- Table niushop_b2c_v4_0730_0910.ns_express_electronicsheet does not contain any data (it is empty)
-
---
--- Dumping data for table ns_express_delivery_package
---
--- Table niushop_b2c_v4_0730_0910.ns_express_delivery_package does not contain any data (it is empty)
-
---
--- Dumping data for table ns_express_company_template
---
--- Table niushop_b2c_v4_0730_0910.ns_express_company_template does not contain any data (it is empty)
-
---
--- Dumping data for table ns_express_company
---
--- Table niushop_b2c_v4_0730_0910.ns_express_company does not contain any data (it is empty)
-
---
--- Dumping data for table ns_document
---
--- Table niushop_b2c_v4_0730_0910.ns_document does not contain any data (it is empty)
-
---
--- Dumping data for table ns_diy_view_util
---
--- Table niushop_b2c_v4_0730_0910.ns_diy_view_util does not contain any data (it is empty)
-
---
--- Dumping data for table ns_diy_view_temp
---
--- Table niushop_b2c_v4_0730_0910.ns_diy_view_temp does not contain any data (it is empty)
-
---
--- Dumping data for table ns_div_template
---
--- Table niushop_b2c_v4_0730_0910.ns_div_template does not contain any data (it is empty)
-
---
--- Dumping data for table ns_cron_log
---
--- Table niushop_b2c_v4_0730_0910.ns_cron_log does not contain any data (it is empty)
-
---
--- Dumping data for table ns_cron
---
--- Table niushop_b2c_v4_0730_0910.ns_cron does not contain any data (it is empty)
-
---
--- Dumping data for table ns_config
---
--- Table niushop_b2c_v4_0730_0910.ns_config does not contain any data (it is empty)
-
---
--- Dumping data for table ns_area
+-- Dumping data for table area
 --
 INSERT INTO area VALUES
 (110000, 0, '北京市', '北京', '116.40529', '39.904987', 1, 1, 1),

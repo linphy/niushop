@@ -30,7 +30,7 @@ class AddMemberLevel
                 'site_id'          => $param['site_id'],
                 'level_name'       => '普通会员',
                 'is_default'       => 1,
-                'is_free_shipping' => 1
+                'is_free_shipping' => 0
             ];
             $res          = $member_level->addMemberLevel($data);
             return $res;

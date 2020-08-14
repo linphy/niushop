@@ -15,18 +15,24 @@ use app\model\BaseModel;
 use think\facade\Db;
 use extend\api\HttpClient;
 use think\facade\Cache;
+use app\model\web\Config;
 
 class Upgrade extends BaseModel
 {
     private $url;
     private $cert = '';
 
-    public function __construct()
+    public function __construct($code = '')
     {
-        if (file_exists('cert.key')) {
-            $this->cert = file_get_contents('cert.key');
+        if (!empty($code)) {
+            $this->cert = $code;
+        } else {
+            $config_model = new Config();
+            $config = $config_model->getAuth();
+            $config = $config['data']['value'];
+            $this->cert = $config['code'] ?? '';
         }
-        $this->url  = 'https://www.niushop.com.cn/api/four/index';
+        $this->url  = 'https://www.niushop.com.cn/api/four/index';// http://cs.niusite.net/api
     }
 
     /**

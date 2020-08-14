@@ -15,10 +15,10 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">版权logo：</label>
 				<div class="layui-input-block">
-					<input type="hidden" name="logo" value="{$copyright_config.logo}" />
+					<input type="hidden" name="logo" value="{$copyright_config.logo ?? ''}" />
 					<div class="upload-img-block icon">
 						<div class="upload-img-box" id="webLogoUpload">
-							{if condition="$copyright_config.logo"}
+							{if condition="!empty($copyright_config.logo)"}
 							<img src="{:img($copyright_config.logo)}" />
 							{else/}
 							<div class="ns-upload-default">
@@ -34,25 +34,25 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">公司名称：</label>
 				<div class="layui-input-block">
-					<input type="text" name="company_name" value="{$copyright_config.company_name}" autocomplete="off" class="layui-input ns-len-long">
+					<input type="text" name="company_name" value="{$copyright_config.company_name ?? ''}" autocomplete="off" class="layui-input ns-len-long">
 				</div>
 			</div>
 			
 			<div class="layui-form-item">
 				<label class="layui-form-label">版权链接：</label>
 				<div class="layui-input-block">
-					<input type="text" name="copyright_link" value="{$copyright_config.copyright_link}" autocomplete="off" class="layui-input ns-len-long">
+					<input type="text" name="copyright_link" value="{$copyright_config.copyright_link ?? ''}" autocomplete="off" class="layui-input ns-len-long">
 				</div>
 			</div>
 			
 			<div class="layui-form-item">
 				<label class="layui-form-label">版权信息：</label>
 				<div class="layui-input-block">
-					<textarea name="copyright_desc" class="layui-textarea ns-len-long">{$copyright_config.copyright_desc}</textarea>
+					<textarea name="copyright_desc" class="layui-textarea ns-len-long">{$copyright_config.copyright_desc ?? ''}</textarea>
 				</div>
 			</div>
 			{else/}
-				<div class="no-auth">授权之后才可修改版权信息，<a href="https://www.niushop.com.cn" target="_blank" class="ns-text-color">去授权</a></div>
+				<div class="no-auth">授权之后才可修改版权信息，<a href="{:url('shop/upgrade/auth')}" class="ns-text-color">绑定授权</a></div>
 			{/if}
 		</div>
 	</div>

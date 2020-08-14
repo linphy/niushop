@@ -145,9 +145,21 @@
 				<thead>
 				<tr>
 					<th>可配送区域</th>
+					{if $info['fee_type'] eq 1}
+					<th data-name="snum">首重（Kg）</th>
+					{elseif $info['fee_type'] eq 2}
+					<th data-name="snum">首体积(m³)</th>
+					{else/}
 					<th data-name="snum">首件（个）</th>
+					{/if}
 					<th >运费（元）</th>
+					{if $info['fee_type'] eq 1}
+					<th data-name="xnum">续重（Kg）</th>
+					{elseif $info['fee_type'] eq 2}
+					<th data-name="xnum">续体积(m³)</th>
+					{else/}
 					<th data-name="xnum">续件（个）</th>
+					{/if}
 					<th >续费（元）</th>
 				</tr>
 				</thead>

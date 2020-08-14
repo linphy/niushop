@@ -738,15 +738,6 @@ class OrderCreate extends BaseModel
                 $shop_goods["local_config"]['info'] = $local_info;
             }
 
-            //如果本地配送开启, 则查询出本地配送的配置
-            if ($shop_goods["local_config"]['is_use'] == 1) {
-                $local_model                        = new Local();
-                $local_info_result                  = $local_model->getLocalInfo([['site_id', '=', $site_id]]);
-                $local_info                         = $local_info_result['data'];
-                $shop_goods["local_config"]['info'] = $local_info;
-            }
-
-
             $delivery_array = $data['delivery'] ?? [];
             $delivery_type  = $delivery_array["delivery_type"] ?? 'express';
             if ($delivery_type == "store") {
