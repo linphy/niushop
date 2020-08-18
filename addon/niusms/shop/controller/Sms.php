@@ -151,13 +151,13 @@ class Sms extends BaseShop
                 ]
             );
 
-            if ($res[ 'code' ] >= 0) {
-                //添加关闭短信充值订单事件
-                $cron = new Cron();
-                $execute_time = ( time() + ( 60 * 15 ) );
-                $cron->addCron(1, 0, "关闭短信充值订单", "CloseSmsPayment", $execute_time, $res[ 'data' ][ 'out_trade_no' ]);
-//                event('CloseSmsPayment', [ 'relate_id' => $res[ 'data' ][ 'out_trade_no' ] ], true);
-            }
+//            if ($res[ 'code' ] >= 0) {
+//                //添加关闭短信充值订单事件
+//                $cron = new Cron();
+//                $execute_time = ( time() + ( 60 * 15 ) );
+//                $cron->addCron(1, 0, "关闭短信充值订单", "CloseSmsPayment", $execute_time, $res[ 'data' ][ 'out_trade_no' ]);
+////                event('CloseSmsPayment', [ 'relate_id' => $res[ 'data' ][ 'out_trade_no' ] ], true);
+//            }
             return $res;
         }
     }
@@ -215,6 +215,7 @@ class Sms extends BaseShop
                         $list[ 'data' ][ 'list' ][ $k ][ 'audit_status' ] = 2;
                         $v[ 'audit_status' ] = 2;
                     }
+                    sleep(1);
 
                 }
                 $audit_status = $sms_model->getAuditStatus();

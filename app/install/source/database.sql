@@ -4398,25 +4398,25 @@ ADD UNIQUE INDEX UK_nc_addons_name (name);
 -- Dumping data for table sms_template
 --
 INSERT INTO sms_template VALUES
-(1, 1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596437584),
-(2, 1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 1, 0, 0, 1596427379),
-(3, 1, 0, 'ORDER_COMPLETE', 2, '订单完成通知', '尊敬的会员，您的订单{orderno}，交易成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427376),
-(4, 1, 0, 'ORDER_PAY', 2, '订单支付通知', '亲爱的{username},你的订单号为{orderno}的订单已成功支付,支付金额{ordermoney}', '{"username":"others","orderno":"other_number","ordermoney":"amount"}', 1, 0, 0, 1596428621),
-(5, 1, 0, 'ORDER_DELIVERY', 2, '订单发货通知', '尊敬的会员，您的订单已发货，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596427369),
-(6, 1, 0, 'ORDER_TAKE_DELIVERY', 2, '订单收货通知', '尊敬的会员，您的订单{orderno}，收货成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427365),
-(7, 1, 0, 'ORDER_REFUND_AGREE', 2, '商家同意退款', '尊敬的会员，您的订单{orderno}，商家同意退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427356),
-(8, 1, 0, 'ORDER_REFUND_REFUSE', 2, '商家拒绝退款', '尊敬的会员，您的订单{orderno}，商家拒绝退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427352),
-(9, 1, 0, 'VERIFY', 2, '核销取货', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427347),
-(10, 1, 0, 'REGISTER_CODE', 1, '注册验证', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426737),
-(11, 1, 0, 'REGISTER_SUCCESS', 2, '注册成功', '尊敬的{username},您以成功注册为{shopname}用户。', '{"username":"others","shopname":"others"}', 1, 0, 0, 1596426734),
-(12, 1, 0, 'FIND_PASSWORD', 1, '找回密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426730),
-(13, 1, 0, 'LOGIN', 2, '会员登录', '尊敬的{name}，您的账号登陆成功。', '{"name":"others"}', 1, 0, 0, 1596426726),
-(14, 1, 0, 'MEMBER_BIND', 1, '账户绑定', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426723),
-(15, 1, 0, 'LOGIN_CODE', 1, '动态码登录', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426719),
-(16, 1, 0, 'MEMBER_PAY_PASSWORD', 1, '支付密码修改', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426716),
-(17, 1, 0, 'SET_PASSWORD', 1, '设置密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426714),
-(18, 1, 0, 'BUYER_REFUND', 2, '买家已退货提醒', '订单号为{orderno}，买家退货。', '{"orderno":"other_number"}', 1, 0, 0, 1596436982),
-(19, 1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 1, 0, 0, 1596437579);
+(1, 1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 0, 0, 0, 1596437584),
+(2, 1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 0, 0, 0, 1596427379),
+(3, 1, 0, 'ORDER_COMPLETE', 2, '订单完成通知', '尊敬的会员，您的订单{orderno}，交易成功。', '{"orderno":"other_number"}', 0, 0, 0, 1596427376),
+(4, 1, 0, 'ORDER_PAY', 2, '订单支付通知', '亲爱的{username},你的订单号为{orderno}的订单已成功支付,支付金额{ordermoney}', '{"username":"others","orderno":"other_number","ordermoney":"amount"}', 0, 0, 0, 1596428621),
+(5, 1, 0, 'ORDER_DELIVERY', 2, '订单发货通知', '尊敬的会员，您的订单已发货，订单号{orderno}。', '{"orderno":"other_number"}', 0, 0, 0, 1596427369),
+(6, 1, 0, 'ORDER_TAKE_DELIVERY', 2, '订单收货通知', '尊敬的会员，您的订单{orderno}，收货成功。', '{"orderno":"other_number"}', 0, 0, 0, 1596427365),
+(7, 1, 0, 'ORDER_REFUND_AGREE', 2, '商家同意退款', '尊敬的会员，您的订单{orderno}，商家同意退款。', '{"orderno":"other_number"}', 0, 0, 0, 1596427356),
+(8, 1, 0, 'ORDER_REFUND_REFUSE', 2, '商家拒绝退款', '尊敬的会员，您的订单{orderno}，商家拒绝退款。', '{"orderno":"other_number"}', 0, 0, 0, 1596427352),
+(9, 1, 0, 'VERIFY', 2, '核销取货', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"other_number"}', 0, 0, 0, 1596427347),
+(10, 1, 0, 'REGISTER_CODE', 1, '注册验证', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426737),
+(11, 1, 0, 'REGISTER_SUCCESS', 2, '注册成功', '尊敬的{username},您以成功注册为{shopname}用户。', '{"username":"others","shopname":"others"}', 0, 0, 0, 1596426734),
+(12, 1, 0, 'FIND_PASSWORD', 1, '找回密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426730),
+(13, 1, 0, 'LOGIN', 2, '会员登录', '尊敬的{name}，您的账号登陆成功。', '{"name":"others"}', 0, 0, 0, 1596426726),
+(14, 1, 0, 'MEMBER_BIND', 1, '账户绑定', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426723),
+(15, 1, 0, 'LOGIN_CODE', 1, '动态码登录', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426719),
+(16, 1, 0, 'MEMBER_PAY_PASSWORD', 1, '支付密码修改', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426716),
+(17, 1, 0, 'SET_PASSWORD', 1, '设置密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426714),
+(18, 1, 0, 'BUYER_REFUND', 2, '买家已退货提醒', '订单号为{orderno}，买家退货。', '{"orderno":"other_number"}', 0, 0, 0, 1596436982),
+(19, 1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 0, 0, 0, 1596437579);
 
 --
 -- Dumping data for table message_variable
