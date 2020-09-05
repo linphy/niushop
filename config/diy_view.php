@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 return [
@@ -258,6 +259,22 @@ return [
                                     'wap_url' => '/pages/goods/cart/cart',
                                     'web_url' => '',
                                     'sort' => 0
+                                ],
+                                [
+                                    'name' => 'SHOPPING_NOTICE',
+                                    'title' => '公告',
+                                    'parent' => '',
+                                    'wap_url' => '/otherpages/notice/list/list',
+                                    'web_url' => '',
+                                    'sort' => 0
+                                ],
+                                [
+                                    'name' => 'SHOPPING_HELP',
+                                    'title' => '帮助',
+                                    'parent' => '',
+                                    'wap_url' => '/otherpages/help/list/list',
+                                    'web_url' => '',
+                                    'sort' => 0
                                 ]
                             ]
                         ],
@@ -267,7 +284,7 @@ return [
                             'parent' => '',
                             'wap_url' => '',
                             'web_url' => '',
-                            'sort' => 0,
+                            'sort' => 1,
                             'child_list' => [
                                 [
                                     'name' => 'MEMBER_CENTER',
@@ -391,7 +408,7 @@ return [
                     'parent' => '',
                     'wap_url' => '/pages/index/index/index',
                     'web_url' => '',
-                    'sort' => 0,
+                    'sort' => 2,
                     'child_list' => []
                 ]
             ]

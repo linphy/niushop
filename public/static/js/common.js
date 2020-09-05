@@ -462,7 +462,7 @@ function Table(options) {
 	options.request = options.request || {
 		limitName: 'page_size' //每页数据量的参数名，默认：limit
 	};
-	
+
 	if (options.page == undefined) {
 		options.page = {
 			layout: ['count', 'limit', 'prev', 'page', 'next'],

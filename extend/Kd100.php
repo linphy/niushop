@@ -91,7 +91,7 @@ class Kd100
                     "remark" => $v["context"],
                 );
             }
-            $result["$list"] = $list;
+            $result["list"] = $list;
         }
 
         return $result;
