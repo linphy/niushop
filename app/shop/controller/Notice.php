@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -31,6 +32,11 @@ class Notice extends BaseShop
             $condition = [['site_id', '=', $this->site_id]];
             $notice    = new NoticeModel();
             $list      = $notice->getNoticePageList($condition, $page, $limit);
+
+            foreach ($list['data']['list'] as $key => $val){
+            	$list['data']['list'][$key]['content'] = preg_replace("/[^\x{4e00}-\x{9fa5}^0-9^A-Z^a-z]+/u", '', $val['content']);
+            }
+
             return $list;
         }
         return $this->fetch('notice/index');

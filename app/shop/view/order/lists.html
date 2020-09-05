@@ -102,7 +102,8 @@
             <div class="ns-form-row">
                 <button class="layui-btn ns-bg-color" lay-submit id="btn_search"lay-filter="btn_search">筛选</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="batch_export" >批量导出</button>
+                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="batch_export_order_goods" >导出订单商品</button>
+                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="batch_export_order" >导出订单</button>
                 <!--<button class="layui-btn layui-btn-primary">查看已生成报表</button>-->
             </div>
             <input type="hidden" name="status" val=""/>
@@ -249,10 +250,15 @@
             return false;
         });
 
-        //批量导出
-        form.on('submit(batch_export)', function(data){
-            data.field.order_type = 1;
+        //批量导出（订单项）
+        form.on('submit(batch_export_order_goods)', function(data){
             location.href = ns.url("shop/order/exportOrderGoods",data.field);
+            return false;
+        });
+
+        //批量导出（订单）
+        form.on('submit(batch_export_order)', function(data){
+            location.href = ns.url("shop/order/exportOrder",data.field);
             return false;
         });
 

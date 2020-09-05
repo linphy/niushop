@@ -128,7 +128,7 @@ class Weapp extends BaseShop
         // 检测授权
         $upgrade_model = new Upgrade();
         $auth_info = $upgrade_model->authInfo();
-        $this->assign('is_auth', ($auth_info['code'] == 1));
+        $this->assign('is_auth', ($auth_info['code'] == 0));
 
         return $this->fetch('weapp/package', [], $this->replace);
     }
@@ -157,7 +157,7 @@ class Weapp extends BaseShop
 
             $upgrade_model = new Upgrade();
             $res = $upgrade_model->downloadUniapp($app_info['version_no']);
-            if ($res['code'] >= 0) {
+            if ($res['code'] == 0) {
                 $filename = "upload/{$app_info['version_no']}_uniapp.zip";
                 $res = file_put_contents($filename, base64_decode($res['data']));
 

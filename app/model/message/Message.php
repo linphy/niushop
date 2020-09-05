@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -45,15 +46,15 @@ class Message extends BaseModel
     public function modifyMessageWechatIsOpen($is_open, $condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $keywords        = isset($check_condition['keywords']) ? $check_condition['keywords'] : '';
+        $keywords = isset($check_condition[ 'keywords' ]) ? $check_condition[ 'keywords' ] : '';
         if ($keywords === '') {
             return $this->error('', 'REQUEST_KEYWORDS');
         }
 
-        $data = array(
+        $data = array (
             "wechat_is_open" => $is_open
         );
-        $res  = model('message')->update($data, $condition);
+        $res = model('message')->update($data, $condition);
         if ($res === false) {
             return $this->error('', 'UNKNOW_ERROR');
         }
@@ -69,20 +70,20 @@ class Message extends BaseModel
     public function getMessageInfo($site_id, $keywords, $field = "*")
     {
 
-        $info = model("message_template")->getInfo([['keywords', '=', $keywords]], $field);
+        $info = model("message_template")->getInfo([ [ 'keywords', '=', $keywords ] ], $field);
         if (!empty($info)) {
-            $info["message_json_array"] = empty($info["message_json"]) ? [] : json_decode($info["message_json"], true);//消息配置
-            $info["sms_json_array"]     = event('SmsTemplateInfo', ['keywords' => $keywords, 'site_id' => $site_id], true);//短信配置
-            $info["wechat_json_array"]  = empty($info["wechat_json"]) ? [] : json_decode($info["wechat_json"], true);//微信模板消息配置
-            $message = model('message')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]]);
+            $info[ "message_json_array" ] = empty($info[ "message_json" ]) ? [] : json_decode($info[ "message_json" ], true);//消息配置
+            $info[ "sms_json_array" ] = event('SmsTemplateInfo', [ 'keywords' => $keywords, 'site_id' => $site_id ], true);//短信配置
+            $info[ "wechat_json_array" ] = empty($info[ "wechat_json" ]) ? [] : json_decode($info[ "wechat_json" ], true);//微信模板消息配置
+            $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ]);
             if (empty($message)) {
                 $data = [
-                    'keywords'    => $keywords,
-                    'site_id'     => $site_id,
+                    'keywords' => $keywords,
+                    'site_id' => $site_id,
                     'sms_is_open' => 0,
                 ];
                 model('message')->add($data);
-                $message = model('message')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]]);
+                $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ]);
             }
             $info = array_merge($info, $message);
         }
@@ -98,16 +99,16 @@ class Message extends BaseModel
      */
     public function getMessageDetail($site_id, $keywords, $field = "*")
     {
-        $message = model('message')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]], $field);
+        $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ], $field);
         if (empty($message)) {
             $data = [
-                'keywords'    => $keywords,
-                'site_id'     => $site_id,
+                'keywords' => $keywords,
+                'site_id' => $site_id,
                 'sms_is_open' => 0
             ];
             model('message')->add($data);
 
-            $message = model('message')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]], $field);
+            $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ], $field);
             return $this->success($message);
         }
         return $this->success($message);
@@ -124,15 +125,15 @@ class Message extends BaseModel
     public function getMessageList($site_id = 0, $message_type = 1, $field = '*', $order = '', $limit = null)
     {
 
-        $list = model('message_template')->getList([["message_type", "=", $message_type]], $field, $order, '', '', '', $limit);
+        $list = model('message_template')->getList([ [ "message_type", "=", $message_type ] ], $field, $order, '', '', '', $limit);
         if (!empty($list)) {
             foreach ($list as $k => $v) {
-                $list[$k]['support_type'] = explode(',', $v['support_type']);
+                $list[ $k ][ 'support_type' ] = explode(',', $v[ 'support_type' ]);
 
-                $message_info            = model('message')->getInfo([["keywords", "=", $v['keywords']], ['site_id', '=', $site_id]], 'sms_is_open,wechat_is_open');
-                $list[$k]['sms_is_open'] = $message_info == null ? 0 : $message_info['sms_is_open'];
+                $message_info = model('message')->getInfo([ [ "keywords", "=", $v[ 'keywords' ] ], [ 'site_id', '=', $site_id ] ], 'sms_is_open,wechat_is_open');
+                $list[ $k ][ 'sms_is_open' ] = $message_info == null ? 0 : $message_info[ 'sms_is_open' ];
 
-                $list[$k]['wechat_is_open'] = $message_info == null ? 0 : $message_info['wechat_is_open'];
+                $list[ $k ][ 'wechat_is_open' ] = $message_info == null ? 0 : $message_info[ 'wechat_is_open' ];
             }
         }
         return $this->success($list);
@@ -151,11 +152,11 @@ class Message extends BaseModel
     {
         $list = model('message_template')->pageList($condition, $field, $order, $page, $page_size);
         if ($site_id > 0) {
-            if (!empty($list['list'])) {
-                foreach ($list['list'] as $k => $v) {
-                    $message_info                           = model('message')->getInfo([["keywords", "=", $v['keywords']], ['site_id', '=', $site_id]], 'wechat_is_open,wechat_template_id');
-                    $list['list'][$k]['wechat_is_open']     = $message_info == null ? 0 : $message_info['wechat_is_open'];
-                    $list['list'][$k]['wechat_template_id'] = $message_info['wechat_template_id'];
+            if (!empty($list[ 'list' ])) {
+                foreach ($list[ 'list' ] as $k => $v) {
+                    $message_info = model('message')->getInfo([ [ "keywords", "=", $v[ 'keywords' ] ], [ 'site_id', '=', $site_id ] ], 'wechat_is_open,wechat_template_id');
+                    $list[ 'list' ][ $k ][ 'wechat_is_open' ] = $message_info == null ? 0 : $message_info[ 'wechat_is_open' ];
+                    $list[ 'list' ][ $k ][ 'wechat_template_id' ] = $message_info[ 'wechat_template_id' ];
                 }
             }
         }
@@ -171,43 +172,39 @@ class Message extends BaseModel
     public function getWechatTemplateNo(string $keywords, $site_id, $wechat_is_open = 0)
     {
         $keyword = explode(',', $keywords);
-        $list    = model('message_template')->getList([['keywords', 'in', $keyword], ['wechat_json', '<>', '']], 'keywords,wechat_json');
+        $list = model('message_template')->getList([ [ 'keywords', 'in', $keyword ], [ 'wechat_json', '<>', '' ] ], 'keywords,wechat_json');
         if (!empty($list)) {
 
             $wechat = new Wechat($site_id);
             foreach ($list as $item) {
 
-                $shop_message = model('message')->getInfo([['keywords', '=', $item['keywords']], ["site_id", "=", $site_id]], 'wechat_template_id');
-                if (empty($shop_message) || $shop_message['wechat_template_id'] == '') {
+                $shop_message = model('message')->getInfo([ [ 'keywords', '=', $item[ 'keywords' ] ], [ "site_id", "=", $site_id ] ], 'wechat_template_id');
 
-                    //todo  已存在模板id的   需要重新拉去模板id 并编辑
-                    $template_info = json_decode($item['wechat_json'], true);
-                    $res           = $wechat->getTemplateId($template_info['template_id_short']);
-                    if (isset($res['errcode']) && $res['errcode'] == 0) {
-                        $template_info['template_id'] = $res['template_id'];
-                        if (empty($shop_message)) {
-                            model('message')->add(
-                                [
-                                    'site_id'            => $site_id,
-                                    'keywords'           => $item['keywords'],
-                                    'wechat_template_id' => $res['template_id'],
-                                    'wechat_is_open'     => $wechat_is_open
-                                ]
-                            );
-                        } else {
-                            model('message')->update(
-                                ['wechat_template_id' => $res['template_id'], 'wechat_is_open' => $wechat_is_open]
-                                , [['keywords', '=', $item['keywords']], ["site_id", "=", $site_id]]
-                            );
-                        }
-
+                //todo  已存在模板id的   需要重新拉去模板id 并编辑
+                $template_info = json_decode($item[ 'wechat_json' ], true);
+                $res = $wechat->getTemplateId($template_info[ 'template_id_short' ]);
+                if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) {
+                    $template_info[ 'template_id' ] = $res[ 'template_id' ];
+                    if (empty($shop_message)) {
+                        model('message')->add(
+                            [
+                                'site_id' => $site_id,
+                                'keywords' => $item[ 'keywords' ],
+                                'wechat_template_id' => $res[ 'template_id' ],
+                                'wechat_is_open' => $wechat_is_open
+                            ]
+                        );
                     } else {
-                        return $this->error($res, $res['errmsg']);
+                        model('message')->update(
+                            [ 'wechat_template_id' => $res[ 'template_id' ], 'wechat_is_open' => $wechat_is_open ]
+                            , [ [ 'keywords', '=', $item[ 'keywords' ] ], [ "site_id", "=", $site_id ] ]
+                        );
                     }
 
                 } else {
-                    model('message')->update(['wechat_is_open' => $wechat_is_open], [['keywords', '=', $item['keywords']], ["site_id", "=", $site_id]]);
+                    return $this->error($res, $res[ 'errmsg' ]);
                 }
+
             }
         }
         return $this->success();
@@ -223,21 +220,21 @@ class Message extends BaseModel
     public function sendMessage($param)
     {
         try {
-            $keywords              = $param["keywords"];
-            $site_id               = $param["site_id"] ?? $param["site_id"];
-            $message_info_result   = $this->getMessageInfo($site_id, $keywords);
-            $message_info          = $message_info_result["data"];
-            $param["message_info"] = $message_info;
-            $shop_info             = [];
+            $keywords = $param[ "keywords" ];
+            $site_id = $param[ "site_id" ] ?? $param[ "site_id" ];
+            $message_info_result = $this->getMessageInfo($site_id, $keywords);
+            $message_info = $message_info_result[ "data" ];
+            $param[ "message_info" ] = $message_info;
+            $shop_info = [];
             if ($site_id > 0) {
-                $shop_model       = new Shop();
-                $shop_info_result = $shop_model->getShopInfo([['site_id', '=', $site_id]]);
-                $site_model       = new Site();
-                $site_info        = $site_model->getSiteInfo([['site_id', '=', $site_id]]);
-                $shop_info        = array_merge($shop_info_result["data"], $site_info['data']);
+                $shop_model = new Shop();
+                $shop_info_result = $shop_model->getShopInfo([ [ 'site_id', '=', $site_id ] ]);
+                $site_model = new Site();
+                $site_info = $site_model->getSiteInfo([ [ 'site_id', '=', $site_id ] ]);
+                $shop_info = array_merge($shop_info_result[ "data" ], $site_info[ 'data' ]);
             }
-            $param["site_info"] = $shop_info;
-            $result             = event("SendMessageTemplate", $param, true);//匹配消息模板  并发送
+            $param[ "site_info" ] = $shop_info;
+            $result = event("SendMessageTemplate", $param, true);//匹配消息模板  并发送
             return $result;
         } catch (\Exception $e) {
             return $this->error('', "MESSAGE_FAIL");

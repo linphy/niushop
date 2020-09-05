@@ -11,6 +11,8 @@ var goodsImage = [];//商品主图
 const GOODS_IMAGE_MAX = 10;//商品主图数量
 const GOODS_SKU_MAX = 10;//商品SKU数量
 
+var attribute_img_type = 0;//规格项是否保存图片
+
 //正则表达式
 var regExp = {
 	number: /^\d{0,10}$/,
@@ -93,6 +95,12 @@ $(function () {
 		
 		//是否添加规格图片，复选框
 		form.on("checkbox(add_spec_img)", function (data) {
+			var div = data.othis[0];
+			if($(div).attr("class") == "layui-unselect layui-form-checkbox layui-form-checked"){
+				attribute_img_type = 1;
+			}else{
+				attribute_img_type = 0;
+			}
 			refreshSpec();
 		});
 		
@@ -703,6 +711,7 @@ $(function () {
 			
 			if (repeat_flag) return false;
 			repeat_flag = true;
+			data.field.attribute_img_type = attribute_img_type;
 			$.ajax({
 				url: url,
 				data: data.field,
@@ -1081,7 +1090,15 @@ function refreshSpec(isCheckedAddSpecImg) {
 				refreshSpec();
 			}, 1);
 		});
-		
+
+		if(attribute_img_type == 0){
+			for(var q = 0; q < goodsSpecFormat.length; q ++){
+				for (var r = 0; r < goodsSpecFormat[q]["value"].length; r ++) {
+					goodsSpecFormat[q]["value"][r]["image"] = "";
+				}
+			}
+		}
+
 		//绑定规格项下拉搜索
 		bindSpecSearchableSelect();
 		
@@ -1600,7 +1617,7 @@ function initEditData() {
 	
 	// 加载商品属性关联
 	var goods_attr_format = $("input[name='goods_attr_format']").val().toString();
-	
+
 	if (goods_attr_format) {
 		goodsAttrFormat = JSON.parse(goods_attr_format);
 		

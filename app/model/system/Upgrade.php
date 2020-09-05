@@ -32,7 +32,7 @@ class Upgrade extends BaseModel
             $config = $config['data']['value'];
             $this->cert = $config['code'] ?? '';
         }
-        $this->url  = 'https://www.niushop.com.cn/api/four/index';// http://cs.niusite.net/api
+        $this->url  = 'https://api.niushop.com';
     }
 
     /**
@@ -40,9 +40,9 @@ class Upgrade extends BaseModel
      */
     private function doPost($post_url, $post_data)
     {
-        $post_data['cert'] = $this->cert;
+        $post_data['code'] = $this->cert;
         $httpClient             = new HttpClient();
-        $res                    = $httpClient->post($post_url, $post_data);
+        $res                    = $httpClient->post($this->url . $post_url, $post_data);
         return $res;
     }
 
@@ -67,7 +67,6 @@ class Upgrade extends BaseModel
         }
 
         $post_data = [
-            'method'      => 'getSystemUpgradeInfo',
             'app_info'    => [
                 'code'         => $app_info['name'],
                 'version_no'   => $app_info['version_no'],
@@ -76,18 +75,18 @@ class Upgrade extends BaseModel
             'plugin_info' => $plugin_info,
         ];
 
-        $res = $this->doPost($this->url, $post_data);
+        $res = $this->doPost('/upgrade/upgrade/updateinfo', $post_data);
         $res = json_decode($res, true);
 
         //处理返回数据
-        if (!empty($res)) {
+        if (!empty($res) && $res['code'] == 0) {
             //整合系统和插件数据
             $app_data     = $res['data']['app_data'];
             $client_data  = $res['data']['client_data'];
             $plugin_data  = $res['data']['plugin_data'];
             $install_data = $res['data']['install_data'];
             $data         = [];
-            if ($app_data['code'] > 0) {
+            if ($app_data['code'] == 0) {
                 $app_data['data']['action']      = 'upgrade';
                 $app_data['data']['action_name'] = '升级';
                 $app_data['data']['type']        = 'system';
@@ -95,7 +94,7 @@ class Upgrade extends BaseModel
                 $data[]                          = $app_data['data'];
             }
             foreach ($client_data as $key => $val) {
-                if ($val['code'] > 0) {
+                if ($val['code'] == 0) {
                     $val['data']['action']      = 'download';
                     $val['data']['action_name'] = '下载';
                     $val['data']['type']        = 'client';
@@ -104,7 +103,7 @@ class Upgrade extends BaseModel
                 }
             }
             foreach ($plugin_data as $key => $val) {
-                if ($val['code'] > 0) {
+                if ($val['code'] == 0) {
                     $val['data']['action']      = 'upgrade';
                     $val['data']['action_name'] = '升级';
                     $val['data']['type']        = 'addon';
@@ -113,7 +112,7 @@ class Upgrade extends BaseModel
                 }
             }
             foreach ($install_data as $key => $val) {
-                if ($val['code'] > 0) {
+                if ($val['code'] == 0) {
                     $val['data']['action']      = 'install';
                     $val['data']['action_name'] = '安装';
                     $val['data']['type']        = 'addon';
@@ -142,52 +141,15 @@ class Upgrade extends BaseModel
     public function download($param)
     {
         $data   = array(
-            "method" => "download",
-            "file"   => $param["file"],//下载文件路径
-            "token"  => $param["token"]
+            "file_token"  => $param["token"]
         );
-        $result = $this->doPost($this->url, $data);//授权
+        $result = $this->doPost('/upgrade/upgrade/download', $data);//授权
         if (empty($result)) {
             return $this->error();
         }
 
         $result = json_decode($result, true);
-
-        //约定 返回内容一律用base64_encode转码 因为部分文件格式无法用直接转json
-        if ($result['code'] > 0) {
-            $result['data'] = base64_decode($result['data']);
-        }
         return $result;
-    }
-
-    /**
-     * 获取下载信息
-     * @param $addon_name
-     * @return mixed
-     */
-    public function getDownloadInfo($addon_name)
-    {
-        $params = [
-            'method' => 'getPluginDownloadInfo',
-            'code'   => $addon_name
-        ];
-        $res    = $this->doPost($this->url, $params);
-        $res    = json_decode($res, true);
-        return $res;
-    }
-
-    /**
-     * 获取版本详情
-     */
-    public function getUpgradeInfo($name)
-    {
-        $post_data = [
-            'method' => 'getPluginUpgradeInfo',
-            'code'   => $name,
-        ];
-        $re        = $this->doPost($this->url, $post_data);
-        $re        = json_decode($re, true);
-        return $re;
     }
 
     /**
@@ -196,10 +158,11 @@ class Upgrade extends BaseModel
      */
     public function authInfo()
     {
-        $post_data = [
-            'method' => 'getAuthDetail',
-        ];
-        $re        = $this->doPost($this->url, $post_data);
+        $app_info    = config('info');
+        $data   = array(
+            "product_key" => $app_info['name'],
+        );
+        $re        = $this->doPost('/upgrade/auth/info', $data);
         $re        = json_decode($re, true);
         return $re;
     }
@@ -210,11 +173,7 @@ class Upgrade extends BaseModel
      */
     public function getAuthPlugin()
     {
-        $data   = array(
-            "method" => "getAuthPlugin",
-        );
-        $result = $this->doPost($this->url, $data);//授权
-
+        $result = $this->doPost('/upgrade/auth/plugin', []);//授权
         if (empty($result))
             return $this->error();
 
@@ -222,38 +181,6 @@ class Upgrade extends BaseModel
         $result = json_decode($result, true);
 
         return $result;
-    }
-
-    /**
-     * 获取最新的版本信息
-     * @return bool|string
-     */
-    public function getLatestVersion()
-    {
-        $url       = sprintf($this->url, 'getLatestVersion');
-        $post_data = [];
-        $re        = $this->doPost($url, $post_data);
-        $re        = json_decode($re, true);
-        return $re;
-    }
-
-    /**
-     * 文件对比
-     * @param $data
-     * @return bool|mixed|string
-     */
-    public function getTowDevFiles($param)
-    {
-        $post_data = [
-            'method'     => 'fileContrast',
-            'code'       => $param['code'],
-            'version_no' => $param['version_no'],
-            'files'      => json_encode($param['files']),
-        ];
-        $re        = $this->doPost($this->url, $post_data);
-        $re        = json_decode($re, true);
-
-        return $re;
     }
 
     /**
@@ -368,23 +295,20 @@ class Upgrade extends BaseModel
 
     /******************************* 升级日志相关 end *****************************/
 
-    /******************************* 更新日志 START   *****************************/
-
     public function getVersionLog($page, $page_size)
     {
         $post_data = [
-            'method'     => 'getVersionLog',
             'page_index' => $page,
             'page_size'  => $page_size,
         ];
-        $re        = $this->doPost($this->url, $post_data);
+        $re        = $this->doPost('/upgrade/upgrade/versionPage', $post_data);
         $re        = json_decode($re, true);
 
         //处理返回数据
         $return_data = [];
-        foreach ($re['data']['data'] as $key => $val) {
-            $val['description']       = str_replace("\n", '<br/>', $val['description']);
-            $day                      = date('Y-m-d', $val['online_time']);
+        foreach ($re['data']['list'] as $key => $val) {
+            $val['version_desc']       = str_replace("\n", '<br/>', $val['version_desc']);
+            $day                      = date('Y-m-d', $val['create_time']);
             $day_time                 = strtotime($day);
             $return_data[$day_time][] = $val;
         }
@@ -394,47 +318,10 @@ class Upgrade extends BaseModel
             $temp_arr[] = ['list' => $value, 'time' => $key, 'format_time' => date('Y-m-d', $key)];
         }
 
-        $re['data']['data'] = $temp_arr;
+        $re['data']['list'] = $temp_arr;
 
         return $re;
     }
-
-    /******************************* 更新日志 end   *******************************/
-
-    /******************************* 同步授权文件 start****************************/
-
-    /**
-     * 获取证书
-     * @return mixed
-     */
-    public function getCert()
-    {
-        $post_data = [
-            'method' => 'getCert'
-        ];
-        $re        = $this->doPost($this->url, $post_data);
-        $re        = json_decode($re, true);
-
-        return $re;
-    }
-
-    /**
-     * 证书对比
-     * @return mixed
-     */
-    public function certContrast()
-    {
-        $post_data = [
-            'method' => 'certContrast',
-            'cert'   => file_get_contents('./cert.key'),
-        ];
-        $re        = $this->doPost($this->url, $post_data);
-        $re        = json_decode($re, true);
-
-        return $re;
-    }
-
-    /****************************** 同步授权文件 end  *****************************/
 
     /**
      * 获取所有插件
@@ -444,30 +331,33 @@ class Upgrade extends BaseModel
     {
         $addon_list = Cache::get('website_addon_list');
         if(empty($addon_list)){
+            $app_info    = config('info');
             $data   = array(
-                "method" => "getPluginGoodsList",
+                "product_key" => $app_info['name'],
             );
-            $result = $this->doPost($this->url, $data);//授权
-
+            $result = $this->doPost('/upgrade/auth/allplugin', $data);//授权
             if (empty($result))
                 return $this->error();
 
             $result = json_decode($result, true);
-            Cache::set('website_addon_list',$result['data']['data'],3*24*60*60);
-            return $result['data']['data'];
+            Cache::set('website_addon_list',$result['data'],3*24*60*60);
+            return $result['data'];
         }else{
             return $addon_list;
         }
 
     }
 
-
+    /**
+     * 下载uniapp
+     * @param $version
+     * @return array|mixed
+     */
     public function downloadUniapp($version){
         $data   = array(
-            "method" => "getUniappCode",
             "version" => $version
         );
-        $result = $this->doPost($this->url, $data);//授权
+        $result = $this->doPost('/upgrade/upgrade/downloaduniapp', $data);//授权
 
         if (empty($result))
             return $this->error();

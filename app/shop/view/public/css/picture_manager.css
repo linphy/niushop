@@ -30,3 +30,4 @@
 .album-foot-operation .page{margin-left: auto;}
 .img-group{max-height: 300px;}
 .ns-link-input{display: inline-block!important;vertical-align: top;}
+.layui-layer.layui-layer-page .layui-layer-content{overflow-y:auto !important}

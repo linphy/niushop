@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -66,12 +67,18 @@ class GoodsCategory extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
+        //判断该分类下是否存在商品
+        $goods_count = model('goods')->getCount([['category_id','like','%,'.$category_id.',%'],['site_id','=',$site_id]]);
+        if($goods_count > 0){
+            return $this->error('','该分类下存在商品，暂不能删除');
+        }
+
         $goods_category_info = $this->getCategoryInfo([
             ['category_id', '=', $category_id], ['site_id', '=', $site_id]
         ], "level");
         $goods_category_info = $goods_category_info['data'];
-        $field               = "category_id_" . $goods_category_info['level'];
-        $res                 = model('goods_category')->delete([[$field, '=', $category_id], ['site_id', '=', $site_id]]);
+        $field = "category_id_" . $goods_category_info['level'];
+        $res = model('goods_category')->delete([[$field, '=', $category_id], ['site_id', '=', $site_id]]);
 
         Cache::tag("goods_category_" . $site_id)->clear();
         return $this->success($res);
@@ -85,12 +92,12 @@ class GoodsCategory extends BaseModel
     public function getCategoryInfo($condition, $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,keywords,description,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,category_full_name,commission_rate,image_adv')
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([$condition, $field]);
         $cache = Cache::get("goods_category_getCategoryInfo_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -111,12 +118,12 @@ class GoodsCategory extends BaseModel
     public function getCategoryList($condition = [], $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate,image_adv', $order = '', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([$condition, $field, $order, $limit]);
         $cache = Cache::get("goods_category_getCategoryList_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -139,12 +146,12 @@ class GoodsCategory extends BaseModel
     {
 
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([$condition, $field, $order, $limit]);
         $cache = Cache::get("goods_category_getCategoryTree_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -208,12 +215,12 @@ class GoodsCategory extends BaseModel
     public function getCategoryPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,category_id_1,category_id_2,category_id_3,category_full_name,commission_rate')
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $page, $page_size]);
+        $data = json_encode([$condition, $field, $order, $page, $page_size]);
         $cache = Cache::get("goods_category_getCategoryPageList_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -234,19 +241,19 @@ class GoodsCategory extends BaseModel
     public function getCategoryByParent($condition = [], $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate', $order = '', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([$condition, $field, $order, $limit]);
         $cache = Cache::get("goods_category_getCategoryByParent_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
         $list = model('goods_category')->getList($condition, $field, $order, '', '', '', $limit);
         foreach ($list as $k => $v) {
-            $child_count             = model('goods_category')->getCount(['pid' => $v['category_id']]);
+            $child_count = model('goods_category')->getCount(['pid' => $v['category_id']]);
             $list[$k]['child_count'] = $child_count;
         }
 

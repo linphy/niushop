@@ -5,8 +5,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -74,109 +75,115 @@ class Order extends OrderCommon
     /**
      */
     public $order_status = [
-        self::ORDER_CREATE        => [
-            'status'          => self::ORDER_CREATE,
-            'name'            => '待支付',
+        self::ORDER_CREATE => [
+            'status' => self::ORDER_CREATE,
+            'name' => '待支付',
             'is_allow_refund' => 0,
-            'icon'            => 'upload/uniapp/order/order-icon.png',
-            'action'          => [
+            'icon' => 'upload/uniapp/order/order-icon.png',
+            'action' => [
                 [
                     'action' => 'orderClose',
-                    'title'  => '关闭订单',
-                    'color'  => ''
+                    'title' => '关闭订单',
+                    'color' => ''
                 ],
                 [
                     'action' => 'orderAddressUpdate',
-                    'title'  => '修改地址',
-                    'color'  => ''
+                    'title' => '修改地址',
+                    'color' => ''
                 ],
                 [
                     'action' => 'orderAdjustMoney',
-                    'title'  => '调整价格',
-                    'color'  => ''
+                    'title' => '调整价格',
+                    'color' => ''
                 ],
             ],
-            'member_action'   => [
+            'member_action' => [
                 [
                     'action' => 'orderClose',
-                    'title'  => '关闭订单',
-                    'color'  => '',
+                    'title' => '关闭订单',
+                    'color' => '',
                 ],
                 [
                     'action' => 'orderPay',
-                    'title'  => '支付',
-                    'color'  => ''
+                    'title' => '支付',
+                    'color' => ''
                 ],
             ],
-            'color'           => ''
+            'color' => ''
         ],
-        self::ORDER_PAY           => [
-            'status'          => self::ORDER_PAY,
-            'name'            => '待发货',
+        self::ORDER_PAY => [
+            'status' => self::ORDER_PAY,
+            'name' => '待发货',
             'is_allow_refund' => 0,
-            'icon'            => 'upload/uniapp/order/order-icon-send.png',
-            'action'          => [
+            'icon' => 'upload/uniapp/order/order-icon-send.png',
+            'action' => [
                 [
                     'action' => 'orderDelivery',
-                    'title'  => '发货',
-                    'color'  => ''
+                    'title' => '发货',
+                    'color' => ''
                 ],
                 [
                     'action' => 'orderAddressUpdate',
-                    'title'  => '修改地址',
-                    'color'  => ''
+                    'title' => '修改地址',
+                    'color' => ''
                 ],
             ],
-            'member_action'   => [],
-            'color'           => ''
+            'member_action' => [],
+            'color' => ''
         ],
-        self::ORDER_DELIVERY      => [
-            'status'          => self::ORDER_DELIVERY,
-            'name'            => '已发货',
+        self::ORDER_DELIVERY => [
+            'status' => self::ORDER_DELIVERY,
+            'name' => '已发货',
             'is_allow_refund' => 1,
-            'icon'            => 'upload/uniapp/order/order-icon-receive.png',
-            'action'          => [],
-            'member_action'   => [
+            'icon' => 'upload/uniapp/order/order-icon-receive.png',
+            'action' => [
+                [
+                    'action' => 'editDelivery',
+                    'title' => '修改物流单号',
+                    'color' => ''
+                ],
+            ],
+            'member_action' => [
                 [
                     'action' => 'memberTakeDelivery',
-                    'title'  => '确认收货',
-                    'color'  => ''
+                    'title' => '确认收货',
+                    'color' => ''
                 ],
                 [
                     'action' => 'trace',
-                    'title'  => '查看物流',
-                    'color'  => ''
+                    'title' => '查看物流',
+                    'color' => ''
                 ]
             ],
-            'color'           => ''
+            'color' => ''
         ],
         self::ORDER_TAKE_DELIVERY => [
-            'status'          => self::ORDER_TAKE_DELIVERY,
-            'name'            => '已收货',
+            'status' => self::ORDER_TAKE_DELIVERY,
+            'name' => '已收货',
             'is_allow_refund' => 1,
-            'icon'            => 'upload/uniapp/order/order-icon-received.png',
-            'action'          => [],
-            'member_action'   => [],
-            'color'           => ''
+            'icon' => 'upload/uniapp/order/order-icon-received.png',
+            'action' => [],
+            'member_action' => [],
+            'color' => ''
         ],
-        self::ORDER_COMPLETE      => [
-            'status'          => self::ORDER_COMPLETE,
-            'name'            => '已完成',
-            'icon'            => 'upload/uniapp/order/order-icon-received.png',
+        self::ORDER_COMPLETE => [
+            'status' => self::ORDER_COMPLETE,
+            'name' => '已完成',
+            'icon' => 'upload/uniapp/order/order-icon-received.png',
             'is_allow_refund' => 1,
-            'action'          => [],
-            'member_action'   => [],
-            'color'           => ''
+            'action' => [],
+            'member_action' => [],
+            'color' => ''
         ],
-        self::ORDER_CLOSE         => [
+        self::ORDER_CLOSE => [
             'status' => self::ORDER_CLOSE,
-            'name'   => '已关闭',
-            'icon'   => 'upload/uniapp/order/order-icon-close.png',
+            'name' => '已关闭',
+            'icon' => 'upload/uniapp/order/order-icon-close.png',
 
             'is_allow_refund' => 0,
-            'action'          => [],
-            'member_action'   => [],
-            'color'           => ''
+            'action' => [],
+            'member_action' => [],
+            'color' => ''
         ]
     ];
 
@@ -185,24 +192,24 @@ class Order extends OrderCommon
      */
     public $delivery_order_status = [
         self::ORDER_PAY => [
-            'status'          => self::ORDER_PAY,
-            'name'            => '待发货',
+            'status' => self::ORDER_PAY,
+            'name' => '待发货',
             'is_allow_refund' => 0,
-            'icon'            => 'upload/uniapp/order/order-icon-send.png',
-            'action'          => [
+            'icon' => 'upload/uniapp/order/order-icon-send.png',
+            'action' => [
                 [
                     'action' => 'orderDelivery',
-                    'title'  => '发货',
-                    'color'  => ''
+                    'title' => '发货',
+                    'color' => ''
                 ],
                 [
                     'action' => 'orderAddressUpdate',
-                    'title'  => '修改地址',
-                    'color'  => ''
+                    'title' => '修改地址',
+                    'color' => ''
                 ],
             ],
-            'member_action'   => [],
-            'color'           => ''
+            'member_action' => [],
+            'color' => ''
         ]
     ];
 
@@ -210,20 +217,20 @@ class Order extends OrderCommon
      * 配送状态
      */
     public $delivery_status = [
-        self::DELIVERY_WAIT   => [
+        self::DELIVERY_WAIT => [
             'status' => self::DELIVERY_WAIT,
-            'name'   => '待发货',
-            'color'  => ''
+            'name' => '待发货',
+            'color' => ''
         ],
-        self::DELIVERY_DOING  => [
+        self::DELIVERY_DOING => [
             'status' => self::DELIVERY_DOING,
-            'name'   => '已发货',
-            'color'  => ''
+            'name' => '已发货',
+            'color' => ''
         ],
         self::DELIVERY_FINISH => [
             'status' => self::DELIVERY_FINISH,
-            'name'   => '已收货',
-            'color'  => ''
+            'name' => '已收货',
+            'color' => ''
         ]
     ];
 
@@ -241,15 +248,15 @@ class Order extends OrderCommon
             ["order_id", "=", $order_info["order_id"]],
             ["order_status", "=", self::ORDER_CREATE],
         );
-        $data      = array(
-            "order_status"        => self::ORDER_PAY,
-            "order_status_name"   => $this->order_status[self::ORDER_PAY]["name"],
-            "pay_status"          => 1,
+        $data = array(
+            "order_status" => self::ORDER_PAY,
+            "order_status_name" => $this->order_status[self::ORDER_PAY]["name"],
+            "pay_status" => 1,
             "order_status_action" => json_encode($this->order_status[self::ORDER_PAY], JSON_UNESCAPED_UNICODE),
-            "pay_time"            => time(),
-            "is_enable_refund"    => 1,
-            "pay_type"            => $pay_type,
-            "pay_type_name"       => $pay_type_list[$pay_type]
+            "pay_time" => time(),
+            "is_enable_refund" => 1,
+            "pay_type" => $pay_type,
+            "pay_type_name" => $pay_type_list[$pay_type]
         );
 
         $result = model("order")->update($data, $condition);
@@ -268,7 +275,7 @@ class Order extends OrderCommon
         model('order_goods')->startTrans();
         try {
 
-            $delivery_no   = $param["delivery_no"]; //物流单号
+            $delivery_no = $param["delivery_no"]; //物流单号
             $delivery_type = $param["delivery_type"];
             if ($delivery_type == 0) {
                 $express_company_id = 0;
@@ -293,8 +300,8 @@ class Order extends OrderCommon
                 );
             }
 
-            $order_id       = 0;
-            $member_id      = 0;
+            $order_id = 0;
+            $member_id = 0;
             $goods_id_array = [];
             foreach ($order_goods_id_array as $k => $v) {
 
@@ -309,9 +316,9 @@ class Order extends OrderCommon
                     model('order_goods')->commit();
                     return $this->error([], 'ORDER_GOODS_IS_DELIVERYED');
                 }
-                $member_id        = $order_goods_info["member_id"];
+                $member_id = $order_goods_info["member_id"];
                 $goods_id_array[] = $order_goods_info["sku_id"] . ":" . $order_goods_info["num"] . ":" . $order_goods_info["sku_name"] . ":" . $order_goods_info["sku_image"];
-                $data             = ["delivery_status" => self::DELIVERY_DOING, "delivery_status_name" => $this->delivery_status[self::DELIVERY_DOING]["name"]];
+                $data = ["delivery_status" => self::DELIVERY_DOING, "delivery_status_name" => $this->delivery_status[self::DELIVERY_DOING]["name"]];
                 if (!empty($delivery_no)) {
                     $data['delivery_no'] = $delivery_no;
                 }
@@ -324,24 +331,24 @@ class Order extends OrderCommon
             }
             //创建包裹
             $order_common_model = new OrderCommon();
-            $lock_result        = $order_common_model->verifyOrderLock($order_id);
+            $lock_result = $order_common_model->verifyOrderLock($order_id);
             if ($lock_result["code"] < 0) {
                 model('order_goods')->rollback();
                 return $lock_result;
             }
             $express_delivery_model = new ExpressDelivery();
-            $delivery_data          = array(
-                "order_id"             => $order_id,
+            $delivery_data = array(
+                "order_id" => $order_id,
                 "order_goods_id_array" => $order_goods_id_array,
-                "goods_id_array"       => $goods_id_array,
-                "goods_array"          => $goods_id_array,
-                "site_id"              => $site_id,
-                "delivery_no"          => $delivery_no,
-                "member_id"            => $member_id,
-                "express_company_id"   => $express_company_id,
-                "delivery_type"        => $delivery_type,
-                'type'                 => $param['type'],
-                'template_id'          => $param['template_id']
+                "goods_id_array" => $goods_id_array,
+                "goods_array" => $goods_id_array,
+                "site_id" => $site_id,
+                "delivery_no" => $delivery_no,
+                "member_id" => $member_id,
+                "express_company_id" => $express_company_id,
+                "delivery_type" => $delivery_type,
+                'type' => $param['type'],
+                'template_id' => $param['template_id']
             );
 
             $delivery_id = $express_delivery_model->delivery($delivery_data);
@@ -372,7 +379,7 @@ class Order extends OrderCommon
             }
 
             foreach ($order_list as $v) {
-                $param['order_id']        = $v['order_id'];
+                $param['order_id'] = $v['order_id'];
                 $param['order_goods_ids'] = '';
 
 
@@ -384,7 +391,7 @@ class Order extends OrderCommon
                     }
 
                     $electronicsheet_model = new ElectronicsheetDelivery();
-                    $result                = $electronicsheet_model->delivery($param);
+                    $result = $electronicsheet_model->delivery($param);
                     if ($result['code'] < 0) {
                         return $result;
                     }
@@ -415,7 +422,7 @@ class Order extends OrderCommon
     public function orderDelivery($order_id)
     {
         //统计订单项目
-        $count          = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_WAIT], ["refund_status", "<>", 3]], "order_goods_id");
+        $count = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_WAIT], ["refund_status", "<>", 3]], "order_goods_id");
         $delivery_count = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_DOING], ["refund_status", "<>", 3]], "order_goods_id");
         if ($count == 0 && $delivery_count > 0) {
 
@@ -423,20 +430,20 @@ class Order extends OrderCommon
 
             //修改订单项的配送状态
             $order_data = array(
-                'order_status'         => self::ORDER_DELIVERY,
-                'order_status_name'    => $this->order_status[self::ORDER_DELIVERY]["name"],
-                'delivery_status'      => self::DELIVERY_FINISH,
+                'order_status' => self::ORDER_DELIVERY,
+                'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
+                'delivery_status' => self::DELIVERY_FINISH,
                 'delivery_status_name' => $this->delivery_status[self::DELIVERY_FINISH]["name"],
-                'order_status_action'  => json_encode($this->order_status[self::ORDER_DELIVERY], JSON_UNESCAPED_UNICODE),
-                'delivery_time'        => time()
+                'order_status_action' => json_encode($this->order_status[self::ORDER_DELIVERY], JSON_UNESCAPED_UNICODE),
+                'delivery_time' => time()
             );
-            $res        = model('order')->update($order_data, [['order_id', "=", $order_id]]);
+            $res = model('order')->update($order_data, [['order_id', "=", $order_id]]);
 
             //获取订单自动收货时间
-            $config_model             = new Config();
+            $config_model = new Config();
             $event_time_config_result = $config_model->getOrderEventTimeConfig($order_info['site_id']);
-            $event_time_config        = $event_time_config_result["data"];
-            $now_time                 = time(); //当前时间
+            $event_time_config = $event_time_config_result["data"];
+            $now_time = time(); //当前时间
 
             if (!empty($event_time_config)) {
                 $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400; //自动收货时间
@@ -474,31 +481,31 @@ class Order extends OrderCommon
      */
     public function orderAddressUpdate($param, $condition)
     {
-        $province_id        = $param["province_id"];
-        $city_id            = $param["city_id"];
-        $district_id        = $param["district_id"];
-        $community_id       = $param["community_id"];
-        $address            = $param["address"];
-        $full_address       = $param["full_address"];
-        $longitude          = $param["longitude"];
-        $latitude           = $param["latitude"];
-        $mobile             = $param["mobile"];
-        $telephone          = $param["telephone"];
-        $name               = $param["name"];
-        $data               = array(
-            "province_id"  => $province_id,
-            "city_id"      => $city_id,
-            "district_id"  => $district_id,
+        $province_id = $param["province_id"];
+        $city_id = $param["city_id"];
+        $district_id = $param["district_id"];
+        $community_id = $param["community_id"];
+        $address = $param["address"];
+        $full_address = $param["full_address"];
+        $longitude = $param["longitude"];
+        $latitude = $param["latitude"];
+        $mobile = $param["mobile"];
+        $telephone = $param["telephone"];
+        $name = $param["name"];
+        $data = array(
+            "province_id" => $province_id,
+            "city_id" => $city_id,
+            "district_id" => $district_id,
             "community_id" => $community_id,
-            "address"      => $address,
+            "address" => $address,
             "full_address" => $full_address,
-            "longitude"    => $longitude,
-            "latitude"     => $latitude,
-            "mobile"       => $mobile,
-            "telephone"    => $telephone,
-            "name"         => $name,
+            "longitude" => $longitude,
+            "latitude" => $latitude,
+            "mobile" => $mobile,
+            "telephone" => $telephone,
+            "name" => $name,
         );
-        $order_info         = model("order")->getInfo($condition, "order_status");
+        $order_info = model("order")->getInfo($condition, "order_status");
         $order_status_array = [self::ORDER_PAY, self::ORDER_CREATE];
         if (!in_array($order_info["order_status"], $order_status_array))
             return $this->error("", "当前订单状态不可编辑收货地址!");
@@ -516,9 +523,9 @@ class Order extends OrderCommon
         //是否入库
         if ($order_goods_info["is_refund_stock"] == 1) {
             $goods_stock_model = new GoodsStock();
-            $item_param        = array(
+            $item_param = array(
                 "sku_id" => $order_goods_info["sku_id"],
-                "num"    => $order_goods_info["num"],
+                "num" => $order_goods_info["num"],
             );
             //返还库存
             $goods_stock_model->incStock($item_param);
@@ -533,9 +540,9 @@ class Order extends OrderCommon
      */
     public function orderDetail($order_info)
     {
-        $express_package_model      = new ExpressPackage();
-        $package_list               = $express_package_model->package([["order_id", "=", $order_info['order_id']]]);
-        $order_info                 = [];
+        $express_package_model = new ExpressPackage();
+        $package_list = $express_package_model->package([["order_id", "=", $order_info['order_id']]]);
+        $order_info = [];
         $order_info["package_list"] = $package_list;
         return $order_info;
     }

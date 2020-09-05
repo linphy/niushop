@@ -25,8 +25,11 @@
 
 <script type="text/html" id="operation">
 	<div class="ns-table-btn">
+	{{# if(d.wechat_is_open == 0){ }}
 		<a class="layui-btn" lay-event="open">开启</a>
+	{{# }else{ }}	
 		<a class="layui-btn" lay-event="close">关闭</a>
+	{{# } }}
 	</div>
 </script>
 

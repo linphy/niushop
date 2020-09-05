@@ -5,8 +5,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -142,13 +143,13 @@ class AddonQuick extends BaseModel
             $addon_name_arr = array_column($addon_list,'name');
             foreach($website_addon_list as $k=>$v){
 
-                if($v['addon_type'] == $type){
+                if($v['type_mark'] == $type){
 
                     if(empty($addon_list)){
                         $arr[] = $v;
                     }else{
                         //判断是否在插件中
-                        if(!in_array($v['code'],$addon_name_arr)){
+                        if(!in_array($v['addon_goods_key'],$addon_name_arr)){
                             $arr[] = $v;
                         }
                     }

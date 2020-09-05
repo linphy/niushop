@@ -3,44 +3,39 @@
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/upgrade/version_log.css" />
 {/block}
 {block name="main"}
-<!-- 版本 1.0.1 -->
-<!-- 版本 1.0.1 -->
-<!-- 版本 1.0.1 -->
-<!-- 版本 1.0.1 -->
-<!-- 版本 1.0.1 -->
 <script type="text/html" id="log_block">
     <div class="log-block">
         <div class="log-content-block">
             <div class="log-content">
-                {{#  if(d.total_count === 0){ }}
-                    暂无数据
+                {{#  if(d.count === 0){ }}
+                暂无数据
                 {{#  }else{ }}
                 <div class="log-step-text">
                     <ul class="layui-timeline">
-                        {{#  layui.each(d.data, function(index, item){ }}
+                        {{#  layui.each(d.list, function(index, item){ }}
                         <li class="layui-timeline-item">
                             <div class="layui-timeline-axis ns-log-version-date">{{ item.format_time }}</div>
                             <i class="layui-icon open layui-timeline-axis ns-bg-color"  style="display:{{# if(item.isclose){ }}block {{#  }else{ }}none {{#  } }}" onclick="showHidebtn($(this))" data-index="{{index}}">&#xe61a;</i>
                             <i class="layui-icon close layui-timeline-axis ns-bg-color" style="display:{{# if(item.isclose){ }}none {{#  }else{ }}block {{#  } }}" onclick="showHidebtn($(this))" data-index="{{index}}">&#xe619;</i>
                             <div class="log-body look_text" onclick="showHide($(this))" data-index="{{index}}">{{# if(item.isclose){ }}点击查看完整更新日志{{#  }else{ }}点击收起 {{#  } }}</div>
                             <div class="look" style="display:{{# if(item.isclose){ }}none{{#  }else{ }}block {{#  } }}">
-                                 {{#  layui.each(item.list, function(item_index, item_item){ }}
+                                {{#  layui.each(item.list, function(item_index, item_item){ }}
                                 <div class="layui-timeline-content layui-text log-body">
                                     <h3 class="log-step-text-title">{{ item_item.goods_name }}</h3>
                                     <div class="log-step-text-content">
                                         版本号：{{ item_item.version_name }}
                                     </div>
                                     <div class="log-step-text-content">
-                                        发布时间：{{ ns.time_to_date(item_item.online_time) }}
+                                        发布时间：{{ ns.time_to_date(item_item.create_time) }}
                                     </div>
                                     <div class="log-detail">
                                         <!-- <div class="log-update ns-text-color">更新</div> -->
-                                        <div>{{ item_item.description }}</div>
+                                        <div>{{ item_item.version_desc }}</div>
                                     </div>
                                 </div>
                                 {{#  }); }}
                             </div>
-                           
+
                         </li>
                         {{#  }); }}
                         <li class="layui-timeline-item load-more">
@@ -49,9 +44,9 @@
                             <div class="layui-timeline-content layui-text log-body">
                                 <h3 class="log-step-text-title" onclick="LoadingData()">
                                     {{# if(d.is_end == 1){ }}
-                                        已经加载到底了
+                                    已经加载到底了
                                     {{# }else{ }}
-                                        加载更多
+                                    加载更多
                                     {{# } }}
                                 </h3>
                             </div>
@@ -98,13 +93,13 @@
     }
 
     function renderLogData(res){
-        var new_list = res.data.data;
+        var new_list = res.data.list;
         if(page > 1){
             var old_list = logData.data;
             //如果上一页的最后一条和新数据的第一条是属于同一天的要进行数据合并
             if(old_list[old_list.length - 1]['time'] === new_list[0]['time']){
                 var first = new_list.shift();
-                
+
                 for(var i in first['list']){
                     old_list[old_list.length - 1]['list'].push(first['list'][i]);
                 }
@@ -128,7 +123,7 @@
         });
     }
     function renderLogDataStatus(res){
-        logData.data[res].isclose = logData.data[res].isclose ? 0 :1
+        logData.list[res].isclose = logData.list[res].isclose ? 0 :1
         layui.use(['form', 'laytpl'], function() {
             var laytpl = layui.laytpl;
             laytpl($("#log_block").html()).render(logData, function(html) {
@@ -138,18 +133,18 @@
     }
     function showHide(val){
         val.siblings('.look').slideToggle(function(){
-          val.text( $(this).is(":visible") ? "点击收起" : "点击查看完整更新日志" );
+            val.text( $(this).is(":visible") ? "点击收起" : "点击查看完整更新日志" );
 
-          if($(this).is(":visible") ){
-            val.siblings('.close').show()
-            val.siblings('.open').hide()
-            
-          }else{
-            val.siblings('.open').show()
-            val.siblings('.close').hide()
-           
-          }
-           renderLogDataStatus(val.data('index'))
+            if($(this).is(":visible") ){
+                val.siblings('.close').show()
+                val.siblings('.open').hide()
+
+            }else{
+                val.siblings('.open').show()
+                val.siblings('.close').hide()
+
+            }
+            renderLogDataStatus(val.data('index'))
         })
     }
     function showHidebtn(val){
@@ -162,7 +157,7 @@
             }
             val.siblings('.look_text').text( $(this).is(":visible") ? "点击收起" : "点击查看完整更新日志" );
             renderLogDataStatus(val.data('index'))
-         })
+        })
     }
     $(function(){
         LoadingData();

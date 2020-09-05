@@ -12,6 +12,7 @@
 namespace app\shop\controller;
 
 use app\model\express\Config as ConfigModel;
+use app\model\express\ExpressPackage;
 use app\model\order\OrderCommon as OrderCommonModel;
 use app\model\order\Order as OrderModel;
 use addon\electronicsheet\model\ExpressElectronicsheet as ExpressElectronicsheetModel;
@@ -39,29 +40,29 @@ class Delivery extends BaseShop
     public function lists()
     {
         $order_label_list = array(
-            "order_no"     => "订单号",
+            "order_no" => "订单号",
             "out_trade_no" => "外部单号",
-            "name"         => "收货人姓名",
-            "order_name"   => "商品名称",
+            "name" => "收货人姓名",
+            "order_name" => "商品名称",
         );
-        $order_model      = new OrderModel();
+        $order_model = new OrderModel();
 
-        $order_status_list  = $order_model->delivery_order_status;
-        $order_status       = input("order_status", "");//订单状态
-        $order_name         = input("order_name", '');
-        $pay_type           = input("pay_type", '');
-        $order_from         = input("order_from", '');
-        $start_time         = input("start_time", '');
-        $end_time           = input("end_time", '');
-        $order_label        = !empty($order_label_list[input("order_label")]) ? input("order_label") : "";
-        $search_text        = input("search", '');
-        $promotion_type     = input("promotion_type", '');//订单类型
-        $order_type         = input("order_type", 'all');//营销类型
+        $order_status_list = $order_model->delivery_order_status;
+        $order_status = input("order_status", "");//订单状态
+        $order_name = input("order_name", '');
+        $pay_type = input("pay_type", '');
+        $order_from = input("order_from", '');
+        $start_time = input("start_time", '');
+        $end_time = input("end_time", '');
+        $order_label = !empty($order_label_list[input("order_label")]) ? input("order_label") : "";
+        $search_text = input("search", '');
+        $promotion_type = input("promotion_type", '');//订单类型
+        $order_type = input("order_type", 'all');//营销类型
         $order_common_model = new OrderCommonModel();
         if (request()->isAjax()) {
             $page_index = input('page', 1);
-            $page_size  = input('page_size', PAGE_LIST_ROWS);
-            $condition  = [
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $condition = [
                 ["order_type", "=", 1],
                 ["site_id", "=", $this->site_id],
                 ['is_delete', '=', 0]
@@ -133,14 +134,14 @@ class Delivery extends BaseShop
      */
     public function express()
     {
-        $config_model   = new ConfigModel();
-        $config_result  = $config_model->getExpressConfig($this->site_id);
+        $config_model = new ConfigModel();
+        $config_result = $config_model->getExpressConfig($this->site_id);
         $express_config = $config_result["data"];
         $this->assign("express_config", $express_config);
         $config_result = $config_model->getStoreConfig($this->site_id);
-        $store_config  = $config_result["data"];
+        $store_config = $config_result["data"];
         $this->assign("store_config", $store_config);
-        $config_result         = $config_model->getLocalDeliveryConfig($this->site_id);
+        $config_result = $config_model->getLocalDeliveryConfig($this->site_id);
         $local_delivery_config = $config_result["data"];
         $this->assign("local_delivery_config", $local_delivery_config);
         return $this->fetch("delivery/delivery");
@@ -155,7 +156,7 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input("is_use", 0);
-            $data   = array();
+            $data = array();
             $result = $config_model->setExpressConfig($data, $is_use, $this->site_id);
             return $result;
         }
@@ -169,12 +170,12 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input("is_use", 0);
-            $data   = array();
+            $data = array();
             $result = $config_model->setExpressConfig($data, $is_use, $this->site_id);
             return $result;
         } else {
             $config_result = $config_model->getExpressConfig($this->site_id);
-            $config        = $config_result["data"];
+            $config = $config_result["data"];
             $this->assign("config", $config);
             return $this->fetch("delivery/store_config");
         }
@@ -189,7 +190,7 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input("is_use", 0);
-            $data   = array();
+            $data = array();
             $result = $config_model->setStoreConfig($data, $is_use, $this->site_id);
             return $result;
         }
@@ -204,7 +205,7 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input("is_use", 0);
-            $data   = array();
+            $data = array();
             $result = $config_model->setLocalDeliveryConfig($data, $is_use, $this->site_id);
             return $result;
         }
@@ -219,12 +220,12 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input("is_use", 0);
-            $data   = array();
+            $data = array();
             $result = $config_model->setStoreConfig($data, $is_use, $this->site_id);
             return $result;
         } else {
             $config_result = $config_model->getStoreConfig($this->site_id);
-            $config        = $config_result["data"];
+            $config = $config_result["data"];
             $this->assign("config", $config);
             return $this->fetch("delivery/store_config");
         }
@@ -238,12 +239,12 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input("is_use", 0);
-            $data   = array();
+            $data = array();
             $result = $config_model->setLocalDeliveryConfig($data, $is_use, $this->site_id);
             return $result;
         } else {
             $config_result = $config_model->getLocalDeliveryConfig($this->site_id);
-            $config        = $config_result["data"];
+            $config = $config_result["data"];
             $this->assign("config", $config);
             return $this->fetch("delivery/local_config");
         }
@@ -261,7 +262,7 @@ class Delivery extends BaseShop
 
             //获取电子面单模板
             $electronicsheet_model = new ExpressElectronicsheetModel();
-            $condition[]           = ['site_id', '=', $this->site_id];
+            $condition[] = ['site_id', '=', $this->site_id];
 
             $electronicsheet_list = $electronicsheet_model->getExpressElectronicsheetList($condition, '', 'is_default desc');
             return $electronicsheet_list;
@@ -280,12 +281,12 @@ class Delivery extends BaseShop
         if (request()->isAjax()) {
 
             $order_model = new OrderModel();
-            $data        = array(
-                "type"               => input('type', 'manual'),//发货方式（手动发货、电子面单）
+            $data = array(
+                "type" => input('type', 'manual'),//发货方式（手动发货、电子面单）
                 "express_company_id" => input("express_company_id", 0),//物流公司
-                "delivery_type"      => input("delivery_type", 0),//是否需要物流
-                "site_id"            => $this->site_id,
-                "template_id"        => input('template_id', 0),//电子面单模板id
+                "delivery_type" => input("delivery_type", 0),//是否需要物流
+                "site_id" => $this->site_id,
+                "template_id" => input('template_id', 0),//电子面单模板id
             );
 
             $order_list = input('order_list', '');
@@ -306,27 +307,27 @@ class Delivery extends BaseShop
             $addon_is_exit = addon_is_exit('electronicsheet', $this->site_id);
             if ($addon_is_exit != 1) {
                 return [
-                    'code'    => -1001,
+                    'code' => -1001,
                     'message' => '电子面单插件不存在',
-                    'data'    => ''
+                    'data' => ''
                 ];
             }
 
             $order_model = new OrderModel();
-            $data        = array(
-                "type"               => 'electronicsheet',//电子面单
+            $data = array(
+                "type" => 'electronicsheet',//电子面单
                 "express_company_id" => 0,//物流公司
-                "delivery_type"      => 1,
-                "site_id"            => $this->site_id,
-                "template_id"        => input('template_id', 0),//电子面单模板id
-                "is_delivery"        => input('is_delivery', 0),//是否发货
-                'order_id'           => input('order_id'),//订单id
-                'order_goods_ids'    => '',
-                'delivery_no'        => ''
+                "delivery_type" => 1,
+                "site_id" => $this->site_id,
+                "template_id" => input('template_id', 0),//电子面单模板id
+                "is_delivery" => input('is_delivery', 0),//是否发货
+                'order_id' => input('order_id'),//订单id
+                'order_goods_ids' => '',
+                'delivery_no' => ''
             );
 
             $electronicsheet_model = new ElectronicsheetDelivery();
-            $result                = $electronicsheet_model->delivery($data);
+            $result = $electronicsheet_model->delivery($data);
             if ($result['code'] >= 0) {
 
                 if ($data['is_delivery'] == 1) {//发货
@@ -340,6 +341,47 @@ class Delivery extends BaseShop
                 }
             }
             return $result;
+        }
+    }
+
+
+    /**
+     * 获取单个订单的物流信息（电子面单的除外）
+     */
+    public function getOrderDelivery()
+    {
+        if (request()->isAjax()) {
+
+            $order_id = input('order_id', '');
+
+            $condition = [
+                ['order_id', '=', $order_id],
+                ['site_id', '=', $this->site_id],
+                ['delivery_type', '=', 1],
+                ['type', '=', 'manual']
+            ];
+
+            $express_package_model = new ExpressPackage();
+
+            $list = $express_package_model->getExpressDeliveryPackageList($condition);
+            return $list;
+        }
+    }
+
+    /**
+     * 修改单个订单的物流信息（电子面单的除外）
+     */
+    public function editOrderDelivery()
+    {
+        if (request()->isAjax()) {
+
+            $delivery_json = input('delivery_json');
+
+            $express_package_model = new ExpressPackage();
+
+            $res = $express_package_model->editOrderExpressDeliveryPackage($delivery_json);
+
+            return $res;
         }
     }
 

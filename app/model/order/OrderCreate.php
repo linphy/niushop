@@ -5,8 +5,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -150,6 +151,7 @@ class OrderCreate extends BaseModel
                 'invoice_title_type'      => $order_item["invoice_title_type"] ?? 0,
                 'buyer_ask_delivery_time' => $order_item['buyer_ask_delivery_time'] ?? '',//定时达
             ];
+
             $order_id   = model("order")->add($data_order);
 
             $pay_money += $order_item['pay_money'];
@@ -793,8 +795,9 @@ class OrderCreate extends BaseModel
                         } else {
                             $local_delivery_time = 0;
                             if (!empty($data['buyer_ask_delivery_time'])) {
-                                $buyer_ask_delivery_time_temp = explode(':', $data['buyer_ask_delivery_time']);
-                                $local_delivery_time          = $buyer_ask_delivery_time_temp[0] * 3600 + $buyer_ask_delivery_time_temp[1] * 60;
+                                //$buyer_ask_delivery_time_temp = explode(':', $data['buyer_ask_delivery_time']);
+                                //$local_delivery_time          = $buyer_ask_delivery_time_temp[0] * 3600 + $buyer_ask_delivery_time_temp[1] * 60;
+                                $local_delivery_time = strtotime($data['buyer_ask_delivery_time']);
                             }
                             $shop_goods['buyer_ask_delivery_time'] = $local_delivery_time;
 

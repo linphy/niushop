@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -36,12 +37,13 @@ class Config extends BaseShop
                 'icp'        => input('icp', ''),
                 'gov_record' => $gov_record = input('gov_record', ''),
                 'gov_url'    => input('gov_url', ''),
+                'market_supervision_url'    => input('market_supervision_url', ''),
                 'logo' => '',
                 'company_name' => '',
                 'copyright_link' => '',
                 'copyright_desc' => ''
             ];
-            if ($auth_info['code'] >= 0) {
+            if ($auth_info['code'] == 0) {
                 $data['logo'] = input('logo', '');
                 $data['company_name'] = input('company_name', '');
                 $data['copyright_link'] = input('copyright_link', '');
@@ -173,5 +175,20 @@ class Config extends BaseShop
         $config = $config_model->getMapConfig();
         $this->assign('info', $config['data']['value']);
         return $this->fetch('config/map');
+    }
+    
+    /**
+     * h5域名配置
+     */
+    public function h5DomainName(){
+    	
+    	$config_model = new ConfigModel();
+    	$domain_name = input("domain_name", "");
+    	
+    	$result = $config_model->seth5DomainName([
+    			'domain_name_h5' => $domain_name
+    	]);
+    	
+    	return $result;
     }
 }

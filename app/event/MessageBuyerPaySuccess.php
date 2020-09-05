@@ -15,21 +15,20 @@ namespace app\event;
 use app\model\order\OrderMessage;
 
 /**
- * 订单收货发送消息
+ * 买家支付成功通知商家
  */
-class MessageOrderReceive
+class MessageBuyerPaySuccess
 {
     /**
      * @param $param
+     * @return array|mixed|void
      */
     public function handle($param)
     {
-        // 发送订单消息
-        if ($param["keywords"] == "ORDER_TAKE_DELIVERY") {
-            //发送订单消息
+        //发送订单消息
+        if ($param["keywords"] == "BUYER_PAY") {
             $model = new OrderMessage();
-            return $model->messageOrderTakeDelivery($param);
+            return $model->messageBuyerPaySuccess($param);
         }
     }
-
 }

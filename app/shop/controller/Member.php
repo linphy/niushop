@@ -4,13 +4,15 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
 namespace app\shop\controller;
 
+use addon\fenxiao\model\Fenxiao;
 use app\model\member\Member as MemberModel;
 use app\model\member\MemberAddress as MemberAddressModel;
 use app\model\member\MemberLabel as MemberLabelModel;
@@ -42,9 +44,9 @@ class Member extends BaseShop
         $buyed_count = $member->getMemberCount([['site_id', '=', $this->site_id], ['order_complete_num', '>', 0]]);
 
         $this->assign('data', [
-            'total_count'  => $total_count['data'],
+            'total_count' => $total_count['data'],
             'newadd_count' => $newadd_count['data'],
-            'buyed_count'  => $buyed_count['data']
+            'buyed_count' => $buyed_count['data']
         ]);
         return $this->fetch('member/index');
     }
@@ -57,7 +59,7 @@ class Member extends BaseShop
         if (request()->isAjax()) {
             $member = new MemberModel();
             $handle = input('handle', false);
-            $res    = $member->getMemberCountByArea($this->site_id, $handle);
+            $res = $member->getMemberCountByArea($this->site_id, $handle);
             return $res;
         }
     }
@@ -68,16 +70,19 @@ class Member extends BaseShop
      */
     public function memberList()
     {
+        //判断分销是否存在
+        $is_exit_fenxiao = addon_is_exit('fenxiao');
+
         if (request()->isAjax()) {
-            $page             = input('page', 1);
-            $page_size        = input('page_size', PAGE_LIST_ROWS);
-            $search_text      = input('search_text', '');
+            $page = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $search_text = input('search_text', '');
             $search_text_type = input('search_text_type', 'username');//可以传username mobile email
-            $level_id         = input('level_id', 0);
-            $label_id         = input('label_id', 0);
-            $reg_start_date   = input('reg_start_date', '');
-            $reg_end_date     = input('reg_end_date', '');
-            $status           = input('status', '');
+            $level_id = input('level_id', 0);
+            $label_id = input('label_id', 0);
+            $reg_start_date = input('reg_start_date', '');
+            $reg_end_date = input('reg_end_date', '');
+            $status = input('status', '');
 
             $condition[] = ['site_id', '=', $this->site_id];
             //下拉选择
@@ -105,20 +110,39 @@ class Member extends BaseShop
             }
 
             $order = 'reg_time desc';
-            $field = 'member_id, username, mobile, email, status, headimg, member_level, member_level_name, member_label, member_label_name, qq, qq_openid, wx_openid, wx_unionid, ali_openid, baidu_openid, toutiao_openid, douyin_openid, login_ip, login_type, login_time, last_login_ip, last_login_type, last_login_time, login_num, nickname, realname, sex, location, birthday, reg_time, point, balance, balance_money, growth, account5';
+            $field = '*';
 
             $member_model = new MemberModel();
-            $list         = $member_model->getMemberPageList($condition, $page, $page_size, $order, $field);
-            return $list;
+            $result = $member_model->getMemberPageList($condition, $page, $page_size, $order, $field);
+            if($is_exit_fenxiao == 1){
+                $list = $result['data']['list'];
+                if(!empty($list)){
+
+                    $fenxiao_model = new Fenxiao();
+                    foreach($list as $k=>$v){
+
+                        if($v['is_fenxiao'] == 1){
+                            $parent_fenxiao_name = $fenxiao_model->getParentFenxiaoName($v['fenxiao_id'],2);
+                        }else{
+                            $parent_fenxiao_name = $fenxiao_model->getParentFenxiaoName($v['fenxiao_id'],1);
+                        }
+                        $list[$k]['parent_fenxiao_name'] = $parent_fenxiao_name;
+                    }
+                }
+
+                $result['data']['list'] = $list;
+            }
+
+            return $result;
         } else {
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list  = $member_level_model->getMemberLevelList([['site_id', '=', $this->site_id]], 'level_id, level_name', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([['site_id', '=', $this->site_id]], 'level_id, level_name', 'growth asc');
             $this->assign('member_level_list', $member_level_list['data']);
 
             //会员标签
             $member_label_model = new MemberLabelModel();
-            $member_label_list  = $member_label_model->getMemberLabelList([['site_id', '=', $this->site_id]], 'label_id, label_name', 'sort asc');
+            $member_label_list = $member_label_model->getMemberLabelList([['site_id', '=', $this->site_id]], 'label_id, label_name', 'sort asc');
             $this->assign('member_label_list', $member_label_list['data']);
 
             /*奖励规则*/
@@ -132,6 +156,7 @@ class Member extends BaseShop
             $growth = event('MemberAccountRule', ['account' => 'growth', 'site_id' => $this->site_id]);
             $this->assign('growth', $growth);
 
+            $this->assign('is_exit_fenxiao', $is_exit_fenxiao);
             return $this->fetch('member/member_list');
         }
     }
@@ -143,20 +168,20 @@ class Member extends BaseShop
     {
         if (request()->isAjax()) {
             $data = [
-                'site_id'           => $this->site_id,
-                'username'          => input('username', ''),
-                'mobile'            => input('mobile', ''),
-                'email'             => input('email', ''),
-                'password'          => data_md5(input('password', '')),
-                'status'            => input('status', 1),
-                'headimg'           => input('headimg', ''),
-                'member_level'      => input('member_level', ''),
+                'site_id' => $this->site_id,
+                'username' => input('username', ''),
+                'mobile' => input('mobile', ''),
+                'email' => input('email', ''),
+                'password' => data_md5(input('password', '')),
+                'status' => input('status', 1),
+                'headimg' => input('headimg', ''),
+                'member_level' => input('member_level', ''),
                 'member_level_name' => input('member_level_name', ''),
-                'nickname'          => input('nickname', ''),
-                'sex'               => input('sex', 0),
-                'birthday'          => input('birthday', '') ? strtotime(input('birthday', '')) : 0,
-                'realname'          => input('realname', ''),
-                'reg_time'          => time(),
+                'nickname' => input('nickname', ''),
+                'sex' => input('sex', 0),
+                'birthday' => input('birthday', '') ? strtotime(input('birthday', '')) : 0,
+                'realname' => input('realname', ''),
+                'reg_time' => time(),
             ];
 
             $member_model = new MemberModel();
@@ -165,7 +190,7 @@ class Member extends BaseShop
         } else {
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list  = $member_level_model->getMemberLevelList([['site_id', '=', $this->site_id]], 'level_id, level_name', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([['site_id', '=', $this->site_id]], 'level_id, level_name', 'growth asc');
             $this->assign('member_level_list', $member_level_list['data']);
 
             return $this->fetch('member/add_member');
@@ -179,18 +204,18 @@ class Member extends BaseShop
     {
         if (request()->isAjax()) {
             $data = [
-                'mobile'            => input('mobile', ''),
-                'email'             => input('email', ''),
-                'status'            => input('status', 1),
-                'headimg'           => input('headimg', ''),
-                'member_level'      => input('member_level', ''),
+                'mobile' => input('mobile', ''),
+                'email' => input('email', ''),
+                'status' => input('status', 1),
+                'headimg' => input('headimg', ''),
+                'member_level' => input('member_level', ''),
                 'member_level_name' => input('member_level_name', ''),
-                'nickname'          => input('nickname', ''),
-                'sex'               => input('sex', 0),
-                'birthday'          => input('birthday', '') ? strtotime(input('birthday', '')) : 0,
+                'nickname' => input('nickname', ''),
+                'sex' => input('sex', 0),
+                'birthday' => input('birthday', '') ? strtotime(input('birthday', '')) : 0,
             ];
 
-            $member_id    = input('member_id', 0);
+            $member_id = input('member_id', 0);
             $member_model = new MemberModel();
             $this->addLog("编辑会员:id" . $member_id, $data);
             return $member_model->editMember($data, [['member_id', '=', $member_id]]);
@@ -198,13 +223,13 @@ class Member extends BaseShop
 
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list  = $member_level_model->getMemberLevelList([['site_id', '=', $this->site_id]], 'level_id, level_name', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([['site_id', '=', $this->site_id]], 'level_id, level_name', 'growth asc');
             $this->assign('member_level_list', $member_level_list['data']);
 
             //会员信息
-            $member_id    = input('member_id', 0);
+            $member_id = input('member_id', 0);
             $member_model = new MemberModel();
-            $member_info  = $member_model->getMemberInfo([['member_id', '=', $member_id]]);
+            $member_info = $member_model->getMemberInfo([['member_id', '=', $member_id]]);
             $this->assign('member_info', $member_info);
 
             //会员详情四级菜单
@@ -219,7 +244,7 @@ class Member extends BaseShop
      */
     public function deleteMember()
     {
-        $member_ids   = input('member_ids', '');
+        $member_ids = input('member_ids', '');
         $member_model = new MemberModel();
         $this->addLog("删除会员:id" . $member_ids);
         return $member_model->deleteMember([['member_id', 'in', $member_ids], ['site_id', '=', $this->site_id]]);
@@ -230,8 +255,8 @@ class Member extends BaseShop
      */
     public function modifyLabel()
     {
-        $member_ids   = input('member_ids', '');
-        $label_ids    = input('label_ids', '');
+        $member_ids = input('member_ids', '');
+        $label_ids = input('label_ids', '');
         $member_model = new MemberModel();
         return $member_model->modifyMemberLabel($label_ids, [['member_id', 'in', $member_ids]]);
     }
@@ -241,8 +266,8 @@ class Member extends BaseShop
      */
     public function modifyStatus()
     {
-        $member_ids   = input('member_ids', '');
-        $status       = input('status', 0);
+        $member_ids = input('member_ids', '');
+        $status = input('status', 0);
         $member_model = new MemberModel();
         return $member_model->modifyMemberStatus($status, [['member_id', 'in', $member_ids]]);
     }
@@ -252,8 +277,8 @@ class Member extends BaseShop
      */
     public function modifyPassword()
     {
-        $member_ids   = input('member_ids', '');
-        $password     = input('password', '123456');
+        $member_ids = input('member_ids', '');
+        $password = input('password', '123456');
         $member_model = new MemberModel();
         return $member_model->resetMemberPassword($password, [['member_id', 'in', $member_ids]]);
     }
@@ -264,13 +289,13 @@ class Member extends BaseShop
     public function accountDetail()
     {
         if (request()->isAjax()) {
-            $page         = input('page', 1);
-            $page_size    = input('page_size', PAGE_LIST_ROWS);
+            $page = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
             $account_type = input('account_type', '');
-            $from_type    = input('from_type', '');
-            $start_date   = input('start_date', '');
-            $end_date     = input('end_date', '');
-            $member_id    = input('member_id', 0);
+            $from_type = input('from_type', '');
+            $start_date = input('start_date', '');
+            $end_date = input('end_date', '');
+            $member_id = input('member_id', 0);
 
             $condition[] = ['site_id', '=', $this->site_id];
             $condition[] = ['member_id', '=', $member_id];
@@ -292,8 +317,8 @@ class Member extends BaseShop
             }
 
             $member_account_model = new MemberAccountModel();
-            $res                  = $member_account_model->getMemberAccountPageList($condition, $page, $page_size);
-            $account_type_arr     = $member_account_model->getAccountType();
+            $res = $member_account_model->getMemberAccountPageList($condition, $page, $page_size);
+            $account_type_arr = $member_account_model->getAccountType();
             foreach ($res['data']['list'] as $key => $val) {
                 $res['data']['list'][$key]['account_type_name'] = $account_type_arr[$val['account_type']];
             }
@@ -304,12 +329,12 @@ class Member extends BaseShop
 
             //会员信息
             $member_model = new MemberModel();
-            $member_info  = $member_model->getMemberDetail($member_id);
+            $member_info = $member_model->getMemberDetail($member_id);
             $this->assign('member_info', $member_info['data']);
 
             //账户类型和来源类型
             $member_account_model = new MemberAccountModel();
-            $account_type_arr     = $member_account_model->getAccountType();
+            $account_type_arr = $member_account_model->getAccountType();
 //			$from_type_arr = $member_account_model->getFromType();
             $this->assign('account_type_arr', $account_type_arr);
 //			$this->assign('from_type_arr', $from_type_arr['point']);
@@ -326,9 +351,9 @@ class Member extends BaseShop
      */
     public function adjustBalance()
     {
-        $member_id  = input('member_id', 0);
+        $member_id = input('member_id', 0);
         $adjust_num = input('adjust_num', 0);
-        $remark     = input('remark', '');
+        $remark = input('remark', '');
         $this->addLog("会员余额调整id:" . $member_id . "金额" . $adjust_num);
         $member_account_model = new MemberAccountModel();
         return $member_account_model->addMemberAccount($this->site_id, $member_id, 'balance', $adjust_num, 'adjust', 0, $remark);
@@ -339,9 +364,9 @@ class Member extends BaseShop
      */
     public function adjustBalanceMoney()
     {
-        $member_id  = input('member_id', 0);
+        $member_id = input('member_id', 0);
         $adjust_num = input('adjust_num', 0);
-        $remark     = input('remark', '');
+        $remark = input('remark', '');
         $this->addLog("会员余额调整id:" . $member_id . "金额" . $adjust_num);
         $member_account_model = new MemberAccountModel();
         return $member_account_model->addMemberAccount($this->site_id, $member_id, 'balance_money', $adjust_num, 'adjust', 0, $remark);
@@ -352,9 +377,9 @@ class Member extends BaseShop
      */
     public function adjustPoint()
     {
-        $member_id  = input('member_id', 0);
+        $member_id = input('member_id', 0);
         $adjust_num = input('adjust_num', 0);
-        $remark     = input('remark', '');
+        $remark = input('remark', '');
         $this->addLog("会员积分调整id:" . $member_id . "数量" . $adjust_num);
         $member_account_model = new MemberAccountModel();
         return $member_account_model->addMemberAccount($this->site_id, $member_id, 'point', $adjust_num, 'adjust', 0, $remark);
@@ -365,9 +390,9 @@ class Member extends BaseShop
      */
     public function adjustGrowth()
     {
-        $member_id  = input('member_id', 0);
+        $member_id = input('member_id', 0);
         $adjust_num = input('adjust_num', 0);
-        $remark     = input('remark', '');
+        $remark = input('remark', '');
         $this->addLog("会员成长值调整id:" . $member_id . "数量" . $adjust_num);
         $member_account_model = new MemberAccountModel();
         return $member_account_model->addMemberAccount($this->site_id, $member_id, 'growth', $adjust_num, 'adjust', 0, $remark);
@@ -380,13 +405,13 @@ class Member extends BaseShop
     {
         if (request()->isAjax()) {
             //设置注册协议
-            $title        = input('title', '');
-            $content      = input('content', '');
+            $title = input('title', '');
+            $content = input('content', '');
             $config_model = new ConfigModel();
             return $config_model->setRegisterDocument($title, $content, $this->site_id, 'shop');
         } else {
             //获取注册协议
-            $config_model  = new ConfigModel();
+            $config_model = new ConfigModel();
             $document_info = $config_model->getRegisterDocument($this->site_id, 'shop');
             $this->assign('document_info', $document_info);
 
@@ -403,20 +428,20 @@ class Member extends BaseShop
         if (request()->isAjax()) {
             //设置注册设置
             $data = array(
-                'is_enable'          => input('is_enable', 1),
-                'type'               => input('type', ''),
-                'keyword'            => input('keyword', ''),
-                'pwd_len'            => input('pwd_len', 6),
-                'pwd_complexity'     => input('pwd_complexity', 'number,letter,upper_case,symbol'),
+                'is_enable' => input('is_enable', 1),
+                'type' => input('type', ''),
+                'keyword' => input('keyword', ''),
+                'pwd_len' => input('pwd_len', 6),
+                'pwd_complexity' => input('pwd_complexity', 'number,letter,upper_case,symbol'),
                 'dynamic_code_login' => input('dynamic_code_login', 1)
             );
             return $config_model->setRegisterConfig($data, $this->site_id, 'shop');
         } else {
             //获取注册设置
             $config_info = $config_model->getRegisterConfig($this->site_id, 'shop');
-            $value       = $config_info['data']['value'];
+            $value = $config_info['data']['value'];
             if (!empty($value)) {
-                $value['type_arr']           = explode(',', $value['type']);
+                $value['type_arr'] = explode(',', $value['type']);
                 $value['pwd_complexity_arr'] = explode(',', $value['pwd_complexity']);
             }
             $this->assign('value', $value);
@@ -430,9 +455,9 @@ class Member extends BaseShop
      */
     public function searchMember()
     {
-        $search_text  = input('search_text', '');
+        $search_text = input('search_text', '');
         $member_model = new MemberModel();
-        $member_info  = $member_model->getMemberInfo([['username|mobile', '=', $search_text], ['site_id', '=', $this->site_id]]);
+        $member_info = $member_model->getMemberInfo([['username|mobile', '=', $search_text], ['site_id', '=', $this->site_id]]);
         return $member_info;
     }
 
@@ -442,13 +467,13 @@ class Member extends BaseShop
     public function exportMember()
     {
         //获取会员信息
-        $search_text      = input('search_text', '');
+        $search_text = input('search_text', '');
         $search_text_type = input('search_text_type', 'username');//可以传username mobile email
-        $level_id         = input('level_id', 0);
-        $label_id         = input('label_id', 0);
-        $reg_start_date   = input('reg_start_date', '');
-        $reg_end_date     = input('reg_end_date', '');
-        $status           = input('status', '');
+        $level_id = input('level_id', 0);
+        $label_id = input('label_id', 0);
+        $reg_start_date = input('reg_start_date', '');
+        $reg_end_date = input('reg_end_date', '');
+        $status = input('status', '');
 
         $condition[] = ['site_id', '=', $this->site_id];
         //下拉选择
@@ -480,7 +505,7 @@ class Member extends BaseShop
         qq,location,balance,balance_money,point,growth,reg_time,last_login_ip,last_login_time';
 
         $member_model = new MemberModel();
-        $list         = $member_model->getMemberList($condition, $field, $order);
+        $list = $member_model->getMemberList($condition, $field, $order);
 
         // 实例化excel
         $phpExcel = new \PHPExcel();
@@ -550,7 +575,7 @@ class Member extends BaseShop
         $phpExcel->setActiveSheetIndex(0);
         // 保存Excel 2007格式文件，保存路径为当前路径，名字为export.xlsx
         $objWriter = \PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
-        $file      = date('Y年m月d日-会员信息表', time()) . '.xlsx';
+        $file = date('Y年m月d日-会员信息表', time()) . '.xlsx';
         $objWriter->save($file);
 
         header("Content-type:application/octet-stream");
@@ -583,7 +608,7 @@ class Member extends BaseShop
     public function addressDetail()
     {
         if (request()->isAjax()) {
-            $page      = input('page', 1);
+            $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $member_id = input('member_id', 0);
 
@@ -592,7 +617,7 @@ class Member extends BaseShop
 
             //会员地址
             $member_address_model = new MemberAddressModel();
-            $res                  = $member_address_model->getMemberAddressPageList($condition, $page, $page_size);
+            $res = $member_address_model->getMemberAddressPageList($condition, $page, $page_size);
             return $res;
 
         } else {
@@ -612,9 +637,9 @@ class Member extends BaseShop
      */
     public function getFromType()
     {
-        $type  = input('type', '');
+        $type = input('type', '');
         $model = new MemberAccountModel();
-        $res   = $model->getFromType();
+        $res = $model->getFromType();
 
         return $res[$type];
     }

@@ -21,6 +21,19 @@
 	.ns-level-equity .layui-input {
 		display: inline-block;
 	}
+
+	.gods-box table:first-of-type{
+		margin-bottom: 0;
+	}
+	.gods-box table:last-of-type{
+		margin-top: 0;
+		display: block;
+		max-height: 323px;
+		overflow: auto;
+	}
+	.coupon-box .ns-single-filter-box{
+		padding-top: 0;
+	}
 </style>
 {/block}
 {block name="main"}
@@ -152,7 +165,11 @@
 								</div>
 							</td>
 							<td class="layui-elip coupon-money">{$coupon_list_v.money}</td>
+							{if $coupon_list_v.validity_type == 0}
 							<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
+							{else/}
+							<td class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
+							{/if}
 							<td class="layui-elip"><a class="default ns-del-btn" onclick="delCoupon(this)">删除</a></td>
 						</tr>
 						{/foreach}
@@ -453,60 +470,73 @@
 				</div>
 			</div>
 		</div>
-
-		<table class="layui-table" id="goods" lay-skin="line" lay-size="lg">
-			<colgroup>
-				<col width="8%">
-				<col width="50%">
-				<col width="15%">
-				<col width="27%">
-			</colgroup>
-			<thead>
-			<tr>
-				<th class="ns-check-box">
-					<div class="layui-form">
-						<input type="checkbox" name="" lay-filter="selectAll" lay-skin="primary">
-					</div>
-				</th>
-				<th class="layui-elip">优惠券名称</th>
-				<th class="layui-elip">面额（元）</th>
-				<th class="layui-elip">结束时间</th>
-			</tr>
-			</thead>
-			<tbody>
-			{foreach $coupon_list.data as $coupon_list_k => $coupon_list_v}
-			<tr>
-				<td class="ns-check-box">
-					<div class="layui-form">
-						{{# var a = {$coupon_list_v.coupon_type_id} }}
-						{{#  if($.inArray(a.toString(), d.coupon_id) != -1){  }}
-						<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary" checked>
-						{{#  }else{  }}
-						<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary">
-						{{#  }  }}
-						<input type="hidden" id="coupon_id" value="{$coupon_list_v.coupon_type_id}">
-					</div>
-				</td>
-				<td>
-					<div class="ns-table-title">
-						<div class="ns-title-pic">
-							{if condition="$coupon_list_v.image"}
-							<img src="{:img($coupon_list_v.image)}">
-							{else/}
-							<img src="__ROOT__/upload/uniapp/game/coupon.png">
-							{/if}
+		<div class="gods-box">
+			<table class="layui-table" lay-skin="line" lay-size="lg">
+				<colgroup>
+					<col width="8%">
+					<col width="50%">
+					<col width="15%">
+					<col width="27%">
+				</colgroup>
+				<thead>
+				<tr>
+					<th class="ns-check-box">
+						<div class="layui-form">
+							<input type="checkbox" name="" lay-filter="selectAll" lay-skin="primary">
 						</div>
-						<div class="ns-title-content">
-							<p class="ns-multi-line-hiding">{$coupon_list_v.coupon_name}</p>
+					</th>
+					<th class="layui-elip">优惠券名称</th>
+					<th class="layui-elip">面额（元）</th>
+					<th class="layui-elip">结束时间</th>
+				</tr>
+				</thead>
+			</table>
+			<table class="layui-table" id="goods" lay-skin="line" lay-size="lg">
+				<colgroup>
+					<col width="8%">
+					<col width="50%">
+					<col width="15%">
+					<col width="27%">
+				</colgroup>
+				<tbody>
+				{foreach $coupon_list.data as $coupon_list_k => $coupon_list_v}
+				<tr>
+					<td class="ns-check-box">
+						<div class="layui-form">
+							{{# var a = {$coupon_list_v.coupon_type_id} }}
+							{{#  if($.inArray(a.toString(), d.coupon_id) != -1){  }}
+							<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary" checked>
+							{{#  }else{  }}
+							<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary">
+							{{#  }  }}
+							<input type="hidden" id="coupon_id" value="{$coupon_list_v.coupon_type_id}">
 						</div>
-					</div>
-				</td>
-				<td class="layui-elip coupon-money">{$coupon_list_v.money}</td>
-				<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
-			</tr>
-			{/foreach}
-			</tbody>
-		</table>
+					</td>
+					<td>
+						<div class="ns-table-title">
+							<div class="ns-title-pic">
+								{if condition="$coupon_list_v.image"}
+								<img src="{:img($coupon_list_v.image)}">
+								{else/}
+								<img src="__ROOT__/upload/uniapp/game/coupon.png">
+								{/if}
+							</div>
+							<div class="ns-title-content">
+								<p class="ns-multi-line-hiding">{$coupon_list_v.coupon_name}</p>
+							</div>
+						</div>
+					</td>
+					<td class="layui-elip coupon-money">{$coupon_list_v.money}</td>
+					{if $coupon_list_v.validity_type == 0}
+					<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
+					{else/}
+					<td class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
+					{/if}
+				</tr>
+				{/foreach}
+				</tbody>
+			</table>
+		</div>
 
 		<button class="layui-btn ns-bg-color" onclick="couponSelected()">确定</button>
 	</div>

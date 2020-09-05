@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -14,7 +15,7 @@ namespace app\shop\controller;
 use app\model\shop\Shop as ShopModel;
 use app\model\system\Address as AddressModel;
 use app\model\system\Site;
-
+use app\model\web\Config as ConfigModel;
 /**
  * 店铺
  * Class Shop
@@ -79,6 +80,11 @@ class Shop extends BaseShop
 
             $shop_info_result = $shop_model->getShopInfo($condition);
             $site_info        = $site_model->getSiteInfo($condition);
+            
+            $config_model = new ConfigModel();
+            $info = $config_model->geth5DomainName();
+            $this->assign('domain_name_h5', $info['data']['value']['domain_name_h5']);
+            
             $shop_info        = array_merge($shop_info_result["data"], $site_info['data']);
             $this->assign("shop_info", $shop_info);
             return $this->fetch("shop/config");

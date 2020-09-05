@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -87,6 +88,7 @@ class Memberwithdraw extends BaseApi
         $bank_name      = isset($this->params['bank_name']) ? $this->params['bank_name'] : '';//银行名称
         $account_number = isset($this->params['account_number']) ? $this->params['account_number'] : '';//账号名称
         $mobile         = isset($this->params['mobile']) ? $this->params['mobile'] : '';//手机号
+        $applet_type    = isset($this->params['applet_type']) ? $this->params['applet_type'] : 0;
         $app_type       = $this->params['app_type'];
         $member_model   = new MemberModel();
         $member_info    = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id');
@@ -99,7 +101,8 @@ class Memberwithdraw extends BaseApi
             "account_number" => $account_number,
             "apply_money"    => $apply_money,
             "mobile"         => $mobile,
-            "app_type"       => $app_type
+            "app_type"       => $app_type,
+        	"applet_type" 	 => $applet_type
         );
         $result         = $withdraw_model->apply($data, $member_info['data']['site_id'], 'shop');
         return $this->response($result);

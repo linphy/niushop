@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -127,11 +128,12 @@ class Config extends BaseModel
                 'icp'            => '',
                 'gov_record'     => '',
                 'gov_url'        => '',
+                'market_supervision_url' => ''
             ];
         } else {
             $upgrade_model = new Upgrade();
             $auth_info = $upgrade_model->authInfo();
-            if (is_null($auth_info) || $auth_info['code'] != 1) {
+            if (is_null($auth_info) || $auth_info['code'] != 0) {
                 $res['data']['value']['logo'] = '';
                 $res['data']['value']['company_name'] = '';
                 $res['data']['value']['copyright_link'] = '';
@@ -199,5 +201,38 @@ class Config extends BaseModel
             ];
         }
         return $res;
+    }
+    
+    /**
+     * h5域名配置
+     */
+    public function seth5DomainName($data, $site_id = 1, $app_modle = 'shop'){
+    	
+    	$config = new ConfigModel();
+    	$res = $config->setConfig($data, 'H5域名配置', 1, [['site_id', '=', $site_id], ['app_module', '=', $app_modle], ['config_key', '=', 'H5_DOMAIN_NAME']]);
+    	
+    	return $res;
+    }
+    
+    /**
+     * 获取h5域名配置
+     */
+    public function geth5DomainName($site_id = 1, $app_module = 'shop'){
+
+    	$config = new ConfigModel();
+    	$res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'H5_DOMAIN_NAME']]);
+    	if (empty($res['data']['value'])) {
+    		$res['data']['value'] = [
+    				'domain_name_h5' => ROOT_URL . '/h5',
+    		];
+    		
+    	}else{
+    		if($res['data']['value']['domain_name_h5'] == ''){
+    			$res['data']['value'] = [
+    					'domain_name_h5' => ROOT_URL . '/h5',
+    			];
+    		}
+    	}
+    	return $res;
     }
 }

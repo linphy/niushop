@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -32,24 +33,28 @@ class Store extends BaseModel
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
+        if (empty($data['longitude']) || empty($data['latitude'])) {
+            return $this->error('', '门店经纬度不能为空');
+        }
+
         $data['create_time'] = time();
         model('store')->startTrans();
 
         try {
             if ($is_store == 1) {
                 $data['username'] = $user_data['username'];
-                $store_id         = model('store')->add($data);
+                $store_id = model('store')->add($data);
                 Cache::tag("store")->clear();
                 //添加系统用户组
-                $group      = new Group();
+                $group = new Group();
                 $group_data = [
-                    'site_id'     => $store_id,
-                    'app_module'  => 'store',
-                    'group_name'  => '管理员组',
-                    'is_system'   => 1,
+                    'site_id' => $store_id,
+                    'app_module' => 'store',
+                    'group_name' => '管理员组',
+                    'is_system' => 1,
                     'create_time' => time()
                 ];
-                $group_id   = $group->addGroup($group_data)['data'];
+                $group_id = $group->addGroup($group_data)['data'];
 
                 //用户检测
                 if (empty($user_data['username'])) {
@@ -65,14 +70,14 @@ class Store extends BaseModel
                 //添加用户
                 $data_user = [
                     'app_module' => 'store',
-                    'app_group'  => 0,
-                    'is_admin'   => 1,
-                    'group_id'   => $group_id,
+                    'app_group' => 0,
+                    'is_admin' => 1,
+                    'group_id' => $group_id,
                     'group_name' => '管理员组',
-                    'site_id'    => $data['site_id']
+                    'site_id' => $data['site_id']
                 ];
                 $user_info = array_merge($data_user, $user_data);
-                $uid       = model("user")->add($user_info);
+                $uid = model("user")->add($user_info);
 
                 model('store')->update(['uid' => $uid], [['store_id', '=', $store_id]]);
 
@@ -100,13 +105,16 @@ class Store extends BaseModel
      */
     public function editStore($data, $condition)
     {
+        if (empty($data['longitude']) || empty($data['latitude'])) {
+            return $this->error('', '门店经纬度不能为空');
+        }
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
         $data["modify_time"] = time();
-        $res                 = model('store')->update($data, $condition);
+        $res = model('store')->update($data, $condition);
         Cache::tag("store")->clear();
         return $this->success($res);
     }
@@ -118,13 +126,13 @@ class Store extends BaseModel
     public function deleteStore($condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
-        $store_id        = isset($check_condition['store_id']) ? $check_condition['store_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $store_id = isset($check_condition['store_id']) ? $check_condition['store_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
         $store_info = model('store')->getInfo([['store_id', '=', $store_id]], 'uid');
-        $res        = model('store')->delete($condition);
+        $res = model('store')->delete($condition);
         if ($res) {
             model('store_goods')->delete([['store_id', '=', $store_id]]);
             model('store_goods_sku')->delete([['store_id', '=', $store_id]]);
@@ -144,7 +152,7 @@ class Store extends BaseModel
     public function frozenStore($condition, $is_frozen)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
@@ -160,7 +168,7 @@ class Store extends BaseModel
      */
     public function getStoreInfo($condition, $field = '*')
     {
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([$condition, $field]);
         $cache = Cache::get("store_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -179,7 +187,7 @@ class Store extends BaseModel
      */
     public function getStoreList($condition = [], $field = '*', $order = '', $limit = null)
     {
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([$condition, $field, $order, $limit]);
         $cache = Cache::get("store_getStoreList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -200,7 +208,7 @@ class Store extends BaseModel
      */
     public function getStorePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
     {
-        $data  = json_encode([$condition, $field, $order, $page, $page_size]);
+        $data = json_encode([$condition, $field, $order, $page, $page_size]);
         $cache = Cache::get("store_getStorePageList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -220,9 +228,9 @@ class Store extends BaseModel
     {
         $order = '';
         if ($lnglat['lat'] !== null && $lnglat['lng'] !== null) {
-            $field       .= ' , FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) as distance ';
+            $field .= ' , FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) as distance ';
             $condition[] = ['', 'exp', Db::raw(' FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) < 10000')];
-            $order       = 'distance asc';
+            $order = 'distance asc';
         }
 
         $list = model('store')->getList($condition, $field, $order);
@@ -238,9 +246,9 @@ class Store extends BaseModel
     {
         $order = '';
         if ($lnglat['lat'] !== null && $lnglat['lng'] !== null) {
-            $field       .= ',FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) as distance';
+            $field .= ',FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) as distance';
             $condition[] = ['', 'exp', Db::raw(' FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) < 10000')];
-            $order       = Db::raw(' st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000 asc');
+            $order = Db::raw(' st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000 asc');
         }
         $list = model('store')->pageList($condition, $field, $order, $page, $page_size);
         return $this->success($list);

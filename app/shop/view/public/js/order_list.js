@@ -185,21 +185,21 @@ Order.prototype.header = function (hasThead) {
  * 渲染内容
  */
 Order.prototype.tbody = function () {
-	
+
 	var tbody = '<tbody>';
 	for (var i = 0; i < this.data.list.length; i++) {
-		
+
 		var order = this.data.list[i];
 		var orderitemList = order.order_goods;
 		var pay_type_name = order.pay_type_name != '' ? order.pay_type_name : "";
-		
+
 		if (i > 0) {
 			//分割行
 			tbody += '<tr class="separation-row">';
 			tbody += '<td colspan="' + this.cols.length + '"></td>';
 			tbody += '</tr>';
 		}
-		
+
 		//订单项头部
 		tbody += '<tr class="header-row">';
 		tbody += '<td colspan="5">';
@@ -208,11 +208,11 @@ Order.prototype.tbody = function () {
 		tbody += '<div class="more-operation" data-order-id="' + order.order_id + '">';
 			tbody += '<span>支付流水号：' + order.out_trade_no + '</span>';
 		tbody += '</div></span>';
-		
+
 		tbody += '<span class="order-item-header" style="margin-right:50px;">下单时间：' + ns.time_to_date(order.create_time) + '</span>';
 		tbody += '<span class="order-item-header" style="margin-right:50px;">订单类型：' + order.order_type_name + '</span>';
 		if (pay_type_name) tbody += '<span class="order-item-header">支付方式：' + pay_type_name + '</span>';
-		
+
 		tbody += '</td>';
 		tbody += '<td>';
 			tbody += '<div class="ns-table-btn">';
@@ -220,6 +220,7 @@ Order.prototype.tbody = function () {
 			tbody += '<a class="layui-btn layui-btn-xs" href="' + ns.url('shop/order/printOrder', {order_id: order.order_id}) + '" target="_blank" >打印发货单</a>';
 			// tbody += '<a href="'+ ns.url('shop/order/printOrder',{order_id:order.order_id}) +'" target="_blank" class="layui-btn layui-btn-xs">打印发货单</a>';
 		}
+
 		if (order.order_status == -1) {
 			tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderDelete(' + order.order_id + ');" >删除</a>';
 		}
@@ -229,47 +230,46 @@ Order.prototype.tbody = function () {
 			tbody += '<a class="layui-btn layui-btn-xs" href="javascript:offlinePay(' + order.order_id + ');">线下支付</a> ';
 		}
 
-			
 			tbody += '</div>';
 		tbody += '</td>';
 		tbody += '</tr>';
-		
+
 		// tbody += '<tr class="separation-row"><td colspan="6"><hr /></td></tr>';
-		
+
 		var orderitemHtml = '';
 		loadImgMagnify();
 		for (var j = 0; j < orderitemList.length; j++) {
 			var orderitem = orderitemList[j];
 			orderitemHtml += '<tr class="content-row">';
 			for (var k = 0; k < this.cols.length; k++) {
-				
+
 				if (j == 0 && this.cols[k].merge && this.cols[k].template) {
-					
+
 					orderitemHtml += '<td class="' + (this.cols[k].className || "") + '" align="' + (this.cols[k].align || "") + '" style="' + (this.cols[k].style || "") + '" rowspan="' + orderitemList.length + '">';
 					orderitemHtml += this.cols[k].template(orderitem, order);
 					orderitemHtml += '</td>';
-					
+
 				} else if (this.cols[k].template && !this.cols[k].merge) {
-					
+
 					orderitemHtml += '<td class="' + (this.cols[k].className || "") + '" align="' + (this.cols[k].align || "") + '" style="' + (this.cols[k].style || "") + '">';
 					orderitemHtml += this.cols[k].template(orderitem, order);
 					orderitemHtml += '</td>';
-					
+
 				}
 			}
 			orderitemHtml += '</tr>';
 		}
-		
+
 		tbody += orderitemHtml;
-		
+
 		if (order.remark != '') {
 			tbody += '<tr class="remark-row">';
 			tbody += '<td colspan="' + this.cols.length + '">卖家备注：' + order.remark + '</td>';
 			tbody += '</tr>';
 		}
-		
+
 	}
-	
+
 	tbody += '</tbody>';
 	return tbody;
 };

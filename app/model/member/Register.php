@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -14,7 +15,8 @@ namespace app\model\member;
 use addon\wechat\model\Message as WechatMessage;
 use app\model\BaseModel;
 use app\model\message\Sms;
-
+use app\model\member\MemberAccount;
+use addon\coupon\model\Coupon;
 /**
  * 登录
  *
@@ -36,9 +38,8 @@ class Register extends BaseModel
         if ($config_info['data']['value']['is_enable'] == 1) {
             $this->cancelBind($data);
             $member_level      = new MemberLevel();
-            $member_level_info = $member_level->getMemberLevelInfo([['is_default', '=', 1], ['site_id', '=', $data['site_id']]], 'level_id,level_name');
+            $member_level_info = $member_level->getMemberLevelInfo([['is_default', '=', 1], ['site_id', '=', $data['site_id']]], '*');         
             $member_level_info = $member_level_info['data'];
-
             if (isset($data['source_member']) && !empty($data['source_member'])) {
                 $count = model("member")->getCount([['member_id', '=', $data['source_member']], ['site_id', '=', $data['site_id']]]);
                 if (!$count) $data['source_member'] = 0;
@@ -64,8 +65,30 @@ class Register extends BaseModel
                 'login_time'        => time(),
                 'last_login_time'   => time()
             ];
-            $res      = model("member")->add($data_reg);
+            $res = model("member")->add($data_reg);
             if ($res) {
+
+            	$member_account_model = new MemberAccount();
+            	//赠送红包
+            	if($member_level_info['send_balance'] > 0){
+            		$balance = $member_level_info['send_balance'];
+            		$member_account_model->addMemberAccount($data['site_id'], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员升级得红包' . $balance);            		
+            	}
+            	//赠送积分
+            	if($member_level_info['send_point'] > 0){
+            		$send_point = $member_level_info['send_point'];
+            		$member_account_model->addMemberAccount($data['site_id'], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员升级得积分' . $send_point);
+            	}
+     	
+            	//给用户发放优惠券
+            	$coupon_model = new Coupon();
+            	$coupon_array = empty($member_level_info['send_coupon']) ? [] : explode(',', $member_level_info['send_coupon']);
+            	if (!empty($coupon_array)) {
+            		foreach ($coupon_array as $k => $v) {
+            			$coupon_model->receiveCoupon($v, $data['site_id'], $res, 3);
+            		}
+            	}
+
                 //会员注册事件
                 event("MemberRegister", ['member_id' => $res, 'site_id' => $data['site_id']]);
                 $data['member_id'] = $res;
@@ -92,19 +115,27 @@ class Register extends BaseModel
         if ($config_info['data']['value']['is_enable'] == 1) {
             $this->cancelBind($data);
             $member_level      = new MemberLevel();
-            $member_level_info = $member_level->getMemberLevelInfo([['is_default', '=', 1], ['site_id', '=', $data['site_id']]], 'level_id,level_name');
+            $member_level_info = $member_level->getMemberLevelInfo([['is_default', '=', 1], ['site_id', '=', $data['site_id']]], '*');
             $member_level_info = $member_level_info['data'];
 
             if (isset($data['source_member']) && !empty($data['source_member'])) {
                 $count = model("member")->getCount([['member_id', '=', $data['source_member']], ['site_id', '=', $data['site_id']]]);
                 if (!$count) $data['source_member'] = 0;
             }
+            $nickname = $data[ 'mobile' ];
+            if (!empty($data[ 'nickname' ])) {
+                $nickname = preg_replace_callback('/./u',
+                    function(array $match) {
+                        return strlen($match[ 0 ]) >= 4 ? '' : $match[ 0 ];
+                    },
+                    $data[ 'nickname' ]);
+            }
 
             $data_reg = [
                 'site_id'           => $data['site_id'],
                 'source_member'     => isset($data['source_member']) ? $data['source_member'] : 0,
                 'mobile'            => $data['mobile'],
-                'nickname'          => $data['mobile'], //默认昵称为手机号
+                'nickname'          => $nickname, //默认昵称为手机号
                 'password'          => '',
                 'qq_openid'         => isset($data['qq_openid']) ? $data['qq_openid'] : '',
                 'wx_openid'         => isset($data['wx_openid']) ? $data['wx_openid'] : '',
@@ -122,7 +153,27 @@ class Register extends BaseModel
             ];
             $res      = model("member")->add($data_reg);
             if ($res) {
-
+				
+            	$member_account_model = new MemberAccount();
+            	//赠送红包
+            	if($member_level_info['send_balance'] > 0){
+            		$balance = $member_level_info['send_balance'];
+            		$member_account_model->addMemberAccount($data['site_id'], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员升级得红包' . $balance);            		
+            	}
+            	//赠送积分
+            	if($member_level_info['send_point'] > 0){
+            		$send_point = $member_level_info['send_point'];
+            		$member_account_model->addMemberAccount($data['site_id'], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员升级得积分' . $send_point);
+            	}            	
+            	//给用户发放优惠券            	
+            	$coupon_model = new Coupon();
+            	$coupon_array = empty($member_level_info['send_coupon']) ? [] : explode(',', $member_level_info['send_coupon']);
+            	if (!empty($coupon_array)) {
+            		foreach ($coupon_array as $k => $v) {
+            			$coupon_model->receiveCoupon($v, $data['site_id'], $res, 3);
+            		}
+            	}
+            	
                 //会员注册事件
                 event("MemberRegister", ['member_id' => $res, 'site_id' => $data['site_id']]);
                 $data['member_id'] = $res;

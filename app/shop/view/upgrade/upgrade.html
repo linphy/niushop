@@ -109,13 +109,21 @@
             elem: '#version_list',
             url: ns.url("shop/upgrade/upgrade"),
             parseData: function(res){ //res 即为原始返回的数据
-                right_check = res.data.right_check;
-                system_upgrade_info_ready = res.data.system_upgrade_info_ready;
-                return {
-                    "code": res.code, //解析接口状态
-                    "msg": res.message, //解析提示文本
-                    "data": res.data.system_upgrade_info_ready //解析数据列表
-                };
+                if (res.code == 0) {
+                    right_check = res.data.right_check;
+                    system_upgrade_info_ready = res.data.system_upgrade_info_ready;
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "data": res.data.system_upgrade_info_ready //解析数据列表
+                    };
+                } else {
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "data": [] //解析数据列表
+                    };
+                }
             },
             page: false,
             cols: [

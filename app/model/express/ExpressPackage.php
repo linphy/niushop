@@ -4,20 +4,66 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
 namespace app\model\express;
 
 use app\model\BaseModel;
+use think\facade\Db;
 
 /**
  * 物流配送
  */
 class ExpressPackage extends BaseModel
 {
+
+    /**
+     * 修改物流单号和物流公司
+     * @param $data
+     * @return array
+     */
+    public function editOrderExpressDeliveryPackage($data)
+    {
+        $data = json_decode($data,true);
+
+        model("express_delivery_package")->startTrans();
+        try {
+
+            foreach ($data as $v) {
+
+                if ($v['express_company_id'] == '') {
+                    return $this->error('', '物流公司不能为空');
+                }
+                if ($v['delivery_no'] == '') {
+                    return $this->error('', '物流单号不能为空');
+                }
+                //获取物流公司名称
+                $express_company_name = model('express_company_template')->getValue([['company_id', '=', $v['express_company_id']]], 'company_name');
+
+                $condition = [
+                    ['id', '=', $v['id']]
+                ];
+                model('express_delivery_package')->update(
+                    [
+                        'express_company_id' => $v['express_company_id'],
+                        'express_company_name' => $express_company_name,
+                        'delivery_no' => $v['delivery_no'],
+                    ], $condition
+                );
+            }
+            model("express_delivery_package")->commit();
+            return $this->success();
+
+        } catch (\Exception $e) {
+
+            model("express_delivery_package")->rollback();
+            return $this->error('', $e->getMessage());
+        }
+    }
 
     /**
      * 获取物流包裹列表
@@ -37,22 +83,22 @@ class ExpressPackage extends BaseModel
     public function package($condition)
     {
         $list_result = $this->getExpressDeliveryPackageList($condition);
-        $list        = $list_result["data"];
+        $list = $list_result["data"];
         $trace_model = new Trace();
         foreach ($list as $k => $v) {
             $temp_array = explode(",", $v["goods_id_array"]);
             if (!empty($temp_array)) {
 
                 foreach ($temp_array as $temp_k => $temp_v) {
-                    $temp_str                 = str_replace("http://", "http//", $temp_v);
-                    $temp_str                 = str_replace("https://", "https//", $temp_str);
-                    $temp_item                = explode(":", $temp_str);
-                    $sku_image                = str_replace("https//", "https://", $temp_item["3"]);
-                    $sku_image                = str_replace("http//", "http://", $sku_image);
+                    $temp_str = str_replace("http://", "http//", $temp_v);
+                    $temp_str = str_replace("https://", "https//", $temp_str);
+                    $temp_item = explode(":", $temp_str);
+                    $sku_image = str_replace("https//", "https://", $temp_item["3"]);
+                    $sku_image = str_replace("http//", "http://", $sku_image);
                     $list[$k]["goods_list"][] = ["sku_name" => $temp_item["2"], "num" => $temp_item["1"], "sku_image" => $sku_image, "sku_id" => $temp_item["0"]];
                 }
             }
-            $trace_list        = $trace_model->trace($v["delivery_no"], $v["express_company_id"], $v['site_id']);
+            $trace_list = $trace_model->trace($v["delivery_no"], $v["express_company_id"], $v['site_id']);
             $list[$k]["trace"] = $trace_list["data"];
         }
 
@@ -73,7 +119,7 @@ class ExpressPackage extends BaseModel
         $order_list = model('order')->pageList($condition, $field, $order, $page, $page_size);
         if (!empty($order_list['list'])) {
             foreach ($order_list['list'] as $k => $v) {
-                $order_goods_list                      = model("order_goods")->getList([
+                $order_goods_list = model("order_goods")->getList([
                     'order_id' => $v['order_id']
                 ]);
                 $order_list['list'][$k]['order_goods'] = $order_goods_list;

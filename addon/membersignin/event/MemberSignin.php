@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -40,28 +41,25 @@ class MemberSignin
         $res = [];
         if (!empty($award)) {
 
-            $is_end = true;//是否超出连签天数，取最大的奖励
-
             foreach ($award as $k => $v) {
                 if ($member_info['sign_days_series'] == $v['day']) {
-                    $is_end = false;
                     $res    = $v;
                     break;
                 }
             }
-
-            if ($is_end) {
-                $res = $award[count($award) - 1];
-            }
-
-            foreach ($res as $curr_k => $curr_v) {
-                if ($curr_k != 'day') {
-                    $adjust_num   = $curr_v;
-                    $account_type = $curr_k;
-                    $remark       = '签到送' . $adjust_num . $this->accountType($curr_k);
-                    $member_account_model->addMemberAccount($param['site_id'], $param['member_id'], $account_type, $adjust_num, 'signin', 0, $remark);
-                }
-            }
+			if(!empty($res)){
+				foreach ($res as $curr_k => $curr_v) {
+					if ($curr_k != 'day') {
+						$adjust_num   = $curr_v;
+						$account_type = $curr_k;
+						$remark       = '签到送' . $adjust_num . $this->accountType($curr_k);
+						$member_account_model->addMemberAccount($param['site_id'], $param['member_id'], $account_type, $adjust_num, 'signin', 0, $remark);
+					}
+				}
+			}else{
+				return $res;
+			}
+           
 
         }
         return $res;

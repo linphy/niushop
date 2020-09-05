@@ -294,7 +294,13 @@
 		form.on('submit(save)', function(data) {
 			if(repeat_flag) return;
 			repeat_flag = true;
-			
+
+			if(data.field.is_watermark){
+				if(data.field.watermark_x == "" || data.field.watermark_y == ""){
+					return layer.msg("水印坐标不能为空值");
+				}
+			}
+
 			$.ajax({
 				type: 'POST',
 				url: ns.url("shop/upload/config"),

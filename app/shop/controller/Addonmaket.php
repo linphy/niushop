@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -24,15 +25,14 @@ class Addonmaket extends BaseShop
     {
         //获取官网所有插件
         $upgrade_model = new UpgradeModel();
-        $list_result = $upgrade_model->getPluginGoodsList();
-        $list = $list_result['data']['data'];
+        $list = $upgrade_model->getPluginGoodsList();
 
         $addon_quick_model = new AddonQuick();
         if(!empty($list)){
             foreach ($list as $k => $v) {
 
                 //判断是否已设置快捷
-                $addon_quick_info = $addon_quick_model->getAddonQuickModeInfo([ ['name', '=', $v['code']] ], 'id');
+                $addon_quick_info = $addon_quick_model->getAddonQuickModeInfo([ ['name', '=', $v['addon_goods_key']] ], 'id');
                 if (empty($addon_quick_info['data'])) {
                     $list[$k]['is_quick'] = 0;
                 } else {

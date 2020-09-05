@@ -56,6 +56,7 @@
 			<div class="ns-form-row">
 				<button class="layui-btn ns-bg-color" lay-submit lay-filter="search">筛选</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="export_verify" >批量导出</button>
 			</div>
 		</form>
 	</div>
@@ -150,6 +151,12 @@
 			});
 			return false;
 		});
+
+        //批量导出
+        form.on('submit(export_verify)', function(data){
+            location.href = ns.url("shop/verify/exportVerify",data.field);
+            return false;
+        });
 	});
 </script>
 {/block}

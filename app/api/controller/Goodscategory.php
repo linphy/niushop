@@ -29,7 +29,7 @@ class Goodscategory extends BaseApi
             ['site_id', '=', $this->site_id]
         ];
         $field                = "category_id,category_name,short_name,pid,level,image,category_id_1,category_id_2,category_id_3,image_adv";
-        $order                = "sort desc,category_id desc";
+        $order                = "sort asc";
 
         $list = $goods_category_model->getCategoryTree($condition, $field, $order);
         // 查询商品

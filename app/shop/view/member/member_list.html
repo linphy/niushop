@@ -42,12 +42,13 @@
 					<label class="layui-form-label">账号</label>
 					<div class="layui-input-inline">
 						<select name="search_text_type">
-							<option value="username">昵称</option>
+							<option value="username">用户名</option>
+							<option value="nickname">昵称</option>
 							<option value="mobile">手机号</option>
 						</select>
 					</div>
 					<div class="layui-input-inline">
-						<input type="text" name="search_text" placeholder="昵称/手机号" autocomplete="off" class="layui-input ">
+						<input type="text" name="search_text" placeholder="用户名/昵称/手机号" autocomplete="off" class="layui-input ">
 					</div>
 				</div>
 			</div>
@@ -135,6 +136,9 @@
 		<a class="layui-btn" lay-event="info">详情</a>
 		<a class="layui-btn" lay-event="more">更多</a>
 		<div class="more-operation">
+			{if $is_exit_fenxiao == 1}
+			<a class="operation" lay-event="change">上下级变更</a>
+			{/if}
 			<a class="operation" lay-event="set_label">设置标签</a>
 			<a class="operation" lay-event="reset_pass">重置密码</a>
 			<a class="operation" lay-event="delete">删除</a>
@@ -221,14 +225,20 @@
 					}, {
 						field: 'userdetail',
 						title: '账户',
-						width: '17%',
+						width: '15%',
 						unresize: 'false',
 						templet: '#userdetail'
 					}, {
 						field: 'member_level_name',
 						title: '会员等级',
-						width: '10%',
+						width: '8%',
 						unresize: 'false'
+					}, {
+						field: 'parent_fenxiao_name',
+						title: '上级分销商',
+						width: '10%',
+						unresize: 'false',
+						hide: {$is_exit_fenxiao} ? false : true
 					}, {
 						field: 'point',
 						title: '{if !empty($point)}' +
@@ -303,9 +313,6 @@
 						unresize: 'false',
 						align: 'right'
 					}, {
-						width: '4%',
-						unresize: 'false',
-					}, {
 						field: 'member_label',
 						title: '标签',
 						width: '15%',
@@ -314,7 +321,7 @@
 					}, {
 						field: 'reg-login',
 						title: '最后登录时间',
-						width: '15%',
+						width: '12%',
 						unresize: 'false',
 						templet: function (data) {
 							return ns.time_to_date(data.last_login_time);
@@ -352,6 +359,23 @@
 					$('.more-operation').css('display', 'none');
 					$(obj.tr).find('.more-operation').css('display', 'block');
 					break;
+
+                case 'change':
+
+                    var url = ns.url("fenxiao://shop/fenxiao/change", {member_id: data.member_id});
+                    //iframe层-父子操作
+                    var layerIndex = layer.open({
+                        title: "变更上级分销商",
+                        type: 2,
+                        area: ['1200px', '800px'],
+                        // btn: '保存',
+                        content: url,
+                        end: function () {
+                            location.reload();
+                        }
+                    });
+
+                    break;
 			}
 		});
 

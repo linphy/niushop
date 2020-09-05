@@ -5,8 +5,9 @@
  * =========================================================
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: http://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  * @author : niuteam
  * @date : 2015.1.17
@@ -41,6 +42,7 @@ class Store extends BaseApi
             ['site_id', "=", $this->site_id],
             ['status', '=', 1],
             ['is_frozen', '=', 0],
+            ['is_pickup','=',1]
         ];
 
         $latlng           = array(
@@ -49,33 +51,26 @@ class Store extends BaseApi
         );
         $field            = '*';
         $list_result      = $store_model->getLocationStoreList($condition, $field, $latlng);
+
+        $list = $list_result['data'];
+
+		if (!empty($longitude) && !empty($latitude) && !empty($list)) {
+			foreach ($list as $k => $item) {
+				if ($item['longitude'] && $item['latitude']) {
+					$list[ $k ]['distance'] = getDistance((float) $item['longitude'], (float) $item['latitude'], (float) $longitude, (float) $latitude);
+				} else {
+					$list[ $k ]['distance'] = 0;
+				}
+			}
+			// 按距离就近排序
+			array_multisort(array_column($list, 'distance'), SORT_ASC, $list);
+		}
+
         $default_store_id = 0;
-        $temp_store_array = array_column($list_result['data'], 'store_id');
-        if ($store_id > 0) {
-            //默认门店符合
-            if (in_array($store_id, $temp_store_array)) {
-                $default_store_id = $store_id;
-            }
+		if(!empty($list)){
+            $default_store_id = $list[0]['store_id'];
         }
-
-        if ($default_store_id == 0) {
-            $default_store_id = $temp_store_array[0] ?? 0;
-        }
-
-        $list_result['data'] = ['list' => $list_result['data'], 'store_id' => $default_store_id];
-//		if (!empty($longitude) && !empty($latitude) && !empty($list['data']['list'])) {
-//			foreach ($list['data']['list'] as $k => $item) {
-//				if ($item['longitude'] && $item['latitude']) {
-//					$list['data']['list'][ $k ]['distance'] = getDistance((float) $item['longitude'], (float) $item['latitude'], (float) $longitude, (float) $latitude);
-//				} else {
-//					$list['data']['list'][ $k ]['distance'] = 0;
-//				}
-//			}
-//
-//			// 按距离就近排序
-//			array_multisort(array_column($list['data']['list'], 'distance'), SORT_ASC, $list['data']['list']);
-//		}
-        return $this->response($list_result);
+        return $this->response($this->success(['list' => $list,'store_id' => $default_store_id]));
     }
 
     /**

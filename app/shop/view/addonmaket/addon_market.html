@@ -21,15 +21,15 @@
 		<div class="site_list ns-item-block-parent ns-item-five">
 			{if !empty($list)}
 			{foreach $list as $list_k => $list_v}
-			{if $list_v['addon_type'] == 'promotion'}
+			{if $list_v['type_mark'] == 'shop'}
 			<a class="ns-item-block ns-item-block-hover" href="#">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
-						<img src="https://www.niushop.com.cn/{$list_v.logo_img}" />
+						<img src="{$list_v.logo_img}" />
 					</div>
 					<div class="ns-item-con">
 						<div class="ns-item-content-title">
-
+							{$list_v.goods_name}
 						</div>
 						<p class="ns-item-content-desc ns-line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
 					</div>
@@ -61,15 +61,15 @@
 		<div class="site_list ns-item-block-parent ns-item-five">
 			{if !empty($list)}
 			{foreach $list as $list_k => $list_v}
-			{if $list_v['addon_type'] == 'system'}
+			{if $list_v['type_mark'] == 'member'}
 			<a class="ns-item-block ns-item-block-hover" href="#">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
-						<img src="https://www.niushop.com.cn/{$list_v.logo_img}" />
+						<img src="{$list_v.logo_img}" />
 					</div>
 					<div class="ns-item-con">
 						<div class="ns-item-content-title">
-
+							{$list_v.goods_name}
 						</div>
 						<p class="ns-item-content-desc ns-line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
 					</div>
@@ -101,15 +101,55 @@
 		<div class="site_list ns-item-block-parent ns-item-five">
 			{if !empty($list)}
 			{foreach $list as $list_k => $list_v}
-			{if $list_v['addon_type'] == 'tool'}
+			{if $list_v['type_mark'] == 'tool'}
 			<a class="ns-item-block ns-item-block-hover" href="#">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
-						<img src="https://www.niushop.com.cn/{$list_v.logo_img}" />
+						<img src="{$list_v.logo_img}" />
 					</div>
 					<div class="ns-item-con">
 						<div class="ns-item-content-title">
+							{$list_v.goods_name}
+						</div>
+						<p class="ns-item-content-desc ns-line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
+					</div>
+				</div>
+				<div class="ns-item-float-wrap">
+					<div class="ns-item-float">
+						<div class="ns-item-float-con">
+							<i class="ns-bg-color-red"></i>
+							<span>
 
+							</span>
+						</div>
+
+					</div>
+				</div>
+			</a>
+			{/if}
+			{/foreach}
+			{/if}
+		</div>
+	</div>
+</div>
+
+<div class="layui-card ns-card-common ns-card-brief">
+	<div class="layui-card-header">
+		<span class="ns-card-title">系统插件</span>
+	</div>
+	<div class="layui-card-body layui-field-box">
+		<div class="site_list ns-item-block-parent ns-item-five">
+			{if !empty($list)}
+			{foreach $list as $list_k => $list_v}
+			{if $list_v['type_mark'] == 'system'}
+			<a class="ns-item-block ns-item-block-hover" href="#">
+				<div class="ns-item-block-wrap">
+					<div class="ns-item-pic">
+						<img src="{$list_v.logo_img}" />
+					</div>
+					<div class="ns-item-con">
+						<div class="ns-item-content-title">
+							{$list_v.goods_name}
 						</div>
 						<p class="ns-item-content-desc ns-line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
 					</div>
@@ -135,32 +175,32 @@
 {/block}
 {block name="script"}
 <script>
-	var repeat_flag = false; //防重复标识
-	function manage(addon_name, tag) {
-		if (repeat_flag) return;
-		repeat_flag = true;
-		$.ajax({
-			url: ns.url("shop/system/addon"),
-			data: {
-				addon_name,
-				tag
-			},
-			type: "POST",
-			dataType: "JSON",
-			success: function(res) {
-				layer.msg(res.message);
-				if (res.code == 0) {
-					location.href = ns.url('shop/system/addon');
-				}else{
-					repeat_flag = false;
-				}
-			}
-		});
-	}
+    var repeat_flag = false; //防重复标识
+    function manage(addon_name, tag) {
+        if (repeat_flag) return;
+        repeat_flag = true;
+        $.ajax({
+            url: ns.url("shop/system/addon"),
+            data: {
+                addon_name,
+                tag
+            },
+            type: "POST",
+            dataType: "JSON",
+            success: function(res) {
+                layer.msg(res.message);
+                if (res.code == 0) {
+                    location.href = ns.url('shop/system/addon');
+                }else{
+                    repeat_flag = false;
+                }
+            }
+        });
+    }
 
-	//查看插件信息
-	function addonInfo(name){
-		location.href = ns.url('shop/upgrade/addonInfo', {name : name});
-	}
+    //查看插件信息
+    function addonInfo(name){
+        location.href = ns.url('shop/upgrade/addonInfo', {name : name});
+    }
 </script>
 {/block}

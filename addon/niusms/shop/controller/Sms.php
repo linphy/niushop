@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -156,7 +157,7 @@ class Sms extends BaseShop
 //                $cron = new Cron();
 //                $execute_time = ( time() + ( 60 * 15 ) );
 //                $cron->addCron(1, 0, "关闭短信充值订单", "CloseSmsPayment", $execute_time, $res[ 'data' ][ 'out_trade_no' ]);
-////                event('CloseSmsPayment', [ 'relate_id' => $res[ 'data' ][ 'out_trade_no' ] ], true);
+//                event('CloseSmsPayment', [ 'relate_id' => $res[ 'data' ][ 'out_trade_no' ] ], true);
 //            }
             return $res;
         }
@@ -207,6 +208,7 @@ class Sms extends BaseShop
 
                 if ($v[ 'audit_status' ] != 0 && $v[ 'audit_status' ] != 2) {
 
+                    // 异步操作，不应该在这里修改状态
                     $template_info = $this->queryTemplate($v[ 'tem_id' ]);
                     // 审核状态如果没有通过，要查询原因
                     $list[ 'data' ][ 'list' ][ $k ][ 'audit_reason' ] = $template_info[ 'auditMsg' ];
@@ -215,7 +217,6 @@ class Sms extends BaseShop
                         $list[ 'data' ][ 'list' ][ $k ][ 'audit_status' ] = 2;
                         $v[ 'audit_status' ] = 2;
                     }
-                    sleep(1);
 
                 }
                 $audit_status = $sms_model->getAuditStatus();

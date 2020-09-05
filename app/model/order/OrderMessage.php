@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -354,12 +355,13 @@ class OrderMessage extends BaseModel
             "refundreason" => replaceSpecialChar($order_goods_info["refund_reason"]),//退款原因
         );
         $site_id    = $order_info['site_id'];
-        $shop_info  = model("shop")->getInfo([["site_id", "=", $site_id]], "telephone,email");
+        $shop_info  = model("shop")->getInfo([["site_id", "=", $site_id]], "mobile,email");
 
-        $data["sms_account"] = $shop_info["telephone"];//手机号
+        $data["sms_account"] = $shop_info["mobile"];//手机号
         $data["var_parse"]   = $var_parse;
         $sms_model->sendMessage($data);
     }
+
 
     /**
      * 买家已退款，卖家通知
@@ -376,12 +378,54 @@ class OrderMessage extends BaseModel
             "orderno" => $order_info["order_no"],//商品名称
         );
         $site_id   = $order_info['site_id'];
-        $shop_info = model("shop")->getInfo([["site_id", "=", $site_id]], "telephone,email");
+        $shop_info = model("shop")->getInfo([["site_id", "=", $site_id]], "mobile,email");
 
-        $data["sms_account"] = $shop_info["telephone"];//手机号
+        $data["sms_account"] = $shop_info["mobile"];//手机号
         $data["var_parse"]   = $var_parse;
         $sms_model->sendMessage($data);
     }
+
+    /**
+     * 买家支付成功，卖家通知
+     * @param $data
+     */
+    public function messageBuyerPaySuccess($data)
+    {
+        //发送短信
+        $sms_model        = new Sms();
+
+        $var_parse  = array(
+            "orderno"      => $data["order_no"],//订单编号
+            "ordermoney"  => $data["order_money"],//退款申请金额
+        );
+        $site_id    = $data['site_id'];
+        $shop_info  = model("shop")->getInfo([["site_id", "=", $site_id]], "mobile,email");
+
+        $data["sms_account"] = $shop_info["mobile"];//手机号
+        $data["var_parse"]   = $var_parse;
+        $sms_model->sendMessage($data);
+    }
+
+    /**
+     * 买家收货成功，卖家通知
+     * @param $data
+     */
+    public function messageBuyerReceive($data)
+    {
+        //发送短信
+        $sms_model        = new Sms();
+
+        $var_parse  = array(
+            "orderno"      => $data["order_no"],//订单编号
+        );
+        $site_id    = $data['site_id'];
+        $shop_info  = model("shop")->getInfo([["site_id", "=", $site_id]], "mobile,email");
+
+        $data["sms_account"] = $shop_info["mobile"];//手机号
+        $data["var_parse"]   = $var_parse;
+        $sms_model->sendMessage($data);
+    }
+
 
     /**
      * 处理订单链接

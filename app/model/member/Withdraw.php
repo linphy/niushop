@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -128,7 +129,8 @@ class Withdraw extends BaseModel
                 "realname"           => $data["realname"],
                 "bank_name"          => $bank_name,
                 "account_number"     => $account_number,
-                "mobile"             => $data["mobile"]
+                "mobile"             => $data["mobile"],
+            	"applet_type"		 => $data['applet_type']
             );
             $result        = model("member_withdraw")->add($data);
 
@@ -139,7 +141,7 @@ class Withdraw extends BaseModel
 
             //是否启用自动通过审核(必须是微信)
             if ($config["is_auto_audit"] == 1) {
-                $this->agree([["id", "=", $result]]);
+                $this->agree([["id", "=", $result],['site_id', '=',$site_id ]]);
             }
 
             model('member_withdraw')->commit();

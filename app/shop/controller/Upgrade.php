@@ -4,8 +4,9 @@
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
- * 官方网址: https://www.niushop.com.cn
-
+ * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -20,6 +21,7 @@ use think\facade\Cache;
 use think\facade\Db;
 use app\model\system\Addon;
 use app\model\web\Config;
+use extend\FileManage;
 
 /**
  * 系统升级
@@ -37,7 +39,7 @@ class Upgrade extends BaseShop
             $code = input('code', '');
             $upgrade_model = new UpgradeModel($code);
             $res = $upgrade_model->authInfo();
-            if ($res['code'] == 1) {
+            if ($res['code'] == 0) {
                 $config = new Config();
                 $config->setAuth(['code' => $code]);
             }
@@ -80,6 +82,7 @@ class Upgrade extends BaseShop
         if (request()->isAjax()) {
             $upgrade_model = new UpgradeModel();
             $res           = $upgrade_model->getSystemUpgradeInfo();
+            if ($res['code'] != 0) return $res;
             $errors        = $this->checkSystemUpgradeRight($res['data']);
             session('system_upgrade_info_ready', $res['data']);
             return success(0, '操作成功', [
@@ -143,36 +146,38 @@ class Upgrade extends BaseShop
                 }
             }
             //遍历文件 检测权限
-            foreach ($info['files'] as $val) {
-                $file_path = '';
-                if ($info['action'] == 'upgrade') {
-                    if ($info['type'] == 'system') {
-                        $file_path = $val['file_path'];
-                    } else {
-                        $file_path = "addon/{$val['file_path']}";
-                    }
-                }
-                if ($info['action'] == 'download' && $info['type'] == 'client') {
-                    $file_path = "public/{$val['file_path']}";
-                }
-                if ($file_path) {
-                    if (file_exists($file_path)) {
-                        if (!is_writeable($file_path)) {
-                            $errors[] = [
-                                'path'      => $file_path,
-                                'type'      => 'file',
-                                'type_name' => '文件',
-                            ];
+            if (is_array($info['files'])) {
+                foreach ($info['files'] as $val) {
+                    $file_path = '';
+                    if ($info['action'] == 'upgrade') {
+                        if ($info['type'] == 'system') {
+                            $file_path = $val['file_path'];
+                        } else {
+                            $file_path = "addon/{$val['file_path']}";
                         }
-                    } else {
-                        $dir_path = dirname($file_path);
-                        $dir_path = $this->getRealPath($dir_path);
-                        if (!is_writeable($dir_path)) {
-                            $errors[] = [
-                                'path'      => $dir_path,
-                                'type'      => 'dir',
-                                'type_name' => '文件夹',
-                            ];
+                    }
+                    if ($info['action'] == 'download' && $info['type'] == 'client') {
+                        $file_path = "public/{$val['file_path']}";
+                    }
+                    if ($file_path) {
+                        if (file_exists($file_path)) {
+                            if (!is_writeable($file_path)) {
+                                $errors[] = [
+                                    'path'      => $file_path,
+                                    'type'      => 'file',
+                                    'type_name' => '文件',
+                                ];
+                            }
+                        } else {
+                            $dir_path = dirname($file_path);
+                            $dir_path = $this->getRealPath($dir_path);
+                            if (!is_writeable($dir_path)) {
+                                $errors[] = [
+                                    'path'      => $dir_path,
+                                    'type'      => 'dir',
+                                    'type_name' => '文件夹',
+                                ];
+                            }
                         }
                     }
                 }
@@ -201,8 +206,10 @@ class Upgrade extends BaseShop
                     $val['code'] = $info['code'];
                     $files[]     = $val;
                 }
-                $sqls .= "\n";//防止脚本没有换行导致sql解析完成后将多条sql一起执行,导致出错
-                $sqls .= $info['sqls'];
+                if (isset($info['sqls']) && !empty($info['sqls'])) {
+                    $sqls .= "\n";//防止脚本没有换行导致sql解析完成后将多条sql一起执行,导致出错
+                    $sqls .= $info['sqls'];
+                }
             }
 
             $system_upgrade_info = [
@@ -380,7 +387,7 @@ class Upgrade extends BaseShop
         if ($type == 'system') {
             $download_root = "upload/upgrade/{$upgrade_no}";//框架
         } else if ($type == 'client') {
-            $download_root = "upload/upgrade/{$upgrade_no}/public/{$code}";//客户端
+            $download_root = "upload/upgrade/{$upgrade_no}";//客户端
         } else if ($type == 'addon') {
             $download_root = "upload/upgrade/{$upgrade_no}/addon";//插件
         }
@@ -411,7 +418,7 @@ class Upgrade extends BaseShop
                     if (preg_match('/[\x{4e00}-\x{9fa5}]/u', $temp_path) > 0) {
                         $temp_path = iconv('utf-8', 'gbk', $temp_path);
                     }
-                    file_put_contents($temp_path, $info['data']);
+                    file_put_contents($temp_path, base64_decode($info['data']));
                     return json(['code' => 0, 'message' => $file_path, 'download_root' => "upload/upgrade/{$upgrade_no}/"]);
                 } else {
                     return json(['code' => -1, 'message' => '升级文件不存在']);
@@ -434,8 +441,24 @@ class Upgrade extends BaseShop
         try {
             //下载目录和要覆盖的目录
             $download_root = "upload/upgrade/{$upgrade_no}";
-            $to_path       = './';
+            // 先解压客户端文件
+            $client_type_arr = ['h5', 'weapp'];
+            $file_manage = new FileManage();
+            foreach ($client_type_arr as $client_type) {
+                $client_path = $download_root . '/' . $client_type . '.zip';
+                if (file_exists($client_path)) {
+                    $to_path = "public/{$client_type}/";
+                    if (!is_dir($to_path)) {
+                        dir_mkdir($to_path);
+                    } else {
+                        deleteDir($to_path);
+                    }
+                    $file_manage->unzip($client_path, $to_path);
+                    unlink($client_path);
+                }
+            }
 
+            $to_path       = './';
             //文件替换
             dir_copy($download_root, $to_path);
 
@@ -444,7 +467,7 @@ class Upgrade extends BaseShop
             //升级失败
             $upgrade_model = new UpgradeModel();
             $upgrade_model->editUpgradeLog(['status' => 2, 'error_message' => $e->getMessage()], ['upgrade_no' => $upgrade_no]);
-            return json(['code' => 0, 'message' => $e->getMessage()]);
+            return json(['code' => -1, 'message' => $e->getMessage()]);
         }
     }
 
@@ -710,100 +733,6 @@ class Upgrade extends BaseShop
     /************************************************ 更新日志 END*****************************************/
 
     /**
-     * 版本详情
-     */
-    public function version()
-    {
-        $version_release = input('version_release');
-        if (empty($version_release)) {
-            return $this->error('参数错误', url('admin/upgrade/upgrade'));
-        }
-        $upgrade_model = new UpgradeModel();
-        $version_info  = $upgrade_model->getUpgradeInfo($version_release);
-        if (!empty($version_info["data"])) {
-            $version_info["data"]["error"] = [];
-            try {
-                //判断upload/upgrade可写权限
-                $upgrade_root = 'upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release'];
-                dir_mkdir($upgrade_root);
-                if (!is_writeable($upgrade_root)) {
-                    $version_info["data"]["error"][] = $upgrade_root;
-                }
-                //备份路径
-                $backup_path = 'upload/backup';
-                dir_mkdir($backup_path);
-                if (!is_writeable($backup_path)) {
-                    $version_info["data"]["error"][] = $backup_path;
-                }
-                //本地要覆盖的文件路径 => mds加密
-                $two_dev_files = [];
-                //文件重置
-                foreach ($version_info['data']['files'] as $k => $v) {
-                    if (!sp_exist_dir($v)) {
-                        $version_info["data"]["error"][] = $v;
-                    } else {
-                        if (file_exists($v) && !is_writeable($v)) {
-                            $version_info["data"]["error"][] = $v;
-                        }
-                        if (file_exists($v)) {
-                            $two_dev_files[$v] = md5(file_get_contents($v));
-                        } else {
-                            $two_dev_files[$v] = '';
-                        }
-                    }
-                    if (file_exists('upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release'] . '/release/' . $v)) {
-                        unset($version_info['data']['files'][$k]);
-                    }
-                }
-
-                $two_dev_files                         = $upgrade_model->getTowDevFiles($two_dev_files);
-                $version_info['data']['two_dev_files'] = $two_dev_files['data'];
-
-                if (!empty($version_info['data']['files'])) {
-                    sort($version_info['data']['files']);
-                }
-                if (file_exists('upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release'] . '/database.sql')) {
-                    unlink('upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release'] . '/database.sql');
-                }
-                //生成升级sql文件
-                $dir_make = dir_mkdir('upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release']);
-
-                if ($dir_make) {
-                    $res = file_put_contents('upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release'] . '/db_upgrade.sql', charset2utf8($version_info['data']['sqls']));
-                } else {
-                    $version_info["data"]["error"][] = 'upload/upgrade/' . $version_info['data']['sys_version'] . '/' . $version_info['data']['sys_release'] . '/db_upgrade.sql';
-                }
-                $version_info["data"]['script_count'] = count($version_info["data"]['scripts']);
-                $version_info["data"]['file_count']   = count($version_info["data"]['files']);
-                if (!empty($version_info['data']['two_dev_files'])) {
-                    $version_info['data']['tow_dev_file_count'] = count($version_info['data']['two_dev_files']);
-                } else {
-                    $version_info['data']['tow_dev_file_count'] = 0;
-                }
-
-                session("version_update", $version_info['data']);//记录更新文件序列
-            } catch (\Exception $e) {
-                return $this->error($e->getMessage());
-            }
-        } else {
-            if ($version_info["code"] < 0) {
-                $message = $version_info["message"];
-                if ($version_info["code"] == -100) {
-                    $message .= " 服务续费请跳转到官网<a href='https://www.niushop.com.cn/member/index.html'>续费</a>";
-                }
-                return $this->error($message);
-            }
-        }
-        $current_version = [
-            'SYS_RELEASE'    => SYS_RELEASE,
-            'SYS_VERSION_NO' => SYS_VERSION_NO
-        ];
-        $this->assign('current_verison', $current_version);
-        $this->assign('version_info', $version_info['data']);
-        return $this->fetch('system/version');
-    }
-
-    /**
      * 版本恢复
      */
     public function versionRecovery()
@@ -828,34 +757,4 @@ class Upgrade extends BaseShop
             return json(['code' => -1, 'message' => $e->getMessage()]);
         }
     }
-
-
-    /************************************************同步授权文件 start*****************************************/
-
-    public function syncCert()
-    {
-        if (request()->isAjax()) {
-            $upgrade_model = new UpgradeModel();
-
-            if (!file_exists('./cert.key')) {
-                return $this->error('没有此文件');
-            }
-
-            if (!is_writeable('./cert.key')) {
-                return $this->error('文件不可写');
-            }
-
-            $res = $upgrade_model->getCert();
-
-            if ($res['code'] > 0) {
-                $cert_content = $res['data'];
-                file_put_contents('./cert.key', $cert_content);
-                return $res;
-            } else {
-                return $this->error('同步失败');
-            }
-        }
-    }
-
-    /************************************************同步授权文件 end  *****************************************/
 }

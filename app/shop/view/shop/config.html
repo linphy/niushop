@@ -90,7 +90,12 @@
 			<span class="layui-word-aux">多个关键字之间用英文“,”隔开</span>
 		</div>
 	</div>
-
+	<div class="layui-form-item">
+		<label class="layui-form-label">手机网页端域名：</label>
+		<div class="layui-input-block">
+			<input type="text" name="domain_name" autocomplete="off" value="{$domain_name_h5}" class="layui-input ns-len-long">
+		</div>
+	</div>
 	<!--<div class="layui-form-item">-->
 		<!--<label class="layui-form-label">工作日：</label>-->
 		<!--<div class="layui-input-block" id="work_week">-->
@@ -256,5 +261,21 @@
 			}
 		});
 	});
+	
+	$("input[name='domain_name']").change(function(){
+		var domain_name = $("input[name='domain_name']").val();
+		$.ajax({
+			type: 'POST',
+			url: ns.url("shop/config/h5DomainName"),
+			data:{
+				"domain_name" : domain_name
+			},
+			dataType: 'JSON',
+			success: function(res) {
+				console.log(res)
+				layer.msg(res.message);
+			}
+		})
+	})
 </script>
 {/block}

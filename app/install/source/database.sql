@@ -1907,6 +1907,7 @@ CREATE TABLE printer (
   template_id int(11) NOT NULL DEFAULT 0 COMMENT '模板id',
   create_time int(11) NOT NULL DEFAULT 0,
   update_time int(11) NOT NULL DEFAULT 0,
+  store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
   PRIMARY KEY (printer_id)
 )
 ENGINE = INNODB,
@@ -2043,7 +2044,7 @@ CREATE TABLE order_goods (
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品skuid',
   sku_name varchar(50) NOT NULL DEFAULT '' COMMENT '商品名称',
   sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
-  sku_no varchar(10) NOT NULL DEFAULT '' COMMENT '商品编码',
+  sku_no varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
   is_virtual int(11) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品',
   goods_class int(11) NOT NULL DEFAULT 0 COMMENT '商品种类(1.实物 2.虚拟3.卡券)',
   goods_class_name varchar(50) NOT NULL DEFAULT '' COMMENT '商品类型名称',
@@ -2131,8 +2132,8 @@ CREATE TABLE `order` (
   community_id int(11) NOT NULL DEFAULT 0 COMMENT '购买人社区id',
   address varchar(255) NOT NULL DEFAULT '' COMMENT '购买人地址',
   full_address varchar(255) NOT NULL DEFAULT '' COMMENT '购买人详细地址',
-  longitude varchar(10) NOT NULL DEFAULT '' COMMENT '购买人地址经度',
-  latitude varchar(10) NOT NULL DEFAULT '' COMMENT '购买人地址纬度',
+  longitude varchar(50) NOT NULL DEFAULT '' COMMENT '购买人地址经度',
+  latitude varchar(50) NOT NULL DEFAULT '' COMMENT '购买人地址纬度',
   buyer_ip varchar(20) NOT NULL DEFAULT '' COMMENT '购买人ip',
   buyer_ask_delivery_time int(11) NOT NULL DEFAULT 0 COMMENT '购买人要求配送时间',
   buyer_message varchar(50) NOT NULL DEFAULT '' COMMENT '购买人留言信息',
@@ -2166,7 +2167,7 @@ CREATE TABLE `order` (
   promotion_type varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型',
   promotion_type_name varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型名称',
   promotion_status_name varchar(255) NOT NULL DEFAULT '' COMMENT '营销状态名称',
-  delivery_store_info varchar(255) NOT NULL DEFAULT '' COMMENT '门店信息(json)',
+  delivery_store_info text NOT NULL COMMENT '门店信息(json)',
   virtual_code varchar(255) NOT NULL DEFAULT '' COMMENT '虚拟商品码',
   evaluate_status int(11) NOT NULL DEFAULT 0 COMMENT '评价状态，0：未评价，1：已评价，2：已追评',
   evaluate_status_name varchar(20) NOT NULL DEFAULT '' COMMENT '评价状态名称，未评价，已评价，已追评',
@@ -2527,6 +2528,7 @@ CREATE TABLE member_withdraw (
   certificate varchar(255) NOT NULL DEFAULT '' COMMENT '凭证',
   certificate_remark varchar(255) NOT NULL DEFAULT '' COMMENT '凭证说明',
   account_name varchar(50) NOT NULL DEFAULT '' COMMENT '账号',
+  applet_type int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -3102,7 +3104,7 @@ CREATE TABLE goods_sku (
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku名称',
   sku_no varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku编码',
-  sku_spec_format varchar(1000) NOT NULL DEFAULT '' COMMENT 'sku规格格式',
+  sku_spec_format text NOT NULL COMMENT 'sku规格格式',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'sku单价',
   market_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'sku市场价',
   cost_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'sku成本价',
@@ -3473,8 +3475,8 @@ CREATE TABLE goods (
   virtual_indate int(11) NOT NULL DEFAULT 1 COMMENT '虚拟商品有效期',
   is_free_shipping tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否免邮',
   shipping_template int(11) NOT NULL DEFAULT 0 COMMENT '指定运费模板',
-  goods_spec_format varchar(2000) NOT NULL DEFAULT '' COMMENT '商品规格格式',
-  goods_attr_format varchar(1000) NOT NULL DEFAULT '' COMMENT '商品属性格式',
+  goods_spec_format text NOT NULL COMMENT '商品规格格式',
+  goods_attr_format text NOT NULL COMMENT '商品属性格式',
   is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否已经删除',
   introduction varchar(255) NOT NULL DEFAULT '' COMMENT '促销语',
   keywords varchar(255) NOT NULL DEFAULT '' COMMENT '关键词',
@@ -4398,25 +4400,27 @@ ADD UNIQUE INDEX UK_nc_addons_name (name);
 -- Dumping data for table sms_template
 --
 INSERT INTO sms_template VALUES
-(1, 1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 0, 0, 0, 1596437584),
-(2, 1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 0, 0, 0, 1596427379),
-(3, 1, 0, 'ORDER_COMPLETE', 2, '订单完成通知', '尊敬的会员，您的订单{orderno}，交易成功。', '{"orderno":"other_number"}', 0, 0, 0, 1596427376),
-(4, 1, 0, 'ORDER_PAY', 2, '订单支付通知', '亲爱的{username},你的订单号为{orderno}的订单已成功支付,支付金额{ordermoney}', '{"username":"others","orderno":"other_number","ordermoney":"amount"}', 0, 0, 0, 1596428621),
-(5, 1, 0, 'ORDER_DELIVERY', 2, '订单发货通知', '尊敬的会员，您的订单已发货，订单号{orderno}。', '{"orderno":"other_number"}', 0, 0, 0, 1596427369),
-(6, 1, 0, 'ORDER_TAKE_DELIVERY', 2, '订单收货通知', '尊敬的会员，您的订单{orderno}，收货成功。', '{"orderno":"other_number"}', 0, 0, 0, 1596427365),
-(7, 1, 0, 'ORDER_REFUND_AGREE', 2, '商家同意退款', '尊敬的会员，您的订单{orderno}，商家同意退款。', '{"orderno":"other_number"}', 0, 0, 0, 1596427356),
-(8, 1, 0, 'ORDER_REFUND_REFUSE', 2, '商家拒绝退款', '尊敬的会员，您的订单{orderno}，商家拒绝退款。', '{"orderno":"other_number"}', 0, 0, 0, 1596427352),
-(9, 1, 0, 'VERIFY', 2, '核销取货', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"other_number"}', 0, 0, 0, 1596427347),
-(10, 1, 0, 'REGISTER_CODE', 1, '注册验证', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426737),
-(11, 1, 0, 'REGISTER_SUCCESS', 2, '注册成功', '尊敬的{username},您以成功注册为{shopname}用户。', '{"username":"others","shopname":"others"}', 0, 0, 0, 1596426734),
-(12, 1, 0, 'FIND_PASSWORD', 1, '找回密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426730),
-(13, 1, 0, 'LOGIN', 2, '会员登录', '尊敬的{name}，您的账号登陆成功。', '{"name":"others"}', 0, 0, 0, 1596426726),
-(14, 1, 0, 'MEMBER_BIND', 1, '账户绑定', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426723),
-(15, 1, 0, 'LOGIN_CODE', 1, '动态码登录', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426719),
-(16, 1, 0, 'MEMBER_PAY_PASSWORD', 1, '支付密码修改', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426716),
-(17, 1, 0, 'SET_PASSWORD', 1, '设置密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 0, 0, 0, 1596426714),
-(18, 1, 0, 'BUYER_REFUND', 2, '买家已退货提醒', '订单号为{orderno}，买家退货。', '{"orderno":"other_number"}', 0, 0, 0, 1596436982),
-(19, 1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 0, 0, 0, 1596437579);
+(1, 1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596437584),
+(2, 1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 1, 0, 0, 1596427379),
+(3, 1, 0, 'ORDER_COMPLETE', 2, '订单完成通知', '尊敬的会员，您的订单{orderno}，交易成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427376),
+(4, 1, 0, 'ORDER_PAY', 2, '订单支付通知', '亲爱的{username},你的订单号为{orderno}的订单已成功支付,支付金额{ordermoney}', '{"username":"others","orderno":"other_number","ordermoney":"amount"}', 1, 0, 0, 1596428621),
+(5, 1, 0, 'ORDER_DELIVERY', 2, '订单发货通知', '尊敬的会员，您的订单已发货，订单号{orderno}。', '{"orderno":"other_number"}', 1, 0, 0, 1596427369),
+(6, 1, 0, 'ORDER_TAKE_DELIVERY', 2, '订单收货通知', '尊敬的会员，您的订单{orderno}，收货成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427365),
+(7, 1, 0, 'ORDER_REFUND_AGREE', 2, '商家同意退款', '尊敬的会员，您的订单{orderno}，商家同意退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427356),
+(8, 1, 0, 'ORDER_REFUND_REFUSE', 2, '商家拒绝退款', '尊敬的会员，您的订单{orderno}，商家拒绝退款。', '{"orderno":"other_number"}', 1, 0, 0, 1596427352),
+(9, 1, 0, 'VERIFY', 2, '核销取货', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"other_number"}', 1, 0, 0, 1596427347),
+(10, 1, 0, 'REGISTER_CODE', 1, '注册验证', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426737),
+(11, 1, 0, 'REGISTER_SUCCESS', 2, '注册成功', '尊敬的{username},您以成功注册为{shopname}用户。', '{"username":"others","shopname":"others"}', 1, 0, 0, 1596426734),
+(12, 1, 0, 'FIND_PASSWORD', 1, '找回密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426730),
+(13, 1, 0, 'LOGIN', 2, '会员登录', '尊敬的{name}，您的账号登陆成功。', '{"name":"others"}', 1, 0, 0, 1596426726),
+(14, 1, 0, 'MEMBER_BIND', 1, '账户绑定', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426723),
+(15, 1, 0, 'LOGIN_CODE', 1, '动态码登录', '您的验证码为：{code}，该验证码 5 分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426719),
+(16, 1, 0, 'MEMBER_PAY_PASSWORD', 1, '支付密码修改', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426716),
+(17, 1, 0, 'SET_PASSWORD', 1, '设置密码', '您的验证码{code}，该验证码5分钟内有效，请勿泄漏于他人！', '{"code":"valid_code"}', 1, 0, 0, 1596426714),
+(18, 1, 0, 'BUYER_REFUND', 2, '买家已退货提醒', '订单号为{orderno}，买家退货。', '{"orderno":"other_number"}', 1, 0, 0, 1596436982),
+(19, 1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 1, 0, 0, 1596437579),
+(20, 1, 0, 'BUYER_TAKE_DELIVERY', 2, '买家收货提醒', '订单号为{orderno}，买家已收货。', '{"orderno":"other_number"}', 0, 2, 0, 1599040477),
+(21, 1, 0, 'BUYER_PAY', 2, '买家支付提醒', '订单号为{orderno}，买家已支付，支付金额为{ordermoney}。', '{"orderno":"other_number","ordermoney":"amount"}', 0, 2, 0, 1599040486);
 
 --
 -- Dumping data for table message_variable
@@ -4448,7 +4452,9 @@ INSERT INTO message_template VALUES
 (16, '', 'MEMBER_BIND', '账户绑定', 1, '{"code":"验证码","site_name":"站点名称"}', '', '', '', '', '', '', 'sms'),
 (17, '', 'LOGIN_CODE', '动态码登录', 1, '{"code":"验证码"}', '', '', '', '', '', '', 'sms'),
 (18, '', 'MEMBER_PAY_PASSWORD', '支付密码修改', 1, '{"code":"验证码"}', '', '', '', '', '', '', 'sms'),
-(19, '', 'SET_PASSWORD', '设置密码', 1, '{"code":"验证码"}', '', '', '', '', '', '', 'sms');
+(19, '', 'SET_PASSWORD', '设置密码', 1, '{"code":"验证码"}', '', '', '', '', '', '', 'sms'),
+(19, '', 'BUYER_TAKE_DELIVERY', '买家收货提醒', 2, '', '', '', '', '', '', '', 'sms'),
+(19, '', 'BUYER_PAY', '买家支付提醒', 2, '', '', '', '', '', '', '', 'sms');
 
 --
 -- Dumping data for table area
