@@ -11191,6 +11191,7 @@ UE.commands['insertimage'] = {
                     html.push(str);
                 }
             }
+
             me.execCommand('insertHtml', html.join(''));
         }
 
@@ -12665,7 +12666,7 @@ UE.plugins['paragraph'] = function() {
                         } );
                     }
                     tmpRange.setEndAfter( tmpNode );
-                    
+
                     para = range.document.createElement( style );
                     if(attrs){
                         domUtils.setAttributes(para,attrs);
@@ -12677,7 +12678,7 @@ UE.plugins['paragraph'] = function() {
                     //需要内容占位
                     if(domUtils.isEmptyNode(para)){
                         domUtils.fillChar(range.document,para);
-                        
+
                     }
 
                     tmpRange.insertNode( para );
@@ -12801,7 +12802,7 @@ UE.plugins['paragraph'] = function() {
 
         },
         doDirectionality = function(range,editor,forward){
-            
+
             var bookmark,
                 filterFn = function( node ) {
                     return   node.nodeType == 1 ? !domUtils.isBookmarkNode(node) : !domUtils.isWhitespace(node);
@@ -17666,7 +17667,7 @@ UE.plugins['video'] = function (){
                 var ext = url.substr(url.lastIndexOf('.') + 1);
                 if(ext == 'ogv') ext = 'ogg';
                 str = '<video' + (id ? ' id="' + id + '"' : '') + ' class="' + classname + ' video-js" ' + (align ? ' style="float:' + align + '"': '') +
-                    ' controls preload="none" width="' + width + '" height="' + height + '" src="' + url + '" data-setup="{}">' +
+                    ' controls preload="none" width="' + width + '" height="' + height + '" src="' + ns.img(url) + '" data-setup="{}">' +
                     '<source src="' + url + '" type="video/' + ext + '" /></video>';
                 break;
         }
@@ -22724,7 +22725,7 @@ UE.plugins['formatmatch'] = function(){
      });
 
     function addList(type,evt){
-        
+
         if(browser.webkit){
             var target = evt.target.tagName == 'IMG' ? evt.target : null;
         }
@@ -22790,7 +22791,7 @@ UE.plugins['formatmatch'] = function(){
 
     me.commands['formatmatch'] = {
         execCommand : function( cmdName ) {
-          
+
             if(flag){
                 flag = 0;
                 list = [];
@@ -22799,7 +22800,7 @@ UE.plugins['formatmatch'] = function(){
             }
 
 
-              
+
             var range = me.selection.getRange();
             img = range.getClosedNode();
             if(!img || img.tagName != 'IMG'){
@@ -25273,7 +25274,7 @@ UE.ui = baidu.editor.ui = {};
         domUtils = baidu.editor.dom.domUtils,
         UIBase = baidu.editor.ui.UIBase,
         uiUtils = baidu.editor.ui.uiUtils;
-    
+
     var Mask = baidu.editor.ui.Mask = function (options){
         this.initOptions(options);
         this.initUIBase();
@@ -25569,7 +25570,7 @@ UE.ui = baidu.editor.ui = {};
         }
     };
     utils.inherits(Popup, UIBase);
-    
+
     domUtils.on( document, 'mousedown', function ( evt ) {
         var el = evt.target || evt.srcElement;
         closeAllPopup( evt,el );
@@ -25665,7 +25666,7 @@ UE.ui = baidu.editor.ui = {};
     var utils = baidu.editor.utils,
         uiUtils = baidu.editor.ui.uiUtils,
         UIBase = baidu.editor.ui.UIBase;
-    
+
     var TablePicker = baidu.editor.ui.TablePicker = function (options){
         this.initOptions(options);
         this.initTablePicker();
@@ -25749,7 +25750,7 @@ UE.ui = baidu.editor.ui = {};
     var browser = baidu.editor.browser,
         domUtils = baidu.editor.dom.domUtils,
         uiUtils = baidu.editor.ui.uiUtils;
-    
+
     var TPL_STATEFUL = 'onmousedown="$$.Stateful_onMouseDown(event, this);"' +
         ' onmouseup="$$.Stateful_onMouseUp(event, this);"' +
         ( browser.ie ? (
@@ -25758,7 +25759,7 @@ UE.ui = baidu.editor.ui = {};
         : (
         ' onmouseover="$$.Stateful_onMouseOver(event, this);"' +
         ' onmouseout="$$.Stateful_onMouseOut(event, this);"' ));
-    
+
     baidu.editor.ui.Stateful = {
         alwalysHoverable: false,
         target:null,//目标元素和this指向dom不一样
@@ -27383,7 +27384,7 @@ UE.ui = baidu.editor.ui = {};
         setValue : function(value){
             this._value = value;
         }
-        
+
     };
     utils.inherits(MenuButton, SplitButton);
 })();
@@ -29565,6 +29566,52 @@ UE.registerUI('autosave', function(editor) {
 
 });
 
+
+//2016年12月12日 14:03:00
+	UE.registerUI('图片选择', function(editor, uiName) {
+		// 注册按钮执行时的command命令，使用命令默认就会带有回退操作
+		editor.registerCommand(uiName, {
+			execCommand : function() {
+				var me = this;
+				openAlbum(function (data) {
+
+					var html = '';
+					for (var i = 0; i < data.length; i++) {
+						html += "<img src='" + ns.img(data[i].pic_path) + "' />";
+					}
+
+					me.execCommand('insertHtml', html);
+				});
+			}
+		});
+		// 创建一个button
+		var btn = new UE.ui.Button({
+			// 按钮的名字
+			name : uiName,
+			// 提示
+			title : uiName,
+			// 添加额外样式，指定icon图标，这里默认使用一个重复的icon
+			cssRules : 'background-position: -380px 0;',
+			// 点击时执行的命令
+			onclick : function() {
+				// 这里可以不用执行命令,做你自己的操作也可
+				editor.execCommand(uiName);
+			}
+		});
+		// 当点到编辑内容上时，按钮要做的状态反射
+		// editor.addListener('selectionchange', function() {
+		// 	var state = editor.queryCommandState(uiName);
+		// 	if (state == -1) {
+		// 		btn.setDisabled(true);
+		// 		btn.setChecked(false);
+		// 	} else {
+		// 		btn.setDisabled(false);
+		// 		btn.setChecked(state);
+		// 	}
+		// });
+		// 因为你是添加button,所以需要返回这个button
+		return btn;
+	});
 
 
 })();

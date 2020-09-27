@@ -59,11 +59,14 @@ $(function () {
 			var html = '<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>';
 			if (type == "goods_state" && id == 1) {
 				// 销售中状态：下架
-				html += '<button class="layui-btn layui-btn-primary" lay-event="off_goods">下架</button>';
+				html += '<button class="layui-btn layui-btn-primary" lay-event="off_goods">批量下架</button>';
 			} else if (type == "goods_state" && id == 0) {
 				// 仓库中状态：上架
-				html += '<button class="layui-btn layui-btn-primary" lay-event="on_goods">上架</button>';
+				html += '<button class="layui-btn layui-btn-primary" lay-event="on_goods">批量上架</button>';
 			}
+
+			html += '<button class="layui-btn layui-btn-primary" lay-event="batch_set">批量设置</button>';
+
 			$("#batchOperation").html(html);
 
 			refreshTable();
@@ -119,6 +122,10 @@ $(function () {
 					} else {
 						location.href = ns.url("shop/virtualgoods/editgoods", {"goods_id": data.goods_id});
 					}
+					break;
+				case 'copy':
+					// 复制
+					copyGoods(data.goods_id);
 					break;
 				case 'delete':
 					//删除
@@ -192,9 +199,21 @@ $(function () {
                         success: function(){
                         	form.render();
                         }
-                    })
+                    });
 					break;
 			}
+		});
+
+		table.on("sort",function (obj) {
+			table.reload({
+				page: {
+					curr: 1
+				},
+				where: {
+					order:obj.field,
+					sort:obj.type
+				}
+			});
 		});
 
 		// 搜索功能
@@ -227,7 +246,7 @@ $(function () {
 		$(this).addClass('active').siblings('li').removeClass('active');
 		$('.batch-set-wrap .content-wrap .tab-item.'+ type).addClass('tab-show').siblings('.tab-item').removeClass('tab-show');
 		$('.batch-set-wrap .footer-wrap').show();
-	})
+	});
 
 	$('body').on('click', '.batch-set-wrap .shipping .layui-form-radio', function(){
 		if ($('[name="is_free_shipping"]:checked').val() == 1) {
@@ -251,7 +270,7 @@ function refreshTable() {
 		}, {
 			title: '商品信息',
 			unresize: 'false',
-			width: '38%',
+			width: '34%',
 			templet: '#goods_info'
 		}, {
 			field: 'price',
@@ -263,20 +282,49 @@ function refreshTable() {
 				return '￥' + data.price;
 			}
 		}, {
-			unresize: 'false',
-			width: '4%'
-		}, {
 			field: 'goods_stock',
 			title: '库存',
 			unresize: 'false',
-			width: '5%'
+			width: '6%',
+			templet: function (data) {
+				if (data.goods_stock_alarm > 0 && data.goods_stock <= data.goods_stock_alarm) {
+					return `<span style='color: red;'>${data.goods_stock}</span>`;
+				}
+				return data.goods_stock;
+			},
+			sort: true
 		}, {
 			field: 'sale_num',
 			title: '销量',
 			unresize: 'false',
-			width: '5%'
+			width: '6%',
+			sort: true
+		},{
+			field: 'sort',
+			unresize:'false',
+			title: `<div class="ns-prompt-block">排序
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
+									<div class="ns-prompt-con">
+									<p>商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</p>
+								</div>
+							</div>
+							</div>
+						</div>`,
+			width: '10%',
+			align: 'center',
+			templet: '#editSort',
+			sort: true
 		}, {
-			title: '商品状态',
+			title: '创建时间',
+			unresize: 'false',
+			width: '10%',
+			templet: function (data) {
+				return ns.time_to_date(data.create_time);
+			}
+		}, {
+			title: '状态',
 			unresize: 'false',
 			width: '9%',
 			templet: function (data) {
@@ -289,17 +337,10 @@ function refreshTable() {
 				return str;
 			}
 		}, {
-			title: '创建时间',
-			unresize: 'false',
-			width: '13%',
-			templet: function (data) {
-				return ns.time_to_date(data.create_time);
-			}
-		}, {
 			title: '操作',
 			toolbar: '#operation',
 			unresize: 'false',
-			width: '16%'
+			width: '15%'
 		}]
 	];
 
@@ -312,7 +353,7 @@ function refreshTable() {
 			}, {
 				title: '商品信息',
 				unresize: 'false',
-				width: '38%',
+				width: '30%',
 				templet: '#goods_info'
 			}, {
 				field: 'price',
@@ -327,27 +368,46 @@ function refreshTable() {
 				field: 'goods_stock',
 				title: '库存',
 				unresize: 'false',
-				width: '5%'
+				width: '5%',
+				templet: function (data) {
+					if (data.goods_stock_alarm > 0 && data.goods_stock < data.goods_stock_alarm) {
+						return `<span style='color: red;'>${data.goods_stock}</span>`;
+					}
+					return data.goods_stock;
+				},
+				sort: true
 			}, {
 				field: 'sale_num',
 				title: '销量',
 				unresize: 'false',
-				width: '5%'
+				width: '5%',
+				sort: true
+			},{
+				field: 'sort',
+				unresize:'false',
+				title: `<div class="ns-prompt-block">排序
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
+									<div class="ns-prompt-con">
+									<p>商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</p>
+								</div>
+							</div>
+							</div>
+						</div>`,
+				width: '10%',
+				align: 'center',
+				templet: '#editSort',
+				sort: true
 			}, {
-				title: '商品状态',
+				title: '创建时间',
 				unresize: 'false',
-				width: '6%',
+				width: '10%',
 				templet: function (data) {
-					var str = '';
-					if (data.goods_state == 1) {
-						str = '销售中';
-					} else if (data.goods_state == 0) {
-						str = '仓库中';
-					}
-					return str;
+					return ns.time_to_date(data.create_time);
 				}
 			}, {
-				title: '是否参与会员折扣',
+				title: '会员等级折扣',
 				unresize: 'false',
 				width: '9%',
 				templet: function (data) {
@@ -365,16 +425,22 @@ function refreshTable() {
 							str ='默认规则';
 						}
 					}else{
-						str ='否';
+						str ='不参与';
 					}
 					return str;
 				}
 			}, {
-				title: '创建时间',
+				title: '状态',
 				unresize: 'false',
-				width: '12%',
+				width: '6%',
 				templet: function (data) {
-					return ns.time_to_date(data.create_time);
+					var str = '';
+					if (data.goods_state == 1) {
+						str = '销售中';
+					} else if (data.goods_state == 0) {
+						str = '仓库中';
+					}
+					return str;
 				}
 			}, {
 				title: '操作',
@@ -413,6 +479,28 @@ function add() {
 			area: ['600px'],
 			content: html
 
+		});
+	});
+}
+
+// 复制
+function copyGoods(goods_id) {
+	layer.confirm('确定要复制该商品吗?', function () {
+		// if (repeat_flag) return;
+		// repeat_flag = true;
+
+		$.ajax({
+			url: ns.url("shop/goods/copyGoods"),
+			data: {goods_id: goods_id},
+			dataType: 'JSON',
+			type: 'POST',
+			success: function (res) {
+				layer.msg(res.message);
+				repeat_flag = false;
+				if (res.code == 0) {
+					table.reload();
+				}
+			}
 		});
 	});
 }
@@ -657,4 +745,36 @@ function batchSetting(){
 }
 
 
+// 监听单元格编辑
+function editSort(goods_id, event){
+	var data = $(event).val();
 
+	if (data == '') {
+		$(event).val(0);
+		data = 0;
+	}
+
+	if(!new RegExp("^-?[0-9]\\d*$").test(data)){
+		layer.msg("排序号只能是整数");
+		return ;
+	}
+	if(data<0){
+		layer.msg("排序号必须大于0");
+		return ;
+	}
+	$.ajax({
+		type: 'POST',
+		url: ns.url("shop/goods/modifySort"),
+		data: {
+			goods_id: goods_id,
+			sort: data
+		},
+		dataType: 'JSON',
+		success: function(res) {
+			layer.msg(res.message);
+			if(res.code==0){
+				table.reload();
+			}
+		}
+	});
+}

@@ -27,7 +27,7 @@ return [
     'USERNAME_EXISTED' => '用户名已存在' ,
     'MOBILE_EXISTED' => '手机号已存在' ,
     'EMAIL_EXISTED' => '邮箱已存在' ,
-    'REGISTER_REFUND' => '注册拒绝' ,
+    'REGISTER_REFUND' => '未开放注册' ,
     'USERNAME_OR_PASSWORD_ERROR' => '用户名或密码错误' ,
     //消息管理
     'REQUEST_KEYWORDS' => '缺少必须消息关键字' ,
@@ -107,5 +107,6 @@ return [
     'CANCEL_SUCCESS' => '审核撤回成功',
 
     //会员账户
-    'ACCOUNT_EMPTY' => '账户余额不足'
+    'ACCOUNT_EMPTY' => '账户余额不足',
+    'MOBILE_EXISTS' => '该手机号已存在'
 ];

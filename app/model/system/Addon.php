@@ -31,7 +31,7 @@ class Addon extends BaseModel
      */
     public function getAddonInfo($condition, $field = "*")
     {
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("addon_getAddonInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -51,7 +51,7 @@ class Addon extends BaseModel
      */
     public function getAddonList($condition = [], $field = '*', $order = '', $limit = null)
     {
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
         $cache = Cache::get("addon_getAddonList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -73,7 +73,7 @@ class Addon extends BaseModel
      */
     public function getAddonPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
     {
-        $data  = json_encode([$condition, $page, $page_size, $order, $field]);
+        $data = json_encode([ $condition, $page, $page_size, $order, $field ]);
         $cache = Cache::get("addon_getAddonPageList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -91,9 +91,9 @@ class Addon extends BaseModel
     {
         //获取官网记录的所有数据
         $upgrade_service = new Upgrade();
-        $data            = $upgrade_service->getAuthPlugin();
-        if (isset($data['code']) && $data['code'] >= 0) {
-            $temp_auth_addon_list = $data['data'];
+        $data = $upgrade_service->getAuthPlugin();
+        if (isset($data[ 'code' ]) && $data[ 'code' ] >= 0) {
+            $temp_auth_addon_list = $data[ 'data' ];
         } else {
             $temp_auth_addon_list = [];
         }
@@ -101,7 +101,7 @@ class Addon extends BaseModel
         //以code为key组装正式数据
         $auth_addon_list = [];
         foreach ($temp_auth_addon_list as $key => $val) {
-            $auth_addon_list[$val['code']] = $val;
+            $auth_addon_list[ $val[ 'code' ] ] = $val;
         }
         //存在的插件
         $existed_addons = array_map('basename', glob('addon/*', GLOB_ONLYDIR));
@@ -109,21 +109,21 @@ class Addon extends BaseModel
         $installed_addon_array = model('addon')->getColumn([], 'name');
         //初始化数据
         $undownload_addons = [];
-        $uninstall_addons  = [];
-        $install_addons    = [];
+        $uninstall_addons = [];
+        $install_addons = [];
         //获取未下载插件
         foreach ($auth_addon_list as $key => $val) {
-            $index = array_search($val['code'], $existed_addons);
+            $index = array_search($val[ 'code' ], $existed_addons);
             if ($index === false) {
                 $undownload_addons[] = [
-                    'name'        => $val['code'],
-                    'title'       => $val['goods_name'],
-                    'icon'        => $val['logo'],
-                    'description' => $val['introduction'],
-                    'version'     => $val['last_online_version_name'],
-                    'download'    => 1,
-                    'auth'        => true,
-                    'update'      => false
+                    'name' => $val[ 'code' ],
+                    'title' => $val[ 'goods_name' ],
+                    'icon' => $val[ 'logo' ],
+                    'description' => $val[ 'introduction' ],
+                    'version' => $val[ 'last_online_version_name' ],
+                    'download' => 1,
+                    'auth' => true,
+                    'update' => false
                 ];
             }
         }
@@ -131,12 +131,12 @@ class Addon extends BaseModel
         foreach ($existed_addons as $key => $val) {
             $info_file_path = 'addon/' . $val . '/config/info.php';
             if (file_exists($info_file_path)) {
-                $info                           = include_once $info_file_path;
-                $info['icon']                   = 'addon/' . $val . '/icon.png';
-                $info['download']               = 0;
-                $info['auth']                   = isset($auth_addon_list[$val]) ? true : false;
-                $info['update']                 = (isset($auth_addon_list[$val]) && $auth_addon_list[$val]['last_online_version_no'] > $info['version_no']) ? true : false;
-                $info['last_online_version_no'] = isset($auth_addon_list[$val]) ? $auth_addon_list[$val]['last_online_version_no'] : '';
+                $info = include_once $info_file_path;
+                $info[ 'icon' ] = 'addon/' . $val . '/icon.png';
+                $info[ 'download' ] = 0;
+                $info[ 'auth' ] = isset($auth_addon_list[ $val ]) ? true : false;
+                $info[ 'update' ] = ( isset($auth_addon_list[ $val ]) && $auth_addon_list[ $val ][ 'last_online_version_no' ] > $info[ 'version_no' ] ) ? true : false;
+                $info[ 'last_online_version_no' ] = isset($auth_addon_list[ $val ]) ? $auth_addon_list[ $val ][ 'last_online_version_no' ] : '';
                 if (!in_array($val, $installed_addon_array)) {
                     $uninstall_addons[] = $info;
                 } else {
@@ -146,7 +146,7 @@ class Addon extends BaseModel
         }
         return $this->success([
             'uninstall' => array_merge($undownload_addons, $uninstall_addons),
-            'install'   => $install_addons,
+            'install' => $install_addons,
         ]);
     }
 
@@ -156,16 +156,16 @@ class Addon extends BaseModel
     public function getUninstallAddonList()
     {
 
-        $dirs        = array_map('basename', glob('addon/*', GLOB_ONLYDIR));
+        $dirs = array_map('basename', glob('addon/*', GLOB_ONLYDIR));
         $addon_names = model('addon')->getColumn([], 'name');
-        $addons      = [];
+        $addons = [];
         foreach ($dirs as $key => $value) {
             if (!in_array($value, $addon_names)) {
                 $info_name = 'addon/' . $value . '/config/info.php';
                 if (file_exists($info_name)) {
-                    $info         = include_once $info_name;
-                    $info['icon'] = 'addon/' . $value . '/icon.png';
-                    $addons[]     = $info;
+                    $info = include_once $info_name;
+                    $info[ 'icon' ] = 'addon/' . $value . '/icon.png';
+                    $addons[] = $info;
                 }
             }
         }
@@ -186,30 +186,30 @@ class Addon extends BaseModel
             // 插件预安装
 
             $res2 = $this->preInstall($addon_name);
-            if ($res2['code'] != 0) {
+            if ($res2[ 'code' ] != 0) {
                 Db::rollback();
                 return $res2;
             }
 
             // 安装菜单
             $res3 = $this->installMenu($addon_name);
-            if ($res3['code'] != 0) {
+            if ($res3[ 'code' ] != 0) {
                 Db::rollback();
                 return $res3;
             }
 
             // 安装自定义模板
             $res4 = $this->refreshDiyView($addon_name);
-            if ($res4['code'] != 0) {
+            if ($res4[ 'code' ] != 0) {
                 Db::rollback();
                 return $res4;
             }
 
             // 添加插件入表
-            $addons_model              = model('addon');
-            $addon_info                = require 'addon/' . $addon_name . '/config/info.php';
-            $addon_info['create_time'] = time();
-            $addon_info['icon']        = 'addon/' . $addon_name . '/icon.png';
+            $addons_model = model('addon');
+            $addon_info = require 'addon/' . $addon_name . '/config/info.php';
+            $addon_info[ 'create_time' ] = time();
+            $addon_info[ 'icon' ] = 'addon/' . $addon_name . '/icon.png';
 
             $data = $addons_model->add($addon_info);
 
@@ -236,9 +236,9 @@ class Addon extends BaseModel
     private function preInstall($addon_name)
     {
         $class_name = "addon\\" . $addon_name . "\\event\\Install";
-        $install    = new $class_name;
-        $res        = $install->handle($addon_name);
-        if ($res['code'] != 0) {
+        $install = new $class_name;
+        $res = $install->handle($addon_name);
+        if ($res[ 'code' ] != 0) {
             return $res;
         }
         return $this->success();
@@ -263,14 +263,14 @@ class Addon extends BaseModel
     {
         if (empty($addon)) {
             $diy_view_file = 'config/diy_view.php';
-            model('diy_view_temp')->delete([['addon_name', '=', '']]);
-            model('link')->delete([['addon_name', '=', '']]);
-            model('diy_view_util')->delete([['addon_name', '=', '']]);
+            model('diy_view_temp')->delete([ [ 'addon_name', '=', '' ] ]);
+            model('link')->delete([ [ 'addon_name', '=', '' ] ]);
+            model('diy_view_util')->delete([ [ 'addon_name', '=', '' ] ]);
         } else {
             $diy_view_file = 'addon/' . $addon . '/config/diy_view.php';
-            model('diy_view_temp')->delete([['addon_name', '=', $addon]]);
-            model('link')->delete([['addon_name', '=', $addon]]);
-            model('diy_view_util')->delete([['addon_name', '=', $addon]]);
+            model('diy_view_temp')->delete([ [ 'addon_name', '=', $addon ] ]);
+            model('link')->delete([ [ 'addon_name', '=', $addon ] ]);
+            model('diy_view_util')->delete([ [ 'addon_name', '=', $addon ] ]);
         }
         if (!file_exists($diy_view_file)) {
             return $this->success();
@@ -279,16 +279,16 @@ class Addon extends BaseModel
         $diy_view = require $diy_view_file;
 
         // 自定义模板
-        if (isset($diy_view['template'])) {
+        if (isset($diy_view[ 'template' ])) {
             $diy_view_addons_data = [];
-            foreach ($diy_view['template'] as $k => $v) {
-                $addons_item            = [
-                    'addon_name'  => isset($addon) ? $addon : '',
-                    'name'        => $v['name'],
-                    'title'       => $v['title'],
-                    'value'       => $v['value'],
-                    'type'        => $v['type'],
-                    'icon'        => $v['icon'],
+            foreach ($diy_view[ 'template' ] as $k => $v) {
+                $addons_item = [
+                    'addon_name' => isset($addon) ? $addon : '',
+                    'name' => $v[ 'name' ],
+                    'title' => $v[ 'title' ],
+                    'value' => $v[ 'value' ],
+                    'type' => $v[ 'type' ],
+                    'icon' => $v[ 'icon' ],
                     'create_time' => time()
                 ];
                 $diy_view_addons_data[] = $addons_item;
@@ -298,28 +298,31 @@ class Addon extends BaseModel
             }
         }
         // 自定义链接
-        if (isset($diy_view['link'])) {
+        if (isset($diy_view[ 'link' ])) {
 
-            $link_model         = new DiyViewLink();
-            $diy_view_link_data = $link_model->getViewLinkList($diy_view['link'], $addon);
+            $link_model = new DiyViewLink();
+            $diy_view_link_data = $link_model->getViewLinkList($diy_view[ 'link' ], $addon);
             if ($diy_view_link_data) {
                 model('link')->addList($diy_view_link_data);
             }
         }
         // 自定义模板组件
-        if (isset($diy_view['util'])) {
+        if (isset($diy_view[ 'util' ])) {
             $diy_view_util_data = [];
-            foreach ($diy_view['util'] as $k => $v) {
-                $util_item            = [
-                    'name'             => $v['name'],
-                    'title'            => $v['title'],
-                    'type'             => $v['type'],
-                    'controller'       => $v['controller'],
-                    'value'            => $v['value'],
-                    'sort'             => $v['sort'],
-                    'support_diy_view' => $v['support_diy_view'],
-                    'addon_name'       => $addon,
-                    'max_count'        => $v['max_count']
+            foreach ($diy_view[ 'util' ] as $k => $v) {
+                $util_item = [
+                    'name' => $v[ 'name' ],
+                    'title' => $v[ 'title' ],
+                    'type' => $v[ 'type' ],
+                    'controller' => $v[ 'controller' ],
+                    'value' => $v[ 'value' ],
+                    'sort' => $v[ 'sort' ],
+                    'support_diy_view' => $v[ 'support_diy_view' ],
+                    'addon_name' => $addon,
+                    'max_count' => $v[ 'max_count' ],
+                    'is_delete' => isset($v[ 'is_delete' ]) ? $v[ 'is_delete' ] : 0,
+                    'icon' => isset($v[ 'icon' ]) ? $v[ 'icon' ] : '',
+                    'icon_selected' => isset($v[ 'icon_selected' ]) ? $v[ 'icon_selected' ] : ''
                 ];
                 $diy_view_util_data[] = $util_item;
             }
@@ -337,26 +340,26 @@ class Addon extends BaseModel
     {
         Db::startTrans();
         try {
-            $addon_info = model("addon")->getInfo([['name', '=', $addon_name]], '*');
+            $addon_info = model("addon")->getInfo([ [ 'name', '=', $addon_name ] ], '*');
             // 插件预卸载
             $res1 = $this->preUninstall($addon_name);
-            if ($res1['code'] != 0) {
+            if ($res1[ 'code' ] != 0) {
                 Db::rollback();
                 return $res1;
             }
             // 卸载菜单
             $res2 = $this->uninstallMenu($addon_name);
-            if ($res2['code'] != 0) {
+            if ($res2[ 'code' ] != 0) {
                 Db::rollback();
                 return $res2;
             }
             $res3 = $this->uninstallDiyView($addon_name);
-            if ($res3['code'] != 0) {
+            if ($res3[ 'code' ] != 0) {
                 Db::rollback();
                 return $res3;
             }
             $delete_res = model('addon')->delete([
-                ['name', '=', $addon_name]
+                [ 'name', '=', $addon_name ]
             ]);
             if ($delete_res === false) {
                 Db::rollback();
@@ -380,8 +383,8 @@ class Addon extends BaseModel
     private function preUninstall($addon_name)
     {
         $class_name = "addon\\" . $addon_name . "\\event\\UnInstall";
-        $install    = new $class_name;
-        $res        = $install->handle($addon_name);
+        $install = new $class_name;
+        $res = $install->handle($addon_name);
         return $res;
     }
 
@@ -391,7 +394,7 @@ class Addon extends BaseModel
     private function uninstallMenu($addon_name)
     {
         $res = model('menu')->delete([
-            ['addon', '=', $addon_name]
+            [ 'addon', '=', $addon_name ]
         ]);
         return $this->success($res);
     }
@@ -404,9 +407,9 @@ class Addon extends BaseModel
      */
     private function uninstallDiyView($addon_name)
     {
-        model('diy_view_temp')->delete([['addon_name', '=', $addon_name]]);
-        model('link')->delete([['addon_name', '=', $addon_name]]);
-        model('diy_view_util')->delete([['addon_name', '=', $addon_name]]);
+        model('diy_view_temp')->delete([ [ 'addon_name', '=', $addon_name ] ]);
+        model('link')->delete([ [ 'addon_name', '=', $addon_name ] ]);
+        model('diy_view_util')->delete([ [ 'addon_name', '=', $addon_name ] ]);
         return $this->success();
     }
 
@@ -420,10 +423,10 @@ class Addon extends BaseModel
     public function installAllAddon()
     {
         $addon_list_result = $this->getUninstallAddonList();
-        $addon_list        = $addon_list_result["data"];
+        $addon_list = $addon_list_result[ "data" ];
         foreach ($addon_list as $k => $v) {
-            $item_result = $this->install($v["name"]);
-            if ($item_result["code"] < 0)
+            $item_result = $this->install($v[ "name" ]);
+            if ($item_result[ "code" ] < 0)
                 return $item_result;
         }
         return $this->success();

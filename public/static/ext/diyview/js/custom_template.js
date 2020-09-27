@@ -2,12 +2,18 @@
 var ncComponentHtml = '<div v-show="data.lazyLoadCss && data.lazyLoad">';
 
 ncComponentHtml += '<div class="preview-draggable">';//拖拽区域
-ncComponentHtml += '<slot name="preview"></slot>';
-ncComponentHtml += '<i class="del" v-on:click.stop="$parent.delComponent(data.index)" data-disabled="1">x</i>';
+	ncComponentHtml += '<slot name="preview"></slot>';
+	ncComponentHtml += '<i class="del" v-show="parseInt(data.is_delete) !== 1" v-on:click.stop="$parent.delComponent(data.index)" data-disabled="1">x</i>';
 ncComponentHtml += '</div>';
 
-ncComponentHtml += '<div class="edit-attribute" v-bind:data-have-edit="($slots.edit ? \'1\' : \'0\')" v-show="$parent.currentIndex==data.index && $slots.edit">';
-ncComponentHtml += '<slot name="edit"></slot>';
+// ($slots.edit ? '1' : '0')
+ncComponentHtml += '<div class="edit-attribute" v-bind:data-have-edit="1" v-show="$parent.currentIndex==data.index">';//  && $slots.edit
+	ncComponentHtml += '<div class="attr-wrap">';
+			ncComponentHtml += '<div class="restore-wrap">';
+				ncComponentHtml += '<h2 class="attr-title">{{data.name}}</h2>';
+				ncComponentHtml += '<slot name="edit"></slot>';
+		ncComponentHtml += '</div>';
+	ncComponentHtml += '</div>';
 ncComponentHtml += '</div>';
 
 ncComponentHtml += '<div style="display:none;">';
@@ -20,7 +26,7 @@ var ncComponent = {
 	props: ["data"],
 	template: ncComponentHtml,
 	created: function () {
-		
+
 		//如果当前添加的组件没有添加过资源
 		if (!this.$slots.resource) {
 			this.data.lazyLoadCss = true;
@@ -39,12 +45,12 @@ var ncComponent = {
 					}
 				}
 			}
-			
+
 			if (countCss == 0) this.data.lazyLoadCss = true;
 			if (countJs == 0) this.data.lazyLoad = true;
-			
+
 			this.data.outerCountJs = outerCountJs;
-			
+
 		}
 	}
 };
@@ -53,20 +59,28 @@ var ncComponent = {
  * 手机端自定义模板Vue对象
  */
 var vue = new Vue({
-	
+
 	el: "#diyView",
-	
+
 	data: {
 		//当前编辑的组件位置
-		currentIndex: 0,
-		
+		currentIndex: -99,
+		changeIndex: -1,
+		isAdd : false,
+
 		//全局属性
 		global: {
-			//模板标题
-			title: "模板标题",
-			
+			title: "页面名称",
+
 			//是否显示底部导航标识
 			openBottomNav: false,
+
+			// 弹框形式，不弹出 -1，首次弹出 1，每次弹出 0
+			popWindow: {
+				imageUrl : "",
+				count : -1,
+				link : {}
+			},
 		},
 		
 		//自定义组件集合
@@ -75,6 +89,10 @@ var vue = new Vue({
 	
 	components: {
 		'nc-component': ncComponent,//最外层组件
+	},
+	created:function(){
+		// console.log(this.global)
+		// console.log(JSON.stringify(this.global))
 	},
 	
 	mounted: function () {
@@ -85,29 +103,43 @@ var vue = new Vue({
 	methods: {
 		
 		addComponent: function (obj, other) {
-			
+
 			//附加公共字段
 			obj.index = 0;
 			obj.sort = 0;
 			obj.lazyLoadCss = false;//资源懒加载，防止看到界面缓慢加载
 			obj.lazyLoad = false;//资源懒加载，防止看到界面缓慢加载
 			obj.outerCountJs = 0;
-			
+
 			//第一次添加组件时，添加以下字段
 			if (other) {
 				obj.addon_name = other.addon_name;
 				obj.type = other.name;
 				obj.name = other.title;
 				obj.controller = other.controller;
+				obj.is_delete = other.is_delete;
 			}
-			
-			if (other && !this.checkComponentIsAdd(obj.type, other.max_count)) {
-				return;
-			}
-			
+
+			if (other && !this.checkComponentIsAdd(obj.type, other.max_count)) return;
+
 			this.data.push(obj);
-			this.currentIndex = this.data.length - 1;
+
+			// 添加组件后（不是编辑调用的），选择最后一个
+			if(other) this.currentIndex = this.data.length - 1;
+
+			this.isAdd = true;
+
 			this.refresh();
+
+			var self = this;
+
+			$(".edit-attribute-placeholder").show();
+			setTimeout(function () {
+				$(".edit-attribute-placeholder").hide();
+				if (self.changeIndex == -1 || (self.changeIndex != self.currentIndex)) {
+					$(".preview-wrap .preview-restore-wrap .dv-wrap").scrollTop($(".diy-view-wrap").height());
+				}
+			},60);
 
 //			console.log(JSON.stringify(this.data));
 		
@@ -124,13 +156,22 @@ var vue = new Vue({
 			for (var i in this.data) if (this.data[i].type == type) count++;
 			
 			if (count >= max_count) return false;
-			
 			else return true;
+		},
+
+		// 获取组件添加数量
+		getComponentAddCount: function (type) {
+			var count = 0;
+			//遍历已添加的自定义组件，检测是否超出数量
+			for (var i in this.data) if (this.data[i].type == type) count++;
+			return count;
 		},
 		
 		//改变当前编辑的组件选中
 		changeCurrentIndex: function (sort) {
-			this.currentIndex = sort;
+			this.currentIndex = parseInt(sort);
+			this.changeIndex = this.currentIndex;
+			this.isAdd = false;
 			this.refresh();
 		},
 		
@@ -157,27 +198,52 @@ var vue = new Vue({
 			var self = this;
 			//vue框架执行，异步操作组件列表的排序
 			setTimeout(function () {
-				
+
 				$(".draggable-element").each(function (i) {
 					$(this).attr("data-sort", i);
 				});
-				
+
 				for (var i = 0; i < self.data.length; i++) {
 					self.data[i].index = $(".draggable-element[data-index=" + i + "]").attr("data-index");
 					self.data[i].sort = $(".draggable-element[data-index=" + i + "]").attr("data-sort");
 				}
-				
+
 				//触发变异方法，进行视图更新。不能用sort()方法，会改变组件的顺序，导致显示的顺序错乱
 				self.data.push({});
 				self.data.pop();
 				// console.log(self.currentIndex);
 				// console.log("触发变异方法，进行视图更新。不能用sort()方法，会改变组件的顺序，导致显示的顺序错乱");
-				
+
 				//如果当前编辑的组件不存在了，则选中最后一个
 				if (parseInt(self.currentIndex) >= self.data.length) self.currentIndex--;
-				
+
+				$(".draggable-element[data-index=" + self.currentIndex + "] .edit-attribute .attr-wrap").css("height", ($(window).height() - 214) + "px");
+
+				if (self.isAdd && self.changeIndex > -1 && (self.changeIndex != self.currentIndex) && self.changeIndex < (self.data.length - 1)) {
+					var curr = $(".draggable-element[data-index=" + self.changeIndex + "]");
+					var last = $(".draggable-element[data-index=" + (self.data.length - 1) + "]");
+					// 调试代码，勿删
+					// window.curr = curr;
+					// window.last = last;
+					// console.log("curr",curr);
+					// console.log("last",last);
+					curr.after(last);
+					self.changeIndex = self.currentIndex;
+
+					// 定位到当前位置
+					// setTimeout(function () {
+						// console.log("定位到当前位置",parseFloat((curr.position().top + last.outerHeight())));
+						// $(".preview-wrap .preview-restore-wrap .dv-wrap").scrollTop(curr.position().top + last.outerHeight());
+					// },1600);
+					// console.log("self.changeIndex",self.changeIndex);
+					// console.log("self.currentIndex",self.currentIndex);
+				}
+
+				// 显示插件添加的数量，防止一进入看到代码
+				$(".js-component-add-count").show();
+
 			}, 50);
-			
+
 		},
 		
 		//转换图片路径
@@ -190,14 +256,27 @@ var vue = new Vue({
 		//设置全局对象属性
 		setGlobal: function (obj) {
 			for (var k in obj) {
-				this.$set(this.global, k, obj[k]);
+				if(k) this.$set(this.global, k, obj[k]);
 			}
 		},
 		verify:function () {
 			
 			if (this.global.title == "") {
-				layer.msg('请输入模板名称');
+				layer.msg('请输入页面名称');
 				this.currentIndex = -99;
+				this.refresh();
+				return false;
+			}else if (this.global.title.length > 50) {
+				layer.msg('页面名称最多50个字符');
+				this.currentIndex = -99;
+				this.refresh();
+				return false;
+			}
+
+			if(this.global.popWindow.count != -1 && this.global.popWindow.imageUrl == ''){
+				layer.msg('请上传弹框广告');
+				this.currentIndex = -99;
+				this.refresh();
 				return false;
 			}
 			
@@ -208,6 +287,7 @@ var vue = new Vue({
 							var res = this.data[i].verify[j]();
 							if (!res.code) {
 								this.currentIndex = i;
+								this.refresh();
 								layer.msg(res.message);
 								return false;
 							}
@@ -238,7 +318,7 @@ var vue = new Vue({
 
 /**
  * 绑定拖拽事件
- * 创建时间：2018年7月3日18:50:11 全栈小学生
+ * 创建时间：2018年7月3日18:50:11
  */
 $('.preview-block').DDSort({
 	
@@ -247,7 +327,7 @@ $('.preview-block').DDSort({
 	
 	//拖拽时显示的样式
 	floatStyle: {
-		'border': '1px solid #0d73f9',
+		'border': '1px solid #FF6A00',
 		'background-color': '#ffffff'
 	},
 	

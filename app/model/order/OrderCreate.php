@@ -176,7 +176,7 @@ class OrderCreate extends BaseModel
                     'cost_money'           => $order_goods['cost_price'] * $order_goods['num'],
                     'goods_id'             => $order_goods['goods_id'],
                     'delivery_status'      => 0,
-                    'delivery_status_name' => "待发货",
+                    'delivery_status_name' => "未发货",
                     "real_goods_money"     => $order_goods["real_goods_money"],
                     'coupon_money'         => $order_goods["coupon_money"],
                     'promotion_money'      => $order_goods["promotion_money"],
@@ -840,6 +840,15 @@ class OrderCreate extends BaseModel
         $coupon_money = $shop_goods['coupon_money'] ?? 0;
         $order_money  = $shop_goods['order_money'];
 
+        // 积分抵现
+        $shop_goods['max_usable_point'] = 0;
+        $point_money = 0;
+        if ($data['member_account']['point'] > 0 && addon_is_exit('pointcash', $data['site_id'])) {
+            $shop_goods = $this->getMaxUsablePoint($shop_goods, $data);
+            $point_money = $shop_goods['point_money'] ?? 0;
+            $order_money  = $shop_goods['order_money'];
+        }
+
         //发票相关
         $shop_goods = $this->invoice($shop_goods, $data);
 
@@ -850,15 +859,9 @@ class OrderCreate extends BaseModel
             $order_money = 0;
         }
 
-        // 最大可用积分
-        $shop_goods['max_usable_point'] = 0;
-        if ($data['member_account']['point'] > 0 && addon_is_exit('pointcash', $data['site_id'])) {
-            $shop_goods = $this->getMaxUsablePoint($shop_goods, $data);
-        }
-
         //余额抵扣(判断是否使用余额)
         if ($this->member_balance_money > 0) {
-            $temp_order_money = $order_money - $this->point_money;
+            $temp_order_money = $order_money;
             if ($temp_order_money <= $this->member_balance_money) {
                 $balance_money = $temp_order_money;
             } else {
@@ -868,7 +871,7 @@ class OrderCreate extends BaseModel
             $balance_money = 0;
         }
 
-        $pay_money = $order_money - $this->point_money - $balance_money; //计算出实际支付金额
+        $pay_money = $order_money - $balance_money; //计算出实际支付金额
         //判断是否存在支付金额为0的订单
         $this->member_balance_money -= $balance_money; //预减少账户余额
         $this->balance_money        += $balance_money; //累计余额
@@ -895,6 +898,7 @@ class OrderCreate extends BaseModel
 
         $this->goods_num  += $shop_goods["goods_num"];
         $this->order_name = string_split($this->order_name, ",", $shop_goods["order_name"]);
+        $this->point_money += $point_money;
 
         //买家留言
         if (isset($data['buyer_message']) && isset($data['buyer_message'])) {
@@ -984,13 +988,11 @@ class OrderCreate extends BaseModel
         $order_config_result = $config_model->getOrderEventTimeConfig($site_id);
         $order_config        = $order_config_result["data"];
         $now_time            = time();
-        if (!empty($order_config)) {
+        if ($order_config["value"]["auto_close"] > 0){
             $execute_time = $now_time + $order_config["value"]["auto_close"] * 60; //自动关闭时间
-        } else {
-            $execute_time = $now_time + 3600; //尚未配置  默认一天
+            $cron_model = new Cron();
+            $cron_model->addCron(1, 0, "订单自动关闭", "CronOrderClose", $execute_time, $order_id);
         }
-        $cron_model = new Cron();
-        $cron_model->addCron(1, 0, "订单自动关闭", "CronOrderClose", $execute_time, $order_id);
     }
 
     /**
@@ -1487,8 +1489,13 @@ class OrderCreate extends BaseModel
             $point     = $max_point > $data['member_account']['point'] ? $data['member_account']['point'] : $max_point;
         }
         if ($data['is_point'] && $point > 0) {
-            $this->point_money        = round(($point * (1 / $config['cash_rate'])), 2);
-            $shop_goods['goods_list'] = $this->distributionGoodsPoint($shop_goods['goods_list'], $shop_goods['goods_money'], $point, $this->point_money);
+            $point_money = round(($point * (1 / $config['cash_rate'])), 2);
+            if ($point_money > $shop_goods['order_money']) {
+                $point_money = $shop_goods['order_money'];
+            }
+            $shop_goods['goods_list'] = $this->distributionGoodsPoint($shop_goods['goods_list'], $shop_goods['goods_money'], $point, $point_money);
+            $shop_goods['order_money'] -= $point_money;
+            $shop_goods['point_money'] = $point_money;
         }
         $shop_goods['max_usable_point'] = $point;
         return $shop_goods;

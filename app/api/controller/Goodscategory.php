@@ -24,7 +24,7 @@ class Goodscategory extends BaseApi
         $goods                = new GoodsModel();
         $goods_category_model = new GoodsCategoryModel();
         $condition            = [
-//			[ 'is_show', '=', 1 ],
+			[ 'is_show', '=', 0 ],
             ['level', '<=', $level],
             ['site_id', '=', $this->site_id]
         ];

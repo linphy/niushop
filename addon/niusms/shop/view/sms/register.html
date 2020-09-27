@@ -15,7 +15,7 @@
 {block name="main"}
 <div class="layui-form ns-form">
 
-	<p class="tips">您还未注册牛云短信，请填写信息</p>
+	<p class="tips">已有账号，<a href="{:addon_url('niusms://shop/sms/login')}">去登录</a></p>
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">用户名：</label>
@@ -87,7 +87,7 @@
 					repeat_flag = false;
 					if (res.code == 0) {
 						layer.msg("注册成功");
-						location.reload();
+						location.href = ns.url("niusms://shop/sms/index");
 					} else {
 						layer.msg(res.message);
 					}

@@ -234,8 +234,6 @@
         });    
     }
 
-
-
     $("body").on('click','.template-item .preview',function () {
         var data = JSON.parse($(this).parents('.template-item').find('input[name="temple_cotent"]').val());
         data.value = JSON.parse(data.value);
@@ -257,12 +255,9 @@
 
     });
 
-
-
     $("body").on('click','.template-item .immediate-use',function () {
         var data = JSON.parse($(this).parents('.template-item').find('input[name="temple_cotent"]').val());
         data.value = JSON.parse(data.value);
-
         immediateUse(data);
     });
 
@@ -279,15 +274,12 @@
             },
             dataType: 'JSON',
             success: function(res) {
+                layer.msg(res.message);
                 if (res.code >= 0){
-                    layer.msg(res.message)
                     location.href = ns.url("shop/diy/index");
                 }
-                else
-                    layer.msg(res.message)
             }
         });
     }
 </script>
-
 {/block}

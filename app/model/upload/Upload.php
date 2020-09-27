@@ -50,7 +50,6 @@ class Upload extends BaseModel
 
             $tmp_name      = $file->getPathname();//获取上传缓存文件
             $original_name = $file->getOriginalName();//文件原名
-//            $file_path = $this->upload_path."/".$this->site_id . "/images/".date("Ymd"). '/';
             $file_path = $this->path;
             // 检测目录
             $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
@@ -66,10 +65,23 @@ class Upload extends BaseModel
             $image    = Image::make($tmp_name);
             $width    = $image->width();//图片宽
             $height   = $image->height();//图片高
-            $image    = $this->imageWater($image);
-            $result   = $this->fileCloud($image, $new_file);//原图云上传(文档流上传)
-            if ($result["code"] < 0)
-                return $result;
+            // 是否需生成水印
+            if (isset($param['watermark']) && $param['watermark']) {
+                $image    = $this->imageWater($image);
+            }
+            // 是否需上传到云存储
+            if (isset($param['cloud']) && $param['cloud']){
+                $result   = $this->fileCloud($image, $new_file);
+                if ($result["code"] < 0)
+                    return $result;
+            } else {
+                try {
+                    $image->save($new_file);
+                    $result = $this->success($new_file, "UPLOAD_SUCCESS");
+                } catch (\Exception $e) {
+                    return $this->error('', $e->getMessage());
+                }
+            }
 
             $thumb_res = $this->thumbBatch($tmp_name, $file_name, $extend_name, $thumb_type);//生成缩略图
             if ($thumb_res["code"] < 0)
@@ -106,7 +118,7 @@ class Upload extends BaseModel
 
             $tmp_name      = $file->getPathname();//获取上传缓存文件
             $original_name = $file->getOriginalName();//文件原名
-//            $file_path = $this->upload_path."/".$this->site_id . "/images/".date("Ymd"). '/';
+
             $file_path = $this->path;
             // 检测目录
             $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
@@ -123,7 +135,7 @@ class Upload extends BaseModel
             $image    = Image::make($tmp_name);
             $width    = $image->width();//图片宽
             $height   = $image->height();//图片高
-//            $image = $this->imageWater($image);
+            $image = $this->imageWater($image);
             $result = $this->fileCloud($image, $new_file);//原图云上传(文档流上传)
             if ($result["code"] < 0)
                 return $result;
@@ -206,7 +218,7 @@ class Upload extends BaseModel
                 $file_path = $this->path;
                 \think\facade\Filesystem::disk('public')->putFileAs($file_path, $file, $new_name);
                 $file_name = $file_path . $new_name;
-                return $this->success(["path" => $file_name], "UPLOAD_SUCCESS");
+                return $this->success(["path" => $file_name,'name' => $new_name], "UPLOAD_SUCCESS");
             } catch (\think\exception\ValidateException $e) {
                 return $this->error('', $e->getMessage());
             }
@@ -578,5 +590,38 @@ class Upload extends BaseModel
             return $result;
 
         return $this->success(["pic_path" => $result["data"]]);
+    }
+
+    /**
+     * 远程拉取图片到本地
+     * @param $path
+     */
+    public function remotePullToLocal($path){
+
+        if(stristr($path, 'http://') || stristr($path, 'https://')){
+            $file_path = $this->path;
+            // 检测目录
+            $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
+            if ($checkpath_result["code"] < 0)
+                return $checkpath_result;
+
+            $file_name = $file_path . $this->createNewFileName();
+            $new_file = $file_name . ".png";
+
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $path);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+            $file = curl_exec($ch);
+            curl_close($ch);
+
+            $image = Image::make($file);
+            $image = $this->imageWater($image);
+            $image->save($new_file);
+            return $this->success(["path" => $new_file]);
+        }else{
+            return $this->success(["path" => $path]);
+        }
     }
 }

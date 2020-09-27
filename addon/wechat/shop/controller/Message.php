@@ -10,6 +10,7 @@
 // +---------------------------------------------------------------------+
 namespace addon\wechat\shop\controller;
 
+use addon\wechat\model\Config;
 use app\model\message\Message as MessageModel;
 use app\model\message\MessageTemplate as MessageTemplateModel;
 
@@ -87,6 +88,9 @@ class Message extends BaseWechat
             $list      = $message_model->getMessagePageList($condition, $this->site_id, $page, $page_size);
             return $list;
         } else {
+            $config_model = new Config();
+            $config = $config_model->getTemplateMessageConfig($this->site_id);
+            $this->assign('config', $config['data']['value']);
             return $this->fetch('message/config');
         }
 
@@ -102,7 +106,7 @@ class Message extends BaseWechat
         if (request()->isAjax()) {
             $keywords       = input("keywords", "");
             $wechat_is_open = input('wechat_is_open', 0);
-            $res            = $message_model->getWechatTemplateNo($keywords, $this->site_id, $wechat_is_open);
+            $res = $message_model->getWechatTemplateNo($keywords, $this->site_id, $wechat_is_open);
             return $res;
         }
     }
@@ -116,10 +120,22 @@ class Message extends BaseWechat
         if (request()->isAjax()) {
             $keywords      = input("keywords", "");
             $message_model = new MessageModel();
-            $res           = $message_model->getWechatTemplateNo($keywords, $this->site_id);
+            $res           = $message_model->getWechatTemplateNo($keywords, $this->site_id, -1);
             return $res;
         }
 
     }
 
+    /**
+     *
+     * @return array
+     */
+    public function messageConfig(){
+        if (request()->isAjax()) {
+            $is_jump_weapp = input("is_jump_weapp", 0);
+            $config_model = new Config();
+            $res = $config_model->setTemplateMessageConfig(['is_jump_weapp' => $is_jump_weapp], 1, $this->site_id);
+            return $res;
+        }
+    }
 }

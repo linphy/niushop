@@ -131,8 +131,8 @@ class OrderCommon extends BaseModel
             'icon' => 'upload/uniapp/order/order-icon-receive.png',
             'action' => [
                 [
-                    'action' => 'editDelivery',
-                    'title' => '修改物流单号',
+                    'action' => 'takeDelivery',
+                    'title' => '确认收货',
                     'color' => ''
                 ],
             ],
@@ -369,8 +369,8 @@ class OrderCommon extends BaseModel
             $condition = array(
                 ["order_id", "=", $order_id]
             );
-            //循环订单项 依次返还库存
-            $order_goods_list = model('order_goods')->getList($condition, "sku_id,num,refund_status,use_point");
+            //循环订单项 依次返还库存 并修改状态
+            $order_goods_list = model('order_goods')->getList($condition, "order_goods_id,sku_id,num,refund_status,use_point");
             $goods_stock_model = new GoodsStock();
             $order_refund_model = new OrderRefund();
             $goods_model = new Goods();
@@ -599,9 +599,10 @@ class OrderCommon extends BaseModel
         $order_name = implode(",", $order_name_array);
         //生成新的支付单据
         $out_trade_no = $pay_model->createOutTradeNo();
-        $result = $pay_model->addPay($site_id, $out_trade_no, "", $order_name, $order_name, $pay_money, '', 'OrderPayNotify', '');
         //修改交易流水号为新生成的
         model("order")->update(["out_trade_no" => $out_trade_no], [["order_id", "in", $order_ids], ["pay_status", "=", 0]]);
+        $result = $pay_model->addPay($site_id, $out_trade_no, "", $order_name, $order_name, $pay_money, '', 'OrderPayNotify', '');
+
         return $this->success($out_trade_no);
     }
     /************************************************************************ 订单调价 start **************************************************************************/
@@ -639,29 +640,12 @@ class OrderCommon extends BaseModel
             if ($pay_money < 0)
                 return $this->error("", "实际支付不能小于0!");
 
-
-//            $pay_money = $order_info["pay_money"] - $order_info["delivery_money"];//减去原来的配送费用
-//            $pay_money = $pay_money - $order_info["adjust_money"];//减去原来的调整费用
-//            $pay_money = $pay_money + $delivery_money;//加配送费用
-//
-//            $pay_money = $pay_money + $adjust_money;
-//            if ($pay_money < 0)
-//                return $this->error("", "实际支付不能小于0!");
-//
-////            $order_money = $order_info["order_money"] - $order_info["adjust_money"] + $adjust_money;
-//            $order_money = $order_info["order_money"] - $order_info["delivery_money"] + $delivery_money + $order_info["adjust_money"] + $adjust_money;
-//            if ($order_money < 0)
-//                return $this->error("", "订单金额不能小于0!");
-
             $data_order = array(
                 'delivery_money' => $delivery_money,
                 'pay_money' => $pay_money,
                 'adjust_money' => $adjust_money,
                 'order_money' => $new_order_money,
-                'invoice_money' => $invoice_money,
-//                '$invoice_money' => $invoice_money,
-//                '$invoice_money' => $invoice_money,
-//                '$invoice_money' => $invoice_money,
+                'invoice_money' => $invoice_money
             );
             model('order')->update($data_order, [['order_id', "=", $order_id]]);
 
@@ -678,6 +662,11 @@ class OrderCommon extends BaseModel
                 return $pay_result;
             }
             $out_trade_no = $pay_result["data"];
+            // 调价之后支付金额为0
+            if($pay_money == 0){
+                $this->orderOfflinePay($order_id);
+            }
+
             model('order')->commit();
 
             return $this->success();
@@ -783,24 +772,6 @@ class OrderCommon extends BaseModel
                 break;
         }
         $result = $order_model->orderDelivery($order_id);
-        if ($result["code"] < 0) {
-            return $result;
-        }
-        //获取订单自动收货时间
-        $config_model = new Config();
-        $event_time_config_result = $config_model->getOrderEventTimeConfig($order_info['site_id']);
-        $event_time_config = $event_time_config_result["data"];
-        $now_time = time();//当前时间
-
-        if (!empty($event_time_config)) {
-            $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400;//自动收货时间
-        } else {
-            $execute_time = $now_time + 86400;//尚未配置  默认一天
-        }
-        //默认自动时间
-        $cron_model = new Cron();
-        $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
-        event('OrderDelivery', ['order_id' => $order_id]);
         return $result;
     }
 
@@ -811,7 +782,7 @@ class OrderCommon extends BaseModel
      */
     public function orderCommonTakeDelivery($order_id)
     {
-        $order_info = model('order')->getInfo([['order_id', '=', $order_id]], 'order_no,order_type,site_id');
+        $order_info = model('order')->getInfo([['order_id', '=', $order_id]], '*');
         if (empty($order_info))
             return $this->error([], "ORDER_EMPTY");
 
@@ -819,6 +790,9 @@ class OrderCommon extends BaseModel
         if ($local_result["code"] < 0)
             return $local_result;
 
+        if($order_info['order_status'] == self::ORDER_TAKE_DELIVERY){
+            return $this->error('','该订单已收货');
+        }
         switch ($order_info['order_type']) {
             case 1:
                 $order_model = new Order();

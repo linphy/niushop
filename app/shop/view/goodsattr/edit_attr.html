@@ -222,7 +222,9 @@
 
 	</div>
 </div>
-
+<script type="text/html" id="editSort">
+	<input name="sort" type="number" onchange="editSort({{d.attr_class_id}},{{d.attr_id}},this)" value="{{d.sort}}" placeholder="请输入排序" class="layui-input edit-sort ns-len-short">
+</script>
 {/block}
 {block name="script"}
 <script>

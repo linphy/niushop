@@ -77,7 +77,7 @@ class Cart extends BaseModel
             ngs.sku_no, ngs.sku_spec_format,ngs.price,ngs.market_price,
             ngs.discount_price, ngs.promotion_type, ngs.start_time, ngs.end_time, ngs.stock, 
             ngs.sku_image, ngs.sku_images, ngs.goods_state, ngs.goods_stock_alarm, ngs.is_virtual, ngs.goods_name,
-            ngs.virtual_indate, ngs.is_free_shipping, ngs.shipping_template, ngs.unit, ngs.introduction,ngs.sku_spec_format, ngs.keywords, ns.site_name';
+            ngs.virtual_indate, ngs.is_free_shipping, ngs.shipping_template, ngs.unit, ngs.introduction,ngs.sku_spec_format, ngs.keywords, ngs.max_buy, ngs.min_buy, ns.site_name';
         $alias = 'ngc';
         $join  = [
             [
@@ -107,7 +107,16 @@ class Cart extends BaseModel
 
     public function getCartList($condition = [], $field = 'cart_id,site_id,member_id,sku_id,num', $order = 'cart_id desc')
     {
-        $list = model("goods_cart")->getList($condition, $field, $order);
+        $alias = 'gc';
+        $join = [
+            [
+                'goods_sku gs',
+                'gc.sku_id = gs.sku_id',
+                'left'
+            ]
+        ];
+
+        $list = model("goods_cart")->getList($condition, $field, $order,$alias,$join);
         return $this->success($list);
     }
 }

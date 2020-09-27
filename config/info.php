@@ -16,7 +16,7 @@ return [
     'type' => 'system',
     'status' => 1,
     'author' => '',
-    'version' => '4.0.1',
-    'version_no' => '202008140001',
+    'version' => '4.0.3',
+    'version_no' => '202009260001',
     'content' => 'NiuShop单商户V4版',
 ];

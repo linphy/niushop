@@ -114,40 +114,35 @@
 {/block}
 {block name="script"}
 <script>
-	layui.use(['form', 'upload'], function() {
+	layui.use(['form'], function() {
 		var form = layui.form,
-			upload = layui.upload,
 			repeat_flag = false; //防重复标识
 		form.render();
-		
-		
-		//指定允许上传的文件类型
-		upload.render({
+
+		var cert_upload = new Upload({
 			elem: '#cert_upload',
 			url: ns.url("wechatpay://shop/pay/uploadwechatcert"), //改成您自己的上传接口
-			accept: 'file', //普通文件
-			done: function(res){
-				layer.msg(res.message);
+			accept: 'file',
+			callback:function (res) {
 				if (res.code >= 0) {
 					$("input[name='apiclient_cert']").val(res.data.path);
 					$("input[name='apiclient_cert']").siblings(".file-upload").text("已上传");
 				}
 			}
 		});
-		
-		upload.render({
+
+		var key_upload = new Upload({
 			elem: '#key_upload',
 			url: ns.url("wechatpay://shop/pay/uploadwechatcert"), //改成您自己的上传接口
-			accept: 'file', //普通文件
-			done: function(res){
-				layer.msg(res.message);
+			accept: 'file',
+			callback:function (res) {
 				if (res.code >= 0) {
 					$("input[name='apiclient_key']").val(res.data.path);
 					$("input[name='apiclient_key']").siblings(".file-upload").text("已上传");
 				}
 			}
 		});
-	
+
 		/**
 		 * 监听提交
 		 */

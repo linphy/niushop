@@ -32,7 +32,6 @@
 			<div class="layui-input-block">
 				<div class="upload-img-block">
 					<!-- 用于存储图片路径 -->
-					<input type="hidden" name="background" value="{$info['background']}" class="layui-input" />
 					<div class="upload-img-box" id="background">
 						{if $info['background']}
 						<img src="{:img($info['background'])}">
@@ -43,6 +42,8 @@
 						</div>
 						{/if}
 					</div>
+					<input type="hidden" name="background" value="{$info['background']}" />
+					<i class="del {if $info['background']}show{/if}">x</i>
 				</div>
 			</div>
 			<div class="ns-word-aux">背景图必须是640px*1134px的png图像；点击下方"保存"按钮后生效。</div>

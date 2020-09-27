@@ -87,7 +87,6 @@ function orderClose(order_id){
 	});
 }
 
-
 /**
 * 删除订单
 * @param order_id
@@ -115,6 +114,30 @@ function orderDelete(order_id){
     layer.confirm('确定要删除该订单吗?', function() {
         $.ajax({
             url: ns.url("shop/order/delete"),
+            data: {order_id : order_id},
+            dataType: 'JSON',
+            type: 'POST',
+            success: function(res) {
+                layer.msg(res.message);
+
+                if (res.code == 0) {
+                    location.reload();
+                }
+            }
+        });
+    }, function () {
+        layer.close();
+    });
+}
+
+/**
+ * 确认收货
+ * @param order_id
+ */
+function takeDelivery(order_id){
+    layer.confirm('确保买家已经收到您的商品，并且与买家协商完毕提前确认收货?', function() {
+        $.ajax({
+            url: ns.url("shop/order/takeDelivery"),
             data: {order_id : order_id},
             dataType: 'JSON',
             type: 'POST',

@@ -21,24 +21,24 @@ return [
          * 完成系统基础化操作执行
          */
         //应用初始化事件
-        'AppInit'               => [
+        'AppInit' => [
             'app\event\InitConfig',
             'app\event\InitRoute',
             'app\event\InitAddon',
             'app\event\InitCron',
 
         ],
-        'HttpRun'               => [],
-        'HttpEnd'               => [],
-        'LogLevel'              => [],
-        'LogWrite'              => [],
+        'HttpRun' => [],
+        'HttpEnd' => [],
+        'LogLevel' => [],
+        'LogWrite' => [],
 
         /**
          * 营销活动查询事件
          * 用于添加到对应营销活动展示
          */
         //营销活动
-        'ShowPromotion'         => [
+        'ShowPromotion' => [
             'app\event\ShowPromotion'
         ],
 
@@ -46,7 +46,7 @@ return [
          * 店铺相关事件
          * 完成店铺相关功能操作
          */
-        'AddSite'               => [
+        'AddSite' => [
             'app\event\AddSiteDiyView',//增加默认自定义数据：主页主页、商品分类、底部导航
             'app\event\AddMemberLevel',//增加默认会员等级
             'app\event\AddRegisterAgreement',//增加默认会员注册协议
@@ -55,15 +55,15 @@ return [
             'app\event\AddSiteExpressCompany',//增加默认物流公司数据
         ],
         // 添加店铺演示数据
-        'AddYanshiData'         => [
+        'AddYanshiData' => [
             'app\event\AddYanshiData',//增加默认商品相关数据：商品1~3个、商品分类、商品服务
         ],
 
         //添加店铺账户数据
-        'AddShopAccount'        => [],
+        'AddShopAccount' => [],
 
         //添加门店事件
-        'AddStore'              => [
+        'AddStore' => [
             'app\event\AddStoreDiyView',//增加默认自定义数据：门店主页
         ],
 
@@ -72,18 +72,18 @@ return [
          *完成会员相关功能操作调用
          */
         //添加会员账户数据
-        'AddMemberAccount'      => [
+        'AddMemberAccount' => [
             'app\event\UpdateMemberLevel',//会员账户变化检测会员等级
         ],
         //会员行为事件
-        'MemberAction'          => [],
+        'MemberAction' => [],
         //会员营销活动标志
-        'MemberPromotion'       => [],
+        'MemberPromotion' => [],
         //会员注册后执行事件
-        'MemberRegister'        => [
+        'MemberRegister' => [
             'app\event\MemberRegister'
         ],
-        'MemberLogin'           => [
+        'MemberLogin' => [
             'app\event\MemberLogin'
         ],
 
@@ -93,7 +93,7 @@ return [
          * 对应支付相关功能调用
          */
         //支付异步回调(支付插件完成，作用判定支付成功，返回对应支付编号)
-        'PayNotify'             => [
+        'PayNotify' => [
 
         ],
 
@@ -102,57 +102,57 @@ return [
          * 完成订单相关操作调用
          */
         //订单支付异步执行
-        'OrderPayNotify'        => [
+        'OrderPayNotify' => [
             'app\event\OrderPayNotify',//商城订单支付异步回调
         ],
 
         //店铺订单支付异步操作
-        'SysOrderPayNotify'     => [
+        'SysOrderPayNotify' => [
             'app\event\SysOrderPayNotify',
         ],
 
         //订单创建后执行事件
-        'OrderCreate'           => [
+        'OrderCreate' => [
         ],
-        'OrderPay'              => [
+        'OrderPay' => [
             'app\event\ShopOrderCalc',  //订单支付后统计
 
         ],  //订单支付成功后执行事件
-        'OrderDelivery'         => [], //订单发货
-        'orderTakeDelivery'     => [], //订单收货
-        'OrderComplete'         => [
+        'OrderDelivery' => [], //订单发货
+        'orderTakeDelivery' => [], //订单收货
+        'OrderComplete' => [
             //订单完成后执行 后续事件
             'app\event\OrderComplete',  //订单支付后统计
         ],  //订单完成后执行事件
         //系统订单完成
-        'SysOrderComplete'      => [
+        'SysOrderComplete' => [
             'app\event\SysOrderComplete',
             'app\event\SmsOrderComplete',
         ],
-        'OrderClose'            => [], //订单关闭后执行事件
-        'OrderRefundFinish'     => [
+        'OrderClose' => [], //订单关闭后执行事件
+        'OrderRefundFinish' => [
             'app\event\OrderRefundFinish'
         ],//订单项完成退款操作之后
         //核销类型
-        'VerifyType'            => [
+        'VerifyType' => [
         ],
         //核销
-        'Verify'                => [
+        'Verify' => [
             'app\event\PickupOrderVerify',//自提订单核销
             'app\event\VirtualGoodsVerify',//虚拟商品核销
         ],
         //执行店铺续签申请后店铺入驻时间续期
-        'CronShopRelpay'        => [
+        'CronShopRelpay' => [
             'app\event\CronShopRelpay'
         ],
-        'CronOrderClose'        => [
+        'CronOrderClose' => [
             'app\event\CronOrderClose'
         ],
         'CronOrderTakeDelivery' => [
             'app\event\CronOrderTakeDelivery'
         ],
         //自动执行订单自动完成
-        'CronOrderComplete'     => [
+        'CronOrderComplete' => [
             'app\event\CronOrderComplete'
         ],
 
@@ -161,26 +161,31 @@ return [
          * 自定义模板展示调用相关功能
          */
         //自定义模板
-        'DiyViewUtils'          => [
+        'DiyViewUtils' => [
             'app\event\DiyViewUtils',//自定义组件
         ],
-        'DiyViewEdit'           => [
+        'DiyViewEdit' => [
             'app\event\DiyViewEdit',//自定义页面编辑
         ],
-
-        'DiyViewCreate'       => [
+        'DiyViewCreate' => [
             'app\event\DiyViewCreate',//自定义页面创建
+        ],
+        'DiyLink' => [
+            'app\event\DiyLink',//自定义链接
+        ],
+        'DiyChildLink' => [
+            'app\event\DiyChildLink',//自定义子级链接
         ],
 
         /**
          * 物流公司
          */
         //物流跟踪
-        'Trace'               => [
+        'Trace' => [
             'app\event\Kd100Trace',//快递100 物流查询
             'app\event\KdbirdTrace'//快递鸟物流查询
         ],
-        'CloseTrace'          => [
+        'CloseTrace' => [
             'app\event\CloseKd100Trace',//快递100 物流查询关闭
             'app\event\CloseKdbirdTrace'//快递鸟物流查询关闭
         ],
@@ -234,13 +239,22 @@ return [
             'app\event\MessageBuyerPaySuccess',
             // 买家收货通知商家
             'app\event\MessageBuyerReceive',
+            // 会员申请提现通知
+            'app\event\MessageUserWithdrawalApply',
+            // 会员提现成功通知
+            'app\event\MessageUserWithdrawalSuccess',
+            // 分销申请提现通知
+            'app\event\MessageFenxiaoWithdrawalApply',
+            // 分销提现成功通知
+            'app\event\MessageFenxiaoWithdrawalSuccess',
+
         ],
         //发送短信
-        'sendSms'             => [
+        'sendSms' => [
 
         ],
 
-        'Qrcode'          => [
+        'Qrcode' => [
             'app\event\Qrcode'
         ],
         // api配置变更
@@ -249,11 +263,11 @@ return [
         ],
 
         //关闭游戏
-        'CloseGame'       => [
+        'CloseGame' => [
             'app\event\CloseGame'
         ],
         //开启游戏
-        'OpenGame'        => [
+        'OpenGame' => [
             'app\event\OpenGame'
         ],
     ],

@@ -37,6 +37,7 @@ class InitConfig
     private function initConst()
     {
         //加载版本信息
+        define('SHOP_MODULE', 'shop');
         defined('SYS_VERSION_NO') or define('SYS_VERSION_NO', Config::get('info.version'));                        //版本号
         defined('SYS_VERSION_NAME') or define('SYS_VERSION_NAME', Config::get('info.title'));                     //版本名称
         defined('SYS_VERSION') or define('SYS_VERSION', Config::get('info.name'));                            //版本类型

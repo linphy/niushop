@@ -29,7 +29,7 @@ class ShopOrderCalc
         $stat = new Stat();
         $data = [
             'site_id'         => $data['site_id'],
-            'order_total'     => $data['order_money'] - $data['adjust_money'],
+            'order_total'     => $data['order_money'],
             'shipping_total'  => $data['delivery_money'],
             'order_pay_count' => 1,
             'goods_pay_count' => $data['goods_num'],

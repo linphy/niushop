@@ -1,13 +1,10 @@
 <?php
 /**
- * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * NiuShop商城系统 - 团队十年电商经验汇集巨献!
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
- * =========================================================
  */
 
 namespace addon\niusms\model;
@@ -19,10 +16,12 @@ use app\model\BaseModel;
  */
 class Order extends BaseModel
 {
-    private $api = "https://api.niushop.com/api";// http://cs.niusite.net/index.php/api
+    private $api = "https://www.niushop.com/api";// https://www.niushop.com/api
 
     /**
      * 创建短信订单
+     * @param $data
+     * @return mixed
      */
     public function createSmsOrder($data)
     {
@@ -45,6 +44,8 @@ class Order extends BaseModel
 
     /**
      * 获取订单信息
+     * @param $data
+     * @return mixed
      */
     public function getSmsOrderInfo($data)
     {
@@ -55,6 +56,8 @@ class Order extends BaseModel
 
     /**
      * 获取短信充值订单列表
+     * @param $data
+     * @return mixed
      */
     public function getSmsOrderList($data)
     {
@@ -65,6 +68,8 @@ class Order extends BaseModel
 
     /**
      * 待付款订单
+     * @param $data
+     * @return mixed
      */
     public function payment($data)
     {
@@ -76,7 +81,7 @@ class Order extends BaseModel
     /**
      * 关闭待付款订单
      * @param $out_trade_no
-     * @return array|\multitype
+     * @return mixed
      */
     public function cronCloseSmsPayment($out_trade_no)
     {
@@ -89,7 +94,7 @@ class Order extends BaseModel
      * 数据请求
      * @param $url
      * @param $data
-     * @return mixed
+     * @return array|bool|string
      */
     public function httpPost($url, $data)
     {

@@ -2,6 +2,7 @@ var form, laytpl, layerIndex = -1, repeatFlag = false;
 
 var attrValueList = [];// 属性值列表
 var deleteAttrValueList = [];//要删除的属性值
+var table;
 
 $(function () {
 	
@@ -114,7 +115,7 @@ $(function () {
 			return false;
 		});
 		
-		var table = new Table({
+		table = new Table({
 			elem: '#attribute_list',
 			url: ns.url("shop/goodsattr/getAttributeList"),
 			where: {attr_class_id: attr_class_id},
@@ -163,7 +164,8 @@ $(function () {
 						field: 'sort',
 						title: '排序',
 						width: '15%',
-						align: 'center'
+						align: 'center',
+						templet: '#editSort'
 					},
 					{
 						title: '操作',
@@ -558,4 +560,34 @@ function addAttributeValue(attr_id, callback) {
 			}
 		});
 	}
+}
+
+
+// 监听单元格编辑
+function editSort(attr_class_id,id, event) {
+	var data = $(event).val();
+	if (!new RegExp("^-?[1-9]\\d*$").test(data)) {
+		layer.msg("排序号只能是整数");
+		return;
+	}
+	if(data<0){
+		layer.msg("排序号必须大于0");
+		return ;
+	}
+	$.ajax({
+		type: 'POST',
+		url: ns.url("shop/goodsattr/modifyAttributeSort"),
+		data: {
+			sort: data,
+			attr_class_id:attr_class_id,
+			attr_id: id
+		},
+		dataType: 'JSON',
+		success: function(res) {
+			layer.msg(res.message);
+			if (res.code == 0) {
+				location.reload();
+			}
+		}
+	});
 }

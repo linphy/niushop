@@ -12,6 +12,7 @@
 
 namespace app\model\goods;
 
+use app\model\order\Config as ConfigModel;
 use think\facade\Db;
 use think\facade\Cache;
 use app\model\BaseModel;
@@ -33,78 +34,85 @@ class GoodsEvaluate extends BaseModel
      */
     public function addEvaluate($data, $site_id)
     {
-        $res = model('goods_evaluate')->getInfo([['order_id', '=', $data['order_id']]], 'evaluate_id');
+        $res = model('goods_evaluate')->getInfo([ [ 'order_id', '=', $data[ 'order_id' ] ] ], 'evaluate_id');
         if (empty($res)) {
+
+            $config_model = new ConfigModel();
+            //订单评价设置
+            $order_evaluate_config = $config_model->getOrderEvaluateConfig($site_id);
+            $order_evaluate_config = $order_evaluate_config[ 'data' ][ 'value' ];
+
             $data_arr = [];
-            foreach ($data['goods_evaluate'] as $k => $v) {
-                $item       = [
-                    'order_id'       => $data['order_id'],
-                    'order_no'       => $data['order_no'],
-                    'member_id'      => $data['member_id'],
-                    'member_name'    => $data['member_name'],
-                    'member_headimg' => $data['member_headimg'],
-                    'is_anonymous'   => $data['is_anonymous'],
-                    'order_goods_id' => $v['order_goods_id'],
-                    'goods_id'       => $v['goods_id'],
-                    'sku_id'         => $v['sku_id'],
-                    'site_id'        => $site_id,
-                    'sku_name'       => $v['sku_name'],
-                    'sku_price'      => $v['sku_price'],
-                    'sku_image'      => $v['sku_image'],
-                    'content'        => !empty($v['content']) ? $v['content'] : '此用户没有填写评价。',
-                    'images'         => $v['images'],
-                    'scores'         => $v['scores'],
-                    'explain_type'   => $v['explain_type'],
-                    'create_time'    => time()
+            foreach ($data[ 'goods_evaluate' ] as $k => $v) {
+                $item = [
+                    'order_id' => $data[ 'order_id' ],
+                    'order_no' => $data[ 'order_no' ],
+                    'member_id' => $data[ 'member_id' ],
+                    'member_name' => $data[ 'member_name' ],
+                    'member_headimg' => $data[ 'member_headimg' ],
+                    'is_anonymous' => $data[ 'is_anonymous' ],
+                    'order_goods_id' => $v[ 'order_goods_id' ],
+                    'goods_id' => $v[ 'goods_id' ],
+                    'sku_id' => $v[ 'sku_id' ],
+                    'site_id' => $site_id,
+                    'sku_name' => $v[ 'sku_name' ],
+                    'sku_price' => $v[ 'sku_price' ],
+                    'sku_image' => $v[ 'sku_image' ],
+                    'content' => !empty($v[ 'content' ]) ? $v[ 'content' ] : '此用户没有填写评价。',
+                    'images' => $v[ 'images' ],
+                    'scores' => $v[ 'scores' ],
+                    'explain_type' => $v[ 'explain_type' ],
+                    'is_audit' => ( $order_evaluate_config[ 'evaluate_audit' ] == 1 ? 0 : 1 ),
+                    'create_time' => time()
                 ];
                 $data_arr[] = $item;
 
-                $evaluate           = 0; //评价
-                $evaluate_shaitu    = 0; //晒图
-                $evaluate_shipin    = 0; //视频
-                $evaluate_haoping   = 0; //好评
+                $evaluate = 0; //评价
+                $evaluate_shaitu = 0; //晒图
+                $evaluate_shipin = 0; //视频
+                $evaluate_haoping = 0; //好评
                 $evaluate_zhongping = 0; //中评
-                $evaluate_chaping   = 0; //差评
-                if ($v['explain_type'] == 1) {
+                $evaluate_chaping = 0; //差评
+                if ($v[ 'explain_type' ] == 1) {
                     //好评
-                    $evaluate         = 1; //评价
+                    $evaluate = 1; //评价
                     $evaluate_haoping = 1; //好评
 
-                } elseif ($v['explain_type'] == 2) {
+                } elseif ($v[ 'explain_type' ] == 2) {
                     //中评
-                    $evaluate           = 1; //评价
+                    $evaluate = 1; //评价
                     $evaluate_zhongping = 1; //中评
 
-                } elseif ($v['explain_type'] == 3) {
+                } elseif ($v[ 'explain_type' ] == 3) {
                     //差评
-                    $evaluate         = 1; //评价
+                    $evaluate = 1; //评价
                     $evaluate_chaping = 1; //差评
                 }
-                if (!empty($v['images'])) {
+                if (!empty($v[ 'images' ])) {
                     $evaluate_shaitu = 1; //晒图
                 }
-                Db::name('goods')->where([['goods_id', '=', $v['goods_id']]])
+                Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
                     ->update(
                         [
-                            "evaluate"           => Db::raw('evaluate+' . $evaluate),
-                            "evaluate_shaitu"    => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
-                            "evaluate_haoping"   => Db::raw('evaluate_haoping+' . $evaluate_haoping),
+                            "evaluate" => Db::raw('evaluate+' . $evaluate),
+                            "evaluate_shaitu" => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
+                            "evaluate_haoping" => Db::raw('evaluate_haoping+' . $evaluate_haoping),
                             "evaluate_zhongping" => Db::raw('evaluate_zhongping+' . $evaluate_zhongping),
-                            "evaluate_chaping"   => Db::raw('evaluate_chaping+' . $evaluate_chaping),
+                            "evaluate_chaping" => Db::raw('evaluate_chaping+' . $evaluate_chaping),
                         ]);
-                Db::name('goods_sku')->where([['sku_id', '=', $v['sku_id']]])
+                Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
                     ->update(
                         [
-                            "evaluate"           => Db::raw('evaluate+' . $evaluate),
-                            "evaluate_shaitu"    => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
-                            "evaluate_haoping"   => Db::raw('evaluate_haoping+' . $evaluate_haoping),
+                            "evaluate" => Db::raw('evaluate+' . $evaluate),
+                            "evaluate_shaitu" => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
+                            "evaluate_haoping" => Db::raw('evaluate_haoping+' . $evaluate_haoping),
                             "evaluate_zhongping" => Db::raw('evaluate_zhongping+' . $evaluate_zhongping),
-                            "evaluate_chaping"   => Db::raw('evaluate_chaping+' . $evaluate_chaping),
+                            "evaluate_chaping" => Db::raw('evaluate_chaping+' . $evaluate_chaping),
                         ]);
             }
 
 //			修改订单表中的评价标识
-            model("order")->update(['is_evaluate' => 1, 'evaluate_status' => 1, 'evaluate_status_name' => $this->evaluate_status[1]], [['order_id', '=', $data['order_id']]]);
+            model("order")->update([ 'is_evaluate' => 1, 'evaluate_status' => 1, 'evaluate_status_name' => $this->evaluate_status[ 1 ] ], [ [ 'order_id', '=', $data[ 'order_id' ] ] ]);
             $evaluate_id = model('goods_evaluate')->addList($data_arr);
             Cache::tag("goods_evaluate")->clear();
             return $this->success($evaluate_id);
@@ -120,7 +128,7 @@ class GoodsEvaluate extends BaseModel
      */
     public function evaluateApply($data)
     {
-        $res = model("goods_evaluate")->update($data, [['evaluate_id', '=', $data['evaluate_id']]]);
+        $res = model("goods_evaluate")->update($data, [ [ 'evaluate_id', '=', $data[ 'evaluate_id' ] ] ]);
         Cache::tag("goods_evaluate")->clear();
         return $this->success($res);
     }
@@ -145,23 +153,23 @@ class GoodsEvaluate extends BaseModel
      */
     public function evaluateAgain($data)
     {
-        foreach ($data['goods_evaluate'] as $k => $v) {
+        foreach ($data[ 'goods_evaluate' ] as $k => $v) {
             $item = [
-                'order_id'       => $data['order_id'],
-                'order_goods_id' => $v['order_goods_id'],
-                'goods_id'       => $v['goods_id'],
-                'sku_id'         => $v['sku_id'],
-                'again_content'  => $v['again_content'],
-                'again_images'   => $v['again_images'],
-                'again_time'     => time()
+                'order_id' => $data[ 'order_id' ],
+                'order_goods_id' => $v[ 'order_goods_id' ],
+                'goods_id' => $v[ 'goods_id' ],
+                'sku_id' => $v[ 'sku_id' ],
+                'again_content' => $v[ 'again_content' ],
+                'again_images' => $v[ 'again_images' ],
+                'again_time' => time()
             ];
-            $res  = model("goods_evaluate")->update($item, [['order_goods_id', '=', $v['order_goods_id']]]);
+            $res = model("goods_evaluate")->update($item, [ [ 'order_goods_id', '=', $v[ 'order_goods_id' ] ] ]);
             if ($res) {
-                model("goods")->setInc([['goods_id', '=', $v['goods_id']]], 'evaluate_zhuiping', 1);
-                model("goods_sku")->setInc([['sku_id', '=', $v['sku_id']]], 'evaluate_zhuiping', 1);
+                model("goods")->setInc([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ], 'evaluate_zhuiping', 1);
+                model("goods_sku")->setInc([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ], 'evaluate_zhuiping', 1);
             }
         }
-        model("order")->update(['is_evaluate' => 0, 'evaluate_status' => 2, 'evaluate_status_name' => $this->evaluate_status[2]], [['order_id', '=', $data['order_id']]]);
+        model("order")->update([ 'is_evaluate' => 0, 'evaluate_status' => 2, 'evaluate_status_name' => $this->evaluate_status[ 2 ] ], [ [ 'order_id', '=', $data[ 'order_id' ] ] ]);
         Cache::tag("goods_evaluate")->clear();
         return $this->success($res);
     }
@@ -172,7 +180,7 @@ class GoodsEvaluate extends BaseModel
      */
     public function deleteEvaluate($evaluate_id)
     {
-        $res = model('goods_evaluate')->delete(['evaluate_id' => $evaluate_id]);
+        $res = model('goods_evaluate')->delete([ 'evaluate_id' => $evaluate_id ]);
         Cache::tag("goods_evaluate")->clear();
         return $this->success($res);
     }
@@ -186,7 +194,7 @@ class GoodsEvaluate extends BaseModel
      */
     public function getFirstEvaluateInfo($condition, $field = 'evaluate_id,order_goods_id,goods_id,sku_id,sku_name,sku_price,content,images,explain_first,member_name,member_headimg,member_id,is_anonymous,again_content,again_images,again_explain,create_time,again_time', $order = "create_time desc")
     {
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("goods_evaluate_getFirstEvaluateInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -205,7 +213,7 @@ class GoodsEvaluate extends BaseModel
      */
     public function getEvaluateList($condition = [], $field = 'evaluate_id, order_id, order_no, order_goods_id, goods_id, sku_id, sku_name, sku_price, sku_image, content, images, explain_first, member_name, member_id, is_anonymous, scores, again_content, again_images, again_explain, explain_type, is_show, create_time, again_time,shop_desccredit,shop_servicecredit,shop_deliverycredit', $order = '', $limit = null)
     {
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
         $cache = Cache::get("goods_evaluate_getEvaluateList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -223,9 +231,9 @@ class GoodsEvaluate extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getEvaluatePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc', $field = 'evaluate_id, order_id, order_no, order_goods_id, goods_id, sku_id, sku_name, sku_price, sku_image, content, images, explain_first, member_name,member_headimg, member_id, is_anonymous, scores, again_content, again_images, again_explain, explain_type, is_show, create_time, again_time,shop_desccredit,shop_servicecredit,shop_deliverycredit')
+    public function getEvaluatePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc', $field = 'evaluate_id, order_id, order_no, order_goods_id, goods_id, sku_id, sku_name, sku_price, sku_image, content, images, explain_first, member_name,member_headimg, member_id, is_anonymous, scores, again_content, again_images, again_explain, explain_type, is_show, create_time, again_time,shop_desccredit,shop_servicecredit,shop_deliverycredit,is_audit')
     {
-        $data  = json_encode([$condition, $field, $order, $page, $page_size]);
+        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
         $cache = Cache::get("goods_evaluate_getEvaluatePageList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);

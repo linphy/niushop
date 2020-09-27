@@ -66,10 +66,14 @@ class Memberwithdraw extends BaseApi
     {
         $token = $this->checkToken();
         if ($token['code'] < 0) return $this->response($token);
+
         $member_model       = new MemberModel();
-        $member_info        = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id');
+        $member_info        = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id,wx_openid');
         $withdraw_model     = new WithdrawModel();
         $transfer_type_list = $withdraw_model->getTransferType($member_info['data']['site_id'], 'shop');
+        if(empty($member_info['data']['wx_openid'])){
+            unset($transfer_type_list['wechatpay']);
+        }
         return $this->response($this->success($transfer_type_list));
     }
 

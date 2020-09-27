@@ -79,14 +79,16 @@
 			<div class="upload-img-block">
 				<div class="upload-img-box" id="imgUpload">
 					{notempty name="$goods_category_info['image']"}
-					<img src="{:img($goods_category_info['image'])}"/>
+						<img src="{:img($goods_category_info['image'])}"/>
 					{else/}
-					<div class="ns-upload-default">
-						<img src="SHOP_IMG/upload_img.png" />
-						<p>点击上传</p>
-					</div>
+						<div class="ns-upload-default">
+							<img src="SHOP_IMG/upload_img.png" />
+							<p>点击上传</p>
+						</div>
 					{/notempty}
 				</div>
+				<input type="hidden" name="image" value="{$goods_category_info['image']}">
+				<i class="del {if condition="$goods_category_info['image']"}show{/if}">x</i>
 			</div>
 		</div>
 		<div class="ns-word-aux">
@@ -100,14 +102,16 @@
             <div class="upload-img-block">
                 <div class="upload-img-box" id="imgUploadAdv">
                     {notempty name="$goods_category_info['image_adv']"}
-                    <img src="{:img($goods_category_info['image_adv'])}"/>
+                     <img src="{:img($goods_category_info['image_adv'])}"/>
                     {else/}
-                    <div class="ns-upload-default">
-                    	<img src="SHOP_IMG/upload_img.png" />
-                    	<p>点击上传</p>
-                    </div>
+	                    <div class="ns-upload-default">
+	                        <img src="SHOP_IMG/upload_img.png" />
+	                        <p>点击上传</p>
+	                    </div>
                     {/notempty}
                 </div>
+	            <input type="hidden" name="image_adv" value="{$goods_category_info['image_adv']}">
+	            <i class="del {if condition="$goods_category_info['image_adv']"}show{/if}">x</i>
             </div>
         </div>
 	    <div class="ns-word-aux">
@@ -151,9 +155,18 @@
 			<p>排序值只能为整数</p>
 		</div>
 	</div>
-	
-	<input type="hidden" name="image" value="{$goods_category_info['image']}">
-    <input type="hidden" name="image_adv" value="{$goods_category_info['image_adv']}">
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否显示</label>
+		<div class="layui-input-block">
+			<input type="radio" name="is_show" value="0" title="显示" {if $goods_category_info['is_show'] == 0} checked="" {/if}>
+			<input type="radio" name="is_show" value="-1" title="不显示"  {if $goods_category_info['is_show'] == -1} checked="" {/if}>
+		</div>
+		<div class="ns-word-aux">
+			<p>如果不显示会导致小程序、h5没有该分类以及该分类下的所有商品</p>
+		</div>
+	</div>
+
 	<input type="hidden" name="category_id" value="{$goods_category_info['category_id']}">
 	<input type="hidden" name="category_full_name" value="{$goods_category_info['category_full_name']}">
 	

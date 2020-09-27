@@ -133,17 +133,18 @@
 					<div class="layui-input-block">
 						<div class="upload-img-block">
 							<!-- 用于存储图片路径 -->
-							<input type="hidden" name="watermark_source" value="{$config.value.water.watermark_source}" class="layui-input"/>
 							<div class="upload-img-box" id="watermark_source">
 								{if empty($config.value.water.watermark_source)}
 								<div class="ns-upload-default">
-									<img src="__STATIC__/img/upload_img.png" />
+									<img src="SHOP_IMG/upload_img.png" />
 									<p>点击上传</p>
 								</div>
 								{else/}
 								<img src="{:img($config.value.water.watermark_source)}" alt="">
 								{/if}
 							</div>
+							<input type="hidden" name="watermark_source" value="{$config.value.water.watermark_source}" />
+							<i class="del {if !empty($config.value.water.watermark_source)}show{/if}">x</i>
 						</div>
 					</div>
 					<div class="ns-word-aux">水印为图片时，上传水印图片</div>
@@ -281,9 +282,8 @@
 {/block}
 {block name="script"}
 <script>
-	layui.use(['form', 'upload', 'colorpicker'], function() {
+	layui.use(['form', 'colorpicker'], function() {
 		var form = layui.form,
-			upload = layui.upload,
 			colorpicker = layui.colorpicker,
 			repeat_flag = false; //防重复标识
 		form.render();
@@ -292,14 +292,18 @@
 		 * 监听保存
 		 */
 		form.on('submit(save)', function(data) {
-			if(repeat_flag) return;
-			repeat_flag = true;
 
 			if(data.field.is_watermark){
 				if(data.field.watermark_x == "" || data.field.watermark_y == ""){
 					return layer.msg("水印坐标不能为空值");
 				}
 			}
+
+			if(repeat_flag) return;
+			repeat_flag = true;
+
+			// 删除图片
+			if(!data.field.watermark_source) upload.delete();
 
 			$.ajax({
 				type: 'POST',
@@ -335,21 +339,10 @@
 			}
 		});
 
-		/**
-		 * 图片上传
-		 */
-		var uploadLogo = upload.render({
-			elem: '#watermark_source',
-			url: ns.url("shop/upload/upload"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='watermark_source']").val(res.data.pic_path);
-					$('.upload-img-box').html("<img src=" + ns.img(res.data.pic_path) + " >"); //图片链接（base64）
-				}
-				return layer.msg(res.message);
-			}
+		var upload = new Upload({
+			elem: '#watermark_source'
 		});
-		
+
 		/**
 		 * 水印文字颜色
 		 */

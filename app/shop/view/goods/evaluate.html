@@ -75,22 +75,29 @@
 	</div>
 </div>
 
-<table class="layui-table ns-evaluate-table" lay-skin="line" lay-size="lg">
+<table class="layui-table ns-evaluate-table layui-form" lay-skin="line" lay-size="lg">
 	<colgroup>
-		<col width="55%">
+		<col width="45%">
 		<col width="30%">
+		<col width="10%">
 		<col width="15%">
 	</colgroup>
 	<thead>
 		<tr>
-			<th>评论内容</th>
+			<th><input type="checkbox" name="check_all" lay-skin="primary" lay-filter="check_all" />评论内容</th>
 			<th>商品信息</th>
+			<th>审核状态</th>
 			<th>操作</th>
 		</tr>
 	</thead>
 	<tbody></tbody>
 </table>
 
+<div class="ns-table-bottom layui-table-bottom-tool-temp layui-form" style="float: left;border: none;">
+	<input type="checkbox" name="check_all" lay-skin="primary" lay-filter="check_all">
+	<button class="layui-btn layui-btn-primary js-audit-pass" data-is-audit="1">批量通过</button>
+	<button class="layui-btn layui-btn-primary js-audit-refuse" data-is-audit="-1">批量拒绝</button>
+</div>
 <div id="laypage"></div>
 {/block}
 {block name="script"}
@@ -99,7 +106,8 @@
 </script>
 <script src="SHOP_JS/evaluate.js"></script>
 <script>
-	var evaluate = new Evaluate(2, [2, 4, 6]);
+	var limit = 2;
+	var evaluate = new Evaluate(limit, [2, 4, 6]);
 
 	evaluate.getList({
 		"_this": evaluate
@@ -108,15 +116,41 @@
 		"_this": evaluate
 	});
 
-	layui.use(['form', 'laydate', 'laypage'], function() {
+	layui.use(['form', 'laydate'], function() {
 		var form = layui.form,
-			laydate = layui.laydate,
-			laypage = layui.laypage;
+			laydate = layui.laydate;
 		currentDate = new Date(),
 			minDate = "";
 		form.render();
 
 		currentDate.setDate(currentDate.getDate() - 7);
+
+		form.on('checkbox(check_all)', function(data){
+			$("input[name='evaluate']").prop("checked",data.elem.checked);
+			$("input[name='check_all']").prop("checked",data.elem.checked);
+			form.render();
+		});
+
+		form.on('checkbox(evaluate)', function(data){
+			if($("input[name='evaluate']:checked").length == limit){
+				$("input[name='check_all']").prop("checked",true);
+			}
+			form.render();
+		});
+
+		$(".js-audit-pass,.js-audit-refuse").click(function () {
+			var evaluate_ids = [];
+			var is_audit = $(this).attr("data-is-audit");
+			$("input[name='evaluate']:checked").each(function () {
+				evaluate_ids.push($(this).val());
+			});
+
+			if(evaluate_ids.length<1) {
+				layer.msg("请选择要操作的数据");
+				return;
+			}
+			modifyAuditEvaluate(evaluate_ids.toString(),is_audit);
+		});
 
 		//开始时间
 		laydate.render({
@@ -205,7 +239,6 @@
 					layer.close(index);
 				} else {
 					layer.msg('请输入回复内容!', {icon: 5, anim: 6});
-					return;
 				}
 			}
 		});
@@ -246,6 +279,33 @@
 		}, function () {
 			layer.close();
 			repeat_flag = false;
+		});
+	}
+
+	// 修改审核状态
+	function audit(e,is_audit) {
+		var input = $(e).parents("tr").prev().find(".evaluate_id");
+		var evaluate_id = input.val();
+		modifyAuditEvaluate(evaluate_id,is_audit);
+	}
+
+	function modifyAuditEvaluate(evaluate_ids,is_audit) {
+		$.ajax({
+			url: ns.url("shop/goods/modifyAuditEvaluate"),
+			data: {
+				evaluate_ids: evaluate_ids,
+				is_audit: is_audit
+			},
+			dataType: 'JSON', //服务器返回json格式数据
+			type: 'POST', //HTTP请求类型
+			success: function (res) {
+				layer.msg(res.message);
+				if (res.code == 0) {
+					evaluate.getList({
+						"_this": evaluate
+					});
+				}
+			}
 		});
 	}
 </script>

@@ -10,7 +10,7 @@
 .image-ads .add-item p i{display: inline-block;height: 24px; line-height: 24px;font-size: 18px;font-style: normal;}
 .image-ads .add-item p span{display: inline-block;height: 24px; line-height: 24px;}
 .image-ads .add-item>span{vertical-align: middle;color:#999;font-size:12px;}
-.image-ads p.hint{font-size:12px;color:#999;margin:10px 0;}
+.image-ads p.hint{font-size:12px;color:red;margin:10px 0;}
 
 .image-ads .preview-draggable{padding:0;}
 .image-ads .preview-draggable>ul li{text-align: center;height: 136px;background-color: #ebf8fd;color: #88c4dc;background-repeat: no-repeat;background-position: 50%;background-size:100%;position:relative;}
@@ -26,19 +26,19 @@
 .image-ads .preview-draggable .image-ads-item>span{background: rgba(0,0,0,.6);position: absolute;bottom: 0;color: #ffffff;font-size: 12px;width: 100%;left: 0;line-height: 30px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;padding: 0 5px;}
 
 /*横向滑动*/
-.image-ads .preview-draggable{overflow: hidden;white-space: nowrap;}
+.image-ads .preview-draggable .image-ads-list{overflow: hidden;white-space: nowrap;}
 .image-ads .preview-draggable>ul.horizontal-sliding{overflow-x: scroll;white-space: nowrap;}
 .image-ads .preview-draggable>ul.horizontal-sliding::-webkit-scrollbar{display: none;}
-.image-ads .preview-draggable .image-ads-item.horizontal-sliding{display: inline-block;width: 100px;vertical-align: middle;}
+.image-ads .preview-draggable .image-ads-item.horizontal-sliding{display: inline-block;/* width: 100px; */ width: 340px; vertical-align: middle;}
 .image-ads .preview-draggable .image-ads-item.horizontal-sliding p{height: 100px;line-height: 100px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;}
 
 /*轮播海报*/
 .image-ads .preview-draggable .image-ads-item.carousel-posters{}
-.image-ads .preview-draggable .image-ads-item.carousel-posters p{height: 150px;line-height: 150px;}
-.image-ads .preview-draggable .image-ads-item.carousel-posters>div{height: 150px;line-height: 150px;}
+.image-ads .preview-draggable .image-ads-item.carousel-posters p{height: 170px;line-height: 170px;}
+.image-ads .preview-draggable .image-ads-item.carousel-posters>div{height: 170px; line-height: 170px;}
 .image-ads .preview-draggable .image-ads-item.carousel-posters>div.fill img{width:100%;}
 
-.draggable-element .image-ads .preview-draggable{padding: 0}
+.draggable-element .image-ads .preview-draggable{padding: 0;}
 .image-ads .image-ad-list{margin-left:10px;}
 .image-ads .image-ad-list>ul>li{padding:10px;background: #ffffff;border:1px dashed #e5e5e5;position:relative;margin-top:10px;}
 .image-ads .image-ad-list>ul>li:first-child{margin-top:0;}
@@ -46,7 +46,6 @@
 .image-ads .image-ad-list>ul>li .content-block.textNavigation{width:100%;}
 .image-ads .image-ad-list>ul>li .content-block .layui-form-item{margin:0;}
 .image-ads .image-ad-list>ul>li .content-block .layui-form-label{width:60px;padding:9px 0;line-height: 1;}
-.image-ads .image-ad-list>ul>li .content-block .layui-input-block{margin-left:80px;}
 .image-ads .image-ad-list>ul>li .content-block div{margin-top:10px;}
 .image-ads .image-ad-list>ul>li .content-block div:last-child{margin-top:0;}
 .image-ads .image-ad-list>ul>li:hover .del{display:block;}

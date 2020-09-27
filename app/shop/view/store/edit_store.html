@@ -25,7 +25,6 @@
 		<label class="layui-form-label img-upload-lable">门店图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block icon">
-				<input type="hidden" name="store_image" value="{$info.store_image}">
 				<div class="upload-img-box" id="storeUpload">
 					{if empty($info.store_image)}
 					<div class="ns-upload-default">
@@ -36,6 +35,8 @@
 					<img src="{:img($info.store_image)}" alt="">
 					{/if}
 				</div>
+				<input type="hidden" name="store_image" value="{$info.store_image}">
+				<i class="del {if !empty($info.store_image)}show{/if}">x</i>
 			</div>
 		</div>
 		<div class="ns-word-aux">
@@ -146,11 +147,10 @@
 <script type="text/javascript" src="SHOP_JS/address.js"></script>
 <script type="text/javascript" src="STATIC_JS/map_address.js"></script>
 <script>
-	var form, repeat_flag, map_class, upload;
+	var form, repeat_flag, map_class;
 
-	layui.use(['form','upload'], function() {
+	layui.use(['form'], function() {
 		form = layui.form;
-		upload = layui.upload;
 		repeat_flag = false;//防重复标识
 		
 		form.render();
@@ -206,19 +206,9 @@
 			}
 		});
 
-		/**
-		 * 门店logo
-		 */
-		upload.render({
-			elem: '#storeUpload',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='store_image']").val(res.data.pic_path);
-					$("#storeUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
+		// 门店logo
+		var upload = new Upload({
+			elem: '#storeUpload'
 		});
 
 		/**
@@ -239,6 +229,9 @@
 			full_address.push($("select[name=district_id] option:selected").text());
 
 			data.field.full_address = full_address.toString();
+
+			// 删除图片
+			if(!data.field.store_image) upload.delete();
 
 			if(repeat_flag) return;
 			repeat_flag = true;

@@ -34,8 +34,8 @@ class System extends BaseShop
     {
         if (request()->isAjax()) {
             $type = input("key", '');
-            $msg  = '缓存更新成功';
-            switch ($type) {
+            $msg = '缓存更新成功';
+            switch ( $type ) {
                 case 'all':
                     // 清除缓存
                 case 'content':
@@ -66,7 +66,7 @@ class System extends BaseShop
             return success(0, $msg, '');
         } else {
             $config_model = new ConfigModel();
-            $cache_list   = $config_model->getCacheList();
+            $cache_list = $config_model->getCacheList();
 
             $this->assign("cache_list", $cache_list);
             return $this->fetch('system/cache');
@@ -81,7 +81,7 @@ class System extends BaseShop
         $addon = new Addon();
         if (request()->isAjax()) {
             $addon_name = input("addon_name");
-            $tag        = input("tag", "install");
+            $tag = input("tag", "install");
             if ($tag == 'install') {
                 $res = $addon->install($addon_name);
                 return $res;
@@ -92,8 +92,8 @@ class System extends BaseShop
         }
         $addon = $addon->getAddonAllList();
 
-        $this->assign("addons", $addon['data']['install']);
-        $this->assign("uninstall", $addon['data']['uninstall']);
+        $this->assign("addons", $addon[ 'data' ][ 'install' ]);
+        $this->assign("uninstall", $addon[ 'data' ][ 'uninstall' ]);
 
         $this->forthMenu();
         return $this->fetch('system/addon');
@@ -105,7 +105,7 @@ class System extends BaseShop
     public function database()
     {
         $database = new Database();
-        $table    = $database->getDatabaseList();
+        $table = $database->getDatabaseList();
         $this->assign('list', $table);
         $this->forthMenu();
         return $this->fetch('system/database');
@@ -126,7 +126,7 @@ class System extends BaseShop
 
         $flag = \FilesystemIterator::KEY_AS_FILENAME;
         $glob = new \FilesystemIterator($path, $flag);
-        $list = array();
+        $list = array ();
 
         foreach ($glob as $name => $file) {
 
@@ -135,23 +135,23 @@ class System extends BaseShop
                 $name = sscanf($name, '%4s%2s%2s-%2s%2s%2s-%d');
                 $date = "{$name[0]}-{$name[1]}-{$name[2]}";
                 $time = "{$name[3]}:{$name[4]}:{$name[5]}";
-                $part = $name[6];
+                $part = $name[ 6 ];
 
-                if (isset($list["{$date} {$time}"])) {
-                    $info         = $list["{$date} {$time}"];
-                    $info['part'] = max($info['part'], $part);
-                    $info['size'] = $info['size'] + $file->getSize();
-                    $info['size'] = $database->format_bytes($info['size']);
+                if (isset($list[ "{$date} {$time}" ])) {
+                    $info = $list[ "{$date} {$time}" ];
+                    $info[ 'part' ] = max($info[ 'part' ], $part);
+                    $info[ 'size' ] = $info[ 'size' ] + $file->getSize();
+                    $info[ 'size' ] = $database->format_bytes($info[ 'size' ]);
                 } else {
-                    $info['part'] = $part;
-                    $info['size'] = $file->getSize();
-                    $info['size'] = $database->format_bytes($info['size']);
+                    $info[ 'part' ] = $part;
+                    $info[ 'size' ] = $file->getSize();
+                    $info[ 'size' ] = $database->format_bytes($info[ 'size' ]);
                 }
 
-                $info['name'] = date('Ymd-His', strtotime("{$date} {$time}"));;
-                $extension        = strtoupper(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-                $info['compress'] = ($extension === 'SQL') ? '-' : $extension;
-                $info['time']     = strtotime("{$date} {$time}");
+                $info[ 'name' ] = date('Ymd-His', strtotime("{$date} {$time}"));;
+                $extension = strtoupper(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+                $info[ 'compress' ] = ( $extension === 'SQL' ) ? '-' : $extension;
+                $info[ 'time' ] = strtotime("{$date} {$time}");
 
                 $list[] = $info;
             }
@@ -172,23 +172,23 @@ class System extends BaseShop
     public function importData()
     {
 
-        $time  = request()->post('time', '');
-        $part  = request()->post('part', 0);
+        $time = request()->post('time', '');
+        $part = request()->post('part', 0);
         $start = request()->post('start', 0);
 
         $database = new Database();
-        if (is_numeric($time) && (is_null($part) || empty($part)) && (is_null($start) || empty($start))) { // 初始化
+        if (is_numeric($time) && ( is_null($part) || empty($part) ) && ( is_null($start) || empty($start) )) { // 初始化
             // 获取备份文件信息
-            $name  = date('Ymd-His', $time) . '-*.sql*';
-            $path  = realpath($database->backup_path) . DIRECTORY_SEPARATOR . $name;
+            $name = date('Ymd-His', $time) . '-*.sql*';
+            $path = realpath($database->backup_path) . DIRECTORY_SEPARATOR . $name;
             $files = glob($path);
-            $list  = array();
+            $list = array ();
             foreach ($files as $name) {
-                $basename        = basename($name);
-                $match           = sscanf($basename, '%4s%2s%2s-%2s%2s%2s-%d');
-                $gz              = preg_match('/^\d{8,8}-\d{6,6}-\d+\.sql.gz$/', $basename);
-                $list[$match[6]] = array(
-                    $match[6],
+                $basename = basename($name);
+                $match = sscanf($basename, '%4s%2s%2s-%2s%2s%2s-%d');
+                $gz = preg_match('/^\d{8,8}-\d{6,6}-\d+\.sql.gz$/', $basename);
+                $list[ $match[ 6 ] ] = array (
+                    $match[ 6 ],
                     $name,
                     $gz
                 );
@@ -196,81 +196,81 @@ class System extends BaseShop
             ksort($list);
             // 检测文件正确性
             $last = end($list);
-            if (count($list) === $last[0]) {
+            if (count($list) === $last[ 0 ]) {
                 session('backup_list', $list); // 缓存备份列表
                 $return_data = [
-                    'code'    => 1,
+                    'code' => 1,
                     'message' => '初始化完成',
-                    'data'    => ['part' => 1, 'start' => 0]
+                    'data' => [ 'part' => 1, 'start' => 0 ]
                 ];
                 return $return_data;
             } else {
                 $return_data = [
-                    'code'    => -1,
+                    'code' => -1,
                     'message' => '备份文件可能已经损坏，请检查！',
                 ];
                 return $return_data;
             }
         } elseif (is_numeric($part) && is_numeric($start)) {
             $list = session('backup_list');
-            $db   = new dbdatabase($list[$part], array(
-                'path'     => realpath($database->backup_path) . DIRECTORY_SEPARATOR,
-                'compress' => $list[$part][2]
+            $db = new dbdatabase($list[ $part ], array (
+                'path' => realpath($database->backup_path) . DIRECTORY_SEPARATOR,
+                'compress' => $list[ $part ][ 2 ]
             ));
 
             $start = $db->import($start);
             if ($start === false) {
                 $return_data = [
-                    'code'    => -1,
+                    'code' => -1,
                     'message' => '还原数据出错！',
                 ];
                 return $return_data;
             } elseif ($start === 0) { // 下一卷
-                if (isset($list[++$part])) {
-                    $data        = array(
-                        'part'  => $part,
+                if (isset($list[ ++$part ])) {
+                    $data = array (
+                        'part' => $part,
                         'start' => 0
                     );
                     $return_data = [
-                        'code'    => -1,
+                        'code' => -1,
                         'message' => "正在还原...#{$part}",
-                        'data'    => $data
+                        'data' => $data
                     ];
                     return $return_data;
                 } else {
                     session('backup_list', null);
                     $return_data = [
-                        'code'    => -1,
+                        'code' => -1,
                         'message' => "还原完成！",
                     ];
                     return $return_data;
                 }
             } else {
-                $data = array(
-                    'part'  => $part,
-                    'start' => $start[0]
+                $data = array (
+                    'part' => $part,
+                    'start' => $start[ 0 ]
                 );
-                if ($start[1]) {
-                    $rate = floor(100 * ($start[0] / $start[1]));
+                if ($start[ 1 ]) {
+                    $rate = floor(100 * ( $start[ 0 ] / $start[ 1 ] ));
 
                     $return_data = [
-                        'code'    => 1,
+                        'code' => 1,
                         'message' => "正在还原...#{$part} ({$rate}%)",
                     ];
                     return $return_data;
                 } else {
-                    $data['gz']  = 1;
+                    $data[ 'gz' ] = 1;
                     $return_data = [
-                        'code'    => 1,
+                        'code' => 1,
                         'message' => "正在还原...#{$part}",
-                        'data'    => $data
+                        'data' => $data
                     ];
                     return $return_data;
                 }
             }
         } else {
             $return_data = [
-                'code'    => -1,
+                'code' => -1,
                 'message' => "参数有误",
             ];
             return $return_data;
@@ -284,8 +284,8 @@ class System extends BaseShop
     {
         if (request()->isAjax()) {
             $table_str = input('tables', '');
-            $database  = new Database();
-            $res       = $database->repair($table_str);
+            $database = new Database();
+            $res = $database->repair($table_str);
             return $res;
         }
     }
@@ -297,17 +297,17 @@ class System extends BaseShop
     public function backup()
     {
         $database = new Database();
-        $tables   = input('tables', []);
-        $id       = input('id', '');
-        $start    = input('start', '');
+        $tables = input('tables', []);
+        $id = input('id', '');
+        $start = input('start', '');
 
         if (!empty($tables) && is_array($tables)) { // 初始化
             // 读取备份配置
-            $config = array(
-                'path'     => $database->backup_path . DIRECTORY_SEPARATOR,
-                'part'     => 20971520,
+            $config = array (
+                'path' => $database->backup_path . DIRECTORY_SEPARATOR,
+                'part' => 20971520,
                 'compress' => 1,
-                'level'    => 9
+                'level' => 9
             );
             // 检查是否有正在执行的任务
             $lock = "{$config['path']}backup.lock";
@@ -315,17 +315,17 @@ class System extends BaseShop
                 return error(-1, '检测到有一个备份任务正在执行，请稍后再试！');
             } else {
                 $mode = intval('0777', 8);
-                if (!file_exists($config['path']) || !is_dir($config['path']))
-                    mkdir($config['path'], $mode, true); // 创建锁文件
+                if (!file_exists($config[ 'path' ]) || !is_dir($config[ 'path' ]))
+                    mkdir($config[ 'path' ], $mode, true); // 创建锁文件
 
                 file_put_contents($lock, date('Ymd-His', time()));
             }
             // 自动创建备份文件夹
             // 检查备份目录是否可写
-            is_writeable($config['path']) || exit('backup_not_exist_success');
+            is_writeable($config[ 'path' ]) || exit('backup_not_exist_success');
             session('backup_config', $config);
             // 生成备份文件信息
-            $file = array(
+            $file = array (
                 'name' => date('Ymd-His', time()),
                 'part' => 1
             );
@@ -338,12 +338,12 @@ class System extends BaseShop
             $dbdatabase = new dbdatabase($file, $config);
             if (false !== $dbdatabase->create()) {
 
-                $data            = array();
-                $data['status']  = 1;
-                $data['message'] = '初始化成功';
-                $data['tables']  = $tables;
-                $data['tab']     = array(
-                    'id'    => 0,
+                $data = array ();
+                $data[ 'status' ] = 1;
+                $data[ 'message' ] = '初始化成功';
+                $data[ 'tables' ] = $tables;
+                $data[ 'tab' ] = array (
+                    'id' => 0,
                     'start' => 0
                 );
                 return $data;
@@ -354,21 +354,21 @@ class System extends BaseShop
             $tables = session('backup_tables');
             // 备份指定表
             $dbdatabase = new dbdatabase(session('backup_file'), session('backup_config'));
-            $start      = $dbdatabase->backup($tables[$id], $start);
+            $start = $dbdatabase->backup($tables[ $id ], $start);
             if (false === $start) { // 出错
                 return error(-1, '备份出错！');
             } elseif (0 === $start) { // 下一表
-                if (isset($tables[++$id])) {
-                    $tab             = array(
-                        'id'    => $id,
-                        'table' => $tables[$id],
+                if (isset($tables[ ++$id ])) {
+                    $tab = array (
+                        'id' => $id,
+                        'table' => $tables[ $id ],
                         'start' => 0
                     );
-                    $data            = array();
-                    $data['rate']    = 100;
-                    $data['status']  = 1;
-                    $data['message'] = '备份完成！';
-                    $data['tab']     = $tab;
+                    $data = array ();
+                    $data[ 'rate' ] = 100;
+                    $data[ 'status' ] = 1;
+                    $data[ 'message' ] = '备份完成！';
+                    $data[ 'tab' ] = $tab;
                     return $data;
                 } else { // 备份完成，清空缓存
                     unlink($database->backup_path . DIRECTORY_SEPARATOR . 'backup.lock');
@@ -378,17 +378,17 @@ class System extends BaseShop
                     return success(1);
                 }
             } else {
-                $tab             = array(
-                    'id'    => $id,
-                    'table' => $tables[$id],
-                    'start' => $start[0]
+                $tab = array (
+                    'id' => $id,
+                    'table' => $tables[ $id ],
+                    'start' => $start[ 0 ]
                 );
-                $rate            = floor(100 * ($start[0] / $start[1]));
-                $data            = array();
-                $data['status']  = 1;
-                $data['rate']    = $rate;
-                $data['message'] = "正在备份...({$rate}%)";
-                $data['tab']     = $tab;
+                $rate = floor(100 * ( $start[ 0 ] / $start[ 1 ] ));
+                $data = array ();
+                $data[ 'status' ] = 1;
+                $data[ 'rate' ] = $rate;
+                $data[ 'message' ] = "正在备份...({$rate}%)";
+                $data[ 'tab' ] = $tab;
                 return $data;
             }
         } else { // 出错
@@ -404,8 +404,8 @@ class System extends BaseShop
         $name_time = input('time', '');
         if ($name_time) {
             $database = new Database();
-            $name     = date('Ymd-His', $name_time) . '-*.sql*';
-            $path     = realpath($database->backup_path) . DIRECTORY_SEPARATOR . $name;
+            $name = date('Ymd-His', $name_time) . '-*.sql*';
+            $path = realpath($database->backup_path) . DIRECTORY_SEPARATOR . $name;
             array_map("unlink", glob($path));
             if (count(glob($path))) {
                 return error(-1, "备份文件删除失败，请检查权限！");
@@ -423,7 +423,7 @@ class System extends BaseShop
     public function refresh()
     {
         $menu = new Menu();
-        $res  = $menu->refreshMenu('shop', '');
+        $res = $menu->refreshMenu('store', 'store');
         var_dump($res);
     }
 
@@ -432,9 +432,12 @@ class System extends BaseShop
      */
     public function refreshDiy()
     {
+        $arr = [ '', 'bargain', 'groupbuy', 'pintuan', 'seckill', 'coupon', 'fenxiao', 'live', 'notes', 'store' ];
         $addon = new Addon();
-        $res   = $addon->refreshDiyView('');
-        var_dump($res);
+        foreach ($arr as $k=>$v) {
+            $res = $addon->refreshDiyView($v);
+            var_dump($res);
+        }
     }
 
     /**
@@ -452,7 +455,7 @@ class System extends BaseShop
     public function refreshH5()
     {
         if (request()->isAjax()) {
-            $h5  = new H5();
+            $h5 = new H5();
             $res = $h5->refresh();
             return $res;
         } else {

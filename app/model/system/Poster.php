@@ -198,7 +198,7 @@ class Poster extends BaseModel
         $res = event('Qrcode', [
             'site_id'     => $site_id,
             'app_type'    => $app_type,
-            'type'        => 'get',
+            'type'        => 'create',
             'data'        => $qrcode_param,
             'page'        => $page,
             'qrcode_path' => 'upload/qrcode/goods',

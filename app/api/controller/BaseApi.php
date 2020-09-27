@@ -28,6 +28,8 @@ class BaseApi
 
     protected $site_id;
 
+    protected $app_module = "shop";
+
     protected $auth_key = '';
 
     public $app_type;

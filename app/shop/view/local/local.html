@@ -43,7 +43,7 @@
 				<label class="layui-form-label">配送方式：</label>
 				<div class="layui-input-inline">
 					<input type="checkbox" name="type" value="default" title="商家自配送" lay-skin="primary" checked>
-					<input type="checkbox" name="type" value="other" title="第三方配送"lay-skin="primary" disabled >
+					<input type="checkbox" name="type" value="other" title="第三方配送" lay-skin="primary" disabled >
 				</div>
 			</div>
 
@@ -89,13 +89,13 @@
 				<div class="layui-form-item time-type-view" >
 					<label class="layui-form-label"></label>
 					<div class="layui-input-inline">
-						<input type="text" class="layui-input" id="startTime" lay-verify="start_time"placeholder="配送开始时间" value="" readonly >
-						<input type="hidden" class="layui-input" name="start_time"placeholder="配送开始时间" value="{$local_info.start_time}">
+						<input type="text" class="layui-input" id="startTime" lay-verify="start_time" placeholder="配送开始时间" value="" readonly >
+						<input type="hidden" class="layui-input" name="start_time" placeholder="配送开始时间" value="{$local_info.start_time}">
 					</div>
 					<div class="layui-form-mid layui-word-aux">~</div>
 					<div class="layui-input-inline">
-						<input type="text" class="layui-input"id="endTime"lay-verify="end_time" placeholder="配送结束时间" value="" readonly >
-						<input type="hidden" class="layui-input"name="end_time"placeholder="配送结束时间" value="{$local_info.end_time}">
+						<input type="text" class="layui-input" id="endTime" lay-verify="end_time" placeholder="配送结束时间" value="" readonly >
+						<input type="hidden" class="layui-input" name="end_time" placeholder="配送结束时间" value="{$local_info.end_time}">
 					</div>
 				</div>
 			</div>
@@ -181,15 +181,11 @@
 			<div class="layui-input-block map-view">
 					<div class="map-block">
 						<div class="local-map">
-							<div class="map"id="container" >
-
-							</div>
+							<div class="map" id="container"></div>
 						</div>
 
 						<div class="overlayers">
-							<ul class="region-list">
-
-							</ul>
+							<ul class="region-list"></ul>
 							<div class="region-add-block">
 								<button onclick="addArea();">增加配送区域</button>
 							</div>
@@ -197,14 +193,11 @@
 					</div>
 				</div>
 
-
 			</div>
 
 		</div>
 
 </div>
-
-
 
 <div class="layui-card ns-card-common ns-card-brief administrative-view">
 	<div class="layui-card-header">
@@ -221,8 +214,6 @@
 				<div class="layui-form-mid">元</div>
 			</div>
 			<div class="ns-word-aux">订单中商品在优惠券的价格（不包含运费）低于配送价时，买家无法下单</div>
-
-
 
 		</div>
 	</div>
@@ -258,11 +249,11 @@
 
 				<div class="layui-form-mid">半径</div>
 				<div class="layui-input-inline">
-					<input type="number" name="xz_start_distance"  lay-verify="xz_start_distance"class="layui-input"value="{if $local_info.area_type == 3}{$local_info.start_distance}{/if}">
+					<input type="number" name="xz_start_distance"  lay-verify="xz_start_distance" class="layui-input" value="{if $local_info.area_type == 3}{$local_info.start_distance}{/if}">
 				</div>
 				<div class="layui-form-mid">公里以内,配送费用</div>
 				<div class="layui-input-inline" style="width: 100px;">
-					<input type="number" name="xz_start_delivery_money" placeholder="￥"  lay-verify="xz_start_delivery_money"autocomplete="off" class="layui-input" value="{if $local_info.area_type == 3}{$local_info.start_delivery_money}{/if}">
+					<input type="number" name="xz_start_delivery_money" placeholder="￥"  lay-verify="xz_start_delivery_money" autocomplete="off" class="layui-input" value="{if $local_info.area_type == 3}{$local_info.start_delivery_money}{/if}">
 				</div>
 			</div>
 
@@ -275,11 +266,11 @@
 
 				<div class="layui-form-mid">距离每增加</div>
 				<div class="layui-input-inline">
-					<input type="number" name="xz_continued_distance"  lay-verify="xz_continued_distance"class="layui-input" value="{if $local_info.area_type == 3}{$local_info.continued_distance}{/if}">
+					<input type="number" name="xz_continued_distance" lay-verify="xz_continued_distance" class="layui-input" value="{if $local_info.area_type == 3}{$local_info.continued_distance}{/if}">
 				</div>
 				<div class="layui-form-mid">公里，运费将增加</div>
 				<div class="layui-input-inline" style="width: 100px;">
-					<input type="number" name="xz_continued_delivery_money"  lay-verify="xz_continued_delivery_money"placeholder="￥" autocomplete="off" class="layui-input"value="{if $local_info.area_type == 3}{$local_info.continued_delivery_money}{/if}">
+					<input type="number" name="xz_continued_delivery_money" lay-verify="xz_continued_delivery_money" placeholder="￥" autocomplete="off" class="layui-input"value="{if $local_info.area_type == 3}{$local_info.continued_delivery_money}{/if}">
 				</div>
 			</div>
 
@@ -292,9 +283,6 @@
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
 </div>
-
-
-
 {/block}
 {block name="script"}
 <script type="text/javascript" src="{:get_http_type()}://webapi.amap.com/maps?v=1.4.15&amp;key=2df5711d4e2fd9ecd1622b5a53fc6b1d&plugin=AMap.CircleEditor,AMap.PolyEditor"></script>
@@ -336,7 +324,6 @@
 var laytpl,form;
 var init_key = 1;
 
-
 {if empty($local_info.local_area_array)}
 	var area_array = [
 		{
@@ -348,8 +335,6 @@ var init_key = 1;
 {else/}
 	var area_array = JSON.parse('{:json_encode($local_info.local_area_array, JSON_UNESCAPED_UNICODE)}');
 {/if}
-
-
 
 	//全局定义一次, 加载formSelects
 	layui.config({
@@ -410,14 +395,11 @@ var init_key = 1;
 		init();
 		form.render();
 
-
-
 		form.verify({
 			start_time: function(value, item){ //value：表单的值、item：表单的DOM对象
 				var end_time = $("input[name=end_time]").val();
 				var start_time = $("input[name=start_time]").val();
-
-				if(start_time > end_time){
+				if(parseInt(start_time) > parseInt(end_time)){
 					return '配送开始时间不能大于配送结束时间';
 				}
 
@@ -426,8 +408,8 @@ var init_key = 1;
 				var end_time = $("input[name=end_time]").val();
 				var start_time = $("input[name=start_time]").val();
 
-				if(start_time > end_time){
-					return '配送开始时间不能大于配送结束时间';
+				if(parseInt(end_time) < parseInt(start_time)){
+					return '配送结束时间不能小于配送开始时间';
 				}
 			},
 			radius_start_distance: function(value, item){
@@ -455,11 +437,9 @@ var init_key = 1;
 				var area_type = $("input[name=area_type]:checked").val();
 				if(area_type == 1 && value == ''){
 					return '请填写配送区域相关信息';
-
 				}
 
 			},
-
 
 			xz_start_distance: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();
@@ -513,7 +493,6 @@ var init_key = 1;
 				}
 
 			},
-
 
 			start_price: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();
@@ -572,7 +551,7 @@ var init_key = 1;
 						if($(this).prop('checked')){
 							time_week.push($(this).val());
 						}
-					})
+					});
 					json.time_week =  time_week.toString();
 					json.start_time =  field.start_time;
 					json.end_time =  field.end_time;
@@ -625,7 +604,7 @@ var init_key = 1;
 			});
 		});
 
-	})
+	});
 
 	//删除区域
 	function deleteArea(key){
@@ -648,14 +627,14 @@ var init_key = 1;
 				area_name:area_name,
 				rule_type:rule_type,
 				path:path,
-			}
+			};
 			if(area_type == 2){
 				var delivery_money = $(this).find('.delivery-money').val();
 				item_json.delivery_money = delivery_money;
 			}
 
 			area_json.push(item_json);
-		})
+		});
 		return area_json;
 	}
 
@@ -667,7 +646,7 @@ var init_key = 1;
 		var key = $(this).attr('key');
 		//创建覆盖物
 		foursOverlayers(key);
-	})
+	});
 
 	//初始化
 	function init(){
@@ -687,7 +666,6 @@ var init_key = 1;
 			var latlng = {lat:'{$shop_detail.latitude}',lng:'{$shop_detail.longitude}'};
 		}
 		createMap('container', latlng);
-
 
 		$.each(area_array, function(i, item){
 			addArea(item);
@@ -743,8 +721,6 @@ var init_key = 1;
 	 * 创建配送区域
 	 */
 	function addArea(data){
-
-
 		var temp_data = data != undefined ? data : [];
 		var rule_type = temp_data.length == 0 ? 'circle' : data.rule_type;
 		var key = init_key;
@@ -798,9 +774,6 @@ var init_key = 1;
 		}
 	}
 
-
-
-
 /**
  * 随机生成颜色
  * @returns {string}
@@ -811,6 +784,7 @@ function getRandomColor(){
 		&& (color.length == 6) ?  color : arguments.callee(color);
 	})('');
 }
+
 /**
  * 一天内的时间比较
  * @param start_time

@@ -36,6 +36,8 @@
 								<p>点击上传</p>
 							</div>
 						</div>
+						<input type="hidden" name="logo"/>  <!-- logo -->
+						<i class="del">x</i>
 					</div>
 				</div>
 			</div>
@@ -157,6 +159,8 @@
 								<p>点击上传</p>
 							</div>
 						</div>
+						<input type="hidden" name="background_image" />   <!-- 打印背景图 -->
+						<i class="del">x</i>
 					</div>
 				</div>
 				<div class="ns-word-aux">打印模板背景图</div>
@@ -194,49 +198,31 @@
 		<button type="reset" class="layui-btn layui-btn-primary" onclick="back()">返回</button>
 	</div>
 
-	<input type="hidden" name="logo"/>  <!-- logo -->
-	<input type="hidden" name="background_image" />   <!-- 打印背景图 -->
 </div>
 {/block}
 {block name="script"}
 <script src="STATIC_JS/Tdrag.min.js"></script>
 <script>
 	var delRule,submitRule,printStyle=[],expressSheetChecked;
-	layui.use(['form', 'upload'], function() {
+	layui.use(['form'], function() {
 		var form = layui.form,
-			upload = layui.upload,
-			companyLOGO = '',
 			repeat_flag = false; //防重复标识
 		form.render();
 
-		/**
-		 * logo
-		 */
-		var uploadInst = upload.render({
-			elem: '#companyLOGO',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='logo']").val(res.data.pic_path);
-					$("#companyLOGO").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
+		var logo_upload = new Upload({
+			elem: '#companyLOGO'
 		});
 
-		/**
-		 * 打印背景图
-		 */
-		var uploadInst = upload.render({
+		// 打印背景图
+		var bg_upload = new Upload({
 			elem: '#printBackground',
-			url: ns.url("shop/upload/upload"),
-			done: function(res) {
+			callback:function (res) {
 				if (res.code >= 0) {
-					$("input[name='background_image']").val(res.data.pic_path);
-					$("#printBackground").html("<img src=" + ns.img(res.data.pic_path) + " >");
 					$(".design-sketch").css("background", "url("+ ns.img(res.data.pic_path) +") no-repeat center/ cover");
 				}
-				return layer.msg(res.message);
+			},
+			deleteCallback:function () {
+				$(".design-sketch").css("background", "");
 			}
 		});
 
@@ -263,6 +249,11 @@
 			data.field.content_json = JSON.stringify(content);
 			data.field.print_style = JSON.stringify(printStyle);
 
+			// 删除图片
+			if(!data.field.logo) logo_upload.delete();
+
+			if(!data.field.background_image) bg_upload.delete();
+
 			if (repeat_flag) return;
 			repeat_flag = true;
 
@@ -278,6 +269,7 @@
 						layer.confirm('添加成功', {
 							title:'操作提示',
 							btn: ['返回列表', '继续添加'],
+							closeBtn: 0,
 							yes: function(){
 								location.href = ns.url("shop/express/expressCompany")
 							},
@@ -337,7 +329,7 @@
 
 			var html = '<div class="span_' + dataId + '">'+
 							'<span style="font-size: '+ fontSize +'px;">' + dataValue + '</span>'+
-							'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'
+							'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'+
 						'</div>';
 
 			$(".design-sketch").append(html);

@@ -88,6 +88,9 @@ class DiyViewEdit extends Controller
 
         $this->assign("time", time());
         $this->assign("name", isset($data['name']) ? $data['name'] : '');
+
+        // 禁止编辑页面设置（商品分类单页用）
+        $this->assign("disabled_page_set", isset($data['disabled_page_set']) ? $data['disabled_page_set'] : '');
         $this->assign("qrcode_info", $qrcode_info);
         $this->assign('diy_view_utils', $diy_view_utils);
         $this->assign("diy_view_info", $diy_view_info);

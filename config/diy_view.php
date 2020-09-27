@@ -28,7 +28,10 @@ return [
             'value' => '{ title : "『文本』", textColor : "#333333", "defaultTextColor": "#333333", subTitle : "副标题", "padding": 0, backgroundColor : "", "link" : {}, "fontSize" : 16, "fontSizeSub" : 14, "colorSub": "#999", "defaultColorSub": "#999", "style": 1, "sub": 0, "isShowMore": 0, "fontWeight": 600, "moreText": "查看更多", "moreLink" : {}, "btnColor": "#999", "defaultBtnColor": "#999" }',
             'sort' => '10000',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'is_delete' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/text.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/text_selected.png'
         ],
         [
             'name' => 'TEXT_NAV',
@@ -38,7 +41,9 @@ return [
             'value' => '{ fontSize : 14, textColor : "#333333", "defaultTextColor" : "#333333", textAlign : "left", backgroundColor : "", arrangement : "vertical", list : [{ text : "『文本导航』",secondText : "","link" : {}}] }',
             'sort' => '10001',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/text_nav.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/text_nav_selected.png'
         ],
         [
             'name' => 'NOTICE',
@@ -48,17 +53,21 @@ return [
             'value' => '{ "sources": "default","backgroundColor": "", "paddingLeftRight": 0, "paddingTopBottom": 10, "style": 1, "isEdit": 1, "textColor": "#333333", "defaultTextColor": "#333333", "fontSize": 14,"list": [{"title": "公告","link": {}},{"title": "公告","link": {}}], "noticeIds": []}',
             'sort' => '10002',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/notice.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/notice_selected.png'
         ],
         [
             'name' => 'GRAPHIC_NAV',
             'title' => '图文导航',
             'type' => 'SYSTEM',
             'controller' => 'GraphicNav',
-            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666","backgroundColor": "","selectedTemplate": "imageNavigation","scrollSetting": "fixed","imageScale": 100,padding : 0, "paddingTopBottom": 0, "paddingLeftRight": 0, "list": [{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}}], "borderTopLeftRadius": 0, "borderTopRightRadius": 0, "borderBottomLeftRadius": 0, "borderBottomRightRadius": 0}',
+            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666","backgroundColor": "","selectedTemplate": "imageNavigation","scrollSetting": "fixed","imageScale": 100,padding : 0, "paddingTopBottom": 0, "paddingLeftRight": 0, "marginTopBottom": 0, "marginLeftRight": 0, "list": [{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}}], "borderTopLeftRadius": 0, "borderTopRightRadius": 0, "borderBottomLeftRadius": 0, "borderBottomRightRadius": 0}',
             'sort' => '10003',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/graphic_nav.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/graphic_nav_selected.png'
         ],
         [
             'name' => 'IMAGE_ADS',
@@ -68,17 +77,21 @@ return [
             'value' => '{ selectedTemplate : "carousel-posters", imageClearance : 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : {}} ] }',
             'sort' => '10004',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/image_ads.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/image_ads_selected.png'
         ],
         [
             'name' => 'SEARCH',
             'title' => '商品搜索',
             'type' => 'SYSTEM',
             'controller' => 'Search',
-            'value' => '{ "textColor": "#999999", "textAlign" : "left", "backgroundColor" : "", "bgColor": "", "defaultTextColor": "#999999", "borderType": 2 }',
+            'value' => '{ title : "搜索", "textColor": "#999999", "textAlign" : "left", "backgroundColor" : "", "bgColor": "", "defaultTextColor": "#999999", "borderType": 2 }',
             'sort' => '10005',
             'support_diy_view' => '',
-            'max_count' => 1
+            'max_count' => 1,
+            'icon' => 'public/static/ext/diyview/img/icon/search.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/search_selected.png'
         ],
         [
             'name' => 'TITLE',
@@ -88,7 +101,9 @@ return [
             'value' => '{ "title": "『顶部标题』","backgroundColor": "","textColor": "#000000","defaultTextColor": "#000000","isOpenOperation" : false,"leftLink" : {},"rightLink" : {},"operationName" : "操作","fontSize" : 16}',
             'sort' => '10006',
             'support_diy_view' => '',
-            'max_count' => 1
+            'max_count' => 1,
+            'icon' => 'public/static/ext/diyview/img/icon/title.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/title_selected.png'
         ],
         [
             'name' => 'RICH_TEXT',
@@ -98,7 +113,9 @@ return [
             'value' => '{ "backgroundColor": "","padding": 10,"html" : ""}',
             'sort' => '10007',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/rich_text.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/rich_text_selected.png'
         ],
         [
             'name' => 'RUBIK_CUBE',
@@ -108,7 +125,9 @@ return [
             'value' => '{ "selectedTemplate": "row1-of2","backgroundColor": "","list": [{ imageUrl : "", link : {} },{ imageUrl : "", link : {} }], "selectedRubikCubeArray" : [] ,"diyHtml": "","customRubikCube": 4,"heightArray": ["74.25px","59px","48.83px","41.56px"],"imageGap": 0}',
             'sort' => '10008',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/rubik_cube.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/rubik_cube_selected.png'
         ],
 //		[
 //			'name' => 'CUSTOM_MODULE',
@@ -121,16 +140,6 @@ return [
 //			'max_count' => 0
 //		],
         [
-            'name' => 'POP_WINDOW',
-            'title' => '弹窗广告',
-            'type' => 'SYSTEM',
-            'controller' => 'PopWindow',
-            'value' => '{ "imageUrl":"","link":{}, "showCount": 3}',
-            'sort' => '10010',
-            'support_diy_view' => '',
-            'max_count' => 1
-        ],
-        [
             'name' => 'HORZ_LINE',
             'title' => '辅助线',
             'type' => 'SYSTEM',
@@ -138,7 +147,9 @@ return [
             'value' => '{ "color" : "#e5e5e5", "defaultColor" : "#e5e5e5", "margin" : 0, "borderStyle": "solid", "padding": "no-padding" }',
             'sort' => '10011',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/horz_line.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/horz_line_selected.png'
         ],
         [
             'name' => 'HORZ_BLANK',
@@ -148,7 +159,9 @@ return [
             'value' => '{ height : 10, backgroundColor : "", "marginLeftRight": 0 }',
             'sort' => '10012',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/horz_blank.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/horz_blank_selected.png'
         ],
 //		[
 //			'name' => 'VIDEO',
@@ -178,7 +191,9 @@ return [
             'value' => '{ "sources" : "default", "categoryId" : 0, "goodsCount" : "6", "goodsId": [], "style": 1, "backgroundColor": "", "paddingUpDown": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0 }',
             'sort' => '10016',
             'support_diy_view' => '',
-            'max_count' => 0
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/goods_list.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/goods_list_selected.png'
         ],
         [
             'name' => 'GOODS_CATEGORY',
@@ -188,7 +203,9 @@ return [
             'value' => '{"level":"1","template":"1"}',
             'sort' => '10021',
             'support_diy_view' => '',
-            'max_count' => 1
+            'max_count' => 1,
+            'icon' => 'public/static/ext/diyview/img/icon/goods_category.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/goods_category_selected.png'
         ],
         [
             'name' => 'FLOAT_BTN',
@@ -198,7 +215,9 @@ return [
             'value' => '{ "textColor": "#ffffff", "backgroundColor": "", subTitle : "", "list": [{"imageUrl": "","title": "","link": {}}]}',
             'sort' => '10022',
             'support_diy_view' => '',
-            'max_count' => 1
+            'max_count' => 1,
+            'icon' => 'public/static/ext/diyview/img/icon/float_btn.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/float_btn_selected.png'
         ],
         [
             'name' => 'TOP_CATEGORY',
@@ -208,7 +227,9 @@ return [
             'value' => '{"title":"首页","selectColor":"#FF4544","nsSelectColor":"#333333",backgroundColor : "",}',
             'sort' => '10023',
             'support_diy_view' => '',
-            'max_count' => 1
+            'max_count' => 1,
+            'icon' => 'public/static/ext/diyview/img/icon/top_category.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/top_category_selected.png'
         ],
     ],
     'link' => [
@@ -401,6 +422,15 @@ return [
                             ]
                         ],
                     ]
+                ],
+                [
+                    'name' => 'MIC_PAGE',
+                    'title' => '微页面',
+                    'parent' => '',
+                    'wap_url' => '/pages/index/index/index',
+                    'web_url' => '',
+                    'sort' => 1,
+                    'child_list' => []
                 ],
                 [
                     'name' => 'MARKETING_LINK',

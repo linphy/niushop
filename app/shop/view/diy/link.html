@@ -4,7 +4,7 @@
     }
     .link-box .link-center{
         display: flex;
-        height: 420px;
+        height: 480px;
     }
     .link-box .link-left{
         overflow-y: auto;
@@ -82,8 +82,12 @@
     }
     .link-box .custom-link{
         width: 360px;
-        margin: 100px auto 0;
+        margin: 50px;
     }
+	
+	.link-box .ns-word-aux {
+		width: 250px;
+	}
 </style>
 
 <div class="link-box">
@@ -98,26 +102,13 @@
             </dl>
             {/foreach}
         </div>
-        <div class="link-right">
-            <!--<dl>-->
-            <!--<dt>基础链接</dt>-->
-            <!--<dd><a href="" class="ns-border-color">商城首页</a></dd>-->
-            <!--<dd><a href="">商品分类</a></dd>-->
-            <!--<dd><a href="">全部商城</a></dd>-->
-            <!--</dl>-->
-            <!--<dl>-->
-            <!--<dt>基础链接</dt>-->
-            <!--<dd><a href="" class="ns-border-color">商城首页</a></dd>-->
-            <!--<dd><a href="">商品分类</a></dd>-->
-            <!--<dd><a href="">全部商城</a></dd>-->
-            <!--</dl>-->
-        </div>
+        <div class="link-right"></div>
     </div>
     <div class="link-btn">
+        <button class="layui-btn link-eliminate layui-btn-primary">清空</button>
         <button class="layui-btn link-save ns-bg-color">确定</button>
     </div>
 </div>
-
 
 <script>
     var promotion,wap_url,goodsIdent,
@@ -128,15 +119,53 @@
             support_diy_view : '{$support_diy_view}',
         };
 
+    var preoldlink = JSON.parse(getLineData.link);
+
+    if(!preoldlink.parents){
+        preoldlink.parents = initMeun;
+    }
+
+    firstRequest();
+
+    //左侧循环列表    请求参数
+    function firstRequest(){
+        if(preoldlink.parents == 'CUSTOM_LINK'){
+            $(".link-left dl").eq(2).find('dt').addClass("ns-text-color");
+            showCustom();
+            $(".link-box input[name='title']").val(preoldlink.title);
+            $(".link-box input[name='wap_url']").val(preoldlink.wap_url);
+            customIdent = true;
+            return;
+        }
+        $categoryList = eval(<?php echo json_encode($list);?>);
+        let categoryList=$categoryList;
+        for(let i=0;i<categoryList.length;i++){
+            let arr=categoryList[i].child_list;
+            for(let j=0;j<arr.length;j++){
+
+                if(arr[j].name == preoldlink.parents){
+                    let documentPage= $(".link-left dl dt");
+                    for(let z=0;z<documentPage.length;z++){
+                        documentPage.eq(z).addClass("active");
+                        $(documentPage.eq(z)).parent("dl").find("dd").addClass("layui-hide");
+                    }
+                    documentPage.eq(i).removeClass("active");
+                    $(documentPage.eq(i)).parent("dl").find("dd").removeClass("layui-hide");
+                    $(documentPage.eq(i)).parent("dl").find("dd").eq(j).addClass("ns-text-color");
+                    let title = $(documentPage.eq(i)).parent("dl").find("dd").eq(j).attr("data-ident");
+                    getLinkInfo(title);
+                }
+            }
+        }
+    }
+
     /*
     * 渲染数据
     * */
-    // console.log(getLineData.link)
-    getLinkInfo(initMeun);
     function getLinkInfo(name){
         getLineData.name = name;
         $.ajax({
-            url: ns.url(post+"/diy/childlink"),
+            url : "{:addon_url($request_url)}",
             data: getLineData,
             dataType: 'json',
             type: 'post',
@@ -150,7 +179,7 @@
                         html += `<dt>${list[i].title}</dt>`;
                         if (list[i].child_list != undefined) {
                             for (var j = 0; j < list[i].child_list.length; j++){
-                                if (list[i].child_list[j].selected)
+                                if (list[i].child_list[j].name == preoldlink.name || list[i].child_list[j].name == preoldlink.name)
                                     html += `<dd data-value='${JSON.stringify(list[i].child_list[j])}' class="ns-border-color" data-old-value='${JSON.stringify(data_link)}'>${list[i].child_list[j].title}</dd>`;
                                 else
                                     html += `<dd data-value='${JSON.stringify(list[i].child_list[j])}'>${list[i].child_list[j].title}</dd>`;
@@ -179,6 +208,7 @@
 
     function getGoodsInfo(name){
         var goodsCols,table;
+        initMeun = name;
         if (name == 'ALL_GOODS'){
             promotion = 'all';
             wap_url = '/pages/goods/detail/detail?sku_id=';
@@ -353,6 +383,8 @@
 
     function getGameInfo(name){
         var addon_url = '';
+        initMeun = name;
+
         if (name == 'CARDS_GAME'){
             wap_url = '/otherpages/game/cards/cards?id=';
             addon_url = '{:addon_url("cards://shop/cards/lists")}';
@@ -393,44 +425,33 @@
 
     }
 
-    $(function () {
-        //自定义链接
-        $("body").on("click", "dt[data-ident='CUSTOM_LINK']", function () {
-            customIdent = true;
-            var html = '';
-            html += '<div class="layui-form custom-link">';
-            html += '<div class="layui-form-item">';
-            html += '<label class="layui-form-label sm"><span class="required">*</span>链接名称</label>';
-            html += '<div class="layui-input-inline">';
-            html += '<input type="text" name="title" class="layui-input ns-len-mid" required>';
-            html += '</div>';
-            html += '</div>';
-            html += '<div class="layui-form-item">';
-            html += '<label class="layui-form-label sm"><span class="required">*</span>跳转路径</label>';
-            html += '<div class="layui-input-inline">';
-            html += '<input type="text" name="wap_url" class="layui-input ns-len-mid">';
-            html += '</div>';
-            html += '</div>';
-            html += '</div>';
-
-            $(".link-right").html(html);
-        });
+    //自定义链接
+    $("dt[data-ident='CUSTOM_LINK']").click(function(){
+        showCustom();
+        customIdent = true;
     });
 
+    function showCustom(){
+        var html = '';
+        html += '<div class="layui-form custom-link">';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label sm"><span class="required">*</span>链接名称</label>';
+        html += '<div class="layui-input-inline">';
+        html += '<input type="text" name="title" class="layui-input ns-len-mid" required>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label sm"><span class="required">*</span>跳转路径</label>';
+        html += '<div class="layui-input-block">';
+        html += '<input type="text" name="wap_url" class="layui-input ns-len-mid">';
+        html += '</div>';
+        html += '<div class="ns-word-aux sm">路径必须以“/”开头，例：“/pages/goods/list/list”</div>';
+        html += '</div>';
+        html += '</div>';
 
+        $(".link-right").html(html);
+    }
 
-
-    // link-left
-    // $("body").on("click", ".link-box .link-left dt", function () {
-    //     console.log(1);
-    //     if (!$(this).hasClass("active")){
-    //         $(this).addClass("active");
-    //         $(this).parent("dl").find("dd").addClass("layui-hide");
-    //     }else{
-    //         $(this).removeClass("active");
-    //         $(this).parent("dl").find("dd").removeClass("layui-hide");
-    //     }
-    // });
     $(".link-box .link-left dt").click(function () {
         if (!$(this).hasClass("active")){
             $(this).addClass("active");
@@ -452,13 +473,13 @@
             $(".link-box .link-left dd,.link-box .link-left dt").removeClass("ns-text-color");
             $(this).addClass("ns-text-color");
         }
-
         initMeun = $(this).attr("data-ident");
         getLinkInfo(initMeun);
     });
 
     // link-right
     $("body").on("click", ".link-box .link-right dd", function () {
+
         $(".link-box .link-right dd").removeClass("ns-border-color");
         if (!$(this).hasClass("ns-border-color")) $(this).addClass("ns-border-color");
     });
@@ -488,49 +509,22 @@
         });
     });
 
+    //清空
+    $(".link-btn .link-eliminate").click(function () {
+        $(".link-box input[name='title']").val('');
+        $(".link-box input[name='wap_url']").val('');
 
+        $(".link-box .link-right dd").removeClass("ns-border-color");
 
-    // 保存
-    // $("body").on("click", ".link-box .link-save", function () {
-    //     console.log("保存");
-        // var value,old_value;
-        // var dd = $(".link-box .link-right dd.ns-border-color");
-        // console.log("保存",dd);
-        // if(dd.length){
-        //     value = dd.attr("data-value").toString();
-        //     old_value = dd.attr("data-old-value");
-        //
-        //     if(old_value) value = old_value.toString();
-        // }
-        //
-        // if ($("input[name='goods_checkbox']:checked").length){
-        //     var goodsId = $("input[name='goods_checkbox']:checked").eq(0).attr("data-goods-id");
-        //     value = $("input[name='goods_json'][data-goods-id = "+ goodsId +"]").val();
-        //     old_value = $("input[name='old_goods_json'][data-goods-id = "+ goodsId +"]").val();
-        //
-        //     if(old_value) value = old_value.toString();
-        //     value = JSON.parse(value);
-        //     if (!value.wap_url){
-        //
-        //         var nn =value.id;
-        //         if (goodsIdent=='PINTUAN_GOODS' || goodsIdent=='GROUPBUY_GOODS' || goodsIdent=='BARGAIN_GOODS')
-        //             value.wap_url = wap_url + value.id;
-        //         else
-        //             value.wap_url = wap_url+value.sku_id;
-        //
-        //         value.title = value.goods_name;
-        //         value.selected = true;
-        //         value.name = "";
-        //     }
-        //     value = JSON.stringify(value);
-        // }
-        //
-        // if(value) {
-        //     value = JSON.parse(value.toString());
-        //     window.linkData = value;
-        // }
-        // layer.close(window.linkIndex);
-    // });
+        $(".link-box input[type='checkbox']:checked").prop('checked',false);
+        $(".link-box .layui-unselect.layui-form-checkbox").removeClass("layui-form-checked");
+
+        var obj = {"title":"","wap_url":'',"name":''};
+        window.linkData = obj;
+        window.linkData.parents = '';
+
+        layer.close(window.linkIndex);
+    });
 
     // 保存
     $(".link-box .link-save").click(function(){
@@ -543,6 +537,7 @@
             old_value = dd.attr("data-old-value");
 
             if(old_value) value = old_value;
+            initMeun = $(".link-box .link-left dd.ns-text-color").attr('data-ident');
         }
 
         /* 商品链接保存 */
@@ -566,12 +561,11 @@
                 }
 
                 value.title = goodsIdent=='BARGAIN_GOODS' ? value.sku_name : value.goods_name;
-
-                value.selected = true;
                 value.name = "";
             }
             value = JSON.stringify(value);
         }
+
         // 小游戏
         if ($("input[name='game_checkbox']:checked").length){
             var gameId = $("input[name='game_checkbox']:checked").eq(0).attr("data-game-id");
@@ -589,7 +583,6 @@
             }
             value = JSON.stringify(value);
         }
-
 
         //自定义链接
         if(customIdent){
@@ -615,6 +608,7 @@
             value.type = 0;
 
             window.linkData = value;
+            window.linkData.parents = 'CUSTOM_LINK';
         }
 
         if(value && !customIdent) {
@@ -622,19 +616,18 @@
             window.linkData = value;
             window.linkData.parents = initMeun;
         }
-
         layer.close(window.linkIndex);
     });
 </script>
 
 <script type="text/html" id="checkbox">
-    {{# if(d.selected){ }}
-    <input type="checkbox" data-goods-id="{{d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox" checked>
-    <input type="hidden" data-goods-id="{{d.goods_id}}" name="old_goods_json" value='{:html_entity_decode($link)}' />
+    {{# if(Object.getOwnPropertyNames(preoldlink).length && preoldlink.goods_id == d.goods_id && preoldlink.parents == initMeun &&  promotion == 'all' || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id == d.sku_id && promotion == 'bargain' || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.groupbuy_id== d.groupbuy_id && promotion == 'groupbuy' || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id== d.sku_id  && promotion == 'pintuan'|| preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id== d.sku_id  && promotion == 'fenxiao'){ }}
+    <input type="checkbox" data-goods-id="{{d.sku_id ? d.sku_id : d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox" checked>
+    <input type="hidden" data-goods-id="{{d.sku_id ? d.sku_id : d.goods_id}}" name="old_goods_json" value='{:html_entity_decode($link)}' />
     {{# }else{ }}
-    <input type="checkbox" data-goods-id="{{d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox">
+    <input type="checkbox" data-goods-id="{{d.sku_id ? d.sku_id : d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox">
     {{# } }}
-    <input type="hidden" data-goods-id="{{d.goods_id}}" name="goods_json" value='{{ JSON.stringify(d) }}' />
+    <input type="hidden" data-goods-id="{{d.sku_id ? d.sku_id : d.goods_id}}" name="goods_json" value='{{ JSON.stringify(d) }}' />
 </script>
 
 <!-- 商品信息 -->
@@ -650,7 +643,7 @@
 </script>
 
 <script type="text/html" id="game_checkbox">
-    {{# if(d.selected){ }}
+    {{# if(Object.getOwnPropertyNames(preoldlink).length && preoldlink.game_id == d.game_id){ }}
     <input type="checkbox" data-game-id="{{d.game_id}}" name="game_checkbox" lay-skin="primary" lay-filter="game_checkbox" checked>
     <input type="hidden" data-game-id="{{d.game_id}}" name="old_game_json" value='{:html_entity_decode($link)}' />
     {{# }else{ }}

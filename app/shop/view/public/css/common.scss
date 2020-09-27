@@ -37,6 +37,7 @@ $ns-color-red: red;
 .ns-border-color {
   border-color: $base-color !important;
 }
+
 .ns-border-after-color::after {
   border-color: $base-color !important;
 }
@@ -87,6 +88,7 @@ $ns-color-red: red;
 
   .layui-logo {
     width: 184px;
+
     h1 {
       display: inline-block;
       font-size: 16px;
@@ -155,14 +157,14 @@ $ns-color-red: red;
     background-color: #FFFFFF;
     border-right: 1px solid #f1f1f1;
     overflow: hidden;
-	box-sizing: border-box;
+    box-sizing: border-box;
 
     .layui-side-scroll {
       width: 204px;
 
       .layui-nav {
         width: 184px;
-		background-color: transparent !important; 
+        background-color: transparent !important;
       }
 
       .layui-nav-item {
@@ -183,6 +185,7 @@ $ns-color-red: red;
 
           &:hover {
             background-color: #F7F7F7;
+
             img {
               left: -19px !important;
             }
@@ -214,9 +217,10 @@ $ns-color-red: red;
         background-color: #FFFFFF !important;
       }
 
-	  .layui-nav-tree{
-		  position: relative;
-	  }
+      .layui-nav-tree {
+        position: relative;
+      }
+
       .layui-nav-tree > .layui-this {
         > a {
           background-color: #F7F7F7 !important;
@@ -238,7 +242,7 @@ $ns-color-red: red;
       }
 
       .layui-nav-child {
-		  
+
         dd.layui-this {
           background-color: #FFFFFF !important;
           color: #333333;
@@ -257,29 +261,29 @@ $ns-color-red: red;
           padding-left: 60px;
         }
       }
-	  
-	  .layui-nav .layui-nav-more {
-		width: 7px;
-		height: 7px;
-		border-width: 1px;
-		border-color: #333 #333 transparent transparent;
-		border-style: solid;
-		transform: rotate(45deg);
-		-ms-transform: rotate(45deg); 	/* IE 9 */
-		-moz-transform: rotate(45deg); 	/* Firefox */
-		-webkit-transform: rotate(45deg); /* Safari 和 Chrome */
-		-o-transform: rotate(45deg);
-		top: 16px;
-		right: 16px;
-		margin-top: 0;
-	  }
+
+      .layui-nav .layui-nav-more {
+        width: 7px;
+        height: 7px;
+        border-width: 1px;
+        border-color: #333 #333 transparent transparent;
+        border-style: solid;
+        transform: rotate(45deg);
+        -ms-transform: rotate(45deg); /* IE 9 */
+        -moz-transform: rotate(45deg); /* Firefox */
+        -webkit-transform: rotate(45deg); /* Safari 和 Chrome */
+        -o-transform: rotate(45deg);
+        top: 16px;
+        right: 16px;
+        margin-top: 0;
+      }
 
       .layui-nav-itemed > a .layui-nav-more {
         transform: rotate(135deg);
-		-ms-transform: rotate(135deg);
-		-moz-transform: rotate(135deg);
-		-webkit-transform: rotate(135deg);
-		-o-transform: rotate(135deg);
+        -ms-transform: rotate(135deg);
+        -moz-transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+        -o-transform: rotate(135deg);
       }
     }
   }
@@ -296,6 +300,7 @@ $ns-color-red: red;
     padding: 0 28px;
     background-color: #fff;
     border-bottom: 1px solid #f1f1f1;
+
     a:hover {
       color: $base-color !important;
     }
@@ -308,6 +313,7 @@ $ns-color-red: red;
     top: 104px;
     bottom: 0;
     left: 184px;
+
     .ns-body-content {
       min-width: 1000px;
       min-height: 650px;
@@ -321,15 +327,19 @@ $ns-color-red: red;
 
   .layui-tab-title {
     border: 0;
+
     li {
-	  margin: 0 15px;
-	  padding: 0;
+      margin: 0 15px;
+      padding: 0;
+
       &::after {
         border: 0 !important;
       }
+
       a {
         border-bottom: 2px solid #fff;
       }
+
       &.layui-this a {
         color: $base-color;
         border-bottom: 2px solid $base-color;
@@ -348,19 +358,21 @@ $ns-color-red: red;
   padding-top: 50px;
   line-height: 1.8;
   color: #999;
-  .gov-box img{
-	  max-width: 20px;
-	  max-height: 20px;
-	  margin-right: 5px;
+
+  .gov-box img {
+    max-width: 20px;
+    max-height: 20px;
+    margin-right: 5px;
   }
-  a{
-	  color: #999;
+
+  a {
+    color: #999;
   }
 }
 
 .ns-footer-img {
-	margin-bottom: 18px;
-	
+  margin-bottom: 18px;
+
   img {
     max-width: 100px;
     max-height: 27px;
@@ -386,27 +398,123 @@ $ns-color-red: red;
 }
 
 //访问店铺
-.ns-login-box{display: flex;}
-.ns-shop-ewm a{display: inline-block;line-height: 60px;cursor: pointer;margin-right: 10px;}
-.ns-shop-ewm{position: relative;}
-.side-pic-img{display: inline-block;width: 35px;height: 35px;margin-top: 20px;line-height: 35px;text-align: center;border-radius: 50%;overflow: hidden;}
-.side-pic-img img{width: 100%;height: 100%;}
+.ns-login-box {
+  display: flex;
+}
+
+.ns-shop-ewm a {
+  display: inline-block;
+  line-height: 60px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.ns-shop-ewm {
+  position: relative;
+}
+
+.side-pic-img {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  margin-top: 20px;
+  line-height: 35px;
+  text-align: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.side-pic-img img {
+  width: 100%;
+  height: 100%;
+}
+
 /*h5预览*/
-.goods-preview{position: relative;}
-.goods-preview .qrcode-wrap{background: #f4f6f8;display: inline-block;padding: 10px;text-align: center;position: absolute;left: 40px;top:40px;}
-.goods-preview .qrcode-wrap img{width: 100px;height: 100px;}
-.goods-preview .qrcode-wrap .tips{font-size: 12px;margin-top: 10px;}
-.goods-preview .phone-wrap{width: 253px;height: 510px;margin-left: 210px;background: url("../img/iphone_shell.png") no-repeat;background-size: 100% auto;position: relative;}
-.goods-preview .phone-wrap .iframe-wrap{width: 230px;height: 448px;position: absolute;top: 38px;left: 12px;overflow: hidden;display: inline-block;}
-.goods-preview .phone-wrap .iframe-wrap iframe{width: 264px;height: 510px;margin-top: -34px;margin-left: -18px;transform:scale(0.87);border-radius: 10px;}
+.goods-preview {
+  position: relative;
+}
+
+.goods-preview .qrcode-wrap {
+  background: #f4f6f8;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  position: absolute;
+  left: 40px;
+  top: 40px;
+}
+
+.goods-preview .qrcode-wrap img {
+  width: 100px;
+  height: 100px;
+}
+
+.goods-preview .qrcode-wrap .tips {
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.goods-preview .phone-wrap {
+  width: 253px;
+  height: 510px;
+  margin-left: 210px;
+  background: url("../img/iphone_shell.png") no-repeat;
+  background-size: 100% auto;
+  position: relative;
+}
+
+.goods-preview .phone-wrap .iframe-wrap {
+  width: 230px;
+  height: 448px;
+  position: absolute;
+  top: 38px;
+  left: 12px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.goods-preview .phone-wrap .iframe-wrap iframe {
+  width: 264px;
+  height: 510px;
+  margin-top: -34px;
+  margin-left: -18px;
+  transform: scale(0.87);
+  border-radius: 10px;
+}
 
 /*小程序发布*/
-.release-layer .layui-layer-title {background:#fff;border-bottom:0;margin-top:10px;}
-.release-layer .weapp-release .title {font-size:16px;text-align:center;}
-.release-layer .weapp-release .desc {font-size:16px;text-align:center;padding:0 20px;margin-top:30px;color:#555}
-.release-layer .weapp-release .operation-btns {margin-top:60px;}
-.release-layer .operation-btns > div {margin-top:10px;text-align:center;}
-.release-layer .operation-btns .layui-btn {width:80%;}
+.release-layer .layui-layer-title {
+  background: #fff;
+  border-bottom: 0;
+  margin-top: 10px;
+}
+
+.release-layer .weapp-release .title {
+  font-size: 16px;
+  text-align: center;
+}
+
+.release-layer .weapp-release .desc {
+  font-size: 16px;
+  text-align: center;
+  padding: 0 20px;
+  margin-top: 30px;
+  color: #555
+}
+
+.release-layer .weapp-release .operation-btns {
+  margin-top: 60px;
+}
+
+.release-layer .operation-btns > div {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.release-layer .operation-btns .layui-btn {
+  width: 80%;
+}
+
 /*********************** 组件样式 ***************************/
 
 // 提示面板
@@ -415,6 +523,7 @@ $ns-color-red: red;
   border: 0;
   background-color: #fff;
   border: 1px solid #f1f1f1;
+
   .layui-colla-title {
     padding-left: 10px;
     height: 30px;
@@ -422,14 +531,17 @@ $ns-color-red: red;
     font-weight: 400;
     line-height: 30px;
     background-color: transparent;
+
     .layui-colla-icon {
       left: 80px;
     }
   }
+
   .layui-colla-content {
     padding: 0;
     padding-left: 34px;
     border: none;
+
     li {
       line-height: 25px;
       list-style: initial;
@@ -492,6 +604,7 @@ $ns-color-red: red;
 
 .layui-card.ns-form-show {
   margin-bottom: 0;
+
   .layui-card-header {
     padding: 3px 15px;
     display: flex;
@@ -565,61 +678,66 @@ $ns-color-red: red;
 
 /* 详情面板 */
 .ns-detail-card {
-	width: 100%;
-	border: 1px solid #F1F1F1;
-	padding: 20px 0 20px 80px;
-	box-sizing: border-box;
-	display: flex;
+  width: 100%;
+  border: 1px solid #F1F1F1;
+  padding: 20px 0 20px 80px;
+  box-sizing: border-box;
+  display: flex;
 
-	.ns-detail-img {
-		width: 60px;
-		height: 60px;
-		text-align: center;
-		margin-right: 15px;
-		
-		img {
-			max-width: 100%;
-			max-height: 100%;
-		}
-	}
+  .ns-detail-img {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    margin-right: 15px;
 
-	.ns-goods-name {
-		font-size: 16px;
-		font-weight: 600;
-		color: #333333;
-	}
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
 
-	.ns-detail-line {
-		height: 32px;
-		line-height: 32px;
-		color: #666666;
-	}
+  .ns-goods-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
 
-	.ns-inline-span {
-		display: inline-block;
-		width: 220px;
-	}
+  .ns-detail-line {
+    height: 32px;
+    line-height: 32px;
+    color: #666666;
+  }
+
+  .ns-inline-span {
+    display: inline-block;
+    width: 220px;
+  }
 }
 
 //*************** tab页 ***************/
 .ns-table-tab {
-	margin-top: 15px;
+  margin-top: 15px;
+
   .layui-tab-title {
     height: 41px;
     border-color: #f1f1f1;
+
     li {
       background-color: #F7F7F7;
       border-top: 1px solid #f1f1f1;
       border-bottom: 1px solid #f1f1f1;
       border-left: 1px solid #f1f1f1;
+
       &:first-child {
         border-left: 1px solid #f1f1f1;
         border-top-left-radius: 3px;
       }
+
       &:last-child {
         border-right: 1px solid #f1f1f1;
         border-top-right-radius: 3px;
       }
+
       &.layui-this {
         //color: $base-color;
         background-color: #fff;
@@ -634,6 +752,7 @@ $ns-color-red: red;
     }
 
   }
+
   .layui-tab-content {
     padding: 0;
     border: none;
@@ -648,12 +767,15 @@ $ns-color-red: red;
   padding: 14px 0;
   padding: 14px 0;
   background-color: #fff;
+
   .layui-form {
     margin-left: auto;
+
     .layui-btn {
       border-color: #e6e6e6;
       padding: 0 10px;
     }
+
     .layui-input + .layui-btn {
       height: 32px;
       line-height: 32px;
@@ -668,6 +790,7 @@ $ns-color-red: red;
       border-color: $base-color !important;
     }
   }
+
   .layui-input-inline {
     margin-left: 8px;
   }
@@ -679,32 +802,39 @@ $ns-color-red: red;
   background-color: #fff;
   border-radius: 5px;
   min-height: 45px;
+
   .layui-colla-item {
     position: relative;
   }
+
   .layui-colla-title {
     position: initial;
     height: 0;
+
     .layui-colla-icon {
       left: auto;
-	  transform: translateX(-50%);
-	  top: 0;
-	  color: #BEBEBE;
-	  right: 10px;
-	  z-index: 2;
-	  padding: 5px;
+      transform: translateX(-50%);
+      top: 0;
+      color: #BEBEBE;
+      right: 10px;
+      z-index: 2;
+      padding: 5px;
     }
   }
+
   .layui-colla-content {
     padding: 15px 0;
     border: 1px solid #f1f1f1;
+
     .layui-input, .layui-form-select {
       width: 185px !important;
     }
   }
+
   .layui-form-label {
     width: 120px;
   }
+
   .ns-form-row {
     margin-left: 120px;
   }
@@ -737,6 +867,7 @@ $ns-color-red: red;
 //input其他设置
 .layui-input, .layui-select, .layui-textarea {
   border-color: #E6E6E6;
+
   &:focus {
     border-color: $base-color !important;
   }
@@ -761,11 +892,13 @@ $ns-color-red: red;
   box-sizing: border-box;
   font-size: 14px;
   color: #454545 !important;
+
   &.sm {
     width: 80px;
   }
+
   &.mid {
-	  width: 150px;
+    width: 150px;
   }
 }
 
@@ -796,13 +929,14 @@ $ns-color-red: red;
   color: #B2B2B2;
   font-size: 12px;
   line-height: 1.6;
-	
-	&.sm {
-		margin-left: 80px;
-	}
-	&.mid {
-		margin-left: 150px;
-	}
+
+  &.sm {
+    margin-left: 80px;
+  }
+
+  &.mid {
+    margin-left: 150px;
+  }
 }
 
 //下拉框
@@ -832,6 +966,7 @@ $ns-color-red: red;
   margin-top: 6px;
   border-radius: 16px;
   border-color: #DDDDDD;
+
   i {
     width: 21px;
     height: 21px;
@@ -846,6 +981,7 @@ $ns-color-red: red;
     -webkit-box-shadow: 0 2px 5px $ns-color-content;
     box-shadow: 0 2px 5px $ns-color-content;
   }
+
   &.layui-form-onswitch i {
     left: 46px;
   }
@@ -860,6 +996,7 @@ $ns-color-red: red;
   display: inline-block;
   color: $ns-color-black !important;
   resize: none;
+
   &::-webkit-scrollbar {
     display: none
   }
@@ -869,12 +1006,15 @@ $ns-color-red: red;
 .ns-form-row {
   margin-top: 20px;
   margin-left: 200px;
+
   &.sm {
     margin-left: 80px;
   }
+
   &.mid {
-  	margin-left: 150px;
+    margin-left: 150px;
   }
+
   .layui-btn {
     height: 34px;
     line-height: 34px;
@@ -893,6 +1033,7 @@ $ns-color-red: red;
   height: 100px;
   border: 1px dashed #ddd;
   box-sizing: border-box;
+  position: relative;
 
   .upload-img-box {
     width: 100%;
@@ -923,6 +1064,29 @@ $ns-color-red: red;
       max-width: 100%;
     }
   }
+
+
+  .del {
+    background: #999;
+    color: #FFFFFF;
+    position: absolute;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 18px;
+    text-align: center;
+    right: -10px;
+    top: -10px;
+    cursor: pointer;
+    z-index: 1;
+    display: none;
+
+    &.show {
+      display: block;
+    }
+  }
 }
 
 // 弹框按钮
@@ -938,8 +1102,8 @@ select:-webkit-autofill {
   box-shadow: 0 0 50px 50px white inset;
 }
 
-.layui-input-block{
-	line-height: 34px;
+.layui-input-block {
+  line-height: 34px;
 }
 
 .layui-form-item .layui-input-inline {
@@ -976,13 +1140,13 @@ select:-webkit-autofill {
 }
 
 //日历图标
-.ns-calendar{
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 34px;
-	height: 34px;
-	z-index: 0;
+.ns-calendar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34px;
+  height: 34px;
+  z-index: 0;
 }
 
 
@@ -991,25 +1155,31 @@ select:-webkit-autofill {
   margin-top: 15px;
   background-color: #fff;
   border: 0;
+
   .layui-table {
     &[lay-skin=line] {
       width: 100%;
       border: 0;
     }
+
     thead tr {
       background-color: #fff;
     }
+
     tbody td > div {
       height: auto !important;
     }
+
     thead span {
       font-weight: bold;
     }
   }
+
   .ns-table-btn {
     display: flex;
     flex-wrap: wrap;
   }
+
   tr .layui-btn {
     display: flex;
     justify-content: center;
@@ -1039,6 +1209,7 @@ select:-webkit-autofill {
     text-align: center;
     line-height: 50px;
     margin-left: 5px;
+
     img {
       max-width: 100%;
       max-height: 100%;
@@ -1060,6 +1231,7 @@ select:-webkit-autofill {
   height: 50px;
   text-align: center;
   line-height: 50px;
+
   img {
     max-width: 100%;
     max-height: 100%;
@@ -1105,20 +1277,24 @@ select:-webkit-autofill {
 .ns-table-bottom {
   .layui-form-checkbox[lay-skin=primary] {
     padding-left: 24px;
-	margin-top: 5px;
+    margin-top: 5px;
   }
+
   border-top: 1px solid #eee;
   padding-top: 10px;
   padding-bottom: 15px;
   padding-left: 17px;
   display: flex;
   justify-content: space-between;
+
   .layui-table-bottom-tool-temp {
     line-height: 34px;
+
     .layui-table-view .layui-form-checkbox {
       padding-left: 15px;
     }
   }
+
   .layui-btn {
     padding: 0px 5px;
     font-size: 12px;
@@ -1127,6 +1303,7 @@ select:-webkit-autofill {
     display: inline-block;
     margin-top: 3px;
   }
+
   .layui-table-page {
     width: auto;
     border-top: 0;
@@ -1153,12 +1330,14 @@ select:-webkit-autofill {
 .layui-table {
   th {
     font-weight: bold;
-	background-color: #F7F7F7;
+    background-color: #F7F7F7;
   }
+
   .ns-table-btn {
     display: flex;
     flex-wrap: wrap;
   }
+
   .layui-btn {
     display: flex;
     justify-content: center;
@@ -1178,18 +1357,22 @@ select:-webkit-autofill {
 .layui-table.ns-pithy-table {
   margin-top: 15px;
   border: 0;
+
   thead th {
     height: 40px;
     line-height: 40px;
     border: 0;
     border-bottom: 1px solid #e6e6e6;
   }
+
   tbody td {
     min-height: 40px;
     border: 0;
   }
+
   tbody tr {
     border-bottom: 1px solid #e6e6e6;
+
     &:last-of-type {
       border-bottom: 0;
     }
@@ -1198,17 +1381,20 @@ select:-webkit-autofill {
 
 //*************** 弹框 ***************/
 //弹框阴影
-.layui-layer{
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;	
+.layui-layer {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
+
 //弹框遮罩层颜色
-.layui-layer-shade{
-	background-color: #373737 !important;
-	opacity: 0.6 !important;
+.layui-layer-shade {
+  background-color: #373737 !important;
+  opacity: 0.6 !important;
 }
+
 .layui-layer-page .layui-layer-content {
   overflow: initial !important;
   padding: 20px;
+
   .layui-form-selected dl {
     position: absolute;
   }
@@ -1229,6 +1415,7 @@ select:-webkit-autofill {
   border: 0;
   font-size: 16px;
   background-color: transparent;
+
   &:after {
     content: "";
     position: absolute;
@@ -1261,12 +1448,12 @@ select:-webkit-autofill {
     position: relative;
     display: inline-block;
     // border: 1px solid #e5e5e5;
-	background: #f7f8fa;
+    background: #f7f8fa;
     box-sizing: border-box;
   }
-  
+
   .ns-item-block:hover {
-	background: #f2f3f5;
+    background: #f2f3f5;
   }
 
   //内容展示
@@ -1394,6 +1581,7 @@ select:-webkit-autofill {
  */
   .ns-item-block-hover:hover {
     border-color: transparent;
+
     .ns-item-float-wrap {
       bottom: -30px;
       opacity: 1;
@@ -1476,69 +1664,76 @@ select:-webkit-autofill {
 
 // 悬浮框
 .ns-prompt-block {
-	display: flex;
-	align-items: center;
-	
-	.ns-prompt {
-		width: 18px;
-		height: 18px;
-		line-height: 18px;
-		position: relative;
-	}
-	
-	.ns-prompt:hover {
-		.ns-prompt-box {
-			display: inline-block;
-		}
-	}
-	
-	.ns-prompt .iconfont {
-		color: #000;
-		font-weight: 100;
-	}
+  display: flex;
+  align-items: center;
 
-	.ns-prompt-box {
-		position: absolute;
-		top: -20px;
-		left: 32px;
-		border: 1px solid #e4e4e4;
-		width: 280px;
-		text-align: left;
-		border-radius: 5px;
-		background-color: #FFFFFF;
-		padding: 15px;
-		box-sizing: border-box;
-		word-break: break-all;
-		color: #666666;
-		line-height: 24px;
-		z-index: 999;
-		display: none;
-	}
-	
-	.ns-prompt-box:before, .ns-prompt-box:after {
-		content: '';
-		display: inline-block;
-		border: solid transparent;
-		width: 0;
-		height: 0;
-		border-width: 12px;
-		top: 16px;
-		position: absolute;
-	}
+  .ns-prompt {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    position: relative;
+  }
 
-	.ns-prompt-box:before {
-		border-right-color: #e4e4e4;
-		left: -25px;
-	}
+  .ns-prompt:hover {
+    .ns-prompt-box {
+      display: inline-block;
+    }
+  }
 
-	.ns-prompt-box:after {
-		border-right-color: #FFFFFF;
-		left: -23px;
-	}
+  .ns-prompt .iconfont {
+    color: #000;
+    font-weight: 100;
+    margin-left: 3px;
+    cursor: pointer;
+  }
 
-	.ns-prompt-con {
-		width: 100%;
-		word-break: break-all;
-		white-space: normal;
-	}
+  .ns-prompt-box {
+    position: absolute;
+    top: -20px;
+    left: 32px;
+    border: 1px solid #e4e4e4;
+    width: 280px;
+    text-align: left;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    padding: 15px;
+    box-sizing: border-box;
+    word-break: break-all;
+    color: #666666;
+    line-height: 24px;
+    z-index: 999;
+    display: none;
+    font-weight: normal;
+  }
+
+  .ns-prompt-box:before, .ns-prompt-box:after {
+    content: '';
+    display: inline-block;
+    border: solid transparent;
+    width: 0;
+    height: 0;
+    border-width: 12px;
+    top: 16px;
+    position: absolute;
+  }
+
+  .ns-prompt-box:before {
+    border-right-color: #e4e4e4;
+    left: -25px;
+  }
+
+  .ns-prompt-box:after {
+    border-right-color: #FFFFFF;
+    left: -23px;
+  }
+
+  .ns-prompt-con {
+    width: 100%;
+    word-break: break-all;
+    white-space: normal;
+  }
+}
+
+.ns-diy-word-aux {
+	margin-left: 80px;
 }

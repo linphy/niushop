@@ -41,13 +41,14 @@
 		<label class="layui-form-label img-upload-lable ns-short-label">头像：</label>
 		<div class="layui-input-inline">
 			<div class="upload-img-block square">
-				<input type="hidden" name="headimg" />
 				<div class="upload-img-box" id="headImg">
 					<div class="ns-upload-default">
 						<img src="SHOP_IMG/upload_img.png" />
 						<p>点击上传</p>
 					</div>
 				</div>
+				<input type="hidden" name="headimg" />
+				<i class="del">x</i>
 			</div>
 		</div>
 	</div>
@@ -95,10 +96,9 @@
 {/block}
 {block name="script"}
 <script>
-	layui.use(['form', 'laydate','upload'], function() {
+	layui.use(['form', 'laydate'], function() {
 		var form = layui.form,
 			laydate = layui.laydate,
-			upload = layui.upload,
 			repeat_flag = false; //防重复标识
 		form.render();
 
@@ -129,6 +129,10 @@
 				}
 			}
 		});
+
+		var upload = new Upload({
+			elem: '#headImg'
+		});
 		
 		/**
 		 * 监听提交
@@ -136,6 +140,9 @@
 		form.on('submit(save)', function(data) {
 			
 			data.field.member_level_name = $(".member_level").find("option[value=" + data.field.member_level + "]").text();
+
+			// 删除图片
+			if(!data.field.headimg) upload.delete();
 			
 			if(repeat_flag) return false;
 			repeat_flag = true;
@@ -151,6 +158,7 @@
 						layer.confirm('添加成功', {
 							title:'操作提示',
 							btn: ['返回列表', '继续添加'],
+							closeBtn: 0,
 							yes: function(){
 								location.href = ns.url("shop/member/memberList")
 							},
@@ -163,19 +171,6 @@
 					}
 				}
 			});
-		});
-		
-		//普通图片上传
-		var uploadInst = upload.render({
-			elem: '#headImg',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='headimg']").val(res.data.pic_path);
-					$("#headImg").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
 		});
 
 	});

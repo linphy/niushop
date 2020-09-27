@@ -55,7 +55,7 @@ ns.url = function (url, vars, suffix) {
 	if (url.indexOf('http://') != -1 || url.indexOf('https://') != -1) {
 		return url;
 	}
-	
+
 	var info = this.parse_url(url), path = [], param = {}, reg;
 	/* 验证info */
 	info.path || alert("url格式错误！");
@@ -89,13 +89,14 @@ ns.url = function (url, vars, suffix) {
 		addon = info.scheme + '/';
 	}
 	url = addon + url;
-	
+
 	if (vars) {
 		var param_str = $.param(vars);
 		if ('' !== param_str) {
 			url += ((this.baseUrl + url).indexOf('?') !== -1 ? '&' : '?') + param_str;
 		}
 	}
+	url = url.replace("shop", this.shop_module);
 	url = this.baseUrl + url;
 	return url;
 };
@@ -106,7 +107,7 @@ ns.url = function (url, vars, suffix) {
  * type 类型 big、mid、small
  */
 ns.img = function (path, type = '') {
-	
+
 	var start = path.lastIndexOf('.');
 	type = type ? '_' + type.toUpperCase() : '';
 	var suffix = path.substring(start);
@@ -115,7 +116,7 @@ ns.img = function (path, type = '') {
 	path += type + suffix;
 	
 	if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1) {
-		
+
 		var base_url = this.baseUrl.replace('/?s=', '');
 		var base_url = base_url.replace('/index.php', '');
 		if (isNaN(first[0])) {
@@ -135,7 +136,7 @@ ns.img = function (path, type = '') {
  */
 var default_time_format = 'YYYY-MM-DD h:m:s';
 ns.time_to_date = function (timeStamp, time_format = '') {
-	
+
 	time_format = time_format == '' ? default_time_format : time_format;
 	if (timeStamp > 0) {
 		var date = new Date();
@@ -270,9 +271,9 @@ ns.get_page_param = function (param) {
  */
 ns.open = function (options) {
 	if (!options) options = {};
-	
+
 	options.type = options.type || 1;
-	
+
 	//宽高，小、中、大
 	// options.size
 	options.area = options.area || ['500px'];
@@ -326,31 +327,32 @@ ns.copy = function JScopy(dom, callback) {
 	var o = {
 		url: url.value
 	};
-	
+
 	if (callback) callback.call(this, o);
 	layer.msg('复制成功');
 };
 
-
-ns.int_to_float = function (val){
+ns.int_to_float = function (val) {
 	return new Number(val).toFixed(2);
-}
+};
+
 var show_link_box_flag = true;
+
 /**
  * 弹出框-->选择链接
  * @param link
  * @param support_diy_view
  * @param callback
- * @param post 端口：admin、shop
+ * @param post 端口：shop、store
  */
 ns.select_link = function (link, support_diy_view, callback, post) {
-	
-	if(post == 'store') post = 'shop';
-	
-	var url = ns.url("shop/diy/link");
+
+	if (post == 'store') post += '://store';
+
+	var url = ns.url(post + "/diy/link");
 	if (show_link_box_flag) {
 		show_link_box_flag = false;
-		$.post(url,{link: JSON.stringify(link), support_diy_view: support_diy_view}, function (str) {
+		$.post(url, {link: JSON.stringify(link), support_diy_view: support_diy_view}, function (str) {
 			window.linkIndex = layer.open({
 				type: 1,
 				title: "选择链接",
@@ -363,12 +365,12 @@ ns.select_link = function (link, support_diy_view, callback, post) {
 				},
 				end: function () {
 					if (window.linkData) {
-						
 						if (callback) callback(window.linkData);
+						delete window.linkData;// 清空本次选择
 					}
-					
+
 					show_link_box_flag = true;
-					
+
 				}
 			});
 		});
@@ -382,8 +384,8 @@ var show_promote_flag = true;
  * @param data
  */
 ns.page_promote = function (data) {
-	
-	var url = ns.url("admin/diy/promote");
+
+	var url = ns.url("shop/diy/promote");
 	if (show_promote_flag) {
 		show_promote_flag = false;
 		$.post(url, {data: JSON.stringify(data)}, function (str) {
@@ -404,6 +406,15 @@ ns.page_promote = function (data) {
 		});
 	}
 };
+
+ns.compare = function (property) {
+	return function (a, b) {
+		var value1 = a[property];
+		var value2 = b[property];
+		return value1 - value2;
+	}
+};
+
 //存储单元单位转换
 ns.sizeformat = function (limit) {
 	if (limit == null || limit == "") {
@@ -429,14 +440,14 @@ ns.sizeformat = function (limit) {
 		}
 	}
 	var limit = parseFloat(limit.substring(0, (limit.length - 2))); //得到纯数字
-	
+
 	while (limit >= 1024) {//数字部分1到1024之间
 		limit /= 1024;
 		index += 1;
 	}
-	limit = limit.toFixed(2) + array[index]
+	limit = limit.toFixed(2) + array[index];
 	return limit;
-}
+};
 
 
 /**
@@ -446,10 +457,10 @@ ns.sizeformat = function (limit) {
  * @constructor
  */
 function Table(options) {
-	
+
 	if (!options) return;
 	var _self = this;
-	
+
 	options.parseData = options.parseData || function (data) {
 		return {
 			"code": data.code,
@@ -458,7 +469,7 @@ function Table(options) {
 			"data": data.data.list
 		};
 	};
-	
+
 	options.request = options.request || {
 		limitName: 'page_size' //每页数据量的参数名，默认：limit
 	};
@@ -469,11 +480,11 @@ function Table(options) {
 			limit: 10
 		};
 	}
-	
+
 	options.defaultToolbar = options.defaultToolbar || [];//'filter', 'print', 'exports'
-	
+
 	options.toolbar = options.toolbar || "";//头工具栏事件
-	
+
 	options.skin = options.skin || 'line';
 	options.size = options.size || 'lg';
 	options.async = (options.async != undefined) ? options.async : true;
@@ -482,16 +493,16 @@ function Table(options) {
 		loadImgMagnify();
 		if (options.callback) options.callback(res, curr, count);
 	};
-	
+
 	layui.use('table', function () {
 		_self._table = layui.table;
 		_self._table.render(options);
 	});
-	
+
 	this.filter = options.filter || options.elem.replace(/#/g, "");
 	this.elem = options.elem;
-	
-	
+
+
 	//获取当前选中的数据
 	this.checkStatus = function () {
 		return this._table.checkStatus(_self.elem.replace(/#/g, ""));
@@ -663,7 +674,7 @@ function loadImgMagnify() {
 				});
 			}
 		} catch (e) {
-		
+
 		}
 	}, 200);
 }
@@ -693,10 +704,10 @@ function back() {
  * @constructor
  */
 function Page(options) {
-	
+
 	if (!options) return;
 	var _self = this;
-	
+
 	options.elem = options.elem.replace(/#/g, "");// 注意：这里不能加 # 号
 	options.count = options.count || 0;// 数据总数。一般通过服务端得到
 	options.limit = options.limit || 10;// 每页显示的条数。laypage将会借助 count 和 limit 计算出分页数。
@@ -707,24 +718,24 @@ function Page(options) {
 	options.prev = options.prev || '<i class="layui-icon layui-icon-left"></i>';// 自定义“上一页”的内容，支持传入普通文本和HTML
 	options.next = options.next || '<i class="layui-icon layui-icon-right"></i>';// 自定义“下一页”的内容，同上
 	options.first = options.first || 1;// 自定义“首页”的内容，同上
-	
+
 	// 自定义排版。可选值有：count（总条目输区域）、prev（上一页区域）、page（分页区域）、next（下一页区域）、limit（条目选项区域）、refresh（页面刷新区域。注意：layui 2.3.0 新增） 、skip（快捷跳页区域）
 	options.layout = options.layout || ['count', 'prev', 'page', 'next'];
-	
+
 	options.jump = function (obj, first) {
-		
+
 		//首次不执行，一定要加此判断，否则初始时会无限刷新
 		if (!first) {
 			obj.page = obj.curr;
-			if(options.callback) options.callback.call(this, obj);
+			if (options.callback) options.callback.call(this, obj);
 		}
 	};
-	
+
 	layui.use('laypage', function () {
 		_self._page = layui.laypage;
 		_self._page.render(options);
 	});
-	
+
 }
 
 
@@ -735,11 +746,22 @@ function Page(options) {
  */
 layui.use('form', function () {
 	var form = layui.form;
+
+	$(".layui-input").blur(function () {
+		var val = $(this).val().trim();
+		$(this).val(val);
+	})
+
+	$(".layui-textarea").blur(function () {
+		var val = $(this).val().trim();
+		$(this).val(val);
+	})
+
 	form.verify({
 		required: function (value, item) {
 			var str = $(item).parents(".layui-form-item").find("label").text().split("*").join("");
 			str = str.substring(0, str.length - 1);
-			
+
 			if (value.trim() == "" || value == undefined || value == null) return str + "不能为空";
 		}
 	});
@@ -763,9 +785,89 @@ layui.use('element', function () {
 	});
 });
 
-
 /* 处理日历图片点击问题 */
 $(function () {
-	$(".ns-calendar").parents(".layui-form-item").find("input").css({"background":'transparent','z-index':2,'position':'relative'});
+	$(".ns-calendar").parents(".layui-form-item").find("input").css({
+		"background": 'transparent',
+		'z-index': 2,
+		'position': 'relative'
+	});
 });
 
+/**
+ * 上传
+ * layui官方文档：https://www.layui.com/doc/modules/upload.html
+ * @param options
+ * @constructor
+ */
+function Upload(options) {
+
+	if (!options) return;
+
+	var _self = this;
+	var $parent = $(options.elem).parent();
+
+	options.url = options.url || ns.url("shop/upload/image");
+	options.accept = options.accept || "images";
+	options.before = function (obj) {
+		// console.log("before", obj)
+	};
+
+	options.done = function (res, index, upload) {
+
+		try {
+			if (res.code >= 0) {
+				$parent.find("input[type='hidden']").val(res.data.pic_path);
+				$parent.find(".del").addClass("show");
+				if (options.accept == 'images') $parent.find(".upload-img-box").html("<img src=" + ns.img(res.data.pic_path) + " >");
+			}
+		} catch (e) {
+
+		} finally {
+			//加载图片放大
+			if (options.accept == 'images') loadImgMagnify();
+			if (options.callback) options.callback(res, index, upload);
+		}
+		return layer.msg(res.message);
+	};
+
+	layui.use('upload', function () {
+		_self._upload = layui.upload;
+		_self._upload.render(options);
+	});
+
+	// this.elem = options.elem;
+	this.parent = $parent;
+
+	$parent.find(".del").click(function () {
+		var path = $parent.find("input[type='hidden']").val();
+		if (!path) return;
+
+		_self.path = path;
+		$parent.find("input[type='hidden']").val("");
+		$(this).removeClass("show");
+		$parent.find(".upload-img-box").html(`
+				<div class="ns-upload-default">
+					<img src="${ns_url.SHOPIMG}/upload_img.png" />
+					<p>点击上传</p>
+				</div>`);
+
+		if (options.deleteCallback) options.deleteCallback();
+
+	});
+
+}
+
+// 删除物理文件
+Upload.prototype.delete = function () {
+	var _self = this;
+	$.ajax({
+		url: ns.url("shop/upload/deleteFile"),
+		data: {path: _self.path},
+		dataType: 'JSON',
+		type: 'POST',
+		success: function (res) {
+			$(_self).removeClass("show");
+		}
+	});
+};

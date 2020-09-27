@@ -1,6 +1,5 @@
 var laytpl, form, layerIndex;
 var categoryFullName = [];//组装名称
-var file = "";//图片路径
 
 $(function () {
 	
@@ -8,14 +7,9 @@ $(function () {
 	if ($("input[name='category_full_name']").length > 0) {
 		categoryFullName = $("input[name='category_full_name']").val().split("/").slice(0, $("input[name='category_full_name']").val().split("/").length - 1);
 	}
-	
-	if ($("input[name='image']").length > 0) {
-		file = $("input[name='image']").val();
-	}
 
-	layui.use(['form', 'upload', 'laytpl'], function () {
-		var upload = layui.upload,
-			repeat_flag = false;//防重复标识
+	layui.use(['form', 'laytpl'], function () {
+		var repeat_flag = false;//防重复标识
 		laytpl = layui.laytpl;
 		form = layui.form;
 		
@@ -46,53 +40,31 @@ $(function () {
 				}
 			}
 		});
-		
-		//普通图片上传
-		var uploadInst = upload.render({
+
+		var upload = new Upload({
 			elem: '#imgUpload'
-			, url: ns.url("shop/upload/image")
-			, before: function (obj) {
-				//预读本地文件示例，不支持ie8
-				obj.preview(function (index, file, result) {
-					$('#imgUpload').html("<img src=" + result + " >"); //图片链接（base64）
-				});
-			}
-			, done: function (res) {
-				if (res.code >= 0) {
-					file = res.data.pic_path;
-				}
-				return layer.msg(res.message);
-			}
 		});
 
-        //普通图片上传
-        var uploadInst = upload.render({
-            elem: '#imgUploadAdv'
-            , url: ns.url("shop/upload/image")
-            , done: function (res) {
-                if (res.code >= 0) {
-                    $("#imgUploadAdv").html("<img src=" + ns.img(res.data.pic_path) + " >");
-                    $("input[name='image_adv']").val(res.data.pic_path);
-                }
-                return layer.msg(res.message);
-            }
-        });
-		
+		var adv_upload = new Upload({
+			elem: '#imgUploadAdv'
+		});
+
 		form.on('submit(save)', function (data) {
-			
-			data.field.image = file;
+
 			categoryFullName.push(data.field.category_name);
 			data.field.category_full_name = categoryFullName.join("/");
 			data.field.attr_class_name = $("select[name='attr_class_id'] option:checked").text();
+
+			// 删除图片
+			if(!data.field.image) upload.delete();
+
+			if(!data.field.image_adv) adv_upload.delete();
 			
 			if (repeat_flag) return false;
 			repeat_flag = true;
 			
 			var url = ns.url("shop/goodscategory/addCategory");
-			if (data.field.category_id) {
-				//编辑
-				url = ns.url("shop/goodscategory/editCategory");
-			}
+			if (data.field.category_id) url = ns.url("shop/goodscategory/editCategory");
 			$.ajax({
 				url: url,
 				data: data.field,

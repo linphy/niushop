@@ -47,20 +47,18 @@ class MemberSignin
                     break;
                 }
             }
-			if(!empty($res)){
-				foreach ($res as $curr_k => $curr_v) {
-					if ($curr_k != 'day') {
-						$adjust_num   = $curr_v;
-						$account_type = $curr_k;
-						$remark       = '签到送' . $adjust_num . $this->accountType($curr_k);
-						$member_account_model->addMemberAccount($param['site_id'], $param['member_id'], $account_type, $adjust_num, 'signin', 0, $remark);
-					}
-				}
-			}else{
-				return $res;
-			}
-           
+            if(empty($res)){
+                $res = array_pop($award);
+            }
 
+            foreach ($res as $curr_k => $curr_v) {
+                if ($curr_k != 'day') {
+                    $adjust_num   = $curr_v;
+                    $account_type = $curr_k;
+                    $remark       = '签到送' . $adjust_num . $this->accountType($curr_k);
+                    $member_account_model->addMemberAccount($param['site_id'], $param['member_id'], $account_type, $adjust_num, 'signin', 0, $remark);
+                }
+            }
         }
         return $res;
     }

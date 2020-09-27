@@ -1,19 +1,15 @@
 <?php
 /**
- * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * NiuShop商城系统 - 团队十年电商经验汇集巨献!
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
- * =========================================================
  */
 
 namespace addon\niusms\model;
 
 use addon\niusms\model\Config as ConfigModel;
-use addon\niusms\model\Sms as SmsModel;
 use app\model\BaseModel;
 
 /**
@@ -21,7 +17,7 @@ use app\model\BaseModel;
  */
 class Sms extends BaseModel
 {
-    private $api = "https://www.niushop.com.cn/api";
+    private $api = "https://www.niushop.com/api";// https://www.niushop.com/api
 
     // 审核状态（0 未审核，1 待审核，2 审核通过， 3 审核不通过）
     private $audit_status = [
@@ -85,8 +81,6 @@ class Sms extends BaseModel
     /**
      * 创建子账号
      * @param $data
-     * @param $site_id
-     * @param $app_module
      * @return array|mixed
      */
     public function createChildAccount($data, $site_id, $app_module)
@@ -96,7 +90,25 @@ class Sms extends BaseModel
         if ($res[ 'code' ] == 0) {
             $config_model = new ConfigModel();
             $data[ 'signature' ] = "";
-            $config_model->setSmsConfig($data, 1, $site_id, $app_module);
+            $config_model->setSmsConfig($res[ 'data' ], 1, $site_id, $app_module);
+        }
+        return $res;
+    }
+
+    /**
+     * 账号登录
+     * @param $data
+     * @param $site_id
+     * @param $app_module
+     * @return array|mixed
+     */
+    public function loginAccount($data, $site_id, $app_module)
+    {
+        $url = $this->api . '/sms/loginAccount';
+        $res = $this->httpPost($url, $data);
+        if ($res[ 'code' ] == 0) {
+            $config_model = new ConfigModel();
+            $config_model->setSmsConfig($res[ 'data' ], 1, $site_id, $app_module);
         }
         return $res;
     }

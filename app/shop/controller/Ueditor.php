@@ -172,7 +172,8 @@ class Ueditor extends Controller
         if (!empty($_FILES[$fieldName])) {//上传成功
             $info = $upload_service->setPath("common/images/" . date("Ymd") . '/')->image([
                 'name'       => $fieldName,
-                'thumb_type' => ''
+                'thumb_type' => '',
+                'cloud' => 1
             ]);
             if ($info['code'] >= 0) {
                 $data = array(
@@ -195,28 +196,22 @@ class Ueditor extends Controller
         return json_encode($data);
     }
 
-    /**
-     * 上传视频
-     * @param unknown $fieldName
-     */
-    private function upVideo($fieldName, $size)
-    {
-        $upload_service = new Upload();
-        $upload_path    = 'ueditor/video/' . date('Ymd');
+    public function upVideo($fieldName, $size){
+        $upload_service = new UploadModel();
         if (!empty($_FILES[$fieldName])) {//上传成功
-            $info = $upload_service->video($_FILES[$fieldName], $upload_path, $size);
-            if ($info['code'] > 0) {
+            $info = $upload_service->setPath("common/video/" . date("Ymd") . '/')->video([
+                'name'       => $fieldName,
+            ]);
+            if ($info['code'] >= 0) {
                 $data = array(
                     'state'    => 'SUCCESS',
                     'url'      => $info['data']['path'],
-                    'title'    => $info['data']['file_name'],
-                    'original' => $info['data']['file_name'],
-                    'type'     => '.' . $info['data']['file_ext'],
-                    'size'     => $info['data']['size']
+                    'title'    => $info['data']['path'],
+                    'original' => $info['data']['path']
                 );
             } else {
                 $data = array(
-                    'state' => $info['message']
+                    'state' => 'FAIL'
                 );
             }
         } else {

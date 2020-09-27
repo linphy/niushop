@@ -19,9 +19,8 @@ $(document).ready(function() {
 	});
 });
 
-layui.use(['form', 'upload', 'colorpicker'], function() {
+layui.use(['form', 'colorpicker'], function() {
 	var form = layui.form,
-		upload = layui.upload,
 		colorpicker = layui.colorpicker,
 		repeat_flag = false; //防重复标识
 
@@ -64,9 +63,9 @@ layui.use(['form', 'upload', 'colorpicker'], function() {
 	 * 图片上传
 	 */
 	var posterWidth = 640, posterHeight = 1134;
-	var uploadLogo = upload.render({
+
+	var upload = new Upload({
 		elem: '#background',
-		url: ns.url("shop/upload/image"),
 		auto: false,
 		choose: function(obj) {
 			obj.preview(function(index, file, result) {
@@ -82,16 +81,13 @@ layui.use(['form', 'upload', 'colorpicker'], function() {
 				img.src = result;
 			});
 		},
-		done: function(res) {
+		callback: function(res) {
 			if (res.code >= 0) {
-				$("input[name='background']").val(res.data.pic_path);
-				$('.upload-img-box').html("<img src=" + ns.img(res.data.pic_path) + " >"); //图片链接（base64）
 				$("#imgLogo").attr("src", ns.img(res.data.pic_path));
 			}
-			return layer.msg(res.message);
 		}
 	});
-	
+
 	/**
 	 * 文字颜色
 	 */

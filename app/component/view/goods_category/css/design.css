@@ -1,11 +1,11 @@
 /* 公共*/
 .goods-category .preview-draggable{padding:0;}
-.goods-category{overflow: hidden;background: #ffffff;height: 370px;}
+.goods-category{background: #ffffff;}
 .goods-category .templet-list{display: flex;justify-content: space-between;flex-wrap: wrap;}
 .goods-category .templet-img-box{display: flex;justify-content: center;align-items: center;width: 150px;min-height: 90px;border: 1px solid #eee;margin-bottom: 10px;}
 .goods-category .templet-img-box img{max-height: 100%;max-width: 100%;}
-.goods-category .real-image-box{width: 316px;}
-.goods-category .real-image-box img{max-height: 100%;max-width: 100%;}
+.goods-category .real-image-box{/*width: 375px;height: 550px;*/}
+.goods-category .real-image-box img{/*max-height: 100%;*/max-width: 100%;}
 .goods-category-popup-wrap{display: none;}
 /* 弹框中的分类样式*/
 .goods-classification-style{padding:0 !important;}

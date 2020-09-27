@@ -39,7 +39,7 @@ class PayType
         $info = array(
             "pay_type"      => "wechatpay",
             "pay_type_name" => "微信支付",
-            "edit_url"      => "wechatpay://admin/pay/config",
+            "edit_url"      => "wechatpay://shop/pay/config",
             "shop_url"      => "wechatpay://shop/pay/config",
             "logo"          => "addon/wechatpay/icon.png",
             "desc"          => "微信支付，用户通过扫描二维码、微信内打开商品页面购买等多种方式调起微信支付模块完成支付。"

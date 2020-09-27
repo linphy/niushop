@@ -24,8 +24,7 @@
 .graphic-navigation .graphic-nav-list>ul>li .content-block{display:inline-block;width:71%;}
 .graphic-navigation .graphic-nav-list>ul>li .content-block.textNavigation{width:100%;}
 .graphic-navigation .graphic-nav-list>ul>li .content-block .layui-form-item{margin:0;}
-.graphic-navigation .graphic-nav-list>ul>li .content-block .layui-form-label{width:60px;}
-.graphic-navigation .graphic-nav-list>ul>li .content-block .layui-input-block{margin-left:60px;}
+.graphic-navigation .graphic-nav-list>ul>li .content-block .layui-form-label{width:60px;padding: 9px 0;line-height: 1;}
 .graphic-navigation .graphic-nav-list>ul>li .content-block div{margin-top:10px;}
 .graphic-navigation .graphic-nav-list>ul>li .content-block div:last-child{margin-top:0;}
 .graphic-navigation .graphic-nav-list>ul>li:hover .del{display:block;}
@@ -33,6 +32,6 @@
 .graphic-navigation .add-item{padding: 10px;border: 1px dashed #e5e5e5;margin: 10px 0;cursor: pointer;}
 .graphic-navigation .add-item i{display: inline-block;height: 24px; line-height: 24px;font-size: 18px;margin-right: 10px;font-style: normal;}
 .graphic-navigation .add-item span{display: inline-block;height: 24px; line-height: 24px;}
-.graphic-navigation p.hint{font-size: 12px;color: #999;margin: 10px;}
+.graphic-navigation p.hint{font-size: 12px;color: red;margin: 10px;}
 
 .graphic-navigation .error-msg {margin-top: 5px;color: #f44;display: none;}

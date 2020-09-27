@@ -29,7 +29,10 @@ class Login extends Controller
 {
 
     protected $app_module = "shop";
-
+    public function __construct(){
+        parent::__construct();
+        $this->assign("shop_module", SHOP_MODULE);
+    }
     /**
      * 登录首页
      * @return mixed

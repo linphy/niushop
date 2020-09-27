@@ -22,6 +22,7 @@ use app\model\member\Register as RegisterModel;
 use Exception;
 use think\facade\Cache;
 use app\model\member\Config as ConfigModel;
+use app\model\web\Config;
 
 class Login extends BaseApi
 {
@@ -31,9 +32,13 @@ class Login extends BaseApi
     public function login()
     {
         // 校验验证码
-        $captcha   = new Captcha();
-        $check_res = $captcha->checkCaptcha();
-        if ($check_res['code'] < 0) return $this->response($check_res);
+        $config_model = new Config();
+        $info = $config_model->getCaptchaConfig();
+        if($info['data']['value']['shop_reception_login'] == 1){
+            $captcha   = new Captcha();
+            $check_res = $captcha->checkCaptcha();
+            if ($check_res['code'] < 0) return $this->response($check_res);
+        }
 
         // 登录
         $login = new LoginModel();
@@ -137,9 +142,13 @@ class Login extends BaseApi
     public function mobileCode()
     {
         // 校验验证码
-        $captcha   = new Captcha();
-        $check_res = $captcha->checkCaptcha(false);
-        if ($check_res['code'] < 0) return $this->response($check_res);
+        $config_model = new Config();
+        $info = $config_model->getCaptchaConfig();
+        if($info['data']['value']['shop_reception_login'] == 1){
+            $captcha   = new Captcha();
+            $check_res = $captcha->checkCaptcha(false);
+            if ($check_res['code'] < 0) return $this->response($check_res);
+        }
 
         $mobile = $this->params['mobile'];//注册手机号
 

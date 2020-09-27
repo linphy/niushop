@@ -29,8 +29,8 @@ class DiyView extends BaseModel
      */
     private $page = [
         'shop' => [
-            'port'           => 'shop',
-            'index'          => [
+            'port' => 'shop',
+            'index' => [
                 'name' => 'DIYVIEW_INDEX',
             ],
             'goods_category' => [
@@ -56,7 +56,7 @@ class DiyView extends BaseModel
      * @param string $limit
      * @return array
      */
-    public function getDiyViewUtilList($condition = [], $field = 'id,name,title,type,controller,value,addon_name,support_diy_view,max_count', $order = 'sort asc', $limit = null)
+    public function getDiyViewUtilList($condition = [], $field = 'id,name,title,type,controller,value,addon_name,support_diy_view,max_count,is_delete,icon,icon_selected', $order = 'sort asc', $limit = null)
     {
         $res = model('diy_view_util')->getList($condition, $field, $order, '', '', '', $limit);
         return $this->success($res);
@@ -70,7 +70,7 @@ class DiyView extends BaseModel
      * @param string $limit
      * @return array
      */
-    public function getDiyLinkList($condition = [], $field = 'lk.id,lk.addon_name,nsa.title as addon_title,lk.name,lk.title,lk.web_url,lk.wap_url,lk.icon,nsa.icon as addon_icon', $order = 'nsa.id asc', $alias = 'lk', $join = [['addon nsa', 'lk.addon_name=nsa.name', 'left']], $group = '', $limit = null)
+    public function getDiyLinkList($condition = [], $field = 'lk.id,lk.addon_name,nsa.title as addon_title,lk.name,lk.title,lk.web_url,lk.wap_url,lk.icon,nsa.icon as addon_icon', $order = 'nsa.id asc', $alias = 'lk', $join = [ [ 'addon nsa', 'lk.addon_name=nsa.name', 'left' ] ], $group = '', $limit = null)
     {
         $res = model('link')->getList($condition, $field, $order, $alias, $join, $group, $limit);
         return $this->success($res);
@@ -97,28 +97,16 @@ class DiyView extends BaseModel
      */
     public function addSiteDiyViewByTemplate($data)
     {
-        $diy_view_info = model('site_diy_view')->getInfo([['site_id', '=', $data['site_id']], ['name', '=', $data['name']]], 'id');
-        if (empty($diy_view_info)) {
-            $res = model('site_diy_view')->add($data);
-            if ($res) {
-                Cache::tag("site_diy_view")->clear();
-                return $this->success($res);
-            } else {
-                return $this->error($res);
-            }
+        $diy_view_info = model('site_diy_view')->getInfo([ [ 'site_id', '=', $data[ 'site_id' ] ], [ 'name', '=', $data[ 'name' ] ] ], 'id');
+        if (!empty($diy_view_info)) {
+            $data[ 'update_time' ] = time();
+            $res = model('site_diy_view')->update($data, [ [ 'id', '=', $diy_view_info[ 'id' ] ] ]);
         } else {
-            try {
-                model('site_diy_view')->startTrans();
-                model('site_diy_view')->update(['name' => 'DIY_VIEW_RANDOM_' . time()], [['id', '=', $diy_view_info['id']]]);
-                model('site_diy_view')->add($data);
-                Cache::tag("site_diy_view")->clear();
-                model('site_diy_view')->commit();
-                return $this->success();
-            } catch (\Exception $e) {
-                model('site_diy_view')->rollback();
-                return $this->error($e->getMessage());
-            }
+            $data[ 'create_time' ] = time();
+            $res = model('site_diy_view')->add($data);
         }
+        Cache::tag("site_diy_view")->clear();
+        return $this->success($res);
     }
 
     /**
@@ -181,13 +169,13 @@ class DiyView extends BaseModel
      */
     public function getSiteDiyViewPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'sdv.*,ndva.addon_name as addon_name_temp')
     {
-        $data  = json_encode([$condition, $field, $order, $page, $page_size]);
+        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
         $cache = Cache::get("site_diy_view_getSiteDiyViewPageList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
         $alias = "sdv";
-        $join  = [
+        $join = [
             [
                 'diy_view_temp ndva',
                 'sdv.name=ndva.name',
@@ -208,7 +196,7 @@ class DiyView extends BaseModel
      */
     public function getSiteDiyViewInfo($condition = [], $field = 'id,site_id,name,title,value,type')
     {
-        $data  = json_encode($condition);
+        $data = json_encode($condition);
         $cache = Cache::get("site_diy_view_getSiteDiyViewInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -227,13 +215,13 @@ class DiyView extends BaseModel
      */
     public function getSiteDiyViewDetail($condition = [])
     {
-        $data  = json_encode($condition);
+        $data = json_encode($condition);
         $cache = Cache::get("site_diy_view_getSiteDiyViewDetail_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
         $alias = 'sdv';
-        $join  = [
+        $join = [
             [
                 'diy_view_temp dvt',
                 'sdv.name=dvt.name',
@@ -256,11 +244,11 @@ class DiyView extends BaseModel
     public function getTypeName($type)
     {
         $arr = [
-            'SYSTEM' => '系统组件',
-            'ADDON'  => '营销插件',
-            'OTHER'  => '其他插件',
+            'SYSTEM' => '基础组件', // 排序：10000~11000
+            'ADDON' => '营销插件', // 排序：12000~13000
+            'OTHER' => '其他插件', // 排序：14000~15000
         ];
-        return $arr[$type];
+        return $arr[ $type ];
     }
 
     /**
@@ -271,7 +259,7 @@ class DiyView extends BaseModel
     public function getBottomNavConfig($site_id)
     {
         $config = new ConfigModel();
-        $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'DIY_VIEW_SHOP_BOTTOM_NAV_CONFIG_SHOP_' . $site_id]]);
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'DIY_VIEW_SHOP_BOTTOM_NAV_CONFIG_SHOP_' . $site_id ] ]);
         return $res;
     }
 
@@ -284,7 +272,7 @@ class DiyView extends BaseModel
     public function setBottomNavConfig($data, $site_id)
     {
         $config = new ConfigModel();
-        $res    = $config->setConfig($data, '店铺端自定义底部导航', 1, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'DIY_VIEW_SHOP_BOTTOM_NAV_CONFIG_SHOP_' . $site_id]]);
+        $res = $config->setConfig($data, '店铺端自定义底部导航', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'DIY_VIEW_SHOP_BOTTOM_NAV_CONFIG_SHOP_' . $site_id ] ]);
         return $res;
     }
 
@@ -297,26 +285,26 @@ class DiyView extends BaseModel
     public function qrcode($condition, $type = "create")
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : 0;
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : 0;
 
         $diy_view_info = $this->getSiteDiyViewInfo($condition, 'site_id,name');
-        $page          = $this->getPage();
-        $diy_view_info = $diy_view_info['data'];
-        $data          = [
-            'app_type'    => "all", // all为全部
-            'type'        => $type, // 类型 create创建 get获取
-            'site_id'     => $site_id,
-            'data'        => [
-                "name" => $diy_view_info['name'] . '_' . $site_id
+        $page = $this->getPage();
+        $diy_view_info = $diy_view_info[ 'data' ];
+        $data = [
+            'app_type' => "all", // all为全部
+            'type' => $type, // 类型 create创建 get获取
+            'site_id' => $site_id,
+            'data' => [
+                "name" => $diy_view_info[ 'name' ]
             ],
-            'page'        => '/otherpages/diy/diy/diy',
+            'page' => '/otherpages/diy/diy/diy',
             'qrcode_path' => 'upload/qrcode/diy',
-            'qrcode_name' => "diy_qrcode_" . $diy_view_info['name'] . '_' . $site_id,
+            'qrcode_name' => "diy_qrcode_" . $diy_view_info[ 'name' ] . '_' . $site_id,
         ];
 
         // 网站主页
-        if ($diy_view_info['name'] == $page['shop']['index']['name']) {
-            $data['page'] = '/pages/index/index/index';
+        if ($diy_view_info[ 'name' ] == $page[ 'shop' ][ 'index' ][ 'name' ]) {
+            $data[ 'page' ] = '/pages/index/index/index';
         }
 
         event('Qrcode', $data, true);
@@ -327,49 +315,49 @@ class DiyView extends BaseModel
         $config = new ConfigModel();
 
         foreach ($app_type_list as $k => $v) {
-            switch ($k) {
+            switch ( $k ) {
                 case 'h5':
-                    $wap_domain         = getH5Domain();
-                    $path[$k]['status'] = 1;
-                    if ($diy_view_info['name'] == $page['shop']['index']) {
+                    $wap_domain = getH5Domain();
+                    $path[ $k ][ 'status' ] = 1;
+                    if ($diy_view_info[ 'name' ] == $page[ 'shop' ][ 'index' ]) {
                         // 网站主页
-                        $path[$k]['url'] = $wap_domain . $data['page'];
+                        $path[ $k ][ 'url' ] = $wap_domain . $data[ 'page' ];
                     } else {
                         //自定义
-                        $path[$k]['url'] = $wap_domain . $data['page'] . '?name=' . $diy_view_info['name'];
+                        $path[ $k ][ 'url' ] = $wap_domain . $data[ 'page' ] . '?name=' . $diy_view_info[ 'name' ];
                     }
-                    $path[$k]['img'] = "upload/qrcode/diy/diy_qrcode_" . $diy_view_info['name'] . '_' . $site_id . "_" . $k . ".png";
+                    $path[ $k ][ 'img' ] = "upload/qrcode/diy/diy_qrcode_" . $diy_view_info[ 'name' ] . '_' . $site_id . "_" . $k . ".png";
                     break;
                 case 'weapp' :
-                    $res = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'WEAPP_CONFIG']]);
-                    if (!empty($res['data'])) {
-                        if (empty($res['data']['value']['qrcode'])) {
-                            $path[$k]['status']  = 2;
-                            $path[$k]['message'] = '未配置微信小程序';
+                    $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WEAPP_CONFIG' ] ]);
+                    if (!empty($res[ 'data' ])) {
+                        if (empty($res[ 'data' ][ 'value' ][ 'qrcode' ])) {
+                            $path[ $k ][ 'status' ] = 2;
+                            $path[ $k ][ 'message' ] = '未配置微信小程序';
                         } else {
-                            $path[$k]['status'] = 1;
-                            $path[$k]['img']    = $res['data']['value']['qrcode'];
+                            $path[ $k ][ 'status' ] = 1;
+                            $path[ $k ][ 'img' ] = $res[ 'data' ][ 'value' ][ 'qrcode' ];
                         }
 
                     } else {
-                        $path[$k]['status']  = 2;
-                        $path[$k]['message'] = '未配置微信小程序';
+                        $path[ $k ][ 'status' ] = 2;
+                        $path[ $k ][ 'message' ] = '未配置微信小程序';
                     }
                     break;
 
                 case 'wechat' :
-                    $res = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'WECHAT_CONFIG']]);
-                    if (!empty($res['data'])) {
-                        if (empty($res['data']['value']['qrcode'])) {
-                            $path[$k]['status']  = 2;
-                            $path[$k]['message'] = '未配置微信公众号';
+                    $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WECHAT_CONFIG' ] ]);
+                    if (!empty($res[ 'data' ])) {
+                        if (empty($res[ 'data' ][ 'value' ][ 'qrcode' ])) {
+                            $path[ $k ][ 'status' ] = 2;
+                            $path[ $k ][ 'message' ] = '未配置微信公众号';
                         } else {
-                            $path[$k]['status'] = 1;
-                            $path[$k]['img']    = $res['data']['value']['qrcode'];
+                            $path[ $k ][ 'status' ] = 1;
+                            $path[ $k ][ 'img' ] = $res[ 'data' ][ 'value' ][ 'qrcode' ];
                         }
                     } else {
-                        $path[$k]['status']  = 2;
-                        $path[$k]['message'] = '未配置微信公众号';
+                        $path[ $k ][ 'status' ] = 2;
+                        $path[ $k ][ 'message' ] = '未配置微信公众号';
                     }
                     break;
             }
@@ -392,7 +380,7 @@ class DiyView extends BaseModel
         $list = [];
         foreach ($dirs as $key => $value) {
             $config_json = file_get_contents('public/diy_view/' . $value . '/config.json');
-            $list[]      = json_decode($config_json, true);
+            $list[] = json_decode($config_json, true);
 
         }
         return $this->success($list);
@@ -410,9 +398,9 @@ class DiyView extends BaseModel
     {
         model('site_diy_view')->startTrans();
         try {
-            $name = $this->page[$port][$type]['name'];
-            model('site_diy_view')->update(['name' => 'DIY_VIEW_RANDOM_' . time()], [['name', '=', $name], ['site_id', '=', $site_id]]);
-            model('site_diy_view')->update(['name' => $name], [['id', '=', $id], ['site_id', '=', $site_id]]);
+            $name = $this->page[ $port ][ $type ][ 'name' ];
+            model('site_diy_view')->update([ 'name' => 'DIY_VIEW_RANDOM_' . time() ], [ [ 'name', '=', $name ], [ 'site_id', '=', $site_id ] ]);
+            model('site_diy_view')->update([ 'name' => $name ], [ [ 'id', '=', $id ], [ 'site_id', '=', $site_id ] ]);
             Cache::tag("site_diy_view")->clear();
             model('site_diy_view')->commit();
             return $this->success();

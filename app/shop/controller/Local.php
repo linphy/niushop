@@ -47,8 +47,7 @@ class Local extends BaseShop
 
             $start_time = input('start_time', '');
             $end_time   = input('end_time', '');
-
-            if (empty($start_time) || !empty($end_time)) {
+            if (empty($start_time) || empty($end_time)) {
                 $start_time = 0;
                 $end_time   = 0;
             }

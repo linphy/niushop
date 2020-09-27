@@ -24,9 +24,9 @@ class Config extends BaseApi
     public function defaultimg()
     {
         $upload_config_model = new ConfigModel();
-        $res                 = $upload_config_model->getDefaultImg($this->site_id, 'shop');
-        if (!empty($res['data']['value'])) {
-            return $this->response($this->success($res['data']['value']));
+        $res = $upload_config_model->getDefaultImg($this->site_id, 'shop');
+        if (!empty($res[ 'data' ][ 'value' ])) {
+            return $this->response($this->success($res[ 'data' ][ 'value' ]));
         } else {
             return $this->response($this->error());
         }
@@ -38,8 +38,27 @@ class Config extends BaseApi
     public function copyright()
     {
         $config_model = new ConfigModel();
-        $res          = $config_model->getCopyright($this->site_id, 'shop');
-        return $this->response($this->success($res['data']['value']));
+        $res = $config_model->getCopyright($this->site_id, 'shop');
+        return $this->response($this->success($res[ 'data' ][ 'value' ]));
     }
 
+    /**
+     * 获取当前时间戳
+     * @return false|string
+     */
+    public function time()
+    {
+        $time = time();
+        return $this->response($this->success($time));
+    }
+
+    /**
+     * 获取验证码配置
+     */
+    public function getCaptchaConfig(){
+        
+        $config_model = new ConfigModel();
+        $info = $config_model->getCaptchaConfig();
+        return $this->response($this->success($info));
+    }
 }

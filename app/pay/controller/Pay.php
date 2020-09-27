@@ -27,7 +27,6 @@ class Pay extends Controller
     public function notify()
     {
         $param = input();
-//        Log::write('pay_notifiy_log:'.json_encode($param), 'notice');
         event('PayNotify', []);
     }
 

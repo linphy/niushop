@@ -142,13 +142,12 @@
 
 {block name="script"}
 <script>
-    var table;
-    layui.use(['form', 'laydate','laytpl','upload'], function() {
+    var table,upload;
+    layui.use(['form', 'laydate','laytpl'], function() {
         var form = layui.form,
             laydate = layui.laydate,
             currentDate = new Date(),
             laytpl = layui.laytpl,
-            upload = layui.upload,
             minDate = "";
         form.render();
 
@@ -288,18 +287,10 @@
                             content: html,
                         });
                     });
-                    
+
                     //转账凭证
-                    var uploadInst = upload.render({
-                        elem: '#certificate',
-                        url: ns.url("shop/upload/upload"),
-                        done: function(res) {
-                            if (res.code >= 0) {
-                                $("input[name='certificate']").val(res.data.pic_path);
-                                $("#certificate").html("<img src=" + ns.img(res.data.pic_path) + " >");
-                            }
-                            return layer.msg(res.message);
-                        }
+                    upload = new Upload({
+                        elem: '#certificate'
                     });
                     // return false;
                     // actiontransfer(data);
@@ -369,6 +360,8 @@
 		if(actiontransfer_repeat_flag) return false;
 		actiontransfer_repeat_flag = true;
 
+        // 删除图片
+        if(!data.field.certificate) upload.delete();
 
         $.ajax({
             url: ns.url("shop/memberwithdraw/transferfinish"),
@@ -391,6 +384,7 @@
         });
         
     }
+
     /**
      * 同意
      */
@@ -544,13 +538,14 @@
             <label class="layui-form-label img-upload-lable">转账凭证：</label>
             <div class="layui-input-block img-upload">
                 <div class="upload-img-block">
-                    <input type="hidden" name="certificate" >
                     <div class="upload-img-box" id="certificate">
                         <div class="ns-upload-default">
                             <img src="SHOP_IMG/upload_img.png" />
                             <p>点击上传</p>
                         </div>
                     </div>
+                    <input type="hidden" name="certificate" >
+                    <i class="del">x</i>
                 </div>
             </div>
         </div>

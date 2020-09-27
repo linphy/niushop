@@ -1,13 +1,10 @@
 <?php
 /**
- * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * NiuShop商城系统 - 团队十年电商经验汇集巨献!
  * =========================================================
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
- * =========================================================
  */
 
 namespace addon\niusms\shop\controller;
@@ -32,7 +29,6 @@ class Sms extends BaseShop
 
     public function index()
     {
-
         $buy = input("buy", 0);
         $return = input("return", 0);
         $sms_model = new SmsModel();
@@ -62,12 +58,12 @@ class Sms extends BaseShop
                     $this->assign("signature_status", $signature_status);
                     return $this->fetch("sms/index");
                 } else {
-                    return $this->fetch("sms/register");
+                    $this->redirect(addon_url("niusms://shop/sms/login"));
                 }
             }
         } else {
             // 未注册
-            return $this->fetch("sms/register");
+            $this->redirect(addon_url("niusms://shop/sms/login"));
         }
     }
 
@@ -86,6 +82,26 @@ class Sms extends BaseShop
                 'mobiles' => input('mobiles', '')//子账户手机号
             ], $this->site_id, $this->app_module);
             return $res;
+        } else {
+            return $this->fetch("sms/register");
+        }
+    }
+
+    /**
+     * 登录
+     * @return array|mixed
+     */
+    public function login()
+    {
+        if (request()->isAjax()) {
+            $sms_model = new SmsModel();
+            $res = $sms_model->loginAccount([
+                'username' => input('username', ''),//子账户用户名
+                'password' => input('password', ''),//子账户密码
+            ], $this->site_id, $this->app_module);
+            return $res;
+        } else {
+            return $this->fetch("sms/login");
         }
     }
 
@@ -153,7 +169,7 @@ class Sms extends BaseShop
             );
 
 //            if ($res[ 'code' ] >= 0) {
-//                //添加关闭短信充值订单事件
+            //添加关闭短信充值订单事件
 //                $cron = new Cron();
 //                $execute_time = ( time() + ( 60 * 15 ) );
 //                $cron->addCron(1, 0, "关闭短信充值订单", "CloseSmsPayment", $execute_time, $res[ 'data' ][ 'out_trade_no' ]);
@@ -207,8 +223,6 @@ class Sms extends BaseShop
             foreach ($list[ 'data' ][ 'list' ] as $k => $v) {
 
                 if ($v[ 'audit_status' ] != 0 && $v[ 'audit_status' ] != 2) {
-
-                    // 异步操作，不应该在这里修改状态
                     $template_info = $this->queryTemplate($v[ 'tem_id' ]);
                     // 审核状态如果没有通过，要查询原因
                     $list[ 'data' ][ 'list' ][ $k ][ 'audit_reason' ] = $template_info[ 'auditMsg' ];
@@ -217,7 +231,7 @@ class Sms extends BaseShop
                         $list[ 'data' ][ 'list' ][ $k ][ 'audit_status' ] = 2;
                         $v[ 'audit_status' ] = 2;
                     }
-
+                    sleep(1);
                 }
                 $audit_status = $sms_model->getAuditStatus();
                 $list[ 'data' ][ 'list' ][ $k ][ 'audit_status_name' ] = $audit_status [ $v[ 'audit_status' ] ];

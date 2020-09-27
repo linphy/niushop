@@ -1,6 +1,8 @@
 <?php
 namespace extend;
 
+use Intervention\Image\ImageManagerStatic as Image;
+
 class Poster
 {
     
@@ -136,6 +138,15 @@ class Poster
         $image_info = $this->getImageResources($filename);
         $width = min($image_info['width'], $image_info['height']);
         $height = $width;
+        // 如果图片不是正方形
+        if ($image_info['width'] != $image_info['height']) {
+            $temp_file_path = 'upload/temp_' .uniqid() . '.' . $image_info['ext'];
+            $image_manager  = Image::make($filename)->fit($width, $height, function ($constraint) {
+            }, 'center');
+            $image_manager->save($temp_file_path);
+            $image_info = $this->getImageResources($temp_file_path);
+            unlink($temp_file_path);
+        }
         $image = imagecreatetruecolor($width, $height);
         imagesavealpha($image, true);
         $bg = imagecolorallocatealpha($image, 255, 255, 255, 127);
@@ -217,7 +228,7 @@ class Poster
             foreach ($data as $item) {
                 $action = $item['action'];
                 $this->$action(...$item['data']);
-            }         
+            }
             return $this;
         } catch (\Exception $e) {
             return error(-1, $e->getMessage());

@@ -2,6 +2,12 @@
 {block name="resources"/}
 <link rel="stylesheet" href="SHOP_CSS/order_detail.css"/>
 <link rel="stylesheet" href="SHOP_CSS/package.css"/>
+<style>
+    .logistics-operation{
+        padding-left: 25px;
+        padding-bottom: 25px;
+    }
+</style>
 
 {/block}
 {block name="main"}
@@ -341,6 +347,14 @@
                     {/if}
                 </div>
             </div>
+            {php}
+            $packageV = json_encode($package_v);
+            {/php}
+            {if $order_detail.order_status == 3}
+            <div class="logistics-operation">
+                <button class="btn layui-btn-primary layui-btn" onclick="logisticsOperation('{$order_detail.order_id}','{$package_v.id}',{$packageV})">修改物流</button>
+            </div>
+            {/if}
         </div>
         {/foreach}
     </div>
@@ -440,7 +454,148 @@
             }
         });
     }
+
+
+    function logisticsOperation(orderId,packageId,dataJson) {
+        console.log(dataJson);
+        //获取模板
+        var getTpl = $("#logistics_html").html();
+        var data = {};
+        data.dataJson = dataJson;
+        $.ajax({
+            type: "post",
+            url: ns.url("shop/express/getShopExpressCompanyList"),
+            dataType: 'json',
+            async: false,
+            success: function (res) {
+                if (res.code == 0) {
+                    data.express_company = res.data;
+                }
+            }
+        });
+
+        laytpl(getTpl).render(data, function (html) {
+            layer.open({
+                type: 1,
+                shadeClose: true,
+                shade: 0.3,
+                fixed: false,
+                scrollbar: false,
+                title: "修改物流信息",
+                area: '800px',
+                content: html,
+                cancel: function (index, layero) {
+                    //右上角关闭回调
+                    layer.close(index);
+                    //return false 开启该代码可禁止点击该按钮关闭
+                },
+                success: function (layero, index) {
+                    form.render();
+                    form.on('radio(delivery_type)', function (data) {
+                        if (data.value == 1) {
+                            $(".express-type").removeClass("layui-hide");
+                        } else {
+                            $(".express-type").addClass("layui-hide");
+                        }
+
+                    });
+
+
+                    form.on('submit(button_logistics_order)', function (data) {
+                        var express_company_id = data.field.express_company_id;
+
+                        if (data.field.delivery_type == 1 && express_company_id <= 0) {
+                            layer.msg('请选择物流公司', {time: 2000, icon: 5});
+                            return;
+                        }
+
+
+                        if (data.field.delivery_no == "" && data.field.delivery_type == 1) {
+                            layer.msg('物流单号不能为空', {time: 2000, icon: 5});
+                            return;
+                        }
+
+                        if (submitting) {
+                            return false;
+                        }
+                        submitting = true;
+                        data.field.order_id = orderId;
+                        data.field.package_id = packageId;
+                        $.ajax({
+                            type: "post",
+                            url: '{:addon_url("shop/delivery/editOrderDelivery")}',
+                            async: true,
+                            dataType: 'json',
+                            data: data.field,
+                            success: function (res) {
+                                layer.msg(res.message, {}, function () {
+                                    if (res.code == 0) {
+                                        location.reload();
+                                    } else {
+                                        submitting = false;
+                                    }
+                                });
+                            }
+                        })
+                    });
+
+                }
+
+            });
+        })
+    }
 </script>
+<!--发送订单弹出框-->
+<script type="text/html" id="logistics_html">
+    <div class="order-delivery">
+        <div class="layui-form">
+            <input type="hidden" name="type" value="manual">
+            <div class="layui-form-item delivery-type">
+                <label class="layui-form-label">发货方式：</label>
+                <div class="layui-input-block">
+                    {{# if(d.dataJson.delivery_type == 1){ }}
+                    <input type="radio" lay-filter="delivery_type" name="delivery_type" value="1" title="物流发货" checked>
+                    <input type="radio" lay-filter="delivery_type" name="delivery_type" value="0" title='无需物流'>
+                    {{# }else{ }}
+                    <input type="radio" lay-filter="delivery_type" name="delivery_type" value="1" title="物流发货">
+                    <input type="radio" lay-filter="delivery_type" name="delivery_type" value="0" title='无需物流' checked>
+                    {{# } }}
+                </div>
+            </div>
 
+            {{# if(d.dataJson.delivery_type == 1){ }}
+            <div class="express-type">
+            {{# }else{ }}
+            <div class="express-type layui-hide">
+            {{# } }}
+                <div class="layui-form-item logistics-company">
+                    <label class="layui-form-label">物流公司：</label>
+                    <div class="layui-input-block ns-len-mid">
+                        <select name="express_company_id" lay-search lay-filter="express_company">
+                            <option value="">请选择物流公司</option>
+                            {{# layui.each(d.express_company, function(index, item){ }}
+                                {{# if(item.company_id == d.dataJson.express_company_id){ }}
+                                <option value="{{ item.company_id }}" selected>{{ item.company_name }}</option>
+                                {{# }else{ }}
+                                <option value="{{ item.company_id }}">{{ item.company_name }}</option>
+                                {{# } }}
+                            {{# }); }}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item express-number">
+                    <label class="layui-form-label">快递单号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="delivery_no" placeholder="" autocomplete="off" class="layui-input ns-len-mid" value="{{d.dataJson.delivery_no}}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="ns-form-row">
+                <button type="button" class="layui-btn ns-bg-color" lay-submit lay-filter="button_logistics_order">保存</button>
+            </div>
+        </div>
+    </div>
+</script>
 {/block}
-

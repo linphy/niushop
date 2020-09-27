@@ -2,6 +2,9 @@
 {block name="resources"}
 <style>
 	.layui-elem-quote{color: #999;}
+	.ns-table-btn{justify-content: center;}
+	.layui-card-header{border: 1px solid #f6f6f6;}
+	.layui-card-header .ns-card-title{font-size: 14px;}
 </style>
 {/block}
 {block name="main"}
@@ -11,7 +14,18 @@
 		<ul class="layui-colla-content layui-show">
 			<li> 注意：请将公众平台模板消息所在行业选择为：消费品/消费品，其他/其他，所选行业不一致将会导致模板消息不可用。</li>
 			<li>公众平台模板消息所在行业选择一个月只能修改一次,请谨慎选择。</li>
+			<li>公众号最多支持25个模板消息获取时请注意公众号剩余模板数量是否充足</li>
+			<li>所需跳转到的小程序必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏</li>
 		</ul>
+	</div>
+</div>
+
+<div class="layui-form">
+	<div class="layui-card ns-card-common">
+		<div class="layui-card-header">
+			<span class="ns-card-title">是否需跳转到小程序</span>
+			<input type="checkbox" name="" value="1" lay-skin="switch" {if $config.is_jump_weapp == 1} checked {/if} lay-filter="is_jump_weapp" />
+		</div>
 	</div>
 </div>
 
@@ -30,6 +44,11 @@
 	{{# }else{ }}	
 		<a class="layui-btn" lay-event="close">关闭</a>
 	{{# } }}
+
+	{{# if(d.wechat_template_id != undefined && d.wechat_template_id != ''){ }}
+		<a class="layui-btn" lay-event="getTemplateNo">重新获取</a>
+	{{# } }}
+
 	</div>
 </script>
 
@@ -52,6 +71,19 @@
 	layui.use(['form'], function(){
 		form = layui.form;
 		var repeat_flag = false;//防重复标识
+
+		form.on('switch(is_jump_weapp)', function(data){
+            data.value = data.elem.checked ? data.value : 0;
+
+            $.ajax({
+                dataType: "JSON",
+                type: "POST",
+                data:{"is_jump_weapp": data.value},
+                url: ns.url("wechat://shop/message/messageConfig"),
+                success: function(res){
+                }
+            })
+        });
 
 		table = new Table({
 			elem: '#template_list',
@@ -87,6 +119,7 @@
 						templet: '#template_no'
 					},
 					{
+						align: 'center',
 						title: '操作',
 						toolbar: '#operation'
 					}
@@ -156,19 +189,28 @@
 		}
 
 		function getTemplate(keywords) {
-			$.ajax({
-				type : "post",
-				url : '{:addon_url("wechat://shop/message/getWechatTemplateNo")}',
-				data : {
-					'keywords' : keywords
-				},
-				dataType : "JSON",
-				success : function(res) {
-					repeat_flag = false;
-					layer.msg(res.message);
-					table.reload('template_list');
-				}
-			});
+			var loadLayer;
+			layer.confirm('已存在的模板再次获取会导致模板重复存在，是否继续?', function () {
+				$.ajax({
+					type : "post",
+					url : '{:addon_url("wechat://shop/message/getWechatTemplateNo")}',
+					data : {
+						'keywords' : keywords
+					},
+					dataType : "JSON",
+					beforeSend: function(){
+						loadLayer = layer.msg("模板获取中，请耐心等待，请勿进行其他操作！",{ time : 1000 * 10000});
+					},
+					complete: function(){
+						layer.close(loadLayer);
+					},
+					success : function(res) {
+						repeat_flag = false;
+						layer.msg(res.message);
+						table.reload('template_list');
+					}
+				});
+			})
 		}
 		
 	});

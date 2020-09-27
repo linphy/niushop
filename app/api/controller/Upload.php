@@ -34,7 +34,9 @@ class Upload extends BaseApi
         $upload_model = new UploadModel($this->site_id);
         $param        = array(
             "thumb_type" => "",
-            "name"       => "file"
+            "name"       => "file",
+            "watermark" => 0,
+            "cloud" => 1
         );
         $result       = $upload_model->setPath("headimg/" . date("Ymd") . '/')->image($param);
         return $this->response($result);
@@ -48,9 +50,20 @@ class Upload extends BaseApi
         $upload_model = new UploadModel($this->site_id);
         $param        = array(
             "thumb_type" => "",
-            "name"       => "file"
+            "name"       => "file",
+            "watermark" => 0,
+            "cloud" => 1
         );
         $result       = $upload_model->setPath("evaluate_img/" . date("Ymd") . '/')->image($param);
+        return $this->response($result);
+    }
+
+    public function headimgBase64()
+    {
+        $upload_model = new UploadModel($this->site_id);
+        $file = input('images', '');
+        $file = base64_to_blob($file);
+        $result       = $upload_model->setPath("headimg/" . date("Ymd") . '/')->remotePullBinary($file['blob']);
         return $this->response($result);
     }
 

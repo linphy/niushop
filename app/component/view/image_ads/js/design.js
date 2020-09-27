@@ -39,7 +39,7 @@ Vue.component("image-ads-carouse",{
 			var elem = "#" + self.id;
 			layui.use('carousel', function(){
 				self.carousel = layui.carousel;
-				self.carousel_render = self.carousel.render({ elem: elem , width : '100%' , height : '150px' , indicator : 'none' });
+				self.carousel_render = self.carousel.render({ elem: elem , width : '100%' , height : '170px' , indicator : 'none' });
 			});
 		},10);
 	},
@@ -63,28 +63,22 @@ Vue.component("image-ads-carouse",{
 });
 
 var imageAdsListHtml = '<div class="image-ad-list">';
+		imageAdsListHtml += '<p class="hint">建议上传尺寸相同的图片，推荐尺寸750*350</p>';//，拖动选中的图片广告可对其排序
 		imageAdsListHtml += '<ul>';
-		
-				imageAdsListHtml += '<li v-for="(item,index) in list" v-bind:data-sort="index" v-bind:data-index="index">';
-
-					imageAdsListHtml += '<img-upload v-bind:data="{ data : item }"></img-upload>';
-					
-					imageAdsListHtml += '<div class="content-block">';
-						imageAdsListHtml += '<div class="layui-form-item">';
-							imageAdsListHtml += '<label class="layui-form-label sm">标题 </label>';
-							imageAdsListHtml += '<div class="layui-input-block">';
-								imageAdsListHtml += '<input type="text" v-model="item.title" class="layui-input" />';
-							imageAdsListHtml += '</div>';
+			imageAdsListHtml += '<li v-for="(item,index) in list" v-bind:data-sort="index" v-bind:data-index="index">';
+				imageAdsListHtml += '<img-upload v-bind:data="{ data : item }"></img-upload>';
+				imageAdsListHtml += '<div class="content-block">';
+					imageAdsListHtml += '<div class="layui-form-item">';
+						imageAdsListHtml += '<label class="layui-form-label sm">标题 </label>';
+						imageAdsListHtml += '<div class="layui-input-block">';
+							imageAdsListHtml += '<input type="text" v-model="item.title" class="layui-input" />';
 						imageAdsListHtml += '</div>';
-							
-						imageAdsListHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
 					imageAdsListHtml += '</div>';
-					
-					imageAdsListHtml += '<i class="del" v-on:click="deleteItem(index)" data-disabled="1">x</i>';
-
-					imageAdsListHtml += '<div class="error-msg"></div>';
-				imageAdsListHtml += '</li>';
-				
+					imageAdsListHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
+				imageAdsListHtml += '</div>';
+				imageAdsListHtml += '<i class="del" v-on:click="deleteItem(index)" data-disabled="1">x</i>';
+				imageAdsListHtml += '<div class="error-msg"></div>';
+			imageAdsListHtml += '</li>';
 		imageAdsListHtml += '</ul>';
 		
 		imageAdsListHtml += '<div class="add-item ns-text-color" v-on:click="addItem">';
@@ -93,9 +87,6 @@ var imageAdsListHtml = '<div class="image-ad-list">';
 				imageAdsListHtml += '<span>添加一个图片广告</span>';
 			imageAdsListHtml += '</p>';
 		imageAdsListHtml += '</div>';
-		
-		imageAdsListHtml += '<p class="hint">轮播海报建议上传比例相同的图片，推荐尺寸750*350</p>';//，拖动选中的图片广告可对其排序
-	
 	imageAdsListHtml += '</div>';
 
 Vue.component("image-ads-list",{

@@ -98,7 +98,7 @@ class Register extends BaseModel
                 return $this->error();
             }
         } else {
-            return $this->error('', "注册拒绝");
+            return $this->error('', "未开放注册");
         }
     }
 

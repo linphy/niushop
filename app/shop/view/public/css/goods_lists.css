@@ -10,6 +10,13 @@
 .sku-list li .info-wrap span:last-child{margin-bottom: 0;}
 #goods tr td{padding:2px 2px; }
 #goods tr td input{text-align:center;}
+.edit-sort{width: 70px !important;}
+
+.ns-prompt-block{display: inline-block;}
+.ns-prompt-block .ns-prompt{display: inline-block;}
+.ns-reason-box p{white-space: normal;line-height: 1.5;}
+.layui-table-header{overflow: inherit;}
+.layui-table-header .layui-table-cell{overflow: inherit;}
 
 /*推广二维码·旧保留*/
 /*.promote{margin:0 20px 20px}*/

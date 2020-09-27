@@ -45,4 +45,5 @@ class Captcha extends BaseApi
 
         return $this->success();
     }
+    
 }

@@ -10,7 +10,6 @@
 	.ns-reason-box p{white-space: normal;line-height: 1.5;}
 	.layui-table-header{overflow: inherit;}
 	.layui-table-header .layui-table-cell{overflow: inherit;}
-	.ns-prompt .iconfont{font-size: 16px;color: rgba(0,0,0,0.7);cursor: pointer;font-weight: 500;margin-left: 3px;}
 	.ns-prompt-block.balance, .ns-prompt-block.growth {justify-content: flex-end;}
 	.layui-form-item .layui-form-checkbox[lay-skin=primary] {margin-top: 0;}
 </style>
@@ -137,7 +136,7 @@
 		<a class="layui-btn" lay-event="more">更多</a>
 		<div class="more-operation">
 			{if $is_exit_fenxiao == 1}
-			<a class="operation" lay-event="change">上下级变更</a>
+			<a class="operation" lay-event="change">上级分销商变更</a>
 			{/if}
 			<a class="operation" lay-event="set_label">设置标签</a>
 			<a class="operation" lay-event="reset_pass">重置密码</a>
@@ -626,6 +625,7 @@
 		<input class="reset-label-id" type="hidden" name="member_ids" value="{{d}}" />
 	</div>
 </script>
+
 <script type="text/html" id="batchOperation">
 	<button class="layui-btn layui-btn-primary" lay-event="setlabel">设置标签</button>
 </script>

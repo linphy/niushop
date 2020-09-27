@@ -1,4 +1,5 @@
 var floatBtnListHtml = '<div class="float-btn-list">';
+		floatBtnListHtml += '<p class="required" style="font-size: 12px; margin: 5px 0 8px;">建议上传正方形图片，大小建议为50px * 50px</p>';
 		floatBtnListHtml += '<ul>';
 			floatBtnListHtml += '<li v-for="(item,index) in list" v-bind:key="index">';
 				floatBtnListHtml += '<img-upload v-bind:data="{data : item}"></img-upload>';

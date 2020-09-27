@@ -29,9 +29,9 @@ class User extends BaseModel
     public function addUser($data, $store_id = 0)
     {
 
-        $site_id    = isset($data['site_id']) ? $data['site_id'] : '';
-        $app_module = isset($data['app_module']) ? $data['app_module'] : '';
-        $member_id  = isset($data['member_id']) ? $data['member_id'] : 0;
+        $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
+        $app_module = isset($data[ 'app_module' ]) ? $data[ 'app_module' ] : '';
+        $member_id = isset($data[ 'member_id' ]) ? $data[ 'member_id' ] : 0;
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
@@ -42,44 +42,44 @@ class User extends BaseModel
         //判断 用户名 是否存在
         $user_info = model('user')->getInfo(
             [
-                ['username', "=", $data["username"]],
-                ["app_module", "=", $data["app_module"]],
-                ['site_id', '=', $site_id]
+                [ 'username', "=", $data[ "username" ] ],
+                [ "app_module", "=", $data[ "app_module" ] ],
+                [ 'site_id', '=', $site_id ]
             ]
         );
         if (!empty($user_info)) {
-            if (data_md5($data["password"]) == $user_info['password']) {
+            if (data_md5($data[ "password" ]) == $user_info[ 'password' ]) {
                 return $this->success(2);
             } else {
                 return $this->error('', '账号已存在');
             }
         }
         if ($member_id > 0) {
-            $temp_condition = array(
-                "app_module" => $data["app_module"],
-                "member_id"  => $member_id
+            $temp_condition = array (
+                "app_module" => $data[ "app_module" ],
+                "member_id" => $member_id
             );
-            $temp_count     = model('user')->getCount($temp_condition, 'uid');
+            $temp_count = model('user')->getCount($temp_condition, 'uid');
             if ($temp_count > 0) {
                 return $this->error('', 'USERNAME_EXISTED');
             }
         }
 
-        $group_id = isset($data['group_id']) ? $data['group_id'] : 0;
+        $group_id = isset($data[ 'group_id' ]) ? $data[ 'group_id' ] : 0;
         if ($group_id > 0) {
             $group_model = new Group();
             if (!empty($store_id)) {
-                $group_info_result = $group_model->getGroupInfo([["group_id", "=", $group_id], ["site_id", "=", $store_id], ["app_module", "=", $app_module]], "group_name");
+                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $store_id ], [ "app_module", "=", $app_module ] ], "group_name");
             } else {
-                $group_info_result = $group_model->getGroupInfo([["group_id", "=", $group_id], ["site_id", "=", $site_id], ["app_module", "=", $app_module]], "group_name");
+                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], [ "app_module", "=", $app_module ] ], "group_name");
             }
-            $group_info         = $group_info_result["data"];
-            $data["group_name"] = $group_info["group_name"];
+            $group_info = $group_info_result[ "data" ];
+            $data[ "group_name" ] = $group_info[ "group_name" ];
         }
 
-        $data["password"]    = data_md5($data["password"]);
-        $data["create_time"] = time();
-        $result              = model("user")->add($data);
+        $data[ "password" ] = data_md5($data[ "password" ]);
+        $data[ "create_time" ] = time();
+        $result = model("user")->add($data);
         if ($result === false) {
             return $this->error('', 'UNKNOW_ERROR');
         }
@@ -94,24 +94,24 @@ class User extends BaseModel
     public function editUser($data, $condition, $store_id = 0)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
-        $app_module      = isset($check_condition['app_module']) ? $check_condition['app_module'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
+        $app_module = isset($check_condition[ 'app_module' ]) ? $check_condition[ 'app_module' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
         if ($app_module === '') {
             return $this->error('', 'REQUEST_APP_MODULE');
         }
-        $group_id = isset($data['group_id']) ? $data['group_id'] : 0;
+        $group_id = isset($data[ 'group_id' ]) ? $data[ 'group_id' ] : 0;
         if ($group_id > 0) {
             $group_model = new Group();
             if (!empty($store_id)) {
-                $group_info_result = $group_model->getGroupInfo([["group_id", "=", $group_id], ["site_id", "=", $store_id], ["app_module", "=", $app_module]], "group_name");
+                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $store_id ], [ "app_module", "=", $app_module ] ], "group_name");
             } else {
-                $group_info_result = $group_model->getGroupInfo([["group_id", "=", $group_id], ["site_id", "=", $site_id], ["app_module", "=", $app_module]], "group_name");
+                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], [ "app_module", "=", $app_module ] ], "group_name");
             }
-            $group_info         = $group_info_result["data"];
-            $data["group_name"] = $group_info["group_name"];
+            $group_info = $group_info_result[ "data" ];
+            $data[ "group_name" ] = $group_info[ "group_name" ];
         }
         $res = model("user")->update($data, $condition);
         if ($res === false) {
@@ -128,19 +128,19 @@ class User extends BaseModel
     public function modifyUserStatus($status, $condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
-        $app_module      = isset($check_condition['app_module']) ? $check_condition['app_module'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
+        $app_module = isset($check_condition[ 'app_module' ]) ? $check_condition[ 'app_module' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
         if ($app_module === '') {
             return $this->error('', 'REQUEST_APP_MODULE');
         }
-        $data = array(
-            "status"      => $status,
+        $data = array (
+            "status" => $status,
             "update_time" => time()
         );
-        $res  = model('user')->update($data, $condition);
+        $res = model('user')->update($data, $condition);
         if ($res === false) {
             return $this->error('', 'UNKNOW_ERROR');
         }
@@ -155,7 +155,7 @@ class User extends BaseModel
      */
     public function modifyUserPassword($password, $condition)
     {
-        $res = model('user')->update(['password' => data_md5($password)], $condition);
+        $res = model('user')->update([ 'password' => data_md5($password) ], $condition);
         if ($res === false) {
             return $this->error('', 'RESULT_ERROR');
         }
@@ -172,11 +172,11 @@ class User extends BaseModel
     public function modifyAdminUserPassword($condition = [], $new_password)
     {
         $res = model('user')->getInfo($condition, "uid");
-        if (!empty($res['uid'])) {
-            $data = array(
+        if (!empty($res[ 'uid' ])) {
+            $data = array (
                 'password' => data_md5($new_password)
             );
-            $res  = model('user')->update($data, $condition);
+            $res = model('user')->update($data, $condition);
             return $this->success($res, 'SUCCESS');
         } else {
             return $this->error('', 'PASSWORD_ERROR');
@@ -191,7 +191,7 @@ class User extends BaseModel
     public function deleteUser($condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $app_module      = isset($check_condition['app_module']) ? $check_condition['app_module'] : '';
+        $app_module = isset($check_condition[ 'app_module' ]) ? $check_condition[ 'app_module' ] : '';
         if ($app_module === '') {
             return $this->error('', 'REQUEST_APP_MODULE');
         }
@@ -257,14 +257,14 @@ class User extends BaseModel
             nu.is_admin, nu.site_id, nu.group_id, nu.group_name, nu.username, nu.member_id, nu.create_time, 
             nu.update_time, nu.status, nu.login_time, nu.login_ip, ns.site_name,';
         $alias = 'nu';
-        $join  = [
+        $join = [
             [
                 'shop ns',
                 'nu.site_id = ns.site_id',
                 'left'
             ],
         ];
-        $list  = model("user")->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
+        $list = model("user")->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
     }
 
@@ -276,19 +276,22 @@ class User extends BaseModel
      */
     public function checkAuth($url, $app_module, $group_info, $addon = '')
     {
-        if ($group_info['is_system'] == 1) {
+        if ($group_info[ 'is_system' ] == 1) {
             return true;
         }
         $menu_model = new Menu();
-        
-        $menu_info  = $menu_model->getMenuInfoByUrl($url, $app_module, $addon);
-        
-        if (!empty($menu_info['data'])) {
+        $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module, $addon);
+        if (!empty($menu_info[ 'data' ])) {
+
+            if ($menu_info[ 'data' ][ 'is_control' ] == 0) {
+                return true;
+            }
+
             //权限组
             if (empty($group_info)) {
                 return false;
             }
-            if (strpos(',' . $group_info['menu_array'] . ',', ',' . $menu_info['data']['name'] . ',') !== false) {
+            if (strpos(',' . $group_info[ 'menu_array' ] . ',', ',' . $menu_info[ 'data' ][ 'name' ] . ',') !== false) {
                 return true;
             } else {
                 return false;
@@ -296,6 +299,47 @@ class User extends BaseModel
         } else {
             return true;
         }
+    }
+
+    /**
+     * 获取相邻菜单
+     * @param $url
+     * @param $app_module
+     * @param $group_info
+     * @return multitype|array
+     */
+    public function getRedirectUrl($url, $app_module, $group_info)
+    {
+        if ($this->checkAuth($url, $app_module, $group_info) == false) {
+            $menu_model = new Menu();
+            $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module);
+            $menu_info = $menu_info[ 'data' ];
+            if ($menu_info[ 'level' ] == 1) {
+            } elseif ($menu_info[ 'level' ] == 2) {
+                $menu_second_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 2 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
+                $menu_second_info = $menu_second_info[ 'data' ];
+                if (!empty($menu_second_info)) {
+                    return $menu_second_info;
+                }
+            } elseif ($menu_info[ 'level' ] == 3) {
+                $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 3 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
+                $check_menu_info = $check_menu_info[ 'data' ];
+                if (!empty($check_menu_info)) {
+                    return $check_menu_info;
+                } else {
+                    $parent_menu_info = $menu_model->getMenuInfo([ [ 'name', '=', $menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'app_module', '=', $app_module ] ]);
+                    $parent_menu_info = $parent_menu_info[ 'data' ];
+
+                    $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $parent_menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
+                    $check_menu_info = $check_menu_info[ 'data' ];
+
+                    if (!empty($check_menu_info)) {
+                        return $check_menu_info;
+                    }
+                }
+            }
+        }
+        return [];
     }
 
     /*******************************************************************用户 编辑查询 end*****************************************************/
@@ -311,15 +355,15 @@ class User extends BaseModel
     {
 
         $user_condition = [
-            ['username', '=', $username],
-            ['app_module', '=', $app_module],
-            ['password', '=', data_md5($password)],
-            ['site_id', '=', $site_id]
+            [ 'username', '=', $username ],
+            [ 'app_module', '=', $app_module ],
+            [ 'password', '=', data_md5($password) ],
+            [ 'site_id', '=', $site_id ]
         ];
-        $user_info      = model('user')->getInfo($user_condition);
+        $user_info = model('user')->getInfo($user_condition);
         if (empty($user_info)) {
             return $this->error('', 'USER_LOGIN_ERROR');
-        } else if ($user_info['status'] !== 1) {
+        } else if ($user_info[ 'status' ] !== 1) {
             return $this->error([], 'USER_IS_LOCKED');
         }
         $this->initLogin($user_info);
@@ -334,29 +378,29 @@ class User extends BaseModel
     {
         $time = time();
         //初始化登录信息
-        $auth = array(
-            'uid'         => $user_info['uid'],
-            'username'    => $user_info['username'],
-            'create_time' => $user_info['create_time'],
-            'status'      => $user_info['status'],
-            'group_id'    => $user_info["group_id"],
-            'site_id'     => $user_info["site_id"],
-            'app_group'   => $user_info["app_group"],
-            'is_admin'    => $user_info['is_admin'],
-            'login_time'  => $time,
-            'login_ip'    => request()->ip(),
-            'sys_uid'     => $user_info['sys_uid']
+        $auth = array (
+            'uid' => $user_info[ 'uid' ],
+            'username' => $user_info[ 'username' ],
+            'create_time' => $user_info[ 'create_time' ],
+            'status' => $user_info[ 'status' ],
+            'group_id' => $user_info[ "group_id" ],
+            'site_id' => $user_info[ "site_id" ],
+            'app_group' => $user_info[ "app_group" ],
+            'is_admin' => $user_info[ 'is_admin' ],
+            'login_time' => $time,
+            'login_ip' => request()->ip(),
+            'sys_uid' => $user_info[ 'sys_uid' ]
         );
 
         //更新登录记录
         $data = [
             'login_time' => time(),
-            'login_ip'   => request()->ip(),
+            'login_ip' => request()->ip(),
         ];
-        model('user')->update($data, [['uid', "=", $user_info['uid']]]);
-        Session::set($user_info['app_module'] . "_" . $user_info['site_id'] . ".uid", $user_info['uid']);
-        Session::set($user_info['app_module'] . "_" . $user_info['site_id'] . ".user_info", $auth);
-        $this->addUserLog($user_info['uid'], $user_info['username'], $user_info['site_id'], "用户登录", []);//添加日志
+        model('user')->update($data, [ [ 'uid', "=", $user_info[ 'uid' ] ] ]);
+        Session::set($user_info[ 'app_module' ] . "_" . $user_info[ 'site_id' ] . ".uid", $user_info[ 'uid' ]);
+        Session::set($user_info[ 'app_module' ] . "_" . $user_info[ 'site_id' ] . ".user_info", $auth);
+        $this->addUserLog($user_info[ 'uid' ], $user_info[ 'username' ], $user_info[ 'site_id' ], "用户登录", []);//添加日志
     }
 
     /**
@@ -396,14 +440,14 @@ class User extends BaseModel
     {
 
         $url = request()->parseUrl();
-        $ip  = request()->ip();
-        $log = array(
-            "uid"         => $uid,
-            "username"    => $username,
-            "site_id"     => $site_id,
-            "url"         => $url,
-            "ip"          => $ip,
-            "data"        => json_encode($data),
+        $ip = request()->ip();
+        $log = array (
+            "uid" => $uid,
+            "username" => $username,
+            "site_id" => $site_id,
+            "url" => $url,
+            "ip" => $ip,
+            "data" => json_encode($data),
             "action_name" => $action_name,
             "create_time" => time(),
         );
@@ -420,7 +464,7 @@ class User extends BaseModel
     public function deleteUserLog($condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }

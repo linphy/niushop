@@ -453,6 +453,7 @@ function url(string $url = '', $vars = [])
         $var_url = '';
     }
     $url = $url . '.html';
+    $url = str_replace("shop", SHOP_MODULE, $url);  //针对输入
     return ROOT_URL . '/' . $url . $var_url;
 
 }
@@ -1261,16 +1262,16 @@ function is_json($string)
  */
 function getH5Domain()
 {
-	$config = new \app\model\web\Config();
-	
-	$info = $config->geth5DomainName();
-	
-	$h5_name = $info['data']['value']['domain_name_h5'];
-	
-	if($h5_name){
-		return $h5_name;
-	}
-	
+    $config = new \app\model\web\Config();
+
+    $info = $config->geth5DomainName();
+
+    $h5_name = $info[ 'data' ][ 'value' ][ 'domain_name_h5' ];
+
+    if ($h5_name) {
+        return $h5_name;
+    }
+
     return ROOT_URL . '/h5';
 }
 
@@ -1385,7 +1386,32 @@ function is_point_in_polygon($point, $pts)
  * @param $strParam
  * @return null|string|string[]
  */
-function replaceSpecialChar($strParam){
+function replaceSpecialChar($strParam)
+{
     $regex = "/\/|\~|\!|\@|\#|\\$|\%|\^|\&|\*|\(|\)|\（|\）|\_|\+|\{|\}|\:|\<|\>|\?|\[|\]|\,|\.|\/|\;|\'|\`|\-|\=|\\\|\||\s+/";
-    return preg_replace($regex,"",$strParam);
+    return preg_replace($regex, "", $strParam);
+}
+
+function delFile($path)
+{
+    $res = false;
+    if (file_exists($path)) {
+        $res = unlink($path);
+    }
+    return $res;
+}
+
+/**
+ * base64转二进制
+ * @param $base64Str
+ * @return array|boo
+ */
+function base64_to_blob($base64Str){
+    if($index = strpos($base64Str,'base64,',0)){
+        $blobStr = substr($base64Str,$index+7);
+        $typestr = substr($base64Str,0,$index);
+        preg_match("/^data:(.*);$/",$typestr,$arr);
+        return ['blob'=>base64_decode($blobStr),'type'=>$arr[1]];
+    }
+    return false;
 }

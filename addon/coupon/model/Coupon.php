@@ -130,7 +130,7 @@ class Coupon extends BaseModel
             $data['state'] = 3;
         }
 
-        $result = model("promotion_coupon")->update(['use_time' => 0, 'state' => 1], [['coupon_id', '=', $coupon_id], ['member_id', '=', $member_id], ['state', '=', 2]]);
+        $result = model("promotion_coupon")->update($data, [['coupon_id', '=', $coupon_id], ['member_id', '=', $member_id], ['state', '=', 2]]);
         return $this->success($result);
     }
 

@@ -15,18 +15,19 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">版权logo：</label>
 				<div class="layui-input-block">
-					<input type="hidden" name="logo" value="{$copyright_config.logo ?? ''}" />
 					<div class="upload-img-block icon">
 						<div class="upload-img-box" id="webLogoUpload">
 							{if condition="!empty($copyright_config.logo)"}
-							<img src="{:img($copyright_config.logo)}" />
+								<img src="{:img($copyright_config.logo)}" />
 							{else/}
-							<div class="ns-upload-default">
-								<img src="SHOP_IMG/upload_img.png" />
-								<p>点击上传</p>
-							</div>
+								<div class="ns-upload-default">
+									<img src="SHOP_IMG/upload_img.png" />
+									<p>点击上传</p>
+								</div>
 							{/if}
 						</div>
+						<input type="hidden" name="logo" value="{$copyright_config.logo ?? ''}" />
+						<i class="del {if condition="!empty($copyright_config.logo)"}show{/if}">x</i>
 					</div>
 				</div>
 			</div>
@@ -100,25 +101,15 @@
 {/block}
 {block name="script"}
 <script>
-	layui.use(['form', 'upload'], function() {
+	layui.use(['form'], function() {
 		var form = layui.form,
-			upload = layui.upload,
 			repeat_flag = false; //防重复
 		form.render();
 
-		//上传logo
-		var uploadInst = upload.render({
-			elem: '#webLogoUpload',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='logo']").val(res.data.pic_path);
-					$("#webLogoUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
+		var upload = new Upload({
+			elem: '#webLogoUpload'
 		});
-		
+
 		//保存配置
 		form.on('submit(save)', function(data) {
 			if(repeat_flag) return;

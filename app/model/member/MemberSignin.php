@@ -103,4 +103,16 @@ class MemberSignin extends BaseModel
 
     }
 
+    /**
+     * 获取签到记录
+     * @param array $condition
+     * @param string $field
+     * @param string $order
+     * @return array
+     */
+    public function getMemberSigninList($condition = [],$field = '*',$order = 'create_time asc')
+    {
+        $list = model('member_log')->getList($condition,$field,$order);
+        return $this->success($list);
+    }
 }

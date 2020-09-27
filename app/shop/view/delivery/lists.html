@@ -57,18 +57,6 @@
                     </div>
                 </div>
 
-                <div class="layui-inline">
-                    <label class="layui-form-label">订单状态：</label>
-                    <div class="layui-input-inline">
-                        <select name="order_status1">
-                            <option value="">全部</option>
-                            {foreach $delivery_order_status as $k => $status_val}
-                            <option value="{$status_val.status}">{$status_val.name}</option>
-                            {/foreach}
-                        </select>
-                    </div>
-                </div>
-
             </div>
 
             <div class="ns-form-row">
@@ -263,6 +251,7 @@
         //批量导出
         form.on('submit(batch_export)', function(data){
             data.field.order_type = 1;
+            data.field.order_status = 1;
             location.href = ns.url("shop/order/exportOrderGoods",data.field);
             return false;
         });

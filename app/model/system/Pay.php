@@ -116,6 +116,7 @@ class Pay extends BaseModel
     {
         $pay_info_result = $this->getPayInfo($out_trade_no);
         $pay_info        = $pay_info_result["data"];
+        $pay_type = empty($pay_type) ? 'ONLINE_PAY' : $pay_type;
         //支付状态 (未支付  未取消)
         if ($pay_info["pay_status"] == 0) {
             $data = array(

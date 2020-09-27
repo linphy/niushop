@@ -133,6 +133,8 @@ class Weapp extends BaseModel
                 $filename = $param['qrcode_path'] . '/';
                 $filename .= $response->saveAs($param['qrcode_path'], $param['qrcode_name'] . '_' . $param['app_type'] . '.png');
                 return $this->success(['path' => $filename]);
+            } else {
+                return $this->error($response, $response['errmsg']);
             }
         } catch (\Exception $e) {
             return $this->error('', $e->getMessage());

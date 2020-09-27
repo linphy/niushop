@@ -24,8 +24,9 @@
 						</div>
 					{/if}
 				</div>
+				<input type="hidden" name="logo" value="{$shop_info.logo}"/>
+				<i class="del {if condition="$shop_info.logo"}show{/if}">x</i>
 			</div>
-			<input type="hidden" name="logo"  value="{$shop_info.logo}"/>
 		</div>
 
 		<div class="ns-word-aux">
@@ -125,7 +126,6 @@
 	<!--</div>-->
 	<!--</div>-->
 
-	
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
@@ -148,10 +148,9 @@
 		$(".end-time").val(endTime);
 	}
 
-	layui.use(['form', 'upload', 'laydate'], function(){
+	layui.use(['form', 'laydate'], function(){
 		var form = layui.form,
-			upload = layui.upload,
-				laydate = layui.laydate,
+			laydate = layui.laydate,
 			repeat_flag = false; //防重复标识
 			
 		form.render();
@@ -197,7 +196,11 @@
 					week_arr.push($(this).val());
 				}
 			});
+
 			data.field.work_week = week_arr.toString();
+
+			// 删除图片
+			if(!data.field.logo) logo_upload.delete();
 
 			// if ($("#start_time").val() > $("#end_time").val()) {
 			// 	layer.msg("结束时间不能小于开始时间！");
@@ -220,46 +223,22 @@
 				}
 			});
 		});
-		//店铺LOGO
-		var uploadInst = upload.render({
-			elem: '#logoUpload',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='logo']").val(res.data.pic_path);
-					$("#logoUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
+
+		// 店铺LOGO
+		var logo_upload = new Upload({
+			elem: '#logoUpload'
 		});
 
+		// 店铺头像
+		// var avatar_upload = new Upload({
+		// 	elem: '#avatarUpload'
+		// });
+		//
+		// // 店铺大图
+		// var banner_upload = new Upload({
+		// 	elem: '#bannerUpload'
+		// });
 
-		//店铺头像
-		var uploadInst = upload.render({
-			elem: '#avatarUpload',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='avatar']").val(res.data.pic_path);
-					$("#avatarUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
-		});
-
-
-		//店铺大图
-		var uploadInst = upload.render({
-			elem: '#bannerUpload',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='banner']").val(res.data.pic_path);
-					$("#bannerUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
-		});
 	});
 	
 	$("input[name='domain_name']").change(function(){
@@ -272,7 +251,6 @@
 			},
 			dataType: 'JSON',
 			success: function(res) {
-				console.log(res)
 				layer.msg(res.message);
 			}
 		})

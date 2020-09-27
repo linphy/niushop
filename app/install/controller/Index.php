@@ -3,7 +3,6 @@
 namespace app\install\controller;
 
 
-use app\model\message\SmsPackage as SmsPackageModel;
 use app\model\shop\Shop;
 use app\model\system\Addon;
 use app\model\system\Api;
@@ -11,11 +10,8 @@ use app\model\system\DiyTemplate;
 use app\model\system\Group;
 use app\model\system\H5;
 use app\model\system\Menu;
-use app\model\system\Site as SiteModel;
 use app\model\system\Site;
 use app\model\system\User;
-use app\model\web\WebSite;
-use think\Exception;
 use think\facade\Cache;
 use think\facade\Event;
 

@@ -226,4 +226,18 @@ class Store extends BaseShop
         }
     }
 
+    /**
+     * 重置密码
+     */
+    public function modifyPassword()
+    {
+        if(request()->isAjax()){
+
+            $store_id = input('store_id', '');
+            $password = input('password', '123456');
+
+            $store_model = new StoreModel();
+            return $store_model->resetStorePassword($password, [['store_id', '=', $store_id]]);
+        }
+    }
 }

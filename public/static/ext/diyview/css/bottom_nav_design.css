@@ -2,7 +2,7 @@
 .layui-fluid{overflow: initial;}
 #bottomNav{position: relative;}
 #bottomNav .preview{width: 320px;background-repeat: no-repeat;background-size: 100%;float: left;padding-left: 20px;}
-#bottomNav .preview .preview-head{background: url("../img/preview_head.png") no-repeat;position: relative;}
+#bottomNav .preview .preview-head{background: url("../img/preview_head_old.png") no-repeat;position: relative;}
 #bottomNav .preview .preview-head>span{color: #ffffff;font-size: 16px;display: block;text-align: center;margin-left: 50px;height: 64px;line-height: 82px;margin-right: 40px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;cursor: pointer;}
 #bottomNav .preview .preview-block{border-left: 1px solid #e5e5e5;border-right: 1px solid #e5e5e5;border-bottom: 1px solid #e5e5e5;min-height: 100px;position: relative;}
 .preview-block ul{overflow: hidden;display: flex;position: absolute;bottom: 0;width: 100%;border-top:1px solid #e5e5e5;}

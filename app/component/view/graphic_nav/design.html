@@ -2,7 +2,7 @@
 
 	<!-- 预览 -->
 	<template slot="preview">
-		<div class="preview-box" v-bind:style="{ paddingLeft : nc.paddingLeftRight + 'px', paddingRight : nc.paddingLeftRight + 'px', paddingTop : nc.paddingTopBottom + 'px', paddingBottom : nc.paddingTopBottom + 'px' }">
+		<div class="preview-box" v-bind:style="{ background: nc.backgroundColor, paddingLeft : nc.paddingLeftRight + 'px', paddingRight : nc.paddingLeftRight + 'px', paddingTop : nc.paddingTopBottom + 'px', paddingBottom : nc.paddingTopBottom + 'px', marginLeft : nc.marginLeftRight + 'px', marginRight : nc.marginLeftRight + 'px', marginTop : nc.marginTopBottom + 'px', marginBottom : nc.marginTopBottom + 'px' }">
 			<template v-if="nc.lazyLoad">
 				<graphic-nav></graphic-nav>
 			</template>

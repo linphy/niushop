@@ -27,7 +27,7 @@ class Config extends BaseShop
         if (request()->isAjax()) {
             $data   = input("json", "{}");
             $is_use = input("is_use", 0);//是否启用
-            $data   = json_decode($data);
+            $data   = json_decode($data,true);
             $res    = $config_model->setConfig($data, $is_use, $this->site_id);
             $this->addLog("设置会员签到奖励");
             return $res;

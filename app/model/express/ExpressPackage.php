@@ -13,6 +13,7 @@
 namespace app\model\express;
 
 use app\model\BaseModel;
+use app\model\order\OrderCommon;
 use think\facade\Db;
 
 /**
@@ -28,33 +29,58 @@ class ExpressPackage extends BaseModel
      */
     public function editOrderExpressDeliveryPackage($data)
     {
-        $data = json_decode($data,true);
-
+        $order_common_model = new OrderCommon();
+        //订单状态
+        $order_status = model('order')->getValue([['site_id', '=', $data['site_id']], ['order_id', '=', $data['order_id']]], 'order_status');
+        if (empty($order_status)) {
+            return $this->error('', '订单不存在');
+        }
+        if ($order_status != $order_common_model::ORDER_DELIVERY) {
+            return $this->error('', '订单已收货或已完成');
+        }
+        //包裹信息
+        $package_count = model('express_delivery_package')->getCount(
+            [
+                ['site_id', '=', $data['site_id']], ['order_id', '=', $data['order_id']], ['id', '=', $data['package_id']]
+            ]
+        );
+        if($package_count == 0){
+            return $this->error('','包裹信息不存在');
+        }
         model("express_delivery_package")->startTrans();
         try {
 
-            foreach ($data as $v) {
-
-                if ($v['express_company_id'] == '') {
+            if ($data['delivery_type'] == 0) {
+                $data['express_company_id'] = 0;
+                $data['delivery_no'] = '';
+                $express_company_name = '';
+                $express_company_image = '';
+            }else{
+                if ($data['express_company_id'] == '') {
                     return $this->error('', '物流公司不能为空');
                 }
-                if ($v['delivery_no'] == '') {
+                if ($data['delivery_no'] == '') {
                     return $this->error('', '物流单号不能为空');
                 }
                 //获取物流公司名称
-                $express_company_name = model('express_company_template')->getValue([['company_id', '=', $v['express_company_id']]], 'company_name');
-
-                $condition = [
-                    ['id', '=', $v['id']]
-                ];
-                model('express_delivery_package')->update(
-                    [
-                        'express_company_id' => $v['express_company_id'],
-                        'express_company_name' => $express_company_name,
-                        'delivery_no' => $v['delivery_no'],
-                    ], $condition
-                );
+                $express_company_info = model('express_company_template')->getInfo([['company_id', '=', $data['express_company_id']]], 'company_name,logo');
+                $express_company_name = $express_company_info['company_name'];
+                $express_company_image = $express_company_info['logo'];
             }
+
+            $condition = [
+                ['site_id', '=', $data['site_id']], ['order_id', '=', $data['order_id']], ['id', '=', $data['package_id']]
+            ];
+            model('express_delivery_package')->update(
+                [
+                    'delivery_type' => $data['delivery_type'],
+                    'express_company_id' => $data['express_company_id'],
+                    'express_company_name' => $express_company_name,
+                    'delivery_no' => $data['delivery_no'],
+                    'express_company_image' => $express_company_image
+                ], $condition
+            );
+
             model("express_delivery_package")->commit();
             return $this->success();
 

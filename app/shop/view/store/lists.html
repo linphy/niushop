@@ -59,6 +59,17 @@
 	</div>
 </script>
 
+
+<!-- 门店管理员 -->
+<script type="text/html" id="store_admin">
+	<div class="ns-table-title">
+		<div class="ns-title-pic">
+			<span>{{ d.username }}</span>
+			（<a style="color: #FF6A00;cursor: pointer;" onclick="resetStorePassword({{ d.store_id }})" >重置密码</a>）
+		</div>
+	</div>
+</script>
+
 <!-- 操作 -->
 <script type="text/html" id="operation">
 	<div class="ns-table-btn">
@@ -74,11 +85,12 @@
 {/block}
 {block name="script"}
 <script>
-	layui.use(['form','element'], function() {
-		var table,
-			form = layui.form,
-			element = layui.element,
-			repeat_flag = false; //防重复标识
+	var layer_pass,laytpl,table,form,element;
+	layui.use(['form','element','laytpl'], function() {
+		form = layui.form;
+		element = layui.element;
+		laytpl = layui.laytpl;
+		repeat_flag = false; //防重复标识
 		form.render();
 		
 		//监听Tab切换，以改变地址hash值
@@ -100,7 +112,7 @@
 				[{
 					title: '门店',
 					unresize: 'false',
-					width: '28%',
+					width: '23%',
 					templet: '#store'
 				}, {
 					field: 'full_address',
@@ -111,9 +123,15 @@
 						return '<span title="'+data.full_address+data.address+'">'+data.full_address+data.address+'</span>'; //创建时间转换方法
 					}
 				},{
+                    title: '管理员',
+                    unresize: 'false',
+                    width: '10%',
+                    templet:'#store_admin',
+                    hide: {$store_is_exit} ? false : true
+                },{
 					title: '创建时间',
 					unresize: 'false',
-					width: '15%',
+					width: '10%',
 					templet: function(data) {
 						return ns.time_to_date(data.create_time); //创建时间转换方法
 					}
@@ -202,7 +220,7 @@
 				});
 			});
 		}
-		
+
 		/**
 		 * 搜索功能
 		 */
@@ -214,11 +232,94 @@
 				where: data.field
 			});
 		});
-		
+
+		//重置密码
+        form.on('submit(repass)', function(data) {
+
+            if (repeat_flag) return false;
+            repeat_flag = true;
+
+            $.ajax({
+                type: "POST",
+                url: ns.url("shop/store/modifyPassword"),
+                data: data.field,
+                dataType: 'JSON',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag = false;
+
+                    if (res.code == 0) {
+                        layer.closeAll('page');
+                    }
+                }
+            });
+        });
+
+        /**
+         * 表单验证
+         */
+        form.verify({
+            repass: function(value) {
+                if (value != $(".new_pass").val()) {
+                    return "输入错误,两次密码不一致!";
+                }
+            }
+        });
 	});
-	
+
 	function add() {
 		location.href = ns.url("shop/store/addStore");
 	}
+
+    /**
+     * 重置密码
+     */
+    function resetStorePassword(data) {
+
+        laytpl($("#pass_change").html()).render(data, function(html) {
+            layer_pass = layer.open({
+                title: '重置密码',
+                skin: 'layer-tips-class',
+                type: 1,
+                area: ['550px'],
+                content: html
+            });
+        });
+    }
+
+    function closePass() {
+        layer.close(layer_pass);
+    }
+
 </script>
+
+<!-- 重置密码弹框html -->
+<script type="text/html" id="pass_change">
+	<div class="layui-form" id="reset_pass" lay-filter="form">
+
+		<div class="layui-form-item">
+			<label class="layui-form-label mid"><span class="required">*</span>新密码：</label>
+			<div class="layui-input-block">
+				<input type="password" name="password" lay-verify="required" class="layui-input ns-len-mid new_pass" maxlength="18">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label mid"><span class="required">*</span>确认新密码：</label>
+			<div class="layui-input-block">
+				<input type="password" name="password" lay-verify="repass|required" class="layui-input ns-len-mid" maxlength="18">
+			</div>
+			<div class="ns-word-aux mid">请再一次输入密码，两次输入密码须一致</div>
+		</div>
+
+		<div class="ns-form-row mid">
+			<button class="layui-btn ns-bg-color" lay-submit lay-filter="repass">确定</button>
+			<button class="layui-btn layui-btn-primary" onclick="closePass()">返回</button>
+		</div>
+
+		<input class="reset-pass-id" type="hidden" name="store_id" value="{{d}}"/>
+	</div>
+</script>
+
+
 {/block}

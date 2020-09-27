@@ -33,7 +33,14 @@ class AddSiteDiyView
                     "bgColor" => "",
                     "title" => "网站主页",
                     "openBottomNav" => false,
-                    "bgUrl" => "upload/default/diy_view/index_bg.png"
+                    "bgUrl" => "upload/default/diy_view/index_bg.png",
+                    "popWindow" => [
+                        "imageUrl" => "",
+                        "count" => 1,
+                        "link" => [
+                            "name" => ""
+                        ]
+                    ]
                 ],
                 "value" => [
                     [
@@ -153,6 +160,8 @@ class AddSiteDiyView
                         "controller" => "GraphicNav",
                         "paddingTopBottom" => 0,
                         "paddingLeftRight" => 10,
+                        "marginTopBottom" => 0,
+                        "marginLeftRight" => 0,
                         "defaultTextColor" => "#666666",
                         "borderTopLeftRadius" => 0,
                         "borderTopRightRadius" => 0,
@@ -166,7 +175,7 @@ class AddSiteDiyView
                         "type" => "HORZ_BLANK",
                         "name" => "辅助空白",
                         "controller" => "HorzBlank",
-                        "marginLeftRight" => 10
+                        "marginLeftRight" => 0
                     ],
                     [
                         "backgroundColor" => "",
@@ -206,44 +215,6 @@ class AddSiteDiyView
                         "fontSize" => 14,
                         "noticeIds" => [],
                         "defaultTextColor" => "#333333"
-                    ],
-                    [
-                        "backgroundColor" => "",
-                        "addon_name" => "",
-                        "type" => "RUBIK_CUBE",
-                        "name" => "魔方",
-                        "controller" => "RubikCube",
-                        "selectedTemplate" => "row1-lt-of2-rt",
-                        "list" => [
-                            [
-                                "imageUrl" => "upload/default/diy_view/mofang_zhekozhuanqu.png",
-                                "link" => [
-                                    "name" => ""
-                                ]
-                            ],
-                            [
-                                "imageUrl" => "upload/default/diy_view/mofang_brand_zhuanqu.png",
-                                "link" => [
-                                    "name" => ""
-                                ]
-                            ],
-                            [
-                                "imageUrl" => "upload/default/diy_view/mofang_xianshizheko.png",
-                                "link" => [
-                                    "name" => ""
-                                ]
-                            ]
-                        ],
-                        "selectedRubikCubeArray" => [],
-                        "diyHtml" => "",
-                        "customRubikCube" => 4,
-                        "heightArray" => [
-                            "74.25px",
-                            "59px",
-                            "48.83px",
-                            "41.56px"
-                        ],
-                        "imageGap" => 0
                     ],
                     [
                         "style" => 1,

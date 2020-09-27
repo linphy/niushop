@@ -133,10 +133,12 @@
 			<a class="layui-btn" lay-event="select">推广</a>
 			<!-- <a class="layui-btn" lay-event="preview">预览</a> -->
 			<a class="layui-btn" lay-event="edit">编辑</a>
+			<a class="layui-btn" lay-event="copy">复制</a>
 			<a class="layui-btn" lay-event="delete">删除</a>
 			<a class="layui-btn" lay-event="off_goods">下架</a>
 			{{# }else{ }}
 			<a class="layui-btn" lay-event="edit">编辑</a>
+			<a class="layui-btn" lay-event="copy">复制</a>
 			<a class="layui-btn" lay-event="delete">删除</a>
 			<a class="layui-btn" lay-event="on_goods">上架</a>
 			{{# } }}
@@ -147,8 +149,8 @@
 <!-- 批量操作 -->
 <script type="text/html" id="batchOperation">
 	<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>
-	<button class="layui-btn layui-btn-primary" lay-event="on_goods">上架</button>
-	<button class="layui-btn layui-btn-primary" lay-event="off_goods">下架</button>
+	<button class="layui-btn layui-btn-primary" lay-event="on_goods">批量上架</button>
+	<button class="layui-btn layui-btn-primary" lay-event="off_goods">批量下架</button>
 	<button class="layui-btn layui-btn-primary" lay-event="batch_set">批量设置</button>
 </script>
 
@@ -170,7 +172,11 @@
 					<div class="info-wrap">
 						<span class="sku-name">{{d.list[i].sku_name}}</span>
 						<span class="price">价格：￥{{d.list[i].price}}</span>
+						{{# if(d.list[i].stock_alarm> 0 && d.list[i].stock<=d.list[i].stock_alarm){ }}
+						<span class="stock" >库存：<label style="color:red;">{{d.list[i].stock}}（库存不足）</label></span>
+						{{# }else{ }}
 						<span class="stock">库存：{{d.list[i].stock}}</span>
+						{{# } }}
 						<span class="sale_num">销量：{{d.list[i].sale_num}}</span>
 					</div>
 				</li>
@@ -225,6 +231,11 @@
 		</div>
 	</div>
 </script>
+
+<!-- 编辑排序 -->
+<script type="text/html" id="editSort">
+	<input name="sort" type="number" onchange="editSort({{d.goods_id}}, this)" value="{{d.sort}}" class="layui-input edit-sort ns-len-short">
+</script>
 {/block}
 
 {block name="script"}
@@ -246,7 +257,7 @@
 				<tr>
 					<th>sku名称</th>
 					<th>销售价</th>
-					<th>市场价</th>
+					<th>划线价</th>
 					<th>成本价</th>
 					<th>库存</th>
 					<th>重量(kg)</th>

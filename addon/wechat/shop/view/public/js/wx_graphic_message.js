@@ -360,26 +360,18 @@ function initVue() {
 				return true;
 			},
 			reloadUpload: function () {
-				/**
-				 * 上传图片
-				 */
-				layui.use("upload", function () {
-					var upload = layui.upload;
-					upload.render({
-						elem: '#uploadImg',
-						url: ns.url("shop/upload/image"),
-						done: function (res) {
-							if (res.code >= 0) {
-								//成功之后将图片的路径存放再隐藏域中，便于提交使用
-								// $("input[name='web_qrcode']").val(res.data.pic_path);
-								vue_obj.coverImg = ns.img(res.data.pic_path);
-								vue_obj.article_item_list[vue_obj.current_msg_index].cover.path = ns.img(res.data.pic_path);
-								//将图片展示在页面上
-								// $("#webQrcodeUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
-							}
-							return layer.msg(res.message);
+				var upload = new Upload({
+					elem: '#uploadImg',
+					callback:function (res) {
+						if (res.code >= 0) {
+							//成功之后将图片的路径存放再隐藏域中，便于提交使用
+							// $("input[name='web_qrcode']").val(res.data.pic_path);
+							vue_obj.coverImg = ns.img(res.data.pic_path);
+							vue_obj.article_item_list[vue_obj.current_msg_index].cover.path = ns.img(res.data.pic_path);
+							//将图片展示在页面上
+							// $("#webQrcodeUpload").html("<img src=" + ns.img(res.data.pic_path) + " >");
 						}
-					});
+					}
 				});
 			}
 		},

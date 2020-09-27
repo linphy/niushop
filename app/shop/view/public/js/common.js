@@ -2,6 +2,7 @@
  * 打开相册
  */
 function openAlbum(callback, imgNum) {
+	if(!imgNum) imgNum = 9999;
 	layui.use(['layer'], function () {
 		//iframe层-父子操作
 		layer.open({

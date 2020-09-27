@@ -40,6 +40,8 @@
 								<img src="{:img($company_info.data.logo)}" alt="">
 							{/if}
 						</div>
+						<input type="hidden" name="logo" value="{$company_info.data.logo}" />
+						<i class="del {if !empty($company_info.data.logo)}show{/if}">x</i>
 					</div>
 				</div>
 			</div>
@@ -166,6 +168,8 @@
 								<img src="{:img($company_info.data.background_image)}" alt="">
 							{/if}
 						</div>
+						<input type="hidden" name="background_image" value="{$company_info.data.background_image}" />
+						<i class="del {if !empty($company_info.data.background_image)}show{/if}">x</i>
 					</div>
 				</div>
 				<div class="ns-word-aux">打印模板背景图</div>
@@ -205,8 +209,6 @@
 	</div>
 	
 	<input type="hidden" name="company_id" value="{$company_info.data.company_id}" />
-	<input type="hidden" name="logo" value="{$company_info.data.logo}" />
-	<input type="hidden" name="background_image" value="{$company_info.data.background_image}" />
 	<input type="hidden" class="bg-img-pri" value="{:img($company_info.data.background_image)}" />
 	<input type="hidden" class="print-con" value="{$company_info.data.content_json}" />   <!-- 打印内容 -->
 	
@@ -224,7 +226,7 @@
 			"height": $(".show-height").val() + "px",
 			"background": "url("+ img +") no-repeat center/ cover"
 		});
-		
+
 		var arr = JSON.parse($(".print-con").val());
 		var fontSize = $("input[name=font_size]").val();
 		if (fontSize == 0 || fontSize == '') {
@@ -264,46 +266,29 @@
 	});
 </script>
 <script>
-
-
 	var delRule,submitRule,expressSheetChecked,printStyle='{:html_entity_decode($company_info.data.print_style)}' ? JSON.parse('{:html_entity_decode($company_info.data.print_style)}') : [];
-	layui.use(['form', 'upload'],function() {
+	layui.use(['form'],function() {
 		var form = layui.form,
-			upload = layui.upload,
 			repeat_flag = false; //防重复标识
 		form.render();
 
-		/**
-		 * logo
-		 */
-		var uploadInst = upload.render({
-			elem: '#companyLOGO',
-			url: ns.url("shop/upload/image"),
-			done: function(res) {
-				if (res.code >= 0) {
-					$("input[name='logo']").val(res.data.pic_path);
-					$("#companyLOGO").html("<img src=" + ns.img(res.data.pic_path) + " >");
-				}
-				return layer.msg(res.message);
-			}
+		var logo_upload = new Upload({
+			elem: '#companyLOGO'
 		});
-		
-		/**
-		 * 打印背景图
-		 */
-		var uploadInst = upload.render({
+
+		// 打印背景图
+		var bg_upload = new Upload({
 			elem: '#printBackground',
-			url: ns.url("shop/upload/upload"),
-			done: function(res) {
+			callback:function (res) {
 				if (res.code >= 0) {
-					$("input[name='background_image']").val(res.data.pic_path);
-					$("#printBackground").html("<img src=" + ns.img(res.data.pic_path) + " >");
 					$(".design-sketch").css("background", "url("+ ns.img(res.data.pic_path) +") no-repeat center/ cover");
 				}
-				return layer.msg(res.message);
+			},
+			deleteCallback:function () {
+				$(".design-sketch").css("background", "");
 			}
 		});
-		
+
 		/**
 		 * 监听提交
 		 */
@@ -326,6 +311,11 @@
 			if (expressSheetChecked) data.field.is_electronicsheet = 1;
 			data.field.content_json = JSON.stringify(content);
 			data.field.print_style = JSON.stringify(printStyle);
+
+			// 删除图片
+			if(!data.field.logo) logo_upload.delete();
+
+			if(!data.field.background_image) bg_upload.delete();
 			
 	        if (repeat_flag) return;
 	        repeat_flag = true;
@@ -375,7 +365,7 @@
 			
 			var html = '<div class="span_' + dataId + '" style="font-size: '+ fontSize +'px;">'+
 							'<span>' + dataValue + '</span>'+
-							'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'
+							'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'+
 						'</div>';
 			
 			$(".design-sketch").append(html);
@@ -497,7 +487,6 @@
 
 		delRule = function(obj) {
 			var val = $(obj).parents(".ns-discount").find(".template-size").text();
-
 			for (var i = 0; i < printStyle.length; i++){
 				if (printStyle[i].template_size == val){
 					printStyle.splice(i,1);

@@ -25,7 +25,7 @@
 			</div>
 		</div>
 		
-		<nc-link v-bind:data="{ field : nc.leftLink, label : '左侧链接地址' }"></nc-link>
+		<nc-link v-bind:data="{ field : nc.leftLink, label : '左侧链接' }"></nc-link>
 		
 		<font-size v-bind:data="{ value : nc.fontSize }"></font-size>
 		
@@ -34,7 +34,7 @@
 		<color v-bind:data="{ defaultcolor: 'defaultTextColor'}"></color>
 
 		<div class="layui-form-item">
-			<label class="layui-form-label sm">开启右侧功能</label>
+			<label class="layui-form-label sm">右侧功能</label>
 			<div class="layui-input-block">
 				<div v-bind:class="{ 'layui-unselect layui-form-switch' : true, 'layui-form-onswitch' : nc.isOpenOperation }" v-on:click="nc.isOpenOperation=!nc.isOpenOperation">
 					<em></em>

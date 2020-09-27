@@ -53,17 +53,38 @@
 			url: ns.url("shop/memberlevel/levelList"),
 			cols: [
 				[{
+					title: '会员等级',
+					width: '12%',
+					unresize: 'false',
+					templet: function (data) {
+						return "VIP"+data.LAY_INDEX;
+					}
+				}, {
 					field: 'level_name',
 					title: '等级名称',
-					width: '30%',
+					width: '16%',
 					unresize: 'false'
 				}, {
 					field: 'growth',
 					title: '成长值',
-					width: '15%',
+					width: '12%',
 					unresize: 'false'
+				},{
+					field: 'consume_discount',
+					title: '等级折扣',
+					width: '10%',
+					unresize: 'false',
+					templet: function (data) {						
+						return data.consume_discount + "%";
+					}
 				}, {
-					field: 'growth',
+					title: '是否包邮',
+					width: '10%',
+					unresize: 'false',
+					templet: function (data) {
+						return data.is_free_shipping ? "是" : "否";
+					}
+				},{
 					title: '是否默认',
 					width: '10%',
 					unresize: 'false',
@@ -73,11 +94,11 @@
 				}, {
 					field: 'remark',
 					title: '备注',
-					width: '30%',
+					width: '20%',
 					unresize: 'false'
 				}, {
 					title: '操作',
-					width: '15%',
+					width: '10%',
 					unresize: 'false',
 					toolbar: '#operation'
 				}]

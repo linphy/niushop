@@ -125,7 +125,7 @@ class GoodsLabel extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getLabelPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'id desc', $field = '*')
+    public function getLabelPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'sort asc', $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';

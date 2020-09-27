@@ -21,6 +21,8 @@ use app\model\shop\Shop;
 use app\model\system\Cron;
 use app\model\message\Message;
 use addon\electronicsheet\model\ElectronicsheetDelivery;
+use phpoffice\phpexcel\Classes\PHPExcel;
+use phpoffice\phpexcel\Classes\PHPExcel\Writer\Excel2007;
 
 /**
  * 普通（快递）订单
@@ -138,8 +140,8 @@ class Order extends OrderCommon
             'icon' => 'upload/uniapp/order/order-icon-receive.png',
             'action' => [
                 [
-                    'action' => 'editDelivery',
-                    'title' => '修改物流单号',
+                    'action' => 'takeDelivery',
+                    'title' => '确认收货',
                     'color' => ''
                 ],
             ],
@@ -370,7 +372,6 @@ class Order extends OrderCommon
      */
     public function orderBatchDelivery($param, $order_list)
     {
-
         model('express_delivery_package')->startTrans();
         try {
 
@@ -415,6 +416,235 @@ class Order extends OrderCommon
     }
 
     /**
+     * 批量订单发货（导入excel文件发货）
+     * @param $filename
+     */
+    public function orderFileDelivery($param, $site_id)
+    {
+        //电子面单插件
+        $addon_is_exit = addon_is_exit('electronicsheet', $site_id);
+
+        $PHPExcel = new \PHPExcel();
+        //如果excel文件后缀名为.xls，导入这个类
+        $PHPReader = new \PHPExcel_Reader_Excel2007();
+        //载入文件
+        $PHPExcel = $PHPReader->load($param['path']);
+        //获取表中的第一个工作表，如果要获取第二个，把0改为1，依次类推
+        $currentSheet = $PHPExcel->getSheet(0);
+        //获取总行数
+        $allRow = $currentSheet->getHighestRow();
+        if ($allRow < 2) {
+            return $this->error('', '导入了一个空文件');
+        }
+
+        //添加文件上传记录
+        $success_num = $allRow - 1;
+        $error_num = 0;
+        $data = [
+            'site_id' => $site_id,
+            'filename' => $param['filename'],
+            'path' => $param['path'],
+            'order_num' => $allRow - 1,
+            'success_num' => $success_num,
+            'create_time' => time()
+        ];
+        $res = model('order_import_file')->add($data);
+        if (!$res) {
+            return $this->error('', '上传文件失败');
+        }
+
+        model('order_import_file')->startTrans();
+        try {
+
+            for ($i = 2; $i <= $allRow; $i++) {
+
+                $delivery_data = [
+                    'type' => '',//发货方式（手动发货、电子面单）
+                    'express_company_id' => 0,//物流公司
+                    'delivery_type' => 1,//是否需要物流
+                    'site_id' => $site_id,
+                    'template_id' => 0,//电子面单模板id
+                    'delivery_no' => ''
+                ];
+
+                //订单编号
+                $order_no = $PHPExcel->getActiveSheet()->getCell('A' . $i)->getValue();
+                $order_no = trim($order_no, ' ');
+                //订单内容
+                $order_name = $PHPExcel->getActiveSheet()->getCell('B' . $i)->getValue();
+                $order_name = trim($order_name, ' ');
+                //发货方式
+                $type = $PHPExcel->getActiveSheet()->getCell('C' . $i)->getValue();
+                $type = trim($type, ' ');
+                //物流公司名称或电子面单名称
+                $name = $PHPExcel->getActiveSheet()->getCell('D' . $i)->getValue();
+                $name = trim($name, ' ');
+                //物流单号
+                $delivery_no = $PHPExcel->getActiveSheet()->getCell('E' . $i)->getValue();
+                $delivery_no = trim($delivery_no, ' ');
+
+                if (empty($type)) {
+                    $error_num += 1;
+                    $success_num -= 1;
+                    //修改数量
+                    model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                    //添加失败记录
+                    model('order_import_file_log')->add(
+                        [
+                            'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                            'status' => -1, 'reason' => '发货方式为空'
+                        ]
+                    );
+                    continue;
+                }
+                if ($type == '电子面单' && $addon_is_exit == 1) {
+
+                    if (empty($name)) {
+                        $error_num += 1;
+                        $success_num -= 1;
+                        //修改数量
+                        model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                        //添加失败记录
+                        model('order_import_file_log')->add(
+                            [
+                                'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                                'status' => -1, 'reason' => '电子面单模板为空'
+                            ]
+                        );
+                        continue;
+                    }
+                    $delivery_data['type'] = 'electronicsheet';
+                    $template_id = model('express_electronicsheet')->getValue([['template_name', '=', $name], ['site_id', '=', $site_id]], 'id');
+                    if (empty($template_id)) {
+                        $error_num += 1;
+                        $success_num -= 1;
+                        //修改数量
+                        model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                        //添加失败记录
+                        model('order_import_file_log')->add(
+                            [
+                                'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                                'status' => -1, 'reason' => '电子面单模板不存在'
+                            ]
+                        );
+                        continue;
+                    }
+                    $delivery_data['template_id'] = $template_id;
+                } elseif ($type == '电子面单' && $addon_is_exit != 1) {
+                    $error_num += 1;
+                    $success_num -= 1;
+                    //修改数量
+                    model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                    //添加失败记录
+                    model('order_import_file_log')->add(
+                        [
+                            'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                            'status' => -1, 'reason' => '电子面单插件未安装']
+                    );
+                    continue;
+                } else {
+                    $delivery_data['type'] = 'manual';
+
+                    if (empty($delivery_no) || empty($name)) {//无需物流
+                        $delivery_data['delivery_type'] = 0;
+                    } else {
+                        $company_id = model('express_company')->getValue([['site_id', '=', $site_id], ['company_name', '=', $name]], 'company_id');
+                        if ($company_id == '') {
+                            $error_num += 1;
+                            $success_num -= 1;
+                            //修改数量
+                            model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                            //添加失败记录
+                            model('order_import_file_log')->add(
+                                [
+                                    'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                                    'status' => -1, 'reason' => '物流公司不存在'
+                                ]
+                            );
+                            continue;
+                        }
+                        $delivery_data['express_company_id'] = $company_id;
+                        $delivery_data['delivery_no'] = $delivery_no;
+                    }
+                }
+                //获取订单信息
+                $order_info = model('order')->getInfo([['order_no', '=', $order_no], ['site_id', '=', $site_id]], 'order_id,order_status');
+                if (empty($order_info) || $order_info['order_status'] != self::ORDER_PAY) {
+                    $error_num += 1;
+                    $success_num -= 1;
+                    //修改数量
+                    model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                    //添加失败记录
+                    model('order_import_file_log')->add(
+                        [
+                            'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                            'status' => -1, 'reason' => '订单不存在或者已发货'
+                        ]
+                    );
+                    continue;
+                }
+                $delivery_data['order_id'] = $order_info['order_id'];
+                $delivery_data['order_goods_ids'] = '';
+
+                if ($delivery_data['type'] == 'electronicsheet') {//电子面单发货
+
+                    $electronicsheet_model = new ElectronicsheetDelivery();
+                    $result = $electronicsheet_model->delivery($delivery_data);
+                    if ($result['code'] < 0) {
+                        $error_num += 1;
+                        $success_num -= 1;
+                        //修改数量
+                        model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                        //添加失败记录
+                        model('order_import_file_log')->add(
+                            [
+                                'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                                'status' => -1, 'reason' => $result['message']
+                            ]
+                        );
+                        continue;
+                    }
+                    $delivery_data['delivery_no'] = $result['data']['Order']['LogisticCode'];
+                }
+
+                $result = $this->orderGoodsDelivery($delivery_data, 2);
+                if ($result['code'] < 0) {
+                    $error_num += 1;
+                    $success_num -= 1;
+                    //修改数量
+                    model('order_import_file')->update(['success_num' => $success_num, 'error_num' => $error_num], [['id', '=', $res]]);
+                    //添加失败记录
+                    model('order_import_file_log')->add(
+                        [
+                            'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                            'status' => -1, 'reason' => $result['message']
+                        ]
+                    );
+                    continue;
+                }
+
+                //添加成功记录
+                model('order_import_file_log')->add(
+                    [
+                        'site_id' => $site_id, 'file_id' => $res, 'order_no' => $order_no, 'order_name' => $order_name,
+                        'status' => 0, 'reason' => ''
+                    ]
+                );
+            }
+
+            model('order_import_file')->commit();
+            return $this->success();
+        } catch (\Exception $e) {
+
+            model('order_import_file')->rollback();
+            //修改数量
+            model('order_import_file')->update(['success_num' => 0, 'error_num' => $allRow - 1], [['id', '=', $res]]);
+            return $this->error('', $e->getMessage());
+        }
+
+    }
+
+    /**
      * 订单发货
      *
      * @param array $condition
@@ -445,14 +675,11 @@ class Order extends OrderCommon
             $event_time_config = $event_time_config_result["data"];
             $now_time = time(); //当前时间
 
-            if (!empty($event_time_config)) {
-                $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400; //自动收货时间
-            } else {
-                $execute_time = $now_time + 86400; //尚未配置  默认一天
+            if ($event_time_config["value"]["auto_take_delivery"] > 0) {
+                $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400;//自动收货时间
+                $cron_model = new Cron();
+                $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
             }
-            //默认自动时间
-            $cron_model = new Cron();
-            $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
 
             event('OrderDelivery', ['order_id' => $order_id]);
 

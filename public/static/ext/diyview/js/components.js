@@ -170,7 +170,7 @@ Vue.component("slide", {
 				var ins = slider.render({
 					elem: '#'+_self.id,
 					tips: false,
-					theme: '#12b7f5',
+					theme: '#FF6A00',
 					value : _self.parent[_self.data.field],
 					change: function(value){
 						_self.parent[_self.data.field] = value;
@@ -204,7 +204,7 @@ Vue.component("slide", {
 var linkHtml = '<div class="layui-form-item component-links">';
 		linkHtml += '<label class="layui-form-label sm">{{myData[0].label}}</label>';
 		linkHtml += '<div class="layui-input-block">';
-			linkHtml += '<span style="margin-right: 10px;font-size: 12px;display: inline-block;height: 36px;line-height: 36px;vertical-align: top;white-space: nowrap;overflow: hidden;width: 100%;text-overflow: ellipsis;" v-if="myData[0].field.title" v-bind:title="myData[0].field.title">{{myData[0].field.title}}</span>';
+			linkHtml += '<span style="margin-right: 10px;font-size: 12px;display: inline-block;height: 36px;line-height: 36px;vertical-align: top;white-space: nowrap;overflow: hidden;max-width: 80%;text-overflow: ellipsis;" v-if="myData[0].field.title" v-bind:title="myData[0].field.title">{{myData[0].field.title}}</span>';
 			linkHtml += '<button v-for="(item,index) in myData[0].operation" class="layui-btn layui-btn-primary sm" v-on:click="selected(item.key,item.method)">{{item.label}}</button>';
 		linkHtml += '</div>';
 	linkHtml += '</div>';
@@ -253,19 +253,22 @@ Vue.component("nc-link", {
 		if (this.data.label == undefined) this.data.label = "链接地址";
 		
 		if (this.data.operation == undefined) this.data.operation = [{ key : "system", method : '' , label: "选择" }];
-		
+
 	},
 	watch: {
 		
 		data: function (val, oldVal) {
-			if (val.field == undefined) val.field = oldVal.field;
+			// if (val.field == undefined) val.field = oldVal.field;
 			
 			if (this.data.supportDiyView == undefined) this.data.supportDiyView = "";
 			
 			if (this.data.label == undefined) this.data.label = "链接地址";
 			
 			if (this.data.operation == undefined) this.data.operation = [{ key : "system", method : '' , label: "选择" }];
-			
+
+			this.myData[0].field= this.data.field;
+
+			// console.log("myData",this.myData[0].field);
 			// console.log("watch:", this.data.field);
 		},
 		refresh:function (val,oldVal) {
@@ -281,9 +284,8 @@ Vue.component("nc-link", {
 				for (var k in link) {
 					this.data.field[k] = link[k];
 				}
-				
 			}
-			
+
 			//触发变异方法，进行视图更新
 			this.myData.push({});
 			this.myData.pop();
@@ -588,18 +590,17 @@ Vue.component("img-upload", {
 		
 		var self = this;
 		setTimeout(function () {
-			layui.use(['upload'], function() {
-				self.upload = layui.upload;
-				//上传logo
-				var uploadInst = this.upload.render({
-					elem: '#'+self.id,
-					url: ns.url("shop/upload/upload"),
-					done: function(res) {
-						self.data.data[self.data.field] = res.data.pic_path;
-						if (self.callback) self.data.callback.call(this);
-						return layer.msg(res.message);
-					}
-				});
+
+			if (post == 'store') post += '://store';
+
+			var url = ns.url(post + "/upload/image");
+			self.upload = new Upload({
+				elem: '#' + self.id,
+				url : url,
+				callback:function(res) {
+					self.data.data[self.data.field] = res.data.pic_path;
+					if (self.callback) self.data.callback.call(this);
+				}
 			});
 		},20);
 		

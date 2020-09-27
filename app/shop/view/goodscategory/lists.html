@@ -25,6 +25,7 @@
 			<li>商城添加商品的时候需要选择对应的商品分类,用户可以根据商品分类搜索商品。</li>
 			<li>点击商品分类名前“+”符号，显示当前商品分类的下级分类。</li>
 			<li>商品属性是前台搜索分类查询商品之后可以通过商品的属性进行进一步搜索。</li>
+			<li>商品分类如果不显示会导致小程序、h5没有该分类以及该分类下的所有商品</li>
 		</ul>
 	</div>
 </div>
@@ -37,9 +38,10 @@
 		<colgroup>
 			<col width="3%">
 			<col width="37%">
-			<col width="20%">
-			<col width="20%">
-			<col width="20%">
+			<col width="15%">
+			<col width="15%">
+			<col width="15%">
+			<col width="15%">
 		</colgroup>
 		<thead>
 			<tr>
@@ -50,6 +52,7 @@
 				<!-- <th>关联类型</th> -->
 				<!-- <th>是否显示</th> -->
 				<th>排序</th>
+				<th>是否显示</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -74,6 +77,7 @@
 				<!-- <td>{$vo['attr_class_name']}</td> -->
 				<!-- <td>{if $vo['is_show'] == 1}是{else/}否{/if}</td> -->
 				<td><input type="number" class="layui-input ns-len-short" value="{$vo['sort']}" onchange="editSort('{$vo.category_id}')" id="category_sort{$vo.category_id}"></td>
+				<td>{if $vo['is_show'] == 0} 显示 {else /} 不显示 {/if}</td>
 				<td>
 					<div class="ns-table-btn">
 						<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$vo['category_id']])}">编辑</a>
@@ -98,6 +102,7 @@
 						<!-- <td>{$second['attr_class_name']}</td> -->
 						<!-- <td>{if $second['is_show'] == 1}是{else/}否{/if}</td> -->
 						<td><input type="number" class="layui-input ns-len-short" value="{$second['sort']}" onchange="editSort('{$second.category_id}')" id="category_sort{$second.category_id}"></td>
+						<td>{if $second['is_show'] == 0} 显示 {else /} 不显示 {/if}</td>
 						<td>
 							<div class="ns-table-btn">
 							<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$second['category_id']])}">编辑</a>
@@ -121,6 +126,7 @@
 								<!-- <td>{$third['attr_class_name']}</td> -->
 								<!-- <td>{if $third['is_show'] == 1}是{else/}否{/if}</td> -->
 								<td><input type="number" class="layui-input ns-len-short" value="{$third['sort']}" onchange="editSort('{$third.category_id}')" id="category_sort{$third.category_id}"></td>
+								<td>{if $third['is_show'] == 0} 显示 {else /} 不显示 {/if}</td>
 								<td>
 									<div class="ns-table-btn">
 										<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$third['category_id']])}">编辑</a>
@@ -144,9 +150,10 @@
 {/block}
 {block name="script"}
 <script>
+
 $(function () {
 	loadImgMagnify();  //图片放大
-	
+
 	//展开收齐点击事件
 	$(".js-switch").click(function () {
 		var category_id = $(this).attr("data-category-id");
@@ -210,7 +217,7 @@ function editSort(category_id) {
         success: function(res) {
             layer.msg(res.message);
             if (res.code == 0) {
-                table.reload();
+                window.location.reload();
             }
         }
     });

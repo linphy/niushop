@@ -30,7 +30,7 @@ class GoodsAttribute extends BaseModel
      */
     public function addAttrClass($data)
     {
-        $site_id = isset($data['site_id']) ? $data['site_id'] : '';
+        $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
@@ -47,15 +47,15 @@ class GoodsAttribute extends BaseModel
      */
     public function editAttrClass($data)
     {
-        $site_id = isset($data['site_id']) ? $data['site_id'] : '';
+        $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $res = model("goods_attr_class")->update($data, [['class_id', '=', $data['class_id']], ['site_id', '=', $data['site_id']]]);
-        if (!empty($data['class_name'])) {
+        $res = model("goods_attr_class")->update($data, [ [ 'class_id', '=', $data[ 'class_id' ] ], [ 'site_id', '=', $data[ 'site_id' ] ] ]);
+        if (!empty($data[ 'class_name' ])) {
             //修改属性表
-            model("goods_attribute")->update(['attr_class_name' => $data['class_name']], [['attr_class_id', '=', $data['class_id']]]);
+            model("goods_attribute")->update([ 'attr_class_name' => $data[ 'class_name' ] ], [ [ 'attr_class_id', '=', $data[ 'class_id' ] ] ]);
         }
         //预留修改商品
         Cache::tag("goods_attr_class_" . $site_id)->clear();
@@ -74,11 +74,11 @@ class GoodsAttribute extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $res = model('goods_attr_class')->delete([['class_id', '=', $class_id], ['site_id', '=', $site_id]]);
+        $res = model('goods_attr_class')->delete([ [ 'class_id', '=', $class_id ], [ 'site_id', '=', $site_id ] ]);
         if ($res) {
 
             // 删除商品属性
-            model('goods_attribute')->delete([['attr_class_id', '=', $class_id]]);
+            model('goods_attribute')->delete([ [ 'attr_class_id', '=', $class_id ] ]);
             Cache::tag("goods_attribute_" . $site_id . "_" . $class_id)->clear();
 
         }
@@ -98,7 +98,7 @@ class GoodsAttribute extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $res = model('goods_attr_class')->update(['sort' => $sort], [['class_id', '=', $class_id], ['site_id', '=', $site_id]]);
+        $res = model('goods_attr_class')->update([ 'sort' => $sort ], [ [ 'class_id', '=', $class_id ], [ 'site_id', '=', $site_id ] ]);
         Cache::tag("goods_attr_class_" . $site_id)->clear();
         return $this->success($res);
     }
@@ -111,12 +111,12 @@ class GoodsAttribute extends BaseModel
     public function getAttrClassInfo($condition, $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("goods_attr_class_getAttrClassInfo_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -137,12 +137,12 @@ class GoodsAttribute extends BaseModel
     public function getAttrClassList($condition = [], $field = 'class_id,class_name,sort', $order = 'class_id desc', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
         $cache = Cache::get("goods_attr_class_getAttrClassList_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -162,15 +162,15 @@ class GoodsAttribute extends BaseModel
      * @param string $field
      * @return \multitype
      */
-    public function getAttrClassPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'class_id desc', $field = 'class_id,class_name,sort')
+    public function getAttrClassPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'sort asc', $field = 'class_id,class_name,sort')
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $page, $page_size]);
+        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
         $cache = Cache::get("goods_attr_class_getAttrClassPageList_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -191,7 +191,7 @@ class GoodsAttribute extends BaseModel
      */
     public function addAttribute($attr_class_id, $data)
     {
-        $site_id = isset($data['site_id']) ? $data['site_id'] : '';
+        $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
@@ -209,12 +209,12 @@ class GoodsAttribute extends BaseModel
      */
     public function editAttribute($attr_class_id, $data)
     {
-        $site_id = isset($data['site_id']) ? $data['site_id'] : '';
+        $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $res = model("goods_attribute")->update($data, [['attr_id', '=', $data['attr_id']], ['attr_class_id', '=', $attr_class_id], ['site_id', '=', $site_id]]);
+        $res = model("goods_attribute")->update($data, [ [ 'attr_id', '=', $data[ 'attr_id' ] ], [ 'attr_class_id', '=', $attr_class_id ], [ 'site_id', '=', $site_id ] ]);
         Cache::tag("goods_attribute_" . $site_id . "_" . $attr_class_id)->clear();
         return $this->success($res);
     }
@@ -232,8 +232,23 @@ class GoodsAttribute extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $res = model('goods_attribute')->delete([['attr_id', '=', $attr_id], ['attr_class_id', '=', $attr_class_id], ['site_id', '=', $site_id]]);
+        $res = model('goods_attribute')->delete([ [ 'attr_id', '=', $attr_id ], [ 'attr_class_id', '=', $attr_class_id ], [ 'site_id', '=', $site_id ] ]);
 
+        Cache::tag("goods_attribute_" . $site_id . "_" . $attr_class_id)->clear();
+        return $this->success($res);
+    }
+
+    /**
+     * 修改排序
+     * @param $sort
+     * @param $attr_class_id
+     * @param $attr_id
+     * @param $site_id
+     * @return array
+     */
+    public function modifyAttributeSort($sort, $attr_class_id, $attr_id, $site_id)
+    {
+        $res = model('goods_attribute')->update([ 'sort' => $sort ], [ [ 'attr_id', '=', $attr_id ], [ 'site_id', '=', $site_id ] ]);
         Cache::tag("goods_attribute_" . $site_id . "_" . $attr_class_id)->clear();
         return $this->success($res);
     }
@@ -248,17 +263,17 @@ class GoodsAttribute extends BaseModel
     public function getAttributeInfo($condition, $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
-        $attr_class_id   = isset($check_condition['attr_class_id']) ? $check_condition['attr_class_id'] : '';
+        $attr_class_id = isset($check_condition[ 'attr_class_id' ]) ? $check_condition[ 'attr_class_id' ] : '';
         if ($attr_class_id === '') {
             return $this->error('', 'REQUEST_GOODS_ATTRIBUTE_ID');
         }
 
-        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("goods_attribute_getAttributeInfo_" . $site_id . "_" . $attr_class_id . '_' . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -276,20 +291,20 @@ class GoodsAttribute extends BaseModel
      * @param null $limit
      * @return \multitype
      */
-    public function getAttributeList($condition = [], $field = '*', $order = 'attr_id desc', $limit = null)
+    public function getAttributeList($condition = [], $field = '*', $order = 'sort asc', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
-        $attr_class_id   = isset($check_condition['attr_class_id']) ? $check_condition['attr_class_id'] : '';
+        $attr_class_id = isset($check_condition[ 'attr_class_id' ]) ? $check_condition[ 'attr_class_id' ] : '';
         if ($attr_class_id === '') {
             return $this->error('', 'REQUEST_GOODS_ATTRIBUTE_ID');
         }
 
-        $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
         $cache = Cache::get("goods_attribute_getAttributeList_" . $site_id . "_" . $attr_class_id . '_' . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -309,7 +324,7 @@ class GoodsAttribute extends BaseModel
      * @param null $limit
      * @return \multitype
      */
-    public function getSpecList($condition = [], $field = 'attr_id,attr_name,attr_class_id,sort,is_query,is_spec,attr_value_list,attr_value_list,attr_type,site_id', $order = 'attr_id desc', $limit = null)
+    public function getSpecList($condition = [], $field = 'attr_id,attr_name,attr_class_id,sort,is_query,is_spec,attr_value_list,attr_value_list,attr_type,site_id', $order = 'sort asc', $limit = null)
     {
         $list = model('goods_attribute')->getList($condition, $field, $order, '', '', '', $limit);
         return $this->success($list);
@@ -328,7 +343,7 @@ class GoodsAttribute extends BaseModel
         $attr_value_id = model("goods_attribute_value")->addList($data);
         if ($attr_value_id) {
 //			刷新属性值JSON格式
-            $this->refreshAttrValueFormat($attr_class_id, $data[0]['attr_id']);
+            $this->refreshAttrValueFormat($attr_class_id, $data[ 0 ][ 'attr_id' ]);
             Cache::tag("goods_attribute_value_" . $attr_class_id)->clear();
             return $this->success($attr_value_id);
         } else {
@@ -344,10 +359,10 @@ class GoodsAttribute extends BaseModel
      */
     public function editAttributeValue($attr_class_id, $data)
     {
-        $res = model("goods_attribute_value")->update($data, [['attr_value_id', '=', $data['attr_value_id']]]);
+        $res = model("goods_attribute_value")->update($data, [ [ 'attr_value_id', '=', $data[ 'attr_value_id' ] ] ]);
         if ($res) {
 //			刷新属性值JSON格式
-            $this->refreshAttrValueFormat($attr_class_id, $data['attr_id']);
+            $this->refreshAttrValueFormat($attr_class_id, $data[ 'attr_id' ]);
             Cache::tag("goods_attribute_value_" . $attr_class_id)->clear();
             return $this->success($res);
         } else {
@@ -362,17 +377,17 @@ class GoodsAttribute extends BaseModel
      */
     private function refreshAttrValueFormat($attr_class_id, $attr_id)
     {
-        $list = model('goods_attribute_value')->getList([['attr_id', '=', $attr_id]], 'attr_value_id,attr_value_name');
+        $list = model('goods_attribute_value')->getList([ [ 'attr_id', '=', $attr_id ] ], 'attr_value_id,attr_value_name');
         if (!empty($list)) {
             $attr_value_format = [];
             foreach ($list as $k => $v) {
-                $item                = [
-                    'attr_value_id'   => $v['attr_value_id'],
-                    'attr_value_name' => $v['attr_value_name']
+                $item = [
+                    'attr_value_id' => $v[ 'attr_value_id' ],
+                    'attr_value_name' => $v[ 'attr_value_name' ]
                 ];
                 $attr_value_format[] = $item;
             }
-            $res = model("goods_attribute")->update(['attr_value_format' => json_encode($attr_value_format)], [['attr_id', '=', $attr_id], ['attr_class_id', '=', $attr_class_id]]);
+            $res = model("goods_attribute")->update([ 'attr_value_format' => json_encode($attr_value_format) ], [ [ 'attr_id', '=', $attr_id ], [ 'attr_class_id', '=', $attr_class_id ] ]);
             Cache::tag("goods_attribute_" . $attr_class_id)->clear();
             return $this->success($res);
         }
@@ -403,11 +418,11 @@ class GoodsAttribute extends BaseModel
     {
 
         $check_condition = array_column($condition, 2, 0);
-        $attr_class_id   = isset($check_condition['attr_class_id']) ? $check_condition['attr_class_id'] : '';
+        $attr_class_id = isset($check_condition[ 'attr_class_id' ]) ? $check_condition[ 'attr_class_id' ] : '';
         if ($attr_class_id === '') {
             return $this->error('', 'REQUEST_GOODS_ATTRIBUTE_ID');
         }
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
         $cache = Cache::get("goods_attribute_value_getAttributeValueList_" . $attr_class_id . '_' . $data);
         if (!empty($cache)) {
             return $this->success($cache);

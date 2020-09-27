@@ -49,6 +49,7 @@ class BaseShop extends Controller
         if (empty($this->uid)) {
             $this->redirect(url("shop/login/login"));
         }
+        $this->assign("shop_module", SHOP_MODULE);
         $this->url = request()->parseUrl();
         $this->addon = request()->addon() ? request()->addon() : '';
         $this->user_info = $user_model->userInfo($this->app_module, $this->site_id);
@@ -58,7 +59,12 @@ class BaseShop extends Controller
         $this->getGroupInfo();
         if (!$this->checkAuth()) {
             if (!request()->isAjax()) {
-                $this->error('权限不足');
+                $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info);
+                if (empty($menu_info)) {
+                    $this->error('权限不足');
+                } else {
+                    $this->redirect(addon_url($menu_info[ 'url' ]));
+                }
             } else {
                 echo json_encode(error('', '权限不足'));
                 exit;
@@ -247,6 +253,8 @@ class BaseShop extends Controller
             $menus = $menu_model->getMenuList([ [ 'app_module', "=", $this->app_module ], [ 'is_show', "=", 1 ] ], '*', 'sort asc');
         } else {
             $menus = $menu_model->getMenuList([ [ 'name', 'in', $this->group_info[ 'menu_array' ] ], [ 'is_show', "=", 1 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
+            $control_menu = $menu_model->getMenuList([ [ 'is_control', '=', 0 ], [ 'is_show', "=", 1 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
+            $menus[ 'data' ] = array_merge($menus[ 'data' ], $control_menu[ 'data' ]);
         }
 
         return $menus[ 'data' ];

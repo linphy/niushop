@@ -7,7 +7,7 @@
 
 var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
 		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{borderTopLeftRadius: data.borderTopLeftRadius+\'px\', borderTopRightRadius: data.borderTopRightRadius+\'px\', borderBottomLeftRadius: data.borderBottomLeftRadius+\'px\', borderBottomRightRadius: data.borderBottomRightRadius+\'px\'}">';
-			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" v-bind:style="{ backgroundColor: data.backgroundColor, padding: \'0 \'+ data.padding + \'px\', width : ( data.scrollSetting == \'fixed\' ? ((316-data.paddingLeftRight*2)/list.length) : (316/3)) + \'px\' }">';
+			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" v-bind:style="{ padding: \'0 \'+ data.padding + \'px\', width : ( data.scrollSetting == \'fixed\' ? ((371 - data.paddingLeftRight * 2 - data.marginLeftRight * 2) / list.length) : (371 / 3)) + \'px\' }">';
 				graphicNavPreviewHtml += '<a href="javascript:;">';
 					graphicNavPreviewHtml += '<img v-show="data.selectedTemplate ==\'imageNavigation\'" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" v-bind:style="{ width : data.imageScale+\'%\' }" />';
 					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor }">{{item.title}}</span>';
@@ -63,8 +63,10 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 		graphicNavListHtml += '<color v-bind:data="{ field : \'backgroundColor\', label : \'背景颜色\' }"></color>';
 
 		graphicNavListHtml += '<div class="text-slide">';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingTopBottom\', label : \'上下边距\' }"></slide>';
+			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingTopBottom\', label : \'上下内边距\' }"></slide>';
 			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingLeftRight\', label : \'左右边距\' }"></slide>';
+			graphicNavListHtml += '<slide v-bind:data="{ field : \'marginTopBottom\', label : \'上下外边距\' }"></slide>';
+			graphicNavListHtml += '<slide v-bind:data="{ field : \'marginLeftRight\', label : \'左右外边距\' }"></slide>';
 			graphicNavListHtml += '<slide v-bind:data="{ field : \'padding\', label : \'图片间距\' }"></slide>';
 			graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopLeftRadius\', label : \'左上圆角\' }"></slide>';
 			graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopRightRadius\', label : \'右上圆角\' }"></slide>';
@@ -91,6 +93,7 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 		graphicNavListHtml += '</div>';
 	
 		graphicNavListHtml += '<ul>';
+		graphicNavListHtml += '<p class="hint">建议上传尺寸相同的图片(78px * 78px)，最多添加 {{maxTip}} 个导航，拖动选中的导航可对其排序</p>';
 			graphicNavListHtml += '<li v-for="(item,index) in list" v-bind:key="index">';
 
 				graphicNavListHtml += '<img-upload v-bind:data="{ data : item }" v-bind:condition="$parent.data.selectedTemplate == \'imageNavigation\'"></img-upload>';
@@ -121,8 +124,6 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 			graphicNavListHtml += '<span>添加一个图文导航</span>';
 		
 			graphicNavListHtml += '</div>';
-		
-		graphicNavListHtml += '<p class="hint">建议上传比例相同的图片，最多添加 {{maxTip}} 个导航，拖动选中的导航可对其排序</p>';
 		
 	graphicNavListHtml += '</div>';
 	

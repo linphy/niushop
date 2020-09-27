@@ -221,6 +221,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 					layer.confirm('添加成功', {
 						title:'操作提示',
 						btn: ['返回列表', '继续添加'],
+						closeBtn: 0,
 						yes: function(){
 							location.href = ns.url("manjian://shop/manjian/lists")
 						},

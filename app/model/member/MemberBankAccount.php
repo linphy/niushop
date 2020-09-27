@@ -21,8 +21,8 @@ use think\facade\Cache;
 class MemberBankAccount extends BaseModel
 {
     private $withdraw_type = [
-        'alipay'    => '支付宝',
-        'bank'      => '银行卡',
+        'alipay' => '支付宝',
+        'bank' => '银行卡',
         'wechatpay' => '微信'
     ];
 
@@ -39,16 +39,47 @@ class MemberBankAccount extends BaseModel
      */
     public function addMemberBankAccount($data)
     {
-        if ($data['is_default'] == 1) {
-            model('member_bank_account')->update(['is_default' => 0], ['member_id' => $data['member_id']]);
+        //获取提现设置
+        $config_model = new Withdraw();
+        $config_result = $config_model->getConfig(1, 'shop');
+        $config = $config_result['data']['value'];
+        if (!empty($config)) {
+
+            //提现方式为微信的时候  判断用户是否已关注公众号
+            if ($data['withdraw_type'] == 'wechatpay') {
+                //获取会员信息
+                $wx_openid = model('member')->getValue([['member_id', '=', $data['member_id']]], 'wx_openid');
+                if (empty($wx_openid)) {
+                    return $this->error('', '请先绑定微信');
+                }
+            }
+
+            model('member_bank_account')->startTrans();
+            try {
+
+                if ($data['is_default'] == 1) {
+                    model('member_bank_account')->update(['is_default' => 0], ['member_id' => $data['member_id']]);
+                }
+                $data['create_time'] = time();
+                $id = model('member_bank_account')->add($data);
+                $count = model('member_bank_account')->getCount(['member_id' => $data['member_id']]);
+                if ($count == 1)
+                    model('member_bank_account')->update(['is_default' => 1], ['member_id' => $data['member_id'], 'id' => $id]);
+
+                Cache::tag("member_bank_account_" . $data['member_id'])->clear();
+
+                model('member_bank_account')->commit();
+                return $this->success($id);
+            } catch (\Exception $e) {
+
+                model('member_bank_account')->rollback();
+                return $this->error('', $e->getMessage());
+            }
+
+        } else {
+            return $this->error('', '平台未开启会员提现');
         }
-        $data['create_time'] = time();
-        $id                  = model('member_bank_account')->add($data);
-        $count               = model('member_bank_account')->getCount(['member_id' => $data['member_id']]);
-        if ($count == 1)
-            model('member_bank_account')->update(['is_default' => 1], ['member_id' => $data['member_id'], 'id' => $id]);
-        Cache::tag("member_bank_account_" . $data['member_id'])->clear();
-        return $this->success($id);
+
     }
 
     /**
@@ -58,13 +89,44 @@ class MemberBankAccount extends BaseModel
      */
     public function editMemberBankAccount($data)
     {
-        if ($data['is_default'] == 1) {
-            model('member_bank_account')->update(['is_default' => 0], ['member_id' => $data['member_id']]);
+        //获取提现设置
+        $config_model = new Withdraw();
+        $config_result = $config_model->getConfig(1, 'shop');
+        $config = $config_result['data']['value'];
+
+        if (!empty($config)) {
+
+            //提现方式为微信的时候  判断用户是否已关注公众号
+            if ($data['withdraw_type'] == 'wechatpay') {
+                //获取会员信息
+                $wx_openid = model('member')->getValue([['member_id', '=', $data['member_id']]], 'wx_openid');
+                if (empty($wx_openid)) {
+                    return $this->error('', '请先绑定微信');
+                }
+            }
+
+            model('member_bank_account')->startTrans();
+            try {
+
+                if ($data['is_default'] == 1) {
+                    model('member_bank_account')->update(['is_default' => 0], ['member_id' => $data['member_id']]);
+                }
+                $data['modify_time'] = time();
+                $res = model('member_bank_account')->update($data, ['id' => $data['id']]);
+                Cache::tag("member_bank_account_" . $data['member_id'])->clear();
+
+                model('member_bank_account')->commit();
+                return $this->success($res);
+
+            } catch (\Exception $e) {
+
+                model('member_bank_account')->rollback();
+                return $this->error('', $e->getMessage());
+            }
+
+        } else {
+            return $this->error('', '平台未开启会员提现');
         }
-        $data['modify_time'] = time();
-        $res                 = model('member_bank_account')->update($data, ['id' => $data['id']]);
-        Cache::tag("member_bank_account_" . $data['member_id'])->clear();
-        return $this->success($res);
     }
 
     /**
@@ -74,7 +136,7 @@ class MemberBankAccount extends BaseModel
     public function deleteMemberBankAccount($condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $res             = model('member_bank_account')->delete($condition);
+        $res = model('member_bank_account')->delete($condition);
         Cache::tag("member_bank_account_" . $check_condition['member_id'])->clear();
         if ($res === false) {
             return $this->error('', 'RESULT_ERROR');
@@ -112,8 +174,8 @@ class MemberBankAccount extends BaseModel
     public function getMemberBankAccountInfo($condition, $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
-        $data            = json_encode([$condition, $field]);
-        $cache           = Cache::get("member_bank_account_getMemberBankAccountInfo_" . $data);
+        $data = json_encode([$condition, $field]);
+        $cache = Cache::get("member_bank_account_getMemberBankAccountInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
@@ -134,8 +196,8 @@ class MemberBankAccount extends BaseModel
     public function getMemberBankAccountPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc', $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
-        $data            = json_encode([$condition, $field, $order, $page, $page_size]);
-        $cache           = Cache::get("member_bank_account_getMemberBankAccountPageList_" . $data);
+        $data = json_encode([$condition, $field, $order, $page, $page_size]);
+        $cache = Cache::get("member_bank_account_getMemberBankAccountPageList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }

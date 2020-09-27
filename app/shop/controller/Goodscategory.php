@@ -45,7 +45,7 @@ class Goodscategory extends BaseShop
             $short_name         = input('short_name', '');// 简称
             $pid                = input('pid', 0);//默认添加的商品分类为顶级
             $level              = input('level', 1);// 层级
-            $is_show            = input('is_show', '');// 是否显示
+            $is_show            = input('is_show', 0);// 是否显示
             $sort               = input('sort', '');// 排序
             $image              = input('image', '');// 分类图片
             $image_adv          = input('image_adv', '');// 分类广告图片
@@ -115,7 +115,7 @@ class Goodscategory extends BaseShop
             $short_name         = input('short_name', '');// 简称
             $pid                = input('pid', 0);//默认添加的商品分类为顶级
             $level              = input('level', 1);// 层级
-            $is_show            = input('is_show', '');// 是否显示
+            $is_show            = input('is_show', 0);// 是否显示
             $sort               = input('sort', '');// 排序
             $image              = input('image', '');// 分类图片
             $image_adv          = input('image_adv', '');// 分类广告图片

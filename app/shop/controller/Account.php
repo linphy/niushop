@@ -88,5 +88,4 @@ class Account extends BaseShop
 
         return $this->fetch('account/dashboard');
     }
-
 }

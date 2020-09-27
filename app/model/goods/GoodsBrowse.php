@@ -38,7 +38,6 @@ class GoodsBrowse extends BaseModel
         //添加浏览统计
         $stat = new Stat();
         $stat->addShopStat(['visit_count' => 1, 'site_id' => $data['site_id']]);
-        Cache::tag("goods_browse")->clear();
         return $this->success($collect_id);
 
     }
@@ -51,7 +50,6 @@ class GoodsBrowse extends BaseModel
     public function deleteBrowse($id, $member_id)
     {
         $res = model('goods_browse')->delete([['member_id', '=', $member_id], ['id', '=', $id]]);
-        Cache::tag("goods_browse")->clear();
         return $this->success($res);
     }
 
@@ -65,13 +63,7 @@ class GoodsBrowse extends BaseModel
      */
     public function getBrowsePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'browse_time desc', $field = 'id,member_id,browse_time,goods_id,sku_id', $alias = 'a', $join = [])
     {
-        $data  = json_encode([$condition, $field, $order, $page, $page_size, $alias, $join]);
-        $cache = Cache::get("goods_browse_getBrowsePageList_" . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('goods_browse')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
-        Cache::tag("goods_browse")->set("goods_browse_getBrowsePageList_" . $data, $list);
         return $this->success($list);
     }
 }

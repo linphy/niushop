@@ -55,6 +55,7 @@ class Addon extends BaseApi
         $res['groupbuy']       = addon_is_exit('groupbuy', $this->site_id);                    //团购
         $res['bargain']        = addon_is_exit('bargain', $this->site_id);                    //砍价
         $res['presale']        = addon_is_exit('presale', $this->site_id);                   // 预售
+        $res['notes']        = addon_is_exit('notes', $this->site_id);                   // 运营笔记
 
         return $this->response($this->success($res));
     }

@@ -29,18 +29,19 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">公众号二维码：</label>
 				<div class="layui-input-block">
-					<input type="hidden" class="layui-input" name="qrcode" value="{$config.value.qrcode ?? ''}"/>
 					<div class="upload-img-block square">
 						<div class="upload-img-box" id="img">
 						{if condition="$config.value && $config.value.qrcode"}
-						<img src="{:img($config.value.qrcode)}"/>
+							<img src="{:img($config.value.qrcode)}"/>
 						{else/}
-						<div class="ns-upload-default">
-							<img src="SHOP_IMG/upload_img.png" />
-							<p>点击上传</p>
-						</div>
+							<div class="ns-upload-default">
+								<img src="SHOP_IMG/upload_img.png" />
+								<p>点击上传</p>
+							</div>
 						{/if}
 						</div>
+						<input type="hidden" class="layui-input" name="qrcode" value="{$config.value.qrcode ?? ''}"/>
+						<i class="del {if condition="$config.value && $config.value.qrcode"}show{/if}">x</i>
 				   </div>
 				</div>
 			</div>
@@ -163,9 +164,8 @@
 {/block}
 {block name="script"}
 <script type="text/javascript">
-    layui.use(['form', 'upload'], function () {
+    layui.use(['form'], function () {
         var form = layui.form,
-            upload = layui.upload,
             repeat_flag = false; //防重复标识
 		form.render();
 
@@ -185,31 +185,16 @@
 			});
 		});
 
-        // 图片上传
-        var uploadInst = upload.render({
-            elem: '#img',
-            url: ns.url("shop/upload/image"),
-            done: function (res) {
-                if (res.code >= 0) {
-                    $("input[name='qrcode']").val(res.data.pic_path);
-                    $("#img").html("<img src=" + ns.img(res.data.pic_path) + " >");
-                }
-                return layer.msg(res.message);
-            }
-        });
+		var upload = new Upload({
+			elem: '#img'
+		});
 
-        
-        var uploadFile = upload.render({
+		var file_upload = new Upload({
 			elem: '#checkFile',
+			url: ns.url("shop/upload/checkfile"),
 			accept: 'file',
 			acceptMime: 'text/plain',
-			exts: 'txt',
-			url: ns.url("shop/upload/checkfile"),
-			done: function(res) {
-				if (res.code >= 0) {
-					layer.msg('文件上传成功');
-				}
-			}
+			exts: 'txt'
 		});
 
 	});
@@ -217,7 +202,6 @@
 	function back() {
 		location.href = "{:addon_url('wechat://shop/wechat/setting')}";
 	}
-
 
 	/**
 	 * 去授权

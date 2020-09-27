@@ -118,6 +118,11 @@ class LocalOrder extends OrderCommon
                     'title'  => '发货',
                     'color'  => ''
                 ],
+                [
+                    'action' => 'orderAddressUpdate',
+                    'title' => '修改地址',
+                    'color' => ''
+                ],
             ],
             'member_action'   => [
 
@@ -131,6 +136,11 @@ class LocalOrder extends OrderCommon
             'icon'            => 'upload/uniapp/order/order-icon-receive.png',
 
             'action'        => [
+                [
+                    'action' => 'takeDelivery',
+                    'title' => '确认收货',
+                    'color' => ''
+                ],
             ],
             'member_action' => [
                 [
@@ -138,6 +148,7 @@ class LocalOrder extends OrderCommon
                     'title'  => '确认收货',
                     'color'  => ''
                 ],
+
             ],
             'color'         => ''
         ],
@@ -334,14 +345,11 @@ class LocalOrder extends OrderCommon
             $event_time_config        = $event_time_config_result["data"];
             $now_time                 = time();//当前时间
 
-            if (!empty($event_time_config)) {
+            if ($event_time_config["value"]["auto_take_delivery"] > 0) {
                 $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400;//自动收货时间
-            } else {
-                $execute_time = $now_time + 86400;//尚未配置  默认一天
+                $cron_model = new Cron();
+                $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
             }
-            //默认自动时间
-            $cron_model = new Cron();
-            $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
 
             event('OrderDelivery', ['order_id' => $order_id]);
 

@@ -32,30 +32,30 @@ class Member extends BaseModel
      */
     public function addMember($data)
     {
-        if ($data['username']) {
+        if ($data[ 'username' ]) {
             $count = model('member')->getCount([
-                ['username', '=', $data['username']],
-                ['site_id', '=', $data['site_id']]
+                [ 'username', '=', $data[ 'username' ] ],
+                [ 'site_id', '=', $data[ 'site_id' ] ]
             ]);
             if ($count > 0) {
                 return $this->error('', 'USERNAME_EXISTED');
             }
         }
 
-        if ($data['mobile']) {
+        if ($data[ 'mobile' ]) {
             $count = model('member')->getCount([
-                ['mobile', '=', $data['mobile']],
-                ['site_id', '=', $data['site_id']]
+                [ 'mobile', '=', $data[ 'mobile' ] ],
+                [ 'site_id', '=', $data[ 'site_id' ] ]
             ]);
             if ($count > 0) {
                 return $this->error('', 'MOBILE_EXISTED');
             }
         }
 
-        if ($data['email']) {
+        if ($data[ 'email' ]) {
             $count = model('member')->getCount([
-                ['email', '=', $data['email']],
-                ['site_id', '=', $data['site_id']]
+                [ 'email', '=', $data[ 'email' ] ],
+                [ 'site_id', '=', $data[ 'site_id' ] ]
             ]);
             if ($count > 0) {
                 return $this->error('', 'EMAIL_EXISTED');
@@ -67,7 +67,7 @@ class Member extends BaseModel
         }
         //添加统计
         $stat = new Stat();
-        $stat->addShopStat(['member_count' => 1, 'site_id' => 0]);
+        $stat->addShopStat([ 'member_count' => 1, 'site_id' => 0 ]);
         return $this->success($res);
     }
 
@@ -79,17 +79,16 @@ class Member extends BaseModel
      */
     public function editMember($data, $condition)
     {
-        if(isset($data['mobile'])){
+        if(isset($data['mobile']) && $data['mobile'] != ''){
             $info = model('member')->getInfo([['mobile', '=', $data['mobile']]]);
-            if(empty($info)){
-                return $this->error('', 'RESULT_ERROR');
+            if(!empty($info)){
+                return $this->error('', 'MOBILE_EXISTED');
             }
         }
-
-    	$res = model('member')->update($data, $condition);
-    	if ($res === false) {
-    		return $this->error('', 'RESULT_ERROR');
-    	}
+        $res = model('member')->update($data, $condition);
+        if ($res === false) {
+            return $this->error('', 'SAVE_FAIL');
+        }
 
         return $this->success($res);
     }
@@ -120,18 +119,18 @@ class Member extends BaseModel
     public function modifyMemberLabel($label_ids, $condition)
     {
         //查询会员标签
-        $label_list = model("member_label")->getList([['label_id', 'in', $label_ids]], 'label_id,label_name');
+        $label_list = model("member_label")->getList([ [ 'label_id', 'in', $label_ids ] ], 'label_id,label_name');
 
-        $label_ids   = '';
+        $label_ids = '';
         $label_names = '';
         if (!empty($label_list)) {
             foreach ($label_list as $k => $v) {
-                $label_ids   = $label_ids . $v['label_id'] . ',';
-                $label_names = $label_names . $v['label_name'] . ',';
+                $label_ids = $label_ids . $v[ 'label_id' ] . ',';
+                $label_names = $label_names . $v[ 'label_name' ] . ',';
             }
         }
         $res = model('member')->update([
-            'member_label'      => $label_ids,
+            'member_label' => $label_ids,
             'member_label_name' => $label_names
         ], $condition);
         if ($res === false) {
@@ -167,13 +166,13 @@ class Member extends BaseModel
     public function modifyMemberPassword($member_id, $old_password, $new_password)
     {
         $res = model('member')->getCount([
-            ['password', '=', data_md5($old_password)],
-            ['member_id', '=', $member_id]
+            [ 'password', '=', data_md5($old_password) ],
+            [ 'member_id', '=', $member_id ]
         ]);
         if ($res > 0) {
             $res = model('member')->update([
                 'password' => data_md5($new_password)
-            ], [['member_id', '=', $member_id]]);
+            ], [ [ 'member_id', '=', $member_id ] ]);
             if ($res === false) {
                 return $this->error('', 'RESULT_ERROR');
             }
@@ -216,10 +215,10 @@ class Member extends BaseModel
      */
     public function getMemberDetail($member_id)
     {
-        $field       = 'member_id,source_member,username,nickname,mobile,email,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,realname,sex,location,birthday,reg_time,point,balance,growth,balance_money,account5,pay_password';
-        $member_info = model('member')->getInfo([['member_id', '=', $member_id]], $field);
+        $field = 'member_id,source_member,username,nickname,mobile,email,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,realname,sex,location,birthday,reg_time,point,balance,growth,balance_money,account5,pay_password';
+        $member_info = model('member')->getInfo([ [ 'member_id', '=', $member_id ] ], $field);
         if (!empty($member_info)) {
-            $member_info['balance_total'] = $member_info['balance'] + $member_info['balance_money'];
+            $member_info[ 'balance_total' ] = $member_info[ 'balance' ] + $member_info[ 'balance_money' ];
             return $this->success($member_info);
         }
         return $this->error();
@@ -276,14 +275,14 @@ class Member extends BaseModel
     public function bindCode($data)
     {
         //发送短信
-        $sms_model           = new Sms();
-        $var_parse           = array(
-            "code" => $data["code"],//验证码
+        $sms_model = new Sms();
+        $var_parse = array (
+            "code" => $data[ "code" ],//验证码
         );
-        $data["sms_account"] = $data["mobile"] ?? '';//手机号
-        $data["var_parse"]   = $var_parse;
-        $sms_result          = $sms_model->sendMessage($data);
-        if ($sms_result["code"] < 0)
+        $data[ "sms_account" ] = $data[ "mobile" ] ?? '';//手机号
+        $data[ "var_parse" ] = $var_parse;
+        $sms_result = $sms_model->sendMessage($data);
+        if ($sms_result[ "code" ] < 0)
             return $sms_result;
 
         return $this->success();
@@ -297,14 +296,14 @@ class Member extends BaseModel
     public function findCode($data)
     {
         //发送短信
-        $sms_model           = new Sms();
-        $var_parse           = array(
-            "code" => $data["code"],//验证码
+        $sms_model = new Sms();
+        $var_parse = array (
+            "code" => $data[ "code" ],//验证码
         );
-        $data["sms_account"] = $data["mobile"] ?? '';//手机号
-        $data["var_parse"]   = $var_parse;
-        $sms_result          = $sms_model->sendMessage($data);
-        if ($sms_result["code"] < 0)
+        $data[ "sms_account" ] = $data[ "mobile" ] ?? '';//手机号
+        $data[ "var_parse" ] = $var_parse;
+        $sms_result = $sms_model->sendMessage($data);
+        if ($sms_result[ "code" ] < 0)
             return $sms_result;
 
         return $this->success();
@@ -320,7 +319,7 @@ class Member extends BaseModel
     {
         $res = model('member')->update([
             'pay_password' => data_md5($password)
-        ], [['member_id', '=', $member_id]]);
+        ], [ [ 'member_id', '=', $member_id ] ]);
         if ($res === false) {
             return $this->error('', 'RESULT_ERROR');
         }
@@ -333,8 +332,8 @@ class Member extends BaseModel
      */
     public function memberIsSetPayPassword($member_id)
     {
-        $info = model('member')->getInfo([['member_id', '=', $member_id]], 'pay_password');
-        if (empty($info['pay_password'])) return $this->success(0);
+        $info = model('member')->getInfo([ [ 'member_id', '=', $member_id ] ], 'pay_password');
+        if (empty($info[ 'pay_password' ])) return $this->success(0);
         else return $this->success(1);
     }
 
@@ -346,8 +345,8 @@ class Member extends BaseModel
     public function checkPayPassword($member_id, $pay_password)
     {
         $res = model('member')->getCount([
-            ['pay_password', '=', data_md5($pay_password)],
-            ['member_id', '=', $member_id]
+            [ 'pay_password', '=', data_md5($pay_password) ],
+            [ 'member_id', '=', $member_id ]
         ]);
         if ($res > 0) {
             return $this->success($res);
@@ -364,16 +363,16 @@ class Member extends BaseModel
     public function paypasswordCode($data)
     {
         //发送短信
-        $sms_model           = new Sms();
-        $var_parse           = array(
-            "code" => $data["code"],//验证码
+        $sms_model = new Sms();
+        $var_parse = array (
+            "code" => $data[ "code" ],//验证码
         );
-        $member_info_result  = $this->getMemberInfo([["member_id", "=", $data["member_id"]]], "mobile");
-        $member_info         = $member_info_result["data"];
-        $data["sms_account"] = $member_info["mobile"] ?? '';//通过member_id获得手机号
-        $data["var_parse"]   = $var_parse;
-        $sms_result          = $sms_model->sendMessage($data);
-        if ($sms_result["code"] < 0)
+        $member_info_result = $this->getMemberInfo([ [ "member_id", "=", $data[ "member_id" ] ] ], "mobile");
+        $member_info = $member_info_result[ "data" ];
+        $data[ "sms_account" ] = $member_info[ "mobile" ] ?? '';//通过member_id获得手机号
+        $data[ "var_parse" ] = $var_parse;
+        $sms_result = $sms_model->sendMessage($data);
+        if ($sms_result[ "code" ] < 0)
             return $sms_result;
 
         return $this->success();
@@ -385,12 +384,12 @@ class Member extends BaseModel
      */
     public function pullHeadimg($member_id)
     {
-        $member_info = model("member")->getInfo([['member_id', '=', $member_id]], 'headimg');
-        if (!empty($member_info['headimg']) && is_url($member_info['headimg'])) {
+        $member_info = model("member")->getInfo([ [ 'member_id', '=', $member_id ] ], 'headimg');
+        if (!empty($member_info[ 'headimg' ]) && is_url($member_info[ 'headimg' ])) {
             $upload = new Upload();
-            $res    = $upload->setPath('upload/user/haedimg/')->remotePull($member_info['headimg']);
-            if ($res['code'] >= 0) {
-                model("member")->update(['headimg' => $res['data']['pic_path']], [['member_id', '=', $member_id]]);
+            $res = $upload->setPath('upload/user/haedimg/')->remotePull($member_info[ 'headimg' ]);
+            if ($res[ 'code' ] >= 0) {
+                model("member")->update([ 'headimg' => $res[ 'data' ][ 'pic_path' ] ], [ [ 'member_id', '=', $member_id ] ]);
             }
         }
     }
@@ -421,29 +420,29 @@ class Member extends BaseModel
      */
     public function getMemberCountByArea($site_id, $handle = false)
     {
-        $total_count = $this->getMemberAreaCount([['site_id', '=', $site_id]]);
+        $total_count = $this->getMemberAreaCount([ [ 'site_id', '=', $site_id ] ]);
 
         $address = new Address();
-        $list    = $address->getAreaList([['pid', '=', 0]], 'id,shortname', 'sort asc');
+        $list = $address->getAreaList([ [ 'pid', '=', 0 ] ], 'id,shortname', 'sort asc');
 
         $data = [];
 
-        if ($total_count['data']) {
-            foreach ($list['data'] as $item) {
-                $count = $this->getMemberAreaCount([['nsm.site_id', '=', $site_id], ['nma.is_default', '=', 1], ['nma.province_id', '=', $item['id']]], 'nsm', [['member_address nma', 'nsm.member_id = nma.member_id', 'left']], 'nma.member_id');
+        if ($total_count[ 'data' ]) {
+            foreach ($list[ 'data' ] as $item) {
+                $count = $this->getMemberAreaCount([ [ 'nsm.site_id', '=', $site_id ], [ 'nma.is_default', '=', 1 ], [ 'nma.province_id', '=', $item[ 'id' ] ] ], 'nsm', [ [ 'member_address nma', 'nsm.member_id = nma.member_id', 'left' ] ], 'nma.member_id');
                 if ($handle) {
-                    if ($count['data'] > 0) {
+                    if ($count[ 'data' ] > 0) {
                         array_push($data, [
-                            'name'  => $item['shortname'],
-                            'value' => $count['data'],
-                            'ratio' => $count['data'] > 0 ? sprintf("%.2f", $count['data'] / $total_count['data'] * 100) : 0
+                            'name' => $item[ 'shortname' ],
+                            'value' => $count[ 'data' ],
+                            'ratio' => $count[ 'data' ] > 0 ? sprintf("%.2f", $count[ 'data' ] / $total_count[ 'data' ] * 100) : 0
                         ]);
                     }
                 } else {
                     array_push($data, [
-                        'name'  => $item['shortname'],
-                        'value' => $count['data'],
-                        'ratio' => $count['data'] > 0 ? sprintf("%.2f", $count['data'] / $total_count['data'] * 100) : 0
+                        'name' => $item[ 'shortname' ],
+                        'value' => $count[ 'data' ],
+                        'ratio' => $count[ 'data' ] > 0 ? sprintf("%.2f", $count[ 'data' ] / $total_count[ 'data' ] * 100) : 0
                     ]);
                 }
             }
@@ -455,8 +454,8 @@ class Member extends BaseModel
 
         return $this->success([
             'page_count' => 1,
-            'count'      => $total_count['data'],
-            'list'       => $data
+            'count' => $total_count[ 'data' ],
+            'list' => $data
         ]);
     }
 
@@ -470,7 +469,7 @@ class Member extends BaseModel
         foreach ($join as $item) {
             list($table, $on, $type) = $item;
             $type = strtolower($type);
-            switch ($type) {
+            switch ( $type ) {
                 case "left":
                     $db_obj = $db_obj->leftJoin($table, $on);
                     break;

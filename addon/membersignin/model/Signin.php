@@ -28,8 +28,27 @@ class Signin extends BaseModel
      */
     public function setConfig($data, $is_use, $site_id)
     {
+        if (!empty($data)) {
+            $day = 0;
+            foreach ($data as $k => $v) {
+                if ($v['day'] == 0) {
+                    return $this->error('', '连续签到天数不能设置为0');
+                }
+                
+                if ($k != 0) {
+
+                    if ($v['day'] <= $day) {
+                        return $this->error('', '连续签到天数不能相同或者小于上一个签到天数');
+                    }
+                    if (($v['day'] - $day) > 1) {
+                        return $this->error('', '连续签到天数不能隔天设置');
+                    }
+                }
+                $day = $v['day'];
+            }
+        }
         $config = new ConfigModel();
-        $res    = $config->setConfig($data, '会员签到奖励设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
+        $res = $config->setConfig($data, '会员签到奖励设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
         return $res;
     }
 
@@ -39,14 +58,14 @@ class Signin extends BaseModel
     public function getConfig($site_id)
     {
         $config = new ConfigModel();
-        $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
+        $res = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
         if (empty($res['data']['value'])) {
             $res['data']['value'] = [
                 [
-                    "point"  => 0,
+                    "point" => 0,
                     "growth" => 0,
                     'coupon' => 0,
-                    "day"    => 1
+                    "day" => 1
                 ]
             ];
         }

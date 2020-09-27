@@ -1,6 +1,6 @@
 /**
  * [魔方]属性组件
- * 修改时间：2018年9月13日19:08:50 全栈小学生
+ * 修改时间：2018年9月13日19:08:50
  */
 
 //预览自定义魔方组件
@@ -73,9 +73,9 @@ var rubikCubeHtml = '<div class="layui-form-item">';
 	
 	rubikCubeHtml += '<div class="layui-form-item">';
 		rubikCubeHtml += '<label class="layui-form-label sm">布局</label>';
-		rubikCubeHtml += '<div class="layui-input-block layout">';
+		rubikCubeHtml += '<div class="layui-input-block layout" v-for="item in templateList" v-if="(item.className == $parent.data.selectedTemplate) && !isShowCustomRubikCube">';
 		
-			rubikCubeHtml += '<ul v-for="item in templateList" v-if="(item.className == $parent.data.selectedTemplate) && !isShowCustomRubikCube">';
+			rubikCubeHtml += '<ul>';
 				rubikCubeHtml += '<li v-for="(li,i) in item.dimensionScale" v-bind:class="[item.className,(currentIndex==i) ? \'ns-border-color\' : \'\']" v-on:click="changeCurrentIndex(i)">';
 					rubikCubeHtml += '<div class="empty" v-show="currentList.length>0 && !currentList[i].imageUrl" v-html="li"></div>';
 					rubikCubeHtml += '<div class="have-preview-image" v-show="currentList.length>0 && currentList[i].imageUrl">';
@@ -83,6 +83,7 @@ var rubikCubeHtml = '<div class="layui-form-item">';
 					rubikCubeHtml += '</div>';
 				rubikCubeHtml += '</li>';
 			rubikCubeHtml += '</ul>';
+			rubikCubeHtml += '<p class="ns-word-aux" style="margin-left: 0; color: red;">{{ item.descAux }}</p>';
 			
 			//魔方
 			rubikCubeHtml += '<ul v-if="isShowCustomRubikCube">';
@@ -106,14 +107,13 @@ var rubikCubeHtml = '<div class="layui-form-item">';
 
 					rubikCubeHtml += '<span v-show="!currentList[i].imageUrl">{{item.proportion}}<template v-if="customRubikCube==4">比例</template></span>';
 					rubikCubeHtml += '<i class="del" v-on:click.stop="deleteSelectedRubikCubeClick(i)" data-disabled="1">x</i>';
-					
 				rubikCubeHtml += '</div>';
 				
 			rubikCubeHtml += '</template>';
 
 		rubikCubeHtml += '</div>';
 		
-		rubikCubeHtml += '<p class="ns-word-aux">选定布局区域，在下方添加图片，建议添加比例一致的图片</p>';
+		// rubikCubeHtml += '<p class="ns-word-aux">选定布局区域，在下方添加图片，建议添加比例一致的图片</p>';
 
 		// rubikCubeHtml += '<slide v-bind:data="{ field : \'imageGap\', label : \'图片间隙\' }"></slide>';
 		
@@ -218,13 +218,13 @@ Vue.component("rubik-cube",{
 		//初始化可选择的模板集合
 		initTemplateList : function(){
 			var prefix = RESOURCEPATH + "/rubik_cube/img";
-			this.templateList.push({ name : "1行2个", src :  prefix + "/rubik_cube_row1_of2.png", className : "row1-of2", dimensionScale : ["宽度50%","宽度50%"] });
-			this.templateList.push({ name : "1行3个", src : prefix + "/rubik_cube_row1_of3.png", className : "row1-of3", dimensionScale : ["宽度33.33%","宽度33.33%","宽度33.33%"] });
-			this.templateList.push({ name : "1行4个", src : prefix + "/rubik_cube_row1_of4.png", className : "row1-of4", dimensionScale : ["宽度25%","宽度25%","宽度25%","宽度25%"] });
-			this.templateList.push({ name : "2左2右", src : prefix + "/rubik_cube_row2_lt_of2_rt.png", className : "row2-lt-of2-rt", dimensionScale : ["宽度50%","宽度50%","宽度50%","宽度50%"] });
-			this.templateList.push({ name : "1左2右", src : prefix + "/rubik_cube_row1_lt_of2_rt.png", className : "row1-lt-of2-rt", dimensionScale : ["宽度50% x 高度100%","宽度50% x 高度50%","宽度50% x 高度50%"] });
-			this.templateList.push({ name : "1上2下", src : prefix + "/rubik_cube_row1_tp_of2_bm.png", className : "row1-tp-of2-bm", dimensionScale : ["宽度100% x 高度50%","宽度50% x 高度50%","宽度50% x 高度50%"] });
-			this.templateList.push({ name : "1左3右", src : prefix + "/rubik_cube_row1_lt_of1_tp_of2_bm.png", className : "row1-lt-of1-tp-of2-bm",dimensionScale : ["宽度50% x 高度100%","宽度50% x 高度50%","宽度25% x 高度50%","宽度25% x 高度50%"] });
+			this.templateList.push({ name : "1行2个", src :  prefix + "/rubik_cube_row1_of2.png", className : "row1-of2", dimensionScale : ["宽度50%","宽度50%"], descAux: "选定布局区域，在下方添加图片，建议添加尺寸一致的图片，宽度最小建议为：200px" });
+			this.templateList.push({ name : "1行3个", src : prefix + "/rubik_cube_row1_of3.png", className : "row1-of3", dimensionScale : ["宽度33.33%","宽度33.33%","宽度33.33%"], descAux: "选定布局区域，在下方添加图片，建议添加尺寸一致的图片，宽度最小建议为：130px" });
+			this.templateList.push({ name : "1行4个", src : prefix + "/rubik_cube_row1_of4.png", className : "row1-of4", dimensionScale : ["宽度25%","宽度25%","宽度25%","宽度25%"], descAux: "选定布局区域，在下方添加图片，建议添加尺寸一致的图片，宽度最小建议为：100px" });
+			this.templateList.push({ name : "2左2右", src : prefix + "/rubik_cube_row2_lt_of2_rt.png", className : "row2-lt-of2-rt", dimensionScale : ["宽度50%","宽度50%","宽度50%","宽度50%"], descAux: "选定布局区域，在下方添加图片，建议添加尺寸一致的图片，宽度最小建议为：200px" });
+			this.templateList.push({ name : "1左2右", src : prefix + "/rubik_cube_row1_lt_of2_rt.png", className : "row1-lt-of2-rt", dimensionScale : ["宽度50% x 高度100%","宽度50% x 高度50%","宽度50% x 高度50%"], descAux: "选定布局区域，在下方添加图片，宽度最小建议为：200px，右侧两张图片高度一致，左侧图片高度为右侧两张图片高度之和（例：左侧图片尺寸：200px * 300px，右侧两张图片尺寸：200px * 150px）" });
+			this.templateList.push({ name : "1上2下", src : prefix + "/rubik_cube_row1_tp_of2_bm.png", className : "row1-tp-of2-bm", dimensionScale : ["宽度100% x 高度50%","宽度50% x 高度50%","宽度50% x 高度50%"], descAux: "选定布局区域，在下方添加图片，上方一张图片的宽度为下方两张图片宽度之和，下放两张图片尺寸一致，高度可根据实际需求自行确定（例：上方图片尺寸：400px * 150px，下方两张图片尺寸：200px * 150px）" });
+			this.templateList.push({ name : "1左3右", src : prefix + "/rubik_cube_row1_lt_of1_tp_of2_bm.png", className : "row1-lt-of1-tp-of2-bm",dimensionScale : ["宽度50% x 高度100%","宽度50% x 高度50%","宽度25% x 高度50%","宽度25% x 高度50%"], descAux: "选定布局区域，在下方添加图片，左右两侧内容宽高相同，右侧上下区域高度各占50%，右侧内容下半部分两张图片的宽度相同，各占右侧内容宽度的50%（例：左侧图片尺寸：200px * 400px，右侧上半部分图片尺寸：200px * 200px，右侧下半部分两张图片尺寸：100px * 200px）" });
 			// this.templateList.push({ name : "自定义", src : prefix + "/rubik_cube_diy.png", className : "custom-rubik-cube", dimensionScale : [] });
 			
 			//初始化加载时

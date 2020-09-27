@@ -13,10 +13,14 @@
 namespace app\model\member;
 
 use app\model\BaseModel;
+use app\model\message\Message;
+use app\model\message\Sms;
+use app\model\shop\ShopAcceptMessage;
 use app\model\system\Config as ConfigModel;
 use app\model\system\Pay;
 use think\facade\Cache;
 use addon\memberwithdraw\model\Withdraw as MemberWithdraw;
+use addon\wechat\model\Message as WechatMessage;
 
 /**
  * 会员提现
@@ -29,7 +33,7 @@ class Withdraw extends BaseModel
      * 会员提现设置
      * array $data
      */
-    public function setConfig($data, $is_use, $site_id = 0, $app_module = 'admin')
+    public function setConfig($data, $is_use, $site_id = 0, $app_module = 'shop')
     {
         $config = new ConfigModel();
         $res    = $config->setConfig($data, '会员提现设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'MEMBER_WITHDRAW_CONFIG']]);
@@ -39,7 +43,7 @@ class Withdraw extends BaseModel
     /**
      * 会员提现设置
      */
-    public function getConfig($site_id = 0, $app_module = 'admin')
+    public function getConfig($site_id = 0, $app_module = 'shop')
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'MEMBER_WITHDRAW_CONFIG']]);
@@ -50,7 +54,7 @@ class Withdraw extends BaseModel
      * 申请提现
      * @param $data
      */
-    public function apply($data, $site_id = 0, $app_module = 'admin')
+    public function apply($data, $site_id = 0, $app_module = 'shop')
     {
 
         $config_result = $this->getConfig($site_id, $app_module);
@@ -98,6 +102,9 @@ class Withdraw extends BaseModel
                 case "wechatpay":
                     $bank_name = '';
                     if ($data["app_type"] == "wechat") {
+                        if(empty($member_info["wx_openid"])){
+                            return $this->error('','请绑定微信或更换提现账户');
+                        }
                         $account_number = $member_info["wx_openid"];
                     } else if ($data["app_type"] == "weapp") {
                         $account_number = $member_info["weapp_openid"];
@@ -145,6 +152,12 @@ class Withdraw extends BaseModel
             }
 
             model('member_withdraw')->commit();
+
+            //申请提现发送消息
+            $data['keywords'] = 'USER_WITHDRAWAL_APPLY';
+            $message_model = new Message();
+            $message_model->sendMessage($data);
+
             return $this->success();
         } catch (\Exception $e) {
             model('member_withdraw')->rollback();
@@ -164,7 +177,7 @@ class Withdraw extends BaseModel
         if (empty($site_id)) {
             return $this->error(-1, '参数错误');
         }
-        $info = model("member_withdraw")->getInfo($condition, "transfer_type,id");
+        $info = model("member_withdraw")->getInfo($condition);
         if (empty($info))
             return $this->error();
 
@@ -186,6 +199,12 @@ class Withdraw extends BaseModel
                 $member_withdraw_model->transfer($info["id"]);
             }
             model('member_withdraw')->commit();
+
+            //提现成功发送消息
+            $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
+            $message_model = new Message();
+            $message_model->sendMessage($info);
+
             return $this->success();
         } catch (\Exception $e) {
             model('member_withdraw')->rollback();
@@ -341,7 +360,7 @@ class Withdraw extends BaseModel
     /**
      * 转账方式
      */
-    public function getTransferType($site_id = 0, $app_module = 'admin')
+    public function getTransferType($site_id = 0, $app_module = 'shop')
     {
         $pay_model          = new Pay();
         $transfer_type_list = $pay_model->getTransferType($site_id);
@@ -355,6 +374,86 @@ class Withdraw extends BaseModel
             }
         }
         return $data;
+    }
+
+
+    /**
+     * 会员提现成功通知
+     * @param $data
+     */
+    public function messageUserWithdrawalSuccess($data)
+    {
+        //发送短信
+        $sms_model = new Sms();
+
+        $var_parse = array(
+            'username' => $data["member_name"],//会员名
+            'money' => $data['apply_money']
+        );
+
+        $data["sms_account"] = $data["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
+        
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $data["member_id"]]]);
+        $member_info = $member_info_result["data"];
+
+        //绑定微信公众号才发送
+        if (!empty($member_info) && !empty($member_info["wx_openid"])) {
+        	$wechat_model = new WechatMessage();
+        	$data["openid"] = $member_info["wx_openid"];
+        	$data["template_data"] = [
+        		'keyword1' => $data['apply_money'],
+        		'keyword2' => time_to_date($data['payment_time']),
+        	];
+        	$data["page"] = "";
+        	$wechat_model->sendMessage($data);
+        }   
+    }
+
+    /**
+     * 会员申请提现通知，卖家通知
+     * @param $data
+     */
+    public function messageUserWithdrawalApply($data)
+    {
+        //发送短信
+        $sms_model = new Sms();
+
+        $var_parse = array(
+            "username" => replaceSpecialChar($data["member_name"]),//会员名
+            "money" => $data["apply_money"],//退款申请金额
+        );
+//        $site_id    = $data['site_id'];
+//        $shop_info  = model("shop")->getInfo([["site_id", "=", $site_id]], "mobile,email");
+//        $message_data["sms_account"] = $shop_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+
+        $shop_accept_message_model = new ShopAcceptMessage();
+        $result = $shop_accept_message_model->getShopAcceptMessageList();
+        $list = $result['data'];
+        if (!empty($list)) {
+            foreach ($list as $v) {
+                $message_data = $data;
+                $message_data["sms_account"] = $v["mobile"];//手机号
+                $sms_model->sendMessage($message_data);
+                
+                if($v['wx_openid'] != ""){
+                	
+                	$wechat_model = new WechatMessage();               	
+                	$data["openid"] = $v['wx_openid'];
+                	$data["template_data"] = [
+                			'keyword1' => replaceSpecialChar($data["member_name"]),
+                			'keyword2' => time_to_date($data['apply_time']),
+                			'keyword3' => $data["apply_money"]
+                	];
+
+                	$data["page"] = "";
+                	$wechat_model->sendMessage($data);
+                }   
+            }
+        }
     }
 
 }

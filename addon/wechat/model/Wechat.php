@@ -748,7 +748,11 @@ class Wechat extends BaseModel
     {
         try {
             $res = $this->app()->template_message->addTemplate($shortId);
-            return $res;
+            if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) return $res;
+            $errormsg = [
+                '45026' => '模板数量超出限制'
+            ];
+            return ['errcode' => $res[ 'errcode' ], 'errmsg' => $errormsg[$res[ 'errcode' ]] ?? $res[ 'errmsg' ] ];
         } catch (\Exception $e) {
             return ['errcode' => -1, 'errmsg' => $e->getMessage()];
         }

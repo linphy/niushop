@@ -25,7 +25,7 @@
 				
 				target: 'li',
 				cloneStyle: {
-					'background-color': '#eee'
+					'background-color': '#f7f8fa'
 				},
 				floatStyle: {
 					//用固定定位可以防止定位父级不是Body的情况的兼容处理，表示不兼容IE6，无妨

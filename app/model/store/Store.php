@@ -162,6 +162,29 @@ class Store extends BaseModel
     }
 
     /**
+     * 重置密码
+     * @param string $password
+     * @param $condition
+     * @return array
+     */
+    public function resetStorePassword($password = '123456', $condition)
+    {
+        //获取用户id
+        $uid = model('store')->getValue($condition,'uid');
+        if($uid){
+            $res = model('user')->update([
+                'password' => data_md5($password)
+            ], [['uid','=',$uid]]);
+        }else{
+            $res = 1;
+        }
+        if ($res === false) {
+            return $this->error('', 'RESULT_ERROR');
+        }
+        return $this->success($res);
+    }
+
+    /**
      * 获取门店信息
      * @param array $condition
      * @param string $field

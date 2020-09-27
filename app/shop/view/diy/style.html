@@ -11,6 +11,8 @@
     .style.style-red div{background: url(SHOP_IMG/style/color_panel.png) no-repeat 0 0;}
     .style.style-green div{background: url(SHOP_IMG/style/color_panel.png) no-repeat -77px 0;}
     .style.style-blue div{background: url(SHOP_IMG/style/color_panel.png) no-repeat -156px 0;}
+	.style.style-pink div{background: url(SHOP_IMG/style/pink.png) no-repeat;}
+	.style.style-golden div{background: url(SHOP_IMG/style/golden.png) no-repeat;}
     .style_theme img{margin-right: 64px; margin-bottom: 50px; height: 534px;width: 300px;-webkit-box-shadow: 5px 5px 20px #f5f5f5;box-shadow: 5px 5px 20px #f5f5f5;}
 </style>
 {/block}
@@ -33,6 +35,14 @@
                 <div class="ns-exchange-type exchange_green" data-status="green">
                     <div class="style style-green"><div></div><p>纯净绿</p></div>
                 </div>
+				
+				<div class="ns-exchange-type exchange_pink" data-status="pink">
+				    <div class="style style-pink"><div></div><p>樱花粉</p></div>
+				</div>
+				
+				<div class="ns-exchange-type exchange_golden" data-status="golden">
+				    <div class="style style-golden"><div></div><p>魅力金</p></div>
+				</div>
 
                 <input type="hidden" name="style_theme" {if isset($style_theme['style_theme'])} value="{$style_theme.style_theme}" {/if}>
             </div>
@@ -58,7 +68,18 @@
                     <img src="SHOP_IMG/style/decorate-green-2.png" alt="">
 					<img src="SHOP_IMG/style/decorate-green-3.png" alt="">
                 </div>
-
+				
+				<div class="style_theme style_theme_pink">
+				    <img src="SHOP_IMG/style/decorate-pink-1.png" alt="">
+				    <img src="SHOP_IMG/style/decorate-pink-2.png" alt="">
+					<img src="SHOP_IMG/style/decorate-pink-3.png" alt="">
+				</div>
+				
+				<div class="style_theme style_theme_golden">
+				    <img src="SHOP_IMG/style/decorate-golden-1.png" alt="">
+				    <img src="SHOP_IMG/style/decorate-golden-2.png" alt="">
+					<img src="SHOP_IMG/style/decorate-golden-3.png" alt="">
+				</div>
             </div>
         </div>
 
