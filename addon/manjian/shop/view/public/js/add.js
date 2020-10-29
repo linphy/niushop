@@ -234,6 +234,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 					layer.confirm('在同一活动时间内，部分商品已参加其他的满减活动', {
 						title:'活动冲突提醒',
 						btn: ['取消', '查看详情'],
+						closeBtn: 0,
 						btn1: function(){
 							location.href = ns.url("manjian://shop/manjian/add");
 						},

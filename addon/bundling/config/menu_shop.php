@@ -5,7 +5,7 @@
 return [
     [
         'name'           => 'PROMOTION_BUNDLING',
-        'title'          => '优惠套餐',
+        'title'          => '组合套餐',
         'url'            => 'bundling://shop/bundling/lists',
         'parent'         => 'PROMOTION_CENTER',
         'is_show'        => 0,

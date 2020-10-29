@@ -14,6 +14,7 @@ namespace addon\coupon\shop\controller;
 use app\shop\controller\BaseShop;
 use addon\coupon\model\CouponType as CouponTypeModel;
 use addon\coupon\model\Coupon as CouponModel;
+use addon\coupon\model\MemberCoupon as MemberCouponModel;
 
 /**
  * 优惠券
@@ -165,6 +166,43 @@ class Coupon extends BaseShop
         }
     }
 
+
+
+    /**
+     * 发送优惠券
+     */
+    public function send()
+    {
+        $member_id = input('member_id');
+        $coupon_type_model = new CouponTypeModel();
+        if (request()->isAjax()) {
+            $coupon_type_ids   = input('parent', 0);
+            $get_type = input('get_type', 4);
+            $parent = $coupon_type_ids;
+            $site_id        = $this->site_id;
+            if (empty($parent)) {
+                return $this->error('', 'REQUEST_COUPON_TYPE_ID');
+            }
+            if(count($parent,COUNT_NORMAL)==1){
+                $coupon_model = new CouponModel();
+                $res          = $coupon_model->receiveCoupon($parent, $site_id, $member_id, $get_type);
+            }else{
+                $membercoupon_model = new MemberCouponModel();
+                $res          = $membercoupon_model->sendCoupon($parent, $site_id, $member_id, $get_type);
+            }
+            return $res;
+        } else {
+
+            //优惠券状态
+            $coupon_type_status_arr = $coupon_type_model->getCouponTypeStatus();
+            $this->assign('coupon_type_status_arr', $coupon_type_status_arr);
+
+            $this->assign('member_id', $member_id);
+
+            return $this->fetch("coupon/send");
+        }
+    }
+
     /**
      * 活动列表
      */
@@ -246,4 +284,6 @@ class Coupon extends BaseShop
             return $this->fetch("coupon/receive");
         }
     }
+
+
 }

@@ -60,7 +60,7 @@
 <div class="ns-tips layui-collapse">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>设置短信签名、开启模板消息需要审核。</li>
 			<li>审核时间：周一至周日9:30-22:00（法定节假日顺延），工作日预计2小时，非工作日预计4小时。</li>
 			<li>短信数量不足时，请进行短信充值；如有疑问，请联系客服，客服电话：400-886-7993。</li>
@@ -263,13 +263,9 @@
 					width: '9%',
 					unresize: 'false',
 					templet: function (data) {
-
 						var html = '';
-
-						if (data.audit_status != 0 && data.audit_status != 2)
-							html += "<span style='color: red;'>"+ data.audit_status_name +"</span>"
-						else
-							html += data.audit_status_name;
+						if (data.audit_status != 0 && data.audit_status != 2) html += "<span style='color: red;'>"+ data.audit_status_name +"</span>";
+						else html += data.audit_status_name;
 						return html;
 					}
 				},{

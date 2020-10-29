@@ -11,7 +11,7 @@ function loadMaterialList(type) {
 			{field: 'value', width: '30%', title: '标题', align: 'center', templet: '#title',unresize : 'true'},
 			{field: 'create_time', width: '30%', title: '创建时间', align: 'center', templet: '#create_time',unresize : 'true'},
 			{field: 'update_time', width: '25%', title: '更新时间', align: 'center', templet: '#update_time',unresize : 'true'},
-			{title: '　　操作', width: '15%', toolbar: '#operation',unresize : 'true', align: 'left'}
+			{title: '操作', width: '15%', toolbar: '#operation',unresize : 'true', align: 'left'}
 		]]
 	});
 	

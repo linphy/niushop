@@ -220,13 +220,17 @@ class Wechat extends BaseModel
     {
         try {
             $user = $this->app()->oauth->userByCode($params['code']);//获取授权用户
+            $original = $user->getOriginal();
             $data = [
-                'openid'   => $user->getId(),
+                'openid'   => $original['openid'],
                 'userinfo' => [
-                    'avatarUrl' => $user->getAvatar(),
-                    'nickName'  => $user->getNickname()
+                    'avatarUrl' => $original['headimgurl'],
+                    'nickName'  => $original['nickname']
                 ]
             ];
+            if (isset($original['unionid'])) {
+                $data['unionid'] = $original['unionid'];
+            }
             return $this->success($data);
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());

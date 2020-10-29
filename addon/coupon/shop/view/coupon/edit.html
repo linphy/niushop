@@ -21,7 +21,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>满减活动包括店铺所有商品，活动时间不能和已有活动重叠</li>
 			<li>每添加一个规则都需点击确定规则设置按钮，生成一条规则，提交之后才可成功添加</li>
 			<li>点击确定规则设置按钮生成的规则都有一个删除按钮，如不需要该条规则点击删除按钮即可删除</li>
@@ -130,9 +130,9 @@
 		<label class="layui-form-label img-upload-lable">优惠券图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
-				<div class="upload-img-box" id="couponImg">
+				<div class="upload-img-box">
 					{if condition="$coupon_type_info.image"}
-						<img src="{:img($coupon_type_info.image)}" />
+						<img layer-src src="{:img($coupon_type_info.image)}" />
 					{else/}
 						<div class="ns-upload-default">
 							<img src="SHOP_IMG/upload_img.png" />
@@ -141,6 +141,7 @@
 					{/if}
 				</div>
 				<input type="hidden" class="layui-input" name="image" value="{$coupon_type_info.image}" />
+				<p id="couponImg" class=" {if condition="$coupon_type_info.image"} replace {else/} no-replace{/if}">替换</p>
 				<i class="del {if condition="$coupon_type_info.image"}show{/if}">x</i>
 			</div>
 		</div>

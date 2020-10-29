@@ -9,7 +9,6 @@
 
 namespace addon\niusms\model;
 
-use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
 
 
@@ -24,17 +23,17 @@ class Template extends BaseModel
      */
     public function getTemplateInfo($site_id, $keywords, $field = "*")
     {
-        $info = model('sms_template')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]],$field);
+        $info = model('sms_template')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ], $field);
         //获取message信息
-        $message = model('message')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]]);
+        $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ]);
         if (empty($message)) {
             $data = [
-                'keywords'    => $keywords,
-                'site_id'     => $site_id,
+                'keywords' => $keywords,
+                'site_id' => $site_id,
                 'sms_is_open' => 0,
             ];
             model('message')->add($data);
-            $message = model('message')->getInfo([['keywords', '=', $keywords], ['site_id', '=', $site_id]]);
+            $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ]);
         }
         $info = array_merge($info, $message);
 

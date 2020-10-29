@@ -16,7 +16,7 @@ use app\model\BaseModel;
  */
 class Order extends BaseModel
 {
-    private $api = "https://www.niushop.com/api";// https://www.niushop.com/api
+    private $api = "https://www.niushop.com/api";
 
     /**
      * 创建短信订单
@@ -98,7 +98,6 @@ class Order extends BaseModel
      */
     public function httpPost($url, $data)
     {
-
         // 模拟提交数据函数
         $curl = curl_init(); // 启动一个CURL会话
         curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址

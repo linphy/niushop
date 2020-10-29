@@ -9,14 +9,26 @@
  * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
-return [
-    'name' => 'membersignin',
-    'title' => '签到奖励',
-    'description' => '会员签到奖励设置',
-    'type' => 'system', //插件类型  system :系统插件(自动安装), promotion:扩展营销插件  tool:工具插件
-    'status' => 1,
-    'author' => '',
-    'version' => '4.0.4',
-    'version_no' => '202010280001',
-    'content' => '',
-];
+
+namespace addon\memberregister\api\controller;
+
+use app\api\controller\BaseApi;
+use addon\memberregister\model\Register;
+
+/**
+ * 会员注册奖励
+ */
+class Config extends BaseApi
+{
+
+    /**
+     * 计算信息
+     */
+    public function Config()
+    {
+        //注册后奖励
+        $register_model = new Register();
+        $info = $register_model->getConfig($this->site_id);
+        return $this->response($info);
+    }
+}

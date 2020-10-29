@@ -30,7 +30,7 @@
 				<label class="layui-form-label">公众号二维码：</label>
 				<div class="layui-input-block">
 					<div class="upload-img-block square">
-						<div class="upload-img-box" id="img">
+						<div class="upload-img-box">
 						{if condition="$config.value && $config.value.qrcode"}
 							<img src="{:img($config.value.qrcode)}"/>
 						{else/}
@@ -40,6 +40,7 @@
 							</div>
 						{/if}
 						</div>
+						<p id="img" class=" {if condition="$config.value && $config.value.qrcode"} replace {else/} no-replace{/if}">替换</p>
 						<input type="hidden" class="layui-input" name="qrcode" value="{$config.value.qrcode ?? ''}"/>
 						<i class="del {if condition="$config.value && $config.value.qrcode"}show{/if}">x</i>
 				   </div>

@@ -61,6 +61,11 @@ class Coupon extends BaseModel
 
             }
 
+            //只有正在进行中的优惠券可以添加或者发送领取)
+            if ($coupon_type_info['status'] !=1 ) {
+                return $this->error('', '该优惠券已过期');
+            }
+
             $data = [
                 'coupon_type_id' => $coupon_type_id,
                 'site_id'        => $site_id,

@@ -32,9 +32,9 @@
 			<div class="layui-input-block">
 				<div class="upload-img-block">
 					<!-- 用于存储图片路径 -->
-					<div class="upload-img-box" id="background">
+					<div class="upload-img-box">
 						{if $info['background']}
-						<img src="{:img($info['background'])}">
+						<img layer-src src="{:img($info['background'])}">
 						{else /}
 						<div class="ns-upload-default">
 							<img src="SHOP_IMG/upload_img.png" />
@@ -42,6 +42,7 @@
 						</div>
 						{/if}
 					</div>
+					<p id="background" class=" {if condition="$info['background']"} replace {else/} no-replace{/if}">替换</p>
 					<input type="hidden" name="background" value="{$info['background']}" />
 					<i class="del {if $info['background']}show{/if}">x</i>
 				</div>

@@ -174,7 +174,7 @@
 			},
 			success : function(data) {
 				repeat_flag = false;
-				if (data.code != 0 && data.code != undefined) {
+				if (data.code != 0 && data.message != undefined && data.message != '') {
 					layer.msg(data.message);
 					$(".progress-layer").fadeOut();
 				} else if (data.code == 0) {

@@ -135,7 +135,7 @@ var seckillTopHtml = '<ul class="fenxiao-addon-title">';
 				seckillTopHtml += '</div>';
 			seckillTopHtml += '</div>';
 			
-			seckillTopHtml += '<color v-bind:data="{ field : \'titleTextColor\', label : \'标题颜色\', defaultcolor: \'defaultTitleTextColor\' }"></color>';
+			seckillTopHtml += '<color v-bind:data="{ field : \'titleTextColor\', label : \'标题颜色\', defaultcolor: \'#000\' }"></color>';
 		seckillTopHtml += '</li>';
 		
 		seckillTopHtml += '<li>';
@@ -153,7 +153,7 @@ var seckillTopHtml = '<ul class="fenxiao-addon-title">';
 						seckillTopHtml += '<input type="text" name=\'title\' v-model="listMore.title" class="layui-input" />';
 					seckillTopHtml += '</div>';
 				seckillTopHtml += '</div>';
-				seckillTopHtml += '<color v-bind:data="{ field : \'moreTextColor\', defaultcolor: \'defaultMoreTextColor\' }"></color>';
+				seckillTopHtml += '<color v-bind:data="{ field : \'moreTextColor\', defaultcolor: \'#858585\' }"></color>';
 				
 				// seckillTopHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
 				

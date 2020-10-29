@@ -9,7 +9,7 @@ return [
         'url'            => 'coupon://shop/coupon/lists',
         'parent'         => 'PROMOTION_CENTER',
         'is_show'        => 0,
-        'is_control'     => 0,
+        'is_control'     => 1,
         'is_icon'        => 0,
         'picture'        => '',
         'picture_select' => '',

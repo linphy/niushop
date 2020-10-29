@@ -79,4 +79,86 @@ class MemberCoupon extends BaseModel
         $received_num = model('promotion_coupon')->getCount([['coupon_type_id', '=', $coupon_type_id], ['member_id', '=', $member_id]]);
         return $this->success($received_num);
     }
+
+    /**
+     * 获取编码
+     */
+    public function getCode()
+    {
+        return random_keys(8);
+    }
+
+    /**
+     * 会员批量发送优惠券
+     */
+    public function sendCoupon($coupon_type_ids, $site_id, $member_id, $get_type = 4, $is_stock = 0, $is_limit = 1)
+    {
+        //已选优惠券提交数组
+        if(!empty($coupon_type_ids)){
+            $res = 0;
+            foreach ($coupon_type_ids as $coupon_type_id) {
+                $coupon_type_info = model('promotion_coupon_type')->getInfo(['coupon_type_id' => $coupon_type_id, 'site_id' => $site_id]);
+                if (!empty($coupon_type_info)) {
+
+                    if ($coupon_type_info['count'] == $coupon_type_info['lead_count'] && $is_stock == 0) {
+                        continue;
+                    }
+
+                    if ($coupon_type_info['max_fetch'] != 0) {
+                        //限制领取
+                        $member_receive_num = model('promotion_coupon')->getCount([
+                            'coupon_type_id' => $coupon_type_id,
+                            'member_id' => $member_id
+                        ]);
+                        if ($member_receive_num >= $coupon_type_info['max_fetch'] && $is_limit == 1) {
+                            continue;
+                        }
+
+                    }
+                    //优惠券已过期
+                    if ($coupon_type_info['status'] !=1 ) {
+                        continue;
+                    }
+
+                    $data = [
+                        'coupon_type_id' => $coupon_type_id,
+                        'site_id' => $site_id,
+                        'coupon_code' => $this->getCode(),
+                        'member_id' => $member_id,
+                        'money' => $coupon_type_info['money'],
+                        'state' => 1,
+                        'get_type' => $get_type,
+                        'goods_type' => $coupon_type_info['goods_type'],
+                        'fetch_time' => time(),
+                        'coupon_name' => $coupon_type_info['coupon_name'],
+                        'at_least' => $coupon_type_info['at_least'],
+                        'type' => $coupon_type_info['type'],
+                        'discount' => $coupon_type_info['discount'],
+                        'discount_limit' => $coupon_type_info['discount_limit'],
+                        'goods_ids' => $coupon_type_info['goods_ids'],
+                    ];
+
+                    if ($coupon_type_info['validity_type'] == 0) {
+                        $data['end_time'] = $coupon_type_info['end_time'];
+                    } else {
+                        $data['end_time'] = (time() + $coupon_type_info['fixed_term'] * 86400);
+                    }
+                    $res = model('promotion_coupon')->add($data);
+                    if ($is_stock == 0) {
+                        model('promotion_coupon_type')->setInc(['coupon_type_id' => $coupon_type_id], 'lead_count');
+                    }
+                }
+            }
+            if($res){
+                return $this->success($res);
+            }else{
+                return $this->error();
+            }
+        }else{
+            return $this->error();
+        }
+    }
+
+
+
 }

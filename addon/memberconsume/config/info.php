@@ -11,12 +11,12 @@
  */
 return [
     'name' => 'memberconsume',
-    'title' => '会员消费',
+    'title' => '消费奖励',
     'description' => '会员消费后奖励设置',
     'type' => 'system', //插件类型  system :系统插件(自动安装), business:业务插件    promotion:扩展营销插件  tool:工具插件
     'status' => 1,
     'author' => '',
-    'version' => '4.0.3',
-    'version_no' => '202009260001',
+    'version' => '4.0.4',
+    'version_no' => '202010280001',
     'content' => '',
 ];

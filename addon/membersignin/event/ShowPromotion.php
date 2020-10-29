@@ -33,7 +33,7 @@ class ShowPromotion
                     //展示分类（根据平台端设置，admin（平台营销），shop：店铺营销，member:会员营销, tool:应用工具）
                     'show_type'   => 'member',
                     //展示主题
-                    'title'       => '会员签到',
+                    'title'       => '签到奖励',
                     //展示介绍
                     'description' => '会员签到后奖励设置',
                     //展示图标

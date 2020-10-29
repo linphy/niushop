@@ -72,8 +72,13 @@ class Fans extends BaseWechat
             $next_openid = null;
             do {
                 $item_result = $wechat_model->user($next_openid);
+
                 if ($item_result["code"] < 0)
                     return $item_result;
+
+                if(empty($item_result['data']['data'])){
+                    return success(0, '公众号暂无粉丝');
+                }
 
                 $next_openid = $item_result["data"]["next_openid"];
                 $openid_item = $item_result["data"]['data']["openid"];

@@ -9,7 +9,7 @@ return [
         'url'            => 'memberconsume://shop/config/index',
         'parent'         => 'PROMOTION_MEMBER',
         'is_show'        => 0,
-        'is_control'     => 0,
+        'is_control'     => 1,
         'is_icon'        => 0,
         'picture'        => '',
         'picture_select' => '',

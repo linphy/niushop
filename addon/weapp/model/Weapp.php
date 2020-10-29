@@ -103,7 +103,7 @@ class Weapp extends BaseModel
             return $this->error('', $result['errmsg']);
         } else {
             Cache::set('weapp_' . $result['openid'], $result);
-            return $this->success($result['openid']);
+            return $this->success($result);
         }
     }
 
@@ -341,13 +341,16 @@ class Weapp extends BaseModel
         $web_config = $web_config_model ->getMapConfig();
         $web_config = $web_config['data']['value'];
 
+        $socket_url = (strstr(ROOT_URL, 'https://') === false ? str_replace('http', 'ws', ROOT_URL) : str_replace('https', 'wss', ROOT_URL)) . '/wss';
+
         $patterns     = [
             '/\{\{\$baseUrl\}\}/',
             '/\{\{\$imgDomain\}\}/',
             '/\{\{\$h5Domain\}\}/',
             '/\{\{\$mpKey\}\}/',
             '/\{\{\$apiSecurity\}\}/',
-            '/\{\{\$publicKey\}\}/'
+            '/\{\{\$publicKey\}\}/',
+            '/\{\{\$webSocket\}\}/'
         ];
         $replacements = [
             ROOT_URL,
@@ -355,7 +358,8 @@ class Weapp extends BaseModel
             ROOT_URL . '/h5',
             $web_config['tencent_map_key'] ?? '',
             $api_config['is_use'] ?? 0,
-            $api_config['value']['public_key'] ?? ''
+            $api_config['value']['public_key'] ?? '',
+            $socket_url
         ];
         $string       = preg_replace($patterns, $replacements, $string);
         return $string;

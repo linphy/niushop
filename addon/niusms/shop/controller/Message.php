@@ -53,10 +53,10 @@ class Message extends BaseShop
         }
     }
 
-
     /**
      * 查询短信模板审核状态
-     * @return mixed
+     * @param string $tem_id
+     * @return array|mixed
      */
     public function queryTemplate($tem_id = '')
     {

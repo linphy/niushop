@@ -10,9 +10,8 @@
 namespace addon\niusms\shop\controller;
 
 use addon\niusms\model\Config as ConfigModel;
-use addon\niusms\model\Sms as SmsModel;
 use addon\niusms\model\Order as SmsOrderModel;
-use app\model\system\Cron;
+use addon\niusms\model\Sms as SmsModel;
 use app\shop\controller\BaseShop;
 
 /**
@@ -219,20 +218,8 @@ class Sms extends BaseShop
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $sms_model = new SmsModel();
-            $list = $sms_model->getSmsTemplatePageList([], $page, $page_size);
+            $list = $sms_model->getSmsTemplatePageList($this->site_id, [], $page, $page_size);
             foreach ($list[ 'data' ][ 'list' ] as $k => $v) {
-
-                if ($v[ 'audit_status' ] != 0 && $v[ 'audit_status' ] != 2) {
-                    $template_info = $this->queryTemplate($v[ 'tem_id' ]);
-                    // 审核状态如果没有通过，要查询原因
-                    $list[ 'data' ][ 'list' ][ $k ][ 'audit_reason' ] = $template_info[ 'auditMsg' ];
-                    if ($template_info[ 'auditResult' ] == 2) {
-                        $sms_model->modifyAuditStatus(2, $v[ 'template_id' ]);
-                        $list[ 'data' ][ 'list' ][ $k ][ 'audit_status' ] = 2;
-                        $v[ 'audit_status' ] = 2;
-                    }
-                    sleep(1);
-                }
                 $audit_status = $sms_model->getAuditStatus();
                 $list[ 'data' ][ 'list' ][ $k ][ 'audit_status_name' ] = $audit_status [ $v[ 'audit_status' ] ];
             }
@@ -240,34 +227,16 @@ class Sms extends BaseShop
         }
     }
 
+    /**
+     * 开关短信
+     * @return array
+     */
     public function modifyConfigIsUse()
     {
         $config_model = new ConfigModel();
         $is_use = input("is_use", 0);
         $result = $config_model->modifyConfigIsUse($is_use, $this->site_id, $this->app_module);
         return $result;
-    }
-
-    /**
-     * 查询短信模板审核状态
-     * @return mixed
-     */
-    public function queryTemplate($tem_id = '')
-    {
-        $sms_model = new SmsModel();
-        $config_model = new ConfigModel();
-        $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module);
-        $sms_config = $sms_config[ 'data' ][ 'value' ];
-        $tKey = time();
-        $data = [
-            'username' => $sms_config[ 'username' ],
-            'password' => md5(md5($sms_config[ 'password' ]) . $tKey),
-            'tKey' => $tKey,
-            'sign' => input('signature', $sms_config[ 'signature' ]),//短信签名
-            'temId' => input('tem_id', $tem_id)//模板id
-        ];
-        $res = $sms_model->queryTemplate($data);
-        return $res;
     }
 
     /**

@@ -106,9 +106,12 @@ class Sms extends BaseModel
     {
         $url = $this->api . '/sms/loginAccount';
         $res = $this->httpPost($url, $data);
-        if ($res[ 'code' ] == 0) {
+        if ($res[ 'code' ] == 0 && !empty($res[ 'data' ])) {
             $config_model = new ConfigModel();
+            $res[ 'data' ][ 'password' ] = $data[ 'password' ];
             $config_model->setSmsConfig($res[ 'data' ], 1, $site_id, $app_module);
+            // 刷新模板id
+            $this->getSmsTemplatePageList($site_id, [], 1, 0, 'template_id desc', 'template_id,tem_id,template_name,audit_status');
         }
         return $res;
     }
@@ -186,7 +189,7 @@ class Sms extends BaseModel
 
             $signature_status = $this->querySignature($site_id, $app_module);
             if ($signature_status[ 'auditResult' ] != 2) {
-                return $this->error('', $signature_status[ 'auditMsg' ]);
+                return $this->error('', $signature_status[ 'msg' ]);
             }
 
             if ($template_info[ 'tem_id' ] == 0) {
@@ -242,7 +245,6 @@ class Sms extends BaseModel
             model('sms_template')->commit();
             return $this->success();
         } catch (\Exception $e) {
-
             model('sms_template')->rollback();
             return $this->error('', $e->getMessage());
         }
@@ -333,6 +335,7 @@ class Sms extends BaseModel
 
     /**
      * 获取短信模板分页列表
+     * @param $site_id
      * @param array $condition
      * @param int $page
      * @param int $page_size
@@ -340,15 +343,40 @@ class Sms extends BaseModel
      * @param string $field
      * @return array
      */
-    public function getSmsTemplatePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'template_id desc', $field = '*')
+    public function getSmsTemplatePageList($site_id, $condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'template_id desc', $field = '*')
     {
-        $list = model('sms_template')->pageList($condition, $field, $order, $page, $page_size);
-        return $this->success($list);
+        $res = model('sms_template')->pageList($condition, $field, $order, $page, $page_size);
+
+        $config_model = new ConfigModel();
+        $sms_config = $config_model->getSmsConfig($site_id, 'shop');
+        $sms_config = $sms_config[ 'data' ][ 'value' ];
+
+        $url = $this->api . '/sms/getChildSmsTemplateList';
+        $sms_template_list = $this->httpPost($url, [ 'username' => $sms_config[ 'username' ] ]);
+        $sms_template_list = $sms_template_list[ 'data' ];
+
+        // 修改模板id、审核状态
+        if (!empty($sms_template_list)) {
+            foreach ($res[ 'list' ] as $k => $v) {
+                if ($v[ 'tem_id' ] == 0) {
+                    foreach ($sms_template_list as $ck => $cv) {
+                        if ($cv[ 'temName' ] == $v[ 'template_name' ]) {
+                            $res[ 'list' ][ $k ][ 'tem_id' ] = $cv[ 'temId' ];
+                            $res[ 'list' ][ $k ][ 'audit_status' ] = 2;
+                            model('sms_template')->update([ 'tem_id' => $cv[ 'temId' ], 'audit_status' => 2 ], [ [ 'template_id', '=', $v[ 'template_id' ] ] ]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->success($res);
     }
 
     /**
      * 发送短信
      * @param $params
+     * @return array
      */
     public function send($params)
     {
@@ -394,7 +422,6 @@ class Sms extends BaseModel
      */
     public function httpPost($url, $data)
     {
-
         // 模拟提交数据函数
         $curl = curl_init(); // 启动一个CURL会话
         curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址

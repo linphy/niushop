@@ -11,12 +11,12 @@
  */
 return [
     'name' => 'memberregister',
-    'title' => '会员注册',
+    'title' => '新人礼',
     'description' => '会员注册奖励设置',
     'type' => 'system', //插件类型  system :系统插件(自动安装), promotion:扩展营销插件  tool:工具插件
     'status' => 1,
     'author' => '',
-    'version' => '4.0.3',
-    'version_no' => '202009260001',
+    'version' => '4.0.4',
+    'version_no' => '202010280001',
     'content' => '',
 ];
