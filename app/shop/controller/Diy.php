@@ -68,6 +68,25 @@ class Diy extends BaseShop
     }
 
     /**
+     * 会员中心
+     */
+    public function memberIndex()
+    {
+        $diy_view = new DiyViewModel();
+        if (request()->isAjax()) {
+            $data = input("data", '');
+            $res = $diy_view->setMemberIndexDiyConfig($data, $this->site_id);
+            return $res;
+        } else {
+            $info = $diy_view->getMemberIndexDiyConfig($this->site_id);
+            $info = $info[ 'data' ][ 'value' ];
+            $this->assign("info", json_encode($info));
+            $this->assign("app_module", $this->app_module);
+            return $this->fetch('diy/member_index');
+        }
+    }
+
+    /**
      * 编辑
      */
     public function edit()

@@ -171,6 +171,10 @@ class User extends BaseModel
      */
     public function modifyAdminUserPassword($condition = [], $new_password)
     {
+        if(addon_is_exit("demo"))
+        {
+            return $this->error('', '权限不足');
+        }
         $res = model('user')->getInfo($condition, "uid");
         if (!empty($res[ 'uid' ])) {
             $data = array (
@@ -270,12 +274,22 @@ class User extends BaseModel
 
     /**
      * 检测权限
-     * @param unknown $app_module
-     * @param unknown $group_info
-     * @param unknown $url
+     * @param $url
+     * @param $app_module
+     * @param $group_info
+     * @param string $addon
+     * @return bool
      */
     public function checkAuth($url, $app_module, $group_info, $addon = '')
     {
+        $auth_control = event("AuthControl", ['url' => $url, 'app_module' => $app_module], 1);
+        if(!empty($auth_control))
+        {
+            if($auth_control['code'] < 0)
+            {
+                return false;
+            }
+        }
         if ($group_info[ 'is_system' ] == 1) {
             return true;
         }
@@ -308,12 +322,18 @@ class User extends BaseModel
      * @param $group_info
      * @return multitype|array
      */
-    public function getRedirectUrl($url, $app_module, $group_info)
+    public function getRedirectUrl($url, $app_module, $group_info, $addon = '')
     {
         if ($this->checkAuth($url, $app_module, $group_info) == false) {
             $menu_model = new Menu();
-            $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module);
+            $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module, $addon);
             $menu_info = $menu_info[ 'data' ];
+            $menu_count = $menu_model->getMenuCount([ [ 'url', "=", $url ], [ 'app_module', "=", $app_module ] ]);
+            $menu_count = $menu_count[ 'data' ];
+            if ($menu_count == 1) {
+                return [];
+            }
+
             if ($menu_info[ 'level' ] == 1) {
             } elseif ($menu_info[ 'level' ] == 2) {
                 $menu_second_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 2 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);

@@ -59,10 +59,10 @@ class Shop extends BaseModel
      */
     public function getShopDetail($site_id)
     {
-        $res       = [];
-        $shop_info = model('shop')->getInfo([['site_id', '=', $site_id]], 'site_id,expire_time,site_name,username,shop_status,logo,avatar,banner,seo_description,qq,ww,telephone,workingtime,email');
+        $res = [];
+        $shop_info = model('shop')->getInfo([ [ 'site_id', '=', $site_id ] ], 'site_id,expire_time,site_name,username,shop_status,logo,avatar,banner,seo_description,qq,ww,telephone,workingtime,email');
 
-        $res ['shop_info'] = $shop_info;
+        $res [ 'shop_info' ] = $shop_info;
 
         return $this->success($res);
     }
@@ -76,11 +76,11 @@ class Shop extends BaseModel
     public function qrcode($site_id, $type = "create")
     {
         $data = [
-            'site_id'     => $site_id,
-            'app_type'    => "all", // all为全部
-            'type'        => $type, // 类型 create创建 get获取
-            'data'        => [],
-            'page'        => '/pages/index/index/index',
+            'site_id' => $site_id,
+            'app_type' => "all", // all为全部
+            'type' => $type, // 类型 create创建 get获取
+            'data' => [],
+            'page' => '/pages/index/index/index',
             'qrcode_path' => 'upload/qrcode/shop/',
             'qrcode_name' => "shop_qrcode_" . $site_id,
         ];
@@ -91,45 +91,45 @@ class Shop extends BaseModel
         $path = [];
 
         foreach ($app_type_list as $k => $v) {
-            switch ($k) {
+            switch ( $k ) {
                 case 'h5':
-                    $wap_domain         = getH5Domain();
-                    $path[$k]['status'] = 1;
-                    $path[$k]['url']    = $wap_domain . $data['page'];
-                    $path[$k]['img']    = $data['qrcode_path'] . $data['qrcode_name'] . '_' . $k . '.png';
+                    $wap_domain = getH5Domain();
+                    $path[ $k ][ 'status' ] = 1;
+                    $path[ $k ][ 'url' ] = $wap_domain . $data[ 'page' ];
+                    $path[ $k ][ 'img' ] = $data[ 'qrcode_path' ] . $data[ 'qrcode_name' ] . '_' . $k . '.png';
                     break;
                 case 'weapp' :
                     $config = new ConfigModel();
-                    $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'WEAPP_CONFIG']]);
-                    if (!empty($res['data'])) {
-                        if (empty($res['data']['value']['qrcode'])) {
-                            $path[$k]['status']  = 2;
-                            $path[$k]['message'] = '未配置微信小程序';
+                    $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WEAPP_CONFIG' ] ]);
+                    if (!empty($res[ 'data' ])) {
+                        if (empty($res[ 'data' ][ 'value' ][ 'qrcode' ])) {
+                            $path[ $k ][ 'status' ] = 2;
+                            $path[ $k ][ 'message' ] = '未配置微信小程序';
                         } else {
-                            $path[$k]['status'] = 1;
-                            $path[$k]['img']    = $res['data']['value']['qrcode'];
+                            $path[ $k ][ 'status' ] = 1;
+                            $path[ $k ][ 'img' ] = $res[ 'data' ][ 'value' ][ 'qrcode' ];
                         }
 
                     } else {
-                        $path[$k]['status']  = 2;
-                        $path[$k]['message'] = '未配置微信小程序';
+                        $path[ $k ][ 'status' ] = 2;
+                        $path[ $k ][ 'message' ] = '未配置微信小程序';
                     }
                     break;
 
                 case 'wechat' :
                     $config = new ConfigModel();
-                    $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'WECHAT_CONFIG']]);
-                    if (!empty($res['data'])) {
-                        if (empty($res['data']['value']['qrcode'])) {
-                            $path[$k]['status']  = 2;
-                            $path[$k]['message'] = '未配置微信公众号';
+                    $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WECHAT_CONFIG' ] ]);
+                    if (!empty($res[ 'data' ])) {
+                        if (empty($res[ 'data' ][ 'value' ][ 'qrcode' ])) {
+                            $path[ $k ][ 'status' ] = 2;
+                            $path[ $k ][ 'message' ] = '未配置微信公众号';
                         } else {
-                            $path[$k]['status'] = 1;
-                            $path[$k]['img']    = $res['data']['value']['qrcode'];
+                            $path[ $k ][ 'status' ] = 1;
+                            $path[ $k ][ 'img' ] = $res[ 'data' ][ 'value' ][ 'qrcode' ];
                         }
                     } else {
-                        $path[$k]['status']  = 2;
-                        $path[$k]['message'] = '未配置微信公众号';
+                        $path[ $k ][ 'status' ] = 2;
+                        $path[ $k ][ 'message' ] = '未配置微信公众号';
                     }
                     break;
             }

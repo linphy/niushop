@@ -5,7 +5,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>通过选择操作用户及操作内容，进行筛选用户。</li>
 			<li>可以对用户日志进行批量删除。</li>
 		</ul>
@@ -35,6 +35,11 @@
 
 <!-- 列表 -->
 <table id="useLog_info" lay-filter="useLog_info"></table>
+
+<!-- 批量删除 -->
+<script type="text/html" id="toolbarOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="del">批量删除</button>
+</script>
 
 <!-- 批量删除 -->
 <script type="text/html" id="batchOperation">
@@ -79,6 +84,7 @@
 					}
 				}]
 			],
+			toolbar: '#toolbarOperation',
 			bottomToolbar: "#batchOperation"
 		});
 		
@@ -119,6 +125,25 @@
 					break;
 			}
 		});
+		
+		/**
+		 * 批量操作
+		 */
+		table.toolbar(function(obj) {
+		
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			switch (obj.event) {
+				case "del":
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].id);
+					deleteUserLog(id_array.toString());
+					break;
+			}
+		});
+		
 
 		/**
 		 * 搜索功能

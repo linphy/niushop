@@ -36,7 +36,7 @@
 <div class="layui-form">
 	<div class="layui-card ns-card-common ns-card-brief">
 		<div class="layui-card-header">
-			<span class="ns-card-title">同城配送基础设置</span>
+			<span class="ns-card-title">外卖配送基础设置</span>
 		</div>
 		<div class="layui-card-body">
 			<div class="layui-form-item">
@@ -57,7 +57,7 @@
 						<input type="radio" name="time_is_open" value="1" title="开启"  lay-filter="time_is_open" {if $local_info.time_is_open == 1}checked{/if}/>
 						<input type="radio" name="time_is_open" value="0" title="关闭"  lay-filter="time_is_open" {if $local_info.time_is_open == 0 || !isset($local_info.time_is_open)}checked{/if}/>
 					</div>
-					<div class="ns-word-aux">开启后，买家下单选择同城配送时，可选择配送时间，提交订单后，将在买家备注中显示。</div>
+					<div class="ns-word-aux">开启后，买家下单选择外卖配送时，可选择配送时间，提交订单后，将在买家备注中显示。</div>
 				</div>
 			</div>
 			<div class="layui-form-item time-view" {if $local_info.time_is_open == 0} style="display:none;"{/if}>

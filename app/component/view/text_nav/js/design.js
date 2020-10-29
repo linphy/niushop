@@ -5,12 +5,12 @@ var textNavPreviewHtml = '<div v-bind:id="id" class="text-navigation">';
 
 		textNavPreviewHtml += '<div v-show="data.arrangement==\'horizontal\'" v-bind:class="[data.arrangement]">';
 			textNavPreviewHtml += '<div class="item" v-for="item in list">';
-				textNavPreviewHtml += '<a href="javascript:;" v-bind:style="{color: data.textColor, fontSize: data.fontSize+\'px\'}">{{item.text}}</a>';
+				textNavPreviewHtml += '<a href="javascript:;" v-bind:style="{color: data.textColor ? data.textColor : \'rgba(0,0,0,0)\', fontSize: data.fontSize+\'px\'}">{{item.text}}</a>';
 			textNavPreviewHtml += '</div>';
 		textNavPreviewHtml += '</div>';
 
 		textNavPreviewHtml += '<div v-show="data.arrangement==\'vertical\'" v-bind:style="{ textAlign : data.textAlign }">';
-			textNavPreviewHtml += '<a href="javascript:;" v-bind:style="{color: data.textColor, fontSize: data.fontSize+\'px\'}">{{list[0].text}}</a>';
+			textNavPreviewHtml += '<a href="javascript:;" v-bind:style="{color: data.textColor ? data.textColor : \'rgba(0,0,0,0)\', fontSize: data.fontSize+\'px\'}">{{list[0].text}}</a>';
 			textNavPreviewHtml += '<a href="javascript:;" class="second-text">{{list[0].secondText}}</a>';
 		textNavPreviewHtml += '</div>';
 

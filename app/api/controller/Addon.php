@@ -56,6 +56,7 @@ class Addon extends BaseApi
         $res['bargain']        = addon_is_exit('bargain', $this->site_id);                    //砍价
         $res['presale']        = addon_is_exit('presale', $this->site_id);                   // 预售
         $res['notes']        = addon_is_exit('notes', $this->site_id);                   // 运营笔记
+        $res['membercancel'] = addon_is_exit('membercancel', $this->site_id);        // 会员注销
 
         return $this->response($this->success($res));
     }

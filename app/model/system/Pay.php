@@ -21,9 +21,9 @@ use app\model\BaseModel;
 class Pay extends BaseModel
 {
 
-    public $refund_pay_type = array(
+    public $refund_pay_type = array (
         "offline_refund_pay" => "线下退款",
-        "online_refund_pay"  => "原路退款"
+        "online_refund_pay" => "原路退款"
     );
 
     /********************************************************************支付**********************************************************/
@@ -43,14 +43,14 @@ class Pay extends BaseModel
             $return_url = addon_url("pay/pay/payreturn");
         }
 
-        $pay_info           = $this->getPayInfo($out_trade_no);
-        $data               = $pay_info['data'];
-        $data['app_type']   = $app_type;
-        $data['notify_url'] = $notify_url;
-        $data['return_url'] = $return_url;
-        $data['pay_type']   = $pay_type;
-        $data["member_id"]  = $member_id;
-        $res                = event('Pay', $data, true);
+        $pay_info = $this->getPayInfo($out_trade_no);
+        $data = $pay_info[ 'data' ];
+        $data[ 'app_type' ] = $app_type;
+        $data[ 'notify_url' ] = $notify_url;
+        $data[ 'return_url' ] = $return_url;
+        $data[ 'pay_type' ] = $pay_type;
+        $data[ "member_id" ] = $member_id;
+        $res = event('Pay', $data, true);
         return $res;
     }
 
@@ -86,17 +86,17 @@ class Pay extends BaseModel
      */
     public function addPay($site_id, $out_trade_no, $pay_type, $pay_body, $pay_detail, $pay_money, $pay_no, $notify_url, $return_url)
     {
-        $data   = array(
-            'site_id'      => $site_id,
+        $data = array (
+            'site_id' => $site_id,
             'out_trade_no' => $out_trade_no,
-            'pay_body'     => $pay_body,
-            'pay_detail'   => $pay_detail,
-            'pay_money'    => $pay_money,
-            'pay_no'       => $pay_no,
-            "event"        => $notify_url,
-            'return_url'   => $return_url,
-            "pay_status"   => 0,
-            "create_time"  => time(),
+            'pay_body' => $pay_body,
+            'pay_detail' => $pay_detail,
+            'pay_money' => $pay_money,
+            'pay_no' => $pay_no,
+            "event" => $notify_url,
+            'return_url' => $return_url,
+            "pay_status" => 0,
+            "create_time" => time(),
         );
         $result = model("pay")->add($data);
         if ($pay_money == 0) {
@@ -115,33 +115,33 @@ class Pay extends BaseModel
     public function onlinePay($out_trade_no, $pay_type, $trade_no, $pay_addon)
     {
         $pay_info_result = $this->getPayInfo($out_trade_no);
-        $pay_info        = $pay_info_result["data"];
+        $pay_info = $pay_info_result[ "data" ];
         $pay_type = empty($pay_type) ? 'ONLINE_PAY' : $pay_type;
         //支付状态 (未支付  未取消)
-        if ($pay_info["pay_status"] == 0) {
-            $data = array(
-                "trade_no"   => $trade_no,
-                "pay_type"   => $pay_type,
-                "pay_addon"  => $pay_addon,
-                "pay_time"   => time(),
+        if ($pay_info[ "pay_status" ] == 0) {
+            $data = array (
+                "trade_no" => $trade_no,
+                "pay_type" => $pay_type,
+                "pay_addon" => $pay_addon,
+                "pay_time" => time(),
                 "pay_status" => 2
             );
-            $res  = model("pay")->update($data, [['out_trade_no', '=', $out_trade_no]]);
+            $res = model("pay")->update($data, [ [ 'out_trade_no', '=', $out_trade_no ] ]);
             if ($res === false) {
                 return error('', 'UNKNOW_ERROR');
             } else {
                 //成功则直接给应用异步回调地址发送
-                $return_data = array(
+                $return_data = array (
                     'out_trade_no' => $out_trade_no,
-                    'trade_no'     => $trade_no,
-                    'pay_type'     => $pay_type
+                    'trade_no' => $trade_no,
+                    'pay_type' => $pay_type
                 );
 
                 //根据事件成功后执行
-                if (strpos($pay_info["event"], 'http://') !== 0 || strpos($pay_info["event"], 'https://') !== 0) {
-                    event($pay_info["event"], $return_data);
+                if (strpos($pay_info[ "event" ], 'http://') !== 0 || strpos($pay_info[ "event" ], 'https://') !== 0) {
+                    event($pay_info[ "event" ], $return_data);
                 } else {
-                    http($pay_info["event"], 1);
+                    http($pay_info[ "event" ], 1);
 
                 }
                 return $this->success($return_data);
@@ -159,17 +159,17 @@ class Pay extends BaseModel
     public function deletePay($out_trade_no)
     {
         $pay_info_result = $this->getPayInfo($out_trade_no);
-        $pay_info        = $pay_info_result["data"];
+        $pay_info = $pay_info_result[ "data" ];
         if (!empty($pay_info)) {
             //支付状态 (未支付  未取消)
-            if ($pay_info["pay_status"] == 0) {
-                if (!empty($pay_info["pay_type"])) {
+            if ($pay_info[ "pay_status" ] == 0) {
+                if (!empty($pay_info[ "pay_type" ])) {
                     $close_result = event("payClose", $pay_info, true);
-                    if ($close_result["code"] < 0) {
+                    if ($close_result[ "code" ] < 0) {
                         return $close_result;
                     }
                 }
-                $res = model("pay")->delete([['out_trade_no', '=', $out_trade_no]]);
+                $res = model("pay")->delete([ [ 'out_trade_no', '=', $out_trade_no ] ]);
                 if ($res === false) {
                     return $this->error('', 'UNKNOW_ERROR');
                 } else {
@@ -191,21 +191,21 @@ class Pay extends BaseModel
     public function rewritePay($out_trade_no, $pay_money)
     {
         $pay_info_result = $this->getPayInfo($out_trade_no);
-        $pay_info        = $pay_info_result["data"];
+        $pay_info = $pay_info_result[ "data" ];
         //支付状态 (未支付  未取消)
-        if ($pay_info["pay_status"] == 0) {
-            if (!empty($pay_info["pay_type"])) {
+        if ($pay_info[ "pay_status" ] == 0) {
+            if (!empty($pay_info[ "pay_type" ])) {
                 $close_result = event("payClose", $pay_info, true);
-                if ($close_result["code"] < 0) {
+                if ($close_result[ "code" ] < 0) {
                     return $close_result;
                 }
             }
             $new_out_trade_no = $this->createOutTradeNo();
-            $data             = array(
+            $data = array (
                 "out_trade_no" => $new_out_trade_no,
-                "pay_money"    => $pay_money
+                "pay_money" => $pay_money
             );
-            $res              = model("pay")->update($data, [['out_trade_no', '=', $out_trade_no]]);
+            $res = model("pay")->update($data, [ [ 'out_trade_no', '=', $out_trade_no ] ]);
             if ($res === false) {
                 return $this->error('', 'UNKNOW_ERROR');
             } else {
@@ -224,13 +224,13 @@ class Pay extends BaseModel
      */
     public function bindMchPay($out_trade_no, $json_data)
     {
-        $data      = array(
+        $data = array (
             "mch_info" => json_encode($json_data, JSON_UNESCAPED_UNICODE)
         );
-        $condition = array(
-            ["out_trade_no", "=", $out_trade_no]
+        $condition = array (
+            [ "out_trade_no", "=", $out_trade_no ]
         );
-        $res       = model("pay")->update($data, $condition);
+        $res = model("pay")->update($data, $condition);
         return $res;
     }
 
@@ -250,7 +250,7 @@ class Pay extends BaseModel
      */
     public function getPayInfo($out_trade_no)
     {
-        $get_pay_list = model('pay')->getInfo([['out_trade_no', '=', $out_trade_no]]);
+        $get_pay_list = model('pay')->getInfo([ [ 'out_trade_no', '=', $out_trade_no ] ]);
         return $this->success($get_pay_list);
     }
 
@@ -275,8 +275,8 @@ class Pay extends BaseModel
      */
     public function getPayStatistics($condition)
     {
-        $statistics_array = array(
-            'count'     => model('pay')->getCount($condition),
+        $statistics_array = array (
+            'count' => model('pay')->getCount($condition),
             'sum_money' => model('pay')->getSum($condition, 'pay_money')
         );
         return $statistics_array;
@@ -315,36 +315,36 @@ class Pay extends BaseModel
         //是否是原理退款方式退款
         if ($refund_type == 1) {
             $pay_info_result = $this->getPayInfo($out_trade_no);
-            $pay_info        = $pay_info_result["data"];
+            $pay_info = $pay_info_result[ "data" ];
             if (empty($pay_info))
                 return $this->error('', "付款记录不存在!");
 
-            $data = array(
-                "refund_no"   => $refund_no,
-                "refund_fee"  => $refund_fee,
+            $data = array (
+                "refund_no" => $refund_no,
+                "refund_fee" => $refund_fee,
                 "refund_desc" => $refund_desc,
-                "pay_info"    => $pay_info,
-                "total_fee"   => $total_fee,
-                "site_id"     => $site_id
+                "pay_info" => $pay_info,
+                "total_fee" => $total_fee,
+                "site_id" => $site_id
             );
             //退款金额许大于0
-            if ($refund_fee > 0 && !in_array($pay_info["pay_type"], ["OFFLINE_PAY", "BALANCE", "ONLINE_PAY"])) {
+            if ($refund_fee > 0 && !in_array($pay_info[ "pay_type" ], [ "OFFLINE_PAY", "BALANCE", "ONLINE_PAY" ])) {
                 $result = event("PayRefund", $data, true);
                 if (empty($result))
                     return $this->error('', "找不到可用的退款方式!");
 
-                if ($result["code"] < 0)
+                if ($result[ "code" ] < 0)
                     return $result;
             }
 
 
         }
-        $refund_data = array(
-            "refund_no"    => $refund_no,
-            "refund_fee"   => $refund_fee,
-            "total_money"  => $total_fee,
-            "refund_type"  => $refund_type,
-            "site_id"      => $site_id,
+        $refund_data = array (
+            "refund_no" => $refund_no,
+            "refund_fee" => $refund_fee,
+            "total_money" => $total_fee,
+            "refund_type" => $refund_type,
+            "site_id" => $site_id,
             "out_trade_no" => $out_trade_no,
         );
         $this->addRefundPay($refund_data);
@@ -358,9 +358,9 @@ class Pay extends BaseModel
      */
     public function addRefundPay($data)
     {
-        $data["create_time"]   = time();
-        $data["refund_detail"] = "支付交易号:" . $data['out_trade_no'] . "，退款金额:" . $data["refund_fee"] . "元";
-        $res                   = model("pay_refund")->add($data);
+        $data[ "create_time" ] = time();
+        $data[ "refund_detail" ] = "支付交易号:" . $data[ 'out_trade_no' ] . "，退款金额:" . $data[ "refund_fee" ] . "元";
+        $res = model("pay_refund")->add($data);
         if ($res == false) {
             return $this->error($res);
         }
@@ -374,7 +374,7 @@ class Pay extends BaseModel
      */
     public function getPayStatus($out_trade_no)
     {
-        $info = model('pay')->getInfo([['out_trade_no', '=', $out_trade_no]], 'pay_status');
+        $info = model('pay')->getInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'pay_status');
         if (empty($info)) return $this->error();
         return $this->success($info);
     }
@@ -385,14 +385,14 @@ class Pay extends BaseModel
      */
     public function getTransferType($site_id)
     {
-        $data       = array(
+        $data = array (
             "bank" => "银行卡"
         );
-        $temp_array = event("TransferType", ['site_id' => $site_id]);
+        $temp_array = event("TransferType", [ 'site_id' => $site_id ]);
 
         if (!empty($temp_array)) {
             foreach ($temp_array as $k => $v) {
-                $data[$v["type"]] = $v["type_name"];
+                $data[ $v[ "type" ] ] = $v[ "type_name" ];
             }
         }
         return $data;

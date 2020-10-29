@@ -13,6 +13,7 @@
 
 namespace app\api\controller;
 
+use app\model\system\Servicer;
 use app\model\web\Config as ConfigModel;
 
 class Config extends BaseApi
@@ -60,5 +61,14 @@ class Config extends BaseApi
         $config_model = new ConfigModel();
         $info = $config_model->getCaptchaConfig();
         return $this->response($this->success($info));
+    }
+
+    /**
+     * 客服配置
+     */
+    public function servicer(){
+        $servicer_model = new Servicer();
+        $result = $servicer_model->getServicerConfig()['data'] ?? [];
+        return $this->response($this->success($result['value'] ?? []));
     }
 }

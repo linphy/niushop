@@ -14,6 +14,7 @@ namespace app\model\goods;
 
 use think\facade\Cache;
 use app\model\BaseModel;
+use think\facade\Db;
 
 /**
  * 商品分类
@@ -77,6 +78,32 @@ class GoodsCategory extends BaseModel
                         break;
                 }
             }
+
+            if ($info['pid'] != $data['pid']) {
+                if ($info[ 'level' ] == 2) {
+                    model('goods')->update([
+                        'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['pid']},{$data[ 'category_id' ]},', '[\"{$data['pid']},{$data[ 'category_id' ]},')")
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+
+                    model('goods')->update([
+                        'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['pid']},{$data[ 'category_id' ]}\"]', '[\"{$data['pid']},{$data[ 'category_id' ]}\"]')")
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+
+                    model('goods')->update([
+                        'category_id' => Db::raw("REPLACE(category_id, ',{$info['pid']},{$data[ 'category_id' ]},', ',{$data['pid']},{$data[ 'category_id' ]},')")
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                } else {
+                    model('goods')->update([
+                        'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['category_id_1']},{$info['category_id_2']},{$info['category_id_3']}\"]', '[\"{$data['category_id_1']},{$data['category_id_2']},{$data['category_id_3']}\"]')")
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+
+                    model('goods')->update([
+                        'category_id' => Db::raw("REPLACE(category_id, ',{$info['category_id_1']},{$info[ 'category_id_2' ]},{$info[ 'category_id_3' ]},', ',{$data['category_id_1']},{$data[ 'category_id_2' ]},{$data[ 'category_id_3' ]},')")
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                }
+
+            }
+
             $res = model('goods_category')->update($data, [ [ 'category_id', '=', $data[ 'category_id' ] ], [ 'site_id', '=', $site_id ] ]);
             Cache::tag("goods_category_" . $site_id)->clear();
 

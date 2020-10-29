@@ -14,6 +14,7 @@ namespace app\model\goods;
 
 use app\model\BaseModel;
 use app\model\order\OrderCommon;
+use app\model\system\Cron;
 use app\model\system\Stat;
 use addon\discount\model\Discount;
 
@@ -74,7 +75,9 @@ class VirtualGoods extends BaseModel
                 'goods_spec_format' => $data[ 'goods_spec_format' ],
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
-                'label_id' => $data[ 'label_id' ]
+                'label_id' => $data[ 'label_id' ],
+                'timer_on' => $data['timer_on'],
+                'timer_off' => $data['timer_off'],
             );
 
             $common_data = array (
@@ -123,20 +126,31 @@ class VirtualGoods extends BaseModel
                     'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
                     'sku_images' => $item[ 'sku_images' ],
                     'goods_id' => $goods_id,
+                    'is_default' => $item[ 'is_default' ] ?? 0,
                 );
 
                 $sku_arr[] = array_merge($sku_data, $common_data);
             }
 
+
             model('goods_sku')->addList($sku_arr);
 
             // 赋值第一个商品sku_id
-            $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'sku_id asc');
+            $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
             model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项 / 规格值JSON字符串
                 $this->dealGoodsSkuSpecFormat($goods_id, $data[ 'goods_spec_format' ]);
+            }
+
+            $cron = new Cron();
+            //定时上下架
+            if($goods_data['timer_on'] > 0){
+                $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data['timer_on'], $goods_id);
+            }
+            if($goods_data['timer_off'] > 0){
+                $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data['timer_off'], $goods_id);
             }
 
             //添加统计
@@ -194,7 +208,9 @@ class VirtualGoods extends BaseModel
                 'goods_spec_format' => $data[ 'goods_spec_format' ],
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
-                'label_id' => $data[ 'label_id' ]
+                'label_id' => $data[ 'label_id' ],
+                'timer_on' => $data['timer_on'],
+                'timer_off' => $data['timer_off'],
             );
 
             $common_data = array (
@@ -228,31 +244,63 @@ class VirtualGoods extends BaseModel
             // 如果只编辑价格库存就是修改，如果添加规格项/值就需要重新生成
             if (!empty($data[ 'goods_sku_data' ][ 0 ][ 'sku_id' ])) {
 
-                foreach ($data[ 'goods_sku_data' ] as $item) {
-                    $discount_model = new Discount();
-                    $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
-                    $discount_info = $discount_info_result[ 'data' ];
+                if($data['spec_type_status'] == 1){
+                    model('goods_sku')->delete([ [ 'goods_id', '=', $goods_id ] ]);
 
-                    $sku_data = array (
-                        'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
-                        'spec_name' => $item[ 'spec_name' ],
-                        'sku_no' => $item[ 'sku_no' ],
-                        'sku_spec_format' => !empty($item[ 'sku_spec_format' ]) ? json_encode($item[ 'sku_spec_format' ]) : "",
-                        'price' => $item[ 'price' ],
-                        'market_price' => $item[ 'market_price' ],
-                        'cost_price' => $item[ 'cost_price' ],
-                        'stock' => $item[ 'stock' ],
-                        'stock_alarm' => $item[ 'stock_alarm' ],
-                        'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
-                        'sku_images' => $item[ 'sku_images' ],
-                        'goods_id' => $goods_id,
-                    );
-                    if (empty($discount_info)) {
-                        $sku_data[ 'discount_price' ] = $item[ 'price' ];
+                    $sku_arr = array ();
+                    //添加sku商品
+                    foreach ($data[ 'goods_sku_data' ] as $item) {
+
+                        $sku_data = array (
+                            'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
+                            'spec_name' => $item[ 'spec_name' ],
+                            'sku_no' => $item[ 'sku_no' ],
+                            'sku_spec_format' => !empty($item[ 'sku_spec_format' ]) ? json_encode($item[ 'sku_spec_format' ]) : "",
+                            'price' => $item[ 'price' ],
+                            'market_price' => $item[ 'market_price' ],
+                            'cost_price' => $item[ 'cost_price' ],
+                            'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
+                            'stock' => $item[ 'stock' ],
+                            'stock_alarm' => $item[ 'stock_alarm' ],
+                            'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
+                            'sku_images' => $item[ 'sku_images' ],
+                            'goods_id' => $goods_id,
+                            'is_default' => $item[ 'is_default' ] ?? 0,
+                        );
+
+                        $sku_arr[] = array_merge($sku_data, $common_data);
                     }
-                    model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ] ]);
 
+                    model('goods_sku')->addList($sku_arr);
+                }else{
+                    foreach ($data[ 'goods_sku_data' ] as $item) {
+                        $discount_model = new Discount();
+                        $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
+                        $discount_info = $discount_info_result[ 'data' ];
+
+                        $sku_data = array (
+                            'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
+                            'spec_name' => $item[ 'spec_name' ],
+                            'sku_no' => $item[ 'sku_no' ],
+                            'sku_spec_format' => !empty($item[ 'sku_spec_format' ]) ? json_encode($item[ 'sku_spec_format' ]) : "",
+                            'price' => $item[ 'price' ],
+                            'market_price' => $item[ 'market_price' ],
+                            'cost_price' => $item[ 'cost_price' ],
+                            'stock' => $item[ 'stock' ],
+                            'stock_alarm' => $item[ 'stock_alarm' ],
+                            'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
+                            'sku_images' => $item[ 'sku_images' ],
+                            'goods_id' => $goods_id,
+                            'is_default' => $item[ 'is_default' ] ?? 0,
+                        );
+                        if (empty($discount_info)) {
+                            $sku_data[ 'discount_price' ] = $item[ 'price' ];
+                        }
+                        model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ] ]);
+
+                    }
                 }
+
             } else {
 
                 model('goods_sku')->delete([ [ 'goods_id', '=', $goods_id ] ]);
@@ -275,6 +323,7 @@ class VirtualGoods extends BaseModel
                         'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
                         'sku_images' => $item[ 'sku_images' ],
                         'goods_id' => $goods_id,
+                        'is_default' => $item[ 'is_default' ] ?? 0,
                     );
 
                     $sku_arr[] = array_merge($sku_data, $common_data);
@@ -284,12 +333,23 @@ class VirtualGoods extends BaseModel
             }
 
             // 赋值第一个商品sku_id
-            $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'sku_id asc');
+            $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
             model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项 / 规格值JSON字符串
                 $this->dealGoodsSkuSpecFormat($goods_id, $data[ 'goods_spec_format' ]);
+            }
+
+            $cron = new Cron();
+            //定时上下架
+            if($goods_data['timer_on'] > 0){
+                $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOn' ], [ 'relate_id', '=', $goods_id ] ]);
+                $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data['timer_on'], $goods_id);
+            }
+            if($goods_data['timer_off'] > 0){
+                $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOff' ], [ 'relate_id', '=', $goods_id ] ]);
+                $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data['timer_off'], $goods_id);
             }
 
             model('goods')->commit();

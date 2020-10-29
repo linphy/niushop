@@ -31,7 +31,7 @@ class Helpclass extends BaseApi
         ];
         $list      = $help->getHelpClassList($condition, 'class_id, class_name', 'sort desc');
         $order     = 'create_time desc';
-        $field     = 'id,title';
+        $field     = 'id,title,link_address';
         if (!empty($list['data'])) {
 
             foreach ($list['data'] as $k => $v) {

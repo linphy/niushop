@@ -6,7 +6,7 @@
 		<template v-if="nc.selectedTemplate!='carousel-posters'">
 			<div class="image-ads-list">
 				<div v-for="(item,index) in nc.list" class="image-ads-item"
-				     v-bind:style="{ marginBottom : ( nc.selectedTemplate=='vertically' ? (nc.imageClearance+'px') : '' ),marginRight : ( nc.selectedTemplate=='horizontal-sliding' ? (nc.imageClearance+'px') : '' ),padding : ( nc.selectedTemplate=='vertically' ? ('0 '+ nc.padding+'px') : '' ) }"
+				     v-bind:style="{ marginTop : ( nc.selectedTemplate=='vertically' ? (nc.imageClearance+'px') : '' ),marginRight : ( nc.selectedTemplate=='horizontal-sliding' ? (nc.imageClearance+'px') : '' ),padding : ( nc.selectedTemplate=='vertically' ? ('0 '+ nc.padding+'px') : '' ) }"
 				     v-bind:class="[nc.selectedTemplate]">
 
 					<p v-show="item.imageUrl==''">

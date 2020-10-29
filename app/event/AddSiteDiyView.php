@@ -30,13 +30,13 @@ class AddSiteDiyView
             // 添加自定义主页装修
             $value = json_encode([
                 "global" => [
-                    "bgColor" => "",
                     "title" => "网站主页",
                     "openBottomNav" => false,
+                    "bgColor" => "",
                     "bgUrl" => "upload/default/diy_view/index_bg.png",
                     "popWindow" => [
                         "imageUrl" => "",
-                        "count" => 1,
+                        "count" => -1,
                         "link" => [
                             "name" => ""
                         ]
@@ -66,14 +66,18 @@ class AddSiteDiyView
                                 "title" => "",
                                 "link" => [
                                     "name" => ""
-                                ]
+                                ],
+                                "imgWidth" => 750,
+                                "imgHeight" => 350
                             ],
                             [
                                 "imageUrl" => "upload/default/diy_view/posters_2.png",
                                 "title" => "",
                                 "link" => [
                                     "name" => ""
-                                ]
+                                ],
+                                "imgWidth" => 750,
+                                "imgHeight" => 350
                             ]
                         ],
                         "addon_name" => "",
@@ -86,8 +90,7 @@ class AddSiteDiyView
                         "backgroundColor" => "#ffffff",
                         "selectedTemplate" => "imageNavigation",
                         "scrollSetting" => "fixed",
-                        "imageScale" => "70",
-                        "padding" => 0,
+                        "padding" => 20,
                         "list" => [
                             [
                                 "imageUrl" => "upload/default/diy_view/nav/coupon.png",
@@ -159,14 +162,7 @@ class AddSiteDiyView
                         "name" => "图文导航",
                         "controller" => "GraphicNav",
                         "paddingTopBottom" => 0,
-                        "paddingLeftRight" => 10,
-                        "marginTopBottom" => 0,
-                        "marginLeftRight" => 0,
-                        "defaultTextColor" => "#666666",
-                        "borderTopLeftRadius" => 0,
-                        "borderTopRightRadius" => 0,
-                        "borderBottomLeftRadius" => 10,
-                        "borderBottomRightRadius" => 10
+                        "defaultTextColor" => "#666666"
                     ],
                     [
                         "height" => 10,
@@ -175,7 +171,7 @@ class AddSiteDiyView
                         "type" => "HORZ_BLANK",
                         "name" => "辅助空白",
                         "controller" => "HorzBlank",
-                        "marginLeftRight" => 0
+                        "marginLeftRight" => 10
                     ],
                     [
                         "backgroundColor" => "",

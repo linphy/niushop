@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="SHOP_CSS/delivery_lists.css"/>
 <style>
     .ns-table-tab .layui-tab-content {padding-top: 0;}
+	.layui-layer-content {text-align: center; line-height: 30px;}
 </style>
 {/block}
 {block name="main"}
@@ -62,11 +63,7 @@
             <div class="ns-form-row">
                 <button class="layui-btn ns-bg-color" id="btn_search" lay-submit lay-filter="btn_search">筛选</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="batch_export" >批量导出</button>
-                <!--<button class="layui-btn layui-btn-primary">查看已生成报表</button>-->
             </div>
-            <input type="hidden" name="status" val=""/>
-            <input type="hidden" name="page" val=""/>
         </form>
     </div>
 </div>
@@ -77,24 +74,41 @@
         <li class="layui-this" lay-id="">全部订单</li>
     </ul>
     <div class="layui-tab-content">
+		<div class="order-operation" style="display: none">
+			<div class="layui-form order-operation-btn all-selected-checkbox">
+				<div class="order-operation-all-btn">
+					<input type="checkbox" name="" lay-skin="primary" lay-filter="allCheckbox">
+					<input type="hidden" name="allOrderId">
+				</div>
+				<div class="btn-box">
+					<span class="btn-deliver">批量发货</span>
+					<span class="btn-dispatch-bill">打印发货单</span>
+					{if addon_is_exit('electronicsheet',$user_info.site_id) == 1}
+					<span class="btn-express-sheet">打印电子面单</span>
+					{/if}
+				</div>
+			</div>
+		</div>
         <!-- 列表 -->
         <div id="delivery_list"></div>
     </div>
 </div>
 
 <div class="order-operation" style="display: none">
-    <div class="layui-form order-operation-btn all-selected-checkbox">
-        <input type="checkbox" name="" lay-skin="primary" lay-filter="allCheckbox">
-        <input type="hidden" name="allOrderId">
-        <div class="btn-box">
-            <span class="btn-deliver">批量发货</span>
-            <span class="btn-dispatch-bill">打印发货单</span>
-            {if addon_is_exit('electronicsheet',$user_info.site_id) == 1}
-            <span class="btn-express-sheet">打印电子面单</span>
-            {/if}
-        </div>
-    </div>
-    <div id="delivery_page"></div>
+	<div class="layui-form order-operation-btn all-selected-checkbox">
+		<div class="order-operation-all-btn">
+			<input type="checkbox" name="" lay-skin="primary" lay-filter="allCheckbox">
+			<input type="hidden" name="allOrderId">
+		</div>
+		<div class="btn-box">
+			<span class="btn-deliver">批量发货</span>
+			<span class="btn-dispatch-bill">打印发货单</span>
+			{if addon_is_exit('electronicsheet',$user_info.site_id) == 1}
+			<span class="btn-express-sheet">打印电子面单</span>
+			{/if}
+		</div>
+	</div>
+	<div id="delivery_page"></div>
 </div>
 
 <div id="order_operation"></div>
@@ -241,10 +255,8 @@
         form.on('submit(btn_search)', function(data){
             is_refresh = true;
             data.field.page = 1;
-            data.field.order_status = data.field.order_status1;
             resetOrderStatus(data.field.order_type, 2);
             setHashOrderList(data.field);
-            setOrderStatusTab(data.field.order_status);
             return false;
         });
 
@@ -505,6 +517,11 @@
     }
 
     $("body").on("click",".order-operation .btn-dispatch-bill", function () {
+		var subLen = $(".sub-selected-checkbox input:checked").length;
+		if (subLen <=0 ) {
+		    layer.msg("请选择订单");
+		    return false;
+		}
         for (var i = 0; i < orderDataAll.length; i++){
             var url = ns.url("shop/printer/batchprintorder",{order_id: orderDataAll[i].order_id});
             dispatchBill(url)

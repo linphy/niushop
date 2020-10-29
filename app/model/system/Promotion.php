@@ -52,6 +52,7 @@ class Promotion extends BaseModel
         return $promotion;
     }
 
+
     /**
      * 获取营销类型
      */

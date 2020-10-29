@@ -5,7 +5,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<!--<li>物流公司由平台端进行统计管理和维护。</li>-->
 			<li>系统配置物流公司的地址，联系方式，查询接口，初始打印模板等。</li>
 		</ul>
@@ -43,6 +43,11 @@
 			{{# } }}
 		</div>
 	</div>
+</script>
+
+<!-- 批量删除 -->
+<script type="text/html" id="toolbarOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="del">批量删除</button>
 </script>
 
 <!-- 批量删除 -->
@@ -119,6 +124,7 @@
 					width: '15%'
 				}]
 			],
+			toolbar: '#toolbarOperation',
 			bottomToolbar: "#batchOperation"
 		});
 		
@@ -182,6 +188,25 @@
 					break;
 			}
 		});
+		
+		/**
+		 * 批量操作
+		 */
+		table.toolbar(function(obj) {
+		
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			switch (obj.event) {
+				case "del":
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].company_id);
+					deleteCompany(id_array.toString());
+					break;
+			}
+		});
+
 		
 		/**
 		 * 搜索功能

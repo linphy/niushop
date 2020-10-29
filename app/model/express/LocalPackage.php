@@ -62,7 +62,7 @@ class LocalPackage extends BaseModel
 
 
     /**
-     * 同城配送
+     * 外卖配送
      */
     public function delivery($param)
     {

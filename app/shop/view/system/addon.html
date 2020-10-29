@@ -13,6 +13,7 @@
 </style>
 {/block}
 {block name="main"}
+{notempty name="$uninstall"}
 <div class="layui-card ns-card-common ns-card-brief">
 	<div class="layui-card-header">
 		<span class="ns-card-title">未安装插件</span>
@@ -24,7 +25,7 @@
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
 						{if isset($list_v['is_quick']) && $list_v['is_quick'] == 1}
-						<img src="https://www.niushop.com.cn/{$list_v.icon}" />
+						<img src="https://www.niushop.com/{$list_v.icon}" />
 						{else/}
 						<img src="{:img($list_v.icon)}" />
 						{/if}
@@ -59,7 +60,9 @@
 		</div>
 	</div>
 </div>
+{/notempty}
 
+{notempty name="$addons"}
 <div class="layui-card ns-card-common ns-card-brief">
 	<div class="layui-card-header">
 		<span class="ns-card-title">已安装插件</span>
@@ -94,6 +97,7 @@
 		</div>
 	</div>
 </div>
+{/notempty}
 {/block}
 {block name="script"}
 <script>

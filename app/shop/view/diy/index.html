@@ -214,7 +214,7 @@
         var title = $(this).parents(".template-box").find("input[name='showTitle']").val();
         $.ajax({
             type: 'post',
-            url: ns.url("shop//diy/edit"),
+            url: ns.url("shop/diy/edit"),
             data:{
                 name: '{$data.name}',
                 title: title,
@@ -224,7 +224,7 @@
             success: function(res) {
                 console.log(res)
                 if (res.code >= 0){
-                    location.href = ns.url("shop//diy/index");
+                    location.href = ns.url("shop/diy/index");
                 }
             }
         });

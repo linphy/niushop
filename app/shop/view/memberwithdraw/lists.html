@@ -337,10 +337,10 @@
 							}
 						});
 
-                        layer.close();
+                        layer.closeAll();
 					} else {
 
-                        layer.close();
+                        layer.closeAll();
 						layer.msg(res.message);
 					}
 				}
@@ -417,7 +417,7 @@
 			    }
 			});
 		}, function () {
-			layer.close();
+			layer.closeAll();
 			agree_repeat_flag = false;
 		});
         
@@ -538,12 +538,13 @@
             <label class="layui-form-label img-upload-lable">转账凭证：</label>
             <div class="layui-input-block img-upload">
                 <div class="upload-img-block">
-                    <div class="upload-img-box" id="certificate">
+                    <div class="upload-img-box">
                         <div class="ns-upload-default">
                             <img src="SHOP_IMG/upload_img.png" />
                             <p>点击上传</p>
                         </div>
                     </div>
+                    <p id="certificate" class="no-replace">替换</p>
                     <input type="hidden" name="certificate" >
                     <i class="del">x</i>
                 </div>

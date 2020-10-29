@@ -34,7 +34,7 @@ class Menu extends BaseModel
     public function getMenuList($condition = [], $field = 'id, app_module, title, name, parent, level, url, is_show, sort, is_icon, picture, picture_select, is_control', $order = '', $limit = null)
     {
 
-        $data  = json_encode([$condition, $field, $order, $limit]);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
         $cache = Cache::get("getMenuList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -46,6 +46,17 @@ class Menu extends BaseModel
     }
 
     /**
+     * 获取菜单数量
+     * @param $condition
+     * @return array
+     */
+    public function getMenuCount($condition)
+    {
+        $count = model('menu')->getCount($condition);
+        return $this->success($count);
+    }
+
+    /**
      * 获取菜单树
      * @param number $level 层级 0不限层级
      */
@@ -54,11 +65,11 @@ class Menu extends BaseModel
         $condition = [];
         if ($level > 0) {
             $condition = [
-                ['level', 'elt', $level]
+                [ 'level', 'elt', $level ]
             ];
         }
         $list = $this->getMenuList($condition, 'id, app_module, title, name, parent, level, url, is_show, sort, is_icon, picture, picture_select, is_control', 'sort asc');
-        $tree = list_to_tree($list['data'], 'menu_id', 'parent', 'child_list');
+        $tree = list_to_tree($list[ 'data' ], 'menu_id', 'parent', 'child_list');
         return $this->success($tree);
     }
 
@@ -70,7 +81,7 @@ class Menu extends BaseModel
     public function getMenuInfo($condition, $field = 'id, app_module, name, title, parent, level, url, is_show, sort, `desc`, picture, is_icon, picture_select, is_control')
     {
 
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("getMenuInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -93,7 +104,7 @@ class Menu extends BaseModel
         if (!empty($cache)) {
             return $this->success($cache);
         }
-        $info = model('menu')->getFirstData([['url', "=", $url], ['app_module', "=", $app_module], ['addon', '=', $addon]], 'id, app_module, name, title, parent, level, url, is_show, sort, `desc`, picture, is_icon, picture_select, is_control', 'level desc');
+        $info = model('menu')->getFirstData([ [ 'url', "=", $url ], [ 'app_module', "=", $app_module ] ], 'id, app_module, name, title, parent, level, url, is_show, sort, `desc`, picture, is_icon, picture_select, is_control', 'level desc');
         if (empty($info)) {
             return $this->error();
         }
@@ -116,7 +127,7 @@ class Menu extends BaseModel
         $tree = require $tree_name;
         $list = $this->getAddonMenuList($tree, $app_module, $addon);
         if (!empty($list)) {
-            model('menu')->delete([['app_module', "=", $app_module], ['addon', "=", $addon]]);
+            model('menu')->delete([ [ 'app_module', "=", $app_module ], [ 'addon', "=", $addon ] ]);
             $res = model('menu')->addList($list);
             return $this->success($res);
         } else {
@@ -137,45 +148,45 @@ class Menu extends BaseModel
             return [];
         }
         foreach ($tree as $k => $v) {
-            if (isset($v['parent'])) {
-                if ($v['parent'] == '') {
+            if (isset($v[ 'parent' ])) {
+                if ($v[ 'parent' ] == '') {
                     $parent = '';
-                    $level  = 1;
+                    $level = 1;
                 } else {
                     $parent_menu_info = model('menu')->getInfo([
-                        ['name', "=", $v['parent']]
+                        [ 'name', "=", $v[ 'parent' ] ]
                     ]);
                     if ($parent_menu_info) {
-                        $parent = $parent_menu_info['name'];
-                        $level  = $parent_menu_info['level'] + 1;
+                        $parent = $parent_menu_info[ 'name' ];
+                        $level = $parent_menu_info[ 'level' ] + 1;
                     } else {
                         $level = 1;
                     }
                 }
             } else {
                 $parent = '';
-                $level  = 1;
+                $level = 1;
             }
             $item = [
-                'app_module'     => $app_module,
-                'addon'          => $addon,
-                'title'          => $v['title'],
-                'name'           => $v['name'],
-                'parent'         => $parent,
-                'level'          => $level,
-                'url'            => $v['url'],
-                'is_show'        => isset($v['is_show']) ? $v['is_show'] : 1,
-                'sort'           => isset($v['sort']) ? $v['sort'] : 100,
-                'is_icon'        => isset($v['is_icon']) ? $v['is_icon'] : 0,
-                'picture'        => isset($v['picture']) ? $v['picture'] : '',
-                'picture_select' => isset($v['picture_selected']) ? $v['picture_selected'] : '',
-                'is_control'     => isset($v['is_control']) ? $v['is_control'] : 1,
-                'desc'           => isset($v['desc']) ? $v['desc'] : '',
+                'app_module' => $app_module,
+                'addon' => $addon,
+                'title' => $v[ 'title' ],
+                'name' => $v[ 'name' ],
+                'parent' => $parent,
+                'level' => $level,
+                'url' => $v[ 'url' ],
+                'is_show' => isset($v[ 'is_show' ]) ? $v[ 'is_show' ] : 1,
+                'sort' => isset($v[ 'sort' ]) ? $v[ 'sort' ] : 100,
+                'is_icon' => isset($v[ 'is_icon' ]) ? $v[ 'is_icon' ] : 0,
+                'picture' => isset($v[ 'picture' ]) ? $v[ 'picture' ] : '',
+                'picture_select' => isset($v[ 'picture_selected' ]) ? $v[ 'picture_selected' ] : '',
+                'is_control' => isset($v[ 'is_control' ]) ? $v[ 'is_control' ] : 1,
+                'desc' => isset($v[ 'desc' ]) ? $v[ 'desc' ] : '',
             ];
             array_push($list, $item);
-            if (isset($v['child_list'])) {
+            if (isset($v[ 'child_list' ])) {
                 $this->list = [];
-                $this->menuTreeToList($v['child_list'], $app_module, $addon, $v['name'], $level + 1);
+                $this->menuTreeToList($v[ 'child_list' ], $app_module, $addon, $v[ 'name' ], $level + 1);
                 $list = array_merge($list, $this->list);
             }
         }
@@ -194,28 +205,28 @@ class Menu extends BaseModel
     {
         if (is_array($tree)) {
             foreach ($tree as $key => $value) {
-                $item  = [
-                    'app_module'     => $app_module,
-                    'addon'          => $addon,
-                    'title'          => $value['title'],
-                    'name'           => $value['name'],
-                    'parent'         => $parent,
-                    'level'          => $level,
-                    'url'            => $value['url'],
-                    'is_show'        => isset($value['is_show']) ? $value['is_show'] : 1,
-                    'sort'           => isset($value['sort']) ? $value['sort'] : 100,
-                    'is_icon'        => isset($value['is_icon']) ? $value['is_icon'] : 0,
-                    'picture'        => isset($value['picture']) ? $value['picture'] : '',
-                    'picture_select' => isset($value['picture_select']) ? $value['picture_select'] : '',
-                    'is_control'     => isset($value['is_control']) ? $value['is_control'] : 1,
-                    'desc'           => isset($value['desc']) ? $value['desc'] : '',
+                $item = [
+                    'app_module' => $app_module,
+                    'addon' => $addon,
+                    'title' => $value[ 'title' ],
+                    'name' => $value[ 'name' ],
+                    'parent' => $parent,
+                    'level' => $level,
+                    'url' => $value[ 'url' ],
+                    'is_show' => isset($value[ 'is_show' ]) ? $value[ 'is_show' ] : 1,
+                    'sort' => isset($value[ 'sort' ]) ? $value[ 'sort' ] : 100,
+                    'is_icon' => isset($value[ 'is_icon' ]) ? $value[ 'is_icon' ] : 0,
+                    'picture' => isset($value[ 'picture' ]) ? $value[ 'picture' ] : '',
+                    'picture_select' => isset($value[ 'picture_select' ]) ? $value[ 'picture_select' ] : '',
+                    'is_control' => isset($value[ 'is_control' ]) ? $value[ 'is_control' ] : 1,
+                    'desc' => isset($value[ 'desc' ]) ? $value[ 'desc' ] : '',
                 ];
                 $refer = $value;
-                if (isset($refer['child_list'])) {
-                    unset($refer['child_list']);
+                if (isset($refer[ 'child_list' ])) {
+                    unset($refer[ 'child_list' ]);
                     array_push($this->list, $item);
-                    $p_name = $refer['name'];
-                    $this->menuTreeToList($value['child_list'], $app_module, $addon, $p_name, $level + 1);
+                    $p_name = $refer[ 'name' ];
+                    $this->menuTreeToList($value[ 'child_list' ], $app_module, $addon, $p_name, $level + 1);
                 } else {
                     array_push($this->list, $item);
                 }

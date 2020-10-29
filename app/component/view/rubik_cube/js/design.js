@@ -115,7 +115,7 @@ var rubikCubeHtml = '<div class="layui-form-item">';
 		
 		// rubikCubeHtml += '<p class="ns-word-aux">选定布局区域，在下方添加图片，建议添加比例一致的图片</p>';
 
-		// rubikCubeHtml += '<slide v-bind:data="{ field : \'imageGap\', label : \'图片间隙\' }"></slide>';
+		rubikCubeHtml += '<slide v-bind:data="{ field : \'imageGap\', label : \'图片间隙\', max: 30 }"></slide>';
 		
 		rubikCubeHtml += '<div class="image-ad-list" v-if="currentList.length>0 && currentIndex<currentList.length">';
 			rubikCubeHtml += '<ul>';

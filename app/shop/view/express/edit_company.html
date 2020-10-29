@@ -30,16 +30,17 @@
 				<label class="layui-form-label img-upload-lable ns-short-label ">物流公司LOGO：</label>
 				<div class="layui-input-inline">
 					<div class="upload-img-block">
-						<div class="upload-img-box" id="companyLOGO">
+						<div class="upload-img-box">
 							{if empty($company_info.data.logo)}
 							<div class="ns-upload-default">
 								<img src="SHOP_IMG/upload_img.png" />
 								<p>点击上传</p>
 							</div>
 							{else/}
-								<img src="{:img($company_info.data.logo)}" alt="">
+								<img layer-src src="{:img($company_info.data.logo)}" alt="">
 							{/if}
 						</div>
+						<p id="companyLOGO" class=" {if condition="$company_info.data.logo"} replace {else/} no-replace{/if}">替换</p>
 						<input type="hidden" name="logo" value="{$company_info.data.logo}" />
 						<i class="del {if !empty($company_info.data.logo)}show{/if}">x</i>
 					</div>
@@ -158,16 +159,17 @@
 				<label class="layui-form-label img-upload-lable">打印背景图：</label>
 				<div class="layui-input-block">
 					<div class="upload-img-block">
-						<div class="upload-img-box" id="printBackground">
+						<div class="upload-img-box">
 							{if empty($company_info.data.background_image)}
 							<div class="ns-upload-default">
 								<img src="SHOP_IMG/upload_img.png" />
 								<p>点击上传</p>
 							</div>
 							{else/}
-								<img src="{:img($company_info.data.background_image)}" alt="">
+								<img layer-src src="{:img($company_info.data.background_image)}" alt="">
 							{/if}
 						</div>
+						<p id="printBackground" class=" {if condition="$company_info.data.background_image"} replace {else/} no-replace{/if}">替换</p>
 						<input type="hidden" name="background_image" value="{$company_info.data.background_image}" />
 						<i class="del {if !empty($company_info.data.background_image)}show{/if}">x</i>
 					</div>
@@ -248,7 +250,7 @@
 			
 			var html = '<div class="span_' + class_name + '" style="top: '+ top +'px; left: '+ left +'px;">'+
 							'<span style="font-size: '+ fontSize +'px;">' + span_text + '</span>'+
-							'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'
+							'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'+
 						'</div>';
 						
 			$(".design-sketch").append(html);

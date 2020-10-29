@@ -5,7 +5,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作说明</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>会员可提现余额申请提现</li>
 		</ul>
 	</div>
@@ -85,10 +85,10 @@
 				url: ns.url("shop/memberwithdraw/config"),
 				data: data.field,
 				success: function(res) {
+                    repeat_flag = false;
 					if (res.code == 0) {
 						layer.msg(res.message);
 					}else{
-						repeat_flag = false;
 						layer.msg(res.message);
 					}
 				}

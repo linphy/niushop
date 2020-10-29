@@ -35,9 +35,6 @@ class Upload extends BaseShop
             $this->site_id = input("site_id", 0);
             request()->siteid($this->site_id);
         }
-        $user_model = new UserModel();
-        $this->user_info = $user_model->userInfo($this->app_module, $this->site_id);
-        $this->assign("user_info", $this->user_info);
     }
 
     /**

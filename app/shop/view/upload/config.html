@@ -133,16 +133,17 @@
 					<div class="layui-input-block">
 						<div class="upload-img-block">
 							<!-- 用于存储图片路径 -->
-							<div class="upload-img-box" id="watermark_source">
+							<div class="upload-img-box">
 								{if empty($config.value.water.watermark_source)}
 								<div class="ns-upload-default">
 									<img src="SHOP_IMG/upload_img.png" />
 									<p>点击上传</p>
 								</div>
 								{else/}
-								<img src="{:img($config.value.water.watermark_source)}" alt="">
+								<img layer-src src="{:img($config.value.water.watermark_source)}" alt="">
 								{/if}
 							</div>
+							<p id="watermark_source" class=" {if condition="$config.value.water.watermark_source"} replace {else/} no-replace{/if}">替换</p>
 							<input type="hidden" name="watermark_source" value="{$config.value.water.watermark_source}" />
 							<i class="del {if !empty($config.value.water.watermark_source)}show{/if}">x</i>
 						</div>

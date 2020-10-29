@@ -9,6 +9,7 @@
 	<!-- 搜索框 -->
 	<div class="ns-single-filter-box">
 		<button class="layui-btn ns-bg-color" onclick="uploadImg()">上传图片</button>
+		<button class="layui-btn layui-btn-primary ns-text-color ns-border-color" onclick="addGrouping()">添加分组</button>
 
 		<div class="layui-form">
 			<div class="layui-input-inline">
@@ -21,14 +22,16 @@
 	</div>
 
 	<div class="album-box">
-		<ul class="album-list">
-			{foreach $album_list as $album_list_k=> $album_list_v}
-			<li class="{if $album_list_k == 0}active {/if}" data-album-id="{$album_list_v.album_id}">
-				<span>{$album_list_v.album_name}</span>
-				<span>{$album_list_v.num}</span>
-			</li>
-			{/foreach}
-		</ul>
+		<div class="album-list-box">
+			<ul class="album-list">
+				{foreach $album_list as $album_list_k=> $album_list_v}
+				<li class="{if $album_list_k == 0}active {/if}" data-album-id="{$album_list_v.album_id}">
+					<span>{$album_list_v.album_name}</span>
+					<span>{$album_list_v.num}</span>
+				</li>
+				{/foreach}
+			</ul>
+		</div>
 
 		<div class="album-content">
 			<ul class="album-img">
@@ -357,6 +360,42 @@
 			obj[decodeURIComponent(tmp_arr[0])] = decodeURIComponent(tmp_arr[1]);
 		}
 		return obj[key];
+	}
+	
+	/**
+	 * 添加分组
+	 */
+	var flag_add_group = false;
+	
+	function addGrouping() {
+	
+		var laryer_add = layer.prompt({
+			formType: 3,
+			title: '添加分组',
+			area: ["350px"],
+			shade: 0,
+			offset: '150px'
+		}, function(value) {
+			if (flag_add_group) return;
+			flag_add_group = true;
+	
+			$.ajax({
+				url: ns.url("shop/Album/addAlbum"),
+				data: {
+					"album_name": value
+				},
+				type: "POST",
+				dataType: "JSON",
+				success: function(res) {
+					layer.msg(res.message);
+					flag_add_group = false;
+	
+					if (res.code == 0) {
+						location.reload();
+					}
+				}
+			})
+		})
 	}
 </script>
 {/block}

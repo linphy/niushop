@@ -81,13 +81,16 @@ class H5 extends BaseModel
         $web_config = $web_config_model ->getMapConfig();
         $web_config = $web_config['data']['value'];
 
+        $socket_url = (strstr(ROOT_URL, 'https://') === false ? str_replace('http', 'ws', ROOT_URL) : str_replace('https', 'wss', ROOT_URL)) . '/wss';
+
         $patterns     = [
             '/\{\{\$baseUrl\}\}/',
             '/\{\{\$imgDomain\}\}/',
             '/\{\{\$h5Domain\}\}/',
             '/\{\{\$mpKey\}\}/',
             '/\{\{\$apiSecurity\}\}/',
-            '/\{\{\$publicKey\}\}/'
+            '/\{\{\$publicKey\}\}/',
+            '/\{\{\$webSocket\}\}/'
         ];
         $replacements = [
             ROOT_URL,
@@ -95,7 +98,8 @@ class H5 extends BaseModel
             ROOT_URL . '/h5',
             $web_config['tencent_map_key'] ?? '',
             $api_config['is_use'] ?? 0,
-            $api_config['value']['public_key'] ?? ''
+            $api_config['value']['public_key'] ?? '',
+            $socket_url
         ];
         $string       = preg_replace($patterns, $replacements, $string);
         return $string;

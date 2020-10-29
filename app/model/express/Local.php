@@ -17,12 +17,12 @@ use app\model\shop\Shop;
 use think\facade\Cache;
 
 /**
- * 同城配送
+ * 外卖配送
  */
 class Local extends BaseModel
 {
     /**
-     * 添加站点同城配送配置
+     * 添加站点外卖配送配置
      * @param unknown $data
      */
     public function addLocal($data)
@@ -33,7 +33,7 @@ class Local extends BaseModel
     }
 
     /**
-     * 修改站点同城配送配置
+     * 修改站点外卖配送配置
      * @param $data
      * @param $condition
      * @return array
@@ -46,7 +46,7 @@ class Local extends BaseModel
     }
 
     /**
-     * 删除站点同城配送 (通常删除站点会用到)
+     * 删除站点外卖配送 (通常删除站点会用到)
      * @param unknown $condition
      */
     public function deleteLocal($condition)
@@ -57,7 +57,7 @@ class Local extends BaseModel
     }
 
     /**
-     * 获取站点同城配送信息
+     * 获取站点外卖配送信息
      * @param unknown $condition
      * @param string $field
      */
@@ -102,7 +102,7 @@ class Local extends BaseModel
     }
 
     /**
-     * 获取站点同城配送列表
+     * 获取站点外卖配送列表
      * @param array $condition
      * @param string $field
      * @param string $order
@@ -122,7 +122,7 @@ class Local extends BaseModel
     }
 
     /**
-     * 获取站点同城配送分页列表
+     * 获取站点外卖配送分页列表
      * @param array $condition
      * @param number $page
      * @param string $page_size

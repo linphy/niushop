@@ -20,6 +20,7 @@ use app\model\order\OrderExport;
 use phpoffice\phpexcel\Classes\PHPExcel;
 use phpoffice\phpexcel\Classes\PHPExcel\Writer\Excel2007;
 use think\facade\Config;
+use app\model\system\Promotion as PromotionModel;
 
 /**
  * 订单
@@ -47,6 +48,8 @@ class Order extends BaseShop
             "name" => "收货人姓名",
             "order_name" => "商品名称",
         );
+        $order_model = new OrderModel();
+        $order_status_list = $order_model->delivery_order_status;
         $order_status = input("order_status", "");//订单状态
         $order_name = input("order_name", '');
         $pay_type = input("pay_type", '');
@@ -69,6 +72,8 @@ class Order extends BaseShop
             //订单状态
             if ($order_status != "") {
                 $condition[] = [ "order_status", "=", $order_status ];
+            } else {
+                $condition[] = [ 'order_status', 'in', array_keys($order_status_list) ];
             }
             //订单内容 模糊查询
             if ($order_name != "") {
@@ -395,117 +400,115 @@ class Order extends BaseShop
      */
     public function exportOrder()
     {
+        $order_label_list = array (
+            "order_no" => "订单号",
+            "out_trade_no" => "外部单号",
+            "name" => "收货人姓名",
+            "mobile" => "收货人手机号",
+            "order_name" => "商品名称",
+        );
+
         $order_status = input("order_status", "");//订单状态
         $order_name = input("order_name", '');
         $pay_type = input("pay_type", '');
         $order_from = input("order_from", '');
         $start_time = input("start_time", '');
         $end_time = input("end_time", '');
-        $order_label = input("order_label", '');
+        $order_label = !empty($order_label_list[ input("order_label") ]) ? input("order_label") : "";
         $search_text = input("search", '');
         $promotion_type = input("promotion_type", '');
         $order_type = input("order_type", 'all');
 
-        $condition[] = [ "site_id", "=", $this->site_id ];
+        $condition_desc = [];
 
+        $order_common_model = new OrderCommon();
+        $condition[] = [ "site_id", "=", $this->site_id ];
+        //订单类型
+        $order_type_name = '全部';
         if ($order_type != 'all') {
             $condition[] = [ "order_type", "=", $order_type ];
+
+            $order_type_list = $order_common_model->getOrderTypeStatusList();
+            $order_type_list = array_column($order_type_list, 'name', 'type');
+            $order_type_name = $order_type_list[ $order_type ];
         }
+        $condition_desc[] = [ 'name' => '订单类型', 'value' => $order_type_name ];
 
         //订单状态
+        $order_status_name = '全部';
         if ($order_status != "") {
             $condition[] = [ "order_status", "=", $order_status ];
+            $order_status_list = $order_common_model->order_status;
+            $order_status_name = $order_status_list[ $order_status ][ 'name' ] ?? '';
         }
+        $condition_desc[] = [ 'name' => '订单状态', 'value' => $order_status_name ];
+
         //订单内容 模糊查询
         if ($order_name != "") {
             $condition[] = [ "order_name", 'like', "%$order_name%" ];
         }
         //订单来源
+        $order_from_name = '全部';
         if ($order_from != "") {
             $condition[] = [ "order_from", "=", $order_from ];
+            //订单来源 (支持端口)
+            $order_from_list = Config::get("app_type");
+            $order_from_name = $order_from_list[ $order_from ][ 'name' ] ?? '';
         }
+        $condition_desc[] = [ 'name' => '订单来源', 'value' => $order_from_name ];
+
+
         //订单支付
+        $pay_type_name = '全部';
         if ($pay_type != "") {
             $condition[] = [ "pay_type", "=", $pay_type ];
+            $pay_type_list = $order_common_model->getPayType();
+            $pay_type_name = $pay_type_list[ $pay_type ] ?? '';
         }
+        $condition_desc[] = [ 'name' => '支付方式', 'value' => $pay_type_name ];
+
         //营销类型
+        $promotion_type_name = '全部';
         if ($promotion_type != "") {
             if ($promotion_type == 'empty') {
                 $condition[] = [ "promotion_type", "=", '' ];
             } else {
                 $condition[] = [ "promotion_type", "=", $promotion_type ];
             }
+            //营销活动类型
+            $promotion_model = new PromotionModel();
+            $promotion_type_list = $promotion_model->getPromotionType();
+            $promotion_type_list = array_column($promotion_type_list, 'name', 'type');
+            $promotion_type_name = $promotion_type_list[ $promotion_type ] ?? '';
         }
-        if (!empty($start_time) && !empty($end_time)) {
-            $condition[] = [ "create_time", "between", [ date_to_time($start_time), date_to_time($end_time) ] ];
+        $condition_desc[] = [ 'name' => '营销活动', 'value' => $promotion_type_name ];
+        $time_name = '';
+        if (!empty($start_time) && empty($end_time)) {
+            $condition[] = [ "create_time", ">=", date_to_time($start_time) ];
+            $time_name = $start_time . '起';
+        } elseif (empty($start_time) && !empty($end_time)) {
+            $condition[] = [ "create_time", "<=", date_to_time($end_time) ];
+            $time_name = '至' . $end_time;
+        } elseif (!empty($start_time) && !empty($end_time)) {
+            $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+            $time_name = $start_time . ' 至 ' . $end_time;
         }
+        $condition_desc[] = [ 'name' => '下单时间', 'value' => $time_name ];
+
         if ($search_text != "") {
             $condition[] = [ $order_label, 'like', "%$search_text%" ];
         }
-        $order_common_model = new OrderCommonModel();
-
-        $order_export_model = new OrderExport();
-        $field = $order_export_model->order_field;
-
-        //接收需要展示的字段
-        $input_field = input('field', array_keys($field));
-        $order = $order_common_model->getOrderList($condition, $input_field, 'order_id desc');
-        $header_arr = array (
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-            'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ',
-            'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ'
-        );
-
-        //处理数据
-        if (!empty($order[ 'data' ])) {
-            $order_list = $order_export_model->handleData($order[ 'data' ], $input_field);
-        } else {
-            $order_list = [];
-        }
-        $count = count($input_field);
-        // 实例化excel
-        $phpExcel = new \PHPExcel();
-
-        $phpExcel->getProperties()->setTitle("订单信息-订单维度");
-        $phpExcel->getProperties()->setSubject("订单信息-订单维度");
-        //单独添加列名称
-        $phpExcel->setActiveSheetIndex(0);
-
-
-        for ($i = 0; $i < $count; $i++) {
-            $phpExcel->getActiveSheet()->setCellValue($header_arr[ $i ] . '1', $field[ $input_field[ $i ] ]);
-        }
-
-        if (!empty($order_list)) {
-            foreach ($order_list as $k => $v) {
-                $start = $k + 2;
-                for ($i = 0; $i < $count; $i++) {
-
-                    $value = $v[ $input_field[ $i ] ] . "\t";
-                    $phpExcel->getActiveSheet()->setCellValue($header_arr[ $i ] . $start, $value);
-                }
+        foreach ($order_label_list as $k => $v) {
+            $order_label_name = $v;
+            if ($k == $order_label) {
+                $condition_desc[] = [ 'name' => $order_label_name, 'value' => $search_text ];
+            } else {
+                $condition_desc[] = [ 'name' => $order_label_name, 'value' => '' ];
             }
         }
-
-        // 重命名工作sheet
-        $phpExcel->getActiveSheet()->setTitle('订单信息-订单维度');
-        // 设置第一个sheet为工作的sheet
-        $phpExcel->setActiveSheetIndex(0);
-        // 保存Excel 2007格式文件，保存路径为当前路径，名字为export.xlsx
-        $objWriter = \PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
-        $file = date('Y年m月d日-订单信息', time()) . '.xlsx';
-        $objWriter->save($file);
-
-        header("Content-type:application/octet-stream");
-
-        $filename = basename($file);
-        header("Content-Disposition:attachment;filename = " . $filename);
-        header("Accept-ranges:bytes");
-        header("Accept-length:" . filesize($file));
-        readfile($file);
-        unlink($file);
-        exit;
-
+        $order_export_model = new OrderExport();
+        $result = $order_export_model->orderExport($condition, $condition_desc, $this->site_id);
+        return $result;
     }
 
     /**
@@ -513,239 +516,118 @@ class Order extends BaseShop
      */
     public function exportOrderGoods()
     {
+        $order_label_list = array (
+            "order_no" => "订单号",
+            "out_trade_no" => "外部单号",
+            "name" => "收货人姓名",
+            "mobile" => "收货人手机号",
+            "order_name" => "商品名称",
+        );
+
+        $condition = [];
         $order_status = input("order_status", "");//订单状态
         $order_name = input("order_name", '');
         $pay_type = input("pay_type", '');
         $order_from = input("order_from", '');
         $start_time = input("start_time", '');
         $end_time = input("end_time", '');
-        $order_label = input("order_label", '');
+
+        $order_label = !empty($order_label_list[ input("order_label") ]) ? input("order_label") : "";
+
         $search_text = input("search", '');
         $promotion_type = input("promotion_type", '');
         $order_type = input("order_type", 'all');
+        $condition_desc = [];
 
+        $order_common_model = new OrderCommon();
         $condition[] = [ "o.site_id", "=", $this->site_id ];
+        //订单类型
+        $order_type_name = '全部';
         if ($order_type != 'all') {
             $condition[] = [ "o.order_type", "=", $order_type ];
+
+            $order_type_list = $order_common_model->getOrderTypeStatusList();
+            $order_type_list = array_column($order_type_list, 'name', 'type');
+            $order_type_name = $order_type_list[ $order_type ];
         }
+        $condition_desc[] = [ 'name' => '订单类型', 'value' => $order_type_name ];
+
         //订单状态
+        $order_status_name = '全部';
         if ($order_status != "") {
             $condition[] = [ "o.order_status", "=", $order_status ];
+            $order_status_list = $order_common_model->order_status;
+            $order_status_name = $order_status_list[ $order_status ][ 'name' ] ?? '';
         }
+        $condition_desc[] = [ 'name' => '订单状态', 'value' => $order_status_name ];
+
         //订单内容 模糊查询
         if ($order_name != "") {
             $condition[] = [ "o.order_name", 'like', "%$order_name%" ];
         }
         //订单来源
+        $order_from_name = '全部';
         if ($order_from != "") {
             $condition[] = [ "o.order_from", "=", $order_from ];
+            //订单来源 (支持端口)
+            $order_from_list = Config::get("app_type");
+            $order_from_name = $order_from_list[ $order_from ][ 'name' ] ?? '';
         }
+        $condition_desc[] = [ 'name' => '订单来源', 'value' => $order_from_name ];
+
+
         //订单支付
+        $pay_type_name = '全部';
         if ($pay_type != "") {
             $condition[] = [ "o.pay_type", "=", $pay_type ];
+            $pay_type_list = $order_common_model->getPayType();
+            $pay_type_name = $pay_type_list[ $pay_type ] ?? '';
         }
-        $condition[] = [ "o.is_delete", "=", 0 ];
+        $condition_desc[] = [ 'name' => '支付方式', 'value' => $pay_type_name ];
+
         //营销类型
+        $promotion_type_name = '全部';
         if ($promotion_type != "") {
             if ($promotion_type == 'empty') {
                 $condition[] = [ "o.promotion_type", "=", '' ];
             } else {
                 $condition[] = [ "o.promotion_type", "=", $promotion_type ];
             }
+            //营销活动类型
+            $promotion_model = new PromotionModel();
+            $promotion_type_list = $promotion_model->getPromotionType();
+            $promotion_type_list = array_column($promotion_type_list, 'name', 'type');
+            $promotion_type_name = $promotion_type_list[ $promotion_type ] ?? '';
         }
-        if (!empty($start_time) && !empty($end_time)) {
-            $condition[] = [ "o.create_time", "between", [ date_to_time($start_time), date_to_time($end_time) ] ];
+        $condition_desc[] = [ 'name' => '营销活动', 'value' => $promotion_type_name ];
+
+        $time_name = '';
+        if (!empty($start_time) && empty($end_time)) {
+            $condition[] = [ "o.create_time", ">=", date_to_time($start_time) ];
+            $time_name = $start_time . '起';
+        } elseif (empty($start_time) && !empty($end_time)) {
+            $condition[] = [ "o.create_time", "<=", date_to_time($end_time) ];
+            $time_name = '至' . $end_time;
+        } elseif (!empty($start_time) && !empty($end_time)) {
+            $condition[] = [ 'o.create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+            $time_name = $start_time . ' 至 ' . $end_time;
         }
+        $condition_desc[] = [ 'name' => '下单时间', 'value' => $time_name ];
+
         if ($search_text != "") {
             $condition[] = [ 'o.' . $order_label, 'like', "%$search_text%" ];
         }
-        $order_common_model = new OrderCommonModel();
-        $order_export_model = new OrderExport();
-
-        $field = array_merge($order_export_model->order_goods_field, $order_export_model->order_field);
-        //接收需要展示的字段
-        $input_field = input('field', array_keys($field));
-        $order = $order_common_model->getOrderGoodsDetailList($condition);
-        $header_arr = array (
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-            'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ',
-            'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ'
-        );
-        //处理数据
-        $order_list = [];
-        if (!empty($order[ 'data' ])) {
-            $order_list = $order_export_model->handleData($order[ 'data' ], $input_field);
-        }
-
-        $count = count($input_field);
-        // 实例化excel
-        $phpExcel = new \PHPExcel();
-
-        $phpExcel->getProperties()->setTitle("订单信息-商品维度");
-        $phpExcel->getProperties()->setSubject("订单信息-商品维度");
-        //单独添加列名称
-        $phpExcel->setActiveSheetIndex(0);
-
-
-        for ($i = 0; $i < $count; $i++) {
-            $phpExcel->getActiveSheet()->setCellValue($header_arr[ $i ] . '1', $field[ $input_field[ $i ] ]);
-        }
-
-        if (!empty($order_list)) {
-            foreach ($order_list as $k => $v) {
-                $start = $k + 2;
-                for ($i = 0; $i < $count; $i++) {
-
-                    $value = $v[ $input_field[ $i ] ] . "\t";
-                    $phpExcel->getActiveSheet()->setCellValue($header_arr[ $i ] . $start, $value);
-                }
+        foreach ($order_label_list as $k => $v) {
+            $order_label_name = $v;
+            if ($k == $order_label) {
+                $condition_desc[] = [ 'name' => $order_label_name, 'value' => $search_text ];
+            } else {
+                $condition_desc[] = [ 'name' => $order_label_name, 'value' => '' ];
             }
         }
-
-        // 重命名工作sheet
-        $phpExcel->getActiveSheet()->setTitle('订单信息-商品维度');
-        // 设置第一个sheet为工作的sheet
-        $phpExcel->setActiveSheetIndex(0);
-        // 保存Excel 2007格式文件，保存路径为当前路径，名字为export.xlsx
-        $objWriter = \PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
-        $file = date('Y年m月d日-订单信息', time()) . '.xlsx';
-        $objWriter->save($file);
-
-        header("Content-type:application/octet-stream");
-
-        $filename = basename($file);
-        header("Content-Disposition:attachment;filename = " . $filename);
-        header("Accept-ranges:bytes");
-        header("Accept-length:" . filesize($file));
-        readfile($file);
-        unlink($file);
-        exit;
-
-    }
-
-    /**
-     * 订单导出（维权订单）
-     */
-    public function exportRefundOrder()
-    {
-        $refund_status = input("refund_status", "");//退款状态
-        $sku_name = input("sku_name", '');//商品名称
-        $refund_type = input("refund_type", '');//退款方式
-        $start_time = input("start_time", '');//开始时间
-        $end_time = input("end_time", '');//结束时间
-        $order_no = input("order_no", '');//订单编号
-        $delivery_status = input("delivery_status", '');//物流状态
-        $refund_no = input("refund_no", '');//退款编号
-
-        $delivery_no = input("delivery_no", '');//物流编号
-        $refund_delivery_no = input("refund_delivery_no", '');//退款物流编号
-
-        $order_common_model = new OrderCommonModel();
-
-        $condition[] = [ 'og.site_id', '=', $this->site_id ];
-        //退款状态
-        if ($refund_status != "") {
-            $condition[] = [ "og.refund_status", "=", $refund_status ];
-        } else {
-            $condition[] = [ "og.refund_status", "<>", 0 ];
-        }
-        //物流状态
-        if ($delivery_status != "") {
-            $condition[] = [ "og.delivery_status", "=", $delivery_status ];
-        }
-        //商品名称
-        if ($sku_name != "") {
-            $condition[] = [ "og.sku_name", "like", "%$sku_name%" ];
-        }
-        //退款方式
-        if ($refund_type != "") {
-            $condition[] = [ "og.refund_type", "=", $refund_type ];
-        }
-        //退款编号
-        if ($refund_no != "") {
-            $condition[] = [ "og.refund_no", "like", "%$refund_no%" ];
-        }
-        //订单编号
-        if ($order_no != "") {
-            $condition[] = [ "og.order_no", "like", "%$order_no%" ];
-        }
-        //物流编号
-        if ($delivery_no != "") {
-            $condition[] = [ "og.delivery_no", "like", "%$delivery_no%" ];
-        }
-        //退款物流编号
-        if ($refund_delivery_no != "") {
-            $condition[] = [ "og.refund_delivery_no", "like", "%$refund_delivery_no%" ];
-        }
-
-        if (!empty($start_time) && empty($end_time)) {
-            $condition[] = [ "og.refund_action_time", ">=", date_to_time($start_time) ];
-        } elseif (empty($start_time) && !empty($end_time)) {
-            $condition[] = [ "og.refund_action_time", "<=", date_to_time($end_time) ];
-        } elseif (!empty($start_time) && !empty($end_time)) {
-            $condition[] = [ 'og.refund_action_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
-        }
-
         $order_export_model = new OrderExport();
-        $field = array_merge($order_export_model->order_goods_field, $order_export_model->order_field);
-        //接收需要展示的字段
-        $input_field = input('field', array_keys($field));
-        $order = $order_common_model->getOrderGoodsDetailList($condition);
-        $header_arr = array (
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-            'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ',
-            'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ'
-        );
-
-        //处理数据
-        $order_list = [];
-        if (!empty($order[ 'data' ])) {
-            $order_list = $order_export_model->handleData($order[ 'data' ], $input_field);
-        }
-
-        $count = count($input_field);
-        // 实例化excel
-        $phpExcel = new \PHPExcel();
-
-        $phpExcel->getProperties()->setTitle("退款维权订单");
-        $phpExcel->getProperties()->setSubject("退款维权订单");
-        //单独添加列名称
-        $phpExcel->setActiveSheetIndex(0);
-
-
-        for ($i = 0; $i < $count; $i++) {
-            $phpExcel->getActiveSheet()->setCellValue($header_arr[ $i ] . '1', $field[ $input_field[ $i ] ]);
-        }
-
-        if (!empty($order_list)) {
-            foreach ($order_list as $k => $v) {
-                $start = $k + 2;
-                for ($i = 0; $i < $count; $i++) {
-
-                    $value = $v[ $input_field[ $i ] ] . "\t";
-                    $phpExcel->getActiveSheet()->setCellValue($header_arr[ $i ] . $start, $value);
-                }
-            }
-        }
-
-        // 重命名工作sheet
-        $phpExcel->getActiveSheet()->setTitle('退款维权订单');
-        // 设置第一个sheet为工作的sheet
-        $phpExcel->setActiveSheetIndex(0);
-        // 保存Excel 2007格式文件，保存路径为当前路径，名字为export.xlsx
-        $objWriter = \PHPExcel_IOFactory::createWriter($phpExcel, 'Excel2007');
-        $file = date('Y年m月d日-退款维权订单', time()) . '.xlsx';
-        $objWriter->save($file);
-
-        header("Content-type:application/octet-stream");
-
-        $filename = basename($file);
-        header("Content-Disposition:attachment;filename = " . $filename);
-        header("Accept-ranges:bytes");
-        header("Accept-length:" . filesize($file));
-        readfile($file);
-        unlink($file);
-        exit;
+        $result = $order_export_model->orderGoodsExport($condition, $condition_desc, $this->site_id);
+        return $result;
     }
 
     /**
@@ -1015,4 +897,21 @@ class Order extends BaseShop
 
     }
 
+    /**
+     * 订单导出记录
+     * @return mixed
+     */
+    public function export()
+    {
+        if (request()->isAjax()) {
+            $export_model = new OrderExport();
+            $condition = array (
+                [ 'site_id', '=', $this->site_id ]
+            );
+            $result = $export_model->getExport($condition, '*', 'create_time desc');
+            return $result;
+        } else {
+            return $this->fetch("order/export");
+        }
+    }
 }

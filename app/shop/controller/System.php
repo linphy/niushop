@@ -422,9 +422,22 @@ class System extends BaseShop
      */
     public function refresh()
     {
-        $menu = new Menu();
-        $res = $menu->refreshMenu('store', 'store');
-        var_dump($res);
+        try {
+
+            $menu = new Menu();
+            $res = $menu->refreshMenu('shop', '');
+
+            $addon_model = new Addon();
+            $addon_list = $addon_model->getAddonList([], 'name');
+            $addon_list = $addon_list[ 'data' ];
+            foreach ($addon_list as $k => $v) {
+                $addon_shop_menu_res = $menu->refreshMenu('shop', $v[ 'name' ]);
+                var_dump($addon_shop_menu_res);
+            }
+            var_dump($res);
+        } catch (\Exception $e) {
+            var_dump("error：" . $e->getMessage());
+        }
     }
 
     /**
@@ -434,7 +447,7 @@ class System extends BaseShop
     {
         $arr = [ '', 'bargain', 'groupbuy', 'pintuan', 'seckill', 'coupon', 'fenxiao', 'live', 'notes', 'store' ];
         $addon = new Addon();
-        foreach ($arr as $k=>$v) {
+        foreach ($arr as $k => $v) {
             $res = $addon->refreshDiyView($v);
             var_dump($res);
         }

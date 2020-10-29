@@ -19,7 +19,7 @@
 <div class="layui-collapse ns-tips" >
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>商城可以针对会员进行添加，编辑，锁定，调整账户等操作。</li>
 			<li>账户类型有用户名、手机、邮箱三种类型，筛选时可以选择其中一种类型并输入对应的内容进行筛选。</li>
 			<li>点击收起按钮可以将搜索面板隐收起，变成高级搜索按钮。</li>
@@ -140,24 +140,94 @@
 			{/if}
 			<a class="operation" lay-event="set_label">设置标签</a>
 			<a class="operation" lay-event="reset_pass">重置密码</a>
+			<a class="operation" lay-event="recive_coupon">发放优惠券</a>
+			<a class="operation" lay-event="adjust_balance">调整余额</a>
+			<a class="operation" lay-event="adjust_integral">调整积分</a>
 			<a class="operation" lay-event="delete">删除</a>
 		</div>
 	</div>
 </script>
+
+<!-- 积分弹框html -->
+<script type="text/html" id="point">
+	<div class="layui-form integral-bounced">
+		<div class="layui-form-item">
+			<label class="layui-form-label">当前积分：</label>
+			<div class="layui-input-block ns-account-value">{{ parseInt(d.point) }}</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">调整数额：</label>
+			<div class="layui-input-block amount">
+				<input type="number" value="0" placeholder="请输入调整数额" name="adjust_num" lay-verify="num" class="layui-input ns-len-short">
+			</div>
+			<span class="ns-word-aux">调整数额与当前积分数相加不能小于0</span>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block ns-len-long">
+				<textarea class="layui-textarea" name="remark" placeholder="请输入备注"></textarea>
+			</div>
+		</div>
+
+		<div class="ns-form-row">
+			<button class="layui-btn ns-bg-color" lay-submit lay-filter="savePoint">确定</button>
+		</div>
+
+		<input type="hidden" name="member_id" value="{{d.member_id}}" />
+		<input type="hidden" name="point" value="{{ d.point }}" />
+	</div>
+</script>
+
+<!-- 余额弹框html -->
+<script type="text/html" id="balance">
+	<div class="layui-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label">当前余额（不可提现）：</label>
+			<div class="layui-input-block ns-account-value">{{ d.balance }}</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">调整数额：</label>
+			<div class="layui-input-block">
+				<input type="number" value="0" placeholder="请输入调整数额" name="adjust_num" lay-verify="num" class="layui-input ns-len-short">
+			</div>
+			<span class="ns-word-aux">调整数额与当前不可提现余额相加不能小于0</span>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block ns-len-long">
+				<textarea class="layui-textarea" name="remark" placeholder="请输入备注"></textarea>
+			</div>
+		</div>
+
+		<div class="ns-form-row">
+			<button class="layui-btn ns-bg-color" lay-submit lay-filter="saveBalance">确定</button>
+		</div>
+
+		<input type="hidden" name="member_id" value="{{d.member_id}}" />
+		<input type="hidden" name="balance" value="{{ d.balance }}" />
+	</div>
+</script>
 {/block}
 {block name="script"}
+<script type='text/javascript' src='SHOP_JS/member_list.js'></script>
 <script type="text/javascript">
 	var table, form, laytpl, laydate,
 		repeat_flag = false,
 		currentDate = new Date(),
 		minDate = "",
 		layer_pass,
+		upload,
 		layer_label;
 
-	layui.use(['form', 'laytpl', 'laydate'], function() {
+	layui.use(['form', 'laytpl', 'laydate', 'upload'], function() {
 		form = layui.form;
 		laytpl = layui.laytpl;
 		laydate = layui.laydate;
+		upload = layui.upload;
 		currentDate.setDate(currentDate.getDate() - 7);
 		form.render();
 
@@ -173,6 +243,34 @@
 			type: 'datetime'
 		});
 
+		//允许上传的文件后缀
+		upload.render({
+			elem: '#member_file'
+			,url: ns.url("shop/member/file"),
+			accept: 'file',
+			exts: 'xlsx',
+			done: function(res){
+				if (res.code >= 0) {
+
+					$.ajax({
+						url: ns.url("shop/member/import"),
+						data: {
+							filename: res.data.name,
+							path:res.data.path
+						},
+						dataType: 'JSON',
+						type: 'POST',
+						success: function (res) {
+							layer.msg(res.message);
+							repeat_flag = false;
+							if (res.code == 0) table.reload();
+						}
+					});
+				}else{
+					layer.msg(res.message);
+				}
+			}
+		});
 		/**
 		 * 重新渲染结束时间
 		 * */
@@ -333,6 +431,7 @@
 					}
 				]
 			],
+			toolbar: '#toolbarOperation',
 			bottomToolbar: "#batchOperation"
 		});
 
@@ -351,6 +450,12 @@
 				case 'reset_pass': //重置密码
 					resetPassword(data);
 					break;
+				case 'adjust_balance': //调整余额
+					adjustBalance(data);
+					break;
+				case 'adjust_integral': //调整积分
+					adjustIntegral(data);
+					break;
 				case 'set_label': //设置标签
 					settingLabels(data.member_id);
 					break;
@@ -358,9 +463,7 @@
 					$('.more-operation').css('display', 'none');
 					$(obj.tr).find('.more-operation').css('display', 'block');
 					break;
-
                 case 'change':
-
                     var url = ns.url("fenxiao://shop/fenxiao/change", {member_id: data.member_id});
                     //iframe层-父子操作
                     var layerIndex = layer.open({
@@ -373,7 +476,9 @@
                             location.reload();
                         }
                     });
-
+					break;
+				case 'recive_coupon': //发放优惠券
+					selectCoupon(data);
                     break;
 			}
 		});
@@ -407,6 +512,31 @@
 					break;
 			}
 		});
+
+		/**
+		 * 批量操作
+		 */
+		table.toolbar(function(obj) {
+
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+
+			switch (obj.event) {
+				case "del":
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].member_id);
+					delMember(id_array.toString());
+					break;
+				case "setlabel":
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].member_id);
+					settingLabels(id_array.toString());
+					break;
+			}
+		});
+
 
 		/**
 		 * 删除
@@ -451,6 +581,97 @@
 				});
 			});
 		}
+		// 调整余额
+		function adjustBalance(e){
+			laytpl($("#balance").html()).render(e, function(html) {
+				layer.open({
+					title: '调整余额（不可提现）',
+					skin: 'layer-tips-class',
+					type: 1,
+					area: ['800px'],
+					content: html
+				});
+			});
+		}
+
+		//调整积分
+		function adjustIntegral(e){
+			laytpl($("#point").html()).render(e, function(html) {
+				layer.open({
+					title: '调整积分',
+					skin: 'layer-tips-class',
+					type: 1,
+					area: ['800px'],
+					content: html
+				});
+			});
+		}
+		var repeat_flag_point = false;
+		form.on('submit(savePoint)', function(data) {
+			if (repeat_flag_point) return false;
+			repeat_flag_point = true;
+			var point = data.field.point;
+			if (data.field.adjust_num == 0) {
+				layer.msg('调整数值不能为0');
+				repeat_flag_point = false;
+				return ;
+			}
+			if (point*1 + data.field.adjust_num*1 < 0) {
+				layer.msg('积分不可以为负数');
+				repeat_flag_point = false;
+				return ;
+			}
+			$.ajax({
+				type: "POST",
+				url: ns.url("shop/member/adjustPoint"),
+				data: data.field,
+				dataType: 'JSON',
+				success: function(res) {
+					layer.msg(res.message);
+					repeat_flag_point = false;
+
+					if (res.code == 0) {
+						layer.closeAll('page');
+						table.reload();
+					}
+				}
+			});
+		});
+
+		var repeat_flag_balance = false;
+		form.on('submit(saveBalance)', function(data) {
+			if (repeat_flag_balance) return false;
+			repeat_flag_balance = true;
+
+			var balance = data.field.balance;
+			if (data.field.adjust_num == 0) {
+				layer.msg('调整数值不能为0');
+				repeat_flag_balance = false;
+				return ;
+			}
+			if (balance*1 + data.field.adjust_num*1 < 0) {
+				layer.msg('当前余额（不可提现）不可以为负数');
+				repeat_flag_balance = false;
+				return ;
+			}
+			$.ajax({
+				type: "POST",
+				url: ns.url("shop/member/adjustBalance"),
+				data: data.field,
+				dataType: 'JSON',
+				success: function(res) {
+					layer.msg(res.message);
+					repeat_flag_balance = false;
+
+					if (res.code == 0) {
+						layer.closeAll('page');
+						table.reload();
+					}
+				}
+			});
+		});
+
+
 
 		form.on('submit(repass)', function(data) {
 
@@ -566,6 +787,22 @@
 			}
 		});
 
+
+		/**
+		 * 发放优惠券
+		 */
+		function selectCoupon(data) {
+			laytpl($("#recive_coupon").html()).render(data, function(html) {
+				layer_coupon = layer.open({
+					title: '选择优惠券',
+					skin: 'layer-tips-class',
+					type: 1,
+					area: ['700px', '542px'],
+					content: html,
+				});
+				renderCoupon("", data.member_id);
+			});
+		}
 	});
 
 	function closePass() {
@@ -575,6 +812,32 @@
 	function closeLabel() {
 		layer.close(layer_label);
 	}
+
+	function downloadMemberFile(){
+		location.href = ns.url("shop/member/downloadMemberFile");
+		return false;
+	}
+</script>
+
+<!-- 发放优惠券弹框 -->
+<script type="text/html" id="recive_coupon">
+	<div class="recive-coupon">
+		<div class="coupon-modal">
+			<div class="coupon-list all-coupon">
+				<div class="title ns-bg-color-gray">可选优惠券</div>
+				<div class="box"></div>
+			</div>
+			<button class="add">添加</button>
+			<div class="coupon-list selected-coupon">
+				<div class="title ns-bg-color-gray">已选优惠券</div>
+				<div class="box"></div>
+			</div>
+		</div>
+		<div class="modal-operation">
+			<button class="layui-btn ns-bg-color save-btn">确定</button>
+			<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
+		</div>
+	</div>
 </script>
 
 <!-- 重置密码弹框html -->
@@ -624,6 +887,10 @@
 
 		<input class="reset-label-id" type="hidden" name="member_ids" value="{{d}}" />
 	</div>
+</script>
+
+<script type="text/html" id="toolbarOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="setlabel">设置标签</button>
 </script>
 
 <script type="text/html" id="batchOperation">

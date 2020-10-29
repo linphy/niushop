@@ -67,6 +67,7 @@ $(function () {
 
 			html += '<button class="layui-btn layui-btn-primary" lay-event="batch_set">批量设置</button>';
 
+			$("#toolbarOperation").html(html);
 			$("#batchOperation").html(html);
 
 			refreshTable();
@@ -116,11 +117,11 @@ $(function () {
 					goodsPreview(data);
 					break;
 				case 'edit':
-					//编辑`
+					//编辑
 					if (data.goods_class == 1) {
-						location.href = ns.url("shop/goods/editgoods", {"goods_id": data.goods_id});
+						window.open(ns.url("shop/goods/editgoods", {"goods_id": data.goods_id}))
 					} else {
-						location.href = ns.url("shop/virtualgoods/editgoods", {"goods_id": data.goods_id});
+						window.open(ns.url("shop/virtualgoods/editgoods", {"goods_id": data.goods_id}))
 					}
 					break;
 				case 'copy':
@@ -141,6 +142,9 @@ $(function () {
 					break;
 				case 'editStock':
 					editStock(data);
+					break;
+				case 'browse_records':
+					location.href = ns.url("shop/goods/goodsBrowse", {goods_id:data.goods_id});
 					break;
 			}
 		});
@@ -200,6 +204,39 @@ $(function () {
                         	form.render();
                         }
                     });
+					break;
+			}
+		});
+		
+		table.toolbar(function(obj){
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			var id_array = new Array();
+			for (i in obj.data) id_array.push(obj.data[i].goods_id);
+			switch (obj.event) {
+				case "delete":
+					deleteGoods(id_array.toString());
+					break;
+				case 'off_goods':
+					//下架
+					offGoods(id_array);
+					break;
+				case 'on_goods':
+					//上架
+					onGoods(id_array);
+					break;
+				case 'batch_set':
+				 	layer.open({
+			            title: "批量设置",
+			            type: 1,
+			            area: ['700px', '600px'],
+			            content: $('#batchSet').html(),
+			            success: function(){
+			            	form.render();
+			            }
+			        });
 					break;
 			}
 		});
@@ -456,6 +493,7 @@ function refreshTable() {
 		elem: '#goods_list',
 		url: ns.url("shop/goods/lists"),
 		cols: cols,
+		toolbar: '#toolbarOperation',
 		bottomToolbar: "#batchOperation",
 		where: {
 			search_text: $("input[name='search_text']").val(),
@@ -471,23 +509,24 @@ function refreshTable() {
 }
 
 function add() {
-	var html = $("#selectAddGoods").html();
-	laytpl(html).render({}, function (html) {
-		layer.open({
-			type: 1,
-			title: '选择商品类型',
-			area: ['600px'],
-			content: html
-
-		});
-	});
+	location.href = ns.url('shop/goods/addGoods');
+	// var html = $("#selectAddGoods").html();
+	// laytpl(html).render({}, function (html) {
+	// 	layer.open({
+	// 		type: 1,
+	// 		title: '选择商品类型',
+	// 		area: ['600px'],
+	// 		content: html
+	//
+	// 	});
+	// });
 }
 
 // 复制
 function copyGoods(goods_id) {
 	layer.confirm('确定要复制该商品吗?', function () {
-		// if (repeat_flag) return;
-		// repeat_flag = true;
+		if (repeat_flag) return;
+		repeat_flag = true;
 
 		$.ajax({
 			url: ns.url("shop/goods/copyGoods"),
@@ -594,7 +633,6 @@ function editStock(data) {
 
 // 商品推广
 function goodsUrl(data) {
-	console.log(data)
 	$(".operation-wrap[data-goods-id='" + data.goods_id + "'] .popup-qrcode-wrap").css("display", "block");
 	$('#goods_name').html(data.goods_name);
 	$.ajax({
@@ -718,6 +756,25 @@ function batchSetting(){
 				return;
 			}
 		break;
+		case 'category':
+			var category_id = [];
+			$(".ns-goods-cate .layui-block").each(function () {
+				var cate_id = $(this).find(".category_id").val();
+				category_id.push(cate_id);
+			});
+			field.category_id = category_id;
+			if (field.category_id == 0) {
+				layer.msg('请选择商品分类');
+				return;
+			}
+			break;
+		case 'shop_intor':
+			field.recom_way = $('[name="recom_way"]:checked').val();
+			if (field.recom_way == 0) {
+				layer.msg('请选择推荐方式');
+				return;
+			}
+			break;
 	}
 
 	if (setSub) return;

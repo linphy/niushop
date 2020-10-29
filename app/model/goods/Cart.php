@@ -91,7 +91,7 @@ class Cart extends BaseModel
                 'inner'
             ],
         ];
-        $list  = model("goods_cart")->getList([['ngc.member_id', '=', $member_id], ['ngc.site_id', '=', $site_id]], $field, '', $alias, $join);
+        $list  = model("goods_cart")->getList([['ngc.member_id', '=', $member_id], ['ngc.site_id', '=', $site_id], [ 'ngs.is_delete', '=', 0 ]], $field, '', $alias, $join);
         return $this->success($list);
     }
 

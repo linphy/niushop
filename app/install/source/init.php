@@ -1,58 +1,8 @@
 <?php
 
 return [
-	'site_group' => [
-		[
-			'type' => 'group',
-			'group_name' => '基础版',
-			'image' => 'upload/default/site_group.png',
-			'fee' => 1000,
-			'unit' => 'month',
-			'status' => 1,
-			'desc' => '适合个人或三个人以下运营的团队开店，满足商品销售、推广营销等基础经营需求。',
-			'addon_array' => '',
-			'sms_num' => 1000
-		],
-		[
-			'type' => 'group',
-			'group_name' => '专业版',
-			'image' => 'upload/default/site_group.png',
-			'fee' => 2000,
-			'unit' => 'month',
-			'status' => 1,
-			'desc' => '适合成长型电商、门店商家，满足推广获客、成交转化、客户留存、复购增购、分享裂变等核心经营需求。',
-			'addon_array' => '',
-			'sms_num' => 2000
-		],
-		[
-			'type' => 'group',
-			'group_name' => '旗舰版',
-			'image' => 'upload/default/site_group.png',
-			'fee' => 3000,
-			'unit' => 'month',
-			'status' => 1,
-			'desc' => '适合规模化扩张，有多个经营场景需求的成熟商家，满足创新营销玩法等深度经营需求。',
-			'addon_array' => '',
-			'sms_num' => 3000
-		],
-	],
-	'sms_package' => [
-		'sms_name' => '1000条短信',
-		'sms_image' => 'upload/default/sms_package.png',
-		'sms_num' => 1000,
-		'sms_money' => 0.01,
-		'status' => 1,
-		'desc' => '1000条短信套餐，可使用短信条数是1000条。',
-		'create_time' => time()
-	],
-	'site' => [
-		'site_name' => '自营店铺',
-		'sys_uid' => 0,
-		'is_try' => 0,
-		'expire_time' => 0
-	],
-	'api' => [
-		'public_key' => '-----BEGIN PUBLIC KEY-----
+    'api' => [
+        'public_key' => '-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA9J9Jesl0+vHuZf/kkK/4
 fSiHF55aoGMcuGeWSsEurQnHasYUJnqDLS6VozF83o9eR/MFQMfWkJZAlOa7sznm
 PGNOKhWvd7wGu7qoW75Lo3HIR/Uw6n7WDoeJedEcrQrsy9WtgRV5LeMnIiy++0SM
@@ -66,7 +16,7 @@ zwuxwLLPZ+8nPwF8zbqoitzcghiepSxRo6toREYRbtK7huZnbrthQvVdLJQSLclC
 54c99BCxXKhbABxKoFkh5RtqshbJLVnEVol4PFLgym25MfCoPsUEzOBtMogIiEtX
 es7EzlKstlTvyik2t3ZVKXUCAwEAAQ==
 -----END PUBLIC KEY-----',
-		'private_key' => '-----BEGIN PRIVATE KEY-----
+        'private_key' => '-----BEGIN PRIVATE KEY-----
 MIIJQwIBADANBgkqhkiG9w0BAQEFAASCCS0wggkpAgEAAoICAQD0n0l6yXT68e5l
 /+SQr/h9KIcXnlqgYxy4Z5ZKwS6tCcdqxhQmeoMtLpWjMXzej15H8wVAx9aQlkCU
 5ruzOeY8Y04qFa93vAa7uqhbvkujcchH9TDqftYOh4l50RytCuzL1a2BFXkt4yci
@@ -118,5 +68,5 @@ srPCVemhi0Em5wKlgkj/Dz6zs41vOlPKR6Vm2wE2hxi9dh5Zd6OazYdJQD88MIU2
 gg3OSyzGukNQM0X8DxzlWGT6Q3lMJ/yBWFzIVQ/gBGwvpu8tt++1LnRTNBqGdCpe
 qb4I+BQ4ywbjIpj15QjQ6LITfn77pCI=
 -----END PRIVATE KEY-----'
-	]
+    ]
 ];

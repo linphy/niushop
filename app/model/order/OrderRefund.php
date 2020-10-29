@@ -154,7 +154,7 @@ class OrderRefund extends BaseModel
         self::REFUND_TAKEDELIVERY => [
             'status' => self::REFUND_TAKEDELIVERY,
             'name' => '卖家已收货',
-            'action' => [
+             'action' => [
                 [
                     'event' => 'orderRefundTransfer',
                     'title' => '转账',

@@ -251,11 +251,10 @@ class Store extends BaseModel
     {
         $order = '';
         if ($lnglat['lat'] !== null && $lnglat['lng'] !== null) {
-            $field .= ' , FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) as distance ';
+            $field .= ' , ROUND(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) as distance ';
             $condition[] = ['', 'exp', Db::raw(' FORMAT(st_distance ( point ( ' . $lnglat['lng'] . ', ' . $lnglat['lat'] . ' ), point ( longitude, latitude ) ) * 111195 / 1000, 2) < 10000')];
             $order = 'distance asc';
         }
-
         $list = model('store')->getList($condition, $field, $order);
         return $this->success($list);
     }

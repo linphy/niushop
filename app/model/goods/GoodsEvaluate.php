@@ -91,24 +91,27 @@ class GoodsEvaluate extends BaseModel
                 if (!empty($v[ 'images' ])) {
                     $evaluate_shaitu = 1; //晒图
                 }
-                Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
-                    ->update(
-                        [
-                            "evaluate" => Db::raw('evaluate+' . $evaluate),
-                            "evaluate_shaitu" => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
-                            "evaluate_haoping" => Db::raw('evaluate_haoping+' . $evaluate_haoping),
-                            "evaluate_zhongping" => Db::raw('evaluate_zhongping+' . $evaluate_zhongping),
-                            "evaluate_chaping" => Db::raw('evaluate_chaping+' . $evaluate_chaping),
-                        ]);
-                Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
-                    ->update(
-                        [
-                            "evaluate" => Db::raw('evaluate+' . $evaluate),
-                            "evaluate_shaitu" => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
-                            "evaluate_haoping" => Db::raw('evaluate_haoping+' . $evaluate_haoping),
-                            "evaluate_zhongping" => Db::raw('evaluate_zhongping+' . $evaluate_zhongping),
-                            "evaluate_chaping" => Db::raw('evaluate_chaping+' . $evaluate_chaping),
-                        ]);
+
+                if ($order_evaluate_config[ 'evaluate_audit' ] == 0) {
+                    Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
+                        ->update(
+                            [
+                                "evaluate" => Db::raw('evaluate+' . $evaluate),
+                                "evaluate_shaitu" => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
+                                "evaluate_haoping" => Db::raw('evaluate_haoping+' . $evaluate_haoping),
+                                "evaluate_zhongping" => Db::raw('evaluate_zhongping+' . $evaluate_zhongping),
+                                "evaluate_chaping" => Db::raw('evaluate_chaping+' . $evaluate_chaping),
+                            ]);
+                    Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
+                        ->update(
+                            [
+                                "evaluate" => Db::raw('evaluate+' . $evaluate),
+                                "evaluate_shaitu" => Db::raw('evaluate_shaitu+' . $evaluate_shaitu),
+                                "evaluate_haoping" => Db::raw('evaluate_haoping+' . $evaluate_haoping),
+                                "evaluate_zhongping" => Db::raw('evaluate_zhongping+' . $evaluate_zhongping),
+                                "evaluate_chaping" => Db::raw('evaluate_chaping+' . $evaluate_chaping),
+                            ]);
+                }
             }
 
 //			修改订单表中的评价标识
@@ -144,6 +147,163 @@ class GoodsEvaluate extends BaseModel
         $res = model("goods_evaluate")->update($data, $condition);
         Cache::tag("goods_evaluate")->clear();
         return $this->success($res);
+    }
+
+    public function modifyAuditEvaluate($data, $condition = [])
+    {
+        $list = model("goods_evaluate")->getList($condition, 'goods_id,sku_id,is_audit,explain_type,images');
+        if (!empty($list)) {
+
+            $goods_evaluate = 0; //评价
+            $goods_evaluate_haoping = 0; //好评
+            $goods_evaluate_zhongping = 0; //中评
+            $goods_evaluate_chaping = 0; //差评
+            $goods_evaluate_shaitu = 0; //晒图
+
+            $sku_evaluate = 0; //评价
+            $sku_evaluate_haoping = 0; //好评
+            $sku_evaluate_zhongping = 0; //中评
+            $sku_evaluate_chaping = 0; //差评
+            $sku_evaluate_shaitu = 0; //晒图
+
+            foreach ($list as $k => $v) {
+
+                $symbol = "-";
+                if ($v[ 'is_audit' ] == -1) {
+                    $symbol = "+";
+                }
+
+                if ($v[ 'explain_type' ] == 1) {
+                    //好评
+                    $goods_evaluate = 1; //评价
+                    $sku_evaluate = 1;
+                    $goods_evaluate_haoping = 1; //好评
+                    $sku_evaluate_haoping = 1;
+                } elseif ($v[ 'explain_type' ] == 2) {
+                    //中评
+                    $goods_evaluate = 1; //评价
+                    $goods_evaluate_zhongping = 1; //中评
+                    $sku_evaluate_zhongping = 1;
+                } elseif ($v[ 'explain_type' ] == 3) {
+                    //差评
+                    $goods_evaluate = 1; //评价
+                    $goods_evaluate_chaping = 1; //差评
+                    $sku_evaluate_chaping = 1;
+                }
+
+                if (!empty($v[ 'images' ])) {
+                    $goods_evaluate_shaitu = 1; //晒图
+                    $sku_evaluate_shaitu = 1;
+                }
+
+                if ($symbol == "-") {
+                    $goods_info = model("goods")->getInfo([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ], 'evaluate,evaluate_shaitu,evaluate_haoping,evaluate_zhongping,evaluate_chaping');
+
+                    if ($goods_info[ 'evaluate' ] == 0) {
+                        $goods_evaluate = 0;
+                    }
+                    if ($goods_info[ 'evaluate_shaitu' ] == 0) {
+                        $goods_evaluate_shaitu = 0;
+                    }
+                    if ($goods_info[ 'evaluate_haoping' ] == 0) {
+                        $goods_evaluate_haoping = 0;
+                    }
+                    if ($goods_info[ 'evaluate_zhongping' ] == 0) {
+                        $goods_evaluate_zhongping = 0;
+                    }
+                    if ($goods_info[ 'evaluate_chaping' ] == 0) {
+                        $goods_evaluate_chaping = 0;
+                    }
+
+                    $goods_sku_info = model("goods_sku")->getInfo([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ], 'evaluate,evaluate_shaitu,evaluate_haoping,evaluate_zhongping,evaluate_chaping');
+                    if ($goods_sku_info[ 'evaluate' ] == 0) {
+                        $sku_evaluate = 0;
+                    }
+                    if ($goods_sku_info[ 'evaluate_shaitu' ] == 0) {
+                        $sku_evaluate_shaitu = 0;
+                    }
+                    if ($goods_sku_info[ 'evaluate_haoping' ] == 0) {
+                        $sku_evaluate_haoping = 0;
+                    }
+                    if ($goods_sku_info[ 'evaluate_zhongping' ] == 0) {
+                        $sku_evaluate_zhongping = 0;
+                    }
+                    if ($goods_sku_info[ 'evaluate_chaping' ] == 0) {
+                        $sku_evaluate_chaping = 0;
+                    }
+                }
+
+                Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
+                    ->update(
+                        [
+                            "evaluate" => Db::raw('evaluate' . $symbol . $goods_evaluate),
+                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $goods_evaluate_shaitu),
+                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $goods_evaluate_haoping),
+                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $goods_evaluate_zhongping),
+                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $goods_evaluate_chaping),
+                        ]);
+                Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
+                    ->update(
+                        [
+                            "evaluate" => Db::raw('evaluate' . $symbol . $sku_evaluate),
+                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $sku_evaluate_shaitu),
+                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $sku_evaluate_haoping),
+                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $sku_evaluate_zhongping),
+                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $sku_evaluate_chaping),
+                        ]);
+            }
+
+        }
+        $res = model("goods_evaluate")->update($data, $condition);
+        Cache::tag("goods_evaluate")->clear();
+        return $this->success($res);
+    }
+
+    /**
+     * 修改商品评价数量
+     * @param $evaluate_ids
+     * @return array
+     */
+    public function modifyGoodsEvaluateCount($evaluate_ids)
+    {
+        $list = model("goods_evaluate")->getList([ [ 'evaluate_id', 'in', $evaluate_ids ], [ 'is_audit', '<>', 0 ] ], 'goods_id,sku_id,is_audit');
+        if (!empty($list)) {
+            $evaluate = 1; //评价
+            $evaluate_shaitu = 1; //晒图
+            $evaluate_haoping = 1; //好评
+            $evaluate_zhongping = 1; //中评
+            $evaluate_chaping = 1; //差评
+            foreach ($list as $k => $v) {
+
+                $symbol = "+";
+                if ($v[ 'is_audit' ] == -1) {
+                    // 审核拒绝
+                    $symbol = "-";
+                }
+
+                Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
+                    ->update(
+                        [
+                            "evaluate" => Db::raw('evaluate' . $symbol . $evaluate),
+                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $evaluate_shaitu),
+                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $evaluate_haoping),
+                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $evaluate_zhongping),
+                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $evaluate_chaping),
+                        ]);
+                Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
+                    ->update(
+                        [
+                            "evaluate" => Db::raw('evaluate' . $symbol . $evaluate),
+                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $evaluate_shaitu),
+                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $evaluate_haoping),
+                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $evaluate_zhongping),
+                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $evaluate_chaping),
+                        ]);
+            }
+
+        }
+
+        return $this->success();
     }
 
     /**

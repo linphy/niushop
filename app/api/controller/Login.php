@@ -31,6 +31,10 @@ class Login extends BaseApi
      */
     public function login()
     {
+        $config      = new ConfigModel();
+        $config_info = $config->getRegisterConfig($this->site_id, 'shop');
+        if (strstr($config_info['data']['value']['login'], 'username') === false) return $this->response($this->error([], "用户名登录未开启!"));
+
         // 校验验证码
         $config_model = new Config();
         $info = $config_model->getCaptchaConfig();
@@ -60,15 +64,8 @@ class Login extends BaseApi
      */
     public function auth()
     {
-        $auth_tag    = $this->params['auth_tag'];
-        $auth_openid = $this->params['auth_openid'];
         $login       = new LoginModel();
-        $data        = [
-            'auth_tag'    => $auth_tag,
-            'auth_openid' => $auth_openid,
-            'site_id'     => $this->site_id
-        ];
-        $res         = $login->authLogin($data);
+        $res         = $login->authLogin($this->params);
         //生成access_token
         if ($res['code'] >= 0) {
             $token = $this->createToken($res['data']['member_id']);
@@ -82,15 +79,8 @@ class Login extends BaseApi
      */
     public function openidIsExits()
     {
-        $auth_tag    = $this->params['auth_tag'];
-        $auth_openid = $this->params['auth_openid'];
         $login       = new LoginModel();
-        $data        = [
-            'auth_tag'    => $auth_tag,
-            'auth_openid' => $auth_openid,
-            'site_id'     => $this->site_id
-        ];
-        $res         = $login->openidIsExits($data);
+        $res         = $login->openidIsExits($this->params);
         return $this->response($res);
     }
 
@@ -101,7 +91,7 @@ class Login extends BaseApi
     {
         $config      = new ConfigModel();
         $config_info = $config->getRegisterConfig($this->site_id, 'shop');
-        if ($config_info['data']['value']['dynamic_code_login'] != 1) return $this->response($this->error([], "动态码登录未开启!"));
+        if (strstr($config_info['data']['value']['login'], 'mobile') === false) return $this->response($this->error([], "动态码登录未开启!"));
 
         $key         = $this->params['key'];
         $verify_data = Cache::get($key);
@@ -118,15 +108,7 @@ class Login extends BaseApi
                     $res   = $this->success(['token' => $token]);
                 }
             } else {
-                if ($config_info['data']['value']['is_enable'] == 1) {
-                    $res = $register->mobileRegister($this->params);
-                    if ($res['code'] >= 0) {
-                        $token = $this->createToken($res['data']);
-                        $res   = $this->success(['token' => $token]);
-                    }
-                } else {
-                    $res = $this->error("", "该手机号未注册");
-                }
+                $res = $this->error("", "该手机号未注册");
             }
         } else {
             $res = $this->error("", "手机动态码不正确");
@@ -150,9 +132,13 @@ class Login extends BaseApi
             if ($check_res['code'] < 0) return $this->response($check_res);
         }
 
-        $mobile = $this->params['mobile'];//注册手机号
+        $mobile = $this->params['mobile'];
 
         if (empty($mobile)) return $this->response($this->error([], "手机号不可为空!"));
+
+        $register = new RegisterModel();
+        $exist    = $register->mobileExist($this->params["mobile"], $this->site_id);
+        if (!$exist) return $this->response($this->error([], "该手机号未注册!"));
 
         $code          = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);// 生成4位随机数，左侧补0
         $message_model = new Message();
@@ -165,7 +151,6 @@ class Login extends BaseApi
         } else {
             return $this->response($res);
         }
-
     }
 
     /**
@@ -196,5 +181,14 @@ class Login extends BaseApi
             }
         }
         return $this->response($res);
+    }
+
+    /**
+     * 验证token有效性
+     */
+    public function verifyToken(){
+        $token = $this->checkToken();
+        if ($token['code'] < 0) return $this->response($token);
+        return $this->response($this->success());
     }
 }

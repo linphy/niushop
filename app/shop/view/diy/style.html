@@ -87,7 +87,6 @@
             <button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
         </div>
 
-
     </div>
 </div>
 
@@ -104,7 +103,6 @@
 
     $('.style_theme_'+style_theme).show();
     $('.style_theme_'+style_theme).siblings(".style_theme").hide();
-
 
     $(".ns-exchange-type").click(function() {
         $(this).addClass("ns-exchange-selected");
@@ -135,7 +133,6 @@
                 dataType: 'JSON',
                 type: 'POST',
                 success: function(res) {
-
                     repeat_flag = false;
                     layer.msg(res.message);
                 }

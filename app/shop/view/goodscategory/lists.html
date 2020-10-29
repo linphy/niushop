@@ -21,7 +21,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>商城添加商品的时候需要选择对应的商品分类,用户可以根据商品分类搜索商品。</li>
 			<li>点击商品分类名前“+”符号，显示当前商品分类的下级分类。</li>
 			<li>商品属性是前台搜索分类查询商品之后可以通过商品的属性进行进一步搜索。</li>
@@ -172,7 +172,7 @@ $(function () {
 	});
 });
 
-function deleteCategory(category_id,level) {
+function deleteCategory(category_id) {
 	
 	layer.confirm('子级分类也会删除，请谨慎操作', function() {
 		$.ajax({

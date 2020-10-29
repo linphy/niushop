@@ -34,12 +34,6 @@
 		margin-left: 3px;
 		cursor: pointer;
 	}
-	.sms-recharge{
-		cursor: pointer;
-	}
-	.sysorder-recharge{
-		cursor: pointer;
-	}
 </style>
 {/block}
 {block name="main"}
@@ -165,15 +159,6 @@
 				where: data.field
 			});
 		});
-		//短信充值
-		$(".sms-recharge").click(function () {
-			location.href = ns.url('shop/smspackage/payment');
-		});
-
-        //订购记录
-        $(".sysorder-recharge").click(function () {
-            location.href = ns.url('shop/sysorder/lists');
-        })
 	});
 </script>
 

@@ -23,7 +23,6 @@ use app\model\member\Member as MemberModel;
 class Shopacceptmessage extends BaseShop
 {
 
-
     public function __construct()
     {
         //执行父类构造函数
@@ -40,12 +39,12 @@ class Shopacceptmessage extends BaseShop
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
 
-            $search_text_type = input('search_text_type','nickname');
-            $search_text = input('search_text','');
+            $search_text_type = input('search_text_type', 'nickname');
+            $search_text = input('search_text', '');
 
             $condition = [];
             if ($search_text) {
-                $condition[] = ['m.'.$search_text_type, 'like', '%'.$search_text.'%'];
+                $condition[] = [ 'm.' . $search_text_type, 'like', '%' . $search_text . '%' ];
             }
 
             $model = new ShopAcceptMessageModel();
@@ -82,12 +81,11 @@ class Shopacceptmessage extends BaseShop
             $model = new ShopAcceptMessageModel();
 
             $member_id = input('member_id', 0);
-            $res = $model->deleteShopAcceptMessage([['member_id', '=', $member_id], ['site_id', '=', $this->site_id]]);
+            $res = $model->deleteShopAcceptMessage([ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $this->site_id ] ]);
             return $res;
         }
 
     }
-
 
     /**
      *  会员列表
@@ -100,10 +98,10 @@ class Shopacceptmessage extends BaseShop
             $search_text = input('search_text', '');
             $search_text_type = input('search_text_type', 'nickname');//可以传nickname mobile
 
-            $condition[] = ['site_id', '=', $this->site_id];
+            $condition[] = [ 'site_id', '=', $this->site_id ];
             //下拉选择
-            if($search_text_type){
-                $condition[] = [$search_text_type, 'like', "%" . $search_text . "%"];
+            if ($search_text_type) {
+                $condition[] = [ $search_text_type, 'like', "%" . $search_text . "%" ];
             }
 
             $order = 'reg_time desc';
@@ -113,7 +111,6 @@ class Shopacceptmessage extends BaseShop
             $list = $member_model->getMemberPageList($condition, $page, $page_size, $order, $field);
             return $list;
         } else {
-
             return $this->fetch('shopacceptmessage/member_list');
         }
     }

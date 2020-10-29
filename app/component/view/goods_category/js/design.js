@@ -33,6 +33,8 @@ goodsCategoryHtml += '<div class="layui-input-block">';
 goodsCategoryHtml += '<p class="ns-input-text ns-text-color" v-on:click="selectClassificationStyle">选择</p>';
 goodsCategoryHtml += '</div>';
 goodsCategoryHtml += '</div>';
+// goodsCategoryHtml += '<color v-bind:data="{ field : \'topNavColor\', label : \'顶部导航\', value : \'#ffffff\' }"></color>';
+goodsCategoryHtml += '</div>';
 // goodsCategoryHtml += '<p class="hint">商品数量选择 0 时，前台会自动上拉加载更多</p>';
 
 goodsCategoryHtml += '</div>';

@@ -139,12 +139,9 @@
 		 * 添加商家会员
 		 */
 		function addShopMember(member_id) {
-
-			if (repeat_flag) return false;
-			repeat_flag = true;
-
-			layer.confirm('添加后该会员将接收消息通知', function() {
-
+			layer.confirm('添加后该会员将接收消息通知',{shade: 0},function() {
+				if (repeat_flag) return false;
+				repeat_flag = true;
 				$.ajax({
 					url: ns.url("shop/shopacceptmessage/add"),
 					data: {member_id:member_id},
@@ -161,6 +158,7 @@
 					}
 				});
 			}, function () {
+				console.log(123132)
 				layer.close();
 				repeat_flag = false;
 			});

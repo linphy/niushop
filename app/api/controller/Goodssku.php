@@ -130,7 +130,7 @@ class Goodssku extends BaseApi
         }
 
         if (!empty($category_id)) {
-            $condition[] = [ 'g.category_id', 'like', [ $category_id, '%' . $category_id, '%,' . $category_id . ',%' ], 'or' ];
+            $condition[] = [ 'g.category_id', 'like', '%,' . $category_id . ',%' ];
         }
 
         if ($min_price != "" && $max_price != "") {

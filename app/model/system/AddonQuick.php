@@ -31,12 +31,12 @@ class AddonQuick extends BaseModel
     public function addAddonQuickMode($data)
     {
         //判断是否已存在该插件
-        $addon_count = model('addon_quick')->getCount([ ['name', '=', $data['name']] ]);
-        if($addon_count > 0){
-            return $this->error('','该插件已添加快捷方式，请不要重复添加');
+        $addon_count = model('addon_quick')->getCount([ [ 'name', '=', $data[ 'name' ] ] ]);
+        if ($addon_count > 0) {
+            return $this->error('', '该插件已添加快捷方式，请不要重复添加');
         }
 
-        $data['create_time'] = time();
+        $data[ 'create_time' ] = time();
         $res = model('addon_quick')->add($data);
         return $this->success($res);
     }
@@ -52,7 +52,6 @@ class AddonQuick extends BaseModel
         return $this->success($res);
     }
 
-
     /**
      * 获取快捷方式信息
      * @param array $condition
@@ -61,7 +60,7 @@ class AddonQuick extends BaseModel
      */
     public function getAddonQuickModeInfo($condition = [], $field = '*')
     {
-        $info = model('addon_quick')->getInfo($condition,$field);
+        $info = model('addon_quick')->getInfo($condition, $field);
         return $this->success($info);
     }
 
@@ -74,9 +73,9 @@ class AddonQuick extends BaseModel
      * @param string $field
      * @return array
      */
-    public function getAddonQuickModeList($condition = [], $order = '',$field = '*')
+    public function getAddonQuickModeList($condition = [], $order = '', $field = '*')
     {
-        $list  = model('addon_quick')->getList($condition, $field, $order);
+        $list = model('addon_quick')->getList($condition, $field, $order);
         return $this->success($list);
     }
 
@@ -86,30 +85,30 @@ class AddonQuick extends BaseModel
      * @param $install
      * @return array
      */
-    public function isInstallAddonQuick($uninstall,$install)
+    public function isInstallAddonQuick($uninstall, $install)
     {
         //未安装的插件
-        $uninstall_name_arr = array_column($uninstall,'name');
+        $uninstall_name_arr = array_column($uninstall, 'name');
         //已安装的插件
-        $install_name_arr = array_column($install,'name');
+        $install_name_arr = array_column($install, 'name');
         //获取快捷方式插件
-        $addon_quick_list = $this->getAddonQuickModeList([],'','*');
+        $addon_quick_list = $this->getAddonQuickModeList([], '', '*');
 
-        if(empty($addon_quick_list['data'])){
+        if (empty($addon_quick_list[ 'data' ])) {
             return [
                 'uninstall' => $uninstall,
                 'install' => $install
             ];
-        }else{
+        } else {
 
-            foreach($addon_quick_list['data'] as $k=>$v){
+            foreach ($addon_quick_list[ 'data' ] as $k => $v) {
 
                 //判断是否在已安装的插件中
-                if(!in_array($v['name'],$install_name_arr)){
+                if (!in_array($v[ 'name' ], $install_name_arr)) {
                     //判断是否在未安装的插件中
-                    if(empty($uninstall_name_arr) ||  !in_array($v['name'],$uninstall_name_arr)){
-                        $v['is_quick'] = 1;
-                        $v['download'] = 1;
+                    if (empty($uninstall_name_arr) || !in_array($v[ 'name' ], $uninstall_name_arr)) {
+                        $v[ 'is_quick' ] = 1;
+                        $v[ 'download' ] = 1;
                         $uninstall[] = $v;
                     }
                 }
@@ -122,34 +121,33 @@ class AddonQuick extends BaseModel
         }
     }
 
-
     /**
      * 根据插件类型获取官网插件
      * @param $addon_list
      * @param $type
      * @return array
      */
-    public function getAddonQuickByAddonType($addon_list,$type)
+    public function getAddonQuickByAddonType($addon_list, $type)
     {
         //获取官网所有插件
         $upgrade_model = new UpgradeModel();
         $website_addon_list = $upgrade_model->getPluginGoodsList();
 
         $arr = [];
-        if(empty($website_addon_list)){
+        if (empty($website_addon_list)) {
             return $arr;
-        }else{
+        } else {
 
-            $addon_name_arr = array_column($addon_list,'name');
-            foreach($website_addon_list as $k=>$v){
+            $addon_name_arr = array_column($addon_list, 'name');
+            foreach ($website_addon_list as $k => $v) {
 
-                if($v['type_mark'] == $type){
+                if ($v[ 'type_mark' ] == $type) {
 
-                    if(empty($addon_list)){
+                    if (empty($addon_list)) {
                         $arr[] = $v;
-                    }else{
+                    } else {
                         //判断是否在插件中
-                        if(!in_array($v['addon_goods_key'],$addon_name_arr)){
+                        if (!in_array($v[ 'addon_goods_key' ], $addon_name_arr)) {
                             $arr[] = $v;
                         }
                     }

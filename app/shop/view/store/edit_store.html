@@ -25,16 +25,17 @@
 		<label class="layui-form-label img-upload-lable">门店图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block icon">
-				<div class="upload-img-box" id="storeUpload">
+				<div class="upload-img-box">
 					{if empty($info.store_image)}
 					<div class="ns-upload-default">
 						<img src="SHOP_IMG/upload_img.png" />
 						<p>点击上传</p>
 					</div>
 					{else/}
-					<img src="{:img($info.store_image)}" alt="">
+					<img layer-src src="{:img($info.store_image)}" alt="">
 					{/if}
 				</div>
+				<p id="storeUpload" class=" {if condition="$info.store_image"} replace {else/} no-replace{/if}">替换</p>
 				<input type="hidden" name="store_image" value="{$info.store_image}">
 				<i class="del {if !empty($info.store_image)}show{/if}">x</i>
 			</div>

@@ -22,10 +22,10 @@ class MemberAccount extends BaseModel
 {
     //账户类型
     private $account_type = [
-        'balance'       => '余额（不可提现）',
+        'balance' => '余额（不可提现）',
         'balance_money' => '余额（可提现）',
-        'point'         => '积分',
-        'growth'        => '成长值'
+        'point' => '积分',
+        'growth' => '成长值'
     ];
 
     //来源类型
@@ -34,47 +34,47 @@ class MemberAccount extends BaseModel
     public function __construct()
     {
         $event_from_type = event('MemberAccountFromType', '');
-        $from_type       = [];
+        $from_type = [];
         foreach ($event_from_type as $info) {
 
-            if (isset($info['balance'])) {
-                $balance                           = array_keys($info['balance']);
-                $from_type['balance'][$balance[0]] = $info['balance'][$balance[0]];
+            if (isset($info[ 'balance' ])) {
+                $balance = array_keys($info[ 'balance' ]);
+                $from_type[ 'balance' ][ $balance[ 0 ] ] = $info[ 'balance' ][ $balance[ 0 ] ];
             }
 
-            if (isset($info['point'])) {
-                $point                         = array_keys($info['point']);
-                $from_type['point'][$point[0]] = $info['point'][$point[0]];
+            if (isset($info[ 'point' ])) {
+                $point = array_keys($info[ 'point' ]);
+                $from_type[ 'point' ][ $point[ 0 ] ] = $info[ 'point' ][ $point[ 0 ] ];
             }
 
-            if (isset($info['growth'])) {
-                $growth                          = array_keys($info['growth']);
-                $from_type['growth'][$growth[0]] = $info['growth'][$growth[0]];
+            if (isset($info[ 'growth' ])) {
+                $growth = array_keys($info[ 'growth' ]);
+                $from_type[ 'growth' ][ $growth[ 0 ] ] = $info[ 'growth' ][ $growth[ 0 ] ];
             }
 
-            if (isset($info['balance_money'])) {
-                $balance_money                                 = array_keys($info['balance_money']);
-                $from_type['balance_money'][$balance_money[0]] = $info['balance_money'][$balance_money[0]];
+            if (isset($info[ 'balance_money' ])) {
+                $balance_money = array_keys($info[ 'balance_money' ]);
+                $from_type[ 'balance_money' ][ $balance_money[ 0 ] ] = $info[ 'balance_money' ][ $balance_money[ 0 ] ];
             }
         }
 
-        $from_type['balance']['adjust']       = ['type_name' => '调整', 'type_url' => ''];
-        $from_type['balance_money']['adjust'] = ['type_name' => '调整', 'type_url' => ''];
+        $from_type[ 'balance' ][ 'adjust' ] = [ 'type_name' => '调整', 'type_url' => '' ];
+        $from_type[ 'balance_money' ][ 'adjust' ] = [ 'type_name' => '调整', 'type_url' => '' ];
 
-        $from_type['balance']['order']       = ['type_name' => '消费', 'type_url' => ''];
-        $from_type['balance_money']['order'] = ['type_name' => '消费', 'type_url' => ''];
+        $from_type[ 'balance' ][ 'order' ] = [ 'type_name' => '消费', 'type_url' => '' ];
+        $from_type[ 'balance_money' ][ 'order' ] = [ 'type_name' => '消费', 'type_url' => '' ];
 
-        $from_type['point']['adjust']  = ['type_name' => '调整', 'type_url' => ''];
-        $from_type['growth']['adjust'] = ['type_name' => '调整', 'type_url' => ''];
+        $from_type[ 'point' ][ 'adjust' ] = [ 'type_name' => '调整', 'type_url' => '' ];
+        $from_type[ 'growth' ][ 'adjust' ] = [ 'type_name' => '调整', 'type_url' => '' ];
 
-        $from_type['balance']['upgrade']       = ['type_name' => '升级', 'type_url' => ''];
-        $from_type['balance_money']['upgrade'] = ['type_name' => '升级', 'type_url' => ''];
+        $from_type[ 'balance' ][ 'upgrade' ] = [ 'type_name' => '升级', 'type_url' => '' ];
+        $from_type[ 'balance_money' ][ 'upgrade' ] = [ 'type_name' => '升级', 'type_url' => '' ];
 
-        $from_type['point']['upgrade']  = ['type_name' => '升级', 'type_url' => ''];
-        $from_type['growth']['upgrade'] = ['type_name' => '升级', 'type_url' => ''];
+        $from_type[ 'point' ][ 'upgrade' ] = [ 'type_name' => '升级', 'type_url' => '' ];
+        $from_type[ 'growth' ][ 'upgrade' ] = [ 'type_name' => '升级', 'type_url' => '' ];
 
-        $from_type['balance']['refund'] = ['type_name' => '退还', 'type_url' => ''];
-        $from_type['point']['refund']   = ['type_name' => '退还', 'type_url' => ''];
+        $from_type[ 'balance' ][ 'refund' ] = [ 'type_name' => '退还', 'type_url' => '' ];
+        $from_type[ 'point' ][ 'refund' ] = [ 'type_name' => '退还', 'type_url' => '' ];
 
         $this->from_type = $from_type;
     }
@@ -109,31 +109,39 @@ class MemberAccount extends BaseModel
         model('member_account')->startTrans();
         try {
             //账户检测
-            $member_account   = model('member')->getInfo([
-                ['member_id', '=', $member_id],
-                ['site_id', '=', $site_id]
+            $member_account = model('member')->getInfo([
+                [ 'member_id', '=', $member_id ],
+                [ 'site_id', '=', $site_id ]
             ], $account_type . ', username, mobile, email');
-            $account_new_data = (float)$member_account[$account_type] + (float)$account_data;
-            if ((float)$account_new_data < 0) {
+            $account_new_data = (float) $member_account[ $account_type ] + (float) $account_data;
+            if ((float) $account_new_data < 0) {
                 model('member_account')->rollback();
-                return $this->error('', 'ACCOUNT_EMPTY');
+                $msg = '';
+                if ($account_type == 'balance') {
+                    $msg = '账户余额不足';
+                } elseif ($account_type = 'point') {
+                    $msg = '账户积分不足';
+                } elseif ($account_type = 'growth') {
+                    $msg = '账户成长值不足';
+                }
+                return $this->error('', $msg);
             }
 
             //添加记录
-            $type_info = $this->from_type[$account_type][$from_type];
-            $data      = array(
-                'site_id'      => $site_id,
-                'member_id'    => $member_id,
+            $type_info = $this->from_type[ $account_type ][ $from_type ];
+            $data = array (
+                'site_id' => $site_id,
+                'member_id' => $member_id,
                 'account_type' => $account_type,
                 'account_data' => $account_data,
-                'from_type'    => $from_type,
-                'type_name'    => $type_info['type_name'],
-                'type_tag'     => $relate_tag,
-                'create_time'  => time(),
-                'username'     => $member_account['username'],
-                'mobile'       => $member_account['mobile'],
-                'email'        => $member_account['email'],
-                'remark'       => $remark
+                'from_type' => $from_type,
+                'type_name' => $type_info[ 'type_name' ],
+                'type_tag' => $relate_tag,
+                'create_time' => time(),
+                'username' => $member_account[ 'username' ],
+                'mobile' => $member_account[ 'mobile' ],
+                'email' => $member_account[ 'email' ],
+                'remark' => $remark
             );
             model('member_account')->add($data);
 
@@ -146,7 +154,7 @@ class MemberAccount extends BaseModel
 
             event("AddMemberAccount", $data);
             model('member_account')->commit();
-            return $this->success(['member_id' => $member_id, $account_type => sprintf("%.2f", $account_new_data)]);
+            return $this->success([ 'member_id' => $member_id, $account_type => sprintf("%.2f", $account_new_data) ]);
         } catch (\Exception $e) {
             model('member_account')->rollback();
             return $this->error('', $e->getMessage());

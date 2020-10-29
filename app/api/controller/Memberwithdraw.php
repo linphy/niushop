@@ -51,10 +51,8 @@ class Memberwithdraw extends BaseApi
     {
         $token = $this->checkToken();
         if ($token['code'] < 0) return $this->response($token);
-        $member_model  = new MemberModel();
-        $member_info   = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id');
         $config_model  = new WithdrawModel();
-        $config_result = $config_model->getConfig($member_info['data']['site_id'], 'shop');
+        $config_result = $config_model->getConfig($this->site_id, 'shop');
         return $this->response($config_result);
     }
 
@@ -68,10 +66,10 @@ class Memberwithdraw extends BaseApi
         if ($token['code'] < 0) return $this->response($token);
 
         $member_model       = new MemberModel();
-        $member_info        = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id,wx_openid');
+        $member_info        = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id,wx_openid,weapp_openid');
         $withdraw_model     = new WithdrawModel();
         $transfer_type_list = $withdraw_model->getTransferType($member_info['data']['site_id'], 'shop');
-        if(empty($member_info['data']['wx_openid'])){
+        if(empty($member_info['data']['wx_openid']) && empty($member_info['data']['weapp_openid'])){
             unset($transfer_type_list['wechatpay']);
         }
         return $this->response($this->success($transfer_type_list));
@@ -92,7 +90,6 @@ class Memberwithdraw extends BaseApi
         $bank_name      = isset($this->params['bank_name']) ? $this->params['bank_name'] : '';//银行名称
         $account_number = isset($this->params['account_number']) ? $this->params['account_number'] : '';//账号名称
         $mobile         = isset($this->params['mobile']) ? $this->params['mobile'] : '';//手机号
-        $applet_type    = isset($this->params['applet_type']) ? $this->params['applet_type'] : 0;
         $app_type       = $this->params['app_type'];
         $member_model   = new MemberModel();
         $member_info    = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id']]], 'site_id');
@@ -105,8 +102,7 @@ class Memberwithdraw extends BaseApi
             "account_number" => $account_number,
             "apply_money"    => $apply_money,
             "mobile"         => $mobile,
-            "app_type"       => $app_type,
-        	"applet_type" 	 => $applet_type
+            "app_type"       => $app_type
         );
         $result         = $withdraw_model->apply($data, $member_info['data']['site_id'], 'shop');
         return $this->response($result);

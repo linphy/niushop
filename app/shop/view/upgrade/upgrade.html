@@ -5,23 +5,27 @@
         word-break: break-all;
         line-height: 24px;
     }
+    .ns-single-filter-box{
+        display: block;
+    }
 </style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
     <div class="layui-colla-item">
         <h2 class="layui-colla-title">操作提示</h2>
-        <ul class="layui-colla-content layui-show">
+        <ul class="layui-colla-content">
             <li>一、建议在系统升级前将网站的文件权限全部修改为777，保证系统备份文件、下载文件和覆盖文件的正常进行</li>
             <li>二、在升级完成后，为保证网站的安全，需要重新设置文件权限。建议进行如下修改</li>
             <li>1、runtime文件夹，upload文件夹依旧为777权限</li>
-            <li>2、其他文件设置为644权限</li>
+            <li>2、其他文件设置为755权限</li>
         </ul>
     </div>
 </div>
 <!-- 操作栏 -->
 <div class="ns-single-filter-box">
     <button class="layui-btn ns-bg-color" id="upgrade_btn">一键升级</button>
+    <button class="layui-btn ns-bg-color" id="refresh_btn">一键刷新</button>
 </div>
 <table id="version_list" lay-filter="version_list"></table>
 
@@ -238,11 +242,23 @@
                         area: ['700px', '500px'],
                         content: html
                     });
-                })
+                });
                 return false;
             }
             window.location.href = ns.url("shop/upgrade/upgradeAction");
-        })
+        });
+
+        $("#refresh_btn").click(function () {
+            $.ajax({
+                type: "post",
+                url: ns.url('shop/upgrade/refresh'),
+                dataType: "JSON",
+                success: function (res) {
+                    console.log(res);
+                    layer.msg(res.message);
+                }
+            });
+        });
     });
 </script>
 {/block}

@@ -48,8 +48,8 @@ class MemberBankAccount extends BaseModel
             //提现方式为微信的时候  判断用户是否已关注公众号
             if ($data['withdraw_type'] == 'wechatpay') {
                 //获取会员信息
-                $wx_openid = model('member')->getValue([['member_id', '=', $data['member_id']]], 'wx_openid');
-                if (empty($wx_openid)) {
+                $member_info = model('member')->getInfo([['member_id', '=', $data['member_id']]], 'wx_openid,weapp_openid');
+                if (empty($member_info['wx_openid']) && empty($member_info['weapp_openid'])) {
                     return $this->error('', '请先绑定微信');
                 }
             }
@@ -99,8 +99,8 @@ class MemberBankAccount extends BaseModel
             //提现方式为微信的时候  判断用户是否已关注公众号
             if ($data['withdraw_type'] == 'wechatpay') {
                 //获取会员信息
-                $wx_openid = model('member')->getValue([['member_id', '=', $data['member_id']]], 'wx_openid');
-                if (empty($wx_openid)) {
+                $member_info = model('member')->getInfo([['member_id', '=', $data['member_id']]], 'wx_openid,weapp_openid');
+                if (empty($member_info['wx_openid']) && empty($member_info['weapp_openid'])) {
                     return $this->error('', '请先绑定微信');
                 }
             }

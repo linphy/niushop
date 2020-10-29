@@ -3,7 +3,7 @@
 	<!-- 预览 -->
 	<template slot="preview">
 
-		<header v-bind:style="{ color : nc.textColor, backgroundColor : nc.backgroundColor }">
+		<header v-bind:style="{ color : nc.textColor?nc.textColor:'rgba(0,0,0,0)', backgroundColor : nc.backgroundColor }">
 			<a href="javascript:;" class="go-back">
 				<svg t="1535096586623" class="icon" v-bind:style="{width: nc.fontSize-4+'px'}" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1036" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<path d="M352 512l384-384c12.8-12.8 12.8-32 0-44.8-12.8-12.8-32-12.8-44.8 0L288 486.4C281.6 492.8 275.2 505.6 275.2 512c0 6.4 0 19.2 6.4 25.6l409.6 409.6c12.8 12.8 32 12.8 44.8 0s12.8-32 0-44.8L352 512z" p-id="1037"></path>
@@ -31,7 +31,7 @@
 		
 		<color v-bind:data="{ field : 'backgroundColor', label : '背景颜色' }"></color>
 		
-		<color v-bind:data="{ defaultcolor: 'defaultTextColor'}"></color>
+		<color v-bind:data="{ defaultcolor: '#000000'}"></color>
 
 		<div class="layui-form-item">
 			<label class="layui-form-label sm">右侧功能</label>

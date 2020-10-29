@@ -14,16 +14,17 @@
 		<label class="layui-form-label">默认商品图片：</label>
 		<div class="layui-input-inline">
 			<div class="upload-img-block">
-				<div class="upload-img-box" id="imgUploadGoods">
+				<div class="upload-img-box">
 					{if empty($default_img.default_goods_img)}
 						<div class="ns-upload-default">
-							<img src="SHOP_IMG/upload_img.png" />
+							<img layer-src src="SHOP_IMG/upload_img.png" />
 							<p>点击上传</p>
 						</div>
 					{else/}
-						<img src="{:img($default_img.default_goods_img)}" alt="">
+						<img layer-src src="{:img($default_img.default_goods_img)}" alt="">
 					{/if}
 				</div>
+				<p id="imgUploadGoods" class=" {if condition="$default_img.default_goods_img"} replace {else/} no-replace{/if}">替换</p>
 				<input type="hidden" name="default_goods_img" {if $default_img} value="{$default_img.default_goods_img}" {/if}>
 				<i class="del {if !empty($default_img.default_goods_img)}show{/if}">x</i>
 			</div>
@@ -34,16 +35,17 @@
 		<label class="layui-form-label">默认会员头像：</label>
 		<div class="layui-input-inline">
 			<div class="upload-img-block">
-				<div class="upload-img-box" id="imgUploadMember">
+				<div class="upload-img-box">
 					{if empty($default_img.default_headimg)}
 						<div class="ns-upload-default">
 							<img src="SHOP_IMG/upload_img.png" />
 							<p>点击上传</p>
 						</div>
 					{else/}
-						<img src="{:img($default_img.default_headimg)}" alt="">
+						<img layer-src src="{:img($default_img.default_headimg)}" alt="">
 					{/if}
 				</div>
+				<p id="imgUploadMember" class=" {if condition="$default_img.default_headimg"} replace {else/} no-replace{/if}">替换</p>
 				<input type="hidden" name="default_headimg" {if $default_img} value="{$default_img.default_headimg}"{/if}>
 				<i class="del {if !empty($default_img.default_headimg)}show{/if}">x</i>
 			</div>

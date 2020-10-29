@@ -14,6 +14,7 @@ namespace app\shop\controller;
 
 use app\model\goods\Config as GoodsConfigModel;
 use app\model\system\Pay;
+use app\model\system\Servicer as ServicerModel;
 use app\model\web\Config as ConfigModel;
 use app\model\system\Api;
 use extend\RSA;
@@ -35,7 +36,7 @@ class Config extends BaseShop
             $logo = input('logo', '');
             $data = [
                 'icp' => input('icp', ''),
-                'gov_record' => $gov_record = input('gov_record', ''),
+                'gov_record' => input('gov_record', ''),
                 'gov_url' => input('gov_url', ''),
                 'market_supervision_url' => input('market_supervision_url', ''),
                 'logo' => '',
@@ -119,7 +120,7 @@ class Config extends BaseShop
         if (request()->isAjax()) {
             $data = [
                 'shop_login' => input('shop_login', 0),//后台登陆验证码是否启用 1：启用 0：不启用
-                'shop_reception_login' => input('shop_reception_login', 0),//前天登陆验证码是否启用 1：启用 0：不启用
+                'shop_reception_login' => input('shop_reception_login', 0),//前台登陆验证码是否启用 1：启用 0：不启用
             ];
             return $config_model->setCaptchaConfig($data);
         } else {
@@ -184,7 +185,6 @@ class Config extends BaseShop
      */
     public function h5DomainName()
     {
-
         $config_model = new ConfigModel();
         $domain_name = input("domain_name", "");
 
@@ -193,5 +193,33 @@ class Config extends BaseShop
         ]);
 
         return $result;
+    }
+
+
+    /**
+     * 客服配置
+     */
+    public function servicer()
+    {
+        $servicer_model = new ServicerModel();
+        if (request()->isAjax()) {
+            $weapp = input('weapp', 0);//是否启用小程序客服
+            $system = input('system', 0);//是否启用系统客服
+            $open = input('open', 0);//是否启用第三方客服
+            $open_url = input('open_url', '');//是否启用第三方客服
+            $data = array(
+                'weapp' => $weapp,
+                'system' => $system,
+                'open' => $open,
+                'open_url' => $open_url
+            );
+            $result = $servicer_model->setServicerConfig($data);
+            return $result;
+        } else {
+            $config = $servicer_model->getServicerConfig()['data'] ?? [];
+            $this->assign('config', $config['value'] ?? []);
+            return $this->fetch('config/servicer');
+        }
+
     }
 }

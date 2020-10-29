@@ -1415,3 +1415,37 @@ function base64_to_blob($base64Str){
     }
     return false;
 }
+
+/**
+ * 获取近七日的时间
+ * @param $time
+ * @return array|boo
+ */
+
+function getweeks($time = '', $format='Y-m-d'){
+    $time = $time != '' ? $time : time();
+    //组合数据
+    $date = [];
+    for ($i=1; $i<=10; $i++){
+        $date[$i] = date($format ,strtotime( '+' . $i-10 .' days', $time));
+    }
+    return $date;
+}
+
+/**
+ * 两个数字比
+ * @param $first | $second
+ * @return string
+ */
+
+function diff_rate($first,$second){
+    if($second!=0){
+        $result = sprintf('%.2f',(($first-$second)/$second)*100 ).'%';
+    }else if($second==0 & $first!=0 ){
+        $result = '100%';
+    }else{
+        $result = '0%';
+    }
+    return $result;
+}
+

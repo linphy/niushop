@@ -6,11 +6,20 @@
  */
 
 var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
-		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{borderTopLeftRadius: data.borderTopLeftRadius+\'px\', borderTopRightRadius: data.borderTopRightRadius+\'px\', borderBottomLeftRadius: data.borderBottomLeftRadius+\'px\', borderBottomRightRadius: data.borderBottomRightRadius+\'px\'}">';
-			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" v-bind:style="{ padding: \'0 \'+ data.padding + \'px\', width : ( data.scrollSetting == \'fixed\' ? ((371 - data.paddingLeftRight * 2 - data.marginLeftRight * 2) / list.length) : (371 / 3)) + \'px\' }">';
+		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{}" v-if="data.scrollSetting==\'fixed\'">';
+			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" v-bind:style="{ width: ( data.scrollSetting==\'fixed\' ? ( 375/list.length ) : (375/4) ) + \'px\', paddingLeft: (data.padding/2)+\'px\', paddingRight: (data.padding/2)+\'px\' }">';
 				graphicNavPreviewHtml += '<a href="javascript:;">';
-					graphicNavPreviewHtml += '<img v-show="data.selectedTemplate ==\'imageNavigation\'" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" v-bind:style="{ width : data.imageScale+\'%\' }" />';
-					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor }">{{item.title}}</span>';
+					graphicNavPreviewHtml += '<img v-show="data.selectedTemplate ==\'imageNavigation\'" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" />';
+					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor, opacity: data.textColor ? 1 : 0 }">{{item.title}}</span>';
+					graphicNavPreviewHtml += '</a>';
+			graphicNavPreviewHtml += '</div>';
+		graphicNavPreviewHtml += '</div>';
+		
+		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{}" v-else>';
+			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" v-bind:style="{ width: (375/4)+\'px\', marginLeft: index==0?0:data.padding+\'px\' }">';
+				graphicNavPreviewHtml += '<a href="javascript:;">';
+					graphicNavPreviewHtml += '<img v-show="data.selectedTemplate ==\'imageNavigation\'" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" />';
+					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor, opacity: data.textColor ? 1 : 0 }">{{item.title}}</span>';
 					graphicNavPreviewHtml += '</a>';
 			graphicNavPreviewHtml += '</div>';
 		graphicNavPreviewHtml += '</div>';
@@ -59,27 +68,27 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 			graphicNavListHtml += '</div>';
 		graphicNavListHtml += '</div>';
 
-		graphicNavListHtml += '<color v-bind:data="{ defaultcolor: \'defaultTextColor\' }"></color>';
+		graphicNavListHtml += '<color v-bind:data="{ defaultcolor: \'#666666\' }"></color>';
 		graphicNavListHtml += '<color v-bind:data="{ field : \'backgroundColor\', label : \'背景颜色\' }"></color>';
 
 		graphicNavListHtml += '<div class="text-slide">';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingTopBottom\', label : \'上下内边距\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingLeftRight\', label : \'左右边距\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'marginTopBottom\', label : \'上下外边距\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'marginLeftRight\', label : \'左右外边距\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'padding\', label : \'图片间距\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopLeftRadius\', label : \'左上圆角\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopRightRadius\', label : \'右上圆角\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomLeftRadius\', label : \'左下圆角\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomRightRadius\', label : \'右下圆角\' }"></slide>';
+			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingTopBottom\', label : \'上下边距\' }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingLeftRight\', label : \'左右边距\' }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'marginTopBottom\', label : \'上下外边距\' }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'marginLeftRight\', label : \'左右外边距\' }"></slide>';
+			graphicNavListHtml += '<slide v-bind:data="{ field : \'padding\', label : \'图片间距\', max: 40 }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopLeftRadius\', label : \'左上圆角\' }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopRightRadius\', label : \'右上圆角\' }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomLeftRadius\', label : \'左下圆角\' }"></slide>';
+			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomRightRadius\', label : \'右下圆角\' }"></slide>';
 		graphicNavListHtml += '</div>';
 
-		graphicNavListHtml += '<div class="layui-form-item">';
+		/* graphicNavListHtml += '<div class="layui-form-item">';
 			graphicNavListHtml += '<label class="layui-form-label sm">图片比例</label>';
 			graphicNavListHtml += '<div class="layui-input-block">';
 				graphicNavListHtml += '<input type="number" v-bind:value="imageScale" v-on:keyup="changeImageScale($event)" placeholder="图片比例1~100%" class="layui-input" />';
 			graphicNavListHtml += '</div>';
-		graphicNavListHtml += '</div>';
+		graphicNavListHtml += '</div>'; */
 
 		graphicNavListHtml += '<div class="layui-form-item">';
 			graphicNavListHtml += '<label class="layui-form-label sm">滚动设置</label>';

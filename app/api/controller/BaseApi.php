@@ -15,6 +15,7 @@ namespace app\api\controller;
 use app\model\system\Api;
 use extend\RSA;
 use think\facade\Cache;
+use app\model\member\Member as MemberModel;
 
 class BaseApi
 {
@@ -38,13 +39,13 @@ class BaseApi
 
     public function __construct()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        if ($_SERVER[ 'REQUEST_METHOD' ] == 'OPTIONS') {
             exit;
         }
         //获取参数
-        $this->site_id           = request()->siteid();
-        $this->params            = input();
-        $this->params['site_id'] = $this->site_id;
+        $this->site_id = request()->siteid();
+        $this->params = input();
+        $this->params[ 'site_id' ] = $this->site_id;
         $this->getApiConfig();
         $this->decryptParams();
     }
@@ -54,11 +55,11 @@ class BaseApi
      */
     private function decryptParams()
     {
-        if ($this->api_config['is_use'] && !empty($this->api_config['value']) && isset($this->params['encrypt'])) {
-            $decrypted = RSA::decrypt(urldecode($this->params['encrypt']), $this->api_config['value']['private_key'], $this->api_config['value']['public_key']);
-            if ($decrypted['code'] >= 0) {
-                $this->params = json_decode($decrypted['data'], true);
-                $this->params['site_id'] = $this->site_id;
+        if ($this->api_config[ 'is_use' ] && !empty($this->api_config[ 'value' ]) && isset($this->params[ 'encrypt' ])) {
+            $decrypted = RSA::decrypt(urldecode($this->params[ 'encrypt' ]), $this->api_config[ 'value' ][ 'private_key' ], $this->api_config[ 'value' ][ 'public_key' ]);
+            if ($decrypted[ 'code' ] >= 0) {
+                $this->params = json_decode($decrypted[ 'data' ], true);
+                $this->params[ 'site_id' ] = $this->site_id;
             } else {
                 $this->params = [];
             }
@@ -70,31 +71,38 @@ class BaseApi
      */
     private function getApiConfig()
     {
-        $api_model        = new Api();
-        $config_result    = $api_model->getApiConfig();
-        $this->api_config = $config_result["data"];
+        $api_model = new Api();
+        $config_result = $api_model->getApiConfig();
+        $this->api_config = $config_result[ "data" ];
     }
 
     /**
      * 检测token(使用私钥检测)
      */
-    protected function checkToken(): array
+    protected function checkToken() : array
     {
-        if (empty($this->params['token'])) return $this->error('', 'TOKEN_NOT_EXIST');
+        if (empty($this->params[ 'token' ])) return $this->error('', 'TOKEN_NOT_EXIST');
 
-        if ($this->api_config['is_use'] && isset($this->api_config['value']['private_key']) && !empty($this->api_config['value']['private_key'])) {
-            $decrypt = decrypt($this->params['token'], $this->api_config['value']['private_key'] . 'site' . $this->site_id);
+        if ($this->api_config[ 'is_use' ] && isset($this->api_config[ 'value' ][ 'private_key' ]) && !empty($this->api_config[ 'value' ][ 'private_key' ])) {
+            $decrypt = decrypt($this->params[ 'token' ], $this->api_config[ 'value' ][ 'private_key' ] . 'site' . $this->site_id);
         } else {
-            $decrypt = decrypt($this->params['token'], 'site' . $this->site_id);
+            $decrypt = decrypt($this->params[ 'token' ], 'site' . $this->site_id);
         }
         if (empty($decrypt)) return $this->error('', 'TOKEN_ERROR');
 
         $data = json_decode($decrypt, true);
-        if (!isset($data['member_id']) || empty($data['member_id'])) return $this->error('', 'TOKEN_ERROR');
+        if (!isset($data[ 'member_id' ]) || empty($data[ 'member_id' ])) return $this->error('', 'TOKEN_ERROR');
 
-        if (!empty($data['expire_time']) && $data['expire_time'] > time()) return $this->error('', 'TOKEN_EXPIRE');
+        if (!empty($data[ 'expire_time' ]) && $data[ 'expire_time' ] > time()) return $this->error('', 'TOKEN_EXPIRE');
 
-        $this->member_id = $data['member_id'];
+        //判断用户是否已注销
+        $member_model = new MemberModel();
+        $member_info = $member_model->getMemberInfo([['member_id','=',$data['member_id']]]);
+        if(empty($member_info['data'])){
+            return $this->error('','该会员已注销');
+        }
+
+        $this->member_id = $data[ 'member_id' ];
 
         return success(0, '', $data);
     }
@@ -106,11 +114,12 @@ class BaseApi
     protected function createToken($member_id, $expire_time = 0)
     {
         $data = [
-            'member_id'   => $member_id,
+            'member_id' => $member_id,
+            'create_time' => time(),
             'expire_time' => empty($expire_time) ? 0 : time() + $expire_time
         ];
-        if ($this->api_config['is_use'] && isset($this->api_config['value']['private_key']) && !empty($this->api_config['value']['private_key'])) {
-            $token = encrypt(json_encode($data), $this->api_config['value']['private_key'] . 'site' . $this->site_id);
+        if ($this->api_config[ 'is_use' ] && isset($this->api_config[ 'value' ][ 'private_key' ]) && !empty($this->api_config[ 'value' ][ 'private_key' ])) {
+            $token = encrypt(json_encode($data), $this->api_config[ 'value' ][ 'private_key' ] . 'site' . $this->site_id);
         } else {
             $token = encrypt(json_encode($data), 'site' . $this->site_id);
         }
@@ -124,7 +133,7 @@ class BaseApi
      */
     public function response($data)
     {
-        $data['timestamp'] = time();
+        $data[ 'timestamp' ] = time();
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 
@@ -138,8 +147,8 @@ class BaseApi
     {
         $lang_array = $this->getLang();
         $code_array = $this->getCode();
-        $lang_var   = isset($lang_array[$code_var]) ? $lang_array[$code_var] : $code_var;
-        $code_var   = isset($code_array[$code_var]) ? $code_array[$code_var] : $code_array['SUCCESS'];
+        $lang_var = isset($lang_array[ $code_var ]) ? $lang_array[ $code_var ] : $code_var;
+        $code_var = isset($code_array[ $code_var ]) ? $code_array[ $code_var ] : $code_array[ 'SUCCESS' ];
         return success($code_var, $lang_var, $data);
     }
 
@@ -153,8 +162,8 @@ class BaseApi
     {
         $lang_array = $this->getLang();
         $code_array = $this->getCode();
-        $lang_var   = isset($lang_array[$code_var]) ? $lang_array[$code_var] : $code_var;
-        $code_var   = isset($code_array[$code_var]) ? $code_array[$code_var] : $code_array['ERROR'];
+        $lang_var = isset($lang_array[ $code_var ]) ? $lang_array[ $code_var ] : $code_var;
+        $code_var = isset($code_array[ $code_var ]) ? $code_array[ $code_var ] : $code_array[ 'ERROR' ];
         return error($code_var, $lang_var, $data);
     }
 
@@ -165,8 +174,8 @@ class BaseApi
     private function getLang()
     {
         $default_lang = config("lang.default_lang");
-        $addon        = request()->addon();
-        $addon        = isset($addon) ? $addon : '';
+        $addon = request()->addon();
+        $addon = isset($addon) ? $addon : '';
         $cache_common = Cache::get("lang_app/api/lang/" . $default_lang);
 
         if (!empty($addon)) {
@@ -211,8 +220,8 @@ class BaseApi
      */
     private function getCode()
     {
-        $addon        = request()->addon();
-        $addon        = isset($addon) ? $addon : '';
+        $addon = request()->addon();
+        $addon = isset($addon) ? $addon : '';
         $cache_common = Cache::get("lang_code_app/api/lang");
 
         if (!empty($addon)) {

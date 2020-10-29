@@ -29,7 +29,8 @@
 .image-ads .preview-draggable .image-ads-list{overflow: hidden;white-space: nowrap;}
 .image-ads .preview-draggable>ul.horizontal-sliding{overflow-x: scroll;white-space: nowrap;}
 .image-ads .preview-draggable>ul.horizontal-sliding::-webkit-scrollbar{display: none;}
-.image-ads .preview-draggable .image-ads-item.horizontal-sliding{display: inline-block;/* width: 100px; */ width: 340px; vertical-align: middle;}
+.image-ads .preview-draggable .image-ads-item.horizontal-sliding>div {height: 165px;}
+.image-ads .preview-draggable .image-ads-item.horizontal-sliding{display: inline-block;/* width: 100px; */ /* width: 340px; */ vertical-align: middle;}
 .image-ads .preview-draggable .image-ads-item.horizontal-sliding p{height: 100px;line-height: 100px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;}
 
 /*轮播海报*/
@@ -51,9 +52,18 @@
 .image-ads .image-ad-list>ul>li:hover .del{display:block;}
 
 /*图片间隙*/
+.image-ads .preview-draggable .image-ads-item.vertically:first-child {margin-top: 0 !important;}
 .image-ads .preview-draggable>ul.vertically li{margin-left:0 !important;margin-right:0 !important;margin-top:0 !important;}
 .image-ads .preview-draggable>ul.vertically li:last-child{margin:0 !important;}
 .image-ads .preview-draggable>ul[class*='horizontal-sliding'] li{margin-top:0 !important;margin-bottom:0 !important;margin-left:0 !important;}
 .image-ads .preview-draggable>ul[class*='horizontal-sliding'] li:last-child{margin:0 !important;}
 
 .image-ads .error-msg {margin-top: 5px;color: #f44;display: none;}
+
+
+/* 轮播 */
+.image-ads .preview-draggable .layui-carousel {background-color: transparent; padding: 0 10px; box-sizing: border-box;}
+.image-ads .preview-draggable .layui-carousel .image-ads-item.carousel-posters {border-radius: 5px; overflow: hidden;}
+.image-ads .preview-draggable .layui-carousel>[carousel-item]>* {background-color: transparent;}
+.image-ads .preview-draggable .layui-carousel .image-ads-item>div img {width: 100%; height: 100%; object-fit: cover;}
+.image-ads .preview-draggable .layui-carousel .image-ads-item>span {line-height: 20px; background: rgba(0,0,0,.3);}

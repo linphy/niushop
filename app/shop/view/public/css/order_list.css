@@ -25,7 +25,7 @@
 .order-list-table .header-row td  .more-operation:before{left: 8px;top: -14px;border: solid transparent;content: "";height: 0;width: 0;position: absolute;pointer-events: none;border-color: transparent;border-bottom-color: #fff;border-width: 8px;}
 .order-list-table .header-row td  .more-operation span{color:#333;}
 
-.order-list-table .checkbox-all .layui-table-cell{padding:0;text-align:center}
+.order-list-table .checkbox-all .layui-table-cell{padding:0;text-align:center;}
 .order-list-table .product-info .layui-table-cell{padding:0 5px}
 .order-list-table .content-row:hover{background-color:#fff !important;}
 .order-list-table .content-row .product-info{border-right: 0;}

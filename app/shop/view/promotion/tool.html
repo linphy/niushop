@@ -15,11 +15,9 @@
 		top: 0;
 		right: -1px;
 	}
-
 </style>
 {/block}
 {block name="main"}
-
 <div class="layui-card ns-card-common ns-card-brief" id="promotion">
 	<div class="layui-card-header ">
 		<span class="ns-card-title">应用工具</span>
@@ -42,7 +40,7 @@
 				</div>
 			</a>
 			{else/}
-					<a class="ns-item-block ns-item-block-hover-a" href="#">
+			<a class="ns-item-block ns-item-block-hover-a" href="javascript:;">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
 						<img src="{:img($list_v.icon)}" />
@@ -51,9 +49,7 @@
 						<div class="ns-item-content-title">{$list_v.title}</div>
 						<p class="ns-item-content-desc ns-line-hiding" title="{$list_v.description}">{$list_v.description}</p>
 					</div>
-					<div class="ns-item-poa-pic">
-						敬请期待
-					</div>
+					<div class="ns-item-poa-pic">敬请期待</div>
 				</div>
 			</a>
 			{/empty}
@@ -86,5 +82,4 @@
 </div>
 {/block}
 {block name="script"}
-
 {/block}

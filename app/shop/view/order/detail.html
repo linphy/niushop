@@ -350,7 +350,7 @@
             {php}
             $packageV = json_encode($package_v);
             {/php}
-            {if $order_detail.order_status == 3}
+            {if in_array($order_detail.order_status,[1,3])}
             <div class="logistics-operation">
                 <button class="btn layui-btn-primary layui-btn" onclick="logisticsOperation('{$order_detail.order_id}','{$package_v.id}',{$packageV})">修改物流</button>
             </div>
@@ -457,7 +457,7 @@
 
 
     function logisticsOperation(orderId,packageId,dataJson) {
-        console.log(dataJson);
+        // console.log(dataJson);
         //获取模板
         var getTpl = $("#logistics_html").html();
         var data = {};

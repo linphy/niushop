@@ -16,13 +16,13 @@ class BaseInstall extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->replace   = [
+        $this->replace = [
             'INSTALL_CSS' => __ROOT__ . '/app/install/view/public/css',
             'INSTALL_IMG' => __ROOT__ . '/app/install/view/public/img',
-            'INSTALL_JS'  => __ROOT__ . '/app/install/view/public/js',
+            'INSTALL_JS' => __ROOT__ . '/app/install/view/public/js',
         ];
         $this->lock_file = './install.lock';//锁定文件
-        $root_url        = __ROOT__;
+        $root_url = __ROOT__;
         $this->assign("root_url", $root_url);
 
     }
@@ -36,7 +36,7 @@ class BaseInstall extends Controller
     public function returnSuccess($data = '', $code_var = 'SUCCESS')
     {
         $lang_array = $this->getLang();
-        $lang_var   = isset($lang_array[$code_var]) ? $lang_array[$code_var] : $code_var;
+        $lang_var = isset($lang_array[ $code_var ]) ? $lang_array[ $code_var ] : $code_var;
 
         if ($code_var == 'SUCCESS') {
             $code_var = 0;
@@ -62,8 +62,8 @@ class BaseInstall extends Controller
 
         $lang_array = $this->getLang();
 
-        if (isset($lang_array[$code_var])) {
-            $lang_var = $lang_array[$code_var];
+        if (isset($lang_array[ $code_var ])) {
+            $lang_var = $lang_array[ $code_var ];
         } else {
             $lang_var = $code_var;
             $code_var = 'FAIL';

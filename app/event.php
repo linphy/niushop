@@ -248,6 +248,12 @@ return [
             // 分销提现成功通知
             'app\event\MessageFenxiaoWithdrawalSuccess',
 
+            // 会员注销成功通知
+            'app\event\MessageCancelSuccess',
+            // 会员注销失败通知
+            'app\event\MessageCancelFail',
+            // 会员注销申请通知
+            'app\event\MessageCancelApply',
         ],
         //发送短信
         'sendSms' => [
@@ -269,6 +275,16 @@ return [
         //开启游戏
         'OpenGame' => [
             'app\event\OpenGame'
+        ],
+
+        //商品上架
+        'CronGoodsTimerOn' => [
+            'app\event\CronGoodsTimerOn'
+        ],
+
+        //商品下架
+        'CronGoodsTimerOff' => [
+            'app\event\CronGoodsTimerOff'
         ],
     ],
 

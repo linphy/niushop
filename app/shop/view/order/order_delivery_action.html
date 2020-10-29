@@ -104,21 +104,17 @@
                 <div class="layui-form-item express-number">
                     <label class="layui-form-label">快递单号：</label>
                     <div class="layui-input-block">
-                        <input type="text" name="delivery_no" placeholder="" autocomplete="off"
-                               class="layui-input ns-len-mid">
+                        <input type="text" name="delivery_no" placeholder="" autocomplete="off" class="layui-input ns-len-mid">
                     </div>
                 </div>
             </div>
 
             <div class="ns-form-row">
-                <button type="button" class="layui-btn" lay-submit id="button_delivery_order"
-                        lay-filter="button_delivery_order" style="display:none;">保存
-                </button>
+                <button type="button" class="layui-btn" lay-submit id="button_delivery_order" lay-filter="button_delivery_order" style="display:none;">保存</button>
             </div>
 
             <div id="order_goods_list_box">
-                <table class="layui-table order_goods_list" lay-filter="order_goods" lay-skin="line"
-                       lay-filter="order_goods_list">
+                <table class="layui-table order_goods_list" lay-filter="order_goods" lay-skin="line" lay-filter="order_goods_list">
                     <colgroup>
                         <col width="5%">
                         <col width="38%">
@@ -136,8 +132,7 @@
                     </tr>
                     </thead>
                 </table>
-                <table class="layui-table order_goods_list" lay-filter="order_goods" lay-skin="line"
-                       lay-filter="order_goods_list">
+                <table class="layui-table order_goods_list" lay-filter="order_goods" lay-skin="line" lay-filter="order_goods_list">
                     <colgroup>
                         <col width="5%">
                         <col width="38%">
@@ -148,9 +143,7 @@
                     <tbody>
                     {{# layui.each(d.order_goods_list, function(index, item){ }}
                     <tr>
-                        <td><input type="checkbox" lay-skin="primary" class="order_goods_id"
-                                   lay-filter="select{{ item.order_goods_id }}" value="{{ item.order_goods_id }}" {{#
-                                   if(item.delivery_status !=0){ }} disabled {{# } }}/></td>
+                        <td><input type="checkbox" lay-skin="primary" class="order_goods_id" lay-filter="select{{ item.order_goods_id }}" value="{{ item.order_goods_id }}" {{# if(item.delivery_status !=0){ }} disabled {{# } }}/></td>
                         <td>{{ item.sku_name }}</td>
                         <td>{{ item.num }}</td>
                         <td>{{ item.delivery_no }}</td>
@@ -169,7 +162,6 @@
     </div>
 </script>
 
-
 <!-- 批量订单发货 -->
 <script type="text/html" id="order_batch_delivery_html">
     <div class="order-delivery">
@@ -179,9 +171,8 @@
             {if addon_is_exit('electronicsheet',$user_info.site_id) == 1}
             <div class="layui-form-item">
                 <label class="layui-form-label">发货类型：</label>
-                <div class="layui-input-block">
-                    <input type="radio" lay-filter="delivery_mode" name="type" value="electronicsheet" title="电子面单"
-                           checked>
+                <div class="layui-input-inline">
+                    <input type="radio" lay-filter="delivery_mode" name="type" value="electronicsheet" title="电子面单" checked>
                     <input type="radio" lay-filter="delivery_mode" name="type" value="manual" title="手动发货">
                 </div>
             </div>
@@ -192,7 +183,7 @@
 
             <div class="layui-form-item {if addon_is_exit('electronicsheet',$user_info.site_id) == 1} layui-hide {/if} delivery-type">
                 <label class="layui-form-label">发货方式：</label>
-                <div class="layui-input-block">
+                <div class="layui-input-inline">
                     <input type="radio" lay-filter="delivery_type" name="delivery_type" value="1" title="物流发货" checked>
                     <input type="radio" lay-filter="delivery_type" name="delivery_type" value="0" title=无需物流>
                 </div>
@@ -224,9 +215,7 @@
             </div>
 
             <div class="ns-form-row">
-                <button type="button" class="layui-btn" lay-submit id="button_delivery_order"
-                        lay-filter="button_delivery_order" style="display:none;">保存
-                </button>
+                <button type="button" class="layui-btn" lay-submit id="button_delivery_order" lay-filter="button_delivery_order" style="display:none;">保存</button>
             </div>
 
             <div id="order_goods_list_box">
@@ -260,8 +249,7 @@
                         <td></td>
                         <td>{{ item.order_no }}</td>
                         <td>{{ item.full_address }}</td>
-                        <td><a href="javascript:;" class="ns-text-color goods-item-remove"
-                               data-order-id="{{item.order_id}}">删除</a></td>
+                        <td><a href="javascript:;" class="ns-text-color goods-item-remove" data-order-id="{{item.order_id}}">删除</a></td>
                     </tr>
                     {{# }); }}
                     {{# if(d.order_goods_list.length === 0){ }}
@@ -406,7 +394,6 @@
 
                                     });
 
-
                                     form.on('submit(button_delivery_order)', function (data) {
                                         var express_company_id = data.field.express_company_id;
                                         var template_id = data.field.template_id;
@@ -456,7 +443,6 @@
                                             }
                                         })
                                     });
-
 
                                     /**
                                      * 监听全选
@@ -559,7 +545,6 @@
                 }
             });
 
-
             laytpl(getTpl).render(data, function (html) {
                 layer.open({
                     type: 1,
@@ -582,7 +567,6 @@
                     success: function (layero, index) {
 
                         var sheetExists = $("input[name='sheet_exists']").val();
-
 
                         var deliveryModeIdent = "";
                         if (sheetExists == 1) {
@@ -623,12 +607,10 @@
                             }
                         });
 
-
                         $("body").on("click", ".order_goods_list:eq(1) .goods-item-remove", function () {
                             $(this).parents("tr").remove();
                             var orderId = $(this).attr("data-order-id");
                             data.order_goods_list.remove(orderId);
-
 
                             var html = '<tr>';
                             html += '<td colspan="5" align="center">无数据</td>';
@@ -688,7 +670,6 @@
                             })
                         });
 
-
                         form.verify({
                             required: function (value, item) { //value：表单的值、item：表单的DOM对象
                                 if (!value) {
@@ -696,7 +677,6 @@
                                 }
                             }
                         });
-
 
                         function tableContentChange(type) {
 
@@ -776,7 +756,7 @@
 
                             html += '</table>';
 
-                            return html
+                            return html;
                         }
                     }
 
@@ -784,7 +764,6 @@
             })
         })
     }
-
 
     /**
      * 电子面单模版
@@ -810,7 +789,6 @@
             }
         })
     }
-
 
     /**
      * 修改物流单号
@@ -907,9 +885,6 @@
         });
 
         form.render();
-    }
-    function getDeliveryData(order_id){
-
     }
 
     //数组的删除

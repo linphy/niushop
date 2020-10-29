@@ -12,6 +12,7 @@
 namespace app\event;
 
 use app\Controller;
+use app\model\goods\GoodsCategory;
 use app\model\web\DiyViewLink;
 
 /**
@@ -42,6 +43,7 @@ class DiyLink extends Controller
         }
         $this->assign('list', $list);
         $this->assign("link", $link);
+        $this->assign('link_array', json_decode($link, true));
         $this->assign("support_diy_view", $support_diy_view);
         $this->assign("app_module", $data['app_module']);
 
@@ -61,6 +63,13 @@ class DiyLink extends Controller
         $this->assign("request_url", $request_url);
 
         $template = dirname(realpath(__DIR__)) . '/shop/view/diy/link.html';
+
+
+        $goods_category_model = new GoodsCategory();
+        $category_condition[]          = ['site_id', '=', $data['site_id']];
+        $category_list                 = $goods_category_model->getCategoryTree($category_condition);
+        $category_list                 = $category_list['data'];
+        $this->assign("category_list", $category_list);
         return $this->fetch($template, [], $replace);
     }
 

@@ -67,9 +67,9 @@ class Config extends BaseModel
                 'shop_login' => 1,
                 'shop_reception_login' => 1
             ];
-        }else{
-            if (isset($res[ 'data' ][ 'value' ]['shop_reception_login']) === false){
-                $res[ 'data' ][ 'value' ]['shop_reception_login'] = 1;
+        } else {
+            if (isset($res[ 'data' ][ 'value' ][ 'shop_reception_login' ]) === false) {
+                $res[ 'data' ][ 'value' ][ 'shop_reception_login' ] = 1;
             }
         }
         return $res;
@@ -233,7 +233,6 @@ class Config extends BaseModel
             $res[ 'data' ][ 'value' ] = [
                 'domain_name_h5' => ROOT_URL . '/h5',
             ];
-
         } else {
             if ($res[ 'data' ][ 'value' ][ 'domain_name_h5' ] == '') {
                 $res[ 'data' ][ 'value' ] = [

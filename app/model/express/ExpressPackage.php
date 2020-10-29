@@ -35,7 +35,7 @@ class ExpressPackage extends BaseModel
         if (empty($order_status)) {
             return $this->error('', '订单不存在');
         }
-        if ($order_status != $order_common_model::ORDER_DELIVERY) {
+        if (!in_array($order_status,[$order_common_model::ORDER_PAY,$order_common_model::ORDER_DELIVERY])) {
             return $this->error('', '订单已收货或已完成');
         }
         //包裹信息

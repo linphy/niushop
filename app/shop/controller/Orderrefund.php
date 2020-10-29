@@ -14,6 +14,7 @@ namespace app\shop\controller;
 
 use app\model\order\OrderCommon;
 use app\model\order\OrderRefund as OrderRefundModel;
+use app\model\order\OrderExport;
 
 /**
  * 订单维权
@@ -197,4 +198,113 @@ class Orderrefund extends BaseShop
         return $res;
     }
 
+
+    /**
+     * 订单导出（维权订单）
+     */
+    public function exportRefundOrder()
+    {
+        $refund_status = input("refund_status", "");//退款状态
+        $sku_name = input("sku_name", '');//商品名称
+        $refund_type = input("refund_type", '');//退款方式
+        $start_time = input("start_time", '');//开始时间
+        $end_time = input("end_time", '');//结束时间
+        $order_no = input("order_no", '');//订单编号
+        $delivery_status = input("delivery_status", '');//物流状态
+        $refund_no = input("refund_no", '');//退款编号
+
+        $order_refund_model = new OrderRefundModel();
+        $delivery_no = input("delivery_no", '');//物流编号
+        $refund_delivery_no = input("refund_delivery_no", '');//退款物流编号
+        $condition_desc = [];
+
+        $condition[] = ['og.site_id', '=', $this->site_id];
+        //退款状态
+        $refund_status_list = $order_refund_model->order_refund_status;
+        $refund_status_name = '全部';
+        if ($refund_status != "") {
+            $condition[] = ["og.refund_status", "=", $refund_status];
+            $refund_status_name = $refund_status_list[$refund_status]['name'] ?? '';
+        } else {
+            $condition[] = ["og.refund_status", "<>", 0];
+        }
+        $condition_desc[] = ['name' => '维权状态', 'value' => $refund_status_name];
+
+        //物流状态
+        if ($delivery_status != "") {
+            $condition[] = ["og.delivery_status", "=", $delivery_status];
+        }
+
+        //商品名称
+        $sku_name_value = '';
+        if ($sku_name != "") {
+            $condition[] = ["og.sku_name", "like", "%$sku_name%"];
+            $sku_name_value = $sku_name;
+        }
+        $condition_desc[] = ['name' => '商品名称', 'value' => $sku_name_value];
+
+        //退款方式
+        $refund_type_name = '全部';
+        if ($refund_type != "") {
+            $condition[] = ["og.refund_type", "=", $refund_type];
+            $refund_type_name = $order_refund_model->refund_type[$refund_type];
+        }
+        $condition_desc[] = ['name' => '退款方式', 'value' => $refund_type_name];
+
+        //退款编号
+        if ($refund_no != "") {
+            $condition[] = ["og.refund_no", "like", "%$refund_no%"];
+        }
+        $condition_desc[] = ['name' => '退款编号', 'value' => $refund_no];
+
+        //订单编号
+        if ($order_no != "") {
+            $condition[] = ["og.order_no", "like", "%$order_no%"];
+        }
+        $condition_desc[] = ['name' => '订单编号', 'value' => $order_no];
+
+        //物流编号
+        if ($delivery_no != "") {
+            $condition[] = ["og.delivery_no", "like", "%$delivery_no%"];
+        }
+        //退款物流编号
+        if ($refund_delivery_no != "") {
+            $condition[] = ["og.refund_delivery_no", "like", "%$refund_delivery_no%"];
+        }
+        $time_name = '';
+        if (!empty($start_time) && empty($end_time)) {
+            $condition[] = ["og.refund_action_time", ">=", date_to_time($start_time)];
+            $time_name = $start_time . '起';
+        } elseif (empty($start_time) && !empty($end_time)) {
+            $condition[] = ["og.refund_action_time", "<=", date_to_time($end_time)];
+            $time_name = '至' . $end_time;
+        } elseif (!empty($start_time) && !empty($end_time)) {
+            $condition[] = ['og.refund_action_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
+            $time_name = $start_time . ' 至 ' . $end_time;
+        }
+        $condition_desc[] = ['name' => '申请时间', 'value' => $time_name];
+
+        $order_export_model = new OrderExport();
+        $result = $order_export_model->orderRefundExport($condition, $condition_desc, $this->site_id);
+        dump($result);die;
+        return $result;
+    }
+
+    /**
+     * 订单导出记录
+     * @return mixed
+     */
+    public function export()
+    {
+        if (request()->isAjax()) {
+            $export_model = new OrderExport();
+            $condition = array(
+                ['site_id', '=', $this->site_id]
+            );
+            $result = $export_model->getRefundExport($condition, '*', 'create_time desc');
+            return $result;
+        } else {
+            return $this->fetch("orderrefund/export");
+        }
+    }
 }

@@ -54,18 +54,18 @@ class Store extends BaseApi
 
         $list = $list_result[ 'data' ];
 
-//		if (!empty($longitude) && !empty($latitude) && !empty($list)) {
-//			foreach ($list as $k => $item) {
-//				if ($item['longitude'] && $item['latitude']) {
-//                    $distance = getDistance((float) $item['longitude'], (float) $item['latitude'], (float) $longitude, (float) $latitude);
-//                    $list[ $k ]['distance'] = $distance/1000;
-//				} else {
-//					$list[ $k ]['distance'] = 0;
-//				}
-//			}
-//			// 按距离就近排序
-//			array_multisort(array_column($list, 'distance'), SORT_ASC, $list);
-//		}
+        if (!empty($longitude) && !empty($latitude) && !empty($list)) {
+            foreach ($list as $k => $item) {
+                if ($item[ 'longitude' ] && $item[ 'latitude' ]) {
+                    $distance = getDistance((float) $item[ 'longitude' ], (float) $item[ 'latitude' ], (float) $longitude, (float) $latitude);
+                    $list[ $k ][ 'distance' ] = $distance / 1000;
+                } else {
+                    $list[ $k ][ 'distance' ] = 0;
+                }
+            }
+            // 按距离就近排序
+            array_multisort(array_column($list, 'distance'), SORT_ASC, $list);
+        }
 //        array_multisort(array_column($list, 'distance'), SORT_ASC, $list);
         $default_store_id = 0;
         if (!empty($list)) {

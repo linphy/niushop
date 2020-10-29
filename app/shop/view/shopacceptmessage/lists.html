@@ -160,7 +160,7 @@
 
 			layer.confirm('删除后，该会员将不能接收消息，请谨慎操作！', function() {
 				$.ajax({
-					url: ns.url("shop/Shopacceptmessage/delete"),
+					url: ns.url("shop/shopacceptmessage/delete"),
 					data: {member_id:member_id},
 					dataType: 'JSON',
 					type: 'POST',

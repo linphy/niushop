@@ -6,8 +6,8 @@
 		<!--<div class="left-img"><img v-bind:src="nc.left_img_url ? changeImgUrl(nc.left_img_url) : '{$resource_path}/search/img/category.png'" class="self-adaption"/></div>-->
 		<div class="top-search-form" v-bind:style="{background: nc.backgroundColor}">
 			<div class="top-search-box" v-bind:class="{'border-circle': nc.borderType == 2}" v-bind:style="{background: nc.bgColor, textAlign: nc.textAlign}">
-				<span class="top-search-intro" v-bind:style="{color: nc.textColor}">{{ nc.title }}</span>
-				<span class="top-search-icon"><i class="iconfont iconsousuo" v-bind:style="{color: nc.textColor}"></i></span>
+				<span class="top-search-intro" v-bind:style="{color: nc.textColor?nc.textColor:'rgba(0,0,0,0)'}">{{ nc.title }}</span>
+				<span class="top-search-icon"><i class="iconfont iconsousuo" v-bind:style="{color: nc.textColor?nc.textColor:'rgba(0,0,0,0)'}"></i></span>
 			</div>
 		</div>
 		<!--<div class="right-img"><img v-bind:src="nc.right_img_url ? changeImgUrl(nc.right_img_url) : '{$resource_path}/search/img/user.png'" class="self-adaption"/></div>-->
@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		
-		<color v-bind:data="{ 'defaultcolor': 'defaultTextColor' }"></color>
+		<color v-bind:data="{ 'defaultcolor': '#999999' }"></color>
 		<color v-bind:data="{ field : 'backgroundColor', 'label' : '背景颜色' }"></color>
 		<color v-bind:data="{ field : 'bgColor', 'label' : '框体颜色' }"></color>
 		

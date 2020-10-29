@@ -77,9 +77,9 @@
 		<label class="layui-form-label">分类图标：</label>
 		<div class="layui-input-block">
 			<div class="upload-img-block">
-				<div class="upload-img-box" id="imgUpload">
+				<div class="upload-img-box">
 					{notempty name="$goods_category_info['image']"}
-						<img src="{:img($goods_category_info['image'])}"/>
+						<img layer-src src="{:img($goods_category_info['image'])}"/>
 					{else/}
 						<div class="ns-upload-default">
 							<img src="SHOP_IMG/upload_img.png" />
@@ -87,6 +87,7 @@
 						</div>
 					{/notempty}
 				</div>
+				<p id="imgUpload" class=" {if condition="$goods_category_info['image']"} replace {else/} no-replace{/if}">替换</p>
 				<input type="hidden" name="image" value="{$goods_category_info['image']}">
 				<i class="del {if condition="$goods_category_info['image']"}show{/if}">x</i>
 			</div>
@@ -100,9 +101,9 @@
         <label class="layui-form-label">分类广告图：</label>
         <div class="layui-input-block">
             <div class="upload-img-block">
-                <div class="upload-img-box" id="imgUploadAdv">
+                <div class="upload-img-box" >
                     {notempty name="$goods_category_info['image_adv']"}
-                     <img src="{:img($goods_category_info['image_adv'])}"/>
+                     <img layer-src src="{:img($goods_category_info['image_adv'])}"/>
                     {else/}
 	                    <div class="ns-upload-default">
 	                        <img src="SHOP_IMG/upload_img.png" />
@@ -110,12 +111,13 @@
 	                    </div>
                     {/notempty}
                 </div>
+				<p id="imgUploadAdv" class=" {if condition="$goods_category_info['image_adv']"} replace {else/} no-replace{/if}">替换</p>
 	            <input type="hidden" name="image_adv" value="{$goods_category_info['image_adv']}">
 	            <i class="del {if condition="$goods_category_info['image_adv']"}show{/if}">x</i>
             </div>
         </div>
 	    <div class="ns-word-aux">
-		    <p>建议图片尺寸：650px * 450px。图片格式：jpg、png、jpeg。</p>
+		    <p>建议图片尺寸：550px * 250px。图片格式：jpg、png、jpeg。</p>
 	    </div>
     </div>
 	

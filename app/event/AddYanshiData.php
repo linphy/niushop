@@ -102,7 +102,6 @@ class AddYanshiData
             }
 
             // 商品
-
             $goods_data = [
                 [
                     "goods_name" => '演示商品一',
@@ -148,14 +147,16 @@ class AddYanshiData
                         "virtual_sale" => 0,
                         "max_buy" => 0,
                         "min_buy" => 0,
-                        "stock_alarm"=>0
+                        "stock_alarm" => 0
                     ] ]),
                     "goods_service_ids" => "",
                     "label_id" => "",
                     "virtual_sale" => 0,
                     "max_buy" => 0,
                     "min_buy" => 0,
-                    "recommend_way" => 0
+                    "recommend_way" => 0,
+                    "timer_on" => 0,
+                    "timer_off" => 0
                 ],
                 [
                     "goods_name" => '演示商品二',
@@ -201,14 +202,16 @@ class AddYanshiData
                         "virtual_sale" => 0,
                         "max_buy" => 0,
                         "min_buy" => 0,
-                        "stock_alarm"=>0
+                        "stock_alarm" => 0
                     ] ]),
                     "goods_service_ids" => "",
                     "label_id" => "",
                     "virtual_sale" => 0,
                     "max_buy" => 0,
                     "min_buy" => 0,
-                    "recommend_way" => 0
+                    "recommend_way" => 0,
+                    "timer_on" => 0,
+                    "timer_off" => 0
                 ],
                 [
                     "goods_name" => '演示商品三',
@@ -254,14 +257,16 @@ class AddYanshiData
                         "virtual_sale" => 0,
                         "max_buy" => 0,
                         "min_buy" => 0,
-                        "stock_alarm"=>0
+                        "stock_alarm" => 0
                     ] ]),
                     "goods_service_ids" => "",
                     "label_id" => "",
                     "virtual_sale" => 0,
                     "max_buy" => 0,
                     "min_buy" => 0,
-                    "recommend_way" => 0
+                    "recommend_way" => 0,
+                    "timer_on" => 0,
+                    "timer_off" => 0
                 ],
                 [
                     'goods_name' => '演示商品四',
@@ -307,14 +312,16 @@ class AddYanshiData
                         "virtual_sale" => 0,
                         "max_buy" => 0,
                         "min_buy" => 0,
-                        "stock_alarm"=>0
+                        "stock_alarm" => 0
                     ] ]),
                     "goods_service_ids" => "",
                     "label_id" => "",
                     "virtual_sale" => 0,
                     "max_buy" => 0,
                     "min_buy" => 0,
-                    "recommend_way" => 0
+                    "recommend_way" => 0,
+                    "timer_on" => 0,
+                    "timer_off" => 0
                 ]
             ];
 

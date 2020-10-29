@@ -6,8 +6,21 @@
 	display: flex;
 }
 
-.album-list {
+.album-list-box {
 	margin-right: 25px;
+	width: 180px;
+	height: 500px;
+	position: relative;
+	overflow: auto;
+}
+
+.album-list-box button {
+	position: absolute;
+	left: 40px;
+	bottom: 0;
+}
+
+.album-list {
 	width: 180px;
 	min-height: 400px;
 	background-color: #F7F7F7;

@@ -59,14 +59,14 @@ class BaseShop extends Controller
         $this->getGroupInfo();
         if (!$this->checkAuth()) {
             if (!request()->isAjax()) {
-                $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info);
+                $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info,$this->addon);
                 if (empty($menu_info)) {
                     $this->error('权限不足');
                 } else {
                     $this->redirect(addon_url($menu_info[ 'url' ]));
                 }
             } else {
-                echo json_encode(error('', '权限不足'));
+                echo json_encode(error(-1, '权限不足'));
                 exit;
             }
 
@@ -120,19 +120,12 @@ class BaseShop extends Controller
                 $addon_info = $addon_info[ 'data' ];
                 foreach ($init_menu as $k => $v) {
                     if ($v[ 'selected' ]) {
-//                        var_dump($init_menu[ $k ][ 'child_list' ]);
-//                        var_dump("<hr/>");
-//                        var_dump("<hr/>");
                         $this->crumbs[ 0 ][ 'title' ] = $addon_info[ 'title' ];
                         unset($init_menu[ $k ][ 'child_list' ][ 'PROMOTION_TOOL' ]);
-//                        var_dump($init_menu[$k]['child_list']);
                         foreach ($init_menu[ $k ][ 'child_list' ] as $ck => $cv) {
-//                            var_dump($addon_info[ 'name' ]);
                             if ($cv[ 'addon' ] != $addon_info[ 'name' ]) {
                                 unset($init_menu[ $k ][ 'child_list' ][ $ck ]);
                             }
-//                            var_dump($init_menu[ $k ][ 'child_list' ][ $ck ]);
-//                            var_dump("<hr/>");
                         }
                         break;
                     }
@@ -254,7 +247,7 @@ class BaseShop extends Controller
         } else {
             $menus = $menu_model->getMenuList([ [ 'name', 'in', $this->group_info[ 'menu_array' ] ], [ 'is_show', "=", 1 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
             $control_menu = $menu_model->getMenuList([ [ 'is_control', '=', 0 ], [ 'is_show', "=", 1 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
-            $menus[ 'data' ] = array_merge($menus[ 'data' ], $control_menu[ 'data' ]);
+            $menus[ 'data' ] = array_merge($control_menu[ 'data' ], $menus[ 'data' ]);
         }
 
         return $menus[ 'data' ];

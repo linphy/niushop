@@ -5,7 +5,7 @@
 			<!-- 图一 -->
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-if="nc.style == 1">
 				<div class="text-title-box" v-show="nc.title">
-					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px' }">{{ nc.title }}</span>
+					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px' }">{{ nc.title }}</span>
 					<span class="line-left" v-bind:style="{ background: nc.textColor }"></span>
 					<span class="line-right" v-bind:style="{ background: nc.textColor }"></span>
 				</div>
@@ -13,39 +13,39 @@
 			<!-- 图二 -->
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 2">
 				<div class="text-title-box" v-show="nc.title">
-					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px' }">{{ nc.title }}</span>
+					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px' }">{{ nc.title }}</span>
 				</div>
 				<div v-bind:class="'text-title-con'+ nc.style">
 					<span class="inner-line" v-bind:style="{ background: nc.textColor }"></span>
-					<span class="line-triangle" v-bind:style="{ borderColor: nc.textColor }"></span>
+					<span class="line-triangle" v-bind:style="{ borderColor: nc.textColor, opacity: nc.textColor ? 1 : 0 }"></span>
 				</div>
 			</div>
 			<!-- 图三 -->
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 3">
 				<div class="text-title-box" v-show="nc.title">
-					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px' }">{{ nc.title }}</span>
+					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px' }">{{ nc.title }}</span>
 				</div>
 				<div v-bind:class="'text-title-con'+ nc.style">
 					<span class="inner-line" v-bind:style="{ background: nc.textColor }"></span>
-					<span class="line-short" v-bind:style="{ background: nc.textColor }"></span>
+					<span class="line-short" v-bind:style="{ background: nc.textColor, opacity: nc.textColor ? 1 : 0 }"></span>
 				</div>
 			</div>
 			<!-- 图四 -->
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 4">
 				<div class="text-title-box" v-show="nc.title">
-					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px' }">{{ nc.title }}</span>
+					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px' }">{{ nc.title }}</span>
 				</div>
 				<div class="text-title-line">
 					<span class="line-left" v-bind:style="{ background: nc.textColor }"></span>
-					<span class="line-center" v-bind:style="{ borderColor: nc.textColor }"></span>
+					<span class="line-center" v-bind:style="{ borderColor: nc.textColor, opacity: nc.textColor ? 1 : 0 }"></span>
 					<span class="line-right" v-bind:style="{ background: nc.textColor }"></span>
 				</div>
 			</div>
 			<!-- 图五 -->
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 5">
 				<div class="text-title-box" v-show="nc.title">
-					<span class="text-title-block" v-bind:style="{ borderColor: nc.textColor }">
-						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', borderColor: nc.textColor }">{{ nc.title }}</span>
+					<span class="text-title-block" v-bind:style="{ borderColor: nc.textColor, opacity: nc.textColor ? 1 : 0 }">
+						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px', borderColor: nc.textColor }">{{ nc.title }}</span>
 						<span class="line-left" v-bind:style="{ background: nc.textColor }"></span>
 						<span class="line-right" v-bind:style="{ background: nc.textColor }"></span>
 					</span>
@@ -55,8 +55,8 @@
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 6">
 				<div class="text-title-box" v-show="nc.title">
 					<span class="text-title-outer" v-bind:style="{ borderColor: nc.textColor }">
-						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', borderColor: nc.textColor, background: '#fff' }">{{ nc.title }}</span>
-						<span class="text-title-con-2" v-bind:style="{ borderColor: nc.textColor }"></span>
+						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px', borderColor: nc.textColor, background: '#fff' }">{{ nc.title }}</span>
+						<span class="text-title-con-2" v-bind:style="{ borderColor: nc.textColor, opacity: nc.textColor ? 1 : 0 }"></span>
 					</span>
 				</div>
 			</div>
@@ -64,15 +64,15 @@
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 7">
 				<div class="text-title-box" v-show="nc.title">
 					<span class="text-title-outer" v-bind:style="{ borderColor: nc.textColor }">
-						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : '#fff', paddingBottom: 3+'px', borderColor: nc.textColor, background: nc.textColor }">{{ nc.title }}</span>
-						<span class="text-title-con-2" v-bind:style="{ borderColor: nc.textColor }"></span>
+						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : '#fff', paddingBottom: 3+'px', borderColor: nc.textColor, background: nc.textColor, opacity: nc.textColor ? 1 : 0 }">{{ nc.title }}</span>
+						<span class="text-title-con-2" v-bind:style="{ borderColor: nc.textColor, opacity: nc.textColor ? 1 : 0 }"></span>
 					</span>
 				</div>
 			</div>
 			<!-- 图八 -->
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 8" >
 				<div class="text-title-box" v-show="nc.title" v-bind:style="{ textAlign: 'left'}">
-					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px' }">{{ nc.title }}</span>
+					<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px' }">{{ nc.title }}</span>
 					<span class="line-left" v-bind:style="{ height: nc.fontSize + 2 + 'px', background: nc.textColor}"></span>
 				</div>
 			</div>
@@ -82,13 +82,13 @@
 					<div class="left"></div>
 					<div class="center">
 						<div><img src="{$resource_path}/text/img/style9-1.png" /></div>
-						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.title }}</span>
+						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.title }}</span>
 						<div><img src="{$resource_path}/text/img/style9-2.png" /></div>
 					</div>
-					<div v-show="nc.isShowMore == 1" class="more" v-bind:style="{ color: nc.btnColor }">{{nc.moreText}} <i class="iconfont iconyoujiantou"></i></div>
+					<div v-show="nc.isShowMore == 1" class="more" v-bind:style="{ color: nc.btnColor, opacity: nc.btnColor ? 1 : 0 }">{{nc.moreText}} <i class="iconfont iconyoujiantou"></i></div>
 				</div>
 				<div class="text-subTitle-box" v-show="nc.subTitle">
-					<p v-show="nc.subTitle" v-bind:style="{ fontSize : nc.fontSizeSub + 'px', color: nc.colorSub }">{{ nc.subTitle }}</p>
+					<p v-show="nc.subTitle" v-bind:style="{ fontSize : nc.fontSizeSub + 'px', color: nc.colorSub, opacity: nc.colorSub ? 1 : 0 }">{{ nc.subTitle }}</p>
 				</div>
 			</div>
 			
@@ -98,14 +98,14 @@
 					<div class="left"></div>
 					<div class="center">
 						<div><img src="{$resource_path}/text/img/style10-1.png" /></div>
-						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.title }}</span>
+						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.title }}</span>
 						<div><img src="{$resource_path}/text/img/style10-2.png" /></div>
 						<img src="{$resource_path}/text/img/style10-3.png" />
 					</div>
-					<div v-show="nc.isShowMore == 1" class="more" v-bind:style="{ color: nc.btnColor }">{{nc.moreText}} <i class="iconfont iconyoujiantou"></i></div>
+					<div v-show="nc.isShowMore == 1" class="more" v-bind:style="{ color: nc.btnColor, opacity: nc.btnColor ? 1 : 0 }">{{nc.moreText}} <i class="iconfont iconyoujiantou"></i></div>
 				</div>
 				<div class="text-subTitle-box" v-show="nc.subTitle">
-					<p v-show="nc.subTitle" v-bind:style="{ fontSize : nc.fontSizeSub + 'px', color: nc.colorSub }">{{ nc.subTitle }}</p>
+					<p v-show="nc.subTitle" v-bind:style="{ fontSize : nc.fontSizeSub + 'px', color: nc.colorSub, opacity: nc.colorSub ? 1 : 0 }">{{ nc.subTitle }}</p>
 				</div>
 			</div>
 			
@@ -113,12 +113,12 @@
 			<div class="text-title" v-bind:class="'text-title-'+ nc.style" v-else-if="nc.style == 11" >
 				<div class="text-title-box" v-show="nc.title">
 					<div class="left">
-						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.title }}</span>
+						<span class="text-title-con" v-bind:style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.title }}</span>
 						<div class="text-subTitle-box" v-show="nc.subTitle">
-							<p v-show="nc.subTitle" v-bind:style="{ fontSize : nc.fontSizeSub + 'px', color: nc.colorSub }">{{ nc.subTitle }}</p>
+							<p v-show="nc.subTitle" v-bind:style="{ fontSize : nc.fontSizeSub + 'px', color: nc.colorSub, opacity: nc.colorSub ? 1 : 0 }">{{ nc.subTitle }}</p>
 						</div>
 					</div>
-					<div v-show="nc.isShowMore == 1" class="more" v-bind:style="{ color: nc.btnColor }"><span>{{nc.moreText}}</span> <i class="iconfont iconyoujiantou"></i></div>
+					<div v-show="nc.isShowMore == 1" class="more" v-bind:style="{ color: nc.btnColor, opacity: nc.btnColor ? 1 : 0 }"><span>{{nc.moreText}}</span> <i class="iconfont iconyoujiantou"></i></div>
 					<img class="left-img" src="{$resource_path}/text/img/style11-1.png" />
 					<img class="right-img" src="{$resource_path}/text/img/style11-2.png" />
 				</div>
@@ -149,7 +149,7 @@
 		</div>
 		<font-size v-bind:data="{ value : nc.fontSize }"></font-size>
 		<!-- <text-align></text-align> -->
-		<color v-bind:data="{ field : 'textColor', 'label' : '文本颜色', 'defaultcolor': 'defaultTextColor' }"></color>
+		<color v-bind:data="{ field : 'textColor', 'label' : '文本颜色', 'defaultcolor': '#333333' }"></color>
 		<template v-if="nc.lazyLoad">
 			<font-weight v-show="nc.sub == 1"></font-weight>
 		</template>
@@ -167,7 +167,7 @@
 				</div>
 			</div>
 			<font-size v-bind:data="{ field : 'fontSizeSub', 'label' : '文字大小' }"></font-size>
-			<color v-bind:data="{ field : 'colorSub', 'label' : '文字颜色', 'defaultcolor': 'defaultColorSub' }"></color>
+			<color v-bind:data="{ field : 'colorSub', 'label' : '文字颜色', 'defaultcolor': '#999' }"></color>
 		</div>
 		
 		<hr v-show="nc.sub == 1" />
@@ -184,7 +184,7 @@
 					<input type="text" v-model="nc.moreText" v-bind:id="'moreText'+index" placeholder="查看更多 >" class="layui-input">
 				</div>
 			</div>
-			<color v-bind:data="{ field : 'btnColor', 'label' : '文字颜色', 'defaultcolor': 'defaultBtnColor' }"></color>
+			<color v-bind:data="{ field : 'btnColor', 'label' : '文字颜色', 'defaultcolor': '#999' }"></color>
 			<nc-link v-bind:data="{ field : nc.moreLink }"></nc-link>
 		</div>
 		

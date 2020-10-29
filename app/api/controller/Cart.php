@@ -137,7 +137,8 @@ class Cart extends BaseApi
         $condition = [
             ['gc.member_id', '=', $token['data']['member_id']],
             ['gc.site_id', '=', $this->site_id],
-            ['gs.goods_state', '=', 1]
+            ['gs.goods_state', '=', 1],
+            ['gs.is_delete', '=', 0 ]
         ];
         $list = $cart->getCartList($condition, 'gc.num');
         $list = $list['data'];

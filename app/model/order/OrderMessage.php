@@ -39,15 +39,17 @@ class OrderMessage extends BaseModel
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "full_address,address,order_no,mobile,member_id,order_type,create_time,order_name,order_money");
 
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $order_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
+
         //绑定微信公众号才发送
         if (!empty($member_info) && !empty($member_info["wx_openid"])) {
             $wechat_model = new WechatMessage();
@@ -73,20 +75,21 @@ class OrderMessage extends BaseModel
      */
     public function messagePaySuccess($params)
     {
-        // 发送短信
-        $var_parse = [
-            "orderno" => $params['order_no'],
-            "username" => replaceSpecialChar($params["name"]),
-            "ordermoney" => $params["order_money"],
-        ];
-        $params["sms_account"] = $params["mobile"] ?? '';//手机号
-        $params["var_parse"] = $var_parse;
-        $sms_model = new Sms();
-        $sms_result = $sms_model->sendMessage($params);
-
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $params["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        // 发送短信
+        $var_parse = [
+            "orderno" => $params['order_no'],
+            "username" => replaceSpecialChar($member_info["nickname"]),
+            "ordermoney" => $params["order_money"],
+        ];
+
+        $params["sms_account"] = $member_info["mobile"] ?? '';//手机号
+        $params["var_parse"] = $var_parse;
+        $sms_model = new Sms();
+        $sms_result = $sms_model->sendMessage($params);
 
         $data = $params;
         //绑定微信公众号才发送
@@ -115,16 +118,17 @@ class OrderMessage extends BaseModel
         $sms_model = new Sms();
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,create_time,order_money,close_time");
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $order_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
 
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
 
         if (!empty($member_info) && !empty($member_info["wx_openid"])) {
             $wechat_model = new WechatMessage();
@@ -153,15 +157,16 @@ class OrderMessage extends BaseModel
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,create_time");
 
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $order_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
 
         //发送模板消息
         $wechat_model = new WechatMessage();
@@ -187,16 +192,16 @@ class OrderMessage extends BaseModel
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,goods_num,order_money,delivery_time");
 
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $order_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
-
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
 
         //发送模板消息
         $wechat_model = new WechatMessage();
@@ -224,16 +229,16 @@ class OrderMessage extends BaseModel
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,full_address,address,name,order_name,sign_time");
 
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $order_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
-
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
 
         //发送模板消息
         $wechat_model = new WechatMessage();
@@ -260,17 +265,17 @@ class OrderMessage extends BaseModel
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id");
 
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
+        $member_info = $member_info_result["data"];
+
         $order_goods_info = model("order_goods")->getInfo([["order_goods_id", "=", $data["order_goods_id"]]], "refund_apply_money,refund_time,refund_action_time");
         $var_parse = array(
             "orderno" => $order_info["order_no"],//商品名称
         );
-        $data["sms_account"] = $order_info["mobile"];//手机号
+        $data["sms_account"] = $member_info["mobile"];//手机号
         $data["var_parse"] = $var_parse;
         $sms_model->sendMessage($data);
-
-        $member_model = new Member();
-        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
-        $member_info = $member_info_result["data"];
 
         //发送模板消息
         $wechat_model = new WechatMessage();
@@ -295,16 +300,17 @@ class OrderMessage extends BaseModel
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id");
         $order_goods_info = model("order_goods")->getInfo([["order_goods_id", "=", $data["order_goods_id"]]], "refund_apply_money,refund_time,refund_action_time");
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $order_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
 
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
 
         //发送模板消息
         $wechat_model = new WechatMessage();
@@ -324,6 +330,10 @@ class OrderMessage extends BaseModel
      */
     public function messageOrderVerify($data)
     {
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
+        $member_info = $member_info_result["data"];
+
         //发送短信
         $sms_model = new Sms();
         $order_id = $data["order_id"];
@@ -332,7 +342,7 @@ class OrderMessage extends BaseModel
         $var_parse = array(
             "orderno" => $order_info["order_no"],//订单编号
         );
-        $data["sms_account"] = $order_info["mobile"];//手机号
+        $data["sms_account"] = $member_info["mobile"];//手机号
         $data["var_parse"] = $var_parse;
         $sms_model->sendMessage($data);
     }

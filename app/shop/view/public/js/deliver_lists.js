@@ -148,7 +148,7 @@ Delivery.prototype.cols = [
     // },
     {
         title: "操作",
-        width: "20%",
+        width: "16%",
         align: "left",
         className: "operation",
         merge: true,

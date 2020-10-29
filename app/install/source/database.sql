@@ -1,7 +1,6 @@
 ﻿
 SET NAMES 'utf8';
 
-
 --
 --
 --
@@ -270,6 +269,16 @@ DROP TABLE IF EXISTS member_bank_account;
 --
 --
 --
+DROP TABLE IF EXISTS member_cancel;
+
+--
+--
+--
+DROP TABLE IF EXISTS member_import_log;
+
+--
+--
+--
 DROP TABLE IF EXISTS member_label;
 
 --
@@ -370,6 +379,11 @@ DROP TABLE IF EXISTS `order`;
 --
 --
 --
+DROP TABLE IF EXISTS order_export;
+
+--
+--
+--
 DROP TABLE IF EXISTS order_goods;
 
 --
@@ -391,6 +405,11 @@ DROP TABLE IF EXISTS order_log;
 --
 --
 DROP TABLE IF EXISTS order_promotion_detail;
+
+--
+--
+--
+DROP TABLE IF EXISTS order_refund_export;
 
 --
 --
@@ -565,6 +584,21 @@ DROP TABLE IF EXISTS promotion_topic_goods;
 --
 --
 --
+DROP TABLE IF EXISTS servicer;
+
+--
+--
+--
+DROP TABLE IF EXISTS servicer_dialogue;
+
+--
+--
+--
+DROP TABLE IF EXISTS servicer_member;
+
+--
+--
+--
 DROP TABLE IF EXISTS shop;
 
 --
@@ -717,7 +751,6 @@ DROP TABLE IF EXISTS wechat_qrcode;
 --
 DROP TABLE IF EXISTS wechat_replay_rule;
 
-
 --
 -- `ns_wechat_replay_rule`
 --
@@ -726,8 +759,8 @@ CREATE TABLE wechat_replay_rule (
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   rule_name varchar(50) NOT NULL DEFAULT '' COMMENT '规则名称',
   rule_type varchar(255) NOT NULL DEFAULT 'KEYWORDS' COMMENT '规则类型KEYWORDS表示关键字,DEFAULT表示默认,AFTER表示关注后',
-  keywords_json text NOT NULL COMMENT '关键字json',
-  replay_json text NOT NULL COMMENT '回复内容json',
+  keywords_json text DEFAULT NULL COMMENT '关键字json',
+  replay_json text DEFAULT NULL COMMENT '回复内容json',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   PRIMARY KEY (rule_id)
@@ -773,7 +806,7 @@ CREATE TABLE wechat_media (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   type varchar(255) NOT NULL DEFAULT '' COMMENT '类型',
-  value text NOT NULL COMMENT '值',
+  value text DEFAULT NULL COMMENT '值',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   media_id varchar(70) NOT NULL DEFAULT '0' COMMENT '微信端返回的素材id',
@@ -796,7 +829,7 @@ CREATE TABLE wechat_mass_recording (
   member_label varchar(255) NOT NULL DEFAULT '' COMMENT '发送群体（会员标签）',
   media_id varchar(255) NOT NULL DEFAULT '0' COMMENT '素材id',
   err varchar(1000) NOT NULL DEFAULT '' COMMENT '错误信息',
-  content text NOT NULL COMMENT '内容',
+  content text DEFAULT NULL COMMENT '内容',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -882,7 +915,7 @@ CREATE TABLE weapp_live_room (
   start_time int(11) NOT NULL COMMENT '直播计划开始时间',
   end_time int(11) NOT NULL COMMENT '直播计划结束时间',
   anchor_name varchar(255) NOT NULL COMMENT '主播昵称',
-  goods text NOT NULL COMMENT '直播间商品',
+  goods text DEFAULT NULL COMMENT '直播间商品',
   live_status varchar(255) NOT NULL COMMENT 'live_status  101: 直播中, 102: 未开始, 103: 已结束, 104: 禁播, 105: 暂停中, 106: 异常, 107: 已过期',
   anchor_img varchar(1000) NOT NULL DEFAULT '' COMMENT '主播头像',
   banner varchar(1000) NOT NULL DEFAULT '' COMMENT '直播间横幅',
@@ -945,12 +978,12 @@ CREATE TABLE weapp_audit_record (
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '审核提交时间',
   audit_time int(11) NOT NULL DEFAULT 0 COMMENT '审核通过时间',
   release_time int(11) NOT NULL DEFAULT 0 COMMENT '发布时间',
-  reason text NOT NULL COMMENT '未通过和延后的原因',
+  reason text DEFAULT NULL COMMENT '未通过和延后的原因',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
-CHARACTER SET utf8mb4,
-COLLATE utf8mb4_general_ci,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
 COMMENT = '小程序审核记录表',
 ROW_FORMAT = DYNAMIC;
 
@@ -979,6 +1012,36 @@ COMMENT = '核销编码管理',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_verify_is_verify` on table `ns_verify`
+--
+ALTER TABLE verify
+ADD INDEX IDX_ns_verify_is_verify (is_verify);
+
+--
+-- `IDX_ns_verify_site_id` on table `ns_verify`
+--
+ALTER TABLE verify
+ADD INDEX IDX_ns_verify_site_id (site_id);
+
+--
+-- `IDX_ns_verify_verify_code` on table `ns_verify`
+--
+ALTER TABLE verify
+ADD INDEX IDX_ns_verify_verify_code (verify_code);
+
+--
+-- `IDX_ns_verify_verify_time` on table `ns_verify`
+--
+ALTER TABLE verify
+ADD INDEX IDX_ns_verify_verify_time (verify_time);
+
+--
+-- `IDX_ns_verify_verify_type` on table `ns_verify`
+--
+ALTER TABLE verify
+ADD INDEX IDX_ns_verify_verify_type (verify_type);
+
+--
 -- `ns_verifier`
 --
 CREATE TABLE verifier (
@@ -996,6 +1059,18 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '核销员（商品或订单商品）',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_verifier_member_id` on table `ns_verifier`
+--
+ALTER TABLE verifier
+ADD INDEX IDX_ns_verifier_member_id (member_id);
+
+--
+-- `IDX_ns_verifier_site_id` on table `ns_verifier`
+--
+ALTER TABLE verifier
+ADD INDEX IDX_ns_verifier_site_id (site_id);
 
 --
 -- `ns_v3_upgrade_log`
@@ -1079,7 +1154,7 @@ ADD INDEX IDX_ns_user (group_id, app_module);
 --
 -- `IDX_ns_user_member_id` on table `ns_user`
 --
-ALTER TABLE user
+ALTER TABLE `user`
 ADD INDEX IDX_ns_user_member_id (member_id);
 
 --
@@ -1101,7 +1176,7 @@ CREATE TABLE sys_upgrade_log (
   log_id int(11) NOT NULL AUTO_INCREMENT,
   upgrade_no varchar(255) NOT NULL DEFAULT '' COMMENT '升级编号 每次的编号都不同',
   upgrade_time int(11) NOT NULL DEFAULT 0 COMMENT '升级时间 记录开始时间',
-  version_info text NOT NULL COMMENT '版本信息 json数据 包含升级前和升级后的基本信息',
+  version_info text DEFAULT NULL COMMENT '版本信息 json数据 包含升级前和升级后的基本信息',
   backup_root varchar(255) NOT NULL DEFAULT '' COMMENT '备份文件和sql的根目录',
   download_root varchar(255) NOT NULL DEFAULT '' COMMENT '下载文件的根目录',
   status tinyint(3) NOT NULL DEFAULT 0 COMMENT '升级状态 0 进行中 1 升级成功 2 升级失败',
@@ -1401,7 +1476,7 @@ CREATE TABLE sms_template (
   PRIMARY KEY (template_id)
 )
 ENGINE = INNODB,
-AUTO_INCREMENT = 26,
+AUTO_INCREMENT = 29,
 AVG_ROW_LENGTH = 862,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
@@ -1417,7 +1492,7 @@ CREATE TABLE site_diy_view (
   name varchar(50) NOT NULL DEFAULT '',
   addon_name varchar(50) NOT NULL DEFAULT '' COMMENT '插件名称',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
-  value text NOT NULL COMMENT '配置值',
+  value text DEFAULT NULL COMMENT '配置值',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   type varchar(255) NOT NULL DEFAULT 'shop' COMMENT '应用模块:shop、store',
@@ -1547,6 +1622,80 @@ COMMENT = '店铺表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `ns_servicer_member`
+--
+CREATE TABLE servicer_member (
+  id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据ID',
+  member_id int(11) NOT NULL COMMENT '关联会员ID',
+  servicer_id int(11) NOT NULL DEFAULT 0 COMMENT '关联客服ID',
+  member_name varchar(64) NOT NULL DEFAULT '' COMMENT '会员名称',
+  online tinyint(2) NOT NULL DEFAULT 0 COMMENT '是否在线',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '登录时间',
+  last_online_time int(11) NOT NULL DEFAULT 0 COMMENT '上次在线时间',
+  delete_time int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
+  headimg varchar(255) NOT NULL DEFAULT '' COMMENT '会员头像',
+  client_id varchar(64) NOT NULL DEFAULT '' COMMENT 'session会话临时ID',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '聊天会员在线状态表',
+ROW_FORMAT = DYNAMIC;
+
+--
+-- `ns_servicer_dialogue`
+--
+CREATE TABLE servicer_dialogue (
+  id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据ID',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员ID（匿名聊天则为0）',
+  servicer_id int(11) NOT NULL COMMENT '客服ID',
+  create_day date NOT NULL COMMENT '聊天创建日',
+  create_time time NOT NULL COMMENT '聊天创建时间',
+  content_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '内容类型（0：文本（包括表情，1：图片，2：订单信息，3：商品信息）',
+  `read` tinyint(2) NOT NULL DEFAULT 0 COMMENT '消息是否已读',
+  shop_id int(11) NOT NULL DEFAULT 0 COMMENT '商户ID',
+  goods_sku_id int(11) NOT NULL DEFAULT 0 COMMENT '关联商品ID',
+  order_id int(11) NOT NULL DEFAULT 0 COMMENT '关联订单ID',
+  consumer_say text DEFAULT NULL COMMENT '顾客说',
+  servicer_say text DEFAULT NULL COMMENT '客服说',
+  type tinyint(2) NOT NULL DEFAULT 0 COMMENT '0: say,客户咨询，1：answer,客服回答',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '客服对话内容',
+ROW_FORMAT = DYNAMIC;
+
+--
+-- `index_create_day` on table `ns_servicer_dialogue`
+--
+ALTER TABLE servicer_dialogue
+ADD INDEX index_create_day (create_day) COMMENT '聊天日期索引';
+
+--
+-- `ns_servicer`
+--
+CREATE TABLE servicer (
+  id int(11) NOT NULL AUTO_INCREMENT COMMENT '客服ID',
+  is_platform tinyint(2) NOT NULL DEFAULT 1 COMMENT '是否平台客服',
+  shop_id int(11) DEFAULT 0 COMMENT '商户ID',
+  user_id int(11) NOT NULL DEFAULT 0 COMMENT '客服账号归属用户ID',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '客服创建时间',
+  last_online_time int(11) NOT NULL DEFAULT 0 COMMENT '最近在线时间',
+  delete_time int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
+  client_id varchar(64) NOT NULL DEFAULT '' COMMENT 'session会话临时ID',
+  online tinyint(2) NOT NULL DEFAULT 0 COMMENT '是否在线',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '客服基础表',
+ROW_FORMAT = DYNAMIC;
+
+--
 -- `ns_promotion_topic_goods`
 --
 CREATE TABLE promotion_topic_goods (
@@ -1564,6 +1713,36 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '限时折扣商品列表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_topic_goods_end_time` on table `ns_promotion_topic_goods`
+--
+ALTER TABLE promotion_topic_goods
+ADD INDEX IDX_ns_promotion_topic_goods_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_topic_goods_site_id` on table `ns_promotion_topic_goods`
+--
+ALTER TABLE promotion_topic_goods
+ADD INDEX IDX_ns_promotion_topic_goods_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_topic_goods_sku_id` on table `ns_promotion_topic_goods`
+--
+ALTER TABLE promotion_topic_goods
+ADD INDEX IDX_ns_promotion_topic_goods_sku_id (sku_id);
+
+--
+-- `IDX_ns_promotion_topic_goods_start_time` on table `ns_promotion_topic_goods`
+--
+ALTER TABLE promotion_topic_goods
+ADD INDEX IDX_ns_promotion_topic_goods_start_time (start_time);
+
+--
+-- `IDX_ns_promotion_topic_goods_topic_id` on table `ns_promotion_topic_goods`
+--
+ALTER TABLE promotion_topic_goods
+ADD INDEX IDX_ns_promotion_topic_goods_topic_id (topic_id);
 
 --
 -- `ns_promotion_topic`
@@ -1598,6 +1777,7 @@ CREATE TABLE promotion_seckill_goods (
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   seckill_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '秒杀',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
+  num int(11) NOT NULL DEFAULT 0 COMMENT '限购',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -1605,6 +1785,24 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '秒杀参与商品',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_seckill_goods_seckill_id` on table `ns_promotion_seckill_goods`
+--
+ALTER TABLE promotion_seckill_goods
+ADD INDEX IDX_ns_promotion_seckill_goods_seckill_id (seckill_id);
+
+--
+-- `IDX_ns_promotion_seckill_goods_site_id` on table `ns_promotion_seckill_goods`
+--
+ALTER TABLE promotion_seckill_goods
+ADD INDEX IDX_ns_promotion_seckill_goods_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_seckill_goods_sku_id` on table `ns_promotion_seckill_goods`
+--
+ALTER TABLE promotion_seckill_goods
+ADD INDEX IDX_ns_promotion_seckill_goods_sku_id (sku_id);
 
 --
 -- `ns_promotion_seckill`
@@ -1626,6 +1824,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '秒杀活动',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_seckill_site_id` on table `ns_promotion_seckill`
+--
+ALTER TABLE promotion_seckill
+ADD INDEX IDX_ns_promotion_seckill_site_id (site_id);
 
 --
 -- `ns_promotion_present`
@@ -1656,6 +1860,30 @@ COMMENT = '赠品',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_present_goods_id` on table `ns_promotion_present`
+--
+ALTER TABLE promotion_present
+ADD INDEX IDX_ns_promotion_present_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_present_site_id` on table `ns_promotion_present`
+--
+ALTER TABLE promotion_present
+ADD INDEX IDX_ns_promotion_present_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_present_sku_id` on table `ns_promotion_present`
+--
+ALTER TABLE promotion_present
+ADD INDEX IDX_ns_promotion_present_sku_id (sku_id);
+
+--
+-- `IDX_ns_promotion_present_status` on table `ns_promotion_present`
+--
+ALTER TABLE promotion_present
+ADD INDEX IDX_ns_promotion_present_status (status);
+
+--
 -- `ns_promotion_pintuan_order`
 --
 CREATE TABLE promotion_pintuan_order (
@@ -1678,6 +1906,36 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团订单',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_pintuan_order_head_id` on table `ns_promotion_pintuan_order`
+--
+ALTER TABLE promotion_pintuan_order
+ADD INDEX IDX_ns_promotion_pintuan_order_head_id (head_id);
+
+--
+-- `IDX_ns_promotion_pintuan_order_member_id` on table `ns_promotion_pintuan_order`
+--
+ALTER TABLE promotion_pintuan_order
+ADD INDEX IDX_ns_promotion_pintuan_order_member_id (member_id);
+
+--
+-- `IDX_ns_promotion_pintuan_order_order_id` on table `ns_promotion_pintuan_order`
+--
+ALTER TABLE promotion_pintuan_order
+ADD INDEX IDX_ns_promotion_pintuan_order_order_id (order_id);
+
+--
+-- `IDX_ns_promotion_pintuan_order_pintuan_id` on table `ns_promotion_pintuan_order`
+--
+ALTER TABLE promotion_pintuan_order
+ADD INDEX IDX_ns_promotion_pintuan_order_pintuan_id (pintuan_id);
+
+--
+-- `IDX_ns_promotion_pintuan_order_site_id` on table `ns_promotion_pintuan_order`
+--
+ALTER TABLE promotion_pintuan_order
+ADD INDEX IDX_ns_promotion_pintuan_order_site_id (site_id);
 
 --
 -- `ns_promotion_pintuan_group`
@@ -1709,6 +1967,42 @@ COMMENT = '拼团组',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_pintuan_group_end_time` on table `ns_promotion_pintuan_group`
+--
+ALTER TABLE promotion_pintuan_group
+ADD INDEX IDX_ns_promotion_pintuan_group_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_pintuan_group_goods_id` on table `ns_promotion_pintuan_group`
+--
+ALTER TABLE promotion_pintuan_group
+ADD INDEX IDX_ns_promotion_pintuan_group_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_pintuan_group_head_id` on table `ns_promotion_pintuan_group`
+--
+ALTER TABLE promotion_pintuan_group
+ADD INDEX IDX_ns_promotion_pintuan_group_head_id (head_id);
+
+--
+-- `IDX_ns_promotion_pintuan_group_pintuan_id` on table `ns_promotion_pintuan_group`
+--
+ALTER TABLE promotion_pintuan_group
+ADD INDEX IDX_ns_promotion_pintuan_group_pintuan_id (pintuan_id);
+
+--
+-- `IDX_ns_promotion_pintuan_group_site_id` on table `ns_promotion_pintuan_group`
+--
+ALTER TABLE promotion_pintuan_group
+ADD INDEX IDX_ns_promotion_pintuan_group_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_pintuan_group_status` on table `ns_promotion_pintuan_group`
+--
+ALTER TABLE promotion_pintuan_group
+ADD INDEX IDX_ns_promotion_pintuan_group_status (status);
+
+--
 -- `ns_promotion_pintuan_goods`
 --
 CREATE TABLE promotion_pintuan_goods (
@@ -1726,6 +2020,30 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团商品表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_pintuan_goods_goods_id` on table `ns_promotion_pintuan_goods`
+--
+ALTER TABLE promotion_pintuan_goods
+ADD INDEX IDX_ns_promotion_pintuan_goods_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_pintuan_goods_pintuan_id` on table `ns_promotion_pintuan_goods`
+--
+ALTER TABLE promotion_pintuan_goods
+ADD INDEX IDX_ns_promotion_pintuan_goods_pintuan_id (pintuan_id);
+
+--
+-- `IDX_ns_promotion_pintuan_goods_site_id` on table `ns_promotion_pintuan_goods`
+--
+ALTER TABLE promotion_pintuan_goods
+ADD INDEX IDX_ns_promotion_pintuan_goods_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_pintuan_goods_sku_id` on table `ns_promotion_pintuan_goods`
+--
+ALTER TABLE promotion_pintuan_goods
+ADD INDEX IDX_ns_promotion_pintuan_goods_sku_id (sku_id);
 
 --
 -- `ns_promotion_pintuan`
@@ -1760,6 +2078,42 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团活动表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_pintuan_end_time` on table `ns_promotion_pintuan`
+--
+ALTER TABLE promotion_pintuan
+ADD INDEX IDX_ns_promotion_pintuan_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_pintuan_goods_id` on table `ns_promotion_pintuan`
+--
+ALTER TABLE promotion_pintuan
+ADD INDEX IDX_ns_promotion_pintuan_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_pintuan_is_recommend` on table `ns_promotion_pintuan`
+--
+ALTER TABLE promotion_pintuan
+ADD INDEX IDX_ns_promotion_pintuan_is_recommend (is_recommend);
+
+--
+-- `IDX_ns_promotion_pintuan_site_id` on table `ns_promotion_pintuan`
+--
+ALTER TABLE promotion_pintuan
+ADD INDEX IDX_ns_promotion_pintuan_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_pintuan_start_time` on table `ns_promotion_pintuan`
+--
+ALTER TABLE promotion_pintuan
+ADD INDEX IDX_ns_promotion_pintuan_start_time (start_time);
+
+--
+-- `IDX_ns_promotion_pintuan_status` on table `ns_promotion_pintuan`
+--
+ALTER TABLE promotion_pintuan
+ADD INDEX IDX_ns_promotion_pintuan_status (status);
 
 --
 -- `ns_promotion_mansong_record`
@@ -1805,6 +2159,36 @@ COMMENT = '满减商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_manjian_goods_end_time` on table `ns_promotion_manjian_goods`
+--
+ALTER TABLE promotion_manjian_goods
+ADD INDEX IDX_ns_promotion_manjian_goods_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_manjian_goods_goods_id` on table `ns_promotion_manjian_goods`
+--
+ALTER TABLE promotion_manjian_goods
+ADD INDEX IDX_ns_promotion_manjian_goods_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_manjian_goods_manjian_id` on table `ns_promotion_manjian_goods`
+--
+ALTER TABLE promotion_manjian_goods
+ADD INDEX IDX_ns_promotion_manjian_goods_manjian_id (manjian_id);
+
+--
+-- `IDX_ns_promotion_manjian_goods_manjian_type` on table `ns_promotion_manjian_goods`
+--
+ALTER TABLE promotion_manjian_goods
+ADD INDEX IDX_ns_promotion_manjian_goods_manjian_type (manjian_type);
+
+--
+-- `IDX_ns_promotion_manjian_goods_start_time` on table `ns_promotion_manjian_goods`
+--
+ALTER TABLE promotion_manjian_goods
+ADD INDEX IDX_ns_promotion_manjian_goods_start_time (start_time);
+
+--
 -- `ns_promotion_manjian`
 --
 CREATE TABLE promotion_manjian (
@@ -1830,16 +2214,40 @@ COMMENT = '满减活动',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_manjian_end_time` on table `ns_promotion_manjian`
+--
+ALTER TABLE promotion_manjian
+ADD INDEX IDX_ns_promotion_manjian_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_manjian_manjian_type` on table `ns_promotion_manjian`
+--
+ALTER TABLE promotion_manjian
+ADD INDEX IDX_ns_promotion_manjian_manjian_type (manjian_type);
+
+--
 -- `IDX_ns_promotion_manjian_site_id` on table `ns_promotion_manjian`
 --
 ALTER TABLE promotion_manjian
 ADD INDEX IDX_ns_promotion_manjian_site_id (site_id);
 
 --
+-- `IDX_ns_promotion_manjian_start_time` on table `ns_promotion_manjian`
+--
+ALTER TABLE promotion_manjian
+ADD INDEX IDX_ns_promotion_manjian_start_time (start_time);
+
+--
 -- `IDX_ns_promotion_manjian_status` on table `ns_promotion_manjian`
 --
 ALTER TABLE promotion_manjian
 ADD INDEX IDX_ns_promotion_manjian_status (status);
+
+--
+-- `IDX_ns_promotion_manjian_type` on table `ns_promotion_manjian`
+--
+ALTER TABLE promotion_manjian
+ADD INDEX IDX_ns_promotion_manjian_type (type);
 
 --
 -- `ns_promotion_groupbuy`
@@ -1869,6 +2277,36 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '团购',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_groupbuy_end_time` on table `ns_promotion_groupbuy`
+--
+ALTER TABLE promotion_groupbuy
+ADD INDEX IDX_ns_promotion_groupbuy_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_groupbuy_goods_id` on table `ns_promotion_groupbuy`
+--
+ALTER TABLE promotion_groupbuy
+ADD INDEX IDX_ns_promotion_groupbuy_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_groupbuy_site_id` on table `ns_promotion_groupbuy`
+--
+ALTER TABLE promotion_groupbuy
+ADD INDEX IDX_ns_promotion_groupbuy_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_groupbuy_start_time` on table `ns_promotion_groupbuy`
+--
+ALTER TABLE promotion_groupbuy
+ADD INDEX IDX_ns_promotion_groupbuy_start_time (start_time);
+
+--
+-- `IDX_ns_promotion_groupbuy_status` on table `ns_promotion_groupbuy`
+--
+ALTER TABLE promotion_groupbuy
+ADD INDEX IDX_ns_promotion_groupbuy_status (status);
 
 --
 -- `ns_promotion_games_draw_record`
@@ -1961,6 +2399,36 @@ COLLATE utf8_general_ci,
 COMMENT = '营销游戏（概率游戏）';
 
 --
+-- `IDX_ns_promotion_games_end_time` on table `ns_promotion_games`
+--
+ALTER TABLE promotion_games
+ADD INDEX IDX_ns_promotion_games_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_games_game_type` on table `ns_promotion_games`
+--
+ALTER TABLE promotion_games
+ADD INDEX IDX_ns_promotion_games_game_type (game_type);
+
+--
+-- `IDX_ns_promotion_games_site_id` on table `ns_promotion_games`
+--
+ALTER TABLE promotion_games
+ADD INDEX IDX_ns_promotion_games_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_games_start_time` on table `ns_promotion_games`
+--
+ALTER TABLE promotion_games
+ADD INDEX IDX_ns_promotion_games_start_time (start_time);
+
+--
+-- `IDX_ns_promotion_games_status` on table `ns_promotion_games`
+--
+ALTER TABLE promotion_games
+ADD INDEX IDX_ns_promotion_games_status (status);
+
+--
 -- `ns_promotion_freeshipping`
 --
 CREATE TABLE promotion_freeshipping (
@@ -2038,6 +2506,18 @@ COMMENT = '积分兑换订单',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_exchange_order` on table `ns_promotion_exchange_order`
+--
+ALTER TABLE promotion_exchange_order
+ADD INDEX IDX_ns_promotion_exchange_order (member_id, order_status);
+
+--
+-- `IDX_ns_promotion_exchange_order_relate_order_id` on table `ns_promotion_exchange_order`
+--
+ALTER TABLE promotion_exchange_order
+ADD INDEX IDX_ns_promotion_exchange_order_relate_order_id (relate_order_id);
+
+--
 -- `ns_promotion_exchange`
 --
 CREATE TABLE promotion_exchange (
@@ -2069,6 +2549,30 @@ COMMENT = '积分兑换',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_exchange_site_id` on table `ns_promotion_exchange`
+--
+ALTER TABLE promotion_exchange
+ADD INDEX IDX_ns_promotion_exchange_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_exchange_state` on table `ns_promotion_exchange`
+--
+ALTER TABLE promotion_exchange
+ADD INDEX IDX_ns_promotion_exchange_state (state);
+
+--
+-- `IDX_ns_promotion_exchange_type` on table `ns_promotion_exchange`
+--
+ALTER TABLE promotion_exchange
+ADD INDEX IDX_ns_promotion_exchange_type (type);
+
+--
+-- `IDX_ns_promotion_exchange_type_id` on table `ns_promotion_exchange`
+--
+ALTER TABLE promotion_exchange
+ADD INDEX IDX_ns_promotion_exchange_type_id (type_id);
+
+--
 -- `ns_promotion_discount_goods`
 --
 CREATE TABLE promotion_discount_goods (
@@ -2091,6 +2595,36 @@ COMMENT = '限时折扣商品列表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_discount_goods_discount_id` on table `ns_promotion_discount_goods`
+--
+ALTER TABLE promotion_discount_goods
+ADD INDEX IDX_ns_promotion_discount_goods_discount_id (discount_id);
+
+--
+-- `IDX_ns_promotion_discount_goods_end_time` on table `ns_promotion_discount_goods`
+--
+ALTER TABLE promotion_discount_goods
+ADD INDEX IDX_ns_promotion_discount_goods_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_discount_goods_goods_id` on table `ns_promotion_discount_goods`
+--
+ALTER TABLE promotion_discount_goods
+ADD INDEX IDX_ns_promotion_discount_goods_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_discount_goods_sku_id` on table `ns_promotion_discount_goods`
+--
+ALTER TABLE promotion_discount_goods
+ADD INDEX IDX_ns_promotion_discount_goods_sku_id (sku_id);
+
+--
+-- `IDX_ns_promotion_discount_goods_start_time` on table `ns_promotion_discount_goods`
+--
+ALTER TABLE promotion_discount_goods
+ADD INDEX IDX_ns_promotion_discount_goods_start_time (start_time);
+
+--
 -- `ns_promotion_discount`
 --
 CREATE TABLE promotion_discount (
@@ -2111,6 +2645,24 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '限时折扣',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_discount_end_time` on table `ns_promotion_discount`
+--
+ALTER TABLE promotion_discount
+ADD INDEX IDX_ns_promotion_discount_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_discount_start_time` on table `ns_promotion_discount`
+--
+ALTER TABLE promotion_discount
+ADD INDEX IDX_ns_promotion_discount_start_time (start_time);
+
+--
+-- `IDX_ns_promotion_discount_status` on table `ns_promotion_discount`
+--
+ALTER TABLE promotion_discount
+ADD INDEX IDX_ns_promotion_discount_status (status);
 
 --
 -- `ns_promotion_coupon_type`
@@ -2260,6 +2812,24 @@ COMMENT = '组合套餐活动商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_bundling_goods_bl_id` on table `ns_promotion_bundling_goods`
+--
+ALTER TABLE promotion_bundling_goods
+ADD INDEX IDX_ns_promotion_bundling_goods_bl_id (bl_id);
+
+--
+-- `IDX_ns_promotion_bundling_goods_site_id` on table `ns_promotion_bundling_goods`
+--
+ALTER TABLE promotion_bundling_goods
+ADD INDEX IDX_ns_promotion_bundling_goods_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_bundling_goods_sku_id` on table `ns_promotion_bundling_goods`
+--
+ALTER TABLE promotion_bundling_goods
+ADD INDEX IDX_ns_promotion_bundling_goods_sku_id (sku_id);
+
+--
 -- `ns_promotion_bundling`
 --
 CREATE TABLE promotion_bundling (
@@ -2281,6 +2851,18 @@ COMMENT = '组合套餐活动表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_bundling_site_id` on table `ns_promotion_bundling`
+--
+ALTER TABLE promotion_bundling
+ADD INDEX IDX_ns_promotion_bundling_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_bundling_status` on table `ns_promotion_bundling`
+--
+ALTER TABLE promotion_bundling
+ADD INDEX IDX_ns_promotion_bundling_status (status);
+
+--
 -- `ns_promotion_bargain_record`
 --
 CREATE TABLE promotion_bargain_record (
@@ -2297,6 +2879,24 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_promotion_bargain_record_bargain_time` on table `ns_promotion_bargain_record`
+--
+ALTER TABLE promotion_bargain_record
+ADD INDEX IDX_ns_promotion_bargain_record_bargain_time (bargain_time);
+
+--
+-- `IDX_ns_promotion_bargain_record_launch_id` on table `ns_promotion_bargain_record`
+--
+ALTER TABLE promotion_bargain_record
+ADD INDEX IDX_ns_promotion_bargain_record_launch_id (launch_id);
+
+--
+-- `IDX_ns_promotion_bargain_record_member_id` on table `ns_promotion_bargain_record`
+--
+ALTER TABLE promotion_bargain_record
+ADD INDEX IDX_ns_promotion_bargain_record_member_id (member_id);
 
 --
 -- `ns_promotion_bargain_launch`
@@ -2335,6 +2935,42 @@ COMMENT = '砍价发起表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_promotion_bargain_launch_bargain_id` on table `ns_promotion_bargain_launch`
+--
+ALTER TABLE promotion_bargain_launch
+ADD INDEX IDX_ns_promotion_bargain_launch_bargain_id (bargain_id);
+
+--
+-- `IDX_ns_promotion_bargain_launch_end_time` on table `ns_promotion_bargain_launch`
+--
+ALTER TABLE promotion_bargain_launch
+ADD INDEX IDX_ns_promotion_bargain_launch_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_bargain_launch_goods_id` on table `ns_promotion_bargain_launch`
+--
+ALTER TABLE promotion_bargain_launch
+ADD INDEX IDX_ns_promotion_bargain_launch_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_bargain_launch_site_id` on table `ns_promotion_bargain_launch`
+--
+ALTER TABLE promotion_bargain_launch
+ADD INDEX IDX_ns_promotion_bargain_launch_site_id (site_id);
+
+--
+-- `IDX_ns_promotion_bargain_launch_sku_id` on table `ns_promotion_bargain_launch`
+--
+ALTER TABLE promotion_bargain_launch
+ADD INDEX IDX_ns_promotion_bargain_launch_sku_id (sku_id);
+
+--
+-- `IDX_ns_promotion_bargain_launch_start_time` on table `ns_promotion_bargain_launch`
+--
+ALTER TABLE promotion_bargain_launch
+ADD INDEX IDX_ns_promotion_bargain_launch_start_time (start_time);
+
+--
 -- `ns_promotion_bargain_goods`
 --
 CREATE TABLE promotion_bargain_goods (
@@ -2366,6 +3002,36 @@ COLLATE utf8_general_ci,
 COMMENT = '砍价活动表';
 
 --
+-- `IDX_ns_promotion_bargain_goods_bargain_id` on table `ns_promotion_bargain_goods`
+--
+ALTER TABLE promotion_bargain_goods
+ADD INDEX IDX_ns_promotion_bargain_goods_bargain_id (bargain_id);
+
+--
+-- `IDX_ns_promotion_bargain_goods_goods_id` on table `ns_promotion_bargain_goods`
+--
+ALTER TABLE promotion_bargain_goods
+ADD INDEX IDX_ns_promotion_bargain_goods_goods_id (goods_id);
+
+--
+-- `IDX_ns_promotion_bargain_goods_is_own` on table `ns_promotion_bargain_goods`
+--
+ALTER TABLE promotion_bargain_goods
+ADD INDEX IDX_ns_promotion_bargain_goods_is_own (is_own);
+
+--
+-- `IDX_ns_promotion_bargain_goods_sku_id` on table `ns_promotion_bargain_goods`
+--
+ALTER TABLE promotion_bargain_goods
+ADD INDEX IDX_ns_promotion_bargain_goods_sku_id (sku_id);
+
+--
+-- `IDX_ns_promotion_bargain_goods_status` on table `ns_promotion_bargain_goods`
+--
+ALTER TABLE promotion_bargain_goods
+ADD INDEX IDX_ns_promotion_bargain_goods_status (status);
+
+--
 -- `ns_promotion_bargain`
 --
 CREATE TABLE promotion_bargain (
@@ -2391,6 +3057,18 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '砍价活动表';
+
+--
+-- `IDX_ns_promotion_bargain_end_time` on table `ns_promotion_bargain`
+--
+ALTER TABLE promotion_bargain
+ADD INDEX IDX_ns_promotion_bargain_end_time (end_time);
+
+--
+-- `IDX_ns_promotion_bargain_start_time` on table `ns_promotion_bargain`
+--
+ALTER TABLE promotion_bargain
+ADD INDEX IDX_ns_promotion_bargain_start_time (start_time);
 
 --
 -- `ns_printer_template`
@@ -2471,6 +3149,12 @@ COMMENT = '退款记录',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `UK_ns_pay_refund_out_trade_no` on table `ns_pay_refund`
+--
+ALTER TABLE pay_refund
+ADD UNIQUE INDEX UK_ns_pay_refund_out_trade_no (out_trade_no);
+
+--
 -- `ns_pay`
 --
 CREATE TABLE pay (
@@ -2500,6 +3184,12 @@ COMMENT = '支付记录',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `UK_ns_pay_out_trade_no` on table `ns_pay`
+--
+ALTER TABLE pay
+ADD UNIQUE INDEX UK_ns_pay_out_trade_no (out_trade_no);
+
+--
 -- `ns_order_refund_log`
 --
 CREATE TABLE order_refund_log (
@@ -2519,6 +3209,30 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单退款操作表',
+ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_order_refund_log_order_goods_id` on table `ns_order_refund_log`
+--
+ALTER TABLE order_refund_log
+ADD INDEX IDX_ns_order_refund_log_order_goods_id (order_goods_id, site_id);
+
+--
+-- `ns_order_refund_export`
+--
+CREATE TABLE order_refund_export (
+  export_id int(11) NOT NULL AUTO_INCREMENT,
+  `condition` varchar(2000) NOT NULL DEFAULT '' COMMENT '条件  json',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '导出状态  0 正在导出 1 已导出  2 已删除',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '导出时间',
+  path varchar(255) NOT NULL DEFAULT '' COMMENT '导出文件的物理路径',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  PRIMARY KEY (export_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '订单维权导出记录表',
 ROW_FORMAT = DYNAMIC;
 
 --
@@ -2563,6 +3277,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单操作表(传统表，不用设计)',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_order_log_order_id` on table `ns_order_log`
+--
+ALTER TABLE order_log
+ADD INDEX IDX_ns_order_log_order_id (order_id);
 
 --
 -- `ns_order_import_file_log`
@@ -2666,6 +3386,67 @@ COMMENT = '订单商品表',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_order_goods_goods_id` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_goods_id (goods_id);
+
+--
+-- `IDX_ns_order_goods_is_fenxiao` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_is_fenxiao (is_fenxiao);
+
+--
+-- `IDX_ns_order_goods_is_virtual` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_is_virtual (is_virtual);
+
+--
+-- `IDX_ns_order_goods_member_id` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_member_id (member_id);
+
+--
+-- `IDX_ns_order_goods_order_id` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_order_id (order_id);
+
+--
+-- `IDX_ns_order_goods_refund_status` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_refund_status (refund_status);
+
+--
+-- `IDX_ns_order_goods_sku_id` on table `ns_order_goods`
+--
+ALTER TABLE order_goods
+ADD INDEX IDX_ns_order_goods_sku_id (sku_id);
+
+--
+-- `ns_order_export`
+--
+CREATE TABLE order_export (
+  export_id int(11) NOT NULL AUTO_INCREMENT,
+  `condition` varchar(2000) NOT NULL DEFAULT '' COMMENT '条件  json',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '导出状态  0 正在导出 1 已导出  2 已删除',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '导出时间',
+  type int(11) NOT NULL DEFAULT 0 COMMENT '导出类型',
+  path varchar(255) NOT NULL DEFAULT '' COMMENT '导出文件的物理路径',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  PRIMARY KEY (export_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '订单导出记录表',
+ROW_FORMAT = DYNAMIC;
+
+--
 -- `ns_order`
 --
 CREATE TABLE `order` (
@@ -2740,7 +3521,7 @@ CREATE TABLE `order` (
   promotion_type varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型',
   promotion_type_name varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型名称',
   promotion_status_name varchar(255) NOT NULL DEFAULT '' COMMENT '营销状态名称',
-  delivery_store_info text NOT NULL COMMENT '门店信息(json)',
+  delivery_store_info text DEFAULT NULL COMMENT '门店信息(json)',
   virtual_code varchar(255) NOT NULL DEFAULT '' COMMENT '虚拟商品码',
   evaluate_status int(11) NOT NULL DEFAULT 0 COMMENT '评价状态，0：未评价，1：已评价，2：已追评',
   evaluate_status_name varchar(20) NOT NULL DEFAULT '' COMMENT '评价状态名称，未评价，已评价，已追评',
@@ -2766,6 +3547,60 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_order_create_time` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_create_time (create_time);
+
+--
+-- `IDX_ns_order_finish_time` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_finish_time (finish_time);
+
+--
+-- `IDX_ns_order_is_tax_invoice` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_is_tax_invoice (is_tax_invoice);
+
+--
+-- `IDX_ns_order_member_id` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_member_id (member_id);
+
+--
+-- `IDX_ns_order_order_from` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_order_from (order_from);
+
+--
+-- `IDX_ns_order_order_status` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_order_status (order_status);
+
+--
+-- `IDX_ns_order_order_type` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_order_type (order_type);
+
+--
+-- `IDX_ns_order_pay_status` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_pay_status (pay_status);
+
+--
+-- `IDX_ns_order_promotion_id` on table `ns_order`
+--
+ALTER TABLE `order`
+ADD INDEX IDX_ns_order_promotion_id (promotion_id);
 
 --
 -- `ns_notice`
@@ -2849,7 +3684,7 @@ CREATE TABLE notes (
   cover_img varchar(2000) NOT NULL DEFAULT '' COMMENT '封面图片',
   goods_ids varchar(255) NOT NULL DEFAULT '' COMMENT '商品id（根据类型判断商品是单个还是多个）',
   goods_highlights varchar(255) NOT NULL DEFAULT '' COMMENT '商品亮点（单品有效）',
-  note_content text NOT NULL COMMENT '内容',
+  note_content text DEFAULT NULL COMMENT '内容',
   status tinyint(3) NOT NULL DEFAULT 0 COMMENT '状态（0草稿箱  1发布）',
   is_show_release_time tinyint(1) NOT NULL DEFAULT 0 COMMENT '发布时间是否显示',
   is_show_read_num tinyint(1) NOT NULL DEFAULT 0 COMMENT '阅读数是否显示',
@@ -2942,7 +3777,7 @@ CREATE TABLE message_template (
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
-AUTO_INCREMENT = 26,
+AUTO_INCREMENT = 29,
 AVG_ROW_LENGTH = 862,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
@@ -3071,6 +3906,42 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '菜单表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_menu_app_module` on table `ns_menu`
+--
+ALTER TABLE menu
+ADD INDEX IDX_ns_menu_app_module (app_module);
+
+--
+-- `IDX_ns_menu_is_control` on table `ns_menu`
+--
+ALTER TABLE menu
+ADD INDEX IDX_ns_menu_is_control (is_control);
+
+--
+-- `IDX_ns_menu_is_show` on table `ns_menu`
+--
+ALTER TABLE menu
+ADD INDEX IDX_ns_menu_is_show (is_show);
+
+--
+-- `IDX_ns_menu_name` on table `ns_menu`
+--
+ALTER TABLE menu
+ADD INDEX IDX_ns_menu_name (name);
+
+--
+-- `IDX_ns_menu_parent` on table `ns_menu`
+--
+ALTER TABLE menu
+ADD INDEX IDX_ns_menu_parent (parent);
+
+--
+-- `IDX_ns_menu_url` on table `ns_menu`
+--
+ALTER TABLE menu
+ADD INDEX IDX_ns_menu_url (url);
 
 --
 -- `ns_member_withdraw`
@@ -3275,6 +4146,54 @@ ALTER TABLE member_label
 ADD INDEX IDX_nc_member_label_label_id (label_id);
 
 --
+-- `ns_member_import_log`
+--
+CREATE TABLE member_import_log (
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  mobile varchar(255) NOT NULL DEFAULT '' COMMENT '手机号',
+  username varchar(255) NOT NULL DEFAULT '' COMMENT '用户名',
+  nickname varchar(255) NOT NULL DEFAULT '' COMMENT '昵称',
+  password varchar(255) NOT NULL DEFAULT '' COMMENT '密码',
+  realname varchar(255) NOT NULL DEFAULT '' COMMENT '真实姓名',
+  wx_openid varchar(255) NOT NULL DEFAULT '' COMMENT '微信公众号openid',
+  weapp_openid varchar(255) NOT NULL DEFAULT '' COMMENT '小程序openid',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '添加时间',
+  content varchar(255) NOT NULL DEFAULT '' COMMENT '内容',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '会员导入记录',
+ROW_FORMAT = DYNAMIC;
+
+--
+-- `ns_member_cancel`
+--
+CREATE TABLE member_cancel (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
+  username varchar(255) NOT NULL DEFAULT '' COMMENT '会员账号',
+  mobile varchar(255) NOT NULL DEFAULT '' COMMENT '电话',
+  nickname varchar(255) NOT NULL DEFAULT '' COMMENT '会员昵称',
+  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态',
+  audit_uid int(11) NOT NULL DEFAULT 0 COMMENT '审核人UID',
+  audit_username varchar(255) NOT NULL DEFAULT '' COMMENT '审核人账号',
+  reason varchar(255) NOT NULL DEFAULT '' COMMENT '审核拒绝原因',
+  audit_time int(11) NOT NULL DEFAULT 0 COMMENT '审核时间',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '申请注销时间',
+  member_json text NOT NULL COMMENT '会员信息',
+  fenxiao_json text NOT NULL COMMENT '分销信息',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '会员注销表',
+ROW_FORMAT = DYNAMIC;
+
+--
 -- `ns_member_bank_account`
 --
 CREATE TABLE member_bank_account (
@@ -3401,7 +4320,7 @@ ADD INDEX IDX_ns_member_account_member_id (member_id);
 -- `ns_member`
 --
 CREATE TABLE member (
-  member_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  member_id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) DEFAULT 0 COMMENT '站点id',
   source_member int(11) NOT NULL DEFAULT 0 COMMENT '推荐人',
   fenxiao_id int(11) NOT NULL DEFAULT 0 COMMENT '分销商（分销有效）',
@@ -3453,6 +4372,7 @@ CREATE TABLE member (
   order_complete_num int(11) NOT NULL DEFAULT 0 COMMENT '订单完成-消费次数',
   balance_withdraw_apply decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '提现中余额',
   balance_withdraw decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '已提现余额',
+  is_delete tinyint(1) NOT NULL DEFAULT 0 COMMENT '0正常  1已删除',
   PRIMARY KEY (member_id)
 )
 ENGINE = INNODB,
@@ -3460,6 +4380,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统用户表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_member_weapp_openid` on table `ns_member`
+--
+ALTER TABLE member
+ADD INDEX IDX_ns_member_weapp_openid (weapp_openid);
 
 --
 -- `IDX_sys_user_user_email` on table `ns_member`
@@ -3678,7 +4604,7 @@ CREATE TABLE goods_sku (
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku名称',
   sku_no varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku编码',
-  sku_spec_format text NOT NULL COMMENT 'sku规格格式',
+  sku_spec_format text DEFAULT NULL COMMENT 'sku规格格式',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'sku单价',
   market_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'sku市场价',
   cost_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'sku成本价',
@@ -3706,8 +4632,8 @@ CREATE TABLE goods_sku (
   virtual_indate int(11) NOT NULL DEFAULT 1 COMMENT '虚拟商品有效期',
   is_free_shipping tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否免邮',
   shipping_template int(11) NOT NULL DEFAULT 0 COMMENT '指定运费模板',
-  goods_spec_format text NOT NULL COMMENT '商品规格格式',
-  goods_attr_format text NOT NULL COMMENT '商品属性格式',
+  goods_spec_format text DEFAULT NULL COMMENT '商品规格格式',
+  goods_attr_format text DEFAULT NULL COMMENT '商品属性格式',
   is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否已经删除',
   introduction varchar(255) NOT NULL DEFAULT '' COMMENT '促销语',
   keywords varchar(255) NOT NULL DEFAULT '' COMMENT '关键词',
@@ -3737,6 +4663,7 @@ CREATE TABLE goods_sku (
   fenxiao_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '分销计算价格',
   stock_alarm int(11) NOT NULL DEFAULT 0 COMMENT 'sku库存预警',
   sale_sort int(11) NOT NULL DEFAULT 0 COMMENT '销量排序字段 占位用',
+  is_default tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否默认',
   PRIMARY KEY (sku_id)
 )
 ENGINE = INNODB,
@@ -4054,8 +4981,8 @@ CREATE TABLE goods (
   virtual_indate int(11) NOT NULL DEFAULT 1 COMMENT '虚拟商品有效期',
   is_free_shipping tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否免邮',
   shipping_template int(11) NOT NULL DEFAULT 0 COMMENT '指定运费模板',
-  goods_spec_format text NOT NULL COMMENT '商品规格格式',
-  goods_attr_format text NOT NULL COMMENT '商品属性格式',
+  goods_spec_format text DEFAULT NULL COMMENT '商品规格格式',
+  goods_attr_format text DEFAULT NULL COMMENT '商品属性格式',
   is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否已经删除',
   introduction varchar(255) NOT NULL DEFAULT '' COMMENT '促销语',
   keywords varchar(255) NOT NULL DEFAULT '' COMMENT '关键词',
@@ -4086,6 +5013,8 @@ CREATE TABLE goods (
   max_buy int(11) NOT NULL DEFAULT 0 COMMENT '限购',
   min_buy int(11) NOT NULL DEFAULT 0 COMMENT '起购数',
   recommend_way int(11) NOT NULL DEFAULT 0 COMMENT '推荐方式，1：新品，2：精品，3；推荐',
+  timer_on int(11) NOT NULL DEFAULT 0 COMMENT '定时上架',
+  timer_off int(11) NOT NULL DEFAULT 0 COMMENT '定时下架',
   PRIMARY KEY (goods_id)
 )
 ENGINE = INNODB,
@@ -4393,6 +5322,7 @@ CREATE TABLE fenxiao (
   one_child_fenxiao_num int(11) NOT NULL DEFAULT 0 COMMENT '一级下线分销商',
   two_child_fenxiao_num int(11) NOT NULL DEFAULT 0 COMMENT '二级下线分销商',
   total_commission decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '累计佣金',
+  is_delete tinyint(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除 0未删除 1已删除',
   PRIMARY KEY (fenxiao_id)
 )
 ENGINE = INNODB,
@@ -4400,6 +5330,54 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商表',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_fenxiao_audit_time` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_audit_time (audit_time);
+
+--
+-- `IDX_ns_fenxiao_create_time` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_create_time (create_time);
+
+--
+-- `IDX_ns_fenxiao_grand_parent` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_grand_parent (grand_parent);
+
+--
+-- `IDX_ns_fenxiao_level_id` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_level_id (level_id);
+
+--
+-- `IDX_ns_fenxiao_member_id` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_member_id (member_id);
+
+--
+-- `IDX_ns_fenxiao_parent` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_parent (parent);
+
+--
+-- `IDX_ns_fenxiao_site_id` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_site_id (site_id);
+
+--
+-- `IDX_ns_fenxiao_status` on table `ns_fenxiao`
+--
+ALTER TABLE fenxiao
+ADD INDEX IDX_ns_fenxiao_status (status);
 
 --
 -- `ns_express_template_item`
@@ -4423,6 +5401,18 @@ COMMENT = '运费模板细节',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_express_template_item_fee_type` on table `ns_express_template_item`
+--
+ALTER TABLE express_template_item
+ADD INDEX IDX_ns_express_template_item_fee_type (fee_type);
+
+--
+-- `IDX_ns_express_template_item_template_id` on table `ns_express_template_item`
+--
+ALTER TABLE express_template_item
+ADD INDEX IDX_ns_express_template_item_template_id (template_id);
+
+--
 -- `ns_express_template`
 --
 CREATE TABLE express_template (
@@ -4433,7 +5423,7 @@ CREATE TABLE express_template (
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   is_default int(11) NOT NULL DEFAULT 0 COMMENT '是否默认',
-  surplus_area_ids mediumtext NOT NULL COMMENT '剩余地址id',
+  surplus_area_ids mediumtext DEFAULT NULL COMMENT '剩余地址id',
   PRIMARY KEY (template_id)
 )
 ENGINE = INNODB,
@@ -4441,6 +5431,18 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '运费模板',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_express_template_is_default` on table `ns_express_template`
+--
+ALTER TABLE express_template
+ADD INDEX IDX_ns_express_template_is_default (is_default);
+
+--
+-- `IDX_ns_express_template_site_id` on table `ns_express_template`
+--
+ALTER TABLE express_template
+ADD INDEX IDX_ns_express_template_site_id (site_id);
 
 --
 -- `ns_express_electronicsheet`
@@ -4501,6 +5503,18 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品订单物流信息表（多次发货）',
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_express_delivery_package_order_id` on table `ns_express_delivery_package`
+--
+ALTER TABLE express_delivery_package
+ADD INDEX IDX_ns_express_delivery_package_order_id (order_id);
+
+--
+-- `IDX_ns_express_delivery_package_site_id` on table `ns_express_delivery_package`
+--
+ALTER TABLE express_delivery_package
+ADD INDEX IDX_ns_express_delivery_package_site_id (site_id);
 
 --
 -- `ns_express_company_template`
@@ -4582,6 +5596,24 @@ COMMENT = '系统配置性相关文件',
 ROW_FORMAT = DYNAMIC;
 
 --
+-- `IDX_ns_document_app_module` on table `ns_document`
+--
+ALTER TABLE document
+ADD INDEX IDX_ns_document_app_module (app_module);
+
+--
+-- `IDX_ns_document_document_key` on table `ns_document`
+--
+ALTER TABLE document
+ADD INDEX IDX_ns_document_document_key (document_key);
+
+--
+-- `IDX_ns_document_site_id` on table `ns_document`
+--
+ALTER TABLE document
+ADD INDEX IDX_ns_document_site_id (site_id);
+
+--
 -- `ns_diy_view_util`
 --
 CREATE TABLE diy_view_util (
@@ -4590,7 +5622,7 @@ CREATE TABLE diy_view_util (
   title varchar(50) NOT NULL DEFAULT '' COMMENT '组件名称',
   type varchar(50) NOT NULL DEFAULT 'SYSTEM' COMMENT '组件类型，SYSTEM 基础组件，ADDON 营销组件，OTHER 其他组件',
   controller varchar(255) NOT NULL DEFAULT '' COMMENT '组件控制器名称',
-  value text NOT NULL COMMENT '配置:json格式',
+  value text DEFAULT NULL COMMENT '配置:json格式',
   addon_name varchar(50) NOT NULL DEFAULT '' COMMENT '插件标识',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
   support_diy_view varchar(500) NOT NULL DEFAULT '' COMMENT '支持的自定义页面（为空表示公共组件都支持）',
@@ -4638,8 +5670,8 @@ CREATE TABLE diy_view_temp (
   addon_name varchar(50) NOT NULL DEFAULT '' COMMENT '插件标识名称',
   name varchar(50) NOT NULL DEFAULT '' COMMENT '自定义模板标识',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
-  value text NOT NULL COMMENT '默认配置值',
-  type varchar(255) NOT NULL DEFAULT 'ADMIN' COMMENT '应用模块:ADMIN、SHOP',
+  value text DEFAULT NULL COMMENT '默认配置值',
+  type varchar(255) NOT NULL DEFAULT 'SHOP' COMMENT '应用模块:SHOP',
   icon varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (id)
@@ -4682,9 +5714,23 @@ CREATE TABLE div_template (
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
+AUTO_INCREMENT = 6,
+AVG_ROW_LENGTH = 16384,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 ROW_FORMAT = DYNAMIC;
+
+--
+-- `IDX_ns_div_template_mark` on table `ns_div_template`
+--
+ALTER TABLE div_template
+ADD INDEX IDX_ns_div_template_mark (mark);
+
+--
+-- `IDX_ns_div_template_type` on table `ns_div_template`
+--
+ALTER TABLE div_template
+ADD INDEX IDX_ns_div_template_type (type);
 
 --
 -- `ns_cron_log`
@@ -4696,7 +5742,7 @@ CREATE TABLE cron_log (
   execute_time varchar(255) NOT NULL DEFAULT '' COMMENT '执行时间',
   relate_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
   is_success int(11) NOT NULL DEFAULT 1 COMMENT '是否成功',
-  message text NOT NULL COMMENT '返回结果',
+  message text DEFAULT NULL COMMENT '返回结果',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -4907,7 +5953,7 @@ CREATE TABLE adv (
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   ap_id int(11) NOT NULL DEFAULT 0 COMMENT '广告位id',
   adv_title varchar(255) NOT NULL DEFAULT '' COMMENT '广告内容描述',
-  adv_url varchar(255) NOT NULL DEFAULT '' COMMENT '广告链接',
+  adv_url varchar(2000) NOT NULL DEFAULT '' COMMENT '广告链接',
   adv_image varchar(255) NOT NULL DEFAULT '' COMMENT '广告内容图片',
   slide_sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '广告价格/月',
@@ -4930,7 +5976,7 @@ CREATE TABLE addon_quick (
   type varchar(255) NOT NULL DEFAULT '' COMMENT '插件类型',
   icon varchar(255) NOT NULL DEFAULT '' COMMENT '插件图标',
   title varchar(20) NOT NULL DEFAULT '' COMMENT '中文名',
-  description text NOT NULL COMMENT '插件描述',
+  description text DEFAULT NULL COMMENT '插件描述',
   author varchar(40) NOT NULL DEFAULT '' COMMENT '作者',
   version varchar(20) NOT NULL DEFAULT '' COMMENT '版本号',
   version_no varchar(255) NOT NULL DEFAULT '' COMMENT '版本编号',
@@ -4959,7 +6005,7 @@ CREATE TABLE addon (
   type varchar(255) NOT NULL DEFAULT '' COMMENT '插件类型',
   icon varchar(255) NOT NULL DEFAULT '' COMMENT '插件图标',
   title varchar(20) NOT NULL DEFAULT '' COMMENT '中文名',
-  description text NOT NULL COMMENT '插件描述',
+  description text DEFAULT NULL COMMENT '插件描述',
   status tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
   author varchar(40) NOT NULL DEFAULT '' COMMENT '作者',
   version varchar(20) NOT NULL DEFAULT '' COMMENT '版本号',
@@ -4980,132 +6026,132 @@ ROW_FORMAT = DYNAMIC;
 ALTER TABLE addon
 ADD UNIQUE INDEX UK_nc_addons_name (name);
 
---
+-- 
 -- Dumping data for table ns_wechat_replay_rule
 --
--- Table niushop_b2c_v4_20200925.ns_wechat_replay_rule does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_wechat_replay_rule does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_wechat_qrcode
 --
--- Table niushop_b2c_v4_20200925.ns_wechat_qrcode does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_wechat_qrcode does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_wechat_media
 --
--- Table niushop_b2c_v4_20200925.ns_wechat_media does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_wechat_media does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_wechat_mass_recording
 --
--- Table niushop_b2c_v4_20200925.ns_wechat_mass_recording does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_wechat_mass_recording does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_wechat_fans_tag
 --
--- Table niushop_b2c_v4_20200925.ns_wechat_fans_tag does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_wechat_fans_tag does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_wechat_fans
 --
--- Table niushop_b2c_v4_20200925.ns_wechat_fans does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_wechat_fans does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_weapp_live_room
 --
--- Table niushop_b2c_v4_20200925.ns_weapp_live_room does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_weapp_live_room does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_weapp_goods
 --
--- Table niushop_b2c_v4_20200925.ns_weapp_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_weapp_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_weapp_experiencer
 --
--- Table niushop_b2c_v4_20200925.ns_weapp_experiencer does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_weapp_experiencer does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_weapp_audit_record
 --
--- Table niushop_b2c_v4_20200925.ns_weapp_audit_record does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_weapp_audit_record does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_verify
 --
--- Table niushop_b2c_v4_20200925.ns_verify does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_verify does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_verifier
 --
--- Table niushop_b2c_v4_20200925.ns_verifier does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_verifier does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_v3_upgrade_log
 --
--- Table niushop_b2c_v4_20200925.ns_v3_upgrade_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_v3_upgrade_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_user_log
 --
--- Table niushop_b2c_v4_20200925.ns_user_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_user_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_user
 --
--- Table niushop_b2c_v4_20200925.ns_user does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_user does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_sys_upgrade_log
 --
--- Table niushop_b2c_v4_20200925.ns_sys_upgrade_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_sys_upgrade_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_supplier
 --
--- Table niushop_b2c_v4_20200925.ns_supplier does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_supplier does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store_stock_import_log
 --
--- Table niushop_b2c_v4_20200925.ns_store_stock_import_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store_stock_import_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store_stock_import
 --
--- Table niushop_b2c_v4_20200925.ns_store_stock_import does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store_stock_import does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store_settlement
 --
--- Table niushop_b2c_v4_20200925.ns_store_settlement does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store_settlement does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store_member
 --
--- Table niushop_b2c_v4_20200925.ns_store_member does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store_member does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store_goods_sku
 --
--- Table niushop_b2c_v4_20200925.ns_store_goods_sku does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store_goods_sku does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store_goods
 --
--- Table niushop_b2c_v4_20200925.ns_store_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_store
 --
--- Table niushop_b2c_v4_20200925.ns_store does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_store does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_stat_shop
 --
--- Table niushop_b2c_v4_20200925.ns_stat_shop does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_stat_shop does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_sms_template
 --
 INSERT INTO sms_template VALUES
@@ -5133,259 +6179,287 @@ INSERT INTO sms_template VALUES
 (22, 1, 0, 'USER_WITHDRAWAL_APPLY', 2, '会员申请提现通知', '会员{username}申请余额提现，提现金额为{money}', '{"username":"others","money":"amount"}', 0, 0, 0, 1599876409),
 (23, 1, 0, 'FENXIAO_WITHDRAWAL_APPLY', 2, '分销申请提现通知', '分销商{fenxiaoname}申请佣金提现，提现金额为{money}', '{"fenxiaorname":"others","money":"amount"}', 0, 0, 0, 1599820140),
 (24, 1, 0, 'USER_WITHDRAWAL_SUCCESS', 2, '会员提现成功通知', '尊敬的{username}，您申请的{money}余额，已提现成功。', '{"username":"others","money":"amount"}', 0, 0, 0, 1599876399),
-(25, 1, 0, 'FENXIAO_WITHDRAWAL_SUCCESS', 2, '分销提现成功通知', '尊敬的{username}，您申请的{money}佣金，已提现成功。', '{"fenxiaorname":"others","money":"amount"}', 0, 0, 0, 1599820115);
+(25, 1, 0, 'FENXIAO_WITHDRAWAL_SUCCESS', 2, '分销提现成功通知', '尊敬的{username}，您申请的{money}佣金，已提现成功。', '{"fenxiaorname":"others","money":"amount"}', 0, 0, 0, 1599820115),
+(26, 1, 0, 'USER_CANCEL_SUCCESS', 2, '会员注销成功', '尊敬的{username}，您的账号已注销成功。', '{"username":"others"}', 0, 0, 0, 1603694000),
+(27, 1, 0, 'USER_CANCEL_FAIL', 2, '会员注销失败', '尊敬的{username}，您的账号商家拒绝注销。', '{"username":"others"}', 0, 0, 0, 1603693993),
+(28, 1, 0, 'USER_CANCEL_APPLY', 2, '会员注销申请', '账号为{username}，会员申请注销。', '{"username":"others"}', 0, 0, 0, 1603693989);
 
---
+-- 
 -- Dumping data for table ns_site_diy_view
 --
--- Table niushop_b2c_v4_20200925.ns_site_diy_view does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_site_diy_view does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_site
 --
--- Table niushop_b2c_v4_20200925.ns_site does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_site does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_shop_address
 --
--- Table niushop_b2c_v4_20200925.ns_shop_address does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_shop_address does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_shop_accept_message
 --
--- Table niushop_b2c_v4_20200925.ns_shop_accept_message does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_shop_accept_message does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_shop
 --
--- Table niushop_b2c_v4_20200925.ns_shop does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_shop does not contain any data (it is empty)
 
+-- 
+-- Dumping data for table ns_servicer_member
 --
+-- Table niushop_b2c_v4_20201028_0908.ns_servicer_member does not contain any data (it is empty)
+
+-- 
+-- Dumping data for table ns_servicer_dialogue
+--
+-- Table niushop_b2c_v4_20201028_0908.ns_servicer_dialogue does not contain any data (it is empty)
+
+-- 
+-- Dumping data for table ns_servicer
+--
+-- Table niushop_b2c_v4_20201028_0908.ns_servicer does not contain any data (it is empty)
+
+-- 
 -- Dumping data for table ns_promotion_topic_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_topic_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_topic_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_topic
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_topic does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_topic does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_seckill_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_seckill_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_seckill_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_seckill
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_seckill does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_seckill does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_present
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_present does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_present does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_pintuan_order
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_pintuan_order does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_pintuan_order does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_pintuan_group
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_pintuan_group does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_pintuan_group does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_pintuan_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_pintuan_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_pintuan_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_pintuan
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_pintuan does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_pintuan does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_mansong_record
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_mansong_record does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_mansong_record does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_manjian_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_manjian_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_manjian_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_manjian
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_manjian does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_manjian does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_groupbuy
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_groupbuy does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_groupbuy does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_games_draw_record
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_games_draw_record does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_games_draw_record does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_games_award
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_games_award does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_games_award does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_games
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_games does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_games does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_freeshipping
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_freeshipping does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_freeshipping does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_exchange_order
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_exchange_order does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_exchange_order does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_exchange
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_exchange does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_exchange does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_discount_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_discount_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_discount_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_discount
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_discount does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_discount does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_coupon_type
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_coupon_type does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_coupon_type does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_coupon
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_coupon does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_coupon does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_bundling_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_bundling_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_bundling_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_bundling
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_bundling does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_bundling does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_bargain_record
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_bargain_record does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_bargain_record does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_bargain_launch
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_bargain_launch does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_bargain_launch does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_bargain_goods
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_bargain_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_bargain_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_promotion_bargain
 --
--- Table niushop_b2c_v4_20200925.ns_promotion_bargain does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_promotion_bargain does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_printer_template
 --
--- Table niushop_b2c_v4_20200925.ns_printer_template does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_printer_template does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_printer
 --
--- Table niushop_b2c_v4_20200925.ns_printer does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_printer does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_pay_refund
 --
--- Table niushop_b2c_v4_20200925.ns_pay_refund does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_pay_refund does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_pay
 --
--- Table niushop_b2c_v4_20200925.ns_pay does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_pay does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_order_refund_log
 --
--- Table niushop_b2c_v4_20200925.ns_order_refund_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order_refund_log does not contain any data (it is empty)
 
+-- 
+-- Dumping data for table ns_order_refund_export
 --
+-- Table niushop_b2c_v4_20201028_0908.ns_order_refund_export does not contain any data (it is empty)
+
+-- 
 -- Dumping data for table ns_order_promotion_detail
 --
--- Table niushop_b2c_v4_20200925.ns_order_promotion_detail does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order_promotion_detail does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_order_log
 --
--- Table niushop_b2c_v4_20200925.ns_order_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_order_import_file_log
 --
--- Table niushop_b2c_v4_20200925.ns_order_import_file_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order_import_file_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_order_import_file
 --
--- Table niushop_b2c_v4_20200925.ns_order_import_file does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order_import_file does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_order_goods
 --
--- Table niushop_b2c_v4_20200925.ns_order_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order_goods does not contain any data (it is empty)
 
+-- 
+-- Dumping data for table ns_order_export
 --
+-- Table niushop_b2c_v4_20201028_0908.ns_order_export does not contain any data (it is empty)
+
+-- 
 -- Dumping data for table ns_order
 --
--- Table niushop_b2c_v4_20200925.ns_order does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_order does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_notice
 --
--- Table niushop_b2c_v4_20200925.ns_notice does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_notice does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_notes_group
 --
--- Table niushop_b2c_v4_20200925.ns_notes_group does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_notes_group does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_notes_dianzan_record
 --
--- Table niushop_b2c_v4_20200925.ns_notes_dianzan_record does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_notes_dianzan_record does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_notes
 --
--- Table niushop_b2c_v4_20200925.ns_notes does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_notes does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_message_wechat_records
 --
--- Table niushop_b2c_v4_20200925.ns_message_wechat_records does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_message_wechat_records does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_message_variable
 --
 INSERT INTO message_variable VALUES
@@ -5393,7 +6467,7 @@ INSERT INTO message_variable VALUES
 (2, '会员名称', 'membername', ',REGISTER,NEW_ORDER,LOGIN,'),
 (3, '验证码', 'number', ',REGISTER,LOGIN,');
 
---
+-- 
 -- Dumping data for table ns_message_template
 --
 INSERT INTO message_template VALUES
@@ -5413,7 +6487,7 @@ INSERT INTO message_template VALUES
 (14, '', 'FIND_PASSWORD', '找回密码', 1, '{"code":"验证码","site_name":"站点名称"}', '', '{"alisms":{"template_id":"SMS_190792678","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms'),
 (15, '', 'LOGIN', '会员登录', 1, '{"name":"会员名称"}', '', '{"alisms":{"template_id":"SMS_190728279","content":"\\u5c0a\\u656c\\u7684${name}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u767b\\u9646\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412447375","template_id":"jQcfV222-1xer1O5diwLZfPFldGW9-3-XmtfJrvkSag","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"登录账号：{{keyword1.DATA}}\\n登录状态：{{keyword2.DATA}}\\n登录时间：{{keyword3.DATA}}"}', '', '', 'sms,wechat'),
 (16, '', 'MEMBER_BIND', '账户绑定', 1, '{"code":"验证码","site_name":"站点名称"}', '', '{"alisms":{"template_id":"SMS_190792680","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms'),
-(17, '', 'LOGIN_CODE', '动态码登录', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190792665","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${number}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms'),
+(17, '', 'LOGIN_CODE', '动态码登录', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190792665","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms'),
 (18, '', 'MEMBER_PAY_PASSWORD', '支付密码修改', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190782786","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms'),
 (19, '', 'SET_PASSWORD', '设置密码', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190728294","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms'),
 (20, '', 'BUYER_TAKE_DELIVERY', '买家收货通知', 2, '{"orderno":"订单号"}', '', '', '', '{"template_id_short":"OPENTM418052192","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u6536\\u8d27\\u5730\\u5740\\uff1a{{keyword1.DATA}}\\n\\u8054\\u7cfb\\u4eba\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u53f7\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u8be6\\u60c5\\uff1a{{keyword4.DATA}}\\n\\u64cd\\u4f5c\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}"}', '', '', 'sms,wechat'),
@@ -5421,299 +6495,327 @@ INSERT INTO message_template VALUES
 (22, '', 'USER_WITHDRAWAL_APPLY', '会员申请提现通知', 2, '{"username":"会员名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM416719519","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}"}', '', '', 'sms,wechat'),
 (23, '', 'FENXIAO_WITHDRAWAL_APPLY', '分销申请提现通知', 2, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM416719519","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}"}', '', '', 'sms,wechat'),
 (24, '', 'USER_WITHDRAWAL_SUCCESS', '会员提现成功通知', 1, '{"username":"会员名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '', '', 'sms,wechat'),
-(25, '', 'FENXIAO_WITHDRAWAL_SUCCESS', '分销提现成功通知', 1, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '', '', 'sms,wechat');
+(25, '', 'FENXIAO_WITHDRAWAL_SUCCESS', '分销提现成功通知', 1, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '', '', 'sms,wechat'),
+(26, '', 'USER_CANCEL_SUCCESS', '会员注销成功', 1, '{"username":"会员账号"}', '', '', '', '', '', '', 'sms'),
+(27, '', 'USER_CANCEL_FAIL', '会员注销失败', 1, '{"username":"会员账号"}', '', '', '', '', '', '', 'sms'),
+(28, '', 'USER_CANCEL_APPLY', '会员注销申请', 2, '{"username":"会员账号"}', '', '', '', '{"template_id_short":"OPENTM413481457","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n手机号码：{{keyword2.DATA}}"}', '', '', 'sms,wechat');
 
---
+-- 
 -- Dumping data for table ns_message_sms_records
 --
--- Table niushop_b2c_v4_20200925.ns_message_sms_records does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_message_sms_records does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_message_send_log
 --
--- Table niushop_b2c_v4_20200925.ns_message_send_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_message_send_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_message_email_records
 --
--- Table niushop_b2c_v4_20200925.ns_message_email_records does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_message_email_records does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_message
 --
--- Table niushop_b2c_v4_20200925.ns_message does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_message does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_menu
 --
--- Table niushop_b2c_v4_20200925.ns_menu does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_menu does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_withdraw
 --
--- Table niushop_b2c_v4_20200925.ns_member_withdraw does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_withdraw does not contain any data (it is empty)
 
+-- 
+-- Dumping data for table ns_member_recommend_award
 --
+-- Table niushop_b2c_v4_20201028_0908.ns_member_recommend_award does not contain any data (it is empty)
+
+-- 
+-- Dumping data for table ns_member_recommend
+--
+-- Table niushop_b2c_v4_20201028_0908.ns_member_recommend does not contain any data (it is empty)
+
+-- 
 -- Dumping data for table ns_member_recharge_order
 --
--- Table niushop_b2c_v4_20200925.ns_member_recharge_order does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_recharge_order does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_recharge_card
 --
--- Table niushop_b2c_v4_20200925.ns_member_recharge_card does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_recharge_card does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_recharge
 --
--- Table niushop_b2c_v4_20200925.ns_member_recharge does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_recharge does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_log
 --
--- Table niushop_b2c_v4_20200925.ns_member_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_level
 --
--- Table niushop_b2c_v4_20200925.ns_member_level does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_level does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_label
 --
--- Table niushop_b2c_v4_20200925.ns_member_label does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_label does not contain any data (it is empty)
 
+-- 
+-- Dumping data for table ns_member_import_log
 --
+-- Table niushop_b2c_v4_20201028_0908.ns_member_import_log does not contain any data (it is empty)
+
+-- 
+-- Dumping data for table ns_member_cancel
+--
+-- Table niushop_b2c_v4_20201028_0908.ns_member_cancel does not contain any data (it is empty)
+
+-- 
 -- Dumping data for table ns_member_bank_account
 --
--- Table niushop_b2c_v4_20200925.ns_member_bank_account does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_bank_account does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_auth
 --
--- Table niushop_b2c_v4_20200925.ns_member_auth does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_auth does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_address
 --
--- Table niushop_b2c_v4_20200925.ns_member_address does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_address does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member_account
 --
--- Table niushop_b2c_v4_20200925.ns_member_account does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member_account does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_member
 --
--- Table niushop_b2c_v4_20200925.ns_member does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_member does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_local_delivery_package
 --
--- Table niushop_b2c_v4_20200925.ns_local_delivery_package does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_local_delivery_package does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_local
 --
--- Table niushop_b2c_v4_20200925.ns_local does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_local does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_link
 --
--- Table niushop_b2c_v4_20200925.ns_link does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_link does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_help_class
 --
--- Table niushop_b2c_v4_20200925.ns_help_class does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_help_class does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_help
 --
--- Table niushop_b2c_v4_20200925.ns_help does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_help does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_group
 --
--- Table niushop_b2c_v4_20200925.ns_group does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_group does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_virtual
 --
--- Table niushop_b2c_v4_20200925.ns_goods_virtual does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_virtual does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_sku
 --
--- Table niushop_b2c_v4_20200925.ns_goods_sku does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_sku does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_service
 --
--- Table niushop_b2c_v4_20200925.ns_goods_service does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_service does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_label
 --
--- Table niushop_b2c_v4_20200925.ns_goods_label does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_label does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_evaluate
 --
--- Table niushop_b2c_v4_20200925.ns_goods_evaluate does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_evaluate does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_collect
 --
--- Table niushop_b2c_v4_20200925.ns_goods_collect does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_collect does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_category
 --
--- Table niushop_b2c_v4_20200925.ns_goods_category does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_category does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_cart
 --
--- Table niushop_b2c_v4_20200925.ns_goods_cart does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_cart does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_browse
 --
--- Table niushop_b2c_v4_20200925.ns_goods_browse does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_browse does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_attr_class
 --
--- Table niushop_b2c_v4_20200925.ns_goods_attr_class does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_attr_class does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_attribute_value
 --
--- Table niushop_b2c_v4_20200925.ns_goods_attribute_value does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_attribute_value does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods_attribute
 --
--- Table niushop_b2c_v4_20200925.ns_goods_attribute does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods_attribute does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_goods
 --
--- Table niushop_b2c_v4_20200925.ns_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_withdraw
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_withdraw does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_withdraw does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_order
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_order does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_order does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_level
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_level does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_level does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_goods_sku
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_goods_sku does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_goods_sku does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_goods_collect
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_goods_collect does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_goods_collect does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_goods
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_goods does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_goods does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_apply
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_apply does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_apply does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao_account
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao_account does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao_account does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_fenxiao
 --
--- Table niushop_b2c_v4_20200925.ns_fenxiao does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_fenxiao does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_express_template_item
 --
--- Table niushop_b2c_v4_20200925.ns_express_template_item does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_express_template_item does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_express_template
 --
--- Table niushop_b2c_v4_20200925.ns_express_template does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_express_template does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_express_electronicsheet
 --
--- Table niushop_b2c_v4_20200925.ns_express_electronicsheet does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_express_electronicsheet does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_express_delivery_package
 --
--- Table niushop_b2c_v4_20200925.ns_express_delivery_package does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_express_delivery_package does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_express_company_template
 --
--- Table niushop_b2c_v4_20200925.ns_express_company_template does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_express_company_template does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_express_company
 --
--- Table niushop_b2c_v4_20200925.ns_express_company does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_express_company does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_document
 --
--- Table niushop_b2c_v4_20200925.ns_document does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_document does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_diy_view_util
 --
--- Table niushop_b2c_v4_20200925.ns_diy_view_util does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_diy_view_util does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_diy_view_temp
 --
--- Table niushop_b2c_v4_20200925.ns_diy_view_temp does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_diy_view_temp does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_div_template
 --
--- Table niushop_b2c_v4_20200925.ns_div_template does not contain any data (it is empty)
+INSERT INTO div_template VALUES
+(1, '水果生鲜商城', '牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！', 'fresh_template', 'DIYVIEW_INDEX', '{"global":{"title":"水果生鲜商城","openBottomNav":false,"bgColor":"#f7f7f7","bgUrl":"public/diy_view/style1/img/bg_img.png","popWindow":{"imageUrl":"","count":-1,"link":{"name":""}}},"value":[{"addon_name":"store","type":"STORE_CHANGE","name":"门店展示","controller":"StoreShow","style":"2","backgroundColor":"","textColor":"#333333","defaultTextColor":"#333333"},{"addon_name":"","type":"SEARCH","name":"商品搜索","controller":"Search","title":"搜索","textColor":"#999999","backgroundColor":"#00ae4b","bgColor":"#fcfcfc","defaultTextColor":"#999999","borderType":2,"textAlign":"left"},{"list":[{"title":"","link":{"name":""},"imageUrl":"public/diy_view/style1/img/adv_01.png"}],"addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","selectedTemplate":"imageNavigation","padding":0,"backgroundColor":"#ffffff","paddingTopBottom":10,"textColor":"#666666","defaultTextColor":"#666666","scrollSetting":"fixed","imageScale":100},{"backgroundColor":"#ffffff","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#363636","defaultTextColor":"#666666","selectedTemplate":"imageNavigation","scrollSetting":"horizontal-scroll","imageScale":"40","padding":0,"paddingTopBottom":10,"list":[{"imageUrl":"public/diy_view/style1/img/all.png","title":"全部商品","link":{"id":3492,"addon_name":"","name":"SHOP_CATEGORY","title":"商品分类","web_url":"","wap_url":"/pages/goods/category/category","icon":"","selected":false,"parent":"BASICS_LINK","sort":0,"level":4,"support_diy_view":"","parents":"MALL_LINK"}},{"imageUrl":"public/diy_view/style1/img/pintuan.png","title":"超值拼团","link":{"id":3536,"addon_name":"pintuan","name":"PINTUAN_PREFECTURE","title":"拼团专区","web_url":"","wap_url":"/promotionpages/pintuan/list/list","icon":"","selected":false,"parent":"PINTUAN","sort":0,"level":4,"support_diy_view":"","parents":"MARKETING_LINK"}},{"imageUrl":"public/diy_view/style1/img/grup_purchase.png","title":"精彩团购","link":{"id":3539,"addon_name":"groupbuy","name":"GROUPBUY_PREFECTURE","title":"团购专区","web_url":"","wap_url":"/promotionpages/groupbuy/list/list","icon":"","selected":false,"parent":"GROUPBUY","sort":0,"level":4,"support_diy_view":"","parents":"MARKETING_LINK"}},{"imageUrl":"public/diy_view/style1/img/seckill.png","title":"限时秒杀","link":{"id":3534,"addon_name":"seckill","name":"SECKILL_PREFECTURE","title":"秒杀专区","web_url":"","wap_url":"/promotionpages/seckill/list/list","icon":"","selected":false,"parent":"SECKILL","sort":0,"level":4,"support_diy_view":"","parents":"MARKETING_LINK"}},{"imageUrl":"public/diy_view/style1/img/integral.png","title":"积分兑换","link":{"id":3541,"addon_name":"pointexchange","name":"INTEGRAL_STORE","title":"积分商城","web_url":"","wap_url":"/promotionpages/point/list/list","icon":"","selected":false,"parent":"INTEGRAL","sort":0,"level":4,"support_diy_view":"","parents":"MARKETING_LINK"}},{"imageUrl":"public/diy_view/style1/img/help.png","title":"我的帮助","link":{"name":""}}]},{"backgroundColor":"","addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","height":10,"marginLeftRight":0},{"backgroundColor":"","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","selectedTemplate":"imageNavigation","list":[{"imageUrl":"public/diy_view/style1/img/adv_05.png","link":{"name":""},"title":""}],"textColor":"#666666","defaultTextColor":"#666666","scrollSetting":"fixed","imageScale":100,"padding":0,"paddingTopBottom":0},{"addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","backgroundColor":"","textColor":"#666666","defaultTextColor":"#666666","selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":100,"padding":5,"paddingTopBottom":0,"list":[{"imageUrl":"public/diy_view/style1/img/adv_02.png","title":"","link":{"name":""}},{"imageUrl":"public/diy_view/style1/img/adv_03.png","title":"","link":{"name":""}}]},{"backgroundColor":"","list":[{"title":"","link":{"name":""},"imageUrl":"public/diy_view/style1/img/function_01.png"},{"link":{"name":""},"title":"","imageUrl":"public/diy_view/style1/img/function_02.png"},{"imageUrl":"public/diy_view/style1/img/function_03.png","title":"","link":{"name":""}},{"imageUrl":"public/diy_view/style1/img/function_04.png","title":"","link":{"name":""}}],"addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"#666666","paddingTopBottom":10,"selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":100,"padding":4},{"backgroundColor":"","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"#666666","list":[{"link":{"name":""},"title":"","imageUrl":"public/diy_view/style1/img/cards.png"},{"link":{"name":""},"title":"","imageUrl":"public/diy_view/style1/img/egg.png"},{"imageUrl":"public/diy_view/style1/img/turntable.png","title":"","link":{"name":""}}],"paddingTopBottom":0,"selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":100,"padding":5},{"backgroundColor":"","list":[{"link":{"name":""},"text":"今日热销","secondText":"原味进口 新鲜品尝"}],"addon_name":"","type":"TEXT_NAV","name":"文本导航","controller":"TextNav","textColor":"#333333","defaultTextColor":"#333333","fontSize":14,"textAlign":"left","arrangement":"vertical"},{"backgroundColor":"","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","padding":0,"list":[{"imageUrl":"public/diy_view/style1/img/adv_04.png","title":"","link":{"name":""}}],"textColor":"#666666","defaultTextColor":"#666666","selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":100,"paddingTopBottom":0},{"sources":"default","style":1,"backgroundColor":"","addon_name":"","type":"GOODS_LIST","name":"商品列表","controller":"GoodsList","categoryId":0,"goodsCount":"6","goodsId":["263","255","253","249"],"paddingLeftRight":0,"paddingUpDown":0,"isShowCart":1,"cartStyle":1,"isShowGoodName":1,"isShowMarketPrice":1,"isShowGoodSaleNum":0,"isShowGoodSubTitle":1},{"sources":"default","style":1,"backgroundColor":"","padding":10,"addon_name":"bargain","type":"BARGAIN_LIST","name":"砍价","controller":"Bargain","categoryId":0,"goodsCount":"6","goodsId":[],"list":{"imageUrl":"","title":"砍价专区"},"listMore":{"imageUrl":"","title":"更多"},"titleTextColor":"#000","defaultTitleTextColor":"#000","moreTextColor":"#858585","defaultMoreTextColor":"#858585"}]}', 'public/diy_view/style1/img/cover.png'),
+(2, '时尚简约商城', '牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！', 'shopping_template', 'DIYVIEW_INDEX', '{"global":{"title":"时尚简约商城","openBottomNav":false,"bgColor":"","bgUrl":"public/diy_view/style2/img/bg_img.png","popWindow":{"imageUrl":"public/diy_view/style2/img/adv_supernatant.png","count":1,"link":{"name":""}}},"value":[{"addon_name":"store","type":"STORE_CHANGE","name":"门店展示","controller":"StoreShow","style":1,"backgroundColor":"","textColor":"#333333","defaultTextColor":"#333333"},{"addon_name":"","type":"SEARCH","name":"商品搜索","controller":"Search","title":"搜索","textColor":"#3b3a3b","backgroundColor":"","bgColor":"#ffffff","defaultTextColor":"","borderType":2,"textAlign":"left"},{"list":[{"title":"","link":{"name":""},"imageUrl":"public/diy_view/style2/img/posters_1.png","imgWidth":750,"imgHeight":350},{"imageUrl":"public/diy_view/style2/img/posters_2.png","title":"","link":{"name":""},"imgWidth":750,"imgHeight":350}],"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","selectedTemplate":"carousel-posters","padding":0,"imageClearance":0,"height":0},{"backgroundColor":"#ffffff","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"","selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":"70","padding":20,"paddingTopBottom":10,"list":[{"imageUrl":"public/diy_view/style2/img/pintuan.png","title":"拼团","link":{"id":2803,"addon_name":"pintuan","name":"PINTUAN_LIST","title":"拼团列表","web_url":"","wap_url":"/promotionpages/pintuan/list/list","icon":"","selected":false,"addon_title":"拼团","addon_icon":"addon/pintuan/icon.png"}},{"imageUrl":"public/diy_view/style2/img/group_buy.png","title":"团购","link":{"id":2804,"addon_name":"groupbuy","name":"GROUPBUY_LIST","title":"团购列表","web_url":"","wap_url":"/promotionpages/groupbuy/list/list","icon":"","selected":false,"addon_title":"团购","addon_icon":"addon/groupbuy/icon.png"}},{"imageUrl":"public/diy_view/style2/img/seckill.png","title":"秒杀","link":{"id":2802,"addon_name":"seckill","name":"SECKILL_LIST","title":"秒杀列表","web_url":"","wap_url":"/promotionpages/seckill/list/list","icon":"","selected":false,"addon_title":"限时秒杀","addon_icon":"addon/seckill/icon.png"}},{"imageUrl":"public/diy_view/style2/img/point.png","title":"积分商城","link":{"id":2869,"addon_name":"","name":"POINT_INDEX","title":"积分商城","web_url":"","wap_url":"/promotionpages/point/list/list","icon":"","selected":false,"addon_title":null,"addon_icon":null}},{"imageUrl":"public/diy_view/style2/img/topic.png","title":"专题活动","link":{"id":2871,"addon_name":"","name":"TOPIC_LIST","title":"专题活动","web_url":"","wap_url":"/promotionpages/topics/list/list","icon":"","selected":false,"addon_title":null,"addon_icon":null}}]},{"backgroundColor":"#ffffff","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"","selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":"70","padding":20,"list":[{"imageUrl":"public/diy_view/style2/img/coupon.png","link":{"name":"COUPON_LIST","id":2870,"addon_name":"","addon_title":null,"title":"领券中心","web_url":"","wap_url":"/otherpages/goods/coupon/coupon","icon":"","addon_icon":null,"selected":false},"title":"优惠券"},{"imageUrl":"public/diy_view/style2/img/live.png","link":{"name":"LIVE_LIST","id":2898,"addon_name":"live","addon_title":"小程序直播","title":"直播","web_url":"","wap_url":"/otherpages/live/list/list","icon":"","addon_icon":"addon/live/icon.png","selected":false},"title":"直播"},{"imageUrl":"public/diy_view/style2/img/help.png","link":{"name":"HELP_LIST","id":2868,"addon_name":"","addon_title":null,"title":"帮助中心","web_url":"","wap_url":"/otherpages/help/list/list","icon":"","addon_icon":null,"selected":false},"title":"帮助"},{"imageUrl":"public/diy_view/style2/img/notice.png","title":"公告","link":{"id":2867,"addon_name":"","addon_title":null,"name":"NOTICE_LIST","title":"公告列表","web_url":"","wap_url":"/otherpages/notice/list/list","icon":"","addon_icon":null,"selected":false}},{"imageUrl":"public/diy_view/style2/img/bargain.png","title":"砍价","link":{"id":3186,"addon_name":"bargain","addon_title":"砍价","name":"BARGAIN_LIST","title":"砍价列表","web_url":"","wap_url":"/promotionpages/bargain/list/list","icon":"","addon_icon":"addon/bargain/icon.png","selected":false}}]},{"backgroundColor":"#ffffff","addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","marginLeftRight":10,"height":10},{"addon_name":"","type":"NOTICE","name":"公告","controller":"Notice","backgroundColor":"#ffffff","textColor":"#333333","defaultTextColor":"","paddingTopBottom":0,"list":[{"title":"NiuShop_b2c_v4上线啦！","link":{"name":""}},{"title":"NiuShop_b2c_v4上线啦！","link":{"name":""}}],"paddingLeftRight":10,"sources":"default","style":1,"isEdit":1,"fontSize":14,"noticeIds":[]},{"backgroundColor":"","addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","marginLeftRight":0,"height":10},{"backgroundColor":"","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"#666666","list":[{"link":{"name":""},"title":"","imageUrl":"public/diy_view/style2/img/cards.png"},{"link":{"name":""},"title":"","imageUrl":"public/diy_view/style2/img/egg.png"},{"imageUrl":"public/diy_view/style2/img/turntable.png","title":"","link":{"name":""}}],"paddingTopBottom":0,"selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":100,"padding":5},{"backgroundColor":"","list":{"imageUrl":"","title":"秒杀专区"},"addon_name":"seckill","type":"SECKILL_LIST","name":"秒杀","controller":"Seckill","padding":10,"paddingLeftRight":0,"style":1,"listMore":{"imageUrl":"","title":"更多秒杀"},"titleTextColor":"#000","moreTextColor":"#858585","defaultTitleTextColor":"","defaultMoreTextColor":"","isShowGoodsName":1,"isShowGoodsDesc":0,"isShowGoodsPrice":1,"isShowGoodsPrimary":1,"isShowGoodsStock":0},{"backgroundColor":"","addon_name":"coupon","type":"COUPON","name":"优惠券","controller":"Coupon","padding":10,"style":1,"sources":"default","couponCount":"6","status":1,"couponIds":[]},{"sources":"default","style":1,"backgroundColor":"","addon_name":"groupbuy","type":"GROUPBUY_LIST","name":"团购","controller":"Groupbuy","categoryId":0,"goodsCount":"6","goodsId":[],"padding":10,"list":{"imageUrl":"","title":"团购专区"},"listMore":{"imageUrl":"","title":"查看更多"},"titleTextColor":"#000","defaultTitleTextColor":"","moreTextColor":"#858585","defaultMoreTextColor":""},{"sources":"default","style":1,"backgroundColor":"","padding":10,"addon_name":"pintuan","type":"PINTUAN_LIST","name":"拼团","controller":"Pintuan","categoryId":0,"goodsCount":"4","goodsId":[],"list":{"imageUrl":"","title":"拼团专区"},"listMore":{"imageUrl":"","title":"好友都在拼"},"titleTextColor":"#000","defaultTitleTextColor":"","moreTextColor":"#858585","defaultMoreTextColor":""},{"addon_name":"","type":"TEXT","name":"文本","controller":"Text","style":"10","backgroundColor":"","padding":0,"title":"精品推荐","subTitle":"","link":{"name":""},"fontSize":16,"fontSizeSub":14,"colorSub":"#999","sub":"1","isShowMore":0,"fontWeight":600,"moreText":"查看更多","moreLink":{"name":""},"btnColor":"#999","textColor":"#333333","defaultTextColor":"","defaultColorSub":"","defaultBtnColor":""},{"style":1,"backgroundColor":"","addon_name":"","type":"GOODS_LIST","name":"商品列表","controller":"GoodsList","sources":"default","categoryId":0,"goodsCount":"6","goodsId":[],"paddingUpDown":0,"paddingLeftRight":0,"isShowCart":0,"cartStyle":1,"isShowGoodName":1,"isShowMarketPrice":1,"isShowGoodSaleNum":1,"isShowGoodSubTitle":1},{"addon_name":"bargain","type":"BARGAIN_LIST","name":"砍价","controller":"Bargain","sources":"diy","categoryId":0,"goodsCount":"6","goodsId":[],"style":1,"backgroundColor":"","padding":10,"list":{"imageUrl":"","title":"砍价专区"},"listMore":{"imageUrl":"","title":"更多"},"titleTextColor":"#000","defaultTitleTextColor":"#000","moreTextColor":"#858585","defaultMoreTextColor":"#858585"}]}', 'public/diy_view/style2/img/cover.png'),
+(3, '外卖美食商城', '牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！', 'toke_template', 'DIYVIEW_INDEX', '{"global":{"title":"外卖美食商城","openBottomNav":false,"bgColor":"#f7f7f7","bgUrl":"public\\/diy_view\\/style3\\/img\\/bg_img.png","popWindow":{"imageUrl":"","count":-1,"link":{"name":""}}},"value":[{"addon_name":"store","type":"STORE_CHANGE","name":"门店展示","controller":"StoreShow","style":"3","backgroundColor":"","textColor":"#333333","defaultTextColor":"#333333"},{"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","selectedTemplate":"carousel-posters","imageClearance":0,"padding":0,"height":"0","list":[{"imageUrl":"public\\/diy_view\\/style3\\/img\\/posters_3.png","title":"","link":{"name":""},"imgWidth":702,"imgHeight":337},{"imageUrl":"public\\/diy_view\\/style3\\/img\\/posters_1.png","title":"","link":{"name":""},"imgWidth":702,"imgHeight":337},{"imageUrl":"public\\/diy_view\\/style3\\/img\\/posters_2.png","title":"","link":{"name":""},"imgWidth":702,"imgHeight":337}]},{"list":[{"title":"外卖小程序","link":{"name":""}}],"addon_name":"","type":"NOTICE","name":"公告","controller":"Notice","backgroundColor":"#ffffff","paddingLeftRight":10,"paddingTopBottom":0,"borderTopLeftRadius":0,"borderTopRightRadius":0,"borderBottomLeftRadius":0,"borderBottomRightRadius":0,"textColor":"#333333","defaultTextColor":"#333333","sources":"default","style":1,"isEdit":1,"fontSize":14,"noticeIds":[]},{"backgroundColor":"","addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","marginLeftRight":0,"height":10},{"backgroundColor":"","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"#666666","selectedTemplate":"imageNavigation","scrollSetting":"fixed","padding":0,"paddingTopBottom":0,"list":[{"imageUrl":"public\\/diy_view\\/style3\\/img\\/adv_01.png","link":{"name":""},"title":""}]},{"backgroundColor":"","addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","marginLeftRight":0,"height":10},{"addon_name":"","type":"RUBIK_CUBE","name":"魔方","controller":"RubikCube","backgroundColor":"#ffffff","list":[{"link":{"name":""},"imageUrl":"public\\/diy_view\\/style3\\/img\\/adv_02.png"},{"link":{"name":""},"imageUrl":"public\\/diy_view\\/style3\\/img\\/adv_04.png"},{"imageUrl":"public\\/diy_view\\/style3\\/img\\/adv_03.png","link":{"name":""}}],"selectedTemplate":"row1-lt-of2-rt","selectedRubikCubeArray":[],"diyHtml":"","customRubikCube":4,"heightArray":["74.25px","59px","48.83px","41.56px"],"imageGap":10},{"backgroundColor":"","addon_name":"pintuan","type":"PINTUAN_LIST","name":"拼团","controller":"Pintuan","list":{"imageUrl":"","title":"拼团专区"},"padding":10,"sources":"diy","categoryId":0,"goodsCount":"6","goodsId":[],"style":1,"listMore":{"imageUrl":"","title":"好友都在拼"},"titleTextColor":"#000","defaultTitleTextColor":"#000","moreTextColor":"#858585","defaultMoreTextColor":"#858585"},{"backgroundColor":"","addon_name":"seckill","type":"SECKILL_LIST","name":"秒杀","controller":"Seckill","list":{"imageUrl":"","title":"秒杀专区"},"paddingLeftRight":0,"padding":10,"style":1,"isShowGoodsName":1,"isShowGoodsDesc":0,"isShowGoodsPrice":1,"isShowGoodsPrimary":1,"isShowGoodsStock":0,"listMore":{"imageUrl":"","title":"更多秒杀"},"titleTextColor":"#000","defaultTitleTextColor":"#000","moreTextColor":"#858585","defaultMoreTextColor":"#858585"},{"backgroundColor":"","list":{"imageUrl":"","title":"砍价专区"},"addon_name":"bargain","type":"BARGAIN_LIST","name":"砍价","controller":"Bargain","padding":10,"style":1,"listMore":{"imageUrl":"","title":"更多"},"titleTextColor":"#000","moreTextColor":"#858585","defaultTitleTextColor":"#000","defaultMoreTextColor":"#858585","sources":"default","categoryId":0,"goodsCount":"6","goodsId":[]}]}', 'public/diy_view/style3/img/cover.png'),
+(4, '母婴生活馆', '牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！', 'motherandbaby_template', 'DIYVIEW_INDEX', '{"global":{"title":"母婴生活馆","openBottomNav":false,"popWindow":{"imageUrl":"public/diy_view/style4/img/adv_supernatant.png","count":1,"link":{"name":""}},"bgColor":"#ffffff","bgUrl":"public/diy_view/style4/img/bg_img.png"},"value":[{"addon_name":"store","type":"STORE_CHANGE","name":"门店展示","controller":"StoreShow","style":"3","backgroundColor":"","textColor":"#333333","defaultTextColor":"#333333"},{"addon_name":"","type":"SEARCH","name":"商品搜索","controller":"Search","title":"搜索","textColor":"#9d9d9d","backgroundColor":"","bgColor":"#ffffff","defaultTextColor":"","borderType":2,"textAlign":"left"},{"list":[{"title":"","link":{"name":""},"imageUrl":"public/diy_view/style4/img/banner1.png","imgWidth":702,"imgHeight":349},{"imageUrl":"public/diy_view/style4/img/banner2.png","title":"","link":{"name":""},"imgWidth":702,"imgHeight":349}],"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","selectedTemplate":"carousel-posters","padding":0,"imageClearance":0,"height":0},{"backgroundColor":"#ffffff","addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","textColor":"#666666","defaultTextColor":"","selectedTemplate":"imageNavigation","scrollSetting":"fixed","imageScale":"80","padding":15,"paddingTopBottom":10,"list":[{"imageUrl":"public/diy_view/style4/img/icon1.png","title":"爆款特卖","link":{"id":2803,"addon_name":"pintuan","name":"","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":"拼团","addon_icon":"addon/pintuan/icon.png","parents":""}},{"imageUrl":"public/diy_view/style4/img/icon2.png","title":"新品预售","link":{"id":2804,"addon_name":"groupbuy","name":"","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":"团购","addon_icon":"addon/groupbuy/icon.png","parents":""}},{"imageUrl":"public/diy_view/style4/img/icon3.png","title":"儿童玩具","link":{"id":2802,"addon_name":"seckill","name":"","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":"限时秒杀","addon_icon":"addon/seckill/icon.png","parents":""}},{"imageUrl":"public/diy_view/style4/img/icon4.png","title":"签到积分","link":{"id":5698,"addon_name":"","name":"SIGN_IN","title":"签到","web_url":"","wap_url":"/otherpages/member/signin/signin","icon":"","selected":false,"addon_title":null,"addon_icon":null,"parents":"MALL_LINK","parent":"MEMBER","sort":0,"level":4,"support_diy_view":""}},{"imageUrl":"public/diy_view/style4/img/icon5.png","title":"商品分类","link":{"id":5683,"addon_name":"","name":"SHOP_CATEGORY","title":"商品分类","web_url":"","wap_url":"/pages/goods/category/category","icon":"","selected":false,"addon_title":null,"addon_icon":null,"parent":"BASICS_LINK","sort":0,"level":4,"support_diy_view":"","parents":"MALL_LINK"}}]},{"selectedTemplate":"vertically","imageClearance":0,"padding":0,"height":0,"list":[{"imageUrl":"public/diy_view/style4/img/adv.png","title":"","link":{"name":""}}],"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","is_delete":"0"},{"selectedTemplate":"row1-lt-of2-rt","backgroundColor":"","list":[{"imageUrl":"public/diy_view/style4/img/adv1.png","link":{"name":""}},{"imageUrl":"public/diy_view/style4/img/adv2.png","link":{"name":""}},{"imageUrl":"public/diy_view/style4/img/adv3.png","link":{"name":""}}],"selectedRubikCubeArray":[],"diyHtml":"","customRubikCube":4,"heightArray":["74.25px","59px","48.83px","41.56px"],"imageGap":10,"addon_name":"","type":"RUBIK_CUBE","name":"魔方","controller":"RubikCube","is_delete":"0"},{"height":20,"backgroundColor":"","marginLeftRight":0,"addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","is_delete":"0"},{"selectedTemplate":"vertically","imageClearance":0,"padding":0,"height":0,"list":[{"imageUrl":"public/diy_view/style4/img/title1.png","title":"","link":{"name":""}}],"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","is_delete":"0"},{"height":20,"backgroundColor":"","marginLeftRight":0,"addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","is_delete":"0"},{"sources":"default","categoryId":0,"goodsCount":"6","goodsId":[],"style":1,"backgroundColor":"","paddingUpDown":0,"paddingLeftRight":0,"isShowCart":0,"cartStyle":1,"isShowGoodName":1,"isShowMarketPrice":1,"isShowGoodSaleNum":1,"isShowGoodSubTitle":0,"addon_name":"","type":"GOODS_LIST","name":"商品列表","controller":"GoodsList","is_delete":"0"}]}', 'public/diy_view/style4/img/cover.png'),
+(5, '精品家居商城', '牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！', 'furniture_template', 'DIYVIEW_INDEX', '{"global":{"title":"精品家居商城","openBottomNav":false,"popWindow":{"imageUrl":"public/diy_view/style5/img/adv_supernatant.png","count":1,"link":{"name":""}},"bgColor":"#ffffff","bgUrl":"public/diy_view/style5/img/bg_img.png"},"value":[{"addon_name":"store","type":"STORE_CHANGE","name":"门店展示","controller":"StoreShow","style":"1","backgroundColor":"","textColor":"#333333","defaultTextColor":"#333333"},{"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","list":[{"title":"","link":{"name":""},"imageUrl":"public/diy_view/style5/img/banner1.png","imgWidth":702,"imgHeight":348},{"imageUrl":"public/diy_view/style5/img/banner2.png","title":"","link":{"name":""},"imgWidth":702,"imgHeight":348}],"selectedTemplate":"carousel-posters","padding":0,"imageClearance":0,"height":0},{"list":[{"title":"沙发","link":{"name":"","id":2803,"addon_name":"pintuan","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":"拼团","addon_icon":"addon/pintuan/icon.png","parents":""},"imageUrl":"public/diy_view/style5/img/icon1.png"},{"imageUrl":"public/diy_view/style5/img/icon2.png","title":"床品","link":{"name":"","id":2804,"addon_name":"groupbuy","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":"团购","addon_icon":"addon/groupbuy/icon.png","parents":""}},{"imageUrl":"public/diy_view/style5/img/icon3.png","title":"柜子","link":{"id":2802,"addon_name":"seckill","name":"","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":"限时秒杀","addon_icon":"addon/seckill/icon.png","parents":""}},{"imageUrl":"public/diy_view/style5/img/icon4.png","title":"灯具","link":{"id":5698,"addon_name":"","name":"","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":null,"addon_icon":null,"parents":"","parent":"MEMBER","sort":0,"level":4,"support_diy_view":""}},{"imageUrl":"public/diy_view/style5/img/icon5.png","title":"更多","link":{"id":5683,"addon_name":"","name":"","title":"","web_url":"","wap_url":"","icon":"","selected":false,"addon_title":null,"addon_icon":null,"parent":"BASICS_LINK","sort":0,"level":4,"support_diy_view":"","parents":""}}],"addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","selectedTemplate":"imageNavigation","padding":20,"backgroundColor":"#ffffff","textColor":"#666666","defaultTextColor":"","scrollSetting":"fixed","imageScale":"70","paddingTopBottom":10},{"backgroundColor":"","addon_name":"","type":"RUBIK_CUBE","name":"魔方","controller":"RubikCube","selectedTemplate":"row1-of3","list":[{"imageUrl":"public/diy_view/style5/img/adv1.png","link":{"name":""}},{"imageUrl":"public/diy_view/style5/img/adv2.png","link":{"name":""}},{"imageUrl":"public/diy_view/style5/img/adv3.png","link":{"name":""}}],"selectedRubikCubeArray":[],"diyHtml":"","customRubikCube":4,"heightArray":["74.25px","59px","48.83px","41.56px"],"imageGap":0,"is_delete":"0"},{"height":10,"addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","is_delete":"0","backgroundColor":"","marginLeftRight":0},{"selectedTemplate":"vertically","list":[{"imageUrl":"public/diy_view/style5/img/adv.png","link":{"name":""},"title":""}],"addon_name":"","type":"IMAGE_ADS","name":"图片广告","controller":"ImageAds","is_delete":"0","imageClearance":0,"padding":10,"height":0},{"height":20,"backgroundColor":"","marginLeftRight":0,"addon_name":"","type":"HORZ_BLANK","name":"辅助空白","controller":"HorzBlank","is_delete":"0","padding":15,"imageClearance":7},{"selectedTemplate":"imageNavigation","padding":20,"list":[{"imageUrl":"public/diy_view/style5/img/title.png","title":"","link":{"name":""}}],"addon_name":"","type":"GRAPHIC_NAV","name":"图文导航","controller":"GraphicNav","is_delete":"0","textColor":"#666666","defaultTextColor":"#666666","backgroundColor":"","scrollSetting":"fixed","imageScale":100,"paddingTopBottom":0},{"backgroundColor":"","addon_name":"","type":"GOODS_LIST","name":"商品列表","controller":"GoodsList","is_delete":"0","sources":"default","categoryId":0,"goodsCount":"6","goodsId":[],"style":1,"paddingUpDown":0,"paddingLeftRight":0,"isShowCart":0,"cartStyle":1,"isShowGoodName":1,"isShowMarketPrice":1,"isShowGoodSaleNum":1,"isShowGoodSubTitle":0}]}', 'public/diy_view/style5/img/cover.png');
 
---
+-- 
 -- Dumping data for table ns_cron_log
 --
--- Table niushop_b2c_v4_20200925.ns_cron_log does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_cron_log does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_cron
 --
--- Table niushop_b2c_v4_20200925.ns_cron does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_cron does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_config
 --
--- Table niushop_b2c_v4_20200925.ns_config does not contain any data (it is empty)
+-- Table niushop_b2c_v4_20201028_0908.ns_config does not contain any data (it is empty)
 
---
+-- 
 -- Dumping data for table ns_area
 --
 INSERT INTO area VALUES

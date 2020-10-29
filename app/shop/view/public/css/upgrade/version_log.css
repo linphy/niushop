@@ -27,6 +27,8 @@
 .log-body{
     margin-left: 60px;
     margin-bottom:26px;
+	display: inline-block;
+	cursor: pointer;
 }
 .ns-log-version-date{
     left: -120px;
@@ -61,4 +63,118 @@
 }
 .open{
     display: none
+}
+
+.ns-item-block-parent {
+	padding-left: 60px;
+	box-sizing: border-box;
+}
+
+.ns-item-block-btn {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+/* .ns-item-block-parent .ns-item-block .ns-prompt-block {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.ns-item-block-parent .ns-item-block .ns-prompt-block .ns-prompt {
+	width: auto;
+	height: auto;
+	line-height: unset;
+}
+
+.ns-item-block-parent .ns-item-block .ns-prompt-block .ns-prompt-box {
+	top: 30px;
+	left: -50px;
+	width: 150px;
+}
+
+.ns-prompt-block .ns-prompt-box:before, .ns-prompt-block .ns-prompt-box:after {
+	left: 62px;
+	top: unset;
+}
+
+.ns-prompt-block .ns-prompt-box:before {
+	border-bottom-color: #e4e4e4;
+	border-right-color: transparent;
+	top: -25px;
+}
+
+.ns-prompt-block .ns-prompt-box:after {
+	border-bottom-color: #FFFFFF;
+	border-right-color: transparent;
+	top: -23px;
+} */
+
+.ns-item-block-parent .ns-item-block:hover {
+	background-color: #f7f8fa;
+}
+
+.ns-item-block-parent .ns-item-block-wrap {
+	align-items: center;
+}
+
+.ns-item-block-parent .ns-item-pic {
+	width: 58px;
+	height: 58px;
+	line-height: 58px;
+}
+
+.ns-item-block-parent .ns-item-pic img {
+	vertical-align: top;
+}
+
+.ns-item-block-parent .ns-item-con {
+	height: auto;
+}
+
+.ns-item-block-parent .ns-item-con .ns-item-content-title {
+	margin-bottom: 6px;
+}
+
+@media screen and (min-width: 1683px) and (max-width: 1920px) {
+	.ns-item-block {
+		width: 27%;
+		margin-right: 2%;
+		margin-bottom: 25px;
+	}
+
+	.ns-item-block:nth-child(3n) {
+		margin-right: 0;
+	}
+	
+	.ns-item-block:nth-child(4n),
+	.ns-item-block:nth-child(5n) {
+		margin-right: 2% !important;
+	}
+}
+
+@media screen and (max-width: 1682px) {
+	.ns-item-block {
+		width: 31.5%;
+		margin-right: 2%;
+		margin-bottom: 25px;
+	}
+
+	.ns-item-block:nth-child(2n) {
+		margin-right: 0;
+	}
+	
+	.ns-item-block:nth-child(3n) {
+		margin-right: 2% !important;
+	}
+}
+
+.layui-layer-page .layui-layer-content {
+	line-height: 26px;
+	overflow: auto !important;
 }

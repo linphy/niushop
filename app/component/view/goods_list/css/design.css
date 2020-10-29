@@ -98,8 +98,8 @@
 
 .control-goods-list-small .control-goods-price {
 	margin: 0;
-	height: 16px;
-	line-height: 16px;
+	height: 25px;
+	line-height: 25px;
 }
 
 .control-goods-list-small .control-goods-price.position {
@@ -252,4 +252,5 @@
 	position: absolute;
 	right: 5px;
 	bottom: 10px;
+	line-height: 25px;
 }

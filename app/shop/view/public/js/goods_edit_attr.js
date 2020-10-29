@@ -189,9 +189,6 @@ $(function () {
 				case 'delete':
 					deleteAttribute(data.attr_id);
 					break;
-				case 'change':
-					modifyAttributeSite(data.attr_id);
-					break;
 			}
 		});
 		
@@ -440,24 +437,6 @@ function deleteAttribute(attr_id) {
 		});
 		
 		layer.close(layerIndex);
-	});
-}
-
-function modifyAttributeSite(attr_id) {
-	layer.confirm('确定要转移到平台吗？', function () {
-		$.ajax({
-			url: ns.url("shop/goodsattr/modifyattributesite"),
-			data: {attr_class_id: attr_class_id, attr_id: attr_id},
-			dataType: 'JSON',
-			type: 'POST',
-			success: function (res) {
-				layer.msg(res.message);
-				if (res.code == 0) {
-					location.hash = "";
-					location.reload();
-				}
-			}
-		});
 	});
 }
 

@@ -92,7 +92,7 @@
 		 * 删除
 		 */
 		function deleteData(ids) {
-			layer.confirm('真的删除核销员吗?', function() {
+			layer.confirm('确定要删除核销员吗?', function() {
 				$.ajax({
 					url: ns.url("shop/verify/deleteUser"),
 					data: {ids},

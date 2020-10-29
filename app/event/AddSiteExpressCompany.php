@@ -195,7 +195,6 @@ class AddSiteExpressCompany
                 $item['site_id'] = $param['site_id'];
                 $res             = $template_model->addExpressCompanyTemplate($item);
                 if ($res['code'] >= 0) {
-                    $express_company_model = new ExpressCompany();
                     $express_company_model->addExpressCompany(['site_id' => $param['site_id'], 'company_id' => $res['data']]);
                 }
             }

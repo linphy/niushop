@@ -47,6 +47,15 @@ class Withdraw extends BaseModel
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'MEMBER_WITHDRAW_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'is_auto_audit' => 0,
+                'rate' => 0,
+                'transfer_type' => '',
+                'is_auto_transfer' => 0,
+                'min' => 0
+            ];
+        }
         return $res;
     }
     /**************************************************************************** 会员提现设置 *************************************************************/
@@ -101,16 +110,15 @@ class Withdraw extends BaseModel
                     break;
                 case "wechatpay":
                     $bank_name = '';
-                    if ($data["app_type"] == "wechat") {
-                        if(empty($member_info["wx_openid"])){
-                            return $this->error('','请绑定微信或更换提现账户');
-                        }
-                        $account_number = $member_info["wx_openid"];
-                    } else if ($data["app_type"] == "weapp") {
-                        $account_number = $member_info["weapp_openid"];
+                    if(empty($member_info["wx_openid"]) && empty($member_info["weapp_openid"])){
+                        return $this->error('','请绑定微信或更换提现账户');
                     }
-                    if (empty($account_number)) {
-                        return $this->error("");
+                    if(!empty($member_info["wx_openid"])){
+                        $account_number = $member_info["wx_openid"];
+                        $applet_type = 0; // 公众号
+                    } else {
+                        $account_number = $member_info["weapp_openid"];
+                        $applet_type = 1; // 小程序
                     }
                     break;
 
@@ -137,7 +145,7 @@ class Withdraw extends BaseModel
                 "bank_name"          => $bank_name,
                 "account_number"     => $account_number,
                 "mobile"             => $data["mobile"],
-            	"applet_type"		 => $data['applet_type']
+            	"applet_type"		 => $applet_type
             );
             $result        = model("member_withdraw")->add($data);
 
@@ -200,11 +208,12 @@ class Withdraw extends BaseModel
             }
             model('member_withdraw')->commit();
 
-            //提现成功发送消息
-            $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
-            $message_model = new Message();
-            $message_model->sendMessage($info);
-
+            if ($config["value"]["is_auto_transfer"] == 1) {
+                //提现成功发送消息
+                $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
+                $message_model = new Message();
+                $message_model->sendMessage($info);
+            }
             return $this->success();
         } catch (\Exception $e) {
             model('member_withdraw')->rollback();
@@ -252,7 +261,7 @@ class Withdraw extends BaseModel
      */
     public function transferFinish($condition, $data = [])
     {
-        $info = model("member_withdraw")->getInfo($condition, "transfer_type,member_id,apply_money");
+        $info = model("member_withdraw")->getInfo($condition);
         if (empty($info))
             return $this->error();
 
@@ -270,6 +279,12 @@ class Withdraw extends BaseModel
             model("member")->setDec([["member_id", "=", $info["member_id"]]], "balance_withdraw_apply", $info["apply_money"]);
 
             model('member_withdraw')->commit();
+
+            //提现成功发送消息
+            $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
+            $message_model = new Message();
+            $message_model->sendMessage($info);
+
             return $this->success();
         } catch (\Exception $e) {
             model('member_withdraw')->rollback();
@@ -366,8 +381,8 @@ class Withdraw extends BaseModel
         $transfer_type_list = $pay_model->getTransferType($site_id);
         $config_result      = $this->getConfig($site_id, $app_module);
         $config             = $config_result["data"]['value'];
-        $support_type       = explode(",", $config["transfer_type"]);
         $data               = [];
+        $support_type       = explode(",", $config["transfer_type"]);
         foreach ($transfer_type_list as $k => $v) {
             if (in_array($k, $support_type)) {
                 $data[$k] = $v;

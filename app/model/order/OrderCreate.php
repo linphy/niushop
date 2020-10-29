@@ -81,9 +81,12 @@ class OrderCreate extends BaseModel
         model("order")->startTrans();
         //循环生成多个订单
         try {
+            
             $pay_money         = 0;
             $goods_stock_model = new GoodsStock();
             $order_item        = $calculate_data['shop_goods_list']; //订单数据主体
+
+            
 
             $item_delivery      = $order_item['delivery'] ?? [];
             $delivery_type      = $item_delivery['delivery_type'] ?? '';
@@ -187,12 +190,7 @@ class OrderCreate extends BaseModel
                     'point_money'     => $order_goods['point_money'] ?? 0.00
                 );
                 model("order_goods")->add($data_order_goods);
-                //库存变化
-                $stock_result = $goods_stock_model->decStock(["sku_id" => $order_goods['sku_id'], "num" => $order_goods['num']]);
-                if ($stock_result["code"] != 0) {
-                    model("order")->rollback();
-                    return $stock_result;
-                }
+
             }
 
             //todo  满减送
@@ -273,7 +271,15 @@ class OrderCreate extends BaseModel
                 ];
                 $cart->deleteCart($data_cart);
             }
-
+            //库存处理
+            foreach ($order_item['goods_list'] as $k_order_goods => $order_goods) {
+                //库存变化
+                $stock_result = $goods_stock_model->decStock(["sku_id" => $order_goods['sku_id'], "num" => $order_goods['num']]);
+                if ($stock_result["code"] != 0) {
+                    model("order")->rollback();
+                    return $stock_result;
+                }
+            }
             model("order")->commit();
             //订单生成的消息
             $message_model = new Message();
@@ -1120,7 +1126,7 @@ class OrderCreate extends BaseModel
         $calculate_data['manjian_rule_list'] = [];
         //先查询全部商品的满减套餐  进行中
         $manjian_model   = new Manjian();
-        $all_info_result = $manjian_model->getManjianInfo([['manjian_type', '=', 1], ['site_id', '=', $calculate_data['site_id']], ['status', '=', 1]], 'manjian_name,type,goods_ids,rule_json');
+        $all_info_result = $manjian_model->getManjianInfo([['manjian_type', '=', 1], ['site_id', '=', $calculate_data['site_id']], ['status', '=', 1]], 'manjian_name,type,goods_ids,rule_json,manjian_id');
         $all_info        = $all_info_result['data'];
         $goods_list      = $calculate_data['goods_list'];
         //存在全场满减(不考虑部分满减情况)

@@ -1,4 +1,4 @@
-﻿var CLodopJsState;
+var CLodopJsState;
 
 //====加载C-Lodop的过程(用script元素动态引用主文件CLodopfuncs.js)====
 function loadCLodop() {
@@ -51,6 +51,24 @@ function getLodop(oOBJECT, oEMBED) {
                 alert("没有加载CLodop的主js，请先调用loadCLodop过程.");
             return;
         }
+		
+		if (!LODOP) {
+			// document.body.innerHTML = strCLodopInstall_1 + (CLodopIsLocal ? strCLodopInstall_2 : "") + strCLodopInstall_3 + document.body.innerHTML;
+			layer.open({
+				type: 1,
+				area: ['450px'],
+				content: "Web打印服务CLodop未安装启动，点击这里<a class='ns-text-color' href='http://www.lodop.net/download.html' target='_black'>去下载安装</a><br />（若此前已安装过，可<a class='ns-text-color' href='CLodop.protocol:setup' target='_self'>点这里直接再次启动</a>）" //这里content是一个普通的String
+			});
+			return;
+		} else {
+			if (CLODOP.CVERSION < "4.0.9.9") {
+				document.body.innerHTML = strCLodopUpdate + document.body.innerHTML;
+			}
+			if (oEMBED && oEMBED.parentNode)
+				oEMBED.parentNode.removeChild(oEMBED);
+			if (oOBJECT && oOBJECT.parentNode)
+				oOBJECT.parentNode.removeChild(oOBJECT);
+		}
 
         //清理旧例子的object或embed元素(避免乱提示干扰理解)：
         if (oEMBED && oEMBED.parentNode)   oEMBED.parentNode.removeChild(oEMBED);

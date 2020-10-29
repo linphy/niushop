@@ -5,7 +5,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
+		<ul class="layui-colla-content">
 			<li>会员标签是商城为了更加有效的对会员进行管理和分组。</li>
 			<li>用户可以针对会员设置相应的标签，方便查找和管理。</li>
 		</ul>
@@ -40,6 +40,11 @@
 		<a class="layui-btn" lay-event="edit">编辑</a>
 		<a class="layui-btn" lay-event="delete">删除</a>
 	</div>
+</script>
+
+<!-- 顶部工具栏 -->
+<script type="text/html" id="toolbarOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="del">批量删除</button>
 </script>
 
 <!-- 批量删除 -->
@@ -105,6 +110,7 @@
 					}
 				]
 			],
+			toolbar: '#toolbarOperation',
 			bottomToolbar: "#batchOperation"
 		});
 		
@@ -167,6 +173,23 @@
 					deleteLabel(id_array.toString());
 					break;
 			}
+		});
+		
+		//监听事件
+		table.toolbar(function(obj){
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			
+			var checkStatus = table.checkStatus(obj.config.id);
+			switch (obj.event) {
+				case 'del':
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].label_id);
+					deleteLabel(id_array.toString());
+					break;
+			};
 		});
 
 		// 搜索

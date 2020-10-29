@@ -37,8 +37,8 @@
                         <input type="text" class="layui-input" name="end_time" placeholder="结束时间" id="end_time" readonly>
                         <i class="ns-calendar"></i>
                     </div>
-                    <button class="layui-btn layui-btn-primary date-picker-btn" onclick="datePick(7, this);return false;">近7天</button>
-                    <button class="layui-btn layui-btn-primary date-picker-btn" onclick="datePick(30, this);return false;">近30天</button>
+                    <button class="layui-btn layui-btn-primary date-picker-btn date-picker-btn-seven" onclick="datePick(7, this);return false;">近7天</button>
+                    <button class="layui-btn layui-btn-primary date-picker-btn date-picker-btn-thirty" onclick="datePick(30, this);return false;">近30天</button>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -104,7 +104,7 @@
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 <button class="layui-btn layui-btn-primary" lay-submit lay-filter="batch_export_order_goods" >导出订单商品</button>
                 <button class="layui-btn layui-btn-primary" lay-submit lay-filter="batch_export_order" >导出订单</button>
-                <!--<button class="layui-btn layui-btn-primary">查看已生成报表</button>-->
+                <a class="layui-btn layui-btn-primary" href="{:addon_url('shop/order/export')}" target="_blank">查看已生成报表</a>
             </div>
             <input type="hidden" name="status" val=""/>
             <input type="hidden" name="page" val=""/>
@@ -145,6 +145,8 @@
     function getHashPage(){
         var page = 1;
         var hash = location.hash;
+		var startTime = '';
+		var endTime = '';
 
         var hash_arr = hash.split("&");
         $.each(hash_arr,function(index, itemobj){
@@ -153,8 +155,27 @@
                 if(item_arr[0].indexOf("page") != "-1"){
                     page = item_arr[1];
                 }
+				if (item_arr[0].indexOf("start_time") != "-1") {
+					startTime = ns.date_to_time(item_arr[1].split("%")[0]);
+				}
+				if (item_arr[0].indexOf("end_time") != "-1") {
+					endTime = ns.date_to_time(item_arr[1].split("%")[0]);
+				}
             }
         });
+		
+		var _time = (endTime - startTime) / (24 * 60 * 60);
+		if (_time == 6) {
+			$(".date-picker-btn-seven").addClass("selected");
+			$(".date-picker-btn-thirty").removeClass("selected");
+		} else if (_time == 29) {
+			$(".date-picker-btn-thirty").addClass("selected");
+			$(".date-picker-btn-seven").removeClass("selected");
+		} else {
+			$(".date-picker-btn-seven").removeClass("selected");
+			$(".date-picker-btn-thirty").removeClass("selected");
+		}
+		
         return page;
     }
 
@@ -252,13 +273,35 @@
 
         //批量导出（订单项）
         form.on('submit(batch_export_order_goods)', function(data){
-            location.href = ns.url("shop/order/exportOrderGoods",data.field);
+            // location.href = ns.url("shop/order/exportOrderGoods",data.field);
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: ns.url("shop/order/exportordergoods"),
+                data: data.field,
+                success: function (res) {
+
+                }
+            })
+            window.open(ns.url("shop/order/export",{}))
+            // location.href = ns.url("shop/order/orderexportlist",{});
             return false;
         });
 
         //批量导出（订单）
         form.on('submit(batch_export_order)', function(data){
-            location.href = ns.url("shop/order/exportOrder",data.field);
+            // location.href = ns.url("shop/order/exportOrder",data.field);
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: ns.url("shop/order/exportorder"),
+                data: data.field,
+                success: function (res) {
+
+                }
+            })
+            window.open(ns.url("shop/order/export",{}))
+            // location.href = ns.url("shop/order/orderexportlist",{});
             return false;
         });
 

@@ -29,10 +29,10 @@ class Upgrade extends BaseModel
         } else {
             $config_model = new Config();
             $config = $config_model->getAuth();
-            $config = $config['data']['value'];
-            $this->cert = $config['code'] ?? '';
+            $config = $config[ 'data' ][ 'value' ];
+            $this->cert = $config[ 'code' ] ?? '';
         }
-        $this->url  = 'https://api.niushop.com';
+        $this->url = 'https://api.niushop.com';
     }
 
     /**
@@ -40,9 +40,9 @@ class Upgrade extends BaseModel
      */
     private function doPost($post_url, $post_data)
     {
-        $post_data['code'] = $this->cert;
-        $httpClient             = new HttpClient();
-        $res                    = $httpClient->post($this->url . $post_url, $post_data);
+        $post_data[ 'code' ] = $this->cert;
+        $httpClient = new HttpClient();
+        $res = $httpClient->post($this->url . $post_url, $post_data);
         return $res;
     }
 
@@ -51,26 +51,26 @@ class Upgrade extends BaseModel
      */
     public function getSystemUpgradeInfo()
     {
-        $app_info    = config('info');
+        $app_info = config('info');
         $addon_array = array_map('basename', glob('addon/*', GLOB_ONLYDIR));
         $plugin_info = [];
         foreach ($addon_array as $addon) {
             $addon_info_path = "addon/{$addon}/config/info.php";
             if (file_exists($addon_info_path)) {
-                $info          = include_once $addon_info_path;
+                $info = include_once $addon_info_path;
                 $plugin_info[] = [
-                    'code'         => $info['name'],
-                    'version_no'   => $info['version_no'],
-                    'version_name' => $info['version'],
+                    'code' => $info[ 'name' ],
+                    'version_no' => $info[ 'version_no' ],
+                    'version_name' => $info[ 'version' ],
                 ];
             }
         }
 
         $post_data = [
-            'app_info'    => [
-                'code'         => $app_info['name'],
-                'version_no'   => $app_info['version_no'],
-                'version_name' => $app_info['version'],
+            'app_info' => [
+                'code' => $app_info[ 'name' ],
+                'version_no' => $app_info[ 'version_no' ],
+                'version_name' => $app_info[ 'version' ],
             ],
             'plugin_info' => $plugin_info,
         ];
@@ -79,56 +79,56 @@ class Upgrade extends BaseModel
         $res = json_decode($res, true);
 
         //处理返回数据
-        if (!empty($res) && $res['code'] == 0) {
+        if (!empty($res) && $res[ 'code' ] == 0) {
             //整合系统和插件数据
-            $app_data     = $res['data']['app_data'];
-            $client_data  = $res['data']['client_data'];
-            $plugin_data  = $res['data']['plugin_data'];
-            $install_data = $res['data']['install_data'];
-            $data         = [];
-            if ($app_data['code'] == 0) {
-                $app_data['data']['action']      = 'upgrade';
-                $app_data['data']['action_name'] = '升级';
-                $app_data['data']['type']        = 'system';
-                $app_data['data']['type_name']   = '系统';
-                $data[]                          = $app_data['data'];
+            $app_data = $res[ 'data' ][ 'app_data' ];
+            $client_data = $res[ 'data' ][ 'client_data' ];
+            $plugin_data = $res[ 'data' ][ 'plugin_data' ];
+            $install_data = $res[ 'data' ][ 'install_data' ];
+            $data = [];
+            if ($app_data[ 'code' ] == 0) {
+                $app_data[ 'data' ][ 'action' ] = 'upgrade';
+                $app_data[ 'data' ][ 'action_name' ] = '升级';
+                $app_data[ 'data' ][ 'type' ] = 'system';
+                $app_data[ 'data' ][ 'type_name' ] = '系统';
+                $data[] = $app_data[ 'data' ];
             }
             foreach ($client_data as $key => $val) {
-                if ($val['code'] == 0) {
-                    $val['data']['action']      = 'download';
-                    $val['data']['action_name'] = '下载';
-                    $val['data']['type']        = 'client';
-                    $val['data']['type_name']   = '客户端';
-                    $data[]                     = $val['data'];
+                if ($val[ 'code' ] == 0) {
+                    $val[ 'data' ][ 'action' ] = 'download';
+                    $val[ 'data' ][ 'action_name' ] = '下载';
+                    $val[ 'data' ][ 'type' ] = 'client';
+                    $val[ 'data' ][ 'type_name' ] = '客户端';
+                    $data[] = $val[ 'data' ];
                 }
             }
             foreach ($plugin_data as $key => $val) {
-                if ($val['code'] == 0) {
-                    $val['data']['action']      = 'upgrade';
-                    $val['data']['action_name'] = '升级';
-                    $val['data']['type']        = 'addon';
-                    $val['data']['type_name']   = '插件';
-                    $data[]                     = $val['data'];
+                if ($val[ 'code' ] == 0) {
+                    $val[ 'data' ][ 'action' ] = 'upgrade';
+                    $val[ 'data' ][ 'action_name' ] = '升级';
+                    $val[ 'data' ][ 'type' ] = 'addon';
+                    $val[ 'data' ][ 'type_name' ] = '插件';
+                    $data[] = $val[ 'data' ];
                 }
             }
             foreach ($install_data as $key => $val) {
-                if ($val['code'] == 0) {
-                    $val['data']['action']      = 'install';
-                    $val['data']['action_name'] = '安装';
-                    $val['data']['type']        = 'addon';
-                    $val['data']['type_name']   = '插件';
-                    $data[]                     = $val['data'];
+                if ($val[ 'code' ] == 0) {
+                    $val[ 'data' ][ 'action' ] = 'install';
+                    $val[ 'data' ][ 'action_name' ] = '安装';
+                    $val[ 'data' ][ 'type' ] = 'addon';
+                    $val[ 'data' ][ 'type_name' ] = '插件';
+                    $data[] = $val[ 'data' ];
                 }
             }
 
             //处理更新说明的换行
             foreach ($data as $key => $val) {
-                foreach ($val['scripts'] as $k => $v) {
-                    $val['scripts'][$k]['description'] = str_replace("\n", '<br/>', $v['description']);
+                foreach ($val[ 'scripts' ] as $k => $v) {
+                    $val[ 'scripts' ][ $k ][ 'description' ] = str_replace("\n", '<br/>', $v[ 'description' ]);
                 }
-                $data[$key] = $val;
+                $data[ $key ] = $val;
             }
-            $res['data'] = $data;
+            $res[ 'data' ] = $data;
         }
 
         return $res;
@@ -140,8 +140,8 @@ class Upgrade extends BaseModel
      */
     public function download($param)
     {
-        $data   = array(
-            "file_token"  => $param["token"]
+        $data = array (
+            "file_token" => $param[ "token" ]
         );
         $result = $this->doPost('/upgrade/upgrade/download', $data);//授权
         if (empty($result)) {
@@ -158,12 +158,12 @@ class Upgrade extends BaseModel
      */
     public function authInfo()
     {
-        $app_info    = config('info');
-        $data   = array(
-            "product_key" => $app_info['name'],
+        $app_info = config('info');
+        $data = array (
+            "product_key" => $app_info[ 'name' ],
         );
-        $re        = $this->doPost('/upgrade/auth/info', $data);
-        $re        = json_decode($re, true);
+        $re = $this->doPost('/upgrade/auth/info', $data);
+        $re = json_decode($re, true);
         return $re;
     }
 
@@ -237,7 +237,7 @@ class Upgrade extends BaseModel
     {
         $info = model('sys_upgrade_log')->getInfo($condition, $field);
         if (!empty($info)) {
-            $info['version_info'] = json_decode($info['version_info'], true);
+            $info[ 'version_info' ] = json_decode($info[ 'version_info' ], true);
         }
         return $info;
     }
@@ -281,7 +281,7 @@ class Upgrade extends BaseModel
         $log_list = model('sys_upgrade_log')->getList($condition, '*', 'upgrade_time asc');
         try {
             foreach ($log_list as $log) {
-                $backup_root = $log['backup_root'];
+                $backup_root = $log[ 'backup_root' ];
                 if (is_dir($backup_root)) {
                     unlink($backup_root);
                 }
@@ -299,27 +299,30 @@ class Upgrade extends BaseModel
     {
         $post_data = [
             'page_index' => $page,
-            'page_size'  => $page_size,
+            'page_size' => $page_size,
         ];
-        $re        = $this->doPost('/upgrade/upgrade/versionPage', $post_data);
-        $re        = json_decode($re, true);
+        $re = $this->doPost('/upgrade/upgrade/versionPage', $post_data);
+        $re = json_decode($re, true);
+        if (!empty($re[ 'data' ])) {
 
-        //处理返回数据
-        $return_data = [];
-        foreach ($re['data']['list'] as $key => $val) {
-            $val['version_desc']       = str_replace("\n", '<br/>', $val['version_desc']);
-            $day                      = date('Y-m-d', $val['create_time']);
-            $day_time                 = strtotime($day);
-            $return_data[$day_time][] = $val;
+            //处理返回数据
+            $return_data = [];
+            foreach ($re[ 'data' ][ 'list' ] as $key => $val) {
+                $val[ 'version_desc' ] = str_replace("\n", '<br/>', $val[ 'version_desc' ]);
+                $day = date('Y-m-d', $val[ 'create_time' ]);
+                $day_time = strtotime($day);
+                $return_data[ $day_time ][] = $val;
+            }
+
+            $temp_arr = [];
+            foreach ($return_data as $key => $value) {
+                $temp_arr[] = [ 'list' => $value, 'time' => $key, 'format_time' => date('Y-m-d', $key) ];
+            }
+
+            $re[ 'data' ][ 'list' ] = $temp_arr;
+        } else {
+            $re[ 'data' ][ 'list' ] = [];
         }
-
-        $temp_arr = [];
-        foreach ($return_data as $key => $value) {
-            $temp_arr[] = ['list' => $value, 'time' => $key, 'format_time' => date('Y-m-d', $key)];
-        }
-
-        $re['data']['list'] = $temp_arr;
-
         return $re;
     }
 
@@ -330,19 +333,19 @@ class Upgrade extends BaseModel
     public function getPluginGoodsList()
     {
         $addon_list = Cache::get('website_addon_list');
-        if(empty($addon_list)){
-            $app_info    = config('info');
-            $data   = array(
-                "product_key" => $app_info['name'],
+        if (empty($addon_list)) {
+            $app_info = config('info');
+            $data = array (
+                "product_key" => $app_info[ 'name' ],
             );
             $result = $this->doPost('/upgrade/auth/allplugin', $data);//授权
             if (empty($result))
                 return $this->error();
 
             $result = json_decode($result, true);
-            Cache::set('website_addon_list',$result['data'],3*24*60*60);
-            return $result['data'];
-        }else{
+            Cache::set('website_addon_list', $result[ 'data' ], 3 * 24 * 60 * 60);
+            return $result[ 'data' ];
+        } else {
             return $addon_list;
         }
 
@@ -353,8 +356,9 @@ class Upgrade extends BaseModel
      * @param $version
      * @return array|mixed
      */
-    public function downloadUniapp($version){
-        $data   = array(
+    public function downloadUniapp($version)
+    {
+        $data = array (
             "version" => $version
         );
         $result = $this->doPost('/upgrade/upgrade/downloaduniapp', $data);//授权

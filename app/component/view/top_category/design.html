@@ -1,19 +1,20 @@
-<nc-component v-bind:data="data[index]" class="top-category">
+<nc-component v-bind:data="data[index]" class="top-category" v-bind:style="{ backgroundColor : nc.backgroundColor}">
 
 	<!-- 预览 -->
 	<template slot="preview">
-		<div class="topCategorty" v-bind:style="{ backgroundColor : nc.backgroundColor}">
-			<div class="top-categorty-item active" v-bind:style="{ color : nc.selectColor}">
-				{{nc.title}}
+		<div class="topCategorty">
+			<div class="top-categorty-item active" v-bind:style="{ color : nc.selectColor?nc.selectColor:'rgba(0,0,0,0)'}">
+				<p>{{nc.title}}</p>
+				<p class="line"  v-bind:style="{ background : nc.selectColor}"></p>
 			</div>
-			<div class="top-categorty-item" v-bind:style="{ color : nc.nsSelectColor}">
-				珠宝饰品
+			<div class="top-categorty-item" v-bind:style="{ color : nc.nsSelectColor?nc.nsSelectColor:'rgba(0,0,0,0)'}">
+				商品分类1
 			</div>
-			<div class="top-categorty-item" v-bind:style="{ color : nc.nsSelectColor}">
-				美妆护肤
+			<div class="top-categorty-item" v-bind:style="{ color : nc.nsSelectColor?nc.nsSelectColor:'rgba(0,0,0,0)'}">
+				商品分类2
 			</div>
-			<div class="top-categorty-item" v-bind:style="{ color : nc.nsSelectColor}">
-				手机数码
+			<div class="top-categorty-item" v-bind:style="{ color : nc.nsSelectColor?nc.nsSelectColor:'rgba(0,0,0,0)'}">
+				商品分类3
 			</div>
 		</div>
 	</template>

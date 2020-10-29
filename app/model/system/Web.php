@@ -16,7 +16,7 @@ use think\facade\Cache;
 
 class Web extends BaseModel
 {
-    private $url = "https://www.niushop.com.cn/api/%s";
+    private $url = "https://www.niushop.com/api/%s";
 
     public function __construct()
     {
