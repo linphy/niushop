@@ -110,6 +110,7 @@ class ComposerStaticInit516d2ac39a060b91610bddcc729d2cf4
             'GuzzleHttp\\Command\\Guzzle\\' => 26,
             'GuzzleHttp\\Command\\' => 19,
             'GuzzleHttp\\' => 11,
+            'GatewayClient\\' => 14,
         ),
         'E' => 
         array (
@@ -318,6 +319,10 @@ class ComposerStaticInit516d2ac39a060b91610bddcc729d2cf4
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'GatewayClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gatewayclient',
         ),
         'EasyWeChat\\' => 
         array (

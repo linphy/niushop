@@ -59,7 +59,7 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 			bottomMenuHtml += '<span>添加一个图文导航</span>';
 		bottomMenuHtml += '</div>';
 
-		bottomMenuHtml += '<p class="hint">建议上传比例相同的图片，最多添加 {{maxTip}} 个底部导航，拖动选中的导航可对其排序</p>';
+		bottomMenuHtml += '<p class="hint">建议上传比例相同的图片，最多添加 {{maxTip}} 个底部导航</p>';
 
 	bottomMenuHtml += '</div>';
 
@@ -82,6 +82,7 @@ Vue.component("bottom-menu", {
 		
 	},
 	created: function () {
+		this.changeShowAddItem();
 	},
 	
 	methods: {

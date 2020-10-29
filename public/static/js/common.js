@@ -114,7 +114,7 @@ ns.img = function (path, type = '') {
 	path = path.substring(0, start);
 	var first = path.split("/");
 	path += type + suffix;
-	
+
 	if (path.indexOf("http://") == -1 && path.indexOf("https://") == -1) {
 
 		var base_url = this.baseUrl.replace('/?s=', '');
@@ -806,20 +806,24 @@ function Upload(options) {
 
 	var _self = this;
 	var $parent = $(options.elem).parent();
+	options.post = options.post || "shop";
+	if (options.post == 'store') options.post += '://store';
 
-	options.url = options.url || ns.url("shop/upload/image");
+	this.post = options.post;
+
+	options.url = options.url || ns.url(options.post + "/upload/image");
 	options.accept = options.accept || "images";
 	options.before = function (obj) {
 		// console.log("before", obj)
 	};
 
 	options.done = function (res, index, upload) {
-
 		try {
 			if (res.code >= 0) {
 				$parent.find("input[type='hidden']").val(res.data.pic_path);
 				$parent.find(".del").addClass("show");
-				if (options.accept == 'images') $parent.find(".upload-img-box").html("<img src=" + ns.img(res.data.pic_path) + " >");
+				if (options.accept == 'images') $parent.find(".upload-img-box").html("<img layer-src title='点击放大图片' src=" + ns.img(res.data.pic_path) + " >");
+				$(options.elem).addClass("replace").removeClass("no-replace");
 			}
 		} catch (e) {
 
@@ -838,11 +842,9 @@ function Upload(options) {
 
 	// this.elem = options.elem;
 	this.parent = $parent;
-
 	$parent.find(".del").click(function () {
 		var path = $parent.find("input[type='hidden']").val();
 		if (!path) return;
-
 		_self.path = path;
 		$parent.find("input[type='hidden']").val("");
 		$(this).removeClass("show");
@@ -853,16 +855,15 @@ function Upload(options) {
 				</div>`);
 
 		if (options.deleteCallback) options.deleteCallback();
-
+		$(options.elem).addClass("no-replace").removeClass("replace");
 	});
-
 }
 
 // 删除物理文件
 Upload.prototype.delete = function () {
 	var _self = this;
 	$.ajax({
-		url: ns.url("shop/upload/deleteFile"),
+		url: ns.url(_self.post + "/upload/deleteFile"),
 		data: {path: _self.path},
 		dataType: 'JSON',
 		type: 'POST',

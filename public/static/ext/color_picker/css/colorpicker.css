@@ -27,5 +27,5 @@
 /* colorpicker ie6 hack */
 .colorpicker_color div{_background:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/colorpicker_overlay.png',sizingMethod='crop');}
 .colorpicker_color div div{_background:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/colorpicker_select.png',sizingMethod='crop');}
-.colorSelector{position:relative;width:20px;height:20px;/*background:url(../images/select.png);*/border-radius: 50%;border:1px solid #d7d7d7;}
-.colorSelector div{position:absolute;top:50%;left:50%;width:16px;height:16px;background:url(../images/select.png) center;border-radius: 50%;margin-top: -8px;margin-left: -8px;}
+.colorSelector{position:relative;width:20px;height:20px;/*background:url(../images/select.png);*/border-radius: 3px;border:1px solid #d7d7d7;}
+.colorSelector div{position:absolute;top:50%;left:50%;width:16px;height:16px;background:url(../images/select.png) center;border-radius: 3px;margin-top: -8px;margin-left: -8px;}

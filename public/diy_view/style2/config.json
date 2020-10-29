@@ -1,7 +1,7 @@
 {
   "templateInfo": {
-    "name": "商城系统",
-    "desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛酷科技愿竭诚为您服务！",
+    "name": "时尚简约商城",
+    "desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
     "mark": "shopping_template"
   },
   "templateValue": {
@@ -9,7 +9,7 @@
       "image": "public/diy_view/style2/img/cover.png",
       "data": {
         "global": {
-          "title": "商城模版",
+          "title": "时尚简约商城",
           "openBottomNav": false,
           "bgColor": "",
           "bgUrl": "public/diy_view/style2/img/bg_img.png",
@@ -52,14 +52,18 @@
                 "link": {
                   "name": ""
                 },
-                "imageUrl": "public/diy_view/style2/img/posters_1.png"
+                "imageUrl": "public/diy_view/style2/img/posters_1.png",
+				"imgWidth": 750,
+				"imgHeight": 350
               },
               {
                 "imageUrl": "public/diy_view/style2/img/posters_2.png",
                 "title": "",
                 "link": {
                   "name": ""
-                }
+                },
+				"imgWidth": 750,
+				"imgHeight": 350
               }
             ],
             "addon_name": "",
@@ -82,9 +86,8 @@
             "selectedTemplate": "imageNavigation",
             "scrollSetting": "fixed",
             "imageScale": "70",
-            "padding": 0,
+            "padding": 20,
             "paddingTopBottom": 10,
-            "paddingLeftRight": 10,
             "list": [
               {
                 "imageUrl": "public/diy_view/style2/img/pintuan.png",
@@ -166,9 +169,7 @@
                   "addon_icon": null
                 }
               }
-            ],
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            ]
           },
           {
             "backgroundColor": "#ffffff",
@@ -176,16 +177,12 @@
             "type": "GRAPHIC_NAV",
             "name": "图文导航",
             "controller": "GraphicNav",
-            "marginLeftRight": 0,
             "textColor": "#666666",
             "defaultTextColor": "",
             "selectedTemplate": "imageNavigation",
             "scrollSetting": "fixed",
             "imageScale": "70",
-            "padding": 0,
-            "paddingTopBottom": 0,
-            "paddingLeftRight": 10,
-            "marginTopBottom": 0,
+            "padding": 20,
             "list": [
               {
                 "imageUrl": "public/diy_view/style2/img/coupon.png",
@@ -349,17 +346,10 @@
               }
             ],
             "paddingTopBottom": 0,
-            "paddingLeftRight": 5,
             "selectedTemplate": "imageNavigation",
             "scrollSetting": "fixed",
             "imageScale": 100,
-            "padding": 5,
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            "padding": 5
           },
           {
             "backgroundColor": "",

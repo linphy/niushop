@@ -21,7 +21,7 @@ return [
         'url' => 'shop/diy/index',
         'parent' => '',
         'is_show' => 1,
-        'is_control' => 0,
+        'is_control' => 1,
         'is_icon' => 0,
         'picture' => 'app/shop/view/public/img/menu_icon/menu_shop.png',
         'picture_selected' => 'app/shop/view/public/img/menu_icon/menu_shop_selected.png',
@@ -61,6 +61,17 @@ return [
                         'sort' => 2,
                     ],
                     [
+                        'name' => 'SHOP_DIY_MEMBER_INDEX',
+                        'title' => '会员中心',
+                        'url' => 'shop/diy/memberindex',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 3,
+                    ],
+                    [
                         'name' => 'SHOP_DIY_LISTS',
                         'title' => '微页面',
                         'url' => 'shop/diy/lists',
@@ -69,7 +80,7 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 3,
+                        'sort' => 4,
                         'child_list' => [
                             [
                                 'name' => 'SHOP_DIY_EDIT',
@@ -88,7 +99,7 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 4,
+                        'sort' => 5,
                     ],
                     [
                         'name' => 'SHOP_STYLE_CONFIG',
@@ -99,7 +110,7 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 5,
+                        'sort' => 6,
                     ],
                     [
                         'name' => 'SHOP_STYLE_TEMPLATE',
@@ -110,7 +121,7 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 6,
+                        'sort' => 7,
                         'child_list' => [
                             [
                                 'name' => 'SHOP_STYLE_TEMPLATE_EDIT',
@@ -120,8 +131,28 @@ return [
                             ],
                         ],
                     ],
-
-
+                    [
+                        'name' => 'SHOP_DIY_DELETE',
+                        'title' => '删除微页面',
+                        'url' => 'shop/diy/deleteSiteDiyView',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 8,
+                    ],
+                    [
+                        'name' => 'SHOP_DIY_HOME_PAGE',
+                        'title' => '设为主页',
+                        'url' => 'shop/diy/homePage',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 9,
+                    ],
                 ]
             ],
             [
@@ -130,7 +161,7 @@ return [
                 'url' => 'shop/help/helplist',
                 'parent' => '',
                 'is_show' => 1,
-                'is_control' => 0,
+                'is_control' => 1,
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/shop_content.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/website_set_selected.png',
@@ -173,6 +204,12 @@ return [
                                 'is_show' => 0,
                             ],
                             [
+                                'name' => 'WEBSITE_HELP_MODIFY_SORT',
+                                'title' => '帮助排序',
+                                'url' => 'shop/help/modifySort',
+                                'is_show' => 0,
+                            ],
+                            [
                                 'name' => 'WEBSITE_HELP_CLASS',
                                 'title' => '帮助分类',
                                 'url' => 'shop/help/classlist',
@@ -197,6 +234,12 @@ return [
                                 'name' => 'WEBSITE_HELP_CLASS_DELETE',
                                 'title' => '删除分类',
                                 'url' => 'shop/help/deleteclass',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'WEBSITE_HELP_CLASS_MODIFY_SORT',
+                                'title' => '分类排序',
+                                'url' => 'shop/help/modifyClassSort',
                                 'is_show' => 0,
                             ],
                         ],
@@ -254,7 +297,7 @@ return [
         'url' => 'shop/goods/lists',
         'parent' => '',
         'is_show' => 1,
-        'is_control' => 0,
+        'is_control' => 1,
         'is_icon' => 0,
         'picture' => 'app/shop/view/public/img/menu_icon/menu_commodity.png',
         'picture_selected' => 'app/shop/view/public/img/menu_icon/menu_commodity_selected.png',
@@ -273,51 +316,79 @@ return [
                 'child_list' => [
                     [
                         'name' => 'PHYSICAL_GOODS_ADD',
-                        'title' => '发布商品',
+                        'title' => '发布实物商品',
                         'url' => 'shop/goods/addgoods',
-                        'sort' => 5,
+                        'sort' => 1,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'PHYSICAL_GOODS_EDIT',
-                        'title' => '编辑商品',
+                        'title' => '编辑实物商品',
                         'url' => 'shop/goods/editgoods',
-                        'sort' => 6,
+                        'sort' => 2,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'VIRTUAL_GOODS_ADD',
-                        'title' => '发布商品',
+                        'title' => '发布虚拟商品',
                         'url' => 'shop/virtualgoods/addgoods',
-                        'sort' => 5,
+                        'sort' => 3,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'VIRTUAL_GOODS_EDIT',
-                        'title' => '编辑商品',
+                        'title' => '编辑虚拟商品',
                         'url' => 'shop/virtualgoods/editgoods',
-                        'sort' => 6,
+                        'sort' => 4,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'GOODS_OFF',
                         'title' => '商品下架',
                         'url' => 'shop/goods/offgoods',
-                        'sort' => 7,
+                        'sort' => 5,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'GOODS_ON',
                         'title' => '商品上架',
                         'url' => 'shop/goods/ongoods',
-                        'sort' => 8,
+                        'sort' => 6,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'GOODS_DELETE',
                         'title' => '商品删除',
                         'url' => 'shop/goods/deletegoods',
+                        'sort' => 7,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_EDIT_STOCK',
+                        'title' => '编辑商品库存',
+                        'url' => 'shop/goods/editGoodsStock',
+                        'sort' => 8,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_COPY',
+                        'title' => '复制商品',
+                        'url' => 'shop/goods/copyGoods',
                         'sort' => 9,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_MODIFY_SORT',
+                        'title' => '商品排序',
+                        'url' => 'shop/goods/modifySort',
+                        'sort' => 10,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_BROWSE',
+                        'title' => '浏览记录',
+                        'url' => 'shop/goods/goodsbrowse',
+                        'sort' => 11,
                         'is_show' => 0
                     ],
                 ]
@@ -336,7 +407,7 @@ return [
                     [
                         'name' => 'PHYSICAL_GOODS_RECYCLE_DELETE',
                         'title' => '回收站删除',
-                        'url' => 'shop/goods/deleterecycle',
+                        'url' => 'shop/goods/deleteRecycleGoods',
                         'sort' => 1,
                         'is_show' => 0
                     ],
@@ -378,6 +449,12 @@ return [
                         'url' => 'shop/goodscategory/deletecategory',
                         'is_show' => 0
                     ],
+                    [
+                        'name' => 'GOODS_CATEGORY_MODIFY_SORT',
+                        'title' => '商品分类排序',
+                        'url' => 'shop/goodscategory/modifySort',
+                        'is_show' => 0
+                    ],
                 ]
             ],
             [
@@ -405,6 +482,12 @@ return [
                         'name' => 'GOODS_LABEL_DEL',
                         'title' => '商品分组删除',
                         'url' => 'shop/goodslabel/delete',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_LABEL_MODIFY_SORT',
+                        'title' => '商品分组排序',
+                        'url' => 'shop/goodslabel/modifySort',
                         'is_show' => 0
                     ]
                 ]
@@ -448,20 +531,79 @@ return [
                 'picture_selected' => 'app/shop/view/public/img/icon/category.png',
                 'child_list' => [
                     [
+                        'name' => 'GOODS_ATTR_ADD',
+                        'title' => '添加属性类型',
+                        'url' => 'shop/goodsattr/addAttr',
+                        'is_show' => 0
+                    ],
+                    [
                         'name' => 'GOODS_ATTR_EDIT',
-                        'title' => '属性模板',
+                        'title' => '编辑属性类型',
                         'url' => 'shop/goodsattr/editattr',
                         'is_show' => 0
                     ],
                     [
                         'name' => 'GOODS_ATTR_DEL',
-                        'title' => '类型删除',
+                        'title' => '删除属性类型',
                         'url' => 'shop/goodsattr/deleteattr',
                         'is_show' => 0
-                    ]
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_MODIFY_SORT',
+                        'title' => '属性类型排序',
+                        'url' => 'shop/goodsattr/modifySort',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_ADD',
+                        'title' => '添加属性',
+                        'url' => 'shop/goodsattr/addattribute',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_EDIT',
+                        'title' => '编辑属性',
+                        'url' => 'shop/goodsattr/editAttribute',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_DELETE',
+                        'title' => '删除属性',
+                        'url' => 'shop/goodsattr/deleteAttribute',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_VALUE_ADD',
+                        'title' => '添加属性值',
+                        'url' => 'shop/goodsattr/addAttributeValue',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_VALUE_EDIT',
+                        'title' => '编辑属性值',
+                        'url' => 'shop/goodsattr/editAttributeValue',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_VALUE_DELETE',
+                        'title' => '删除属性值',
+                        'url' => 'shop/goodsattr/deleteAttributeValue',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_VALUE_DELETE',
+                        'title' => '删除属性值',
+                        'url' => 'shop/goodsattr/deleteAttributeValue',
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_ATTR_ATTRIBUTE_VALUE_MODIFY_SORT',
+                        'title' => '属性排序',
+                        'url' => 'shop/goodsattr/modifyAttributeSort',
+                        'is_show' => 0
+                    ],
                 ]
             ],
-
             [
                 'name' => 'GOODS_EVALUATE',
                 'title' => '商品评价',
@@ -475,8 +617,29 @@ return [
                 'child_list' => [
                     [
                         'name' => 'GOODS_EVALUATE_DELETE',
-                        'title' => '删除',
+                        'title' => '删除评价',
                         'url' => 'shop/goods/deleteevaluate',
+                        'sort' => 1,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_EVALUATE_APPLY',
+                        'title' => '评价回复',
+                        'url' => 'shop/goods/evaluateapply',
+                        'sort' => 1,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_EVALUATE_DELETE_CONTENT',
+                        'title' => '删除评价回复',
+                        'url' => 'shop/goods/deleteContent',
+                        'sort' => 1,
+                        'is_show' => 0
+                    ],
+                    [
+                        'name' => 'GOODS_EVALUATE_MODIFY_AUDIT',
+                        'title' => '评价审核',
+                        'url' => 'shop/goods/modifyAuditEvaluate',
                         'sort' => 1,
                         'is_show' => 0
                     ],
@@ -511,35 +674,35 @@ return [
                         'name' => 'ALBUM_DELETE',
                         'title' => '删除相册分组',
                         'url' => 'shop/album/deletealbum',
-                        'sort' => 2,
+                        'sort' => 3,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'ALBUM_PIC_MODIFY_PICNAME',
                         'title' => '编辑文件名称',
                         'url' => 'shop/album/modifypicname',
-                        'sort' => 2,
+                        'sort' => 4,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'ALBUM_PIC_MODIFY_ALBUM',
                         'title' => '修改文件分组',
                         'url' => 'shop/album/modifyfilealbum',
-                        'sort' => 2,
+                        'sort' => 5,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'ALBUM_PIC_DELETE',
                         'title' => '删除文件',
                         'url' => 'shop/album/deletefile',
-                        'sort' => 2,
+                        'sort' => 6,
                         'is_show' => 0
                     ],
                     [
                         'name' => 'ALBUM_BOX',
                         'title' => '相册',
                         'url' => 'shop/album/album',
-                        'sort' => 2,
+                        'sort' => 7,
                         'is_show' => 0
                     ],
                 ]
@@ -618,6 +781,17 @@ return [
                         'sort' => 1,
                     ],
                     [
+                        'name' => 'ORDER_EXPORT_LIST',
+                        'title' => '订单导出记录',
+                        'url' => 'shop/order/export',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
                         'name' => 'EXPRESS_ORDER_CLOSE',
                         'title' => '订单关闭',
                         'url' => 'shop/order/close',
@@ -651,6 +825,28 @@ return [
                         'sort' => 1,
                     ],
                     [
+                        'name' => 'ORDER_REMARK',
+                        'title' => '订单备注',
+                        'url' => 'shop/order/orderRemark',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'ORDER_DELETE',
+                        'title' => '订单删除',
+                        'url' => 'shop/order/delete',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
                         'name' => 'EXPRESS_ORDER_EDIT_ADDRESS',
                         'title' => '订单修改收货地址',
                         'url' => 'shop/order/editaddress',
@@ -675,7 +871,7 @@ return [
                     [
                         'name' => 'LOCAL_ORDER_DELIVER',
                         'title' => '外卖订单发货',
-                        'url' => 'shop/localorder/deliver',
+                        'url' => 'shop/localorder/delivery',
                         'is_show' => 0,
                         'is_control' => 1,
                         'is_icon' => 0,
@@ -704,20 +900,88 @@ return [
                         'picture' => '',
                         'picture_selected' => '',
                         'sort' => 1,
-                    ]
+                    ],
+                    [
+                        'name' => 'ORDER_TAKE_DELIVERY',
+                        'title' => '确认收货',
+                        'url' => 'shop/order/takeDelivery',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'ORDER_DELIVERY',
+                        'title' => '发货',
+                        'url' => 'shop/order/delivery',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'ORDER_BATCH_DELIVERY',
+                        'title' => '批量发货',
+                        'url' => 'shop/delivery/batchdelivery',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
                 ],
             ],
             [
-                'name' => 'ORDER_DELIVERY',
+                'name' => 'ORDER_DELIVERY_LIST',
                 'title' => '订单发货',
                 'url' => 'shop/delivery/lists',
                 'parent' => '',
                 'is_show' => 1,
-                'is_control' => 0,
+                'is_control' => 1,
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/deliver.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/deliver.png',
                 'sort' => 2,
+                'child_list' => [
+                    [
+                        'name' => 'ORDER_DELIVERY_EXPRESS_ELECTRONICSHEETLIST',
+                        'title' => '获取电子面单模板列表',
+                        'url' => 'shop/delivery/getexpresselectronicsheetlist',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'ORDER_DELIVERY_EXPRESS_PRINT_ELECTRONICSHEET',
+                        'title' => '打印电子面单',
+                        'url' => 'shop/delivery/printelectronicsheet',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'ORDER_DELIVERY_EDIT_ORDER_DELIVERY',
+                        'title' => '修改订单物流信息',
+                        'url' => 'shop/delivery/editOrderDelivery',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                ]
             ],
             [
                 'name' => 'ORDER_IMPORT_FILE',
@@ -809,6 +1073,17 @@ return [
                         'picture_selected' => '',
                         'sort' => 1,
                     ],
+                    [
+                        'name' => 'ORDER_REFUND_EXPORT_LIST',
+                        'title' => '订单维权导出记录',
+                        'url' => 'shop/orderrefund/export',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
                 ]
             ],
             [
@@ -843,6 +1118,17 @@ return [
                         'picture' => '',
                         'picture_selected' => '',
                         'sort' => 2,
+                    ],
+                    [
+                        'name' => 'ORDER_VERIFY_CONFIRM',
+                        'title' => '核销',
+                        'url' => 'shop/verify/verify',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 3,
                     ],
                     [
                         'name' => 'ORDER_VERIFY_USER',
@@ -901,9 +1187,7 @@ return [
                 'picture' => 'app/shop/view/public/img/icon/invoice.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/invoice.png',
                 'sort' => 6,
-                'child_list' => [
-
-                ]
+                'child_list' => []
             ],
 
         ]
@@ -938,7 +1222,7 @@ return [
                 'is_show' => 1,
                 'picture' => 'app/shop/view/public/img/icon/member_list.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/member.png',
-                'sort' => 1,
+                'sort' => 2,
                 'child_list' => [
                     [
                         'name' => 'MEMBER_LIST',
@@ -998,24 +1282,24 @@ return [
                             [
                                 'name' => 'MEMBER_STATUS_MODIFY',
                                 'title' => '修改会员状态',
-                                'url' => 'shop/member/midifystatus',
+                                'url' => 'shop/member/modifystatus',
                                 'is_show' => 0,
                             ],
                             [
                                 'name' => 'MEMBER_PASSWORD_MODIFY',
                                 'title' => '修改会员密码',
-                                'url' => 'shop/member/midifypassword',
+                                'url' => 'shop/member/modifypassword',
                                 'is_show' => 0,
                             ],
                             [
                                 'name' => 'MEMBER_BALANCE_ADJUST',
-                                'title' => '余额调整(不可提现)',
+                                'title' => '余额调整（不可提现）',
                                 'url' => 'shop/member/adjustbalance',
                                 'is_show' => 0,
                             ],
                             [
                                 'name' => 'MEMBER_BALANCE_ADJUST_BALANCE_MONEY',
-                                'title' => '余额调整(可提现)',
+                                'title' => '余额调整（可提现）',
                                 'url' => 'shop/member/adjustbalancemoney',
                                 'is_show' => 0,
                             ],
@@ -1031,11 +1315,22 @@ return [
                                 'url' => 'shop/member/adjustgrowth',
                                 'is_show' => 0,
                             ],
+                            [
+                                'name' => 'MEMBER_COLLECT',
+                                'title' => '收藏记录',
+                                'url' => 'shop/goods/membergoodscollect',
+                                'is_show' => 1,
+                            ],
+                            [
+                                'name' => 'MEMBER_BROWSE',
+                                'title' => '浏览记录',
+                                'url' => 'shop/goods/membergoodsbrowse',
+                                'is_show' => 1,
+                            ],
                         ]
                     ],
                 ],
             ],
-
             [
                 'name' => 'MEMBER_LEVEL',
                 'title' => '会员等级',
@@ -1100,7 +1395,17 @@ return [
                     ],
                 ]
             ],
-
+            [
+                'name' => 'MEMBER_IMPORT',
+                'title' => '会员导入',
+                'url' => 'shop/member/memberimport',
+                'is_show' => 1,
+                'is_control' => 1,
+                'is_icon' => 0,
+                'picture' => 'app/shop/view/public/img/icon/member_list.png',
+                'picture_selected' => '',
+                'sort' => 6,
+            ]
         ]
     ],
     [
@@ -1120,7 +1425,7 @@ return [
                 'title' => '营销中心',
                 'url' => 'shop/promotion/index',
                 'is_show' => 1,
-                'is_control' => 0,
+                'is_control' => 1,
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/promotion.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/promotion.png',
@@ -1131,7 +1436,7 @@ return [
                 'title' => '会员互动',
                 'url' => 'shop/promotion/member',
                 'is_show' => 1,
-                'is_control' => 0,
+                'is_control' => 1,
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/member_chat.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/member_chat.png',
@@ -1219,6 +1524,39 @@ return [
                         'picture_selected' => '',
                         'sort' => 1,
                     ],
+                    [
+                        'name' => 'STORE_FROZEN',
+                        'title' => '关闭门店',
+                        'url' => 'shop/store/frozenStore',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'STORE_FROZEN',
+                        'title' => '关闭门店',
+                        'url' => 'shop/store/frozenStore',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
+                    [
+                        'name' => 'STORE_MODIFY_PASSWORD',
+                        'title' => '重置密码',
+                        'url' => 'shop/store/modifyPassword',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
                 ]
             ],
 
@@ -1244,8 +1582,7 @@ return [
                 'picture' => 'app/shop/view/public/img/menu_icon/money.png',
                 'picture_selected' => 'app/shop/view/public/img/menu_icon/money.png',
                 'sort' => 1,
-                'child_list' => [
-                ]
+                'child_list' => []
             ],
             [
                 'name' => 'MEMBER_WITHDRAW_LIST',
@@ -1261,6 +1598,24 @@ return [
                         'url' => 'shop/memberwithdraw/detail',
                         'is_show' => 0,
                     ],
+                    [
+                        'name' => 'MEMBER_WITHDRAW_TRANSFERFINISH',
+                        'title' => '手动转账',
+                        'url' => 'shop/memberwithdraw/transferfinish',
+                        'is_show' => 0,
+                    ],
+                    [
+                        'name' => 'MEMBER_WITHDRAW_agree',
+                        'title' => '同意转账',
+                        'url' => 'shop/memberwithdraw/agree',
+                        'is_show' => 0,
+                    ],
+                    [
+                        'name' => 'MEMBER_WITHDRAW_refuse',
+                        'title' => '拒绝转账',
+                        'url' => 'shop/memberwithdraw/refuse',
+                        'is_show' => 0,
+                    ],
                 ]
             ],
 
@@ -1272,7 +1627,7 @@ return [
         'url' => 'shop/stat/shop',
         'parent' => '',
         'is_show' => 1,
-        'is_control' => 0,
+        'is_control' => 1,
         'is_icon' => 0,
         'picture' => 'app/shop/view/public/img/menu_icon/menu_data.png',
         'picture_selected' => 'app/shop/view/public/img/menu_icon/menu_data_selected.png',
@@ -1325,16 +1680,29 @@ return [
         ]
     ],
     [
+        'name' => 'CHANNEL_ROOT',
+        'title' => '渠道',
+        'url' => 'wechat://shop/wechat/setting',
+        'parent' => '',
+        'is_show' => 1,
+        'is_control' => 1,
+        'is_icon' => 0,
+        'picture' => 'app/shop/view/public/img/menu_icon/menu_set.png',
+        'picture_selected' => 'app/shop/view/public/img/menu_icon/menu_set_selected.png',
+        'sort' => 10,
+        'child_list' => []
+    ],
+    [
         'name' => 'CONFIG_ROOT',
         'title' => '设置',
         'url' => 'shop/shop/config',
         'parent' => '',
         'is_show' => 1,
-        'is_control' => 0,
+        'is_control' => 1,
         'is_icon' => 0,
         'picture' => 'app/shop/view/public/img/menu_icon/menu_set.png',
         'picture_selected' => 'app/shop/view/public/img/menu_icon/menu_set_selected.png',
-        'sort' => 10,
+        'sort' => 11,
         'child_list' => [
             [
                 'name' => 'CONFIG_BASE',
@@ -1440,14 +1808,14 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/member_config.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
-                'sort' => 1,
+                'sort' => 2,
                 'child_list' => [
                     [
                         'name' => 'LOGIN_REG_CONFIG',
                         'title' => '注册设置',
                         'url' => 'shop/member/regconfig',
                         'is_show' => 1,
-                        'sort' => 2,
+                        'sort' => 1,
                     ],
                     [
                         'name' => 'LOGIN_REG_AGREEMENT',
@@ -1456,14 +1824,14 @@ return [
                         'is_show' => 1,
                         'picture' => 'app/shop/view/public/img/icon/member.png',
                         'picture_selected' => 'app/shop/view/public/img/icon/member.png',
-                        'sort' => 5,
+                        'sort' => 2,
                     ],
                     [
                         'name' => 'MEMBER_WITHDRAW_CONFIG',
                         'title' => '会员提现',
                         'url' => 'shop/memberwithdraw/config',
                         'is_show' => 1,
-                        'sort' => 10,
+                        'sort' => 5,
                     ],
                 ]
             ],
@@ -1476,7 +1844,7 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/deal_config.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
-                'sort' => 1,
+                'sort' => 3,
                 'child_list' => [
                     [
                         'name' => 'ORDER_CONFIG_SETTING',
@@ -1507,7 +1875,7 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/distribution_config.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
-                'sort' => 1,
+                'sort' => 4,
                 'child_list' => [
                     [
                         'name' => 'EXPRESS_CONFIG',
@@ -1630,6 +1998,28 @@ return [
                                 'picture_selected' => '',
                                 'sort' => 1,
                             ],
+                            [
+                                'name' => 'EXPRESS_DEFAULT_TEMPLATE',
+                                'title' => '设置默认运费模板',
+                                'url' => 'shop/express/defaultTemplate',
+                                'is_show' => 0,
+                                'is_control' => 1,
+                                'is_icon' => 0,
+                                'picture' => '',
+                                'picture_selected' => '',
+                                'sort' => 1,
+                            ],
+                            [
+                                'name' => 'EXPRESS_CLOSE_TEMPLATE',
+                                'title' => '删除物流公司',
+                                'url' => 'shop/express/closeCompany',
+                                'is_show' => 0,
+                                'is_control' => 1,
+                                'is_icon' => 0,
+                                'picture' => '',
+                                'picture_selected' => '',
+                                'sort' => 1,
+                            ],
                         ]
                     ],
                     [
@@ -1706,7 +2096,7 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/sys_config.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
-                'sort' => 1,
+                'sort' => 5,
                 'child_list' => [
                     [
                         'name' => 'USER_AUTH',
@@ -1714,7 +2104,7 @@ return [
                         'url' => 'shop/user/user',
                         'parent' => '',
                         'is_show' => 1,
-                        'is_control' => 0,
+                        'is_control' => 1,
                         'is_icon' => 0,
                         'picture' => 'app/shop/view/public/img/icon/account.png',
                         'picture_selected' => 'app/shop/view/public/img/icon/account.png',
@@ -1845,12 +2235,23 @@ return [
                                 'picture_selected' => '',
                                 'sort' => 1,
                             ],
+                            [
+                                'name' => 'USER_LOG_DELETE',
+                                'title' => '删除日志',
+                                'url' => 'shop/user/deleteUserLog',
+                                'is_show' => 0,
+                                'is_control' => 1,
+                                'is_icon' => 0,
+                                'picture' => '',
+                                'picture_selected' => '',
+                                'sort' => 1,
+                            ],
                         ]
                     ],
                     [
                         'name' => 'CONFIG_DEFAULT_PICTURE',
                         'title' => '默认图设置',
-                        'url' => 'shop/config/defaultPicture',
+                        'url' => 'shop/config/defaultpicture',
                         'parent' => '',
                         'is_show' => 1,
                         'picture' => '',
@@ -1876,20 +2277,40 @@ return [
                                 'picture' => '',
                                 'picture_selected' => '',
                                 'sort' => 1,
-                                'child_list' => [
-                                ],
+                                'child_list' => [],
                             ],
                             [
                                 'name' => 'MESSAGE_SHOP_USER',
                                 'title' => '商家会员管理',
-                                'url' => 'shop/Shopacceptmessage/lists',
+                                'url' => 'shop/shopacceptmessage/lists',
                                 'parent' => '',
                                 'is_show' => 0,
                                 'picture' => '',
                                 'picture_selected' => '',
-                                'sort' => 1,
-                                'child_list' => [
-                                ],
+                                'sort' => 2,
+                                'child_list' => [],
+                            ],
+                            [
+                                'name' => 'MESSAGE_SHOP_USER_ADD',
+                                'title' => '添加商家消息接收会员',
+                                'url' => 'shop/Shopacceptmessage/add',
+                                'parent' => '',
+                                'is_show' => 0,
+                                'picture' => '',
+                                'picture_selected' => '',
+                                'sort' => 3,
+                                'child_list' => [],
+                            ],
+                            [
+                                'name' => 'MESSAGE_SHOP_USER_DELETE',
+                                'title' => '删除商家消息接收会员',
+                                'url' => 'shop/Shopacceptmessage/delete',
+                                'parent' => '',
+                                'is_show' => 0,
+                                'picture' => '',
+                                'picture_selected' => '',
+                                'sort' => 4,
+                                'child_list' => [],
                             ],
                         ],
                     ],
@@ -1912,8 +2333,7 @@ return [
                                 'picture' => '',
                                 'picture_selected' => '',
                                 'sort' => 1,
-                                'child_list' => [
-                                ],
+                                'child_list' => [],
                             ],
                             [
                                 'name' => 'SMS_RECORDS',
@@ -1924,8 +2344,7 @@ return [
                                 'picture' => '',
                                 'picture_selected' => '',
                                 'sort' => 1,
-                                'child_list' => [
-                                ],
+                                'child_list' => [],
                             ],
                         ],
                     ],
@@ -1938,7 +2357,17 @@ return [
                         'picture' => '',
                         'picture_selected' => '',
                         'sort' => 10
-                    ]
+                    ],
+                    [
+                        'name' => 'CONFIG_SERVICER_ROOT',
+                        'title' => '客服设置',
+                        'url' => 'shop/config/servicer',
+                        'parent' => '',
+                        'is_show' => 1,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 11,
+                    ],
                 ]
             ],
             [
@@ -1950,7 +2379,7 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/sys_config.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
-                'sort' => 1,
+                'sort' => 6,
                 'child_list' => [
                     [
                         'name' => 'CONFIG_SYSTEM_DATABASE',
@@ -2012,8 +2441,7 @@ return [
                         'picture' => '',
                         'picture_selected' => '',
                         'sort' => 2,
-                        'child_list' => [
-                        ],
+                        'child_list' => [],
                     ],
                     [
                         'name' => 'SYSTEM_H5_REFRESH',
@@ -2023,8 +2451,7 @@ return [
                         'picture' => '',
                         'picture_selected' => '',
                         'sort' => 3,
-                        'child_list' => [
-                        ],
+                        'child_list' => [],
                     ],
                 ]
             ]
@@ -2037,7 +2464,7 @@ return [
         'is_show' => 1,
         'picture' => 'app/shop/view/public/img/menu_icon/system_setup.png',
         'picture_selected' => '',
-        'sort' => 11,
+        'sort' => 12,
         'child_list' => [
             [
                 'name' => 'AUTH_INFO',

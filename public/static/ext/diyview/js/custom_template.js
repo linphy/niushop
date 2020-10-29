@@ -66,23 +66,27 @@ var vue = new Vue({
 		//当前编辑的组件位置
 		currentIndex: -99,
 		changeIndex: -1,
-		isAdd : false,
+		isAdd: false,
+		globalLazyLoad: false,
 
 		//全局属性
 		global: {
 			title: "页面名称",
+			bgColor: "#ffffff",
+			topNavColor: "#ffffff",
+			textNavColor: "#333333",
 
 			//是否显示底部导航标识
 			openBottomNav: false,
 
 			// 弹框形式，不弹出 -1，首次弹出 1，每次弹出 0
 			popWindow: {
-				imageUrl : "",
-				count : -1,
-				link : {}
+				imageUrl: "",
+				count: -1,
+				link: {}
 			},
 		},
-		
+
 		//自定义组件集合
 		data: [],
 	},
@@ -98,10 +102,10 @@ var vue = new Vue({
 	mounted: function () {
 		this.refresh();
 		// console.log("vue is mounted");
+
 	},
 	
 	methods: {
-		
 		addComponent: function (obj, other) {
 
 			//附加公共字段
@@ -258,6 +262,7 @@ var vue = new Vue({
 			for (var k in obj) {
 				if(k) this.$set(this.global, k, obj[k]);
 			}
+			this.globalLazyLoad = true;
 		},
 		verify:function () {
 			

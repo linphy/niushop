@@ -27,8 +27,8 @@ class HttpClient
 	{
 		$ci = curl_init();
 		curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ci, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, 100);
+		curl_setopt($ci, CURLOPT_TIMEOUT, 100);
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
 		//curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, false);

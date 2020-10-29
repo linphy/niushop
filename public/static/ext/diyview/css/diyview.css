@@ -7,7 +7,8 @@
 .position-page-btn{position: absolute;right: 440px;border-color:#f7f8fa;box-shadow: 0 2px 8px 0 rgba(0,0,0,.1);}
 
 /*颜色选择器*/
-.colorSelector{display: inline-block;vertical-align: middle;margin-right:20px;}
+.colorSelector{display: inline-block;vertical-align: middle;margin-right:20px; cursor: pointer;}
+.color-selector-reset {color: #555555; display: inline-block; line-height: 36px;cursor: pointer;}
 .photo-album{display: none;}
 .selected-style{cursor: pointer;}
 
@@ -24,9 +25,9 @@
 .preview-wrap .preview-restore-wrap{/*overflow: auto;height: 590px;*/width: 102%;/*margin-left: 290px;/*210px;*//*margin-right: 400px;*/}
 .preview-wrap .preview-restore-wrap .dv-wrap{overflow: auto;height: 525px;}
 /*auto*/
-.preview-wrap .preview-restore-wrap .diy-view-wrap{width: 375px;background-repeat: no-repeat;/*background-position: center;*/background-size: 100%;margin: 0 auto 20px;}
-.preview-wrap .preview-restore-wrap .diy-view-wrap .preview-head{background: url(../img/preview_head.png) no-repeat 50%/cover;height: 64px;width: 375px;box-shadow: 0 0 14px 0 rgba(0,0,0,.1);}
-.preview-wrap .preview-restore-wrap .diy-view-wrap .preview-head>span{font-size: 14px;display: block;text-align: center;height: 64px;line-height: 82px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;cursor: pointer;width: 180px;margin: 0 auto;}
+.preview-wrap .preview-restore-wrap .diy-view-wrap{width: 375px;background-repeat: no-repeat;background-position-y: 64px;background-size: 100%;margin: 0 auto 20px;}
+.preview-wrap .preview-restore-wrap .diy-view-wrap .preview-head{height: 64px;width: 375px;box-shadow: 0 0 14px 0 rgba(0,0,0,.1);}
+.preview-wrap .preview-restore-wrap .diy-view-wrap .preview-head>span{background: url(../img/preview_head.png) no-repeat 50%/cover;font-size: 14px;display: block;text-align: center;height: 64px;line-height: 82px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;cursor: pointer;margin: 0 auto;}
 
 .preview-wrap .preview-restore-wrap .diy-view-wrap .middle{padding:10px 20px;}
 .preview-wrap .preview-restore-wrap .diy-view-wrap .preview-block{min-height: 400px;box-shadow: 0 0 4px 0 rgba(0,0,0,.1);}
@@ -37,10 +38,11 @@
 .component-list h3 {font-weight: normal;font-size: 14px;margin: 10px 0 0;cursor: pointer;line-height: 40px;}
 .component-list h3 img{width: 16px;margin-right: 5px;}
 .component-list ul {overflow: hidden;margin: 0;padding: 0;transition: all .3s;opacity: 1;}
-.component-list ul li {float: left;color: #333;padding: 10px 0;font-size: 14px;width: 90px;height: 90px;/*line-height: 40px;*/text-align: center;cursor: pointer;position: relative;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;}
+.component-list ul li {float: left;color: #333;/* padding: 10px 0; */font-size: 12px;width: 90px;height: 90px;/*line-height: 40px;*/text-align: center;cursor: pointer;position: relative;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;}
 .component-list ul li.hot:after{content:'';background: url(../img/hot_component.png) no-repeat center/100%;position: absolute;width: 16px;height: 20px;margin:2px 0 0 0;right:10%;top: 10px;}
 .component-list ul li.disabled {cursor: not-allowed;color: #bbb;}
 .component-list ul li:not(.disabled):hover {background: #fde6da;color: #ff8143;}
+.component-list ul li img {width: 50px;}
 .component-list ul li span:nth-of-type(1){display: block;margin-bottom: 5px;}
 .component-list ul li span:last-child{font-size: 12px;color: #7d7e80;}
 .component-list ul li:not(.disabled):hover span:last-child{font-size: 12px;color: #ff8143;}
@@ -79,3 +81,19 @@
 .edit-attribute .attr-wrap .restore-wrap .img-block span{font-size: 12px;}
 .layui-btn.layui-btn-primary.sm{margin-top: 5px;padding: 5px 10px !important;height: auto; font-size: 12px;border-radius: 0;vertical-align: baseline;line-height: 1}
 .edit-attribute .attr-wrap .restore-wrap .layui-form-radio {margin-top: 0; line-height: 34px;}
+
+
+/* 颜色选择器 */
+.flexbox-fix-btn {
+	justify-content: center;
+}
+
+.flexbox-fix-btn .btn {
+	width: 80px;
+	border: 1px solid #DDDDDD;
+	color: #666666;
+	line-height: 32px;
+	background-color: transparent;
+	margin: 20px 5px 0;
+	cursor: pointer;
+}

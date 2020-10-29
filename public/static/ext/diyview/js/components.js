@@ -151,7 +151,8 @@ Vue.component("slide", {
 			default: function () {
 				return {
 					field: "height",
-					label: "空白高度"
+					label: "空白高度",
+					max: 100
 				};
 			}
 		}
@@ -159,8 +160,8 @@ Vue.component("slide", {
 	created: function () {
 
 		if (this.data.label == undefined) this.data.label = "空白高度";
-
 		if (this.data.field == undefined) this.data.field = "height";
+		if (this.data.max == undefined) this.data.max = 100;
 
 		var _self = this;
 		setTimeout(function () {
@@ -169,6 +170,7 @@ Vue.component("slide", {
 				var slider = layui.slider;
 				var ins = slider.render({
 					elem: '#'+_self.id,
+					max: _self.data.max,
 					tips: false,
 					theme: '#FF6A00',
 					value : _self.parent[_self.data.field],
@@ -186,9 +188,8 @@ Vue.component("slide", {
 		data: function (val, oldVal) {
 
 			if (val.field == undefined) val.field = oldVal.field;
-
 			if (val.label == undefined) val.label = "空白高度";
-
+			if (val.max == undefined) val.max = 100;
 		},
 	},
 	template: sliderHtml,
@@ -314,8 +315,9 @@ Vue.component("nc-link", {
 var colorHtml = '<div class="layui-form-item">';
 		colorHtml += '<label class="layui-form-label sm">{{d.label}}</label>';
 		colorHtml += '<div class="layui-input-block">';
-			colorHtml += '<div v-bind:class="class_name" class="colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
-			colorHtml += '<button class="layui-btn layui-btn-primary sm" v-on:click="reset()">重置</button>';
+			colorHtml += '<div v-bind:id="class_name" class="picker colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
+			// colorHtml += '<div v-bind:id="class_name" v-bind:class="class_name" class="colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
+			colorHtml += '<span class="color-selector-reset" v-on:click="reset()">重置</span>';
 		colorHtml += '</div>';
 	colorHtml += '</div>';
 
@@ -341,7 +343,6 @@ Vue.component("color", {
 	data: function () {
 		return {
 			d: this.data,
-			// class_name: "colorSelector_" + (this.data.field ? this.data.field : "textColor") + ns.gen_non_duplicate(10),
 			class_name: "",
 			parent: (Object.keys(this.$parent.data).length) ? this.$parent.data : this.$parent.global,
 		};
@@ -357,26 +358,28 @@ Vue.component("color", {
 	methods: {
 		init:function(){
 
-			// console.log("datadatadata",this.data,this.parent);
 			if (this.data.field == undefined) this.data.field = "textColor";
 			if (this.data.label == undefined) this.data.label = "文字颜色";
 			if (this.data.value == undefined) this.data.value = "#333333";
 			if (this.data.defaultcolor == undefined) this.data.defaultcolor = "";
 			if (this.data.defaultvalue == undefined) this.data.defaultvalue = "";
 
+			if(this.data.global == 1) this.parent = this.$parent.global;
+
 			//如果当前字段没有值数据，则给予默认值，反之用该字段的值，用于优化调用该组件
 			if (this.parent[this.data.field] == undefined) this.$set(this.parent, this.data.field, this.data.value);
 			else this.data.value = this.parent[this.data.field];
 			this.parent[this.data.field] = this.data.value;
 
-			if (this.parent[this.data.defaultcolor] == undefined) this.$set(this.parent, this.data.defaultcolor, this.data.defaultvalue);
-			else this.data.defaultvalue = this.parent[this.data.defaultcolor];
-			this.parent[this.data.defaultcolor] = this.data.defaultvalue;
+			// if (this.parent[this.data.defaultcolor] == undefined) this.$set(this.parent, this.data.defaultcolor, this.data.defaultvalue);
+			// else this.data.defaultvalue = this.parent[this.data.defaultcolor];
+			// this.parent[this.data.defaultcolor] = this.data.defaultvalue;
 			this.d = this.data;
 		},
 		reset: function () {
 			try {
-				this.parent[this.d.field] = this.d.defaultvalue;
+				if(this.data.global == 1) this.parent = this.$parent.global;
+				this.parent[this.d.field] = this.d.defaultcolor;
 			} catch (e) {
 				console.log("color reset() ERROR:" + e.message);
 			}
@@ -387,12 +390,16 @@ Vue.component("color", {
 			var class_name = "." + this.class_name;
 			var $self = this;
 
-			setColorPicker($self.data.value, class_name, function (hex) {
+			setColorPicker($self.data.value, this.class_name, function (hex) {
 				try {
 					// data数据可能不全，所以要用d，通过对象的引用关系绑定数据
 					// 这里要更新$self，不然如果删除了，就会出问题
 					// console.log("getThis",$self.refreshData());
-					$self.parent[$self.d.field] = "#" + hex;
+					if(hex) {
+						$self.parent[$self.d.field] = hex;
+					} else {
+						$self.parent[$self.d.field] = "";
+					}
 					// console.log("$self.parent", $self.parent, vue.currentIndex);
 				} catch (e) {
 					console.log("color ERROR:" + e.message);
@@ -421,10 +428,32 @@ Vue.component("color", {
  * @param obj
  * @param callBack
  */
-function setColorPicker(defaultColor, obj, callBack) {
+function setColorPicker(defaultColor, name, callBack) {
 
 	setTimeout(function () {
-		$(obj).ColorPicker({
+		/* $(obj).paigusu({
+			color: defaultColor,//初始色  支持两种配置方案
+			// recommend : '25,38,220,1|25,38,220,1|46,49,104,1|25,38,220,1|46,49,104,1|25,38,220,1|46,49,104,1|25,38,220,1|46,49,104,1|25,38,220,1|46,49,104,1'
+			//	,color : '42,0,255'
+		}, function(event, obj){
+			// console.log(event);
+			// console.log(obj);
+			$(event).find("div").css('background', '#'+ obj.hex);
+			if (callBack) callBack(obj.hex);
+		});
+		if(defaultColor) $(event).find("div").css('background', defaultColor); */
+		var obj = document.getElementById("picker");
+		var a = Colorpicker.create({
+			el: name,
+			color: defaultColor,
+			change: function (elem, hex) {
+				$(elem).find("div").css('background', hex);
+				if (callBack) callBack(hex);
+			}
+		});
+		if(defaultColor) $("#" + name).find("div").css('background', defaultColor);
+		
+		/* $(obj).ColorPicker({
 			
 			onShow: function (colpkr) {
 				$(colpkr).fadeIn(500);
@@ -447,7 +476,7 @@ function setColorPicker(defaultColor, obj, callBack) {
 			}
 			
 		});
-		if(defaultColor) $(obj).ColorPickerSetColor(defaultColor);
+		if(defaultColor) $(obj).ColorPickerSetColor(defaultColor); */
 	}, 500);
 }
 
@@ -491,7 +520,7 @@ Vue.component("font-size", {
 		return {
 			d: this.data,
 			isShowFontSize: false,
-			selectIndex: 2,		//当前选中的下标
+			selectIndex: 2, //当前选中的下标
 			list: [],
 			parent: (Object.keys(this.$parent.data).length) ? this.$parent.data : this.$parent.global,
 		};
@@ -520,7 +549,7 @@ Vue.component("font-size", {
 });
 
 //[图片上传]组件
-var imageHtml = '<div v-show="condition" class="img-block layui-form ns-text-color" :id="id" v-bind:class="{ \'has-choose-image\' : (myData.data[myData.field]) }">';
+var imageHtml = '<div @click="uploadImg" v-show="condition" class="img-block layui-form ns-text-color" :id="id" v-bind:class="{ \'has-choose-image\' : (myData.data[myData.field]) }">';
 			imageHtml += '<div>';
 				imageHtml += '<template v-if="myData.data[myData.field]">';
 					imageHtml += '<img v-bind:src="changeImgUrl(myData.data[myData.field])"/>';
@@ -530,7 +559,7 @@ var imageHtml = '<div v-show="condition" class="img-block layui-form ns-text-col
 				
 				imageHtml += '<template v-else>';
 					imageHtml += '<i class="add">+</i>';
-					imageHtml += '<span>{{myData.text}}</span>';
+					imageHtml += '<span v-if="myData.text">{{myData.text}}</span>';
 				imageHtml += '</template>';
 				
 			imageHtml += '</div>';
@@ -565,43 +594,42 @@ Vue.component("img-upload", {
 		return {
 			myData: this.data,
 			upload : null,
-			id : ns.gen_non_duplicate(10)
+			id : ns.gen_non_duplicate(10),
+			// parent: (Object.keys(this.$parent.data).length) ? this.$parent.data : this.data,
 		};
 	},
 	watch: {
 		data: function (val, oldVal) {
 			if (val.field == undefined) val.field = oldVal.field;
-			
 			if (val.text == undefined) val.text = "添加图片";
 			
 			this.myData = val;
-			
 		}
 	},
 	created: function () {
-		
+
 		if (this.data.field == undefined) this.data.field = "imageUrl";
-		
 		if (this.data.data[this.data.field] == undefined) this.$set(this.data.data, this.data.field, "");
-		
 		if (this.data.text == undefined) this.data.text = "添加图片";
 		
 		this.id = ns.gen_non_duplicate(10);
 		
 		var self = this;
 		setTimeout(function () {
-
 			if (post == 'store') post += '://store';
-
-			var url = ns.url(post + "/upload/image");
-			self.upload = new Upload({
-				elem: '#' + self.id,
-				url : url,
-				callback:function(res) {
-					self.data.data[self.data.field] = res.data.pic_path;
-					if (self.callback) self.data.callback.call(this);
-				}
-			});
+			if (post == 'store://store') {
+				var url = ns.url(post + "/upload/image");
+				self.upload = new Upload({
+					elem: '#' + self.id,
+					url : url,
+					callback:function(res) {
+						self.data.data[self.data.field] = res.data.pic_path;
+						self.data.data.imgWidth = res.data.pic_spec.split("*")[0];
+						self.data.data.imgHeight = res.data.pic_spec.split("*")[1];
+						if (self.callback) self.data.callback.call(this);
+					}
+				});
+			}
 		},20);
 		
 	},
@@ -614,6 +642,22 @@ Vue.component("img-upload", {
 		changeImgUrl: function (url) {
 			if (url == null || url == "") return '';
 			else return ns.img(url);
+		},
+		uploadImg: function() {
+			var self = this;
+			if (post == 'store') post += '://store';
+			if (post != 'store://store') {
+				openAlbum(function (data) {
+					for (var i = 0; i < data.length; i++) {
+						self.data.data[self.data.field] = data[i].pic_path;
+					}
+				}, 1);
+			}
+			/* openAlbum(function (data) {
+				for (var i = 0; i < data.length; i++) {
+					self.data.data[self.data.field] = data[i].pic_path;
+				}
+			}, 1); */
 		}
 	}
 });

@@ -1,7 +1,7 @@
 {
   "templateInfo": {
-    "name": "生鲜水果蔬菜食品特产",
-    "desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛酷科技愿竭诚为您服务！",
+    "name": "水果生鲜商城",
+    "desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
     "mark": "fresh_template"
   },
   "templateValue": {
@@ -9,7 +9,7 @@
       "image": "public/diy_view/style1/img/cover.png",
       "data": {
         "global": {
-          "title": "水果模版",
+          "title": "水果生鲜商城",
           "openBottomNav": false,
           "bgColor": "#f7f7f7",
           "bgUrl": "public/diy_view/style1/img/bg_img.png",
@@ -62,18 +62,11 @@
             "selectedTemplate": "imageNavigation",
             "padding": 0,
             "backgroundColor": "#ffffff",
-            "paddingLeftRight": 10,
             "paddingTopBottom": 10,
             "textColor": "#666666",
             "defaultTextColor": "#666666",
             "scrollSetting": "fixed",
-            "imageScale": 100,
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            "imageScale": 100
           },
           {
             "backgroundColor": "#ffffff",
@@ -88,7 +81,6 @@
             "imageScale": "40",
             "padding": 0,
             "paddingTopBottom": 10,
-            "paddingLeftRight": 0,
             "list": [
               {
                 "imageUrl": "public/diy_view/style1/img/all.png",
@@ -192,13 +184,7 @@
                   "name": ""
                 }
               }
-            ],
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            ]
           },
           {
             "backgroundColor": "",
@@ -230,14 +216,7 @@
             "scrollSetting": "fixed",
             "imageScale": 100,
             "padding": 0,
-            "paddingTopBottom": 0,
-            "paddingLeftRight": 0,
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            "paddingTopBottom": 0
           },
           {
             "addon_name": "",
@@ -252,7 +231,6 @@
             "imageScale": 100,
             "padding": 5,
             "paddingTopBottom": 0,
-            "paddingLeftRight": 5,
             "list": [
               {
                 "imageUrl": "public/diy_view/style1/img/adv_02.png",
@@ -268,13 +246,7 @@
                   "name": ""
                 }
               }
-            ],
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            ]
           },
           {
             "backgroundColor": "",
@@ -315,17 +287,10 @@
             "textColor": "#666666",
             "defaultTextColor": "#666666",
             "paddingTopBottom": 10,
-            "paddingLeftRight": 10,
             "selectedTemplate": "imageNavigation",
             "scrollSetting": "fixed",
             "imageScale": 100,
-            "padding": 4,
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            "padding": 4
           },
           {
             "backgroundColor": "",
@@ -359,17 +324,10 @@
               }
             ],
             "paddingTopBottom": 0,
-            "paddingLeftRight": 10,
             "selectedTemplate": "imageNavigation",
             "scrollSetting": "fixed",
             "imageScale": 100,
-            "padding": 5,
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            "padding": 5
           },
           {
             "backgroundColor": "",
@@ -398,7 +356,6 @@
             "type": "GRAPHIC_NAV",
             "name": "图文导航",
             "controller": "GraphicNav",
-            "paddingLeftRight": 10,
             "padding": 0,
             "list": [
               {
@@ -414,13 +371,7 @@
             "selectedTemplate": "imageNavigation",
             "scrollSetting": "fixed",
             "imageScale": 100,
-            "paddingTopBottom": 0,
-            "borderTopLeftRadius": 0,
-            "borderTopRightRadius": 0,
-            "borderBottomLeftRadius": 0,
-            "borderBottomRightRadius": 0,
-            "marginTopBottom": 0,
-            "marginLeftRight": 0
+            "paddingTopBottom": 0
           },
           {
             "sources": "default",

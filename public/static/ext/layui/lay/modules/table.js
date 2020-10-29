@@ -221,7 +221,12 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
 				n = e.layTool.find(".layui-table-tool-temp");
 			if ("default" === a.toolbar) n.html(l);
 			else if ("string" == typeof a.toolbar) {
-				var o = t(a.toolbar).html() || "";
+				var o = '<div class="tool-temp-checkbox">';
+					o += '<input type="checkbox" name="layTableCheckbox" lay-skin="primary" lay-filter="layTableAllChoose">';
+					o += '</div>';
+					o += '<div class="tool-temp-btns">';
+					o += t(a.toolbar).html() || "";
+					o += '</div>';
 				o && n.html(i(o).render(a))
 			}
 			var r = {
@@ -257,22 +262,23 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
 			if (!a.bottomToolbar) return;
 			
 			if ("string" == typeof a.bottomToolbar && t(a.bottomToolbar).html().length) {
-				var h = '<div>';
+				var h = '<div class="tool-temp-checkbox">';
 					h += '<input type="checkbox" name="layTableCheckbox" lay-skin="primary" lay-filter="layTableAllChoose">';
+					h += '</div>';
+					h += '<div class="tool-temp-btns">';
 					h += t(a.bottomToolbar).html();
-				h += '</div>';
+					h += '</div>';
 			}else{
 				h = '';
 			}
 			n.html(i(h).render(a))
-
 
 		}, j.prototype.setParentCol = function(e, t) {
 			var i = this,
 				a = i.config,
 				l = i.layHeader.find('th[data-key="' + a.index + "-" + t + '"]'),
 				n = parseInt(l.attr("colspan")) || 0;
-			console.log(i);
+			
 			if (l[0]) {
 				var o = t.split("-"),
 					r = a.cols[o[0]][o[1]];
@@ -568,13 +574,24 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
 						"checkbox" === a.type && (a[t.checkName] = i)
 					}), i
 				};
-
+			
+			var eee = this,
+				ttt = e.config,
+				iii = eee.layTool.find('input[name="layTableCheckbox"]'),
+				aaa = function(i) {
+					return ee.eachCols(function(e, a) {
+						"checkbox" === a.type && (a[t.checkName] = i)
+					}), i
+				};
 
 			i[0] && (d.checkStatus(e.key).isAll ? (i[0].checked || (i.prop("checked", !0), e.renderForm("checkbox")), a(!0)) :
 				(i[0].checked && (i.prop("checked", !1), e.renderForm("checkbox")), a(!1)))
 				
 			ii[0] && (d.checkStatus(ee.key).isAll ? (ii[0].checked || (ii.prop("checked", !0), ee.renderForm("checkbox")), aa(
 				!0)) : (ii[0].checked && (ii.prop("checked", !1), ee.renderForm("checkbox")), aa(!1)))
+				
+			iii[0] && (d.checkStatus(eee.key).isAll ? (iii[0].checked || (iii.prop("checked", !0), eee.renderForm("checkbox")), aaa(
+				!0)) : (iii[0].checked && (iii.prop("checked", !1), eee.renderForm("checkbox")), aaa(!1)))
 				
 		}, j.prototype.getCssRule = function(e, t) {
 			var i = this,
@@ -772,10 +789,10 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
 			};
 			i.elem.on("click", 'input[name="layTableCheckbox"]+', function() {
 				var e = t(this).prev(),
-					a = i.layBody.find('input[name="layTableCheckbox"]'),
+					a = i.layBody.find('input[name="layTableCheckbox"]'), // 选中的表格项
 					l = e.parents("tr").eq(0).data("index"),
 					n = e[0].checked,
-					o = "layTableAllChoose" === e.attr("lay-filter");
+					o = "layTableAllChoose" === e.attr("lay-filter");  // true:选中的是全选按钮, false:选中的是表格项
 				o ? (a.each(function(e, t) {
 					t.checked = n, i.setCheckData(e, n)
 				}), i.syncCheckAll(), i.renderForm("checkbox")) : (i.setCheckData(l, n), i.syncCheckAll()), layui.event.call(e[
