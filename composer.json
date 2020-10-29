@@ -31,7 +31,8 @@
         "intervention/image": "^2.5",
         "nesbot/carbon": "^2.27",
         "thans/thinkphp-filesystem-cloud": "^1.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "workerman/gatewayclient": "3.0.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

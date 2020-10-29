@@ -29,50 +29,53 @@ class Login extends Controller
 {
 
     protected $app_module = "shop";
-    public function __construct(){
+
+    public function __construct()
+    {
         parent::__construct();
         $this->assign("shop_module", SHOP_MODULE);
     }
+
     /**
      * 登录首页
      * @return mixed
      */
     public function login()
     {
-        $site_id      = request()->siteid();
+        $site_id = request()->siteid();
         $config_model = new ConfigModel();
-        $config_info  = $config_model->getCaptchaConfig();
-        $config       = $config_info['data']['value'];
-        $this->assign('shop_login', $config['shop_login']);
+        $config_info = $config_model->getCaptchaConfig();
+        $config = $config_info[ 'data' ][ 'value' ];
+        $this->assign('shop_login', $config[ 'shop_login' ]);
         if (request()->isAjax()) {
-            $username   = input("username", '');
-            $password   = input("password", '');
+            $username = input("username", '');
+            $password = input("password", '');
             $user_model = new UserModel();
-            if ($config["shop_login"] == 1) {
+            if ($config[ "shop_login" ] == 1) {
                 $captcha_result = $this->checkCaptcha();
                 //验证码
-                if ($captcha_result["code"] != 0) {
+                if ($captcha_result[ "code" ] != 0) {
                     return $captcha_result;
                 }
             }
             $result = $user_model->login($username, $password, $this->app_module, $site_id);
             return $result;
         } else {
-            $this->assign("menu_info", ['title' => "登录"]);
+            $this->assign("menu_info", [ 'title' => "登录" ]);
             //平台配置信息
             $site_model = new Site();
-            $shop_info  = $site_model->getSiteInfo([['site_id', '=', $site_id]], 'site_name,logo,seo_keywords,seo_description, create_time');
+            $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time');
 
-            $this->assign("shop_info", $shop_info['data']);
-            $this->assign('domain', $_SERVER['SERVER_NAME']);
+            $this->assign("shop_info", $shop_info[ 'data' ]);
+            $this->assign('domain', $_SERVER[ 'SERVER_NAME' ]);
 
             //加载版权信息
             $copyright = $config_model->getCopyright();
-            $this->assign('copyright', $copyright['data']['value']);
+            $this->assign('copyright', $copyright[ 'data' ][ 'value' ]);
 
             // 验证码
             $captcha = $this->captcha();
-            $captcha = $captcha['data'];
+            $captcha = $captcha[ 'data' ];
             $this->assign('site_id', $site_id);
             $this->assign("captcha", $captcha);
             return $this->fetch("login/login");
@@ -84,7 +87,7 @@ class Login extends Controller
      */
     public function logout()
     {
-        $site_id    = request()->siteid();
+        $site_id = request()->siteid();
         $user_model = new UserModel();
         $user_model->clearLogin($this->app_module, $site_id);
         $this->redirect(url("shop/login/login"));
@@ -96,10 +99,10 @@ class Login extends Controller
     public function captcha()
     {
         $captcha_data = ThinkCaptcha::create(null, true);
-        $captcha_id   = md5(uniqid(null, true));
+        $captcha_id = md5(uniqid(null, true));
         // 验证码10分钟有效
-        Cache::set($captcha_id, $captcha_data['code'], 600);
-        return success(0, '', ['id' => $captcha_id, 'img' => $captcha_data['img']]);
+        Cache::set($captcha_id, $captcha_data[ 'code' ], 600);
+        return success(0, '', [ 'id' => $captcha_id, 'img' => $captcha_data[ 'img' ] ]);
     }
 
     /**
@@ -107,7 +110,7 @@ class Login extends Controller
      */
     public function checkCaptcha()
     {
-        $captcha    = input('captcha', '');
+        $captcha = input('captcha', '');
         $captcha_id = input('captcha_id', '');
 
         if (empty($captcha)) return error(-1, '请输入验证码');
@@ -135,17 +138,17 @@ class Login extends Controller
     public function modifyPassword()
     {
         if (request()->isAjax()) {
-            $site_id    = request()->siteid();
+            $site_id = request()->siteid();
             $user_model = new UserModel();
-            $uid        = $user_model->uid($this->app_module, $site_id);
+            $uid = $user_model->uid($this->app_module, $site_id);
 
             $old_pass = input('old_pass', '');
             $new_pass = input('new_pass', '123456');
 
             $condition = [
-                ['uid', '=', $uid],
-                ['password', '=', data_md5($old_pass)],
-                ['site_id', '=', $site_id]
+                [ 'uid', '=', $uid ],
+                [ 'password', '=', data_md5($old_pass) ],
+                [ 'site_id', '=', $site_id ]
             ];
 
             $res = $user_model->modifyAdminUserPassword($condition, $new_pass);

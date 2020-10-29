@@ -12,17 +12,24 @@
 			{foreach name="$diy_view_utils" item="vo" key="k"}
 			<h3 data-index="{$k}"><img src="__STATIC__/ext/diyview/img/component_down.png" />{$vo.type_name}</h3>
 			<ul data-index="{$k}">
+				{if $vo['type'] == 'SYSTEM' && $name != 'DIYVIEW_GOODS_CATEGORY'}
+				<li title="弹出广告" v-on:click='changeCurrentIndex(-98)'>
+					<img src="__ROOT__/public/static/ext/diyview/img/icon/pop_adv.png" data-icon="__ROOT__/public/static/ext/diyview/img/icon/pop_adv.png" data-icon-selected="__ROOT__/public/static/ext/diyview/img/icon/pop_adv_selected.png" />
+					<span>弹出广告</span>
+					<span class="js-component-add-count">1/1</span>
+				</li>
+				{/if}
 				{foreach name="$vo.list" item="li" key="li_k"}
 				<li title="{$li.title}"
 				    {if condition="$li.value"}v-on:click='addComponent({$li.value},{ name : "{$li.name}", title : "{$li.title}", max_count : {$li.max_count}, addon_name : "{$li.addon_name}", controller : "{$li.controller}", is_delete : "{$li.is_delete}" })'
 				    v-bind:class="{ 'disabled' : !checkComponentIsAdd('{$li.name}',{$li.max_count}) }"
-				    {if condition="$li.support_diy_view"}
-				    class="hot"
-				    {/if}
-				{else/}class="disabled"{/if}>
-				<img src="__ROOT__/{$li.icon}" data-icon="__ROOT__/{$li.icon}" data-icon-selected="__ROOT__/{$li.icon_selected}" />
-				<span>{$li.title}</span>
-				<span class="js-component-add-count">{{getComponentAddCount('{$li.name}')}}/{if $li.max_count}{$li.max_count}{else/}不限{/if}</span>
+					    {if condition="$li.support_diy_view"}
+					    class="hot"
+					    {/if}
+					{else/}class="disabled"{/if}>
+					<img src="__ROOT__/{$li.icon}" data-icon="__ROOT__/{$li.icon}" data-icon-selected="__ROOT__/{$li.icon_selected}" />
+					<span>{$li.title}</span>
+					<span class="js-component-add-count">{{getComponentAddCount('{$li.name}')}}/{if $li.max_count}{$li.max_count}{else/}不限{/if}</span>
 				</li>
 				{/foreach}
 			</ul>
@@ -43,7 +50,7 @@
 				<div class='diy-view-wrap layui-form' v-bind:style="{ backgroundColor : global.bgColor,backgroundImage : 'url('+changeImgUrl(global.bgUrl)+')' }">
 
 					<div class="preview-head" {empty name="$disabled_page_set"}v-on:click="changeCurrentIndex(-99)"{/empty}>
-						<span>{{global.title}}</span>
+						<span v-bind:style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">{{global.title}}</span>
 
 						<div v-bind:class="{selected : currentIndex==-99}" v-bind:data-sort="-99" style="display:none;" {empty name="$disabled_page_set"}v-show="data.length==0 || currentIndex==-99"{else/}v-show="currentIndex==-99"{/empty}>
 
@@ -52,7 +59,7 @@
 									<div class="restore-wrap">
 										<h2 class="attr-title">页面设置</h2>
 
-										<div class="layui-form-item">
+										<div class="layui-form-item" >
 											<label class="layui-form-label sm">页面名称</label>
 											<div class="layui-input-block">
 												<input type="text" v-model="global.title" placeholder="请输入页面名称" class="layui-input" maxlength="50">
@@ -62,14 +69,21 @@
 										<div class="layui-form-item">
 											<label class="layui-form-label sm">底部导航</label>
 											<div class="layui-input-block">
-												<div class="layui-unselect layui-form-switch" v-on:click="global.openBottomNav=!global.openBottomNav" v-bind:class="{ 'layui-form-onswitch' : global.openBottomNav }" lay-skin="_switch">
+												<div v-on:click="global.openBottomNav = true" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : global.openBottomNav }"><i class="layui-anim layui-icon">&#xe643;</i><div>显示</div></div>
+												<div v-on:click="global.openBottomNav = false" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : !global.openBottomNav }"><i class="layui-anim layui-icon">&#xe643;</i><div>隐藏</div></div>
+												<!-- <div class="layui-unselect layui-form-switch" v-on:click="global.openBottomNav=!global.openBottomNav" v-bind:class="{ 'layui-form-onswitch' : global.openBottomNav }" lay-skin="_switch">
 													<em></em>
 													<i></i>
-												</div>
+												</div> -->
 											</div>
+											<div class="ns-word-aux ns-diy-word-aux">此处控制当前页面底部导航菜单是否显示</div>
 										</div>
 
-										<color v-bind:data="{ field : 'bgColor', label : '背景颜色', value : '#ffffff' }"></color>
+										<template v-if="globalLazyLoad">
+											<color v-bind:data="{ field : 'bgColor', label : '背景颜色', value : global.bgColor, defaultcolor : '#ffffff', global: 1 }"></color>
+											<color v-bind:data="{ field : 'topNavColor', label : '顶部颜色', value : global.topNavColor, defaultcolor : '#ffffff', global: 1 }"></color>
+											<color v-bind:data="{ field : 'textNavColor', label : '标题颜色', value : global.textNavColor, defaultcolor : '#333333', global: 1 }"></color>
+										</template>
 
 										<div class="layui-form-item">
 											<label class="layui-form-label sm">背景图片</label>
@@ -78,28 +92,41 @@
 											</div>
 										</div>
 
-										<div class="layui-form-item">
-											<label class="layui-form-label sm">弹框广告</label>
-											<div class="layui-input-block">
-												<img-upload v-bind:data="{ data : global.popWindow, field : 'imageUrl' }"></img-upload>
-											</div>
-											<div class="ns-word-aux ns-diy-word-aux">建议上传图片大小：362px * 502px</div>
-										</div>
-
-										<div class="layui-form-item">
-											<label class="layui-form-label sm">弹框形式</label>
-											<div class="layui-input-block">
-												<div v-on:click="global.popWindow.count=-1" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (global.popWindow.count==-1) }"><i class="layui-anim layui-icon">&#xe643;</i><div>不弹出</div></div>
-												<div v-on:click="global.popWindow.count=1" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (global.popWindow.count==1) }"><i class="layui-anim layui-icon">&#xe643;</i><div>首次弹出</div></div>
-												<div v-on:click="global.popWindow.count=0" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (global.popWindow.count==0) }"><i class="layui-anim layui-icon">&#xe643;</i><div>每次弹出</div></div>
-											</div>
-										</div>
-
-										<nc-link v-bind:data="{ field : global.popWindow.link, label : '弹框链接' }"></nc-link>
-
 									</div>
 								</div>
 
+							</div>
+
+						</div>
+
+					</div>
+
+					<div v-bind:class="{selected : currentIndex==-98}" v-bind:data-sort="-98" style="display:none;" v-show="currentIndex==-98">
+
+						<div class="edit-attribute">
+							<div class="attr-wrap">
+								<div class="restore-wrap">
+									<h2 class="attr-title">弹出广告</h2>
+									<div class="layui-form-item">
+										<label class="layui-form-label sm">弹出广告</label>
+										<div class="layui-input-block">
+											<img-upload v-bind:data="{ data : global.popWindow, field : 'imageUrl' }"></img-upload>
+										</div>
+										<div class="ns-word-aux ns-diy-word-aux">建议上传图片大小：362px * 502px</div>
+									</div>
+
+									<div class="layui-form-item">
+										<label class="layui-form-label sm">弹出形式</label>
+										<div class="layui-input-block">
+											<div v-on:click="global.popWindow.count=-1" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (global.popWindow.count==-1) }"><i class="layui-anim layui-icon">&#xe643;</i><div>不弹出</div></div>
+											<div v-on:click="global.popWindow.count=1" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (global.popWindow.count==1) }"><i class="layui-anim layui-icon">&#xe643;</i><div>首次弹出</div></div>
+											<div v-on:click="global.popWindow.count=0" v-bind:class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (global.popWindow.count==0) }"><i class="layui-anim layui-icon">&#xe643;</i><div>每次弹出</div></div>
+										</div>
+									</div>
+
+									<nc-link v-bind:data="{ field : global.popWindow.link, label : '弹出链接' }"></nc-link>
+
+								</div>
 							</div>
 
 						</div>
@@ -149,11 +176,11 @@
 		<div class="qrcode-wrap">
 			<img src="{:img($qrcode_info.path.h5.img)}" alt="推广二维码">
 			<p class="tips ns-text-color">扫码访问页面 <a class="ns-text-color" href="javascript:ns.copy('h5_preview_1');">复制链接</a></p>
-			<input type="text" id="h5_preview_1" value="{$qrcode_info.path.h5.url}" readonly />
+			<input type="text" id="h5_preview_1" value="{$qrcode_info.path.h5.url}&store_id={$store_id==0?'':$store_id}" readonly />
 		</div>
 		<div class="phone-wrap">
 			<div class="iframe-wrap">
-				<iframe src="{$qrcode_info.path.h5.url}?preview=1" frameborder="0"></iframe>
+				<iframe src="{$qrcode_info.path.h5.url}&preview=1&store_id={$store_id==0?'':$store_id}" frameborder="0"></iframe>
 			</div>
 		</div>
 	</div>
@@ -176,6 +203,7 @@
 <script>
     var STATICIMG = 'STATIC_IMG';
     var post = '{$app_module}';
+	var store_id = '{$store_id}';
 
     // 自适应全屏，调整高度
     var height = $(window).height();
@@ -218,7 +246,9 @@
 
 </script>
 <script src="STATIC_JS/vue.js"></script>
-<script src="STATIC_EXT/color_picker/js/colorpicker.js"></script>
+<!--<script src="STATIC_EXT/color_picker/js/colorpicker.js"></script>-->
+<script src="STATIC_EXT/colorPicker/js/colorpicker.js"></script>
+<script src="STATIC_EXT/jquerycolorpicker/js/paigusu.min.js"></script>
 <script src="STATIC_EXT/diyview/js/async_load_css.js"></script>
 <script src="STATIC_EXT/diyview/js/ddsort.js"></script>
 <script src="STATIC_EXT/ueditor/ueditor.config.js"></script>
@@ -246,6 +276,7 @@
 	    vue.title = "{$diy_view_info.title}";
     {else/}
         var id = 0;
+		vue.globalLazyLoad = true;
     {/if}
 
     var repeat_flag = false;//防重复标识

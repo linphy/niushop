@@ -62,7 +62,7 @@ return [
             'title' => '图文导航',
             'type' => 'SYSTEM',
             'controller' => 'GraphicNav',
-            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666","backgroundColor": "","selectedTemplate": "imageNavigation","scrollSetting": "fixed","imageScale": 100,padding : 0, "paddingTopBottom": 0, "paddingLeftRight": 0, "marginTopBottom": 0, "marginLeftRight": 0, "list": [{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}}], "borderTopLeftRadius": 0, "borderTopRightRadius": 0, "borderBottomLeftRadius": 0, "borderBottomRightRadius": 0}',
+            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666","backgroundColor": "","selectedTemplate": "imageNavigation","scrollSetting": "fixed", padding : 20, "paddingTopBottom": 0, "list": [{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}}]}',
             'sort' => '10003',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -74,7 +74,7 @@ return [
             'title' => '图片广告',
             'type' => 'SYSTEM',
             'controller' => 'ImageAds',
-            'value' => '{ selectedTemplate : "carousel-posters", imageClearance : 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : {}} ] }',
+            'value' => '{ selectedTemplate : "carousel-posters", imageClearance : 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : {}, "imgWidth": 0, "imgHeight": 0} ] }',
             'sort' => '10004',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -357,7 +357,7 @@ return [
                                 ],
                                 [
                                     'name' => 'MEMBER_INFO',
-                                    'title' => '会员资料',
+                                    'title' => '个人资料',
                                     'parent' => '',
                                     'wap_url' => '/pages/member/info/info',
                                     'web_url' => '',
@@ -419,6 +419,30 @@ return [
                                     'web_url' => '',
                                     'sort' => 0
                                 ],
+                                [
+                                    'name' => 'ACCOUNT',
+                                    'title' => '账户列表',
+                                    'parent' => '',
+                                    'wap_url' => '/otherpages/member/account/account',
+                                    'web_url' => '',
+                                    'sort' => 0
+                                ],
+                                [
+                                    'name' => 'COUPON',
+                                    'title' => '优惠券',
+                                    'parent' => '',
+                                    'wap_url' => '/otherpages/member/coupon/coupon',
+                                    'web_url' => '',
+                                    'sort' => 0
+                                ],
+                                [
+                                    'name' => 'VERIFICATION_PLATFORM',
+                                    'title' => '核销台',
+                                    'parent' => '',
+                                    'wap_url' => '/otherpages/verification/index/index',
+                                    'web_url' => '',
+                                    'sort' => 0
+                                ],
                             ]
                         ],
                     ]
@@ -439,6 +463,15 @@ return [
                     'wap_url' => '/pages/index/index/index',
                     'web_url' => '',
                     'sort' => 2,
+                    'child_list' => []
+                ],
+                [
+                    'name' => 'GOODS_CATEGORY',
+                    'title' => '商品分类',
+                    'parent' => '',
+                    'wap_url' => '',
+                    'web_url' => '',
+                    'sort' => 3,
                     'child_list' => []
                 ]
             ]

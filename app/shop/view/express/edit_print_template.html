@@ -111,24 +111,24 @@
 
     <div class="layui-form-item">
         <label class="layui-form-label">效果图预览：</label>
-        <div class="layui-input-block design-sketch">
-        </div>
+        <div class="layui-input-block design-sketch"></div>
     </div>
 	
 	<div class="layui-form-item">
 	    <label class="layui-form-label img-upload-lable">打印背景图：</label>
 	    <div class="layui-input-block">
 	        <div class="upload-img-block">
-	            <div class="upload-img-box" id="printBackground">
+	            <div class="upload-img-box">
 	                {if empty($info.background_image)}
 		                <div class="ns-upload-default">
 		                    <img src="SHOP_IMG/upload_img.png" />
 		                    <p>点击上传</p>
 		                </div>
 	                {else/}
-	                 <img src="{:img($info.background_image)}" alt="">
+	                 <img layer-src src="{:img($info.background_image)}" alt="">
 	                {/if}
 	            </div>
+				<p id="printBackground" class=" {if condition="$info.background_image"} replace {else/} no-replace{/if}">替换</p>
 		        <input type="hidden" class="bg-img-pri" name="background_image" value="{$info.background_image}" />   <!-- 预览背景图 -->
 		        <i class="del {if !empty($info.background_image)}show{/if}">x</i>
 	        </div>
@@ -177,7 +177,7 @@
 				
                 var html = '<div class="span_' + class_name + '" style="top: '+ top +'px; left: '+ left +'px; font-size: '+ fontSize +'px;">'+
 								'<span>' + span_text + '</span>'+
-								'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'
+								'<i class="iconfont iconclose_light" onclick="remove(this)"></i>'+
 							'</div>';
                 $(".design-sketch").append(html);
 				

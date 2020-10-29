@@ -79,6 +79,8 @@ class Virtualgoods extends BaseShop
                 'max_buy' => input("max_buy", 0),// 限购
                 'min_buy' => input("min_buy", 0),// 起售
                 'recommend_way' => input('recommend_way', 0), // 推荐方式，1：新品，2：精品，3；推荐
+                'timer_on' => strtotime(input('timer_on',0)),//定时上架
+                'timer_off' => strtotime(input('timer_off',0)),//定时下架
             ];
 
             $virtual_goods_model = new VirtualGoodsModel();
@@ -166,6 +168,9 @@ class Virtualgoods extends BaseShop
                 'max_buy' => input("max_buy", 0),// 限购
                 'min_buy' => input("min_buy", 0),// 起售
                 'recommend_way' => input('recommend_way', 0), // 推荐方式，1：新品，2：精品，3；推荐
+                'timer_on' => strtotime(input('timer_on',0)),//定时上架
+                'timer_off' => strtotime(input('timer_off',0)),//定时下架
+                'spec_type_status' => input('spec_type_status',0),
             ];
 
             $res = $virtual_goods_model->editGoods($data);
@@ -177,7 +182,7 @@ class Virtualgoods extends BaseShop
             $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ]);
             $goods_info = $goods_info[ 'data' ];
 
-            $goods_sku_list = $virtual_goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,virtual_indate,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm", '');
+            $goods_sku_list = $virtual_goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,virtual_indate,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default", '');
             $goods_sku_list = $goods_sku_list[ 'data' ];
             $goods_info[ 'sku_list' ] = $goods_sku_list;
             $this->assign("goods_info", $goods_info);
