@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index/index",
-    "pages/index/index/index1",
     "pages/login/login/login",
     "pages/login/register/register",
     "pages/goods/cart/cart",
@@ -86,6 +85,11 @@
         "member/address/address",
         "member/address_edit/address_edit",
         "member/pay_password/pay_password",
+        "member/cancellation/cancellation",
+        "member/assets/assets",
+        "member/cancelstatus/cancelstatus",
+        "member/cancelsuccess/cancelsuccess",
+        "member/cancelrefuse/cancelrefuse",
         "login/find/find",
         "goods/coupon/coupon",
         "goods/coupon_receive/coupon_receive",
@@ -117,7 +121,11 @@
         "game/cards/cards",
         "game/turntable/turntable",
         "game/smash_eggs/smash_eggs",
-        "game/record/record"
+        "game/record/record",
+        "store_notes/note_list/note_list",
+        "store_notes/note_detail/note_detail",
+        "chat/room/room",
+        "webview/webview"
       ]
     }
   ],
@@ -136,16 +144,20 @@
     "borderStyle": "white",
     "list": [
       {
-        "pagePath": "pages/index/index/index"
+        "pagePath": "pages/index/index/index",
+        "text": "首页"
       },
       {
-        "pagePath": "pages/goods/category/category"
+        "pagePath": "pages/goods/category/category",
+        "text": "分类"
       },
       {
-        "pagePath": "pages/goods/cart/cart"
+        "pagePath": "pages/goods/cart/cart",
+        "text": "购物车"
       },
       {
-        "pagePath": "pages/member/index/index"
+        "pagePath": "pages/member/index/index",
+        "text": "个人中心"
       }
     ]
   },
@@ -156,7 +168,7 @@
   },
   "plugins": {
     "live-player-plugin": {
-      "version": "1.0.14",
+      "version": "1.2.0",
       "provider": "wx2b03c6e691cd7370"
     }
   },

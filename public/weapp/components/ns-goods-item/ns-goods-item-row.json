@@ -1,4 +1,7 @@
 {
   "component": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "ns-login": "/components/ns-login/ns-login",
+    "ns-goods-sku-new": "/components/ns-goods-sku/ns-goods-sku-new"
+  }
 }
