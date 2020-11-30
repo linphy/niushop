@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -32,6 +31,7 @@ class Discount extends BaseShop
                 'start_time'    => strtotime(input('start_time', '')),
                 'end_time'      => strtotime(input('end_time', '')),
                 'site_id'       => $this->site_id,
+                'goods_data'    => input('goods_data', '')
             ];
 
             $discount_model = new DiscountModel();
@@ -54,7 +54,9 @@ class Discount extends BaseShop
                 'start_time'    => strtotime(input('start_time', '')),
                 'end_time'      => strtotime(input('end_time', '')),
                 'discount_id'   => input('discount_id', 0),
+                'goods_id'   => input('goods_id', 0),
                 'site_id'       => $this->site_id,
+                'sku_list'      => input('sku_list', ''),
             ];
 
             return $discount_model->editDiscount($data);
@@ -63,7 +65,7 @@ class Discount extends BaseShop
             $discount_id = input('discount_id', 0);
             $this->assign('discount_id', $discount_id);
 
-            $discount_info = $discount_model->getDiscountInfo($discount_id, $this->site_id);
+            $discount_info = $discount_model->getDiscountDetail($discount_id, $this->site_id);
             $this->assign('discount_info', $discount_info['data']);
 
             return $this->fetch("discount/edit");
@@ -112,20 +114,26 @@ class Discount extends BaseShop
         if (request()->isAjax()) {
             $page          = input('page', 1);
             $page_size     = input('page_size', PAGE_LIST_ROWS);
-            $discount_name = input('discount_name', '');
+            $goods_name    = input('goods_name', '');
             $status        = input('status', '');
 
             $condition = [];
             if ($status !== "") {
-                $condition[] = ['status', '=', $status];
+                $condition[] = ['d.status', '=', $status];
             }
-            $condition[] = ['site_id', '=', $this->site_id];
-            $condition[] = ['discount_name', 'like', '%' . $discount_name . '%'];
-            $order       = 'create_time desc';
-            $field       = 'discount_id, discount_name, start_time, end_time, status, create_time';
+            $condition[] = ['d.site_id', '=', $this->site_id];
+            $condition[] = ['g.goods_name', 'like', '%' . $goods_name . '%'];
+            $order       = 'd.create_time desc';
+            $field       = 'd.*,g.goods_name,g.goods_image';
 
             $discount_status_arr = $discount_model->getDiscountStatus();
-            $res                 = $discount_model->getDiscountPageList($condition, $page, $page_size, $order, $field);
+
+            $alias = 'd';
+            $join = [
+                ['goods g', 'd.goods_id = g.goods_id', 'inner']
+            ];
+
+            $res                 = $discount_model->getDiscountPageList($condition, $page, $page_size, $order, $field, $alias, $join);
             foreach ($res['data']['list'] as $key => $val) {
                 $res['data']['list'][$key]['status_name'] = $discount_status_arr[$val['status']];
             }
@@ -164,78 +172,21 @@ class Discount extends BaseShop
         }
     }
 
-    /**
-     * 限时折扣商品管理
-     */
-    public function manage()
-    {
-        $discount_model = new DiscountModel();
-        if (request()->isAjax()) {
-            //限时折扣商品列表
-            $page        = input('page', 1);
-            $page_size   = input('page_size', PAGE_LIST_ROWS);
-            $discount_id = input('discount_id', 0);
 
-            $condition = [['pdg.discount_id', '=', $discount_id]];
-            $res       = $discount_model->getDiscountGoodsPageList($condition, $page, $page_size);
-            foreach ($res['data']['list'] as $key => $val) {
-                if ($val['price'] != 0) {
-                    $discount_rate = floor($val['discount_price'] / $val['price'] * 100);
-                } else {
-                    $discount_rate = 100;
-                }
-                $res['data']['list'][$key]['discount_rate'] = $discount_rate;
-            }
-            return $res;
-        } else {
-            $discount_id = input('discount_id', 0);
-            $this->assign('discount_id', $discount_id);
-
-            //活动详情
-            $discount_info = $discount_model->getDiscountInfo($discount_id, $this->site_id);
-            $this->assign('discount_info', $discount_info['data']);
-
-            return $this->fetch("discount/manage");
-        }
-    }
 
     /**
-     * 添加商品
+     * 获取商品列表
+     * @return array
      */
-    public function addGoods()
+    public function getSkuList()
     {
-        if (request()->isAjax()) {
-            $sku_ids        = input('sku_ids', '');
-            $discount_id    = input('discount_id', 0);
+        if(request()->isAjax()){
             $discount_model = new DiscountModel();
-            return $discount_model->addDiscountGoods($discount_id, $this->site_id, $sku_ids);
-        }
-    }
 
-    /**
-     * 修改商品（价格）
-     */
-    public function updateGoods()
-    {
-        if (request()->isAjax()) {
-            $discount_id    = input('discount_id', 0);
-            $sku_id         = input('sku_id', '');
-            $discount_price = input('discount_price', 0.00);
-            $discount_model = new DiscountModel();
-            return $discount_model->updateDiscountGoods($discount_id, $sku_id, $this->site_id, $discount_price);
-        }
-    }
+            $discount_id = input('discount_id', '');
 
-    /**
-     * 删除商品
-     */
-    public function deleteGoods()
-    {
-        if (request()->isAjax()) {
-            $discount_id    = input('discount_id', 0);
-            $sku_id         = input('sku_id', '');
-            $discount_model = new DiscountModel();
-            return $discount_model->deleteDiscountGoods($discount_id, $sku_id, $this->site_id);
+            $goods_list = $discount_model->getDiscountGoodsList($discount_id);
+            return $goods_list;
         }
     }
 }

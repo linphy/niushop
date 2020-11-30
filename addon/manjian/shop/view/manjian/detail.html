@@ -2,6 +2,11 @@
 {block name="resources"}
 <style>
 	.ns-discount { display: flex; justify-content: space-between; height: 34px; line-height: 34px; padding: 5px 15px; background-color: #F6FBFD; border: 1px dashed #BCE8F1; }
+	.layui-table-body{max-height: 480px !important;}
+	.goods-title{display: flex;align-items: center;}
+	.goods-title .goods-img{display: flex;align-items: center;justify-content: center;width: 55px;height: 55px;margin-right: 5px;}
+	.goods-title .goods-img img{max-height: 100%;max-width: 100%;}
+	.goods-title .goods-name{flex: 1;line-height: 1.6;}
 </style>
 {/block}
 {block name="main"}
@@ -127,12 +132,26 @@
 		
 		table = new Table({
 			elem: '#selected_sku_list',
+			page: false,
+			limit: Number.MAX_VALUE,
 			cols: [
 				[{
 					field: 'goods_name',
 					title: '商品名称',
 					unresize: 'false',
-					width: '60%'
+					width: '60%',
+					templet: function(data) {
+						var html = '';
+						html += `
+							<div class="goods-title">
+								<div class="goods-img">
+									<img src="${data.goods_image ? ns.img(data.goods_image.split(",")[0],'small') : ''}" alt="">
+								</div>
+								<p class="ns-multi-line-hiding goods-name">${data.goods_name}</p>
+							</div>
+						`;
+						return html;
+					}
 				}, {
 					field: 'price',
 					title: '商品价格(元)', 

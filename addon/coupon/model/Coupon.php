@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -49,16 +48,16 @@ class Coupon extends BaseModel
                 return $this->error('', '来迟了该优惠券已被领取完了');
             }
 
-            if ($coupon_type_info['max_fetch'] != 0) {
+            if ($coupon_type_info['max_fetch'] != 0 && $get_type == 2) {
                 //限制领取
                 $member_receive_num = model('promotion_coupon')->getCount([
                     'coupon_type_id' => $coupon_type_id,
-                    'member_id'      => $member_id
+                    'member_id'      => $member_id,
+                    'get_type' => 2
                 ]);
                 if ($member_receive_num >= $coupon_type_info['max_fetch'] && $is_limit == 1) {
                     return $this->error('', '该优惠券领取已达到上限');
                 }
-
             }
 
             //只有正在进行中的优惠券可以添加或者发送领取)
@@ -186,7 +185,7 @@ class Coupon extends BaseModel
     public function getMemberCouponPageList($condition, $page = 1, $page_size = PAGE_LIST_ROWS)
     {
         $field = 'npc.coupon_name,npc.type,npc.use_order_id,npc.coupon_id,npc.coupon_type_id,npc.site_id,npc.coupon_code,npc.member_id,npc.discount_limit,
-		npc.at_least,npc.money,npc.discount,npc.state,npc.get_type,npc.fetch_time,npc.use_time,npc.end_time,mem.username,on.order_no';
+		npc.at_least,npc.money,npc.discount,npc.state,npc.get_type,npc.fetch_time,npc.use_time,npc.end_time,mem.nickname,on.order_no';
         $alias = 'npc';
         $join  = [
             [
@@ -233,7 +232,9 @@ class Coupon extends BaseModel
      * @param $condition
      * @param int $page
      * @param int $page_size
-     * @return \multitype
+     * @param string $order
+     * @param string $field
+     * @return array
      */
     public function getCouponTypePageList($condition, $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'coupon_type_id desc', $field = '*')
     {

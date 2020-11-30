@@ -185,7 +185,7 @@ class Coupon extends BaseShop
             }
             if(count($parent,COUNT_NORMAL)==1){
                 $coupon_model = new CouponModel();
-                $res          = $coupon_model->receiveCoupon($parent, $site_id, $member_id, $get_type);
+                $res          = $coupon_model->receiveCoupon($parent[0], $site_id, $member_id, $get_type);
             }else{
                 $membercoupon_model = new MemberCouponModel();
                 $res          = $membercoupon_model->sendCoupon($parent, $site_id, $member_id, $get_type);
@@ -215,6 +215,7 @@ class Coupon extends BaseShop
             $coupon_name = input('coupon_name', '');
 
             $condition[] = ['site_id', '=', $this->site_id];
+            $condition[] = ['status', '=', 1];
             $condition[] = ['coupon_name', 'like', '%' . $coupon_name . '%'];
             $order       = 'create_time desc';
             $field       = '*';
@@ -272,9 +273,13 @@ class Coupon extends BaseShop
             $page           = input('page', 1);
             $page_size      = input('page_size', PAGE_LIST_ROWS);
             $coupon_type_id = input('coupon_type_id', 0);
+            $state = input('state','');
             $condition      = [];
             $condition[]    = ['npc.coupon_type_id', '=', $coupon_type_id];
             $condition[]    = ['npc.site_id', '=', $this->site_id];
+            if($state !== ''){
+                $condition[] = ['npc.state', '=', $state];
+            }
             $coupon_model   = new CouponModel();
             $res            = $coupon_model->getMemberCouponPageList($condition, $page, $page_size);
             return $res;

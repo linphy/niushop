@@ -4,13 +4,17 @@
 	#goods thead th{ background-color: #e6e6e6;}
 	/* 优惠商品 */
 	.goods-empty { width: 100%; display: flex; justify-content: center; align-items: center; }
+	.goods-title{display: flex;align-items: center;}
+	.goods-title .goods-img{display: flex;align-items: center;justify-content: center;width: 55px;height: 55px;margin-right: 5px;}
+	.goods-title .goods-img img{max-height: 100%;max-width: 100%;}
+	.goods-title .goods-name{flex: 1;line-height: 1.6;}
 </style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>每个活动可添加2到6个商品</li>
 			<li>凡选择指定优惠的商品，在这个商品的详细页将出现发布的优惠套装</li>
 			<li>特殊商品不能参加该活动</li>
@@ -186,12 +190,21 @@
 			for (var i = 0; i < res.length; i++) {
 				for (var k = 0; k < res[i].selected_sku_list.length; k++) {
 					var item = res[i].selected_sku_list[k];
-					html += "<tr data-sku_id=" + item.sku_id + ">";
-					html += "<td>" + item.sku_name + "</td>";
-					html += "<td class='price-one'>" + item.price + "</td>";
-					html += "<td>" + item.stock + "</td>";
-					html += "<td class='operation'> <div class='ns-table-btn '><a href='javascript:;' class='layui-btn' onclick='deleteGoods(this)'>删除商品</a></div></td>";
-					html += "</tr>";
+					html += `<tr data-sku_id="${item.sku_id}">`;
+					html += `
+						<td>
+							<div class="goods-title">
+								<div class="goods-img">
+									<img layer-src src="${item.sku_image ? ns.img(item.sku_image) : ''}" alt="">
+								</div>
+								<p class="ns-multi-line-hiding goods-name">${item.sku_name}</p>
+							</div>
+						</td>
+					`;
+					html += `<td class='price-one'>${item.price }</td>`;
+					html += `<td>${item.stock}</td>`;
+					html += `<td class='operation'> <div class='ns-table-btn '><a href='javascript:;' class='layui-btn' onclick='deleteGoods(this)'>删除商品</a></div></td>`;
+					html += `</tr>`;
 					
 					price += Number(item.price);
 					selectGoodsSkuId.push(item.sku_id);
@@ -200,8 +213,8 @@
 
 
 			$("#goods tbody").html(html);
-			$(".original-price").text(price);
-			$(".combined-price").val(price);
+			$(".original-price").text(price.toFixed(2));
+			$(".combined-price").val(price.toFixed(2));
 			$(".save-prices").text(0);
 			
 		}, selectGoodsSkuId, {mode: "sku", max_num: 6, min_num: 2});
@@ -230,9 +243,9 @@
 			var price_one = Number($(this).text());
 			price_count += price_one;
 		});
-		$(".original-price").text(price_count);
+		$(".original-price").text(price_count.toFixed(2));
 		$(".save-prices").text(0);
-		$(".combined-price").val(price_count);
+		$(".combined-price").val(price_count.toFixed(2));
 
 		if (price_count == 0) {
 			var html = '<tr>' +

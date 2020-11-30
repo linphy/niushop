@@ -10,16 +10,19 @@
 	.manjian-rule .wrap .layui-form-checkbox[lay-skin=primary] {margin-top: 0}
 	.manjian-rule .wrap .discount-cont {padding-left: 28px;min-height: 36px}
 	.manjian-rule .discount-item .ns-word-aux {margin-left: 0}
-	.layui-form-item .layui-input-inline.end-time{
-		float: none;
-	}
+	.layui-form-item .layui-input-inline.end-time{float: none;}
+	.layui-table-body{max-height: 480px !important;}
+	.goods-title{display: flex;align-items: center;}
+	.goods-title .goods-img{display: flex;align-items: center;justify-content: center;width: 55px;height: 55px;margin-right: 5px;}
+	.goods-title .goods-img img{max-height: 100%;max-width: 100%;}
+	.goods-title .goods-name{flex: 1;line-height: 1.6;}
 </style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>满减活动包括店铺所有商品，活动时间不能和已有活动重叠</li>
 			<li>每添加一个规则都需点击确定规则设置按钮，生成一条规则，提交之后才可成功添加</li>
 			<li>点击确定规则设置按钮生成的规则都有一个删除按钮，如不需要该条规则点击删除按钮即可删除</li>
@@ -39,27 +42,23 @@
 	</div>
 
 	<div class="layui-form-item">
-		<label class="layui-form-label"><span class="required">*</span>开始时间：</label>
-		<div class="layui-input-inline ns-len-mid">
-			<input type="text" {if condition="$manjian_info.status == 1"}disabled {/if} value="{:date('Y-m-d H:i:s', $manjian_info.start_time)}" class="layui-input" name="start_time" lay-verify="required" id="start_time" autocomplete="off" readonly>
-			<i class="ns-calendar"></i>
+		<label class="layui-form-label"><span class="required">*</span>活动时间：</label>
+		<div class="layui-inline">
+			<div class="layui-input-inline ns-len-mid">
+				<input type="text" {if condition="$manjian_info.status == 1"}disabled {/if} value="{:date('Y-m-d H:i:s', $manjian_info.start_time)}" class="layui-input" name="start_time" lay-verify="required" id="start_time" autocomplete="off" readonly>
+				<i class="ns-calendar"></i>
+			</div>
+			<span class="layui-form-mid">-</span>
+			<div class="layui-input-inline ns-len-mid end-time">
+				<input type="text" {if condition="$manjian_info.status == 1"}disabled {/if} value="{:date('Y-m-d H:i:s', $manjian_info.end_time)}" class="layui-input" name="end_time" lay-verify="required|times" id="end_time" autocomplete="off" readonly>
+				<i class="ns-calendar"></i>
+			</div>
 		</div>
-	</div>
-
-	<div class="layui-form-item">
-		<label class="layui-form-label"><span class="required">*</span>结束时间：</label>
-		<div class="layui-input-inline ns-len-mid end-time">
-			<input type="text" {if condition="$manjian_info.status == 1"}disabled {/if} value="{:date('Y-m-d H:i:s', $manjian_info.end_time)}" class="layui-input" name="end_time" lay-verify="required|times" id="end_time" autocomplete="off" readonly>
-			<i class="ns-calendar"></i>
-		</div>
-		
+		{if condition="$manjian_info.status == 1"}
 		<div class="ns-word-aux">
-			{if condition="$manjian_info.status == 1"}
 			<p>活动进行中时间不可更改</p>
-			{else/}
-			<p>结束时间不能小于开始时间，也不能小于当前时间</p>
-			{/if}
 		</div>
+		{/if}
 	</div>
 
 	<div class="layui-form-item">

@@ -21,7 +21,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>标识“<span class="required">*</span>”的选项为必填项，其余为选填项</li>
 			<li>有效期类型可选固定时间和自领取之日起
 				<p>1、固定时间：选择结束日期，所有领取的优惠券有效期都截止在结束日期当天</p>
@@ -108,14 +108,23 @@
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
 				<div class="upload-img-box">
-					<div class="ns-upload-default">
-						<img src="SHOP_IMG/upload_img.png" />
-						<p>点击上传</p>
+					<div class="ns-upload-default" id="couponImg">
+						<div class="upload">
+							<img src="SHOP_IMG/upload_img.png" />
+							<p>点击上传</p>
+						</div>
 					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete" ></i>
+						</div>
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="image" />
 				</div>
-				<input type="hidden" name="image" />
-				<p id="couponImg" class="no-replace">替换</p>
-				<i class="del">x</i>
+				<!-- <p id="couponImg" class="no-replace">替换</p>
+				<i class="del">x</i> -->
 			</div>
 		</div>
 		<div class="ns-word-aux">

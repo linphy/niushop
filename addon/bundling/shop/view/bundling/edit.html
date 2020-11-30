@@ -4,13 +4,17 @@
 	#goods thead th{ background-color: #e6e6e6;}
 	/* 优惠商品 */
 	.goods-empty { width: 100%; display: flex; justify-content: center; align-items: center; }
+	.goods-title{display: flex;align-items: center;}
+	.goods-title .goods-img{display: flex;align-items: center;justify-content: center;width: 55px;height: 55px;margin-right: 5px;}
+	.goods-title .goods-img img{max-height: 100%;max-width: 100%;}
+	.goods-title .goods-name{flex: 1;line-height: 1.6;}
 </style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>每个活动可添加2到6个商品</li>
 			<li>凡选择指定优惠的商品，在这个商品的详细页将出现发布的优惠套装</li>
 			<li>特殊商品不能参加该活动</li>
@@ -51,7 +55,18 @@
 					{if condition="$info.bundling_goods"}
 						{foreach name=$info.bundling_goods as $k => $v}
 							<tr data-sku_id="{$v.sku_id}">
-								<td>{$v.sku_name}</td>
+								<td>
+									<div class="goods-title">
+										<div class="goods-img">
+											{if condition="$v.sku_image"}
+											<img layer-src src="{:img($v.sku_image)}" alt="">
+											{else/}
+											<img layer-src src="" alt="">
+											{/if}
+										</div>
+										<p class="ns-multi-line-hiding goods-name">{$v.sku_name}</p>
+									</div>
+								</td>
 								<td class="price-one">{$v.price}</td>
 								<td>{$v.promotion_price}</td>
 								<td class="operation">
@@ -120,7 +135,7 @@
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 		<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
 	</div>
-	
+
 	<input type="hidden" name="bl_id" value="{$bl_id}" />
 </div>
 {/block}
@@ -128,18 +143,18 @@
 <script>
 	var priceAll = $(".original-price").text();
 	var priceBl = $("input[name=bl_price]").val();
-	$(".save-prices").text(Number(priceAll) - Number(priceBl));  //优惠价
+	$(".save-prices").text((parseFloat(priceAll) - parseFloat(priceBl)).toFixed(2));  //优惠价
 	var table, form, selectGoodsSkuId = [];
 
 	$("#goods").find("tbody tr").each(function (i) {
 		var id = $(this).attr("data-sku_id");
 		selectGoodsSkuId.push(id);
 	});
-		
+
 	layui.use(['form'], function() {
 		form = layui.form;
 		var	repeat_flag = false; //防重复标识
-			
+
 		table = new Table({
 			elem: '#goods_list',
 			url: ns.url("bundling://shop/bundling/lists"),
@@ -180,7 +195,7 @@
 				}]
 			]
 		});
-		
+
 		/**
 		 * 监听提交
 		 */
@@ -190,29 +205,29 @@
 				layer.msg("商品数不可小于2个！");
 				return;
 			}
-			
+
 			if (data.field.status == undefined) {
 				data.field.status = 0;
 			}
-			
+
 			var selectGoodsSkuId = []; //商品id
 			$("#goods").find("tbody tr").each(function (i) {
 				var id = $(this).attr("data-sku_id");
 				selectGoodsSkuId.push(id);
 			});
 			data.field.sku_ids = selectGoodsSkuId.toString();
-			
+
 			if(repeat_flag) return;
 			repeat_flag = true;
-			
+
 			$.ajax({
 				url: ns.url("bundling://shop/bundling/edit"),
 				data: data.field,
 				dataType: 'JSON',
-				type: 'POST', 
+				type: 'POST',
 				success: function(res) {
 					repeat_flag = false;
-					
+
 					if (res.code == 0) {
 						layer.confirm('编辑成功', {
 							title:'操作提示',
@@ -230,7 +245,7 @@
 				}
 			});
 		});
-		
+
 		form.verify({
 			flo: function (value) {
 				if (value == '') {
@@ -241,9 +256,9 @@
 					return '价格不能小于0，可保留两位小数！'
 				}
 			}
-		}); 
+		});
 	});
-	
+
 	/**
 	 * 添加商品
 	 */
@@ -255,26 +270,35 @@
 			for (var i = 0; i < res.length; i++) {
 				for (var k = 0; k < res[i].selected_sku_list.length; k++) {
 					var item = res[i].selected_sku_list[k];
-					html += "<tr data-sku_id=" + item.sku_id + ">";
-					html += "<td>" + item.sku_name + "</td>";
-					html += "<td class='price-one'>" + item.price + "</td>";
-					html += "<td>" + item.stock + "</td>";
-					html += "<td class='operation'> <div class='ns-table-btn '><a href='javascript:;' class='layui-btn' onclick='deleteGoods(this)'>删除商品</a></div></td>";
-					html += "</tr>";
-					
+					html += `<tr data-sku_id="${item.sku_id}">`;
+					html += `
+						<td>
+							<div class="goods-title">
+								<div class="goods-img">
+									<img layer-src src="${item.sku_image ? ns.img(item.sku_image) : ''}" alt="">
+								</div>
+								<p class="ns-multi-line-hiding goods-name">${item.sku_name}</p>
+							</div>
+						</td>
+					`;
+					html += `<td class='price-one'>${item.price }</td>`;
+					html += `<td>${item.stock}</td>`;
+					html += `<td class='operation'> <div class='ns-table-btn '><a href='javascript:;' class='layui-btn' onclick='deleteGoods(this)'>删除商品</a></div></td>`;
+					html += `</tr>`;
+
 					price += Number(item.price);
 					selectGoodsSkuId.push(item.sku_id);
 				}
 			}
-			
+
 			$("#goods tbody").html(html);
-			$(".original-price").text(price);
-			$(".combined-price").val(price);
+			$(".original-price").text(price.toFixed(2));
+			$(".combined-price").val(price.toFixed(2));
 			$(".save-prices").text(0);
-			
+
 		}, selectGoodsSkuId, {mode: "sku", max_num: 6, min_num: 2});
 	}
-	
+
 	/**
 	 * 删除商品
 	 */
@@ -288,7 +312,7 @@
 			}
 		}
 	}
-	
+
 	/**
 	 * 计算总价
 	 */
@@ -298,38 +322,38 @@
 			var price_one = Number($(this).text());
 			price_count += price_one;
 		});
-		
-		$(".original-price").text(price_count);
+
+		$(".original-price").text(price_count.toFixed(2));
 		$(".save-prices").text(0);
-		$(".combined-price").val(price_count);
-		
+		$(".combined-price").val(price_count.toFixed(2));
+
 		if (price_count == 0) {
 			var html = '<tr>'+
 							'<td colspan="4">'+
 								'<div class="goods-empty">优惠套装还未选择添加商品</div>'+
 							'</td>'+
 						'</tr>';
-			
+
 			$("#goods tbody").html(html);
 		}
 	}
-	
+
 	/**
 	 * 计算组合套餐价格、原价、节省价
 	 */
 	$(".combined-price").blur(function () {
 		var combinedPrice = $(this).val(),
 			originalPrice = Number($(".original-price").text());
-	
+
 		if(combinedPrice > originalPrice){
 			$(this).val(originalPrice);
 			layer.msg("组合套餐价格不能高于原价");
 			$(".save-prices").text(0);
 		}else{
-			$(".save-prices").text(originalPrice - combinedPrice);
+			$(".save-prices").text((originalPrice - combinedPrice).toFixed(2));
 		}
 	});
-	
+
 	function back() {
 		location.href = ns.url("bundling://shop/bundling/lists");
 	}

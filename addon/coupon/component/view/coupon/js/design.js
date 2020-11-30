@@ -3,38 +3,45 @@
  */
 var couponListHtml = '<div class="goods-list-edit layui-form">';
 
-		couponListHtml += '<div class="layui-form-item">';
+		couponListHtml += '<div class="layui-form-item ns-icon-radio">';
 			couponListHtml += '<label class="layui-form-label sm">优惠券来源</label>';
 			couponListHtml += '<div class="layui-input-block">';
-				couponListHtml += '<template v-for="(item,index) in goodsSources" v-bind:k="index">';
-					couponListHtml += '<div v-on:click="data.sources=item.value" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (data.sources==item.value) }"><i class="layui-anim layui-icon">&#xe643;</i><div>{{item.text}}</div></div>';
+				couponListHtml += '<template v-for="(item, index) in goodsSources" v-bind:k="index">';
+					couponListHtml += '<span :class="[item.value == data.sources ? \'\' : \'layui-hide\']">{{item.text}}</span>';
 				couponListHtml += '</template>';
+				couponListHtml += '<ul class="ns-icon">';
+					couponListHtml += '<li v-for="(item, index) in goodsSources" v-bind:k="index" :class="[item.value == data.sources ? \'ns-text-color ns-border-color ns-bg-color-diaphaneity\' : \'\']" @click="data.sources=item.value">';
+						couponListHtml += '<img v-if="item.value == data.sources" :src="item.selectedSrc" />'
+						couponListHtml += '<img v-else :src="item.src" />'
+					couponListHtml += '</li>';
+				couponListHtml += '</ul>';
 			couponListHtml += '</div>';
 		couponListHtml += '</div>';
 		
 		couponListHtml += '<div class="layui-form-item" v-if="data.sources == \'diy\'">';
 			couponListHtml += '<label class="layui-form-label sm">手动选择</label>';
 			couponListHtml += '<div class="layui-input-block">';
-				couponListHtml += '<a href="#" class="ns-input-text ns-text-color" v-on:click="addCoupon">选择</a>';
+				couponListHtml += '<a href="#" class="ns-input-text selected-style" v-on:click="addCoupon">选择 <i class="layui-icon layui-icon-right"></i></a>';
 			couponListHtml += '</div>';
 		couponListHtml += '</div>';
 		
-		couponListHtml += '<div class="layui-form-item" v-show="data.sources == \'default\'">';
+		/* couponListHtml += '<div class="layui-form-item" v-show="data.sources == \'default\'">';
 			couponListHtml += '<label class="layui-form-label sm">优惠券数量</label>';
 			couponListHtml += '<div class="layui-input-block">';
-				// couponListHtml += '<input class="layui-input goods-account" v-model="data.couponCount" />';
 				couponListHtml += '<input type="number" class="layui-input goods-account" v-on:keyup="shopNum" v-model="data.couponCount"/>';
 			couponListHtml += '</div>';
-		couponListHtml += '</div>';
+		couponListHtml += '</div>'; */
 		
-		couponListHtml += '<div class="layui-form-item" v-show="data.sources == \'default\'">';
+		couponListHtml += '<slide v-if="data.sources == \'default\'" v-bind:data="{ field : \'couponCount\', label : \'优惠券数量\', max: 9, min: 1 }"></slide>';
+		
+		/* couponListHtml += '<div class="layui-form-item" v-show="data.sources == \'default\'">';
 			couponListHtml += '<label class="layui-form-label sm"></label>';
 			couponListHtml += '<div class="layui-input-block">';
 				couponListHtml += '<template v-for="(item,index) in couponCount" v-bind:k="index">';
-					couponListHtml += '<div v-on:click="data.couponCount=item" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (data.couponCount==item) }"><i class="layui-anim layui-icon">&#xe643;</i><div>{{item}}</div></div>';
+					couponListHtml += '<div v-on:click="data.couponCount=item" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (data.couponCount==item) }"><i class="layui-anim layui-icon">&#xe63f;</i><div>{{item}}</div></div>';
 				couponListHtml += '</template>';
 			couponListHtml += '</div>';
-		couponListHtml += '</div>';
+		couponListHtml += '</div>'; */
 
 		// couponListHtml += '<p class="hint">商品数量选择 0 时，前台会自动上拉加载更多</p>';
 		
@@ -48,11 +55,15 @@ Vue.component("coupon-list", {
 			goodsSources: [
 				{
 					text: "默认",
-					value: "default"
+					value: "default",
+					src: couponResourcePath + "/coupon/img/goods.png",
+					selectedSrc: couponResourcePath + "/coupon/img/goods_1.png"
 				},
 				{
 					text : "手动选择",
-					value : "diy"
+					value : "diy",
+					src: couponResourcePath + "/coupon/img/manual.png",
+					selectedSrc: couponResourcePath + "/coupon/img/manual_1.png"
 				}
 			],
 			isLoad: false,
@@ -77,18 +88,18 @@ Vue.component("coupon-list", {
 		},
 		verify : function () {
 			var res = { code : true, message : "" };
-			if(this.$parent.data.couponCount.length===0) {
+			/* if(this.data.couponCount.length===0) {
 				res.code = false;
 				res.message = "请输入优惠券数量";
 			}
-			if (this.$parent.data.goodsCount < 0) {
+			if (this.data.goodsCount < 0) {
 				res.code = false;
 				res.message = "优惠券数量不能小于0";
 			}
-			if(this.$parent.data.couponCount > 50){
+			if(this.data.couponCount > 50){
 				res.code = false;
 				res.message = "优惠券数量最多为50";
-			}
+			} */
 			return res;
 		},
 		addCoupon: function(){
@@ -147,7 +158,9 @@ Vue.component("coupon-list", {
 var couponHtml = '<div class="layui-form-item">';
 		couponHtml += '<label class="layui-form-label sm">选择风格</label>';
 		couponHtml += '<div class="layui-input-block">';
-			couponHtml += '<div class="ns-input-text ns-text-color selected-style" v-on:click="selectCouponStyle">选择</div>';
+			// couponHtml += '<span>{{data.styleName}}</span>';
+			couponHtml += '<div v-if="data.styleName" class="ns-input-text ns-text-color selected-style" v-on:click="selectCouponStyle">{{data.styleName}} <i class="layui-icon layui-icon-right"></i></div>';
+			couponHtml += '<div v-else class="ns-input-text selected-style" v-on:click="selectCouponStyle">选择 <i class="layui-icon layui-icon-right"></i></div>';
 		couponHtml += '</div>';
 	couponHtml += '</div>';
 
@@ -169,13 +182,16 @@ Vue.component("coupon-style", {
 				content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .coupon-list-style").html(),
 				success: function(layero, index) {
 					$(".layui-layer-content input[name='style']").val(self.data.style);
+					$(".layui-layer-content input[name='style_name']").val(self.data.styleName);
 					$("body").on("click", ".layui-layer-content .style-list-con-coupon .style-li-coupon", function () {
 						$(this).addClass("selected ns-border-color").siblings().removeClass("selected ns-border-color");
 						$(".layui-layer-content input[name='style']").val($(this).index() + 1);
+						$(".layui-layer-content input[name='style_name']").val($(this).find("span").text());
 					});
 				},
 				yes: function (index, layero) {
 					self.data.style = $(".layui-layer-content input[name='style']").val();
+					self.data.styleName = $(".layui-layer-content input[name='style_name']").val();
 					layer.closeAll()
 				}
 			});

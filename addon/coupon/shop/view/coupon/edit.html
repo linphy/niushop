@@ -21,7 +21,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>满减活动包括店铺所有商品，活动时间不能和已有活动重叠</li>
 			<li>每添加一个规则都需点击确定规则设置按钮，生成一条规则，提交之后才可成功添加</li>
 			<li>点击确定规则设置按钮生成的规则都有一个删除按钮，如不需要该条规则点击删除按钮即可删除</li>
@@ -91,7 +91,7 @@
 		<label class="layui-form-label"><span class="required">*</span>发放数量：</label>
 		<div class="layui-input-block">
 			<div class="layui-input-inline">
-				<input type="number" name="count" min=0 value="{$coupon_type_info.count}" lay-verify="required|number|int" autocomplete="off" class="layui-input ns-len-short">
+				<input type="number" name="count" min=0 value="{$coupon_type_info.count}" lay-verify="required|number|int|count" autocomplete="off" class="layui-input ns-len-short">
 			</div>
 			<span class="layui-form-mid">张</span>
 		</div>
@@ -130,19 +130,30 @@
 		<label class="layui-form-label img-upload-lable">优惠券图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
-				<div class="upload-img-box">
+				<div class="upload-img-box {notempty name="$coupon_type_info['image']"}hover{/notempty}">
+					<div class="ns-upload-default "  id="couponImg">
 					{if condition="$coupon_type_info.image"}
-						<img layer-src src="{:img($coupon_type_info.image)}" />
-					{else/}
-						<div class="ns-upload-default">
-							<img src="SHOP_IMG/upload_img.png" />
-							<p>点击上传</p>
+						<div id="preview_couponImg" class="preview_img">
+							<img layer-src src="{:img($coupon_type_info.image)}" class="img_prev"/>
 						</div>
+					{else/}
+					<div class="upload">
+						<img src="SHOP_IMG/upload_img.png" />
+						<p>点击上传</p>
+					</div>
 					{/if}
+					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" class="layui-input" name="image" value="{$coupon_type_info.image}" />
 				</div>
-				<input type="hidden" class="layui-input" name="image" value="{$coupon_type_info.image}" />
-				<p id="couponImg" class=" {if condition="$coupon_type_info.image"} replace {else/} no-replace{/if}">替换</p>
-				<i class="del {if condition="$coupon_type_info.image"}show{/if}">x</i>
+			<!-- 	<p id="couponImg" class=" {if condition="$coupon_type_info.image"} replace {else/} no-replace{/if}">替换</p>
+				<i class="del {if condition="$coupon_type_info.image"}show{/if}">x</i> -->
 			</div>
 		</div>
 		<div class="ns-word-aux">
@@ -350,7 +361,12 @@
                     if (val.length > 2) {
                         return str + "最多可保留两位小数";
                     }
-                }
+                },
+                count: function(value){
+                    if (parseInt(value) < parseInt('{$coupon_type_info.count}')) {
+                        return '发放数量不能小于原发放数量!';
+                    }
+				}
             });
 
 			var upload = new Upload({

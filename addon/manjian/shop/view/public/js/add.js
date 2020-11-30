@@ -37,7 +37,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 	 * */
 	function reRender(){
 		$("#end_time").remove();
-		$(".end_time").html('<input type="text" id="end_time" name="end_time" placeholder="请输入结束时间" lay-verify="required|time" class="layui-input ns-len-mid" autocomplete="off">');
+		$(".end-time").html('<input type="text" id="end_time" name="end_time" placeholder="请输入结束时间" lay-verify="required|time" class="layui-input ns-len-mid" autocomplete="off"><i class="ns-calendar"></i>');
 		laydate.render({
 			elem: '#end_time',
 			type: 'datetime',
@@ -264,12 +264,26 @@ function renderTable(goods_list) {
 	//展示已知数据
 	table = new Table({
 		elem: '#selected_goods_list',
+		page: false,
+		limit: Number.MAX_VALUE,
 		cols: [
 			[{
 				field: 'goods_name',
 				title: '商品名称',
 				unresize: 'false',
-				width: '50%'
+				width: '50%',
+				templet: function(data) {
+					var html = '';
+					html += `
+							<div class="goods-title">
+								<div class="goods-img">
+									<img src="${data.goods_image ? ns.img(data.goods_image.split(",")[0],'small') : ''}" alt="">
+								</div>
+								<p class="ns-multi-line-hiding goods-name">${data.goods_name}</p>
+							</div>
+						`;
+					return html;
+				}
 			}, {
 				field: 'price',
 				title: '商品价格(元)', 

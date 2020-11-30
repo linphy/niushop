@@ -17,6 +17,10 @@ return [
         'OrderPromotionType' => [
             'addon\bundling\event\OrderPromotionType',
         ],
+        // 删除商品（需判断套餐是否存在该商品，存在活动关闭）
+        'DeleteGoods' => [
+            'addon\bundling\event\DeleteGoods',
+        ],
     ],
 
     'subscribe' => [

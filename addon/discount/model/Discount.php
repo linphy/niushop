@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -43,32 +42,88 @@ class Discount extends BaseModel
      */
     public function addDiscount($data)
     {
-        $data['create_time'] = time();
-        $cron                = new Cron();
-        //查询是否存在活动
-        $promotion_info = Db::name('promotion_discount')->where([
-            ['start_time|end_time', 'between', [$data['start_time'], $data['end_time']]],
-            ['site_id', '=', $data['site_id']],
-            ['status', 'in', '0,1']
-        ])->find();
-        if (!empty($promotion_info)) {
-            return $this->error('', "当前时间段内存在限时折扣活动");
-        }
-        $promotion_info = Db::name('promotion_discount')->where([['start_time', '<', $data['start_time']], ['end_time', '>', $data['end_time']], ['site_id', '=', $data['site_id']], ['status', 'in', '0,1']])->find();
-        if (!empty($promotion_info)) {
-            return $this->error('', "当前时间段内存在限时折扣活动");
-        }
-        if ($data['start_time'] <= time()) {
-            $data['status'] = 1;//直接启动
-            $discount_id    = model('promotion_discount')->add($data);
-            $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
-        } else {
-            $discount_id = model('promotion_discount')->add($data);
-            $cron->addCron(1, 0, "限时折扣开启", "OpenDiscount", $data['start_time'], $discount_id);
-            $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
+
+        $cron = new Cron();
+        $discount_goods = $data['goods_data'];
+
+        foreach ($discount_goods as $k => $v){
+            //查询是否存在活动
+            $promotion_info = Db::name('promotion_discount')->where([
+                ['start_time|end_time', 'between', [$data['start_time'], $data['end_time']]],
+                ['site_id', '=', $data['site_id']],
+                ['status', 'in', '0,1'],
+                ['goods_id', '=', $v['goods_id']]
+            ])->find();
+            if (!empty($promotion_info)) {
+                return $this->error('', "有商品在当前时间段内存在限时折扣活动");
+            }
+
+            $promotion_info = Db::name('promotion_discount')->where([['start_time', '<', $data['start_time']], ['end_time', '>', $data['end_time']], ['site_id', '=', $data['site_id']], ['status', 'in', '0,1'],['goods_id', '=', $v['goods_id']]])->find();
+            if (!empty($promotion_info)) {
+                return $this->error('', "有商品在当前时间段内存在限时折扣活动");
+            }
         }
 
-        return $this->success($discount_id);
+        model('promotion_discount')->startTrans();
+        try {
+
+            foreach ($discount_goods as $key => $item){
+                $discount_data = [
+                    'site_id'       => $data['site_id'],
+                    'discount_name' => $data['discount_name'],
+                    'remark'        => $data['remark'],
+                    'start_time'    => $data['start_time'],
+                    'end_time'      => $data['end_time'],
+                    'create_time'   => time(),
+                    'goods_id'      => $item['goods_id'],
+                    'discount_price'=> $item['sku_list'][0]['discount_price']
+                ];
+
+                if ($discount_data['start_time'] <= time()) {
+                    $discount_data['status'] = 1;//直接启动
+                    $discount_id    = model('promotion_discount')->add($discount_data);
+                    $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $discount_data['end_time'], $discount_id);
+                } else {
+                    $discount_data['status'] = 0;
+                    $discount_id = model('promotion_discount')->add($discount_data);
+                    $cron->addCron(1, 0, "限时折扣开启", "OpenDiscount", $data['start_time'], $discount_id);
+                    $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
+                }
+
+                $goods     = new Goods();
+                foreach ($item['sku_list'] as $k => $v) {
+                    $sku_info             = model("goods_sku")->getInfo([['sku_id', '=', $v['sku_id']],['is_delete', '=', 0], ['goods_state','=',1]], 'goods_id, sku_id, sku_name,price,sku_image');
+                    $discount_goods_count = model('promotion_discount_goods')->getCount(['discount_id' => $discount_id, 'goods_id' => $sku_info['goods_id'], 'sku_id' => $sku_info['sku_id']]);
+                    if (!empty($sku_info) && $discount_goods_count == 0) {
+                        $discount_goods_data = [
+                            'discount_id'    => $discount_id,
+                            'start_time'     => $discount_data['start_time'],
+                            'end_time'       => $discount_data['end_time'],
+                            'goods_id'       => $sku_info['goods_id'],
+                            'sku_id'         => $sku_info['sku_id'],
+                            'price'          => $sku_info['price'],
+                            'discount_price' => $v['discount_price'],
+                            'sku_name'       => $sku_info['sku_name'],
+                            'sku_image'      => $sku_info['sku_image']
+                        ];
+                        model('promotion_discount_goods')->add($discount_goods_data);
+                        if ($discount_data['status'] == 1) {
+                            model("goods_sku")->update(['promotion_type' => 1, 'discount_price' => $v['discount_price'], 'start_time' => $discount_data['start_time'], 'end_time' => $discount_data['end_time']], [['sku_id', '=', $v['sku_id']]]);
+                        }
+
+                        // 更新营销商品活动标识
+                        $goods->modifyPromotionAddon($sku_info['goods_id'], ['discount' => $discount_id]);
+                    }
+                }
+            }
+
+            model('promotion_discount')->commit();
+            return $this->success();
+
+        } catch (\Exception $e) {
+            model('promotion_discount')->rollback();
+            return $this->error('', $e->getMessage());
+        }
     }
 
     /**
@@ -78,59 +133,100 @@ class Discount extends BaseModel
     public function editDiscount($data)
     {
         $discount_id   = $data['discount_id'];
-        $discount_info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id], ['site_id', '=', $data['site_id']]], 'start_time,status');
-        if ($discount_info['status'] != 1) {
-            //针对未开始的活动进行设置
-            $cron = new Cron();
-            //查询是否存在活动
-            $promotion_info = Db::name('promotion_discount')->where([
-                ['start_time|end_time', 'between', [$data['start_time'], $data['end_time']]],
-                ['site_id', '=', $data['site_id']],
-                ['discount_id', '<>', $discount_id],
-                ['status', 'in', '0,1'],
-            ])->find();
-            if (!empty($promotion_info)) {
-                return $this->error('', "当前时间段内存在限时折扣活动");
-            }
-            $promotion_info = Db::name('promotion_discount')->where([
-                ['start_time', '<', $data['start_time']],
-                ['end_time', '>', $data['end_time']],
-                ['site_id', '=', $data['site_id']],
-                ['discount_id', '<>', $discount_id],
-                ['status', 'in', '0,1'],
-            ])->find();
-            if (!empty($promotion_info)) {
-                return $this->error('', "当前时间段内存在限时折扣活动");
-            }
-            if ($data['start_time'] <= time()) {
-                $data['status'] = 1;//直接启动
-                $res            = model('promotion_discount')->update($data, [['discount_id', '=', $discount_id], ['site_id', '=', $data['site_id']]]);
-                if ($res) {
-                    model('promotion_discount_goods')->update(['start_time' => $data['start_time'], 'end_time' => $data['end_time']], [['discount_id', '=', $discount_id]]);
-                    //活动商品启动
-                    $this->cronOpenDiscount($discount_id);
-                    $cron->deleteCron([['event', '=', 'OpenDiscount'], ['relate_id', '=', $discount_id]]);
-                    $cron->deleteCron([['event', '=', 'CloseDiscount'], ['relate_id', '=', $discount_id]]);
-                    $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
-                }
 
-            } else {
-                $res = model('promotion_discount')->update($data, [['discount_id', '=', $discount_id], ['site_id', '=', $data['site_id']]]);
-                if ($res) {
-                    model('promotion_discount_goods')->update(['start_time' => $data['start_time'], 'end_time' => $data['end_time']], [['discount_id', '=', $discount_id]]);
-                    $cron->deleteCron([['event', '=', 'OpenDiscount'], ['relate_id', '=', $discount_id]]);
-                    $cron->deleteCron([['event', '=', 'CloseDiscount'], ['relate_id', '=', $discount_id]]);
-                    $cron->addCron(1, 0, "限时折扣开启", "OpenDiscount", $data['start_time'], $discount_id);
-                    $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
-                }
-
-            }
-        } else {
-            //针对已经启动的限时折扣只能修改文字信息不能修改时间
-            if (isset($data['start_time'])) unset($data['start_time']);
-            if (isset($data['end_time'])) unset($data['end_time']);
-            $res = model('promotion_discount')->update($data, [['discount_id', '=', $discount_id], ['site_id', '=', $data['site_id']]]);
+        //针对未开始的活动进行设置
+        $cron = new Cron();
+        //查询是否存在活动
+        $promotion_info = Db::name('promotion_discount')->where([
+            ['start_time|end_time', 'between', [$data['start_time'], $data['end_time']]],
+            ['site_id', '=', $data['site_id']],
+            ['discount_id', '<>', $discount_id],
+            ['status', 'in', '0,1'],
+            ['goods_id', '=', $data['goods_id']]
+        ])->find();
+        if (!empty($promotion_info)) {
+            return $this->error('', "当前时间段内存在限时折扣活动");
         }
+        $promotion_info = Db::name('promotion_discount')->where([
+            ['start_time', '<', $data['start_time']],
+            ['end_time', '>', $data['end_time']],
+            ['site_id', '=', $data['site_id']],
+            ['discount_id', '<>', $discount_id],
+            ['status', 'in', '0,1'],
+            ['goods_id', '=', $data['goods_id']]
+        ])->find();
+        if (!empty($promotion_info)) {
+            return $this->error('', "当前时间段内存在限时折扣活动");
+        }
+        if ($data['start_time'] <= time()) {
+            $sku_list = $data['sku_list'];
+            unset($data['sku_list']);
+            if($sku_list)  $data['discount_price'] = $sku_list[0]['discount_price'];
+            $data['status'] = 1;//直接启动
+            $res            = model('promotion_discount')->update($data, [['discount_id', '=', $discount_id], ['site_id', '=', $data['site_id']]]);
+
+            model('promotion_discount_goods')->delete([['discount_id', '=', $discount_id]]);
+
+            foreach ($sku_list as $k => $v) {
+                $sku_info             = model("goods_sku")->getInfo([['sku_id', '=', $v['sku_id']]], 'goods_id, sku_id, sku_name,price,sku_image');
+                if (!empty($sku_info)) {
+                    $discount_goods_data = [
+                        'discount_id'    => $discount_id,
+                        'start_time'     => $data['start_time'],
+                        'end_time'       => $data['end_time'],
+                        'goods_id'       => $sku_info['goods_id'],
+                        'sku_id'         => $sku_info['sku_id'],
+                        'price'          => $sku_info['price'],
+                        'discount_price' => $v['discount_price'],
+                        'sku_name'       => $sku_info['sku_name'],
+                        'sku_image'      => $sku_info['sku_image']
+                    ];
+                    model('promotion_discount_goods')->add($discount_goods_data);
+                }
+            }
+
+
+            //活动商品启动
+            $this->cronCloseDiscount($discount_id);
+            $this->cronOpenDiscount($discount_id);
+            $cron->deleteCron([['event', '=', 'OpenDiscount'], ['relate_id', '=', $discount_id]]);
+            $cron->deleteCron([['event', '=', 'CloseDiscount'], ['relate_id', '=', $discount_id]]);
+            $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
+
+        } else {
+            $sku_list = $data['sku_list'];
+            unset($data['sku_list']);
+            unset($data['discount_id']);
+            if($sku_list)  $data['discount_price'] = $sku_list[0]['discount_price'];
+
+            $res = model('promotion_discount')->update($data, [['discount_id', '=', $discount_id], ['site_id', '=', $data['site_id']]]);
+            model('promotion_discount_goods')->delete([['discount_id', '=', $discount_id]]);
+            foreach ($sku_list as $k => $v) {
+                $sku_info             = model("goods_sku")->getInfo([['sku_id', '=', $v['sku_id']]], 'goods_id, sku_id, sku_name,price,sku_image');
+                if (!empty($sku_info)) {
+                    $discount_goods_data = [
+                        'discount_id'    => $discount_id,
+                        'start_time'     => $data['start_time'],
+                        'end_time'       => $data['end_time'],
+                        'goods_id'       => $sku_info['goods_id'],
+                        'sku_id'         => $sku_info['sku_id'],
+                        'price'          => $sku_info['price'],
+                        'discount_price' => $v['discount_price'],
+                        'sku_name'       => $sku_info['sku_name'],
+                        'sku_image'      => $sku_info['sku_image']
+                    ];
+
+                    model('promotion_discount_goods')->add($discount_goods_data);
+                }
+            }
+
+            $cron->deleteCron([['event', '=', 'OpenDiscount'], ['relate_id', '=', $discount_id]]);
+            $cron->deleteCron([['event', '=', 'CloseDiscount'], ['relate_id', '=', $discount_id]]);
+            $cron->addCron(1, 0, "限时折扣开启", "OpenDiscount", $data['start_time'], $discount_id);
+            $cron->addCron(1, 0, "限时折扣关闭", "CloseDiscount", $data['end_time'], $discount_id);
+
+        }
+
         return $this->success($res);
     }
 
@@ -179,7 +275,7 @@ class Discount extends BaseModel
     {
         $discount_info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id]], 'start_time,status');
         if (!empty($discount_info)) {
-            if ($discount_info['start_time'] <= time() && $discount_info['status'] == 0) {
+            if ($discount_info['start_time'] <= time() && $discount_info['status'] != 1) {
                 $res = model('promotion_discount')->update(['status' => 1], [['discount_id', '=', $discount_id]]);
 
                 // 删除商品营销活动标识
@@ -257,67 +353,6 @@ class Discount extends BaseModel
         }
     }
 
-    /**
-     * 添加限时折扣商品
-     * @param unknown $discount_id
-     * @param unknown $sku_ids sku_id组（添加时不设置价格）
-     */
-    public function addDiscountGoods($discount_id, $site_id, $sku_ids)
-    {
-        $discount_info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id], ['site_id', '=', $site_id]], 'start_time,end_time,status');
-        if (!empty($discount_info)) {
-            $sku_array = explode(',', $sku_ids);
-            $goods     = new Goods();
-            foreach ($sku_array as $k => $v) {
-                $sku_info             = model("goods_sku")->getInfo([['sku_id', '=', $v]], 'goods_id, sku_id, sku_name,price,sku_image');
-                $discount_goods_count = model('promotion_discount_goods')->getCount(['discount_id' => $discount_id, 'goods_id' => $sku_info['goods_id'], 'sku_id' => $sku_info['sku_id']]);
-
-                if (!empty($sku_info) && $discount_goods_count == 0) {
-                    $discount_goods_data = [
-                        'discount_id'    => $discount_id,
-                        'start_time'     => $discount_info['start_time'],
-                        'end_time'       => $discount_info['end_time'],
-                        'goods_id'       => $sku_info['goods_id'],
-                        'sku_id'         => $sku_info['sku_id'],
-                        'price'          => $sku_info['price'],
-                        'discount_price' => $sku_info['price'],
-                        'sku_name'       => $sku_info['sku_name'],
-                        'sku_image'      => $sku_info['sku_image']
-                    ];
-                    model('promotion_discount_goods')->add($discount_goods_data);
-                    if ($discount_info['status'] == 1) {
-                        model("goods_sku")->update(['promotion_type' => 1, 'start_time' => $discount_info['start_time'], 'end_time' => $discount_info['end_time']], [['sku_id', '=', $v]]);
-                    }
-
-                    // 更新营销商品活动标识
-                    $goods->modifyPromotionAddon($sku_info['goods_id'], ['discount' => $discount_id]);
-                }
-
-            }
-        }
-        return $this->success();
-    }
-
-    /**
-     * 修改折扣商品价
-     */
-    public function updateDiscountGoods($discount_id, $sku_id, $site_id, $discount_price)
-    {
-        $discount_info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id], ['site_id', '=', $site_id]], 'start_time,end_time,status');
-        if (!empty($discount_info)) {
-
-            $discount_goods_data = [
-                'discount_price' => $discount_price,
-            ];
-            $res                 = model('promotion_discount_goods')->update($discount_goods_data, [['discount_id', '=', $discount_id], ['sku_id', '=', $sku_id]]);
-            if ($res && $discount_info['status'] == 1) {
-                model("goods_sku")->update(['discount_price' => $discount_price], [['sku_id', '=', $sku_id]]);
-            }
-            return $this->success($res);
-        } else {
-            return $this->error('', '活动不存在');
-        }
-    }
 
     /**
      * 删除限时折扣商品
@@ -353,6 +388,34 @@ class Discount extends BaseModel
     public function getDiscountInfo($discount_id, $site_id)
     {
         $info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id], ['site_id', '=', $site_id]], 'discount_id, site_id, discount_name, status, remark, start_time, end_time, create_time, modify_time');
+
+        return $this->success($info);
+    }
+
+    /**
+     * 获取限时折扣详情
+     */
+    public function getDiscountDetail($discount_id, $site_id)
+    {
+        $info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id], ['site_id', '=', $site_id]], 'goods_id,discount_id, site_id, discount_name, status, remark, start_time, end_time, create_time, modify_time');
+
+        $goods_sku = model("goods_sku")->getList([['goods_id', '=', $info['goods_id']]], 'stock, goods_id, sku_id, sku_name,price,sku_image');
+
+        $discount_goods = model("promotion_discount_goods")->getList([['goods_id', '=', $info['goods_id']], ['discount_id','=',$info['discount_id']]], '*');
+        foreach ($goods_sku as $k => $v){
+            $goods_sku[$k]['is_select'] = 0;
+            $goods_sku[$k]['discount_price'] = $v['price'];
+            foreach ($discount_goods as $key => $val){
+                if($val['sku_id'] == $v['sku_id']){
+                    $goods_sku[$k]['is_select'] = 1;
+                    $goods_sku[$k]['discount_price'] = $val['discount_price'];
+                }
+            }
+        }
+
+        $info['goods_sku'] = $goods_sku;
+        $info['discount_goods'] = $discount_goods;
+
         return $this->success($info);
     }
 
@@ -446,9 +509,9 @@ class Discount extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getDiscountPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    public function getDiscountPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = '', $join = [])
     {
-        $list = model('promotion_discount')->pageList($condition, $field, $order, $page, $page_size);
+        $list = model('promotion_discount')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
     }
 
@@ -471,5 +534,36 @@ class Discount extends BaseModel
             $goods->modifyPromotionAddon($v['goods_id'], ['discount' => $discount_id], true);
         }
 
+    }
+
+    /**
+     * 获取商品列表
+     * @param $discount_id
+     * @param $site_id
+     * @return array
+     */
+    public function getDiscountGoodsList($discount_id)
+    {
+        $field = 'pdg.*,sku.sku_name,sku.price,sku.sku_image,sku.stock';
+        $alias = 'pdg';
+        $join = [
+            [
+                'goods g',
+                'g.goods_id = pdg.goods_id',
+                'inner'
+            ],
+            [
+                'goods_sku sku',
+                'sku.sku_id = pdg.sku_id',
+                'inner'
+            ]
+        ];
+        $condition = [
+            ['pdg.discount_id','=',$discount_id],
+            ['g.is_delete','=',0],['g.goods_state','=',1]
+        ];
+
+        $list = model('promotion_discount_goods')->getList($condition, $field, '',$alias, $join);
+        return $this->success($list);
     }
 }

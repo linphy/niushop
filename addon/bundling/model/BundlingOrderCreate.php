@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -65,7 +64,7 @@ class BundlingOrderCreate extends OrderCreate
             return $this->error(['error_code' => $this->error], $this->error_msg);
         }
         $pay          = new Pay();
-        $out_trade_no = $pay->createOutTradeNo();
+        $out_trade_no = $pay->createOutTradeNo($data['member_id']);
         model("order")->startTrans();
         //循环生成多个订单
         try {
@@ -78,7 +77,7 @@ class BundlingOrderCreate extends OrderCreate
 
             //订单主表
             $order_type = $this->orderType($shop_goods_list, $calculate_data);
-            $order_no   = $this->createOrderNo($shop_goods_list['site_id']);
+            $order_no   = $this->createOrderNo($shop_goods_list['site_id'], $data['member_id']);
             $data_order = [
                 'order_no'              => $order_no,
                 'site_id'               => $shop_goods_list['site_id'],
