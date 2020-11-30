@@ -5,8 +5,7 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  * @author : niuteam
  */
@@ -29,25 +28,26 @@ class Tripartite extends BaseApi
     /**
      * 绑定手机号
      */
-    public function mobile(){
-        $key         = $this->params['key'];
+    public function mobile()
+    {
+        $key = $this->params[ 'key' ];
         $verify_data = Cache::get($key);
-        if ($verify_data["mobile"] == $this->params["mobile"] && $verify_data["code"] == $this->params["code"]) {
+        if ($verify_data[ "mobile" ] == $this->params[ "mobile" ] && $verify_data[ "code" ] == $this->params[ "code" ]) {
             $register = new RegisterModel();
-            $exist    = $register->mobileExist($this->params["mobile"], $this->site_id);
+            $exist = $register->mobileExist($this->params[ "mobile" ], $this->site_id);
 
             if ($exist) {
                 $login = new LoginModel();
-                $res   = $login->mobileLogin($this->params);
-                if ($res['code'] >= 0) {
-                    $token = $this->createToken($res['data']['member_id']);
-                    $res   = $this->success(['token' => $token]);
+                $res = $login->mobileLogin($this->params);
+                if ($res[ 'code' ] >= 0) {
+                    $token = $this->createToken($res[ 'data' ][ 'member_id' ]);
+                    $res = $this->success([ 'token' => $token ]);
                 }
             } else {
                 $res = $register->mobileRegister($this->params);
-                if ($res['code'] >= 0) {
-                    $token = $this->createToken($res['data']);
-                    $res   = $this->success(['token' => $token]);
+                if ($res[ 'code' ] >= 0) {
+                    $token = $this->createToken($res[ 'data' ]);
+                    $res = $this->success([ 'token' => $token, 'is_register' => 1 ]);
                 }
             }
         } else {
@@ -65,23 +65,23 @@ class Tripartite extends BaseApi
         // 校验验证码
         $config_model = new WebConfig();
         $info = $config_model->getCaptchaConfig();
-        if($info['data']['value']['shop_reception_login'] == 1){
-            $captcha   = new Captcha();
+        if ($info[ 'data' ][ 'value' ][ 'shop_reception_login' ] == 1) {
+            $captcha = new Captcha();
             $check_res = $captcha->checkCaptcha(false);
-            if ($check_res['code'] < 0) return $this->response($check_res);
+            if ($check_res[ 'code' ] < 0) return $this->response($check_res);
         }
-        $mobile = $this->params['mobile'];
+        $mobile = $this->params[ 'mobile' ];
 
         if (empty($mobile)) return $this->response($this->error([], "手机号不可为空!"));
 
-        $code          = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);// 生成4位随机数，左侧补0
+        $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);// 生成4位随机数，左侧补0
         $message_model = new Message();
-        $res           = $message_model->sendMessage(["mobile" => $mobile, "site_id" => $this->site_id, "support_type" => ['sms'], "code" => $code, "keywords" => "MEMBER_BIND"]);
-        if ($res["code"] >= 0) {
+        $res = $message_model->sendMessage([ "mobile" => $mobile, "site_id" => $this->site_id, "support_type" => [ 'sms' ], "code" => $code, "keywords" => "MEMBER_BIND" ]);
+        if ($res[ "code" ] >= 0) {
             //将验证码存入缓存
             $key = 'bind_mobile_code_' . md5(uniqid(null, true));
-            Cache::tag("bind_mobile_code_")->set($key, ['mobile' => $mobile, 'code' => $code], 600);
-            return $this->response($this->success(["key" => $key]));
+            Cache::tag("bind_mobile_code_")->set($key, [ 'mobile' => $mobile, 'code' => $code ], 600);
+            return $this->response($this->success([ "key" => $key ]));
         } else {
             return $this->response($res);
         }
@@ -93,25 +93,25 @@ class Tripartite extends BaseApi
     public function mobileAuth()
     {
         $decrypt_data = event('DecryptData', $this->params, true);
-        if ($decrypt_data['code'] < 0) return $this->response($decrypt_data);
+        if ($decrypt_data[ 'code' ] < 0) return $this->response($decrypt_data);
 
-        $this->params['mobile'] = $decrypt_data['data']['purePhoneNumber'];
+        $this->params[ 'mobile' ] = $decrypt_data[ 'data' ][ 'purePhoneNumber' ];
 
         $register = new RegisterModel();
-        $exist    = $register->mobileExist($this->params["mobile"], $this->site_id);
+        $exist = $register->mobileExist($this->params[ "mobile" ], $this->site_id);
 
         if ($exist) {
             $login = new LoginModel();
-            $res   = $login->mobileLogin($this->params);
-            if ($res['code'] >= 0) {
-                $token = $this->createToken($res['data']['member_id']);
-                $res   = $this->success(['token' => $token]);
+            $res = $login->mobileLogin($this->params);
+            if ($res[ 'code' ] >= 0) {
+                $token = $this->createToken($res[ 'data' ][ 'member_id' ]);
+                $res = $this->success([ 'token' => $token ]);
             }
         } else {
             $res = $register->mobileRegister($this->params);
-            if ($res['code'] >= 0) {
-                $token = $this->createToken($res['data']);
-                $res   = $this->success(['token' => $token]);
+            if ($res[ 'code' ] >= 0) {
+                $token = $this->createToken($res[ 'data' ]);
+                $res = $this->success([ 'token' => $token, 'is_register' => 1 ]);
             }
         }
         return $this->response($res);

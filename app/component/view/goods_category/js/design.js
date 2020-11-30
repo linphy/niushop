@@ -63,43 +63,43 @@ Vue.component("goods-category", {
 			pictureList: [
 				[
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_1_1.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_1_1.png",
 						value: "1"
 					},
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_1_2.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_1_2.png",
 						value: "2"
 					},
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_1_3.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_1_3.png",
 						value: "3"
 					}
 				],
 				[
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_2_1.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_2_1.png",
 						value: "1"
 					},
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_2_2.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_2_2.png",
 						value: "2"
 					},
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_2_3.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_2_3.png",
 						value: "3"
 					}
 				],
 				[
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_3_1.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_3_1.png",
 						value: "1"
 					},
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_3_2.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_3_2.png",
 						value: "2"
 					},
 					{
-						url: RESOURCEPATH + "/goods_category/img/category_3_3.png",
+						url: goodsCategoryResourcePath + "/goods_category/img/category_3_3.png",
 						value: "3"
 					}
 				]

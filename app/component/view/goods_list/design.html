@@ -2,99 +2,131 @@
 
 	<!-- 预览 -->
 	<template slot="preview">
-		
-		<!-- 图一 -->
-		<div class="goods-list-preview" v-bind:class="'text-title-'+ nc.style" v-if="nc.style == 1" v-bind:style="{ backgroundColor : nc.backgroundColor, paddingTop: (nc.paddingUpDown + 'px'), paddingBottom: (nc.paddingUpDown + 'px'), paddingLeft: (nc.paddingLeftRight + 'px'), paddingRight: (nc.paddingLeftRight + 'px') }">
-			<div class="control-goods-list-small">
-				<ul>
-					<li>
-						<div class="control-thumbnail blue-bg">第一个商品</div>
-						<h5 class="control-goods-name" v-show="nc.isShowGoodName == 1">商品名称</h5>
-						<h6 class="control-goods-subname" v-show="nc.isShowGoodSubTitle == 1">商品副标题</h6>
-						<div class="control-goods-sale-info">
-							<h6 class="control-goods-delprice" v-show="nc.isShowMarketPrice == 1">￥0.00</h6>
-							<h6 class="control-goods-sellnum" v-bind:class="{'control-goods-sellnum-abs': nc.isShowCart != 1}" v-show="nc.isShowGoodSaleNum == 1">0人付款</h6>
+		<div class="goods-list-preview" v-bind:style="{ backgroundColor : nc.backgroundColor, margin: (nc.marginTop + 'px 15px 0 15px') }">
+			<div class="goods-list" :class="nc.style == 1 ? 'single-column' : 'double-column' ">
+				<div class="goods-item margin-bottom">
+					<div class="goods-img">
+						<img src="STATIC_EXT/diyview/img/crack_figure.png">
+						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
 						</div>
-						<div class="control-goods-price">
-							<em>￥638.24</em>
+					</div>
+					<div class="info-wrap">
+						<div class="name-wrap">
+							<div class="goods-name">商品名称</div>
 						</div>
-						<div class="cart-box" v-show="nc.isShowCart == 1">
-							<div class="cart-icon">+</div>
+						<div class="pro-info">
+							<div class="delete-price"><span class="unit">¥</span>15.99</div>
+							<div class="sale">1005人付款</div>
 						</div>
-					</li>
-					<li>
-						<div class="control-thumbnail pink-bg">第二个商品</div>
-						<h5 class="control-goods-name" v-show="nc.isShowGoodName == 1">商品名称</h5>
-						<h6 class="control-goods-subname" v-show="nc.isShowGoodSubTitle == 1">商品副标题</h6>
-						<div class="control-goods-sale-info">
-							<h6 class="control-goods-delprice" v-show="nc.isShowMarketPrice == 1">￥0.00</h6>
-							<h6 class="control-goods-sellnum" v-bind:class="{'control-goods-sellnum-abs': nc.isShowCart != 1}" v-show="nc.isShowGoodSaleNum == 1">0人付款</h6>
+						<div class="lineheight-clear">
+							<div class="discount-price">
+								<span class="unit">¥</span>
+								<span class="price">25.69</span>
+							</div>
 						</div>
-						<div class="control-goods-price">
-							<em>￥148.18</em>
+					</div>
+				</div>
+				<div class="goods-item margin-bottom">
+					<div class="goods-img">
+						<img src="STATIC_EXT/diyview/img/crack_figure.png">
+						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
 						</div>
-						<div class="cart-box" v-show="nc.isShowCart == 1">
-							<div class="cart-icon">+</div>
+					</div>
+					<div class="info-wrap">
+						<div class="name-wrap">
+							<div class="goods-name">商品名称</div>
 						</div>
-					</li>
-					<li>
-						<div class="control-thumbnail green-bg">第三个商品</div>
-						<h5 class="control-goods-name" v-show="nc.isShowGoodName == 1">商品名称</h5>
-						<h6 class="control-goods-subname" v-show="nc.isShowGoodSubTitle == 1">商品副标题</h6>
-						<div class="control-goods-sale-info">
-							<h6 class="control-goods-delprice" v-show="nc.isShowMarketPrice == 1">￥0.00</h6>
-							<h6 class="control-goods-sellnum" v-bind:class="{'control-goods-sellnum-abs': nc.isShowCart != 1}" v-show="nc.isShowGoodSaleNum == 1">0人付款</h6>
+						<div class="pro-info">
+							<div class="delete-price"><span class="unit">¥</span>15.99</div>
+							<div class="sale">1005人付款</div>
 						</div>
-						<div class="control-goods-price">
-							<em>￥633.05</em>
+						<div class="lineheight-clear">
+							<div class="discount-price">
+								<span class="unit">¥</span>
+								<span class="price">25.69</span>
+							</div>
 						</div>
-						<div class="cart-box" v-show="nc.isShowCart == 1">
-							<div class="cart-icon">+</div>
+					</div>
+				</div>
+				<div class="goods-item margin-bottom">
+					<div class="goods-img">
+						<img src="STATIC_EXT/diyview/img/crack_figure.png">
+						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
 						</div>
-					</li>
-					<li>
-						<div class="control-thumbnail orange-bg">第N个商品</div>
-						<h5 class="control-goods-name" v-show="nc.isShowGoodName == 1">商品名称</h5>
-						<h6 class="control-goods-subname" v-show="nc.isShowGoodSubTitle == 1">商品副标题</h6>
-						<div class="control-goods-sale-info">
-							<h6 class="control-goods-delprice" v-show="nc.isShowMarketPrice == 1">￥0.00</h6>
-							<h6 class="control-goods-sellnum" v-bind:class="{'control-goods-sellnum-abs': nc.isShowCart != 1}" v-show="nc.isShowGoodSaleNum == 1">0人付款</h6>
+					</div>
+					<div class="info-wrap">
+						<div class="name-wrap">
+							<div class="goods-name">商品名称</div>
 						</div>
-						<div class="control-goods-price">
-							<em>￥264.67</em>
+						<div class="pro-info">
+							<div class="delete-price"><span class="unit">¥</span>15.99</div>
+							<div class="sale">1005人付款</div>
 						</div>
-						<div class="cart-box" v-show="nc.isShowCart == 1">
-							<div class="cart-icon">+</div>
+						<div class="lineheight-clear">
+							<div class="discount-price">
+								<span class="unit">¥</span>
+								<span class="price">25.69</span>
+							</div>
 						</div>
-					</li>
-				</ul>
+					</div>
+				</div>
+				<div class="goods-item margin-bottom">
+					<div class="goods-img">
+						<img src="STATIC_EXT/diyview/img/crack_figure.png">
+						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+						</div>
+					</div>
+					<div class="info-wrap">
+						<div class="name-wrap">
+							<div class="goods-name">商品名称</div>
+						</div>
+						<div class="pro-info">
+							<div class="delete-price"><span class="unit">¥</span>15.99</div>
+							<div class="sale">1005人付款</div>
+						</div>
+						<div class="lineheight-clear">
+							<div class="discount-price">
+								<span class="unit">¥</span>
+								<span class="price">25.69</span>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
+
 	</template>
 
 	<!-- 编辑 -->
 	<template slot="edit">
-		
 		<template v-if="nc.lazyLoad">
-			<goods-list></goods-list>
 			<goods-list-style></goods-list-style>
 		</template>
 		
-		<color v-bind:data="{ field : 'backgroundColor', 'label' : '背景颜色' }"></color>
-		<slide v-bind:data="{ field : 'paddingUpDown', label : '上下边距' }"></slide>
-<!--		<slide v-bind:data="{ field : 'paddingLeftRight', label : '左右边距' }"></slide>-->
+		<template v-if="nc.lazyLoad">
+			<goods-list></goods-list>
+		</template>
+		
+		<template v-if="nc.lazyLoad">
+			<goods-tag-style></goods-tag-style>
+		</template>
 
-		<h3>购物车</h3>
-		<template v-if="nc.lazyLoad">
-			<goods-list-more-btn></goods-list-more-btn>
-			<cart-style></cart-style>
-		</template>
-		
-		<h3>显示内容</h3>
-		<template v-if="nc.lazyLoad">
-			<show-content></show-content>
-		</template>
-		
+		<div class="template-edit-title"><h3>其他设置</h3></div>
+		<color v-bind:data="{ field : 'backgroundColor', 'label' : '背景颜色' }"></color>
+		<slide v-bind:data="{ field : 'marginTop', label : '页面间距' }"></slide>
+
 		<!-- 商品列表风格弹框 -->
 		<div class="goods-list-style">
 			<div class="style-list-goods layui-form">
@@ -102,33 +134,36 @@
 					<div class="style-li-goods" v-bind:class="{'selected ns-border-color': nc.style == 1}">
 						<img src="{$resource_path}/goods_list/img/style1.png" />
 					</div>
+					<div class="style-li-goods" v-bind:class="{'selected ns-border-color': nc.style == 2}">
+						<img src="{$resource_path}/goods_list/img/style2.png" />
+					</div>
 				</div>
 				
 				<input type="hidden" name="style">
 				
 			</div>
 		</div>
-		
-		<!-- 购物车图标 -->
-		<div class="cart-list-style">
-			<div class="cart-list layui-form">
-				<div class="cart-list-con">
-					<div class="cart-li" v-bind:class="{'selected ns-border-color': nc.cartStyle == 1}">
-						<img src="{$resource_path}/goods_list/img/cart_style1.png" />
-					</div>
-				</div>
 
-				<input type="hidden" name="cart_style">
-			</div>
+		<!-- 商品分类选择弹框 -->
+		<div class="goods-category-layer">
+			{notempty name="goods_category_list"}
+				<div class="category-head">分类名称</div>
+				<div class="category-wrap">
+				{foreach name="$goods_category_list" item="vo"}
+					<div class="category-item" data-id="{$vo.category_id}">{$vo.category_name}</div>
+				{/foreach}
+				</div>
+			{/notempty}
 		</div>
 	</template>
 	
 	<!-- 资源 -->
 	<template slot="resource">
-
+		<js>
+		var goodsListResourcePath = "{$resource_path}";
+		</js>
 		<css src="{$resource_path}/goods_list/css/design.css"></css>
 		<js src="{$resource_path}/goods_list/js/design.js"></js>
-		
 	</template>
 	
 </nc-component>

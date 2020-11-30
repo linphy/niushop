@@ -5,8 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -858,10 +856,10 @@ function parse_sql($content = '', $string = false, $replace = [])
         }
         // 只返回一条语句
         if ($string) {
-            return implode($pure_sql, "");
+            return implode("", $pure_sql);
         }
         // 以数组形式返回sql语句
-        $pure_sql = implode($pure_sql, "\n");
+        $pure_sql = implode("\n", $pure_sql);
         $pure_sql = explode(";\n", $pure_sql);
     }
     return $pure_sql;
@@ -1406,12 +1404,13 @@ function delFile($path)
  * @param $base64Str
  * @return array|boo
  */
-function base64_to_blob($base64Str){
-    if($index = strpos($base64Str,'base64,',0)){
-        $blobStr = substr($base64Str,$index+7);
-        $typestr = substr($base64Str,0,$index);
-        preg_match("/^data:(.*);$/",$typestr,$arr);
-        return ['blob'=>base64_decode($blobStr),'type'=>$arr[1]];
+function base64_to_blob($base64Str)
+{
+    if ($index = strpos($base64Str, 'base64,', 0)) {
+        $blobStr = substr($base64Str, $index + 7);
+        $typestr = substr($base64Str, 0, $index);
+        preg_match("/^data:(.*);$/", $typestr, $arr);
+        return [ 'blob' => base64_decode($blobStr), 'type' => $arr[ 1 ] ];
     }
     return false;
 }
@@ -1422,12 +1421,13 @@ function base64_to_blob($base64Str){
  * @return array|boo
  */
 
-function getweeks($time = '', $format='Y-m-d'){
+function getweeks($time = '', $format = 'Y-m-d')
+{
     $time = $time != '' ? $time : time();
     //组合数据
     $date = [];
-    for ($i=1; $i<=10; $i++){
-        $date[$i] = date($format ,strtotime( '+' . $i-10 .' days', $time));
+    for ($i = 1; $i <= 10; $i++) {
+        $date[ $i ] = date($format, strtotime('+' . $i - 10 . ' days', $time));
     }
     return $date;
 }
@@ -1438,14 +1438,31 @@ function getweeks($time = '', $format='Y-m-d'){
  * @return string
  */
 
-function diff_rate($first,$second){
-    if($second!=0){
-        $result = sprintf('%.2f',(($first-$second)/$second)*100 ).'%';
-    }else if($second==0 & $first!=0 ){
+function diff_rate($first, $second)
+{
+    if ($second != 0) {
+        $result = sprintf('%.2f', ( ( $first - $second ) / $second ) * 100) . '%';
+    } else if ($second == 0 & $first != 0) {
         $result = '100%';
-    }else{
+    } else {
         $result = '0%';
     }
     return $result;
 }
 
+/**
+ * 过滤bom
+ * @param $filename
+ */
+function removeBom($contents)
+{
+    $charset[ 1 ] = substr($contents, 0, 1);
+    $charset[ 2 ] = substr($contents, 1, 1);
+    $charset[ 3 ] = substr($contents, 2, 1);
+    if (ord($charset[ 1 ]) == 239 && ord($charset[ 2 ]) == 187 && ord($charset[ 3 ]) == 191) {
+        $rest = substr($contents, 3);
+        return $rest;
+    } else {
+        return $contents;
+    }
+}

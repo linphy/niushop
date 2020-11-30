@@ -6,8 +6,7 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  * @author : niuteam
  * @date : 2015.1.17
@@ -16,6 +15,7 @@
 
 namespace app\api\controller;
 
+use app\model\order\Order as OrderModel;
 use app\model\system\Pay as PayModel;
 
 /**
@@ -28,9 +28,18 @@ class Pay extends BaseApi
      */
     public function info()
     {
-        $out_trade_no = $this->params['out_trade_no'];
-        $pay          = new PayModel();
-        $info         = $pay->getPayInfo($out_trade_no);
+        $out_trade_no = $this->params[ 'out_trade_no' ];
+        $pay = new PayModel();
+        $info = $pay->getPayInfo($out_trade_no);
+        $order_model = new OrderModel();
+        if (!empty($info[ 'data' ])) {
+            $order_info = $order_model->getOrderInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_type');
+            $order_info = $order_info[ 'data' ];
+            if (!empty($order_info)) {
+                $info[ 'data' ][ 'order_id' ] = $order_info[ 'order_id' ];
+                $info[ 'data' ][ 'order_type' ] = $order_info[ 'order_type' ];
+            }
+        }
         return $this->response($info);
     }
 
@@ -40,13 +49,13 @@ class Pay extends BaseApi
     public function pay()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
-        $pay_type     = $this->params['pay_type'];
-        $out_trade_no = $this->params['out_trade_no'];
-        $app_type     = $this->params['app_type'];
-        $return_url   = isset($this->params['return_url']) && !empty($this->params['return_url']) ? urldecode($this->params['return_url']) : null;
-        $pay          = new PayModel();
-        $info         = $pay->pay($pay_type, $out_trade_no, $app_type, $this->member_id, $return_url);
+        if ($token[ 'code' ] < 0) return $this->response($token);
+        $pay_type = $this->params[ 'pay_type' ];
+        $out_trade_no = $this->params[ 'out_trade_no' ];
+        $app_type = $this->params[ 'app_type' ];
+        $return_url = isset($this->params[ 'return_url' ]) && !empty($this->params[ 'return_url' ]) ? urldecode($this->params[ 'return_url' ]) : null;
+        $pay = new PayModel();
+        $info = $pay->pay($pay_type, $out_trade_no, $app_type, $this->member_id, $return_url);
         return $this->response($info);
     }
 
@@ -55,15 +64,15 @@ class Pay extends BaseApi
      */
     public function type()
     {
-        $pay  = new PayModel();
+        $pay = new PayModel();
         $info = $pay->getPayType($this->params);
         $temp = empty($info) ? [] : $info;
         $type = [];
-        foreach ($temp['data'] as $k => $v) {
-            array_push($type, $v["pay_type"]);
+        foreach ($temp[ 'data' ] as $k => $v) {
+            array_push($type, $v[ "pay_type" ]);
         }
         $type = implode(",", $type);
-        return $this->response(success(0, '', ['pay_type' => $type]));
+        return $this->response(success(0, '', [ 'pay_type' => $type ]));
     }
 
     /**
@@ -71,9 +80,9 @@ class Pay extends BaseApi
      */
     public function status()
     {
-        $pay          = new PayModel();
-        $out_trade_no = $this->params['out_trade_no'];
-        $res          = $pay->getPayStatus($out_trade_no);
+        $pay = new PayModel();
+        $out_trade_no = $this->params[ 'out_trade_no' ];
+        $res = $pay->getPayStatus($out_trade_no);
         return $this->response($res);
     }
 

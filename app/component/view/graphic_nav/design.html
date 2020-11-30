@@ -2,7 +2,7 @@
 
 	<!-- 预览 -->
 	<template slot="preview">
-		<div class="preview-box" v-bind:style="{ background: nc.backgroundColor, paddingTop : nc.paddingTopBottom + 'px', paddingBottom : nc.paddingTopBottom + 'px' }">
+		<div class="preview-box" v-bind:style="{ background: nc.backgroundColor, marginTop : nc.marginTop + 'px', borderRadius: nc.navRadius == 'fillet' ? '5px' : '0px' }">
 			<template v-if="nc.lazyLoad">
 				<graphic-nav></graphic-nav>
 			</template>
@@ -22,7 +22,7 @@
 	<template slot="resource">
 		
 		<js>
-			var RESOURCEPATH = "{$resource_path}";
+			var graphicNavResourcePath = "{$resource_path}";
 			var STATICEXT_IMG ="STATIC_EXT/diyview/img";
 		</js>
 		<css src="{$resource_path}/graphic_nav/css/design.css"></css>
