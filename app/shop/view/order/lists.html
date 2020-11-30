@@ -58,7 +58,7 @@
                         <select name="order_status" lay-filter="order_status">
                             <option value="">全部</option>
                             {foreach $order_status_list as $k => $status_val}
-                            <option value="{$status_val.status}">{$status_val.name}</option>
+                            <option value="{$k}">{$status_val}</option>
                             {/foreach}
                         </select>
                     </div>
@@ -134,7 +134,11 @@
 
 <!-- 外卖发货 -->
 {include file="localorder/local_order_delivery_action" /}
+
+
+
 <script src="SHOP_JS/order_list.js"></script>
+<script src="SHOP_JS/lodop_funcs.js"></script>
 <script>
     var laypage,element, form, hash_url;
     var is_refresh = false;
@@ -348,7 +352,6 @@
             if(is_tab != 2 || is_refresh == false){
                 $("select[name=order_status] option").not(':first').remove();
             }
-
             var status_item = order_type_status_json[order_type]["status"];
             $.each(status_item,function(index, itemobj){
                 if(is_tab != 1 || is_refresh == false) {

@@ -32,3 +32,4 @@
 .platform-buyer{background-color:#5FB878}
 .layui-timeline-item:last-child:before{display:none !important;}
 .layui-timeline-axis:hover{color:#FFF;}
+.desc {color: #999;font-size: 12px}

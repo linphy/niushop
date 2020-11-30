@@ -2,7 +2,7 @@
   "templateInfo": {
     "name": "时尚简约商城",
     "desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
-    "mark": "shopping_template"
+    "mark": "shop_template"
   },
   "templateValue": {
     "DIYVIEW_INDEX": {
@@ -10,501 +10,483 @@
       "data": {
         "global": {
           "title": "时尚简约商城",
-          "openBottomNav": false,
-          "bgColor": "",
-          "bgUrl": "public/diy_view/style2/img/bg_img.png",
+          "bgColor": "#f8f8f8",
+          "topNavColor": "#ffffff",
+          "topNavbg": false,
+          "textNavColor": "#303133",
+          "topNavImg": "",
+          "moreLink": {},
+          "openBottomNav": true,
+          "navStyle": 1,
+          "textImgStyleLink": "1",
+          "textImgPosLink": "center",
           "popWindow": {
-            "imageUrl": "public/diy_view/style2/img/adv_supernatant.png",
-            "count": 1,
-            "link": {
-              "name": ""
-            }
-          }
+            "imageUrl": "",
+            "count": -1,
+            "link": {},
+            "imgWidth": "",
+            "imgHeight": ""
+          },
+          "bgUrl": "",
+          "mpCollect": false
         },
         "value": [
           {
+            "style": "3",
+            "styleName": "风格三",
+            "backgroundColor": "",
+            "textColor": "#303133",
+            "defaultTextColor": "#333333",
             "addon_name": "store",
             "type": "STORE_CHANGE",
             "name": "门店展示",
             "controller": "StoreShow",
-            "style": 1,
-            "backgroundColor": "",
-            "textColor": "#333333",
-            "defaultTextColor": "#333333"
+            "is_delete": "0"
           },
           {
-            "addon_name": "",
-            "type": "SEARCH",
-            "name": "商品搜索",
-            "controller": "Search",
-            "title": "搜索",
-            "textColor": "#3b3a3b",
-            "backgroundColor": "",
-            "bgColor": "#ffffff",
-            "defaultTextColor": "",
-            "borderType": 2,
-            "textAlign": "left"
-          },
-          {
+            "selectedTemplate": "carousel-posters",
+            "imageClearance": 0,
+            "imageRadius": "fillet",
+            "carouselChangeStyle": "circle",
+            "marginTop": 0,
+            "padding": 0,
+            "height": 0,
             "list": [
               {
-                "title": "",
-                "link": {
-                  "name": ""
-                },
                 "imageUrl": "public/diy_view/style2/img/posters_1.png",
-				"imgWidth": 750,
-				"imgHeight": 350
+                "title": "",
+                "link": {},
+                "imgWidth": "750",
+                "imgHeight": "350"
               },
               {
                 "imageUrl": "public/diy_view/style2/img/posters_2.png",
                 "title": "",
-                "link": {
-                  "name": ""
-                },
-				"imgWidth": 750,
-				"imgHeight": 350
+                "link": {},
+                "imgWidth": "750",
+                "imgHeight": "350"
               }
             ],
             "addon_name": "",
             "type": "IMAGE_ADS",
             "name": "图片广告",
             "controller": "ImageAds",
-            "selectedTemplate": "carousel-posters",
-            "padding": 0,
-            "imageClearance": 0,
-            "height": 0
+            "is_delete": "0"
           },
           {
+            "textColor": "#303133",
+            "defaultTextColor": "#666666",
             "backgroundColor": "#ffffff",
-            "addon_name": "",
-            "type": "GRAPHIC_NAV",
-            "name": "图文导航",
-            "controller": "GraphicNav",
-            "textColor": "#666666",
-            "defaultTextColor": "",
             "selectedTemplate": "imageNavigation",
+            "showType": 5,
             "scrollSetting": "fixed",
-            "imageScale": "70",
             "padding": 20,
-            "paddingTopBottom": 10,
+            "marginTop": 10,
             "list": [
               {
-                "imageUrl": "public/diy_view/style2/img/pintuan.png",
+                "imageUrl": "public/diy_view/style2/img/icon1.png",
                 "title": "拼团",
                 "link": {
-                  "id": 2803,
+                  "id": 11539,
                   "addon_name": "pintuan",
-                  "name": "PINTUAN_LIST",
-                  "title": "拼团列表",
+                  "name": "PINTUAN_PREFECTURE",
+                  "title": "拼团专区",
+                  "parent": "PINTUAN",
+                  "sort": 0,
+                  "level": 4,
                   "web_url": "",
                   "wap_url": "/promotionpages/pintuan/list/list",
                   "icon": "",
-                  "selected": false,
-                  "addon_title": "拼团",
-                  "addon_icon": "addon/pintuan/icon.png"
-                }
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
               },
               {
-                "imageUrl": "public/diy_view/style2/img/group_buy.png",
+                "imageUrl": "public/diy_view/style2/img/icon2.png",
                 "title": "团购",
                 "link": {
-                  "id": 2804,
+                  "id": 11536,
                   "addon_name": "groupbuy",
-                  "name": "GROUPBUY_LIST",
-                  "title": "团购列表",
+                  "name": "GROUPBUY_PREFECTURE",
+                  "title": "团购专区",
+                  "parent": "GROUPBUY",
+                  "sort": 0,
+                  "level": 4,
                   "web_url": "",
                   "wap_url": "/promotionpages/groupbuy/list/list",
                   "icon": "",
-                  "selected": false,
-                  "addon_title": "团购",
-                  "addon_icon": "addon/groupbuy/icon.png"
-                }
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
               },
               {
-                "imageUrl": "public/diy_view/style2/img/seckill.png",
+                "imageUrl": "public/diy_view/style2/img/icon3.png",
                 "title": "秒杀",
                 "link": {
-                  "id": 2802,
+                  "id": 11543,
                   "addon_name": "seckill",
-                  "name": "SECKILL_LIST",
-                  "title": "秒杀列表",
+                  "name": "SECKILL_PREFECTURE",
+                  "title": "秒杀专区",
+                  "parent": "SECKILL",
+                  "sort": 0,
+                  "level": 4,
                   "web_url": "",
                   "wap_url": "/promotionpages/seckill/list/list",
                   "icon": "",
-                  "selected": false,
-                  "addon_title": "限时秒杀",
-                  "addon_icon": "addon/seckill/icon.png"
-                }
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
               },
               {
-                "imageUrl": "public/diy_view/style2/img/point.png",
+                "imageUrl": "public/diy_view/style2/img/icon4.png",
                 "title": "积分商城",
                 "link": {
-                  "id": 2869,
-                  "addon_name": "",
-                  "name": "POINT_INDEX",
+                  "id": 3541,
+                  "addon_name": "pointexchange",
+                  "name": "INTEGRAL_STORE",
                   "title": "积分商城",
+                  "parent": "INTEGRAL",
+                  "sort": 0,
+                  "level": 4,
                   "web_url": "",
                   "wap_url": "/promotionpages/point/list/list",
                   "icon": "",
-                  "selected": false,
-                  "addon_title": null,
-                  "addon_icon": null
-                }
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
               },
               {
-                "imageUrl": "public/diy_view/style2/img/topic.png",
+                "imageUrl": "public/diy_view/style2/img/icon5.png",
                 "title": "专题活动",
                 "link": {
-                  "id": 2871,
-                  "addon_name": "",
-                  "name": "TOPIC_LIST",
-                  "title": "专题活动",
+                  "id": 3532,
+                  "addon_name": "topic",
+                  "name": "THEMATIC_ACTIVITIES_LIST",
+                  "title": "专题活动列表",
+                  "parent": "THEMATIC_ACTIVITIES",
+                  "sort": 0,
+                  "level": 4,
                   "web_url": "",
                   "wap_url": "/promotionpages/topics/list/list",
                   "icon": "",
-                  "selected": false,
-                  "addon_title": null,
-                  "addon_icon": null
-                }
-              }
-            ]
-          },
-          {
-            "backgroundColor": "#ffffff",
-            "addon_name": "",
-            "type": "GRAPHIC_NAV",
-            "name": "图文导航",
-            "controller": "GraphicNav",
-            "textColor": "#666666",
-            "defaultTextColor": "",
-            "selectedTemplate": "imageNavigation",
-            "scrollSetting": "fixed",
-            "imageScale": "70",
-            "padding": 20,
-            "list": [
-              {
-                "imageUrl": "public/diy_view/style2/img/coupon.png",
-                "link": {
-                  "name": "COUPON_LIST",
-                  "id": 2870,
-                  "addon_name": "",
-                  "addon_title": null,
-                  "title": "领券中心",
-                  "web_url": "",
-                  "wap_url": "/otherpages/goods/coupon/coupon",
-                  "icon": "",
-                  "addon_icon": null,
-                  "selected": false
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
                 },
-                "title": "优惠券"
+                "imgWidth": "70",
+                "imgHeight": "70"
               },
               {
-                "imageUrl": "public/diy_view/style2/img/live.png",
-                "link": {
-                  "name": "LIVE_LIST",
-                  "id": 2898,
-                  "addon_name": "live",
-                  "addon_title": "小程序直播",
-                  "title": "直播",
-                  "web_url": "",
-                  "wap_url": "/otherpages/live/list/list",
-                  "icon": "",
-                  "addon_icon": "addon/live/icon.png",
-                  "selected": false
-                },
-                "title": "直播"
-              },
-              {
-                "imageUrl": "public/diy_view/style2/img/help.png",
-                "link": {
-                  "name": "HELP_LIST",
-                  "id": 2868,
-                  "addon_name": "",
-                  "addon_title": null,
-                  "title": "帮助中心",
-                  "web_url": "",
-                  "wap_url": "/otherpages/help/list/list",
-                  "icon": "",
-                  "addon_icon": null,
-                  "selected": false
-                },
-                "title": "帮助"
-              },
-              {
-                "imageUrl": "public/diy_view/style2/img/notice.png",
-                "title": "公告",
-                "link": {
-                  "id": 2867,
-                  "addon_name": "",
-                  "addon_title": null,
-                  "name": "NOTICE_LIST",
-                  "title": "公告列表",
-                  "web_url": "",
-                  "wap_url": "/otherpages/notice/list/list",
-                  "icon": "",
-                  "addon_icon": null,
-                  "selected": false
-                }
-              },
-              {
-                "imageUrl": "public/diy_view/style2/img/bargain.png",
+                "imageUrl": "public/diy_view/style2/img/icon6.png",
                 "title": "砍价",
                 "link": {
-                  "id": 3186,
+                  "id": 11532,
                   "addon_name": "bargain",
-                  "addon_title": "砍价",
-                  "name": "BARGAIN_LIST",
-                  "title": "砍价列表",
+                  "name": "BARGAIN_PREFECTURE",
+                  "title": "砍价专区",
+                  "parent": "BARGAIN",
+                  "sort": 0,
+                  "level": 4,
                   "web_url": "",
                   "wap_url": "/promotionpages/bargain/list/list",
                   "icon": "",
-                  "addon_icon": "addon/bargain/icon.png",
-                  "selected": false
-                }
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
+              },
+              {
+                "imageUrl": "public/diy_view/style2/img/icon7.png",
+                "title": "直播",
+                "link": {
+                  "id": 11556,
+                  "addon_name": "live",
+                  "name": "LIVE_LIST",
+                  "title": "直播",
+                  "parent": "LIVE",
+                  "sort": 0,
+                  "level": 4,
+                  "web_url": "",
+                  "wap_url": "/otherpages/live/list/list",
+                  "icon": "",
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
+              },
+              {
+                "imageUrl": "public/diy_view/style2/img/icon8.png",
+                "title": "领券",
+                "link": {
+                  "id": 11545,
+                  "addon_name": "coupon",
+                  "name": "COUPON_PREFECTURE",
+                  "title": "优惠券专区",
+                  "parent": "COUPON_LIST",
+                  "sort": 0,
+                  "level": 4,
+                  "web_url": "",
+                  "wap_url": "/otherpages/goods/coupon/coupon",
+                  "icon": "",
+                  "support_diy_view": "",
+                  "parents": "MARKETING_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
+              },
+              {
+                "imageUrl": "public/diy_view/style2/img/icon9.png",
+                "title": "公告",
+                "link": {
+                  "id": 11504,
+                  "addon_name": "",
+                  "name": "SHOPPING_NOTICE",
+                  "title": "公告",
+                  "parent": "BASICS_LINK",
+                  "sort": 0,
+                  "level": 4,
+                  "web_url": "",
+                  "wap_url": "/otherpages/notice/list/list",
+                  "icon": "",
+                  "support_diy_view": "",
+                  "selected": false,
+                  "parents": "MALL_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
+              },
+              {
+                "imageUrl": "public/diy_view/style2/img/icon10.png",
+                "title": "帮助",
+                "link": {
+                  "id": 11505,
+                  "addon_name": "",
+                  "name": "SHOPPING_HELP",
+                  "title": "帮助",
+                  "parent": "BASICS_LINK",
+                  "sort": 0,
+                  "level": 4,
+                  "web_url": "",
+                  "wap_url": "/otherpages/help/list/list",
+                  "icon": "",
+                  "support_diy_view": "",
+                  "selected": false,
+                  "parents": "MALL_LINK"
+                },
+                "imgWidth": "70",
+                "imgHeight": "70"
               }
-            ]
-          },
-          {
-            "backgroundColor": "#ffffff",
+            ],
             "addon_name": "",
-            "type": "HORZ_BLANK",
-            "name": "辅助空白",
-            "controller": "HorzBlank",
-            "marginLeftRight": 10,
-            "height": 10
+            "type": "GRAPHIC_NAV",
+            "name": "图文导航",
+            "navRadius": "fillet",
+            "controller": "GraphicNav",
+            "is_delete": "0"
           },
           {
+            "sources": "default",
+            "backgroundColor": "#ffffff",
+            "marginTop": 10,
+            "style": 1,
+            "isEdit": 1,
+            "styleName": "风格一",
+            "textColor": "#606266",
+            "defaultTextColor": "#333333",
+            "fontSize": 14,
+            "list": [
+              {
+                "title": "单商户V4.0.4更新啦！",
+                "link": {}
+              }
+            ],
+            "noticeIds": [],
             "addon_name": "",
             "type": "NOTICE",
             "name": "公告",
             "controller": "Notice",
-            "backgroundColor": "#ffffff",
-            "textColor": "#333333",
-            "defaultTextColor": "",
-            "paddingTopBottom": 0,
-            "paddingLeftRight": 10,
-            "list": [
-              {
-                "title": "NiuShop_b2c_v4上线啦！",
-                "link": {
-                  "name": ""
-                }
-              },
-              {
-                "title": "NiuShop_b2c_v4上线啦！",
-                "link": {
-                  "name": ""
-                }
-              }
-            ],
-            "sources": "default",
-            "style": 1,
-            "isEdit": 1,
-            "fontSize": 14,
-            "noticeIds": []
+            "is_delete": "0"
           },
           {
+            "marginTop": 10,
+            "isShowAnchorInfo": "1",
+            "isShowLiveGood": "1",
+            "addon_name": "live",
+            "type": "WEAPP_LIVE",
+            "name": "小程序直播",
+            "controller": "LiveInfo",
+            "is_delete": "0"
+          },
+          {
+            "height": 10,
             "backgroundColor": "",
+            "marginLeftRight": 0,
             "addon_name": "",
             "type": "HORZ_BLANK",
             "name": "辅助空白",
             "controller": "HorzBlank",
-            "marginLeftRight": 0,
-            "height": 10
+            "is_delete": "0"
           },
           {
+            "selectedTemplate": "row1-lt-of2-rt",
             "backgroundColor": "",
-            "addon_name": "",
-            "type": "GRAPHIC_NAV",
-            "name": "图文导航",
-            "controller": "GraphicNav",
-            "textColor": "#666666",
-            "defaultTextColor": "#666666",
             "list": [
               {
-                "link": {
-                  "name": ""
-                },
-                "title": "",
-                "imageUrl": "public/diy_view/style2/img/cards.png"
+                "imageUrl": "public/diy_view/style2/img/adv1.png",
+                "link": {}
               },
               {
-                "link": {
-                  "name": ""
-                },
-                "title": "",
-                "imageUrl": "public/diy_view/style2/img/egg.png"
+                "imageUrl": "public/diy_view/style2/img/adv2.png",
+                "link": {}
               },
               {
-                "imageUrl": "public/diy_view/style2/img/turntable.png",
-                "title": "",
-                "link": {
-                  "name": ""
-                }
+                "imageUrl": "public/diy_view/style2/img/adv3.png",
+                "link": {}
               }
             ],
-            "paddingTopBottom": 0,
-            "selectedTemplate": "imageNavigation",
-            "scrollSetting": "fixed",
-            "imageScale": 100,
-            "padding": 5
+            "selectedRubikCubeArray": [],
+            "diyHtml": "",
+            "customRubikCube": 4,
+            "heightArray": [
+              "74.25px",
+              "59px",
+              "48.83px",
+              "41.56px"
+            ],
+            "imageGap": 10,
+            "addon_name": "",
+            "type": "RUBIK_CUBE",
+            "name": "魔方",
+            "controller": "RubikCube",
+            "is_delete": "0"
           },
           {
+            "sources": "default",
+            "style": 1,
+            "couponCount": "6",
+            "styleName": "风格一",
             "backgroundColor": "",
+            "marginTop": 10,
+            "status": 1,
+            "couponIds": [],
+            "addon_name": "coupon",
+            "type": "COUPON",
+            "name": "优惠券",
+            "controller": "Coupon",
+            "is_delete": "0"
+          },
+          {
+            "style": 1,
+            "backgroundColor": "",
+            "marginTop": 10,
+            "styleName": "风格一",
+            "bgSelect": "red",
+            "changeType": 1,
+            "paddingLeftRight": 0,
+            "isShowGoodsName": 1,
+            "isShowGoodsDesc": 0,
+            "isShowGoodsPrice": 1,
+            "isShowGoodsPrimary": 1,
+            "isShowGoodsStock": 0,
             "list": {
-              "imageUrl": "",
+              "imageUrl": "public/diy_view/style2/img/title1.png",
               "title": "秒杀专区"
             },
-            "addon_name": "seckill",
-            "type": "SECKILL_LIST",
-            "name": "秒杀",
-            "controller": "Seckill",
-            "padding": 10,
-            "paddingLeftRight": 0,
-            "style": 1,
             "listMore": {
               "imageUrl": "",
               "title": "更多秒杀"
             },
             "titleTextColor": "#000",
+            "defaultTitleTextColor": "#000",
             "moreTextColor": "#858585",
-            "defaultTitleTextColor": "",
-            "defaultMoreTextColor": "",
-            "isShowGoodsName": 1,
-            "isShowGoodsDesc": 0,
-            "isShowGoodsPrice": 1,
-            "isShowGoodsPrimary": 1,
-            "isShowGoodsStock": 0
-          },
-          {
-            "backgroundColor": "",
-            "addon_name": "coupon",
-            "type": "COUPON",
-            "name": "优惠券",
-            "controller": "Coupon",
-            "padding": 10,
-            "style": 1,
-            "sources": "default",
-            "couponCount": "6",
-            "status": 1,
-            "couponIds": []
+            "defaultMoreTextColor": "#858585",
+            "addon_name": "seckill",
+            "type": "SECKILL_LIST",
+            "name": "秒杀",
+            "controller": "Seckill",
+            "is_delete": "0"
           },
           {
             "sources": "default",
-            "style": 1,
-            "backgroundColor": "",
-            "addon_name": "groupbuy",
-            "type": "GROUPBUY_LIST",
-            "name": "团购",
-            "controller": "Groupbuy",
             "categoryId": 0,
             "goodsCount": "6",
             "goodsId": [],
-            "padding": 10,
-            "list": {
-              "imageUrl": "",
-              "title": "团购专区"
-            },
-            "listMore": {
-              "imageUrl": "",
-              "title": "查看更多"
-            },
-            "titleTextColor": "#000",
-            "defaultTitleTextColor": "",
-            "moreTextColor": "#858585",
-            "defaultMoreTextColor": ""
-          },
-          {
-            "sources": "default",
             "style": 1,
+            "styleName": "风格一",
+            "changeType": 1,
             "backgroundColor": "",
-            "padding": 10,
-            "addon_name": "pintuan",
-            "type": "PINTUAN_LIST",
-            "name": "拼团",
-            "controller": "Pintuan",
-            "categoryId": 0,
-            "goodsCount": "4",
-            "goodsId": [],
+            "bgSelect": "blue",
+            "marginTop": 10,
             "list": {
-              "imageUrl": "",
-              "title": "拼团专区"
+              "imageUrl": "public/diy_view/style2/img/title2.png",
+              "title": "爱拼才会赢"
             },
             "listMore": {
               "imageUrl": "",
               "title": "好友都在拼"
             },
             "titleTextColor": "#000",
-            "defaultTitleTextColor": "",
+            "defaultTitleTextColor": "#000",
             "moreTextColor": "#858585",
-            "defaultMoreTextColor": ""
+            "defaultMoreTextColor": "#858585",
+            "addon_name": "pintuan",
+            "type": "PINTUAN_LIST",
+            "name": "拼团",
+            "controller": "Pintuan",
+            "is_delete": "0"
           },
           {
-            "addon_name": "",
-            "type": "TEXT",
-            "name": "文本",
-            "controller": "Text",
-            "style": "10",
-            "backgroundColor": "",
-            "padding": 0,
-            "title": "精品推荐",
-            "subTitle": "",
-            "link": {
-              "name": ""
-            },
-            "fontSize": 16,
-            "fontSizeSub": 14,
-            "colorSub": "#999",
-            "sub": "1",
-            "isShowMore": 0,
-            "fontWeight": 600,
-            "moreText": "查看更多",
-            "moreLink": {
-              "name": ""
-            },
-            "btnColor": "#999",
-            "textColor": "#333333",
-            "defaultTextColor": "",
-            "defaultColorSub": "",
-            "defaultBtnColor": ""
-          },
-          {
-            "style": 1,
-            "backgroundColor": "",
-            "addon_name": "",
-            "type": "GOODS_LIST",
-            "name": "商品列表",
-            "controller": "GoodsList",
             "sources": "default",
             "categoryId": 0,
             "goodsCount": "6",
             "goodsId": [],
-            "paddingUpDown": 0,
-            "paddingLeftRight": 0,
-            "isShowCart": 0,
-            "cartStyle": 1,
-            "isShowGoodName": 1,
-            "isShowMarketPrice": 1,
-            "isShowGoodSaleNum": 1,
-            "isShowGoodSubTitle": 1
+            "style": 1,
+            "styleName": "风格一",
+            "changeType": 1,
+            "backgroundColor": "",
+            "bgSelect": "yellow",
+            "marginTop": 10,
+            "list": {
+              "imageUrl": "public/diy_view/style2/img/title3.png",
+              "title": "一起团才更实惠"
+            },
+            "listMore": {
+              "imageUrl": "",
+              "title": "查看更多"
+            },
+            "titleTextColor": "#000",
+            "defaultTitleTextColor": "#000",
+            "moreTextColor": "#858585",
+            "defaultMoreTextColor": "#858585",
+            "addon_name": "groupbuy",
+            "type": "GROUPBUY_LIST",
+            "name": "团购",
+            "controller": "Groupbuy",
+            "is_delete": "0"
           },
           {
-            "addon_name": "bargain",
-            "type": "BARGAIN_LIST",
-            "name": "砍价",
-            "controller": "Bargain",
-            "sources": "diy",
+            "sources": "default",
             "categoryId": 0,
             "goodsCount": "6",
+            "styleName": "风格一",
             "goodsId": [],
             "style": 1,
+            "changeType": 1,
             "backgroundColor": "",
-            "padding": 10,
+            "bgSelect": "violet",
+            "marginTop": 10,
             "list": {
-              "imageUrl": "",
-              "title": "砍价专区"
+              "imageUrl": "public/diy_view/style2/img/title4.png",
+              "title": "低价一目了然"
             },
             "listMore": {
               "imageUrl": "",
@@ -513,7 +495,61 @@
             "titleTextColor": "#000",
             "defaultTitleTextColor": "#000",
             "moreTextColor": "#858585",
-            "defaultMoreTextColor": "#858585"
+            "defaultMoreTextColor": "#858585",
+            "addon_name": "bargain",
+            "type": "BARGAIN_LIST",
+            "name": "砍价",
+            "controller": "Bargain",
+            "is_delete": "0"
+          },
+          {
+            "selectedTemplate": "single-graph",
+            "imageClearance": 0,
+            "imageRadius": "right-angle",
+            "carouselChangeStyle": "circle",
+            "marginTop": 25,
+            "padding": 0,
+            "height": 0,
+            "list": [
+              {
+                "imageUrl": "public/diy_view/style2/img/title.png",
+                "title": "",
+                "link": {},
+                "imgWidth": "690",
+                "imgHeight": "65"
+              }
+            ],
+            "addon_name": "",
+            "type": "IMAGE_ADS",
+            "name": "图片广告",
+            "controller": "ImageAds",
+            "is_delete": "0"
+          },
+          {
+            "sources": "default",
+            "categoryId": 0,
+            "categoryName": "请选择",
+            "goodsCount": "6",
+            "goodsId": [],
+            "style": "2",
+            "backgroundColor": "",
+            "marginTop": 10,
+            "paddingLeftRight": 0,
+            "isShowCart": 0,
+            "cartStyle": 1,
+            "isShowGoodName": 1,
+            "isShowMarketPrice": 1,
+            "isShowGoodSaleNum": 1,
+            "isShowGoodSubTitle": 0,
+            "goodsTag": "default",
+            "tagImg": {
+              "imageUrl": ""
+            },
+            "addon_name": "",
+            "type": "GOODS_LIST",
+            "name": "商品列表",
+            "controller": "GoodsList",
+            "is_delete": "0"
           }
         ]
       }

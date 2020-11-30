@@ -14,19 +14,32 @@
 		<label class="layui-form-label img-upload-lable">网站logo：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
-				<div class="upload-img-box">
-					{if condition="$shop_info.logo"}
-						<img layer-src src="{:img($shop_info.logo)}" />
-					{else/}
-						<div class="ns-upload-default">
+				<div class="upload-img-box {if condition="$shop_info.logo"}hover{/if} ">
+					<div class="ns-upload-default" id="logoUpload">
+						{if condition="$shop_info.logo"}
+							<div id="preview_logoUpload" class="preview_img">
+								<img layer-src src="{:img($shop_info.logo)}" class="img_prev"/>
+							</div>
+						{else/}
+						<div class="upload">
 							<img src="SHOP_IMG/upload_img.png" />
 							<p>点击上传</p>
 						</div>
-					{/if}
+							
+						{/if}
+					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="logo" value="{$shop_info.logo}"/>
 				</div>
-				<p id="logoUpload" class=" {if condition="$shop_info.logo"} replace {else/} no-replace{/if}">替换</p>
+				<!-- <p id="logoUpload" class=" {if condition="$shop_info.logo"} replace {else/} no-replace{/if}">替换</p>
 				<input type="hidden" name="logo" value="{$shop_info.logo}"/>
-				<i class="del {if condition="$shop_info.logo"}show{/if}">x</i>
+				<i class="del {if condition="$shop_info.logo"}show{/if}">x</i> -->
 			</div>
 		</div>
 
@@ -96,6 +109,17 @@
 		<label class="layui-form-label">手机网页端域名：</label>
 		<div class="layui-input-block">
 			<input type="text" name="domain_name" autocomplete="off" value="{$domain_name_h5}" class="layui-input ns-len-long">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">商城状态：</label>
+		<div class="layui-input-block">
+			<input type="radio" name="shop_status" value="1" title="开启" {if isset($shop_status) && $shop_status == 1} checked {/if}>
+			<input type="radio" name="shop_status" value="0" title="关闭" {if isset($shop_status) && $shop_status == 0} checked {/if}>
+		</div>
+		<div class="ns-word-aux">
+			<p>商城状态为关闭时，用户将无法访问商城</p>
 		</div>
 	</div>
 	<!--<div class="layui-form-item">-->
@@ -229,6 +253,7 @@
 		var logo_upload = new Upload({
 			elem: '#logoUpload'
 		});
+
 
 		// 店铺头像
 		// var avatar_upload = new Upload({

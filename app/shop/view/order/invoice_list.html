@@ -26,7 +26,7 @@
 						<select name="order_status" lay-filter="order_status">
 							<option value="">全部</option>
 							{foreach $order_status_list as $k => $status_val}
-							<option value="{$status_val.status}">{$status_val.name}</option>
+							<option value="{$k}">{$status_val}</option>
 							{/foreach}
 						</select>
 					</div>
@@ -99,10 +99,13 @@
 
 {block name="script"}
 <script>
+	var is_refresh = false;
+	var form;
+	var order_type_status_json = {:json_encode($order_type_list)};
 	layui.use(['form', 'laydate', 'element', 'laytpl',], function() {
 		var table,
-			form = layui.form,
 			laydate = layui.laydate;
+		form = layui.form,
 		form.render();
 
 		//渲染时间
@@ -166,7 +169,7 @@
 						if(data.invoice_title_type == 2){
 							html += '<br/>纳税人识别号:'+data.taxpayer_number;
 						}
-						html += '<br/>发票内容:'+data.invoice_title_type;
+						html += '<br/>发票内容:'+data.invoice_content;
 						return html;
 					}
 				}, {
@@ -225,8 +228,52 @@
 			}
 		});
 
-	});
+		//订单类型
+		form.on('select(order_type)', function(data){
 
+			resetOrderStatus(data.value, 1);
+			return false;
+		});
+
+	});
+	/**
+	 * 获取哈希值order_type
+	 */
+	function getHashOrderType(){
+		var hash = ns.urlReplace(location.hash);
+		var hash_arr = hash.split("&");
+		var order_type = "all";
+		if(hash_arr.length > 0){
+			// page = hash_arr[0].replace('#!page=', '');
+			$.each(hash_arr,function(index, itemobj){
+				var item_arr = itemobj.split("=");
+				if(item_arr.length == 2){
+					if(item_arr[0].indexOf("order_type") != "-1") {
+						order_type = item_arr[1];
+					}
+				}
+			})
+		}
+		return order_type;
+	}
+
+	//重置状态tab 选项卡
+	function resetOrderStatus(order_type, is_tab){
+		var hash_order_type = getHashOrderType();
+		if(hash_order_type != order_type || is_refresh == false){
+
+			if(is_tab != 2 || is_refresh == false){
+				$("select[name=order_status] option").not(':first').remove();
+			}
+			var status_item = order_type_status_json[order_type]["status"];
+			$.each(status_item,function(index, itemobj){
+				if(is_tab != 2 || is_refresh == false) {
+					$("select[name=order_status]").append('<option value="' + index + '">' + itemobj + '</option>');
+				}
+			});
+			form.render('select');
+		}
+	}
     /**
      * 七天时间
      */

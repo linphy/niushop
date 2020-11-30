@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -285,7 +284,8 @@ class Diy extends BaseShop
                     'name' => $name,
                     'title' => $title,
                     'type' => $page[ 'shop' ][ 'port' ],
-                    'value' => $value
+                    'value' => $value,
+                    'create_time' => time()
                 ];
                 $res = $diy_view->addSiteDiyViewByTemplate($data);
             }
@@ -312,6 +312,19 @@ class Diy extends BaseShop
             $id = input('id', 0);
             $res = $diy_view->setPage('shop', 'index', $id, $this->site_id);
             return $res;
+        }
+    }
+
+    /**
+     * 修改排序
+     */
+    public function modifySort()
+    {
+        if (request()->isAjax()) {
+            $sort = input('sort', 0);
+            $id = input('id', 0);
+            $diy_view = new DiyViewModel();
+            return $diy_view->modifyDiyViewSort($sort, $id);
         }
     }
 }

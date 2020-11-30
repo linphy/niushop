@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -15,6 +14,7 @@ namespace app\shop\controller;
 use app\model\order\OrderCommon;
 use app\model\order\OrderRefund as OrderRefundModel;
 use app\model\order\OrderExport;
+use app\model\member\Member;
 
 /**
  * 订单维权
@@ -128,6 +128,10 @@ class Orderrefund extends BaseShop
         if (empty($order_info))
             $this->error("操作失败!请重试");
 
+        //添加会员昵称
+        $member = new Member();
+        $member_info = $member->getMemberInfo([ ["member_id",'=', $order_info['member_id']] ],'nickname');
+        $order_info['nickname'] = $member_info['data']['nickname'];
         $this->assign("detail", $detail);
         $this->assign("order_info", $order_info);
         return $this->fetch("orderrefund/detail");
@@ -297,14 +301,48 @@ class Orderrefund extends BaseShop
     public function export()
     {
         if (request()->isAjax()) {
+            $page_index = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
             $export_model = new OrderExport();
             $condition = array(
                 ['site_id', '=', $this->site_id]
             );
-            $result = $export_model->getRefundExport($condition, '*', 'create_time desc');
+            $result = $export_model->getRefundExportPageList($condition, $page_index, $page_size, 'create_time desc', '*');
             return $result;
         } else {
             return $this->fetch("orderrefund/export");
+
+        }
+    }
+
+    /**
+     * 删除订单导出记录
+     */
+    public function deleteExport(){
+
+        if (request()->isAjax()) {
+            $export_ids = input('export_ids', '');
+
+            $export_model = new OrderExport();
+            $condition = array (
+                [ 'site_id', '=', $this->site_id ],
+                ['export_id', 'in', (string)$export_ids]
+            );
+            $result = $export_model->deleteRefundExport($condition);
+            return $result;
+        }
+    }
+
+    /**
+     * 关闭维权
+     * @return \app\model\order\multitype
+     */
+    public function close(){
+        if (request()->isAjax()) {
+            $order_goods_id     = input("order_goods_id", 0);
+            $order_refund_model = new OrderRefundModel();
+            $res = $order_refund_model->orderRefundClose($order_goods_id, $this->site_id, $this->user_info);
+            return $res;
         }
     }
 }

@@ -59,8 +59,12 @@
 			this.current_mode = 'hex'; // input框当前的模式
 
 			this.rgba = { r: 0, g: 0, b: 0, a: 1 };
-			this.hsb = { h: 0, s: 100, b: 100 };
-
+			
+			if (this.Opt.color) {
+				this.hsb = this.hexToHsb(this.Opt.color);
+			} else {
+				this.hsb = { h: 0, s: 100, b: 100 };
+			}
 
 			var _this = this, rgb = initColor.slice(4, -1).split(",");
 
@@ -132,8 +136,8 @@
 				_this.pancelTop = top + _this.bindElem.offsetHeight;
 				util.css(div, {
 					"display": 'block',
-					"left": (left - 400) + "px",
-					"top": 10 + top + _this.bindElem.offsetHeight + "px"
+					"left": (left - 240) + "px",
+					"top": (10 + $(_this.bindElem).offset().top + _this.bindElem.offsetHeight) + "px"
 				});
 			}, false);
 
@@ -191,12 +195,12 @@
 		render: function () {
 			var tpl =
 				`<div style="position: fixed; top: 0px; right: 0px; bottom: 0px; left: 0px;"></div>
-				<div style="position: inherit;z-index: 100;display: flex;box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 2px, rgba(0, 0, 0, 0.3) 0px 4px 8px;">
-					<div style='width:180px;padding:10px;background: #f9f9f9;display: flex;flex-flow: row wrap;align-content: space-around;justify-content: space-around;' class='color-palette'>
+				<div style="position: inherit; height: 245px; padding: 8px; border-radius: 3px; background: #fff; z-index: 100; display: flex; box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 2px, rgba(0, 0, 0, 0.3) 0px 4px 8px;">
+					<div style='width:0;padding:0;overflow: hidden; background: #f9f9f9;display: flex;flex-flow: row wrap;align-content: space-around;justify-content: space-around;' class='color-palette'>
 						${this.getPaletteColorsItem()}
 					</div>
-					<div class="colorpicker-pancel" style="background: rgb(255, 255, 255);box-sizing: initial; width: 225px; font-family: Menlo;">
-						<div style="width: 100%; padding-bottom: 55%; position: relative; border-radius: 2px 2px 0px 0px; overflow: hidden;">
+					<div class="colorpicker-pancel" style="background: rgb(255, 255, 255);box-sizing: initial; width: 240px; font-family: Menlo;">
+						<div style="width: 100%; padding-bottom: 75%; position: relative; border-radius: 2px 2px 0px 0px; overflow: hidden;">
 							<div class="color-pancel" style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; background: rgb(${this.rgba.r},${this.rgba.g},${this.rgba.b})">
 								<style>
 									.saturation-white {background: -webkit-linear-gradient(to right, #fff, rgba(255,255,255,0));background: linear-gradient(to right, #fff, rgba(255,255,255,0));}
@@ -212,9 +216,9 @@
 								</div>
 							</div>
 						</div>
-						<div style="padding: 0 16px 20px;">
+						<div style="padding: 0;">
 							<div class="flexbox-fix" style="display: flex;align-items: center;height: 40px;">
-								<div style="width: 32px;">
+								<div style="width: 0; overflow: hidden;">
 									<div style="width: 16px; height: 16px; border-radius: 8px; position: relative; overflow: hidden;">
 										<div class="colorpicker-showColor" style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset; background:rgb(${this.rgba.r},${this.rgba.g},${this.rgba.b}); z-index: 2;"></div>
 										<div class="" style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; background: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==&quot;) left center;"></div>
@@ -227,8 +231,8 @@
 												.hue-horizontal {background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);background: -webkit-linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);}
 												.hue-vertical {background: linear-gradient(to top, #f00 0%, #ff0 17%, #0f0 33%,#0ff 50%, #00f 67%, #f0f 83%, #f00 100%);background: -webkit-linear-gradient(to top, #f00 0%, #ff0 17%,#0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);}
 											</style>
-											<div  class="colorBar-color-picker" style="position: absolute; left: 0%;">
-												<div style="width: 12px; height: 12px; border-radius: 6px; transform: translate(-6px, -1px); background-color: rgb(248, 248, 248); box-shadow: rgba(0, 0, 0, 0.37) 0px 1px 4px 0px;">
+											<div  class="colorBar-color-picker" style="position: absolute; left: 0; top: 1px;">
+												<div style="width: 4px; height: 8px; border-radius: 1px; background-color: rgb(248, 248, 248); box-shadow: rgba(0, 0, 0, 0.37) 0px 1px 4px 0px;">
 												</div>
 											</div>
 										</div>
@@ -237,14 +241,14 @@
 							</div>
 						</div>
 						<div class="flexbox-fix" style="display: flex;">
-							<div class="flexbox-fix colorpicker-inputWrap" style="-webkit-box-flex: 1; flex: 1 1 0%; display: flex; margin-left: -6px;">
-									${this.getInputTpl()}
+							<div class="flexbox-fix colorpicker-inputWrap" style="-webkit-box-flex: 1; flex: 1 1 0%; display: flex; width: 138px;">
+								${this.getInputTpl()}
 							</div>
-						</div>
-						
-						<div class="flexbox-fix flexbox-fix-btn" style="display: flex;">
-							<button class="btn confirm-btn">确定</button>
-							<button class="btn cancel-btn">清空</button>
+							
+							<div class="flexbox-fix flexbox-fix-btn" style="display: flex; width: 90px;">
+								<button class="btn cancel-btn">清空</button>
+								<button class="btn confirm-btn" style="margin-left: 5px; background: #ff6600; border: 1px solid #ff6600; color: #fff;">确定</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -257,10 +261,9 @@
 				case 'hex':
 					var hex = "#" + this.rgbToHex(this.HSBToRGB(this.hsb));
 					current_mode_html += `
-							<div style="padding-left: 6px; width: 100%;">
+							<div style="width: 138px;">
 								<div style="position: relative;">
-									<input class="colorpicker-hexInput" value="${hex}" spellcheck="false" style="font-size: 11px; color: rgb(51, 51, 51); width: 100%; border-radius: 2px; border: none; box-shadow: rgb(218, 218, 218) 0px 0px 0px 1px inset; height: 21px; text-align: center;">
-									<span style="text-transform: uppercase; font-size: 11px; line-height: 11px; color: rgb(150, 150, 150); text-align: center; display: block; margin-top: 12px;">hex</span>
+									<input class="colorpicker-hexInput" value="${hex}" spellcheck="false" style="font-size: 11px; color: rgb(51, 51, 51); width: 100%; border-radius: 3px; border: none; box-shadow: rgb(218, 218, 218) 0px 0px 0px 1px inset; width: 138px; height: 24px; text-align: center;">
 								</div>
 							</div>`;
 					break;
@@ -290,7 +293,7 @@
 			return str;
 		},
 		setPosition(x, y) {
-			var LEFT = parseInt(x - this.pancelLeft) + 400,
+			var LEFT = parseInt(x - this.pancelLeft) + 240,
 				TOP = parseInt(y - this.pancelTop);
 
 			this.pointLeft = Math.max(0, Math.min(LEFT, this.pancel_width));

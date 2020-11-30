@@ -5,8 +5,7 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -55,7 +54,8 @@ class Notice extends BaseApi
         $page      = isset($this->params['page']) ? $this->params['page'] : 1;
         $page_size = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
         $notice    = new NoticeModel();
-        $list      = $notice->getNoticePageList([['receiving_type', 'like', '%mobile%'], ['site_id', '=', $this->site_id]], $page, $page_size);
+        $order = 'is_top desc,sort asc,create_time desc';
+        $list      = $notice->getNoticePageList([['receiving_type', 'like', '%mobile%'], ['site_id', '=', $this->site_id]], $page, $page_size,$order);
         return $this->response($list);
     }
 

@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -30,7 +29,7 @@ class Signin extends BaseModel
     {
         if (!empty($data)) {
             $day = 0;
-            foreach ($data as $k => $v) {
+            foreach ($data['reward'] as $k => $v) {
                 if ($v['day'] == 0) {
                     return $this->error('', '连续签到天数不能设置为0');
                 }
@@ -39,9 +38,6 @@ class Signin extends BaseModel
 
                     if ($v['day'] <= $day) {
                         return $this->error('', '连续签到天数不能相同或者小于上一个签到天数');
-                    }
-                    if (($v['day'] - $day) > 1) {
-                        return $this->error('', '连续签到天数不能隔天设置');
                     }
                 }
                 $day = $v['day'];
@@ -61,11 +57,14 @@ class Signin extends BaseModel
         $res = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
         if (empty($res['data']['value'])) {
             $res['data']['value'] = [
-                [
-                    "point" => 0,
-                    "growth" => 0,
-                    'coupon' => 0,
-                    "day" => 1
+                'cycle' => 30,
+                'reward' => [
+                    [
+                        "point" => 0,
+                        "growth" => 0,
+                        'coupon' => 0,
+                        "day" => 1
+                    ]
                 ]
             ];
         }

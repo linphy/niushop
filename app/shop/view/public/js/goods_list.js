@@ -146,6 +146,13 @@ $(function () {
 				case 'browse_records':
 					location.href = ns.url("shop/goods/goodsBrowse", {goods_id:data.goods_id});
 					break;
+				case 'evaluate':
+					location.href = ns.url("shop/goods/evaluate", {goods_id:data.goods_id});
+					break;
+                case 'more': //更多
+                    $('.more-operation').css('display', 'none');
+                    $(obj.tr).find('.more-operation').css('display', 'block');
+                    break;
 			}
 		});
 
@@ -172,6 +179,12 @@ $(function () {
 				}
 			});
 		});
+
+        $(document).click(function(event) {
+            if ($(event.target).attr('lay-event') != 'more' && $('.more-operation').not(':hidden').length) {
+                $('.more-operation').css('display', 'none');
+            }
+        });
 
 		// 批量操作
 		table.bottomToolbar(function (obj) {
@@ -207,7 +220,7 @@ $(function () {
 					break;
 			}
 		});
-		
+
 		table.toolbar(function(obj){
 			if (obj.data.length < 1) {
 				layer.msg('请选择要操作的数据');
@@ -307,7 +320,7 @@ function refreshTable() {
 		}, {
 			title: '商品信息',
 			unresize: 'false',
-			width: '34%',
+			width: '37%',
 			templet: '#goods_info'
 		}, {
 			field: 'price',
@@ -334,7 +347,7 @@ function refreshTable() {
 			field: 'sale_num',
 			title: '销量',
 			unresize: 'false',
-			width: '6%',
+			width: '4%',
 			sort: true
 		},{
 			field: 'sort',
@@ -344,19 +357,19 @@ function refreshTable() {
 								<i class="iconfont iconwenhao1 required ns-growth"></i>
 								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
 									<div class="ns-prompt-con">
-									<p>商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</p>
+									<p>商品默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</p>
 								</div>
 							</div>
 							</div>
 						</div>`,
-			width: '10%',
+			width: '7%',
 			align: 'center',
 			templet: '#editSort',
 			sort: true
 		}, {
 			title: '创建时间',
 			unresize: 'false',
-			width: '10%',
+			width: '12%',
 			templet: function (data) {
 				return ns.time_to_date(data.create_time);
 			}
@@ -390,7 +403,7 @@ function refreshTable() {
 			}, {
 				title: '商品信息',
 				unresize: 'false',
-				width: '30%',
+				width: '33%',
 				templet: '#goods_info'
 			}, {
 				field: 'price',
@@ -417,7 +430,7 @@ function refreshTable() {
 				field: 'sale_num',
 				title: '销量',
 				unresize: 'false',
-				width: '5%',
+				width: '4%',
 				sort: true
 			},{
 				field: 'sort',
@@ -427,19 +440,19 @@ function refreshTable() {
 								<i class="iconfont iconwenhao1 required ns-growth"></i>
 								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
 									<div class="ns-prompt-con">
-									<p>商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</p>
+									<p>商品默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</p>
 								</div>
 							</div>
 							</div>
 						</div>`,
-				width: '10%',
+				width: '7%',
 				align: 'center',
 				templet: '#editSort',
 				sort: true
 			}, {
 				title: '创建时间',
 				unresize: 'false',
-				width: '10%',
+				width: '12%',
 				templet: function (data) {
 					return ns.time_to_date(data.create_time);
 				}
@@ -677,26 +690,39 @@ function goodsPreview(data) {
 		success: function (res) {
 			if (res.data.path.h5.status == 1) {
 				res.data.goods_id = data.goods_id;
-
-				laytpl($("#goods_preview").html()).render(res.data, function (html) {
-					var layerIndex = layer.open({
-						title: '商品预览',
-						skin: 'layer-tips-class',
-						type: 1,
-						area: ['600px', '600px'],
-						content: html,
-						success: function () {
-							isOpenGoodsPreviewPopup = false;
-						}
-					});
+				$.ajax({
+					type: 'get',
+					url: res.data.path.h5.url + "?preview=1",
+					dataType: 'json',
+					error: function (obj) {
+						laytpl($("#h5_preview").html()).render(res.data, function (html) {
+							var layerIndex = layer.open({
+								title: '商品预览',
+								skin: 'layer-tips-class',
+								type: 1,
+								area: ['600px', '600px'],
+								content: html,
+								success: function () {
+									if(obj.status == 0 || obj.status == 200){
+										isOpenGoodsPreviewPopup = false;
+										$("#iframe").show();
+										$(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
+									} else {
+										$(".goods-preview .phone-wrap .iframe-wrap .empty").show();
+										$("#iframe").hide();
+									}
+								}
+							});
+						});
+					}
 				});
+
 			} else {
 				layer.msg(res.data.path.h5.message);
 			}
 		}
 	});
 }
-
 
 function closeStock() {
 	layer.close(layer_stock);
@@ -723,7 +749,7 @@ function batchSetting(){
 			var service = [];
 			$('[name="batch_goods_service"]:checked').each(function(e){
 				service.push($(this).val());
-			})
+			});
 			field.server_ids = service.length ? service.toString() : '';
 		break;
 		case 'sale':
@@ -795,12 +821,11 @@ function batchSetting(){
 				$('.batch-set-wrap .footer-wrap').hide();
 				$('.batch-set-wrap .content-wrap .tab-item.result').addClass('tab-show').siblings('.tab-item').removeClass('tab-show');
 			} else {
-				layer.msg('操作失败');
+				layer.msg(res.message);
 			}
 		}
 	})
 }
-
 
 // 监听单元格编辑
 function editSort(goods_id, event){

@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -140,4 +139,38 @@ class Shop extends BaseModel
         ];
         return $this->success($return);
     }
+
+
+    /**
+     * 设置商城状态
+     * @param $data
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function setShopStatus($data, $site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '商城状态设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_STATUS_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取商城状态
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function getShopStatus($site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_STATUS_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'shop_status' => 1
+            ];
+        }
+        return $res;
+    }
+
 }

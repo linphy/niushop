@@ -5,9 +5,10 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>公告显示在网站的首页</li>
 			<li>公告可进行置顶</li>
+			<li>公告默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</li>
 		</ul>
 	</div>
 </div>
@@ -56,6 +57,11 @@
 		<a class="layui-btn" lay-event="del">删除</a>
 	</div>
 </script>
+
+<!-- 编辑排序 -->
+<script type="text/html" id="editSort">
+	<input name="sort" type="number" onchange="editSort({{d.id}}, this)" value="{{d.sort}}" class="layui-input edit-sort ns-len-short">
+</script>
 {/block}
 {block name="script"}
 <script type="text/javascript">
@@ -70,7 +76,7 @@
 			url: ns.url("shop/notice/index"),
 			cols: [
 				[{
-					width: '55%',
+					width: '35%',
 					title: '公告标题',
 					unresize: 'false',
 					templet: function(data) {
@@ -93,6 +99,12 @@
 						return ns.time_to_date(data.create_time);
 					}
 				}, {
+                    field: 'sort',
+                    unresize:'false',
+                    title: '排序',
+                    width: '20%',
+                    templet: '#editSort'
+                }, {
 					title: '操作',
 					width: '20%',
 					unresize: 'false',
@@ -169,5 +181,39 @@
 	function add() {
 		location.href = ns.url("shop/notice/addNotice");
 	}
+
+    // 监听单元格编辑
+    function editSort(id, event){
+        var data = $(event).val();
+
+        if (data == '') {
+            $(event).val(0);
+            data = 0;
+        }
+
+        if(!new RegExp("^-?[0-9]\\d*$").test(data)){
+            layer.msg("排序号只能是整数");
+            return ;
+        }
+        if(data<0){
+            layer.msg("排序号必须大于0");
+            return ;
+        }
+        $.ajax({
+            type: 'POST',
+            url: ns.url("shop/notice/modifySort"),
+            data: {
+                sort: data,
+                id: id
+            },
+            dataType: 'JSON',
+            success: function(res) {
+                layer.msg(res.message);
+                if(res.code==0){
+                    table.reload();
+                }
+            }
+        });
+    }
 </script>
 {/block}

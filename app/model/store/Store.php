@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -59,12 +58,12 @@ class Store extends BaseModel
                 //用户检测
                 if (empty($user_data['username'])) {
                     model("store")->rollback();
-                    return $this->error('', 'USER_NOT_EXIST');
+                    return $this->error('', '门店账号不能为空');
                 }
                 $user_count = model("user")->getCount([['username', '=', $user_data['username']], ['app_module', '=', 'store'], ['site_id', '=', $site_id]]);
                 if ($user_count > 0) {
                     model("store")->rollback();
-                    return $this->error('', 'USERNAME_EXISTED');
+                    return $this->error('', '门店账号已存在');
                 }
 
                 //添加用户

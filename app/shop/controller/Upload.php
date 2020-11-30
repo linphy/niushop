@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -15,6 +14,11 @@ namespace app\shop\controller;
 use app\model\upload\Upload as UploadModel;
 use app\model\system\User as UserModel;
 use app\model\upload\Config as ConfigModel;
+use app\model\upload\Album as AlbumModel;
+use think\Exception;
+use app\model\BaseModel;
+
+
 
 /**
  * 图片上传
@@ -50,7 +54,6 @@ class Upload extends BaseShop
             $image_allow_mime = trim(input("image_allow_mime", ""));//图片允许Mime类型
 
             /*************************************************************************** 缩略图 *******************************************************************/
-            $thumb_position = input("thumb_position", 'top-left');//自定义裁剪的位置。默认是 '中心'  (相对于当前图像)top-left(默认)top top-right left center right bottom-left bottom bottom-right
             $thumb_big_width = input("thumb_big_width", 400);//缩略大图 宽
             $thumb_big_height = input("thumb_big_height", 400);//缩略大图 高
             $thumb_mid_width = input("thumb_mid_width", 200);//缩略中图 宽
@@ -84,7 +87,6 @@ class Upload extends BaseShop
                 ),
                 //缩略图相关配置
                 "thumb" => array (
-                    "thumb_position" => $thumb_position,
                     "thumb_big_width" => $thumb_big_width,
                     "thumb_big_height" => $thumb_big_height,
                     "thumb_mid_width" => $thumb_mid_width,
@@ -261,6 +263,63 @@ class Upload extends BaseShop
             }
             return $res;
         }
+    }
+
+    /*
+     * 替换图片文件
+     * */
+    public function modifyFile()
+    {
+
+//      实例化响应数据结构生成类
+        $base_model = new BaseModel();
+
+        try {
+//            参数
+            $album_id = input("album_id", '');
+            $pic_id = input("pic_id", '');
+
+//            获取图片信息
+            $album_model = new AlbumModel($this->site_id);
+            $get_pic_info = array(
+                ["pic_id", "=", $pic_id],
+                ["site_id", "=", $this->site_id],
+            );
+
+//            图片信息
+            $pic_info = $album_model->getAlbumPicInfo($get_pic_info);
+//            判断是否找到有效图片
+            if(empty($pic_info) || empty($pic_info['data'])){
+                return json($base_model->error('', 'FAIL'));
+            }
+
+//            文件名及后缀
+            $file_full_name = basename($pic_info['data']['pic_path']);
+            $filename_arr = explode('.', $file_full_name);
+            $filename =$filename_arr[0];
+            $suffix = $filename_arr[1];
+
+//            实例化文件上传类
+            $upload_model = new UploadModel($this->site_id);
+
+            $upload_param = array (
+                "name" => "file",
+                "album_id" => $album_id,
+                "pic_id" => $pic_id,
+                "thumb_type" => [ "BIG", "MID", "SMALL" ],
+                "filename" => $filename,
+                "suffix" => $suffix
+            );
+
+
+            $result = $upload_model->setPath("common/images/" . date("Ymd") . '/')->modifyFile($upload_param);
+
+            return json($result);
+
+        }catch (Exception $e){
+            return json($base_model->error($e, 'FAIL'));
+        }
+
     }
 
 }

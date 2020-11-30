@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -27,14 +26,19 @@ class MemberAddress extends BaseModel
      */
     public function addMemberAddress($data)
     {
-        if ($data['is_default'] == 1) {
-            model('member_address')->update(['is_default' => 0], ['member_id' => $data['member_id']]);
+        if (!empty($data[ 'longitude' ]) && !empty($data[ 'latitude' ])) {
+            $data[ 'type' ] = 2;
+        } else {
+            $data[ 'type' ] = 1;
         }
-        $res   = model('member_address')->add($data);
-        $count = model('member_address')->getCount(['member_id' => $data['member_id']]);
+        if ($data[ 'is_default' ] == 1) {
+            model('member_address')->update([ 'is_default' => 0 ],  [ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'type', '=', $data[ 'type' ] ] ]);
+        }
+        $res = model('member_address')->add($data);
+        $count = model('member_address')->getCount([ 'member_id' => $data[ 'member_id' ] ]);
         if ($count == 1)
-            model('member_address')->update(['is_default' => 1], ['member_id' => $data['member_id'], 'id' => $res]);
-        Cache::tag("member_address_" . $data['member_id'])->clear();
+            model('member_address')->update([ 'is_default' => 1 ], [ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'id', '=', $res ], [ 'type', '=', $data[ 'type' ] ] ]);
+        Cache::tag("member_address_" . $data[ 'member_id' ])->clear();
         return $this->success($res);
     }
 
@@ -44,11 +48,22 @@ class MemberAddress extends BaseModel
      */
     public function editMemberAddress($data)
     {
-        if ($data['is_default'] == 1) {
-            model('member_address')->update(['is_default' => 0], ['member_id' => $data['member_id']]);
+        $info = model('member_address')->getInfo([ 'id' => $data[ 'id' ], 'member_id' => $data[ 'member_id' ] ], 'type');
+        $type = $info[ 'type' ] ?? 1;
+        if (!empty($data[ 'longitude' ]) && !empty($data[ 'latitude' ])) {
+            $data[ 'type' ] = 2;
+        } else {
+            $data[ 'type' ] = 1;
+            if ($type == 2) {
+                //定位地址不能修改为,非定位地址
+                return $this->error([], '');
+            }
         }
-        $res = model('member_address')->update($data, ['id' => $data['id'], 'member_id' => $data['member_id']]);
-        Cache::tag("member_address_" . $data['member_id'])->clear();
+        if ($data[ 'is_default' ] == 1) {
+            model('member_address')->update([ 'is_default' => 0 ],  [ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'type', '=', $data[ 'type' ] ] ]);
+        }
+        $res = model('member_address')->update($data, [ 'id' => $data[ 'id' ], 'member_id' => $data[ 'member_id' ] ]);
+        Cache::tag("member_address_" . $data[ 'member_id' ])->clear();
         return $this->success($res);
     }
 
@@ -59,7 +74,7 @@ class MemberAddress extends BaseModel
     public function deleteMemberAddress($condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $member_id       = isset($check_condition['member_id']) ? $check_condition['member_id'] : 0;
+        $member_id = isset($check_condition[ 'member_id' ]) ? $check_condition[ 'member_id' ] : 0;
         if (empty($member_id)) {
             return $this->error("", "缺少必填参数会员id");
         }
@@ -82,8 +97,9 @@ class MemberAddress extends BaseModel
     {
         model('member_address')->startTrans();
         try {
-            model('member_address')->update(['is_default' => 0], ['member_id' => $member_id]);
-            $res = model('member_address')->update(['is_default' => 1], ['member_id' => $member_id, 'id' => $id]);
+            $info = model('member_address')->getInfo([ 'id' => $id, 'member_id' => $member_id ], 'type');
+            model('member_address')->update([ 'is_default' => 0 ], [ [ 'member_id', '=', $member_id ], [ 'type', '=', $info[ 'type' ] ] ]);
+            $res = model('member_address')->update([ 'is_default' => 1 ], [ 'member_id' => $member_id, 'id' => $id ]);
             model('member_address')->commit();
             Cache::tag("member_address_" . $member_id)->clear();
             return $this->success($res);
@@ -100,13 +116,13 @@ class MemberAddress extends BaseModel
     public function getMemberAddressInfo($condition, $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
-        $data            = json_encode([$condition, $field]);
-        $cache           = Cache::get("member_address_getMemberAddressInfo_" . $data);
+        $data = json_encode([ $condition, $field ]);
+        $cache = Cache::get("member_address_getMemberAddressInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
         $res = model('member_address')->getInfo($condition, $field);
-        Cache::tag("member_address_" . $check_condition['member_id'])->set("member_address_getMemberAddressInfo_" . $data, $res);
+        Cache::tag("member_address_" . $check_condition[ 'member_id' ])->set("member_address_getMemberAddressInfo_" . $data, $res);
         return $this->success($res);
     }
 
@@ -121,13 +137,13 @@ class MemberAddress extends BaseModel
     public function getMemberAddressList($condition = [], $field = '*', $order = 'is_default desc', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
-        $data            = json_encode([$condition, $field, $order, $limit]);
-        $cache           = Cache::get("member_address_getMemberAddressList_" . $data);
+        $data = json_encode([ $condition, $field, $order, $limit ]);
+        $cache = Cache::get("member_address_getMemberAddressList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
         $list = model('member_address')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag("member_address_" . $check_condition['member_id'])->set("member_address_getMemberAddressList_" . $data, $list);
+        Cache::tag("member_address_" . $check_condition[ 'member_id' ])->set("member_address_getMemberAddressList_" . $data, $list);
         return $this->success($list);
 
     }
@@ -141,16 +157,16 @@ class MemberAddress extends BaseModel
      * @param string $field
      * @return \multitype
      */
-    public function getMemberAddressPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'is_default desc,id desc', $field = 'id, member_id, name, mobile, telephone, address, full_address, is_default')
+    public function getMemberAddressPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'is_default desc,id desc', $field = 'id, member_id, name, mobile, telephone, address, full_address, is_default, type')
     {
         $check_condition = array_column($condition, 2, 0);
-        $data            = json_encode([$condition, $page, $page_size, $order, $field]);
-        $cache           = Cache::get("member_address_getMemberAddressList_" . $data);
+        $data = json_encode([ $condition, $page, $page_size, $order, $field ]);
+        $cache = Cache::get("member_address_getMemberAddressList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
         $list = model('member_address')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag("member_address_" . $check_condition['member_id'])->set("member_address_getMemberAddressPageList_" . $data, $list);
+        Cache::tag("member_address_" . $check_condition[ 'member_id' ])->set("member_address_getMemberAddressPageList_" . $data, $list);
         return $this->success($list);
     }
 }

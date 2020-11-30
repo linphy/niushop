@@ -53,28 +53,26 @@
 			</div>
 
 			<div class="layui-form-item">
+				<label class="layui-form-label">等级描述：</label>
+				<div class="layui-input-block ns-len-long">
+					<textarea name="remark" class="layui-textarea">{$level_info.remark}</textarea>
+				</div>
+			</div>
+
+			{if $level_info.is_default == 0}
+			<div class="layui-form-item">
 				<label class="layui-form-label"><span class="required">*</span>所需成长值：</label>
 				<div class="layui-input-block">
 					<input name="growth" value="{$level_info.growth}" type="number" lay-verify="required" min="0" class="layui-input ns-len-short">
 				</div>
 				<div class="ns-word-aux">修改等级所需成长值后，部分客户会因无法达到该成长值要求而发生会员等级的变化</div>
 			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">备注：</label>
-				<div class="layui-input-block ns-len-long">
-					<textarea name="remark" class="layui-textarea">{$level_info.remark}</textarea>
-				</div>
-			</div>
-			
-			<div class="layui-form-item">
-				<label class="layui-form-label">是否默认：</label>
-				<div class="layui-input-block">
-					<input type="checkbox" name="is_default" value="1" {if $level_info.is_default == 1} checked {/if}  lay-skin="switch" />
-				</div>
-			</div>
+			{/if}
 
 		</div>
 	</div>
+
+	{if $level_info.is_default == 0}
 
 	<div class="layui-card ns-card-common ns-card-brief ns-level-equity">
 		<div class="layui-card-header">
@@ -189,6 +187,7 @@
 
 		</div>
 	</div>
+	{/if}
 	<input type="hidden" name="level_id" value="{$level_info.level_id}">
 	
 	<div class="layui-card ns-card-common">

@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -140,7 +139,7 @@ class Upload extends BaseModel
             if ($result[ "code" ] < 0)
                 return $result;
 
-            $thumb_res = $this->thumbBatch($tmp_name, $file_name, $extend_name, $thumb_type);//生成缩略图
+            $thumb_res = $this->thumbBatch($result['data'], $file_name, $extend_name, $thumb_type);//生成缩略图
             if ($thumb_res[ "code" ] < 0)
                 return $result;
 
@@ -164,6 +163,99 @@ class Upload extends BaseModel
             } else {
                 return $this->error($res);
             }
+        } else {
+            //返回错误信息
+            return $check_res;
+        }
+
+    }
+
+    /*
+     * 替换图片文件
+     * */
+    public function modifyFile($param)
+    {
+//        参数校验
+        if(empty($param['album_id'])){
+            return $this->error('', "PARAMETER_ERROR");
+        }
+
+        if(empty($param['pic_id'])){
+            return $this->error('', "PARAMETER_ERROR");
+        }
+
+        if(empty($param['filename'])){
+            return $this->error('', "PARAMETER_ERROR");
+        }
+
+        if(empty($param['suffix'])){
+            return $this->error('', "PARAMETER_ERROR");
+        }
+
+        $check_res = $this->checkImg();
+
+        if ($check_res[ "code" ] >= 0) {
+
+            $file = request()->file($param[ "name" ]);
+            if (empty($file))
+                return $this->error();
+
+            $tmp_name = $file->getPathname();//获取上传缓存文件
+            $original_name = $file->getOriginalName();//文件原名
+
+            $file_path = $this->path;
+            // 检测目录
+            $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
+            if ($checkpath_result[ "code" ] < 0){
+                return $checkpath_result;
+            }
+
+//            保留原文件名和后缀
+            $file_name = $file_path . $param['filename'];
+            $extend_name = $param['suffix'];
+            $thumb_type = $param[ "thumb_type" ];//所留
+            //原图保存
+            $new_file = $file_name . "." . $extend_name;
+            $image = Image::make($tmp_name);
+            $width = $image->width();//图片宽
+            $height = $image->height();//图片高
+            $image = $this->imageWater($image);
+
+            $result = $this->imageCloud($image, $new_file);//原图云上传(文档流上传)
+            if ($result[ "code" ] < 0){
+                return $result;
+            }
+
+            $thumb_res = $this->thumbBatch($tmp_name, $file_name, $extend_name, $thumb_type);//生成缩略图
+            if ($thumb_res[ "code" ] < 0){
+                return $thumb_res;
+            }
+
+            $pic_name_first = substr(strrchr($original_name, '.'), 1);
+            $pic_name = basename($original_name, "." . $pic_name_first);
+
+            $data = array (
+                "pic_path" => $result[ "data" ],//图片云存储
+                "pic_spec" => $width . "*" . $height,
+                "update_time" => time(),
+            );
+
+            $album_model = new Album();
+            $condition   = array(
+                ["pic_id", "=", $param['pic_id']],
+                ["site_id", "=", $this->site_id],
+                ['album_id', "=", $param['album_id']],
+            );
+
+            $res = $album_model->editAlbumPic($data, $condition);
+
+            if ($res[ 'code' ] >= 0) {
+                $data[ "id" ] = $res[ "data" ];
+                return $this->success($data, "UPLOAD_SUCCESS");
+            } else {
+                return $this->error($res);
+            }
+
         } else {
             //返回错误信息
             return $check_res;
@@ -309,10 +401,16 @@ class Upload extends BaseModel
      */
     public function imageThumb($file, $thumb_name, $width, $height)
     {
-        $image = Image::make($file)->fit($width, $height, function($constraint) {
-//            $constraint->upsize();//防止图片放大  不需要
-        }, $this->config[ "thumb" ][ "thumb_position" ]);
-        $image = $this->imageWater($image);
+        $image = Image::make($file)->resize($width, $height, function ($constraint) {
+            $constraint->aspectRatio();
+//            $constraint->upsize();
+        });
+        $now_width = $image->width();
+        $now_height= $image->height();
+        $new_height = $height - $now_height;
+        $new_width = $width - $now_width;
+        $image = $image->resizeCanvas($new_width, $new_height, 'center', true, 'ffffff');
+//        $image = $this->imageWater($image);
         $result = $this->imageCloud($image, $thumb_name);
         return $result;
     }

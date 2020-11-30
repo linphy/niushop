@@ -11,7 +11,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>会员购买商品之后可以针对购买的商品进行评价或者追评</li>
 			<li>商品评价之后会在前台的商品详情中进行显示</li>
 			<li>商家可以针对会员的商品评价进行回复</li>
@@ -66,7 +66,7 @@
 					</div>
 				</div>
 			</div>
-
+			<input type="hidden" name="goods_id" value="{$goods_id}">
 			<div class="ns-form-row">
 				<button class="layui-btn ns-bg-color" lay-submit lay-filter="search">筛选</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -113,12 +113,15 @@
 <script>
 	var limit = 2;
 	var evaluate = new Evaluate(limit, [2, 4, 6]);
-
+	var goods_id = "{$goods_id}";
 	evaluate.getList({
-		"_this": evaluate
+		"_this": evaluate,
+		"goods_id" : goods_id,
+
 	});
 	evaluate.pageInit({
-		"_this": evaluate
+		"_this": evaluate,
+		"goods_id" : goods_id,
 	});
 
 	layui.use(['form', 'laydate'], function() {
@@ -195,7 +198,8 @@
 				"search_text": data.field.search_text,
 				"explain_type": data.field.explain_type,
 				"start_time": data.field.start_time,
-				"end_time": data.field.end_time
+				"end_time": data.field.end_time,
+				"goods_id" : data.field.goods_id
 			});
 			evaluate.pageInit({
 				"_this": evaluate,
@@ -203,7 +207,8 @@
 				"search_text": data.field.search_text,
 				"explain_type": data.field.explain_type,
 				"start_time": data.field.start_time,
-				"end_time": data.field.end_time
+				"end_time": data.field.end_time,
+				"goods_id" : data.field.goods_id
 			});
 			return false;
 		});

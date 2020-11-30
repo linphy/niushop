@@ -6,8 +6,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -189,4 +188,18 @@ class MemberAccount extends BaseModel
         $list = model('member_account')->getList($condition, $field, $order, '', '', '', $limit);
         return $this->success($list);
     }
+
+    /**
+     * 获取账户总额
+     * @param array $where
+     * @param string $field
+     * @param string $alias
+     * @param null $join
+     * @return array
+     */
+    public function getMemberAccountSum($where = [], $field = '', $alias = 'a', $join = null){
+        $sum = model('member_account')->getSum($where, $field, $alias, $join);
+        return $this->success($sum);
+    }
+
 }

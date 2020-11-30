@@ -80,7 +80,7 @@
 
 <script>
 	var form, laytpl, laypage, upload,
-		limit = 12,
+		limit = 10,
 		active_array = [],
 		album_id = $(".album-list li.active").attr("data-album-id");
 
@@ -163,7 +163,7 @@
 			} else {
 				json_data.index = active_array.length + 1;
 				if (json_data.index > imgNum) {
-					layer.msg("您已超出最大的图片限额");
+					layer.msg("您只能选"+imgNum+"张图片！");
 					return;
 				}
 				active_array.push(json_data);

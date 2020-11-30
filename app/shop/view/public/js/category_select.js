@@ -35,9 +35,9 @@ function delGoodsCate(obj) {
 // 刷新添加商品分类按钮是否显示
 function refreshAddCategory() {
 	if ($(".goods-category-con-wrap .layui-block").length < 10) {
-		$(".js-add-category").show();
+		$(".js-add-category").css('visibility', '');
 	} else {
-		$(".js-add-category").hide();
+		$(".js-add-category").css('visibility', 'hidden');
 	}
 }
 

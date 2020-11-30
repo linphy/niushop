@@ -28,7 +28,7 @@ class Fans extends BaseWechat
         $fans_model = new FansModel();
         if (request()->isAjax()) {
             $page         = input('page', 1);
-            $limit        = input('limit', PAGE_LIST_ROWS);
+            $limit        = input('page_size', PAGE_LIST_ROWS);
             $is_subscribe = input('is_subscribe', '');//关注
             $nickname     = input('nickname', '');//粉丝名称
             $start_time   = input('start_time', '');

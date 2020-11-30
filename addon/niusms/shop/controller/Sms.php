@@ -55,6 +55,7 @@ class Sms extends BaseShop
                     $this->assign("sms_config", $sms_config);
                     $signature_status = $sms_model->querySignature($this->site_id, $this->app_module);
                     $this->assign("signature_status", $signature_status);
+
                     return $this->fetch("sms/index");
                 } else {
                     $this->redirect(addon_url("niusms://shop/sms/login"));
@@ -253,8 +254,64 @@ class Sms extends BaseShop
             $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module);
             $sms_config = $sms_config[ 'data' ][ 'value' ];
             $sms_model = new SmsOrderModel();
-            $order_list = $sms_model->getSmsOrderList([ 'page' => $page, 'page_size' => $page_size, 'username' => $sms_config[ 'username' ], ]);
+            $order_list = $sms_model->getSmsOrderList([ 'page' => $page, 'page_size' => $page_size, 'username' => $sms_config[ 'username' ] ]);
             return $order_list;
         }
     }
+
+    /**
+     * 签名管理
+     */
+    public function signList()
+    {
+        //短信配置
+        $config_model = new ConfigModel();
+        $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module);
+        $sms_config = $sms_config[ 'data' ][ 'value' ];
+
+        if(request()->isAjax()){
+
+            $page = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $signature = input('signature','');
+            $status = input('status','');//审核状态 1 - 待审核，2 - 审核通过，3 - 审核不通过;
+
+            $data = [
+                'page' => $page,
+                'page_size' => $page_size,
+                'username' => $sms_config[ 'username' ],
+                'signature' => $signature,
+                'status' => $status
+            ];
+            $sms_model = new SmsModel();
+            $list = $sms_model->getChildSignatureList($data);
+            return $list;
+        }else{
+
+            $this->assign('sms_config',$sms_config);
+            return $this->fetch('sms/sign_list');
+        }
+    }
+
+    /**
+     * 更换签名
+     */
+    public function changeSignature()
+    {
+        if(request()->isAjax()){
+
+            $signature = input('signature','');
+
+            //短信配置
+            $config_model = new ConfigModel();
+            $sms_config_result = $config_model->getSmsConfig($this->site_id, $this->app_module);
+            $sms_config = $sms_config_result[ 'data' ][ 'value' ];
+
+            $sms_config['signature'] = $signature;
+
+            $res = $config_model->setSmsConfig($sms_config,$sms_config_result['data']['is_use'],$this->site_id,$this->app_module);
+            return $res;
+        }
+    }
+
 }

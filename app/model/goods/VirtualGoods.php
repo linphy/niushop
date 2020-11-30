@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -45,13 +44,13 @@ class VirtualGoods extends BaseModel
 
         try {
 
-            if(!empty($data[ 'goods_attr_format' ])){
+            if (!empty($data[ 'goods_attr_format' ])) {
 
-                $goods_attr_format = json_decode($data['goods_attr_format'],true);
-                $keys = array_column($goods_attr_format,'sort');
-                if(!empty($keys)){
-                    array_multisort($keys,SORT_ASC,SORT_NUMERIC,$goods_attr_format);
-                    $data['goods_attr_format'] = json_encode($goods_attr_format);
+                $goods_attr_format = json_decode($data[ 'goods_attr_format' ], true);
+                $keys = array_column($goods_attr_format, 'sort');
+                if (!empty($keys)) {
+                    array_multisort($keys, SORT_ASC, SORT_NUMERIC, $goods_attr_format);
+                    $data[ 'goods_attr_format' ] = json_encode($goods_attr_format);
                 }
             }
 
@@ -76,8 +75,8 @@ class VirtualGoods extends BaseModel
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
-                'timer_on' => $data['timer_on'],
-                'timer_off' => $data['timer_off'],
+                'timer_on' => $data[ 'timer_on' ],
+                'timer_off' => $data[ 'timer_off' ],
             );
 
             $common_data = array (
@@ -146,11 +145,11 @@ class VirtualGoods extends BaseModel
 
             $cron = new Cron();
             //定时上下架
-            if($goods_data['timer_on'] > 0){
-                $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data['timer_on'], $goods_id);
+            if ($goods_data[ 'timer_on' ] > 0) {
+                $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data[ 'timer_on' ], $goods_id);
             }
-            if($goods_data['timer_off'] > 0){
-                $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data['timer_off'], $goods_id);
+            if ($goods_data[ 'timer_off' ] > 0) {
+                $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data[ 'timer_off' ], $goods_id);
             }
 
             //添加统计
@@ -177,13 +176,13 @@ class VirtualGoods extends BaseModel
 
         try {
 
-            if(!empty($data[ 'goods_attr_format' ])){
+            if (!empty($data[ 'goods_attr_format' ])) {
 
-                $goods_attr_format = json_decode($data['goods_attr_format'],true);
-                $keys = array_column($goods_attr_format,'sort');
-                if(!empty($keys)){
-                    array_multisort($keys,SORT_ASC,SORT_NUMERIC,$goods_attr_format);
-                    $data['goods_attr_format'] = json_encode($goods_attr_format);
+                $goods_attr_format = json_decode($data[ 'goods_attr_format' ], true);
+                $keys = array_column($goods_attr_format, 'sort');
+                if (!empty($keys)) {
+                    array_multisort($keys, SORT_ASC, SORT_NUMERIC, $goods_attr_format);
+                    $data[ 'goods_attr_format' ] = json_encode($goods_attr_format);
                 }
             }
 
@@ -209,8 +208,8 @@ class VirtualGoods extends BaseModel
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
-                'timer_on' => $data['timer_on'],
-                'timer_off' => $data['timer_off'],
+                'timer_on' => $data[ 'timer_on' ],
+                'timer_off' => $data[ 'timer_off' ],
             );
 
             $common_data = array (
@@ -244,7 +243,7 @@ class VirtualGoods extends BaseModel
             // 如果只编辑价格库存就是修改，如果添加规格项/值就需要重新生成
             if (!empty($data[ 'goods_sku_data' ][ 0 ][ 'sku_id' ])) {
 
-                if($data['spec_type_status'] == 1){
+                if ($data[ 'spec_type_status' ] == 1) {
                     model('goods_sku')->delete([ [ 'goods_id', '=', $goods_id ] ]);
 
                     $sku_arr = array ();
@@ -272,11 +271,14 @@ class VirtualGoods extends BaseModel
                     }
 
                     model('goods_sku')->addList($sku_arr);
-                }else{
+                } else {
+                    $discount_model = new Discount();
                     foreach ($data[ 'goods_sku_data' ] as $item) {
-                        $discount_model = new Discount();
-                        $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
-                        $discount_info = $discount_info_result[ 'data' ];
+                        $discount_info = [];
+                        if (!empty($item[ 'sku_id' ])) {
+                            $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
+                            $discount_info = $discount_info_result[ 'data' ];
+                        }
 
                         $sku_data = array (
                             'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
@@ -296,7 +298,11 @@ class VirtualGoods extends BaseModel
                         if (empty($discount_info)) {
                             $sku_data[ 'discount_price' ] = $item[ 'price' ];
                         }
-                        model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ] ]);
+                        if (!empty($item[ 'sku_id' ])) {
+                            model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
+                        } else {
+                            model('goods_sku')->add(array_merge($sku_data, $common_data));
+                        }
 
                     }
                 }
@@ -342,14 +348,14 @@ class VirtualGoods extends BaseModel
             }
 
             $cron = new Cron();
+            $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOn' ], [ 'relate_id', '=', $goods_id ] ]);
+            $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOff' ], [ 'relate_id', '=', $goods_id ] ]);
             //定时上下架
-            if($goods_data['timer_on'] > 0){
-                $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOn' ], [ 'relate_id', '=', $goods_id ] ]);
-                $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data['timer_on'], $goods_id);
+            if ($goods_data[ 'timer_on' ] > 0) {
+                $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data[ 'timer_on' ], $goods_id);
             }
-            if($goods_data['timer_off'] > 0){
-                $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOff' ], [ 'relate_id', '=', $goods_id ] ]);
-                $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data['timer_off'], $goods_id);
+            if ($goods_data[ 'timer_off' ] > 0) {
+                $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data[ 'timer_off' ], $goods_id);
             }
 
             model('goods')->commit();

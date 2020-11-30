@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -282,6 +281,9 @@ class User extends BaseModel
      */
     public function checkAuth($url, $app_module, $group_info, $addon = '')
     {
+        if ($group_info[ 'is_system' ] == 1) {
+            return true;
+        }
         $auth_control = event("AuthControl", ['url' => $url, 'app_module' => $app_module], 1);
         if(!empty($auth_control))
         {
@@ -290,9 +292,7 @@ class User extends BaseModel
                 return false;
             }
         }
-        if ($group_info[ 'is_system' ] == 1) {
-            return true;
-        }
+
         $menu_model = new Menu();
         $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module, $addon);
         if (!empty($menu_info[ 'data' ])) {
@@ -327,8 +327,10 @@ class User extends BaseModel
         if ($this->checkAuth($url, $app_module, $group_info) == false) {
             $menu_model = new Menu();
             $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module, $addon);
+
             $menu_info = $menu_info[ 'data' ];
             $menu_count = $menu_model->getMenuCount([ [ 'url', "=", $url ], [ 'app_module', "=", $app_module ] ]);
+
             $menu_count = $menu_count[ 'data' ];
             if ($menu_count == 1) {
                 return [];
@@ -338,23 +340,30 @@ class User extends BaseModel
             } elseif ($menu_info[ 'level' ] == 2) {
                 $menu_second_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 2 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
                 $menu_second_info = $menu_second_info[ 'data' ];
+
                 if (!empty($menu_second_info)) {
-                    return $menu_second_info;
+                    if($menu_info['addon'] == $menu_second_info['addon']){
+                        return $menu_second_info;
+                    }
                 }
             } elseif ($menu_info[ 'level' ] == 3) {
                 $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 3 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
                 $check_menu_info = $check_menu_info[ 'data' ];
+
                 if (!empty($check_menu_info)) {
-                    return $check_menu_info;
+                    if($menu_info['addon'] == $check_menu_info['addon']){
+                        return $check_menu_info;
+                    }
                 } else {
                     $parent_menu_info = $menu_model->getMenuInfo([ [ 'name', '=', $menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'app_module', '=', $app_module ] ]);
                     $parent_menu_info = $parent_menu_info[ 'data' ];
 
                     $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $parent_menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
                     $check_menu_info = $check_menu_info[ 'data' ];
-
                     if (!empty($check_menu_info)) {
-                        return $check_menu_info;
+                        if($menu_info['addon'] == $check_menu_info['addon']){
+                            return $check_menu_info;
+                        }
                     }
                 }
             }

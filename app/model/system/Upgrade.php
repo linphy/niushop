@@ -24,14 +24,7 @@ class Upgrade extends BaseModel
 
     public function __construct($code = '')
     {
-        if (!empty($code)) {
-            $this->cert = $code;
-        } else {
-            $config_model = new Config();
-            $config = $config_model->getAuth();
-            $config = $config[ 'data' ][ 'value' ];
-            $this->cert = $config[ 'code' ] ?? '';
-        }
+        $this->cert = defined('NIUSHOP_AUTH_CODE') ? NIUSHOP_AUTH_CODE : '';
         $this->url = 'https://api.niushop.com';
     }
 
@@ -297,9 +290,11 @@ class Upgrade extends BaseModel
 
     public function getVersionLog($page, $page_size)
     {
+        $app_info = config('info');
         $post_data = [
             'page_index' => $page,
             'page_size' => $page_size,
+            'product_key' => $app_info[ 'name' ]
         ];
         $re = $this->doPost('/upgrade/upgrade/versionPage', $post_data);
         $re = json_decode($re, true);

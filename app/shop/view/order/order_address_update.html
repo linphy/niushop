@@ -1,7 +1,6 @@
-<script type="text/javascript" src="SHOP_JS/address.js"></script>
-<script type="text/javascript" src="__STATIC__/js/map_address.js"></script>
 <script type="text/javascript" src="{$http_type}://webapi.amap.com/maps?v=1.4.6&amp;key=2df5711d4e2fd9ecd1622b5a53fc6b1d"></script>
-<script type="text/javascript" src="{$http_type}://webapi.amap.com/demos/js/liteToolbar.js"></script>
+<script type="text/javascript" src="SHOP_JS/address.js"></script>
+<script type="text/javascript" src="STATIC_JS/map_address.js"></script>
 <style>
     .update-address-html .order-map{width:876px;height:380px}
 </style>
@@ -31,28 +30,26 @@
                 <option value="">请选择区/县</option>
             </select>
         </div>
-        <!--<div class="layui-input-inline area-select ns-len-mid">-->
-            <!--<select name="community_id" lay-filter="community_id" lay-verify="community_id">-->
-                <!--<option value="">请选择街道</option>-->
-            <!--</select>-->
-        <!--</div>-->
     </div>
+    {{# if(d.order_type == 3){ }}
     <div class="layui-form-item">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline" >
             <input type="text" name="address"  placeholder="请填写具体地址。" lay-verify="address" autocomplete="off" class="layui-input address-content ns-len-long" value="{{# if(d.address != undefined){}}{{ d.address}}{{#  } }}">
-            <!--<input type = "hidden" name="longitude" lay-verify="required" class="layui-input" value="{{# if(d.longitude != undefined){}}{{ d.longitude}}{{#  } }}"/>-->
-            <!--<input type = "hidden" name="latitude" lay-verify="required" class="layui-input"value="{{# if(d.latitude != undefined){}}{{ d.latitude}}{{#  } }}"/>-->
+            <input type = "hidden" name="longitude" lay-verify="required" class="layui-input" value="{{# if(d.longitude != undefined){}}{{ d.longitude}}{{#  } }}"/>
+            <input type = "hidden" name="latitude" lay-verify="required" class="layui-input"value="{{# if(d.latitude != undefined){}}{{ d.latitude}}{{#  } }}"/>
         </div>
-        <!--<button class='layui-btn-primary layui-btn' onclick="refreshFrom();">查找地址</button>-->
+        <button class='layui-btn-primary layui-btn' onclick="refreshFrom();">查找地址</button>
     </div>
+
     <!--地图定位-->
-    <!--<div class="layui-form-item">-->
-        <!--<label class="layui-form-label">地图定位</label>-->
-        <!--<div class="layui-input-block ns-special-length">-->
-            <!--<div id="container" class="order-map"></div>-->
-        <!--</div>-->
-    <!--</div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">地图定位</label>
+        <div class="layui-input-block ns-special-length">
+            <div id="container" class="order-map"></div>
+        </div>
+    </div>
+    {{# } }}
     <!--联系人方式-->
     <div class="layui-form-item">
         <div class="layui-inline">
@@ -83,7 +80,8 @@
 </script>
 <script>
 
-var map_class, form;
+var map_class, form,latlng;
+
 /**
  * 订单地址修改
  */
@@ -101,8 +99,8 @@ function orderAddressUpdate(order_id) {
                 //获取模板
                 var getTpl = $("#update_address_html").html();
                 //渲染模板
-                var data = res.data;
-                laytpl(getTpl).render(data, function(html) {
+                var order_data = res.data;
+                laytpl(getTpl).render(order_data, function(html) {
                     layer.open({
                         type: 1,
                         shadeClose: true,
@@ -111,7 +109,7 @@ function orderAddressUpdate(order_id) {
                         scrollbar: true,
                         fixed: false,
                         title: "编辑收货地址",
-                        area: ['1000px'],
+                        area: ['1200px'],
                         btn: ['确定', '取消'],
                         yes: function(index, layero){
                             $("#submit_address").click();
@@ -126,21 +124,26 @@ function orderAddressUpdate(order_id) {
                         },
                         success: function(layero, index){
 
+
+                            form.render();
                             //初始化省级地址
                             getAreaList(0, 1);
                             var repeat_flag = false;//防重复标识
                             form.render();
-                            var initdata = {province_id : res.data.province_id, city_id : res.data.city_id, district_id : res.data.district_id, community_id : res.data.community_id};
+                            var initdata = {province_id : order_data.province_id, city_id : order_data.city_id, district_id : order_data.district_id};
                             initAddress(initdata, "update_address");
 
-                            if($.isEmptyObject(data) == true){
-                                var latlng = {lat:'',lng:''};
-                            }else{
-                                var latlng = {lat:data.latitude,lng:data.longitude};
+                            if(order_data.order_type == 3) {
+                                if ($.isEmptyObject(order_data) == true) {
+                                    latlng = {lat: '', lng: ''};
+                                } else {
+                                    latlng = {lat: order_data.latitude, lng: order_data.longitude};
+                                }
+
+                                map_class = new mapClass("container", latlng);
                             }
-                            // map_class = new mapClass("container",latlng);
                             form.render();
-							
+
                             form.on('submit(submit_address)', function(data){
 								if(data.field.province_id == ''){
 									layer.msg('请选择省份', {icon: 5, anim: 6});
@@ -158,15 +161,22 @@ function orderAddressUpdate(order_id) {
 								    layer.msg('请输入详细地址', {icon: 5, anim: 6});
 								    return;
 								}
+								//外卖订单修改地址必须选坐标
+								if(order_data.order_type == 3){
+								    if(data.field.latitude == '' || data.field.longitude == ''  ){
+                                        layer.msg('外卖订单必须选择地图坐标', {icon: 5, anim: 6});
+                                        return;
+                                    }
+                                }
                                 var province_name = $("option[value='" + data.field.province_id + "']").text();
                                 var city_name = $("option[value='" + data.field.city_id + "']").text();
                                 var district_name = $("option[value='" + data.field.district_id + "']").text();
-                                var community_name = $("option[value='" + data.field.community_id + "']").text();
+                                // var community_name = $("option[value='" + data.field.community_id + "']").text();
                                 data.field.province_name = province_name;
                                 data.field.city_name = city_name;
                                 data.field.district_name = district_name;
-                                data.field.community_name = community_name;
-                                data.field.full_address = province_name + city_name + district_name + community_name + data.field.address;
+                                // data.field.community_name = community_name;
+                                data.field.full_address = province_name + city_name + district_name + data.field.address;
 
 								if(repeat_flag)return;
 								repeat_flag = true;
@@ -204,59 +214,7 @@ function orderAddressUpdate(order_id) {
 function refreshFrom(){
     form.render();
     orderAddressChange();//改变地址
-    // map_class.mapChange();
-}
-/**
- * 获取地区列表
- * @param pid
- * @param level
- */
-function getAreaList(pid, level){
-    if(level <= 5){
-        $.ajax({
-            type : "post",
-            url : ns.url("shop/address/getAreaList"),
-            data : {
-                'level' : level,
-                'pid' : pid
-            },
-            dataType: 'json',
-            async : false,
-            success : function(res) {
-                if(res.code == 0){
-                    if(level == 1){
-                        $("select[name=province_id] option:gt(0)").remove();
-                        $("select[name=city_id] option:gt(0)").remove();
-                        $("select[name=district_id] option:gt(0)").remove();
-                        $.each(res.data, function(name, value) {
-                            $("select[name=province_id]").append("<option value='"+value.id+"'>"+value.name+"</option>");
-                        });
-                    }else if(level == 2){
-                        $("select[name=city_id] option:gt(0)").remove();
-                        $("select[name=district_id] option:gt(0)").remove();
-                        $.each(res.data, function(name, value) {
-                            $("select[name=city_id]").append("<option value='"+value.id+"'>"+value.name+"</option>");
-                        });
-                    }else if(level == 3){
-                        $("select[name=district_id] option:gt(0)").remove();
-                        $.each(res.data, function(name, value) {
-                            $("select[name=district_id]").append("<option value='"+value.id+"'>"+value.name+"</option>");
-                        });
-
-                    }else if(level == 4){
-                        $("select[name=community_id] option:gt(0)").remove();
-                        $.each(res.data, function(name, value) {
-                            $("select[name=community_id]").append("<option value='"+value.id+"'>"+value.name+"</option>");
-                        });
-                    }
-                }else{
-                    layer.msg(res.message);
-                }
-                form.render();
-            }
-        });
-    }
-    
+    map_class.mapChange();
 }
 
 //动态改变订单地址赋值
@@ -267,8 +225,8 @@ function orderAddressChange(){
     map_class.address.city_name = $("select[name=city_id] option:selected").text();
     map_class.address.district = $("select[name=district_id]").val();
     map_class.address.district_name = $("select[name=district_id] option:selected").text();
-    map_class.address.township = $("select[name=community_id]").val();
-    map_class.address.township_name = $("select[name=community_id] option:selected").text();
+    // map_class.address.township = $("select[name=community_id]").val();
+    // map_class.address.township_name = $("select[name=community_id] option:selected").text();
     map_class.address.address = $("input[name=address]").val()
 }
 
@@ -278,9 +236,12 @@ function orderAddressChange(){
 function selectCallBack(){
     $("input[name=longitude]").val(map_class.address.longitude);//坐标
     $("input[name=latitude]").val(map_class.address.latitude);//坐标
+    $("input[name=address]").val(map_class.address.address);//详细地址
+    console.log(map_class.address);
 }
 //地图点击回调时间
 function mapChangeCallBack(){
+
     $("input[name=address]").val(map_class.address.address);//详细地址
     $("input[name=longitude]").val(map_class.address.longitude);//坐标
     $("input[name=latitude]").val(map_class.address.latitude);//坐标
@@ -296,7 +257,7 @@ function mapChangeCallBack(){
             map_class.address.province = data.province_id;
             map_class.address.city = data.city_id;
             map_class.address.district = data.district_id;
-            map_class.address.township = data.community_id;
+            // map_class.address.township = data.community_id;
             map_class.map_change = false;
             form.val("update_address", {
                 "province_id": data.province_id // "name": "value"
@@ -310,9 +271,9 @@ function mapChangeCallBack(){
                 "district_id": data.district_id // "name": "value"
             });
             $("select[name=district_id]").change();
-            form.val("update_address", {
-                "community_id": data.community_id // "name": "value"
-            });
+            // form.val("update_address", {
+            //     "community_id": data.community_id // "name": "value"
+            // });
             refreshFrom();//重新渲染form
             map_class.map_change = true;
         }

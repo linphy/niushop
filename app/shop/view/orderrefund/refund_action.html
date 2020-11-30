@@ -375,4 +375,27 @@
         });
 
     }
+
+    /**
+     * 关闭维权
+     * @param order_goods_id
+     */
+    function orderRefundClose(order_goods_id){
+        layer.confirm('确定要关闭本次维权吗？', function() {
+            $.ajax({
+                url: ns.url("shop/orderrefund/close"),
+                data: { order_goods_id: order_goods_id },
+                dataType: 'JSON',
+                type: 'POST',
+                success: function(res) {
+                    layer.msg(res.message);
+                    if (res.code == 0) {
+                        location.href = ns.url("shop/orderrefund/lists");
+                    }
+                }
+            });
+        }, function () {
+            layer.closeAll();
+        });
+    }
 </script>

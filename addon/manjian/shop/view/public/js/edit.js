@@ -239,12 +239,26 @@ function renderTable(goods_list) {
 	//展示已知数据
 	table = new Table({
 		elem: '#selected_sku_list',
+		page: false,
+		limit: Number.MAX_VALUE,
 		cols: [
 			[{
 				field: 'goods_name',
 				title: '商品名称',
 				unresize: 'false',
-				width: '50%'
+				width: '50%',
+				templet: function(data) {
+					var html = '';
+					html += `
+							<div class="goods-title">
+								<div class="goods-img">
+									<img src="${data.goods_image ? ns.img(data.goods_image.split(",")[0],'small') : ''}" alt="">
+								</div>
+								<p class="ns-multi-line-hiding goods-name">${data.goods_name}</p>
+							</div>
+						`;
+					return html;
+				}
 			}, {
 				field: 'price',
 				title: '商品价格(元)',

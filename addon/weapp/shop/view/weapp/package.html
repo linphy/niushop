@@ -37,7 +37,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>下载之后需使用微信开发者工具上传代码，微信开发者工具下载地址: <a href="https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html" target="_blank">https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html</a></li>
 			<li>上传之后登录<a href="https://mp.weixin.qq.com" target="_blank">微信公众平台</a>，在版本管理中选择刚上传的版本提交审核，审核通过之后即可发布小程序。</li>
 			<li>UNIAPP源码包授权后可下载，可很好的进行二次开发，可通过<a href="https://www.dcloud.io/hbuilderx.html" target="_blank">HBuilder X</a>编译为H5、微信小程序、支付宝小程序、头条小程序等</li>
@@ -121,7 +121,7 @@
 {block name="script"}
 <script type="text/javascript">
 	function authLayer(){
-		layer.confirm('您尚未授权，只有授权才可以下载UNIAPP源码包！是否立即授权？', {
+		layer.confirm('当前为免费版，授权后才可以下载UNIAPP源码包！是否立即授权？', {
 		  btn: ['立即授权','暂不需要'] //按钮
 		}, function(){
 		  	window.open('https://www.niushop.com');

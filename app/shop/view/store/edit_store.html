@@ -25,19 +25,31 @@
 		<label class="layui-form-label img-upload-lable">门店图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block icon">
-				<div class="upload-img-box">
+				<div class="upload-img-box {if !empty($info.store_image)}hover{/if}" >
+					<div class="ns-upload-default" id="storeUpload">
 					{if empty($info.store_image)}
-					<div class="ns-upload-default">
-						<img src="SHOP_IMG/upload_img.png" />
-						<p>点击上传</p>
-					</div>
+						<div class="upload">
+							<img src="SHOP_IMG/upload_img.png" />
+							<p>点击上传</p>
+						</div>
 					{else/}
-					<img layer-src src="{:img($info.store_image)}" alt="">
+					<div id="preview_storeUpload" class="preview_img">
+						<img layer-src src="{:img($info.store_image)}" class="img_prev"/>
+					</div>
 					{/if}
+					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete" ></i>
+						</div>
+						
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="store_image" value="{$info.store_image}">
 				</div>
-				<p id="storeUpload" class=" {if condition="$info.store_image"} replace {else/} no-replace{/if}">替换</p>
-				<input type="hidden" name="store_image" value="{$info.store_image}">
-				<i class="del {if !empty($info.store_image)}show{/if}">x</i>
+				<!-- <p id="storeUpload" class=" {if condition="$info.store_image"} replace {else/} no-replace{/if}">替换</p>
+				<i class="del {if !empty($info.store_image)}show{/if}">x</i> -->
 			</div>
 		</div>
 		<div class="ns-word-aux">

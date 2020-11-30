@@ -5,18 +5,19 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
 namespace addon\wechat\api\controller;
 
+use app\model\member\Member as MemberModel;
 use addon\wechat\model\Wechat as WechatModel;
 use app\api\controller\BaseApi;
 use app\model\system\Site;
 use think\facade\Cache;
 use addon\wechat\model\Config as ConfigModel;
+use app\model\web\Config as WebConfig;
 
 class Wechat extends BaseApi
 {
@@ -73,8 +74,23 @@ class Wechat extends BaseApi
         $site_model = new Site();
         $shop_info  = $site_model->getSiteInfo([['site_id', '=', $this->site_id]], 'site_name,logo');
 
+        $web_config_model = new WebConfig();
+        $default_img_config = $web_config_model->getDefaultImg($this->site_id, 'shop');
+        $default_img_config = $default_img_config['data']['value'];
+
         $share_config['site_name'] = $shop_info['data']['site_name'];
         $share_config['site_logo'] = $shop_info['data']['logo'];
+        $share_config['haedimg'] = $default_img_config['default_headimg'];
+
+        $token = $this->checkToken();
+        if ($token['code'] == 0) {
+            $member = new MemberModel();
+            $member_info = $member->getMemberInfo([ ['member_id', '=', $this->member_id] ], 'headimg');
+            if (!empty($member_info['data']) && !empty($member_info['data']['headimg'])) {
+                $share_config['headimg'] = $member_info['data']['headimg'];
+            }
+        }
+
         $data['share_config']      = $share_config;
 
         return $this->response($this->success($data));

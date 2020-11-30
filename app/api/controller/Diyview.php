@@ -5,8 +5,6 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -39,12 +37,31 @@ class Diyview extends BaseApi
         ];
         if (!empty($id)) {
             $condition[] = [ 'sdv.id', '=', $id ];
+            $diy_view->modifyClick([ [ 'id', '=', $id ] ], $this->site_id);
         }
         if (!empty($name)) {
             $condition[] = [ 'sdv.name', '=', $name ];
+            $diy_view->modifyClick([ [ 'name', '=', $name ] ], $this->site_id);
         }
 
         $info = $diy_view->getSiteDiyViewDetail($condition);
+
+        if (!empty($info[ 'data' ][ 'value' ])) {
+            $json_data = json_decode($info[ 'data' ][ 'value' ], true);
+            foreach ($json_data[ 'value' ] as $k => $v) {
+                if (!empty($v[ 'addon_name' ])) {
+                    $is_exit = addon_is_exit($v[ 'addon_name' ], $this->site_id);
+                    // 检查插件是否存在
+                    if ($is_exit == 0) {
+                        unset($json_data[ 'value' ][ $k ]);
+                    }
+                }
+            }
+            $json_data[ 'value' ] = array_values($json_data[ 'value' ]);
+            $info[ 'data' ][ 'value' ] = json_encode($json_data);
+        }
+
+
         return $this->response($info);
     }
 

@@ -10,7 +10,7 @@
 
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>文件名称：{$info.filename}</li>
 			<li>导入订单数：{$info.order_num}</li>
 			<li>成功数：<span style="color: green">{$info.success_num}</span> </li>
@@ -65,7 +65,14 @@
 					field: 'order_no',
 					title: '订单编号',
 					unresize: 'false',
-					width:'15%'
+					width:'15%',
+					templet:function(data){
+						if(data.order_id){
+							return '<a href="'+ns.url("shop/order/detail", {order_id:data.order_id})+'">'+data.order_no+'</a>';
+						}else{
+							return data.order_no;
+						}
+					}
 				}, {
                     field: 'order_name',
                     title: '订单内容',

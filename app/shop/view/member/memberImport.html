@@ -18,7 +18,12 @@
 
 <!-- 列表 -->
 <table id="member_import_log_list" lay-filter="member_import_log_list"></table>
-
+<!-- 工具栏操作 -->
+<script type="text/html" id="operation">
+    <div class="ns-table-btn">
+        <a class="layui-btn" lay-event="info">查看</a>
+    </div>
+</script>
 {/block}
 
 {block name="script"}
@@ -40,40 +45,35 @@
             url: ns.url("shop/member/memberImport"),
             cols: [
                 [{
-					field: 'username',
-					title: '用户名',
-                    width: '8%',
+					field: 'create_time',
+					title: '导入时间',
+                    width: '20%',
 					unresize: 'false',
 				}, {
-					field: 'mobile',
-					title: '手机号',
-					width: '8%',
+					field: 'member_num',
+					title: '导入会员数',
+					width: '20%',
 					unresize: 'false',
 				}, {
-					field: 'nickname',
-					title: '昵称',
+					field: 'success_num',
+					title: '导入成功会员数',
+					width: '20%',
+					unresize: 'false',
+				}, {
+                    field: 'error_num',
+                    title: '导入失败会员数',
 					width: '15%',
-					unresize: 'false',
-				}, {
-                    field: 'wx_openid',
-                    title: '微信公众号openid',
-					width: '20%',
                     unresize: 'false',
                 }, {
-                    field: 'weapp_openid',
-                    title: '小程序openid',
-					width: '20%',
+                    field: 'status_name',
+                    title: '导入状态',
+					width: '15%',
                     unresize: 'false',
                 }, {
-                    field: 'password',
-                    title: '密码',
-                    width: '8%',
+                    title: '操作',
+                    width: '10%',
                     unresize: 'false',
-                }, {
-                    field: 'content',
-                    title: '内容',
-                    width: '21%',
-                    unresize: 'false',
+                    toolbar: '#operation'
                 }]
             ]
         });
@@ -92,15 +92,30 @@
                 }
             }
         });
+
+        /**
+         * 监听工具栏操作
+         */
+        table.tool(function(obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'info': //查看
+                    location.href = ns.url("shop/member/memberimportlist?id=" + data.id);
+                    break
+            }
+        });
     });
 
-    function member_import(index, name, path){
+    function member_import(index, name, path, success_num = 0, error_num = 0, record = 0){
         $.ajax({
             url: ns.url("shop/member/import"),
             data: {
                 filename: name,
                 path: path,
-                index: index
+                index: index,
+                success_num : success_num,
+                error_num : error_num,
+                record : record
             },
             dataType: 'JSON',
             type: 'POST',
@@ -109,7 +124,7 @@
                 if(res.code == 0){
 
                     if(res.data.num < res.data.allRow){
-                        member_import(index, res.data.name, res.data.path);
+                        member_import(index, res.data.name, res.data.path, res.data.success_num, res.data.error_num, res.data.record);
                     }else{
                         table.reload();
                     }

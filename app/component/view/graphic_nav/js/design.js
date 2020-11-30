@@ -5,12 +5,12 @@
  * 2、上传图片的比例，最好统一，效果最佳
  */
 
-var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
+/* var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
 		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{}" v-if="data.scrollSetting==\'fixed\'">';
-			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" v-bind:style="{ width: ( data.scrollSetting==\'fixed\' ? ( 375/list.length ) : (375/4) ) + \'px\', paddingLeft: (data.padding/2)+\'px\', paddingRight: (data.padding/2)+\'px\' }">';
+			graphicNavPreviewHtml += '<div v-for="(item,index) in list" class="item" style="width: 60px;">';
 				graphicNavPreviewHtml += '<a href="javascript:;">';
-					graphicNavPreviewHtml += '<img v-show="data.selectedTemplate ==\'imageNavigation\'" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" />';
-					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor, opacity: data.textColor ? 1 : 0 }">{{item.title}}</span>';
+					graphicNavPreviewHtml += '<div v-show="data.selectedTemplate ==\'imageNavigation\'" style="width: 35px; height: 35px; line-height: 35px; display: inline-block;"><img style="max-width: 100%; max-height: 100%;" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" /></div>';
+					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor, opacity: data.textColor ? 1 : 0, marginTop: data.selectedTemplate ==\'imageNavigation\' ? \'10px\' : \'\' }">{{item.title}}</span>';
 					graphicNavPreviewHtml += '</a>';
 			graphicNavPreviewHtml += '</div>';
 		graphicNavPreviewHtml += '</div>';
@@ -24,6 +24,17 @@ var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
 			graphicNavPreviewHtml += '</div>';
 		graphicNavPreviewHtml += '</div>';
 		
+	graphicNavPreviewHtml += '</div>'; */
+
+var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
+		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{}">';
+			graphicNavPreviewHtml += '<div v-for="(item, index) in list" class="item" :style="{width: 333/data.showType + \'px\'}">';
+				graphicNavPreviewHtml += '<a href="javascript:;">';
+					graphicNavPreviewHtml += '<div v-show="data.selectedTemplate ==\'imageNavigation\'" style="width: 35px; height: 35px; line-height: 35px; display: inline-block;"><img style="max-width: 100%; max-height: 100%;" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" /></div>';
+					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor, opacity: data.textColor ? 1 : 0, marginTop: data.selectedTemplate ==\'imageNavigation\' ? \'10px\' : \'\' }">{{item.title}}</span>';
+				graphicNavPreviewHtml += '</a>';
+			graphicNavPreviewHtml += '</div>';
+		graphicNavPreviewHtml += '</div>';
 	graphicNavPreviewHtml += '</div>';
 
 Vue.component("graphic-nav", {
@@ -54,33 +65,96 @@ Vue.component("graphic-nav", {
  */
 var graphicNavListHtml = '<div class="graphic-nav-list">';
 
-		graphicNavListHtml += '<div class="layui-form-item">';
+		graphicNavListHtml += '<div class="layui-form-item ns-icon-radio">';
 			graphicNavListHtml += '<label class="layui-form-label sm">选择模板</label>';
 			graphicNavListHtml += '<div class="layui-input-block">';
-				graphicNavListHtml += '<div class="template-list">';
+				graphicNavListHtml += '<template v-for="(item, index) in selectedTemplateList" v-bind:k="index">';
+					graphicNavListHtml += '<span :class="[item.value == selectedTemplate ? \'\' : \'layui-hide\']">{{item.name}}</span>';
+				graphicNavListHtml += '</template>';
 				
-					graphicNavListHtml += '<div v-for="(item,i) in selectedTemplateList" v-bind:class="[\'template-item\',selectedTemplate == item.value ? \'ns-border-color ns-text-color\' : \'\']" v-on:click="selectedTemplate =item.value">';
-						graphicNavListHtml += '<img v-bind:src="item.src" width="90px" height="64px">';
-						graphicNavListHtml += '<span>{{item.name}}</span>';
-					graphicNavListHtml += '</div>';
-					
-				graphicNavListHtml += '</div>';
+				graphicNavListHtml += '<ul class="ns-icon">';
+					graphicNavListHtml += '<li v-for="(item, index) in selectedTemplateList" v-bind:k="index" :class="[item.value == selectedTemplate ? \'ns-text-color ns-border-color ns-bg-color-diaphaneity\' : \'\']" @click="selectedTemplate =item.value">';
+						graphicNavListHtml += '<img v-if="item.value == selectedTemplate" :src="item.selectedSrc" />'
+						graphicNavListHtml += '<img v-else :src="item.src" />'
+					graphicNavListHtml += '</li>';
+				graphicNavListHtml += '</ul>';
 			graphicNavListHtml += '</div>';
 		graphicNavListHtml += '</div>';
-
-		graphicNavListHtml += '<color v-bind:data="{ defaultcolor: \'#666666\' }"></color>';
-		graphicNavListHtml += '<color v-bind:data="{ field : \'backgroundColor\', label : \'背景颜色\' }"></color>';
-
-		graphicNavListHtml += '<div class="text-slide">';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingTopBottom\', label : \'上下边距\' }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingLeftRight\', label : \'左右边距\' }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'marginTopBottom\', label : \'上下外边距\' }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'marginLeftRight\', label : \'左右外边距\' }"></slide>';
-			graphicNavListHtml += '<slide v-bind:data="{ field : \'padding\', label : \'图片间距\', max: 40 }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopLeftRadius\', label : \'左上圆角\' }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopRightRadius\', label : \'右上圆角\' }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomLeftRadius\', label : \'左下圆角\' }"></slide>';
-			// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomRightRadius\', label : \'右下圆角\' }"></slide>';
+		
+		graphicNavListHtml += '<div class="layui-form-item ns-icon-radio">';
+			graphicNavListHtml += '<label class="layui-form-label sm">展示形式</label>';
+			graphicNavListHtml += '<div class="layui-input-block">';
+				graphicNavListHtml += '<template v-for="(item, index) in showTypeList" v-bind:k="index">';
+					graphicNavListHtml += '<span :class="[item.value == data.showType ? \'\' : \'layui-hide\']">{{item.name}}</span>';
+				graphicNavListHtml += '</template>';
+				
+				graphicNavListHtml += '<ul class="ns-icon">';
+					graphicNavListHtml += '<li v-for="(item, index) in showTypeList" v-bind:k="index" :class="[item.value == data.showType ? \'ns-text-color ns-border-color ns-bg-color-diaphaneity\' : \'\']" @click="data.showType = item.value">';
+						graphicNavListHtml += '<img v-if="item.value == data.showType" :src="item.selectedSrc" />'
+						graphicNavListHtml += '<img v-else :src="item.src" />'
+					graphicNavListHtml += '</li>';
+				graphicNavListHtml += '</ul>';
+			graphicNavListHtml += '</div>';
+		graphicNavListHtml += '</div>';
+		
+		graphicNavListHtml += '<div class="template-edit-wrap">';
+			graphicNavListHtml += '<ul>';
+				// graphicNavListHtml += '<p class="hint">建议上传尺寸相同的图片(60px * 60px)，最多添加 {{maxTip}} 个导航，拖动选中的导航可对其排序</p>';
+				graphicNavListHtml += '<p class="hint">建议上传尺寸相同的图片(60px * 60px)</p>';
+				graphicNavListHtml += '<li v-for="(item,index) in list" v-bind:key="index">';
+					graphicNavListHtml += '<img-upload v-bind:data="{ data : item }" v-bind:condition="$parent.data.selectedTemplate == \'imageNavigation\'"></img-upload>';
+			
+					graphicNavListHtml += '<div class="content-block" v-bind:class="$parent.data.selectedTemplate">';
+						graphicNavListHtml += '<div class="layui-form-item">';
+							graphicNavListHtml += '<label class="layui-form-label sm">标题</label>';
+							graphicNavListHtml += '<div class="layui-input-block">';
+								graphicNavListHtml += '<input type="text" name=\'title\' v-model="item.title" class="layui-input" />';
+							graphicNavListHtml += '</div>';
+						graphicNavListHtml += '</div>';
+					
+						graphicNavListHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
+					graphicNavListHtml += '</div>';
+					
+					graphicNavListHtml += '<i class="del" v-on:click="list.splice(index,1)" data-disabled="1">x</i>';
+					graphicNavListHtml += '<div class="error-msg"></div>';
+				graphicNavListHtml += '</li>';
+				
+				graphicNavListHtml += '<div class="add-item ns-text-color" v-on:click="list.push({ imageUrl : \'\', title : \'\', link : {} })">';
+					graphicNavListHtml += '<i>+</i>';
+					graphicNavListHtml += '<span>添加一个图文导航</span>';
+				graphicNavListHtml += '</div>';
+			graphicNavListHtml += '</ul>';
+		graphicNavListHtml += '</div>';
+		
+		/* graphicNavListHtml += '<div class="template-edit-title">';
+			graphicNavListHtml += '<h3>导航显示样式</h3>';
+			graphicNavListHtml += '<i class="layui-icon layui-icon-down" onclick="closeBox(this)"></i>';
+		graphicNavListHtml += '</div>'; */
+		
+		graphicNavListHtml += '<div class="template-edit-wrap">';
+			graphicNavListHtml += '<color v-bind:data="{ defaultcolor: \'#666666\' }"></color>';
+			graphicNavListHtml += '<nav-radius></nav-radius>';
+		graphicNavListHtml += '</div>';
+		
+		graphicNavListHtml += '<div class="template-edit-title">';
+			graphicNavListHtml += '<h3>其他设置</h3>';
+			graphicNavListHtml += '<i class="layui-icon layui-icon-down" onclick="closeBox(this)"></i>';
+		graphicNavListHtml += '</div>';
+		
+		graphicNavListHtml += '<div class="template-edit-wrap">';
+			graphicNavListHtml += '<color v-bind:data="{ field : \'backgroundColor\', label : \'背景颜色\' }"></color>';
+		
+			graphicNavListHtml += '<div class="text-slide">';
+				graphicNavListHtml += '<slide v-bind:data="{ field : \'marginTop\', label : \'页面间距\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'paddingLeftRight\', label : \'左右边距\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'marginTopBottom\', label : \'上下外边距\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'marginLeftRight\', label : \'左右外边距\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'padding\', label : \'图片间距\', max: 40 }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopLeftRadius\', label : \'左上圆角\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderTopRightRadius\', label : \'右上圆角\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomLeftRadius\', label : \'左下圆角\' }"></slide>';
+				// graphicNavListHtml += '<slide v-bind:data="{ field : \'borderBottomRightRadius\', label : \'右下圆角\' }"></slide>';
+			graphicNavListHtml += '</div>';
 		graphicNavListHtml += '</div>';
 
 		/* graphicNavListHtml += '<div class="layui-form-item">';
@@ -90,49 +164,17 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 			graphicNavListHtml += '</div>';
 		graphicNavListHtml += '</div>'; */
 
-		graphicNavListHtml += '<div class="layui-form-item">';
+		/* graphicNavListHtml += '<div class="layui-form-item">';
 			graphicNavListHtml += '<label class="layui-form-label sm">滚动设置</label>';
 			graphicNavListHtml += '<div class="layui-input-block sm">';
 				graphicNavListHtml += '<div v-for="(item,i) in scrollSettingList" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (scrollSetting==item.value) }" v-on:click="scrollSetting=item.value">';
-					graphicNavListHtml += '<i class="layui-anim layui-icon">&#xe643;</i>';
+					graphicNavListHtml += '<i class="layui-anim layui-icon">&#xe63f;</i>';
 					graphicNavListHtml += '<div>{{item.name}}</div>';
 				graphicNavListHtml += '</div>';
 
 			graphicNavListHtml += '</div>';
-		graphicNavListHtml += '</div>';
+		graphicNavListHtml += '</div>'; */
 	
-		graphicNavListHtml += '<ul>';
-		graphicNavListHtml += '<p class="hint">建议上传尺寸相同的图片(78px * 78px)，最多添加 {{maxTip}} 个导航，拖动选中的导航可对其排序</p>';
-			graphicNavListHtml += '<li v-for="(item,index) in list" v-bind:key="index">';
-
-				graphicNavListHtml += '<img-upload v-bind:data="{ data : item }" v-bind:condition="$parent.data.selectedTemplate == \'imageNavigation\'"></img-upload>';
-
-				graphicNavListHtml += '<div class="content-block" v-bind:class="$parent.data.selectedTemplate">';
-					graphicNavListHtml += '<div class="layui-form-item">';
-						graphicNavListHtml += '<label class="layui-form-label sm">标题</label>';
-						graphicNavListHtml += '<div class="layui-input-block">';
-							graphicNavListHtml += '<input type="text" name=\'title\' v-model="item.title" class="layui-input" />';
-						graphicNavListHtml += '</div>';
-					graphicNavListHtml += '</div>';
-				
-					graphicNavListHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
-				graphicNavListHtml += '</div>';
-				
-				graphicNavListHtml += '<i class="del" v-on:click="list.splice(index,1)" data-disabled="1">x</i>';
-				
-				graphicNavListHtml += '<div class="error-msg"></div>';
-				
-			graphicNavListHtml += '</li>';
-			
-		graphicNavListHtml += '</ul>';
-		
-		graphicNavListHtml += '<div class="add-item ns-text-color" v-if="showAddItem" v-on:click="list.push({ imageUrl : \'\', title : \'\', link : {} })">';
-		
-			graphicNavListHtml += '<i>+</i>';
-		
-			graphicNavListHtml += '<span>添加一个图文导航</span>';
-		
-			graphicNavListHtml += '</div>';
 		
 	graphicNavListHtml += '</div>';
 	
@@ -160,13 +202,30 @@ Vue.component("graphic-nav-list",{
 			selectedTemplateList : [{
 				name : '图片导航',
 				value : 'imageNavigation',
-				src : RESOURCEPATH + "/graphic_nav/img/image_navigation.png"
+				src : graphicNavResourcePath + "/graphic_nav/img/img.png",
+				selectedSrc: graphicNavResourcePath + "/graphic_nav/img/img_1.png"
 			},{
 				name : '文字导航',
 				value : 'textNavigation',
-				src : RESOURCEPATH + "/graphic_nav/img/text_navigation.png"
+				src : graphicNavResourcePath + "/graphic_nav/img/font.png",
+				selectedSrc: graphicNavResourcePath + "/graphic_nav/img/font_1.png"
+			}],
+			showTypeList: [{
+				name : '一行三个',
+				value : '3',
+				src : graphicNavResourcePath + "/graphic_nav/img/three.png",
+				selectedSrc: graphicNavResourcePath + "/graphic_nav/img/three_1.png"
+			}, {
+				name : '一行四个',
+				value : '4',
+				src : graphicNavResourcePath + "/graphic_nav/img/four.png",
+				selectedSrc: graphicNavResourcePath + "/graphic_nav/img/four_1.png"
+			}, {
+				name : '一行五个',
+				value : '5',
+				src : graphicNavResourcePath + "/graphic_nav/img/five.png",
+				selectedSrc: graphicNavResourcePath + "/graphic_nav/img/five_1.png"
 			}]
-			
 		};
 	},
 
@@ -256,8 +315,8 @@ Vue.component("graphic-nav-list",{
 			
 			var res = { code : true, message : "" };
 			var _self = this;
-			$(".draggable-element[data-index='" + this.data.index + "'] .graphic-navigation .graphic-nav-list>ul>li").each(function(index){
-				
+			
+			$(".draggable-element[data-index='" + this.data.index + "'] .graphic-navigation .graphic-nav-list .template-edit-wrap>ul>li").each(function(index){
 				if(_self.selectedTemplate == "imageNavigation"){
 					$(this).find("input[name='title']").removeAttr("style");//清空输入框的样式
 					//检测是否有未上传的图片
@@ -319,3 +378,53 @@ Vue.component("graphic-nav-list",{
 // //		vue.refresh();
 // 	}
 // });
+
+
+var navRadiusHtml = '<div class="layui-form-item ns-icon-radio">';
+		navRadiusHtml += '<label class="layui-form-label sm">圆角展示</label>';
+		navRadiusHtml += '<div class="layui-input-block">';
+			navRadiusHtml += '<template v-for="(item, index) in navRadius" v-bind:k="index">';
+				navRadiusHtml += '<span :class="[item.value == data.navRadius ? \'\' : \'layui-hide\']">{{item.text}}</span>';
+			navRadiusHtml += '</template>';
+			navRadiusHtml += '<ul class="ns-icon">';
+				navRadiusHtml += '<li v-for="(item, index) in navRadius" v-bind:k="index" :class="[item.value == data.navRadius ? \'ns-text-color ns-border-color ns-bg-color-diaphaneity\' : \'\']" @click="data.navRadius=item.value">';
+					navRadiusHtml += '<img v-if="item.value == data.navRadius" :src="item.selectedSrc" />'
+					navRadiusHtml += '<img v-else :src="item.src" />'
+				navRadiusHtml += '</li>';
+			navRadiusHtml += '</ul>';
+		navRadiusHtml += '</div>';
+	navRadiusHtml += '</div>';
+
+Vue.component("nav-radius",{
+	template : navRadiusHtml,
+	data : function(){
+		return {
+			data : this.$parent.data,
+			navRadius: [
+				{
+					text: "直角",
+					value: "right-angle",
+					src: graphicNavResourcePath + "/graphic_nav/img/right-angle.png",
+					selectedSrc: graphicNavResourcePath + "/graphic_nav/img/right-angle_1.png"
+				},
+				{
+					text: "圆角",
+					value: "fillet",
+					src: graphicNavResourcePath + "/graphic_nav/img/fillet.png",
+					selectedSrc: graphicNavResourcePath + "/graphic_nav/img/fillet_1.png"
+				}
+			],
+		}
+	},
+	created : function(){
+		if(!this.$parent.data.verify) this.$parent.data.verify = [];
+		this.$parent.data.verify.push(this.verify);//加载验证方法
+	},
+	methods : {
+		verify :function () {
+			var res = {code: true, message: ""};		
+			return res;
+		},
+	},
+	
+});

@@ -86,6 +86,24 @@ class DiyViewEdit extends Controller
             }
         }
 
+        // 已知插件：【秒杀、团购、拼团、砍价、优惠券、分销、直播、门店、店铺笔记】
+        if (!empty($diy_view_info)) {
+            if (!empty($diy_view_info[ 'value' ])) {
+                $json_data = json_decode($diy_view_info[ 'value' ], true);
+                foreach ($json_data[ 'value' ] as $k => $v) {
+                    if (!empty($v[ 'addon_name' ])) {
+                        $is_exit = addon_is_exit($v[ 'addon_name' ], $data[ 'site_id' ]);
+                        // 检查插件是否存在
+                        if ($is_exit == 0) {
+                            unset($json_data[ 'value' ][ $k ]);
+                        }
+                    }
+                }
+                $json_data[ 'value' ] = array_values($json_data[ 'value' ]);
+                $diy_view_info[ 'value' ] = json_encode($json_data);
+            }
+        }
+
         $this->assign("time", time());
         $this->assign("name", isset($data[ 'name' ]) ? $data[ 'name' ] : '');
         $this->assign("store_id", isset($data[ 'store_id' ]) ? $data[ 'store_id' ] : 0);

@@ -90,7 +90,7 @@ class Sms extends BaseModel
         if ($res[ 'code' ] == 0) {
             $config_model = new ConfigModel();
             $data[ 'signature' ] = "";
-            $config_model->setSmsConfig($res[ 'data' ], 1, $site_id, $app_module);
+            $config_model->setSmsConfig($data, 1, $site_id, $app_module);
         }
         return $res;
     }
@@ -127,18 +127,18 @@ class Sms extends BaseModel
     {
         $url = $this->api . '/sms/addChildSignature';
         $res = $this->httpPost($url, $data);
-        if ($res[ 'code' ] == 0) {
-            $config_model = new ConfigModel();
-            $sms_config = $config_model->getSmsConfig($site_id, $app_module);
-            $sms_config = $sms_config[ 'data' ][ 'value' ];
-            if (!empty($sms_config)) {
-                $save_data = $sms_config;
-            } else {
-                $save_data = $data;
-            }
-            $save_data[ 'signature' ] = "【" . $data[ 'signature' ] . "】";
-            $config_model->setSmsConfig($save_data, 1, $site_id, $app_module);
-        }
+//        if ($res[ 'code' ] == 0) {
+//            $config_model = new ConfigModel();
+//            $sms_config = $config_model->getSmsConfig($site_id, $app_module);
+//            $sms_config = $sms_config[ 'data' ][ 'value' ];
+//            if (!empty($sms_config)) {
+//                $save_data = $sms_config;
+//            } else {
+//                $save_data = $data;
+//            }
+//            $save_data[ 'signature' ] = "【" . $data[ 'signature' ] . "】";
+//            $config_model->setSmsConfig($save_data, 1, $site_id, $app_module);
+//        }
         return $res;
     }
 
@@ -148,6 +148,18 @@ class Sms extends BaseModel
     public function getChildAccountInfo($data)
     {
         $url = $this->api . '/sms/getChildAccountInfo';
+        $res = $this->httpPost($url, $data);
+        return $res;
+    }
+
+    /**
+     * 获取签名列表
+     * @param $data
+     * @return mixed
+     */
+    public function getChildSignatureList($data)
+    {
+        $url = $this->api . '/sms/getChildSignatureList';
         $res = $this->httpPost($url, $data);
         return $res;
     }
@@ -358,9 +370,10 @@ class Sms extends BaseModel
         // 修改模板id、审核状态
         if (!empty($sms_template_list)) {
             foreach ($res[ 'list' ] as $k => $v) {
-                if ($v[ 'tem_id' ] == 0) {
+                if ($v[ 'tem_id' ] == 0 || $v['audit_status'] != 2) {
                     foreach ($sms_template_list as $ck => $cv) {
-                        if ($cv[ 'temName' ] == $v[ 'template_name' ]) {
+
+                        if ($cv[ 'temName' ] == $v[ 'template_name' ] && $cv['auditResult'] == 2) {
                             $res[ 'list' ][ $k ][ 'tem_id' ] = $cv[ 'temId' ];
                             $res[ 'list' ][ $k ][ 'audit_status' ] = 2;
                             model('sms_template')->update([ 'tem_id' => $cv[ 'temId' ], 'audit_status' => 2 ], [ [ 'template_id', '=', $v[ 'template_id' ] ] ]);

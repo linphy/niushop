@@ -19,7 +19,7 @@
 					<div class="layui-card-header">
 						<span class="ns-card-title">基础信息</span>
 					</div>
-					
+
 					<div class="layui-card-body">
 						<div class="layui-form-item">
 							<label class="layui-form-label"><span class="required">*</span>商品名称：</label>
@@ -71,14 +71,14 @@
 								</ul>
 							</div>
 						</div>
-						
+
 						<div class="layui-form-item">
 							<label class="layui-form-label">关键词：</label>
 							<div class="layui-input-block">
 								<input type="text" name="keywords" value="{$goods_info['keywords']}" placeholder="商品关键词用于SEO搜索，不能超过100个字符" maxlength="100" autocomplete="off" class="layui-input ns-len-long">
 							</div>
 						</div>
-						
+
 						<div class="layui-form-item">
 							<label class="layui-form-label">商品分组：</label>
 							<div class="layui-input-inline">
@@ -132,19 +132,19 @@
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="ns-word-aux">商品可以属于多个分类，最多10个</div>
 						</div>
 
 					</div>
 				</div>
-				
+
 				<!-- 价格库存 -->
 				<div class="layui-card ns-card-common">
 					<div class="layui-card-header">
 						<span class="ns-card-title">价格库存</span>
 					</div>
-					
+
 					<div class="layui-card-body">
 						<div class="layui-form-item">
 							<label class="layui-form-label">启用多规格：</label>
@@ -153,10 +153,10 @@
 								<input type="hidden" id="spec_type_status" {if empty($goods_info['goods_spec_format'])} value="0" {else/} value="1" {/if}>
 							</div>
 						</div>
-						
+
 						<!-- 单规格 -->
 						<div class="js-single-spec" {notempty name="$goods_info['goods_spec_format']" }style="display:none;"{/notempty}>
-							
+
 							<div class="layui-form-item">
 								<label class="layui-form-label"><span class="required">*</span>销售价：</label>
 								<div class="layui-input-block">
@@ -165,7 +165,7 @@
 								</div>
 								<div class="ns-word-aux">商品没有相关优惠活动的实际卖价</div>
 							</div>
-							
+
 							<div class="layui-form-item">
 								<label class="layui-form-label">划线价：</label>
 								<div class="layui-input-block">
@@ -174,7 +174,7 @@
 								</div>
 								<div class="ns-word-aux">商品没有优惠活动显示的划线价格，如果商品有折扣等优惠活动划线价显示销售价</div>
 							</div>
-							
+
 							<div class="layui-form-item">
 								<label class="layui-form-label">成本价：</label>
 								<div class="layui-input-block">
@@ -183,7 +183,7 @@
 								</div>
 								<div class="ns-word-aux">成本价将不会对前台会员展示，用于商家统计使用</div>
 							</div>
-							
+
 							<div class="layui-form-item">
 								<label class="layui-form-label">重量：</label>
 								<div class="layui-input-block">
@@ -191,7 +191,7 @@
 									<div class="layui-form-mid">kg</div>
 								</div>
 							</div>
-							
+
 							<div class="layui-form-item">
 								<label class="layui-form-label">体积：</label>
 								<div class="layui-input-block">
@@ -199,29 +199,29 @@
 									<div class="layui-form-mid">m3</div>
 								</div>
 							</div>
-							
+
 							<div class="layui-form-item">
 								<label class="layui-form-label">商品编码：</label>
 								<div class="layui-input-inline">
 									<input type="text" name="sku_no" value="{$goods_info['sku_list'][0]['sku_no']}" placeholder="请输入商品编码" maxlength="50" class="layui-input ns-len-long" autocomplete="off">
 								</div>
 							</div>
-						
+
 						</div>
-						
+
 						<!-- 多规格 -->
 						<div class="js-more-spec" {notempty name="$goods_info['goods_spec_format']" }style="display:block;"{/notempty}>
-							
+
 							<!--规格项/规格值-->
 							<div class="spec-edit-list"></div>
-					
+
 							<div class="layui-form-item js-add-spec">
 								<label class="layui-form-label"></label>
 								<div class="layui-input-inline">
 									<button class="layui-btn ns-bg-color" type="button">添加规格</button>
 								</div>
 							</div>
-							
+
 							<div class="layui-form-item batch-operation-sku">
 								<label class="layui-form-label">批量操作：</label>
 								<div class="layui-input-inline">
@@ -267,9 +267,9 @@
 								<label class="layui-form-label"></label>
 								<div class="layui-input-block"></div>
 							</div>
-						
+
 						</div>
-						
+
 						<div class="layui-form-item js-goods-stock-wrap" {notempty name="$goods_info['goods_spec_format']" }style="display:none;"{/notempty}>
 							<label class="layui-form-label"><span class="required">*</span>库存：</label>
 							<div class="layui-input-block">
@@ -277,7 +277,7 @@
 								<div class="layui-form-mid">件</div>
 							</div>
 						</div>
-						
+
 						<div class="layui-form-item js-goods-stock-wrap" {notempty name="$goods_info['goods_spec_format']" }style="display:none;"{/notempty}>
 							<label class="layui-form-label">库存预警：</label>
 							<div class="layui-input-block">
@@ -321,13 +321,13 @@
 
 					</div>
 				</div>
-				
+
 				<!-- 其他信息 -->
 				<div class="layui-card ns-card-common">
 					<div class="layui-card-header">
 						<span class="ns-card-title">其他信息</span>
 					</div>
-					
+
 					<div class="layui-card-body">
 
 						{notempty name="$service_list"}
@@ -352,7 +352,7 @@
 						</div>
 
 						<div class="layui-form-item">
-							<label class="layui-form-label">已售出数：</label>
+							<label class="layui-form-label">虚拟销量：</label>
 							<div class="layui-input-block">
 								<input type="number" name="virtual_sale" placeholder="0" value="{$goods_info['virtual_sale']}" lay-verify="virtual_sale" class="layui-input ns-len-short" autocomplete="off">
 								<div class="layui-form-mid">件</div>
@@ -393,17 +393,25 @@
 							<div class="ns-word-aux">商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</div>
 						</div>
 
-						<div class="layui-form-item">
+						<div class="layui-form-item goods_state">
+							<label class="layui-form-label"><span class="required">*</span>是否上架：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="goods_state" value="1" title="立刻上架" lay-filter="goods_state" {if $goods_info['goods_state'] == 1 }checked{/if}>
+								<input type="radio" name="goods_state" value="0" title="放入仓库" lay-filter="goods_state" {if $goods_info['goods_state'] == 0 }checked{/if}>
+							</div>
+						</div>
+
+						{if $goods_info['goods_state'] == 0}
+						<div class="layui-form-item timer_on">
 							<label class="layui-form-label">定时上架：</label>
 							<div class="layui-input-block">
-								<input type="radio" name="timer_on_status" value="1" title="启用" lay-filter="timer_on" {if $goods_info['timer_on'] > 0} checked {/if}>
+								<input type="radio" name="timer_on_status" class="timer_on_status_true" value="1" title="启用" lay-filter="timer_on" {if $goods_info['timer_on'] > 0} checked {/if}>
 								<input type="radio" name="timer_on_status" value="2" title="不启用" lay-filter="timer_on" {if $goods_info['timer_on'] == 0} checked {/if}>
 							</div>
 							<div class="ns-word-aux">启用定时上架后，到达设定时间，此商品将自动上架。</div>
 						</div>
-
 						{if $goods_info['timer_on'] > 0}
-						<div class="layui-form-item timer_on">
+						<div class="layui-form-item timer_on_time">
 							<label class="layui-form-label"></label>
 							<div class="layui-input-inline">
 								<input type="text" id="timer_on" name="timer_on" value="{:date('Y-m-d H:i:s',$goods_info['timer_on'])}" lay-verify="required" class="layui-input ns-len-mid" autocomplete="off" readonly>
@@ -411,13 +419,14 @@
 							</div>
 						</div>
 						{else/}
-						<div class="layui-form-item timer_on" style="display:none">
+						<div class="layui-form-item timer_on_time layui-hide">
 							<label class="layui-form-label"></label>
 							<div class="layui-input-inline">
 								<input type="text" id="timer_on" name="timer_on" lay-verify="" class="layui-input ns-len-mid" autocomplete="off" readonly>
 								<i class="ns-calendar"></i>
 							</div>
 						</div>
+						{/if}
 						{/if}
 
 						<div class="layui-form-item">
@@ -446,14 +455,6 @@
 							</div>
 						</div>
 						{/if}
-
-						<div class="layui-form-item">
-							<label class="layui-form-label"><span class="required">*</span>是否上架：</label>
-							<div class="layui-input-block">
-								<input type="radio" name="goods_state" value="1" title="立刻上架"  {if $goods_info['goods_state'] == 1 }checked{/if}>
-								<input type="radio" name="goods_state" value="0" title="放入仓库" {if $goods_info['goods_state'] == 0 }checked{/if}>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -491,7 +492,7 @@
 						</div>
 						<div class="ns-word-aux">商品可以添加自定义属性，也可以通过属性模板批量设置属性</div>
 					</div>
-					
+
 					<div class="layui-form-item js-new-attr-list">
 						<label class="layui-form-label"></label>
 						<div class="layui-input-block">
@@ -533,12 +534,12 @@
 
 		</div>
 	</div>
-	
+
 	<input type="hidden" name="goods_id" value="{$goods_info['goods_id']}" />
 	<input type="hidden" name="goods_spec_format" value="{$goods_info['goods_spec_format']}" />
 	<input type="hidden" name="goods_image" value="{$goods_info['goods_image']}" />
 	<input type="hidden" name="goods_attr_format" value="{$goods_info['goods_attr_format']}" />
-	
+
 	<div class="fixed-btn">
 		<button class="layui-btn layui-btn-primary ns-border-color ns-text-color js-prev" lay-submit="" lay-filter="prev">上一步</button>
 		<button class="layui-btn ns-bg-color js-save" lay-submit="" lay-filter="save">保存</button>
@@ -548,9 +549,9 @@
 
 <!--选择商品分类-->
 <script type="text/html" id="selectedCategory">
-	
+
 	<div class="category-list">
-		
+
 		<div class="item">
 			<!--后续做搜索-->
 			<ul>
@@ -566,19 +567,19 @@
 				{/foreach}
 			</ul>
 		</div>
-		
+
 		<div class="item" data-level="2">
 			<!--后续做搜索-->
 			<ul></ul>
 		</div>
-		
+
 		<div class="item" data-level="3">
 			<!--后续做搜索-->
 			<ul></ul>
 		</div>
-	
+
 	</div>
-	
+
 	<div class="selected-category-wrap">
 		<label>您当前选择的是：</label>
 		<span class="js-selected-category"></span>
@@ -587,7 +588,7 @@
 
 <!--规格项模板-->
 <script type="text/html" id="specTemplate">
-	
+
 	{{# for(var i=0;i<d.list.length;i++){ }}
 	<div class="spec-item" data-index="{{i}}">
 		<div class="layui-form-item spec">
@@ -602,7 +603,7 @@
 				</select>
 				<i class="layui-icon layui-icon-close" data-index="{{i}}"></i>
 			</div>
-			
+
 			{{# if(i==0){ }}
 			<div class="layui-input-inline">
 				{{# if(d.add_spec_img){ }}
@@ -613,7 +614,7 @@
 			</div>
 			{{# } }}
 		</div>
-		
+
 		{{# if(d.list[i].spec_name != ''){ }}
 		<div class="layui-form-item spec-value">
 		{{# }else{ }}
@@ -649,7 +650,7 @@
 					<select name="spec_value_item"></select>
 					<button class="layui-btn layui-btn-primary ns-border-color ns-text-color js-cancel-spec-value">取消</button>
 				</div>
-				
+
 			</div>
 		</div>
 
@@ -659,7 +660,7 @@
 
 <!--SKU列表模板-->
 <script type="text/html" id="skuTableTemplate">
-	
+
 	{{# if(d.skuList.length){ }}
 	<table class="layui-table">
 		<colgroup></colgroup>
@@ -745,7 +746,7 @@
 				</td>
 			</tr>
 			{{# } }}
-		
+
 		</tbody>
 	</table>
 	{{# } }}
@@ -756,23 +757,26 @@
 <script type="text/html" id="goodsImage">
 	{{# if(d.list.length){ }}
 		{{# for(var i=0;i<d.list.length;i++){ }}
-			<div class="item" data-index="{{i}}">
+			<div class="item upload_img_square_item" data-index="{{i}}">
 				<div class="img-wrap">
 					<img src="{{ns.img(d.list[i])}}" layer-src>
 				</div>
 				<div class="operation">
 					<i title="图片预览" class="iconfont iconreview js-preview"></i>
 					<i title="删除图片" class="layui-icon layui-icon-delete js-delete" data-index="{{i}}"></i>
+					<div class="replace_img" data-index="{{i}}">点击替换</div>
 				</div>
 			</div>
 		{{# } }}
 		{{# if(d.list.length < d.max){ }}
-			<div class="item js-add-goods-image">+</div>
+			<div class="item js-add-goods-image upload_img_square">+</div>
 		{{# } }}
 	{{# }else{ }}
-		<div class="item js-add-goods-image">+</div>
+		<div class="item js-add-goods-image upload_img_square">+</div>
 	{{# } }}
 </script>
+
+
 
 <!--属性列表模板-->
 <script type="text/html" id="attrTemplate">

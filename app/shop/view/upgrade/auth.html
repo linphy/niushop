@@ -65,13 +65,32 @@
     </div>
 </div>
 {else/}
-<div>
-    <div class="auth-form">
-        <input type="" name="auth_code" class="layui-input ns-len-long" placeholder="请输入您的授权码">
-        <button class="layui-btn ns-bg-color" onclick="auth()">绑定授权</button>
-    </div>
-    <div class="auth-tips">
-        请在上方输入框内输入您的授权码，如果没有授权码请到<a href="https://www.niushop.com" target="_blank" class="ns-text-color">Niushop官网</a>获取授权
+<div class="index-box">
+    <div class="index-content">
+        <div class="system-function">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="20%">
+                    <col width="30%">
+                    <col width="20%">
+                    <col width="30%">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="ns-bg-color-light-gray">产品名称</td>
+                    <td>单商户V4</td>
+                    <td class="ns-bg-color-light-gray">授权状态</td>
+                    <td>未授权 <a href="https://www.niushop.com" class="ns-text-color" target="_blank">去授权</a> </td>
+                </tr>
+                <tr>
+                    <td class="ns-bg-color-light-gray">套餐版本</td>
+                    <td>免费版</td>
+                    <td class="ns-bg-color-light-gray">当前版本</td>
+                    <td>{$app_info.version}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {/if}

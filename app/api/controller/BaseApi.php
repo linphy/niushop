@@ -5,13 +5,14 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
 namespace app\api\controller;
 
+use app\exception\ApiException;
+use app\model\shop\Shop;
 use app\model\system\Api;
 use extend\RSA;
 use think\facade\Cache;
@@ -37,6 +38,8 @@ class BaseApi
 
     protected $api_config;
 
+    private $refresh_token;
+
     public function __construct()
     {
         if ($_SERVER[ 'REQUEST_METHOD' ] == 'OPTIONS') {
@@ -46,8 +49,17 @@ class BaseApi
         $this->site_id = request()->siteid();
         $this->params = input();
         $this->params[ 'site_id' ] = $this->site_id;
-        $this->getApiConfig();
-        $this->decryptParams();
+
+        $shop_model = new Shop();
+        $shop_status = $shop_model->getShopStatus($this->site_id, 'shop');
+        if (!$shop_status['data']['value']['shop_status']) {
+            $error = $this->error([], 'SITE_CLOSE');
+            throw new ApiException($error['code'], $error['message']);
+        }
+
+        if (isset($this->params['encrypt']) && !empty($this->params['encrypt'])) {
+            $this->decryptParams();
+        }
     }
 
     /**
@@ -55,25 +67,17 @@ class BaseApi
      */
     private function decryptParams()
     {
-        if ($this->api_config[ 'is_use' ] && !empty($this->api_config[ 'value' ]) && isset($this->params[ 'encrypt' ])) {
-            $decrypted = RSA::decrypt(urldecode($this->params[ 'encrypt' ]), $this->api_config[ 'value' ][ 'private_key' ], $this->api_config[ 'value' ][ 'public_key' ]);
+        $api_model = new Api();
+        $config = $api_model->getApiConfig();
+        $config = $config['data'];
+
+        if ($config[ 'is_use' ] && !empty($config[ 'value' ])) {
+            $decrypted = RSA::decrypt(urldecode($this->params[ 'encrypt' ]), $config[ 'value' ][ 'private_key' ], $config[ 'value' ][ 'public_key' ]);
             if ($decrypted[ 'code' ] >= 0) {
                 $this->params = json_decode($decrypted[ 'data' ], true);
                 $this->params[ 'site_id' ] = $this->site_id;
-            } else {
-                $this->params = [];
             }
         }
-    }
-
-    /**
-     * 获取api配置
-     */
-    private function getApiConfig()
-    {
-        $api_model = new Api();
-        $config_result = $api_model->getApiConfig();
-        $this->api_config = $config_result[ "data" ];
     }
 
     /**
@@ -83,23 +87,31 @@ class BaseApi
     {
         if (empty($this->params[ 'token' ])) return $this->error('', 'TOKEN_NOT_EXIST');
 
-        if ($this->api_config[ 'is_use' ] && isset($this->api_config[ 'value' ][ 'private_key' ]) && !empty($this->api_config[ 'value' ][ 'private_key' ])) {
-            $decrypt = decrypt($this->params[ 'token' ], $this->api_config[ 'value' ][ 'private_key' ] . 'site' . $this->site_id);
-        } else {
-            $decrypt = decrypt($this->params[ 'token' ], 'site' . $this->site_id);
+        $key = 'site' . $this->site_id;
+        $api_model = new Api();
+        $api_config = $api_model->getApiConfig();
+        $api_config = $api_config['data'];
+        if ($api_config[ 'is_use' ] && isset($api_config[ 'value' ][ 'private_key' ]) && !empty($api_config[ 'value' ][ 'private_key' ])) {
+            $key = $api_config[ 'value' ][ 'private_key' ] . $key;
         }
+        $decrypt = decrypt($this->params[ 'token' ], $key);
         if (empty($decrypt)) return $this->error('', 'TOKEN_ERROR');
 
         $data = json_decode($decrypt, true);
+
         if (!isset($data[ 'member_id' ]) || empty($data[ 'member_id' ])) return $this->error('', 'TOKEN_ERROR');
 
-        if (!empty($data[ 'expire_time' ]) && $data[ 'expire_time' ] > time()) return $this->error('', 'TOKEN_EXPIRE');
-
-        //判断用户是否已注销
         $member_model = new MemberModel();
-        $member_info = $member_model->getMemberInfo([['member_id','=',$data['member_id']]]);
-        if(empty($member_info['data'])){
-            return $this->error('','该会员已注销');
+        $blacklist = $member_model->getMemberBlacklist($this->site_id);
+        if (!empty($blacklist['data']) && in_array($data[ 'member_id' ], $blacklist['data'])) {
+            return $this->error('','TOKEN_EXPIRE');
+        }
+
+        if ($data[ 'expire_time' ] < time()) {
+            return $this->error('','TOKEN_EXPIRE');
+        } else if (($data[ 'expire_time' ] - time()) < 300 && !Cache::get('member_token' . $data[ 'member_id' ])) {
+            $this->refresh_token = $this->createToken($data[ 'member_id' ]);
+            Cache::set('member_token' . $data[ 'member_id' ], $this->refresh_token, 360);
         }
 
         $this->member_id = $data[ 'member_id' ];
@@ -111,18 +123,21 @@ class BaseApi
      * 创建token
      * @param int $expire_time 有效时间  0为永久 单位s
      */
-    protected function createToken($member_id, $expire_time = 0)
+    protected function createToken($member_id, $expire_time = 172800)
     {
+        $key = 'site' . $this->site_id;
+        $api_model = new Api();
+        $api_config = $api_model->getApiConfig();
+        $api_config = $api_config['data'];
+        if ($api_config[ 'is_use' ] && isset($api_config[ 'value' ][ 'private_key' ]) && !empty($api_config[ 'value' ][ 'private_key' ])) {
+            $key = $api_config[ 'value' ][ 'private_key' ] . $key;
+        }
         $data = [
             'member_id' => $member_id,
             'create_time' => time(),
             'expire_time' => empty($expire_time) ? 0 : time() + $expire_time
         ];
-        if ($this->api_config[ 'is_use' ] && isset($this->api_config[ 'value' ][ 'private_key' ]) && !empty($this->api_config[ 'value' ][ 'private_key' ])) {
-            $token = encrypt(json_encode($data), $this->api_config[ 'value' ][ 'private_key' ] . 'site' . $this->site_id);
-        } else {
-            $token = encrypt(json_encode($data), 'site' . $this->site_id);
-        }
+        $token = encrypt(json_encode($data), $key);
         return $token;
     }
 
@@ -134,6 +149,7 @@ class BaseApi
     public function response($data)
     {
         $data[ 'timestamp' ] = time();
+        if (!empty($this->refresh_token)) $data[ 'refreshtoken' ] = $this->refresh_token;
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 

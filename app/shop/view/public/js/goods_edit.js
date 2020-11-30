@@ -19,7 +19,7 @@ var regExp = {
 };
 
 $(function () {
-	
+
 	// $(".fixed-btn").css("width", $(".layui-layout-admin .layui-body").width() - 40);
 
 	//获取hash来切换选项卡
@@ -50,47 +50,119 @@ $(function () {
 		});
 
 		var time = new Date();
-        var currentTime = time.toLocaleDateString +" " + time.getHours() +":" + time.getMinutes() +":" + time.getSeconds();
-        //定时上架时间
-        laydate.render({
-            elem: '#timer_on', //指定元素
-            type: 'datetime',
-            min: currentTime
-        });
+		var currentTime = time.toLocaleDateString +" " + time.getHours() +":" + time.getMinutes() +":" + time.getSeconds();
+		//定时上架时间
+		laydate.render({
+			elem: '#timer_on', //指定元素
+			type: 'datetime',
+			min: currentTime
+		});
 
 		//定时下架时间
-        laydate.render({
-            elem: '#timer_off', //指定元素
-            type: 'datetime',
-            min: currentTime
+		laydate.render({
+			elem: '#timer_off', //指定元素
+			type: 'datetime',
+			min: currentTime
+		});
+
+		//是否上架
+		form.on('radio(goods_state)', function(data){
+			value = parseInt(data.value);
+			if(value == 0){
+				$('.timer_on').remove();
+				$('.timer_on_time').remove();
+				var html = '<div class="layui-form-item timer_on">' +
+					'<label class="layui-form-label">定时上架：</label>' +
+					'<div class="layui-input-block">' +
+					'<input type="radio" name="timer_on_status" value="1" title="启用" lay-filter="timer_on" checked>' +
+					'<input type="radio" name="timer_on_status" value="2" title="不启用" lay-filter="timer_on">' +
+					'</div>' +
+					'<div class="ns-word-aux">启用定时上架后，到达设定时间，此商品将自动上架。</div>' +
+					'</div>' +
+					'<div class="layui-form-item timer_on_time">' +
+					'<label class="layui-form-label"></label>' +
+					'<div class="layui-input-inline">' +
+					'<input type="text" id="timer_on" name="timer_on" lay-verify="required" class="layui-input ns-len-mid" autocomplete="off" readonly>' +
+					'<i class="ns-calendar"></i>' +
+					'</div>' +
+					'</div>';
+				$('.goods_state').after(html);
+				//定时上架时间
+				laydate.render({
+					elem: '#timer_on', //指定元素
+					type: 'datetime',
+					min: currentTime
+				});
+				form.render();
+			}else{
+
+				$('.timer_on').remove();
+				$('.timer_on_time').remove();
+			}
+		});
+
+        //是否上架
+        form.on('radio(goods_state)', function(data){
+            value = parseInt(data.value);
+            if(value == 0){
+                $('.timer_on').remove();
+                $('.timer_on_time').remove();
+				var html = '<div class="layui-form-item timer_on">' +
+                    '<label class="layui-form-label">定时上架：</label>' +
+                    '<div class="layui-input-block">' +
+                    '<input type="radio" name="timer_on_status" value="1" title="启用" lay-filter="timer_on" checked>' +
+                    '<input type="radio" name="timer_on_status" value="2" title="不启用" lay-filter="timer_on">' +
+                    '</div>' +
+                    '<div class="ns-word-aux">启用定时上架后，到达设定时间，此商品将自动上架。</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item timer_on_time">' +
+                    '<label class="layui-form-label"></label>' +
+                    '<div class="layui-input-inline">' +
+                    '<input type="text" id="timer_on" name="timer_on" lay-verify="required" class="layui-input ns-len-mid" autocomplete="off" readonly>' +
+                    '<i class="ns-calendar"></i>' +
+                    '</div>' +
+                    '</div>';
+				$('.goods_state').after(html);
+                //定时上架时间
+                laydate.render({
+                    elem: '#timer_on', //指定元素
+                    type: 'datetime',
+                    min: currentTime
+                });
+                form.render();
+            }else{
+
+                $('.timer_on').remove();
+                $('.timer_on_time').remove();
+            }
         });
 
 		//定时上架
-        form.on('radio(timer_on)', function(data){
-        	value = parseInt(data.value);
-            if(value == 1){
-				$('.timer_on').show();
-                $("input[name='timer_on']").attr("lay-verify", "required");
+		form.on('radio(timer_on)', function(data){
+			value = parseInt(data.value);
+			if(value == 1){
+				$('.timer_on_time').removeClass('layui-hide');
+				$("input[name='timer_on']").attr("lay-verify", "required");
 			}else{
-                $("input[name='timer_on']").attr("lay-verify", "");
-                $("input[name='timer_on']").val('');
-				$('.timer_on').hide();
+				$("input[name='timer_on']").attr("lay-verify", "");
+				$("input[name='timer_on']").val('');
+				$('.timer_on_time').addClass('layui-hide');
 			}
-        });
+		});
 
-        //定时下架
-        form.on('radio(timer_off)', function(data){
-            value = parseInt(data.value);
-            if(value == 1){
-                $('.timer_off').show();
-                $("input[name='timer_off']").attr("lay-verify", "required");
-            }else{
+		//定时下架
+		form.on('radio(timer_off)', function(data){
+			value = parseInt(data.value);
+			if(value == 1){
+				$('.timer_off').show();
+				$("input[name='timer_off']").attr("lay-verify", "required");
+			}else{
 
-                $("input[name='timer_off']").attr("lay-verify", "");
-                $("input[name='timer_off']").val('');
-                $('.timer_off').hide();
-            }
-        });
+				$("input[name='timer_off']").attr("lay-verify", "");
+				$("input[name='timer_off']").val('');
+				$('.timer_off').hide();
+			}
+		});
 
 		//编辑商品
 		initEditData();
@@ -248,6 +320,19 @@ $(function () {
 				}
 				refreshGoodsImage();
 			}, GOODS_IMAGE_MAX);
+		});
+		
+		//替换商品主图
+		$("body").on("click", ".replace_img", function () {
+			console.log($(this).data('index'),465)
+			var index = $(this).data('index');
+			openAlbum(function (data) {
+				
+				for (var i = 0; i < data.length; i++) {
+					goodsImage[index] = data[i].pic_path
+				}
+				refreshGoodsImage();
+			},1);
 		});
 
 		// 商品类型选择查询属性
@@ -761,7 +846,7 @@ $(function () {
 				var attr_class_id = $(this).attr("data-attr-class-id");
 				var attr_id = $(this).attr("data-attr-id");
 				var sort = $(this).find(".attr-sort").val();
-				
+
 				$.each(goodsAttrFormat, function(index, item) {
 					if (item.attr_class_id == attr_class_id && item.attr_id == attr_id) {
 						item.sort = sort;
@@ -821,7 +906,7 @@ function selectedCategoryPopup(obj) {
 	$(".ns-goods-category-list").show();
 	var parent = $(obj).parents(".layui-block");
 	var i = $(obj).parents(".layui-block").index();
-	
+
 	if (isOpenSelectedCategoryPopup) return;
 	var selected_category = $("#selectedCategory").html();
 	var data = {
@@ -830,7 +915,7 @@ function selectedCategoryPopup(obj) {
 		category_id_2: $(parent).find(".category_id_2").val(),
 		category_id_3: $(parent).find(".category_id_3").val()
 	};
-	
+
 	$('body').on('click',function(e){
 		var flag = true;
 		$(parent).parents(".ns-goods-cate").find(".category_name").each(function() {
@@ -840,14 +925,14 @@ function selectedCategoryPopup(obj) {
 				return;
 			}
 		});
-		
+
 		if (flag) {
 			if($(".ns-goods-category-list").is(":visible")){
 				$(".ns-goods-category-list").hide();
 			}
 		}
 	});
-	
+
 	laytpl(selected_category).render(data, function (html) {
 		var layerIndex = layer.open({
 			title: '选择商品分类',
@@ -1108,8 +1193,12 @@ function refreshSpec(isCheckedAddSpecImg,isRefreshSkuData) {
 
 	var spec_template = $("#specTemplate").html();
 
-	if (isCheckedAddSpecImg) $("input[name='add_spec_img']").prop("checked", isCheckedAddSpecImg);
-	else isCheckedAddSpecImg = $("input[name='add_spec_img']").is(":checked");
+	if (isCheckedAddSpecImg){
+		attribute_img_type = 1;
+	 	$("input[name='add_spec_img']").prop("checked", isCheckedAddSpecImg);
+	}else{
+		isCheckedAddSpecImg = $("input[name='add_spec_img']").is(":checked");
+	}
 
 	var data = {
 		list: goodsSpecFormat,
@@ -1316,18 +1405,18 @@ function refreshSkuTable() {
 		}).blur(function () {
 			$(this).keyup();
 		});
-		
+
 		$(".sku-table .layui-input-block input[name='is_default']").each(function () {
 			var index = $(this).attr("data-index");
 			goodsSkuData[index]['is_default'] = 0;
-			
+
 			form.on('switch(is_default_'+ index +')', function(data){
 				if(data.elem.checked) {
 					goodsSkuData[index]['is_default'] = 1;
-					
+
 					$(".sku-table .layui-input-block input[name='is_default']").each(function () {
 						var i = $(this).attr("data-index");
-						
+
 						if (i != index) {
 							$(this).prop('checked', false);
 							form.render();
@@ -1335,7 +1424,7 @@ function refreshSkuTable() {
 						}
 					});
 				}
-			});  
+			});
 		});
 
 		//SKU图片放大预览
@@ -1388,6 +1477,7 @@ function refreshSkuTable() {
 refreshGoodsSkuData = function () {
 
 	var arr = goodsSpecFormat;
+	var tempGoodsSkuData = JSON.parse(JSON.stringify(goodsSkuData));// 记录原始数据，后续用作对比
 	goodsSkuData = [];
 	for (var ele_1 of arr) {
 		var item_prop_arr = [];
@@ -1397,7 +1487,7 @@ refreshGoodsSkuData = function () {
 
 				for (var ele_3 of ele_1['value']) {
 
-					var sku_spec_format = JSON.parse(JSON.stringify(ele_2.sku_spec_format));//防止对象引用
+					var sku_spec_format = JSON.parse(JSON.stringify(ele_2.sku_spec_format));// 防止对象引用
 					sku_spec_format.push(ele_3);
 					var item = {
 						spec_name: `${ele_2.spec_name} ${ele_3.spec_value_name}`,
@@ -1443,6 +1533,16 @@ refreshGoodsSkuData = function () {
 		}
 
 		goodsSkuData = item_prop_arr.length > 0 ? item_prop_arr : goodsSkuData;
+	}
+
+	// 比对已存在的规格项/值，并且赋值
+	for (var i=0;i<tempGoodsSkuData.length;i++) {
+		for (var j=0;j<goodsSkuData.length;j++) {
+			if(tempGoodsSkuData[i].spec_name == goodsSkuData[j].spec_name){
+				goodsSkuData[j] = tempGoodsSkuData[i];
+				break;
+			}
+		}
 	}
 
 	// if ($("input[name='goods_id']").length == 1) {
@@ -1658,7 +1758,9 @@ function refreshGoodsImage() {
 	};
 
 	laytpl(goods_image_template).render(data, function (html) {
+		
 		$(".js-goods-image").html(html);
+
 		//加载图片放大
 		loadImgMagnify();
 
@@ -1677,7 +1779,7 @@ function refreshGoodsImage() {
 			});
 
 			// 拖拽
-			$('.js-goods-image .item').arrangeable({
+			$('.js-goods-image .upload_img_square_item').arrangeable({
 				//拖拽结束后执行回调
 				callback: function (e) {
 					var indexBefore = $(e).attr("data-index");//拖拽前的原始位置

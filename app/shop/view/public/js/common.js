@@ -8,7 +8,7 @@ function openAlbum(callback, imgNum) {
 		layer.open({
 			type: 2,
 			title: '图片管理',
-			area: ['825px', '675px'],
+			area: ['950px', '580px'],
 			fixed: false, //不固定
 			btn: ['保存', '返回'],
 			content: ns.url("shop/album/album?imgNum=" + imgNum),
@@ -38,16 +38,23 @@ function openAlbum(callback, imgNum) {
  * 商品选择器
  * @param callback 回调函数
  * @param selectId 已选商品id
- * @param params mode：模式(spu、sku), max_num：最大数量，min_num 最小数量, is_virtual 是否虚拟 0 1, disabled: 开启禁用已选 0 1，promotion：营销活动标识 pintuan、groupbuy、fenxiao
+ * @param params mode：模式(spu、sku), max_num：最大数量，min_num 最小数量, is_virtual 是否虚拟 0 1, disabled: 开启禁用已选 0 1，promotion：营销活动标识 pintuan、groupbuy、fenxiao （module 表示组件）
  */
-function goodsSelect(callback, selectId, params) {
+function goodsSelect(callback, selectId, params={}) {
 	layui.use(['layer'], function () {
 		if (selectId.length) {
 			params.select_id = selectId.toString();
 		}
-		params.disabled =  params.disabled == 0 ? 0 : 1;
-		
-		var url = ns.url("shop/goods/goodsselect", params);
+
+		params.mode = params.mode ? params.mode : 'spu';
+		params.disabled = params.disabled == 0 ? 0 : 1;
+
+		if(!params.post) params.post = 'shop';
+
+		if (params.post == 'store') params.post += '://store';
+
+		var url = ns.url(params.post + "/goods/goodsselect", params);
+
 		//iframe层-父子操作
 		layer.open({
 			title: "商品选择",

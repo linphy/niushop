@@ -257,17 +257,24 @@ class Orderimportfile extends BaseShop
         $file_id = input('file_id',0);
         if(request()->isAjax()){
             $condition = [
-                ['site_id','=',$this->site_id],
-                ['file_id','=',$file_id]
+                ['oif.site_id','=',$this->site_id],
+                ['oif.file_id','=',$file_id]
             ];
 
             $page_index = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $status = input('status','');
             if($status !== ''){
-                $condition[] = ['status','=',$status];
+                $condition[] = ['oif.status','=',$status];
             }
-            $list = $model->getOrderImportFilePageLogList($condition,$page_index,$page_size);
+
+            $field = 'oif.*, o.order_id';
+            $alias = 'oif';
+            $join = [
+                ['order o','oif.order_no = o.order_no','left']
+            ];
+
+            $list = $model->getOrderImportFilePageLogList($condition,$page_index,$page_size, 'oif.id desc', $field, $alias, $join);
             return $list;
         }
         $this->assign('file_id',$file_id);

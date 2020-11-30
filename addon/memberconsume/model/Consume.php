@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -72,14 +71,14 @@ class Consume extends BaseModel
                 $adjust_num = intval($consume_config['return_point_rate'] / 100 * $order_info['order_money']);
                 if ($adjust_num > 0) {
                     $remark = '订单' . $order_info['order_no'] . $this->returnStatusToZh($param['status']) . '送' . $adjust_num . '积分';
-                    $member_account_model->addMemberAccount($order_info['site_id'], $order_info['member_id'], 'point', $adjust_num, 'order', $param['order_id'], $remark);
+                    $member_account_model->addMemberAccount($order_info['site_id'], $order_info['member_id'], 'point', $adjust_num, 'memberconsume', $param['order_id'], $remark);
                 }
             }
             if (!empty($consume_config['return_growth_rate'])) {
                 $adjust_num = intval($consume_config['return_growth_rate'] / 100 * $order_info['order_money']);
                 if ($adjust_num > 0) {
                     $remark = '订单' . $order_info['order_no'] . $this->returnStatusToZh($param['status']) . '送' . $adjust_num . '成长值';
-                    $member_account_model->addMemberAccount($order_info['site_id'], $order_info['member_id'], 'growth', $adjust_num, 'order', $param['order_id'], $remark);
+                    $member_account_model->addMemberAccount($order_info['site_id'], $order_info['member_id'], 'growth', $adjust_num, 'memberconsume', $param['order_id'], $remark);
                 }
             }
         }

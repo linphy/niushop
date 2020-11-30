@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -393,8 +392,6 @@ class OrderMessage extends BaseModel
                 		'keyword2' => time_to_date($order_goods_info['refund_action_time']),
                 		'keyword3' => $order_goods_info['refund_apply_money'],
                 	];
-
-                	$data["page"] = $this->handleUrl($order_info['order_type'], $order_goods_info['order_id']);
                 	$wechat_model->sendMessage($data);
                 }
             }
@@ -441,7 +438,6 @@ class OrderMessage extends BaseModel
                 			'keyword3' => $data['order_goods_info']['num'],
                 			'keyword4' => $data['order_goods_info']['refund_real_money'],
                 	];
-                	$data["page"] = $this->handleUrl($order_info['order_type'], $data['order_goods_info']['order_id']);
                 	$wechat_model->sendMessage($data);
                 }
             }
@@ -484,7 +480,6 @@ class OrderMessage extends BaseModel
                 		'keyword3' => str_sub($data['order_name']),
                 		'keyword4' => $data['order_money'],
                 	];
-                	$data["page"] = $this->handleUrl($data['order_type'], $data['order_id']);
                 	$wechat_model->sendMessage($data);
                 }
             }
@@ -528,7 +523,6 @@ class OrderMessage extends BaseModel
                 			'keyword4' => $data['order_name'],
                 			'keyword5' => time_to_date($data['sign_time']),
                 	];
-                	$data["page"] = $this->handleUrl($data['order_type'], $data['order_id']);
                 	$wechat_model->sendMessage($data);
                 }
             }

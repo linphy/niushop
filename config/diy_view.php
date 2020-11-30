@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 return [
@@ -25,7 +24,7 @@ return [
             'title' => '文本',
             'type' => 'SYSTEM',
             'controller' => 'Text',
-            'value' => '{ title : "『文本』", textColor : "#333333", "defaultTextColor": "#333333", subTitle : "副标题", "padding": 0, backgroundColor : "", "link" : {}, "fontSize" : 16, "fontSizeSub" : 14, "colorSub": "#999", "defaultColorSub": "#999", "style": 1, "sub": 0, "isShowMore": 0, "fontWeight": 600, "moreText": "查看更多", "moreLink" : {}, "btnColor": "#999", "defaultBtnColor": "#999" }',
+            'value' => '{ title : "『文本』", textColor : "#333333", "defaultTextColor": "#333333", "alignStyle": "center", subTitle : "副标题", "marginTop": 0, "padding": 0, backgroundColor : "", "link" : {}, "fontSize" : 16, "fontSizeSub" : 14, "colorSub": "#999", "defaultColorSub": "#999", "style": 1, "sub": 0, "styleName": "模板一", "isShowMore": 0, "fontWeight": 600, "moreText": "查看更多", "moreLink" : {}, "btnColor": "#999", "defaultBtnColor": "#999" }',
             'sort' => '10000',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -33,7 +32,7 @@ return [
             'icon' => 'public/static/ext/diyview/img/icon/text.png',
             'icon_selected' => 'public/static/ext/diyview/img/icon/text_selected.png'
         ],
-        [
+        /* [
             'name' => 'TEXT_NAV',
             'title' => '文本导航',
             'type' => 'SYSTEM',
@@ -44,13 +43,13 @@ return [
             'max_count' => 0,
             'icon' => 'public/static/ext/diyview/img/icon/text_nav.png',
             'icon_selected' => 'public/static/ext/diyview/img/icon/text_nav_selected.png'
-        ],
+        ], */
         [
             'name' => 'NOTICE',
             'title' => '公告',
             'type' => 'SYSTEM',
             'controller' => 'Notice',
-            'value' => '{ "sources": "default","backgroundColor": "", "paddingLeftRight": 0, "paddingTopBottom": 10, "style": 1, "isEdit": 1, "textColor": "#333333", "defaultTextColor": "#333333", "fontSize": 14,"list": [{"title": "公告","link": {}},{"title": "公告","link": {}}], "noticeIds": []}',
+            'value' => '{ "sources": "default","backgroundColor": "", "marginTop": 0, "style": 1, "isEdit": 1, "styleName": "风格一", "textColor": "#333333", "defaultTextColor": "#333333", "fontSize": 14,"list": [{"title": "公告","link": {}}], "noticeIds": []}',
             'sort' => '10002',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -62,7 +61,7 @@ return [
             'title' => '图文导航',
             'type' => 'SYSTEM',
             'controller' => 'GraphicNav',
-            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666","backgroundColor": "","selectedTemplate": "imageNavigation","scrollSetting": "fixed", padding : 20, "paddingTopBottom": 0, "list": [{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}},{"imageUrl": "","title": "","link": {}}]}',
+            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666", "navRadius": "fillet", "backgroundColor": "","selectedTemplate": "imageNavigation", "showType": 4, "scrollSetting": "fixed", padding : 20, "marginTop": 0, "list": [{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0}]}',
             'sort' => '10003',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -74,7 +73,7 @@ return [
             'title' => '图片广告',
             'type' => 'SYSTEM',
             'controller' => 'ImageAds',
-            'value' => '{ selectedTemplate : "carousel-posters", imageClearance : 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : {}, "imgWidth": 0, "imgHeight": 0} ] }',
+            'value' => '{ selectedTemplate : "carousel-posters", imageClearance : 0, "imageRadius": "right-angle", "carouselChangeStyle": "circle", "marginTop": 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : {}, "imgWidth": 0, "imgHeight": 0} ] }',
             'sort' => '10004',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -86,31 +85,31 @@ return [
             'title' => '商品搜索',
             'type' => 'SYSTEM',
             'controller' => 'Search',
-            'value' => '{ title : "搜索", "textColor": "#999999", "textAlign" : "left", "backgroundColor" : "", "bgColor": "", "defaultTextColor": "#999999", "borderType": 2 }',
+            'value' => '{ title : "搜索", "textColor": "#999999", "textAlign" : "left", "backgroundColor" : "#ffffff", "bgColor": "#e8e8e8", "defaultTextColor": "#999999", "borderType": 2 ,searchType:1,searchImg:"",searchStyle:1}',
             'sort' => '10005',
             'support_diy_view' => '',
             'max_count' => 1,
             'icon' => 'public/static/ext/diyview/img/icon/search.png',
             'icon_selected' => 'public/static/ext/diyview/img/icon/search_selected.png'
         ],
-        [
-            'name' => 'TITLE',
-            'title' => '顶部标题',
-            'type' => 'SYSTEM',
-            'controller' => 'Title',
-            'value' => '{ "title": "『顶部标题』","backgroundColor": "","textColor": "#000000","defaultTextColor": "#000000","isOpenOperation" : false,"leftLink" : {},"rightLink" : {},"operationName" : "操作","fontSize" : 16}',
-            'sort' => '10006',
-            'support_diy_view' => '',
-            'max_count' => 1,
-            'icon' => 'public/static/ext/diyview/img/icon/title.png',
-            'icon_selected' => 'public/static/ext/diyview/img/icon/title_selected.png'
-        ],
+//        [
+//            'name' => 'TITLE',
+//            'title' => '顶部标题',
+//            'type' => 'SYSTEM',
+//            'controller' => 'Title',
+//            'value' => '{ "title": "『顶部标题』","backgroundColor": "","textColor": "#000000","defaultTextColor": "#000000","isOpenOperation" : false,"leftLink" : {},"rightLink" : {},"operationName" : "操作","fontSize" : 16}',
+//            'sort' => '10006',
+//            'support_diy_view' => '',
+//            'max_count' => 1,
+//            'icon' => 'public/static/ext/diyview/img/icon/title.png',
+//            'icon_selected' => 'public/static/ext/diyview/img/icon/title_selected.png'
+//        ],
         [
             'name' => 'RICH_TEXT',
             'title' => '富文本',
             'type' => 'SYSTEM',
             'controller' => 'RichText',
-            'value' => '{ "backgroundColor": "","padding": 10,"html" : ""}',
+            'value' => '{ "backgroundColor": "","padding": 10,"html" : "", "marginTop": 0}',
             'sort' => '10007',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -144,7 +143,7 @@ return [
             'title' => '辅助线',
             'type' => 'SYSTEM',
             'controller' => 'HorzLine',
-            'value' => '{ "color" : "#e5e5e5", "defaultColor" : "#e5e5e5", "margin" : 0, "borderStyle": "solid", "padding": "no-padding" }',
+            'value' => '{ "color" : "#000000", "defaultColor" : "#000000", "margin" : 0, "borderStyle": "solid", "padding": 0 }',
             'sort' => '10011',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -188,7 +187,7 @@ return [
             'title' => '商品列表',
             'type' => 'SYSTEM',
             'controller' => 'GoodsList',
-            'value' => '{ "sources" : "default", "categoryId" : 0, "goodsCount" : "6", "goodsId": [], "style": 1, "backgroundColor": "", "paddingUpDown": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0 }',
+            'value' => '{ "sources" : "default", "categoryId" : 0, "categoryName": "请选择", "goodsCount" : "6", "goodsId": [], "style": 1, "backgroundColor": "", "marginTop": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0, "goodsTag": "default", "tagImg": {"imageUrl": ""} }',
             'sort' => '10016',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -212,7 +211,7 @@ return [
             'title' => '浮动按钮',
             'type' => 'SYSTEM',
             'controller' => 'FloatBtn',
-            'value' => '{ "textColor": "#ffffff", "backgroundColor": "", subTitle : "", "list": [{"imageUrl": "","title": "","link": {}}]}',
+            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list": [{"imageUrl": "","title": "","link": {}}]}',
             'sort' => '10022',
             'support_diy_view' => '',
             'max_count' => 1,
@@ -221,10 +220,10 @@ return [
         ],
         [
             'name' => 'TOP_CATEGORY',
-            'title' => '顶部分类条',
+            'title' => '分类导航',
             'type' => 'SYSTEM',
             'controller' => 'TopCategory',
-            'value' => '{"title":"首页","selectColor":"#FF4544","nsSelectColor":"#333333",backgroundColor : "",}',
+            'value' => '{"title":"首页","selectColor":"#FF4544","nsSelectColor":"#333333",backgroundColor : "",styleType:"line"}',
             'sort' => '10023',
             'support_diy_view' => '',
             'max_count' => 1,

@@ -49,7 +49,8 @@ class HttpClient
 		curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE);
         //TODO 只有本地使用 外网不用设置
         curl_setopt($ci, CURLOPT_SSL_VERIFYPEER,FALSE);
-		
+        curl_setopt($ci, CURLOPT_SSL_VERIFYHOST,FALSE);
+        curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 		$response = curl_exec($ci);
 
 		$httpCode = curl_getinfo($ci, CURLINFO_HTTP_CODE);

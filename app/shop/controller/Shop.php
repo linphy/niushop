@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -53,6 +52,8 @@ class Shop extends BaseShop
             $qq = input("qq", '');//qq
             $ww = input("ww", '');//ww
             $telephone = input("telephone", '');//联系电话
+            $shop_status = input('shop_status',1);//商城状态
+
             $data_site = array (
                 "site_name" => $site_name,
                 "logo" => $logo,
@@ -76,11 +77,20 @@ class Shop extends BaseShop
             );
             $site_model->editSite($data_site, $condition);
             $res = $shop_model->editShop($data_shop, $condition);
+            if($res['code'] >= 0){
+
+                $shop_model->setShopStatus(['shop_status'=> $shop_status],$this->site_id,$this->app_module);
+            }
             return $res;
         } else {
 
             $shop_info_result = $shop_model->getShopInfo($condition);
             $site_info = $site_model->getSiteInfo($condition);
+
+            //商城状态
+            $shop_status_result = $shop_model->getShopStatus($this->site_id,$this->app_module);
+            $shop_status = $shop_status_result['data']['value'];
+            $this->assign('shop_status',$shop_status['shop_status']);
 
             $config_model = new ConfigModel();
             $info = $config_model->geth5DomainName();

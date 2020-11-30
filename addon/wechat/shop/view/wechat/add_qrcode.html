@@ -29,15 +29,26 @@
 				<div class="upload-img-block">
 					<!-- 用于存储图片路径 -->
 					<div class="upload-img-box">
-						<div class="ns-upload-default">
-							<img src="SHOP_IMG/upload_img.png" />
-							<p>点击上传</p>
+						<div class="ns-upload-default" id="background">
+							<div class="upload">
+								<img src="SHOP_IMG/upload_img.png" />
+								<p>点击上传</p>
+							</div>
+							
 						</div>
+						<div class="operation"  >
+							<div >
+								<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+								<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+							</div>
+							<div class="replace_img js-replace">点击替换</div>
+						</div>
+						<input type="hidden" name="background" />
 					</div>
-					<p id="background" class="no-replace">替换</p>
-					<input type="hidden" name="background" />
-					<i class="del">x</i>
-				</div>
+	<!-- 				<p id="background" class="no-replace">替换</p>
+					
+					<i class="del">x</i> -->	
+			</div>
 			</div>
 			<div class="ns-word-aux">背景图必须是640px*1134px的png图像；点击下方"保存"按钮后生效。</div>
 		</div>

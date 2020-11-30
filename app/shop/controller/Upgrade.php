@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -568,6 +567,14 @@ class Upgrade extends BaseShop
             //修改插件信息
             $addon_model = new Addon();
             $addon_model->refreshDiyView('');
+
+            //刷新插件菜单
+            $addon_list = $addon_model->getAddonList([], 'name');
+            $addon_list = $addon_list[ 'data' ];
+            foreach ($addon_list as $k => $v) {
+                $menu->refreshMenu('shop', $v[ 'name' ]);
+            }
+
             foreach ($system_upgrade_info_ready as $key => $val) {
                 if ($val[ 'type' ] == 'addon') {
                     if ($val[ 'action' ] == 'upgrade') {
@@ -770,27 +777,41 @@ class Upgrade extends BaseShop
     public function refresh()
     {
         if (request()->isAjax()) {
-            Cache::clear();
-            if (is_dir('runtime/schema')) {
-                rmdirs("schema");
+
+            try{
+                Cache::clear();
+                if (is_dir('runtime/schema')) {
+                    rmdirs("schema");
+                }
+
+                if (is_dir('runtime/temp')) {
+                    rmdirs("temp");
+                }
+
+                $menu = new Menu();
+                $shop_menu_res = $menu->refreshMenu('shop', '');
+
+                $addon_model = new Addon();
+                $addon_model->installAllAddon();
+
+                //刷新插件菜单
+                $addon_list = $addon_model->getAddonList([], 'name');
+                $addon_list = $addon_list[ 'data' ];
+                foreach ($addon_list as $k => $v) {
+                    $menu->refreshMenu('shop', $v[ 'name' ]);
+                }
+
+                $arr = [ '', 'bargain', 'groupbuy', 'pintuan', 'seckill', 'coupon', 'fenxiao', 'live', 'notes', 'store' ];
+                $addon = new Addon();
+                foreach ($arr as $k => $v) {
+                    $res = $addon->refreshDiyView($v);
+                }
+                return success('', '刷新成功', '');
+            }catch(\Exception $e){
+
+                return error('',$e->getMessage());
             }
 
-            if (is_dir('runtime/temp')) {
-                rmdirs("temp");
-            }
-
-            $menu = new Menu();
-            $shop_menu_res = $menu->refreshMenu('shop', '');
-
-            $addon_model = new Addon();
-            $addon_model->installAllAddon();
-
-            $arr = [ '', 'bargain', 'groupbuy', 'pintuan', 'seckill', 'coupon', 'fenxiao', 'live', 'notes', 'store' ];
-            $addon = new Addon();
-            foreach ($arr as $k => $v) {
-                $res = $addon->refreshDiyView($v);
-            }
-            return success('', '刷新成功', '');
         }
     }
 }

@@ -608,8 +608,25 @@
                         });
 
                         $("body").on("click", ".order_goods_list:eq(1) .goods-item-remove", function () {
+
                             $(this).parents("tr").remove();
                             var orderId = $(this).attr("data-order-id");
+
+                            //数组的删除
+                            Array.prototype.remove = function (val) {
+                                var index = this.indexOf(val);
+                                if (index > -1) {
+                                    this.splice(index, 1);
+                                }
+                            };
+
+                            Array.prototype.indexOf = function (val) {
+                                for (var i = 0; i < this.length; i++) {
+                                    if (this[i].order_id == val) return i;
+                                }
+                                return -1;
+                            };
+
                             data.order_goods_list.remove(orderId);
 
                             var html = '<tr>';
@@ -887,18 +904,5 @@
         form.render();
     }
 
-    //数组的删除
-    Array.prototype.remove = function (val) {
-        var index = this.indexOf(val);
-        if (index > -1) {
-            this.splice(index, 1);
-        }
-    };
 
-    Array.prototype.indexOf = function (val) {
-        for (var i = 0; i < this.length; i++) {
-            if (this[i].order_id == val) return i;
-        }
-        return -1;
-    };
 </script>

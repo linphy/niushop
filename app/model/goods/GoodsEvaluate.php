@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -168,89 +167,53 @@ class GoodsEvaluate extends BaseModel
 
             foreach ($list as $k => $v) {
 
-                $symbol = "-";
-                if ($v[ 'is_audit' ] == -1) {
+                if ($data[ 'is_audit' ] == 1) {
                     $symbol = "+";
+                    if ($v[ 'explain_type' ] == 1) {
+                        //好评
+                        $goods_evaluate = 1; //评价
+                        $sku_evaluate = 1;
+                        $goods_evaluate_haoping = 1; //好评
+                        $sku_evaluate_haoping = 1;
+                    } elseif ($v[ 'explain_type' ] == 2) {
+                        //中评
+                        $goods_evaluate = 1; //评价
+                        $goods_evaluate_zhongping = 1; //中评
+                        $sku_evaluate_zhongping = 1;
+                    } elseif ($v[ 'explain_type' ] == 3) {
+                        //差评
+                        $goods_evaluate = 1; //评价
+                        $goods_evaluate_chaping = 1; //差评
+                        $sku_evaluate_chaping = 1;
+                    }
+
+                    if (!empty($v[ 'images' ])) {
+                        $goods_evaluate_shaitu = 1; //晒图
+                        $sku_evaluate_shaitu = 1;
+                    }
+
+                    Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
+                        ->update(
+                            [
+                                "evaluate" => Db::raw('evaluate' . $symbol . $goods_evaluate),
+                                "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $goods_evaluate_shaitu),
+                                "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $goods_evaluate_haoping),
+                                "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $goods_evaluate_zhongping),
+                                "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $goods_evaluate_chaping),
+                            ]);
+                    Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
+                        ->update(
+                            [
+                                "evaluate" => Db::raw('evaluate' . $symbol . $sku_evaluate),
+                                "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $sku_evaluate_shaitu),
+                                "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $sku_evaluate_haoping),
+                                "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $sku_evaluate_zhongping),
+                                "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $sku_evaluate_chaping),
+                            ]);
                 }
 
-                if ($v[ 'explain_type' ] == 1) {
-                    //好评
-                    $goods_evaluate = 1; //评价
-                    $sku_evaluate = 1;
-                    $goods_evaluate_haoping = 1; //好评
-                    $sku_evaluate_haoping = 1;
-                } elseif ($v[ 'explain_type' ] == 2) {
-                    //中评
-                    $goods_evaluate = 1; //评价
-                    $goods_evaluate_zhongping = 1; //中评
-                    $sku_evaluate_zhongping = 1;
-                } elseif ($v[ 'explain_type' ] == 3) {
-                    //差评
-                    $goods_evaluate = 1; //评价
-                    $goods_evaluate_chaping = 1; //差评
-                    $sku_evaluate_chaping = 1;
-                }
 
-                if (!empty($v[ 'images' ])) {
-                    $goods_evaluate_shaitu = 1; //晒图
-                    $sku_evaluate_shaitu = 1;
-                }
 
-                if ($symbol == "-") {
-                    $goods_info = model("goods")->getInfo([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ], 'evaluate,evaluate_shaitu,evaluate_haoping,evaluate_zhongping,evaluate_chaping');
-
-                    if ($goods_info[ 'evaluate' ] == 0) {
-                        $goods_evaluate = 0;
-                    }
-                    if ($goods_info[ 'evaluate_shaitu' ] == 0) {
-                        $goods_evaluate_shaitu = 0;
-                    }
-                    if ($goods_info[ 'evaluate_haoping' ] == 0) {
-                        $goods_evaluate_haoping = 0;
-                    }
-                    if ($goods_info[ 'evaluate_zhongping' ] == 0) {
-                        $goods_evaluate_zhongping = 0;
-                    }
-                    if ($goods_info[ 'evaluate_chaping' ] == 0) {
-                        $goods_evaluate_chaping = 0;
-                    }
-
-                    $goods_sku_info = model("goods_sku")->getInfo([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ], 'evaluate,evaluate_shaitu,evaluate_haoping,evaluate_zhongping,evaluate_chaping');
-                    if ($goods_sku_info[ 'evaluate' ] == 0) {
-                        $sku_evaluate = 0;
-                    }
-                    if ($goods_sku_info[ 'evaluate_shaitu' ] == 0) {
-                        $sku_evaluate_shaitu = 0;
-                    }
-                    if ($goods_sku_info[ 'evaluate_haoping' ] == 0) {
-                        $sku_evaluate_haoping = 0;
-                    }
-                    if ($goods_sku_info[ 'evaluate_zhongping' ] == 0) {
-                        $sku_evaluate_zhongping = 0;
-                    }
-                    if ($goods_sku_info[ 'evaluate_chaping' ] == 0) {
-                        $sku_evaluate_chaping = 0;
-                    }
-                }
-
-                Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
-                    ->update(
-                        [
-                            "evaluate" => Db::raw('evaluate' . $symbol . $goods_evaluate),
-                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $goods_evaluate_shaitu),
-                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $goods_evaluate_haoping),
-                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $goods_evaluate_zhongping),
-                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $goods_evaluate_chaping),
-                        ]);
-                Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
-                    ->update(
-                        [
-                            "evaluate" => Db::raw('evaluate' . $symbol . $sku_evaluate),
-                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $sku_evaluate_shaitu),
-                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $sku_evaluate_haoping),
-                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $sku_evaluate_zhongping),
-                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $sku_evaluate_chaping),
-                        ]);
             }
 
         }
@@ -275,30 +238,31 @@ class GoodsEvaluate extends BaseModel
             $evaluate_chaping = 1; //差评
             foreach ($list as $k => $v) {
 
-                $symbol = "+";
-                if ($v[ 'is_audit' ] == -1) {
+                if ($v[ 'is_audit' ] == 1) {
                     // 审核拒绝
-                    $symbol = "-";
+                    $symbol = "+";
+
+                    Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
+                        ->update(
+                            [
+                                "evaluate" => Db::raw('evaluate' . $symbol . $evaluate),
+                                "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $evaluate_shaitu),
+                                "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $evaluate_haoping),
+                                "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $evaluate_zhongping),
+                                "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $evaluate_chaping),
+                            ]);
+                    Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
+                        ->update(
+                            [
+                                "evaluate" => Db::raw('evaluate' . $symbol . $evaluate),
+                                "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $evaluate_shaitu),
+                                "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $evaluate_haoping),
+                                "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $evaluate_zhongping),
+                                "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $evaluate_chaping),
+                            ]);
                 }
 
-                Db::name('goods')->where([ [ 'goods_id', '=', $v[ 'goods_id' ] ] ])
-                    ->update(
-                        [
-                            "evaluate" => Db::raw('evaluate' . $symbol . $evaluate),
-                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $evaluate_shaitu),
-                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $evaluate_haoping),
-                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $evaluate_zhongping),
-                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $evaluate_chaping),
-                        ]);
-                Db::name('goods_sku')->where([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ])
-                    ->update(
-                        [
-                            "evaluate" => Db::raw('evaluate' . $symbol . $evaluate),
-                            "evaluate_shaitu" => Db::raw('evaluate_shaitu' . $symbol . $evaluate_shaitu),
-                            "evaluate_haoping" => Db::raw('evaluate_haoping' . $symbol . $evaluate_haoping),
-                            "evaluate_zhongping" => Db::raw('evaluate_zhongping' . $symbol . $evaluate_zhongping),
-                            "evaluate_chaping" => Db::raw('evaluate_chaping' . $symbol . $evaluate_chaping),
-                        ]);
+
             }
 
         }

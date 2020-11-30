@@ -1,8 +1,9 @@
 @CHARSET "UTF-8";
 
 /*魔方*/
-.draggable-element .rubik-cube .preview-draggable {
+.draggable-element .rubik-cube .preview-draggable .preview-box {
 	padding: 0;
+	margin: 0 15px;
 }
 
 .rubik-cube .preview-draggable div.tip {
@@ -15,7 +16,6 @@
 
 .rubik-cube .preview-draggable ul {
 	overflow: hidden;
-	padding: 0 10px;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -35,31 +35,43 @@
 }
 
 /*编辑值*/
+.rubik-cube .selected-template-list {
+	padding-left: 15px;
+	margin-bottom: 20px;
+}
+
 .rubik-cube .selected-template-list ul {
 	overflow: hidden;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .rubik-cube .selected-template-list ul li {
-	float: left;
-	width: 26%;
+	width: 46px;
+	height: 32px;
 	text-align: center;
+	line-height: 29px;
 	border: 1px solid #e5e5e5;
-	padding: 5px;
-	margin: 0 10px 15px 0;
 	cursor: pointer;
 	background: #ffffff;
+	box-sizing: border-box;
+	border-right: 1px transparent solid;
 }
 
-.rubik-cube .selected-template-list ul li:nth-child(3n) {
-	margin-right: 0;
+.rubik-cube .selected-template-list ul li:last-child {
+	border-right: 1px solid #e5e5e5;
 }
 
 .rubik-cube .selected-template-list ul li img {
-	width: 100%;
+	display: inline-block;
 }
 
 .rubik-cube .selected-template-list ul li div {
 	font-size: 12px;
+}
+
+.selected-template-layout .layui-input-block {
+	margin-left: 15px;
 }
 
 .rubik-cube .layout {
@@ -73,9 +85,8 @@
 
 .rubik-cube .layout li {
 	float: left;
-	background: #EBF8FD;
-	color: #88c4dc;
-	border: 1px solid #bdf;
+	color: #909399;
+	border: 1px solid #e5e5e5;
 	cursor: pointer;
 	font-size: 12px;
 	position: relative;
@@ -87,25 +98,34 @@
 	width: 100%;
 	position: absolute;
 	top: 50%;
-	margin-top: -17px;
+	margin-top: -26px;
+}
+
+.rubik-cube .layout li div.empty p {
+	margin: 0;
+	line-height: 26px;
 }
 
 .rubik-cube .layui-form-item p {
-	margin: 10px 0 10px 80px;
-	color: #999;
+	margin: 10px 0 10px 15px;
+	color: #909399;
 	font-size: 12px;
 }
 
 .rubik-cube .image-ad-list {
-	margin-left: 10px;
+	/* margin-left: 10px;
+	margin-bottom: 20px; */
+	margin-top: 15px;
 }
 
 .rubik-cube .image-ad-list > ul > li {
+	width: 100%;
 	padding: 10px;
 	background: #ffffff;
-	border: 1px dashed #e5e5e5;
+	border: 1px dashed #CCCCCC;
 	position: relative;
-	margin-top: 10px;
+	margin-top: 15px;
+	box-sizing: border-box;
 }
 
 .rubik-cube .image-ad-list > ul > li:first-child {
@@ -114,7 +134,7 @@
 
 .rubik-cube .image-ad-list > ul > li .content-block {
 	display: inline-block;
-	width: 70%;
+	width: calc(100% - 74px);
 }
 
 .rubik-cube .image-ad-list > ul > li .content-block.textNavigation {
@@ -126,9 +146,9 @@
 }
 
 .rubik-cube .image-ad-list > ul > li .content-block .layui-form-label {
-	width: 60px;
+	/* width: 60px;
 	padding: 9px 0;
-	line-height: 1;
+	line-height: 1; */
 }
 
 .rubik-cube .image-ad-list > ul > li .content-block div {
@@ -171,12 +191,12 @@
 /*编辑*/
 .rubik-cube .layout li.row1-of2 {
 	width: 49.2%;
-	height: 127.91px;
+	height: 160px;
 	border-right: 1px transparent solid;
 }
 
 .rubik-cube .layout li.row1-of2:last-child {
-	border-right: 1px solid #bdf;
+	border-right: 1px solid #e5e5e5;
 }
 
 .rubik-cube .layout li.row1-of2 div.empty {
@@ -185,7 +205,7 @@
 .rubik-cube .layout li.row1-of2 div.have-preview-image {
 	text-align: center;
 	height: 100%;
-	line-height: 127.91px;
+	line-height: 160px;
 	background: #ffffff;
 }
 
@@ -215,7 +235,7 @@
 /*编辑*/
 .rubik-cube .layout li.row1-of3 {
 	width: 32.5%;
-	height: 84.5px;
+	height: 100px;
 	border-right: 1px transparent solid;
 }
 
@@ -229,7 +249,7 @@
 .rubik-cube .layout li.row1-of3 div.have-preview-image {
 	text-align: center;
 	height: 100%;
-	line-height: 84.5px;
+	line-height: 100px;
 	background: #ffffff;
 }
 
@@ -264,7 +284,7 @@
 /*编辑*/
 .rubik-cube .layout li.row1-of4 {
 	width: 24.2%;
-	height: 62.91px;
+	height: 80px;
 	border-right: 1px transparent solid;
 }
 
@@ -278,7 +298,7 @@
 .rubik-cube .layout li.row1-of4 div.have-preview-image {
 	text-align: center;
 	height: 100%;
-	line-height: 62.91px;
+	line-height: 80px;
 	background: #ffffff;
 }
 
@@ -312,7 +332,7 @@
 /*编辑*/
 .rubik-cube .layout li.row2-lt-of2-rt {
 	width: 49.2%;
-	height: 127.91px;
+	height: 160px;
 }
 
 .rubik-cube .layout li.row2-lt-of2-rt:nth-child(1) {
@@ -335,7 +355,7 @@
 .rubik-cube .layout li.row2-lt-of2-rt div.have-preview-image {
 	text-align: center;
 	height: 100%;
-	line-height: 127.91px;
+	line-height: 160px;
 	background: #ffffff;
 }
 
@@ -440,7 +460,7 @@
 
 /*编辑*/
 .rubik-cube .layout li.row1-tp-of2-bm {
-	height: 129.91px;
+	height: 160px;
 }
 
 .rubik-cube .layout li.row1-tp-of2-bm:nth-child(1) {
@@ -463,7 +483,7 @@
 .rubik-cube .layout li.row1-tp-of2-bm div.have-preview-image {
 	text-align: center;
 	height: 100%;
-	line-height: 129.91px;
+	line-height: 160px;
 	background: #ffffff;
 }
 

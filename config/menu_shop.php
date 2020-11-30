@@ -391,6 +391,13 @@ return [
                         'sort' => 11,
                         'is_show' => 0
                     ],
+                    [
+                        'name' => 'GOODS_MODIFY_BATCHSET',
+                        'title' => '批量设置',
+                        'url' => 'shop/goods/batchset',
+                        'sort' => 12,
+                        'is_show' => 0
+                    ],
                 ]
             ],
             [
@@ -727,7 +734,7 @@ return [
                 'is_control' => 1,
                 'is_icon' => 0,
                 'sort' => 10,
-                'picture' => 'app/shop/view/public/img/icon/sys_config.png',
+                'picture' => 'app/shop/view/public/img/icon/hot_search.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
                 'child_list' => []
             ],
@@ -739,7 +746,7 @@ return [
                 'is_control' => 1,
                 'is_icon' => 0,
                 'sort' => 11,
-                'picture' => 'app/shop/view/public/img/icon/sys_config.png',
+                'picture' => 'app/shop/view/public/img/icon/default_search.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
                 'child_list' => []
             ],
@@ -765,8 +772,8 @@ return [
                 'is_show' => 1,
                 'is_control' => 1,
                 'is_icon' => 0,
-                'picture' => 'app/shop/view/public/img/icon/order.png',
-                'picture_selected' => 'app/shop/view/public/img/icon/order.png',
+                'picture' => 'app/shop/view/public/img/icon/order_management.png',
+                'picture_selected' => 'app/shop/view/public/img/icon/order_management.png',
                 'sort' => 1,
                 'child_list' => [
                     [
@@ -1084,6 +1091,17 @@ return [
                         'picture_selected' => '',
                         'sort' => 1,
                     ],
+                    [
+                        'name' => 'ORDER_REFUND_CLOSE',
+                        'title' => '关闭维权',
+                        'url' => 'shop/orderrefund/close',
+                        'is_show' => 0,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 1,
+                    ],
                 ]
             ],
             [
@@ -1184,8 +1202,8 @@ return [
                 'is_show' => 1,
                 'is_control' => 1,
                 'is_icon' => 0,
-                'picture' => 'app/shop/view/public/img/icon/invoice.png',
-                'picture_selected' => 'app/shop/view/public/img/icon/invoice.png',
+                'picture' => 'app/shop/view/public/img/icon/invoice_management.png',
+                'picture_selected' => 'app/shop/view/public/img/icon/invoice_management.png',
                 'sort' => 6,
                 'child_list' => []
             ],
@@ -1242,6 +1260,7 @@ return [
                                 'title' => '基础信息',
                                 'url' => 'shop/member/editmember',
                                 'is_show' => 1,
+                                'sort' => 1
                             ],
                             [
                                 'name' => 'MEMBER_DELETE',
@@ -1254,18 +1273,21 @@ return [
                                 'title' => '账户明细',
                                 'url' => 'shop/member/accountdetail',
                                 'is_show' => 1,
+                                'sort' => 2
                             ],
                             [
                                 'name' => 'MEMBER_ORDER',
                                 'title' => '订单管理',
                                 'url' => 'shop/member/order',
                                 'is_show' => 1,
+                                'sort' => 3
                             ],
                             [
                                 'name' => 'MEMBER_ADDRESS',
                                 'title' => '会员地址',
                                 'url' => 'shop/member/addressdetail',
                                 'is_show' => 1,
+                                'sort' => 4
                             ],
                             [
                                 'name' => 'MEMBER_DETAIL',
@@ -1320,12 +1342,14 @@ return [
                                 'title' => '收藏记录',
                                 'url' => 'shop/goods/membergoodscollect',
                                 'is_show' => 1,
+                                'sort' => 5
                             ],
                             [
                                 'name' => 'MEMBER_BROWSE',
                                 'title' => '浏览记录',
                                 'url' => 'shop/goods/membergoodsbrowse',
                                 'is_show' => 1,
+                                'sort' => 6
                             ],
                         ]
                     ],
@@ -1402,9 +1426,103 @@ return [
                 'is_show' => 1,
                 'is_control' => 1,
                 'is_icon' => 0,
-                'picture' => 'app/shop/view/public/img/icon/member_list.png',
+                'picture' => 'app/shop/view/public/img/icon/member_channel.png',
                 'picture_selected' => '',
                 'sort' => 6,
+                'child_list' => [
+                    [
+                        'name' => 'MEMBER_IMPORT_LIST',
+                        'title' => '导入记录',
+                        'url' => 'shop/member/memberimportlist',
+                        'is_show' => 0,
+                    ]
+                ]
+            ],
+            [
+                'name' => 'MEMBER_CLUSTER',
+                'title' => '会员群体',
+                'url' => 'shop/membercluster/clusterlist',
+                'is_show' => 1,
+                'picture' => 'app/shop/view/public/img/icon/member_group.png',
+                'picture_selected' => 'app/shop/view/public/img/icon/member_group.png',
+                'sort' => 7,
+                'child_list' => [
+                    [
+                        'name' => 'MEMBER_CLUSTER_LIST',
+                        'title' => '会员群体',
+                        'url' => 'shop/membercluster/clusterlist',
+                        'is_show' => 0,
+                        'sort' => 1,
+                        'child_list' => [
+                            [
+                                'name' => 'MEMBER_CLUSTER_ADD',
+                                'title' => '群体添加',
+                                'url' => 'shop/membercluster/addcluster',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_EDIT',
+                                'title' => '群体编辑',
+                                'url' => 'shop/membercluster/editcluster',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_DELETE',
+                                'title' => '群体删除',
+                                'url' => 'shop/membercluster/deletecluster',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_BALANCE_ADJUST',
+                                'title' => '发放红包',
+                                'url' => 'shop/membercluster/sendbalance',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_POINT_ADJUST',
+                                'title' => '发放积分',
+                                'url' => 'shop/membercluster/sendpoint',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_COUPON_ADJUST',
+                                'title' => '发放优惠券',
+                                'url' => 'shop/membercluster/sendcoupon',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_CALCULATE',
+                                'title' => '计算群体',
+                                'url' => 'shop/membercluster/calculate',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_EXPORT_MEMBER',
+                                'title' => '导出会员',
+                                'url' => 'shop/membercluster/exportclustermember',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_CLUSTER_REFRESH',
+                                'title' => '刷新信息',
+                                'url' => 'shop/membercluster/refreshcluster',
+                                'is_show' => 0,
+                            ],
+
+                        ]
+                    ],
+                ],
+            ],
+            [
+                'name' => 'MEMBER_BLACKLIST',
+                'title' => '黑名单',
+                'url' => 'shop/member/blacklist',
+                'is_show' => 1,
+                'is_control' => 1,
+                'is_icon' => 0,
+                'picture' => 'app/shop/view/public/img/icon/member_blacklist.png',
+                'picture_selected' => '',
+                'sort' => 8
             ]
         ]
     ],
@@ -1440,35 +1558,35 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/member_chat.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/member_chat.png',
-                'sort' => 1,
+                'sort' => 2
             ],
-        ]
-    ],
-    [
-        'name' => 'TOOL_ROOT',
-        'title' => '应用',
-        'url' => 'shop/promotion/tool',
-        'parent' => '',
-        'is_show' => 1,
-        'is_control' => 1,
-        'is_icon' => 0,
-        'picture' => 'app/shop/view/public/img/menu_icon/menu_marketing.png',
-        'picture_selected' => '',
-        'sort' => 6,
-        'child_list' => [
             [
                 'name' => 'PROMOTION_TOOL',
-                'title' => '应用管理',
+                'title' => '应用工具',
                 'url' => 'shop/promotion/tool',
                 'is_show' => 1,
-                'is_control' => 0,
+                'is_control' => 1,
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon/promotion_tool.png',
                 'picture_selected' => 'app/shop/view/public/img/icon/promotion_tool.png',
-                'sort' => 1,
+                'sort' => 3
             ],
         ]
     ],
+//    [
+//        'name' => 'TOOL_ROOT',
+//        'title' => '应用',
+//        'url' => 'shop/promotion/tool',
+//        'parent' => '',
+//        'is_show' => 1,
+//        'is_control' => 1,
+//        'is_icon' => 0,
+//        'picture' => 'app/shop/view/public/img/menu_icon/menu_marketing.png',
+//        'picture_selected' => '',
+//        'sort' => 6,
+//        'child_list' => [
+//        ]
+//    ],
     [
         'name' => 'STORE_ROOT',
         'title' => '门店',
@@ -2377,8 +2495,8 @@ return [
                 'is_show' => 1,
                 'is_control' => 1,
                 'is_icon' => 0,
-                'picture' => 'app/shop/view/public/img/icon/sys_config.png',
-                'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
+                'picture' => 'app/shop/view/public/img/icon/common_tools.png',
+                'picture_selected' => 'app/shop/view/public/img/icon/common_tools.png',
                 'sort' => 6,
                 'child_list' => [
                     [

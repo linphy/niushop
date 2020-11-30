@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -157,7 +156,7 @@ class Message extends BaseModel
                 foreach ($list[ 'list' ] as $k => $v) {
                     $message_info = model('message')->getInfo([ [ "keywords", "=", $v[ 'keywords' ] ], [ 'site_id', '=', $site_id ] ], 'wechat_is_open,wechat_template_id');
                     $list[ 'list' ][ $k ][ 'wechat_is_open' ] = $message_info == null ? 0 : $message_info[ 'wechat_is_open' ];
-                    $list[ 'list' ][ $k ][ 'wechat_template_id' ] = $message_info[ 'wechat_template_id' ];
+                    $list[ 'list' ][ $k ][ 'wechat_template_id' ] = $message_info == null ? 0 : $message_info[ 'wechat_template_id' ];
                 }
             }
         }
@@ -178,21 +177,21 @@ class Message extends BaseModel
         if ($wechat_is_open == 1) {
             // 启用
             foreach ($keyword as $item) {
-                $shop_message = model('message')->getInfo([['keywords', '=', $item], ["site_id", "=", $site_id]], 'wechat_template_id');
+                $shop_message = model('message')->getInfo([ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ], 'wechat_template_id');
                 $data = [
                     'wechat_is_open' => $wechat_is_open,
                     'site_id' => $site_id,
                     'keywords' => $item,
                 ];
                 // 开启时没有模板则进行添加
-                if (!empty($shop_message)){
-                    if (empty($shop_message['wechat_template_id'])) {
+                if (!empty($shop_message)) {
+                    if (empty($shop_message[ 'wechat_template_id' ])) {
                         $template_info = model('message_template')->getInfo([ [ 'keywords', '=', $item ], [ 'wechat_json', '<>', '' ] ], 'wechat_json');
                         if (!empty($template_info)) {
-                            $template = json_decode($template_info['wechat_json'], true);
+                            $template = json_decode($template_info[ 'wechat_json' ], true);
                             $res = $wechat->getTemplateId($template[ 'template_id_short' ]);
                             if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) {
-                                $data['wechat_template_id'] = $res[ 'template_id' ];
+                                $data[ 'wechat_template_id' ] = $res[ 'template_id' ];
                             } else {
                                 return $this->error($res, $res[ 'errmsg' ]);
                             }
@@ -202,10 +201,10 @@ class Message extends BaseModel
                 } else {
                     $template_info = model('message_template')->getInfo([ [ 'keywords', '=', $item ], [ 'wechat_json', '<>', '' ] ], 'wechat_json');
                     if (!empty($template_info)) {
-                        $template = json_decode($template_info['wechat_json'], true);
+                        $template = json_decode($template_info[ 'wechat_json' ], true);
                         $res = $wechat->getTemplateId($template[ 'template_id_short' ]);
                         if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) {
-                            $data['wechat_template_id'] = $res[ 'template_id' ];
+                            $data[ 'wechat_template_id' ] = $res[ 'template_id' ];
                         } else {
                             return $this->error($res, $res[ 'errmsg' ]);
                         }
@@ -218,9 +217,9 @@ class Message extends BaseModel
             foreach ($keyword as $item) {
                 $shop_message = model('message')->getInfo([ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ], 'wechat_template_id');
                 if (!empty($shop_message)) {
-                    model('message')->update(['wechat_is_open' => $wechat_is_open], [ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ]);
+                    model('message')->update([ 'wechat_is_open' => $wechat_is_open ], [ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ]);
                 } else {
-                    model('message')->add( [
+                    model('message')->add([
                         'site_id' => $site_id,
                         'keywords' => $item,
                         'wechat_is_open' => $wechat_is_open
@@ -232,19 +231,19 @@ class Message extends BaseModel
             $list = model('message_template')->getList([ [ 'keywords', 'in', $keyword ], [ 'wechat_json', '<>', '' ] ], 'keywords,wechat_json');
             if (!empty($list)) {
                 foreach ($list as $item) {
-                    $template = json_decode($item['wechat_json'], true);
+                    $template = json_decode($item[ 'wechat_json' ], true);
                     $res = $wechat->getTemplateId($template[ 'template_id_short' ]);
                     if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] != 0) return $this->error($res, $res[ 'errmsg' ]);
 
-                    $shop_message = model('message')->getInfo([['keywords', '=', $item['keywords']], ["site_id", "=", $site_id]], 'wechat_template_id');
+                    $shop_message = model('message')->getInfo([ [ 'keywords', '=', $item[ 'keywords' ] ], [ "site_id", "=", $site_id ] ], 'wechat_template_id');
 
                     if (!empty($shop_message)) {
-                        model('message')->update(['wechat_template_id' => $res['template_id'] ], [ [ 'keywords', '=', $item['keywords'] ], [ "site_id", "=", $site_id ] ]);
+                        model('message')->update([ 'wechat_template_id' => $res[ 'template_id' ] ], [ [ 'keywords', '=', $item[ 'keywords' ] ], [ "site_id", "=", $site_id ] ]);
                     } else {
-                        model('message')->add( [
+                        model('message')->add([
                             'site_id' => $site_id,
-                            'keywords' => $item['keywords'],
-                            'wechat_template_id' => $res['template_id']
+                            'keywords' => $item[ 'keywords' ],
+                            'wechat_template_id' => $res[ 'template_id' ]
                         ]);
                     }
                 }

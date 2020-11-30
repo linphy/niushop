@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -64,53 +63,67 @@ class Order extends BaseShop
         if (request()->isAjax()) {
             $page_index = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
+            $alias = 'a';
+            $join = null;
             $condition = [
 //                ["order_type", "=", 1],
-                [ "site_id", "=", $this->site_id ],
-                [ 'is_delete', '=', 0 ]
+                [ "a.site_id", "=", $this->site_id ],
+                [ 'a.is_delete', '=', 0 ]
             ];
             //订单状态
             if ($order_status != "") {
-                $condition[] = [ "order_status", "=", $order_status ];
+                if($order_status != 'refunding'){
+                    $condition[] = [ "a.order_status", "=", $order_status ];
+                }else{
+                    $join = [
+                        [
+                            'order_goods og',
+                            'og.order_id = a.order_id',
+                            'left'
+                        ]
+                    ];
+                    $condition[] = [ "og.refund_status", "not in", [0,3] ];
+                }
+
             } else {
-                $condition[] = [ 'order_status', 'in', array_keys($order_status_list) ];
+//                $condition[] = [ 'order_status', 'in', array_keys($order_status_list) ];
             }
             //订单内容 模糊查询
             if ($order_name != "") {
-                $condition[] = [ "order_name", 'like', "%$order_name%" ];
+                $condition[] = [ "a.order_name", 'like', "%$order_name%" ];
             }
             //订单来源
             if ($order_from != "") {
-                $condition[] = [ "order_from", "=", $order_from ];
+                $condition[] = [ "a.order_from", "=", $order_from ];
             }
             //订单支付
             if ($pay_type != "") {
-                $condition[] = [ "pay_type", "=", $pay_type ];
+                $condition[] = [ "a.pay_type", "=", $pay_type ];
             }
             //订单类型
             if ($order_type != 'all') {
-                $condition[] = [ "order_type", "=", $order_type ];
+                $condition[] = [ "a.order_type", "=", $order_type ];
             }
             //营销类型
             if ($promotion_type != "") {
                 if ($promotion_type == 'empty') {
-                    $condition[] = [ "promotion_type", "=", '' ];
+                    $condition[] = [ "a.promotion_type", "=", '' ];
                 } else {
-                    $condition[] = [ "promotion_type", "=", $promotion_type ];
+                    $condition[] = [ "a.promotion_type", "=", $promotion_type ];
                 }
             }
             if (!empty($start_time) && empty($end_time)) {
-                $condition[] = [ "create_time", ">=", date_to_time($start_time) ];
+                $condition[] = [ "a.create_time", ">=", date_to_time($start_time) ];
             } elseif (empty($start_time) && !empty($end_time)) {
-                $condition[] = [ "create_time", "<=", date_to_time($end_time) ];
+                $condition[] = [ "a.create_time", "<=", date_to_time($end_time) ];
             } elseif (!empty($start_time) && !empty($end_time)) {
-                $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+                $condition[] = [ 'a.create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
             }
             if ($search_text != "") {
-                $condition[] = [ $order_label, 'like', "%$search_text%" ];
+                $condition[] = [ 'a.'.$order_label, 'like', "%$search_text%" ];
             }
 
-            $list = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "create_time desc");
+            $list = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "create_time desc", $field = 'a.*', $alias, $join);
             return $list;
         } else {
 
@@ -119,7 +132,7 @@ class Order extends BaseShop
             $this->assign("order_label_list", $order_label_list);
             $order_model = new OrderModel();
             $order_status_list = $order_model->order_status;
-            $this->assign("order_status_list", $order_status_list);//订单状态
+            $this->assign("order_status_list", $order_type_list[1]['status']);//订单状态
 
             //订单来源 (支持端口)
             $order_from = Config::get("app_type");
@@ -422,11 +435,14 @@ class Order extends BaseShop
         $condition_desc = [];
 
         $order_common_model = new OrderCommon();
-        $condition[] = [ "site_id", "=", $this->site_id ];
+        $condition = [
+            ["o.site_id", "=", $this->site_id],
+            ["o.is_delete","=",0]
+        ];
         //订单类型
         $order_type_name = '全部';
         if ($order_type != 'all') {
-            $condition[] = [ "order_type", "=", $order_type ];
+            $condition[] = [ "o.order_type", "=", $order_type ];
 
             $order_type_list = $order_common_model->getOrderTypeStatusList();
             $order_type_list = array_column($order_type_list, 'name', 'type');
@@ -437,20 +453,34 @@ class Order extends BaseShop
         //订单状态
         $order_status_name = '全部';
         if ($order_status != "") {
-            $condition[] = [ "order_status", "=", $order_status ];
-            $order_status_list = $order_common_model->order_status;
-            $order_status_name = $order_status_list[ $order_status ][ 'name' ] ?? '';
+            if($order_status != 'refunding'){
+                $condition[] = [ "o.order_status", "=", $order_status ];
+                $order_status_list = $order_common_model->order_status;
+                $order_status_name = $order_status_list[ $order_status ][ 'name' ] ?? '';
+            }else{
+                $join = [
+                    [
+                        'order_goods og',
+                        'og.order_id = o.order_id',
+                        'left'
+                    ]
+                ];
+                $condition[] = [ "og.refund_status", "not in", [0,3] ];
+                $order_status_name = '维权中';
+            }
+
+
         }
         $condition_desc[] = [ 'name' => '订单状态', 'value' => $order_status_name ];
 
         //订单内容 模糊查询
         if ($order_name != "") {
-            $condition[] = [ "order_name", 'like', "%$order_name%" ];
+            $condition[] = [ "o.order_name", 'like', "%$order_name%" ];
         }
         //订单来源
         $order_from_name = '全部';
         if ($order_from != "") {
-            $condition[] = [ "order_from", "=", $order_from ];
+            $condition[] = [ "o.order_from", "=", $order_from ];
             //订单来源 (支持端口)
             $order_from_list = Config::get("app_type");
             $order_from_name = $order_from_list[ $order_from ][ 'name' ] ?? '';
@@ -461,7 +491,7 @@ class Order extends BaseShop
         //订单支付
         $pay_type_name = '全部';
         if ($pay_type != "") {
-            $condition[] = [ "pay_type", "=", $pay_type ];
+            $condition[] = [ "o.pay_type", "=", $pay_type ];
             $pay_type_list = $order_common_model->getPayType();
             $pay_type_name = $pay_type_list[ $pay_type ] ?? '';
         }
@@ -471,9 +501,9 @@ class Order extends BaseShop
         $promotion_type_name = '全部';
         if ($promotion_type != "") {
             if ($promotion_type == 'empty') {
-                $condition[] = [ "promotion_type", "=", '' ];
+                $condition[] = [ "o.promotion_type", "=", '' ];
             } else {
-                $condition[] = [ "promotion_type", "=", $promotion_type ];
+                $condition[] = [ "o.promotion_type", "=", $promotion_type ];
             }
             //营销活动类型
             $promotion_model = new PromotionModel();
@@ -484,19 +514,19 @@ class Order extends BaseShop
         $condition_desc[] = [ 'name' => '营销活动', 'value' => $promotion_type_name ];
         $time_name = '';
         if (!empty($start_time) && empty($end_time)) {
-            $condition[] = [ "create_time", ">=", date_to_time($start_time) ];
+            $condition[] = [ "o.create_time", ">=", date_to_time($start_time) ];
             $time_name = $start_time . '起';
         } elseif (empty($start_time) && !empty($end_time)) {
-            $condition[] = [ "create_time", "<=", date_to_time($end_time) ];
+            $condition[] = [ "o.create_time", "<=", date_to_time($end_time) ];
             $time_name = '至' . $end_time;
         } elseif (!empty($start_time) && !empty($end_time)) {
-            $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+            $condition[] = [ 'o.create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
             $time_name = $start_time . ' 至 ' . $end_time;
         }
         $condition_desc[] = [ 'name' => '下单时间', 'value' => $time_name ];
 
         if ($search_text != "") {
-            $condition[] = [ $order_label, 'like', "%$search_text%" ];
+            $condition[] = [ 'o.'.$order_label, 'like', "%$search_text%" ];
         }
         foreach ($order_label_list as $k => $v) {
             $order_label_name = $v;
@@ -507,7 +537,7 @@ class Order extends BaseShop
             }
         }
         $order_export_model = new OrderExport();
-        $result = $order_export_model->orderExport($condition, $condition_desc, $this->site_id);
+        $result = $order_export_model->orderExport($condition, $condition_desc, $this->site_id, $join ?? null);
         return $result;
     }
 
@@ -524,7 +554,6 @@ class Order extends BaseShop
             "order_name" => "商品名称",
         );
 
-        $condition = [];
         $order_status = input("order_status", "");//订单状态
         $order_name = input("order_name", '');
         $pay_type = input("pay_type", '');
@@ -540,7 +569,10 @@ class Order extends BaseShop
         $condition_desc = [];
 
         $order_common_model = new OrderCommon();
-        $condition[] = [ "o.site_id", "=", $this->site_id ];
+        $condition = [
+            ["o.site_id", "=", $this->site_id],
+            ["o.is_delete","=",0]
+        ];
         //订单类型
         $order_type_name = '全部';
         if ($order_type != 'all') {
@@ -555,9 +587,16 @@ class Order extends BaseShop
         //订单状态
         $order_status_name = '全部';
         if ($order_status != "") {
-            $condition[] = [ "o.order_status", "=", $order_status ];
-            $order_status_list = $order_common_model->order_status;
-            $order_status_name = $order_status_list[ $order_status ][ 'name' ] ?? '';
+            if($order_status != 'refunding'){
+                $condition[] = [ "o.order_status", "=", $order_status ];
+                $order_status_list = $order_common_model->order_status;
+                $order_status_name = $order_status_list[ $order_status ][ 'name' ] ?? '';
+            }else{
+                $condition[] = [ "og.refund_status", "not in", [0,3] ];
+                $order_status_name = '维权中';
+            }
+
+
         }
         $condition_desc[] = [ 'name' => '订单状态', 'value' => $order_status_name ];
 
@@ -715,49 +754,61 @@ class Order extends BaseShop
         if (request()->isAjax()) {
             $page_index = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
+            $alias = 'o';
+            $join = [];
+
             $condition = [
-                [ "site_id", "=", $this->site_id ],
-                [ 'is_delete', '=', 0 ],
-                [ 'is_invoice', '=', 1 ]
+                [ "o.site_id", "=", $this->site_id ],
+                [ 'o.is_delete', '=', 0 ],
+                [ 'o.is_invoice', '=', 1 ]
             ];
 
             //订单编号
             $order_no = input('order_no', '');
             if ($order_no) {
-                $condition[] = [ "order_no", "like", "%" . $order_no . "%" ];
+                $condition[] = [ "o.order_no", "like", "%" . $order_no . "%" ];
             }
             //订单状态
             $order_status = input('order_status', '');
             if ($order_status != "") {
-                $condition[] = [ "order_status", "=", $order_status ];
+                if($order_status != 'refunding'){
+                    $condition[] = [ "o.order_status", "=", $order_status ];
+                }else{
+                    $join = [
+                        [
+                            'order_goods og',
+                            'og.order_id = o.order_id',
+                            'left'
+                        ]
+                    ];
+                    $condition[] = [ "og.refund_status", "not in", [0,3] ];
+                }
             }
             $order_type = input("order_type", 'all');//营销类型
             $start_time = input('start_time', '');
             $end_time = input('end_time', '');
 
-
             //订单类型
             if ($order_type != 'all') {
-                $condition[] = [ "order_type", "=", $order_type ];
+                $condition[] = [ "o.order_type", "=", $order_type ];
             }
 
             if (!empty($start_time) && empty($end_time)) {
-                $condition[] = [ "create_time", ">=", date_to_time($start_time) ];
+                $condition[] = [ "o.create_time", ">=", date_to_time($start_time) ];
             } elseif (empty($start_time) && !empty($end_time)) {
-                $condition[] = [ "create_time", "<=", date_to_time($end_time) ];
+                $condition[] = [ "o.create_time", "<=", date_to_time($end_time) ];
             } elseif (!empty($start_time) && !empty($end_time)) {
-                $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+                $condition[] = [ 'o.create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
             }
-
             $order_common_model = new OrderCommonModel();
-            $list = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "create_time desc");
+            $list = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "o.create_time desc", 'o.*',$alias, $join);
             return $list;
         } else {
             $order_model = new OrderModel();
-            $order_status_list = $order_model->order_status;
-            $this->assign("order_status_list", $order_status_list);//订单状态
+//            $order_status_list = $order_model->order_status;
             $order_common_model = new OrderCommonModel();
             $order_type_list = $order_common_model->getOrderTypeStatusList();
+            $this->assign("order_status_list", $order_type_list[1]['status']);//订单状态
             $this->assign("order_type_list", $order_type_list);
 
             return $this->fetch('order/invoice_list');
@@ -772,20 +823,32 @@ class Order extends BaseShop
         $page_index = input('page', 1);
         $page_size = 0;
         $condition = [
-            [ "site_id", "=", $this->site_id ],
-            [ 'is_delete', '=', 0 ],
-            [ 'is_invoice', '=', 1 ]
+            [ "o.site_id", "=", $this->site_id ],
+            [ 'o.is_delete', '=', 0 ],
+            [ 'o.is_invoice', '=', 1 ]
         ];
-
+        $alias = 'o';
+        $join = null;
         //订单编号
         $order_no = input('order_no', '');
         if ($order_no) {
-            $condition[] = [ "order_no", "like", "%" . $order_no . "%" ];
+            $condition[] = [ "o.order_no", "like", "%" . $order_no . "%" ];
         }
         //订单状态
         $order_status = input('order_status', '');
         if ($order_status != "") {
-            $condition[] = [ "order_status", "=", $order_status ];
+            if($order_status != 'refunding'){
+                $condition[] = [ "o.order_status", "=", $order_status ];
+            }else{
+                $join = [
+                    [
+                        'order_goods og',
+                        'og.order_id = o.order_id',
+                        'left'
+                    ]
+                ];
+                $condition[] = [ "og.refund_status", "not in", [0,3] ];
+            }
         }
         $order_type = input("order_type", 'all');//营销类型
         $start_time = input('start_time', '');
@@ -794,19 +857,19 @@ class Order extends BaseShop
 
         //订单类型
         if ($order_type != 'all') {
-            $condition[] = [ "order_type", "=", $order_type ];
+            $condition[] = [ "o.order_type", "=", $order_type ];
         }
 
         if (!empty($start_time) && empty($end_time)) {
-            $condition[] = [ "create_time", ">=", date_to_time($start_time) ];
+            $condition[] = [ "o.create_time", ">=", date_to_time($start_time) ];
         } elseif (empty($start_time) && !empty($end_time)) {
-            $condition[] = [ "create_time", "<=", date_to_time($end_time) ];
+            $condition[] = [ "o.create_time", "<=", date_to_time($end_time) ];
         } elseif (!empty($start_time) && !empty($end_time)) {
-            $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+            $condition[] = [ 'o.create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
         }
 
         $order_common_model = new OrderCommonModel();
-        $list_result = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "create_time desc");
+        $list_result = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "o.create_time desc", 'o.*', $alias, $join);
         $list = $list_result[ 'data' ][ 'list' ];
 
         // 实例化excel
@@ -904,14 +967,34 @@ class Order extends BaseShop
     public function export()
     {
         if (request()->isAjax()) {
+            $page_index = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
             $export_model = new OrderExport();
             $condition = array (
                 [ 'site_id', '=', $this->site_id ]
             );
-            $result = $export_model->getExport($condition, '*', 'create_time desc');
+            $result = $export_model->getExportPageList($condition, $page_index, $page_size, 'create_time desc', '*');
             return $result;
         } else {
             return $this->fetch("order/export");
+        }
+    }
+
+    /**
+     * 删除订单导出记录
+     */
+    public function deleteExport(){
+
+        if (request()->isAjax()) {
+            $export_ids = input('export_ids', '');
+
+            $export_model = new OrderExport();
+            $condition = array (
+                [ 'site_id', '=', $this->site_id ],
+                ['export_id', 'in', (string)$export_ids]
+            );
+            $result = $export_model->deleteExport($condition);
+            return $result;
         }
     }
 }

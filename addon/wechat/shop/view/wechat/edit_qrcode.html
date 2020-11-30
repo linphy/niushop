@@ -32,19 +32,31 @@
 			<div class="layui-input-block">
 				<div class="upload-img-block">
 					<!-- 用于存储图片路径 -->
-					<div class="upload-img-box">
-						{if $info['background']}
-						<img layer-src src="{:img($info['background'])}">
-						{else /}
-						<div class="ns-upload-default">
-							<img src="SHOP_IMG/upload_img.png" />
-							<p>点击上传</p>
+					<div class="upload-img-box {if $info['background']}hover{/if}">
+						<div class="ns-upload-default" id="background">
+							{if $info['background']}
+							<div id="preview_background" class="preview_img">
+								<img layer-src src="{:img($info['background'])}" class="img_prev">
+							</div>
+							{else /}
+								<div class="upload">
+									<img src="SHOP_IMG/upload_img.png" />
+									<p>点击上传</p>
+								</div>
+							{/if}
 						</div>
-						{/if}
+						<div class="operation"  >
+							<div >
+								<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px"></i>
+								<i title="删除图片" class="layui-icon layui-icon-delete js-delete" ></i>
+							</div>
+							
+							<div class="replace_img js-replace">点击替换</div>
+						</div>
+						<input type="hidden" name="background" value="{$info['background']}" />
 					</div>
-					<p id="background" class=" {if condition="$info['background']"} replace {else/} no-replace{/if}">替换</p>
-					<input type="hidden" name="background" value="{$info['background']}" />
-					<i class="del {if $info['background']}show{/if}">x</i>
+				<!-- 	<p id="background" class=" {if condition="$info['background']"} replace {else/} no-replace{/if}">替换</p>
+					<i class="del {if $info['background']}show{/if}">x</i> -->
 				</div>
 			</div>
 			<div class="ns-word-aux">背景图必须是640px*1134px的png图像；点击下方"保存"按钮后生效。</div>

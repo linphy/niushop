@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -17,6 +16,7 @@ use app\model\BaseModel;
 use app\model\message\Sms;
 use app\model\member\MemberAccount;
 use addon\coupon\model\Coupon;
+use app\model\system\Stat;
 
 /**
  * 登录
@@ -100,6 +100,11 @@ class Register extends BaseModel
             event("MemberRegister", [ 'member_id' => $res, 'site_id' => $data[ 'site_id' ] ]);
             $data[ 'member_id' ] = $res;
             $this->pullHeadimg($data);
+
+            //添加统计
+            $stat = new Stat();
+            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
+
             return $this->success($res);
         } else {
             return $this->error();
@@ -182,6 +187,11 @@ class Register extends BaseModel
             event("MemberRegister", [ 'member_id' => $res, 'site_id' => $data[ 'site_id' ] ]);
             $data[ 'member_id' ] = $res;
             $this->pullHeadimg($data);
+
+            //添加统计
+            $stat = new Stat();
+            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
+
             return $this->success($res);
         } else {
             return $this->error();
@@ -264,6 +274,11 @@ class Register extends BaseModel
             event("MemberRegister", [ 'member_id' => $res, 'site_id' => $data[ 'site_id' ] ]);
             $data[ 'member_id' ] = $res;
             $this->pullHeadimg($data);
+
+            //添加统计
+            $stat = new Stat();
+            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
+
             return $this->success($res);
         } else {
             return $this->error();

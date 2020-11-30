@@ -30,19 +30,30 @@
 				<label class="layui-form-label img-upload-lable ns-short-label ">物流公司LOGO：</label>
 				<div class="layui-input-inline">
 					<div class="upload-img-block">
-						<div class="upload-img-box">
+						<div class="upload-img-box {if !empty($company_info.data.background_image)}hover{/if}">
+							<div class="ns-upload-default" id="companyLOGO">
 							{if empty($company_info.data.logo)}
-							<div class="ns-upload-default">
-								<img src="SHOP_IMG/upload_img.png" />
-								<p>点击上传</p>
-							</div>
+								<div class="upload">
+									<img src="SHOP_IMG/upload_img.png" />
+									<p>点击上传</p>
+								</div>
 							{else/}
-								<img layer-src src="{:img($company_info.data.logo)}" alt="">
+								<div id="preview_companyLOGO" class="preview_img">
+									<img layer-src src="{:img($company_info.data.logo)}" alt="" class="img_prev">
+								</div>
 							{/if}
+							</div>
+							<div class="operation"  >
+								<div >
+									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+									<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+								</div>
+								<div class="replace_img js-replace">点击替换</div>
+							</div>
+							<input type="hidden" name="logo" value="{$company_info.data.logo}" />
 						</div>
-						<p id="companyLOGO" class=" {if condition="$company_info.data.logo"} replace {else/} no-replace{/if}">替换</p>
-						<input type="hidden" name="logo" value="{$company_info.data.logo}" />
-						<i class="del {if !empty($company_info.data.logo)}show{/if}">x</i>
+						<!-- <p id="companyLOGO" class=" {if condition="$company_info.data.logo"} replace {else/} no-replace{/if}">替换</p>
+						<i class="del {if !empty($company_info.data.logo)}show{/if}">x</i> -->
 					</div>
 				</div>
 			</div>
@@ -159,19 +170,30 @@
 				<label class="layui-form-label img-upload-lable">打印背景图：</label>
 				<div class="layui-input-block">
 					<div class="upload-img-block">
-						<div class="upload-img-box">
+						<div class="upload-img-box {if !empty($company_info.data.background_image)}hover{/if}">
+							<div class="ns-upload-default" id="printBackground">
 							{if empty($company_info.data.background_image)}
-							<div class="ns-upload-default">
-								<img src="SHOP_IMG/upload_img.png" />
-								<p>点击上传</p>
-							</div>
+								<div class="upload">
+									<img src="SHOP_IMG/upload_img.png" />
+									<p>点击上传</p>
+								</div>
 							{else/}
-								<img layer-src src="{:img($company_info.data.background_image)}" alt="">
+								<div id="preview_printBackground" class="preview_img">
+									<img layer-src src="{:img($company_info.data.background_image)}" alt="" class="img_prev">
+								</div>
 							{/if}
+							</div>
+							<div class="operation"  >
+								<div >
+									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px"></i>
+									<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+								</div>
+								<div class="replace_img js-replace">点击替换</div>
+							</div>
+							<input type="hidden" name="background_image" value="{$company_info.data.background_image}" />
 						</div>
-						<p id="printBackground" class=" {if condition="$company_info.data.background_image"} replace {else/} no-replace{/if}">替换</p>
-						<input type="hidden" name="background_image" value="{$company_info.data.background_image}" />
-						<i class="del {if !empty($company_info.data.background_image)}show{/if}">x</i>
+					<!-- 	<p id="printBackground" class=" {if condition="$company_info.data.background_image"} replace {else/} no-replace{/if}">替换</p>
+						<i class="del {if !empty($company_info.data.background_image)}show{/if}">x</i> -->
 					</div>
 				</div>
 				<div class="ns-word-aux">打印模板背景图</div>

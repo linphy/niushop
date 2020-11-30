@@ -253,10 +253,10 @@
                         var html = '';
                         html += `<div class="ns-table-title">`;
                             html += `<div class="ns-title-pic" id="goods_img_{{data.goods_id}}">`;
-                                html += `<img layer-src src="${ns.img(data.sku_image.split(',')[0], 'small')}"/>`;
+                                html += `<img layer-src src="${ns.img(data.sku_image != '' && data.sku_image != undefined ? data.sku_image.split(',')[0] : '', 'small')}"/>`;
                             html += `</div>`;
                             html += `<div class="ns-title-content">`;
-                                html += `<a href="javascript:;" class="ns-multi-line-hiding ns-text-color" title="${data.sku_name}">${data.sku_name}</a>`;
+                                html += `<a href="javascript:;" class="ns-multi-line-hiding ns-text-color" title="${data.goods_name}">${data.goods_name}</a>`;
                             html += `</div>`;
                         html += `</div>`;
 
@@ -268,7 +268,7 @@
                     unresize: 'false',
                     width: '15%'
                 },{
-                    field: 'stock',
+                    field: 'goods_stock',
                     title: '库存',
                     unresize: 'false',
                     width: '15%'
@@ -441,7 +441,7 @@
         html += '<div class="layui-input-block">';
         html += '<input type="text" name="wap_url" class="layui-input ns-len-mid">';
         html += '</div>';
-        html += '<div class="ns-word-aux sm">路径必须以“/”开头，例：“/promotionpages/seckill/list/list”</div>';
+        html += '<div class="ns-word-aux sm">路径必须以“/”开头，例：“/pages/goods/list/list”</div>';
         html += '</div>';
         html += '</div>';
 

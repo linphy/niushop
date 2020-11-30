@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -157,7 +156,7 @@ class OrderExport extends BaseModel
      * 查询订单项数据并导出
      * @param $condition
      */
-    public function orderExport($condition, $condition_desc, $site_id = 0)
+    public function orderExport($condition, $condition_desc, $site_id = 0, $join = [])
     {
 
         try {
@@ -176,6 +175,9 @@ class OrderExport extends BaseModel
                 return $this->error();
             }
 
+            $alias = 'o';
+
+
             $field = $this->order_field;
             //通过分批次执行数据导出(防止内存超出配置设置的)
 
@@ -186,7 +188,7 @@ class OrderExport extends BaseModel
                 $file_path = $file_path . $file_name . '.csv';
                 //创建一个临时csv文件
                 $fp = fopen($file_path, 'w'); //生成临时文件
-
+                fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
                 $field_value = [];
                 $field_key = [];
                 $field_key_array = [];
@@ -199,20 +201,32 @@ class OrderExport extends BaseModel
 
                 $table_field = implode(',', $field_key_array);
 
-                $order_table = Db::name('order')->where($condition);
+                $order_table = Db::name('order')->where($condition)->alias($alias);
 
+                if(!empty($join)){
+                    $join = [
+                        [
+                            'order_goods og',
+                            'o.order_id = og.order_id',
+                            'left'
+                        ]
+                    ];
+                    $order_table = $this->parseJoin($order_table, $join);
+                }
                 $first_line = implode(',', $field_value);
                 //写入第一行表头
                 fwrite($fp, $first_line . "\n");
 
                 $temp_line = implode(',', $field_key) . "\n";
 
-                $table_field = '*';
+                $table_field = 'o.*';
                 $order_table->field($table_field)->chunk(5000, function ($item_list) use ($fp, $temp_line, $field_key_array) {
+
                     //写入导出信息
                     $this->itemExport($item_list, $field_key_array, $temp_line, $fp);
                     unset($item_list);
-                });
+
+                }, 'o.order_id');
 
                 $order_table->removeOption();
                 fclose($fp);  //每生成一个文件关闭
@@ -287,7 +301,7 @@ class OrderExport extends BaseModel
                 //创建一个临时csv文件
                 $file_path = $file_path . $file_name . '.csv';
                 $fp = fopen($file_path, 'w'); //生成临时文件
-
+                fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
                 $field_value = [];
                 $field_key = [];
                 $field_key_array = [];
@@ -381,7 +395,7 @@ class OrderExport extends BaseModel
                 $file_path = $file_path . $file_name . '.csv';
                 //创建一个临时csv文件
                 $fp = fopen($file_path, 'w'); //生成临时文件
-
+                fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
                 $field_value = [];
                 $field_key = [];
                 $field_key_array = [];
@@ -478,6 +492,7 @@ class OrderExport extends BaseModel
                 }
                 //CSV比较简单，记得转义 逗号就好
                 $values = str_replace(',', '\\', $value . "\t");
+                $values = str_replace("\n", '', $values);
                 $new_line_value = str_replace("{\$$key}", $values, $new_line_value);
             }
             //写入第一行表头
@@ -517,7 +532,25 @@ class OrderExport extends BaseModel
      */
     public function deleteExport($condition)
     {
-        $res = model("order_export")->delete($condition);
+        //先查询数据
+        $list = model("order_export")->getList($condition, '*');
+        if(!empty($list)){
+            foreach($list as $k => $v){
+                if(file_exists($v['path'])){
+                    //删除物理文件路径
+                    if (!unlink($v['path']))
+                    {
+                        //失败
+                    }
+                    else
+                    {
+                        //成功
+                    }
+                }
+            }
+            $res = model("order_export")->delete($condition);
+        }
+
         return $this->success($res);
     }
 
@@ -528,11 +561,24 @@ class OrderExport extends BaseModel
      */
     public function getExport($condition, $field = "*", $order = '')
     {
-
         $list = model("order_export")->getList($condition, $field, $order);
         return $this->success($list);
     }
 
+    /**
+     * 导出记录
+     * @param array $condition
+     * @param int $page
+     * @param int $page_size
+     * @param string $order
+     * @param string $field
+     * @return array
+     */
+    public function getExportPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    {
+        $list = model('order_export')->pageList($condition, $field, $order, $page, $page_size);
+        return $this->success($list);
+    }
 
     /**
      * 添加导出记录
@@ -578,4 +624,6 @@ class OrderExport extends BaseModel
         $list = model("order_refund_export")->getList($condition, $field, $order);
         return $this->success($list);
     }
+
+
 }

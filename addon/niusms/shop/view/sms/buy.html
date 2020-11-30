@@ -298,6 +298,7 @@
 			if(repeat_flag) return false;
 			repeat_flag = true;
 
+			var newWin = window.open('about:blank');
 			$.ajax({
 				url: ns.url("niusms://shop/sms/createSmsOrder"),
 				dataType: 'JSON',
@@ -305,7 +306,7 @@
 				data: data.field,
 				success: function (res) {
 					if (res.code == 0) {
-						open(ns.url("niusms://shop/sms/payment", {out_trade_no: res.data.out_trade_no}));
+						newWin.location.href = ns.url("niusms://shop/sms/payment", {out_trade_no: res.data.out_trade_no});
 						var index = layer.confirm('请确认支付是否完成',{
 							title: '支付提示',
 							btn: ['已完成支付', '返回'],

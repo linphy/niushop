@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -59,7 +58,7 @@ class BaseShop extends Controller
         $this->getGroupInfo();
         if (!$this->checkAuth()) {
             if (!request()->isAjax()) {
-                $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info,$this->addon);
+                $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info, $this->addon);
                 if (empty($menu_info)) {
                     $this->error('权限不足');
                 } else {
@@ -97,19 +96,25 @@ class BaseShop extends Controller
         if (!empty($info_result[ "data" ])) {
             $info = $info_result[ "data" ];
             $this->getParentMenuList($info[ 'name' ]);
+        } elseif ($this->url == '/Index/index') {
+            $info_result = $menu_model->getMenuInfoByUrl($this->app_module . $this->url, $this->app_module, $this->addon);
+            if (!empty($info_result[ "data" ])) {
+                $info = $info_result["data"];
+                $this->getParentMenuList($info['name']);
+            }
         }
         $this->assign("menu_info", $info);
         //加载菜单树
         $init_menu = $this->initMenu($this->menus, '');
 
         // 应用下的菜单特殊处理
-        if (!empty($this->crumbs) && $this->crumbs[ 0 ][ 'name' ] == 'TOOL_ROOT') {
+        if (!empty($this->crumbs) && $this->crumbs[ 0 ][ 'name' ] == 'PROMOTION_ROOT') {
 
             //如果当前选择了【应用管理】，则只保留【应用管理】菜单
             if ($this->crumbs[ 1 ][ 'name' ] == 'PROMOTION_TOOL') {
                 foreach ($init_menu as $k => $v) {
                     if ($v[ 'selected' ]) {
-                        $init_menu[ $k ][ 'child_list' ] = [ $v[ 'child_list' ][ 'PROMOTION_TOOL' ] ];
+                        $init_menu[ $k ][ 'child_list' ] = [ $v[ 'child_list' ][ 'PROMOTION_CENTER' ], $v[ 'child_list' ][ 'PROMOTION_MEMBER' ], $v[ 'child_list' ][ 'PROMOTION_TOOL' ] ];
                         break;
                     }
                 }
@@ -117,14 +122,21 @@ class BaseShop extends Controller
                 //选择了应用下的某个插件，则移除【应用管理】菜单，显示该插件下的菜单，并且标题名称改为插件名称
                 $addon_model = new Addon();
                 $addon_info = $addon_model->getAddonInfo([ [ 'name', '=', request()->addon() ] ], 'name,title');
-                $addon_info = $addon_info[ 'data' ];
+                $addon_info = $addon_info[ 'data' ] ?? [ 'name' => '', 'title' => '' ];
+                $promotion_menu_arr = [ 'PROMOTION_CENTER', 'PROMOTION_MEMBER', 'PROMOTION_TOOL' ];
                 foreach ($init_menu as $k => $v) {
                     if ($v[ 'selected' ]) {
                         $this->crumbs[ 0 ][ 'title' ] = $addon_info[ 'title' ];
-                        unset($init_menu[ $k ][ 'child_list' ][ 'PROMOTION_TOOL' ]);
+//                        unset($init_menu[ $k ][ 'child_list' ][ 'PROMOTION_TOOL' ]);
                         foreach ($init_menu[ $k ][ 'child_list' ] as $ck => $cv) {
                             if ($cv[ 'addon' ] != $addon_info[ 'name' ]) {
-                                unset($init_menu[ $k ][ 'child_list' ][ $ck ]);
+                                if (isset($this->crumbs[ 2 ]) && ( $this->crumbs[ 2 ][ 'parent' ] == 'PROMOTION_CENTER' || $this->crumbs[ 2 ][ 'parent' ] == 'PROMOTION_MEMBER' )) {
+                                    if (!in_array($ck, $promotion_menu_arr)) {
+                                        unset($init_menu[ $k ][ 'child_list' ][ $ck ]);
+                                    }
+                                } else {
+                                    unset($init_menu[ $k ][ 'child_list' ][ $ck ]);
+                                }
                             }
                         }
                         break;
@@ -132,7 +144,6 @@ class BaseShop extends Controller
                 }
             }
         }
-
         $this->assign("url", $this->url);
         $this->assign("menu", $init_menu);
         $this->assign("crumbs", $this->crumbs);
@@ -171,7 +182,8 @@ class BaseShop extends Controller
                         'title' => $menu_v[ 'title' ],
                         'icon' => $menu_v[ 'picture' ],
                         'icon_selected' => $menu_v[ 'picture_select' ],
-                        'target' => ''
+                        'target' => '',
+                        'parent' => $menu_v[ 'parent' ]
                     );
 
                     $child = $this->initMenu($menus_list, $menu_v[ "name" ]);//获取下级的菜单

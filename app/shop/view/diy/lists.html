@@ -21,7 +21,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>微页面是用户打开的具体内容页面，您可以完全实现自定义页面，不同模块组合及样式的自由编辑。</li>
 			<li>好的页面可以吸引客户浏览的兴趣，快速找到自己想要买的商品，给客户带来良好的购物体验，最终实现高的转化率。</li>
 			<li>创建不同活动页面，实现线上推广转化，提升网店的传播量。</li>
@@ -68,6 +68,11 @@
 	<input class="layui-input nc-len-mid" type="text" value="{{ d.path.h5.url }}" id="h5_url_{{ d.id }}" readonly>
 	{{# } }}
 </script>
+
+<!-- 编辑排序 -->
+<script type="text/html" id="editSort">
+	<input name="sort" type="number" onchange="editSort({{d.id}}, this)" value="{{d.sort}}" class="layui-input edit-sort ns-len-short">
+</script>
 {/block}
 {block name="script"}
 <script>
@@ -95,17 +100,23 @@
 				return html;
 			}
 		}, {
-			field: 'name',
-			width: '30%',
-			title: '标识',
-			unresize : 'true'
-		}, {
 			width: '20%',
 			title: '创建时间',
 			unresize : 'true',
 			templet: function (d) {
 				return ns.time_to_date(d.create_time);
 			}
+		}, {
+			field: 'click_num',
+			width: '15%',
+			title: '浏览量',
+			unresize : 'true'
+		}, {
+			field: 'sort',
+			width: '15%',
+			title: '排序',
+			align: 'center',
+			templet: '#editSort'
 		}, {
 			title: '操作',
 			toolbar: '#operation',
@@ -245,5 +256,39 @@
 			}
 		});
 	}
+
+	// 监听单元格编辑
+	function editSort(id, event){
+	 	var data = $(event).val();
+		
+		if (data == '') {
+			$(event).val(0);
+			data = 0;
+		}
+		
+		if(!new RegExp("^-?[0-9]\\d*$").test(data)){
+			layer.msg("排序号只能是整数");
+			return ;
+		}
+		if(data<0){
+			layer.msg("排序号必须大于0");
+			return ;
+		}
+	 	$.ajax({
+	 		type: 'POST',
+	 		url: ns.url("shop/diy/modifySort"),
+	 		data: {
+	 			sort: data,
+	 			id: id
+	 		},
+	 		dataType: 'JSON',
+	 		success: function(res) {
+	 			layer.msg(res.message);
+	 			if(res.code==0){
+	 				table.reload();
+	 			}
+	 		}
+	 	});
+ 	}
 </script>
 {/block}

@@ -385,7 +385,7 @@ input[disabled] {
 	display: inline-block;
 }
 
-.goods-image-wrap .item, .goods-image-wrap .item.empty {
+/* .goods-image-wrap .item, .goods-image-wrap .item.empty {
 	display: block;
 	float: left;
 	width: 78px;
@@ -399,26 +399,26 @@ input[disabled] {
 .goods-image-wrap .item.empty {
 	background: url("../img/goods_empty.gif");
 	background-size: 100%;
-}
+} */
 
-.goods-image-wrap .item.js-add-goods-image {
+/* .goods-image-wrap .item.js-add-goods-image {
 	line-height: 78px;
 	font-size: 30px;
 	color: #bbbbbb;
 	cursor: pointer;
 }
-
-.goods-image-wrap .item .img-wrap {
+ */
+/* .goods-image-wrap .item .img-wrap {
 	width: 80px;
 	line-height: 80px;
-}
+} */
 
-.goods-image-wrap .item .img-wrap img {
+/* .goods-image-wrap .item .img-wrap img {
 	width: 100%;
 	height: 100%;
-}
+} */
 
-.goods-image-wrap .item .operation {
+/* .goods-image-wrap .item .operation {
 	position: absolute;
 	top: 0;
 	z-index: 10;
@@ -430,20 +430,20 @@ input[disabled] {
 	cursor: pointer;
 	text-align: center;
 	display: none;
-}
+} */
 
-.goods-image-wrap .item:hover .operation {
+/* .goods-image-wrap .item:hover .operation {
 	display: block;
 }
-
-.goods-image-wrap .item .operation i {
+ */
+/* .goods-image-wrap .item .operation i {
 	font-size: 20px;
 	margin-right: 15px;
 }
 
 .goods-image-wrap .item .operation i:last-child {
 	margin-right: 0;
-}
+} */
 
 .layui-word-aux {
 	font-size: 12px;

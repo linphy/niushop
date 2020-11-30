@@ -77,19 +77,30 @@
 		<label class="layui-form-label">分类图标：</label>
 		<div class="layui-input-block">
 			<div class="upload-img-block">
-				<div class="upload-img-box">
-					{notempty name="$goods_category_info['image']"}
-						<img layer-src src="{:img($goods_category_info['image'])}"/>
-					{else/}
-						<div class="ns-upload-default">
-							<img src="SHOP_IMG/upload_img.png" />
+				<div class="upload-img-box {notempty name="$goods_category_info['image']"}hover{/notempty}">
+					<div class="ns-upload-default" id="imgUpload">
+						{notempty name="$goods_category_info['image']"}
+						<div id="preview_imgUpload" class="preview_img">
+							<img layer-src src="{:img($goods_category_info['image'])}" class="img_prev"/>
+						</div>
+						{else/}
+						<div class="upload">
+							<img src="SHOP_IMG/upload_img.png" data-id="imgUpload"/>
 							<p>点击上传</p>
 						</div>
-					{/notempty}
+							
+						{/notempty}
+					</div>
+					<div class="operation"  >
+						<div>
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="image" value="{$goods_category_info['image']}">
 				</div>
-				<p id="imgUpload" class=" {if condition="$goods_category_info['image']"} replace {else/} no-replace{/if}">替换</p>
-				<input type="hidden" name="image" value="{$goods_category_info['image']}">
-				<i class="del {if condition="$goods_category_info['image']"}show{/if}">x</i>
 			</div>
 		</div>
 		<div class="ns-word-aux">
@@ -100,20 +111,33 @@
     <div class="layui-form-item">
         <label class="layui-form-label">分类广告图：</label>
         <div class="layui-input-block">
-            <div class="upload-img-block">
-                <div class="upload-img-box" >
-                    {notempty name="$goods_category_info['image_adv']"}
-                     <img layer-src src="{:img($goods_category_info['image_adv'])}"/>
-                    {else/}
-	                    <div class="ns-upload-default">
-	                        <img src="SHOP_IMG/upload_img.png" />
-	                        <p>点击上传</p>
-	                    </div>
-                    {/notempty}
+            <div class="upload-img-block ">
+                <div class="upload-img-box {notempty name="$goods_category_info['image_adv']"} hover {/notempty}" >
+					<div class="ns-upload-default" id="imgUploadAdv">
+						{notempty name="$goods_category_info['image_adv']"}
+						<div id="preview_imgUploadAdv" class="preview_img">
+							<img layer-src src="{:img($goods_category_info['image_adv'])}" class="img_prev"/>
+						 </div>
+						{else/}
+						    <div class="upload">
+						        <img src="SHOP_IMG/upload_img.png" />
+						        <p>点击上传</p>
+						    </div>
+						{/notempty}
+					</div>
+                    <div class="operation"  >
+                    	<div>
+                    		<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+                    		<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+                    	</div>
+                    	
+                    	<div class="replace_img js-replace">点击替换</div>
+                    </div>
+					<input type="hidden" name="image_adv" value="{$goods_category_info['image_adv']}">
                 </div>
-				<p id="imgUploadAdv" class=" {if condition="$goods_category_info['image_adv']"} replace {else/} no-replace{/if}">替换</p>
-	            <input type="hidden" name="image_adv" value="{$goods_category_info['image_adv']}">
-	            <i class="del {if condition="$goods_category_info['image_adv']"}show{/if}">x</i>
+				
+				<!-- <p id="imgUploadAdv" class=" {if condition="$goods_category_info['image_adv']"} replace {else/} no-replace{/if}">替换</p> -->
+	            <!-- <i class="del {if condition="$goods_category_info['image_adv']"}show{/if}">x</i> -->
             </div>
         </div>
 	    <div class="ns-word-aux">
@@ -148,7 +172,7 @@
 		</div>
 	</div>
 	
-	<div class="layui-form-item">
+	<!-- <div class="layui-form-item">
 		<label class="layui-form-label">排序：</label>
 		<div class="layui-input-block">
 			<input name="sort" type="number" placeholder="请输入排序" lay-verify="num" class="layui-input ns-len-short" value="{$goods_category_info['sort']}">
@@ -156,7 +180,7 @@
 		<div class="ns-word-aux">
 			<p>排序值只能为整数</p>
 		</div>
-	</div>
+	</div> -->
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">是否显示</label>
@@ -227,4 +251,25 @@
 {/block}
 {block name="script"}
 <script src="SHOP_JS/goods_edit_category.js"></script>
+<script type="text/html" id="goodsImage">
+	// {{# if(d.list.length){ }}
+	// 	{{# for(var i=0;i<d.list.length;i++){ }}
+	// 		<div class="item upload_img_square_item" data-index="{{i}}">
+	// 			<div class="img-wrap">
+	// 				<img src="{{ns.img(d.list[i])}}" layer-src>
+	// 			</div>
+	// 			<div class="operation">
+	// 				<i title="图片预览" class="iconfont iconreview js-preview"></i>
+	// 				<i title="删除图片" class="layui-icon layui-icon-delete js-delete" data-index="{{i}}"></i>
+	// 				<div class="replace_img" data-index="{{i}}">点击替换</div>
+	// 			</div>
+	// 		</div>
+	// 	{{# } }}
+	// 	{{# if(d.list.length < d.max){ }}
+	// 		<div class="item js-add-goods-image upload_img_square">+</div>
+	// 	{{# } }}
+	// {{# }else{ }}
+	// 	<div class="item js-add-goods-image upload_img_square">+</div>
+	// {{# } }}
+</script>
 {/block}

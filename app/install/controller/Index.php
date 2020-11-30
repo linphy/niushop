@@ -138,7 +138,7 @@ class Index extends BaseInstall
             }
 
             //数据库连接测试
-            $conn = @mysqli_connect($dbhost, $dbuser, $dbpwd);
+            $conn = @mysqli_connect($dbhost, $dbuser, $dbpwd, "", $dbport);
             if (!$conn) {
                 return $this->returnError([], '连接数据库失败！请检查连接参数!');
             }
@@ -186,7 +186,7 @@ class Index extends BaseInstall
 
             $fp = fopen($target_dir . DIRECTORY_SEPARATOR . $target_file, "w");
             if ($fp == false) {
-                return $this->returnError([], '写入配置失败，请检查{$target_dir}/{$target_file}是否可写入！');
+                return $this->returnError([], '写入配置失败，请检查' . $target_dir . '/' . $target_file . '是否可写入！');
             }
 
             fwrite($fp, $configStr);
@@ -215,7 +215,7 @@ class Index extends BaseInstall
             }
 
             //插入索引
-            preg_match_all("/ALTER TABLE .*\(.*\)\;/iUs", $get_sql_data, $alter_sql_arr);
+            preg_match_all("/ALTER TABLE .*\(.*\)?;/iUs", $get_sql_data, $alter_sql_arr);
             $alter_sql_arr = $alter_sql_arr[ 0 ];
 
             foreach ($alter_sql_arr as $alter_sql_item) {
@@ -266,7 +266,10 @@ class Index extends BaseInstall
 
             //安装插件
             $addon_model = new Addon();
-            $addon_model->refreshDiyView('');
+            $diy_view_result = $addon_model->refreshDiyView('');
+            if ($diy_view_result[ 'code' ] < 0) {
+                return $this->returnError([], '自定义页面刷新失败！');
+            }
             $addon_result = $addon_model->installAllAddon();
             if ($addon_result[ "code" ] < 0)
                 return $this->returnError([], $addon_result[ "message" ]);
@@ -279,12 +282,16 @@ class Index extends BaseInstall
 
             // H5端刷新
             $h5 = new H5();
-            $res = $h5->refresh();
-
+            $h5_res = $h5->refresh();
+            if ($h5_res[ 'code' ] < 0) {
+                return $this->returnError([], 'h5部署失败！');
+            }
             // 刷新内置模板
             $template = new DiyTemplate();
-            $template->refresh();
-
+            $template_result = $template->refresh();
+            if ($template_result[ 'code' ] < 0) {
+                return $this->returnError([], '自定义模板刷新失败！');
+            }
             //添加店铺
             $site_data = [
                 'site_type' => 'shop',
@@ -294,6 +301,9 @@ class Index extends BaseInstall
             ];
             $site_model = new Site();
             $site_result = $site_model->addSite($site_data);
+            if ($site_result[ 'code' ] < 0) {
+                return $this->returnError([], '默认站点添加失败！');
+            }
             $site_id = $site_result[ 'data' ];
 
             $shop_data = [
@@ -301,9 +311,14 @@ class Index extends BaseInstall
                 'shop_status' => 1
             ];
             $shop_model = new Shop();
-            $shop_model->addShop($shop_data);
+            $shop_result = $shop_model->addShop($shop_data);
+            if ($shop_result[ 'code' ] < 0) {
+                return $this->returnError([], '默认店铺添加失败！');
+            }
             // 添加默认数据
-            $this->defaultData($site_id);
+            $default_result = $this->defaultData($site_id);
+            if ($default_result[ 'code' ] < 0)
+                return $default_result;
 
             //添加系统用户组
             $group_model = new Group();
@@ -380,6 +395,15 @@ class Index extends BaseInstall
                     "message" => "数据库账号或密码不能为空"
                 ]);
 
+
+            if (!function_exists("mysqli_connect")) {
+                return $this->returnError([
+                    "status" => -1,
+                    "message" => "mysqli扩展类必须开启"
+                ]);
+            }
+
+
             $conn = @mysqli_connect($dbhost, $dbuser, $dbpwd);
             if ($conn) {
                 if (empty($dbname)) {
@@ -425,17 +449,24 @@ class Index extends BaseInstall
      */
     private function initData($param)
     {
-        $this->initEvent();
+        $init_event_result = $this->initEvent();
+        if ($init_event_result[ 'code' ] < 0)
+            return $init_event_result;
         // 初始化自定义组件、链接
         $diyview_result = $this->initDiyView();
+        if ($diyview_result[ 'code' ] < 0)
+            return $this->returnError([], '自定义组件初始化失败!');
 
         $api_model = new Api();
         $data = array (
             "public_key" => $this->init_data[ 'api' ][ 'public_key' ],
             "private_key" => $this->init_data[ 'api' ][ 'private_key' ],
         );
-        $api_model->setApiConfig($data, 1);
-        return $this->returnSuccess($diyview_result);
+        $api_result = $api_model->setApiConfig($data, 1);
+        if ($api_result[ 'code' ] < 0)
+            return $this->returnError([], 'api秘钥配置失败!');
+
+        return $this->returnSuccess();
     }
 
     /**
@@ -444,9 +475,19 @@ class Index extends BaseInstall
     private function defaultData($site_id)
     {
         // 添加店铺相册默认分组
-        model("album")->add([ 'site_id' => $site_id, 'album_name' => "默认分组", 'update_time' => time(), 'is_default' => 1 ]);
+        $result = model("album")->add([ 'site_id' => $site_id, 'album_name' => "默认分组", 'update_time' => time(), 'is_default' => 1 ]);
+        if ($result === false)
+            return $this->returnError([], '默认相册创建失败!');
         //执行事件
-        event("AddSite", [ 'site_id' => $site_id ]);
+        $add_site_result = event("AddSite", [ 'site_id' => $site_id ]);
+        if (!empty($add_site_result)) {
+            foreach ($add_site_result as $site_item) {
+                if (!empty($site_item) && $site_item[ 'code' ] < 0) {
+                    return $this->returnError([], $site_item[ 'message' ]);
+                }
+            }
+        }
+        return $this->returnSuccess();
     }
 
     /**
@@ -456,7 +497,14 @@ class Index extends BaseInstall
      */
     private function yanShiData($site_id)
     {
-        event("AddYanshiData", [ 'site_id' => $site_id ]);
+        $result_array = event("AddYanshiData", [ 'site_id' => $site_id ]);
+        if (!empty($result_array)) {
+            foreach ($result_array as $item) {
+                if (!empty($item) && $item[ 'code' ] < 0) {
+                    return $this->returnError([], $item[ 'message' ]);
+                }
+            }
+        }
         return $this->returnSuccess();
     }
 
@@ -476,33 +524,38 @@ class Index extends BaseInstall
      */
     private function initEvent()
     {
-        $cache = Cache::get("addon_event_list");
+        try {
+            $cache = Cache::get("addon_event_list");
 
-        if (empty($cache)) {
-            $addon_model = new Addon();
-            $addon_data = $addon_model->getAddonList([], 'name');
+            if (empty($cache)) {
+                $addon_model = new Addon();
+                $addon_data = $addon_model->getAddonList([], 'name');
 
-            $listen_array = [];
-            foreach ($addon_data[ 'data' ] as $k => $v) {
-                $addon_event = require_once 'addon/' . $v[ 'name' ] . '/config/event.php';
+                $listen_array = [];
+                foreach ($addon_data[ 'data' ] as $k => $v) {
+                    $addon_event = require_once 'addon/' . $v[ 'name' ] . '/config/event.php';
 
-                $listen = isset($addon_event[ 'listen' ]) ? $addon_event[ 'listen' ] : [];
-                if (!empty($listen)) {
-                    $listen_array[] = $listen;
+                    $listen = isset($addon_event[ 'listen' ]) ? $addon_event[ 'listen' ] : [];
+                    if (!empty($listen)) {
+                        $listen_array[] = $listen;
+                    }
+                }
+                Cache::tag("addon")->set("addon_event_list", $listen_array);
+            } else {
+                $listen_array = $cache;
+            }
+
+            if (!empty($listen_array)) {
+                foreach ($listen_array as $k => $listen) {
+                    if (!empty($listen)) {
+                        Event::listenEvents($listen);
+                    }
+
                 }
             }
-            Cache::tag("addon")->set("addon_event_list", $listen_array);
-        } else {
-            $listen_array = $cache;
-        }
-
-        if (!empty($listen_array)) {
-            foreach ($listen_array as $k => $listen) {
-                if (!empty($listen)) {
-                    Event::listenEvents($listen);
-                }
-
-            }
+            return $this->returnSuccess();
+        } catch (\Exception $e) {
+            return $this->returnError('', $e->getMessage());
         }
     }
 

@@ -1,7 +1,15 @@
 var html = '<div class="rich-text-list">';
-		html += '<color v-bind:data="{ field : \'backgroundColor\', \'label\' : \'背景颜色\' }"></color>';
-		html += '<slide v-bind:data="{ field : \'padding\', label : \'边距\' }"></slide>';
-		html += '<div v-bind:id="id" style="width:100%;height:320px;"></div>';
+		html += '<div v-bind:id="id" style="width:100%;height:320px;padding-left: 10px; box-sizing: border-box;"></div>';
+		
+		html += '<div class="template-edit-title">';
+			html += '<h3>其他设置</h3>';
+			html += '<i class="layui-icon layui-icon-down" onclick="closeBox(this)"></i>';
+		html += '</div>';
+		
+		html += '<div class="template-edit-wrap">';
+			html += '<color v-bind:data="{ field : \'backgroundColor\', \'label\' : \'背景颜色\' }"></color>';
+			html += '<slide v-bind:data="{ field : \'marginTop\', label : \'页面边距\' }"></slide>';
+		html += '</div>';
 	html += '</div>';
 
 Vue.component("rich-text", {

@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -24,6 +23,8 @@ use think\facade\Db;
 use phpoffice\phpexcel\Classes\PHPExcel;
 use phpoffice\phpexcel\Classes\PHPExcel\Writer\Excel2007;
 use app\model\upload\Upload as UploadModel;
+use app\model\member\MemberCluster as MemberClusterModel;
+use think\facade\Config;
 
 /**
  * 会员管理 控制器
@@ -73,7 +74,8 @@ class Member extends BaseShop
     {
         //判断分销是否存在
         $is_exit_fenxiao = addon_is_exit('fenxiao');
-
+        $cluster_id = input('cluster_id', '');//获取会员群体
+        $member_cluster_model = new MemberClusterModel();
         if (request()->isAjax()) {
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
@@ -84,6 +86,20 @@ class Member extends BaseShop
             $reg_start_date = input('reg_start_date', '');
             $reg_end_date = input('reg_end_date', '');
             $status = input('status', '');
+            $cluster_id = input('cluster_id', '');//获取会员群体
+            $last_login_time_start = input('last_login_time_start', '');//上次登录时间
+            $last_login_time_end = input('last_login_time_end', '');
+            $start_order_complete_num = input('start_order_complete_num', '');//成交次数
+            $end_order_complete_num = input('end_order_complete_num', '');
+            $start_order_complete_money = input('start_order_complete_money', '');//消费金额
+            $end_order_complete_money = input('end_order_complete_money', '');
+            $start_point = input('start_point', '');//积分
+            $end_point = input('end_point', '');
+            $start_balance = input('start_balance', '');//余额
+            $end_balance = input('end_balance', '');
+            $start_growth = input('start_growth', '');//成长值
+            $end_growth = input('end_growth', '');
+            $login_type = input('login_type', '');//来源渠道
 
             $condition[] = [ 'site_id', '=', $this->site_id ];
             //下拉选择
@@ -108,6 +124,67 @@ class Member extends BaseShop
             //会员状态
             if ($status != '') {
                 $condition[] = [ 'status', '=', $status ];
+            }
+
+            //会员群体
+            if ($cluster_id != '') {
+                //获取会员群体的member_id值
+                $member_cluster_info = $member_cluster_model->getMemberClusterInfo(["cluster_id" => $cluster_id],'member_ids');
+                if(!empty($member_cluster_info['data']['member_ids'])){
+                    $condition[] = [ 'member_id', 'in', $member_cluster_info['data']['member_ids'] ];
+                }
+            }
+            //上次访问时间
+            if ($last_login_time_start != '' && $last_login_time_end != '') {
+                $condition[] = [ 'last_login_time', 'between', [ strtotime($last_login_time_start), strtotime($last_login_time_end) ] ];
+            } else if ($last_login_time_start != '' && $last_login_time_end == '') {
+                $condition[] = [ 'last_login_time', '>=', strtotime($last_login_time_start) ];
+            } else if ($last_login_time_start == '' && $last_login_time_end != '') {
+                $condition[] = [ 'last_login_time', '<=', strtotime($last_login_time_end) ];
+            }
+            //成交次数
+            if ($start_order_complete_num != '' && $end_order_complete_num != '') {
+                $condition[] = [ 'order_complete_num', 'between', [ $start_order_complete_num, $end_order_complete_num ] ];
+            } else if ($start_order_complete_num != '' && $end_order_complete_num == '') {
+                $condition[] = [ 'order_complete_num', '>=', $start_order_complete_num ];
+            } else if ($start_order_complete_num == '' && $end_order_complete_num != '') {
+                $condition[] = [ 'order_complete_num', '<=', $end_order_complete_num ];
+            }
+            //消费金额
+            if ($start_order_complete_money != '' && $end_order_complete_money != '') {
+                $condition[] = [ 'order_complete_num', 'between', [ $start_order_complete_money, $end_order_complete_money ] ];
+            } else if ($start_order_complete_money != '' && $end_order_complete_money == '') {
+                $condition[] = [ 'order_complete_num', '>=', $start_order_complete_money ];
+            } else if ($start_order_complete_money == '' && $end_order_complete_money != '') {
+                $condition[] = [ 'order_complete_num', '<=', $end_order_complete_money ];
+            }
+            //积分
+            if ($start_point != '' && $end_point != '') {
+                $condition[] = [ 'point', 'between', [ $start_point, $end_point ] ];
+            } else if ($start_point != '' && $end_point == '') {
+                $condition[] = [ 'point', '>=', $start_point ];
+            } else if ($start_point == '' && $end_point != '') {
+                $condition[] = [ 'point', '<=', $end_point ];
+            }
+            //余额
+            if ($start_balance != '' && $end_balance != '') {
+                $condition[] = [ 'balance', 'between', [ $start_balance, $end_balance ] ];
+            } else if ($start_balance != '' && $end_balance == '') {
+                $condition[] = [ 'balance', '>=', $start_balance ];
+            } else if ($start_balance == '' && $end_balance != '') {
+                $condition[] = [ 'balance', '<=', $end_balance ];
+            }
+            //成长值
+            if ($start_growth != '' && $end_growth != '') {
+                $condition[] = [ 'growth', 'between', [ $start_growth, $end_growth ] ];
+            } else if ($start_growth != '' && $end_growth == '') {
+                $condition[] = [ 'growth', '>=', $start_growth ];
+            } else if ($start_growth == '' && $end_growth != '') {
+                $condition[] = [ 'growth', '<=', $end_growth ];
+            }
+            //来源渠道
+            if ($login_type != '') {
+                $condition[] = [ 'login_type', '=', $login_type ];
             }
 
             $order = 'reg_time desc';
@@ -158,6 +235,15 @@ class Member extends BaseShop
             $this->assign('growth', $growth);
 
             $this->assign('is_exit_fenxiao', $is_exit_fenxiao);
+
+            //会员群体
+            $member_cluster_list = $member_cluster_model->getMemberClusterList([ [ 'site_id', '=', $this->site_id ] ], 'cluster_id, cluster_name', 'create_time desc');
+            $this->assign('member_cluster_list', $member_cluster_list[ 'data' ]);
+            $this->assign('cluster_id', $cluster_id);
+
+            //订单来源 (支持端口)
+            $order_from = Config::get("app_type");
+            $this->assign('order_from_list', $order_from);
             return $this->fetch('member/member_list');
         }
     }
@@ -270,7 +356,7 @@ class Member extends BaseShop
         $member_ids = input('member_ids', '');
         $status = input('status', 0);
         $member_model = new MemberModel();
-        return $member_model->modifyMemberStatus($status, [ [ 'member_id', 'in', $member_ids ] ]);
+        return $member_model->modifyMemberStatus($status, [ [ 'member_id', 'in', $member_ids ], ['site_id', '=', $this->site_id ] ]);
     }
 
     /**
@@ -520,6 +606,20 @@ class Member extends BaseShop
         $reg_start_date = input('reg_start_date', '');
         $reg_end_date = input('reg_end_date', '');
         $status = input('status', '');
+        $cluster_id = input('cluster_id', '');//获取会员群体
+        $last_login_time_start = input('last_login_time_start', '');//上次登录时间
+        $last_login_time_end = input('last_login_time_end', '');
+        $start_order_complete_num = input('start_order_complete_num', '');//成交次数
+        $end_order_complete_num = input('end_order_complete_num', '');
+        $start_order_complete_money = input('start_order_complete_money', '');//消费金额
+        $end_order_complete_money = input('end_order_complete_money', '');
+        $start_point = input('start_point', '');//积分
+        $end_point = input('end_point', '');
+        $start_balance = input('start_balance', '');//余额
+        $end_balance = input('end_balance', '');
+        $start_growth = input('start_growth', '');//成长值
+        $end_growth = input('end_growth', '');
+        $login_type = input('login_type', '');//来源渠道
 
         $condition[] = [ 'site_id', '=', $this->site_id ];
         //下拉选择
@@ -544,6 +644,68 @@ class Member extends BaseShop
         //会员状态
         if ($status != '') {
             $condition[] = [ 'status', '=', $status ];
+        }
+
+        //会员群体
+        $member_cluster_model = new MemberClusterModel();
+        if ($cluster_id != '') {
+            //获取会员群体的member_id值
+            $member_cluster_info = $member_cluster_model->getMemberClusterInfo(["cluster_id" => $cluster_id],'member_ids');
+            if(!empty($member_cluster_info['data']['member_ids'])){
+                $condition[] = [ 'member_id', 'in', $member_cluster_info['data']['member_ids'] ];
+            }
+        }
+        //上次访问时间
+        if ($last_login_time_start != '' && $last_login_time_end != '') {
+            $condition[] = [ 'last_login_time', 'between', [ strtotime($last_login_time_start), strtotime($last_login_time_end) ] ];
+        } else if ($last_login_time_start != '' && $last_login_time_end == '') {
+            $condition[] = [ 'last_login_time', '>=', strtotime($last_login_time_start) ];
+        } else if ($last_login_time_start == '' && $last_login_time_end != '') {
+            $condition[] = [ 'last_login_time', '<=', strtotime($last_login_time_end) ];
+        }
+        //成交次数
+        if ($start_order_complete_num != '' && $end_order_complete_num != '') {
+            $condition[] = [ 'order_complete_num', 'between', [ $start_order_complete_num, $end_order_complete_num ] ];
+        } else if ($start_order_complete_num != '' && $end_order_complete_num == '') {
+            $condition[] = [ 'order_complete_num', '>=', $start_order_complete_num ];
+        } else if ($start_order_complete_num == '' && $end_order_complete_num != '') {
+            $condition[] = [ 'order_complete_num', '<=', $end_order_complete_num ];
+        }
+        //消费金额
+        if ($start_order_complete_money != '' && $end_order_complete_money != '') {
+            $condition[] = [ 'order_complete_num', 'between', [ $start_order_complete_money, $end_order_complete_money ] ];
+        } else if ($start_order_complete_money != '' && $end_order_complete_money == '') {
+            $condition[] = [ 'order_complete_num', '>=', $start_order_complete_money ];
+        } else if ($start_order_complete_money == '' && $end_order_complete_money != '') {
+            $condition[] = [ 'order_complete_num', '<=', $end_order_complete_money ];
+        }
+        //积分
+        if ($start_point != '' && $end_point != '') {
+            $condition[] = [ 'point', 'between', [ $start_point, $end_point ] ];
+        } else if ($start_point != '' && $end_point == '') {
+            $condition[] = [ 'point', '>=', $start_point ];
+        } else if ($start_point == '' && $end_point != '') {
+            $condition[] = [ 'point', '<=', $end_point ];
+        }
+        //余额
+        if ($start_balance != '' && $end_balance != '') {
+            $condition[] = [ 'balance', 'between', [ $start_balance, $end_balance ] ];
+        } else if ($start_balance != '' && $end_balance == '') {
+            $condition[] = [ 'balance', '>=', $start_balance ];
+        } else if ($start_balance == '' && $end_balance != '') {
+            $condition[] = [ 'balance', '<=', $end_balance ];
+        }
+        //成长值
+        if ($start_growth != '' && $end_growth != '') {
+            $condition[] = [ 'growth', 'between', [ $start_growth, $end_growth ] ];
+        } else if ($start_growth != '' && $end_growth == '') {
+            $condition[] = [ 'growth', '>=', $start_growth ];
+        } else if ($start_growth == '' && $end_growth != '') {
+            $condition[] = [ 'growth', '<=', $end_growth ];
+        }
+        //来源渠道
+        if ($login_type != '') {
+            $condition[] = [ 'login_type', '=', $login_type ];
         }
 
         $order = 'reg_time desc';
@@ -700,7 +862,7 @@ class Member extends BaseShop
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $condition = [];
-            $result = $member_model->getMemberImportLogList($condition, $page, $page_size);
+            $result = $member_model->getMemberImportRecordList($condition, $page, $page_size);
             return $result;
         }
         return $this->fetch('member/memberImport');
@@ -776,7 +938,7 @@ class Member extends BaseShop
             'extend_type' => [ 'xlsx' ]
         );
 
-        $result = $upload_model->setPath("common/store/file/" . date("Ymd") . '/')->file($param);
+        $result = $upload_model->setPath("common/member/member_import/" . date("Ymd") . '/')->file($param);
         return $result;
     }
 
@@ -789,9 +951,69 @@ class Member extends BaseShop
             $filename = input('filename', '');
             $path = input('path', '');
             $index = input('index', '');
+            $success_num = input('success_num', 0);
+            $error_num = input('error_num', 0);
+            $record = input('record', 0);
             $member_model = new MemberModel();
-            $res = $member_model->importMember([ 'filename' => $filename, 'path' => $path, 'index' => $index ], $this->site_id);
+
+            $params = [
+                'filename' => $filename,
+                'path' => $path,
+                'index' => $index,
+                'success_num' => $success_num,
+                "error_num" => $error_num,
+                "record" => $record
+            ];
+
+            $res = $member_model->importMember($params, $this->site_id);
             return $res;
         }
     }
+
+    /**
+     * 黑名单
+     * @return mixed
+     */
+    public function blacklist(){
+        if (request()->isAjax()) {
+            $page = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $search_text = input('search_text', '');
+            $search_text_type = input('search_text_type', 'username');//可以传username mobile email
+
+            $condition[] = [ 'status', '=', 0 ];
+            $condition[] = [ 'site_id', '=', $this->site_id ];
+            //下拉选择
+            $condition[] = [ $search_text_type, 'like', "%" . $search_text . "%" ];
+            $order = 'reg_time desc';
+            $field = '*';
+
+            $member_model = new MemberModel();
+            $result = $member_model->getMemberPageList($condition, $page, $page_size, $order, $field);
+            return $result;
+        }
+        return $this->fetch('member/blacklist');
+    }
+
+    /*
+     *  会员导入记录
+     */
+     public function memberimportlist(){
+
+         if(request()->isAjax()){
+             $member_model = new MemberModel();
+             $id = input("id", 0);
+             $condition['record_id'] = $id;
+             $list = $member_model->getMemberImportLogList($condition);
+
+             return $list;
+         }
+
+         $id = request()->get("id", 0);
+         $member_model = new MemberModel();
+         $info = $member_model->getMemberImportRecordInfo($id);
+         $this->assign('info', $info);
+         $this->assign('id', $id);
+         return $this->fetch('member/import_log');
+     }
 }

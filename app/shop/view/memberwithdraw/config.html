@@ -2,14 +2,6 @@
 {block name="resources"}
 {/block}
 {block name="main"}
-<div class="layui-collapse ns-tips">
-	<div class="layui-colla-item">
-		<h2 class="layui-colla-title">操作说明</h2>
-		<ul class="layui-colla-content">
-			<li>会员可提现余额申请提现</li>
-		</ul>
-	</div>
-</div>
 
 <div class="layui-form ns-form">
 	<div class="layui-form-item">
@@ -17,6 +9,7 @@
 		<div class="layui-input-block">
 			<input type="checkbox" name="is_use" lay-filter="is_use" value="1" lay-skin="switch" {if !empty($config) && $config.is_use==1 } checked {/if} >
 		</div>
+		<div class="ns-word-aux">会员可以将<span class="ns-text-color">可提现余额账户</span>的金额申请提现</div>
 	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">提现审核：</label>

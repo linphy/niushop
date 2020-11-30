@@ -50,15 +50,6 @@
 		</div>
 		<div class="layui-card-body">
 			<div class="layui-form-item">
-				<label class="layui-form-label">自定义裁剪位置：</label>
-				<div class="layui-input-block">
-					{foreach $position as $thumb_position_k => $thumb_position_v }
-						<input type="radio" name="thumb_position" value="{$thumb_position_k}" lay-filter="thumbPosition" title="{$thumb_position_v}" {$config.value.thumb.thumb_position == $thumb_position_k ? 'checked' : ''} />
-					{/foreach}
-				</div>
-			</div>
-
-			<div class="layui-form-item">
 				<label class="layui-form-label">缩略大图（单位：px）：</label>
 				<div class="layui-input-block">
 					<div class="layui-form-mid">宽</div>
@@ -133,19 +124,32 @@
 					<div class="layui-input-block">
 						<div class="upload-img-block">
 							<!-- 用于存储图片路径 -->
-							<div class="upload-img-box">
-								{if empty($config.value.water.watermark_source)}
-								<div class="ns-upload-default">
-									<img src="SHOP_IMG/upload_img.png" />
-									<p>点击上传</p>
+							<div class="upload-img-box {if !empty($config.value.water.watermark_source)}hover{/if}" >
+								
+								<div class="ns-upload-default" id="watermark_source">
+									{if empty($config.value.water.watermark_source)}
+									<div class="upload">
+										<img src="SHOP_IMG/upload_img.png" />
+										<p>点击上传</p>
+									</div>
+									
+									{else /}
+									<div id="preview_watermark_source" class="preview_img">
+										<img layer-src src="{:img($config.value.water.watermark_source)}" class="img_prev"/>
+									</div>
+									{/if}
 								</div>
-								{else/}
-								<img layer-src src="{:img($config.value.water.watermark_source)}" alt="">
-								{/if}
+								<div class="operation"  >
+									<div >
+										<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+										<i title="删除图片" class="layui-icon layui-icon-delete js-delete" ></i>
+									</div>
+									<div class="replace_img js-replace">点击替换</div>
+								</div>
+								<input type="hidden" name="watermark_source" value="{$config.value.water.watermark_source}" />
 							</div>
-							<p id="watermark_source" class=" {if condition="$config.value.water.watermark_source"} replace {else/} no-replace{/if}">替换</p>
-							<input type="hidden" name="watermark_source" value="{$config.value.water.watermark_source}" />
-							<i class="del {if !empty($config.value.water.watermark_source)}show{/if}">x</i>
+							<!-- <p id="watermark_source" class=" {if condition="$config.value.water.watermark_source"} replace {else/} no-replace{/if}">替换</p>
+							<i class="del {if !empty($config.value.water.watermark_source)}show{/if}">x</i> -->
 						</div>
 					</div>
 					<div class="ns-word-aux">水印为图片时，上传水印图片</div>
@@ -204,9 +208,9 @@
 				</div>
 				
 				<div class="layui-form-item">
-					<label class="layui-form-label">字体颜色：</label>
+					<label class="layui-form-label"><span class="required">*</span>字体颜色：</label>
 					<div class="layui-input-inline">
-						<input name="watermark_text_color" type="text" value="{$config.value.water.watermark_text_color}" class="layui-input ns-len-short" id="watermark_color_input">
+						<input name="watermark_text_color" type="text" lay-verify="watermark_text_color" value="{$config.value.water.watermark_text_color}" class="layui-input ns-len-short" id="watermark_color_input">
 					</div>
 					<div class="layui-input-block">
 						<div id="watermark_color">
@@ -398,6 +402,11 @@
 				}
 				if (!(value % 1 === 0)) {
 					return '请输入整数'
+				}
+			},
+			watermark_text_color:function (value) {
+				if ($("input[name='watermark_type']:checked").val() == 2 && value == '') {
+					return '请选择字体颜色';
 				}
 			}
 		});

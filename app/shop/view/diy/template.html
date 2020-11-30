@@ -248,12 +248,12 @@
                })
             })
         });
-
-        $(".template-operation").click(function () {
+        $("body").on('click','.template-operation',function () {
             immediateUse(data);
-        })
+        });
 
     });
+
 
     $("body").on('click','.template-item .immediate-use',function () {
         var data = JSON.parse($(this).parents('.template-item').find('input[name="temple_cotent"]').val());

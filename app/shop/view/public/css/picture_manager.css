@@ -1,16 +1,19 @@
 .album-box{display: flex;justify-content: space-between;align-items: end;}
-.album-list{width: 176px;min-height: 350px;margin-right: 45px;padding-bottom: 70px;background-color: #F7F7F7;position: relative;}
-.album-list>li{width: 100%;box-sizing: border-box;display: flex;justify-content: space-between;align-items: center;height: 50px;padding: 0 25px;cursor: pointer;}
-.album-list li:last-of-type{position: absolute;bottom: 20px;}
-.album-list li:last-of-type button{margin: 0 auto;}
-.album-list>li.item-this{background-color: #E8E8E8;}
+.album-list{width: 176px;height: 530px;margin-right: 45px;padding-bottom: 70px;background-color: #F7F7F7;position: relative;display: flex;flex-direction: column;padding-bottom: 0}
+.album-list .btn-wrap {width: 176px;background: #fff;height: 50px;display: flex;align-content: center;justify-content: center;padding-top: 20px;}
+.album-list ul{flex: 1;overflow-y: scroll;}
+.album-list ul::-webkit-scrollbar { width:0px !important }
+.album-list ul::-webkit-scrollbar-track{border-radius: 10px;background-color: #F5F5F5;}
+.album-list ul::-webkit-scrollbar-thumb{border-radius: 10px;background-color: #FF6A00;}
+.album-list li{width: 100%;box-sizing: border-box;display: flex;justify-content: space-between;align-items: center;height: 50px;padding: 0 25px;cursor: pointer;}
+.album-list li.item-this{background-color: #E8E8E8;}
 .album-content{flex: 1;padding-top: 10px;}
 .album-content-title{height: 50px;line-height: 50px;}
 .album-content .album-content-title>span,
 .album-content .album-content-title>a{display: inline-block;margin-right: 5px;margin-bottom: 5px;}
 .album-content .album-content-bar{height: 34px;line-height: 34px;}
 .album-content .album-img-box{display: flex;flex-wrap: wrap;}
-.album-content .album-img-box li{margin: 0 20px 25px 0;width: 146px;text-align: center;}
+.album-content .album-img-box li{margin: 0 20px 25px 0;width: 180px;text-align: center;}
 .album-content .album-img-box .album-pic{width: 130px;height: 130px;line-height: 130px;}
 .album-content .album-img-box .album-pic img{max-height: 100%;max-width: 100%;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
 .album-content .album-img-box .album-img-select{height: 40px;line-height: 40px;text-align: left;margin-bottom: 5px;}

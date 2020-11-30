@@ -39,6 +39,7 @@ if (needCLodop()) {
 //====获取LODOP对象的主过程：====
 function getLodop(oOBJECT, oEMBED) {
     var LODOP;
+    var strCLodopUpdate = "<br><font color='#FF00FF'>Web打印服务CLodop需升级!点击这里<a href='CLodop_Setup_for_Win32NT.zip' target='_self'>执行升级</a>,升级后请刷新页面。</font>";
     try {
         try {
             LODOP = getCLodop(); //获得主对象（getCLodop是在CLodopfuncs.js定义的）
@@ -62,7 +63,13 @@ function getLodop(oOBJECT, oEMBED) {
 			return;
 		} else {
 			if (CLODOP.CVERSION < "4.0.9.9") {
-				document.body.innerHTML = strCLodopUpdate + document.body.innerHTML;
+
+                layer.open({
+                    type: 1,
+                    area: ['450px'],
+                    content: "Web打印服务CLodop版本过低，需升级，请点击这里<a class='ns-text-color' href='http://www.lodop.net/download.html' target='_black'>去下载安装</a><br />（若此前已安装过，可<a class='ns-text-color' href='CLodop.protocol:setup' target='_self'>点这里直接再次启动</a>）" //这里content是一个普通的String
+                });
+                return;
 			}
 			if (oEMBED && oEMBED.parentNode)
 				oEMBED.parentNode.removeChild(oEMBED);

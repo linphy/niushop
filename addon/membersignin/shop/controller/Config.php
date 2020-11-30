@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -26,9 +25,10 @@ class Config extends BaseShop
         $config_model = new Signin();
         if (request()->isAjax()) {
             $data   = input("json", "{}");
+            $cycle   = input("cycle", 30);
             $is_use = input("is_use", 0);//是否启用
             $data   = json_decode($data,true);
-            $res    = $config_model->setConfig($data, $is_use, $this->site_id);
+            $res    = $config_model->setConfig(['cycle' => $cycle, 'reward' => $data], $is_use, $this->site_id);
             $this->addLog("设置会员签到奖励");
             return $res;
         } else {

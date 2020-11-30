@@ -24,7 +24,7 @@
                                 <div class="layui-inline">
                                     <div class="layui-form-mid layui-word-aux">{$order_detail['order_no']}
                                         <a type="button" class="layui-btn layui-btn-xs layui-btn-primary"
-                                           href="{:addon_url('shop/order/printOrder', array('order_id' => $order_detail['order_id']))}" target="_blank">打印发货单</a>
+                                           href="javascript:printDeliverOrder({$order_detail['order_id']});">打印发货单</a>
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                             <label class="layui-form-label">买家：</label>
                             <div class="layui-input-block">
                                 <div class="layui-inline">
-                                    <div class="layui-form-mid layui-word-aux">{$order_detail.nickname}</div>
+                                    <div class="layui-form-mid layui-word-aux"><a class="ns-text-color" target="_blank" href='{:addon_url("shop/member/editmember?member_id=".$order_detail["member_id"])}'>{$order_detail.nickname}</a></div>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +200,7 @@
                 <div class="invoice-content">{$order_detail['invoice_title']}</div>
             </li>
             <li class="invoice-item">
-                <label class="invoice-label">发票抬头类型：{$order_detail['invoice_title_type']}</label>
+                <label class="invoice-label">发票抬头类型：</label>
                 <div class="invoice-content">{$order_detail['invoice_title_type'] == 1 ? '个人' : '企业'}</div>
             </li>
             {if $order_detail['invoice_title_type'] == 2}

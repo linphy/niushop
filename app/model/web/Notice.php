@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -104,7 +103,7 @@ class Notice extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getNoticePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'is_top desc,create_time desc', $field = 'id, title,content, create_time, is_top,receiving_type,receiving_name')
+    public function getNoticePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'is_top desc,create_time desc', $field = 'id, title,content, create_time, is_top,receiving_type,receiving_name,sort')
     {
         $data  = json_encode([$condition, $field, $order, $page, $page_size]);
         $cache = Cache::get("notice_getNoticePageList_" . $data);
@@ -114,5 +113,19 @@ class Notice extends BaseModel
         $list = model('notice')->pageList($condition, $field, $order, $page, $page_size);
         Cache::tag("notice")->set("notice_getNoticePageList_" . $data, $list);
         return $this->success($list);
+    }
+
+    /**
+     * 修改标签排序
+     * @param $sort
+     * @param $id
+     * @return array
+     */
+    public function modifyNoticeSort($sort, $id)
+    {
+
+        $res = model('notice')->update(['sort' => $sort], [['id', '=', $id]]);
+        Cache::tag("notice")->clear();
+        return $this->success($res);
     }
 }

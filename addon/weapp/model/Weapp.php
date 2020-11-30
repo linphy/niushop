@@ -94,16 +94,16 @@ class Weapp extends BaseModel
      */
     public function authCodeToOpenid($param)
     {
-        //正常返回的JSON数据包
-        //{"openid": "OPENID", "session_key": "SESSIONKEY", "unionid": "UNIONID"}
-        //错误时返回JSON数据包(示例为Code无效)
-        //{"errcode": 40029, "errmsg": "invalid code"}
-        $result = $this->app->auth->session($param['code']);
-        if (isset($result['errcode'])) {
-            return $this->error('', $result['errmsg']);
-        } else {
-            Cache::set('weapp_' . $result['openid'], $result);
-            return $this->success($result);
+        try {
+            $result = $this->app->auth->session($param['code']);
+            if (isset($result['errcode'])) {
+                return $this->error('', $result['errmsg']);
+            } else {
+                Cache::set('weapp_' . $result['openid'], $result);
+                return $this->success($result);
+            }
+        } catch (\Exception $e) {
+            return $this->error('', $e->getMessage());
         }
     }
 

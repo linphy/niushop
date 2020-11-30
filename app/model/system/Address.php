@@ -5,13 +5,13 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
 namespace app\model\system;
 
+use extend\api\HttpClient;
 use think\facade\Cache;
 use app\model\BaseModel;
 
@@ -109,4 +109,41 @@ class Address extends BaseModel
         if ($info) return $this->success($info);
         return $this->error();
     }
+
+
+    /**
+     * 通过地址查询
+     */
+    public function getAddressByLatlng($post_data)
+    {
+        $post_url = 'https://apis.map.qq.com/ws/geocoder/v1/';
+        $config_model = new \app\model\web\Config();
+        $config_result = $config_model->getMapConfig()['data'] ?? [];
+        $config = $config_result['value'] ?? [];
+        $tencent_map_key = $config['tencent_map_key'] ?? '';
+        $post_data = array(
+            'location' => $post_data['latlng'],
+            'key' => $tencent_map_key,
+            'get_poi' => 0,//是否返回周边POI列表：1.返回；0不返回(默认)
+        );
+
+        $httpClient = new HttpClient();
+        $res = $httpClient->post($post_url, $post_data);
+        $res = json_decode($res, true);
+        $return_data = [];
+        if($res['status'] == 0){
+            $return_array = $res['result']['address_component'] ?? [];
+            $return_data = array(
+                'province' => $return_array['province'] ?? '',
+                'city' => $return_array['city'] ?? '',
+                'district' => $return_array['district'] ?? '',
+                'address' => $return_array['street_number'] ?? ''
+            );
+            return $this->success($return_data);
+        }else{
+            return $this->error([], $res['message']);
+        }
+
+    }
+
 }

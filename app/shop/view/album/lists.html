@@ -3,6 +3,13 @@
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/picture_manager.css" />
 {/block}
 {block name="main"}
+
+<!-- 清理网站缓存 start	-->
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store">
+<meta http-equiv="expires" content="0">
+<!-- 清理网站缓存 end	-->
+
 <!-- 搜索框 -->
 <div class="ns-single-filter-box">
 	<button class="layui-btn ns-bg-color" onclick="uploadImg()">上传图片</button>
@@ -18,9 +25,13 @@
 </div>
 
 <div class="album-box">
-	<ul class="album-list ns-bg-color-light-gray">
-		<li><button class="layui-btn layui-btn-primary ns-text-color ns-border-color" onclick="addGrouping()">添加分组</button></li>
-	</ul>
+	<div class="album-list">
+		<ul class="ns-bg-color-light-gray">
+		</ul>
+		<div class="btn-wrap">
+			<button class="layui-btn layui-btn-primary ns-text-color ns-border-color" onclick="addGrouping()">添加分组</button>
+		</div>
+	</div>
 	<div class="album-content">
 		<div class="album-content-title">
 			<span id="album_name">默认分组</span>
@@ -66,12 +77,31 @@
 	</div>
 </script>
 
+<!-- 替换图片 -->
+<script type="text/html" id="modify_file_html">
+	<div class="layui-form multuple-list-box">
+		<div class="layui-form-item">
+			<label class="layui-form-label sm">本地图片</label>
+			<ul class="layui-input-block multuple-list">
+				<li class="multuple-list-img" id="modifyFile">
+					<span class="ns-bg-color">+</span>
+					<span class="ns-text-color-black">点击添加图片</span>
+				</li>
+			</ul>
+		</div>
+		<div class="ns-form-row sm">
+			<button class="layui-btn layui-btn-disabled" disabled="disabled" id="modifyFileAction">提交</button>
+			<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
+		</div>
+	</div>
+</script>
+
 <!-- 相册展示 -->
 <script type="text/html" id="list_html">
 	{{# layui.each(d.list,function(index, item){ }}
     <li>
         <div class="album-pic">
-            <img layer-src src="{{ ns.img(item.pic_path)}}" alt="{{item.pic_name}}">
+            <img layer-src src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000)) }}" alt="{{item.pic_name}}">
         </div>
         <div class="layui-form album-img-select">
             <input type="checkbox" name="check[]" value="{{item.pic_id}}" lay-skin="primary" title="{{item.pic_name}}">
@@ -80,8 +110,9 @@
             <a href="javascript:;" class="ns-text-color" data-pic-name="{{item.pic_name}}" data-id="{{item.pic_id}}" onclick="modifyImgName(this)">改名</a>|
             <a href="javascript:;" class="ns-text-color" data-path="{{ns.img(item.pic_path)}}" onclick="copyLink(this)">链接</a>|
             <a href="javascript:;" class="ns-text-color" data-id="{{item.pic_id}}" onclick="modifyImgGroup(this)">分组</a>|
-            <a href="javascript:;" class="ns-text-color" data-id="{{item.pic_id}}" onclick="deleteImg(this)">删除</a>
-        </div>
+			<a href="javascript:;" class="ns-text-color" data-id="{{item.pic_id}}" onclick="modifyFile(this)">替换</a>|
+			<a href="javascript:;" class="ns-text-color" data-id="{{item.pic_id}}" onclick="deleteImg(this)">删除</a>
+		</div>
 
     </li>
     {{# }) }}
@@ -117,7 +148,7 @@
 		picture_arr = [],
 		uploadListIns,
 		initIdent= true;
-		limit = 16,
+		limit = 14,
 		album_list_count = 0,
 		album_id = $(".album-list li.item-this").attr("data-album");
 
@@ -262,7 +293,112 @@
 
 	}
 
+
 	/**
+	 * 替换图片，单张
+	 */
+	function modifyFile(data) {
+
+		laytpl($("#modify_file_html").html()).render({}, function(html) {
+			layer_one = layer.open({
+				type: 1,
+				area: ['580px', '430px'],
+				title: '替换图片',
+				content: html,
+				cancel: function() {
+					$("#modifyFileAction").removeClass("ns-bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
+				},
+				success: function(res) {
+
+					//上传图片
+					upload.render({
+						elem: '#modifyFile',
+						url: ns.url("shop/upload/modifyFile"),
+						data: {
+							album_id: album_id,
+							pic_id: $(data).attr('data-id')
+						},
+						multiple: true,
+						auto: false,
+						bindAction: '#modifyFileAction',
+						choose: function(obj) {
+							//将每次选择的文件追加到文件队列
+							var files = this.files = obj.pushFile();
+
+							//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+							obj.preview(function(index, file, result) {
+
+								//追加预览图片
+								var html = '';
+								html += '<li class="multuple-list-img nc-upload-wrap" index="' + index + '">';
+								html += '<img src="' + result + '" alt="' + file.name + '">';
+								html += '<span class="upload-close-modal"  id="upload_img_' + index + '">×</span>';
+								html += '<div class="upload-image-curtain">50%</div>';
+								html += '</li>';
+								$(".multuple-list").prepend(html);
+
+								//删除预览图片
+								$("#upload_img_" + index).bind("click", function() {
+									delete files[index];
+									delete picture_arr[index]; //删除所选队列
+									$(this).parent('.nc-upload-wrap').remove();
+
+									// uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+
+									//禁止点击
+									if ($(".multuple-list li").length <= 1) {
+										$("#modifyFileAction").removeClass("ns-bg-color").addClass("layui-btn-disabled").attr("disabled",
+												"disabled");
+										//未选择图片时，显示添加按钮
+										$("#modifyFile").show();
+									}
+
+								});
+
+								//禁止点击
+								if ($(".multuple-list li").length > 1) {
+									$("#modifyFileAction").addClass("ns-bg-color").removeClass("layui-btn-disabled").removeAttr(
+											"disabled");
+									//隐藏添加按钮，仅替换一张图片
+									$("#modifyFile").hide();
+								}
+							});
+						},
+						done: function(res, index) {
+							picture_arr.push(res.data);
+
+							var image_box = $(".nc-upload-wrap[index='" + index + "']").parent().find(".upload-image-curtain");
+							image_box.text("50%");
+							image_box.show();
+
+							if (res.code >= 0) {
+								setTimeout(function() {
+									image_box.text("100%");
+								}, 500);
+								setTimeout(function() {
+									getFileAlbumList(1, limit);
+									location.reload();
+									layer.close(layer_one);
+								}, 1000);
+								return delete this.files[index]; //删除文件队列已经上传成功的文件
+							} else {
+								setTimeout(function() {
+									image_box.text("上传失败");
+								}, 500);
+								laytpl.msg(res.message); //删除文件队列已经上传成功的文件
+							}
+						}
+					});
+
+				}
+			})
+		});
+
+	}
+
+
+
+		/**
 	 * 图片加载
 	 */
 	function getFileAlbumList(page, limit) {
@@ -335,7 +471,7 @@
 							'</sapn></li>';
 					}
 				}
-				$(".album-list").prepend(html);
+				$(".album-list ul").prepend(html);
 			}
 		});
     }

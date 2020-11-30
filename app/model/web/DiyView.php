@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -98,15 +97,27 @@ class DiyView extends BaseModel
     public function addSiteDiyViewByTemplate($data)
     {
         $diy_view_info = model('site_diy_view')->getInfo([ [ 'site_id', '=', $data[ 'site_id' ] ], [ 'name', '=', $data[ 'name' ] ] ], 'id');
-        if (!empty($diy_view_info)) {
-            $data[ 'update_time' ] = time();
-            $res = model('site_diy_view')->update($data, [ [ 'id', '=', $diy_view_info[ 'id' ] ] ]);
-        } else {
-            $data[ 'create_time' ] = time();
+        if (empty($diy_view_info)) {
             $res = model('site_diy_view')->add($data);
+            if ($res) {
+                Cache::tag("site_diy_view")->clear();
+                return $this->success($res);
+            } else {
+                return $this->error($res);
+            }
+        } else {
+            try {
+                model('site_diy_view')->startTrans();
+                model('site_diy_view')->update([ 'name' => 'DIY_VIEW_RANDOM_' . time(), 'create_time' => time() ], [ [ 'name', '=', 'DIYVIEW_INDEX' ] ]);
+                model('site_diy_view')->add($data);
+                Cache::tag("site_diy_view")->clear();
+                model('site_diy_view')->commit();
+                return $this->success();
+            } catch (\Exception $e) {
+                model('site_diy_view')->rollback();
+                return $this->error($e->getMessage());
+            }
         }
-        Cache::tag("site_diy_view")->clear();
-        return $this->success($res);
     }
 
     /**
@@ -169,11 +180,6 @@ class DiyView extends BaseModel
      */
     public function getSiteDiyViewPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'sdv.*,ndva.addon_name as addon_name_temp')
     {
-        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
-        $cache = Cache::get("site_diy_view_getSiteDiyViewPageList_" . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $alias = "sdv";
         $join = [
             [
@@ -184,7 +190,6 @@ class DiyView extends BaseModel
         ];
 
         $res = model('site_diy_view')->rawPageList($condition, $field, $order, $page, $page_size, $alias, $join);
-        Cache::tag("site_diy_view")->set("site_diy_view_getSiteDiyViewPageList_" . $data, $res);
         return $this->success($res);
     }
 
@@ -399,7 +404,7 @@ class DiyView extends BaseModel
         model('site_diy_view')->startTrans();
         try {
             $name = $this->page[ $port ][ $type ][ 'name' ];
-            model('site_diy_view')->update([ 'name' => 'DIY_VIEW_RANDOM_' . time() ], [ [ 'name', '=', $name ], [ 'site_id', '=', $site_id ] ]);
+            model('site_diy_view')->update([ 'name' => 'DIY_VIEW_RANDOM_' . time(), 'create_time' => time() ], [ [ 'name', '=', $name ], [ 'site_id', '=', $site_id ] ]);
             model('site_diy_view')->update([ 'name' => $name ], [ [ 'id', '=', $id ], [ 'site_id', '=', $site_id ] ]);
             Cache::tag("site_diy_view")->clear();
             model('site_diy_view')->commit();
@@ -768,5 +773,28 @@ class DiyView extends BaseModel
         $config = new ConfigModel();
         $res = $config->setConfig($data, '自定义会员中心', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'DIY_MEMBER_INDEX_CONFIG_SHOP_' . $site_id ] ]);
         return $res;
+    }
+
+    /**
+     * 修改微页面排序
+     * @param int $sort
+     * @param int $label_id
+     */
+    public function modifyDiyViewSort($sort, $id)
+    {
+        $res = model('site_diy_view')->update([ 'sort' => $sort ], [ [ 'id', '=', $id ] ]);
+        Cache::tag("site_diy_view")->clear();
+        return $this->success($res);
+    }
+
+    /**
+     * 修改微页面点击量
+     * @param $sku_id
+     * @param $site_id
+     */
+    public function modifyClick($condition, $site_id)
+    {
+        model("site_diy_view")->setInc($condition, 'click_num', 1);
+        return $this->success(1);
     }
 }

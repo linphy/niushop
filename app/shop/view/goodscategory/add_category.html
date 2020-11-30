@@ -64,14 +64,25 @@
 		<div class="layui-input-block">
 			<div class="upload-img-block">
 				<div class="upload-img-box">
-					<div class="ns-upload-default">
-						<img src="SHOP_IMG/upload_img.png" />
-						<p>点击上传</p>
+					<div class="ns-upload-default" id="imgUpload">
+						<div class="upload">
+							<img src="SHOP_IMG/upload_img.png" data-id="imgUpload"/>
+							<p>点击上传</p>
+						</div>
 					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="image">
 				</div>
-				<p id="imgUpload" class="no-replace">替换</p>
+				<!-- <p id="imgUpload" class="no-replace">替换</p>
 				<input type="hidden" name="image">
-				<i class="del">x</i>
+				<i class="del">x</i> -->
 			</div>
 		</div>
 		<div class="ns-word-aux">
@@ -84,14 +95,23 @@
         <div class="layui-input-block">
             <div class="upload-img-block">
                 <div class="upload-img-box">
-					<div class="ns-upload-default">
-						<img src="SHOP_IMG/upload_img.png" />
-						<p>点击上传</p>
+					<div class="ns-upload-default" id="imgUploadAdv">
+						<div class="upload">
+							<img src="SHOP_IMG/upload_img.png" />
+							<p>点击上传</p>
+						</div>
 					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="image_adv" value="">
                 </div>
-				<p id="imgUploadAdv" class="no-replace">替换</p>
-	            <input type="hidden" name="image_adv" value="">
-	            <i class="del">x</i>
+			<!-- 	<p id="imgUploadAdv" class="no-replace">替换</p>
+	            <i class="del">x</i> -->
             </div>
         </div>
 	    <div class="ns-word-aux">
@@ -125,7 +145,7 @@
 		</div>
 	</div>
 	
-	<div class="layui-form-item">
+	<!-- <div class="layui-form-item">
 		<label class="layui-form-label">排序：</label>
 		<div class="layui-input-block">
 			<input name="sort" type="number" value="0" placeholder="请输入排序" lay-verify="num" class="layui-input ns-len-short" autocomplete="off">
@@ -133,7 +153,7 @@
 		<div class="ns-word-aux">
 			<p>排序值必须为整数</p>
 		</div>
-	</div>
+	</div> -->
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">是否显示</label>

@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -155,7 +154,7 @@ class StoreOrder extends OrderCommon
             ["order_status", "=", self::ORDER_CREATE],
         );
         $verify           = new Verify();
-        $order_goods_list = model("order_goods")->getList([["order_id", "=", $order_info["order_id"]]], "sku_image,sku_name,price,num,order_goods_id");
+        $order_goods_list = model("order_goods")->getList([["order_id", "=", $order_info["order_id"]]], "sku_image,sku_name,price,num,order_goods_id,goods_id,sku_id");
         $item_array       = [];
         foreach ($order_goods_list as $k => $v) {
             $item_array[] = [
@@ -168,6 +167,9 @@ class StoreOrder extends OrderCommon
 
                 ]
             ];
+            // 增加门店商品销量
+            model("store_goods")->setInc([ ['goods_id', '=', $v['goods_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'store_sale_num', $v["num"]);
+            model("store_goods_sku")->setInc([ ['sku_id', '=', $v['sku_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'store_sale_num', $v["num"]);
         }
         $pay_time            = time();
         $remark_array        = array(
@@ -215,7 +217,7 @@ class StoreOrder extends OrderCommon
         if (empty($order_info))
             return $this->error([], "ORDER_EMPTY");
 
-        $result = $this->orderCommonTakeDelivery($order_info["order_id"]);
+        $result = $this->activeTakeDelivery($order_info["order_id"]);
         if ($result["code"] < 0) {
             return $result;
         }
@@ -264,5 +266,32 @@ class StoreOrder extends OrderCommon
     public function orderDetail($order_info)
     {
         return [];
+    }
+
+    /**
+     * 主动提货
+     * @param $order_id
+     */
+    public function activeTakeDelivery($order_id){
+        $order_condition = array(
+            ['order_id', '=', $order_id],
+            ['order_type', '=', 2]
+        );
+        $order_info = model('order')->getInfo($order_condition, 'delivery_code, order_status, site_id');
+        if(empty($order_info))
+            return $this->error();
+
+        if($order_info['order_status'] != self::ORDER_PENDING_DELIVERY)
+            return $this->error([], '只有待提货状态的订单才可以提货');
+
+
+        $result = $this->orderCommonTakeDelivery($order_id);
+        if ($result["code"] < 0) {
+            return $result;
+        }
+        //核销发送通知
+        $message_model = new Message();
+        $message_model->sendMessage(['keywords' => "VERIFY", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
+        return $result;
     }
 }

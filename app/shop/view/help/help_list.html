@@ -1,11 +1,26 @@
 {extend name="base"/}
 {block name="resources"}
+<style>
+	.ns-prompt-block .ns-prompt {
+		display: inline-block;
+	}
+	.ns-prompt-block .ns-prompt {
+		width: 18px;
+		height: 18px;
+		line-height: 18px;
+		position: relative;
+	}
+	
+	.layui-table-box {overflow: inherit;}
+	.layui-table-header {overflow: inherit;}
+	.layui-table-cell, .layui-table-tool-panel li {overflow: inherit;}
+</style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>介绍网站的一些操作步骤，需遵循的规则</li>
 			<li>帮助内容排序显示规则为排序小的在前，新增内容的在前</li>
 		</ul>
@@ -53,12 +68,6 @@
 			url: ns.url("shop/help/helpList"),
 			cols: [
 				[ {
-					field: 'sort',
-					title: '排序',
-					width: '15%',
-					unresize: 'false',
-					templet: '#sort'
-				},{
 					field: 'title',
 					title: '帮助标题',
 					width: '30%',
@@ -68,7 +77,22 @@
 					title: '帮助分类',
 					width: '20%',
 					unresize: 'false'
-				}, {
+				},{
+                    field: 'sort',
+                    title: `<div class="ns-prompt-block">排序
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
+									<div class="ns-prompt-con">
+									<p>默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</p>
+								</div>
+							</div>
+							</div>
+						</div>`,
+                    width: '15%',
+                    unresize: 'false',
+                    templet: '#sort'
+                }, {
 					field: 'create_time',
 					title: '创建时间',
 					width: '20%',

@@ -150,16 +150,15 @@
 					title: '会员等级',
 					width: 120,
 					unresize: 'false',
-					fixed: 'left',
+                    fixed: 'left',
 					templet: function(data) {
 						return '会员享受折扣';
 					}
 				},
 				{foreach $level_list as $k => $v}
 				{
-					title: '{$v.level_name}', 
+					title: '{$v.level_name}',
 					unresize: 'false',
-					width: 80,
 					templet: function(data) {
 						return {$v.consume_discount} + '%';
 					}
@@ -427,7 +426,8 @@
 				]
 			],
 			data: sku_list,
-			page: false
+			page: false,
+			limit:sku_list.length
 		});
 	}
 	

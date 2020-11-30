@@ -59,5 +59,4 @@ class Template extends BaseShop
 
     }
 
-
 }

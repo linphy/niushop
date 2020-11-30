@@ -34,7 +34,18 @@
 				</div>
 				<div class="layui-card-body">
 					<div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">今日订单数</p>
+						<div class="ns-survey-detail-aco">今日订单数
+							<div class="ns-prompt-block" style="left: 100px;top: 20px;">
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" style="top: 30px;left: -64px;">
+									<div class="ns-prompt-con">
+										<p>只有经过支付的订单才会参与统计,支付后关闭的订单也参与统计。</p>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
 						<p class="ns-survey-detail-num ns-text-color">{$stat_day.order_pay_count}</p>
 						<div class="ns-survey-detail-rate">
 							{php}
@@ -92,27 +103,27 @@
 						</div>
 					</div>
 					<div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">今日商品收藏数</p>
-						<p class="ns-survey-detail-num ns-text-color">{$stat_day.collect_goods}</p>
+						<p class="ns-survey-detail-aco">今日新增会员数</p>
+						<p class="ns-survey-detail-num ns-text-color">{$stat_day.member_count}</p>
 						<div class="ns-survey-detail-rate">
 							{php}
-								$t = $stat_day['collect_goods'];
-								$y = $stat_yesterday['collect_goods'];
+								$t = $stat_day['member_count'];
+								$y = $stat_yesterday['member_count'];
 							{/php}
-							<div>日同比 <span>{$t > $y ? '+' : ''}{$day_rate.collect_goods}</span><i class="layui-icon layui-icon-triangle-d {$t > $y ? 'layui-icon-increase ns-text-color' : $t == $y ? 'is-null' : ''}"></i></div>
-							<div>昨日商品收藏数 <span>{$stat_yesterday.collect_goods} </span></div>
+							<div>日同比 <span>{$t > $y ? '+' : ''}{$day_rate.member_count}</span><i class="layui-icon layui-icon-triangle-d {$t > $y ? 'layui-icon-increase ns-text-color' : $t == $y ? 'is-null' : ''}"></i></div>
+							<div>昨日新增会员数 <span>{$stat_yesterday.member_count} </span></div>
 						</div>
 						<div class="ns-survey-detail-split"></div>
 						<div class="ns-survey-detail-total">
-							<span>商品收藏总数</span>
-							<span>{$shop_stat_sum.collect_goods}</span>
+							<span>会员总数</span>
+							<span>{$shop_stat_sum.member_count}</span>
 						</div>
 						<div class="title ns-prompt-block">
 							<div class="ns-prompt">
 								<button class="layui-btn layui-btn-primary ns-text-color ns-border-color ns-survey-yesterday-btn">昨日</button>
 								<div class="ns-prompt-box">
 									<div class="ns-prompt-con">
-										商品收藏数：{if isset($stat_yesterday.collect_goods)}{$stat_yesterday.collect_goods}{else /} 0 {/if}
+										会员数：{if isset($stat_yesterday.member_count)}{$stat_yesterday.member_count}{else /} 0 {/if}
 									</div>
 								</div>
 							</div>

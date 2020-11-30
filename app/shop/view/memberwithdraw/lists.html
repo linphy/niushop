@@ -361,7 +361,7 @@
 		actiontransfer_repeat_flag = true;
 
         // 删除图片
-        if(!data.field.certificate) upload.delete();
+        // if(!data.field.certificate) upload.delete();
 
         $.ajax({
             url: ns.url("shop/memberwithdraw/transferfinish"),
@@ -539,14 +539,24 @@
             <div class="layui-input-block img-upload">
                 <div class="upload-img-block">
                     <div class="upload-img-box">
-                        <div class="ns-upload-default">
-                            <img src="SHOP_IMG/upload_img.png" />
-                            <p>点击上传</p>
+                        <div class="ns-upload-default" id="certificate">
+							<div class="upload">
+								<img src="SHOP_IMG/upload_img.png" />
+								<p>点击上传</p>
+							</div>
                         </div>
+						<div class="operation"  >
+							<div >
+								<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+								<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+							</div>
+							<div class="replace_img js-replace">点击替换</div>
+						</div>
+						<input type="hidden" name="certificate" >
                     </div>
-                    <p id="certificate" class="no-replace">替换</p>
+                   <!-- <p id="certificate" class="no-replace">替换</p>
                     <input type="hidden" name="certificate" >
-                    <i class="del">x</i>
+                    <i class="del">x</i> -->
                 </div>
             </div>
         </div>

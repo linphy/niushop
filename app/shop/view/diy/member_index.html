@@ -3,7 +3,12 @@
 <link rel="stylesheet" href="STATIC_EXT/color_picker/css/colorpicker.css"/>
 <link rel="stylesheet" href="STATIC_EXT/diyview/css/member_icon/iconfont.css"/>
 <link rel="stylesheet" href="STATIC_EXT/diyview/css/member_index.css"/>
-
+<link rel="stylesheet" href="STATIC_EXT/diyview/css/diyview.css"/>
+<style>
+	.ns-body-content {
+		padding-left: 0 !important;
+	}
+</style>
 {/block}
 {block name="main"}
 <div id="diyView">
@@ -64,17 +69,17 @@
 			                                    <div class="layui-input-block">
 				                                    <template v-for="(item,index) in topStyleList">
 					                                    <div @click="data.topStyle=item.value" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (data.topStyle==item.value) }">
-						                                    <i class="layui-anim layui-icon">&#xe643;</i>
+						                                    <i class="layui-anim layui-icon">&#xe63f;</i>
 						                                    <div>{{item.text}}</div>
 					                                    </div>
 				                                    </template>
 			                                    </div>
 												<div class="ns-word-aux ns-diy-word-aux">系统风格跟随商城风格进行整体变化</div>
 		                                    </div>
-
 		                                    <template v-if="data.topStyle == topStyleList[1].value">
-
-		                                        <color v-bind:data="{ field: 'textColor', label : '文字颜色', value:data.textColor }"></color>
+												<div class="diy-text-color">
+													<color v-bind:data="{ field: 'textColor', label : '文字颜色', value:data.textColor }"></color>
+												</div>
 
 		                                        <div class="layui-form-item">
 		                                            <label class="layui-form-label sm">背景颜色</label>
@@ -83,7 +88,6 @@
 		                                                    <div :style="{background: item}" @click="data.bgColor=item"></div>
 		                                                </div>
 		                                                <div class="diy-color-wrap">
-		                                                    <input v-model="data.bgColor">
 		                                                    <color v-bind:data="{ field : 'bgColor', label : '', value:data.bgColor }" :class="{'selected':bgColorList.indexOf(data.bgColor)==-1}"></color>
 		                                                </div>
 		                                            </div>
@@ -91,10 +95,10 @@
 
 		                                        <div class="layui-form-item">
 		                                            <label class="layui-form-label sm">背景图片</label>
-		                                            <div class="layui-input-block">
-		                                                <img-upload :data="{data:data,field:'bgImg'}"></img-upload>
+		                                            <div class="layui-input-block ns-img-upload">
+		                                                <img-sec-upload :data="{data:data,field:'bgImg'}"></img-sec-upload>
 		                                            </div>
-		                                            <div class="ns-word-aux ns-diy-word-aux">建议使用半透明图片，尺寸：655px * 304px</div>
+		                                            <div class="ns-word-aux ns-diy-word-aux">建议使用半透明图片，尺寸：750px * 332px</div>
 		                                        </div>
 		                                    </template>
 
@@ -150,20 +154,43 @@
 	                    </div>
 
 	                    <!-- 会员等级 -->
-	                    <div class="draggable-element disabled">
-	                        <div class="member-grade">
-	                            <div class="preview-draggable">
-	                                <div class="grade-icon">
-	                                    <i></i>
-	                                    <span>白银会员</span>
-	                                </div>
-	                                <div class="member-equities">
-	                                    <span>会员等级更多权益</span>
-	                                    <i></i>
-	                                </div>
-	                            </div>
-	                        </div>
-	                    </div>
+						<div class="draggable-element" @click="currentIndex=1" :class="{selected: currentIndex == 1}">
+							<div  class="draggable-element disabled">
+								<div class="member-grade">
+									<div class="preview-draggable">
+										<div class="grade-icon">
+											<i></i>
+											<span>白银会员</span>
+										</div>
+										<div class="member-equities">
+											<span>会员等级更多权益</span>
+											<i></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="edit-attribute" v-show="currentIndex == 1">
+								<div class="attr-wrap">
+									<div class="restore-wrap">
+										<h2 class="attr-title">会员等级</h2>
+										<div class="layui-form-item">
+											<label class="layui-form-label sm">显示状态</label>
+											<div class="layui-input-block">
+												<div @click="data.level=1" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : data.level==1 }">
+													<i class="layui-anim layui-icon">&#xe63f;</i>
+													<div>显示</div>
+												</div>
+												<div @click="data.level=0" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : data.level==0 }">
+													<i class="layui-anim layui-icon">&#xe63f;</i>
+													<div>隐藏</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
 
 	                    <!-- 常用工具 -->
 	                    <div @click="currentIndex=3" class="draggable-element" :class="{selected: currentIndex == 3}">
@@ -194,7 +221,7 @@
 	                                            <div class="layui-input-block">
 	                                                <template v-for="(item,index) in menuStyleList">
 	                                                    <div @click="data.menuStyle=item.value" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (data.menuStyle==item.value) }">
-	                                                        <i class="layui-anim layui-icon">&#xe643;</i>
+	                                                        <i class="layui-anim layui-icon">&#xe63f;</i>
 	                                                        <div>{{item.text}}</div>
 	                                                    </div>
 	                                                </template>

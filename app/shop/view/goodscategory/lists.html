@@ -15,17 +15,98 @@
 		vertical-align: middle;
 	}
 	.goods-category-list .layui-table img {width: 40px;}
+	/* 分类样式 */
+	.table_div{
+		color:#666
+	}
+	.table_head{
+		display: flex;
+		font-weight: bold;
+		background-color: #F7F7F7;
+	}
+	.table_head li{
+		height: 40px;
+		line-height: 40px;
+		border: 0;
+		border-bottom: 1px solid #e6e6e6;
+		padding: 9px 15px;
+		font-size: 14px;
+		
+	}
+	.table_head li:first-child{
+		padding-right: 0;
+		
+	}
+	.table_tr{
+		display: flex;
+		border-bottom: 1px solid #e6e6e6;
+		cursor: move;
+	}
+	.table_tr .table_td{
+		position: relative;
+		padding: 11px 15px 8px;
+		min-height: 30px;
+		line-height: 33px;
+		font-size: 14px;
+	}
+	.table_tr .table_td span{
+		cursor: pointer;
+	}
+	.table_tr .table_td span>img{
+		width:12px;
+		height:12px
+	}
+	.table_tr .table_td span>img.rotate{
+		transform:rotate(90deg);
+	}
+	.table_tr .table_td .ns-img-box{
+		width:30px;
+		height:30px;
+		line-height: 30px;
+	}
+	.table_tr .table_td:first-child{
+		padding-right:0
+	}
+	.table_tr .ns-table-btn {
+	    display: flex;
+	    flex-wrap: wrap;
+	}
+	.table_tr .layui-btn {
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    height: 23px;
+	    border-radius: 50px;
+	    background-color: transparent;
+	    color: #FF6A00;
+	    text-align: center;
+	    padding: 2px 8px 2px 0;
+	    margin: 5px 0 5px 5px;
+	    position: relative;
+	}
+	.table_two_div{
+		display: none;
+	}
+	.table_three{
+		display: none;
+	}
+	.empty_switch{
+		display: inline-block;
+		width:25px
+	}
+	.js-switch{display: inline-block;height:30px;width:30px;text-align: center;}
 </style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>商城添加商品的时候需要选择对应的商品分类,用户可以根据商品分类搜索商品。</li>
 			<li>点击商品分类名前“+”符号，显示当前商品分类的下级分类。</li>
 			<li>商品属性是前台搜索分类查询商品之后可以通过商品的属性进行进一步搜索。</li>
 			<li>商品分类如果不显示会导致小程序、h5没有该分类以及该分类下的所有商品</li>
+			<li>可通过拖拽进行分类排序</li>
 		</ul>
 	</div>
 </div>
@@ -34,122 +115,183 @@
 </div>
 
 <div class="goods-category-list">
-	<table class="layui-table ns-pithy-table">
-		<colgroup>
-			<col width="3%">
-			<col width="37%">
-			<col width="15%">
-			<col width="15%">
-			<col width="15%">
-			<col width="15%">
-		</colgroup>
-		<thead>
-			<tr>
-				<th></th>
-				<th>分类名称</th>
-				<!-- <th>简称</th> -->
-				<th>图片</th>
-				<!-- <th>关联类型</th> -->
-				<!-- <th>是否显示</th> -->
-				<th>排序</th>
-				<th>是否显示</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<tbody>
+	<div class="table_div" >
+		<ul class="table_head">
+			<li class="" style="width:30px"></li>
+			<li class="" style="flex:6">分类名称</li>
+			<li class="" style="flex:2">图片</li>
+			<!-- <li class="" style="flex:2">排序</li> -->
+			<li class="" style="flex:2">是否显示</li>
+			<li class="" style="flex:2">操作</li>
+		</ul>
+		<div  class="table_body">
 			{if condition="$list"}
-			{foreach name="$list" item="vo"}
-			<tr>
-				<td>
-					{notempty name="$vo['child_list']"}
-					<span class="switch ns-text-color js-switch" data-category-id="{$vo['category_id']}" data-level="{$vo['level']}" data-open="0">+</span>
-					{/notempty}
-				</td>
-				<td>{$vo['category_name']}</td>
-				<!-- <td>{$vo['short_name']}</td> -->
-				<td>
-					{notempty name="$vo['image']"}
-					<div class="ns-img-box">
-						<img layer-src src="{:img($vo['image'])}"/>
-					</div>
-					{/notempty}
-				</td>
-				<!-- <td>{$vo['attr_class_name']}</td> -->
-				<!-- <td>{if $vo['is_show'] == 1}是{else/}否{/if}</td> -->
-				<td><input type="number" class="layui-input ns-len-short" value="{$vo['sort']}" onchange="editSort('{$vo.category_id}')" id="category_sort{$vo.category_id}"></td>
-				<td>{if $vo['is_show'] == 0} 显示 {else /} 不显示 {/if}</td>
-				<td>
-					<div class="ns-table-btn">
-						<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$vo['category_id']])}">编辑</a>
-						<a class="layui-btn" href="javascript:deleteCategory({$vo['category_id']});">删除</a>
-					</div>
-				</td>
-			</tr>
-				{notempty name="$vo['child_list']"}
-					{foreach name="$vo['child_list']" item="second"}
-					<tr data-category-id-1="{$second['category_id_1']}" style="display:none;">
-						<td></td>
-						<td style="padding-left: 20px;">
-							<span class="switch ns-text-color js-switch" data-category-id="{$second['category_id']}" data-level="{$second['level']}" data-open="1" style="padding-right: 20px;">-</span>
-							<span>{$second['category_name']}</span>
-						</td>
-						<!-- <td>{$second['short_name']}</td> -->
-						<td>
-							{notempty name="$second['image']"}
-							<img layer-src src="{:img($second['image'])}"/>
-							{/notempty}
-						</td>
-						<!-- <td>{$second['attr_class_name']}</td> -->
-						<!-- <td>{if $second['is_show'] == 1}是{else/}否{/if}</td> -->
-						<td><input type="number" class="layui-input ns-len-short" value="{$second['sort']}" onchange="editSort('{$second.category_id}')" id="category_sort{$second.category_id}"></td>
-						<td>{if $second['is_show'] == 0} 显示 {else /} 不显示 {/if}</td>
-						<td>
-							<div class="ns-table-btn">
-							<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$second['category_id']])}">编辑</a>
-							<a class="layui-btn" href="javascript:deleteCategory({$second['category_id']});">删除</a>
-							</div>
-						</td>
-					</tr>
-						{notempty name="$second['child_list']"}
-							{foreach name="$second['child_list']" item="third"}
-							<tr data-category-id-1="{$third['category_id_1']}" data-category-id-2="{$third['category_id_2']}" style="display:none;">
-								<td></td>
-								<td style="padding-left: 80px;">
-									<span>{$third['category_name']}</span>
-								</td>
-								<!-- <td>{$third['short_name']}</td> -->
-								<td>
-									{notempty name="$third['image']"}
-									<img layer-src src="{:img($third['image'])}"/>
-									{/notempty}
-								</td>
-								<!-- <td>{$third['attr_class_name']}</td> -->
-								<!-- <td>{if $third['is_show'] == 1}是{else/}否{/if}</td> -->
-								<td><input type="number" class="layui-input ns-len-short" value="{$third['sort']}" onchange="editSort('{$third.category_id}')" id="category_sort{$third.category_id}"></td>
-								<td>{if $third['is_show'] == 0} 显示 {else /} 不显示 {/if}</td>
-								<td>
-									<div class="ns-table-btn">
-										<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$third['category_id']])}">编辑</a>
-										<a class="layui-btn" href="javascript:deleteCategory({$third['category_id']});">删除</a>
-									</div>
-								</td>
-							</tr>
-							{/foreach}
+			{foreach name="$list" item="vo" key="index"}
+			<div class="table_one" data-index="{$index}" data-sort="{$vo['sort']}" data-cateid="{$vo['category_id']}">
+				<div class="table_tr">
+					<div class="table_td" style="width:30px">
+						{notempty name="$vo['child_list']"}
+						<span class="switch ns-text-color js-switch" data-category-id="{$vo['category_id']}" data-level="{$vo['level']}" data-open="0">
+							+
+						</span>
+					
 						{/notempty}
+					</div>
+					<div class="table_td" style="flex:6">{$vo['category_name']}</div>
+					<div class="table_td" style="flex:2">
+						{notempty name="$vo['image']"}
+						<div class="ns-img-box">
+							<img layer-src src="{:img($vo['image'])}"/>
+						</div>
+						{/notempty}
+					</div>
+					<!-- <div class="table_td" style="flex:2">
+						<input type="number" class="layui-input ns-len-short" value="{$vo['sort']}" onchange="editSort('{$vo.category_id}')" id="category_sort{$vo.category_id}">
+					</div> -->
+					<div class="table_td" style="flex:2">
+						{if $vo['is_show'] == 0} 显示 {else /} 不显示 {/if}
+					</div>
+					<div class="table_td" style="flex:2">
+						<div class="ns-table-btn">
+							<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$vo['category_id']])}">编辑</a>
+							<a class="layui-btn" href="javascript:deleteCategory({$vo['category_id']});">删除</a>
+						</div>
+					</div>
+				</div>
+				{notempty name="$vo['child_list']"}
+					<div class="table_two_div">
+					{foreach name="$vo['child_list']" item="second"}
+					<div class="table_two" data-index="{$index}" data-sort="{$second['sort']}" data-cateid="{$second['category_id']}">
+					<div class="table_tr">
+						<div class="table_td" style="width:30px">
+							
+						</div>
+						<div class="table_td" style="flex:6">
+							{notempty name="$second['child_list']"}
+							<span class="switch ns-text-color js-switch" data-category-id="{$second['category_id']}" data-level="{$second['level']}" data-open="0" style="padding-right: 15px;">
+								+
+							</span>
+							{else /}
+							<span class="switch ns-text-color empty_switch" >  </span>
+							{/notempty}
+							<span>{$second['category_name']}</span>
+						</div>
+						<div class="table_td" style="flex:2">
+							{notempty name="$second['image']"}
+							<div class="ns-img-box">
+								<img layer-src src="{:img($second['image'])}"/>
+							</div>
+							{/notempty}
+						</div>
+						<!-- <div class="table_td" style="flex:2">
+							<input type="number" class="layui-input ns-len-short" value="{$second['sort']}" onchange="editSort('{$second.category_id}')" id="category_sort{$second.category_id}">
+						</div> -->
+						<div class="table_td" style="flex:2">
+							{if $second['is_show'] == 0} 显示 {else /} 不显示 {/if}
+						</div>
+						<div class="table_td" style="flex:2">
+							<div class="ns-table-btn">
+								<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$second['category_id']])}">编辑</a>
+								<a class="layui-btn" href="javascript:deleteCategory({$second['category_id']});">删除</a>
+							</div>
+						</div>
+					</div>
+					{notempty name="$second['child_list']"}
+						
+					<div class="table_three">
+						{foreach name="$second['child_list']" item="third"}
+						<div class="table_tr" data-sort="{$third['sort']}" data-cateid="{$third['category_id']}">
+							<div class="table_td" style="width:30px">
+								
+							</div>
+							<div class="table_td" style="flex:6">
+								<span style="padding-left: 80px;">{$third['category_name']}</span>
+							</div>
+							<div class="table_td" style="flex:2">
+								{notempty name="$third['image']"}
+								<div class="ns-img-box">
+									<img layer-src src="{:img($third['image'])}"/>
+								</div>
+								{/notempty}
+							</div>
+							<!-- <div class="table_td" style="flex:2">
+								<input type="number" class="layui-input ns-len-short" value="{$second['sort']}" onchange="editSort('{$second.category_id}')" id="category_sort{$second.category_id}">
+							</div> -->
+							<div class="table_td" style="flex:2">
+								{if $third['is_show'] == 0} 显示 {else /} 不显示 {/if}
+							</div>
+							<div class="table_td" style="flex:2">
+								<div class="ns-table-btn">
+									<a class="layui-btn" href="{:addon_url('shop/goodscategory/editcategory',['category_id'=>$third['category_id']])}">编辑</a>
+									<a class="layui-btn" href="javascript:deleteCategory({$third['category_id']});">删除</a>
+								</div>
+							</div>
+						</div>
+						{/foreach}
+						
+					</div>
+					{/notempty}
+					</div>
 					{/foreach}
+					</div>
 				{/notempty}
+			</div>
+			
 			{/foreach}
 			{else/}
-			<tr>
-				<td colspan="9" style="text-align: center">无数据</td>
-			</tr>
+			<div class="table_tr">
+				<div class="table_td" style="flex:1;text-align: center;">暂无数据</div>
+			</div>
 			{/if}
-		</tbody>
-	</table>
+		</div>
+	</div>
 </div>
 {/block}
 {block name="script"}
+<script src="STATIC_EXT/diyview/js/ddsort.js"></script>
 <script>
+var tempPos = '';
+bindDragSort('.table_body' ,'.table_one');
+bindDragSort('.table_two_div' ,'.table_two');
+bindDragSort('.table_three' ,'.table_tr');
+function bindDragSort(paremtElem,childElem){
+	$(paremtElem ).DDSort({
+	    target: childElem,
+	    floatStyle: {
+	        'border': '1px solid #ccc',
+	        'background-color': '#fff'
+	    },
+		down:function(e){
+			tempPos = $(this).data('sort');
+		},
+		up:function(e){
+			var index = $(this).index(),self = $(this);
+			if(index != tempPos){
+				var temparr = [];
+				$(childElem).each(function(index,item){
+					var tempObj = {};
+					tempObj.category_id = item.getAttribute('data-cateid');
+					tempObj.sort = index;
+					temparr.push(tempObj)
+				})
+				setTimeout(function(){
+					$.ajax({
+						url: ns.url("shop/goodscategory/modifySort"),
+						data: {category_sort_array : JSON.stringify(temparr)},
+						dataType: 'JSON',
+						type: 'POST',
+						async: false,
+						success: function (res) {
+							self.data('sort',index)
+							layer.msg(res.message);
+						}
+					});
+				},100);
+			}
+			
+		}
+	});
+}
 
 $(function () {
 	loadImgMagnify();  //图片放大
@@ -159,13 +301,20 @@ $(function () {
 		var category_id = $(this).attr("data-category-id");
 		var level = $(this).attr("data-level");
 		var open = parseInt($(this).attr("data-open").toString());
-		
 		if(open){
 			$(".goods-category-list .layui-table tr[data-category-id-"+ level+"='" + category_id + "']").hide();
+			// $(this).children("img").removeClass('rotate');
 			$(this).text("+");
+			if(level == 1) $(this).parents('.table_tr').siblings('.table_two_div').hide();
+			else if(level == 2) $(this).parents('.table_tr').siblings('.table_three').hide();
+			
 		}else{
 			$(".goods-category-list .layui-table tr[data-category-id-"+ level+"='" + category_id + "']").show();
 			$(this).text("-");
+			// $(this).children("img").addClass('rotate');
+			if(level == 1) $(this).parents('.table_tr').siblings('.table_two_div').show();
+			else if(level == 2) $(this).parents('.table_tr').siblings('.table_three').show();
+			
 		}
 		$(this).attr("data-open", (open ? 0 : 1));
 		
@@ -192,35 +341,6 @@ function deleteCategory(category_id) {
 }
 function addCategory() {
 	location.href = ns.url("shop/goodscategory/addcategory");
-}
-
-// 监听单元格编辑
-function editSort(category_id) {
-    var sort = $("#category_sort"+category_id).val();
-
-    if (!new RegExp("^-?[1-9]\\d*$").test(sort)) {
-        layer.msg("排序号只能是整数");
-        return;
-    }
-    if(sort<0){
-        layer.msg("排序号必须大于0");
-        return ;
-    }
-    $.ajax({
-        type: 'POST',
-        url: ns.url("shop/goodscategory/modifySort"),
-        data: {
-            sort: sort,
-            category_id: category_id
-        },
-        dataType: 'JSON',
-        success: function(res) {
-            layer.msg(res.message);
-            if (res.code == 0) {
-                window.location.reload();
-            }
-        }
-    });
 }
 </script>
 {/block}

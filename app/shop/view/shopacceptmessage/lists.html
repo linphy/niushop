@@ -57,10 +57,10 @@
 <script type="text/html" id="userdetail">
 	<div class='ns-table-title'>
 		<div class='ns-title-pic'>
-            <img layer-src src="{{ns.img(d.headimg)}}" onerror="this.src = 'SHOP_IMG/default_headimg.png' ">
+			<img layer-src src="{{d.headimg ? ns.img(d.headimg) : 'SHOP_IMG/default_headimg.png'}}" onerror="this.src = 'SHOP_IMG/default_headimg.png' ">
 		</div>
 		<div class='ns-title-content'>
-			<p class="layui-elip">{{d.nickname}}</p>
+			<p class="layui-elip">{{d.nickname ? d.nickname : ''}}</p>
 		</div>
 	</div>
 </script>
@@ -87,7 +87,6 @@
 	</div>
 </script>
 
-
 <!-- 工具栏操作 -->
 <script type="text/html" id="operation">
 	<div class="ns-table-btn">
@@ -104,7 +103,6 @@
 		form = layui.form;
 		laytpl = layui.laytpl;
 		form.render();
-
 
 		/**
 		 * 加载表格
@@ -246,5 +244,4 @@
 	}
 
 </script>
-
 {/block}

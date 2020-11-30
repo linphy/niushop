@@ -5,13 +5,18 @@
 .album-box {
 	display: flex;
 }
+.album-list-box::-webkit-scrollbar {
+	display: none; /* Chrome Safari */
+}
 
 .album-list-box {
+	scrollbar-width: none; /* firefox */
+	-ms-overflow-style: none; /* IE 10+ */
+	overflow: auto;
 	margin-right: 25px;
 	width: 180px;
-	height: 500px;
+	height: 385px;
 	position: relative;
-	overflow: auto;
 }
 
 .album-list-box button {

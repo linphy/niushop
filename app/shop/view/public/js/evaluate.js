@@ -15,6 +15,7 @@ Evaluate.prototype.getList = function(d) {
 	var explain_type = d.explain_type;
 	var start_time = d.start_time;
 	var end_time = d.end_time;
+	var goods_id = d.goods_id;
 
 	$.ajax({
 		url: ns.url("shop/goods/evaluate"),
@@ -26,7 +27,8 @@ Evaluate.prototype.getList = function(d) {
 			"search_text": search_text,
 			"explain_type": explain_type,
 			"start_time": start_time,
-			"end_time": end_time
+			"end_time": end_time,
+			"goods_id" : goods_id
 		},
 		type: "POST",
 		dataType: "JSON",
@@ -141,7 +143,6 @@ Evaluate.prototype.getList = function(d) {
 					audit = "审核通过";
 				}else if(d[i].is_audit == -1){
 					audit = "审核拒绝";
-					audit_action = '<a class="default layui-btn" onclick="audit(this,1)">通过</a>';
 				}
 
 				html += '<td>' + audit + '</td>';
@@ -186,7 +187,6 @@ Evaluate.prototype.getList = function(d) {
 
 Evaluate.prototype.pageInit = function (d) {
 	var _this = d._this;
-
 	layui.use('laypage', function () {
 		var laypage = layui.laypage;
 
@@ -210,7 +210,8 @@ Evaluate.prototype.pageInit = function (d) {
 						"search_text": d.search_text,
 						"explain_type": d.explain_type,
 						"start_time": d.start_time,
-						"end_time": d.end_time
+						"end_time": d.end_time,
+						"goods_id" : d.goods_id
 					});
 				}
 			}

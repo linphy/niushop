@@ -8,7 +8,7 @@
 <div class="layui-collapse ns-tips">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>当前页面对门店的信息进行管理，可以添加门店，管理门店等。</li>
 			{if $store_is_exit == 1}
 			<li>通过以下链接前往门店管理中心<a href="{:addon_url('store://store/login/login')}" target="_blank" style="color: red"> {:addon_url('store://store/login/login')}</a></li>
@@ -47,7 +47,7 @@
 	<div class="ns-table-title">
 		<div class="ns-title-pic">
 			{{#  if(d.store_image){  }}
-			<img layer-src src={{ns.img(d.store_image)}} alt="">
+			<img layer-src src={{ns.img(d.store_image)}} alt="" onerror=src='__STATIC__/img/default_shop.png'>
 			{{#  }else{  }}
 			<img layer-src src="__STATIC__/img/default_shop.png" alt="">
 			{{#  }  }}
@@ -65,7 +65,7 @@
 	<div class="ns-table-title">
 		<div class="ns-title-pic">
 			<span>{{ d.username }}</span>
-			（<a style="color: #FF6A00;cursor: pointer;" onclick="resetStorePassword({{ d.store_id }})" >重置密码</a>）
+			<a style="color: #FF6A00;cursor: pointer;" onclick="resetStorePassword({{ d.store_id }})" >重置密码</a>
 		</div>
 	</div>
 </script>
@@ -320,6 +320,5 @@
 		<input class="reset-pass-id" type="hidden" name="store_id" value="{{d}}"/>
 	</div>
 </script>
-
 
 {/block}

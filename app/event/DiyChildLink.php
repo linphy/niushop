@@ -141,7 +141,7 @@ class DiyChildLink extends Controller
                 [ 'sdv.type', '=', $page[ 'shop' ][ 'port' ] ],
                 [ 'sdv.name', 'like', '%DIY_VIEW_RANDOM_%' ]
             ];
-            $site_diy_view_list = $diy_view_model->getSiteDiyViewPageList($condition, 1, 0, "sdv.create_time desc");
+            $site_diy_view_list = $diy_view_model->getSiteDiyViewPageList($condition, 1, 0, "sdv.sort desc,sdv.create_time desc");
             $site_diy_view_list = $site_diy_view_list[ 'data' ][ 'list' ];
             $link_mic = [
                 'id' => 0,

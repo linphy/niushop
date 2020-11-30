@@ -6,8 +6,7 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  * @author : niuteam
  * @date : 2015.1.17
@@ -150,7 +149,7 @@ class Memberaddress extends BaseApi
         }
 
         $member_address = new MemberAddressModel();
-        $res            = $member_address->getMemberAddressInfo($condition, 'id, member_id, name, mobile, telephone, province_id, district_id, city_id, community_id, address, full_address, longitude, latitude, is_default');
+        $res            = $member_address->getMemberAddressInfo($condition, 'id, member_id, name, mobile, telephone, province_id, district_id, city_id, community_id, address, full_address, longitude, latitude, is_default, type');
         return $this->response($res);
     }
 
@@ -164,9 +163,16 @@ class Memberaddress extends BaseApi
 
         $page      = isset($this->params['page']) ? $this->params['page'] : 1;
         $page_size = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
-
+        $type      = isset($this->params['type']) ? $this->params['type'] : '';
         $member_address = new MemberAddressModel();
-        $list           = $member_address->getMemberAddressPageList([['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]], $page, $page_size);
+        $condition = [
+            ['member_id', '=', $token['data']['member_id'],
+            ['site_id', '=', $this->site_id]]
+        ];
+        if(!empty($type)){
+            $condition[] = ['type', '=', $type];
+        }
+        $list           = $member_address->getMemberAddressPageList($condition, $page, $page_size);
         return $this->response($list);
     }
 
@@ -206,4 +212,41 @@ class Memberaddress extends BaseApi
         $res            = $member_address->addMemberAddress($data);
         return $this->response($res);
     }
+
+    /**
+     * 转化省市区地址形式为实际的省市区id
+     */
+    public function tranAddressInfo(){
+        $latlng = $this->params['latlng'] ?? '';
+
+        $address_model       = new Address();
+        $address_result = $address_model->getAddressByLatlng(['latlng' => $latlng]);
+        if($address_result['code'] < 0)
+            return $this->response($address_result);
+
+        $address_data = $address_result['data'];
+        $province = $address_data['province'] ?? '';
+        $city = $address_data['city'] ?? '';
+        $district = $address_data['district'] ?? '';
+        $province_id = $address_model->getAreasInfo([['name', 'like', '%' . $province . '%'], ['level', '=', 1]], 'id')['data']['id'] ?? 0;
+
+        if($province_id > 0)
+            $city_id = $address_model->getAreasInfo([['name', 'like', '%' . $city . '%'], ['level', '=', 2], ['pid', '=', $province_id]], 'id')['data']['id'] ?? 0;
+
+
+        if ($city_id > 0 && $province_id > 0)
+            $district_id = $address_model->getAreasInfo([['name', 'like', '%' . $district . '%'], ['level', '=', 3], ['pid', '=', $city_id]], 'id')['data']['id'] ?? 0;
+
+        $data = array(
+            'province_id' => $province_id ?? 0,
+            'city_id' => $city_id ?? 0,
+            'district_id' => $district_id ?? 0,
+            'province' => $province,
+            'city' => $city,
+            'district' => $district,
+        );
+        return $this->response($this->success($data));
+
+    }
+
 }

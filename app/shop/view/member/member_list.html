@@ -12,6 +12,7 @@
 	.layui-table-header .layui-table-cell{overflow: inherit;}
 	.ns-prompt-block.balance, .ns-prompt-block.growth {justify-content: flex-end;}
 	.layui-form-item .layui-form-checkbox[lay-skin=primary] {margin-top: 0;}
+	.blacklist{background: #333;color: #fff;line-height: 1;padding: 3px 6px;border-radius: 3px;font-size: 12px;}
 </style>
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/member.css" />
 {/block}
@@ -19,7 +20,7 @@
 <div class="layui-collapse ns-tips" >
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>商城可以针对会员进行添加，编辑，锁定，调整账户等操作。</li>
 			<li>账户类型有用户名、手机、邮箱三种类型，筛选时可以选择其中一种类型并输入对应的内容进行筛选。</li>
 			<li>点击收起按钮可以将搜索面板隐收起，变成高级搜索按钮。</li>
@@ -50,6 +51,26 @@
 						<input type="text" name="search_text" placeholder="用户名/昵称/手机号" autocomplete="off" class="layui-input ">
 					</div>
 				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">成交次数</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="start_order_complete_num" id="start_order_complete_num" autocomplete="off">
+					</div>
+					<div class="layui-input-inline ns-split">-</div>
+					<div class="layui-input-inline end-time">
+						<input type="text" class="layui-input" name="end_order_complete_num" id="end_order_complete_num" autocomplete="off">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">消费金额</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="start_order_complete_money" id="start_order_complete_money" autocomplete="off">
+					</div>
+					<div class="layui-input-inline ns-split">-</div>
+					<div class="layui-input-inline end-time">
+						<input type="text" class="layui-input" name="end_order_complete_money" id="end_order_complete_money" autocomplete="off">
+					</div>
+				</div>
 			</div>
 			<div class="layui-form-item">
 				<div class="layui-inline">
@@ -62,8 +83,61 @@
 						<input type="text" class="layui-input" name="reg_end_date" id="reg_end_date" placeholder="请输入结束时间" autocomplete="off" readonly>
 					</div>
 				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">上次访问时间</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="last_login_time_start" id="last_login_time_start" placeholder="请输入开始时间" autocomplete="off" readonly>
+					</div>
+					<div class="layui-input-inline ns-split">-</div>
+					<div class="layui-input-inline end-time">
+						<input type="text" class="layui-input" name="last_login_time_end" id="last_login_time_end" placeholder="请输入结束时间" autocomplete="off" readonly>
+					</div>
+				</div>
 			</div>
 			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">积分</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="start_point" id="start_point" autocomplete="off">
+					</div>
+					<div class="layui-input-inline ns-split">-</div>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="end_point" id="end_point" autocomplete="off">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">余额</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="start_balance" id="start_balance" autocomplete="off">
+					</div>
+					<div class="layui-input-inline ns-split">-</div>
+					<div class="layui-input-inline end-time">
+						<input type="text" class="layui-input" name="end_balance" id="end_balance" autocomplete="off">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">成长值</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="start_growth" id="start_growth" autocomplete="off">
+					</div>
+					<div class="layui-input-inline ns-split">-</div>
+					<div class="layui-input-inline end-time">
+						<input type="text" class="layui-input" name="end_growth" id="end_growth" autocomplete="off">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">会员等级</label>
+					<div class="layui-input-inline">
+						<select name="level_id">
+							<option value="">请选择</option>
+							{foreach $member_level_list as $member_level_list_k=> $member_level_list_v}
+							<option value="{$member_level_list_v.level_id}">{$member_level_list_v.level_name}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
 				<div class="layui-inline">
 					<label class="layui-form-label">会员标签</label>
 					<div class="layui-input-inline">
@@ -76,12 +150,34 @@
 					</div>
 				</div>
 				<div class="layui-inline">
-					<label class="layui-form-label">状态</label>
+					<label class="layui-form-label">来源渠道：</label>
+					<div class="layui-input-inline">
+						<select name="login_type">
+							<option value="">全部</option>
+							{foreach $order_from_list as $order_from_k => $order_from_v}
+							<option value="{$order_from_k}">{$order_from_v['name']}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">黑名单</label>
 					<div class="layui-input-inline">
 						<select name="status">
 							<option value="">请选择</option>
-							<option value="1">正常</option>
-							<option value="0">已锁定</option>
+							<option value="0">是</option>
+							<option value="1">否</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">会员群体</label>
+					<div class="layui-input-inline">
+						<select name="cluster_id">
+							<option value="">请选择</option>
+							{foreach $member_cluster_list as $member_cluster_list_k=> $member_cluster_list_v}
+							<option value="{$member_cluster_list_v.cluster_id}" {if $member_cluster_list_v.cluster_id == $cluster_id}selected{/if}>{$member_cluster_list_v.cluster_name}</option>
+							{/foreach}
 						</select>
 					</div>
 				</div>
@@ -106,6 +202,11 @@
 		</div>
 		<div class='ns-title-content'>
 			<p class="layui-elip">{{d.nickname}}</p>
+			{{# if (d.status == 0){ }}
+			<div>
+				<span class="blacklist">黑名单</span>
+			</div>
+			{{# } }}
 		</div>
 	</div>
 </script>
@@ -143,7 +244,7 @@
 			<a class="operation" lay-event="recive_coupon">发放优惠券</a>
 			<a class="operation" lay-event="adjust_balance">调整余额</a>
 			<a class="operation" lay-event="adjust_integral">调整积分</a>
-			<a class="operation" lay-event="delete">删除</a>
+			<a class="operation" lay-event="blacklist">黑名单</a>
 		</div>
 	</div>
 </script>
@@ -243,6 +344,18 @@
 			type: 'datetime'
 		});
 
+        //上次访问开始时间
+        laydate.render({
+            elem: '#last_login_time_start',
+            type: 'datetime'
+        });
+
+        //上次访问结束时间
+        laydate.render({
+            elem: '#last_login_time_end',
+            type: 'datetime'
+        });
+
 		//允许上传的文件后缀
 		upload.render({
 			elem: '#member_file'
@@ -313,6 +426,7 @@
 		table = new Table({
 			elem: '#member_list',
 			url: ns.url("shop/member/memberList"),
+			where:{"cluster_id" : "{$cluster_id}"},
 			cols: [
 				[
 					{
@@ -444,9 +558,6 @@
 				case 'info': //编辑
 					location.href = ns.url("shop/member/editMember?member_id=" + data.member_id);
 					break;
-				case 'delete': //删除
-					delMember(data.member_id);
-					break;
 				case 'reset_pass': //重置密码
 					resetPassword(data);
 					break;
@@ -480,6 +591,9 @@
 				case 'recive_coupon': //发放优惠券
 					selectCoupon(data);
                     break;
+                case 'blacklist': // 黑名单
+                	addBlacklist(data.member_id);
+                	break;
 			}
 		});
 
@@ -493,7 +607,7 @@
 		 * 批量操作
 		 */
 		table.bottomToolbar(function(obj) {
-
+			console.log("批量操作",obj);
 			if (obj.data.length < 1) {
 				layer.msg('请选择要操作的数据');
 				return;
@@ -537,35 +651,6 @@
 			}
 		});
 
-
-		/**
-		 * 删除
-		 */
-		function delMember(member_ids) {
-
-			if (repeat_flag) return false;
-			repeat_flag = true;
-
-			layer.confirm('删除该会员，同时会删除相关账户，请谨慎操作！', function() {
-				$.ajax({
-					url: ns.url("shop/member/deleteMember"),
-					data: {member_ids},
-					dataType: 'JSON',
-					type: 'POST',
-					success: function(res) {
-						layer.msg(res.message);
-						repeat_flag = false;
-
-						if (res.code == 0) {
-							table.reload();
-						}
-					}
-				});
-			}, function () {
-				layer.close();
-				repeat_flag = false;
-			});
-		}
 
 		/**
 		 * 重置密码
@@ -801,6 +886,25 @@
 					content: html,
 				});
 				renderCoupon("", data.member_id);
+			});
+		}
+
+		function addBlacklist(member_ids) {
+			layer.confirm('加入黑名单后用户将强制退出无法登录，您确认要将用户加入黑名单吗？', function() {
+				$.ajax({
+					url: ns.url("shop/member/modifyStatus"),
+					data: {member_ids},
+					dataType: 'JSON',
+					type: 'POST',
+					success: function(res) {
+						layer.msg(res.message);
+						if (res.code == 0) {
+							table.reload();
+						}
+					}
+				});
+			}, function () {
+				layer.close();
 			});
 		}
 	});

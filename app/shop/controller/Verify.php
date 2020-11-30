@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -80,6 +79,19 @@ class Verify extends BaseShop
     }
 
     /**
+     * 核销信息
+     */
+    public function verifyInfo()
+    {
+        $id = input('id','');
+
+        $verify_model = new VerifyModel();
+        $info = $verify_model->getVerifyInfo([['id','=',$id],['site_id','=',$this->site_id]]);
+        return $info;
+    }
+
+
+    /**
      * 核销台
      * @return mixed
      */
@@ -109,11 +121,11 @@ class Verify extends BaseShop
             $order = input("order", "create_time desc");
             $verifier_name = input('verifier_name', '');
             $condition = [];
-            $condition[] = ['site_id', "=", $this->site_id];
+            $condition[] = ['v.site_id', "=", $this->site_id];
             if ($verifier_name) {
-                $condition[] = ['verifier_name', '=', $verifier_name];
+                $condition[] = ['v.verifier_name', '=', $verifier_name];
             }
-            $list = $verifier->getVerifierPageList($condition, $page, $page_size, $order, $field = 'verifier_id, verifier_name, site_id, member_id, uid, create_time, modify_time');
+            $list = $verifier->getVerifierPageList($condition, $page, $page_size, $order);
             return $list;
         } else {
             return $this->fetch("verify/user");

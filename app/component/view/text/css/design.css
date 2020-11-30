@@ -3,7 +3,6 @@
 .component-title h2 {margin: 0;font-size: 16px;overflow: hidden;text-overflow: ellipsis;}
 .component-title p {font-size: 12px;color: #8c8c8c;padding: 5px 0 0;overflow: hidden;text-overflow: ellipsis;}
 
-.component-title h3 {font-size: 14px; font-weight: 600; padding: 5px 10px 10px 10px;}
 .component-title .style-list-box {
 	display: none;
 }
@@ -385,6 +384,7 @@
 
 .component-title .text-title-11 .text-title-box .left {
 	width: calc(100% - 66px);
+	text-align: left;
 }
 
 .component-title .text-title-11 .text-title-box .more {
@@ -428,7 +428,7 @@
 	width: 30.5px;
 	position: absolute;
 	bottom: -13px;
-	left: -8px;
+	left: 8px;
 	z-index: 0;
 }
 
@@ -436,6 +436,6 @@
 	width: 17.5px;
 	position: absolute;
 	top: -7px;
-	left: 70px;
+	left: 86px;
 	z-index: 0;
 }

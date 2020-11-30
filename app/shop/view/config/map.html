@@ -9,10 +9,13 @@
 {block name="main"}
 <div class="layui-form ns-form">
 	<div class="layui-form-item">
-		<label class="layui-form-label">腾讯地图密钥：</label>
+		<label class="layui-form-label">腾讯地图KEY：</label>
 		<div class="layui-input-block">
 			<input type="text" name="tencent_map_key" autocomplete="off" value="{$info.tencent_map_key ?? ''}" class="layui-input ns-len-long inline-block">
 			<a href="https://lbs.qq.com/dev/console/key/manage" class="ns-text-color" target="_blank" style="margin-left:5px;">获取密钥</a>
+		</div>
+		<div class="ns-word-aux">
+			<p>H5平台腾讯定位地图应用KEY</p>
 		</div>
 	</div>
 

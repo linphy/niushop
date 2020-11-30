@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -224,10 +223,12 @@ class OrderCommon extends BaseModel
     public function getOrderTypeStatusList()
     {
         $list = [];
+        $all_order_list = array_column($this->order_status, "name", "status");
+        $all_order_list['refunding'] = '退款中';
         $list['all'] = array(
             "name" => "全部",
             "type" => 'all',
-            "status" => array_column($this->order_status, "name", "status")
+            "status" => $all_order_list
         );
         foreach ($this->order_type as $k => $v) {
             switch ($k) {
@@ -244,10 +245,13 @@ class OrderCommon extends BaseModel
                     $order_model = new VirtualOrder();
                     break;
             }
+            $temp_order_list = array_column($order_model->order_status, "name", "status");
+            $temp_order_list['refunding'] = '退款中';
+
             $item = array(
                 "name" => $v,
                 "type" => $k,
-                "status" => array_column($order_model->order_status, "name", "status")
+                "status" => $temp_order_list
             );
             $list[$k] = $item;
         }
@@ -554,7 +558,7 @@ class OrderCommon extends BaseModel
     public function splitOrderPay($order_ids)
     {
         $order_ids = empty($order_ids) ? [] : explode(",", $order_ids);
-        $order_list = model("order")->getList([["order_id", "in", $order_ids], ["pay_status", "=", 0]], "pay_money,order_name,out_trade_no,order_id,pay_status,site_id");
+        $order_list = model("order")->getList([["order_id", "in", $order_ids], ["pay_status", "=", 0]], "pay_money,order_name,out_trade_no,order_id,pay_status,site_id,member_id");
         $order_count = count($order_list);
         //判断订单数是否匹配
         if (count($order_ids) > $order_count)
@@ -567,7 +571,9 @@ class OrderCommon extends BaseModel
         $order_name_array = [];
         $site_id = 0;
 
+
         foreach ($order_list as $order_k => $item) {
+            $member_id = $item['member_id'];
             $pay_money += $item["pay_money"];//累加金额
             $order_name_array[] = $item["order_name"];
             if (!in_array($item["out_trade_no"], $close_out_trade_no_array)) {
@@ -598,7 +604,7 @@ class OrderCommon extends BaseModel
         }
         $order_name = implode(",", $order_name_array);
         //生成新的支付单据
-        $out_trade_no = $pay_model->createOutTradeNo();
+        $out_trade_no = $pay_model->createOutTradeNo($member_id ?? 0);
         //修改交易流水号为新生成的
         model("order")->update(["out_trade_no" => $out_trade_no], [["order_id", "in", $order_ids], ["pay_status", "=", 0]]);
         $result = $pay_model->addPay($site_id, $out_trade_no, "", $order_name, $order_name, $pay_money, '', 'OrderPayNotify', '');
@@ -616,14 +622,14 @@ class OrderCommon extends BaseModel
         model('order')->startTrans();
         try {
             //查询订单
-            $order_info = model('order')->getInfo(['order_id' => $order_id], 'site_id, out_trade_no,delivery_money, adjust_money, pay_money, order_money, promotion_money, coupon_money, goods_money, invoice_money, invoice_delivery_money, promotion_money, coupon_money, invoice_rate, invoice_delivery_money, balance_money');
+            $order_info = model('order')->getInfo(['order_id' => $order_id], 'site_id, out_trade_no,delivery_money, adjust_money, pay_money, order_money, promotion_money, coupon_money, goods_money, invoice_money, invoice_delivery_money, promotion_money, coupon_money, invoice_rate, invoice_delivery_money, balance_money, point_money');
             if (empty($order_info))
                 return $this->error("", "找不到订单");
 
             if ($delivery_money < 0)
                 return $this->error("", "配送费用不能小于0!");
 
-            $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'];//计算出订单真实商品金额
+            $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'] - $order_info['point_money'];//计算出订单真实商品金额
 
             $new_goods_money = $real_goods_money + $adjust_money;
 
@@ -649,9 +655,9 @@ class OrderCommon extends BaseModel
             );
             model('order')->update($data_order, [['order_id', "=", $order_id]]);
 
-            $order_goods_list = model('order_goods')->getList([['order_id', "=", $order_id]], 'order_goods_id,goods_money,adjust_money,coupon_money,promotion_money');
+            $order_goods_list = model('order_goods')->getList([['order_id', "=", $order_id]], 'order_goods_id,goods_money,adjust_money,coupon_money,promotion_money,point_money');
             //将调价摊派到所有订单项
-            $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'];
+            $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'] - $order_info['point_money'];
             $this->distributionGoodsAdjustMoney($order_goods_list, $real_goods_money, $adjust_money);
 
             //关闭原支付  生成新支付
@@ -684,7 +690,7 @@ class OrderCommon extends BaseModel
         $temp_adjust_money = $adjust_money;
         $last_key = count($goods_list) - 1;
         foreach ($goods_list as $k => $v) {
-            $item_goods_money = $v['goods_money'] - $v['promotion_money'] - $v['coupon_money'];
+            $item_goods_money = $v['goods_money'] - $v['promotion_money'] - $v['coupon_money'] - $v['point_money'];
             if ($last_key != $k) {
                 $item_adjust_money = round(floor($item_goods_money / $goods_money * $adjust_money * 100) / 100, 2);
             } else {
@@ -952,6 +958,46 @@ class OrderCommon extends BaseModel
         return $this->success($order_info);
     }
 
+
+    /**
+     * 获取订单详情(为退款的订单项)
+     * @param array $order_id
+     */
+    public function getUnRefundOrderDetail($order_id)
+    {
+        $order_info = model('order')->getInfo([['order_id', "=", $order_id]]);
+
+        if (empty($order_info))
+            return $this->error('');
+
+        $member_info = model('member')->getInfo([['member_id', "=", $order_info['member_id']]], 'nickname');
+
+        $order_info['nickname'] = $member_info['nickname'];
+
+        $order_goods_list = model('order_goods')->getList([['order_id', "=", $order_id],['refund_status','=',0]]);
+        $order_info['order_goods'] = $order_goods_list;
+        switch ($order_info['order_type']) {
+            case 1:
+                $order_model = new Order();
+                break;
+            case 2:
+                $order_model = new StoreOrder();
+                break;
+            case 3:
+                $order_model = new LocalOrder();
+                break;
+            case 4:
+                $order_model = new VirtualOrder();
+                break;
+        }
+
+        $temp_info = $order_model->orderDetail($order_info);
+        $order_info = array_merge($order_info, $temp_info);
+
+        return $this->success($order_info);
+    }
+
+
     /**
      * 得到订单基础信息
      * @param $condition
@@ -997,15 +1043,18 @@ class OrderCommon extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getOrderPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    public function getOrderPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = 'a', $join = [])
     {
-        $order_list = model('order')->pageList($condition, $field, $order, $page, $page_size);
+        $order_list = model('order')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         if (!empty($order_list['list'])) {
             foreach ($order_list['list'] as $k => $v) {
                 $order_goods_list = model("order_goods")->getList([
                     'order_id' => $v['order_id']
                 ]);
                 $order_list['list'][$k]['order_goods'] = $order_goods_list;
+                //购买人信息
+                $member_info = model('member')->getInfo(['member_id' => $v['member_id']],'nickname');
+                $order_list['list'][$k]['nickname'] = $member_info['nickname'] ?? '';
             }
         }
 

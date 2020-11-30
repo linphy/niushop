@@ -49,7 +49,7 @@ class Goodsbrowse extends BaseApi
         $token = $this->checkToken();
         if ($token['code'] < 0) return $this->response($token);
 
-        $id = isset($this->params['id']) ? $this->params['id'] : 0;
+        $id = isset($this->params['id']) ? $this->params['id'] : '';
         if (empty($id)) {
             return $this->response($this->error('', 'REQUEST_ID'));
         }
@@ -74,7 +74,7 @@ class Goodsbrowse extends BaseApi
         ];
 
         $alias = 'ngb';
-        $field = 'ngb.id,ngb.member_id,ngb.browse_time,ngb.sku_id,ngs.sku_image,ngs.discount_price,ngs.sku_name,ng.goods_id,ng.goods_name,ng.goods_image,(ngs.sale_num + ngs.virtual_sale) as sale_num,ngs.is_free_shipping,ngs.promotion_type,ngs.member_price,ngs.price,ngs.market_price,ngs.is_virtual,ng.goods_image';
+        $field = 'ngb.id,ngb.member_id,ngb.browse_time,ngb.sku_id,ngs.sku_image,ngs.discount_price,ngs.sku_name,ng.goods_id,ng.goods_name,ng.goods_image,(ngs.sale_num + ngs.virtual_sale) as sale_num,ngs.is_free_shipping,ngs.promotion_type,ngs.member_price,ngs.price,ngs.market_price,ngs.is_virtual,ng.goods_image,ngs.unit';
         $join  = [
             [
                 'goods ng',

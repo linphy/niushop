@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -273,10 +272,13 @@ class Goods extends BaseModel
                     }
                     model('goods_sku')->addList($sku_arr);
                 } else {
+                    $discount_model = new Discount();
                     foreach ($data[ 'goods_sku_data' ] as $item) {
-                        $discount_model = new Discount();
-                        $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
-                        $discount_info = $discount_info_result[ 'data' ];
+                        $discount_info = [];
+                        if (!empty($item[ 'sku_id' ])) {
+                            $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
+                            $discount_info = $discount_info_result[ 'data' ];
+                        }
 
                         $sku_data = array (
                             'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
@@ -298,7 +300,11 @@ class Goods extends BaseModel
                         if (empty($discount_info)) {
                             $sku_data[ 'discount_price' ] = $item[ 'price' ];
                         }
-                        model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
+                        if (!empty($item[ 'sku_id' ])) {
+                            model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
+                        } else {
+                            model('goods_sku')->add(array_merge($sku_data, $common_data));
+                        }
                     }
                 }
 
@@ -345,13 +351,13 @@ class Goods extends BaseModel
             }
 
             $cron = new Cron();
+            $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOn' ], [ 'relate_id', '=', $goods_id ] ]);
+            $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOff' ], [ 'relate_id', '=', $goods_id ] ]);
             //定时上下架
             if ($goods_data[ 'timer_on' ] > 0) {
-                $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOn' ], [ 'relate_id', '=', $goods_id ] ]);
                 $cron->addCron(1, 0, "商品定时上架", "CronGoodsTimerOn", $goods_data[ 'timer_on' ], $goods_id);
             }
             if ($goods_data[ 'timer_off' ] > 0) {
-                $cron->deleteCron([ [ 'event', '=', 'CronGoodsTimerOff' ], [ 'relate_id', '=', $goods_id ] ]);
                 $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data[ 'timer_off' ], $goods_id);
             }
 
@@ -512,6 +518,11 @@ class Goods extends BaseModel
     {
         model('goods')->update([ 'is_delete' => $is_delete ], [ [ 'goods_id', 'in', $goods_ids ], [ 'site_id', '=', $site_id ] ]);
         model('goods_sku')->update([ 'is_delete' => $is_delete ], [ [ 'goods_id', 'in', $goods_ids ], [ 'site_id', '=', $site_id ] ]);
+
+        //删除商品
+        if ($is_delete == 1) {
+            event('DeleteGoods', [ 'goods_id' => $goods_ids, 'site_id' => $site_id ]);
+        }
         return $this->success(1);
     }
 
@@ -561,7 +572,8 @@ class Goods extends BaseModel
         $goods_category = [];
         foreach ($category_json as $k => $v) {
             if (!empty($v)) {
-                $category_name = model('goods_category')->getColumn([ [ 'category_id', 'in', $v ] ], 'category_name');
+                $category_list = model('goods_category')->getList([ [ 'category_id', 'in', $v ] ], 'category_name', 'level asc');
+                $category_name = array_column($category_list, 'category_name');
                 $category_name = implode('/', $category_name);
                 $goods_category[ $k ] = [
                     'id' => $v,
@@ -609,11 +621,15 @@ class Goods extends BaseModel
     /**
      * 商品SKU 详情
      * @param $sku_id
-     * @return mixed
+     * @param $site_id
+     * @param string $field
+     * @return array
      */
-    public function getGoodsSkuDetail($sku_id, $site_id)
+    public function getGoodsSkuDetail($sku_id, $site_id, $field = '')
     {
-        $field = 'gs.goods_id,gs.sku_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(gs.sale_num + gs.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.evaluate,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,g.goods_image';
+        if (empty($field)) {
+            $field = 'gs.goods_id,gs.sku_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.evaluate,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,g.goods_image';
+        }
         $join = [
             [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
         ];
@@ -1215,4 +1231,108 @@ class Goods extends BaseModel
         ], 'og.num', 'og', $join);
         return $num;
     }
+
+    /**
+     * 判断规格值是否禁用
+     * @param $bargain_id
+     * @param $site_id
+     * @param $goods
+     * @return false|string
+     */
+    public function getGoodsSpecFormat($sku_ids, $goods_spec_format)
+    {
+        if (!empty($goods_spec_format) && !empty($sku_ids)) {
+
+            $sku_spec_format = model('goods_sku')->getColumn([ [ 'sku_id', 'in', $sku_ids ] ], 'sku_spec_format');
+
+            $sku_spec_format_arr = [];
+            foreach ($sku_spec_format as $sku_spec) {
+                $format = json_decode($sku_spec, true);
+                foreach ($format as $format_v) {
+                    if (empty($sku_spec_format_arr[ $format_v[ 'spec_id' ] ])) {
+                        $sku_spec_format_arr[ $format_v[ 'spec_id' ] ] = [];
+                    }
+                    $sku_spec_format_arr[ $format_v[ 'spec_id' ] ][] = $format_v[ 'spec_value_id' ];
+                }
+            }
+
+            $goods_spec_format = json_decode($goods_spec_format, true);
+            $count = count($goods_spec_format);
+            foreach ($goods_spec_format as $k => $v) {
+                foreach ($v[ 'value' ] as $key => $item) {
+                    if (!in_array($item[ 'spec_value_id' ], $sku_spec_format_arr[ $item[ 'spec_id' ] ])) {
+                        $v[ 'value' ][ $key ][ 'disabled' ] = true;
+                    }
+                }
+                if ($k > 0 || $count == 1) {
+                    foreach ($v[ 'value' ] as $key => $item) {
+                        if (!in_array($item[ 'sku_id' ], $sku_ids)) {
+                            $v[ 'value' ][ $key ][ 'disabled' ] = true;
+                        }
+                    }
+                }
+                $goods_spec_format[ $k ][ 'value' ] = $v[ 'value' ];
+            }
+            return $goods_spec_format;
+        }
+    }
+
+
+    public function getEmptyGoodsSpecFormat($sku_ids, $sku_id)
+    {
+        if (!empty($sku_id) && !empty($sku_ids)) {
+
+            $sku_spec_format = model('goods_sku')->getValue([ [ 'sku_id', '=', $sku_id ] ], 'sku_spec_format');
+            $sku_spec_format = json_decode($sku_spec_format, true);
+            $sku_spec_format = array_column($sku_spec_format, null, 'spec_id');
+
+            $sku_array = [];
+            $spec_dict = [];
+            foreach ($sku_spec_format as $k => $v) {
+                $spec_dict[] = $k;
+            }
+            $sku_spec_list = model('goods_sku')->getList([ [ 'sku_id', 'in', $sku_ids ] ], 'sku_spec_format,sku_id');
+            $sku_spec_list = array_column($sku_spec_list, 'sku_spec_format', 'sku_id');
+            foreach ($sku_spec_list as $sku_key => $sku_spec) {
+                $format = json_decode($sku_spec, true);
+                $format_column = array_column($format, null, 'spec_id');
+                $key = 0;
+                $num = $this->verifySkuSpec($format_column, $sku_spec_format, $key, $spec_dict);
+                if (empty($sku_array)) {
+                    $sku_array = array (
+                        'sku_id' => $sku_key,
+                        'num' => $num
+                    );
+                } else {
+                    if ($num > $sku_array[ 'num' ]) {
+                        $sku_array = array (
+                            'sku_id' => $sku_key,
+                            'num' => $num
+                        );
+                    }
+                }
+            }
+            $temp_sku_id = $sku_array[ 'sku_id' ] ?? 0;
+            return $temp_sku_id;
+        }
+        return 0;
+    }
+
+
+    public function verifySkuSpec($spec1, $spec2, $key, $spec_dict)
+    {
+        $real_key = $spec_dict[ $key ];
+        $spec1_value = $spec1[ $real_key ];
+        $spec2_value = $spec2[ $real_key ];
+        $num = 0;
+        if ($spec1_value[ 'spec_value_id' ] == $spec2_value[ 'spec_value_id' ]) {
+            $num++;
+            $key++;
+            $num += $this->verifySkuSpec($spec1, $spec2, $key, $spec_dict);
+        }
+        return $num;
+
+    }
+
+
 }

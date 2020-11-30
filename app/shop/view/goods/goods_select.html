@@ -39,14 +39,11 @@
 	.select-goods .select-goods-classification .select-goods-classification .classification-item.arrow:after{left: 15px;}
 	.select-goods .select-goods-classification .select-goods-classification .layui-colla-content.classification-item{padding-left: 38px;}
 	.select-goods .select-goods-classification .classification-item:hover{background-color: #f7f7f7;}
-	/*.select-goods .select-goods-classification .classification-item{min-height: 32px;line-height: 32px;}*/
-	/*.select-goods .select-goods-classification > .layui-colla-item > .layui-colla-content{padding-left: 13px;min-height: 32px;line-height: 32px;}*/
 </style>
 {/block}
 {block name="body"}
 <div class="select-goods">
 	<div class="select-goods-left">
-
 		{if $promotion}
 		<dl class="marketing-campaign">
 			<dt>商品</dt>
@@ -54,21 +51,13 @@
 			<dd class="ns-text-color" data-type="">全部商品</dd>
 			{/if}
 			{foreach $promotion_type as $k => $v}
-			{if $promotion && $promotion == $v.type || !$promotion}
-			<dd class="{if $promotion && $promotion == $v.type}ns-text-color{/if}" data-type="{$v.type}">{$v.name}</dd>
-			{/if}
+				{if $promotion && $promotion == $v.type || !$promotion}
+				<dd class="{if $promotion && $promotion == $v.type}ns-text-color{/if}" data-type="{$v.type}">{$v.name}</dd>
+				{/if}
 			{/foreach}
 		</dl>
 		{/if}
-		<!--{if !$promotion}-->
-		<!--<dl class="commodity-group fold">-->
-			<!--<dt>商品分组</dt>-->
-			<!--<dd class="ns-text-color" data-group-id="">全部分组</dd>-->
-			<!--{foreach $label_list as $k => $v}-->
-			<!--<dd data-group-id="{$v.id}">{$v.label_name}</dd>-->
-			<!--{/foreach}-->
-		<!--</dl>-->
-		<!--{/if}-->
+
 		{if !$promotion}
 		<div class="select-goods-classification layui-collapse" lay-accordion lay-filter="oneCategory">
 			<div class="layui-colla-item">
@@ -111,66 +100,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- 筛选面板 可以删除 -->
-		<div class="ns-screen layui-collapse layui-hide">
-			<form class="layui-colla-content layui-form layui-show">
-				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label sm">
-							{if $promotion == "pintuan"}
-							活动名称：
-							{else/}
-							商品名称：
-							{/if}
-						</label>
-						<div class="layui-input-inline">
-							<input type="text" name="goods_name" placeholder="请输入{if $promotion == 'pintuan'}活动名称{else}商品名称{/if}" autocomplete="off" class="layui-input">
-						</div>
-					</div>
-
-					{if $promotion != "pintuan" &&  $promotion != "groupbuy"}
-					<div class="layui-inline">
-						<label class="layui-form-label sm">商品分类：</label>
-						<div class="layui-input-inline">
-							{include file="goods/category_select" /}
-						</div>
-					</div>
-						{if $promotion != "fenxiao"}
-						<div class="layui-inline">
-							<label class="layui-form-label sm">商品类型：</label>
-							<div class="layui-input-inline">
-								<select name="goods_class" lay-filter="goods_class">
-									<option value="">全部</option>
-									<option value="1">实物商品</option>
-									<option value="2">虚拟商品</option>
-								</select>
-							</div>
-						</div>
-						{/if}
-					{/if}
-				</div>
-
-				{if $promotion == ""}
-				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label sm">价格：</label>
-						<div class="layui-input-inline">
-							<input type="number" name="min_price" id="start_sale" lay-verify="int" placeholder="最低价格" class="layui-input" autocomplete="off">
-						</div>
-						<div class="layui-form-mid">-</div>
-						<div class="layui-input-inline">
-							<input type="number" name="max_price" id="end_sale" lay-verify="int" placeholder="最高价格" class="layui-input" autocomplete="off">
-						</div>
-					</div>
-				</div>
-				{/if}
-
-				<div class="ns-form-row sm">
-					<button class="layui-btn ns-bg-color" lay-submit lay-filter="search">筛选</button>
-					<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-				</div>
-			</form>
-		</div>
 
 		<!-- 列表 -->
 		<table id="goods_list" lay-filter="goods_list"></table>
@@ -182,19 +111,7 @@
 	{{# if('{$promotion}'  == "pintuan"){ }}
 	<div class="layui-hide">{{ d.goods_name = d.pintuan_name }}</div>
 	{{# } }}
-	{{# if('{$promotion}'  == "bargain"){ }}
-	<div class="layui-hide">{{ d.goods_id = d.id }}</div>
-	{{# } }}
-
-	{{# if(mode == "spu" && $.inArray(d.goods_id.toString(), selected_id_arr) != -1){ }}
-		{{# if(disabled == 1){ }}
-			<input type="checkbox" data-goods-id="{{d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox" checked disabled>
-		{{# }else{ }}
-		<input type="checkbox" data-goods-id="{{d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox" checked>
-		{{# } }}
-	{{# }else{ }}
-		<input type="checkbox" data-goods-id="{{d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox">
-	{{# } }}
+	<input type="checkbox" data-goods-id="{{d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox">
 	<input type="hidden" data-goods-id="{{d.goods_id}}" name="goods_json" value='{{ JSON.stringify(d) }}' />
 	<input type="hidden" data-goods-id="{{d.goods_id}}" name="goods_sku_list_json" value='{{ JSON.stringify(d.sku_list) }}' />
 </script>
@@ -202,10 +119,6 @@
 <!-- 商品信息 -->
 <script type="text/html" id="goods_info">
 	<div class="ns-table-title">
-		{{# if('{$promotion}'  == "bargain" || '{$promotion}'  == "pintuan"){ }}
-		<div class="layui-hide">{{ d.goods_name = d.sku_name }}{{ d.goods_image = d.sku_image }}</div>
-		{{# } }}
-
 		{{# if(mode == "sku"){ }}
 		<div class="contraction" data-goods-id="{{d.goods_id}}" data-open="0">
 			<span>+</span>
@@ -215,7 +128,6 @@
 		<div class="ns-title-pic" id="goods_img_{{d.goods_id}}">
 			<img layer-src src="{{ns.img(d.goods_image.split(',')[0], 'small')}}"/>
 		</div>
-
 		<div class="ns-title-content">
 			<a href="javascript:;" class="ns-multi-line-hiding ns-text-color" title="{{d.goods_name}}">{{d.goods_name}}</a>
 			{{# if('{$promotion}' != 'pintuan' && '{$promotion}' != 'groupbuy' && '{$promotion}' != 'fenxiao'){ }}
@@ -231,15 +143,7 @@
 	<tr class="sku-list js-sku-list-{{d.list[i].goods_id}}" id="sku_img_{{d.list[i].goods_id}}">
 		<td></td>
 		<td>
-			{{# if(d.checked || (mode == "sku" && $.inArray(d.list[i].sku_id.toString(), selected_id_arr) != -1) ){ }}
-			{{# if(disabled == 1){ }}
-			<input type="checkbox" data-goods-id="{{d.list[i].goods_id}}" data-sku-id="{{d.list[i].sku_id}}" name="goods_sku_checkbox" lay-skin="primary" lay-filter="goods_sku_checkbox" checked disabled>
-			{{# }else{ }}
-			<input type="checkbox" data-goods-id="{{d.list[i].goods_id}}" data-sku-id="{{d.list[i].sku_id}}" name="goods_sku_checkbox" lay-skin="primary" lay-filter="goods_sku_checkbox" checked>
-			{{# } }}
-			{{# }else{ }}
 			<input type="checkbox" data-goods-id="{{d.list[i].goods_id}}" data-sku-id="{{d.list[i].sku_id}}" name="goods_sku_checkbox" lay-skin="primary" lay-filter="goods_sku_checkbox">
-			{{# } }}
 			<input type="hidden" data-sku-id="{{d.list[i].sku_id}}" value='{{ JSON.stringify(d.list[i]) }}' name="goods_sku_json" />
 			<div class="ns-table-title">
 				<div class="ns-title-pic" id="sku_img_{{d.sku_id}}">
@@ -258,28 +162,38 @@
 </script>
 
 <script>
-	var table, form,laytpl,element,
-		select_id = "{$select_id}", //选中商品id
-		selected_id_arr = select_id.length ? select_id.split(',') : [],
-		// select_list = window.parent.select_goods_list ? window.parent.select_goods_list : [], //选中商品所有数据
-		select_list = [], //选中商品所有数据
+	var select_id = "{$select_id}", //选中商品id
+		select_list = [], //选中商品所有数据res
 		mode = "{$mode}", //商品类型
 		max_num = "{$max_num}", //最大商品数量
 		min_num = "{$min_num}", //最小商品数量
 		disabled = "{$disabled}", //不可选中
-		promotion = "{$promotion}",// 营销标识
 		goodsCols = [], //数据源
+		filterData = {promotion_type: '',label_id: '',goods_name:''}, //筛选数据
+
 		goodsIdArr = [],
 		skuIdAll = [],
-		filterData = {promotion_type: '',label_id: '',goods_name:''}; //筛选数据
 
-	if(mode == 'spu'){
+		//------新代码
+		table, form,laytpl,element,
+		selected_id_arr = select_id.length ? select_id.split(',') : [], //已选中的商品id
+		//设置项
+		setItem = {
+			mode: "{$mode}", //商品类型
+			max_num: "{$max_num}", //最大商品数量
+			min_num: "{$min_num}", //最小商品数量
+			disabled: "{$disabled}", //不可选中
+			promotion: "{$promotion}",// 营销标识
+		};
+
+
+	if(setItem.mode == 'spu'){
 		goodsIdArr = selected_id_arr;
 	}else{
 		skuIdAll = selected_id_arr;
 	}
 
-	if (!promotion || promotion == 'all'){
+	if (!setItem.promotion || setItem.promotion == 'all' || setItem.promotion == 'module'){
 		goodsCols = [
 			[
 				{
@@ -307,19 +221,19 @@
 				}
 			]
 		];
-	}else if(promotion == "pintuan"){
+	}else if(setItem.promotion == "pintuan"){
 		goodsCols = [
 			[{
 				unresize: 'false',
 				width: '8%',
 				templet: '#checkbox'
 			},
-			{
-				field: 'pintuan_name',
-				title: '拼团活动',
-				unresize: 'false',
-				width: '20%',
-			},{
+				{
+					field: 'pintuan_name',
+					title: '拼团活动',
+					unresize: 'false',
+					width: '20%',
+				},{
 				title: '拼团商品',
 				unresize: 'false',
 				width: '33%',
@@ -341,7 +255,7 @@
 				width: '13%'
 			}]
 		];
-	}else if(promotion == "groupbuy"){
+	}else if(setItem.promotion == "groupbuy"){
 		goodsCols = [
 			[{
 				unresize: 'false',
@@ -375,7 +289,7 @@
 				width: '15%'
 			}]
 		]
-	}else if(promotion == "fenxiao"){
+	}else if(setItem.promotion == "fenxiao"){
 		goodsCols = [
 			[
 				{
@@ -409,9 +323,7 @@
 				},
 			]
 		]
-	}else if(promotion == "bargain"){
-
-
+	}else if(setItem.promotion == "bargain"){
 		goodsCols = [
 			[
 				{
@@ -450,10 +362,10 @@
 			table = new Table({
 				elem: '#goods_list',
 				url: '{:addon_url("shop/goods/goodsselect")}',
-				where: {is_virtual: "{$is_virtual}",promotion},
+				where: {is_virtual: "{$is_virtual}",promotion: setItem.promotion},
 				cols: goodsCols,
 				callback : function (res) {
-					if(mode == "sku") {
+					if(setItem.mode == "sku") {
 						//存储这sku的具体id
 						$("input[name='goods_checkbox'][data-goods-id]").each(function () {
 							var goods_id = $(this).attr("data-goods-id");
@@ -466,38 +378,36 @@
 									photos: '.img-wrap',
 									anim: 5
 								});
-
 							});
 						});
 					}
+
 					// 更新商品复选框状态
-					if(mode == 'spu') {
+					if(setItem.mode == 'spu') {
 						for (var i=0;i<goodsIdArr.length;i++) {
 							var selected_goods = $("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']");
 							if (selected_goods.length) {
 								$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").prop("checked", true);
-								if (disabled == 1) {
+								if (setItem.disabled == 1) {
 									$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").attr("disabled", "disabled");
 								}
 							}
 						}
 					}
-					if(mode == 'sku'){
+					if(setItem.mode == 'sku'){
 						for (var i=0;i<skuIdAll.length;i++) {
 							var selected_goods_sku = $("input[name='goods_sku_checkbox'][data-sku-id='" + skuIdAll[i] + "']");
 							$("input[name='goods_sku_checkbox'][data-sku-id='" + skuIdAll[i] + "']").prop("checked", true);
 							if (selected_goods_sku.length) {
 								$("input[name='goods_checkbox'][data-goods-id='" + selected_goods_sku.attr("data-goods-id") + "']").prop("checked", true);
-								if (disabled == 1) {
+								if (setItem.disabled == 1) {
 									$("input[name='goods_checkbox'][data-goods-id='" + selected_goods_sku.attr("data-goods-id") + "']").attr("disabled", "disabled");
 								}
 							}
 						}
 					}
 					form.render();
-					// initData();
 				}
-
 			});
 
 			//修改一级分类箭头切换
@@ -554,14 +464,14 @@
 				}
 				else{
 					select_list.remove(goods_id);
-
 					goodsIdArr.remove(goods_id);
 				}
 
+
+				if (setItem.mode == "spu") return false;
 				var skuLen = $("input[name='goods_sku_checkbox'][data-goods-id="+ goods_id +"]").length;
 				if(!skuLen){
 					skuIdAll = [];
-
 				}
 				for (var i = 0; i < skuLen; i++){
 					var skuId = $("input[name='goods_sku_checkbox'][data-goods-id="+ goods_id +"]").eq(i).attr("data-sku-id");
@@ -621,52 +531,9 @@
 				}
 				form.render();
 			});
-
-			//初始化数据
-			function initData(){
-				var goodsLen = $("input[name='goods_checkbox'][data-goods-id]:checked").length;
-
-				//父级
-				for (var i = 0; i < goodsLen; i++){
-					var goodsId = $("input[name='goods_checkbox'][data-goods-id]:checked").eq(i).attr("data-goods-id");
-					var ident = false;
-					for (var k = 0; k < select_list.length; k++){
-						if(select_list[k].goods_id == goodsId){
-							ident = true;
-							break;
-						}
-					}
-
-					if (ident) return;
-
-					json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsId +"]").val());
-					delete json.LAY_INDEX;
-					delete json.LAY_TABLE_INDEX;
-					delete json.create_time;
-
-					//子级
-					var goodsSkuLen = $("input[name='goods_sku_checkbox'][data-goods-id="+ goodsId +"]:checked").length;
-					json.selected_sku_list = [];
-					for (var j = 0; j < goodsSkuLen; j++){
-						var goodsSkuId = $("input[name='goods_sku_checkbox'][data-goods-id="+ goodsId +"]:checked").eq(j).attr("data-sku-id");
-						var skuVal = $("input[name='goods_sku_json'][data-sku-id="+ goodsSkuId +"]").val();
-						json.selected_sku_list.push(JSON.parse(skuVal));
-					}
-					select_list.push(json);
-				}
-
-				// if (!select_list.length) return false;
-				// // select_list
-				// // selected_id_arr
-				// // for (var i)
-				// if(mode == 'spu'){
-				//
-				// }else if(mode == 'sku'){
-				//
-				// }
-			}
 		});
 
+		//商品信息展开
 		$("body").on("click", ".contraction", function () {
 			var goods_id = $(this).attr("data-goods-id");
 			var open = $(this).attr("data-open");
@@ -699,21 +566,13 @@
 		var res = select_list;
 		var num = 0;
 		if (mode == "spu") {
-			// for (var i = 0; i < res.length; i++) {
-			// 	num++;
-			// }
 			num = goodsIdArr.length;
-			if (promotion){
+			if (setItem.promotion){
 				res = goodsIdArr;
 			}
 		} else if (mode == "sku") {
-			// for (var i = 0; i < res.length; i++) {
-			// 	for (var k = 0; k < res[i].selected_sku_list.length; k++) {
-			// 		num++;
-			// 	}
-			// }
 			num = skuIdAll.length;
-			if (promotion){
+			if (setItem.promotion){
 				res = skuIdAll;
 			}
 		}
@@ -777,7 +636,7 @@
 		$(this).addClass("active");
 	},function () {
 		$(this).removeClass("active");
-	})
+	});
 
 	$("body").on("click",".select-goods-left .marketing-campaign dd",function () {
 		$(this).addClass("ns-text-color").siblings().removeClass("ns-text-color");

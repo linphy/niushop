@@ -60,7 +60,7 @@
 <div class="ns-tips layui-collapse">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content">
+		<ul class="layui-colla-content layui-show">
 			<li>设置短信签名、开启模板消息需要审核。</li>
 			<li>审核时间：周一至周日9:30-22:00（法定节假日顺延），工作日预计2小时，非工作日预计4小时。</li>
 			<li>短信数量不足时，请进行短信充值；如有疑问，请联系客服，客服电话：400-886-7993。</li>
@@ -82,10 +82,12 @@
 			<p><strong>手机号：</strong><span class="ns-text-color-dark-gray">{$account_info.mobiles}</span></p>
 			<p><strong>签名：</strong>
 				<span class="ns-text-color-dark-gray">{$sms_config.value.signature}</span>
-				{if $signature_status.auditResult == 1}<span>待审核</span>{elseif $signature_status.auditResult == 3 /}<span>审核失败 <span style="color:red;">（失败原因：{$signature_status.auditMsg}）</span></span>{/if}
-				{if $signature_status.auditResult != 1}
-				<button class="layui-btn layui-btn-primary btn-sign" onclick="addChildSignature('{$sms_config.value.signature}')">修改</button>
+				{if $signature_status.auditResult == 1}
+				<span>待审核</span>
+				{elseif $signature_status.auditResult == 3 /}
+				<span>审核失败 <span style="color:red;">（失败原因：{$signature_status.auditMsg}）</span></span>
 				{/if}
+				<button class="layui-btn layui-btn-primary btn-sign" onclick="addChildSignature('{$sms_config.value.signature}')">管理</button>
 			</p>
 		</div>
 	</div>
@@ -499,29 +501,43 @@
 	}
 
 	function addChildSignature(signature) {
-		signature = signature.replace("【","").replace("】","");
-		layer.prompt({
-			formType: 2,
-			title: '请输入短信签名',
-			value: signature,
-		}, function(value, index, elem){
-			$.ajax({
-				url: ns.url("niusms://shop/sms/addChildSignature"),
-				data: {signature: value},
-				dataType: 'JSON',
-				type: 'POST',
-				success: function (res) {
-					var successList = res.data.successList;
-					var failList = res.data.failList;
-					if(successList.length){
-						layer.msg(successList[0].msg);
-					}else if(failList.length){
-						layer.msg(failList[0].msg);
-					}
-				}
-			});
-			layer.close(index);
-		});
+
+        var url = ns.url("niusms://shop/sms/signlist");
+        //iframe层-父子操作
+        var layerIndex = layer.open({
+            title: "签名管理",
+            type: 2,
+            area: ['1200px', '800px'],
+            // btn: '保存',
+            content: url,
+            end: function () {
+                location.reload();
+            }
+        });
+
+//		signature = signature.replace("【","").replace("】","");
+//		layer.prompt({
+//			formType: 2,
+//			title: '请输入短信签名',
+//			value: signature,
+//		}, function(value, index, elem){
+//			$.ajax({
+//				url: ns.url("niusms://shop/sms/addChildSignature"),
+//				data: {signature: value},
+//				dataType: 'JSON',
+//				type: 'POST',
+//				success: function (res) {
+//					var successList = res.data.successList;
+//					var failList = res.data.failList;
+//					if(successList.length){
+//						layer.msg(successList[0].msg);
+//					}else if(failList.length){
+//						layer.msg(failList[0].msg);
+//					}
+//				}
+//			});
+//			layer.close(index);
+//		});
 	}
 </script>
 <script type="text/html" id="smsDetail">

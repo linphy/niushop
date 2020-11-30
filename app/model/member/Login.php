@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -73,6 +72,7 @@ class Login extends BaseModel
         $info = [];
         foreach ($data as $key => $value) {
             if (in_array($key, ['wx_unionid', 'wx_openid', 'weapp_openid', 'qq_openid', 'ali_openid', 'baidu_openid', 'toutiao_openid'])) {
+                if (empty($value)) return $this->error('', 'MEMBER_NOT_EXIST');
                 $info = model("member")->getInfo(
                     [
                         [$key, '=', $value],
@@ -93,6 +93,7 @@ class Login extends BaseModel
                 $register_res = $register->authRegister($data);
                 if ($register_res['code'] == 0) {
                     $info = model("member")->getInfo([ [ 'member_id', '=', $register_res['data'] ]], 'member_id,username, nickname, mobile, email, status, last_login_time');
+                    $info['is_register'] = 1;
                 }
             }
         }

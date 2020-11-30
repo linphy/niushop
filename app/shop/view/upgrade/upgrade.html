@@ -8,13 +8,15 @@
     .ns-single-filter-box{
         display: block;
     }
+    .upgrade-tips p{margin-bottom: 5px;}
+    .upgrade-tips p:last-child{margin-bottom: 0;}
 </style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
     <div class="layui-colla-item">
         <h2 class="layui-colla-title">操作提示</h2>
-        <ul class="layui-colla-content">
+        <ul class="layui-colla-content layui-show">
             <li>一、建议在系统升级前将网站的文件权限全部修改为777，保证系统备份文件、下载文件和覆盖文件的正常进行</li>
             <li>二、在升级完成后，为保证网站的安全，需要重新设置文件权限。建议进行如下修改</li>
             <li>1、runtime文件夹，upload文件夹依旧为777权限</li>
@@ -245,17 +247,29 @@
                 });
                 return false;
             }
-            window.location.href = ns.url("shop/upgrade/upgradeAction");
+            layer.open({
+                title: '注意事项',
+                area: ['400px'],
+                btn: ['继续'],
+                content: `<div class="upgrade-tips"><p>1、升级前请先检查防火墙以及cc拦截是否已经关闭。</p>
+                        <p>2、强烈建议清理runtime下的子文件夹，做好备份工作（后台程序、数据库），方便后期与售后人员协调。</p>
+                        <p>3、升级完成后，点击一键刷新按钮（授权升级—>系统升级功能），清理runtime缓存，清理浏览器缓存，Ctrl+F5强制刷新。</p>
+                        <p>4、重置自定义首页，可在模板选择中选择。</p></div>`,
+                yes: function () {
+                    window.location.href = ns.url("shop/upgrade/upgradeAction");
+                }
+            });
         });
 
         $("#refresh_btn").click(function () {
+            var index = layer.load(2);
             $.ajax({
                 type: "post",
                 url: ns.url('shop/upgrade/refresh'),
                 dataType: "JSON",
                 success: function (res) {
-                    console.log(res);
                     layer.msg(res.message);
+                    layer.close(index);
                 }
             });
         });

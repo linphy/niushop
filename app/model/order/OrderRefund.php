@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -48,6 +47,8 @@ class OrderRefund extends BaseModel
     // 卖家拒绝退款
     const REFUND_DIEAGREE = -1;
 
+    // 卖家关闭退款
+    const REFUND_CLOSE = -2;
 
     const ONLY_REFUNDS = 1;//仅退款
     const A_REFUND_RETURN = 2;//退款退货
@@ -56,7 +57,6 @@ class OrderRefund extends BaseModel
      * @var unknown
      */
     public $order_refund_status = [
-
         0 => [
             'status' => 0,
             'name' => '',
@@ -85,6 +85,11 @@ class OrderRefund extends BaseModel
                     'title' => '拒绝',
                     'color' => ''
                 ],
+                [
+                    'event' => 'orderRefundClose',
+                    'title' => '关闭维权',
+                    'color' => ''
+                ]
             ],
             'member_action' => [
                 [
@@ -103,6 +108,11 @@ class OrderRefund extends BaseModel
                     'title' => '转账',
                     'color' => ''
                 ],
+                [
+                    'event' => 'orderRefundClose',
+                    'title' => '关闭维权',
+                    'color' => ''
+                ]
             ],
             'member_action' => [
 
@@ -122,7 +132,11 @@ class OrderRefund extends BaseModel
             'status' => self::REFUND_WAIT_DELIVERY,
             'name' => '买家待退货',
             'action' => [
-
+                [
+                    'event' => 'orderRefundClose',
+                    'title' => '关闭维权',
+                    'color' => ''
+                ]
             ],
             'member_action' => [
                 [
@@ -146,6 +160,11 @@ class OrderRefund extends BaseModel
                     'title' => '拒绝',
                     'color' => ''
                 ],
+                [
+                    'event' => 'orderRefundClose',
+                    'title' => '关闭维权',
+                    'color' => ''
+                ]
             ],
             'member_action' => [
 
@@ -160,6 +179,11 @@ class OrderRefund extends BaseModel
                     'title' => '转账',
                     'color' => ''
                 ],
+                [
+                     'event' => 'orderRefundClose',
+                     'title' => '关闭维权',
+                     'color' => ''
+                ]
             ],
             'member_action' => [
 
@@ -169,7 +193,11 @@ class OrderRefund extends BaseModel
             'status' => self::REFUND_DIEAGREE,
             'name' => '卖家拒绝',
             'action' => [
-
+                [
+                    'event' => 'orderRefundClose',
+                    'title' => '关闭维权',
+                    'color' => ''
+                ]
             ],
             'member_action' => [
                 [
@@ -183,7 +211,8 @@ class OrderRefund extends BaseModel
                     'color' => ''
                 ],
             ]
-        ],
+        ]
+
     ];
 
     /**
@@ -269,7 +298,7 @@ class OrderRefund extends BaseModel
      * @param int $action_userid
      * @param string $action_username
      */
-    public function addOrderRefundLog($order_goods_id, $refund_status, $action, $action_way, $action_userid, $action_username)
+    public function addOrderRefundLog($order_goods_id, $refund_status, $action, $action_way, $action_userid, $action_username, $desc = '')
     {
         $data = [
             'order_goods_id' => $order_goods_id,
@@ -278,7 +307,8 @@ class OrderRefund extends BaseModel
             'action_way' => $action_way,
             'action_userid' => $action_userid,
             'username' => $action_username,
-            'action_time' => time()
+            'action_time' => time(),
+            'desc' => $desc
         ];
         $res = model('order_refund_log')->add($data);
         return $res;
@@ -364,6 +394,13 @@ class OrderRefund extends BaseModel
             $data[ 'refund_status_name' ] = $this->order_refund_status[ 0 ][ "name" ];
             $data[ 'refund_status_action' ] = json_encode($this->order_refund_status[ 0 ], JSON_UNESCAPED_UNICODE);
             $data[ 'refund_type' ] = 0;
+            //重置部分字段
+            $data[ "refund_address" ] = "";
+            $data[ "refund_delivery_remark" ] = "";
+            $data[ "refund_remark" ] = "";
+            $data[ "refund_delivery_name" ] = "";
+            $data[ "refund_delivery_no" ] = "";
+            $data[ "refund_reason" ] = "";
             $res = model('order_goods')->update($data, [ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
 
             //验证订单锁定状态
@@ -439,19 +476,13 @@ class OrderRefund extends BaseModel
             $data[ 'refund_status_action' ] = json_encode($this->order_refund_status[ self::REFUND_DIEAGREE ], JSON_UNESCAPED_UNICODE);
             $data[ "refund_refuse_reason" ] = $refund_refuse_reason;
 
-            //重置部分字段
-            $data[ "refund_address" ] = "";
-            $data[ "refund_delivery_remark" ] = "";
-            $data[ "refund_remark" ] = "";
-            $data[ "refund_delivery_name" ] = "";
-            $data[ "refund_delivery_no" ] = "";
-            $data[ "refund_reason" ] = "";
             $data[ "refund_action_time" ] = time();
             $res = model('order_goods')->update($data, [ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
             //验证订单锁定状态
             $lock_result = $this->verifyOrderLock($order_goods_info[ "order_id" ]);
 
-            $this->addOrderRefundLog($data[ 'order_goods_id' ], $data[ 'refund_status' ], '卖家拒绝退款', 2, $user_info[ 'uid' ], $user_info[ 'username' ]);
+            $log_desc = empty($refund_refuse_reason) ? '' : '拒绝原因：' . $refund_refuse_reason;
+            $this->addOrderRefundLog($data[ 'order_goods_id' ], $data[ 'refund_status' ], '卖家拒绝退款', 2, $user_info[ 'uid' ], $user_info[ 'username' ], $log_desc);
             event("OrderRefundRefuse", $data);
             model('order_goods')->commit();
 
@@ -975,4 +1006,43 @@ class OrderRefund extends BaseModel
         return $res;
     }
 
+    /**
+     * 关闭退款
+     * @param $order_goods_id
+     * @param $site_id
+     */
+    public function orderRefundClose($order_goods_id, $site_id, $user_info){
+        $order_goods_info = model('order_goods')->getInfo([ 'order_goods_id' => $order_goods_id, 'site_id' => $site_id ]);
+        if (empty($order_goods_info)) {
+            return $this->error();
+        }
+        model('order_goods')->startTrans();
+        try {
+            $data = [
+                'order_goods_id' => $order_goods_id,
+                'refund_status' => 0,
+                'refund_status_name' => $this->order_refund_status[ 0 ][ "name" ],
+                'refund_status_action' => json_encode($this->order_refund_status[ 0 ], JSON_UNESCAPED_UNICODE),
+                'refund_type' => 0,
+                'refund_address' => '',
+                'refund_delivery_remark' => '',
+                'refund_remark' => '',
+                'refund_delivery_name' => '',
+                'refund_delivery_no' => '',
+                'refund_reason' => ''
+            ];
+            $res = model('order_goods')->update($data, [ 'order_goods_id' => $order_goods_id ]);
+
+            //验证订单锁定状态
+            $lock_result = $this->verifyOrderLock($order_goods_info[ "order_id" ]);
+
+            $this->addOrderRefundLog($data[ 'order_goods_id' ], 0, '卖家关闭本次维权', 2, $user_info[ 'uid' ], $user_info[ 'username' ]);
+            event('memberCancelRefund', $data);//传入订单类型以及订单项id
+            model('order_goods')->commit();
+            return $this->success();
+        } catch (\Exception $e) {
+            model('order_goods')->rollback();
+            return $this->error('', $e->getMessage());
+        }
+    }
 }

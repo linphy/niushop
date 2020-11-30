@@ -31,14 +31,24 @@
 				<div class="layui-input-inline">
 					<div class="upload-img-block">
 						<div class="upload-img-box">
-							<div class="ns-upload-default">
-								<img src="SHOP_IMG/upload_img.png" />
-								<p>点击上传</p>
+							<div class="ns-upload-default"  id="companyLOGO">
+								<div class="upload">
+									<img src="SHOP_IMG/upload_img.png" />
+									<p>点击上传</p>
+								</div>
 							</div>
+							<div class="operation"  >
+								<div>
+									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+									<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+								</div>
+								<div class="replace_img js-replace">点击替换</div>
+							</div>
+							<input type="hidden" name="logo"/>
 						</div>
-						<p id="companyLOGO" class="no-replace">替换</p>
+						<!-- <p id="companyLOGO" class="no-replace">替换</p>
 						<input type="hidden" name="logo"/>
-						<i class="del">x</i>
+						<i class="del">x</i> -->
 					</div>
 				</div>
 			</div>
@@ -153,15 +163,24 @@
 				<label class="layui-form-label img-upload-lable">打印背景图：</label>
 				<div class="layui-input-block">
 					<div class="upload-img-block">
-						<div class="upload-img-box">
-							<div class="ns-upload-default">
-								<img src="SHOP_IMG/upload_img.png" />
-								<p>点击上传</p>
+						<div class="upload-img-box" >
+							<div class="ns-upload-default" id="printBackground">
+								<div class="upload">
+									<img src="SHOP_IMG/upload_img.png" />
+									<p>点击上传</p>
+								</div>
 							</div>
+							<div class="operation"  >
+								<div >
+									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+									<i title="删除图片" class="layui-icon layui-icon-delete js-delete" ></i>
+								</div>
+								<div class="replace_img js-replace">点击替换</div>
+							</div>
+							<input type="hidden" name="background_image" />   <!-- 打印背景图 -->
 						</div>
-						<p id="printBackground" class="no-replace">替换</p>
-						<input type="hidden" name="background_image" />   <!-- 打印背景图 -->
-						<i class="del">x</i>
+						<!-- <p id="printBackground" class="no-replace">替换</p>
+						<i class="del">x</i> -->
 					</div>
 				</div>
 				<div class="ns-word-aux">打印模板背景图</div>

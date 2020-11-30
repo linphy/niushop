@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -45,11 +44,14 @@ class Local extends BaseShop
                 return $local_model->error([], '店铺地址尚为配置');
             }
 
-            $start_time = input('start_time', '');
-            $end_time   = input('end_time', '');
-            if (empty($start_time) || empty($end_time)) {
+            $start_time = input('start_time', 0);
+            $end_time   = input('end_time', 0);
+            $time_is_open   = input('time_is_open', 0);
+            $time_type   = input('time_type', 0);
+
+            if (empty($time_is_open) || empty($time_type)) {
                 $start_time = 0;
-                $end_time   = 0;
+                $end_time = 0;
             }
             $data = [
                 'type'            => input('type', 'default'),//配送方式  default 商家自配送  other 第三方配送

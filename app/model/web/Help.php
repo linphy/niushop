@@ -5,8 +5,7 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
- * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
- * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
+
  * =========================================================
  */
 
@@ -101,7 +100,7 @@ class Help extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getHelpPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc', $field = 'id, title, content, class_id, class_name, sort, link_address, create_time')
+    public function getHelpPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'sort asc,create_time desc', $field = 'id, title, content, class_id, class_name, sort, link_address, create_time')
     {
         $data  = json_encode([$condition, $field, $order, $page, $page_size]);
         $cache = Cache::get("help_getHelpPageList_" . $data);
@@ -187,7 +186,7 @@ class Help extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getHelpClassPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'class_id, class_name, sort')
+    public function getHelpClassPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'sort asc,create_time desc', $field = 'class_id, class_name, sort')
     {
         $data  = json_encode([$condition, $field, $order, $page, $page_size]);
         $cache = Cache::get("help_class_getHelpClassInfo_" . $data);
