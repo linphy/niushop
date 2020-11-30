@@ -31,6 +31,7 @@ var vue = new Vue({
 			bgColor: "#ff454f",
 			topStyle: 'default',
 			menuStyle: "palace",
+			level:1,
 			insertGap: 0, // 插入间隔
 			menuList: [
 				{

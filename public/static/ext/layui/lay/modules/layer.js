@@ -624,7 +624,8 @@
 						})
 					};
 				if (h(), 0 === u.length) return;
-				if (n || p.off("click").on("click", t.img, function() {
+				if (n || p.off("click").on("click", t.img, function(event) {
+						event.stopPropagation();  
 						var e = i(this),
 							n = e.attr("layer-index");
 						r.photos(i.extend(t, {

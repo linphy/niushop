@@ -86,7 +86,7 @@ var textAlignHtml = '<div class="layui-form-item">';
 		textAlignHtml += '<label class="layui-form-label sm">{{data.label}}</label>';
 		textAlignHtml += '<div class="layui-input-block">';
 			textAlignHtml += '<template v-for="(item,index) in list" v-bind:k="index">';
-				textAlignHtml += '<div v-on:click="parent[data.field]=item.value" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (parent[data.field]==item.value) }"><i class="layui-anim layui-icon">&#xe643;</i><div>{{item.label}}</div></div>';
+				textAlignHtml += '<div v-on:click="parent[data.field]=item.value" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (parent[data.field]==item.value) }"><i class="layui-anim layui-icon">&#xe63f;</i><div>{{item.label}}</div></div>';
 			textAlignHtml += '</template>';
 		textAlignHtml += '</div>';
 	textAlignHtml += '</div>';
@@ -152,7 +152,8 @@ Vue.component("slide", {
 				return {
 					field: "height",
 					label: "空白高度",
-					max: 100
+					max: 100,
+					min: 0
 				};
 			}
 		}
@@ -162,6 +163,7 @@ Vue.component("slide", {
 		if (this.data.label == undefined) this.data.label = "空白高度";
 		if (this.data.field == undefined) this.data.field = "height";
 		if (this.data.max == undefined) this.data.max = 100;
+		if (this.data.min == undefined) this.data.min = 0;
 
 		var _self = this;
 		setTimeout(function () {
@@ -171,6 +173,7 @@ Vue.component("slide", {
 				var ins = slider.render({
 					elem: '#'+_self.id,
 					max: _self.data.max,
+					min: _self.data.min,
 					tips: false,
 					theme: '#FF6A00',
 					value : _self.parent[_self.data.field],
@@ -190,6 +193,7 @@ Vue.component("slide", {
 			if (val.field == undefined) val.field = oldVal.field;
 			if (val.label == undefined) val.label = "空白高度";
 			if (val.max == undefined) val.max = 100;
+			if (val.min == undefined) val.min = 0;
 		},
 	},
 	template: sliderHtml,
@@ -205,8 +209,10 @@ Vue.component("slide", {
 var linkHtml = '<div class="layui-form-item component-links">';
 		linkHtml += '<label class="layui-form-label sm">{{myData[0].label}}</label>';
 		linkHtml += '<div class="layui-input-block">';
-			linkHtml += '<span style="margin-right: 10px;font-size: 12px;display: inline-block;height: 36px;line-height: 36px;vertical-align: top;white-space: nowrap;overflow: hidden;max-width: 80%;text-overflow: ellipsis;" v-if="myData[0].field.title" v-bind:title="myData[0].field.title">{{myData[0].field.title}}</span>';
-			linkHtml += '<button v-for="(item,index) in myData[0].operation" class="layui-btn layui-btn-primary sm" v-on:click="selected(item.key,item.method)">{{item.label}}</button>';
+			linkHtml += '<span style="display: none;" v-if="myData[0].field.title" v-bind:title="myData[0].field.title"></span>';
+			// linkHtml += '<button v-for="(item,index) in myData[0].operation" class="layui-btn layui-btn-primary sm" v-on:click="selected(item.key,item.method)">{{item.label}}</button>';
+			linkHtml += '<span v-if="myData[0].field.title" v-for="(item,index) in myData[0].operation" class="sm ns-text-color" v-on:click="selected(item.key,item.method)"><span :title="myData[0].field.title">{{myData[0].field.title}}</span><i class="layui-icon layui-icon-right"></i></span>';
+			linkHtml += '<span v-else v-for="(item,index) in myData[0].operation" class="sm" style="color: #323233;" v-on:click="selected(item.key,item.method)"><span :title="item.label">{{item.label}}</span><i class="layui-icon layui-icon-right"></i></span>';
 		linkHtml += '</div>';
 	linkHtml += '</div>';
 
@@ -232,7 +238,7 @@ Vue.component("nc-link", {
 					
 					//批量操作对象
 					operation: [
-						{key: "system", method: '', label: "选择"}
+						{key: "system", method: '', label: "请选择链接"}
 					],
 					supportDiyView: ""
 				};
@@ -253,7 +259,7 @@ Vue.component("nc-link", {
 		
 		if (this.data.label == undefined) this.data.label = "链接地址";
 		
-		if (this.data.operation == undefined) this.data.operation = [{ key : "system", method : '' , label: "选择" }];
+		if (this.data.operation == undefined) this.data.operation = [{ key : "system", method : '' , label: "请选择链接" }];
 
 	},
 	watch: {
@@ -265,7 +271,7 @@ Vue.component("nc-link", {
 			
 			if (this.data.label == undefined) this.data.label = "链接地址";
 			
-			if (this.data.operation == undefined) this.data.operation = [{ key : "system", method : '' , label: "选择" }];
+			if (this.data.operation == undefined) this.data.operation = [{ key : "system", method : '' , label: "请选择链接" }];
 
 			this.myData[0].field= this.data.field;
 
@@ -312,13 +318,16 @@ Vue.component("nc-link", {
 });
 
 //[颜色]属性组件
-var colorHtml = '<div class="layui-form-item">';
-		colorHtml += '<label class="layui-form-label sm">{{d.label}}</label>';
-		colorHtml += '<div class="layui-input-block">';
-			colorHtml += '<div v-bind:id="class_name" class="picker colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
-			// colorHtml += '<div v-bind:id="class_name" v-bind:class="class_name" class="colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
-			colorHtml += '<span class="color-selector-reset" v-on:click="reset()">重置</span>';
-		colorHtml += '</div>';
+var colorHtml = '<div class="layui-form-item flex">';
+	colorHtml += 	'<div class="flex_left">';
+	colorHtml += 		'<label class="layui-form-label sm">{{d.label}}</label>';
+	colorHtml += 		'<div class="curr_color">{{parent[d.field]}}</div>';
+	colorHtml += 	'</div>';
+	colorHtml += 	'<div class="layui-input-block flex_fill">';
+	colorHtml += 		'<span class="color-selector-reset" v-on:click="reset()">重置</span>';
+	colorHtml += 		'<div v-bind:id="class_name" class="picker colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
+		// colorHtml += '<div v-bind:id="class_name" v-bind:class="class_name" class="colorSelector"><div v-bind:style="{ background : parent[d.field] }"></div></div>';
+	colorHtml += 	'</div>';
 	colorHtml += '</div>';
 
 /**
@@ -554,12 +563,13 @@ var imageHtml = '<div @click="uploadImg" v-show="condition" class="img-block lay
 				imageHtml += '<template v-if="myData.data[myData.field]">';
 					imageHtml += '<img v-bind:src="changeImgUrl(myData.data[myData.field])"/>';
 					imageHtml += '<span>更换图片</span>';
-					imageHtml += '<i class="del" v-on:click.stop="del()" data-disabled="1">x</i>';
+					// imageHtml += '<i class="del" v-on:click.stop="del()" data-disabled="1" v-if = "isShow == true">x</i>';
 				imageHtml += '</template>';
 				
 				imageHtml += '<template v-else>';
 					imageHtml += '<i class="add">+</i>';
-					imageHtml += '<span v-if="myData.text">{{myData.text}}</span>';
+					// imageHtml += '<i class="del" v-on:click.stop="del()" data-disabled="1">x</i>';
+					// imageHtml += '<span v-if="myData.text">{{myData.text}}</span>';
 				imageHtml += '</template>';
 				
 			imageHtml += '</div>';
@@ -586,6 +596,14 @@ Vue.component("img-upload", {
 			}
 		},
 		condition: {
+			type: Boolean,
+			default: true
+		},
+		currIndex: {
+			type: Number,
+			default: 0
+		},
+		isShow:{
 			type: Boolean,
 			default: true
 		}
@@ -635,6 +653,136 @@ Vue.component("img-upload", {
 	},
 	methods: {
 		del: function () {
+			// console.log(this.$parent.list)
+			this.$parent.list.splice(this.currIndex,1)
+			// this.data.data[this.data.field] = "";
+		},
+		
+		//转换图片路径
+		changeImgUrl: function (url) {
+			if (url == null || url == "") return '';
+			else return ns.img(url);
+		},
+		uploadImg: function() {
+			var self = this;
+			if (post == 'store') post += '://store';
+			if (post != 'store://store') {
+				openAlbum(function (obj) {
+					for (var i = 0; i < obj.length; i++) {
+						self.data.data[self.data.field] = obj[i].pic_path;
+						self.data.data.imgWidth = obj[i].pic_spec.split("*")[0];
+						self.data.data.imgHeight = obj[i].pic_spec.split("*")[1];
+					}
+				}, 1);
+			}
+			/* openAlbum(function (data) {
+				for (var i = 0; i < data.length; i++) {
+					self.data.data[self.data.field] = data[i].pic_path;
+				}
+			}, 1); */
+		}
+	}
+});
+
+
+//[图片上传]组件
+var imageSecHtml = '<div @click="uploadImg" v-show="condition" class="img-block layui-form ns-text-color" :id="id" v-bind:class="{ \'has-choose-image\' : (myData.data[myData.field]) }">';
+			imageSecHtml += '<div>';
+				imageSecHtml += '<template v-if="myData.data[myData.field]">';
+					imageSecHtml += '<img v-bind:src="changeImgUrl(myData.data[myData.field])"/>';
+					imageSecHtml += '<span>更换图片</span>';
+					imageSecHtml += '<i class="del" v-on:click.stop="del()" data-disabled="1" v-if = "isShow == true">x</i>';
+				imageSecHtml += '</template>';
+				
+				imageSecHtml += '<template v-else>';
+					imageSecHtml += '<i class="add">+</i>';
+					imageSecHtml += '<i class="del" v-on:click.stop="del()" data-disabled="1">x</i>';
+					// imageSecHtml += '<span v-if="myData.text">{{myData.text}}</span>';
+				imageSecHtml += '</template>';
+				
+			imageSecHtml += '</div>';
+	imageSecHtml += '</div>';
+
+/**
+ * 图片上传
+ * 参数说明：
+ * data：{ field : 字段名, value : 值(默认:14), 'label' : 文本标签(默认:文字大小) }
+ */
+Vue.component("img-sec-upload", {
+	
+	template: imageSecHtml,
+	props: {
+		data: {
+			type: Object,
+			default: function () {
+				return {
+					data: {},
+					field: "imageUrl",
+					callback: null,
+					text: "添加图片"
+				};
+			}
+		},
+		condition: {
+			type: Boolean,
+			default: true
+		},
+		currIndex: {
+			type: Number,
+			default: 0
+		},
+		isShow:{
+			type: Boolean,
+			default: true
+		}
+	},
+	data: function () {
+		return {
+			myData: this.data,
+			upload : null,
+			id : ns.gen_non_duplicate(10),
+			// parent: (Object.keys(this.$parent.data).length) ? this.$parent.data : this.data,
+		};
+	},
+	watch: {
+		data: function (val, oldVal) {
+			if (val.field == undefined) val.field = oldVal.field;
+			if (val.text == undefined) val.text = "添加图片";
+			
+			this.myData = val;
+		}
+	},
+	created: function () {
+
+		if (this.data.field == undefined) this.data.field = "imageUrl";
+		if (this.data.data[this.data.field] == undefined) this.$set(this.data.data, this.data.field, "");
+		if (this.data.text == undefined) this.data.text = "添加图片";
+		
+		this.id = ns.gen_non_duplicate(10);
+		
+		var self = this;
+		setTimeout(function () {
+			if (post == 'store') post += '://store';
+			if (post == 'store://store') {
+				var url = ns.url(post + "/upload/image");
+				self.upload = new Upload({
+					elem: '#' + self.id,
+					url : url,
+					callback:function(res) {
+						self.data.data[self.data.field] = res.data.pic_path;
+						self.data.data.imgWidth = res.data.pic_spec.split("*")[0];
+						self.data.data.imgHeight = res.data.pic_spec.split("*")[1];
+						if (self.callback) self.data.callback.call(this);
+					}
+				});
+			}
+		},20);
+		
+	},
+	methods: {
+		del: function () {
+			// console.log(this.$parent.list)
+			// this.$parent.list.splice(this.currIndex,1)
 			this.data.data[this.data.field] = "";
 		},
 		
@@ -647,9 +795,11 @@ Vue.component("img-upload", {
 			var self = this;
 			if (post == 'store') post += '://store';
 			if (post != 'store://store') {
-				openAlbum(function (data) {
-					for (var i = 0; i < data.length; i++) {
-						self.data.data[self.data.field] = data[i].pic_path;
+				openAlbum(function (obj) {
+					for (var i = 0; i < obj.length; i++) {
+						self.data.data[self.data.field] = obj[i].pic_path;
+						self.data.data.imgWidth = obj[i].pic_spec.split("*")[0];
+						self.data.data.imgHeight = obj[i].pic_spec.split("*")[1];
 					}
 				}, 1);
 			}

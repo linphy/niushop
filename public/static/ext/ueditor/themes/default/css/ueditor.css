@@ -129,7 +129,7 @@ div.edui-box {
 .edui-default .edui-toolbar .edui-splitbutton,
 .edui-default .edui-toolbar .edui-menubutton,
 .edui-default .edui-toolbar .edui-combox {
-    margin: 1px;
+    margin: 2px;
 }
 /*UI工具栏、编辑区域、底部*/
 .edui-default .edui-editor {
@@ -1748,7 +1748,7 @@ div.edui-box {
 .edui-default .edui-toolbar .edui-separator {
     width: 2px;
     height: 20px;
-    margin: 2px 4px 2px 3px;
+    margin: 3px 4px 3px 3px;
     background: url(../images/icons.png) -181px 0;
     background: url(../images/icons.gif) -181px 0 \9;
 }

@@ -809,19 +809,25 @@ class PHPExcel_Cell
 
         //    We also use the language construct isset() rather than the more costly strlen() function to match the length of $pString
         //        for improved performance
-        if (isset($pString{0})) {
-            if (!isset($pString{1})) {
+        $pp0 = substr($pString, 0, 1);
+        $pp1 = substr($pString, 1, 1);
+        $pp2 = substr($pString, 2, 1);
+        $pp3 = substr($pString, 3, 1);
+        
+        if ($pp0) {
+           
+            if (!$pp1) {
                 $_indexCache[$pString] = $_columnLookup[$pString];
                 return $_indexCache[$pString];
-            } elseif (!isset($pString{2})) {
-                $_indexCache[$pString] = $_columnLookup[$pString{0}] * 26 + $_columnLookup[$pString{1}];
+            } elseif (!$pp2) {
+                $_indexCache[$pString] = $_columnLookup[substr($pString, 0, 1)] * 26 + $_columnLookup[substr($pString, 1, 1)];
                 return $_indexCache[$pString];
-            } elseif (!isset($pString{3})) {
-                $_indexCache[$pString] = $_columnLookup[$pString{0}] * 676 + $_columnLookup[$pString{1}] * 26 + $_columnLookup[$pString{2}];
+            } elseif (!$pp3) {
+                $_indexCache[$pString] = $_columnLookup[substr($pString, 0, 1)] * 676 + $_columnLookup[substr($pString, 1, 1)] * 26 + $_columnLookup[substr($pString, 2, 1)];
                 return $_indexCache[$pString];
             }
         }
-        throw new PHPExcel_Exception("Column string index can not be " . ((isset($pString{0})) ? "longer than 3 characters" : "empty"));
+        throw new PHPExcel_Exception("Column string index can not be " . ((isset($pp0)) ? "longer than 3 characters" : "empty"));
     }
 
     /**

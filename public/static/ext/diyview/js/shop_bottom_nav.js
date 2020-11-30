@@ -2,12 +2,23 @@
  * 底部导航·组件
  */
 var bottomMenuHtml = '<div class="bottom-menu-config">';
-		bottomMenuHtml += '<div class="layui-form-item">';
+		bottomMenuHtml += '<div class="template-edit-title"><h3>导航样式设置</h3><i onclick="closeBox(this)" class="layui-icon layui-icon-down"></i></div>';
+		bottomMenuHtml += '<div>';
+		bottomMenuHtml += '<div class="layui-form-item ns-icon-radio">';
 			bottomMenuHtml += '<label class="layui-form-label sm">导航类型</label>';
 			bottomMenuHtml += '<div class="layui-input-block">';
-				bottomMenuHtml += '<template v-for="(item,index) in typeList" v-bind:k="index">';
-					bottomMenuHtml += '<div v-on:click="($parent.data.type=item.value)" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : ($parent.data.type==item.value) }"><i class="layui-anim layui-icon">&#xe643;</i><div>{{item.label}}</div></div>';
-				bottomMenuHtml += '</template>';
+				bottomMenuHtml += '<template v-for="(item, index) in typeList" v-bind:k="index">'
+					bottomMenuHtml += '<span :class="[item.value == data.type ? \'\' : \'layui-hide\']">{{item.label}}</span>'
+				bottomMenuHtml += '</template>'
+				bottomMenuHtml += '<ul class="ns-icon">'
+					bottomMenuHtml += '<li v-for="(item, index) in typeList" v-bind:k="index" v-bind:class="{\'ns-text-color ns-border-color ns-bg-color-diaphaneity\':data.type==item.value}" v-on:click="data.type=item.value">'
+						bottomMenuHtml += '<img v-if="data.type==item.value" :src="item.selectedSrc" />'
+						bottomMenuHtml += '<img v-else :src="item.src" />'
+					bottomMenuHtml += '</li>'
+				bottomMenuHtml += '</ul>'
+				// bottomMenuHtml += '<template v-for="(item,index) in typeList" v-bind:k="index">';
+				// 	bottomMenuHtml += '<div v-on:click="($parent.data.type=item.value)" v-bind:class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : ($parent.data.type==item.value) }"><i class="layui-anim layui-icon">&#xe63f;</i><div>{{item.label}}</div></div>';
+				// bottomMenuHtml += '</template>';
 			bottomMenuHtml += '</div>';
 		bottomMenuHtml += '</div>';
 
@@ -16,19 +27,26 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 		bottomMenuHtml += '<color v-show="$parent.data.type == 1 || $parent.data.type == 3"></color>';
 		bottomMenuHtml += '<color v-bind:data="{ field: \'textHoverColor\', label: \'选中颜色\' }" v-show="$parent.data.type == 1 || $parent.data.type == 3"></color>';
 
-		bottomMenuHtml += '<div class="layui-form-item">';
-			bottomMenuHtml += '<label class="layui-form-label sm">导航悬浮</label>';
-			bottomMenuHtml += '<div class="layui-input-block">';
-				bottomMenuHtml += '<div class="layui-unselect layui-form-switch" v-bind:class="{ \'layui-form-onswitch\' : $parent.data.bulge }" v-on:click="$parent.data.bulge=!$parent.data.bulge"><em></em><i></i></div>';
-			bottomMenuHtml += '</div>';
+		// bottomMenuHtml += '<div class="layui-form-item ns-checkbox-wrap">';
+		// 	bottomMenuHtml += '<label class="layui-form-label sm">导航悬浮</label>';
+		// 	bottomMenuHtml += '<div class="layui-input-block">';
+		// 		bottomMenuHtml += '<span v-if="$parent.data.bulge == true">是</span>';
+		// 		bottomMenuHtml += '<span v-else>否</span>'
+		// 		bottomMenuHtml += '<div v-if="$parent.data.bulge == true" v-on:click="$parent.data.bulge=!$parent.data.bulge" class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>'
+		// 		bottomMenuHtml += '<div v-else v-on:click="$parent.data.bulge=!$parent.data.bulge" class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>'
+		// 		// bottomMenuHtml += '<div class="layui-unselect layui-form-switch" v-bind:class="{ \'layui-form-onswitch\' : $parent.data.bulge }" v-on:click="$parent.data.bulge=!$parent.data.bulge"><em></em><i></i></div>';
+		// 	bottomMenuHtml += '</div>';
+		// bottomMenuHtml += '</div>';
 		bottomMenuHtml += '</div>';
 
-		bottomMenuHtml += '<p class="hint">当有5个底部导航时，中间导航会悬浮显示</p>';
-
+		
+		bottomMenuHtml += '<div class="template-edit-title"><h3>导航内容设置</h3><i onclick="closeBox(this)" class="layui-icon layui-icon-down"></i></div>';
 		bottomMenuHtml += '<ul>';
+			// bottomMenuHtml += '<p class="hint">当有5个底部导航时，中间导航会悬浮显示</p>';
 			bottomMenuHtml += '<li v-for="(item,index) in menuList">';
 				bottomMenuHtml += '<div class="image-block" v-show="$parent.data.type != 3">';
 					bottomMenuHtml += '<img-upload v-bind:data="{ data : item,field : \'iconPath\' }"></img-upload>';
+					bottomMenuHtml += '<img-upload v-bind:data="{ data : item, field : \'selectedIconPath\', text : \'选中图片\' }" v-show="$parent.data.type != 3"></img-upload>';
 				bottomMenuHtml += '</div>';
 
 				bottomMenuHtml += '<div class="content-block">';
@@ -42,9 +60,9 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 					bottomMenuHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
 				bottomMenuHtml += '</div>';
 
-				bottomMenuHtml += '<div class="img-hover-block">';
-					bottomMenuHtml += '<img-upload v-bind:data="{ data : item, field : \'selectedIconPath\', text : \'选中图片\' }" v-show="$parent.data.type != 3"></img-upload>';
-				bottomMenuHtml += '</div>';
+				// bottomMenuHtml += '<div class="img-hover-block">';
+				// 	bottomMenuHtml += '<img-upload v-bind:data="{ data : item, field : \'selectedIconPath\', text : \'选中图片\' }" v-show="$parent.data.type != 3"></img-upload>';
+				// bottomMenuHtml += '</div>';
 	
 				bottomMenuHtml += '<i class="del" v-on:click="menuList.splice(index,1)" data-disabled="1">x</i>';
 	
@@ -71,9 +89,24 @@ Vue.component("bottom-menu", {
 		return {
 			data: this.$parent.data,
 			typeList: [
-				{label: "图文", value: 1},
-				{label: "图片", value: 2},
-				{label: "文字", value: 3},
+				{
+					label: "图文", 
+					value: 1,
+					src: STATICEXT+"/diyview/img/nav_style/img_text.png",
+					selectedSrc:STATICEXT+"/diyview/img/nav_style/img_text_hover.png"
+				},
+				{
+					label: "图片", 
+					value: 2,
+					src: STATICEXT+"/diyview/img/nav_style/img.png",
+					selectedSrc:STATICEXT+"/diyview/img/nav_style/img_1.png"
+				},
+				{
+					label: "文字",
+					value: 3,
+					src: STATICEXT+"/diyview/img/nav_style/font.png",
+					selectedSrc:STATICEXT+"/diyview/img/nav_style/font_1.png"
+				},
 			],
 			menuList: this.$parent.data.list,
 			showAddItem: true,

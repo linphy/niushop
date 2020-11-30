@@ -89,7 +89,7 @@
 					//判断当前点击的DOM是否允许拖拽
 					var isDraggable = recursiveQuery($(e.target), settings.draggableArea);
 					// 特殊处理：带有该属性的禁用
-					if($(e.target).attr("data-disabled")){
+					if($(e.target).parent().attr("data-disabled") || $(e.target).attr("data-disabled")){
 						return;
 					}
 					if (!isDraggable) {

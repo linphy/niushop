@@ -74,19 +74,53 @@ var vue = new Vue({
 			title: "页面名称",
 			bgColor: "#ffffff",
 			topNavColor: "#ffffff",
+			topNavbg:false,
 			textNavColor: "#333333",
-
+			topNavImg:"",
+			moreLink:{},
 			//是否显示底部导航标识
 			openBottomNav: false,
-
+			navStyle:1,
+			textImgStyleLink:'1',
+			textImgPosLink:'left',
+			mpCollect:false,
 			// 弹框形式，不弹出 -1，首次弹出 1，每次弹出 0
 			popWindow: {
 				imageUrl: "",
 				count: -1,
-				link: {}
+				link: {},
+				imgWidth: '',
+				imgHeight: ''
 			},
 		},
-
+		textImgStyleList:[
+			{
+				text: "图片超链接",
+				value: "1",
+				src: STATICEXT+"/diyview/img/nav_style/img_link.png",
+				selectedSrc:STATICEXT+"/diyview/img/nav_style/img_link_hover.png"
+			},
+			{
+				text: "文字超链接",
+				value: "2",
+				src: STATICEXT+"/diyview/img/nav_style/text_link.png",
+				selectedSrc: STATICEXT+"/diyview/img/nav_style/text_link_hover.png"
+			}
+		],
+		textImgPositionList:[
+			{
+				text: "居左",
+				value: "left",
+				src: STATICEXT+"/diyview/img/nav_style/text_left.png",
+				selectedSrc:STATICEXT+"/diyview/img/nav_style/text_left_hover.png"
+			},
+			{
+				text: "居中",
+				value: "center",
+				src: STATICEXT+"/diyview/img/nav_style/text_right.png",
+				selectedSrc: STATICEXT+"/diyview/img/nav_style/text_right_hover.png"
+			}
+		],
 		//自定义组件集合
 		data: [],
 	},
@@ -107,7 +141,7 @@ var vue = new Vue({
 	
 	methods: {
 		addComponent: function (obj, other) {
-
+			// console.log(other,78)
 			//附加公共字段
 			obj.index = 0;
 			obj.sort = 0;
@@ -124,7 +158,10 @@ var vue = new Vue({
 				obj.is_delete = other.is_delete;
 			}
 
-			if (other && !this.checkComponentIsAdd(obj.type, other.max_count)) return;
+			if (other && !this.checkComponentIsAdd(obj.type, other.max_count)) {
+				this.autoSelected(obj.type);
+				return;	
+			}
 
 			this.data.push(obj);
 
@@ -140,9 +177,13 @@ var vue = new Vue({
 			$(".edit-attribute-placeholder").show();
 			setTimeout(function () {
 				$(".edit-attribute-placeholder").hide();
-				if (self.changeIndex == -1 || (self.changeIndex != self.currentIndex)) {
-					$(".preview-wrap .preview-restore-wrap .dv-wrap").scrollTop($(".diy-view-wrap").height());
+				if(obj.controller == "FloatBtn"){
+				}else{
+					if (self.changeIndex == -1 || (self.changeIndex != self.currentIndex)) {
+						$(".preview-wrap .preview-restore-wrap .dv-wrap").scrollTop($(".diy-view-wrap").height());
+					}
 				}
+				
 			},60);
 
 //			console.log(JSON.stringify(this.data));
@@ -178,6 +219,33 @@ var vue = new Vue({
 			this.isAdd = false;
 			this.refresh();
 		},
+		//选择页面顶部风格
+		selectPageStyle: function() {
+			var self = this;
+			// console.log(self.data)
+			layer.open({
+				type: 1,
+				title: '风格选择',
+				area:['930px','630px'],
+				btn: ['确定', '返回'],
+				content: $(".nav_style").html(),
+				success: function(layero, index) {
+					// $(".layui-layer-content input[name='style']").val(self.data.style);
+					// $("body").on("click", ".layui-layer-content .style-list-con-goods .style-li-goods", function () {
+					// 	$(this).addClass("selected ns-border-color").siblings().removeClass("selected ns-border-color");
+					// 	$(".layui-layer-content input[name='style']").val($(this).index() + 1);
+					// });
+				},
+				yes: function (index, layero) {
+					// self.data.style = $(".layui-layer-content input[name='style']").val();
+					layer.closeAll()
+				}
+			});
+		},
+		// changeStyle(val){
+		// 	console.log(val)
+		// 	this.global.navStyle = val
+		// },
 		
 		//改变当前的删除弹出框的显示状态
 		delComponent: function (i) {
@@ -286,6 +354,7 @@ var vue = new Vue({
 			}
 			
 			for (var i = 0; i < this.data.length; i++) {
+				
 				try {
 					if(this.data[i].verify) {
 						for (var j = 0; j < this.data[i].verify.length; j++) {
@@ -303,6 +372,28 @@ var vue = new Vue({
 				}
 			}
 			return true;
+		},
+		autoSelected(type){
+			for (var i in this.data) {
+				if (this.data[i].type == type) {
+					this.changeCurrentIndex(this.data[i].index);
+					var element = $('.preview-wrap .preview-restore-wrap [data-index="'+ this.data[i].index +'"]'),
+						warp = $(".preview-wrap .preview-restore-wrap .dv-wrap"),
+						warpTop = warp.offset().top,
+						warpBottom = warpTop + warp.height(),
+						elementTop = element.offset().top,
+						elementBottom = elementTop + element.height(),
+						scrollTop = $(".preview-wrap .preview-restore-wrap .dv-wrap").scrollTop();
+
+						if (elementBottom > warpBottom) {
+							scrollTop += (elementBottom - warpBottom) + 2;
+						} else if (warpTop > elementTop) {
+							scrollTop -= (warpTop - elementTop);
+						}
+					$(".preview-wrap .preview-restore-wrap .dv-wrap").animate({ scrollTop: scrollTop }, 300);
+					return;
+				}	
+			} 
 		}
 		// test: function () {
 		// 	var url = "http://localhost/niucloud_service/s10155/Draw/component/Design/headEdit";

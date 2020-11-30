@@ -2472,7 +2472,7 @@ hr {
 	min-height: 18px;
 	border: none !important;
 	margin-right: 0;
-	padding-left: 28px;
+	padding-left: 24px;
 	padding-right: 0;
 	background: 0 0
 }
@@ -2488,9 +2488,10 @@ hr {
 .layui-form-checkbox[lay-skin=primary] i {
 	right: auto;
 	left: 0;
-	width: 16px;
-	height: 16px;
-	line-height: 16px;
+	top: 2px;
+	width: 13px;
+	height: 13px;
+	line-height: 14px;
 	border: 1px solid #d2d2d2;
 	font-size: 12px;
 	border-radius: 2px;
@@ -2616,7 +2617,7 @@ hr {
 
 .layui-form-radio>i {
 	margin-right: 8px;
-	font-size: 22px;
+	font-size: 16px;
 	color: #c2c2c2
 }
 
@@ -5352,6 +5353,7 @@ body .layui-util-face .layui-layer-content {
 }
 
 .layui-anim.layui-icon {
+	position: relative;
 	display: inline-block
 }
 

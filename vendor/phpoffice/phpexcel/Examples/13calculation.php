@@ -195,7 +195,7 @@ echo date('H:i:s') , " Calculated data" , EOL;
 for ($col = 'B'; $col != 'G'; ++$col) {
     for($row = 14; $row <= 41; ++$row) {
         if ((!is_null($formula = $objPHPExcel->getActiveSheet()->getCell($col.$row)->getValue())) &&
-			($formula[0] == '=')) {
+			(substr($formula,0, 1) == '=')) {
             echo 'Value of ' , $col , $row , ' [' , $formula , ']: ' ,
                                $objPHPExcel->getActiveSheet()->getCell($col.$row)->getCalculatedValue() . EOL;
         }
