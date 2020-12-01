@@ -416,7 +416,9 @@
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
-
+.ns-survey-left{
+	flex:1;
+}
 .ns-survey-left>.ns-card-common {
 	margin-top: 40px;
 }
