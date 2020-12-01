@@ -16,6 +16,6 @@ return [
     'status' => 1,
     'author' => '',
     'version' => '4.1.0',
-    'version_no' => '202011270001',
+    'version_no' => '202012010001',
     'content' => '',
 ];

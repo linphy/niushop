@@ -233,6 +233,7 @@
     $("body").on('click','.template-box .template-right .right-list li',function () {
         $(this).addClass("ns-bg-color active").siblings().removeClass("ns-bg-color active");
     })
+	document.getElementById('iframe').contentWindow.location.reload(true);	
 </script>
 
 {/block}
