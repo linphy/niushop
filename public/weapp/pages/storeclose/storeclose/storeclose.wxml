@@ -1,1 +1,1 @@
-<view><view class="{{['head-nav',(isIphoneX)?'active':'']}}"></view><view class="head-return">{{pageVal}}</view><view class="closeBox"><image src="{{$root.g0}}" mode="widthFix"></image><text class="close-title">{{textVal}}</text></view></view>
+<view data-theme="{{themeStyle}}"><view class="closeBox"><image src="{{$root.g0}}" mode="widthFix"></image><text class="close-title">{{textVal}}</text></view></view>

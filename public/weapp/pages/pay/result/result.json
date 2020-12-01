@@ -1,6 +1,6 @@
 {
   "usingComponents": {
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
+    "ns-goods-recommend": "/components/ns-goods-recommend/ns-goods-recommend",
+    "loading-cover": "/components/loading-cover/loading-cover"
   }
 }

@@ -7,7 +7,7 @@
     "diy-index-page": "/components/diy-index-page/diy-index-page",
     "diy-group": "/components/diy-group/diy-group",
     "uni-popup": "/components/uni-popup/uni-popup",
-    "diy-bottom-nav": "/components/diy-bottom-nav/diy-bottom-nav",
-    "loading-cover": "/components/loading-cover/loading-cover"
+    "loading-cover": "/components/loading-cover/loading-cover",
+    "diy-bottom-nav": "/components/diy-bottom-nav/diy-bottom-nav"
   }
 }

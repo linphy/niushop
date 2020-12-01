@@ -1,7 +1,4 @@
 {
   "component": true,
-  "usingComponents": {
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast",
-    "ns-goods-item-col": "/components/ns-goods-item/ns-goods-item-col"
-  }
+  "usingComponents": {}
 }

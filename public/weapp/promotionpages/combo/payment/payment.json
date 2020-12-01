@@ -1,9 +1,7 @@
 {
   "usingComponents": {
     "uni-popup": "/components/uni-popup/uni-popup",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast",
     "loading-cover": "/components/loading-cover/loading-cover",
-    "ns-switch": "/components/ns-switch/ns-switch",
     "ns-payment": "/components/payment/payment"
   }
 }

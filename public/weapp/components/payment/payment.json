@@ -2,7 +2,6 @@
   "component": true,
   "usingComponents": {
     "uni-popup": "/components/uni-popup/uni-popup",
-    "ns-switch": "/components/ns-switch/ns-switch",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
+    "ns-switch": "/components/ns-switch/ns-switch"
   }
 }

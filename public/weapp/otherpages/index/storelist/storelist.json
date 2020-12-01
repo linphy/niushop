@@ -1,8 +1,6 @@
 {
   "navigationBarTitleText": "门店列表",
   "usingComponents": {
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast",
-    "diy-search": "/components/diy-search/diy-search"
+    "loading-cover": "/components/loading-cover/loading-cover"
   }
 }

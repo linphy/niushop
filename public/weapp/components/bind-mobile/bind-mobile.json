@@ -2,6 +2,6 @@
   "component": true,
   "usingComponents": {
     "uni-popup": "/components/uni-popup/uni-popup",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
+    "register-reward": "/components/register-reward/register-reward"
   }
 }

@@ -1,7 +1,6 @@
 {
   "component": true,
   "usingComponents": {
-    "ns-loading": "/components/ns-loading/ns-loading",
-    "ns-goods-item-row": "/components/ns-goods-item/ns-goods-item-row"
+    "ns-loading": "/components/ns-loading/ns-loading"
   }
 }

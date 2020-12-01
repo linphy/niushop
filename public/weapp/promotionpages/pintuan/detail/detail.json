@@ -8,7 +8,6 @@
     "ns-goods-action": "/components/ns-goods-action/ns-goods-action",
     "ns-goods-action-icon": "/components/ns-goods-action-icon/ns-goods-action-icon",
     "ns-goods-action-button": "/components/ns-goods-action-button/ns-goods-action-button",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast",
     "ns-goods-recommend": "/components/ns-goods-recommend/ns-goods-recommend",
     "ns-goods-promotion": "/components/ns-goods-promotion/ns-goods-promotion",
     "to-top": "/components/toTop/toTop"

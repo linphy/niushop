@@ -1,7 +1,6 @@
 {
   "navigationBarTitleText": "退款",
   "usingComponents": {
-    "ns-empty": "/components/ns-empty/ns-empty",
-    "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
+    "ns-empty": "/components/ns-empty/ns-empty"
   }
 }

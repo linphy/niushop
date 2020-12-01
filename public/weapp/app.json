@@ -55,7 +55,6 @@
         "point/detail/detail",
         "point/payment/payment",
         "point/order_list/order_list",
-        "point/order_detail/order_detail",
         "point/result/result"
       ]
     },
@@ -77,8 +76,8 @@
         "member/footprint/footprint",
         "member/level/level",
         "member/level/level_growth_rules",
-        "member/message/message",
         "member/point/point",
+        "member/point_detail/point_detail",
         "member/signin/signin",
         "member/withdrawal/withdrawal",
         "member/withdrawal_detail/withdrawal_detail",
@@ -103,7 +102,6 @@
         "verification/list/list",
         "verification/detail/detail",
         "recharge/list/list",
-        "recharge/detail/detail",
         "recharge/order_list/order_list",
         "fenxiao/index/index",
         "fenxiao/apply/apply",
@@ -125,7 +123,8 @@
         "store_notes/note_list/note_list",
         "store_notes/note_detail/note_detail",
         "chat/room/room",
-        "webview/webview"
+        "webview/webview",
+        "member/invite_friends/invite_friends"
       ]
     }
   ],
@@ -161,6 +160,15 @@
       }
     ]
   },
+  "preloadRule": {
+    "pages/index/index/index": {
+      "network": "all",
+      "packages": [
+        "promotionpages",
+        "otherpages"
+      ]
+    }
+  },
   "permission": {
     "scope.userLocation": {
       "desc": "为了更好地为您提供服务"
@@ -177,7 +185,8 @@
     "ns-empty": "/components/ns-empty/ns-empty",
     "mescroll-uni": "/components/mescroll/my-list-mescroll",
     "mescroll-body": "/components/mescroll/mescroll-body",
-    "ns-login": "/components/ns-login/ns-login"
+    "ns-login": "/components/ns-login/ns-login",
+    "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
   },
   "sitemapLocation": "sitemap.json"
 }
