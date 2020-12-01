@@ -23,21 +23,34 @@
             <div class="layui-form-item">
                 <label class="layui-form-label img-upload-lable">小程序二维码：</label>
                 <div class="layui-input-inline img-upload">
-                    <div class="upload-img-block icon">
-                        <div class="upload-img-box">
-                        {if condition="$config_info && $config_info.qrcode"}
-                            <img layer-src src="{:img($config_info.qrcode)}" />
-                        {else/}
-                            <div class="ns-upload-default">
-                                <img src="SHOP_IMG/upload_img.png" />
-                                <p>点击上传</p>
-                            </div>
-                        {/if}
+                    <div class="upload-img-block">
+                        <div class='upload-img-box {if condition="$config_info && $config_info.qrcode"}hover{/if}'>
+							<div class="ns-upload-default" id="img" >
+								{if condition="$config_info && $config_info.qrcode"}
+									<div id="preview_img" class="preview_img">
+										<img layer-src src="{:img($config_info.qrcode)}" class="img_prev"/>
+									</div>
+								{else/}
+									<div class="upload">
+										<img src="SHOP_IMG/upload_img.png" data-id="imgUpload"/>
+										<p>点击上传</p>
+									</div>
+								{/if}
+							</div>
+							<div class="operation"  >
+								<div>
+									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+									<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+								</div>
+								
+								<div class="replace_img js-replace">点击替换</div>
+							</div>
+							<input type="hidden" class="layui-input" name="qrcode" value="{$config_info.qrcode ?? ''}"/>
                         </div>
-                        <p id="img" class=" {if condition="$config_info && $config_info.qrcode"} replace {else/} no-replace{/if}">替换</p>
+                     </div>
+                     <!--   <p id="img" class=" {if condition="$config_info && $config_info.qrcode"} replace {else/} no-replace{/if}">替换</p>
                         <input type="hidden" class="layui-input" name="qrcode" value="{$config_info.qrcode ?? ''}"/>
-                        <i class="del {if condition="$config_info && $config_info.qrcode"}show{/if}">x</i>
-                    </div>
+                        <i class="del {if condition="$config_info && $config_info.qrcode"}show{/if}">x</i> -->
                 </div>
             </div>
         </div>
