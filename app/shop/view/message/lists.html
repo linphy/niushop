@@ -96,6 +96,12 @@
 					<i class="iconfont iconseleted {if $member_message_v.wechat_is_open == 1}ns-text-color{/if}"></i>微信公众号
 				</a>
 				{/if}
+
+				{if in_array('weapp',$member_message_v['support_type'])}
+				<a href="{:addon_url('weapp://shop/message/edit',['keywords' => $member_message_v.keywords])}">
+					<i class="iconfont iconseleted {if $member_message_v.weapp_is_open == 1}ns-text-color{/if}"></i>微信小程序
+				</a>
+				{/if}
 			</div>
 		</div>
 		{/foreach}
@@ -123,6 +129,12 @@
 				{if in_array('wechat',$shop_message_v['support_type'])}
 				<a href="{:addon_url('wechat://shop/message/edit',['keywords' => $shop_message_v.keywords])}">
 					<i class="iconfont iconseleted {if $shop_message_v.wechat_is_open == 1}ns-text-color{/if}"></i>微信公众号
+				</a>
+				{/if}
+
+				{if in_array('weapp',$shop_message_v['support_type'])}
+				<a href="{:addon_url('weapp://shop/message/edit',['keywords' => $shop_message_v.keywords])}">
+					<i class="iconfont iconseleted {if $shop_message_v.weapp_is_open == 1}ns-text-color{/if}"></i>微信小程序
 				</a>
 				{/if}
 			</div>

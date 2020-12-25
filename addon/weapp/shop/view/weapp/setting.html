@@ -125,6 +125,17 @@
 					{if $is_new_version}<span class="new-tips"></span>{/if}
 				</div>
 			</a>
+			<a class="ns-item-block ns-item-block-hover-a" href="{:addon_url('weapp://shop/message/config')}">
+				<div class="ns-item-block-wrap">
+					<div class="ns-item-pic">
+						<img src="WEAPP_IMG/message.png">
+					</div>
+					<div class="ns-item-con">
+						<div class="ns-item-content-title">订阅消息</div>
+						<p class="ns-item-content-desc">给用户提供更好的服务闭环体验</p>
+					</div>
+				</div>
+			</a>
 			{notempty name="$weapp_menu"}
 				{foreach name="$weapp_menu" item="vo"}
 					<a class="ns-item-block ns-item-block-hover-a" href="{:addon_url($vo.url)}">

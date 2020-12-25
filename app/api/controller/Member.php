@@ -33,7 +33,7 @@ class Member extends BaseApi
         if ($token['code'] < 0) return $this->response($token);
 
         $member_model = new MemberModel();
-        $info         = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password');
+        $info         = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time');
         if (!empty($info['data'])) {
             $info['data']['password'] = empty($info['data']['password']) ? 0 : 1;
 

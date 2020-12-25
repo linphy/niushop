@@ -77,9 +77,9 @@
 	<script type="text/html" id="operation">
 		<div class="ns-table-btn">
 			{{# if (d.is_select == 1){ }}
-			<a class="layui-btn" onclick="setSelect(0,{{d.sku_id}})">设置不参与</a>
+			<a class="layui-btn no-participation">设置不参与</a>
 			{{# }else{ }}
-			<a class="layui-btn" onclick="setSelect(1,{{d.sku_id}})">设置参与</a>
+			<a class="layui-btn participation">设置参与</a>
 			{{# } }}
 		</div>
 	</script>
@@ -289,6 +289,7 @@
 					break;
 			}
 		});
+		return false;
 	}
 
 	function editInput(textIndex=0,data) {
@@ -336,7 +337,33 @@
 			}
 		})
 	}
-	
+
+	$("body").on("click",".no-participation",function(){
+		$(this).text("设置参与");
+		$(this).parents("tr").find("input").each(function (index,item) {
+			$(item).attr("readonly",true);
+			$(item).attr("disabled",true);
+			$(item).addClass("forbidden");
+			$(item).attr("lay-verify","");
+		})
+
+		$(this).addClass("participation").removeClass("no-participation");
+		sku_list[$(this).parents("tr").attr("data-index")].is_select = 0;
+	});
+
+	$("body").on("click",".participation",function(){
+		$(this).text("设置不参与");
+		$(this).parents("tr").find("input").each(function (index,item) {
+			$(item).attr("readonly",false);
+			$(item).attr("disabled",false);
+			$(item).removeClass("forbidden");
+
+		});
+
+		$(this).removeClass("participation").addClass("no-participation");
+		sku_list[$(this).parents("tr").attr("data-index")].is_select = 1;
+	});
+
 	function back() {
 		location.href = ns.url("discount://shop/discount/lists");
 	}

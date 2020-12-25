@@ -15,6 +15,7 @@ use app\model\member\Member;
 use app\model\message\Sms;
 use app\model\BaseModel;
 use addon\wechat\model\Message as WechatMessage;
+use addon\weapp\model\Message as WeappMessage;
 use app\model\shop\ShopAcceptMessage;
 
 /**
@@ -65,6 +66,28 @@ class OrderMessage extends BaseModel
             $wechat_model->sendMessage($data);
         }
 
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string13' => [
+                    'value' => $order_info['order_no']
+                ],
+                'time1' => [
+                    'value' => time_to_date($order_info['create_time'], 'Y-m-d H:i')
+                ],
+                'amount15' => [
+                    'value' => $order_info['order_money']
+                ],
+                'thing14' => [
+                    'value' => str_sub($order_info['order_name'])
+                ],
+            ];
+
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
     }
 
     /**
@@ -77,19 +100,16 @@ class OrderMessage extends BaseModel
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $params["member_id"]]]);
         $member_info = $member_info_result["data"];
-
         // 发送短信
         $var_parse = [
             "orderno" => $params['order_no'],
             "username" => replaceSpecialChar($member_info["nickname"]),
             "ordermoney" => $params["order_money"],
         ];
-
         $params["sms_account"] = $member_info["mobile"] ?? '';//手机号
         $params["var_parse"] = $var_parse;
         $sms_model = new Sms();
         $sms_result = $sms_model->sendMessage($params);
-
         $data = $params;
         //绑定微信公众号才发送
         if (!empty($member_info) && !empty($member_info["wx_openid"])) {
@@ -104,6 +124,31 @@ class OrderMessage extends BaseModel
             $data["page"] = $this->handleUrl($params['order_type'], $params["order_id"]);
             $wechat_model->sendMessage($data);
         }
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string1' => [
+                    'value' => $params['order_no']
+                ],
+                'time7' => [
+                    'value' => time_to_date($params['create_time'])
+                ],
+                'thing4' => [
+                    'value' => str_sub($params['order_name'])
+                ],
+                'amount3' => [
+                    'value' => $params['order_money']
+                ],
+            ];
+
+            $data["page"] = $this->handleUrl($params['order_type'], $params["order_id"]);
+            $weapp_model->sendMessage($data);
+        }
+
 
     }
 
@@ -143,6 +188,31 @@ class OrderMessage extends BaseModel
             $wechat_model->sendMessage($data);
         }
 
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'thing4' => [
+                    'value' => str_sub($order_info['order_name'])
+                ],
+                'character_string1' => [
+                    'value' => $order_info['order_no']
+                ],
+                'time3' => [
+                    'value' => time_to_date($order_info['create_time'])
+                ],
+                'amount6' => [
+                    'value' => $order_info['order_money']
+                ],
+                'time5' => [
+                    'value' => time_to_date($order_info['close_time'])
+                ],
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
+
     }
 
     /**
@@ -154,7 +224,7 @@ class OrderMessage extends BaseModel
         //发送短信
         $sms_model = new Sms();
         $order_id = $data["order_id"];
-        $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,create_time");
+        $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,create_time,finish_time");
 
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
@@ -177,6 +247,26 @@ class OrderMessage extends BaseModel
         ];
         $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
         $wechat_model->sendMessage($data);
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+
+                'character_string1' => [
+                    'value' => $order_info['order_no']
+                ],
+                'thing2' => [
+                    'value' => str_sub($order_info['order_name'])
+                ],
+                'time4' => [
+                    'value' => time_to_date($order_info['finish_time'])
+                ]
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
 
     }
 
@@ -215,6 +305,29 @@ class OrderMessage extends BaseModel
         $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
         $wechat_model->sendMessage($data);
 
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string2' => [
+                    'value' => $order_info['order_no']
+                ],
+                'thing1' => [
+                    'value' => str_sub($order_info['order_name'])
+                ],
+                'amount7' => [
+                    'value' => $order_info['order_money']
+                ],
+                'date3' => [
+                    'value' => time_to_date($order_info['delivery_time'])
+                ]
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
+
     }
 
     /**
@@ -251,6 +364,28 @@ class OrderMessage extends BaseModel
         ];
         $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
         $wechat_model->sendMessage($data);
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string1' => [
+                    'value' => $order_info['order_no']
+                ],
+                'thing2' => [
+                    'value' => str_sub($order_info['order_name'])
+                ],
+                'time7' => [
+                    'value' => time_to_date($order_info['sign_time'])
+                ],
+                'thing9' => [
+                    'value' => str_sub($order_info['name'])
+                ]
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
     }
 
     /**
@@ -286,6 +421,25 @@ class OrderMessage extends BaseModel
         ];
         $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
         $wechat_model->sendMessage($data);
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string3' => [
+                    'value' => $order_info['order_no']
+                ],
+                'amount1' => [
+                    'value' => $order_goods_info["refund_apply_money"]
+                ],
+                'phrase7' => [
+                    'value' => '成功'
+                ]
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
     }
 
     /**
@@ -321,6 +475,22 @@ class OrderMessage extends BaseModel
         ];
         $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
         $wechat_model->sendMessage($data);
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string4' => [
+                    'value' => $order_info['order_no']
+                ],
+                'amount3' => [
+                    'value' => $order_goods_info["refund_apply_money"]
+                ]
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
+
     }
 
     /**
@@ -344,6 +514,28 @@ class OrderMessage extends BaseModel
         $data["sms_account"] = $member_info["mobile"];//手机号
         $data["var_parse"] = $var_parse;
         $sms_model->sendMessage($data);
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'character_string11' => [
+                    'value' => $order_info['order_no']
+                ],
+                'thing1' => [
+                    'value' => $order_info["order_name"]
+                ],
+                'phrase3' => [
+                    'value' => '已取货'
+                ],
+                'time10' => [
+                    'value' => time_to_date(time())
+                ]
+            ];
+            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $weapp_model->sendMessage($data);
+        }
     }
 
 

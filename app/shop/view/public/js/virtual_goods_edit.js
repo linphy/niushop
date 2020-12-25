@@ -164,7 +164,7 @@ $(function () {
 				$(".js-more-spec").hide();
 				$(".js-goods-stock-wrap").show();
 				$("input[name='goods_stock']").removeAttr("disabled");
-				$("input[name='goods_stock_alarm']").attr("disabled", true).val("");
+				$("input[name='goods_stock_alarm']").removeAttr("disabled").val("");
 			}
 		});
 
@@ -1670,6 +1670,11 @@ function refreshGoodsImage() {
 			$(".js-add-goods-image").show();
 		} else {
 			$(".js-add-goods-image").hide();
+		}
+
+		// 清空规格的图片
+		for (var i=0;i<goodsSkuData.length;i++){
+			if(goodsSkuData[i].sku_images.length == 0) goodsSkuData[i].sku_image = '';
 		}
 
 	});

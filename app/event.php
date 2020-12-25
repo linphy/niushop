@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 return [
@@ -243,10 +242,16 @@ return [
             'app\event\MessageUserWithdrawalApply',
             // 会员提现成功通知
             'app\event\MessageUserWithdrawalSuccess',
+
+            // 会员提现失败通知
+            'app\event\MessageUserWithdrawalError',
+
             // 分销申请提现通知
             'app\event\MessageFenxiaoWithdrawalApply',
             // 分销提现成功通知
             'app\event\MessageFenxiaoWithdrawalSuccess',
+            // 分销提现失败通知
+            'app\event\MessageFenxiaoWithdrawalError',
 
             // 会员注销成功通知
             'app\event\MessageCancelSuccess',
@@ -263,6 +268,7 @@ return [
         'Qrcode' => [
             'app\event\Qrcode'
         ],
+
         // api配置变更
         'ApiConfigChange' => [
             'app\event\ApiConfigChange'
@@ -290,7 +296,7 @@ return [
         //会员群体定时刷新
         'CronMemberClusterRefresh' => [
             'app\event\CronMemberClusterRefresh'
-        ],
+        ]
     ],
 
     'subscribe' => [

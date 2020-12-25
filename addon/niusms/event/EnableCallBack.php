@@ -28,7 +28,7 @@ class EnableCallBack
             $is_use = $sms_config[ 'data' ][ 'is_use' ];
             if ($is_use) {
                 $is_use = 0;
-                $res = $config_model->modifyConfigIsUse($is_use, $param[ 'site_id' ]);
+                $res = $config_model->enableCallBack($is_use, $param[ 'site_id' ]);
                 return $res;
             }
         }

@@ -407,6 +407,17 @@
 							</div>
 						</div>
 						{/if}
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">是否参与会员等级折扣：</label>
+							<div class="layui-input-block">
+								<div class="layui-input-inline">
+									<input type="radio" name="is_consume_discount" value="0" title="不参与" {if $goods_info['is_consume_discount'] == 0} checked {/if}>
+									<input type="radio" name="is_consume_discount" value="1" title="参与" {if $goods_info['is_consume_discount'] > 0} checked {/if}>
+								</div>
+							</div>
+							<div class="ns-word-aux">如果该商品未单独配置过优惠规则，则按照默认会员等级折扣优惠</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -701,21 +712,22 @@
 <script type="text/html" id="goodsImage">
 	{{# if(d.list.length){ }}
 		{{# for(var i=0;i<d.list.length;i++){ }}
-			<div class="item" data-index="{{i}}">
+			<div class="item upload_img_square_item" data-index="{{i}}">
 				<div class="img-wrap">
 					<img src="{{ns.img(d.list[i])}}" layer-src>
 				</div>
 				<div class="operation">
 					<i title="图片预览" class="iconfont iconreview js-preview"></i>
 					<i title="删除图片" class="layui-icon layui-icon-delete js-delete" data-index="{{i}}"></i>
+					<div class="replace_img" data-index="{{i}}">点击替换</div>
 				</div>
 			</div>
 		{{# } }}
 		{{# if(d.list.length < d.max){ }}
-			<div class="item js-add-goods-image">+</div>
+			<div class="item js-add-goods-image upload_img_square">+</div>
 		{{# } }}
 	{{# }else{ }}
-		<div class="item js-add-goods-image">+</div>
+		<div class="item js-add-goods-image upload_img_square">+</div>
 	{{# } }}
 </script>
 

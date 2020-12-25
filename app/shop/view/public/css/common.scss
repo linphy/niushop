@@ -14,7 +14,6 @@ $ns-color-nav: #97a0a8; //一三级菜单
 $ns-color-nav-select: rgba(0, 0, 0, .8); //一三级菜单选中
 $ns-color-red: red;
 $ns-color-btn: #F3F3F3;
-$ns-color-red: red;
 
 .ns-red-color {
   color: $ns-color-red !important;
@@ -353,7 +352,6 @@ $ns-color-red: red;
 
 }
 
-
 //版权信息
 .ns-footer {
   box-sizing: border-box;
@@ -503,6 +501,7 @@ $ns-color-red: red;
   font-size: 12px;
   margin-bottom: 5px;
 }
+
 .goods-preview .phone-wrap .iframe-wrap .empty a {
   font-size: 12px;
 }
@@ -545,7 +544,6 @@ $ns-color-red: red;
 // 提示面板
 .ns-tips {
   padding: 6px;
-  border: 0;
   background-color: #fff;
   border: 1px solid #f1f1f1;
   border-radius: 4px;
@@ -1069,20 +1067,24 @@ $ns-color-red: red;
 .upload-img-block.square {
   width: 100px;
   height: 100px;
-  .hover:hover .operation>div{
-	
+
+  .hover:hover .operation > div {
+
   }
-  .operation i{
-	line-height: 90px;
-  	font-size: 25px !important;
-  	margin-left: 0 !important;
-  	margin-right: 10px !important;
+
+  .operation i {
+    line-height: 90px;
+    font-size: 25px !important;
+    margin-left: 0 !important;
+    margin-right: 10px !important;
   }
-  .operation i:last-child{
-  	margin-right: 0px !important;
+
+  .operation i:last-child {
+    margin-right: 0px !important;
   }
-  .ns-upload-default .preview_img{
-	  line-height: 80px;
+
+  .ns-upload-default .preview_img {
+    line-height: 80px;
   }
 }
 
@@ -1125,32 +1127,38 @@ $ns-color-red: red;
     text-align: center;
     // position: relative;
     cursor: pointer;
+    height: 100%;
+
     .ns-upload-default {
       // position: relative;
-   //    top: 50%; /*偏移*/
-   //    left: 50%;
-   //    transform: translate(-50%, -50%);
-		 .preview_img{
-			 line-height: 80px;
-		 }
-	  .preview_img,.img_prev{
-			max-width:100%;
-			max-height:100%;
-	  }
-	  .img_prev{
-		  position: absolute;
-		  top: 50%; /*偏移*/
-		  left: 50%;
-		  transform: translate(-50%, -50%);
-		  max-height: 100%;
-		  max-width: 100%;
-	  }
-	  .upload{
-		  position: absolute;
-		  top: 50%; /*偏移*/
-		  left: 50%;
-		  transform: translate(-50%, -50%);
-	  }
+      //    top: 50%; /*偏移*/
+      //    left: 50%;
+      //    transform: translate(-50%, -50%);
+      .preview_img {
+        line-height: 80px;
+      }
+
+      .preview_img, .img_prev {
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      .img_prev {
+        position: absolute;
+        top: 50%; /*偏移*/
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 100%;
+        max-width: 100%;
+      }
+
+      .upload {
+        position: absolute;
+        top: 50%; /*偏移*/
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
       p {
         color: $ns-color-content;
         line-height: 20px;
@@ -1190,40 +1198,46 @@ $ns-color-red: red;
       display: block;
     }
   }
+
   /* 长图上传操作 */
-  .hover:hover .operation{
-  	display: block;
+  .hover:hover .operation {
+    display: block;
   }
-  .operation{
-  	display: none;
-  	position:absolute;
-  	left:0px;
-  	top:0px;
-  	width:calc(100% + 0px);
-  	height:calc(100% + 0px);
-  	background-color: rgba(0, 0, 0, 0.5);
-  	color:#fff;
-	i{
-		font-size: 25px !important;
-		margin-left: 30px;
-		line-height: 120px;
-		&:first-child{
-			margin-left: 0px;
-		}
-	}
-	.replace_img{
-		position:absolute;
-		bottom: 0;
-		width: 100%;
-		height: 24px;
-		color: #fff;
-		background: rgba(0, 0, 0, 0.5);
-		font-size: 12px;
-		line-height: 24px;
-	}
-	.upload-img-block{
-		height:120px;
-	}
+
+  .operation {
+    display: none;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: calc(100% + 0px);
+    height: calc(100% + 0px);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+
+    i {
+      font-size: 25px !important;
+      margin-left: 30px;
+      line-height: 120px;
+
+      &:first-child {
+        margin-left: 0px;
+      }
+    }
+
+    .replace_img {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 24px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.5);
+      font-size: 12px;
+      line-height: 24px;
+    }
+
+    .upload-img-block {
+      height: 120px;
+    }
   }
 }
 
@@ -1232,7 +1246,10 @@ $ns-color-red: red;
   border-color: $base-color !important;
   background-color: $base-color !important;
 }
-.layui-layer.layui-layer-dialog.layui-layer-msg{z-index: 99999999!important;}
+
+.layui-layer.layui-layer-dialog.layui-layer-msg {
+  z-index: 99999999 !important;
+}
 
 //表单的其他设置
 :root input:-webkit-autofill,
@@ -1956,92 +1973,104 @@ select:-webkit-autofill {
 
 // 小图上传样式
 .upload_img_square {
-    display: inline-block;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  line-height: 78px;
+  font-size: 30px;
+  color: #bbbbbb;
+  cursor: pointer;
+  border: 1px dashed #ccc;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.upload_img_square_item {
+  display: inline-block;
+  float: left;
+  width: 80px;
+  height: 80px;
+  position: relative;
+  border: 1px dashed #e5e5e5;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+  margin-right: 10px;
+
+  &:hover {
+    border: 1px dashed #ff8143;
+    border-radius: 5px;
+  }
+
+  &:hover .operation {
+    display: block;
+  }
+
+  .img-wrap {
+    width: 80px;
+    font-size: 0;
+    line-height: 79px;
+    border-radius: 5px;
+    overflow: hidden;
+
+    img {
+      width: calc(100% - 2px);
+      height: calc(100% - 2px);
+    }
+  }
+
+  .operation {
+    position: absolute;
+    top: 0;
+    z-index: 10;
     width: 80px;
     height: 80px;
-    line-height: 78px;
-    font-size: 30px;
-    color: #bbbbbb;
+    line-height: 80px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
     cursor: pointer;
-    border: 1px dashed #ccc;
-    border-radius: 5px;
     text-align: center;
-    margin-bottom: 10px;
-    margin-right: 10px;
+    display: none;
+
+    i {
+      font-size: 20px;
+      margin-left: 10px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+
+    .replace_img {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 24px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.5);
+      font-size: 12px;
+      line-height: 24px;
+    }
+  }
 }
-.upload_img_square_item{
-	display: inline-block;
-	float: left;
-	width: 80px;
-	height: 80px;
-	position: relative;
-	border: 1px dashed #e5e5e5;
-	text-align: center;
-	transition: background-color 0.3s ease;
-	margin-bottom: 10px;
-	margin-right: 10px;
-	&:hover{
-		border: 1px dashed #ff8143;
-		border-radius: 5px;
-	}
-	&:hover .operation {
-		display: block;
-	}
-	.img-wrap {
-	    width: 80px;
-	    font-size: 0;
-	    line-height: 79px;
-	    border-radius: 5px;
-	    overflow: hidden;
-		img {
-		    width: calc(100% - 2px);
-		    height: calc(100% - 2px);
-		}
-	}
-	.operation {
-	    position: absolute;
-	    top: 0;
-	    z-index: 10;
-	    width: 80px;
-	    height: 80px;
-	    line-height: 80px;
-	    background: rgba(0, 0, 0, 0.5);
-	    color: #fff;
-	    cursor: pointer;
-	    text-align: center;
-	    display: none;
-		i {
-		    font-size: 20px;
-		    margin-left: 10px;
-			&:first-child{
-				margin-left: 0;
-			}
-		}
-		.replace_img {
-		    position: absolute;
-		    bottom: 0;
-		    width: 100%;
-		    height: 24px;
-		    color: #fff;
-		    background: rgba(0, 0, 0, 0.5);
-		    font-size: 12px;
-		    line-height: 24px;
-		}
-	}
-}
+
 .layui-form-item {
-  .layui-table-view{
+  .layui-table-view {
     margin-top: 0;
   }
-  .layui-form-checkbox[lay-skin=primary]{
+
+  .layui-form-checkbox[lay-skin=primary] {
     margin-top: 0;
   }
-  .layui-table-tool{
+
+  .layui-table-tool {
     min-height: 40px;
     padding: 0;
   }
 }
 
-.layui-table-init .layui-icon{
+.layui-table-init .layui-icon {
   position: absolute;
 }

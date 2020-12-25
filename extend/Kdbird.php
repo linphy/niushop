@@ -7,22 +7,34 @@ class Kdbird
     private $EBusinessID; // 授权key
     private $AppKey; // 快递100分配的公司编码
     private $url;
+    private $status;
 
     public function __construct($config){
         $this->EBusinessID = $config["EBusinessID"];
         $this->AppKey = $config["AppKey"];
         $this->url ='http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx';
+        $this->status = $config["status"];
     }
 
-    public function orderTracesSubByJson($shipper_code, $logistic_code){
-        $requestData="{'ShipperCode':'".$shipper_code."',".
-            "'LogisticCode':'". $logistic_code ."'}";
+    public function orderTracesSubByJson($shipper_code, $logistic_code, $mobile){
+        $request_array = array(
+            'ShipperCode' => $shipper_code,
+            'LogisticCode' => $logistic_code,
+        );
+        if($shipper_code == 'SF'){
+            $request_array['CustomerName'] = substr($mobile,7,10);
+        }
+        $requestData = json_encode($request_array);
+
         $datas = array(
             'EBusinessID' => $this->EBusinessID,
             'RequestType' => '1002',
             'RequestData' => urlencode($requestData) ,
             'DataType' => '2',
         );
+
+        if($this->status == 1) $datas['RequestType'] = 8001;
+
         $datas['DataSign'] = $this->encrypt($requestData, $this->AppKey);
         $result = $this->sendPost($this->url, $datas);
         //根据公司业务处理返回的信息......

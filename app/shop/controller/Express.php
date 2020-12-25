@@ -374,6 +374,7 @@ class Express extends BaseShop
                 $data = array (
                     "EBusinessID" => input("EBusinessID", ""),
                     "AppKey" => input("AppKey", ""),
+                    "status" => input("kdniao_status", 0),
                 );
                 $result = $kdbird_model->setKdbirdConfig($data, 1, $this->site_id);
             }

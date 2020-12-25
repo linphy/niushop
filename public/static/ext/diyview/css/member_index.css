@@ -88,7 +88,7 @@
 .member-info .preview-draggable .info .info-set{position: absolute;width: 20px;height: 20px;right: 15px;top: 15px;}
 .member-info .preview-draggable .info .info-set i {font-size: 18px;color: #fff;line-height: 1;}
 .member-info .preview-draggable .info .info-content .info-name{font-size: 16px;font-weight: bold;}
-.member-info .preview-draggable .info .info-content .info-grad{display: block;color: #e7e525;background: rgba(0, 0, 0, 0.5);-webkit-border-radius: 50px;-moz-border-radius: 50px;border-radius: 50px;font-size: 12px;margin-top: 5px;padding: 5px 8px;line-height: 1;}
+.member-info .preview-draggable .info .info-content .info-grad{text-align: center;display: block;color: #e7e525;background: rgba(0, 0, 0, 0.5);-webkit-border-radius: 50px;-moz-border-radius: 50px;border-radius: 50px;font-size: 12px;margin-top: 5px;padding: 5px 8px;line-height: 1;}
 .member-info .preview-draggable .wallet{margin-top: 10px;display: flex;justify-content: space-around;align-items: center;color: #fff;}
 .member-info .preview-draggable .wallet .wallet-item{padding: 0 30px;}
 .member-info .preview-draggable .wallet .wallet-item-border{height: 30px;width: 1px;background-color: rgba(255,255,255,.5);}
@@ -150,7 +150,7 @@
 .menu-list>ul>li{background: #ffffff;border:1px solid #e5e5e5;position:relative;border-top: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;height: 50px;line-height: 50px;}
 .menu-list>ul>li:first-child{border-top:1px solid #e5e5e5;}
 .menu-list>ul>li .layui-form-checkbox{display: inline-block;margin-left: 10px;}
-.menu-list>ul>li .info-wrap{display: inline-block;width: 70%;padding-right:10px;}
+.menu-list>ul>li .info-wrap{display: inline-block;width: 65%;padding-right:10px;}
 .menu-list>ul>li .info-wrap .tips{color:#a3a3a3;}
 .menu-list>ul>li .info-wrap span{cursor: pointer;}
 .menu-list>ul>li i{color: #B2B2B2;font-size: 18px;vertical-align: middle;float: right;cursor: pointer;margin-right: 10px;}

@@ -75,6 +75,7 @@
         "member/coupon/coupon",
         "member/footprint/footprint",
         "member/level/level",
+        "member/card/card",
         "member/level/level_growth_rules",
         "member/point/point",
         "member/point_detail/point_detail",

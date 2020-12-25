@@ -98,7 +98,7 @@ class GoodsCollect extends BaseModel
         $alias = 'gc';
         $join  = [
             ['goods g', 'gc.goods_id = g.goods_id', 'inner'],
-            ['goods_sku sku', 'gc.sku_id = sku.sku_id', 'inner']
+            ['goods_sku sku', 'g.sku_id = sku.sku_id', 'inner']
         ];
         $list  = model('goods_collect')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);

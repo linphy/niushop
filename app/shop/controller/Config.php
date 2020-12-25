@@ -82,6 +82,7 @@ class Config extends BaseShop
             $data = array (
                 "default_goods_img" => input("default_goods_img", ""),
                 "default_headimg" => input("default_headimg", ""),
+                "default_storeimg" => input("default_storeimg", ""),
             );
             $this->addLog("修改默认图配置");
             $res = $upload_config_model->setDefaultImg($data, $this->site_id, $this->app_module);

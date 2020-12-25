@@ -85,7 +85,7 @@ $(function () {
                     var layerIndex = layer.open({
                         title: "自定义会员价",
                         type: 2,
-                        area: ['1000px', '600px'],
+                        area: ['1100px', '650px'],
                         // btn: '保存',
                         content: url,
                         success: function(layero, index){
@@ -800,6 +800,9 @@ function batchSetting(){
 				layer.msg('请选择推荐方式');
 				return;
 			}
+			break;
+		case 'member_price':
+			field.is_consume_discount = $('[name="is_consume_discount"]:checked').val();
 			break;
 	}
 

@@ -21,8 +21,8 @@
 				{/if}
 				{foreach name="$vo.list" item="li" key="li_k"}
 				<li title="{$li.title}"
-				    {if condition="$li.value"}v-on:click='addComponent({$li.value},{ name : "{$li.name}", title : "{$li.title}", max_count : {$li.max_count}, addon_name : "{$li.addon_name}", controller : "{$li.controller}", is_delete : "{$li.is_delete}" })'
-				    v-bind:class="{ 'disabled' : !checkComponentIsAdd('{$li.name}',{$li.max_count}) }"
+					{if condition="$li.value"}v-on:click='addComponent({$li.value},{ name : "{$li.name}", title : "{$li.title}", max_count : {$li.max_count}, addon_name : "{$li.addon_name}", controller : "{$li.controller}", is_delete : "{$li.is_delete}" })'
+					v-bind:class="{ 'disabled' : !checkComponentIsAdd('{$li.name}',{$li.max_count}) }"
 					{else/}class="disabled"{/if}>
 					<img src="__ROOT__/{$li.icon}" data-icon="__ROOT__/{$li.icon}" data-icon-selected="__ROOT__/{$li.icon_selected}" />
 					<span>{$li.title}</span>
@@ -50,7 +50,6 @@
 						<!-- 风格1 -->
 						<div v-if="global.navStyle == 1" class="preview-head_div" v-bind:style="{ backgroundColor : global.topNavColor,color:global.textNavColor,textAlign:global.textImgPosLink}">
 							<span v-bind:style="{ textAlign:global.textImgPosLink}" v-if="global.navStyle == 1">{{global.title}}</span>
-							
 						</div>
 						<!-- 风格3 -->
 						<div v-if="global.navStyle == 3" class="preview-head_div" v-bind:style="{ backgroundColor : global.topNavColor,color:global.textNavColor,textAlign:global.textImgPosLink}">
@@ -60,11 +59,9 @@
 									<i class="iconfont iconsousuo" style="color: #909399;float:left;margin-left:10px;"></i>请输入商品名称
 								</div>
 							</div>
-							
 						</div>
 						<!-- 风格2 -->
 						<div v-if="global.navStyle == 2" class="preview-head_div" v-bind:style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">
-							
 							<div class="search" >
 								<div class="img" v-bind:style="{backgroundImage : 'url('+changeImgUrl(global.topNavImg)+')'}"></div>
 								<span >{{global.title}}</span>
@@ -72,7 +69,6 @@
 						</div>
 
 						<div v-bind:class="{selected : currentIndex==-99}" v-bind:data-sort="-99" style="display:none;" {empty name="$disabled_page_set"}v-show="data.length==0 || currentIndex==-99"{else/}v-show="currentIndex==-99"{/empty}>
-
 							<div class="edit-attribute">
 								<div class="attr-wrap">
 									<div class="restore-wrap">
@@ -80,7 +76,7 @@
 										<div class="layui-form-item">
 											<label class="layui-form-label sm">页面名称</label>
 											<div class="layui-input-block">
-												<input type="text" v-model="global.title" placeholder="请输入页面名称" class="layui-input" maxlength="10">
+												<input type="text" v-model="global.title" placeholder="请输入页面名称" class="layui-input" maxlength="15">
 											</div>
 										</div>
 										<div class="layui-form-item">
@@ -111,8 +107,7 @@
 												</ul>
 											</div>
 										</div>
-										
-										
+
 										<!-- <div class="layui-form-item" >
 											<label class="layui-form-label sm">页面名称</label>
 											<div class="layui-input-block">
@@ -196,6 +191,7 @@
 
 					</div>
 
+					<!-- 弹出广告 -->
 					<div v-bind:class="{selected : currentIndex==-98}" v-bind:data-sort="-98" style="display:none;" v-show="currentIndex==-98">
 
 						<div class="edit-attribute">
@@ -264,17 +260,14 @@
 
 		</div>
 	</div>
+
 	<!-- 预览 -->
 	<template slot="preview">
 		<div class="nav_style" >
 			<div class="sytle">
-				<!-- 图一 -->
 				<div class="text-title" onclick="changeStyle(1)" :class="{active:global.navStyle == 1}">
 					<img src="__STATIC__/ext/diyview/img/nav_style/nav_style1.png"/>
 				</div>
-				<!-- <div class="text-title" onclick="changeStyle(2)" :class="{active:global.navStyle == 2}">
-					<img src="__STATIC__/ext/diyview/img/nav_style/nav_style2.png"/>
-				</div> -->
 				<div class="text-title" onclick="changeStyle(2)" :class="{active:global.navStyle == 2}">
 					<img src="__STATIC__/ext/diyview/img/nav_style/nav_style3.png"/>
 				</div>
@@ -282,7 +275,6 @@
 					<img src="__STATIC__/ext/diyview/img/nav_style/nav_style4.png"/>
 				</div>
 			</div>
-			
 		</div>
 	</template>
 	<div class="custom-save">
@@ -291,7 +283,6 @@
 		<button class="layui-btn ns-bg-color" onclick="preview()">预览</button>
 		{/notempty}
 	</div>
-
 </div>
 
 {notempty name="$qrcode_info"}
@@ -392,7 +383,6 @@
 		});
 	}
     {/notempty}
-	
 </script>
 <script src="STATIC_JS/vue.js"></script>
 <!--<script src="STATIC_EXT/color_picker/js/colorpicker.js"></script>-->
@@ -406,29 +396,27 @@
 <script src="STATIC_EXT/diyview/js/components.js"></script>
 <script src="STATIC_EXT/diyview/js/custom_template.js"></script>
 <script>
+	{if condition="!empty($diy_view_info) && (!empty($diy_view_info.value) || !empty($diy_view_info.id) )"}
+		var id = "{$diy_view_info.id}";
+		var info = JSON.parse($("#info").val().toString().replace(/\@/g, "'"));
 
-    {if condition="!empty($diy_view_info) && (!empty($diy_view_info.value) || !empty($diy_view_info.id) )"}
-	    var id = "{$diy_view_info.id}";
-	    var info = JSON.parse($("#info").val().toString().replace(/\@/g, "'"));
-	    console.log("info",info)
+		if(!$.isEmptyObject(info) && info.value){
+			for(var i=0;i<info.value.length;i++) vue.addComponent(info.value[i]);
+			vue.setGlobal(info.global);
+		}else{
+			vue.setGlobal({ title : "{$diy_view_info.title}" });
+		}
 
-	    if(!$.isEmptyObject(info) && info.value){
-	        for(var i=0;i<info.value.length;i++) vue.addComponent(info.value[i]);
-	        vue.setGlobal(info.global);
-	    }else{
-	        vue.setGlobal({ title : "{$diy_view_info.title}" });
-	    }
+		{if $disabled_page_set}
+		vue.currentIndex=0;
+		{/if}
 
-        {if $disabled_page_set}
-	    vue.currentIndex=0;
-        {/if}
-
-	    vue.title = "{$diy_view_info.title}";
+		vue.title = "{$diy_view_info.title}";
     {else/}
-        var id = 0;
+		var id = 0;
 		vue.globalLazyLoad = true;
     {/if}
-	
+
 	//设置默认logo
 	if(!vue.global.topNavImg){vue.global.topNavImg = '{$shop_info.logo}';}
 	
@@ -504,11 +492,12 @@
 			}
 		},100);
     });
+
+	//导航样式切换
 	function changeStyle(val){
 		$('.text-title:nth-child('+(val)+')').css('border',"1px solid #FF6A00").siblings().css('border',"1px solid #ccc")
 		vue.global.navStyle = val
 		// vue.$forceUpdate()
 	}
-	
 </script>
 {/block}

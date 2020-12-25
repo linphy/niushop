@@ -40,6 +40,7 @@ class Localorder extends BaseShop
             "out_trade_no" => "外部单号",
             "name"         => "收货人姓名",
             "order_name"   => "商品名称",
+            "mobile" => "收货人电话",
         );
         $order_status       = input("order_status", "");//订单状态
         $order_name         = input("order_name", '');

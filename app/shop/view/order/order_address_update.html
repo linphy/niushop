@@ -13,7 +13,7 @@
     <input type="hidden" name="order_id" value="{{ d.order_id }}"/>
     <!--自提点地址-->
     <div class="layui-form-item">
-        <label class="layui-form-label"><span class="required">* </span>收获地址</label>
+        <label class="layui-form-label"><span class="required">* </span>收货地址</label>
         <div class="layui-input-inline area-select">
             <select name="province_id" lay-filter="province_id" lay-verify="province_id">
                 <option value="">请选择省份</option>
@@ -31,17 +31,21 @@
             </select>
         </div>
     </div>
-    {{# if(d.order_type == 3){ }}
+
     <div class="layui-form-item">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline" >
-            <input type="text" name="address"  placeholder="请填写具体地址。" lay-verify="address" autocomplete="off" class="layui-input address-content ns-len-long" value="{{# if(d.address != undefined){}}{{ d.address}}{{#  } }}">
+            <input type="text" name="address"  placeholder="请填写具体地址。" lay-verify="required" autocomplete="off" class="layui-input address-content ns-len-long" value="{{# if(d.address != undefined){}}{{ d.address}}{{#  } }}">
+            {{# if(d.order_type == 3){ }}
             <input type = "hidden" name="longitude" lay-verify="required" class="layui-input" value="{{# if(d.longitude != undefined){}}{{ d.longitude}}{{#  } }}"/>
             <input type = "hidden" name="latitude" lay-verify="required" class="layui-input"value="{{# if(d.latitude != undefined){}}{{ d.latitude}}{{#  } }}"/>
+            {{# } }}
         </div>
+        {{# if(d.order_type == 3){ }}
         <button class='layui-btn-primary layui-btn' onclick="refreshFrom();">查找地址</button>
+        {{# } }}
     </div>
-
+    {{# if(d.order_type == 3){ }}
     <!--地图定位-->
     <div class="layui-form-item">
         <label class="layui-form-label">地图定位</label>
@@ -145,6 +149,7 @@ function orderAddressUpdate(order_id) {
                             form.render();
 
                             form.on('submit(submit_address)', function(data){
+
 								if(data.field.province_id == ''){
 									layer.msg('请选择省份', {icon: 5, anim: 6});
 								    return;
@@ -176,7 +181,7 @@ function orderAddressUpdate(order_id) {
                                 data.field.city_name = city_name;
                                 data.field.district_name = district_name;
                                 // data.field.community_name = community_name;
-                                data.field.full_address = province_name + city_name + district_name + data.field.address;
+                                data.field.full_address = province_name + city_name + district_name;
 
 								if(repeat_flag)return;
 								repeat_flag = true;
@@ -214,6 +219,7 @@ function orderAddressUpdate(order_id) {
 function refreshFrom(){
     form.render();
     orderAddressChange();//改变地址
+
     map_class.mapChange();
 }
 
@@ -227,7 +233,8 @@ function orderAddressChange(){
     map_class.address.district_name = $("select[name=district_id] option:selected").text();
     // map_class.address.township = $("select[name=community_id]").val();
     // map_class.address.township_name = $("select[name=community_id] option:selected").text();
-    map_class.address.address = $("input[name=address]").val()
+    map_class.address.detail_address = $("input[name=address]").val()
+
 }
 
 /**

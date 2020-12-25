@@ -334,7 +334,7 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label">排序：</label>
 							<div class="layui-input-block">
-								<input type="number" name="sort" class="layui-input ns-len-short" placeholder="0" autocomplete="off">
+								<input type="number" name="sort" class="layui-input ns-len-short" value="{$sort_config['default_value']}" placeholder="0" autocomplete="off">
 							</div>
 							<div class="ns-word-aux">商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</div>
 						</div>
@@ -350,18 +350,29 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label">定时下架：</label>
 							<div class="layui-input-block">
-								<input type="radio" name="timer_off_status" value="1" title="启用" checked lay-filter="timer_off">
-								<input type="radio" name="timer_off_status" value="2" title="不启用" lay-filter="timer_off">
+								<input type="radio" name="timer_off_status" value="1" title="启用" lay-filter="timer_off">
+								<input type="radio" name="timer_off_status" value="2" title="不启用" lay-filter="timer_off" checked>
 							</div>
 							<div class="ns-word-aux">启用定时下架后，到达设定时间，此商品将自动下架。</div>
 						</div>
 
-						<div class="layui-form-item timer_off">
+						<div class="layui-form-item timer_off" style="display: none;">
 							<label class="layui-form-label"></label>
 							<div class="layui-input-inline">
-								<input type="text" id="timer_off" name="timer_off" lay-verify="required" class="layui-input ns-len-mid" autocomplete="off" readonly>
+								<input type="text" id="timer_off" name="timer_off" class="layui-input ns-len-mid" autocomplete="off" readonly>
 								<i class="ns-calendar"></i>
 							</div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">是否参与会员等级折扣：</label>
+							<div class="layui-input-block">
+								<div class="layui-input-inline">
+									<input type="radio" name="is_consume_discount" value="0" title="不参与" checked>
+									<input type="radio" name="is_consume_discount" value="1" title="参与">
+								</div>
+							</div>
+							<div class="ns-word-aux">按照默认会员等级折扣优惠</div>
 						</div>
 					</div>
 				</div>
@@ -649,21 +660,22 @@
 <script type="text/html" id="goodsImage">
 	{{# if(d.list.length){ }}
 		{{# for(var i=0;i<d.list.length;i++){ }}
-			<div class="item" data-index="{{i}}">
+			<div class="item upload_img_square_item" data-index="{{i}}">
 				<div class="img-wrap">
 					<img src="{{ns.img(d.list[i])}}" layer-src>
 				</div>
 				<div class="operation">
 					<i title="图片预览" class="iconfont iconreview js-preview"></i>
 					<i title="删除图片" class="layui-icon layui-icon-delete js-delete" data-index="{{i}}"></i>
+					<div class="replace_img" data-index="{{i}}">点击替换</div>
 				</div>
 			</div>
 		{{# } }}
 		{{# if(d.list.length < d.max){ }}
-			<div class="item js-add-goods-image">+</div>
+			<div class="item js-add-goods-image upload_img_square">+</div>
 		{{# } }}
 	{{# }else{ }}
-		<div class="item js-add-goods-image">+</div>
+		<div class="item js-add-goods-image upload_img_square">+</div>
 	{{# } }}
 </script>
 

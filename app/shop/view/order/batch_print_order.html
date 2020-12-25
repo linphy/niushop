@@ -98,10 +98,14 @@
             <tbody>
                 {php}
                 $total_goods_num = 0;
+                $total_goods_money = 0.00;
+                $promotion_money = 0.00;
                 {/php}
                 {foreach $order_detail['order_goods'] as $list_k => $order_goods_item}
                 {php}
                 $total_goods_num += $order_goods_item['num'];
+                $total_goods_money += $order_goods_item['goods_money'];
+                $promotion_money += $order_goods_item['promotion_money'] + $order_goods_item['coupon_money'] + $order_goods_item['adjust_money'] + $order_goods_item['point_money'];
                 {/php}
                 <tr class="table-body">
                     <td align="center">{$list_k+1}</td>
@@ -111,20 +115,30 @@
                     <td class="tl">{$order_goods_item.goods_money}</td>
                 </tr>
                 {/foreach}
+
+                {php}
+                $total_goods_money = number_format($total_goods_money,2);
+                $order_money = number_format($order_detail['order_money'] - $order_detail['refund_money'], 2);
+                if($order_money < 0 || empty($order_detail['order_goods'])) $order_money = 0.00;
+
+                $promotion_money = number_format($promotion_money,2);
+
+                {/php}
+
                 <tr class="table-floot">
                     <td></td>
                     <td colspan="2">合计</td>
                     <td>{$total_goods_num}</td>
-                    <td>{$order_detail.goods_money}</td>
+                    <td>{$total_goods_money}</td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
                     <th colspan="5">
-                        <span>总计:￥{$order_detail.goods_money}</span>
+                        <span>总计:￥{$total_goods_money}</span>
                         <span>运费：￥{$order_detail.delivery_money}</span>
-                        <span>优惠:￥{$order_detail.promotion_money}</span>
-                        <span>订单总额：￥{$order_detail.order_money}</span>
+                        <span>优惠:￥{$promotion_money}</span>
+                        <span>订单总额：￥{$order_money}</span>
                         <span>店铺：{$order_detail.site_name}</span>
                 </tr>
             </tfoot>

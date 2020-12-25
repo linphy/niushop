@@ -6,7 +6,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -33,6 +32,7 @@ class MemberAccount extends BaseModel
     public function __construct()
     {
         $event_from_type = event('MemberAccountFromType', '');
+
         $from_type = [];
         foreach ($event_from_type as $info) {
 
@@ -74,7 +74,10 @@ class MemberAccount extends BaseModel
 
         $from_type[ 'balance' ][ 'refund' ] = [ 'type_name' => '退还', 'type_url' => '' ];
         $from_type[ 'point' ][ 'refund' ] = [ 'type_name' => '退还', 'type_url' => '' ];
+        $from_type[ 'point' ][ 'pointexchangerefund' ] = [ 'type_name' => '积分兑换退还', 'type_url' => '' ];
 
+        $from_type[ 'balance' ][ 'memberlevel' ] = [ 'type_name' => '开卡', 'type_url' => '' ];
+        $from_type[ 'point' ][ 'memberlevel' ] = [ 'type_name' => '开卡', 'type_url' => '' ];
         $this->from_type = $from_type;
     }
 
@@ -197,7 +200,8 @@ class MemberAccount extends BaseModel
      * @param null $join
      * @return array
      */
-    public function getMemberAccountSum($where = [], $field = '', $alias = 'a', $join = null){
+    public function getMemberAccountSum($where = [], $field = '', $alias = 'a', $join = null)
+    {
         $sum = model('member_account')->getSum($where, $field, $alias, $join);
         return $this->success($sum);
     }

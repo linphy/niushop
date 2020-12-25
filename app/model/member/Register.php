@@ -417,10 +417,11 @@ class Register extends BaseModel
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([ [ "member_id", "=", $data[ "member_id" ] ] ], "username,mobile,email,reg_time,wx_openid,last_login_type");
         $member_info = $member_info_result[ "data" ];
+        $name = $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"];
         //发送短信
         $var_parse = [
-            "shopname" => replaceSpecialChar($data[ 'site_name' ]),   //商城名称
-            "username" => replaceSpecialChar($member_info[ "username" ]),    //会员名称
+            "shopname" => replaceSpecialChar($data['site_info'][ 'site_name' ]),   //商城名称
+            "username" => replaceSpecialChar($name),    //会员名称
         ];
         $data[ "sms_account" ] = $member_info[ "mobile" ] ?? '';//手机号
         $data[ "var_parse" ] = $var_parse;

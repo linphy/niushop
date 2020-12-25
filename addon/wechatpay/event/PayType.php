@@ -25,7 +25,7 @@ class PayType
         $app_type = isset($params['app_type']) ? $params['app_type'] : '';
         if (!empty($app_type)) {
             $config_model   = new Config();
-            $app_type_array = ['h5', 'wechat', 'weapp'];
+            $app_type_array = ['h5', 'wechat', 'weapp', 'pc'];
             if (!in_array($app_type, $app_type_array)) {
                 return '';
             }

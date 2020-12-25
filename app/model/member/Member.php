@@ -83,12 +83,11 @@ class Member extends BaseModel
     public function editMember($data, $condition)
     {
         if (isset($data[ 'mobile' ]) && $data[ 'mobile' ] != '') {
-            $info = model('member')->getInfo([ [ 'mobile', '=', $data[ 'mobile' ] ],['is_delete', '=', 0] ]);
-            if (!empty($info)) {
-                if ($info[ 'member_id' ] != (int) $condition[ 0 ][ 2 ]) {
-                    return $this->error('', 'MOBILE_EXISTED');
-                }
-            }
+            $check_condition = array_column($condition, 2, 0);
+            $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : 0;
+            $member_id = isset($check_condition[ 'member_id' ]) ? $check_condition[ 'member_id' ] : 0;
+            $mobile_is_exist = model('member')->getCount([ [ 'mobile', '=', $data[ 'mobile' ] ], ['member_id', '<>', $member_id], ['site_id', '=', $site_id], ['is_delete', '=', 0] ]);
+            if ($mobile_is_exist > 0) return $this->error('', 'MOBILE_EXISTED');
         }
         $res = model('member')->update($data, $condition);
         if ($res === false) {
@@ -625,7 +624,7 @@ class Member extends BaseModel
                 $balance = trim($balance, ' ');
 
                 //会员等级(id)
-                $membeer_level_id = $PHPExcel->getActiveSheet()->getCell('K' . $i)->getValue();
+                $membeer_level_id = $PHPExcel->getActiveSheet()->getCell('L' . $i)->getValue();
                 $membeer_level_id = trim($membeer_level_id, ' ');
 
                 $not_data = [
@@ -787,7 +786,7 @@ class Member extends BaseModel
     /**
      *  获取会员导入记录列表
      */
-    public function getMemberImportRecordList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    public function getMemberImportRecordList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc', $field = '*')
     {
 
         $list = model('member_import_record')->pageList($condition, $field, $order, $page, $page_size, '', '', '');

@@ -20,6 +20,7 @@ use app\model\system\Pay;
 use think\facade\Cache;
 use addon\memberwithdraw\model\Withdraw as MemberWithdraw;
 use addon\wechat\model\Message as WechatMessage;
+use addon\weapp\model\Message as WeappMessage;
 
 /**
  * 会员提现
@@ -77,7 +78,7 @@ class Withdraw extends BaseModel
 
         $member_id          = $data["member_id"];
         $member_model       = new Member();
-        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $member_id]], "balance_money,headimg,wx_openid,username,weapp_openid");
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $member_id]], "balance_money,headimg,wx_openid,username,mobile,weapp_openid");
         $member_info        = $member_info_result["data"];
         if (empty($member_info))
             return $this->error([], "MEMBER_NOT_EXIST");
@@ -129,7 +130,7 @@ class Withdraw extends BaseModel
             $data          = array(
                 "site_id"            => $site_id,
                 "withdraw_no"        => $withdraw_no,
-                "member_name"        => $member_info["username"],
+                "member_name"        => $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"],
                 "member_id"          => $data["member_id"],
                 "transfer_type"      => $data["transfer_type"],
                 "transfer_type_name" => $transfer_type_name,
@@ -424,7 +425,82 @@ class Withdraw extends BaseModel
         	];
         	$data["page"] = "";
         	$wechat_model->sendMessage($data);
-        }   
+        }
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'amount6' => [
+                    'value' => $data['apply_money']
+                ],
+                'date3' => [
+                    'value' => time_to_date(time())
+                ]
+            ];
+            $data["page"] = "";
+            $weapp_model->sendMessage($data);
+        }
+
+    }
+
+
+    /**
+     * 会员提现失败通知
+     * @param $data
+     */
+    public function messageUserWithdrawalError($data)
+    {
+        //发送短信
+        $sms_model = new Sms();
+
+        $var_parse = array(
+            'username' => $data["member_name"],//会员名
+            'money' => $data['apply_money']
+        );
+
+        $data["sms_account"] = $data["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
+
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $data["member_id"]]]);
+        $member_info = $member_info_result["data"];
+
+        //绑定微信公众号才发送
+        if (!empty($member_info) && !empty($member_info["wx_openid"])) {
+            $wechat_model = new WechatMessage();
+            $data["openid"] = $member_info["wx_openid"];
+            $data["template_data"] = [
+                'keyword1' => time_to_date($data['create_time']),
+                'keyword2' => '审核失败',
+                'keyword3' => '会员申请提现',
+                'keyword4' => $data['apply_money'],
+            ];
+            $data["page"] = "";
+            $wechat_model->sendMessage($data);
+        }
+
+        //发送订阅消息
+        if (!empty($member_info) && !empty($member_info["weapp_openid"])) {
+            $weapp_model = new WeappMessage();
+            $data["openid"] = $member_info["weapp_openid"];
+            $data["template_data"] = [
+                'amount3' => [
+                    'value' => $data['apply_money']
+                ],
+                'phrase4' => [
+                    'value' => '审核失败'
+                ],
+                'date2' => [
+                    'value' => time_to_date(time())
+                ]
+            ];
+            $data["page"] = "";
+            $weapp_model->sendMessage($data);
+        }
+
     }
 
     /**

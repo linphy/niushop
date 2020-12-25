@@ -107,4 +107,32 @@ class Config extends BaseModel
         return $res;
     }
     /*********************************************************************** 外卖配送 end ***********************************************************************/
+
+    /**
+     * 外卖配送配置
+     * @param $site_id
+     * @return \multitype
+     */
+    public function getDeliverTypeSort($site_id)
+    {
+        $config = new ConfigModel();
+        $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'DELIVERY_SORT_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'deliver_type' => 'express,store,local'
+            ];
+        }
+        return $res;
+    }
+
+    public function setDeliverTypeSort($data, $site_id)
+    {
+        if ($site_id === '') {
+            return $this->error('', '缺少必须参数站点id');
+        }
+        $config = new ConfigModel();
+        $res    = $config->setConfig($data, '配置方式排序设置', 1, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'DELIVERY_SORT_CONFIG']]);
+        return $res;
+    }
+
 }

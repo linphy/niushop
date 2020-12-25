@@ -11,11 +11,15 @@
 
 namespace app\shop\controller;
 
+use addon\fenxiao\model\FenxiaoApply;
+use addon\fenxiao\model\FenxiaoWithdraw;
 use app\model\goods\Goods as GoodsModel;
 use app\model\member\Member as MemberModel;
+use app\model\order\OrderCommon;
 use app\model\system\Promotion as PrmotionModel;
 use app\model\system\Stat;
 use Carbon\Carbon;
+use app\model\order\OrderRefund as OrderRefundModel;
 
 class Index extends BaseShop
 {
@@ -97,9 +101,48 @@ class Index extends BaseShop
         $this->assign("promotion", $promotions);
         $this->assign("count", $count);
 
+        $order = new OrderCommon();
+        $waitpay = $order->getOrderCount([ ['order_status','=', 0],['site_id','=',$this->site_id], ['is_delete','=',0]]);
+        $waitsend = $order->getOrderCount([ ['order_status','=', 1],['site_id','=',$this->site_id], ['is_delete','=',0]]);
+        $order_refund_model = new OrderRefundModel();
+        $refund_num = $order_refund_model->getRefundOrderGoodsCount([
+            ["site_id", "=", $this->site_id],
+            ["refund_status", "not in", [0, 3]]
+        ]);
+        $goods_stock_alarm = $goods_model->getGoodsStockAlarm($this->site_id);
+        $goods_total = $goods_model->getGoodsTotalCount([ ['goods_state', '=', 1],['site_id','=',$this->site_id], ['is_delete','=',0] ]);
+        $warehouse_goods = $goods_model->getGoodsTotalCount([ ['goods_state', '=', 0],['site_id','=',$this->site_id], ['is_delete','=',0] ]);
+
+        $num_data = [
+            'waitpay' => $waitpay['data'],
+            'waitsend' => $waitsend['data'],
+            'refund' => $refund_num['data'],
+            'goods_stock_alarm' => $goods_stock_alarm['data'],
+            'goods_total' => $goods_total['data'],
+            'warehouse_goods' => $warehouse_goods['data']
+        ];
+
         //分销插件是否存在
         $is_fenxiao = addon_is_exit('fenxiao', $this->site_id);
         $this->assign('is_fenxiao', $is_fenxiao);
+        if ($is_fenxiao){
+            //提现待审核
+            $fenxiao_model = new FenxiaoWithdraw();
+            $withdraw_count = $fenxiao_model->getFenxiaoWithdrawCount([ ['site_id','=',$this->site_id], ['status','=',1]], 'id');
+            $num_data['withdraw_count'] = $withdraw_count['data'];
+
+            //分销商申请
+            $fenxiao_apply_model = new FenxiaoApply();
+            $fenxiao_count = $fenxiao_apply_model->getFenxiaoApplyCount([ ['site_id','=',$this->site_id], ['status','=',1]], 'apply_id');
+            $num_data['apply_count'] = $fenxiao_count['data'];
+        } else {
+            $waitconfirm = $order->getOrderCount([ ['order_status',"=", 3],['site_id','=',$this->site_id], ['is_delete','=',0]]);
+            $complete = $order->getOrderCount([ ['order_status',"=", 10],['site_id','=',$this->site_id], ['is_delete','=',0]]);
+            $num_data['waitconfirm'] = $waitconfirm['data'];
+            $num_data['complete'] = $complete['data'];
+        }
+
+        $this->assign('num_data', $num_data);
 
         return $this->fetch("index/index");
     }

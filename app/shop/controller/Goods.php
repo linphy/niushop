@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -114,7 +113,8 @@ class Goods extends BaseShop
             }
             return $res;
         } else {
-
+            $goods_state = input('state', '');
+            $this->assign('goods_state', $goods_state);
             //获取一级商品分类
             $goods_category_model = new GoodsCategoryModel();
             $condition = [
@@ -214,6 +214,7 @@ class Goods extends BaseShop
                 'recommend_way' => input('recommend_way', 0), // 推荐方式，1：新品，2：精品，3；推荐
                 'timer_on' => strtotime(input('timer_on', 0)),//定时上架
                 'timer_off' => strtotime(input('timer_off', 0)),//定时下架
+                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
             ];
 
             $goods_model = new GoodsModel();
@@ -255,6 +256,12 @@ class Goods extends BaseShop
             $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
+
+            //商品默认排序值
+            $config_model = new ConfigModel();
+            $sort_config = $config_model->getGoodsSort($this->site_id, $this->app_module);
+            $sort_config = $sort_config['data']['value'];
+            $this->assign("sort_config", $sort_config);
 
             return $this->fetch("goods/add_goods");
         }
@@ -311,6 +318,7 @@ class Goods extends BaseShop
                 'timer_on' => strtotime(input('timer_on', 0)),//定时上架
                 'timer_off' => strtotime(input('timer_off', 0)),//定时下架
                 'spec_type_status' => input('spec_type_status', 0),
+                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
             ];
 
             $res = $goods_model->editGoods($data);
@@ -555,6 +563,7 @@ class Goods extends BaseShop
                     [ 'goods_state', '=', 1 ],
                     [ 'site_id', '=', $this->site_id ]
                 ];
+
                 if (!empty($goods_name)) {
                     $condition[] = [ 'goods_name', 'like', '%' . $goods_name . '%' ];
                 }
@@ -588,7 +597,12 @@ class Goods extends BaseShop
                     $condition[] = [ 'price', '>=', $max_price ];
                 }
 
-                $order = 'sort asc,create_time desc';
+                $config_model = new ConfigModel();
+                $sort_config = $config_model->getGoodsSort($this->site_id);
+                $sort_config = $sort_config['data']['value'];
+
+                $order = 'sort '.$sort_config['type'].',create_time desc';
+
                 $goods_model = new GoodsModel();
                 $field = 'goods_id,goods_name,goods_class_name,goods_image,price,goods_stock,create_time,is_virtual';
                 $goods_list = $goods_model->getGoodsPageList($condition, $page, $page_size, $order, $field);
@@ -878,6 +892,9 @@ class Goods extends BaseShop
                         case 'shop_intor':
                             $result = $goods_model->modifyGoodsShopIntor($data[ 'recom_way' ], $this->site_id, $goods_ids);
                             break;
+                        case 'member_price':
+                            $result = $goods_model->modifyGoodsConsumeDiscount($data[ 'is_consume_discount' ], $this->site_id, $goods_ids);
+                            break;
                     }
                 }
             } catch (\Exception $e) {
@@ -944,7 +961,7 @@ class Goods extends BaseShop
     public function copyGoods()
     {
         if (request()->isAjax()) {
-            $goods_id = input('goods_id', '');
+            $goods_id = input('goods_id', 0);
             $goods_model = new GoodsModel();
             $res = $goods_model->copyGoods($goods_id);
             return $res;
@@ -1038,5 +1055,28 @@ class Goods extends BaseShop
         }
     }
 
+
+    /**
+     * 商品排序
+     */
+    public function goodssort(){
+        $config_model = new ConfigModel();
+        if (request()->isAjax()) {
+            $type = input("type", 'asc');
+            $default_value = input("default_value", '0');
+            $data = [
+                'type' => trim($type),
+                'default_value' => trim($default_value),
+            ];
+            $res = $config_model->setGoodsSort($data, $this->site_id, $this->app_module);
+            return $res;
+        } else {
+            $goods_sort_confog = $config_model->getGoodsSort($this->site_id, $this->app_module);
+            $goods_sort_confog = $goods_sort_confog['data']['value'];
+
+            $this->assign("goods_sort_confog", $goods_sort_confog);
+            return $this->fetch('goods/goods_sort');
+        }
+    }
 
 }

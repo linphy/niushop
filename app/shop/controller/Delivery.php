@@ -46,6 +46,7 @@ class Delivery extends BaseShop
             'out_trade_no' => '外部单号',
             'name' => '收货人姓名',
             'order_name' => '商品名称',
+            "mobile" => "收货人电话",
         );
         $order_model = new OrderModel();
 
@@ -146,6 +147,8 @@ class Delivery extends BaseShop
         $config_result = $config_model->getLocalDeliveryConfig($this->site_id);
         $local_delivery_config = $config_result[ 'data' ];
         $this->assign('local_delivery_config', $local_delivery_config);
+        $deliver_type = $config_model->getDeliverTypeSort($this->site_id);
+        $this->assign('deliver_type', explode(',', $deliver_type['data']['value']['deliver_type']));
         return $this->fetch('delivery/delivery');
     }
 
@@ -351,5 +354,16 @@ class Delivery extends BaseShop
         }
     }
 
+    /**
+     * 配送方式排序
+     */
+    public function deliverTypeSort(){
+        if (request()->isAjax()) {
+            $config_model = new ConfigModel();
+            $deliver_type = input('deliver_type', '');
+            $result = $config_model->setDeliverTypeSort(['deliver_type' => $deliver_type], $this->site_id);
+            return $result;
+        }
+    }
 
 }

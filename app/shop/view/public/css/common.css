@@ -962,6 +962,7 @@
 .upload-img-block .upload-img-box {
   text-align: center;
   cursor: pointer;
+  height: 100%;
 }
 .upload-img-block .upload-img-box .ns-upload-default .preview_img {
   line-height: 80px;

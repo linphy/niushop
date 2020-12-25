@@ -750,6 +750,18 @@ return [
                 'picture_selected' => 'app/shop/view/public/img/icon/sys_config.png',
                 'child_list' => []
             ],
+            [
+                'name' => 'GOODS_SORT',
+                'title' => '商品排序',
+                'url' => 'shop/goods/goodssort',
+                'is_show' => 1,
+                'is_control' => 1,
+                'is_icon' => 0,
+                'sort' => 12,
+                'picture' => 'app/shop/view/public/img/icon/goods_sort.png',
+                'picture_selected' => 'app/shop/view/public/img/icon/goods_sort.png',
+                'child_list' => []
+            ],
         ]
     ],
     [
@@ -1259,7 +1271,7 @@ return [
                                 'name' => 'MEMBER_EDIT',
                                 'title' => '基础信息',
                                 'url' => 'shop/member/editmember',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'sort' => 1
                             ],
                             [
@@ -1272,21 +1284,21 @@ return [
                                 'name' => 'MEMBER_ACCOUNT_DETAIL',
                                 'title' => '账户明细',
                                 'url' => 'shop/member/accountdetail',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'sort' => 2
                             ],
                             [
                                 'name' => 'MEMBER_ORDER',
                                 'title' => '订单管理',
                                 'url' => 'shop/member/order',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'sort' => 3
                             ],
                             [
                                 'name' => 'MEMBER_ADDRESS',
                                 'title' => '会员地址',
                                 'url' => 'shop/member/addressdetail',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'sort' => 4
                             ],
                             [
@@ -1341,14 +1353,14 @@ return [
                                 'name' => 'MEMBER_COLLECT',
                                 'title' => '收藏记录',
                                 'url' => 'shop/goods/membergoodscollect',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'sort' => 5
                             ],
                             [
                                 'name' => 'MEMBER_BROWSE',
                                 'title' => '浏览记录',
                                 'url' => 'shop/goods/membergoodsbrowse',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'sort' => 6
                             ],
                         ]
@@ -1366,24 +1378,25 @@ return [
                 'child_list' => [
                     [
                         'name' => 'MEMBER_LEVEL_ADD',
-                        'title' => '等级添加',
+                        'title' => '会员等级添加',
                         'url' => 'shop/memberlevel/addlevel',
                         'is_show' => 0,
                     ],
                     [
                         'name' => 'MEMBER_LEVEL_EDIT',
-                        'title' => '等级修改',
+                        'title' => '会员等级修改',
                         'url' => 'shop/memberlevel/editlevel',
                         'is_show' => 0,
                     ],
                     [
                         'name' => 'MEMBER_LEVEL_DELETE',
-                        'title' => '等级删除',
+                        'title' => '会员等级删除',
                         'url' => 'shop/memberlevel/deletelevel',
                         'is_show' => 0,
-                    ],
+                    ]
                 ]
             ],
+
             [
                 'name' => 'MEMBER_LABEL',
                 'title' => '会员标签',

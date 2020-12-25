@@ -17,6 +17,7 @@ use app\model\goods\GoodsCategory as GoodsCategoryModel;
 use app\model\goods\VirtualGoods as VirtualGoodsModel;
 use app\model\goods\GoodsService as GoodsServiceModel;
 use app\model\goods\GoodsLabel as GoodsLabelModel;
+use app\model\web\Config as ConfigModel;
 
 
 /**
@@ -80,6 +81,7 @@ class Virtualgoods extends BaseShop
                 'recommend_way' => input('recommend_way', 0), // 推荐方式，1：新品，2：精品，3；推荐
                 'timer_on' => strtotime(input('timer_on',0)),//定时上架
                 'timer_off' => strtotime(input('timer_off',0)),//定时下架
+                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
             ];
 
             $virtual_goods_model = new VirtualGoodsModel();
@@ -115,6 +117,12 @@ class Virtualgoods extends BaseShop
             $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
+
+            //商品默认排序值
+            $config_model = new ConfigModel();
+            $sort_config = $config_model->getGoodsSort($this->site_id);
+            $sort_config = $sort_config['data']['value'];
+            $this->assign("sort_config", $sort_config);
 
             return $this->fetch("virtualgoods/add_goods");
         }
@@ -170,6 +178,7 @@ class Virtualgoods extends BaseShop
                 'timer_on' => strtotime(input('timer_on',0)),//定时上架
                 'timer_off' => strtotime(input('timer_off',0)),//定时下架
                 'spec_type_status' => input('spec_type_status',0),
+                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
             ];
 
             $res = $virtual_goods_model->editGoods($data);

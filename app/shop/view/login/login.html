@@ -53,8 +53,17 @@
 
 	<div class="ns-login-bottom">
 		<a class="ns-footer-img" href="#"><img src="{if !empty($copyright.logo)} {:img($copyright.logo)} {else /}__STATIC__/img/copyright_logo.png{/if}" /></a>
-		<p>{notempty name="$copyright.company_name"}{$copyright.company_name}{else/}上海牛之云网络科技有限公司{/notempty} {notempty name="$copyright.icp"}<a href="{notempty name='$copyright.copyright_link'}{$copyright.copyright_link}{/notempty}">&nbsp;&nbsp;备案号{$copyright.icp}</a>{/notempty}</p>
-		{notempty name="$copyright.gov_record"}<a class="gov-box" href={$copyright.gov_url}><img src="HOME_IMG/gov_record.png" alt="">公安备案{$copyright.gov_record}</a>{/notempty}
+		<p>
+			{notempty name="$copyright.company_name"}
+			<a href="{notempty name='$copyright.copyright_link'}{$copyright.copyright_link}{else/}javascript:;{/notempty}" target="_blank">{$copyright.company_name}</a>
+			{else/}
+			<a href="https://www.niushop.com" target="_blank">上海牛之云网络科技有限公司</a>
+			{/notempty}
+			{notempty name="$copyright.icp"}
+			<a href="http://www.beian.gov.cn/" target="_blank">&nbsp;&nbsp;备案号{$copyright.icp}</a>
+			{/notempty}
+		</p>
+		{notempty name="$copyright.gov_record"}<a class="gov-box" href="{notempty name='$copyright.gov_url'}{$copyright.gov_url}{else/}javascript:;{/notempty}" target="_blank"><img src="HOME_IMG/gov_record.png" alt="">公安备案{$copyright.gov_record}</a>{/notempty}
 	</div>
 </div>
 {/block}

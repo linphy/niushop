@@ -768,7 +768,7 @@ class Order extends OrderCommon
     public function orderDetail($order_info)
     {
         $express_package_model = new ExpressPackage();
-        $package_list = $express_package_model->package([["order_id", "=", $order_info['order_id']]]);
+        $package_list = $express_package_model->package([["order_id", "=", $order_info['order_id']]], $order_info['mobile']);
         $order_info = [];
         $order_info["package_list"] = $package_list;
         return $order_info;

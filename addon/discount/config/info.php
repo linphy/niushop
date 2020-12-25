@@ -15,7 +15,7 @@ return [
     'type' => 'promotion', //插件类型  system :系统插件(自动安装), promotion:扩展营销插件  tool:工具插件
     'status' => 1,
     'author' => '',
-    'version' => '4.1.0',
-    'version_no' => '202012010001',
+    'version' => '4.1.1',
+    'version_no' => '202012250001',
     'content' => '',
 ];

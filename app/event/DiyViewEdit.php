@@ -19,7 +19,11 @@ use app\model\web\DiyView as DiyViewModel;
  */
 class DiyViewEdit extends Controller
 {
-    // 行为扩展的执行入口必须是run
+    /**
+     * 行为扩展的执行入口必须是run
+     * @param $data
+     * @return mixed
+     */
     public function handle($data)
     {
         $diy_view = new DiyViewModel();
@@ -54,6 +58,7 @@ class DiyViewEdit extends Controller
         if (!empty($diy_view_info) && !empty($diy_view_info[ 'data' ])) {
             $diy_view_info = $diy_view_info[ 'data' ];
         }
+
         if (!empty($qrcode_info)) {
             $qrcode_info = $qrcode_info[ 'data' ];
             // 目前只支持H5
@@ -62,12 +67,12 @@ class DiyViewEdit extends Controller
             }
         }
 
-        $diy_view_utils = array ();
+        $diy_view_utils = [];
         if (!empty($utils[ 'data' ])) {
 
             // 先遍历，组件分类
             foreach ($utils[ 'data' ] as $k => $v) {
-                $value = array ();
+                $value = [];
                 $value[ 'type' ] = $v[ 'type' ];
                 $value[ 'type_name' ] = $diy_view->getTypeName($v[ 'type' ]);
                 $value[ 'list' ] = [];
@@ -135,7 +140,6 @@ class DiyViewEdit extends Controller
 
         $template = dirname(realpath(__DIR__)) . '/shop/view/diy/edit.html';
         return $this->fetch($template, [], $replace);
-
     }
 
 }

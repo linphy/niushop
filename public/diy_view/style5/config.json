@@ -24,7 +24,9 @@
 					"popWindow": {
 						"imageUrl": "public/diy_view/style5/img/adv_supernatant.png",
 						"count": 1,
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "362",
 						"imgHeight": "502"
 					},
@@ -53,13 +55,17 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style5/img/banner1.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "348"
 					}, {
 						"imageUrl": "public/diy_view/style5/img/banner2.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "348"
 					}],
@@ -80,31 +86,41 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style5/img/icon1.png",
 						"title": "沙发",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "100",
 						"imgHeight": "100"
 					}, {
 						"imageUrl": "public/diy_view/style5/img/icon2.png",
 						"title": "床品",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "100",
 						"imgHeight": "100"
 					}, {
 						"imageUrl": "public/diy_view/style5/img/icon3.png",
 						"title": "柜子",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "100",
 						"imgHeight": "100"
 					}, {
 						"imageUrl": "public/diy_view/style5/img/icon4.png",
 						"title": "灯具",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "100",
 						"imgHeight": "100"
 					}, {
 						"imageUrl": "public/diy_view/style5/img/icon5.png",
 						"title": "更多",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "100",
 						"imgHeight": "100"
 					}],
@@ -128,13 +144,19 @@
 					"backgroundColor": "",
 					"list": [{
 						"imageUrl": "public/diy_view/style5/img/adv1.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style5/img/adv2.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style5/img/adv3.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"selectedRubikCubeArray": [],
 					"diyHtml": "",
@@ -157,7 +179,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style5/img/adv.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "306"
 					}],
@@ -177,7 +201,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style5/img/title.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "750",
 						"imgHeight": "82"
 					}],

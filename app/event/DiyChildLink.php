@@ -25,7 +25,7 @@ class DiyChildLink extends Controller
     {
 
         $link = input("link", []);
-        $support_diy_view = input("support_diy_view", '');//支持的自定义页面（为空表示都支持）
+        $support_diy_view = isset($data[ 'support_diy_view' ]) ? $data[ 'support_diy_view' ] : 'DIY_VIEW_SHOP';//支持的自定义页面（为空表示都支持）
         $name = input('name', '');
         $is_array = true;//记录是否是数组，后续判断受该变量影响
         if (!empty($link)) {
@@ -35,7 +35,7 @@ class DiyChildLink extends Controller
 
         $condition = [
             [ 'parent', '=', $name ],
-            [ 'support_diy_view', 'like', [ $support_diy_view, '', 'DIY_VIEW_SHOP' ], 'or' ]
+            [ 'support_diy_view', 'like', [ $support_diy_view, '' ], 'or' ]
         ];
         $link_model = new DiyViewLink();
         $list_result = $link_model->getLinkList($condition, '*', 'sort ASC');
@@ -46,7 +46,7 @@ class DiyChildLink extends Controller
         foreach ($list as $k => $v) {
             $child_condition = [
                 [ 'parent', '=', $v[ 'name' ] ],
-                [ 'support_diy_view', 'like', [ $support_diy_view, '', 'DIY_VIEW_SHOP' ], 'or' ]
+                [ 'support_diy_view', 'like', [ $support_diy_view, '' ], 'or' ]
             ];
             $child_list_result = $link_model->getLinkList($child_condition, '*', 'sort ASC');
             $child_list = $child_list_result[ 'data' ];

@@ -79,7 +79,8 @@ class Sms extends BaseShop
                 'username' => input('username', ''),//子账户用户名
                 'password' => input('password', ''),//子账户密码
                 'company' => input('company', ''),//子账户公司名
-                'mobiles' => input('mobiles', '')//子账户手机号
+                'mobiles' => input('mobiles', ''),//子账户手机号
+                'domain' => input('domain', ''),//手机端网址
             ], $this->site_id, $this->app_module);
             return $res;
         } else {

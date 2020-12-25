@@ -383,4 +383,36 @@ class Weapp extends BaseModel
             return $this->error([], $e->getMessage());
         }
     }
+
+    /**
+     * 获取订阅消息template_id
+     * @param array $param
+     */
+    public function getTemplateId(array $param){
+        try {
+            $result = $this->app->subscribe_message->addTemplate($param['tid'], $param['kidList'], $param['sceneDesc']);
+            return $result;
+        } catch (\Exception $e) {
+            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * 发送订阅消息
+     * @param array $param
+     * @return array
+     */
+    public function sendTemplateMessage(array $param){
+        $result = $this->app->subscribe_message->send([
+            'template_id' => $param['template_id'],// 模板id
+            'touser'      => $param['openid'], // openid
+            'page' => $param['page'], // 点击模板卡片后的跳转页面 支持带参数
+            'data'        => $param['data'] // 模板变量
+        ]);
+
+        if (isset($result['errcode']) && $result['errcode'] != 0) {
+            return $this->error($result, $result["errmsg"]);
+        }
+        return $this->success($result);
+    }
 }

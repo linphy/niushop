@@ -95,8 +95,11 @@ class Config extends BaseModel
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
                 "default_goods_img" => "upload/default/default_img/goods.png",
-                "default_headimg" => "upload/default/default_img/head.png"
+                "default_headimg" => "upload/default/default_img/head.png",
+                "default_storeimg" => "upload/default/default_img/store.png"
             ];
+        } else {
+            if (!isset($res[ 'data' ][ 'value' ]['default_storeimg'])) $res[ 'data' ][ 'value' ]['default_storeimg'] = "upload/default/default_img/store.png";
         }
         return $res;
     }
@@ -301,6 +304,40 @@ class Config extends BaseModel
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
                 'words' => '搜索 商品'
+            ];
+        }
+        return $res;
+    }
+
+
+    /**
+     * 设置商品排序方式
+     * @param $data
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function setGoodsSort($data, $site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '商品默认排序方式', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_SORT_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取商品排序方式
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function getGoodsSort($site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_SORT_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'type' => 'asc',
+                'default_value' => 0
             ];
         }
         return $res;

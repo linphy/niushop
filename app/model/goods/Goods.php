@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -44,6 +43,7 @@ class Goods extends BaseModel
     public function addGoods($data)
     {
         model('goods')->startTrans();
+
         try {
 
             if (!empty($data[ 'goods_attr_format' ])) {
@@ -79,6 +79,7 @@ class Goods extends BaseModel
                 'label_id' => $data[ 'label_id' ],
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
+                'is_consume_discount' => $data['is_consume_discount']
             );
 
             $common_data = array (
@@ -130,6 +131,7 @@ class Goods extends BaseModel
                     'sku_images' => $item[ 'sku_images' ],
                     'goods_id' => $goods_id,
                     'is_default' => $item[ 'is_default' ] ?? 0,
+                    'is_consume_discount' => $data['is_consume_discount']
                 );
 
                 $sku_arr[] = array_merge($sku_data, $common_data);
@@ -211,6 +213,7 @@ class Goods extends BaseModel
                 'label_id' => $data[ 'label_id' ],
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
+                'is_consume_discount' => $data['is_consume_discount']
             );
 
             $common_data = array (
@@ -236,7 +239,8 @@ class Goods extends BaseModel
                 'virtual_sale' => $data[ 'virtual_sale' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
-                'recommend_way' => $data[ 'recommend_way' ]
+                'recommend_way' => $data[ 'recommend_way' ],
+                'is_consume_discount' => $data['is_consume_discount']
             );
 
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
@@ -273,6 +277,7 @@ class Goods extends BaseModel
                     model('goods_sku')->addList($sku_arr);
                 } else {
                     $discount_model = new Discount();
+                    $sku_id_arr = [];
                     foreach ($data[ 'goods_sku_data' ] as $item) {
                         $discount_info = [];
                         if (!empty($item[ 'sku_id' ])) {
@@ -301,10 +306,27 @@ class Goods extends BaseModel
                             $sku_data[ 'discount_price' ] = $item[ 'price' ];
                         }
                         if (!empty($item[ 'sku_id' ])) {
+                            $sku_id_arr[] = $item[ 'sku_id' ];
                             model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
                         } else {
-                            model('goods_sku')->add(array_merge($sku_data, $common_data));
+                            $sku_id = model('goods_sku')->add(array_merge($sku_data, $common_data));
+                            $sku_id_arr[] = $sku_id;
                         }
+                    }
+
+                    // 移除不存在的商品SKU
+                    $sku_id_list = model('goods_sku')->getList([ [ 'goods_id', '=', $goods_id ] ], 'sku_id');
+                    $sku_id_list = array_column($sku_id_list, 'sku_id');
+                    foreach ($sku_id_list as $k => $v) {
+                        foreach ($sku_id_arr as $ck => $cv) {
+                            if ($v == $cv) {
+                                unset($sku_id_list[ $k ]);
+                            }
+                        }
+                    }
+                    $sku_id_list = array_values($sku_id_list);
+                    if (!empty($sku_id_list)) {
+                        model('goods_sku')->delete([ [ 'sku_id', 'in', implode(",", $sku_id_list) ] ]);
                     }
                 }
 
@@ -1039,6 +1061,20 @@ class Goods extends BaseModel
     }
 
     /**
+     * 批量设置参与会员优惠
+     * @param $is_consume_discount
+     * @param $site_id
+     * @param $goods_ids
+     * @return array
+     */
+    public function modifyGoodsConsumeDiscount($is_consume_discount, $site_id, $goods_ids)
+    {
+        model('goods')->update([ 'is_consume_discount' => $is_consume_discount ], [ [ 'site_id', '=', $site_id ], [ 'goods_id', 'in', $goods_ids ] ]);
+        model('goods_sku')->update([ 'is_consume_discount' => $is_consume_discount ], [ [ 'site_id', '=', $site_id ], [ 'goods_id', 'in', $goods_ids ] ]);
+        return $this->success();
+    }
+
+    /**
      * 修改商品服务
      * @param $service_ids
      * @param $site_id
@@ -1318,7 +1354,6 @@ class Goods extends BaseModel
         return 0;
     }
 
-
     public function verifySkuSpec($spec1, $spec2, $key, $spec_dict)
     {
         $real_key = $spec_dict[ $key ];
@@ -1334,5 +1369,16 @@ class Goods extends BaseModel
 
     }
 
-
+    /**
+     * 库存预警数量
+     * @param $site_id
+     * @return array
+     */
+    public function getGoodsStockAlarm($site_id)
+    {
+        $prefix = config('database.connections.mysql.prefix');
+        $sql = 'select count(goods_id) as num from ' . $prefix . 'goods where goods_stock_alarm >= goods_stock and goods_stock_alarm > 0 and is_delete = 0 and goods_state = 1 and site_id = ' . $site_id;
+        $count = model('goods')->query($sql);
+        return $this->success($count[ 0 ][ 'num' ]);
+    }
 }

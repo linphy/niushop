@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -30,13 +29,13 @@ class Diy extends BaseShop
 
         // 查询公共组件和支持的页面
         $condition = [
-            [ 'support_diy_view', 'like', [ $page[ 'shop' ][ 'index' ][ 'name' ], '%' . $page[ 'shop' ][ 'index' ][ 'name' ] . ',%', '%' . $page[ 'shop' ][ 'index' ][ 'name' ], '%,' . $page[ 'shop' ][ 'index' ][ 'name' ] . ',%', 'DIY_VIEW_SHOP', '' ], 'or' ]
+            [ 'support_diy_view', 'like', [ $page[ $this->app_module ][ 'index' ][ 'name' ], '%' . $page[ $this->app_module ][ 'index' ][ 'name' ] . ',%', '%' . $page[ $this->app_module ][ 'index' ][ 'name' ], '%,' . $page[ $this->app_module ][ 'index' ][ 'name' ] . ',%', 'DIY_VIEW_SHOP', '' ], 'or' ]
         ];
 
         $data = [
             'app_module' => $this->app_module,
             'site_id' => $this->site_id,
-            'name' => $page[ 'shop' ][ 'index' ][ 'name' ],
+            'name' => $page[ $this->app_module ][ 'index' ][ 'name' ],
             'condition' => $condition
         ];
         $edit_view = event('DiyViewEdit', $data, true);
@@ -50,6 +49,7 @@ class Diy extends BaseShop
     {
         $diy_view = new DiyViewModel();
         $page = $diy_view->getPage();
+
         // 查询公共组件和支持的页面
         $condition = [
             [ 'name', '=', 'GOODS_CATEGORY' ]
@@ -58,7 +58,7 @@ class Diy extends BaseShop
         $data = [
             'app_module' => $this->app_module,
             'site_id' => $this->site_id,
-            'name' => $page[ 'shop' ][ 'goods_category' ][ 'name' ],
+            'name' => $page[ $this->app_module ][ 'goods_category' ][ 'name' ],
             'condition' => $condition,
             'disabled_page_set' => 1
         ];
@@ -103,16 +103,14 @@ class Diy extends BaseShop
                 $data[ 'site_id' ] = $this->site_id;
                 $data[ 'name' ] = $name;
                 $data[ 'title' ] = $title;
-                $data[ 'type' ] = $page[ 'shop' ][ 'port' ];
+                $data[ 'type' ] = $page[ $this->app_module ][ 'port' ];
                 $data[ 'value' ] = $value;
                 if ($id == 0 && $name != 'DIYVIEW_INDEX') {
                     $data[ 'create_time' ] = time();
                     $res = $diy_view->addSiteDiyView($data);
                 } else {
                     $data[ 'update_time' ] = time();
-                    $res = $diy_view->editSiteDiyView($data, [
-                        [ 'id', '=', $id ]
-                    ]);
+                    $res = $diy_view->editSiteDiyView($data, [ [ 'id', '=', $id ] ]);
                 }
             }
 
@@ -145,12 +143,12 @@ class Diy extends BaseShop
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $diy_view = new DiyViewModel();
             $page = $diy_view->getPage();
-            $condition = array (
+            $condition = [
                 [ 'sdv.site_id', '=', $this->site_id ],
-                [ 'sdv.type', '=', $page[ 'shop' ][ 'port' ] ],
+                [ 'sdv.type', '=', $page[ $this->app_module ][ 'port' ] ],
                 [ 'sdv.name', 'like', '%DIY_VIEW_RANDOM_%' ]
-            );
-            $list = $diy_view->getSiteDiyViewPageList($condition, $page_index, $page_size, "INSTR('DIYVIEW_INDEX', sdv.name) desc, sdv.create_time desc");
+            ];
+            $list = $diy_view->getSiteDiyViewPageList($condition, $page_index, $page_size, "sdv.sort desc, INSTR('DIYVIEW_INDEX', sdv.name) desc, sdv.create_time desc");
             return $list;
         } else {
             return $this->fetch('diy/lists');
@@ -207,11 +205,11 @@ class Diy extends BaseShop
             $this->assign("bottom_nav_info", $bottom_nav_info[ 'data' ][ 'value' ]);
             return $this->fetch('diy/bottom_nav_design');
         }
-
     }
 
     /**
      * 推广链接
+     * @return array
      */
     public function promote()
     {
@@ -236,12 +234,11 @@ class Diy extends BaseShop
             $data = [
                 'style_theme' => input('style_theme', '')
             ];
-
-            $res = $config_model->setConfig($data, '店铺风格设置', '1', [ [ 'site_id', '=', $this->site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'SHOP_STYLE_CONFIG' ] ]);
+            $res = $config_model->setConfig($data, '店铺风格设置', '1', [ [ 'site_id', '=', $this->site_id ], [ 'app_module', '=', $this->app_module ], [ 'config_key', '=', 'SHOP_STYLE_CONFIG' ] ]);
             return $res;
         }
 
-        $res = $config_model->getConfig([ [ 'site_id', '=', $this->site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'SHOP_STYLE_CONFIG' ] ]);
+        $res = $config_model->getConfig([ [ 'site_id', '=', $this->site_id ], [ 'app_module', '=', $this->app_module ], [ 'config_key', '=', 'SHOP_STYLE_CONFIG' ] ]);
         $style_theme = empty($res[ 'data' ][ 'value' ]) ? [] : $res[ 'data' ][ 'value' ];
         $this->assign('style_theme', $style_theme);
         return $this->fetch('diy/style');
@@ -257,7 +254,7 @@ class Diy extends BaseShop
             $page_index = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $condition = [
-                [ 'type', '=', $page[ 'shop' ][ 'index' ][ 'name' ] ]
+                [ 'type', '=', $page[ $this->app_module ][ 'index' ][ 'name' ] ]
             ];
             $data = $diy_view->getTemplatePageList($condition, '*', 'id asc', $page_index, $page_size);
             return $data;
@@ -283,7 +280,7 @@ class Diy extends BaseShop
                     'site_id' => $this->site_id,
                     'name' => $name,
                     'title' => $title,
-                    'type' => $page[ 'shop' ][ 'port' ],
+                    'type' => $page[ $this->app_module ][ 'port' ],
                     'value' => $value,
                     'create_time' => time()
                 ];
@@ -310,7 +307,7 @@ class Diy extends BaseShop
         if (request()->isAjax()) {
             $diy_view = new DiyViewModel();
             $id = input('id', 0);
-            $res = $diy_view->setPage('shop', 'index', $id, $this->site_id);
+            $res = $diy_view->setPage($this->app_module, 'index', $id, $this->site_id);
             return $res;
         }
     }
@@ -327,4 +324,5 @@ class Diy extends BaseShop
             return $diy_view->modifyDiyViewSort($sort, $id);
         }
     }
+
 }

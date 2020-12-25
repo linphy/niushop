@@ -6,7 +6,6 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  * @author : niuteam
  * @date : 2015.1.17
@@ -19,6 +18,7 @@ use app\model\goods\Goods;
 use app\model\goods\GoodsCategory as GoodsCategoryModel;
 use app\model\goods\GoodsService;
 use addon\coupon\model\CouponType;
+use app\model\web\Config as ConfigModel;
 
 /**
  * 商品sku
@@ -38,8 +38,6 @@ class Goodssku extends BaseApi
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
         $goods = new Goods();
-        //$field = 'goods_id,sku_id,goods_name,sku_name,sku_spec_format,price,market_price,discount_price,promotion_type,start_time,end_time,stock,sku_image,sku_images,goods_spec_format,recommend_way';
-        //$info = $goods->getGoodsSkuInfo([ [ 'sku_id', '=', $sku_id ], [ 'site_id', '=', $this->site_id ] ], $field);
         $info = $goods->getGoodsSkuDetail($sku_id, $this->site_id);
         $token = $this->checkToken();
         if ($token[ 'code' ] >= 0) {
@@ -93,7 +91,6 @@ class Goodssku extends BaseApi
         $goods_service = new GoodsService();
         $goods_service_list = $goods_service->getServiceList([ [ 'site_id', '=', $this->site_id ], [ 'id', 'in', $res[ 'goods_sku_detail' ][ 'goods_service_ids' ] ] ], 'service_name,desc');
         $res[ 'goods_sku_detail' ][ 'goods_service' ] = $goods_service_list[ 'data' ];
-
 
         // 查询当前商品参与的营销活动信息
         $goods_promotion = event('GoodsPromotion', [ 'goods_id' => $goods_sku_detail[ 'goods_id' ], 'sku_id' => $goods_sku_detail[ 'sku_id' ] ]);
@@ -223,7 +220,12 @@ class Goodssku extends BaseApi
             }
             $order_by = $order . ' ' . $sort;
         } else {
-            $order_by = 'gs.sort asc,gs.create_time desc';
+
+            $config_model = new ConfigModel();
+            $sort_config = $config_model->getGoodsSort($this->site_id);
+            $sort_config = $sort_config['data']['value'];
+
+            $order_by = 'g.sort '.$sort_config['type'].',g.create_time desc';
         }
 
         // 优惠券
@@ -242,7 +244,7 @@ class Goodssku extends BaseApi
 
         $condition[] = [ 'gs.goods_state', '=', 1 ];
         $condition[] = [ 'gs.is_delete', '=', 0 ];
-        $field = 'gs.goods_id,gs.sku_id,gs.sku_name,gs.price,gs.market_price,gs.discount_price,gs.stock,(g.sale_num + g.virtual_sale) as sale_num,(gs.sale_num + gs.virtual_sale) as sale_sort,gs.sku_image,gs.goods_name,gs.site_id,gs.is_free_shipping,gs.introduction,gs.promotion_type,g.goods_image,g.promotion_addon,gs.is_virtual,g.goods_spec_format,g.recommend_way,gs.max_buy,gs.min_buy,gs.unit';
+        $field = 'gs.goods_id,gs.sort,gs.sku_id,gs.sku_name,gs.price,gs.market_price,gs.discount_price,gs.stock,(g.sale_num + g.virtual_sale) as sale_num,(gs.sale_num + gs.virtual_sale) as sale_sort,gs.sku_image,gs.goods_name,gs.site_id,gs.is_free_shipping,gs.introduction,gs.promotion_type,g.goods_image,g.promotion_addon,gs.is_virtual,g.goods_spec_format,g.recommend_way,gs.max_buy,gs.min_buy,gs.unit';
 
         $alias = 'gs';
         $join = [
@@ -293,7 +295,12 @@ class Goodssku extends BaseApi
         $join = [
             [ 'goods g', 'gs.sku_id = g.sku_id', 'inner' ]
         ];
-        $order_by = 'gs.sort asc,gs.create_time desc';
+
+        $config_model = new ConfigModel();
+        $sort_config = $config_model->getGoodsSort($this->site_id);
+        $sort_config = $sort_config['data']['value'];
+        $order_by = 'gs.sort '.$sort_config['type'].',gs.create_time desc';
+
         $list = $goods->getGoodsSkuPageList($condition, $page, $page_size, $order_by, $field, $alias, $join);
 
         $token = $this->checkToken();

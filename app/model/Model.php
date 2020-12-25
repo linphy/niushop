@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -31,25 +30,25 @@ class Model
     //错误信息
     protected $error;
 
+    protected $table;
+
     public function __construct($table = '')
     {
         if ($table) {
             $this->table = $table;
         }
-
     }
 
     /**
      * 获取列表数据
      * @param array $condition
-     * @param string $field
+     * @param bool $field
      * @param string $order
-     * @param number $page
+     * @param string $alias
      * @param array $join
      * @param string $group
-     * @param string $limit
-     * @param string $data
-     * @return mixed
+     * @param null $limit
+     * @return array
      */
     final public function getList($condition = [], $field = true, $order = '', $alias = 'a', $join = [], $group = '', $limit = null)
     {
@@ -94,16 +93,16 @@ class Model
     final public function pageList($condition = [], $field = true, $order = '', $page = 1, $list_rows = PAGE_LIST_ROWS, $alias = 'a', $join = [], $group = null, $limit = null)
     {
         self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
-        $count_obj       = Db::name($this->table)->alias($alias)->where($condition)->order($order);
+        $count_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
         if (!empty($join)) {
-            $db_obj          = self::$query_obj;
+            $db_obj = self::$query_obj;
             self::$query_obj = $this->parseJoin($db_obj, $join);
-            $count_obj       = $this->parseJoin($count_obj, $join);
+            $count_obj = $this->parseJoin($count_obj, $join);
         }
 
         if (!empty($group)) {
             self::$query_obj = self::$query_obj->group($group);
-            $count_obj       = $count_obj->group($group);
+            $count_obj = $count_obj->group($group);
         }
 
         if (!empty($limit)) {
@@ -113,15 +112,14 @@ class Model
         $count = $count_obj->count();
         if ($list_rows == 0) {
             //查询全部
-            $result_data          = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
-            $result['page_count'] = 1;
+            $result_data = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
+            $result[ 'page_count' ] = 1;
         } else {
-            $result_data          = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
-            $result['page_count'] = ceil($count / $list_rows);
+            $result_data = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
+            $result[ 'page_count' ] = ceil($count / $list_rows);
         }
-        $result['count'] = $count;
-        $result['list']  = $result_data;
-
+        $result[ 'count' ] = $count;
+        $result[ 'list' ] = $result_data;
 
         self::$query_obj->removeOption();
         return $result;
@@ -143,21 +141,21 @@ class Model
     {
         if (is_array($order)) {
             self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
-            $count_obj       = Db::name($this->table)->alias($alias)->where($condition)->order($order);
+            $count_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
         } else {
             self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->orderRaw($order);
-            $count_obj       = Db::name($this->table)->alias($alias)->where($condition)->orderRaw($order);
+            $count_obj = Db::name($this->table)->alias($alias)->where($condition)->orderRaw($order);
         }
 
         if (!empty($join)) {
-            $db_obj          = self::$query_obj;
+            $db_obj = self::$query_obj;
             self::$query_obj = $this->parseJoin($db_obj, $join);
-            $count_obj       = $this->parseJoin($count_obj, $join);
+            $count_obj = $this->parseJoin($count_obj, $join);
         }
 
         if (!empty($group)) {
             self::$query_obj = self::$query_obj->group($group);
-            $count_obj       = $count_obj->group($group);
+            $count_obj = $count_obj->group($group);
         }
 
         if (!empty($limit)) {
@@ -167,14 +165,14 @@ class Model
         $count = $count_obj->count();
         if ($list_rows == 0) {
             //查询全部
-            $result_data          = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
-            $result['page_count'] = 1;
+            $result_data = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
+            $result[ 'page_count' ] = 1;
         } else {
-            $result_data          = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
-            $result['page_count'] = ceil($count / $list_rows);
+            $result_data = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
+            $result[ 'page_count' ] = ceil($count / $list_rows);
         }
-        $result['count'] = $count;
-        $result['list']  = $result_data;
+        $result[ 'count' ] = $count;
+        $result[ 'list' ] = $result_data;
 
 
         self::$query_obj->removeOption();
@@ -214,7 +212,7 @@ class Model
         foreach ($join as $item) {
             list($table, $on, $type) = $item;
             $type = strtolower($type);
-            switch ($type) {
+            switch ( $type ) {
                 case "left":
                     $db_obj = $db_obj->leftJoin($table, $on);
                     break;
@@ -299,7 +297,7 @@ class Model
      */
     final public function setFieldValue($where = [], $field = '', $value = '')
     {
-        return $this->update([$field => $value], $where);
+        return $this->update([ $field => $value ], $where);
     }
 
     /**
@@ -315,6 +313,7 @@ class Model
     /**
      * 删除数据
      * @param array $where 条件
+     * @return int
      */
     final public function delete($where = [])
     {
@@ -325,6 +324,8 @@ class Model
      * 统计数据
      * @param array $where 条件
      * @param string $type 查询类型  count:统计数量|max:获取最大值|min:获取最小值|avg:获取平均值|sum:获取总和
+     * @param string $field
+     * @return mixed
      */
     final public function stat($where = [], $type = 'count', $field = 'id')
     {
@@ -336,13 +337,14 @@ class Model
      */
     final public function query($sql = '')
     {
-
         return Db::query($sql);
     }
 
     /**
      * 返回总数
-     * @param unknown $where
+     * @param array $where
+     * @param string $field
+     * @return int
      */
     final public function getCount($where = [], $field = '*')
     {
@@ -351,7 +353,11 @@ class Model
 
     /**
      * 返回总数
-     * @param unknown $where
+     * @param array $where
+     * @param string $field
+     * @param string $alias
+     * @param null $join
+     * @return float
      */
     final public function getSum($where = [], $field = '', $alias = 'a', $join = null)
     {
@@ -384,6 +390,25 @@ class Model
     }
 
     /**
+     * 查询第一条数据
+     * @param array $condition
+     */
+    final function getFirstDataView($condition, $field = '*', $order = "",  $alias = 'a', $join = [], $group = null)
+    {
+        self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order)->field($field);
+        if (!empty($join)) {
+            $db_obj = self::$query_obj;
+            self::$query_obj = $this->parseJoin($db_obj, $join);
+        }
+
+        if (!empty($group)) {
+            self::$query_obj = self::$query_obj->group($group);
+        }
+        $data = self::$query_obj->find();
+        return $data;
+    }
+
+    /**
      * 验证
      * @param array $data
      * @param string $scene_name
@@ -400,7 +425,7 @@ class Model
             $validate_result = $validate->scene($scene_name)->batch(false)->check($data);
         }
 
-        return $validate_result ? [true, ''] : [false, $validate->getError()];
+        return $validate_result ? [ true, '' ] : [ false, $validate->getError() ];
     }
 
     /**
@@ -408,8 +433,7 @@ class Model
      */
     final public function startTrans()
     {
-
-        return Db::startTrans();
+        Db::startTrans();
     }
 
     /**
@@ -417,8 +441,7 @@ class Model
      */
     final public function commit()
     {
-
-        return Db::commit();
+        Db::commit();
     }
 
     /**
@@ -426,8 +449,7 @@ class Model
      */
     final public function rollback()
     {
-
-        return Db::rollback();
+        Db::rollback();
     }
 
     /**
@@ -468,7 +490,6 @@ class Model
      */
     final public function getMax($where = [], $field)
     {
-
         return Db::name($this->table)->where($where)->max($field);
     }
 }

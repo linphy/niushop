@@ -370,10 +370,10 @@ class Sms extends BaseModel
         // 修改模板id、审核状态
         if (!empty($sms_template_list)) {
             foreach ($res[ 'list' ] as $k => $v) {
-                if ($v[ 'tem_id' ] == 0 || $v['audit_status'] != 2) {
+                if ($v[ 'tem_id' ] == 0 || $v[ 'audit_status' ] != 2) {
                     foreach ($sms_template_list as $ck => $cv) {
 
-                        if ($cv[ 'temName' ] == $v[ 'template_name' ] && $cv['auditResult'] == 2) {
+                        if ($cv[ 'temName' ] == $v[ 'template_name' ] && $cv[ 'auditResult' ] == 2) {
                             $res[ 'list' ][ $k ][ 'tem_id' ] = $cv[ 'temId' ];
                             $res[ 'list' ][ $k ][ 'audit_status' ] = 2;
                             model('sms_template')->update([ 'tem_id' => $cv[ 'temId' ], 'audit_status' => 2 ], [ [ 'template_id', '=', $v[ 'template_id' ] ] ]);

@@ -13,11 +13,11 @@
 </div>
 <!-- 搜索框 -->
 <div class="ns-single-filter-box">
-	<button class="layui-btn ns-bg-color" onclick="addLevel()">添加等级</button>
+	<button class="layui-btn ns-bg-color" onclick="addLevel()">添加会员等级</button>
 
 	<div class="layui-form">
 		<div class="layui-input-inline">
-			<input type="text" name="search_text" placeholder="请输入等级名称" autocomplete="off" class="layui-input">
+			<input type="text" name="search_text" placeholder="请输入会员等级名称" autocomplete="off" class="layui-input">
 			<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
 				<i class="layui-icon">&#xe615;</i>
 			</button>
@@ -25,14 +25,13 @@
 	</div>
 </div>
 
-<!-- 会员等级列表 -->
 <table id="level_list" lay-filter="level_list"></table>
 
 <!-- 操作 -->
 <script type="text/html" id="operation">
 	<div class="ns-table-btn">
 		<a class="layui-btn" lay-event="edit">编辑</a>
-		{{# if(d.is_default==0){ }}
+		{{# if(d.is_default == 0){ }}
 		<a class="layui-btn" lay-event="del">删除</a>
 		{{# } }}
 	</div>
@@ -45,9 +44,6 @@
 			form = layui.form,
 			repeat_flag = false; //防重复标识
 
-		/**
-		 * 加载表格
-		 */
 		table = new Table({
 			elem: '#level_list',
 			url: ns.url("shop/memberlevel/levelList"),
@@ -59,35 +55,32 @@
 					templet: function (data) {
 						return "VIP"+data.LAY_INDEX;
 					}
-				}, {
+				},{
 					field: 'level_name',
 					title: '等级名称',
-					width: '16%',
-					unresize: 'false'
-				}, {
-                    field: 'remark',
-                    title: '等级描述',
-                    width: '20%',
-                    unresize: 'false'
-                }, {
-					field: 'growth',
-					title: '成长值',
-					width: '12%',
+					width: '15%',
 					unresize: 'false'
 				},{
-					field: 'consume_discount',
-					title: '等级折扣',
+					field: 'growth',
+					title: '成长值',
+					width: '20%',
+					unresize: 'false'
+				},{
+					field: 'member_num',
+					title: '持有人数',
 					width: '10%',
+					unresize: 'false'
+				},{
+					field: '',
+					title: '等级权益',
+					width: '30%',
 					unresize: 'false',
-					templet: function (data) {						
-						return data.consume_discount + "%";
-					}
-				}, {
-					title: '是否包邮',
-					width: '10%',
-					unresize: 'false',
-					templet: function (data) {
-						return data.is_free_shipping ? "是" : "否";
+					templet: function (data) {	
+						var text = '';
+						if (data.is_free_shipping == 1) text += '购物享商品包邮；';
+						if (data.consume_discount != 100) text += '购物享'+ (data.consume_discount / 10) +'折优惠；';
+						if (data.point_feedback > 0) text += '购物享'+ data.point_feedback +'倍积分回馈；';
+						return text;
 					}
 				}, {
 					title: '操作',
@@ -97,6 +90,7 @@
 				}]
 			]
 		});
+	 	
 		
 		/**
 		 * 工具栏操作，编辑、删除
@@ -118,6 +112,7 @@
 		 * 搜索功能
 		 */
 		form.on('submit(search)', function(data) {
+			data
 			table.reload( {
 				page: {
 					curr: 1
@@ -127,15 +122,15 @@
 		});
 
 		// 删除方法
-		function delMemberLevel(level_ids) {
+		function delMemberLevel(level_id) {
 			if(repeat_flag) return false;
 			repeat_flag = true;
 				
-			layer.confirm('确定要删除该等级吗?', function() {
+			layer.confirm('确定要删除该卡吗?', function() {
 				$.ajax({
 					type: 'POST',
 					url: ns.url("shop/memberlevel/deleteLevel"),
-					data: {level_ids},
+					data: {level_id},
 					dataType: 'JSON',
 					success: function(res) {
 						layer.msg(res.message);
@@ -155,7 +150,7 @@
 	});
 
 	/**
-	 * 点击跳转添加会员等级页面
+	 * 点击跳转添加会员卡页面
 	 */
 	function addLevel() {
 		location.href = ns.url("shop/memberlevel/addLevel");

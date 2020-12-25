@@ -253,10 +253,11 @@ class OrderRefund extends BaseModel
             $invoice_delivery_money = 0;
             $invoice_money = 0;
         } else {
+            $delivery_num = model('order_goods')->getCount([ [ 'order_id', '=', $order_goods_info[ 'order_id' ] ], ['delivery_status', '=', 1] ]);
             //订单整体项
             $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ]
             ], 'delivery_money, invoice_delivery_money, invoice_money');
-            $delivery_money = $order_info[ 'delivery_money' ];
+            $delivery_money = $delivery_num == 0 ? $order_info[ 'delivery_money' ] : 0;
             $invoice_delivery_money = $order_info[ 'invoice_delivery_money' ];
             $invoice_money = $order_info[ 'invoice_money' ];
         }
@@ -694,7 +695,7 @@ class OrderRefund extends BaseModel
             //退款余额
             if ($refund_balance_money > 0) {
                 $member_account_model = new MemberAccount();
-                $balance_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "balance", $refund_balance_money, "refund", "余额返还", "订单退款,返还余额:" . $refund_balance_money);
+                $balance_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "balance", $refund_balance_money, "refund", $order_goods_info[ 'order_id' ], "订单退款,返还余额:" . $refund_balance_money);
                 if ($balance_result[ "code" ] < 0) {
                     model('order_goods')->rollback();
                     return $balance_result;
@@ -703,7 +704,7 @@ class OrderRefund extends BaseModel
             // 退还积分
             if ($order_goods_info[ 'use_point' ] > 0) {
                 $member_account_model = new MemberAccount();
-                $point_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "point", $order_goods_info[ 'use_point' ], "refund", "积分返还", "订单退款,返还积分:" . $order_goods_info[ 'use_point' ]);
+                $point_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "point", $order_goods_info[ 'use_point' ], "refund", $order_goods_info[ 'order_id' ], "订单退款,返还积分:" . $order_goods_info[ 'use_point' ]);
                 if ($point_result[ "code" ] < 0) {
                     model('order_goods')->rollback();
                     return $point_result;
@@ -946,6 +947,13 @@ class OrderRefund extends BaseModel
     {
         model('order_goods')->startTrans();
         try {
+
+            //判断是否退款完毕
+            $order_goods_info = model('order_goods')->getInfo([['order_goods_id', '=', $order_goods_id]]);
+            if($order_goods_info['refund_status'] == self::REFUND_COMPLETE){
+                model('order_goods')->rollback();
+                return $this->error('', '订单不能重复维权');
+            }
             $pay_model = new Pay();
             $refund_no = $pay_model->createRefundNo();
 

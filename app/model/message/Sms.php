@@ -132,7 +132,6 @@ class Sms extends BaseModel
             if (empty($param["sms_account"])) return $this->error('', '手机号不能为空');
 
             $result = event("SendSms", $param, true);
-
             if (empty($result)) {
                 $result = $this->error([], "EMPTY_SMS_TYPE");
             }

@@ -60,7 +60,7 @@ class Addon extends BaseApi
         $res[ 'cards' ] = addon_is_exit('cards', $this->site_id);        // 刮刮乐
         $res[ 'egg' ] = addon_is_exit('egg', $this->site_id);        // 砸金蛋
         $res[ 'turntable' ] = addon_is_exit('turntable', $this->site_id);        // 幸运抽奖
-
+        $res[ 'memberrecommend' ] = addon_is_exit('memberrecommend', $this->site_id); // 推荐奖励
 
         return $this->response($this->success($res));
     }

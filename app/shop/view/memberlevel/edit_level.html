@@ -41,7 +41,7 @@
 
 	<div class="layui-card ns-card-common ns-card-brief">
 		<div class="layui-card-header">
-			<span class="ns-card-title">会员等级信息</span>
+			<span class="ns-card-title">基础信息</span>
 		</div>
 		<div class="layui-card-body">
 
@@ -53,19 +53,21 @@
 			</div>
 
 			<div class="layui-form-item">
-				<label class="layui-form-label">等级描述：</label>
+				<label class="layui-form-label">等级说明：</label>
 				<div class="layui-input-block ns-len-long">
 					<textarea name="remark" class="layui-textarea">{$level_info.remark}</textarea>
 				</div>
 			</div>
 
 			{if $level_info.is_default == 0}
-			<div class="layui-form-item">
-				<label class="layui-form-label"><span class="required">*</span>所需成长值：</label>
-				<div class="layui-input-block">
-					<input name="growth" value="{$level_info.growth}" type="number" lay-verify="required" min="0" class="layui-input ns-len-short">
+			<div class="gratis-wrap  {if $level_info['level_type'] == 1}layui-hide{/if}">
+				<div class="layui-form-item">
+					<label class="layui-form-label"><span class="required">*</span>所需成长值：</label>
+					<div class="layui-input-block">
+						<input name="growth" value="{$level_info.growth}" type="number" {if $level_info['level_type'] == 0}lay-verify="required"{/if}  min="0" class="layui-input ns-len-short">
+					</div>
+					<div class="ns-word-aux">修改等级所需成长值后，部分客户会因无法达到该成长值要求而发生会员等级的变化</div>
 				</div>
-				<div class="ns-word-aux">修改等级所需成长值后，部分客户会因无法达到该成长值要求而发生会员等级的变化</div>
 			</div>
 			{/if}
 
@@ -76,7 +78,7 @@
 
 	<div class="layui-card ns-card-common ns-card-brief ns-level-equity">
 		<div class="layui-card-header">
-			<span class="ns-card-title">等级权益</span>
+			<span class="ns-card-title">权益</span>
 		</div>
 		<div class="layui-card-body">
 
@@ -101,13 +103,12 @@
 				</div>
 				<div class="ns-word-aux">回馈积分 = 消费金额 * 积分回馈倍率</div>
 			</div>
-
 		</div>
 	</div>
 
 	<div class="layui-card ns-card-common ns-card-brief">
 		<div class="layui-card-header">
-			<span class="ns-card-title">等级礼包</span>
+			<span class="ns-card-title">开卡礼包</span>
 		</div>
 		<div class="layui-card-body">
 
@@ -138,7 +139,7 @@
 						<thead>
 						<tr>
 							<th>优惠券名称</th>
-							<th>面额</th>
+							<th>优惠金额/折扣</th>
 							<th>结束时间</th>
 							<th>操作</th>
 						</tr>
@@ -162,7 +163,11 @@
 									</div>
 								</div>
 							</td>
-							<td class="layui-elip coupon-money">{$coupon_list_v.money}</td>
+							{if $coupon_list_v.type == 'reward'}
+							<td class="layui-elip coupon-money">{$coupon_list_v.money}元</td>
+							{else/}
+							<td class="layui-elip coupon-money">{$coupon_list_v.discount}折</td>
+							{/if}
 							{if $coupon_list_v.validity_type == 0}
 							<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
 							{else/}
@@ -202,12 +207,13 @@
 
 {/block}
 {block name="script"}
+<script type="text/javascript" src="__STATIC__/ext/colorPicker/js/colorpicker.js"></script>
 <script>
     var coupon_id = [], addCoupon;
-
+	var form;
 	layui.use(['form', 'laytpl'], function() {
-		var form = layui.form,
-            laytpl = layui.laytpl,
+		form = layui.form;
+		var laytpl = layui.laytpl,
 			repeat_flag = false; //防重复标识
 		form.render();
 
@@ -217,10 +223,10 @@
 		 * 监听保存
 		 */
 		form.on('submit(save)', function(data) {
-
             data.field.send_coupon = coupon_id.toString();
 			if(repeat_flag) return false;
 			repeat_flag = true;
+			
 			$.ajax({
 				url: ns.url("shop/memberlevel/editLevel"),
 				data: data.field,
@@ -454,6 +460,83 @@
     function back(){
 		location.href = ns.url("shop/memberlevel/levelList");
 	}
+
+	//添加付费规则
+	function addRule() {
+		let level_select = {:json_encode($level_time, JSON_UNESCAPED_UNICODE)};;
+		$('#level-rule tr').each(function (i, e) {
+			if($(e).find('select').val() && $(e).find('select').val() != undefined){
+				delete level_select[$(e).find('select').val()];
+			}
+		})
+
+		var select_html = '';
+		for (let i in level_select){
+			select_html += '<option value="'+i+'">'+level_select[i]+'</option>';
+		}
+
+		var html = `
+			<tr>
+				<td>
+					<div class="ns-len-short">
+						<select lay-filter="selectRule">
+							${select_html}
+						</select>
+					</div>
+				</td>
+				<td class="align-center">
+					<input  type="text" value="0" lay-verify="num" class="layui-input ns-len-short price" placeholder="价格/元">
+				</td>
+				<td>
+					<a href="javascript:void(0)" class="ns-text-color" onclick="deleteRule(this)">删除</a>
+				</td>
+			</tr>
+		`;
+
+		$('#level-rule tbody').append(html);
+		if($('#level-rule tr').length == 5){
+			$('#add_rule_btn').hide()
+		}
+		form.render();
+		form.on('select(selectRule)', function(data){
+			let num = 0;
+			$('#level-rule tr').each(function (i, e) {
+				if($(e).find('select').val() == data.value){
+					num++;
+					$('.delete-rule').removeClass('delete-rule');
+					$(e).find('select').addClass('delete-rule');
+				}
+			})
+			if(num > 1) deleteRule($('.delete-rule'));
+		});
+
+		form.verify({
+			num: function (value) {
+				var arrmen = value.split(".");
+				var val = 0;
+				if (arrmen.length == 2) {
+					val = arrmen[1];
+				}
+
+				if (value == "") {
+					return false;
+				}
+				if (value <= 0 || val.length > 2) {
+					return '请输入大于0的数，保留小数点后两位'
+				}
+			}
+		})
+
+		return false;
+	}
+
+	function deleteRule(obj) {
+		$(obj).parents('tr').remove();
+		if($('#level-rule tr').length < 5){
+			$('#add_rule_btn').show()
+		}
+	}
+
 </script>
 
 <!-- 优惠券 -->
@@ -485,7 +568,7 @@
 						</div>
 					</th>
 					<th class="layui-elip">优惠券名称</th>
-					<th class="layui-elip">面额（元）</th>
+					<th class="layui-elip">优惠金额/折扣</th>
 					<th class="layui-elip">结束时间</th>
 				</tr>
 				</thead>

@@ -54,6 +54,7 @@ class DiyViewLink extends BaseModel
                         $parent = $parent_menu_info['name'];
                         $level  = $parent_menu_info['level'] + 1;
                     } else {
+                        $parent = '';
                         $level = 1;
                     }
                 }

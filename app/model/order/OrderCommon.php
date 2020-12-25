@@ -420,12 +420,12 @@ class OrderCommon extends BaseModel
             if (!$is_exist_refund) {//因为订单完成后  只有全部退款完毕订单才会关闭
                 if ($order_info["balance_money"] > 0) {
                     $member_account_model = new MemberAccount();
-                    $result = $member_account_model->addMemberAccount($order_info['site_id'], $order_info["member_id"], "balance", $order_info["balance_money"], "refund", "余额返还", "订单关闭,返还余额:" . $order_info["balance_money"]);
+                    $result = $member_account_model->addMemberAccount($order_info['site_id'], $order_info["member_id"], "balance", $order_info["balance_money"], "refund", $order_id, "订单关闭,返还余额:" . $order_info["balance_money"]);
                 }
                 // 订单关闭返还积分
                 if ($refund_point > 0) {
                     $member_account_model = new MemberAccount();
-                    $result = $member_account_model->addMemberAccount($order_info['site_id'], $order_info["member_id"], "point", $refund_point, "refund", "积分返还", "订单关闭,返还积分:" . $refund_point);
+                    $result = $member_account_model->addMemberAccount($order_info['site_id'], $order_info["member_id"], "point", $refund_point, "refund", $order_id, "订单关闭,返还积分:" . $refund_point);
                 }
             }
             //订单关闭后操作
@@ -1052,9 +1052,11 @@ class OrderCommon extends BaseModel
                     'order_id' => $v['order_id']
                 ]);
                 $order_list['list'][$k]['order_goods'] = $order_goods_list;
-                //购买人信息
-                $member_info = model('member')->getInfo(['member_id' => $v['member_id']],'nickname');
-                $order_list['list'][$k]['nickname'] = $member_info['nickname'] ?? '';
+                if (isset($v['member_id'])) {
+                    //购买人信息
+                    $member_info = model('member')->getInfo(['member_id' => $v['member_id']],'nickname');
+                    $order_list['list'][$k]['nickname'] = $member_info['nickname'] ?? '';
+                }
             }
         }
 

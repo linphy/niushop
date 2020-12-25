@@ -72,7 +72,7 @@ class User extends BaseShop
                 "app_module" => $this->app_module,
                 "site_id" => $this->site_id
             );
-            $result = $user_model->addUser($data);
+            $result = $user_model->addUser($data,'','add');
             return $result;
         } else {
             $group_model = new Group();

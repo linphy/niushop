@@ -24,7 +24,9 @@
 					"popWindow": {
 						"imageUrl": "",
 						"count": -1,
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "",
 						"imgHeight": ""
 					},
@@ -53,19 +55,25 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style3/img/posters_1.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "337"
 					}, {
 						"imageUrl": "public/diy_view/style3/img/posters_2.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "337"
 					}, {
 						"imageUrl": "public/diy_view/style3/img/posters_3.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "337"
 					}],
@@ -86,7 +94,9 @@
 					"fontSize": 14,
 					"list": [{
 						"title": "多端小程序即将上线",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"noticeIds": [],
 					"addon_name": "",
@@ -105,7 +115,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style3/img/adv_01.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "161"
 					}],
@@ -128,13 +140,19 @@
 					"backgroundColor": "",
 					"list": [{
 						"imageUrl": "public/diy_view/style3/img/adv_02.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style3/img/adv_03.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style3/img/adv_04.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"selectedRubikCubeArray": [],
 					"diyHtml": "",
@@ -160,13 +178,19 @@
 					"backgroundColor": "",
 					"list": [{
 						"imageUrl": "public/diy_view/style3/img/adv_05.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style3/img/adv_06.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style3/img/adv_07.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"selectedRubikCubeArray": [],
 					"diyHtml": "",
@@ -189,7 +213,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style3/img/title.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "750",
 						"imgHeight": "62"
 					}],

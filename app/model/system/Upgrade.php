@@ -365,4 +365,18 @@ class Upgrade extends BaseModel
         return $result;
     }
 
+    /**
+     * 获取应用更新日志
+     * @return mixed
+     */
+    public function getUpdateLog()
+    {
+        $app_info = config('info');
+        $post_data = [
+            'product_key' => $app_info[ 'name' ]
+        ];
+        $re = $this->doPost('/upgrade/upgrade/updateLog', $post_data);
+        $re = json_decode($re, true);
+        return $re;
+    }
 }

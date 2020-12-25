@@ -196,6 +196,7 @@ class BundlingOrderCreate extends OrderCreate
             //扣除余额(统一扣除)
             if ($calculate_data["balance_money"] > 0) {
                 $this->pay_type = "BALANCE";
+                $calculate_data['order_id'] = $order_id;
                 $balance_result = $this->useBalance($calculate_data, $data['site_id']);
                 if ($balance_result["code"] < 0) {
                     model("order")->rollback();
@@ -278,60 +279,60 @@ class BundlingOrderCreate extends OrderCreate
         $calculate_data['shop_goods_list']["coupon_list"] = $coupon_list;
         $express_type                                     = [];
         if ($this->is_virtual == 0) {
+            foreach ($calculate_data[ 'shop_goods_list' ]['deliver_sort'] as $type) {
+                // 物流
+                if ($type == 'express' && $calculate_data[ 'shop_goods_list' ][ "express_config" ][ "is_use" ] == 1) {
+                    $express_type[] = [ "title" => Express::express_type[ "express" ][ "title" ], "name" => "express" ];
+                }
+                // 自提
+                if ($type == 'store' && $calculate_data[ 'shop_goods_list' ][ "store_config" ][ "is_use" ] == 1) {
+                    //根据坐标查询门店
+                    $store_model = new Store();
+                    $store_condition = array (
+                        [ 'site_id', '=', $data[ 'site_id' ] ],
+                        [ 'is_pickup', '=', 1 ],
+                        [ 'status', '=', 1 ],
+                        [ 'is_frozen', '=', 0 ],
+                    );
 
-            //2. 查询店铺配送方式（1. 物流  2. 自提  3. 外卖）
-            if ($calculate_data['shop_goods_list']["express_config"]["is_use"] == 1) {
-                $express_type[] = ["title" => Express::express_type["express"]["title"], "name" => "express"];
-            }
-            //查询店铺是否开启门店自提
-            if ($calculate_data['shop_goods_list']["store_config"]["is_use"] == 1) {
-                //根据坐标查询门店
-                $store_model     = new Store();
-                $store_condition = array(
-                    ['site_id', '=', $data['site_id']],
-                    ['is_pickup', '=', 1],
-                    ['status', '=', 1],
-                    ['is_frozen', '=', 0],
-                );
+                    $latlng = array (
+                        'lat' => $data[ 'latitude' ],
+                        'lng' => $data[ 'longitude' ],
+                    );
+                    $store_list_result = $store_model->getLocationStoreList($store_condition, '*', $latlng);
+                    $store_list = $store_list_result[ "data" ];
 
-
-                $latlng            = array(
-                    'lat' => $data['latitude'],
-                    'lng' => $data['longitude'],
-                );
-                $store_list_result = $store_model->getLocationStoreList($store_condition, '*', $latlng);
-                $store_list        = $store_list_result["data"];
-                //如果用户默认选中了门店
-                $store_id = 0;
-                if ($data['default_store_id'] > 0) {
-                    if (!empty($store_list)) {
-                        $store_array = array_column($store_list, 'store_id');
-                        if (in_array($data['default_store_id'], $store_array)) {
-                            $store_id = $data['default_store_id'];
-                        } else {
-                            $store_condition   = array(
-                                ['site_id', '=', $data['site_id']],
-                                ['is_pickup', '=', 1],
-                                ['status', '=', 1],
-                                ['is_frozen', '=', 0],
-                                ['store_id', '=', $data['default_store_id']],
-                            );
-                            $store_info_result = $store_model->getStoreInfo($store_condition, '*');
-                            $store_info        = $store_info_result['data'];
-                            if (!empty($store_info)) {
-                                $store_id     = $data['default_store_id'];
-                                $store_list[] = $store_info;
+                    //如果用户默认选中了门店
+                    $store_id = 0;
+                    if ($data[ 'default_store_id' ] > 0) {
+                        if (!empty($store_list)) {
+                            $store_array = array_column($store_list, 'store_id');
+                            if (in_array($data[ 'default_store_id' ], $store_array)) {
+                                $store_id = $data[ 'default_store_id' ];
+                            } else {
+                                $store_condition = array (
+                                    [ 'site_id', '=', $data[ 'site_id' ] ],
+                                    [ 'is_pickup', '=', 1 ],
+                                    [ 'status', '=', 1 ],
+                                    [ 'is_frozen', '=', 0 ],
+                                    [ 'store_id', '=', $data[ 'default_store_id' ] ],
+                                );
+                                $store_info_result = $store_model->getStoreInfo($store_condition, '*');
+                                $store_info = $store_info_result[ 'data' ];
+                                if (!empty($store_info)) {
+                                    $store_id = $data[ 'default_store_id' ];
+                                    $store_list[] = $store_info;
+                                }
                             }
                         }
                     }
-
+                    $express_type[] = [ "title" => Express::express_type[ "store" ][ "title" ], "name" => "store", "store_list" => $store_list, 'store_id' => $store_id ];
                 }
-                $express_type[] = ["title" => Express::express_type["store"]["title"], "name" => "store", "store_list" => $store_list, 'store_id' => $store_id];
-            }
-            //查询店铺是否开启外卖配送
-            if ($calculate_data['shop_goods_list']["local_config"]["is_use"] == 1) {
-                //查询本店的通讯地址
-                $express_type[] = ["title" => "外卖配送", "name" => "local"];
+                // 外卖
+                if ($type == 'local' && $calculate_data[ 'shop_goods_list' ][ "local_config" ][ "is_use" ] == 1) {
+                    //查询本店的通讯地址
+                    $express_type[] = [ "title" => "外卖配送", "name" => "local" ];
+                }
             }
         }
 
@@ -483,9 +484,11 @@ class BundlingOrderCreate extends OrderCreate
             $delivery_money                          = 0;
             $shop_goods['delivery']['delivery_type'] = '';
         } else {
-
-            //查询店铺是否开启快递配送
             $express_config_model         = new ExpressConfig();
+            $deliver_type = $express_config_model->getDeliverTypeSort($site_id);
+            $deliver_type = $deliver_type[ "data" ];
+            $shop_goods[ "deliver_sort" ] = explode(',', $deliver_type['value']['deliver_type']);
+            //查询店铺是否开启快递配送
             $express_config_result        = $express_config_model->getExpressConfig($site_id);
             $express_config               = $express_config_result["data"];
             $shop_goods["express_config"] = $express_config;

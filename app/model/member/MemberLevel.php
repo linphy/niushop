@@ -11,6 +11,8 @@
 
 namespace app\model\member;
 
+use addon\coupon\model\Coupon;
+use app\model\system\Cron;
 use think\facade\Cache;
 use app\model\BaseModel;
 use addon\coupon\model\CouponType;
@@ -20,6 +22,19 @@ use addon\coupon\model\CouponType;
  */
 class MemberLevel extends BaseModel
 {
+    public $level_change_type = [
+        'upgrade' => '自动升级',
+        'buy' => '付费购卡',
+        'adjust' => '商家调整',
+        'expire' => '到期降级'
+    ];
+
+    public $level_time = [
+        'week' => '一周',
+        'month' => '一月',
+        'quarter' => '一季',
+        'year' => '一年',
+    ];
 
     /**
      * 添加会员等级
@@ -71,10 +86,15 @@ class MemberLevel extends BaseModel
      * 删除会员等级
      * @param array $condition
      */
-    public function deleteMemberLevel($condition)
+    public function deleteMemberLevel($level_id, $site_id)
     {
+        $count = model('member')->getCount([ ['member_level', '=', $level_id], ['is_delete', '=', 0] ]);
+        if ($count > 0) return $this->error('', '有会员正持有该卡不可删除');
+        $condition = [
+            ['level_id', '=', $level_id],
+            ['site_id', '=', $site_id],
+        ];
         $res = model('member_level')->delete($condition);
-
         Cache::tag("member_level")->clear();
         return $this->success($res);
     }
@@ -98,7 +118,7 @@ class MemberLevel extends BaseModel
             //获取优惠券信息
             if (isset($info['send_coupon']) && !empty($info['send_coupon'])) {
                 //优惠券字段
-                $coupon_field = 'coupon_type_id,coupon_name,money,count,lead_count,max_fetch,at_least,end_time,image,validity_type,fixed_term';
+                $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time';
 
                 $model               = new CouponType();
                 $coupon              = $model->getCouponTypeList([['coupon_type_id', 'in', $info['send_coupon']]], $coupon_field);
@@ -155,4 +175,142 @@ class MemberLevel extends BaseModel
         return $this->success($list);
     }
 
+    /**
+     * 添加会员卡变更记录
+     * @param $member_id 变更会员
+     * @param $site_id 站点id
+     * @param $after_level 变更之后的会员卡
+     * @param $action_uid 操作人
+     * @param $action_type 操作人类型
+     * @param $action_name 操作人昵称
+     * @param string $action_desc 描述
+     */
+    public function addMemberLevelChangeRecord($member_id, $site_id, $after_level, $expire_time, $change_type, $action_uid, $action_type, $action_name, $action_desc = ''){
+        model('member_level_records')->startTrans();
+
+        try {
+            $member_info = model('member')->getInfo([ ['member_id', '=', $member_id] ], 'member_level,member_level_name,member_level_type,level_expire_time');
+            $level_info = model('member_level')->getInfo([ ['level_id', '=', $after_level], ['site_id', '=', $site_id] ], 'level_id,level_name,level_type');
+            if ($member_info['member_level'] == $level_info['level_id']) {
+                model('member_level_records')->rollback();
+                return $this->success('', '会员卡未发生变更');
+            }
+
+            $prev_record = model('member_level_records')->getFirstData([ ['member_id', '=', $member_id] ], 'id', 'change_time desc');
+            // 添加变更记录
+            $data = [
+                'member_id' => $member_id,
+                'site_id' => $site_id,
+                'before_level_id' => $member_info['member_level'],
+                'before_level_name' => $member_info['member_level_name'],
+                'before_level_type' => $member_info['member_level_type'],
+                'before_expire_time' => $member_info['level_expire_time'],
+                'after_level_id' => $level_info['level_id'],
+                'after_level_name' => $level_info['level_name'],
+                'after_level_type' => $level_info['level_type'],
+                'prev_id' => $prev_record['id'] ?? 0,
+                'change_time' => time(),
+                'action_uid' => $action_uid,
+                'action_type' => $action_type,
+                'action_name' => $action_name,
+                'action_desc' => $action_desc,
+                'change_type' => $change_type,
+                'change_type_name' => $this->level_change_type[$change_type]
+            ];
+            model('member_level_records')->add($data);
+
+            // 变更会员等级
+            model('member')->update([
+                'member_level' => $level_info['level_id'],
+                'member_level_name' => $level_info['level_name'],
+                'member_level_type' => $level_info['level_type'],
+                'level_expire_time' => $expire_time
+            ], [ ['member_id','=',$member_id] ]);
+            $cron = new Cron();
+            $cron->deleteCron([ ['event', '=', 'MemberLevelAutoExpire'], ['relate_id', '=', $member_id ] ]);
+            if ($level_info['level_type']) {
+                $cron->addCron(1, 0, "会员卡自动过期", "MemberLevelAutoExpire", $expire_time, $member_id);
+            }
+            Cache::tag("member_level_records")->clear();
+            model('member_level_records')->commit();
+            return $this->success();
+        } catch (\Exception $e) {
+            model('member_level_records')->rollback();
+            return $this->error('', $e->getMessage());
+        }
+    }
+
+    /**
+     * 获取会员会员卡变更记录
+     * @param array $condition
+     * @param int $page
+     * @param int $list_rows
+     * @param string $field
+     * @param string $order
+     * @param string $alias
+     * @param array $join
+     * @param null $group
+     * @return array
+     */
+    public function getMemberLevelRecordPageList($condition = [], $page = 1, $list_rows = PAGE_LIST_ROWS, $field = '*', $order = 'change_time desc',  $alias = 'a', $join = [], $group = null){
+        $data  = json_encode([$condition, $field, $order, $page, $list_rows, $alias, $join, $group]);
+        $cache = Cache::get("getMemberLevelRecordPageList" . $data);
+        if (!empty($cache)) {
+            return $this->success($cache);
+        }
+        $list = model('member_level_records')->pageList($condition, $field, $order, $page, $list_rows, $alias, $join, $group);
+        Cache::tag("member_level_records")->set("getMemberLevelRecordPageList" . $data, $list);
+        return $this->success($list);
+    }
+
+    /**
+     * 会员卡过期
+     * @param $member_id
+     */
+    public function memberLevelExpire($member_id){
+        $member_info = model('member')->getInfo([ ['member_id', '=', $member_id] ], 'member_id,site_id,nickname,member_level,level_expire_time,growth');
+        if (!empty($member_info) && !empty($member_info['level_expire_time']) && $member_info['level_expire_time'] < time()) {
+            $alias = 'mlr';
+            $join = [
+                ['member_level ml', 'ml.level_id = mlr.before_level_id', 'inner']
+            ];
+            // 如果会员还存在未过期的付费会员卡
+            $level_info = model('member_level_records')->getFirstDataView([ ['before_expire_time', '>', time()], ['member_id', '=', $member_id] ], 'mlr.*', 'change_time desc', $alias, $join);
+
+            if (!empty($level_info)) {
+                $this->addMemberLevelChangeRecord($member_id, $member_info['site_id'], $level_info['before_level_id'], $level_info['before_expire_time'], 'expire', $member_id, 'member', $member_info['nickname']);
+            } else {
+                // 如果之前免费卡还存在
+                $level_info = model('member_level_records')->getFirstDataView([ ['before_level_type', '=', 0], ['member_id', '=', $member_id] ], 'mlr.*', 'change_time desc', $alias, $join);
+                if (!empty($level_info)) {
+                    $this->addMemberLevelChangeRecord($member_id, $member_info['site_id'], $level_info['before_level_id'], $level_info['before_expire_time'], 'expire', $member_id, 'member', $member_info['nickname']);
+                    event("AddMemberAccount", ['account_type' => 'growth', 'member_id' => $member_id, 'site_id' => $member_info['site_id']]);
+                } else {
+                    // 如果之前的免费卡不存在
+                    $level_info = model('member_level')->getFirstData([ ['site_id', '=', $member_info['site_id']], ['level_type', '=', 0], ['growth', '<=', $member_info['growth']] ], '*', 'growth desc');
+
+                    if (!empty($level_info)) {
+                        $this->addMemberLevelChangeRecord($member_id, $member_info['site_id'], $level_info['level_id'], 0, 'expire', $member_id, 'member', $member_info['nickname']);
+                        $member_account = new MemberAccount();
+                        //赠送红包
+                        if ($level_info['send_balance'] > 0) {
+                            $member_account->addMemberAccount($member_info['site_id'], $member_info['member_id'], 'balance', $level_info['send_balance'], 'upgrade', '会员升级得红包' . $level_info['send_balance'], '会员升级得红包' . $level_info['send_balance']);
+                        }
+                        //赠送积分
+                        if ($level_info['send_point'] > 0) {
+                            $member_account->addMemberAccount($member_info['site_id'], $member_info['member_id'], 'point', $level_info['send_point'], 'upgrade', '会员升级得积分' . $level_info['send_point'], '会员升级得积分' . $level_info['send_point']);
+                        }
+                        //给用户发放优惠券
+                        if (!empty($level_info['send_coupon'])) {
+                            $coupon_array = explode(',', $level_info['send_coupon']);
+                            $coupon_model = new Coupon();
+                            foreach ($coupon_array as $k => $v) {
+                                $coupon_model->receiveCoupon($v, $member_info['site_id'], $member_info['member_id'], 3);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

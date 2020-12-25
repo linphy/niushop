@@ -11,23 +11,31 @@
 
 namespace app\event;
 
+use ReflectionClass;
+use ReflectionException;
+
 /**
  * 自定义模板组件渲染
  */
 class DiyViewUtils
 {
-    // 行为扩展的执行入口必须是run
+    /**
+     * 行为扩展的执行入口必须是run
+     * @param $data
+     * @return mixed | void
+     * @throws ReflectionException
+     */
     public function handle($data)
     {
-        $port = ['app', 'addon'];
-        if (!empty($data['controller'])) {
+        $port = [ 'app', 'addon' ];
+        if (!empty($data[ 'controller' ])) {
             $class_name = '';
-            $is_exist   = false;
+            $is_exist = false;
             foreach ($port as $k => $v) {
-                if (!empty($data['addon_name'])) {
-                    $class_name = $v . '\\' . $data['addon_name'] . '\\component\\controller\\' . $data['controller'];
+                if (!empty($data[ 'addon_name' ])) {
+                    $class_name = $v . '\\' . $data[ 'addon_name' ] . '\\component\\controller\\' . $data[ 'controller' ];
                 } else {
-                    $class_name = $v . '\\component\\controller\\' . $data['controller'];
+                    $class_name = $v . '\\component\\controller\\' . $data[ 'controller' ];
                 }
                 if (class_exists($class_name)) {
                     $is_exist = true;
@@ -35,13 +43,12 @@ class DiyViewUtils
                 }
             }
             if ($is_exist) {
-                $class    = new \ReflectionClass($class_name);
+                $class = new ReflectionClass($class_name);
                 $instance = $class->newInstanceArgs();
                 return $instance->design();
             } else {
                 var_dump("not found：" . $class_name);
             }
-
         }
     }
 

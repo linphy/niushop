@@ -1402,7 +1402,7 @@ function delFile($path)
 /**
  * base64转二进制
  * @param $base64Str
- * @return array|boo
+ * @return array|boolean
  */
 function base64_to_blob($base64Str)
 {

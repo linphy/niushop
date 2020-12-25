@@ -575,7 +575,11 @@
                             html += '<select name="template_id" lay-search lay-filter="express_company">';
                             html += '<option value="">请选择面单模版</option>';
                             for (var i = 0; i < templateList.length; i++){
-                                html += '<option value='+ templateList[i].id +'>'+ templateList[i].template_name+'</option>';
+                                if(templateList[i].is_default == 1){
+                                    html += '<option  selected value='+ templateList[i].id +'>'+ templateList[i].template_name+'</option>';
+                                }else{
+                                    html += '<option  value='+ templateList[i].id +'>'+ templateList[i].template_name+'</option>';
+                                }
                             }
                             html += '</select>';
                             $(".express-sheet select[name='template_id']").html(html);

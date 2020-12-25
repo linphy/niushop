@@ -203,6 +203,67 @@
 			</div>
 
 		</div>
+
+		<div class="statistics-wrap">
+			<div class="item">
+				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=0'">
+					<h5 class="title">待付款订单</h5>
+					<div class="num">{$num_data.waitpay}</div>
+				</div>
+				<div class="flex-box" style="background: rgba(255, 69, 68, 0.1);" onclick="location.href='{:addon_url('shop/delivery/lists')}'">
+					<h5 class="title">待发货订单</h5>
+					<div class="num">{$num_data.waitsend}</div>
+				</div>
+			</div>
+
+			{if $is_fenxiao eq 0}
+			<div class="item">
+				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=3'">
+					<h5 class="title">待收货订单</h5>
+					<div class="num">{$num_data.waitconfirm}</div>
+				</div>
+				<div class="flex-box" style="background: rgba(255, 69, 68, 0.1);" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=10'">
+					<h5 class="title">已完成订单</h5>
+					<div class="num">{$num_data.complete}</div>
+				</div>
+			</div>
+			{/if}
+
+			<div class="item">
+				<div class="flex-box" style="background: rgba(80, 130, 255, 0.1);" onclick="location.href='{:addon_url('shop/orderrefund/lists')}'">
+					<h5 class="title">退款中订单</h5>
+					<div class="num">{$num_data.refund}</div>
+				</div>
+				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists')}'">
+					<h5 class="title">库存预警</h5>
+					<div class="num">{$num_data.goods_stock_alarm}</div>
+				</div>
+			</div>
+
+			<div class="item">
+				<div class="flex-box" style="background: rgba(60, 188, 66, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists', ['state' => 1])}'">
+					<h5 class="title">出售中商品</h5>
+					<div class="num">{$num_data.goods_total}</div>
+				</div>
+				<div class="flex-box" style="background: rgba(255, 174, 68, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists', ['state' => 0])}'">
+					<h5 class="title">仓库中商品</h5>
+					<div class="num">{$num_data.warehouse_goods}</div>
+				</div>
+			</div>
+			
+			{if $is_fenxiao eq 1}
+			<div class="item">
+				<div class="flex-box" style="background: rgba(38, 189, 216, 0.1)" onclick="location.href='{:addon_url('fenxiao://shop/fenxiao/apply')}'">
+					<h5 class="title">分销商申请</h5>
+					<div class="num">{$num_data.apply_count}</div>
+				</div>
+				<div class="flex-box" style="background: rgba(121, 68, 255, 0.1)" onclick="location.href='{:addon_url('fenxiao://shop/withdraw/lists')}'">
+					<h5 class="title">提现待审核</h5>
+					<div class="num">{$num_data.withdraw_count}</div>
+				</div>
+			</div>
+			{/if}
+		</div>
 		
 		<div class="echarts-wrap">
 			<div class="echarts-order">

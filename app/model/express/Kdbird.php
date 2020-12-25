@@ -31,6 +31,9 @@ class Kdbird extends BaseModel
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['app_module', '=', 'shop'], ["site_id", "=", $site_id], ['config_key', '=', 'EXPRESS_KDBIRD_CONFIG']]);
+        if(empty($res['data']['value']['status'])){
+            $res['data']['value']['status'] = 0;
+        }
         return $res;
     }
 
@@ -68,7 +71,7 @@ class Kdbird extends BaseModel
      * @param $express_no
      * @return array
      */
-    public function trace($code, $express_no, $site_id)
+    public function trace($code, $express_no, $site_id, $mobile)
     {
         $config_result = $this->getKdbirdConfig($site_id);
         $config        = $config_result["data"];
@@ -76,7 +79,7 @@ class Kdbird extends BaseModel
         if ($config["is_use"] == 0) return $this->error();
 
         $kd100_extend = new KdbirdExtend($config["value"]);
-        $result       = $kd100_extend->orderTracesSubByJson($express_no, $code);
+        $result       = $kd100_extend->orderTracesSubByJson($express_no, $code, $mobile);
         if (isset($result['success']) && $result['success']) {
             return $this->success($result);
         } else {

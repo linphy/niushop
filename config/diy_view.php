@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 return [
@@ -187,7 +186,7 @@ return [
             'title' => '商品列表',
             'type' => 'SYSTEM',
             'controller' => 'GoodsList',
-            'value' => '{ "sources" : "default", "categoryId" : 0, "categoryName": "请选择", "goodsCount" : "6", "goodsId": [], "style": 1, "backgroundColor": "", "marginTop": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0, "goodsTag": "default", "tagImg": {"imageUrl": ""} }',
+            'value' => '{ "sources" : "default", "categoryId" : 0, "categoryName": "请选择", "goodsCount" : "6", "goodsId": [], "style": 1, "backgroundColor": "", "marginTop": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0, "goodsTag": "default", "tagImg": {"imageUrl": ""}}',
             'sort' => '10016',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -207,28 +206,28 @@ return [
             'icon_selected' => 'public/static/ext/diyview/img/icon/goods_category_selected.png'
         ],
         [
-            'name' => 'FLOAT_BTN',
-            'title' => '浮动按钮',
-            'type' => 'SYSTEM',
-            'controller' => 'FloatBtn',
-            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list": [{"imageUrl": "","title": "","link": {}}]}',
-            'sort' => '10022',
-            'support_diy_view' => '',
-            'max_count' => 1,
-            'icon' => 'public/static/ext/diyview/img/icon/float_btn.png',
-            'icon_selected' => 'public/static/ext/diyview/img/icon/float_btn_selected.png'
-        ],
-        [
             'name' => 'TOP_CATEGORY',
             'title' => '分类导航',
             'type' => 'SYSTEM',
             'controller' => 'TopCategory',
             'value' => '{"title":"首页","selectColor":"#FF4544","nsSelectColor":"#333333",backgroundColor : "",styleType:"line"}',
-            'sort' => '10023',
+            'sort' => '10022',
             'support_diy_view' => '',
             'max_count' => 1,
             'icon' => 'public/static/ext/diyview/img/icon/top_category.png',
             'icon_selected' => 'public/static/ext/diyview/img/icon/top_category_selected.png'
+        ],
+        [
+            'name' => 'FLOAT_BTN',
+            'title' => '浮动按钮',
+            'type' => 'SYSTEM',
+            'controller' => 'FloatBtn',
+            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list": [{"imageUrl": "","title": "","link": {}}]}',
+            'sort' => '10023',
+            'support_diy_view' => '',
+            'max_count' => 1,
+            'icon' => 'public/static/ext/diyview/img/icon/float_btn.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/float_btn_selected.png'
         ],
     ],
     'link' => [

@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -77,6 +76,7 @@ class VirtualGoods extends BaseModel
                 'label_id' => $data[ 'label_id' ],
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
+                'is_consume_discount' => $data['is_consume_discount']
             );
 
             $common_data = array (
@@ -126,6 +126,7 @@ class VirtualGoods extends BaseModel
                     'sku_images' => $item[ 'sku_images' ],
                     'goods_id' => $goods_id,
                     'is_default' => $item[ 'is_default' ] ?? 0,
+                    'is_consume_discount' => $data['is_consume_discount']
                 );
 
                 $sku_arr[] = array_merge($sku_data, $common_data);
@@ -210,6 +211,7 @@ class VirtualGoods extends BaseModel
                 'label_id' => $data[ 'label_id' ],
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
+                'is_consume_discount' => $data['is_consume_discount']
             );
 
             $common_data = array (
@@ -265,6 +267,7 @@ class VirtualGoods extends BaseModel
                             'sku_images' => $item[ 'sku_images' ],
                             'goods_id' => $goods_id,
                             'is_default' => $item[ 'is_default' ] ?? 0,
+                            'is_consume_discount' => $data['is_consume_discount']
                         );
 
                         $sku_arr[] = array_merge($sku_data, $common_data);
@@ -273,6 +276,7 @@ class VirtualGoods extends BaseModel
                     model('goods_sku')->addList($sku_arr);
                 } else {
                     $discount_model = new Discount();
+                    $sku_id_arr = [];
                     foreach ($data[ 'goods_sku_data' ] as $item) {
                         $discount_info = [];
                         if (!empty($item[ 'sku_id' ])) {
@@ -299,11 +303,29 @@ class VirtualGoods extends BaseModel
                             $sku_data[ 'discount_price' ] = $item[ 'price' ];
                         }
                         if (!empty($item[ 'sku_id' ])) {
+                            $sku_id_arr[] = $item[ 'sku_id' ];
                             model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
                         } else {
-                            model('goods_sku')->add(array_merge($sku_data, $common_data));
+                            $sku_id = model('goods_sku')->add(array_merge($sku_data, $common_data));
+                            $sku_id_arr[] = $sku_id;
                         }
 
+                    }
+
+                    // 移除不存在的商品SKU
+                    $sku_id_list = model('goods_sku')->getList([ [ 'goods_id', '=', $goods_id ] ], 'sku_id');
+                    $sku_id_list = array_column($sku_id_list, 'sku_id');
+                    foreach ($sku_id_list as $k => $v) {
+                        foreach ($sku_id_arr as $ck => $cv) {
+                            if ($v == $cv) {
+                                unset($sku_id_list[ $k ]);
+                            }
+                        }
+                    }
+
+                    $sku_id_list = array_values($sku_id_list);
+                    if (!empty($sku_id_list)) {
+                        model('goods_sku')->delete([ [ 'sku_id', 'in', implode(",", $sku_id_list) ] ]);
                     }
                 }
 

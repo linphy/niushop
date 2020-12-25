@@ -33,14 +33,14 @@
                 <tr>
                     <td class="onetd"><span class="required">*</span>Mysql端口：</td>
                     <td>
-                        <input name="dbport" id="dbport" type="text" value="3306" class="input-txt"lay-verify="empty" placeholder="请输入Mysql端口"/>
+                        <input name="dbport" id="dbport" type="text" value="3306" class="input-txt" lay-verify="empty" placeholder="请输入Mysql端口"/>
                         <small>一般为3306</small>
                     </td>
                 </tr>
                 <tr>
                     <td class="onetd"><span class="required">*</span>数据库用户：</td>
                     <td>
-                        <input name="dbuser" id="dbuser" type="text" value="" class="input-txt" onChange="testDb()"lay-verify="empty" placeholder="请输入数据库用户"/>
+                        <input name="dbuser" id="dbuser" type="text" value="" class="input-txt" onChange="testDb()" lay-verify="empty" placeholder="请输入数据库用户"/>
                         <small>默认root</small>
                     </td>
                 </tr>
@@ -48,7 +48,7 @@
                     <td class="onetd"><span class="required">*</span>数据库密码：</td>
                     <td>
                         <div style='float:left;margin-right:3px;'>
-                            <input name="dbpwd" id="dbpwd" type="text" class="input-txt" onChange="testDb()"lay-verify="empty" placeholder="请输入数据库密码" />
+                            <input name="dbpwd" id="dbpwd" type="text" class="input-txt" onChange="testDb()" lay-verify="empty" placeholder="请输入数据库密码" />
                         </div>
                         <div style='float:left' class="mysql-message" id='dbpwdsta'></div>
                     </td>
@@ -56,7 +56,7 @@
                 <tr>
                     <td class="onetd"><span class="required">*</span>数据库名称：</td>
                     <td>
-                        <div style='float:left;margin-right:3px;'><input name="dbname" id="dbname" type="text" value="" class="input-txt" onChange="haveDB()"lay-verify="empty" placeholder="请输入数据库名称" /></div>
+                        <div style='float:left;margin-right:3px;'><input name="dbname" id="dbname" type="text" value="" class="input-txt" onChange="haveDB()" lay-verify="empty" placeholder="请输入数据库名称" /></div>
                         <div style='float:left' class="mysql-message" id='havedbsta'></div>
                     </td>
                 </tr>
@@ -80,7 +80,7 @@
             <table border="0" align="center" cellpadding="0" cellspacing="0" class="twbox">
                 <tr>
                     <td class="onetd"><span class="required">*</span><strong>网站标题：</strong></td>
-                    <td><input name="site_name" id="site_name" type="text" value="" class="input-txt"lay-verify="empty" placeholder="请输入网站标题"/>
+                    <td><input name="site_name" id="site_name" type="text" value="" class="input-txt" lay-verify="empty" placeholder="请输入网站标题"/>
                         <small id="mess_site_name">网站标题 必填</small></td>
                 </tr>
                 <tr>
@@ -90,12 +90,12 @@
                 </tr>
                 <tr>
                     <td class="onetd"><span class="required">*</span><strong>管理员密码：</strong></td>
-                    <td><input name="password" id="password" type="password" value="" class="input-txt"lay-verify="empty" placeholder="请输入平台密码"/>
+                    <td><input name="password" id="password" type="password" value="" class="input-txt" lay-verify="empty" placeholder="请输入平台密码"/>
                         <small id="mess_password">密码 必填</small></td>
                 </tr>
                 <tr>
                     <td class="onetd"><span class="required">*</span><strong>确认密码：</strong></td>
-                    <td><input name="password2" id="password2" type="password" value="" class="input-txt"lay-verify="empty" placeholder="请输入平台确认密码"/>
+                    <td><input name="password2" id="password2" type="password" value="" class="input-txt" lay-verify="empty" placeholder="请输入平台确认密码"/>
                         <small id="mess_password2">确认密码 必填</small></td>
                 </tr>
                 <tr>
@@ -109,8 +109,8 @@
         <div class="btn-box"></div>
 
         <div class="btn-box">
-                <input type="button" class="btn-back" value="后退" onclick="window.location.href='{$root_url}/install.php/index/index?step=2'" />
-                <input type="button" class="btn-next" lay-submit lay-filter="install"value="开始安装" id="form_submit">
+            <input type="button" class="btn-back" value="后退" onclick="window.location.href='{$root_url}/install.php/index/index?step=2'" />
+            <input type="button" class="btn-next" lay-submit lay-filter="install"value="开始安装" id="form_submit">
         </div>
     </div>
 </form>
@@ -121,10 +121,10 @@
     ControlContent(2);
     var is_existdb = 1;//数据库是否存在
     var message = '数据库账号或密码不能为空';
+    var is_install = false;
     function inputBoxPointer(id){
         return document.getElementById(id);
     }
-    var is_install = false;
     layui.use('form', function(){
         var form = layui.form;
         form.verify({
@@ -180,7 +180,7 @@
                         $("#form_submit").val("开始安装");
                         $("#form_submit").removeClass("installimg-btn");
                     }else{
-                        window.location.href = '{$root_url}/install.php/index/installSuccess'
+                        window.location.href = '{$root_url}/install.php/index/installSuccess';
                     }
                 }
             })

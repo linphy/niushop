@@ -30,7 +30,7 @@ class KdbirdTrace
 
         if ($config["is_use"]) {
             $express_no = $express_no_data["express_no"];
-            $result     = $kdbird_model->trace($data["code"], $express_no, $express_no_data["site_id"]);
+            $result     = $kdbird_model->trace($data["code"], $express_no, $express_no_data["site_id"], $data['mobile']);
             return $result;
         }
     }

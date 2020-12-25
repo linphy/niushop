@@ -31,7 +31,8 @@ class Config extends BaseShop
                 'return_point_status' => input('return_point_status', 'complete'),//返积分事件 pay 订单付款 receive 订单收货 complete 订单完成 单选或下拉
                 'return_point_rate'   => input('return_point_rate', 0),//返积分比率 0-100 不取小数
                 'return_growth_rate'  => input('return_growth_rate', 0),//成长值返还比例0-100 不取小数
-                'return_coupon'       => input('return_point_coupon', ''),//优惠券
+                'return_coupon'       => input('return_coupon', ''),//优惠券
+                'is_return_coupon'    => input('is_return_coupon', 0),//是否送优惠券
             ];
             $this->addLog("设置会员消费奖励");
             $is_use       = input("is_use", 0);//是否启用
@@ -49,7 +50,50 @@ class Config extends BaseShop
             //订单返积分设置
             $config_result = $config_model->getConfig($this->site_id);
             $this->assign('config', $config_result['data']);
+            $this->forthMenu();
             return $this->fetch('config/index');
+        }
+    }
+
+    /**
+     * 奖励记录
+     */
+    public function lists()
+    {
+        if (request()->isAjax()) {
+            $page      = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $status    = input('status', '');
+            $search_text    = input('search_text', '');
+
+            $condition = [];
+            if ($status !== '') {
+                $condition[] = ['pcr.type', '=', $status];
+            }
+            if($search_text){
+                $condition[] = ['m.username|o.order_no', 'like', '%'.$search_text.'%'];
+            }
+            $condition[] = ['pcr.site_id', '=', $this->site_id];
+            $order       = 'pcr.create_time desc';
+            $field       = 'pcr.*,m.username,m.nickname,m.mobile,m.headimg,o.order_no';
+            $alias = 'pcr';
+            $join = [
+                ['member m','pcr.member_id = m.member_id','left'],
+                ['order o','pcr.order_id = o.order_id','left'],
+            ];
+
+            $config_model = new Consume();
+            $res            = $config_model->getConsumeRecordPageList($condition, $page, $page_size, $order, $field, $alias, $join);
+            return $res;
+        } else {
+            $event_list = array(
+                ["name" => "coupon", "title" => "优惠券"],
+                ["name" => "point", "title" => "积分"],
+                ["name" => "growth", "title" => "成长值"],
+            );
+            $this->assign("event_list", $event_list);
+            $this->forthMenu();
+            return $this->fetch('config/lists');
         }
     }
 

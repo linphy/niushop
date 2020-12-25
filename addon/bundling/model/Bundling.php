@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -172,7 +171,7 @@ class Bundling extends BaseModel
         $bundling_ids = model("promotion_bundling_goods")->getList([ [ 'sku_id', '=', $sku_id ] ], 'bl_id');
         $bundling_array = [];
         foreach ($bundling_ids as $k => $v) {
-            $temp_result = $this->getBundlingDetail([ [ 'bl_id', '=', $v[ "bl_id" ] ], ['status', '=', 1] ]);
+            $temp_result = $this->getBundlingDetail([ [ 'bl_id', '=', $v[ "bl_id" ] ], [ 'status', '=', 1 ] ]);
             if (!empty($temp_result[ "data" ])) $bundling_array[] = $temp_result[ "data" ];
         }
         return $this->success($bundling_array);

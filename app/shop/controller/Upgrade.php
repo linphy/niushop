@@ -731,11 +731,8 @@ class Upgrade extends BaseShop
     public function versionLog()
     {
         if (request()->isAjax()) {
-            $page = input('page', 1);
-            $page_size = input('page_size', PAGE_LIST_ROWS);
-
             $upgrade_model = new UpgradeModel();
-            $info = $upgrade_model->getVersionLog($page, $page_size);
+            $info = $upgrade_model->getUpdateLog();
             return $info;
         } else {
             return $this->fetch('upgrade/version_log');

@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -13,8 +12,6 @@ namespace app\model\web;
 
 use app\model\BaseModel;
 use app\model\system\Config as ConfigModel;
-use app\model\web\WebSite as WebsiteModel;
-use think\Exception;
 use think\facade\Cache;
 
 /**
@@ -77,7 +74,8 @@ class DiyView extends BaseModel
 
     /**
      * 添加自定义模板
-     * @param array $data
+     * @param $data
+     * @return array
      */
     public function addSiteDiyView($data)
     {
@@ -92,7 +90,8 @@ class DiyView extends BaseModel
 
     /**
      * 添加自定义模板
-     * @param array $data
+     * @param $data
+     * @return array
      */
     public function addSiteDiyViewByTemplate($data)
     {
@@ -259,7 +258,7 @@ class DiyView extends BaseModel
     /**
      * 获取平台端的底部导航配置
      * @param $site_id
-     * @return array|array
+     * @return array
      */
     public function getBottomNavConfig($site_id)
     {
@@ -316,7 +315,6 @@ class DiyView extends BaseModel
         $app_type_list = config('app_type');
 
         $path = [];
-
         $config = new ConfigModel();
 
         foreach ($app_type_list as $k => $v) {
@@ -333,7 +331,7 @@ class DiyView extends BaseModel
                     }
                     $path[ $k ][ 'img' ] = "upload/qrcode/diy/diy_qrcode_" . $diy_view_info[ 'name' ] . '_' . $site_id . "_" . $k . ".png";
                     break;
-                case 'weapp' :
+                case 'weapp':
                     $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WEAPP_CONFIG' ] ]);
                     if (!empty($res[ 'data' ])) {
                         if (empty($res[ 'data' ][ 'value' ][ 'qrcode' ])) {
@@ -350,7 +348,7 @@ class DiyView extends BaseModel
                     }
                     break;
 
-                case 'wechat' :
+                case 'wechat':
                     $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WECHAT_CONFIG' ] ]);
                     if (!empty($res[ 'data' ])) {
                         if (empty($res[ 'data' ][ 'value' ][ 'qrcode' ])) {
@@ -432,6 +430,7 @@ class DiyView extends BaseModel
         $pointexchange_addon_is_exit = addon_is_exit('pointexchange', $site_id);// 积分兑换插件
         $fenxiao_addon_is_exit = addon_is_exit('fenxiao', $site_id);// 分销插件
         $bargain_addon_is_exit = addon_is_exit('bargain', $site_id);// 砍价插件
+        $memberrecommend_addon_is_exit = addon_is_exit('memberrecommend', $site_id);// 邀请奖励插件
 
         if (empty($res[ 'data' ][ 'value' ])) {
             $menuList = [];
@@ -601,6 +600,21 @@ class DiyView extends BaseModel
                 ];
             }
 
+            if ($memberrecommend_addon_is_exit) {
+                $menuList[] = [
+                    'tag' => 'memberrecommend',
+                    "text" => "邀请有礼",
+                    "img" => "upload/uniapp/member/index/menu/default_memberrecommend.png",
+                    "link" => [
+                        "name" => "MEMBER_RECOMMEND",
+                        "title" => "邀请有礼",
+                        "wap_url" => "/otherpages/member/invite_friends/invite_friends"
+                    ],
+                    "isShow" => "1",
+                    "isSystem" => "1"
+                ];
+            }
+
             $res[ 'data' ][ 'value' ] = [
                 "textColor" => "#ffffff",
                 "bgImg" => "upload/uniapp/member/index/member_bg.png",
@@ -621,6 +635,7 @@ class DiyView extends BaseModel
             $pointexchange_key = array_search('pointexchange', array_column($menuList, 'tag'));
             $fenxiao_key = array_search('fenxiao', array_column($menuList, 'tag'));
             $bargain_key = array_search('bargain', array_column($menuList, 'tag'));
+            $memberrecommend_key = array_search('memberrecommend', array_column($menuList, 'tag'));
 
             if ($membersignin_key !== false && $membersignin_addon_is_exit == 0) {
                 // 插件卸载后，移除【签到】菜单
@@ -756,6 +771,25 @@ class DiyView extends BaseModel
                 ];
             }
 
+            if ($memberrecommend_key !== false && $memberrecommend_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $memberrecommend_key, 1);
+            } elseif ($memberrecommend_key === false && $bargain_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] = [
+                    'tag' => 'memberrecommend',
+                    "text" => "邀请有礼",
+                    "img" => "upload/uniapp/member/index/menu/default_memberrecommend.png",
+                    "link" => [
+                        "name" => "MEMBER_RECOMMEND",
+                        "title" => "邀请有礼",
+                        "wap_url" => "/otherpages/member/invite_friends/invite_friends"
+                    ],
+                    "isShow" => "1",
+                    "isSystem" => "1"
+                ];
+            }
+
             $res[ 'data' ][ 'value' ][ 'menuList' ] = $menuList;
         }
 
@@ -777,8 +811,9 @@ class DiyView extends BaseModel
 
     /**
      * 修改微页面排序
-     * @param int $sort
-     * @param int $label_id
+     * @param $sort
+     * @param $id
+     * @return array
      */
     public function modifyDiyViewSort($sort, $id)
     {
@@ -789,8 +824,9 @@ class DiyView extends BaseModel
 
     /**
      * 修改微页面点击量
-     * @param $sku_id
+     * @param $condition
      * @param $site_id
+     * @return array
      */
     public function modifyClick($condition, $site_id)
     {

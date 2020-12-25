@@ -157,8 +157,10 @@ class Orderrefund extends BaseApi
         if ($order_goods_info_result["data"]) {
             //查询店铺收货地址
             $shop_model                                      = new ShopModel();
-            $shop_info_result                                = $shop_model->getShopInfo([["site_id", "=", $order_goods_info_result["data"]['site_id']]], "full_address,address");
+            $shop_info_result                                = $shop_model->getShopInfo([["site_id", "=", $order_goods_info_result["data"]['site_id']]], "full_address,address,name,mobile");
             $shop_info                                       = $shop_info_result["data"];
+            $order_goods_info_result["data"]['shop_contacts'] = $shop_info['name'];
+            $order_goods_info_result["data"]['shop_mobile'] = $shop_info['mobile'];
             $order_goods_info_result["data"]["shop_address"] = $shop_info["full_address"] . $shop_info["address"];
         }
 

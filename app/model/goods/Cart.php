@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -26,9 +25,9 @@ class Cart extends BaseModel
      */
     public function addCart($data)
     {
-        $cart_info = model("goods_cart")->getInfo([['sku_id', '=', $data['sku_id']], ['member_id', '=', $data['member_id']]], 'cart_id, num');
+        $cart_info = model("goods_cart")->getInfo([ [ 'sku_id', '=', $data[ 'sku_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ], 'cart_id, num');
         if (!empty($cart_info)) {
-            $res = model("goods_cart")->update(['num' => $cart_info['num'] + $data['num']], [['cart_id', '=', $cart_info['cart_id']]]);
+            $res = model("goods_cart")->update([ 'num' => $cart_info[ 'num' ] + $data[ 'num' ] ], [ [ 'cart_id', '=', $cart_info[ 'cart_id' ] ] ]);
         } else {
             $res = model("goods_cart")->add($data);
         }
@@ -41,7 +40,7 @@ class Cart extends BaseModel
      */
     public function editCart($data)
     {
-        $res = model("goods_cart")->update(['num' => $data['num']], [['cart_id', '=', $data['cart_id']], ['member_id', '=', $data['member_id']]]);
+        $res = model("goods_cart")->update([ 'num' => $data[ 'num' ] ], [ [ 'cart_id', '=', $data[ 'cart_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ]);
         return $this->success($res);
     }
 
@@ -51,7 +50,7 @@ class Cart extends BaseModel
      */
     public function deleteCart($data)
     {
-        $res = model("goods_cart")->delete([['cart_id', 'in', explode(',', $data['cart_id'])], ['member_id', '=', $data['member_id']]]);
+        $res = model("goods_cart")->delete([ [ 'cart_id', 'in', explode(',', $data[ 'cart_id' ]) ], [ 'member_id', '=', $data[ 'member_id' ] ] ]);
         return $this->success($res);
     }
 
@@ -61,7 +60,7 @@ class Cart extends BaseModel
      */
     public function clearCart($data)
     {
-        $res = model("goods_cart")->delete([['member_id', '=', $data['member_id']]]);
+        $res = model("goods_cart")->delete([ [ 'member_id', '=', $data[ 'member_id' ] ] ]);
         return $this->success($res);
     }
 
@@ -78,7 +77,7 @@ class Cart extends BaseModel
             ngs.sku_image, ngs.sku_images, ngs.goods_state, ngs.goods_stock_alarm, ngs.is_virtual, ngs.goods_name,
             ngs.virtual_indate, ngs.is_free_shipping, ngs.shipping_template, ngs.unit, ngs.introduction,ngs.sku_spec_format, ngs.keywords, ngs.max_buy, ngs.min_buy, ns.site_name';
         $alias = 'ngc';
-        $join  = [
+        $join = [
             [
                 'goods_sku ngs',
                 'ngc.sku_id = ngs.sku_id',
@@ -90,7 +89,7 @@ class Cart extends BaseModel
                 'inner'
             ],
         ];
-        $list  = model("goods_cart")->getList([['ngc.member_id', '=', $member_id], ['ngc.site_id', '=', $site_id], [ 'ngs.is_delete', '=', 0 ]], $field, 'ngc.cart_id desc', $alias, $join);
+        $list = model("goods_cart")->getList([ [ 'ngc.member_id', '=', $member_id ], [ 'ngc.site_id', '=', $site_id ], [ 'ngs.is_delete', '=', 0 ] ], $field, 'ngc.cart_id desc', $alias, $join);
         return $this->success($list);
     }
 
@@ -100,7 +99,7 @@ class Cart extends BaseModel
      */
     public function getCartCount($member_id)
     {
-        $list = model("goods_cart")->getCount([['member_id', '=', $member_id]]);
+        $list = model("goods_cart")->getCount([ [ 'member_id', '=', $member_id ] ]);
         return $this->success($list);
     }
 
@@ -115,7 +114,7 @@ class Cart extends BaseModel
             ]
         ];
 
-        $list = model("goods_cart")->getList($condition, $field, $order,$alias,$join);
+        $list = model("goods_cart")->getList($condition, $field, $order, $alias, $join);
         return $this->success($list);
     }
 }

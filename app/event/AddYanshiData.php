@@ -155,7 +155,8 @@ class AddYanshiData
                     "min_buy" => 0,
                     "recommend_way" => 0,
                     "timer_on" => 0,
-                    "timer_off" => 0
+                    "timer_off" => 0,
+                    "is_consume_discount" => 0
                 ],
                 [
                     "goods_name" => '演示商品二',
@@ -210,7 +211,8 @@ class AddYanshiData
                     "min_buy" => 0,
                     "recommend_way" => 0,
                     "timer_on" => 0,
-                    "timer_off" => 0
+                    "timer_off" => 0,
+                    "is_consume_discount" => 0
                 ],
                 [
                     "goods_name" => '演示商品三',
@@ -265,7 +267,8 @@ class AddYanshiData
                     "min_buy" => 0,
                     "recommend_way" => 0,
                     "timer_on" => 0,
-                    "timer_off" => 0
+                    "timer_off" => 0,
+                    "is_consume_discount" => 0
                 ],
                 [
                     'goods_name' => '演示商品四',
@@ -320,7 +323,8 @@ class AddYanshiData
                     "min_buy" => 0,
                     "recommend_way" => 0,
                     "timer_on" => 0,
-                    "timer_off" => 0
+                    "timer_off" => 0,
+                    "is_consume_discount" => 0
                 ]
             ];
 

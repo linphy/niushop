@@ -6,7 +6,6 @@
  * Copy right 2015-2025 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  * @author : niuteam
  * @date : 2015.1.17
@@ -49,15 +48,15 @@ class Memberaccount extends BaseApi
         $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
         $account_type = isset($this->params[ 'account_type' ]) ? $this->params[ 'account_type' ] : 'balance,balance_money';//账户类型 余额:balance，积分:point
         $start_time = empty($this->params[ 'date' ]) ? strtotime(date('Y-m', strtotime("today"))) : strtotime($this->params[ 'date' ]);
-        $end_time = strtotime("+1 month",$start_time);
+        $end_time = strtotime("+1 month", $start_time);
         $from_type = isset($this->params[ 'from_type' ]) ? $this->params[ 'from_type' ] : '';
         if (!in_array($account_type, [ 'point', 'balance', 'balance,balance_money' ])) return $this->response($this->error('', 'INVALID_PARAMETER'));
 
         $condition[] = [ 'account_type', 'in', $account_type ];
         $condition[] = [ 'member_id', '=', $token[ 'data' ][ 'member_id' ] ];
-        $condition[] = [ 'create_time', 'between', [$start_time,$end_time] ];
+        $condition[] = [ 'create_time', 'between', [ $start_time, $end_time ] ];
         if (!empty($from_type)) {
-            $condition[] = ['from_type', '=', $from_type];
+            $condition[] = [ 'from_type', '=', $from_type ];
         }
 
         $member_account_model = new MemberAccountModel();
@@ -79,7 +78,8 @@ class Memberaccount extends BaseApi
     /**
      * 获取账户总额
      */
-    public function sum(){
+    public function sum()
+    {
         $token = $this->checkToken();
         if ($token[ 'code' ] < 0) return $this->response($token);
 
@@ -97,10 +97,10 @@ class Memberaccount extends BaseApi
             [ 'site_id', '=', $this->site_id ],
             [ 'account_type', '=', $account_type ]
         ];
-        if (!empty($from_type)) $condition[] = ['from_type', '=', $from_type];
-        if ($query_type == 'income')  $condition[] = ['account_data', '>', 0];
-        if ($query_type == 'pay')  $condition[] = ['account_data', '<', 0];
-        if ($start_time && $end_time) $condition[] = [ 'create_time', 'between', [$start_time,$end_time] ];
+        if (!empty($from_type)) $condition[] = [ 'from_type', '=', $from_type ];
+        if ($query_type == 'income') $condition[] = [ 'account_data', '>', 0 ];
+        if ($query_type == 'pay') $condition[] = [ 'account_data', '<', 0 ];
+        if ($start_time && $end_time) $condition[] = [ 'create_time', 'between', [ $start_time, $end_time ] ];
         $data = $member_account_model->getMemberAccountSum($condition, 'account_data');
 
         return $this->response($data);

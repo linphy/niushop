@@ -417,21 +417,24 @@ var init_key = 1;
 				if(area_type == 1 && value == ''){
 					return '请填写配送区域相关信息';
 				}
+                if (area_type == 1 && parseFloat(value) <= 0) {
+                    return '距离不能小于等于0';
+                }
 			},
 			radius_start_delivery_money: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();
 				if(area_type == 1 && value == ''){
 					return '请填写配送区域相关信息';
 				}
-
 			},
 			radius_continued_distance: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();
 				if(area_type == 1 && value == ''){
 					return '请填写配送区域相关信息';
-
 				}
-
+                if (area_type == 1 && parseFloat(value) <= 0) {
+                    return '距离不能小于等于0';
+                }
 			},
 			radius_continued_delivery_money: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();

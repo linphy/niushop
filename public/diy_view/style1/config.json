@@ -20,7 +20,9 @@
 					"popWindow": {
 						"imageUrl": "",
 						"count": -1,
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "",
 						"imgHeight": ""
 					},
@@ -69,7 +71,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style1/img/adv_01.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "230"
 					}],
@@ -201,7 +205,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style1/img/adv_05.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "747",
 						"imgHeight": "185"
 					}],
@@ -215,10 +221,14 @@
 					"backgroundColor": "",
 					"list": [{
 						"imageUrl": "public/diy_view/style1/img/adv_02.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style1/img/adv_03.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"selectedRubikCubeArray": [],
 					"diyHtml": "",
@@ -244,16 +254,24 @@
 					"backgroundColor": "",
 					"list": [{
 						"imageUrl": "public/diy_view/style1/img/function_03.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style1/img/function_01.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style1/img/function_04.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style1/img/function_02.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"selectedRubikCubeArray": [],
 					"diyHtml": "",
@@ -332,7 +350,9 @@
 					"marginTop": 20,
 					"padding": 0,
 					"backgroundColor": "",
-					"link": {},
+					"link": {
+						"name": ""
+					},
 					"fontSize": 16,
 					"fontSizeSub": 14,
 					"colorSub": "#999999",
@@ -362,7 +382,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style1/img/adv_04.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "188"
 					}],

@@ -1,6 +1,21 @@
 {extend name="base"/}
 {block name="resources"}
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/upgrade/version_log.css" />
+<style>
+	.ns-item-block-parent{
+		display: block;
+	}
+	.version{
+		font-size: 18px;
+	}
+	.versionlog{
+		color:#999;
+		padding:10px 20px;
+		margin-top: 10px;
+		background-color: #f8f8f8;
+		line-height: 2;
+	}
+</style>
 {/block}
 {block name="main"}
 <script type="text/html" id="log_block">
@@ -14,12 +29,17 @@
                     <ul class="layui-timeline">
                         {{#  layui.each(d.list, function(index, item){ }}
                         <li class="layui-timeline-item">
-                            <div class="layui-timeline-axis ns-log-version-date">{{ item.format_time }}</div>
-                            <i class="layui-icon open layui-timeline-axis ns-bg-color"  style="display:{{# if(item.isclose){ }}block {{#  }else{ }}none {{#  } }}" onclick="showHidebtn($(this))" data-index="{{index}}">&#xe61a;</i>
-                            <i class="layui-icon close layui-timeline-axis ns-bg-color" style="display:{{# if(item.isclose){ }}none {{#  }else{ }}block {{#  } }}" onclick="showHidebtn($(this))" data-index="{{index}}">&#xe619;</i>
+                            <div class="layui-timeline-axis ns-log-version-date">{{ ns.time_to_date(item.create_time,'YYYY-MM-DD') }}</div>
+                            <i class="layui-icon open layui-timeline-axis ns-bg-color"  style="display:{{# if(item.isclose){ }}block {{#  }else{ }}none {{#  } }}" onclick="showHidebtn($(this))" data-index="{{index}}">&#xe602;</i>
+                            <i class="layui-icon close layui-timeline-axis ns-bg-color" style="display:{{# if(item.isclose){ }}none {{#  }else{ }}block {{#  } }}" onclick="showHidebtn($(this))" data-index="{{index}}">&#xe61a;</i>
                             <div class="log-body look_text" onclick="showHide($(this))" data-index="{{index}}">{{# if(item.isclose){ }}点击查看完整更新日志{{#  }else{ }}点击收起 {{#  } }}</div>
-						   
-							<div class="site_list ns-item-block-parent ns-item-five look" style="display:{{# if(item.isclose){ }}none{{#  }else{ }}flex {{#  } }}">
+						    <div class="ns-item-block-parent look" style="padding-top:0;display:{{# if(item.isclose){ }}none{{#  }else{ }}block {{#  } }}">
+								<div class="version">版本：单商户{{item.version_name}}</div>
+								<div class="versionlog">
+									<pre>{{item.version_desc}}</pre>
+								</div>
+							</div>
+							<!-- <div class="site_list ns-item-block-parent ns-item-five look" style="display:{{# if(item.isclose){ }}none{{#  }else{ }}flex {{#  } }}">
 								{{#  layui.each(item.list, function(item_index, item_item){ }}
 								<div class="ns-item-block ns-item-block-hover">
 									<div class="ns-item-block-wrap">
@@ -39,7 +59,7 @@
 										</div>
 									</div>
 									{{#  var str = JSON.stringify(item_item)}}
-									<a class="ns-text-color ns-item-block-btn" onclick='changeDesc({{str}})'>更新内容</a>
+									<a class="ns-text-color ns-item-block-btn" onclick='changeDesc({{str}})'>更新内容</a> -->
 									<!-- <div class="title ns-prompt-block">
 										<div class="ns-prompt">
 											<span class="ns-text-color">更新内容</span>
@@ -50,9 +70,9 @@
 											</div>
 										</div>
 									</div> -->
-								</div>
+								<!-- </div>
 								{{#  }); }}
-							</div>
+							</div> -->
 							
 							<!-- <div class="look" style="display:{{# if(item.isclose){ }}none{{#  }else{ }}block {{#  } }}">
                                 {{#  layui.each(item.list, function(item_index, item_item){ }}
@@ -73,7 +93,7 @@
 
                         </li>
                         {{#  }); }}
-                        <li class="layui-timeline-item load-more">
+                        <!-- <li class="layui-timeline-item load-more">
                             <div class="layui-timeline-axis ns-log-version-date"></div>
                             <img src="SHOP_IMG/version_load_more.png" class="load-more-img"/>
                             <div class="layui-timeline-content layui-text log-body">
@@ -85,7 +105,7 @@
                                     {{# } }}
                                 </h3>
                             </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
                 {{#  } }}
@@ -144,10 +164,10 @@
                 old_list.push(new_list[i]);
             }
         }else{
-            for(var i in res.data.data){
-                res.data.data[i].isclose = 0
+            for(var i in res.data){
+                res.data[i].isclose = i== 0 ? 0:1
             }
-            logData = res.data;
+            logData.list = res.data;
         }
         logData.is_end = is_end;
         layui.use(['form', 'laytpl'], function() {
@@ -158,9 +178,11 @@
         });
     }
     function renderLogDataStatus(res){
-        logData.list[res].isclose = logData.list[res].isclose ? 0 :1
+		console.log(logData.list[res].isclose)
+        logData.list[res].isclose = logData.list[res].isclose ? 0 :1,
         layui.use(['form', 'laytpl'], function() {
             var laytpl = layui.laytpl;
+			console.log(logData,78)
             laytpl($("#log_block").html()).render(logData, function(html) {
                 $("#log_detail").html(html);
             });

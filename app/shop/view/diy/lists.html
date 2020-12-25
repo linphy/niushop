@@ -36,7 +36,7 @@
 
 <table id="diy_list" lay-filter="diy_list"></table>
 
-<script type="text/html" id="operation">
+<script type="text/html" id="action">
 	<div class="operation-wrap" data-id="{{d.id}}">
 		<div class="ns-table-btn">
 			<div class="popup-qrcode-wrap"><img class="popup-qrcode-loadimg" src="__STATIC__/loading/loading.gif" /></div>
@@ -119,7 +119,7 @@
 			templet: '#editSort'
 		}, {
 			title: '操作',
-			toolbar: '#operation',
+			toolbar: '#action',
             width: '15%',
 			unresize : 'true'
 		}]],
@@ -259,13 +259,13 @@
 
 	// 监听单元格编辑
 	function editSort(id, event){
-	 	var data = $(event).val();
-		
+		var data = $(event).val();
+
 		if (data == '') {
 			$(event).val(0);
 			data = 0;
 		}
-		
+
 		if(!new RegExp("^-?[0-9]\\d*$").test(data)){
 			layer.msg("排序号只能是整数");
 			return ;
@@ -274,21 +274,21 @@
 			layer.msg("排序号必须大于0");
 			return ;
 		}
-	 	$.ajax({
-	 		type: 'POST',
-	 		url: ns.url("shop/diy/modifySort"),
-	 		data: {
-	 			sort: data,
-	 			id: id
-	 		},
-	 		dataType: 'JSON',
-	 		success: function(res) {
-	 			layer.msg(res.message);
-	 			if(res.code==0){
-	 				table.reload();
-	 			}
-	 		}
-	 	});
- 	}
+		$.ajax({
+			type: 'POST',
+			url: ns.url("shop/diy/modifySort"),
+			data: {
+				sort: data,
+				id: id
+			},
+			dataType: 'JSON',
+			success: function(res) {
+				layer.msg(res.message);
+				if(res.code==0){
+					table.reload();
+				}
+			}
+		});
+	}
 </script>
 {/block}

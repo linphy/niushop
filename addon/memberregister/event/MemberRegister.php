@@ -14,6 +14,8 @@ namespace addon\memberregister\event;
 
 use addon\memberregister\model\Register as RegisterModel;
 use app\model\member\MemberAccount as MemberAccountModel;
+use addon\coupon\model\CouponType;
+use addon\coupon\model\Coupon;
 
 /**
  * 会员注册奖励
@@ -35,8 +37,18 @@ class MemberRegister
         $res = [];
         if ($register_config['is_use']) {
             $register_config = $register_config['value'];
+            unset($register_config['coupon_list']);
             foreach ($register_config as $k => $v) {
-                if (!empty($v)) {
+                if($k == 'coupon'){
+                    $coupon_type = new CouponType();
+                    $coupon_list = $coupon_type->getCouponTypeList([ ['site_id','=',$param['site_id']],['status','=',1],['coupon_type_id','in',$v] ]);
+                    $coupon_list = $coupon_list['data'];
+                    $coupon = new Coupon();
+                    foreach ($coupon_list as $key => $val){
+                        $coupon->receiveCoupon($val['coupon_type_id'], $param['site_id'], $param['member_id'], '', 0, 0);
+                    }
+
+                }else if(!empty($v)) {
                     $adjust_num   = $v;
                     $account_type = $k;
                     $remark       = '注册送' . $adjust_num . $this->accountType($k);

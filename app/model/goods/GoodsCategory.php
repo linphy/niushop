@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -78,27 +77,27 @@ class GoodsCategory extends BaseModel
                 }
             }
 
-            if ($info['pid'] != $data['pid']) {
+            if ($info[ 'pid' ] != $data[ 'pid' ]) {
                 if ($info[ 'level' ] == 2) {
                     model('goods')->update([
                         'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['pid']},{$data[ 'category_id' ]},', '[\"{$data['pid']},{$data[ 'category_id' ]},')")
-                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%" ], [ 'site_id', '=', $site_id ] ]);
 
                     model('goods')->update([
                         'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['pid']},{$data[ 'category_id' ]}\"]', '[\"{$data['pid']},{$data[ 'category_id' ]}\"]')")
-                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%" ], [ 'site_id', '=', $site_id ] ]);
 
                     model('goods')->update([
                         'category_id' => Db::raw("REPLACE(category_id, ',{$info['pid']},{$data[ 'category_id' ]},', ',{$data['pid']},{$data[ 'category_id' ]},')")
-                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%" ], [ 'site_id', '=', $site_id ] ]);
                 } else {
                     model('goods')->update([
                         'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['category_id_1']},{$info['category_id_2']},{$info['category_id_3']}\"]', '[\"{$data['category_id_1']},{$data['category_id_2']},{$data['category_id_3']}\"]')")
-                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%" ], [ 'site_id', '=', $site_id ] ]);
 
                     model('goods')->update([
                         'category_id' => Db::raw("REPLACE(category_id, ',{$info['category_id_1']},{$info[ 'category_id_2' ]},{$info[ 'category_id_3' ]},', ',{$data['category_id_1']},{$data[ 'category_id_2' ]},{$data[ 'category_id_3' ]},')")
-                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%"], [ 'site_id', '=', $site_id ] ]);
+                    ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%" ], [ 'site_id', '=', $site_id ] ]);
                 }
 
             }
@@ -300,7 +299,7 @@ class GoodsCategory extends BaseModel
      * @param null $limit
      * @return \multitype
      */
-    public function getCategoryByParent($condition = [], $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate', $order = '', $limit = null)
+    public function getCategoryByParent($condition = [], $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate', $order = 'sort asc,category_id desc', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';

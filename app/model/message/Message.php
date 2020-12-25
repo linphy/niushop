@@ -75,6 +75,7 @@ class Message extends BaseModel
             $info[ "message_json_array" ] = empty($info[ "message_json" ]) ? [] : json_decode($info[ "message_json" ], true);//消息配置
             $info[ "sms_json_array" ] = event('SmsTemplateInfo', [ 'keywords' => $keywords, 'site_id' => $site_id ], true);//短信配置
             $info[ "wechat_json_array" ] = empty($info[ "wechat_json" ]) ? [] : json_decode($info[ "wechat_json" ], true);//微信模板消息配置
+            $info[ "weapp_json_array" ] = empty($info[ "weapp_json" ]) ? [] : json_decode($info[ "weapp_json" ], true);//订阅消息配置
             $message = model('message')->getInfo([ [ 'keywords', '=', $keywords ], [ 'site_id', '=', $site_id ] ]);
             if (empty($message)) {
                 $data = [
@@ -130,10 +131,12 @@ class Message extends BaseModel
             foreach ($list as $k => $v) {
                 $list[ $k ][ 'support_type' ] = explode(',', $v[ 'support_type' ]);
 
-                $message_info = model('message')->getInfo([ [ "keywords", "=", $v[ 'keywords' ] ], [ 'site_id', '=', $site_id ] ], 'sms_is_open,wechat_is_open');
+                $message_info = model('message')->getInfo([ [ "keywords", "=", $v[ 'keywords' ] ], [ 'site_id', '=', $site_id ] ], 'sms_is_open,wechat_is_open,weapp_is_open');
                 $list[ $k ][ 'sms_is_open' ] = $message_info == null ? 0 : $message_info[ 'sms_is_open' ];
 
                 $list[ $k ][ 'wechat_is_open' ] = $message_info == null ? 0 : $message_info[ 'wechat_is_open' ];
+
+                $list[ $k ][ 'weapp_is_open' ] = $message_info == null ? 0 : $message_info[ 'weapp_is_open' ];
             }
         }
         return $this->success($list);

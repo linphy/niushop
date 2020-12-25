@@ -200,7 +200,7 @@ $(function () {
 				$(".js-more-spec").hide();
 				$(".js-goods-stock-wrap").show();
 				$("input[name='goods_stock']").removeAttr("disabled");
-				$("input[name='goods_stock_alarm']").attr("disabled", true).val("");
+				$("input[name='goods_stock_alarm']").removeAttr("disabled").val("");
 			}
 		});
 
@@ -324,10 +324,8 @@ $(function () {
 		
 		//替换商品主图
 		$("body").on("click", ".replace_img", function () {
-			console.log($(this).data('index'),465)
 			var index = $(this).data('index');
 			openAlbum(function (data) {
-				
 				for (var i = 0; i < data.length; i++) {
 					goodsImage[index] = data[i].pic_path
 				}
@@ -1797,6 +1795,11 @@ function refreshGoodsImage() {
 			$(".js-add-goods-image").show();
 		} else {
 			$(".js-add-goods-image").hide();
+		}
+
+		// 清空规格的图片
+		for (var i=0;i<goodsSkuData.length;i++){
+			if(goodsSkuData[i].sku_images.length == 0) goodsSkuData[i].sku_image = '';
 		}
 
 	});

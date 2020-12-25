@@ -42,5 +42,4 @@ class Config extends BaseShop
             return $this->fetch('config/index');
         }
     }
-
 }

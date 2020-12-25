@@ -79,7 +79,7 @@
 				</div>
 			</div>
 			
-			<input type="hidden" name="goods_state" />
+			<input type="hidden" name="goods_state" value="{$goods_state}"/>
 			<div class="ns-form-row">
 				<button class="layui-btn ns-bg-color" lay-submit lay-filter="search">筛选</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -90,9 +90,9 @@
 
 <div class="layui-tab ns-table-tab" lay-filter="goods_list_tab">
 	<ul class="layui-tab-title">
-		<li class="layui-this" lay-id="">全部</li>
-		<li lay-id="1" data-type="goods_state">销售中</li>
-		<li lay-id="0" data-type="goods_state">仓库中</li>
+		<li {if $goods_state == ''}class="layui-this"{/if} lay-id="">全部</li>
+		<li {if $goods_state == '1'}class="layui-this"{/if} lay-id="1" data-type="goods_state">销售中</li>
+		<li {if $goods_state == '0'}class="layui-this"{/if} lay-id="0" data-type="goods_state">仓库中</li>
 	</ul>
 	<div class="layui-tab-content">
 		<!-- 列表 -->
@@ -318,6 +318,9 @@
 				    <li data-type="shipping">包邮设置</li>
 					<li data-type="category">商品分类</li>
 					<li data-type="shop_intor">商品推荐</li>
+					{if $memberprice_is_exit == 1}
+					<li data-type="member_price">会员价</li>
+					{/if}
 			  	</ul>
 			</div>
 			<div class="content-wrap">
@@ -458,20 +461,33 @@
 					</div>
 				</div>
 				<div class="tab-item shop_intor">
-						<div class="layui-form">
-							<div class="layui-form-item">
-								<label class="layui-form-label">推荐方式：</label>
-								<div class="layui-input-block">
-									<div class="layui-input-inline">
-										<input type="radio" name="recom_way" value="0" title="无" checked>
-										<input type="radio" name="recom_way" value="1" title="新品">
-										<input type="radio" name="recom_way" value="2" title="精品">
-										<input type="radio" name="recom_way" value="3" title="推荐">
-									</div>
+					<div class="layui-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label">推荐方式：</label>
+							<div class="layui-input-block">
+								<div class="layui-input-inline">
+									<input type="radio" name="recom_way" value="0" title="无" checked>
+									<input type="radio" name="recom_way" value="1" title="新品">
+									<input type="radio" name="recom_way" value="2" title="精品">
+									<input type="radio" name="recom_way" value="3" title="推荐">
 								</div>
 							</div>
 						</div>
-
+					</div>
+				</div>
+				<div class="tab-item member_price">
+					<div class="layui-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label">是否参与会员等级折扣：</label>
+							<div class="layui-input-block">
+								<div class="layui-input-inline">
+									<input type="radio" name="is_consume_discount" value="0" title="不参与" checked>
+									<input type="radio" name="is_consume_discount" value="1" title="参与">
+								</div>
+							</div>
+						</div>
+						<div class="ns-word-aux">批量设置参与会员等级折扣的商品，如果之前未单独配置过优惠规则，则按照默认会员等级折扣优惠</div>
+					</div>
 				</div>
 				<div class="tab-item result">
 					<img src="SHOP_IMG/success.png">

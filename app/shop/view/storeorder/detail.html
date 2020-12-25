@@ -314,10 +314,12 @@
         <div class="layui-col-md9">
             &nbsp;
         </div>
+
         <div class="layui-col-md3 order-money-box" >
             <div>商品总额：￥{$order_detail["goods_money"]}</div>
             <div>店铺优惠券：￥{$order_detail["coupon_money"]}</div>
             <div>店铺优惠：￥{$order_detail["promotion_money"]}</div>
+            {if $order_detail["point_money"] > 0}<div>积分抵扣：￥{$order_detail["point_money"]}</div>{/if}
             <div>订单调价：￥{$order_detail["adjust_money"]}</div>
             <div>配送费用：￥{$order_detail["delivery_money"]}</div>
             <div>发票费用：￥{$order_detail["invoice_money"]}</div>

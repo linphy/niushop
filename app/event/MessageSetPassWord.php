@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 // +---------------------------------------------------------------------+
@@ -17,9 +16,9 @@
 // +---------------------------------------------------------------------+
 // | Repository | https://github.com/niucloud/framework.git          |
 // +---------------------------------------------------------------------+
-declare (strict_types = 1);
 
 namespace app\event;
+
 use app\model\member\Member;
 
 
@@ -29,15 +28,15 @@ use app\model\member\Member;
 class MessageSetPassWord
 {
 
-	public function handle($param)
-	{
-	    //发送订单消息
-        if($param["keywords"] == "SET_PASSWORD"){
+    public function handle($param)
+    {
+        //发送订单消息
+        if ($param[ "keywords" ] == "SET_PASSWORD") {
             $member_model = new Member();
             $result = $member_model->bindCode($param);
             return $result;
         }
 
-	}
-	
+    }
+
 }

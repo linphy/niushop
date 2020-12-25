@@ -18,7 +18,7 @@
 					<div class="ns-upload-default" id="imgUploadGoods">
 					{if empty($default_img.default_goods_img)}
 						<div class="upload">
-							<img layer-src src="SHOP_IMG/upload_img.png" />
+							<img src="SHOP_IMG/upload_img.png" />
 							<p>点击上传</p>
 						</div>
 					{else/}
@@ -46,11 +46,11 @@
 		<label class="layui-form-label">默认会员头像：</label>
 		<div class="layui-input-inline">
 			<div class="upload-img-block">
-				<div class="upload-img-box {if !empty($default_img.default_goods_img)}hover{/if}">
+				<div class="upload-img-box {if !empty($default_img.default_headimg)}hover{/if}">
 					<div class="ns-upload-default" id="imgUploadMember">
 					{if empty($default_img.default_headimg)}
 						<div class="upload">
-							<img layer-src src="SHOP_IMG/upload_img.png" />
+							<img src="SHOP_IMG/upload_img.png" />
 							<p>点击上传</p>
 						</div>
 					{else/}
@@ -68,11 +68,40 @@
 					</div>
 					<input type="hidden" name="default_headimg" {if $default_img} value="{$default_img.default_headimg}"{/if}>
 				</div>
-				<!-- <p id="imgUploadMember" class=" {if condition="$default_img.default_headimg"} replace {else/} no-replace{/if}">替换</p>
-				<i class="del {if !empty($default_img.default_headimg)}show{/if}">x</i> -->
 			</div>
 		</div>
 	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">默认门店图片：</label>
+		<div class="layui-input-inline">
+			<div class="upload-img-block">
+				<div class="upload-img-box {if !empty($default_img.default_storeimg)}hover{/if}">
+					<div class="ns-upload-default" id="imgUploadStore">
+					{if empty($default_img.default_storeimg)}
+						<div class="upload">
+							<img src="SHOP_IMG/upload_img.png" />
+							<p>点击上传</p>
+						</div>
+					{else/}
+						<div id="preview_imgUploadStore" class="preview_img">
+							<img layer-src src="{:img($default_img.default_storeimg)}" alt="" class="img_prev">
+						</div>
+					{/if}
+					</div>
+					<div class="operation"  >
+						<div >
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="default_storeimg" {if $default_img} value="{$default_img.default_storeimg}"{/if}>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
@@ -93,6 +122,10 @@
 			elem: '#imgUploadMember'
 		});
 
+		var store_upload = new Upload({
+			elem: '#imgUploadStore'
+		});
+
         form.on('submit(save)', function(data) {
             if (repeat_flag) return false;
             repeat_flag = true;
@@ -100,7 +133,9 @@
 			// 删除图片
 			if(!data.field.default_goods_img && goods_upload.path != 'upload/default/default_img/goods.png') goods_upload.delete();
 
-			if(!data.field.default_headimg && goods_upload.path != 'upload/default/default_img/head.png') member_upload.delete();
+			if(!data.field.default_headimg && member_upload.path != 'upload/default/default_img/head.png') member_upload.delete();
+
+			if(!data.field.default_storeimg && store_upload.path != 'upload/default/default_img/store.png') store_upload.delete();
 
             $.ajax({
                 type: "POST",

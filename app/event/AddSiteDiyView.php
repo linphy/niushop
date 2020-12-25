@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -77,14 +76,18 @@ class AddSiteDiyView
                             [
                                 "imageUrl" => "public/diy_view/style2/img/posters_1.png",
                                 "title" => "",
-                                "link" => [],
+                                "link" => [
+                                    "name" => ""
+                                ],
                                 "imgWidth" => "750",
                                 "imgHeight" => "350"
                             ],
                             [
                                 "imageUrl" => "public/diy_view/style2/img/posters_2.png",
                                 "title" => "",
-                                "link" => [],
+                                "link" => [
+                                    "name" => ""
+                                ],
                                 "imgWidth" => "750",
                                 "imgHeight" => "350"
                             ]
@@ -328,7 +331,9 @@ class AddSiteDiyView
                         "list" => [
                             [
                                 "title" => "单商户V4.0.4更新啦！",
-                                "link" => []
+                                "link" => [
+                                    "name" => ""
+                                ]
                             ]
                         ],
                         "noticeIds" => [],
@@ -364,15 +369,21 @@ class AddSiteDiyView
                         "list" => [
                             [
                                 "imageUrl" => "public/diy_view/style2/img/adv1.png",
-                                "link" => []
+                                "link" => [
+                                    "name" => ""
+                                ]
                             ],
                             [
                                 "imageUrl" => "public/diy_view/style2/img/adv2.png",
-                                "link" => []
+                                "link" => [
+                                    "name" => ""
+                                ]
                             ],
                             [
                                 "imageUrl" => "public/diy_view/style2/img/adv3.png",
-                                "link" => []
+                                "link" => [
+                                    "name" => ""
+                                ]
                             ]
                         ],
                         "selectedRubikCubeArray" => [],
@@ -536,7 +547,9 @@ class AddSiteDiyView
                             [
                                 "imageUrl" => "public/diy_view/style2/img/title.png",
                                 "title" => "",
-                                "link" => [],
+                                "link" => [
+                                    "name" => ""
+                                ],
                                 "imgWidth" => "690",
                                 "imgHeight" => "65"
                             ]
@@ -616,9 +629,9 @@ class AddSiteDiyView
             $diy_view_bottom_nav = [
                 "type" => 1,
                 "backgroundColor" => "#ffffff",
-                "textColor" => "#000000",
-                "textHoverColor" => "#fa0036",
-                "bulge" => true,
+                "textColor" => "#333333",
+                "textHoverColor" => "#ff0036",
+                "bulge" => false,
                 "list" => [
                     [
                         "iconPath" => "upload/default/diy_view/bottom/index.png",
@@ -653,7 +666,8 @@ class AddSiteDiyView
                             "selected" => false
                         ]
                     ],
-                    [ "iconPath" => "upload/default/diy_view/bottom/cart.png",
+                    [
+                        "iconPath" => "upload/default/diy_view/bottom/cart.png",
                         "selectedIconPath" => "upload/default/diy_view/bottom/cart_selected.png",
                         "text" => "购物车",
                         "link" => [
@@ -668,7 +682,8 @@ class AddSiteDiyView
                             "selected" => false
                         ],
                     ],
-                    [ "iconPath" => "upload/default/diy_view/bottom/member_index.png",
+                    [
+                        "iconPath" => "upload/default/diy_view/bottom/member_index.png",
                         "selectedIconPath" => "upload/default/diy_view/bottom/member_index_selected.png",
                         "text" => "我的",
                         "link" => [
@@ -687,9 +702,8 @@ class AddSiteDiyView
 
             ];
 
-            //底部导航
+            // 底部导航
             $result = $diy_view_model->setBottomNavConfig(json_encode($diy_view_bottom_nav), $param[ 'site_id' ]);
-
             return $res;
 
         }

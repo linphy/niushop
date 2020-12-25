@@ -61,7 +61,6 @@ class Diyview extends BaseApi
             $info[ 'data' ][ 'value' ] = json_encode($json_data);
         }
 
-
         return $this->response($info);
     }
 

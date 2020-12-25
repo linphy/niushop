@@ -169,14 +169,14 @@
 			} else {
 				$('#bindMobile').addClass('layui-hide');
 			}
-		})
+		});
 		
 		/**
 		 * 表单验证
 		 */	
 		form.verify({
 			pwd_lens: function(value, item){ //value：表单的值、item：表单的DOM对象
-				if(!new RegExp("^[0-9]*[1-9][0-9]*$").test(value)){
+				if(!new RegExp("^[0-9]*$").test(value)){
 					return '密码长度只能是正整数！';
 				}
 			}

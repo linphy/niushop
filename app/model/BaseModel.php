@@ -22,10 +22,6 @@ class BaseModel
 {
     public $lang;
 
-    public function __construct()
-    {
-    }
-
     /**
      * 操作成功返回值函数
      * @param string $data

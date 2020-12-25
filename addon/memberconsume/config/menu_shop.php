@@ -14,5 +14,19 @@ return [
         'picture'        => '',
         'picture_select' => '',
         'sort'           => 100,
+        'child_list' => [
+            [
+                'name'    => 'MEMBER_CONSUME_CONFIG',
+                'title'   => '奖励设置',
+                'url'     => 'memberconsume://shop/config/index',
+                'is_show' => 1,
+            ],
+            [
+                'name'    => 'MEMBER_CONSUME_LIST',
+                'title'   => '奖励记录',
+                'url'     => 'memberconsume://shop/config/lists',
+                'is_show' => 1,
+            ],
+        ]
     ],
 ];

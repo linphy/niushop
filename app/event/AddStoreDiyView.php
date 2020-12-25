@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -33,24 +32,24 @@ class AddStoreDiyView
                     "openBottomNav" => false,
                     "bgColor" => "#ffffff",
                     "bgUrl" => "",
-                    "moreLink"      =>[],
-                    "mpCollect"     => false,
-                    "navStyle"      => 1,
+                    "moreLink" => [],
+                    "mpCollect" => false,
+                    "navStyle" => 1,
                     "popWindow" => [
                         "imageUrl" => "",
                         "count" => -1,
                         "link" => [
                             "name" => ""
                         ],
-						"imgWidth" => "",
-						"imgHeight" => ""
+                        "imgWidth" => "",
+                        "imgHeight" => ""
                     ],
-                    "textImgPosLink"   => "left",
+                    "textImgPosLink" => "left",
                     "textImgStyleLink" => "1",
-                    "textNavColor"     => "#333333",
-                    "topNavColor"      => "#ffffff",
-                    "topNavImg"        => "",
-                    "topNavbg"         => false
+                    "textNavColor" => "#333333",
+                    "topNavColor" => "#ffffff",
+                    "topNavImg" => "",
+                    "topNavbg" => false
                 ],
                 "value" => [
                     [

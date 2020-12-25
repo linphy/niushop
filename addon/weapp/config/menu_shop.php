@@ -25,7 +25,25 @@ return [
                 'url' => 'weapp://shop/weapp/package',
                 'is_show' => 0
             ],
-    ],
+            [
+                'name' => 'WEAPP_PACKAGE',
+                'title' => '小程序订阅消息',
+                'url' => 'weapp://shop/message/config',
+                'is_show' => 0
+            ]
+        ]
 
-    ]
+    ],
+    [
+        'name'           => 'WEAPP_PACKAGE_EDIT',
+        'title'          => '编辑订阅消息',
+        'url' => 'weapp://shop/message/edit',
+        'parent'         => 'MESSAGE_LISTS',
+        'is_show'        => 0,
+        'picture'        => '',
+        'picture_select' => '',
+        'sort'           => 1,
+        'child_list'     => [
+        ],
+    ],
 ];

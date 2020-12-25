@@ -24,8 +24,11 @@ class User extends BaseModel
     /**
      * 添加用户
      * @param $data
+     * @param int $store_id
+     * @param string $source_type register 注册  add 添加
+     * @return array
      */
-    public function addUser($data, $store_id = 0)
+    public function addUser($data, $store_id = 0, $source_type = 'register')
     {
 
         $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
@@ -46,13 +49,21 @@ class User extends BaseModel
                 [ 'site_id', '=', $site_id ]
             ]
         );
-        if (!empty($user_info)) {
-            if (data_md5($data[ "password" ]) == $user_info[ 'password' ]) {
-                return $this->success(2);
-            } else {
+
+        if($source_type == 'add'){
+            if (!empty($user_info)) {
                 return $this->error('', '账号已存在');
             }
+        }else{
+            if (!empty($user_info)) {
+                if (data_md5($data[ "password" ]) == $user_info[ 'password' ]) {
+                    return $this->success(2);
+                } else {
+                    return $this->error('', '账号已存在');
+                }
+            }
         }
+
         if ($member_id > 0) {
             $temp_condition = array (
                 "app_module" => $data[ "app_module" ],

@@ -48,3 +48,5 @@
 
 /*.order-money span {color: red;}*/
 #order_page {text-align: right;}
+.bottom-row{color:#e0a723;background: #fffbec;}
+.bottom-row:hover{background: #fffbec!important;}

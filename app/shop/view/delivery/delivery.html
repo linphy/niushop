@@ -8,52 +8,70 @@
 	.ns-btn-box a{cursor: pointer;}
 	.ns-card-common:first-child{margin-top: 0;}
 	.ns-card-common{border: 1px solid #f1f1f1;}
+	.ns-single-filter-box {display: block;}
+	.deliver-type .layui-card{user-select:none;cursor:move}
 </style>
 {/block}
 {block name="main"}
-
-<div class="layui-form">
-	<div class="layui-card ns-card-common">
-		<div class="layui-card-header">
-			<span class="ns-card-title">快递发货</span>
-			<input type="checkbox" name="" value="1" lay-skin="switch" {if $express_config.is_use == 1} checked {/if} lay-filter="logistics" />
-		</div>
-		<div class="layui-card-body">
-			<p>启用快递发货后，买家下单可以选择快递发货，由您安排快递送货上门。</p>
-			<div class="ns-btn-box">
-				<a class="default ns-text-color" href="{:addon_url('shop/express/template')}">运费模板</a>
-			</div>
-		</div>
+<div class="layui-collapse ns-tips">
+	<div class="layui-colla-item">
+		<h2 class="layui-colla-title">操作提示</h2>
+		<ul class="layui-colla-content layui-show">
+			<li class="ns-text-color">拖动可改变配送方式的排序</li>
+		</ul>
 	</div>
-
-	<div class="layui-card ns-card-common">
-		<div class="layui-card-header">
-			<span class="ns-card-title">门店自提</span>
-			<input type="checkbox" name="" value="1" lay-skin="switch" {if $store_config.is_use == 1} checked {/if} lay-filter="SelfMention" />
-		</div>
-		<div class="layui-card-body">
-			<p>启用上门自提后，买家可以就近选择商品自提门店，买家下单后，您需要确保买家指定的自提门店商品库存充足。</p>
-			<div class="ns-btn-box">
-				<a class="default ns-text-color" href="{:addon_url('shop/store/lists')}">查看自提门店</a>
+</div>
+<div class="ns-single-filter-box">
+	<div class="layui-form deliver-type">
+		{foreach name="deliver_type" item="vo"}
+			{if $vo eq 'express'}
+			<div class="layui-card ns-card-common" data-type="express">
+				<div class="layui-card-header">
+					<span class="ns-card-title">快递发货</span>
+					<input type="checkbox" name="" value="1" lay-skin="switch" {if $express_config.is_use == 1} checked {/if} lay-filter="logistics" />
+				</div>
+				<div class="layui-card-body">
+					<p>启用快递发货后，买家下单可以选择快递发货，由您安排快递送货上门。</p>
+					<div class="ns-btn-box">
+						<a class="default ns-text-color" href="{:addon_url('shop/express/template')}">运费模板</a>
+					</div>
+				</div>
 			</div>
-		</div>
-	</div>
-
-	<div class="layui-card ns-card-common">
-		<div class="layui-card-header">
-			<span class="ns-card-title">外卖配送</span>
-			<input type="checkbox" name="" value="1" lay-skin="switch" {if $local_delivery_config.is_use == 1} checked {/if}  lay-filter="cityDistribution"/>
-		</div>
-		<div class="layui-card-body">
-			<p>启用外卖配送后，在配送范围内的买家可以选择外卖配送，您可以接入第三方配送，也可以自己配送。</p>
-			<div class="ns-btn-box" >
-				<a class="default ns-text-color" href="{:addon_url('shop/local/local')}">编辑外卖配送</a>
+			{/if}
+			{if $vo eq 'store'}
+			<div class="layui-card ns-card-common" data-type="store">
+				<div class="layui-card-header">
+					<span class="ns-card-title">门店自提</span>
+					<input type="checkbox" name="" value="1" lay-skin="switch" {if $store_config.is_use == 1} checked {/if} lay-filter="SelfMention" />
+				</div>
+				<div class="layui-card-body">
+					<p>启用上门自提后，买家可以就近选择商品自提门店，买家下单后，您需要确保买家指定的自提门店商品库存充足。</p>
+					<div class="ns-btn-box">
+						<a class="default ns-text-color" href="{:addon_url('shop/store/lists')}">查看自提门店</a>
+					</div>
+				</div>
 			</div>
-		</div>
+			{/if}
+			{if $vo eq 'local'}
+			<div class="layui-card ns-card-common" data-type="local">
+				<div class="layui-card-header">
+					<span class="ns-card-title">外卖配送</span>
+					<input type="checkbox" name="" value="1" lay-skin="switch" {if $local_delivery_config.is_use == 1} checked {/if}  lay-filter="cityDistribution"/>
+				</div>
+				<div class="layui-card-body">
+					<p>启用外卖配送后，在配送范围内的买家可以选择外卖配送，您可以接入第三方配送，也可以自己配送。</p>
+					<div class="ns-btn-box" >
+						<a class="default ns-text-color" href="{:addon_url('shop/local/local')}">编辑外卖配送</a>
+					</div>
+				</div>
+			</div>
+			{/if}
+		{/foreach}
 	</div>
 </div>
 {/block}
 {block name="script"}
+<script type="text/javascript" src="__STATIC__/ext/drag-arrange.js"></script>
 <script>
     layui.use('form', function() {
         var form = layui.form;
@@ -103,6 +121,24 @@
                 }
             })
         });
+
+        $('.deliver-type .layui-card').arrangeable({
+			//拖拽结束后执行回调
+			callback: function (e) {
+			    var deliverType = [];
+			    $('.deliver-type .layui-card').each(function(){
+                    deliverType.push($(this).attr('data-type'));
+				})
+                $.ajax({
+                    dataType: "JSON",
+                    type: "POST",
+                    data:{"deliver_type": deliverType.toString()},
+                    url: ns.url("shop/delivery/delivertypesort"),
+                    success: function(res){
+                    }
+                })
+			}
+		});
     });
 </script>
 {/block}

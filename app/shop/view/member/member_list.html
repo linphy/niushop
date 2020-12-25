@@ -128,7 +128,7 @@
 			</div>
 			<div class="layui-form-item">
 				<div class="layui-inline">
-					<label class="layui-form-label">会员等级</label>
+					<label class="layui-form-label">会员卡</label>
 					<div class="layui-input-inline">
 						<select name="level_id">
 							<option value="">请选择</option>
@@ -198,7 +198,7 @@
 <script type="text/html" id="userdetail">
 	<div class='ns-table-title'>
 		<div class='ns-title-pic'>
-            <img layer-src src="{{ns.img(d.headimg)}}" onerror="this.src = 'SHOP_IMG/default_headimg.png' ">
+			<img layer-src src="{{ns.img(d.headimg)}}" onerror="this.src = 'SHOP_IMG/default_headimg.png' ">
 		</div>
 		<div class='ns-title-content'>
 			<p class="layui-elip">{{d.nickname}}</p>
@@ -214,14 +214,14 @@
 <!-- 会员标签 -->
 <script id="member_label" type="text/html">
 	{{# if (d.member_label_name != null) { }}
-		{{# var arr = d.member_label_name.split(",") }}
-		<div id="member_label_dl">
+	{{# var arr = d.member_label_name.split(",") }}
+	<div id="member_label_dl">
 		{{# for (var index in arr) { }}
-			{{#  if (arr[index]){  }}
-			{{'<span>' + arr[index] + '</span>'}}
-			{{#  }  }}
+		{{#  if (arr[index]){  }}
+		{{'<span>' + arr[index] + '</span>'}}
+		{{#  }  }}
 		{{# } }}
-		</div>
+	</div>
 	{{# } }}
 </script>
 
@@ -316,33 +316,33 @@
 {block name="script"}
 <script type='text/javascript' src='SHOP_JS/member_list.js'></script>
 <script type="text/javascript">
-	var table, form, laytpl, laydate,
-		repeat_flag = false,
-		currentDate = new Date(),
-		minDate = "",
-		layer_pass,
-		upload,
-		layer_label;
+    var table, form, laytpl, laydate,
+        repeat_flag = false,
+        currentDate = new Date(),
+        minDate = "",
+        layer_pass,
+        upload,
+        layer_label;
 
-	layui.use(['form', 'laytpl', 'laydate', 'upload'], function() {
-		form = layui.form;
-		laytpl = layui.laytpl;
-		laydate = layui.laydate;
-		upload = layui.upload;
-		currentDate.setDate(currentDate.getDate() - 7);
-		form.render();
+    layui.use(['form', 'laytpl', 'laydate', 'upload'], function() {
+        form = layui.form;
+        laytpl = layui.laytpl;
+        laydate = layui.laydate;
+        upload = layui.upload;
+        currentDate.setDate(currentDate.getDate() - 7);
+        form.render();
 
-		//注册开始时间
-		laydate.render({
-			elem: '#reg_start_date',
-			type: 'datetime'
-		});
+        //注册开始时间
+        laydate.render({
+            elem: '#reg_start_date',
+            type: 'datetime'
+        });
 
-		//注册结束时间
-		laydate.render({
-			elem: '#reg_end_date',
-			type: 'datetime'
-		});
+        //注册结束时间
+        laydate.render({
+            elem: '#reg_end_date',
+            type: 'datetime'
+        });
 
         //上次访问开始时间
         laydate.render({
@@ -356,45 +356,45 @@
             type: 'datetime'
         });
 
-		//允许上传的文件后缀
-		upload.render({
-			elem: '#member_file'
-			,url: ns.url("shop/member/file"),
-			accept: 'file',
-			exts: 'xlsx',
-			done: function(res){
-				if (res.code >= 0) {
+        //允许上传的文件后缀
+        upload.render({
+            elem: '#member_file'
+            ,url: ns.url("shop/member/file"),
+            accept: 'file',
+            exts: 'xlsx',
+            done: function(res){
+                if (res.code >= 0) {
 
-					$.ajax({
-						url: ns.url("shop/member/import"),
-						data: {
-							filename: res.data.name,
-							path:res.data.path
-						},
-						dataType: 'JSON',
-						type: 'POST',
-						success: function (res) {
-							layer.msg(res.message);
-							repeat_flag = false;
-							if (res.code == 0) table.reload();
-						}
-					});
-				}else{
-					layer.msg(res.message);
-				}
-			}
-		});
-		/**
-		 * 重新渲染结束时间
-		 * */
-		function reRender() {
-			$("#reg_end_date").remove();
-			$(".end-time").html('<input type="text" class="layui-input" name="reg_end_date" id="reg_end_date" placeholder="请输入结束时间">');
-			laydate.render({
-				elem: '#reg_end_date',
-				min: minDate
-			});
-		}
+                    $.ajax({
+                        url: ns.url("shop/member/import"),
+                        data: {
+                            filename: res.data.name,
+                            path:res.data.path
+                        },
+                        dataType: 'JSON',
+                        type: 'POST',
+                        success: function (res) {
+                            layer.msg(res.message);
+                            repeat_flag = false;
+                            if (res.code == 0) table.reload();
+                        }
+                    });
+                }else{
+                    layer.msg(res.message);
+                }
+            }
+        });
+        /**
+         * 重新渲染结束时间
+         * */
+        function reRender() {
+            $("#reg_end_date").remove();
+            $(".end-time").html('<input type="text" class="layui-input" name="reg_end_date" id="reg_end_date" placeholder="请输入结束时间">');
+            laydate.render({
+                elem: '#reg_end_date',
+                min: minDate
+            });
+        }
 
         //积分
         /* $("body").on("mousemove",".ns-point",function() {
@@ -420,160 +420,160 @@
             $("body").find(".ns-growth-box").hide().stop(false, true);
         }); */
 
-		/**
-		 * 加载表格
-		 */
-		table = new Table({
-			elem: '#member_list',
-			url: ns.url("shop/member/memberList"),
-			where:{"cluster_id" : "{$cluster_id}"},
-			cols: [
-				[
-					{
-						width: "3%",
-						type: 'checkbox',
-						unresize: 'false'
-					}, {
-						field: 'userdetail',
-						title: '账户',
-						width: '15%',
-						unresize: 'false',
-						templet: '#userdetail'
-					}, {
-						field: 'member_level_name',
-						title: '会员等级',
-						width: '8%',
-						unresize: 'false'
-					}, {
-						field: 'parent_fenxiao_name',
-						title: '上级分销商',
-						width: '10%',
-						unresize: 'false',
-						hide: {$is_exit_fenxiao} ? false : true
-					}, {
-						field: 'point',
-						title: '{if !empty($point)}' +
-								'<div class="ns-prompt-block">' +
-									'积分' +
-									'<div class="ns-prompt">' +
-										'<i class="iconfont iconwenhao1 required ns-point"></i>'+
-										'<div class="ns-point-box ns-reason-box ns-prompt-box" >' +
-											'<div class="ns-prompt-con">' +
-												'{foreach $point as $k=>$v}' +
-												'<p>{$k+1}、{$v}</p>' +
-												'{/foreach}' +
-											'</div>' +
-										'</div>' +
-									'</div>' +
-								'</div>' +
-								'{else /} ' +
-								'积分' +
-								'{/if}',
-						width: '8%',
-						unresize: 'false',
-						align: 'left',
-						templet: function (data) {
-							return parseInt(data.point);
-						}
-					}, {
-						field: 'balance',
-						title: '{if !empty($balance)}'+
-								'<div class="ns-prompt-block balance">'+
-									'余额'+
-									'<div class="ns-prompt">' +
-										'<i class="iconfont iconwenhao1 required ns-balance"></i>' +
-										'<div class="ns-balance-box ns-reason-box ns-prompt-box">' +
-											'<div class="ns-prompt-con">' +
-												'{foreach $balance as $k=>$v}' +
-												'<p>{$k+1}、{$v}</p>' +
-												'{/foreach}' +
-											'</div>' +
-										'</div>' +
-									'</div>' +
-								'</div>' +
-								'{else /} ' +
-								'余额' +
-								'{/if}',
-						width: '8%',
-						unresize: 'false',
-						align: 'right',
-						templet: function(data) {
-							var balance = parseFloat(data.balance) + parseFloat(data.balance_money);
-							return '<span style="color: red;" title="'+ balance.toFixed(2) +'">￥' + balance.toFixed(2) + '</span>';
-						}
-					}, {
-						field: 'growth',
-						title: '{if !empty($growth)}'+
-								'<div class="ns-prompt-block growth">'+
-									'成长值'+
-									'<div class="ns-prompt">' +
-										'<i class="iconfont iconwenhao1 required ns-growth"></i>' +
-										'<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">' +
-											'<div class="ns-prompt-con">' +
-												'{foreach $growth as $k=>$v}' +
-												'<p>{$k+1}、{$v}</p>' +
-												'{/foreach}' +
-											'</div>' +
-										'</div>' +
-									'</div>' +
-								'</div>' +
-								'{else /} ' +
-								'成长值' +
-								'{/if}',
-						width: '10%',
-						unresize: 'false',
-						align: 'right'
-					}, {
-						field: 'member_label',
-						title: '标签',
-						width: '15%',
-						unresize: 'false',
-						templet: '#member_label'
-					}, {
-						field: 'reg-login',
-						title: '最后登录时间',
-						width: '12%',
-						unresize: 'false',
-						templet: function (data) {
-							return ns.time_to_date(data.last_login_time);
-						}
-					}, {
-						title: '操作',
-						width: '10%',
-						unresize: 'false',
-						toolbar: '#operation'
-					}
-				]
-			],
-			toolbar: '#toolbarOperation',
-			bottomToolbar: "#batchOperation"
-		});
+        /**
+         * 加载表格
+         */
+        table = new Table({
+            elem: '#member_list',
+            url: ns.url("shop/member/memberList"),
+            where:{"cluster_id" : "{$cluster_id}"},
+            cols: [
+                [
+                    {
+                        width: "3%",
+                        type: 'checkbox',
+                        unresize: 'false'
+                    }, {
+                    field: 'userdetail',
+                    title: '账户',
+                    width: '15%',
+                    unresize: 'false',
+                    templet: '#userdetail'
+                }, {
+                    field: 'member_level_name',
+                    title: '会员卡',
+                    width: '8%',
+                    unresize: 'false'
+                }, {
+                    field: 'parent_fenxiao_name',
+                    title: '上级分销商',
+                    width: '10%',
+                    unresize: 'false',
+                    hide: {$is_exit_fenxiao} ? false : true
+                }, {
+                    field: 'point',
+                    title: '{if !empty($point)}' +
+                        '<div class="ns-prompt-block">' +
+                        '积分' +
+                        '<div class="ns-prompt">' +
+                        '<i class="iconfont iconwenhao1 required ns-point"></i>'+
+                        '<div class="ns-point-box ns-reason-box ns-prompt-box" >' +
+                        '<div class="ns-prompt-con">' +
+                        '{foreach $point as $k=>$v}' +
+                        '<p>{$k+1}、{$v}</p>' +
+                        '{/foreach}' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '{else /} ' +
+                        '积分' +
+                        '{/if}',
+                    width: '8%',
+                    unresize: 'false',
+                    align: 'left',
+                    templet: function (data) {
+                        return parseInt(data.point);
+                    }
+                }, {
+                    field: 'balance',
+                    title: '{if !empty($balance)}'+
+                        '<div class="ns-prompt-block balance">'+
+                        '余额'+
+                        '<div class="ns-prompt">' +
+                        '<i class="iconfont iconwenhao1 required ns-balance"></i>' +
+                        '<div class="ns-balance-box ns-reason-box ns-prompt-box">' +
+                        '<div class="ns-prompt-con">' +
+                        '{foreach $balance as $k=>$v}' +
+                        '<p>{$k+1}、{$v}</p>' +
+                        '{/foreach}' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '{else /} ' +
+                        '余额' +
+                        '{/if}',
+                    width: '8%',
+                    unresize: 'false',
+                    align: 'right',
+                    templet: function(data) {
+                        var balance = parseFloat(data.balance) + parseFloat(data.balance_money);
+                        return '<span style="color: red;" title="'+ balance.toFixed(2) +'">￥' + balance.toFixed(2) + '</span>';
+                    }
+                }, {
+                    field: 'growth',
+                    title: '{if !empty($growth)}'+
+                        '<div class="ns-prompt-block growth">'+
+                        '成长值'+
+                        '<div class="ns-prompt">' +
+                        '<i class="iconfont iconwenhao1 required ns-growth"></i>' +
+                        '<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">' +
+                        '<div class="ns-prompt-con">' +
+                        '{foreach $growth as $k=>$v}' +
+                        '<p>{$k+1}、{$v}</p>' +
+                        '{/foreach}' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '{else /} ' +
+                        '成长值' +
+                        '{/if}',
+                    width: '10%',
+                    unresize: 'false',
+                    align: 'right'
+                }, {
+                    field: 'member_label',
+                    title: '标签',
+                    width: '15%',
+                    unresize: 'false',
+                    templet: '#member_label'
+                }, {
+                    field: 'reg-login',
+                    title: '最后登录时间',
+                    width: '12%',
+                    unresize: 'false',
+                    templet: function (data) {
+                        return ns.time_to_date(data.last_login_time);
+                    }
+                }, {
+                    title: '操作',
+                    width: '10%',
+                    unresize: 'false',
+                    toolbar: '#operation'
+                }
+                ]
+            ],
+            toolbar: '#toolbarOperation',
+            bottomToolbar: "#batchOperation"
+        });
 
-		/**
-		 * 监听工具栏操作
-		 */
-		 table.tool(function(obj) {
-			var data = obj.data;
-			switch (obj.event) {
-				case 'info': //编辑
-					location.href = ns.url("shop/member/editMember?member_id=" + data.member_id);
-					break;
-				case 'reset_pass': //重置密码
-					resetPassword(data);
-					break;
-				case 'adjust_balance': //调整余额
-					adjustBalance(data);
-					break;
-				case 'adjust_integral': //调整积分
-					adjustIntegral(data);
-					break;
-				case 'set_label': //设置标签
-					settingLabels(data.member_id);
-					break;
-				case 'more': //更多
-					$('.more-operation').css('display', 'none');
-					$(obj.tr).find('.more-operation').css('display', 'block');
-					break;
+        /**
+         * 监听工具栏操作
+         */
+        table.tool(function(obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'info': //编辑
+                    location.href = ns.url("shop/member/editMember?member_id=" + data.member_id);
+                    break;
+                case 'reset_pass': //重置密码
+                    resetPassword(data);
+                    break;
+                case 'adjust_balance': //调整余额
+                    adjustBalance(data);
+                    break;
+                case 'adjust_integral': //调整积分
+                    adjustIntegral(data);
+                    break;
+                case 'set_label': //设置标签
+                    settingLabels({member_id: data.member_id, label: data.member_label});
+                    break;
+                case 'more': //更多
+                    $('.more-operation').css('display', 'none');
+                    $(obj.tr).find('.more-operation').css('display', 'block');
+                    break;
                 case 'change':
                     var url = ns.url("fenxiao://shop/fenxiao/change", {member_id: data.member_id});
                     //iframe层-父子操作
@@ -587,261 +587,271 @@
                             location.reload();
                         }
                     });
-					break;
-				case 'recive_coupon': //发放优惠券
-					selectCoupon(data);
+                    break;
+                case 'recive_coupon': //发放优惠券
+                    selectCoupon(data);
                     break;
                 case 'blacklist': // 黑名单
-                	addBlacklist(data.member_id);
-                	break;
-			}
-		});
+                    addBlacklist(data.member_id);
+                    break;
+            }
+        });
 
-		$(document).click(function(event) {
-			if ($(event.target).attr('lay-event') != 'more' && $('.more-operation').not(':hidden').length) {
-				$('.more-operation').css('display', 'none');
-			}
-		});
+        $(document).click(function(event) {
+            if ($(event.target).attr('lay-event') != 'more' && $('.more-operation').not(':hidden').length) {
+                $('.more-operation').css('display', 'none');
+            }
+        });
 
-		/**
-		 * 批量操作
-		 */
-		table.bottomToolbar(function(obj) {
-			console.log("批量操作",obj);
-			if (obj.data.length < 1) {
-				layer.msg('请选择要操作的数据');
-				return;
-			}
+        /**
+         * 批量操作
+         */
+        table.bottomToolbar(function(obj) {
+            console.log("批量操作",obj);
+            if (obj.data.length < 1) {
+                layer.msg('请选择要操作的数据');
+                return;
+            }
 
-			switch (obj.event) {
-				case "del":
-					var id_array = new Array();
-					for (i in obj.data) id_array.push(obj.data[i].member_id);
-					delMember(id_array.toString());
-					break;
-				case "setlabel":
-					var id_array = new Array();
-					for (i in obj.data) id_array.push(obj.data[i].member_id);
-					settingLabels(id_array.toString());
-					break;
-			}
-		});
+            switch (obj.event) {
+                case "del":
+                    var id_array = new Array();
+                    for (i in obj.data) id_array.push(obj.data[i].member_id);
+                    delMember(id_array.toString());
+                    break;
+                case "setlabel":
+                    var id_array = new Array();
+                    for (i in obj.data) id_array.push(obj.data[i].member_id);
+                    settingLabels({member_id: id_array.toString()});
+                    break;
+            }
+        });
 
-		/**
-		 * 批量操作
-		 */
-		table.toolbar(function(obj) {
+        /**
+         * 批量操作
+         */
+        table.toolbar(function(obj) {
 
-			if (obj.data.length < 1) {
-				layer.msg('请选择要操作的数据');
-				return;
-			}
+            if (obj.data.length < 1) {
+                layer.msg('请选择要操作的数据');
+                return;
+            }
 
-			switch (obj.event) {
-				case "del":
-					var id_array = new Array();
-					for (i in obj.data) id_array.push(obj.data[i].member_id);
-					delMember(id_array.toString());
-					break;
-				case "setlabel":
-					var id_array = new Array();
-					for (i in obj.data) id_array.push(obj.data[i].member_id);
-					settingLabels(id_array.toString());
-					break;
-			}
-		});
-
-
-		/**
-		 * 重置密码
-		 */
-		function resetPassword(data) {
-			laytpl($("#pass_change").html()).render(data, function(html) {
-				layer_pass = layer.open({
-					title: '重置密码',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['550px'],
-					content: html,
-				});
-			});
-		}
-		// 调整余额
-		function adjustBalance(e){
-			laytpl($("#balance").html()).render(e, function(html) {
-				layer.open({
-					title: '调整余额（不可提现）',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['800px'],
-					content: html
-				});
-			});
-		}
-
-		//调整积分
-		function adjustIntegral(e){
-			laytpl($("#point").html()).render(e, function(html) {
-				layer.open({
-					title: '调整积分',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['800px'],
-					content: html
-				});
-			});
-		}
-		var repeat_flag_point = false;
-		form.on('submit(savePoint)', function(data) {
-			if (repeat_flag_point) return false;
-			repeat_flag_point = true;
-			var point = data.field.point;
-			if (data.field.adjust_num == 0) {
-				layer.msg('调整数值不能为0');
-				repeat_flag_point = false;
-				return ;
-			}
-			if (point*1 + data.field.adjust_num*1 < 0) {
-				layer.msg('积分不可以为负数');
-				repeat_flag_point = false;
-				return ;
-			}
-			$.ajax({
-				type: "POST",
-				url: ns.url("shop/member/adjustPoint"),
-				data: data.field,
-				dataType: 'JSON',
-				success: function(res) {
-					layer.msg(res.message);
-					repeat_flag_point = false;
-
-					if (res.code == 0) {
-						layer.closeAll('page');
-						table.reload();
-					}
-				}
-			});
-		});
-
-		var repeat_flag_balance = false;
-		form.on('submit(saveBalance)', function(data) {
-			if (repeat_flag_balance) return false;
-			repeat_flag_balance = true;
-
-			var balance = data.field.balance;
-			if (data.field.adjust_num == 0) {
-				layer.msg('调整数值不能为0');
-				repeat_flag_balance = false;
-				return ;
-			}
-			if (balance*1 + data.field.adjust_num*1 < 0) {
-				layer.msg('当前余额（不可提现）不可以为负数');
-				repeat_flag_balance = false;
-				return ;
-			}
-			$.ajax({
-				type: "POST",
-				url: ns.url("shop/member/adjustBalance"),
-				data: data.field,
-				dataType: 'JSON',
-				success: function(res) {
-					layer.msg(res.message);
-					repeat_flag_balance = false;
-
-					if (res.code == 0) {
-						layer.closeAll('page');
-						table.reload();
-					}
-				}
-			});
-		});
+            switch (obj.event) {
+                case "del":
+                    var id_array = new Array();
+                    for (i in obj.data) id_array.push(obj.data[i].member_id);
+                    delMember(id_array.toString());
+                    break;
+                case "setlabel":
+                    var id_array = new Array();
+                    for (i in obj.data) id_array.push(obj.data[i].member_id);
+                    settingLabels({member_id: id_array.toString()});
+                    break;
+            }
+        });
 
 
+        /**
+         * 重置密码
+         */
+        function resetPassword(data) {
+            laytpl($("#pass_change").html()).render(data, function(html) {
+                layer_pass = layer.open({
+                    title: '重置密码',
+                    skin: 'layer-tips-class',
+                    type: 1,
+                    area: ['550px'],
+                    content: html,
+                });
+            });
+        }
+        // 调整余额
+        function adjustBalance(e){
+            laytpl($("#balance").html()).render(e, function(html) {
+                layer.open({
+                    title: '调整余额（不可提现）',
+                    skin: 'layer-tips-class',
+                    type: 1,
+                    area: ['800px'],
+                    content: html
+                });
+            });
+        }
 
-		form.on('submit(repass)', function(data) {
+        //调整积分
+        function adjustIntegral(e){
+            laytpl($("#point").html()).render(e, function(html) {
+                layer.open({
+                    title: '调整积分',
+                    skin: 'layer-tips-class',
+                    type: 1,
+                    area: ['800px'],
+                    content: html
+                });
+            });
+        }
+        var repeat_flag_point = false;
+        form.on('submit(savePoint)', function(data) {
+            if (repeat_flag_point) return false;
+            repeat_flag_point = true;
+            var point = data.field.point;
+            if (data.field.adjust_num == 0) {
+                layer.msg('调整数值不能为0');
+                repeat_flag_point = false;
+                return ;
+            }
+            if (point*1 + data.field.adjust_num*1 < 0) {
+                layer.msg('积分不可以为负数');
+                repeat_flag_point = false;
+                return ;
+            }
+            $.ajax({
+                type: "POST",
+                url: ns.url("shop/member/adjustPoint"),
+                data: data.field,
+                dataType: 'JSON',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag_point = false;
 
-			if (repeat_flag) return false;
-			repeat_flag = true;
+                    if (res.code == 0) {
+                        layer.closeAll('page');
+                        table.reload();
+                    }
+                }
+            });
+        });
 
-			$.ajax({
-				type: "POST",
-				url: ns.url("shop/member/modifyPassword"),
-				data: data.field,
-				dataType: 'JSON',
-				success: function(res) {
-					layer.msg(res.message);
-					repeat_flag = false;
+        var repeat_flag_balance = false;
+        form.on('submit(saveBalance)', function(data) {
+            if (repeat_flag_balance) return false;
+            repeat_flag_balance = true;
 
-					if (res.code == 0) {
-						layer.closeAll('page');
-					}
-				}
-			});
-		});
+            var balance = data.field.balance;
+            if (data.field.adjust_num == 0) {
+                layer.msg('调整数值不能为0');
+                repeat_flag_balance = false;
+                return ;
+            }
+            if (balance*1 + data.field.adjust_num*1 < 0) {
+                layer.msg('当前余额（不可提现）不可以为负数');
+                repeat_flag_balance = false;
+                return ;
+            }
+            $.ajax({
+                type: "POST",
+                url: ns.url("shop/member/adjustBalance"),
+                data: data.field,
+                dataType: 'JSON',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag_balance = false;
 
-		/**
-		 * 设置标签
-		 */
-		function settingLabels(data) {
+                    if (res.code == 0) {
+                        layer.closeAll('page');
+                        table.reload();
+                    }
+                }
+            });
+        });
 
-			laytpl($("#label_change").html()).render(data, function(html) {
-				layer_label = layer.open({
-					title: '设置标签',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['450px'],
-					content: html,
-				});
-			});
 
-			form.render();
-		}
 
-		form.on('submit(setlabel)', function(obj) {
-			if (repeat_flag) return false;
-			repeat_flag = true;
+        form.on('submit(repass)', function(data) {
 
-			var field = obj.field;
-			var arr_id = [];
+            if (repeat_flag) return false;
+            repeat_flag = true;
 
-			for (var prop in field) {
-				if (prop == 'member_ids') {
-					continue;
-				}
-				arr_id.push(field[prop]);
-			}
+            $.ajax({
+                type: "POST",
+                url: ns.url("shop/member/modifyPassword"),
+                data: data.field,
+                dataType: 'JSON',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag = false;
 
-			$.ajax({
-				type: "POST",
-				url: ns.url("shop/member/modifyLabel"),
-				data: {
-					'member_ids': field.member_ids,
-					'label_ids': arr_id.toString()
-				},
-				dataType: 'JSON',
-				success: function(res) {
-					layer.msg(res.message);
-					repeat_flag = false;
-					if (res.code == 0) {
-						table.reload();
-						layer.closeAll('page');
-					}
-				}
-			});
-		});
+                    if (res.code == 0) {
+                        layer.closeAll('page');
+                    }
+                }
+            });
+        });
 
-		/**
-		 * 搜索功能
-		 */
-		form.on('submit(search)', function(data) {
-			table.reload({
-				page: {
-					curr: 1
-				},
-				where: data.field
-			});
-			return false;
-		});
+        /**
+         * 设置标签
+         */
+        function settingLabels(data) {
+
+            laytpl($("#label_change").html()).render(data, function(html) {
+                layer_label = layer.open({
+                    title: '设置标签',
+                    skin: 'layer-tips-class',
+                    type: 1,
+                    area: ['450px'],
+                    content: html,
+                    success: function(){
+                        if (data.label) {
+                            var label = data.label.split(',');
+                            label.forEach(function (i) {
+                                $('#reset_label [name="label_id'+ i +'"]').prop('checked', true);
+                                form.render();
+                            })
+
+                        }
+                    }
+                });
+            });
+
+            form.render();
+        }
+
+        form.on('submit(setlabel)', function(obj) {
+            if (repeat_flag) return false;
+            repeat_flag = true;
+
+            var field = obj.field;
+            var arr_id = [];
+
+            for (var prop in field) {
+                if (prop == 'member_ids') {
+                    continue;
+                }
+                arr_id.push(field[prop]);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: ns.url("shop/member/modifyLabel"),
+                data: {
+                    'member_ids': field.member_ids,
+                    'label_ids': arr_id.toString()
+                },
+                dataType: 'JSON',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag = false;
+                    if (res.code == 0) {
+                        table.reload();
+                        layer.closeAll('page');
+                    }
+                }
+            });
+        });
+
+        /**
+         * 搜索功能
+         */
+        form.on('submit(search)', function(data) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+            return false;
+        });
 
         /**
          *  导出
@@ -851,76 +861,76 @@
             return false;
         });
 
-		$(".search-form").click(function() {
-			$(".layui-form-search").show();
-			$(this).hide();
-		});
+        $(".search-form").click(function() {
+            $(".layui-form-search").show();
+            $(this).hide();
+        });
 
-		$(".form-hide-btn").click(function() {
-			$(".layui-form-search").hide();
-			$(".search-form").show();
-		});
+        $(".form-hide-btn").click(function() {
+            $(".layui-form-search").hide();
+            $(".search-form").show();
+        });
 
-		/**
-		 * 表单验证
-		 */
-		form.verify({
-			repass: function(value) {
-				if (value != $(".new_pass").val()) {
-					return "输入错误,两次密码不一致!";
-				}
-			}
-		});
+        /**
+         * 表单验证
+         */
+        form.verify({
+            repass: function(value) {
+                if (value != $(".new_pass").val()) {
+                    return "输入错误,两次密码不一致!";
+                }
+            }
+        });
 
 
-		/**
-		 * 发放优惠券
-		 */
-		function selectCoupon(data) {
-			laytpl($("#recive_coupon").html()).render(data, function(html) {
-				layer_coupon = layer.open({
-					title: '选择优惠券',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['700px', '542px'],
-					content: html,
-				});
-				renderCoupon("", data.member_id);
-			});
-		}
+        /**
+         * 发放优惠券
+         */
+        function selectCoupon(data) {
+            laytpl($("#recive_coupon").html()).render(data, function(html) {
+                layer_coupon = layer.open({
+                    title: '选择优惠券',
+                    skin: 'layer-tips-class',
+                    type: 1,
+                    area: ['700px', '542px'],
+                    content: html,
+                });
+                renderCoupon("", data.member_id);
+            });
+        }
 
-		function addBlacklist(member_ids) {
-			layer.confirm('加入黑名单后用户将强制退出无法登录，您确认要将用户加入黑名单吗？', function() {
-				$.ajax({
-					url: ns.url("shop/member/modifyStatus"),
-					data: {member_ids},
-					dataType: 'JSON',
-					type: 'POST',
-					success: function(res) {
-						layer.msg(res.message);
-						if (res.code == 0) {
-							table.reload();
-						}
-					}
-				});
-			}, function () {
-				layer.close();
-			});
-		}
-	});
+        function addBlacklist(member_ids) {
+            layer.confirm('加入黑名单后用户将强制退出无法登录，您确认要将用户加入黑名单吗？', function() {
+                $.ajax({
+                    url: ns.url("shop/member/modifyStatus"),
+                    data: {member_ids},
+                    dataType: 'JSON',
+                    type: 'POST',
+                    success: function(res) {
+                        layer.msg(res.message);
+                        if (res.code == 0) {
+                            table.reload();
+                        }
+                    }
+                });
+            }, function () {
+                layer.close();
+            });
+        }
+    });
 
-	function closePass() {
-		layer.close(layer_pass);
-	}
+    function closePass() {
+        layer.close(layer_pass);
+    }
 
-	function closeLabel() {
-		layer.close(layer_label);
-	}
+    function closeLabel() {
+        layer.close(layer_label);
+    }
 
-	function downloadMemberFile(){
-		location.href = ns.url("shop/member/downloadMemberFile");
-		return false;
-	}
+    function downloadMemberFile(){
+        location.href = ns.url("shop/member/downloadMemberFile");
+        return false;
+    }
 </script>
 
 <!-- 发放优惠券弹框 -->
@@ -989,7 +999,7 @@
 			<button class="layui-btn layui-btn-primary" onclick="closeLabel()">返回</button>
 		</div>
 
-		<input class="reset-label-id" type="hidden" name="member_ids" value="{{d}}" />
+		<input class="reset-label-id" type="hidden" name="member_ids" value="{{d.member_id}}" />
 	</div>
 </script>
 

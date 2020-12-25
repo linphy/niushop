@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -25,12 +24,12 @@ class Bundling extends BaseApi
      */
     public function lists()
     {
-        $sku_id = isset($this->params['sku_id']) ? $this->params['sku_id'] : 0;
+        $sku_id = isset($this->params[ 'sku_id' ]) ? $this->params[ 'sku_id' ] : 0;
         if (empty($sku_id)) {
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
         $bundling_model = new BundlingModel();
-        $info           = $bundling_model->getBundlingGoods($sku_id);
+        $info = $bundling_model->getBundlingGoods($sku_id);
         return $this->response($info);
     }
 
@@ -39,12 +38,12 @@ class Bundling extends BaseApi
      */
     public function detail()
     {
-        $bl_id = isset($this->params['bl_id']) ? $this->params['bl_id'] : 0;
+        $bl_id = isset($this->params[ 'bl_id' ]) ? $this->params[ 'bl_id' ] : 0;
         if (empty($bl_id)) {
             return $this->response($this->error('', 'REQUEST_BL_ID'));
         }
         $bundling_model = new BundlingModel();
-        $info           = $bundling_model->getBundlingDetail([['bl_id', '=', $bl_id]]);
+        $info = $bundling_model->getBundlingDetail([ [ 'bl_id', '=', $bl_id ] ]);
         return $this->response($info);
 
     }

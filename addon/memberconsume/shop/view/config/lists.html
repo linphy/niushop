@@ -1,0 +1,182 @@
+{extend name="app/shop/view/base.html"/}
+{block name="resources"}
+{/block}
+{block name="main"}
+<!-- 搜索框 -->
+<div class="ns-single-filter-box">
+	<div class="layui-form">
+		<div class="layui-input-inline">
+			<input type="text" name="search_text" placeholder="请输入订单编号/用户名" class="layui-input" autocomplete="off">
+			<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
+			  <i class="layui-icon">&#xe615;</i>
+			</button>
+		</div>
+	</div>
+</div>
+
+<div class="layui-tab ns-table-tab"  lay-filter="activity_tab">
+	<ul class="layui-tab-title">
+		<li class="layui-this" lay-id="">全部</li>
+		{foreach $event_list as $k => $v}
+		<li lay-id="{$v['name']}">{$v['title']}</li>
+		{/foreach}
+	</ul>
+	<div class="layui-tab-content">
+		<!-- 列表 -->
+		<table id="activity_list" lay-filter="activity_list"></table>
+	</div>
+</div>
+
+<!-- 状态 -->
+<script type="text/html" id="status">
+	{{ d.status == 0 ? '已下架' : '已上架' }}
+</script>
+
+<!-- 操作 -->
+<script type="text/html" id="operation">
+	<div class="ns-table-btn">
+		<a class="layui-btn" lay-event="detail">查看订单</a>
+	</div>
+</script>
+
+<script type="text/html" id="member_info">
+	<div class="ns-table-title">
+		<div class="ns-title-pic">
+			<img layer-src src="{{ns.img(d.headimg)}}" onerror="this.src = 'SHOP_IMG/default_headimg.png' "/>
+		</div>
+		<div class="ns-title-content">
+			<a href="javascript:;" class="ns-multi-line-hiding ns-text-color"
+			   title="{{d.nickname}}">{{d.nickname}}</a>
+		</div>
+	</div>
+</script>
+{/block}
+{block name="script"}
+<script>
+	layui.use(['form','element'], function() {
+		var table,
+			form = layui.form,
+			element = layui.element,
+			repeat_flag = false; //防重复标识
+
+		form.render();
+
+		//监听Tab切换，以改变地址hash值
+		element.on('tab(activity_tab)', function(){
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where:{
+                    'status':this.getAttribute('lay-id')
+                }
+            });
+		});
+
+			table = new Table({
+				elem: '#activity_list',
+				url: ns.url("memberconsume://shop/config/lists"),
+				cols: [
+					[{
+						title: '会员信息',
+						unresize: 'false',
+						width: '20%',
+						templet: '#member_info'
+					}, {
+						field: 'remark',
+						title: '内容',
+						unresize: 'false',
+						width: '30%'
+					}, {
+						title: '奖励类型',
+						unresize: 'false',
+						width: '20%',
+						align: 'left',
+						templet: function(data) {
+							if(data.type == 'point'){
+								return '积分';
+							}
+							if(data.type == 'growth'){
+								return '成长值';
+							}
+							if(data.type == 'coupon'){
+								return '优惠券';
+							}
+						}
+					}, {
+						field: 'create_time',
+						title: '奖励',
+						unresize: 'false',
+						width: '20%',
+						templet: function(data) {
+							return ns.time_to_date(data.create_time);
+						}
+					}, {
+						title: '操作',
+						toolbar: '#operation',
+						unresize: 'false',
+						width: '10%'
+					}]
+				]
+			});
+
+		/**
+		 * 监听工具栏操作
+		 */
+		table.tool(function(obj) {
+			var data = obj.data;
+			switch (obj.event) {
+				case 'detail': //详情
+					location.href = ns.url("shop/order/detail", {"order_id": data.order_id});
+					break;
+			}
+		});
+
+		/**
+		 * 删除
+		 */
+		function deleteBund(id) {
+			if (repeat_flag) return false;
+			repeat_flag = true;
+
+			layer.confirm('确定要删除该组合套餐吗?', function() {
+				$.ajax({
+					url: ns.url("bundling://shop/bundling/delete"),
+					data: {
+						"bl_id": id
+					},
+					dataType: 'JSON',
+					type: 'POST',
+					success: function(res) {
+						layer.msg(res.message);
+						repeat_flag = false;
+
+						if (res.code == 0) {
+							table.reload();
+						}
+					}
+				});
+			}, function() {
+				layer.close();
+				repeat_flag = false;
+			});
+		}
+		
+		/**
+		 * 搜索功能
+		 */
+		form.on('submit(search)', function(data) {
+			table.reload({
+				page: {
+					curr: 1
+				},
+				where: data.field
+			});
+		});
+	});
+	
+	function add() {
+		location.href = ns.url("bundling://shop/bundling/add");
+	}
+</script>
+{/block}

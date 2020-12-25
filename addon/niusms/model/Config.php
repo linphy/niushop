@@ -60,4 +60,15 @@ class Config extends BaseModel
         event('EnableCallBack', [ 'sms_type' => 'niusms', 'is_use' => $is_use, 'site_id' => $site_id ]);
         return $res;
     }
+
+    /**
+     * 事件修改开关状态
+     * array $data
+     */
+    public function enableCallBack($is_use, $site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->modifyConfigIsUse($is_use, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'NIU_SMS_CONFIG' ] ]);
+        return $res;
+    }
 }

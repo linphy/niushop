@@ -134,7 +134,8 @@
 
 .rubik-cube .image-ad-list > ul > li .content-block {
 	display: inline-block;
-	width: calc(100% - 74px);
+	width: calc(100% - 78px);
+	font-size: 14px;
 }
 
 .rubik-cube .image-ad-list > ul > li .content-block.textNavigation {
@@ -146,9 +147,7 @@
 }
 
 .rubik-cube .image-ad-list > ul > li .content-block .layui-form-label {
-	/* width: 60px;
-	padding: 9px 0;
-	line-height: 1; */
+	text-align: left;
 }
 
 .rubik-cube .image-ad-list > ul > li .content-block div {

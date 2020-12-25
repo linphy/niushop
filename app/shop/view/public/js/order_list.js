@@ -275,8 +275,16 @@ Order.prototype.tbody = function () {
 			}
 			orderitemHtml += '</tr>';
 		}
-
 		tbody += orderitemHtml;
+
+		if(order.buyer_message != '') {
+			//订单项底部
+			tbody += '<tr class="bottom-row">';
+			tbody += '<td colspan="7">';
+			tbody += '<span class="order-item-header" style="margin-right:10px;">买家备注：' + order.buyer_message + '</span>';
+			tbody += '</td>';
+			tbody += '</tr>';
+		}
 
 		if (order.remark != '') {
 			tbody += '<tr class="remark-row">';

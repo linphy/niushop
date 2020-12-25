@@ -46,6 +46,7 @@ class Order extends BaseShop
             "out_trade_no" => "外部单号",
             "name" => "收货人姓名",
             "order_name" => "商品名称",
+            "mobile" => "收货人电话",
         );
         $order_model = new OrderModel();
         $order_status_list = $order_model->delivery_order_status;

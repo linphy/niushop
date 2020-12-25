@@ -24,7 +24,9 @@
 					"popWindow": {
 						"imageUrl": "public/diy_view/style4/img/adv_supernatant.png",
 						"count": 1,
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "362",
 						"imgHeight": "502"
 					},
@@ -69,13 +71,17 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style4/img/banner1.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "348"
 					}, {
 						"imageUrl": "public/diy_view/style4/img/banner2.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "702",
 						"imgHeight": "349"
 					}],
@@ -206,7 +212,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style4/img/adv.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "732",
 						"imgHeight": "166"
 					}],
@@ -229,13 +237,19 @@
 					"backgroundColor": "",
 					"list": [{
 						"imageUrl": "public/diy_view/style4/img/adv1.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style4/img/adv2.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}, {
 						"imageUrl": "public/diy_view/style4/img/adv3.png",
-						"link": {}
+						"link": {
+							"name": ""
+						}
 					}],
 					"selectedRubikCubeArray": [],
 					"diyHtml": "",
@@ -258,7 +272,9 @@
 					"list": [{
 						"imageUrl": "public/diy_view/style4/img/title.png",
 						"title": "",
-						"link": {},
+						"link": {
+							"name": ""
+						},
 						"imgWidth": "750",
 						"imgHeight": "82"
 					}],

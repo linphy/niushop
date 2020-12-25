@@ -18,7 +18,6 @@ class Goodscategory extends BaseApi
     public function tree()
     {
         $level = isset($this->params[ 'level' ]) ? $this->params[ 'level' ] : 3;// 分类等级 1 2 3
-        $template = isset($this->params[ 'template' ]) ? $this->params[ 'template' ] : 2;// 模板 1：无图，2：有图，3：有商品
         $goods_category_model = new GoodsCategoryModel();
         $condition = [
             [ 'is_show', '=', 0 ],

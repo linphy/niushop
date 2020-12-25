@@ -68,7 +68,11 @@ class Login extends BaseApi
         //生成access_token
         if ($res['code'] >= 0) {
             $token = $this->createToken($res['data']['member_id']);
-            return $this->response($this->success(['token' => $token]));
+            $data = [
+                'token' => $token
+            ];
+            if (isset($res['data']['is_register'])) $data['is_register'] = 1;
+            return $this->response($this->success($data));
         }
         return $this->response($res);
     }

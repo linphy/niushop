@@ -13,10 +13,10 @@ class Cart extends BaseApi
     public function add()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $sku_id = isset($this->params['sku_id']) ? $this->params['sku_id'] : 0;
-        $num = isset($this->params['num']) ? $this->params['num'] : 0;
+        $sku_id = isset($this->params[ 'sku_id' ]) ? $this->params[ 'sku_id' ] : 0;
+        $num = isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 0;
         if (empty($sku_id)) {
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
@@ -26,7 +26,7 @@ class Cart extends BaseApi
         $cart = new CartModel();
         $data = [
             'site_id' => $this->site_id,
-            'member_id' => $token['data']['member_id'],
+            'member_id' => $token[ 'data' ][ 'member_id' ],
             'sku_id' => $sku_id,
             'num' => $num
         ];
@@ -40,10 +40,10 @@ class Cart extends BaseApi
     public function edit()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $cart_id = isset($this->params['cart_id']) ? $this->params['cart_id'] : 0;
-        $num = isset($this->params['num']) ? $this->params['num'] : 0;
+        $cart_id = isset($this->params[ 'cart_id' ]) ? $this->params[ 'cart_id' ] : 0;
+        $num = isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 0;
         if (empty($cart_id)) {
             return $this->response($this->error('', 'REQUEST_CART_ID'));
         }
@@ -54,7 +54,7 @@ class Cart extends BaseApi
         $cart = new CartModel();
         $data = [
             'cart_id' => $cart_id,
-            'member_id' => $token['data']['member_id'],
+            'member_id' => $token[ 'data' ][ 'member_id' ],
             'num' => $num
         ];
         $res = $cart->editCart($data);
@@ -67,16 +67,16 @@ class Cart extends BaseApi
     public function delete()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $cart_id = isset($this->params['cart_id']) ? $this->params['cart_id'] : 0;
+        $cart_id = isset($this->params[ 'cart_id' ]) ? $this->params[ 'cart_id' ] : 0;
         if (empty($cart_id)) {
             return $this->response($this->error('', 'REQUEST_CART_ID'));
         }
         $cart = new CartModel();
         $data = [
             'cart_id' => $cart_id,
-            'member_id' => $token['data']['member_id']
+            'member_id' => $token[ 'data' ][ 'member_id' ]
         ];
         $res = $cart->deleteCart($data);
         return $this->response($res);
@@ -88,11 +88,11 @@ class Cart extends BaseApi
     public function clear()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
         $cart = new CartModel();
         $data = [
-            'member_id' => $token['data']['member_id']
+            'member_id' => $token[ 'data' ][ 'member_id' ]
         ];
         $res = $cart->clearCart($data);
         return $this->response($res);
@@ -104,19 +104,19 @@ class Cart extends BaseApi
     public function goodsLists()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
         $cart = new CartModel();
-        $list = $cart->getCart($token['data']['member_id'], $this->site_id);
+        $list = $cart->getCart($token[ 'data' ][ 'member_id' ], $this->site_id);
 
         $goods = new Goods();
-        if (!empty($list['data'])) {
-            foreach ($list['data'] as $k => $v) {
-                if ($token['code'] >= 0) {
+        if (!empty($list[ 'data' ])) {
+            foreach ($list[ 'data' ] as $k => $v) {
+                if ($token[ 'code' ] >= 0) {
                     // 是否参与会员等级折扣
-                    $goods_member_price = $goods->getGoodsPrice($v['sku_id'], $this->member_id);
-                    $goods_member_price = $goods_member_price['data'];
-                    if (!empty($goods_member_price['member_price'])) {
-                        $list['data'][$k]['member_price'] = $goods_member_price['price'];
+                    $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id);
+                    $goods_member_price = $goods_member_price[ 'data' ];
+                    if (!empty($goods_member_price[ 'member_price' ])) {
+                        $list[ 'data' ][ $k ][ 'member_price' ] = $goods_member_price[ 'price' ];
                     }
                 }
             }
@@ -131,20 +131,20 @@ class Cart extends BaseApi
     public function count()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
         $cart = new CartModel();
 //        $list = $cart->getCartCount($token['data']['member_id']);
         $condition = [
-            ['gc.member_id', '=', $token['data']['member_id']],
-            ['gc.site_id', '=', $this->site_id],
-            ['gs.goods_state', '=', 1],
-            ['gs.is_delete', '=', 0 ]
+            [ 'gc.member_id', '=', $token[ 'data' ][ 'member_id' ] ],
+            [ 'gc.site_id', '=', $this->site_id ],
+            [ 'gs.goods_state', '=', 1 ],
+            [ 'gs.is_delete', '=', 0 ]
         ];
         $list = $cart->getCartList($condition, 'gc.num');
-        $list = $list['data'];
+        $list = $list[ 'data' ];
         $count = 0;
         foreach ($list as $k => $v) {
-            $count += $v['num'];
+            $count += $v[ 'num' ];
         }
         return $this->response($this->success($count));
     }
@@ -156,11 +156,11 @@ class Cart extends BaseApi
     public function lists()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
         $cart = new CartModel();
         $condition = [
-            ['gc.member_id', '=', $token['data']['member_id']],
-            ['gc.site_id', '=', $this->site_id]
+            [ 'gc.member_id', '=', $token[ 'data' ][ 'member_id' ] ],
+            [ 'gc.site_id', '=', $this->site_id ]
         ];
         $list = $cart->getCartList($condition, 'gc.cart_id,gc.sku_id,gc.num');
         return $this->response($list);

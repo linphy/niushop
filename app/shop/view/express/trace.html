@@ -63,7 +63,16 @@
         </div>
         <div class="ns-word-aux">快递鸟分配的电商加密私钥，请到快递鸟官网申请http://kdniao.com/reg</div>
     </div>
-
+    <div class="layui-form-item config-item kdbird" {if $kdbird_config.is_use != 1} style="display:none;"{/if}>
+        <label class="layui-form-label">开启付费版：</label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline">
+                <input type="radio" name="kdniao_status" value="0" title="关闭" autocomplete="off" class="layui-input ns-len-long" {if $kdbird_config.value.status == 0} checked {/if}>
+                <input type="radio" name="kdniao_status" value="1" title="开启" autocomplete="off" class="layui-input ns-len-long" {if $kdbird_config.value.status == 1} checked {/if}>
+            </div>
+        </div>
+        <div class="ns-word-aux">开启订单评价功能</div>
+    </div>
     <div class="ns-single-filter-box">
         <div class="ns-form-row">
             <button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
@@ -85,6 +94,7 @@
         });
 
         form.on('submit(save)', function(data) {
+
             if (repeat_flag) return;
             repeat_flag = true;
             $.ajax({

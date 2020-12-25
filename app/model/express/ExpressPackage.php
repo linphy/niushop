@@ -105,7 +105,7 @@ class ExpressPackage extends BaseModel
      * 获取包裹信息
      * @param $condition
      */
-    public function package($condition)
+    public function package($condition, $mobile)
     {
         $list_result = $this->getExpressDeliveryPackageList($condition);
         $list = $list_result["data"];
@@ -123,7 +123,7 @@ class ExpressPackage extends BaseModel
                     $list[$k]["goods_list"][] = ["sku_name" => $temp_item["2"], "num" => $temp_item["1"], "sku_image" => $sku_image, "sku_id" => $temp_item["0"]];
                 }
             }
-            $trace_list = $trace_model->trace($v["delivery_no"], $v["express_company_id"], $v['site_id']);
+            $trace_list = $trace_model->trace($v["delivery_no"], $v["express_company_id"], $v['site_id'], $mobile);
             $list[$k]["trace"] = $trace_list["data"];
         }
 

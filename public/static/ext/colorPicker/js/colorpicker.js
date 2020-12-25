@@ -133,11 +133,17 @@
 				}
 				
 				_this.pancelLeft = left + _this.elem_colorPalette.clientWidth;
-				_this.pancelTop = top + _this.bindElem.offsetHeight;
+				_this.pancelTop = 10 + $(_this.bindElem).offset().top + _this.bindElem.offsetHeight;
+
+				
+				if($(document).height() - _this.pancelTop < 240){
+					_this.pancelTop = $(_this.bindElem).offset().top - _this.bindElem.offsetHeight - 240;
+				}
+
 				util.css(div, {
 					"display": 'block',
 					"left": (left - 240) + "px",
-					"top": (10 + $(_this.bindElem).offset().top + _this.bindElem.offsetHeight) + "px"
+					"top": (_this.pancelTop) + "px"
 				});
 			}, false);
 

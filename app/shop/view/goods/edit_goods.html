@@ -455,6 +455,18 @@
 							</div>
 						</div>
 						{/if}
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">是否参与会员等级折扣：</label>
+							<div class="layui-input-block">
+								<div class="layui-input-inline">
+									<input type="radio" name="is_consume_discount" value="0" title="不参与" {if $goods_info['is_consume_discount'] == 0} checked {/if}>
+									<input type="radio" name="is_consume_discount" value="1" title="参与" {if $goods_info['is_consume_discount'] > 0} checked {/if}>
+								</div>
+							</div>
+							<div class="ns-word-aux">如果该商品未单独配置过优惠规则，则按照默认会员等级折扣优惠</div>
+						</div>
+
 					</div>
 				</div>
 			</div>

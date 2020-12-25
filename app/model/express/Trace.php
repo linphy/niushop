@@ -24,7 +24,7 @@ class Trace extends BaseModel
      * 物流跟踪信息
      * @param $code
      */
-    public function trace($code, $company_id, $site_id)
+    public function trace($code, $company_id, $site_id, $mobile)
     {
 //        $result = array(
 //            "success" => true,//成功与否
@@ -46,7 +46,7 @@ class Trace extends BaseModel
             return $this->success(["success" => false, "reason" => "物流公司信息不完整!"]);
 
         $company_info_result['data']['site_id'] = $site_id;
-        $result                                 = event("Trace", ["code" => $code, "express_no_data" => $company_info_result["data"]], true);
+        $result                                 = event("Trace", ["code" => $code, "express_no_data" => $company_info_result["data"], "mobile" => $mobile], true);
         if (empty($result)) {
             $data = ["success" => false, "reason" => "抱歉，没有启用的物流方式"];
             return $this->success($data);

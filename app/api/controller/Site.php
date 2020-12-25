@@ -31,7 +31,7 @@ class Site extends BaseApi
      */
     public function info()
     {
-        $field                       = 'site_id,site_domain,site_name';
+        $field                       = 'site_id,site_domain,site_name,logo';
         $website_model               = new SiteModel();
         $info                        = $website_model->getSiteInfo([['site_id', '=', $this->site_id]], $field);
 

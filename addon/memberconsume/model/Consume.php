@@ -15,6 +15,8 @@ use app\model\member\MemberAccount as MemberAccountModel;
 use app\model\order\OrderCommon as OrderCommonModel;
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
+use addon\coupon\model\CouponType;
+use addon\coupon\model\Coupon;
 
 /**
  * 会员消费
@@ -44,9 +46,20 @@ class Consume extends BaseModel
                 'is_return_point'     => 0,
                 'return_point_status' => 'complete',
                 'return_point_rate'   => 0,
-                'return_growth_rate'  => 0
+                'return_growth_rate'  => 0,
+                'is_return_coupon'    => 0,
+                'return_coupon'       => '',
             ];
         }
+
+        $coupon_list = [];
+        if($res['data']['value']['is_return_coupon'] != 0 && $res['data']['value']['return_coupon'] != '') {
+            $coupon = new CouponType();
+            $coupon_list = $coupon->getCouponTypeList([ ['site_id','=',$site_id],['status','=',1],['coupon_type_id','in',$res['data']['value']['return_coupon']] ]);
+            $coupon_list = $coupon_list['data'];
+        }
+        $res['data']['value']['coupon_list'] = $coupon_list;
+
         return $res;
     }
 
@@ -62,9 +75,17 @@ class Consume extends BaseModel
         $order_info = $order_model->getOrderInfo([['order_id', '=', $param['order_id']]]);
         $order_info = $order_info['data'];
 
+        //是否发放过
+        $count = model('promotion_consume_record')->getCount([['order_id','=',$param['order_id']]]);
+        if(!empty($count)){
+            return $this->success();
+        }
+
         $consume_config = $this->getConfig($order_info['site_id']);
         $consume_config = $consume_config['data'];
         if ($consume_config['is_use'] && $consume_config['value']['return_point_status'] == $param['status']) {
+
+            $consume_data = [];
 
             $consume_config = $consume_config['value'];
             if (!empty($consume_config['return_point_rate'])) {
@@ -72,6 +93,16 @@ class Consume extends BaseModel
                 if ($adjust_num > 0) {
                     $remark = '订单' . $order_info['order_no'] . $this->returnStatusToZh($param['status']) . '送' . $adjust_num . '积分';
                     $member_account_model->addMemberAccount($order_info['site_id'], $order_info['member_id'], 'point', $adjust_num, 'memberconsume', $param['order_id'], $remark);
+                    $consume_data[] = [
+                        'site_id' => $order_info['site_id'],
+                        'type' => 'point',
+                        'value' => $adjust_num,
+                        'order_id' => $param['order_id'],
+                        'member_id' => $order_info['member_id'],
+                        'remark' => $remark,
+                        'config' => json_encode($consume_config),
+                        'create_time' => time()
+                    ];
                 }
             }
             if (!empty($consume_config['return_growth_rate'])) {
@@ -79,8 +110,49 @@ class Consume extends BaseModel
                 if ($adjust_num > 0) {
                     $remark = '订单' . $order_info['order_no'] . $this->returnStatusToZh($param['status']) . '送' . $adjust_num . '成长值';
                     $member_account_model->addMemberAccount($order_info['site_id'], $order_info['member_id'], 'growth', $adjust_num, 'memberconsume', $param['order_id'], $remark);
+                    $consume_data[] = [
+                        'site_id' => $order_info['site_id'],
+                        'type' => 'growth',
+                        'value' => $adjust_num,
+                        'order_id' => $param['order_id'],
+                        'member_id' => $order_info['member_id'],
+                        'remark' => $remark,
+                        'config' => json_encode($consume_config),
+                        'create_time' => time()
+                    ];
                 }
             }
+
+            if (!empty($consume_config['is_return_coupon']) && !empty($consume_config['return_coupon'])) {
+                $coupon_type = new CouponType();
+                $coupon_list = $coupon_type->getCouponTypeList([ ['site_id','=',$order_info['site_id']],['status','=',1],['coupon_type_id','in',$consume_config['return_coupon']] ]);
+                $coupon_list = $coupon_list['data'];
+                $coupon = new Coupon();
+                foreach ($coupon_list as $k => $v){
+                    $coupon->receiveCoupon($v['coupon_type_id'], $order_info['site_id'], $order_info['member_id'], '', 0, 0);
+                    if($v['at_least'] > 0){
+                        $remark = '满'.$v['at_least'].($v['type'] == 'discount' ? '打' .$v['discount'] : '减'.$v['money']);
+                    }else {
+                        $remark = '无门槛'.($v['type'] == 'discount' ? '打' .$v['discount'] : '减'.$v['money']);
+                    }
+
+                    $consume_data[] = [
+                        'site_id' => $order_info['site_id'],
+                        'type' => 'coupon',
+                        'value' => $v['coupon_type_id'],
+                        'order_id' => $param['order_id'],
+                        'member_id' => $order_info['member_id'],
+                        'remark' => $remark,
+                        'config' => json_encode($consume_config),
+                        'create_time' => time()
+                    ];
+                }
+            }
+
+            if($consume_data) {
+                model('promotion_consume_record')->addList($consume_data);
+            }
+
         }
         return $this->success();
     }
@@ -94,4 +166,21 @@ class Consume extends BaseModel
         ];
         return $status_zh[$status];
     }
+
+    /**
+     * 奖励记录分页列表
+     * @param array $condition
+     * @param int $page
+     * @param int $page_size
+     * @param string $order
+     * @param string $field
+     * @param string $alias
+     * @param array $join
+     * @return array
+     */
+    public function getConsumeRecordPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = 'a', $join = []){
+        $list = model('promotion_consume_record')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
+        return $this->success($list);
+    }
+
 }

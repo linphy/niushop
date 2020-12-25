@@ -7,7 +7,8 @@
   "templateValue": {
     "DIYVIEW_INDEX": {
       "image": "public/diy_view/style2/img/cover.png",
-      "data": {
+      "data":
+      {
         "global": {
           "title": "时尚简约商城",
           "bgColor": "#f8f8f8",
@@ -23,7 +24,9 @@
           "popWindow": {
             "imageUrl": "",
             "count": -1,
-            "link": {},
+            "link": {
+              "name": ""
+            },
             "imgWidth": "",
             "imgHeight": ""
           },
@@ -55,14 +58,18 @@
               {
                 "imageUrl": "public/diy_view/style2/img/posters_1.png",
                 "title": "",
-                "link": {},
+                "link": {
+                  "name": ""
+                },
                 "imgWidth": "750",
                 "imgHeight": "350"
               },
               {
                 "imageUrl": "public/diy_view/style2/img/posters_2.png",
                 "title": "",
-                "link": {},
+                "link": {
+                  "name": ""
+                },
                 "imgWidth": "750",
                 "imgHeight": "350"
               }
@@ -306,7 +313,9 @@
             "list": [
               {
                 "title": "单商户V4.0.4更新啦！",
-                "link": {}
+                "link": {
+                  "name": ""
+                }
               }
             ],
             "noticeIds": [],
@@ -342,15 +351,21 @@
             "list": [
               {
                 "imageUrl": "public/diy_view/style2/img/adv1.png",
-                "link": {}
+                "link": {
+                  "name": ""
+                }
               },
               {
                 "imageUrl": "public/diy_view/style2/img/adv2.png",
-                "link": {}
+                "link": {
+                  "name": ""
+                }
               },
               {
                 "imageUrl": "public/diy_view/style2/img/adv3.png",
-                "link": {}
+                "link": {
+                  "name": ""
+                }
               }
             ],
             "selectedRubikCubeArray": [],
@@ -514,7 +529,9 @@
               {
                 "imageUrl": "public/diy_view/style2/img/title.png",
                 "title": "",
-                "link": {},
+                "link": {
+                  "name": ""
+                },
                 "imgWidth": "690",
                 "imgHeight": "65"
               }

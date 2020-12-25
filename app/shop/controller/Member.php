@@ -152,11 +152,11 @@ class Member extends BaseShop
             }
             //消费金额
             if ($start_order_complete_money != '' && $end_order_complete_money != '') {
-                $condition[] = [ 'order_complete_num', 'between', [ $start_order_complete_money, $end_order_complete_money ] ];
+                $condition[] = [ 'order_complete_money', 'between', [ $start_order_complete_money, $end_order_complete_money ] ];
             } else if ($start_order_complete_money != '' && $end_order_complete_money == '') {
-                $condition[] = [ 'order_complete_num', '>=', $start_order_complete_money ];
+                $condition[] = [ 'order_complete_money', '>=', $start_order_complete_money ];
             } else if ($start_order_complete_money == '' && $end_order_complete_money != '') {
-                $condition[] = [ 'order_complete_num', '<=', $end_order_complete_money ];
+                $condition[] = [ 'order_complete_money', '<=', $end_order_complete_money ];
             }
             //积分
             if ($start_point != '' && $end_point != '') {
@@ -277,7 +277,7 @@ class Member extends BaseShop
         } else {
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id, level_name', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ], ['level_type', '=', 0] ], 'level_id, level_name', 'growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
 
             return $this->fetch('member/add_member');
@@ -295,13 +295,11 @@ class Member extends BaseShop
                 'email' => input('email', ''),
                 'status' => input('status', 1),
                 'headimg' => input('headimg', ''),
-                'member_level' => input('member_level', ''),
-                'member_level_name' => input('member_level_name', ''),
                 'nickname' => input('nickname', ''),
                 'sex' => input('sex', 0),
                 'birthday' => input('birthday', '') ? strtotime(input('birthday', '')) : 0,
             ];
-
+            if (empty($data['nickname'])) unset($data['nickname']);
             $member_id = input('member_id', 0);
             $member_model = new MemberModel();
             $this->addLog("编辑会员:id" . $member_id, $data);
@@ -310,7 +308,7 @@ class Member extends BaseShop
 
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id, level_name', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id,level_name,level_type,is_free_shipping,consume_discount,point_feedback', 'growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
 
             //会员信息
@@ -320,7 +318,12 @@ class Member extends BaseShop
             $this->assign('member_info', $member_info);
 
             //会员详情四级菜单
-            $this->forthMenu([ 'member_id' => $member_id ]);
+//            $this->forthMenu([ 'member_id' => $member_id ]);
+
+            //账户类型和来源类型
+            $member_account_model = new MemberAccountModel();
+            $account_type_arr = $member_account_model->getAccountType();
+            $this->assign('account_type_arr', $account_type_arr);
 
             return $this->fetch('member/edit_member');
         }
@@ -1016,4 +1019,18 @@ class Member extends BaseShop
          $this->assign('id', $id);
          return $this->fetch('member/import_log');
      }
+
+    /**
+     * 变更会员会员卡
+     */
+    public function changeMemberLevel(){
+        if(request()->isAjax()){
+            $member_id = input('member_id', 0);
+            $level_id = input('level_id', 0);
+            $member_level = new MemberLevelModel();
+            $res = $member_level->addMemberLevelChangeRecord($member_id, $this->site_id, $level_id, 0, 'adjust', $this->user_info['uid'], 'user', $this->user_info['username']);
+            return $res;
+        }
+    }
+
 }
