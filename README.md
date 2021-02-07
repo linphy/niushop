@@ -54,7 +54,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 4.本基础版本后台源码全部开源，小程序为uniapp编译版，如需小程序源码，请点击下方图片马上获取。
 
-<a href='https://www.niushop.com/web/index/promotion' target="_blank">![输入图片说明](https://images.gitee.com/uploads/images/2021/0207/091800_7fa98644_6569472.png "V4.png")</a>
+<a href='https://www.niushop.com/web/index/saaspromotion.html' target="_blank">![输入图片说明](https://images.gitee.com/uploads/images/2021/0207/091800_7fa98644_6569472.png "V4.png")</a>
 
 ### 技术亮点
 
