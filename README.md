@@ -58,7 +58,7 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 ### 技术亮点
 
-    1.框架采用全新thinkphp6+事件开发设计+layui+uniapp进行设计，代码完全重构，采用支持百万级！
+    1.框架采用全新thinkphp6+事件开发设计+layui+uniapp进行设计，代码完全重构，轻松支持百万级！
 
     2.前端以layui + uniapp模块化开发；
 
