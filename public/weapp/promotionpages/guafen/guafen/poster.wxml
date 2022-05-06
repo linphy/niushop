@@ -1,0 +1,1 @@
+<view class="container data-v-45cda1e4"><swiper class="swiper data-v-45cda1e4"><swiper-item class="data-v-45cda1e4"><view class="swiper-item data-v-45cda1e4"><view class="poster-wrap data-v-45cda1e4"><image src="{{$root.g0}}" mode="widthFix" show-menu-by-longpress="{{true}}" class="data-v-45cda1e4"></image></view></view></swiper-item></swiper></view>

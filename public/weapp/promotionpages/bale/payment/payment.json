@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "myp-one": "/components/myp-one/myp-one",
+    "loading-cover": "/components/loading-cover/loading-cover",
+    "ns-show-toast": "/components/ns-show-toast/ns-show-toast",
+    "ns-switch": "/components/ns-switch/ns-switch",
+    "ns-payment": "/components/payment/payment",
+    "time-popup": "/components/ns-selectTime/ns-selectTime"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "ns-empty": "/components/ns-empty/ns-empty",
+    "uni-drawer": "/components/uni-drawer/uni-drawer"
+  }
+}

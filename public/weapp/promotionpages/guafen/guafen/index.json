@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "好友瓜分券",
+  "usingComponents": {
+    "uni-count-down": "/components/uni-count-down/uni-count-down",
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "ns-login": "/components/ns-login/ns-login",
+    "loading-cover": "/components/loading-cover/loading-cover",
+    "ns-goods-recommend": "/components/ns-goods-recommend/ns-goods-recommend"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的礼品卡",
+  "usingComponents": {
+    "loading-cover": "/components/loading-cover/loading-cover"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "diy-goods-list": "/components/diy-goods-list/diy-goods-list"
+  }
+}
