@@ -11,13 +11,16 @@
 
 namespace app\model\member;
 
+use addon\memberregister\model\Register as RegisterModel;
 use app\model\BaseModel;
+use app\model\member\MemberAccount as MemberAccountModel;
 use app\model\message\Sms;
 use app\model\system\Stat;
 use app\model\upload\Upload;
 use app\model\system\Address;
 use think\facade\Cache;
 use think\facade\Db;
+use addon\wechat\model\Fans;
 
 /**
  * 会员管理
@@ -64,6 +67,15 @@ class Member extends BaseModel
                 return $this->error('', 'EMAIL_EXISTED');
             }
         }
+
+        $register_model       = new RegisterModel();
+
+        $register_config = $register_model->getConfig($data['site_id']);
+        $register_config = $register_config['data'];
+        if($register_config['is_use']){
+            $data['can_receive_registergift'] = 1;
+        }
+
         $res = model('member')->add($data);
         if ($res === false) {
             return $this->error('', 'RESULT_ERROR');
@@ -95,6 +107,25 @@ class Member extends BaseModel
         }
 
         return $this->success($res);
+    }
+
+    /**
+     * 修改用户名
+     * @param $member_id
+     * @param $username
+     */
+    public function editUsername($member_id, $site_id, $username){
+        $member_info = model('member')->getInfo([ ['member_id', '=', $member_id] ], 'username,is_edit_username');
+
+        if (empty($member_info)) return $this->error('', '未查找到该用户');
+        if ($member_info['username'] == $username) return $this->error('', '与原用户名一致，无需修改');
+        if (!$member_info['is_edit_username']) return $this->error('', '用户名不可进行修改');
+
+        $count = model('member')->getCount([ ['username', '=', $username], ['site_id', '=', $site_id] ], 'member_id');
+        if ($count != 0) return $this->error('', '该用户名已存在');
+
+        model('member')->update([ 'username' => $username, 'is_edit_username' => 0 ], [ ['member_id', '=', $member_id] ]);
+        return $this->success();
     }
 
     /**
@@ -158,6 +189,7 @@ class Member extends BaseModel
         $res = model('member')->update([
             'password' => data_md5($password)
         ], $condition);
+
         if ($res === false) {
             return $this->error('', 'RESULT_ERROR');
         }
@@ -214,6 +246,16 @@ class Member extends BaseModel
     {
         $condition[] = ['is_delete', '=', 0];
         $member_info = model('member')->getInfo($condition, $field);
+
+        if(!empty($member_info) && empty($member_info['wx_openid']) && !empty($member_info['wx_unionid'])){
+            $fans_model = new Fans();
+            $fans_condition[] = ["unionid", "=", $member_info['wx_unionid']];
+            $fans_info = $fans_model->getFansInfo($fans_condition);
+            if(!empty($fans_info['data'])){
+                $member_info['wx_openid'] = $fans_info['data']['openid'];
+            }
+        }
+
         return $this->success($member_info);
     }
 
@@ -222,10 +264,10 @@ class Member extends BaseModel
      * @param int $member_id
      * @return array
      */
-    public function getMemberDetail($member_id)
+    public function getMemberDetail($member_id, $site_id)
     {
-        $field = 'member_id,source_member,username,nickname,mobile,email,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,realname,sex,location,birthday,reg_time,point,balance,growth,balance_money,account5,pay_password';
-        $member_info = model('member')->getInfo([ [ 'member_id', '=', $member_id ] ], $field);
+        $field = 'member_id,source_member,username,nickname,mobile,email,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,realname,sex,location,birthday,reg_time,point,balance,growth,balance_money,account5,pay_password,member_level_type';
+        $member_info = model('member')->getInfo([ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $site_id ] ], $field);
         if (!empty($member_info)) {
             $member_info[ 'balance_total' ] = $member_info[ 'balance' ] + $member_info[ 'balance_money' ];
             return $this->success($member_info);
@@ -809,4 +851,31 @@ class Member extends BaseModel
 
         return $this->success($info);
     }
+
+    //更改
+    public function alterShareRelation($member_id,$share_member,$site_id)
+    {
+        $member_info = model('member')->getInfo([
+            ['member_id', '=', $member_id],
+            ['site_id', '=', $site_id],
+        ]);
+        if(empty($member_info)){
+            return $this->error(null, '会员数据有误');
+        }
+
+        //只有普通会员 并且没有绑定上级才修改关系
+        if($member_info['is_fenxiao'] == 0 && $member_info['fenxiao_id'] == 0){
+            model('member')->update([
+                'share_member' => $share_member,
+            ],[
+                ['member_id','=',$member_id],
+                ['site_id','=',$site_id],
+            ]);
+            event('AlterShareRelation',['site_id' => $site_id, 'member_id' => $member_id]);
+        }
+
+        return $this->success();
+    }
+
+
 }

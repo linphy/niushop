@@ -13,6 +13,7 @@ namespace addon\wechat\model;
 
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
+use app\model\upload\Upload;
 
 /**
  * 微信公众号配置
@@ -26,6 +27,12 @@ class Config extends BaseModel
      */
     public function setWechatConfig($data, $is_use, $site_id)
     {
+        $config_info = $this->getWechatConfig($site_id);
+        if(!empty($config_info['data']['value']['qrcode']) && !empty($data['qrcode']) && $config_info['data']['value']['qrcode'] != $data['qrcode']){
+            $upload_model = new Upload();
+            $upload_model->deletePic($config_info['data']['value']['qrcode'], $site_id);
+        }
+
         $config = new ConfigModel();
         $res    = $config->setConfig($data, '微信公众号设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'WECHAT_CONFIG']]);
         return $res;

@@ -18,6 +18,7 @@ use app\model\member\MemberAccount;
 use app\model\system\Cron;
 use think\Exception;
 use app\model\system\Config as ConfigModel;
+use app\model\upload\Upload;
 
 /**
  * 游戏
@@ -51,11 +52,19 @@ class Games extends BaseModel
             $award_data = [];
             $award_winning_rate = 0;
             foreach ($award_json_data as $k => $v) {
+                $award_img = '';
+                if($v[ 'award_type' ] == 3){
+                    $award_img = isset($v[ 'award_img' ]) ? $v[ 'award_img' ] : img("/public/static/img/game_coupon.png");
+                }elseif ($v[ 'award_type' ] == 2){
+                    $award_img = isset($v[ 'award_img' ]) ? $v[ 'award_img' ] : img("/public/static/img/game_hongbao.png");
+                }elseif ($v[ 'award_type' ] == 1){
+                    $award_img = isset($v[ 'award_img' ]) ? $v[ 'award_img' ] : img("/public/static/img/game_jifen.png");
+                }
                 $item = [
                     'site_id' => $game_data[ 'site_id' ],
                     'game_id' => $game_id,
                     'award_name' => $v[ 'award_name' ],
-                    'award_img' => isset($v[ 'award_img' ]) ? $v[ 'award_img' ] : '',
+                    'award_img' => $award_img,
                     'award_type' => $v[ 'award_type' ],
                     'relate_id' => $v[ 'relate_id' ],
                     'relate_name' => isset($v[ 'relate_name' ]) ? $v[ 'relate_name' ] : '',
@@ -77,7 +86,7 @@ class Games extends BaseModel
                 $cron->addCron(1, 0, "游戏活动关闭", "CloseGame", $game_data[ 'end_time' ], $game_id);
             } else {//未进行
                 $cron->addCron(1, 0, "游戏活动开启", "OpenGame", $game_data[ 'start_time' ], $game_id);
-                $cron->addCron(1, 0, "游戏活动关闭", "CloseGame", $game_data[ 'start_time' ], $game_id);
+                $cron->addCron(1, 0, "游戏活动关闭", "CloseGame", $game_data[ 'end_time' ], $game_id);
             }
 
             model('promotion_games')->commit();
@@ -115,6 +124,11 @@ class Games extends BaseModel
         }
         model('promotion_games')->startTrans();
         try {
+            $game_info = model('promotion_games')->getInfo($condition);
+            if($game_info['no_winning_img'] && $game_data['no_winning_img'] && $game_info['no_winning_img'] != $game_data['no_winning_img']){
+                $upload_model = new Upload();
+                $upload_model->deletePic($game_info['no_winning_img'], $game_data[ 'site_id' ]);
+            }
 
             model('promotion_games')->update($game_data, $condition);
 
@@ -158,7 +172,7 @@ class Games extends BaseModel
                 $cron->addCron(1, 0, "游戏活动关闭", "CloseGame", $game_data[ 'end_time' ], $game_id);
             } else {//未进行
                 $cron->addCron(1, 0, "游戏活动开启", "OpenGame", $game_data[ 'start_time' ], $game_id);
-                $cron->addCron(1, 0, "游戏活动关闭", "CloseGame", $game_data[ 'start_time' ], $game_id);
+                $cron->addCron(1, 0, "游戏活动关闭", "CloseGame", $game_data[ 'end_time' ], $game_id);
             }
 
             model('promotion_games')->commit();
@@ -277,11 +291,11 @@ class Games extends BaseModel
 
             if ($game_info[ 'status' ] != 3) {
                 $res = model('promotion_games')->update([ 'status' => 3 ], [ [ 'game_id', '=', $game_id ] ]);
-                if ($res) {
-                    $cron = new Cron();
-                    $cron->deleteCron([ [ 'event', '=', 'OpenGame' ], [ 'relate_id', '=', $game_id ] ]);
-                    $cron->deleteCron([ [ 'event', '=', 'CloseGame' ], [ 'relate_id', '=', $game_id ] ]);
-                }
+//                if ($res) {
+//                    $cron = new Cron();
+//                    $cron->deleteCron([ [ 'event', '=', 'OpenGame' ], [ 'relate_id', '=', $game_id ] ]);
+//                    $cron->deleteCron([ [ 'event', '=', 'CloseGame' ], [ 'relate_id', '=', $game_id ] ]);
+//                }
                 return $this->success($res);
             } else {
                 $this->error('', '该游戏已关闭');
@@ -308,6 +322,29 @@ class Games extends BaseModel
                 return $this->success($res);
             } else {
                 return $this->error("", "游戏已开启或者关闭");
+            }
+
+        } else {
+            return $this->error("", "游戏不存在");
+        }
+
+    }
+
+    /**
+     * 开启游戏
+     * @param $game_id
+     * @return array|\multitype
+     */
+    public function startGames($game_id)
+    {
+        $game_info = model('promotion_games')->getInfo([ [ 'game_id', '=', $game_id ] ], 'end_time,status');
+        if (!empty($game_info)) {
+
+            if ($game_info[ 'end_time' ] >= time()) {
+                $res = model('promotion_games')->update([ 'status' => 1 ], [ [ 'game_id', '=', $game_id ] ]);
+                return $this->success($res);
+            } else {
+                return $this->error("", "游戏已结束");
             }
 
         } else {
@@ -347,7 +384,7 @@ class Games extends BaseModel
         $game_info = model('promotion_games')->getInfo([ [ 'game_id', '=', $game_id ], [ 'site_id', '=', $site_id ] ]);
         if (empty($game_info)) return $this->error("", "未获取到游戏信息");
 
-        if ($game_info[ 'status' ] == 0) return $this->error("", "游戏尚未开始");
+        if ($game_info[ 'status' ] == 0 && $game_info['game_type'] != 'scenefestival') return $this->error("", "游戏尚未开始");
         if ($game_info[ 'status' ] == 2 || $game_info[ 'status' ] == 3) return $this->error("", "游戏已经结束");
 
         $member_info = model('member')->getInfo([ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $site_id ], [ 'status', '=', 1 ] ], 'nickname,member_level,point');
@@ -406,7 +443,7 @@ class Games extends BaseModel
                     case 3:
                         // 优惠券
                         $coupon = new Coupon();
-                        $receive_res = $coupon->receiveCoupon($lottery_result[ 'relate_id' ], $site_id, $member_id, '', 0, 0);
+                        $receive_res = $coupon->receiveCoupon($lottery_result[ 'relate_id' ], $site_id, $member_id, '3', 0, 0);
                         // 如果优惠券发放失败则本次抽奖为未中奖
                         if ($receive_res[ 'code' ] < 0) {
                             $lottery_result = [ 'is_winning' => 0 ];
@@ -443,6 +480,89 @@ class Games extends BaseModel
     }
 
     /**
+     * 节日有礼领取
+     * @param $game_id
+     * @param $member_id
+     * @param $site_id
+     */
+    public function receive($game_id, $member_id, $site_id)
+    {
+        $game_info = model('promotion_games')->getInfo([ [ 'game_id', '=', $game_id ], [ 'site_id', '=', $site_id ] ]);
+        if (empty($game_info)) return $this->error("", "未获取到游戏信息");
+
+        if ($game_info[ 'status' ] == 2 || $game_info[ 'status' ] == 3) return $this->error("", "游戏已经结束");
+
+        $member_info = model('member')->getInfo([ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $site_id ], [ 'status', '=', 1 ] ], 'nickname,member_level,point');
+        if (empty($member_info)) return $this->error("", "未获取到会员信息");
+
+        if (!empty($game_info[ 'level_id' ])) {
+            $level = explode(',', $game_info[ 'level_id' ]);
+            if (!in_array($member_info[ 'member_level' ], $level)) {
+                return $this->error("", "只有{$game_info['level_name']}等级的会员可参与该活动");
+            }
+        }
+
+        model('promotion_games')->startTrans();
+        try {
+            $meber_account = new MemberAccount();
+            $award_list = model('promotion_games_award')->getList([ [ 'game_id', '=', $game_id ], [ 'remaining_num', '>', 0 ] ], 'award_id,award_name,award_type,relate_id,relate_name,point,balance');
+            $record = [
+                'site_id' => $site_id,
+                'game_id' => $game_id,
+                'game_type' => $game_info[ 'game_type' ],
+                'member_id' => $member_id,
+                'member_nick_name' => $member_info[ 'nickname' ],
+                'points' => $game_info[ 'points' ],
+                'create_time' => time()
+            ];
+
+            if(!empty($award_list)){
+                foreach($award_list as $v){
+                    switch ( $v[ 'award_type' ] ) {
+                        case 1:
+                            // 积分
+                            $meber_account->addMemberAccount($site_id, $member_id, 'point', $v[ 'point' ], $game_info[ 'game_type' ], $game_id, "{$game_info['game_type_name']}获得积分");
+                            break;
+                        case 2:
+                            // 余额
+                            $meber_account->addMemberAccount($site_id, $member_id, 'balance', $v[ 'balance' ], $game_info[ 'game_type' ], $game_id, "{$game_info['game_type_name']}获得余额");
+                            break;
+                        case 3:
+                            // 优惠券
+                            $coupon = new Coupon();
+                            $receive_res = $coupon->receiveCoupon($v[ 'relate_id' ], $site_id, $member_id, '3', 0, 0);
+                            break;
+                        case 4:
+                            // 赠品
+                            break;
+                    }
+                    $record[ 'is_winning' ] = 1;
+                    $record[ 'award_id' ] = $v[ 'award_id' ];
+                    $record[ 'award_name' ] = $v[ 'award_name' ];
+                    $record[ 'award_type' ] = $v[ 'award_type' ];
+                    $record[ 'relate_id' ] = $v[ 'relate_id' ];
+                    $record[ 'relate_name' ] = $v[ 'relate_name' ];
+                    $record[ 'point' ] = $v[ 'point' ];
+                    $record[ 'balance' ] = $v[ 'balance' ];
+
+                    model('promotion_games_award')->setDec([ [ 'award_id', '=', $v[ 'award_id' ] ] ], 'remaining_num'); // 剩余数量
+                    model('promotion_games_award')->setInc([ [ 'award_id', '=', $v[ 'award_id' ] ] ], 'receive_num'); // 已领取数量
+                    model('promotion_games_draw_record')->add($record);
+                }
+            }else{
+                model('promotion_games')->update([ 'status' => 2 ], [ [ 'game_id', '=', $game_id ] ]);
+            }
+
+
+            model('promotion_games')->commit();
+            return $this->success(['status'=>1]);
+        } catch (\Exception $e) {
+            model('promotion_games')->rollback();
+            return $this->error("", $e->getMessage());
+        }
+    }
+
+    /**
      * 中奖计算
      */
     private function lotteryCalculate($data)
@@ -466,6 +586,29 @@ class Games extends BaseModel
                 model('promotion_games')->update([ 'status' => 2 ], [ [ 'game_id', '=', $data[ 'game_id' ] ] ]);
             }
         }
+        return $result;
+    }
+
+    /**
+     * 奖品计算
+     */
+    private function awardCalculate($data)
+    {
+            $award_list = model('promotion_games_award')->getList([ [ 'game_id', '=', $data[ 'game_id' ] ], [ 'remaining_num', '>', 0 ] ], 'award_id,award_name,award_type,relate_id,relate_name,point,balance,award_winning_rate', 'award_winning_rate asc');
+            if (!empty($award_list)) {
+                $rate_arr = [];
+                foreach ($award_list as $item) {
+                    $rate_arr[] = $item[ 'award_winning_rate' ];
+                }
+                $key = $this->get_rand($rate_arr);
+                if (isset($award_list[ $key ])) {
+                    $result = $award_list[ $key ];
+                    $result[ 'is_winning' ] = 1;
+                    unset($result[ 'award_winning_rate' ]);
+                }
+            } else {
+                model('promotion_games')->update([ 'status' => 2 ], [ [ 'game_id', '=', $data[ 'game_id' ] ] ]);
+            }
         return $result;
     }
 
@@ -603,4 +746,20 @@ class Games extends BaseModel
         return $this->success($return);
     }
 
+    public function gameUrlQrcode($page, $qrcode_param, $promotion_type = 'null', $site_id){
+        $params = [
+            'site_id'     => $site_id,
+            'data'        => $qrcode_param,
+            'page'        => $page,
+            'promotion_type' => $promotion_type,
+            'h5_path'          => $page.'?id='.$qrcode_param['id'],
+            'qrcode_path' => 'upload/qrcode/games',
+            'qrcode_name' => [
+                'h5_name'       => 'games_qrcode_'. $promotion_type .'_h5_' .$qrcode_param['id'] . '_' . $site_id,
+                'weapp_name'    => 'games_qrcode_'. $promotion_type .'_weapp_' .$qrcode_param['id'] . '_' . $site_id
+            ]
+        ];
+        $solitaire = event('ExtensionInformation', $params);
+        return $this->success($solitaire[0]);
+    }
 }

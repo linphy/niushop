@@ -49,12 +49,23 @@ class BaseApi
         $this->site_id = request()->siteid();
         $this->params = input();
         $this->params[ 'site_id' ] = $this->site_id;
-
         $shop_model = new Shop();
         $shop_status = $shop_model->getShopStatus($this->site_id, 'shop');
-        if (!$shop_status['data']['value']['shop_status']) {
-            $error = $this->error([], 'SITE_CLOSE');
-            throw new ApiException($error['code'], $error['message']);
+        if($this->params['app_type'] == 'pc'){
+            if (!$shop_status['data']['value']['shop_pc_status']) {
+                $error = $this->error([], 'SITE_CLOSE');
+                throw new ApiException($error['code'], $error['message']);
+            }
+        }else if ($this->params['app_type'] == 'weapp'){
+            if (!$shop_status['data']['value']['shop_weapp_status']) {
+                $error = $this->error([], 'SITE_CLOSE');
+                throw new ApiException($error['code'], $error['message']);
+            }
+        }else{
+            if (!$shop_status['data']['value']['shop_h5_status']) {
+                $error = $this->error([], 'SITE_CLOSE');
+                throw new ApiException($error['code'], $error['message']);
+            }
         }
 
         if (isset($this->params['encrypt']) && !empty($this->params['encrypt'])) {
@@ -106,9 +117,10 @@ class BaseApi
         if (!empty($blacklist['data']) && in_array($data[ 'member_id' ], $blacklist['data'])) {
             return $this->error('','TOKEN_EXPIRE');
         }
-
         if ($data[ 'expire_time' ] < time()) {
-            return $this->error('','TOKEN_EXPIRE');
+            if($data[ 'expire_time' ] != 0){
+                return $this->error('','TOKEN_EXPIRE');
+            }
         } else if (($data[ 'expire_time' ] - time()) < 300 && !Cache::get('member_token' . $data[ 'member_id' ])) {
             $this->refresh_token = $this->createToken($data[ 'member_id' ]);
             Cache::set('member_token' . $data[ 'member_id' ], $this->refresh_token, 360);
@@ -121,10 +133,20 @@ class BaseApi
 
     /**
      * 创建token
-     * @param int $expire_time 有效时间  0为永久 单位s
+     * @param
      */
-    protected function createToken($member_id, $expire_time = 172800)
+    protected function createToken($member_id)
     {
+        $api_model = new Api();
+        $config_result = $api_model->getApiConfig();
+        $config = $config_result[ "data" ];
+        # $expire_time 有效时间  0为永久 单位s
+        if($config){
+            $expire_time = round($config['value']['long_time'] * 3600);
+        }else{
+            $expire_time = 0;
+        }
+
         $key = 'site' . $this->site_id;
         $api_model = new Api();
         $api_config = $api_model->getApiConfig();
@@ -194,39 +216,23 @@ class BaseApi
         $addon = isset($addon) ? $addon : '';
         $cache_common = Cache::get("lang_app/api/lang/" . $default_lang);
 
-        if (!empty($addon)) {
-            $addon_cache_common = Cache::get("lang_app/api/lang/" . $addon . '_' . $default_lang);
-            if (!empty($addon_cache_common)) {
-                $cache_common = array_merge($cache_common, $addon_cache_common);
-            }
-        }
-
         if (empty($cache_common)) {
             $cache_common = include 'app/api/lang/' . $default_lang . '.php';
             Cache::tag("lang")->set("lang_app/api/lang/" . $default_lang, $cache_common);
-            if (!empty($addon)) {
-                try {
-                    $addon_cache_common = include 'addon/' . $addon . '/api/lang/' . $default_lang . '.php';
-                    if (!empty($addon_cache_common)) {
-                        $cache_common = array_merge($cache_common, $addon_cache_common);
-                        Cache::tag("lang")->set("lang_app/api/lang/" . $addon . '_' . $default_lang, $addon_cache_common);
-                    }
-                } catch (\Exception $e) {
+        }
+
+        if (!empty($addon)) {
+            try {
+                $addon_cache_common = include 'addon/' . $addon . '/api/lang/' . $default_lang . '.php';
+                if (!empty($addon_cache_common)) {
+                    $cache_common = array_merge($cache_common, $addon_cache_common);
+                    Cache::tag("lang")->set("lang_app/api/lang/" . $addon . '_' . $default_lang, $addon_cache_common);
                 }
+            } catch (\Exception $e) {
             }
         }
-        $lang_path = isset($this->lang) ? $this->lang : '';
-        if (!empty($lang_path)) {
-            $cache_path = Cache::get("lang_" . $lang_path . "/" . $default_lang);
-            if (empty($cache_path)) {
-                $cache_path = include $lang_path . "/" . $default_lang . '.php';
-                Cache::tag("lang")->set("lang_" . $lang_path . "/" . $default_lang, $cache_path);
-            }
-            $lang = array_merge($cache_common, $cache_path);
-        } else {
-            $lang = $cache_common;
-        }
-        return $lang;
+
+        return $cache_common;
 
     }
 

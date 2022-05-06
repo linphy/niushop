@@ -11,9 +11,12 @@
 
 namespace app\shop\controller;
 
+use addon\postertemplate\model\PosterTemplate as PosterTemplateModel;
 use app\model\goods\Goods as GoodsModel;
 use app\model\goods\GoodsAttribute as GoodsAttributeModel;
 use app\model\goods\GoodsCategory as GoodsCategoryModel;
+use app\model\goods\GoodsCommunityQrCode;
+use app\model\goods\GoodsPoster;
 use app\model\goods\VirtualGoods as VirtualGoodsModel;
 use app\model\goods\GoodsService as GoodsServiceModel;
 use app\model\goods\GoodsLabel as GoodsLabelModel;
@@ -50,6 +53,8 @@ class Virtualgoods extends BaseShop
                 'goods_name' => input("goods_name", ""),// 商品名称,
                 'goods_attr_class' => input("goods_attr_class", ""),// 商品类型id,
                 'goods_attr_name' => input("goods_attr_name", ""),// 商品类型名称,
+                'is_limit' => input("is_limit", "0"),// 商品是否限购,
+                'limit_type' => input("limit_type", "1"),// 商品限购类型,
                 'site_id' => $this->site_id,
                 'category_id' => $category_id,
                 'category_json' => $category_json,
@@ -64,7 +69,6 @@ class Virtualgoods extends BaseShop
                 'volume' => input("volume", ""),// 体积
                 'goods_stock' => input("goods_stock", 0),// 商品库存（总和）
                 'goods_stock_alarm' => input("goods_stock_alarm", 0),// 库存预警
-                'virtual_indate' => input("virtual_indate", ""),// 虚拟商品有效期
                 'goods_spec_format' => input("goods_spec_format", ""),// 商品规格格式
                 'goods_attr_format' => input("goods_attr_format", ""),// 商品属性格式
                 'introduction' => input("introduction", ""),// 促销语
@@ -81,8 +85,19 @@ class Virtualgoods extends BaseShop
                 'recommend_way' => input('recommend_way', 0), // 推荐方式，1：新品，2：精品，3；推荐
                 'timer_on' => strtotime(input('timer_on',0)),//定时上架
                 'timer_off' => strtotime(input('timer_off',0)),//定时下架
-                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
+                'is_consume_discount' => input('is_consume_discount', 0),//是否参与会员折扣
+                'is_need_verify' => input("is_need_verify", 0),// 是否需要核销
+                'verify_validity_type' => input("verify_validity_type", 0),// 核销有效期类型
+                'virtual_indate' => 0,// 虚拟商品有效期
+                'qr_id' => input('qr_id',0),// 社群二维码id
+                'template_id' => input('template_id',0), // 商品海报id
             ];
+
+            if ($data['verify_validity_type'] == 1) {
+                $data['virtual_indate'] = input("virtual_indate", 0);
+            } else if ($data['verify_validity_type'] == 2) {
+                $data['virtual_indate'] = strtotime(input("virtual_time", ''));
+            }
 
             $virtual_goods_model = new VirtualGoodsModel();
             $res = $virtual_goods_model->addGoods($data);
@@ -114,7 +129,7 @@ class Virtualgoods extends BaseShop
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
 
@@ -123,6 +138,18 @@ class Virtualgoods extends BaseShop
             $sort_config = $config_model->getGoodsSort($this->site_id);
             $sort_config = $sort_config['data']['value'];
             $this->assign("sort_config", $sort_config);
+
+            //获取社群二维码
+            $goods_community_model = new GoodsCommunityQrCode();
+            $goods_community_qr_list = $goods_community_model ->getQrList([['site_id', '=', $this->site_id],['qr_state','=',1]],'qr_id,qr_name,site_id');
+            $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
+
+            //获取商品海报
+            $poster_template_model = new PosterTemplateModel();
+            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
+            $this->assign('poster_list',$poster_list['data']);
+
+            $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
 
             return $this->fetch("virtualgoods/add_goods");
         }
@@ -146,6 +173,8 @@ class Virtualgoods extends BaseShop
                 'goods_name' => input("goods_name", ""),// 商品名称,
                 'goods_attr_class' => input("goods_attr_class", ""),// 商品类型id,
                 'goods_attr_name' => input("goods_attr_name", ""),// 商品类型名称,
+                'is_limit' => input("is_limit", "0"),// 商品是否限购,
+                'limit_type' => input("limit_type", "1"),// 商品限购类型,
                 'site_id' => $this->site_id,
                 'category_id' => $category_id,
                 'category_json' => $category_json,
@@ -160,7 +189,6 @@ class Virtualgoods extends BaseShop
                 'volume' => input("volume", ""),// 体积
                 'goods_stock' => input("goods_stock", 0),// 商品库存（总和）
                 'goods_stock_alarm' => input("goods_stock_alarm", 0),// 库存预警
-                'virtual_indate' => input("virtual_indate", ""),// 虚拟商品有效期
                 'goods_spec_format' => input("goods_spec_format", ""),// 商品规格格式
                 'goods_attr_format' => input("goods_attr_format", ""),// 商品属性格式
                 'introduction' => input("introduction", ""),// 促销语
@@ -178,8 +206,20 @@ class Virtualgoods extends BaseShop
                 'timer_on' => strtotime(input('timer_on',0)),//定时上架
                 'timer_off' => strtotime(input('timer_off',0)),//定时下架
                 'spec_type_status' => input('spec_type_status',0),
-                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
+                'is_consume_discount' => input('is_consume_discount', 0),//是否参与会员折扣
+                'is_need_verify' => input("is_need_verify", 0),// 是否需要核销
+                'verify_validity_type' => input("verify_validity_type", 0),// 核销有效期类型
+                'virtual_indate' => 0,// 虚拟商品有效期
+                'verify_num' => input("verify_num", 1), // 核销次数
+                'qr_id' => input('qr_id',0),// 社群二维码id
+                'template_id' => input('template_id',0), // 商品海报id
             ];
+
+            if ($data['verify_validity_type'] == 1) {
+                $data['virtual_indate'] = input("virtual_indate", 0);
+            } else if ($data['verify_validity_type'] == 2) {
+                $data['virtual_indate'] = strtotime(input("virtual_time", ''));
+            }
 
             $res = $virtual_goods_model->editGoods($data);
             return $res;
@@ -190,7 +230,7 @@ class Virtualgoods extends BaseShop
             $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ]);
             $goods_info = $goods_info[ 'data' ];
 
-            $goods_sku_list = $virtual_goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,virtual_indate,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default", '');
+            $goods_sku_list = $virtual_goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,virtual_indate,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default,verify_num", '');
             $goods_sku_list = $goods_sku_list[ 'data' ];
             $goods_info[ 'sku_list' ] = $goods_sku_list;
             $this->assign("goods_info", $goods_info);
@@ -217,11 +257,21 @@ class Virtualgoods extends BaseShop
             $service_list = $service_list[ 'data' ];
             $this->assign("service_list", $service_list);
 
-            // 商品分组
+            // 商品标签
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
+
+            //获取社群二维码
+            $goods_community_model = new GoodsCommunityQrCode();
+            $goods_community_qr_list = $goods_community_model ->getQrList([['site_id', '=', $this->site_id],['qr_state','=',1]],'qr_id,qr_name,site_id');
+            $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
+
+            //获取商品海报
+            $poster_template_model = new PosterTemplateModel();
+            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
+            $this->assign('poster_list',$poster_list['data']);
 
             return $this->fetch("virtualgoods/edit_goods");
         }

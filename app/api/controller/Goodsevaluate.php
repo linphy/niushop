@@ -90,7 +90,7 @@ class Goodsevaluate extends BaseApi
             'goods_evaluate' => $goods_evaluate
         ];
         $goods_evaluate_model = new GoodsEvaluateModel();
-        $res = $goods_evaluate_model->evaluateAgain($data);
+        $res = $goods_evaluate_model->evaluateAgain($data,$this->site_id);
         return $this->response($res);
     }
 
@@ -109,7 +109,7 @@ class Goodsevaluate extends BaseApi
             [ 'is_audit', '=', 1 ],
             [ 'goods_id', '=', $goods_id ]
         ];
-        $info = $goods_evaluate_model->getFirstEvaluateInfo($condition);
+        $info = $goods_evaluate_model->getSecondEvaluateInfo($condition);
         return $this->response($info);
     }
 
@@ -121,17 +121,60 @@ class Goodsevaluate extends BaseApi
         $page = isset($this->params[ 'page' ]) ? $this->params[ 'page' ] : 1;
         $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        $explain_type = empty($this->params[ 'explain_type' ]) ? '': $this->params[ 'explain_type' ];
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }
         $goods_evaluate_model = new GoodsEvaluateModel();
-        $condition = [
-            [ 'is_show', '=', 1 ],
-            [ 'is_audit', '=', 1 ],
-            [ 'goods_id', '=', $goods_id ]
-        ];
+        if(!empty($explain_type)){
+            $condition[] = ['explain_type','=',$explain_type];
+        }
+        $condition[] = ['is_show','=',1];
+        $condition[] = ['is_audit','=',1];
+        $condition[] = ['goods_id','=',$goods_id];
+//        $condition = [
+//            [ 'is_show', '=', 1 ],
+//            [ 'is_audit', '=', 1 ],
+//            [ 'goods_id', '=', $goods_id ]
+//        ];
         $list = $goods_evaluate_model->getEvaluatePageList($condition, $page, $page_size);
         return $this->response($list);
+    }
+
+    /**
+     * 获取评价 1好 2中 3差
+     */
+    public function getGoodsEvaluate(){
+        $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        if (empty($goods_id)) {
+            return $this->response($this->error('', 'REQUEST_GOODS_ID'));
+        }
+        $goods_evaluate_model = new GoodsEvaluateModel();
+        $condition[] = ['is_show','=',1];
+        $condition[] = ['is_audit','=',1];
+        $condition[] = ['goods_id','=',$goods_id];
+        $list = $goods_evaluate_model->getEvaluateList($condition);
+        $haoping = 0;
+        $zhongping = 0;
+        $chaping = 0;
+        if(!empty($list['data'])){
+            foreach($list['data'] as $k=>$v){
+                   if($v['explain_type']== 1 ){
+                       $haoping+=1;
+                   }else if($v['explain_type']== 2 ){
+                       $zhongping+=1;
+                   }else{
+                       $chaping+=1;
+                   }
+            }
+        }
+        $data = [
+            'total' => count($list['data']),
+            'haoping' => $haoping,
+            'zhongping' => $zhongping,
+            'chaping' => $chaping
+        ];
+        return $this->response($this->success($data));
     }
 
     /**

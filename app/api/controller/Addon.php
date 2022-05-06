@@ -21,7 +21,6 @@ use app\model\system\Addon as AddonModel;
  */
 class Addon extends BaseApi
 {
-
     /**
      * 列表信息
      */
@@ -61,6 +60,14 @@ class Addon extends BaseApi
         $res[ 'egg' ] = addon_is_exit('egg', $this->site_id);        // 砸金蛋
         $res[ 'turntable' ] = addon_is_exit('turntable', $this->site_id);        // 幸运抽奖
         $res[ 'memberrecommend' ] = addon_is_exit('memberrecommend', $this->site_id); // 推荐奖励
+        $res[ 'supermember' ] = addon_is_exit('supermember', $this->site_id); // 超级会员卡
+        $res[ 'giftcard' ] = addon_is_exit('giftcard', $this->site_id); // 兑换卡
+        $res[ 'divideticket' ] = addon_is_exit('divideticket', $this->site_id); // 兑换卡
+        $res[ 'birthdaygift' ] = addon_is_exit('birthdaygift', $this->site_id); // 兑换卡
+        $res[ 'scenefestival' ] = addon_is_exit('scenefestival', $this->site_id); // 兑换卡
+        $res[ 'pinfan' ] = addon_is_exit('pinfan', $this->site_id); // 拼团返利
+        $res[ 'hongbao' ] = addon_is_exit('hongbao', $this->site_id); // 裂变红包
+        $res[ 'blindbox' ] = addon_is_exit('blindbox', $this->site_id); // 盲盒
 
         return $this->response($this->success($res));
     }

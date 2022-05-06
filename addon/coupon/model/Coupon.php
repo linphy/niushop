@@ -11,6 +11,7 @@
 
 namespace addon\coupon\model;
 
+use addon\memberconsume\model\Consume;
 use app\model\BaseModel;
 
 /**
@@ -44,8 +45,10 @@ class Coupon extends BaseModel
         $coupon_type_info = model('promotion_coupon_type')->getInfo(['coupon_type_id' => $coupon_type_id, 'site_id' => $site_id]);
         if (!empty($coupon_type_info)) {
 
-            if ($coupon_type_info['count'] == $coupon_type_info['lead_count'] && $is_stock == 0) {
-                return $this->error('', '来迟了该优惠券已被领取完了');
+            if ($coupon_type_info['count'] != -1 || $is_stock == 0) {
+                if ($coupon_type_info['count'] == $coupon_type_info['lead_count']) {
+                    return $this->error('', '来迟了该优惠券已被领取完了');
+                }
             }
 
             if ($coupon_type_info['max_fetch'] != 0 && $get_type == 2) {
@@ -170,7 +173,7 @@ class Coupon extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getCouponPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'fetch_time desc', $field = 'coupon_id,coupon_type_id,site_id,coupon_code,member_id,use_order_id,at_least,money,state,get_type,fetch_time,use_time,end_time')
+    public function getCouponPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'fetch_time desc', $field = 'coupon_id,type,discount,coupon_type_id,coupon_name,site_id,coupon_code,member_id,use_order_id,at_least,money,state,get_type,fetch_time,use_time,end_time')
     {
         $list = model('promotion_coupon')->pageList($condition, $field, $order, $page, $page_size);
         return $this->success($list);
@@ -185,7 +188,7 @@ class Coupon extends BaseModel
     public function getMemberCouponPageList($condition, $page = 1, $page_size = PAGE_LIST_ROWS)
     {
         $field = 'npc.coupon_name,npc.type,npc.use_order_id,npc.coupon_id,npc.coupon_type_id,npc.site_id,npc.coupon_code,npc.member_id,npc.discount_limit,
-		npc.at_least,npc.money,npc.discount,npc.state,npc.get_type,npc.fetch_time,npc.use_time,npc.end_time,mem.nickname,on.order_no';
+		npc.at_least,npc.money,npc.discount,npc.state,npc.get_type,npc.fetch_time,npc.use_time,npc.end_time,mem.nickname,on.order_no,npc.end_time';
         $alias = 'npc';
         $join  = [
             [
@@ -208,7 +211,7 @@ class Coupon extends BaseModel
      * @param array $condition
      * @param unknown $field
      */
-    public function getCouponTypeInfo($condition, $field = 'coupon_type_id,site_id,coupon_name,money,count,lead_count,max_fetch,at_least,end_time,image,validity_type,fixed_term,status')
+    public function getCouponTypeInfo($condition, $field = 'coupon_type_id,site_id,coupon_name,money,count,lead_count,max_fetch,at_least,end_time,image,validity_type,fixed_term,status,type,discount')
     {
         $info = model("promotion_coupon_type")->getInfo($condition, $field);
         return $this->success($info);
@@ -305,8 +308,11 @@ class Coupon extends BaseModel
             return $this->error(-1, "找不到优惠券");
 
         //编辑sku库存
-        if (($coupon_info["count"] - $coupon_info["lead_count"]) < $num)
-            return $this->error(-1, "库存不足");
+
+        if($coupon_info["count"] != -1){
+            if (($coupon_info["count"] - $coupon_info["lead_count"]) < $num)
+                return $this->error(-1, "库存不足");
+        }
 
         $result = model("promotion_coupon_type")->setInc($condition, "lead_count", $num);
         if ($result === false)

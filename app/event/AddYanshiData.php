@@ -278,7 +278,7 @@ class AddYanshiData
                     "category_id" => "," . $category_ids[ 2 ] . ",",
                     "category_json" => '[" ' . $category_ids[ 2 ] . '"]',
                     "goods_image" => "upload/default/diy_view/crack_figure.png",
-                    "goods_content" => "<p>​演示商品四</p>",
+                    "goods_content" => "<p>演示商品四</p>",
                     "goods_state" => "1",
                     "price" => "0.01",
                     "market_price" => "",

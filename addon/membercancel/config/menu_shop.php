@@ -8,7 +8,8 @@ return [
         'title' => '会员注销',
         'url' => 'membercancel://shop/membercancel/lists',
         'parent' => 'PROMOTION_ROOT',
-        'picture' => 'addon/membercancel/shop/view/public/img/distribution.png',
+        'picture' => 'addon/membercancel/shop/view/public/img/distribution_new.png',
+        'picture_selected' => 'addon/membercancel/shop/view/public/img/distribution_select.png',
         'is_show' => 1,
         'sort' => 1,
         'child_list' => [

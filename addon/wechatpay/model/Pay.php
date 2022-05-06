@@ -11,7 +11,10 @@
 
 namespace addon\wechatpay\model;
 
+use addon\shopcomponent\model\Weapp;
 use app\model\member\Member;
+use app\model\order\OrderMessage;
+use app\model\upload\Upload;
 use EasyWeChat\Factory;
 use app\model\system\Pay as PayCommon;
 use app\model\BaseModel;
@@ -129,7 +132,6 @@ class Pay extends BaseModel
             'body' => str_sub($param["pay_body"], 15),
             'out_trade_no' => $param["out_trade_no"],
             'total_fee' => $param["pay_money"] * 100,
-//            'spbill_create_ip' => '123.12.12.123', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
             'notify_url' => $param["notify_url"], // 支付结果通知网址，如果不设置则会使用配置里的默认地址
             'trade_type' => $param["trade_type"], // 请对应换成你的支付方式对应的值类型
             'openid' => $openid,
@@ -143,6 +145,8 @@ class Pay extends BaseModel
             return $this->error([], $result["err_code_des"]);
         }
 
+        $is_matched = $param['is_matched'] ?? 0;
+
         switch ($param["trade_type"]) {
             case 'JSAPI' ://微信支付 或小程序支付
                 if ($this->is_weapp == 0) {
@@ -155,6 +159,7 @@ class Pay extends BaseModel
                 } else {
                     $jssdk = $this->app->jssdk;
                     $config = $jssdk->bridgeConfig($result['prepay_id'], false);
+                    if ($is_matched) $config['orderInfo'] = $this->getOrderInfo($param['out_trade_no'], $openid, $result['prepay_id'], $param['scene']);
                     $return = array(
                         "type" => "jsapi",
                         "data" => $config
@@ -171,9 +176,12 @@ class Pay extends BaseModel
                 break;
             case 'NATIVE' :
                 $code_url = $result['code_url'];
+                $upload_model = new Upload($param['site_id']);
+                $qrcode_result = $upload_model->qrcode($code_url);
+                $qrcode = $qrcode_result['data'] ?? '';
                 $return = array(
                     "type" => "qrcode",
-                    "qrcode" => $code_url
+                    "qrcode" => $qrcode
                 );
                 break;
             case 'MWEB' ://H5支付
@@ -261,8 +269,8 @@ class Pay extends BaseModel
         $this->config["app_id"] = $pay_info["mch_info"];//替换为商户自己的appid
         $this->app = Factory::payment($this->config);
         $refund_no = $param["refund_no"];
-        $total_fee = $pay_info["pay_money"] * 100;
-        $refund_fee = $param["refund_fee"] * 100;
+        $total_fee = round($pay_info["pay_money"] * 100);
+        $refund_fee = round($param["refund_fee"] * 100);
         $desc_data = array();
 
 //        $desc_data["refund_desc"] = $param["refund_reason"];// 商家退款原因 暂时不考虑
@@ -325,5 +333,77 @@ class Pay extends BaseModel
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
         }
+    }
+
+    /**
+     * 获取支付所需orderinfo
+     * @param $out_trade_no
+     * @param $openid
+     * @param $prepay_id
+     * @return array
+     */
+    private function getOrderInfo($out_trade_no, $openid, $prepay_id, $scene = 0){
+        $order_info = model('order')->getInfo([ ['out_trade_no', '=', $out_trade_no] ], 'site_id,create_time,order_id,order_type,member_id,order_money,delivery_money,name,full_address,mobile,delivery_store_info,delivery_store_name');
+        $data = [
+            'create_time' => $order_info['create_time'],
+            'out_order_id' => $order_info['order_id'],
+            'openid' => $openid,
+            'path' => (new OrderMessage())->handleUrl($order_info['order_type'], $order_info['order_id']),
+            'out_user_id' => $order_info['member_id'],
+            'order_detail' => [
+                'product_infos' => [],
+                'pay_info' => [
+                    'pay_method' => '微信支付',
+                    'prepay_id' => $prepay_id,
+                    'prepay_time' => date('Y-m-d H:i:s', time())
+                ],
+                'price_info' => [
+                    'order_price' => $order_info['order_money'] * 100,
+                    'freight' => $order_info['delivery_money'] * 100
+                ]
+            ],
+            'delivery_detail' => []
+        ];
+        // 配送方式
+        switch ($order_info['order_type']) {
+            case 2:
+                $delivery_store_info = json_decode($order_info['delivery_store_info'], true);
+                $data['delivery_detail']['delivery_type'] = 4; //用户自提
+                $data['address_info'] = [
+                    'receiver_name' => $order_info['delivery_store_name'],
+                    'detailed_address' => $delivery_store_info['full_address'],
+                    'tel_number' => $delivery_store_info['telphone']
+                ];
+                break;
+            case 3:
+                $data['delivery_detail']['delivery_type'] = 3; //线下配送
+                break;
+            case 4:
+                $data['delivery_detail']['delivery_type'] = 2; //无需快递
+                break;
+            default:
+                $data['delivery_detail']['delivery_type'] = 1; //正常快递
+                $data['address_info'] = [
+                    'receiver_name' => $order_info['name'],
+                    'detailed_address' => $order_info['full_address'],
+                    'tel_number' => $order_info['mobile']
+                ];
+                break;
+        }
+        $order_goods = model('order_goods')->getList([ ['order_id', '=', $order_info['order_id']] ], 'goods_id,sku_id,num,price,sku_name,sku_image');
+        foreach ($order_goods as $goods) {
+            array_push($data['order_detail']['product_infos'], [
+                'out_product_id' => $goods['goods_id'],
+                'out_sku_id' => $goods['sku_id'],
+                'product_cnt' => $goods['num'],
+                'sale_price' => $goods['price'] * 100,
+                'path' => 'pages/goods/detail/detail?sku_id=' . $goods['sku_id'],
+                'title' => $goods['sku_name'],
+                'head_img' => img($goods['sku_image'])
+            ]);
+        }
+        $video_number_scene = [ 1175, 1176, 1177, 1191, 1195 ]; // 视频号场景值
+        if (in_array($scene, $video_number_scene)) model('order')->update(['is_video_number' => 1], [['order_id', '=', $order_info['order_id'] ]]);
+        return $data;
     }
 }

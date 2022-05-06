@@ -25,16 +25,22 @@ class PayNotify
     public function handle($param)
     {
         $postStr = file_get_contents('php://input');
+
         if (!empty($postStr)) {
             libxml_disable_entity_loader(true);
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-            if (isset($postObj->out_trade_no)) {
+            $postObj = json_encode($postObj);
+            $post_data = json_decode($postObj, true);
+            if (isset($post_data['out_trade_no'])) {
                 $pay      = new PayCommon();
-                $pay_info = $pay->getPayInfo($postObj->out_trade_no);
+                $pay_info = $pay->getPayInfo($post_data['out_trade_no']);
+                if($post_data['total_fee'] != round($pay_info['data']['pay_money'] * 100)){
+                    return;
+                }
                 $pay_info = $pay_info['data'];
                 if (!empty($pay_info)) {
                     $config = model('config')->getInfo([
-                        ['value', 'like', "%{$postObj->appid}%"],
+                        ['value', 'like', "%{$post_data['appid']}%"],
                         ['config_key', 'in', ['WECHAT_CONFIG', 'WEAPP_CONFIG']],
                         ['app_module', '=', 'shop'],
                         ['site_id', '=', $pay_info['site_id']]

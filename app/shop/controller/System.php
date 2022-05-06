@@ -425,6 +425,10 @@ class System extends BaseShop
 
             $menu = new Menu();
             $res = $menu->refreshMenu('shop', '');
+            dd($res);
+            if(addon_is_exit('store', $this->site_id) == 1){
+                $menu->refreshMenu('store', 'store');
+            };
 
             $addon_model = new Addon();
             $addon_list = $addon_model->getAddonList([], 'name');
@@ -445,7 +449,7 @@ class System extends BaseShop
      */
     public function refreshDiy()
     {
-        $arr = [ '', 'bargain', 'groupbuy', 'pintuan', 'seckill', 'coupon', 'fenxiao', 'live', 'notes', 'store' ];
+        $arr = [ '','divideticket', 'bargain', 'groupbuy', 'pintuan', 'seckill', 'coupon', 'fenxiao', 'live', 'notes', 'store', 'presale', 'postertemplate', 'memberrecommend' ];
         $addon = new Addon();
         foreach ($arr as $k => $v) {
             $res = $addon->refreshDiyView($v);
@@ -462,22 +466,4 @@ class System extends BaseShop
         $template->refresh();
     }
 
-    /**
-     * 刷新前端代码
-     */
-    public function refreshH5()
-    {
-        if (request()->isAjax()) {
-            $h5 = new H5();
-            $res = $h5->refresh();
-            return $res;
-        } else {
-            $refresh_time = 0;
-            if (file_exists('h5/refresh.log')) {
-                $refresh_time = file_get_contents('h5/refresh.log');
-            }
-            $this->assign('refresh_time', $refresh_time);
-            return $this->fetch('system/refresh_h5');
-        }
-    }
 }

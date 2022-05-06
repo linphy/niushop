@@ -263,7 +263,7 @@ Vue.component("rubik-cube",{
 						//数量不够，进行添加
 						if(count>this.currentList.length){
 							for(var j=0;j<count;j++){
-								if((j + 1) > this.currentList.length) this.currentList.push({ imageUrl : "", link : {} });
+								if((j + 1) > this.currentList.length) this.currentList.push({ imageUrl : "", link : { name : "" } });
 							}
 						}else{
 							//数量不相同时，并且数量超出，减去
@@ -367,7 +367,7 @@ Vue.component("rubik-cube",{
 					}
 				}
 				
-				this.currentList.push({ imageUrl : "", link : {} });
+				this.currentList.push({ imageUrl : "", link : { name : "" } });
 				//默认选择当前添加的下标
 				this.changeCurrentIndex(this.currentList.length-1);
 				

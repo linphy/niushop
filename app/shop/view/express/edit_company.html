@@ -88,18 +88,18 @@
 				</div>
 			</div>
 
-			<div class="layui-form-item">
+			<!--<div class="layui-form-item">
 				<label class="layui-form-label">菜鸟物流编码：</label>
 				<div class="layui-input-block">
 					<input type="text" name="express_no_cainiao" value="{$company_info.data.express_no_cainiao}" class="layui-input ns-len-long">
 				</div>
-			</div>
+			</div>-->
 
 
 		</div>
 	</div>
-	
-	<div class="layui-card ns-card-common ns-card-brief">
+
+	<!--<div class="layui-card ns-card-common ns-card-brief">
 		<div class="layui-card-header">
 			<span class="ns-card-title">订单发票设置</span>
 		</div>
@@ -165,7 +165,6 @@
 				<div class="layui-input-block design-sketch">
 				</div>
 			</div>
-			
 			<div class="layui-form-item">
 				<label class="layui-form-label img-upload-lable">打印背景图：</label>
 				<div class="layui-input-block">
@@ -192,12 +191,13 @@
 							</div>
 							<input type="hidden" name="background_image" value="{$company_info.data.background_image}" />
 						</div>
-					<!-- 	<p id="printBackground" class=" {if condition="$company_info.data.background_image"} replace {else/} no-replace{/if}">替换</p>
-						<i class="del {if !empty($company_info.data.background_image)}show{/if}">x</i> -->
+					 	<p id="printBackground" class=" {if condition="$company_info.data.background_image"} replace {else/} no-replace{/if}">替换</p>
+						<i class="del {if !empty($company_info.data.background_image)}show{/if}">x</i>
 					</div>
 				</div>
 				<div class="ns-word-aux">打印模板背景图</div>
 			</div>
+-->
 
 			<div class="layui-form-item">
 				<label class="layui-form-label img-upload-lable">是否支持电子面单：</label>
@@ -224,8 +224,8 @@
 					<button class="layui-btn ns-bg-color" onclick="submitRule()">确定规则设置</button>
 				</div>
 			</div>
-		</div>
-	</div>
+		<!-- </div>
+	</div>-->
 
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
@@ -317,6 +317,11 @@
 		 * 监听提交
 		 */
 		form.on('submit(save)', function(data) {
+
+			if($("input[name='is_electronicsheet']").is(':checked')) {
+				expressSheetChecked = true;
+			}
+
 			if (expressSheetChecked && !printStyle.length){
 				layer.msg("电子面单规则不能为空");
 				return false;

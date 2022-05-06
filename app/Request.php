@@ -47,9 +47,9 @@ class Request extends \think\Request
     {
         if(!empty($addon))
         {
-            $this->addon = $addon;
+            $GLOBALS["REQUEST_ADDON"] = $addon;
         }
-        return $this->addon;
+        return isset($GLOBALS["REQUEST_ADDON"]) ? $GLOBALS["REQUEST_ADDON"] : '';
     }
     
     /**
@@ -60,10 +60,11 @@ class Request extends \think\Request
     {
         if(!empty($module))
         {
-            $this->module = $module;
+            $GLOBALS["REQUEST_MODULE"] = $module;
         }
-        return $this->module;
+        return isset($GLOBALS["REQUEST_MODULE"]) ? $GLOBALS["REQUEST_MODULE"] : '';
     }
+    
     
     /**
      * 判断当前是否是微信浏览器

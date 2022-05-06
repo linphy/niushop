@@ -11,12 +11,16 @@
 
 namespace app\model\order;
 
+use addon\presale\model\PresaleOrder;
 use app\model\goods\GoodsStock;
 use app\model\member\MemberAccount;
 use app\model\shop\Shop;
 use app\model\system\Pay;
 use app\model\BaseModel;
 use app\model\message\Message;
+use addon\coupon\model\Coupon;
+use app\model\order\Order as OrderModel;
+use app\model\verify\Verify as VerifyModel;
 
 /**
  * 订单退款
@@ -50,8 +54,11 @@ class OrderRefund extends BaseModel
     // 卖家关闭退款
     const REFUND_CLOSE = -2;
 
+    //退款方式
     const ONLY_REFUNDS = 1;//仅退款
     const A_REFUND_RETURN = 2;//退款退货
+    const SHOP_ACTIVE_REFUND = 3;//店铺主动退款
+
     /**
      * 订单退款状态
      * @var unknown
@@ -248,22 +255,75 @@ class OrderRefund extends BaseModel
             'order_goods_id' => $order_goods_id
         ]);
         $count = model("order_goods")->getCount([ [ 'order_id', '=', $order_goods_info[ 'order_id' ] ], [ 'refund_status', '=', 0 ], [ 'order_goods_id', '<>', $order_goods_id ] ], 'order_goods_id');
+        $delivery_count = model("order_goods")->getCount([ [ 'order_id', '=', $order_goods_info[ 'order_id' ] ], [ 'refund_delivery_money', '>', 0 ], [ 'order_goods_id', '<>', $order_goods_id ] ], 'order_goods_id');
         if ($count > 0) {
             $delivery_money = 0;
             $invoice_delivery_money = 0;
             $invoice_money = 0;
         } else {
-            $delivery_num = model('order_goods')->getCount([ [ 'order_id', '=', $order_goods_info[ 'order_id' ] ], ['delivery_status', '=', 1] ]);
-            //订单整体项
             $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ]
             ], 'delivery_money, invoice_delivery_money, invoice_money');
-            $delivery_money = $delivery_num == 0 ? $order_info[ 'delivery_money' ] : 0;
+            if($delivery_count ==  0){
+                $delivery_money = $order_info[ 'delivery_money' ];
+            }else{
+                $delivery_money = 0;
+            }
             $invoice_delivery_money = $order_info[ 'invoice_delivery_money' ];
             $invoice_money = $order_info[ 'invoice_money' ];
         }
         //todo  退款是最后要退物流费用  以及 发票相关项
         $refund_money = $order_goods_info[ 'real_goods_money' ] + $delivery_money + $invoice_delivery_money + $invoice_money;
-        return $refund_money;
+        $data = array (
+            'refund_money' => $refund_money,
+            'refund_delivery_money' => $delivery_money
+        );
+        return $data;
+    }
+
+    /**
+     * 获取退款金额
+     * @param int $order_goods_id
+     */
+    public function getOrderRefundMoneyBatch($order_goods_ids)
+    {
+        //订单商品项
+        $order_goods_info = model('order_goods')->getList([[
+            'order_goods_id' ,'in', $order_goods_ids
+        ]]);
+        $count = model("order_goods")->getCount([ [ 'order_id', '=', $order_goods_info[0][ 'order_id' ] ], [ 'refund_status', '<>', 0 ] ], 'order_goods_id');
+
+        $order_count = count($order_goods_info) + $count;//之前退款和现在退款总和
+
+        // 订单数
+        $sum_count = model("order_goods")->getCount([ [ 'order_id', '=', $order_goods_info[0][ 'order_id' ] ] ], 'order_goods_id');
+
+        $delivery_count = model("order_goods")->getCount([ [ 'order_id', '=', $order_goods_info[0][ 'order_id' ] ], [ 'refund_delivery_money', '>', 0 ], [ 'order_goods_id', 'not in', $order_goods_ids ] ], 'order_goods_id');
+
+        if ($sum_count != $order_count) {
+            $delivery_money = 0;
+            $invoice_delivery_money = 0;
+            $invoice_money = 0;
+        } else {
+            $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[0][ 'order_id' ]
+            ], 'delivery_money, invoice_delivery_money, invoice_money');
+            if($delivery_count ==  0){
+                $delivery_money = $order_info[ 'delivery_money' ];
+            }else{
+                $delivery_money = 0;
+            }
+            $invoice_delivery_money = $order_info[ 'invoice_delivery_money' ];
+            $invoice_money = $order_info[ 'invoice_money' ];
+        }
+        //todo  退款是最后要退物流费用  以及 发票相关项
+        $refund_money = 0;
+        foreach ($order_goods_info as $item){
+            $refund_money += $item[ 'real_goods_money' ] + $delivery_money + $invoice_delivery_money + $invoice_money;
+        }
+        $data = array (
+            'refund_money' => $refund_money,
+            'refund_delivery_money' => $delivery_money
+        );
+        return $data;
     }
 
     /**
@@ -312,6 +372,8 @@ class OrderRefund extends BaseModel
             'desc' => $desc
         ];
         $res = model('order_refund_log')->add($data);
+        // 维权状态变更
+        event('RefundStatusChange', $data);
         return $res;
     }
 
@@ -321,7 +383,7 @@ class OrderRefund extends BaseModel
      * @param array $member_info
      * @return multitype:string mixed
      */
-    public function orderRefundApply($data, $member_info)
+    public function orderRefundApply($data, $member_info, $log_data=[])
     {
         $order_goods_info = model('order_goods')->getInfo([ 'order_goods_id' => $data[ 'order_goods_id' ] ], 'order_id,refund_status,delivery_status,is_virtual,site_id');
         if (empty($order_goods_info))
@@ -339,6 +401,9 @@ class OrderRefund extends BaseModel
         $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ] ]);
         //判断是否允许申请退款
         if ($order_info[ 'is_enable_refund' ] == 0) {
+            if($order_info['promotion_type'] == "pinfan"){
+                return $this->error("", "拼团活动正在进行中,待拼成功后可发起退款");
+            }
             return $this->error();
         }
 
@@ -350,24 +415,45 @@ class OrderRefund extends BaseModel
             $data[ 'refund_status_action' ] = json_encode($this->order_refund_status[ self::REFUND_APPLY ], JSON_UNESCAPED_UNICODE);
             $data[ 'refund_type' ] = $data[ "refund_type" ];
             $data[ 'refund_remark' ] = $data[ "refund_remark" ];
+            $data[ 'refund_mode' ] = $order_info['order_status'] == Order::ORDER_COMPLETE ? 2 : 1;
 
             $pay_model = new Pay();
             $data[ 'refund_no' ] = $pay_model->createRefundNo();
             $data[ 'refund_action_time' ] = time();
-            $refund_apply_money = $this->getOrderRefundMoney($data[ 'order_goods_id' ]);//可退款金额 通过计算获得
-            $data[ 'refund_apply_money' ] = $refund_apply_money;
+            $refund_apply_money_array = $this->getOrderRefundMoney($data[ 'order_goods_id' ]);//可退款金额 通过计算获得
+            $refund_apply_money = $refund_apply_money_array[ 'refund_money' ];
+            $refund_delivery_money = $refund_apply_money_array[ 'refund_delivery_money' ];
+            $data[ 'refund_apply_money' ] = $refund_apply_money;//申请的总退款
+            $data[ 'refund_delivery_money' ] = $refund_delivery_money;//退的运费
             $res = model('order_goods')->update($data, [ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
 
             //验证订单锁定状态
             $local_result = $this->verifyOrderLock($order_goods_info[ "order_id" ]);
 
             $this->addOrderRefundLog($data[ 'order_goods_id' ], self::REFUND_APPLY, '买家申请退款', 1, $member_info[ 'member_id' ], $member_info[ 'nickname' ]);
+
             event('orderRefundApply', $data);//传入订单类型以及订单项id
             model('order_goods')->commit();
 
             //订单会员申请退款消息
             $message_model = new Message();
             $message_model->sendMessage([ 'keywords' => "BUYER_REFUND", 'order_goods_id' => $data[ 'order_goods_id' ], 'site_id' => $order_goods_info[ 'site_id' ] ]);
+
+            // 发起维权 关闭订单评价
+            model('order')->update(['is_evaluate' => 0], [ 'order_id' => $order_goods_info[ 'order_id' ] ]);
+
+            //记录订单日志 start
+            if ($log_data){
+                $order_common_model = new OrderCommon();
+                $log_data = array_merge($log_data,[
+                    'order_id'          => $order_goods_info['order_id'],
+                    'order_status'      => $order_info['order_status'],
+                    'order_status_name' => $order_info['order_status_name']
+                ]);
+
+                $order_common_model->addOrderLog($log_data);
+            }
+            //记录订单日志 end
 
             return $this->success($res);
         } catch (\Exception $e) {
@@ -382,7 +468,7 @@ class OrderRefund extends BaseModel
      * @param array $member_info
      * @return string[]|mixed[]
      */
-    public function memberCancelRefund($data, $member_info)
+    public function memberCancelRefund($data, $member_info, $log_data = [])
     {
         $order_goods_info = model('order_goods')->getInfo([ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
         if (empty($order_goods_info)) {
@@ -406,6 +492,23 @@ class OrderRefund extends BaseModel
 
             //验证订单锁定状态
             $lock_result = $this->verifyOrderLock($order_goods_info[ "order_id" ]);
+
+            // 维权拒绝 评价锁定放开
+            model('order')->update(['is_evaluate' => 1], [ ['order_id', '=', $order_goods_info[ "order_id" ]], ['order_status', 'in', [ OrderModel::ORDER_TAKE_DELIVERY, OrderModel::ORDER_COMPLETE ] ] ]);
+
+            //记录订单日志 start
+            if ($log_data){
+                $order_common_model = new OrderCommon();
+                $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ] ],'order_status,order_status_name');
+                $log_data = array_merge($log_data,[
+                    'order_id'          => $order_goods_info['order_id'],
+                    'order_status'      => $order_info['order_status'],
+                    'order_status_name' => $order_info['order_status_name']
+                ]);
+
+                $order_common_model->addOrderLog($log_data);
+            }
+            //记录订单日志 end
 
             $this->addOrderRefundLog($data[ 'order_goods_id' ], 0, '买家撤销退款申请', 1, $member_info[ 'member_id' ], $member_info[ 'nickname' ]);
             event('memberCancelRefund', $data);//传入订单类型以及订单项id
@@ -442,6 +545,22 @@ class OrderRefund extends BaseModel
             $data[ 'refund_status_action' ] = json_encode($this->order_refund_status[ $data[ 'refund_status' ] ], JSON_UNESCAPED_UNICODE);
 
             $res = model('order_goods')->update($data, [ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
+
+            //记录订单日志 start
+            $order_common_model = new OrderCommon();
+            $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ] ],'order_status,order_status_name');
+            $log_data = [
+                'uid'               => $user_info['uid'],
+                'nick_name'         => $user_info['username'],
+                'action'            => '商家同意了退款申请，等待转账',
+                'action_way'        => 2,
+                'order_id'          => $order_goods_info['order_id'],
+                'order_status'      => $order_info['order_status'],
+                'order_status_name' => $order_info['order_status_name']
+            ];
+            $order_common_model->addOrderLog($log_data);
+            //记录订单日志 end
+
             $this->addOrderRefundLog($data[ 'order_goods_id' ], $data[ 'refund_status' ], '卖家确认退款', 2, $user_info[ 'uid' ], $user_info[ 'username' ]);
             model('order_goods')->commit();
 
@@ -461,7 +580,7 @@ class OrderRefund extends BaseModel
      * @param array $data
      * @param array $user_info
      */
-    public function orderRefundRefuse($data, $user_info, $refund_refuse_reason)
+    public function orderRefundRefuse($data, $user_info, $refund_refuse_reason, $log_data=[])
     {
         $order_goods_info = model('order_goods')->getInfo([ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
         if (empty($order_goods_info)) {
@@ -486,6 +605,22 @@ class OrderRefund extends BaseModel
             $this->addOrderRefundLog($data[ 'order_goods_id' ], $data[ 'refund_status' ], '卖家拒绝退款', 2, $user_info[ 'uid' ], $user_info[ 'username' ], $log_desc);
             event("OrderRefundRefuse", $data);
             model('order_goods')->commit();
+
+            //记录订单日志 start
+            if ($log_data){
+                $order_common_model = new OrderCommon();
+                $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ] ],'order_status,order_status_name');
+                $log_data = array_merge($log_data,[
+                    'order_id'          => $order_goods_info['order_id'],
+                    'order_status'      => $order_info['order_status'],
+                    'order_status_name' => $order_info['order_status_name']
+                ]);
+                $order_common_model->addOrderLog($log_data);
+            }
+            //记录订单日志 end
+
+            // 维权拒绝 评价锁定放开
+            model('order')->update(['is_evaluate' => 1], [ ['order_id', '=', $order_goods_info[ "order_id" ]], ['order_status', 'in', [ OrderModel::ORDER_TAKE_DELIVERY, OrderModel::ORDER_COMPLETE ] ] ]);
 
             //订单退款拒绝消息
             $message_model = new Message();
@@ -572,29 +707,52 @@ class OrderRefund extends BaseModel
      * @param array $user_info
      * @return multitype:string mixed
      */
-    public function orderRefundFinish($data, $user_info)
+    public function orderRefundFinish($data, $user_info, $log_data = [])
     {
         $order_goods_info = model('order_goods')->getInfo([ 'order_goods_id' => $data[ 'order_goods_id' ] ]);
         if (empty($order_goods_info)) {
             return $this->error();
         }
+        $refund_apply_money = $order_goods_info['refund_apply_money'];
 
-        if ($order_goods_info[ 'refund_status' ] != self::REFUND_TAKEDELIVERY && $order_goods_info[ 'refund_status' ] != self::REFUND_CONFIRM) {
-            return $this->error();
+        $shop_active_refund = $data['shop_active_refund'] ?? 0;
+        if($shop_active_refund == 1){//商家主动退款
+            //查询发货状态(已发货的不能主动退款)
+            if($order_goods_info['delivery_status'] != OrderModel::DELIVERY_WAIT){
+                return $this->error();
+            }
+            //获取可退金额
+            $refund_apply_money_arr = $this->getOrderRefundMoney($data[ 'order_goods_id' ]);
+            $refund_apply_money = $refund_apply_money_arr['refund_money'];
+            $refund_delivery_money = $refund_apply_money_arr['refund_delivery_money'];
+            $data['refund_real_money'] = $refund_apply_money;
+            $data['refund_delivery_money'] = $refund_delivery_money;
+        }else{
+            if ($order_goods_info[ 'refund_status' ] != self::REFUND_TAKEDELIVERY && $order_goods_info[ 'refund_status' ] != self::REFUND_CONFIRM) {
+                return $this->error();
+            }
         }
+
+        if ($data['refund_real_money'] > $refund_apply_money) return $this->error('', '退款金额超出最大可退金额');
         model('order_goods')->startTrans();
         try {
 
             $update_data = array (
                 "refund_time" => time(),
-                "refund_real_money" => $order_goods_info[ "refund_apply_money" ]
+                'shop_active_refund' => $shop_active_refund,
+                'refund_apply_money' => $refund_apply_money,
+                'refund_money_type' => $data['refund_money_type'],
+                "refund_real_money" => $data['refund_real_money'],
+                'shop_refund_remark' => $data['shop_refund_remark'],
+                'refund_delivery_money' => $data['refund_delivery_money'] ?? 0.00
             );
+
             $update_data[ 'refund_status' ] = self::REFUND_COMPLETE;
             $update_data[ 'refund_status_name' ] = $this->order_refund_status[ self::REFUND_COMPLETE ][ "name" ];
             $update_data[ 'refund_status_action' ] = json_encode($this->order_refund_status[ self::REFUND_COMPLETE ], JSON_UNESCAPED_UNICODE);
             $res = model('order_goods')->update($update_data, [ [ 'order_goods_id', "=", $data[ 'order_goods_id' ] ] ]);
 
-            $result = $this->finishAction($data[ 'order_goods_id' ]);
+            $result = $this->finishAction($data[ 'order_goods_id' ], $log_data, $data['is_deposit_back'] ?? 0);
             if ($result[ 'code' ] < 0) {
                 model('order_goods')->rollback();
                 return $result;
@@ -616,7 +774,7 @@ class OrderRefund extends BaseModel
                     break;
             }
             //退货日志
-            $this->addOrderRefundLog($data[ 'order_goods_id' ], self::REFUND_COMPLETE, '维权完成', 2, $user_info[ 'uid' ], $user_info[ 'username' ]);
+            $this->addOrderRefundLog($data[ 'order_goods_id' ], self::REFUND_COMPLETE, '维权完成', 2, $user_info[ 'uid' ], $user_info[ 'username' ], '维权完成，退款金额：¥'.$data['refund_real_money']);
 
             $order_goods_info = model("order_goods")->getInfo([ [ "order_goods_id", "=", $data[ 'order_goods_id' ] ] ]);
             $order_model->refund($order_goods_info);
@@ -635,12 +793,13 @@ class OrderRefund extends BaseModel
 
     /**
      * 退款完成操作
-     * @param $data
-     * @param $user_info
+     * @param $order_goods_id
+     * @param $refund_money_type
      * @return array
      */
-    public function finishAction($order_goods_id)
+    public function finishAction($order_goods_id, $log_data = [],$is_deposit_back = 1)
     {
+
         $order_goods_info = model('order_goods')->getInfo([ 'order_goods_id' => $order_goods_id ]);
 
         model('order_goods')->startTrans();
@@ -649,7 +808,9 @@ class OrderRefund extends BaseModel
 
             //验证订单是否全部退款完毕
             $order_goods_count = model("order_goods")->getCount([ [ "order_id", "=", $order_goods_info[ 'order_id' ] ] ], "order_goods_id");
+
             $refund_count = model("order_goods")->getCount([ [ "order_id", "=", $order_goods_info[ 'order_id' ] ], [ "refund_status", "=", self::REFUND_COMPLETE ] ], "order_goods_id");
+
             $refund_total_real_money = model("order_goods")->getSum([ [ "order_id", "=", $order_goods_info[ 'order_id' ] ], [ "refund_status", "=", self::REFUND_COMPLETE ] ], "refund_real_money");
 
             if ($refund_total_real_money > $order_info[ "order_money" ]) {
@@ -658,33 +819,74 @@ class OrderRefund extends BaseModel
             }
 
             //实际执行转账 (存在余额支付的话   退款一部分余额  退还一部分实际金额)  //订单退款退回余额积分等操作
-            if ($order_info[ "balance_money" ] > 0) {
-//                if($order_goods_count == $refund_count){
-//                    $refunded_balance_money = model("order_goods")->getSum([["order_id", "=", $order_goods_info['order_id']], ["refund_status", "=", self::REFUND_COMPLETE]], "order_goods_id");
-//                    $refunded_balance_money = model("order_goods")->getSum([["order_id", "=", $order_goods_info['order_id']], ["refund_status", "=", self::REFUND_COMPLETE]], "order_goods_id");
-//                    $refund_balance_money = $order_info["balance_money"] - $refunded_balance_money;
-//                    $refund_pay_money = $order_info["pay_money"] - $refund_balance_money;
-//                }else{
+            if ($order_info[ "balance_money" ] > 0 && $order_goods_info[ "refund_real_money" ] > 0) {
                 $balance_rate = $order_info[ "balance_money" ] / $order_info[ "order_money" ];
                 $refund_balance_money = $order_goods_info[ "refund_real_money" ] * $balance_rate;
                 $refund_pay_money = $order_goods_info[ "refund_real_money" ] - $refund_balance_money;
-//                }
             } else {
                 $refund_balance_money = 0;
                 $refund_pay_money = $order_goods_info[ "refund_real_money" ];
             }
 
-            $addon_result = event('AddonOrderRefund', [ 'order_no' => $order_info[ 'order_no' ], 'promotion_type' => $order_info[ 'promotion_type' ] ], true);
+            $addon_result = event('AddonOrderRefund', [ 'order_no' => $order_info[ 'order_no' ], 'promotion_type' => $order_info[ 'promotion_type' ], 'is_deposit_back' => $is_deposit_back, 'refund_money_type' => $order_goods_info['refund_money_type'] ], true);
+
             if (empty($addon_result)) {
-                //退还直接支付的金额
-                if ($refund_pay_money > 0) {
-                    $pay_model = new Pay();
-                    $refund_result = $pay_model->refund($order_goods_info[ "refund_no" ], $refund_pay_money, $order_info[ "out_trade_no" ], '', $order_info[ "pay_money" ], $order_info[ "site_id" ], 1);
+                //原路退回的时候退还余额 + 支付金额
+                if($order_goods_info['refund_money_type'] == 1){
+
+                    //退还直接支付的金额
+                    if ($refund_pay_money > 0) {
+                        $pay_model = new Pay();
+
+                        if($order_goods_info[ "refund_no" ] == ''){
+                            $refund_no = $pay_model->createRefundNo();
+                        }else{
+                            $refund_no = $order_goods_info[ "refund_no" ];
+                        }
+                        
+                        $refund_result = $pay_model->refund($refund_no, $refund_pay_money, $order_info[ "out_trade_no" ], '', $order_info[ "pay_money" ], $order_info[ "site_id" ], 1);
+                        if ($refund_result[ "code" ] < 0) {
+                            model('order_goods')->rollback();
+                            return $refund_result;
+                        }
+                    }
+
+                    //退款余额
+                    if ($refund_balance_money > 0) {
+                        $member_account_model = new MemberAccount();
+                        // 查询该订单使用的可提现余额
+                        $order_use_balance_money = abs($member_account_model->getMemberAccountSum([ ['account_type', '=', 'balance_money' ], ['type_tag', '=', $order_goods_info[ 'order_id' ] ], ['from_type', '=', 'order'] ], 'account_data')['data']);
+                        // 查询该订单已退回的可提现余额
+                        $refunded_balance_money = $member_account_model->getMemberAccountSum([ ['account_type', '=', 'balance_money' ], ['type_tag', '=', $order_goods_info[ 'order_id' ] ], ['from_type', '=', 'refund'] ], 'account_data')['data'];
+
+                        if ($order_use_balance_money > $refunded_balance_money) {
+                            $refundable_balance_money = $order_use_balance_money - $refunded_balance_money;
+                            $refundable_balance_money = $refundable_balance_money > $refund_balance_money ? $refund_balance_money : $refundable_balance_money;
+                            $refund_balance_money -= $refundable_balance_money;
+                            $balance_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "balance_money", $refundable_balance_money, "refund", $order_goods_info[ 'order_id' ], "订单退款,返还余额:" . $refundable_balance_money);
+                            if ($balance_result[ "code" ] < 0) {
+                                model('order_goods')->rollback();
+                                return $balance_result;
+                            }
+                        }
+
+                        if ($refund_balance_money > 0) {
+                            $balance_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "balance", $refund_balance_money, "refund", $order_goods_info[ 'order_id' ], "订单退款,返还余额:" . $refund_balance_money);
+                            if ($balance_result[ "code" ] < 0) {
+                                model('order_goods')->rollback();
+                                return $balance_result;
+                            }
+                        }
+                    }
+                }else if($order_goods_info['refund_money_type'] == 3){ //退款到余额
+                    $member_account_model = new MemberAccount();
+                    $refund_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "balance", $refund_total_real_money, "refund", $order_goods_info[ 'order_id' ], "订单退款,返还余额:" . $refund_total_real_money);
                     if ($refund_result[ "code" ] < 0) {
                         model('order_goods')->rollback();
                         return $refund_result;
                     }
                 }
+
             } else {
                 if ($addon_result[ 'code' ] < 0) {
                     model('order_goods')->rollback();
@@ -692,17 +894,24 @@ class OrderRefund extends BaseModel
                 }
             }
 
-            //退款余额
-            if ($refund_balance_money > 0) {
-                $member_account_model = new MemberAccount();
-                $balance_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "balance", $refund_balance_money, "refund", $order_goods_info[ 'order_id' ], "订单退款,返还余额:" . $refund_balance_money);
-                if ($balance_result[ "code" ] < 0) {
-                    model('order_goods')->rollback();
-                    return $balance_result;
-                }
+            //虚拟商品 退款 修改核销码状态
+            if ($order_goods_info['refund_mode'] == 1 && $order_goods_info['goods_class'] == 2) {
+                $verify_goods_condition = [
+                    ['order_no', '=', $order_info['order_no']],
+                    ['site_id', '=', $order_info['site_id']]
+                ];
+                $virtual_goods_res = model('goods_virtual')->update([ 'is_veirfy' => 2], $verify_goods_condition);
+
+                $verify_model = new VerifyModel();
+                $verify_condition = [
+                    ['verify_code', '=', $order_info['virtual_code']],
+                    ['site_id', '=', $order_info['site_id']]
+                ];
+                $verify_res = $verify_model->editVerify([ 'is_verify' => 2 ], $verify_condition);
             }
-            // 退还积分
-            if ($order_goods_info[ 'use_point' ] > 0) {
+
+            // 退还积分 只有退款时返还 售后不返还
+            if ($order_goods_info['refund_mode'] == 1 && $order_goods_info[ 'use_point' ] > 0) {
                 $member_account_model = new MemberAccount();
                 $point_result = $member_account_model->addMemberAccount($order_info[ 'site_id' ], $order_info[ "member_id" ], "point", $order_goods_info[ 'use_point' ], "refund", $order_goods_info[ 'order_id' ], "订单退款,返还积分:" . $order_goods_info[ 'use_point' ]);
                 if ($point_result[ "code" ] < 0) {
@@ -716,18 +925,53 @@ class OrderRefund extends BaseModel
                 $goods_stock_model = new GoodsStock();
                 $goods_stock_model->incStock(["sku_id" => $order_goods_info["sku_id"], "num" => $order_goods_info["num"]]);
             }
-
             //验证订单锁定状态
             $lock_result = $this->verifyOrderLock($order_goods_info[ "order_id" ]);
 
             //验证订单是否全部退款完毕  订单如果全部退款完毕,订单关闭
-            if ($order_goods_count == $refund_count) {
+            if ($order_goods_count == $refund_count && $order_info['order_status'] != Order::ORDER_COMPLETE) {
+
                 $order_common_model = new OrderCommon();
                 $close_result = $order_common_model->orderClose($order_goods_info[ "order_id" ]);
                 if ($close_result[ "code" ] < 0) {
+
                     model('order_goods')->rollback();
                     return $close_result;
+                }else{
+
+                    //记录订单日志 start
+                    if ($log_data){
+                        $log_data = array_merge($log_data,[
+                            'order_id'          => $order_goods_info['order_id'],
+                            'order_status'      => -1,
+                            'order_status_name' => '已关闭'
+                        ]);
+                        $order_common_model->addOrderLog($log_data);
+                    }
+                    //记录订单日志 end
                 }
+
+            }else{
+                //记录订单日志 start
+                if ($log_data){
+                    $order_common_model = new OrderCommon();
+                    $log_data = array_merge($log_data,[
+                        'order_id'          => $order_goods_info['order_id'],
+                        'order_status'      => $order_info['order_status'],
+                        'order_status_name' => $order_info['order_status_name']
+                    ]);
+                    $order_common_model->addOrderLog($log_data);
+                }
+                //记录订单日志 end
+            }
+
+            // 如果售后完成关闭订单评价
+            if ($order_goods_count == $refund_count && $order_info['order_status'] == Order::ORDER_COMPLETE) {
+                $order_common_model = new OrderCommon();
+                $order_common_model->orderUpdate(['is_evaluate' => 0], [ ['order_id', '=', $order_goods_info[ "order_id" ] ] ]);
+            }else if($order_info['order_status'] == Order::ORDER_COMPLETE || $order_info['order_status'] == Order::ORDER_TAKE_DELIVERY){
+                $order_common_model = new OrderCommon();
+                $order_common_model->orderUpdate(['is_evaluate' => 1], [ ['order_id', '=', $order_goods_info[ "order_id" ] ] ]);
             }
 
             //订单累加 退款
@@ -900,6 +1144,18 @@ class OrderRefund extends BaseModel
         }
 
     }
+
+    /**
+     * 根据配送状态获取退款方式
+     */
+    public function getRefundOrderType($order_id){
+        $status = model("order")->getInfo([ [ "order_id", "=", $order_id ] ], "delivery_status");
+        if ($status[ "delivery_status" ] == 0) {
+            return [ self::ONLY_REFUNDS ];
+        } else {
+            return [ self::ONLY_REFUNDS, self::A_REFUND_RETURN ];
+        }
+    }
     /****************************************************************************订单退款相关操作（结束）**********************************/
 
     /********************************************************************** 主动退款 ********************************************************************/
@@ -909,8 +1165,8 @@ class OrderRefund extends BaseModel
      */
     public function activeRefund($order_id, $remark, $refund_reason)
     {
-        $order_info = model("order")->getInfo([ [ "order_id", "=", $order_id ] ], "pay_money, out_trade_no, site_id, delivery_money");
-        if ($order_info[ "pay_money" ] > 0) {
+        $order_info = model("order")->getInfo([ [ "order_id", "=", $order_id ] ], "order_money, out_trade_no, site_id, delivery_money");
+        if ($order_info[ "order_money" ] > 0) {
             $pay_model = new Pay();
             //遍历订单项
             $order_goods_list = model("order_goods")->getList([ [ "order_id", "=", $order_id ] ]);
@@ -1044,6 +1300,21 @@ class OrderRefund extends BaseModel
             //验证订单锁定状态
             $lock_result = $this->verifyOrderLock($order_goods_info[ "order_id" ]);
 
+            //记录订单日志 start
+            $order_common_model = new OrderCommon();
+            $order_info = model('order')->getInfo([ 'order_id' => $order_goods_info[ 'order_id' ] ],'order_status,order_status_name');
+            $log_data = [
+                'uid'               => $user_info['uid'],
+                'nick_name'         => $user_info['username'],
+                'action'            => '商家关闭了维权',
+                'action_way'        => 2,
+                'order_id'          => $order_goods_info['order_id'],
+                'order_status'      => $order_info['order_status'],
+                'order_status_name' => $order_info['order_status_name']
+            ];
+            $order_common_model->addOrderLog($log_data);
+            //记录订单日志 end
+
             $this->addOrderRefundLog($data[ 'order_goods_id' ], 0, '卖家关闭本次维权', 2, $user_info[ 'uid' ], $user_info[ 'username' ]);
             event('memberCancelRefund', $data);//传入订单类型以及订单项id
             model('order_goods')->commit();
@@ -1053,4 +1324,59 @@ class OrderRefund extends BaseModel
             return $this->error('', $e->getMessage());
         }
     }
+
+    /**
+     * 获取订单项退款信息
+     * @param $order_goods_id
+     * @param $site_id
+     * @return array
+     */
+    public function getOrderGoodsRefundInfo($order_goods_id, $site_id)
+    {
+        $order_goods_info = model('order_goods')->getInfo([['order_goods_id', '=', $order_goods_id],['site_id','=',$site_id]]);
+        if(empty($order_goods_info)){
+            return $this->error('','该订单项不存在');
+        }
+        if($order_goods_info['refund_status'] == self::REFUND_COMPLETE){
+            return $this->error('该订单项已维权结束');
+        }
+        if($order_goods_info['refund_status'] == 0){
+            $refund_apply_arr = $this->getOrderRefundMoney($order_goods_id);
+            $order_goods_info['refund_apply_money'] = number_format($refund_apply_arr['refund_money'],2);;
+            $order_goods_info['refund_delivery_money'] = $refund_apply_arr['refund_delivery_money'];
+        }
+
+        //获取订单信息
+        $order_info = model('order')->getInfo([['order_id','=',$order_goods_info['order_id']]]);
+
+        $coupon_info = [];
+        if($order_info['coupon_id'] > 0){
+            $order_goods_count = model("order_goods")->getCount([ [ "order_id", "=", $order_goods_info[ 'order_id' ] ] ], "order_goods_id");
+            $refund_count = model("order_goods")->getCount([ [ "order_id", "=", $order_goods_info[ 'order_id' ] ], [ "refund_status", "=", self::REFUND_COMPLETE ] ], "order_goods_id");
+
+            if (($order_goods_count - $refund_count) == 1) {
+                //查询优惠劵信息
+                $coupon_model = new Coupon();
+                $coupon_info = $coupon_model->getCouponInfo([['coupon_id','=',$order_info['coupon_id']]],'coupon_id,coupon_name,type,at_least,money,discount,discount_limit');
+                $coupon_info = $coupon_info['data'];
+            }
+        }
+
+        $data = [
+            'order_goods_info' => $order_goods_info,
+            'order_info' => $order_info,
+            'coupon_info' => $coupon_info
+        ];
+
+        //预售订单
+        if ($order_info['promotion_type'] == 'presale'){
+            $presale_order_model = new PresaleOrder();
+            $presale_order_info = $presale_order_model -> getPresaleOrderInfo([['order_no','=',$order_info['order_no']]],'presale_deposit_money,final_money');
+            $data['presale_order_info'] = $presale_order_info['data'];
+        }
+
+        return $this->success($data);
+
+    }
+
 }

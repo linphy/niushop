@@ -81,18 +81,18 @@ layui.use(['form', 'laytpl'], function() {
 				}, {
 					field: 'userdetail',
 					title: '账户',
-					width: '15%',
+					width: '16%',
 					unresize: 'false',
 					templet: '#userdetail'
 				}, {
 					field: 'member_level_name',
 					title: '会员等级',
-					width: '10%',
+					width: '12%',
 					unresize: 'false'
 				}, {
 					field: 'point',
 					title: '积分',
-					width: '8%',
+					width: '15%',
 					unresize: 'false',
 					align: 'left',
 					templet: function (data) {
@@ -101,7 +101,7 @@ layui.use(['form', 'laytpl'], function() {
 				}, {
 					field: 'balance',
 					title: '余额',
-					width: '8%',
+					width: '15%',
 					unresize: 'false',
 					align: 'left',
 					templet: function(data) {
@@ -111,22 +111,22 @@ layui.use(['form', 'laytpl'], function() {
 				}, {
 					field: 'growth',
 					title: '成长值',
-					width: '8%',
+					width: '15%',
 					unresize: 'false',
 					align: 'left'
 				}, {
 					field: 'reg-login',
 					title: '最后登录时间',
-					width: '15%',
+					width: '20%',
 					unresize: 'false',
 					templet: function (data) {
 						return ns.time_to_date(data.last_login_time);
 					}
 				}, {
 					title: '操作',
-					width: '10%',
 					unresize: 'false',
-					toolbar: '#operation'
+					toolbar: '#operation',
+					align : 'right'
 				}
 			]
 		],

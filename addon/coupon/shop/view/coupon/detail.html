@@ -8,6 +8,7 @@
 </style>
 {/block}
 {block name="main"}
+{foreach $coupon_type_info as $k=>$coupon_type_info}
 <div class="layui-form">
     <div class="layui-form-item">
         <label class="layui-form-label">优惠券名称：</label>
@@ -33,7 +34,11 @@
     {/if}
     <div class="layui-form-item">
         <label class="layui-form-label">发放数量：</label>
+        {if $coupon_type_info.count > 0 }
         <div class="layui-input-inline">{$coupon_type_info.count} 张</div>
+        {else /}
+        <div class="layui-input-inline">无限制</div>
+        {/if}
     </div>
 
     <div class="layui-form-item">
@@ -87,7 +92,8 @@
         </div>
     </div>
     {/if}
-
+    <div style="height: 5px;"></div>
+{/foreach}
     <div class="ns-form-row">
         <button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
     </div>

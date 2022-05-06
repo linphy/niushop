@@ -10,6 +10,11 @@
 		line-height: 30px;
 		border-bottom-left-radius: 3px;
 	}
+	.ns-item-block .item-hide{
+		position: absolute;
+		top: 0;
+		right: -1px;
+	}
 </style>
 {/block}
 {block name="main"}
@@ -53,10 +58,38 @@
 			{/empty}
 			{/if}
 			{/foreach}
+			{if  condition="$user_info['is_admin'] eq '1'"}
+			{foreach $tool_addon as $tool_addon_k => $tool_addon_v}
+			<div class="ns-item-block ns-item-block-hover">
+				<div class="ns-item-block-wrap">
+					<div class="ns-item-pic">
+						<img src="{$tool_addon_v.logo_img}" />
+					</div>
+					<div class="ns-item-con">
+						<div class="ns-item-content-title">{$tool_addon_v.goods_name}</div>
+						<p class="ns-item-content-desc ns-line-hiding" title="{$tool_addon_v.package_name}">{$tool_addon_v.introduction}</p>
+					</div>
+					<img class="item-hide" src="SHOP_IMG/recommend.png" alt="">
+				</div>
+				<div class="ns-item-float-wrap ">
+					<div class="ns-item-float">
+						<div class="ns-item-float-con"></div>
+						<div class="ns-item-float-con now_btn" >
+							<a onclick="alertAddon()" target="_blank">立即升级</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/foreach}
+			{/if}
 		</div>
 	</div>
 </div>
 {/block}
 {block name="script"}
-
+<script>
+	function alertAddon() {
+		layer.msg('该插件为付费插件，请联系客服购买！');
+	}
+</script>
 {/block}

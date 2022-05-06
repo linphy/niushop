@@ -33,13 +33,13 @@
 				</div>
 			</div>
 		</div>
-		
+
 	</template>
 
 	<!-- 编辑 -->
 	<template slot="edit">
 		<div class="layui-form-item">
-			<label class="layui-form-label sm">主页名称</label> 
+			<label class="layui-form-label sm">主页名称</label>
 			<div class="layui-input-block">
 				<input type="text" v-model="nc.title" v-bind:id="'title_'+index" placeholder="请输入文本" class="layui-input">
 			</div>
@@ -48,7 +48,7 @@
 			<h3>显示样式</h3>
 			<i class="layui-icon layui-icon-down" onclick="closeBox(this)"></i>
 		</div> -->
-		
+
 		<div class="template-edit-wrap">
 			<template v-if="nc.lazyLoad">
 				<style-choose></style-choose>
@@ -88,7 +88,7 @@
 				<input type="hidden" name="style_name" />
 			</div>
 		</div>
-		
+
 	</template>
 
 	<!-- 资源 -->

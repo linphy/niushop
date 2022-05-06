@@ -8,6 +8,7 @@ $(function () {
 			vue_obj.loadGraphicMessageInfo();
 		}, 20);
 	}
+
 });
 
 // 初始化Vue
@@ -71,7 +72,9 @@ function initVue() {
 			var _self = this;
 			_self.material_id = $('#material_id').val();
 			_self.editor = UE.getEditor('editor');
-			_self.reloadUpload();
+			if(_self.material_id == 0){
+				_self.reloadUpload();
+			}
 		},
 		methods: {
 			// 添加图文消息
@@ -82,7 +85,7 @@ function initVue() {
 					layer.msg('多图文消息内容不可超过8个');
 					return false;
 				}
-				
+
 				var new_item_msg = {
 					msg_type: 1, 		// 消息类型
 					title: '', 			// 标题
@@ -115,7 +118,10 @@ function initVue() {
 				_top = _num == 0 ? 80 : _top;
 				_num = _num > 0 ? _num - 1 : _num;
 				this.editBoxTopPosition = 72 * _num + _top;
-				
+
+				setTimeout(()=>{
+					this.reloadUpload();
+				},600)
 			},
 			// 选择编辑中图文消息
 			chooseGraphicMessage: function (index) {
@@ -133,6 +139,10 @@ function initVue() {
 				_top = _num == 0 ? 80 : _top;
 				_num = _num > 0 ? _num - 1 : _num;
 				this.editBoxTopPosition = 72 * _num + _top;
+
+				setTimeout(()=>{
+					this.reloadUpload();
+				},600)
 			},
 			//鼠标经过
 			moveThis: function (index) {
@@ -224,8 +234,9 @@ function initVue() {
 				
 				var id = _self.material_id;
 				var article_item_list = JSON.parse(JSON.stringify(_self.article_item_list));
+				article_item_list[0].cover.path = $("#logo").val();
 				var value = JSON.stringify(article_item_list);
-				
+
 				if (repeat_flag) return;
 				repeat_flag = true;
 				$.ajax({

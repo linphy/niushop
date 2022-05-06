@@ -20,6 +20,8 @@ use app\model\web\Config as ConfigModel;
 use app\model\web\WebSite;
 use app\model\system\Site;
 use addon\weapp\model\Config as WeappConfigModel;
+use app\model\upload\Config as UploadConfigModel;
+use think\validate\ValidateRule;
 
 class BaseShop extends Controller
 {
@@ -79,8 +81,18 @@ class BaseShop extends Controller
         if (!request()->isAjax()) {
             //获取菜单
             $this->menus = $this->getMenuList();
+
             $this->initBaseInfo();
         }
+
+        // 上传图片配置
+        $uplode_config_model = new UploadConfigModel();
+        $upload_config = $uplode_config_model->getUploadConfig($this->site_id);
+        $this->assign('upload_max_filesize',$upload_config['data']['value']['upload']['max_filesize'] / 1024);
+
+        $config_model = new ConfigModel();
+        $base = $config_model->getStyle($this->site_id);
+        $this->assign('base', $base);
     }
 
     /**
@@ -106,7 +118,6 @@ class BaseShop extends Controller
         $this->assign("menu_info", $info);
         //加载菜单树
         $init_menu = $this->initMenu($this->menus, '');
-
         // 应用下的菜单特殊处理
         if (!empty($this->crumbs) && $this->crumbs[ 0 ][ 'name' ] == 'PROMOTION_ROOT') {
 
@@ -124,6 +135,7 @@ class BaseShop extends Controller
                 $addon_info = $addon_model->getAddonInfo([ [ 'name', '=', request()->addon() ] ], 'name,title');
                 $addon_info = $addon_info[ 'data' ] ?? [ 'name' => '', 'title' => '' ];
                 $promotion_menu_arr = [ 'PROMOTION_CENTER', 'PROMOTION_MEMBER', 'PROMOTION_TOOL' ];
+
                 foreach ($init_menu as $k => $v) {
                     if ($v[ 'selected' ]) {
                         $this->crumbs[ 0 ][ 'title' ] = $addon_info[ 'title' ];
@@ -144,6 +156,7 @@ class BaseShop extends Controller
                 }
             }
         }
+
         $this->assign("url", $this->url);
         $this->assign("menu", $init_menu);
         $this->assign("crumbs", $this->crumbs);
@@ -187,6 +200,7 @@ class BaseShop extends Controller
                     );
 
                     $child = $this->initMenu($menus_list, $menu_v[ "name" ]);//获取下级的菜单
+
                     $temp_item[ "child_list" ] = $child;
                     $temp_list[ $menu_v[ "name" ] ] = $temp_item;
                 }
@@ -289,12 +303,17 @@ class BaseShop extends Controller
         if (!empty($menu_info[ 'data' ])) {
             $menus = $menu_model->getMenuList([ [ 'app_module', "=", $this->app_module ], [ 'is_show', "=", 1 ], [ 'parent', '=', $menu_info[ 'data' ][ 'parent' ] ] ], '*', 'sort asc');
             foreach ($menus[ 'data' ] as $k => $v) {
-                $menus[ 'data' ][ $k ][ 'parse_url' ] = addon_url($menus[ 'data' ][ $k ][ 'url' ], $params);
-                if ($menus[ 'data' ][ $k ][ 'url' ] == $url) {
-                    $menus[ 'data' ][ $k ][ 'selected' ] = 1;
-                } else {
-                    $menus[ 'data' ][ $k ][ 'selected' ] = 0;
+                if($v['name'] == "PROMOTION_FENXIAO_ADD"){
+                    unset($menus[ 'data' ][$k]);
+                }else{
+                    $menus[ 'data' ][ $k ][ 'parse_url' ] = addon_url($menus[ 'data' ][ $k ][ 'url' ], $params);
+                    if ($menus[ 'data' ][ $k ][ 'url' ] == $url) {
+                        $menus[ 'data' ][ $k ][ 'selected' ] = 1;
+                    } else {
+                        $menus[ 'data' ][ $k ][ 'selected' ] = 0;
+                    }
                 }
+
             }
             $this->assign('forth_menu', $menus[ 'data' ]);
         }
@@ -335,4 +354,31 @@ class BaseShop extends Controller
         $user->addUserLog($this->uid, $this->user_info[ 'username' ], $this->site_id, $action_name, $data);
     }
 
+    /**
+     * 切换风格
+     * @param unknown $action_name
+     * @param unknown $data
+     */
+    public function checkStyle()
+    {
+        $style= Array(
+            'app/shop/view/base/style1.html',
+            'app/shop/view/base/style2.html'
+        );
+        $type = input('type','old');
+        $data=[];
+        if($type=='old'){
+            $data['style'] = $style[0];
+        }else if($type=='new'){
+            $data['style'] = $style[1];
+        }
+        $config_model = new ConfigModel();
+        $res = $config_model->setStyle($data, $this->site_id);
+        return $res;
+    }
+
+    public function  __call($method, $args)
+    {
+        return $this->fetch('error/error');
+    }
 }

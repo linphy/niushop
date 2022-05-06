@@ -170,6 +170,7 @@
 			<div class="ns-form-row">
 				<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 				<button type="reset" class="layui-btn layui-btn-primary" onclick="back()">返回</button>
+				<a id="imageQrcode"></a>
 			</div>
 		</div>
 	</div>
@@ -177,6 +178,10 @@
 {/block}
 {block name="script"}
 <script type="text/javascript">
+	var saveData = null;
+	var totalUploadNum = 0;
+	var completeUploadNum = 0;
+
     layui.use(['form'], function () {
         var form = layui.form,
             repeat_flag = false; //防重复标识
@@ -186,6 +191,46 @@
 			if (repeat_flag) return;
 			repeat_flag = true;
 
+			saveData = data;
+			var obj = $("img.img_prev[data-prev='1']");
+			totalUploadNum = obj.length;
+			if(totalUploadNum > 0){
+				obj.each(function(){
+					var actionId = $(this).attr('data-action-id');
+					$(actionId).click();
+				})
+			}else{
+				saveFunc();
+			}
+		});
+
+		var upload = new Upload({
+			elem: '#img',
+			auto: false,
+			bindAction:'#imageQrcode',
+			callback: function(res) {
+				uploadComplete('qrcode', res.data.pic_path);
+			}
+		});
+
+		var file_upload = new Upload({
+			elem: '#checkFile',
+			url: ns.url("shop/upload/checkfile"),
+			accept: 'file',
+			acceptMime: 'text/plain',
+			exts: 'txt'
+		});
+
+		function uploadComplete(field, pic_path) {
+			saveData.field[field] = pic_path;
+			completeUploadNum += 1;
+			if(completeUploadNum == totalUploadNum){
+				saveFunc();
+			}
+		}
+
+		function saveFunc(){
+			var data = saveData;
 			$.ajax({
 				type: "post",
 				url: "{:addon_url('wechat://shop/wechat/config')}",
@@ -196,19 +241,7 @@
 					layer.msg(data.message);
 				}
 			});
-		});
-
-		var upload = new Upload({
-			elem: '#img'
-		});
-
-		var file_upload = new Upload({
-			elem: '#checkFile',
-			url: ns.url("shop/upload/checkfile"),
-			accept: 'file',
-			acceptMime: 'text/plain',
-			exts: 'txt'
-		});
+		}
 
 	});
  

@@ -15,6 +15,7 @@ use app\model\express\LocalPackage;
 use app\model\goods\GoodsStock;
 use app\model\message\Message;
 use app\model\system\Cron;
+use think\facade\Db;
 
 /**
  * 外卖订单
@@ -215,7 +216,7 @@ class LocalOrder extends OrderCommon
      * 订单支付
      * @param unknown $order_info
      */
-    public function orderPay($order_info, $pay_type)
+    public function orderPay($order_info, $pay_type,$log_data=[])
     {
         if ($order_info['order_status'] != 0) {
             return $this->error();
@@ -235,6 +236,30 @@ class LocalOrder extends OrderCommon
             "pay_type"            => $pay_type,
             "pay_type_name"       => $pay_type_list[$pay_type]
         );
+
+        //记录订单日志 start
+        $action = '商家对订单进行了线下支付';
+        //获取用户信息
+        if (empty($log_data)){
+            $member_info = model('member')->getInfo(['member_id'=>$order_info['member_id']],'nickname');
+            $log_data = [
+                'uid'        => $order_info[ 'member_id' ],
+                'nick_name'  => $member_info['nickname'],
+                'action_way' => 1
+            ];
+            $action = '买家【'.$member_info['nickname'].'】支付了订单';
+        }
+
+        $log_data = array_merge($log_data,[
+            'order_id'          => $order_info['order_id'],
+            'action'            => $action,
+            'order_status'      => self::ORDER_PAY,
+            'order_status_name' => $this->order_status[self::ORDER_PAY]["name"]
+        ]);
+
+        $this->addOrderLog($log_data);
+        //记录订单日志 end
+
         $result        = model("order")->update($data, $condition);
         return $this->success($result);
     }
@@ -253,19 +278,22 @@ class LocalOrder extends OrderCommon
             $delivery_type    = $param["delivery_type"] ?? 'default';
             $order_id         = $param['order_id'] ?? 0;
             $site_id          = $param["site_id"];
-            $order_goods_list = model('order_goods')->getList([['site_id', '=', $site_id], ['order_id', '=', $order_id]], 'sku_id,num,order_id,sku_name,sku_image,member_id,refund_status,order_goods_id');
+
+            $order_goods_list = model('order_goods')->getList([['site_id', '=', $site_id], ['order_id', '=', $order_id], ['refund_status', '<>', 3]], 'sku_id,num,order_id,sku_name,sku_image,member_id,refund_status,order_goods_id');
             if (empty($order_goods_list))
                 return $this->error('', "发送货物不可为空!");
+
+            $condition_refund[] = [ "", 'exp', Db::raw("(refund_status=1 or  refund_status=2) and site_id=".$site_id." and order_id=".$order_id)];
+            $order_refund_goods_list = model('order_goods')->getList($condition_refund, 'order_goods_id');
+            //已退款的订单项不可发货
+            if ($order_refund_goods_list) {
+                model('order_goods')->commit();
+                return $this->error([], "ORDER_GOODS_IN_REFUND");
+            }
 
             $order_goods_id_array = [];
             $goods_id_array       = [];
             foreach ($order_goods_list as $k => $order_goods_info) {
-
-                //已退款的订单项不可发货
-                if ($order_goods_info["refund_status"] == 3) {
-                    model('order_goods')->commit();
-                    return $this->error([], "ORDER_GOODS_IS_REFUND");
-                }
                 $order_goods_id_array[] = $order_goods_info['order_goods_id'];
                 $order_id               = $order_goods_info["order_id"];
                 $member_id              = $order_goods_info["member_id"];

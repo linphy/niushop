@@ -29,6 +29,7 @@ class Api extends BaseModel
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'API_CONFIG']]);
+        $res['data']['value']['long_time'] = $res['data']['value']['long_time'] ?? 48;
         return $res;
     }
 

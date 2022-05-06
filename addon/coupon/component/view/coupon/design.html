@@ -4,39 +4,6 @@
 	<template slot="preview">
 		<div class="preview-box" v-bind:style="{ backgroundColor : nc.backgroundColor, margin: nc.marginTop + 'px 15px 0' }">
 			<div class="coupon-preview">
-				<!-- <div class="coupon-box coupon-box-1" v-if="nc.style == 1">
-					<div class="coupon-title">
-						<img src="{$resource_path}/coupon/img/title.png" />
-						<span>更多优惠等你来</span>
-					</div>
-					<ul class="coupon-list">
-						<li class="coupon-li">
-							<img src="{$resource_path}/coupon/img/style1-bg.png">
-							<div class="coupon-intro">
-								<p class="coupon-price">￥<span>500.00</span></p>
-								<p class="coupon-desc">满3000元可用</p>
-							</div>
-							<div class="coupon-btn">立即领取</div>
-						</li>
-						<li class="coupon-li">
-							<img src="{$resource_path}/coupon/img/style1-bg.png">
-							<div class="coupon-intro">
-								<p class="coupon-price">￥<span>500.00</span></p>
-								<p class="coupon-desc">满3000元可用</p>
-							</div>
-							<div class="coupon-btn">立即领取</div>
-						</li>
-						<li class="coupon-li">
-							<img src="{$resource_path}/coupon/img/style1-bg.png">
-							<div class="coupon-intro">
-								<p class="coupon-price">￥<span>500.00</span></p>
-								<p class="coupon-desc">满3000元可用</p>
-							</div>
-							<div class="coupon-btn">立即领取</div>
-						</li>
-					</ul>
-				</div> -->
-				
 				<div class="coupon-box coupon-box-1" v-if="nc.style == 1">
 					<div class="coupon-box-list">
 						<div class="coupon">
@@ -121,6 +88,35 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="coupon-box" v-bind:class="'coupon-box-'+ nc.style" v-else-if="nc.style == 4">
+					<div class="coupon">
+						<img src="{$resource_path}/coupon/img/style4-bg-1.png">
+						<div class="coupon-intro">
+							<p class="coupon-price">￥<span>100</span></p>
+							<p class="coupon-desc">满1000可用</p>
+						</div>
+						<div class="coupon-btn">立即领取</div>
+					</div>
+					
+					<div class="coupon">
+						<img src="{$resource_path}/coupon/img/style4-bg-1.png">
+						<div class="coupon-intro">
+							<p class="coupon-price"><span>8</span>折</p>
+							<p class="coupon-desc">无门槛券</p>
+						</div>
+						<div class="coupon-btn">立即领取</div>
+					</div>
+					
+					<div class="coupon">
+						<img src="{$resource_path}/coupon/img/style4-bg-1.png">
+						<div class="coupon-intro">
+							<p class="coupon-price">￥<span>200</span></p>
+							<p class="coupon-desc">满1000可用</p>
+						</div>
+						<div class="coupon-btn">立即领取</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</template>
@@ -133,13 +129,8 @@
 			<coupon-list></coupon-list>
 		</template>
 		
-<!--		<color v-bind:data="{ field : 'backgroundColor', 'label' : '背景颜色' }"></color>-->
 		<slide v-bind:data="{ field : 'marginTop', label : '页面间距' }"></slide>
 		
-		<!-- <template v-if="nc.lazyLoad">
-			<coupon-status></coupon-status>
-		</template> -->
-
 		<!-- 弹框 -->
 		<div class="coupon-list-style">
 			<div class="style-list-coupon layui-form">
@@ -157,6 +148,11 @@
 					<div class="style-li-coupon" v-bind:class="{'selected ns-border-color': nc.style == 3}">
 						<img src="{$resource_path}/coupon/img/style3.png" />
 						<span class="layui-hide">风格三</span>
+					</div>
+					
+					<div class="style-li-coupon" v-bind:class="{'selected ns-border-color': nc.style == 4}">
+						<img src="{$resource_path}/coupon/img/style4.png" />
+						<span class="layui-hide">风格四</span>
 					</div>
 				</div>
 

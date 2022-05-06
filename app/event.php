@@ -39,6 +39,9 @@ return [
         'ShowPromotion' => [
             'app\event\ShowPromotion'
         ],
+        'ExtensionInformation' => [
+            'app\event\ExtensionInformation'
+        ],
 
         /**
          * 店铺相关事件
@@ -52,6 +55,7 @@ return [
             'app\event\AddSiteDelivery',//增加默认配送管理数据
             'app\event\AddSiteExpressCompany',//增加默认物流公司数据
             'app\event\AddMemberClusterCronRefresh',//增加会员群体定时刷新任务
+            'app\event\AddSiteAdv'// 增加默认广告
         ],
         // 添加店铺演示数据
         'AddYanshiData' => [
@@ -80,7 +84,7 @@ return [
         'MemberPromotion' => [],
         //会员注册后执行事件
         'MemberRegister' => [
-            'app\event\MemberRegister'
+            
         ],
         'MemberLogin' => [
             'app\event\MemberLogin'
@@ -147,6 +151,14 @@ return [
         'CronOrderClose' => [
             'app\event\CronOrderClose'
         ],
+        // 核销商品临期提醒
+        'VerifyOrderOutTime' => [
+            'app\event\VerifyOrderOutTime'
+        ],
+        // 核销码过期提醒
+        'CronVerifyCodeExpire' => [
+            'app\event\CronVerifyCodeExpire'
+        ],
         'CronOrderTakeDelivery' => [
             'app\event\CronOrderTakeDelivery'
         ],
@@ -154,7 +166,17 @@ return [
         'CronOrderComplete' => [
             'app\event\CronOrderComplete'
         ],
-
+        // 自动关闭订单售后
+        'CronOrderAfterSaleClose' => [
+            'app\event\CronOrderAfterSaleClose'
+        ],
+        // 订单催付通知
+        'CronOrderUrgePayment' => [
+            'app\event\CronOrderUrgePayment'
+        ],
+        'CloseDeletePoint' => [
+            'app\event\CloseDeletePoint'
+        ],
         /**
          * 自定义模板事件
          * 自定义模板展示调用相关功能
@@ -194,8 +216,8 @@ return [
          */
         //消息模板
         'SendMessageTemplate' => [
-            // 订单创建
-            'app\event\MessageOrderCreate',
+            // 订单催付通知
+            'app\event\MessageOrderUrgePayment',
             // 订单关闭
             'app\event\MessageOrderClose',
             // 订单完成
@@ -204,8 +226,6 @@ return [
             'app\event\MessageOrderPaySuccess',
             // 订单发货
             'app\event\MessageOrderDelivery',
-            // 订单收货
-            'app\event\MessageOrderReceive',
 
             // 商家同意退款
             'app\event\MessageShopRefundAgree',
@@ -213,11 +233,11 @@ return [
             'app\event\MessageShopRefundRefuse',
             // 核销通知
             'app\event\MessageShopVerified',
+            // 核销码过期提醒
+            'app\event\MessageVerifyCodeExpire',
 
             // 注册验证
             'app\event\MessageRegisterCode',
-            // 注册成功
-            'app\event\MessageRegisterSuccess',
             // 找回密码
             'app\event\MessageFindCode',
             // 会员登陆成功
@@ -236,8 +256,8 @@ return [
             'app\event\MessageOrderRefundDelivery',
             // 买家支付通知商家
             'app\event\MessageBuyerPaySuccess',
-            // 买家收货通知商家
-            'app\event\MessageBuyerReceive',
+            // 买家订单完成通知
+            'app\event\MessageBuyerOrderComplete',
             // 会员申请提现通知
             'app\event\MessageUserWithdrawalApply',
             // 会员提现成功通知
@@ -252,6 +272,8 @@ return [
             'app\event\MessageFenxiaoWithdrawalSuccess',
             // 分销提现失败通知
             'app\event\MessageFenxiaoWithdrawalError',
+            // 分销佣金发放通知
+            'app\event\MessageOrderCommissionGrant',
 
             // 会员注销成功通知
             'app\event\MessageCancelSuccess',
@@ -259,6 +281,8 @@ return [
             'app\event\MessageCancelFail',
             // 会员注销申请通知
             'app\event\MessageCancelApply',
+            // 会员账户变动通知通知
+            'app\event\MessageAccountChangeNotice',
         ],
         //发送短信
         'sendSms' => [
@@ -296,6 +320,16 @@ return [
         //会员群体定时刷新
         'CronMemberClusterRefresh' => [
             'app\event\CronMemberClusterRefresh'
+        ],
+
+        //网站部署配置
+        'SiteDeployData' => [
+			// 域名跳转
+			'app\event\DomainJumpSiteDeployData',
+			// h5
+            'app\event\H5SiteDeployData',
+			// 客服
+			'app\event\ServicerSiteDeployData'
         ]
     ],
 

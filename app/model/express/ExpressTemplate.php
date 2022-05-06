@@ -46,7 +46,10 @@ class ExpressTemplate extends BaseModel
             $data_item                = $v;
             $data_item['template_id'] = $template_id;
             $data_item['fee_type']    = $data['fee_type'];
-            model("express_template_item")->add($data_item);
+            if($data_item[ 'area_ids' ] && $data_item[ 'area_names' ])
+            {
+                model("express_template_item")->add($data_item);
+            }
         }
         Cache::tag("express_template_" . $data['site_id'])->clear();
         return $this->success($template_id);
@@ -72,7 +75,10 @@ class ExpressTemplate extends BaseModel
             $data_item                = $v;
             $data_item['template_id'] = $data['template_id'];
             $data_item['fee_type']    = $data['fee_type'];
-            model("express_template_item")->add($data_item);
+            if($data_item[ 'area_ids' ] && $data_item[ 'area_names' ])
+            {
+                model("express_template_item")->add($data_item);
+            }
         }
         Cache::tag("express_template_" . $data['site_id'])->clear();
         return $this->success($res);
@@ -84,9 +90,9 @@ class ExpressTemplate extends BaseModel
      */
     public function deleteExpressTemplate($template_id, $site_id)
     {
-        $res = model('express_template')->delete([['template_id', '=', $template_id], ['site_id', '=', $site_id]]);
+        $res = model('express_template')->delete([['template_id', 'in', $template_id], ['site_id', '=', $site_id]]);
         if ($res) {
-            model('express_template_item')->delete([['template_id', '=', $template_id]]);
+            model('express_template_item')->delete([['template_id', 'in', $template_id]]);
         }
 
         Cache::tag("express_template_" . $site_id)->clear();

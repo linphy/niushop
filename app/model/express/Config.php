@@ -30,6 +30,11 @@ class Config extends BaseModel
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'EXPRESS_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'express_name' => '快递发货'
+            ];
+        }
         return $res;
     }
 
@@ -59,6 +64,11 @@ class Config extends BaseModel
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'EXPRESS_STORE_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'store_name' => '门店自提'
+            ];
+        }
         return $res;
     }
 
@@ -89,6 +99,11 @@ class Config extends BaseModel
     {
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'EXPRESS_LOCAL_DELIVERY_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            $res['data']['value'] = [
+                'local_name' => '同城配送'
+            ];
+        }
         return $res;
     }
 
@@ -103,7 +118,7 @@ class Config extends BaseModel
             return $this->error('', '缺少必须参数站点id');
         }
         $config = new ConfigModel();
-        $res    = $config->setConfig($data, '外卖配送配置设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'EXPRESS_LOCAL_DELIVERY_CONFIG']]);
+        $res    = $config->setConfig($data, '同城配送配置设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'EXPRESS_LOCAL_DELIVERY_CONFIG']]);
         return $res;
     }
     /*********************************************************************** 外卖配送 end ***********************************************************************/

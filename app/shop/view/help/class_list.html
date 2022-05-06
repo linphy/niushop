@@ -23,6 +23,7 @@
 		<ul class="layui-colla-content layui-show">
 			<li>帮助内容的类型</li>
 			<li>帮助类型排序显示规则为排序小的在前，新增的在前</li>
+			<li>PC端底部只显示前四个帮助分类</li>
 		</ul>
 	</div>
 </div>
@@ -92,9 +93,9 @@
                     templet: '#sort'
                 },{
 					title: '操作',
-					width: '20%',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+                    align : 'right'
 				}]
 			],
 		});
@@ -121,18 +122,35 @@
 					location.href = ns.url("shop/help/editClass?class_id=" + data.class_id);
 					break;
 				case 'delete': //删除
-					deleteUser(data.class_id);
+					deleteUser(data.class_id,data.child);
 					break;
 			}
 		});
+
+        table.on("sort",function (obj) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: {
+                    order:obj.field,
+                    sort:obj.type
+                }
+            });
+        });
 		
 		/**
 		 * 删除
 		 */
-		function deleteUser(class_id) {
+		function deleteUser(class_id,child) {
 			if (repeat_flag) return false;
 			repeat_flag = true;
-		
+			if(child == 1){
+				repeat_flag = false;
+				layer.msg("该分类使用中，不可删除");
+				return false;
+			}
+
 			layer.confirm('确定要删除该帮助类型吗?', function() {
 				$.ajax({
 					url: ns.url("shop/help/deleteClass"),

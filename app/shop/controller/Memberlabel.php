@@ -30,11 +30,19 @@ class Memberlabel extends BaseShop
 
             $condition   = [['site_id', '=', $this->site_id]];
             $condition[] = ['label_name', 'like', "%" . $search_text . "%"];
-            $order       = 'create_time desc';
             $field       = '*';
 
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
             $member_label_model = new MemberLabelModel();
-            $list               = $member_label_model->getMemberLabelPageList($condition, $page, $page_size, $order, $field);
+            $list               = $member_label_model->getMemberLabelPageList($condition, $page, $page_size, $order_by, $field);
             return $list;
         } else {
             return $this->fetch('memberlabel/label_list');
@@ -71,18 +79,16 @@ class Memberlabel extends BaseShop
         $label_id           = input('label_id', 0);
         if (request()->isAjax()) {
             $data = [
-                'site_id'     => $this->site_id,
                 'label_name'  => input('label_name', ''),
                 'remark'      => input('remark', ''),
                 'sort'        => input('sort', 0),
                 'modify_time' => time(),
             ];
-            return $member_label_model->editMemberLabel($data, [['label_id', '=', $label_id]]);
+            return $member_label_model->editMemberLabel($data, [['label_id', '=', $label_id], ['site_id', '=', $this->site_id]]);
         } else {
-
-            $label_info = $member_label_model->getMemberLabelInfo([['label_id', '=', $label_id]]);
+            $label_info = $member_label_model->getMemberLabelInfo([['label_id', '=', $label_id], ['site_id', '=', $this->site_id]]);
+            if (empty($label_info['data'])) return $this->error('未获取到标签数据', addon_url('shop/memberlabel/labellist'));
             $this->assign('label_info', $label_info);
-
             return $this->fetch('memberlabel/edit_label');
         }
     }

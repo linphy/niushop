@@ -11,6 +11,8 @@
 
 namespace addon\manjian\shop\controller;
 
+use addon\coupon\model\CouponType;
+use app\model\member\MemberLevel;
 use app\shop\controller\BaseShop;
 use addon\manjian\model\Manjian as ManjianModel;
 use think\facade\Cache;
@@ -48,6 +50,23 @@ class Manjian extends BaseShop
             if ($status != null) {
                 $condition[] = ['status', '=', $status];
             }
+
+            $start_time = input('start_time', '');
+            $end_time   = input('end_time', '');
+
+            if ($start_time && !$end_time) {
+                $condition[] = ['end_time', '>=', date_to_time($start_time)];
+            } elseif (!$start_time && $end_time) {
+                $condition[] = ['start_time', '<=', date_to_time($end_time)];
+            } elseif ($start_time && $end_time) {
+                $start_timestamp = date_to_time($start_time);
+                $end_timestamp = date_to_time($end_time);
+                $sql = "start_time between {$start_timestamp} and {$end_timestamp}";
+                $sql .= " or end_time between {$start_timestamp} and {$end_timestamp}";
+                $sql .= " or (start_time <= {$start_timestamp} and end_time >= {$end_timestamp})";
+                $condition[] = ['', 'exp', \think\facade\Db::raw($sql)];
+            }
+
             $order = 'create_time desc';
             $field = 'manjian_id,manjian_name,start_time,end_time,create_time,status';
 
@@ -76,13 +95,14 @@ class Manjian extends BaseShop
      */
     public function add()
     {
+        $member_level_model = new MemberLevel();
         if (request()->isAjax()) {
-
             $data = [
                 'site_id'      => $this->site_id,
                 'manjian_name' => input('manjian_name', ''),
                 'manjian_type' => input('manjian_type', ''),
                 'type'         => input('type', 0),
+                'number'       => input('number', 0),
                 'goods_ids'    => input('goods_ids', ''),
                 'start_time'   => strtotime(input('start_time', '')),
                 'end_time'     => strtotime(input('end_time', '')),
@@ -93,6 +113,17 @@ class Manjian extends BaseShop
             $manjian_model = new ManjianModel();
             return $manjian_model->addManjian($data);
         } else {
+            //获取优惠券列表
+            $coupon_model = new CouponType();
+            $condition    = [
+                ['status', '=', 1],
+                ['site_id', '=', $this->site_id],
+            ];
+            //优惠券字段
+            $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time';
+            $coupon_list  = $coupon_model->getCouponTypeList($condition, $coupon_field);
+            $this->assign('coupon_list', $coupon_list);
+            $this->assign('level_time', $member_level_model->level_time);
             return $this->fetch("manjian/add", [], $this->replace);
         }
     }
@@ -102,6 +133,7 @@ class Manjian extends BaseShop
      */
     public function edit()
     {
+        $member_level_model = new MemberLevel();
         $manjian_model = new ManjianModel();
         if (request()->isAjax()) {
 
@@ -117,6 +149,7 @@ class Manjian extends BaseShop
                 'rule_json'    => input('rule_json', ''),
                 'remark'       => input('remark', '')
             ];
+
             return $manjian_model->editManjian($data);
 
         } else {
@@ -125,9 +158,19 @@ class Manjian extends BaseShop
             $this->assign('manjian_id', $manjian_id);
 
             $manjian_info = $manjian_model->getManjianDetail($manjian_id, $this->site_id);
-
+            if (empty($manjian_info['data'])) return $this->error('未获取到活动数据', addon_url('manjian://shop/manjian/lists'));
             $this->assign('manjian_info', $manjian_info['data']);
-
+            //获取优惠券列表
+            $coupon_model = new CouponType();
+            $condition    = [
+                ['status', '=', 1],
+                ['site_id', '=', $this->site_id],
+            ];
+            //优惠券字段
+            $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time';
+            $coupon_list  = $coupon_model->getCouponTypeList($condition, $coupon_field);
+            $this->assign('coupon_list', $coupon_list);
+            $this->assign('level_time', $member_level_model->level_time);
             return $this->fetch("manjian/edit", [], $this->replace);
         }
     }
@@ -140,7 +183,7 @@ class Manjian extends BaseShop
         $manjian_id    = input('manjian_id', 0);
         $manjian_model = new ManjianModel();
         $manjian_info  = $manjian_model->getManjianDetail($manjian_id, $this->site_id);
-
+        if (empty($manjian_info['data'])) return $this->error('未获取到活动数据', addon_url('manjian://shop/manjian/lists'));
         $this->assign('manjian_info', $manjian_info['data']);
         return $this->fetch('manjian/detail');
 

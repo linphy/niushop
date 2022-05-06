@@ -97,6 +97,7 @@ class Replay extends BaseModel
     public function getSiteWechatKeywordsReplay($keywords, $site_id)
     {
         $list      = model('wechat_replay_rule')->getList([['rule_type', '=', 'KEYWORDS'], ['site_id', '=', $site_id]]);
+        $default_list = model('wechat_replay_rule')->getList([['rule_type', '=', 'DEFAULT'], ['site_id', '=', $site_id]]);
         $rule_list = array();
         $text      = '';
         foreach ($list as $k => $v) {
@@ -114,7 +115,19 @@ class Replay extends BaseModel
             }
         }
         if (empty($rule_list)) {
-            $rule = [];
+            $default_rule_list = array();
+            foreach ($default_list as $kk => $vv) {
+                $default_replay_array  = json_decode($vv['replay_json'], true);
+                if (!empty($default_replay_array)) {
+                    $num         = rand(0, count($replay_array) - 1);
+                    $default_rule_list[] = $default_replay_array[$num];
+                }
+            }
+            if (!empty($default_rule_list)){
+                $rule = $default_rule_list[0];
+            }else{
+                $rule = [];
+            }
         } else {
             $rule = $rule_list[0];
         }

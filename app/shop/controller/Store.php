@@ -13,6 +13,7 @@ namespace app\shop\controller;
 
 use app\model\store\Store as StoreModel;
 use app\model\system\Address as AddressModel;
+use app\model\web\Config as ConfigModel;
 
 /**
  * 门店
@@ -39,18 +40,26 @@ class Store extends BaseShop
             $store_model = new StoreModel();
             $page        = input('page', 1);
             $page_size   = input('page_size', PAGE_LIST_ROWS);
-            $order       = input("order", "create_time desc");
-            $keyword     = input("keyword", '');
+//            $order       = input("order", "create_time desc");
+            $keyword     = input("search_text", '');
             $status      = input("status", '');
+            $type      = input("type", '');
+
             $condition   = [];
-            $condition[] = ['site_id', "=", $this->site_id];
-            if ($status != null) {
-                $condition[] = ['status', '=', $status];
+           if($type == 1){
+                if ($status != null) {
+                    $condition[] = ['status', '=', $status];
+                    $condition[] = ['is_frozen', '=', 0];
+                }
+            }else if($type == 2){
+                $condition[] = ['is_frozen', '=', $status];
             }
+            $condition[] = ['site_id', "=", $this->site_id];
             //关键字查询
             if (!empty($keyword)) {
                 $condition[] = ["store_name", "like", "%" . $keyword . "%"];
             }
+            $order = 'is_frozen asc,status desc';
             $list = $store_model->getStorePageList($condition, $page, $page_size, $order);
             return $list;
         } else {
@@ -86,6 +95,13 @@ class Store extends BaseShop
             $is_pickup    = input("is_pickup", 0);
             $is_o2o       = input("is_o2o", 0);
             $open_date    = input("open_date", '');
+            $start_time = input('start_time', 0);
+            $end_time   = input('end_time', 0);
+            $time_type   = input('time_type', 0);
+            $time_week = input('time_week', '');
+            if(!empty($time_week)){
+                $time_week = implode(',',$time_week);
+            }
             $data         = array(
                 "store_name"   => $store_name,
                 "telphone"     => $telphone,
@@ -102,7 +118,11 @@ class Store extends BaseShop
                 "is_pickup"    => $is_pickup,
                 "is_o2o"       => $is_o2o,
                 "open_date"    => $open_date,
-                "site_id"      => $this->site_id
+                "site_id"      => $this->site_id,
+                'start_time' => $start_time,
+                'end_time'   => $end_time,
+                'time_type'   => $time_type,
+                'time_week' => $time_week,
             );
 
             //判断是否开启多门店
@@ -125,6 +145,11 @@ class Store extends BaseShop
             $this->assign("province_list", $list["data"]);
             $this->assign("is_exit", $is_store);
             $this->assign("http_type", get_http_type());
+
+            $config_model = new ConfigModel();
+            $mp_config = $config_model->getMapConfig($this->site_id);
+            $this->assign('tencent_map_key', $mp_config['data']['value']['tencent_map_key']);
+
             return $this->fetch("store/add_store");
         }
     }
@@ -135,6 +160,7 @@ class Store extends BaseShop
      */
     public function editStore()
     {
+        $is_exit = addon_is_exit("store");
         $store_id    = input("store_id", 0);
         $condition   = array(
             ["site_id", "=", $this->site_id],
@@ -157,6 +183,13 @@ class Store extends BaseShop
             $is_pickup    = input("is_pickup", 0);
             $is_o2o       = input("is_o2o", 0);
             $open_date    = input("open_date", '');
+            $start_time = input('start_time', 0);
+            $end_time   = input('end_time', 0);
+            $time_type   = input('time_type', 0);
+            $time_week = input('time_week', '');
+            if(!empty($time_week)){
+                $time_week = implode(',',$time_week);
+            }
             $data         = array(
                 "store_name"   => $store_name,
                 "telphone"     => $telphone,
@@ -173,8 +206,22 @@ class Store extends BaseShop
                 "is_pickup"    => $is_pickup,
                 "is_o2o"       => $is_o2o,
                 "open_date"    => $open_date,
+                'start_time' => $start_time,
+                'end_time'   => $end_time,
+                'time_type'   => $time_type,
+                'time_week' => $time_week,
             );
-            $result       = $store_model->editStore($data, $condition);
+            $user_type = input('user_type', 1);
+            if ($is_exit == 1 && $user_type == 0) {
+                $user_data = [
+                    'username' => input('username', ''),
+                    'password' => data_md5(input('password', '')),
+                ];
+            }else{
+                $user_data = [];
+            }
+
+            $result       = $store_model->editStore($data, $condition, $user_data, $is_exit, $user_type);
             return $result;
         } else {
             //查询省级数据列表
@@ -183,11 +230,17 @@ class Store extends BaseShop
             $this->assign("province_list", $list["data"]);
             $info_result = $store_model->getStoreInfo($condition);//门店信息
             $info        = $info_result["data"];
+            if (empty($info)) return $this->error('未获取到门店数据', addon_url('shop/store/lists'));
             $this->assign("info", $info);
             $this->assign("store_id", $store_id);
-            $is_exit = addon_is_exit("store");
+
             $this->assign("is_exit", $is_exit);
             $this->assign("http_type", get_http_type());
+
+            $config_model = new ConfigModel();
+            $mp_config = $config_model->getMapConfig($this->site_id);
+            $this->assign('tencent_map_key', $mp_config['data']['value']['tencent_map_key']);
+
             return $this->fetch("store/edit_store");
         }
     }

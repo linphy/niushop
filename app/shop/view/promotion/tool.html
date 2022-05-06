@@ -55,8 +55,9 @@
 			{/empty}
 			{/if}
 			{/foreach}
+			{if  condition="$user_info['is_admin'] eq '1'"}
 			{foreach $tool_addon as $tool_addon_k => $tool_addon_v}
-			
+
 			<div class="ns-item-block ns-item-block-hover">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
@@ -72,13 +73,13 @@
 					<div class="ns-item-float">
 						<div class="ns-item-float-con"></div>
 						<div class="ns-item-float-con now_btn" >
-							<!-- href="https://www.niushop.com" target="_blank" -->
-							<a  >立即升级</a>
+							<a onclick="alertAddon()" target="_blank">立即升级</a>
 						</div>
 					</div>
 				</div>
 			</div>
 			{/foreach}
+			{/if}
 		</div>
 	</div>
 </div>

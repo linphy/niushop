@@ -121,6 +121,7 @@ class User extends BaseShop
             );
             $user_info_result = $user_model->getUserInfo($condition);
             $user_info = $user_info_result[ "data" ];
+            if (empty($user_info)) return $this->error('未获取到用户数据', addon_url('shop/user/user'));
             $this->assign("edit_user_info", $user_info);
 
             //用户组
@@ -150,6 +151,18 @@ class User extends BaseShop
             $result = $user_model->deleteUser($condition);
             return $result;
         }
+    }
+
+    /**
+     * 清除后台所有用户的登录信息
+     */
+    public function deleteUserLoginInfo()
+    {
+        $app_module = $this->app_module;
+        $site_id = $this->site_id;
+        $user_model = new UserModel();
+        $result = $user_model->deleteUserLoginInfo($app_module,$site_id);
+        return $result;
     }
 
     /**
@@ -278,6 +291,7 @@ class User extends BaseShop
             );
             $group_info_result = $group_model->getGroupInfo($condition);
             $group_info = $group_info_result[ "data" ];
+            if (empty($group_info)) return $this->error('未获取到用户组数据', addon_url('shop/user/group'));
             $this->assign("group_info", $group_info);
             $this->assign("group_id", $group_id);
 

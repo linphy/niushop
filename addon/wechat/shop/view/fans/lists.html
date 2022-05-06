@@ -7,6 +7,7 @@
 
 <div class="ns-single-filter-box">
 	<button class="layui-btn ns-bg-color btn-hide" lay-submit="" lay-filter="save"  onclick="refresh()">同步粉丝信息</button>
+
     <!-- 右边的form元素 -->
     <div class="layui-form">
         <div class="layui-input-inline">
@@ -16,6 +17,13 @@
             </button>
         </div>
     </div>
+</div>
+<div class="layui-collapse ns-tips">
+	<div class="layui-colla-item">
+		<h2 class="layui-colla-title">操作提示</h2>
+		<div class="layui-colla-content layui-show">说明：把同步公众号上的实际粉丝数量与信息同步到商城中展示
+		</div>
+	</div>
 </div>
 <!-- 列表 -->
 <table id="Fans_list" lay-filter="Fans_list"></table>

@@ -29,7 +29,7 @@ class Bundling extends BaseApi
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
         $bundling_model = new BundlingModel();
-        $info = $bundling_model->getBundlingGoods($sku_id);
+        $info = $bundling_model->getBundlingGoodsNew($sku_id);
         return $this->response($info);
     }
 

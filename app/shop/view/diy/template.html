@@ -184,7 +184,7 @@
         <div class="template-content">
             <div class="template-img">
                 <div class="template-img-box">
-                    <img src={{ns.img(d.image)}} alt="">
+                    <img src="{{ns.img(d.image)}}?v=20220104" alt="">
                 </div>
             </div>
             <div class="template-right">
@@ -214,7 +214,7 @@
                     for (var i = 0; i< data.length; i++){
                       html += `<li class="template-item">`;
                         html += `<div class="item-img">`;
-                            html += `<img src="${ns.img(data[i].image)}" alt="">`;
+                            html += `<img src="${ns.img(data[i].image)}?v=20220104" alt="">`;
                         html += `</div>`;
                         html += `<span class="item-name">${data[i].title}</span>`;
                         html += `<div class="item-hide">`;

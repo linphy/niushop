@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '优惠券',
                     //展示介绍
-                    'description' => '会员优惠券功能',
+                    'description' => '设置商家优惠券',
                     //展示图标
                     'icon'        => 'addon/coupon/icon.png',
                     //跳转链接

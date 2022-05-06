@@ -105,7 +105,7 @@ class Tripartite extends BaseApi
             $res = $login->mobileLogin($this->params);
             if ($res[ 'code' ] >= 0) {
                 $token = $this->createToken($res[ 'data' ][ 'member_id' ]);
-                $res = $this->success([ 'token' => $token ]);
+                $res = $this->success([ 'token' => $token ,'can_receive_registergift'=>$res['data']['can_receive_registergift']]);
             }
         } else {
             $res = $register->mobileRegister($this->params);

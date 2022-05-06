@@ -26,6 +26,9 @@ return [
         'MemberAccountRule' => [
             'addon\memberregister\event\MemberAccountRule',
         ],
+        'MemberReceiveRegisterGift' => [
+            'addon\memberregister\event\MemberReceiveRegisterGift',
+        ],
     ],
 
     'subscribe' => [

@@ -15,7 +15,7 @@ use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
 use addon\coupon\model\CouponType;
 use addon\coupon\model\Coupon;
-
+use think\facade\Db;
 /**
  * 会员注册
  */
@@ -50,7 +50,13 @@ class Register extends BaseModel
         $coupon_list = [];
         if($res['data']['value']['coupon']) {
             $coupon = new CouponType();
-            $coupon_list = $coupon->getCouponTypeList([ ['site_id','=',$site_id],['status','=',1],['coupon_type_id','in',$res['data']['value']['coupon']] ]);
+            $condition = [
+              ['site_id', '=', $site_id],
+              ['status', '=', 1],
+              ['coupon_type_id','in',$res['data']['value']['coupon']],
+              ['', "exp", Db::raw("(lead_count < count && count != -1) OR count = -1")]
+            ];
+            $coupon_list = $coupon->getCouponTypeList($condition);
             $coupon_list = $coupon_list['data'];
         }
         $res['data']['value']['coupon_list'] = $coupon_list;

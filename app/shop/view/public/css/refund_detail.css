@@ -1,7 +1,7 @@
 .refund-title{font-weight:700;margin-bottom:8px}
 .refund-box{padding:0;font-size:12px;max-width:240px;line-height:21px}
 .refund-item .refund-label{color:#646566;display:inline-block;min-width:60px}
-.refund-item .refund-content{display:inline;white-space:pre-wrap;word-break:break-all}
+.refund-item .refund-content{display:inline;word-break:break-all}
 .goods-item{display:-ms-flexbox;display:flex;-ms-flex-align:start;align-items:flex-start}
 .refund-item .goods-item .image-wrap{width:64px;height:64px;padding-top:5px;vertical-align:middle;text-align:center;display:-ms-flexbox;display:flex;-ms-flex-align:start;align-items:flex-start}
 .refund-item .goods-item img{width:64px;height:64px;max-width:64px;max-height:64px;min-width:64px}
@@ -26,10 +26,15 @@
 .refund-btn{color:#323233;color:var(--theme-stroke-1,#323233);background-color:#fff;background-color:var(--theme-stroke-9,#fff);display:inline-block;height:32px;line-height:30px;font-size:14px;padding:0 16px;border-radius:2px;font-family:inherit;border:1px solid #dcdee0;border-color:var(--theme-stroke-5,#dcdee0);text-align:center;vertical-align:middle;box-sizing:border-box;cursor:pointer;transition:all .3s}
 .refund-money{color:#d40000}
 .refund-block-title{font-weight:700;padding-bottom:10px;border-bottom:1px solid #ebedf0;background-color:#fff;font-size:14px;margin-top:30px;}
-.refund-block-content{margin-top:20px}
+.refund-block-content{margin-top:20px;padding: 0 48px;}
 .refund-way{width:24px;height:24px;line-height:24px;display:inline-block;border-radius:50%;background-color:#74829d;color:#fff;text-align:center}
 .seller-buyer{background-color:#ff8143}
 .platform-buyer{background-color:#5FB878}
 .layui-timeline-item:last-child:before{display:none !important;}
 .layui-timeline-axis:hover{color:#FFF;}
 .desc {color: #999;font-size: 12px}
+.layui-timeline-axis {left: 10px;}
+.layui-timeline-item:before{margin-left: 17px;}	
+.shop-information-table>table{border-bottom: 1px solid rgb(238,238,238);}
+.align-center {text-align: center;}
+.table-trTow .goods-name {width: 200px;}

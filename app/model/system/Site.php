@@ -14,6 +14,7 @@ namespace app\model\system;
 use app\model\BaseModel;
 use think\facade\Cache;
 use think\facade\Db;
+use app\model\upload\Upload;
 
 /**
  * 站点管理
@@ -51,7 +52,17 @@ class Site extends BaseModel
      */
     public function editSite($site_data, $condition)
     {
+        $site_info = $this->getSiteInfo($condition);
+        if($site_info['data'] && $site_data['logo'] && $site_info['data']['logo'] != $site_data['logo']){
+            $upload_model = new Upload();
+            $upload_model->deletePic($site_info['data']['logo'], $site_info['data']['site_id']);
+        }
+
         $res = model('site')->update($site_data, $condition);
+        if($res && $site_data['logo']){
+            copy($site_data['logo'],"upload/default/default_img/login.png");
+        }
+
         return $this->success($res);
     }
 }

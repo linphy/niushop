@@ -57,6 +57,7 @@ class Goodscategory extends BaseShop
             $category_id_1 = input('category_id_1', 0); // 一级分类id
             $category_id_2 = input('category_id_2', 0); // 二级分类id
             $category_full_name = input('category_full_name', '');; // 组装名称
+            $link_url = input('link_url', '');;// 广告链接
 
             $data = [
                 'site_id' => $this->site_id,
@@ -75,7 +76,8 @@ class Goodscategory extends BaseShop
                 'commission_rate' => $commission_rate,
                 'category_id_1' => $category_id_1,
                 'category_id_2' => $category_id_2,
-                'category_full_name' => $category_full_name
+                'category_full_name' => $category_full_name,
+                'link_url' => $link_url
             ];
             $res = $goods_category_model->addCategory($data);
             if (!empty($res[ 'data' ])) {
@@ -128,8 +130,8 @@ class Goodscategory extends BaseShop
             $category_id_1 = input('category_id_1', 0);// 一级分类id
             $category_id_2 = input('category_id_2', 0);// 二级分类id
             $category_id_3 = input('category_id_3', 0);// 三级分类id
-            $category_full_name = input('category_full_name', '');;// 组装名称
-
+            $category_full_name = input('category_full_name', '');// 组装名称
+            $link_url = input('link_url', '');// 广告链接
             $data = [
                 'site_id' => $this->site_id,
                 'category_id' => $category_id,
@@ -149,7 +151,8 @@ class Goodscategory extends BaseShop
                 'category_id_1' => $category_id_1,
                 'category_id_2' => $category_id_2,
                 'category_id_3' => $category_id_3,
-                'category_full_name' => $category_full_name
+                'category_full_name' => $category_full_name,
+                'link_url' => $link_url
             ];
             $this->addLog("编辑商品分类:" . $category_name);
             $res = $goods_category_model->editCategory($data);
@@ -166,6 +169,8 @@ class Goodscategory extends BaseShop
 
             $goods_category_info = $goods_category_model->getCategoryInfo([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ]);
             $goods_category_info = $goods_category_info[ 'data' ];
+            if (empty($goods_category_info)) return $this->error('未获取到分类数据', addon_url('shop/goodscategory/lists'));
+
             $this->assign("goods_category_info", $goods_category_info);
 
             //父级

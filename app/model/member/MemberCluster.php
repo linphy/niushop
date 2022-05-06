@@ -51,7 +51,7 @@ class MemberCluster extends BaseModel
      * 查询规则
      */
     public $rule = [
-        'member_level' => ['field' => "member_level",'query_method' => "=", "table" => "member"],
+        'member_level' => ['field' => "member_level",'query_method' => "FIND_IN_SET", "table" => "member"],
         'member_label' => ['field' => "member_label",'query_method' => "FIND_IN_SET", "table" => "member"],
         'sex' => ['field' => "sex",'query_method' => "in", "table" => "member"],
         'birthday' => ['field' => "birthday",'query_method' => "between time", "table" => "member"],
@@ -424,5 +424,28 @@ class MemberCluster extends BaseModel
         $res = $cron_model->addCron(2, 1, "会员群体定时刷新", "CronMemberClusterRefresh", $execute_time, 0);
         return $this->success($res);
     }
+    /**
+     * 获取优惠券剩余数量
+     */
+    public function getCouponNum($coupon,$site_id)
+    {
+        $coupon_array = explode(',', $coupon);
+        $num = 0;
+        $is_infinite = 0;
+        foreach ($coupon_array as $k => $v) {
+            $coupon_type_info = model('promotion_coupon_type')->getInfo(['coupon_type_id' => $v, 'site_id' => $site_id]);
+            if ($coupon_type_info['count'] == -1){
+                $is_infinite += 1;
+            }else{
+                $num += $coupon_type_info['count']-$coupon_type_info['lead_count'];
+            }
+        }
+
+        if ($is_infinite == 0 && $num == 0){
+            return $this->error('', '当前暂无可发放优惠券');
+        }
+
+    }
+
 
 }

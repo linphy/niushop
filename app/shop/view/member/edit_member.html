@@ -1,157 +1,102 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.flex{display: flex;flex-wrap: wrap;}
-	.flex .layui-form-item{width:50%}
-	.ns-form-row{margin: 20px auto;}
-	.layui-tab-brief li{border-bottom: 3px solid #FFFFFF;}
-	.layui-tab-brief li.layui-this{border-bottom: 3px solid #ff6a00;}
-	.panel-content { padding-left: 15px; box-sizing: border-box; }
-	.ns-custom-panel .custom-panel-title .panel-content { width: calc(100% - 190px); }
-	.ns-account-value, .ns-split { line-height: 34px; }
-	.ns-custom-panel .custom-panel-from { display: flex; }
-	.ns-custom-panel .custom-panel-from .layui-form-label{
-		text-align: center;
-	}
-	.ns-custom-panel .custom-panel-from>div{
-		text-align: center;
-	}
-	.ns-custom-panel .custom-panel-from .layui-form-item>div>span{
-		margin-right: 10px;
-	}
-	.ns-custom-panel .custom-panel-from .layui-form-item>div>button{
-		width: 20px;
-		height: 20px;
-		text-align: center;
-		padding: 0;
-		line-height: 20px;
-		border:0;
-		color:#FF6A00 ;
-	}
-	.layui-input-block + .layui-word-aux {
-	    display: block;
-	    margin-left: 100px;
-	}
-	.ns-shop-account {
-		display: flex;
-		align-items: center;
-		position: relative;
-		padding: 15px;
-		box-sizing: border-box;
-	}
-	
-	.ns-shop-detail p {
-		display: inline-block;
-		width: 300px;
-		line-height: 30px;
-	}
+	.flex {display:flex;flex-wrap:wrap;}
+	.flex .layui-form-item {width:50%}
+	.ns-form-row {margin:20px auto;}
+	.layui-tab-brief li {border-bottom:3px solid #FFFFFF;}
+	.layui-tab-brief li.layui-this {border-bottom:3px solid #ff6a00;}
+	.panel-content {padding-left:15px;box-sizing:border-box;}
+	.ns-custom-panel .custom-panel-title .panel-content {width:calc(100% - 190px);}
+	.ns-account-value,.ns-split {line-height:34px;}
+	.ns-custom-panel .custom-panel-from {display:flex;}
+	.ns-custom-panel .custom-panel-from .layui-form-label {text-align:center;}
+	.ns-custom-panel .custom-panel-from>div {text-align:center;}
+	.ns-custom-panel .custom-panel-from .layui-form-item>div>span {margin-right:10px;}
+	.ns-custom-panel .custom-panel-from .layui-form-item>div>button {width:20px;height:20px;text-align:center;padding:0;line-height:20px;border:0;color:#FF6A00;}
+	.layui-input-block + .layui-word-aux {display:block;margin-left:100px;}
+	.ns-shop-account {display:flex;align-items:center;position:relative;padding:15px;box-sizing:border-box;}
+	.ns-item-pic {width:70px!important;height:70px!important;margin-right:15px;border-radius: 50%;overflow: hidden;}
+	.ns-shop-detail {flex:1;}
+	.ns-shop-detail p {display:inline-block;width:300px;line-height:30px;}
+	.select-level-layer .layui-layer-content {overflow-y:scroll!important;}
+	.edit-member-layer .layui-form-radio {margin-top:0;}
+	.edit-member-layer .ns-form {padding:0;}
+	.edit-member-layer .ns-form .layui-form-item {margin-bottom:0;}
+	.ns-member-info {margin-left:15px;background: #f5f5f5}
 </style>
 {/block}
 {block name="main"}
 <div class="fourstage-nav layui-tab layui-tab-brief" lay-filter="edit_user_tab">
-<ul class="layui-tab-title">
-	<li class="layui-this" lay-id="basic_info">基本信息</li>
-</ul>
+	<ul class="layui-tab-title">
+		<li class="layui-this" lay-id="basic_info">基本信息</li>
+	</ul>
 </div>
 <div class="layui-form ns-form flex">
-	<div class="layui-form-item">
-		<label class="layui-form-label"><span class="required">*</span>用户名：</label>
-		<div class="layui-input-block">
-			<p class="ns-input-text ns-len-mid">{$member_info.data.username}</p>
+	<div class="layui-card-body ns-item-block-parent ns-member-info">
+		<div class="ns-item-pic">
+			{notempty name="$member_info.data.headimg"}
+			<img src="{:img($member_info.data.headimg)}" alt="">
+			{else/}
+			<img src="SHOP_IMG/default_headimg.png" alt="">
+			{/notempty}
 		</div>
-		<div class="ns-word-aux">用于登录，不可编辑</div>
-	</div>
-
-	<div class="layui-form-item">
-		<label class="layui-form-label"><span class="required">*</span>昵称：</label>
-		<div class="layui-input-block">
-			<input name="nickname" type="text" lay-verify="required" value="{$member_info.data.nickname}" class="layui-input ns-len-long">
-		</div>
-		<div class="ns-word-aux">会员名称</div>
-	</div>
-
-	<div class="layui-form-item">
-		<label class="layui-form-label">手机号：</label>
-		<div class="layui-input-block">
-			<input name="mobile" type="text" lay-verify="mobile" value="{$member_info.data.mobile}" class="layui-input ns-len-long">
-		</div>
-		<div class="ns-word-aux">已进行手机号验证，请填写正确的手机号</div>
-	</div>
-	
-	<div class="layui-form-item">
-		<label class="layui-form-label">状态：</label>
-		<div class="layui-input-block">
-			<input type="checkbox" name="status" value="1" lay-skin="switch" {if condition="$member_info.data.status == 1"} checked {/if} lay-filter="status">
-		</div>
-		<div class="ns-word-aux">当状态处于关闭时，该会员则不能登录。</div>
-	</div>
-
-	<div class="layui-form-item">
-		<label class="layui-form-label img-upload-lable ns-short-label">头像：</label>
-		<div class="layui-input-inline">
-			<div class="upload-img-block square">
-				<div class="upload-img-box {if condition="$member_info.data.headimg"}hover{/if}">
-					<div class="ns-upload-default" id="headImg">
-						{if condition="$member_info.data.headimg"}
-							<div id="preview_headImg" class="preview_img">
-								<img layer-src src="{:img($member_info.data.headimg)}" class="img_prev"/>
-							</div>
-						{else/}
-							<div class="upload">
-								<img src="SHOP_IMG/upload_img.png" />
-								<p>点击上传</p>
-							</div>
-						{/if}
-					</div>
-					<div class="operation"  >
-						<div >
-							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
-							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
-						</div>
-						
-						<div class="replace_img js-replace">点击替换</div>
-					</div>
-					<input type="hidden" name="headimg" value="{$member_info.data.headimg}" />
-				</div>
-				<!-- <p id="headImg" class=" {if condition="$member_info.data.headimg"} replace {else/} no-replace{/if}">替换</p>
-				
-				<i class="del {if condition="$member_info.data.headimg"}show{/if}">x</i> -->
-			</div>
+		<div class="ns-shop-detail">
+			<p>
+				<strong>用户名：</strong>
+				<span class="ns-text-color-dark-gray">{$member_info.data.username}</span>
+			</p>
+			<p>
+				<strong>昵称：</strong>
+				<span class="ns-text-color-dark-gray">{$member_info.data.nickname}</span>
+				<i class="layui-icon ns-text-color" style="margin-left: 5px;" onclick="editNickname(this)"> </i>
+			</p>
+			<p>
+				<strong>真实姓名：</strong>
+				<span class="ns-text-color-dark-gray">{notempty name="$member_info.data.realname"}{$member_info.data.realname}{else/}暂无{/notempty}</span>
+				<i class="layui-icon ns-text-color" style="margin-left: 5px;" onclick="editRealname(this)"> </i>
+			</p>
+			<p>
+				<strong>手机号：</strong>
+				<span class="ns-text-color-dark-gray">{notempty name="$member_info.data.mobile"}{$member_info.data.mobile}{else/}暂无{/notempty}</span>
+				<i class="layui-icon ns-text-color" style="margin-left: 5px;" onclick="editMobile(this)"> </i>
+			</p>
+			<p>
+				<strong>性别：</strong>
+				<span class="ns-text-color-dark-gray" data-value="$member_info.data.sex">
+					{switch name="$member_info.data.sex"}
+						{case value="0"}未知{/case}
+						{case value="1"}男{/case}
+						{case value="2"}女{/case}
+					{/switch}
+				</span>
+				<i class="layui-icon ns-text-color" style="margin-left: 5px;" onclick="editSex(this)"> </i>
+			</p>
+			<p>
+				<strong>生日：</strong>
+				<span class="ns-text-color-dark-gray" data-value="{$member_info.data.birthday}">{notempty name="$member_info.data.birthday"}{:date('Y-m-d', $member_info.data.birthday)}{else/}未知{/notempty}</span>
+				<i class="layui-icon ns-text-color" style="margin-left: 5px;" onclick="editBirthday(this)"> </i>
+			</p>
+			<p>
+				<strong>会员等级：</strong><span class="ns-text-color-dark-gray">{$member_info.data.member_level_name}</span>
+				<i class="layui-icon ns-text-color" style="margin-left: 5px;" onclick="editMemberLevel()"> </i>
+			</p>
+			<p>
+				<strong>注册时间：</strong>
+				<span class="ns-text-color-dark-gray ns-end-time">{:time_to_date($member_info.data.reg_time)}</span>
+			</p>
+			<p>
+				<strong>最后登录时间：</strong>
+				<span class="ns-text-color-dark-gray ns-end-time">{:time_to_date($member_info.data.last_login_time)}</span>
+			</p>
 		</div>
 	</div>
 
-	<div class="layui-form-item">
-		<label class="layui-form-label"><span class="required">*</span>会员卡：</label>
-		<div class="layui-input-inline ns-len-mid">
-			<select class="member_level" name="member_level" lay-verify="required" lay-filter="member_level">
-				<option value="">请选择</option>
-				{volist name="member_level_list" id="member_level"}
-				<option value="{$member_level.level_id}" {$member_info.data.member_level == $member_level.level_id ? 'selected' : '' } {if $member_level.level_type eq 1}disabled{/if}>{$member_level.level_name}</option>
-				{/volist}
-			</select>
-		</div>
-	</div>
-
-	<div class="layui-form-item">
-		<label class="layui-form-label">性别：</label>
-		<div class="layui-input-inline">
-			<input type="radio" name="sex" value="0" title="未知" {$member_info.data.sex == 0 ? 'checked' : ''} lay-filter="sex">
-			<input type="radio" name="sex" value="1" title="男" {$member_info.data.sex == 1 ? 'checked' : ''} lay-filter="sex">
-			<input type="radio" name="sex" value="2" title="女" {$member_info.data.sex == 2 ? 'checked' : ''} lay-filter="sex">
-		</div>
-	</div>
-
-	<div class="layui-form-item">
-		<label class="layui-form-label">生日：</label>
-		<div class="layui-input-inline">
-			<input name="birthday" type="text" id="laydate" value="" class="layui-input ns-len-mid">
-		</div>
-	</div>
-	
 	<!-- 隐藏域 -->
 	<input type="hidden" name="member_id" value="{$member_info.data.member_id}" />
 	<input type="hidden" class="birthday" value="{$member_info.data.birthday}" />
 </div>
+
 <div class="fourstage-nav layui-tab layui-tab-brief" lay-filter="edit_user_tab">
 	<ul class="layui-tab-title">
 		<li class="layui-this" lay-id="basic_info">账户明细</li>
@@ -159,13 +104,12 @@
 		<li class="" lay-id="basic_info">会员地址</li>
 		<li class="" lay-id="basic_info">收藏记录</li>
 		<li class="" lay-id="basic_info">浏览记录</li>
+		<li class="" lay-id="basic_info">优惠券</li>
 	</ul>
 	<div class="layui-tab-content">
-	    <div class="layui-tab-item layui-show">
+		<div class="layui-tab-item layui-show">
 			<!-- <iframe src="{:url('shop/member/accountdetail',array('member_id'=>$member_info.data.member_id))}" style="width:100%;height:100vh;border:0"></iframe> -->
 			<div class="ns-custom-panel">
-			
-			
 				<div class="custom-panel-from ns-form">
 					<div class="layui-form" lay-filter="pointForm">
 						<div class="layui-form-item">
@@ -176,29 +120,28 @@
 							</div>
 						</div>
 					</div>
-			
+
 					<div class="layui-form">
 						<div class="layui-form-item">
 							<label class="layui-form-label">余额（不可提现）</label>
 							<div>
-								
+
 								<span class="ns-len-short ns-account-value" id="member_balance">{$member_info.data.balance}</span>
 								<button class="layui-btn layui-btn-primary layui-icon" onclick="saveBalance(this)" data-num="{$member_info.data.balance}">&#xe642;</button>
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="layui-form">
 						<div class="layui-form-item">
-							
-							<label class="layui-form-label">余额（可提现）</label>
+
+							<label class="layui-form-label">收入（可提现）</label>
 							<div>
 								<span class="ns-len-short ns-account-value" id="member_balance_money">{$member_info.data.balance_money}</span>
-								<button class="layui-btn layui-btn-primary layui-icon" onclick="saveBalanceMoney(this)" data-num="{$member_info.data.balance_money}">&#xe642;</button>
 							</div>
 						</div>
 					</div>
-			
+
 					<div class="layui-form">
 						<div class="layui-form-item">
 							<label class="layui-form-label">成长值</label>
@@ -206,33 +149,32 @@
 								<span class="ns-len-short ns-account-value" id="member_growth">{$member_info.data.growth}</span>
 								<button class="layui-btn layui-btn-primary layui-icon" onclick="saveGrowth(this)" data-num="{$member_info.data.growth}">&#xe642;</button>
 							</div>
-							
+
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="ns-screen layui-collapse" lay-filter="selection_panel">
 					<div class="layui-colla-item">
-						<h2 class="layui-colla-title"></h2>
 						<form class="layui-colla-content layui-form layui-show">
-							<div class="layui-form-item">
+							<div class="layui-form-item flex">
 								<div class="layui-inline">
-								<label class="layui-form-label">账户类型：</label>
-								<div class="layui-input-inline">
-									<select name="account_type" lay-filter="account_type">
-										<option value="">请选择</option>
-										{foreach $account_type_arr as $account_type_arr_k => $account_type_arr_v}
-										<option value="{$account_type_arr_k}">{$account_type_arr_v}</option>
-										{/foreach}
-									</select>
-								</div>
+									<label class="layui-form-label">账户类型：</label>
+									<div class="layui-input-inline">
+										<select name="account_type" lay-filter="account_type">
+											<option value="">请选择</option>
+											{foreach $account_type_arr as $account_type_arr_k => $account_type_arr_v}
+											<option value="{$account_type_arr_k}">{$account_type_arr_v}</option>
+											{/foreach}
+										</select>
+									</div>
 								</div>
 								<div class="layui-inline">
 									<label class="layui-form-label">来源类型：</label>
 									<div class="layui-input-inline">
 										<select name="from_type" class="from_type">
 											<option value="">请选择</option>
-			
+
 										</select>
 									</div>
 								</div>
@@ -244,50 +186,36 @@
 								</div>
 								<div class="layui-inline">
 									<div class="layui-input-inline ns-split">&nbsp;&nbsp;-&nbsp;&nbsp;</div>
-									<div class="layui-input-inline ns-len-mid">
+									<div class="layui-input-inline">
 										<input type="text" class="layui-input" name="end_date" id="end_date" placeholder="结束时间" autocomplete="off" readonly>
 									</div>
 								</div>
-							</div>
-							<!-- <div class="layui-form-item">
-								<div class="layui-inline">
-								<label class="layui-form-label">发生时间：</label>
-								<div class="layui-input-inline">
-									<input type="text" class="layui-input" name="start_date" id="start_date" placeholder="开始时间" autocomplete="off" readonly>
-								</div>
-								<div class="layui-input-inline ns-split">&nbsp;&nbsp;-&nbsp;&nbsp;</div>
-								<div class="layui-input-inline ns-len-mid">
-									<input type="text" class="layui-input" name="end_date" id="end_date" placeholder="结束时间" autocomplete="off" readonly>
-								</div>
-								</div>
-							</div> -->
-			
-							<input type="hidden" name="member_id" value="{$member_info.data.member_id}" id="member_id"/>
-			
-							<!-- 提交 -->
-							<div class="ns-form-row" style="margin:0 !important;text-align: center;">
 								<button class="layui-btn ns-bg-color" lay-submit lay-filter="search">筛选</button>
 								<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 							</div>
+							<input type="hidden" name="member_id" value="{$member_info.data.member_id}" id="member_id"/>
 						</form>
 					</div>
 				</div>
 			</div>
 			<table id="member_account" lay-filter="member_account"></table>
 		</div>
-	    <div class="layui-tab-item">
+		<div class="layui-tab-item">
 			<iframe src="{:url('shop/member/order',array('member_id'=>$member_info.data.member_id))}" style="width:100%;height:100vh;border:0"></iframe>
 		</div>
-	    <div class="layui-tab-item">
+		<div class="layui-tab-item">
 			<iframe src="{:url('shop/member/addressdetail',array('member_id'=>$member_info.data.member_id))}" style="width:100%;height:100vh;border:0"></iframe>
 		</div>
-	    <div class="layui-tab-item">
+		<div class="layui-tab-item">
 			<iframe src="{:url('shop/goods/membergoodscollect',array('member_id'=>$member_info.data.member_id))}" style="width:100%;height:100vh;border:0"></iframe>
 		</div>
-	    <div class="layui-tab-item">
+		<div class="layui-tab-item">
 			<iframe src="{:url('shop/goods/membergoodsbrowse',array('member_id'=>$member_info.data.member_id))}" style="width:100%;height:100vh;border:0"></iframe>
 		</div>
-	  </div>
+		<div class="layui-tab-item">
+			<iframe src="{:url('shop/member/membercoupon',array('member_id'=>$member_info.data.member_id))}" style="width:100%;height:100vh;border:0"></iframe>
+		</div>
+	</div>
 </div>
 
 {/block}
@@ -295,98 +223,85 @@
 <script>
 	var birthday = $(".birthday").val();
 	$("input[name=birthday]").attr("value", ns.time_to_date(birthday, "YYYY-MM-DD"));
-	
+
 	layui.use(['form', 'laydate'], function() {
 		var form = layui.form,
-			laydate = layui.laydate,
-			repeat_flag = false; //防重复标识
+				laydate = layui.laydate,
+				repeat_flag = false; //防重复标识
 		form.render();
 
-		laydate.render({
-			elem: '#laydate',
-			done: function(){
-				editMember();
+		/**
+		 * 表单验证
+		 */
+		form.verify({
+			mobile: function(value) {
+				var reg = /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/;
+				if (value == '') {
+					return;
+				}
+				if (!reg.test(value)) {
+					return '请输入正确的手机号码!';
+				}
+			},
+			isemail: function(value) {
+				var reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+				if (value == '') {
+					return;
+				}
+				if (!reg.test(value)) {
+					return '请输入正确的邮箱!';
+				}
 			}
 		});
-
-		form.on('switch(status)', function(data){
-			editMember();
-		}); 
-
-		form.on('radio(sex)', function(data){
-			editMember();
-		}); 
-
-		form.on('select(member_level)', function(data){
-			layer.confirm('是否确定变更该客户的会员卡？',{title: '会员卡变更确认'}, function(index){
-                $.ajax({
-                    type: "POST",
-                    url: ns.url("shop/member/changememberlevel"),
-                    data: {
-                        level_id: data.value,
-						member_id: '{$member_info.data.member_id}'
-					},
-                    dataType: 'JSON',
-                    success: function(res) {
-                        if (res.code == 0) {
-                           layer.closeAll();
-                        } else {
-                            layer.msg(res.message);
-						}
-                    }
-                });
-            });
-		}); 
-
 
 		var upload = new Upload({
-			elem: '#headImg',
-			callback: function(){
-				editMember();
-			}
+			elem: '#headImg'
 		});
 
-		$('[name="mobile"],[name="headimg"],[name="nickname"]').change(function(){
-			editMember();
-		})
+		/**
+		 * 监听提交
+		 */
+		form.on('submit(save)', function(data) {
 
-		function editMember(){
+			data.field.member_level_name = $(".member_level").find("option[value=" + data.field.member_level + "]").text();
+
+			if (data.field.status == undefined) {
+				data.field.status = 0;
+			}
+
+			// 删除图片
+			if(!data.field.headimg) upload.delete();
+
 			if(repeat_flag) return false;
 			repeat_flag = true;
 
-			var data = {
-				birthday: $('[name="birthday"]').val(),
-				status: $('[name="status"]').is(':checked') ? 1 : 0,
-				sex: $('[name="sex"]:checked').val(),
-				mobile: $('[name="mobile"]').val(),
-				nickname: $('[name="nickname"]').val(),
-				headimg: $('[name="headimg"]').val(),
-				member_id: '{$member_info.data.member_id}'
-			};
-			var reg = {
-				required: /[\S]+/,
-				mobile: /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/
-			};
-
-			if (!reg.required.test(data.mobile) || !mobileReg.test(data.mobile)) delete data.mobile;
-			if (!reg.required.test(data.nickname)) delete data.nickname;
-
 			$.ajax({
 				url: ns.url("shop/member/editMember"),
-				data: data,
+				data: data.field,
 				dataType: 'JSON', //服务器返回json格式数据
 				type: 'POST', //HTTP请求类型
 				success: function(res) {
 					repeat_flag = false;
-					if (res.code != 0) {
+					if (res.code == 0) {
+						layer.confirm('编辑成功', {
+							title:'操作提示',
+							btn: ['返回列表', '继续操作'],
+							yes: function(){
+								location.href = ns.url("shop/member/memberList")
+							},
+							btn2: function() {
+								location.reload();
+							}
+						});
+					}else{
 						layer.msg(res.message);
 					}
 				}
 			});
-		}
+		});
 
 	});
-	
+
 	function back() {
 		location.href = ns.url("shop/member/memberList");
 	}
@@ -397,15 +312,19 @@
 	$("#member_point").text(parseInt("{$member_info.data.point}"));
 
 	var form,
-		table,
-		laydate,
-		laytpl;
-		repeat_flag = false, //防重复标识
-		currentDate = new Date(),
-		minDate = "";
-	
+			table,
+			laydate,
+			laytpl;
+	repeat_flag = false, //防重复标识
+			currentDate = new Date(),
+			minDate = "",
+			reg = {
+				required: /[\S]+/,
+				mobile: /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[0-9])\d{8}$/
+			};
+
 	currentDate.setDate(currentDate.getDate() - 7);
-	
+
 	layui.use(['form', 'laydate', 'laytpl'], function() {
 		form = layui.form;
 		laydate = layui.laydate;
@@ -417,33 +336,33 @@
 			elem: '#start_date',
 			type: 'datetime'
 		});
-		
+
 		//结束时间
 		laydate.render({
 			elem: '#end_date',
 			type: 'datetime'
 		});
 
-        //根据账户类型获取来源类型
-        form.on('select(account_type)', function (data) {
+		//根据账户类型获取来源类型
+		form.on('select(account_type)', function (data) {
 
-            $.ajax({
-                type: "POST",
-                url: ns.url("shop/member/getfromtype"),
-                data: {type:data.value},
-                dataType: 'JSON',
-                success: function(res) {
+			$.ajax({
+				type: "POST",
+				url: ns.url("shop/member/getfromtype"),
+				data: {type:data.value},
+				dataType: 'JSON',
+				success: function(res) {
 
-                    var html = '<option value="">请选择</option>';
-                    $.each(res,function(k,v){
-                        html += '<option value="'+k+'">'+v.type_name+'</option>';
-                    });
+					var html = '<option value="">请选择</option>';
+					$.each(res,function(k,v){
+						html += '<option value="'+k+'">'+v.type_name+'</option>';
+					});
 
-                    $('.from_type').html(html);
+					$('.from_type').html(html);
 					form.render();
-                }
-            });
-        });
+				}
+			});
+		});
 
 		/**
 		 * 重新渲染结束时间
@@ -464,7 +383,7 @@
 			elem: '#member_account',
 			url: ns.url("shop/member/accountDetail"),
 			where:{
-			    member_id : $("#member_id").val(),
+				member_id : $("#member_id").val(),
 			},
 			cols: [
 				[{
@@ -477,7 +396,8 @@
 					width: '15%',
 					unresize: 'false',
 					templet: function (d) {
-						return d.account_type = "point" ? parseInt(d.account_data) : d.account_data;
+						var num_account= parseFloat(d.account_data);
+						return d.account_type = "point" ? num_account.toFixed(2) : d.account_data;
 					}
 				}, {
 					field: 'type_name',
@@ -500,7 +420,7 @@
 				}]
 			]
 		});
-		
+
 		/**
 		 * 表单验证
 		 */
@@ -511,7 +431,7 @@
 				if (arrMen.length == 2) {
 					val = arrMen[1];
 				}
-				
+
 				if (value == "") {
 					return false;
 				}
@@ -520,7 +440,7 @@
 				}
 			}
 		});
-		
+
 		/**
 		 * 监听提交
 		 */
@@ -533,7 +453,7 @@
 			});
 			return false;
 		});
-		
+
 		form.on('submit(savePoint)', function(data) {
 			if (repeat_flag) return false;
 			repeat_flag = true;
@@ -556,7 +476,7 @@
 				success: function(res) {
 					layer.msg(res.message);
 					repeat_flag = false;
-					
+
 					if (res.code == 0) {
 						$("#member_point").html(res.data.point);
 						$("#member_point").next().attr('data-num', res.data.point);
@@ -566,7 +486,7 @@
 				}
 			});
 		});
-		
+
 		form.on('submit(saveBalance)', function(data) {
 			if (repeat_flag) return false;
 			repeat_flag = true;
@@ -589,7 +509,7 @@
 				success: function(res) {
 					layer.msg(res.message);
 					repeat_flag = false;
-					
+
 					if (res.code == 0) {
 						$("#member_balance").html(res.data.balance);
 						$("#member_balance").next().attr('data-num', res.data.balance);
@@ -599,40 +519,7 @@
 				}
 			});
 		});
-		
-		form.on('submit(saveBalanceMoney)', function(data) {
-			if (repeat_flag) return false;
-			repeat_flag = true;
-			var balance = {$member_info.data.balance_money};
-			if (data.field.adjust_num == 0) {
-				layer.msg('调整数值不能为0');
-				repeat_flag = false;
-				return ;
-			}
-			if (balance*1 + data.field.adjust_num*1 < 0) {
-				layer.msg('余额(可提现)不可以为负数');
-				repeat_flag = false;
-				return ;
-			}
-			$.ajax({
-				type: "POST",
-				url: ns.url("shop/member/adjustBalanceMoney"),
-				data: data.field,
-				dataType: 'JSON',
-				success: function(res) {
-					layer.msg(res.message);
-					repeat_flag = false;
-					
-					if (res.code == 0) {
-						$("#member_balance_money").html(res.data.balance_money);
-						$("#member_balance_money").next().attr('data-num', res.data.balance_money);
-						layer.closeAll('page');
-						table.reload();
-					}
-				}
-			});
-		});
-		
+
 		form.on('submit(saveGrowth)', function(data) {
 			if (repeat_flag) return false;
 			repeat_flag = true;
@@ -655,7 +542,7 @@
 				success: function(res) {
 					layer.msg(res.message);
 					repeat_flag = false;
-					
+
 					if (res.code == 0) {
 						$("#member_growth").html(res.data.growth);
 						$("#member_growth").next().attr('data-num', res.data.growth);
@@ -665,8 +552,14 @@
 				}
 			});
 		});
+
+		form.on('checkbox(memberlevel)', function(data){
+			$('#setMemberLevel input[type="checkbox"]').prop('checked', false);
+			$(data.elem).prop('checked', true);
+			form.render();
+		})
 	});
-	
+
 	function savePoint(e) {
 		var point = $(e).attr('data-num');
 		var data = {
@@ -685,7 +578,7 @@
 
 		$(".integral-bounced .amount input").on("input propertychange",function(val){
 			var newIntegral = parseInt($(this).val());
-			$(this).val(newIntegral);
+            if (!isNaN(newIntegral)) $(this).val(newIntegral);
 			var currIntegral = parseInt($(".integral-bounced .ns-account-value").text());
 
 			if (newIntegral + currIntegral < 0){
@@ -696,7 +589,7 @@
 
 		})
 	}
-	
+
 	function saveBalance(e) {
 		var balance = $(e).attr('data-num');
 		var data = {
@@ -712,23 +605,7 @@
 			});
 		});
 	}
-	
-	function saveBalanceMoney(e) {
-		var balance_money = $(e).attr('data-num');
-		var data = {
-			balance_money : balance_money
-		};
-		laytpl($("#balance_money").html()).render(data, function(html) {
-			layer.open({
-				title: '调整余额（可提现）',
-				skin: 'layer-tips-class',
-				type: 1,
-				area: ['800px'],
-				content: html
-			});
-		});
-	}
-	
+
 	function saveGrowth(e) {
 		var growth = $(e).attr('data-num');
 		var data = {
@@ -744,6 +621,263 @@
 			});
 		});
 	}
+
+	function editMemberLevel(){
+		laytpl($("#memberLevel").html()).render({}, function(html) {
+			layer.open({
+				title: '设置会员等级',
+				skin: 'select-level-layer',
+				type: 1,
+				area: ['600px', '400px'],
+				content: html,
+				success: function(){
+					form.render();
+				},
+				btn: ['保存', '取消'],
+				yes: function () {
+					layer.confirm('是否确定变更该客户的会员等级？',{title: '会员等级变更确认'}, function(index){
+						$.ajax({
+							type: "POST",
+							url: ns.url("shop/member/changememberlevel"),
+							data: {
+								level_id: $('#setMemberLevel input[type="checkbox"]:checked').val(),
+								member_id: '{$member_info.data.member_id}'
+							},
+							dataType: 'JSON',
+							success: function(res) {
+								if (res.code == 0) {
+									location.reload();
+								} else {
+									layer.msg(res.message);
+								}
+							}
+						});
+						console.log($('#setMemberLevel input[type="checkbox"]:checked').val())
+						layer.closeAll();
+					});
+				}
+			});
+		});
+	}
+
+	function editNickname(event){
+		var nickname = $(event).prev('span').text();
+		var html = `<div class="layui-form ns-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label" style="width:auto"><span class="required">*</span>昵称：</label>
+							<div class="layui-input-block" style="margin-left: 0;">
+								<input name="nickname" type="text" lay-verify="required" value="`+ nickname +`" class="layui-input ns-len-mid">
+							</div>
+						</div>
+					</div>`;
+		layer.open({
+			title: '编辑昵称',
+			skin: 'edit-member-layer',
+			type: 1,
+			area: ['360px', '180px'],
+			content: html,
+			success: function(){
+				form.render();
+			},
+			btn: ['保存', '取消'],
+			yes: function () {
+				var data = {nickname: $.trim($('[name="nickname"]').val())};
+				if (!reg.required.test(data.nickname)) {
+					layer.msg('请输入昵称', {icon: 5})
+					return;
+				}
+				editMember(data, function(res){
+					if (res.code == 0) {
+						$(event).prev('span').text(data.nickname);
+						layer.closeAll();
+					} else {
+						layer.msg(res.message);
+					}
+				});
+			}
+		})
+	}
+
+	function editRealname(event){
+		var realname = $.trim($(event).prev('span').text()) != '暂无' ? $.trim($(event).prev('span').text()) : '';
+		var html = `<div class="layui-form ns-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label" style="width:auto"><span class="required">*</span>真实姓名：</label>
+							<div class="layui-input-block" style="margin-left: 0;">
+								<input name="realname" type="text" lay-verify="required" value="`+ realname +`" class="layui-input ns-len-mid">
+							</div>
+						</div>
+					</div>`;
+		layer.open({
+			title: '真实姓名',
+			skin: 'edit-member-layer',
+			type: 1,
+			area: ['380px', '180px'],
+			content: html,
+			success: function(){
+				form.render();
+			},
+			btn: ['保存', '取消'],
+			yes: function () {
+				var data = {realname: $.trim($('[name="realname"]').val())};
+				if (!reg.required.test(data.realname)) {
+					layer.msg('请输入真实姓名', {icon: 5})
+					return;
+				}
+				editMember(data, function(res){
+					if (res.code == 0) {
+						$(event).prev('span').text(data.realname);
+						layer.closeAll();
+					} else {
+						layer.msg(res.message);
+					}
+				});
+			}
+		})
+	}
+
+	function editBirthday(event){
+		var birthday = $(event).prev('span').attr('data-value');
+		var html = `<div class="layui-form ns-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label" style="width:auto"><span class="required">*</span>生日：</label>
+							<div class="layui-input-block" style="margin-left: 0;">
+								<input name="birthday" type="text" id="birthday" value="" class="layui-input ns-len-mid">
+							</div>
+						</div>
+					</div>`;
+		layer.open({
+			title: '生日',
+			skin: 'edit-member-layer',
+			type: 1,
+			area: ['360px', '180px'],
+			content: html,
+			success: function(){
+				laydate.render({
+					elem: '#birthday',
+					max: 0
+				});
+				form.render();
+			},
+			btn: ['保存', '取消'],
+			yes: function () {
+				var data = {birthday: $('[name="birthday"]').val()};
+				if (!reg.required.test(data.birthday)) {
+					layer.msg('请选择生日', {icon: 5})
+					return;
+				}
+				editMember(data, function(res){
+					if (res.code == 0) {
+						$(event).prev('span').text(data.birthday);
+						// $(event).prev('span').attr('data-value', data.sex);
+						layer.closeAll();
+					} else {
+						layer.msg(res.message);
+					}
+				});
+			}
+		})
+	}
+
+	function editSex(event){
+		var sex = $(event).prev('span').attr('data-value');
+		var html = `<div class="layui-form ns-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label" style="width:auto"><span class="required">*</span>性别：</label>
+							<div class="layui-input-block" style="margin-left: 0;">
+								<input type="radio" name="sex" value="1" title="男" `+ (sex == 1 ? 'checked' : '') +`>
+								<input type="radio" name="sex" value="2" title="女" `+ (sex == 2 ? 'checked' : '') +`>
+							</div>
+						</div>
+					</div>`;
+		layer.open({
+			title: '性别',
+			skin: 'edit-member-layer',
+			type: 1,
+			area: ['270px', '160px'],
+			content: html,
+			success: function(){
+				form.render();
+			},
+			btn: ['保存', '取消'],
+			yes: function () {
+				var data = {sex: $('[name="sex"]:checked').val()};
+				if (!data.sex) {
+					layer.msg('请选择性别', {icon: 5})
+					return;
+				}
+				editMember(data, function(res){
+					if (res.code == 0) {
+						$(event).prev('span').text($('[name="sex"]:checked').attr('title'));
+						$(event).prev('span').attr('data-value', data.sex);
+						layer.closeAll();
+					} else {
+						layer.msg(res.message);
+					}
+				});
+			}
+		})
+	}
+
+	function editMobile(event){
+		var mobile = $.trim($(event).prev('span').text()) != '暂无' ? $.trim($(event).prev('span').text()) : '';
+		var html = `<div class="layui-form ns-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label" style="width:auto"><span class="required">*</span>手机号：</label>
+							<div class="layui-input-block" style="margin-left: 0;">
+								<input name="mobile" type="number" value="`+ mobile +`" class="layui-input ns-len-mid">
+							</div>
+						</div>
+					</div>`;
+		layer.open({
+			title: '编辑手机号',
+			skin: 'edit-member-layer',
+			type: 1,
+			area: ['370px', '180px'],
+			content: html,
+			success: function(){
+				form.render();
+			},
+			btn: ['保存', '取消'],
+			yes: function () {
+				var data = {mobile: $('[name="mobile"]').val()};
+				if (!reg.required.test(data.mobile)) {
+					layer.msg('请输入手机号', {icon: 5})
+					return;
+				}
+				if (!reg.mobile.test(data.mobile)) {
+					layer.msg('请输入正确的手机号', {icon: 5})
+					return;
+				}
+				editMember(data, function(res){
+					if (res.code == 0) {
+						$(event).prev('span').text(data.mobile);
+						layer.closeAll();
+					} else {
+						layer.msg(res.message);
+					}
+				});
+			}
+		})
+	}
+
+	function editMember(data, callback){
+		if(repeat_flag) return false;
+		repeat_flag = true;
+
+		data.member_id = '{$member_info.data.member_id}';
+
+		$.ajax({
+			url: ns.url("shop/member/editMember"),
+			data: data,
+			dataType: 'JSON', //服务器返回json格式数据
+			type: 'POST', //HTTP请求类型
+			success: function(res) {
+				repeat_flag = false;
+				typeof callback == 'function' && callback(res);
+			}
+		});
+	}
 </script>
 <!-- 积分弹框html -->
 <script type="text/html" id="point">
@@ -752,7 +886,7 @@
 			<label class="layui-form-label">当前积分：</label>
 			<div class="layui-input-block ns-account-value">{{ parseInt(d.point) }}</div>
 		</div>
-		
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">调整数额：</label>
 			<div class="layui-input-block amount">
@@ -760,18 +894,18 @@
 			</div>
 			<span class="ns-word-aux">调整数额与当前积分数相加不能小于0</span>
 		</div>
-		
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">备注：</label>
 			<div class="layui-input-block ns-len-long">
 				<textarea class="layui-textarea" name="remark" placeholder="请输入备注"></textarea>
 			</div>
 		</div>
-		
+
 		<div class="ns-form-row" style="margin-left: 200px;">
 			<button class="layui-btn ns-bg-color" lay-submit lay-filter="savePoint">确定</button>
 		</div>
-		
+
 		<input type="hidden" name="member_id" value="{$member_info.data.member_id}" />
 		<input type="hidden" name="point" value="{{ d.point }}" />
 	</div>
@@ -784,7 +918,7 @@
 			<label class="layui-form-label">当前余额（不可提现）：</label>
 			<div class="layui-input-block ns-account-value">{{ d.balance }}</div>
 		</div>
-		
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">调整数额：</label>
 			<div class="layui-input-block">
@@ -792,52 +926,20 @@
 			</div>
 			<span class="ns-word-aux">调整数额与当前不可提现余额相加不能小于0</span>
 		</div>
-		
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">备注：</label>
 			<div class="layui-input-block ns-len-long">
 				<textarea class="layui-textarea" name="remark" placeholder="请输入备注"></textarea>
 			</div>
 		</div>
-		
+
 		<div class="ns-form-row" style="margin-left: 200px;">
 			<button class="layui-btn ns-bg-color" lay-submit lay-filter="saveBalance">确定</button>
 		</div>
-		
+
 		<input type="hidden" name="member_id" value="{$member_info.data.member_id}" />
 		<input type="hidden" name="point" value="{{ d.balance }}" />
-	</div>
-</script>
-
-<!-- 余额（可提现）弹框html -->
-<script type="text/html" id="balance_money">
-	<div class="layui-form">
-		<div class="layui-form-item">
-			<label class="layui-form-label">当前余额（可提现）：</label>
-			<div class="layui-input-block ns-account-value">{{ d.balance_money }}</div>
-		</div>
-		
-		<div class="layui-form-item">
-			<label class="layui-form-label">调整数额：</label>
-			<div class="layui-input-block">
-				<input type="number" value="0" placeholder="请输入调整数额" name="adjust_num" lay-verify="num" class="layui-input ns-len-short">
-			</div>
-			<span class="ns-word-aux">调整数额与当前可提现余额相加不能小于0</span>
-		</div>
-		
-		<div class="layui-form-item">
-			<label class="layui-form-label">备注：</label>
-			<div class="layui-input-block ns-len-long">
-				<textarea class="layui-textarea" name="remark" placeholder="请输入备注"></textarea>
-			</div>
-		</div>
-		
-		<div class="ns-form-row" style="margin-left: 200px;">
-			<button class="layui-btn ns-bg-color" lay-submit lay-filter="saveBalanceMoney">确定</button>
-		</div>
-		
-		<input type="hidden" name="member_id" value="{$member_info.data.member_id}" />
-		<input type="hidden" name="point" value="{{ d.balance_money }}" />
 	</div>
 </script>
 
@@ -848,7 +950,7 @@
 			<label class="layui-form-label">当前成长值：</label>
 			<div class="layui-input-block ns-account-value">{{ d.growth }}</div>
 		</div>
-		
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">调整数额：</label>
 			<div class="layui-input-block">
@@ -856,20 +958,48 @@
 			</div>
 			<span class="ns-word-aux">调整数额与当前成长值相加不能小于0</span>
 		</div>
-		
+
 		<div class="layui-form-item">
 			<label class="layui-form-label">备注：</label>
 			<div class="layui-input-block ns-len-long">
 				<textarea class="layui-textarea" name="remark" placeholder="请输入备注"></textarea>
 			</div>
 		</div>
-		
+
 		<div class="ns-form-row" style="margin-left: 200px;">
 			<button class="layui-btn ns-bg-color" lay-submit lay-filter="saveGrowth">确定</button>
 		</div>
-		
+
 		<input type="hidden" name="member_id" value="{$member_info.data.member_id}" />
 		<input type="hidden" name="point" value="{{ d.growth }}" />
+	</div>
+</script>
+
+<script type="text/html" id="memberLevel">
+	<div class="layui-form" id="setMemberLevel">
+		<table class="layui-table" lay-skin="nob">
+			<thead>
+			<colgroup>
+				<col width="5%">
+				<col width="30%">
+				<col width="65%">
+			</colgroup>
+			<tr>
+				<th></th>
+				<th>等级名称</th>
+				<th>等级权益</th>
+			</tr>
+			</thead>
+			<tbody>
+			{foreach name="member_level_list" item="vo"}
+			<tr {if $vo.level_type eq 1}style="background: #f2f2f2"{/if}>
+			<td><input type="checkbox" name="" lay-skin="primary" lay-filter="memberlevel" {if $vo.level_id eq $member_info.data.member_level}checked{/if} {if $vo.level_type eq 1}disabled{/if} value="{$vo.level_id}"></td>
+			<td>{$vo.level_name}</td>
+			<td>{if $vo.is_free_shipping eq 1}商品包邮；{/if}{if $vo.consume_discount neq 100}购物享{$vo.consume_discount / 10}折优惠；{/if}{if $vo.point_feedback > 0}购物{$vo.point_feedback}倍积分回馈{/if}</td>
+			</tr>
+			{/foreach}
+			</tbody>
+		</table>
 	</div>
 </script>
 {/block}

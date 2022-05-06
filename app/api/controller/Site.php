@@ -31,7 +31,7 @@ class Site extends BaseApi
      */
     public function info()
     {
-        $field                       = 'site_id,site_domain,site_name,logo';
+        $field                       = 'site_id,site_domain,site_name,logo,seo_keywords,seo_description,site_tel';
         $website_model               = new SiteModel();
         $info                        = $website_model->getSiteInfo([['site_id', '=', $this->site_id]], $field);
 
@@ -40,8 +40,19 @@ class Site extends BaseApi
         $shop_status_result = $shop_model->getShopStatus($this->site_id,$this->app_module);
         $shop_status = $shop_status_result['data']['value'];
 
-        $info['data']['shop_status'] = $shop_status['shop_status'];
+        $info['data']['shop_status'] = $shop_status['shop_pc_status'];
         return $this->response($info);
+    }
+
+    /**
+     * 手机端二维码
+     * @return false|string
+     */
+    public function wapQrcode()
+    {
+        $shop_model = new ShopModel();
+        $res = $shop_model->qrcode($this->site_id);
+        return $this->response($res);
     }
 
     /**

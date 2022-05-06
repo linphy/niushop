@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '限时折扣',
                     //展示介绍
-                    'description' => '限时折扣功能',
+                    'description' => '商品限时促销打折',
                     //展示图标
                     'icon'        => 'addon/discount/icon.png',
                     //跳转链接

@@ -17,7 +17,7 @@ return [
 
     //运费
     'TEMPLATE_TO_LONG' => '每个站点最多添加10条运费模板' ,
-    'TEMPLATE_EMPTY' => '为设置完善配送方式' ,
+    'TEMPLATE_EMPTY' => '未设置完善配送方式' ,
     'TEMPLATE_AREA_EXIST' => '当前收货地址不支持配送' ,
     //商品
     'REQUEST_GOODS_ATTRIBUTE_ID' => '缺少必须参数商品类型id' ,
@@ -42,6 +42,7 @@ return [
     "ORDER_EMPTY" => '订单不存在' ,
     "ORDER_LOCK" => '订单已被锁定' ,
     "ORDER_GOODS_IS_REFUND" => '存在已退款的订单项' ,
+    "ORDER_GOODS_IN_REFUND" => '存在正在退款的订单项',
     "ORDER_GOODS_EMPTY" => '订单项不存在' ,
     "ORDER_GOODS_IS_DELIVERYED" => '订单项已发货' ,
     //店铺

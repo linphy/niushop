@@ -150,8 +150,8 @@ class MemberCancel extends BaseModel
             //会员申请注销消息
             $message_model = new Message();
             $message_model->sendMessage(['keywords' => "USER_CANCEL_APPLY", 'member_id' => $member_info['member_id'], 'site_id' => $param['site_id']]);
-
-            return $this->success();
+            $res['is_audit']=$value['is_audit'];
+            return $this->success($res);
         } catch (\Exception $e) {
             model('member_cancel')->rollback();
             return $this->error('', $e->getMessage());
@@ -399,12 +399,12 @@ class MemberCancel extends BaseModel
         if (empty($member_cancel)) {
             return $this->success();
         }
-        $member_info = json_decode($member_cancel['member_json'], true);
+        $member_info = model('member')->getInfo([ ['member_id', '=', $data['member_id']] ], 'username,mobile,nickname');
 
         //发送短信
         $sms_model = new Sms();
 
-        $name = $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"];
+        $name = $member_info["nickname"] == '' ? $member_info["mobile"] : $member_info["nickname"];
         $var_parse = array(
             "username" => $name,
         );
@@ -433,12 +433,12 @@ class MemberCancel extends BaseModel
         if (empty($member_cancel)) {
             return $this->success();
         }
-        $member_info = json_decode($member_cancel['member_json'], true);
+        $member_info = model('member')->getInfo([ ['member_id', '=', $data['member_id']] ], 'username,mobile,nickname');
 
         //发送短信
         $sms_model = new Sms();
 
-        $name = $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"];
+        $name = $member_info["nickname"] == '' ? $member_info["mobile"] : $member_info["nickname"];
         $var_parse = array(
             "username" => $name,
         );
@@ -467,8 +467,8 @@ class MemberCancel extends BaseModel
         if (empty($member_cancel)) {
             return $this->success();
         }
-        $member_info = json_decode($member_cancel['member_json'], true);
-        $name = $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"];
+        $member_info = model('member')->getInfo([ ['member_id', '=', $data['member_id']] ], 'username,mobile,nickname');
+        $name = $member_info["nickname"] == '' ? $member_info["mobile"] : $member_info["nickname"];
         //发送短信
         $sms_model = new Sms();
 
@@ -493,7 +493,7 @@ class MemberCancel extends BaseModel
                     $wechat_model = new WechatMessage();
                     $data["openid"] = $v['wx_openid'];
                     $data["template_data"] = [
-                        'keyword1' => $member_info['username'],
+                        'keyword1' => $name,
                         'keyword2' => $member_info['mobile']
                     ];
 

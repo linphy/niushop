@@ -3,7 +3,7 @@
  */
 var imageAdsCarouselHtml = '<div class="layui-carousel" v-bind:id="id" :class="{\'ns-carousel-ind-line\': data.carouselChangeStyle == \'line\'}">';
 		imageAdsCarouselHtml += '<div carousel-item>';
-			imageAdsCarouselHtml += '<div class="image-ads-item carousel-posters" v-for="(item,index) in list">';
+			imageAdsCarouselHtml += '<div class="image-ads-item carousel-posters" v-for="(item,index) in list" :key="item.id">';
 			
 				imageAdsCarouselHtml += '<p v-show="item.imageUrl==\'\'">';
 					imageAdsCarouselHtml += '<span>图片广告</span>';
@@ -14,7 +14,7 @@ var imageAdsCarouselHtml = '<div class="layui-carousel" v-bind:id="id" :class="{
 				imageAdsCarouselHtml += '</div>';
 
 				// imageAdsCarouselHtml += '<span v-show="item.title">{{item.title}}</span>';
-				
+
 			imageAdsCarouselHtml += '</div>';
 		imageAdsCarouselHtml += '</div>';
 	imageAdsCarouselHtml += '</div>';
@@ -37,11 +37,21 @@ Vue.component("image-ads-carouse",{
 		this.$parent.data.verify.push(this.verify);//加载验证方法
 		var self = this;
 		
+		var imgArr = [];
+		for (let i = 0; i < this.data.list.length; i++) {
+			let item = this.data.list[i];
+			imgArr[i] = (item.imgWidth / item.imgHeight);
+		}
+		imgArr.sort(function(a, b){
+			return a - b
+		})
+		var swiperHeight = (345 / imgArr[0]).toFixed(2);
+		
 		setTimeout(function(){
 			var elem = "#" + self.id;
 			layui.use('carousel', function(){
 				self.carousel = layui.carousel;
-				self.carousel_render = self.carousel.render({ elem: elem , width : '100%' , height : '170px' , indicator : 'inside' });
+				self.carousel_render = self.carousel.render({ elem: elem , width : '100%' , height : swiperHeight + 'px' , indicator : 'inside', arrow: 'none' });
 			});
 		},10);
 	},
@@ -66,8 +76,8 @@ Vue.component("image-ads-carouse",{
 
 var imageAdsListHtml = '<div class="image-ad-list">';
 		imageAdsListHtml += '<p class="ns-word-aux">建议上传尺寸相同的图片，推荐尺寸750*350</p>';//，拖动选中的图片广告可对其排序
-		imageAdsListHtml += '<ul>';
-			imageAdsListHtml += '<li v-for="(item,index) in list" v-bind:data-sort="index" v-bind:data-index="index">';
+		imageAdsListHtml += '<ul class="navigation-set-list">';
+			imageAdsListHtml += '<li v-for="(item,index) in list" v-bind:data-sort="index" v-bind:data-index="index" :key="item.id">';
 				imageAdsListHtml += '<img-upload v-bind:data="{ data : item }"></img-upload>';
 				imageAdsListHtml += '<div class="content-block">';
 					/* imageAdsListHtml += '<div class="layui-form-item">';
@@ -104,6 +114,35 @@ Vue.component("image-ads-list",{
 
 		if(!this.$parent.data.verify) this.$parent.data.verify = [];
 		this.$parent.data.verify.push(this.verify);//加载验证方法
+
+		this.list.forEach(function(e, i){
+			e.id = ns.gen_non_duplicate(6);
+		})
+		this.$parent.data.list = this.list;
+
+		var moveBeforeIndex = 0;
+		var _this = this;
+
+		setTimeout(function(){
+			var componentIndex = _this.data.index;
+			$( '[data-index="'+ componentIndex +'"] .navigation-set-list' ).DDSort({
+			    target: 'li',
+			    floatStyle: {
+			        'border': '1px solid #ccc',
+			        'background-color': '#fff'
+			    },
+			    down: function(index){
+			    	moveBeforeIndex = index;
+			    },
+			    up: function(index){
+			    	var temp = _this.list[moveBeforeIndex];
+			    	_this.list.splice(moveBeforeIndex, 1);
+			    	_this.list.splice(index, 0, temp);
+		    		_this.$parent.data.list = _this.list;
+			    }
+			});
+		})
+
 //		//采用单项绑定，复制当前对象
 //		this.list = JSON.parse(JSON.stringify(this.parentList));
 //		
@@ -165,7 +204,7 @@ Vue.component("image-ads-list",{
 	methods : {
 		
 		addItem : function(){
-			this.list.push({ imageUrl : "", title : "", link : {} });
+			this.list.push({ imageUrl : "", title : "", link : { name : "" } });
 		},
 		verify :function () {
 			var res = {code: true, message: ""};
@@ -230,10 +269,11 @@ Vue.component("image-ads-list",{
 
 var imageAdsSingleHtml = '<div class="image-ad-list">';
 		imageAdsSingleHtml += '<ul>';
-			imageAdsSingleHtml += '<li v-for="(item,index) in list" v-bind:data-sort="index" v-bind:data-index="index">';
+			imageAdsSingleHtml += '<li v-for="(item,index) in list" v-bind:data-sort="index" v-bind:data-index="index" :key="item.id">';
 				imageAdsSingleHtml += '<img-sec-upload v-bind:data="{ data : item }"></img-sec-upload>';
 				imageAdsSingleHtml += '<div class="content-block">';
 					imageAdsSingleHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
+					imageAdsSingleHtml += '<div class="ns-input-text selected-style" style="color: #323233;" v-on:click="setHeatMap(index)">热区设置 <i class="layui-icon layui-icon-right"></i></div>';
 				imageAdsSingleHtml += '</div>';
 				// imageAdsSingleHtml += '<i class="del" v-on:click="deleteItem(index)" data-disabled="1">x</i>';
 				imageAdsSingleHtml += '<div class="error-msg"></div>';
@@ -261,6 +301,28 @@ Vue.component("image-ads-single",{
 	},
 	
 	methods : {
+		//热区设置
+		setHeatMap :function(index) {
+			let that = this;
+			if(!that.list[index].imageUrl){
+				layer.msg('请先上传广告图片');
+				return;
+			}
+
+			sessionStorage.setItem('imageData',JSON.stringify(that.list[index]));
+			ns.open_iframe({
+				title: '热区设置',
+				url:ns.url("shop/diy/heatmap"),
+				area:['100%', '100%'],
+				success: function(data){
+					that.list[index] = data;
+					that.$parent.data.list[index] = data;
+					//触发变异方法，进行视图更新
+					that.$parent.data.list.push({});
+					that.$parent.data.list.pop();
+				}
+			})
+		},
 		verify :function () {
 			var res = {code: true, message: ""};
 			var _self = this;
@@ -285,7 +347,7 @@ Vue.component("image-ads-single",{
 
 
 var imgAdsRadiusHtml = '<div class="layui-form-item ns-icon-radio">';
-		imgAdsRadiusHtml += '<label class="layui-form-label sm">图片圆角</label>';
+		imgAdsRadiusHtml += '<label class="layui-form-label sm banner-sm">图片圆角</label>';
 		imgAdsRadiusHtml += '<div class="layui-input-block">';
 			imgAdsRadiusHtml += '<template v-for="(item, index) in imgAdsRadius" v-bind:k="index">';
 				imgAdsRadiusHtml += '<span :class="[item.value == data.imageRadius ? \'\' : \'layui-hide\']">{{item.text}}</span>';
@@ -335,7 +397,7 @@ Vue.component("img-ads-radius",{
 
 
 var imgAdsCarouselHtml = '<div class="layui-form-item ns-icon-radio">';
-		imgAdsCarouselHtml += '<label class="layui-form-label sm">轮播切换</label>';
+		imgAdsCarouselHtml += '<label class="layui-form-label sm banner-sm">H5轮播切换</label>';
 		imgAdsCarouselHtml += '<div class="layui-input-block">';
 			imgAdsCarouselHtml += '<template v-for="(item, index) in imgAdsCarousel" v-bind:k="index">';
 				imgAdsCarouselHtml += '<span :class="[item.value == data.carouselChangeStyle ? \'\' : \'layui-hide\']">{{item.text}}</span>';

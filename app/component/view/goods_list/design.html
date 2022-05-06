@@ -3,108 +3,337 @@
 	<!-- 预览 -->
 	<template slot="preview">
 		<div class="goods-list-preview" v-bind:style="{ backgroundColor : nc.backgroundColor, margin: (nc.marginTop + 'px 15px 0 15px') }">
-			<div class="goods-list" :class="nc.style == 1 ? 'single-column' : 'double-column' ">
-				<div class="goods-item margin-bottom">
-					<div class="goods-img">
-						<img src="STATIC_EXT/diyview/img/crack_figure.png">
-						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
-						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
-							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
-							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+			<template v-if="nc.style == 1 || nc.style == 2">
+				<div class="goods-list" :class="nc.style == 1 ? 'single-column' : 'double-column'">
+					<div class="goods-item margin-bottom">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="delete-price"><span class="unit">¥</span>15.99</div>
+								<div class="sale">1005人付款</div>
+							</div>
+							<div class="lineheight-clear">
+								<div class="discount-price">
+									<span class="unit">¥</span>
+									<span class="price">25.69</span>
+								</div>
+							</div>
 						</div>
 					</div>
-					<div class="info-wrap">
-						<div class="name-wrap">
-							<div class="goods-name">商品名称</div>
+					<div class="goods-item margin-bottom">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
 						</div>
-						<div class="pro-info">
-							<div class="delete-price"><span class="unit">¥</span>15.99</div>
-							<div class="sale">1005人付款</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="delete-price"><span class="unit">¥</span>15.99</div>
+								<div class="sale">1005人付款</div>
+							</div>
+							<div class="lineheight-clear">
+								<div class="discount-price">
+									<span class="unit">¥</span>
+									<span class="price">25.69</span>
+								</div>
+							</div>
 						</div>
-						<div class="lineheight-clear">
-							<div class="discount-price">
-								<span class="unit">¥</span>
-								<span class="price">25.69</span>
+					</div>
+					<div class="goods-item margin-bottom">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="delete-price"><span class="unit">¥</span>15.99</div>
+								<div class="sale">1005人付款</div>
+							</div>
+							<div class="lineheight-clear">
+								<div class="discount-price">
+									<span class="unit">¥</span>
+									<span class="price">25.69</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="goods-item margin-bottom">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="delete-price"><span class="unit">¥</span>15.99</div>
+								<div class="sale">1005人付款</div>
+							</div>
+							<div class="lineheight-clear">
+								<div class="discount-price">
+									<span class="unit">¥</span>
+									<span class="price">25.69</span>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="goods-item margin-bottom">
-					<div class="goods-img">
-						<img src="STATIC_EXT/diyview/img/crack_figure.png">
-						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
-						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
-							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
-							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+			</template>
+			
+			<template v-if="nc.style == 3">
+				<div class="goods-list goods-list-3">
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure_2.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+								<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<button class="layui-btn btn">立即购买</button>
 						</div>
 					</div>
-					<div class="info-wrap">
-						<div class="name-wrap">
-							<div class="goods-name">商品名称</div>
-						</div>
-						<div class="pro-info">
-							<div class="delete-price"><span class="unit">¥</span>15.99</div>
-							<div class="sale">1005人付款</div>
-						</div>
-						<div class="lineheight-clear">
-							<div class="discount-price">
-								<span class="unit">¥</span>
-								<span class="price">25.69</span>
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure_2.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
 							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+								<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<button class="layui-btn btn">立即购买</button>
+						</div>
+					</div>
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure_2.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+								<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<button class="layui-btn btn">立即购买</button>
 						</div>
 					</div>
 				</div>
-				<div class="goods-item margin-bottom">
-					<div class="goods-img">
-						<img src="STATIC_EXT/diyview/img/crack_figure.png">
-						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
-						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
-							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
-							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+			</template>
+			
+			<template v-if="nc.style == 4">
+				<div class="goods-list goods-list-4">
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+							</div>
+							<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							<!-- <div class="btn"><i class="iconfont icongouwuche"></i></div> -->
 						</div>
 					</div>
-					<div class="info-wrap">
-						<div class="name-wrap">
-							<div class="goods-name">商品名称</div>
-						</div>
-						<div class="pro-info">
-							<div class="delete-price"><span class="unit">¥</span>15.99</div>
-							<div class="sale">1005人付款</div>
-						</div>
-						<div class="lineheight-clear">
-							<div class="discount-price">
-								<span class="unit">¥</span>
-								<span class="price">25.69</span>
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
 							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+							</div>
+							<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							<!-- <div class="btn"><i class="iconfont icongouwuche"></i></div> -->
+						</div>
+					</div>
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+							</div>
+							<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							<!-- <div class="btn"><i class="iconfont icongouwuche"></i></div> -->
+						</div>
+					</div>
+					<div class="goods-item">
+						<div class="goods-img">
+							<img src="STATIC_EXT/diyview/img/crack_figure.png">
+							<div class="goods-tag" v-show="nc.goodsTag == 'default'" style="background: url(STATIC_EXT/diyview/img/hot.png) no-repeat; background-size: cover;">爆款</div>
+							<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
+								<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
+								<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
+							</div>
+							<div class="bg"></div>
+							<span class="num">1034人付款</span>
+						</div>
+						<div class="info-wrap">
+							<div class="name-wrap">
+								<div class="goods-name">商品名称</div>
+							</div>
+							<div class="label">
+								<div>包邮</div>
+								<div>限时折扣</div>
+							</div>
+							<div class="pro-info">
+								<div class="discount-price">
+									<div class="price">
+										<span class="unit">¥</span>168.00
+									</div>
+									<img src="{$resource_path}/goods_list/img/vip.png" />
+								</div>
+							</div>
+							<div class="delete-price"><span class="unit">¥</span>299.00</div>
+							<!-- <div class="btn"><i class="iconfont icongouwuche"></i></div> -->
 						</div>
 					</div>
 				</div>
-				<div class="goods-item margin-bottom">
-					<div class="goods-img">
-						<img src="STATIC_EXT/diyview/img/crack_figure.png">
-						<div class="goods-tag" v-show="nc.goodsTag == 'default'">爆款</div>
-						<div class="goods-tag-img" v-show="nc.goodsTag == 'diy'">
-							<div v-if="nc.tagImg.imageUrl == '' " class="tag-wrap">角标区域</div>
-							<img v-else :src="changeImgUrl(nc.tagImg.imageUrl)">
-						</div>
-					</div>
-					<div class="info-wrap">
-						<div class="name-wrap">
-							<div class="goods-name">商品名称</div>
-						</div>
-						<div class="pro-info">
-							<div class="delete-price"><span class="unit">¥</span>15.99</div>
-							<div class="sale">1005人付款</div>
-						</div>
-						<div class="lineheight-clear">
-							<div class="discount-price">
-								<span class="unit">¥</span>
-								<span class="price">25.69</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			</template>
 		</div>
 
 	</template>
@@ -137,6 +366,12 @@
 					<div class="style-li-goods" v-bind:class="{'selected ns-border-color': nc.style == 2}">
 						<img src="{$resource_path}/goods_list/img/style2.png" />
 					</div>
+					<div class="style-li-goods" v-bind:class="{'selected ns-border-color': nc.style == 3}">
+						<img src="{$resource_path}/goods_list/img/style3.png" />
+					</div>
+					<div class="style-li-goods" v-bind:class="{'selected ns-border-color': nc.style == 4}">
+						<img src="{$resource_path}/goods_list/img/style4.png" />
+					</div>
 				</div>
 				
 				<input type="hidden" name="style">
@@ -144,17 +379,91 @@
 			</div>
 		</div>
 
-		<!-- 商品分类选择弹框 -->
-		<div class="goods-category-layer">
-			{notempty name="goods_category_list"}
-				<div class="category-head">分类名称</div>
-				<div class="category-wrap">
-				{foreach name="$goods_category_list" item="vo"}
-					<div class="category-item" data-id="{$vo.category_id}">{$vo.category_name}</div>
-				{/foreach}
-				</div>
-			{/notempty}
-		</div>
+		<script type="text/html" class="goods-category-layer">
+		    <div class="goods-category-list layui-form">
+		        <table class="layui-table ns-pithy-table">
+		            <colgroup>
+		                <col width="5%">
+		                <col width="3%">
+		                <col width="37%">
+		                <col width="25%">
+		                <col width="30%">
+		            </colgroup>
+		            <thead>
+		            <tr>
+		                <th></th>
+		                <th></th>
+		                <th>分类名称</th>
+		                <th>简称</th>
+		                <th>图片</th>
+		            </tr>
+		            </thead>
+		            <tbody>
+		            {if condition="$category_list"}
+		            {foreach name="$category_list" item="vo"}
+		            <tr class='category-line'>
+		                <td><input type="checkbox" name="category_select_id" data-category_select_id = "{$vo['category_id']}"lay-skin="primary" value='{:json_encode($vo)}' lay-filter="category_select_id"{if !empty($link_array.category_id) && $link_array.category_id == $vo['category_id']}checked{/if}></td>
+		                <td>
+		                    {notempty name="$vo['child_list']"}
+		                    <span class="switch ns-text-color js-switch" data-category-id="{$vo['category_id']}" data-level="{$vo['level']}" data-open="0">+</span>
+		                    {/notempty}
+		                </td>
+		                <td class="category-name">{$vo['category_name']}</td>
+		                <td>{$vo['short_name']}</td>
+		                <td>
+		                    {notempty name="$vo['image']"}
+		                    <div class="ns-img-box">
+		                        <img layer-src src="{:img($vo['image'])}"/>
+		                    </div>
+		                    {/notempty}
+		                </td>
+
+		            </tr>
+		            {notempty name="$vo['child_list']"}
+		            {foreach name="$vo['child_list']" item="second"}
+		            <tr class='category-line' data-category-id-1="{$second['category_id_1']}" style="display:none;">
+		                <td><input type="checkbox" name="category_select_id" lay-skin="primary"data-category_select_id = "{$second['category_id']}" value='{:json_encode($second)}' lay-filter="category_select_id"{if !empty($link_array.category_id) && $link_array.category_id == $second['category_id']}checked{/if}></td>
+		                <td></td>
+		                <td style="padding-left: 20px;">
+		                    <span class="switch ns-text-color js-switch" data-category-id="{$second['category_id']}" data-level="{$second['level']}" data-open="1" style="padding-right: 20px;">-</span>
+		                    <span class="category-name">{$second['category_name']}</span>
+		                </td>
+		                <td>{$second['short_name']}</td>
+		                <td>
+		                    {notempty name="$second['image']"}
+		                    <img layer-src src="{:img($second['image'])}"/>
+		                    {/notempty}
+		                </td>
+		            </tr>
+		            {notempty name="$second['child_list']"}
+		            {foreach name="$second['child_list']" item="third"}
+		            <tr class='category-line'data-category-id-1="{$third['category_id_1']}" data-category-id-2="{$third['category_id_2']}" style="display:none;">
+		                <td><input type="checkbox" name="category_select_id" lay-skin="primary" value='{:json_encode($third)}' data-category_select_id = '{$third['category_id']}'lay-filter="category_select_id"{if !empty($link_array.category_id) && $link_array.category_id == $third['category_id']}checked{/if}></td>
+		                <td></td>
+		                <td style="padding-left: 80px;">
+		                    <span class="category-name">{$third['category_name']}</span>
+		                </td>
+		                <td>{$third['short_name']}</td>
+		                <td>
+		                    {notempty name="$third['image']"}
+		                    <img layer-src src="{:img($third['image'])}"/>
+		                    {/notempty}
+		                </td>
+		            </tr>
+		            {/foreach}
+		            {/notempty}
+		            {/foreach}
+		            {/notempty}
+		            {/foreach}
+		            {else/}
+		            <tr>
+		                <td colspan="9" style="text-align: center">无数据</td>
+		            </tr>
+		            {/if}
+		            </tbody>
+		        </table>
+		    </div>
+		</script>
 	</template>
 	
 	<!-- 资源 -->

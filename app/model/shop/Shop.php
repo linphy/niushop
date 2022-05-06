@@ -167,7 +167,9 @@ class Shop extends BaseModel
         $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_STATUS_CONFIG' ] ]);
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
-                'shop_status' => 1
+                'shop_pc_status' => 1,
+                'shop_h5_status' => 1,
+                'shop_weapp_status' => 1,
             ];
         }
         return $res;

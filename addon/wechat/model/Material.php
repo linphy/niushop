@@ -113,4 +113,5 @@ class Material extends BaseModel
         Cache::tag("wechat_media")->set("wechat_media_getMaterialPageList_" . $data, $list);
         return $this->success($list);
     }
+
 }

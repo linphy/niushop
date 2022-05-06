@@ -11,6 +11,7 @@
 
 namespace addon\weapp\api\controller;
 
+use addon\weapp\model\Config;
 use addon\weapp\model\Message;
 use app\api\controller\BaseApi;
 use addon\weapp\model\Weapp as WeappModel;
@@ -36,5 +37,25 @@ class Weapp extends BaseApi
         $message = new Message();
         $res = $message->getMessageTmplIds($this->site_id, $keywords);
         return $this->response($res);
+    }
+
+    /*
+     * 获取小程序码
+     */
+    public function qrcode(){
+        $config_model = new Config();
+        $config = $config_model->getWeappConfig($this->site_id);
+        $qrcode = $config['data']['value']['qrcode'] ?? '';
+        return $this->response($this->success($qrcode));
+    }
+
+    /**
+     * 分享
+     * @return false|string
+     */
+    public function share(){
+        $config_model = new Config();
+        $config = $config_model->getShareConfig($this->site_id, 'shop');
+        return $this->response($this->success($config['data']['value']));
     }
 }

@@ -149,6 +149,7 @@ class Delivery extends BaseShop
         $this->assign('local_delivery_config', $local_delivery_config);
         $deliver_type = $config_model->getDeliverTypeSort($this->site_id);
         $this->assign('deliver_type', explode(',', $deliver_type['data']['value']['deliver_type']));
+		
         return $this->fetch('delivery/delivery');
     }
 
@@ -161,7 +162,9 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input('is_use', 0);
-            $data = array ();
+            $data = array (
+                'express_name' => input('express_name')
+            );
             $result = $config_model->setExpressConfig($data, $is_use, $this->site_id);
             return $result;
         }
@@ -176,7 +179,9 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input('is_use', 0);
-            $data = array ();
+            $data = array (
+                'store_name' => input('store_name')
+            );
             $result = $config_model->setStoreConfig($data, $is_use, $this->site_id);
             return $result;
         }
@@ -191,7 +196,9 @@ class Delivery extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $is_use = input('is_use', 0);
-            $data = array ();
+            $data = array (
+                'local_name' => input('local_name')
+            );
             $result = $config_model->setLocalDeliveryConfig($data, $is_use, $this->site_id);
             return $result;
         }

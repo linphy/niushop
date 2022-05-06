@@ -154,42 +154,42 @@
 	                    </div>
 
 	                    <!-- 会员等级 -->
-						<div class="draggable-element" @click="currentIndex=1" :class="{selected: currentIndex == 1}">
-							<div  class="draggable-element disabled">
-								<div class="member-grade">
-									<div class="preview-draggable">
-										<div class="grade-icon">
-											<i></i>
-											<span>白银会员</span>
-										</div>
-										<div class="member-equities">
-											<span>VIP更多权益</span>
-											<i></i>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="edit-attribute" v-show="currentIndex == 1">
-								<div class="attr-wrap">
-									<div class="restore-wrap">
-										<h2 class="attr-title">会员等级</h2>
-										<div class="layui-form-item">
-											<label class="layui-form-label sm">显示状态</label>
-											<div class="layui-input-block">
-												<div @click="data.level=1" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : data.level==1 }">
-													<i class="layui-anim layui-icon">&#xe63f;</i>
-													<div>显示</div>
-												</div>
-												<div @click="data.level=0" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : data.level==0 }">
-													<i class="layui-anim layui-icon">&#xe63f;</i>
-													<div>隐藏</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						<!--<div class="draggable-element" @click="currentIndex=1" :class="{selected: currentIndex == 1}">-->
+							<!--<div  class="draggable-element disabled">-->
+								<!--<div class="member-grade">-->
+									<!--<div class="preview-draggable">-->
+										<!--<div class="grade-icon">-->
+											<!--<i></i>-->
+											<!--<span>白银会员</span>-->
+										<!--</div>-->
+										<!--<div class="member-equities">-->
+											<!--<span>VIP更多权益</span>-->
+											<!--<i></i>-->
+										<!--</div>-->
+									<!--</div>-->
+								<!--</div>-->
+							<!--</div>-->
+							<!--<div class="edit-attribute" v-show="currentIndex == 1">-->
+								<!--<div class="attr-wrap">-->
+									<!--<div class="restore-wrap">-->
+										<!--<h2 class="attr-title">会员等级</h2>-->
+										<!--<div class="layui-form-item">-->
+											<!--<label class="layui-form-label sm">显示状态</label>-->
+											<!--<div class="layui-input-block">-->
+												<!--<div @click="data.level=1" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : data.level==1 }">-->
+													<!--<i class="layui-anim layui-icon">&#xe63f;</i>-->
+													<!--<div>显示</div>-->
+												<!--</div>-->
+												<!--<div @click="data.level=0" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : data.level==0 }">-->
+													<!--<i class="layui-anim layui-icon">&#xe63f;</i>-->
+													<!--<div>隐藏</div>-->
+												<!--</div>-->
+											<!--</div>-->
+										<!--</div>-->
+									<!--</div>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
 
 
 	                    <!-- 常用工具 -->

@@ -31,11 +31,19 @@ class Help extends BaseShop
             $condition   = [['site_id', '=', $this->site_id]];
             $condition[] = ['class_name', 'like', '%' . $search_text . '%'];
             $condition[] = ['app_module', '=', $this->app_module];
-            $order       = 'sort asc,create_time desc';
             $field       = '*';
 
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
             $help_model = new HelpModel();
-            return $help_model->getHelpClassPageList($condition, $page, $page_size, $order, $field);
+            return $help_model->getHelpClassPageList($condition, $page, $page_size, $order_by, $field);
         } else {
             $this->forthMenu();
             return $this->fetch('help/class_list');
@@ -128,11 +136,19 @@ class Help extends BaseShop
             $condition   = [['site_id', '=', $this->site_id]];
             $condition[] = ['title', 'like', '%' . $search_text . '%'];
             $condition[] = ['app_module', '=', $this->app_module];
-            $order       = 'sort asc,create_time desc';
             $field       = 'id,title,class_id,class_name,sort,create_time';
 
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
             $help_model = new HelpModel();
-            return $help_model->getHelpPageList($condition, $page, $page_size, $order, $field);
+            return $help_model->getHelpPageList($condition, $page, $page_size, $order_by, $field);
         } else {
             $this->forthMenu();
             return $this->fetch('help/help_list');

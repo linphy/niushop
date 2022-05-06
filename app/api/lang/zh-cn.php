@@ -16,7 +16,7 @@ return [
 	'PARAMETER_ERROR' => '参数错误',
 	'REQUEST_SITE_ID' => '缺少必须参数站点id',
 	'REQUEST_APP_MODULE' => '缺少必须参数应用模块',
-	'TOKEN_NOT_EXIST' => 'token不存在',
+	'TOKEN_NOT_EXIST' => '您尚未登录，请先进行登录',
 	'TOKEN_ERROR' => 'token错误',
 	'TOKEN_EXPIRE' => 'token已过期',
 	'CAPTCHA_FAILURE' => '验证码已失效',
@@ -51,4 +51,5 @@ return [
 	'REQUEST_BRANCH_BANK_ACCOUNT' => '缺少参数bank_account',
     'REQUEST_NOTE_ID' => '缺少参数note_id',
     'REQUEST_PRESALE_ID' => '缺少参数presale_id',
+    'REQUEST_JIELONG_ID' => '缺少参数jielong_id',
 ];

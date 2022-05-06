@@ -29,12 +29,16 @@ class Pay extends BaseModel
 
     /**
      * 支付
-     * @param unknown $pay_type
-     * @param unknown $out_trade_no
-     * @param unknown $app_type 支付端口场景
-     * @return Ambigous <>
+     * @param $pay_type 支付方式
+     * @param $out_trade_no 交易号
+     * @param $app_type 请求来源类型
+     * @param $member_id 会员id
+     * @param null $return_url 同步回调地址
+     * @param int $is_matched 场景值是否在支付校验范围内
+     * @param int $scene 场景值
+     * @return mixed|void
      */
-    public function pay($pay_type, $out_trade_no, $app_type, $member_id, $return_url = null)
+    public function pay($pay_type, $out_trade_no, $app_type, $member_id, $return_url = null, $is_matched = 0, $scene = 0)
     {
         $notify_url = addon_url("pay/pay/notify");
 
@@ -49,6 +53,8 @@ class Pay extends BaseModel
         $data[ 'return_url' ] = $return_url;
         $data[ 'pay_type' ] = $pay_type;
         $data[ "member_id" ] = $member_id;
+        $data[ "is_matched" ] = $is_matched;
+        $data[ 'scene' ] = $scene;
         $res = event('Pay', $data, true);
         return $res;
     }
@@ -111,7 +117,7 @@ class Pay extends BaseModel
      * @param unknown $trade_no
      * @param unknown $pay_addon
      */
-    public function onlinePay($out_trade_no, $pay_type, $trade_no, $pay_addon)
+    public function onlinePay($out_trade_no, $pay_type, $trade_no, $pay_addon, $log_data = [])
     {
         $pay_info_result = $this->getPayInfo($out_trade_no);
         $pay_info = $pay_info_result[ "data" ];
@@ -133,7 +139,8 @@ class Pay extends BaseModel
                 $return_data = array (
                     'out_trade_no' => $out_trade_no,
                     'trade_no' => $trade_no,
-                    'pay_type' => $pay_type
+                    'pay_type' => $pay_type,
+                    'log_data' => $log_data
                 );
 
                 //根据事件成功后执行

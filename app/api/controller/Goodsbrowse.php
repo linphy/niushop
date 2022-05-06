@@ -94,14 +94,17 @@ class Goodsbrowse extends BaseApi
         $token = $this->checkToken();
         if (!empty($list['data']['list'])) {
             foreach ($list['data']['list'] as $k => $v) {
-
                 if ($token['code'] >= 0) {
                     // 是否参与会员等级折扣
                     $goods_member_price = $goods->getGoodsPrice($v['sku_id'], $this->member_id);
                     $goods_member_price = $goods_member_price['data'];
                     if (!empty($goods_member_price['member_price'])) {
                         $list['data']['list'][$k]['member_price'] = $goods_member_price['price'];
+                    } else {
+                        unset($list['data']['list'][$k]['member_price']);
                     }
+                } else {
+                    unset($list['data']['list'][$k]['member_price']);
                 }
             }
         }

@@ -516,7 +516,7 @@ layui.use(['form', 'layer'], function () {
 			'<button class="add">添加</button>' +
 			'<div class="area-list selected-area">' +
 			'<div class="title ns-bg-color-gray">已选地区</div>' +
-			'<div class="box"></div>' +
+			'<div id="choice" class="box"></div>' +
 			'</div>' +
 			'</div>' +
 			'<div class="modal-operation">' +
@@ -579,6 +579,11 @@ layui.use(['form', 'layer'], function () {
 	 * 保存操作
 	 */
 	$("body").on("click", ".save-btn", function () {
+		let boxLength=$('#choice').children().length
+		if(boxLength==0){
+			layer.msg('已选地区不能为空', {icon: 5, anim: 6});
+			return false
+		}
 		layer.close(layer_index);
 		if (count_obj(temp_area) == 0) return;
 		if (opt_type == 1) {
@@ -586,7 +591,6 @@ layui.use(['form', 'layer'], function () {
 			opt_num = opt_total;
 			// 选中地区数据
 			selected_area[opt_num] = new Object();
-
 			// 提交表单数据
 			submit_data[opt_num] = new Object();
 		}
@@ -639,7 +643,6 @@ layui.use(['form', 'layer'], function () {
 	});
 
 	form.on('submit(save)', function (form_data) {
-
 		if (submit_flag == true) return false;
 		var url = ns.url('freeshipping://shop/freeshipping/add');
 		if (freeshipping_id) url = ns.url('freeshipping://shop/freeshipping/edit');
@@ -650,6 +653,12 @@ layui.use(['form', 'layer'], function () {
 			if (count_obj(submit_data[per]) > 0) {
 				real_data[per] = submit_data[per];
 			}
+		}
+		
+		var baoyouprice = $("input[name='price']").val();
+		if (parseFloat(baoyouprice) <= 0) {
+			layer.msg('包邮金额不能小于0', {icon: 5, anim: 6});
+			return false;
 		}
 
 		if (count_obj(real_data) == 0) {
@@ -710,5 +719,6 @@ layui.use(['form', 'layer'], function () {
 		}
 		return obj;
 	}
-
+	
+	
 });

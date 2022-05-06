@@ -25,6 +25,7 @@ use phpoffice\phpexcel\Classes\PHPExcel\Writer\Excel2007;
 use app\model\upload\Upload as UploadModel;
 use app\model\member\MemberCluster as MemberClusterModel;
 use think\facade\Config;
+use addon\coupon\model\Coupon as CouponModel;
 
 /**
  * 会员管理 控制器
@@ -36,7 +37,6 @@ class Member extends BaseShop
      */
     public function index()
     {
-
         $member = new MemberModel();
 
         // 累计会员数
@@ -44,7 +44,7 @@ class Member extends BaseShop
         // 今日新增数
         $newadd_count = $member->getMemberCount([ [ 'site_id', '=', $this->site_id ], [ 'reg_time', 'between', [ date_to_time(date('Y-m-d 00:00:00')), time() ] ] ]);
         // 已购会员数
-        $buyed_count = $member->getMemberCount([ [ 'site_id', '=', $this->site_id ], [ 'order_complete_num', '>', 0 ] ]);
+        $buyed_count = $member->getMemberCount([ [ 'site_id', '=', $this->site_id ], [ 'order_num', '>', 0 ] ]);
 
         $this->assign('data', [
             'total_count' => $total_count[ 'data' ],
@@ -168,11 +168,11 @@ class Member extends BaseShop
             }
             //余额
             if ($start_balance != '' && $end_balance != '') {
-                $condition[] = [ 'balance', 'between', [ $start_balance, $end_balance ] ];
+                $condition[] = [ '', 'exp', Db::raw("(balance + balance_money) between {$start_balance} and {$end_balance}") ];
             } else if ($start_balance != '' && $end_balance == '') {
-                $condition[] = [ 'balance', '>=', $start_balance ];
+                $condition[] = [ '', 'exp', Db::raw("(balance + balance_money) >= {$start_balance}") ];
             } else if ($start_balance == '' && $end_balance != '') {
-                $condition[] = [ 'balance', '<=', $end_balance ];
+                $condition[] = [ '', 'exp', Db::raw("(balance + balance_money) <= {$end_balance}") ];
             }
             //成长值
             if ($start_growth != '' && $end_growth != '') {
@@ -191,6 +191,7 @@ class Member extends BaseShop
             $field = '*';
 
             $member_model = new MemberModel();
+            $member_label_model = new MemberLabelModel();
             $result = $member_model->getMemberPageList($condition, $page, $page_size, $order, $field);
             if ($is_exit_fenxiao == 1) {
                 $list = $result[ 'data' ][ 'list' ];
@@ -205,17 +206,29 @@ class Member extends BaseShop
                             $parent_fenxiao_name = $fenxiao_model->getParentFenxiaoName($v[ 'fenxiao_id' ], 1);
                         }
                         $list[ $k ][ 'parent_fenxiao_name' ] = $parent_fenxiao_name;
+                        $list[ $k ][ 'member_label_name' ] = '';
+                        $member_label_name = '';
+                        if(!empty($v['member_label'])){
+                            $member_labels = explode(',',$v['member_label']);
+                            foreach($member_labels as $kk=>$vv){
+                                $label_name = $member_label_model->getMemberLabelInfo([['label_id','=',$vv]],'label_name');
+                                if(!empty($label_name['data']['label_name'])){
+                                    $member_label_name .= ','. $label_name['data']['label_name'];
+                                }
+                            }
+                            $member_label_name = ltrim($member_label_name,',');
+                        }
+                        $list[ $k ][ 'member_label_name' ] = $member_label_name;
                     }
-                }
 
+                }
                 $result[ 'data' ][ 'list' ] = $list;
             }
-
             return $result;
         } else {
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id, level_name', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id, level_name, level_type', 'growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
 
             //会员标签
@@ -244,6 +257,9 @@ class Member extends BaseShop
             //订单来源 (支持端口)
             $order_from = Config::get("app_type");
             $this->assign('order_from_list', $order_from);
+
+            $this->assign('supermember_is_exit', addon_is_exit('supermember', $this->site_id));
+
             return $this->fetch('member/member_list');
         }
     }
@@ -290,31 +306,30 @@ class Member extends BaseShop
     public function editMember()
     {
         if (request()->isAjax()) {
-            $data = [
-                'mobile' => input('mobile', ''),
-                'email' => input('email', ''),
-                'status' => input('status', 1),
-                'headimg' => input('headimg', ''),
-                'nickname' => input('nickname', ''),
-                'sex' => input('sex', 0),
-                'birthday' => input('birthday', '') ? strtotime(input('birthday', '')) : 0,
-            ];
-            if (empty($data['nickname'])) unset($data['nickname']);
+            $input = input();
+            $data = [];
+            if (isset($input['nickname'])) $data['nickname'] = $input['nickname'];
+            if (isset($input['realname'])) $data['realname'] = $input['realname'];
+            if (isset($input['sex'])) $data['sex'] = $input['sex'];
+            if (isset($input['birthday'])) $data['birthday'] = $input['birthday'] ? strtotime($input['birthday']) : 0;
+            if (isset($input['mobile'])) $data['mobile'] = $input['mobile'];
+
             $member_id = input('member_id', 0);
             $member_model = new MemberModel();
             $this->addLog("编辑会员:id" . $member_id, $data);
-            return $member_model->editMember($data, [ [ 'member_id', '=', $member_id ] ]);
+            return $member_model->editMember($data, [ [ 'member_id', '=', $member_id ], ['site_id', '=', $this->site_id] ]);
         } else {
 
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id,level_name,level_type,is_free_shipping,consume_discount,point_feedback', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id,level_name,level_type,is_free_shipping,consume_discount,point_feedback', 'level_type asc,growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
 
             //会员信息
             $member_id = input('member_id', 0);
             $member_model = new MemberModel();
-            $member_info = $member_model->getMemberInfo([ [ 'member_id', '=', $member_id ] ]);
+            $member_info = $member_model->getMemberInfo([ [ 'site_id', '=', $this->site_id ], [ 'member_id', '=', $member_id ] ]);
+            if (empty($member_info['data'])) return $this->error('未获取到会员数据', addon_url('shop/member/memberlist'));
             $this->assign('member_info', $member_info);
 
             //会员详情四级菜单
@@ -419,7 +434,8 @@ class Member extends BaseShop
 
             //会员信息
             $member_model = new MemberModel();
-            $member_info = $member_model->getMemberDetail($member_id);
+            $member_info = $member_model->getMemberDetail($member_id, $this->site_id);
+            if (empty($member_info['data'])) return $this->error('未获取到会员数据', addon_url('shop/member/memberlist'));
             $this->assign('member_info', $member_info[ 'data' ]);
 
             //账户类型和来源类型
@@ -447,19 +463,6 @@ class Member extends BaseShop
         $this->addLog("会员余额调整id:" . $member_id . "金额" . $adjust_num);
         $member_account_model = new MemberAccountModel();
         return $member_account_model->addMemberAccount($this->site_id, $member_id, 'balance', $adjust_num, 'adjust', 0, $remark);
-    }
-
-    /**
-     * 余额调整（可提现）
-     */
-    public function adjustBalanceMoney()
-    {
-        $member_id = input('member_id', 0);
-        $adjust_num = input('adjust_num', 0);
-        $remark = input('remark', '');
-        $this->addLog("会员余额调整id:" . $member_id . "金额" . $adjust_num);
-        $member_account_model = new MemberAccountModel();
-        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'balance_money', $adjust_num, 'adjust', 0, $remark);
     }
 
     /**
@@ -500,6 +503,7 @@ class Member extends BaseShop
             $config_model = new ConfigModel();
             return $config_model->setRegisterDocument($title, $content, $this->site_id, 'shop');
         } else {
+            $this->forthMenu();
             //获取注册协议
             $config_model = new ConfigModel();
             $document_info = $config_model->getRegisterDocument($this->site_id, 'shop');
@@ -527,6 +531,7 @@ class Member extends BaseShop
             );
             return $config_model->setRegisterConfig($data, $this->site_id, 'shop');
         } else {
+            $this->forthMenu();
             //获取注册设置
             $config_info = $config_model->getRegisterConfig($this->site_id, 'shop');
             $value = $config_info[ 'data' ][ 'value' ];
@@ -713,11 +718,27 @@ class Member extends BaseShop
 
         $order = 'reg_time desc';
         $field = 'username,nickname,realname,mobile,sex,birthday,email,member_level_name,member_label_name,
-        qq,location,balance,balance_money,point,growth,reg_time,last_login_ip,last_login_time';
+        qq,location,balance,balance_money,point,growth,reg_time,last_login_ip,last_login_time,is_fenxiao,fenxiao_id';
 
         $member_model = new MemberModel();
         $list = $member_model->getMemberList($condition, $field, $order);
 
+        $is_exit_fenxiao = addon_is_exit('fenxiao');
+        if ($is_exit_fenxiao == 1) {
+            if (!empty($list['data'])) {
+
+                $fenxiao_model = new Fenxiao();
+                foreach ($list['data'] as $k => $v) {
+
+                    if ($v[ 'is_fenxiao' ] == 1) {
+                        $parent_fenxiao_name = $fenxiao_model->getParentFenxiaoName($v[ 'fenxiao_id' ], 2);
+                    } else {
+                        $parent_fenxiao_name = $fenxiao_model->getParentFenxiaoName($v[ 'fenxiao_id' ], 1);
+                    }
+                    $list['data'][ $k ][ 'parent_fenxiao_name' ] = $parent_fenxiao_name;
+                }
+            }
+        }
         // 实例化excel
         $phpExcel = new \PHPExcel();
 
@@ -740,6 +761,7 @@ class Member extends BaseShop
         $phpExcel->getActiveSheet()->getStyle('N')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         $phpExcel->getActiveSheet()->getStyle('O')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         $phpExcel->getActiveSheet()->getStyle('P')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $phpExcel->getActiveSheet()->getStyle('Q')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         //单独添加列名称
         $phpExcel->setActiveSheetIndex(0);
         $phpExcel->getActiveSheet()->setCellValue('A1', '会员账号');//可以指定位置
@@ -758,6 +780,7 @@ class Member extends BaseShop
         $phpExcel->getActiveSheet()->setCellValue('N1', '上次登录时间');
         $phpExcel->getActiveSheet()->setCellValue('O1', '上次登录ip');
         $phpExcel->getActiveSheet()->setCellValue('P1', '注册时间');
+        $phpExcel->getActiveSheet()->setCellValue('Q1', '上级分销商');
         //循环添加数据（根据自己的逻辑）
         $sex = [ '保密', '男', '女' ];
         foreach ($list[ 'data' ] as $k => $v) {
@@ -778,6 +801,7 @@ class Member extends BaseShop
             $phpExcel->getActiveSheet()->setCellValue('N' . $i, date('Y-m-d H:i:s', $v[ 'last_login_time' ]));
             $phpExcel->getActiveSheet()->setCellValue('O' . $i, $v[ 'last_login_ip' ]);
             $phpExcel->getActiveSheet()->setCellValue('P' . $i, date('Y-m-d H:i:s', $v[ 'reg_time' ]));
+            $phpExcel->getActiveSheet()->setCellValue('Q' . $i, !empty($v[ 'parent_fenxiao_name' ])?$v[ 'parent_fenxiao_name' ]:'');
         }
 
         // 重命名工作sheet
@@ -839,6 +863,34 @@ class Member extends BaseShop
             $this->forthMenu([ 'member_id' => $member_id ]);
 
             return $this->fetch('member/address_detail');
+        }
+    }
+
+    /**
+     * 会员领取优惠卷
+     */
+    public function memberCoupon()
+    {
+        if (request()->isAjax()) {
+            $page = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $member_id = input('member_id', 0);
+
+            $condition[] = [ 'site_id', '=', $this->site_id ];
+            $condition[] = [ 'member_id', '=', $member_id ];
+
+            //查询会员领取的优惠券
+            $coupon_model   = new CouponModel();
+            $res = $coupon_model->getCouponPageList($condition, $page, $page_size);
+            return $res;
+        } else {
+            $member_id = input('member_id', 0);
+            $this->assign('member_id', $member_id);
+
+            //会员详情四级菜单
+            $this->forthMenu([ 'member_id' => $member_id ]);
+
+            return $this->fetch('member/member_coupon');
         }
     }
 
@@ -1006,8 +1058,10 @@ class Member extends BaseShop
          if(request()->isAjax()){
              $member_model = new MemberModel();
              $id = input("id", 0);
+             $page = input('page', 1);
+             $page_size = input('page_size', PAGE_LIST_ROWS);
              $condition['record_id'] = $id;
-             $list = $member_model->getMemberImportLogList($condition);
+             $list = $member_model->getMemberImportLogList($condition, $page, $page_size);
 
              return $list;
          }
@@ -1015,6 +1069,7 @@ class Member extends BaseShop
          $id = request()->get("id", 0);
          $member_model = new MemberModel();
          $info = $member_model->getMemberImportRecordInfo($id);
+         if (empty($info['data'])) return $this->error('未获取到导入数据', addon_url('shop/member/memberimport'));
          $this->assign('info', $info);
          $this->assign('id', $id);
          return $this->fetch('member/import_log');

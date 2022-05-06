@@ -182,9 +182,15 @@ class Discount extends BaseModel
                         'sku_image'      => $sku_info['sku_image']
                     ];
                     model('promotion_discount_goods')->add($discount_goods_data);
+                    model("goods_sku")->update(['promotion_type' => 1, 'discount_price' => $v['discount_price'], 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], [['sku_id', '=', $v['sku_id']]]);
                 }
             }
-
+            if (!empty($data['cancel_sku_list'])){
+                foreach($data['cancel_sku_list'] as $kk=>$vv){
+                    $sku_info             = model("goods_sku")->getInfo([['sku_id', '=', $vv['sku_id']]], 'goods_id, sku_id, sku_name,price,sku_image');
+                    model("goods_sku")->update(['promotion_type' => 1, 'discount_price' => $sku_info ['price']], [['sku_id', '=', $sku_info ['sku_id']]]);
+                }
+            }
 
             //活动商品启动
             $this->cronCloseDiscount($discount_id);
@@ -399,7 +405,7 @@ class Discount extends BaseModel
     {
         $info = model('promotion_discount')->getInfo([['discount_id', '=', $discount_id], ['site_id', '=', $site_id]], 'goods_id,discount_id, site_id, discount_name, status, remark, start_time, end_time, create_time, modify_time');
 
-        $goods_sku = model("goods_sku")->getList([['goods_id', '=', $info['goods_id']]], 'stock, goods_id, sku_id, sku_name,price,sku_image');
+        $goods_sku = model("goods_sku")->getList([['goods_id', '=', $info['goods_id']]], 'goods_name, stock, goods_id, sku_id, sku_name,price,sku_image');
 
         $discount_goods = model("promotion_discount_goods")->getList([['goods_id', '=', $info['goods_id']], ['discount_id','=',$info['discount_id']]], '*');
         foreach ($goods_sku as $k => $v){

@@ -8,6 +8,7 @@
         <li>
             <a href='{:addon_url("wechat://shop/replay/replay")}'>关键词自动回复</a>
         </li>
+        <li><a href='{:addon_url("wechat://shop/replay/default")}'>默认回复</a></li>
         <li class='layui-this'>
             <a href='{:addon_url("wechat://shop/replay/follow")}'>关注后自动回复</a>
         </li>
@@ -21,8 +22,8 @@
             <input type="hidden" name="layer_index" value="">
             <input type="hidden" name="rule_id" value="">
             <input type="hidden" name="key_id" value="-1">
-            <div class="arrow"><i class="layui-icon">&#xe603;</i></div>
-            <a href="javascript:;" class="close--circle js-close">×</a>
+            <!--<div class="arrow"><i class="layui-icon">&#xe603;</i></div>-->
+            <!--<a href="javascript:;" class="close&#45;&#45;circle js-close">×</a>-->
             <div>
                 <div class="misc">
                     <!-- 	   <a href="javascript:;" class="js-replay" nc-event="click" nc-action="emotion">表情</a> -->
@@ -107,6 +108,7 @@
 
             //添加和修改回复
             form.on('submit(add_reply)', function (data) {
+
                 var d = data.field;
                 var rule_id = d.rule_id;
                 var key_id = d.key_id;
@@ -116,7 +118,7 @@
 
                 var param = {
                     url: ns.url('wechat://shop/replay/editReplays'),
-                    data: {"rule_id": rule_id,"reply_content":reply_content, "key_id":key_id, "type" : type},
+                    data: {"rule_id": rule_id,"reply_content":reply_content, "key_id":key_id, "type" : type,"replay_type":"follow"},
                     success: function (res) {
                         layer.msg(res.message);
                         if (res.code >= 0) {

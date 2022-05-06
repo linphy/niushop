@@ -15,13 +15,13 @@
 </div>
 
 <div class="layui-form ns-form">
-	<div class="layui-form-item">
-		<label class="layui-form-label">是否启用：</label>
-		<div class="layui-input-block">
-			<input type="checkbox" name="is_use" value="1" lay-skin="switch" {if condition="$config.is_use == 1"} checked {/if} />
-		</div>
-		<!--<div class="ns-word-aux">api安全功能开启之后调用前端api需要传输签名串</div>-->
-	</div>
+<!--	<div class="layui-form-item">-->
+<!--		<label class="layui-form-label">是否启用：</label>-->
+<!--		<div class="layui-input-block">-->
+<!--			<input type="checkbox" name="is_use" value="1" lay-skin="switch" {if condition="$config.is_use == 1"} checked {/if} />-->
+<!--		</div>-->
+<!--		&lt;!&ndash;<div class="ns-word-aux">api安全功能开启之后调用前端api需要传输签名串</div>&ndash;&gt;-->
+<!--	</div>-->
 	
 	<!--<div class="layui-form-item">-->
 		<!--<label class="layui-form-label">Token加密秘钥：</label>-->
@@ -38,16 +38,33 @@
 		<label class="layui-form-label">Token加密秘钥：</label>
 		<div class="layui-input-block">
 			{if condition="$config.value"}
-			<textarea name="private_key" class="layui-textarea ns-len-long" placeholder="请输入秘钥" disabled>{$config.value.private_key}</textarea>
+			<input type="text" name="private_key" class="layui-input ns-len-long" placeholder="请输入秘钥" value="{$config.value.private_key}">
 			{else/}
-			<textarea name="private_key" class="layui-textarea ns-len-long" placeholder="请输入秘钥" disabled></textarea>
+			<input type="text" name="private_key" class="layui-input ns-len-long" placeholder="请输入秘钥">
 			{/if}
 		</div>
 		<div class="ns-word-aux">该配置关系到会员token解析，请慎重设置，注意设置之后对应会员要求重新登录获取token</div>
 	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"><span class="required">*</span>token存储时长 ：</label>
+		<div class="layui-input-block">
+			<div class="layui-input-inline ns-len-short">
+				{if condition="$config.value"}
+				<input type="number" name="long_time" value="{$config.value.long_time}" lay-verify="required|num" data-min="0" data-unit="小时" placeholder="登录限制时长" autocomplete="off" class="layui-input ns-len-short">
+				{else/}
+				<input type="text" name="long_time" value="" class="layui-input ns-len-long" placeholder="登录限制时长">
+				{/if}
+			</div>
+			<div class="layui-form-mid">小时</div>
+		</div>
+		<div class="ns-word-aux">
+			<p>说明：该存储时间为小程序端和公众号端用户从登录开始到设置时间会重新获取登录信息，0为不限制</p>
+		</div>
+	</div>
 	
 	<div class="ns-form-row">
-		<button class="layui-btn ns-bg-color" lay-submit lay-filter="generate">生成秘钥</button>
+<!--		<button class="layui-btn ns-bg-color" lay-submit lay-filter="generate">生成秘钥</button>-->
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
 </div>
@@ -59,6 +76,16 @@
 			repeat_flag = false; //防重复标识
 		form.render();
 
+		/**
+		 * 表单验证
+		 */
+		form.verify({
+			num: function(value) {
+				if (value < 0) {
+					return '不能小于0！';
+				}
+			},
+		});
 		/**
 		 * 监听提交
 		 */

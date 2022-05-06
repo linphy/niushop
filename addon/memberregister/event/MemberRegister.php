@@ -45,7 +45,7 @@ class MemberRegister
                     $coupon_list = $coupon_list['data'];
                     $coupon = new Coupon();
                     foreach ($coupon_list as $key => $val){
-                        $coupon->receiveCoupon($val['coupon_type_id'], $param['site_id'], $param['member_id'], '', 0, 0);
+                        $coupon->receiveCoupon($val['coupon_type_id'], $param['site_id'], $param['member_id'], '3', 0, 0);
                     }
 
                 }else if(!empty($v)) {

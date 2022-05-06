@@ -65,7 +65,7 @@
 					<label class="layui-form-label"></label>
 					<div class="layui-input-inline">
 
-						<input type="radio" name="time_type" value="0" title="全天"  lay-filter="time_type" {if $local_info.time_type == 0 || !isset($local_info.time_type)}checked{/if}/>
+						<input type="radio" name="time_type" value="0" title="每天"  lay-filter="time_type" {if $local_info.time_type == 0 || !isset($local_info.time_type)}checked{/if}/>
 						<input type="radio" name="time_type" value="1" title="自定义"  lay-filter="time_type" {if $local_info.time_type == 1 }checked{/if}/>
 					</div>
 				</div>
@@ -86,7 +86,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="layui-form-item time-type-view" >
+				<div class="layui-form-item time-type-view-all" >
 					<label class="layui-form-label"></label>
 					<div class="layui-input-inline">
 						<input type="text" class="layui-input" id="startTime" lay-verify="start_time" placeholder="配送开始时间" value="" readonly >
@@ -538,6 +538,12 @@ var init_key = 1;
 
 			if (repeat_flag) return false;
 			repeat_flag = true;
+			var transfer_type =$("input[name=type]:checked()");
+			if(transfer_type.length <= 0){
+				repeat_flag = false;
+				layer.msg("请至少选择一种配送方式！");
+				return
+			};
 			var field = data.field;
 			var json = {};
 			json.type = field.type;
@@ -592,6 +598,11 @@ var init_key = 1;
 					}
 					break;
 			}
+			if(json.local_area_json == '[]'){
+				repeat_flag = false;
+				layer.msg('至少保留一个配送区域');
+				return;
+		}
 			$.ajax({
 				type: 'POST',
 				dataType: 'JSON',

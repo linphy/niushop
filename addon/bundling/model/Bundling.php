@@ -157,6 +157,7 @@ class Bundling extends BaseModel
                 ],
             ];
             $data[ 'bundling_goods' ] = model("promotion_bundling_goods")->getList([ [ 'pbg.bl_id', '=', $bl_id ], [ 'ngs.is_delete', '=', 0 ] ], $field, $order, $alias, $join);
+            $data[ 'bundling_goods_count' ] = count($data['bundling_goods']);
         }
         return $this->success($data);
     }
@@ -212,5 +213,44 @@ class Bundling extends BaseModel
                 return $this->success($res);
             }
         }
+    }
+
+    /**
+     * 获取组合
+     * @param unknown $bundling_id
+     */
+    public function getBundlingGoodsNew($sku_id)
+    {
+        $goods_id = model("goods_sku")->getInfo([ [ 'sku_id', '=', $sku_id ] ], 'goods_id');
+        $sku_list_id = model("goods_sku")->getList([ [ 'goods_id', '=', $goods_id['goods_id'] ] ], 'sku_id');
+        $sku_id_arr = [];
+        foreach ($sku_list_id as $key => $val){
+            if($val['sku_id'] != $sku_id){
+                $sku_id_arr[] = $val['sku_id'];
+            }
+        }
+        $bundling_list1 = model("promotion_bundling_goods")->getList([ [ 'sku_id', '=', $sku_id ] ], 'bl_id');
+        $bundling_list = model("promotion_bundling_goods")->getList([ [ 'sku_id', 'in', $sku_id_arr ] ], 'bl_id');
+        $bl_id_arr1 = [];
+        if ($bundling_list1){
+            foreach ($bundling_list1 as $kes => $vas){
+                $bl_id_arr1[] = $vas['bl_id'];
+            }
+        }
+
+        $bl_id_arr = [];
+        if($bundling_list){
+            foreach ($bundling_list as $ke => $va){
+                $bl_id_arr[] = $va['bl_id'];
+            }
+        }
+
+        $bl_id_arr = array_unique(array_merge($bl_id_arr1, $bl_id_arr));
+        $bundling_array = [];
+        foreach ($bl_id_arr as $k => $v) {
+            $temp_result = $this->getBundlingDetail([ [ 'bl_id', '=', $v ], [ 'status', '=', 1 ] ]);
+            if (!empty($temp_result[ "data" ])) $bundling_array[] = $temp_result[ "data" ];
+        }
+        return $this->success($bundling_array);
     }
 }

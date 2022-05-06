@@ -90,7 +90,7 @@ class MemberCoupon extends BaseModel
     /**
      * 会员批量发送优惠券
      */
-    public function sendCoupon($coupon_type_ids, $site_id, $member_id, $get_type = 4, $is_stock = 0, $is_limit = 1)
+    public function sendCoupon($coupon_type_ids, $site_id, $member_id, $get_type = 4, $is_stock = 0, $is_limit = 1 ,$related_id = 0)
     {
         //已选优惠券提交数组
         if(!empty($coupon_type_ids)){
@@ -135,6 +135,7 @@ class MemberCoupon extends BaseModel
                         'discount' => $coupon_type_info['discount'],
                         'discount_limit' => $coupon_type_info['discount_limit'],
                         'goods_ids' => $coupon_type_info['goods_ids'],
+                        'related_id' => $related_id
                     ];
 
                     if ($coupon_type_info['validity_type'] == 0) {

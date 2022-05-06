@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '消费奖励',
                     //展示介绍
-                    'description' => '会员消费后奖励设置',
+                    'description' => '客户消费后发放奖励',
                     //展示图标
                     'icon'        => 'addon/memberconsume/icon.png',
                     //跳转链接

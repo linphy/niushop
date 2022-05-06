@@ -30,7 +30,17 @@ class Notice extends BaseShop
             $limit     = input('page_size', PAGE_LIST_ROWS);
             $condition = [['site_id', '=', $this->site_id]];
             $notice    = new NoticeModel();
-            $list      = $notice->getNoticePageList($condition, $page, $limit);
+
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
+            $list      = $notice->getNoticePageList($condition, $page, $limit, $order_by);
 
             foreach ($list['data']['list'] as $key => $val){
             	$list['data']['list'][$key]['content'] = preg_replace("/[^\x{4e00}-\x{9fa5}^0-9^A-Z^a-z]+/u", '', $val['content']);

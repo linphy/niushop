@@ -65,4 +65,18 @@ class GoodsBrowse extends BaseModel
         $list = model('goods_browse')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
     }
+
+    /**
+     * 获取浏览商品列表
+     * @param array $condition
+     * @param string $field
+     * @param string $order
+     * @param null $limit
+     * @return array
+     */
+    public function getBrowseList($condition = [], $field = '*', $order = 'id asc', $limit = null)
+    {
+        $list = model('goods_browse')->getList($condition, $field, $order, '', '', '', $limit);
+        return $this->success($list);
+    }
 }

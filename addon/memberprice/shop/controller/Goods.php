@@ -36,7 +36,7 @@ class Goods extends BaseShop
         //会员等级
         $member_level_model = new MemberLevel();
         $condition          = [['site_id', '=', $this->site_id]];
-        $order              = 'growth asc';
+        $order              = 'level_type asc,growth asc';
         $field              = '*';
         $level_list         = $member_level_model->getMemberLevelList($condition, $field, $order);
         $this->assign('level_list', $level_list['data']);

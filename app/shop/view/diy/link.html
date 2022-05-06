@@ -13,9 +13,11 @@
     .link-box .link-right dd{float:left;margin:5px 5px 5px 0;padding:0 16px;border:1px solid #ededed;border-radius:3px;line-height:30px;color:#666;cursor:pointer}
     .link-box .link-right .layui-table-body{height:285px}
     .link-btn{margin-top:20px;padding-right:10px;height:45px;line-height:45px;text-align:right;border-top:1px solid #f2f2f2}
-    .link-box .custom-link{width:360px;margin:50px}
+    .link-box .custom-link{width:420px;margin:50px}
+    .link-box .other-applet{width:450px;margin:50px}
     .link-box .ns-word-aux{width:250px}
-
+    .layui-input-inline .layui-input{display: inline-block;width: 150px}
+    .layui-input-inline .layui-btn.layui-btn-primary{border-color: #FF6A00;color:#fff;vertical-align: top;height: 34px !important;line-height: 34px !important;padding: 0px 10px !important;}
 </style>
 
 <div class="link-box">
@@ -37,19 +39,24 @@
         <button class="layui-btn link-save ns-bg-color">确定</button>
     </div>
 </div>
-
+<script type="text/html" id="toolbarOperation">
+       <div class="layui-input-inline">
+           <input type="text" name="search_text" placeholder="请输入商品名称" autocomplete="off" class="layui-input"/>
+           <bottom class="layui-btn layui-btn-primary ns-bg-color" onclick="getGoodsInfo('GOODSNAME_GOODS')">筛选</bottom>
+       </div>
+</script>
 <script>
     var promotion,wap_url,goodsIdent,
         initMeun = $(".link-box .link-left dd:eq(0)").attr("data-ident"),
         customIdent = false, //是否点击自定义链接
+        appletIdent = false, // 是否点击跳转小程序
+        mobileIdent = false, // 是否点击拨打电话
         getLineData = {
             link : '{:html_entity_decode($link)}',
             support_diy_view : '{$support_diy_view}',
         };
-            console.log(getLineData);
     var preoldlink = JSON.parse(getLineData.link);
-
-    if(!preoldlink.parents){
+     if(!preoldlink.parents){
         preoldlink.parents = initMeun;
     }
 
@@ -58,11 +65,26 @@
     //左侧循环列表    请求参数
     function firstRequest(){
         if(preoldlink.parents == 'CUSTOM_LINK'){
-            $(".link-left dl").eq(2).find('dt').addClass("ns-text-color");
+            $(".link-left dl dd[data-ident='CUSTOM_LINK']").addClass("ns-text-color");
             showCustom();
             $(".link-box input[name='title']").val(preoldlink.title);
             $(".link-box input[name='wap_url']").val(preoldlink.wap_url);
             customIdent = true;
+            return;
+        }
+        if(preoldlink.parents == 'OTHER_APPLET'){
+            $(".link-left dl dd[data-ident='OTHER_APPLET']").addClass("ns-text-color");
+            showOtherApplet();
+            $(".link-box input[name='appid']").val(preoldlink.appid);
+            $(".link-box input[name='page']").val(preoldlink.page);
+            appletIdent = true;
+            return;
+        }
+        if(preoldlink.parents == 'MOBILE'){
+            $(".link-left dl dd[data-ident='MOBILE']").addClass("ns-text-color");
+            showMobile();
+            $(".link-box input[name='mobile']").val(preoldlink.mobile);
+            mobileIdent = true;
             return;
         }
         $categoryList = eval(<?php echo json_encode($list);?>);
@@ -168,13 +190,10 @@
 
                 });
 
-
-                console.log($("input[name='category_select_id']:checked").length);
                 if ($("input[name='category_select_id']:checked").length > 0){
                     var category_id_1 = $("input[name='category_select_id']:checked").parents('.category-line').attr('data-category-id-1');
                     var category_id_2 = $("input[name='category_select_id']:checked").parents('.category-line').attr('data-category-id-2');
                     // $("input[name='category_select_id']:checked").parents().parent().find('.category-line').css('display', 'block');
-                    console.log(category_id_1,category_id_2);
                     if(category_id_1 > 0){
                         $('tr[data-category-id-1='+category_id_1+']').show();
 
@@ -238,7 +257,7 @@
             ];
         }else if(name == "PINTUAN_GOODS"){
             promotion = 'pintuan';
-            wap_url = '/promotionpages/pintuan/detail/detail?id=';
+            wap_url = '/promotionpages/pintuan/detail/detail?pintuan_id=';
 
             goodsCols = [
                 [{
@@ -253,7 +272,7 @@
                         var html = '';
                         html += `<div class="ns-table-title">`;
                             html += `<div class="ns-title-pic" id="goods_img_{{data.goods_id}}">`;
-                                html += `<img layer-src src="${ns.img(data.sku_image != '' && data.sku_image != undefined ? data.sku_image.split(',')[0] : '', 'small')}"/>`;
+                                html += `<img layer-src src="${ns.img(data.goods_image != '' && data.goods_image != undefined ? data.goods_image.split(',')[0] : '', 'small')}"/>`;
                             html += `</div>`;
                             html += `<div class="ns-title-content">`;
                                 html += `<a href="javascript:;" class="ns-multi-line-hiding ns-text-color" title="${data.goods_name}">${data.goods_name}</a>`;
@@ -276,7 +295,7 @@
             ];
         }else if(name == "GROUPBUY_GOODS"){
             promotion = 'groupbuy';
-            wap_url = '/promotionpages/groupbuy/detail/detail?id=';
+            wap_url = '/promotionpages/groupbuy/detail/detail?groupbuy_id=';
 
             goodsCols = [
                 [{
@@ -330,7 +349,7 @@
             ]
         }else if(name == "BARGAIN_GOODS"){
             promotion = 'bargain';
-            wap_url = '/promotionpages/bargain/detail/detail?id=';
+            wap_url = '/promotionpages/bargain/detail/detail?bargain_id=';
 
             goodsCols = [
                 [{
@@ -366,16 +385,98 @@
                     width: '15%'
                 }]
             ]
+        } else if(name == "PRESALE_GOODS"){
+            promotion = 'presale';
+            wap_url = '/promotionpages/presale/detail/detail?id=';
+
+            goodsCols = [
+                [{
+                    unresize: 'false',
+                    width: '8%',
+                    templet: '#checkbox'
+                },{
+                    title: '预售商品',
+                    unresize: 'false',
+                    width: '47%',
+                    templet: function(d){
+                        var html = '';
+                        html += `<div class="ns-table-title">`;
+                            html += `<div class="ns-title-pic" id="goods_img_{{d.goods_id}}">`;
+                                html += `<img layer-src src="${ns.img(d.goods_image.split(',')[0], 'small')}"/>`;
+                            html += `</div>`;
+                            html += `<div class="ns-title-content">`;
+                                html += `<a href="javascript:;" class="ns-multi-line-hiding ns-text-color" title="{{d.goods_name}}">${d.goods_name}</a>`;
+                            html += `</div>`;
+                        html += `</div>`;
+                        return html;
+                    }
+                },{
+                    field: 'presale_name',
+                    title: '活动名称',
+                    unresize: 'false',
+                    width: '30%'
+                },
+                {
+                    field: 'presale_stock',
+                    title: '库存',
+                    unresize: 'false',
+                    width: '15%'
+                }]
+            ]
+        }else if(name == 'GOODSNAME_GOODS'){
+            wap_url = '/pages/goods/detail/detail?sku_id=';
+
+            goodsCols = [
+                [
+                    {
+                        unresize: 'false',
+                        width: '8%',
+                        templet: '#checkbox'
+                    },
+                    {
+                        title: '商品',
+                        unresize: 'false',
+                        width: '62%',
+                        templet: '#goods_info'
+                    },
+                    {
+                        field: 'price',
+                        title: '价格',
+                        unresize: 'false',
+                        width: '15%'
+                    },
+                    {
+                        field: 'goods_stock',
+                        title: '库存',
+                        unresize: 'false',
+                        width: '15%'
+                    }
+                ]
+            ];
         }
         goodsIdent = name;
+        if(name == "GOODSNAME_GOODS"){
+            goodsIdent = 'ALL_GOODS';
+            var goods_name = $("input[name='search_text']").val();
+            table = new Table({
+                elem: '#goods_list',
+                url: '{:addon_url("shop/goods/goodsselect")}',
+                where: {search_text : goods_name},
+                cols: goodsCols,
 
-        table = new Table({
-            elem: '#goods_list',
-            url: '{:addon_url("shop/goods/goodsselect")}',
-            where: {promotion},
-            cols: goodsCols
-        });
+            });
+
+        }else{
+            table = new Table({
+                elem: '#goods_list',
+                url: '{:addon_url("shop/goods/goodsselect")}',
+                where: {promotion},
+                cols: goodsCols,
+                toolbar: '#toolbarOperation',
+            });
+        }
     }
+
 
     function getGameInfo(name){
         var addon_url = '';
@@ -384,7 +485,7 @@
         if (name == 'CARDS_GAME'){
             wap_url = '/otherpages/game/cards/cards?id=';
             addon_url = '{:addon_url("cards://shop/cards/lists")}';
-        } else if (name == 'TURNTABLE_GAME'){ 
+        } else if (name == 'TURNTABLE_GAME'){
             wap_url = '/otherpages/game/turntable/turntable?id=';
             addon_url = '{:addon_url("turntable://shop/turntable/lists")}';
         } else if (name == 'EGG_GAME'){
@@ -422,26 +523,97 @@
     }
 
     //自定义链接
-    $("dt[data-ident='CUSTOM_LINK']").click(function(){
+    $("dd[data-ident='CUSTOM_LINK']").click(function(){
         showCustom();
         customIdent = true;
+        appletIdent = false;
+        mobileIdent = false;
+        if (preoldlink.name == 'CUSTOM_LINK') {
+            $(".link-box input[name='title']").val(preoldlink.title);
+            $(".link-box input[name='wap_url']").val(preoldlink.wap_url);
+        }
     });
 
     function showCustom(){
         var html = '';
         html += '<div class="layui-form custom-link">';
         html += '<div class="layui-form-item">';
-        html += '<label class="layui-form-label sm"><span class="required">*</span>链接名称</label>';
+        html += '<label class="layui-form-label mid"><span class="required">*</span>链接名称</label>';
         html += '<div class="layui-input-inline">';
         html += '<input type="text" name="title" class="layui-input ns-len-mid" required>';
         html += '</div>';
         html += '</div>';
         html += '<div class="layui-form-item">';
-        html += '<label class="layui-form-label sm"><span class="required">*</span>跳转路径</label>';
+        html += '<label class="layui-form-label mid"><span class="required">*</span>跳转路径</label>';
         html += '<div class="layui-input-block">';
         html += '<input type="text" name="wap_url" class="layui-input ns-len-mid">';
         html += '</div>';
-        html += '<div class="ns-word-aux sm">路径必须以“/”开头，例：“/pages/goods/list/list”</div>';
+        html += '<div class="ns-word-aux mid">跳转内部链接，例：“/pages/goods/list/list”</div>';
+        html += '<div class="ns-word-aux mid">跳转外部链接，例：“https://baidu.com”</div>';
+
+        html += '</div>';
+        html += '</div>';
+
+        $(".link-right").html(html);
+    }
+
+    // 跳转小程序
+    $("dd[data-ident='OTHER_APPLET']").click(function(){
+        showOtherApplet();
+        mobileIdent = false;
+        customIdent = false;
+        appletIdent = true;
+        if (preoldlink.name == 'OTHER_APPLET') {
+            $(".link-box input[name='appid']").val(preoldlink.appid);
+            $(".link-box input[name='page']").val(preoldlink.page);
+        }
+    });
+
+    function showOtherApplet(){
+        var html = '';
+        html += '<div class="layui-form other-applet">';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label mid"><span class="required">*</span>小程序AppID</label>';
+        html += '<div class="layui-input-inline">';
+        html += '<input type="text" name="appid" class="layui-input ns-len-mid" required placeholder="请输入要打开的小程序的appid">';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label mid">小程序路径</label>';
+        html += '<div class="layui-input-block">';
+        html += '<input type="text" name="page" class="layui-input ns-len-mid" placeholder="请输入要打开的小程序路径">';
+        html += '</div>';
+        html += '<div class="ns-word-aux mid" style="width: auto">仅支持小程序之间的跳转，不支持从其他渠道跳转小程序</div>';
+        html += '<div class="ns-word-aux mid" style="width: auto">小程序路径如果为空则跳转到小程序首页</div>';
+        html += '<div class="ns-word-aux mid" style="width: auto">小程序路径格式如：page/index/index/index</div>';
+        html += '</div>';
+        html += '</div>';
+
+        $(".link-right").html(html);
+    }
+
+    // 拨打手机号
+    $("dd[data-ident='MOBILE']").click(function(){
+        showMobile();
+        customIdent = false;
+        appletIdent = false;
+        mobileIdent = true;
+        if (preoldlink.name == 'MOBILE') {
+            $(".link-box input[name='appid']").val(preoldlink.appid);
+            $(".link-box input[name='page']").val(preoldlink.page);
+        }
+    });
+
+    function showMobile(){
+        var html = '';
+        html += '<div class="layui-form other-mobile">';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label mid"><span class="required">*</span>电话号码</label>';
+        html += '<div class="layui-input-inline">';
+        html += '<input type="text" name="mobile" class="layui-input ns-len-mid" required placeholder="请输入要电话号码">';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="ns-word-aux mid" style="width: auto">电话号码支持手机号码和固定电话</div>';
         html += '</div>';
         html += '</div>';
 
@@ -458,24 +630,27 @@
         }
 
         if ($(this).parent("dl").find("dd").length == 0) {
-            $(".link-box .link-left dd").removeClass("ns-text-color");
+            $(".link-box .link-left dd,.link-box .link-left dt").removeClass("ns-text-color");
             $(this).addClass("ns-text-color");
         }
     });
 
     $("body").off('click').on("click", ".link-box .link-left dd", function () {
-        customIdent = false;
         if (!$(this).hasClass("ns-text-color")){
             $(".link-box .link-left dd,.link-box .link-left dt").removeClass("ns-text-color");
             $(this).addClass("ns-text-color");
         }
         initMeun = $(this).attr("data-ident");
-        getLinkInfo(initMeun);
+        if (initMeun != 'CUSTOM_LINK' && initMeun != 'OTHER_APPLET' && initMeun != 'MOBILE') {
+            customIdent = false;
+            appletIdent = false;
+            mobileIdent = false;
+            getLinkInfo(initMeun);   
+        }
     });
 
     // link-right
     $("body").on("click", ".link-box .link-right dd", function () {
-
         $(".link-box .link-right dd").removeClass("ns-border-color");
         if (!$(this).hasClass("ns-border-color")) $(this).addClass("ns-border-color");
     });
@@ -537,7 +712,6 @@
             if(old_value) value = old_value;
             initMeun = $(".link-box .link-left dd.ns-text-color").attr('data-ident');
         }
-
         /* 商品链接保存 */
         if ($("input[name='goods_checkbox']:checked").length){
             var goodsId = $("input[name='goods_checkbox']:checked").eq(0).attr("data-goods-id");
@@ -546,14 +720,21 @@
 
             if(old_value) value = old_value.toString();
             value = JSON.parse(value);
+
+            /* 删除商品活动信息 */
+            delete value.promotion_addon;
+
             if (!value.wap_url){
-                var nn =value.id;
                 if (goodsIdent=='GROUPBUY_GOODS') {
                     value.wap_url = wap_url + value.groupbuy_id;
-                } else if (goodsIdent=='PINTUAN_GOODS' || goodsIdent=='BARGAIN_GOODS') {
-                    value.wap_url = wap_url + value.id;     
+                } else if (goodsIdent=='BARGAIN_GOODS') {
+                    value.wap_url = wap_url + value.bargain_id;
                 } else if (goodsIdent=='DISTRIBUTION_GOODS') {
                     value.wap_url = wap_url + value.sku_id;
+                } else if (goodsIdent=='PINTUAN_GOODS') {
+                    value.wap_url = wap_url + value.pintuan_id;
+                } else if (goodsIdent=='PRESALE_GOODS') {
+                    value.wap_url = wap_url + value.presale_id;
                 } else {
                     value.wap_url = wap_url + value.sku_list[0].sku_id;
                 }
@@ -563,13 +744,12 @@
             }
             value = JSON.stringify(value);
         }
-
         // 小游戏
         if ($("input[name='game_checkbox']:checked").length){
             var gameId = $("input[name='game_checkbox']:checked").eq(0).attr("data-game-id");
             value = $("input[name='game_json'][data-game-id = "+ gameId +"]").val();
             old_value = $("input[name='old_game_json'][data-game-id = "+ gameId +"]").val();
-  
+
             if(old_value) value = old_value.toString();
             value = JSON.parse(value);
 
@@ -613,6 +793,7 @@
                 return false;
             }
 
+            value.appid = '';
             value.title = $(".custom-link input[name='title']").val();
             value.wap_url = $(".custom-link input[name='wap_url']").val();
             value.id = -999;
@@ -627,7 +808,52 @@
             window.linkData.parents = 'CUSTOM_LINK';
         }
 
-        if(value && !customIdent) {
+        if(appletIdent){
+            value = {};
+            if (!$(".other-applet input[name='appid']").val()){
+                layer.msg("跳转小程序appid不能为空");
+                return false;
+            }
+
+            value.wap_url = '';
+            value.appid = $(".other-applet input[name='appid']").val();
+            value.page = $(".other-applet input[name='page']").val();
+            value.title = '小程序-' + value.appid;
+            value.id = -999;
+            value.addon_icon = "";
+            value.addon_name = "ToApplet";
+            value.addon_title = "跳转小程序";
+            value.icon = "";
+            value.name = "OTHER_APPLET";
+            value.type = 0;
+
+            window.linkData = value;
+            window.linkData.parents = 'OTHER_APPLET';
+        }
+
+        if(mobileIdent){
+            value = {};
+            if (!$(".other-mobile input[name='mobile']").val()){
+                layer.msg("电话号码不能为空");
+                return false;
+            }
+
+            value.wap_url = '';
+            value.mobile = $(".other-mobile input[name='mobile']").val();
+            value.title = '拨打电话：' + value.mobile;
+            value.id = -999;
+            value.addon_icon = "";
+            value.addon_name = "MakeCall";
+            value.addon_title = "拨打电话";
+            value.icon = "";
+            value.name = "MOBILE";
+            value.type = 0;
+
+            window.linkData = value;
+            window.linkData.parents = 'MOBILE';
+        }
+
+        if(value && !customIdent && !appletIdent && !mobileIdent) {
             value = JSON.parse(value);
             window.linkData = value;
             window.linkData.parents = initMeun;
@@ -637,7 +863,12 @@
 </script>
 
 <script type="text/html" id="checkbox">
-    {{# if(Object.getOwnPropertyNames(preoldlink).length && preoldlink.goods_id == d.goods_id && preoldlink.parents == initMeun &&  promotion == 'all' || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id == d.sku_id && promotion == 'bargain' || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.groupbuy_id== d.groupbuy_id && promotion == 'groupbuy' || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id== d.sku_id  && promotion == 'pintuan'|| preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id== d.sku_id  && promotion == 'fenxiao'){ }}
+    {{# if (Object.getOwnPropertyNames(preoldlink).length && preoldlink.goods_id == d.goods_id && preoldlink.parents == initMeun && promotion == 'all'
+    || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.bargain_id == d.bargain_id && promotion == 'bargain'
+    || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.groupbuy_id == d.groupbuy_id && promotion == 'groupbuy'
+    || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.pintuan_id== d.pintuan_id && promotion == 'pintuan'
+    || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.presale_id== d.presale_id && promotion == 'presale'
+    || preoldlink.parents == initMeun && Object.getOwnPropertyNames(preoldlink).length && preoldlink.sku_id== d.sku_id && promotion == 'fenxiao'){ }}
     <input type="checkbox" data-goods-id="{{d.sku_id ? d.sku_id : d.goods_id}}" name="goods_checkbox" lay-skin="primary" lay-filter="goods_checkbox" checked>
     <input type="hidden" data-goods-id="{{d.sku_id ? d.sku_id : d.goods_id}}" name="old_goods_json" value='{:html_entity_decode($link)}' />
     {{# }else{ }}

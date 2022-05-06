@@ -11,6 +11,7 @@
 
 namespace app\shop\controller;
 
+use addon\presale\model\PresaleOrder;
 use app\model\order\OrderCommon;
 use app\model\order\OrderRefund as OrderRefundModel;
 use app\model\order\OrderExport;
@@ -37,7 +38,6 @@ class Orderrefund extends BaseShop
      */
     public function lists()
     {
-
         $refund_status   = input("refund_status", "");//退款状态
         $sku_name        = input("sku_name", '');//商品名称
         $refund_type     = input("refund_type", '');//退款方式
@@ -49,6 +49,7 @@ class Orderrefund extends BaseShop
 
         $delivery_no        = input("delivery_no", '');//物流编号
         $refund_delivery_no = input("refund_delivery_no", '');//退款物流编号
+        $refund_mode       = input("refund_mode", '');//退款类型
         $order_refund_model = new OrderRefundModel();
         if (request()->isAjax()) {
             $page_index = input('page', 1);
@@ -90,6 +91,12 @@ class Orderrefund extends BaseShop
             if ($refund_delivery_no != "") {
                 $condition[] = ["nop.refund_delivery_no", "like", "%$refund_delivery_no%"];
             }
+            //退款类型
+            if ($refund_mode == 1) {
+                $condition[] = ["nop.refund_mode", "in", [0, 1]];
+            } else if ($refund_mode == 2) {
+                $condition[] = ["nop.refund_mode", "=", 2];
+            }
 
             if (!empty($start_time) && empty($end_time)) {
                 $condition[] = ["nop.refund_action_time", ">=", date_to_time($start_time)];
@@ -119,14 +126,21 @@ class Orderrefund extends BaseShop
         $order_refund_model = new OrderRefundModel();
         $detail_result      = $order_refund_model->getRefundDetail($order_goods_id);
         $detail             = $detail_result["data"];
+
         if (empty($detail))
-            $this->error("操作失败!请重试");
+            $this->error("未获取到维权信息", addon_url('shop/orderrefund/lists'));
 
         $order_common_model = new OrderCommon();
-        $order_info_result  = $order_common_model->getOrderInfo([["order_id", "=", $detail["order_id"]]]);
+//        $order_info_result  = $order_common_model->getOrderInfo([["order_id", "=", $detail["order_id"]]]);
+        $order_info_result  = $order_common_model->getOrderDetail($detail["order_id"]);
         $order_info         = $order_info_result["data"];
         if (empty($order_info))
-            $this->error("操作失败!请重试");
+            $this->error("未获取到维权信息", addon_url('shop/orderrefund/lists'));
+
+        $template = "orderrefund/detail";
+        if( $order_info[ "order_type" ] == 4){
+            $template = "orderrefund/virtualdetail";
+        }
 
         //添加会员昵称
         $member = new Member();
@@ -134,7 +148,7 @@ class Orderrefund extends BaseShop
         $order_info['nickname'] = $member_info['data']['nickname'];
         $this->assign("detail", $detail);
         $this->assign("order_info", $order_info);
-        return $this->fetch("orderrefund/detail");
+        return $this->fetch($template);
     }
 
     /**
@@ -150,7 +164,13 @@ class Orderrefund extends BaseShop
             "order_goods_id"       => $order_goods_id,
             "refund_refuse_reason" => $refund_refuse_reason
         );
-        $res                  = $order_refund_model->orderRefundRefuse($data, $this->user_info, $refund_refuse_reason);
+        $log_data = [
+            'uid'        => $this->user_info['uid'],
+            'nick_name'  => $this->user_info['username'],
+            'action'     => '商家拒绝了维权',
+            'action_way' => 2
+        ];
+        $res                  = $order_refund_model->orderRefundRefuse($data, $this->user_info, $refund_refuse_reason, $log_data);
         return $res;
     }
 
@@ -194,11 +214,26 @@ class Orderrefund extends BaseShop
     public function complete()
     {
         $order_goods_id     = input("order_goods_id", 0);
+        $refund_money_type = input('refund_money_type', '');
+        $shop_refund_remark = input('shop_refund_remark','');
+        $refund_real_money = input('refund_real_money', 0);
+        $is_deposit_back = input('is_deposit_back', 1);
+
         $order_refund_model = new OrderRefundModel();
         $data               = array(
-            "order_goods_id" => $order_goods_id
+            "order_goods_id" => $order_goods_id,
+            'refund_money_type' => $refund_money_type,
+            'shop_refund_remark' => $shop_refund_remark,
+            'refund_real_money' => $refund_real_money,
+            'is_deposit_back'=>$is_deposit_back
         );
-        $res                = $order_refund_model->orderRefundFinish($data, $this->user_info);
+        $log_data = [
+            'uid'        => $this->user_info['uid'],
+            'nick_name'  => $this->user_info['username'],
+            'action'     => '商家对维权进行了转账，维权关闭',
+            'action_way' => 2
+        ];
+        $res                = $order_refund_model->orderRefundFinish($data, $this->user_info,$log_data);
         return $res;
     }
 
@@ -290,7 +325,6 @@ class Orderrefund extends BaseShop
 
         $order_export_model = new OrderExport();
         $result = $order_export_model->orderRefundExport($condition, $condition_desc, $this->site_id);
-        dump($result);die;
         return $result;
     }
 
@@ -345,4 +379,49 @@ class Orderrefund extends BaseShop
             return $res;
         }
     }
+
+    /**
+     * 获取订单项退款信息
+     */
+    public function getOrderGoodsRefundInfo()
+    {
+        if(request()->isAjax()){
+
+            $order_goods_id = input('order_goods_id','');
+
+            $order_refund_model = new OrderRefundModel();
+            $res = $order_refund_model->getOrderGoodsRefundInfo($order_goods_id,$this->site_id);
+            return $res;
+        }
+    }
+
+    /**
+     * 主动退款
+     * @return mixed
+     */
+    public function shopActiveRefund()
+    {
+        $order_goods_id     = input("order_goods_id", 0);
+        $refund_money_type = input('refund_money_type', '');
+        $shop_refund_remark = input('shop_refund_remark','');
+
+        $order_refund_model = new OrderRefundModel();
+        $data               = array(
+            "order_goods_id" => $order_goods_id,
+            'refund_money_type' => $refund_money_type,
+            'shop_refund_remark' => $shop_refund_remark,
+            'shop_active_refund' => 1
+        );
+
+        $log_data = [
+            'uid'        => $this->user_info['uid'],
+            'nick_name'  => $this->user_info['username'],
+            'action'     => '商家对订单进行了主动退款',
+            'action_way' => 2
+        ];
+
+        $res                = $order_refund_model->orderRefundFinish($data, $this->user_info, $log_data);
+        return $res;
+    }
+
 }

@@ -11,6 +11,7 @@
 
 namespace app\model\system;
 
+use think\Console;
 use think\facade\Cache;
 use app\model\BaseModel;
 
@@ -130,6 +131,7 @@ class Menu extends BaseModel
             model('menu')->delete([ [ 'app_module', "=", $app_module ], [ 'addon', "=", $addon ] ]);
 
             $tree = require $tree_name;
+
             $list = $this->getAddonMenuList($tree, $app_module, $addon);
             if (!empty($list)) {
                 $res = model('menu')->addList($list);
@@ -155,6 +157,7 @@ class Menu extends BaseModel
             if (!$tree) {
                 return [];
             }
+
             foreach ($tree as $k => $v) {
                 $parent = '';
                 if (isset($v[ 'parent' ])) {
@@ -192,7 +195,9 @@ class Menu extends BaseModel
                     'is_control' => isset($v[ 'is_control' ]) ? $v[ 'is_control' ] : 1,
                     'desc' => isset($v[ 'desc' ]) ? $v[ 'desc' ] : '',
                 ];
+
                 array_push($list, $item);
+
                 if (isset($v[ 'child_list' ])) {
                     $this->list = [];
                     $this->menuTreeToList($v[ 'child_list' ], $app_module, $addon, $v[ 'name' ], $level + 1);
@@ -200,6 +205,7 @@ class Menu extends BaseModel
                 }
             }
             return $list;
+
         } catch (\Exception $e) {
             return json(error(-1, $e->getMessage() . ",File：" . $e->getFile() . "，line：" . $e->getLine()));
         }
@@ -229,7 +235,7 @@ class Menu extends BaseModel
                     'sort' => isset($value[ 'sort' ]) ? $value[ 'sort' ] : 100,
                     'is_icon' => isset($value[ 'is_icon' ]) ? $value[ 'is_icon' ] : 0,
                     'picture' => isset($value[ 'picture' ]) ? $value[ 'picture' ] : '',
-                    'picture_select' => isset($value[ 'picture_select' ]) ? $value[ 'picture_select' ] : '',
+                    'picture_select' => isset($value[ 'picture_selected' ]) ? $value[ 'picture_selected' ] : '',
                     'is_control' => isset($value[ 'is_control' ]) ? $value[ 'is_control' ] : 1,
                     'desc' => isset($value[ 'desc' ]) ? $value[ 'desc' ] : '',
                 ];

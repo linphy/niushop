@@ -13,7 +13,7 @@ namespace app\model\order;
 
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
-
+use app\model\system\Cron;
 /**
  * 订单交易设置
  */
@@ -34,12 +34,16 @@ class Config extends BaseModel
                 'auto_close' => 30,//订单未付款自动关闭时间 数字 单位(天)
                 'auto_take_delivery' => 14,//订单发货后自动收货时间 数字 单位(天)
                 'auto_complete' => 7,//订单收货后自动完成时间 数字 单位(天)
+                'after_sales_time' => 0,//订单完成后可维权时间 数字 单位(天)
                 'invoice_status' => 0,//发票状态（0关闭 1开启）
                 'invoice_rate' => 0,//发票比率（0关闭 1开启）
                 'invoice_content' => '',//发内容（0关闭 1开启）
                 'invoice_money' => 0,//发票运费（0关闭 1开启）
+                'change_price' => 1,//订单改价（1整单 2单个商品）
             ];
         }
+        $res[ 'data' ][ 'value' ]['invoice_type'] = $res[ 'data' ][ 'value' ]['invoice_type'] ?? '1,2';
+        $res[ 'data' ][ 'value' ]['change_price'] = $res[ 'data' ][ 'value' ]['change_price'] ?? 1;
         return $res;
     }
 
@@ -101,6 +105,98 @@ class Config extends BaseModel
     {
         $config = new ConfigModel();
         $res = $config->setConfig($data, '订单事件时间设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'ORDER_EVALUATE_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 设置余额支付配置
+     */
+    public function setBalanceConfig($data, $site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '余额支付配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'BALANCE_SHOW_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取余额支付配置
+     * @param $site_id
+     * @param string $app_module
+     * @return array
+     */
+    public function getBalanceConfig($site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'BALANCE_SHOW_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'balance_show' => 1 //余额支付配置（0关闭 1开启）
+            ];
+        }
+        return $res;
+    }
+
+    /**
+     * 设置积分时间配置
+     */
+    public function setPointTimeConfig($data, $site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '积分时间设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'POINT_TIME_CONFIG' ] ]);
+        if($data['point_time_one'] > 0){
+            (new Cron())->deleteCron([["event", "=", "CloseDeletePoint"]]);
+            (new Cron())->addCron(1,0, "积分到期时间", "CloseDeletePoint", $data['point_time_one'], 0, 0);
+        }
+        return $res;
+    }
+
+    /**
+     * 获取积分时间配置
+     * @param $site_id
+     * @param string $app_module
+     * @return array
+     */
+    public function getPointTimeConfig($site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'POINT_TIME_CONFIG' ] ]);
+        if (empty($res[ 'data' ]) || empty($res[ 'data' ]['value'])) {
+            $res[ 'data' ][ 'value' ] = [
+                "point_time_type" => 0,
+                "point_time_one" => '',
+            ];
+        }else{
+            if($res[ 'data' ][ 'value' ]['point_time_type'] == 0 && $res[ 'data' ][ 'value' ]['point_time_one']){
+                $res[ 'data' ][ 'value' ]['point_time_one'] = date("Y-m-d H:i:s", $res[ 'data' ][ 'value' ]['point_time_one']);
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * 订单核销设置
+     * array $data
+     */
+    public function setOrderVerifyConfig($data, $site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '核销到期提醒', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'ORDER_VERIFY_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 订单核销设置
+     */
+    public function getOrderVerifyConfig($site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'ORDER_VERIFY_CONFIG' ] ]);
+        if(empty($res['data']['value'])){
+            $res['data']['value'] = [
+                'order_verify_time_out' => 1,//核销临期提醒时间
+            ];
+        }
         return $res;
     }
 }

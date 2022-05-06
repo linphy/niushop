@@ -12,6 +12,7 @@
 namespace app\shop\controller;
 
 use app\model\upload\Album as AlbumModel;
+use app\model\upload\Upload as UploadModel;
 
 /**
  * 相册
@@ -191,9 +192,10 @@ class Album extends BaseShop
      * @return mixed
      */
     public function album()
-    {
+    {   
         $album_model = new AlbumModel();
         if (request()->isAjax()) {
+            $is_thumb = input("is_thumb", 0);
             $page_index = input('page', 1);
             $list_rows  = input('limit', PAGE_LIST_ROWS);
             $album_id   = input('album_id', '');
@@ -205,14 +207,36 @@ class Album extends BaseShop
             if (!empty($pic_name)) {
                 $condition[] = ['pic_name', 'like', '%' . $pic_name . '%'];
             }
+            if($is_thumb == 1){
+                $condition[] = ['is_thumb','=',$is_thumb];
+            }
             $list = $album_model->getAlbumPicPageList($condition, $page_index, $list_rows, 'update_time desc');
             return $list;
         } else {
+            $is_thumb = input("is_thumb", 0);
             $album_list = $album_model->getAlbumList([['site_id', "=", $this->site_id]]);
+            $this->assign('is_thumb',$is_thumb);
             $this->assign("album_list", $album_list['data']);
             return $this->fetch('album/album');
 
         }
 
+    }
+
+    /**
+     * 生成缩略图
+     *
+     * @return void
+     */
+    public function thumbBatch()
+    {   
+        if (request()->isAjax()) {
+            $upload_model = new AlbumModel();
+            $pic_id = input('pic_id',0);
+            $thumb_batch = $upload_model->createThumbBatch($this->site_id,$pic_id);
+            return $thumb_batch;
+        }else{
+            return $this->fetch("album/lists");
+        }
     }
 }

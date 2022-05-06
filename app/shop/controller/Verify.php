@@ -12,6 +12,7 @@
 namespace app\shop\controller;
 
 use app\model\member\Member;
+use app\model\store\Store;
 use app\model\verify\Verifier;
 use app\model\verify\Verify as VerifyModel;
 use app\model\web\Config as ConfigModel;
@@ -47,6 +48,7 @@ class Verify extends BaseShop
             $verifier_name = input('verifier_name', "");
             $start_time = input("start_time", '');
             $end_time = input("end_time", '');
+            $verify_from = input('verify_from','');
 
             $condition = [
                 ['site_id', "=", $this->site_id],
@@ -55,6 +57,9 @@ class Verify extends BaseShop
             if (!empty($verify_type)) {
                 $condition[] = ["verify_type", "=", $verify_type];
             }
+            if (!empty($verify_from)) {
+                $condition[] = ["verify_from", "=", $verify_from];
+            }
             if (!empty($verify_code)) {
                 $condition[] = ["verify_code", 'like', '%' . $verify_code . '%'];
             }
@@ -62,16 +67,18 @@ class Verify extends BaseShop
                 $condition[] = ['verifier_name', 'like', '%' . $verifier_name . '%'];
             }
             if (!empty($start_time) && empty($end_time)) {
-                $condition[] = ['create_time', '>=', date_to_time($start_time)];
+                $condition[] = ['verify_time', '>=', date_to_time($start_time)];
             } elseif (empty($start_time) && !empty($end_time)) {
-                $condition[] = ["create_time", "<=", date_to_time($end_time)];
+                $condition[] = ["verify_time", "<=", date_to_time($end_time)];
             } elseif (!empty($start_time) && !empty($end_time)) {
-                $condition[] = ['create_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
+                $condition[] = ['verify_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
             }
-            $list = $verify_model->getVerifyPageList($condition, $page, $page_size, $order, $field = 'id, verify_code, verify_type, verify_type_name, verify_content_json, verifier_id, verifier_name, is_verify, create_time, verify_time');
+            $list = $verify_model->getVerifyPageList($condition, $page, $page_size, $order, $field = 'id, verify_code, verify_type, verify_type_name, verify_content_json, verifier_id, verifier_name,verify_from,verify_remark, is_verify, create_time, verify_time');
             return $list;
         } else {
             $verify_type = $verify_model->getVerifyType();
+            $verify_from = $verify_model->verifyFrom;
+            $this->assign('verify_from', $verify_from);
             $this->assign('verify_type', $verify_type);
             return $this->fetch("verify/records");
         }
@@ -117,17 +124,31 @@ class Verify extends BaseShop
         if (request()->isAjax()) {
             $verifier = new Verifier();
             $page = input('page', 1);
+            $page = intval($page);
             $page_size = input('page_size', PAGE_LIST_ROWS);
-            $order = input("order", "create_time desc");
+            $order = input("order", "v.create_time desc");
             $verifier_name = input('verifier_name', '');
+            $verifier_type = input('verifier_type', 0);
+            $store_id = input('store_id' ,0);
             $condition = [];
             $condition[] = ['v.site_id', "=", $this->site_id];
             if ($verifier_name) {
                 $condition[] = ['v.verifier_name', '=', $verifier_name];
             }
+            if ($verifier_type != '') {
+                $condition[] = ['v.verifier_type', '=', $verifier_type];
+            }
+            if ($store_id) {
+                $condition[] = ['v.store_id', '=', $store_id];
+            }
             $list = $verifier->getVerifierPageList($condition, $page, $page_size, $order);
             return $list;
         } else {
+            // 门店列表
+            $store_model = new Store();
+            $store_list = $store_model->getStorePageList([['site_id', "=", $this->site_id],['is_frozen','=',0]],1,null,'store_id desc','store_id,store_name');
+            $this->assign('store_list',$store_list['data']['list']);
+
             return $this->fetch("verify/user");
         }
     }
@@ -142,6 +163,8 @@ class Verify extends BaseShop
             $verifier_name = input("verifier_name", "");
             $member_id = input("member_id", 0);//会员账号
             $uid = input("uid", 0);//管理员账号
+            $verifier_type = input('verifier_type',0);//核销员类型：0平台核销员，1门店核销员
+            $store_id = input('store_id',0);//门店ID
             $model = new Verifier();
             $data = array();
             $data['site_id'] = $this->site_id;
@@ -149,6 +172,8 @@ class Verify extends BaseShop
             $data["verifier_name"] = $verifier_name;
             $data["member_id"] = $member_id;
             $data["uid"] = $uid;
+            $data['verifier_type'] = $verifier_type;
+            $data['store_id'] = $store_id;
             $result = $model->addVerifier($data);
             return $result;
         } else {
@@ -156,6 +181,12 @@ class Verify extends BaseShop
             $upload_config_result = $upload_config_model->getDefaultImg($this->site_id, $this->app_module);
             $upload_config_result = $upload_config_result['data']['value'];
             $this->assign("default_headimg", $upload_config_result['default_headimg']);
+
+            // 门店列表
+            $store_model = new Store();
+            $store_list = $store_model->getStorePageList([['site_id', "=", $this->site_id],['is_frozen','=',0]],1,null,'store_id desc','store_id,store_name');
+            $this->assign('store_list',$store_list['data']['list']);
+            
             return $this->fetch("verify/add_user");
         }
     }
@@ -170,12 +201,20 @@ class Verify extends BaseShop
         if (request()->isAjax()) {
             $verifier_name = input("verifier_name", "");
             $member_id = input("member_id", 0);//会员账号
+            $verifier_type = input('verifier_type',0);//核销员类型：0平台核销员，1门店核销员
+            $store_id = input('store_id',0);//门店ID
             $data = [
                 'verifier_name' => $verifier_name,
                 'modify_time' => time(),
             ];
             $data["member_id"] = $member_id;
             $data["uid"] = 0;
+            $data['verifier_type'] = $verifier_type;
+            if($data['verifier_type'] == 1){
+                $data['store_id'] = $store_id;
+            }else{
+                $data['store_id'] = 0;
+            }
             $condition = array(
                 ['verifier_id', '=', $verifier_id],
                 ['site_id', '=', $this->site_id],
@@ -195,6 +234,7 @@ class Verify extends BaseShop
             ];
             $info_result = $model->getVerifierInfo($condition);
             $info = $info_result["data"];
+            if (empty($info)) return $this->error('未获取到核销员数据', addon_url('shop/verify/user'));
             $member_account = "";
             if (!empty($info["member_id"])) {
                 $member_model = new Member();
@@ -203,7 +243,12 @@ class Verify extends BaseShop
                 if (!empty($member_info)) {
                     $member_account = $member_info["username"];
                 }
-
+            }
+            if($info['verifier_type'] == 1){
+                // 门店列表
+                $store_model = new Store();
+                $store = $store_model->getStoreInfo([['store_id','=',$info['store_id']]],'store_name');
+                $info['store_name'] = $store['data']['store_name'];
             }
             $info["member_account"] = $member_account;
             $this->assign("data", $info);
@@ -212,6 +257,12 @@ class Verify extends BaseShop
             $upload_config_result = $upload_config_model->getDefaultImg($this->site_id, $this->app_module);
             $upload_config_result = $upload_config_result['data']['value'];
             $this->assign("default_headimg", $upload_config_result['default_headimg']);
+
+            // 门店列表
+            $store_model = new Store();
+            $store_list = $store_model->getStorePageList([['site_id', "=", $this->site_id],['is_frozen','=',0]],1,null,'store_id desc','store_id,store_name');
+            $this->assign('store_list',$store_list['data']['list']);
+
             return $this->fetch("verify/edit_user");
         }
 
@@ -240,6 +291,7 @@ class Verify extends BaseShop
         $info = array(
             "verifier_id" => $this->uid,
             "verifier_name" => $this->user_info['username'],
+            "verify_from" =>'shop',
         );
         $verify_code = input("verify_code", "");
         $verify_model = new VerifyModel();
@@ -291,11 +343,11 @@ class Verify extends BaseShop
             $condition[] = ['verifier_name', 'like', '%' . $verifier_name . '%'];
         }
         if (!empty($start_time) && empty($end_time)) {
-            $condition[] = ['create_time', '>=', date_to_time($start_time)];
+            $condition[] = ['verify_time', '>=', date_to_time($start_time)];
         } elseif (empty($start_time) && !empty($end_time)) {
-            $condition[] = ["create_time", "<=", date_to_time($end_time)];
+            $condition[] = ["verify_time", "<=", date_to_time($end_time)];
         } elseif (!empty($start_time) && !empty($end_time)) {
-            $condition[] = ['create_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
+            $condition[] = ['verify_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
         }
         $list_result = $verify_model->getVerifyPageList($condition, $page, $page_size, $order, $field = 'id, verify_code, verify_type, verify_type_name, verify_content_json, verifier_id, verifier_name, is_verify, create_time, verify_time');
         $list = $list_result['data']['list'];

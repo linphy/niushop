@@ -49,7 +49,7 @@ class Upload extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             //基础上传
-            $max_filesize = input("max_filesize", "10240");//允许上传大小
+            $max_filesize = input("max_filesize", "10240");//允许上传大小 默认kb
             $image_allow_ext = trim(input("image_allow_ext", ""));//图片允许扩展名
             $image_allow_mime = trim(input("image_allow_mime", ""));//图片允许Mime类型
 
@@ -81,7 +81,7 @@ class Upload extends BaseShop
             $data = array (
                 //上传相关配置
                 "upload" => array (
-                    "max_filesize" => $max_filesize,//最大上传限制,
+                    "max_filesize" => $max_filesize*1024,//最大上传限制,
                     "image_allow_ext" => $image_allow_ext,
                     "image_allow_mime" => $image_allow_mime,
                 ),
@@ -120,7 +120,10 @@ class Upload extends BaseShop
             $this->forthMenu();
             $config_result = $config_model->getUploadConfig();
             $config = $config_result[ "data" ];
+            $config['value']['upload']['max_filesize'] = $config['value']['upload']['max_filesize']/1024;
             $this->assign("config", $config);
+
+            //图片水印位置
             $position = array (
                 "top-left" => "上左",
                 "top" => "上中",
@@ -131,8 +134,24 @@ class Upload extends BaseShop
                 "bottom-left" => "下左",
                 "bottom" => "下中",
                 "bottom-right" => "下右",
-            );//位置
+            );
+
             $this->assign("position", $position);
+
+            //文字水印位置
+            $text_position = array (
+                "top-left" => "上左",
+                "top-center" => "上中",
+                "top-right" => "上右",
+                "center-left" => "左",
+                "center-center" => "中",
+                "center-right" => "右",
+                "bottom-left" => "下左",
+                "bottom-center" => "下中",
+                "bottom-right" => "下右",
+            );
+            $this->assign("text_position", $text_position);
+
             return $this->fetch('upload/config');
         }
     }
@@ -161,14 +180,19 @@ class Upload extends BaseShop
         $upload_model = new UploadModel($this->site_id, $this->app_module);
         $thumb_type = input("thumb", "");
         $name = input("name", "");
+        $width = input("width", "");
+        $height = input("height", "");
         $watermark = input("watermark", 0); // 是否需生成水印
         $cloud = input("cloud", 1); // 是否需上传到云存储
         $param = array (
             "thumb_type" => "",
             "name" => "file",
             "watermark" => $watermark,
-            "cloud" => $cloud
+            "cloud" => $cloud,
+            "width" => $width,
+            "height" => $height
         );
+
         $path = $this->site_id > 0 ? "common/images/" . date("Ymd") . '/' : "common/images/" . date("Ymd") . '/';
         $result = $upload_model->setPath($path)->image($param);
         return $result;
@@ -182,11 +206,13 @@ class Upload extends BaseShop
     {
         $upload_model = new UploadModel($this->site_id);
         $album_id = input("album_id", 0);
+        $is_thumb = input("is_thumb", 0);
         $name = input("name", "");
         $param = array (
             "thumb_type" => [ "BIG", "MID", "SMALL" ],
             "name" => "file",
-            "album_id" => $album_id
+            "album_id" => $album_id,
+            "is_thumb" => $is_thumb
         );
         $result = $upload_model->setPath("common/images/" . date("Ymd") . '/')->imageToAlbum($param);
         return $result;
@@ -289,12 +315,17 @@ class Upload extends BaseShop
 //            图片信息
             $pic_info = $album_model->getAlbumPicInfo($get_pic_info);
 //            判断是否找到有效图片
+
             if(empty($pic_info) || empty($pic_info['data'])){
                 return json($base_model->error('', 'FAIL'));
             }
 
-//            文件名及后缀
+
             $file_full_name = basename($pic_info['data']['pic_path']);
+
+            $pic_path = str_replace($file_full_name,"",$pic_info['data']['pic_path']);
+            $pic_path = str_replace('upload/1/',"",$pic_path);
+            // 文件名及后缀
             $filename_arr = explode('.', $file_full_name);
             $filename =$filename_arr[0];
             $suffix = $filename_arr[1];
@@ -311,8 +342,7 @@ class Upload extends BaseShop
                 "suffix" => $suffix
             );
 
-
-            $result = $upload_model->setPath("common/images/" . date("Ymd") . '/')->modifyFile($upload_param);
+            $result = $upload_model->setPath($pic_path)->modifyFile($upload_param);
 
             return json($result);
 

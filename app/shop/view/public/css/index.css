@@ -1,8 +1,11 @@
 .layui-layout-admin .layui-body .ns-body-content {
 	min-width: 1200px;
 	padding: 0 !important;
+	margin: 0px !important;
 }
-
+.ns-card-common{
+	margin-top: 0px !important;
+}
 /* @media screen and (max-width: 1270px) {
 	.ns-survey-info .layui-card-body .ns-survey-detail-con {
 		flex-basis: 33% !important;
@@ -63,6 +66,8 @@
 .ns-survey {
 	display: flex;
 	padding: 30px 40px;
+	background: #f8f8f8;
+	padding-top: 0px;
 }
 
 /* 营销插件 */
@@ -98,11 +103,13 @@
 
 .ns-item-block-parent {
 	padding: 0;
+	background: #f8f8f8;
 }
 
 /* 商家信息 */
 .ns-survey-item .ns-survey-info {
 	flex: 1;
+	background: #f8f8f8;
 }
 
 .ns-survey-item {
@@ -182,7 +189,7 @@
 	width: calc((100% - 90px) / 4);
 	margin-right: 30px;
 	margin-bottom: 30px;
-	background-color: #FAFAFA;
+	background-color: #FFF;
 	padding: 0 20px;
 	box-sizing: border-box;
 	position: relative;
@@ -356,7 +363,7 @@
 .common-functions-item {
 	display: inline-block;
 	width: 215px;
-	background-color: #F7F9FA;
+	background-color: #FFF;
 	text-align: center;
 	margin-right: 10px;
 	margin-bottom: 15px;
@@ -405,12 +412,13 @@
 
 .addon-tool .ns-card-common {
 	width: 50%;
+	background: #f8f8f8;
 }
 
 .addon-tool .addon-tool-item {
 	width: 270px;
-	padding: 30px 0 30px 50px;
-	background-color: #FAFAFA;
+	padding: 5px 0 5px 50px;
+	background-color: #FFF;
 	box-sizing: border-box;
 	margin-right: 10px;
 	margin-bottom: 10px;
@@ -420,6 +428,7 @@
 }
 .ns-survey-left>.ns-card-common {
 	margin-top: 40px;
+	background: #f8f8f8;
 }
 
 /* 图表 */
@@ -430,7 +439,7 @@
 
 .echarts-wrap>div {
 	width: 49%;
-	background-color: #FAFAFA;
+	background-color: #FFF;
 }
 
 .echarts-wrap>div h5 {

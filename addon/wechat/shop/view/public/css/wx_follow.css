@@ -3,6 +3,24 @@
 	
 }
 
+.layui-layout-admin .layui-body .ns-body-content{
+	background: #f8f8f8;
+	padding: 0;
+}
+
+.fourstage-nav .layui-tab-title {
+	background: #fff;
+	height: 50px;
+}
+
+.fourstage-nav .layui-tab-title li {
+	line-height: 48px;
+}
+
+/* .fourstage-nav .layui-tab-title li a {
+	border-bottom: 2px solid #f8f8f8;
+} */
+
 button, input, select, textarea {
 	font-family: inherit;
 	font-size: 100%;
@@ -30,9 +48,17 @@ li {
 }
 
 a:-webkit-any-link {
-	color: #353535;
-	cursor: pointer;
-	text-decoration: none;
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+}
+.reply-opts a:-webkit-any-link{
+    color: #ff7e23;
+    cursor: pointer;
+    text-decoration: none;
+}
+.reply-opts .delet-color:-webkit-any-link {
+	color: #ff3d3d;
 }
 
 button {
@@ -210,10 +236,11 @@ button {
 
 .rule-group {
 	position: relative;
-	border: 1px solid #ccc;
+	/* border: 1px solid #ccc; */
 	margin-bottom: 20px;
-	border-radius: 5px;
-	background: #fff
+	border-radius: 2px;
+	padding: 0 20px;
+	background: #fff;
 }
 
 
@@ -318,17 +345,17 @@ button {
 .close--circle {
 	position: absolute;
 	z-index: 91;
-	top: -9px;
-	right: -9px;
-	width: 20px;
-	height: 20px;
-	font-size: 16px;
-	line-height: 18px;
-	color: #fff;
+	top: 5px;
+	right: 10px;
+	/* width: 20px;
+	height: 20px; */
+	font-size: 28px;
+	/* line-height: 18px; */
+	color: #333;
 	text-align: center;
 	cursor: pointer;
-	background: rgba(153, 153, 153, 0.6);
-	border-radius: 10px;
+	/* background: rgba(153, 153, 153, 0.6);
+	border-radius: 10px; */
 }
 
 .keyword .value {
@@ -469,7 +496,7 @@ ol.reply-list {
 	line-height: 14px;
 	color: #fff;
 	white-space: nowrap;
-	background: #4685FD
+	background: #1AAD19;
 }
 /***************************************/
 .misc {
@@ -539,9 +566,10 @@ ol.reply-list {
 	left: 10px;
 	width: 96%;
 	height: 38%;
-	background-color: #fff;
-	-webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25);
-	box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25);
+	/* background-color: #fff; */
+	/* -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25);
+	box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25); */
+	/* border: 1px solid #f4f4f4; */
 }
 
 .complex-content {
@@ -628,20 +656,20 @@ ol.reply-list {
 	z-index: initial;
 }
 
-.close--circle {
-	position: absolute;
-	z-index: 91;
-	top: -9px;
-	right: -9px;
-	width: 20px;
-	height: 20px;
-	font-size: 16px;
-	line-height: 18px;
-	color: #fff;
-	text-align: center;
-	cursor: pointer;
-	background: rgba(153, 153, 153, 0.6);
-	border-radius: 10px;
+.complex-content .close--circle ,.keyword-list .close--circle {
+    position: absolute;
+    z-index: 91;
+    top: -9px;
+    right: -9px;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(153, 153, 153, 0.6);
+    border-radius: 10px;
 }
 
 .voice-player .second {
@@ -711,14 +739,26 @@ a.new-window {
 
 /*************************************/
 .rule-container {
-	position: absolute;
-	padding: 5px 10px;
+	/*position: absolute;*/
+	/*padding: 5px 10px;*/
 	background-color: #fff;
 	border-radius: 4px;
-	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-	border: 1px solid #e5e5e5;
-	height: 230px;
-	width: 460px;
+	/*box-shadow: 0px 1px 6px 7px rgba(0, 0, 0, 0.1);*/
+	/*border: 1px solid #e5e5e5; */
+	/*height: 230px;*/
+	/*width: 460px;*/
+}
+
+.rule-container .add_reply-top{
+	position: absolute; 
+	width: 0px; 
+	height: 0px; 
+	line-height: 0px;/*为了防止ie下出现题型*/ 
+	border-bottom: 10px solid #fff; 
+	border-left: 10px solid rgba(0,0,0,0); 
+	border-right: 10px solid rgba(0,0,0,0);
+	right: 55px; 
+	top: -10px;
 }
 
 .popover>.close--circle {

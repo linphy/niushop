@@ -33,8 +33,17 @@ class Goodsattr extends BaseShop
             if (!empty($search_keys)) {
                 $condition[] = [ 'class_name', 'like', '%' . $search_keys . '%' ];
             }
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
             $goods_attr_model = new GoodsAttributeModel();
-            $list = $goods_attr_model->getAttrClassPageList($condition, $page_index, $page_size);
+            $list = $goods_attr_model->getAttrClassPageList($condition, $page_index, $page_size,$order_by);
             return $list;
 
         } else {
@@ -89,6 +98,7 @@ class Goodsattr extends BaseShop
             //商品类型信息
             $attr_class_info = $goods_attr_model->getAttrClassInfo([ [ 'class_id', '=', $class_id ], [ 'site_id', '=', $this->site_id ] ]);
             $attr_class_info = $attr_class_info[ 'data' ];
+            if (empty($attr_class_info)) return $this->error('未获取到属性数据', addon_url('shop/goodsattr/lists'));
             $this->assign("attr_class_info", $attr_class_info);
 
             return $this->fetch('goodsattr/edit_attr');

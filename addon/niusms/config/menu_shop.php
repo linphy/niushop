@@ -35,6 +35,16 @@ return [
                 'picture_selected' => '',
                 'sort' => 2,
             ],
+            [
+                'name' => 'NIU_SMS_Forget',
+                'title' => '账户注册',
+                'url' => 'niusms://shop/sms/forget',
+                'parent' => '',
+                'is_show' => 1,
+                'picture' => '',
+                'picture_selected' => '',
+                'sort' => 3,
+            ],
         ],
     ],
     [

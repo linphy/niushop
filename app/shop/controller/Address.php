@@ -12,6 +12,7 @@
 namespace app\shop\controller;
 
 use app\model\system\Address as AddressModel;
+use app\model\web\Config as ConfigModel;
 use app\Controller;
 
 /**
@@ -59,5 +60,24 @@ class Address extends Controller
         $subdistrict_list = !empty($subdistrict) && $city_id > 0 && $province_id > 0 && $district_id > 0 ? $address_model->getAreaList(["name" => $subdistrict, "level" => 4, "pid" => $district_id], "id", '') : [];
         $subdistrict_id   = !empty($subdistrict_list["data"]) ? $subdistrict_list["data"][0]["id"] : 0;
         return ["province_id" => $province_id, "city_id" => $city_id, "district_id" => $district_id, "subdistrict_id" => $subdistrict_id];
+    }
+
+    public function getLocation(){
+        $config_model = new ConfigModel();
+        $mp_config = $config_model->getMapConfig(request()->siteid());
+        $tencent_map_key = $mp_config['data']['value']['tencent_map_key'];
+
+        $url = 'https://apis.map.qq.com/ws/location/v1/ip?key='.$tencent_map_key;
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        $data = curl_exec($curl);
+
+        return $data;
     }
 }

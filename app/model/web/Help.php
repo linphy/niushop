@@ -194,6 +194,26 @@ class Help extends BaseModel
             return $this->success($cache);
         }
         $res = model('help_class')->pageList($condition, $field, $order, $page, $page_size);
+        $check_condition = array_column($condition, 2, 0);
+        if($check_condition){
+            unset($check_condition['class_name']);
+        }
+        $help_data = model('help')->getList($check_condition,'class_id');
+        $arr = [];
+        if($help_data){
+            $arr = array_column($help_data,'class_id');
+            $arr = array_unique($arr);
+        }
+        if($res['list']){
+            foreach ($res['list'] as $k=>$v){
+
+                if(in_array($v['class_id'],$arr)){
+                    $res['list'][$k]['child'] = 1;
+                }else{
+                    $res['list'][$k]['child'] = 0;
+                }
+            }
+        }
         Cache::tag("help_class")->set("help_class_getHelpClassPageList_" . $data, $res);
         return $this->success($res);
     }

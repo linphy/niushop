@@ -175,8 +175,8 @@ WxReplay.prototype.clickEvent = {
 			type: 1,
 			title: "删除",
 			offset: "auto",
-			content: ''
-			, btn: ['保存', '返回']
+			content: ' 确定要删除规则吗？'
+			, btn: ['确定', '取消']
 			, yes: function (index, layero) {
 				if (!flag) return;
 				flag = false;
@@ -301,7 +301,7 @@ WxReplay.prototype.clickEvent = {
 		var rule_id = $(_dom).parents(".rule-group").attr("data-rule_id");
 		var key_id = $(_dom).attr('data-key_id');
 		var reply_content = $(_dom).attr('reply_content');
-		$("#add_reply").css("display", "block");
+		// $("#add_reply").css("display", "block");
 		
 		$("#add_reply").children("input[name='rule_id']").val(rule_id);
 		
@@ -309,6 +309,21 @@ WxReplay.prototype.clickEvent = {
 		$(".image,.voice").next("span").css("display", "inline-block");
 		$(".complex-backdrop").css("display", "none");  //清空文本框
 		$("#add_reply").find("textarea[name='reply_content']").val("");
+
+		var index = layer.open({
+			type: 1,
+			title: "修改自动回复",
+			area: ['450px'],
+			offset: "auto",
+			content: $("#add_reply"),
+			success: function(layero) {
+				var mask = $(".layui-layer-shade");
+				mask.appendTo(layero.parent());
+			},
+			cancel: function(){
+				$('.complex-backdrop').css("display", "none");
+			}
+		});
 		
 	},
 	
@@ -321,16 +336,16 @@ WxReplay.prototype.clickEvent = {
 		var reply_content = $(_dom).attr('reply_content');
 		var request_type = $(_dom).attr('type');
 		$("#hidden_reply_type").val(request_type);
-		$("#add_reply").css({"padding": "5px 10px"});
+		// $("#add_reply").css({"padding": "5px 10px"});
 		
-		$("#add_reply").css("display", "block");
+		// $("#add_reply").css("display", "block");
 		
 		$("#add_reply").find("input[name='rule_id']").val(rule_id);
 		$("#add_reply").find("input[name='key_id']").val(key_id);
 		$("#add_reply").find("textarea[name='reply_content']").val(reply_content);
 		
-		$(".image,.voice").css("display", "none");
-		$(".image,.voice").next("span").css("display", "none");
+		$(".voice").css("display", "none");
+		$(".voice").next("span").css("display", "none");
 		
 		if (request_type == 'image') {
 			var active_pic = '';
@@ -393,6 +408,22 @@ WxReplay.prototype.clickEvent = {
 		} else {
 			$('.complex-backdrop').css("display", "none");
 		}
+
+		var index = layer.open({
+			type: 1,
+			title: "修改自动回复",
+			area: ['450px'],
+			offset: "auto",
+			content: $("#add_reply"),
+			success: function(layero) {
+				var mask = $(".layui-layer-shade");
+				mask.appendTo(layero.parent());
+			},
+			cancel: function(){
+				$('.complex-backdrop').css("display", "none");
+			}
+		});
+
 	},
 	
 	//删除回复
@@ -404,10 +435,10 @@ WxReplay.prototype.clickEvent = {
 		var flag = true;
 		var index = layer.open({
 			type: 1,
-			title: "是否删除该条回复",
+			title: "删除",
 			offset: "auto",
-			content: ''
-			, btn: ['保存', '返回']
+			content: '确定删除该条回复吗？'
+			, btn: ['确定', '取消']
 			, yes: function (index, layero) {
 				if (!flag) return;
 				flag = false;

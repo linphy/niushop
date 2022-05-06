@@ -1,5 +1,15 @@
+var link_url_json = $("input[name='link_url']").val();
+if(link_url_json) {
+	link_url_json = JSON.parse(link_url_json);
+	$(".link-url-show").text(link_url_json.title);
+}
+
 var laytpl, form, layerIndex;
 var categoryFullName = [];//组装名称
+
+var saveData = null;
+var totalUploadNum = 0;
+var completeUploadNum = 0;
 
 $(function () {
 	
@@ -42,15 +52,52 @@ $(function () {
 		});
 
 		var upload = new Upload({
-			elem: '#imgUpload'
+			elem: '#imgUpload',
+			size:100,
+			auto:false,
+			bindAction:'#imageUploadAction',
+			callback: function(res) {
+				uploadComplete('image', res.data.pic_path);
+			}
 		});
 
 		var adv_upload = new Upload({
-			elem: '#imgUploadAdv'
+			elem: '#imgUploadAdv',
+			auto:false,
+			bindAction:'#imageAdvUploadAction',
+			callback: function(res) {
+				uploadComplete('image_adv', res.data.pic_path);
+			}
 		});
+
+		function uploadComplete(field, pic_path) {
+			saveData.field[field] = pic_path;
+			completeUploadNum += 1;
+			if(completeUploadNum == totalUploadNum){
+				saveFunc();
+			}
+		}
 
 		form.on('submit(save)', function (data) {
 
+			saveData = data;
+			var obj = $("img.img_prev[data-prev='1']");
+			totalUploadNum = obj.length;
+			if(totalUploadNum > 0){
+				obj.each(function(){
+					var actionId = $(this).attr('data-action-id');
+					$(actionId).click();
+				})
+			}else{
+				saveFunc();
+			}
+
+			return false;
+		});
+
+		function saveFunc(){
+
+			var data = saveData;
 			categoryFullName.push(data.field.category_name);
 			data.field.category_full_name = categoryFullName.join("/");
 			data.field.attr_class_name = $("select[name='attr_class_id'] option:checked").text();
@@ -59,10 +106,10 @@ $(function () {
 			if(!data.field.image) upload.delete();
 
 			if(!data.field.image_adv) adv_upload.delete();
-			
+
 			if (repeat_flag) return false;
 			repeat_flag = true;
-			
+
 			var url = ns.url("shop/goodscategory/addCategory");
 			if (data.field.category_id) url = ns.url("shop/goodscategory/editCategory");
 			$.ajax({
@@ -79,8 +126,7 @@ $(function () {
 					}
 				}
 			});
-			return false;
-		});
+		}
 		
 		//保存上级分类
 		form.on('submit(save_pid)', function (data) {
@@ -125,8 +171,14 @@ $(function () {
 			return false;
 			
 		});
+
+		setTimeout(()=>{
+			form.render();
+		},600)
 		
 	});
+
+
 	
 });
 
@@ -317,4 +369,18 @@ function getCategoryInfo(category_id, callback) {
 
 function back() {
 	location.href = ns.url("shop/goodscategory/lists")
+}
+
+function selectedLink() {
+	if(link_url_json == ""){
+		link_url_json = {};
+	}
+	ns.select_link(link_url_json, '', function (data) {
+
+		for (var o in data) {
+			if (data[o] == null) delete data[o];
+		}
+		$("input[name='link_url']").val(JSON.stringify(data));
+		$(".link-url-show").text(data.title);
+	}, 'shop');
 }

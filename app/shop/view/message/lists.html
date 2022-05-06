@@ -70,6 +70,46 @@
 		color: #999;
 		font-weight: 600;
 	}
+	
+	.block-list .block-title .config {
+		float: right;
+		padding-left: 100px;
+		cursor: pointer;
+		color: #FA5B14 !important;
+	}
+	.word-aux {
+		margin-left: 200px;
+		display: block;
+		margin-top: 5px;
+		color: #999;
+		font-size: 14px;
+		line-height: 1.6;
+	}
+	.ns-prompt-block {
+	position: absolute;
+	top: 18px;
+	right: 20px;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.ns-prompt-block .ns-prompt {
+	width: auto;
+	height: auto;
+	line-height: unset;
+}
+
+.ns-prompt-block .ns-prompt-box {
+	top: 46px;
+	left: -69px;
+	text-align: center;
+}
+
+.ns-prompt-block .ns-prompt .iconfont{
+	margin-left: -3px;
+}
+.block-list .block-title{display: flex;align-items: center;}
+.ns-prompt-block{position: static;margin-left: 10px;}
 </style>
 {/block}
 {block name="main"}
@@ -83,6 +123,17 @@
 		<div class="block-list">
 			<div class="block-title">
 				{$member_message_v.title}
+				<div class="ns-prompt-block" style="left: 130px;top: 20px;">
+					<div class="ns-prompt">
+						<i class="iconfont iconwenhao1 required ns-growth"></i>
+						<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" >
+							<div class="ns-prompt-con">
+								<p>{$member_message_v.remark}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				{if $member_message_v.keywords == 'ORDER_VERIFY_OUT_TIME'}<span class="config text-color" onclick="messageSetting()">配置</span>{/if}
 			</div>
 			<div class="block-content">
 				{if in_array('sms',$member_message_v['support_type'])}
@@ -111,7 +162,7 @@
 <!-- 卖家通知 -->
 <div class="layui-card ns-card-common ns-card-brief">
 	<div class="layui-card-header">
-		<span class="ns-card-title">卖家通知  <a style="margin-left:20px" href="{:addon_url('shop/Shopacceptmessage/lists')}">商家会员管理（用以接受消息通知）</a></span>
+		<span class="ns-card-title">卖家通知  <a style="margin-left:20px;color:#FF6A00" href="{:addon_url('shop/Shopacceptmessage/lists')}">消息接收设置>>></a></span>
 
 	</div>
 	<div class="layui-card-body layui-field-box">
@@ -119,6 +170,16 @@
 		<div class="block-list">
 			<div class="block-title">
 				{$shop_message_v.title}
+				<div class="ns-prompt-block" style="left: 130px;top: 20px;">
+					<div class="ns-prompt">
+						<i class="iconfont iconwenhao1 required ns-growth"></i>
+						<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" style="top: 45px;left: -64px;">
+							<div class="ns-prompt-con">
+								<p>{$shop_message_v.remark}</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="block-content">
 				{if in_array('sms',$shop_message_v['support_type'])}
@@ -144,4 +205,73 @@
 </div>
 {/block}
 {block name="script"}
+<script type="text/html" id="settingLayer">
+	<div class="layui-form-item">
+		<label class="layui-form-label">过期前提醒：</label>
+		<div class="layui-input-block">
+			<div class="layui-input-inline">
+				<input type="number" name="remind_time" value="{{ d.value }}" autocomplete="off" class="layui-input len-short">
+			</div>
+			<span class="layui-form-mid">小时</span>
+		</div>
+		<div class="word-aux">核销码过期前多少时间发送提醒</div>
+	</div>
+</script>
+<script>
+	var laytpl;
+	layui.use(['laytpl', 'form'], function() {
+		var form = layui.form,
+			repeat_flag = false; //防重复标识
+			laytpl = layui.laytpl;
+        form.render();
+	})
+	function messageSetting() {
+		var config = {:json_encode($verify_config)};
+		var keywords = 'order_verify_time_out';
+		var value = config[keywords] == undefined ? 24 : config[keywords];
+		console.log(value);
+		laytpl($('#settingLayer').html()).render({
+			value: value
+		}, function(string){
+			layer.open({
+				type: 1,
+				title: '配置',
+				content: string,
+				area: ['590px'],
+				btn: ['保存', '取消'],
+				yes: function () {
+					var remind_time = parseInt($('[name="remind_time"]').val());
+					if (isNaN(remind_time)) {
+						layer.msg('提醒时间格式不正确', {icon: 5})
+						return;
+					}
+					if (remind_time < 1) {
+						layer.msg('提醒时间最少不能小于1小时', {icon: 5})
+						return;
+					}
+
+					$.ajax({
+						dataType: 'JSON',
+						type: 'POST',
+						url: ns.url("shop/message/remindTimeSetting"),
+						data: {
+							"hour": remind_time,
+							"keyword": keywords
+						},
+						success: function(res){
+							if (res.code == 0) {
+								layer.msg('设置成功');
+								setTimeout(function () {
+									location.reload()
+								}, 1000)
+							} else {
+								layer.msg(res.message);
+							}
+						}
+					})
+				}
+			})
+		});
+	}
+</script>
 {/block}

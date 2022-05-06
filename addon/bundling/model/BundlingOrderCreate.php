@@ -63,6 +63,23 @@ class BundlingOrderCreate extends OrderCreate
         if ($this->error > 0) {
             return $this->error(['error_code' => $this->error], $this->error_msg);
         }
+
+        if(!empty($calculate_data['invoice_type'])){
+            if($calculate_data['invoice_type'] == 1 && $calculate_data['invoice_full_address'] == ""){
+                //物流,同城
+                if($calculate_data[ 'shop_goods_list' ]['delivery']['delivery_type'] == "express" || $calculate_data[ 'shop_goods_list' ]['delivery']['delivery_type'] == "local"){
+                    $calculate_data['invoice_full_address'] = $calculate_data['member_address']['full_address'].$calculate_data['member_address']['address'];
+                    $calculate_data[ 'shop_goods_list' ]['invoice_full_address'] = $calculate_data['member_address']['full_address'].$calculate_data['member_address']['address'];
+                }
+                //门店
+                if($calculate_data[ 'shop_goods_list' ]['delivery']['delivery_type'] == "store"){
+                    $delivery_store_info = json_decode($calculate_data[ 'shop_goods_list' ]['delivery_store_info'], true);
+                    $calculate_data['invoice_full_address'] = $delivery_store_info['full_address'];
+                    $calculate_data[ 'shop_goods_list' ]['invoice_full_address'] = $delivery_store_info['full_address'];
+                }
+            }
+        }
+
         $pay          = new Pay();
         $out_trade_no = $pay->createOutTradeNo($data['member_id']);
         model("order")->startTrans();
@@ -181,6 +198,16 @@ class BundlingOrderCreate extends OrderCreate
                 }
             }
 
+            $result_list = event("OrderCreate", ['order_id' => $order_id,'site_id'=>$shop_goods_list['site_id']]);
+            if (!empty($result_list)) {
+                foreach ($result_list as $k => $v) {
+                    if (!empty($v) && $v["code"] < 0) {
+                        model("order")->rollback();
+                        return $v;
+                    }
+                }
+            }
+
             //优惠券
             if ($data_order['coupon_id'] > 0 && $data_order['coupon_money']) {
                 //优惠券处理方案
@@ -193,8 +220,11 @@ class BundlingOrderCreate extends OrderCreate
                 }
             }
 
+            $config_model = new Config();
+            $balance_config = $config_model->getBalanceConfig($shop_goods_list['site_id']);
+
             //扣除余额(统一扣除)
-            if ($calculate_data["balance_money"] > 0) {
+            if ($calculate_data["balance_money"] > 0 && $balance_config[ 'data' ][ 'value' ][ 'balance_show' ] == 1) {
                 $this->pay_type = "BALANCE";
                 $calculate_data['order_id'] = $order_id;
                 $balance_result = $this->useBalance($calculate_data, $data['site_id']);
@@ -204,15 +234,6 @@ class BundlingOrderCreate extends OrderCreate
                 }
             }
 
-            $result_list = event("OrderCreate", ['order_id' => $order_id]);
-            if (!empty($result_list)) {
-                foreach ($result_list as $k => $v) {
-                    if (!empty($v) && $v["code"] < 0) {
-                        model("order")->rollback();
-                        return $v;
-                    }
-                }
-            }
             //生成整体支付单据
             $pay->addPay($shop_goods_list['site_id'], $out_trade_no, $this->pay_type, $this->order_name, $this->order_name, $this->pay_money, '', 'OrderPayNotify', '');
             $this->addOrderCronClose($order_id, $shop_goods_list['site_id']);//增加关闭订单自动事件
@@ -282,7 +303,11 @@ class BundlingOrderCreate extends OrderCreate
             foreach ($calculate_data[ 'shop_goods_list' ]['deliver_sort'] as $type) {
                 // 物流
                 if ($type == 'express' && $calculate_data[ 'shop_goods_list' ][ "express_config" ][ "is_use" ] == 1) {
-                    $express_type[] = [ "title" => Express::express_type[ "express" ][ "title" ], "name" => "express" ];
+                    $title = $calculate_data[ 'shop_goods_list' ][ "express_config" ]['value']['express_name'];
+                    if($title == ""){
+                        $title =  Express::express_type[ "express" ][ "title" ];
+                    }
+                    $express_type[] = [ "title" => $title, "name" => "express" ];
                 }
                 // 自提
                 if ($type == 'store' && $calculate_data[ 'shop_goods_list' ][ "store_config" ][ "is_use" ] == 1) {
@@ -326,17 +351,30 @@ class BundlingOrderCreate extends OrderCreate
                             }
                         }
                     }
-                    $express_type[] = [ "title" => Express::express_type[ "store" ][ "title" ], "name" => "store", "store_list" => $store_list, 'store_id' => $store_id ];
+                    $title = $calculate_data[ 'shop_goods_list' ][ "store_config" ]['value']['store_name'];
+                    if($title == ""){
+                        $title = Express::express_type[ "store" ][ "title" ];
+                    }
+                    $express_type[] = [ "title" => $title, "name" => "store", "store_list" => $store_list, 'store_id' => $store_id ];
                 }
                 // 外卖
                 if ($type == 'local' && $calculate_data[ 'shop_goods_list' ][ "local_config" ][ "is_use" ] == 1) {
                     //查询本店的通讯地址
-                    $express_type[] = [ "title" => "外卖配送", "name" => "local" ];
+                    $title = $calculate_data[ 'shop_goods_list' ][ "local_config" ]['value']['local_name'];
+                    if($title == ""){
+                        $title = '外卖配送';
+                    }
+                    $express_type[] = [ "title" => $title, "name" => "local" ];
                 }
             }
         }
 
         $calculate_data['shop_goods_list']["express_type"] = $express_type;
+        $payment_event_data = event('OrderPayment', $data);
+
+        if (!empty($payment_event_data)) {
+            $calculate_data = array_merge($calculate_data, ...$payment_event_data);
+        }
 
         return $calculate_data;
 
@@ -524,7 +562,7 @@ class BundlingOrderCreate extends OrderCreate
                         $this->error_msg = "门店未选择!";
                     }
                     $shop_goods['delivery']['store_id'] = $data['delivery']["store_id"];
-
+                    $shop_goods[ 'buyer_ask_delivery_time' ] = $data[ 'buyer_ask_delivery_time' ];
                     $shop_goods = $this->storeOrderData($shop_goods, $data);
                 }
             } else {
@@ -564,18 +602,18 @@ class BundlingOrderCreate extends OrderCreate
                         } else {
                             $local_delivery_time = 0;
                             if (!empty($data['buyer_ask_delivery_time'])) {
-                                $buyer_ask_delivery_time_temp = explode(':', $data['buyer_ask_delivery_time']);
-                                $local_delivery_time          = $buyer_ask_delivery_time_temp[0] * 3600 + $buyer_ask_delivery_time_temp[1] * 60;
+                                $local_delivery_time = $data['buyer_ask_delivery_time'];
                             }
                             $shop_goods['buyer_ask_delivery_time'] = $local_delivery_time;
 
                             $local_model  = new Local();
                             $local_result = $local_model->calculate($shop_goods, $data);
 
-
+                            $shop_goods[ 'delivery' ][ 'start_money' ] = 0;
                             if ($local_result['code'] < 0) {
                                 $this->error     = $local_result['data']['code'];
                                 $this->error_msg = $local_result['message'];
+                                $shop_goods[ 'delivery' ][ 'start_money' ] = $local_result[ 'data' ]['start_money_array'][0] ?? 0;
                             } else {
                                 $delivery_money = $local_result['data']['delivery_money'];
                                 if (!empty($local_result['data']['error_code'])) {
@@ -583,6 +621,10 @@ class BundlingOrderCreate extends OrderCreate
                                     $this->error_msg = $local_result['data']['error'];
                                 }
                             }
+
+                            $shop_goods[ 'delivery' ][ 'error' ] = $this->error;
+                            $shop_goods[ 'delivery' ][ 'error_msg' ] = $this->error_msg;
+
                         }
                     }
                 }
@@ -603,8 +645,8 @@ class BundlingOrderCreate extends OrderCreate
         $order_money               = $goods_money + $delivery_money - $promotion_money + $shop_goods['invoice_money'] + $shop_goods['invoice_delivery_money'];
         $shop_goods['order_money'] = $order_money;
         //优惠券活动(采用站点id:coupon_id)
-        $shop_goods  = $this->couponPromotion($shop_goods, $data);
-        $order_money = $shop_goods['order_money'];
+//        $shop_goods  = $this->couponPromotion($shop_goods, $data);
+//        $order_money = $shop_goods['order_money'];
 
         if ($order_money < 0) {
             $order_money = 0;

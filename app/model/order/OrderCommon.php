@@ -13,7 +13,7 @@ namespace app\model\order;
 
 use addon\coupon\model\Coupon;
 use app\model\express\ExpressPackage;
-use app\model\express\LocalPackage;
+use addon\fenxiao\model\FenxiaoOrder;
 use app\model\goods\Goods;
 use app\model\goods\GoodsStock;
 use app\model\member\MemberAccount;
@@ -320,9 +320,20 @@ class OrderCommon extends BaseModel
             'order_status' => self::ORDER_COMPLETE,
             'order_status_name' => $this->order_status[self::ORDER_COMPLETE]["name"],
             'order_status_action' => json_encode($this->order_status[self::ORDER_COMPLETE], JSON_UNESCAPED_UNICODE),
-            'finish_time' => time(),
-            'is_enable_refund' => 0
+            'finish_time' => time()
         );
+
+        $config = new Config();
+        $order_event = $config->getOrderEventTimeConfig($order_info['site_id']);
+        $after_sales_time = $order_event['data']['value']['after_sales_time'] ?? 0;
+        if ($after_sales_time > 0) {
+            $cron = new Cron();
+            $execute_time = strtotime("+ {$after_sales_time} day");
+            $cron->addCron(1, 0, "订单售后自动关闭", "CronOrderAfterSaleClose", $execute_time, $order_id);
+        } else {
+            $order_data['is_enable_refund'] = 0;
+        }
+
         $res = model('order')->update($order_data, [['order_id', "=", $order_id]]);
         Cache::set("order_complete_execute_" . $order_id, '');
         //修改用户表order_complete_money和order_complete_num
@@ -336,6 +347,8 @@ class OrderCommon extends BaseModel
         //订单完成
         $message_model = new Message();
         $message_model->sendMessage(['keywords' => "ORDER_COMPLETE", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
+        // 买家订单完成通知商家
+        $message_model->sendMessage(['keywords' => "BUYER_ORDER_COMPLETE", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
 
         return $this->success($res);
     }
@@ -344,7 +357,7 @@ class OrderCommon extends BaseModel
      * 订单关闭
      * @param int $order_id
      */
-    public function orderClose($order_id)
+    public function orderClose($order_id,$log_data = [])
     {
 
         model('order')->startTrans();
@@ -365,9 +378,19 @@ class OrderCommon extends BaseModel
                 'order_status_name' => $this->order_status[self::ORDER_CLOSE]["name"],
                 'order_status_action' => json_encode($this->order_status[self::ORDER_CLOSE], JSON_UNESCAPED_UNICODE),
                 'close_time' => time(),
-                'is_enable_refund' => 0
+                'is_enable_refund' => 0,
+                'is_evaluate' => 0
             );
+
             $res = model('order')->update($order_data, [['order_id', "=", $order_id]]);
+
+            //更改接龙订单状态
+            model('promotion_jielong_order')->update([
+                'order_status' => self::ORDER_CLOSE,
+                'order_status_name' => $this->order_status[self::ORDER_CLOSE]["name"],
+                'order_status_action' => json_encode($this->order_status[self::ORDER_CLOSE], JSON_UNESCAPED_UNICODE),
+                'close_time' => time(),
+            ], [['relate_order_id', "=", $order_id]]);
 
             //库存处理
             $condition = array(
@@ -391,6 +414,8 @@ class OrderCommon extends BaseModel
                     );
                     //返还库存
                     $goods_stock_model->incStock($item_param);
+
+                    $refund_point += $v['use_point'];
                 }
 
                 if ($v["refund_status"] == $order_refund_model::REFUND_COMPLETE) {
@@ -401,8 +426,6 @@ class OrderCommon extends BaseModel
                 if ($order_info["pay_status"] > 0) {
                     $goods_model->decGoodsSaleNum($v["sku_id"], $v["num"]);
                 }
-
-                $refund_point += $v['use_point'];
             }
 
             //订单项移除可退款操作
@@ -430,6 +453,7 @@ class OrderCommon extends BaseModel
             }
             //订单关闭后操作
             $close_result = event('OrderClose', ['order_id' => $order_id]);
+
             if (empty($close_result)) {
                 foreach ($close_result as $k => $v) {
                     if (!empty($v) && $v["code"] < 0) {
@@ -439,14 +463,33 @@ class OrderCommon extends BaseModel
                 }
             }
 
-
             //订单关闭消息
             $message_model = new Message();
             $res = $message_model->sendMessage(['keywords' => "ORDER_CLOSE", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
+
+            //记录订单日志 start
+            if ($log_data){
+                $action = '商家关闭了订单';
+                if ($log_data['action_way'] == 1){
+                    $member_info = model('member')->getInfo(['member_id'=>$log_data['uid']],'nickname');
+                    $log_data['nick_name'] = $member_info['nickname'];
+                    $action = '买家【'.$member_info['nickname'].'】关闭了订单';
+                }
+                $log_data = array_merge($log_data,[
+                    'order_id'          => $order_id,
+                    'action'            => $action,
+                    'order_status'      => self::ORDER_CLOSE,
+                    'order_status_name' => $this->order_status[self::ORDER_CLOSE]["name"]
+                ]);
+                $this->addOrderLog($log_data);
+            }
+            //记录订单日志 end
+
             model('order')->commit();
             return $this->success();
         } catch (\Exception $e) {
             model('order')->rollback();
+       
             return $this->error('', $e->getMessage());
         }
     }
@@ -481,7 +524,11 @@ class OrderCommon extends BaseModel
                         $order_model = new VirtualOrder();
                         break;
                 }
-                $order_model->orderPay($order, $data["pay_type"]);
+                if (isset($data['log_data'])){
+                    $order_model->orderPay($order, $data["pay_type"],$data["log_data"]);
+                }else{
+                    $order_model->orderPay($order, $data["pay_type"]);
+                }
                 //同时将用户表的order_money和order_num更新
                 model('member')->setInc([['member_id', '=', $order['member_id']]], 'order_money', $order['order_money']);
                 model('member')->setInc([['member_id', '=', $order['member_id']]], 'order_num');
@@ -527,7 +574,7 @@ class OrderCommon extends BaseModel
      * @param unknown $order_id
      * @return unknown
      */
-    public function orderOfflinePay($order_id)
+    public function orderOfflinePay($order_id,$log_data = [])
     {
         model('order')->startTrans();
         try {
@@ -537,7 +584,7 @@ class OrderCommon extends BaseModel
 
             $out_trade_no = $split_result["data"];
             $pay_model = new Pay();
-            $result = $pay_model->onlinePay($out_trade_no, "OFFLINE_PAY", '', '');
+            $result = $pay_model->onlinePay($out_trade_no, "OFFLINE_PAY", '', '',$log_data);
             if ($result["code"] < 0) {
                 model('order')->rollback();
                 return $result;
@@ -558,7 +605,7 @@ class OrderCommon extends BaseModel
     public function splitOrderPay($order_ids)
     {
         $order_ids = empty($order_ids) ? [] : explode(",", $order_ids);
-        $order_list = model("order")->getList([["order_id", "in", $order_ids], ["pay_status", "=", 0]], "pay_money,order_name,out_trade_no,order_id,pay_status,site_id,member_id");
+        $order_list = model("order")->getList([["order_id", "in", $order_ids], ["pay_status", "=", 0]], "pay_money,order_name,out_trade_no,order_id,pay_status,site_id,member_id,member_card_order");
         $order_count = count($order_list);
         //判断订单数是否匹配
         if (count($order_ids) > $order_count)
@@ -570,6 +617,7 @@ class OrderCommon extends BaseModel
         $pay_model = new Pay();
         $order_name_array = [];
         $site_id = 0;
+        $member_card_order = [];
 
 
         foreach ($order_list as $order_k => $item) {
@@ -580,6 +628,9 @@ class OrderCommon extends BaseModel
                 $close_out_trade_no_array[] = $item["out_trade_no"];
             }
             $site_id = $item['site_id'];
+            if (!empty($item['member_card_order'])) {
+                array_push($member_card_order, $item['member_card_order']);
+            }
 //            $field_list = model("order")->getColumn([["out_trade_no", "=", $item["out_trade_no"]]], "order_id");
         }
 
@@ -607,13 +658,14 @@ class OrderCommon extends BaseModel
         $out_trade_no = $pay_model->createOutTradeNo($member_id ?? 0);
         //修改交易流水号为新生成的
         model("order")->update(["out_trade_no" => $out_trade_no], [["order_id", "in", $order_ids], ["pay_status", "=", 0]]);
+        if (!empty($member_card_order)) model("member_level_order")->update(["out_trade_no" => $out_trade_no], [["order_id", "in", $member_card_order], ["pay_status", "=", 0]]);
         $result = $pay_model->addPay($site_id, $out_trade_no, "", $order_name, $order_name, $pay_money, '', 'OrderPayNotify', '');
 
         return $this->success($out_trade_no);
     }
     /************************************************************************ 订单调价 start **************************************************************************/
     /**
-     * 订单金额调整
+     * 订单金额调整 按整单调整
      * @param string $order_product_adjust_list order_product_id:adjust_money,order_product_id:adjust_money
      * @param string $shipping_money
      */
@@ -622,7 +674,7 @@ class OrderCommon extends BaseModel
         model('order')->startTrans();
         try {
             //查询订单
-            $order_info = model('order')->getInfo(['order_id' => $order_id], 'site_id, out_trade_no,delivery_money, adjust_money, pay_money, order_money, promotion_money, coupon_money, goods_money, invoice_money, invoice_delivery_money, promotion_money, coupon_money, invoice_rate, invoice_delivery_money, balance_money, point_money');
+            $order_info = model('order')->getInfo(['order_id' => $order_id], 'site_id, out_trade_no,delivery_money, adjust_money, pay_money, order_money, promotion_money, coupon_money, goods_money, invoice_money, invoice_delivery_money, promotion_money, coupon_money, invoice_rate, invoice_delivery_money, balance_money, point_money, member_card_money');
             if (empty($order_info))
                 return $this->error("", "找不到订单");
 
@@ -637,7 +689,7 @@ class OrderCommon extends BaseModel
                 return $this->error("", "真实商品金额不能小于0!");
 
             $invoice_money = round(floor($new_goods_money * $order_info['invoice_rate']) / 100, 2);
-            $new_order_money = $invoice_money + $new_goods_money + $delivery_money + $order_info['invoice_delivery_money'];
+            $new_order_money = $invoice_money + $new_goods_money + $delivery_money + $order_info['invoice_delivery_money'] + $order_info['member_card_money'];
 
             if ($new_order_money < 0)
                 return $this->error("", "订单金额不能小于0!");
@@ -659,6 +711,83 @@ class OrderCommon extends BaseModel
             //将调价摊派到所有订单项
             $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'] - $order_info['point_money'];
             $this->distributionGoodsAdjustMoney($order_goods_list, $real_goods_money, $adjust_money);
+
+            //关闭原支付  生成新支付
+            $pay_model = new Pay();
+            $pay_result = $pay_model->deletePay($order_info["out_trade_no"]);//关闭旧支付单据
+            if ($pay_result["code"] < 0) {
+                model('order')->rollback();
+                return $pay_result;
+            }
+            $out_trade_no = $pay_result["data"];
+            // 调价之后支付金额为0
+            if($pay_money == 0){
+                $this->orderOfflinePay($order_id);
+            }
+
+            model('order')->commit();
+
+            return $this->success();
+        } catch (\Exception $e) {
+            model('order')->rollback();
+            return $this->error('', $e->getMessage());
+        }
+    }
+
+    /**
+     * 订单金额调整 按单个商品调整
+     * @param string $order_product_adjust_list order_product_id:adjust_money,order_product_id:adjust_money
+     * @param string $shipping_money
+     */
+    public function orderAdjustMoneyByGoods($order_id, $adjust_money_array, $delivery_money)
+    {
+        model('order')->startTrans();
+        try {
+            //查询订单
+            $order_info = model('order')->getInfo(['order_id' => $order_id], 'site_id, out_trade_no,delivery_money, adjust_money, pay_money, order_money, promotion_money, coupon_money, goods_money, invoice_money, invoice_delivery_money, promotion_money, coupon_money, invoice_rate, invoice_delivery_money, balance_money, point_money, member_card_money');
+            if (empty($order_info))
+                return $this->error("", "找不到订单");
+
+            if ($delivery_money < 0)
+                return $this->error("", "配送费用不能小于0!");
+
+            $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'] - $order_info['point_money'];//计算出订单真实商品金额
+            $adjust_money = 0;
+            if(is_array($adjust_money_array)){
+                foreach($adjust_money_array as $k=>$v){
+                    if($v == ""){
+                        $v = 0;
+                    }
+                    $adjust_money += $v;
+                }
+            }
+            $new_goods_money = $real_goods_money + $adjust_money;
+
+            if ($new_goods_money < 0)
+                return $this->error("", "真实商品金额不能小于0!");
+
+            $invoice_money = round(floor($new_goods_money * $order_info['invoice_rate']) / 100, 2);
+            $new_order_money = $invoice_money + $new_goods_money + $delivery_money + $order_info['invoice_delivery_money'] + $order_info['member_card_money'];
+
+            if ($new_order_money < 0)
+                return $this->error("", "订单金额不能小于0!");
+
+            $pay_money = $new_order_money - $order_info['balance_money'];
+            if ($pay_money < 0)
+                return $this->error("", "实际支付不能小于0!");
+
+            $data_order = array(
+                'delivery_money' => $delivery_money,
+                'pay_money' => $pay_money,
+                'adjust_money' => $adjust_money,
+                'order_money' => $new_order_money,
+                'invoice_money' => $invoice_money
+            );
+            model('order')->update($data_order, [['order_id', "=", $order_id]]);
+
+            $order_goods_list = model('order_goods')->getList([['order_id', "=", $order_id]], 'order_goods_id,goods_money,adjust_money,coupon_money,promotion_money,point_money,sku_id');
+            $real_goods_money = $order_info['goods_money'] - $order_info['promotion_money'] - $order_info['coupon_money'] - $order_info['point_money'];
+            $this->distributionGoodsAdjustMoneyByGoods($order_goods_list, $real_goods_money, $adjust_money_array);
 
             //关闭原支付  生成新支付
             $pay_model = new Pay();
@@ -709,21 +838,59 @@ class OrderCommon extends BaseModel
     }
 
     /**
+     * 单个商品订单调价
+     */
+    public function distributionGoodsAdjustMoneyByGoods($goods_list, $goods_money, $adjust_money_array)
+    {
+        foreach ($goods_list as $k => $v) {
+            foreach($adjust_money_array as $kk=>$vv){
+                if($v['sku_id'] == $kk){
+                    $item_goods_money = $v['goods_money'] - $v['promotion_money'] - $v['coupon_money'] - $v['point_money'];
+                    if ($vv == ""){
+                        $vv = 0;
+                    }
+                    $order_goods_data = array(
+                        'adjust_money' => $vv,
+                        'real_goods_money' => $item_goods_money + $vv,
+                    );
+                    model('order_goods')->update($order_goods_data, [['order_goods_id', '=', $v['order_goods_id']]]);
+                }
+            }
+        }
+        return $this->success();
+    }
+
+    /**
      * 订单删除
      * @param int $order_id
      */
-    public function orderDelete($order_id)
+    public function orderDelete($order_id,$user_info=[])
     {
 
         model('order')->startTrans();
         try {
-            $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_status,site_id");
+            $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_status,site_id,order_status_name");
             if ($order_info["order_status"] != -1) {
                 return $this->error([], '只有已经关闭的订单才能删除');
             }
             $order_data = array(
                 'is_delete' => 1
             );
+
+            //记录订单日志 start
+            if ($user_info){
+                $log_data = [
+                    'order_id'          => $order_id,
+                    'uid'               => $user_info['uid'],
+                    'nick_name'         => $user_info['username'],
+                    'action'            => '商家删除了订单',
+                    'action_way'        => 2,
+                    'order_status'      => $order_info['order_status'],
+                    'order_status_name' => $order_info['order_status_name']
+                ];
+                $this->addOrderLog($log_data);
+            }
+            //记录订单日志 end
             $res = model('order')->update($order_data, [['order_id', "=", $order_id]]);
             model('order')->commit();
             return $this->success();
@@ -739,13 +906,23 @@ class OrderCommon extends BaseModel
      * @param $data
      * @param $condition
      */
-    public function orderUpdate($data, $condition)
+    public function orderUpdate($data, $condition, $log_data = [])
     {
         $order_model = model("order");
         $res = $order_model->update($data, $condition);
         if ($res === false) {
             return $this->error();
         } else {
+            //记录订单日志 start
+            if ($log_data){
+                $order_info = model('order')->getInfo(['order_id'=>$log_data['order_id']],'order_status,order_status_name');
+                $log_data = array_merge($log_data,[
+                    'order_status'      => $order_info['order_status'],
+                    'order_status_name' => $order_info['order_status_name']
+                ]);
+                $this->addOrderLog($log_data);
+            }
+            //记录订单日志 end
             return $this->success($res);
         }
     }
@@ -755,7 +932,7 @@ class OrderCommon extends BaseModel
      * @param $order_id
      * @return array
      */
-    public function orderCommonDelivery($order_id)
+    public function orderCommonDelivery($order_id,$log_data=[])
     {
         $order_common_model = new OrderCommon();
         $local_result = $order_common_model->verifyOrderLock($order_id);
@@ -777,7 +954,7 @@ class OrderCommon extends BaseModel
                 $order_model = new VirtualOrder();
                 break;
         }
-        $result = $order_model->orderDelivery($order_id);
+        $result = $order_model->orderDelivery($order_id,$log_data);
         return $result;
     }
 
@@ -786,7 +963,7 @@ class OrderCommon extends BaseModel
      *
      * @param int $order_id
      */
-    public function orderCommonTakeDelivery($order_id)
+    public function orderCommonTakeDelivery($order_id,$log_data = [])
     {
         $order_info = model('order')->getInfo([['order_id', '=', $order_id]], '*');
         if (empty($order_info))
@@ -799,6 +976,7 @@ class OrderCommon extends BaseModel
         if($order_info['order_status'] == self::ORDER_TAKE_DELIVERY){
             return $this->error('','该订单已收货');
         }
+
         switch ($order_info['order_type']) {
             case 1:
                 $order_model = new Order();
@@ -829,14 +1007,26 @@ class OrderCommon extends BaseModel
             $res = model('order')->update($order_data, [['order_id', '=', $order_id]]);
             $this->addCronOrderComplete($order_id, $order_info['site_id']);
             event('OrderTakeDelivery', ['order_id' => $order_id]);
+//            event('OrderComplete', ['order_id' => $order_id]);
             model('order')->commit();
 
-            //订单收货消息
-            $message_model = new Message();
-            $message_model->sendMessage(['keywords' => "ORDER_TAKE_DELIVERY", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
-
-            $order_info['keywords'] = "BUYER_TAKE_DELIVERY";
-            $message_model->sendMessage($order_info);
+            //记录订单日志 start
+            if ($log_data){
+                $action = '商家对订单进行了确认收货';
+                if ($log_data['action_way'] == 1){
+                    $member_info = model('member')->getInfo(['member_id'=>$log_data['uid']],'nickname');
+                    $log_data['nick_name'] = $member_info['nickname'];
+                    $action = '买家【'.$member_info['nickname'].'】确认收到货物';
+                }
+                $log_data = array_merge($log_data,[
+                    'order_id'          => $order_id,
+                    'action'            => $action,
+                    'order_status'      => $order_model::ORDER_TAKE_DELIVERY,
+                    'order_status_name' => $order_model->order_status[$order_model::ORDER_TAKE_DELIVERY]["name"]
+                ]);
+                $this->addOrderLog($log_data);
+            }
+            //记录订单日志 end
 
             return $this->success();
         } catch (\Exception $e) {
@@ -934,6 +1124,8 @@ class OrderCommon extends BaseModel
         $member_info = model('member')->getInfo([['member_id', "=", $order_info['member_id']]], 'nickname');
 
         $order_info['nickname'] = $member_info['nickname'];
+        
+        $order_info['verifier_name'] = model('verify')->getValue([['verify_code','=',$order_info['delivery_code']]],'verifier_name');
 
         $order_goods_list = model('order_goods')->getList([['order_id', "=", $order_id]]);
         $order_info['order_goods'] = $order_goods_list;
@@ -954,7 +1146,22 @@ class OrderCommon extends BaseModel
 
         $temp_info = $order_model->orderDetail($order_info);
         $order_info = array_merge($order_info, $temp_info);
+//        if(!empty($order_info['package_list'])){
+//            foreach ($order_info['package_list'] as $package_key => $package_val){
+//                if(!empty($package_val['trace']['list'])){
+//                    $order_info['package_list'][$package_key]['trace']['list'] = array_reverse($package_val['trace']['list']);
+//                }
+//            }
+//        }
 
+        if (addon_is_exit('form', $order_info['site_id'])) {
+            $form_info = model('form_data')->getInfo([ ['relation_id', '=', $order_id], ['scene', '=', 'order'] ], 'form_data');
+            if (!empty($form_info)) {
+                $order_info['form'] = json_decode($form_info['form_data'], true);
+            }
+        }
+
+        $order_info['order_log'] = model('order_log')->getList([['order_id', "=", $order_id]], '*', 'action_time desc,id desc');
         return $this->success($order_info);
     }
 
@@ -1046,8 +1253,13 @@ class OrderCommon extends BaseModel
     public function getOrderPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = 'a', $join = [])
     {
         $order_list = model('order')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
+        $check_condition = array_column($condition, 2, 0);
+
         if (!empty($order_list['list'])) {
             foreach ($order_list['list'] as $k => $v) {
+                if(!empty($check_condition['a.order_status'])){
+                    $order_list['list'][$k]['order_data_status'] = $check_condition['a.order_status'];
+                }
                 $order_goods_list = model("order_goods")->getList([
                     'order_id' => $v['order_id']
                 ]);
@@ -1059,7 +1271,6 @@ class OrderCommon extends BaseModel
                 }
             }
         }
-
         return $this->success($order_list);
     }
 
@@ -1076,9 +1287,14 @@ class OrderCommon extends BaseModel
                 'order o',
                 'o.order_id = og.order_id',
                 'left'
+            ],
+            [
+                'member m',
+                'm.member_id = og.member_id',
+                'left'
             ]
         ];
-        $order_field = 'o.order_no,o.site_name,o.order_name,o.order_from_name,o.order_type_name,o.order_promotion_name,o.out_trade_no,o.out_trade_no_2,o.delivery_code,o.order_status_name,o.pay_status,o.delivery_status,o.refund_status,o.pay_type_name,o.delivery_type_name,o.name,o.mobile,o.telephone,o.full_address,o.buyer_ip,o.buyer_ask_delivery_time,o.buyer_message,o.goods_money,o.delivery_money,o.promotion_money,o.coupon_money,o.order_money,o.adjust_money,o.balance_money,o.pay_money,o.refund_money,o.pay_time,o.delivery_time,o.sign_time,o.finish_time,o.remark,o.goods_num,o.delivery_status_name,o.is_settlement,o.delivery_store_name,o.promotion_type_name,concat(full_address,"-",address),';
+        $order_field = 'o.order_no,o.site_name,o.order_name,o.order_from_name,o.order_type_name,o.order_promotion_name,o.out_trade_no,o.out_trade_no_2,o.delivery_code,o.order_status_name,o.pay_status,o.delivery_status,o.refund_status,o.pay_type_name,o.delivery_type_name,o.name,o.mobile,o.telephone,o.full_address,o.buyer_ip,o.buyer_ask_delivery_time,o.buyer_message,o.goods_money,o.delivery_money,o.promotion_money,o.coupon_money,o.order_money,o.adjust_money,o.balance_money,o.pay_money,o.refund_money,o.pay_time,o.delivery_time,o.sign_time,o.finish_time,o.remark,o.goods_num,o.delivery_status_name,o.is_settlement,o.delivery_store_name,o.promotion_type_name,concat(full_address,"-",address),m.nickname,o.full_address,';
 
         $order_goods_field = 'og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock';
 
@@ -1136,9 +1352,6 @@ class OrderCommon extends BaseModel
             $order_goods_list[$k]["refund_action"] = $refund_action;
         }
         $order_info['order_goods'] = $order_goods_list;
-        $code_result = $this->orderQrcode($order_info);
-        $order_info = array_merge($order_info, $code_result);
-        $order_info["code_info"] = $code_result;
 
         switch ($order_info['order_type']) {
             case 1:
@@ -1157,6 +1370,11 @@ class OrderCommon extends BaseModel
 
         $temp_info = $order_model->orderDetail($order_info);
         $order_info = array_merge($order_info, $temp_info);
+
+        $code_result = $this->orderQrcode($order_info);
+        $order_info = array_merge($order_info, $code_result);
+        $order_info["code_info"] = $code_result;
+
         return $this->success($order_info);
     }
 
@@ -1169,9 +1387,9 @@ class OrderCommon extends BaseModel
      * @param string $field
      * @return \multitype
      */
-    public function getMemberOrderPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    public function getMemberOrderPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = 'a', $join = [])
     {
-        $order_list = model('order')->pageList($condition, $field, $order, $page, $page_size);
+        $order_list = model('order')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         if (!empty($order_list['list'])) {
             foreach ($order_list['list'] as $k => $v) {
                 $order_goods_list = model("order_goods")->getList([
@@ -1209,10 +1427,13 @@ class OrderCommon extends BaseModel
         }
         $verify_model = new Verify();
         $result = $verify_model->qrcode($code, $app_type, $verify_type, $order_info['site_id'], "get");
+        // 生成条形码
+        $txm = getBarcode($code,'upload/qrcode/' . $verify_type);
         $data = [];
         if (!empty($result) && $result["code"] >= 0) {
             $data[$verify_type] = $result["data"]["path"];
         }
+        $data[$verify_type.'_barcode'] = $txm;
         return $data;
     }
 
@@ -1239,4 +1460,85 @@ class OrderCommon extends BaseModel
     /***************************************************************** 交易记录 *****************************************************************/
 
 
+    public function orderAfterSaleClose($order_id){
+        $res = model('order')->update(['is_enable_refund' => 0], [['order_id', "=", $order_id]]);
+        return $this->success($res);
+    }
+
+    /************************************************************************* 订单日志 start ********************************************************************/
+    /**
+     * 添加订单日志
+     * @param array $data
+     * @return array
+     */
+    public function addOrderLog($data)
+    {
+        $data[ 'action_time' ] = time();//操作时间
+        $res = model("order_log")->add($data);
+        return $this->success($res);
+    }
+
+    /**
+     * 获取订单日志
+     * @param $condition
+     * @param string $field
+     */
+    public function getOrderLog($condition, $field = "*")
+    {
+        $res = model("order_log")->getInfo($condition, $field);
+        return $this->success($res);
+    }
+
+    /**
+     * 获取订单日志列表
+     * @param $condition
+     * @param string $field
+     * @param string $order
+     * @return array
+     */
+    public function getOrderLogList($condition, $field = "*", $order = 'action_time desc')
+    {
+        $res = model("order_log")->getList($condition, $field, $order);
+        return $this->success($res);
+    }
+
+    /**
+     * 获取订单日志数量
+     * @param $condition
+     * @param string $field
+     */
+    public function getOrderLogCount($condition)
+    {
+        $res = model("order_log")->getCount($condition);
+        return $this->success($res);
+    }
+
+    /**
+     * 删除订单日志
+     * @param $condition
+     * @return array
+     */
+    public function deleteOrderLog($condition)
+    {
+        $res = model("order_log")->delete($condition);
+        return $this->success($res);
+    }
+
+
+    /**
+     * 获取订单项分页列表
+     * @param array $condition
+     * @param int $page
+     * @param int $page_size
+     * @param string $order
+     * @param string $field
+     * @param string $alias
+     * @param array $join
+     * @return array
+     */
+    public function getOrderGoodsPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = '', $join = [])
+    {
+        $list = model('order_goods')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
+        return $this->success($list);
+    }
 }

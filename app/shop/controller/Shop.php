@@ -11,6 +11,8 @@
 
 namespace app\shop\controller;
 
+use app\model\member\Member as MemberModel;
+use app\model\order\OrderRefund as OrderRefundModel;
 use app\model\shop\Shop as ShopModel;
 use app\model\system\Address as AddressModel;
 use app\model\system\Site;
@@ -52,13 +54,18 @@ class Shop extends BaseShop
             $qq = input("qq", '');//qq
             $ww = input("ww", '');//ww
             $telephone = input("telephone", '');//联系电话
-            $shop_status = input('shop_status',1);//商城状态
+            $shop_pc_status = input('shop_pc_status',1);//商城pc端状态
+            $shop_h5_status = input('shop_h5_status',1);//商城h5端状态
+            $shop_weapp_status = input('shop_weapp_status',1);//商城小程序端状态
+
+            $site_tel = input("site_tel", '');//服务电话
 
             $data_site = array (
                 "site_name" => $site_name,
                 "logo" => $logo,
                 "seo_keywords" => $seo_keywords,
-                "seo_description" => $seo_description
+                "seo_description" => $seo_description,
+                "site_tel" => $site_tel,
             );
 
             $work_week = input("work_week", '');//工作日  例如 : 1,2,3,4,5,6,7
@@ -79,18 +86,19 @@ class Shop extends BaseShop
             $res = $shop_model->editShop($data_shop, $condition);
             if($res['code'] >= 0){
 
-                $shop_model->setShopStatus(['shop_status'=> $shop_status],$this->site_id,$this->app_module);
+                $shop_model->setShopStatus(['shop_pc_status'=> $shop_pc_status,'shop_h5_status'=>$shop_h5_status,'shop_weapp_status'=>$shop_weapp_status],$this->site_id,$this->app_module);
             }
             return $res;
         } else {
-
+            $this->forthMenu();
             $shop_info_result = $shop_model->getShopInfo($condition);
             $site_info = $site_model->getSiteInfo($condition);
 
             //商城状态
             $shop_status_result = $shop_model->getShopStatus($this->site_id,$this->app_module);
+
             $shop_status = $shop_status_result['data']['value'];
-            $this->assign('shop_status',$shop_status['shop_status']);
+            $this->assign('shop_status',$shop_status);
 
             $config_model = new ConfigModel();
             $info = $config_model->geth5DomainName();
@@ -157,6 +165,7 @@ class Shop extends BaseShop
             $res = $shop_model->editShop($data, $condition);
             return $res;
         } else {
+            $this->forthMenu();
             $shop_info_result = $shop_model->getShopInfo($condition);
             $shop_info = $shop_info_result[ "data" ];
             $this->assign("info", $shop_info);
@@ -166,6 +175,11 @@ class Shop extends BaseShop
             $list = $address_model->getAreaList([ [ "pid", "=", 0 ], [ "level", "=", 1 ] ]);
             $this->assign("province_list", $list[ "data" ]);
             $this->assign("http_type", get_http_type());
+
+            $config_model = new ConfigModel();
+            $mp_config = $config_model->getMapConfig($this->site_id);
+            $this->assign('tencent_map_key', $mp_config['data']['value']['tencent_map_key']);
+
             return $this->fetch("shop/contact");
         }
 
@@ -183,5 +197,5 @@ class Shop extends BaseShop
         // dump($res);exit;
         return $res;
     }
-
+    
 }

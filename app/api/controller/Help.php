@@ -52,7 +52,7 @@ class Help extends BaseApi
             ['class_id', '=', $class_id],
             ['site_id', '=', $this->site_id]
         ];
-        $order     = 'create_time desc';
+        $order     = 'sort asc, create_time desc';
         $field     = 'id,title,class_id,class_name,sort,create_time';
         $help      = new HelpModel();
         $list      = $help->getHelpPageList($condition, $page, $page_size, $order, $field);

@@ -169,4 +169,10 @@ class MemberAddress extends BaseModel
         Cache::tag("member_address_" . $check_condition[ 'member_id' ])->set("member_address_getMemberAddressPageList_" . $data, $list);
         return $this->success($list);
     }
+
+    //获取默认地址
+    public function getMemberDefault($member_id)
+    {
+        return model('member_address')->getInfo(['member_id'=>$member_id,'is_default'=>1,'type'=>1], 'id');
+    }
 }

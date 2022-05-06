@@ -17,6 +17,8 @@ use app\model\order\OrderRefund;
 use app\model\system\Config as ConfigModel;
 use app\model\system\Cron;
 use app\model\system\Stat;
+use think\facade\Db;
+use think\facade\Cache;
 
 /**
  * 商品
@@ -66,17 +68,30 @@ class Goods extends BaseModel
 //                    $goods_image = $data[ 'goods_sku_data' ][ 0 ][ 'sku_image' ];
 //                }
             }
+            if($data['is_free_shipping'] == 0){
+                if(empty($data['shipping_template'])){
+                    return $this->error('','运费模板不能为空');
+                }
+            }
+
+            //获取标签名称
+            $label_name = '';
+            if($data[ 'label_id' ]){
+                $label_info = model('goods_label')->getInfo([['id', '=', $data[ 'label_id' ]]], 'label_name');
+                $label_name = $label_info['label_name'] ?? '';
+            }
 
             $goods_data = array (
                 'goods_image' => $goods_image,
                 'goods_stock' => $data[ 'goods_stock' ],
-                'price' => $data[ 'goods_sku_data' ][ 0 ][ 'price' ],
-                'market_price' => $data[ 'goods_sku_data' ][ 0 ][ 'market_price' ],
-                'cost_price' => $data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ],
+                'price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'price' ]:'',
+                'market_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'market_price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'market_price' ]:'',
+                'cost_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ]:'',
                 'goods_spec_format' => $data[ 'goods_spec_format' ],
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
+                'label_name' => $label_name,
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
                 'is_consume_discount' => $data['is_consume_discount']
@@ -88,6 +103,8 @@ class Goods extends BaseModel
                 'goods_class_name' => $this->goods_class[ 'name' ],
                 'goods_attr_class' => $data[ 'goods_attr_class' ],
                 'goods_attr_name' => $data[ 'goods_attr_name' ],
+                'is_limit' => isset($data[ 'is_limit' ]) ? $data[ 'is_limit' ] : 0,
+                'limit_type' => isset($data[ 'limit_type' ]) ? $data[ 'limit_type' ]:1,
                 'site_id' => $data[ 'site_id' ],
                 'goods_content' => $data[ 'goods_content' ],
                 'goods_state' => $data[ 'goods_state' ],
@@ -105,14 +122,21 @@ class Goods extends BaseModel
                 'virtual_sale' => $data[ 'virtual_sale' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
-                'recommend_way' => $data[ 'recommend_way' ]
+                'recommend_way' => $data[ 'recommend_way' ],
+                'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
+                'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
+
             );
 
             $goods_id = model('goods')->add(array_merge($goods_data, $common_data));
 
+            $goods_stock  = 0;
+
             $sku_arr = array ();
             //添加sku商品
             foreach ($data[ 'goods_sku_data' ] as $item) {
+
+                $goods_stock += $item[ 'stock' ];
 
                 $sku_data = array (
                     'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
@@ -137,11 +161,12 @@ class Goods extends BaseModel
                 $sku_arr[] = array_merge($sku_data, $common_data);
             }
 
-            model('goods_sku')->addList($sku_arr);
+           model('goods_sku')->addList($sku_arr);
+
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ], 'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项/规格值JSON字符串
@@ -165,7 +190,7 @@ class Goods extends BaseModel
             return $this->success($goods_id);
         } catch (\Exception $e) {
             model('goods')->rollback();
-            return $this->error($e->getMessage());
+            return $this->error('', $e->getMessage());
         }
     }
 
@@ -201,6 +226,19 @@ class Goods extends BaseModel
 //                }
             }
 
+            if($data['is_free_shipping'] == 0){
+                if(empty($data['shipping_template'])){
+                    return $this->error('','运费模板不能为空');
+                }
+            }
+
+            //获取标签名称
+            $label_name = '';
+            if($data[ 'label_id' ]){
+                $label_info = model('goods_label')->getInfo([['id', '=', $data[ 'label_id' ]]], 'label_name');
+                $label_name = $label_info['label_name'] ?? '';
+            }
+
             $goods_data = array (
                 'goods_image' => $goods_image,
                 'goods_stock' => $data[ 'goods_stock' ],
@@ -211,6 +249,7 @@ class Goods extends BaseModel
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
+                'label_name' => $label_name,
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
                 'is_consume_discount' => $data['is_consume_discount']
@@ -240,10 +279,15 @@ class Goods extends BaseModel
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
                 'recommend_way' => $data[ 'recommend_way' ],
-                'is_consume_discount' => $data['is_consume_discount']
+                'is_consume_discount' => $data['is_consume_discount'],
+                'is_limit' => $data[ 'is_limit' ],
+                'limit_type' => $data[ 'limit_type' ],
+                'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
+                'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
             );
-
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
+
+            $goods_stock = 0;
 
             // 如果只编辑价格库存就是修改，如果添加规格项/值就需要重新生成
             if (!empty($data[ 'goods_sku_data' ][ 0 ][ 'sku_id' ])) {
@@ -253,6 +297,8 @@ class Goods extends BaseModel
                     $sku_arr = array ();
                     //添加sku商品
                     foreach ($data[ 'goods_sku_data' ] as $item) {
+
+                        $goods_stock += $item[ 'stock' ];
 
                         $sku_data = array (
                             'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
@@ -271,6 +317,7 @@ class Goods extends BaseModel
                             'sku_images' => $item[ 'sku_images' ],
                             'goods_id' => $goods_id,
                             'is_default' => $item[ 'is_default' ] ?? 0,
+                            'is_consume_discount' => $data['is_consume_discount']
                         );
                         $sku_arr[] = array_merge($sku_data, $common_data);
                     }
@@ -284,6 +331,8 @@ class Goods extends BaseModel
                             $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
                             $discount_info = $discount_info_result[ 'data' ];
                         }
+
+                        $goods_stock += $item[ 'stock' ];
 
                         $sku_data = array (
                             'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
@@ -301,6 +350,7 @@ class Goods extends BaseModel
                             'sku_images' => $item[ 'sku_images' ],
                             'goods_id' => $goods_id,
                             'is_default' => $item[ 'is_default' ] ?? 0,
+                            'is_consume_discount' => $data['is_consume_discount']
                         );
                         if (empty($discount_info)) {
                             $sku_data[ 'discount_price' ] = $item[ 'price' ];
@@ -338,6 +388,8 @@ class Goods extends BaseModel
                 //添加sku商品
                 foreach ($data[ 'goods_sku_data' ] as $item) {
 
+                    $goods_stock += $item[ 'stock' ];
+
                     $sku_data = array (
                         'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
                         'spec_name' => $item[ 'spec_name' ],
@@ -355,6 +407,7 @@ class Goods extends BaseModel
                         'sku_images' => $item[ 'sku_images' ],
                         'goods_id' => $goods_id,
                         'is_default' => $item[ 'is_default' ] ?? 0,
+                        'is_consume_discount' => $data['is_consume_discount']
                     );
 
                     $sku_arr[] = array_merge($sku_data, $common_data);
@@ -365,7 +418,7 @@ class Goods extends BaseModel
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ], 'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 //刷新SKU商品规格项/规格值JSON字符串
@@ -383,6 +436,8 @@ class Goods extends BaseModel
                 $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data[ 'timer_off' ], $goods_id);
             }
 
+            event('GoodsEdit', ['goods_id' => $goods_id, 'site_id' => $data[ 'site_id' ] ]);
+
             model('goods')->commit();
             return $this->success($goods_id);
         } catch (\Exception $e) {
@@ -396,9 +451,9 @@ class Goods extends BaseModel
      * @param $goods_id
      * @return array
      */
-    public function copyGoods($goods_id)
+    public function copyGoods($goods_id, $site_id)
     {
-        $goods_info = model("goods")->getInfo([ [ 'goods_id', '=', $goods_id ] ]);
+        $goods_info = model("goods")->getInfo([ [ 'goods_id', '=', $goods_id ], ['site_id', '=', $site_id] ]);
         if (empty($goods_info)) {
             return $this->error('', '商品不存在，无法复制！');
         }
@@ -462,7 +517,7 @@ class Goods extends BaseModel
                 $v[ 'is_consume_discount' ] = 0;
                 $v[ 'discount_config' ] = 0;
                 $v[ 'discount_method' ] = '';
-                $v[ 'member_price' ] = 0;
+                $v[ 'member_price' ] = '';
                 $v[ 'fenxiao_price' ] = 0;
                 $v[ 'virtual_sale' ] = 0;
                 $sku_data[] = $v;
@@ -590,21 +645,24 @@ class Goods extends BaseModel
     public function editGetGoodsInfo($condition, $field = '*')
     {
         $info = model('goods')->getInfo($condition, $field);
-        $category_json = json_decode($info[ 'category_json' ]);
-        $goods_category = [];
-        foreach ($category_json as $k => $v) {
-            if (!empty($v)) {
-                $category_list = model('goods_category')->getList([ [ 'category_id', 'in', $v ] ], 'category_name', 'level asc');
-                $category_name = array_column($category_list, 'category_name');
-                $category_name = implode('/', $category_name);
-                $goods_category[ $k ] = [
-                    'id' => $v,
-                    'category_name' => $category_name
-                ];
+        if (!empty($info)) {
+            $category_json = json_decode($info[ 'category_json' ]);
+            $goods_category = [];
+            foreach ($category_json as $k => $v) {
+                if (!empty($v)) {
+                    $category_list = model('goods_category')->getList([ [ 'category_id', 'in', $v ] ], 'category_name', 'level asc');
+                    $category_name = array_column($category_list, 'category_name');
+                    $category_name = implode('/', $category_name);
+                    $goods_category[ $k ] = [
+                        'id' => $v,
+                        'category_name' => $category_name
+                    ];
+                }
             }
+            $info[ 'goods_category' ] = $goods_category;
+            return $this->success($info);
         }
-        $info[ 'goods_category' ] = $goods_category;
-        return $this->success($info);
+        return $this->error();
     }
 
     /**
@@ -623,8 +681,8 @@ class Goods extends BaseModel
             foreach ($sku_data as $k => $v) {
                 $sku_data[ $k ][ 'member_price' ] = $v[ 'member_price' ] == '' ? '' : json_decode($v[ 'member_price' ], true);
             }
+            $info[ 'sku_data' ] = $sku_data;
         }
-        $info[ 'sku_data' ] = $sku_data;
         return $this->success($info);
     }
 
@@ -649,9 +707,12 @@ class Goods extends BaseModel
      */
     public function getGoodsSkuDetail($sku_id, $site_id, $field = '')
     {
+        $prefix = config('database.connections.mysql.prefix');
         if (empty($field)) {
-            $field = 'gs.goods_id,gs.sku_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.evaluate,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,g.goods_image';
+            $field = 'gs.goods_id,gs.sku_id,gs.qr_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,g.goods_image,
+            (SELECT count(evaluate_id) FROM '.$prefix.'goods_evaluate nge WHERE gs.goods_id = nge.goods_id and is_show = 1 and is_audit = 1) as evaluate';
         }
+
         $join = [
             [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
         ];
@@ -680,9 +741,9 @@ class Goods extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getGoodsPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc', $field = 'goods_id,goods_name,site_id,site_name,goods_image,goods_state,price,goods_stock,goods_stock_alarm,create_time,sale_num,is_virtual,goods_class,is_fenxiao,fenxiao_type,promotion_addon,sku_id,is_consume_discount,discount_config,discount_method,sort')
+    public function getGoodsPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'a.create_time desc', $field = 'a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete',$alias = 'a', $join = [])
     {
-        $list = model('goods')->pageList($condition, $field, $order, $page, $page_size);
+        $list = model('goods')->pageList($condition, $field, $order, $page, $page_size,$alias, $join);
         return $this->success($list);
     }
 
@@ -757,8 +818,24 @@ class Goods extends BaseModel
      */
     public function getGoodsSkuPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = '', $join = '')
     {
-        $list = model('goods_sku')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
+        $list = model('goods_sku')->Lists($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
+    }
+
+    /**
+     * 二维数组根据某个字段排序
+     * @param array $array 要排序的数组
+     * @param string $keys   要排序的键字段
+     * @param string $sort  排序类型  SORT_ASC     SORT_DESC
+     * @return array 排序后的数组
+     */
+    function arraySort($array, $keys, $sort = SORT_DESC) {
+        $keysValue = [];
+        foreach ($array as $k => $v) {
+            $keysValue[$k] = $v[$keys];
+        }
+        array_multisort($keysValue, $sort, $array);
+        return $array;
     }
 
     /**
@@ -1220,6 +1297,164 @@ class Goods extends BaseModel
     }
 
     /**
+     * 获取商品会员价（列表）
+     * @param array $goods_list
+     * @param $member_id
+     * @param $site_id
+     */
+    public function getGoodsListMemberPirce(array $goods_list, $member_id){
+        if (!addon_is_exit("memberprice")) return $goods_list;
+
+        $alias = 'm';
+        $join = [
+            [ 'member_level ml', 'ml.level_id = m.member_level', 'inner' ],
+        ];
+        $member_info = model("member")->getInfo([ [ 'member_id', '=', $member_id ] ], 'm.member_level,ml.consume_discount', $alias, $join);
+        if (empty($member_info)) return $goods_list;
+
+        foreach ($goods_list as $key => $goods_item) {
+            if ($goods_item[ 'is_consume_discount' ]){
+                // 自定义优惠
+                if ($goods_item['discount_config'] == 1) {
+                    $member_price_config = json_decode($goods_item[ 'member_price' ], true);
+                    $value = $member_price_config[ $goods_item[ 'discount_method' ] ][ $member_info[ 'member_level' ] ] ?? 0;
+                    switch ( $goods_item[ 'discount_method' ] ) {
+                        case "discount":
+                            // 打折
+                            if ($value == 0) {
+                                $goods_list[$key][ 'member_price' ] = $goods_item[ 'price' ];
+                            } else
+                                $goods_list[$key][ 'member_price' ] = number_format($goods_item[ 'price' ] * $value / 10, 2, '.', '');
+                            break;
+                        case "manjian":
+                            if ($value == 0) {
+                                $goods_list[$key][ 'member_price' ] = $goods_item[ 'price' ];
+                            } else
+                                // 满减
+                                $goods_list[$key][ 'member_price' ] = number_format($goods_item[ 'price' ] - $value, 2, '.', '');
+                            break;
+                        case "fixed_price":
+                            if ($value == 0) {
+                                $goods_list[$key][ 'member_price' ] = $goods_item[ 'price' ];
+                            } else
+                                // 指定价格
+                                $goods_list[$key][ 'member_price' ] = number_format($value, 2, '.', '');
+                            break;
+                    }
+                } else {
+                    $goods_list[$key][ 'member_price' ] = number_format($goods_item[ 'price' ] * $member_info[ 'consume_discount' ] / 100, 2, '.', '');
+                }
+            } else {
+                unset($goods_list[$key][ 'member_price' ]);
+            }
+        }
+        return $goods_list;
+    }
+
+    /**
+     * 获取会员卡商品价格
+     */
+    public function getMemberCardGoodsPrice($sku_id, $level_id){
+        $res = [
+            'discount_price' => 0, // 折扣价（默认等于单价）
+            'member_price' => 0, // 会员价
+            'price' => 0 // 最低价格
+        ];
+
+        $goods_sku_info = model("goods_sku")->getInfo([ [ 'sku_id', '=', $sku_id ] ], 'is_consume_discount,discount_config,discount_method,price,member_price,discount_price');
+        if (empty($goods_sku_info)) return $this->success($res);
+
+        $res[ 'discount_price' ] = $goods_sku_info[ 'discount_price' ];
+        $res[ 'price' ] = $goods_sku_info[ 'discount_price' ];
+
+        $level_info = model("member_level")->getInfo([ [ 'level_id', '=', $level_id ] ], 'consume_discount');
+
+        if (!addon_is_exit("memberprice") || empty($level_info)) return $this->success($res);
+
+        if ($goods_sku_info['is_consume_discount']) {
+            if ($goods_sku_info[ 'discount_config' ] == 1) {
+                // 自定义优惠
+                $goods_sku_info[ 'member_price' ] = json_decode($goods_sku_info[ 'member_price' ], true);
+                $value = isset($goods_sku_info[ 'member_price' ][ $goods_sku_info[ 'discount_method' ] ][ $level_id ]) ? $goods_sku_info[ 'member_price' ][ $goods_sku_info[ 'discount_method' ] ][ $level_id ] : 0;
+                switch ( $goods_sku_info[ 'discount_method' ] ) {
+                    case "discount":
+                        // 打折
+                        if ($value == 0) {
+                            $res[ 'member_price' ] = $goods_sku_info[ 'price' ];
+                        } else
+                            $res[ 'member_price' ] = number_format($goods_sku_info[ 'price' ] * $value / 10, 2, '.', '');
+                        break;
+                    case "manjian":
+                        if ($value == 0) {
+                            $res[ 'member_price' ] = $goods_sku_info[ 'price' ];
+                        } else
+                            // 满减
+                            $res[ 'member_price' ] = number_format($goods_sku_info[ 'price' ] - $value, 2, '.', '');
+                        break;
+                    case "fixed_price":
+                        if ($value == 0) {
+                            $res[ 'member_price' ] = $goods_sku_info[ 'price' ];
+                        } else
+                            // 指定价格
+                            $res[ 'member_price' ] = number_format($value, 2, '.', '');
+                        break;
+                }
+            } else {
+                // 默认按会员享受折扣计算
+                $res[ 'member_price' ] = number_format($goods_sku_info[ 'price' ] * $level_info[ 'consume_discount' ] / 100, 2, '.', '');
+            }
+            if ($res[ 'member_price' ] < $res[ 'price' ]) {
+                $res[ 'price' ] = $res[ 'member_price' ];
+            }
+        }
+        return $this->success($res);
+    }
+
+    public function getSkuMemberPrice($sku_list, $site_id){
+        $member_level_list = model('member_level')->getList([ ['site_id', '=', $site_id] ], 'level_name,level_id,consume_discount', 'level_type asc,growth asc');
+        foreach ($sku_list as $k => $sku_item) {
+            $member_level = [];
+            if ($sku_item['is_consume_discount']) {
+                foreach ($member_level_list as $level_item) {
+                    // 自定义优惠
+                    if ($sku_item[ 'discount_config' ] == 1) {
+                        $member_price = json_decode($sku_item[ 'member_price' ], true);
+                        $value = isset($member_price[ $sku_item[ 'discount_method' ] ][ $level_item['level_id'] ]) ? $member_price[ $sku_item[ 'discount_method' ] ][ $level_item['level_id'] ] : 0;
+                        switch ( $sku_item[ 'discount_method' ] ) {
+                            case "discount":
+                                // 打折
+                                if ($value == 0) {
+                                    $level_item[ 'member_price' ] = $sku_item[ 'price' ];
+                                } else
+                                    $level_item[ 'member_price' ] = number_format($sku_item[ 'price' ] * $value / 10, 2, '.', '');
+                                break;
+                            case "manjian":
+                                if ($value == 0) {
+                                    $level_item[ 'member_price' ] = $sku_item[ 'price' ];
+                                } else
+                                    // 满减
+                                    $level_item[ 'member_price' ] = number_format($sku_item[ 'price' ] - $value, 2, '.', '');
+                                break;
+                            case "fixed_price":
+                                if ($value == 0) {
+                                    $level_item[ 'member_price' ] = $sku_item[ 'price' ];
+                                } else
+                                    // 指定价格
+                                    $level_item[ 'member_price' ] = number_format($value, 2, '.', '');
+                                break;
+                        }
+                    } else {
+                        $level_item['member_price'] = number_format($sku_item[ 'price' ] * $level_item[ 'consume_discount' ] / 100, 2, '.', '');
+                    }
+                    array_push($member_level, $level_item);
+                }
+            }
+            $sku_list[$k]['member_price_list'] = $member_level;
+        }
+        return $sku_list;
+    }
+
+    /**
      * 修改当前商品参与的营销活动标识，逗号分隔（限时折扣、团购、拼团、秒杀、专题活动）
      * @param $goods_id
      * @param array $promotion 营销活动标识，【promotion:value】
@@ -1267,7 +1502,7 @@ class Goods extends BaseModel
         ], 'og.num', 'og', $join);
         return $num;
     }
-
+ 
     /**
      * 判断规格值是否禁用
      * @param $bargain_id
@@ -1284,11 +1519,13 @@ class Goods extends BaseModel
             $sku_spec_format_arr = [];
             foreach ($sku_spec_format as $sku_spec) {
                 $format = json_decode($sku_spec, true);
-                foreach ($format as $format_v) {
-                    if (empty($sku_spec_format_arr[ $format_v[ 'spec_id' ] ])) {
-                        $sku_spec_format_arr[ $format_v[ 'spec_id' ] ] = [];
+                if (is_array($format)) {
+                    foreach ($format as $format_v) {
+                        if (empty($sku_spec_format_arr[ $format_v[ 'spec_id' ] ])) {
+                            $sku_spec_format_arr[ $format_v[ 'spec_id' ] ] = [];
+                        }
+                        $sku_spec_format_arr[ $format_v[ 'spec_id' ] ][] = $format_v[ 'spec_value_id' ];
                     }
-                    $sku_spec_format_arr[ $format_v[ 'spec_id' ] ][] = $format_v[ 'spec_value_id' ];
                 }
             }
 
@@ -1302,7 +1539,7 @@ class Goods extends BaseModel
                 }
                 if ($k > 0 || $count == 1) {
                     foreach ($v[ 'value' ] as $key => $item) {
-                        if (!in_array($item[ 'sku_id' ], $sku_ids)) {
+                        if (!in_array($item[ 'sku_id' ] ?? '', $sku_ids)) {
                             $v[ 'value' ][ $key ][ 'disabled' ] = true;
                         }
                     }
@@ -1377,8 +1614,239 @@ class Goods extends BaseModel
     public function getGoodsStockAlarm($site_id)
     {
         $prefix = config('database.connections.mysql.prefix');
-        $sql = 'select count(goods_id) as num from ' . $prefix . 'goods where goods_stock_alarm >= goods_stock and goods_stock_alarm > 0 and is_delete = 0 and goods_state = 1 and site_id = ' . $site_id;
-        $count = model('goods')->query($sql);
-        return $this->success($count[ 0 ][ 'num' ]);
+        $sql = 'select goods_id from ' . $prefix . 'goods_sku where stock_alarm >= stock and stock_alarm > 0 and is_delete = 0 and goods_state = 1 and site_id = ' . $site_id . ' group by goods_id';
+        $data = model('goods')->query($sql);
+        if (!empty($data)) {
+            $data = array_column($data, 'goods_id');
+        }
+        return $this->success($data);
+    }
+
+    /**
+     * 商品导入
+     * @param $goods_data
+     * @param $img_dir
+     * @param $site_id
+     * @return array
+     */
+    public function importGoods($goods_data, $site_id){
+        try {
+            if (empty($goods_data['goods_name'])) return $this->error('', '商品名称不能为空');
+            if (empty($goods_data['goods_image'])) return $this->error('', '商品主图不能为空');
+            if (empty($goods_data['category_1']) && empty($goods_data['category_2']) && empty($goods_data['category_3'])) return $this->error('', '商品分类不能为空');
+
+            // 处理商品分类
+            $category_id = '';
+            $category_json = [];
+            if (!empty($goods_data['category_3'])) {
+                $category_info = model('goods_category')->getInfo([ ['level', '=', 3],['site_id', '=', $site_id ], ['category_full_name', '=', "{$goods_data['category_1']}/{$goods_data['category_2']}/{$goods_data['category_3']}"] ], 'category_id_1,category_id_2,category_id_3');
+                if (!empty($category_info)) {
+                    $category_id = "{$category_info['category_id_1']},{$category_info['category_id_2']},{$category_info['category_id_3']}";
+                }
+            }
+            if (!empty($goods_data['category_2']) && empty($category_id)) {
+                $category_info = model('goods_category')->getInfo([ ['level', '=', 2],['site_id', '=', $site_id ], ['category_full_name', '=', "{$goods_data['category_1']}/{$goods_data['category_2']}"] ], 'category_id_1,category_id_2');
+                if (!empty($category_info)) {
+                    $category_id = "{$category_info['category_id_1']},{$category_info['category_id_2']}";
+                }
+            }
+            if (!empty($goods_data['category_1']) && empty($category_id)) {
+                $category_info = model('goods_category')->getInfo([ ['level', '=', 1],['site_id', '=', $site_id ], ['category_name', '=', "{$goods_data['category_1']}"] ], 'category_id_1');
+                if (!empty($category_info)) {
+                    $category_id = "{$category_info['category_id_1']}";
+                }
+            }
+            if (empty($category_id)) return $this->error('', '未找到所填商品分类');
+            $category_json = [$category_id];
+
+            $sku_data = [];
+            $goods_spec_format = [];
+            $tag = 0;
+            // 处理sku数据
+            if (isset($goods_data['sku'])) {
+                foreach ($goods_data['sku'] as $sku_item) {
+                    if (empty($sku_item['sku_data'])) return $this->error('', '规格数据不能为空');
+
+                    $spec_name = '';
+                    $spec_data = explode(';', $sku_item['sku_data']);
+
+                    $sku_spec_format = [];
+                    foreach ($spec_data as $item) {
+                        $spec_item = explode(':', $item);
+                        $spec_name .= ' ' . $spec_item[1];
+
+                        // 规格项
+                        $spec_index = array_search($spec_item[0], array_column($goods_spec_format, 'spec_name'));
+                        if (empty($goods_spec_format) || $spec_index === false) {
+                            $spec = [
+                                'spec_id' => -($tag + getMillisecond()),
+                                'spec_name' => $spec_item[0],
+                                'value' => []
+                            ];
+                            array_push($goods_spec_format, $spec);
+                            $tag++;
+                        } else {
+                            $spec = $goods_spec_format[$spec_index];
+                        }
+                        // 规格值
+                        $spec_index = array_search($spec_item[0], array_column($goods_spec_format, 'spec_name'));
+                        $spec_value_index = array_search($spec_item[1], array_column($spec['value'], 'spec_value_name'));
+                        if (empty($spec['value']) || $spec_value_index === false) {
+                            $spec_value = [
+                                'spec_id' => $spec['spec_id'],
+                                'spec_name' => $spec['spec_name'],
+                                'spec_value_id' => -($tag + getMillisecond()),
+                                'spec_value_name' => $spec_item[1],
+                                'image' => '',
+                            ];
+                            array_push($goods_spec_format[$spec_index]['value'], $spec_value);
+                            $tag++;
+                        } else {
+                            $spec_value = $spec['value'][$spec_value_index];
+                        }
+
+                        array_push($sku_spec_format, [
+                            'spec_id' => $spec['spec_id'],
+                            'spec_name' => $spec['spec_name'],
+                            'spec_value_id' => $spec_value['spec_value_id'],
+                            'spec_value_name' => $spec_value['spec_value_name'],
+                            'image' => '',
+                        ]);
+                    }
+
+                    $sku_images_arr = explode(',', $sku_item['sku_image']);
+
+                    $sku_temp = [
+                        'spec_name' => trim($spec_name),
+                        'sku_no' => $sku_item['sku_code'],
+                        'sku_spec_format' => $sku_spec_format,
+                        'price' => $sku_item['price'],
+                        'market_price' => $sku_item['market_price'],
+                        'cost_price' => $sku_item['cost_price'],
+                        'stock' => $sku_item['stock'],
+                        'stock_alarm' => $sku_item['stock_alarm'],
+                        'weight' => $sku_item['weight'],
+                        'volume' => $sku_item['volume'],
+                        'sku_image' => empty($sku_item['sku_image']) ? '' : $sku_images_arr[0],
+                        'sku_images' => empty($sku_item['sku_image']) ? '' : $sku_item['sku_image'],
+                        'sku_images_arr' => empty($sku_item['sku_image']) ? [] : $sku_images_arr,
+                        'is_default' => 0
+                    ];
+
+                    array_push($sku_data, $sku_temp);
+                }
+            } else {
+                $goods_img = explode(',', $goods_data['goods_image']);
+                $sku_data = [
+                    [
+                        'sku_id' => 0,
+                        'sku_name' => $goods_data['goods_name'],
+                        'spec_name' => '',
+                        'sku_spec_format' => '',
+                        'price' => empty($goods_data['price']) ? 0 : $goods_data['price'],
+                        'market_price' => empty($goods_data['market_price']) ? 0 : $goods_data['market_price'],
+                        'cost_price' => empty($goods_data['cost_price']) ? 0 : $goods_data['cost_price'],
+                        'sku_no' => $goods_data['goods_code'],
+                        'weight' => empty($goods_data['weight']) ? 0 : $goods_data['weight'],
+                        'volume' => empty($goods_data['volume']) ? 0 : $goods_data['volume'],
+                        'stock' => empty($goods_data['stock']) ? 0 : $goods_data['stock'],
+                        'stock_alarm' => empty($goods_data['stock_alarm']) ? 0 : $goods_data['stock_alarm'],
+                        'sku_image' => $goods_img[0],
+                        'sku_images' => $goods_data['goods_image']
+                    ]
+                ];
+            }
+
+            if (count($goods_spec_format) > 4) return $this->error('', '最多支持四种规格项');
+
+            $data = [
+                'goods_name' => $goods_data['goods_name'],// 商品名称,
+                'goods_attr_class' => '',// 商品类型id,
+                'goods_attr_name' => '',// 商品类型名称,
+                'site_id' => $site_id,
+                'category_id' => ',' . $category_id . ',',
+                'category_json' => json_encode($category_json),
+                'goods_image' => $goods_data['goods_image'],// 商品主图路径
+                'goods_content' => '',// 商品详情
+                'goods_state' => 0, //$goods_data['goods_state'] == 1 || $goods_data['goods_state'] == '是' ? 1 : 0,// 商品状态（1.正常0下架）
+                'price' => empty($goods_data['price']) ? 0 : $goods_data['price'],// 商品价格（取第一个sku）
+                'market_price' => empty($goods_data['market_price']) ? 0 : $goods_data['market_price'],// 市场价格（取第一个sku）
+                'qr_id' => empty($goods_data['qr_id']) ? 0 : $goods_data['qr_id'],// 社群二维码id
+                'template_id' => empty($goods_data['template_id']) ? 0 : $goods_data['template_id'],// 海报id
+                'is_limit' => empty($goods_data['is_limit']) ? 0 : $goods_data['is_limit'],// 是否限购
+                'limit_type' => empty($goods_data['limit_type']) ? 0 : $goods_data['limit_type'],// 限购类型
+                'cost_price' => empty($goods_data['cost_price']) ? 0 : $goods_data['cost_price'],// 成本价（取第一个sku）
+                'sku_no' => $goods_data['goods_code'],// 商品sku编码
+                'weight' => empty($goods_data['weight']) ? 0 : $goods_data['weight'],// 重量
+                'volume' => empty($goods_data['volume']) ? 0 : $goods_data['volume'],// 体积
+                'goods_stock' => empty($goods_data['goods_stock']) ? 0 : $goods_data['goods_stock'],// 商品库存（总和）
+                'goods_stock_alarm' => empty($goods_data['goods_stock_alarm']) ? 0 : $goods_data['goods_stock_alarm'],// 库存预警
+                'is_free_shipping' => $goods_data['is_free_shipping'] == 1 || $goods_data['is_free_shipping'] == '是' ? 1 : 0,// 是否免邮
+                'shipping_template' => 0,// 指定运费模板
+                'goods_spec_format' => empty($goods_spec_format) ? '' : json_encode($goods_spec_format, JSON_UNESCAPED_UNICODE),// 商品规格格式
+                'goods_attr_format' => '',// 商品属性格式
+                'introduction' => $goods_data['introduction'],// 促销语
+                'keywords' => $goods_data['keywords'],// 关键词
+                'unit' => $goods_data['unit'],// 单位
+                'sort' => '',// 排序,
+                'video_url' => '',// 视频
+                'goods_sku_data' => json_encode($sku_data, JSON_UNESCAPED_UNICODE),// SKU商品数据
+                'goods_service_ids' => '',// 商品服务id集合
+                'label_id' => '',// 商品分组id
+                'virtual_sale' => 0,// 虚拟销量
+                'max_buy' => 0,// 限购
+                'min_buy' => 0,// 起售
+                'recommend_way' => 0, // 推荐方式，1：新品，2：精品，3；推荐
+                'timer_on' => 0,//定时上架
+                'timer_off' => 0,//定时下架
+                'is_consume_discount' => $goods_data['is_consume_discount'] == 1 || $goods_data['is_consume_discount'] == '是' ? 1 : 0 //是否参与会员折扣
+            ];
+            $res = $this->addGoods($data);
+            return $res;
+        } catch (\Exception $e) {
+            return $this->error('', $e->getMessage());
+        }
+    }
+
+    /**
+     * 商品用到的分类
+     * @param $condition
+     * @return array
+     */
+    public function getGoodsCategoryIds($condition)
+    {
+        $cache_name = "shop_goods_category_".md5(json_encode($condition));
+        $cache_time = 60;
+        $cache_res = Cache::get($cache_name);
+        if(empty($cache_res) || time() - $cache_res['time'] > $cache_time){
+            $list = Db::name('goods')
+                ->where($condition)
+                ->group('category_id')
+                ->column('category_id');
+            $category_ids = trim(join('0', $list), ',');
+            $category_id_arr = array_unique(explode(',', $category_ids));
+            Cache::set($cache_name, ['time' => time(), 'data' => $category_id_arr]);
+        }else{
+            $category_id_arr = $cache_res['data'];
+        }
+        return $this->success($category_id_arr);
+    }
+
+    public function urlQrcode($page, $qrcode_param, $promotion_type = 'null', $site_id){
+        $params = [
+            'site_id'     => $site_id,
+            'data'        => $qrcode_param,
+            'page'        => $page,
+            'promotion_type' => $promotion_type,
+            'h5_path'          => $page.'?sku_id='.$qrcode_param['sku_id'],
+            'qrcode_path' => 'upload/qrcode/goods',
+            'qrcode_name' => [
+                'h5_name'       => 'goods_qrcode_'. $promotion_type .'_h5_' .$qrcode_param['sku_id'] . '_' . $site_id,
+                'weapp_name'    => 'goods_qrcode_'. $promotion_type .'_weapp_' .$qrcode_param['sku_id'] . '_' . $site_id
+            ]
+        ];
+
+        $solitaire = event('ExtensionInformation', $params);
+        return $this->success($solitaire[0]);
     }
 }

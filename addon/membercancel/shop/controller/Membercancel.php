@@ -37,7 +37,7 @@ class Membercancel extends BaseShop
             $search_type = input('search_type', '');
             if (!empty($search_text)) {
                 $condition[] = [
-                    $search_type, '=', $search_text
+                    $search_type, 'like', '%'.$search_text.'%'
                 ];
             }
             //状态
@@ -65,7 +65,7 @@ class Membercancel extends BaseShop
             //筛选条件
             $search_type = [
                 'username' => '会员账号',
-                'phone' => '手机号',
+                'mobile' => '手机号',
                 'nickname' => '昵称'
             ];
             $this->assign('search_type', $search_type);

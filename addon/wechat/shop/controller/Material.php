@@ -28,7 +28,7 @@ class Material extends BaseWechat
             $type       = input('type', '');
             $name       = input('name', '');
             $page_index = input('page', 1);
-            $page_size  = input('limit', PAGE_LIST_ROWS);
+            $page_size  = input('limit', 9);
             if (!empty($type)) {
                 $condition[] = ['type', "=", $type];
             }
@@ -39,7 +39,7 @@ class Material extends BaseWechat
             }
             $condition[]    = ['site_id', '=', $this->site_id];
             $material_model = new MaterialModel();
-            $material_list  = $material_model->getMaterialPageList($condition, $page_index, $page_size);
+            $material_list  = $material_model->getMaterialPageList($condition, $page_index, $page_size,'type asc,create_time desc');
             if (!empty($material_list['data']['list']) && is_array($material_list['data']['list'])) {
                 foreach ($material_list['data']['list'] as $k => $v) {
                     if (!empty($v['value']) && json_decode($v['value'])) {
@@ -47,7 +47,6 @@ class Material extends BaseWechat
                     }
                 }
             }
-
             return $material_list;
         } else {
             return $this->fetch('material/lists', [], $this->replace);
@@ -141,6 +140,40 @@ class Material extends BaseWechat
             $res                  = $material_model->addMaterial($param);
 
             return $res;
+        }else{
+            return $this->fetch('material/add_text');
+        }
+    }
+
+    /**
+     * 修改文本素材
+     */
+    public function editTextMaterial(){
+        $material_model = new MaterialModel();
+        if (request()->isAjax()) {
+            $media_id = input("media_id", "");
+            $media_id = str_replace("MATERIAL_TEXT_MESSAGE_", "", $media_id);
+
+            $content = input("content", "");
+            $content = ["content" => $content];
+            $content = json_encode($content, JSON_UNESCAPED_UNICODE);
+
+            $condition['id'] = $media_id;
+            $data['value'] = $content;
+            $data['update_time'] = time();
+
+
+            $res = $material_model->editMaterial($data, $condition);
+
+            return $res;
+        }else{
+            $material_id = input('id', '');
+            $data = $material_model->getMaterialInfo([['id','=',$material_id],['site_id','=',$this->site_id]]);
+            if(!empty($data['data'])){
+                $data['data']['value'] = json_decode($data['data']['value'],true);
+            }
+            $this->assign('material_data', $data['data']);
+            return $this->fetch('material/edit_text');
         }
     }
 
@@ -159,6 +192,21 @@ class Material extends BaseWechat
         $this->assign('info', $info['data']);
         $this->assign('index', $index);
         return $this->fetch('material/preview_material', [], $this->replace);
+    }
+
+    /**
+     * 预览文本
+     */
+    public function previewTextMessage()
+    {
+        $id             = input('id', '');
+        $material_model = new MaterialModel();
+        $info           = $material_model->getMaterialInfo(['id' => $id]);
+        if (!empty($info['data']['value']) && json_decode($info['data']['value'], true)) {
+            $info['data']['value'] = json_decode($info['data']['value'], true);
+        }
+        $this->assign('info', $info['data']);
+        return $this->fetch('material/preview_text', [], $this->replace);
     }
 
     /**

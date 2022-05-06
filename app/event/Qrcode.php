@@ -22,7 +22,7 @@ class Qrcode
 {
     public function handle($param)
     {
-        if (in_array($param["app_type"], ['h5', 'all', 'wechat'])) {
+        if (in_array($param["app_type"], ['pc', 'h5', 'all', 'wechat'])) {
             $param["app_type"] = 'h5';
             $qrcode            = new QrcodeModel();
             $res               = $qrcode->createQrcode($param);

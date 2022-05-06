@@ -13,8 +13,8 @@ namespace app\model\member;
 
 use addon\wechat\model\Message as WechatMessage;
 use app\model\BaseModel;
-use app\model\message\Sms;
 use app\model\member\MemberAccount;
+use app\model\message\Sms;
 use addon\coupon\model\Coupon;
 use app\model\system\Stat;
 
@@ -34,6 +34,8 @@ class Register extends BaseModel
      */
     public function usernameRegister($data)
     {
+        $examine_username_exit = $this ->usernameExist($data[ 'username' ],$data[ 'site_id' ]);
+        if($examine_username_exit) return $this->error('','用户名已存在');
         $this->cancelBind($data);
         $member_level = new MemberLevel();
         $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
@@ -53,24 +55,26 @@ class Register extends BaseModel
         }
 
         $data_reg = [
-            'site_id' => $data[ 'site_id' ],
-            'source_member' => isset($data[ 'source_member' ]) ? $data[ 'source_member' ] : 0,
-            'username' => $data[ 'username' ],
-            'nickname' => $nickname, //默认昵称为用户名
-            'password' => data_md5($data[ 'password' ]),
-            'qq_openid' => isset($data[ 'qq_openid' ]) ? $data[ 'qq_openid' ] : '',
-            'wx_openid' => isset($data[ 'wx_openid' ]) ? $data[ 'wx_openid' ] : '',
-            'weapp_openid' => isset($data[ 'weapp_openid' ]) ? $data[ 'weapp_openid' ] : '',
-            'wx_unionid' => isset($data[ 'wx_unionid' ]) ? $data[ 'wx_unionid' ] : '',
-            'ali_openid' => isset($data[ 'ali_openid' ]) ? $data[ 'ali_openid' ] : '',
-            'baidu_openid' => isset($data[ 'baidu_openid' ]) ? $data[ 'baidu_openid' ] : '',
-            'toutiao_openid' => isset($data[ 'toutiao_openid' ]) ? $data[ 'toutiao_openid' ] : '',
-            'headimg' => isset($data[ 'headimg' ]) ? $data[ 'headimg' ] : '',
-            'member_level' => $member_level_info[ 'level_id' ],
-            'member_level_name' => $member_level_info[ 'level_name' ],
-            'reg_time' => time(),
-            'login_time' => time(),
-            'last_login_time' => time()
+            'site_id'           => $data['site_id'],
+            'source_member'     => isset($data['source_member']) ? $data['source_member'] : 0,
+            'username'          => $data['username'],
+            'nickname'          => $nickname, //默认昵称为用户名
+            'password'          => data_md5($data['password']),
+            'qq_openid'         => isset($data['qq_openid']) ? $data['qq_openid'] : '',
+            'wx_openid'         => isset($data['wx_openid']) ? $data['wx_openid'] : '',
+            'weapp_openid'      => isset($data['weapp_openid']) ? $data['weapp_openid'] : '',
+            'wx_unionid'        => isset($data['wx_unionid']) ? $data['wx_unionid'] : '',
+            'ali_openid'        => isset($data['ali_openid']) ? $data['ali_openid'] : '',
+            'baidu_openid'      => isset($data['baidu_openid']) ? $data['baidu_openid'] : '',
+            'toutiao_openid'    => isset($data['toutiao_openid']) ? $data['toutiao_openid'] : '',
+            'headimg'           => isset($data['headimg']) ? $data['headimg'] : '',
+            'member_level'      => $member_level_info['level_id'],
+            'member_level_name' => $member_level_info['level_name'],
+            'reg_time'          => time(),
+            'login_time'        => time(),
+            'last_login_time'   => time(),
+            'login_type'        => $data['app_type'] ?? '',
+            'login_type_name'   => $data['app_type_name'] ?? '',
         ];
         $res = model("member")->add($data_reg);
         if ($res) {
@@ -116,13 +120,107 @@ class Register extends BaseModel
      * @param $data
      * @return array|mixed
      */
+//    public function mobileRegister($data)
+//    {
+//        $this->cancelBind($data);
+//        $member_level = new MemberLevel();
+//        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
+//        $member_level_info = $member_level_info[ 'data' ];
+//
+//        if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
+//            $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
+//            if (!$count) $data[ 'source_member' ] = 0;
+//        }
+//        $nickname = $data[ 'mobile' ];
+//        if (isset($data[ 'nickname' ]) && !empty($data[ 'nickname' ])) {
+//            $nickname = preg_replace_callback('/./u',
+//                function(array $match) {
+//                    return strlen($match[ 0 ]) >= 4 ? '' : $match[ 0 ];
+//                },
+//                $data[ 'nickname' ]);
+//        }
+//        //新增2021.06.18
+//        if (isset($data['wx_openid']) && !empty($data['nickname'])){
+//            $nickname = $data['nickname'];
+//        }
+//
+//        $data_reg = [
+//            'site_id'           => $data['site_id'],
+//            'source_member'     => isset($data['source_member']) ? $data['source_member'] : 0,
+//            'mobile'            => $data['mobile'],
+//            'nickname'          => $nickname, //默认昵称为手机号
+//            'password'          => '',
+//            'qq_openid'         => isset($data['qq_openid']) ? $data['qq_openid'] : '',
+//            'wx_openid'         => isset($data['wx_openid']) ? $data['wx_openid'] : '',
+//            'weapp_openid'      => isset($data['weapp_openid']) ? $data['weapp_openid'] : '',
+//            'wx_unionid'        => isset($data['wx_unionid']) ? $data['wx_unionid'] : '',
+//            'ali_openid'        => isset($data['ali_openid']) ? $data['ali_openid'] : '',
+//            'baidu_openid'      => isset($data['baidu_openid']) ? $data['baidu_openid'] : '',
+//            'toutiao_openid'    => isset($data['toutiao_openid']) ? $data['toutiao_openid'] : '',
+//            'headimg'           => isset($data['headimg']) ? $data['headimg'] : '',
+//            'member_level'      => $member_level_info['level_id'],
+//            'member_level_name' => $member_level_info['level_name'],
+//            'reg_time'          => time(),
+//            'login_time'        => time(),
+//            'last_login_time'   => time(),
+//            'login_type'        => $data['app_type'] ?? '',
+//            'login_type_name'   => $data['app_type_name'] ?? '',
+//        ];
+//
+//        $res = model("member")->add($data_reg);
+//        if ($res) {
+//
+//            $member_account_model = new MemberAccount();
+//
+//            //赠送红包
+//            if ($member_level_info[ 'send_balance' ] > 0) {
+//                $balance = $member_level_info[ 'send_balance' ];
+//                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员升级得红包' . $balance);
+//            }
+//
+//            //赠送积分
+//            if ($member_level_info[ 'send_point' ] > 0) {
+//                $send_point = $member_level_info[ 'send_point' ];
+//                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员升级得积分' . $send_point);
+//            }
+//
+//            //给用户发放优惠券
+//            $coupon_model = new Coupon();
+//            $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
+//            if (!empty($coupon_array)) {
+//                foreach ($coupon_array as $k => $v) {
+//                    $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+//                }
+//            }
+//
+//            //会员注册事件
+//            event("MemberRegister", [ 'member_id' => $res, 'site_id' => $data[ 'site_id' ] ]);
+//            $data[ 'member_id' ] = $res;
+//            $this->pullHeadimg($data);
+//
+//            //添加统计
+//            $stat = new Stat();
+//            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
+//
+//            return $this->success($res);
+//        } else {
+//            return $this->error();
+//        }
+//    }
+
+    /**
+     * 手机号密码注册(必传mobile， password),之前检测重复性
+     * @param $data
+     * @return array|mixed
+     */
     public function mobileRegister($data)
     {
+        $examine_mobile_exit = $this ->mobileExist($data[ 'mobile' ],$data[ 'site_id' ]);
+        if($examine_mobile_exit) return $this->error('','手机号已存在');
         $this->cancelBind($data);
         $member_level = new MemberLevel();
         $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
         $member_level_info = $member_level_info[ 'data' ];
-
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
             if (!$count) $data[ 'source_member' ] = 0;
@@ -154,7 +252,11 @@ class Register extends BaseModel
             'member_level_name' => $member_level_info[ 'level_name' ],
             'reg_time' => time(),
             'login_time' => time(),
-            'last_login_time' => time()
+            'last_login_time' => time(),
+            'is_edit_username'  => 1,
+            'login_type'        => $data['app_type'] ?? '',
+            'login_type_name'   => $data['app_type_name'] ?? '',
+            'username' => isset($data[ 'username' ]) ? $data[ 'username' ] : $this->createRandUsername($data[ 'site_id' ])
         ];
 
         $res = model("member")->add($data_reg);
@@ -197,7 +299,6 @@ class Register extends BaseModel
             return $this->error();
         }
     }
-
     /**
      * 第三方注册
      * @param $data
@@ -225,24 +326,27 @@ class Register extends BaseModel
         }
 
         $data_reg = [
-            'site_id' => $data[ 'site_id' ],
-            'source_member' => isset($data[ 'source_member' ]) ? $data[ 'source_member' ] : 0,
-            'username' => $username,
-            'nickname' => $nickname,
-            'password' => '',
-            'qq_openid' => isset($data[ 'qq_openid' ]) ? $data[ 'qq_openid' ] : '',
-            'wx_openid' => isset($data[ 'wx_openid' ]) ? $data[ 'wx_openid' ] : '',
-            'weapp_openid' => isset($data[ 'weapp_openid' ]) ? $data[ 'weapp_openid' ] : '',
-            'wx_unionid' => isset($data[ 'wx_unionid' ]) ? $data[ 'wx_unionid' ] : '',
-            'ali_openid' => isset($data[ 'ali_openid' ]) ? $data[ 'ali_openid' ] : '',
-            'baidu_openid' => isset($data[ 'baidu_openid' ]) ? $data[ 'baidu_openid' ] : '',
-            'toutiao_openid' => isset($data[ 'toutiao_openid' ]) ? $data[ 'toutiao_openid' ] : '',
-            'headimg' => isset($data[ 'avatarUrl' ]) ? $data[ 'avatarUrl' ] : '',
-            'member_level' => $member_level_info[ 'level_id' ],
-            'member_level_name' => $member_level_info[ 'level_name' ],
-            'reg_time' => time(),
-            'login_time' => time(),
-            'last_login_time' => time()
+            'site_id'           => $data['site_id'],
+            'source_member'     => isset($data['source_member']) ? $data['source_member'] : 0,
+            'username'          => $username,
+            'nickname'          => $nickname,
+            'password'          => '',
+            'qq_openid'         => isset($data['qq_openid']) ? $data['qq_openid'] : '',
+            'wx_openid'         => isset($data['wx_openid']) ? $data['wx_openid'] : '',
+            'weapp_openid'      => isset($data['weapp_openid']) ? $data['weapp_openid'] : '',
+            'wx_unionid'        => isset($data['wx_unionid']) ? $data['wx_unionid'] : '',
+            'ali_openid'        => isset($data['ali_openid']) ? $data['ali_openid'] : '',
+            'baidu_openid'      => isset($data['baidu_openid']) ? $data['baidu_openid'] : '',
+            'toutiao_openid'    => isset($data['toutiao_openid']) ? $data['toutiao_openid'] : '',
+            'headimg'           => isset($data['avatarUrl']) ? $data['avatarUrl'] : '',
+            'member_level'      => $member_level_info['level_id'],
+            'member_level_name' => $member_level_info['level_name'],
+            'reg_time'          => time(),
+            'login_time'        => time(),
+            'last_login_time'   => time(),
+            'is_edit_username'  => 1,
+            'login_type'        => $data['app_type'] ?? '',
+            'login_type_name'   => $data['app_type_name'] ?? '',
         ];
         $res = model("member")->add($data_reg);
         if ($res) {
@@ -344,6 +448,21 @@ class Register extends BaseModel
     }
 
     /**
+     * 重置用户微信openid
+     * @param $data
+     * @return array
+     */
+    public function wxopenidBind($data)
+    {
+       $res = model("member")->update(['wx_openid'=>$data['wx_openid']],[ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
+       if ($res){
+           return $this->success($res);
+       } else {
+           return $this->error();
+       }
+    }
+
+    /**
      * 检测用户存在性(用户名)
      * @param $username
      * @return int
@@ -352,7 +471,7 @@ class Register extends BaseModel
     {
         $member_info = model("member")->getInfo(
             [
-                [ 'username', '=', $username ],
+                [ 'username|mobile', '=', $username ],
                 [ 'site_id', '=', $site_id ],
                 [ 'is_delete', '=', 0 ]
             ], 'member_id'
@@ -386,6 +505,48 @@ class Register extends BaseModel
     }
 
     /**
+     * 检测用户存在性(wx_openid) 存在返回1 新增2021.06.18
+     * @param $mobile
+     * @return int
+     */
+    public function openidExist($mobile, $site_id)
+    {
+        $member_info = model("member")->getInfo(
+            [
+                [ 'mobile', '=', $mobile ],
+                [ 'site_id', '=', $site_id ],
+                [ 'is_delete', '=', 0]
+            ], 'wx_openid'
+        );
+        if (!empty($member_info['wx_openid'])) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 获取用户ID 新增2021.06.18
+     * @param $mobile
+     * @return int
+     */
+    public function getMemberId($mobile, $site_id)
+    {
+        $member_info = model("member")->getInfo(
+            [
+                [ 'mobile', '=', $mobile ],
+                [ 'site_id', '=', $site_id ],
+                [ 'is_delete', '=', 0]
+            ], 'member_id'
+        );
+        if (!empty($member_info)) {
+            return $member_info['member_id'];
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * 注册发送验证码
      * @param $data
      * @return array|mixed|void
@@ -407,7 +568,7 @@ class Register extends BaseModel
     }
 
     /**
-     * 注册发送验证码
+     * 注册成功通知
      * @param $data
      * @return array|mixed|void
      */
@@ -415,9 +576,9 @@ class Register extends BaseModel
     {
 
         $member_model = new Member();
-        $member_info_result = $member_model->getMemberInfo([ [ "member_id", "=", $data[ "member_id" ] ] ], "username,mobile,email,reg_time,wx_openid,last_login_type");
+        $member_info_result = $member_model->getMemberInfo([ [ "member_id", "=", $data[ "member_id" ] ] ], "username,mobile,email,reg_time,wx_openid,last_login_type,nickname");
         $member_info = $member_info_result[ "data" ];
-        $name = $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"];
+        $name = $member_info["nickname"] == '' ? $member_info["mobile"] : $member_info["nickname"];
         //发送短信
         $var_parse = [
             "shopname" => replaceSpecialChar($data['site_info'][ 'site_name' ]),   //商城名称
@@ -434,7 +595,7 @@ class Register extends BaseModel
         $data[ "openid" ] = $member_info[ "wx_openid" ];
 
         $data[ "template_data" ] = [
-            'keyword1' => $member_info[ "username" ],
+            'keyword1' => $member_info[ "nickname" ],
             'keyword2' => time_to_date($member_info[ "reg_time" ]),
         ];
         $data[ "page" ] = '';
@@ -450,7 +611,7 @@ class Register extends BaseModel
     private function pullHeadimg($data)
     {
         if (!empty($data[ 'headimg' ]) && is_url($data[ 'headimg' ])) {
-            $url = __ROOT__ . '/api/member/pullhaedimg?member_id=' . $data[ 'member_id' ];
+            $url = __ROOT__ . '/api/member/pullheadimg?member_id=' . $data[ 'member_id' ];
             http($url, 1);
         }
     }

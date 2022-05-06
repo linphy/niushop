@@ -1,5 +1,9 @@
 {extend name="base"/}
 {block name="resources"}
+<style type="text/css">
+	.ns-form {position: relative;}
+	.examples {color: #ff8833; cursor: pointer;}
+</style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
@@ -7,7 +11,7 @@
 		<h2 class="layui-colla-title">操作提示</h2>
 		<ul class="layui-colla-content layui-show">
 			<li>协议内容展示使用该网站的一些相关规定</li>
-			<li>注册会员时需同意该协议才可继续注册</li>
+			<li>注册会员时需同意该协议才可继续注册   <a onclick="showDemo()" class="examples ns-text-color">查看示例</a></li>
 		</ul>
 	</div>
 </div>
@@ -30,6 +34,8 @@
 	</div>
 	
 	<input type="hidden" name="" id="agreementContent" value="{$document_info.data.content}" />
+
+	
 </div>
 {/block}
 {block name="script"}
@@ -74,5 +80,13 @@
 			});
 		});
 	});
+		function showDemo(){
+		    layer.open({
+				title: '查看示例',
+		        type: 1,
+		        area: ['500px', '660px'],
+		        content: '<img style="margin: 20px 80px;" src="SHOP_IMG/reg_info.png">'
+		    })
+		}
 </script>
 {/block}

@@ -28,41 +28,52 @@ class OrderMessage extends BaseModel
 {
 
     /************************************************ 会员消息 start ************************************************************/
-    /**
-     * 订单生成提醒
-     * @param $data
-     */
-    public function messageOrderCreate($data)
-    {
-        //发送短信
-        $sms_model = new Sms();
-        $order_id = $data["order_id"];
-        $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "full_address,address,order_no,mobile,member_id,order_type,create_time,order_name,order_money");
 
+    /**
+     * 订单催付通知
+     *
+     * @param [type] $data
+     * @return void
+     */
+    public function messageOrderUrgePayment($data)
+    {
+        $order_info = model("order")->getInfo([["order_id", "=", $data['order_id']]], "full_address,site_id,create_time,address,order_no,mobile,member_id,order_type,create_time,order_name,order_money");
+
+        //计算订单自动关闭时间
+        $config_model = new Config();
+        $order_config_result = $config_model->getOrderEventTimeConfig($order_info['ite_id']);
+        $order_config = $order_config_result[ "data" ];
+        $execute_time = $order_info['create_time'] + $order_config[ "value" ][ "auto_close" ] * 60; //自动关闭时间
+
+        // 发送短信
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
         $member_info = $member_info_result["data"];
+        if (!empty($member_info) && !empty($member_info['mobile'])) {
+            $var_parse = array(
+                'goodsname' => $order_info['order_name'],//商品名称
+                'expiretime' => time_to_date($execute_time),
+                'url' => '/'. $this->handleUrl($order_info['order_type'], $data['order_id'])
+            );
+            $data["sms_account"] = $member_info["mobile"];//手机号
+            $data["var_parse"] = $var_parse;
+            $sms_model = new Sms();
+            $sms_model->sendMessage($data);
+        }
 
-        $var_parse = array(
-            "orderno" => $order_info["order_no"],//商品名称
-        );
-        $data["sms_account"] = $member_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-        $sms_model->sendMessage($data);
-
+        // 公众号模板消息
         //绑定微信公众号才发送
         if (!empty($member_info) && !empty($member_info["wx_openid"])) {
+
             $wechat_model = new WechatMessage();
             $data["openid"] = $member_info["wx_openid"];
             $data["template_data"] = [
                 'keyword1' => $order_info['order_no'],
-                'keyword2' => time_to_date($order_info['create_time']),
-                'keyword3' => str_sub($order_info['order_name']),
-                'keyword4' => $order_info['order_money'],
-                'keyword5' => $order_info['full_address'] . $order_info['address'] . " " . $order_info['mobile']
+                'keyword2' => $order_info['order_name'],
+                'keyword3' => '待支付',
+                'keyword4' => '请在'.time_to_date($execute_time).'前完成支付'
             ];
-
-            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $data["page"] = $this->handleUrl($order_info['order_type'], $data['order_id']);
             $wechat_model->sendMessage($data);
         }
 
@@ -71,21 +82,20 @@ class OrderMessage extends BaseModel
             $weapp_model = new WeappMessage();
             $data["openid"] = $member_info["weapp_openid"];
             $data["template_data"] = [
-                'character_string13' => [
+                'character_string4' => [
                     'value' => $order_info['order_no']
                 ],
-                'time1' => [
-                    'value' => time_to_date($order_info['create_time'], 'Y-m-d H:i')
+                'thing1' => [
+                    'value' => str_sub(replaceSpecialChar($order_info['order_name']), 15)
                 ],
-                'amount15' => [
-                    'value' => $order_info['order_money']
+                'amount6' => [
+                    'value' => $order_info['order_money'].'元'
                 ],
-                'thing14' => [
-                    'value' => str_sub($order_info['order_name'])
-                ],
+                'thing3' => [
+                    'value' => '请在'.date('H:i', $order_info['expire_time']).'前完成支付'
+                ]
             ];
-
-            $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+            $data["page"] = $this->handleUrl($order_info['order_type'], $data['order_id']);
             $weapp_model->sendMessage($data);
         }
     }
@@ -213,6 +223,40 @@ class OrderMessage extends BaseModel
             $weapp_model->sendMessage($data);
         }
 
+    }
+
+    /**
+     * 买家订单完成通知商家
+     * @param $data
+     */
+    public function messageBuyerOrderComplete($data)
+    {
+        //发送短信
+        $sms_model = new Sms();
+        $order_id = $data["order_id"];
+        $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,create_time,finish_time");
+
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
+        $member_info = $member_info_result["data"];
+
+        $var_parse = array(
+            "orderno" => $order_info["order_no"],//商品名称
+        );
+        $data["sms_account"] = $member_info["mobile"];//手机号
+        $data["var_parse"] = $var_parse;
+        $sms_model->sendMessage($data);
+
+        //发送模板消息
+        $wechat_model = new WechatMessage();
+        $data["openid"] = $member_info["wx_openid"];
+        $data["template_data"] = [
+            'keyword1' => $order_info['order_no'],
+            'keyword2' => str_sub($order_info['order_name']),
+            'keyword3' => time_to_date($order_info['create_time']),
+        ];
+        $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
+        $wechat_model->sendMessage($data);
     }
 
     /**
@@ -494,19 +538,53 @@ class OrderMessage extends BaseModel
     }
 
     /**
+     * 核销码过期提醒
+     * @param $data
+     */
+    public function messageVerifyCodeExpire($data){
+        // 发送短信
+        $sms_model = new Sms();
+        // 商品表
+        $goods_virtual_info = model('goods_virtual')->getInfo([ ["order_id", "=", $data["relate_id"] ] ]);
+        // 总核销次数
+        $total_verify_num =model('goods_virtual')->getCount([ ["order_id", "=", $data["relate_id"] ] ]);
+        // 已核销次数
+        $verify_num = model('goods_virtual')->getCount([ ["order_id", "=", $data["relate_id"] ], ['is_veirfy', '=', 1] ]);
+        // 剩余次数
+        $residue = $total_verify_num - $verify_num;
+        // 用户信息
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $goods_virtual_info['member_id']]]);
+        $member_info = $member_info_result["data"];
+
+        if (!empty($member_info) && !empty($member_info['mobile'])) {
+            if($residue > 0){
+                $var_parse = [
+                    "sitename" => replaceSpecialChar($data['site_info']['site_name']),
+                    "desc" => '您购买的'.$goods_virtual_info['sku_name'].'将在'.date('Y-m-d H:i:s',$goods_virtual_info['expire_time']).'到期',//商品名称,
+                ];
+                $data["sms_account"] = $member_info["mobile"];//手机号
+                $data["var_parse"] = $var_parse;
+                $sms_model->sendMessage($data);
+            }
+        }
+        
+    }
+
+    /**
      * 订单核销通知
      * @param $data
      */
     public function messageOrderVerify($data)
     {
-        $member_model = new Member();
-        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
-        $member_info = $member_info_result["data"];
-
         //发送短信
         $sms_model = new Sms();
         $order_id = $data["order_id"];
         $order_info = model("order")->getInfo([["order_id", "=", $order_id]], "order_type,order_no,mobile,member_id,order_name,goods_num,sign_time");
+
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
+        $member_info = $member_info_result["data"];
 
         $var_parse = array(
             "orderno" => $order_info["order_no"],//订单编号
@@ -554,10 +632,15 @@ class OrderMessage extends BaseModel
         $order_goods_info = model('order_goods')->getInfo(['order_goods_id' => $order_goods_id], '*');
 
         $order_info = model("order")->getInfo([["order_id", "=", $order_goods_info['order_id']]], "order_no,mobile,member_id,site_id,name,order_type");
+        $member_model = new Member();
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $order_info["member_id"]]]);
+        $member_info = $member_info_result["data"];
+
+
         $var_parse = array(
-            "username" => replaceSpecialChar($order_info["name"]),//会员名
+            "username" => replaceSpecialChar($member_info["nickname"]),//会员名
             "orderno" => $order_info["order_no"],//订单编号
-            "goodsname" => replaceSpecialChar($order_goods_info["sku_name"]),//商品名称
+            "goodsname" => mb_substr(replaceSpecialChar($order_goods_info["sku_name"]), 0, 25, 'UTF8').".....",//商品名称
             "refundno" => $order_goods_info["refund_no"],//退款编号
             "refundmoney" => $order_goods_info["refund_apply_money"],//退款申请金额
             "refundreason" => replaceSpecialChar($order_goods_info["refund_reason"]),//退款原因
@@ -679,55 +762,12 @@ class OrderMessage extends BaseModel
     }
 
     /**
-     * 买家收货成功，卖家通知
-     * @param $data
-     */
-    public function messageBuyerReceive($data)
-    {
-        //发送短信
-        $sms_model = new Sms();
-
-        $var_parse = array(
-            "orderno" => $data["order_no"],//订单编号
-        );
-//        $site_id    = $data['site_id'];
-//        $shop_info  = model("shop")->getInfo([["site_id", "=", $site_id]], "mobile,email");
-//        $message_data["sms_account"] = $shop_info["mobile"];//手机号
-        $data["var_parse"] = $var_parse;
-
-        $shop_accept_message_model = new ShopAcceptMessage();
-        $result = $shop_accept_message_model->getShopAcceptMessageList();
-        $list = $result['data'];
-        if (!empty($list)) {
-            foreach ($list as $v) {
-                $message_data = $data;
-                $message_data["sms_account"] = $v["mobile"];//手机号
-                $sms_model->sendMessage($message_data);
-                
-                if($v['wx_openid'] != ''){
-                	$wechat_model = new WechatMessage();
-                	$data["openid"] = $v['wx_openid'];
-                	
-                	$data["template_data"] = [
-                			'keyword1' => $data['full_address'],
-                			'keyword2' => str_sub($data['name']),
-                			'keyword3' => $data['order_no'],
-                			'keyword4' => $data['order_name'],
-                			'keyword5' => time_to_date($data['sign_time']),
-                	];
-                	$wechat_model->sendMessage($data);
-                }
-            }
-        }
-    }
-
-    /**
      * 处理订单链接
      * @param unknown $order_type
      * @param unknown $order_id
      * @return string
      */
-    private function handleUrl($order_type, $order_id)
+    public function handleUrl($order_type, $order_id)
     {
         switch ($order_type) {
             case 2:

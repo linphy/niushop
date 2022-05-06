@@ -12,6 +12,7 @@
 namespace app\shop\controller;
 
 
+use app\model\express\ExpressDeliver;
 use app\model\express\Local as LocalModel;
 use app\model\shop\Shop as ShopModel;
 use app\model\system\Address as AddressModel;
@@ -95,6 +96,84 @@ class Local extends BaseShop
             $this->assign('district_list', $district_list);
             $this->assign('local_info', $local_result['data']);
             return $this->fetch('local/local');
+        }
+    }
+
+    /**
+     *  配送员列表
+     */
+    public function deliverLists(){
+        $deliver_model = new ExpressDeliver();
+        if (request()->isAjax()) {
+            $page = input('page','1');
+            $page_size = input('page_size',PAGE_LIST_ROWS);
+            $condition = [
+                 [
+                     'site_id' ,'=',$this->site_id
+                 ]
+            ];
+            $search_text = input('search_text','');
+            if(!empty($search_text)){
+                $condition[] = ['deliver_name','like','%'.$search_text.'%'];
+            }
+            $deliver_lists = $deliver_model->getDeliverPageLists($condition,'*','create_time desc',$page,$page_size);
+            return $deliver_lists;
+        }else{
+           return $this->fetch('local/deliverlists');
+        }
+    }
+
+    /**
+     *  添加配送员
+     */
+    public function addDeliver(){
+        $deliver_model = new ExpressDeliver();
+        if (request()->isAjax()) {
+            $data = [
+                'deliver_name'      => input('deliver_name',''),
+                'deliver_mobile'    => input('deliver_mobile',''),
+                'site_id'           => $this->site_id,
+            ];
+            $result = $deliver_model->addDeliver($data);
+            return $result;
+        }else{
+            return $this->fetch('local/adddeliver');
+        }
+    }
+
+    /**
+     *  编辑配送员
+     */
+    public function editDeliver(){
+        $deliver_model = new ExpressDeliver();
+        $deliver_id = input('deliver_id',0);
+        $site_id = $this->site_id;
+        if (request()->isAjax()) {
+            $data = [
+                'deliver_name'      => input('deliver_name',''),
+                'deliver_mobile'    => input('deliver_mobile',''),
+                'site_id'           => $site_id,
+            ];
+            $result = $deliver_model->editDeliver($data,$deliver_id);
+            return $result;
+        }else{
+            $this->assign('deliver_id',$deliver_id);
+            $deliver_info = $deliver_model->getDeliverInfo($deliver_id,$site_id);
+            $this->assign('deliver_info',$deliver_info['data']);
+            return $this->fetch('local/editdeliver');
+        }
+    }
+
+    /**
+     *  删除配送员
+     */
+    public function deleteDeliver(){
+        $deliver_model = new ExpressDeliver();
+        if (request()->isAjax()) {
+            $deliver_ids = input('deliver_ids',0);
+            $site_id = $this->site_id;
+            $result = $deliver_model->deleteDeliver($deliver_ids,$site_id);
+            return $result;
         }
     }
 }

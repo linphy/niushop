@@ -40,7 +40,6 @@ class GoodsLabel extends BaseModel
     /**
      * 修改商品分组
      * @param array $data
-     * @return multitype:string
      */
     public function editLabel($data)
     {
@@ -48,6 +47,16 @@ class GoodsLabel extends BaseModel
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
+
+        $label_info = model('goods_label')->getInfo([['id', '=', $data['id']]], 'label_name');
+        if(empty($label_info)){
+            return $this->error(null, '编辑条件有误');
+        }
+        //分组名称修改同步修改商品表字段
+        if($label_info['label_name'] != $data['label_name']){
+            model('goods')->update(['label_name' => $data['label_name']], [['label_id', '=', $data['id']]]);
+        }
+
         $data['update_time'] = time();
         $res                 = model('goods_label')->update($data, [['id', '=', $data['id']], ['site_id', '=', $data['site_id']]]);
         Cache::tag("goods_label_" . $site_id)->clear();

@@ -28,8 +28,8 @@ class Helpclass extends BaseApi
         $condition = [
             ['site_id', '=', $this->site_id]
         ];
-        $list      = $help->getHelpClassList($condition, 'class_id, class_name', 'sort desc');
-        $order     = 'create_time desc';
+        $list      = $help->getHelpClassList($condition, 'class_id, class_name', 'sort asc, create_time desc');
+        $order     = 'sort asc, create_time desc';
         $field     = 'id,title,link_address';
         if (!empty($list['data'])) {
 

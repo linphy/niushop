@@ -1,9 +1,8 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.ns-screen {
-		margin-top: 15px;
-	}
+	.ns-screen {margin-top: 15px;}
+	.layui-table-header tr th{padding:3px 0 !important;}
 </style>
 {/block}
 {block name="main"}
@@ -21,6 +20,16 @@
 					</div>
 				</div>
 				<div class="layui-inline">
+					<label class="layui-form-label">订单类型：</label>
+					<div class="layui-input-inline">
+						<select name="order_type" lay-filter="order_type">
+							{foreach $order_type_list as $order_type_k => $order_type_val}
+							<option value="{$order_type_val.type}">{$order_type_val.name}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
 					<label class="layui-form-label">订单状态：</label>
 					<div class="layui-input-inline">
 						<select name="order_status" lay-filter="order_status">
@@ -32,7 +41,30 @@
 					</div>
 				</div>
 			</div>
-
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">发票抬头：</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="invoice_title">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">发票类型：</label>
+					<div class="layui-input-inline">
+						<select name="invoice_type" lay-filter="invoice_type">
+							<option value="">全部</option>
+							<option value="1">纸质发票</option>
+							<option value="2">电子发票</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">纳税人识别号：</label>
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="taxpayer_number">
+					</div>
+				</div>
+			</div>
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">下单时间：</label>
@@ -48,15 +80,13 @@
 					<button class="layui-btn layui-btn-primary date-picker-btn" onclick="datePick(7, this);return false;">近7天</button>
 					<button class="layui-btn layui-btn-primary date-picker-btn" onclick="datePick(30, this);return false;">近30天</button>
 				</div>
-			</div>
-			<div class="layui-form-item">
 				<div class="layui-inline">
-					<label class="layui-form-label">订单类型：</label>
+					<label class="layui-form-label">抬头类型：</label>
 					<div class="layui-input-inline">
-						<select name="order_type" lay-filter="order_type">
-							{foreach $order_type_list as $order_type_k => $order_type_val}
-							<option value="{$order_type_val.type}">{$order_type_val.name}</option>
-							{/foreach}
+						<select name="invoice_title_type" lay-filter="invoice_title_type">
+							<option value="">全部</option>
+							<option value="1">个人</option>
+							<option value="2">企业</option>
 						</select>
 					</div>
 				</div>
@@ -64,35 +94,35 @@
 			<div class="ns-form-row">
 				<button class="layui-btn ns-bg-color" lay-submit lay-filter="search">筛选</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="export_invoice" >批量导出</button>
+				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="export_invoice">批量导出</button>
 			</div>
 		</form>
 	</div>
 </div>
 
-<div class="layui-tab ns-table-tab">
-
+<div class="layui-tab ns-table-tab" lay-filter="invoice_list_tab">
+	<ul class="layui-tab-title">
+		<li class="layui-this" lay-id="">全部</li>
+		<li lay-id="0">未开票</li>
+		<li lay-id="1">已开票</li>
+	</ul>
 	<div class="layui-tab-content">
 		<!-- 列表 -->
 		<table id="order_list" lay-filter="order_list"></table>
 	</div>
 </div>
-<!-- 用户信息 -->
-<script type="text/html" id="goods_info">
-	<div class='ns-table-title'>
-		<div class='ns-title-pic'>
-			<img layer-src src="" onerror="this.src = 'SHOP_IMG/default_headimg.png' ">
-		</div>
-		<div class='ns-title-content'>
-			<p class="layui-elip">{{d.order_goods.[].sku_name}}</p>
-		</div>
-	</div>
-</script>
 
 <!-- 工具栏操作 -->
 <script type="text/html" id="operation">
 	<div class="ns-table-btn">
-		<a class="layui-btn" lay-event="detail">查看</a>
+		{{# if (d.order_status >0){  }}
+			{{# if (d.invoice_status == 0){  }}
+				<a class="layui-btn" lay-event="edit">开票</a>
+			{{# }else{ }}
+				<a class="layui-btn" lay-event="edit">编辑</a>
+			{{#  }  }}
+		{{#  }  }}
+		<a class="layui-btn" lay-event="detail">查看订单</a>
 	</div>
 </script>
 {/block}
@@ -105,6 +135,7 @@
 	layui.use(['form', 'laydate', 'element', 'laytpl',], function() {
 		var table,
 			laydate = layui.laydate;
+		element = layui.element;
 		form = layui.form,
 		form.render();
 
@@ -119,6 +150,18 @@
 			type: 'datetime'
 		});
 
+		//监听Tab切换，以改变地址hash值
+		element.on('tab(invoice_list_tab)', function () {
+			table.reload({
+				page: {
+					curr: 1
+				},
+				where:{
+					'invoice_status':this.getAttribute('lay-id')
+				}
+			});
+		});
+
 		table = new Table({
 			elem: '#order_list',
 			url: ns.url("shop/order/invoiceorderlist"),
@@ -126,7 +169,13 @@
 				[{
                     field: 'order_no',
                     title: '订单编号',
-                    unresize: 'false'
+					width: '12%',
+                    unresize: 'false',
+					templet: function (data) {
+						var html = "";
+						html += '<span title="'+ data.order_no +'">'+ data.order_no +'</span>'
+						return html;
+					}
                 }, {
                     field: 'order_money',
                     title: '订单总额（元）',
@@ -135,11 +184,10 @@
 					title: '发票金额',
 					unresize: 'false',
 					templet: function(data) {
-						var html = '发票金额:'+data.invoice_money;
+						var html = '<span title="' + data.invoice_money + '">' + data.invoice_money + '</span>';
 						if(data.invoice_delivery_money > 0){
-							html += '<br/>发票邮寄费用:'+data.invoice_delivery_money;
+							html += '<br/><span title="发票邮寄费用:'+data.invoice_delivery_money + '">发票邮寄费用:'+data.invoice_delivery_money + '</span>';
 						}
-
 						return html;
 					}
 				},{
@@ -163,13 +211,14 @@
 					title: '发票抬头',
 					unresize: 'false',
 					templet: function(data) {
-						var html = '发票抬头:'+data.invoice_title;
+						var html = '<p title="发票抬头:'+ data.invoice_title + '">发票抬头:'+ data.invoice_title + '<p>';
 						var invoice_title_type_name = data.invoice_title_type == 1 ? '个人' : '企业';
-						html += '<br/>抬头类型:'+invoice_title_type_name;
+						// var html = '<p title="开票时间:'+ ns.time_to_date(data.create_time) + '">开票时间:'+ ns.time_to_date(data.create_time) + '<p>';
+						html += '<p title="抬头类型:'+ invoice_title_type_name + '">抬头类型:'+ invoice_title_type_name + '<p>';
 						if(data.invoice_title_type == 2){
-							html += '<br/>纳税人识别号:'+data.taxpayer_number;
+							html += '<p title="纳税人识别号:'+ data.taxpayer_number + '">纳税人识别号:'+data.taxpayer_number + '<p>';
 						}
-						html += '<br/>发票内容:'+data.invoice_content;
+						html += '<p title="发票内容:'+ data.invoice_content + '">发票内容:'+ data.invoice_content + '<p>';
 						return html;
 					}
 				}, {
@@ -177,6 +226,18 @@
                     title: '发票税率（%）',
                     unresize: 'false'
                 }, {
+					title: '开票状态',
+					unresize: 'false',
+					templet: function(data) {
+						var name = '';
+						if(data.invoice_status == 0){
+							name = '未开票';
+						}else{
+							name = '已开票';
+						}
+						return name;
+					}
+				}, {
                     field: 'order_status_name',
                     title: '订单状态',
                     unresize: 'false'
@@ -184,13 +245,29 @@
                     field: 'create_time',
                     title: '下单时间',
                     unresize: 'false',
-                    templet: function(data) {
-                        return ns.time_to_date(data.create_time);
-                    }
-                }, {
+					templet: function (data) {
+						var create_time = ns.time_to_date(data.create_time)
+						var html = "";
+						html += '<span title="'+ create_time +'">'+ create_time +'</span>'
+						return html;
+					}
+                }, 
+				{
+				    field: 'create_time',
+				    title: '开票时间',
+				    unresize: 'false',
+					templet: function (data) {
+						var invoice_time = ns.time_to_date(data.invoice_time)
+						var html = "";
+						html += '<span title="'+ invoice_time +'">'+ invoice_time +'</span>'
+						return html;
+					}
+				}, 
+				{
 					title: '操作',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+					align : 'right'
 				}]
 			]
 		});
@@ -223,6 +300,9 @@
 			switch (event) {
 				case 'detail': //查看
 					location.href = ns.url('shop/order/detail','order_id='+data.order_id);
+					break;
+				case 'edit': //编辑
+					location.href = ns.url('shop/order/invoiceEdit','order_id='+data.order_id);
 					break;
 
 			}

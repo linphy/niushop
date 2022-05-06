@@ -97,22 +97,36 @@
 							return ns.time_to_date(data.create_time); //创建时间转换方法
 						}
 					}, {
+                    	field: 'sort',
 						unresize:'false',
 						title: '排序',
 						width: '20%',
 						align: 'center',
+                    	sort : true,
 						templet: '#editSort'
 					}, {
 						unresize:'false',
 						title: '操作',
-						width: '15%',
-						toolbar: '#operation'
+						toolbar: '#operation',
+						align : 'right'
 					}
 				]
 			],
 			toolbar: '#toolbarOperation',
 			bottomToolbar: "#batchOperation"
 		});
+
+        table.on("sort",function (obj) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: {
+                    order:obj.field,
+                    sort:obj.type
+                }
+            });
+        });
 		
 		/**
 		* 监听工具栏操作

@@ -294,12 +294,27 @@ WxReplay.prototype.clickEvent = {
 		var rule_id = $(_dom).parents(".rule-group").attr("data-rule_id");
 		var key_id = $(_dom).attr('data-key_id');
 		var reply_content = $(_dom).attr('reply_content');
-		$("#add_reply").css("display", "block");
+		// $("#add_reply").css("display", "block");
 		
 		$("#add_reply").children("input[name='rule_id']").val(rule_id);
 		
 		$(".complex-backdrop").css("display", "none");  //清空文本框
 		$("#add_reply").find("textarea[name='reply_content']").val("");
+
+		var index = layer.open({
+			type: 1,
+			title: "设置自动回复",
+			area: ['450px'],
+			offset: "auto",
+			content: $("#add_reply"),
+			success: function(layero) {
+				var mask = $(".layui-layer-shade");
+				mask.appendTo(layero.parent());
+			},
+			cancel: function(){
+				$('#add_reply').css("display", "none");
+			}
+		});
 	},
 	
 	//编辑回复
@@ -311,9 +326,9 @@ WxReplay.prototype.clickEvent = {
 		var reply_content = $(_dom).attr('reply_content');
 		var request_type = $(_dom).attr('type');
 		$("#hidden_reply_type").val(request_type);
-		$("#add_reply").css({"padding": "5px 10px"});
+		// $("#add_reply").css({"padding": "5px 10px"});
 		
-		$("#add_reply").css("display", "block");
+		// $("#add_reply").css("display", "block");
 		
 		$("#add_reply").find("input[name='rule_id']").val(rule_id);
 		$("#add_reply").find("input[name='key_id']").val(key_id);
@@ -375,6 +390,22 @@ WxReplay.prototype.clickEvent = {
 		} else {
 			$('.complex-backdrop').css("display", "none");
 		}
+
+		var index = layer.open({
+			type: 1,
+			title: "修改自动回复",
+			area: ['450px'],
+			offset: "auto",
+			content: $("#add_reply"),
+			success: function(layero) {
+				var mask = $(".layui-layer-shade");
+				mask.appendTo(layero.parent());
+			},
+			cancel: function(){
+				console.log($('#add_reply'))
+				$('#add_reply').css("display", "none");
+			}
+		});
 	},
 	
 	//删除回复
@@ -388,7 +419,7 @@ WxReplay.prototype.clickEvent = {
 			type: 1,
 			title: "是否删除该条回复",
 			offset: "auto",
-			content: ''
+			content: '删除后，关注该公众号的用户将不再接收该回复，确定删除？'
 			, btn: ['确定', '取消']
 			, yes: function (index, layero) {
 				if (!flag) return;

@@ -46,9 +46,9 @@ class OrderComplete
                 $member_level_info        = $member_level_info_result['data'];
                 if ($member_level_info['point_feedback'] > 0) {
                     //计算返还的积分
-                    $point                = $order_info['order_money'] * $member_level_info['point_feedback'];
+                    $point                = round($order_info['order_money'] * $member_level_info['point_feedback']);
                     $member_account_model = new MemberAccount();
-                    $result               = $member_account_model->addMemberAccount($site_id, $member_id, 'point', $point, 'adjust', '会员消费得积分', '会员消费得到积分' . $point);
+                    $result               = $member_account_model->addMemberAccount($site_id, $member_id, 'point', $point, 'order', '会员消费回馈积分', '会员消费回馈积分' . $point);
                     if ($result['code'] < 0) {
                         return $result;
                     }

@@ -28,9 +28,9 @@
 
 var graphicNavPreviewHtml = '<div v-bind:id="id" class="graphic-nav">';
 		graphicNavPreviewHtml += '<div class="wrap" v-bind:style="{}">';
-			graphicNavPreviewHtml += '<div v-for="(item, index) in list" class="item" :style="{width: 333/data.showType + \'px\'}">';
+			graphicNavPreviewHtml += '<div v-for="(item, index) in list" :key="item.id" class="item" :style="{width: 333/data.showType + \'px\'}">';
 				graphicNavPreviewHtml += '<a href="javascript:;">';
-					graphicNavPreviewHtml += '<div v-show="data.selectedTemplate ==\'imageNavigation\'" style="width: 35px; height: 35px; line-height: 35px; display: inline-block;"><img style="max-width: 100%; max-height: 100%;" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" /></div>';
+					graphicNavPreviewHtml += '<div v-show="data.selectedTemplate ==\'imageNavigation\'" style="width: 45px; height: 45px; line-height: 35px; display: inline-block;"><img style="max-width: 100%; max-height: 100%;" v-bind:src="item.imageUrl? $parent.$parent.changeImgUrl(item.imageUrl) : \'' + STATICEXT_IMG + "/crack_figure.png" + '\'" /></div>';
 					graphicNavPreviewHtml += '<span v-show="item.title" v-bind:style="{ color: data.textColor, opacity: data.textColor ? 1 : 0, marginTop: data.selectedTemplate ==\'imageNavigation\' ? \'10px\' : \'\' }">{{item.title}}</span>';
 				graphicNavPreviewHtml += '</a>';
 			graphicNavPreviewHtml += '</div>';
@@ -56,7 +56,15 @@ Vue.component("graphic-nav", {
 			return res;
 		},
 	},
-	template: graphicNavPreviewHtml
+	template: graphicNavPreviewHtml,
+	watch : {
+		'$parent.data.list' : {
+			handler:function(val,oldval){
+	          	this.list = val;
+	        },
+	        deep:true
+		}
+	}
 });
 
 
@@ -98,10 +106,10 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 		graphicNavListHtml += '</div>';
 		
 		graphicNavListHtml += '<div class="template-edit-wrap">';
-			graphicNavListHtml += '<ul>';
+			graphicNavListHtml += '<p class="hint" style="padding-left:10px;">建议上传尺寸相同的图片(60px * 60px)</p>';
+			graphicNavListHtml += '<ul class="navigation-set-list">';
 				// graphicNavListHtml += '<p class="hint">建议上传尺寸相同的图片(60px * 60px)，最多添加 {{maxTip}} 个导航，拖动选中的导航可对其排序</p>';
-				graphicNavListHtml += '<p class="hint">建议上传尺寸相同的图片(60px * 60px)</p>';
-				graphicNavListHtml += '<li v-for="(item,index) in list" v-bind:key="index">';
+				graphicNavListHtml += '<li v-for="(item,index) in list" :key="item.id">';
 					graphicNavListHtml += '<img-upload v-bind:data="{ data : item }" v-bind:condition="$parent.data.selectedTemplate == \'imageNavigation\'"></img-upload>';
 			
 					graphicNavListHtml += '<div class="content-block" v-bind:class="$parent.data.selectedTemplate">';
@@ -119,7 +127,7 @@ var graphicNavListHtml = '<div class="graphic-nav-list">';
 					graphicNavListHtml += '<div class="error-msg"></div>';
 				graphicNavListHtml += '</li>';
 				
-				graphicNavListHtml += '<div class="add-item ns-text-color" v-on:click="list.push({ imageUrl : \'\', title : \'\', link : {} })">';
+				graphicNavListHtml += '<div class="add-item ns-text-color" v-on:click="addNav">';
 					graphicNavListHtml += '<i>+</i>';
 					graphicNavListHtml += '<span>添加一个图文导航</span>';
 				graphicNavListHtml += '</div>';
@@ -233,6 +241,34 @@ Vue.component("graphic-nav-list",{
 		this.changeShowAddItem();
 		if(!this.$parent.data.verify) this.$parent.data.verify = [];
 		this.$parent.data.verify.push(this.verify);//加载验证方法
+
+		this.list.forEach(function(e, i){
+			e.id = ns.gen_non_duplicate(6);
+		})
+		this.$parent.data.list = this.list;
+		
+		var moveBeforeIndex = 0;
+		var _this = this;
+
+		setTimeout(function(){
+			var componentIndex = _this.data.index;
+			$( '[data-index="'+ componentIndex +'"] .navigation-set-list' ).DDSort({
+			    target: 'li',
+			    floatStyle: {
+			        'border': '1px solid #ccc',
+			        'background-color': '#fff'
+			    },
+			    down: function(index){
+			    	moveBeforeIndex = index;
+			    },
+			    up: function(index){
+			    	var temp = _this.list[moveBeforeIndex];
+			    	_this.list.splice(moveBeforeIndex, 1);
+			    	_this.list.splice(index, 0, temp);
+		    		_this.$parent.data.list = _this.list;
+			    }
+			});
+		})
 	},
 	
 	watch : {
@@ -261,6 +297,9 @@ Vue.component("graphic-nav-list",{
 	},
 	
 	methods : {
+		addNav(){
+			this.list.push({ imageUrl : '', title : '', link : { name : '' }, id: ns.gen_non_duplicate(6) });
+		},
 		
 		//改变图文导航按钮的显示隐藏
 		changeShowAddItem : function(){

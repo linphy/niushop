@@ -37,7 +37,8 @@ class Promotion extends BaseShop
         $promotion_model = new PrmotionModel();
         $promotions = $promotion_model->getSitePromotions($this->site_id);
         $this->assign("promotion", $promotions);
-
+        $user_info = $this->user_info;
+        $this->assign('user_info',$user_info);
         $addon_quick_model = new AddonQuick();
         //店铺促销
         $shop_addon = $addon_quick_model->getAddonQuickByAddonType($promotions, 'shop');
@@ -59,6 +60,11 @@ class Promotion extends BaseShop
     {
         $promotion_model = new PrmotionModel();
         $promotions = $promotion_model->getSitePromotions($this->site_id);
+        $addon_quick_model = new AddonQuick();
+        $addon = $addon_quick_model->getAddonQuickByAddonType($promotions, 'member');
+        $this->assign('tool_addon', $addon);
+        $user_info = $this->user_info;
+        $this->assign('user_info',$user_info);
         $this->assign("promotion", $promotions);
         return $this->fetch("promotion/member");
     }
@@ -76,7 +82,8 @@ class Promotion extends BaseShop
         $addon_quick_model = new AddonQuick();
         $addon = $addon_quick_model->getAddonQuickByAddonType($promotions[ 'shop' ], 'tool');
         $this->assign('tool_addon', $addon);
-
+        $user_info = $this->user_info;
+        $this->assign('user_info',$user_info);
         return $this->fetch("promotion/tool");
     }
 

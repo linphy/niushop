@@ -1,0 +1,67 @@
+<nc-component v-bind:data="data[index]" class="video-box right_bottom" data-disabled="1" v-if="nc.bottomPosition == 1 || nc.bottomPosition == 2" :style="{top:(parseInt(nc.baseBtnBottom)+parseInt(nc.btnBottom))+'px !important'}">
+
+	<!-- 预览 -->
+	<template slot="preview" >
+			<div class="video-list">
+				<div v-for="(item,index) in nc.list" class="image-ads-item">
+					<div>
+						<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 1 && item.is_mute == 1" autoplay="autoplay" muted="muted" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+						<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 1 || item.is_mute == 0" autoplay="autoplay" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+						<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 0 || item.is_mute == 1" muted="muted" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+						<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 0 || item.is_mute == 0" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+					</div>
+				</div>
+			</div>
+	</template>
+
+	<!-- 编辑 -->
+	<template slot="edit">
+		<template v-if="nc.lazyLoad">
+			<video-moba ref=""></video-moba>
+		</template>
+	</template>
+
+	<!-- 资源 -->
+	<template slot="resource">
+
+		<js>
+			var floatBtnResourcePath = "{$resource_path}";
+		</js>
+		<css src="{$resource_path}/video_moba/css/design.css"></css>
+		<js src="{$resource_path}/video_moba/js/design.js"></js>
+	</template>
+
+</nc-component>
+<nc-component v-bind:data="data[index]" class="video-box right_bottom" data-disabled="1" v-else-if="nc.bottomPosition == 3 || nc.bottomPosition == 4" :style="{bottom:(parseInt(nc.baseBtnBottom)  + parseInt(nc.btnBottom))+'px !important'}">
+
+	<!-- 预览 -->
+	<template slot="preview" >
+		<div class="video-list">
+			<div v-for="(item,index) in nc.list" class="image-ads-item">
+				<div>
+					<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 1 && item.is_mute == 1" autoplay="autoplay" muted="muted" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+					<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 1 && item.is_mute == 0" autoplay="autoplay" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+					<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 0 && item.is_mute == 1" muted="muted" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+					<video v-bind:src="changeImgUrl(item.videoUrl)" controls v-if="item.is_play == 0 && item.is_mute == 0" v-bind:poster="changeImgUrl(item.imageUrl)"></video>
+				</div>
+			</div>
+		</div>
+	</template>
+
+	<!-- 编辑 -->
+	<template slot="edit">
+		<template v-if="nc.lazyLoad">
+			<video-moba ref=""></video-moba>
+		</template>
+	</template>
+
+	<!-- 资源 -->
+	<template slot="resource">
+		<js>
+			var floatBtnResourcePath = "{$resource_path}";
+		</js>
+		<css src="{$resource_path}/video_moba/css/design.css"></css>
+		<js src="{$resource_path}/video_moba/js/design.js"></js>
+	</template>
+
+</nc-component>

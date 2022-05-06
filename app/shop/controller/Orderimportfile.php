@@ -76,7 +76,7 @@ class Orderimportfile extends BaseShop
         ];
 
         $order_common_model = new OrderCommonModel();
-        $field = 'order_no,order_name';
+        $field = 'order_no,order_name,full_address,address,name,mobile';
         $list_result = $order_common_model->getOrderList($condition, $field, 'create_time desc');
         $list = $list_result['data'];
 
@@ -89,29 +89,38 @@ class Orderimportfile extends BaseShop
         $phpExcel->setActiveSheetIndex(0);
         $phpExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
         $phpExcel->getActiveSheet()->getColumnDimension('B')->setWidth(50);
-        $phpExcel->getActiveSheet()->getColumnDimension('C')->setWidth(32);
-        $phpExcel->getActiveSheet()->getColumnDimension('D')->setWidth(50);
-        $phpExcel->getActiveSheet()->getColumnDimension('E')->setWidth(48);
+        $phpExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+        $phpExcel->getActiveSheet()->getColumnDimension('D')->setWidth(32);
+        $phpExcel->getActiveSheet()->getColumnDimension('E')->setWidth(70);
+        $phpExcel->getActiveSheet()->getColumnDimension('F')->setWidth(32);
+        $phpExcel->getActiveSheet()->getColumnDimension('G')->setWidth(50);
+        $phpExcel->getActiveSheet()->getColumnDimension('H')->setWidth(48);
 
         $phpExcel->getActiveSheet()->setCellValue('A1', '订单编号');
         $phpExcel->getActiveSheet()->setCellValue('B1', '订单内容');
+        $phpExcel->getActiveSheet()->setCellValue('C1', '收件人姓名');
+        $phpExcel->getActiveSheet()->setCellValue('D1', '收件人电话');
+        $phpExcel->getActiveSheet()->setCellValue('E1', '收件人地址');
         if($addon_is_exit == 1){
-            $phpExcel->getActiveSheet()->setCellValue('C1', '发货方式（手动发货/电子面单）');
-            $phpExcel->getActiveSheet()->setCellValue('D1', '物流公司名称（电子面单发货时为面单模板名称）');
-            $phpExcel->getActiveSheet()->setCellValue('E1', '物流单号（手动发货无需物流和电子面单时为空）');
+            $phpExcel->getActiveSheet()->setCellValue('F1', '发货方式（手动发货/电子面单）');
+            $phpExcel->getActiveSheet()->setCellValue('G1', '物流公司名称（电子面单发货时为面单模板名称）');
+            $phpExcel->getActiveSheet()->setCellValue('H1', '物流单号（手动发货无需物流和电子面单时为空）');
         }else{
-            $phpExcel->getActiveSheet()->setCellValue('C1', '发货方式');
-            $phpExcel->getActiveSheet()->setCellValue('D1', '物流公司名称');
-            $phpExcel->getActiveSheet()->setCellValue('E1', '物流单号（无需物流时为空）');
+            $phpExcel->getActiveSheet()->setCellValue('F1', '发货方式');
+            $phpExcel->getActiveSheet()->setCellValue('G1', '物流公司名称');
+            $phpExcel->getActiveSheet()->setCellValue('H1', '物流单号（无需物流时为空）');
         }
 
         foreach($list as $k=>$v){
             $start = $k + 2;
             $phpExcel->getActiveSheet()->setCellValue('A'. $start, $v['order_no'].' ');
             $phpExcel->getActiveSheet()->setCellValue('B'. $start, $v['order_name']."\t");
-            $phpExcel->getActiveSheet()->setCellValue('C'. $start, ' ');
-            $phpExcel->getActiveSheet()->setCellValue('D'. $start, '');
-            $phpExcel->getActiveSheet()->setCellValue('E'. $start, '');
+            $phpExcel->getActiveSheet()->setCellValue('C'. $start, $v['name'].' ');
+            $phpExcel->getActiveSheet()->setCellValue('D'. $start, $v['mobile'].' ');
+            $phpExcel->getActiveSheet()->setCellValue('E'. $start, $v['full_address'].$v['address']."\t");
+            $phpExcel->getActiveSheet()->setCellValue('F'. $start, '');
+            $phpExcel->getActiveSheet()->setCellValue('G'. $start, '');
+            $phpExcel->getActiveSheet()->setCellValue('H'. $start, '');
         }
 
         // 重命名工作sheet
@@ -226,7 +235,8 @@ class Orderimportfile extends BaseShop
             $path = input('path','');
 
             $order_model = new OrderModel();
-            $res = $order_model->orderFileDelivery(['filename' => $filename,'path' => $path],$this->site_id);
+
+            $res = $order_model->orderFileDelivery(['filename' => $filename,'path' => $path],$this->site_id, $this->uid);
             return $res;
         }
     }
@@ -237,9 +247,7 @@ class Orderimportfile extends BaseShop
     public function delete()
     {
         if(request()->isAjax()){
-
             $id = input('id','');
-
             $model = new OrderimportfileModel();
             $res = $model -> deleteOrderImportFile($id,$this->site_id);
             return $res;
@@ -280,6 +288,7 @@ class Orderimportfile extends BaseShop
         $this->assign('file_id',$file_id);
 
         $info = $model->getOrderImportFileInfo([['id','=',$file_id],['site_id','=',$this->site_id]]);
+        if (empty($info['data'])) return $this->error('未获取到导入数据', addon_url('shop/orderimportfile/lists'));
         $this->assign('info',$info['data']);
         return $this->fetch('orderimportfile/detail');
     }

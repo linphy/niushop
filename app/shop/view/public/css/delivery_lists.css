@@ -1,13 +1,13 @@
 .layui-table {margin-top: 15px;}
 .layui-table thead tr {background-color: #F8F6F9;}
 .layui-table th {border-width: 0; font-size: 14px!important;}
-.layui-table td {padding: 12px 15px;}
+.layui-table td {padding: 3px 15px;}
 .layui-table-cell {height: 40px; line-height: 40px;}
-.layui-table .header-row {border-top: 1px solid #e6e6e6;background: #F7F7F7;}
-.layui-table .header-row:hover{background: #F7F7F7;}
+.layui-table .header-row {border-top: 1px solid #e6e6e6;background: #f8f8f8;}
+.layui-table .header-row:hover{background: rgba(255, 98, 0, 0.05);}
 .separation-row hr {margin: 0;}
 .ns-screen.layui-collapse{margin-bottom: 15px;}
-/* .layui-layout-admin .layui-body{min-width:1100px} */
+/* .layui-layout-admin .layui-body{min-width:1100px}#f8f8f8 */
 /*.date-picker-btn.selected{background-color:#0d73f9;color:#fff}*/
 .layui-table td,
 .layui-table th,
@@ -23,7 +23,9 @@
 }
 
 .layui-table thead th {
-	border-bottom: none
+	border-bottom: none;
+	padding-left:0;
+	padding-right:0;
 }
 
 .order-list-table .separation-row td {
@@ -103,6 +105,8 @@
 	color: #333;
 }
 
+.order-list-table .header-row td{padding: 3px 15px!important;}
+
 .order-list-table .checkbox-all .layui-table-cell {
 	padding: 0;
 	text-align: center
@@ -166,6 +170,7 @@
 
 .order-list-table .operation a {
 	font-size: 14px;
+	text-align: right;
 }
 
 .order-no-data-block ul {
@@ -239,7 +244,7 @@
 
 
 .order-operation .order-operation-all-btn {
-	width: 4%;
+	width: 3%;
 	text-align: center;
 }
 
@@ -265,3 +270,16 @@
 	border: 1px solid #C9C9C9;
 	cursor: pointer;
 }
+.operation>.ns-table-btn{
+	display: block;
+}
+.operation>.ns-table-btn .layui-btn {
+	display: inline;
+	line-height: 23px;
+	padding: 0px;
+	margin: 0px;
+	padding-left:8px;
+}
+
+.address_box{width:87%; display: inline-block}
+.address_input{width: 1px;height: 0px;overflow: hidden;border: 0px}

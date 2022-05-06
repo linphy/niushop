@@ -47,6 +47,7 @@ class Trace extends BaseModel
 
         $company_info_result['data']['site_id'] = $site_id;
         $result                                 = event("Trace", ["code" => $code, "express_no_data" => $company_info_result["data"], "mobile" => $mobile], true);
+        
         if (empty($result)) {
             $data = ["success" => false, "reason" => "抱歉，没有启用的物流方式"];
             return $this->success($data);

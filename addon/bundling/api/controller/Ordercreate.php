@@ -59,6 +59,7 @@ class Ordercreate extends BaseApi
             'invoice_email' => $this->params[ "invoice_email" ] ?? '',
             'invoice_title_type' => $this->params[ "invoice_title_type" ] ?? 0,
             'buyer_ask_delivery_time' => $this->params[ "buyer_ask_delivery_time" ] ?? '',
+            'form_data'  => isset($this->params["form_data"]) && !empty($this->params["form_data"]) ? json_decode($this->params["form_data"], true) : [],
         ];
         if (empty($data[ 'bl_id' ])) {
             return $this->response($this->error('', '缺少必填参数商品数据'));

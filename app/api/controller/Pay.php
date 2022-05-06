@@ -17,6 +17,7 @@ namespace app\api\controller;
 
 use app\model\order\Order as OrderModel;
 use app\model\system\Pay as PayModel;
+use app\model\order\Config;
 
 /**
  * 支付控制器
@@ -54,8 +55,10 @@ class Pay extends BaseApi
         $out_trade_no = $this->params[ 'out_trade_no' ];
         $app_type = $this->params[ 'app_type' ];
         $return_url = isset($this->params[ 'return_url' ]) && !empty($this->params[ 'return_url' ]) ? urldecode($this->params[ 'return_url' ]) : null;
+        $is_matched = $this->params[ 'is_matched' ] ?? 0;
+        $scene = $this->params[ 'scene' ] ?? 0;
         $pay = new PayModel();
-        $info = $pay->pay($pay_type, $out_trade_no, $app_type, $this->member_id, $return_url);
+        $info = $pay->pay($pay_type, $out_trade_no, $app_type, $this->member_id, $return_url, $is_matched, $scene);
         return $this->response($info);
     }
 
@@ -86,4 +89,13 @@ class Pay extends BaseApi
         return $this->response($res);
     }
 
+    /**
+     * 获取余额支付配置
+     */
+    public function getBalanceConfig()
+    {
+        $config_model = new Config();
+        $res = $order_evaluate_config = $config_model->getBalanceConfig($this->site_id);
+        return $this->response($this->success($res[ 'data' ][ 'value' ]));
+    }
 }

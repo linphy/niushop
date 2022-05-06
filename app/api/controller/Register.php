@@ -52,6 +52,8 @@ class Register extends BaseApi
         if (strstr($config_info['data']['value']['register'], 'username') === false) return $this->response($this->error("", "REGISTER_REFUND"));
 
         $register = new RegisterModel();
+        $this->params['username'] = str_replace(' ', '', $this->params['username']);
+        if(empty($this->params['username'])) return $this->response($this->error("", "用户名已存在"));
         $exist    = $register->usernameExist($this->params['username'], $this->site_id);
         if ($exist) {
             return $this->response($this->error("", "用户名已存在"));

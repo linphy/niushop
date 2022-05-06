@@ -13,7 +13,7 @@ namespace app\model\upload;
 
 use think\facade\Cache;
 use app\model\BaseModel;
-
+use app\model\upload\Upload;
 /**
  * 相册组件模型
  */
@@ -78,9 +78,9 @@ class Album extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
 
         //判断当前相册是否存在默认, 默认相册不可删除
-        $temp_count = model("album_pic")->getCount($condition, "*");
-        if ($temp_count > 0)
-            return $this->error("", "当前删除相册中存在图片,不可删除!");
+//        $temp_count = model("album_pic")->getCount($condition, "*");
+//        if ($temp_count > 0)
+//            return $this->error("", "当前删除相册中存在图片,不可删除!");
 
         $temp_condition   = $condition;
         $temp_condition[] = ["is_default", "=", 1];
@@ -93,6 +93,10 @@ class Album extends BaseModel
         if ($res === false) {
             return $this->error('', 'UNKNOW_ERROR');
         }
+
+        $info_id = model("album")->getInfo([["is_default", "=", 1], ["site_id", "=", $site_id]], "album_id");
+        model("album_pic")->update(['album_id' => $info_id['album_id']], $condition);
+
         return $this->success($res);
     }
 
@@ -284,6 +288,15 @@ class Album extends BaseModel
 
 
         Cache::tag("album_pic_" . $site_id)->clear();
+
+        $album_pic_list = model('album_pic')->getList($condition);
+        if(!empty($album_pic_list)){
+            foreach ($album_pic_list as $key => $val){
+                $upload_model = new Upload();
+                $upload_model->deletePic($val['pic_path'], $val['site_id']);
+            }
+        }
+
         $res = model('album_pic')->delete($condition);
         $this->syncAlbumNum($check_condition["album_id"]);//同步当前相册下的图片数量
         if ($res === false) {
@@ -379,7 +392,7 @@ class Album extends BaseModel
      * @param string $field
      * @return multitype:string mixed
      */
-    public function getAlbumPicPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'pic_id, pic_name, pic_path, pic_spec, site_id, update_time')
+    public function getAlbumPicPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'pic_id, pic_name, pic_path, pic_spec, site_id, update_time,is_thumb')
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
@@ -396,5 +409,34 @@ class Album extends BaseModel
         return $this->success($list);
     }
     /*******************************************************************相册图片 end*****************************************************/
+
+    /**
+     * 生成缩略图，是否生成缩略图
+     *
+     * @return boolean
+     */
+    public function createThumbBatch($site_id, $pic_ids)
+    {
+        $condition = [
+            ['pic_id','in',$pic_ids],
+            ['is_thumb','=',0]
+        ];
+        $list = model("album_pic")->getList($condition);
+        $upload = new Upload($site_id);
+        foreach ($list as $key => $val) {
+            if($val['is_thumb'] == 0){
+                $file_name = substr($val['pic_path'],0,strpos($val['pic_path'], '.'));
+                $extend_name  = substr($val['pic_path'],strpos($val['pic_path'], '.') + 1);
+                $thumb_type = [
+                    0 => "BIG",
+                    1 => "MID",
+                    2 => "SMALL"
+                ];
+               $upload->thumbBatch($val['pic_path'],$file_name,$extend_name,$thumb_type);//生成缩略图
+            }
+        }
+        $res = model("album_pic")->update(['is_thumb' => 1],$condition);
+        return $this->success($res);
+    }
 
 }

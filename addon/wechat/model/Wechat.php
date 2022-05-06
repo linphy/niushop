@@ -19,6 +19,7 @@ use EasyWeChat\Kernel\Messages\Text;
 use EasyWeChat\Kernel\Messages\News;
 use EasyWeChat\Kernel\Messages\NewsItem;
 use app\model\BaseModel;
+use think\facade\Cache;
 use think\facade\Log;
 
 /**
@@ -104,6 +105,10 @@ class Wechat extends BaseModel
                     'file'       => 'runtime/log/wechat/easywechat.logs',
                 ],
             ];
+            if(empty($config['app_id']) || empty($config['secret'])){
+                throw new \Exception('商家公众号配置有误，请联系平台管理员');
+            }
+
             $this->app = Factory::officialAccount($config);
         }
         return $this->app;
@@ -268,6 +273,28 @@ class Wechat extends BaseModel
         }
 
         return $this->success($url);
+    }
+
+    /**
+     * 获取临时二维码
+     * @param $scene
+     * @return array
+     */
+    public function getTempQrcode($scene, $seconds){
+        try {
+            $result = $this->app()->qrcode->temporary($scene, $seconds);
+            if (isset($result['errcode']) && $result['errcode'] != 0) {
+                return $this->error($result, $result["errmsg"]);
+            }
+
+            $url = $this->app()->qrcode->url($result['ticket']);
+            if (isset($url['errcode']) && $url['errcode'] != 0) {
+                return $this->error($url, $url["errmsg"]);
+            }
+            return $this->success($url);
+        } catch (\Exception $e) {
+            return $this->error([], $e->getMessage());
+        }
     }
 
     /**
@@ -531,6 +558,10 @@ class Wechat extends BaseModel
                         if ($res['Event'] == 'subscribe') {
                             // 关注公众号
                             $Userstr = $this->getUser($res['FromUserName']);
+                            //获取用户信息
+                            $wechat_user = $this->app->user->get($res['FromUserName']);
+
+
                             if (preg_match("/^qrscene_/", $res['EventKey'])) {
                                 $source_uid             = substr($res['EventKey'], 8);
                                 $_SESSION['source_uid'] = $source_uid;
@@ -540,7 +571,18 @@ class Wechat extends BaseModel
                             } else {
                                 $source_uid = 0;
                             }
-                            $wechat_user = $this->app->user->get($res['FromUserName']);
+
+                            if (preg_match("/^qrscene_key_/", $res['EventKey'])){
+                                //新增2021.06.02
+                                $key = substr($res['EventKey'], 12);
+                                $cache = Cache::get('wechat_'.$key);
+                                if (!empty($cache)){
+                                    Cache::set('wechat_'.$key,$wechat_user);
+                                }
+                            }
+
+
+//                            $wechat_user = $this->app->user->get($res['FromUserName']);
 
                             $nickname_decode = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $wechat_user['nickname']);
                             $headimgurl      = $wechat_user['headimgurl'];
@@ -607,6 +649,15 @@ class Wechat extends BaseModel
                             $openid = $res['FromUserName'];
                             $data   = $res['EventKey'];
 
+                            if (preg_match("/^key_/", $data)){
+                                $key = substr($data,4);
+                                $cache = Cache::get('wechat_'.$key);
+                                if (!empty($cache)){
+                                    $wechat_user = $this->app->user->get($res['FromUserName']);
+                                    Cache::set('wechat_'.$key,$wechat_user);
+                                }
+                            }
+
                         } else if ($res['Event'] == 'CLICK') {
                             // CLICK事件 - 自定义菜单事件
                             $openid = $res['FromUserName'];
@@ -655,6 +706,8 @@ class Wechat extends BaseModel
                                 $weapp_original = $res['ToUserName'];
                                 $site_info      = model('config')->getInfo([['app_module', '=', 'shop'], ['config_key', '=', 'WEAPP_CONFIG'], ['value', 'like', '%is_authopen%'], ['value', 'like', '%' . $weapp_original . '%']], 'site_id');
                                 if (!empty($site_info)) {
+                                    // 先将审核中的变更为审核成功
+                                    model('weapp_audit_record')->update(['status' => 1, 'audit_time' => time()], [['status', '=', 0], ['site_id', '=', $site_info['site_id']]]);
                                     $platform = new OpenPlatform($site_info['site_id']);
                                     $result   = $platform->release();
                                     if ($result['code'] >= 0) {

@@ -60,19 +60,46 @@ class GoodsCategory extends BaseModel
                 switch ( $info[ 'level' ] ) {
                     case 1:
                         model('goods_category')->update([ 'is_show' => -1 ], [ [ 'category_id_1', '=', $info[ 'category_id_1' ] ] ]);
+                        $data['category_full_name'] = $data['category_name'];
                         break;
 
                     case 2:
                         model('goods_category')->update([ 'is_show' => -1 ], [ [ 'category_id_2', '=', $info[ 'category_id_2' ] ] ]);
+
+                        $info_1 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_1' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+                        $category_full_name = $info_1['category_name'].'/'.$data['category_name'];
+                        $data['category_full_name'] = $category_full_name;
+                        break;
+                    case 3:
+                        model('goods_category')->update([ 'is_show' => -1 ], [ [ 'category_id', 'in', [ $info[ 'category_id_1' ], $info[ 'category_id_2' ] ] ] ]);
+
+                        $info_1 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_1' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+                        $info_2 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_2' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+                        $category_full_name = $info_1['category_name'].'/'.$info_2['category_name'].'/'.$data['category_name'];
+                        $data['category_full_name'] = $category_full_name;
                         break;
                 }
             } else {
                 switch ( $info[ 'level' ] ) {
+                    case 1:
+                        model('goods_category')->update([ 'is_show' => 0 ], [ [ 'category_id_1', '=', $info[ 'category_id_1' ] ] ]);
+
+                        $data['category_full_name'] = $data['category_name'];
+                        break;
                     case 2:
                         model('goods_category')->update([ 'is_show' => 0 ], [ [ 'category_id', '=', $info[ 'category_id_1' ] ] ]);
+
+                        $info_1 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_1' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+                        $category_full_name = $info_1['category_name'].'/'.$data['category_name'];
+                        $data['category_full_name'] = $category_full_name;
                         break;
                     case 3:
                         model('goods_category')->update([ 'is_show' => 0 ], [ [ 'category_id', 'in', [ $info[ 'category_id_1' ], $info[ 'category_id_2' ] ] ] ]);
+
+                        $info_1 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_1' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+                        $info_2 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_2' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+                        $category_full_name = $info_1['category_name'].'/'.$info_2['category_name'].'/'.$data['category_name'];
+                        $data['category_full_name'] = $category_full_name;
                         break;
                 }
             }
@@ -150,9 +177,10 @@ class GoodsCategory extends BaseModel
      * @param array $condition
      * @param string $field
      */
-    public function getCategoryInfo($condition, $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,keywords,description,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,category_full_name,commission_rate,image_adv')
+    public function getCategoryInfo($condition, $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,keywords,description,attr_class_id,attr_class_name,category_id_1,category_id_2,category_id_3,category_full_name,commission_rate,image_adv,link_url')
     {
         $check_condition = array_column($condition, 2, 0);
+
         $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
@@ -163,7 +191,7 @@ class GoodsCategory extends BaseModel
         if (!empty($cache)) {
             return $this->success($cache);
         }
-        $res = model('goods_category')->getInfo($condition, $field);
+        $res = model('goods_category')->getInfo($check_condition, $field);
         Cache::tag("goods_category_" . $site_id)->set("goods_category_getCategoryInfo_" . $site_id . "_" . $data, $res);
         return $this->success($res);
     }

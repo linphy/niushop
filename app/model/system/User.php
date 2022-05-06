@@ -11,6 +11,7 @@
 
 namespace app\model\system;
 
+use app\model\system\User as UserModel;
 use think\facade\Session;
 use app\model\BaseModel;
 
@@ -83,6 +84,7 @@ class User extends BaseModel
             } else {
                 $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], [ "app_module", "=", $app_module ] ], "group_name");
             }
+
             $group_info = $group_info_result[ "data" ];
             $data[ "group_name" ] = $group_info[ "group_name" ];
         }
@@ -94,6 +96,12 @@ class User extends BaseModel
             return $this->error('', 'UNKNOW_ERROR');
         }
         return $this->success($result);
+    }
+
+    public function getUserColumn($condition = [], $field = '')
+    {
+        $res = model('user')->getColumn($condition, $field);
+        return $res;
     }
 
     /**
@@ -185,8 +193,8 @@ class User extends BaseModel
         {
             return $this->error('', '权限不足');
         }
-        $res = model('user')->getInfo($condition, "uid");
-        if (!empty($res[ 'uid' ])) {
+        $res = model('user')->getInfo($condition, "uid,password");
+        if (!empty($res)) {
             $data = array (
                 'password' => data_md5($new_password)
             );
@@ -209,12 +217,42 @@ class User extends BaseModel
         if ($app_module === '') {
             return $this->error('', 'REQUEST_APP_MODULE');
         }
-
         $res = model('user')->delete($condition);
         if ($res === false) {
             return $this->error('', 'UNKNOW_ERROR');
         }
         return $this->success($res);
+    }
+
+    /**
+     * 清除后台所有用户的登录信息
+     * @param $app_module
+     * @param $site_id
+     * @return array
+     */
+    public function deleteUserLoginInfo($app_module,$site_id)
+    {
+        $dir = './runtime/session';
+        $this->deldir($dir);
+        Session::delete($app_module . "_" . $site_id . ".uid");
+        return $this->success();
+    }
+
+    public function deldir($dir) {
+        //先删除目录下的文件：
+        $dh = opendir($dir);
+        while ($file = readdir($dh)) {
+            if($file != "." && $file!="..") {
+                $fullpath = $dir."/".$file;
+                if(!is_dir($fullpath)) {
+                    unlink($fullpath);
+                } else {
+                    deldir($fullpath);
+                }
+            }
+        }
+        closedir($dh);
+
     }
 
     /**
@@ -441,6 +479,38 @@ class User extends BaseModel
         Session::set($user_info[ 'app_module' ] . "_" . $user_info[ 'site_id' ] . ".uid", $user_info[ 'uid' ]);
         Session::set($user_info[ 'app_module' ] . "_" . $user_info[ 'site_id' ] . ".user_info", $auth);
         $this->addUserLog($user_info[ 'uid' ], $user_info[ 'username' ], $user_info[ 'site_id' ], "用户登录", []);//添加日志
+    }
+
+    /**
+     * uni-app端用户登录
+     * @param $username
+     * @param $password
+     * @param $app_module
+     * @return array
+     */
+    public function uniAppLogin($username, $password, $app_module)
+    {
+        $time = time();
+        // 验证参数 预留
+        $user_info = model('user')->getInfo([ [ 'username', "=", $username ], [ "app_module", "=", $app_module ] ]);
+        if (empty($user_info)) {
+            return $this->error('', 'USER_LOGIN_ERROR');
+        } else if (data_md5($password) !== $user_info[ 'password' ]) {
+            return $this->error([], 'PASSWORD_ERROR');
+        } else if ($user_info[ 'status' ] !== 1) {
+            return $this->error([], 'USER_IS_LOCKED');
+        }
+
+        //更新登录记录
+        $data = [
+            'login_time' => $time,
+            'login_ip' => request()->ip(),
+        ];
+        model('user')->update($data, [ [ 'uid', "=", $user_info[ 'uid' ] ] ]);
+
+        $this->addUserLog($user_info[ 'uid' ], $user_info[ 'username' ], $user_info[ 'site_id' ], "用户登录", []); //添加日志
+
+        return $this->success($user_info);
     }
 
     /**

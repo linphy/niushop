@@ -40,8 +40,7 @@ class Store extends BaseApi
         $condition = [
             [ 'site_id', "=", $this->site_id ],
             [ 'status', '=', 1 ],
-            [ 'is_frozen', '=', 0 ],
-            [ 'is_pickup', '=', 1 ]
+            [ 'is_frozen', '=', 0 ]
         ];
 
         $latlng = array (

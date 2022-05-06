@@ -31,7 +31,7 @@
 		<tr>
 			<th>商品名称</th>
 			<th style="text-align: right;">价格</th>
-			<th style="text-align: right;">优惠价</th>
+			<th style="text-align: right;">库存</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -53,7 +53,7 @@
 					
 				</td>
 				<td class="price-one" align="right">￥{$v.price}</td>
-				<td align="right">￥{$v.promotion_price}</td>
+				<td align="right">{$v.stock}</td>
 			</tr>
 		{/foreach}
 	</tbody>

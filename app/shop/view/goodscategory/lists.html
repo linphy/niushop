@@ -1,6 +1,13 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
+	.table_body {
+		font-family: arial;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
 	.goods-category-list .layui-table td {
 		border-left: 0;
 		border-right: 0;
@@ -29,9 +36,12 @@
 		line-height: 40px;
 		border: 0;
 		border-bottom: 1px solid #e6e6e6;
-		padding: 9px 15px;
+		padding: 9px 22px;
 		font-size: 14px;
 		
+	}
+	.table_head .operate{
+		text-align: right;
 	}
 	.table_head li:first-child{
 		padding-right: 0;
@@ -40,7 +50,8 @@
 	.table_tr{
 		display: flex;
 		border-bottom: 1px solid #e6e6e6;
-		cursor: move;
+		background: #fff;
+		height: 52px !important;
 	}
 	.table_tr .table_td{
 		position: relative;
@@ -70,6 +81,7 @@
 	.table_tr .ns-table-btn {
 	    display: flex;
 	    flex-wrap: wrap;
+		justify-content: flex-end;
 	}
 	.table_tr .layui-btn {
 	    display: flex;
@@ -92,9 +104,22 @@
 	}
 	.empty_switch{
 		display: inline-block;
-		width:25px
+		width:30px;
+		height:25px;
+		padding-right:15px;
 	}
 	.js-switch{display: inline-block;height:30px;width:30px;text-align: center;}
+	.table_move{
+		cursor: move;float:left;margin-right: 10px;
+	}
+	.table_moves{
+		cursor: move;float:left;margin-right: 10px;
+	}
+	.tables_move{
+		cursor: move;float:left;margin-right: 20px;padding-left: 70px;
+	}
+
+
 </style>
 {/block}
 {block name="main"}
@@ -122,19 +147,20 @@
 			<li class="" style="flex:2">图片</li>
 			<!-- <li class="" style="flex:2">排序</li> -->
 			<li class="" style="flex:2">是否显示</li>
-			<li class="" style="flex:2">操作</li>
+			<li class="operate" style="flex:2">操作</li>
 		</ul>
-		<div  class="table_body">
+		<div class="table_body">
 			{if condition="$list"}
 			{foreach name="$list" item="vo" key="index"}
-			<div class="table_one" data-index="{$index}" data-sort="{$vo['sort']}" data-cateid="{$vo['category_id']}">
+			<li class="table_one" data-index="{$index}" data-sort="{$vo['sort']}" data-cateid="{$vo['category_id']}">
 				<div class="table_tr">
-					<div class="table_td" style="width:30px">
+					<div class="table_td" style="width:60px">
+						<div class="table_move iconfont icontuodong"></div>
 						{notempty name="$vo['child_list']"}
 						<span class="switch ns-text-color js-switch" data-category-id="{$vo['category_id']}" data-level="{$vo['level']}" data-open="0">
 							+
 						</span>
-					
+
 						{/notempty}
 					</div>
 					<div class="table_td" style="flex:6">{$vo['category_name']}</div>
@@ -161,12 +187,14 @@
 				{notempty name="$vo['child_list']"}
 					<div class="table_two_div">
 					{foreach name="$vo['child_list']" item="second"}
+
 					<div class="table_two" data-index="{$index}" data-sort="{$second['sort']}" data-cateid="{$second['category_id']}">
-					<div class="table_tr">
-						<div class="table_td" style="width:30px">
-							
+
+						<div class="table_tr">
+						<div class="table_td" style="width: 36px">
 						</div>
-						<div class="table_td" style="flex:6">
+						<div class="table_td" style="flex:6.2">
+							<div class="table_moves iconfont icontuodong"></div>
 							{notempty name="$second['child_list']"}
 							<span class="switch ns-text-color js-switch" data-category-id="{$second['category_id']}" data-level="{$second['level']}" data-open="0" style="padding-right: 15px;">
 								+
@@ -200,12 +228,12 @@
 						
 					<div class="table_three">
 						{foreach name="$second['child_list']" item="third"}
-						<div class="table_tr" data-sort="{$third['sort']}" data-cateid="{$third['category_id']}">
-							<div class="table_td" style="width:30px">
-								
+						<div class="table_tr table_three_tr" data-sort="{$third['sort']}" data-cateid="{$third['category_id']}">
+							<div class="table_td" style="width: 36px">
 							</div>
-							<div class="table_td" style="flex:6">
-								<span style="padding-left: 80px;">{$third['category_name']}</span>
+							<div class="table_td" style="flex:6.2">
+								<div class="tables_move iconfont icontuodong"></div>
+								<div>{$third['category_name']}</div>
 							</div>
 							<div class="table_td" style="flex:2">
 								{notempty name="$third['image']"}
@@ -235,7 +263,7 @@
 					{/foreach}
 					</div>
 				{/notempty}
-			</div>
+			</li>
 			
 			{/foreach}
 			{else/}
@@ -248,56 +276,133 @@
 </div>
 {/block}
 {block name="script"}
+<script src="STATIC_EXT/drag-arrange.js"></script>
 <script src="STATIC_EXT/diyview/js/ddsort.js"></script>
 <script>
-var tempPos = '';
-bindDragSort('.table_body' ,'.table_one');
-bindDragSort('.table_two_div' ,'.table_two');
-bindDragSort('.table_three' ,'.table_tr');
-function bindDragSort(paremtElem,childElem){
-	$(paremtElem ).DDSort({
-	    target: childElem,
-	    floatStyle: {
-	        'border': '1px solid #ccc',
-	        'background-color': '#fff'
-	    },
-		down:function(e){
-			tempPos = $(this).data('sort');
-		},
-		up:function(e){
-			var index = $(this).index(),self = $(this);
-			if(index != tempPos){
-				var temparr = [];
-				$(childElem).each(function(index,item){
-					var tempObj = {};
-					tempObj.category_id = item.getAttribute('data-cateid');
-					tempObj.sort = index;
-					temparr.push(tempObj)
-				})
-				setTimeout(function(){
-					$.ajax({
-						url: ns.url("shop/goodscategory/modifySort"),
-						data: {category_sort_array : JSON.stringify(temparr)},
-						dataType: 'JSON',
-						type: 'POST',
-						async: false,
-						success: function (res) {
-							self.data('sort',index)
-							layer.msg(res.message);
-						}
-					});
-				},100);
-			}
-			
+$(function() {
+	var tempPos = '';
+	$('li').arrangeable({
+		dragSelector: '.table_move',
+		callback:function(e){
+			var temparr = [];
+			$('.table_one').each(function(index,item){
+				var tempObj = {};
+				tempObj.category_id = item.getAttribute('data-cateid');
+				tempObj.sort = index;
+				temparr.push(tempObj)
+			})
+			setTimeout(function(){
+				$.ajax({
+					url: ns.url("shop/goodscategory/modifySort"),
+					data: {category_sort_array : JSON.stringify(temparr)},
+					dataType: 'JSON',
+					type: 'POST',
+					async: false,
+					success: function (res) {
+						layer.msg(res.message);
+					}
+				});
+			},100);
 		}
 	});
-}
+	$('.table_two').arrangeable({
+		dragSelector: '.table_moves',
+		callback:function(e){
+			var temparrs = [];
+			$('.table_two').each(function(index,item){
+				var tempObjs = {};
+				tempObjs.category_id = item.getAttribute('data-cateid');
+				tempObjs.sort = index;
+				temparrs.push(tempObjs)
+			})
+			setTimeout(function(){
+				$.ajax({
+					url: ns.url("shop/goodscategory/modifySort"),
+					data: {category_sort_array : JSON.stringify(temparrs)},
+					dataType: 'JSON',
+					type: 'POST',
+					async: false,
+					success: function (res) {
+						layer.msg(res.message);
+					}
+				});
+			},100);
+		}
+	});
+	$('.table_three_tr').arrangeable({
+		dragSelector: '.tables_move',
+		callback:function(e){
+			var temparres = [];
+			$('.table_three_tr').each(function(index,item){
+				var tempObjes = {};
+				tempObjes.category_id = item.getAttribute('data-cateid');
+				tempObjes.sort = index;
+				temparres.push(tempObjes)
+			})
+			setTimeout(function(){
+				$.ajax({
+					url: ns.url("shop/goodscategory/modifySort"),
+					data: {category_sort_array : JSON.stringify(temparres)},
+					dataType: 'JSON',
+					type: 'POST',
+					async: false,
+					success: function (res) {
+						layer.msg(res.message);
+					}
+				});
+			},100);
+		}
+	});
+});
+// var tempPos = '';
+// bindDragSort('.table_body' ,'.table_one');
+// bindDragSort('.table_two_div' ,'.table_two');
+// bindDragSort('.table_three' ,'.table_tr');
+// function bindDragSort(paremtElem,childElem){
+// 	$(paremtElem ).DDSort({
+// 	    target: childElem,
+// 	    floatStyle: {
+// 	        'border': '1px solid #ccc',
+// 	        'background-color': '#fff'
+// 	    },
+// 		down:function(e){
+// 			tempPos = $(this).data('sort');
+// 		},
+// 		up:function(e){
+// 			var index = $(this).index(),self = $(this);
+// 			if(index != tempPos){
+// 				var temparr = [];
+// 				$(childElem).each(function(index,item){
+// 					var tempObj = {};
+// 					tempObj.category_id = item.getAttribute('data-cateid');
+// 					tempObj.sort = index;
+// 					temparr.push(tempObj)
+// 				})
+// 				setTimeout(function(){
+// 					$.ajax({
+// 						url: ns.url("shop/goodscategory/modifySort"),
+// 						data: {category_sort_array : JSON.stringify(temparr)},
+// 						dataType: 'JSON',
+// 						type: 'POST',
+// 						async: false,
+// 						success: function (res) {
+// 							self.data('sort',index)
+// 							layer.msg(res.message);
+// 						}
+// 					});
+// 				},100);
+// 			}
+//
+// 		}
+// 	});
+// }
 
 $(function () {
 	loadImgMagnify();  //图片放大
 
 	//展开收齐点击事件
-	$(".js-switch").click(function () {
+	$(".js-switch").click(function (event) {
+        event.stopPropagation();
 		var category_id = $(this).attr("data-category-id");
 		var level = $(this).attr("data-level");
 		var open = parseInt($(this).attr("data-open").toString());

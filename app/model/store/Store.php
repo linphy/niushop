@@ -15,6 +15,7 @@ use app\model\BaseModel;
 use app\model\system\Group;
 use think\facade\Cache;
 use think\facade\Db;
+use app\model\upload\Upload;
 
 /**
  * 门店管理
@@ -102,20 +103,81 @@ class Store extends BaseModel
      * @param unknown $data
      * @return multitype:string
      */
-    public function editStore($data, $condition)
+    public function editStore($data, $condition, $user_data = [], $is_exit = 0, $user_type = 1)
     {
         if (empty($data['longitude']) || empty($data['latitude'])) {
             return $this->error('', '门店经纬度不能为空');
         }
         $check_condition = array_column($condition, 2, 0);
         $site_id = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
+        $store_id = isset($check_condition['store_id']) ? $check_condition['store_id'] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
         $data["modify_time"] = time();
-        $res = model('store')->update($data, $condition);
-        Cache::tag("store")->clear();
-        return $this->success($res);
+
+        model('store')->startTrans();
+        try {
+            $store_info = model('store')->getInfo($condition);
+            if($store_info['store_image'] && $data['store_image'] && $store_info['store_image'] != $data['store_image']){
+                $upload_model = new Upload();
+                $upload_model->deletePic($store_info['store_image'], $site_id);
+            }
+
+            if ($is_exit == 1 && $user_type == 0) {
+                $data['username'] = $user_data['username'];
+                //$store_id = model('store')->add($data);
+                model('store')->update($data, $condition);
+                Cache::tag("store")->clear();
+                //添加系统用户组
+                $group = new Group();
+                $group_data = [
+                    'site_id' => $store_id,
+                    'app_module' => 'store',
+                    'group_name' => '管理员组',
+                    'is_system' => 1,
+                    'create_time' => time()
+                ];
+                $group_id = $group->addGroup($group_data)['data'];
+
+                //用户检测
+                if (empty($user_data['username'])) {
+                    model("store")->rollback();
+                    return $this->error('', '门店账号不能为空');
+                }
+                $user_count = model("user")->getCount([['username', '=', $user_data['username']], ['app_module', '=', 'store'], ['site_id', '=', $site_id]]);
+                if ($user_count > 0) {
+                    model("store")->rollback();
+                    return $this->error('', '门店账号已存在');
+                }
+
+                //添加用户
+                $data_user = [
+                    'app_module' => 'store',
+                    'app_group' => 0,
+                    'is_admin' => 1,
+                    'group_id' => $group_id,
+                    'group_name' => '管理员组',
+                    'site_id' => $site_id
+                ];
+                $user_info = array_merge($data_user, $user_data);
+                $uid = model("user")->add($user_info);
+                model('store')->update(['uid' => $uid], [['store_id', '=', $store_id]]);
+
+                //执行事件
+                //event("AddStore", ['store_id' => $store_id, 'site_id' => $data['site_id']]);
+
+            } else {
+                model('store')->update($data, $condition);
+                Cache::tag("store")->clear();
+            }
+            model('store')->commit();
+            return $this->success($store_id);
+
+        } catch (\Exception $e) {
+            model('store')->rollback();
+            return $this->error('', $e->getMessage());
+        }
     }
 
     /**
@@ -130,7 +192,12 @@ class Store extends BaseModel
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
-        $store_info = model('store')->getInfo([['store_id', '=', $store_id]], 'uid');
+
+        $store_info = model('store')->getInfo([['store_id', '=', $store_id]], 'uid, store_image');
+        if(!empty($store_info['store_image'])){
+            $upload_model = new Upload();
+            $upload_model->deletePic($store_info['store_image'], $site_id);
+        }
         $res = model('store')->delete($condition);
         if ($res) {
             model('store_goods')->delete([['store_id', '=', $store_id]]);
@@ -196,6 +263,9 @@ class Store extends BaseModel
             return $this->success($cache);
         }
         $res = model('store')->getInfo($condition, $field);
+        if (!empty($res[ 'time_week' ])) {
+            $res[ 'time_week' ] = explode(',', $res[ 'time_week' ]);
+        }
         Cache::tag("store")->set("store_" . $data, $res);
         return $this->success($res);
     }

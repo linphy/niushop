@@ -50,6 +50,7 @@ class Memberaccount extends BaseApi
         $start_time = empty($this->params[ 'date' ]) ? strtotime(date('Y-m', strtotime("today"))) : strtotime($this->params[ 'date' ]);
         $end_time = strtotime("+1 month", $start_time);
         $from_type = isset($this->params[ 'from_type' ]) ? $this->params[ 'from_type' ] : '';
+        $related_id = isset($this->params[ 'related_id' ]) ? $this->params[ 'related_id' ] : 0;
         if (!in_array($account_type, [ 'point', 'balance', 'balance,balance_money' ])) return $this->response($this->error('', 'INVALID_PARAMETER'));
 
         $condition[] = [ 'account_type', 'in', $account_type ];
@@ -57,6 +58,9 @@ class Memberaccount extends BaseApi
         $condition[] = [ 'create_time', 'between', [ $start_time, $end_time ] ];
         if (!empty($from_type)) {
             $condition[] = [ 'from_type', '=', $from_type ];
+        }
+        if (!empty($related_id)) {
+            $condition[] = [ 'related_id', '=', $related_id ];
         }
 
         $member_account_model = new MemberAccountModel();

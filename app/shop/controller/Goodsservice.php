@@ -45,11 +45,11 @@ class Goodsservice extends BaseShop
     public function add()
     {
         if (request()->isAjax()) {
-            $service_name = input('service_name', '');
             $data         = [
                 'site_id'      => $this->site_id,
-                'service_name' => $service_name,
-                'desc'         => input('desc', 0)
+                'service_name' => input('service_name', ''),
+                'desc'         => input('desc', 0),
+                'icon' => input('icon', '')
             ];
             $model        = new GoodsServiceModel();
             $res          = $model->addService($data);
@@ -63,14 +63,14 @@ class Goodsservice extends BaseShop
     public function edit()
     {
         if (request()->isAjax()) {
+            $id = input('id', '');
             $data  = [
-                'id'           => input('id', ''),
-                'site_id'      => $this->site_id,
                 'service_name' => input('service_name', ''),
-                'desc'         => input('desc', 0)
+                'desc'         => input('desc', 0),
+                'icon' => input('icon', '')
             ];
             $model = new GoodsServiceModel();
-            $res   = $model->editService($data);
+            $res   = $model->editService($data, [ ['id', '=', $id], ['site_id', '=', $this->site_id ] ]);
             return $res;
         }
     }

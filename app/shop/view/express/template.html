@@ -61,7 +61,7 @@
 
 <!-- 批量删除 -->
 <script type="text/html" id="batchOperation">
-	<button class="layui-btn layui-btn-primary" lay-event="del">删除</button>
+	<button class="layui-btn layui-btn-primary" lay-event="del">批量删除</button>
 </script>
 {/block}
 {block name="script"}
@@ -104,10 +104,10 @@
 					title: '操作',
 					toolbar: '#operation',
 					unresize: 'false',
-					width: '25%'
+					align:'right'
 				}]
 			],
-			// bottomToolbar: "#batchOperation"
+			bottomToolbar: "#batchOperation"
 		});
 
 		/**

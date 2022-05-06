@@ -15,6 +15,9 @@ namespace app\model\order;
 use addon\coupon\model\Coupon;
 use addon\freeshipping\model\Freeshipping;
 use addon\manjian\model\Manjian;
+use addon\store\model\StoreGoodsSku;
+use addon\supermember\model\MemberCard;
+use addon\supermember\model\MemberLevelOrder;
 use app\model\express\Local;
 use app\model\goods\Goods;
 use app\model\goods\GoodsStock;
@@ -60,6 +63,8 @@ class OrderCreate extends BaseModel
     private $balance_money = 0;
     private $member_balance_money = 0; //会员账户余额(计算过程中会逐次减少)
     private $point_money = 0; // 积分抵现金额
+    private $recommend_member_card; // 推荐会员卡
+    private $member_card_money = 0; // 会员卡开卡金额
 
     /**
      * 订单创建
@@ -71,10 +76,26 @@ class OrderCreate extends BaseModel
         $calculate_data = $this->calculate($data);
         if (isset($calculate_data[ 'code' ]) && $calculate_data[ 'code' ] < 0)
             return $calculate_data;
-
         if ($this->error > 0) {
             return $this->error([ 'error_code' => $this->error ], $this->error_msg);
         }
+
+        if(!empty($calculate_data['invoice_type'])){
+            if($calculate_data['invoice_type'] == 1 && $calculate_data['invoice_full_address'] == ""){
+                //物流,同城
+                if($calculate_data[ 'shop_goods_list' ]['delivery']['delivery_type'] == "express" || $calculate_data[ 'shop_goods_list' ]['delivery']['delivery_type'] == "local"){
+                    $calculate_data['invoice_full_address'] = $calculate_data['member_address']['full_address'].$calculate_data['member_address']['address'];
+                    $calculate_data[ 'shop_goods_list' ]['invoice_full_address'] = $calculate_data['member_address']['full_address'].$calculate_data['member_address']['address'];
+                }
+                //门店
+                if($calculate_data[ 'shop_goods_list' ]['delivery']['delivery_type'] == "store"){
+                    $delivery_store_info = json_decode($calculate_data[ 'shop_goods_list' ]['delivery_store_info'], true);
+                    $calculate_data['invoice_full_address'] = $delivery_store_info['full_address'];
+                    $calculate_data[ 'shop_goods_list' ]['invoice_full_address'] = $delivery_store_info['full_address'];
+                }
+            }
+        }
+
         $pay = new Pay();
         $out_trade_no = $pay->createOutTradeNo($data[ 'member_id' ]);
         model("order")->startTrans();
@@ -84,14 +105,12 @@ class OrderCreate extends BaseModel
             $pay_money = 0;
             $goods_stock_model = new GoodsStock();
             $order_item = $calculate_data[ 'shop_goods_list' ]; //订单数据主体
-
-
             $item_delivery = $order_item[ 'delivery' ] ?? [];
             $delivery_type = $item_delivery[ 'delivery_type' ] ?? '';
             $delivery_type_name = Express::express_type[ $delivery_type ][ "title" ] ?? '';
-
             //订单主表
             $order_type = $this->orderType($order_item, $calculate_data);
+
             $order_no = $this->createOrderNo($order_item[ 'site_id' ], $data[ 'member_id' ]);
             $data_order = [
                 'order_no' => $order_no,
@@ -151,9 +170,50 @@ class OrderCreate extends BaseModel
                 'invoice_email' => $order_item[ "invoice_email" ] ?? '',
                 'invoice_title_type' => $order_item[ "invoice_title_type" ] ?? 0,
                 'buyer_ask_delivery_time' => $order_item[ 'buyer_ask_delivery_time' ] ?? '',//定时达
+                'member_card_money' => $this->member_card_money
             ];
-
             $order_id = model("order")->add($data_order);
+
+            if ($data['jielong_id']){
+                model("promotion_jielong_order")->add([
+                    'order_no' => $order_no,
+                    'site_id' => $order_item[ 'site_id' ],
+                    'site_name' => $order_item[ 'site_name' ],
+                    'jielong_id' => $data[ 'jielong_id' ],
+                    'order_from' => $data[ 'order_from' ],
+                    'order_from_name' => $data[ 'order_from_name' ],
+                    'order_type' => $order_type[ 'order_type_id' ],
+                    'order_type_name' => $order_type[ 'order_type_name' ],
+                    'order_status_name' => $order_type[ 'order_status' ][ 'name' ],
+                    'order_status_action' => json_encode($order_type[ 'order_status' ], JSON_UNESCAPED_UNICODE),
+                    'member_id' => $data[ 'member_id' ],
+                    'name' => $calculate_data[ 'member_address' ][ 'name' ] ?? '',
+                    'mobile' => $calculate_data[ 'member_address' ][ 'mobile' ] ?? '',
+                    'telephone' => $calculate_data[ 'member_address' ][ 'telephone' ] ?? '',
+                    'province_id' => $calculate_data[ 'member_address' ][ 'province_id' ] ?? '',
+                    'city_id' => $calculate_data[ 'member_address' ][ 'city_id' ] ?? '',
+                    'district_id' => $calculate_data[ 'member_address' ][ 'district_id' ] ?? '',
+                    'community_id' => $calculate_data[ 'member_address' ][ 'community_id' ] ?? '',
+                    'address' => $calculate_data[ 'member_address' ][ 'address' ] ?? '',
+                    'full_address' => $calculate_data[ 'member_address' ][ 'full_address' ] ?? '',
+                    'longitude' => $calculate_data[ 'member_address' ][ 'longitude' ] ?? '',
+                    'latitude' => $calculate_data[ 'member_address' ][ 'latitude' ] ?? '',
+                    'buyer_ip' => request()->ip(),
+                    'buyer_ask_delivery_time'=>$order_item[ 'buyer_ask_delivery_time' ] ?? '',
+                    'buyer_message'=>$order_item[ "buyer_message" ],
+                    'num'=>$order_item[ 'goods_num' ],
+                    'goods_money' => $order_item[ 'goods_money' ],
+                    'delivery_money' => $order_item[ 'delivery_money' ],
+                    'promotion_money' => $order_item[ 'promotion_money' ],
+                    'coupon_id' => $order_item[ 'coupon_id' ] ?? 0,
+                    'coupon_money' => $order_item[ 'coupon_money' ] ?? 0,
+                    'order_money' => $order_item[ 'order_money' ],
+                    'delivery_type' => $delivery_type,
+                    'delivery_type_name' => $delivery_type_name,
+                    'create_time' => time(),
+                    'relate_order_id' => $order_id,
+                ]);
+            }
 
             $pay_money += $order_item[ 'pay_money' ];
             //订单项目表
@@ -185,7 +245,8 @@ class OrderCreate extends BaseModel
                     'goods_name' => $order_goods[ 'goods_name' ],
                     'sku_spec_format' => $order_goods[ 'sku_spec_format' ],
                     'use_point' => $order_goods[ 'use_point' ] ?? 0,
-                    'point_money' => $order_goods[ 'point_money' ] ?? 0.00
+                    'point_money' => $order_goods[ 'point_money' ] ?? 0.00,
+                    'create_time' => time(),
                 );
                 model("order_goods")->add($data_order_goods);
 
@@ -201,8 +262,9 @@ class OrderCreate extends BaseModel
                             'manjian_id' => $item[ 'manjian_info' ][ 'manjian_id' ],
                             'site_id' => $order_item[ 'site_id' ],
                             'manjian_name' => $item[ 'manjian_info' ][ 'manjian_name' ],
-                            'point' => isset($item[ 'rule' ][ 'point' ]) ? number_format($item[ 'rule' ][ 'point' ]) : 0,
+                            'point' => isset($item[ 'rule' ][ 'point' ]) ? round($item[ 'rule' ][ 'point' ]) : 0,
                             'coupon' => $item[ 'rule' ][ 'coupon' ] ?? 0,
+                            'coupon_num' => $item[ 'rule' ][ 'coupon_num' ] ?? '',
                             'order_id' => $order_id,
                             'member_id' => $data[ 'member_id' ],
                             'order_sku_ids' => !empty($item[ 'sku_ids' ]) ? implode($item[ 'sku_ids' ]) : '',
@@ -226,8 +288,22 @@ class OrderCreate extends BaseModel
                 }
             }
 
+            //订单生成后操作
+            $result_list = event("OrderCreate", [ 'order_id' => $order_id, 'create_data' => $calculate_data ]);
+            if (!empty($result_list)) {
+                foreach ($result_list as $k => $v) {
+                    if (!empty($v) && $v[ "code" ] < 0) {
+                        model("order")->rollback();
+                        return $v;
+                    }
+                }
+            }
+
+            $config_model = new Config();
+            $balance_config = $config_model->getBalanceConfig($order_item[ 'site_id' ]);
+
             //扣除余额(统一扣除)
-            if ($calculate_data[ "balance_money" ] > 0) {
+            if ($calculate_data[ "balance_money" ] > 0 && $balance_config[ 'data' ][ 'value' ][ 'balance_show' ] == 1) {
                 $calculate_data['order_id'] = $order_id;
                 $balance_result = $this->useBalance($calculate_data, $order_item[ 'site_id' ]);
                 if ($balance_result[ "code" ] < 0) {
@@ -245,17 +321,33 @@ class OrderCreate extends BaseModel
                 }
             }
 
-            //订单生成后操作
-            $result_list = event("OrderCreate", [ 'order_id' => $order_id ]);
-
-            if (!empty($result_list)) {
-                foreach ($result_list as $k => $v) {
-                    if (!empty($v) && $v[ "code" ] < 0) {
-                        model("order")->rollback();
-                        return $v;
-                    }
+            // 是否同时开通会员卡
+            if (!empty($this->recommend_member_card) && $calculate_data['is_open_card']) {
+                $member_level_order = new MemberLevelOrder();
+                $level_order_result = $member_level_order->create([ 'out_trade_no' => $out_trade_no, 'member_id' => $data[ 'member_id' ], 'site_id' => $order_item[ 'site_id' ], 'level_id' => $this->recommend_member_card['level_id'], 'period_unit' => $data['member_card_unit'] ]);
+                if ($level_order_result['code'] < 0) {
+                    model("order")->rollback();
+                    return $level_order_result;
                 }
+                model("order")->update(['member_card_order' => $level_order_result['data']['order_id'] ], [['order_id', '=', $order_id]]);
             }
+
+            //记录订单日志 start
+            $order_common_model = new OrderCommon();
+            //获取用户信息
+            $member_info = model('member')->getInfo(['member_id'=>$data['member_id']],'nickname');
+            $log_data = [
+                'order_id'          => $order_id,
+                'action'            => '买家【'.$member_info['nickname'].'】下单了',
+                'uid'               => $data[ 'member_id' ],
+                'nick_name'         => $member_info['nickname'],
+                'action_way'        => 1,
+                'order_status'      => 0,
+                'order_status_name' => $order_type[ 'order_status' ][ 'name' ]
+            ];
+            $order_common_model->addOrderLog($log_data);
+            //记录订单日志 end
+
 
             //生成整体付费支付单据
             $pay->addPay($calculate_data[ "site_id" ], $out_trade_no, $this->pay_type, $this->order_name, $this->order_name, $this->pay_money, '', 'OrderPayNotify', '');
@@ -268,7 +360,18 @@ class OrderCreate extends BaseModel
                     'cart_id' => $cart_ids,
                     'member_id' => $data[ 'member_id' ]
                 ];
-                $cart->deleteCart($data_cart);
+                if(addon_is_exit("jielong")){
+                    $jielong_cart = new \addon\jielong\model\Cart();
+                    //删除购物车
+                    if ($data['jielong_id']){
+                        $jielong_cart->deleteCart($data_cart);
+                    }else{
+                        $cart->deleteCart($data_cart);
+                    }
+                }else{
+                    $cart->deleteCart($data_cart);
+                }
+
             }
             //库存处理
             foreach ($order_item[ 'goods_list' ] as $k_order_goods => $order_goods) {
@@ -279,6 +382,7 @@ class OrderCreate extends BaseModel
                     return $stock_result;
                 }
             }
+
             model("order")->commit();
             //订单生成的消息
             $message_model = new Message();
@@ -288,6 +392,32 @@ class OrderCreate extends BaseModel
             model("order")->rollback();
             return $this->error('', $e->getMessage() . $e->getFile() . $e->getLine());
         }
+    }
+
+    public function verifyArea($data){
+        //查询出会员相关信息
+        $calculate_data = $this->calculate($data);
+        if (isset($calculate_data[ 'code' ]) && $calculate_data[ 'code' ] < 0)
+            return $calculate_data;
+        if ($this->error > 0) {
+            return $this->error([ 'error_code' => $this->error ], $this->error_msg);
+        }
+        if(!empty($data['delivery']['delivery_type']) && $data['delivery']['delivery_type'] == 'store') {
+            if (!empty($data['cart_ids'])) {
+                //商品列表信息
+                $shop_goods_list = $this->getOrderGoodsCalculate($data);
+            } else {
+                //商品列表信息
+                $shop_goods_list = $this->getOrderGoodsCalculate($data);
+            }
+            $goods_lists = $shop_goods_list['goods_list'];
+
+            $res = event("GoodsSkuStock", ['goodslist' => $goods_lists, 'data' => $data]);
+            if(!empty($res)){
+                return $this->error(['error_code'=>11], '当前门店库存不足,请选择其他门店');
+            }
+        }
+        return $this->success(1);
     }
 
     /**
@@ -323,27 +453,38 @@ class OrderCreate extends BaseModel
                 'order_status' => $order->order_status[ 0 ]
             ];
         } else {
-            if ($shop_goods[ 'delivery' ][ 'delivery_type' ] == 'express') {
+
+
+            if(isset($shop_goods['is_blindbox'])){
                 $order = new Order();
                 return [
                     'order_type_id' => 1,
-                    'order_type_name' => '普通订单',
+                    'order_type_name' => '盲盒订单',
                     'order_status' => $order->order_status[ 0 ]
                 ];
-            } elseif ($shop_goods[ 'delivery' ][ 'delivery_type' ] == 'store') {
-                $order = new StoreOrder();
-                return [
-                    'order_type_id' => 2,
-                    'order_type_name' => '自提订单',
-                    'order_status' => $order->order_status[ 0 ]
-                ];
-            } elseif ($shop_goods[ 'delivery' ][ 'delivery_type' ] == 'local') {
-                $order = new LocalOrder();
-                return [
-                    'order_type_id' => 3,
-                    'order_type_name' => '外卖订单',
-                    'order_status' => $order->order_status[ 0 ]
-                ];
+            }else{
+                if ($shop_goods[ 'delivery' ][ 'delivery_type' ] == 'express') {
+                    $order = new Order();
+                    return [
+                        'order_type_id' => 1,
+                        'order_type_name' => '普通订单',
+                        'order_status' => $order->order_status[ 0 ]
+                    ];
+                } elseif ($shop_goods[ 'delivery' ][ 'delivery_type' ] == 'store') {
+                    $order = new StoreOrder();
+                    return [
+                        'order_type_id' => 2,
+                        'order_type_name' => '自提订单',
+                        'order_status' => $order->order_status[ 0 ]
+                    ];
+                } elseif ($shop_goods[ 'delivery' ][ 'delivery_type' ] == 'local') {
+                    $order = new LocalOrder();
+                    return [
+                        'order_type_id' => 3,
+                        'order_type_name' => '外卖订单',
+                        'order_status' => $order->order_status[ 0 ]
+                    ];
+                }
             }
         }
     }
@@ -377,7 +518,6 @@ class OrderCreate extends BaseModel
             }
             $data[ 'shop_goods_list' ] = $this->shopOrderCalculate($shop_goods_list, $data);
         }
-
         // 商品限购判断
         foreach ($shop_goods_list[ 'limit_purchase' ] as $item) {
             if ($item[ 'min_buy' ] > 0 && $item[ 'num' ] < $item[ 'min_buy' ]) {
@@ -385,17 +525,28 @@ class OrderCreate extends BaseModel
                 $this->error_msg = "商品“{$item['goods_name']}”{$item['min_buy']}件起售";
                 break;
             }
-            if ($item[ 'max_buy' ] > 0) {
-                $goods_model = new Goods();
-                $purchased_num = $goods_model->getGoodsPurchasedNum($item[ 'goods_id' ], $data[ 'member_id' ]);
-                if (( $purchased_num + $item[ 'num' ] ) > $item[ 'max_buy' ]) {
-                    $this->error = 1;
-                    $this->error_msg = "商品“{$item['goods_name']}”每人限购{$item['max_buy']}件，您已购买{$purchased_num}件";
-                    break;
+
+            if ($item['is_limit'] == 1 && $item[ 'max_buy' ] > 0){  // 商品做限制购买
+                if($item['limit_type'] == 1){ // 单次限制
+                    if($item['num'] > $item['max_buy']){
+                        $this->error = 1;
+                        $this->error_msg = "商品“{$item['goods_name']}”每人限购{$item['max_buy']}件";
+                        break;
+                    }
+                }else{ // 长期限制
+                    $goods_model = new Goods();
+                    $purchased_num = $goods_model->getGoodsPurchasedNum($item[ 'goods_id' ], $data[ 'member_id' ]);
+                    if (( $purchased_num + $item[ 'num' ] ) > $item[ 'max_buy' ]) {
+                        $this->error = 1;
+                        $this->error_msg = "商品“{$item['goods_name']}”每人限购{$item['max_buy']}件，您已购买{$purchased_num}件";
+                        break;
+                    }
                 }
             }
         }
 
+        $coupon_list = $this->getOrderCouponList($data);
+        $data[ 'shop_goods_list' ][ "coupon_list" ] = $coupon_list;
         //总结计算
         $data[ 'delivery_money' ] = $this->delivery_money;
         $data[ 'coupon_money' ] = $this->coupon_money;
@@ -410,6 +561,8 @@ class OrderCreate extends BaseModel
         $data[ 'goods_num' ] = $this->goods_num;
         $data[ 'is_virtual' ] = $this->is_virtual;
         $data[ 'point_money' ] = $this->point_money;
+        $data[ 'member_card_money' ] = $this->member_card_money;
+        $data[ 'recommend_member_card' ] = $this->recommend_member_card;
         return $data;
     }
 
@@ -421,7 +574,6 @@ class OrderCreate extends BaseModel
     {
 
         $calculate_data = $this->calculate($data);
-
         //1、查询会员优惠券
         $coupon_list = $this->getOrderCouponList($calculate_data);
         $calculate_data[ 'shop_goods_list' ][ "coupon_list" ] = $coupon_list;
@@ -430,7 +582,11 @@ class OrderCreate extends BaseModel
             foreach ($calculate_data[ 'shop_goods_list' ]['deliver_sort'] as $type) {
                 // 物流
                 if ($type == 'express' && $calculate_data[ 'shop_goods_list' ][ "express_config" ][ "is_use" ] == 1) {
-                    $express_type[] = [ "title" => Express::express_type[ "express" ][ "title" ], "name" => "express" ];
+                    $title = $calculate_data[ 'shop_goods_list' ][ "express_config" ]['value']['express_name'];
+                    if($title == ""){
+                        $title =  Express::express_type[ "express" ][ "title" ];
+                    }
+                    $express_type[] = [ "title" => $title, "name" => "express" ];
                 }
                 // 自提
                 if ($type == 'store' && $calculate_data[ 'shop_goods_list' ][ "store_config" ][ "is_use" ] == 1) {
@@ -474,18 +630,32 @@ class OrderCreate extends BaseModel
                             }
                         }
                     }
-                    $express_type[] = [ "title" => Express::express_type[ "store" ][ "title" ], "name" => "store", "store_list" => $store_list, 'store_id' => $store_id ];
+
+                    $title = $calculate_data[ 'shop_goods_list' ][ "store_config" ]['value']['store_name'];
+                    if($title == ""){
+                        $title = Express::express_type[ "store" ][ "title" ];
+                    }
+                    $express_type[] = [ "title" => $title, "name" => "store", "store_list" => $store_list, 'store_id' => $store_id ];
                 }
                 // 外卖
                 if ($type == 'local' && $calculate_data[ 'shop_goods_list' ][ "local_config" ][ "is_use" ] == 1) {
                     //查询本店的通讯地址
-                    $express_type[] = [ "title" => "外卖配送", "name" => "local" ];
+                    $title = $calculate_data[ 'shop_goods_list' ][ "local_config" ]['value']['local_name'];
+                    if($title == ""){
+                        $title = '外卖配送';
+                    }
+
+                    $express_type[] = [ "title" => $title, "name" => "local" ];
                 }
             }
         }
 
         $calculate_data[ 'shop_goods_list' ][ "express_type" ] = $express_type;
+        $payment_event_data = event('OrderPayment', $data);
 
+        if (!empty($payment_event_data)) {
+            $calculate_data = array_merge($calculate_data, ...$payment_event_data);
+        }
         return $calculate_data;
     }
 
@@ -537,29 +707,24 @@ class OrderCreate extends BaseModel
             //            {
             //                return $cache;
             //            }
-            $shop_goods = $this->getCartGoodsList($data[ 'cart_ids' ], $data[ 'member_id' ], $data[ "site_id" ]);
+            $shop_goods = $this->getCartGoodsList($data[ 'cart_ids' ], $data[ 'member_id' ], $data[ "site_id" ], $data);
             //todo  验证商品是否是当前site_id
             //todo  验证商品是否是当前site_id
-
-            $shop_goods[ 'promotion_money' ] = 0;
-
-            $shop_goods_list = $shop_goods;
 
             //            Cache::tag("order_create_member_".$data['member_id'])->set("order_create_cart_".$data['cart_ids'].'_'.$data['member_id'], $shop_goods_list, 600);
 
-        } else {
+        }else {
             //            $cache = Cache::get("order_create_".$data['sku_id'].'_'.$data['num'].'_'.$data['member_id']);
             //            if(!empty($cache))
             //            {
             //                return $cache;
             //            }
             $shop_goods = $this->getShopGoodsList($data);
-            $shop_goods[ 'promotion_money' ] = 0;
 
-
-            $shop_goods_list = $shop_goods;
             //            Cache::tag("order_create_member_".$data['member_id'])->set("order_create_".$data['sku_id'].'_'.$data['num'].'_'.$data['member_id'], $shop_goods_list, 600);
         }
+        $shop_goods[ 'promotion_money' ] = 0;
+        $shop_goods_list = $shop_goods;
         //满减优惠
         $shop_goods_list = $this->manjianPromotion($shop_goods_list);
 
@@ -570,11 +735,11 @@ class OrderCreate extends BaseModel
      * 获取购物车商品列表信息
      * @param unknown $cart_ids
      */
-    public function getCartGoodsList($cart_ids, $member_id, $site_id)
+    public function getCartGoodsList($cart_ids, $member_id, $site_id, $data)
     {
         $goods_model = new Goods();
         //组装商品列表
-        $field = ' ngc.member_id, ngc.sku_id, ngc.num, ngs.sku_name, ngs.sku_no,
+        $field = ' ngc.member_id, ngc.sku_id, ngc.num, ngs.is_limit, ngs.limit_type, ngs.sku_name, ngs.sku_no,
             ngs.price, ngs.discount_price, ngs.cost_price, ngs.stock, ngs.weight, ngs.volume, ngs.sku_image, 
             ngs.site_id, ngs.goods_state, ngs.is_virtual, 
             ngs.is_free_shipping, ngs.shipping_template, ngs.goods_class, ngs.goods_class_name, ngs.goods_id,ns.site_name,ngs.sku_spec_format,ngs.goods_name,ngs.max_buy,ngs.min_buy';
@@ -591,7 +756,12 @@ class OrderCreate extends BaseModel
                 'inner'
             ]
         ];
-        $goods_list = model("goods_cart")->getList([ [ 'cart_id', 'in', $cart_ids ], [ 'member_id', '=', $member_id ] ], $field, '', $alias, $join);
+        if ($data['jielong_id']){
+            $goods_list = model("promotion_jielong_cart")->getList([ [ 'cart_id', 'in', $cart_ids ], [ 'member_id', '=', $member_id ] ], $field, '', $alias, $join);
+        }else{
+            $goods_list = model("goods_cart")->getList([ [ 'cart_id', 'in', $cart_ids ], [ 'member_id', '=', $member_id ] ], $field, '', $alias, $join);
+        }
+
         $shop_goods_list = [];
         if (!empty($goods_list)) {
             foreach ($goods_list as $k => $v) {
@@ -602,6 +772,18 @@ class OrderCreate extends BaseModel
                 $price_result = $goods_model->getGoodsPrice($v[ 'sku_id' ], $member_id);
                 $price_info = $price_result[ "data" ];
                 $price = $price_info[ "price" ];
+
+                // 是否存在推荐会员卡
+                if (!empty($this->recommend_member_card)) {
+                    $card_price_result = $goods_model->getMemberCardGoodsPrice($v[ 'sku_id' ], $this->recommend_member_card['level_id']);
+                    $card_price_info = $card_price_result[ "data" ];
+                    $card_price = $card_price_info[ "price" ];
+                    if ($card_price > 0 && $card_price < $price) {
+                        $this->recommend_member_card['discount_money'] += ($price - $card_price) * $v[ 'num' ];
+                        if ($data['is_open_card']) $price = $card_price;
+                    }
+                }
+
                 $v[ 'price' ] = $price;
                 $v[ 'goods_money' ] = $price * $v[ 'num' ];
                 $v[ 'real_goods_money' ] = $v[ 'goods_money' ];
@@ -622,6 +804,8 @@ class OrderCreate extends BaseModel
                             'goods_id' => $v[ 'goods_id' ],
                             'goods_name' => $v[ 'sku_name' ],
                             'num' => $v[ 'num' ],
+                            'is_limit' => $v[ 'is_limit' ],
+                            'limit_type' => $v[ 'limit_type' ],
                             'max_buy' => $v[ 'max_buy' ],
                             'min_buy' => $v[ 'min_buy' ]
                         ];
@@ -639,6 +823,8 @@ class OrderCreate extends BaseModel
                         'goods_id' => $v[ 'goods_id' ],
                         'goods_name' => $v[ 'sku_name' ],
                         'num' => $v[ 'num' ],
+                        'is_limit' => $v[ 'is_limit' ],
+                        'limit_type' => $v[ 'limit_type' ],
                         'max_buy' => $v[ 'max_buy' ],
                         'min_buy' => $v[ 'min_buy' ]
                     ];
@@ -662,7 +848,7 @@ class OrderCreate extends BaseModel
                 'inner'
             ]
         ];
-        $field = 'sku_id, sku_name, sku_no, price, discount_price,cost_price, stock, volume, weight, sku_image, ngs.site_id, goods_state, is_virtual, is_free_shipping, shipping_template,goods_class, goods_class_name, goods_id, ns.site_name,sku_spec_format,goods_name,max_buy,min_buy';
+        $field = 'sku_id, sku_name, sku_no, price, discount_price,cost_price, stock, volume, weight, sku_image, ngs.site_id, goods_state, is_virtual, is_free_shipping, shipping_template,goods_class, goods_class_name, goods_id, ns.site_name,sku_spec_format,goods_name,max_buy,min_buy,is_limit,limit_type';
         $sku_info = model("goods_sku")->getInfo([ [ 'sku_id', '=', $data[ 'sku_id' ] ], [ "ngs.site_id", "=", $data[ "site_id" ] ] ], $field, 'ngs', $join);
         if (empty($sku_info)) {
             return $this->error([], "不存在的商品!");
@@ -671,6 +857,17 @@ class OrderCreate extends BaseModel
         $price_result = $goods_model->getGoodsPrice($data[ 'sku_id' ], $data[ 'member_id' ]);
         $price_info = $price_result[ "data" ];
         $price = $price_info[ "price" ];
+
+        // 是否存在推荐会员卡
+        if (!empty($this->recommend_member_card)) {
+            $card_price_result = $goods_model->getMemberCardGoodsPrice($data[ 'sku_id' ], $this->recommend_member_card['level_id']);
+            $card_price_info = $card_price_result[ "data" ];
+            $card_price = $card_price_info[ "price" ];
+            if ($card_price > 0 && $card_price < $price) {
+                $this->recommend_member_card['discount_money'] = ($price - $card_price) * $data[ 'num' ];
+                if ($data['is_open_card']) $price = $card_price;
+            }
+        }
 
         $sku_info[ 'num' ] = $data[ 'num' ];
         $goods_money = $price * $data[ 'num' ];
@@ -692,6 +889,8 @@ class OrderCreate extends BaseModel
                 'goods_' . $sku_info[ 'goods_id' ] => [
                     'goods_id' => $sku_info[ 'goods_id' ],
                     'goods_name' => $sku_info[ "sku_name" ],
+                    'is_limit' => $sku_info['is_limit'],
+                    'limit_type' => $sku_info['limit_type'],
                     'num' => $sku_info[ 'num' ],
                     'max_buy' => $sku_info[ 'max_buy' ],
                     'min_buy' => $sku_info[ 'min_buy' ]
@@ -735,7 +934,7 @@ class OrderCreate extends BaseModel
             //虚拟订单  运费为0
             $delivery_money = 0;
             $shop_goods[ 'delivery' ][ 'delivery_type' ] = '';
-        } else {
+        }else {
             $express_config_model = new ExpressConfig();
 
             $deliver_type = $express_config_model->getDeliverTypeSort($site_id);
@@ -777,6 +976,7 @@ class OrderCreate extends BaseModel
                         $this->error_msg = "门店未选择!";
                     }
                     $shop_goods[ 'delivery' ][ 'store_id' ] = $data[ 'delivery' ][ "store_id" ];
+                    $shop_goods[ 'buyer_ask_delivery_time' ] = $data[ 'buyer_ask_delivery_time' ];
 
                     $shop_goods = $this->storeOrderData($shop_goods, $data);
                 }
@@ -819,17 +1019,18 @@ class OrderCreate extends BaseModel
                             if (!empty($data[ 'buyer_ask_delivery_time' ])) {
                                 //$buyer_ask_delivery_time_temp = explode(':', $data['buyer_ask_delivery_time']);
                                 //$local_delivery_time          = $buyer_ask_delivery_time_temp[0] * 3600 + $buyer_ask_delivery_time_temp[1] * 60;
-                                $local_delivery_time = strtotime($data[ 'buyer_ask_delivery_time' ]);
+                                $local_delivery_time = $data[ 'buyer_ask_delivery_time' ];
                             }
                             $shop_goods[ 'buyer_ask_delivery_time' ] = $local_delivery_time;
 
                             $local_model = new Local();
                             $local_result = $local_model->calculate($shop_goods, $data);
 
-
+                            $shop_goods[ 'delivery' ][ 'start_money' ] = 0;
                             if ($local_result[ 'code' ] < 0) {
                                 $this->error = $local_result[ 'data' ][ 'code' ];
                                 $this->error_msg = $local_result[ 'message' ];
+                                $shop_goods[ 'delivery' ][ 'start_money' ] = $local_result[ 'data' ]['start_money_array'][0] ?? 0;
                             } else {
                                 $delivery_money = $local_result[ 'data' ][ 'delivery_money' ];
                                 if (!empty($local_result[ 'data' ][ 'error_code' ])) {
@@ -837,6 +1038,10 @@ class OrderCreate extends BaseModel
                                     $this->error_msg = $local_result[ 'data' ][ 'error' ];
                                 }
                             }
+
+                            $shop_goods[ 'delivery' ][ 'error' ] = $this->error;
+                            $shop_goods[ 'delivery' ][ 'error_msg' ] = $this->error_msg;
+
                         }
                     }
                 }
@@ -875,7 +1080,10 @@ class OrderCreate extends BaseModel
         //发票相关
         $shop_goods = $this->invoice($shop_goods, $data);
 
-        $order_money = $order_money + $shop_goods[ 'invoice_money' ] + $shop_goods[ 'invoice_delivery_money' ];
+        // 会员卡开卡金额
+        $member_card_money = $this->calculateMemberCardMoney($data);
+
+        $order_money = $order_money + $shop_goods[ 'invoice_money' ] + $shop_goods[ 'invoice_delivery_money' ] + $member_card_money;
 
         //理论上是多余的操作
         if ($order_money < 0) {
@@ -908,7 +1116,6 @@ class OrderCreate extends BaseModel
         $shop_goods[ 'order_money' ] = $order_money;
         $shop_goods[ 'balance_money' ] = $balance_money;
         $shop_goods[ 'pay_money' ] = $pay_money;
-
         $this->goods_money += $goods_money;
         $this->delivery_money += $delivery_money;
         $this->coupon_money += $coupon_money;
@@ -918,10 +1125,10 @@ class OrderCreate extends BaseModel
         $this->promotion_money += $promotion_money;
         $this->order_money += $order_money;
         $this->pay_money += $pay_money;
-
         $this->goods_num += $shop_goods[ "goods_num" ];
         $this->order_name = string_split($this->order_name, ",", $shop_goods[ "order_name" ]);
         $this->point_money += $point_money;
+        $this->member_card_money += $member_card_money;
 
         //买家留言
         if (isset($data[ 'buyer_message' ]) && isset($data[ 'buyer_message' ])) {
@@ -950,6 +1157,7 @@ class OrderCreate extends BaseModel
             $shop_goods[ 'invoice' ][ 'invoice_content_array' ] = $invoice_content_array;
             $shop_goods[ 'invoice' ][ 'invoice_delivery_money' ] = $shop_goods[ 'order_config' ][ 'invoice_money' ] ?? 0;
             $shop_goods[ 'invoice' ][ 'invoice_rate' ] = $shop_goods[ 'order_config' ][ 'invoice_rate' ] ?? 0;
+            $shop_goods[ 'invoice' ][ 'invoice_type' ] = $shop_goods[ 'order_config' ][ 'invoice_type' ] ?? '1,2';
 
             $is_invoice = $data[ 'is_invoice' ] ?? 0;
             $shop_goods[ 'is_invoice' ] = $is_invoice;
@@ -963,12 +1171,13 @@ class OrderCreate extends BaseModel
                 $invoice_type = $data[ 'invoice_type' ] ?? 1;
                 if ($invoice_type == 1) {
                     $invoice_delivery_money = $shop_goods[ 'invoice' ][ 'invoice_delivery_money' ];
-                    if (empty($data[ 'invoice_full_address' ])) {
-                        $this->error = 1;
-                        $this->error_msg = "发票邮寄地址不能为空!";
-                    } else {
-                        $shop_goods[ 'invoice_full_address' ] = $data[ 'invoice_full_address' ];
-                    }
+                    $shop_goods[ 'invoice_full_address' ] = !empty($data[ 'invoice_full_address' ]) ? $data[ 'invoice_full_address' ] : "";
+//                    if (empty($data[ 'invoice_full_address' ])) {
+//                        $this->error = 1;
+//                        $this->error_msg = "发票邮寄地址不能为空!";
+//                    } else {
+//                        $shop_goods[ 'invoice_full_address' ] = $data[ 'invoice_full_address' ];
+//                    }
                 } else {
                     if (empty($data[ 'invoice_email' ])) {
                         $this->error = 1;
@@ -1002,6 +1211,19 @@ class OrderCreate extends BaseModel
     }
 
     /**
+     * 计算会员卡开卡金额
+     * @param $data
+     */
+    public function calculateMemberCardMoney($data){
+        $money = 0;
+        if (!empty($this->recommend_member_card) && $data['is_open_card']) {
+            $charge_rule = $this->recommend_member_card['charge_rule'];
+            $money = $charge_rule[ $data['member_card_unit'] ] ?? 0;
+        }
+        return $money;
+    }
+
+    /**
      * 增加订单自动关闭事件
      * @param $order_id
      */
@@ -1016,6 +1238,12 @@ class OrderCreate extends BaseModel
             $execute_time = $now_time + $order_config[ "value" ][ "auto_close" ] * 60; //自动关闭时间
             $cron_model = new Cron();
             $cron_model->addCron(1, 0, "订单自动关闭", "CronOrderClose", $execute_time, $order_id);
+
+            // 订单催付通知
+            // 未付款订单将会在订单关闭前10分钟对买家进行催付提醒
+            if($this->pay_money > 0){
+                $cron_model->addCron(1, 0, "订单催付通知", "CronOrderUrgePayment", $execute_time-600, $order_id);
+            }
         }
     }
 
@@ -1052,6 +1280,10 @@ class OrderCreate extends BaseModel
                     "latitude" => $store_info[ "latitude" ],
                     "telphone" => $store_info[ "telphone" ],
                     "store_image" => $store_info[ "store_image" ],
+                    'time_type' => $store_info['time_type'],
+                    'time_week' => $store_info['time_week'],
+                    'start_time' => $store_info['start_time'],
+                    'end_time' => $store_info['end_time'],
                 );
                 $temp_data[ "delivery_store_info" ] = json_encode($delivery_store_info, JSON_UNESCAPED_UNICODE);
             }
@@ -1063,12 +1295,13 @@ class OrderCreate extends BaseModel
     }
 
     /**
-     * 使用优惠券
+     * 使用余额
      * @param $data
      * @param $site_id
+     * @param string $from_type
      * @return array
      */
-    public function useBalance($data, $site_id)
+    public function useBalance($data, $site_id, $from_type = 'order')
     {
         $this->pay_type = "BALANCE";
         $member_model = new Member();
@@ -1086,7 +1319,7 @@ class OrderCreate extends BaseModel
             } else {
                 $real_balance = $balance;
             }
-            $result = $member_account_model->addMemberAccount($site_id, $data[ "member_id" ], "balance", -$real_balance, "order", $data['order_id'], "订单余额抵扣,扣除不可提现余额:" . $real_balance);
+            $result = $member_account_model->addMemberAccount($site_id, $data[ "member_id" ], "balance", -$real_balance, $from_type, $data['order_id'], "订单余额抵扣,扣除不可提现余额:" . $real_balance);
             $surplus_banance -= $real_balance;
         }
 
@@ -1099,7 +1332,7 @@ class OrderCreate extends BaseModel
         //                $result = $member_account_model->addMemberAccount($data["member_id"], "balance", -$real_balance, "order", "余额抵扣","订单余额抵扣,扣除不可提现余额:".$real_balance);
         //            }
         if ($surplus_banance > 0) {
-            $result = $member_account_model->addMemberAccount($site_id, $data[ "member_id" ], "balance_money", -$surplus_banance, "order", $data['order_id'], "订单余额抵扣,扣除可提现余额:" . $surplus_banance);
+            $result = $member_account_model->addMemberAccount($site_id, $data[ "member_id" ], "balance_money", -$surplus_banance, $from_type, $data['order_id'], "订单余额抵扣,扣除可提现余额:" . $surplus_banance);
         }
 
         return $result;
@@ -1116,7 +1349,7 @@ class OrderCreate extends BaseModel
     public function initMemberAccount($data)
     {
         $member_model = new Member();
-        $member_info_result = $member_model->getMemberDetail($data[ "member_id" ]);
+        $member_info_result = $member_model->getMemberDetail($data[ "member_id" ], $data["site_id"]);
         $member_info = $member_info_result[ "data" ];
 
         if (!empty($member_info)) {
@@ -1128,6 +1361,17 @@ class OrderCreate extends BaseModel
             unset($member_info[ "pay_password" ]);
             $member_info[ "is_pay_password" ] = $is_pay_password;
             $data[ 'member_account' ] = $member_info;
+
+            // 查询推荐会员卡
+            if ($member_info['member_level_type'] == 0 && addon_is_exit('supermember', $data['site_id'])) {
+                $member_card_model = new MemberCard();
+                $recommend_member_card = $member_card_model->getRecommendMemberCard($data['site_id']);
+                if (!empty($recommend_member_card['data'])) {
+                    $recommend_member_card['data']['discount_money'] = 0;
+                    $recommend_member_card['data']['charge_rule'] = json_decode($recommend_member_card['data']['charge_rule'], true);
+                    $this->recommend_member_card = $recommend_member_card['data'];
+                }
+            }
         }
 
         return $data;
@@ -1158,7 +1402,6 @@ class OrderCreate extends BaseModel
 
             $discount_money = $discount_array[ 'real_discount_money' ];
             $calculate_data[ 'goods_list' ] = $goods_list;
-            $calculate_data[ "promotion" ][ 'manjian' ] = $manjian_list;
             $calculate_data[ 'promotion_money' ] += $discount_money;
 
             if (!empty($discount_array[ 'rule' ])) {
@@ -1167,6 +1410,7 @@ class OrderCreate extends BaseModel
                     'rule' => $discount_array[ 'rule' ],
                     'sku_ids' => ''
                 ];
+                $calculate_data[ "promotion" ][ 'manjian' ] = $manjian_list;
             }
         } else {
             $goods_ids = array_unique(array_column($calculate_data[ 'goods_list' ], 'goods_id'));
@@ -1216,8 +1460,8 @@ class OrderCreate extends BaseModel
                         ]);
                     }
                 }
-                $calculate_data[ 'goods_list' ] = $goods_list;
                 $calculate_data[ "promotion" ][ 'manjian' ] = $manjian_list;
+                $calculate_data[ 'goods_list' ] = $goods_list;
                 $calculate_data[ 'promotion_money' ] += $discount_money;
             }
         }
@@ -1333,6 +1577,8 @@ class OrderCreate extends BaseModel
                 $coupon_money = 0;
                 if ($coupon_info[ 'type' ] == 'reward') { //满减优惠券
                     $coupon_money = $coupon_info[ 'money' ] > $coupon_goods_money ? $coupon_goods_money : $coupon_info[ 'money' ];
+                }else if ($coupon_info[ 'type' ] == 'divideticket') {   //瓜分优惠券
+                    $coupon_money = $coupon_info[ 'money' ] > $coupon_goods_money ? $coupon_goods_money : $coupon_info[ 'money' ];
                 } else if ($coupon_info[ 'type' ] == 'discount') { //折扣优惠券
                     //计算折扣优惠金额
                     $coupon_money = $coupon_goods_money * ( 10 - $coupon_info[ 'discount' ] ) / 10;
@@ -1404,7 +1650,7 @@ class OrderCreate extends BaseModel
                         $item_goods_money += $goods_v[ 'goods_money' ];
                     }
                 }
-                if ($item_goods_money > $v[ 'at_least' ]) {
+                if ($item_goods_money >= $item_v[ 'at_least' ]) {
                     $coupon_list[] = $item_v;
                 }
                 //            $intersect_goods_ids = array_intersect($item_goods_ids, $goods_ids);
@@ -1485,6 +1731,7 @@ class OrderCreate extends BaseModel
      */
     public function getMaxUsablePoint($shop_goods, $data)
     {
+
         $point = 0;
         // 获取积分抵现配置
         $config_model = new PointCashConfig();

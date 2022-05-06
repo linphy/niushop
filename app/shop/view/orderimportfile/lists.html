@@ -1,14 +1,29 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.ns-single-filter-box {
-		background-color: transparent;
-	}
+	.ns-single-filter-box {background-color: transparent;}
+	.layui-table .ns-table-btn {justify-content: unset;}
 </style>
 {/block}
 {block name="main"}
 
-
+<div class="layui-collapse ns-tips">
+	<div class="layui-colla-item">
+		<h2 class="layui-colla-title">操作提示</h2>
+		<ul class="layui-colla-content layui-show">
+			<li>第 1 步：待发货的订单只适用于待发货的普通订单。</li>
+		</ul>
+		<ul class="layui-colla-content layui-show">
+			<li>第 2 步：先下载发货单和物流公司、电子面单对照表。</li>
+		</ul>
+		<ul class="layui-colla-content layui-show">
+			<li>第 3 步：对照物流公司和电子面单把待发货表中发货方式、物流公司、物流单号填写清楚。</li>
+		</ul>
+		<ul class="layui-colla-content layui-show">
+			<li>第 4 步：导入填写好的发货单。</li>
+		</ul>
+	</div>
+</div>
 <!-- 搜索框 -->
 <div class="ns-single-filter-box">
 	<div class="ns-form-row">
@@ -32,6 +47,7 @@
 <!-- 操作 -->
 <script type="text/html" id="operation">
 	<div class="ns-table-btn">
+		<a class="layui-btn" lay-event="download">下载</a>
 		<a class="layui-btn" lay-event="detail">详情</a>
 		<a class="layui-btn" lay-event="delete">删除</a>
 	</div>
@@ -91,31 +107,36 @@
 			cols: [
 				[{
 					field: 'filename',
-					title: '文件名称',
+					title: '记录编号',
 					unresize: 'false',
 					width:'25%'
 				}, {
-                    field: 'order_num',
-					title: '导入订单数',
+                    field: 'username',
+					title: '操作人',
                     unresize: 'false'
+				},  {
+					title: '操作时间',
+					unresize: 'false',
+					templet: function (data) {
+						return ns.time_to_date(data.create_time);
+					}
+				},{
+					field: 'order_num',
+					title: '发货订单数',
+					unresize: 'false'
 				}, {
                     field: 'success_num',
-                    title: '成功数',
+                    title: '成功发货数',
                     unresize: 'false'
                 }, {
                     field: 'error_num',
-                    title: '失败数',
+                    title: '失败发货数',
                     unresize: 'false'
-                }, {
-                    title: '导入时间',
-                    unresize: 'false',
-                    templet: function (data) {
-                        return ns.time_to_date(data.create_time);
-                    }
                 }, {
 					title: '操作',
 					toolbar:'#operation',
-					unresize:'false'
+					unresize:'false',
+					align:'right'
 				}]
 			]
 
@@ -134,7 +155,8 @@
 				case 'delete': //删除
                     deleteOrderImportFile(data.id);
 					break;
-
+				case 'download':
+					location.href = ns.img(data.path);
 			}
 		});
 

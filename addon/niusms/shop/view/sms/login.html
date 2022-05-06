@@ -10,6 +10,15 @@
 		background: #ffe1d2;
 		color: #ff8143;
 	}
+	.ns-form-row{
+		width: 240px;
+		display: flex;
+		justify-content: space-between;
+	}
+	button{
+		width:100px;
+		height:34px;
+	}
 </style>
 {/block}
 {block name="main"}
@@ -33,6 +42,7 @@
 
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">登录</button>
+		<button class="layui-btn layui-btn-primary btn-sign" onclick="location.href=ns.url('niusms://shop/sms/forget')">忘记密码</button>
 	</div>
 
 </div>

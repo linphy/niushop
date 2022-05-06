@@ -1,5 +1,4 @@
-var selectedGoodsId = [], goods_id=[];
-
+var selectedGoodsId = [], goods_id=[], coupon_id = [], addCoupon, currIndex;
 $.each(goods_list, function(index, item) {
 	var id = item.goods_id;
 	selectedGoodsId.push(id);
@@ -7,15 +6,26 @@ $.each(goods_list, function(index, item) {
 });
 $("input[name='goods_ids']").val(goods_id.toString());
 
+
+Object.values(manjian_info).forEach((item,index)=>{
+	if (item.coupon_data) {
+		var arr = [];
+		item.coupon_data.forEach((subItem,subIndex)=>{
+			arr.push(subItem.coupon_type_id);
+		});
+		coupon_id.push(arr);
+	}
+});
+
 var table, form, laydate, laytpl, repeat_flag = false; //防重复标识
 
 layui.use(['form', 'laydate', 'laytpl'], function() {
 	form = layui.form,
-	laydate = layui.laydate,
-	laytpl =  layui.laytpl;
-	
+		laydate = layui.laydate,
+		laytpl =  layui.laytpl;
+
 	form.render();
-	
+
 	renderTable(goods_list); // 初始化表格
 
 	laydate.render({
@@ -27,24 +37,24 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 		elem: '#end_time',
 		type: 'datetime'
 	});
-	
-    //监听活动商品类型
-    form.on('radio(manjian_type)', function(data){
-        var value = data.value;
 
-        if(value == 1){
-            $(".goods_list").hide();
-        }
-        if(value == 2){
-            $(".goods_list").show();
-        }
-    });
+	//监听活动商品类型
+	form.on('radio(manjian_type)', function(data){
+		var value = data.value;
 
- 	form.on('radio(type)', function(data){
-        var value = data.value;
-        $('.level-item .type-' + value).removeClass('layui-hide').siblings('div').addClass('layui-hide');
-    });
-	
+		if(value == 1){
+			$(".goods_list").hide();
+		}
+		if(value == 2){
+			$(".goods_list").show();
+		}
+	});
+
+	form.on('radio(type)', function(data){
+		var value = data.value;
+		$('.level-item .type-' + value).removeClass('layui-hide').siblings('div').addClass('layui-hide');
+	});
+
 	/**
 	 * 表单验证
 	 */
@@ -100,9 +110,25 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 					return '数量不能小于0!';
 				}
 			}
+		},
+		coupon_num: function(value){
+			if (!/[\S]+/.test(value)) {
+				return '请输入优惠券赠送数量';
+			}
+			if (value < 1) {
+				return '优惠券赠送数量不能少于一张';
+			}
+		},
+		goods_num:function (value) {
+			var manjian_type = $('[name="manjian_type"]:checked').val();
+			if(manjian_type == 2){
+				if(value == 0){
+					return '请选择活动商品!';
+				}
+			}
 		}
 	});
-	
+
 	/**
 	 * 监听提交
 	 */
@@ -117,9 +143,9 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 				if (parseFloat(prevLimit) >= parseFloat(limit)) {
 					showErrMsg('优惠门槛需大于上一级优惠门槛', $(this).find('.type-'+ type +' .layui-input'));
 					verify = false;
-					return false;				
+					return false;
 				}
-			} 
+			}
 			rule[limit] = {
 				limit: limit
 			}
@@ -128,7 +154,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 				if (!/[\S]+/.test(discount_money)) {
 					showErrMsg('请输入优惠金额', $(this).find('.discount-item.discount-money .layui-input'));
 					verify = false;
-					return false;	
+					return false;
 				}
 				discount_money = parseFloat(discount_money);
 				if (discount_money <= 0) {
@@ -155,7 +181,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 				if (!/[\S]+/.test(point)) {
 					showErrMsg('请输入赠送积分数', $(this).find('.discount-item.point .layui-input'));
 					verify = false;
-					return false;	
+					return false;
 				}
 				if (point <= 0) {
 					showErrMsg('赠送积分数不能小于等于0', $(this).find('.discount-item.point .layui-input'));
@@ -164,27 +190,36 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 				}
 			}
 
+			var coupon = [];
+			var coupon_num = [];
 			if ($(this).find('[value="coupon"]').is(':checked')) {
-				var coupon = $(this).find('.discount-item.coupon tr[data-coupon]').attr('data-coupon');
-				if (coupon == undefined) {
+
+				$(this).find('tr[data-coupon]').each(function (i, e) {
+					coupon.push($(e).attr('data-coupon'));
+				});
+				$(this).find(".coupon input[name='number']").each(function(j,item){
+					coupon_num.push(item.value);
+				});
+				if (!coupon.length) {
 					showErrMsg('请选择要赠送的优惠券');
 					verify = false;
-					return false;	
+					return false;
 				}
-				rule[limit].coupon = coupon;
+				rule[limit].coupon = coupon.toString();
+				rule[limit].coupon_num = coupon_num.toString();
 			}
 
 			if (rule[limit].discount_money == undefined && rule[limit].free_shipping == undefined && rule[limit].point == undefined && rule[limit].coupon == undefined) {
 				showErrMsg('请选择活动层级'+ (i + 1) +'的优惠内容');
 				verify = false;
-				return false;	
+				return false;
 			}
 		})
-		
+
 		if (!verify) return;
 
 		data.field.rule_json = JSON.stringify(rule);
-		
+
 		if (repeat_flag) return;
 		repeat_flag = true;
 
@@ -195,7 +230,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 			dataType: 'JSON',
 			success: function (res) {
 				repeat_flag = false;
-				
+
 				if (res.code == 0) {
 					layer.confirm('编辑成功', {
 						title:'操作提示',
@@ -225,13 +260,22 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 			}
 		});
 	});
-	
+
 	function showErrMsg(msg, e){
 		layer.msg(msg, { icon: 5, shift: 6 });
 		if (e != undefined) {
-			$(e).focus();	
+			$(e).focus();
 		}
 	}
+
+	form.on('submit(coupon-search)', function(data) {
+		couponTable.reload({
+			page: {
+				curr: 1
+			},
+			where: data.field
+		})
+	})
 });
 
 // 表格渲染
@@ -278,7 +322,7 @@ function renderTable(goods_list) {
 				title: '操作',
 				toolbar: '#operation',
 				unresize: 'false',
-				width: '10%'
+				align:'right'
 			}],
 		],
 		data: goods_list,
@@ -290,14 +334,14 @@ function delGoods(id) {
 	var i, j;
 	$.each(goods_list, function(index, item) {
 		var goods_id = item.goods_id;
-		
+
 		if (id == goods_id) {
 			i = index;
 		}
 	});
 	goods_list.splice(i, 1);
 	renderTable(goods_list);
-	
+
 	$.each(selectedGoodsId, function(index, item) {
 		if (id == item) {
 			j = index;
@@ -305,22 +349,25 @@ function delGoods(id) {
 	});
 	selectedGoodsId.splice(j, 1);
 	goods_id = selectedGoodsId;
+	$("#goods_num").html(selectedGoodsId.length)
 	$("input[name='goods_ids']").val(goods_id.toString());
 }
 
 function addGoods(){
-    goodsSelect(function (res) {
+	goodsSelect(function (res) {
 		if (!res.length) return false;
-		
-        for(var i=0;i<res.length;i++) {
-            goods_id.push(res[i].goods_id);
+		goods_id = [];
+		goods_list = [];
+		for(var i=0;i<res.length;i++) {
+			goods_id.push(res[i].goods_id);
 			goods_list.push(res[i]);
-        }
+		}
 		renderTable(goods_list);
-        $("input[name='goods_ids']").val(goods_id.toString());
-        selectedGoodsId = goods_id;
-
-    }, selectedGoodsId, {mode: "spu"});
+		$("input[name='goods_ids']").val(goods_id.toString());
+		selectedGoodsId = goods_id;
+		$("#goods_num").html(selectedGoodsId.length)
+	}, selectedGoodsId, {mode: "spu"});
+	goods_list.splice(0,goods_list.length);
 }
 
 function back() {
@@ -330,11 +377,11 @@ function back() {
 // 添加优惠层级
 function addDiscountLevel(){
 	var type = $('[name="type"]:checked').val();
-		length = $('.discount-level .level-item').length;
-		if (length == 5) {
-			layer.msg('最多支持五个活动层级')
-			return;
-		}
+	length = $('.discount-level .level-item').length;
+	if (length == 5) {
+		layer.msg('最多支持五个活动层级')
+		return;
+	}
 	var template = `<div class="level-item">
 		<div class="level-head">
 			<label class="title">活动层级{{ d.length + 1 }}：</label>
@@ -408,13 +455,15 @@ function addDiscountLevel(){
 								<table class="layui-table" lay-skin="nob">
 								  	<colgroup>
 									    <col width="30%">
-									    <col width="50%">
+									    <col width="30%">
+									    <col width="20%">
 									    <col width="20%">
 								  	</colgroup>
 							  		<thead>
 									    <tr>
 									      	<th>优惠券</th>
 									      	<th>优惠内容</th>
+									      	<th>赠券数</th>
 									      	<th style="text-align:center;">操作</th>
 									    </tr> 
 								  	</thead>
@@ -430,11 +479,11 @@ function addDiscountLevel(){
 	</div>`;
 	laytpl(template).render({
 		length: length,
-	    type: type
-  	}, function(string){
-	    $('.discount-level .level-item:last').after(string);
-	    form.render();
-  	});
+		type: type
+	}, function(string){
+		$('.discount-level .level-item:last').after(string);
+		form.render();
+	});
 }
 
 // 选择优惠
@@ -447,104 +496,101 @@ $('body').on('click', '.discount-item .layui-form-checkbox', function(e){
 })
 
 $('body').on('click', '.discount-item .select-coupon', function(e){
-	var event = this;
+	currIndex = $(this).parents('.level-item').index();
+	var data = {};
+	data.coupon_id = coupon_id[currIndex] != undefined ? coupon_id[currIndex] : [];
+	
+	laytpl($("#couponList").html()).render(data, function(html) {
+		coupon_list = layer.open({
+			title: '优惠券列表',
+			skin: 'layer-tips-class',
+			type: 1,
+			area: ['850px', '600px'],
+			content: html,
+		});
 
-	layer.open({
-        type: 1,
-        area: ["900px","600px"],
-        title: '优惠券列表',
-		skin: 'ns-layer-box',
-        content: $("#couponList").html()
-    });
+		if ($("tbody tr input:checked").length == $(".coupon-box tbody tr").length) {
+			$("input[lay-filter='selectAll']").prop("checked", true);
+		}
 
-    couponTable = new Table({
-        elem: "#coupon_list",
-        url: ns.url("coupon://shop/coupon/lists"),
-        where: {'status': 1},
-        cols: [
-            [{
-				title: '优惠券名称',
-				unresize: 'false',
-				width: '20%',
-				templet: '#couponName'
-			}, {
-				title: '优惠券类型',
-				unresize: 'false',
-				width: '10%',
-				templet: function(data){
-					return data.type == 'discount' ? '折扣券' : '满减券'
-				}
-			}, {
-				field: 'money',
-				title: '优惠券面额（元）',
-				unresize: 'false',
-				width: '10%'
-			}, {
-				field: 'count',
-				title: '发放数量',
-				unresize: 'false',
-				width: '10%'
-			}, {
-				field: 'max_fetch',
-				title: '最大领取数量',
-				unresize: 'false',
-				width: '15%'
-			}, {
-				field: 'gift_state',
-				title: '有效期限',
-				unresize: 'false',
-				width: '25%',
-				templet: function (res) {
-					if(res.validity_type == 0){
-						return "有效时间至" + ns.time_to_date(res.end_time);
-					}else{
-						return "有效时间" + res.fixed_term + "天";
-					}
-				}
-			}, {
-				title: '操作',
-				toolbar: '#couponOperation',
-				unresize: 'false',
-				align: 'center',
-				width: '10%'
-			}]
-        ]
-    });
+		form.render();
+	});
 
-    couponTable.tool(function(obj) {
-        var data = obj.data;
-        switch (obj.event) {
-            case "add":
-                addcoupon(data);
-                break;
-        }
-    });
+	/**
+	 * 监听全选按钮
+	 */
+	form.on('checkbox(selectAll)', function(data) {
+		if (data.elem.checked) {
+			$("tr .ns-check-box input:checkbox").each(function(index) {
+				$(this).prop("checked", true);
+			});
+		} else {
+			$("tr .ns-check-box input:checkbox").each(function() {
+				$(this).prop("checked", false);
+			});
+		}
+		form.render();
+	});
 
-    function addcoupon(data){
-    	var template = `<tr data-coupon="{{ d.coupon_type_id }}">
-			<td>{{ d.coupon_name }}</td>
-			{{# if(d.at_least > 0){  }}
-	  			<td>满{{ d.at_least }}{{ d.type == 'discount' ? '打'+ d.discount +'折' : '减' + d.money }}</td>
-	  		{{# } else { }}
-	  			<td>无门槛，{{ d.type == 'discount' ? '打'+ d.discount +'折' : '减' + d.money }}</td>
-	  		{{# } }}
-	  		<td style="text-align:center;"><a href="javascript:;" onclick="deleteCoupon(this)" class="ns-text-color">删除</a></td>
-  		</tr>`;
-    	laytpl(template).render(data, function(string){
-    		$(event).parents('.discount-cont').find('.layui-table tbody').html(string);
-		    layer.closeAll();
-	  	});
+
+	/**
+	 * 监听每一行的多选按钮
+	 */
+	var len = $(".coupon-box tbody tr").length;
+	for (var i = 0; i < len; i++) {
+		form.on('checkbox(select' + i + ')', function(data) {
+			if ($("tbody tr input:checked").length == len) {
+				$("input[lay-filter='selectAll']").prop("checked", true);
+			} else {
+				$("input[lay-filter='selectAll']").prop("checked", false);
+			}
+
+			form.render();
+		});
 	}
 })
 
 
+function couponSelected() {
+	layer.closeAll('page');
 
+	coupon_id[currIndex] = [];
+	var _len = $("#goods tbody tr input:checked").length;
+	// if (!_len) {
+	// 	layer.msg('请选择优惠券');
+	// 	return;
+	// }
+
+	$("#coupon_selected tbody").empty();
+
+	var data = [];
+	$("#goods tr input:checked").each(function(){
+		var tr = $(this).parents('tr');
+		coupon_id[currIndex].push(tr.find("#coupon_id").val())
+		data.push({
+			coupon_type_id: tr.find("#coupon_id").val(),
+			coupon_name: tr.find(".ns-title-content p").text(),
+			at_least: tr.find('[name="at_least"]').val(),
+			type: tr.find('[name="type"]').val(),
+			discount: tr.find('[name="discount"]').val(),
+			money: tr.find('[name="money"]').val()
+		})
+	});
+
+	laytpl($("#addCoupon").html()).render(data, function(string){
+		$('.level-item:eq('+ currIndex +') .discount-cont tbody').html(string);
+		layer.closeAll();
+	});
+}
 // 删除优惠层级
 function deleteLevel(e){
 	$(e).parents('.level-item').remove();
 }
 
 // 删除优惠券
-function deleteCoupon(e){
+function deleteCoupon(e,index){
+	var index = $(e).parents('.level-item').index();
+	coupon_id[index].splice(index, 1);
 	$(e).parents('tr').remove();
+
 }

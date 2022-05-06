@@ -112,4 +112,40 @@ class Wechat extends BaseApi
         }
 
     }
+
+    /**
+     * 获取登录二维码
+     * @return false|string
+     */
+    public function loginCode(){
+        $key = str_replace('==','', base64_encode(uniqid('')));
+        $expire_time = 600;
+
+        $wechat_model = new WechatModel($this->site_id);
+        $res = $wechat_model->getTempQrcode('key_' . $key, $expire_time);
+        if ($res['code'] != 0) return $this->response($res);
+
+        Cache::set('wechat_' . $key, [ 'expire_time' => (time() + $expire_time)], 3600);
+        $data = $this->success([
+            'key' => $key,
+            'expire_time' => $expire_time,
+            'qrcode' => $res['data']
+        ]);
+        return $this->response($data);
+    }
+
+    /*
+     * 验证公众号是否配置
+     */
+    public function verificationWx(){
+        $config_model = new ConfigModel();
+        $config_info = $config_model->getWechatConfig($this->site_id);
+        if(!empty($config_info['data'])){
+            $config = $config_info['data']["value"];
+            if($config['appid'] || $config['appsecret']){
+                return $this->response($this->success());
+            }
+        }
+        return $this->response($this->error());
+    }
 }

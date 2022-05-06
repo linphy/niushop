@@ -100,6 +100,12 @@ Vue.component("coupon-list", {
 				res.code = false;
 				res.message = "优惠券数量最多为50";
 			} */
+			
+			if (this.$parent.data.sources == 'diy' && this.$parent.data.couponIds.length == 0){
+				res.code = false;
+				res.message = "请选择优惠券";
+			}
+			
 			return res;
 		},
 		addCoupon: function(){

@@ -148,7 +148,18 @@ class Diy extends BaseShop
                 [ 'sdv.type', '=', $page[ $this->app_module ][ 'port' ] ],
                 [ 'sdv.name', 'like', '%DIY_VIEW_RANDOM_%' ]
             ];
-            $list = $diy_view->getSiteDiyViewPageList($condition, $page_index, $page_size, "sdv.sort desc, INSTR('DIYVIEW_INDEX', sdv.name) desc, sdv.create_time desc");
+
+            $order = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($order == 'sort'){
+                $order_by = 'sdv.'.$order . ' ' . $sort;
+            }else if(empty($order)){
+                $order_by = 'sdv.sort desc, INSTR(\'DIYVIEW_INDEX\', sdv.name) desc, sdv.create_time desc';
+            }else{
+                $order_by = 'sdv.'.$order . ' ' . $sort.',sdv.sort desc';
+            }
+
+            $list = $diy_view->getSiteDiyViewPageList($condition, $page_index, $page_size, $order_by);
             return $list;
         } else {
             return $this->fetch('diy/lists');
@@ -191,6 +202,37 @@ class Diy extends BaseShop
     }
 
     /**
+     * 复制自定义模板页面
+     */
+    public function copySiteDiyView()
+    {
+        if (request()->isAjax()) {
+            $diy_view = new DiyViewModel();
+            $id_array = input("id", 0);
+            $condition = [
+                [ 'id', '=', $id_array ]
+            ];
+            //获取被复制数据
+            $data = $diy_view->getSiteDiyViewInfo($condition,'*');
+            $data = $data['data'];
+            unset($data['id']);
+            //对数据进行处理
+            $value = json_decode($data['value'], true);
+            $data['title'] .= '副本';
+            $value['global']['title'] = $data['title'];
+            $data['value'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+            $data['create_time'] = time();
+            $data['click_num'] = 0;
+            $data['name'] = 'DIY_VIEW_RANDOM_'.time();
+            //新增新数据
+            $res = $diy_view->addSiteDiyView($data);
+            return $res;
+        }
+    }
+
+
+
+    /**
      * 底部导航
      */
     public function bottomNavDesign()
@@ -216,10 +258,23 @@ class Diy extends BaseShop
         if (request()->isAjax()) {
             $id = input("id", 0);
             $diy_view = new DiyViewModel();
-            $res = $diy_view->qrcode([
+
+            $diy_view_info = $diy_view->getSiteDiyViewInfo([
                 [ 'site_id', '=', $this->site_id ],
                 [ 'id', '=', $id ]
-            ]);
+            ], 'site_id,name');
+            $page_info = $diy_view->getPage();
+            // 网站主页
+            $page = '/otherpages/diy/diy/diy';
+            if ($diy_view_info['data'][ 'name' ] == $page_info[ 'shop' ][ 'index' ][ 'name' ]) {
+                $page = '/pages/index/index/index';
+            }
+
+//            $res = $diy_view->qrcode([
+//                [ 'site_id', '=', $this->site_id ],
+//                [ 'id', '=', $id ]
+//            ]);
+            $res = $diy_view->urlQrcode($page, ['name' => $diy_view_info['data'][ 'name' ]], 'diy', $this->site_id);
             return $res;
         }
     }
@@ -323,6 +378,14 @@ class Diy extends BaseShop
             $diy_view = new DiyViewModel();
             return $diy_view->modifyDiyViewSort($sort, $id);
         }
+    }
+
+    /**
+     * 热区设置
+     */
+    public function heatMap()
+    {
+        return $this->fetch('diy/heat_map');
     }
 
 }

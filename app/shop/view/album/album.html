@@ -25,9 +25,9 @@
 		<div class="album-list-box">
 			<ul class="album-list">
 				{foreach $album_list as $album_list_k=> $album_list_v}
-				<li class="{if $album_list_k == 0}active {/if}" data-album-id="{$album_list_v.album_id}">
+				<li class="{if $album_list_k == 0}active {/if}" data-album-id="{$album_list_v.album_id}"">
 					<span>{$album_list_v.album_name}</span>
-					<span>{$album_list_v.num}</span>
+					<span id="album_num_{$album_list_v.album_id}">{$album_list_v.num}</span>
 				</li>
 				{/foreach}
 			</ul>
@@ -123,15 +123,14 @@
 				album_id,
 				limit,
 				page,
-				pic_name: $(".album-img-sreach").val()
-			},
+				pic_name: $(".album-img-sreach").val(),
+				is_thumb: '{$is_thumb}'
+				},
 			success: function(res) {
-
 				laytpl($("#albumList").html()).render(res.data, function(data) {
 					$(".album-img").html(data);
+					$("#album_num_" + album_id).html(res.data.count);
 				});
-
-				if (res.data.count > 0) {
 					laypage.render({
 						elem: 'paged',
 						count: res.data.count,
@@ -143,7 +142,6 @@
 							}
 						}
 					})
-				}
 			}
 		})
 	}
@@ -255,12 +253,14 @@
 						elem: '#ImgUpload',
 						url: ns.url("shop/upload/album"),
 						data: {
-							album_id
+							album_id : album_id,
+							is_thumb : '{$is_thumb}',
 						},
 						multiple: true,
 						auto: false,
 						bindAction: '#chooseListAction',
 						choose: function(obj) {
+
 							//将每次选择的文件追加到文件队列
 							var files = this.files = obj.pushFile();
 

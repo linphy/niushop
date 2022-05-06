@@ -105,7 +105,7 @@ class ExpressPackage extends BaseModel
      * 获取包裹信息
      * @param $condition
      */
-    public function package($condition, $mobile)
+    public function package($condition, $mobile = "")
     {
         $list_result = $this->getExpressDeliveryPackageList($condition);
         $list = $list_result["data"];

@@ -19,7 +19,7 @@ Delivery.prototype.cols = [
     {
         type: 'checkbox',
         fixed: 'left',
-        width: '4%',
+        width: '2%',
         merge: true,
         template: function (orderitem, order) {
             var json = {}
@@ -40,10 +40,10 @@ Delivery.prototype.cols = [
         template: function (orderitem, order) {
 
             var h = '<div class="img-block">';
-            h += '<img layer-src src="' + ns.img(orderitem.sku_image,'small') + '">';
+            h += '<img layer-src="' + ns.img(orderitem.sku_image,'big') + '" src="' + ns.img(orderitem.sku_image,'small') + '">';
             h += '</div>';
             h += '<div class="info">';
-            h += '<a href="' + ns.url("shop/order/detail", {order_id: orderitem.order_id}) + '" target="_blank" title="' + orderitem.sku_name + '" class="ns-multi-line-hiding ns-text-color">' + orderitem.sku_name + '</a>';
+            h += '<a href="' + ns.url("shop/order/detail", {order_id: orderitem.order_id}) + '" target="_blank" title="' + orderitem.sku_name + '" class="ns-multi-line-hiding ns-gn-color">' + orderitem.sku_name + '</a>';
             if (orderitem.refund_status_name != '') {
                 h += '<br/><a href="' + ns.url("shop/orderrefund/detail", {order_goods_id: orderitem.order_goods_id}) + '"  target="_blank" class="ns-text-color">' + orderitem.refund_status_name + '</a>&nbsp;&nbsp;';
             }
@@ -90,13 +90,17 @@ Delivery.prototype.cols = [
             var h = '';
             h += '<p>';
             h += '<a class="ns-text-color" target="_blank" href="' + ns.url("shop/member/editmember?member_id=") + order.member_id + '">' + order.nickname + '</a>';
+            // h += '<span style="margin-left:22px;">' + order.mobile + '</span>';
             h += '</p>';
             if (order.order_type != 4) {
                 h += '<p>';
                 h += '<span href="javascript:;">' + order.name + '</span>';
+                h += '<span style="margin-left:22px;">' + order.mobile + '</span>';
                 h += '</p>';
-                h += '<span>' + order.mobile + '</span>';
-                h += '<span class="ns-line-hiding" title="' + order.full_address + '">' + order.full_address + " " + order.address + '</span>';
+                h += '<span inline-block" class="ns-line-hiding address_box" title="' + order.full_address + '">' + order.full_address + " " + order.address + '</span>';
+                h += '<input type="text" class="address_input" id="'+ order.order_id +'_address" value="'+ order.full_address +'-'+ order.address +'".0>'
+                h += '<a style="vertical-align: top" href="javascript:ns.copy(\''+ order.order_id +'_address\');" class="iconfont iconfuzhi"></a>'
+
             } else {
                 h += '<p>';
                 h += '<span>' + order.mobile + '</span>';
@@ -151,7 +155,7 @@ Delivery.prototype.cols = [
     {
         title: "操作",
         width: "16%",
-        align: "left",
+        align: "right",
         className: "operation",
         merge: true,
         template: function (orderitem, order) {
@@ -162,7 +166,7 @@ Delivery.prototype.cols = [
             var action = action_arr.action;
             html += '<div class="ns-table-btn">';
             for (var k = 0; k < action.length; k++) {
-                html += '<a class="layui-btn" href="javascript:orderAction(\'' + action[k].action + '\', ' + order.order_id + ')">' + action[k].title + '</a>';
+                html += '<a class="layui-btn ns-new-btn-color" href="javascript:orderAction(\'' + action[k].action + '\', ' + order.order_id + ')">' + action[k].title + '</a>';
             }
             html += '</div>';
             return html;
@@ -246,6 +250,7 @@ Delivery.prototype.tbody = function () {
             tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderDelete(' + order.order_id + ');" >删除</a>';
         }
         tbody += '<a class="layui-btn layui-btn-xs" href="' + ns.url("shop/order/detail", {order_id: order.order_id}) + '" target="_blank">查看详情</a>';
+        tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderRemark(' + order.order_id + ');">备注</a> ';
         if (order.order_status == 0) {
             tbody += '<a class="layui-btn layui-btn-xs" href="javascript:offlinePay(' + order.order_id + ');">线下支付</a> ';
         }
@@ -281,7 +286,20 @@ Delivery.prototype.tbody = function () {
         }
 
         tbody += orderitemHtml;
+        if(order.buyer_message != '') {
+            //订单项底部
+            tbody += '<tr class="bottom-row">';
+            tbody += '<td colspan="7">';
+            tbody += '<span class="order-item-header" style="margin-right:10px;">买家备注：' + order.buyer_message + '</span>';
+            tbody += '</td>';
+            tbody += '</tr>';
+        }
 
+        if (order.remark != '') {
+            tbody += '<tr class="remark-row">';
+            tbody += '<td colspan="' + this.cols.length + '">卖家备注：' + order.remark + '</td>';
+            tbody += '</tr>';
+        }
     }
 
     tbody += '</tbody>';

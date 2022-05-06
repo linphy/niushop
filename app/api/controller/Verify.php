@@ -113,9 +113,10 @@ class Verify extends BaseApi
         $verify_model = new VerifyModel();
         $res          = $verify_model->checkMemberVerify($this->member_id, $verify_code);
         if ($res["code"] != 0)
-            return $this->response($res);
-
-        $res = $verify_model->verify($res["data"]["verifier"], $verify_code);
+        return $this->response($res);
+        $verifier_info = $res["data"]["verifier"];
+        $verifier_info['verify_from'] = 'mobile';
+        $res = $verify_model->verify($verifier_info, $verify_code);
         return $this->response($res);
     }
 

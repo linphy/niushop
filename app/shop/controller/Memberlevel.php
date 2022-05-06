@@ -72,10 +72,9 @@ class Memberlevel extends BaseShop
                 'send_point'       => input('send_point', 0),
                 'send_balance'     => input('send_balance', 0),
                 'send_coupon'      => input('send_coupon', ''),
-                'charge_rule'      => input('charge_rule', ''),
-                'charge_tyep'      => input('charge_tyep', 0),
-                'level_type'      => input('level_type', 0),
-                'bg_color' => input('bg_color', '')
+                'level_type'      => 0,
+                'charge_rule' => '',
+                'charge_type' => 0
             ];
             $this->addLog("会员等级添加:" . $data['level_name']);
             $res = $member_level_model->addMemberLevel($data);
@@ -90,7 +89,7 @@ class Memberlevel extends BaseShop
                 ['site_id', '=', $this->site_id],
             ];
             //优惠券字段
-            $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time';
+            $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time,goods_type,max_fetch';
             $coupon_list  = $coupon_model->getCouponTypeList($condition, $coupon_field);
             $this->assign('coupon_list', $coupon_list);
 
@@ -108,7 +107,6 @@ class Memberlevel extends BaseShop
         $member_level_model = new MemberLevelModel();
         if (request()->isAjax()) {
             $data = [
-                'site_id'          => $this->site_id,
                 'level_name'       => input('level_name', ''),
                 'growth'           => input('growth', 0.00),
                 'remark'           => input('remark', ''),
@@ -117,17 +115,20 @@ class Memberlevel extends BaseShop
                 'point_feedback'   => input('point_feedback', 0),
                 'send_point'       => input('send_point', 0),
                 'send_balance'     => input('send_balance', 0),
-                'send_coupon'      => input('send_coupon', '')
+                'send_coupon'      => input('send_coupon', ''),
+                'charge_rule' => ''
             ];
 
             $level_id = input('level_id', 0);
 
             $this->addLog("会员等级修改:" . $data['level_name']);
-            return $member_level_model->editMemberLevel($data, [['level_id', '=', $level_id]]);
+            return $member_level_model->editMemberLevel($data, [['level_id', '=', $level_id], ['site_id', '=', $this->site_id]]);
         } else {
 
             $level_id   = input('get.level_id', 0);
-            $level_info = $member_level_model->getMemberLevelInfo([['level_id', '=', $level_id]]);
+            $level_info = $member_level_model->getMemberLevelInfo([['level_id', '=', $level_id], ['site_id', '=', $this->site_id]]);
+            if (empty($level_info['data'])) return $this->error('未获取到等级数据', addon_url('shop/memberlevel/levellist'));
+
             $this->assign('level_info', $level_info['data']);
 
             $this->assign('level_time', $member_level_model->level_time);
@@ -139,7 +140,7 @@ class Memberlevel extends BaseShop
                 ['site_id', '=', $this->site_id],
             ];
             //优惠券字段
-            $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time';
+            $coupon_field = 'coupon_type_id,type,coupon_name,image,money,discount,validity_type,fixed_term,status,is_limit,at_least,count,lead_count,end_time,goods_type,max_fetch';
             $coupon_list  = $coupon_model->getCouponTypeList($condition, $coupon_field);
             $this->assign('coupon_list', $coupon_list);
             return $this->fetch('memberlevel/edit_level');

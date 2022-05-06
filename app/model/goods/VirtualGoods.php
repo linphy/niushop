@@ -63,20 +63,31 @@ class VirtualGoods extends BaseModel
 //                    $goods_image = $data[ 'goods_sku_data' ][ 0 ][ 'sku_image' ];
 //                }
             }
+            if ($data['verify_validity_type'] == 1) {
+                if(empty($data['virtual_indate'])){
+                    return $this->error('','有效期不能为空');
+                }
+                $data['virtual_indate'] = $data['virtual_indate'];
+            } else if ($data['verify_validity_type'] == 2) {
+                if(empty($data['virtual_indate'])){
+                    return $this->error('','有效期不能为空');
+                }
+                $data['virtual_indate'] = $data['virtual_indate'];
+            }
 
             $goods_data = array (
                 'goods_image' => $goods_image,
                 'goods_stock' => $data[ 'goods_stock' ],
-                'price' => $data[ 'goods_sku_data' ][ 0 ][ 'price' ],
-                'market_price' => $data[ 'goods_sku_data' ][ 0 ][ 'market_price' ],
-                'cost_price' => $data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ],
+                'price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'price' ]:'',
+                'market_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'market_price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'market_price' ]:'',
+                'cost_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ]:'',
                 'goods_spec_format' => $data[ 'goods_spec_format' ],
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
-                'is_consume_discount' => $data['is_consume_discount']
+                'is_consume_discount' => $data['is_consume_discount'],
             );
 
             $common_data = array (
@@ -85,11 +96,15 @@ class VirtualGoods extends BaseModel
                 'goods_class_name' => $this->goods_class[ 'name' ],
                 'goods_attr_class' => $data[ 'goods_attr_class' ],
                 'goods_attr_name' => $data[ 'goods_attr_name' ],
+                'is_limit' => isset($data[ 'is_limit' ]) ? $data[ 'is_limit' ] : 0,
+                'limit_type' => isset($data[ 'limit_type' ]) ? $data[ 'limit_type' ]:1,
                 'site_id' => $data[ 'site_id' ],
                 'goods_content' => $data[ 'goods_content' ],
                 'goods_state' => $data[ 'goods_state' ],
                 'goods_stock_alarm' => $data[ 'goods_stock_alarm' ],
                 'is_virtual' => 1,
+                'verify_validity_type' => $data['verify_validity_type'],
+                'is_need_verify' => $data['is_need_verify'],
                 'virtual_indate' => $data[ 'virtual_indate' ],
                 'goods_attr_format' => $data[ 'goods_attr_format' ],
                 'introduction' => $data[ 'introduction' ],
@@ -102,14 +117,20 @@ class VirtualGoods extends BaseModel
                 'virtual_sale' => $data[ 'virtual_sale' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
-                'recommend_way' => $data[ 'recommend_way' ]
+                'recommend_way' => $data[ 'recommend_way' ],
+                'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
+                'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
             );
 
             $goods_id = model('goods')->add(array_merge($goods_data, $common_data));
 
+            $goods_stock = 0;
+
             $sku_arr = array ();
             //添加sku商品
             foreach ($data[ 'goods_sku_data' ] as $item) {
+
+                $goods_stock += $item[ 'stock' ];
 
                 $sku_data = array (
                     'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
@@ -126,7 +147,9 @@ class VirtualGoods extends BaseModel
                     'sku_images' => $item[ 'sku_images' ],
                     'goods_id' => $goods_id,
                     'is_default' => $item[ 'is_default' ] ?? 0,
-                    'is_consume_discount' => $data['is_consume_discount']
+                    'is_consume_discount' => $data['is_consume_discount'],
+                    'site_id' => $data['site_id'],
+                    'verify_num' => $item['verify_num'] ?? 1
                 );
 
                 $sku_arr[] = array_merge($sku_data, $common_data);
@@ -137,7 +160,7 @@ class VirtualGoods extends BaseModel
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ], 'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项 / 规格值JSON字符串
@@ -211,7 +234,9 @@ class VirtualGoods extends BaseModel
                 'label_id' => $data[ 'label_id' ],
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
-                'is_consume_discount' => $data['is_consume_discount']
+                'is_consume_discount' => $data['is_consume_discount'],
+                'verify_validity_type' => $data['verify_validity_type'],
+                'is_need_verify' => $data['is_need_verify']
             );
 
             $common_data = array (
@@ -220,6 +245,8 @@ class VirtualGoods extends BaseModel
                 'goods_class_name' => $this->goods_class[ 'name' ],
                 'goods_attr_class' => $data[ 'goods_attr_class' ],
                 'goods_attr_name' => $data[ 'goods_attr_name' ],
+                'is_limit' => isset($data[ 'is_limit' ]) ? $data[ 'is_limit' ] : 0,
+                'limit_type' => isset($data[ 'limit_type' ]) ? $data[ 'limit_type' ]:1,
                 'site_id' => $data[ 'site_id' ],
                 'goods_content' => $data[ 'goods_content' ],
                 'goods_state' => $data[ 'goods_state' ],
@@ -237,10 +264,14 @@ class VirtualGoods extends BaseModel
                 'virtual_sale' => $data[ 'virtual_sale' ],
                 'max_buy' => $data[ 'max_buy' ],
                 'min_buy' => $data[ 'min_buy' ],
-                'recommend_way' => $data[ 'recommend_way' ]
+                'recommend_way' => $data[ 'recommend_way' ],
+                'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
+                'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
             );
 
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
+
+            $goods_stock = 0;
 
             // 如果只编辑价格库存就是修改，如果添加规格项/值就需要重新生成
             if (!empty($data[ 'goods_sku_data' ][ 0 ][ 'sku_id' ])) {
@@ -251,7 +282,7 @@ class VirtualGoods extends BaseModel
                     $sku_arr = array ();
                     //添加sku商品
                     foreach ($data[ 'goods_sku_data' ] as $item) {
-
+                        $goods_stock += $item[ 'stock' ];
                         $sku_data = array (
                             'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
                             'spec_name' => $item[ 'spec_name' ],
@@ -267,7 +298,8 @@ class VirtualGoods extends BaseModel
                             'sku_images' => $item[ 'sku_images' ],
                             'goods_id' => $goods_id,
                             'is_default' => $item[ 'is_default' ] ?? 0,
-                            'is_consume_discount' => $data['is_consume_discount']
+                            'is_consume_discount' => $data['is_consume_discount'],
+                            'verify_num' => $item['verify_num']
                         );
 
                         $sku_arr[] = array_merge($sku_data, $common_data);
@@ -283,7 +315,7 @@ class VirtualGoods extends BaseModel
                             $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $item[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
                             $discount_info = $discount_info_result[ 'data' ];
                         }
-
+                        $goods_stock += $item[ 'stock' ];
                         $sku_data = array (
                             'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
                             'spec_name' => $item[ 'spec_name' ],
@@ -298,6 +330,8 @@ class VirtualGoods extends BaseModel
                             'sku_images' => $item[ 'sku_images' ],
                             'goods_id' => $goods_id,
                             'is_default' => $item[ 'is_default' ] ?? 0,
+                            'verify_num' => $item['verify_num'],
+                            'is_consume_discount' => $data['is_consume_discount']
                         );
                         if (empty($discount_info)) {
                             $sku_data[ 'discount_price' ] = $item[ 'price' ];
@@ -336,7 +370,7 @@ class VirtualGoods extends BaseModel
                 $sku_arr = array ();
                 //添加sku商品
                 foreach ($data[ 'goods_sku_data' ] as $item) {
-
+                    $goods_stock += $item[ 'stock' ];
                     $sku_data = array (
                         'sku_name' => $data[ 'goods_name' ] . ' ' . $item[ 'spec_name' ],
                         'spec_name' => $item[ 'spec_name' ],
@@ -352,6 +386,8 @@ class VirtualGoods extends BaseModel
                         'sku_images' => $item[ 'sku_images' ],
                         'goods_id' => $goods_id,
                         'is_default' => $item[ 'is_default' ] ?? 0,
+                        'verify_num' => $item['verify_num'],
+                        'is_consume_discount' => $data['is_consume_discount']
                     );
 
                     $sku_arr[] = array_merge($sku_data, $common_data);
@@ -362,7 +398,7 @@ class VirtualGoods extends BaseModel
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ],'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项 / 规格值JSON字符串
@@ -574,28 +610,27 @@ class VirtualGoods extends BaseModel
     }
 
     /************************************************************************* 购买的虚拟产品 start *******************************************************************/
+
     /**
      * 生成购买的虚拟产品
-     * @param $site_id
-     * @param $order_id
-     * @param $order_no
-     * @param $sku_id
-     * @param $sku_name
-     * @param $code
-     * @param $member_id
-     * @param $sku_image
+     * @param $params
+     * @return array
      */
-    public function addGoodsVirtual($site_id, $order_id, $order_no, $sku_id, $sku_name, $code, $member_id, $sku_image)
+    public function addGoodsVirtual($params)
     {
         $data = array (
-            "site_id" => $site_id,
-            "order_id" => $order_id,
-            "order_no" => $order_no,
-            "sku_id" => $sku_id,
-            "sku_name" => $sku_name,
-            "code" => $code,
-            "member_id" => $member_id,
-            'sku_image' => $sku_image
+            'site_id' => $params['site_id'],
+            'order_id' => $params['order_id'],
+            'order_no' => $params['order_no'],
+            'sku_id' => $params['sku_id'],
+            'sku_name' => $params['sku_name'],
+            'code' => $params['code'] ?? '',
+            'member_id' => $params['member_id'],
+            'sku_image' => $params['sku_image'],
+            'expire_time' => $params['expire_time'] ?? '',
+            'card_info' => $params['card_info'] ?? '',
+            'sold_time' => $params['sold_time'] ?? time(),
+            'goods_id' => $params['goods_id']
         );
         $res = model("goods_virtual")->add($data);
         return $this->success($res);
@@ -629,13 +664,33 @@ class VirtualGoods extends BaseModel
         if ($local_result[ "code" ] < 0)
             return $local_result;
 
-        $data = array (
-            "is_veirfy" => 1,
-            "verify_time" => time()
-        );
-        $res = model("goods_virtual")->update($data, [ [ "code", '=', $code ], [ "is_veirfy", "=", 0 ] ]);
+        model('goods_virtual')->startTrans();
+        try{
 
-        return $this->success($res);
+            $data = array (
+                "is_veirfy" => 1,
+                "verify_time" => time()
+            );
+            $res = model("goods_virtual")->update($data, [ [ "code", '=', $code ], [ "is_veirfy", "=", 0 ] ]);
+
+            //判断是否全部核销完毕
+            $count = model('goods_virtual')->getCount([['order_id','=',$goods_virtual_info[ 'order_id' ]],['is_veirfy','=',0]]);
+            if($count == 0){//全部核销完毕
+                //订单执行自动完成
+                $result = event('CronOrderTakeDelivery',['relate_id' => $goods_virtual_info[ 'order_id' ]],true);
+                if($result['code'] < 0){
+                    model('goods_virtual')->rollback();
+                    return $result;
+                }
+            }
+
+            model('goods_virtual')->commit();
+            return $this->success($res);
+        }catch(\Exception $e){
+
+            model('goods_virtual')->rollback();
+            return $this->error('',$e->getMessage());
+        }
     }
 
 
@@ -663,4 +718,193 @@ class VirtualGoods extends BaseModel
         return $this->success($list);
     }
     /************************************************************************* 购买的虚拟产品 end *******************************************************************/
+
+    /**
+     * 商品导入
+     * @param $goods_data
+     * @param $site_id
+     * @return array
+     */
+    public function importGoods($goods_data, $site_id){
+        try {
+            if (empty($goods_data['goods_name'])) return $this->error('', '商品名称不能为空');
+            if (empty($goods_data['goods_image'])) return $this->error('', '商品主图不能为空');
+            if (empty($goods_data['category_1']) && empty($goods_data['category_2']) && empty($goods_data['category_3'])) return $this->error('', '商品分类不能为空');
+
+            // 处理商品分类
+            $category_id = '';
+            $category_json = [];
+            if (!empty($goods_data['category_3'])) {
+                $category_info = model('goods_category')->getInfo([ ['level', '=', 3],['site_id', '=', $site_id ], ['category_full_name', '=', "{$goods_data['category_1']}/{$goods_data['category_2']}/{$goods_data['category_3']}"] ], 'category_id_1,category_id_2,category_id_3');
+                if (!empty($category_info)) {
+                    $category_id = "{$category_info['category_id_1']},{$category_info['category_id_2']},{$category_info['category_id_3']}";
+                }
+            }
+            if (!empty($goods_data['category_2']) && empty($category_id)) {
+                $category_info = model('goods_category')->getInfo([ ['level', '=', 2],['site_id', '=', $site_id ], ['category_full_name', '=', "{$goods_data['category_1']}/{$goods_data['category_2']}"] ], 'category_id_1,category_id_2');
+                if (!empty($category_info)) {
+                    $category_id = "{$category_info['category_id_1']},{$category_info['category_id_2']}";
+                }
+            }
+            if (!empty($goods_data['category_1']) && empty($category_id)) {
+                $category_info = model('goods_category')->getInfo([ ['level', '=', 1],['site_id', '=', $site_id ], ['category_name', '=', "{$goods_data['category_1']}"] ], 'category_id_1');
+                if (!empty($category_info)) {
+                    $category_id = "{$category_info['category_id_1']}";
+                }
+            }
+            if (empty($category_id)) return $this->error('', '未找到所填商品分类');
+            $category_json = [$category_id];
+
+            $sku_data = [];
+            $goods_spec_format = [];
+            $tag = 0;
+            // 处理sku数据
+            if (isset($goods_data['sku'])) {
+                foreach ($goods_data['sku'] as $sku_item) {
+                    if (empty($sku_item['sku_data'])) return $this->error('', '规格数据不能为空');
+
+                    $spec_name = '';
+                    $spec_data = explode(';', $sku_item['sku_data']);
+
+                    $sku_spec_format = [];
+                    foreach ($spec_data as $item) {
+                        $spec_item = explode(':', $item);
+                        $spec_name .= ' ' . $spec_item[1];
+
+                        // 规格项
+                        $spec_index = array_search($spec_item[0], array_column($goods_spec_format, 'spec_name'));
+                        if (empty($goods_spec_format) || $spec_index === false) {
+                            $spec = [
+                                'spec_id' => -($tag + getMillisecond()),
+                                'spec_name' => $spec_item[0],
+                                'value' => []
+                            ];
+                            array_push($goods_spec_format, $spec);
+                            $tag++;
+                        } else {
+                            $spec = $goods_spec_format[$spec_index];
+                        }
+                        // 规格值
+                        $spec_index = array_search($spec_item[0], array_column($goods_spec_format, 'spec_name'));
+                        $spec_value_index = array_search($spec_item[1], array_column($spec['value'], 'spec_value_name'));
+                        if (empty($spec['value']) || $spec_value_index === false) {
+                            $spec_value = [
+                                'spec_id' => $spec['spec_id'],
+                                'spec_name' => $spec['spec_name'],
+                                'spec_value_id' => -($tag + getMillisecond()),
+                                'spec_value_name' => $spec_item[1],
+                                'image' => '',
+                            ];
+                            array_push($goods_spec_format[$spec_index]['value'], $spec_value);
+                            $tag++;
+                        } else {
+                            $spec_value = $spec['value'][$spec_value_index];
+                        }
+
+                        array_push($sku_spec_format, [
+                            'spec_id' => $spec['spec_id'],
+                            'spec_name' => $spec['spec_name'],
+                            'spec_value_id' => $spec_value['spec_value_id'],
+                            'spec_value_name' => $spec_value['spec_value_name'],
+                            'image' => '',
+                        ]);
+                    }
+
+                    $sku_images_arr = explode(',', $sku_item['sku_image']);
+
+                    $sku_temp = [
+                        'spec_name' => trim($spec_name),
+                        'sku_no' => $sku_item['sku_code'],
+                        'sku_spec_format' => $sku_spec_format,
+                        'price' => $sku_item['price'],
+                        'market_price' => $sku_item['market_price'],
+                        'cost_price' => $sku_item['cost_price'],
+                        'stock' => $sku_item['stock'],
+                        'stock_alarm' => $sku_item['stock_alarm'],
+                        'verify_num' => empty($sku_item['verify_num']) ? 1 : $sku_item['verify_num'],
+                        'sku_image' => empty($sku_item['sku_image']) ? '' : $sku_images_arr[0],
+                        'sku_images' => empty($sku_item['sku_image']) ? '' : $sku_item['sku_image'],
+                        'sku_images_arr' => empty($sku_item['sku_image']) ? [] : $sku_images_arr,
+                        'is_default' => 0
+                    ];
+
+                    array_push($sku_data, $sku_temp);
+                }
+            } else {
+                $goods_img = explode(',', $goods_data['goods_image']);
+                $sku_data = [
+                    [
+                        'sku_id' => 0,
+                        'sku_name' => $goods_data['goods_name'],
+                        'spec_name' => '',
+                        'sku_spec_format' => '',
+                        'price' => empty($goods_data['price']) ? 0 : $goods_data['price'],
+                        'market_price' => empty($goods_data['market_price']) ? 0 : $goods_data['market_price'],
+                        'cost_price' => empty($goods_data['cost_price']) ? 0 : $goods_data['cost_price'],
+                        'sku_no' => $goods_data['goods_code'],
+                        'verify_num' => empty($goods_data['verify_num']) ? 1 : $goods_data['verify_num'],
+                        'stock' => empty($goods_data['stock']) ? 0 : $goods_data['stock'],
+                        'stock_alarm' => empty($goods_data['stock_alarm']) ? 0 : $goods_data['stock_alarm'],
+                        'sku_image' => $goods_img[0],
+                        'sku_images' => $goods_data['goods_image']
+                    ]
+                ];
+            }
+
+            if (count($goods_spec_format) > 4) return $this->error('', '最多支持四种规格项');
+
+            $data = [
+                'goods_name' => $goods_data['goods_name'],// 商品名称,
+                'goods_attr_class' => '',// 商品类型id,
+                'goods_attr_name' => '',// 商品类型名称,
+                'site_id' => $site_id,
+                'category_id' => ',' . $category_id . ',',
+                'category_json' => json_encode($category_json),
+                'goods_image' => $goods_data['goods_image'],// 商品主图路径
+                'goods_content' => '',// 商品详情
+                'goods_state' => 0, //$goods_data['goods_state'] == 1 || $goods_data['goods_state'] == '是' ? 1 : 0,// 商品状态（1.正常0下架）
+                'price' => empty($goods_data['price']) ? 0 : $goods_data['price'],// 商品价格（取第一个sku）
+                'market_price' => empty($goods_data['market_price']) ? 0 : $goods_data['market_price'],// 市场价格（取第一个sku）
+                'cost_price' => empty($goods_data['cost_price']) ? 0 : $goods_data['cost_price'],// 成本价（取第一个sku）
+                'sku_no' => $goods_data['goods_code'],// 商品sku编码
+                'goods_stock' => empty($goods_data['goods_stock']) ? 0 : $goods_data['goods_stock'],// 商品库存（总和）
+                'goods_stock_alarm' => empty($goods_data['goods_stock_alarm']) ? 0 : $goods_data['goods_stock_alarm'],// 库存预警
+                'goods_spec_format' => empty($goods_spec_format) ? '' : json_encode($goods_spec_format, JSON_UNESCAPED_UNICODE),// 商品规格格式
+                'goods_attr_format' => '',// 商品属性格式
+                'introduction' => $goods_data['introduction'],// 促销语
+                'keywords' => $goods_data['keywords'],// 关键词
+                'unit' => $goods_data['unit'],// 单位
+                'sort' => '',// 排序,
+                'qr_id' => empty($goods_data['qr_id']) ? 0 : $goods_data['qr_id'],// 社群二维码id
+                'template_id' => empty($goods_data['template_id']) ? 0 : $goods_data['template_id'],// 海报id
+                'is_limit' => empty($goods_data['is_limit']) ? 0 : $goods_data['is_limit'],// 是否限购
+                'limit_type' => empty($goods_data['limit_type']) ? 0 : $goods_data['limit_type'],// 限购类型
+                'video_url' => '',// 视频
+                'goods_sku_data' => json_encode($sku_data, JSON_UNESCAPED_UNICODE),// SKU商品数据
+                'goods_service_ids' => '',// 商品服务id集合
+                'label_id' => '',// 商品分组id
+                'virtual_sale' => 0,// 虚拟销量
+                'max_buy' => 0,// 限购
+                'min_buy' => 0,// 起售
+                'recommend_way' => 0, // 推荐方式，1：新品，2：精品，3；推荐
+                'timer_on' => 0,//定时上架
+                'timer_off' => 0,//定时下架
+                'is_consume_discount' => $goods_data['is_consume_discount'] == 1 || $goods_data['is_consume_discount'] == '是' ? 1 : 0, //是否参与会员折扣
+                'is_need_verify' => $goods_data['is_need_verify'] == 1 || $goods_data['is_need_verify'] == '是' ? 1 : 0,
+                'verify_validity_type' => empty($goods_data['verify_validity_type']) ? 0 : $goods_data['verify_validity_type'], // 核销有效期类型
+                'virtual_indate' => 0,// 虚拟商品有效期
+            ];
+            if ($goods_data['verify_validity_type'] == 1) {
+                $data['virtual_date'] = $goods_data['virtual_indate'];
+            } elseif ($goods_data['verify_validity_type'] == 2) {
+                $t1 = intval(($goods_data['virtual_indate']- 25569) * 3600 * 24); //转换成1970年以来的秒数
+                $createtime = gmdate('Y-m-d H:i:s',$t1);//格式化时间
+                $data['virtual_time'] = $createtime;
+            }
+            $res = $this->addGoods($data);
+            return $res;
+        } catch (\Exception $e) {
+            return $this->error('', $e->getMessage());
+        }
+    }
 }

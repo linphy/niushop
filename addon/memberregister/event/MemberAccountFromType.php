@@ -32,6 +32,7 @@ class MemberAccountFromType
                     'type_url'  => '',
                 ],
             ],
+
             'growth'  => [
                 'register' => [
                     'type_name' => '注册',

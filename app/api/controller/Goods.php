@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\model\goods\Goods as GoodsModel;
+use app\model\goods\GoodsService;
 use app\model\system\Poster;
 use app\model\goods\Config as GoodsConfigModel;
 use app\model\web\Config as ConfigModel;
@@ -35,11 +36,11 @@ class Goods extends BaseApi
      */
     public function poster()
     {
-        if (!empty($qrcode_param)) return $this->response($this->error('', '缺少必须参数qrcode_param'));
+        $this->checkToken();
 
         $promotion_type = 'null';
         $qrcode_param = json_decode($this->params[ 'qrcode_param' ], true);
-        $qrcode_param[ 'source_member' ] = $qrcode_param[ 'source_member' ] ?? 0;
+        $qrcode_param[ 'source_member' ] = $this->member_id;
         $poster = new Poster();
         $res = $poster->goods($this->params[ 'app_type' ], $this->params[ 'page' ], $qrcode_param, $promotion_type, $this->site_id);
         return $this->response($res);
@@ -74,5 +75,15 @@ class Goods extends BaseApi
         $config_model = new ConfigModel();
         $info = $config_model->getDefaultSearchWords($this->site_id, $this->app_module);
         return $this->response($this->success($info[ 'data' ][ 'value' ]));
+    }
+
+    /**
+     * 商品服务
+     * @return false|string
+     */
+    public function service(){
+        $goods_service = new GoodsService();
+        $data = $goods_service->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'service_name,desc,icon');
+        return $this->response($data);
     }
 }

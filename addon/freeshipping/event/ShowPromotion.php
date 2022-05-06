@@ -33,7 +33,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '满额包邮',
                     //展示介绍
-                    'description' => '满额包邮',
+                    'description' => '购满指定金额订单包邮',
                     //展示图标
                     'icon'        => 'addon/freeshipping/icon.png',
                     //跳转链接

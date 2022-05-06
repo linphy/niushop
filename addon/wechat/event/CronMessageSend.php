@@ -13,7 +13,7 @@ namespace addon\system\Wechat\event;
 
 use addon\system\Wechat\common\model\WechatMessage;
 
-class CronMessageSend
+class   CronMessageSend
 {
     /**
      * 邮箱消息延时发送

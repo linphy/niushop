@@ -23,6 +23,7 @@
 		<ul class="layui-colla-content layui-show">
 			<li>介绍网站的一些操作步骤，需遵循的规则</li>
 			<li>帮助内容排序显示规则为排序小的在前，新增内容的在前</li>
+			<li>PC端底部只显示前四个帮助分类，及分类下前四条帮助内容</li>
 		</ul>
 	</div>
 </div>
@@ -79,17 +80,9 @@
 					unresize: 'false'
 				},{
                     field: 'sort',
-                    title: `<div class="ns-prompt-block">排序
-							<div class="ns-prompt">
-								<i class="iconfont iconwenhao1 required ns-growth"></i>
-								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
-									<div class="ns-prompt-con">
-									<p>默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</p>
-								</div>
-							</div>
-							</div>
-						</div>`,
+                    title: '排序',
                     width: '15%',
+                    sort : true,
                     unresize: 'false',
                     templet: '#sort'
                 }, {
@@ -102,9 +95,9 @@
 					}
 				}, {
 					title: '操作',
-					width: '15%',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+                    align : 'right'
 				}]
 			],
 		});
@@ -120,6 +113,18 @@
 				where: data.field
 			});
 		});
+
+        table.on("sort",function (obj) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: {
+                    order:obj.field,
+                    sort:obj.type
+                }
+            });
+        });
 		
 		/**
 		 * 监听工具栏操作

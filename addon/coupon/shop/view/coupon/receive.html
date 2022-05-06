@@ -1,5 +1,6 @@
 {extend name="app/shop/view/base.html"/}
 {block name="resources"}
+<link rel="stylesheet" href="SHOP_CSS/goods_lists.css">
 <style>
 	.layui-layer-page .layui-layer-content { padding: 20px 30px; }
 </style>
@@ -32,7 +33,7 @@
     {{# }else if(d.get_type == 2){ }}
     <div class="layui-elip">直接领取</div>
     {{# }else if(d.get_type == 3){ }}
-    <div class="layui-elip">获取领取</div>
+    <div class="layui-elip">活动领取</div>
 	{{# }else if(d.get_type == 4){ }}
 	<div class="layui-elip">转赠</div>
 	{{# }else if(d.get_type == 5){ }}
@@ -56,6 +57,10 @@
 	{{ ns.time_to_date(d.fetch_time) }}
 </script>
 
+<!--到期时间-->
+<script type="text/html" id="end_time">
+	{{ ns.time_to_date(d.end_time) }}
+</script>
 <!--使用时间-->
 <script type="text/html" id="use_time">
     {{ ns.time_to_date(d.use_time) }}
@@ -92,7 +97,7 @@
 					field: 'coupon_name',
 					title: '优惠券名称',
 					unresize: 'false',
-					width: '15%'
+					width: '10%'
 				},{
 					field: 'nickname',
 					title: '领取人',
@@ -102,21 +107,32 @@
 					field: 'coupon_code',
 					title: '优惠码',
 					unresize: 'false',
-					width: '10%'
+					width: '8%'
 				}, {
 					field: 'money',
 					title: '面额',
 					unresize: 'false',
-					width: '10%',
+					width: '8%',
 					align: 'right',
 					templet: function(data) {
 						return '￥'+ data.money;
 					}
 				}, {
-					title: '获取方式',
 					unresize: 'false',
+					title: `<div class="ns-prompt-block">获取方式
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
+									<div class="ns-prompt-con">
+									<p>首页、商品详情页主动领取为直接领取方式；管理端发放优惠券为转赠；满减活动、消费奖励、充值礼包为订单领取；新人礼、小游戏、邀请奖励为活动领取；</p>
+								</div>
+							</div>
+							</div>
+						</div>`,
 					templet: '#get_type',
-					width: '10%'
+					align: 'center',
+					width: '9%',
+					// sort: true
 				}, {
 					title: '状态',
 					unresize: 'false',
@@ -126,12 +142,17 @@
                     title: '领取时间',
                     unresize: 'false',
                     templet: '#fetch_time',
-                    width: '16%'
+                    width: '14%'
                 }, {
+					title: '到期时间',
+					unresize: 'false',
+					templet: '#end_time',
+					width: '14%'
+				}, {
                     title: '使用时间',
                     unresize: 'false',
                     templet: '#use_time',
-                    width: '16%'
+                    width: '14%'
                 }]
 			],
 		});

@@ -1,5 +1,10 @@
 {extend name="base"/}
 {block name="resources"}
+<style>
+	.layui-layer-content {
+		padding-bottom: 20px!important;
+	}
+</style>
 {/block}
 {block name="main"}
 <div class="layui-collapse ns-tips">
@@ -86,15 +91,17 @@
 					width: '50%',
 					unresize: 'false'
 				}, {
+                    field: 'sort',
 					unresize: 'false',
 					title: '排序',
 					width: '30%',
+                    sort : true,
 					templet: '#editSort'
 				}, {
 					title: '操作',
-					width: '15%',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+					align : 'right'
 				}]
 			]
 		});
@@ -135,6 +142,18 @@
 				});
 			});
 		}
+
+        table.on("sort",function (obj) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: {
+                    order:obj.field,
+                    sort:obj.type
+                }
+            });
+        });
 
 		/**
 		 * 搜索功能
@@ -223,7 +242,7 @@
 				title: '添加商品属性',
 				skin: 'layer-tips-class',
 				type: 1,
-				area: ['500px'],
+				area: ['500px', '250px'],
 				content: html
 			});
 		});

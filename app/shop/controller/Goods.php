@@ -2,7 +2,7 @@
 /**
  * Niushop商城系统 - 团队十年电商经验汇集巨献!
  * =========================================================
- * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
+ * Copy riht 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
  * =========================================================
@@ -10,17 +10,20 @@
 
 namespace app\shop\controller;
 
+use addon\postertemplate\model\PosterTemplate as PosterTemplateModel;
 use app\model\express\ExpressTemplate as ExpressTemplateModel;
 use app\model\goods\Goods as GoodsModel;
 use app\model\goods\GoodsAttribute as GoodsAttributeModel;
 use app\model\goods\GoodsBrowse;
 use app\model\goods\GoodsCategory as GoodsCategoryModel;
 use app\model\goods\GoodsCollect;
+use app\model\goods\GoodsCommunityQrCode;
 use app\model\goods\GoodsEvaluate as GoodsEvaluateModel;
 use app\model\goods\GoodsLabel as GoodsLabelModel;
 use app\model\goods\GoodsService as GoodsServiceModel;
 use app\model\web\Config as ConfigModel;
-
+use app\model\goods\GoodsImport;
+use app\model\goods\GoodsPoster;
 /**
  * 实物商品
  * Class Goods
@@ -41,9 +44,11 @@ class Goods extends BaseShop
      */
     public function lists()
     {
+        $stockalarm = input('stockalarm', 0);
         $goods_model = new GoodsModel();
         if (request()->isAjax()) {
             $page_index = input('page', 1);
+            $page_index = intval($page_index);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $search_text = input('search_text', "");
             $goods_state = input('goods_state', "");
@@ -51,53 +56,86 @@ class Goods extends BaseShop
             $end_sale = input('end_sale', 0);
             $start_price = input('start_price', 0);
             $end_price = input('end_price', 0);
+            $sku_start_price = input('sku_start_price', 0);
+            $sku_end_price = input('sku_end_price', 0);
             $goods_class = input('goods_class', "");
             $label_id = input('label_id', "");
-            $order = input('order', 'sort');
+            $order = input('order', '');
             $sort = input('sort', 'asc');
+            $sku_no = input('sku_no','');
 
-            if ($order == 'sort') {
-                $order_by = $order . ' ' . $sort . ',create_time desc';
-            } else {
-                $order_by = $order . ' ' . $sort;
+            $alias = 'a';
+            $join = null;
+
+            $order_by = 'a.create_time desc';
+            if ($order != '') {
+                if ($order == 'sort') {
+                    $order_by = 'a.'.$order . ' ' . $sort . ',create_time desc';
+                } else {
+                    $order_by = 'a.'.$order . ' ' . $sort;
+                }
             }
             $promotion_type = input('promotion_type', "");
 
-            $condition = [ [ 'is_delete', '=', 0 ], [ 'site_id', '=', $this->site_id ] ];
+            $condition = [ [ 'a.is_delete', '=', 0 ], [ 'a.site_id', '=', $this->site_id ] ];
 
             if (!empty($search_text)) {
-                $condition[] = [ 'goods_name', 'like', '%' . $search_text . '%' ];
+                $condition[] = [ 'a.goods_name', 'like', '%' . $search_text . '%' ];
             }
             $category_id = input('category_id', "");
             if (!empty($category_id)) {
-                $condition[] = [ 'category_id', 'like', '%,' . $category_id . ',%' ];
+                $condition[] = [ 'a.category_id', 'like', '%,' . $category_id . ',%' ];
             }
 
             if ($goods_class !== "") {
-                $condition[] = [ 'goods_class', '=', $goods_class ];
+                $condition[] = [ 'a.goods_class', '=', $goods_class ];
             }
 
             if (!empty($label_id)) {
-                $condition[] = [ 'label_id', '=', $label_id ];
+                $condition[] = [ 'a.label_id', '=', $label_id ];
             }
 
             if (!empty($promotion_type)) {
-                $condition[] = [ 'promotion_addon', 'like', "%{$promotion_type}%" ];
+                $condition[] = [ 'a.promotion_addon', 'like', "%{$promotion_type}%" ];
             }
 
             // 上架状态
             if ($goods_state !== '') {
-                $condition[] = [ 'goods_state', '=', $goods_state ];
+                $condition[] = [ 'a.goods_state', '=', $goods_state ];
             }
-            if (!empty($start_sale)) $condition[] = [ 'sale_num', '>=', $start_sale ];
-            if (!empty($end_sale)) $condition[] = [ 'sale_num', '<=', $end_sale ];
-            if (!empty($start_price)) $condition[] = [ 'price', '>=', $start_price ];
-            if (!empty($end_price)) $condition[] = [ 'price', '<=', $end_price ];
+            if (!empty($start_sale)) $condition[] = [ 'a.sale_num', '>=', $start_sale ];
+            if (!empty($end_sale)) $condition[] = [ 'a.sale_num', '<=', $end_sale ];
+            if (!empty($start_price)) $condition[] = [ 'a.price', '>=', $start_price ];
+            if (!empty($end_price)) $condition[] = [ 'a.price', '<=', $end_price ];
+            if (!empty($sku_start_price)) $condition[] = [ 'sku.price', '>=', $sku_start_price ];
+            if (!empty($sku_end_price)) $condition[] = [ 'sku.price', '<=', $sku_end_price ];
 
-            $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size, $order_by);
+            // 查询库存预警的商品
+            if ($stockalarm) {
+                $stock_alarm = $goods_model->getGoodsStockAlarm($this->site_id);
+                if (!empty($stock_alarm['data'])){
+                    $condition[] = [ 'a.goods_id', 'in', $stock_alarm['data'] ];
+                } else{
+                    return success(0, '', ['page_count' => 1, 'count' => 0, 'list' => [] ]);
+                }
+            }
+            if(!empty($sku_start_price) || !empty($sku_end_price) || !empty($sku_no)){
+                $join[] = [
+                    'goods_sku sku',
+                    'sku.goods_id = a.goods_id',
+                    'inner'
+                ];
+                $condition[] = [ 'sku.sku_no', 'like', '%' . $sku_no . '%' ];
+                $field = 'sku.sku_no,a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete,a.label_name';
+            }else {
+                $field = 'a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete,a.label_name';
+            }
+            
+            $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size, $order_by,$field,$alias,$join); 
+            
             $goods_promotion_type = event('GoodsPromotionType');
             if (!empty($res[ 'data' ][ 'list' ])) {
-                foreach ($res[ 'data' ][ 'list' ] as $k => $v) {
+                foreach ($res[ 'data' ][ 'list' ] as $k => &$v) {
                     if (!empty($v[ 'promotion_addon' ])) {
                         $v[ 'promotion_addon' ] = json_decode($v[ 'promotion_addon' ], true);
                         foreach ($v[ 'promotion_addon' ] as $ck => $cv) {
@@ -128,7 +166,7 @@ class Goods extends BaseShop
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
 
@@ -147,9 +185,23 @@ class Goods extends BaseShop
             //判断会员价插件
             $memberprice_is_exit = addon_is_exit('memberprice', $this->site_id);
             $this->assign('memberprice_is_exit', $memberprice_is_exit);
+
+            // 判断采集插件
+            $goodsgrab_is_exit = addon_is_exit('goodsgrab', $this->site_id);
+            $this->assign('goodsgrab_is_exit', $goodsgrab_is_exit);
+
+            // 获取商品排序
+            $confif_model = new ConfigModel();
+            $goods_sort = $confif_model ->getGoodsSort($this->site_id);
+            $this->assign("goods_sort", $goods_sort['data']['value']['type']);
             // 营销活动
             $goods_promotion_type = event('GoodsPromotionType');
             $this->assign('promotion_type', $goods_promotion_type);
+
+            $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
+
+            $this->assign('stockalarm', $stockalarm);
+
             return $this->fetch("goods/lists");
         }
     }
@@ -174,14 +226,18 @@ class Goods extends BaseShop
     public function addGoods()
     {
         if (request()->isAjax()) {
+
             $category_id = input("category_id", 0);// 分类id
             $category_json = json_encode($category_id);//分类字符串
             $category_id = ',' . implode(',', $category_id) . ',';
-
             $data = [
                 'goods_name' => input("goods_name", ""),// 商品名称,
                 'goods_attr_class' => input("goods_attr_class", ""),// 商品类型id,
                 'goods_attr_name' => input("goods_attr_name", ""),// 商品类型名称,
+
+                'is_limit' => input("is_limit", "0"),// 商品是否限购,
+                'limit_type' => input("limit_type", "1"),// 商品限购类型,
+
                 'site_id' => $this->site_id,
                 'category_id' => $category_id,
                 'category_json' => $category_json,
@@ -214,9 +270,10 @@ class Goods extends BaseShop
                 'recommend_way' => input('recommend_way', 0), // 推荐方式，1：新品，2：精品，3；推荐
                 'timer_on' => strtotime(input('timer_on', 0)),//定时上架
                 'timer_off' => strtotime(input('timer_off', 0)),//定时下架
-                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
+                'is_consume_discount' => input('is_consume_discount', 0),//是否参与会员折扣
+                'qr_id' => input('qr_id', 0),//社群二维码id
+                'template_id' => input('template_id', 0)//商品海报id
             ];
-
             $goods_model = new GoodsModel();
             $res = $goods_model->addGoods($data);
             return $res;
@@ -253,7 +310,7 @@ class Goods extends BaseShop
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name','sort asc');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
 
@@ -262,6 +319,18 @@ class Goods extends BaseShop
             $sort_config = $config_model->getGoodsSort($this->site_id, $this->app_module);
             $sort_config = $sort_config['data']['value'];
             $this->assign("sort_config", $sort_config);
+
+            //获取社群二维码
+            $goods_community_model = new GoodsCommunityQrCode();
+            $goods_community_qr_list = $goods_community_model ->getQrList([['site_id', '=', $this->site_id],['qr_state','=',1]],'qr_id,qr_name,site_id');
+            $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
+
+            //获取商品海报
+            $poster_template_model = new PosterTemplateModel();
+            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
+            $this->assign('poster_list',$poster_list['data']);
+
+            $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
 
             return $this->fetch("goods/add_goods");
         }
@@ -285,6 +354,8 @@ class Goods extends BaseShop
                 'goods_name' => input("goods_name", ""),// 商品名称,
                 'goods_attr_class' => input("goods_attr_class", ""),// 商品类型id,
                 'goods_attr_name' => input("goods_attr_name", ""),// 商品类型名称,
+                'is_limit' => input("is_limit", "0"),// 商品是否限购,
+                'limit_type' => input("limit_type", "1"),// 商品限购类型,
                 'site_id' => $this->site_id,
                 'category_id' => $category_id,
                 'category_json' => $category_json,
@@ -318,7 +389,9 @@ class Goods extends BaseShop
                 'timer_on' => strtotime(input('timer_on', 0)),//定时上架
                 'timer_off' => strtotime(input('timer_off', 0)),//定时下架
                 'spec_type_status' => input('spec_type_status', 0),
-                'is_consume_discount' => input('is_consume_discount', 0)//是否参与会员折扣
+                'is_consume_discount' => input('is_consume_discount', 0),//是否参与会员折扣
+                'qr_id' => input('qr_id', 0),//社群二维码id
+                'template_id' => input('template_id', 0)//商品海报id
             ];
 
             $res = $goods_model->editGoods($data);
@@ -328,6 +401,7 @@ class Goods extends BaseShop
             $goods_id = input("goods_id", 0);
             $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ]);
             $goods_info = $goods_info[ 'data' ];
+            if (empty($goods_info)) return $this->error('未获取到商品数据', addon_url('shop/goods/lists'));
 
             $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,weight,volume,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default", '');
             $goods_sku_list = $goods_sku_list[ 'data' ];
@@ -365,9 +439,19 @@ class Goods extends BaseShop
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name','sort asc');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
+
+            //获取社群二维码
+            $goods_community_model = new GoodsCommunityQrCode();
+            $goods_community_qr_list = $goods_community_model ->getQrList([['site_id', '=', $this->site_id],['qr_state','=',1]],'qr_id,qr_name,site_id');
+            $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
+
+            //获取商品海报
+            $poster_template_model = new PosterTemplateModel();
+            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
+            $this->assign('poster_list',$poster_list['data']);
 
             return $this->fetch("goods/edit_goods");
         }
@@ -395,15 +479,35 @@ class Goods extends BaseShop
         if (request()->isAjax()) {
             $page_index = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
-            $search_keys = input('search_keys', "");
+            $search_keys = input('search_text', "");
+            $goods_class = input('goods_class','');
             $condition = [ [ 'is_delete', '=', 1 ], [ 'site_id', "=", $this->site_id ] ];
             if (!empty($search_keys)) {
                 $condition[] = [ 'goods_name', 'like', '%' . $search_keys . '%' ];
+            }
+            $category_id = input('category_id', "");
+            if (!empty($category_id)) {
+                $condition[] = [ 'category_id', 'like', '%,' . $category_id . ',%' ];
+            }
+
+            if ($goods_class !== "") {
+                $condition[] = [ 'goods_class', '=', $goods_class ];
             }
             $goods_model = new GoodsModel();
             $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size);
             return $res;
         } else {
+            //获取一级商品分类
+            $goods_category_model = new GoodsCategoryModel();
+            $condition = [
+                [ 'pid', '=', 0 ],
+                [ 'site_id', '=', $this->site_id ]
+            ];
+
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
+            $goods_category_list = $goods_category_list[ 'data' ];
+            $this->assign("goods_category_list", $goods_category_list);
+            $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
             return $this->fetch("goods/recycle");
         }
     }
@@ -529,7 +633,10 @@ class Goods extends BaseShop
         if (request()->isAjax()) {
             $goods_id = input("goods_id", 0);
             $goods_model = new GoodsModel();
-            $res = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], 'sku_id,sku_name,price,market_price,cost_price,stock,weight,volume,sku_no,sale_num,sku_image,spec_name,goods_id,stock_alarm');
+            $res = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], 'sku_id,sku_name,price,market_price,cost_price,stock,weight,volume,sku_no,sale_num,sku_image,spec_name,goods_id,stock_alarm,is_consume_discount,member_price,discount_method,discount_config');
+            if (!empty($res['data'])) {
+                $res['data'] = $goods_model->getSkuMemberPrice($res['data'], $this->site_id);
+            }
             return $res;
         }
     }
@@ -543,8 +650,9 @@ class Goods extends BaseShop
         if (request()->isAjax()) {
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
-            $goods_name = input('goods_name', '');
+            $search_text = input('search_text', '');
             $goods_id = input('goods_id', 0);
+            $goods_ids = input('goods_ids', '');
             $is_virtual = input('is_virtual', '');// 是否虚拟类商品（0实物1.虚拟）
             $min_price = input('min_price', 0);
             $max_price = input('max_price', 0);
@@ -553,67 +661,87 @@ class Goods extends BaseShop
             $promotion = input('promotion', '');//营销活动标识：pintuan、groupbuy、fenxiao、bargain
             $promotion_type = input('promotion_type', "");
             $label_id = input('label_id', "");
+            $select_type = input('select_type', 'all');
 
             if (!empty($promotion) && addon_is_exit($promotion)) {
-                $pintuan_name = input('pintuan_name', '');//拼团活动
-                $goods_list = event('GoodsListPromotion', [ 'page' => $page, 'page_size' => $page_size, 'site_id' => $this->site_id, 'promotion' => $promotion, 'pintuan_name' => $pintuan_name, 'goods_name' => $goods_name ], true);
+                $promotion_name = input('promotion_name', '');//拼团活动
+                $goods_list = event('GoodsListPromotion', [
+                    'page' => $page,
+                    'page_size' => $page_size,
+                    'site_id' => $this->site_id,
+                    'promotion' => $promotion,
+                    'promotion_name' => $promotion_name,
+                    //筛选参数
+                    'category_id' => $category_id,
+                    'select_type' => $select_type,
+                    'goods_ids' => $goods_ids,
+                    'label_id' => $label_id,
+                    'goods_class' => $goods_class,
+                    'goods_name' => $search_text,
+                ], true);
             } else {
+                $alias = 'g';
+                $join = [];
+
                 $condition = [
-                    [ 'is_delete', '=', 0 ],
-                    [ 'goods_state', '=', 1 ],
-                    [ 'site_id', '=', $this->site_id ]
+                    [ 'g.is_delete', '=', 0 ],
+                    [ 'g.goods_state', '=', 1 ],
+                    [ 'g.goods_stock', '>', 0 ],
+                    [ 'g.site_id', '=', $this->site_id ],
                 ];
 
-                if (!empty($goods_name)) {
-                    $condition[] = [ 'goods_name', 'like', '%' . $goods_name . '%' ];
+                if (!empty($search_text)) {
+                    $join[] = ['goods_sku gs', 'g.goods_id = gs.goods_id', 'left'];
+                    $condition[] = [ 'g.goods_name|gs.sku_no', 'like', '%' . $search_text . '%' ];
                 }
                 if ($is_virtual !== "") {
-                    $condition[] = [ 'is_virtual', '=', $is_virtual ];
+                    $condition[] = [ 'g.is_virtual', '=', $is_virtual ];
                 }
                 if (!empty($goods_id)) {
-                    $condition[] = [ 'goods_id', '=', $goods_id ];
+                    $condition[] = [ 'g.goods_id', '=', $goods_id ];
+                }
+                if ($select_type == 'selected') {
+                    $condition[] = [ 'g.goods_id', 'in', $goods_ids ];
                 }
                 if (!empty($category_id)) {
-                    $condition[] = [ 'category_id', 'like', '%,' . $category_id . ',%' ];
+                    $condition[] = [ 'g.category_id', 'like', '%,' . $category_id . ',%' ];
                 }
 
                 if (!empty($promotion_type)) {
-                    $condition[] = [ 'promotion_addon', 'like', "%{$promotion_type}%" ];
+                    $condition[] = [ 'g.promotion_addon', 'like', "%{$promotion_type}%" ];
                 }
 
                 if (!empty($label_id)) {
-                    $condition[] = [ 'label_id', '=', $label_id ];
+                    $condition[] = [ 'g.label_id', '=', $label_id ];
                 }
 
                 if ($goods_class !== "") {
-                    $condition[] = [ 'goods_class', '=', $goods_class ];
+                    $condition[] = [ 'g.goods_class', '=', $goods_class ];
                 }
 
                 if ($min_price != "" && $max_price != "") {
-                    $condition[] = [ 'price', 'between', [ $min_price, $max_price ] ];
+                    $condition[] = [ 'g.price', 'between', [ $min_price, $max_price ] ];
                 } elseif ($min_price != "") {
-                    $condition[] = [ 'price', '<=', $min_price ];
+                    $condition[] = [ 'g.price', '<=', $min_price ];
                 } elseif ($max_price != "") {
-                    $condition[] = [ 'price', '>=', $max_price ];
+                    $condition[] = [ 'g.price', '>=', $max_price ];
                 }
 
                 $config_model = new ConfigModel();
                 $sort_config = $config_model->getGoodsSort($this->site_id);
                 $sort_config = $sort_config['data']['value'];
 
-                $order = 'sort '.$sort_config['type'].',create_time desc';
+                $order = 'g.sort '.$sort_config['type'].',g.create_time desc';
 
                 $goods_model = new GoodsModel();
-                $field = 'goods_id,goods_name,goods_class_name,goods_image,price,goods_stock,create_time,is_virtual';
-                $goods_list = $goods_model->getGoodsPageList($condition, $page, $page_size, $order, $field);
-
+                $field = 'g.goods_id,g.goods_name,g.goods_class_name,g.goods_image,g.price,g.goods_stock,g.create_time,g.is_virtual';
+                $goods_list = $goods_model->getGoodsPageList($condition, $page, $page_size, $order, $field, $alias, $join);
                 if (!empty($goods_list[ 'data' ][ 'list' ])) {
                     foreach ($goods_list[ 'data' ][ 'list' ] as $k => $v) {
                         $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $v[ 'goods_id' ] ], [ 'site_id', '=', $this->site_id ] ], 'sku_id,sku_name,price,stock,sku_image,goods_id,goods_class_name', 'price asc');
                         $goods_sku_list = $goods_sku_list[ 'data' ];
                         $goods_list[ 'data' ][ 'list' ][ $k ][ 'sku_list' ] = $goods_sku_list;
                     }
-
                 }
             }
             return $goods_list;
@@ -643,52 +771,44 @@ class Goods extends BaseShop
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'create_time desc');
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
             $label_list = $label_list[ 'data' ];
             $this->assign("label_list", $label_list);
 
-            $goods_category_model = new GoodsCategoryModel();
-
-            $field = 'category_id,category_name as title';
-            $condition = [
-                [ 'pid', '=', 0 ],
-                [ 'level', '=', 1 ],
-                [ 'site_id', '=', $this->site_id ]
-            ];
-            $list = $goods_category_list = $goods_category_model->getCategoryByParent($condition, $field);
-            $list = $list[ 'data' ];
-            if (!empty($list)) {
-                foreach ($list as $k => $v) {
-                    $two_list = $goods_category_list = $goods_category_model->getCategoryByParent(
-                        [
-                            [ 'pid', '=', $v[ 'category_id' ] ],
-                            [ 'level', '=', 2 ],
-                            [ 'site_id', '=', $this->site_id ]
-                        ],
-                        $field
-                    );
-
-                    $two_list = $two_list[ 'data' ];
-                    if (!empty($two_list)) {
-
-                        foreach ($two_list as $two_k => $two_v) {
-                            $three_list = $goods_category_list = $goods_category_model->getCategoryByParent(
-                                [
-                                    [ 'pid', '=', $two_v[ 'category_id' ] ],
-                                    [ 'level', '=', 3 ],
-                                    [ 'site_id', '=', $this->site_id ]
-                                ],
-                                $field
-                            );
-                            $two_list[ $two_k ][ 'children' ] = $three_list[ 'data' ];
-                        }
-                    }
-
-                    $list[ $k ][ 'children' ] = $two_list;
-                }
+            //分类过滤
+            if (!empty($promotion) && addon_is_exit($promotion)){
+                $category_id_arr = event('GoodsListCategoryIds', [
+                    'promotion' => $promotion,
+                    'site_id' => $this->site_id,
+                ], true)['data'] ?? [];
+            }else{
+                $goods_model = new GoodsModel();
+                $category_id_arr = $goods_model->getGoodsCategoryIds([
+                    [ 'is_delete', '=', 0 ],
+                    [ 'goods_state', '=', 1 ],
+                    [ 'goods_stock', '>', 0 ],
+                    [ 'site_id', '=', $this->site_id ],
+                ])['data'];
             }
 
-            $this->assign("category_list", $list);
+            $goods_category_model = new GoodsCategoryModel();
+            $field = 'category_id,category_name as title,pid';
+            $list = $goods_category_model->getCategoryList([
+                ['site_id', '=', $this->site_id],
+                ['category_id', 'in', $category_id_arr]
+            ], $field)['data'];
+            $tree = list_to_tree($list, 'category_id', 'pid', 'children', 0);
+            $this->assign("category_list", $tree);
+
+            //电子卡密插件是否存在
+            $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
+
+            // 商品分组
+            $goods_label_model = new GoodsLabelModel();
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
+            $label_list = $label_list[ 'data' ];
+            $this->assign("label_list", $label_list);
+
             return $this->fetch("goods/goods_select");
         }
     }
@@ -712,9 +832,22 @@ class Goods extends BaseShop
             $start_time = input('start_time', '');
             $end_time = input('end_time', '');
             $goods_id = input('goods_id', '');
-            $condition = [
-                [ "site_id", "=", $this->site_id ]
-            ];
+            $is_audit = input('is_audit','');
+
+            if(!empty($is_audit)){
+                if($is_audit == 1){
+                    $condition[] =
+                        [ "is_audit", "=", 0 ];
+                }else if($is_audit == 2){
+                    $condition[] =
+                        [ "is_audit", "=", 1 ];
+                }else if($is_audit == 3){
+                    $condition[] =
+                        [ "is_audit", "=", 2 ];
+                }
+            }
+            $condition[] =
+                [ "site_id", "=", $this->site_id ];
             //评分类型
             if ($explain_type != "") {
                 $condition[] = [ "explain_type", "=", $explain_type ];
@@ -735,7 +868,7 @@ class Goods extends BaseShop
             } elseif (!empty($start_time) && !empty($end_time)) {
                 $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
             }
-            return $goods_evaluate->getEvaluatePageList($condition, $page_index, $page_size, "create_time desc");
+            return $goods_evaluate->getEvaluatePageList($condition, $page_index, $page_size, "is_audit asc, create_time desc");
         } else {
             $goods_id = input('goods_id', '');
             $this->assign('goods_id', $goods_id);
@@ -752,8 +885,8 @@ class Goods extends BaseShop
 
         if (request()->isAjax()) {
             $goods_evaluate = new GoodsEvaluateModel();
-            $evaluate_id = input("evaluate_id", 0);
-            return $goods_evaluate->deleteEvaluate($evaluate_id);
+            $evaluate_ids = input("evaluate_ids", 0);
+            return $goods_evaluate->deleteEvaluate($evaluate_ids);
         }
     }
 
@@ -780,6 +913,29 @@ class Goods extends BaseShop
     }
 
     /**
+     * 修改商品追评审核状态
+     */
+    public function modifyAgainAuditEvaluate()
+    {
+        if (request()->isAjax()) {
+            $goods_evaluate = new GoodsEvaluateModel();
+            $evaluate_ids = input("evaluate_ids", '');
+            $again_is_audit = input('again_is_audit', 0);
+            $data = [
+                'again_is_audit' => $again_is_audit
+            ];
+            $condition = [
+                [ 'evaluate_id', 'in', $evaluate_ids ],
+                [ 'again_is_audit', '=', 0 ],
+                [ 'site_id', '=', $this->site_id ],
+            ];
+            $res = $goods_evaluate->modifyAgainAuditEvaluate($data, $condition);
+            return $res;
+        }
+    }
+
+
+    /**
      * 商品推广
      * return
      */
@@ -789,7 +945,8 @@ class Goods extends BaseShop
         $goods_model = new GoodsModel();
         $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name,site_id');
         $goods_sku_info = $goods_sku_info[ 'data' ];
-        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ], $goods_sku_info[ 'site_id' ]);
+//        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ], $goods_sku_info[ 'site_id' ]);
+        $res = $goods_model->urlQrcode('/pages/goods/detail/detail', ['sku_id' => $goods_sku_info[ 'sku_id' ]], 'goods', $this->site_id);
         return $res;
     }
 
@@ -853,6 +1010,7 @@ class Goods extends BaseShop
             return $goods_evaluate->editEvaluate($data, $condition);
         }
     }
+
 
     /**
      * 商品批量设置
@@ -919,6 +1077,7 @@ class Goods extends BaseShop
             $res = $config_model->setHotSearchWords($data, $this->site_id, $this->app_module);
             return $res;
         } else {
+            $this->forthMenu();
             $hot_search_words = $config_model->getHotSearchWords($this->site_id, $this->app_module);
             $hot_search_words = $hot_search_words[ 'data' ][ 'value' ];
 
@@ -932,6 +1091,169 @@ class Goods extends BaseShop
         }
     }
 
+    /**
+     * 猜你喜欢
+     * @return mixed
+     */
+    public function guessYouLike()
+    {
+        $config_model = new ConfigModel();
+        if (request()->isAjax()) {
+            $is_show = input('is_show',0);
+            $type_show = input('type_show',1);
+            $goods_id = input('goods_ids','');
+            if($type_show!=4){
+                $goods_id = '';
+            }
+            $data = [
+                'is_show' => $is_show,
+                'type_show' => $type_show,
+                'goods_ids' => $goods_id,
+            ];
+            $res = $config_model->setGuessYouLike($data, $this->site_id, $this->app_module);
+            return $res;
+        } else {
+            $this->forthMenu();
+            $guess_you_like = $config_model->getGuessYouLike($this->site_id, $this->app_module);
+            $guess_you_like = $guess_you_like['data']['value'];
+            $guess_you_like['goods_list']='';
+            if($guess_you_like['type_show'] == 4){ // 手动设置
+                $goods_model = new GoodsModel();
+                $condition[] = ['goods_id','in',$guess_you_like['goods_ids']];
+                $condition[] = ['site_id','=',$this->site_id];
+                $goods_list = $goods_model->getGoodsList($condition,'goods_id,goods_name,goods_image,price,goods_stock');
+                if(!empty($goods_list)){
+                    $guess_you_like['goods_list'] = $goods_list['data'];
+                }
+
+            }
+            $this->assign("guess_you_like", $guess_you_like);
+            return $this->fetch('goods/guess_you_like');
+        }
+    }
+
+    /**
+     * 社群二维码
+     */
+    public function communityQrCode()
+    {
+        $goods_community_model = new GoodsCommunityQrCode();
+        if (request()->isAjax()) {
+            $page = input('page', 1);
+            $page_size = input('page_size', PAGE_LIST_ROWS);
+            $condition = [];
+            $keywords = input('keywords','');
+            if(!empty($keywords)){
+                $condition[] = ['qr_name','like','%'.$keywords.'%'];
+            }
+            $condition[] = [ 'site_id', '=', $this->site_id ];
+            $order = 'create_time desc';
+            $field = 'qr_id, qr_img, qr_name, community_describe,qr_state, create_time, site_id';
+            return $goods_community_model->getQrPageList($condition, $page, $page_size, $order, $field);
+        } else {
+            return $this->fetch('goods/community_qrcode');
+        }
+    }
+
+    /**
+     * 社群二维码组件调用
+     */
+    public function QrCodeLists()
+    {
+        $goods_community_model = new GoodsCommunityQrCode();
+        $page = input('page', 1);
+        $page_size = input('page_size', PAGE_LIST_ROWS);
+        $condition = [];
+        $condition[] = [ 'site_id', '=', $this->site_id ];
+        $order = 'create_time desc';
+        $field = 'qr_id, qr_img, qr_name, community_describe,qr_state, create_time, site_id';
+        $res_data = $goods_community_model->getQrPageList($condition, $page, $page_size, $order, $field);
+        return $res_data;
+    }
+
+    /**
+     * 添加社群二维码
+     */
+    public function addQrCode()
+    {
+        $goods_community_model = new GoodsCommunityQrCode();
+        if (request()->isAjax()) {
+            $qr_name = input('qr_name','');
+            $qr_img = input('qr_img','');
+            $community_describe = input('community_describe','');
+            $data = [
+                'qr_name' => $qr_name,
+                'qr_img' => $qr_img,
+                'community_describe' => $community_describe,
+                'qr_state' => 0,
+                'create_time' => time(),
+                'site_id' => $this->site_id
+            ];
+            return $goods_community_model->addQrCode($data);
+        } else {
+            return $this->fetch('goods/add_qrcode');
+        }
+    }
+
+    /**
+     * 编辑社群二维码
+     */
+    public function editQrCode()
+    {
+        $goods_community_model = new GoodsCommunityQrCode();
+        if (request()->isAjax()) {
+            $qr_id = input('qr_id','0');
+            $qr_name = input('qr_name','');
+            $qr_img = input('qr_img','');
+            $community_describe = input('community_describe','');
+            $data = [
+                'qr_id' => $qr_id,
+                'qr_name' => $qr_name,
+                'qr_img' => $qr_img,
+                'community_describe' => $community_describe,
+                'qr_state' => 0,
+                'modify_time' => time(),
+                'site_id' => $this->site_id
+            ];
+            return $goods_community_model->addQrCode($data);
+        } else {
+            $qr_id = input('qr_id','0');
+            $qr_data = $goods_community_model->getQrInfo($qr_id,$this->site_id);
+            $this->assign('qr_data',$qr_data['data']);
+            return $this->fetch('goods/edit_qrcode');
+        }
+    }
+
+    /**
+     * 修改社群二维码状态
+     */
+    public function editState()
+    {
+        $goods_community_model = new GoodsCommunityQrCode();
+
+            $qr_id = input('qr_id','0');
+            $state = input('state','');
+
+            $data = [
+                'qr_id' => $qr_id,
+                'qr_state' => $state,
+                'modify_time' => time(),
+                'site_id' => $this->site_id
+            ];
+            return $goods_community_model->addQrCode($data);
+    }
+
+    /**
+     * 删除社群二维码
+     */
+    public function deleteQr()
+    {
+        $goods_community_model = new GoodsCommunityQrCode();
+
+        $qr_id = input('qr_id','0');
+
+        return $goods_community_model->deleteQrCode($qr_id,$this->site_id);
+    }
 
     /**
      * 默认搜索关键词
@@ -941,15 +1263,33 @@ class Goods extends BaseShop
     {
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
-            $data = [
-                'words' => input("words", "")
+            $default_data = [
+                'words' => input("default_words", "")
             ];
-            $res = $config_model->setDefaultSearchWords($data, $this->site_id, $this->app_module);
+            $config_model->setDefaultSearchWords($default_data, $this->site_id, $this->app_module);
+            $words = input("words", []);
+            $data = [
+                'words' => implode(',', $words)
+            ];
+            $res = $config_model->setHotSearchWords($data, $this->site_id, $this->app_module);
+
             return $res;
         } else {
+            $this->forthMenu();
             $default_search_words = $config_model->getDefaultSearchWords($this->site_id, $this->app_module);
             $default_search_words = $default_search_words[ 'data' ][ 'value' ];
             $this->assign("default_search_words", $default_search_words);
+
+            $hot_search_words = $config_model->getHotSearchWords($this->site_id, $this->app_module);
+            $hot_search_words = $hot_search_words[ 'data' ][ 'value' ];
+
+            $words_array = [];
+            if (!empty($hot_search_words[ 'words' ])) {
+                $words_array = explode(',', $hot_search_words[ 'words' ]);
+            }
+            $hot_search_words[ 'words_array' ] = $words_array;
+            $this->assign("hot_search_words", $hot_search_words);
+
             return $this->fetch('goods/default_search_words');
         }
     }
@@ -963,7 +1303,7 @@ class Goods extends BaseShop
         if (request()->isAjax()) {
             $goods_id = input('goods_id', 0);
             $goods_model = new GoodsModel();
-            $res = $goods_model->copyGoods($goods_id);
+            $res = $goods_model->copyGoods($goods_id, $this->site_id);
             return $res;
         }
     }
@@ -982,7 +1322,7 @@ class Goods extends BaseShop
             $condition[] = [ 'gc.site_id', '=', $this->site_id ];
             $condition[] = [ 'gc.member_id', '=', $member_id ];
             $order = 'gc.create_time desc';
-            $field = 'gc.collect_id, gc.member_id, gc.goods_id, gc.sku_id,gc.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual,sku.*';
+            $field = 'gc.collect_id,gc.create_time,gc.member_id, gc.goods_id, gc.sku_id,gc.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual,sku.collect_num';
             return $goods_collect_model->getCollectPageList($condition, $page, $page_size, $order, $field);
         } else {
             $this->forthMenu([ 'member_id' => $member_id ]);
@@ -1071,6 +1411,7 @@ class Goods extends BaseShop
             $res = $config_model->setGoodsSort($data, $this->site_id, $this->app_module);
             return $res;
         } else {
+            $this->forthMenu();
             $goods_sort_confog = $config_model->getGoodsSort($this->site_id, $this->app_module);
             $goods_sort_confog = $goods_sort_confog['data']['value'];
 
@@ -1079,4 +1420,147 @@ class Goods extends BaseShop
         }
     }
 
+    /**
+     * 商品导入
+     */
+    public function import(){
+        $import_model = new GoodsImport();
+        $type = input('type');
+        if (request()->isAjax()) {
+            $file = request()->file('xls');
+            if (empty($file)) {
+                return $import_model->error();
+            }
+            $tmp_name = $file->getPathname();//获取上传缓存文件
+            $data = (new GoodsImport())->readGoodsExcel($tmp_name);
+            $result = (new GoodsImport())->importGoods($data['data'], $this->site_id, $type);
+            return $result;
+        } else {
+            return $this->fetch("goods/import");
+        }
+    }
+
+
+//    public function test(){
+//         导入
+//        $data = (new GoodsImport())->readGoodsExcel('upload/test/excel.xls');
+//        (new GoodsImport())->importGoods($data['data'], $this->site_id, 3);
+//        // 导出
+//        (new GoodsImport())->downloadFailData(15, 1);
+//    }
+
+    public function importRecordList(){
+        $page_index = input('page', 1);
+        $page_size = input('page_size', PAGE_LIST_ROWS);
+        $goodsimport_model = new GoodsImport();
+        if (request()->isAjax()) {
+            $start_time = input('start_time','');
+            $end_time = input('end_time','');
+            $condition = [['site_id','=',$this->site_id]];
+            if (!empty($start_time) && empty($end_time)) {
+                $condition[] = [ "import_time", ">=", date_to_time($start_time) ];
+            } elseif (empty($start_time) && !empty($end_time)) {
+                $condition[] = [ "import_time", "<=", date_to_time($end_time) ];
+            } elseif (!empty($start_time) && !empty($end_time)) {
+                $condition[] = [ 'import_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+            }
+            $res = $goodsimport_model ->getImportPageList($condition,$page_index,$page_size);
+
+            if(!empty($res['data']['list'])){
+                foreach($res['data']['list'] as $k=>&$v){
+                    $v['import_time'] = time_to_date($v['import_time']);
+                }
+            }
+            return $res;
+        } else {
+            return $this->fetch("goods/import_record_list");
+        }
+    }
+
+    public function download(){
+        $id = input('id','0');
+        (new GoodsImport())->downloadFailData($id, $this->site_id);
+    }
+
+    /**
+     * 商品海报
+     */
+    public function poster(){
+        $goods_poster_model = new GoodsPoster();
+        if (request()->isAjax()) {
+            $page = input('page',1);
+            $page_size = input('page_size',PAGE_LIST_ROWS);
+            $keywords = input('keywords','');
+            if(!empty($keywords )){
+                $condition[] = ['poster_name','like','%'.$keywords.'%'];
+            }
+            $condition[] = ['site_id','=',$this->site_id];
+            $result = $goods_poster_model->getPosterPageList($condition,$page,$page_size);
+            return $result;
+        } else {
+            return $this->fetch("goods/goods_poster_list");
+        }
+    }
+
+    /**
+     * 商品海报添加
+     */
+    public function editPoster(){
+        $goods_poster_model = new GoodsPoster();
+        if (request()->isAjax()) {
+            $poster_name = input('poster_name','');
+            $json_data = input('json_data','');
+            $poster_id = input('poster_id','');
+            if (empty($poster_id)){
+                $data['create_time'] = time();
+            }else{
+                $data['modify_time'] = time();
+            }
+            $data['poster_id'] = $poster_id;
+            $data['poster_name'] = $poster_name;
+            $data['json_data'] = $json_data;
+            $data['poster_type'] = 1;
+            $data['site_id'] = $this->site_id;
+
+            $result = $goods_poster_model->addPoster($data);
+            return $result;
+        } else {
+            $poster_id = input('poster_id','');
+            if (!empty($poster_id)){
+              $goods_poster_data =   $goods_poster_model->getPosterInfo($poster_id,$this->site_id);
+              $this->assign('poster_data',$goods_poster_data['data']);
+            }
+
+            return $this->fetch("goods/goods_edit_poster");
+        }
+    }
+
+    /**
+     * 修改海报启用状态
+     */
+    public function editStatus(){
+        $goods_poster_model = new GoodsPoster();
+
+        $poster_id = input('poster_id',0);
+        $status = input('status','');
+
+        $data = [
+            'poster_id'   => $poster_id,
+            'status'      => $status,
+            'site_id'     => $this->site_id,
+            'modify_time' => time()
+        ];
+        return $goods_poster_model->addPoster($data);
+    }
+
+    /**
+     * 删除海报
+     */
+    public function deletePoster(){
+        $goods_poster_model = new GoodsPoster();
+
+        $poster_id = input('poster_id',0);
+
+        return $goods_poster_model->deletePoster($poster_id,$this->site_id);
+    }
 }

@@ -12,9 +12,12 @@
 namespace app\shop\controller;
 
 use app\Controller;
+use app\model\system\Addon;
+use app\model\system\Qrcode as QrcodeModel;
 use app\model\system\User as UserModel;
 use app\model\web\Config as ConfigModel;
 use app\model\web\WebSite as WebsiteModel;
+use extend\QRcode as QRcodeExtend;
 use think\captcha\facade\Captcha as ThinkCaptcha;
 use think\facade\Cache;
 use app\model\system\Site;
@@ -33,6 +36,7 @@ class Login extends Controller
     {
         parent::__construct();
         $this->assign("shop_module", SHOP_MODULE);
+        $this->assign('base', 'app/shop/view/base/style1.html');
     }
 
     /**
@@ -72,11 +76,39 @@ class Login extends Controller
             $copyright = $config_model->getCopyright();
             $this->assign('copyright', $copyright[ 'data' ][ 'value' ]);
 
+            //获取其他端 访问二维码
+            $addon = [];
+            $resultData = [];
+            if(addon_is_exit('mobileshop', $site_id)){
+                $config_model = new \addon\mobileshop\model\Config();
+                $addon['mobileshop'] = $config_model->getMShopDomainName($site_id);
+                $addon['weapp'] = $config_model->getWeappConfig($site_id);
+                if($addon['mobileshop']['code']==0 && !empty($addon['mobileshop']['data'])){
+                    $path = 'upload/qrcode/shop' . '/';
+                    $name = "shop_qrcode_" . $site_id . '_'  . 'mobileshop'.'.png';
+                    $filename =  $path.$name;
+                    if(!file_exists($path)){
+                        mkdir($path, intval('0755', 8), true);
+                    }
+                    if(!file_exists($filename)){
+                        $url      = $addon['mobileshop']['data']['value']['domain_name_mobileshop'];
+                        QRcodeExtend::png($url, $filename, 'L', 4, 1);
+                    }
+                    $resultData[0]['message'] = 'H5端';
+                    $resultData[0]['img'] = $filename;
+                }
+                if($addon['weapp']['code']==0 && !empty($addon['weapp']['data']['value'])){
+                    $resultData[1]['message'] = '小程序端';
+                    $resultData[1]['img'] = $addon['weapp']['data']['value']['qrcode'];
+                }
+            }
+
             // 验证码
             $captcha = $this->captcha();
             $captcha = $captcha[ 'data' ];
             $this->assign('site_id', $site_id);
             $this->assign("captcha", $captcha);
+            $this->assign('port_data', $resultData);
             return $this->fetch("login/login");
         }
     }
@@ -155,5 +187,6 @@ class Login extends Controller
             return $res;
         }
     }
+
 
 }

@@ -1,6 +1,10 @@
 {extend name="base"/}
 {block name="resources"}
 <link rel="stylesheet" href="SHOP_CSS/order_list.css"/>
+<style>
+	.content-row .order-money{border-left:0px;}
+	.content-row .operation .layui-btn{display: block;text-align: left;line-height: 23px;padding: 0px;margin: 0px;}
+</style>
 {/block}
 {block name="main"}
 <div class="ns-screen layui-collapse" lay-filter="selection_panel">
@@ -29,7 +33,42 @@
 					</div>
 				</div>
 			</div>
-			
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">退款状态：</label>
+					<div class="layui-input-inline">
+						<select name="refund_status" lay-filter="refund_status">
+							<option value="">全部</option>
+							{foreach $refund_status_list as $k => $status_val}
+							<option value="{$status_val.status}">{$status_val.name}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<label class="layui-form-label">退款方式：</label>
+					<div class="layui-input-inline">
+						<select name="refund_type" >
+							<option value="">全部</option>
+							{foreach $refund_type_list as $refund_type_k => $refund_type_v}
+							<option value="{$refund_type_k}">{$refund_type_v}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<label class="layui-form-label">维权类型：</label>
+					<div class="layui-input-inline">
+						<select name="refund_mode" >
+							<option value="">全部</option>
+							<option value="1">订单退款</option>
+							<option value="2">售后退款</option>
+						</select>
+					</div>
+				</div>
+			</div>
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">下单时间：</label>
@@ -46,33 +85,6 @@
 					<button class="layui-btn layui-btn-primary date-picker-btn" onclick="datePick(30, this);return false;">近30天</button>
 				</div>
 			</div>
-			
-			<div class="layui-form-item">
-				<div class="layui-inline">
-					<label class="layui-form-label">退款状态：</label>
-					<div class="layui-input-inline">
-						<select name="refund_status" lay-filter="refund_status">
-							<option value="">全部</option>
-							{foreach $refund_status_list as $k => $status_val}
-							<option value="{$status_val.status}">{$status_val.name}</option>
-							{/foreach}
-						</select>
-					</div>
-				</div>
-				
-				<div class="layui-inline">
-					<label class="layui-form-label">退款方式：</label>
-					<div class="layui-input-inline">
-						<select name="refund_type" >
-							<option value="">全部</option>
-							{foreach $refund_type_list as $refund_type_k => $refund_type_v}
-							<option value="{$refund_type_k}">{$refund_type_v}</option>
-							{/foreach}
-						</select>
-					</div>
-				</div>
-			</div>
-			
 			<div class="ns-form-row">
 				<button class="layui-btn ns-bg-color" lay-submit id="btn_search"lay-filter="btn_search">筛选</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -104,7 +116,7 @@
 <div id="order_operation"></div>
 {/block}
 {block name="script"}
-<script src="SHOP_JS/refund_list.js"></script>
+<script src="SHOP_JS/refund_list.js?v=20220218"></script>
 <script>
     var laypage,element, form, hash_url;
     /**
@@ -142,7 +154,8 @@
             "refund_no" : "",
             "delivery_no" : "",
             "refund_delivery_no" : "",
-            "page" : ""
+            "page" : "",
+            "refund_mode" : ""
         };
         if(hash_arr.length > 0){
             // page = hash_arr[0].replace('#!page=', '');
@@ -263,7 +276,8 @@
 			"refund_no" : "",
 			"delivery_no" : "",
 			"refund_delivery_no" : "",
-			"page" : ""
+			"page" : "",
+            "refund_mode" : ""
 		};
 		if(hash_arr.length > 0){
 			// page = hash_arr[0].replace('#!page=', '');

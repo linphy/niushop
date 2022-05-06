@@ -45,37 +45,37 @@ class Manjian extends BaseModel
             return $this->error('', '结束时间不能早于当前时间');
         }
 
-        if ($data['manjian_type'] == 1) {
-            $manjian_activity_info = model('promotion_manjian')->getInfo([
-                ['status', 'in', "0,1"],
-                ['site_id', '=', $data['site_id']],
-                ['manjian_type', '=', 1],
-                ['', 'exp', Db::raw('not ( (`start_time` > ' . $data['end_time'] . ' and `start_time` > ' . $data['start_time'] . ' )  or (`end_time` < ' . $data['start_time'] . ' and `end_time` < ' . $data['end_time'] . '))')]
-            ], 'manjian_name,start_time,end_time');
-            if (!empty($manjian_activity_info)) {
-                $key = 'manjian' . random_keys(8) . $data['site_id'];
-                Cache::set($key, ['list' => [$manjian_activity_info], 'type' => 'activity', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
-                return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
-            }
+        $manjian_activity_info = model('promotion_manjian')->getInfo([
+            ['status', 'in', "0,1"],
+            ['site_id', '=', $data['site_id']],
+            ['manjian_type', '=', 1],
+            ['', 'exp', Db::raw('not ( (`start_time` > ' . $data['end_time'] . ' and `start_time` > ' . $data['start_time'] . ' )  or (`end_time` < ' . $data['start_time'] . ' and `end_time` < ' . $data['end_time'] . '))')]
+        ], 'manjian_name,start_time,end_time');
+        if (!empty($manjian_activity_info)) {
+            $key = 'manjian' . random_keys(8) . $data['site_id'];
+            Cache::set($key, ['list' => [$manjian_activity_info], 'type' => 'activity', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
+            return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
         }
 
-        $join = [
-            ['promotion_manjian pm', 'pm.manjian_id = pmg.manjian_id', 'left'],
-            ['goods g', 'g.goods_id = pmg.goods_id', 'left']
-        ];
+        if ($data['manjian_type'] == 2) {
+            $join = [
+                ['promotion_manjian pm', 'pm.manjian_id = pmg.manjian_id', 'left'],
+                ['goods g', 'g.goods_id = pmg.goods_id', 'left']
+            ];
 
-        // 查询存在交集的满减活动商品
-        $condition_bing = [
-            ['pmg.status', 'in', "0,1"],
-            ['pmg.site_id', '=', $data['site_id']],
-            ['', 'exp', Db::raw('not ( (pmg.start_time > ' . $data['end_time'] . ' and pmg.start_time > ' . $data['start_time'] . ' )  or (pmg.end_time < ' . $data['start_time'] . ' and pmg.end_time < ' . $data['end_time'] . '))')]
-        ];
-        if ($data['manjian_type'] != 1) $condition_bing[] = ['pmg.goods_id', 'in', $data['goods_ids']];
-        $manjian_count = model('promotion_manjian_goods')->getList($condition_bing, 'pmg.start_time,pmg.end_time,pm.manjian_name,g.goods_name', '', 'pmg', $join);
-        if (!empty($manjian_count)) {
-            $key = 'manjian' . random_keys(8) . $data['site_id'];
-            Cache::set($key, ['list' => $manjian_count, 'type' => 'goods', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
-            return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
+            // 查询存在交集的满减活动商品
+            $condition_bing = [
+                ['pmg.status', 'in', "0,1"],
+                ['pmg.site_id', '=', $data['site_id']],
+                ['pmg.goods_id', 'in', $data['goods_ids']],
+                ['', 'exp', Db::raw('not ( (pmg.start_time > ' . $data['end_time'] . ' and pmg.start_time > ' . $data['start_time'] . ' )  or (pmg.end_time < ' . $data['start_time'] . ' and pmg.end_time < ' . $data['end_time'] . '))')]
+            ];
+            $manjian_count = model('promotion_manjian_goods')->getList($condition_bing, 'pmg.start_time,pmg.end_time,pm.manjian_name,g.goods_name', '', 'pmg', $join);
+            if (!empty($manjian_count)) {
+                $key = 'manjian' . random_keys(8) . $data['site_id'];
+                Cache::set($key, ['list' => $manjian_count, 'type' => 'goods', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
+                return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
+            }
         }
 
         $data['create_time'] = time();
@@ -84,38 +84,17 @@ class Manjian extends BaseModel
         } else {
             $data['status'] = 0;
         }
+        $goods_ids_arr = $data['goods_ids'];
+        $data['goods_ids'] = ",".$data['goods_ids'].",";
+
         model('promotion_manjian')->startTrans();
         try {
-
             $manjian_id = model('promotion_manjian')->add($data);
-            if ($data['manjian_type'] == 1) {//全部商品参与
-
-                //获取商品id
-                $goods_ids = model('goods')->getColumn([['site_id', '=', $data['site_id']], ['goods_state', '=', 1]], 'goods_id');
-                if (!empty($goods_ids)) {
-                    foreach ($goods_ids as $v) {
-                        $goods_data = [
-                            'manjian_id'   => $manjian_id,
-                            'site_id'      => $data['site_id'],
-                            'goods_id'     => $v,
-                            'manjian_type' => $data['manjian_type'],
-                            'status'       => $data['status'],
-                            'rule_json'    => $data['rule_json'],
-                            'start_time'   => $data['start_time'],
-                            'end_time'     => $data['end_time']
-                        ];
-                        model('promotion_manjian_goods')->add($goods_data);
-                    }
-                } else {
-                    model('promotion_manjian')->rollback();
-                    return $this->error('', '请先添加商品');
-                }
-
-            } else {
-                $goods_ids = explode(',', $data['goods_ids']);
-
+            if ($data['manjian_type'] != 1) {
+                $goods_ids = explode(',', $goods_ids_arr);
+                $goods_data = [];
                 foreach ($goods_ids as $v) {
-                    $goods_data = [
+                    array_push($goods_data, [
                         'manjian_id'   => $manjian_id,
                         'site_id'      => $data['site_id'],
                         'goods_id'     => $v,
@@ -124,9 +103,9 @@ class Manjian extends BaseModel
                         'rule_json'    => $data['rule_json'],
                         'start_time'   => $data['start_time'],
                         'end_time'     => $data['end_time']
-                    ];
-                    model('promotion_manjian_goods')->add($goods_data);
+                    ]);
                 }
+                model('promotion_manjian_goods')->addList($goods_data);
             }
 
             $cron = new Cron();
@@ -140,7 +119,6 @@ class Manjian extends BaseModel
             model('promotion_manjian')->commit();
             return $this->success();
         } catch (\Exception $e) {
-
             model('promotion_manjian')->rollback();
             return $this->error('', $e->getMessage());
         }
@@ -157,46 +135,47 @@ class Manjian extends BaseModel
         $manjian_id = $data['manjian_id'];
         unset($data['manjian_id']);
         $manjian_status = model('promotion_manjian')->getInfo([['site_id', '=', $data['site_id']], ['manjian_id', '=', $manjian_id]], 'status');
-        if ($manjian_status['status'] != 0) {
-            return $this->error('', '只有未开始的满减活动才能进行修改');
+        if ($manjian_status['status'] != 0 && $manjian_status['status'] != 1) {
+            return $this->error('', '只有未开始和进行中的满减活动才能进行修改');
         }
+
         //时间检测
         if ($data['end_time'] < time()) {
             return $this->error('', '结束时间不能早于当前时间');
         }
 
-        if ($data['manjian_type'] == 1) {
-            $manjian_activity_info = model('promotion_manjian')->getInfo([
-                ['status', 'in', "0,1"],
-                ['site_id', '=', $data['site_id']],
-                ['manjian_type', '=', 1],
-                ['manjian_id', '<>', $manjian_id],
-                ['', 'exp', Db::raw('not ( (`start_time` > ' . $data['end_time'] . ' and `start_time` > ' . $data['start_time'] . ' )  or (`end_time` < ' . $data['start_time'] . ' and `end_time` < ' . $data['end_time'] . '))')]
-            ], 'manjian_name,start_time,end_time');
-            if (!empty($manjian_activity_info)) {
-                $key = 'manjian' . random_keys(8) . $data['site_id'];
-                Cache::set($key, ['list' => [$manjian_activity_info], 'type' => 'activity', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
-                return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
-            }
+        $manjian_activity_info = model('promotion_manjian')->getInfo([
+            ['status', 'in', "0,1"],
+            ['site_id', '=', $data['site_id']],
+            ['manjian_type', '=', 1],
+            ['manjian_id', '<>', $manjian_id],
+            ['', 'exp', Db::raw('not ( (`start_time` > ' . $data['end_time'] . ' and `start_time` > ' . $data['start_time'] . ' )  or (`end_time` < ' . $data['start_time'] . ' and `end_time` < ' . $data['end_time'] . '))')]
+        ], 'manjian_name,start_time,end_time');
+        if (!empty($manjian_activity_info)) {
+            $key = 'manjian' . random_keys(8) . $data['site_id'];
+            Cache::set($key, ['list' => [$manjian_activity_info], 'type' => 'activity', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
+            return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
         }
 
-        $join = [
-            ['promotion_manjian pm', 'pm.manjian_id = pmg.manjian_id', 'left'],
-            ['goods g', 'g.goods_id = pmg.goods_id', 'left']
-        ];
-        // 查询存在交集的满减活动商品
-        $condition_jiao = [
-            ['pmg.status', 'in', "0,1"],
-            ['pmg.site_id', '=', $data['site_id']],
-            ['pmg.manjian_id', '<>', $manjian_id],
-            ['', 'exp', Db::raw('not ( (pmg.start_time > ' . $data['end_time'] . ' and pmg.start_time > ' . $data['start_time'] . ' )  or (pmg.end_time < ' . $data['start_time'] . ' and pmg.end_time < ' . $data['end_time'] . '))')]
-        ];
-        if ($data['manjian_type'] != 1) $condition_jiao[] = ['pmg.goods_id', 'in', $data['goods_ids']];
-        $manjian_goods_count = model('promotion_manjian_goods')->getList($condition_jiao, 'pmg.start_time,pmg.end_time,pm.manjian_name,g.goods_name', '', 'pmg', $join);
-        if (!empty($manjian_goods_count)) {
-            $key = 'manjian' . random_keys(8) . $data['site_id'];
-            Cache::set($key, ['list' => $manjian_goods_count, 'type' => 'goods', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
-            return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
+        if ($data['manjian_type'] == 2) {
+            $join = [
+                ['promotion_manjian pm', 'pm.manjian_id = pmg.manjian_id', 'left'],
+                ['goods g', 'g.goods_id = pmg.goods_id', 'left']
+            ];
+            // 查询存在交集的满减活动商品
+            $condition_jiao = [
+                ['pmg.status', 'in', "0,1"],
+                ['pmg.site_id', '=', $data['site_id']],
+                ['pmg.manjian_id', '<>', $manjian_id],
+                ['pmg.goods_id', 'in', $data['goods_ids']],
+                ['', 'exp', Db::raw('not ( (pmg.start_time > ' . $data['end_time'] . ' and pmg.start_time > ' . $data['start_time'] . ' )  or (pmg.end_time < ' . $data['start_time'] . ' and pmg.end_time < ' . $data['end_time'] . '))')]
+            ];
+            $manjian_goods_count = model('promotion_manjian_goods')->getList($condition_jiao, 'pmg.start_time,pmg.end_time,pm.manjian_name,g.goods_name', '', 'pmg', $join);
+            if (!empty($manjian_goods_count)) {
+                $key = 'manjian' . random_keys(8) . $data['site_id'];
+                Cache::set($key, ['list' => $manjian_goods_count, 'type' => 'goods', 'promotion' => '满减送', 'start_time' => $data['start_time'], 'end_time' => $data['end_time']], 3600);
+                return $this->error(['key' => $key], 'GOODS_EXIST_MANJIAN');
+            }
         }
 
         if ($data['start_time'] <= time()) {
@@ -204,44 +183,25 @@ class Manjian extends BaseModel
         } else {
             $data['status'] = 0;
         }
+
         model('promotion_manjian')->startTrans();
         try {
 
-            model('promotion_manjian')->update($data, [['site_id', '=', $data['site_id']], ['manjian_id', '=', $manjian_id]]);
+            $goods_ids_arr = $data['goods_ids'];
+            $data['goods_ids'] = ",".$data['goods_ids'].",";
 
+            model('promotion_manjian')->update($data, [['site_id', '=', $data['site_id']], ['manjian_id', '=', $manjian_id]]);
             model('promotion_manjian_goods')->delete([
                 ['site_id', '=', $data['site_id']],
                 ['manjian_id', '=', $manjian_id]
             ]);
 
-            if ($data['manjian_type'] == 1) {//全部商品参与
-
+            if ($data['manjian_type'] != 1) {
                 //获取商品id
-                $goods_ids = model('goods')->getColumn([['site_id', '=', $data['site_id']], ['goods_state', '=', 1]], 'goods_id');
-                if (!empty($goods_ids)) {
-                    foreach ($goods_ids as $v) {
-                        $goods_data = [
-                            'manjian_id'   => $manjian_id,
-                            'site_id'      => $data['site_id'],
-                            'goods_id'     => $v,
-                            'manjian_type' => $data['manjian_type'],
-                            'status'       => $data['status'],
-                            'rule_json'    => $data['rule_json'],
-                            'start_time'   => $data['start_time'],
-                            'end_time'     => $data['end_time']
-                        ];
-                        model('promotion_manjian_goods')->add($goods_data);
-                    }
-                } else {
-                    model('promotion_manjian')->rollback();
-                    return $this->error('', '请先添加商品');
-                }
-
-            } else {
-                $goods_ids = explode(',', $data['goods_ids']);
-
+                $goods_ids = explode(',', $goods_ids_arr);
+                $goods_data = [];
                 foreach ($goods_ids as $v) {
-                    $goods_data = [
+                    array_push($goods_data, [
                         'manjian_id'   => $manjian_id,
                         'site_id'      => $data['site_id'],
                         'goods_id'     => $v,
@@ -250,33 +210,26 @@ class Manjian extends BaseModel
                         'rule_json'    => $data['rule_json'],
                         'start_time'   => $data['start_time'],
                         'end_time'     => $data['end_time']
-                    ];
-                    model('promotion_manjian_goods')->add($goods_data);
+                    ]);
                 }
+                model('promotion_manjian_goods')->addList($goods_data);
             }
 
             $cron = new Cron();
-
             $cron->deleteCron([['event', '=', 'CloseManjian'], ['relate_id', '=', $manjian_id]]);
             $cron->deleteCron([['event', '=', 'OpenManjian'], ['relate_id', '=', $manjian_id]]);
-
             if ($data['start_time'] <= time()) {
-
                 $cron->addCron(1, 0, "满减关闭", "CloseManjian", $data['end_time'], $manjian_id);
             } else {
                 $cron->addCron(1, 0, "满减开启", "OpenManjian", $data['start_time'], $manjian_id);
                 $cron->addCron(1, 0, "满减关闭", "CloseManjian", $data['end_time'], $manjian_id);
             }
-
             model('promotion_manjian')->commit();
             return $this->success();
         } catch (\Exception $e) {
-
             model('promotion_manjian')->rollback();
             return $this->error('', $e->getMessage());
         }
-
-
     }
 
     /**
@@ -327,7 +280,7 @@ class Manjian extends BaseModel
             //获取商品信息
             if ($res['manjian_type'] == 2) {//指定商品
 
-                $field = 'g.goods_id,g.goods_name,g.goods_stock,g.price';
+                $field = 'g.goods_id,g.goods_name,g.goods_stock,g.price,g.goods_image';
                 $alias = 'mg';
                 $join  = [
                     [
@@ -344,14 +297,16 @@ class Manjian extends BaseModel
                 $rule = json_decode($res['rule_json'], true);
                 foreach ($rule as $key => $item) {
                     if (isset($item['coupon']) && !empty($item['coupon'])) {
-                        $coupon                    = model('promotion_coupon_type')->getInfo([['coupon_type_id', '=', $item['coupon']]], 'coupon_name,type,at_least,money,discount');
+                        $coupon = model('promotion_coupon_type')->getList([['coupon_type_id', 'in', $item['coupon']]], 'coupon_type_id,coupon_name,type,at_least,money,discount');
                         $rule[$key]['coupon_data'] = $coupon;
+                        $rule[$key]['coupon_num'] = explode(',', $item['coupon_num']);
                     }
                 }
                 $res['rule'] = $rule;
             }
+            $res['goods_list'] = isset($goods_list) ? $goods_list : [];
+            $res['goods_list_count'] = count($res['goods_list']);
         }
-        $res['goods_list'] = isset($goods_list) ? $goods_list : [];
         return $this->success($res);
     }
 
@@ -391,20 +346,32 @@ class Manjian extends BaseModel
         $condition  = [
             ['site_id', '=', $site_id],
             ['status', '=', 1],
-            ['goods_ids', 'like', [$goods_id, '%' . $goods_id . ',%', '%' . $goods_id, '%,' . $goods_id . ',%', ''], 'or'],
-            ['end_time', '>', time()]
+            ['end_time', '>', time()],
+            ['manjian_type', '=', 1]
         ];
         $first_info = model('promotion_manjian')->getFirstData($condition, 'manjian_id,site_id,manjian_name,manjian_type,type,goods_ids,status,start_time,end_time,rule_json', 'create_time desc');
+        if (empty($first_info)) {
+            $condition  = [
+                ['site_id', '=', $site_id],
+                ['status', '=', 1],
+                ['end_time', '>', time()],
+                ['manjian_type', '=', 2],
+                ['goods_ids', 'like', [ $goods_id, '%' . $goods_id . ',%', '%' . $goods_id, '%,' . $goods_id . ',%', '' ], 'or' ]
+            ];
+            $first_info = model('promotion_manjian')->getFirstData($condition, 'manjian_id,site_id,manjian_name,manjian_type,type,goods_ids,status,start_time,end_time,rule_json', 'create_time desc');
+        }
         if (!empty($first_info)) {
             $rule = json_decode($first_info['rule_json'], true);
             foreach ($rule as $key => $item) {
                 if (isset($item['coupon']) && !empty($item['coupon'])) {
-                    $coupon                    = model('promotion_coupon_type')->getInfo([['coupon_type_id', '=', $item['coupon']]], 'coupon_name,type,at_least,money,discount');
+                    $coupon                    = model('promotion_coupon_type')->getList([['coupon_type_id', 'in', $item['coupon']]], 'coupon_name,type,at_least,money,discount');
+                    $rule[$key]['coupon_num'] = empty($item['coupon_num']) ? [1] : explode(',', $item['coupon_num']);
                     $rule[$key]['coupon_data'] = $coupon;
                 }
             }
             $first_info['rule_json'] = $rule;
         }
+
         return $this->success($first_info);
     }
 
@@ -431,30 +398,20 @@ class Manjian extends BaseModel
         $manjian_info = model('promotion_manjian')->getInfo([['manjian_id', '=', $manjian_id]], 'start_time,status');
         if (!empty($manjian_info)) {
             if ($manjian_info['start_time'] <= time() && $manjian_info['status'] == 0) {
+                model('promotion_manjian')->startTrans();
+                try {
+                    model('promotion_manjian')->update(['status' => 1], [['manjian_id', '=', $manjian_id]]);
+                    model('promotion_manjian_goods')->update(['status' => 1], [['manjian_id', '=', $manjian_id]]);
 
-                if ($manjian_info['status'] == 1) {
-
-                    model('promotion_manjian')->startTrans();
-                    try {
-
-                        model('promotion_manjian')->update(['status' => 1], [['manjian_id', '=', $manjian_id]]);
-                        model('promotion_manjian_goods')->update(['status' => 1], [['manjian_id', '=', $manjian_id]]);
-
-                        model('promotion_manjian')->commit();
-                        return $this->success();
-                    } catch (\Exception $e) {
-
-                        model('promotion_manjian')->rollback();
-                        return $this->error('', $e->getMessage());
-                    }
-
-                } else {
-                    return $this->error("", "满减活动已关闭");
+                    model('promotion_manjian')->commit();
+                    return $this->success();
+                } catch (\Exception $e) {
+                    model('promotion_manjian')->rollback();
+                    return $this->error('', $e->getMessage());
                 }
             } else {
                 return $this->error("", "满减活动已开启或者关闭");
             }
-
         } else {
             return $this->error("", "满减活动不存在");
         }
@@ -466,10 +423,9 @@ class Manjian extends BaseModel
      */
     public function cronCloseManjian($manjian_id)
     {
-        $manjian_info = model('promotion_manjian')->getInfo([['manjian_id', '=', $manjian_id]], 'status');
+        $manjian_info = model('promotion_manjian')->getInfo([['manjian_id', '=', $manjian_id]], 'end_time,status');
         if (!empty($manjian_info)) {
-            if ($manjian_info['status'] == 1) {
-
+            if ($manjian_info['end_time'] <= time() && $manjian_info['status'] == 1) {
                 model('promotion_manjian')->startTrans();
                 try {
 

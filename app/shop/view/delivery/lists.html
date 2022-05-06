@@ -1,6 +1,6 @@
 {extend name="base"/}
 {block name="resources"}
-<link rel="stylesheet" href="SHOP_CSS/delivery_lists.css"/>
+<link rel="stylesheet" href="SHOP_CSS/delivery_lists.css?v=202202232"/>
 <style>
     .ns-table-tab .layui-tab-content {padding-top: 0;}
 	.layui-layer-content {line-height: 30px;}
@@ -70,9 +70,6 @@
 
 
 <div class="layui-tab ns-table-tab" lay-filter="order_tab">
-    <ul class="layui-tab-title">
-        <li class="layui-this" lay-id="">全部订单</li>
-    </ul>
     <div class="layui-tab-content">
 		<div class="order-operation" style="display: none">
 			<div class="layui-form order-operation-btn all-selected-checkbox">
@@ -114,7 +111,7 @@
 <div id="order_operation"></div>
 {/block}
 {block name="script"}
-<script src="SHOP_JS/deliver_lists.js"></script>
+<script src="SHOP_JS/deliver_lists.js?v=20220218"></script>
 <script src="SHOP_JS/lodop_funcs.js"></script>
 {include file="order/order_common_action" /}
 <!-- 修改订单收货地址 -->
@@ -374,7 +371,6 @@
                 }
             })
         }
-
         return form_json;
     }
 
@@ -388,6 +384,7 @@
             url :url,
             success : function(res){
                 if(res.code == 0){
+									console.log(res.data,'res.data')
                     delivery.setData(res.data);
                     $("#delivery_list").html(delivery.fetch());
                     form.render();

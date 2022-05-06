@@ -12,10 +12,9 @@
 namespace app\model\system;
 
 use app\model\BaseModel;
-use think\facade\Db;
 use extend\api\HttpClient;
 use think\facade\Cache;
-use app\model\web\Config;
+use think\facade\Db;
 
 class Upgrade extends BaseModel
 {

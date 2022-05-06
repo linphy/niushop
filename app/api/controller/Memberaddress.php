@@ -17,6 +17,7 @@ namespace app\api\controller;
 
 use app\model\member\MemberAddress as MemberAddressModel;
 use app\model\system\Address;
+use app\model\express\Local;
 
 class Memberaddress extends BaseApi
 {
@@ -166,13 +167,25 @@ class Memberaddress extends BaseApi
         $type      = isset($this->params['type']) ? $this->params['type'] : '';
         $member_address = new MemberAddressModel();
         $condition = [
-            ['member_id', '=', $token['data']['member_id'],
-            ['site_id', '=', $this->site_id]]
+            [ 'member_id', '=', $token['data']['member_id'] ],
+            [ 'site_id', '=', $this->site_id ]
         ];
         if(!empty($type)){
             $condition[] = ['type', '=', $type];
         }
-        $list           = $member_address->getMemberAddressPageList($condition, $page, $page_size);
+        $field = 'id,member_id, site_id, name, mobile, telephone,province_id,city_id,district_id,community_id,address,full_address,longitude,latitude,is_default,type';
+        $list           = $member_address->getMemberAddressPageList($condition, $page, $page_size, 'is_default desc,id desc', $field);
+        //同城配送验证是否可用
+        if($type == 2){
+            $local = new Local();
+            foreach ($list['data']['list'] as $k => $v){
+                $local_res = $local->isSupportDelivery($v);
+                if($local_res['code'] < 0){
+                    $list['data']['list'][$k]['local_data'] = $local_res['message'];
+                }
+            }
+        }
+
         return $this->response($list);
     }
 
@@ -225,7 +238,12 @@ class Memberaddress extends BaseApi
             return $this->response($address_result);
 
         $address_data = $address_result['data'];
-        $province = $address_data['province'] ?? '';
+//        $province = $address_data['province'] ?? '';
+        $province = "";
+        if ($address_data['province']){
+            $province = str_replace("省", "", $address_data['province']);
+            $province = str_replace("市", "", $province);
+        }
         $city = $address_data['city'] ?? '';
         $district = $address_data['district'] ?? '';
         $province_id = $address_model->getAreasInfo([['name', 'like', '%' . $province . '%'], ['level', '=', 1]], 'id')['data']['id'] ?? 0;

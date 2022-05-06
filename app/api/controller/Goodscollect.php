@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 use app\model\goods\GoodsCollect as GoodsCollectModel;
 use app\model\goods\Goods as GoodsModel;
+use app\model\web\Config as ConfigModel;
 
 /**
  * 商品收藏
@@ -81,7 +82,10 @@ class Goodscollect extends BaseApi
 
         $list  = $goods_collect_model->getCollectPageList($condition, $page, $page_size);
         $goods = new GoodsModel();
-        $token = $this->checkToken();
+        $config_model = new ConfigModel();
+        $guess_you_like = $config_model->getGuessYouLike($this->site_id, $this->app_module);
+        $guess_you_like = $guess_you_like['data']['value'];
+        $list['data']['guessyoulike_is_show'] = $guess_you_like['is_show'];
         if (!empty($list['data']['list'])) {
             foreach ($list['data']['list'] as $k => $v) {
 

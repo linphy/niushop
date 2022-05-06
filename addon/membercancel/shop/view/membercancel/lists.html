@@ -7,16 +7,13 @@
 </style>
 {/block}
 {block name="main"}
-
-
 <div class="ns-screen layui-collapse" lay-filter="selection_panel">
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title"></h2>
 		<form class="layui-colla-content layui-form layui-show">
 			<div class="layui-form-item">
-
 				<div class="layui-inline">
-					<label class="layui-form-label">会员：</label>
+					<label class="layui-form-label">搜索类型：</label>
 					<div class="layui-input-inline">
 						<select name="search_type">
 							{foreach $search_type as $k=>$v}
@@ -26,10 +23,9 @@
 					</div>
 
 					<div class="layui-input-inline">
-						<input type="text" name="mobile" placeholder="请输入" class="layui-input">
+						<input type="text" name="search_text" placeholder="请输入" class="layui-input">
 					</div>
 				</div>
-
 				<div class="layui-inline">
 					<label class="layui-form-label">申请时间：</label>
 					<div class="layui-input-inline">
@@ -175,7 +171,8 @@
                 }, {
 					title: '操作',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+					align:'right'
 				}]
 			]
 		});

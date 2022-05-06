@@ -15,6 +15,7 @@ use app\shop\controller\BaseShop;
 use addon\coupon\model\CouponType as CouponTypeModel;
 use addon\coupon\model\Coupon as CouponModel;
 use addon\coupon\model\MemberCoupon as MemberCouponModel;
+use think\facade\Db;
 
 /**
  * 优惠券
@@ -36,6 +37,7 @@ class Coupon extends BaseShop
                 'type'           => input('type'),//优惠券类型
                 'goods_type'     => input('goods_type', 1),
                 'goods_ids'      => input('goods_ids', ''),
+                'sort'           => input('sort', '0'), //优惠券排序
                 'money'          => input('money', 0),//优惠券面额
                 'discount'       => input('discount', 0),//优惠券折扣
                 'discount_limit' => input('discount_limit', 0),//最多优惠
@@ -71,6 +73,7 @@ class Coupon extends BaseShop
                 'goods_type'     => input('goods_type', 1),
                 'goods_ids'      => input('goods_ids', ''),
                 'money'          => input('money', 0),//优惠券面额
+                'sort'           => input('sort', 0),//优惠券面额
                 'discount'       => input('discount', 0),//优惠券折扣
                 'discount_limit' => input('discount_limit', 0),//最多优惠
                 'count'          => input('count', ''),//发放数量
@@ -90,7 +93,8 @@ class Coupon extends BaseShop
             $this->assign('coupon_type_id', $coupon_type_id);
 
             $coupon_type_info = $coupon_type_model->getCouponTypeInfo($coupon_type_id, $this->site_id);
-            $this->assign('coupon_type_info', $coupon_type_info['data']);
+            if (empty($coupon_type_info['data'])) return $this->error('未获取到优惠券数据', addon_url('coupon://shop/coupon/lists'));
+            $this->assign('coupon_type_info', $coupon_type_info['data'][0]);
 
             return $this->fetch("coupon/edit");
         }
@@ -104,6 +108,7 @@ class Coupon extends BaseShop
         $coupon_type_id    = input('coupon_type_id', 0);
         $coupon_type_model = new CouponTypeModel();
         $coupon_type_info  = $coupon_type_model->getCouponTypeInfo($coupon_type_id, $this->site_id);
+        if (empty($coupon_type_info['data'])) return $this->error('未获取到优惠券数据', addon_url('coupon://shop/coupon/lists'));
         $this->assign('coupon_type_info', $coupon_type_info['data']);
         return $this->fetch("coupon/detail");
     }
@@ -119,6 +124,7 @@ class Coupon extends BaseShop
             $page_size   = input('page_size', PAGE_LIST_ROWS);
             $coupon_name = input('coupon_name', '');
             $status      = input('status', '');
+            $inventory_count  = input('inventory_count', '');#剩余数量
 
             $condition = [];
             if ($status !== "") {
@@ -142,13 +148,24 @@ class Coupon extends BaseShop
                         break;
                 }
             }
+            if($inventory_count){
+                $condition[] = ['', "exp", Db::raw("(lead_count < count && count != -1) OR count = -1")];
+            }
 
             $condition[] = ['site_id', '=', $this->site_id];
             $condition[] = ['coupon_name', 'like', '%' . $coupon_name . '%'];
-            $order       = 'create_time desc';
             $field       = '*';
 
-            $res = $coupon_type_model->getCouponTypePageList($condition, $page, $page_size, $order, $field);
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
+            $res = $coupon_type_model->getCouponTypePageList($condition, $page, $page_size, $order_by, $field);
 
             //获取优惠券状态
             $coupon_type_status_arr = $coupon_type_model->getCouponTypeStatus();
@@ -166,7 +183,30 @@ class Coupon extends BaseShop
         }
     }
 
+    /**
+     * 排序
+     * @return mixed
+     */
+    public function couponSort(){
+        $sort               = input('sort', 0);
+        $coupon_type_id           = input('coupon_type_id', 0);
+        $coupon_type_model = new CouponTypeModel();
+        return $coupon_type_model->couponSort($coupon_type_id, $sort);
+    }
 
+    /**
+     * 优惠券推广
+     */
+    public function couponUrl()
+    {
+        $coupon_type_id = input('coupon_type_id', '');
+        $coupon_model = new couponTypeModel();
+//        $coupon_info = $coupon_model->getInfo([['coupon_type_id','=',$coupon_type_id]],'coupon_type_id,coupon_name,site_id');
+//        $coupon_info = $coupon_info[ 'data' ];
+//        $res = $coupon_model->spread($coupon_info[ 'coupon_type_id' ], $coupon_info[ 'coupon_name' ], $coupon_info[ 'site_id' ]);
+        $res = $coupon_model->urlQrcode('/otherpages/goods/coupon_receive/coupon_receive', ['coupon_type_id' => $coupon_type_id], 'coupon', $this->site_id);
+        return $res;
+    }
 
     /**
      * 发送优惠券

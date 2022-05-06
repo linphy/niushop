@@ -16,6 +16,13 @@
 	.goods-title .goods-img{display: flex;align-items: center;justify-content: center;width: 55px;height: 55px;margin-right: 5px;}
 	.goods-title .goods-img img{max-height: 100%;max-width: 100%;}
 	.goods-title .goods-name{flex: 1;line-height: 1.6;}
+	.select-coupon-layer .layui-layer-content{ overflow-y: scroll!important; }
+	.goods-item{height: 325px;overflow: hidden;display: block;overflow: hidden;overflow-y: auto;}
+	.ns-table-title-name{width: 100px ; overflow: hidden; white-space: nowrap; text-overflow: ellipsis}
+	.coupon-money{padding-left: 190px !important;width: 100px}
+	.coupon-end-time{padding-right: 63px !important;}
+	.ns-word-aux{margin-left: 200px;margin-top: 0}
+	.goods_num {padding-left: 20px}
 </style>
 {/block}
 {block name="main"}
@@ -25,7 +32,7 @@
 		<ul class="layui-colla-content layui-show">
 			<li>满减活动包括店铺所有商品，活动时间不能和已有活动重叠</li>
 			<li>每添加一个规则都需点击确定规则设置按钮，生成一条规则，提交之后才可成功添加</li>
-			<li>点击确定规则设置按钮生成的规则都有一个删除按钮，如不需要该条规则点击删除按钮即可删除</li>
+			<li>点击确定规则设置按钮生成的规则都有一个删除按钮，如不需要该条规则点击删除按钮即可删除 </li>
 		</ul>
 	</div>
 </div>
@@ -36,6 +43,7 @@
 		<div class="layui-input-block">
 			<input type="text" name="manjian_name" lay-verify="required|len" class="layui-input ns-len-long" autocomplete="off">
 		</div>
+			
 		<div class="ns-word-aux">
 			<p>活动名称最多为25个字符</p>
 		</div>
@@ -113,7 +121,7 @@
 										<div>
 											<input type="checkbox" name="" value="free_shipping" class="ns-input-checkbox" lay-skin="primary"><span>包邮</span>
 										</div>
-										<div class="ns-word-aux" style="margin-left: 28px;margin-top: 0">
+										<div class="ns-word-aux" >
 											<p>仅参与该活动的商品包邮，非整单包邮</p>
 										</div>
 									</div>
@@ -142,13 +150,15 @@
 												<table class="layui-table" lay-skin="nob">
 												  	<colgroup>
 													    <col width="30%">
-													    <col width="50%">
+													    <col width="30%">
+														<col width="20%">
 													    <col width="20%">
 												  	</colgroup>
 											  		<thead>
 													    <tr>
 													      	<th>优惠券</th>
 													      	<th>优惠内容</th>
+																	<th>赠券数 <i title="每人每次参加该活动赠送的优惠券数量" class="iconfont iconwenhao1"></i> </th>
 													      	<th style="text-align:center;">操作</th>
 													    </tr>
 												  	</thead>
@@ -186,10 +196,10 @@
 		<label class="layui-form-label"></label>
 		<div class="layui-input-block">
 			<table id="selected_goods_list"></table>
-			<button class="layui-btn ns-bg-color" onclick="addGoods()">选择商品</button>
+			<button class="layui-btn ns-bg-color" onclick="addGoods()">选择商品</button> <span class="goods_num">已选商品（<span id="goods_num" style="color: red">0</span>）</span>
 		</div>
 	</div>
-	<input type="hidden" name="goods_ids">
+	<input type="hidden" name="goods_ids" lay-verify="goods_num">
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">备注：</label>
@@ -212,22 +222,198 @@
 </script>
 {/block}
 {block name="script"}
-<script type="text/javascript" src="MANJIAN_JS/add.js"></script>
+<script type="text/javascript" src="MANJIAN_JS/add.js?v=20220111"></script>
 
 <!-- 优惠券 -->
 <script type="text/html" id="couponList">
-	<div class="gift-box">
+	<div class="coupon-box">
 		<div class="ns-single-filter-box">
 			<div class="layui-form">
 				<div class="layui-input-inline">
-					<input type="text" name="coupon_name" placeholder="请输入优惠券名称" class="layui-input ns-len-mid">
+					<input type="text" name="coupon_name" placeholder="请输优惠券名称" class="layui-input">
 					<button type="button" class="layui-btn layui-btn-primary" lay-filter="coupon-search" lay-submit>
 						<i class="layui-icon">&#xe615;</i>
 					</button>
 				</div>
 			</div>
 		</div>
-		<table id="coupon_list" lay-filter="coupon_list"></table>
+
+		<div class="gods-box">
+			<table class="layui-table" lay-skin="line" lay-size="lg">
+				<colgroup>
+					<col width="8%">
+					<col width="50%">
+					<col width="15%">
+					<col width="27%">
+				</colgroup>
+				<thead>
+				<tr>
+					<th class="ns-check-box">
+						<div class="layui-form">
+							<input type="checkbox" name="" lay-filter="selectAll" lay-skin="primary">
+						</div>
+					</th>
+					<th class="layui-elip">优惠券名称</th>
+					<th class="layui-elip">优惠金额/折扣</th>
+					<th class="layui-elip">结束时间</th>
+				</tr>
+				</thead>
+			</table>
+			<table class="layui-table" id="goods" lay-skin="line" lay-size="lg">
+				<!-- <colgroup>
+					<col width="8%">
+					<col width="50%">
+					<col width="15%">
+					<col width="27%">
+				</colgroup> -->
+				<tbody class="goods-item">
+				{foreach $coupon_list.data as $coupon_list_k => $coupon_list_v}
+				<tr>
+					<td class="ns-check-box">
+						<div class="layui-form">
+							{{# var a = {$coupon_list_v.coupon_type_id} }}
+							{{#  if($.inArray(a.toString(), d.coupon_id) != -1){  }}
+							<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary" checked>
+							{{#  }else{  }}
+							<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary">
+							{{#  }  }}
+							<input type="hidden" id="coupon_id" value="{$coupon_list_v.coupon_type_id}">
+						</div>
+					</td>
+					<td>
+						<div class="ns-table-title">
+							<div class="ns-title-pic">
+								{if condition="$coupon_list_v.image"}
+								<img src="{:img($coupon_list_v.image)}">
+								{else/}
+								<img src="__ROOT__/upload/uniapp/game/coupon.png">
+								{/if}
+							</div>
+							<div class="ns-title-content  ns-table-title-name">
+								<p class="ns-multi-line-hiding">{$coupon_list_v.coupon_name}</p>
+							</div>
+						</div>
+					</td>
+					{if $coupon_list_v.type == 'reward'}
+					<td class="layui-elip coupon-money">{$coupon_list_v.money}元</td>
+					{else/}
+					<td class="layui-elip coupon-money">{$coupon_list_v.discount}折</td>
+					{/if}
+					{if $coupon_list_v.validity_type == 0}
+					<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
+					{else/}
+					<td class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
+					{/if}
+					<input type="hidden" name="at_least" value="{$coupon_list_v.at_least}">
+					<input type="hidden" name="type" value="{$coupon_list_v.type}">
+					<input type="hidden" name="discount" value="{$coupon_list_v.discount}">
+					<input type="hidden" name="money" value="{$coupon_list_v.money}">
+				</tr>
+				{/foreach}
+				</tbody>
+			</table>
+		</div>
+
+		<button class="layui-btn ns-bg-color" onclick="couponSelected()">确定</button>
+	</div>
+</script>
+
+
+<!-- 优惠券 -->
+<script type="text/html" id="couponListsearch">
+	<div class="coupon-box">
+		<div class="ns-single-filter-box">
+			<div class="layui-form">
+				<div class="layui-input-inline">
+					<input type="text" name="coupon_name" placeholder="请输优惠券名称" class="layui-input">
+					<button type="button" class="layui-btn layui-btn-primary" lay-filter="coupon-search" lay-submit>
+						<i class="layui-icon">&#xe615;</i>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="gods-box">
+			<table class="layui-table" lay-skin="line" lay-size="lg">
+				<colgroup>
+					<col width="8%">
+					<col width="50%">
+					<col width="15%">
+					<col width="27%">
+				</colgroup>
+				<thead>
+				<tr>
+					<th class="ns-check-box">
+						<div class="layui-form">
+							<input type="checkbox" name="" lay-filter="selectAll" lay-skin="primary">
+						</div>
+					</th>
+					<th class="layui-elip">优惠券名称</th>
+					<th class="layui-elip">优惠金额/折扣</th>
+					<th class="layui-elip">结束时间</th>
+				</tr>
+				</thead>
+			</table>
+			<table class="layui-table" id="goods" lay-skin="line" lay-size="lg">
+				<!-- <colgroup>
+					<col width="8%">
+					<col width="50%">
+					<col width="15%">
+					<col width="27%">
+				</colgroup> -->
+				<tbody class="goods-item">
+
+				{{#  layui.each(d.list, function(index, item){ }}
+
+				<tr>
+					<td class="ns-check-box">
+						<div class="layui-form">
+							{{# var a = item.coupon_type_id }}
+							{{#  if($.inArray(a.toString(), d.coupon_id) != -1){  }}
+							<input type="checkbox" name="" lay-filter="select{{item.index}}" lay-skin="primary" checked>
+							{{#  }else{  }}
+							<input type="checkbox" name="" lay-filter="select{{item.index}}" lay-skin="primary">
+							{{#  }  }}
+							<input type="hidden" id="coupon_id" value="{{item.coupon_type_id}}">
+						</div>
+					</td>
+					<td>
+						<div class="ns-table-title">
+							<div class="ns-title-pic">
+								{{#if(item.image) {  }}
+								<img src="{{item.image}}">
+								{{#  }else{  }}
+								<img src="__ROOT__/upload/uniapp/game/coupon.png">
+								{{#  }  }}
+							</div>
+							<div class="ns-title-content ns-table-title-name">
+								<p class="ns-multi-line-hiding">{{item.coupon_name}}</p>
+							</div>
+						</div>
+					</td>
+					{{#if(item.type == 'reward') {  }}
+					<td class="layui-elip coupon-money">{{item.money}}元</td>
+					{{#  }else{  }}
+					<td class="layui-elip coupon-money">{{item.discount}}折</td>
+					{{#  }  }}
+					{{#if(item.validity_type == 0) {  }}
+
+					<td class="layui-elip coupon-end-time">{{layui.util.toDateString(item.end_time * 1000,'yyyy-MM-dd HH:mm:ss')}}</td>
+					{{#  }else{  }}
+					<td class="layui-elip coupon-end-time">领取之日起{{item.fixed_term}}天有效</td>
+					{{#  }  }}
+					<input type="hidden" name="at_least" value="{{item.at_least}}">
+					<input type="hidden" name="type" value="{{item.type}}">
+					<input type="hidden" name="discount" value="{{item.discount}}">
+					<input type="hidden" name="money" value="{{item.money}}">
+				</tr>
+				{{#  }); }}
+
+				</tbody>
+			</table>
+		</div>
+
+		<button class="layui-btn ns-bg-color" onclick="couponSelected()">确定</button>
 	</div>
 </script>
 
@@ -240,12 +426,50 @@
 	</div>
 </script>
 
+
 <!-- 优惠券-操作 -->
 <script type="text/html" id="couponOperation">
-	{{# if($.inArray(d.coupon_type_id, coupon_list) != -1){ }}
-	<p title="该优惠券已参加积分兑换活动">已添加</p>
+
+	{{# var select_coupon_list = ','+coupon_list+','}}
+
+	{{# if(select_coupon_list.indexOf(','+d.coupon_type_id+',') != -1){ }}
+	<p title="该优惠券已参加">已添加</p>
 	{{# }else{ }}
 	<a class="layui-btn" lay-event="add">添加</a>
 	{{# } }}
+
 </script>
+<!-- 批量操作 -->
+<script type="text/html" id="batchOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="add">批量添加</button>
+</script>
+<script type="text/html" id="addCoupon">
+	{{# for(var i = 0; i < d.length; i++){ }}
+		<tr data-coupon="{{ d[i].coupon_type_id }}">
+			<td>{{d[i].coupon_name}}</td>
+			{{# if(d[i].at_least > 0){}}
+				<td>满{{d[i].at_least}}{{d[i].type == 'discount' ? '打'+ d[i].discount +'折' : '减' + d[i].money}}</td>
+			{{#} else {}}
+				<td>无门槛，{{d[i].type == 'discount' ? '打'+ d[i].discount +'折' : '减' + d[i].money}}</td>
+			{{#}}}
+			<td><input type="number" name="number" value="1" class="layui-input ns-len-short" lay-verify="coupon_num"></td>
+			<td style="text-align:center;">
+				<a href="javascript:;" onClick="deleteCoupon(this, {{i}})" className="ns-text-color">删除</a>
+			</td>
+		</tr>
+	{{# } }}
+
+</script>
+<script type="text/javascript">
+layui.use(['carousel'], function() {
+		var carousel = layui.carousel;
+		carousel.render({
+			elem: '#carousel'
+			,width: '100%' //设置容器宽度
+			,arrow: 'always' //始终显示箭头
+		});
+	})
+	
+</script>
+
 {/block}

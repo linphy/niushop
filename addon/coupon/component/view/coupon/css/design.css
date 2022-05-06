@@ -239,3 +239,45 @@
 	background-color: #FF4544;
 	border-radius: 30px;
 }
+
+/* 风格四 */
+.coupon-wrap .coupon-box-4 {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.coupon-wrap .coupon-box-4 .coupon {
+	width: calc((100% - 30px) / 3);
+	margin-right: 15px;
+}
+
+.coupon-wrap .coupon-box-4 .coupon:last-child {
+	margin-right: 0;
+}
+
+.coupon-wrap .coupon-box-4 .coupon .coupon-intro {
+	width: 75px;
+	position: absolute;
+	top: 6px;
+}
+
+.coupon-wrap .coupon-box-4 .coupon .coupon-intro p {
+	font-size: 12px;
+	color: #FFFFFF;
+}
+
+.coupon-wrap .coupon-box-4 .coupon .coupon-intro .coupon-price span {
+	font-size: 24px;
+	margin: 0 3px;
+	line-height: 1;
+}
+
+.coupon-wrap .coupon-box-4 .coupon .coupon-btn {
+	font-size: 12px;
+	line-height: 1;
+	position: absolute;
+	top: 4px;
+	right: 5px;
+	color: #FFFFFF;
+}

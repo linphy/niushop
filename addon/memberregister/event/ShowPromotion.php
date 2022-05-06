@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '新人礼',
                     //展示介绍
-                    'description' => '会员注册后奖励设置',
+                    'description' => '新客注册后发放奖励',
                     //展示图标
                     'icon'        => 'addon/memberregister/icon.png',
                     //跳转链接

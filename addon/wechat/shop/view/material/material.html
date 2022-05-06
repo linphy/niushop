@@ -20,7 +20,7 @@
 					{{# for (var index in d.value) { }}
 	     			 	<div class="layui-col-md12 layui-clear">
 							<div class="layui-col-md3 article-img" style="float:left;">
-								<span class="ns-bg-color" style="color: #fff;padding: 2px 4px">图文</span>&nbsp;&nbsp;
+								<span style="color: #fff;padding: 2px 4px;background: #1aad19;">图文</span>&nbsp;&nbsp;
 							</div>
 							<div class="layui-col-md3 title" style="float:left;">
 								<a href="javascript:void(0);" onclick="preview({{d.id}}, {{index}})">{{d.value[index].title}}</a>
@@ -45,7 +45,7 @@
 				</script>
 				<!-- 列表操作 -->
 				<script type="text/html" id="operation">
-					<a class="default layui-btn-sm" lay-event="choose">选取</a>
+					<a class="default layui-btn-sm hover_cursor" style="color: #0d73f9;cursor:pointer;" lay-event="choose">选取</a>
 				</script>
 			</div>
 		</div>
@@ -65,7 +65,7 @@
 					<div class="layui-row grid-demo">
 						<div class="layui-col-md12 layui-clear">
 							<div class="layui-col-md12 article-img" style="text-align: left;">
-								<span class="ns-bg-color" style="color: #fff;padding: 2px 4px">文本</span>&nbsp;&nbsp;
+								<span style="color: #fff;padding: 2px 4px;">文本</span>&nbsp;&nbsp;
 							</div>
 							<div class="layui-col-md12 title ns-line-hiding" style="float:left;">
 								<a href="javascript:void(0);" onclick="previewText('{{d.value.content}}')" title="{{d.value.content}}">{{d.value.content}}</a>
@@ -83,7 +83,7 @@
 				</script>
 				<!-- 列表操作 -->
 				<script type="text/html" id="operation">
-					<a class="default layui-btn-sm" lay-event="choose">选取</a>
+					<a class="default layui-btn-sm hover_cursor" style="color: #0d73f9;cursor:pointer;" lay-event="choose">选取</a>
 				</script>
 			</div>
 		</div>

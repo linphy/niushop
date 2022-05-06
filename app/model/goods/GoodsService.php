@@ -60,14 +60,12 @@ class GoodsService extends BaseModel
      * @param array $data
      * @return multitype:string
      */
-    public function editService($data)
+    public function editService($data, $condition)
     {
-        $site_id = isset($data['site_id']) ? $data['site_id'] : '';
-        if ($site_id === '') {
-            return $this->error('', 'REQUEST_SITE_ID');
-        }
+        $check_condition = array_column($condition, 2, 0);
+        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
 
-        $res = model('goods_service')->update($data, [['id', '=', $data['id']]]);
+        $res = model('goods_service')->update($data, $condition);
         Cache::tag("goods_service_" . $site_id)->clear();
         return $this->success($res);
     }

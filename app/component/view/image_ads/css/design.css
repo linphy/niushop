@@ -39,7 +39,8 @@
 /*轮播海报*/
 .image-ads .preview-draggable .image-ads-item.carousel-posters{}
 .image-ads .preview-draggable .image-ads-item.carousel-posters p{height: 170px;line-height: 170px;}
-.image-ads .preview-draggable .image-ads-item.carousel-posters>div{height: 170px; line-height: 170px;}
+/* .image-ads .preview-draggable .image-ads-item.carousel-posters>div{height: 170px; line-height: 170px;} */
+.image-ads .preview-draggable .image-ads-item.carousel-posters>div{height: 100%;}
 .image-ads .preview-draggable .image-ads-item.carousel-posters>div.fill img{width:100%;}
 
 .draggable-element .image-ads .preview-draggable{padding: 0;}
@@ -73,7 +74,8 @@
 /* 轮播 */
 .image-ads .preview-draggable .layui-carousel {background-color: transparent; padding: 0 15px; box-sizing: border-box;}
 .image-ads .preview-draggable .layui-carousel>[carousel-item]>* {background-color: transparent;}
-.image-ads .preview-draggable .layui-carousel .image-ads-item>div img {max-width: 100%; max-height: 100%;}
+/* .image-ads .preview-draggable .layui-carousel .image-ads-item>div img {max-width: 100%; max-height: 100%;} */
+.image-ads .preview-draggable .layui-carousel .image-ads-item>div img {width: 100%; height: 100%; object-fit: contain;}
 .image-ads .preview-draggable .layui-carousel .image-ads-item>span {line-height: 20px; background: rgba(0,0,0,.3);}
 
 
@@ -104,4 +106,9 @@
 	width: 10px;
 	height: 3px;
 	border-radius: 3px;
+}
+.banner-sm{
+	width: 100px !important;
+	text-align: left !important;
+	padding-left: 10px !important;
 }

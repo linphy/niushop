@@ -40,10 +40,33 @@ function loadMaterialList(type) {
 			url: ns.url("wechat://shop/material/lists"),
 			where: {type: 1, limit},
 			cols: [[
-				{field: 'value', width: '35%', title: '标题', align: 'center', templet: '#graphic_message_title'},
-				{field: 'create_time', width: '25%', title: '创建时间', align: 'center', templet: '#create_time'},
-				{field: 'update_time', width: '20%', title: '更新时间', align: 'center', templet: '#update_time'},
-				{title: '操作', width: '20%', toolbar: '#operation', align: 'center'}
+				{
+					field: 'value',
+					width: '35%',
+					title: '标题',
+					align: 'center',
+					templet: '#graphic_message_title'
+				},
+				{
+					field: 'create_time',
+					width: '25%',
+					title: '创建时间',
+					align: 'center',
+					templet: '#create_time'
+				},
+				{
+					field: 'update_time',
+					width: '20%',
+					title: '更新时间',
+					align: 'center',
+					templet: '#update_time'
+				},
+				{
+					title: '操作',
+					width: '20%',
+					toolbar: '#operation',
+					align:'right'
+				}
 			]]
 		});
 		
@@ -72,16 +95,41 @@ function loadMaterialList(type) {
 			url: ns.url("wechat://shop/material/lists"),
 			where: {type: 5},
 			cols: [[
-				{field: 'value', width: '40%', title: '内容', align: 'center', templet: '#text_content'},
-				{field: 'create_time', width: '25%', title: '创建时间', align: 'center', templet: '#create_time'},
-				{field: 'update_time', width: '25%', title: '更新时间', align: 'center', templet: '#update_time'},
-				{title: '操作', width: '10%',toolbar: '#operation', align: 'center'}
+				{
+					field: 'value',
+					width: '40%',
+					title: '内容',
+					align: 'center',
+					templet: '#text_content'
+				},
+				{
+					field: 'create_time',
+					width: '25%',
+					title: '创建时间',
+					align: 'center',
+					templet: '#create_time'
+				},
+				{
+					field: 'update_time',
+					width: '25%',
+					title: '更新时间',
+					align: 'center',
+					templet: '#update_time'
+				},
+				{
+					title: '操作',
+					width: '10%',
+					toolbar: '#operation',
+					align:'right'
+				}
 			]]
 		});
 		
 		//监听工具条
 		table.tool(function (obj) {
 			var data = obj.data;
+			console.log(data)
+			console.log(parent)
 			switch (obj.event) {
 				case "choose":
                     try{
@@ -106,14 +154,49 @@ function loadMaterialList(type) {
  */
 function preview(id, index = 0) {
 	var parme = {"id": id, "i": index};
-	var url = ns.url("wechat://shop/material/previewgraphicmessage");
-	url = url.replace('.html', '') + '/id/' + id + '/i/' + index + '.html';
+	var url = ns.url("wechat://shop/material/previewgraphicmessage", {id: id, i: index});
 	window.open(url);
 }
 
 /**
  * 文本消息预览
  */
+function previewTexts(event, media_id, index, subIndex = "") {
+	var content = $(".text-message-content .title>a").html();
+	var html = "";
+		html += "<div><textarea id='text_content' class='text-r'>"+ content +"</textarea></div>";
+	layer_index  = layer.open({
+		type: 1,
+		closeBtn: 0, //不显示关闭按钮
+		anim: 2,
+		area: ['380px', '230px'],
+		shadeClose: true, //开启遮罩关闭
+		btn: ['确定', '取消'],
+		title : "文本信息",
+		content: html,
+		yes:function(){
+			var text_r = $(".text-r").val();
+			$(".text-message-content .title>a").html(text_r);
+			if(subIndex >= 0){
+				menu.button[index].sub_button[subIndex]['text'] = text_r;
+			}else{
+				menu.button[index]['text'] = text_r;
+			}
+			$.ajax({
+				type: 'post',
+				url: ns.url('wechat://shop/material/editTextMaterial'),
+				data: {media_id: media_id, content : text_r},
+				dataType: "JSON",
+				success: function (res) {
+					layer.msg(res.message);
+				}
+			});
+
+			layer.close(layer_index);
+		}
+	});
+}
+
 function previewText(content) {
 	layer.open({
 		title: '文本内容',
@@ -174,6 +257,7 @@ function addMaterialForm(type) {
 								id: res.data,
 								value: data.field
 							};
+							typeof chooseTextMessage == 'function' && chooseTextMessage(_data)
 						}
 					}
 				});

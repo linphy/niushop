@@ -1,4 +1,4 @@
-![输入图片说明](https://images.gitee.com/uploads/images/2020/1130/170320_60fa7937_6569472.png "gitee.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2020/1130/170320_60fa7937_6569472.png "toubu.png")
 
 ### 产品介绍
 
@@ -39,10 +39,10 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
  Niushop商城qq开发群1:<a href="https://jq.qq.com/?_wv=1027&k=VrVzi1FI" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群2:<a href="https://jq.qq.com/?_wv=1027&k=MCtjz6B9" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群3:<a href="https://jq.qq.com/?_wv=1027&k=H9FLIfTP" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>
 
 ###  内测演示二维码
-![输入图片说明](https://images.gitee.com/uploads/images/2020/1204/145628_d2e3b098_6569472.png "微信图片_20201204121838.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0805/103000_8b403e1c_6569472.png "扫码111.png")
 
 ####   :fire:  内测演示站后台:[<a href='https://uniapp.v4.niuteam.cn/shop/index' target="_blank"> 查看 </a>]       
-<a href='https://uniapp.v4.niuteam.cn/' target="_blank">https://uniapp.v4.niuteam.cn/</a>  账号：test  密码：123456
+<a href='https://uniapp.v4.niuteam.cn/shop/index' target="_blank">https://uniapp.v4.niuteam.cn/shop/index</a>  账号：admin  密码：123456
 
 ### :tw-1f50a: 开源版使用须知
 
@@ -52,9 +52,13 @@ NIUSHOP开源商城B2C单商户V4,功能强大，安全便捷，框架成熟稳�
 
 3.禁止将本开源的代码和资源进行任何形式任何名义的出售，否则产生的一切任何后果责任由侵权者自负。
 
-4.本基础版本后台源码全部开源，小程序为uniapp编译版，如需小程序源码，请点击下方图片马上获取。
+4.推荐3名会员关注公众号，将免费获得单商户V4基础版授权。
 
-<a href='https://www.niushop.com/web/index/saaspromotion.html' target="_blank">![输入图片说明](https://images.gitee.com/uploads/images/2021/0207/091800_7fa98644_6569472.png "V4.png")</a>
+5.绑定码云评论并点赞支持可获得单商户V4基础版授权
+
+6.本基础版本后台源码全部开源，小程序为uniapp编译版，如需小程序源码，请点击下方图片马上获取。
+
+<a href='https://www.niushop.com/web/index/promotion' target="_blank"><img src="https://images.gitee.com/uploads/images/2020/0805/103536_c7d1b001_6569472.png"/></a>
 
 ### 技术亮点
 

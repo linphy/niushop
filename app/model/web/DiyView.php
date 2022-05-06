@@ -107,7 +107,7 @@ class DiyView extends BaseModel
         } else {
             try {
                 model('site_diy_view')->startTrans();
-                model('site_diy_view')->update([ 'name' => 'DIY_VIEW_RANDOM_' . time(), 'create_time' => time() ], [ [ 'name', '=', 'DIYVIEW_INDEX' ] ]);
+                model('site_diy_view')->update([ 'name' => 'DIY_VIEW_RANDOM_' . time(), 'create_time' => time() ], [ [ 'name', '=', 'DIYVIEW_INDEX' ], [ 'site_id', '=', $data[ 'site_id' ] ] ]);
                 model('site_diy_view')->add($data);
                 Cache::tag("site_diy_view")->clear();
                 model('site_diy_view')->commit();
@@ -431,6 +431,12 @@ class DiyView extends BaseModel
         $fenxiao_addon_is_exit = addon_is_exit('fenxiao', $site_id);// 分销插件
         $bargain_addon_is_exit = addon_is_exit('bargain', $site_id);// 砍价插件
         $memberrecommend_addon_is_exit = addon_is_exit('memberrecommend', $site_id);// 邀请奖励插件
+        $presale_addon_is_exit = addon_is_exit('presale', $site_id);// 预售插件
+        $giftcard_addon_is_exit = addon_is_exit('giftcard', $site_id);// 礼品卡插件
+        $divideticket_addon_is_exit = addon_is_exit('divideticket', $site_id);// 好友瓜分券插件
+        $pinfan_addon_is_exit = addon_is_exit('pinfan', $site_id);// 拼团返利插件
+        $hongbao_addon_is_exit = addon_is_exit('hongbao', $site_id);// 裂变红包插件
+        $blindbox_addon_is_exit = addon_is_exit('blindbox', $site_id);// 盲盒插件
 
         if (empty($res[ 'data' ][ 'value' ])) {
             $menuList = [];
@@ -615,6 +621,102 @@ class DiyView extends BaseModel
                 ];
             }
 
+            if ($presale_addon_is_exit) {
+                $menuList[] =
+                    [
+                        'tag' => 'presale',
+                        "text" => "我的预售",
+                        "img" => "upload/uniapp/member/index/menu/my_presale.png",
+                        "link" => [
+                            "name" => "PRESALE",
+                            "title" => "我的预售",
+                            "wap_url" => "/promotionpages/presale/order_list/order_list"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+
+            if ($giftcard_addon_is_exit) {
+                $menuList[] =
+                    [
+                        'tag' => 'giftcard',
+                        "text" => "我的礼品卡",
+                        "img" => "upload/uniapp/member/index/menu/my_giftcard.png",
+                        "link" => [
+                            "name" => "GIFTCARD",
+                            "title" => "我的礼品卡",
+                            "wap_url" => "/promotionpages/giftcard/my_giftcard/my_giftcard"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+
+            if ($divideticket_addon_is_exit) {
+                $menuList[] =
+                    [
+                        'tag' => 'divideticket',
+                        "text" => "好友瓜分券",
+                        "img" => "upload/uniapp/member/index/menu/my_divideticket.png",
+                        "link" => [
+                            "name" => "DIVIDETICKET",
+                            "title" => "我的好友瓜分券",
+                            "wap_url" => "/promotionpages/guafen/guafen/my_guafen"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+
+            if ($pinfan_addon_is_exit) {
+                $menuList[] =
+                    [
+                        'tag' => 'pinfan',
+                        "text" => "拼团返利",
+                        "img" => "upload/uniapp/member/index/menu/my_pinfan.png",
+                        "link" => [
+                            "name" => "PINFAN",
+                            "title" => "我的拼团返利",
+                            "wap_url" => "/promotionpages/rebate/rebate/my_rebate"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+
+            if ($hongbao_addon_is_exit) {
+                $menuList[] =
+                    [
+                        'tag' => 'hongbao',
+                        "text" => "裂变红包",
+                        "img" => "upload/uniapp/member/index/menu/my_hongbao.png",
+                        "link" => [
+                            "name" => "HONGBAO",
+                            "title" => "我的裂变红包",
+                            "wap_url" => "/otherpages/hongbao/my_hongbao/my_hongbao"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+
+            if ($blindbox_addon_is_exit) {
+                $menuList[] =
+                    [
+                        'tag' => 'blindbox',
+                        "text" => "盲盒",
+                        "img" => "upload/uniapp/member/index/menu/my_box.png",
+                        "link" => [
+                            "name" => "BLINDBOX",
+                            "title" => "我的盲盒",
+                            "wap_url" => "/otherpages/blindBox/my_box/my_box"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+
             $res[ 'data' ][ 'value' ] = [
                 "textColor" => "#ffffff",
                 "bgImg" => "upload/uniapp/member/index/member_bg.png",
@@ -628,14 +730,26 @@ class DiyView extends BaseModel
 
             $menuList = $res[ 'data' ][ 'value' ][ 'menuList' ];
 
-            $membersignin_key = array_search('membersignin', array_column($menuList, 'tag'));
-            $memberwithdraw_key = array_search('memberwithdraw', array_column($menuList, 'tag'));
-            $coupon_key = array_search('coupon', array_column($menuList, 'tag'));
-            $pintuan_key = array_search('pintuan', array_column($menuList, 'tag'));
-            $pointexchange_key = array_search('pointexchange', array_column($menuList, 'tag'));
-            $fenxiao_key = array_search('fenxiao', array_column($menuList, 'tag'));
-            $bargain_key = array_search('bargain', array_column($menuList, 'tag'));
-            $memberrecommend_key = array_search('memberrecommend', array_column($menuList, 'tag'));
+            $menuList_arr = $menuList;
+            foreach ($menuList_arr as $key => $val) {
+                if(empty($val['tag'])){
+                    $menuList_arr[$key]['tag'] = "";
+                }
+            }
+            $membersignin_key = array_search('membersignin', array_column($menuList_arr, 'tag'));
+            $memberwithdraw_key = array_search('memberwithdraw', array_column($menuList_arr, 'tag'));
+            $coupon_key = array_search('coupon', array_column($menuList_arr, 'tag'));
+            $pintuan_key = array_search('pintuan', array_column($menuList_arr, 'tag'));
+            $pointexchange_key = array_search('pointexchange', array_column($menuList_arr, 'tag'));
+            $fenxiao_key = array_search('fenxiao', array_column($menuList_arr, 'tag'));
+            $bargain_key = array_search('bargain', array_column($menuList_arr, 'tag'));
+            $memberrecommend_key = array_search('memberrecommend', array_column($menuList_arr, 'tag'));
+            $presale_key = array_search('presale', array_column($menuList_arr, 'tag'));
+            $giftcard_key = array_search('giftcard', array_column($menuList_arr, 'tag'));
+            $divideticket_key = array_search('divideticket', array_column($menuList_arr, 'tag'));
+            $pinfan_key = array_search('pinfan', array_column($menuList_arr, 'tag'));
+            $hongbao_key = array_search('hongbao', array_column($menuList_arr, 'tag'));
+            $blindbox_key = array_search('blindbox', array_column($menuList_arr, 'tag'));
 
             if ($membersignin_key !== false && $membersignin_addon_is_exit == 0) {
                 // 插件卸载后，移除【签到】菜单
@@ -790,6 +904,118 @@ class DiyView extends BaseModel
                 ];
             }
 
+            if ($presale_key !== false && $presale_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $presale_key, 1);
+            } elseif ($presale_key === false && $presale_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] = [
+                    'tag' => 'presale',
+                    "text" => "我的预售",
+                    "img" => "upload/uniapp/member/index/menu/my_presale.png",
+                    "link" => [
+                        "name" => "PRESALE",
+                        "title" => "我的预售",
+                        "wap_url" => "/promotionpages/presale/order_list/order_list"
+                    ],
+                    "isShow" => "1",
+                    "isSystem" => "1"
+                ];
+            }
+            if ($giftcard_key !== false && $giftcard_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $giftcard_key, 1);
+            } elseif ($giftcard_key === false && $giftcard_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] = [
+                    'tag' => 'giftcard',
+                    "text" => "我的礼品卡",
+                    "img" => "upload/uniapp/member/index/menu/my_giftcard.png",
+                    "link" => [
+                        "name" => "GIFTCARD",
+                        "title" => "我的礼品卡",
+                        "wap_url" => "/promotionpages/giftcard/my_giftcard/my_giftcard"
+                    ],
+                    "isShow" => "1",
+                    "isSystem" => "1"
+                ];
+            }
+            if ($divideticket_key !== false && $divideticket_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $divideticket_key, 1);
+            } elseif ($divideticket_key === false && $divideticket_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] =
+                    [
+                        'tag' => 'divideticket',
+                        "text" => "好友瓜分券",
+                        "img" => "upload/uniapp/member/index/menu/my_divideticket.png",
+                        "link" => [
+                            "name" => "DIVIDETICKET",
+                            "title" => "我的好友瓜分券",
+                            "wap_url" => "/promotionpages/guafen/guafen/my_guafen"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+            if ($pinfan_key !== false && $pinfan_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $pinfan_key, 1);
+            } elseif ($pinfan_key === false && $pinfan_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] =
+                    [
+                        'tag' => 'pinfan',
+                        "text" => "拼团返利",
+                        "img" => "upload/uniapp/member/index/menu/my_pinfan.png",
+                        "link" => [
+                            "name" => "PINFAN",
+                            "title" => "我的拼团返利",
+                            "wap_url" => "/promotionpages/rebate/rebate/my_rebate"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+            if ($hongbao_key !== false && $hongbao_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $hongbao_key, 1);
+            } elseif ($hongbao_key === false && $hongbao_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] =
+                    [
+                        'tag' => 'hongbao',
+                        "text" => "裂变红包",
+                        "img" => "upload/uniapp/member/index/menu/my_hongbao.png",
+                        "link" => [
+                            "name" => "HONGBAO",
+                            "title" => "我的裂变红包",
+                            "wap_url" => "/otherpages/hongbao/my_hongbao/my_hongbao"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
+            if ($blindbox_key !== false && $blindbox_addon_is_exit == 0) {
+                // 插件卸载后，移除【邀请有礼】菜单
+                array_splice($menuList, $blindbox_key, 1);
+            } elseif ($blindbox_key === false && $blindbox_addon_is_exit == 1) {
+                // 插件安装后，如果没有【邀请有礼】菜单，则添加
+                $menuList[] =
+                    [
+                        'tag' => 'blindbox',
+                        "text" => "盲盒",
+                        "img" => "upload/uniapp/member/index/menu/my_box.png",
+                        "link" => [
+                            "name" => "BLINDBOX",
+                            "title" => "我的盲盒",
+                            "wap_url" => "/otherpages/blindBox/my_box/my_box"
+                        ],
+                        "isShow" => "1",
+                        "isSystem" => "1"
+                    ];
+            }
             $res[ 'data' ][ 'value' ][ 'menuList' ] = $menuList;
         }
 
@@ -832,5 +1058,23 @@ class DiyView extends BaseModel
     {
         model("site_diy_view")->setInc($condition, 'click_num', 1);
         return $this->success(1);
+    }
+
+    public function urlQrcode($page, $qrcode_param, $promotion_type = 'null', $site_id){
+        $params = [
+            'site_id'     => $site_id,
+            'data'        => $qrcode_param,
+            'page'        => $page,
+            'promotion_type' => $promotion_type,
+            'h5_path'          => $page.'?name='.$qrcode_param['name'],
+            'qrcode_path' => 'upload/qrcode/diy',
+            'qrcode_name' => [
+                'h5_name'       => 'diy_qrcode_'. $promotion_type .'_h5_' .$qrcode_param['name'] . '_' . $site_id,
+                'weapp_name'    => 'diy_qrcode_'. $promotion_type .'_weapp_' .$qrcode_param['name'] . '_' . $site_id
+            ]
+        ];
+
+        $solitaire = event('ExtensionInformation', $params);
+        return $this->success($solitaire[0]);
     }
 }

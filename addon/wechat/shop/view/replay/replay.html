@@ -6,70 +6,92 @@
 <div class="layui-tab-brief fourstage-nav clearfix">
     <ul class="layui-tab-title">
         <li class='layui-this'><a href='{:addon_url("wechat://shop/replay/replay")}'>关键词自动回复</a></li>
+        <li><a href='{:addon_url("wechat://shop/replay/default")}'>默认回复</a></li>
         <li><a href='{:addon_url("wechat://shop/replay/follow")}'>关注后自动回复</a></li>
     </ul>
-    <div class="ns-single-filter-box">
-        <div class='info'>
-            <button class='add-replay js-replay layui-btn ns-bg-color' type="button" nc-event="click" nc-action="addRule">新建自动回复</button>
-        </div>
-        <div class="layui-form">
-
-            <div class="layui-input-inline">
-                <input type="text" name="rule_name" id="search_text" placeholder="请输入规则" class="layui-input">
-                <button type="button" class="layui-btn layui-btn-primary" onclick="search()">
-                    <i class="layui-icon"></i>
-                </button>
-
+    <div class="keyword-content">
+        <div class="layui-collapse ns-tips">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">操作提示</h2>
+                <ul class="layui-colla-content layui-show">
+                    <li>
+                        全匹配<br>
+                        全匹配是指客户输入的关键字，必须跟你后台设置的关键词一模一样（顺序不能颠倒），才会触发回复内容。<br>
+                        比如：后台设置关键词【公众号类型】，客户只有输入【公众号类型】时才会触发，而输入【公众号的类型】【公众号类型有哪些】【类型公众号】都不会触发。
+                    </li>
+                    <li>
+                        半匹配<br>
+                        半匹配是指客户输入的关键字，必须完全包含你后台设置的关键词（顺序不能颠倒，中间不能加词，只能前后加词）<br>
+                        比如：后台设置关键词【公众号类型】，客户输入【公众号类型有哪些】【有哪些公众号的类型】，都可以被触发，但客户输入【公众号】【类型】【公众号的类型】都不会被触发
+                    </li>
+                    <li>
+                        总结 <br>
+                        无论全匹配还是半匹配，关键词顺序都不能颠倒，中间也不能断开。
+                    </li>
+                </ul>
             </div>
         </div>
-    </div>
-
-    <div class="weixin-normal rule-autoreplay-page">
-        <div id="load_rule_list" class="rule-group-container"></div>
-        <div id="list_page" style="text-align: right;"></div>
-
-        <!--添加回复-->
-        <div class="layui-form rule-container" id="add_reply" style="display: none">
-            <input type="hidden" name="layer_index" value=""/>
-            <input type="hidden" name="rule_id" value=""/>
-            <input type="hidden" name="key_id" value="-1"/>
-            <input type="hidden" value="" id="hidden_reply_type" />
-            <input type="hidden" value="" id="hidden_media_id" />
-            <div class="arrow">
-                <i class="layui-icon">&#xe603;</i>
+        <div class="ns-single-filter-box">
+            <div class='info'>
+                <button class='add-replay js-replay layui-btn ns-bg-color' type="button" nc-event="click" nc-action="addRule">新建自动回复</button>
             </div>
-            <a href="javascript:;" class="close--circle js-close">×</a>
-            <div>
-                <div class="misc">
-                    <!-- 		<a href="javascript:;" class="js-replay" nc-event="click" nc-action="emotion">表情</a> -->
-                    <a href="javascript:;" class="js-replay" nc-event="click" nc-action="hyperlink">插入链接</a>
-                    <!--<a href="javascript:;" class="image" onclick="material(2);">文本消息</a>-->
-                    <!-- <a href="javascript:;" class="voice" onclick="chooseMaterial(3);">音频</a> -->
-                    <!-- <a href="javascript:;" class="js-replay" nc-event="click" nc-action="music">音乐</a> -->
-                    <a href="javascript:;" class="js-replay" onclick="material(1);">选择图文</a>
-                    <!--<div class="others">-->
-                        <!--<a href="javascript:;">其他<i class="caret"></i></a>-->
-                        <!--<ul class="dropdown-menu">-->
-                            <!--{volist name="link_list" id="vo"}-->
-                            <!--<li>-->
-                                <!--<a class="js-open-goods" data-action-type="{$vo.name}" data-complex-mode="true" href="javascript:;">{$vo.title}</a>-->
-                            <!--</li>-->
-                            <!--{/volist}-->
-                        <!--</ul>-->
-                    <!--</div>-->
+            <div class="layui-form">
+                <div class="layui-input-inline">
+                    <input type="text" name="rule_name" id="search_text" placeholder="请输入规则" class="layui-input">
+                    <button type="button" class="layui-btn layui-btn-primary" onclick="search()">
+                        <i class="layui-icon"></i>
+                    </button>
                 </div>
+            </div>
+        </div>
 
-                <div class="layui-form-item">
-                    <textarea placeholder="请输入内容" class="layui-textarea" name="reply_content" maxlength="300" lay-verify="required|content"></textarea>
-                    <div class="complex-backdrop">
-                        <div class="complex-content"></div>
+        <div class="weixin-normal rule-autoreplay-page">
+            <div id="load_rule_list" class="rule-group-container"></div>
+            <div id="list_page" style="text-align: right;"></div>
+
+            <!--添加回复-->
+            <div class="layui-form rule-container" id="add_reply" style="display: none">
+                <input type="hidden" name="layer_index" value=""/>
+                <input type="hidden" name="rule_id" value=""/>
+                <input type="hidden" name="key_id" value="-1"/>
+                <input type="hidden" value="" id="hidden_reply_type" />
+                <input type="hidden" value="" id="hidden_media_id" />
+                <!--<div class="arrow">-->
+                    <!--<i class="layui-icon">&#xe603;</i>-->
+                <!--</div>-->
+                <!--<a href="javascript:;" class="close&#45;&#45;circle js-close">×</a>-->
+                <div>
+                    <div class="misc">
+                        <!-- 		<a href="javascript:;" class="js-replay" nc-event="click" nc-action="emotion">表情</a> -->
+                        <a href="javascript:;" class="js-replay" nc-event="click" nc-action="hyperlink">插入链接</a>
+                        <a href="javascript:;" class="image" onclick="material(5);">文本消息</a>
+                        <!-- <a href="javascript:;" class="voice" onclick="chooseMaterial(3);">音频</a> -->
+                        <!-- <a href="javascript:;" class="js-replay" nc-event="click" nc-action="music">音乐</a> -->
+                        <a href="javascript:;" class="js-replay" onclick="material(1);">选择图文</a>
+                        <!--<div class="others">-->
+                            <!--<a href="javascript:;">其他<i class="caret"></i></a>-->
+                            <!--<ul class="dropdown-menu">-->
+                                <!--{volist name="link_list" id="vo"}-->
+                                <!--<li>-->
+                                    <!--<a class="js-open-goods" data-action-type="{$vo.name}" data-complex-mode="true" href="javascript:;">{$vo.title}</a>-->
+                                <!--</li>-->
+                                <!--{/volist}-->
+                            <!--</ul>-->
+                        <!--</div>-->
                     </div>
-                    <div class="layui-input-block" style="margin-top: 10px; margin-left: 0;">
-                        <button class="layui-btn ns-bg-color" type="button" lay-submit lay-filter="add_reply">确定</button>
-                        <span class="pull-right">还能输入 <i>300</i> 个字 </span>
+
+                    <div class="layui-form-item">
+                        <textarea placeholder="请输入内容" class="layui-textarea" name="reply_content" maxlength="300" lay-verify="required|content"></textarea>
+                        <div class="complex-backdrop">
+                            <div class="complex-content"></div>
+                        </div>
+                        <div class="layui-input-block" style="margin-top: 10px; margin-left: 0;">
+                            <button class="layui-btn ns-bg-color" type="button" lay-submit lay-filter="add_reply">确定</button>
+                            <span class="pull-right">还能输入 <i>300</i> 个字 </span>
+                        </div>
                     </div>
+
                 </div>
-
             </div>
         </div>
     </div>
@@ -358,6 +380,7 @@
 
     //图文回调
     function chooseGraphicMessage(data) {
+        console.log(data)
         var active_pic = '';
         active_pic += '<div class="ng ng-single">';
         active_pic += '<a href="javascript:;" class="close--circle js-delete-complex">×</a>';
@@ -385,11 +408,40 @@
         $("#hidden_media_id").val(data.media_id);
     }
 
+    function chooseTextMessage(data){
+        console.log(data)
+        var active_pic = '';
+        active_pic += '<div class="ng ng-single">';
+        active_pic += '<a href="javascript:;" class="close--circle js-delete-complex">×</a>';
+        active_pic += '<div class="ng-item">';
+        active_pic += '<span class="label label-success">文 本</span>';
+        active_pic += '<div class="ng-title">';
+        active_pic += '<a href="javascript:;" title="'+data.value.content+'">' + data.value.content + '</a>';
+        active_pic += '</div>';
+        // active_pic += '<a href="h" target="_blank" class="new-window" title="' + data.value.content + '"><span class="label label-success">' + data.value.content + '</span></a>';
+        active_pic += '</div>';
+        active_pic += '<div class="ng-item view-more">';
+        active_pic += '<a href="" target="_blank" class="clearfix new-window">';
+        active_pic += '<span class="pull-left">阅读全文</span>';
+        active_pic += '<span class="pull-right">&gt;</span>';
+        active_pic += '</a>';
+        active_pic += '</div>';
+        active_pic += '</div>';
+
+        $("#add_reply").find(".complex-content").html(active_pic);
+        $('.complex-backdrop').css("display", "block");
+        $("#add_reply").find("textarea[name='reply_content']").val(data.value.content);
+        $("#add_reply").find("span.pull-right").hide();
+        $("#hidden_reply_type").val('text');
+        $("#hidden_media_id").val(data.media_id);
+    }
+
+
     //弹出框的位置
     $("body").on('click', ".add-reply-menu", function() {
         var x = $(this).position().top;
         var y = $(this).position().left;
-        var real_x = x - 8;
+        var real_x = x - 180;
         var real_y = y + 120;
         $('.rule-container').css('top', real_x);
         $('.rule-container').css('left', real_y);

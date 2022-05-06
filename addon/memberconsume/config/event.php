@@ -32,6 +32,10 @@ return [
         'MemberAccountRule' => [
             'addon\memberconsume\event\MemberAccountRule',
         ],
+
+        'OrderRefundFinish' => [
+            'addon\memberconsume\event\OrderRefundFinish'
+        ]
     ],
 
     'subscribe' => [

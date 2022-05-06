@@ -3,6 +3,7 @@
 <style>
 	.keywords-item{position:relative;margin-bottom:10px}
 	.keywords-item .layui-icon-close{font-size:12px;position:absolute;top:-8px;right:-8px;width:16px;height:16px;line-height:16px;text-align:center;color:#fff;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;background:rgba(0,0,0,.3);cursor:pointer}
+	.examples {color: #ff8833; cursor: pointer;}
 </style>
 {/block}
 {block name="main"}
@@ -10,7 +11,7 @@
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
 		<ul class="layui-colla-content layui-show">
-			<li>热门搜索，将显示在前台搜索框下面，前台点击时直接作为关键词进行搜索</li>
+			<li>热门搜索，将显示在前台搜索框下面，前台点击时直接作为关键词进行搜索   <a onclick="showDemo()" class="examples ns-text-color">查看示例</a></li>
 		</ul>
 	</div>
 </div>
@@ -50,6 +51,7 @@
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
+	
 </div>
 {/block}
 {block name="script"}
@@ -100,7 +102,14 @@
 				}
 			});
 		}, 1);
-
+	}
+	function showDemo(){
+	    layer.open({
+	        title: '查看示例',
+	        type: 1,
+	        area: ['500px', '660px'],
+	        content: '<img style="margin: 20px 80px;" src="SHOP_IMG/hot_search.png">'
+	    })
 	}
 </script>
 {/block}

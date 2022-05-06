@@ -16,14 +16,10 @@ class GoodsList extends BaseDiyView
     {
         $site_id = request()->siteid();
         $goods_category_model = new GoodsCategory();
-        $condition = [
-            ['pid', '=', 0],
-            ['site_id', '=', $site_id]
-        ];
-
-        $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name    ');
-        $goods_category_list = $goods_category_list['data'];
-        $this->assign("goods_category_list", $goods_category_list);
+        $category_condition[] = [ 'site_id', '=', $site_id ];
+        $category_list = $goods_category_model->getCategoryTree($category_condition);
+        $category_list = $category_list[ 'data' ];
+        $this->assign("category_list", $category_list);
 
         return $this->fetch("goods_list/design.html");
     }

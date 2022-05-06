@@ -180,34 +180,63 @@ class Replay extends BaseWechat
             $media_id      = input('media_id', '');
             $key_id        = input('key_id', -1);
             $type          = input('type', '');
+            $replay_type   = input('replay_type','');
             $info_result   = $replay_model->getRuleInfo([['rule_id', "=", $rule_id], ['site_id', "=", $this->site_id]]);
             $info          = $info_result["data"];
-            if ($info['replay_json']) {
-                $data = json_decode($info['replay_json']);
+            if(!empty($rule_id)){
+                if ($info['replay_json']) {
+                    $data = json_decode($info['replay_json']);
 
-                if ($key_id > -1) {
-                    $data[$key_id] = [
-                        'reply_content' => $reply_content,
-                        'type'          => $type,
-                    ];
-                    if (!empty($media_id)) {
-                        $data[$key_id]['media_id'] = $media_id;
+                    if ($key_id > -1) {
+                        $data[$key_id] = [
+                            'reply_content' => $reply_content,
+                            'type'          => $type,
+                        ];
+                        if (!empty($media_id)) {
+                            $data[$key_id]['media_id'] = $media_id;
+                        }
+                    } else {
+                        if (!empty($media_id)) {
+                            array_push($data, [
+                                'reply_content' => $reply_content,
+                                'type'          => $type,
+                                'media_id'      => $media_id
+                            ]);
+                        } else {
+                            array_push($data, [
+                                'reply_content' => $reply_content,
+                                'type'          => $type,
+                            ]);
+                        }
                     }
                 } else {
+                    $data = [
+                        [
+                            'reply_content' => $reply_content,
+                            'type'          => $type,
+                        ]
+                    ];
                     if (!empty($media_id)) {
-                        array_push($data, [
-                            'reply_content' => $reply_content,
-                            'type'          => $type,
-                            'media_id'      => $media_id
-                        ]);
-                    } else {
-                        array_push($data, [
-                            'reply_content' => $reply_content,
-                            'type'          => $type,
-                        ]);
+                        $data[0]['media_id'] = $media_id;
                     }
                 }
-            } else {
+                $data = json_encode($data);
+                $data = [
+                    'replay_json' => $data,
+                    'modify_time' => time()
+                ];
+                $res  = $replay_model->editRule($data, [['rule_id', "=", $rule_id], ['site_id', "=", $this->site_id]]);
+                return $res;
+            }else{
+                $rule_type = '';
+                $rule_name = '';
+                if ($replay_type == "default"){
+                    $rule_type = 'DEFAULT';
+                    $rule_name = '默认回复';
+                }else if($replay_type == "follow"){
+                    $rule_type = 'AFTER';
+                    $rule_name = '关注后回复';
+                }
                 $data = [
                     [
                         'reply_content' => $reply_content,
@@ -217,16 +246,21 @@ class Replay extends BaseWechat
                 if (!empty($media_id)) {
                     $data[0]['media_id'] = $media_id;
                 }
+                $data = json_encode($data);
+                $data = [
+                    'replay_json' => $data,
+                    'modify_time' => time(),
+                    'rule_name'   => $rule_name,
+                    'rule_type'   => $rule_type,
+                    'site_id'   => $this->site_id,
+                ];
+                $res  = $replay_model->addRule($data);
+                return $res;
             }
-            $data = json_encode($data);
-            $data = [
-                'replay_json' => $data,
-                'modify_time' => time()
-            ];
-            $res  = $replay_model->editRule($data, [['rule_id', "=", $rule_id], ['site_id', "=", $this->site_id]]);
-            return $res;
+
         }
     }
+
 
     /**
      * 删除回复数据
@@ -284,6 +318,37 @@ class Replay extends BaseWechat
         } else {
             $this->assign('link_list', []);//链接
             return $this->fetch('replay/follow', [], $this->replace);
+        }
+    }
+
+    public function default()
+    {
+        if (request()->isAjax()) {
+            $page        = input('page', 1);
+            $limit       = input('limit', PAGE_LIST_ROWS);
+//            $rule_type   = input('rule_type', '');
+            $search_text = input('search_text', '');
+
+            $condition = array(
+                ['rule_type', "=",'DEFAULT'],  //只获取默认的
+                ['site_id', '=', $this->site_id]
+            );
+
+            $condition[] = [
+                'rule_name', 'like', '%' . $search_text . '%'
+            ];
+
+            $order        = 'create_time desc';
+            $replay_model = new ReplayModel();
+            $list         = $replay_model->getReplayPageList($condition, $page, $limit, $order);
+            foreach ($list['data']['list'] as $k => $v) {
+                $list['data']['list'][$k]['key_list']    = $v['keywords_json'] != false ? json_decode($v['keywords_json']) : [];
+                $list['data']['list'][$k]['replay_list'] = $v['replay_json'] != false ? json_decode($v['replay_json']) : [];
+            }
+            return $list;
+        } else {
+            $this->assign('link_list', []);//链接
+            return $this->fetch('replay/default', [], $this->replace);
         }
     }
 

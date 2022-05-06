@@ -70,11 +70,13 @@ class InitConfig
         
         //检测网址访问
         $url = request()->url(true);
-        if(strstr($url, 'call_user_func_array')|| strstr($url, 'invokefunction'))
-        {
-        	die("非法请求");
+        $url = strtolower($url);
+        if (strstr($url, 'call_user_func_array') || strstr($url, 'invokefunction') || strstr($url, 'think\view')) {
+            die("非法请求");
         }
 
+        // 应用模块
+        $GLOBALS['system_array'] = ['shop', 'install', 'cron', 'api', 'pay', 'public', 'app', 'index', SHOP_MODULE];
     }
 
     /**

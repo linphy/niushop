@@ -28,7 +28,7 @@ class Message extends BaseModel
 	{
 		try {
 			$site_id = $param['site_id'];
-			$support_type = $data["support_type"] ?? [];
+			$support_type = $param["support_type"] ?? [];
 			
 			if (!empty($support_type) && !in_array("wechat", $support_type)) return $this->success();
 			

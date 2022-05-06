@@ -39,26 +39,14 @@
 	.select-goods .select-goods-classification .select-goods-classification .classification-item.arrow:after{left: 15px;}
 	.select-goods .select-goods-classification .select-goods-classification .layui-colla-content.classification-item{padding-left: 38px;}
 	.select-goods .select-goods-classification .classification-item:hover{background-color: #f7f7f7;}
+	/* 筛选下拉框宽度调整 */
+	.layui-form-select{width:150px !important;}
 </style>
 {/block}
 {block name="body"}
 <div class="select-goods">
+	<!-- 左侧固定展示商品分类 -->
 	<div class="select-goods-left">
-		{if $promotion}
-		<dl class="marketing-campaign">
-			<dt>商品</dt>
-			{if $promotion &&  $promotion == "all"}
-			<dd class="ns-text-color" data-type="">全部商品</dd>
-			{/if}
-			{foreach $promotion_type as $k => $v}
-				{if $promotion && $promotion == $v.type || !$promotion}
-				<dd class="{if $promotion && $promotion == $v.type}ns-text-color{/if}" data-type="{$v.type}">{$v.name}</dd>
-				{/if}
-			{/foreach}
-		</dl>
-		{/if}
-
-		{if !$promotion}
 		<div class="select-goods-classification layui-collapse" lay-accordion lay-filter="oneCategory">
 			<div class="layui-colla-item">
 				<h2 class="layui-colla-title classification-item ns-text-color" data-category_id="">全部分类</h2>
@@ -85,22 +73,52 @@
 			</div>
 			{/foreach}
 		</div>
-		{/if}
 	</div>
 
+	<!-- 右侧固定展示筛选和商品列表 -->
 	<div class="select-goods-right">
-		<!-- 筛选面板 -->
+		<!-- 筛选 -->
 		<div class="ns-single-filter-box">
+			<div ></div>
 			<div class="layui-form">
+				<div class="layui-inline">
+					<div class="layui-input-inline">
+						<select name="select_type" lay-filter="select_type">
+							<option value="all">全部商品</option>
+							<option value="selected">已选择商品</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<div class="layui-input-inline">
+						<select name="label_id" lay-filter="label_id">
+							<option value="">选择商品标签</option>
+							{foreach name="$label_list" item="vo"}
+							<option value="{$vo['id']}">{$vo['label_name']}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
 				<div class="layui-input-inline">
-					<input type="text" name="goods_name" placeholder="请输入{if $promotion == 'pintuan'}活动名称{else}商品名称{/if}" autocomplete="off" class="layui-input">
+					<select name="goods_class" lay-filter="goods_class">
+						<option value="">选择商品类型</option>
+						<option value="1">实物商品</option>
+						<option value="2">虚拟商品</option>
+						{if $virtualcard_exit}
+						<option value="3">电子卡密</option>
+						{/if}
+					</select>
+				</div>
+				<div class="layui-input-inline">
+					<input type="text" name="search_text" placeholder="请输入商品名称{if in_array($promotion, ['', 'all', 'module'])}或编码{/if}" autocomplete="off" class="layui-input">
 					<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
 						<i class="layui-icon">&#xe615;</i>
 					</button>
 				</div>
+				<!-- 分类id -->
+				<input type="hidden" name="category_id" value=""/>
 			</div>
 		</div>
-
 		<!-- 列表 -->
 		<table id="goods_list" lay-filter="goods_list"></table>
 	</div>
@@ -163,28 +181,27 @@
 
 <script>
 	var select_id = "{$select_id}", //选中商品id
-		select_list = [], //选中商品所有数据res
-		mode = "{$mode}", //商品类型
-		max_num = "{$max_num}", //最大商品数量
-		min_num = "{$min_num}", //最小商品数量
-		disabled = "{$disabled}", //不可选中
-		goodsCols = [], //数据源
-		filterData = {promotion_type: '',label_id: '',goods_name:''}, //筛选数据
+			select_list = [], //选中商品所有数据res
+			mode = "{$mode}", //商品类型
+			max_num = "{$max_num}", //最大商品数量
+			min_num = "{$min_num}", //最小商品数量
+			disabled = "{$disabled}", //不可选中
+			goodsCols = [], //数据源
+			filterData = {promotion_type: '',label_id: '',goods_name:''}, //筛选数据
+			goodsIdArr = [],
+			skuIdAll = [],
 
-		goodsIdArr = [],
-		skuIdAll = [],
-
-		//------新代码
-		table, form,laytpl,element,
-		selected_id_arr = select_id.length ? select_id.split(',') : [], //已选中的商品id
-		//设置项
-		setItem = {
-			mode: "{$mode}", //商品类型
-			max_num: "{$max_num}", //最大商品数量
-			min_num: "{$min_num}", //最小商品数量
-			disabled: "{$disabled}", //不可选中
-			promotion: "{$promotion}",// 营销标识
-		};
+			//------新代码
+			table, form,laytpl,element,
+			selected_id_arr = select_id.length ? select_id.split(',') : [], //已选中的商品id
+			//设置项
+			setItem = {
+				mode: "{$mode}", //商品类型
+				max_num: "{$max_num}", //最大商品数量
+				min_num: "{$min_num}", //最小商品数量
+				disabled: "{$disabled}", //不可选中
+				promotion: "{$promotion}",// 营销标识
+			};
 
 
 	if(setItem.mode == 'spu'){
@@ -193,164 +210,175 @@
 		skuIdAll = selected_id_arr;
 	}
 
-	if (!setItem.promotion || setItem.promotion == 'all' || setItem.promotion == 'module'){
-		goodsCols = [
-			[
-				{
+	//获取表格显示内容
+	switch(setItem.promotion){
+		case '':
+		case 'all':
+		case 'module':
+		case 'fenxiao':
+		case 'bargain':
+			goodsCols = [
+				[
+					{
+						title:'<input type="checkbox" name="goods_checkbox_all" lay-skin="primary" lay-filter="goods_checkbox_all">',
+						unresize: 'false',
+						width: '8%',
+						templet: '#checkbox',
+					},
+					{
+						title: '商品',
+						unresize: 'false',
+						width: '62%',
+						templet: '#goods_info'
+					},
+					{
+						field: 'goods_stock',
+						title: '库存',
+						unresize: 'false',
+						width: '15%'
+					},
+					{
+						field: 'goods_class_name',
+						title: '商品类型',
+						unresize: 'false',
+						width: '15%'
+					}
+				]
+			];
+			break;
+		case 'pintuan':
+			goodsCols = [
+				[{
+					title:'<input type="checkbox" name="goods_checkbox_all" lay-skin="primary" lay-filter="goods_checkbox_all">',
 					unresize: 'false',
 					width: '8%',
 					templet: '#checkbox'
-				},
-				{
-					title: '商品',
-					unresize: 'false',
-					width: '62%',
-					templet: '#goods_info'
-				},
-				{
-					field: 'goods_stock',
-					title: '库存',
-					unresize: 'false',
-					width: '15%'
-				},
-				{
-					field: 'goods_class_name',
-					title: '商品类型',
-					unresize: 'false',
-					width: '15%'
-				}
-			]
-		];
-	}else if(setItem.promotion == "pintuan"){
-		goodsCols = [
-			[{
-				unresize: 'false',
-				width: '8%',
-				templet: '#checkbox'
-			},
-				{
+				}, {
 					field: 'pintuan_name',
 					title: '拼团活动',
 					unresize: 'false',
 					width: '20%',
 				},{
-				title: '拼团商品',
-				unresize: 'false',
-				width: '33%',
-				templet: '#goods_info'
-			},{
-				field: 'pintuan_num',
-				title: '参团人数',
-				unresize: 'false',
-				width: '13%'
-			},{
-				field: 'group_num',
-				title: '开团团队',
-				unresize: 'false',
-				width: '13%'
-			},{
-				field: 'order_num',
-				title: '购买人数',
-				unresize: 'false',
-				width: '13%'
-			}]
-		];
-	}else if(setItem.promotion == "groupbuy"){
-		goodsCols = [
-			[{
-				unresize: 'false',
-				width: '8%',
-				templet: '#checkbox'
-			},{
-				title: '团购商品',
-				unresize: 'false',
-				width: '47%',
-				templet: '#goods_info'
-			}, {
-				field: 'price',
-				title: '商品原价',
-				unresize: 'false',
-				width: '15%',
-				templet: function(data) {
-					return '￥'+ data.price;
-				}
-			}, {
-				field: 'groupbuy_price',
-				title: '团购价格',
-				unresize: 'false',
-				width: '15%',
-				templet: function(data) {
-					return '￥'+ data.groupbuy_price;
-				}
-			}, {
-				field: 'buy_num',
-				title: '起购量',
-				unresize: 'false',
-				width: '15%'
-			}]
-		]
-	}else if(setItem.promotion == "fenxiao"){
-		goodsCols = [
-			[
-				{
+					title: '拼团商品',
+					unresize: 'false',
+					width: '33%',
+					templet: '#goods_info'
+				},{
+					field: 'pintuan_num',
+					title: '参团人数',
+					unresize: 'false',
+					width: '13%'
+				},{
+					field: 'group_num',
+					title: '开团团队',
+					unresize: 'false',
+					width: '13%'
+				},{
+					field: 'order_num',
+					title: '购买人数',
+					unresize: 'false',
+					width: '13%'
+				}]
+			];
+			break;
+		case 'groupbuy':
+			goodsCols = [
+				[{
+					title:'<input type="checkbox" name="goods_checkbox_all" lay-skin="primary" lay-filter="goods_checkbox_all">',
+					unresize: 'false',
+					width: '8%',
+					templet: '#checkbox'
+				},{
+					title: '团购商品',
+					unresize: 'false',
+					width: '47%',
+					templet: '#goods_info'
+				}, {
+					field: 'price',
+					title: '商品原价',
+					unresize: 'false',
+					width: '15%',
+					templet: function(data) {
+						return '￥'+ data.price;
+					}
+				}, {
+					field: 'groupbuy_price',
+					title: '团购价格',
+					unresize: 'false',
+					width: '15%',
+					templet: function(data) {
+						return '￥'+ data.groupbuy_price;
+					}
+				}, {
+					field: 'buy_num',
+					title: '起购量',
+					unresize: 'false',
+					width: '15%'
+				}]
+			];
+			break;
+		case 'presale':
+			goodsCols = [
+				[{
+					title:'<input type="checkbox" name="goods_checkbox_all" lay-skin="primary" lay-filter="goods_checkbox_all">',
 					unresize: 'false',
 					width: '8%',
 					templet: '#checkbox'
 				},
-				{
-					title: '商品名称',
+					{
+						field: 'presale_name',
+						title: '活动名称',
+						unresize: 'false',
+						width: '20%',
+					},{
+					title: '预售商品',
 					unresize: 'false',
-					width: '47%',
+					width: '50%',
 					templet: '#goods_info'
-				},
-				{
-					field: 'price',
-					title: '价格',
-					unresize: 'false',
-					width: '15%'
-				},
-				{
-					field: 'goods_stock',
+				},{
+					field: 'presale_stock',
 					title: '库存',
 					unresize: 'false',
-					width: '15%'
-				},
-				{
-					field: 'sale_num',
-					title: '销量',
-					unresize: 'false',
-					width: '15%'
-				},
-			]
-		]
-	}else if(setItem.promotion == "bargain"){
-		goodsCols = [
-			[
-				{
+					width: '13%'
+				}]
+			];
+			break;
+		case 'pinfan':
+			goodsCols = [
+				[{
+					title:'<input type="checkbox" name="goods_checkbox_all" lay-skin="primary" lay-filter="goods_checkbox_all">',
 					unresize: 'false',
 					width: '8%',
 					templet: '#checkbox'
 				},
-				{
-					title: '商品名称',
+					{
+						field: 'pintuan_name',
+						title: '拼团返利',
+						unresize: 'false',
+						width: '20%',
+					},{
+					title: '拼团商品',
 					unresize: 'false',
-					width: '47%',
+					width: '33%',
 					templet: '#goods_info'
-				},
-				{
-					field: 'price',
-					title: '价格',
+				},{
+					field: 'pintuan_num',
+					title: '参团人数',
 					unresize: 'false',
-					width: '15%'
-				},
-				{
-					field: 'stock',
-					title: '库存',
+					width: '13%'
+				},{
+					field: 'group_num',
+					title: '开团团队',
 					unresize: 'false',
-					width: '15%'
-				}
-			]
-		]
+					width: '13%'
+				},{
+					field: 'order_num',
+					title: '购买人数',
+					unresize: 'false',
+					width: '13%'
+				}]
+			];
+			break;
 	}
 
 	$(function () {
@@ -358,7 +386,6 @@
 			form = layui.form;
 			laytpl = layui.laytpl;
 			element = layui.element;
-
 			table = new Table({
 				elem: '#goods_list',
 				url: '{:addon_url("shop/goods/goodsselect")}',
@@ -388,6 +415,12 @@
 							var selected_goods = $("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']");
 							if (selected_goods.length) {
 								$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").prop("checked", true);
+
+								var json = {};
+								json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
+								json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
+								select_list.push(json);
+
 								if (setItem.disabled == 1) {
 									$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").attr("disabled", "disabled");
 								}
@@ -407,6 +440,8 @@
 						}
 					}
 					form.render();
+					initData();
+					dealWithTableSelectedNum();
 				}
 			});
 
@@ -425,32 +460,65 @@
 				}
 			});
 
-			/**
-			 * 监听搜索
-			 */
+			//搜索商品名称或编码
 			form.on('submit(search)', function (data) {
-				filterData.goods_name = data.field.goods_name;
+				formSearch();
+				return false;
+			});
+
+			//搜索类型切换
+			form.on('select(select_type)', function(data){
+				formSearch();
+			})
+
+			//商品标签筛选
+			form.on('select(label_id)', function(data){
+				formSearch();
+			})
+
+			//商品类型筛选
+			form.on('select(goods_class)', function(data){
+				formSearch();
+			})
+
+			//公共搜索方法
+			function formSearch(){
+				var data = {};
+				data.search_text = $("input[name='search_text']").val();
+				data.select_type = $("select[name='select_type']").val();
+				data.label_id = $("select[name='label_id']").val();
+				data.goods_class = $("select[name='goods_class']").val();
+				data.category_id = $("input[name='category_id']").val();
+				data.goods_ids = goodsIdArr.toString();
+
 				table.reload({
 					page: {
 						curr: 1
 					},
-					where: filterData
+					where: data
 				});
-				return false;
-			});
+			}
 
+			// 勾选商品
+			form.on('checkbox(goods_checkbox_all)', function(data) {
+				var all_checked = data.elem.checked;
+				$("input[name='goods_checkbox']").each(function(){
+					var checked = $(this).prop('checked');
+					if(all_checked != checked){
+						$(this).next().click();
+					}
+				})
+			});
 
 			// 勾选商品
 			form.on('checkbox(goods_checkbox)', function(data) {
 				var goods_id = $(data.elem).attr("data-goods-id"),
-					json = {};
-
+						json = {};
 
 				$("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']").prop("checked",data.elem.checked);
 				form.render();
 
 				var spuLen = $("input[name='goods_checkbox'][data-goods-id="+ goods_id +"]:checked").length;
-
 				if (spuLen){
 					json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goods_id +"]").val());
 
@@ -459,14 +527,19 @@
 					delete json.LAY_TABLE_INDEX;
 					delete json.create_time;
 					select_list.push(json);
-
 					goodsIdArr.push(goods_id);
+					$.unique(goodsIdArr);
 				}
 				else{
-					select_list.remove(goods_id);
+					for (var g = 0; g < select_list.length; g ++){
+						if(select_list[g].goods_id == goods_id){
+							select_list.splice(g, 1);
+						}
+					}
 					goodsIdArr.remove(goods_id);
+					$.unique(goodsIdArr);
 				}
-
+				dealWithTableSelectedNum();
 
 				if (setItem.mode == "spu") return false;
 				var skuLen = $("input[name='goods_sku_checkbox'][data-goods-id="+ goods_id +"]").length;
@@ -481,6 +554,7 @@
 						skuIdAll.remove(skuId);
 					}
 				}
+
 			});
 
 
@@ -492,8 +566,10 @@
 						json = {};
 
 				if($("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']:checked").length) {
+					var skuNoSelect = $("input[name='goods_sku_checkbox'][data-goods-id='"+ goods_id +"']:checked").length - 1;
+					var skuSelect = $("input[name='goods_sku_checkbox'][data-goods-id='"+ goods_id +"']").length;
 
-					if(!$("input[name='goods_checkbox'][data-goods-id='"+ goods_id +"']:checked").length){
+					if(skuNoSelect < skuSelect){
 						goodsIdArr.push(goods_id);
 
 						json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goods_id +"]").val());
@@ -510,7 +586,6 @@
 					goodsIdArr.remove(goods_id);
 					select_list.remove(goods_id);
 				}
-
 
 				if (!select_list.length) {
 					skuIdAll = [];
@@ -530,6 +605,120 @@
 					}
 				}
 				form.render();
+			});
+			//初始化数据
+			function initData(){
+				var goodsLen = $("input[name='goods_checkbox'][data-goods-id]:checked").length;
+
+				//父级
+				for (var i = 0; i < goodsLen; i++){
+					var goodsId = $("input[name='goods_checkbox'][data-goods-id]:checked").eq(i).attr("data-goods-id");
+					var ident = false;
+					for (var k = 0; k < select_list.length; k++){
+						if(select_list[k].goods_id == goodsId){
+							ident = true;
+							break;
+						}
+					}
+
+					if (ident) return;
+
+					json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsId +"]").val());
+					delete json.LAY_INDEX;
+					delete json.LAY_TABLE_INDEX;
+					delete json.create_time;
+
+					//子级
+					var goodsSkuLen = $("input[name='goods_sku_checkbox'][data-goods-id="+ goodsId +"]:checked").length;
+					json.selected_sku_list = [];
+					for (var j = 0; j < goodsSkuLen; j++){
+						var goodsSkuId = $("input[name='goods_sku_checkbox'][data-goods-id="+ goodsId +"]:checked").eq(j).attr("data-sku-id");
+						var skuVal = $("input[name='goods_sku_json'][data-sku-id="+ goodsSkuId +"]").val();
+						json.selected_sku_list.push(JSON.parse(skuVal));
+					}
+					select_list.push(json);
+				}
+
+				// 查询其他页的商品
+				var goods_ids = [];
+				for (var i=0;i<goodsIdArr.length;i++){
+					var is_not = true;
+					for (var j=0;j<select_list.length;j++){
+						if(goodsIdArr[i] ==select_list[j].goods_id) {
+							is_not = false;
+						}
+					}
+					if(is_not) goods_ids.push([goodsIdArr[i]]);
+
+				}
+
+				if(mode == 'spu') {
+					if (goods_ids.length > 0) {
+						$.ajax({
+							url: ns.url("shop/goods/goodsselect"),
+							data: {goods_ids: goods_ids.toString(), select_type : 'selected'},
+							dataType: 'JSON',
+							type: 'POST',
+							success: function (res) {
+								var list = res.data.list;
+								for (var i = 0; i < list.length; i++) select_list.push(list[i]);
+							}
+						});
+					}
+				}
+
+			}
+
+			$(".select-goods .select-goods-left dd").hover(function () {
+				$(this).addClass("active");
+			},function () {
+				$(this).removeClass("active");
+			});
+
+			$("body").on("click",".select-goods-left .marketing-campaign dd",function () {
+				$(this).addClass("ns-text-color").siblings().removeClass("ns-text-color");
+				filterData.promotion_type = $(this).attr("data-type");
+				table.reload({
+					page: {
+						curr: 1
+					},
+					where: filterData
+				});
+			});
+
+			$("body").on("click",".select-goods-left .commodity-group dd",function () {
+				$(this).addClass("ns-text-color").siblings().removeClass("ns-text-color");
+				filterData.label_id = $(this).attr("data-group-id");
+				table.reload({
+					page: {
+						curr: 1
+					},
+					where: filterData
+				});
+			});
+
+			$("body").on("click",".select-goods-left dl",function () {
+				if ($(this).hasClass("fold")){
+					$(this).removeClass("fold");
+				}else{
+					$(this).addClass("fold");
+				}
+			});
+
+			$("body").on("click",".select-goods-left dd",function (event) {
+				$(this).parents("dl").removeClass("fold");
+				$(this).parents("dl").siblings().addClass("fold");
+				event.stopPropagation();
+			});
+
+			//分类切换
+			$("body").on("click",".classification-item",function (event) {
+				var categoryId = $(this).attr("data-category_id");
+				$(".classification-item").removeClass("ns-text-color ns-border-after-color");
+				$(this).addClass("ns-text-color ns-border-after-color");
+				$("input[name='category_id']").val(categoryId);
+				formSearch();
+				event.stopPropagation();
 			});
 		});
 
@@ -577,6 +766,10 @@
 			}
 		}
 
+		if(num == 0) {
+			layer.msg('请选择商品');
+			return;
+		}
 		if (max_num && max_num > 0 && num > max_num) {
 			layer.msg("所选商品数量不能超过" + max_num + '件');
 			return;
@@ -587,7 +780,6 @@
 			return;
 		}
 		callback(res);
-
 	}
 
 	Array.prototype.indexOf = function(val) {
@@ -629,68 +821,11 @@
 			}
 		}
 		return array;
-	};
+	}
 
-
-	$(".select-goods .select-goods-left dd").hover(function () {
-		$(this).addClass("active");
-	},function () {
-		$(this).removeClass("active");
-	});
-
-	$("body").on("click",".select-goods-left .marketing-campaign dd",function () {
-		$(this).addClass("ns-text-color").siblings().removeClass("ns-text-color");
-		filterData.promotion_type = $(this).attr("data-type");
-		table.reload({
-			page: {
-				curr: 1
-			},
-			where: filterData
-		});
-	});
-
-	$("body").on("click",".select-goods-left .commodity-group dd",function () {
-		$(this).addClass("ns-text-color").siblings().removeClass("ns-text-color");
-		filterData.label_id = $(this).attr("data-group-id");
-		table.reload({
-			page: {
-				curr: 1
-			},
-			where: filterData
-		});
-	});
-
-
-
-	$("body").on("click",".select-goods-left dl",function () {
-		if ($(this).hasClass("fold")){
-			$(this).removeClass("fold");
-		}else{
-			$(this).addClass("fold");
-		}
-	});
-
-	$("body").on("click",".select-goods-left dd",function (event) {
-		$(this).parents("dl").removeClass("fold");
-		$(this).parents("dl").siblings().addClass("fold");
-		event.stopPropagation();
-	});
-
-	//分类切换
-	$("body").on("click",".classification-item",function (event) {
-		var categoryId = $(this).attr("data-category_id");
-		$(".classification-item").removeClass("ns-text-color ns-border-after-color");
-		$(this).addClass("ns-text-color ns-border-after-color");
-		table.reload({
-			page: {
-				curr: 1
-			},
-			where: {category_id: categoryId},
-		});
-		event.stopPropagation();
-	});
-
-
-
+	//在表格底部增加了一个容器
+	function dealWithTableSelectedNum() {
+		$(".layui-table-bottom-left-container").html('已选择 '+ goodsIdArr.length +' 个商品');
+	}
 </script>
 {/block}

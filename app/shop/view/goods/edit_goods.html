@@ -24,7 +24,7 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label"><span class="required">*</span>商品名称：</label>
 							<div class="layui-input-inline">
-								<input name="goods_name" type="text" value="{$goods_info['goods_name']}" placeholder="请输入商品名称，不能超过100个字符" maxlength="100" autocomplete="off" lay-verify="goods_name" class="layui-input ns-len-long">
+								<input name="goods_name" type="text" value="{$goods_info['goods_name']}" placeholder="请输入商品名称，不能超过60个字符" maxlength="60" autocomplete="off" lay-verify="goods_name" class="layui-input ns-len-long">
 							</div>
 						</div>
 
@@ -41,7 +41,9 @@
 								<!--商品主图项-->
 								<div class="js-goods-image"></div>
 							</div>
-							<div class="ns-word-aux">第一张图片将作为商品主图,支持同时上传多张图片,多张图片之间可随意调整位置；支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片，上传后的图片将会自动保存在图片空间的默认分类中，最多上传10张（至少1张）</div>
+							<div class="ns-word-aux">第一张图片将作为商品主图,支持同时上传多张图片,多张图片之间可随意调整位置；</div>
+							<div class="ns-word-aux">支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片；</div>
+							<div class="ns-word-aux">上传后的图片将会自动保存在图片空间的默认分类中，最多上传10张（至少1张）</div>
 						</div>
 
 						<div class="layui-form-item">
@@ -49,9 +51,12 @@
 							<div class="layui-input-block">
 								<div class="video-thumb">
 									<video id="goods_video" class="video-js vjs-big-play-centered" controls="" poster="SHOP_IMG/goods_video_preview.png" preload="auto"></video>
-									<span class="delete-video hide" onclick="deleteVideo()"></span>
+									
 								</div>
-								<div id="videoUpload" title="商品视频" style="position: absolute;left: 0;width: 250px;height: 90px;opacity: 0;cursor: pointer;z-index:10;"></div>
+								<div id="videoUpload2" class="up-video" title="商品视频" >
+									<span class="delete-video hide" onclick="deleteVideo()"><img class="del-img" src="SHOP_IMG/delete.png">删除</span>
+									<span id="videoUpload" class="replace-video hide" ><img class="up-img" src="SHOP_IMG/upload.png">上传视频</span>
+									</div>
 							</div>
 						</div>
 
@@ -80,10 +85,10 @@
 						</div>
 
 						<div class="layui-form-item">
-							<label class="layui-form-label">商品分组：</label>
+							<label class="layui-form-label">商品标签：</label>
 							<div class="layui-input-inline">
 								<select name="label_id" lay-search="" lay-verify="label_id">
-									<option value="">请选择商品分组</option>
+									<option value="">请选择商品标签</option>
 									{foreach name="$label_list" item="vo"}
 									<option value="{$vo['id']}" {if $goods_info['label_id']==$vo['id'] }selected{/if}>{$vo['label_name']}</option>
 									{/foreach}
@@ -135,7 +140,17 @@
 
 							<div class="ns-word-aux">商品可以属于多个分类，最多10个</div>
 						</div>
-
+						<div class="layui-form-item">
+							<label class="layui-form-label">商品海报：</label>
+							<div class="layui-input-inline">
+								<select name="template_id" lay-search="" lay-verify="">
+									<option value="">请选择商品海报</option>
+									{foreach name="$poster_list" item="vo"}
+									<option value="{$vo['template_id']}" {if $goods_info.template_id == $vo.template_id} selected {/if}>{$vo['poster_name']}</option>
+									{/foreach}
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -187,7 +202,7 @@
 							<div class="layui-form-item">
 								<label class="layui-form-label">重量：</label>
 								<div class="layui-input-block">
-									<input type="text" name="weight" value="{$goods_info['sku_list'][0]['weight']}" placeholder="0.00" class="layui-input ns-len-short" lay-verify="weight" autocomplete="off">
+									<input type="text" name="weight" value="{notempty name="$goods_info['sku_list'][0]['weight']"}{$goods_info['sku_list'][0]['weight']}{/notempty}" placeholder="0.00" class="layui-input ns-len-short" lay-verify="weight" autocomplete="off">
 									<div class="layui-form-mid">kg</div>
 								</div>
 							</div>
@@ -195,7 +210,7 @@
 							<div class="layui-form-item">
 								<label class="layui-form-label">体积：</label>
 								<div class="layui-input-block">
-									<input type="text" name="volume" value="{$goods_info['sku_list'][0]['volume']}" placeholder="0.00" class="layui-input ns-len-short" lay-verify="volume" autocomplete="off">
+									<input type="text" name="volume" value="{notempty name="$goods_info['sku_list'][0]['volume']"{$goods_info['sku_list'][0]['volume']}{/notempty}" placeholder="0.00" class="layui-input ns-len-short" lay-verify="volume" autocomplete="off">
 									<div class="layui-form-mid">m3</div>
 								</div>
 							</div>
@@ -203,7 +218,7 @@
 							<div class="layui-form-item">
 								<label class="layui-form-label">商品编码：</label>
 								<div class="layui-input-inline">
-									<input type="text" name="sku_no" value="{$goods_info['sku_list'][0]['sku_no']}" placeholder="请输入商品编码" maxlength="50" class="layui-input ns-len-long" autocomplete="off">
+									<input type="text" name="sku_no" value="{notempty name="$goods_info['sku_list'][0]['sku_no']"}{$goods_info['sku_list'][0]['sku_no']}{/notempty}" placeholder="请输入商品编码" maxlength="50" class="layui-input ns-len-long" autocomplete="off">
 								</div>
 							</div>
 
@@ -284,7 +299,7 @@
 								<input type="number" name="goods_stock_alarm" value="{$goods_info['goods_stock_alarm']}" placeholder="0" lay-verify="goods_stock_alarm" class="layui-input ns-len-short" autocomplete="off">
 								<div class="layui-form-mid">件</div>
 							</div>
-							<div class="ns-word-aux">商品库存少于预警数量，商品列表库存数量标红显示，0为不预警。</div>
+							<div class="ns-word-aux">商品库存少于等于预警数量，商品列表库存数量标红显示，0为不预警。</div>
 						</div>
 					</div>
 				</div>
@@ -315,7 +330,7 @@
 								</select>
 							</div>
 							<div class="layui-input-inline">
-								<a class="default ns-text-color" href="{:addon_url('shop/express/addtemplate')}" target="_blank">配送管理</a>
+								<a class="default ns-text-color" href="{:addon_url('shop/express/addtemplate')}" target="_blank">新建模板</a>
 							</div>
 						</div>
 
@@ -342,16 +357,6 @@
 						{/notempty}
 
 						<div class="layui-form-item">
-							<label class="layui-form-label">推荐方式：</label>
-							<div class="layui-input-block">
-								<input type="radio" name="recommend_way" value="0" title="无" {if $goods_info['recommend_way'] == 0 }checked{/if}>
-								<input type="radio" name="recommend_way" value="1" title="新品" {if $goods_info['recommend_way'] == 1 }checked{/if}>
-								<input type="radio" name="recommend_way" value="2" title="精品" {if $goods_info['recommend_way'] == 2 }checked{/if}>
-								<input type="radio" name="recommend_way" value="3" title="推荐" {if $goods_info['recommend_way'] == 3 }checked{/if}>
-							</div>
-						</div>
-
-						<div class="layui-form-item">
 							<label class="layui-form-label">虚拟销量：</label>
 							<div class="layui-input-block">
 								<input type="number" name="virtual_sale" placeholder="0" value="{$goods_info['virtual_sale']}" lay-verify="virtual_sale" class="layui-input ns-len-short" autocomplete="off">
@@ -360,15 +365,27 @@
 							<div class="ns-word-aux">该设置不计入商品统计数据</div>
 						</div>
 
-						<div class="layui-form-item">
-							<label class="layui-form-label">限购：</label>
+						<div class="layui-form-item is_limit">
+							<label class="layui-form-label">是否限购：</label>
 							<div class="layui-input-block">
-								<input type="number" name="max_buy" placeholder="" lay-verify="max_buy" value="{$goods_info['max_buy']}" class="layui-input ns-len-short" autocomplete="off">
-								<div class="layui-form-mid">件</div>
+								<input type="radio" name="is_limit" value="0" title="否" lay-filter="is_limit" {if $goods_info['is_limit'] == 0} checked {/if}>
+								<input type="radio" name="is_limit" value="1" title="是" lay-filter="is_limit" {if $goods_info['is_limit'] == 1} checked {/if}>
 							</div>
-							<div class="ns-word-aux">该限购为终身限购，0为不限购</div>
+							<div class="ns-word-aux">启用限购后，购买商品时，会对该商品购买量做限制判断。</div>
 						</div>
 
+						{if $goods_info['is_limit'] == 1}
+						<div class="layui-form-item limit_type" >
+							<label class="layui-form-label">限购类型：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="limit_type" class="limit_type" value="1" title="单次限购" lay-filter="limit_type" {if $goods_info['limit_type'] == 1 } checked {/if}>
+								<input type="radio" name="limit_type" class="limit_type" value="2" title="长期限购" lay-filter="limit_type" {if $goods_info['limit_type'] == 2} checked {/if}>
+								<input type="number" name="max_buy" placeholder="" lay-verify="max_buy" value="{$goods_info['max_buy']}" class="layui-input ns-len-short" autocomplete="off">
+								<div class="layui-form-mid">&nbsp件</div>
+							</div>
+							<div class="ns-word-aux">单次限购是针对于每次下单不能超过限购数量，长期限购是针对于会员账号购买这个商品的总数不能超过限购数量。</div>
+						</div>
+						{/if}
 						<div class="layui-form-item">
 							<label class="layui-form-label">起售：</label>
 							<div class="layui-input-block">
@@ -460,8 +477,8 @@
 							<label class="layui-form-label">是否参与会员等级折扣：</label>
 							<div class="layui-input-block">
 								<div class="layui-input-inline">
-									<input type="radio" name="is_consume_discount" value="0" title="不参与" {if $goods_info['is_consume_discount'] == 0} checked {/if}>
 									<input type="radio" name="is_consume_discount" value="1" title="参与" {if $goods_info['is_consume_discount'] > 0} checked {/if}>
+									<input type="radio" name="is_consume_discount" value="0" title="不参与" {if $goods_info['is_consume_discount'] == 0} checked {/if}>
 								</div>
 							</div>
 							<div class="ns-word-aux">如果该商品未单独配置过优惠规则，则按照默认会员等级折扣优惠</div>
@@ -469,6 +486,26 @@
 
 					</div>
 				</div>
+                <!-- 社群信息 -->
+                <div class="layui-card ns-card-common">
+	                <div class="layui-card-header">
+		                <span class="ns-card-title">社群信息</span>
+	                </div>
+	            <div class="layui-card-body">
+		        <div class="layui-form-item">
+					<label class="layui-form-label">社群二维码：</label>
+					<div class="layui-input-inline">
+				       <select name="qr_id" lay-search="" lay-verify="">
+					       <option value="">请选择社群二维码</option>
+					       {foreach name="$goods_community_qr_list" item="vo"}
+					       <option value="{$vo['qr_id']}" {if $goods_info.qr_id == $vo['qr_id']} selected {/if} >{$vo['qr_name']}</option>
+					       {/foreach}
+				          </select>
+					 </div>
+		        </div>
+	        </div>
+				</div>
+
 			</div>
 
 			<!-- 商品详情 -->
@@ -703,6 +740,7 @@
 		</thead>
 		<tbody>
 			{{# for(var i=0;i<d.skuList.length;i++){ }}
+
 			<tr>
 				<td id="sku_img_{{i}}">
 					{{# for(var j=0;j<d.skuList[i].sku_images_arr.length;j++){ }}

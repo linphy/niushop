@@ -47,7 +47,11 @@
 								{if isset($vo.discount_money)}，减{$vo.discount_money}元 {/if}
 								{if isset($vo.free_shipping)}，包邮 {/if}
 								{if isset($vo.point)}，送{$vo.point}积分 {/if}
-								{if isset($vo.coupon)}，送优惠券<a href="{:addon_url('coupon://shop/coupon/detail', ['coupon_type_id' => $vo.coupon ])}" target="_blank">【{$vo.coupon_data.coupon_name}】</a> {/if}
+								{if isset($vo.coupon)}
+									{foreach name="$vo.coupon_data" item="coupon"}
+									，送优惠券<a href="{:addon_url('coupon://shop/coupon/detail', ['coupon_type_id' => $coupon.coupon_type_id ])}" target="_blank">【{$coupon.coupon_name}】</a>
+									{/foreach}
+								{/if}
 						</div>
 					</div>
 					{/foreach}
@@ -101,7 +105,14 @@
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">备注：</label>
-		<div class="layui-input-block ns-input-text">{$manjian_info.remark}</div>
+		{if $manjian_info.remark }
+		<div class="layui-input-block ns-input-text">
+			 {$manjian_info.remark}
+		</div>
+		{else/}
+		<div class="layui-input-block ns-input-text">
+			--
+		{/if}
 	</div>
 	
 	<div class="ns-form-row">

@@ -19,7 +19,15 @@
 </div>
 
 <div class="layui-form ns-form">
-        <div class="layui-form-item">
+	<label class="layui-form-label"><span class="required">*</span>是否显示：</label>
+	<div class="layui-input-inline">
+		<input type="radio" title="显示" name="is_display" value="1" {if($content.is_display eq '1')}checked{/if}>
+		<input type="radio" title="不显示" name="is_display" value="0" {if($content.is_display eq '0')}checked{/if}>
+	</div>
+	<div class="ns-word-aux">
+		<p>控制手机端、PC端商品详情页是否显示售后保障 。</p>
+	</div>
+	<div class="layui-form-item">
             <label class="layui-form-label"><span class="required">*</span>协议内容：</label>
         <div class="layui-input-inline">
             <script id="editor" type="text/plain" class="ns-special-length" style="height:300px;"></script>
@@ -30,7 +38,7 @@
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
 
-	<input type="hidden" name="content" id="setContent" value="{$content.data.content}" />
+	<input type="hidden" name="content" id="setContent" value="{$content.content}" />
 </div>
 {/block}
 {block name="script"}

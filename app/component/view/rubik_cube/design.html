@@ -2,7 +2,7 @@
 
 	<template slot="preview">
 		
-		<div class="preview-box" v-bind:style="{background: nc.backgroundColor}">
+		<div class="preview-box" v-bind:style="{background: nc.backgroundColor, margin: nc.marginTop + 'px 0 0' }">
 			<template v-if="nc.list.length>0 && !nc.list[0].imageUrl">
 				<div class="tip">点击编辑魔方</div>
 			</template>
@@ -135,6 +135,9 @@
 		</div>
 		<div class="template-edit-wrap">
 			<color v-bind:data="{ field : 'backgroundColor', 'label' : '背景颜色' }"></color>
+		</div>
+		<div class="template-edit-wrap">
+			<slide v-bind:data="{ field : 'marginTop', label : '页面间距' }"></slide>
 		</div>
 	</template>
 	

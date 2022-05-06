@@ -61,14 +61,46 @@ class Orderrefund extends BaseApi
         $order_refund_model      = new OrderRefundModel();
         $order_goods_info_result = $order_refund_model->getRefundDetail($order_goods_id);
         $order_goods_info        = $order_goods_info_result["data"];//订单项信息
-        $refund_money            = $order_refund_model->getOrderRefundMoney($order_goods_id);
+        $refund_money_array            = $order_refund_model->getOrderRefundMoney($order_goods_id);
+        $refund_delivery_money = $refund_money_array['refund_delivery_money'];//其中的运费
+        $refund_money = $refund_money_array['refund_money'];//总退款
         $refund_type             = $order_refund_model->getRefundType($order_goods_info);
         $refund_reason_type      = $order_refund_model->refund_reason_type;
         $result                  = array(
             "order_goods_info"   => $order_goods_info,
             "refund_money"       => $refund_money,
             "refund_type"        => $refund_type,
-            "refund_reason_type" => $refund_reason_type
+            "refund_reason_type" => $refund_reason_type,
+            "refund_delivery_money" => $refund_delivery_money
+        );
+        return $this->response($this->success($result));
+    }
+
+    /**
+     * 多个退款数据查询
+     */
+    public function refundDataBatch(){
+        $token = $this->checkToken();
+        if ($token['code'] < 0) return $this->response($token);
+        $order_goods_ids          = isset($this->params['order_goods_ids']) ? $this->params['order_goods_ids'] : '';
+        $order_refund_model      = new OrderRefundModel();
+        if(empty($order_goods_ids)) return $this->response($this->error('', '未传order_goods_ids'));
+        $order_goods_id_arr = explode(',',$order_goods_ids);
+        foreach ($order_goods_id_arr as $item) {
+            $order_goods_info_result[] = $order_refund_model->getRefundDetail($item)['data'] ?? [];
+        }
+        $order_goods_info = $order_goods_info_result;//订单项信息
+        $refund_money_array = $order_refund_model->getOrderRefundMoneyBatch($order_goods_ids);
+        $refund_delivery_money = $refund_money_array['refund_delivery_money'];//其中的运费
+        $refund_money = $refund_money_array['refund_money'];//总退款
+        $refund_type = $order_refund_model->getRefundOrderType($order_goods_info[0]['order_id']);
+        $refund_reason_type = $order_refund_model->refund_reason_type;
+        $result = array(
+            "order_goods_info"   => $order_goods_info,
+            "refund_money"       => $refund_money,
+            "refund_type"        => $refund_type,
+            "refund_reason_type" => $refund_reason_type,
+            "refund_delivery_money" => $refund_delivery_money
         );
         return $this->response($this->success($result));
     }
@@ -84,17 +116,29 @@ class Orderrefund extends BaseApi
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $this->member_id]]);
         $member_info        = $member_info_result["data"];
         $order_refund_model = new OrderRefundModel();
-        $order_goods_id     = isset($this->params['order_goods_id']) ? $this->params['order_goods_id'] : '0';
+        $order_goods_ids     = isset($this->params['order_goods_ids']) ? $this->params['order_goods_ids'] : '0';
         $refund_type        = isset($this->params['refund_type']) ? $this->params['refund_type'] : 1;
         $refund_reason      = isset($this->params['refund_reason']) ? $this->params['refund_reason'] : '';
         $refund_remark      = isset($this->params['refund_remark']) ? $this->params['refund_remark'] : '';
-        $data               = array(
-            "order_goods_id" => $order_goods_id,
-            "refund_type"    => $refund_type,
-            "refund_reason"  => $refund_reason,
-            "refund_remark"  => $refund_remark
-        );
-        $result             = $order_refund_model->orderRefundApply($data, $member_info);
+        if(empty($order_goods_ids)) return $this->response($this->error('', '未传order_goods_ids'));
+        $log_data = [
+            'uid'        => $this->member_id,
+            'nick_name'  => $member_info['nickname'],
+            'action'     => '买家【'.$member_info['nickname'].'】发起了退款申请',
+            'action_way' => 1
+        ];
+
+        $order_goods_ids = explode(',',$order_goods_ids);
+        foreach ($order_goods_ids as $item){
+            $data               = array(
+                "order_goods_id" => $item,
+                "refund_type"    => $refund_type,
+                "refund_reason"  => $refund_reason,
+                "refund_remark"  => $refund_remark
+            );
+            $result = $order_refund_model->orderRefundApply($data, $member_info, $log_data);
+        }
+
         return $this->response($result);
     }
 
@@ -113,7 +157,13 @@ class Orderrefund extends BaseApi
         $data               = array(
             "order_goods_id" => $order_goods_id
         );
-        $res                = $order_refund_model->memberCancelRefund($data, $member_info);
+        $log_data = [
+            'uid'        => $this->member_id,
+            'nick_name'  => $member_info['nickname'],
+            'action'     => '买家【'.$member_info['nickname'].'】撤销了维权',
+            'action_way' => 1
+        ];
+        $res                = $order_refund_model->memberCancelRefund($data, $member_info, $log_data);
         return $this->response($res);
     }
 
@@ -133,7 +183,7 @@ class Orderrefund extends BaseApi
         $refund_delivery_name   = isset($this->params['refund_delivery_name']) ? $this->params['refund_delivery_name'] : '';//物流公司名称
         $refund_delivery_no     = isset($this->params['refund_delivery_no']) ? $this->params['refund_delivery_no'] : '';//物流编号
         $refund_delivery_remark = isset($this->params['refund_delivery_remark']) ? $this->params['refund_delivery_remark'] : '';//买家发货说明
-        $data                   = array(
+        $data = array(
             "order_goods_id"         => $order_goods_id,
             "refund_delivery_name"   => $refund_delivery_name,
             "refund_delivery_no"     => $refund_delivery_no,

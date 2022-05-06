@@ -25,22 +25,28 @@ class DiyLink extends Controller
     {
 
         $link = input("link", '');
+        $support_to_applet = input("support_to_applet", 1);
         $support_diy_view = input("support_diy_view", '');//支持的自定义页面（为空表示都支持）
         $link_model = new DiyViewLink();
         $condition = [
             [ 'parent', '=', '' ]
         ];
         $list_result = $link_model->getLinkList($condition, '*', 'sort ASC');
+
         $list = $list_result[ 'data' ];
         foreach ($list as $k => $v) {
-
             $child_condition = [
                 [ 'parent', '=', $v[ 'name' ] ]
             ];
             $child_list_result = $link_model->getLinkList($child_condition, '*', 'sort ASC');
             $child_list = $child_list_result[ 'data' ];
             $list[ $k ][ 'child_list' ] = $child_list;
+
+            if (!$support_to_applet && $v['name'] == 'OTHER_APPLET') {
+                unset($list[ $k ]);
+            }
         }
+        $list = array_values($list);
         $this->assign('list', $list);
         $this->assign("link", $link);
         $this->assign('link_array', json_decode($link, true));

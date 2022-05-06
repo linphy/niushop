@@ -7,9 +7,11 @@
 
 .ns-evaluate-table[lay-size=lg] th,
 .ns-evaluate-table[lay-size=lg] td {
-	padding: 15px 15px;
+	padding: 13px 15px;
 }
-
+.ns-evaluate-table[lay-size=lg] .operate{
+	text-align: right;
+}
 .ns-evaluate-title {
 	display: flex;
 }
@@ -52,10 +54,6 @@
 	color: #FF0000;
 }
 
-.ns-evaluate-img {
-	margin-top: 5px;
-	padding-left: 70px;
-}
 
 /* 追加评价 */
 .ns-evaluate-again {
@@ -102,8 +100,11 @@
 }
 
 /* 分页 */
-#laypage {
+#layui-laypage-1{
 	float: right;
+}
+#laypage {
+	overflow: hidden;
 }
 
 .ns-evaluate-explain, .ns-evaluate-box, .ns-evaluate-again {
@@ -131,3 +132,11 @@
 	word-wrap: break-word;
 	word-break: break-all;
 }
+
+.evaluate-img p{height:30px; line-height: 30px}
+.evaluate-img p img{margin-right: 8px}
+
+.ns-evaluate-img{padding: 5px 0px}
+.ns-evaluate-explain{font-size: 12px;background-color: #fff3eb}
+.ns-evaluate-explain .again-evaluate{margin-left: 8px}
+.required{color:#FF6A00}

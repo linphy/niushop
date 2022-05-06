@@ -1,11 +1,45 @@
 {extend name="base"/}
 {block name="resources"}
 <link rel="stylesheet" href="SHOP_CSS/login.css">
+<style type="text/css">
+	#types {box-sizing: border-box;padding: 20px; margin-top: 20px;height: 195px;width: auto;background: #FFFFFF;border-radius: 6px;display: flex;justify-content: space-around; box-shadow: 0px 0px 20px #CCCCCC;position: relative;}
+	.show {text-align: center;width: 300px;}
+	.show i {display: inline-block; width: 18px;height: 18px;}
+	.show i img {width: 100%;}
+	.show>span {font-size: 16px;font-family: Microsoft YaHei;font-weight: 400;color: #333333;}
+	.log-type{display: none;position: absolute;left: 50%;transform: translateX(-50%);}
+	.show:hover .log-type{display:block;}
+	.login-iph {position: fixed;top: 20px; right: 150px;}
+	.type-item {text-align: center; padding: 10px; display: inline-block;}
+	.type-item span {font-family: Microsoft YaHei;font-weight: 400;color: #333333;}
+	.item-img {width: 100px; height: 100px; display: flex;flex-direction:row;flex-wrap:wrap;margin-bottom: 10px;}
+</style>
 {/block}
 {block name="body"}
 <div class="login-body">
+	{notempty name="port_data"}
+	<div class="login-iph">
+		<div class="show">
+			<i class="iconfont iconico ns-text-color"></i>
+			<span>手机管理端</span>
+			<div class="log-type">
+				<div id="types">
+				{volist name="port_data" id="vo"}
+					<div class="type-item">
+						<div class="item-img">
+							<img src="{:img($vo.img)}"  style="width: 100%">
+						</div>
+						<span>{$vo.message}</span>
+					</div>
+				{/volist}
+				</div>
+			</div>
+		</div>
+	</div>
+	{/notempty}
+
 	<!--<div class="log-carousel">-->
-		<!--<div class="layui-carousel" id="logCarousel">-->
+		<!-- <div class="layui-carousel" id="logCarousel"> -->
 			<!--<div carousel-item>-->
 				<!--<div><img src="SHOP_IMG/login_bg_01.png" alt=""></div>-->
 				<!--<div><img src="SHOP_IMG/login_bg_02.png" alt=""></div>-->
@@ -60,15 +94,27 @@
 			<a href="https://www.niushop.com" target="_blank">上海牛之云网络科技有限公司</a>
 			{/notempty}
 			{notempty name="$copyright.icp"}
-			<a href="http://www.beian.gov.cn/" target="_blank">&nbsp;&nbsp;备案号{$copyright.icp}</a>
+			<a href="https://beian.miit.gov.cn/" target="_blank">&nbsp;&nbsp;备案号{$copyright.icp}</a>
 			{/notempty}
 		</p>
-		{notempty name="$copyright.gov_record"}<a class="gov-box" href="{notempty name='$copyright.gov_url'}{$copyright.gov_url}{else/}javascript:;{/notempty}" target="_blank"><img src="HOME_IMG/gov_record.png" alt="">公安备案{$copyright.gov_record}</a>{/notempty}
+		{notempty name="$copyright.gov_record"}<a class="gov-box" href="{notempty name='$copyright.gov_url'}{$copyright.gov_url}{else/}javascript:;{/notempty}" target="_blank"><img src="SHOP_IMG/gov_record.png" alt="">{$copyright.gov_record}</a>{/notempty}
 	</div>
 </div>
 {/block}
 {block name="script"}
 <script type="text/javascript">
+	// 二维码
+	      var tip_index = 0;
+	        $(document).on('mouseover', '#goodTitleMsg', function(data){
+	            var details = data.currentTarget.lastChild.defaultValue;
+	            if(details!=""){
+	                tip_index =  layer.tips("<span style='font-size:13px;line-height:20px;'>"+details+"</span>", ($(this)),{ tips: [3, '5CBA59'],time:0,time:0,area: ['200px']});
+	            }
+	 
+	        }).on('mouseleave', '#goodTitleMsg', function(){
+	            layer.close(tip_index);
+	        });
+			
 	var form, login_repeat_flag = false,carousel;
 	/**
 	 * 验证码

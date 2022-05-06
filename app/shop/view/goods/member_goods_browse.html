@@ -21,17 +21,16 @@
 <table id="good_list" lay-filter="good_list"></table>
 
 
-
 <!-- 商品 -->
 <script type="text/html" id="goodIntro">
     <div class="ns-table-title">
         <div class="ns-title-pic">
-            {{#  if(d.sku_image){  }}
+            {{# if(d.sku_image){ }}
             <img layer-src src="{{ns.img(d.sku_image.split(',')[0],'small')}}"/>
-            {{#  }  }}
+            {{# } }}
         </div>
         <div class="ns-title-content">
-            <a href="javascript:;" class="ns-multi-line-hiding ns-text-color">{{d.sku_name}}</a>
+            <a href="javascript:;" class="ns-multi-line-hiding ns-gn-color">{{d.sku_name}}</a>
         </div>
     </div>
 </script>
@@ -40,9 +39,9 @@
 {/block}
 {block name="script"}
 <script>
-    var  form, table, laytpl;
+    var form, table, laytpl;
 
-    layui.use(['form', 'laytpl'], function() {
+    layui.use(['form', 'laytpl'], function () {
         form = layui.form;
         laytpl = layui.laytpl;
         form.render();
@@ -50,9 +49,9 @@
         table = new Table({
             elem: '#good_list',
             url: '{:addon_url("shop/goods/membergoodsbrowse")}',
-            async : false,
+            async: false,
             where: {'member_id': "{$member_id}"},
-            parseData: function(res) {
+            parseData: function (res) {
                 return {
                     "code": res.code,
                     "msg": res.message,
@@ -72,15 +71,15 @@
                     unresize: 'false',
                     width: '10%',
                     align: 'left',
-                    templet: function(data) {
-                        return '￥<span class="goods-price">'+ data.price +'</span>'
+                    templet: function (data) {
+                        return '￥<span class="goods-price">' + data.price + '</span>'
                     }
                 }, {
                     title: '商品状态',
                     unresize: 'false',
                     width: '10%',
                     align: 'left',
-                    templet: function(data) {
+                    templet: function (data) {
                         return data.goods_state == 1 ? '正常' : '下架';
                     }
                 }, {
@@ -88,7 +87,7 @@
                     unresize: 'false',
                     width: '10%',
                     align: 'left',
-                    templet: function(data) {
+                    templet: function (data) {
                         return data.click_num;
                     }
                 }, {
@@ -96,7 +95,7 @@
                     unresize: 'false',
                     width: '20%',
                     align: 'left',
-                    templet: function(data){
+                    templet: function (data) {
                         return ns.time_to_date(data.browse_time);
                     }
                 }]
@@ -104,11 +103,10 @@
         });
 
 
-
         /**
          * 搜索功能
          */
-        form.on('submit(search)', function(data) {
+        form.on('submit(search)', function (data) {
             table.reload({
                 page: {
                     curr: 1
@@ -117,9 +115,6 @@
             });
         });
     });
-
-
-
 
 
 </script>

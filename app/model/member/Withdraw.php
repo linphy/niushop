@@ -5,7 +5,6 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -53,7 +52,8 @@ class Withdraw extends BaseModel
                 'rate' => 0,
                 'transfer_type' => '',
                 'is_auto_transfer' => 0,
-                'min' => 0
+                'min' => 0,
+                'max' =>0,
             ];
         }
         return $res;
@@ -75,10 +75,10 @@ class Withdraw extends BaseModel
         $apply_money = round($data["apply_money"], 2);
         if ($apply_money < $config["min"])
             return $this->error([], "申请提现金额不能小于最低提现额度" . $config["min"]);
-
+        if($apply_money > $config['max']) return $this->error([], "申请提现金额不能大于最高提现额度" . $config["max"]);
         $member_id          = $data["member_id"];
         $member_model       = new Member();
-        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $member_id]], "balance_money,headimg,wx_openid,username,mobile,weapp_openid");
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $member_id]], "balance_money,headimg,wx_openid,username,mobile,weapp_openid,nickname");
         $member_info        = $member_info_result["data"];
         if (empty($member_info))
             return $this->error([], "MEMBER_NOT_EXIST");
@@ -146,17 +146,21 @@ class Withdraw extends BaseModel
                 "bank_name"          => $bank_name,
                 "account_number"     => $account_number,
                 "mobile"             => $data["mobile"],
-            	"applet_type"		 => $applet_type
+                "applet_type"		 => $applet_type
             );
-            $result        = model("member_withdraw")->add($data);
 
             //减少可提现余额
-            model("member")->setDec([["member_id", "=", $member_id]], "balance_money", $apply_money);
+            $member_account = new MemberAccount();
+            $account_res = $member_account->addMemberAccount($site_id, $member_id, 'balance_money', -$apply_money, 'withdraw', '会员提现', '会员提现' . (-$apply_money));
+            if ($account_res['code'] != 0) return $account_res;
+
             //增加提现中余额
             model("member")->setInc([["member_id", "=", $member_id]], "balance_withdraw_apply", $apply_money);
 
+            $result        = model("member_withdraw")->add($data);
+
             //是否启用自动通过审核(必须是微信)
-            if ($config["is_auto_audit"] == 1) {
+            if ($config["is_auto_audit"] == 0) {
                 $this->agree([["id", "=", $result],['site_id', '=',$site_id ]]);
             }
 
@@ -164,6 +168,7 @@ class Withdraw extends BaseModel
 
             //申请提现发送消息
             $data['keywords'] = 'USER_WITHDRAWAL_APPLY';
+            $data['member_name'] = $member_info['nickname'];
             $message_model = new Message();
             $message_model->sendMessage($data);
 
@@ -206,15 +211,14 @@ class Withdraw extends BaseModel
             if ($config["value"]["is_auto_transfer"] == 1) {
                 $member_withdraw_model = new MemberWithdraw();
                 $member_withdraw_model->transfer($info["id"]);
+                /*if ($transfer_res['code'] == 0) {
+                    //提现成功发送消息
+                    $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
+                    $message_model = new Message();
+                    $res = $message_model->sendMessage($info);
+                }*/
             }
             model('member_withdraw')->commit();
-
-            if ($config["value"]["is_auto_transfer"] == 1) {
-                //提现成功发送消息
-                $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
-                $message_model = new Message();
-                $message_model->sendMessage($info);
-            }
             return $this->success();
         } catch (\Exception $e) {
             model('member_withdraw')->rollback();
@@ -228,11 +232,9 @@ class Withdraw extends BaseModel
      */
     public function refuse($condition, $param)
     {
-        $info = model("member_withdraw")->getInfo($condition, "transfer_type,member_id,apply_money");
-
+        $info = model("member_withdraw")->getInfo($condition, "site_id,transfer_type,member_id,apply_money");
         if (empty($info))
             return $this->error();
-
         model('member_withdraw')->startTrans();
         try {
             $data   = array(
@@ -243,9 +245,14 @@ class Withdraw extends BaseModel
             );
             $result = model("member_withdraw")->update($data, $condition);
 
-            //减少可提现余额
-            model("member")->setInc([["member_id", "=", $info["member_id"]]], "balance_money", $info["apply_money"]);
-            //增加提现中余额
+            //增加可提现余额
+            $member_account = new MemberAccount();
+            $account_res = $member_account->addMemberAccount($info['site_id'], $info['member_id'], 'balance_money', $info["apply_money"], 'withdraw', '会员提现申请未通过', '会员提现申请未通过，返还余额' . $info["apply_money"]);
+            if ($account_res['code'] != 0) {
+                model('member_withdraw')->rollback();
+                return $account_res;
+            }
+            //减少提现中余额
             model("member")->setDec([["member_id", "=", $info["member_id"]]], "balance_withdraw_apply", $info["apply_money"]);
 
             model('member_withdraw')->commit();
@@ -265,13 +272,13 @@ class Withdraw extends BaseModel
         $info = model("member_withdraw")->getInfo($condition);
         if (empty($info))
             return $this->error();
-
+        $payment_time = time();
         model('member_withdraw')->startTrans();
         try {
 
             $data["status"]       = 2;
             $data["status_name"]  = "已转账";
-            $data["payment_time"] = time();
+            $data["payment_time"] = $payment_time;
             $result               = model("member_withdraw")->update($data, $condition);
 
             //增加已提现余额
@@ -281,8 +288,12 @@ class Withdraw extends BaseModel
 
             model('member_withdraw')->commit();
 
+            $member_info = model("member")->getInfo([["member_id", "=", $info["member_id"]]]);
+
             //提现成功发送消息
             $info['keywords'] = 'USER_WITHDRAWAL_SUCCESS';
+            $info['payment_time'] = $payment_time;
+            $info['member_name'] = $member_info['nickname'];
             $message_model = new Message();
             $message_model->sendMessage($info);
 
@@ -410,21 +421,21 @@ class Withdraw extends BaseModel
         $data["sms_account"] = $data["mobile"];//手机号
         $data["var_parse"] = $var_parse;
         $sms_model->sendMessage($data);
-        
+
         $member_model = new Member();
         $member_info_result = $member_model->getMemberInfo([["member_id", "=", $data["member_id"]]]);
         $member_info = $member_info_result["data"];
 
         //绑定微信公众号才发送
         if (!empty($member_info) && !empty($member_info["wx_openid"])) {
-        	$wechat_model = new WechatMessage();
-        	$data["openid"] = $member_info["wx_openid"];
-        	$data["template_data"] = [
-        		'keyword1' => $data['apply_money'],
-        		'keyword2' => time_to_date($data['payment_time']),
-        	];
-        	$data["page"] = "";
-        	$wechat_model->sendMessage($data);
+            $wechat_model = new WechatMessage();
+            $data["openid"] = $member_info["wx_openid"];
+            $data["template_data"] = [
+                'keyword1' => $data['apply_money'],
+                'keyword2' => time_to_date($data['payment_time']),
+            ];
+            $data["page"] = "";
+            $wechat_model->sendMessage($data);
         }
 
         //发送订阅消息
@@ -529,20 +540,20 @@ class Withdraw extends BaseModel
                 $message_data = $data;
                 $message_data["sms_account"] = $v["mobile"];//手机号
                 $sms_model->sendMessage($message_data);
-                
-                if($v['wx_openid'] != ""){
-                	
-                	$wechat_model = new WechatMessage();               	
-                	$data["openid"] = $v['wx_openid'];
-                	$data["template_data"] = [
-                			'keyword1' => replaceSpecialChar($data["member_name"]),
-                			'keyword2' => time_to_date($data['apply_time']),
-                			'keyword3' => $data["apply_money"]
-                	];
 
-                	$data["page"] = "";
-                	$wechat_model->sendMessage($data);
-                }   
+                if($v['wx_openid'] != ""){
+
+                    $wechat_model = new WechatMessage();
+                    $data["openid"] = $v['wx_openid'];
+                    $data["template_data"] = [
+                        'keyword1' => replaceSpecialChar($data["member_name"]),
+                        'keyword2' => time_to_date($data['apply_time']),
+                        'keyword3' => $data["apply_money"]
+                    ];
+
+                    $data["page"] = "";
+                    $wechat_model->sendMessage($data);
+                }
             }
         }
     }

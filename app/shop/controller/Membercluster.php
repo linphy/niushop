@@ -266,7 +266,10 @@ class Membercluster extends BaseShop
             $member_cluster_model = new MemberClusterModel();
             $cluster_id           = input('cluster_id', 0);
             $coupon           = input('coupon', '');
-
+            $res = $member_cluster_model->getCouponNum($coupon,$this->site_id);
+            if ($res){
+                return $res;
+            }
             return $member_cluster_model->sendCoupon($coupon, $cluster_id);
         }
     }

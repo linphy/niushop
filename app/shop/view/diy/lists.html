@@ -15,6 +15,17 @@
 	.popup-qrcode-wrap a{font-size: 12px;}
 	.popup-qrcode-wrap input{opacity: 0;position: absolute;}
 	.popup-qrcode-wrap .popup-qrcode-loadimg {width: 16px!important; height: 16px!important; margin-top: 107px;}
+	.marked-message {height: 48px;background: #FFF5ED;font-size: 14px;font-family: Source Han Sans SC;font-weight: 400;color: #666;line-height: 50px;padding: 0 16px;display: flex;}
+	.promote-flex {display: flex;margin-top: 15px;padding: 0 10px 0;}
+	.promote-img {background-color: #f8f8f8;display: flex;justify-content: center;align-items: center;width: 200px;height: 200px;}
+	.promote-img img {width: 140px;height: 140px;}
+	.label-width {width: 100px;}
+	.block-left {margin-left: 100px !important;display: flex;}
+	.promote-download {margin-left: 20px;}
+	.h5-path{margin-left: 20px;width: 300px;}
+	.h5-path .fuzhi{width: 1px;height: 0px;border: 0px;}
+	.h5-path span{display: block;margin-bottom: 10px;}
+	.h5-path p input{height: 30px;line-height: 30px;border: 1px solid #e6e6e5;width: 150px;padding: 0px 5px;border-radius: 5px;margin-right: 10px;}
 </style>
 {/block}
 {block name="main"}
@@ -43,8 +54,9 @@
 			{{# if(d.name != 'DIYVIEW_INDEX'){ }}
 			<a class="layui-btn" lay-event="setHome">设为主页</a>
 			{{# } }}
-			<a class="layui-btn" lay-event="promote">推广</a>
+			<a class="layui-btn ns-new-btn-color" lay-event="promote">推广</a>
 			<a class="layui-btn" lay-event="edit">编辑</a>
+			<a class="layui-btn" lay-event="copy">复制页面</a>
 			<a class="layui-btn" lay-event="delete">删除</a>
 		</div>
 	</div>
@@ -59,15 +71,47 @@
 </script>
 
 <!-- 推广 -->
+<!--<script type="text/html" id="promote">-->
+	<!--{{# if(d.path.h5.status == 1){ }}-->
+	<!--<img src="{{ ns.img(d.path.h5.img) }}" alt="推广二维码">-->
+	<!--<p class="qrcode-item-description">扫码后直接访问页面</p>-->
+	<!--<a class="ns-text-color" href="javascript:ns.copy('h5_url_{{ d.id }}');">复制链接</a>-->
+	<!--<a class="ns-text-color" href="{{ ns.img(d.path.h5.img) }}" download>下载二维码</a>-->
+	<!--<input class="layui-input nc-len-mid" type="text" value="{{ d.path.h5.url }}" id="h5_url_{{ d.id }}" readonly>-->
+	<!--{{# } }}-->
+<!--</script>-->
 <script type="text/html" id="promote">
-	{{# if(d.path.h5.status == 1){ }}
-	<img src="{{ ns.img(d.path.h5.img) }}" alt="推广二维码">
-	<p class="qrcode-item-description">扫码后直接访问页面</p>
-	<a class="ns-text-color" href="javascript:ns.copy('h5_url_{{ d.id }}');">复制链接</a>
-	<a class="ns-text-color" href="{{ ns.img(d.path.h5.img) }}" download>下载二维码</a>
-	<input class="layui-input nc-len-mid" type="text" value="{{ d.path.h5.url }}" id="h5_url_{{ d.id }}" readonly>
-	{{# } }}
+	<div class="">
+		<div class="marked-message">
+			<p>活动可分享至多个渠道推广，增加商品曝光率，提升商品分享打开率。
+			</p>
+		</div>
+		<div class="promote-flex">
+			<div class="promote-img">
+				<img src="{{ ns.img(d.h5.path) }}" alt="推广二维码">
+			</div>
+			<div class="layui-form">
+				<div class="layui-form-item">
+					<label class="layui-form-label label-width">选择渠道：</label>
+					<div class="layui-input-block block-left">
+						<input type="radio" name="promote_type" value="1" title="H5" checked lay-filter="promote_type" >
+						<input type="radio" name="promote_type" value="2" title="小程序" lay-filter="promote_type">
+					</div>
+				</div>
+				<div class="h5-path">
+					<span>推广链接</span>
+					<p class="tips ns-text-color"><input type="text" value="{{d.h5.url}}" readonly /><a class="layui-btn ns-bg-color" href="javascript:ns.copy('h5_url_{{ d.id }}');">复制</a></p>
+					<input type="text" id="h5_url_{{ d.id }}" value="{{d.h5.url}}" readonly class="fuzhi"/>
+				</div>
+				<div class="promote-download">
+					<a class="ns-text-color" href="{{ ns.img(d.h5.path) }}" download>下载二维码</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
 </script>
+
 
 <!-- 编辑排序 -->
 <script type="text/html" id="editSort">
@@ -76,9 +120,11 @@
 {/block}
 {block name="script"}
 <script>
-	var laytpl;
-	layui.use([ 'laytpl'], function () {
+	var laytpl,form;
+
+	layui.use([ 'laytpl', 'form'], function () {
 		laytpl = layui.laytpl;
+		form = layui.form;
 	});
 	var table = new Table({
 		elem: '#diy_list',
@@ -89,7 +135,7 @@
 			unresize : 'true',
 			width: '3%'
 		}, {
-			width: '32%',
+			width: '27%',
 			title: '名称',
 			unresize : 'true',
 			templet:function (res) {
@@ -115,13 +161,14 @@
 			field: 'sort',
 			width: '15%',
 			title: '排序',
+            sort : true,
 			align: 'center',
 			templet: '#editSort'
 		}, {
 			title: '操作',
 			toolbar: '#action',
-            width: '15%',
-			unresize : 'true'
+			unresize : 'true',
+			align :'right'
 		}]],
 		toolbar: '#toolbarOperation',
 		bottomToolbar: "#batchOperation"
@@ -166,8 +213,36 @@
 					}
 				}
 			});
+		}else if(obj.event == "copy"){
+			layer.confirm('确定要复制该微页面模板吗', function (index) {
+				$.ajax({
+					type: "post",
+					url: ns.url("shop/diy/copySiteDiyView"),
+					data: {'id': data.id},
+					dataType: "JSON",
+					success: function (res) {
+						layer.msg(res.message);
+						if (res.code == 0) {
+							table.reload();
+						}
+					}
+				});
+				layer.close(index);
+			});
 		}
 	});
+
+    table.on("sort",function (obj) {
+        table.reload({
+            page: {
+                curr: 1
+            },
+            where: {
+                order:obj.field,
+                sort:obj.type
+            }
+        });
+    });
 
 	//批量操作
 	table.bottomToolbar(function(obj) {
@@ -230,7 +305,6 @@
 	});
 	
 	function promote(id) {
-		$(".operation-wrap[data-id='" + id + "'] .popup-qrcode-wrap").show();
 		$.ajax({
 			type: "POST",
 			url: ns.url("shop/diy/promote"),
@@ -239,22 +313,77 @@
 			},
 			dataType: 'JSON',
 			success: function (res) {
-				if(res.data.path.h5.status == 1) {
+				if(res.code==0){
 					res.data.id = id;
 					laytpl($("#promote").html()).render(res.data, function (html) {
-						$(".operation-wrap[data-id='" + id + "'] .popup-qrcode-wrap").html(html).show();
-						
-						$("body").click(function (e) {
-							if (!$(e.target).closest(".popup-qrcode-wrap").length) {
-								$(".operation-wrap[data-id='" + id + "'] .popup-qrcode-wrap").hide();
+						layer.open({
+							type: 1,
+							area: ['600px', '450px'],
+							offset: '155px',
+							title: ['推广'],
+							content: html,
+							success: function(){
+								// 推广渠道监听
+
+								form.on('radio(promote_type)', function(radio){
+									if(radio.value == 1) {
+										var no_html = "";
+										no_html += '<img src="'+ res.data.h5.path +'"/>';
+										$('.promote-img').html(no_html);
+										// $('.promote-img img').attr('src',res.data.h5.path);
+										$('.promote-download a').attr('href',res.data.h5.path)
+										$(".h5-path").show();
+									}else {
+										if(res.data.weapp.path == ""){
+											var no_html = "";
+											no_html += '<span>小程序配置错误</span>';
+											$('.promote-img').html(no_html);
+										}else{
+											$('.promote-img img').attr('src',res.data.weapp.path)
+											$('.promote-download a').attr('href',res.data.weapp.path)
+										}
+										$(".h5-path").hide();
+									}
+								});
 							}
 						});
+						form.render();
 					});
+
 				}else{
-					layer.msg(res.data.path.h5.message);
+					layer.msg('加载失败，请重试');
 				}
 			}
 		});
+
+
+
+
+		// $(".operation-wrap[data-id='" + id + "'] .popup-qrcode-wrap").show();
+		// $.ajax({
+		// 	type: "POST",
+		// 	url: ns.url("shop/diy/promote"),
+		// 	data: {
+		// 		'id': id,
+		// 	},
+		// 	dataType: 'JSON',
+		// 	success: function (res) {
+		// 		if(res.data.path.h5.status == 1) {
+		// 			res.data.id = id;
+		// 			laytpl($("#promote").html()).render(res.data, function (html) {
+		// 				$(".operation-wrap[data-id='" + id + "'] .popup-qrcode-wrap").html(html).show();
+		//
+		// 				$("body").click(function (e) {
+		// 					if (!$(e.target).closest(".popup-qrcode-wrap").length) {
+		// 						$(".operation-wrap[data-id='" + id + "'] .popup-qrcode-wrap").hide();
+		// 					}
+		// 				});
+		// 			});
+		// 		}else{
+		// 			layer.msg(res.data.path.h5.message);
+		// 		}
+		// 	}
+		// });
 	}
 
 	// 监听单元格编辑

@@ -317,6 +317,7 @@
      * 订单发货
      */
     var submitting = false;
+    var flag = false;
 
     function orderDelivery(order_id) {
         $.ajax({
@@ -328,6 +329,8 @@
                 "order_id": order_id
             },
             success: function (res) {
+                if(flag){ return}
+                flag = true;
                 if (res.code == 0) {
                     var product_arr = [];
                     layui.use(['table', 'form', 'laytpl'], function () {
@@ -380,6 +383,7 @@
                                 content: html,
                                 cancel: function (index, layero) {
                                     //右上角关闭回调
+                                    flag = false;
                                     layer.close(index);
                                     //return false 开启该代码可禁止点击该按钮关闭
                                 },
@@ -752,7 +756,7 @@
                                         html += '<tr>';
                                         html += `<td>${data.order_goods_list[i].order_no}</td>`;
                                         html += `<td>${data.order_goods_list[i].full_address}</td>`;
-                                        html += `<td><input lay-verify="required" class="layui-input" type="number"></td>`;
+                                        html += `<td><input lay-verify="required" class="layui-input" type="text"></td>`;
                                         html += `<td><a href="javascript:;" class="ns-text-color goods-item-remove" data-order-id="${data.order_goods_list[i].order_id}">删除</a></td>`;
                                         html += '</tr>';
                                     } else if (type == 1) {

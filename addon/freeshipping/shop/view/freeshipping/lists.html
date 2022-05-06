@@ -57,11 +57,11 @@
 			url: ns.url("freeshipping://shop/freeshipping/lists"),
 			cols: [
 				[{
-			    	field:'freeshipping_id',
-					title: '编号',
-					unresize: 'false',
-					width: '8%'
-				}, {
+                    field: 'area_names',
+                    title: '包邮地区',
+                    unresize: 'false',
+                    width: '63%'
+                }, {
 					field: 'price',
 					title: '包邮金额',
 					unresize: 'false',
@@ -70,16 +70,8 @@
 					templet: function(data) {
 						return '￥'+ data.price;
 					}
-				}, {
-					unresize: 'false',
-					width: '3%',
-				}, {
-					field: 'area_names',
-					title: '包邮地区',
-					unresize: 'false',
-					width: '52%'
-				}, {
-					title: '添加时间',
+				},  {
+					title: '创建时间',
 					unresize: 'false',
 					width: '17%',
 					templet: function(data) {
@@ -89,7 +81,7 @@
 					title: '操作',
 					toolbar: '#operation',
 					unresize: 'false',
-					width: '10%'
+					align : 'right'
 				}]
 			],
 
@@ -154,7 +146,11 @@
 						layer.msg(res.message);
 						repeat_flag = false;
 						if (res.code == 0) {
-							table.reload();
+							table.reload({
+								page: {
+									curr: 1
+								},
+							});
 						}
 					}
 				});

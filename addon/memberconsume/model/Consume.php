@@ -11,8 +11,10 @@
 
 namespace addon\memberconsume\model;
 
+use app\model\member\MemberAccount;
 use app\model\member\MemberAccount as MemberAccountModel;
 use app\model\order\OrderCommon as OrderCommonModel;
+use app\model\order\OrderRefund;
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
 use addon\coupon\model\CouponType;
@@ -51,7 +53,7 @@ class Consume extends BaseModel
                 'return_coupon'       => '',
             ];
         }
-
+        if (!isset($res['data']['value']['is_return_coupon'])) $res['data']['value']['is_return_coupon'] = 0;
         $coupon_list = [];
         if($res['data']['value']['is_return_coupon'] != 0 && $res['data']['value']['return_coupon'] != '') {
             $coupon = new CouponType();
@@ -59,6 +61,7 @@ class Consume extends BaseModel
             $coupon_list = $coupon_list['data'];
         }
         $res['data']['value']['coupon_list'] = $coupon_list;
+        $res['data']['value']['is_recovery_reward'] = $res['data']['value']['is_recovery_reward'] ?? 0;
 
         return $res;
     }
@@ -83,7 +86,14 @@ class Consume extends BaseModel
 
         $consume_config = $this->getConfig($order_info['site_id']);
         $consume_config = $consume_config['data'];
-        if ($consume_config['is_use'] && $consume_config['value']['return_point_status'] == $param['status']) {
+
+        if ($consume_config['is_use'] &&
+            ( ($order_info['order_type'] == 4 && $consume_config['value']['return_point_status'] == 'receive' && $param['status'] == 'complete') || $consume_config['value']['return_point_status'] == $param['status'])) {
+            // 判断是否开启了奖励回收
+            if ($consume_config['value']['is_recovery_reward']) {
+                $refunded_count = model('order_goods')->getCount([ ['order_id', '=', $param['order_id'] ],['refund_status', '=', OrderRefund::REFUND_COMPLETE ] ]);
+                if ($refunded_count > 0) return $this->success();
+            }
 
             $consume_data = [];
 
@@ -129,7 +139,7 @@ class Consume extends BaseModel
                 $coupon_list = $coupon_list['data'];
                 $coupon = new Coupon();
                 foreach ($coupon_list as $k => $v){
-                    $coupon->receiveCoupon($v['coupon_type_id'], $order_info['site_id'], $order_info['member_id'], '', 0, 0);
+                    $coupon->receiveCoupon($v['coupon_type_id'], $order_info['site_id'], $order_info['member_id'], '1', 0, 0);
                     if($v['at_least'] > 0){
                         $remark = '满'.$v['at_least'].($v['type'] == 'discount' ? '打' .$v['discount'] : '减'.$v['money']);
                     }else {
@@ -181,6 +191,46 @@ class Consume extends BaseModel
     public function getConsumeRecordPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = 'a', $join = []){
         $list = model('promotion_consume_record')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
+    }
+
+    /**
+     * 奖励回收
+     * @param $order_id
+     */
+    public function rewardRecovery($order_id){
+        $list = model('promotion_consume_record')->getList([ ['type', 'in', ['point', 'coupon']], ['order_id', '=', $order_id], ['is_recycled', '=', 0] ]);
+        if (!empty($list)) {
+            $site_id = $list[0]['site_id'];
+            $member_id = $list[0]['member_id'];
+
+            $consume_config = $this->getConfig($site_id);
+            $consume_config = $consume_config['data'];
+            // 回收权益
+            if ($consume_config['value']['is_recovery_reward']) {
+                $member_account = new MemberAccount();
+                foreach ($list as $item) {
+                    // 扣除积分
+                    if ($item['type'] == 'point') {
+                        $member_info = model('member')->getInfo([['member_id', '=', $member_id]], 'point');
+                        $point = $item['value'] > $member_info['point'] ? $member_info['point'] : $item['value'];
+                        $res = $member_account->addMemberAccount($site_id, $member_id, 'point', -($point), 'memberconsume', $item['order_id'], "退款完成消费奖励回收");
+                        if ($res['code'] == 0) {
+                            model('promotion_consume_record')->update(['is_recycled' => 1], [ ['id', '=', $item['id'] ] ]);
+                        }
+                    }
+                    // 删除未使用的优惠券
+                    if ($item['type'] == 'coupon') {
+                        $coupon = model('promotion_coupon')->getFirstData([ ['member_id', '=', $member_id], ['coupon_type_id', '=', $item['value'] ], ['state', '=', 1] ], 'coupon_id');
+                        if (!empty($coupon)) {
+                            $delete_num = model('promotion_coupon')->delete([ ['coupon_id', '=', $coupon['coupon_id'] ] ]);
+                            if ($delete_num) {
+                                model('promotion_consume_record')->update(['is_recycled' => 1], [ ['id', '=', $item['id'] ] ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

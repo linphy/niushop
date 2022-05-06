@@ -16,10 +16,12 @@
 namespace app\api\controller;
 
 use app\model\member\Member as MemberModel;
+use app\model\member\MemberAccount;
 use app\model\member\Register as RegisterModel;
 use app\model\message\Message;
 use think\facade\Cache;
 use app\model\member\MemberLevel as MemberLevelModel;
+use extend\QRcode as QRcodeExtend;
 
 class Member extends BaseApi
 {
@@ -33,7 +35,7 @@ class Member extends BaseApi
         if ($token['code'] < 0) return $this->response($token);
 
         $member_model = new MemberModel();
-        $info         = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time');
+        $info         = $member_model->getMemberInfo([['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time,is_edit_username,is_fenxiao');
         if (!empty($info['data'])) {
             $info['data']['password'] = empty($info['data']['password']) ? 0 : 1;
 
@@ -58,6 +60,20 @@ class Member extends BaseApi
         $headimg      = isset($this->params['headimg']) ? $this->params['headimg'] : '';
         $member_model = new MemberModel();
         $res          = $member_model->editMember(['headimg' => $headimg], [['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]]);
+        return $this->response($res);
+    }
+
+    /**
+     * 修改用户名
+     * @return false|string
+     */
+    public function modifyUsername(){
+        $token = $this->checkToken();
+        if ($token['code'] < 0) return $this->response($token);
+
+        $username     = isset($this->params['username']) ? $this->params['username'] : '';
+        $member_model = new MemberModel();
+        $res          = $member_model->editUsername($this->member_id, $this->site_id, $username);
         return $this->response($res);
     }
 
@@ -350,7 +366,7 @@ class Member extends BaseApi
     /**
      * 拉取会员头像
      */
-    public function pullhaedimg()
+    public function pullheadimg()
     {
         $member_id = input('member_id', '');
         $member    = new MemberModel();
@@ -398,4 +414,102 @@ class Member extends BaseApi
         $res          = $member_model->editMember(['birthday' => $birthday], [['member_id', '=', $token['data']['member_id'], ['site_id', '=', $this->site_id]]]);
         return $this->response($res);
     }
+
+
+    /**
+     * 生成会员二维码
+     */
+    public function membereqrcode()
+    {
+        $token = $this->checkToken();
+        if ($token['code'] < 0) return $this->response($token);
+        Cache::tag('memberqrcode')->clear();
+        Cache::tag('dynamic_number')->clear();
+        
+        $member_id = $token['data']['member_id'];
+        $number = date_to_time(date('Y-m-d H:i')).rand(10000000,99999999);
+
+        // 二维码
+        $qrcode_dir = 'upload/qrcode/qrcodereduceaccount';
+        if (!is_dir($qrcode_dir) && !mkdir($qrcode_dir, intval('0755', 8), true)) {
+            return $this->error('', '会员码生成失败');
+        }
+        $qrcode_name = 'memberqrcode_'  . $member_id . '_'  . $this->site_id;
+//        $filename = $qrcode_dir . '/' . $qrcode_name . '_' . $this->params['app_type'] . '.png';
+        // 二维码
+        $res = event('Qrcode', [
+            'site_id'     => $this->site_id,
+            'app_type'    => $this->params['app_type'],
+            'type'        => 'create',
+            'data'        => ['number'=>$number],
+            'page'        => $this->params['page']?:'',
+            'qrcode_path' => 'upload/qrcode/qrcodereduceaccount',
+            'qrcode_name' => 'memberqrcode_'  . $member_id . '_'  . $this->site_id,
+        ], true);
+//        QRcodeExtend::png($number, $filename, 'L', 4, 1);
+//        $res = $this->success(['path' => $filename]);
+
+        Cache::tag('member_qrcode')->set($number,['member_id'=>$member_id,'is_user'=>0],'60');
+        // 条形码
+        Cache::tag('memberqrcode')->set($number,['member_id'=>$member_id,'is_user'=>0],'60');
+        $bar_code = getBarcode($number);
+        $res['bar_code'] = $bar_code;
+        // 动态码
+        $dynamic_number = NoRand(0,9,4);
+        Cache::tag('dynamic_number')->set($dynamic_number,['member_id'=>$member_id,'is_user'=>0],'60');
+        $res['dynamic_number'] = $dynamic_number;
+        return $this->response($res);
+    }
+
+    /**
+     * 会员二维码扣款
+     */
+    public function qrcodereduceaccount()
+    {
+        $member_data = Cache::get($this->params['number']);
+        $member_id = $member_data['member_id'];
+        if(empty($member_id)){
+            return  $this->response($this->error([], "参数已过期!"));
+        }
+        $member_model = new \app\model\member\Member();
+        $member_data = $member_model->getMemberInfo([['member_id','=',$member_id],['site_id','=',$this->site_id]]);
+
+        $balance_money = $member_data['data']['balance_money']; //可提现余额
+        $balance = $member_data['data']['balance']; //不可提现余额
+        $member_account_model = new MemberAccount();
+        $surplus_banance = $this->params['money']; //支付金额
+        //优先扣除不可提现余额
+        if ($balance > 0) {
+            if ($balance >= $surplus_banance) {
+                $real_balance = $surplus_banance;
+            } else {
+                $real_balance = $balance;
+            }
+            $result = $member_account_model->addMemberAccount($this->site_id,$member_id, "balance", -$real_balance, 'membercode', 0, "会员码支付,扣除不可提现余额:" . $real_balance);
+            $surplus_banance -= $real_balance;
+        }
+        if ($surplus_banance > 0) {
+            $result = $member_account_model->addMemberAccount($this->site_id, $member_id, "balance_money", -$surplus_banance,'membercode', 0, "会员码支付,扣除可提现余额:" . $surplus_banance);
+        }
+        Cache::tag('memberqrcode')->clear();
+        Cache::tag('dynamic_number')->clear();
+        return $this->response($result);
+    }
+
+    //更改分享人信息
+    public function alterShareRelation()
+    {
+        $token = $this->checkToken();
+        if ($token['code'] < 0) return $this->response($token);
+
+        $share_member     = $this->params['share_member'] ?? 0;
+        if(empty($share_member)){
+            return  $this->response($this->error(null, "未传分享人id!"));
+        }
+
+        $member_model = new MemberModel();
+        $result = $member_model->alterShareRelation($this->member_id, $share_member,$this->site_id);
+        return $this->response($result);
+    }
+
 }

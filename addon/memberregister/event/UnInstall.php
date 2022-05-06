@@ -21,6 +21,12 @@ class UnInstall
      */
     public function handle()
     {
-        return error('', "系统插件不允许删除");
+        try {
+            return error('', "系统插件不允许删除");
+            //execute_sql('addon/manjian/data/uninstall.sql');
+            //return success();
+        } catch (\Exception $e) {
+            return error('', $e->getMessage());
+        }
     }
 }

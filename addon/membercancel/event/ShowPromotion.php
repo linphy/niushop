@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '会员注销',
                     //展示介绍
-                    'description' => '会员注销',
+                    'description' => '客户在线申请注销账号',
                     //展示图标
                     'icon'        => 'addon/membercancel/icon.png',
                     //跳转链接

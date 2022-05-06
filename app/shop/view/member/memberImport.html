@@ -64,16 +64,18 @@
                     title: '导入失败会员数',
 					width: '15%',
                     unresize: 'false',
-                }, {
-                    field: 'status_name',
-                    title: '导入状态',
-					width: '15%',
-                    unresize: 'false',
-                }, {
+                }, 
+				// {
+    //                 field: 'status_name',
+    //                 title: '导入状态',
+				// 	width: '15%',
+    //                 unresize: 'false',
+    //             }, 
+				{
                     title: '操作',
-                    width: '10%',
                     unresize: 'false',
-                    toolbar: '#operation'
+                    toolbar: '#operation',
+					align : 'right'
                 }]
             ]
         });
@@ -129,7 +131,11 @@
                         table.reload();
                     }
                 }
-                layer.msg(res.message);
+				if(res.data.error_num > 0) {
+					layer.msg('导入失败');
+				} else {
+					layer.msg('导入成功');
+				}
             }
         });
     }

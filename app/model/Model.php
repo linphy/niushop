@@ -5,6 +5,8 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -12,6 +14,7 @@ namespace app\model;
 
 use think\facade\Db;
 use think\Validate;
+use think\facade\Cache;
 
 /**
  * 模型基类
@@ -21,6 +24,8 @@ class Model
 
     // 查询对象
     private static $query_obj = null;
+    
+    protected $table = '';
     //验证规则
     protected $rule = [];
     //验证信息
@@ -29,29 +34,48 @@ class Model
     protected $scene = [];
     //错误信息
     protected $error;
-
-    protected $table;
+    
+    protected $is_cache;
 
     public function __construct($table = '')
     {
         if ($table) {
             $this->table = $table;
         }
+        $this->is_cache = $this->isCache();
+
+    }
+    
+    public function isCache()
+    {
+        
+        return 1;
     }
 
     /**
      * 获取列表数据
      * @param array $condition
-     * @param bool $field
+     * @param string $field
      * @param string $order
-     * @param string $alias
+     * @param number $page
      * @param array $join
      * @param string $group
-     * @param null $limit
-     * @return array
+     * @param string $limit
+     * @param string $data
+     * @return mixed
      */
     final public function getList($condition = [], $field = true, $order = '', $alias = 'a', $join = [], $group = '', $limit = null)
     {
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         self::$query_obj = Db::name($this->table)->where($condition)->order($order);
 
         if (!empty($join)) {
@@ -70,12 +94,33 @@ class Model
         $result = self::$query_obj->field($field)->select()->toArray();
 
         self::$query_obj->removeOption();
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
         return $result;
     }
 
     final public function all()
     {
-        return Db::name($this->table)->select()->toArray();
+        if($this->is_cache)
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_';
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
+        $result =  Db::name($this->table)->select()->toArray();
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
+        return $result;
     }
 
     /**
@@ -92,17 +137,29 @@ class Model
      */
     final public function pageList($condition = [], $field = true, $order = '', $page = 1, $list_rows = PAGE_LIST_ROWS, $alias = 'a', $join = [], $group = null, $limit = null)
     {
+        //关联查询多表无法控制不缓存,单独业务处理
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
-        $count_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
+        $count_obj       = Db::name($this->table)->alias($alias)->where($condition)->order($order);
         if (!empty($join)) {
-            $db_obj = self::$query_obj;
+            
+            $db_obj          = self::$query_obj;
             self::$query_obj = $this->parseJoin($db_obj, $join);
-            $count_obj = $this->parseJoin($count_obj, $join);
+            $count_obj       = $this->parseJoin($count_obj, $join);
         }
 
         if (!empty($group)) {
             self::$query_obj = self::$query_obj->group($group);
-            $count_obj = $count_obj->group($group);
+            $count_obj       = $count_obj->group($group);
         }
 
         if (!empty($limit)) {
@@ -112,16 +169,22 @@ class Model
         $count = $count_obj->count();
         if ($list_rows == 0) {
             //查询全部
-            $result_data = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
-            $result[ 'page_count' ] = 1;
+            $result_data          = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
+            $result['page_count'] = 1;
         } else {
-            $result_data = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
-            $result[ 'page_count' ] = ceil($count / $list_rows);
+            $result_data          = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
+            $result['page_count'] = ceil($count / $list_rows);
         }
-        $result[ 'count' ] = $count;
-        $result[ 'list' ] = $result_data;
+        $result['count'] = $count;
+        $result['list']  = $result_data;
+
 
         self::$query_obj->removeOption();
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
         return $result;
     }
 
@@ -139,23 +202,34 @@ class Model
      */
     final public function rawPageList($condition = [], $field = true, $order = '', $page = 1, $list_rows = PAGE_LIST_ROWS, $alias = 'a', $join = [], $group = null, $limit = null)
     {
+        //关联查询多表无法控制不缓存,单独业务处理
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         if (is_array($order)) {
             self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
-            $count_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order);
+            $count_obj       = Db::name($this->table)->alias($alias)->where($condition)->order($order);
         } else {
             self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->orderRaw($order);
-            $count_obj = Db::name($this->table)->alias($alias)->where($condition)->orderRaw($order);
+            $count_obj       = Db::name($this->table)->alias($alias)->where($condition)->orderRaw($order);
         }
 
         if (!empty($join)) {
-            $db_obj = self::$query_obj;
+            $db_obj          = self::$query_obj;
             self::$query_obj = $this->parseJoin($db_obj, $join);
-            $count_obj = $this->parseJoin($count_obj, $join);
+            $count_obj       = $this->parseJoin($count_obj, $join);
         }
 
         if (!empty($group)) {
             self::$query_obj = self::$query_obj->group($group);
-            $count_obj = $count_obj->group($group);
+            $count_obj       = $count_obj->group($group);
         }
 
         if (!empty($limit)) {
@@ -165,17 +239,22 @@ class Model
         $count = $count_obj->count();
         if ($list_rows == 0) {
             //查询全部
-            $result_data = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
-            $result[ 'page_count' ] = 1;
+            $result_data          = self::$query_obj->field($field)->limit($count)->page($page)->select()->toArray();
+            $result['page_count'] = 1;
         } else {
-            $result_data = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
-            $result[ 'page_count' ] = ceil($count / $list_rows);
+            $result_data          = self::$query_obj->field($field)->limit($list_rows)->page($page)->select()->toArray();
+            $result['page_count'] = ceil($count / $list_rows);
         }
-        $result[ 'count' ] = $count;
-        $result[ 'list' ] = $result_data;
+        $result['count'] = $count;
+        $result['list']  = $result_data;
 
 
         self::$query_obj->removeOption();
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
         return $result;
     }
 
@@ -189,6 +268,17 @@ class Model
      */
     final public function getInfo($where = [], $field = true, $alias = 'a', $join = null, $data = null)
     {
+        //关联查询多表无法控制不缓存,单独业务处理
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         if (empty($join)) {
             $result = Db::name($this->table)->where($where)->field($field)->find($data);
         } else {
@@ -196,7 +286,11 @@ class Model
             $db_obj = $this->parseJoin($db_obj, $join);
             $result = $db_obj->where($where)->field($field)->find($data);
         }
-
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
         return $result;
     }
 
@@ -212,7 +306,7 @@ class Model
         foreach ($join as $item) {
             list($table, $on, $type) = $item;
             $type = strtolower($type);
-            switch ( $type ) {
+            switch ($type) {
                 case "left":
                     $db_obj = $db_obj->leftJoin($table, $on);
                     break;
@@ -242,7 +336,23 @@ class Model
      */
     final public function getColumn($where = [], $field = '', $key = '')
     {
-        return Db::name($this->table)->where($where)->column($field, $key);
+        if($this->is_cache)
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
+        $result = Db::name($this->table)->where($where)->column($field, $key);
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
+        return $result;
     }
 
     /**
@@ -256,7 +366,23 @@ class Model
      */
     final public function getValue($where = [], $field = '', $default = null, $force = false)
     {
-        return Db::name($this->table)->where($where)->value($field, $default, $force);
+        if($this->is_cache)
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
+        $result = Db::name($this->table)->where($where)->value($field, $default, $force);
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
+        return $result;
     }
 
     /**
@@ -266,6 +392,11 @@ class Model
      */
     final public function add($data = [], $is_return_pk = true)
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
+        
         return Db::name($this->table)->insert($data, true, $is_return_pk);
     }
 
@@ -276,6 +407,11 @@ class Model
      */
     final public function addList($data = [], $limit = null)
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
+        
         return Db::name($this->table)->insertAll($data, false, $limit);
     }
 
@@ -286,6 +422,11 @@ class Model
      */
     final public function update($data = [], $where = [])
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
+        
         return Db::name($this->table)->where($where)->update($data);
     }
 
@@ -297,7 +438,7 @@ class Model
      */
     final public function setFieldValue($where = [], $field = '', $value = '')
     {
-        return $this->update([ $field => $value ], $where);
+        return $this->update([$field => $value], $where);
     }
 
     /**
@@ -307,16 +448,25 @@ class Model
      */
     final public function setList($data_list = [], $replace = false)
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
+        
         return Db::name($this->table)->saveAll($data_list, $replace);
     }
 
     /**
      * 删除数据
      * @param array $where 条件
-     * @return int
      */
     final public function delete($where = [])
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
+        
         return Db::name($this->table)->where($where)->delete();
     }
 
@@ -324,16 +474,32 @@ class Model
      * 统计数据
      * @param array $where 条件
      * @param string $type 查询类型  count:统计数量|max:获取最大值|min:获取最小值|avg:获取平均值|sum:获取总和
-     * @param string $field
-     * @return mixed
      */
     final public function stat($where = [], $type = 'count', $field = 'id')
     {
-        return Db::name($this->table)->where($where)->$type($field);
+        if($this->is_cache)
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
+        $result = Db::name($this->table)->where($where)->$type($field);
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
+        return $result;
     }
 
     /**
      * SQL查询
+     * @param string $sql
+     * @return mixed
      */
     final public function query($sql = '')
     {
@@ -342,25 +508,58 @@ class Model
 
     /**
      * 返回总数
-     * @param array $where
-     * @param string $field
-     * @return int
+     * @param unknown $where
      */
-    final public function getCount($where = [], $field = '*')
+    final public function getCount($where = [], $field = '*', $alias = 'a', $join = null, $group = null)
     {
-        return Db::name($this->table)->where($where)->count($field);
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+        if (empty($join)) {
+            if(empty($group)){
+                $result = Db::name($this->table)->where($where)->count($field);
+            }else{
+                $result = Db::name($this->table)->group($group)->where($where)->count($field);
+            }
+        } else {
+            $db_obj = Db::name($this->table)->alias($alias);
+            $db_obj = $this->parseJoin($db_obj, $join);
+            if(empty($group)){
+                $result = $db_obj->where($where)->count($field);
+            }else{
+                $result = $db_obj->group($group)->where($where)->count($field);
+            }
+        }
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
+        return $result;
     }
 
     /**
      * 返回总数
-     * @param array $where
-     * @param string $field
-     * @param string $alias
-     * @param null $join
-     * @return float
+     * @param unknown $where
      */
     final public function getSum($where = [], $field = '', $alias = 'a', $join = null)
     {
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         if (empty($join)) {
             $result = Db::name($this->table)->where($where)->sum($field);
         } else {
@@ -368,6 +567,11 @@ class Model
             $db_obj = $this->parseJoin($db_obj, $join);
             $result = $db_obj->where($where)->sum($field);
         }
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $result);
+        }
+        
         return $result;
     }
 
@@ -385,16 +589,41 @@ class Model
      */
     final function getFirstData($condition, $field = '*', $order = "")
     {
+        if($this->is_cache)
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         $data = Db::name($this->table)->where($condition)->order($order)->field($field)->find();
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $data);
+        }
+        
         return $data;
     }
-
+    
     /**
      * 查询第一条数据
      * @param array $condition
      */
     final function getFirstDataView($condition, $field = '*', $order = "",  $alias = 'a', $join = [], $group = null)
     {
+        if($this->is_cache&&empty($join))
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
         self::$query_obj = Db::name($this->table)->alias($alias)->where($condition)->order($order)->field($field);
         if (!empty($join)) {
             $db_obj = self::$query_obj;
@@ -405,8 +634,14 @@ class Model
             self::$query_obj = self::$query_obj->group($group);
         }
         $data = self::$query_obj->find();
+        if($this->is_cache&&empty($join))
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $data);
+        }
+        
         return $data;
     }
+
 
     /**
      * 验证
@@ -425,7 +660,7 @@ class Model
             $validate_result = $validate->scene($scene_name)->batch(false)->check($data);
         }
 
-        return $validate_result ? [ true, '' ] : [ false, $validate->getError() ];
+        return $validate_result ? [true, ''] : [false, $validate->getError()];
     }
 
     /**
@@ -433,7 +668,8 @@ class Model
      */
     final public function startTrans()
     {
-        Db::startTrans();
+
+        return Db::startTrans();
     }
 
     /**
@@ -441,7 +677,8 @@ class Model
      */
     final public function commit()
     {
-        Db::commit();
+
+        return Db::commit();
     }
 
     /**
@@ -449,7 +686,8 @@ class Model
      */
     final public function rollback()
     {
-        Db::rollback();
+
+        return Db::rollback();
     }
 
     /**
@@ -468,6 +706,11 @@ class Model
      */
     final public function setInc($where = [], $field, $num = 1)
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
+        
         return Db::name($this->table)->where($where)->inc($field, $num)->update();
     }
 
@@ -479,6 +722,10 @@ class Model
      */
     final public function setDec($where = [], $field, $num = 1)
     {
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->clear();
+        }
         return Db::name($this->table)->where($where)->dec($field, $num)->update();
     }
 
@@ -490,6 +737,91 @@ class Model
      */
     final public function getMax($where = [], $field)
     {
-        return Db::name($this->table)->where($where)->max($field);
+        if($this->is_cache)
+        {
+            $cache_name = $this->table.'_'.__FUNCTION__.'_'.serialize(func_get_args());
+            $cache = Cache::get($cache_name);
+            if(!empty($cache))
+            {
+                return $cache;
+            }
+        }
+
+
+        $data = Db::name($this->table)->where($where)->max($field);
+        if($this->is_cache)
+        {
+            Cache::tag("cache_table".$this->table)->set($cache_name, $data);
+        }
+        
+        return $data;
+    }
+
+    /**
+     * 获取分页列表数据 只是单纯的实现部分功能 其他使用还是用pageList吧
+     * @param unknown $where
+     * @param string $field
+     * @param string $order
+     * @param number $page
+     * @param string $list_rows
+     * @param string $alias
+     * @param unknown $join
+     * @param string $group
+     * @param string $limit
+     */
+    final public function Lists($condition = [], $field = true, $order = '', $page = 1, $list_rows = PAGE_LIST_ROWS, $alias = 'a', $join = [], $group = null, $limit = null)
+    {
+        self::$query_obj = Db::name($this->table)->alias($alias)->where($condition);
+        $count_obj = Db::name($this->table)->alias($alias)->where($condition);
+        if (!empty($join)) {
+            $db_obj = self::$query_obj;
+            self::$query_obj = $this->parseJoin($db_obj, $join);
+            $count_obj = $this->parseJoin($count_obj, $join);
+        }
+
+        if (!empty($group)) {
+            self::$query_obj = self::$query_obj->group($group);
+            $count_obj = $count_obj->group($group);
+        }
+
+        if (!empty($limit)) {
+            self::$query_obj = self::$query_obj->limit($limit);
+        }
+
+        $count = $count_obj->count();
+        if ($list_rows == 0) {
+            //查询全部
+            $result_data = self::$query_obj->field($field)->order($order)->limit($count)->page($page)->select()->toArray();
+            $result[ 'page_count' ] = 1;
+        } else {
+            $result_data = self::$query_obj->field($field)->order($order)->limit($list_rows)->page($page)->select()->toArray();
+            $result[ 'page_count' ] = ceil($count / $list_rows);
+        }
+        $result[ 'count' ] = $count;
+        $result[ 'list' ] = $result_data;
+
+        self::$query_obj->removeOption();
+        return $result;
+    }
+
+    /**
+     * 不读取缓存--获取单条数据
+     * @param array $where
+     * @param string $field
+     * @param string $join
+     * @param string $data
+     * @return mixed
+     */
+    final public function getInfoTo($where = [], $field = true, $alias = 'a', $join = null, $data = null)
+    {
+        if (empty($join)) {
+            $result = Db::name($this->table)->where($where)->field($field)->find($data);
+        } else {
+            $db_obj = Db::name($this->table)->alias($alias);
+            $db_obj = $this->parseJoin($db_obj, $join);
+            $result = $db_obj->where($where)->field($field)->find($data);
+        }
+
+        return $result;
     }
 }

@@ -33,7 +33,7 @@ var table = new Table({
 		title: '地址信息',
 		unresize : 'true',
 		templet: function (d) {
-			return d.full_address.replace(/-/g, " ") + " " + d.address;
+			return '<span title="'+ d.full_address.replace(/-/g, " ") + " " + d.address+'">'+  d.full_address.replace(/-/g, " ") + " " + d.address +'</span>';
 		}
 	}, {
 		width: '10%',

@@ -169,9 +169,9 @@ $(function () {
 					},
 					{
 						title: '操作',
-						width: '15%',
 						toolbar: '#attributeOperation',
-						unresize: 'false'
+						unresize: 'false',
+						align:'right'
 					}
 				]
 			]

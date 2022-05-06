@@ -25,11 +25,22 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
 li {
     list-style: none;
 }
-
 a:-webkit-any-link {
-    color: #353535;
+    color: #333;
     cursor: pointer;
     text-decoration: none;
+}
+
+.reply-opts a:-webkit-any-link {
+    color: #ff7e23;
+    cursor: pointer;
+    text-decoration: none;
+}
+.reply-opts .delet-color:-webkit-any-link {
+	color: #ff3d3d;
+}
+.rule-group .rule-meta h3 .rule-opts .delet-color {
+	color: #ff3d3d;
 }
 
 button {
@@ -91,6 +102,7 @@ button {
 
 .weixin-normal {
     margin-top: 15px;
+    position: relative;
 }
 
 .replay-info .info {
@@ -207,7 +219,7 @@ button {
 .rule-group {
     border: 1px solid #e5e5e5;
     margin-bottom: 20px;
-    border-radius: 5px;
+    border-radius: 2px;
     background: #fff;
 }
 
@@ -216,7 +228,8 @@ button {
 }
 
 .rule-group .rule-meta {
-    padding: 10px;
+    padding: 5px 10px;
+		background: #fff7f3;
 }
 
 .rule-group .rule-meta h3 .rule-opts a:hover {
@@ -224,7 +237,7 @@ button {
 }
 
 .rule-group .rule-meta h3 {
-    width: 300px;
+    width: 100%;
     position: relative;
     font-size: 14px;
     margin: 0;
@@ -235,20 +248,20 @@ button {
 .rule-group .rule-meta h3 .rule-opts {
     position: absolute;
     top: 0;
-    right: -65px;
+    right: 0px;
     font-weight: normal;
     font-size: 12px;
     color: #ddd;
 }
 
 .rule-group .rule-meta h3 .rule-opts a {
-    color: #999;
+    color: #ff7e23;
 }
 
 .rule-group .rule-body {
     border-top: 1px solid #e5e5e5;
-    margin: 0 0 10px;
-    padding-top: 5px;
+    /* margin: 0 0 10px;
+    padding-top: 5px; */
     overflow: auto;
 }
 
@@ -258,15 +271,16 @@ button {
     line-height: 0;
 }
 
-.rule-group .long-dashed {
+/* .rule-group .long-dashed {
     position: absolute;
     top: 80px;
     width: 100%;
     border-bottom: 1px dashed #e5e5e5;
-}
+} */
 
 .weixin-normal .rule-keywords {
     float: left;
+		margin-top:10px;
 }
 
 .rule-group .rule-inner {
@@ -278,8 +292,6 @@ button {
     color: #000;
     font-weight: normal;
     font-size: 14px;
-    margin: 0 0 5px;
-    padding: 5px 0;
 }
 
 .rule-group .keyword-containe {
@@ -292,7 +304,7 @@ button {
 }
 
 .rule-group .keyword-list, .reply-list {
-    margin-top: 10px;
+    padding-top: 10px;
 }
 
 .keyword-list .keyword {
@@ -313,7 +325,7 @@ button {
     display: block;
 }
 
-.close--circle {
+.complex-content .close--circle ,.keyword-list .close--circle {
     position: absolute;
     z-index: 91;
     top: -9px;
@@ -321,7 +333,7 @@ button {
     width: 20px;
     height: 20px;
     font-size: 16px;
-    line-height: 18px;
+    line-height: 20px;
     color: #fff;
     text-align: center;
     cursor: pointer;
@@ -334,12 +346,12 @@ button {
     text-align: center;
     display: inline-block;
     height: 20px;
-    padding: 4px 10px;
+    padding: 2px 10px;
     font-size: 12px;
     line-height: 20px;
-    color: #555555;
+    color: #333;
     vertical-align: middle;
-    border-radius: 4px 0 0 4px;
+    border-radius: 2px 0 0 2px;
     border: 1px solid #ccc;
 }
 
@@ -348,26 +360,26 @@ button {
     width: auto;
     height: 20px;
     min-width: 16px;
-    padding: 4px 5px;
-    font-size: 12px;
+    padding: 2px 7px;
+    font-size: 10px;
     font-weight: 400;
     line-height: 20px;
     text-align: center;
     text-shadow: 0 1px 0 #fff;
-    background-color: #eee;
+    background-color: #f7f7f7;
     border: 1px solid #ccc;
     margin-left: -4px;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 2px 2px 0;
     vertical-align: middle;
 }
 
-.rule-group hr.dashed {
+/* .rule-group hr.dashed {
     border-bottom: 1px dashed #d7d7d7;
     border-top: none;
     margin: 0;
     background-color: rgb(255, 255, 255);
 
-}
+} */
 .layui-textarea {
     resize:none
 }
@@ -378,32 +390,46 @@ button {
 .rule-group .opt a {
     color: #0d73f9;
 }
+.inner-keywordbox a {
+	color: #0d73f9;
+}
 
 .weixin-normal .rule-replies {
     position: static;
     float: left;
+		border-left: 1px solid #f7f7f7;
+		padding-top: 10px;
+		min-height: 115px;
 }
 
-.weixin-normal .rule-group::before {
+/* .weixin-normal .rule-group::before {
     content: "";
     position: absolute;
-    top: 41px;
-    bottom: 10px;
+    top: 32px;
+    bottom: 0px;
     left: 41.66666667%;
     border-right: 1px solid #d7d7d7;
-}
+} */
 
 .rule-group .rule-inner {
     font-size: 12px;
     padding: 0 10px 5px;
 }
 
+.rule-group .rule-inner .inner-keywordbox {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 15px;
+	background: #f7f7f7;
+	border-radius: 2px;
+}
+
 .rule-group .rule-inner h4 {
     color: #000;
     font-weight: normal;
     font-size: 14px;
-    margin: 0 0 5px;
-    padding: 5px 0;
 }
 
 .rule-group .reply-container, .keyword-container {
@@ -491,8 +517,14 @@ ol.reply-list {
 
 .misc > a {
     display: inline-block;
-    padding: 10px;
-    color: #0d73f9 !important
+    padding: 7px 10px;
+    color: #0d73f9 !important;
+    border-bottom: 2px solid #fff;
+}
+
+.misc .active {
+    color: #ff7e23!important;
+    border-color: #ff7e23;
 }
 
 .others {
@@ -548,18 +580,46 @@ ol.reply-list {
 .complex-backdrop {
     display: none;
     position: absolute;
-    top: 50px;
-    left: 10px;
-    width: 96%;
-    height: 38%;
+    top: 75px;
+    left: 25px;
+    width: 86%;
+    height: 36.5%;
     background-color: #fff;
-    -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25);
-    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25);
-    padding-top: 12px;
+    /* -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.25); */
+		/* border:1px solid #E6E6E6; */
+    /* padding-top: 12px; */
+}
+
+.layui-layout-admin .layui-body .ns-body-content {
+	background: #f8f8f8;
+	padding: 0;
+}
+
+.fourstage-nav .layui-tab-title {
+	background: #fff;
+	height: 50px;
+}
+
+.fourstage-nav .layui-tab-title li {
+	line-height: 48px;
+}
+
+.keyword-content {
+	background: #fff;
+	padding: 15px;
+	margin-top: 15px;
+}
+
+[lay-id=marterial_graphic_message_list] .article-img .ns-bg-color {
+    background-color: #1aad19 !important;
+}
+.layui-table-view{
+	background-color: red!important;
 }
 
 .complex-content {
-    padding: 6px 10px;
+    padding: 15px;
 }
 
 .ng.ng-image {
@@ -567,6 +627,21 @@ ol.reply-list {
     height: 80px;
     border: none;
     text-align: center;
+}
+
+/* .showtoast .layui-input-block{
+	margin-left: 80px;
+} */
+/* .showtoast .upload-img-block {
+	width: 300px;
+	height: 150px;
+} */
+
+.insert-connect {
+	position: absolute;
+	right: 10px;
+	bottom: 20px;
+	color: #0d73f9 !important;
 }
 
 .ng {
@@ -645,17 +720,18 @@ ol.reply-list {
 .close--circle {
     position: absolute;
     z-index: 91;
-    top: -9px;
-    right: -9px;
-    width: 20px;
-    height: 20px;
-    font-size: 16px;
-    line-height: 18px;
-    color: #fff;
+    top: 5px;
+    right: 10px;
+    /* width: 20px; */
+    /* height: 20px; */
+    font-size: 28px;
+    /* line-height: 18px; */
+    /* color: #fff; */
+		color: #333;
     text-align: center;
     cursor: pointer;
-    background: rgba(153, 153, 153, 0.6);
-    border-radius: 10px;
+    /* background: rgba(153, 153, 153, 0.6); */
+    /* border-radius: 10px; */
 }
 
 .voice-player .second {
@@ -726,14 +802,26 @@ a.new-window {
 
 /*************************************/
 .rule-container {
-    position: absolute;
-    padding: 5px 10px;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    border: 1px solid #e5e5e5;
-    height: 230px;
-    width: 460px;
+    /*position: absolute;*/
+    /*padding: 5px 10px;*/
+    /*background-color: #fff;*/
+    /*border-radius: 4px;*/
+    /*box-shadow: 0px 1px 6px 7px rgba(0, 0, 0, 0.1);*/
+    /*!* border: 1px solid #e5e5e5; *!*/
+    /*height: 230px;*/
+    /*width: 460px;*/
+}
+
+.rule-container .add_reply-top{
+	position: absolute;
+	width: 0px; 
+	height: 0px; 
+	line-height: 0px;/*为了防止ie下出现题型*/ 
+	border-bottom: 10px solid #fff; 
+	border-left: 10px solid rgba(0,0,0,0); 
+	border-right: 10px solid rgba(0,0,0,0);
+	right: 55px; 
+	top: -10px;
 }
 
 .popover > .close--circle {

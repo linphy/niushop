@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '满减活动',
                     //展示介绍
-                    'description' => '满减送活动',
+                    'description' => '购满指定金额享受优惠',
                     //展示图标
                     'icon'        => 'addon/manjian/icon.png',
                     //跳转链接

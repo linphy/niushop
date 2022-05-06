@@ -13,21 +13,13 @@
 	.ns-prompt-block.balance, .ns-prompt-block.growth {justify-content: flex-end;}
 	.layui-form-item .layui-form-checkbox[lay-skin=primary] {margin-top: 0;}
 	.blacklist{background: #333;color: #fff;line-height: 1;padding: 3px 6px;border-radius: 3px;font-size: 12px;}
+	.vip_style{background: #333;color: #fff5a0;line-height: 1;padding: 3px 6px;border-radius: 3px;font-size: 12px;}
+	.layui-form-select dl dt {color: #333; font-weight: bold;}
+    .ns-title-content{overflow:visible !important;}
 </style>
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/member.css" />
 {/block}
 {block name="main"}
-<div class="layui-collapse ns-tips" >
-	<div class="layui-colla-item">
-		<h2 class="layui-colla-title">操作提示</h2>
-		<ul class="layui-colla-content layui-show">
-			<li>商城可以针对会员进行添加，编辑，锁定，调整账户等操作。</li>
-			<li>账户类型有用户名、手机、邮箱三种类型，筛选时可以选择其中一种类型并输入对应的内容进行筛选。</li>
-			<li>点击收起按钮可以将搜索面板隐收起，变成高级搜索按钮。</li>
-		</ul>
-	</div>
-</div>
-
 <!-- 添加会员 -->
 <div class="ns-single-filter-box">
 	<button type="button" class="layui-btn ns-bg-color" onclick="window.location.href='{:addon_url("shop/member/addMember")}'">添加会员</button>
@@ -128,13 +120,26 @@
 			</div>
 			<div class="layui-form-item">
 				<div class="layui-inline">
-					<label class="layui-form-label">会员卡</label>
+					<label class="layui-form-label">会员等级</label>
 					<div class="layui-input-inline">
 						<select name="level_id">
 							<option value="">请选择</option>
+							{if $supermember_is_exit}
+							<optgroup label="超级会员卡">
+								{foreach $member_level_list as $member_level_list_k=> $member_level_list_v}
+								{if $member_level_list_v.level_type eq 1}<option value="{$member_level_list_v.level_id}">{$member_level_list_v.level_name}</option>{/if}
+								{/foreach}
+							</optgroup>
+							<optgroup label="会员级别">
+								{foreach $member_level_list as $member_level_list_k=> $member_level_list_v}
+								{if $member_level_list_v.level_type eq 0}<option value="{$member_level_list_v.level_id}">{$member_level_list_v.level_name}</option>{/if}
+								{/foreach}
+							</optgroup>
+							{else/}
 							{foreach $member_level_list as $member_level_list_k=> $member_level_list_v}
 							<option value="{$member_level_list_v.level_id}">{$member_level_list_v.level_name}</option>
 							{/foreach}
+							{/if}
 						</select>
 					</div>
 				</div>
@@ -202,9 +207,14 @@
 		</div>
 		<div class='ns-title-content'>
 			<p class="layui-elip">{{d.nickname}}</p>
-			{{# if (d.status == 0){ }}
+			{{# if (d.status == 0 || d.member_level_type == 1){ }}
 			<div>
+				{{# if (d.status == 0){ }}
 				<span class="blacklist">黑名单</span>
+				{{# } }}
+				{{# if (d.member_level_type == 1){ }}
+				<span class="vip_style">SVIP</span>
+				{{# } }}
 			</div>
 			{{# } }}
 		</div>
@@ -316,6 +326,16 @@
 {block name="script"}
 <script type='text/javascript' src='SHOP_JS/member_list.js'></script>
 <script type="text/javascript">
+	function getQueryString(name) {
+	    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+	    var r = window.location.search.substr(1).match(reg);
+	    if (r != null) {
+	        return unescape(r[2]);
+	    }
+	    return null;
+	}
+	let levelId = getQueryString("levelId")
+	$('select[name="level_id"]').val(levelId)
     var table, form, laytpl, laydate,
         repeat_flag = false,
         currentDate = new Date(),
@@ -426,7 +446,7 @@
         table = new Table({
             elem: '#member_list',
             url: ns.url("shop/member/memberList"),
-            where:{"cluster_id" : "{$cluster_id}"},
+            where:{"cluster_id" : "{$cluster_id}","level_id": levelId},
             cols: [
                 [
                     {
@@ -441,9 +461,10 @@
                     templet: '#userdetail'
                 }, {
                     field: 'member_level_name',
-                    title: '会员卡',
+                    title: '会员等级',
                     width: '8%',
-                    unresize: 'false'
+                    unresize: 'false',
+										// templet: '#vipdetail'
                 }, {
                     field: 'parent_fenxiao_name',
                     title: '上级分销商',
@@ -452,23 +473,7 @@
                     hide: {$is_exit_fenxiao} ? false : true
                 }, {
                     field: 'point',
-                    title: '{if !empty($point)}' +
-                        '<div class="ns-prompt-block">' +
-                        '积分' +
-                        '<div class="ns-prompt">' +
-                        '<i class="iconfont iconwenhao1 required ns-point"></i>'+
-                        '<div class="ns-point-box ns-reason-box ns-prompt-box" >' +
-                        '<div class="ns-prompt-con">' +
-                        '{foreach $point as $k=>$v}' +
-                        '<p>{$k+1}、{$v}</p>' +
-                        '{/foreach}' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '{else /} ' +
-                        '积分' +
-                        '{/if}',
+                    title: $("#tableTitlePoint").html(),
                     width: '8%',
                     unresize: 'false',
                     align: 'left',
@@ -477,23 +482,7 @@
                     }
                 }, {
                     field: 'balance',
-                    title: '{if !empty($balance)}'+
-                        '<div class="ns-prompt-block balance">'+
-                        '余额'+
-                        '<div class="ns-prompt">' +
-                        '<i class="iconfont iconwenhao1 required ns-balance"></i>' +
-                        '<div class="ns-balance-box ns-reason-box ns-prompt-box">' +
-                        '<div class="ns-prompt-con">' +
-                        '{foreach $balance as $k=>$v}' +
-                        '<p>{$k+1}、{$v}</p>' +
-                        '{/foreach}' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '{else /} ' +
-                        '余额' +
-                        '{/if}',
+                    title: $("#tableTitleBalance").html(),
                     width: '8%',
                     unresize: 'false',
                     align: 'right',
@@ -503,23 +492,7 @@
                     }
                 }, {
                     field: 'growth',
-                    title: '{if !empty($growth)}'+
-                        '<div class="ns-prompt-block growth">'+
-                        '成长值'+
-                        '<div class="ns-prompt">' +
-                        '<i class="iconfont iconwenhao1 required ns-growth"></i>' +
-                        '<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">' +
-                        '<div class="ns-prompt-con">' +
-                        '{foreach $growth as $k=>$v}' +
-                        '<p>{$k+1}、{$v}</p>' +
-                        '{/foreach}' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '{else /} ' +
-                        '成长值' +
-                        '{/if}',
+                    title: $("#tableTitleGrowth").html(),    
                     width: '10%',
                     unresize: 'false',
                     align: 'right'
@@ -539,9 +512,9 @@
                     }
                 }, {
                     title: '操作',
-                    width: '10%',
                     unresize: 'false',
-                    toolbar: '#operation'
+                    toolbar: '#operation',
+                    align:'right'
                 }
                 ]
             ],
@@ -607,7 +580,6 @@
          * 批量操作
          */
         table.bottomToolbar(function(obj) {
-            console.log("批量操作",obj);
             if (obj.data.length < 1) {
                 layer.msg('请选择要操作的数据');
                 return;
@@ -820,6 +792,10 @@
                 }
                 arr_id.push(field[prop]);
             }
+            if (arr_id.length == 0){
+				repeat_flag = false;
+            	return layer.msg('会员标签不能为空!');
+			}
 
             $.ajax({
                 type: "POST",
@@ -1009,5 +985,63 @@
 
 <script type="text/html" id="batchOperation">
 	<button class="layui-btn layui-btn-primary" lay-event="setlabel">设置标签</button>
+</script>
+
+<script type="text/html" id="tableTitleBalance">
+    {if !empty($balance)}
+        <div class="ns-prompt-block balance">
+            余额
+            <div class="ns-prompt">
+                <i class="iconfont iconwenhao1 required ns-growth"></i>
+                <div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
+                    <div class="ns-prompt-con">
+                    {foreach $balance as $k=>$v}
+                    <p>{$k+1}、{$v}</p>
+                    {/foreach}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {else /} 
+        余额
+    {/if}
+</script>
+<script type="text/html" id="tableTitlePoint">
+    {if !empty($point)} 
+        <div class="ns-prompt-block"> 
+            积分 
+            <div class="ns-prompt"> 
+                <i class="iconfont iconwenhao1 required ns-growth"></i>
+                <div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box"> 
+                    <div class="ns-prompt-con"> 
+                    {foreach $point as $k=>$v} 
+                        <p>{$k+1}、{$v}</p> 
+                    {/foreach} 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    {else /}  
+    积分 
+    {/if}
+</script>
+<script type="text/html" id="tableTitleGrowth">
+    {if !empty($growth)}
+        <div class="ns-prompt-block growth">
+            成长值
+            <div class="ns-prompt"> 
+                <i class="iconfont iconwenhao1 required ns-growth"></i> 
+                <div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box"> 
+                    <div class="ns-prompt-con"> 
+                        {foreach $growth as $k=>$v} 
+                        <p>{$k+1}、{$v}</p> 
+                        {/foreach} 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    {else /}  
+    成长值 
+    {/if}
 </script>
 {/block}

@@ -15,21 +15,31 @@ return [
         'url' => 'wechat://shop/wechat/setting',
         'parent' => 'CHANNEL_ROOT',
         'picture_select' => '',
-        'picture' => 'addon/wechat/shop/view/public/img/menu_icon/wechat_icon.png',
+        'picture' => 'addon/wechat/shop/view/public/img/menu_icon/wechat_icon_new.png',
+        'picture_selected' => 'addon/wechat/shop/view/public/img/menu_icon/wechat_icon_select.png',
         'is_show' => 1,
         'sort' => 3,
         'child_list' => [
             [
+                'name' => 'WCHAT_ROOT_CONFIG',
+                'title' => '概况',
+                'url' => 'wechat://shop/wechat/setting',
+                'is_show' => 1,
+                'sort' => 1,
+            ],
+            [
                 'name' => 'WCHAT_CONFIG',
-                'title' => '公众平台配置',
+                'title' => '基础配置',
                 'url' => 'wechat://shop/wechat/config',
-                'is_show' => 0,
+                'is_show' => 1,
+                'sort' => 2,
             ],
             [
                 'name' => 'WECHAT_MENU',
                 'title' => '菜单管理',
                 'url' => 'wechat://shop/menu/menu',
-                'is_show' => 0,
+                'is_show' => 1,
+                'sort' => 3,
             ],
             [
                 'name' => 'WECHAT_MENU_EDIT',
@@ -41,7 +51,8 @@ return [
                 'name' => 'WECHAT_MATERIAL',
                 'title' => '消息素材',
                 'url' => 'wechat://shop/material/lists',
-                'is_show' => 0,
+                'is_show' => 1,
+                'sort' => 4,
             ],
             [
                 'name' => 'WECHAT_MATERIAL_ADD_TEXT',
@@ -65,6 +76,25 @@ return [
                 'name' => 'WECHAT_MATERIAL_DELETE',
                 'title' => '删除图文',
                 'url' => 'wechat://shop/material/delete',
+                'is_show' => 0
+            ],
+
+            [
+                'name' => 'WECHAT_MATERIAL_ADD_TEXT',
+                'title' => '添加文本',
+                'url' => 'wechat://shop/material/addtextmaterial',
+                'is_show' => 0
+            ],
+            [
+                'name' => 'WECHAT_MATERIAL_EDIT_TEXT',
+                'title' => '修改文本',
+                'url' => 'wechat://shop/material/edittextmaterial',
+                'is_show' => 0
+            ],
+            [
+                'name' => 'WECHAT_MATERIAL_DELETE_TEXT',
+                'title' => '删除文本',
+                'url' => 'wechat://shop/material/textmaterial',
                 'is_show' => 0
             ],
             [
@@ -99,20 +129,28 @@ return [
             ],
             [
                 'name' => 'WECHAT_SHARE',
-                'title' => '分享内容设置',
+                'title' => '分享内容',
                 'url' => 'wechat://shop/wechat/share',
-                'is_show' => 0
+                'is_show' => 1,
+                'sort' => 5,
             ],
             [
                 'name' => 'WECHAT_REPLAY_INDEX',
                 'title' => '回复设置',
                 'url' => 'wechat://shop/replay/replay',
-                'is_show' => 0,
+                'is_show' => 1,
+                'sort' => 6,
             ],
             [
                 'name' => 'WECHAT_REPLAY_KEYS',
                 'title' => '关键词自动回复',
                 'url' => 'wechat://shop/replay/replay',
+                'is_show' => 0
+            ],
+            [
+                'name' => 'WECHAT_REPLAY_KEYS',
+                'title' => '默认自动回复',
+                'url' => 'wechat://shop/replay/default',
                 'is_show' => 0
             ],
             [
@@ -122,22 +160,11 @@ return [
                 'is_show' => 0
             ],
             [
-                'name' => 'WECHAT_MASS_INDEX',
-                'title' => '群发设置',
-                'url' => 'wechat://shop/wechat/mass',
-                'is_show' => 0
-            ],
-            [
                 'name' => 'WECHAT_FANS',
                 'title' => '粉丝管理',
                 'url' => 'wechat://shop/fans/lists',
-                'is_show' => 0
-            ],
-            [
-                'name' => 'WECHAT_FANS_LIST',
-                'title' => '粉丝列表',
-                'url' => 'wechat://shop/fans/lists',
-                'is_show' => 0
+                'is_show' => 1,
+                'sort' => 7
             ],
             [
                 'name' => 'WECHAT_FANS_TAG_LIST',
@@ -171,9 +198,10 @@ return [
             ],
             [
                 'name' => 'WECHAT_MESSAGE_CONFIG',
-                'title' => '微信消息模板',
+                'title' => '模板消息',
                 'url' => 'wechat://shop/message/config',
-                'is_show' => 0,
+                'is_show' => 1,
+                'sort' => 8
             ],
             [
                 'name' => 'WECHAT_MESSAGE_EDIT',

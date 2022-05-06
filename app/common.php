@@ -18,6 +18,7 @@ use extend\QRcode as QRcode;
 use think\facade\Session;
 use think\facade\Event;
 use app\model\system\Addon;
+use extend\Barcode;
 
 /*****************************************************基础函数*********************************************************/
 /**
@@ -59,6 +60,27 @@ function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root 
         }
     }
     return $tree;
+}
+
+/**
+ * 读取csv的内容到数组
+ * @param string $uploadfile
+ * @return array|mixed
+ */
+function readCsv($uploadfile)
+{
+    $file = fopen($uploadfile, "r");
+    while (!feof($file)) {
+        $data[] = fgetcsv($file);
+    }
+    $data = eval('return ' . iconv('gbk', 'utf-8', var_export($data, true)) . ';');
+    foreach ($data as $key => $value) {
+        if (!$value) {
+            unset($data[ $key ]);
+        }
+    }
+    fclose($file);
+    return $data;
 }
 
 /**
@@ -307,10 +329,16 @@ function unique_random($len = 10)
  */
 function random_keys($length)
 {
-    $pattern = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLOMNOPQRSTUVWXYZ';
+//    $pattern = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLOMNOPQRSTUVWXYZ';
+    $pattern = array(
+        '1','2','3','4','5','6','7','8','9','0',
+        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+    );
+    $keys = array_rand($pattern, $length);
     $key = '';
     for ($i = 0; $i < $length; $i++) {
-        $key .= $pattern{mt_rand(0, 35)};    //生成php随机数
+        $key .= $pattern[$keys[$i]];    //生成php随机数
     }
     return $key;
 }
@@ -327,7 +355,7 @@ function random_keys($length)
  *            请求方法GET/POST
  * @return array $data 响应数据
  */
-function http($url, $timeout = 30, $header = array ())
+function http($url, $timeout = 30, $header = array())
 {
     if (!function_exists('curl_init')) {
         throw new Exception('server not install curl');
@@ -341,10 +369,15 @@ function http($url, $timeout = 30, $header = array ())
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
     }
     $data = curl_exec($ch);
-    list ($header, $data) = explode("\r\n\r\n", $data);
+    if ($data && is_array(explode("\r\n\r\n", $data))) {
+        list ($header, $data) = explode("\r\n\r\n", $data);
+    } else {
+        $header = explode("\r\n\r\n", $data)[ 0 ];
+        $data = [];
+    }
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($http_code == 301 || $http_code == 302) {
-        $matches = array ();
+        $matches = array();
         preg_match('/Location:(.*?)\n/', $header, $matches);
         $url = trim(array_pop($matches));
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -451,7 +484,46 @@ function url(string $url = '', $vars = [])
         $var_url = '';
     }
     $url = $url . '.html';
-    $url = str_replace("shop", SHOP_MODULE, $url);  //针对输入
+    $url_arr = explode("/", $url);
+    foreach ($url_arr as $key => $val){
+        if($val == "shop"){
+            $url_arr[$key] = SHOP_MODULE;
+            break;
+        }
+    }
+    $url = implode("/", $url_arr);
+//    $url = str_replace("shop", SHOP_MODULE, $url);  //针对输入
+    return ROOT_URL . '/' . $url . $var_url;
+
+}
+
+/**
+ * Url生成(重写url函数) 获取不含html的url
+ * @param string $url 路由地址
+ */
+function getUrl(string $url = '', $vars = [])
+{
+
+    if (!empty($vars)) {
+        if (is_array($vars)) {
+            $vars = http_build_query($vars);
+        }
+        $tag = REWRITE_MODULE ? '?' : '&';
+        $var_url = $tag . $vars;
+    } else {
+
+        $var_url = '';
+    }
+//    $url = $url . '.html';
+    $url_arr = explode("/", $url);
+    foreach ($url_arr as $key => $val){
+        if($val == "shop"){
+            $url_arr[$key] = SHOP_MODULE;
+            break;
+        }
+    }
+    $url = implode("/", $url_arr);
+//    $url = str_replace("shop", SHOP_MODULE, $url);  //针对输入
     return ROOT_URL . '/' . $url . $var_url;
 
 }
@@ -979,7 +1051,7 @@ function dir_mkdir($path = '', $mode = 0777, $recursive = true)
  * @param string $dst 目的地文件夹
  * @return bool
  */
-function dir_copy($src = '', $dst = '')
+function dir_copy($src = '', $dst = '', $ignore_files = [])
 {
     if (empty($src) || empty($dst)) {
         return false;
@@ -991,7 +1063,9 @@ function dir_copy($src = '', $dst = '')
             if (is_dir($src . '/' . $file)) {
                 dir_copy($src . '/' . $file, $dst . '/' . $file);
             } else {
-                copy($src . '/' . $file, $dst . '/' . $file);
+                if(!in_array($file, $ignore_files)){
+                    copy($src . '/' . $file, $dst . '/' . $file);
+                }
             }
         }
     }
@@ -1465,4 +1539,90 @@ function removeBom($contents)
     } else {
         return $contents;
     }
+}
+
+/**
+ * 复制拷贝
+ * @param string $src 原目录
+ * @param string $dst 复制到的目录
+ */
+function recurseCopy($src, $dst)
+{
+    $dir = opendir($src);
+    @mkdir($dst);
+    while (false !== ($file = readdir($dir))) {
+        if (($file != '.') && ($file != '..')) {
+            if (is_dir($src . '/' . $file)) {
+                recurseCopy($src . '/' . $file, $dst . '/' . $file);
+            } else {
+                copy($src . '/' . $file, $dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
+}
+
+/**
+ * 获取毫秒数
+ * @return false|string
+ */
+function getMillisecond() {
+    list($microsecond, $time) = explode(' ', microtime());
+    $time = (float)sprintf('%.0f',(floatval($microsecond)+floatval($time))*1000);
+    return substr($time, -3);
+}
+
+/**
+ * #号颜色转为rgb
+ * @return false|string
+ */
+function hex2rgb($color)
+{
+
+    if ($color[ 0 ] == '#') {
+        $color = substr($color, 1);
+    }
+    if (strlen($color) == 6) {
+        list($r, $g, $b) = array( $color[ 0 ] . $color[ 1 ], $color[ 2 ] . $color[ 3 ], $color[ 4 ] . $color[ 5 ] );
+    } elseif (strlen($color) == 3) {
+        list($r, $g, $b) = array( $color[ 0 ] . $color[ 0 ], $color[ 1 ] . $color[ 1 ], $color[ 2 ] . $color[ 2 ] );
+    } else {
+        return false;
+    }
+    $r = hexdec($r);
+    $g = hexdec($g);
+    $b = hexdec($b);
+    return array( $r, $g, $b );
+}
+
+/**
+ * 生成条形码
+ *
+ * @param unknown $content
+ * @return string
+ */
+function getBarcode($content,$path='')
+{
+    $barcode = new Barcode(14, $content);
+    $path = $barcode->generateBarcode($path);
+    return $path;
+}
+
+/**
+ * 生成不重复的随机数
+ *
+ * @param unknown
+ * @return string
+ */
+function NoRand($begin=0,$end=20,$limit=5)
+{
+    $rand_array = range($begin, $end);
+    shuffle($rand_array);//调用现成的数组随机排列函数
+    $number_arr = array_slice($rand_array, 0, $limit);//截取前$limit个
+    $number = '';
+    foreach($number_arr as $k=>$v){
+        $number .= $v;
+    }
+    $number = trim($number);
+    return $number;
 }

@@ -14,6 +14,7 @@ namespace app\model\web;
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
 use app\model\system\Upgrade;
+use app\model\upload\Upload;
 
 /**
  * 网站系统性设置
@@ -80,6 +81,22 @@ class Config extends BaseModel
      */
     public function setDefaultImg($data, $site_id = 0, $app_module = 'shop')
     {
+        $config_info = $this->getDefaultImg($site_id, $app_module);
+        if(!empty($config_info[ 'data' ][ 'value' ])){
+            if($data['default_goods_img'] && $config_info[ 'data' ][ 'value' ]['default_goods_img'] && $data['default_goods_img'] != $config_info[ 'data' ][ 'value' ]['default_goods_img']){
+                $upload_model = new Upload();
+                $upload_model->deletePic($config_info['data']['value']['default_goods_img'], $site_id);
+            }
+            if($data['default_headimg'] && $config_info[ 'data' ][ 'value' ]['default_headimg'] && $data['default_headimg'] != $config_info[ 'data' ][ 'value' ]['default_headimg']){
+                $upload_model = new Upload();
+                $upload_model->deletePic($config_info['data']['value']['default_headimg'], $site_id);
+            }
+            if($data['default_storeimg'] && $config_info[ 'data' ][ 'value' ]['default_storeimg'] && $data['default_goods_img'] != $config_info[ 'data' ][ 'value' ]['default_storeimg']){
+                $upload_model = new Upload();
+                $upload_model->deletePic($config_info['data']['value']['default_storeimg'], $site_id);
+            }
+        }
+
         $config = new ConfigModel();
         $res = $config->setConfig($data, '默认图设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'DEFAULT_IMAGE' ] ]);
         return $res;
@@ -139,14 +156,20 @@ class Config extends BaseModel
                 'market_supervision_url' => ''
             ];
         } else {
-            $upgrade_model = new Upgrade();
-            $auth_info = $upgrade_model->authInfo();
+            $auth_info = cache("authinfo_copyright");
+            if(empty($auth_info))
+            {
+                $upgrade_model = new Upgrade();
+                $auth_info = $upgrade_model->authInfo();
+                cache("authinfo_copyright", $auth_info, ['expire' => 604800]);
+            }
             if (is_null($auth_info) || $auth_info[ 'code' ] != 0) {
                 $res[ 'data' ][ 'value' ][ 'logo' ] = '';
                 $res[ 'data' ][ 'value' ][ 'company_name' ] = '';
                 $res[ 'data' ][ 'value' ][ 'copyright_link' ] = '';
                 $res[ 'data' ][ 'value' ][ 'copyright_desc' ] = '';
             }
+          
         }
         return $res;
     }
@@ -217,6 +240,12 @@ class Config extends BaseModel
     public function seth5DomainName($data, $site_id = 1, $app_modle = 'shop')
     {
 
+        $search = '/^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/';
+        if($data['deploy_way'] == 'indep'){
+            if(!preg_match($search,$data['domain_name_h5'])){
+                return $this->error('','请输入正确的域名地址');
+            }
+        }
         $config = new ConfigModel();
         $res = $config->setConfig($data, 'H5域名配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_modle ], [ 'config_key', '=', 'H5_DOMAIN_NAME' ] ]);
 
@@ -233,14 +262,78 @@ class Config extends BaseModel
         $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'H5_DOMAIN_NAME' ] ]);
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
-                'domain_name_h5' => ROOT_URL . '/h5',
+                'domain_name_h5' => __ROOT__ . '/h5',
+                'deploy_way' => 'default'
             ];
         } else {
-            if ($res[ 'data' ][ 'value' ][ 'domain_name_h5' ] == '') {
+            if ($res[ 'data' ][ 'value' ][ 'domain_name_h5' ] == '' || empty($res[ 'data' ][ 'value' ]['deploy_way']) || $res[ 'data' ][ 'value' ]['deploy_way'] == 'default') {
                 $res[ 'data' ][ 'value' ] = [
-                    'domain_name_h5' => ROOT_URL . '/h5',
+                    'domain_name_h5' => __ROOT__ . '/h5'
                 ];
             }
+            $res[ 'data' ][ 'value' ]['deploy_way'] = $res[ 'data' ][ 'value' ]['deploy_way'] ?? 'default';
+        }
+        return $res;
+    }
+
+    /**
+     * 设置域名跳转配置
+     * jump_type 1前台，2后台
+     */
+    public function setDomainJumpConfig($data, $site_id = 1, $app_modle = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '获取域名跳转配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_modle ], [ 'config_key', '=', 'DOMAIN_JUMP_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取域名跳转配置
+     * jump_type 1前台，2后台
+     */
+    public function getDomainJumpConfig($site_id = 1,$app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'DOMAIN_JUMP_CONFIG' ] ]);
+        $res[ 'data' ][ 'value' ]['jump_type'] = $res[ 'data' ][ 'value' ]['jump_type'] ?? '0';
+        return $res;
+    }
+
+    /**
+     * pc域名配置
+     */
+    public function setPcDomainName($data, $site_id = 1, $app_modle = 'shop')
+    {
+        $search = '/^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/';
+        if($data['deploy_way'] == 'indep'){
+            if(!preg_match($search,$data['domain_name_pc'])){
+                return $this->error('','请输入正确的域名地址');
+            }
+        }
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, 'PC域名配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_modle ], [ 'config_key', '=', 'PC_DOMAIN_NAME' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取pc域名配置
+     */
+    public function getPcDomainName($site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'PC_DOMAIN_NAME' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'domain_name_pc' => __ROOT__ . '/web',
+                'deploy_way' => 'default'
+            ];
+        } else {
+            if ($res[ 'data' ][ 'value' ][ 'domain_name_pc' ] == ''|| empty($res[ 'data' ][ 'value' ]['deploy_way']) || $res[ 'data' ][ 'value' ]['deploy_way'] == 'default') {
+                $res[ 'data' ][ 'value' ] = [
+                    'domain_name_pc' => __ROOT__ . '/web'
+                ];
+            }
+            $res[ 'data' ][ 'value' ]['deploy_way'] = $res[ 'data' ][ 'value' ]['deploy_way'] ?? 'default';
         }
         return $res;
     }
@@ -272,6 +365,40 @@ class Config extends BaseModel
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
                 'words' => ''
+            ];
+        }
+        return $res;
+    }
+
+    /**
+     * 设置猜你喜欢
+     * @param $data
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function setGuessYouLike($data, $site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '商品猜你喜欢', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_GUESS_YOU_LIKE_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取商品猜你喜欢
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function getGuessYouLike($site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_GUESS_YOU_LIKE_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'is_show' => 0,
+                'type_show' => 1,
+                'goods_ids' => ''
             ];
         }
         return $res;
@@ -337,7 +464,63 @@ class Config extends BaseModel
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
                 'type' => 'asc',
-                'default_value' => 0
+                'default_value' => 100
+            ];
+        }
+        return $res;
+    }
+
+    /**
+     * 导航风格设置
+     * array $data
+     */
+    public function setStyle($data, $site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '验证码设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'STYLE_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 查询导航风格
+     */
+    public function getStyle($site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'STYLE_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res = 'app/shop/view/base/style1.html';
+        }else{
+            $res = $res[ 'data' ][ 'value' ]['style'];
+        }
+        return $res;
+    }
+
+    /**
+     * 设置pc
+     * @param $data
+     * @param int $site_id
+     * @param string $app_module
+     * @return array
+     */
+    public function setCategoryConfig($data, $site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, 'PC端首页分类设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_CATEGORY_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取pc首页商品分类配置
+     */
+    public function getCategoryConfig($site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_CATEGORY_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'category' => 1,
+                'img' => 1
             ];
         }
         return $res;

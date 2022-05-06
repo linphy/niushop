@@ -11,13 +11,12 @@
 
 namespace addon\discount\shop\controller;
 
-use app\shop\controller\BaseShop;
 use addon\discount\model\Discount as DiscountModel;
 
 /**
  * 限时折扣控制器
  */
-class Discount extends BaseShop
+class Discount extends BaseController
 {
     /**
      * 添加活动
@@ -57,6 +56,7 @@ class Discount extends BaseShop
                 'goods_id'   => input('goods_id', 0),
                 'site_id'       => $this->site_id,
                 'sku_list'      => input('sku_list', ''),
+                'cancel_sku_list'      => input('cancel_sku_list', ''),
             ];
 
             return $discount_model->editDiscount($data);
@@ -66,6 +66,7 @@ class Discount extends BaseShop
             $this->assign('discount_id', $discount_id);
 
             $discount_info = $discount_model->getDiscountDetail($discount_id, $this->site_id);
+            if (empty($discount_info['data'])) return $this->error('未获取到活动数据', addon_url('discount://shop/discount/lists'));
             $this->assign('discount_info', $discount_info['data']);
 
             return $this->fetch("discount/edit");
@@ -99,6 +100,7 @@ class Discount extends BaseShop
 
             //活动详情
             $discount_info = $discount_model->getDiscountInfo($discount_id, $site_id);
+            if (empty($discount_info['data'])) return $this->error('未获取到活动数据', addon_url('discount://shop/discount/lists'));
             $this->assign('discount_info', $discount_info['data']);
 
             return $this->fetch("discount/detail");
@@ -122,6 +124,7 @@ class Discount extends BaseShop
                 $condition[] = ['d.status', '=', $status];
             }
             $condition[] = ['d.site_id', '=', $this->site_id];
+            $condition[] = ['g.is_delete', '=', 0];
             $condition[] = ['g.goods_name', 'like', '%' . $goods_name . '%'];
             $order       = 'd.create_time desc';
             $field       = 'd.*,g.goods_name,g.goods_image';
@@ -132,6 +135,22 @@ class Discount extends BaseShop
             $join = [
                 ['goods g', 'd.goods_id = g.goods_id', 'inner']
             ];
+
+            $start_time = input('start_time', '');
+            $end_time   = input('end_time', '');
+
+            if ($start_time && !$end_time) {
+                $condition[] = ['d.end_time', '>=', date_to_time($start_time)];
+            } elseif (!$start_time && $end_time) {
+                $condition[] = ['d.start_time', '<=', date_to_time($end_time)];
+            } elseif ($start_time && $end_time) {
+                $start_timestamp = date_to_time($start_time);
+                $end_timestamp = date_to_time($end_time);
+                $sql = "d.start_time between {$start_timestamp} and {$end_timestamp}";
+                $sql .= " or d.end_time between {$start_timestamp} and {$end_timestamp}";
+                $sql .= " or (d.start_time <= {$start_timestamp} and d.end_time >= {$end_timestamp})";
+                $condition[] = ['', 'exp', \think\facade\Db::raw($sql)];
+            }
 
             $res                 = $discount_model->getDiscountPageList($condition, $page, $page_size, $order, $field, $alias, $join);
             foreach ($res['data']['list'] as $key => $val) {

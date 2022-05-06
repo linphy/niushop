@@ -24,40 +24,6 @@ use app\model\system\Upgrade;
  */
 class Config extends BaseShop
 {
-    public function copyright()
-    {
-        $upgrade_model = new Upgrade();
-        $auth_info = $upgrade_model->authInfo();
-
-        $config_model = new ConfigModel();
-        $copyright = $config_model->getCopyright($this->site_id, $this->app_module);
-        if (request()->isAjax()) {
-            $logo = input('logo', '');
-            $data = [
-                'icp' => input('icp', ''),
-                'gov_record' => input('gov_record', ''),
-                'gov_url' => input('gov_url', ''),
-                'market_supervision_url' => input('market_supervision_url', ''),
-                'logo' => '',
-                'company_name' => '',
-                'copyright_link' => '',
-                'copyright_desc' => ''
-            ];
-            if ($auth_info[ 'code' ] == 0) {
-                $data[ 'logo' ] = input('logo', '');
-                $data[ 'company_name' ] = input('company_name', '');
-                $data[ 'copyright_link' ] = input('copyright_link', '');
-                $data[ 'copyright_desc' ] = input('copyright_desc', '');
-            }
-            $this->addLog("修改版权配置");
-            $res = $config_model->setCopyright($data, $this->site_id, $this->app_module);
-            return $res;
-        }
-        $this->assign('is_auth', ( $auth_info[ 'code' ] >= 0 ? 1 : 0 ));
-        $this->assign('copyright_config', $copyright[ 'data' ][ 'value' ]);
-        return $this->fetch('config/copyright');
-    }
-
     /**
      * 支付管理
      */
@@ -103,10 +69,12 @@ class Config extends BaseShop
         $goods_config_model = new GoodsConfigModel();
         if (request()->isAjax()) {
             $content = input('content', '');//售后保障协议
-            return $goods_config_model->setAfterSaleConfig('售后保障协议', $content, $this->site_id);
+            $is_display = input('is_display',1);//默认显
+            return $goods_config_model->setAfterSaleConfig('售后保障', $content, $this->site_id, $is_display);
         } else {
+            $this->forthMenu();
             $content = $goods_config_model->getAfterSaleConfig($this->site_id);
-            $this->assign('content', $content);
+            $this->assign('content', $content['data']);
             return $this->fetch('config/aftersale');
         }
     }
@@ -137,16 +105,19 @@ class Config extends BaseShop
     {
         $api_model = new Api();
         if (request()->isAjax()) {
-            $is_use = input("is_use", 0);
+            $is_use = input("is_use", 1);
             $public_key = input("public_key", "");
             $private_key = input("private_key", "");
+            $long_time = input("long_time", "0");#限制时长 0位不限制  单位小时
             $data = array (
                 "public_key" => $public_key,
                 "private_key" => $private_key,
+                "long_time" => $long_time
             );
             $result = $api_model->setApiConfig($data, $is_use);
             return $result;
         } else {
+            $this->forthMenu();
             $config_result = $api_model->getApiConfig();
             $config = $config_result[ "data" ];
             $this->assign("config", $config);
@@ -181,45 +152,81 @@ class Config extends BaseShop
     }
 
     /**
-     * h5域名配置
-     */
-    public function h5DomainName()
-    {
-        $config_model = new ConfigModel();
-        $domain_name = input("domain_name", "");
-
-        $result = $config_model->seth5DomainName([
-            'domain_name_h5' => $domain_name
-        ]);
-
-        return $result;
-    }
-
-
-    /**
      * 客服配置
      */
     public function servicer()
     {
         $servicer_model = new ServicerModel();
         if (request()->isAjax()) {
-            $weapp = input('weapp', 0);//是否启用小程序客服
-            $system = input('system', 0);//是否启用系统客服
-            $open = input('open', 0);//是否启用第三方客服
-            $open_url = input('open_url', '');//是否启用第三方客服
-            $data = array(
-                'weapp' => $weapp,
-                'system' => $system,
-                'open' => $open,
-                'open_url' => $open_url
-            );
-            $result = $servicer_model->setServicerConfig($data);
-            return $result;
+            $system     = input('system', 0);//是否启用Niushop客服
+            $weapp      = input('weapp', 0);//是否启用小程序客服
+            $open       = input('open', 0);//是否启用第三方客服H5
+            $open_pc    = input('open_pc', 0);//是否启用第三方客服PC
+            $open_url   = input('open_url', '');//第三方客服 链接
+            $socket_url = input('socket_url', '');// websocket 链接
+
+            $data = [
+                'system'     => $system,
+                'weapp'      => $weapp,
+                'open'       => $open,
+                'open_pc'    => $open_pc,
+                'open_url'   => $open_url,
+                'socket_url' => $socket_url,
+            ];
+
+            return $servicer_model->setServicerConfig($data);
         } else {
+            // $this->forthMenu();
             $config = $servicer_model->getServicerConfig()['data'] ?? [];
             $this->assign('config', $config['value'] ?? []);
+            $this->assign('pc_is_exit', addon_is_exit('pc', $this->site_id));
             return $this->fetch('config/servicer');
         }
 
+    }
+
+    /**
+     * 域名跳转配置
+     */
+    public function domainJumpConfig()
+    {
+        $config_model = new ConfigModel();
+        if(request()->isAjax()){
+            $jump_type = input("jump_type", "1");
+            $result = $config_model->setDomainJumpConfig([
+                'jump_type' => $jump_type
+            ]);
+            return $result;
+        }else{
+            // $this->forthMenu();
+            $config = $config_model->getDomainJumpConfig();
+            $this->assign('config',$config['data']['value']);
+            return $this->fetch('config/domain_jump_config');
+        }
+        
+    }
+
+
+    /**
+     * 网站部署
+     */
+    public function siteDeploy()
+    {
+        //查询域名跳转
+        $config_model = new ConfigModel();
+        $jump_type = $config_model->getDomainJumpConfig();
+        $this->assign('jump_type',$jump_type['data']['value']);
+
+        //查询不同端部署数据
+        $site_deploy_data = event('SiteDeployData');
+        $site_deploy_data = array_column($site_deploy_data, null, 'type');
+        $this->assign('site_deploy_data', $site_deploy_data ?? []);
+        //查询客服设置
+        $servicer_model = new ServicerModel();
+        $servicer_config = $servicer_model->getServicerConfig()['data'] ?? [];
+        $servicer_config['value']['pc_is_exit'] = addon_is_exit('pc', $this->site_id);
+        $this->assign('servicer_config', $servicer_config['value'] ?? []);
+		
+		return $this->fetch('config/site_deploy');
     }
 }

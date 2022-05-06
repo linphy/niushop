@@ -14,8 +14,10 @@ namespace app\model\message;
 use app\model\shop\Shop;
 use app\model\BaseModel;
 use addon\wechat\model\Wechat;
+use app\model\system\Config;
 use app\model\system\Site;
 use EasyWeChatComposer\Laravel\ServiceProvider;
+use think\facade\Db;
 
 /**
  * 消息管理类
@@ -125,7 +127,19 @@ class Message extends BaseModel
      */
     public function getMessageList($site_id = 0, $message_type = 1, $field = '*', $order = '', $limit = null)
     {
-
+        switch ($message_type) {
+            case 1:
+                $order = Db::raw("field(keywords,'REGISTER_CODE','LOGIN_CODE','SET_PASSWORD','FIND_PASSWORD','MEMBER_BIND',
+                                'USER_CANCEL_SUCCESS','USER_CANCEL_FAIL','ORDER_URGE_PAYMENT','ORDER_CLOSE','ORDER_PAY',
+                                'ORDER_DELIVERY','ORDER_COMPLETE','ORDER_VERIFY_OUT_TIME','VERIFY_CODE_EXPIRE','VERIFY',
+                                'ORDER_REFUND_AGREE','ORDER_REFUND_REFUSE','USER_WITHDRAWAL_SUCCESS','USER_BALANCE_CHANGE_NOTICE'
+                                ,'COMMISSION_GRANT','FENXIAO_WITHDRAWAL_SUCCESS','FENXIAO_WITHDRAWAL_ERROR')");
+                break;
+            case 2:
+                $order = Db::raw("field(keywords,'BUYER_PAY','BUYER_ORDER_COMPLETE','BUYER_REFUND','BUYER_DELIVERY_REFUND',
+                                'USER_WITHDRAWAL_APPLY','FENXIAO_WITHDRAWAL_APPLY','USER_CANCEL_APPLY')");
+                break;
+        }
         $list = model('message_template')->getList([ [ "message_type", "=", $message_type ] ], $field, $order, '', '', '', $limit);
         if (!empty($list)) {
             foreach ($list as $k => $v) {
@@ -285,5 +299,4 @@ class Message extends BaseModel
             return $this->error('', "MESSAGE_FAIL");
         }
     }
-
 }

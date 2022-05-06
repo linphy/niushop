@@ -21,6 +21,7 @@ class OrderComplete
 
     public function handle($params)
     {
+
         if (isset($params['order_id'])) {
             $order = new Order();
             $order->orderComplete($params['order_id']);

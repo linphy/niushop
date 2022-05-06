@@ -39,20 +39,25 @@ class Login extends BaseModel
                 ['site_id', '=', $data['site_id']],
                 ['is_delete', '=', 0]
             ], 'member_id,
-            username, nickname, mobile, email, status,last_login_time'
+            username, nickname, mobile, email, status,last_login_time,can_receive_registergift'
         );
         if (empty($info)) {
             return $this->error('', 'USERNAME_OR_PASSWORD_ERROR');
         } elseif ($info['status'] == 0) {
             return $this->error('', 'MEMBER_IS_LOCKED');
         } else {
+            if($info['can_receive_registergift'] == 1){
+                event("MemberReceiveRegisterGift", [ 'member_id' => $info['member_id'], 'site_id' => $data[ 'site_id' ] ]);
+            }
             //更新登录时间
             model("member")->update([
-                'login_time' => time(),
+                'login_time'      => time(),
                 'last_login_time' => time(),
-                'login_ip' => request()->ip(),
+                'can_receive_registergift' => 0,
+                'login_ip'        => request()->ip(),
+                'login_type'      => $data['app_type'] ?? '',
+                'login_type_name' => $data['app_type_name'] ?? '',
             ], [['member_id', '=', $info['member_id']]]);
-
 
             //执行登录奖励
             event("MemberLogin", ['member_id' => $info['member_id'], 'site_id' => $data['site_id']], true);
@@ -78,7 +83,7 @@ class Login extends BaseModel
                         [$key, '=', $value],
                         ['site_id', '=', $data['site_id']],
                         ['is_delete', '=', 0]
-                    ], 'member_id,username, nickname, mobile, email, status, last_login_time'
+                    ], 'member_id,username, nickname, mobile, email, status, last_login_time, can_receive_registergift'
                 );
                 if (!empty($info)) break;
             }
@@ -103,18 +108,25 @@ class Login extends BaseModel
         } elseif ($info['status'] == 0) {
             return $this->error('', 'MEMBER_IS_LOCKED');
         } else {
+            if($info['can_receive_registergift'] == 1){
+                event("MemberReceiveRegisterGift", [ 'member_id' => $info['member_id'], 'site_id' => $data[ 'site_id' ] ]);
+            }
             //更新登录时间
             model("member")->update([
-                'login_time' => time(),
+                'login_time'      => time(),
                 'last_login_time' => time(),
-                'login_ip' => request()->ip(),
+                'can_receive_registergift' => 0,
+                'login_ip'        => request()->ip(),
+                'login_type'      => $data['app_type'] ?? '',
+                'login_type_name' => $data['app_type_name'] ?? '',
             ], [['member_id', '=', $info['member_id']]]);
 
             //执行登录奖励
             event("MemberLogin", ['member_id' => $info['member_id'], 'site_id' => $data['site_id']], true);
 
             //用户第三方信息刷新
-            $this->refreshAuth($info['member_id'], $data);
+            if (!isset($info['is_register'])) $this->refreshAuth($info['member_id'], $data);
+
             return $this->success($info);
         }
     }
@@ -138,31 +150,31 @@ class Login extends BaseModel
             'site_id' => $data['site_id']
         ];
         if (!empty($data['qq_openid'])) {
-            model("member")->update(['qq_openid' => ''], [['qq_openid', '=', $data['qq_openid']]]);
+            model("member")->update(['qq_openid' => ''], [ ['qq_openid', '=', $data['qq_openid'] ], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['qq_openid' => $data['qq_openid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         if (!empty($data['wx_openid'])) {
-            model("member")->update(['wx_openid' => ''], [['wx_openid', '=', $data['wx_openid']]]);
+            model("member")->update(['wx_openid' => ''], [ ['wx_openid', '=', $data['wx_openid']], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['wx_openid' => $data['wx_openid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         if (!empty($data['weapp_openid'])) {
-            model("member")->update(['weapp_openid' => ''], [['weapp_openid', '=', $data['weapp_openid']]]);
+            model("member")->update(['weapp_openid' => ''], [ ['weapp_openid', '=', $data['weapp_openid']], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['weapp_openid' => $data['weapp_openid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         if (!empty($data['wx_unionid'])) {
-            model("member")->update(['wx_unionid' => ''], [['wx_unionid', '=', $data['wx_unionid']]]);
+            model("member")->update(['wx_unionid' => ''], [ ['wx_unionid', '=', $data['wx_unionid']], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['wx_unionid' => $data['wx_unionid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         if (!empty($data['ali_openid'])) {
-            model("member")->update(['ali_openid' => ''], [['ali_openid', '=', $data['ali_openid']]]);
+            model("member")->update(['ali_openid' => ''], [ ['ali_openid', '=', $data['ali_openid']], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['ali_openid' => $data['ali_openid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         if (!empty($data['baidu_openid'])) {
-            model("member")->update(['baidu_openid' => ''], [['baidu_openid', '=', $data['baidu_openid']]]);
+            model("member")->update(['baidu_openid' => ''], [ ['baidu_openid', '=', $data['baidu_openid']], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['baidu_openid' => $data['baidu_openid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         if (!empty($data['toutiao_openid'])) {
-            model("member")->update(['toutiao_openid' => ''], [['toutiao_openid', '=', $data['toutiao_openid']]]);
+            model("member")->update(['toutiao_openid' => ''], [ ['toutiao_openid', '=', $data['toutiao_openid']], ['site_id', '=', $data['site_id']] ]);
             model("member")->update(['toutiao_openid' => $data['toutiao_openid']], [['member_id', '=', $member_id], ['site_id', '=', $data['site_id']]]);
         }
         return $this->success();
@@ -218,18 +230,24 @@ class Login extends BaseModel
                 ['site_id', '=', $data['site_id']],
                 ['is_delete','=',0]
             ],
-            'member_id,username, nickname, mobile, email, status,last_login_time'
+            'member_id,username, nickname, mobile, email, status,last_login_time, can_receive_registergift'
         );
         if (empty($info)) {
             return $this->error('', 'MEMBER_NOT_EXIST');
         } elseif ($info['status'] == 0) {
             return $this->error('', 'MEMBER_IS_LOCKED');
         } else {
+            if($info['can_receive_registergift'] == 1){
+                event("MemberReceiveRegisterGift", [ 'member_id' => $info['member_id'], 'site_id' => $data[ 'site_id' ] ]);
+            }
             //更新登录时间
             model("member")->update([
-                'login_time' => time(),
+                'login_time'      => time(),
                 'last_login_time' => time(),
-                'login_ip' => request()->ip(),
+                'can_receive_registergift' => 0,
+                'login_ip'        => request()->ip(),
+                'login_type'      => $data['app_type'] ?? '',
+                'login_type_name' => $data['app_type_name'] ?? '',
             ], [['member_id', '=', $info['member_id']]]);
 
             event("MemberLogin", ['member_id' => $info['member_id'], 'site_id' => $data['site_id']], true);
@@ -268,13 +286,13 @@ class Login extends BaseModel
     public function loginSuccess($data)
     {
         $member_model = new Member();
-        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $data["member_id"]]], "username,mobile,email,reg_time,wx_openid,last_login_type,login_time");
+        $member_info_result = $member_model->getMemberInfo([["member_id", "=", $data["member_id"]]], "username,mobile,email,reg_time,wx_openid,last_login_type,login_time, nickname");
         $member_info = $member_info_result["data"];
 
         //发送短信
         $sms_model = new Sms();
 
-        $name = $member_info["username"] == '' ? $member_info["mobile"] : $member_info["username"];
+        $name = $member_info["nickname"] == '' ? $member_info["mobile"] : $member_info["nickname"];
         $var_parse = array(
             "name" => replaceSpecialChar($name),//验证码
         );
@@ -300,7 +318,7 @@ class Login extends BaseModel
 //         }
 
         $data["template_data"] = [
-            'keyword1' => !empty($member_info["username"]) ? $member_info["username"] : $member_info["mobile"],
+            'keyword1' => !empty($member_info["nickname"]) ? $member_info["nickname"] : $member_info["mobile"],
             'keyword2' => '登录成功',
             'keyword3' => time_to_date($member_info["login_time"]),
         ];

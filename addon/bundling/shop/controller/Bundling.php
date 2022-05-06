@@ -68,6 +68,7 @@ class Bundling extends BaseShop
             $condition   = [['bl_id', '=', $bl_id], ['site_id', '=', $this->site_id]];
             $info_result = $bundling_model->getBundlingDetail($condition);
             $info        = $info_result["data"];
+            if (empty($info)) return $this->error('未获取到活动数据', addon_url('bundling://shop/bundling/lists'));
             $this->assign("info", $info);
             $this->assign("bl_id", $bl_id);
             return $this->fetch("bundling/edit");
@@ -83,6 +84,7 @@ class Bundling extends BaseShop
         $bundling_model = new BundlingModel();
         $condition      = [['bl_id', '=', $bundling_id], ['site_id', '=', $this->site_id]];
         $info           = $bundling_model->getBundlingDetail($condition);
+        if (empty($info['data'])) return $this->error('未获取到活动数据', addon_url('bundling://shop/bundling/lists'));
         $this->assign('info', $info);
         return $this->fetch("bundling/detail");
     }

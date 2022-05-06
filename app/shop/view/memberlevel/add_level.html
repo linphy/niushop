@@ -35,6 +35,13 @@
 	.align-center{
 		text-align: center!important;
 	}
+	.coupon-box td,th{
+		padding: 15px 10px !important;
+		box-sizing: border-box;
+	}
+	.gods-box .layui-table#goods tbody{
+		width: 100%;
+	}
 </style>
 {/block}
 {block name="main"}
@@ -105,7 +112,7 @@
 
 	<div class="layui-card ns-card-common ns-card-brief">
 		<div class="layui-card-header">
-			<span class="ns-card-title">开卡礼包</span>
+			<span class="ns-card-title">等级礼包</span>
 		</div>
 		<div class="layui-card-body">
 
@@ -291,7 +298,7 @@
                     title: '优惠券列表',
                     skin: 'layer-tips-class',
                     type: 1,
-                    area: ['850px', '600px'],
+                    area: ['1100px', '600px'],
                     content: html,
                 });
 
@@ -525,10 +532,14 @@
 		<div class="gods-box">
 			<table class="layui-table" lay-skin="line" lay-size="lg">
 				<colgroup>
-					<col width="8%">
-					<col width="50%">
-					<col width="15%">
-					<col width="27%">
+					<col width="5%">
+					<col width="25%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+					<col width="20%">
 				</colgroup>
 				<thead>
 				<tr>
@@ -538,22 +549,20 @@
 						</div>
 					</th>
 					<th class="layui-elip">优惠券名称</th>
+					<th class="layui-elip">类型</th>
 					<th class="layui-elip">优惠金额/折扣</th>
+					<th class="layui-elip">适用商品</th>
+					<th class="layui-elip">领取人限制</th>
+					<th class="layui-elip">已领取/发放数</th>
 					<th class="layui-elip">结束时间</th>
 				</tr>
 				</thead>
 			</table>
-			<table class="layui-table" id="goods" lay-skin="line" lay-size="lg">
-				<colgroup>
-					<col width="8%">
-					<col width="50%">
-					<col width="15%">
-					<col width="27%">
-				</colgroup>
+			<table class="layui-table"  style="table-layout:fixed" id="goods" lay-skin="line" lay-size="lg">
 				<tbody>
 				{foreach $coupon_list.data as $coupon_list_k => $coupon_list_v}
 				<tr>
-					<td class="ns-check-box">
+					<td width="50px" class="ns-check-box">
 						<div class="layui-form">
 							{{# var a = {$coupon_list_v.coupon_type_id} }}
 							{{#  if($.inArray(a.toString(), d.coupon_id) != -1){  }}
@@ -564,7 +573,7 @@
 							<input type="hidden" id="coupon_id" value="{$coupon_list_v.coupon_type_id}">
 						</div>
 					</td>
-					<td>
+					<td width="250px">
 						<div class="ns-table-title">
 							<div class="ns-title-pic">
 								{if condition="$coupon_list_v.image"}
@@ -579,14 +588,26 @@
 						</div>
 					</td>
 					{if $coupon_list_v.type == 'reward'}
-					<td class="layui-elip coupon-money">{$coupon_list_v.money}元</td>
+					<td width="101px">满减</td>
 					{else/}
-					<td class="layui-elip coupon-money">{$coupon_list_v.discount}折</td>
+					<td width="101px">折扣</td>
 					{/if}
-					{if $coupon_list_v.validity_type == 0}
-					<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
+					{if $coupon_list_v.type == 'reward'}
+					<td width="101px" class="layui-elip coupon-money">{$coupon_list_v.money}元</td>
 					{else/}
-					<td class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
+					<td width="101px" class="layui-elip coupon-money">{$coupon_list_v.discount}折</td>
+					{/if}
+					{if $coupon_list_v.goods_type == '1'}
+					<td width="101px">全部商品</td>
+					{else/}
+					<td width="101px">指定商品</td>
+					{/if}
+					<td width="107px">{$coupon_list_v.max_fetch}</td>
+					<td width="107px">{$coupon_list_v.lead_count}/{$coupon_list_v.count}</td>
+					{if $coupon_list_v.validity_type == 0}
+					<td width="180px" class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
+					{else/}
+					<td width="180px" class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
 					{/if}
 				</tr>
 				{/foreach}

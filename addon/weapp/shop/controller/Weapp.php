@@ -52,7 +52,7 @@ class Weapp extends BaseShop
         }
         $this->assign('is_new_version', $is_new_version);
 
-        $weapp_menu = event('WeappMenu', []);
+        $weapp_menu = event('WeappMenu', ['site_id' => $this->site_id]);
         $this->assign('weapp_menu', $weapp_menu);
 
         return $this->fetch('weapp/setting', [], $this->replace);
@@ -96,7 +96,7 @@ class Weapp extends BaseShop
             $url_top = str_replace("http://", "", $url_top);
             // 去除链接的尾部/?s=
             $url_top       = str_replace('/?s=', '', $url_top);
-            $call_back_url = $url . '/wechat/wap/config/relateWeixin';
+            $call_back_url = addon_url("weapp://api/auth/relateweixin");
             $this->assign("url", $url_top);
             $this->assign("call_back_url", $call_back_url);
             return $this->fetch('weapp/config', [], $this->replace);
@@ -162,7 +162,7 @@ class Weapp extends BaseShop
                 $res = file_put_contents($filename, base64_decode($res['data']));
 
                 header("Content-Type: application/zip");
-                header("Content-Transfer-Encoding: Binary");
+                header("Content-BirthdayGift-Encoding: Binary");
                 header("Content-Length: " . filesize($filename));
                 header("Content-Disposition: attachment; filename=\"" . basename($filename) . "\"");
                 readfile($filename);
@@ -171,5 +171,34 @@ class Weapp extends BaseShop
                 return $this->error($res['message']);
             }
         }
+    }
+
+    /**
+     * 分享
+     */
+    public function share(){
+        $config_model = new ConfigModel();
+        if (request()->isAjax()) {
+            $key = input('key', 'index');
+            $value = [
+                'title' => input('title', ''),
+                'path' => input('path', '')
+            ];
+            $res = $config_model->setShareConfig($this->site_id, $this->app_module, $key, $value);
+            return $res;
+        }
+        $scene = [
+            [
+                'key' => 'index',
+                'title' => '首页'
+            ]
+        ];
+        $this->assign('scene', $scene);
+
+        $config = $config_model->getShareConfig($this->site_id, $this->app_module);
+        $this->assign('config', $config['data']['value']);
+        $this->assign('shop_info', $this->shop_info);
+		
+        return $this->fetch('weapp/share', [], $this->replace);
     }
 }

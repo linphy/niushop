@@ -87,23 +87,23 @@ function orderRemark(order_id){
  * @param order_id
  */
 function orderClose(order_id){
-	layer.confirm('确定要关闭该订单吗?', function() {
-		$.ajax({
-			url: ns.url("shop/order/close"),
-			data: {order_id : order_id},
-			dataType: 'JSON',
-			type: 'POST',
-			success: function(res) {
-				layer.msg(res.message);
-				
-				if (res.code == 0) {
-					location.reload();
-				}
-			}
-		});
-	}, function () {
-		layer.close();
-	});
+    layer.confirm('确定要关闭该订单吗?', function() {
+        $.ajax({
+            url: ns.url("shop/order/close"),
+            data: {order_id : order_id},
+            dataType: 'JSON',
+            type: 'POST',
+            success: function(res) {
+                layer.msg(res.message);
+
+                if (res.code == 0) {
+                    location.reload();
+                }
+            }
+        });
+    }, function () {
+        layer.close();
+    });
 }
 
 /**
@@ -111,18 +111,22 @@ function orderClose(order_id){
 * @param order_id
 */
 function offlinePay(order_id){
-    $.ajax({
-        url: ns.url("shop/order/offlinePay"),
-        data: {order_id : order_id},
-        dataType: 'JSON',
-        type: 'POST',
-        success: function(res) {
-            layer.msg(res.message);
+    layer.confirm('确定要线下支付吗?', function() {
+        $.ajax({
+            url: ns.url("shop/order/offlinePay"),
+            data: {order_id : order_id},
+            dataType: 'JSON',
+            type: 'POST',
+            success: function(res) {
+                layer.msg(res.message);
 
-            if (res.code == 0) {
-                location.reload();
+                if (res.code == 0) {
+                    location.reload();
+                }
             }
-        }
+        });
+    }, function () {
+        layer.close();
     });
 }
 /**
@@ -153,17 +157,26 @@ function orderDelete(order_id){
  * 确认收货
  * @param order_id
  */
-function takeDelivery(order_id){
-    layer.confirm('确保买家已经收到您的商品，并且与买家协商完毕提前确认收货?', function() {
+function takeDelivery(order_id, type = 0){
+    var html = "";
+    if(type == 0){
+        html = '确保买家已经收到您的商品，并且与买家协商完毕提前确认收货?';
+    }else{
+        html = '确保买家已经收到您的商品，并且与买家协商完毕提前确认收货?（退款中的订单及虚拟订单无法确认收货）';
+    }
+    layer.confirm(html, function() {
         $.ajax({
             url: ns.url("shop/order/takeDelivery"),
-            data: {order_id : order_id},
+            data: {order_id : order_id, type : type},
             dataType: 'JSON',
             type: 'POST',
             success: function(res) {
-                layer.msg(res.message);
                 if (res.code == 0) {
-                    location.reload();
+                    layer.msg(res.message, null, function(){
+                        location.reload();
+                    });
+                }else{
+                    layer.msg(res.message);
                 }
             }
         });

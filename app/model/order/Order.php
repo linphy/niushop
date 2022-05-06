@@ -239,7 +239,7 @@ class Order extends OrderCommon
      * 订单支付
      * @param unknown $order_info
      */
-    public function orderPay($order_info, $pay_type)
+    public function orderPay($order_info, $pay_type,$log_data =[])
     {
         $pay_type_list = $this->getPayType();
         if ($order_info['order_status'] != 0) {
@@ -260,6 +260,43 @@ class Order extends OrderCommon
             "pay_type_name" => $pay_type_list[$pay_type]
         );
 
+        //记录订单日志 start
+        $action = '商家对订单进行了线下支付';
+        //获取用户信息
+        if (empty($log_data)){
+            $member_info = model('member')->getInfo(['member_id'=>$order_info['member_id']],'nickname');
+            $log_data = [
+                'uid'        => $order_info[ 'member_id' ],
+                'nick_name'  => $member_info['nickname'],
+                'action_way' => 1
+            ];
+            $action = '买家【'.$member_info['nickname'].'】支付了订单';
+        }
+        $log_data = array_merge($log_data,[
+            'order_id'          => $order_info['order_id'],
+            'action'            => $action,
+            'order_status'      => self::ORDER_PAY,
+            'order_status_name' => $this->order_status[self::ORDER_PAY]["name"]
+        ]);
+
+        $this->addOrderLog($log_data);
+        //记录订单日志 end
+
+        //操作接龙订单start
+        $where = array(
+            ["relate_order_id", "=", $order_info["order_id"]],
+            ["order_status", "=", self::ORDER_CREATE],
+        );
+        model("promotion_jielong_order")->update([
+            "order_status" => self::ORDER_PAY,
+            "order_status_name" => $this->order_status[self::ORDER_PAY]["name"],
+            "order_status_action" => json_encode($this->order_status[self::ORDER_PAY], JSON_UNESCAPED_UNICODE),
+            "pay_time" => time(),
+            "pay_type" => $pay_type,
+            "pay_type_name" => $pay_type_list[$pay_type]
+        ], $where);
+        //操作接龙订单end
+
         $result = model("order")->update($data, $condition);
         return $this->success($result);
     }
@@ -270,7 +307,7 @@ class Order extends OrderCommon
      * @param int $type //1 订单项发货  2整体发货
      * @return array
      */
-    public function orderGoodsDelivery($param, $type = 1)
+    public function orderGoodsDelivery($param, $type = 1, $log_data=[])
     {
         $param['type'] = isset($param['type']) ? $param['type'] : 'manual';
         model('order_goods')->startTrans();
@@ -355,7 +392,7 @@ class Order extends OrderCommon
             $delivery_id = $express_delivery_model->delivery($delivery_data);
 
             //检测整体, 订单中订单项是否全部发放完毕
-            $res = $this->orderCommonDelivery($order_id);
+            $res = $this->orderCommonDelivery($order_id,$log_data);
             model('order_goods')->commit();
             return $this->success($delivery_id);
         } catch (\Exception $e) {
@@ -418,7 +455,7 @@ class Order extends OrderCommon
      * 批量订单发货（导入excel文件发货）
      * @param $filename
      */
-    public function orderFileDelivery($param, $site_id)
+    public function orderFileDelivery($param, $site_id, $uid)
     {
         //电子面单插件
         $addon_is_exit = addon_is_exit('electronicsheet', $site_id);
@@ -436,6 +473,8 @@ class Order extends OrderCommon
             return $this->error('', '导入了一个空文件');
         }
 
+        $user_info = model("user")->getInfo([['uid', '=', $uid]], 'username');
+
         //添加文件上传记录
         $success_num = $allRow - 1;
         $error_num = 0;
@@ -445,7 +484,9 @@ class Order extends OrderCommon
             'path' => $param['path'],
             'order_num' => $allRow - 1,
             'success_num' => $success_num,
-            'create_time' => time()
+            'create_time' => time(),
+            'uid' => $uid,
+            'username' => $user_info['username']
         ];
         $res = model('order_import_file')->add($data);
         if (!$res) {
@@ -474,13 +515,13 @@ class Order extends OrderCommon
                 $order_name = $PHPExcel->getActiveSheet()->getCell('B' . $i)->getValue();
                 $order_name = trim($order_name, ' ');
                 //发货方式
-                $type = $PHPExcel->getActiveSheet()->getCell('C' . $i)->getValue();
+                $type = $PHPExcel->getActiveSheet()->getCell('F' . $i)->getValue();
                 $type = trim($type, ' ');
                 //物流公司名称或电子面单名称
-                $name = $PHPExcel->getActiveSheet()->getCell('D' . $i)->getValue();
+                $name = $PHPExcel->getActiveSheet()->getCell('G' . $i)->getValue();
                 $name = trim($name, ' ');
                 //物流单号
-                $delivery_no = $PHPExcel->getActiveSheet()->getCell('E' . $i)->getValue();
+                $delivery_no = $PHPExcel->getActiveSheet()->getCell('H' . $i)->getValue();
                 $delivery_no = trim($delivery_no, ' ');
 
                 if (empty($type)) {
@@ -649,48 +690,65 @@ class Order extends OrderCommon
      *
      * @param array $condition
      */
-    public function orderDelivery($order_id)
+    public function orderDelivery($order_id,$log_data=[])
     {
-        //统计订单项目
-        $count = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_WAIT], ["refund_status", "<>", 3]], "order_goods_id");
-        $delivery_count = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_DOING], ["refund_status", "<>", 3]], "order_goods_id");
-        if ($count == 0 && $delivery_count > 0) {
+        $order_info = model('order')->getInfo([['order_id', "=", $order_id]], 'site_id, order_status');
 
-            $order_info = model('order')->getInfo([['order_id', "=", $order_id]], 'site_id');
+        if($order_info['order_status'] == 1){
 
-            //修改订单项的配送状态
-            $order_data = array(
-                'order_status' => self::ORDER_DELIVERY,
-                'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
-                'delivery_status' => self::DELIVERY_FINISH,
-                'delivery_status_name' => $this->delivery_status[self::DELIVERY_FINISH]["name"],
-                'order_status_action' => json_encode($this->order_status[self::ORDER_DELIVERY], JSON_UNESCAPED_UNICODE),
-                'delivery_time' => time()
-            );
-            $res = model('order')->update($order_data, [['order_id', "=", $order_id]]);
+            //统计订单项目
+            $count = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_WAIT], ["refund_status", "<>", 3]], "order_goods_id");
+            $delivery_count = model('order_goods')->getCount([['order_id', "=", $order_id], ['delivery_status', "=", self::DELIVERY_DOING], ["refund_status", "<>", 3]], "order_goods_id");
 
-            //获取订单自动收货时间
-            $config_model = new Config();
-            $event_time_config_result = $config_model->getOrderEventTimeConfig($order_info['site_id']);
-            $event_time_config = $event_time_config_result["data"];
-            $now_time = time(); //当前时间
+            if ($count == 0 && $delivery_count > 0) {
 
-            if ($event_time_config["value"]["auto_take_delivery"] > 0) {
-                $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400;//自动收货时间
-                $cron_model = new Cron();
-                $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
+                //修改订单项的配送状态
+                $order_data = array(
+                    'order_status' => self::ORDER_DELIVERY,
+                    'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
+                    'delivery_status' => self::DELIVERY_FINISH,
+                    'delivery_status_name' => $this->delivery_status[self::DELIVERY_FINISH]["name"],
+                    'order_status_action' => json_encode($this->order_status[self::ORDER_DELIVERY], JSON_UNESCAPED_UNICODE),
+                    'delivery_time' => time()
+                );
+                $res = model('order')->update($order_data, [['order_id', "=", $order_id]]);
+                if ($log_data){
+                    //记录订单日志 start
+                    $log_data = array_merge($log_data,[
+                        'order_id'          => $order_id,
+                        'order_status'      => self::ORDER_DELIVERY,
+                        'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"]
+                    ]);
+                    $this->addOrderLog($log_data);
+                    //记录订单日志 end
+                }
+
+                //获取订单自动收货时间
+                $config_model = new Config();
+                $event_time_config_result = $config_model->getOrderEventTimeConfig($order_info['site_id']);
+                $event_time_config = $event_time_config_result["data"];
+                $now_time = time(); //当前时间
+
+                if ($event_time_config["value"]["auto_take_delivery"] > 0) {
+                    $execute_time = $now_time + $event_time_config["value"]["auto_take_delivery"] * 86400;//自动收货时间
+                    $cron_model = new Cron();
+                    $cron_model->addCron(1, 1, "订单自动收货", "CronOrderTakeDelivery", $execute_time, $order_id);
+                }
+
+                event('OrderDelivery', ['order_id' => $order_id]);
+
+                //订单发货消息
+                $message_model = new Message();
+                $message_model->sendMessage(['keywords' => "ORDER_DELIVERY", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
+
+                return $res;
+            } else {
+                return $this->error();
             }
-
-            event('OrderDelivery', ['order_id' => $order_id]);
-
-            //订单发货消息
-            $message_model = new Message();
-            $message_model->sendMessage(['keywords' => "ORDER_DELIVERY", 'order_id' => $order_id, 'site_id' => $order_info['site_id']]);
-
-            return $res;
-        } else {
+        }else{
             return $this->error();
         }
+
     }
 
     /**
@@ -706,7 +764,7 @@ class Order extends OrderCommon
     /**
      * 订单收货地址修改
      */
-    public function orderAddressUpdate($param, $condition)
+    public function orderAddressUpdate($param, $condition, $log_data = [])
     {
         $province_id = $param["province_id"];
         $city_id = $param["city_id"];
@@ -732,11 +790,20 @@ class Order extends OrderCommon
             "telephone" => $telephone,
             "name" => $name,
         );
-        $order_info = model("order")->getInfo($condition, "order_status");
+        $order_info = model("order")->getInfo($condition, "order_status,order_status_name");
         $order_status_array = [self::ORDER_PAY, self::ORDER_CREATE];
         if (!in_array($order_info["order_status"], $order_status_array))
             return $this->error("", "当前订单状态不可编辑收货地址!");
+        //记录订单日志 start
+        if ($log_data){
+            $log_data = array_merge($log_data,[
+                'order_status'       => $order_info['order_status'],
+                'order_status_name' => $order_info['order_status_name']
+            ]);
 
+            $this->addOrderLog($log_data);
+        }
+        //记录订单日志 end
         $result = model('order')->update($data, $condition);
         return $this->success($result);
     }

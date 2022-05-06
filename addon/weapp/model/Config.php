@@ -14,6 +14,7 @@ namespace addon\weapp\model;
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
 use think\facade\Cache;
+use app\model\upload\Upload;
 
 /**
  * 微信小程序配置
@@ -27,8 +28,17 @@ class Config extends BaseModel
      */
     public function setWeappConfig($data, $is_use, $site_id = 0)
     {
+        $config_info = $this->getWeappConfig($site_id);
+        if(!empty($config_info['data']) && !empty($data['qrcode']) && $config_info['data']['value']['qrcode'] != $data['qrcode']){
+            $upload_model = new Upload();
+            $upload_model->deletePic($config_info['data']['value']['qrcode'], $site_id);
+        }
+
         $config = new ConfigModel();
         $res    = $config->setConfig($data, '微信小程序设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'WEAPP_CONFIG']]);
+        if($res && $data['qrcode']){
+            copy($data['qrcode'], "upload/default/default_img/wxewm.png");
+        }
         return $res;
     }
 
@@ -77,5 +87,38 @@ class Config extends BaseModel
     {
         model('config')->update(['value' => ''], [['app_module', '=', 'shop'], ['config_key', '=', 'WEAPP_VERSION']]);
         Cache::tag("config")->clear();
+    }
+
+    /**
+     * 设置小程序分享
+     * @param $site_id
+     * @param $app_module
+     * @param $key
+     * @param $value
+     */
+    public function setShareConfig($site_id, $app_module, $key, $value){
+        $config = model('config')->getInfo([ ['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'WEAPP_SHARE']], 'value');
+        if (!empty($config) && !empty($config['value'])) $data = json_decode($config['value'], true);
+
+        if(!empty($data[$key]['path']) && !empty($value['path']) && $data[$key]['path'] != $value['path']){
+            $upload_model = new Upload();
+            $upload_model->deletePic($data[$key]['path'], $site_id);
+        }
+
+        $data[$key] = $value;
+        $model = new ConfigModel();
+        $res = $model->setConfig($data, '小程序分享', 1, [['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'WEAPP_SHARE']]);
+        return $res;
+    }
+
+    /**
+     * 获取小程序分享配置
+     * @param $site_id
+     * @param $app_module\
+     */
+    public function getShareConfig($site_id, $app_module){
+        $config = new ConfigModel();
+        $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'WEAPP_SHARE']]);
+        return $res;
     }
 }

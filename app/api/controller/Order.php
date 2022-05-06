@@ -19,7 +19,8 @@ use app\model\express\ExpressPackage;
 use app\model\order\Order as OrderModel;
 use app\model\order\OrderCommon as OrderCommonModel;
 use app\model\order\OrderRefund as OrderRefundModel;
-
+use app\model\order\Config as ConfigModel;
+use think\facade\Cache;
 class Order extends BaseApi
 {
 
@@ -33,6 +34,13 @@ class Order extends BaseApi
         $order_common_model = new OrderCommonModel();
         $order_id           = isset($this->params['order_id']) ? $this->params['order_id'] : 0;
         $result             = $order_common_model->getMemberOrderDetail($order_id, $this->member_id, $this->site_id);
+
+        //获取未付款订单自动关闭时间 字段'auto_close'
+        $config_model = new ConfigModel;
+        $order_event_time_config = $config_model->getOrderEventTimeConfig($this->site_id,'shop');
+        $auto_close = $order_event_time_config['data']['value']['auto_close']*60 ?? [];
+        $result['data']['auto_close'] = $auto_close;
+
         return $this->response($result);
     }
 
@@ -44,33 +52,57 @@ class Order extends BaseApi
         $token = $this->checkToken();
         if ($token['code'] < 0) return $this->response($token);
         $order_common_model = new OrderCommonModel();
+        $search_text = isset($this->params['searchText']) ? $this->params['searchText'] : "";
         $condition          = array(
-            ["member_id", "=", $this->member_id],
-            ["site_id", "=", $this->site_id],
-            ["is_delete", '=', 0]
+            ["o.member_id", "=", $this->member_id],
+            ["o.site_id", "=", $this->site_id],
+            ["o.is_delete", '=', 0]
         );
         $order_status       = isset($this->params['order_status']) ? $this->params['order_status'] : 'all';
         switch ($order_status) {
             case "waitpay"://待付款
-                $condition[] = ["order_status", "=", 0];
+                $condition[] = ["o.order_status", "=", 0];
                 break;
             case "waitsend"://待发货
-                $condition[] = ["order_status", "=", 1];
+                $condition[] = ["o.order_status", "=", 1];
                 break;
             case "waitconfirm"://待收货
-                $condition[] = ["order_status", "in", [2, 3]];
+                $condition[] = ["o.order_status", "in", [2, 3]];
                 break;
             case "waitrate"://待评价
-                $condition[] = ["order_status", "in", [4, 10]];
-                $condition[] = ["is_evaluate", "=", 1];
+                $condition[] = ["o.order_status", "in", [4, 10]];
+                $condition[] = ["o.is_evaluate", "=", 1];
+                $condition[] = ["o.evaluate_status", "=", 0];
                 break;
         }
 //		if (c !== "all") {
 //			$condition[] = [ "order_status", "=", $order_status ];
 //		}
+
+        //获取未付款订单自动关闭时间 字段'auto_close'
+        $config_model = new ConfigModel;
+        $order_event_time_config = $config_model->getOrderEventTimeConfig($this->site_id,'shop');
+
         $page_index = isset($this->params['page']) ? $this->params['page'] : 1;
         $page_size  = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
-        $res        = $order_common_model->getMemberOrderPageList($condition, $page_index, $page_size, "create_time desc");
+        $order_id   = isset($this->params['order_id']) ? $this->params['order_id'] : 0;
+        $search_text = isset($this->params['searchText']) ? $this->params['searchText'] : "";
+        if($order_id){
+            $condition[] = ["o.order_id", "=", $order_id];
+        }
+        $join = [];
+        $alias = "o";
+        if ($search_text){
+            $condition[] = ['og.sku_name|o.order_no', 'like', '%' . $search_text . '%'];
+            $join = [
+                ['order_goods og', 'og.order_id = o.order_id', 'left']
+            ];
+        }
+
+        $res        = $order_common_model->getMemberOrderPageList($condition, $page_index, $page_size, "o.create_time desc", "*", $alias, $join);
+
+        $auto_close = $order_event_time_config['data']['value']['auto_close']*60 ?? [];
+        $res['data']['auto_close'] = $auto_close;
         return $this->response($res);
     }
 
@@ -129,7 +161,11 @@ class Order extends BaseApi
             return $this->response($this->error('', 'REQUEST_ORDER_ID'));
         }
         $order_model = new OrderCommonModel();
-        $result      = $order_model->orderCommonTakeDelivery($order_id);
+        $log_data = [
+            'uid'        => $this->member_id,
+            'action_way' => 1
+        ];
+        $result      = $order_model->orderCommonTakeDelivery($order_id,$log_data);
         return $this->response($result);
     }
 
@@ -146,7 +182,13 @@ class Order extends BaseApi
             return $this->response($this->error('', 'REQUEST_ORDER_ID'));
         }
         $order_model = new OrderModel();
-        $result      = $order_model->orderClose($order_id);
+
+        $log_data = [
+            'uid'        => $this->member_id,
+            'action_way' => 1
+        ];
+
+        $result      = $order_model->orderClose($order_id,$log_data);
         return $this->response($result);
     }
 
@@ -183,6 +225,7 @@ class Order extends BaseApi
                 case "waitrate"://待评价
                     $condition[] = ["order_status", "in", [4, 10]];
                     $condition[] = ["is_evaluate", "=", 1];
+                    $condition[] = ["evaluate_status", "=", 0];
                     break;
             }
             if ($order_status == 'refunding') {
@@ -212,7 +255,20 @@ class Order extends BaseApi
             ["member_id", "=", $this->member_id],
             ["order_id", "=", $order_id],
         );
-        $result                = $express_package_model->package($condition);
+
+        $order_common_model = new OrderCommonModel();
+        //$order_detail             = $order_common_model->getMemberOrderDetail($order_id, $this->member_id, $this->site_id);
+        $order_detail          = $order_common_model->getOrderInfo([['member_id', '=', $this->member_id], ['order_id', '=', $order_id], ['site_id', '=', $this->site_id]]);
+
+        $result                = $express_package_model->package($condition, $order_detail['data']['mobile']);
+        if(!empty($result)){
+            foreach($result as $kk=>$vv){
+                if(!empty($vv['trace']['list'])){
+                    $result[$kk]['trace']['list'] = array_reverse($vv['trace']['list']);
+                }
+            }
+
+        }
         if ($result) return $this->response($this->success($result));
         else return $this->response($this->error());
     }

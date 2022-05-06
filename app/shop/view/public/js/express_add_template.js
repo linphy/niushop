@@ -372,10 +372,9 @@ layui.use(['form', 'layer'], function () {
 	 * 2：在刚进入页面的时候初始化数据
 	 */
 	function compile_table() {
-
 		var html = '';
 		for (var index in submit_data) {
-			if (count_obj(submit_data[index]) > 0) {
+			if (count_obj(submit_data[index]) > 0 && submit_data[index]['area_names']) {
 				html += '<tr data-selected="' + index + '">';
 				html += '<td>';
 				html += '<p class="area-show">' + submit_data[index]['area_names'];
@@ -498,6 +497,8 @@ layui.use(['form', 'layer'], function () {
 		// 找到新选中部分
 		var choose = deal_data(surplus_area, 'selected');
 		combine_data(choose, temp_area);
+		//转换地区id
+		surplus_area_ids = JSON.stringify(get_area_ids(surplus_area));
 		compile_new_data();
 	});
 
@@ -524,8 +525,9 @@ layui.use(['form', 'layer'], function () {
 		// 找到 删除 合并
 		var choose = deal_data(temp_area, 'selected');
 		combine_data(choose, surplus_area);
-
 		compile_new_data();
+		//转换地区id
+		surplus_area_ids = JSON.stringify(get_area_ids(surplus_area));
 	});
 
 	/**
@@ -666,9 +668,14 @@ layui.use(['form', 'layer'], function () {
 		for (var per in temp_area) {
 			selected_area[opt_num][per] = temp_area[per];
 		}
-		submit_data[opt_num]['area_names'] = alter_text(temp_area, 1, 0, '')['html'];
+
+			submit_data[opt_num]['area_names'] = alter_text(temp_area, 1, 0, '')['html'];
+
+
+
 		// 编译数据表格
 		compile_table();
+
 		// 获取剩余地区和选中地区的ID数据
 		surplus_area_ids = JSON.stringify(get_area_ids(surplus_area));
 		submit_data[opt_num]['area_ids'] = JSON.stringify(get_area_ids(temp_area));
@@ -695,6 +702,8 @@ layui.use(['form', 'layer'], function () {
 			alter_data_attr(selected_area[opt_num], 'choosed', 1);
 			// 归还数据到总数据
 			combine_data(selected_area[opt_num], surplus_area);
+			//转换地区id
+			surplus_area_ids = JSON.stringify(get_area_ids(surplus_area));
 			// 销毁当前数据
 			delete selected_area[opt_num];
 			//selected_area[opt_num] = new Object();

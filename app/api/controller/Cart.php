@@ -166,4 +166,32 @@ class Cart extends BaseApi
         return $this->response($list);
     }
 
+    /**
+     * 获取会员购物车中商品数量
+     * @return false|string
+     */
+    public function goodsNum(){
+        $token = $this->checkToken();
+        if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $goods_id = $this->params['goods_id'] ?? 0;
+
+        $condition = [
+            [ 'gc.member_id', '=', $this->member_id ],
+            [ 'gc.site_id', '=', $this->site_id ],
+            [ 'gs.goods_id', '=', $goods_id ]
+        ];
+
+        $join = [
+            [
+                'goods_sku gs',
+                'gc.sku_id = gs.sku_id',
+                'left'
+            ]
+        ];
+
+        $cart = new CartModel();
+        $data = $cart->getCartSum($condition, 'gc.num', 'gc', $join);
+        return $this->response($data);
+    }
 }

@@ -1,6 +1,6 @@
 {extend name="base"/}
 {block name="resources"}
-<link rel="stylesheet" href="SHOP_CSS/index.css">
+<link rel="stylesheet" href="SHOP_CSS/index.css?v=20220111">
 {/block}
 {block name="main"}
 
@@ -29,7 +29,7 @@
 				<div class="layui-card-header">
 					<div>
 						<span class="ns-card-title">实时概况</span>
-						<span class="ns-card-sub">更新时间：{$today}</span>
+						<span class="ns-card-sub" id = "today">更新时间：{$today}</span>
 					</div>
 				</div>
 				<div class="layui-card-body">
@@ -40,55 +40,57 @@
 								<i class="iconfont iconwenhao1 required ns-growth"></i>
 								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" style="top: 30px;left: -64px;">
 									<div class="ns-prompt-con">
-										<p>只有经过支付的订单才会参与统计,支付后关闭的订单也参与统计。</p>
+										<p>只要支付过的订单都会参与统计,包括支付后关闭和退款订单。</p>
 									</div>
 								</div>
 							</div>
 							</div>
 						</div>
-						<p class="ns-survey-detail-num ns-text-color">{$stat_day.order_pay_count}</p>
+						<p class="ns-survey-detail-num ns-text-color" id="order_pay_count">0</p>
 						<div class="ns-survey-detail-rate">
-							{php}
-								$t = $stat_day['order_pay_count'];
-								$y = $stat_yesterday['order_pay_count'];
-							{/php}
-							<div>日同比 <span>{$t > $y ? '+' : ''}{$day_rate.order_pay_count}</span><i class="layui-icon layui-icon-triangle-d {$t > $y ? 'layui-icon-increase ns-text-color' : $t == $y ? 'is-null' : ''}"></i></div>
-							<div>昨日订单数 <span>{$stat_yesterday.order_pay_count} </span></div>
+							<div>日同比 <span id="day_rate_order_pay_count">100</span><i class="layui-icon layui-icon-triangle-d "></i></div>
+							<div>昨日订单数 <span id="stat_yesterday_order_pay_count">0 </span></div>
 						</div>
 						<div class="ns-survey-detail-split"></div>
 						<div class="ns-survey-detail-total">
 							<span>订单总数</span>
-							<span>{$shop_stat_sum.order_pay_count}</span>
+							<span id="shop_stat_sum_order_pay_count">0</span>
 						</div>
-						<!-- <p class="ns-survey-detail-yesterday">昨日：{$stat_yesterday.order_pay_count}</p> -->
 						<div class="title ns-prompt-block">
 							<div class="ns-prompt">
 								<button class="layui-btn layui-btn-primary ns-text-color ns-border-color ns-survey-yesterday-btn">昨日</button>
 								<div class="ns-prompt-box">
 									<div class="ns-prompt-con">
-										订单数：{$stat_yesterday.order_pay_count}
+										订单数：<span id="stat_yesterday_order_pay_counts">0</span>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">今日销售额(元)</p>
-						<p class="ns-survey-detail-num ns-text-color">{if isset($stat_day.order_total)}{$stat_day.order_total}{else /} 0.00 {/if}</p>
+						<!-- <p class="ns-survey-detail-aco">今日销售额(元)</p> -->
+						<div class="ns-survey-detail-aco">今日销售额(元)
+							<div class="ns-prompt-block" style="left: 126px;top: 20px;">
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" style="top: 30px;left: -64px;">
+									<div class="ns-prompt-con">
+										<p>只要支付成功的订单销售额都会参与统计,不去除退款部分。</p>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<p class="ns-survey-detail-num ns-text-color" id="stat_day_order_total"> 0.00 </p>
 						<div class="ns-survey-detail-rate">
-							{php}
-								$t = $stat_day['order_total'];
-								$y = $stat_yesterday['order_total'];
-							{/php}
-							<div>日同比 <span>{$t > $y ? '+' : ''}{$day_rate.order_total}</span><i class="layui-icon layui-icon-triangle-d {$t > $y ? 'layui-icon-increase ns-text-color' : $t == $y ? 'is-null' : ''}"></i></div>
-							<div>昨日销售额(元) <span>{$stat_yesterday.order_total} </span>
-<!--								<i class="layui-icon layui-icon-triangle-d"></i>-->
+							<div>日同比 <span id="day_rate_order_total">100</span><i class="layui-icon layui-icon-triangle-d"></i></div>
+							<div>昨日销售额(元) <span id="stat_yesterday_order_total">0.00</span>
 							</div>
 						</div>
 						<div class="ns-survey-detail-split"></div>
 						<div class="ns-survey-detail-total">
 							<span>销售总额</span>
-							<span>{$shop_stat_sum.order_total}</span>
+							<span id="shop_stat_sum_order_total">0.00</span>
 						</div>
 						<!-- <p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.order_total)}{$stat_yesterday.order_total}{else /} 0.00 {/if}</p> -->
 						<div class="title ns-prompt-block">
@@ -96,109 +98,82 @@
 								<button class="layui-btn layui-btn-primary ns-text-color ns-border-color ns-survey-yesterday-btn">昨日</button>
 								<div class="ns-prompt-box">
 									<div class="ns-prompt-con">
-										销售额：{if isset($stat_yesterday.order_total)}{$stat_yesterday.order_total}{else /} 0.00 {/if}元
+										销售额：<span id="stat_yesterday_order_totals">0.00</span>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">今日新增会员数</p>
-						<p class="ns-survey-detail-num ns-text-color">{$stat_day.member_count}</p>
+						<div class="ns-survey-detail-aco">今日新增会员数
+							<div class="ns-prompt-block" style="left: 131px;top: 20px;">
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" style="top: 30px;left: -64px;">
+									<div class="ns-prompt-con">
+										<p>新注册的会员账号会参与统计,不去除注销会员。</p>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<p class="ns-survey-detail-num ns-text-color" id="stat_day_member_count">0</p>
 						<div class="ns-survey-detail-rate">
-							{php}
-								$t = $stat_day['member_count'];
-								$y = $stat_yesterday['member_count'];
-							{/php}
-							<div>日同比 <span>{$t > $y ? '+' : ''}{$day_rate.member_count}</span><i class="layui-icon layui-icon-triangle-d {$t > $y ? 'layui-icon-increase ns-text-color' : $t == $y ? 'is-null' : ''}"></i></div>
-							<div>昨日新增会员数 <span>{$stat_yesterday.member_count} </span></div>
+							<div>日同比 <span id="day_rate_member_count">100</span><i class="layui-icon layui-icon-triangle-d"></i></div>
+							<div>昨日新增会员数 <span id="stat_yesterday_member_count">0 </span></div>
 						</div>
 						<div class="ns-survey-detail-split"></div>
 						<div class="ns-survey-detail-total">
 							<span>会员总数</span>
-							<span>{$shop_stat_sum.member_count}</span>
+							<span id="shop_stat_sum_member_count">0</span>
 						</div>
 						<div class="title ns-prompt-block">
 							<div class="ns-prompt">
 								<button class="layui-btn layui-btn-primary ns-text-color ns-border-color ns-survey-yesterday-btn">昨日</button>
 								<div class="ns-prompt-box">
 									<div class="ns-prompt-con">
-										会员数：{if isset($stat_yesterday.member_count)}{$stat_yesterday.member_count}{else /} 0 {/if}
+										会员数：<span id="stat_yesterday_member_counts">0</span>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">今日浏览量</p>
-						<p class="ns-survey-detail-num ns-text-color">{$stat_day.visit_count}</p>
+						<div class="ns-survey-detail-aco">今日浏览量
+							<div class="ns-prompt-block" style="left: 100px;top: 20px;">
+							<div class="ns-prompt">
+								<i class="iconfont iconwenhao1 required ns-growth"></i>
+								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box" style="top: 30px;left: -64px;">
+									<div class="ns-prompt-con">
+										<p>所有会员登录状态下进入商品详情页的次数之和。</p>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						<p class="ns-survey-detail-num ns-text-color" id="stat_day_visit_count">0</p>
 						<div class="ns-survey-detail-rate">
-							{php}
-								$t = $stat_day['visit_count'];
-								$y = $stat_yesterday['visit_count'];
-							{/php}
-							<div>日同比 <span>{$t > $y ? '+' : ''}{$day_rate.visit_count}</span><i class="layui-icon layui-icon-triangle-d {$t > $y ? 'layui-icon-increase ns-text-color' : $t == $y ? 'is-null' : ''}"></i></div>
-							<div>昨日浏览量 <span>{$stat_yesterday.visit_count}</span>
+							<div>日同比 <span id="day_rate_visit_count">100</span><i class="layui-icon layui-icon-triangle-d "></i></div>
+							<div>昨日浏览量 <span id="stat_yesterday_visit_count">0</span>
 <!--								<i class="layui-icon layui-icon-triangle-d"></i>-->
 							</div>
 						</div>
 						<div class="ns-survey-detail-split"></div>
 						<div class="ns-survey-detail-total">
 							<span>总浏览量</span>
-							<span>{$shop_stat_sum.visit_count}</span>
+							<span id="shop_stat_sum_visit_count">0</span>
 						</div>
 						<div class="title ns-prompt-block">
 							<div class="ns-prompt">
 								<button class="layui-btn layui-btn-primary ns-text-color ns-border-color ns-survey-yesterday-btn">昨日</button>
 								<div class="ns-prompt-box">
 									<div class="ns-prompt-con">
-										浏览量：{if isset($stat_yesterday.visit_count)}{$stat_yesterday.visit_count}{else /} 0 {/if}
+										浏览量：<span id="stat_yesterday_visit_counts">0</span>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<!-- <div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">订单总数</p>
-						<p class="ns-survey-detail-num">{$shop_stat_sum.order_pay_count}</p>
-						<p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.order_pay_count)}{$stat_yesterday.order_pay_count}{else /} 0 {/if}</p>
-					</div> -->
-					<!-- <div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">订单销售额(元)</p>
-						<p class="ns-survey-detail-num">{$shop_stat_sum.order_total}</p>
-						<p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.order_total)}{$stat_yesterday.order_total}{else /} 0.00 {/if}</p>
-					</div> -->
-					<!--<div class="ns-survey-detail-con">-->
-					<!--<p class="ns-survey-detail-aco">今日店铺收藏</p>-->
-					<!--<p class="ns-survey-detail-num">{$stat_day.collect_shop}</p>-->
-					<!--<p class="ns-survey-detail-yesterday">昨日：{$stat_yesterday.collect_shop}</p>-->
-					<!--</div>-->
-					<!--<div class="ns-survey-detail-con">-->
-					<!--<p class="ns-survey-detail-aco">店铺收藏总数</p>-->
-					<!--<p class="ns-survey-detail-num">{$shop_stat_sum.collect_shop}</p>-->
-					<!--</div>-->
-
-					<!-- <div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">商品收藏总数</p>
-						<p class="ns-survey-detail-num">{$shop_stat_sum.collect_goods}</p>
-						<p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.collect_goods)}{$stat_yesterday.collect_goods}{else /} 0 {/if}</p>
-					</div> -->
-					<!-- <div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">商品总数</p>
-						<p class="ns-survey-detail-num">{$shop_stat_sum.goods_count}</p>
-						<p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.goods_count)}{$stat_yesterday.goods_count}{else /} 0 {/if}</p>
-					</div> -->
-					<!-- <div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">会员总数</p>
-						<p class="ns-survey-detail-num">{$member_count}</p>
-						<p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.member_count)}{$stat_yesterday.member_count}{else /} 0 {/if}</p>
-					</div> -->
-					<!-- <div class="ns-survey-detail-con">
-						<p class="ns-survey-detail-aco">浏览量</p>
-						<p class="ns-survey-detail-num">{$shop_stat_sum.visit_count}</p>
-						<p class="ns-survey-detail-yesterday">昨日：{if isset($stat_yesterday.visit_count)}{$stat_yesterday.visit_count}{else /} 0 {/if}</p>
-					</div> -->
-
 				</div>
 			</div>
 
@@ -208,11 +183,11 @@
 			<div class="item">
 				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=0'">
 					<h5 class="title">待付款订单</h5>
-					<div class="num">{$num_data.waitpay}</div>
+					<div class="num" id="waitpay">0</div>
 				</div>
 				<div class="flex-box" style="background: rgba(255, 69, 68, 0.1);" onclick="location.href='{:addon_url('shop/delivery/lists')}'">
 					<h5 class="title">待发货订单</h5>
-					<div class="num">{$num_data.waitsend}</div>
+					<div class="num" id="waitsend">0</div>
 				</div>
 			</div>
 
@@ -220,11 +195,11 @@
 			<div class="item">
 				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=3'">
 					<h5 class="title">待收货订单</h5>
-					<div class="num">{$num_data.waitconfirm}</div>
+					<div class="num" id="waitconfirm">0</div>
 				</div>
 				<div class="flex-box" style="background: rgba(255, 69, 68, 0.1);" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=10'">
 					<h5 class="title">已完成订单</h5>
-					<div class="num">{$num_data.complete}</div>
+					<div class="num" id="complete">0</div>
 				</div>
 			</div>
 			{/if}
@@ -232,22 +207,22 @@
 			<div class="item">
 				<div class="flex-box" style="background: rgba(80, 130, 255, 0.1);" onclick="location.href='{:addon_url('shop/orderrefund/lists')}'">
 					<h5 class="title">退款中订单</h5>
-					<div class="num">{$num_data.refund}</div>
+					<div class="num" id="refund">0</div>
 				</div>
-				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists')}'">
+				<div class="flex-box" style="background: rgba(255, 125, 68, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists?stockalarm=1')}'">
 					<h5 class="title">库存预警</h5>
-					<div class="num">{$num_data.goods_stock_alarm}</div>
+					<div class="num" id="goods_stock_alarm">0</div>
 				</div>
 			</div>
 
 			<div class="item">
 				<div class="flex-box" style="background: rgba(60, 188, 66, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists', ['state' => 1])}'">
 					<h5 class="title">出售中商品</h5>
-					<div class="num">{$num_data.goods_total}</div>
+					<div class="num" id="goods_total">0</div>
 				</div>
 				<div class="flex-box" style="background: rgba(255, 174, 68, 0.1);" onclick="location.href='{:addon_url('shop/goods/lists', ['state' => 0])}'">
 					<h5 class="title">仓库中商品</h5>
-					<div class="num">{$num_data.warehouse_goods}</div>
+					<div class="num" id="warehouse_goods">0</div>
 				</div>
 			</div>
 			
@@ -255,11 +230,11 @@
 			<div class="item">
 				<div class="flex-box" style="background: rgba(38, 189, 216, 0.1)" onclick="location.href='{:addon_url('fenxiao://shop/fenxiao/apply')}'">
 					<h5 class="title">分销商申请</h5>
-					<div class="num">{$num_data.apply_count}</div>
+					<div class="num" id="apply_count"></div>
 				</div>
 				<div class="flex-box" style="background: rgba(121, 68, 255, 0.1)" onclick="location.href='{:addon_url('fenxiao://shop/withdraw/lists')}'">
 					<h5 class="title">提现待审核</h5>
-					<div class="num">{$num_data.withdraw_count}</div>
+					<div class="num" id="withdraw_count">0</div>
 				</div>
 			</div>
 			{/if}
@@ -471,11 +446,12 @@
     });
 </script>
 <script>
-	var ten_day_json = {:json_encode($ten_day, JSON_UNESCAPED_UNICODE)} ;
-
-	$(function() {
-		
-	});
+	// 今日昨日统计
+	getDayCount();
+	// 综合统计
+	getSumCount()
+	// 图形统计
+	getChartCount()
 	
 	function getDay(day){
 	    var today = new Date();
@@ -496,90 +472,155 @@
 	    }
 	    return m;
 	}
-	
-	var data = [getDay(-9), getDay(-8), getDay(-7), getDay(-6), getDay(-5), getDay(-4), getDay(-3), getDay(-2), getDay(-1), getDay(0)];
-	// 基于准备好的dom，初始化echarts实例
-	var myChart = echarts.init(document.getElementById('order'));
-	
-	// 指定图表的配置项和数据
-	option = {
-		xAxis: {
-			type: 'category',
-			data: data
-		},
-		yAxis: {
-			type: 'value'
-		},
-		tooltip: {
-			formatter: function(params, ticket, callback) {
-				return "日期：" + data[params.dataIndex] + '<br />' + params.seriesName + "：" + params.value;
-			},
-			backgroundColor: 'rgba(0, 0, 0, 0.5)',
-			padding: [5, 10],
-			textStyle: {
-				color: '#fff',
-				lineHeight: 30,
-			}
-		},
-		series: [{
-			name: ['订单数'],
-			data: ten_day_json.order_pay_count,
-			type: 'bar',
-			showBackground: true,
-			barCategoryGap: '50%',
-			itemStyle: {
-				color: new echarts.graphic.LinearGradient(
-					0, 0, 0, 1,
-					[
-						{offset: 0, color: '#e38c62'},
-						{offset: 1, color: '#ff8143'}
-					]
-				)
-			}
-		}]
-	};
 
-	// 使用刚指定的配置项和数据显示图表。
-	myChart.setOption(option);
-	
-	// 基于准备好的dom，初始化echarts实例
-	var moneyChart = echarts.init(document.getElementById('money'));
-	
-	// 指定图表的配置项和数据
-	moneyOption = {
-		xAxis: {
-			type: 'category',
-			data: data
-		},
-		yAxis: {
-			type: 'value'
-		},
-		tooltip: {
-			trigger: 'axis',
-			showContent: true,
-			backgroundColor: 'rgba(0, 0, 0, 0.5)',
-			padding: [5, 10],
-			textStyle: {
-				color: '#fff',
-				lineHeight: 30,
-			},
-			formatter: function(params, ticket, callback) {
-				return "日期：" + params[0].axisValue + '<br />' + params[0].seriesName + "：" + params[0].value + "元";
-			},
-		},
-		series: [{
-			name: ['销售额'],
-			data: ten_day_json.order_total,
-			type: 'line',
-			smooth: true,
-			itemStyle: {
-				color: '#FF8143'
+	//今日昨日统计
+	function getDayCount(){
+		$.ajax({
+			type: 'post',
+			dataType: 'json',
+			url: ns.url("shop/index/dayCount"),
+			success: function (res) {
+				$('#order_pay_count').html(res.stat_day.order_pay_count);
+				$('#day_rate_order_pay_count').html(res.day_rate.order_pay_count);
+				$('#stat_yesterday_order_pay_count').html(res.stat_yesterday.order_pay_count);
+				$('#shop_stat_sum_order_pay_count').html(res.shop_stat_sum.order_pay_count);
+				$('#stat_day_order_total').html(res.stat_day.order_total);
+				$('#stat_yesterday_order_total').html(res.stat_yesterday.order_total);
+				$('#shop_stat_sum_order_total').html(res.shop_stat_sum.order_total);
+				$('#stat_yesterday_order_totals').html(res.stat_yesterday.order_total);
+				$('#stat_yesterday_order_pay_counts').html(res.stat_yesterday.order_pay_count);
+				$('#stat_day_member_count').html(res.stat_day.member_count);
+				$('#stat_yesterday_member_count').html(res.stat_yesterday.member_count);
+				$('#shop_stat_sum_member_count').html(res.shop_stat_sum.member_count);
+				$('#stat_yesterday_member_counts').html(res.stat_yesterday.member_count);
+				$('#stat_day_visit_count').html(res.stat_day.visit_count);
+				$('#stat_yesterday_visit_count').html(res.stat_yesterday.visit_count);
+				$('#shop_stat_sum_visit_count').html(res.shop_stat_sum.visit_count);
+				$('#stat_yesterday_visit_counts').html(res.stat_yesterday.visit_count);
+				$('#day_rate_order_total').html(res.day_rate.order_total);
+				$('#day_rate_visit_count').html(res.day_rate.visit_count);
+				$('#day_rate_member_count').html(res.day_rate.member_count);
 			}
-		}]
-	};
+		})
+	}
 
-	// 使用刚指定的配置项和数据显示图表。
-	moneyChart.setOption(moneyOption);
+	//综合统计
+	function getSumCount() {
+		$.ajax({
+			type:'post',
+			dataType:'json',
+			url:ns.url('shop/index/sumCount'),
+			success:function(res){
+				$('#waitpay').html(res.waitpay);
+				$('#apply_count').html(res.apply_count);
+				$('#goods_stock_alarm').html(res.goods_stock_alarm);
+				$('#goods_total').html(res.goods_total);
+				$('#refund').html(res.refund);
+				$('#waitsend').html(res.waitsend);
+				$('#warehouse_goods').html(res.warehouse_goods);
+				$('#withdraw_count').html(res.withdraw_count);
+			}
+		})
+	}
+
+	//图形统计
+	function getChartCount() {
+		$.ajax({
+			type:'post',
+			dataType:'json',
+			url:ns.url('shop/index/chartCount'),
+			success:function(res){
+				dealWithChart(res);
+			}
+		})
+	}
+
+	function dealWithChart(ten_day_json){
+		var data = [getDay(-9), getDay(-8), getDay(-7), getDay(-6), getDay(-5), getDay(-4), getDay(-3), getDay(-2), getDay(-1), getDay(0)];
+		// 基于准备好的dom，初始化echarts实例
+		var myChart = echarts.init(document.getElementById('order'));
+		
+		// 指定图表的配置项和数据
+		option = {
+			xAxis: {
+				type: 'category',
+				data: data
+			},
+			yAxis: {
+				type: 'value'
+			},
+			tooltip: {
+				formatter: function(params, ticket, callback) {
+					return "日期：" + data[params.dataIndex] + '<br />' + params.seriesName + "：" + params.value;
+				},
+				backgroundColor: 'rgba(0, 0, 0, 0.5)',
+				padding: [5, 10],
+				textStyle: {
+					color: '#fff',
+					lineHeight: 30,
+				}
+			},
+			series: [{
+				name: ['订单数'],
+				data: ten_day_json.order_pay_count,
+				type: 'bar',
+				showBackground: true,
+				barCategoryGap: '50%',
+				itemStyle: {
+					color: new echarts.graphic.LinearGradient(
+						0, 0, 0, 1,
+						[
+							{offset: 0, color: '#e38c62'},
+							{offset: 1, color: '#ff8143'}
+						]
+					)
+				}
+			}]
+		};
+
+		// 使用刚指定的配置项和数据显示图表。
+		myChart.setOption(option);
+		
+		// 基于准备好的dom，初始化echarts实例
+		var moneyChart = echarts.init(document.getElementById('money'));
+		
+		// 指定图表的配置项和数据
+		moneyOption = {
+			xAxis: {
+				type: 'category',
+				data: data
+			},
+			yAxis: {
+				type: 'value'
+			},
+			tooltip: {
+				trigger: 'axis',
+				showContent: true,
+				backgroundColor: 'rgba(0, 0, 0, 0.5)',
+				padding: [5, 10],
+				textStyle: {
+					color: '#fff',
+					lineHeight: 30,
+				},
+				formatter: function(params, ticket, callback) {
+					return "日期：" + params[0].axisValue + '<br />' + params[0].seriesName + "：" + params[0].value + "元";
+				},
+			},
+			series: [{
+				name: ['销售额'],
+				data: ten_day_json.order_total,
+				type: 'line',
+				smooth: true,
+				itemStyle: {
+					color: '#FF8143'
+				}
+			}]
+		};
+
+		// 使用刚指定的配置项和数据显示图表。
+		moneyChart.setOption(moneyOption);
+	}
+		
 </script>
 {/block}
 {/block}

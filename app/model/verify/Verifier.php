@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Niushop商城系统 - 团队十年电商经验汇集巨献!
  * =========================================================
@@ -139,16 +140,21 @@ class Verifier extends BaseModel
      */
     public function getVerifierPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'v.create_time desc')
     {
-        $field = 'v.verifier_id, v.verifier_name, v.site_id, v.member_id, v.uid, v.create_time, v.modify_time, m.username, m.mobile';
+        $field = 'v.verifier_id, v.verifier_name, v.site_id, v.member_id, v.uid, v.create_time, v.modify_time, v.verifier_type,v.store_id,s.store_name,m.username, m.mobile';
         $alias = 'v';
         $join = [
             [
                 'member m',
                 'm.member_id = v.member_id',
                 'left'
+            ],
+            [
+                'store s',
+                'v.store_id = s.store_id',
+                'left'
             ]
         ];
-        $list = model('verifier')->pageList($condition, $field, $order, $page, $page_size,$alias,$join);
+        $list = model('verifier')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
     }
 
@@ -165,5 +171,4 @@ class Verifier extends BaseModel
             return $this->error();
         }
     }
-
 }

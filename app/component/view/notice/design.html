@@ -9,23 +9,15 @@
 				<div class="notice-con" v-for="(item, index) in nc.list" v-if="index < 1">
 					<div class="notice-con-icon" v-if="index == 0"><img src="{$resource_path}/notice/img/ns-notice.png" /></div>
 					<div class="notice-con-split"></div>
-					<span class="notice-con-font" v-bind:style="{color: nc.textColor?nc.textColor:'rgba(0,0,0,0)'}">{{ item.title }}</span>
+					<span class="notice-con-font" v-bind:style="{color: nc.textColor ? nc.textColor : 'rgba(0,0,0,0)'}">{{ item.title }}</span>
 				</div>
 			</div>
 
 			<!-- 图二 -->
 			<div class="notice-box" v-bind:class="'notice-box-'+ nc.style" v-if="nc.style == 2">
-				<div class="notice-con" v-show="nc.title">
-					<div class="notice-con-icon"><img src="{$resource_path}/notice/img/laba.png" /></div>
-					<span class="notice-con-font" v-bind:style="">{{ nc.title }}</span>
-				</div>
-			</div>
-			
-			<!-- 图三 -->
-			<div class="notice-box" v-bind:class="'notice-box-'+ nc.style" v-if="nc.style == 3">
-				<div class="notice-con" v-show="nc.title">
-					<div class="notice-con-icon">公告</div>
-					<span class="notice-con-font" v-bind:style="">{{ nc.title }}</span>
+				<div class="notice-con" v-for="(item, index) in nc.list" v-if="index < 1">
+					<img src="{$resource_path}/notice/img/style2_title.png" />
+					<span class="notice-con-font">{{ item.title }}</span>
 				</div>
 			</div>
 		</div>
@@ -41,31 +33,18 @@
 			
 		</template>
 		
-		<!-- <div class="template-edit-title" v-if="nc.sources == 'default'">
-			<h3>公告显示内容</h3>
-			<i class="layui-icon layui-icon-down" onclick="closeBox(this)"></i>
-		</div> -->
 		<color v-show="nc.isEdit == 1" v-bind:data="{ defaultcolor: '#333333' }"></color>
 		<div class="template-edit-title">
 			<h3>其他设置</h3>
-			<!-- <i class="layui-icon layui-icon-down" onclick="closeBox(this)"></i> -->
 		</div>
 		<div class="template-edit-wrap">
 			<!-- 所选风格字体大小、颜色可编辑 -->
 			<!-- <font-size v-bind:data="{ value : nc.fontSize }" v-show="nc.isEdit == 2"></font-size> -->
-			
-
 			<color v-bind:data="{ field : 'backgroundColor', label : '背景颜色' }"></color>
-
 			<slide v-bind:data="{ field : 'marginTop', label : '页面间距' }"></slide>
-			<!-- <slide v-bind:data="{ field : 'paddingLeftRight', label : '左右边距' }"></slide> -->
 			
 		</div>
 		
-		<!-- <template v-if="nc.lazyLoad">
-			<notice-edit></notice-edit>
-		</template> -->
-
 		<!-- 弹框 -->
 		<div class="style-list-box">
 			<div class="style-list layui-form">
@@ -76,15 +55,11 @@
 						<img src="{$resource_path}/notice/img/style1.png" />
 					</div>
 					
-					<!-- <div class="style-li" v-bind:class="{'selected ns-border-color': nc.style == 2}">
-						<input type="hidden" v-bind:class="'style-li-'+ nc.style" value="0" />
+					<div class="style-li" v-bind:class="{'selected ns-border-color': nc.style == 2}">
+						<input type="hidden" v-bind:class="'style-li-'+ nc.style" value="2" />
+						<span class="layui-hide">风格二</span>
 						<img src="{$resource_path}/notice/img/style2.png" />
 					</div>
-
-					<div class="style-li" v-bind:class="{'selected ns-border-color': nc.style == 3}">
-						<input type="hidden" v-bind:class="'style-li-'+ nc.style" value="0" />
-						<img src="{$resource_path}/notice/img/style3.png" />
-					</div> -->
 				</div>
 
 				<input type="hidden" name="style">

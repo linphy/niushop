@@ -70,7 +70,27 @@ class Coupon extends BaseApi
             [ 'npc.member_id', '=', $token[ 'data' ][ 'member_id' ] ],
             [ 'npc.state', '=', $state ]
         ];
+
+        //按类型筛选
+        $type = isset($this->params['type']) ? $this->params['type'] : '';
+        $related_id= isset($this->params['related_id']) ? $this->params['related_id'] : 0;
+        switch ($type){
+            case "reward"://满减
+                $condition[] = ["npc.type","=","reward"];
+                break;
+            case "discount"://折扣
+                $condition[] = ["npc.type","=","discount"];
+                break;
+            case "no_threshold"://无门槛
+                $condition[] = ["npc.at_least","=",0];
+                break;
+        }
+        if (!empty($related_id)) {
+            $condition[] = [ 'related_id', '=', $related_id ];
+        }
+
         $list = $coupon_model->getMemberCouponPageList($condition, $page, $page_size);
+
         return $this->response($list);
     }
 
@@ -106,14 +126,32 @@ class Coupon extends BaseApi
             [ 'is_show', '=', 1 ],
             [ 'site_id', '=', $this->site_id ]
         ];
+
+        //按类型查询
+        $type = isset($this->params['type']) ? $this->params['type'] : '';
+        switch ($type){
+            case "reward"://满减
+                $condition[] = ["type","=","reward"];
+                break;
+            case "discount"://折扣
+                $condition[] = ["type","=","discount"];
+                break;
+            case "no_threshold"://无门槛
+                $condition[] = ["at_least","=",0];
+                break;
+        }
+
         if (!empty($coupon_type_id_arr)) {
             $condition[] = [ 'coupon_type_id', 'in', $coupon_type_id_arr ];
         }
-        $field = 'coupon_type_id,type,site_id,coupon_name,money,discount,max_fetch,at_least,end_time,image,validity_type,fixed_term,status,is_show,goods_type,discount_limit,count,lead_count';
+        $field = 'coupon_type_id,type,site_id,coupon_name,money,discount,max_fetch,at_least,end_time,image,validity_type,fixed_term,status,is_show,goods_type,discount_limit,count,lead_count,IF(count < 0 or count - lead_count > 0, 1, 0) as is_remain';
         if ($can_receive == 1) {
             $condition[] = [ [ 'count', '<>', Db::raw('lead_count') ] ];
         }
-        $list = $coupon_model->getCouponTypePageList($condition, $page, $page_size, 'coupon_type_id desc', $field);
+
+        $order = Db::raw('IF(count < 0 or count - lead_count > 0, 1, 0) DESC,sort ASC');
+
+        $list = $coupon_model->getCouponTypePageList($condition, $page, $page_size, $order, $field);
 
         return $this->response($list);
     }

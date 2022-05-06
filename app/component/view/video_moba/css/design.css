@@ -1,0 +1,211 @@
+/* 公共*/
+.video-box .float-btn-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+	justify-content: center;
+	text-align: center;
+	border:1px dashed #FF6A00;
+}
+.video-box .float-btn-box a:last-child{
+    margin-bottom: 0;
+}
+.video-box .float-btn-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+}
+
+.video-box .float-btn-item .img-box {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	width: 40px;
+	height: 40px;
+}
+
+.video-box .float-btn-item .img-box img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.video-box .float-btn-item span {
+    margin-top: 5px;
+    color: #333;
+    font-size: 12px;
+}
+
+.video-box .float-btn-list li, .video-box .float-btn-list .add-item {
+    display: flex;
+    align-items: end;
+    border: 1px dashed #e5e5e5;
+    padding: 10px;
+}
+
+.video-box .float-btn-list li + li {
+    margin: 10px 0;
+}
+
+.video-box .float-btn-list li .content-block {
+    width: 71%;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-box .float-btn-list li .content-block .layui-form-item {
+    margin: 0;
+}
+
+.video-box .float-btn-list .add-item {
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.video-box .float-btn-list .add-item i {
+    font-weight: bold;
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.video-box .float-btn-list .add-item span {
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+}
+
+.video-box .float-btn-list li {
+    position: relative;
+}
+
+.video-box .float-btn-list li:hover .del {
+    display: block;
+}
+.video-box .preview-draggable{
+    padding: 0;
+}
+.video-box.left{
+	background: rgba(255, 255, 255, 0.45);
+    margin-left: 10px;
+	top:130px;
+}
+
+
+.video-box.left .edit-attribute{
+    right: -980px;
+    top: -100px;
+}
+
+.video-box.right_bottom{
+	bottom:130px;
+	left:642px;
+}
+.video-box .hint{
+	color:#909399 !important
+}
+
+.flex{justify-content: space-between;display: flex;align-items: center;}
+.flex .flex_left{display: flex;align-items: center;}
+.flex .flex_left .curr_color{color:#303133}
+.flex .flex_fill{flex:1;text-align: right;display: flex;justify-content: flex-end;align-items: center;}
+.flex .flex_fill .flex_choose{display: flex;align-items: center;}
+.flex .flex_fill .flex_choose>div{border:1px solid #EEEEEE;width:30px;height:23px;border-right: 0;line-height: 23px;text-align: center;}
+.flex .flex_fill .flex_choose>div img{vertical-align: middle;}
+.flex .flex_fill .flex_choose>div:last-child{border-right: 1px solid #EEEEEE;}
+.flex .flex_fill .flex_choose>div.active{border:1px solid #FF6A00;background-color: rgba(255, 106, 0, 0.1);}
+.make-tel{
+    border: 1px solid #ccc;
+    height: 25px;
+    border-radius: 2px;
+    padding-left: 5px;
+}
+.video-box.right_bottom .edit-attribute{
+    position: fixed;
+    right: 30px;
+    top: 104px;
+}
+.video-box.right_bottom .img-block layui-form ns-text-color{
+    position: relative;
+}
+.video-box.right_bottom .edit-attribute .attr-wrap .restore-wrap .img-block{
+    width: 200px !important;
+    height: 125px !important;
+    margin-bottom: 30px;
+}
+.video-box.right_bottom .edit-attribute .attr-wrap .restore-wrap .img-block > div{
+    line-height: 125px;
+    height: 125px !important;
+    width: 100%;
+    text-align: center;
+}
+.video-box.right_bottom .edit-attribute .attr-wrap .restore-wrap .img-block video{
+    width: 100% !important;
+    height: 125px !important;
+}
+.float-btn-list ul li{
+    display: block !important;
+}
+.video-list .image-ads-item{
+    padding: 0px 15px;
+}
+.video-list .image-ads-item video{
+    width: 100%;
+}
+.video-box.right_bottom .edit-attribute .attr-wrap .restore-wrap .img-block span{
+    position: absolute;
+    bottom: -30px;
+    display: block;
+    width: 100%;
+    background: #fff;
+}
+.goods-show-box .video-fenmian{
+    display: flex;
+    margin-bottom: 10px;
+}
+.goods-show-box .video-fenmian span{
+    flex: 1;
+    color: #909399;
+}
+.video-title{
+    color: #909399;
+    display: inline-block;
+    padding: 0px 0px 10px;
+    flex: 1;
+}
+.video-in-box{
+    display: flex;
+}
+.video-box.right_bottom .edit-attribute .attr-wrap .restore-wrap .img-block span.add-video-name{
+    bottom: 25px;
+}
+
+.video-box .video-in-box .video-zhezhao{
+    position: relative;
+    background: #fff;
+    width: 200px;
+    height: 125px;
+    top: -156px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+    text-align: CENTER;
+    line-height: 105px;
+    display: none;
+}
+.video-box .video-in-box .video-zhezhao span{
+    position: absolute;
+    top: 35px;
+    left: 80px;
+    color: #909399;
+}
+

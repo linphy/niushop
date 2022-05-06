@@ -123,6 +123,10 @@ class Diyview extends BaseApi
             }
 
             $info[ 'menuList' ][ $k ][ 'url' ] = $info[ 'menuList' ][ $k ][ 'link' ][ 'wap_url' ];
+            if (isset($v['link']['mobile'])) $info[ 'menuList' ][ $k ]['mobile'] = $v['link']['mobile'];
+            if (isset($v['link']['appid'])) $info[ 'menuList' ][ $k ]['appid'] = $v['link']['appid'];
+            if (isset($v['link']['page'])) $info[ 'menuList' ][ $k ]['mobile'] = $v['link']['page'];
+
             unset($info[ 'menuList' ][ $k ][ 'isShow' ]);
             unset($info[ 'menuList' ][ $k ][ 'isSystem' ]);
             unset($info[ 'menuList' ][ $k ][ 'link' ]);

@@ -49,5 +49,4 @@ return [
 	'REQUEST_WITHDRAW_TYPE' => -1,
 	'REQUEST_BRANCH_BANK_NAME' => -1,
 	'REQUEST_BRANCH_BANK_ACCOUNT' => -1,
-    ''
 ];

@@ -1,12 +1,10 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.layui-input-inline.js-pid a{
-		margin-left: 20px;
-	}
-	.ns-form {
-		margin-top: 0;
-	}
+	.layui-input-inline.js-pid a{margin-left: 20px;}
+	.ns-form {margin-top: 0;}
+	.link-url-show{margin-right: 10px}
+	.click-link{height: 34px;line-height: 34px;display: inline-block;white-space: nowrap;text-align: center;border-radius: 2px;cursor: pointer;padding: 0 16px;border: 1px solid #C9C9C9;background-color: #fff;color: #555;}
 </style>
 {/block}
 {block name="main"}
@@ -86,7 +84,7 @@
 			</div>
 		</div>
 		<div class="ns-word-aux">
-			<p>建议图片尺寸：100px * 100px。图片格式：jpg、png、jpeg。</p>
+			<p>建议图片尺寸：不能大于100k。图片格式：jpg、png、jpeg。</p>
 		</div>
 	</div>
 
@@ -115,7 +113,7 @@
             </div>
         </div>
 	    <div class="ns-word-aux">
-		    <p>建议图片尺寸：550px * 250px。图片格式：jpg、png、jpeg。</p>
+		    <p>该图片只对一级使用, 建议图片尺寸：550px * 250px。图片格式：jpg、png、jpeg。</p>
 	    </div>
     </div>
 	<!-- <div class="layui-form-item">
@@ -127,7 +125,14 @@
 			<p>用于控制前台是否展示</p>
 		</div>
 	</div> -->
-	
+	<div class="layui-form-item">
+		<label class="layui-form-label">广告链接：</label>
+		<div class="layui-input-block">
+			<input name="link_url" type="hidden" class="layui-input ns-len-long" autocomplete="off">
+			<span class="link-url-show"></span>
+			<a class="click-link" onclick="selectedLink()">选择链接</a>
+		</div>
+	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">关键字：</label>
 		<div class="layui-input-block">
@@ -207,5 +212,5 @@
 </script>
 {/block}
 {block name="script"}
-<script src="SHOP_JS/goods_edit_category.js"></script>
+<script src="SHOP_JS/goods_edit_category.js?v=20220212"></script>
 {/block}

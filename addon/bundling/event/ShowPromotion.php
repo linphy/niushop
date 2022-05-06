@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '组合套餐',
                     //展示介绍
-                    'description' => '组合套餐活动功能',
+                    'description' => '向客户推荐商品搭售',
                     //展示图标
                     'icon'        => 'addon/bundling/icon.png',
                     //跳转链接

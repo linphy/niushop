@@ -292,8 +292,54 @@ class Ueditor extends Controller
         return $files;
     }
 
+    private function saveRemote($config, $fieldName){
+        $imgUrl = htmlspecialchars($fieldName);
+        $imgUrl = str_replace("&amp;", "&", $imgUrl);
+
+        //http开头验证
+        if (strpos($imgUrl, "http") !== 0) {
+            $data = array(
+                'state' => '链接不是http链接',
+            );
+            return json_encode($data);
+        }
+        //获取请求头并检测死链
+        $heads = get_headers($imgUrl);
+        if (!(stristr($heads[0], "200") && stristr($heads[0], "OK"))) {
+            $data = array(
+                'state' => '链接不可用',
+            );
+            return json_encode($data);
+        }
+        //格式验证(扩展名验证和Content-Type验证)
+        $fileType = strtolower(strrchr($imgUrl, '.'));
+        if (!in_array($fileType, $config['allowFiles']) || stristr($heads['Content-Type'], "image")) {
+            $data = array(
+                'state' => '链接contentType不正确',
+            );
+            return json_encode($data);
+        }
+
+        $upload_service = new UploadModel();
+        $res = $upload_service->setPath("common/images/" . date("Ymd") . '/')->remotePull($imgUrl);
+
+        if ($res['code'] != 0) {
+            return json_encode(['state' => $res['message']]);
+        }
+        preg_match("/[\/]([^\/]*)[\.]?[^\.\/]*$/", $imgUrl, $m);
+
+        return json_encode([
+            'state'    => 'SUCCESS',
+            'url'      => img($res['data']['pic_path']),
+            'title'    => $res['data']['pic_path'],
+            'original' => $m ? $m[1] : "",
+            'type'     => strtolower(strrchr($config['oriName'], '.')),
+            'size'     => 0,
+        ]);
+    }
+
     //抓取远程图片
-    private function saveRemote($config, $fieldName)
+    private function saveRemoteBackup($config, $fieldName)
     {
         $imgUrl = htmlspecialchars($fieldName);
         $imgUrl = str_replace("&amp;", "&", $imgUrl);

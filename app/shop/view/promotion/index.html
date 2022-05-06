@@ -4,13 +4,7 @@
 	.ns-card-common:first-child{margin-top: 0;}
 	.ns-item-block-parent .ns-item-poa-pic{background-image: linear-gradient(to right, #fb8700, #fb6400);text-align: center;color: #FFFFFF;width: 70px;height: 28px;line-height: 28px;border-bottom-left-radius: 3px;}
 	.layui-card-body{padding: 0 !important;}
-	.ns-item-block .item-hide{
-		position: absolute;
-		top: 0;
-		right: -1px;
-	}
-
-
+	.ns-item-block .item-hide{position: absolute;top: 0;right: -1px}
 </style>
 {/block}
 {block name="main"}
@@ -19,10 +13,11 @@
 	<div class="layui-card-header ">
 		<span class="ns-card-title">店铺促销</span>
 	</div>
-	
+
 	<div class="layui-card-body">
 		<div class="ns-item-block-parent ns-item-five" id="promotion-item">
 			{foreach $promotion as $list_k => $list_v}
+
 			{if  condition="$list_v['show_type'] eq 'shop'"}
 			{empty name="$list_v['is_developing']"}
 			<a class="ns-item-block ns-item-block-hover-a" href="{:addon_url($list_v['url'])}">
@@ -54,6 +49,7 @@
 			{/empty}
 			{/if}
 			{/foreach}
+			{if  condition="$user_info['is_admin'] eq '1'"}
 			{foreach $shop_addon as $shop_addon_k => $shop_addon_v}
 			<div class="ns-item-block ns-item-block-hover">
 				<div class="ns-item-block-wrap">
@@ -70,12 +66,13 @@
 					<div class="ns-item-float">
 						<div class="ns-item-float-con"></div>
 						<div class="ns-item-float-con">
-							<a href="https://www.niushop.com" target="_blank">立即升级</a>
+							<a onclick="alertAddon()" target="_blank">立即升级</a>
 						</div>
 					</div>
 				</div>
 			</div>
 			{/foreach}
+			{/if}
 		</div>
 	</div>
 </div>
@@ -84,7 +81,7 @@
 	<div class="layui-card-header">
 		<span class="ns-card-title">会员互动</span>
 	</div>
-	
+
 	<div class="layui-card-body">
 		<div class="ns-item-block-parent ns-item-five">
 			{foreach $promotion as $list_k => $list_v}
@@ -102,7 +99,7 @@
 				</div>
 			</a>
 			{else/}
-					<a class="ns-item-block ns-item-block-hover-a" href="#">
+			<a class="ns-item-block ns-item-block-hover-a" href="#">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
 						<img src="{:img($list_v.icon)}" />
@@ -119,6 +116,7 @@
 			{/empty}
 			{/if}
 			{/foreach}
+			{if  condition="$user_info['is_admin'] eq '1'"}
 			{foreach $member_addon as $member_addon_k => $member_addon_v}
 			<div class="ns-item-block ns-item-block-hover">
 				<div class="ns-item-block-wrap">
@@ -135,12 +133,13 @@
 					<div class="ns-item-float">
 						<div class="ns-item-float-con"></div>
 						<div class="ns-item-float-con">
-							<a href="https://www.niushop.com" target="_blank">立即升级</a>
+							<a onclick="alertAddon()" target="_blank">立即升级</a>
 						</div>
 					</div>
 				</div>
 			</div>
 			{/foreach}
+			{/if}
 		</div>
 	</div>
 </div>
@@ -181,8 +180,9 @@
 			{/empty}
 			{/if}
 			{/foreach}
+			{if  condition="$user_info['is_admin'] eq '1'"}
 			{foreach $tool_addon as $tool_addon_k => $tool_addon_v}
-			
+
 			<div class="ns-item-block ns-item-block-hover">
 				<div class="ns-item-block-wrap">
 					<div class="ns-item-pic">
@@ -198,13 +198,13 @@
 					<div class="ns-item-float">
 						<div class="ns-item-float-con"></div>
 						<div class="ns-item-float-con now_btn" >
-							<!-- href="https://www.niushop.com" target="_blank" -->
-							<a  >立即升级</a>
+							<a onclick="alertAddon()" target="_blank">立即升级</a>
 						</div>
 					</div>
 				</div>
 			</div>
 			{/foreach}
+			{/if}
 		</div>
 	</div>
 </div>
@@ -213,9 +213,9 @@
 <script>
 
 	var promotion_items = $("#promotion a").length,
-		extend_items = $("#extend a").length,
-		interaction_items = $("#interaction a").length,
-		tool_items = $("#tool a").length;
+			extend_items = $("#extend a").length,
+			interaction_items = $("#interaction a").length,
+			tool_items = $("#tool a").length;
 	if (promotion_items == 0) {
 		$("#promotion").hide();
 	}
@@ -229,5 +229,8 @@
 		$("#tool").hide();
 	}
 
+	function alertAddon() {
+		layer.msg('该插件为付费插件，请联系客服购买！');
+	}
 </script>
 {/block}

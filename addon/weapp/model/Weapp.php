@@ -46,8 +46,12 @@ class Weapp extends BaseModel
         'open_shake' => "是否开通微信摇一摇功能",
     );
 
+    // 站点ID
+    private $site_id;
+
     public function __construct($site_id = 0)
     {
+        $this->site_id = $site_id;
         //微信小程序配置
         $weapp_config_model = new WeappConfigModel();
         $weapp_config       = $weapp_config_model->getWeappConfig($site_id);
@@ -100,6 +104,7 @@ class Weapp extends BaseModel
                 return $this->error('', $result['errmsg']);
             } else {
                 Cache::set('weapp_' . $result['openid'], $result);
+                unset($result['session_key']);
                 return $this->success($result);
             }
         } catch (\Exception $e) {
@@ -121,6 +126,10 @@ class Weapp extends BaseModel
             $scene = '';
             if (!empty($param['data'])) {
                 foreach ($param['data'] as $key => $value) {
+                    //防止参数过长，source_member用m代替
+                    if($key == 'source_member'){
+                        $key = 'm';
+                    }
                     if ($scene == '') $scene .= $key . '-' . $value;
                     else $scene .= '&' . $key . '-' . $value;
                 }
@@ -258,7 +267,7 @@ class Weapp extends BaseModel
         $file_arr         = getFileMap($source_file_path);
 
         if (!empty($file_arr)) {
-            $zipname = 'weapp_' . $site_id . '_' . date('Ymd') . '.zip';
+            $zipname = 'upload/weapp_' . $site_id . '_' . date('Ymd') . '.zip';
 
             $zip = new \ZipArchive();
             $res = $zip->open($zipname, \ZipArchive::CREATE);
@@ -414,5 +423,62 @@ class Weapp extends BaseModel
             return $this->error($result, $result["errmsg"]);
         }
         return $this->success($result);
+    }
+
+    /**
+     * 消息推送
+     */
+    public function relateWeixin(){
+        $server  = $this->app->server;
+        $message = $server->getMessage();
+        if (isset($message['MsgType'])) {
+            switch ($message['MsgType']) {
+                case 'event':
+                    $this->app->server->push(function ($res) {
+                        // 商品审核结果通知
+                        if ($res['Event'] == 'open_product_spu_audit' && addon_is_exit('shopcomponent', $this->site_id)) {
+                            model('shopcompoent_goods')->update([
+                                'edit_status' => $res['OpenProductSpuAudit']['status'],
+                                'reject_reason' => !empty($res['OpenProductSpuAudit']['reject_reason']) ?: '',
+                                'audit_time' => time()
+                            ], [
+                                ['out_product_id', '=', $res['OpenProductSpuAudit']['out_product_id'] ]
+                            ]);
+                        }
+                        // 类目审核结果通知
+                        if ($res['Event'] == 'open_product_category_audit' && addon_is_exit('shopcomponent', $this->site_id)) {
+                            model('shopcompoent_category_audit')->update([
+                                'status' => $res['QualificationAuditResult']['status'],
+                                'reject_reason' => !empty($res['QualificationAuditResult']['reject_reason']) ?: '',
+                                'audit_time' => time()
+                            ], [
+                                ['audit_id', '=', $res['QualificationAuditResult']['audit_id'] ]
+                            ]);
+                        }
+                    });
+                break;
+            }
+        }
+        $response = $this->app->server->serve();
+        return $response->send();
+    }
+
+    /**
+     * 检查场景值是否在支付校验范围内
+     * @param $scene
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function sceneCheck($scene){
+        try {
+            $result = $this->app->mini_store->checkScene($scene);
+            if (isset($result['errcode']) && $result['errcode'] == 0) {
+                return $this->success($result['is_matched']);
+            } else {
+                return $this->error('', $result['errmsg']);
+            }
+        } catch (\Exception $e) {
+            return $this->error([], $e->getMessage());
+        }
     }
 }

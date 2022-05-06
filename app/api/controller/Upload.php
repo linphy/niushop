@@ -66,4 +66,17 @@ class Upload extends BaseApi
         return $this->response($result);
     }
 
+    /**
+     * 聊天图片上传
+     */
+    public function chatimg()
+    {
+        $upload_model = new UploadModel(0);
+        $param = array (
+            "thumb_type" => "",
+            "name" => "file"
+        );
+        $result = $upload_model->setPath("chat_img/" . date("Ymd") . '/')->image($param);
+        return $this->response($result);
+    }
 }

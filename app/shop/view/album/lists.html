@@ -47,6 +47,7 @@
 				<input type="checkbox" name="album-select" lay-filter="allChoose" lay-skin="primary" title="全选">
 			</div>
 			<button class="layui-btn ns-bg-color" onclick="modifyImgGroup()">修改分组</button>
+			<button class="layui-btn ns-bg-color" onclick="thumbBatch()">生成缩略图</button>
 			<button class="layui-btn ns-bg-color" onclick="deleteImg()">删除</button>
 			<div id="paged" class="page"></div>
 		</div>
@@ -71,7 +72,7 @@
 			</ul>
 		</div>
 		<div class="ns-form-row sm">
-			<button class="layui-btn layui-btn-disabled" disabled="disabled" id="chooseListAction">提交</button>
+			<button class="layui-btn layui-btn-disabled" disabled="disabled" onclick="submitOne()"  id="chooseListAction">提交</button>
 			<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
 		</div>
 	</div>
@@ -101,10 +102,20 @@
 	{{# layui.each(d.list,function(index, item){ }}
     <li>
         <div class="album-pic">
-            <img layer-src src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000)) }}" alt="{{item.pic_name}}">
-        </div>
+			<div  class = "thumb-batch" >
+				{{# if(item.is_thumb == 0){ }}
+				<img src="/upload/default/default_img/thumb.png" style="cursor: pointer;" title="该图片未裁剪" data-id="{{item.pic_id}}" onclick="thumbBatch(this)">
+				{{# } }}
+			</div>
+			{{# if(item.is_thumb == 0){ }}
+				<img layer-src="" src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000)) }}" alt="{{item.pic_name}}">
+			{{# }else{ }}
+				<img layer-src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000), 'big') }}" src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000), 'small') }}" alt="{{item.pic_name}}">
+			{{# } }}
+
+		</div>
         <div class="layui-form album-img-select">
-            <input type="checkbox" name="check[]" value="{{item.pic_id}}" lay-skin="primary" title="{{item.pic_name}}">
+            <input type="checkbox" name="check[]" value="{{item.pic_id}}" data-is_thumb="{{item.is_thumb}}" lay-skin="primary" title="{{item.pic_name}}">
         </div>
         <div class="album-img-operation">
             <a href="javascript:;" class="ns-text-color" data-pic-name="{{item.pic_name}}" data-id="{{item.pic_id}}" onclick="modifyImgName(this)">改名</a>|
@@ -154,10 +165,11 @@
 
 
 	$(function() {
-		layui.use(['form', 'laytpl', 'laypage', 'layer', 'upload'], function() {
+		layui.use(['form', 'laytpl', 'laypage', 'layer', 'upload','element'], function() {
 			form = layui.form;
 			laytpl = layui.laytpl;
 			laypage = layui.laypage;
+			element = layui.element;
 			layer = layui.layer;
 			upload = layui.upload;
 
@@ -202,7 +214,7 @@
 	 * 多图上传
 	 */
 	function uploadImg() {
-
+		var imageArray=1
 		laytpl($("#multuple_html").html()).render({}, function(html) {
 			layer_one = layer.open({
 				type: 1,
@@ -213,103 +225,114 @@
 					$("#chooseListAction").removeClass("ns-bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 				},
 				success: function(res) {
-
 					//上传图片
 					upload.render({
 						elem: '#ImgUpload',
 						url: ns.url("shop/upload/album"),
 						data: {
-							album_id: album_id
+							album_id: album_id,
+							is_thumb:1,
 						},
 						multiple: true,
 						auto: false,
 						bindAction: '#chooseListAction',
 						choose: function(obj) {
+							imageArray=1
 							//将每次选择的文件追加到文件队列
 							var files = this.files = obj.pushFile();
-
 							//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
 							obj.preview(function(index, file, result) {
-
+								this.num=index
 								//追加预览图片
 								var html = '';
 								html += '<li class="multuple-list-img nc-upload-wrap" index="' + index + '">';
-									html += '<img src="' + result + '" alt="' + file.name + '">';
+									html += '<img class="multuple-list-image" src="' + result + '" alt="' + file.name + '">';
 									html += '<span class="upload-close-modal"  id="upload_img_' + index + '">×</span>';
 									html += '<div class="upload-image-curtain">50%</div>';
+									html += '<div class="tips"></div>';
 								html += '</li>';
 								$(".multuple-list").prepend(html);
-
 								//删除预览图片
 								$("#upload_img_" + index).bind("click", function() {
 									delete files[index];
 									delete picture_arr[index]; //删除所选队列
 									$(this).parent('.nc-upload-wrap').remove();
 									// uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
-
 									//禁止点击
 									if ($(".multuple-list li").length <= 1) {
 										$("#chooseListAction").removeClass("ns-bg-color").addClass("layui-btn-disabled").attr("disabled",
 											"disabled");
 									}
 								});
-
-								//禁止点击
+								//开启点击
 								if ($(".multuple-list li").length > 1) {
 									$("#chooseListAction").addClass("ns-bg-color").removeClass("layui-btn-disabled").removeAttr(
 										"disabled");
 								}
 							});
 						},
-						done: function(res, index) {
+						done: function(res,index) {
+							let data=$('.multuple-list-image')
+							// 禁止点击
 							picture_arr.push(res.data);
-
 							var image_box = $(".nc-upload-wrap[index='" + index + "']").parent().find(".upload-image-curtain");
+							var image_tips = $(".nc-upload-wrap[index='" + index + "']").parent().find(".tips");
+							image_box.text("上传汇总");
 							image_box.text("50%");
 							image_box.show();
-
 							if (res.code >= 0) {
 								setTimeout(function() {
 									image_box.text("100%");
 								}, 500);
 								setTimeout(function() {
 									getFileAlbumList(1, limit);
-									location.reload();
-									layer.close(layer_one);
+									
+									layer.close(layer_one)
 								}, 1000);
 								return delete this.files[index]; //删除文件队列已经上传成功的文件
 							} else {
 								setTimeout(function() {
 									image_box.text("上传失败");
+									image_tips.text(res.message);
+									layer.msg(res.message);
 								}, 500);
-								laytpl.msg(res.message); //删除文件队列已经上传成功的文件
 							}
+							if(imageArray==data.length){
+								$("#chooseListAction").addClass("ns-bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
+								imageArray=1
+								return false
+							}
+							imageArray++
 						}
 					});
-
 				}
 			})
 		});
-
 	}
-
 
 	/**
 	 * 替换图片，单张
 	 */
+	
+	
+	// 上传图片是禁止操作
+	function submitOne(){
+		$("#chooseListAction").removeClass("ns-bg-color").addClass("layui-btn-disabled").attr("disabled","disabled");
+		$(".upload-image-curtain").css('display','block').text('等待中')
+		// var image_box = $(".nc-upload-wrap").parent().find(".upload-image-curtain");
+	}
+	
 	function modifyFile(data) {
-
 		laytpl($("#modify_file_html").html()).render({}, function(html) {
 			layer_one = layer.open({
 				type: 1,
-				area: ['580px', '430px'],
+				area: ['580px', '500px'],
 				title: '替换图片',
 				content: html,
 				cancel: function() {
 					$("#modifyFileAction").removeClass("ns-bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 				},
 				success: function(res) {
-
 					//上传图片
 					upload.render({
 						elem: '#modifyFile',
@@ -324,16 +347,15 @@
 						choose: function(obj) {
 							//将每次选择的文件追加到文件队列
 							var files = this.files = obj.pushFile();
-
 							//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
 							obj.preview(function(index, file, result) {
-
 								//追加预览图片
 								var html = '';
 								html += '<li class="multuple-list-img nc-upload-wrap" index="' + index + '">';
 								html += '<img src="' + result + '" alt="' + file.name + '">';
 								html += '<span class="upload-close-modal"  id="upload_img_' + index + '">×</span>';
 								html += '<div class="upload-image-curtain">50%</div>';
+								html += '<div class="tips"></div>';
 								html += '</li>';
 								$(".multuple-list").prepend(html);
 
@@ -366,26 +388,26 @@
 						},
 						done: function(res, index) {
 							picture_arr.push(res.data);
-
 							var image_box = $(".nc-upload-wrap[index='" + index + "']").parent().find(".upload-image-curtain");
+							var image_tips = $(".nc-upload-wrap[index='" + index + "']").parent().find(".tips");
 							image_box.text("50%");
 							image_box.show();
-
 							if (res.code >= 0) {
 								setTimeout(function() {
 									image_box.text("100%");
 								}, 500);
 								setTimeout(function() {
 									getFileAlbumList(1, limit);
-									location.reload();
 									layer.close(layer_one);
 								}, 1000);
 								return delete this.files[index]; //删除文件队列已经上传成功的文件
 							} else {
 								setTimeout(function() {
 									image_box.text("上传失败");
+									image_tips.text(res.message);
+									layer.close(layer_one);
 								}, 500);
-								laytpl.msg(res.message); //删除文件队列已经上传成功的文件
+
 							}
 						}
 					});
@@ -414,19 +436,17 @@
 				page
 			},
 			success: function(res) {
-
 				laytpl($("#list_html").html()).render(res.data, function(html) {
 					$(".album-img-box").html(html);
 					loadImgMagnify();
 				});
-
 				if(initIdent){
 					album_list_count = res.data.list.length;
 					$(".default-group .num").text(album_list_count);
 					initIdent = false;
 				}
-				
 				$("#paged").empty();
+				let album = $('.item-this .ns-text-color-dark-gray').text(res.data.count);
 				if (res.data.count > 0) {
 					//调用分页
 					laypage.render({
@@ -449,7 +469,7 @@
 	/**
 	 * 相册分组
 	 */
-	function albumList() {
+	function albumList(num = '') {
         $.ajax({
 			url: ns.url("shop/Album/getAlbumList"),
 			type: 'POST',
@@ -458,7 +478,7 @@
 			success: function(res) {
 				var albumList = res.data,
 					html = "";
-
+				$(".album-list ul").html("")
 				for (key in albumList) {
 					if (Number(key) == 0) {
 						album_id = albumList[key].album_id;
@@ -471,7 +491,8 @@
 							'</sapn></li>';
 					}
 				}
-				$(".album-list ul").prepend(html);
+				
+			$(".album-list ul").prepend(html);
 			}
 		});
     }
@@ -614,6 +635,49 @@
 			})
 		})
 	}
+
+	/**
+	 * 生成缩略图
+	*/
+	function thumbBatch(data){
+		var pic_ids = [],
+			url = '';
+
+		if (!data) {
+			$("input[data-is_thumb='0'][name='check[]']:checked").each(function(index, item) {
+				pic_ids.push($(item).val());
+			});
+		}else{
+			pic_ids.push($(data).attr("data-id"));
+		}
+		pic_ids = pic_ids.toString();
+		if(pic_ids==''){
+			layer.msg("请选择未裁剪图片再进行操作")
+			return false;
+		}
+
+		layer.confirm('是否需要生成缩略图', {
+			btn: ['确定', '取消']
+		},function () {
+			$.ajax({
+				url:ns.url("shop/Album/thumbBatch"),
+				data:{
+					pic_id: pic_ids,
+				},
+				type:"POST",
+				dataType: "JSON",
+				success: function(data) {
+					flag_delete_group = false;
+					layer.msg(data.message);
+					if (data.code == 0) {
+						location.reload();
+					}
+				}
+			});
+		}, function() {
+			layer.close();
+		});
+	}
 	
 	/**
 	 * 修改图片分组
@@ -630,7 +694,10 @@
 			pic_ids.push($(data).attr("data-id"));
 		}
 		url = ns.url("shop/Album/modifyFileAlbum");
-
+		if(pic_ids==''){
+			layer.msg("请选择图片再进行操作")
+			return false;
+		}
 		laytpl($("#pic_group").html()).render({album_id}, function(html) {
 			layer.open({
 				type: 1,
@@ -671,6 +738,7 @@
 		var pic_ids = [],
 			url = '';
 
+
 		if (!data) {
 			$("input[name='check[]']:checked").each(function(index, item) {
 				pic_ids.push($(item).val());
@@ -680,8 +748,11 @@
 		}
 		pic_ids = pic_ids.toString();
 		url = ns.url("shop/Album/deleteFile");
-
-		layer.confirm('若删除，不会对目前已使用该图片的相关业务造成影响。', {
+		if(pic_ids==''){
+			layer.msg("请选择图片再进行操作")
+			return false;
+		}
+		layer.confirm('删除图片会连本地存储或云存储的图片也删掉,请谨慎操作！', {
 			btn: ['确定', '取消']
 		}, function() {
 			if (flag_delete_img) return;
@@ -723,7 +794,12 @@
 			})
 		})
 	}
-
+	$('body').on(' mouseenter','.upload-image-curtain',function(){
+		$(this).siblings(".tips").show();
+	})
+	$('body').on('  mouseleave','.upload-image-curtain',function(){
+		$(this).siblings(".tips").hide();
+	})
 	function JScopy() {
 		ns.copy("path_file", function(res) {
 			$("#hidden_image_path").val(res.url);

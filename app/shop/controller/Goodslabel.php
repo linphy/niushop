@@ -30,8 +30,18 @@ class GoodsLabel extends BaseShop
             if (!empty($search_keys)) {
                 $condition[] = ['label_name', 'like', '%' . $search_keys . '%'];
             }
+
+            //排序
+            $link_sort = input('order', 'sort');
+            $sort = input('sort', 'desc');
+            if($link_sort == 'sort'){
+                $order_by = $link_sort . ' ' . $sort;
+            }else{
+                $order_by = $link_sort . ' ' . $sort.',sort desc';
+            }
+
             $goods_attr_model = new GoodsLabelModel();
-            $list             = $goods_attr_model->getLabelPageList($condition, $page_index, $page_size);
+            $list             = $goods_attr_model->getLabelPageList($condition, $page_index, $page_size, $order_by);
             return $list;
         } else {
 

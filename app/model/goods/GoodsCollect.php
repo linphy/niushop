@@ -93,7 +93,7 @@ class GoodsCollect extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getCollectPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'gc.create_time desc', $field = 'gc.collect_id, gc.member_id, gc.goods_id, gc.sku_id,gc.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual')
+    public function getCollectPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'gc.create_time desc', $field = 'gc.collect_id, gc.member_id, gc.goods_id, gc.sku_id,sku.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual, g.goods_image')
     {
         $alias = 'gc';
         $join  = [

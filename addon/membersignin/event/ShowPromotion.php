@@ -34,7 +34,7 @@ class ShowPromotion
                     //展示主题
                     'title'       => '签到奖励',
                     //展示介绍
-                    'description' => '会员签到后奖励设置',
+                    'description' => '客户每日签到发放奖励',
                     //展示图标
                     'icon'        => 'addon/membersignin/icon.png',
                     //跳转链接

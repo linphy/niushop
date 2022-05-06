@@ -136,6 +136,17 @@
 					</div>
 				</div>
 			</a>
+			<a class="ns-item-block ns-item-block-hover-a" href="{:addon_url('weapp://shop/weapp/share')}">
+				<div class="ns-item-block-wrap">
+					<div class="ns-item-pic">
+						<img src="WEAPP_IMG/share.png">
+					</div>
+					<div class="ns-item-con">
+						<div class="ns-item-content-title">分享设置</div>
+						<p class="ns-item-content-desc">小程序分享设置</p>
+					</div>
+				</div>
+			</a>
 			{notempty name="$weapp_menu"}
 				{foreach name="$weapp_menu" item="vo"}
 					<a class="ns-item-block ns-item-block-hover-a" href="{:addon_url($vo.url)}">

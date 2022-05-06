@@ -51,35 +51,12 @@
         <div class="layui-form-item">
             <div class="layui-input-block">
 
-                <div class="style_theme style_theme_default">
+                <div class="style_theme" id="style_theme">
                     <img src="SHOP_IMG/style/decorate-default-1.png" alt="">
                     <img src="SHOP_IMG/style/decorate-default-2.png" alt="">
 					<img src="SHOP_IMG/style/decorate-default-3.png" alt="">
                 </div>
 
-                <div class="style_theme style_theme_blue">
-                    <img src="SHOP_IMG/style/decorate-blue-1.png" alt="">
-                    <img src="SHOP_IMG/style/decorate-blue-2.png" alt="">
-					<img src="SHOP_IMG/style/decorate-blue-3.png" alt="">
-                </div>
-
-                <div class="style_theme style_theme_green">
-                    <img src="SHOP_IMG/style/decorate-green-1.png" alt="">
-                    <img src="SHOP_IMG/style/decorate-green-2.png" alt="">
-					<img src="SHOP_IMG/style/decorate-green-3.png" alt="">
-                </div>
-				
-				<div class="style_theme style_theme_pink">
-				    <img src="SHOP_IMG/style/decorate-pink-1.png" alt="">
-				    <img src="SHOP_IMG/style/decorate-pink-2.png" alt="">
-					<img src="SHOP_IMG/style/decorate-pink-3.png" alt="">
-				</div>
-				
-				<div class="style_theme style_theme_golden">
-				    <img src="SHOP_IMG/style/decorate-golden-1.png" alt="">
-				    <img src="SHOP_IMG/style/decorate-golden-2.png" alt="">
-					<img src="SHOP_IMG/style/decorate-golden-3.png" alt="">
-				</div>
             </div>
         </div>
 
@@ -93,6 +70,7 @@
 {/block}
 {block name="script"}
 <script>
+    
     var style_theme = $("input[name='style_theme']").val();
     style_theme = style_theme == '' ? 'default' : style_theme;
 
@@ -113,6 +91,8 @@
 
         $('.style_theme_'+style_theme).show();
         $('.style_theme_'+style_theme).siblings(".style_theme").hide();
+
+        $("#style_theme").html("<img src='SHOP_IMG/style/decorate-"+ style_theme +"-1.png'/><img src='SHOP_IMG/style/decorate-"+ style_theme +"-2.png'/><img src='SHOP_IMG/style/decorate-"+ style_theme +"-3.png'/>");
     });
 
     layui.use('form', function() {

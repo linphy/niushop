@@ -248,6 +248,16 @@ var menu = new Vue({
 		previewText: function (text) {
 			previewText(text);
 		},
+		// 预览文本
+		previewTexts: function (text) {
+			var index = this.menuIndex[0];
+			var subIndex = this.menuIndex[1];
+			if(subIndex >= 0){
+				previewTexts(text, this.button[index].sub_button[subIndex]['media_id'], index, subIndex, 2);
+			}else{
+				previewTexts(text, this.button[index]['media_id'], index, subIndex, 1);
+			}
+		},
 		setValue: function (menu_key, menu_value) {
 			var index = this.menuIndex[0];
 			var subIndex = this.menuIndex[1];
@@ -349,7 +359,6 @@ var menu = new Vue({
 			
 			json_data.button = _self.dataProcessing(button_backup);
 			json_data = JSON.stringify(json_data);
-			
 			$.ajax({
 				url: ns.url("wechat://shop/menu/edit"),
 				data: {value, json_data},

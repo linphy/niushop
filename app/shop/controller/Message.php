@@ -13,6 +13,7 @@ namespace app\shop\controller;
 
 
 use app\model\message\Message as MessageModel;
+use app\model\order\Config as OrderConfigModel;
 use app\model\message\Sms;
 use app\model\system\Site;
 
@@ -31,10 +32,17 @@ class Message extends BaseShop
         $member_message_list_result = $message_model->getMessageList($this->site_id, 1);
         $member_message_list = $member_message_list_result[ "data" ];
         $this->assign("member_message_list", $member_message_list);
+
         //卖家通知
         $shop_message_list_result = $message_model->getMessageList($this->site_id, 2);
         $shop_message_list = $shop_message_list_result[ "data" ];
         $this->assign("shop_message_list", $shop_message_list);
+
+        //核销配置
+        $config_model = new OrderConfigModel();
+        $verify_config = $config_model->getOrderVerifyConfig($this->site_id,$this->app_module)['data']['value'];
+        $this->assign('verify_config', $verify_config);
+
         return $this->fetch("message/lists");
     }
 
@@ -182,6 +190,24 @@ class Message extends BaseShop
             return $this->fetch("message/edit_email_message");
         }
 
+    }
+
+
+    /**
+     * 消息通知时间设置
+     */
+    public function remindTimeSetting()
+    {
+        if (request()->isAjax()) {
+            $keyword = input('keyword', '');
+            $hour = input('hour', 24);
+            $config_model = new OrderConfigModel();
+            $data = $config_model->getOrderVerifyConfig($this->site_id, $this->app_module)['data']['value'];
+            $data[ $keyword ] = $hour;
+            return $config_model->setOrderVerifyConfig($data, $this->site_id, $this->app_module);
+        }else {
+            return $this->fetch("message/lists");
+        }
     }
 
 }

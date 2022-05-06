@@ -85,6 +85,17 @@
                             <span>订单号：{$order_detail.order_no}</span>
                             <span>下单时间：{$order_detail.create_time|date="Y-m-d"}</span>
                         </div>
+                        {if !empty($order_detail.promotion_type_name)}
+                            <div class="basic-info">
+                                <span>订单活动：{$order_detail.promotion_type_name}</span>
+                            </div>
+                        {/if}
+                        <div class="basic-info">
+                            <span>卖家备注：{$order_detail.remark}</span>
+                        </div>
+                        <div class="basic-info">
+                            <span>买家备注：{$order_detail.buyer_message}</span>
+                        </div>
                     </th>
                 </tr>
                 <tr>

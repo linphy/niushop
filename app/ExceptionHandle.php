@@ -9,7 +9,9 @@ use think\exception\Handle;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;
+use think\facade\View;
 use think\Response;
+use think\template\exception\TemplateNotFoundException;
 use Throwable;
 
 /**
@@ -43,12 +45,10 @@ class ExceptionHandle extends Handle
     }
 
     /**
-     * Render an exception into an HTTP response.
-     *
-     * @access public
      * @param \think\Request $request
      * @param Throwable $e
      * @return Response
+     * @throws \Exception
      */
     public function render($request, Throwable $e): Response
     {
@@ -57,6 +57,17 @@ class ExceptionHandle extends Handle
             $data = [
                 'code'      => $e->getErrorCode(),
                 'message'   => $e->getErrorMessage(),
+                'timestamp' => time()
+            ];
+            return json($data);
+        } else if ($e instanceof HttpException) {
+            if($e->getStatusCode() == 404){
+                return \response(View::fetch('error/error'));
+            }
+        } else if ($e instanceof TemplateNotFoundException) {
+            $data = [
+                'code'      => 1,
+                'message'   => '模块不存在',
                 'timestamp' => time()
             ];
             return json($data);

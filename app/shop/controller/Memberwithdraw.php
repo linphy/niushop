@@ -41,12 +41,14 @@ class Memberwithdraw extends BaseShop
                 'transfer_type'    => $transfer_type,//转账方式,
                 'is_auto_transfer' => input('is_auto_transfer', 0),//是否自动转账 1 手动转账  2 自动转账
                 'min'              => input('min', 0),//提现最低额度
+                'max'              => input('max', 0),//提现最高额度
             ];
             $this->addLog("设置会员提现配置");
             $is_use = input("is_use", 0);//是否启用
             $res    = $config_model->setConfig($data, $is_use, $this->site_id, $this->app_module);
             return $res;
         } else {
+            $this->forthMenu();
             $this->assign("is_exist", addon_is_exit("memberwithdraw", $this->site_id));
             //会员提现
             $config_result = $config_model->getConfig($this->site_id, $this->app_module);
@@ -75,7 +77,6 @@ class Memberwithdraw extends BaseShop
             $transfer_type = input('transfer_type', '');//提现转账方式
             $member_name   = input('member_name', '');//提现转账方式
             $condition     = [['site_id', '=', $this->site_id]];
-
             if (!empty($withdraw_no)) {
                 $condition[] = ['withdraw_no', 'like', '%' . $withdraw_no . '%'];
             }
@@ -120,6 +121,7 @@ class Memberwithdraw extends BaseShop
         $withdraw_model       = new MemberWithdrawModel();
         $withdraw_info_result = $withdraw_model->getMemberWithdrawInfo([["id", "=", $id], ['site_id', '=', $this->site_id]]);
         $withdraw_info        = $withdraw_info_result["data"];
+        if (empty($withdraw_info)) return $this->error('未获取到提现数据', addon_url('shop/memberwithdraw/lists'));
         $this->assign("withdraw_info", $withdraw_info);
         return $this->fetch("memberwithdraw/detail");
     }

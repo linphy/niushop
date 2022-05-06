@@ -1,5 +1,10 @@
 {extend name="base"/}
 {block name="resources"}
+<style>
+	.layui-layer-content {
+		padding-bottom: 20px!important;
+	}
+</style>
 {/block}
 {block name="main"}
 <!--<div class="layui-collapse ns-tips">-->
@@ -14,10 +19,10 @@
 <!--</div>-->
 <!-- 搜索框 -->
 <div class="ns-single-filter-box">
-	<button class="layui-btn ns-bg-color" onclick="addLabel()">添加商品分组</button>
+	<button class="layui-btn ns-bg-color" onclick="addLabel()">添加商品标签</button>
 	<div class="layui-form">
 		<div class="layui-input-inline">
-			<input type="text" name="search_keys" placeholder="请输入商品分组名称" autocomplete="off" class="layui-input">
+			<input type="text" name="search_keys" placeholder="请输入商品标签名称" autocomplete="off" class="layui-input">
 			<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
 				<i class="layui-icon">&#xe615;</i>
 			</button>
@@ -45,16 +50,9 @@
 
 	<div class="layui-form">
 		<div class="layui-form-item">
-			<label class="layui-form-label mid"><span class="required">*</span>商品分组：</label>
+			<label class="layui-form-label mid"><span class="required">*</span>商品标签：</label>
 			<div class="layui-input-block">
-				<input name="label_name" type="text" placeholder="请输入商品分组名称" lay-verify="required" class="layui-input ns-len-mid">
-			</div>
-		</div>
-		
-		<div class="layui-form-item">
-			<label class="layui-form-label mid">描述：</label>
-			<div class="layui-input-block">
-				<textarea name="desc" class="layui-textarea ns-len-mid"></textarea>
+				<input name="label_name" type="text" placeholder="请输入商品标签名称" lay-verify="required" class="layui-input ns-len-mid">
 			</div>
 		</div>
 		
@@ -70,18 +68,12 @@
 
 	<div class="layui-form">
 		<div class="layui-form-item">
-			<label class="layui-form-label mid"><span class="required">*</span>商品分组：</label>
+			<label class="layui-form-label mid"><span class="required">*</span>商品标签：</label>
 			<div class="layui-input-block">
-				<input name="label_name" type="text" value="{{ d.label_name }}" placeholder="请输入商品分组名称" lay-verify="required" class="layui-input ns-len-mid">
+				<input name="label_name" type="text" value="{{ d.label_name }}" placeholder="请输入商品标签名称" lay-verify="required" class="layui-input ns-len-mid">
 			</div>
 		</div>
-
-		<div class="layui-form-item">
-			<label class="layui-form-label mid">描述：</label>
-			<div class="layui-input-block">
-				<textarea name="desc" class="layui-textarea ns-len-mid">{{ d.desc }}</textarea>
-			</div>
-		</div>
+		
 		<input type="hidden" name="id" value="{{ d.id }}">
 		<div class="ns-form-row mid">
 			<button class="layui-btn ns-bg-color" lay-submit lay-filter="edit_save">保存</button>
@@ -108,12 +100,8 @@
 			cols: [
 				[ {
 					field: 'label_name',
-					title: '分组名称',
+					title: '标签名称',
 					unresize: 'false'
-				}, {
-					field:'desc',
-					unresize: 'false',
-					title: '描述'
 				}, {
                     unresize: 'false',
                     title: '创建时间',
@@ -121,16 +109,18 @@
                         return ns.time_to_date(data.create_time);
 					}
                 }, {
+                    field: 'sort',
 					unresize:'false',
 					title: '排序',
 					width: '20%',
+                    sort : true,
 					align: 'center',
 					templet: '#editSort'
 				}, {
 					title: '操作',
-					width: '15%',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+					align : 'right'
 				}]
 			]
 		});
@@ -150,6 +140,18 @@
 					break;
 			}
 		});
+
+        table.on("sort",function (obj) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: {
+                    order:obj.field,
+                    sort:obj.type
+                }
+            });
+        });
 
 		/**
 		 * 删除
@@ -251,10 +253,10 @@
 		var add_attr = $("#addLabel").html();
 		laytpl(add_attr).render({}, function(html) {
 			add_attr_index = layer.open({
-				title: '添加商品分组',
+				title: '添加商品标签',
 				skin: 'layer-tips-class',
 				type: 1,
-				area: ['500px'],
+				area: ['500px', '300px'],
 				content: html
 			});
 		});
@@ -265,10 +267,10 @@
         var add_attr = $("#editLabel").html();
         laytpl(add_attr).render(data, function(html) {
             add_attr_index = layer.open({
-                title: '编辑商品分组',
+                title: '编辑商品标签',
                 skin: 'layer-tips-class',
                 type: 1,
-                area: ['500px'],
+                area: ['500px', '300px'],
                 content: html
             });
         });

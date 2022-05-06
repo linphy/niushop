@@ -34,13 +34,16 @@ class OrderExport extends BaseModel
         'order_status_name' => '订单状态',
         'pay_status' => '支付状态',
         'delivery_status' => '配送状态',
-        'refund_status' => '退款状态',
         'pay_type_name' => '支付方式',
         'delivery_type_name' => '配送方式',
+        'nickname' => '购买人',
         'name' => '客户姓名',
         'mobile' => '客户手机',
         'telephone' => '客户固定电话',
-        'full_address' => '客户地址',
+        'province_name' => '省',
+        'city_name' => '市',
+        'district_name' => '县',
+        'full_address' => '详细地址',
         'buyer_ip' => '客户ip',
         'buyer_ask_delivery_time' => '客户要求配送时间',
         'buyer_message' => '客户留言信息',
@@ -77,6 +80,7 @@ class OrderExport extends BaseModel
         'cost_money' => '成本总价',
         'delivery_status_name' => '配送状态',
         'delivery_no' => '配送单号',
+        'refund_status_name' => '退款状态',
         'refund_no' => '退款编号',
         'refund_type' => '退货方式',
         'refund_apply_money' => '退款申请金额',
@@ -156,9 +160,8 @@ class OrderExport extends BaseModel
      * 查询订单项数据并导出
      * @param $condition
      */
-    public function orderExport($condition, $condition_desc, $site_id = 0, $join = [])
+    public function orderExport($condition, $condition_desc, $site_id = 0, $join = [], $is_verify, $order_label)
     {
-
         try {
             //预先创建导出的记录
             $data = array(
@@ -200,28 +203,58 @@ class OrderExport extends BaseModel
                 }
 
                 $table_field = implode(',', $field_key_array);
-
                 $order_table = Db::name('order')->where($condition)->alias($alias);
 
-                if(!empty($join)){
-                    $join = [
-                        [
-                            'order_goods og',
-                            'o.order_id = og.order_id',
-                            'left'
-                        ]
-                    ];
-                    $order_table = $this->parseJoin($order_table, $join);
+                if(!empty($join) || $is_verify != "all"){
+
+                    if(!empty($join) && $is_verify == "all" ){
+                        $join = [
+                            [
+                                'order_goods og',
+                                'o.order_id = og.order_id',
+                                'left'
+                            ],
+                        ];
+                    }else if($is_verify != "all" && empty($join)){
+                        $join = [
+                            [
+                                'verify v',
+                                'v.verify_code = o.virtual_code',
+                                'left'
+                            ],
+                        ];
+                    }else{
+                        $join = [
+                            [
+                                'order_goods og',
+                                'o.order_id = og.order_id',
+                                'left'
+                            ],
+                            [
+                                'verify v',
+                                'v.verify_code = o.virtual_code',
+                                'left'
+                            ]
+                        ];
+                    }
+
                 }
+
+                $join[] = [
+                    'member m',
+                    'm.member_id = o.member_id',
+                    'left'
+                ];
+                $order_table = $this->parseJoin($order_table, $join);
+
                 $first_line = implode(',', $field_value);
                 //写入第一行表头
                 fwrite($fp, $first_line . "\n");
 
                 $temp_line = implode(',', $field_key) . "\n";
 
-                $table_field = 'o.*';
+                $table_field = 'o.*,m.nickname';
                 $order_table->field($table_field)->chunk(5000, function ($item_list) use ($fp, $temp_line, $field_key_array) {
-
                     //写入导出信息
                     $this->itemExport($item_list, $field_key_array, $temp_line, $fp);
                     unset($item_list);
@@ -254,7 +287,7 @@ class OrderExport extends BaseModel
      * 查询订单项数据并导出
      * @param $condition
      */
-    public function orderGoodsExport($condition, $condition_desc, $site_id = 0)
+    public function orderGoodsExport($condition, $condition_desc, $site_id = 0, $is_verify, $order_label)
     {
 
         try {
@@ -280,9 +313,31 @@ class OrderExport extends BaseModel
                     'left'
                 ]
             ];
-            $order_field = 'o.order_no,o.site_name,o.order_name,o.order_from_name,o.order_type_name,o.order_promotion_name,o.out_trade_no,o.out_trade_no_2,o.delivery_code,o.order_status_name,o.pay_status,o.delivery_status,o.refund_status,o.pay_type_name,o.delivery_type_name,o.name,o.mobile,o.telephone,o.full_address,o.buyer_ip,o.buyer_ask_delivery_time,o.buyer_message,o.goods_money,o.delivery_money,o.promotion_money,o.coupon_money,o.order_money,o.adjust_money,o.balance_money,o.pay_money,o.refund_money,o.pay_time,o.delivery_time,o.sign_time,o.finish_time,o.remark,o.goods_num,o.delivery_status_name,o.is_settlement,o.delivery_store_name,o.promotion_type_name,o.address';
 
-            $order_goods_field = 'og.order_goods_id,og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock';
+            if($is_verify != "all"){
+                $join = [
+                    [
+                        'order o',
+                        'o.order_id = og.order_id',
+                        'left'
+                    ],
+                    [
+                        'verify v',
+                        'v.verify_code = o.virtual_code',
+                        'left'
+                    ]
+                ];
+            }
+
+            $join[] = [
+                'member m',
+                'm.member_id = og.member_id',
+                'left'
+            ];
+
+            $order_field = 'o.order_no,o.site_name,o.order_name,o.order_from_name,o.order_type_name,o.order_promotion_name,o.out_trade_no,o.out_trade_no_2,o.delivery_code,o.order_status_name,o.pay_status,o.delivery_status,o.refund_status,o.pay_type_name,o.delivery_type_name,o.name,o.mobile,o.telephone,o.full_address,o.buyer_ip,o.buyer_ask_delivery_time,o.buyer_message,o.goods_money,o.delivery_money,o.promotion_money,o.coupon_money,o.order_money,o.adjust_money,o.balance_money,o.pay_money,o.refund_money,o.pay_time,o.delivery_time,o.sign_time,o.finish_time,o.remark,o.goods_num,o.delivery_status_name,o.is_settlement,o.delivery_store_name,o.promotion_type_name,o.address,m.nickname';
+
+            $order_goods_field = 'og.order_goods_id,og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock,og.refund_status_name';
 
             $table_field = $order_field . ',' . $order_goods_field;
 
@@ -377,7 +432,7 @@ class OrderExport extends BaseModel
             ];
             $order_field = 'o.order_no,o.site_name,o.order_name,o.order_from_name,o.order_type_name,o.order_promotion_name,o.out_trade_no,o.out_trade_no_2,o.delivery_code,o.order_status_name,o.pay_status,o.delivery_status,o.refund_status,o.pay_type_name,o.delivery_type_name,o.name,o.mobile,o.telephone,o.full_address,o.buyer_ip,o.buyer_ask_delivery_time,o.buyer_message,o.goods_money,o.delivery_money,o.promotion_money,o.coupon_money,o.order_money,o.adjust_money,o.balance_money,o.pay_money,o.refund_money,o.pay_time,o.delivery_time,o.sign_time,o.finish_time,o.remark,o.goods_num,o.delivery_status_name,o.is_settlement,o.delivery_store_name,o.promotion_type_name,o.address';
 
-            $order_goods_field = 'og.order_goods_id,og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock';
+            $order_goods_field = 'og.order_goods_id,og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock,og.refund_status_name';
 
             $table_field = $order_field . ',' . $order_goods_field;
 
@@ -485,7 +540,14 @@ class OrderExport extends BaseModel
         $item_list = $this->handleData($item_list, $field_key);
         foreach ($item_list as $k => $item_v) {
             $new_line_value = $temp_line;
+            //省市县
+            $address_arr = explode("-", $item_v['full_address']);
+            $item_v['province_name'] = !empty($address_arr[0]) ? $address_arr[0] : "";
+            $item_v['city_name'] = !empty($address_arr[1]) ? $address_arr[1] : "";
+            $item_v['district_name'] = !empty($address_arr[2]) ? $address_arr[2] : "";
+
             foreach ($item_v as $key => $value) {
+
                 if($key == 'full_address'){
                     $address = $item_v['address'] ?? '';
                     $value = $value.$address;
@@ -625,5 +687,18 @@ class OrderExport extends BaseModel
         return $this->success($list);
     }
 
-
+    /**
+     * 导出记录
+     * @param array $condition
+     * @param int $page
+     * @param int $page_size
+     * @param string $order
+     * @param string $field
+     * @return array
+     */
+    public function getRefundExportPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    {
+        $list = model('order_refund_export')->pageList($condition, $field, $order, $page, $page_size);
+        return $this->success($list);
+    }
 }

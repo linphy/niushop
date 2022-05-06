@@ -65,7 +65,14 @@ class MemberLabel extends BaseModel
      */
     public function modifyMemberLabelSort($sort, $label_id)
     {
-
+       //判断标签下有没有会员
+        if(!empty($label_ids)){
+            $label_id_array = explode(',',$label_ids);
+            foreach($label_id_array as $val){
+                $label_is_has_member = model('member')->getList([['member_label','like','%'.$val.'%'],['is_delete','=','0']],'member_id');
+                if(!empty($label_is_has_member))return $this->error('','标签下有会员不能删除!');
+            }
+        }
         $res = model('member_label')->update(['sort' => $sort], [['label_id', '=', $label_id]]);
         Cache::tag("member_label")->clear();
         return $this->success($res);

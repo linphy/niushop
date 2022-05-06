@@ -102,13 +102,14 @@
                     field: 'sort',
                     unresize:'false',
                     title: '排序',
+                    sort : true,
                     width: '20%',
                     templet: '#editSort'
                 }, {
 					title: '操作',
-					width: '20%',
 					unresize: 'false',
 					templet: '#operation',
+                    align : 'right'
 				}
 			]]
 		});
@@ -156,6 +157,18 @@
 				}
 			);
 		}
+        table.on("sort",function (obj) {
+            table.reload({
+                page: {
+                    curr: 1
+                },
+                where: {
+                    order:obj.field,
+                    sort:obj.type
+                }
+            });
+        });
+
 
 		function modifySiteNoticeTop(id) {
 			if (repeat_flag) return;

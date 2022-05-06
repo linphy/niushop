@@ -37,7 +37,7 @@ class Qrcode extends BaseModel
             $url      = $domain . $param['page'] . $urlParam;
             $filename = $param['qrcode_path'] . '/' . $param['qrcode_name'] . '_' . $param['app_type'] . '.png';
             QRcodeExtend::png($url, $filename, 'L', 4, 1);
-            return $this->success(['path' => $filename]);
+            return $this->success(['path' => $filename,'url'=>$url]);
         } catch (\Exception $e) {
             return $this->error('', $e->getMessage());
         }

@@ -25,8 +25,20 @@ var goodsListHtml = '<div class="goods-list-edit layui-form">';
 		goodsListHtml += '<div class="layui-form-item" v-if="isLoad && data.sources == \'diy\'">';
 			goodsListHtml += '<label class="layui-form-label sm">手动选择</label>';
 			goodsListHtml += '<div class="layui-input-block align-right">';
-				goodsListHtml += '<a href="#" class="ns-input-text" v-on:click="addGoods"><span class="ns-text-color">请选择</span><i class="iconfont iconyoujiantou"></i></a>';
+				goodsListHtml += '<a href="#" class="ns-input-text" v-on:click="addGoods">';
+					goodsListHtml += '<span v-if="data.goodsId.length == 0" class="ns-text-color">请选择</span>';
+					goodsListHtml += '<span v-if="data.goodsId.length > 0" class="ns-text-color">已选{{data.goodsId.length}}个</span>';
+					goodsListHtml += '<i class="iconfont iconyoujiantou"></i>';
+				goodsListHtml += '</a>';
 			goodsListHtml += '</div>';
+		goodsListHtml += '</div>';
+		
+		goodsListHtml += '<div class="layui-form-item" v-if="isLoad && data.sources == \'group\'">';
+			goodsListHtml += '<label class="layui-form-label sm">商品组名称</label>';
+			goodsListHtml += '<div class="layui-input-block">';
+				goodsListHtml += '<input type="text" v-model="data.groupTitle" id="\'title_\' + data.index" placeholder="请输入商品组名称" class="layui-input">';
+			goodsListHtml += '</div>';
+			goodsListHtml += '<div style="color: #909399; font-size: 12px; padding-left: 80px; margin-top: 10px;">名称必须与多商品组名称一致</div>';
 		goodsListHtml += '</div>';
 			
 		goodsListHtml += '<slide v-bind:data="{ field : \'goodsCount\', label: \'商品数量\', max: 20}" v-if="data.sources != \'diy\'"></slide>';
@@ -56,6 +68,12 @@ Vue.component("goods-list", {
 					value : "diy",
 					icon: goodsListResourcePath + "/goods_list/img/diy_icon.png",
 					selectedIcon: goodsListResourcePath + "/goods_list/img/diy_selected_icon.png"
+				},
+				{
+					text : "多商品组",
+					value : "group",
+					icon: goodsListResourcePath + "/goods_list/img/group_icon.png",
+					selectedIcon: goodsListResourcePath + "/goods_list/img/group_selected_icon.png"
 				}
 			],
 			categoryList: [],
@@ -112,24 +130,57 @@ Vue.component("goods-list", {
 		},
 		selectCategory(){
 			var self = this;
-			layer.open({
-				type: 1,
-				title: '选择分类',
-				area:['630px','430px'],
-				btn: ['确定', '返回'],
-				content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .goods-category-layer").html(),
-				success: function(layero, index) {
-					$("body").on("click", ".layui-layer-content .category-wrap .category-item", function () {
-						$(this).addClass("selected ns-border-color").siblings().removeClass("selected ns-border-color");
-					});
-					$(".layui-layer-content .category-wrap .category-item[data-id='" + self.data.categoryId + "']").click();
-				},
-				yes: function (index, layero) {
-					self.data.categoryName =  $(".layui-layer-content .category-wrap .category-item.selected").text();
-					self.data.categoryId = $(".layui-layer-content .category-wrap .category-item.selected").attr('data-id');
-					layer.closeAll()
-				}
-			});
+			layui.use(['form'], function(){
+	            var form = layui.form;
+
+        		layer.open({
+					type: 1,
+					title: '选择分类',
+					area:['630px','430px'],
+					btn: ['确定', '返回'],
+					content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .goods-category-layer").html(),
+					success: function(layero, index) {
+						$(".js-switch").click(function () {
+		                    var category_id = $(this).attr("data-category-id");
+		                    var level = $(this).attr("data-level");
+		                    var open = parseInt($(this).attr("data-open").toString());
+
+		                    if(open){
+		                        $(".goods-category-list .layui-table tr[data-category-id-"+ level+"='" + category_id + "']").hide();
+		                        $(this).text("+");
+		                    }else{
+		                        $(".goods-category-list .layui-table tr[data-category-id-"+ level+"='" + category_id + "']").show();
+		                        $(this).text("-");
+		                    }
+		                    $(this).attr("data-open", (open ? 0 : 1));
+		                });
+
+	                 	// 勾选分类
+		                form.on('checkbox(category_select_id)', function(data) {
+		                    if (data.elem.checked){
+		                        $("input[name='category_select_id']:checked").prop("checked",false);
+		                        $(data.elem).prop("checked",true);
+		                        form.render();
+		                    }
+		                });
+
+		                $("input[name='category_select_id']:checked").prop("checked",false);
+		                if (self.data.categoryId ) {
+	                		$('.layui-layer-content [data-category_select_id="'+ self.data.categoryId +'"]').prop("checked", true);
+		                }
+		                form.render();
+					},
+					yes: function (index, layero) {
+						if ($(".layui-layer-content input[name='category_select_id']:checked").length == 0) {
+							layer.msg('请选择商品分类');
+							return;
+						}
+						self.data.categoryName =  $(".layui-layer-content input[name='category_select_id']:checked").parents('tr').find('.category-name').text();
+						self.data.categoryId = $(".layui-layer-content input[name='category_select_id']:checked").attr('data-category_select_id');
+						layer.closeAll()
+					}
+				});
+			})	
 		}
 	},
 	computed:{

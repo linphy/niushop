@@ -5,7 +5,8 @@
  * Copy right 2019-2029 上海牛之云网络科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用。
+ * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
 
@@ -58,7 +59,11 @@ class MemberLevel extends BaseModel
     public function editMemberLevel($data, $condition)
     {
         $res = model('member_level')->update($data, $condition);
-
+        $check_condition = array_column($condition, 2, 0);
+        $level_id = isset($check_condition[ 'level_id' ]) ? $check_condition[ 'level_id' ] : 0;
+        if (!empty($level_id) && isset($data['level_name'])) {
+            model('member')->update([ 'member_level_name' => $data['level_name'] ], [ ['member_level', '=', $level_id] ]);
+        }
         Cache::tag("member_level")->clear();
         return $this->success();
     }
@@ -97,6 +102,18 @@ class MemberLevel extends BaseModel
         $res = model('member_level')->delete($condition);
         Cache::tag("member_level")->clear();
         return $this->success($res);
+    }
+
+    /**
+     * 获取一条等级
+     * @param $condition
+     * @param string $field
+     * @param string $order
+     * @return array
+     */
+    public function getFirstMemberLevel($condition, $field = '*', $order = ""){
+        $data = model('member_level')->getFirstData($condition, $field, $order);
+        return $this->success($data);
     }
 
     /**

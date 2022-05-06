@@ -143,7 +143,7 @@ class StoreOrder extends OrderCommon
      * 订单支付
      * @param unknown $order_info
      */
-    public function orderPay($order_info, $pay_type)
+    public function orderPay($order_info, $pay_type,$log_data=[])
     {
         if ($order_info['order_status'] != 0) {
             return $this->error();
@@ -196,6 +196,29 @@ class StoreOrder extends OrderCommon
             "pay_type_name"       => $pay_type_list[$pay_type]
         );
 
+        //记录订单日志 start
+        $action = '商家对订单进行了线下支付';
+        //获取用户信息
+        if (empty($log_data)){
+            $member_info = model('member')->getInfo(['member_id'=>$order_info['member_id']],'nickname');
+            $log_data = [
+                'uid'        => $order_info[ 'member_id' ],
+                'nick_name'  => $member_info['nickname'],
+                'action_way' => 1
+            ];
+            $action = '买家【'.$member_info['nickname'].'】支付了订单';
+        }
+
+        $log_data = array_merge($log_data,[
+            'order_id'          => $order_info['order_id'],
+            'action'            => $action,
+            'order_status'      => self::ORDER_PENDING_DELIVERY,
+            'order_status_name' => $this->order_status[self::ORDER_PENDING_DELIVERY]["name"]
+        ]);
+
+        $this->addOrderLog($log_data);
+        //记录订单日志 end
+
         $res = model('order')->update($data, $condition);
 
         $order_goods_data = array(
@@ -223,8 +246,8 @@ class StoreOrder extends OrderCommon
         }
 
         //核销发送通知
-        $message_model = new Message();
-        $message_model->sendMessage(['keywords' => "VERIFY", 'order_id' => $order_info['order_id'], 'site_id' => $order_info['site_id']]);
+//        $message_model = new Message();
+//        $message_model->sendMessage(['keywords' => "VERIFY", 'order_id' => $order_info['order_id'], 'site_id' => $order_info['site_id']]);
         return $result;
 
 

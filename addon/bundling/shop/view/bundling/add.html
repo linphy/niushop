@@ -8,6 +8,7 @@
 	.goods-title .goods-img{display: flex;align-items: center;justify-content: center;width: 55px;height: 55px;margin-right: 5px;}
 	.goods-title .goods-img img{max-height: 100%;max-width: 100%;}
 	.goods-title .goods-name{flex: 1;line-height: 1.6;}
+	.goods_num {padding-left: 20px}
 </style>
 {/block}
 {block name="main"}
@@ -59,7 +60,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<button class="layui-btn ns-bg-color" onclick="addGoods()">添加商品</button>
+			<button class="layui-btn ns-bg-color" onclick="addGoods()">添加商品</button> <span class="goods_num">已选商品（<span id="goods_num" style="color: red">0</span>）</span>
 		</div>
 	</div>
 
@@ -124,6 +125,8 @@
 		form.on('submit(save)', function(data) {
 
 			var num = $("#goods").find("tbody tr").length;
+			var combinedPrice = $('.combined-price').val(),
+				originalPrice = Number($(".original-price").text());
 			if (num < 2) {  //判断提交时商品数量是否在2-6之间
 				layer.msg("商品数不可小于2个！", {
 					icon: 5
@@ -134,6 +137,16 @@
 			if (data.field.status == undefined) {
 				data.field.status = 0;
 			}
+			
+			if(combinedPrice > originalPrice){
+				layer.msg("组合套餐价格不能高于原价");
+				$(".save-prices").text(0);
+				$(".save-prices").focus()
+				return false
+			}
+			
+			
+			
 			data.field.sku_ids = selectGoodsSkuId.toString();
 
 			if (repeat_flag) return;
@@ -186,6 +199,8 @@
 		goodsSelect(function (res) {
 			if (!res.length) return false;
 			var price = 0.00;
+			selectGoodsSkuId = [];
+			$("#goods tbody").html("");
 			var html = $("#goods tbody .goods-empty").length ? '' : $("#goods tbody").html();
 			for (var i = 0; i < res.length; i++) {
 				for (var k = 0; k < res[i].selected_sku_list.length; k++) {
@@ -210,12 +225,9 @@
 					selectGoodsSkuId.push(item.sku_id);
 				}
 			}
-
-
+			$("#goods_num").html(selectGoodsSkuId.length)
 			$("#goods tbody").html(html);
-			$(".original-price").text(price.toFixed(2));
-			$(".combined-price").val(price.toFixed(2));
-			$(".save-prices").text(0);
+			priceCount();
 			
 		}, selectGoodsSkuId, {mode: "sku", max_num: 6, min_num: 2});
 	}
@@ -232,6 +244,7 @@
 				selectGoodsSkuId.splice(i, 1);
 			}
 		}
+		$("#goods_num").html(selectGoodsSkuId.length)
 	}
 
 	/**
@@ -259,28 +272,40 @@
 	}
 	
 	$("#bl_price").blur(function() {
+		console.log(11)
 		var bl_price = $(this).val();
+
 		if (bl_price < 0) {
 			layer.msg("价格不能小于0，可保留两位小数");
+		}else{
+			var originalPrice = Number($(".original-price").text());
+			if (bl_price > originalPrice) {
+				$(this).val(originalPrice);
+				layer.msg("优惠套餐价格不能高于原价");
+				$(".save-prices").text(0);
+			} else {
+				var num = accSub(originalPrice, bl_price);
+				$(".save-prices").text(num);
+			}
 		}
 	});
 	
 	/**
 	 * 计算组合套餐价格、原价、节省价
 	 */
-	$(".combined-price").blur(function() {
-		var combinedPrice = $(this).val(),
-			originalPrice = Number($(".original-price").text());
+	// $(".combined-price").blur(function() {
+	// 	var combinedPrice = $(this).val(),
+	// 		originalPrice = Number($(".original-price").text());
 
-		if (combinedPrice > originalPrice) {
-			$(this).val(originalPrice);
-			layer.msg("优惠套餐价格不能高于原价");
-			$(".save-prices").text(0);
-		} else {
-			var num = accSub(originalPrice, combinedPrice);
-			$(".save-prices").text(num);
-		}
-	});
+	// 	if (combinedPrice > originalPrice) {
+	// 		$(this).val(originalPrice);
+	// 		layer.msg("优惠套餐价格不能高于原价");
+	// 		$(".save-prices").text(0);
+	// 	} else {
+	// 		var num = accSub(originalPrice, combinedPrice);
+	// 		$(".save-prices").text(num);
+	// 	}
+	// });
 	
 	// 两个浮点数相减
 	function accSub(num1, num2){

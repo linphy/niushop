@@ -33,6 +33,7 @@ class Config extends BaseShop
                 'return_growth_rate'  => input('return_growth_rate', 0),//成长值返还比例0-100 不取小数
                 'return_coupon'       => input('return_coupon', ''),//优惠券
                 'is_return_coupon'    => input('is_return_coupon', 0),//是否送优惠券
+                'is_recovery_reward'    => input('is_recovery_reward', 0),//退款是否回收奖励
             ];
             $this->addLog("设置会员消费奖励");
             $is_use       = input("is_use", 0);//是否启用
@@ -64,14 +65,18 @@ class Config extends BaseShop
             $page      = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $status    = input('status', '');
-            $search_text    = input('search_text', '');
+            $order_no    = input('order_no', '');
+            $username    = input('username', '');
 
             $condition = [];
             if ($status !== '') {
                 $condition[] = ['pcr.type', '=', $status];
             }
-            if($search_text){
-                $condition[] = ['m.username|o.order_no', 'like', '%'.$search_text.'%'];
+            if($order_no){
+                $condition[] = ['o.order_no', 'like', '%'.$order_no.'%'];
+            }
+            if($username){
+                $condition[] = ['m.username', 'like', '%'.$username.'%'];
             }
             $condition[] = ['pcr.site_id', '=', $this->site_id];
             $order       = 'pcr.create_time desc';
@@ -81,6 +86,17 @@ class Config extends BaseShop
                 ['member m','pcr.member_id = m.member_id','left'],
                 ['order o','pcr.order_id = o.order_id','left'],
             ];
+
+            $start_time = input('start_time', '');
+            $end_time   = input('end_time', '');
+
+            if ($start_time && !$end_time) {
+                $condition[] = ['pcr.create_time', '>=', date_to_time($start_time)];
+            } elseif (!$start_time && $end_time) {
+                $condition[] = ['pcr.create_time', '<=', date_to_time($end_time)];
+            } elseif ($start_time && $end_time) {
+                $condition[] = [ 'pcr.create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
+            }
 
             $config_model = new Consume();
             $res            = $config_model->getConsumeRecordPageList($condition, $page, $page_size, $order, $field, $alias, $join);

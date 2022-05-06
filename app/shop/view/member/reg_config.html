@@ -13,6 +13,9 @@
 	.ns-word-aux{
 		width: 50%!important;
 	}
+	.examples {color: #ff8833; cursor: pointer; margin-left: 5px; font-weight: 500;}
+	.layui-carousel {width: 850px !important; height: 580px !important; background: #fff !important;}
+	.layui-carousel>[carousel-item]>* {background: #fff !important;}
 </style>
 {/block}
 {block name="main"}
@@ -21,7 +24,7 @@
 	<div class="layui-card ns-card-common ns-card-brief">
 	    <div class="layui-card-header">
 	        <div>
-	            <span class="ns-card-title">普通登录注册设置</span>
+	            <span class="ns-card-title">普通登录注册设置<a onclick="showDemo1()" class="examples ns-text-color">查看示例</a></span>
 	        </div>
 	    </div>
 	    <div class="layui-card-body">
@@ -53,7 +56,7 @@
 	<div class="layui-card ns-card-common ns-card-brief">
 	    <div class="layui-card-header">
 	        <div>
-	            <span class="ns-card-title">第三方平台注册设置</span>
+	            <span class="ns-card-title">第三方平台注册设置<a onclick="showDemo2()" class="examples ns-text-color">查看示例</a></span>
 	        </div>
 	    </div>
 	    <div class="layui-card-body">
@@ -104,7 +107,7 @@
 					<input type="checkbox" name="pwd_complexity" value="upper_case" title="大写字母" lay-skin="primary" {if condition="!empty($value) && in_array('upper_case', $value['pwd_complexity_arr'])"}checked{/if}>
 					<input type="checkbox" name="pwd_complexity" value="symbol" title="符号" lay-skin="primary" {if condition="!empty($value) && in_array('symbol', $value['pwd_complexity_arr'])"}checked{/if}>
 				</div>
-				<div class="ns-word-aux">设置密码复杂度</div>
+				<div class="ns-word-aux">根据选项设置密码复杂程度，如果不勾选，则密码无限制</div>
 			</div>
 	    </div>
     </div>
@@ -116,10 +119,12 @@
 {/block}
 {block name="script"}
 <script>
-	layui.use('form', function() {
-		var form = layui.form,
-			repeat_flag = false; //防重复
+	layui.use(['form','carousel'], function() {
+		var form = layui.form;
+		var carousel = layui.carousel;
+		repeat_flag = false; //防重复
 		form.render();
+	
 
 		form.on('submit(save)', function(data) {
 			var pwd_complexity_array = [], register = [], login = [];
@@ -183,5 +188,22 @@
 		});    
 		
 	});
+	
+	function showDemo1(){
+	    layer.open({
+	        title: '查看示例',
+	        type: 1,
+	        area: ['700px', '660px'],
+	       content: '<img style="margin:20px;" src="SHOP_IMG/reg_login.png">'
+	    })
+	}
+	function showDemo2(){
+	    layer.open({
+	        title: '查看示例',
+	        type: 1,
+	        area: ['700px', '660px'],
+	       content: '<img style="margin:20px;" src="SHOP_IMG/other_reglogin.png">'
+	    })
+	}
 </script>
 {/block}

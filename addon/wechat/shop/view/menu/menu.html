@@ -122,11 +122,11 @@
                                                         <span>文本</span>
                                                     </div>
                                                     <div class="title">
-                                                        <a href="javascript:void(0);" @click="previewText(text)">{{text}}</a>
+                                                        <a href="javascript:void(0);" @click="previewTexts(text)">{{text}}</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class='del' @click="deleteMaterial(5)">删除</span>
+                                                <span class='del' @click="deleteMaterial(5)">删除</span>
                                         </template>
                                     </div>
                                     <div class="layui-tab-item" :class="media_type == 'graphic_message' ? 'layui-show' : ''">
