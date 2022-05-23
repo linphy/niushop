@@ -1,7 +1,7 @@
 {
 	"templateInfo": {
 		"name": "精品家居商城",
-		"desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
+		"desc": "家居模板，选择以木质纹理为色调，让人一进商城就知道主打产品是什么，导航菜单可按家居类型设置入口，在首页即可看到沙发区，床区，柜子区等，挑选更有目的性；底下也可按照装修风格挑选配套的家居用品及装饰，这样的商城逛起来购物欲也会满满。",
 		"mark": "furniture_template"
 	},
 	"templateValue": {
@@ -16,7 +16,9 @@
 					"topNavbg": false,
 					"textNavColor": "#333333",
 					"topNavImg": "",
-					"moreLink": {},
+					"moreLink": {
+						"name" : ""
+					},
 					"openBottomNav": true,
 					"navStyle": 1,
 					"textImgStyleLink": "1",

@@ -362,6 +362,7 @@
 	var saveData = null;
 	var totalUploadNum = 0;
 	var completeUploadNum = 0;
+	var upload;
 
 	$("body").on("change",'input[name="money"]',function(){
 		let aa = $('input[name="money"]').val();
@@ -536,7 +537,7 @@
             }
         });
 
-		var upload = new Upload({
+		upload = new Upload({
 			elem: '#couponImg',
 			auto:false,
 			bindAction:'#imageId',

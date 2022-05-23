@@ -71,10 +71,9 @@ class Kd100
      * @param unknown $data
      */
     public function handleReturnResult($data){
-
         $result = array();
         // 处理100企业版返回数据
-        if(isset($data["result"])){
+        if(isset($data["result"]) || isset($data['returnCode'])){
             $result["success"] = false;
             $result["reason"] = $data["message"];
         }else{

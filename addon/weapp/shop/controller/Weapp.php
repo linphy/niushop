@@ -11,6 +11,7 @@
 namespace addon\weapp\shop\controller;
 
 use addon\weapp\model\Config as ConfigModel;
+use app\model\share\WeappShareBase as ShareModel;
 use app\model\system\Upgrade;
 use app\shop\controller\BaseShop;
 use addon\weapp\model\Weapp as WeappModel;
@@ -176,7 +177,7 @@ class Weapp extends BaseShop
     /**
      * 分享
      */
-    public function share(){
+    public function shareBack(){
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $key = input('key', 'index');
@@ -199,6 +200,32 @@ class Weapp extends BaseShop
         $this->assign('config', $config['data']['value']);
         $this->assign('shop_info', $this->shop_info);
 		
-        return $this->fetch('weapp/share', [], $this->replace);
+        return $this->fetch('weapp/share_back', [], $this->replace);
+    }
+
+    /**
+     * 分享
+     */
+    public function share()
+    {
+        if (request()->isAjax()) {
+            $data_json = input('data_json', '');
+            $data = json_decode($data_json, true);
+            $share_model = new ShareModel();
+            return $share_model->setShareConfig($this->site_id, $data);
+        } else {
+            $share_config = event('WeappShareConfig', ['site_id' => $this->site_id]);
+            uksort($share_config, function($val1, $val2){
+                return $val1['sort'] > $val2['sort'];
+            });
+            $config_list = [];
+            foreach($share_config as $data){
+                foreach($data['data'] as $val){
+                    $config_list[] = $val;
+                }
+            }
+            $this->assign('config_list', $config_list);
+            return $this->fetch('weapp/share', [], $this->replace);
+        }
     }
 }

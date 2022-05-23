@@ -20,7 +20,7 @@
                 <option value="">所属广告位</option>
                 {notempty name="adv_position"}
                     {foreach name="adv_position" item="vo"}
-                        <option value="{$vo.ap_id}">{$vo.ap_name}</option>
+                        <option value="{$vo.ap_id}" {if $ap_id == $vo.ap_id}selected{/if}>{$vo.ap_name}</option>
                     {/foreach}
                 {/notempty}
             </select>
@@ -76,17 +76,40 @@
 {/block}
 {block name="script"}
 <script>
+    var ap_id = '{$ap_id}';
     layui.use('form', function () {
         var table,
             form = layui.form,
             repeat_flag = false; //防重复标识
         form.render();
 
+        form.on('switch(state)', function(data){
+            let state = data.elem.checked ? 1 : 0;
+            let adv_id = $(data.elem).attr('data-adv-id');
+
+            if(repeat_flag) return;
+            repeat_flag = true;
+
+            $.ajax({
+                url: ns.url("shop/adv/alterAdvState"),
+                data: {
+                    adv_id : adv_id,
+                    state : state,
+                },
+                dataType: 'JSON',
+                type: 'POST',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag = false;
+                }
+            });
+        })
+
         table = new Table({
             elem: '#adv_list',
             url: ns.url("shop/adv/lists"),
             where: {
-                'ap_id': $("input[name=ap_id]").val()
+                'ap_id': '{$ap_id}'
             },
             cols: [
                 [{
@@ -101,7 +124,7 @@
                 }, {
                     title: '广告链接',
                     unresize: 'false',
-                    width: '28%',
+                    width: '15%',
 					templet: function(data) {
                     	var adv_url = data.adv_url;
                     	if(adv_url){
@@ -129,6 +152,13 @@
                     align: 'center',
                     sort : true,
                     width: '12%'
+                },{
+                    title: '是否启用',
+                    unresize: 'false',
+                    templet: function(data) {
+                        return '<input type="checkbox" name="state" value="1" lay-skin="switch" lay-filter="state" data-adv-id="'+ data.adv_id +'" '+ (data.state == 1 ? 'checked' : '') +' />';
+                    },
+                    width: '10%',
                 }, {
                     title: '操作',
                     toolbar: '#action',
@@ -147,7 +177,7 @@
             var data = obj.data;
             switch (obj.event) {
                 case 'edit': //编辑
-                    location.href = ns.url("shop/adv/editadv",{"adv_id":data.adv_id});
+                    location.href = ns.url("shop/adv/editadv",{"adv_id":data.adv_id, ap_id:ap_id});
                     break;
                 case 'delete': //删除
                     deleteAdv(data.adv_id);
@@ -235,6 +265,7 @@
          * 监听搜索
          */
         form.on('submit(search)', function(data){
+            ap_id = $("select[name='ap_id']").val();
             table.reload({
                 page: {
                     curr: 1
@@ -272,7 +303,7 @@
     }
 
     function add() {
-        location.href = ns.url("shop/adv/addAdv");
+        location.href = ns.url("shop/adv/addAdv", {ap_id : ap_id});
     }
 </script>
 {/block}

@@ -90,7 +90,7 @@ class Orderrefund extends BaseApi
             $order_goods_info_result[] = $order_refund_model->getRefundDetail($item)['data'] ?? [];
         }
         $order_goods_info = $order_goods_info_result;//订单项信息
-        $refund_money_array = $order_refund_model->getOrderRefundMoneyBatch($order_goods_ids);
+        $refund_money_array = $order_refund_model->getOrderRefundMoney($order_goods_ids);
         $refund_delivery_money = $refund_money_array['refund_delivery_money'];//其中的运费
         $refund_money = $refund_money_array['refund_money'];//总退款
         $refund_type = $order_refund_model->getRefundOrderType($order_goods_info[0]['order_id']);

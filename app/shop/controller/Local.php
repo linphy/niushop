@@ -47,13 +47,7 @@ class Local extends BaseShop
 
             $start_time = input('start_time', 0);
             $end_time   = input('end_time', 0);
-            $time_is_open   = input('time_is_open', 0);
-            $time_type   = input('time_type', 0);
 
-            if (empty($time_is_open) || empty($time_type)) {
-                $start_time = 0;
-                $end_time = 0;
-            }
             $data = [
                 'type'            => input('type', 'default'),//配送方式  default 商家自配送  other 第三方配送
                 'area_type'       => input('area_type', 1),//配送区域

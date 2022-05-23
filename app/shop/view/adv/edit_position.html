@@ -28,6 +28,13 @@
 			<textarea name="ap_intro" class="layui-textarea {if condition="$info.is_system == 1"}layui-btn-disabled{/if}" {if condition="$info.is_system == 1"}disabled{/if}>{$info.ap_intro}</textarea>
 		</div>
 	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否启用：</label>
+		<div class="layui-input-block">
+			<input type="checkbox" name="state" value="1" lay-skin="switch" lay-filter="state" {if condition="$info.state == 1"} checked {/if} />
+		</div>
+	</div>
 	
 <!--	<div class="layui-form-item">-->
 <!--		<label class="layui-form-label">建议广告图片宽度：</label>-->

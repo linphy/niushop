@@ -201,6 +201,11 @@ class BaseShop extends Controller
 
                     $child = $this->initMenu($menus_list, $menu_v[ "name" ]);//获取下级的菜单
 
+                    //真实的url是自己所拥有的下级的url，要进行替换（营销中心比较特殊，不能做处理）
+                    if ($menu_v['name'] != 'PROMOTION_ROOT' && count($child) > 0 && $menu_v['level'] <= 2) {
+                        $temp_item['url'] = $child[array_keys($child)[0]]['url'];
+                    }
+
                     $temp_item[ "child_list" ] = $child;
                     $temp_list[ $menu_v[ "name" ] ] = $temp_item;
                 }
@@ -269,10 +274,10 @@ class BaseShop extends Controller
         $menu_model = new Menu();
         //暂定全部权限，系统用户做完后放开
         if ($this->user_info[ 'is_admin' ] || $this->group_info[ 'is_system' ] == 1) {
-            $menus = $menu_model->getMenuList([ [ 'app_module', "=", $this->app_module ], [ 'is_show', "=", 1 ] ], '*', 'sort asc');
+            $menus = $menu_model->getMenuList([ [ 'app_module', "=", $this->app_module ]], '*', 'sort asc');
         } else {
-            $menus = $menu_model->getMenuList([ [ 'name', 'in', $this->group_info[ 'menu_array' ] ], [ 'is_show', "=", 1 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
-            $control_menu = $menu_model->getMenuList([ [ 'is_control', '=', 0 ], [ 'is_show', "=", 1 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
+            $menus = $menu_model->getMenuList([ [ 'name', 'in', $this->group_info[ 'menu_array' ] ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
+            $control_menu = $menu_model->getMenuList([ [ 'is_control', '=', 0 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
             $menus[ 'data' ] = array_merge($control_menu[ 'data' ], $menus[ 'data' ]);
         }
 

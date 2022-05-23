@@ -399,17 +399,19 @@ $(function () {
 		//添加商品主图
 		$("body").on("click", ".js-add-goods-image", function () {
 			openAlbum(function (data) {
+				dealWithPicThumb(data);
 				for (var i = 0; i < data.length; i++) {
 					if (goodsImage.length < GOODS_IMAGE_MAX) goodsImage.push(data[i].pic_path);
 				}
 				refreshGoodsImage();
-			}, GOODS_IMAGE_MAX,is_thumb = 1);
+			}, GOODS_IMAGE_MAX);
 		});
 
 		//替换商品主图
 		$("body").on("click", ".replace_img", function () {
 			var index = $(this).data('index');
 			openAlbum(function (data) {
+				dealWithPicThumb(data);
 				for (var i = 0; i < data.length; i++) {
 					goodsImage[index] = data[i].pic_path
 				}
@@ -1426,11 +1428,12 @@ function refreshSpec(isCheckedAddSpecImg,isRefreshSkuData) {
 			var parentIndex = $(this).parent().attr("data-parent-index");
 			var index = $(this).parent().attr("data-index");
 			openAlbum(function (data) {
+				dealWithPicThumb(data);
 				for (var i = 0; i < data.length; i++) {
 					goodsSpecFormat[parentIndex].value[index].image = data[i].pic_path;
 				}
 				refreshSpec(false,true);
-			}, 1,1);
+			}, 1);
 		});
 
 		if (attribute_img_type == 0) {
@@ -1592,13 +1595,14 @@ function refreshSkuTable() {
 		$(".sku-table .layui-input-block .upload-sku-img").click(function () {
 			var index = $(this).attr("data-index");
 			openAlbum(function (data) {
+				dealWithPicThumb(data);
 				for (var i = 0; i < data.length; i++) {
 					if (goodsSkuData[index].sku_images_arr.length < GOODS_SKU_MAX) goodsSkuData[index].sku_images_arr.push(data[i].pic_path)
 				}
 				goodsSkuData[index].sku_image = goodsSkuData[index].sku_images_arr[0];
 				goodsSkuData[index].sku_images = goodsSkuData[index].sku_images_arr.toString();
 				refreshSkuTable();
-			}, GOODS_SKU_MAX,1);
+			}, GOODS_SKU_MAX);
 		});
 
 		// SKU商品图片拖拽排序
@@ -2205,5 +2209,30 @@ function loadVideo(flag) {
 			}
 		}, 1000);
 	});
+}
+
+//处理图片缩略
+function dealWithPicThumb(data){
+	var pic_id_arr = [];
+	data.forEach(function(item, index){
+		if(!item.is_thumb){
+			pic_id_arr.push(item.pic_id);
+		}
+	})
+	if(pic_id_arr.length > 0){
+		$.ajax({
+			url: ns.url("shop/album/createThumb"),
+			data: {
+				pic_ids:pic_id_arr.toString(),
+			},
+			dataType: 'JSON',
+			type: 'POST',
+			success: function (res) {
+				if(res.code >= 0){
+					//console.log(res);
+				}
+			}
+		});
+	}
 }
 

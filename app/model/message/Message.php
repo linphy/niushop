@@ -71,7 +71,6 @@ class Message extends BaseModel
      */
     public function getMessageInfo($site_id, $keywords, $field = "*")
     {
-
         $info = model("message_template")->getInfo([ [ 'keywords', '=', $keywords ] ], $field);
         if (!empty($info)) {
             $info[ "message_json_array" ] = empty($info[ "message_json" ]) ? [] : json_decode($info[ "message_json" ], true);//消息配置
@@ -141,6 +140,7 @@ class Message extends BaseModel
                 break;
         }
         $list = model('message_template')->getList([ [ "message_type", "=", $message_type ] ], $field, $order, '', '', '', $limit);
+        // dump($list);exit;
         if (!empty($list)) {
             foreach ($list as $k => $v) {
                 $list[ $k ][ 'support_type' ] = explode(',', $v[ 'support_type' ]);

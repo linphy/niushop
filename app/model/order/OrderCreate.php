@@ -387,6 +387,7 @@ class OrderCreate extends BaseModel
             //订单生成的消息
             $message_model = new Message();
             $message_model->sendMessage([ 'keywords' => "ORDER_CREATE", 'order_id' => $order_id, 'site_id' => $calculate_data[ 'site_id' ] ]);
+
             return $this->success($out_trade_no);
         } catch (\Exception $e) {
             model("order")->rollback();

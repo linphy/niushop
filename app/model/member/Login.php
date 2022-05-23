@@ -97,7 +97,7 @@ class Login extends BaseModel
                 $register = new Register();
                 $register_res = $register->authRegister($data);
                 if ($register_res['code'] == 0) {
-                    $info = model("member")->getInfo([ [ 'member_id', '=', $register_res['data'] ]], 'member_id,username, nickname, mobile, email, status, last_login_time');
+                    $info = model("member")->getInfo([ [ 'member_id', '=', $register_res['data'] ]], 'member_id,username, nickname, mobile, email, status, last_login_time,can_receive_registergift');
                     $info['is_register'] = 1;
                 }
             }

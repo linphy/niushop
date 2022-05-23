@@ -983,9 +983,11 @@ class Validate
         if (is_string($mime)) {
             $mime = explode(',', $mime);
         }
-
-        return in_array(strtolower($file->getMime()), $mime);
+//        return in_array(strtolower($file->getMime()), $mime);
+        return in_array(strtolower($file->getOriginalMime()), $mime);
     }
+
+
 
     /**
      * 验证上传文件后缀

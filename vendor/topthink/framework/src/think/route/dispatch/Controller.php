@@ -73,7 +73,11 @@ class Controller extends Dispatch
             // 实例化控制器
             $instance = $this->controller($this->controller);
         } catch (ClassNotFoundException $e) {
-            throw new HttpException(404, 'controller not exists:' . $e->getClass());
+            if (env('app_debug', false)) {
+                throw new HttpException(404, 'controller not exists:' . $e->getClass());
+            } else {
+                Header("Location:/shop/error/notfound");exit;
+            }
         }
 
         // 注册控制器中间件
@@ -104,7 +108,11 @@ class Controller extends Dispatch
                     }
                 } else {
                     // 操作不存在
-                    throw new HttpException(404, 'method not exists:' . get_class($instance) . '->' . $action . '()');
+                    if (env('app_debug', false)) {
+                        throw new HttpException(404, 'method not exists:' . get_class($instance) . '->' . $action . '()');
+                    } else {
+                        Header("Location:/shop/error/notfound");exit;
+                    }
                 }
 
                 $data = $this->app->invokeReflectMethod($instance, $reflect, $vars);

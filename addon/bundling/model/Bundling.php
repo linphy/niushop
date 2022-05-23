@@ -146,7 +146,7 @@ class Bundling extends BaseModel
         $data = model("promotion_bundling")->getInfo($condition, 'bl_id,bl_name, site_id, site_name, bl_price, goods_money, shipping_fee_type,status');
         if (!empty($data)) {
 
-            $field = 'pbg.sku_id, pbg.sku_name, pbg.price, pbg.sku_image, pbg.promotion_price,ngs.stock,ngs.unit';
+            $field = 'ngs.sku_id, ngs.sku_name, ngs.price, ngs.sku_image, ngs.stock,ngs.unit,pbg.promotion_price';
             $order = '';
             $alias = 'pbg';
             $join = [

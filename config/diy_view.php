@@ -23,7 +23,7 @@ return [
             'title' => '文本',
             'type' => 'SYSTEM',
             'controller' => 'Text',
-            'value' => '{ title : "『文本』", textColor : "#333333", "defaultTextColor": "#333333", "alignStyle": "center", subTitle : "副标题", "marginTop": 0, "padding": 0, backgroundColor : "", "link" : {}, "fontSize" : 16, "fontSizeSub" : 14, "colorSub": "#999", "defaultColorSub": "#999", "style": 1, "sub": 0, "styleName": "模板一", "isShowMore": 0, "fontWeight": 600, "moreText": "查看更多", "moreLink" : {}, "btnColor": "#999", "defaultBtnColor": "#999" }',
+            'value' => '{ title : "『文本』", textColor : "#333333", "defaultTextColor": "#333333", "alignStyle": "center", subTitle : "副标题", "marginTop": 0, "padding": 0, backgroundColor : "", "link" : {name:""}, "fontSize" : 16, "fontSizeSub" : 14, "colorSub": "#999", "defaultColorSub": "#999", "style": 1, "sub": 0, "styleName": "模板一", "isShowMore": 0, "fontWeight": 600, "moreText": "查看更多", "moreLink" : {}, "btnColor": "#999", "defaultBtnColor": "#999" }',
             'sort' => '10000',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -60,7 +60,7 @@ return [
             'title' => '图文导航',
             'type' => 'SYSTEM',
             'controller' => 'GraphicNav',
-            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666", "navRadius": "fillet", "backgroundColor": "","selectedTemplate": "imageNavigation", "showType": 4, "scrollSetting": "fixed", padding : 20, "marginTop": 0, "list": [{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": {}, "imgWidth": 0, "imgHeight": 0}]}',
+            'value' => '{ "textColor": "#666666","defaultTextColor": "#666666", "navRadius": "fillet", "backgroundColor": "","selectedTemplate": "imageNavigation", "showType": 4, "scrollSetting": "fixed", padding : 20, "marginTop": 0, "list": [{"imageUrl": "","title": "","link": { name : "" }, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": { name : "" }, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": { name : "" }, "imgWidth": 0, "imgHeight": 0},{"imageUrl": "","title": "","link": { name : "" }, "imgWidth": 0, "imgHeight": 0}]}',
             'sort' => '10003',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -72,7 +72,7 @@ return [
             'title' => '图片广告',
             'type' => 'SYSTEM',
             'controller' => 'ImageAds',
-            'value' => '{ selectedTemplate : "carousel-posters", imageClearance : 0, "imageRadius": "right-angle", "carouselChangeStyle": "circle", "marginTop": 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : {}, "imgWidth": 0, "imgHeight": 0} ] }',
+            'value' => '{ selectedTemplate : "single-graph", imageClearance : 0, "imageRadius": "right-angle", "carouselChangeStyle": "circle", "marginTop": 0, padding : 0, height : 0, list : [ { imageUrl : "", title : "", "link" : { name : "" }, "imgWidth": 0, "imgHeight": 0} ] }',
             'sort' => '10004',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -120,7 +120,7 @@ return [
             'title' => '魔方',
             'type' => 'SYSTEM',
             'controller' => 'RubikCube',
-            'value' => '{ "selectedTemplate": "row1-of2","backgroundColor": "","list": [{ imageUrl : "", link : {} },{ imageUrl : "", link : {} }], "selectedRubikCubeArray" : [] ,"diyHtml": "","customRubikCube": 4,"heightArray": ["74.25px","59px","48.83px","41.56px"],"imageGap": 0}',
+            'value' => '{ "selectedTemplate": "row1-of2","backgroundColor": "","list": [{ imageUrl : "", link : { name : "" } },{ imageUrl : "", link : { name : "" } }], "selectedRubikCubeArray" : [] ,"diyHtml": "","customRubikCube": 4,"heightArray": ["74.25px","59px","48.83px","41.56px"],"imageGap": 0, "marginTop": 0}',
             'sort' => '10008',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -165,11 +165,13 @@ return [
 //			'name' => 'VIDEO',
 //			'title' => '视频',
 //			'type' => 'SYSTEM',
-//			'controller' => '',
+//			'controller' => 'Video',
 //			'value' => '',
 //			'sort' => '10013',
 //			'support_diy_view' => '',
-//			'max_count' => 0
+//			'max_count' => 0,
+//            'icon' => 'public/static/ext/diyview/img/icon/horz_blank.png',
+//            'icon_selected' => 'public/static/ext/diyview/img/icon/horz_blank_selected.png'
 //		],
 //		[
 //			'name' => 'VOICE',
@@ -186,7 +188,7 @@ return [
             'title' => '商品列表',
             'type' => 'SYSTEM',
             'controller' => 'GoodsList',
-            'value' => '{ "sources" : "default", "categoryId" : 0, "categoryName": "请选择", "goodsCount" : "6", "goodsId": [], "style": 1, "backgroundColor": "", "marginTop": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0, "goodsTag": "default", "tagImg": {"imageUrl": ""}}',
+            'value' => '{ "sources" : "default", "categoryId" : 0, "categoryName": "请选择", "goodsCount" : "6", "goodsId": [], "groupTitle": "", "style": 1, "backgroundColor": "", "marginTop": 0, "paddingLeftRight": 0, "isShowCart": 0, "cartStyle": 1, "isShowGoodName": 1, "isShowMarketPrice": 1, "isShowGoodSaleNum": 1, "isShowGoodSubTitle": 0, "goodsTag": "default", "tagImg": {"imageUrl": ""}}',
             'sort' => '10016',
             'support_diy_view' => '',
             'max_count' => 0,
@@ -222,13 +224,49 @@ return [
             'title' => '浮动按钮',
             'type' => 'SYSTEM',
             'controller' => 'FloatBtn',
-            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list": [{"imageUrl": "","title": "","link": {}}]}',
+            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list": [{"imageUrl": "", "link": {}}]}',
             'sort' => '10023',
             'support_diy_view' => '',
             'max_count' => 1,
             'icon' => 'public/static/ext/diyview/img/icon/float_btn.png',
             'icon_selected' => 'public/static/ext/diyview/img/icon/float_btn_selected.png'
         ],
+		[
+		    'name' => 'MANY_GOODS_LIST',
+		    'title' => '多商品组',
+		    'type' => 'SYSTEM',
+		    'controller' => 'ManyGoodsList',
+		    'value' => '{ "title": "", "selectColor": "#FF4544","nsSelectColor": "#303133", list: [{"goodsStyle": 1, title: "热卖", desc: "热卖推荐", link: {}, "sources" : "category", "categoryId" : 0, "categoryName": "请选择", "goodsId": []}], "goodsCount" : "6", "style": 1, "backgroundColor": "", "marginTop": 0 }',
+		    'sort' => '10025',
+		    'support_diy_view' => '',
+		    'max_count' => 0,
+		    'icon' => 'public/static/ext/diyview/img/icon/many_goods.png',
+		    'icon_selected' => 'public/static/ext/diyview/img/icon/many_goods_selected.png'
+		],
+//        [
+//            'name' => 'MAKE_BTN',
+//            'title' => '浮动电话',
+//            'type' => 'SYSTEM',
+//            'controller' => 'MakeTel',
+//            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list": [{"imageUrl": "", "title": "","tel": ""}]}',
+//            'sort' => '10023',
+//            'support_diy_view' => '',
+//            'max_count' => 1,
+//            'icon' => 'public/static/ext/diyview/img/icon/make_tel.png',
+//            'icon_selected' => 'public/static/ext/diyview/img/icon/make_tel_selected.png'
+//        ],
+        [
+            'name' => 'VIDEO_MOBA',
+            'title' => '视频',
+            'type' => 'SYSTEM',
+            'controller' => 'VideoMoba',
+            'value' => '{ "textColor": "#ffffff", "backgroundColor": "",baseBtnBottom:0,"btnBottom":"0","bottomPosition": "4", subTitle : "", "list" : [{ "imageUrl" : "", "videoUrl": "", "is_play": "0","is_mute": "0" }]}',
+            'sort' => '10026',
+            'support_diy_view' => '',
+            'max_count' => 0,
+            'icon' => 'public/static/ext/diyview/img/icon/video_moba.png',
+            'icon_selected' => 'public/static/ext/diyview/img/icon/video_moba_selected.png'
+        ]
     ],
     'link' => [
         [
@@ -357,7 +395,7 @@ return [
                                     'name' => 'MEMBER_INFO',
                                     'title' => '个人资料',
                                     'parent' => '',
-                                    'wap_url' => '/pages/member/info/info',
+                                    'wap_url' => '/otherpages/member/info/info',
                                     'web_url' => '',
                                     'sort' => 0
                                 ],
@@ -494,8 +532,8 @@ return [
             ]
         ],
         [
-            'name' => 'CUSTOM_LINK',
-            'title' => '自定义链接',
+            'name' => 'GAME',
+            'title' => '小游戏',
             'parent' => '',
             'wap_url' => '',
             'web_url' => '',
@@ -503,13 +541,41 @@ return [
             'child_list' => []
         ],
         [
-            'name' => 'GAME',
-            'title' => '小游戏',
+            'name' => 'OTHER',
+            'title' => '其他',
             'parent' => '',
             'wap_url' => '',
             'web_url' => '',
             'sort' => 4,
-            'child_list' => []
+            'child_list' => [
+                [
+                    'name' => 'CUSTOM_LINK',
+                    'title' => '自定义链接',
+                    'parent' => '',
+                    'wap_url' => '',
+                    'web_url' => '',
+                    'sort' => 1,
+                    'child_list' => []
+                ],
+                [
+                    'name' => 'OTHER_APPLET',
+                    'title' => '其他小程序',
+                    'parent' => '',
+                    'wap_url' => '',
+                    'web_url' => '',
+                    'sort' => 2,
+                    'child_list' => []
+                ],
+                [
+                    'name' => 'MOBILE',
+                    'title' => '拨打电话',
+                    'parent' => '',
+                    'wap_url' => '',
+                    'web_url' => '',
+                    'sort' => 3,
+                    'child_list' => []
+                ]
+            ]
         ]
     ]
 ];

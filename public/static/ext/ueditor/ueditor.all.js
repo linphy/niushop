@@ -24131,8 +24131,8 @@
 					var link = urlPrefix + data.url,
 						loader = me.document.getElementById(loadingId);
 					if (loader) {
-						loader.setAttribute('src', link);
-						loader.setAttribute('_src', link);
+						loader.setAttribute('src', ns.img(link));
+						loader.setAttribute('_src', ns.img(link));
 						loader.setAttribute('title', data.title || '');
 						loader.setAttribute('alt', data.original || '');
 						loader.removeAttribute('id');

@@ -1,5 +1,7 @@
 {
+  "softinputMode": "adjustResize",
   "usingComponents": {
-    "chat-message": "/components/chat-message/chat-message"
+    "chat-message": "/components/chat-message/chat-message",
+    "loading-cover": "/components/loading-cover/loading-cover"
   }
 }

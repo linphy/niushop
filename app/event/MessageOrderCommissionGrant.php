@@ -24,7 +24,7 @@ class MessageOrderCommissionGrant
         //发送订单消息
         if ($param["keywords"] == "COMMISSION_GRANT") {
             $model = new FenxiaoWithdraw();
-            return $model->messageFenxiaoWithdrawalError($param);
+            return $model->messageOrderCommissionGrant($param);
         }
     }
 }

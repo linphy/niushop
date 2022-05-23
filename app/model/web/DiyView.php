@@ -462,7 +462,7 @@ class DiyView extends BaseModel
                 "link" => [
                     "name" => "MEMBER_INFO",
                     "title" => "个人资料",
-                    "wap_url" => "/pages/member/info/info"
+                    "wap_url" => "/otherpages/member/info/info"
                 ],
                 "isShow" => "1",
                 "isSystem" => "1"

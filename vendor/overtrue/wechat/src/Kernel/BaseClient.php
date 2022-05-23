@@ -172,7 +172,6 @@ class BaseClient
         if (empty($this->middlewares)) {
             $this->registerHttpMiddlewares();
         }
-
         $response = $this->performRequest($url, $method, $options);
 
         $this->app->events->dispatch(new Events\HttpResponseCreated($response));
@@ -220,7 +219,6 @@ class BaseClient
                 if ($this->accessToken) {
                     $request = $this->accessToken->applyToRequest($request, $options);
                 }
-
                 return $handler($request, $options);
             };
         };

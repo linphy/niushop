@@ -453,6 +453,7 @@
 		var saveData = null;
 		var totalUploadNum = 0;
 		var completeUploadNum = 0;
+		var upload;
 
 		if (validity_type == 0) {
 			$('.ns-end-time').removeClass('layui-hide');
@@ -648,7 +649,7 @@
 				}
 			});
 
-			var upload = new Upload({
+			upload = new Upload({
 				elem: '#couponImg',
 				auto:false,
 				bindAction:'#imageId',

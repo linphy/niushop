@@ -1,4 +1,4 @@
-.album-box{display: flex;justify-content: space-between;align-items: end;}
+.album-box{display: flex;justify-content: space-between;}
 .album-list{width: 176px;height: 530px;margin-right: 45px;padding-bottom: 70px;background-color: #F7F7F7;position: relative;display: flex;flex-direction: column;padding-bottom: 0}
 .album-list .btn-wrap {width: 176px;background: #fff;height: 50px;display: flex;align-content: center;justify-content: center;padding-top: 20px;}
 .album-list ul{flex: 1;overflow-y: scroll;}

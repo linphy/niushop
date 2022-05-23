@@ -244,7 +244,8 @@ class User extends BaseShop
                 "group_status" => 1,
                 "menu_array" => $menu_array,
                 "desc" => $desc,
-                "is_system" => 0
+                "is_system" => 0,
+                "create_time" => time(),
             );
             $result = $group_model->addGroup($data);
             return $result;

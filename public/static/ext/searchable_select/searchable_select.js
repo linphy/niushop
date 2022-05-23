@@ -18,7 +18,6 @@
 		this.init();
 		
 		var _this = this;
-		
 		this.searchableElement.click(function (event) {
 			// event.stopPropagation();
 			_this.show();

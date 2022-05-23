@@ -204,12 +204,6 @@ return [
                 'sort' => 8
             ],
             [
-                'name' => 'WECHAT_MESSAGE_EDIT',
-                'title' => '编辑消息模板',
-                'url' => 'wechat://shop/message/edit',
-                'is_show' => 0
-            ],
-            [
                 'name' => 'WECHAT_MESSAGE_CONFIG',
                 'title' => '是否需跳转到小程序',
                 'url' => 'wechat://shop/message/messageConfig',
@@ -222,5 +216,12 @@ return [
                 'is_show' => 0
             ],
         ]
+    ],
+    [
+        'name' => 'WECHAT_MESSAGE_EDIT',
+        'parent' => 'MESSAGE_LISTS',
+        'title' => '编辑消息模板',
+        'url' => 'wechat://shop/message/edit',
+        'is_show' => 0
     ],
 ];

@@ -420,6 +420,9 @@ class Orderrefund extends BaseShop
             'action_way' => 2
         ];
 
+        //创建视频号售后订单
+        $order_refund_model->addshopcomponent($data);
+
         $res                = $order_refund_model->orderRefundFinish($data, $this->user_info, $log_data);
         return $res;
     }

@@ -455,6 +455,11 @@ class Weapp extends BaseModel
                                 ['audit_id', '=', $res['QualificationAuditResult']['audit_id'] ]
                             ]);
                         }
+
+                        // 视频号支付订单回调
+                        if ($res['Event'] == 'open_product_order_pay' && addon_is_exit('shopcomponent', $this->site_id)) {
+                            event("shopcomponentNotify", $res);
+                        }
                     });
                 break;
             }
@@ -472,6 +477,19 @@ class Weapp extends BaseModel
     public function sceneCheck($scene){
         try {
             $result = $this->app->mini_store->checkScene($scene);
+            if (isset($result['errcode']) && $result['errcode'] == 0) {
+                return $this->success($result['is_matched']);
+            } else {
+                return $this->error('', $result['errmsg']);
+            }
+        } catch (\Exception $e) {
+            return $this->error([], $e->getMessage());
+        }
+    }
+
+    public function createOrder($order_info){
+        try {
+            $result = $this->app->mini_store->addOrder($order_info);
             if (isset($result['errcode']) && $result['errcode'] == 0) {
                 return $this->success($result['is_matched']);
             } else {

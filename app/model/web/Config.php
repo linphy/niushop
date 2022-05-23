@@ -295,7 +295,11 @@ class Config extends BaseModel
     {
         $config = new ConfigModel();
         $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'DOMAIN_JUMP_CONFIG' ] ]);
-        $res[ 'data' ][ 'value' ]['jump_type'] = $res[ 'data' ][ 'value' ]['jump_type'] ?? '0';
+        if(empty($res[ 'data' ][ 'value' ])){
+            $res[ 'data' ][ 'value' ] = [
+                'jump_type' => 2,
+            ];
+        }
         return $res;
     }
 

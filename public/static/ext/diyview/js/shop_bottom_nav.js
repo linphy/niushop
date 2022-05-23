@@ -41,9 +41,9 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 
 		
 		bottomMenuHtml += '<div class="template-edit-title"><h3>导航内容设置</h3><i onclick="closeBox(this)" class="layui-icon layui-icon-down"></i></div>';
-		bottomMenuHtml += '<ul>';
+		bottomMenuHtml += '<ul class="bottom-menu-set">';
 			// bottomMenuHtml += '<p class="hint">当有5个底部导航时，中间导航会悬浮显示</p>';
-			bottomMenuHtml += '<li v-for="(item,index) in menuList">';
+			bottomMenuHtml += '<li v-for="(item,index) in menuList" :key="item.id">';
 				bottomMenuHtml += '<div class="image-block" v-show="$parent.data.type != 3">';
 					bottomMenuHtml += '<img-upload v-bind:data="{ data : item,field : \'iconPath\' }"></img-upload>';
 					bottomMenuHtml += '<img-upload v-bind:data="{ data : item, field : \'selectedIconPath\', text : \'选中图片\' }" v-show="$parent.data.type != 3"></img-upload>';
@@ -57,7 +57,7 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 						bottomMenuHtml += '</div>';
 					bottomMenuHtml += '</div>';
 
-					bottomMenuHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link }"></nc-link>';
+					bottomMenuHtml += '<nc-link v-bind:data="{ field : $parent.data.list[index].link, supportToApplet: 0 }"></nc-link>';
 				bottomMenuHtml += '</div>';
 
 				// bottomMenuHtml += '<div class="img-hover-block">';
@@ -116,6 +116,33 @@ Vue.component("bottom-menu", {
 	},
 	created: function () {
 		this.changeShowAddItem();
+
+		this.menuList.forEach(function(e, i){
+			e.id = ns.gen_non_duplicate(6);
+		})
+		this.$parent.data.list = this.menuList;
+
+		var moveBeforeIndex = 0;
+		var _this = this;
+
+		setTimeout(function(){
+			$( '.bottom-menu-set' ).DDSort({
+			    target: 'li',
+			    floatStyle: {
+			        'border': '1px solid #ccc',
+			        'background-color': '#fff'
+			    },
+			    down: function(index){
+			    	moveBeforeIndex = index;
+			    },
+			    up: function(index){
+			    	var temp = _this.menuList[moveBeforeIndex];
+			    	_this.menuList.splice(moveBeforeIndex, 1);
+			    	_this.menuList.splice(index, 0, temp);
+		    		_this.$parent.data.list = _this.menuList;
+			    }
+			});
+		})
 	},
 	
 	methods: {

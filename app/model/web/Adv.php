@@ -42,10 +42,12 @@ class Adv extends BaseModel
 	 */
 	public function editAdv($data, $condition)
 	{
-	    $adv_info = model('adv')->getInfo($condition);
-	    if($adv_info['adv_image'] && $data['adv_image'] && $adv_info['adv_image'] != $data['adv_image']){
-            $upload_model = new Upload();
-            $upload_model->deletePic($adv_info['adv_image'], $adv_info['site_id']);
+	    if(isset($data['adv_image'])){
+            $adv_info = model('adv')->getInfo($condition);
+            if($adv_info['adv_image'] && $data['adv_image'] && $adv_info['adv_image'] != $data['adv_image']){
+                $upload_model = new Upload();
+                $upload_model->deletePic($adv_info['adv_image'], $adv_info['site_id']);
+            }
         }
 
 		$res = model('adv')->update($data, $condition);
@@ -84,7 +86,7 @@ class Adv extends BaseModel
 		if (!empty($cache)) {
 			return $this->success($cache);
 		}
-		$res = model('adv')->getInfo([ [ 'adv_id', '=', $ap_id ] ], 'adv_id, adv_title, ap_id, adv_url, adv_image, slide_sort, price, background');
+		$res = model('adv')->getInfo([ [ 'adv_id', '=', $ap_id ] ], 'adv_id, adv_title, ap_id, adv_url, adv_image, slide_sort, price, background,state');
 		Cache::tag("adv")->set("adv_getAdvInfo_" . $ap_id, $res);
 		return $this->success($res);
 	}
@@ -117,7 +119,7 @@ class Adv extends BaseModel
 	 * @param string $order
 	 * @param string $field
 	 */
-	public function getAdvPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'a.adv_id desc', $field = 'a.adv_id, a.ap_id, a.adv_title, a.adv_url, a.adv_image, a.slide_sort, a.price, a.background, ap.ap_name')
+	public function getAdvPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'a.adv_id desc', $field = 'a.adv_id, a.ap_id, a.adv_title, a.adv_url, a.adv_image, a.slide_sort, a.price, a.background, a.state, ap.ap_name')
 	{
 		$data = json_encode([ $condition, $field, $order, $page, $page_size ]);
 		$cache = Cache::get("adv_getAdvPageList_" . $data);

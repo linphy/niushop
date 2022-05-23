@@ -487,7 +487,7 @@
 	}, r.title = function(e, t) {
 		var n = i("#" + l[0] + (t || r.index)).find(l[1]);
 		n.html(e)
-	}, r.close = function(e) {
+	}, r.close = function(e, callback) {
 		var t = i("#" + l[0] + e),
 			n = t.attr("type"),
 			a = "layer-anim-close";
@@ -513,6 +513,7 @@
 					f()
 				}, 200)
 		}
+        typeof callback === 'function' && callback();
 	}, r.closeAll = function(e) {
 		i.each(i("." + l[0]), function() {
 			var t = i(this),

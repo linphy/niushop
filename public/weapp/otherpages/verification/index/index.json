@@ -1,3 +1,6 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "ns-login": "/components/ns-login/ns-login",
+    "loading-cover": "/components/loading-cover/loading-cover"
+  }
 }

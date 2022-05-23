@@ -77,6 +77,7 @@ $("body").on('click', '.ns-goods-category-wrap-box .goodsCategory ul li', functi
 	var isVal = 0;
 	
 	$('.ns-goods-category-wrap-box .goodsCategory_2, .ns-goods-category-wrap-box .goodsCategory_3').addClass('hide');
+	
 	if ($(this).attr('child') == 'true') {
 		getGoodsCategoryTree(parseInt(level) + 1, value);
 		$('.ns-goods-category-wrap-box .goodsCategory_' + (parseInt(level) + 1) + ' ul li').addClass('hide');
@@ -94,6 +95,7 @@ $("body").on('click', '.ns-goods-category-wrap-box .goodsCategory ul li', functi
 	$(this).addClass('selected');
 	// categoryBottom();
 	setSelectGoodsCaregory(isVal);
+	
 });
 
 
@@ -204,4 +206,5 @@ $('body').on('click', function(e){
 			$(".ns-goods-category-wrap-box .category-wrap").hide();
 		}
 	}
+	
 });

@@ -1,7 +1,7 @@
 {
 	"templateInfo": {
 		"name": "母婴生活馆",
-		"desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
+		"desc": "母婴系列以淡粉色为主，母婴生活馆是专门为妈妈及宝宝们量身定制的模板，主菜单可以为宝妈们提供最快捷的入口，省去一系列繁琐的查找，奶粉专场、玩具专场、婴幼儿服饰专场、孕妈专场等，特色橱窗专区可为宝妈提供更加优质的选择，母婴系列商城就选它。",
 		"mark": "motherandbaby_template"
 	},
 	"templateValue": {
@@ -16,7 +16,9 @@
 					"topNavbg": false,
 					"textNavColor": "#333333",
 					"topNavImg": "",
-					"moreLink": {},
+					"moreLink": {
+						"name" : ""
+					},
 					"openBottomNav": true,
 					"navStyle": 1,
 					"textImgStyleLink": "1",

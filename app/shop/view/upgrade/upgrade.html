@@ -4,6 +4,7 @@
     .layui-layer-content {
         word-break: break-all;
         line-height: 24px;
+        overflow: auto !important;
     }
     .ns-single-filter-box{
         display: block;
@@ -21,6 +22,7 @@
             <li>二、在升级完成后，为保证网站的安全，需要重新设置文件权限。建议进行如下修改</li>
             <li>1、runtime文件夹，upload文件夹依旧为777权限</li>
             <li>2、其他文件设置为755权限</li>
+            <li>三、升级完成，升级文件存放目录（网站根目录/upload/upgrade/）</li>
         </ul>
     </div>
 </div>
@@ -177,9 +179,9 @@
                     }
                 }, {
                     title: '操作',
-                    width: '30%',
                     toolbar: '#operation',
-                    unresize: 'false'
+                    unresize: 'false',
+					align:'right'
                 }]
             ]
         });

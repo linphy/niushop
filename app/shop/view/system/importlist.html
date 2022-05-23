@@ -53,7 +53,7 @@
 			<th>文件名称</th>
 			<th>文件大小</th>
 			<th>备份时间</th>
-			<th class="toolbar">操作</th>
+			<th class="toolbar" style="text-align:right">操作</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -62,10 +62,7 @@
 		<tr>
 			<td>{$list_v.name}</td>
 			<td>{$list_v.size}</td>
-			<td class="ns-backup-time">
-				{ns.time_to_data($list_v.time)}
-				<input type="hidden" value="{$list_v.time}" />
-			</td>
+			<td>{:time_to_date($list_v.time)}</td>
 			<td class="toolbar">
 				<div class="ns-table-btn">
 					<a class="layui-btn" onclick="isSureImport({$list_v.time}, null, null)">还原</a>
@@ -84,9 +81,6 @@
 {/block}
 {block name="script"}
 <script>
-	var date = ns.time_to_date($(".ns-backup-time input").val());
-	$(".ns-backup-time").text(date);
-	
 	function isSureImport(time, part, start) {
 		layer.confirm('是否恢复此备份文件?', function(index){
 		    layer.close(index);

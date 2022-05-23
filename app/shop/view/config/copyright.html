@@ -2,13 +2,15 @@
 {block name="resources"}
 <style type="text/css">
 .no-auth{ padding: 50px 0;text-align: center; }
+.examples {color: #ff8833; cursor: pointer; font-weight: 500; margin-left: 5px;}
+.iconxianshi{margin-right: 20px;}
 </style>
 {/block}
 {block name="main"}
 <div class="layui-form">
 	<div class="layui-card ns-card-common ns-card-brief">
 		<div class="layui-card-header">
-			<span class="ns-card-title">版权设置</span>
+			<span class="ns-card-title">版权设置 <a onclick="showDemo()" class="examples ns-text-color">查看示例</a></span>
 		</div>
 		<div class="layui-card-body">
 			{if $is_auth}
@@ -31,7 +33,7 @@
 							</div>
 							<div class="operation"  >
 								<div >
-									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+									<i title="图片预览" class="iconfont iconxianshi js-preview" ></i>
 									<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
 								</div>
 								
@@ -99,8 +101,9 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">市场监督管理局链接：</label>
 				<div class="layui-input-block">
-					<input type="text" name="market_supervision_url"  value="{$copyright_config.market_supervision_url ?? ''}" autocomplete="off" class="layui-input ns-len-long">
+					<input type="text" name="market_supervision_url"  value="{$copyright_config.market_supervision_url ?? ''}" autocomplete="off" class="layui-input ns-len-long" style="display: inline-block;">  
 				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -110,13 +113,16 @@
 			<button type="button" class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 		</div>
 	</div>
+
+	
 </div>
 {/block}
 {block name="script"}
 <script>
-	layui.use(['form'], function() {
-		var form = layui.form,
-			repeat_flag = false; //防重复
+	layui.use(['form',], function() {
+		var form = layui.form;
+		repeat_flag = false; //防重复标识
+		
 		form.render();
 
 		var upload = new Upload({
@@ -144,5 +150,13 @@
 		});
 	});
 	
+	function showDemo(){
+	    layer.open({
+	        title: '查看示例',
+	        type: 1,
+	        area: ['600px', '660px'],
+	        content: '<img style="margin:100px 30px;" src="SHOP_IMG/copyright.png">'
+	    })
+	}
 </script>
 {/block}

@@ -370,14 +370,17 @@ var show_link_box_flag = true;
  * @param callback
  * @param post 端口：shop、store
  */
-ns.select_link = function (link, support_diy_view, callback, post) {
-
+ns.select_link = function (link, support_diy_view, callback, post, support_to_applet) {
     if (post == 'store') post += '://store';
 
     var url = ns.url(post + "/diy/link");
     if (show_link_box_flag) {
         show_link_box_flag = false;
-        $.post(url, {link: JSON.stringify(link), support_diy_view: support_diy_view}, function (str) {
+        $.post(url, {
+                link: JSON.stringify(link),
+                support_diy_view: support_diy_view,
+                support_to_applet: support_to_applet != undefined ? support_to_applet : 1
+            }, function (str) {
             window.linkIndex = layer.open({
                 type: 1,
                 title: "选择链接",
@@ -432,6 +435,45 @@ ns.page_promote = function (data) {
     }
 };
 
+/**
+ * 打开iframe弹框
+ * @param param
+ */
+ns.open_iframe = function(param){
+    layui.use(['layer'], function () {
+        var url = param.url || '';
+        var success = param.success || null;
+        var title = param.title || '弹框';
+        var area = param.area || ['80%', '80%'];
+        //iframe层-父子操作
+        layer.open({
+            title: title,
+            type: 2,
+            area: area,
+            fixed: false, //不固定
+            btn: ['保存', '返回'],
+            content: url,
+            yes: function (index, layero) {
+                var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+
+                iframeWin['getIframeRes'](function (obj) {
+                    if (typeof success == "string") {
+                        try {
+                            eval(success + '(obj)');
+                            layer.close(index);
+                        } catch (e) {
+                            console.error('回调函数' + success + '未定义');
+                        }
+                    } else if (typeof success == "function") {
+                        success(obj);
+                        layer.close(index);
+                    }
+                });
+            }
+        });
+    });
+}
+
 ns.compare = function (property) {
     return function (a, b) {
         var value1 = a[property];
@@ -474,6 +516,44 @@ ns.sizeformat = function (limit) {
     return limit;
 };
 
+/**
+ * 对象深度拷贝
+ * @param options
+ * @constructor
+ */
+ns.deepclone = function(obj) {
+    const isObject = function(obj) {
+        return typeof obj == 'object';
+    }
+
+    if (!isObject(obj)) {
+        throw new Error('obj 不是一个对象！')
+    }
+    //判断传进来的是对象还是数组
+    let isArray = Array.isArray(obj)
+    let cloneObj = isArray ? [] : {}
+    //通过for...in来拷贝
+    for (let key in obj) {
+        cloneObj[key] = isObject(obj[key]) ? ns.deepclone(obj[key]) : obj[key]
+    }
+    return cloneObj
+}
+
+/**
+ * 检测输入
+ * @param dom
+ * @param type
+ */
+ns.checkInput = function(dom){
+    let new_val = $(dom).val();
+    let reg = /^(0|[1-9][0-9]*)(.\d{0,2})?$/;
+    let old_val = $(dom).attr('data-value');
+    if(new_val === '' || reg.test(new_val)){
+        $(dom).attr('data-value', new_val);
+    }else{
+        $(dom).val(old_val);
+    }
+}
 
 /**
  * 数据表格
@@ -629,9 +709,14 @@ Table.prototype.tool = function (callback) {
  * @param options 参数，参考layui数据表格参数
  */
 Table.prototype.reload = function (options) {
+    var page = $.cookie('currPage') || 1;
+    if (options && options.page) {
+        page = options.page;
+        $.cookie('currPage', page, {path: window.location.pathname});
+    }
     options = options || {
         page: {
-            curr: 1
+            curr: page
         }
     };
     var _self = this;
@@ -845,20 +930,44 @@ $(function () {
  */
 function Upload(options) {
     if (!options) return;
+    if(!options.size){
+        options.size = ns.upload_max_filesize;
+    }
 	var elemChildImg = $(options.elem).children('.preview_img')
-	console.log(elemChildImg)
     var _self = this;
     var $parent = $(options.elem).parent();
     options.post = options.post || "shop";
     if (options.post == 'store') options.post += '://store';
 
     this.post = options.post;
-
     options.url = options.url || ns.url(options.post + "/upload/image");
     options.accept = options.accept || "images";
     options.before = function (obj) {
         // console.log("before", obj)
     };
+
+    //预览
+    if(options.auto === false && options.bindAction){
+        options.choose = function (res){
+            var elemChildImg = $(options.elem).children('.preview_img');
+            var $parent = $(options.elem).parent();
+
+            res.preview(function(index, file, result){
+                $parent.find("input[type='hidden']").val(result);
+                $parent.find(".del").addClass("show");
+                $parent.addClass('hover');
+                if(elemChildImg.length){
+                    var tempId =  $(options.elem).children('.preview_img').attr('id');
+                    var tempHtml = "<div id='"+tempId+"' class='preview_img'><img layer-src title='点击放大图片' src=" + result + "  class='img_prev' data-prev='1' data-action-id='"+ options.bindAction +"'></div>";
+                    $parent.children('.ns-upload-default').html(tempHtml);
+                }else{
+                    var tempId =  $(options.elem).attr('id');
+                    var tempHtml = "<div id='preview_"+tempId+"' class='preview_img'><img layer-src title='点击放大图片' src=" + result + "  class='img_prev' data-prev='1' data-action-id='"+ options.bindAction +"'></div>";
+                    $parent.children('.ns-upload-default').html(tempHtml);
+                }
+            });
+        }
+    }
 
     options.done = function (res, index, upload) {
         try {
@@ -866,6 +975,9 @@ function Upload(options) {
                 $parent.find("input[type='hidden']").val(res.data.pic_path);
                 $parent.find(".del").addClass("show");
 				$parent.addClass('hover');
+                if(res.data.pic_info){
+                    res.data.pic_path = res.data.pic_info.pic_path;
+                }
                 if (options.accept == 'images') {
 					if(elemChildImg.length){
 						var tempId =  $(options.elem).children('.preview_img').attr('id');
@@ -879,24 +991,25 @@ function Upload(options) {
 					// var tempHtml = "<div id='imgId' class='preview_img'><img layer-src title='点击放大图片' src=" + ns.img(res.data.pic_path) + "  class='img_prev'></div>";
 					// $parent.children('.ns-upload-default').html(tempHtml);
 				}
-					
+
                 // $(options.elem).addClass("replace").removeClass("no-replace");
+                typeof options.callback == "function" ? options.callback(res) : "";
             }
         } catch (e) {
-
         } finally {
             //加载图片放大
             if (options.accept == 'images') loadImgMagnify();
-            if (options.callback) options.callback(res, index, upload);
+            // if (options.callback) options.callback(res, index, upload);
         }
-        return layer.msg(res.message);
+        if(!options.callback){
+            return layer.msg(res.message);
+        }
     };
 
     layui.use('upload', function () {
         _self._upload = layui.upload;
         _self._upload.render(options);
     });
-
     // this.elem = options.elem;
     this.parent = $parent;
 	

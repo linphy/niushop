@@ -123,38 +123,29 @@
                         <col width="15%">
                     </colgroup>
                     <thead>
-                    <tr>
-                        <th><input type="checkbox" lay-skin="primary" lay-filter="selectAllTop"/></th>
-                        <th>商品名称</th>
-                        <th>数量</th>
-                        <th>物流单号</th>
-                        <th>物流状态</th>
-                    </tr>
+                        <tr>
+                            <th style="text-align: center;"><input type="checkbox" lay-skin="primary" lay-filter="selectAllTop"/></th>
+                            <th>商品名称</th>
+                            <th>数量</th>
+                            <th>物流单号</th>
+                            <th>物流状态</th>
+                        </tr>
                     </thead>
-                </table>
-                <table class="layui-table order_goods_list" lay-filter="order_goods" lay-skin="line" lay-filter="order_goods_list">
-                    <colgroup>
-                        <col width="5%">
-                        <col width="38%">
-                        <col width="15%">
-                        <col width="27%">
-                        <col width="15%">
-                    </colgroup>
                     <tbody>
-                    {{# layui.each(d.order_goods_list, function(index, item){ }}
-                    <tr>
-                        <td><input type="checkbox" lay-skin="primary" class="order_goods_id" lay-filter="select{{ item.order_goods_id }}" value="{{ item.order_goods_id }}" {{# if(item.delivery_status !=0){ }} disabled {{# } }}/></td>
-                        <td>{{ item.sku_name }}</td>
-                        <td>{{ item.num }}</td>
-                        <td>{{ item.delivery_no }}</td>
-                        <td>{{ item.delivery_status_name }}</td>
-                    </tr>
-                    {{# }); }}
-                    {{# if(d.order_goods_list.length === 0){ }}
-                    <tr>
-                        <td colspan="5" align="center">无数据</td>
-                    </tr>
-                    {{# } }}
+                        {{# layui.each(d.order_goods_list, function(index, item){ }}
+                        <tr>
+                            <td><input type="checkbox" lay-skin="primary" class="order_goods_id" lay-filter="select{{ item.order_goods_id }}" value="{{ item.order_goods_id }}" {{# if(item.delivery_status !=0){ }} disabled {{# } }}/></td>
+                            <td>{{ item.sku_name }}</td>
+                            <td>{{ item.num }}</td>
+                            <td>{{ item.delivery_no }}</td>
+                            <td>{{ item.delivery_status_name }}</td>
+                        </tr>
+                        {{# }); }}
+                        {{# if(d.order_goods_list.length === 0){ }}
+                        <tr>
+                            <td colspan="5" align="center">无数据</td>
+                        </tr>
+                        {{# } }}
                     </tbody>
                 </table>
             </div>

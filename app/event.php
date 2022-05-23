@@ -216,6 +216,11 @@ return [
          */
         //消息模板
         'SendMessageTemplate' => [
+
+            // 订单核销通知
+            'app\event\MessageShopVerified',
+            // 核销商品临期提醒
+            'app\event\MessageVerifyOrderOutTime',
             // 订单催付通知
             'app\event\MessageOrderUrgePayment',
             // 订单关闭
@@ -330,7 +335,24 @@ return [
             'app\event\H5SiteDeployData',
 			// 客服
 			'app\event\ServicerSiteDeployData'
-        ]
+        ],
+
+        //微信分享数据
+        'WchatShareData' => [
+            'app\event\WchatShareData',
+        ],
+        //微信分享配置
+        'WchatShareConfig' => [
+            'app\event\WchatShareConfig',
+        ],
+        //小程序分享数据
+        'WeappShareData' => [
+            'app\event\WeappShareData',
+        ],
+        //小程序分享配置
+        'WeappShareConfig' => [
+            'app\event\WeappShareConfig',
+        ],
     ],
 
     'subscribe' => [

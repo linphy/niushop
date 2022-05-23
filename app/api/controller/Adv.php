@@ -32,20 +32,33 @@ class Adv extends BaseApi
         if (empty($keyword)) {
             return $this->response($this->error('', 'REQUEST_KEYWORD'));
         }
+
+        //广告位
         $adv_position_model = new AdvPositionModel();
-        $adv_model = new AdvModel();
-        $info = $adv_position_model->getAdvPositionInfo([['keyword', '=', $keyword], ['site_id', '=', $this->site_id] ]);
-        $info = $info['data'];
+        $adv_position_info = $adv_position_model->getAdvPositionInfo([
+            ['keyword', '=', $keyword],
+            ['site_id', '=', $this->site_id],
+            ['state', '=', 1],
+        ])['data'];
 
-        $res = ['adv_position' => $info];
+        //广告图
+        $adv_list = [];
+        if(!empty($adv_position_info)){
+            $adv_model = new AdvModel();
+            $adv_list = $adv_model->getAdvList(
+                [
+                    ['ap_id', '=', $adv_position_info['ap_id']],
+                    ['state', '=', 1],
+                ],
+                $field = 'adv_id, adv_title, ap_id, adv_url, adv_image, slide_sort, price, background'
+            )['data'];
+        }
 
-        $list = $adv_model->getAdvList(
-            [['ap_id', '=', $info['ap_id']]],
-            $field = 'adv_id, adv_title, ap_id, adv_url, adv_image, slide_sort, price, background'
-        );
-        $list = $list['data'];
+        $res = [
+            'adv_position' => $adv_position_info,
+            'adv_list' => $adv_list,
+        ];
 
-        $res['adv_list'] = $list;
         return $this->response($this->success($res));
     }
 }

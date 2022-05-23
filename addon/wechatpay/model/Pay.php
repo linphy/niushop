@@ -200,6 +200,43 @@ class Pay extends BaseModel
                 );
                 break;
         }
+
+        if($param['scene'] == 1175 && $this->is_weapp){
+            $weapp_model = new Weapp($param['site_id']);
+//
+            $return['data']['orderInfo']['create_time'] = date("Y-m-d H:i:s",$return['data']['orderInfo']['create_time']);
+            $return['data']['orderInfo']['fund_type'] = 1;
+            $return['data']['orderInfo']['expire_time'] = time() + 3600;
+
+            $product_infos = $return['data']['orderInfo']['order_detail']['product_infos'];
+            foreach ($product_infos as $key => $val){
+                $product_infos[$key]['sale_price'] = $val['sale_price'];
+                $product_infos[$key]['sku_real_price'] = $val['sale_price'];
+            }
+            $return['data']['orderInfo']['order_detail']['product_infos'] = $product_infos;
+
+            $return['data']['orderInfo']['order_detail']['price_info']['discounted_price'] = 0;
+            $return['data']['orderInfo']['order_detail']['price_info']['additional_price'] = 0;
+
+            $res = $weapp_model->createOrder($return['data']['orderInfo']);
+
+            if($res['code'] >= 0){
+                $member_info_result = $member_model->getMemberInfo([["member_id", "=", $param["member_id"]]], "weapp_openid");
+                $member_info = $member_info_result["data"];
+
+                $order_params = [
+                    "order_id" => $res['data']['data']['order_id'],
+                    "out_order_id" => $res['data']['data']['out_order_id'],
+                    "openid" => $member_info["weapp_openid"]
+                ];
+                $config = $weapp_model->getPaymentParams($order_params);
+                $return = array(
+                    "type" => "jsapi",
+                    "data" => $config['data']['payment_params']
+                );
+            }
+        }
+
         return $this->success($return);
     }
 
@@ -243,7 +280,6 @@ class Pay extends BaseModel
      */
     public function close($param)
     {
-
         $pay_info = $param;
         $this->config["app_id"] = $pay_info["mch_info"];//替换为商户自己的appid
         $this->app = Factory::payment($this->config);

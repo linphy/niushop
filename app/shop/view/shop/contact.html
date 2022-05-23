@@ -2,7 +2,9 @@
 {block name="resources"}
 <style>
 	#container{height: 500px; }
+	#container > div {z-index: 500!important}
 	.address-content {display: inline-block;vertical-align: top;}
+	.examples {color: #ff8833; cursor: pointer;}
 </style>
 {/block}
 {block name="main"}
@@ -10,7 +12,8 @@
 	<div class="layui-colla-item">
 		<h2 class="layui-colla-title">操作提示</h2>
 		<ul class="layui-colla-content layui-show">
-			<li>通过地图定位来填充联系地址或通过点击"查找按钮"来锁定地图上的具体位置</li>
+			<li>联系地址用于用户退货时使用，可设置地理坐标  <a onclick="showDemo()" class="examples ns-text-color">查看示例</a></li>
+			
 		</ul>
 	</div>
 </div>
@@ -104,23 +107,41 @@
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 	</div>
-
+	
+	
+	<!-- <div class="layui-carousel" id="carousel">
+	  <div carousel-item>
+	    <img src="../public/img/address.png" >
+	    <img src="../public/img/address2.png" >
+	  </div>
+	</div> -->
+	
 </div>
 {/block}
 
 {block name="script"}
 <script type="text/javascript" src="{$http_type}://webapi.amap.com/maps?v=1.4.6&amp;key=2df5711d4e2fd9ecd1622b5a53fc6b1d"></script>
-<script type="text/javascript" src="SHOP_JS/address.js"></script>
 <script type="text/javascript" src="STATIC_JS/map_address.js"></script>
+<script type="text/javascript" src="SHOP_JS/address.js"></script>
+<!--<script src="https://map.qq.com/api/gljs?v=1.exp&key={$tencent_map_key}"></script>-->
+<!--<script src="https://map.qq.com/api/js?v=2.exp&key={$tencent_map_key}"></script>-->
+<!--<script type="text/javascript" src="STATIC_JS/qq_map.js"></script>-->
 <script type="text/javascript">
-	var form, laydate, repeat_flag, map_class,latlng;
+	var form, carousel, laydate, repeat_flag, map_class,latlng;
 	
-	layui.use(['laydate', 'form'], function() {
+	layui.use(['laydate','form','carousel'], function() {
 		form = layui.form;
 		laydate = layui.laydate;
+		carousel = layui.carousel;
 		repeat_flag = false;//防重复标识
 
 		form.render();
+		carousel.render({
+		    elem: '#carousel',
+			width: '100%',
+			arrow: 'always',
+			interval: 3500
+		});
 		
 		if('{$info.latitude}' == "" || '{$info.longitude}' == ""){
 		    latlng = {lat:'',lng:''};
@@ -289,6 +310,15 @@
 	            map_class.map_change = true;
 	        }
 	    });
+	}
+	
+	function showDemo(){
+	    layer.open({
+	        title: '查看示例',
+	        type: 1,
+	        area: ['500px', '660px'],
+	        content: '<img style="margin: 10px 80px;" src="SHOP_IMG/address.png">'
+	    })
 	}
 </script>
 {/block}

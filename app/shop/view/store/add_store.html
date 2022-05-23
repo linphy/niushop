@@ -2,9 +2,11 @@
 {block name="resources"}
 <style>
 	#container{ width: 650px; height: 500px; }
+	#container > div {z-index: 500!important}
 	.empty-address{ display: none; }
 	.address-content {display: inline-block;vertical-align: top;}
 	.ns-form {margin-top: 0;}
+	.amap-copyright {height: 22px !important;}
 </style>
 {/block}
 {block name="main"}
@@ -52,9 +54,9 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">门店电话：</label>
 		<div class="layui-input-block">
-			<input type="text" name="telphone" autocomplete="off" class="layui-input  ns-len-long">
+			<input type="text" name="telphone" autocomplete="off" lay-verify="tel" class="layui-input  ns-len-long">
 		</div>
-		<div class="ns-word-aux">请输入正确的电话号码或者手机号</div>
+		<!-- <div class="ns-word-aux">请输入正确的电话号码或者手机号</div> -->
 	</div>
 
 	<div class="layui-form-item">
@@ -62,7 +64,7 @@
 		<div class="layui-input-block">
 			<input type="checkbox" name="status" value="1" lay-skin="switch">
 		</div>
-		<div class="ns-word-aux">是否开启营业，关闭即停业</div>
+		<div class="ns-word-aux">营业状态关闭时，该门店处于休息状态，用户端门店列表不会展示门店</div>
 	</div>
 	
 	<div class="layui-form-item">
@@ -70,6 +72,7 @@
 		<div class="layui-input-block">
 			<input type="checkbox" value="1" name="is_pickup" lay-skin="switch">
 		</div>
+		<div class="ns-word-aux">当启用自提，该门店支持到店自提的配送方式</div>
 	</div>
 
 	<!--自提点地址-->
@@ -132,6 +135,48 @@
 		<div class="ns-word-aux ">例：上午9:00-12:00，下午2:00-6:00</div>
 	</div>
 
+	<!-- 下一版上线 time = 20220211-->
+
+    <div class="layui-form-item time-view">
+        <div class="layui-inline">
+            <label class="layui-form-label">自提日期：</label>
+            <div class="layui-input-inline">
+
+                <input type="radio" name="time_type" value="0" title="每天"  lay-filter="time_type" checked>
+                <input type="radio" name="time_type" value="1" title="自定义"  lay-filter="time_type">
+            </div>
+        </div>
+    </div>
+    <div class="time-view ">
+        <div class="layui-form-item time-type-view">
+            <div class="layui-inline">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" value="1" class='time-week' name="time_week[]" title="周一" lay-skin="primary">
+                    <input type="checkbox" value="2" class='time-week' name="time_week[]" title="周二" lay-skin="primary">
+                    <input type="checkbox" value="3" class='time-week' name="time_week[]" title="周三" lay-skin="primary">
+                    <input type="checkbox" value="4" class='time-week' name="time_week[]" title="周四" lay-skin="primary">
+                    <input type="checkbox" value="5" class='time-week' name="time_week[]" title="周五" lay-skin="primary">
+                    <input type="checkbox" value="6" class='time-week' name="time_week[]" title="周六" lay-skin="primary">
+                    <input type="checkbox" value="0" class='time-week' name="time_week[]" title="周日" lay-skin="primary">
+
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item time-type-view-all" >
+            <label class="layui-form-label">自提时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="startTime" lay-verify="start_time" placeholder="配送开始时间" value="" readonly >
+                <input type="hidden" class="layui-input" name="start_time" placeholder="配送开始时间" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">~</div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="endTime" lay-verify="end_time" placeholder="配送结束时间" value="" readonly >
+                <input type="hidden" class="layui-input" name="end_time" placeholder="配送结束时间" >
+            </div>
+        </div>
+    </div>
+
 	{if $is_exit == 1}
 	<div class="layui-form-item">
 		<label class="layui-form-label"><span class="required">*</span>门店账号：</label>
@@ -151,23 +196,81 @@
 	<div class="ns-form-row">
 		<button class="layui-btn ns-bg-color" lay-submit lay-filter="save">保存</button>
 		<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
+		<a id="storeImage"></a>
 	</div>
 
 </div>
 {/block}
 {block name="script"}
 <script type="text/javascript" src="{$http_type}://webapi.amap.com/maps?v=1.4.6&amp;key=2df5711d4e2fd9ecd1622b5a53fc6b1d"></script>
-<script type="text/javascript" src="SHOP_JS/address.js"></script>
 <script type="text/javascript" src="STATIC_JS/map_address.js"></script>
+<script type="text/javascript" src="SHOP_JS/address.js"></script>
+<!--<script src="https://map.qq.com/api/gljs?v=1.exp&key={$tencent_map_key}"></script>-->
+<!--<script src="https://map.qq.com/api/js?v=2.exp&key={$tencent_map_key}"></script>-->
+<!--<script type="text/javascript" src="STATIC_JS/qq_map.js"></script>-->
 <script>
 	var form, repeat_flag, map_class;
+	var saveData = null;
+	var totalUploadNum = 0;
+	var completeUploadNum = 0;
+	var upload;
 
-	layui.use(['form'], function() {
+	layui.use(['form','laydate'], function() {
+		var laydate = layui.laydate;
 		form = layui.form;
 		repeat_flag = false;//防重复标识
 
 		map_class = new mapClass("container",{lat:'',lng:''});
+		map_class.mpKey = '{$tencent_map_key}';
 		form.render();
+
+
+		// <!-- 下一版上线 time = 20220211-->
+		//时间选择器
+		laydate.render({
+			elem: '#startTime'
+			, type: 'time'
+			,value: ""
+			,done: function(value, date, endDate){
+				var time = date.hours * 3600 + date.minutes * 60 + date.seconds;
+				$("input[name=start_time]").val(time);
+		}
+
+		});
+		//时间选择器
+		laydate.render({
+			elem: '#endTime'
+			, type: 'time'
+			,value: ""
+			,done: function(value, date, endDate){
+				var time = date.hours * 3600 + date.minutes * 60 + date.seconds;
+				$("input[name=end_time]").val(time);
+			}
+		});
+
+        form.verify({
+			start_time: function(value, item){ //value：表单的值、item：表单的DOM对象
+				var end_time = $("input[name=end_time]").val();
+				var start_time = $("input[name=start_time]").val();
+				if(parseInt(start_time) > parseInt(end_time)){
+					return '营业开始时间不能大于配送结束时间';
+				}
+
+			},
+			end_time: function(value, item){ //value：表单的值、item：表单的DOM对象
+				var end_time = $("input[name=end_time]").val();
+				var start_time = $("input[name=start_time]").val();
+
+				if(parseInt(end_time) < parseInt(start_time)){
+					return '营业结束时间不能小于配送开始时间';
+				}
+			},
+        });
+        
+		$('.time-type-view').hide();
+        form.on('radio(time_type)', function(data){
+			timeTypeChange(data.value);
+		});
 
 		/**
 		 * 验证码
@@ -209,43 +312,45 @@
         });
 
         // 门店logo
-		var upload = new Upload({
-			elem: '#storeUpload'
+		upload = new Upload({
+			elem: '#storeUpload',
+			auto:false,
+			bindAction:'#storeImage',
+			callback: function(res) {
+				uploadComplete('store_image', res.data.pic_path);
+			}
 		});
 
-        /**
-		 * 监听提交
-		 */
-        form.on('submit(save)', function(data){
-           
-            if( data.field.longitude == "" || data.field.latitude == ""){
-                layer.msg('请确认地理位置!');
-                $(".empty-address").show();
-                return;
-            }else{
-                $(".empty-address").hide();
-            }
-           
-            var full_address  = [];
-            full_address.push($("select[name=province_id] option:selected").text());
+		function uploadComplete(field, pic_path) {
+			saveData.field[field] = pic_path;
+			completeUploadNum += 1;
+			if(completeUploadNum == totalUploadNum){
+				saveFunc();
+			}
+		}
+
+		function saveFunc(){
+			var data = saveData;
+			var full_address  = [];
+			full_address.push($("select[name=province_id] option:selected").text());
 			full_address.push($("select[name=city_id] option:selected").text());
 			full_address.push($("select[name=district_id] option:selected").text());
 
-            data.field.full_address = full_address.toString();
+			data.field.full_address = full_address.toString();
 
 			// 删除图片
 			if(!data.field.store_image) upload.delete();
 
-            if(repeat_flag) return;
-            repeat_flag = true;
-				
-            $.ajax({
-                type : "POST",
-                dataType: 'JSON',
-                url : ns.url("shop/store/addStore"),
-                async : true,
-                data : data.field,
-                success : function(res) {
+			if(repeat_flag) return;
+			repeat_flag = true;
+
+			$.ajax({
+				type : "POST",
+				dataType: 'JSON',
+				url : ns.url("shop/store/addStore"),
+				async : true,
+				data : data.field,
+				success : function(res) {
 					repeat_flag = false;
 
 					if (res.code == 0) {
@@ -263,8 +368,34 @@
 					} else {
 						layer.msg(res.message);
 					}
-                }
-            })
+				}
+			})
+		}
+
+        /**
+		 * 监听提交
+		 */
+        form.on('submit(save)', function(data){
+			saveData = data;
+
+			if( data.field.longitude == "" || data.field.latitude == ""){
+				layer.msg('请确认地理位置!');
+				$(".empty-address").show();
+				return;
+			}else{
+				$(".empty-address").hide();
+			}
+
+			var obj = $("img.img_prev[data-prev='1']");
+			totalUploadNum = obj.length;
+			if(totalUploadNum > 0){
+				obj.each(function(){
+					var actionId = $(this).attr('data-action-id');
+					$(actionId).click();
+				})
+			}else{
+				saveFunc();
+			}
         });
 	});
 	
@@ -337,5 +468,13 @@
         });
 	}
 
+	// <!-- 下一版上线 time = 20220211-->
+	function timeTypeChange(type){
+         if(type == 1){
+			$('.time-type-view').show();
+		}else{
+            $('.time-type-view').hide();
+        }
+	}
 </script>
 {/block}

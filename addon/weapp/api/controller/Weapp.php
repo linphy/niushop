@@ -53,9 +53,35 @@ class Weapp extends BaseApi
      * 分享
      * @return false|string
      */
-    public function share(){
-        $config_model = new Config();
+    public function share()
+    {
+        /*$config_model = new Config();
         $config = $config_model->getShareConfig($this->site_id, 'shop');
-        return $this->response($this->success($config['data']['value']));
+        $share_config = $config['data']['value'];*/
+
+        $this->checkToken();
+
+        //页面路径
+        $path          = $this->params['path'] ?? '';
+
+        //分享配置
+        $share_config = [];
+        $share_data = event('WeappShareData', [
+            'path' => $path,
+            'site_id' => $this->site_id,
+            'member_id' => $this->member_id,
+        ], true);
+        if(!empty($share_data)){
+            $share_config['permission'] = $share_data['permission'];
+            $share_config['data'] = $share_data['data'];
+        }else{
+            $share_config['permission'] = [
+                'onShareAppMessage' => false,
+                'onShareTimeline' => false,
+            ];
+            $share_config['data'] = null;
+        }
+
+        return $this->response($this->success($share_config));
     }
 }

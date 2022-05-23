@@ -425,7 +425,7 @@ class System extends BaseShop
 
             $menu = new Menu();
             $res = $menu->refreshMenu('shop', '');
-            dd($res);
+            //dd($res);
             if(addon_is_exit('store', $this->site_id) == 1){
                 $menu->refreshMenu('store', 'store');
             };

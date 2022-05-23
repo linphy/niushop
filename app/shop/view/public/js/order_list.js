@@ -9,6 +9,7 @@ Order = function () {
  */
 Order.prototype.setData = function (data) {
 	Order.prototype.data = data;
+
 };
 
 /**
@@ -16,22 +17,48 @@ Order.prototype.setData = function (data) {
  */
 Order.prototype.cols = [
 	{
+		type: 'checkbox',
+		fixed: 'left',
+		width: '3%',
+		merge: true,
+		template: function (orderitem, order) {
+			var json = {}
+			json.order_id = order.order_id;
+			json.order_no = order.order_no;
+			json.full_address = order.full_address;
+			if(order.order_type == 4 && order.order_data_status == 3){
+				var h = '<div class="sub-selected-checkbox" data-json='+ JSON.stringify(json) +' data-id='+ order.order_id +' disabled>';
+				h += '<input type="checkbox" lay-skin="primary" lay-filter="subCheckbox" name="" disabled>';
+				h += '</div>';
+			}else{
+				var h = '<div class="sub-selected-checkbox" data-json='+ JSON.stringify(json) +' data-id='+ order.order_id +' >';
+				h += '<input type="checkbox" lay-skin="primary" lay-filter="subCheckbox" name="" >';
+				h += '</div>';
+			}
+			return h;
+		}
+	},
+	{
 		title: '<span>商品</span>',
-		width: "30%",
+		width: "25%",
 		className: "product-info",
 		template: function (orderitem, order) {
 
 			var h = '<div class="img-block">';
-			h += '<img layer-src src="' + ns.img(orderitem.sku_image,'small') + '">';
+			h += '<img layer-src="' + ns.img(orderitem.sku_image,'big') + '" src="' + ns.img(orderitem.sku_image,'small') + '">';
 			h += '</div>';
 			h += '<div class="info">';
-			h += '<a href="' + ns.url("shop/order/detail", {order_id: orderitem.order_id}) + '" target="_blank" title="' + orderitem.sku_name + '" class="ns-multi-line-hiding ns-text-color">' + orderitem.sku_name + '</a>';
+			h += '<a href="' + ns.url("shop/order/detail", {order_id: orderitem.order_id}) + '" target="_blank" title="' + orderitem.sku_name + '" class="ns-multi-line-hiding ns-gn-color">' + orderitem.sku_name + '</a>';
+			if(orderitem.sku_no){
+				h += '<span class="text-tile" title="' + orderitem.sku_no + '" >' + orderitem.sku_no + '</span>';
+			}
+			h += '</div>';
 			return h;
 		}
 	},
 	{
 		title: "单价(元) / 数量",
-		width: "10%",
+		width: "8%",
 		align: "right",
 		className: "order-price",
 		template: function (orderitem, order) {
@@ -48,13 +75,17 @@ Order.prototype.cols = [
 	},
 	{
 		title: "维权",
-		width: "10%",
+		width: "8%",
 		align: "right",
 		className: "order-price",
 		template: function (orderitem, order) {
 			var html = '';
 			if (orderitem.refund_status_name != '') {
 				html += '<br/><a href="' + ns.url("shop/orderrefund/detail", {order_goods_id: orderitem.order_goods_id}) + '"  target="_blank" class="ns-text-color">' + orderitem.refund_status_name + '</a>&nbsp;&nbsp;';
+			}else{
+				if((order.order_status == 1 ||order.order_status == 2 ) && orderitem.goods_class == 1 && order.promotion_type != 'blindbox'){
+					html += '<button class="layui-btn" onclick="shopActiveRefund('+ orderitem.order_goods_id +')" >主动退款</button>';
+				}
 			}
 			return html;
 		}
@@ -80,22 +111,45 @@ Order.prototype.cols = [
 		merge: true,
 		template: function (orderitem, order) {
 			var h = '';
-            h += '<p>';
-            h += '<a class="ns-text-color" target="_blank" href="' + ns.url("shop/member/editmember?member_id=") + order.member_id + '">' + order.nickname + '</a>';
-            h += '</p>';
+			h += '<p>';
+			h += '<a class="ns-text-color" target="_blank" href="' + ns.url("shop/member/editmember?member_id=") + order.member_id + '">' + order.nickname + '</a>';
+			h += '</p>';
 			if (order.order_type != 4) {
-				h += '<p>';
-				h += '<span href="javascript:;">' + order.name + '</span>';
-				h += '</p>';
-				h += '<span>' + order.mobile + '</span>';
-				h += '<span class="ns-line-hiding" title="' + order.full_address + '">' + order.full_address + " " + order.address + '</span>';
+				if(order.order_type == 2){
+					h += '<p>';
+					h += '<span href="javascript:;">' + order.delivery_store_name +'</span>';
+					h += '<span style="margin-left:22px;">' + order.mobile + '</span>';
+					h += '</p>';
+					h += '<span class="ns-line-hiding address_box" title="' + order.full_address + ' ' + order.address + '">' + order.full_address + " " + order.address + '</span>';
+					h += '<input type="text" class="address_input" id="'+ order.order_id +'_address" value="'+ order.full_address +'-'+ order.address +',收货人：'+ order.name +',手机号：'+ order.mobile +'">'
+					h += '<a style="vertical-align: top" href="javascript:ns.copy(\''+ order.order_id +'_address\');" class="iconfont iconfuzhi"></a>'
+				}else{
+					h += '<p>';
+					h += '<span href="javascript:;">' + order.name + '</span>';
+					h += '<span style="margin-left:22px;">' + order.mobile + '</span>';
+					h += '</p>';
+					h += '<span class="ns-line-hiding address_box" title="' + order.full_address + ' ' + order.address + '">' + order.full_address + " " + order.address +'</span>';
+					h += '<input type="text" class="address_input" id="'+ order.order_id +'_address" value="'+ order.full_address +'-'+ order.address +',收货人：'+ order.name +',手机号：'+ order.mobile +'">'
+					h += '<a style="vertical-align: top" href="javascript:ns.copy(\''+ order.order_id +'_address\');" class="iconfont iconfuzhi"></a>'
+				}
 			} else {
 				h += '<p>';
 				h += '<span>' + order.mobile + '</span>';
 				h += '</p>';
 			}
-			
+
 			return h;
+		}
+	},
+	{
+		title: "配送方式",
+		width: "9%",
+		align: "center",
+		className: "transaction-status",
+		merge: true,
+		template: function (orderitem, order) {
+			var html = '<div>' + order.delivery_type_name + '</div>';
+			return html;
 		}
 	},
 	{
@@ -111,7 +165,7 @@ Order.prototype.cols = [
 			// }else if(order.order_status_name == '待发货'){
 			//
 			// }
-			
+
 			var html = '<div>' + order.order_status_name + '</div>';
 			html += '<div>' + order.promotion_type_name;
 			html += order.promotion_status_name != '' ? '(' + order.promotion_status_name + ')' : '';
@@ -142,9 +196,9 @@ Order.prototype.cols = [
 	// },
 	{
 		title: "操作",
-		width: "15%",
-		align: "left",
+		align: "right",
 		className: "operation",
+		width:"11%",
 		merge: true,
 		template: function (orderitem, order) {
 			var url = "shop/order/detail";
@@ -152,11 +206,11 @@ Order.prototype.cols = [
 			var action_json = order.order_status_action;
 			var action_arr = JSON.parse(action_json);
 			var action = action_arr.action;
-			html += '<div class="ns-table-btn">';
+			html += '<div class="ns-table-btn operation-type">';
 			for (var k = 0; k < action.length; k++) {
-				html += '<a class="layui-btn" href="javascript:orderAction(\'' + action[k].action + '\', ' + order.order_id + ')">' + action[k].title + '</a>';
+				html += '<a class="layui-btn  ns-new-btn-color" href="javascript:orderAction(\'' + action[k].action + '\', ' + order.order_id + ')">' + action[k].title + '</a>';
 			}
-			
+
 			// if (orderitem.refund_status_name != '') {
 			// html += '<a  href="javascript:orderAction(\'' + action[k].action + '\', ' + order.order_id + ')">' + action[k].title + '</a>';
 			// html += '<a class="layui-btn" href="' + ns.url("shop/orderrefund/detail", {order_goods_id: orderitem.order_goods_id}) + '"  target="_blank">' + orderitem.refund_status_name + '</a>';
@@ -169,11 +223,10 @@ Order.prototype.cols = [
 
 			html += '</div>';
 			return html;
-			
+
 		}
 	}
 ];
-
 /**
  * 渲染表头
  */
@@ -188,7 +241,15 @@ Order.prototype.header = function (hasThead) {
 		colgroup += '<col width="' + this.cols[i].width + '">';
 		if (hasThead) {
 			thead += '<th style="' + align + '" class="' + (this.cols[i].className || "") + '">';
-			thead += '<div class="layui-table-cell">' + this.cols[i].title + '</div>';
+			thead += '<div class="layui-table-cell">';
+			if(this.cols[i].type){
+				thead += '<div class="all-selected-checkbox">';
+				thead += '<input type="checkbox" lay-skin="primary" lay-filter="allCheckbox" name="">';
+				thead += '</div>';
+			}else{
+				thead +=  this.cols[i].title;
+			}
+			thead += '</div>';
 			thead += '</th>';
 		}
 	}
@@ -208,7 +269,8 @@ Order.prototype.tbody = function () {
 		var order = this.data.list[i];
 		var orderitemList = order.order_goods;
 		var pay_type_name = order.pay_type_name != '' ? order.pay_type_name : "";
-
+		var buyer_ask_delivery_time = order.buyer_ask_delivery_time != '' ? order.buyer_ask_delivery_time : "";
+		var order_type = order.order_type;
 		if (i > 0) {
 			//分割行
 			tbody += '<tr class="separation-row">';
@@ -218,7 +280,7 @@ Order.prototype.tbody = function () {
 
 		//订单项头部
 		tbody += '<tr class="header-row">';
-		tbody += '<td colspan="6">';
+		tbody += '<td colspan="8">';
 		tbody += '<span class="order-item-header" style="margin-right:10px;">订单号：' + order.order_no + '</span>';
 		tbody += '<span class="order-item-header ns-text-color more" style="margin-right:50px;" onclick="showMore(' + order.order_id + ')">更多';
 		tbody += '<div class="more-operation" data-order-id="' + order.order_id + '">';
@@ -226,8 +288,15 @@ Order.prototype.tbody = function () {
 		tbody += '</div></span>';
 
 		tbody += '<span class="order-item-header" style="margin-right:50px;">下单时间：' + ns.time_to_date(order.create_time) + '</span>';
+		
+		tbody += '<span class="order-item-header" style="margin-right:50px;">订单来源：'+ order.order_from_name + (order.is_video_number ? '（视频号）' : '') +'</span>';
+
 		// tbody += '<span class="order-item-header" style="margin-right:50px;">订单类型：' + order.order_type_name + '</span>';
-		if (pay_type_name) tbody += '<span class="order-item-header">支付方式：' + pay_type_name + '</span>';
+		if (pay_type_name) tbody += '<span class="order-item-header">支付方式：' + pay_type_name +'</span>';
+
+        if (order_type == 2 && buyer_ask_delivery_time) tbody += '<span class="order-item-header" style="margin-left:50px;">要求自提时间：' + ns.time_to_date(order.buyer_ask_delivery_time) + '</span>';
+
+        if (order_type == 3 && buyer_ask_delivery_time) tbody += '<span class="order-item-header" style="margin-left:50px;">要求送达时间：' + ns.time_to_date(order.buyer_ask_delivery_time) + '</span>';
 
 		tbody += '</td>';
 		tbody += '<td>';
@@ -237,14 +306,16 @@ Order.prototype.tbody = function () {
 			// tbody += '<a href="'+ ns.url('shop/order/printOrder',{order_id:order.order_id}) +'" target="_blank" class="layui-btn layui-btn-xs">打印发货单</a>';
 		}
 
-		if (order.order_status == -1) {
-			tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderDelete(' + order.order_id + ');" >删除</a>';
-		}
+        if (order.order_status == 0) {
+            tbody += '<a class="layui-btn layui-btn-xs" href="javascript:offlinePay(' + order.order_id + ');">线下支付</a> ';
+        }
 			tbody += '<a class="layui-btn layui-btn-xs" href="' + ns.url("shop/order/detail", {order_id: order.order_id}) + '" target="_blank">查看详情</a>';
-			tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderRemark(' + order.order_id + ');">备注</a> ';
-		if (order.order_status == 0) {
-			tbody += '<a class="layui-btn layui-btn-xs" href="javascript:offlinePay(' + order.order_id + ');">线下支付</a> ';
-		}
+
+        if (order.order_status == -1) {
+            tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderDelete(' + order.order_id + ');" >删除</a>';
+        }
+       		 tbody += '<a class="layui-btn layui-btn-xs" href="javascript:orderRemark(' + order.order_id + ');">备注</a> ';
+
 
 			tbody += '</div>';
 		tbody += '</td>';
@@ -318,3 +389,12 @@ function showMore(order_id) {
 		}
 	});
 }
+$(".layui-colla-title").on("click", function(){
+    if($(".layui-colla-title>i").hasClass("layui-icon-down") === false && $(".layui-colla-title>i").hasClass("layui-icon-up") === false){
+        $(".layui-colla-title .put-open").html("展开");
+    }else if($(".layui-colla-title>i").hasClass("layui-icon-down") === true){
+        $(".layui-colla-title .put-open").html("展开");
+    }else if($(".layui-colla-title>i").hasClass("layui-icon-up") === true){
+        $(".layui-colla-title .put-open").html("收起");
+    }
+})

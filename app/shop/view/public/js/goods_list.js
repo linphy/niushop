@@ -3,10 +3,10 @@ $(function () {
 	$("body").on("click", ".contraction", function () {
 		var goods_id = $(this).attr("data-goods-id");
 		var open = $(this).attr("data-open");
+		var open_t = $(this).siblings('.ns-title-content').children('.vips_price').attr("data-open") ? $(this).siblings('.ns-title-content').children('.vips_price').attr("data-open") : 0;
 		var tr = $(this).parent().parent().parent().parent();
 		var index = tr.attr("data-index");
-
-		if (open == 1) {
+		if ((parseInt(open)+parseInt(open_t)) > 0) {
 			$(this).children("span").text("+");
 			$(".js-sku-list-" + index).remove();
 		} else {
@@ -37,6 +37,48 @@ $(function () {
 			});
 		}
 		$(this).attr("data-open", (open == 0 ? 1 : 0));
+		$(this).siblings('.ns-title-content').children('.vips_price').attr("data-open", (open == 0 ? 1 : 0));
+	});
+
+	$("body").on("click", ".vips_price", function () {
+		var goods_id = $(this).attr("data-goods-id");
+		var open = $(this).attr("data-open");
+		var open_t = $(this).parent().siblings('.contraction').attr("data-open");
+		var tr = $(this).parent().parent().parent().parent().parent();
+		var index = tr.attr("data-index");
+
+		if ((parseInt(open)+parseInt(open_t)) > 0) {
+			$(this).parent().siblings('.contraction').children("span").text("+");
+			$(".js-sku-list-" + index).remove();
+		} else {
+			$(this).parent().siblings('.contraction').children("span").text("-");
+			$.ajax({
+				url: ns.url("shop/goods/getGoodsSkuList"),
+				data: {goods_id: goods_id},
+				dataType: 'JSON',
+				type: 'POST',
+				async: false,
+				success: function (res) {
+					var list = res.data;
+					var sku_list = $("#skuList").html();
+					var data = {
+						list: list,
+						index: index,
+						member_price_is_exit: member_price_is_exit
+					};
+					laytpl(sku_list).render(data, function (html) {
+						tr.after(html);
+					});
+
+					layer.photos({
+						photos: '.img-wrap',
+						anim: 5
+					});
+				}
+			});
+		}
+		$(this).attr("data-open", (open == 0 ? 1 : 0));
+		$(this).parent().siblings('.contraction').attr("data-open", (open == 0 ? 1 : 0))
 	});
 
 	layui.use(['form', 'laytpl', 'element'], function () {
@@ -47,15 +89,21 @@ $(function () {
 
 		form.render();
 		refreshTable();
-
+		
 		//监听Tab切换，以改变地址hash值
 		element.on('tab(goods_list_tab)', function () {
 			var type = this.getAttribute('data-type');
 			$("input[name='goods_state']").val("");
 			if (type) {
+				if(type == "goods_state"){
+					$("input[name='stockalarm']").val("");
+				}
 				var id = this.getAttribute('lay-id');
 				$("input[name='" + type + "']").val(id);
+			}else{
+				$("input[name='stockalarm']").val("");
 			}
+
 			var html = '<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>';
 			if (type == "goods_state" && id == 1) {
 				// 销售中状态：下架
@@ -73,7 +121,7 @@ $(function () {
 			refreshTable();
 
 		});
-
+		
 		// 监听工具栏操作
 		table.tool(function (obj) {
 			var data = obj.data;
@@ -110,9 +158,13 @@ $(function () {
 
                     break;
 
-				case 'select': //推广
-					goodsUrl(data);
+				// case 'select': //推广 (已废除)
+				// 	goodsUrl(data);
+				// 	break;
+				case 'spread': //推广
+					goodsSpread(data);
 					break;
+
 				case 'preview': //预览
 					goodsPreview(data);
 					break;
@@ -120,8 +172,10 @@ $(function () {
 					//编辑
 					if (data.goods_class == 1) {
 						window.open(ns.url("shop/goods/editgoods", {"goods_id": data.goods_id}))
-					} else {
+					} else if(data.goods_class == 2) {
 						window.open(ns.url("shop/virtualgoods/editgoods", {"goods_id": data.goods_id}))
+					} else if(data.goods_class == 3) {
+						window.open(ns.url("virtualcard://shop/goods/editgoods", {"goods_id": data.goods_id}))
 					}
 					break;
 				case 'copy':
@@ -152,6 +206,9 @@ $(function () {
                 case 'more': //更多
                     $('.more-operation').css('display', 'none');
                     $(obj.tr).find('.more-operation').css('display', 'block');
+                    break;
+                case 'carmichael': //更多
+                    location.href = ns.url("virtualcard://shop/goods/carmichael", {goods_id:data.goods_id});
                     break;
 			}
 		});
@@ -211,7 +268,7 @@ $(function () {
 				 	layer.open({
                         title: "批量设置",
                         type: 1,
-                        area: ['700px', '600px'],
+                        area: ['900px', '600px'],
                         content: $('#batchSet').html(),
                         success: function(){
                         	form.render();
@@ -244,7 +301,7 @@ $(function () {
 				 	layer.open({
 			            title: "批量设置",
 			            type: 1,
-			            area: ['700px', '600px'],
+			            area: ['900px', '600px'],
 			            content: $('#batchSet').html(),
 			            success: function(){
 			            	form.render();
@@ -306,6 +363,17 @@ $(function () {
 		}
 	})
 
+	setTimeout(()=>{
+		if(goods_sort == "asc"){
+			var html = "";
+			html += '<p>后台商品默认排序为排序号正序排列(即排序号越小越靠前)，如果序号相同，那么按照添加顺序排列，越新添加的越靠前</p>';
+			$(".ns-prompt .ns-prompt-box .ns-prompt-con>p").html(html);
+		}else{
+			var html = "";
+			html += '<p>后台商品默认排序为排序号倒序排列(即排序号越大越靠前)，如果序号相同，那么按照添加顺序排列，越新添加的越靠前</p>';
+			$(".ns-prompt .ns-prompt-box .ns-prompt-con>p").html(html);
+		}
+	},1000)
 });
 
 /**
@@ -357,9 +425,9 @@ function refreshTable() {
 								<i class="iconfont iconwenhao1 required ns-growth"></i>
 								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
 									<div class="ns-prompt-con">
-									<p>商品默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</p>
+										<p>后台商品默认排序为排序号正序排列(即排序号越小越靠前)，如果序号相同，那么按照添加顺序排列，越新添加的越靠前</p>
+									</div>
 								</div>
-							</div>
 							</div>
 						</div>`,
 			width: '7%',
@@ -390,7 +458,7 @@ function refreshTable() {
 			title: '操作',
 			toolbar: '#operation',
 			unresize: 'false',
-			width: '15%'
+			align: 'right',
 		}]
 	];
 
@@ -440,9 +508,9 @@ function refreshTable() {
 								<i class="iconfont iconwenhao1 required ns-growth"></i>
 								<div class="ns-growth-box ns-reason-box ns-reason-growth ns-prompt-box">
 									<div class="ns-prompt-con">
-									<p>商品默认排序号为0，数字越小，排序越靠前，数字重复，则最新添加的靠前。</p>
+										<p>后台商品默认排序为排序号正序排列(即排序号越小越靠前)，如果序号相同，那么按照添加顺序排列，越新添加的越靠前</p>
+									</div>
 								</div>
-							</div>
 							</div>
 						</div>`,
 				width: '7%',
@@ -456,30 +524,32 @@ function refreshTable() {
 				templet: function (data) {
 					return ns.time_to_date(data.create_time);
 				}
-			}, {
-				title: '会员等级折扣',
-				unresize: 'false',
-				width: '9%',
-				templet: function (data) {
-					var str='';
-					if(data.is_consume_discount == 1){
-						if(data.discount_config == 1){
-							if(data.discount_method == 'discount'){
-								str = '打折';
-							}else if(data.discount_method == 'manjian'){
-								str = '减现';
-							}else if(data.discount_method == 'fixed_price'){
-								str = '指定价格';
-							}
-						}else{
-							str ='默认规则';
-						}
-					}else{
-						str ='不参与';
-					}
-					return str;
-				}
-			}, {
+			},
+			// 	{
+			// 	title: '会员等级折扣',
+			// 	unresize: 'false',
+			// 	width: '9%',
+			// 	templet: function (data) {
+			// 		var str='';
+			// 		if(data.is_consume_discount == 1){
+			// 			if(data.discount_config == 1){
+			// 				if(data.discount_method == 'discount'){
+			// 					str = '打折';
+			// 				}else if(data.discount_method == 'manjian'){
+			// 					str = '减现';
+			// 				}else if(data.discount_method == 'fixed_price'){
+			// 					str = '指定价格';
+			// 				}
+			// 			}else{
+			// 				str ='默认规则';
+			// 			}
+			// 		}else{
+			// 			str ='不参与';
+			// 		}
+			// 		return str;
+			// 	}
+			// },
+			{
 				title: '状态',
 				unresize: 'false',
 				width: '6%',
@@ -496,7 +566,7 @@ function refreshTable() {
 				title: '操作',
 				toolbar: '#operation',
 				unresize: 'false',
-				width: '15%'
+				align: 'right',
 			}]
 		];
 	}
@@ -516,7 +586,8 @@ function refreshTable() {
 			category_id: $("input[name='category_id']").val(),
 			goods_class: $("select[name='goods_class'] option:checked").val(),
 			label_id: $("select[name='label_id'] option:checked").val(),
-			promotion_type: $("select[name='promotion_type'] option:checked").val()
+			promotion_type: $("select[name='promotion_type'] option:checked").val(),
+			stockalarm: $("input[name='stockalarm']").val()
 		}
 	});
 }
@@ -534,7 +605,9 @@ function add() {
 	// 	});
 	// });
 }
-
+function grab() {
+	location.href = ns.url('goodsgrab://shop/goodsgrab/lists');
+}
 // 复制
 function copyGoods(goods_id) {
 	layer.confirm('确定要复制该商品吗?', function () {
@@ -644,7 +717,7 @@ function editStock(data) {
 
 }
 
-// 商品推广
+// 商品推广(已废弃)
 function goodsUrl(data) {
 	$(".operation-wrap[data-goods-id='" + data.goods_id + "'] .popup-qrcode-wrap").css("display", "block");
 	$('#goods_name').html(data.goods_name);
@@ -669,6 +742,60 @@ function goodsUrl(data) {
 				});
 			} else {
 				layer.msg(res.data.path.h5.message);
+			}
+		}
+	});
+
+}
+
+// 商品推广
+function goodsSpread(data) {
+	$.ajax({
+		type: "POST",
+		url: ns.url("shop/goods/goodsUrl"),
+		data: {
+			'goods_id': data.goods_id
+		},
+		dataType: 'JSON',
+		success: function (res) {
+			if(res.code==0){
+				res.data.id = data.goods_id;
+				laytpl($("#promote").html()).render(res.data, function (html) {
+					layer.open({
+						type: 1,
+						area: ['600px', '450px'],
+						offset: '155px',
+						title: ['推广'],
+						content: html,
+						success: function(){
+							// 推广渠道监听
+							form.on('radio(promote_type)', function(radio){
+								if(radio.value == 1) {
+									var no_html = "";
+									no_html += '<img src="'+ res.data.h5.path +'"/>';
+									$('.promote-img').html(no_html);
+									// $('.promote-img img').attr('src',res.data.h5.path);
+									$('.promote-download a').attr('href',res.data.h5.path)
+									$(".h5-path").show();
+								}else {
+									if(res.data.weapp.path == ""){
+										var no_html = "";
+										no_html += '<span>小程序配置错误</span>';
+										$('.promote-img').html(no_html);
+									}else{
+										$('.promote-img img').attr('src',res.data.weapp.path)
+										$('.promote-download a').attr('href',res.data.weapp.path)
+									}
+									$(".h5-path").hide();
+								}
+							});
+						}
+					});
+					form.render();
+				});
+
+			}else{
+				layer.msg('加载失败，请重试');
 			}
 		}
 	});
@@ -796,10 +923,10 @@ function batchSetting(){
 			break;
 		case 'shop_intor':
 			field.recom_way = $('[name="recom_way"]:checked').val();
-			if (field.recom_way == 0) {
-				layer.msg('请选择推荐方式');
-				return;
-			}
+			// if (field.recom_way == 0) {
+			// 	layer.msg('请选择推荐方式');
+			// 	return;
+			// }
 			break;
 		case 'member_price':
 			field.is_consume_discount = $('[name="is_consume_discount"]:checked').val();
@@ -862,4 +989,17 @@ function editSort(goods_id, event){
 			}
 		}
 	});
+}
+$(".layui-colla-title").on("click", function(){
+    if($(".layui-colla-title>i").hasClass("layui-icon-down") === false && $(".layui-colla-title>i").hasClass("layui-icon-up") === false){
+        $(".layui-colla-title .put-open").html("展开");
+    }else if($(".layui-colla-title>i").hasClass("layui-icon-down") === true){
+        $(".layui-colla-title .put-open").html("展开");
+    }else if($(".layui-colla-title>i").hasClass("layui-icon-up") === true){
+        $(".layui-colla-title .put-open").html("收起");
+    }
+})
+
+function linkImport(){
+	location.href = ns.url("shop/goods/import");
 }

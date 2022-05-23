@@ -153,10 +153,10 @@ function renderTable(sku_list) {
 			let data = [];
 			let dataPrice = [];
 			data = item.sku_list.map((v,i)=>{
-				return Math.floor(v.discount_price);
+				return v.discount_price;
 			})
 			dataPrice = item.sku_list.map((v,i)=>{
-				return Math.floor(v.price);
+				return v.price;
 			})
 			if((Math.min.apply(Math,dataPrice)).toFixed(2).toString() != (Math.max.apply(Math,dataPrice)).toFixed(2).toString()){
 				item.ns_price = (Math.min.apply(Math,dataPrice)).toFixed(2).toString() + '~' + (Math.max.apply(Math,dataPrice)).toFixed(2).toString();
@@ -171,7 +171,7 @@ function renderTable(sku_list) {
 				item.discount_price = (Math.min.apply(Math,data)).toFixed(2).toString()
 			}
 		}else{
-			item.sku_list[0].discount_price = Math.floor(item.sku_list[0].discount_price).toFixed(2).toString()
+			item.sku_list[0].discount_price = Number(item.sku_list[0].discount_price).toFixed(2).toString()
 		}
 	})
 	
@@ -196,7 +196,7 @@ function renderTable(sku_list) {
 					var html = '';
 					html = "<div class='goods-title'>"
 						html += "<div class='goods-img'>"
-							html += `<img layer-src src="${data.sku_image ? ns.img(data.sku_image) : ''}" alt="">`
+							html += `<img layer-src="${ns.img(data.sku_image, 'big')}" src="${ns.img(data.sku_image, 'small')}" alt="">`
 						html += "</div>"
 						html += `<div data-goods_id="${data.goods_id}" data-sku_id="${data.sku_id}" title="${data.sku_name}">`
 							html += `<p class="ns-multi-line-hiding goods-name" >${data.sku_name}</p>`
@@ -235,7 +235,7 @@ function renderTable(sku_list) {
 						}
 					}else{
 						return `<input type="number" class="layui-input ns-len-input 
-							discount_price" value="${data.sku_list[0].discount_price}" onchange="setGoodsSku('discount_price', ${data.sku_id}, this)" lay-verify="discount_price" min="0.00"/>`
+							discount_price" value="${data.sku_list[0].discount_price}" onchange="setGoodsSku('discount_price', ${data.goods_id}, this)" lay-verify="discount_price" min="0.00" oninput="ns.checkInput(this)" data-value="${data.sku_list[0].discount_price}"/>`
 					}
 				}
 			}, {
@@ -285,7 +285,7 @@ function editInput(textIndex=0,data) {
 		content: `
 		<div class="layui-form-item">
 			<div class="">
-				<input type="text" name="bargain_edit_input" lay-verify="required" autocomplete="off" class="layui-input"  placeholder="请输入${text[textIndex].name}">
+				<input type="number" name="bargain_edit_input" lay-verify="required" autocomplete="off" class="layui-input"  placeholder="请输入${text[textIndex].name}" data-value="" oninput="ns.checkInput(this)" >
 			</div>
 		</div>`,
 		yes: function(index, layero){
@@ -302,7 +302,7 @@ function editInput(textIndex=0,data) {
 					if (item.goods_id == skuItem.goods_id){
 						
 						skuItem.sku_list.forEach((v,i)=>{
-							if(Math.floor(v.price) > Math.floor(val)){
+							if(Number(v.price) > Number(val)){
 								skuItem.sku_list[i].discount_price = val;
 							}else{
 								skuItem.sku_list[i].discount_price = v.price;
@@ -350,16 +350,16 @@ function discount_price(index){
 						width: '50%',
 						unresize: 'false',
 						templet: function(data) {
+							let skuName = data.sku_name.split(data.goods_name)
 							var html = '';
-							
 							html += `
 								<div class="goods-title">
 									<div class="goods-img">
-										<img layer-src src="${data.sku_image ? ns.img(data.sku_image) : ''}" alt="">
+										<img layer-src="${ns.img(data.sku_image, 'big')}" src="${ns.img(data.sku_image, 'small')}" alt="">
 									</div>
-									<div class="ns-multi-line-hiding goods-name" data-goods_id="${data.goods_id}" data-sku_id="${data.sku_id}" title="${data.sku_name}${data.sku_name}">
-										<p>${data.sku_name.split(' ')[0]}</p>
-										<p>${data.sku_name.split(' ').splice(1,data.sku_name.split(' ').length).join()}</p>
+									<div class="goods-name" data-goods_id="${data.goods_id}" data-sku_id="${data.sku_id}" title="${data.sku_name}${data.sku_name}">
+										<p class="ns-multi-line-hiding goods-name">${data.goods_name}</p>
+										<p class="ns-multi-line-hiding goods-name">${skuName[1]}</p>
 									</div>
 								</div>
 							`;
@@ -376,7 +376,7 @@ function discount_price(index){
 						width: '20%',
 						templet: function(data){
 							return `<input type="number" name="discount_price" class="layui-input ns-len-input discount_price" value="${data.discount_price}" 
-									onchange="setSkusGoods(${data.sku_id}, this)" lay-verify="discount_price" min="0.00"/>`
+									onchange="setSkusGoods(${data.sku_id}, this)" lay-verify="discount_price" min="0.00" oninput="ns.checkInput(this)" data-value="${data.discount_price}"/>`
 						}
 					}]
 				],
@@ -406,7 +406,7 @@ function discount_price(index){
 						title:'修改折扣价',
 						area: ['321px', '180px'],
 						btn:['保存','返回'],
-						content:'<input name="editDiscount" placeholder="请输入折扣价" class="layui-input ns-len-input"/>',
+						content:'<input type="number" name="editDiscount" placeholder="请输入折扣价" class="layui-input ns-len-input" data-value="" oninput="ns.checkInput(this)"/>',
 						success:function(res){},
 						yes:function(res){
 							setSkusGoods(sku_ids,'all')
@@ -451,6 +451,7 @@ function discount_price(index){
 
 function addGoods(){
 	goodsSelect(function (res) {
+		console.log(res, 'res');
 		sku_list.splice(0,sku_list.length);
 		if (!res.length) return false;
 		goods_id = [];
@@ -464,6 +465,9 @@ function addGoods(){
 			item.discount_price = item.price;
 			item.sku_name = item.goods_name;
 			item.sku_image = item.goods_image;
+			for (var k = 0; k < res[i].sku_list.length; k++) {
+				res[i].sku_list[k].goods_name = res[i].goods_name;
+			}
 			goods_id.push(item.goods_id);
 			sku_list.push(item);
 		}
@@ -478,17 +482,17 @@ function addGoods(){
 
 }
 
-function setGoodsSku(type, sku_id, obj){
+function setGoodsSku(type, goods_id, obj){
 	$.each(sku_list, function (i, e) {
-		if(sku_id == e.sku_id){
-			if(parseFloat(sku_list[i]['price']) < parseFloat($(obj).val())){
-				$(obj).val(sku_list[i]['price'])
+		if(goods_id == e.goods_id){
+			if(parseFloat(sku_list[i]['sku_list'][0]['price']) < parseFloat($(obj).val())){
+				$(obj).val(sku_list[i]['sku_list'][0]['price'])
 				return layer.msg('折扣价格不能大于商品价格');
 			} else if($(obj).val()<0){
-				$(obj).val(sku_list[i]['price'])
+				$(obj).val(sku_list[i]['sku_list'][0]['price'])
 				return layer.msg('折扣价格不能小于0');
 			}else{
-				sku_list[i][type] = $(obj).val();
+				sku_list[i]['sku_list'][0][type] = $(obj).val();
 			}
 		}
 	})
@@ -504,21 +508,20 @@ function back() {
 function setSkusGoods(id,that){
 	selected_sku_list.forEach((item,index)=>{
 		if(that == 'all'){
-			console.log(id,that)
-			let disconunt_money = Math.floor($("input[name='editDiscount']").val()).toFixed(2)
+			let discount_price = Number($("input[name='editDiscount']").val()).toFixed(2);
 			if(id.indexOf(item.sku_id) != -1){
-				if(item.price >= Math.floor(disconunt_money).toFixed(2)){
-					item.discount_price = disconunt_money;
+				if(Number(item.price) >= Number(discount_price)){
+					item.discount_price = discount_price;
 				}else{
 					item.discount_price = item.price;
 				}
-				console.log('item.discount_price',item.discount_price)
 				$("input[name='discount_price']").eq(index).val(item.discount_price)
 			}
 		}else{
 			if(item.sku_id == id){
-				if(item.price >= Math.floor($(that).val()).toFixed(2)){
-					item.discount_price = $(that).val();
+				let discount_price = Number($(that).val()).toFixed(2);
+				if(Number(item.price) >= Number(discount_price)){
+					item.discount_price = discount_price;
 				}else{
 					layer.msg('折扣价格不能大于商品原价');
 					$(that).val(item.price)

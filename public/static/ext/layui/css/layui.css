@@ -2308,7 +2308,7 @@ hr {
 	z-index: 899;
 	min-width: 100%;
 	border: 1px solid #d2d2d2;
-	max-height: 300px;
+	max-height: 228px;
 	overflow-y: auto;
 	background-color: #fff;
 	border-radius: 2px;
@@ -2605,7 +2605,7 @@ hr {
 
 .layui-form-radio {
 	line-height: 28px;
-	margin: 6px 10px 0 0;
+	margin: 0px 10px 0 0;
 	padding-right: 10px;
 	cursor: pointer;
 	font-size: 0
@@ -3129,7 +3129,7 @@ hr {
 }
 
 .layui-table img {
-	max-width: 100px
+	max-width: 50px
 }
 
 .layui-table[lay-size=lg] td,
@@ -3196,8 +3196,8 @@ hr {
 }
 
 .layui-table-view .layui-form-checkbox[lay-skin=primary] i {
-	width: 18px;
-	height: 18px
+	width: 15px;
+	height: 15px
 }
 
 .layui-table-view .layui-form-radio {
@@ -4741,7 +4741,7 @@ body .layui-util-face .layui-layer-content {
 }
 
 .layui-rate {
-	padding: 10px 5px 10px 0;
+	/* padding: 10px 5px 10px 0; */
 	font-size: 0
 }
 

@@ -59,27 +59,10 @@ class Message extends BaseModel
 				'template_id' => $message_info['wechat_template_id'],
 				'data' => $template_data,
 				'miniprogram' => [],
-				'url' => ''
+				'url' => ""
 			];
 			
 			if (!empty($param['page'])) {
-			    $template_config_model = new Config();
-                $template_config = $template_config_model->getTemplateMessageConfig($site_id);
-                $template_config = $template_config['data']['value'];
-
-                if ($template_config['is_jump_weapp']) {
-                    // 小程序配置
-                    $weapp_config = new WeappConfig();
-                    $weapp_config_result = $weapp_config->getWeAppConfig($site_id);
-                    $weapp_config = $weapp_config_result['data']["value"];
-
-                    if (!empty($weapp_config['appid'])) {
-                        $data['miniprogram'] = [
-                            'appid' => $weapp_config['appid'],
-                            'pagepath' => $param['page']
-                        ];
-                    }
-                }
                 $data['url'] = getH5Domain() . '/' . $param['page'];
 			}
 			$wechat = new Wechat($site_id);

@@ -13,6 +13,7 @@ namespace app\model\shop;
 
 use app\model\system\Config as ConfigModel;
 use app\model\BaseModel;
+use addon\shopcomponent\model\Weapp;
 
 /**
  * 店铺信息（无缓存）
@@ -38,6 +39,30 @@ class Shop extends BaseModel
     public function editShop($data, $condition)
     {
         $res = model('shop')->update($data, $condition);
+
+        //更新视频号商家信息
+        if($res && $data['name'] && $data['mobile'] && $data['full_address'] && $data['$address'] && addon_is_exit("shopcomponent")){
+            $weapp_model = new Weapp();
+            $info = $weapp_model->checkRegister();
+            if($info['data']['status'] == 2){
+                $params = [
+                    "service_agent_path" => "",
+                    "service_agent_phone" => $data['mobile'],
+                    "service_agent_type" => [0,2],
+                    "default_receiving_address" => [
+                        "receiver_name" => $data['name'],
+                        "detailed_address" => $data['full_address'].$data['$address'],
+                        "tel_number" => $data['mobile'],
+                        "country" => "",
+                        "province" => "",
+                        "city" => "",
+                        "town" => ""
+                    ]
+                ];
+                $weapp_model->updateShop($params);
+            }
+        }
+
         return $this->success($res);
     }
 

@@ -12,6 +12,16 @@
     <link rel="stylesheet" href="SITEHOME_CSS/home.css">
     <link rel="stylesheet" href="WECHAT_CSS/wx_preview_graphic_message.css">
     <script src="__STATIC__/js/jquery-2.2.js"></script>
+    <style>
+        #content p{
+            width: 100%;
+            word-wrap:break-word;
+            word-break:normal;
+        }
+        #content p>img{
+            max-width: 100%;
+        }
+    </style>
 </head>
 <body>
 <div class='preview-box'>
@@ -25,8 +35,8 @@
         <span class='author'>{$info.value[$index]['autor']}</span>
         <content>
             {if condition="$info.value[$index]['show_cover_pic'] == 1"}
-            <div class="rich-media-thumb" id="media">
-                <img onerror="this.parentNode.removeChild(this)" src="{$info.value[$index]['cover']['path']}">
+            <div class="rich-media-thumb" id="media" style="width: 100%">
+                <img style="max-width: 100%" onerror="this.parentNode.removeChild(this)" src="{$info.value[$index]['cover']['path']}">
             </div>
             {/if}
             <div id="content">

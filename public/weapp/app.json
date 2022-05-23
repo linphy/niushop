@@ -1,34 +1,26 @@
 {
   "pages": [
     "pages/index/index/index",
-    "pages/login/login/login",
-    "pages/login/register/register",
     "pages/goods/cart/cart",
     "pages/goods/category/category",
     "pages/goods/detail/detail",
     "pages/goods/list/list",
     "pages/member/index/index",
-    "pages/member/info/info",
     "pages/order/payment/payment",
     "pages/order/list/list",
-    "pages/order/evaluate/evaluate",
     "pages/order/detail/detail",
     "pages/order/detail_local_delivery/detail_local_delivery",
     "pages/order/detail_pickup/detail_pickup",
-    "pages/order/detail_virtual/detail_virtual",
-    "pages/order/detail_point/detail_point",
-    "pages/order/logistics/logistics",
-    "pages/order/refund/refund",
-    "pages/order/refund_detail/refund_detail",
-    "pages/order/activist/activist",
-    "pages/pay/index/index",
-    "pages/pay/result/result",
-    "pages/storeclose/storeclose/storeclose"
+    "pages/order/detail_point/detail_point"
   ],
   "subPackages": [
     {
       "root": "promotionpages",
       "pages": [
+        "guafen/guafen/list",
+        "guafen/guafen/index",
+        "guafen/guafen/poster",
+        "guafen/guafen/my_guafen",
         "combo/detail/detail",
         "combo/payment/payment",
         "topics/list/list",
@@ -43,6 +35,7 @@
         "pintuan/my_spell/my_spell",
         "pintuan/share/share",
         "pintuan/payment/payment",
+        "pintuan/order/order",
         "bargain/list/list",
         "bargain/detail/detail",
         "bargain/launch/launch",
@@ -51,17 +44,54 @@
         "groupbuy/list/list",
         "groupbuy/detail/detail",
         "groupbuy/payment/payment",
+        "rebate/rebate/list",
+        "rebate/rebate/detail",
+        "rebate/rebate/payment",
+        "rebate/rebate/my_rebate",
+        "rebate/rebate/share",
+        "rebate/rebate/order",
         "point/list/list",
+        "point/list/goods_list",
         "point/detail/detail",
         "point/payment/payment",
         "point/order_list/order_list",
-        "point/result/result"
+        "point/result/result",
+        "presale/list/list",
+        "presale/detail/detail",
+        "presale/payment/payment",
+        "presale/order_list/order_list",
+        "presale/order_detail/order_detail",
+        "bale/detail/detail",
+        "bale/payment/payment",
+        "jielong/jielong",
+        "jielong/list",
+        "giftcard/detail/detail",
+        "giftcard/list/list",
+        "giftcard/my_giftcard/my_giftcard",
+        "giftcard/my_giftcard/detail",
+        "giftcard/my_exchange/my_exchange",
+        "giftcard/my_exchange/exchange_list",
+        "giftcard/order/order",
+        "giftcard/present/present",
+        "giftcard/present/accept",
+        "giftcard/present/list",
+        "giftcard/payment/payment"
       ]
     },
     {
       "root": "otherpages",
       "pages": [
         "web/web",
+        "hongbao/index/index",
+        "hongbao/list/list",
+        "hongbao/my_hongbao/my_hongbao",
+        "hongbao/poster/poster",
+        "blindBox/list/list",
+        "blindBox/goods_list/goods_list",
+        "blindBox/fillAddress/fillAddress",
+        "blindBox/index/index",
+        "blindBox/my_box/my_box",
+        "blindBox/my_prize/my_prize",
         "diy/diy/diy",
         "index/storelist/storelist",
         "index/storedetail/storedetail",
@@ -76,6 +106,8 @@
         "member/footprint/footprint",
         "member/level/level",
         "member/card/card",
+        "member/card_buy/card_buy",
+        "member/card_agreement/card_agreement",
         "member/level/level_growth_rules",
         "member/point/point",
         "member/point_detail/point_detail",
@@ -90,6 +122,8 @@
         "member/cancelstatus/cancelstatus",
         "member/cancelsuccess/cancelsuccess",
         "member/cancelrefuse/cancelrefuse",
+        "member/info/info",
+        "member/info_edit/info_edit",
         "login/find/find",
         "goods/coupon/coupon",
         "goods/coupon_receive/coupon_receive",
@@ -107,6 +141,7 @@
         "fenxiao/index/index",
         "fenxiao/apply/apply",
         "fenxiao/order/order",
+        "fenxiao/relation/relation",
         "fenxiao/order_detail/order_detail",
         "fenxiao/team/team",
         "fenxiao/withdraw_apply/withdraw_apply",
@@ -125,7 +160,22 @@
         "store_notes/note_detail/note_detail",
         "chat/room/room",
         "webview/webview",
-        "member/invite_friends/invite_friends"
+        "member/invite_friends/invite_friends",
+        "pay/index/index",
+        "pay/wx_pay/wx_pay",
+        "pay/result/result",
+        "storeclose/storeclose/storeclose",
+        "order/logistics/logistics",
+        "order/evaluate/evaluate",
+        "order/refund/refund",
+        "order/refund_goods_select/refund_goods_select",
+        "order/refund_type_select/refund_type_select",
+        "order/refund_batch/refund_batch",
+        "order/refund_detail/refund_detail",
+        "order/activist/activist",
+        "order/detail_virtual/detail_virtual",
+        "login/login/login",
+        "login/register/register"
       ]
     }
   ],
@@ -165,7 +215,6 @@
     "pages/index/index/index": {
       "network": "all",
       "packages": [
-        "promotionpages",
         "otherpages"
       ]
     }
@@ -188,6 +237,5 @@
     "mescroll-body": "/components/mescroll/mescroll-body",
     "ns-login": "/components/ns-login/ns-login",
     "ns-show-toast": "/components/ns-show-toast/ns-show-toast"
-  },
-  "sitemapLocation": "sitemap.json"
+  }
 }

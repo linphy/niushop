@@ -81,7 +81,6 @@ class Font extends \Intervention\Image\AbstractFont
         $box = [];
 
         if ($this->hasApplicableFontFile()) {
-
             // get bounding box with angle 0
             $box = imagettfbbox($this->getPointSize(), 0, $this->file, $this->text);
 
@@ -135,7 +134,6 @@ class Font extends \Intervention\Image\AbstractFont
         $color = new Color($this->color);
 
         if ($this->hasApplicableFontFile()) {
-
             if ($this->angle != 0 || is_string($this->align) || is_string($this->valign)) {
 
                 $box = $this->getBoxSize();
@@ -203,11 +201,26 @@ class Font extends \Intervention\Image\AbstractFont
             imagettftext($image->getCore(), $this->getPointSize(), $this->angle, $posx, $posy, $color->getInt(), $this->file, $this->text);
 
         } else {
-
             // get box size
+            $this->file = PUBLIC_PATH . 'static/font/Microsoft.ttf';//为了在getBoxSize方法调用imagettfbbox在计算盒子尺寸
             $box = $this->getBoxSize();
             $width = $box['width'];
             $height = $box['height'];
+            if($this->angle == 0){
+                $common_width = $width;
+                $common_height = $height;
+            }else{
+                $angle = $this->angle;
+                $this->angle = 0;
+                $common_box = $this->getBoxSize();
+                $common_width = $common_box['width'];
+                $common_height = $common_box['height'];
+                $this->angle = $angle;
+            }
+            $this->file = 1;//恢复正常，防止程序报错
+
+            $image_width = $image->getWidth();
+            $image_height = $image->getHeight();
 
             // internal font specific position corrections
             if ($this->getInternalFont() == 1) {
@@ -224,33 +237,45 @@ class Font extends \Intervention\Image\AbstractFont
             // x-position corrections for horizontal alignment
             switch (strtolower($this->align)) {
                 case 'center':
-                    $posx = ceil($posx - ($width / 2));
+                    $posx = ceil($posx - ($width / 2) + ($image_width / 2));
                     break;
 
                 case 'right':
-                    $posx = ceil($posx - $width) + 1;
+                    $posx = ceil($posx - $width + $image_width) + 1;
                     break;
             }
 
             // y-position corrections for vertical alignment
             switch (strtolower($this->valign)) {
+                case 'top':
+                    if($this->angle <= 0){
+                        $posy = ceil($posy + $common_height);
+                    }else{
+                        $posy = ceil($posy + $height);
+                    }
+                    break;
                 case 'center':
                 case 'middle':
-                    $posy = ceil($posy - ($height / 2));
+                    if($this->angle >= 0){
+                        $posy = ceil($posy + ($height / 2) + ($image_height / 2));
+                    }else{
+                        $posy = ceil($posy + ($height / 2) * -1 + ($image_height / 2));
+                    }
                     break;
-
-                case 'top':
-                    $posy = ceil($posy - $top_correction);
-                    break;
-
-                default:
                 case 'bottom':
-                    $posy = round($posy - $height + $bottom_correction);
+                default:
+                    if($this->angle >= 0){
+                        $posy = round($posy + $image_height);
+                    }else{
+                        $posy = round($posy + $image_height - $height);
+                    }
                     break;
             }
 
             // draw text
-            imagestring($image->getCore(), $this->getInternalFont(), $posx, $posy, $this->text, $color->getInt());
+            //imagestring($image->getCore(), $this->getInternalFont(), $posx, $posy, $this->text, $color->getInt());
+            //imagestring 制作水印有乱码问题--赵海雷
+            imagettftext($image->getCore(), $this->getPointSize(), $this->angle, $posx, $posy, $color->getInt(), PUBLIC_PATH . 'static/font/Microsoft.ttf', $this->text);
         }
     }
 }

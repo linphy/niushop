@@ -1,7 +1,7 @@
 /**
  * 打开相册
  */
-function openAlbum(callback, imgNum) {
+function openAlbum(callback, imgNum, is_thumb = 0) {
 	if(!imgNum) imgNum = 9999;
 	layui.use(['layer'], function () {
 		//iframe层-父子操作
@@ -11,7 +11,7 @@ function openAlbum(callback, imgNum) {
 			area: ['950px', '580px'],
 			fixed: false, //不固定
 			btn: ['保存', '返回'],
-			content: ns.url("shop/album/album?imgNum=" + imgNum),
+			content: ns.url("shop/album/album?imgNum=" + imgNum+ "&is_thumb=" + is_thumb),
 			yes: function (index, layero) {
 				var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
 				

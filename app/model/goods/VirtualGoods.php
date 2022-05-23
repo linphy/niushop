@@ -15,6 +15,8 @@ use app\model\order\OrderCommon;
 use app\model\system\Cron;
 use app\model\system\Stat;
 use addon\discount\model\Discount;
+use app\model\message\Message;
+use app\model\upload\Album;
 
 /**
  * 虚拟商品
@@ -55,7 +57,7 @@ class VirtualGoods extends BaseModel
 
             $goods_image = $data[ 'goods_image' ];
             $first_image = explode(",", $goods_image)[ 0 ];
-
+            
             //SKU商品数据
             if (!empty($data[ 'goods_sku_data' ])) {
                 $data[ 'goods_sku_data' ] = json_decode($data[ 'goods_sku_data' ], true);
@@ -75,6 +77,13 @@ class VirtualGoods extends BaseModel
                 $data['virtual_indate'] = $data['virtual_indate'];
             }
 
+            //获取标签名称
+            $label_name = '';
+            if($data[ 'label_id' ]){
+                $label_info = model('goods_label')->getInfo([['id', '=', $data[ 'label_id' ]]], 'label_name');
+                $label_name = $label_info['label_name'] ?? '';
+            }
+
             $goods_data = array (
                 'goods_image' => $goods_image,
                 'goods_stock' => $data[ 'goods_stock' ],
@@ -85,6 +94,7 @@ class VirtualGoods extends BaseModel
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
+                'label_name' => $label_name,
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
                 'is_consume_discount' => $data['is_consume_discount'],
@@ -222,6 +232,13 @@ class VirtualGoods extends BaseModel
 //                }
             }
 
+            //获取标签名称
+            $label_name = '';
+            if($data[ 'label_id' ]){
+                $label_info = model('goods_label')->getInfo([['id', '=', $data[ 'label_id' ]]], 'label_name');
+                $label_name = $label_info['label_name'] ?? '';
+            }
+
             $goods_data = array (
                 'goods_image' => $goods_image,
                 'goods_stock' => $data[ 'goods_stock' ],
@@ -232,6 +249,7 @@ class VirtualGoods extends BaseModel
                 'category_id' => $data[ 'category_id' ],
                 'category_json' => $data[ 'category_json' ],
                 'label_id' => $data[ 'label_id' ],
+                'label_name' => $label_name,
                 'timer_on' => $data[ 'timer_on' ],
                 'timer_off' => $data[ 'timer_off' ],
                 'is_consume_discount' => $data['is_consume_discount'],
@@ -663,7 +681,9 @@ class VirtualGoods extends BaseModel
         $local_result = $order_common_model->verifyOrderLock($goods_virtual_info[ 'order_id' ]);
         if ($local_result[ "code" ] < 0)
             return $local_result;
-
+        //核销发送通知
+        $message_model = new Message();
+        $message_model->sendMessage(['keywords' => "VERIFY", 'order_id' => $goods_virtual_info['order_id'], 'site_id' => $goods_virtual_info['site_id']]);
         model('goods_virtual')->startTrans();
         try{
 

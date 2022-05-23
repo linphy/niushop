@@ -310,7 +310,8 @@ class Client extends BaseClient
             'out_order_id' => $out_order_id,
             'openid' => $openid,
             'finish_all_delivery' => $finish_all_delivery,
-            'delivery_list' => $delivery_list
+            'delivery_list' => $delivery_list,
+            'ship_done_time' => date("Y-m-d H:i:s", time())
         );
         return $this->httpPostJson('shop/delivery/send', $params);
     }
@@ -340,7 +341,7 @@ class Client extends BaseClient
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function addAftersale($params){
-        return $this->httpPostJson('shop/aftersale/add', $params);
+        return $this->httpPostJson('shop/ecaftersale/add', $params);
     }
 
     /**
@@ -470,4 +471,43 @@ class Client extends BaseClient
         ];
         return $this->request('shop/img/upload', 'POST', ['multipart' => $params]);
     }
+
+    public function updateShop($params){
+
+        return $this->httpPostJson('shop/account/update_info', $params);
+    }
+
+    /**
+     * 视频号订单同步订单结果
+     */
+    public function updateOrderType($params){
+
+        return $this->httpPostJson('shop/order/pay', $params);
+    }
+
+    //获取支付参数
+    public function getPaymentParams($params){
+        return $this->httpPostJson('shop/order/getpaymentparams', $params);
+    }
+
+    //同意退款
+    public function orderRefund($params){
+        return $this->httpPostJson('shop/ecaftersale/acceptrefund', $params);
+    }
+
+    //拒绝退款
+    public function orderNoRefund($params){
+        return $this->httpPostJson('shop/ecaftersale/reject', $params);
+    }
+
+    //同意退货
+    public function aceptreturn($params){
+        return $this->httpPostJson('shop/ecaftersale/acceptreturn', $params);
+    }
+
+    //取消售后
+    public function cancel($params){
+        return $this->httpPostJson('shop/ecaftersale/cancel', $params);
+    }
+
 }

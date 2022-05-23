@@ -876,6 +876,4 @@ class Member extends BaseModel
 
         return $this->success();
     }
-
-
 }

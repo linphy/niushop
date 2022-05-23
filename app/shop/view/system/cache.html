@@ -1,13 +1,31 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.ns-over-hide-second { line-height: 20px!important; }
-	.ns-item-block-parent .ns-item-block-wrap { align-items: center; }
+	.ns-item-block {
+		margin-bottom: 0px;
+	}
+	
+	.ns-item-block-parent {
+		padding: 20px 20px 0 20px;
+	}
+
+	.ns-over-hide-second {
+		line-height: 20px !important;
+	}
+
+	.ns-item-block-parent .ns-item-block-wrap {
+		align-items: center;
+	}
+
 	.ns-item-block-parent .ns-item-poa-pic {
 		top: 50%;
 		transform: translateY(-50%);
 		line-height: 50px;
 		text-align: center;
+	}
+
+	.tips {
+		margin: 10px 0 0 20px;
 	}
 </style>
 {/block}
@@ -47,6 +65,11 @@
 			</a>
 			{/foreach}
 		</div>
+
+		<div class="ns-word-aux tips">
+			<p>说明：当对模板文件进行过修改,需要清除模板缓存才可正常显示修改后的效果;当新增数据表或者默认数据,需要清除数据和数据表缓存才可正常显示效果。</p>
+		</div>
+
 	</div>
 </div>
 {/block}

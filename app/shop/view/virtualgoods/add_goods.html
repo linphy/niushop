@@ -11,6 +11,7 @@
 			<li class="layu1i-this" lay-id="basic">基础设置</li>
 			<li lay-id="detail">商品详情</li>
 			<li lay-id="attr">商品属性</li>
+			<li lay-id="senior">高级设置</li>
 		</ul>
 		<div class="layui-tab-content">
 			<!-- 基础设置 -->
@@ -31,6 +32,12 @@
 							<span class="ns-text-color">虚拟商品</span>
 							<span>(无需物流)</span>
 						</div>
+						{if $virtualcard_exit}
+						<div class="commodity-type-item" onclick="location.href = ns.url('virtualcard://shop/goods/addGoods')">
+							<span>电子卡密</span>
+							<span>(无需物流)</span>
+						</div>
+						{/if}
 					</div>
 
 				</div>
@@ -44,7 +51,7 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label"><span class="required">*</span>商品名称：</label>
 							<div class="layui-input-inline">
-								<input name="goods_name" type="text" placeholder="请输入商品名称，不能超过100个字符" maxlength="100" autocomplete="off" lay-verify="goods_name" class="layui-input ns-len-long">
+								<input name="goods_name" type="text" placeholder="请输入商品名称，不能超过60个字符" maxlength="60" autocomplete="off" lay-verify="goods_name" class="layui-input ns-len-long">
 							</div>
 						</div>
 
@@ -54,22 +61,16 @@
 								<textarea class="layui-textarea ns-len-long" name="introduction" maxlength="100" lay-verify="introduction" placeholder="请输入促销语，不能超过100个字符"></textarea>
 							</div>
 						</div>
-
-						<div class="layui-form-item">
-							<label class="layui-form-label"><span class="required">*</span>有效期：</label>
-							<div class="layui-input-inline">
-								<input type="text" name="virtual_indate" placeholder="0" class="layui-input ns-len-short" lay-verify="virtual_indate" autocomplete="off">
-							</div>
-							<div class="layui-form-mid layui-word-aux">天</div>
-						</div>
-
+						
 						<div class="layui-form-item goods-image-wrap">
 							<label class="layui-form-label"><span class="required">*</span>商品主图：</label>
 							<div class="layui-input-block">
 								<!--商品主图项-->
 								<div class="js-goods-image"></div>
 							</div>
-							<div class="ns-word-aux">第一张图片将作为商品主图,支持同时上传多张图片,多张图片之间可随意调整位置；支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片，上传后的图片将会自动保存在图片空间的默认分类中，最多上传10张（至少1张）</div>
+							<div class="ns-word-aux">第一张图片将作为商品主图,支持同时上传多张图片,多张图片之间可随意调整位置；</div>
+							<div class="ns-word-aux">支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片；</div>
+							<div class="ns-word-aux">上传后的图片将会自动保存在图片空间的默认分类中，最多上传10张（至少1张）</div>
 						</div>
 
 						<div class="layui-form-item">
@@ -108,10 +109,10 @@
 						</div>
 
 						<div class="layui-form-item">
-							<label class="layui-form-label">商品分组：</label>
+							<label class="layui-form-label">商品标签：</label>
 							<div class="layui-input-inline">
 								<select name="label_id" lay-search="" lay-verify="label_id">
-									<option value="">请选择商品分组</option>
+									<option value="">请选择商品标签</option>
 									{foreach name="$label_list" item="vo"}
 									<option value="{$vo['id']}">{$vo['label_name']}</option>
 									{/foreach}
@@ -154,7 +155,7 @@
 							</div>
 							<div class="ns-word-aux">商品可以属于多个分类，最多10个</div>
 						</div>
-
+						
 					</div>
 				</div>
 
@@ -265,6 +266,61 @@
 							</div>
 							<div class="ns-word-aux">商品库存少于预警数量，商品列表库存数量标红显示，0为不预警。</div>
 						</div>
+
+						<div class="layui-form-item js-goods-stock-wrap verify-num layui-hide">
+							<label class="layui-form-label"><span class="required">*</span>核销次数：</label>
+							<div class="layui-input-inline">
+								<input type="text" name="verify_num" value="1" class="layui-input ns-len-short" lay-verify="verify_num" autocomplete="off">
+							</div>
+							<div class="layui-form-mid layui-word-aux">次</div>
+							<div class="ns-word-aux">用户购买多件商品时，可核销次数 = 【购买数量】*【单个商品核销次数】</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="layui-card ns-card-common">
+					<div class="layui-card-header">
+						<span class="ns-card-title">核销设置</span>
+					</div>
+
+					<div class="layui-card-body">
+						<div class="layui-form-item">
+							<label class="layui-form-label">是否需要核销：</label>
+							<div class="layui-input-inline">
+								<input type="checkbox" value="0" lay-skin="switch" name="is_need_verify" lay-filter="is_need_verify">
+							</div>
+						</div>
+
+						<div class="need-verify layui-hide">
+							<div class="layui-form-item">
+								<label class="layui-form-label">核销有效期：</label>
+								<div class="layui-input-block">
+									<input type="radio" name="verify_validity_type" value="0" title="永久" checked lay-filter="verify_validity_type">
+									<input type="radio" name="verify_validity_type" value="1" title="购买后几日有效" lay-filter="verify_validity_type">
+									<input type="radio" name="verify_validity_type" value="2" title="指定过期日期" lay-filter="verify_validity_type">
+								</div>
+							</div>
+
+							<div class="layui-form-item validity-type validity-type-1 layui-hide">
+								<label class="layui-form-label"><span class="required">*</span>有效期：</label>
+								<div class="layui-input-inline">
+									<input type="text" name="virtual_indate" placeholder="0" class="layui-input ns-len-short" lay-verify="virtual_indate" autocomplete="off">
+								</div>
+								<div class="layui-form-mid layui-word-aux">天</div>
+							</div>
+
+							<div class="layui-form-item validity-type validity-type-2 layui-hide">
+								<label class="layui-form-label"><span class="required">*</span>有效期：</label>
+								<div class="layui-input-inline">
+									<input type="text" id="virtual_time" name="virtual_time" class="layui-input ns-len-mid" lay-verify="virtual_time" autocomplete="off" readonly>
+									<i class="ns-calendar"></i>
+								</div>
+								<div class="ns-word-aux" style="clear:both;top: 5px;position: relative;">无论何时购买此商品，到达指定时间后都将过期，无法核销。</div>
+							</div>
+							
+						</div>
+
 					</div>
 				</div>
 
@@ -276,43 +332,17 @@
 
 					<div class="layui-card-body">
 
-						{notempty name="$service_list"}
-						<div class="layui-form-item">
-							<label class="layui-form-label">商品服务：</label>
-							<div class="layui-input-block">
-								{foreach name="$service_list" item="vo"}
-								<input type="checkbox" name="goods_service_ids" value="{$vo.id}" title="{$vo.service_name}" lay-skin="primary">
-								{/foreach}
-							</div>
-						</div>
-						{/notempty}
 
-						<div class="layui-form-item">
-							<label class="layui-form-label">推荐方式：</label>
-							<div class="layui-input-block">
-								<input type="radio" name="recommend_way" value="0" title="无" checked>
-								<input type="radio" name="recommend_way" value="1" title="新品">
-								<input type="radio" name="recommend_way" value="2" title="精品">
-								<input type="radio" name="recommend_way" value="3" title="推荐">
-							</div>
-						</div>
 
-						<div class="layui-form-item">
-							<label class="layui-form-label">虚拟销量：</label>
-							<div class="layui-input-block">
-								<input type="number" name="virtual_sale" placeholder="0" lay-verify="virtual_sale" class="layui-input ns-len-short" autocomplete="off">
-								<div class="layui-form-mid">件</div>
-							</div>
-							<div class="ns-word-aux">该设置不计入商品统计数据</div>
-						</div>
 
-						<div class="layui-form-item">
-							<label class="layui-form-label">限购：</label>
+
+						<div class="layui-form-item is_limit">
+							<label class="layui-form-label">是否限购：</label>
 							<div class="layui-input-block">
-								<input type="number" name="max_buy" placeholder="" lay-verify="max_buy" class="layui-input ns-len-short" autocomplete="off">
-								<div class="layui-form-mid">件</div>
+								<input type="radio" name="is_limit" value="0" title="否" lay-filter="is_limit" checked>
+								<input type="radio" name="is_limit" value="1" title="是" lay-filter="is_limit">
 							</div>
-							<div class="ns-word-aux">该限购为终身限购，0为不限购</div>
+							<div class="ns-word-aux">启用限购后，购买商品时，会对该商品购买量做限制判断。</div>
 						</div>
 
 						<div class="layui-form-item">
@@ -322,21 +352,6 @@
 								<div class="layui-form-mid">件</div>
 							</div>
 							<div class="ns-word-aux">起售数量超出商品库存时，买家无法购买该商品</div>
-						</div>
-
-						<div class="layui-form-item">
-							<label class="layui-form-label">单位：</label>
-							<div class="layui-input-block">
-								<input type="text" name="unit" placeholder="请输入单位" autocomplete="off" class="layui-input ns-len-short">
-							</div>
-						</div>
-
-						<div class="layui-form-item">
-							<label class="layui-form-label">排序：</label>
-							<div class="layui-input-block">
-								<input type="number" name="sort" class="layui-input ns-len-short" value="{$sort_config['default_value']}" placeholder="0" autocomplete="off">
-							</div>
-							<div class="ns-word-aux">商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</div>
 						</div>
 
 						<div class="layui-form-item goods_state">
@@ -368,14 +383,15 @@
 							<label class="layui-form-label">是否参与会员等级折扣：</label>
 							<div class="layui-input-block">
 								<div class="layui-input-inline">
-									<input type="radio" name="is_consume_discount" value="0" title="不参与" checked>
-									<input type="radio" name="is_consume_discount" value="1" title="参与">
+									<input type="radio" name="is_consume_discount" value="1" title="参与" checked>
+									<input type="radio" name="is_consume_discount" value="0" title="不参与">
 								</div>
 							</div>
 							<div class="ns-word-aux">按照默认会员等级折扣优惠</div>
 						</div>
 					</div>
 				</div>
+
 			</div>
 
 			<!-- 商品详情 -->
@@ -449,7 +465,76 @@
 					</div>
 				</div>
 			</div>
-
+			
+			<div class="layui-tab-item ns-card-common">
+				<div class="layui-card-header">
+					<span class="ns-card-title">高级设置</span>
+				</div>
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">虚拟销量：</label>
+					<div class="layui-input-block">
+						<input type="number" name="virtual_sale" placeholder="0" lay-verify="virtual_sale" class="layui-input ns-len-short" autocomplete="off">
+						<div class="layui-form-mid">件</div>
+					</div>
+					<div class="ns-word-aux">该设置不计入商品统计数据</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位：</label>
+					<div class="layui-input-block">
+						<input type="text" name="unit" placeholder="请输入单位" autocomplete="off" class="layui-input ns-len-short">
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序：</label>
+					<div class="layui-input-block">
+						<input type="number" name="sort" class="layui-input ns-len-short" value="{$sort_config['default_value']}" placeholder="0" autocomplete="off">
+					</div>
+					<div class="ns-word-aux">商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">商品海报：</label>
+					<div class="layui-input-inline">
+						<select name="template_id" lay-search="" lay-verify="">
+							<option value="">请选择商品海报</option>
+							{foreach name="$poster_list" item="vo"}
+							<option value="{$vo['template_id']}">{$vo['poster_name']}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+				
+				{notempty name="$service_list"}
+				<div class="layui-form-item">
+					<label class="layui-form-label">商品服务：</label>
+					<div class="layui-input-block">
+						{foreach name="$service_list" item="vo"}
+						<input type="checkbox" name="goods_service_ids" value="{$vo.id}" title="{$vo.service_name}" lay-skin="primary">
+						{/foreach}
+					</div>
+				</div>
+				{/notempty}
+				
+				<!-- 社群信息 -->
+					<div class="layui-card-header">
+						<span class="ns-card-title">社群信息</span>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">社群二维码：</label>
+						<div class="layui-input-inline">
+							<select name="qr_id" lay-search="" lay-verify="">
+								<option value="">请选择社群二维码</option>
+								{foreach name="$goods_community_qr_list" item="vo"}
+								<option value="{$vo['qr_id']}">{$vo['qr_name']}</option>
+								{/foreach}
+							</select>
+						</div>
+					</div>
+				
+			</div>
 		</div>
 	</div>
 
@@ -587,6 +672,9 @@
 				<th rowspan="{{d.rowSpan}}">成本价</th>
 				<th rowspan="{{d.rowSpan}}"><span class="required">*</span>库存</th>
 				<th rowspan="{{d.rowSpan}}">库存预警</th>
+				{{# if(d.isNeedVerify){ }}
+				<th rowspan="{{d.rowSpan}}"><span class="required">*</span>核销次数</th>
+				{{# } }}
 				<th rowspan="{{d.rowSpan}}">SKU编码</th>
 				<th rowspan="{{d.rowSpan}}" style="white-space: nowrap;">默认展示</th>
 			</tr>
@@ -605,7 +693,7 @@
 					{{# for(var j=0;j<d.skuList[i].sku_images_arr.length;j++){ }}
 					<div class="img-wrap" data-index="{{j}}" data-parent-index="{{i}}">
 						<a href="javascript:void(0)">
-							<img src="{{ns.img(d.skuList[i].sku_images_arr[j],'small')}}" layer-src />
+							<img src="{{ns.img(d.skuList[i].sku_images_arr[j])}}" layer-src />
 						</a>
 						<div class="operation">
 							<i title="图片预览" class="iconfont iconreview js-preview"></i>
@@ -635,6 +723,11 @@
 				<td>
 					<input type="text" name="stock_alarm" placeholder="库存预警" value="{{d.skuList[i].stock_alarm}}" lay-verify="sku_stock_alarm" class="layui-input ns-len-small" autocomplete="off" data-index="{{i}}">
 				</td>
+				{{# if(d.isNeedVerify){ }}
+				<td>
+					<input type="text" name="verify_num" placeholder="核销次数" value="{{d.skuList[i].verify_num}}" maxlength="50" class="layui-input ns-len-small" autocomplete="off" data-index="{{i}}" lay-verify="verify_num">
+				</td>
+				{{# } }}
 				<td>
 					<input type="text" name="sku_no" placeholder="SKU编码" value="{{d.skuList[i].sku_no}}" maxlength="50" class="layui-input ns-len-small" autocomplete="off" data-index="{{i}}">
 				</td>
@@ -708,6 +801,6 @@
 <script src="__STATIC__/ext/video/videojs-ie8.min.js"></script>
 <script src="__STATIC__/ext/video/video.min.js"></script>
 <script src="__STATIC__/ext/searchable_select/searchable_select.js"></script>
-<script src="SHOP_JS/virtual_goods_edit.js"></script>
+<script src="SHOP_JS/virtual_goods_edit.js?v=20220413"></script>
 <script src="SHOP_JS/category_select.js"></script>
 {/block}

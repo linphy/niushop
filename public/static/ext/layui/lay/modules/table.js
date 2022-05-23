@@ -120,7 +120,7 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
 			'{{# if(d.data.skin){ }}lay-skin="{{d.data.skin}}"{{# } }} {{# if(d.data.size){ }}lay-size="{{d.data.size}}"{{# } }} {{# if(d.data.even){ }}lay-even{{# } }}>',
 			'<tbody><tr><td><div class="layui-table-cell" style="visibility: hidden;">Total</div></td></tr></tbody>',
 			"</table>", "</div>", "{{# } }}", '<div class="ns-table-bottom">','<div class="layui-table-bottom-tool">',
-			'<div class="layui-table-bottom-tool-temp"></div>', "</div>",
+			'<div class="layui-table-bottom-tool-temp"></div>', "</div>",'<div class="layui-table-bottom-left-container"></div>',
 			"{{# if(d.data.page){ }}",
 			'<div class="layui-table-page">',
 			'<div id="layui-table-page{{d.index}}"></div>', "</div>", "{{# } }}", '</div>', "<style>",

@@ -198,11 +198,25 @@ class Memberaddress extends BaseApi
         if ($token['code'] < 0) return $this->response($token);
 
         $address       = new Address();
-        $province_info = $address->getAreasInfo([['name', 'like', '%' . $this->params['province'] . '%'], ['level', '=', 1]], 'id');
+        //省查询
+        $province_info = $address->getAreasInfo([
+            ['level', '=', 1],
+            ['name', 'like', '%' . $this->params['province'] . '%'],
+        ], 'id');
         if ($province_info['code'] < 0) return $this->response(error('', '地址库中未获取到' . $this->params['province'] . '的信息'));
-        $city_info = $address->getAreasInfo([['name', 'like', '%' . $this->params['city'] . '%'], ['level', '=', 2]], 'id');
+        //市查询
+        $city_info = $address->getAreasInfo([
+            ['level', '=', 2],
+            ['pid', '=', $province_info['data']['id']],
+            ['name', 'like', '%' . $this->params['city'] . '%'],
+        ], 'id');
         if ($city_info['code'] < 0) return $this->response(error('', '地址库中未获取到' . $this->params['city'] . '的信息'));
-        $district_info = $address->getAreasInfo([['name', 'like', '%' . $this->params['district'] . '%'], ['level', '=', 3]], 'id');
+        //区县查询
+        $district_info = $address->getAreasInfo([
+            ['level', '=', 3],
+            ['pid', '=', $city_info['data']['id']],
+            ['name', 'like', '%' . $this->params['district'] . '%'],
+        ], 'id');
         if ($district_info['code'] < 0) return $this->response(error('', '地址库中未获取到' . $this->params['district'] . '的信息'));
 
         $data           = [

@@ -1,7 +1,7 @@
 {
 	"templateInfo": {
 		"name": "外卖美食商城",
-		"desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
+		"desc": "界面风格简约又不失大气，主要以展示优惠信息为主，比如大额优惠券领取引导页、新人专享引导页等。橱窗可根据需求展示下午茶场、品质特色晚餐、地方风味等等专场美食广场，是外卖类型的商城的不二选择。\n",
 		"mark": "toke_template"
 	},
 	"templateValue": {
@@ -16,7 +16,9 @@
 					"topNavbg": false,
 					"textNavColor": "#303133",
 					"topNavImg": "",
-					"moreLink": {},
+					"moreLink": {
+						"name" : ""
+					},
 					"openBottomNav": true,
 					"navStyle": 1,
 					"textImgStyleLink": "1",

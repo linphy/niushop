@@ -235,19 +235,31 @@ class Verify extends BaseModel
             ["member_id", "=", $member_id],
             ["site_id", "=", $site_id]
         );
-        $verifier_info = model("verifier")->getInfo($condition, "verifier_id,verifier_name,store_id");
+        $verifier_info = model("verifier")->getInfo($condition, "verifier_id,verifier_name,store_id,verifier_type");
         if (empty($verifier_info))
             return $this->error([], "没有店铺" . $verify_info["site_name"] . "的核销权限!");
 
-        // 验证核销员是否有门店权限
-        $condition = array(
-            ['delivery_store_id', '=', $verifier_info['store_id']],
-            ['delivery_code', '=', $verify_code],
-            ['site_id', '=', $site_id]
-        );
-        $is_order_info = model("order")->getInfo($condition, "order_no,delivery_code,delivery_store_name");
-        if (empty($is_order_info))
-            return $this->error([], "没有该门店的核销权限!");
+        //权限验证
+        switch($verify_info['verify_type']){
+            case 'virtualgoods':
+                //虚拟订单权限
+                if($verifier_info['verifier_type'] != 0){
+                    return $this->error([], "没有该订单的核销权限!");
+                }
+                break;
+            case 'pickup':
+                //门店自提权限
+                if($verifier_info['verifier_type'] != 0){
+                    $condition = array(
+                        ['delivery_store_id', '=', $verifier_info['store_id']],
+                        ['delivery_code', '=', $verify_code],
+                        ['site_id', '=', $site_id]
+                    );
+                    $order_count = model("order")->getCount($condition, "order_id");
+                    if (empty($order_count)) return $this->error([], "没有该门店的核销权限!");
+                }
+                break;
+        }
 
         $temp                        = json_decode($verify_info['verify_content_json'], true);
         $verify_info["item_array"]   = $temp["item_array"];

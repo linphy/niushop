@@ -48,13 +48,13 @@
 		<div class="layui-inline">
 			<div class="layui-input-inline ns-len-mid">
 				<input  type="text" id="start_time" name="start_time"
-				value="{:date('Y-m-d H:i:s', $discount_info.start_time)}" lay-verify="required" autocomplete="off" class="layui-input">
+						value="{:date('Y-m-d H:i:s', $discount_info.start_time)}" lay-verify="required" autocomplete="off" class="layui-input">
 				<i class="ns-calendar"></i>
 			</div>
 			<span class="layui-form-mid">-</span>
 			<div class="layui-input-inline ns-len-mid end-time">
 				<input  type="text" id="end_time" lay-verify="required|time" name="end_time" value="{:date('Y-m-d H:i:s', $discount_info.end_time)}"
-				autocomplete="off" class="layui-input">
+						autocomplete="off" class="layui-input">
 				<i class="ns-calendar"></i>
 			</div>
 		</div>
@@ -83,7 +83,7 @@
 			{{# } }}
 		</div>
 	</script>
-	
+
 	<input type="hidden" name="discount_id" value="{$discount_info.discount_id}" />
 	<input type="hidden" name="goods_id" value="{$discount_info.goods_id}" />
 </div>
@@ -117,8 +117,8 @@
 	layui.use(['form', 'laydate'], function() {
 
 		var form = layui.form,
-			laydate = layui.laydate,
-			repeat_flag = false; //防重复标识
+				laydate = layui.laydate,
+				repeat_flag = false; //防重复标识
 
 		form.render();
 
@@ -136,7 +136,7 @@
 			elem: '#end_time', //指定元素
 			type: 'datetime'
 		});
-		
+
 		/**
 		 * 监听提交
 		 */
@@ -247,7 +247,7 @@
 				},{
 					field: 'sku_name',
 					title: '商品名称',
-					width: '33%',
+					width: '23%',
 					unresize: 'false',
 					templet: function(data) {
 						var html = '';
@@ -256,10 +256,7 @@
 								<div class="goods-img">
 									<img layer-src src="${data.sku_image ? ns.img(data.sku_image) : ''}" alt="">
 								</div>
-								<div class="ns-multi-line-hiding goods-name" data-goods_id="${data.goods_id}" data-sku_id="${data.sku_id}" title="${data.sku_name}${data.sku_name}">
-									<p>${data.sku_name.split(' ')[0]}</p>
-									<p>${data.sku_name.split(' ').splice(1,data.sku_name.split(' ').length).join()}</p>
-								</div>
+								<p class="ns-multi-line-hiding goods-name" data-goods_id="${data.goods_id}" data-sku_id="${data.sku_id}" title="${data.sku_name}">${data.sku_name}</p>
 							</div>
 						`;
 						return html;
@@ -274,11 +271,24 @@
 						return '<p class="ns-line-hiding" title="'+ data.price +'">￥<span>' + data.price +'</span></p>';
 					}
 				}, {
+					field: 'stock',
+					title: '库存',
+					unresize: 'false',
+					width: '10%',
+					templet: function(data) {
+						return '<p class="stock">' + data.stock +'</p>';
+					}
+				}, {
 					title: '<span title="折扣价">折扣价<span>',
 					unresize: 'false',
 					width: '13%',
 					templet: '#discountPrice'
 
+				}, {
+					title: '是否参与活动',
+					toolbar: '#operation',
+					width: '10%',
+					unresize: 'false'
 				}]
 			],
 			data: sku_list,
@@ -355,7 +365,33 @@
 			}
 		})
 	}
-	
+
+	$("body").on("click",".no-participation",function(){
+		$(this).text("设置参与");
+		$(this).parents("tr").find("input").each(function (index,item) {
+			$(item).attr("readonly",true);
+			$(item).attr("disabled",true);
+			$(item).addClass("forbidden");
+			$(item).attr("lay-verify","");
+		})
+
+		$(this).addClass("participation").removeClass("no-participation");
+		sku_list[$(this).parents("tr").attr("data-index")].is_select = 0;
+	});
+
+	$("body").on("click",".participation",function(){
+		$(this).text("设置不参与");
+		$(this).parents("tr").find("input").each(function (index,item) {
+			$(item).attr("readonly",false);
+			$(item).attr("disabled",false);
+			$(item).removeClass("forbidden");
+
+		});
+
+		$(this).removeClass("participation").addClass("no-participation");
+		sku_list[$(this).parents("tr").attr("data-index")].is_select = 1;
+	});
+
 	function back() {
 		location.href = ns.url("discount://shop/discount/lists");
 	}

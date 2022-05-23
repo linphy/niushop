@@ -416,10 +416,10 @@
 							if (selected_goods.length) {
 								$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").prop("checked", true);
 
-								var json = {};
-								json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
-								json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
-								select_list.push(json);
+								// var json = {};
+								// json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
+								// json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
+								// select_list.push(json);
 
 								if (setItem.disabled == 1) {
 									$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").attr("disabled", "disabled");

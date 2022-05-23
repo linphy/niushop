@@ -94,7 +94,7 @@ class Message extends BaseShop
         } else {
             if (empty($info))
                 $this->error("不存在的模板信息!");
-
+            $this->forthMenu();
             $this->assign("keywords", $keywords);
             $this->assign("info", $weapp_json_array);
             $this->assign('weapp_is_open', $info['weapp_is_open']);

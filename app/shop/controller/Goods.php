@@ -63,50 +63,42 @@ class Goods extends BaseShop
             $order = input('order', '');
             $sort = input('sort', 'asc');
             $sku_no = input('sku_no','');
-
-            $alias = 'a';
-            $join = null;
-
-            $order_by = 'a.create_time desc';
-            if ($order != '') {
-                if ($order == 'sort') {
-                    $order_by = 'a.'.$order . ' ' . $sort . ',create_time desc';
-                } else {
-                    $order_by = 'a.'.$order . ' ' . $sort;
-                }
-            }
             $promotion_type = input('promotion_type', "");
+            $category_id = input('category_id', "");
 
-            $condition = [ [ 'a.is_delete', '=', 0 ], [ 'a.site_id', '=', $this->site_id ] ];
+            $condition = [
+                [ 'is_delete', '=', 0 ],
+                [ 'site_id', '=', $this->site_id ],
+            ];
 
             if (!empty($search_text)) {
-                $condition[] = [ 'a.goods_name', 'like', '%' . $search_text . '%' ];
+                $condition[] = [ 'goods_name', 'like', '%' . $search_text . '%' ];
             }
-            $category_id = input('category_id', "");
+
             if (!empty($category_id)) {
-                $condition[] = [ 'a.category_id', 'like', '%,' . $category_id . ',%' ];
+                $condition[] = [ 'category_id', 'like', '%,' . $category_id . ',%' ];
             }
 
             if ($goods_class !== "") {
-                $condition[] = [ 'a.goods_class', '=', $goods_class ];
+                $condition[] = [ 'goods_class', '=', $goods_class ];
             }
 
             if (!empty($label_id)) {
-                $condition[] = [ 'a.label_id', '=', $label_id ];
+                $condition[] = [ 'label_id', '=', $label_id ];
             }
 
             if (!empty($promotion_type)) {
-                $condition[] = [ 'a.promotion_addon', 'like', "%{$promotion_type}%" ];
+                $condition[] = [ 'promotion_addon', 'like', "%{$promotion_type}%" ];
             }
 
             // 上架状态
             if ($goods_state !== '') {
-                $condition[] = [ 'a.goods_state', '=', $goods_state ];
+                $condition[] = [ 'goods_state', '=', $goods_state ];
             }
-            if (!empty($start_sale)) $condition[] = [ 'a.sale_num', '>=', $start_sale ];
-            if (!empty($end_sale)) $condition[] = [ 'a.sale_num', '<=', $end_sale ];
-            if (!empty($start_price)) $condition[] = [ 'a.price', '>=', $start_price ];
-            if (!empty($end_price)) $condition[] = [ 'a.price', '<=', $end_price ];
+            if (!empty($start_sale)) $condition[] = [ 'sale_num', '>=', $start_sale ];
+            if (!empty($end_sale)) $condition[] = [ 'sale_num', '<=', $end_sale ];
+            if (!empty($start_price)) $condition[] = [ 'price', '>=', $start_price ];
+            if (!empty($end_price)) $condition[] = [ 'price', '<=', $end_price ];
             if (!empty($sku_start_price)) $condition[] = [ 'sku.price', '>=', $sku_start_price ];
             if (!empty($sku_end_price)) $condition[] = [ 'sku.price', '<=', $sku_end_price ];
 
@@ -114,24 +106,28 @@ class Goods extends BaseShop
             if ($stockalarm) {
                 $stock_alarm = $goods_model->getGoodsStockAlarm($this->site_id);
                 if (!empty($stock_alarm['data'])){
-                    $condition[] = [ 'a.goods_id', 'in', $stock_alarm['data'] ];
+                    $condition[] = [ 'goods_id', 'in', $stock_alarm['data'] ];
                 } else{
                     return success(0, '', ['page_count' => 1, 'count' => 0, 'list' => [] ]);
                 }
             }
-            if(!empty($sku_start_price) || !empty($sku_end_price) || !empty($sku_no)){
-                $join[] = [
-                    'goods_sku sku',
-                    'sku.goods_id = a.goods_id',
-                    'inner'
-                ];
-                $condition[] = [ 'sku.sku_no', 'like', '%' . $sku_no . '%' ];
-                $field = 'sku.sku_no,a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete,a.label_name';
-            }else {
-                $field = 'a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete,a.label_name';
+            if(!empty($sku_no)){
+                $goods_sku_list = $goods_model->getGoodsSkuList([[ 'sku_no', 'like', '%' . $sku_no . '%' ]], 'goods_id')['data'];
+                $goods_id_arr = array_unique(array_column($goods_sku_list, 'goods_id'));
+                $condition[] = [ 'goods_id', 'in', $goods_id_arr ];
             }
-            
-            $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size, $order_by,$field,$alias,$join); 
+
+            $order_by = 'create_time desc';
+            if ($order != '') {
+                if ($order == 'sort') {
+                    $order_by = $order . ' ' . $sort . ',create_time desc';
+                } else {
+                    $order_by = $order . ' ' . $sort;
+                }
+            }
+
+            $field = 'goods_id,goods_name,site_id,site_name,goods_image,goods_state,price,goods_stock,goods_stock_alarm,create_time,sale_num,is_virtual,goods_class,is_fenxiao,fenxiao_type,promotion_addon,sku_id,is_consume_discount,discount_config,discount_method,sort,label_id,is_delete,label_name';
+            $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size, $order_by,$field);
             
             $goods_promotion_type = event('GoodsPromotionType');
             if (!empty($res[ 'data' ][ 'list' ])) {
@@ -450,7 +446,7 @@ class Goods extends BaseShop
 
             //获取商品海报
             $poster_template_model = new PosterTemplateModel();
-            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
+            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1], ['template_type', '=', 'goods']],'template_id,poster_name,site_id');
             $this->assign('poster_list',$poster_list['data']);
 
             return $this->fetch("goods/edit_goods");
@@ -680,62 +676,67 @@ class Goods extends BaseShop
                     'goods_name' => $search_text,
                 ], true);
             } else {
-                $alias = 'g';
-                $join = [];
+                $goods_model = new GoodsModel();
 
                 $condition = [
-                    [ 'g.is_delete', '=', 0 ],
-                    [ 'g.goods_state', '=', 1 ],
-                    [ 'g.goods_stock', '>', 0 ],
-                    [ 'g.site_id', '=', $this->site_id ],
+                    [ 'is_delete', '=', 0 ],
+                    [ 'goods_state', '=', 1 ],
+                    [ 'goods_stock', '>', 0 ],
+                    [ 'site_id', '=', $this->site_id ],
                 ];
 
                 if (!empty($search_text)) {
-                    $join[] = ['goods_sku gs', 'g.goods_id = gs.goods_id', 'left'];
-                    $condition[] = [ 'g.goods_name|gs.sku_no', 'like', '%' . $search_text . '%' ];
+                    $goods_sku_list = $goods_model->getGoodsSkuList([['sku_no', 'like', '%' . $search_text . '%']], 'goods_id')['data'];
+                    $goods_id_arr = array_unique(array_column($goods_sku_list, 'goods_id'));
+                    if(!empty($goods_id_arr)){
+                        $goods_ids = join(',', $goods_id_arr);
+                        $condition[] = [ '', 'exp', \think\facade\Db::raw("goods_name like '%{$search_text}%' or goods_id in ({$goods_ids})") ];
+                    }else{
+                        $condition[] = ['goods_name', 'like', "%{$search_text}%"];
+                    }
                 }
                 if ($is_virtual !== "") {
-                    $condition[] = [ 'g.is_virtual', '=', $is_virtual ];
+                    $condition[] = [ 'is_virtual', '=', $is_virtual ];
                 }
                 if (!empty($goods_id)) {
-                    $condition[] = [ 'g.goods_id', '=', $goods_id ];
+                    $condition[] = [ 'goods_id', '=', $goods_id ];
                 }
                 if ($select_type == 'selected') {
-                    $condition[] = [ 'g.goods_id', 'in', $goods_ids ];
+                    $condition[] = [ 'goods_id', 'in', $goods_ids ];
                 }
                 if (!empty($category_id)) {
-                    $condition[] = [ 'g.category_id', 'like', '%,' . $category_id . ',%' ];
+                    $condition[] = [ 'category_id', 'like', '%,' . $category_id . ',%' ];
                 }
 
                 if (!empty($promotion_type)) {
-                    $condition[] = [ 'g.promotion_addon', 'like', "%{$promotion_type}%" ];
+                    $condition[] = [ 'promotion_addon', 'like', "%{$promotion_type}%" ];
                 }
 
                 if (!empty($label_id)) {
-                    $condition[] = [ 'g.label_id', '=', $label_id ];
+                    $condition[] = [ 'label_id', '=', $label_id ];
                 }
 
                 if ($goods_class !== "") {
-                    $condition[] = [ 'g.goods_class', '=', $goods_class ];
+                    $condition[] = [ 'goods_class', '=', $goods_class ];
                 }
 
                 if ($min_price != "" && $max_price != "") {
-                    $condition[] = [ 'g.price', 'between', [ $min_price, $max_price ] ];
+                    $condition[] = [ 'price', 'between', [ $min_price, $max_price ] ];
                 } elseif ($min_price != "") {
-                    $condition[] = [ 'g.price', '<=', $min_price ];
+                    $condition[] = [ 'price', '<=', $min_price ];
                 } elseif ($max_price != "") {
-                    $condition[] = [ 'g.price', '>=', $max_price ];
+                    $condition[] = [ 'price', '>=', $max_price ];
                 }
 
                 $config_model = new ConfigModel();
                 $sort_config = $config_model->getGoodsSort($this->site_id);
                 $sort_config = $sort_config['data']['value'];
 
-                $order = 'g.sort '.$sort_config['type'].',g.create_time desc';
+                $order = 'sort '.$sort_config['type'].',create_time desc';
 
-                $goods_model = new GoodsModel();
-                $field = 'g.goods_id,g.goods_name,g.goods_class_name,g.goods_image,g.price,g.goods_stock,g.create_time,g.is_virtual';
-                $goods_list = $goods_model->getGoodsPageList($condition, $page, $page_size, $order, $field, $alias, $join);
+
+                $field = 'goods_id,goods_name,goods_class_name,goods_image,price,goods_stock,create_time,is_virtual';
+                $goods_list = $goods_model->getGoodsPageList($condition, $page, $page_size, $order, $field);
                 if (!empty($goods_list[ 'data' ][ 'list' ])) {
                     foreach ($goods_list[ 'data' ][ 'list' ] as $k => $v) {
                         $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $v[ 'goods_id' ] ], [ 'site_id', '=', $this->site_id ] ], 'sku_id,sku_name,price,stock,sku_image,goods_id,goods_class_name', 'price asc');

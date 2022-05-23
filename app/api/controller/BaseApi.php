@@ -51,6 +51,10 @@ class BaseApi
         $this->params[ 'site_id' ] = $this->site_id;
         $shop_model = new Shop();
         $shop_status = $shop_model->getShopStatus($this->site_id, 'shop');
+
+        //默认APP类型处理
+        if(!isset($this->params['app_type'])) $this->params['app_type'] = 'h5';
+
         if($this->params['app_type'] == 'pc'){
             if (!$shop_status['data']['value']['shop_pc_status']) {
                 $error = $this->error([], 'SITE_CLOSE');

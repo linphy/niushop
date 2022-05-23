@@ -1,6 +1,6 @@
 .colorSelector{display: inline-block;vertical-align: middle;}
 .layui-fluid{overflow: initial;}
-#bottomNav{position: relative;}
+#bottomNav{position: relative;overflow: hidden}
 #bottomNav .preview{width: 320px;background-repeat: no-repeat;background-size: 100%;float: left;padding-left: 20px;}
 #bottomNav .preview .preview-head{background: url("../img/preview_head_old.png") no-repeat;position: relative;}
 #bottomNav .preview .preview-head>span{color: #ffffff;font-size: 16px;display: block;text-align: center;margin-left: 50px;height: 64px;line-height: 82px;margin-right: 40px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;cursor: pointer;}

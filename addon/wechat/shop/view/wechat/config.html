@@ -181,6 +181,7 @@
 	var saveData = null;
 	var totalUploadNum = 0;
 	var completeUploadNum = 0;
+	var upload;
 
     layui.use(['form'], function () {
         var form = layui.form,
@@ -204,7 +205,7 @@
 			}
 		});
 
-		var upload = new Upload({
+		upload = new Upload({
 			elem: '#img',
 			auto: false,
 			bindAction:'#imageQrcode',

@@ -17,27 +17,15 @@ Order.prototype.setData = function(data){
 Order.prototype.cols = [
     {
         title : '<span style="margin-left:10px;">商品信息</span>',
-        width : "25%",
+        width : "30%",
         className : "product-info",
         template : function(item){
             var h = '<div class="img-block" >';
-            h += '<img layer-src src="'+ ns.img(item.sku_image,'small') +'">';
+            h += '<img layer-src="'+ ns.img(item.sku_image,'big') +'" src="'+ ns.img(item.sku_image,'small') +'">';
             h += '</div>';
             h += '<div class="info">';
             // h += '<a  href="javascript:void(0);" target="_blank">' + item.sku_name + '</a>';
             h += '<a  href="javascript:void(0);" title="' + item.sku_name + '">' + item.sku_name + '</a>';
-            h += '</div>';
-            return h;
-        }
-    },
-    {
-        title : "发货状态",
-        width : "10%",
-        align : "center",
-        className : "delivery-status",
-        template : function(item){
-            var h = '<div>';
-            h += '<span>' + item.delivery_status_name + '</span>';
             h += '</div>';
             return h;
         }
@@ -68,7 +56,7 @@ Order.prototype.cols = [
     },
     {
         title : "申请时间",
-        width : "17%",
+        width : "15%",
         align : "center",
         className : "apply-time",
         merge : true,
@@ -83,19 +71,25 @@ Order.prototype.cols = [
         className : "refund-status",
         merge : true,
         template : function(item){
-            return '<div>' + item.refund_status_name + '</div>';
+            var refund_type_name = "";
+            if(item.refund_type == 1){
+                refund_type_name = "仅退款";
+            }else{
+                refund_type_name = "退款退货";
+            }
+
+            return '<div>' + item.refund_status_name + '('+ refund_type_name +')</div>';
         }
     },
     {
         title : "操作",
-        width : "15%",
-        align : "left",
+        width : "20%",
+        align : "right",
         className : "operation",
         merge : true,
         template : function(item){
-            var html = '<div class="ns-table-btn"><a class="layui-btn" href="'+ ns.url("shop/orderrefund/detail",{order_goods_id:item.order_goods_id})+'"  target="_blank">查看详情</a></div>';
+            var html = '<div class="ns-table-btn" style="display: block"><a class="layui-btn ns-new-btn-color" href="'+ ns.url("shop/orderrefund/detail",{order_goods_id:item.order_goods_id})+'"  target="_blank">查看详情</a></div>';
             return html;
-
         }
     }
 ];
@@ -129,20 +123,6 @@ Order.prototype.tbody = function(){
     for(var i=0;i<this.data.list.length;i++){
 
         var item = this.data.list[i];
-
-        //分割行
-        // tbody += '<tr class="separation-row">';
-        // tbody += '<td colspan="' + this.cols.length + '"></td>';
-        // tbody += '</tr>';
-        var refund_type_name = "";
-        if(item.refund_type == 1){
-            refund_type_name = "仅退款";
-        }else{
-            refund_type_name = "退款退货";
-        }
-		
-        //订单项头部
-		
 		//分割行
 		tbody += '<tr class="separation-row">';
 		tbody += '<td colspan="' + this.cols.length + '"></td>';
@@ -150,10 +130,10 @@ Order.prototype.tbody = function(){
 		
 		// tbody += '<tr class="separation-row"><td colspan="7"><hr /></td></tr>';
         tbody += '<tr class="header-row">';
-        tbody += '<td colspan="7">';
+        tbody += '<td colspan="6">';
         tbody += '<span class="order-item-header" style="margin-right:50px;">退款编号：' + item.refund_no + '</span>';
         tbody += '<span class="order-item-header" style="margin-right:50px;">订单编号：' + item.order_no + '</span>';
-        tbody += '<span class="order-item-header">' + refund_type_name + '</span>';
+        tbody += '<span class="order-item-header" style="display: inline-block;height: 23px;padding: 0 8px 0 0; margin: 5px 0 5px 5px;">订单状态：' + item.delivery_status_name + '</span>';
         tbody += '</td>';
         tbody += '</tr>';
 

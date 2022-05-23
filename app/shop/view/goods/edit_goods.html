@@ -11,6 +11,7 @@
 			<li class="layu1i-this" lay-id="basic">基础设置</li>
 			<li lay-id="detail">商品详情</li>
 			<li lay-id="attr">商品属性</li>
+			<li lay-id="senior">高级设置</li>
 		</ul>
 		<div class="layui-tab-content">
 			<!-- 基础设置 -->
@@ -140,17 +141,7 @@
 
 							<div class="ns-word-aux">商品可以属于多个分类，最多10个</div>
 						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">商品海报：</label>
-							<div class="layui-input-inline">
-								<select name="template_id" lay-search="" lay-verify="">
-									<option value="">请选择商品海报</option>
-									{foreach name="$poster_list" item="vo"}
-									<option value="{$vo['template_id']}" {if $goods_info.template_id == $vo.template_id} selected {/if}>{$vo['poster_name']}</option>
-									{/foreach}
-								</select>
-							</div>
-						</div>
+						
 					</div>
 				</div>
 
@@ -345,26 +336,6 @@
 
 					<div class="layui-card-body">
 
-						{notempty name="$service_list"}
-						<div class="layui-form-item">
-							<label class="layui-form-label">商品服务：</label>
-							<div class="layui-input-block">
-								{foreach name="$service_list" item="vo"}
-								<input type="checkbox" name="goods_service_ids" value="{$vo.id}" title="{$vo.service_name}" lay-skin="primary" {if strpos($goods_info['goods_service_ids'],(string)$vo['id'])>-1}checked{/if}>
-								{/foreach}
-							</div>
-						</div>
-						{/notempty}
-
-						<div class="layui-form-item">
-							<label class="layui-form-label">虚拟销量：</label>
-							<div class="layui-input-block">
-								<input type="number" name="virtual_sale" placeholder="0" value="{$goods_info['virtual_sale']}" lay-verify="virtual_sale" class="layui-input ns-len-short" autocomplete="off">
-								<div class="layui-form-mid">件</div>
-							</div>
-							<div class="ns-word-aux">该设置不计入商品统计数据</div>
-						</div>
-
 						<div class="layui-form-item is_limit">
 							<label class="layui-form-label">是否限购：</label>
 							<div class="layui-input-block">
@@ -395,20 +366,8 @@
 							<div class="ns-word-aux">起售数量超出商品库存时，买家无法购买该商品</div>
 						</div>
 
-						<div class="layui-form-item">
-							<label class="layui-form-label">单位：</label>
-							<div class="layui-input-block">
-								<input type="text" name="unit" value="{$goods_info['unit']}" placeholder="请输入单位" autocomplete="off" class="layui-input ns-len-short">
-							</div>
-						</div>
 
-						<div class="layui-form-item">
-							<label class="layui-form-label">排序：</label>
-							<div class="layui-input-block">
-								<input type="number" name="sort" value="{$goods_info['sort']}" class="layui-input ns-len-short" placeholder="0" autocomplete="off">
-							</div>
-							<div class="ns-word-aux">商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</div>
-						</div>
+
 
 						<div class="layui-form-item goods_state">
 							<label class="layui-form-label"><span class="required">*</span>是否上架：</label>
@@ -486,25 +445,6 @@
 
 					</div>
 				</div>
-                <!-- 社群信息 -->
-                <div class="layui-card ns-card-common">
-	                <div class="layui-card-header">
-		                <span class="ns-card-title">社群信息</span>
-	                </div>
-	            <div class="layui-card-body">
-		        <div class="layui-form-item">
-					<label class="layui-form-label">社群二维码：</label>
-					<div class="layui-input-inline">
-				       <select name="qr_id" lay-search="" lay-verify="">
-					       <option value="">请选择社群二维码</option>
-					       {foreach name="$goods_community_qr_list" item="vo"}
-					       <option value="{$vo['qr_id']}" {if $goods_info.qr_id == $vo['qr_id']} selected {/if} >{$vo['qr_name']}</option>
-					       {/foreach}
-				          </select>
-					 </div>
-		        </div>
-	        </div>
-				</div>
 
 			</div>
 
@@ -581,6 +521,78 @@
 				</div>
 			</div>
 
+			<div class="layui-tab-item ns-card-common">
+				<div class="layui-card-header">
+					<span class="ns-card-title">高级设置</span>
+				</div>
+				
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">虚拟销量：</label>
+					<div class="layui-input-block">
+						<input type="number" name="virtual_sale" placeholder="0" value="{$goods_info['virtual_sale']}" lay-verify="virtual_sale" class="layui-input ns-len-short" autocomplete="off">
+						<div class="layui-form-mid">件</div>
+					</div>
+					<div class="ns-word-aux">该设置不计入商品统计数据</div>
+				</div>
+				
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位：</label>
+					<div class="layui-input-block">
+						<input type="text" name="unit" value="{$goods_info['unit']}" placeholder="请输入单位" autocomplete="off" class="layui-input ns-len-short">
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序：</label>
+					<div class="layui-input-block">
+						<input type="number" name="sort" value="{$goods_info['sort']}" class="layui-input ns-len-short" placeholder="0" autocomplete="off">
+					</div>
+					<div class="ns-word-aux">商品默认排序号为0，数字越大，排序越靠前，数字重复，则最新添加的靠前。</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">商品海报：</label>
+					<div class="layui-input-inline">
+						<select name="template_id" lay-search="" lay-verify="">
+							<option value="">请选择商品海报</option>
+							{foreach name="$poster_list" item="vo"}
+							<option value="{$vo['template_id']}" {if $goods_info.template_id == $vo.template_id} selected {/if}>{$vo['poster_name']}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+				
+				{notempty name="$service_list"}
+				<div class="layui-form-item">
+					<label class="layui-form-label">商品服务：</label>
+					<div class="layui-input-block">
+						{foreach name="$service_list" item="vo"}
+						<input type="checkbox" name="goods_service_ids" value="{$vo.id}" title="{$vo.service_name}" lay-skin="primary" {if strpos($goods_info['goods_service_ids'],(string)$vo['id'])>-1}checked{/if}>
+						{/foreach}
+					</div>
+				</div>
+				{/notempty}
+				
+				
+				<div class="layui-card-header">
+				    <span class="ns-card-title">社群信息</span>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">社群二维码：</label>
+					<div class="layui-input-inline">
+					   <select name="qr_id" lay-search="" lay-verify="">
+						   <option value="">请选择社群二维码</option>
+						   {foreach name="$goods_community_qr_list" item="vo"}
+						   <option value="{$vo['qr_id']}" {if $goods_info.qr_id == $vo['qr_id']} selected {/if} >{$vo['qr_name']}</option>
+						   {/foreach}
+						  </select>
+					 </div>
+				</div>
+				
+			</div>
+			
 		</div>
 	</div>
 
@@ -746,7 +758,7 @@
 					{{# for(var j=0;j<d.skuList[i].sku_images_arr.length;j++){ }}
 					<div class="img-wrap" data-index="{{j}}" data-parent-index="{{i}}">
 						<a href="javascript:void(0)">
-							<img src="{{ns.img(d.skuList[i].sku_images_arr[j],'small')}}" layer-src />
+							<img src="{{ns.img(d.skuList[i].sku_images_arr[j])}}" layer-src />
 						</a>
 						<div class="operation">
 							<i title="图片预览" class="iconfont iconreview js-preview"></i>
@@ -869,6 +881,6 @@
 <script src="__STATIC__/ext/video/videojs-ie8.min.js"></script>
 <script src="__STATIC__/ext/video/video.min.js"></script>
 <script src="__STATIC__/ext/searchable_select/searchable_select.js"></script>
-<script src="SHOP_JS/goods_edit.js"></script>
+<script src="SHOP_JS/goods_edit.js?v=20220413"></script>
 <script src="SHOP_JS/category_select.js"></script>
 {/block}

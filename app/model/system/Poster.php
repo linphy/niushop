@@ -313,35 +313,41 @@ class Poster extends BaseModel
                             $poster_data['data']['template_json']['goods_price_is_show']
                         ]
                     ],
-                    [
-                        'action' => 'imageText', // 写入商品划线价格
-                        'data'   => [
-                            '¥' . $goods_info['market_price'],
-                            $poster_data['data']['template_json']['goods_market_price_font_size']*$fontRate*2,
-                            hex2rgb($poster_data['data']['template_json']['goods_market_price_color']),
-                            $poster_data['data']['template_json']['goods_market_price_left']*2,
-                            ($poster_data['data']['template_json']['goods_market_price_top']+$poster_data['data']['template_json']['goods_market_price_font_size'])*2,
-                            $poster_data['data']['template_json']['goods_market_price_width']*2,
-                            $poster_data['data']['template_json']['goods_market_price_height']*2,
-                            true,
-                            $poster_data['data']['template_json']['goods_market_is_show']
-                        ]
-                    ],
-                    [
-                        'action' => 'imageText', // 写入线
-                        'data'   => [
-                            $line,
-                            $poster_data['data']['template_json']['goods_market_price_font_size']*$fontRate*2,
-                            hex2rgb($poster_data['data']['template_json']['goods_market_price_color']),
-                            $poster_data['data']['template_json']['goods_market_price_left']*2-5,
-                            ($poster_data['data']['template_json']['goods_market_price_top']+$poster_data['data']['template_json']['goods_market_price_font_size'])*2,
-                            $poster_data['data']['template_json']['goods_market_price_width']*2,
-                            $poster_data['data']['template_json']['goods_market_price_height']*2,
-                            true,
-                            $poster_data['data']['template_json']['goods_market_is_show']
-                        ]
-                    ],
                 ];
+
+                if($goods_info['market_price'] > 0){
+                    $market_price = [
+                        [
+                            'action' => 'imageText', // 写入商品划线价格
+                            'data'   => [
+                                '¥' . $goods_info['market_price'],
+                                $poster_data['data']['template_json']['goods_market_price_font_size']*$fontRate*2,
+                                hex2rgb($poster_data['data']['template_json']['goods_market_price_color']),
+                                $poster_data['data']['template_json']['goods_market_price_left']*2,
+                                ($poster_data['data']['template_json']['goods_market_price_top']+$poster_data['data']['template_json']['goods_market_price_font_size'])*2,
+                                $poster_data['data']['template_json']['goods_market_price_width']*2,
+                                $poster_data['data']['template_json']['goods_market_price_height']*2,
+                                true,
+                                $poster_data['data']['template_json']['goods_market_price_is_show']
+                            ]
+                        ],
+                        [
+                            'action' => 'imageText', // 写入线
+                            'data'   => [
+                                $line,
+                                $poster_data['data']['template_json']['goods_market_price_font_size']*$fontRate*2,
+                                hex2rgb($poster_data['data']['template_json']['goods_market_price_color']),
+                                $poster_data['data']['template_json']['goods_market_price_left']*2-5,
+                                ($poster_data['data']['template_json']['goods_market_price_top']+$poster_data['data']['template_json']['goods_market_price_font_size'])*2,
+                                $poster_data['data']['template_json']['goods_market_price_width']*2,
+                                $poster_data['data']['template_json']['goods_market_price_height']*2,
+                                true,
+                                $poster_data['data']['template_json']['goods_market_price_is_show']
+                            ]
+                        ],
+                    ];
+                    $option  = array_merge($option, $market_price);
+                }
 
                 if (!empty($member_info)) {
                     $member_option = [

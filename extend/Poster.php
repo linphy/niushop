@@ -26,7 +26,7 @@ class Poster
         $color = $this->createColor($red, $green, $blue);
         imagefilledrectangle($this->poster, 0, 0, $this->width, $this->height, $color);
     }
-    
+
     /**
      * 创建颜色
      * @param unknown $red
@@ -59,10 +59,16 @@ class Poster
      * @param unknown $width
      * @param unknown $height
      */
-    public function imageCopy($image_path, $x, $y, $width, $height, int $radius = 0){
-        $image = $this->getImageResources($image_path);
-        if ($radius > 0) $image = $this->radius($image_path, $radius);
-        imagecopyresampled($this->poster, $image['image'], $x, $y, 0, 0, $width, $height, $image['width'], $image['height']);
+    public function imageCopy($image_path, $x, $y, $width, $height, $shape, int $radius = 0,$is_view){
+        if($shape == 'square'){
+            $image = $this->getImageResources($image_path);
+            if ($radius > 0) $image = $this->radius($image_path, $radius);
+        }else{
+            $image = $this->circular($image_path);
+        }
+        if ($is_view>0){
+            imagecopyresampled($this->poster, $image['image'], $x, $y, 0, 0, $width, $height, $image['width'], $image['height']);
+        }
     }
     
     /**
@@ -89,11 +95,13 @@ class Poster
      * @param number $max_line 最大行数
      * @param string $blod 是否加粗
      */
-    public function imageText(string $text, int $size, array $color, int $x, int $y, $max_width = 0, $max_line = 1, $blod = false){
+    public function imageText(string $text, int $size, array $color, int $x, int $y, $max_width = 0, $max_line = 1, $blod = false,$is_view = 1){
         $text = $this->handleStr($text, $size, $max_width, $max_line);
         $color = $this->createColor(...$color);
-        imagettftext($this->poster, $size, 0, $x, $y, $color, PUBLIC_PATH . 'static/font/Microsoft.ttf', $text);
-        if ($blod) imagettftext($this->poster, $size, 0, ($x + 1), ($y + 1), $color, PUBLIC_PATH . 'static/font/Microsoft.ttf', $text);
+        if ($is_view>0){
+            imagettftext($this->poster, $size, 0, $x, $y, $color, PUBLIC_PATH . 'static/font/Microsoft.ttf', $text);
+            if ($blod) imagettftext($this->poster, $size, 0, ($x + 1), ($y + 1), $color, PUBLIC_PATH . 'static/font/Microsoft.ttf', $text);
+        }
     }
     
     /**
@@ -286,16 +294,17 @@ class Poster
      */
     public function jpeg($path, $name){
         $check_res = $this->checkPath($path);
+
         if ($check_res['code'] < 0) return $check_res;
-        
         try {
             $filename = $path .'/'. $name . '.jpg';
             header("Content-type: image/jpeg"); // 定义输出类型
             imagejpeg($this->poster, $filename); // 输出图片
             imagedestroy($this->poster); // 销毁图片资源
-            
+            header("Content-type: text/plain");
             return success(0, '', ['path' => $filename]);            
         } catch (\Exception $e) {
+
             return error(-1, $e->getMessage());
         }
     }

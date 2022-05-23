@@ -1,6 +1,6 @@
 {extend name="base"/}
 {block name="resources"}
-<link rel="stylesheet" type="text/css" href="SHOP_CSS/picture_manager.css" />
+<link rel="stylesheet" type="text/css" href="SHOP_CSS/picture_manager.css?v=20220402" />
 {/block}
 {block name="main"}
 
@@ -47,7 +47,7 @@
 				<input type="checkbox" name="album-select" lay-filter="allChoose" lay-skin="primary" title="全选">
 			</div>
 			<button class="layui-btn ns-bg-color" onclick="modifyImgGroup()">修改分组</button>
-			<button class="layui-btn ns-bg-color" onclick="thumbBatch()">生成缩略图</button>
+			<!-- <button class="layui-btn ns-bg-color" onclick="thumbBatch()">生成缩略图</button> -->
 			<button class="layui-btn ns-bg-color" onclick="deleteImg()">删除</button>
 			<div id="paged" class="page"></div>
 		</div>
@@ -102,11 +102,11 @@
 	{{# layui.each(d.list,function(index, item){ }}
     <li>
         <div class="album-pic">
-			<div  class = "thumb-batch" >
+			<!-- <div  class = "thumb-batch" >
 				{{# if(item.is_thumb == 0){ }}
 				<img src="/upload/default/default_img/thumb.png" style="cursor: pointer;" title="该图片未裁剪" data-id="{{item.pic_id}}" onclick="thumbBatch(this)">
 				{{# } }}
-			</div>
+			</div> -->
 			{{# if(item.is_thumb == 0){ }}
 				<img layer-src="" src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000)) }}" alt="{{item.pic_name}}">
 			{{# }else{ }}
@@ -718,7 +718,8 @@
 						success: function(res) {
 							layer.msg(res.message);
 							if (res.code == 0) {
-                                location.reload();
+                                getFileAlbumList(1, limit);
+                        		layer.closeAll('page');
 							}
 						}
 					})
@@ -772,7 +773,8 @@
 					layer.msg(data.message);
 
 					if (data.code == 0) {
-						location.reload();
+						getFileAlbumList(1, limit);
+                        layer.closeAll('page');
 					}
 				}
 			});

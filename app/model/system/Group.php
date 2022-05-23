@@ -206,7 +206,7 @@ class Group extends BaseModel
      * @param string $limit
      * @return multitype:string mixed
      */
-    public function getGroupList($condition = [], $field = true, $order = '', $limit = null)
+    public function getGroupList($condition = [], $field = true, $order = 'create_time desc, group_id desc', $limit = null)
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
@@ -236,7 +236,7 @@ class Group extends BaseModel
      * @param string $field
      * @return multitype:string mixed
      */
-    public function getGroupPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    public function getGroupPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'create_time desc, group_id desc', $field = '*')
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';

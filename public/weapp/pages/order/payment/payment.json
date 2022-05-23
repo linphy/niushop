@@ -1,8 +1,10 @@
 {
   "usingComponents": {
     "ns-switch": "/components/ns-switch/ns-switch",
+    "ns-form": "/components/ns-form/ns-form",
     "uni-popup": "/components/uni-popup/uni-popup",
     "loading-cover": "/components/loading-cover/loading-cover",
-    "ns-payment": "/components/payment/payment"
+    "ns-payment": "/components/payment/payment",
+    "time-popup": "/components/ns-selectTime/ns-selectTime"
   }
 }

@@ -17,6 +17,7 @@ use app\model\order\OrderRefund;
 use app\model\system\Config as ConfigModel;
 use app\model\system\Cron;
 use app\model\system\Stat;
+use app\model\upload\Album;
 use think\facade\Db;
 use think\facade\Cache;
 
@@ -709,7 +710,7 @@ class Goods extends BaseModel
     {
         $prefix = config('database.connections.mysql.prefix');
         if (empty($field)) {
-            $field = 'gs.goods_id,gs.sku_id,gs.qr_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,g.goods_image,
+            $field = 'gs.goods_id,gs.sku_id,gs.qr_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,g.goods_image,g.keywords,
             (SELECT count(evaluate_id) FROM '.$prefix.'goods_evaluate nge WHERE gs.goods_id = nge.goods_id and is_show = 1 and is_audit = 1) as evaluate';
         }
 
@@ -1100,7 +1101,16 @@ class Goods extends BaseModel
      */
     public function modifyGoodsLabel($label_id, $site_id, $goods_ids)
     {
-        $result = model('goods')->update([ 'label_id' => $label_id ], [
+        //获取标签名称
+        $label_info = model('goods_label')->getInfo([['id', '=', $label_id]], 'label_name');
+        if(empty($label_info)){
+            return $this->error(null, '标签数据有误');
+        }
+
+        $result = model('goods')->update([
+            'label_id' => $label_id,
+            'label_name' => $label_info['label_name'],
+        ], [
             [ 'site_id', '=', $site_id ],
             [ 'goods_id', 'in', $goods_ids ]
         ]);
@@ -1630,6 +1640,7 @@ class Goods extends BaseModel
      * @return array
      */
     public function importGoods($goods_data, $site_id){
+
         try {
             if (empty($goods_data['goods_name'])) return $this->error('', '商品名称不能为空');
             if (empty($goods_data['goods_image'])) return $this->error('', '商品主图不能为空');
@@ -1759,6 +1770,19 @@ class Goods extends BaseModel
 
             if (count($goods_spec_format) > 4) return $this->error('', '最多支持四种规格项');
 
+
+            $shipping_template = 0;
+            $is_free_shipping = $goods_data['is_free_shipping'] == 1 || $goods_data['is_free_shipping'] == '是' ? 1 : 0;// 是否免邮
+            if ($is_free_shipping == 0 && $goods_data['template_name'] == "") return $this->error('', '运费模板不能为空');
+
+            if($is_free_shipping == 0 && $goods_data['template_name']){
+                $shipping = model("express_template")->getInfo([['template_name', '=', $goods_data['template_name']]]);
+                if(empty($shipping)){
+                    return $this->error('', '未找到该运费模板');
+                }
+                $shipping_template = $shipping['template_id'];
+            }
+
             $data = [
                 'goods_name' => $goods_data['goods_name'],// 商品名称,
                 'goods_attr_class' => '',// 商品类型id,
@@ -1781,8 +1805,8 @@ class Goods extends BaseModel
                 'volume' => empty($goods_data['volume']) ? 0 : $goods_data['volume'],// 体积
                 'goods_stock' => empty($goods_data['goods_stock']) ? 0 : $goods_data['goods_stock'],// 商品库存（总和）
                 'goods_stock_alarm' => empty($goods_data['goods_stock_alarm']) ? 0 : $goods_data['goods_stock_alarm'],// 库存预警
-                'is_free_shipping' => $goods_data['is_free_shipping'] == 1 || $goods_data['is_free_shipping'] == '是' ? 1 : 0,// 是否免邮
-                'shipping_template' => 0,// 指定运费模板
+                'is_free_shipping' => $is_free_shipping,
+                'shipping_template' => $shipping_template,// 指定运费模板
                 'goods_spec_format' => empty($goods_spec_format) ? '' : json_encode($goods_spec_format, JSON_UNESCAPED_UNICODE),// 商品规格格式
                 'goods_attr_format' => '',// 商品属性格式
                 'introduction' => $goods_data['introduction'],// 促销语

@@ -353,6 +353,30 @@ class Login extends BaseApi
                         'headimg'=>$cache['headimgurl']
                     ]);
 
+                    $config = new ConfigModel();
+                    $config_info = $config->getRegisterConfig($this->site_id, 'shop');
+
+                    if ($config_info['data']['value']['third_party'] && !$config_info['data']['value']['bind_mobile']) {
+
+                        $data = [
+                            'wx_openid' => $cache[ 'openid' ] ?? "",
+                            'site_id' => $this->site_id,
+                            'avatarUrl' => $cache['headimgurl'],
+                            'nickName' => $cache['nickname'],
+                            'wx_unionid' => $cache['unionid'],
+                        ];
+                        Cache::set('wechat_' . $key, null);
+                        $res = $login->authLogin($data);
+
+                        //生成access_token
+                        if ($res[ 'code' ] >= 0) {
+                            $token = $this->createToken($res[ 'data' ][ 'member_id' ]);
+//                        Session::set($this->params[ 'app_type' ] . "_token_" . $this->site_id, $token);
+//                        Session::set($this->params[ 'app_type' ] . "_member_id_" . $this->site_id, $res[ 'data' ][ 'member_id' ]);
+                            return $this->response($this->success([ 'token' => $token ,'can_receive_registergift'=>$res['data']['can_receive_registergift']]));
+                        }
+                    }
+
                     Cache::set('wechat_' . $key, null);
                     return $this->response($this->success());
                 }

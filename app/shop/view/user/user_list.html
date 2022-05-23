@@ -52,7 +52,9 @@
 		<a class="layui-btn" lay-event="reset_pass">重置密码</a>
 		{{#  }else{ }}
 		<a class="layui-btn" lay-event="edit">编辑</a>
-		<a class="layui-btn" lay-event="delete">删除</a>
+		<span>
+			<a class="layui-btn" lay-event="delete">删除</a>
+		</span>
 		<a class="layui-btn" lay-event="reset_pass">重置密码</a>
 		{{#  }  }}
 	</div>
@@ -108,9 +110,9 @@
 					templet: '#status'
 				}, {
 					title: '操作',
-					width: '17%',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+					align:'right'
 				}]
 			]
 		});
@@ -156,11 +158,32 @@
 					dataType: 'JSON',
 					type: 'POST',
 					success: function(res) {
+						repeat_flag = false;
+						deleteUserLoginInfo();
+					}
+				});
+			}, function () {
+				layer.close();
+				repeat_flag = false;
+			});
+		}
+
+		function deleteUserLoginInfo() {
+			if (repeat_flag) return false;
+			repeat_flag = true;
+
+			layer.confirm('是否清空所有后端用户登录信息，清空后所有用户都将被迫退出重新登录', { btn: ['是']},function() {
+				$.ajax({
+					url: ns.url("shop/user/deleteUserLoginInfo"),
+					dataType: 'JSON',
+					type: 'POST',
+					success: function(res) {
 						layer.msg(res.message);
 						repeat_flag = false;
-						
 						if (res.code == 0) {
-							table.reload();
+							setTimeout(function(){
+								location.reload();//页面刷新
+							},3000);
 						}
 					}
 				});

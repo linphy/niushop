@@ -7,8 +7,8 @@
 <div class="ns-single-filter-box">
     <div class="layui-form" style="margin: 0;">
         <div class="layui-input-inline">
-            <input type="text" name="verify_code" placeholder="请输入核销码" autocomplete="off" class="layui-input ns-len-long">
-            <button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
+            <input type="text" name="verify_code" placeholder="请输入核销码" autocomplete="off" class="layui-input ns-len-long" id="verify_code">
+            <button type="button" class="layui-btn layui-btn-primary code-searsh" lay-filter="search" lay-submit>
                 <i class="layui-icon">&#xe615;</i>
             </button>
         </div>
@@ -30,6 +30,7 @@
                                 请顾客出示核销码并点击“核销台”，
                                 扫描二维码或输入二维码上方的核销码
                             </p>
+                            <p class="verify-step-text-content" style="color:red"> 使用扫码枪时，光标必须在输入框内，并且输入法是英文状态，方可进行使用。</p>
                         </div>
                     </li>
                     <li class="layui-timeline-item">
@@ -99,6 +100,7 @@
     layui.use('form', function () {
         form = layui.form;
 		form.render();
+
         form.on('submit(search)', function(data){
             var val = data.field;
             if(submitting){return false;}
@@ -166,5 +168,14 @@
         })
 
     }
+
+    $(function(){
+        //扫码枪触发操作
+        $(document).keydown(function (event) {
+			if (event.keyCode == 13 && $("#verify_code").val()) {
+				$(".code-searsh").trigger("click");
+			}
+		});
+	})
 </script>
 {/block}

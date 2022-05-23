@@ -42,6 +42,7 @@ use EasyWeChat\Kernel\ServiceContainer;
  * @property \EasyWeChat\MiniProgram\SubscribeMessage\Client    $subscribe_message
  * @property \EasyWeChat\MiniProgram\RealtimeLog\Client         $realtime_log
  * @property \EasyWeChat\MiniProgram\Search\Client              $search
+ * @property \EasyWeChat\MiniProgram\Ministore\Client           $mini_store
  */
 class Application extends ServiceContainer
 {
@@ -72,6 +73,8 @@ class Application extends ServiceContainer
         // Base services
         BasicService\Media\ServiceProvider::class,
         BasicService\ContentSecurity\ServiceProvider::class,
+        //todo  周  新增视频号
+        Ministore\ServiceProvider::class,
     ];
 
     /**

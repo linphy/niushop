@@ -52,12 +52,14 @@ class AdvPosition extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
         }
         //查询是否有重复关键字
-        $conditions = [
-            ['keyword','=',$data['keyword']],
-            ['ap_id','<>',$ap_id]
-        ];
-        $result = $this->getAdvPositionInfo($conditions);
-        if (!empty($result['data'])) return $this->error('', '广告关键字已存在');
+        if(isset($data['keyword'])){
+            $conditions = [
+                ['keyword','=',$data['keyword']],
+                ['ap_id','<>',$ap_id],
+            ];
+            $result = $this->getAdvPositionInfo($conditions);
+            if (!empty($result['data'])) return $this->error('', '广告关键字已存在');
+        }
 		$res = model('adv_position')->update($data, $condition);
 		Cache::tag("adv_position")->clear();
 		return $this->success($res);
@@ -84,7 +86,7 @@ class AdvPosition extends BaseModel
 	 * @param string $file
 	 * @return array
 	 */
-	public function getAdvPositionInfo($condition, $file = 'ap_id, keyword , ap_name, ap_intro, ap_height, ap_width, default_content, ap_background_color, type,is_system')
+	public function getAdvPositionInfo($condition, $file = 'ap_id, keyword , ap_name, ap_intro, ap_height, ap_width, default_content, ap_background_color, type,is_system,state')
 	{
 		$data = json_encode([ $condition ]);
 		$cache = Cache::get("adv_position_getAdvPositionInfo_" . $data);
@@ -124,7 +126,7 @@ class AdvPosition extends BaseModel
 	 * @param string $order
 	 * @param string $field
 	 */
-	public function getAdvPositionPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'ap_id desc', $field = 'ap_id, keyword , ap_name, ap_intro, ap_height, ap_width, default_content, ap_background_color, type,is_system')
+	public function getAdvPositionPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'ap_id desc', $field = 'ap_id, keyword , ap_name, ap_intro, ap_height, ap_width, default_content, ap_background_color, type,is_system,state')
 	{
 		$data = json_encode([ $condition, $field, $order, $page, $page_size ]);
 		$cache = Cache::get("adv_position_getAdvPositionPageList_" . $data);

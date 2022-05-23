@@ -244,10 +244,9 @@ class StoreOrder extends OrderCommon
         if ($result["code"] < 0) {
             return $result;
         }
-
         //核销发送通知
-//        $message_model = new Message();
-//        $message_model->sendMessage(['keywords' => "VERIFY", 'order_id' => $order_info['order_id'], 'site_id' => $order_info['site_id']]);
+        $message_model = new Message();
+        $message_model->sendMessage(['keywords' => "VERIFY", 'order_id' => $order_info['order_id'], 'site_id' => $order_info['site_id']]);
         return $result;
 
 

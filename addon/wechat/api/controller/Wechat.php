@@ -59,39 +59,38 @@ class Wechat extends BaseApi
      */
     public function share()
     {
-        $data = [];
+        $this->checkToken();
 
+        //页面路径
         $url          = $this->params['url'] ?? '';
+
+        //sdk配置
         $weapp_model  = new WechatModel($this->site_id);
         $jssdk_config = $weapp_model->getJssdkConfig($url);
         if ($jssdk_config['code'] < 0) return $this->response($jssdk_config);
-        $data['jssdk_config'] = $jssdk_config['data'];
 
-        $config_model = new ConfigModel();
-        $share_config = $config_model->getShareConfig($this->site_id);
-        $share_config = $share_config['data']['value'];
-
-        $site_model = new Site();
-        $shop_info  = $site_model->getSiteInfo([['site_id', '=', $this->site_id]], 'site_name,logo');
-
-        $web_config_model = new WebConfig();
-        $default_img_config = $web_config_model->getDefaultImg($this->site_id, 'shop');
-        $default_img_config = $default_img_config['data']['value'];
-
-        $share_config['site_name'] = $shop_info['data']['site_name'];
-        $share_config['site_logo'] = $shop_info['data']['logo'];
-        $share_config['haedimg'] = $default_img_config['default_headimg'];
-
-        $token = $this->checkToken();
-        if ($token['code'] == 0) {
-            $member = new MemberModel();
-            $member_info = $member->getMemberInfo([ ['member_id', '=', $this->member_id] ], 'headimg');
-            if (!empty($member_info['data']) && !empty($member_info['data']['headimg'])) {
-                $share_config['headimg'] = $member_info['data']['headimg'];
-            }
+        //分享配置
+        $share_config = [];
+        $share_data = event('WchatShareData', [
+            'url' => $url,
+            'site_id' => $this->site_id,
+            'member_id' => $this->member_id,
+        ], true);
+        if(!empty($share_data)){
+            $share_config['permission'] = $share_data['permission'];
+            $share_config['data'] = $share_data['data'];
+        }else{
+            $share_config['permission'] = [
+                'hideOptionMenu' => true,
+                'hideMenuItems' => [],
+            ];
+            $share_config['data'] = null;
         }
 
-        $data['share_config']      = $share_config;
+        $data = [
+            'jssdk_config' => $jssdk_config['data'],
+            'share_config' => $share_config,
+        ];
 
         return $this->response($this->success($data));
     }

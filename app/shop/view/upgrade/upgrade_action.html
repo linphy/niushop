@@ -57,6 +57,12 @@
 		line-height: 30px;
 		color: #C09853;
 	}
+	.complete-title{text-align: center;font-size: 24px;padding-bottom: 20px;color:#FF6A00;border:0px}
+	.complete-ontent{text-align: center;font-size: 14px;}
+	.complete-word{color:#FF6A00}
+	.complete-ontent-nex{text-align: center;font-size: 14px;padding: 10px 0px;}
+	.complete-url{text-align: center;font-size: 14px;padding-bottom: 20px;}
+	.complete-close{cursor:pointer;display: block;background: #FF6A00; width: 70px;height: 35px;color: #fff;font-size: 16px;text-align: center;line-height: 35px;border-radius: 5px;margin: 0 auto;}
 </style>
 {/block}
 {block name="main"}
@@ -125,7 +131,14 @@
 			'index' : 0,
 			'series' : 1,
 		},
+		'version' : {
+			'current' : 0,
+			'upgrade' : 0,
+			'newVersion' : 0
+		}
 	};
+	var is_down = false;
+	var is_trigger = true;
 
 	//总操作控制
 	upgrade_obj.totalActionControl = function(){
@@ -156,9 +169,27 @@
 	//总操作完成
 	upgrade_obj.totalActionEnd = function(){
 		setActionName('升级完成');
-		layer.msg('升级完成', function(index, layero){
-			window.location.href = ns.url("shop/upgrade/upgrade");
-		})
+
+		var html = "";
+		html += "<div>";
+		html += '<h1 class="complete-title" style>升级成功！</h1>';
+		html += '<p class="complete-ontent">您已从版本V'+ this.version.current +'升级到版本<span class="complete-word">V'+ this.version.upgrade +'</span></p>';
+		html += '<p class="complete-ontent-nex">最新版本为V'+ this.version.newVersion +'</p>';
+		html += '<p class="complete-url">下载文件存储路径为: 网站根目录/upload/upgrade/'+ this.version.current +'_'+ this.version.upgrade +'</p>';
+		html += '<span onclick="close_popup()" class="complete-close">确认</span>';
+		html += '</div>';
+
+		layer.open({
+			title: '温馨提示',
+			skin: 'layer-tips-class',
+			type: 1,
+			area: ['450px'],
+			content: html,
+			closeBtn: 0
+		});
+		// layer.msg('升级完成', function(index, layero){
+		// 	window.location.href = ns.url("shop/upgrade/upgrade");
+		// })
 	}
 
 	//备份文件
@@ -247,16 +278,22 @@
 
 	//下载文件控制
 	upgrade_obj.downloadFileControl = function(){
+		//验证文件是否完成
 		var that = this;
 		that.download_file.index ++;
 		var files = that.data['files'];
-		if(that.download_file.index < files.length){
+		if(that.download_file.index < files.length && is_down == false){
 			that.downloadFileExec();
 		}else{
 			that.download_file.index = -1;
 			that.total_action.status['downloadFile'] = 'end';
-			if (action_type == 'upgrade') {
+			if (action_type == 'upgrade' && is_down == false) {
 				setActionContent("文件下载完成");
+				downComplete();
+				that.totalActionControl();
+			} else if(action_type == 'upgrade' && is_down == true){
+				setActionContent("文件下载完成");
+				setCountPercent(1);
 				that.totalActionControl();
 			} else {
 				setActionContent("文件下载完成，升级文件已下载到：网站根目录/" + that.download_file.download_root + "目录下");
@@ -266,6 +303,9 @@
 
 	//执行下载文件
 	upgrade_obj.downloadFileExec = function(){
+		if(is_trigger && is_down == true){
+			verificationDown();
+		}
 		var that = this;
 		var download_file_index = that.download_file.index;
 		$.ajax({
@@ -281,6 +321,9 @@
 				if(data.code >= 0){
 					//显示进度条和下载文件
 					that.download_file.download_root = data.download_root;
+					that.version.current = data.current;
+					that.version.upgrade = data.upgrade;
+					that.version.newVersion = data.newVersion;
 					setCountPercent((that.download_file.index + 1) / that.data.files.length);
 					setActionContent(that.data.files[that.download_file.index]['file_path']);
 					that.downloadFileControl();
@@ -525,5 +568,28 @@
 		getUpgradeInfo();
 	})
 
+	function downComplete(){
+		$.ajax({
+			type:'post',
+			url : ns.url("shop/upgrade/downComplete"),
+			dataType : 'json',
+		})
+	}
+
+	function verificationDown(){
+		is_trigger = false;
+		$.ajax({
+			type:'post',
+			url : ns.url("shop/upgrade/verificationDown"),
+			dataType : 'json',
+			success:function(res){
+				is_down = res;
+			}
+		})
+	}
+
+	function close_popup() {
+		window.location.href = ns.url("shop/upgrade/upgrade")
+	}
 </script>
 {/block}

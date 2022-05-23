@@ -1,358 +1,262 @@
 {extend name="app/shop/view/base.html" /}
-
 {block name="resources"}
 <style>
-	.ns-word-aux{
-		display: flex;
-	}
-	.mini-program{
-		width: 42px;
-		height: 15px;
-		font-size: 14px;
-		font-family: Microsoft YaHei;
-		font-weight: 400;
-		color: #666666;
-	}
-    .share {
-		margin-top: 10px;
-        padding:20px;
-        border: 1px solid #e5e5e5;
-        position: relative;
-		border-radius: 3px;
-		box-sizing: border-box;
-    }
-    .top-img {
-        width:40px;
-        height: 40px;
-        background: #f00;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-    }
-    .content-left {
-        margin-top:20px;
-    }
-    .content-left .btn-img{
-        width: 200px;
-        height: 160px;
-        font-size: 40px;
-    }
-    .imges {
-        width: 200px;
-        height: 160px;
-    }
-    .box-edit {
-        margin-top:10px;
-    }
-    .btn-edit {
-        width: 40px;
-        height: 25px;
-        font-size: 10px;
-    }
-    .layui-input-block, .ns-word-aux {
-        margin:20px auto 0;
-    }
-	
-    textarea {
-        margin-top:10px;
-    }
-	
-	.picture-introduce{
-		width: 293px;
-		height: 13px;
-		font-size: 12px;
-		font-family: Microsoft YaHei;
-		font-weight: 400;
-		color: #B3B3B3;
-		margin-top: 13px;
-	}
-	
-	.top-text{
-		display: flex;
-		align-items: center;
-		border-bottom: 1px solid #e5e5e5;
-		padding-bottom: 20px;
-	}
-	
-	.top-text .logo{
-		width: 40px;
-		height: 40px;
-		color: #fff;
-		background-color: #e5e5e5;
-		font-size: 12px;
-		text-align: center;
-		line-height: 40px;
-		margin-right: 10px;
-		border-radius: 50%;
-	}
-	
-	.company-titles{
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		font-size: 16px;
-		color: #333333;
-		}
-	
-	.bottom{
-		display: flex;
-	}
-	
-	.replace_img js-replace{
-		    position: absolute;
-		    bottom: 0;
-		    width: 100%;
-		    height: 24px;
-		    color: #fff;
-		    background: rgba(0, 0, 0, 0.5);
-		    font-size: 12px;
-		    line-height: 24px;
-	}
-	
-	.introduce{
-		width: 129px;
-		height: 18px;
-		font-size: 16px;
-		font-family: Microsoft YaHei;
-		font-weight: 400;
-		color: #333333;
-	}
-	
-	::-webkit-input-placeholder{
-		position: absolute;
-		top: 5px;
-		left: 5px;
-	}
-	.member-detail-list{
-		display: flex;
-		flex-wrap: wrap;
-	}
-	.member-detail-list .detail-item{
-		width: 350px;	
-		margin-right: 20px;
-		margin-bottom: 20px;
-	}
-	.member-detail-list .main-header{
-		overflow: hidden;
-		display: block;
-		text-overflow: ellipsis;
-		margin: 0;
-		white-space: nowrap;
-		font-size: 14px;
-		color: #666;
-	}
-
-	.member-detail-list .share-desc{
-		margin-top: 20px;
-	}
-	.member-detail-list .img-upload{
-		margin-top: 18px;
-	}
-	.member-detail-list .upload-img-block{
-		border-style: solid;
-		border-radius: 2px;
-	}
-	.member-detail-list .bottom{
-		display: flex;
-		align-content: center;
-		margin-top: 18px;
-	}
-	.member-detail-list .bottom .iconfont{
-		color: #08BA06;
-		margin-right: 5px;
-	}
-	.member-detail-list .upload-img-block{
-		width: 310px;
-		height:248px; 
-		padding: 0;
-	}
-	.member-detail-list .upload-img-block .operation i{
-		line-height: 246px;
-	}
+.share-box{display: flex;align-items: center;flex-wrap: wrap;}
+.share-box .share-item{margin:0 20px 20px 0;width: 300px;height: 340px;border: 1px solid #EEEEEE;border-radius: 3px;}
+.share-box .share-item .share-title{width: 100%;height: 55px;display: flex;align-items: center;justify-content: space-between; padding: 0 20px;box-sizing: border-box;border-bottom: 1px solid #EEEEEE;}
+.share-box .share-item .share-title{font-size: 14px;font-family: Microsoft YaHei;font-weight: 400;color: #606266;}
+.share-box .share-item .share-title .edit{color: #FF6A00;cursor: pointer;}
+.share-box .share-item .content-box{width: 100%;height: calc(100% - 55px);padding: 20px;box-sizing: border-box;display: flex;flex-direction: column;justify-content: space-between;}
+.share-box .share-item .content-box .title{font-size: 16px;font-family: Microsoft YaHei;font-weight: 400;color: #303133;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.share-box .share-item .content-box .img{width: 260px;height: 208px;background: #ececec;font-size: 24px;text-align: center;line-height: 208px;color: #c0c0c0;overflow: hidden;}
+.share-box .share-item .content-box .img .imgover1{width: 260px;}
+.share-box .share-item .content-box .img .imgover2{height: 208px;}
+.layui-form-item .layui-input-inline .layui-input{width: 248px;}
+.layui-form-item .layui-input-inline .text-tips{line-height: 1;}
+.layui-form-label1{height: 1px;}
 </style>
 {/block}
-
 {block name="main"}
-{notempty name="$scene"}
-	<div class="member-detail-list">
-		{foreach $scene as $scene_item}
-			<div class="detail-item" data-key="{$scene_item['key']}">
-				<div class="ns-word-aux main-header">{$scene_item['title']}</div>
-				<div class="share">
-					<div class="top-text">
-						<span class="logo">Logo</span>
-						<div class="company-titles">小程序名称</div>
-					</div>
-					<form action="" class="layui-form" lay-filter="example">
-						<input type="text" name="share-title" class="layui-input share-desc" placeholder="小程序分享描述" value="{$config[$scene_item['key']]['title'] ?? ''}" maxlength="50">
-						<div class="layui-input-block img-upload">
-							<div class="upload-img-block">
-								<div class="upload-img-box  {if !empty($config[$scene_item['key']]['path'])}hover{/if}" style="position: relative;">
-									<div class="ns-upload-default" id="shareUpload_{$scene_item['key']}">
-										{if empty($config[$scene_item['key']]['path'])}
-										<div class="upload">
-											<img src="SHOP_IMG/upload_img.png" style="background-repeat:repeat"/>
-											<p>点击上传</p>
-										</div>
-										{else /}
-										<div id="preview_watermark_source" class="preview_img">
-											<img layer-src src="{:img($config[$scene_item['key']]['path'])}" class="img_prev" />
-										</div>
-										{/if}
-									</div>
-									<div class="operation">
-										<div>
-											<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
-											<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
-										</div>
-										<div class="replace_img js-replace">点击替换</div>
-									</div>
-									<input type="hidden" name="shareImg_{$scene_item['key']}" lay-verify="required" value="{$config[$scene_item['key']]['path'] ?? ''}">
-								</div>
-							</div>
-						</div>
-						<div class="picture-introduce">支持PNG及JPG。图片长宽比是5:4，不传使用默认截图</div>
-						<div class="bottom">
-							<i class="iconfont iconweixinxiaochengxu"></i>
-							<div class="mini-program">小程序</div>
-						</div>
-					</form>
+	<script>
+		function judgeImageSize(that){
+			let w = $(that).width();
+			let h = $(that).height();
+			let i = $(that).attr('key');
+			let name = 'img-box' + i;
+			if(w > h){
+				$(`div[name=${name}]`).children().addClass('imgover2')
+			}else{
+				$(`div[name=${name}]`).children().addClass('imgover1')
+			}
+		}
+	</script>
+	<div class="share-box">
+		{foreach $config_list as $key=>$config_item}
+		<div class="share-item">
+			<div class="share-title" data-key="{$config_item.config.config_key}" data-data='{:json_encode($config_item)}'>
+				<span class="title">{$config_item.config.title}</span>
+				<a href="javascript:void(0)" class="edit-btn ns-text-color">编辑</a>
+			</div>
+			<div class="content-box">
+				<div class="title" title="{$config_item.value.title}">{$config_item.value.title}</div>
+				<div class="img" name="img-box{$key}">
+					{if isset($config_item.value.imageUrl) && !empty($config_item.value.imageUrl)}
+					<img class="" loading="eager" onload="judgeImageSize(this)" key="{$key}" src="{:img($config_item.value.imageUrl)}" >
+					{else /}
+					<span>分享页面截图</span>
+					{/if}
 				</div>
 			</div>
+		</div>
 		{/foreach}
 	</div>
-{else/}
-	<div class="no-data">暂无数据</div>
-{/notempty}
-
-
 {/block}
 {block name="script"}
-<script>
-	let shareParam = {},
-		scene = '{:json_encode($scene)}',
-		config = '{:json_encode($config)}';
+<script type="text/html" id="openContent">
+	<div class="html-open layui-form">
+		{{# if(d.variable.length){ }}
+		<div class="layui-form-item">
+			<label class="layui-form-label">变量替换：</label>
+			<div class="layui-input-inline">
+				{{# layui.each(d.variable,function(index,item){  }}
+				<button type="button" class="layui-btn addBtn ns-bg-color" data-tips="{{item.name}}">{{item.title}}</button>
+				{{# }) }}
+			</div>
+		</div>
+		{{# } }}
+		<div class="layui-form-item">
+			<label class="layui-form-label">分享标题：</label>
+			<div class="layui-input-inline">
+				<input type="text" name="title" id="title" autocomplete="off" placeholder="请输入标题"  value="{{d.value.title}}" class="layui-input addText" />
+			</div>
+		</div>
+		{{# if(d.value.imageUrl != undefined){ }}
+		<div class="layui-form-item">
+			<label class="layui-form-label">分享图片：</label>
+			<div class="layui-input-block img-upload">
+				<div class="upload-img-block">
+					<div class="upload-img-box {{# if(d.value.imageUrl){ }}hover{{# } }}">
+						<div class="ns-upload-default" id="logoUpload">
+							{{# if(d.value.imageUrl){ }}
+							<div id="preview_logoUpload" class="preview_img">
+								<img layer-src judge = 'true' src="{{ ns.img(d.value.imageUrl) }}" class="img_prev"/>
+							</div>
+							{{#} else { }}
+							<div class="upload">
+								<img src="SHOP_IMG/upload_img.png" />
+								<p>点击上传</p>
+							</div>
+							{{# } }}
+						</div>
+						<div class="operation"  >
+							<div>
+								<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+								<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+							</div>
+							<div class="replace_img js-replace">点击替换</div>
+						</div>
+						<input type="hidden" name="imageUrl" value="{{d.value.imageUrl}}"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-form-label1"></label>
+			<div class="layui-input-inline">
+				<div class="ns-text-color text-tips">建议上传图片宽:高 = 5:4,不上传则使用页面截图</div>
+			</div>
+		</div>
 		
-
-	initData(); //初始化数据
-	function initData(){
-		scene = JSON.parse(scene);	
-		config = JSON.parse(config);
-		scene.forEach((item,index) => {
-		    
-    		var path = config.length != 0 && config[item.key].path ? config[item.key].path : '',
-    		    title = config.length != 0 && config[item.key].title ? config[item.key].title : item.title;
-    		    
-			shareParam[item.key] = 	{
-				'key': item.key,
-				'path': path,
-				'title': title
-			}
-			//实例化图片上传
-			uploadImg(item.key);
-		});
-	}
-
-	function uploadImg(key){
-		new Upload({
-			elem: '#shareUpload_'+key,
-			callback: function(res) {
-				let key = this.elem.split('_')[1];
-
-				if(res.code > 0){
-					shareParam[key].path = res.data.pic_path;
-					$("input[name='shareImg_"+ key +"']").val(shareParam[key].path);
-					$.ajax({
-						type: "post",
-						url: ns.url("weapp://shop/weapp/share"),
-						data: shareParam[key],
-						dataType: 'JSON',
-						success: function(res) {
-							layer.msg(res.message);
-						},
-					});
-				}else{
-					layer.msg(res.message);
+		{{# } }}
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label"></label>
+			<div class="layui-input-inline">
+				<button type="button" class="layui-btn ns-bg-color" lay-submit lay-filter="formDemo">确认</button>
+				<button type="button" id="closeOpen" class="layui-btn layui-btn-primary closeOpen">取消</button>
+				<a id="save"></a>
+			</div>
+		</div>
+		
+	</div>
+</script>
+<script>
+	var layer,laytpl,form,imageUrl,save_data = [];
+	layui.use(['layer','laytpl'], function(){
+		layer = layui.layer;
+		laytpl = layui.laytpl;
+		form =layui.form;
+		form.render();
+	});  
+	$(document).ready(function () {
+		var edit_num = 0;
+		$(".edit-btn").each(function(){
+			$(this).click(function(){
+				let data_key = $(this).parents('.share-title').attr('data-key');
+				let data_data = JSON.parse($(this).parents('.share-title').attr('data-data'));
+				let areaJudge = ['700px','380px']; 
+				if(data_data.variable.length == 0){
+					areaJudge = ['700px','335px'];
 				}
-			},
-			deleteCallback: function(res){
-				let key = this.elem.split('_')[1];
-				
-				shareParam[key].path = '';
-				$("input[name='shareImg_"+ key +"']").val(shareParam[key].path);
-				$.ajax({
-					type: "post",
-					url: ns.url("weapp://shop/weapp/share"),
-					data: shareParam[key],
-					dataType: 'JSON',
-					success: function(res) {
-						layer.msg(res.message);
+				let htmlOpenIndex = layer.open({
+				  type: 1, 
+				  title:'分享设置',
+				  area:areaJudge,
+				  content:"<div id='openHtml'></div>" ,//这里content是一个普通的String
+				  success:res=>{
+					  console.log('data_data',data_data)
+						laytpl($('#openContent').html()).render(data_data,function(html){
+							$('#openHtml').html(html);
+						})
+						
+						//添加标记、用于变量替换时确定节点
+						$("input[name='title']").on("focus",function(){
+							$(this).addClass('addText');
+							$("textarea[name='desc']").removeClass('addText');
+						})
+						
+						$("textarea[name='desc']").on("focus",function(){
+							$(this).addClass('addText');
+							$("input[name='title']").removeClass('addText');
+						})
+						
+						// 变量数据追加
+						$('.layui-input-inline .addBtn').on('click',function(){
+							//向后追加所用模板数据
+							let addText = $(this).attr('data-tips');
+							// 获取需要修改的demo节点name
+							let name = $('.addText').attr('name');
+							switch(name){
+								case 'title':
+									var txtArea = $("input[name='title']")[0];
+									var content = txtArea.value;//文本域内容
+									var start = txtArea.selectionStart;  //光标的初始位置，selectionStart：选区开始位置；selectionEnd：选区结束位置。
+									txtArea.value = content.substring(0, txtArea.selectionStart) + addText + content.substring(txtArea.selectionEnd, content.length);
+									var position = start + addText.length;
+									$("input[name='title']").focus();
+									txtArea.setSelectionRange(position+1, position)
+									break;
+								case 'desc':
+									var txtArea = $("textarea[name='desc']")[0];
+									var content = txtArea.value;//文本域内容
+									var start = txtArea.selectionStart;  //光标的初始位置，selectionStart：选区开始位置；selectionEnd：选区结束位置。
+									txtArea.value = content.substring(0, txtArea.selectionStart) + addText + content.substring(txtArea.selectionEnd, content.length);
+									var position = start + addText.length;
+									$("textarea[name='desc']").focus();
+									txtArea.setSelectionRange(position+1, position)
+									break;
+							}
+						})
+						
+						// 接口上传
+						form.on('submit(formDemo)',function(data){
+							let obj = data.field;
+							obj.config_key = data_data.config.config_key;
+							save_data = [];
+							save_data.push(obj);
+							if(data_data.value.imageUrl == undefined){
+								save(save_data);
+							}else{
+								let judge = $('.preview_img .img_prev').attr('judge')
+								if(!judge){
+									let imgJudge = $('.ns-upload-default .preview_img .img_prev');
+									if(!imgJudge.length){
+										save_data[0].imageUrl = '';
+										save(save_data);
+									}else{
+										$('#save').click();
+									}
+								}else{
+									save(save_data);
+								}
+							}
+						})
+						
+						//选择图片
+						var upload = new Upload({
+							elem: '#logoUpload',
+							auto: false, //选择文件后不自动上传
+							bindAction: '#save', //指向一个按钮触发上传
+							callback: function (res) {
+								if(res.code >= 0){
+									save_data[0].imageUrl = res.data.pic_path;
+									save(save_data);
+								}
+							}
+						});
+						
+						//点击取消弹窗关闭
+						$('#closeOpen').on('click',function(){
+							layer.close(htmlOpenIndex)
+						})
+						
+						form.render();
+						
 					},
 				});
+			})
+		})
+	});
+	
+	function save(data){
+		console.log('查看上传数据 -- data',data)
+		if(repeat_flag) return false;
+		repeat_flag = true;
+		$.ajax({
+			type: 'POST',
+			url: ns.url("weapp://shop/weapp/share"),
+			data: {
+				data_json : JSON.stringify(data),
+			},
+			dataType: 'JSON',
+			success: function (res) {
+				repeat_flag = false;
+				layer.msg(res.message);
+				setTimeout(function () {
+					location.reload();
+				}, 1000);
 			}
 		});
 	}
-
-	$('[name="share-title"]').change(function(){
-		var key = $(this).parents('.detail-item').attr("data-key");
-		shareParam[key].title = $(this).val();
-		
-		$.ajax({
-			type: "post",
-			url: ns.url("weapp://shop/weapp/share"),
-			data: shareParam[key],
-			dataType: 'JSON',
-			success: function(res) {
-				layer.msg(res.message);
-			},
-		});
-	});
-
-
-	// $('[name="share-title"]').change(function(){
-	// 	var parents = $(this).parents('.share-wrap');
-	// 	var data = {
-	// 		key: parents.attr('data-key'),
-	// 		title: $(this).val(),
-	// 		path: parents.find('[name="share-img"]').val()
-	// 	}
-	// 	save(data);
-	// })
-
-	// $(function(){
-	// 	$('.share-img').each(function(){
-	// 		var id = $(this).attr('id');
-				
-	// 		new Upload({
-	// 			elem: '#' + id,
-	// 			callback: function(res) {
-	// 				var parents = $('#' + id).parents('.share-wrap');
-
-	// 				var data = {
-	// 					key: parents.attr('data-key'),
-	// 					title: parents.find('[name="share-title"]').val(),
-	// 					path: parents.find('[name="share-img"]').val()
-	// 				}
-	// 				save(data);
-	// 			},
-	// 		})
-
-	// 	})
-	// })
-
-	// function save(data){
-	// 	$.ajax({
-	// 		type: "post",
-	// 		url: ns.url("weapp://shop/weapp/share"),
-	// 		data: data,
-	// 		dataType: 'JSON',
-	// 		success: function(result) {
-	// 			// console.log(result, '0.00001')
-	// 		},
-	// 	});
-	// 	console.log(data)
-	// }
 </script>
 {/block}

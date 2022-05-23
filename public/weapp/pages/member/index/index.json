@@ -7,7 +7,10 @@
     "ns-login": "/components/ns-login/ns-login",
     "loading-cover": "/components/loading-cover/loading-cover",
     "diy-bottom-nav": "/components/diy-bottom-nav/diy-bottom-nav",
-    "to-top": "/components/toTop/toTop",
+    "ns-birthday-gift": "/components/ns-birthday-gift/ns-birthday-gift",
+    "ns-new-gift": "/components/ns-new-gift/ns-new-gift",
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "birthday-gift": "/components/ns-birthday-gift/ns-birthday-gift",
     "ns-copy-right": "/components/ns-copyright/ns-copyright"
   }
 }

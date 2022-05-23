@@ -456,6 +456,11 @@ DROP TABLE IF EXISTS message_sms_records;
 DROP TABLE IF EXISTS message_template;
 
 --
+-- `message_template_test`
+--
+DROP TABLE IF EXISTS message_template_test;
+
+--
 -- `message_variable`
 --
 DROP TABLE IF EXISTS message_variable;
@@ -1136,10 +1141,10 @@ CREATE TABLE goods (
   recommend_way int(11) NOT NULL DEFAULT 0 COMMENT '推荐方式，1：新品，2：精品，3；推荐',
   timer_on int(11) NOT NULL DEFAULT 0 COMMENT '定时上架',
   timer_off int(11) NOT NULL DEFAULT 0 COMMENT '定时下架',
-  is_need_verify int(1) NOT NULL DEFAULT 0 COMMENT '是否需要核销 ',
-  verify_validity_type int(1) NOT NULL DEFAULT 0 COMMENT '核销有效期类型 0：永久有效 1：购买后x天有效 2：指定过期日期',
-  is_limit int(1) NOT NULL DEFAULT 0 COMMENT '商品是否限购(0:否 1:是)',
-  limit_type int(1) NOT NULL DEFAULT 1 COMMENT '限购类型(1:单次限购 2:长期限购)',
+  is_need_verify int(11) NOT NULL DEFAULT 0 COMMENT '是否需要核销 ',
+  verify_validity_type int(11) NOT NULL DEFAULT 0 COMMENT '核销有效期类型 0：永久有效 1：购买后x天有效 2：指定过期日期',
+  is_limit int(11) NOT NULL DEFAULT 0 COMMENT '商品是否限购(0:否 1:是)',
+  limit_type int(11) NOT NULL DEFAULT 1 COMMENT '限购类型(1:单次限购 2:长期限购)',
   qr_id int(11) NOT NULL DEFAULT 0 COMMENT '社群二维码id',
   template_id int(11) NOT NULL DEFAULT 0 COMMENT '海报id',
   success_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价审核通过数',
@@ -1644,7 +1649,7 @@ ADD INDEX IDX_ns_verify_verify_type (verify_type);
 -- `verifier`
 --
 CREATE TABLE verifier (
-  verifier_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '核销员id',
+  verifier_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '核销员id',
   verifier_name varchar(255) NOT NULL DEFAULT '' COMMENT '核销员姓名',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '商家id',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '前台会员id',
@@ -1971,8 +1976,8 @@ CREATE TABLE store (
   username varchar(255) NOT NULL DEFAULT '' COMMENT '门店管理员',
   order_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '付款后订单金额',
   order_complete_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '订单完成-订单金额',
-  order_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单数',
-  order_complete_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单完成数量',
+  order_num int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单数',
+  order_complete_num int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单完成数量',
   is_frozen tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否冻结0-未冻结 1已冻结',
   uid int(11) DEFAULT 0 COMMENT '门店管理员id',
   time_type int(11) NOT NULL DEFAULT 0 COMMENT '时间选取类型 0 每天  1 自定义',
@@ -2421,6 +2426,7 @@ CREATE TABLE promotion_seckill_time (
   modify_time varchar(255) NOT NULL DEFAULT '0' COMMENT '修改时间',
   seckill_start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间点',
   seckill_end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间点',
+  goods_num int(11) NOT NULL DEFAULT 0 COMMENT '商品数量',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -2535,7 +2541,7 @@ ADD INDEX IDX_ns_promotion_present_status (status);
 -- `promotion_presale_order`
 --
 CREATE TABLE promotion_presale_order (
-  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '站点名称',
   presale_id int(11) NOT NULL DEFAULT 0 COMMENT '预售id',
@@ -2548,7 +2554,7 @@ CREATE TABLE promotion_presale_order (
   order_type_name varchar(50) NOT NULL DEFAULT '' COMMENT '订单类型名称',
   pay_start_time int(11) NOT NULL DEFAULT 0 COMMENT '尾款支付开始时间',
   pay_end_time int(11) NOT NULL DEFAULT 0 COMMENT '尾款支付结束时间',
-  is_fenxiao int(1) NOT NULL DEFAULT 0 COMMENT '是否参与分销 0不参与 1参与',
+  is_fenxiao int(11) NOT NULL DEFAULT 0 COMMENT '是否参与分销 0不参与 1参与',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   goods_name varchar(400) NOT NULL DEFAULT '' COMMENT '商品名称',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品skuid',
@@ -2599,13 +2605,13 @@ CREATE TABLE promotion_presale_order (
   pay_final_time int(11) NOT NULL DEFAULT 0 COMMENT '尾款支付时间',
   final_pay_type varchar(55) NOT NULL DEFAULT '' COMMENT '尾款支付方式',
   final_pay_type_name varchar(50) NOT NULL DEFAULT '' COMMENT '尾款支付类型名称',
-  order_status tinyint(3) NOT NULL DEFAULT 0 COMMENT '订单状态',
+  order_status tinyint(4) NOT NULL DEFAULT 0 COMMENT '订单状态',
   order_status_name varchar(255) NOT NULL DEFAULT '' COMMENT '状态名称',
   order_status_action varchar(1000) NOT NULL DEFAULT '' COMMENT '订单操作',
   deposit_refund_no varchar(255) NOT NULL DEFAULT '' COMMENT '定金退款流水号',
   final_refund_no varchar(255) NOT NULL DEFAULT '' COMMENT '尾款退款流水号',
   refund_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '退款金额',
-  refund_status tinyint(3) NOT NULL DEFAULT 0 COMMENT '退款状态',
+  refund_status tinyint(4) NOT NULL DEFAULT 0 COMMENT '退款状态',
   refund_status_name varchar(255) NOT NULL DEFAULT '' COMMENT '退款名称',
   apply_refund_time int(11) NOT NULL DEFAULT 0 COMMENT '申请退款时间',
   refund_time int(11) NOT NULL DEFAULT 0 COMMENT '审核时间',
@@ -2631,7 +2637,7 @@ CREATE TABLE promotion_presale_order (
   predict_delivery_time int(11) NOT NULL DEFAULT 0 COMMENT '预计发货时间',
   is_deposit_back int(11) NOT NULL DEFAULT 0 COMMENT '是否退定金是0 否1',
   deposit_agreement text DEFAULT NULL COMMENT '定金协议',
-  relate_order_id int(11) NOT NULL COMMENT '关联订单id',
+  relate_order_id int(11) NOT NULL DEFAULT 0 COMMENT '关联订单id',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -4226,9 +4232,9 @@ CREATE TABLE promotion_bundling_goods (
   sku_id int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '商品skuid',
   sku_name varchar(50) NOT NULL DEFAULT '' COMMENT '商品名称',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品sku原价',
-  sku_image varchar(100) NOT NULL DEFAULT '' COMMENT 'sku图片',
+  sku_image varchar(1000) NOT NULL DEFAULT '' COMMENT 'sku图片',
   promotion_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '套餐价格',
-  site_id int(10) NOT NULL DEFAULT 0,
+  site_id int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -4378,23 +4384,23 @@ CREATE TABLE promotion_bargain_launch (
   sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品原价',
   floor_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '底价',
-  buy_type int(1) NOT NULL DEFAULT 0 COMMENT '购买方式（0任意金额可购买 1砍到指定价格）',
-  bargain_type int(1) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
+  buy_type int(11) NOT NULL DEFAULT 0 COMMENT '购买方式（0任意金额可购买 1砍到指定价格）',
+  bargain_type int(11) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
   need_num int(11) NOT NULL DEFAULT 0 COMMENT '帮砍人数需达到数',
   curr_num int(11) NOT NULL DEFAULT 0 COMMENT '当前已帮砍人数',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
-  status int(1) NOT NULL DEFAULT 0 COMMENT '0砍价中 1已成功 2未成功',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '0砍价中 1已成功 2未成功',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '砍价发起用户',
   nickname varchar(255) NOT NULL DEFAULT '' COMMENT '昵称',
   headimg varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
-  is_fenxiao int(1) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
+  is_fenxiao int(11) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
   order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
   first_bargain_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '首刀金额',
   curr_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '当前金额',
   is_own int(11) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
   is_differ_new_user tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
-  distinguish tinyint(4) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
+  distinguish tinyint(1) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
   new_low decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '新用户最低随机金额',
   aged_tall decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户最高随机金额',
   aged_fixation decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户固定砍价金额',
@@ -4467,8 +4473,8 @@ CREATE TABLE promotion_bargain_goods (
   is_own tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
   sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
   join_num int(11) NOT NULL DEFAULT 0 COMMENT '参与人数',
-  is_differ_new_user tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
-  distinguish tinyint(4) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
+  is_differ_new_user tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
+  distinguish tinyint(1) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
   new_low decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '新用户最低随机金额',
   aged_tall decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户最高随机金额',
   aged_fixation decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户固定砍价金额',
@@ -4535,8 +4541,8 @@ CREATE TABLE promotion_bargain (
   join_num int(11) NOT NULL DEFAULT 0 COMMENT '参与人数',
   bargain_stock int(11) NOT NULL DEFAULT 0 COMMENT '砍价总库存',
   floor_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '底价',
-  is_differ_new_user tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
-  distinguish tinyint(4) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
+  is_differ_new_user tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
+  distinguish tinyint(1) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
   new_low decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '新用户最低随机金额',
   aged_tall decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户最高随机金额',
   aged_fixation decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户固定砍价金额',
@@ -5429,10 +5435,10 @@ COLLATE utf8_general_ci,
 COMMENT = '消息模板变量';
 
 --
--- `message_template`
+-- `message_template_test`
 --
-CREATE TABLE message_template (
-  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+CREATE TABLE message_template_test (
+  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   addon varchar(255) NOT NULL DEFAULT '' COMMENT '插件',
   keywords varchar(50) NOT NULL DEFAULT '' COMMENT '关键字',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '主题',
@@ -5445,7 +5451,30 @@ CREATE TABLE message_template (
   weapp_json varchar(1000) NOT NULL DEFAULT '' COMMENT '微信小程序配置参数',
   aliapp_json varchar(1000) NOT NULL DEFAULT '' COMMENT '支付宝小程序配置参数',
   support_type varchar(255) NOT NULL DEFAULT '' COMMENT '支持场景 如小程序  wep端',
-  remark varchar(255) NOT NULL,
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci;
+
+--
+-- `message_template`
+--
+CREATE TABLE message_template (
+  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  addon varchar(255) NOT NULL DEFAULT '' COMMENT '插件',
+  keywords varchar(50) NOT NULL DEFAULT '' COMMENT '关键字',
+  title varchar(255) NOT NULL DEFAULT '' COMMENT '主题',
+  message_type int(11) NOT NULL DEFAULT 1 COMMENT '消息类型 1 买家消息  2 卖家消息',
+  message_json varchar(1000) NOT NULL DEFAULT '' COMMENT '配置参数',
+  sms_addon varchar(255) NOT NULL DEFAULT '' COMMENT '发送短信插件',
+  sms_json varchar(1000) NOT NULL DEFAULT '' COMMENT '短信配置参数',
+  sms_content varchar(1000) NOT NULL DEFAULT '' COMMENT '短信内容',
+  wechat_json varchar(1000) NOT NULL DEFAULT '' COMMENT '配置参数',
+  weapp_json varchar(1000) NOT NULL DEFAULT '' COMMENT '微信小程序配置参数',
+  aliapp_json varchar(1000) NOT NULL DEFAULT '' COMMENT '支付宝小程序配置参数',
+  support_type varchar(255) NOT NULL DEFAULT '' COMMENT '支持场景 如小程序  wep端',
+  remark varchar(255) NOT NULL COMMENT '说明',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -6126,8 +6155,8 @@ ADD INDEX IDX_ns_member_account_member_id (member_id);
 -- `member`
 --
 CREATE TABLE member (
-  member_id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  site_id int(11) DEFAULT 0 COMMENT '站点id',
+  member_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   share_member int(11) NOT NULL DEFAULT 0 COMMENT '分享人',
   source_member int(11) NOT NULL DEFAULT 0 COMMENT '推荐人',
   fenxiao_id int(11) NOT NULL DEFAULT 0 COMMENT '分销商（分销有效）',
@@ -6180,11 +6209,11 @@ CREATE TABLE member (
   balance_withdraw_apply decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '提现中余额',
   balance_withdraw decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '已提现余额',
   is_delete tinyint(1) NOT NULL DEFAULT 0 COMMENT '0正常  1已删除',
-  member_level_type int(1) NOT NULL DEFAULT 0 COMMENT '会员卡类型 0免费卡 1付费卡',
+  member_level_type int(11) NOT NULL DEFAULT 0 COMMENT '会员卡类型 0免费卡 1付费卡',
   level_expire_time int(11) NOT NULL DEFAULT 0 COMMENT '会员卡过期时间',
-  is_edit_username int(1) NOT NULL DEFAULT 0 COMMENT '是否可修改用户名',
+  is_edit_username int(11) NOT NULL DEFAULT 0 COMMENT '是否可修改用户名',
   login_type_name varchar(50) NOT NULL DEFAULT '' COMMENT '登陆类型名称',
-  can_receive_registergift int(1) NOT NULL DEFAULT 0 COMMENT '是否可以领取新人礼(只针对后台注册的用户 1可以 0不可以)',
+  can_receive_registergift int(11) NOT NULL DEFAULT 0 COMMENT '是否可以领取新人礼(只针对后台注册的用户 1可以 0不可以)',
   PRIMARY KEY (member_id)
 )
 ENGINE = INNODB,
@@ -8022,13 +8051,14 @@ CREATE TABLE adv_position (
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   ap_name varchar(100) NOT NULL COMMENT '广告位置名',
   ap_intro varchar(255) NOT NULL COMMENT '广告位简介',
-  ap_height int(10) NOT NULL COMMENT '广告位高度',
-  ap_width int(10) NOT NULL COMMENT '广告位宽度',
+  ap_height int(11) NOT NULL COMMENT '广告位高度',
+  ap_width int(11) NOT NULL COMMENT '广告位宽度',
   default_content varchar(300) NOT NULL DEFAULT '',
   ap_background_color varchar(50) NOT NULL DEFAULT '#FFFFFF' COMMENT '广告位背景色 默认白色',
   type tinyint(4) NOT NULL DEFAULT 1 COMMENT '广告位所在位置类型   1 pc端  2 手机端',
   keyword varchar(255) NOT NULL COMMENT '关键字',
   is_system tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否系统',
+  state tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1：启用 0：关闭',
   PRIMARY KEY (ap_id)
 )
 ENGINE = INNODB,
@@ -8051,6 +8081,7 @@ CREATE TABLE adv (
   slide_sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '广告价格/月',
   background varchar(255) NOT NULL DEFAULT '#FFFFFF' COMMENT '背景色',
+  state tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1：启用 0：关闭',
   PRIMARY KEY (adv_id)
 )
 ENGINE = INNODB,
@@ -8150,7 +8181,28 @@ INSERT INTO sms_template VALUES
 (26, 1, 0, 'USER_CANCEL_FAIL', 2, '会员注销失败', '尊敬的{username}，您的账号商家拒绝注销。', '{"username":"others"}', 0, 0, 0, 1603693993),
 (27, 1, 0, 'USER_CANCEL_APPLY', 2, '会员注销申请', '账号为{username}，会员申请注销。', '{"username":"others"}', 0, 0, 0, 1603693989),
 (28, 1, 0, 'FENXIAO_WITHDRAWAL_ERROR', 2, '分销提现失败结果通知', '尊敬的{fenxiaoname}，您申请的{money}余额，提现审核失败。', '{"fenxiaoname":"others","money":"amount"}', 0, 0, 0, 1608274672),
-(29, 1, 0, 'USER_BALANCE_CHANGE_NOTICE', 2, '会员余额变动通知', '尊敬的{username}，您的账户余额发生变动。当前账户不可提现余额：{balance}，可提现余额：{balance_money}。', '{"username":"others","balance":"amount","balance_money":"amount"}', 0, 0, 0, 1616229040);
+(29, 1, 0, 'USER_BALANCE_CHANGE_NOTICE', 2, '会员余额变动通知', '尊敬的{username}，您的账户余额发生变动。当前账户不可提现余额：{balance}，可提现余额：{balance_money}。', '{"username":"others","balance":"amount","balance_money":"amount"}', 0, 0, 0, 1616229040),
+(30, 1, 0, 'ORDER_URGE_PAYMENT', 2, '订单催付通知', '您购买的“{goodsname}”还没付款哦，店家将为您预留到{expiretime}，再不付款宝贝就被别人买走啦。', '{"expiretime":"others","goodsname":"others"}', 1, 2, 0, 1641538343),
+(31, 1, 0, 'BUYER_ORDER_COMPLETE', 2, '买家订单完成提醒', '订单号为{orderno}的订单已完成。', '{\"orderno\":\"other_number\"}', 1, 2, 0, 0),
+(32, 1, 0, 'ORDER_VERIFY_OUT_TIME', 2, '核销商品临期提醒', '尊敬的{username}，您的商品{sku_name}，订单的核销时间将于{expire_time}到期！', '{\"expire_time\":\"date\",\"sku_name\":\"others\",\"username\":\"others\"}', 1, 2, 0, 0),
+(33, 1, 0, 'VERIFY_CODE_EXPIRE', 2, '核销码过期提醒', '您在{sitename}购买的{sku_name}已过期！', '{\"sitename\":\"others\",\"sku_name\":\"others\"}', 1, 2, 0, 0),
+(34, 1, 0, 'VERIFY', 2, '核销成功通知', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{\"orderno\":\"others\"}', 1, 2, 0, 0),
+(35, 1, 0, 'COMMISSION_GRANT', 2, '分销佣金发放通知', '您在{sitename}推荐的{level}用户{username}付款啦，推广奖励已到账，继续加油哦', '{\"level\":\"others\",\"sitename\":\"others\",\"username\":\"others\"}', 1, 2, 0, 0);
+-- 
+-- poster_muban
+--
+INSERT INTO poster_muban VALUES
+(1, 80, 80, 528, 253, '{"headimg_is_show":"1","headimg_shape":"circle","headimg_width":"30","headimg_height":"30","headimg_top":"30","headimg_left":"20","nickname_is_show":"1","nickname_font_size":"14","nickname_width":"150","nickname_height":"19","nickname_top":"36","nickname_left":"59","nickname_color":"#ffffff","store_logo_is_show":"1","store_logo_width":"60","store_logo_height":"18","store_logo_top":"16","store_logo_left":"259","store_name_is_show":"1","store_name_font_size":"14","store_name_color":"#ffffff","store_name_width":"70","store_name_height":"14","store_name_top":"39","store_name_left":"260","goods_img_is_show":"1","goods_img_width":"248","goods_img_height":"236","goods_img_top":"239","goods_img_left":"57","goods_name_is_show":"1","goods_name_font_size":"14","goods_name_color":"#ffffff","goods_name_width":"230","goods_name_height":"17","goods_name_top":"194","goods_name_left":"69","goods_price_is_show":"1","goods_price_font_size":"18","goods_price_color":"#FF4544","goods_price_width":"100","goods_price_height":"14","goods_price_top":"524","goods_price_left":"27","goods_market_is_show":"1","goods_market_price":0,"goods_market_price_font_size":"14","goods_market_price_color":"#ff4544","goods_market_price_width":"100","goods_market_price_height":"14","goods_market_price_top":"526","goods_market_price_left":"125"}', 'addon/postertemplate/shop/view/public/img/poster_bg1.png ', 'goods', 'qrcode'),
+(2, 66, 67, 495, 249, '{"headimg_is_show":"1","headimg_shape":"circle","headimg_width":"41","headimg_height":"42","headimg_top":"506","headimg_left":"41","nickname_is_show":"1","nickname_font_size":"14","nickname_width":"150","nickname_height":"19","nickname_top":"506","nickname_left":"93","nickname_color":"#000000","store_logo_is_show":"1","store_logo_width":"59","store_logo_height":"21","store_logo_top":"32","store_logo_left":"97","store_name_is_show":"1","store_name_font_size":"14","store_name_color":"#000000","store_name_width":"69","store_name_height":"14","store_name_top":"36","store_name_left":"169","goods_img_is_show":"1","goods_img_width":"269","goods_img_height":"262","goods_img_top":"100","goods_img_left":"46","goods_name_is_show":"1","goods_name_font_size":"16","goods_name_color":"#000000","goods_name_width":"290","goods_name_height":"30","goods_name_top":"391","goods_name_left":"42","goods_price_is_show":"1","goods_price_font_size":"18","goods_price_color":"#FF4544","goods_price_width":"100","goods_price_height":"14","goods_price_top":"442","goods_price_left":"44","goods_market_is_show":"1","goods_market_price":0,"goods_market_price_font_size":"14","goods_market_price_color":"#606060","goods_market_price_width":"100","goods_market_price_height":"14","goods_market_price_top":"447","goods_market_price_left":"147"}', 'addon/postertemplate/shop/view/public/img/poster_bg2.png ', 'goods', 'qrcode'),
+(3, 82, 77, 483, 140, '{"headimg_is_show":"1","headimg_shape":"circle","headimg_width":"38","headimg_height":"38","headimg_top":"22","headimg_left":"26","nickname_is_show":"1","nickname_font_size":"14","nickname_width":"150","nickname_height":"19","nickname_top":"29","nickname_left":"81","nickname_color":"#ffffff","store_logo_is_show":"1","store_logo_width":"60","store_logo_height":"21","store_logo_top":"13","store_logo_left":"276","store_name_is_show":"1","store_name_font_size":"14","store_name_color":"#000000","store_name_width":"69","store_name_height":"14","store_name_top":"42","store_name_left":"277","goods_img_is_show":"1","goods_img_width":"283","goods_img_height":"283","goods_img_top":"95","goods_img_left":"38","goods_name_is_show":"1","goods_name_font_size":"14","goods_name_color":"#ffffff","goods_name_width":"285","goods_name_height":"21","goods_name_top":"432","goods_name_left":"40","goods_price_is_show":"1","goods_price_font_size":"18","goods_price_color":"#ffffff","goods_price_width":"100","goods_price_height":"14","goods_price_top":"401","goods_price_left":"35","goods_market_is_show":"1","goods_market_price":0,"goods_market_price_font_size":"14","goods_market_price_color":"#ffffff","goods_market_price_width":"100","goods_market_price_height":"14","goods_market_price_top":"403","goods_market_price_left":"127"}', 'addon/postertemplate/shop/view/public/img/poster_bg3.png ', 'goods', 'qrcode');
+
+-- 
+-- pc_floor_block
+--
+INSERT INTO pc_floor_block VALUES
+(1, 'floor-style-1', '样式1', '{"goodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"leftImg":{"type":"img","value":{"url":"","link":""}},"bottomImg":{"type":"img","value":{"url":"","link":""}},"title":{"type":"text","value":{"text":"楼层名称","link":"","color":"#333333"}}}', 0),
+(2, 'floor-style-2', '样式2', '{"goodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"bottomImg":{"type":"img","value":{"url":"","link":""}},"title":{"type":"text","value":{"text":"楼层标题","link":"","color":"#333"}},"subTitle":{"type":"text","value":{"text":"楼层副标题","link":"","color":"#b0b0b0"}}}', 1),
+(3, 'floor-style-3', '样式3', '{"title":{"type":"text","value":{"text":"楼层标题","link":"","color":"#333"}},"rightGoodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"bottomGoodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"categoryList":{"type":"category","value":{"category_ids":"","list":[]}},"leftImg":{"type":"img","value":{"url":"","link":""}}}', 2);
 
 -- 
 -- message_variable
@@ -8164,35 +8216,35 @@ INSERT INTO message_variable VALUES
 -- message_template
 --
 INSERT INTO message_template VALUES
-(2, '', 'ORDER_CLOSE', '订单关闭通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190728268","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5df2\\u5173\\u95ed\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM205543831","template_id":"v3WG7D2sXYbFxSr34tn4H37mYOod6le3aCrc9Ifr0co","headtext":"456","bottomtext":"789","headtextcolor":"#dc6a13","bottomtextcolor":"#2a9a08","content":"\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u5173\\u95ed\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}"}', '', '', 'sms,wechat', '订单未付款自动关闭后进行发送'),
-(3, '', 'ORDER_COMPLETE', '订单完成通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190728270","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u4ea4\\u6613\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412034601","template_id":"VhtPPIYyYkS93uuZ7CKqYqApnB3YmtrA8mVBTC6gd1k","headtext":"\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002","bottomtext":"\\u8be6\\u60c5\\u8bf7\\u767b\\u5f55\\u516c\\u4f17\\u53f7\\u67e5\\u770b\\u3002","headtextcolor":"#fe0000","bottomtextcolor":"#1f7af2","content":"\\u8ba2\\u5355\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '', '', 'sms,wechat', '订单交易状态为已完成时对买家进行发送'),
-(4, '', 'ORDER_PAY', '订单支付通知', 1, '{"orderno":"订单号","username":"会员名称","ordermoney":"订单金额"}', '', '{"alisms":{"template_id":"SMS_190782764","content":"\\u4eb2\\u7231\\u7684${username},\\u4f60\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u6210\\u529f\\u652f\\u4ed8,\\u652f\\u4ed8\\u91d1\\u989d${ordermoney}","smssign":""}}', '', '{"template_id_short":"OPENTM402074360","template_id":"W703NbjLcYFPo230M_LuuwRCOsPitGZyb0JHIb9hYhU","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '{"tid":"30808","kidList":[1,2,3,3],"content":"\\u4e0b\\u5355\\u65f6\\u95f4{{time7.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing4.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount3.DATA}}","sceneDesc":"\\u8ba2\\u5355\\u5b8c\\u6210\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '买家订单支付成功后发送通知'),
-(5, '', 'ORDER_DELIVERY', '订单发货通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190728272","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u53d1\\u8d27\\uff0c\\u8ba2\\u5355\\u53f7${orderno}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM406700005","template_id":"Lbk1erxo_tvieaEFJmKP7pQ0EjwqlbsN1kQ2-G80TjE","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4ef6\\u6570\\uff1a{{keyword3.DATA}}\\n\\u652f\\u4ed8\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}"}', '{"tid":"30766","kidList":[2,1,7,3],"content":"\\u8ba2\\u5355\\u53f7{{character_string2.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing1.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount7.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4{{date3.DATA}}","sceneDesc":"\\u8ba2\\u5355\\u53d1\\u8d27\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '只针对实物商品物流发货，卖家发货完成后进行发送'),
-(7, '', 'ORDER_REFUND_AGREE', '商家同意退款', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190792661","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412135258","template_id":"dGuS1yW7yxsclYRL9M6bE4cLCvy-eQ5j7Ur3O56TaVI","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '{"tid":"30825","kidList":[3,1,7],"content":"\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount1.DATA}}\\n\\u7533\\u8bf7\\u7ed3\\u679c{{phrase7.DATA}}","sceneDesc":"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e"}', '', 'sms,wechat,weapp', '卖家统一退款后对买家发送'),
-(8, '', 'ORDER_REFUND_REFUSE', '商家拒绝退款', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190792662","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u62d2\\u7edd\\u9000\\u6b3e\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM417819857","template_id":"Z-NHMwRfF53v_WI5o7pTef3NFONmFDa0r86OI-CpIbQ","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '{"tid":"30824","kidList":[4,3],"content":"\\u8ba2\\u5355\\u53f7{{character_string4.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount3.DATA}}","sceneDesc":"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e"}', '', 'sms,wechat,weapp', '卖家拒绝退款申请后对买家进行发送'),
-(9, '', 'VERIFY', '核销成功通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190782769","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u6838\\u9500\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM416687547","template_id":"", "headtext": "", "bottomtext": "", "headtextcolor": "", "bottomtextcolor": "", "content": "商品名称：{{keyword1.DATA}}\\n商品数量：{{keyword2.DATA}}\\n核销时间：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '核销码核销成功后对买家发送，可以是虚拟商品核销、门店自提订单核销'),
-(10, '', 'BUYER_REFUND', '订单维权通知', 2, '{"username":"会员名称","goodsname":"商品名称","orderno":"订单号","refundmoney":"退款金额","refundreason":"退款原因","refundno":"退款单号"}', '', '{"alisms":{"template_id":"SMS_190792667","content":"${username}\\u7533\\u8bf7\\u4e86\\u9000\\u6b3e\\uff0c\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u5546\\u54c1${goodsname}\\uff0c\\u9000\\u6b3e\\u5355\\u53f7\\u4e3a${refundno}\\uff0c\\u9000\\u6b3e\\u91d1\\u989d${refundmoney}\\uff0c\\u9000\\u6b3e\\u539f\\u56e0${refundreason}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412244458","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u9000\\u6b3e\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u7533\\u8bf7\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword3.DATA}}"}', '', '', 'sms,wechat', '买家提交退款申请后对卖家进行发送'),
-(11, '', 'BUYER_DELIVERY_REFUND', '买家已退货通知', 2, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"SMS_190787803","content":"\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\uff0c\\u4e70\\u5bb6\\u9000\\u8d27\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM206905995","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u9000\\u8d27\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u8d27\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u9000\\u8d27\\u6570\\u91cf\\uff1a{{keyword3.DATA}}\\n\\u9000\\u8d27\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '', '', 'sms,wechat', '买家提交退货信息后对卖家进行发送'),
-(12, '', 'REGISTER_CODE', '注册验证', 1, '{"code":"验证码","site_name":"站点名称"}', '', '{"alisms":{"template_id":"SMS_190792675","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员注册时填写手机号，点击获取动态码进行发送'),
-(14, '', 'FIND_PASSWORD', '找回密码', 1, '{"code":"验证码","site_name":"站点名称"}', '', '{"alisms":{"template_id":"SMS_190792678","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms', '会员申请找回密码时，点击获取动态码时发送'),
-(16, '', 'MEMBER_BIND', '账户绑定', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190792680","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员申请账号绑定时， 点击获取动态码时发送'),
-(17, '', 'LOGIN_CODE', '动态码登录', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190792665","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员手机号登录时，点击获取验证码时发送'),
-(18, '', 'SET_PASSWORD', '设置密码', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"SMS_190728294","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms', '会员修改密码时，点击获取动态码时发送'),
-(20, '', 'BUYER_PAY', '买家支付通知', 2, '{"orderno":"订单号","ordermoney":"订单金额"}', '', '', '', '{"template_id_short":"OPENTM402074360","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '', '', 'sms,wechat', '买家订单支付成功后对卖家发送'),
-(21, '', 'USER_WITHDRAWAL_APPLY', '会员申请提现通知', 2, '{"username":"会员名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM416719519","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '买家申请余额提现后对卖家进行通知'),
-(22, '', 'FENXIAO_WITHDRAWAL_APPLY', '分销申请提现通知', 2, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM416719519","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '买家发起佣金提现后对卖家进行通知'),
-(23, '', 'USER_WITHDRAWAL_SUCCESS', '会员提现成功通知', 1, '{"username":"会员名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '{"tid":"30790","kidList":[6,3],"content":"\\u63d0\\u73b0\\u91d1\\u989d{{amount6.DATA}}\\n\\u63d0\\u73b0\\u65f6\\u95f4{{date3.DATA}}","sceneDesc":"\\u4f1a\\u5458\\u63d0\\u73b0\\u6210\\u529f\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '会员余额提现到账后进行发送'),
-(24, '', 'FENXIAO_WITHDRAWAL_SUCCESS', '分销提现成功通知', 1, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '{"tid":"30813","kidList":[1,2,3],"content":"\\u63d0\\u73b0\\u91d1\\u989d{{amount1.DATA}}\\n\\u63d0\\u73b0\\u65f6\\u95f4{{time2.DATA}}\\n\\u5907\\u6ce8{{thing3.DATA}}","sceneDesc":"\\u4f1a\\u5458\\u7533\\u8bf7\\u63d0\\u73b0\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '会员佣金提现成功后进行发送'),
-(25, '', 'USER_CANCEL_SUCCESS', '会员注销成功', 1, '{"username":"会员账号"}', '', '', '', '', '', '', 'sms', '会员申请账号注销成功后发送'),
-(26, '', 'USER_CANCEL_FAIL', '会员注销失败', 1, '{"username":"会员账号"}', '', '', '', '', '', '', 'sms', '会员申请账号注销失败后发送'),
-(27, '', 'USER_CANCEL_APPLY', '会员注销申请', 2, '{"username":"会员账号"}', '', '', '', '{"template_id_short":"OPENTM413481457","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n手机号码：{{keyword2.DATA}}"}', '', '', 'sms,wechat', '会员提交账户注销申请后对商家进行发送'),
-(28, '', 'FENXIAO_WITHDRAWAL_ERROR', '分销提现失败通知', 1, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '{"alisms":{"template_id":"SMS_205885275","content":"\\u5c0a\\u656c\\u7684{username}\\uff0c\\u60a8\\u7533\\u8bf7\\u7684{money}\\u4f63\\u91d1\\uff0c\\u5df2\\u63d0\\u73b0\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM417749055","template_id":"","headtext":"\\u4f1a\\u5458\\u63d0\\u73b0\\u5931\\u8d25\\u901a\\u77e5","bottomtext":"\\u8fdb\\u5165\\u5546\\u57ce\\u67e5\\u770b\\u8be6\\u60c5","headtextcolor":"","bottomtextcolor":"","content":"\\u63d0\\u73b0\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u5ba1\\u6838\\u72b6\\u6001\\uff1a{{keyword2.DATA}}\\n\\u63d0\\u73b0\\u65b9\\u5f0f\\uff1a{{keyword3.DATA}}\\n\\u63d0\\u73b0\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '{"tid":"31387","kidList":[2,4],"content":"\\u63d0\\u73b0\\u91d1\\u989d{{amount2.DATA}}\\n\\u63d0\\u73b0\\u8fdb\\u5ea6{{thing4.DATA}}","sceneDesc":"\\u5206\\u9500\\u63d0\\u73b0\\u5931\\u8d25\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '会员佣金提现失败后进行发送'),
-(29, '', 'USER_BALANCE_CHANGE_NOTICE', '会员余额变动通知', 1, '{"username":"会员名称","balance":"不可提现余额","balance_money":"可提现余额"}', '', '', '', '{"template_id_short":"OPENTM406440024","template_id":"", "headtext": "", "bottomtext": "", "headtextcolor": "", "bottomtextcolor": "", "content": "变动原因：{{keyword1.DATA}}\\n变动明细：{{keyword2.DATA}}\\n当前余额：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '会员余额发生收入、支出发生改变时发送'),
-(31, '', 'ORDER_VERIFY_OUT_TIME', '核销商品临期提醒', 1, '{"username":"会员名称","sku_name":"商品名称","expire_time":"核销码到期时间"}', '', '{"alisms":{"template_id":"11","content":"\\u5c0a\\u656c\\u7684{username}\\uff0c\\u60a8\\u7684\\u8d26\\u6237\\u53d1\\u751f\\u4e86\\u53d8\\u52a8\\uff0c\\u5f53\\u524d\\u8d26\\u6237\\u4e0d\\u53ef\\u63d0\\u73b0\\u4f59\\u989d\\u4e3a\\uff1a{balance}\\u3002","smssign":""}}', '', '', '', '', 'sms', '核销码过期前一段时间（可设置时间）对买家发送'),
-(32, '', 'ORDER_URGE_PAYMENT', '订单催付通知', 1, '{"goodsname":"商品名称","expiretime":"到期时间","url":"商品链接"}', '', '', '', '{"template_id_short":"OPENTM412091556","template_id":"","headtext":"您下单的商品还未付款哦，赶快支付吧。","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"订单编号：{{keyword1.DATA}}\\\\n订单内容：{{keyword2.DATA}}\\\\n订单状态：{{keyword3.DATA}}\\\\n时间：{{keyword4.DATA}}"}', '{"tid":"3508","kidList":[4,1,6,3],"content":"订单号{{character_string4.DATA}}\\n商品名称{{thing1.DATA}}\\n支付金额{{amount6.DATA}}\\n支付提醒{{thing3.DATA}}","sceneDesc":"订单催付提醒"}', '', 'sms,wechat,weapp', '未付款订单将会在订单关闭前10分钟对买家进行催付提醒'),
-(33, '', 'VERIFY_CODE_EXPIRE', '核销码过期提醒', 1, '{"sitename":"站点名称","desc":"说明"}', '', '', '', '', '', '', 'sms', '核销码过期后对买家发送提醒'),
-(34, '', 'COMMISSION_GRANT', '分销佣金发放通知', 1, '{"sitename":"站点名称","level":"级别","username":"用户名称"}', '', '', '', '', '', '', 'sms', '订单完成后对该笔订单的分销商发送'),
-(35, '', 'BUYER_ORDER_COMPLETE', '买家订单完成通知', 2, '{"orderno":"订单号"}', '', '{"template_id":20,"site_id":0,"tem_id":22765,"keywords":"BUYER_TAKE_DELIVERY","template_type":2,"template_name":"\\u4e70\\u5bb6\\u6536\\u8d27\\u63d0\\u9192","template_content":"\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\uff0c\\u4e70\\u5bb6\\u5df2\\u6536\\u8d27\\u3002","param_json":"{\\"orderno\\":\\"other_number\\"}","status":0,"audit_status":2,"create_time":0,"update_time":1599040477,"alisms":{"template_id":"","content":"","smssign":""}}', '', '{"template_id_short":"OPENTM405800899","template_id":"","headtext":"\\u4e70\\u5bb6\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u5b8c\\u6210\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}"}', '', '', 'sms,wechat', '买家订单交易完成后对卖家发送');
+(2, '', 'ORDER_CLOSE', '订单关闭通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5df2\\u5173\\u95ed\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM205543831\",\"template_id\":\"v3WG7D2sXYbFxSr34tn4H37mYOod6le3aCrc9Ifr0co\",\"headtext\":\"456\",\"bottomtext\":\"789\",\"headtextcolor\":\"#dc6a13\",\"bottomtextcolor\":\"#2a9a08\",\"content\":\"\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u5173\\u95ed\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}\"}', '', '', 'sms,wechat', '订单未付款自动关闭后进行发送'),
+(3, '', 'ORDER_COMPLETE', '订单完成通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u4ea4\\u6613\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412034601\",\"template_id\":\"VhtPPIYyYkS93uuZ7CKqYqApnB3YmtrA8mVBTC6gd1k\",\"headtext\":\"\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002\",\"bottomtext\":\"\\u8be6\\u60c5\\u8bf7\\u767b\\u5f55\\u516c\\u4f17\\u53f7\\u67e5\\u770b\\u3002\",\"headtextcolor\":\"#fe0000\",\"bottomtextcolor\":\"#1f7af2\",\"content\":\"\\u8ba2\\u5355\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '订单交易状态为已完成时对买家进行发送'),
+(4, '', 'ORDER_PAY', '订单支付通知', 1, '{\"orderno\":\"订单号\",\"username\":\"会员名称\",\"ordermoney\":\"订单金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u4eb2\\u7231\\u7684${username},\\u4f60\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u6210\\u529f\\u652f\\u4ed8,\\u652f\\u4ed8\\u91d1\\u989d${ordermoney}\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM402074360\",\"template_id\":\"W703NbjLcYFPo230M_LuuwRCOsPitGZyb0JHIb9hYhU\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '{\"tid\":\"30808\",\"kidList\":[7,1,4,3],\"content\":\"\\u4e0b\\u5355\\u65f6\\u95f4{{time7.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing4.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount3.DATA}}\",\"sceneDesc\":\"\\u8ba2\\u5355\\u5b8c\\u6210\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '买家订单支付成功后发送通知'),
+(5, '', 'ORDER_DELIVERY', '订单发货通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u53d1\\u8d27\\uff0c\\u8ba2\\u5355\\u53f7${orderno}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM406700005\",\"template_id\":\"Lbk1erxo_tvieaEFJmKP7pQ0EjwqlbsN1kQ2-G80TjE\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4ef6\\u6570\\uff1a{{keyword3.DATA}}\\n\\u652f\\u4ed8\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}\"}', '{\"tid\":\"30766\",\"kidList\":[2,1,7,3],\"content\":\"\\u8ba2\\u5355\\u53f7{{character_string2.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing1.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount7.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4{{date3.DATA}}\",\"sceneDesc\":\"\\u8ba2\\u5355\\u53d1\\u8d27\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '只针对实物商品物流发货，卖家发货完成后进行发送'),
+(7, '', 'ORDER_REFUND_AGREE', '商家同意退款', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412135258\",\"template_id\":\"dGuS1yW7yxsclYRL9M6bE4cLCvy-eQ5j7Ur3O56TaVI\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"6964\",\"kidList\":[3,1,7],\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount1.DATA}}\\n\\u7533\\u8bf7\\u7ed3\\u679c{{phrase7.DATA}}\",\"sceneDesc\":\"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\"}', '', 'sms,wechat,weapp', '卖家统一退款后对买家发送'),
+(8, '', 'ORDER_REFUND_REFUSE', '商家拒绝退款', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u62d2\\u7edd\\u9000\\u6b3e\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM417819857\",\"template_id\":\"Z-NHMwRfF53v_WI5o7pTef3NFONmFDa0r86OI-CpIbQ\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"6952\",\"kidList\":[4,3],\"content\":\"\\u8ba2\\u5355\\u53f7{{character_string4.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount3.DATA}}\",\"sceneDesc\":\"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\"}', '', 'sms,wechat,weapp', '卖家拒绝退款申请后对买家进行发送'),
+(9, '', 'VERIFY', '核销成功通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u6838\\u9500\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM206215005\",\"template_id\":\"\",\"headtext\":\"\\u4f60\\u597d\\uff0c\\u5546\\u54c1\\u6838\\u9500\\u6210\\u529f\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u6570\\u91cf\\uff1a{{keyword2.DATA}}\\n\\u6838\\u9500\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"31517\",\"kidList\":[1,2,3],\"content\":\"\\u6838\\u9500\\u72b6\\u6001{{phrase1.DATA}}\\n\\u6838\\u9500\\u65f6\\u95f4{{thing2.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}},\",\"sceneDesc\":\"\\u6838\\u9500\\u7801\\u8fc7\\u671f\\u63d0\\u9192\"}', '', 'sms,wechat,weapp', '核销码核销成功后对买家发送，可以是虚拟商品核销、门店自提订单核销'),
+(10, '', 'BUYER_REFUND', '订单维权通知', 2, '{\"username\":\"会员名称\",\"goodsname\":\"商品名称\",\"orderno\":\"订单号\",\"refundmoney\":\"退款金额\",\"refundreason\":\"退款原因\",\"refundno\":\"退款单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"${username}\\u7533\\u8bf7\\u4e86\\u9000\\u6b3e\\uff0c\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u5546\\u54c1${goodsname}\\uff0c\\u9000\\u6b3e\\u5355\\u53f7\\u4e3a${refundno}\\uff0c\\u9000\\u6b3e\\u91d1\\u989d${refundmoney}\\uff0c\\u9000\\u6b3e\\u539f\\u56e0${refundreason}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412244458\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u9000\\u6b3e\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u7533\\u8bf7\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '买家提交退款申请后对卖家进行发送'),
+(11, '', 'BUYER_DELIVERY_REFUND', '买家已退货通知', 2, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\uff0c\\u4e70\\u5bb6\\u9000\\u8d27\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM206905995\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u9000\\u8d27\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u8d27\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u9000\\u8d27\\u6570\\u91cf\\uff1a{{keyword3.DATA}}\\n\\u9000\\u8d27\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '', '', 'sms,wechat', '买家提交退货信息后对卖家进行发送'),
+(12, '', 'REGISTER_CODE', '注册验证', 1, '{\"code\":\"验证码\",\"site_name\":\"站点名称\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员注册时填写手机号，点击获取动态码进行发送'),
+(14, '', 'FIND_PASSWORD', '找回密码', 1, '{\"code\":\"验证码\",\"site_name\":\"站点名称\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请找回密码时，点击获取动态码时发送'),
+(16, '', 'MEMBER_BIND', '账户绑定', 1, '{\"code\":\"验证码\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请账号绑定时， 点击获取动态码时发送'),
+(17, '', 'LOGIN_CODE', '动态码登录', 1, '{\"code\":\"验证码\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员手机号登录时，点击获取验证码时发送'),
+(18, '', 'SET_PASSWORD', '设置密码', 1, '{\"code\":\"验证码\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员修改密码时，点击获取动态码时发送'),
+(20, '', 'BUYER_PAY', '买家支付通知', 2, '{\"orderno\":\"订单号\",\"ordermoney\":\"订单金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458\\u8ba2\\u5355${orderno}\\u652f\\u4ed8\\u6210\\u529f\\uff0c\\u8ba2\\u5355\\u91d1\\u989d\\uff1a${ordermoney}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM402074360\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '', '', 'sms,wechat', '买家订单支付成功后对卖家发送'),
+(21, '', 'USER_WITHDRAWAL_APPLY', '会员申请提现通知', 2, '{\"username\":\"会员名称\",\"money\":\"提现金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458${username}\\u7533\\u8bf7\\u63d0\\u73b0\\uff0c\\u63d0\\u73b0\\u91d1\\u989d${money}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM416719519\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '买家申请余额提现后对卖家进行通知'),
+(22, '', 'FENXIAO_WITHDRAWAL_APPLY', '分销申请提现通知', 2, '{\"fenxiaoname\":\"分销商名称\",\"money\":\"提现金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u5206\\u9500\\u5546${fenxiaoname}\\u7533\\u8bf7\\u63d0\\u73b0\\uff0c\\u63d0\\u73b0\\u91d1\\u989d${money}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM416719519\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '买家发起佣金提现后对卖家进行通知'),
+(23, '', 'USER_WITHDRAWAL_SUCCESS', '会员提现成功通知', 1, '{\"username\":\"会员名称\",\"money\":\"提现金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684{username}\\uff0c\\u4f60\\u63d0\\u73b0{money}\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM203174659\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}\"}', '{\"tid\":\"5184\",\"kidList\":[6,3],\"content\":\"\\u63d0\\u73b0\\u91d1\\u989d{{amount6.DATA}}\\n\\u63d0\\u73b0\\u65f6\\u95f4{{date3.DATA}}\",\"sceneDesc\":\"\\u4f1a\\u5458\\u63d0\\u73b0\\u6210\\u529f\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '会员余额提现到账后进行发送'),
+(24, '', 'FENXIAO_WITHDRAWAL_SUCCESS', '分销提现成功通知', 1, '{\"fenxiaoname\":\"分销商名称\",\"money\":\"提现金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u5206\\u9500\\u5546${fenxiaoname}\\uff0c${money}\\u63d0\\u73b0\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM203174659\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}\"}', '{\"tid\":\"6699\",\"kidList\":[1,2,3],\"content\":\"\\u63d0\\u73b0\\u91d1\\u989d{{amount1.DATA}}\\n\\u63d0\\u73b0\\u65f6\\u95f4{{time2.DATA}}\\n\\u5907\\u6ce8{{thing3.DATA}}\",\"sceneDesc\":\"\\u4f1a\\u5458\\u7533\\u8bf7\\u63d0\\u73b0\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '会员佣金提现成功后进行发送'),
+(25, '', 'USER_CANCEL_SUCCESS', '会员注销成功', 1, '{\"username\":\"会员账号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u6ce8\\u9500\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请账号注销成功后发送'),
+(26, '', 'USER_CANCEL_FAIL', '会员注销失败', 1, '{\"username\":\"会员账号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u6ce8\\u9500\\u5931\\u8d25\\uff01\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请账号注销失败后发送'),
+(27, '', 'USER_CANCEL_APPLY', '会员注销申请', 2, '{\"username\":\"会员账号\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458${username}\\u7533\\u8bf7\\u6ce8\\u9500\\u8d26\\u53f7\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM413481457\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"申请人：{{keyword1.DATA}}\\n手机号码：{{keyword2.DATA}}\"}', '', '', 'sms,wechat', '会员提交账户注销申请后对商家进行发送'),
+(28, '', 'FENXIAO_WITHDRAWAL_ERROR', '分销提现失败通知', 1, '{\"fenxiaoname\":\"分销商名称\",\"money\":\"提现金额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684{username}\\uff0c\\u60a8\\u7533\\u8bf7\\u7684{money}\\u4f63\\u91d1\\uff0c\\u63d0\\u73b0\\u5931\\u8d25\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM417749055\",\"template_id\":\"\",\"headtext\":\"\\u4f1a\\u5458\\u63d0\\u73b0\\u5931\\u8d25\\u901a\\u77e5\",\"bottomtext\":\"\\u8fdb\\u5165\\u5546\\u57ce\\u67e5\\u770b\\u8be6\\u60c5\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u63d0\\u73b0\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u5ba1\\u6838\\u72b6\\u6001\\uff1a{{keyword2.DATA}}\\n\\u63d0\\u73b0\\u65b9\\u5f0f\\uff1a{{keyword3.DATA}}\\n\\u63d0\\u73b0\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '{\"tid\":\"18547\",\"kidList\":[2,4],\"content\":\"\\u63d0\\u73b0\\u91d1\\u989d{{amount2.DATA}}\\n\\u63d0\\u73b0\\u8fdb\\u5ea6{{thing4.DATA}}\",\"sceneDesc\":\"\\u5206\\u9500\\u63d0\\u73b0\\u5931\\u8d25\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '会员佣金提现失败后进行发送'),
+(29, '', 'USER_BALANCE_CHANGE_NOTICE', '会员余额变动通知', 1, '{\"username\":\"会员名称\",\"balance\":\"不可提现余额\",\"balance_money\":\"可提现余额\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u4f59\\u989d\\u53d1\\u751f\\u53d8\\u52a8\\uff1a${balance_money}\\/${balance}\\uff08\\u53ef\\u63d0\\u73b0\\/\\u4e0d\\u53ef\\u63d0\\u73b0\\uff09\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM406440024\",\"template_id\":\"\", \"headtext\": \"\", \"bottomtext\": \"\", \"headtextcolor\": \"\", \"bottomtextcolor\": \"\", \"content\": \"变动原因：{{keyword1.DATA}}\\n变动明细：{{keyword2.DATA}}\\n当前余额：{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '会员余额发生收入、支出发生改变时发送'),
+(30, '', 'ORDER_VERIFY_OUT_TIME', '核销商品临期提醒', 1, '{\"username\":\"会员名称\",\"sku_name\":\"商品名称\",\"expire_time\":\"核销码到期时间\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u5546\\u54c1${sku_name}\\uff0c\\u8ba2\\u5355\\u7684\\u6838\\u9500\\u65f6\\u95f4\\u5c06\\u4e8e${expire_time}\\u5230\\u671f\\uff01\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM409367252\",\"template_id\":\"\",\"headtext\":\"\\u60a8\\u597d\\uff0c\\u60a8\\u6709\\u4e00\\u4e2a\\u8ba2\\u5355\\u5373\\u5c06\\u8fc7\\u671f\\u3002\",\"bottomtext\":\"\\u8bf7\\u53ca\\u65f6\\u5904\\u7406\\u8ba2\\u5355\\uff0c\\u8c22\\u8c22\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"30781\",\"kidList\":[1,2,3],\"content\":\"\\u670d\\u52a1\\u540d\\u79f0{{thing1.DATA}}\\n\\u5230\\u671f\\u65f6\\u95f4{{date2.DATA}}\\n\\u6e29\\u99a8\\u63d0\\u793a{{thing3.DATA}}\",\"sceneDesc\":\"\\u6838\\u9500\\u7801\\u4e34\\u671f\\u63d0\\u9192\"}', '', 'sms,wechat,weapp', '核销码过期前一段时间（可设置时间）对买家发送'),
+(32, '', 'ORDER_URGE_PAYMENT', '订单催付通知', 1, '{\"goodsname\":\"商品名称\",\"expiretime\":\"到期时间\",\"url\":\"商品链接\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u8d2d\\u4e70\\u7684\\u201c${goodsname}\\u201d\\u8fd8\\u6ca1\\u4ed8\\u6b3e\\u54e6\\uff0c\\u5e97\\u5bb6\\u5c06\\u4e3a\\u60a8\\u9884\\u7559\\u5230${expiretime}\\uff0c\\u518d\\u4e0d\\u4ed8\\u6b3e\\u5b9d\\u8d1d\\u5c31\\u88ab\\u522b\\u4eba\\u4e70\\u8d70\\u5566\\u3002\\u67e5\\u770b\\u8be6\\u60c5 ${url}\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412091556\",\"template_id\":\"\",\"headtext\":\"\\u60a8\\u5728\\u5546\\u57ce\\u8d2d\\u4e70\\u7684\\u5b9d\\u8d1d\\u8fd8\\u672a\\u4ed8\\u6b3e\\u54e6\\uff01\\u4e3a\\u786e\\u4fdd\\u60a8\\u5fc3\\u7231\\u7684\\u5b9d\\u8d1d\\u65e9\\u65e5\\u542f\\u7a0b\\u3001\\u987a\\u5229\\u62b5\\u8fbe\\uff0c\\u8bb0\\u5f97\\u5c3d\\u65e9\\u4ed8\\u6b3e\\u54e6\\uff01\",\"bottomtext\":\"\\u611f\\u8c22\\u4f60\\u7684\\u4f7f\\u7528\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword4.DATA}}\"}', '{\"tid\":\"1768\",\"kidList\":[1,2,3],\"content\":\"\\u8ba2\\u5355\\u53f7{{character_string1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing2.DATA}}\\n\\u652f\\u4ed8\\u72b6\\u6001{{phrase3.DATA}}\",\"sceneDesc\":\"\\u8ba2\\u5355\\u50ac\\u4ed8\\u63d0\\u9192\"}', '', 'sms,wechat,weapp', '未付款订单将会在订单关闭前10分钟对买家进行催付提醒'),
+(33, '', 'VERIFY_CODE_EXPIRE', '核销码过期提醒', 1, '{\"sitename\":\"站点名称\",\"sku_name\":\"商品名称\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u5728${sitename}\\u8d2d\\u4e70\\u7684${sku_name}\\u5df2\\u8fc7\\u671f\\uff01\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM409367252\",\"template_id\":\"\",\"headtext\":\"\\u60a8\\u597d\\uff0c\\u60a8\\u6709\\u4e00\\u4e2a\\u6838\\u9500\\u7801\\u5df2\\u8fc7\\u671f\\u3002\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"12624\",\"kidList\":[1,2,3],\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7{{character_string1.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4{{time2.DATA}}\\n\\u8fc7\\u671f\\u65f6\\u95f4{{time3.DATA}}\\n\\u6e29\\u99a8\\u63d0\\u793a{{thing4.DATA}}\",\"sceneDesc\":\"\\u6838\\u9500\\u7801\\u5230\\u671f\\u63d0\\u9192\"}', '', 'sms,wechat,weapp', '核销码过期后对买家发送提醒'),
+(35, '', 'COMMISSION_GRANT', '分销佣金发放通知', 1, '{\"sitename\":\"站点名称\",\"level\":\"级别\",\"username\":\"用户名称\"}', '', '{\"alisms\":{\"template_id\":"",\"content\":\"\\u60a8\\u5728${sitename}\\u63a8\\u8350\\u7684${level}\\u7528\\u6237[${username}]\\u4ed8\\u6b3e\\u5566\\uff0c\\u63a8\\u5e7f\\u5956\\u52b1\\u5df2\\u5230\\u8d26\\uff0c\\u7ee7\\u7eed\\u52a0\\u6cb9\\u54e6\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM400094720\",\"template_id\":\"\",\"headtext\":\"\\u606d\\u559c\\u60a8\\uff0c\\u83b7\\u5f97\\u4e86\\u4e00\\u7b14\\u65b0\\u7684\\u4f63\\u91d1\\uff0c\\u60a8\\u53ef\\u4ee5\\u5728\\u201c\\u6211\\u7684\\u4f63\\u91d1\\u201d\\u4e2d\\u67e5\\u770b\\u8be6\\u7ec6\\u4f63\\u91d1\\u4fe1\\u606f\\u3002\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u4f63\\u91d1\\u91d1\\u989d\\uff1a{{keyword1.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}\"}', '{\"tid\":\"30948\",\"kidList\":[1,2,3],\"content\":\"\\u8ba2\\u5355\\u91d1\\u989d{{amount1.DATA}}\\n\\u9884\\u4f30\\u4f63\\u91d1{{amount2.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing3.DATA}}\\n\\u65f6\\u95f4{{time4.DATA}}\",\"sceneDesc\":\"\\u5206\\u9500\\u4f63\\u91d1\\u53d1\\u653e\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '订单完成后对该笔订单的分销商发送'),
+(36, '', 'BUYER_ORDER_COMPLETE', '买家订单完成通知', 2, '{\"orderno\":\"订单号\"}', '', '{\"template_id\":20,\"site_id\":0,\"tem_id\":22765,\"keywords\":\"BUYER_TAKE_DELIVERY\",\"template_type\":2,\"template_name\":\"\\u4e70\\u5bb6\\u6536\\u8d27\\u63d0\\u9192\",\"template_content\":\"\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\uff0c\\u4e70\\u5bb6\\u5df2\\u6536\\u8d27\\u3002\",\"param_json\":\"{\\\"orderno\\\":\\\"other_number\\\"}\",\"status\":0,\"audit_status\":2,\"create_time\":0,\"update_time\":1599040477,\"alisms\":{\"template_id\":"",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u60a8\\u7684\\u4f1a\\u5458\\u8d2d\\u4e70\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM202531033\",\"template_id\":\"\",\"headtext\":\"\\u4e70\\u5bb6\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u8be6\\u60c5\\uff1a{{keyword2.DATA}}\"}', '{\"tid\":\"3564\",\"kidList\":[1,2,3],\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7{{character_string1.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount3.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing6.DATA}}\\n\\u6536\\u8d27\\u4eba{{thing8.DATA}}\\n\\u5b8c\\u6210\\u65f6\\u95f4{{date7.DATA}}\",\"sceneDesc\":\"\\u5206\\u9500\\u4f63\\u91d1\\u53d1\\u653e\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '买家订单交易完成后对卖家发送');
 
 -- 
 -- div_template
@@ -11421,25 +11473,35 @@ INSERT INTO area VALUES
 (659010, 659000, '胡杨河市', '胡杨河', '84.827387', '44.69295', 3, 0, 1);
 
 -- 
+-- album_pic
+--
+
+-- 
+-- album
+--
+
+-- 
 -- adv_position
 --
 INSERT INTO adv_position VALUES
-(9, 1, '拼团', '拼团', 0, 0, '', '#FFFFFF', 2, 'NS_PINTUAN', 0),
-(10, 1, '团购', '团购', 0, 0, '', '#FFFFFF', 2, 'NS_GROUPBUY', 0),
-(11, 1, '秒杀', '秒杀', 0, 0, '', '#FFFFFF', 2, 'NS_SECKILL', 0),
-(12, 1, '专题', '专题', 0, 0, '', '#FFFFFF', 2, 'NS_TOPIC', 0),
-(13, 1, '砍价', '砍价', 0, 0, '', '#FFFFFF', 2, 'NS_BARGAIN', 0),
-(14, 1, '预售', '预售', 0, 0, '', '#FFFFFF', 2, 'NS_PRESALE', 0),
-(15, 1, '礼品卡', '礼品卡', 0, 0, '', '#FFFFFF', 2, 'NS_GIFTCARD', 0),
-(16, 1, '拼团返利', '拼团返利', 0, 0, '', '#FFFFFF', 2, 'NS_PINFAN', 0);
+(9, 1, '拼团', '拼团', 0, 0, '', '#FFFFFF', 2, 'NS_PINTUAN', 0, 1),
+(10, 1, '团购', '团购', 0, 0, '', '#FFFFFF', 2, 'NS_GROUPBUY', 0, 1),
+(11, 1, '秒杀', '秒杀', 0, 0, '', '#FFFFFF', 2, 'NS_SECKILL', 0, 1),
+(12, 1, '专题', '专题', 0, 0, '', '#FFFFFF', 2, 'NS_TOPIC', 0, 1),
+(13, 1, '砍价', '砍价', 0, 0, '', '#FFFFFF', 2, 'NS_BARGAIN', 0, 1),
+(14, 1, '预售', '预售', 0, 0, '', '#FFFFFF', 2, 'NS_PRESALE', 0, 1),
+(15, 1, '礼品卡', '礼品卡', 0, 0, '', '#FFFFFF', 2, 'NS_GIFTCARD', 0, 1),
+(16, 1, '拼团返利', '拼团返利', 0, 0, '', '#FFFFFF', 2, 'NS_PINFAN', 0, 1),
+(17, 1, '盲盒', '盲盒', 0, 0, '', '#FFFFFF', 2, 'NS_BLINDBOX', 0, 1);
 
 -- 
 -- adv
 --
 INSERT INTO adv VALUES
-(13, 1, 9, '广告一', '', 'upload/default/diy_view/index_pintuan_gg.png', 0, 0.00, '#FFFFFF'),
-(14, 1, 10, '广告一', '', 'upload/default/diy_view/index_groupbuy_gg.png', 0, 0.00, '#FFFFFF'),
-(15, 1, 11, '广告一', '', 'upload/default/diy_view/index_seckill_gg.png', 0, 0.00, '#FFFFFF'),
-(16, 1, 12, '广告一', '', 'upload/default/diy_view/index_topic_gg.png', 0, 0.00, '#FFFFFF'),
-(17, 1, 13, '广告一', '', 'upload/default/diy_view/index_bargain_gg.png', 0, 0.00, '#FFFFFF'),
-(18, 1, 14, '广告一', '', 'upload/default/diy_view/index_presale.png', 0, 0.00, '#FFFFFF');
+(13, 1, 9, '广告一', '', 'upload/default/diy_view/index_pintuan_gg.png', 0, 0.00, '#FFFFFF', 1),
+(14, 1, 10, '广告一', '', 'upload/default/diy_view/index_groupbuy_gg.png', 0, 0.00, '#FFFFFF', 1),
+(15, 1, 11, '广告一', '', 'upload/default/diy_view/index_seckill_gg.png', 0, 0.00, '#FFFFFF', 1),
+(16, 1, 12, '广告一', '', 'upload/default/diy_view/index_topic_gg.png', 0, 0.00, '#FFFFFF', 1),
+(17, 1, 13, '广告一', '', 'upload/default/diy_view/index_bargain_gg.png', 0, 0.00, '#FFFFFF', 1),
+(18, 1, 14, '广告一', '', 'upload/default/diy_view/index_presale.png', 0, 0.00, '#FFFFFF', 1),
+(19, 1, 17, '广告一', '', 'upload/default/diy_view/index_blindbox.png', 0, 0.00, '#FFFFFF', 1);

@@ -412,7 +412,6 @@ class Album extends BaseModel
 
     /**
      * 生成缩略图，是否生成缩略图
-     *
      * @return boolean
      */
     public function createThumbBatch($site_id, $pic_ids)
@@ -425,8 +424,13 @@ class Album extends BaseModel
         $upload = new Upload($site_id);
         foreach ($list as $key => $val) {
             if($val['is_thumb'] == 0){
-                $file_name = substr($val['pic_path'],0,strpos($val['pic_path'], '.'));
-                $extend_name  = substr($val['pic_path'],strpos($val['pic_path'], '.') + 1);
+                //分两种情况
+                //1、云存储 'http://aaa.com/upload/a.jpg' 这里需要把域名去掉，upload左边也不能有/，否则会变为绝对路径
+                //2、本地存储'upload/a.jpg'
+                $parse_res = parse_url($val['pic_path']);
+                $pic_path = ltrim($parse_res['path'], '/');
+                $file_name = substr($pic_path,0,strrpos($pic_path, '.'));
+                $extend_name  = substr($pic_path,strrpos($pic_path, '.') + 1);
                 $thumb_type = [
                     0 => "BIG",
                     1 => "MID",

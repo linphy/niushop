@@ -211,8 +211,8 @@ var linkHtml = '<div class="layui-form-item component-links">';
 		linkHtml += '<div class="layui-input-block">';
 			linkHtml += '<span style="display: none;" v-if="myData[0].field.title" v-bind:title="myData[0].field.title"></span>';
 			// linkHtml += '<button v-for="(item,index) in myData[0].operation" class="layui-btn layui-btn-primary sm" v-on:click="selected(item.key,item.method)">{{item.label}}</button>';
-			linkHtml += '<span v-if="myData[0].field.title" v-for="(item,index) in myData[0].operation" class="sm ns-text-color" v-on:click="selected(item.key,item.method)"><span :title="myData[0].field.title">{{myData[0].field.title}}</span><i class="layui-icon layui-icon-right"></i></span>';
-			linkHtml += '<span v-else v-for="(item,index) in myData[0].operation" class="sm" style="color: #323233;" v-on:click="selected(item.key,item.method)"><span :title="item.label">{{item.label}}</span><i class="layui-icon layui-icon-right"></i></span>';
+			linkHtml += '<span v-if="myData[0].field.title" v-for="(item,index) in myData[0].operation" class="sm ns-text-color" v-on:click="selected(item.key,item.method)"><span :title="myData[0].field.title" stop-ddsort="1">{{myData[0].field.title}}</span><i class="layui-icon layui-icon-right"></i></span>';
+			linkHtml += '<span v-else v-for="(item,index) in myData[0].operation" class="sm" style="color: #323233;" v-on:click="selected(item.key,item.method)"><span :title="item.label" stop-ddsort="1">{{item.label}}</span><i class="layui-icon layui-icon-right"></i></span>';
 		linkHtml += '</div>';
 	linkHtml += '</div>';
 
@@ -240,7 +240,8 @@ Vue.component("nc-link", {
 					operation: [
 						{key: "system", method: '', label: "请选择链接"}
 					],
-					supportDiyView: ""
+					supportDiyView: "",
+                    supportToApplet: 1
 				};
 			}
 		},
@@ -254,7 +255,8 @@ Vue.component("nc-link", {
 		};
 	},
 	created: function () {
-		
+		if (this.data.supportToApplet == undefined) this.data.supportToApplet = 1;
+
 		if (this.data.supportDiyView == undefined) this.data.supportDiyView = "";
 		
 		if (this.data.label == undefined) this.data.label = "链接地址";
@@ -291,6 +293,10 @@ Vue.component("nc-link", {
 				for (var k in link) {
 					this.data.field[k] = link[k];
 				}
+				if (link.wap_url) {
+					delete this.data.field.mobile;
+					delete this.data.field.appid;
+				}
 			}
 
 			//触发变异方法，进行视图更新
@@ -305,13 +311,13 @@ Vue.component("nc-link", {
 				ns.select_link($self.myData[0].field,$self.myData[0].supportDiyView, function (data) {
 					$self.set(data);
 					if ($self.callback) $self.callback.call(this, data);
-				}, post);
+				}, post, $self.data.supportToApplet);
 			}else {
 				//插件自定义链接
 				ns[method]($self.myData[0].field, $self.myData[0].supportDiyView, function (data) {
 					$self.set(data);
 					if ($self.callback) $self.callback.call(this, data);
-				}, post);
+				}, post, $self.data.supportToApplet);
 			}
 		}
 	}
@@ -753,7 +759,6 @@ Vue.component("img-sec-upload", {
 		}
 	},
 	created: function () {
-
 		if (this.data.field == undefined) this.data.field = "imageUrl";
 		if (this.data.data[this.data.field] == undefined) this.$set(this.data.data, this.data.field, "");
 		if (this.data.text == undefined) this.data.text = "添加图片";
@@ -810,4 +815,116 @@ Vue.component("img-sec-upload", {
 			}, 1); */
 		}
 	}
+});
+
+//[图片上传]组件
+var videoHtml = '<div style="position: relative" class="video-add-box">';
+		videoHtml += '<div  class="img-block layui-form ns-text-color" :id="id">';
+			videoHtml += '<div >';
+				videoHtml += '<template v-if="myData.data[myData.field]" >';
+					videoHtml += '<video v-bind:src="changeImgUrl(myData.data[myData.field])" controls/></video>';
+					videoHtml += '<span>更换视频</span>';
+				videoHtml += '</template>';
+				videoHtml += '<template v-else>';
+					videoHtml += '<div>';
+						videoHtml += '<i class="add add-video">+</i>';
+						videoHtml += '<span class="add-video-name">上传视频</span>';
+					videoHtml += '</div>';
+				videoHtml += '</template>';
+			videoHtml += '</div>';
+		videoHtml += '</div>';
+		videoHtml += '<div class="video-zhezhao">';
+			videoHtml += '<img src="../../public/static/ext/diyview/img/jiazai.gif"/>';
+			videoHtml += '<span>上传中</span>';
+    	videoHtml += '</div>';
+	videoHtml += '</div>';
+
+/**
+ * 图片上传
+ * 参数说明：
+ * data：{ field : 字段名, value : 值(默认:14), 'label' : 文本标签(默认:文字大小) }
+ */
+Vue.component("video-upload", {
+
+    template: videoHtml,
+    props: {
+        data: {
+            type: Object,
+            default: function () {
+                return {
+                    data: {},
+                    field: "videoUrl",
+                    callback: null,
+                    text: "添加视频"
+                };
+            }
+        },
+        condition: {
+            type: Boolean,
+            default: true
+        },
+        currIndex: {
+            type: Number,
+            default: 0
+        },
+        isShow:{
+            type: Boolean,
+            default: true
+        }
+    },
+    data: function () {
+        return {
+            myData: this.data,
+            upload : null,
+            id : 'a'+ns.gen_non_duplicate(10),
+            // parent: (Object.keys(this.$parent.data).length) ? this.$parent.data : this.data,
+        };
+    },
+    watch: {
+        data: function (val, oldVal) {
+            if (val.field == undefined) val.field = oldVal.field;
+            if (val.text == undefined) val.text = "添加视频";
+            this.myData = val;
+        }
+    },
+    created: function () {
+        if (this.data.field == undefined) this.data.field = "videoUrl";
+        if (this.data.data[this.data.field] == undefined) this.$set(this.data.data, this.data.field, "");
+        if (this.data.text == undefined) this.data.text = "添加视频"
+
+        var self = this;
+        setTimeout(function () {
+			self.upload = new Upload({
+				elem: '#'+self.id,
+				accept: "video",
+				url : ns.url("shop/upload/video"),
+                callback:function(res) {
+                    $(".video-add-box .video-zhezhao").hide();
+                    self.data.data[self.data.field] = res.data.path;
+                    if (self.callback) self.data.callback.call(this);
+
+                },
+                progress:function(){
+                    $(".video-add-box .video-zhezhao").show();
+				}
+			});
+        },500);
+
+    },
+    methods: {
+        del: function () {
+            // console.log(this.$parent.list)
+            this.$parent.list.splice(this.currIndex,1)
+            // this.data.data[this.data.field] = "";
+        },
+
+        //转换图片路径
+        changeImgUrl: function (url) {
+            if (url == null || url == "") return '';
+            else return ns.img(url);
+        },
+        videoAdd : function(){
+			//$(".video-add-box .video-zhezhao").show();
+		},
+    }
 });

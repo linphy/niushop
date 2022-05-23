@@ -56,10 +56,9 @@
 				if (e.which != 1) {
 					return;
 				}
-				
 				//防止表单元素失效
 				var tagName = e.target.tagName.toLowerCase();
-				if (tagName == 'input' || tagName == 'textarea' || tagName == 'select') {
+				if (tagName == 'input' || tagName == 'textarea' || tagName == 'select' || $(e.target).attr('stop-ddsort')) {
 					return;
 				}
 				
@@ -96,8 +95,9 @@
 						return;
 					}
 				}
-				
-				settings.down.call(THIS);
+
+				var downIndex = $(THIS).index();
+				settings.down.call(THIS, downIndex);
 				
 				$doc.on('mousemove.DDSort', function (e) {
 					if (hasClone) {
@@ -175,7 +175,7 @@
 					//click的时候也会触发mouseup事件，加上判断阻止这种情况
 					if (!hasClone) {
 						clone.before($this.removeAttr('style')).remove();
-						var index = recursiveQueryIndex($(THIS));
+						var index = $(THIS).index();
 						settings.up.call(THIS, index);
 					}
 				});

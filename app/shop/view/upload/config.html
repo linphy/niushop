@@ -2,6 +2,9 @@
 {block name="resources"}
 <style>
 	.ns-watermark-img, .ns-watermark-font { display: none; }
+	.examples {color: #ff8833; cursor: pointer; margin-left: 5px;}
+	.layui-carousel {width: 750px !important; height: 580px !important; background: #fff !important;}
+	.layui-carousel>[carousel-item]>* {background: #fff !important;}
 </style>
 {/block}
 {block name="main"}
@@ -20,7 +23,7 @@
 					<div class="layui-input-inline">
 						<input name="max_filesize" type="number" lay-verify="num" value="{$config.value.upload.max_filesize}" class="layui-input ns-len-short">
 					</div>
-					<div class="layui-form-mid">b</div>
+					<div class="layui-form-mid">kb</div>
 				</div>
 				<div class="ns-word-aux">允许上传的文件大小，0为不限制</div>
 			</div>
@@ -104,7 +107,7 @@
 				<div class="layui-input-block">
 					<input type="checkbox" name="is_watermark" value="1" lay-skin="switch" lay-filter="isOpen" {if condition="$config.value.water.is_watermark == 1"} checked {/if} />
 				</div>
-				<div class="ns-word-aux">开启水印设置之后所有上传图片都会有水印标志</div>
+				<div class="ns-word-aux">开启水印后,商品主图会添加水印 <a onclick="showDemo()" class="examples ns-text-color">查看示例</a></div>
 			</div>
 			
 			<!-- 水印开启 -->
@@ -173,7 +176,7 @@
 							</div>
 							<div class="layui-form-mid">%</div>
 						</div>
-						<div class="ns-word-aux">水印图片透明度，用百分数表示，可为0-100%，0为不透明</div>
+						<div class="ns-word-aux">水印图片透明度，用百分数表示，可为0-100%，0为透明</div>
 					</div>
 				<div class="layui-form-item">
 					<label class="layui-form-label">水印图片倾斜度：</label>
@@ -219,23 +222,16 @@
 					</div>
 					<div class="ns-word-aux">水印文字颜色</div>
 				</div>
-				
+
 				<div class="layui-form-item">
-					<label class="layui-form-label">水印文字水平对齐方式：</label>
+					<label class="layui-form-label">水印文字位置：</label>
 					<div class="layui-input-block">
-						<input type="radio" name="watermark_text_align" value="left" title="居左对齐" {$config.value.water.watermark_text_align == 'left' ? 'checked' : ''} >
-						<input type="radio" name="watermark_text_align" value="center" title="居中对齐" {$config.value.water.watermark_text_align == 'center' ? 'checked' : ''} >
-						<input type="radio" name="watermark_text_align" value="right" title="居右对齐" {$config.value.water.watermark_text_align == 'right' ? 'checked' : ''} >
+						{php}$watermark_text_position = $config['value']['water']['watermark_text_valign'] .'-'. $config['value']['water']['watermark_text_align'];{/php}
+						{foreach $text_position as $watermark_position_k => $watermark_position_v }
+						<input type="radio" name="watermark_text_position" value="{$watermark_position_k}" title="{$watermark_position_v}" {$watermark_text_position == $watermark_position_k ? 'checked' : ''} />
+						{/foreach}
 					</div>
-				</div>
-				
-				<div class="layui-form-item">
-					<label class="layui-form-label">水印文字垂直对齐方式：</label>
-					<div class="layui-input-block">
-						<input type="radio" name="watermark_text_valign" value="top" title="居上对齐" {$config.value.water.watermark_text_valign == 'top' ? 'checked' : ''} >
-						<input type="radio" name="watermark_text_valign" value="center" title="居中对齐" {$config.value.water.watermark_text_valign == 'center' ? 'checked' : ''} >
-						<input type="radio" name="watermark_text_valign" value="bottom" title="居下对齐" {$config.value.water.watermark_text_valign == 'bottom' ? 'checked' : ''} >
-					</div>
+					<div class="ns-word-aux">水印图片在图片上的位置</div>
 				</div>
 			
 				<div class="layui-form-item">
@@ -254,7 +250,7 @@
 				<label class="layui-form-label">水印横坐标偏移量：</label>
 				<div class="layui-input-block">
 					<div class="layui-input-inline">
-						<input name="watermark_x" type="number" value="{$config.value.water.watermark_x}" lay-verify="int" class="layui-input ns-len-short">
+						<input name="watermark_x" type="number" value="{$config.value.water.watermark_x}" lay-verify="whole_int" class="layui-input ns-len-short">
 					</div>
 					<div class="layui-form-mid">px</div>
 				</div>
@@ -265,7 +261,7 @@
 				<label class="layui-form-label">水印纵坐标偏移量：</label>
 				<div class="layui-input-block">
 					<div class="layui-input-inline">
-						<input name="watermark_y" type="number" value="{$config.value.water.watermark_y}" lay-verify="int" class="layui-input ns-len-short">
+						<input name="watermark_y" type="number" value="{$config.value.water.watermark_y}" lay-verify="whole_int" class="layui-input ns-len-short">
 					</div>
 					<div class="layui-form-mid">px</div>
 				</div>
@@ -281,17 +277,35 @@
 		</div>
 	</div>
 	
+	
+	
 	<!-- 隐藏域 -->
 	<input class="watermark-type" type="hidden" value="{$config.value.water.watermark_type}"  /><!-- 水印类型 -->
+	
 </div>
+
 {/block}
 {block name="script"}
+<script type="text/html" id="carouselInner">
+	<div class="layui-carousel" id="carousel">
+		<div carousel-item>
+			<img style="width: 300px; margin: 0 225px;" src="SHOP_IMG/upload_h5.png" >
+			<img style="width: 500px; height: 300px; margin: 150px 125px;" src="SHOP_IMG/upload_pc.png" >
+		</div>
+	</div>
+</script>
 <script>
-	layui.use(['form', 'colorpicker'], function() {
-		var form = layui.form,
-			colorpicker = layui.colorpicker,
-			repeat_flag = false; //防重复标识
+	layui.use(['form','carousel', 'colorpicker'], function() {
+		var form = layui.form;
+		var colorpicker = layui.colorpicker;
+		var carousel = layui.carousel;
+		repeat_flag = false; //防重复标识
 		form.render();
+		carousel.render({
+			elem: '#carousel'
+			,width: '100%' //设置容器宽度
+			,arrow: 'always' //始终显示箭头
+		});
 
 		/**
 		 * 监听保存
@@ -303,6 +317,11 @@
 					return layer.msg("水印坐标不能为空值");
 				}
 			}
+
+			//文字水印位置
+			let watermark_text_position = data.field.watermark_text_position.split('-');
+			data.field.watermark_text_valign = watermark_text_position[0];
+			data.field.watermark_text_align = watermark_text_position[1];
 
 			if(repeat_flag) return;
 			repeat_flag = true;
@@ -345,7 +364,8 @@
 		});
 
 		var upload = new Upload({
-			elem: '#watermark_source'
+			elem: '#watermark_source',
+			data: {cloud : 0}
 		});
 
 		/**
@@ -388,6 +408,14 @@
 					return '请输入大于0的整数'
 				}
 			},
+			whole_int: function(value) {
+				if (value == "") {
+					return false;
+				}
+				if (!(value % 1 === 0)) {
+					return '请输入整数'
+				}
+			},
 			intrange: function(value) {
 				if (value == "") {
 					return false;
@@ -411,5 +439,22 @@
 			}
 		});
 	});
+	function showDemo(){
+	    layer.open({
+	        title: false,
+	        type: 1,
+	        area: ['800px', '660px'],
+	        content: $('#carouselInner').html(),
+	    })
+		 layui.use('carousel', function(){
+			var carousel = layui.carousel;
+			//建造实例
+			carousel.render({
+				elem: '#carousel'
+				,width: '100%' //设置容器宽度
+				,arrow: 'always' //始终显示箭头
+			});
+		});
+	}
 </script>
 {/block}

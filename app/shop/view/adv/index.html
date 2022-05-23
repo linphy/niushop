@@ -17,7 +17,9 @@
 <!--</div>-->
 
 <div class="ns-single-filter-box">
-    <!-- <button class="layui-btn ns-bg-color" onclick="add()">添加广告位</button> -->
+    <div>
+        <!-- <button class="layui-btn ns-bg-color" onclick="add()">添加广告位</button> -->
+    </div>
     <div class="layui-form">
         <div class="layui-input-inline">
             <input type="text" name="search_text" placeholder="请输入广告位名称" class="layui-input">
@@ -76,6 +78,28 @@
         form = layui.form;
         form.render();
 
+        form.on('switch(state)', function(data){
+            let state = data.elem.checked ? 1 : 0;
+            let ap_id = $(data.elem).attr('data-ap-id');
+
+            if(repeat_flag) return;
+            repeat_flag = true;
+
+            $.ajax({
+                url: ns.url("shop/adv/alterAdvPositionState"),
+                data: {
+                    ap_id : ap_id,
+                    state : state,
+                },
+                dataType: 'JSON',
+                type: 'POST',
+                success: function(res) {
+                    layer.msg(res.message);
+                    repeat_flag = false;
+                }
+            });
+        })
+
         table = new Table({
             elem: '#adv_position',
             url: ns.url("shop/adv/index"),
@@ -104,10 +128,17 @@
                 }, {
                     title: '是否是系统',
                     unresize: 'false',
-                    templet: function (data) {
+                    templet: function(data) {
                         return data.is_system == 0 ? "否" : "是";
                     },
-                    width: '20%',
+                    width: '10%',
+                },{
+                    title: '是否启用',
+                    unresize: 'false',
+                    templet: function(data) {
+                        return '<input type="checkbox" name="state" value="1" lay-skin="switch" lay-filter="state" data-ap-id="'+ data.ap_id +'" '+ (data.state == 1 ? 'checked' : '') +' />';
+                    },
+                    width: '10%',
                 }, {
                     title: '操作',
                     toolbar: '#action',

@@ -70,6 +70,7 @@ class Adv extends BaseShop
 				'default_content' => input('default_content', ''),
 				'ap_background_color' => input('ap_background_color', ''),
 				'type' => input('type', 2),
+                'state' => input('state', 0),
                 'site_id' => $this->site_id
 			];
 			return $adv_position->addAdvPosition($data);
@@ -94,6 +95,7 @@ class Adv extends BaseShop
 				'ap_width' => input('ap_width', 0),
 				'default_content' => input('default_content', ''),
 				'ap_background_color' => input('ap_background_color', ''),
+                'state' => input('state', 0),
 			];
 			return $adv_position->editAdvPosition($data, [ [ 'ap_id', '=', $ap_id ], [ 'site_id', '=', $this->site_id ] ]);
 		} else {
@@ -200,6 +202,7 @@ class Adv extends BaseShop
 				'slide_sort' => input('slide_sort', 0),
 				'price' => input('price', 0),
 				'background' => input('background', ''),
+                'state' => input('state', 0),
                 'site_id' => $this->site_id
 			];
 			return $adv->addAdv($data);
@@ -207,6 +210,10 @@ class Adv extends BaseShop
 			$adv_position = new AdvPosition();
 			$adv_position_list = $adv_position->getAdvPositionList([ [ 'site_id', '=', $this->site_id ],['type','=',2] ]);
 			$this->assign('adv_position_list', $adv_position_list[ 'data' ]);
+
+            $ap_id = input('ap_id', 0);
+            $this->assign('ap_id', $ap_id);
+
 			return $this->fetch("adv/add_adv");
 		}
 	}
@@ -227,6 +234,7 @@ class Adv extends BaseShop
 				'slide_sort' => input('slide_sort', 0),
 				'price' => input('price', 0),
 				'background' => input('background', ''),
+                'state' => input('state', 0),
 			];
 			return $adv->editAdv($data, [ [ 'adv_id', '=', $adv_id ],[ 'site_id', '=', $this->site_id ] ]);
 		} else {
@@ -244,6 +252,9 @@ class Adv extends BaseShop
 				}
 			}
 			$this->assign("type", $type);
+
+            $ap_id = input('ap_id', 0);
+            $this->assign('ap_id', $ap_id);
 
 			return $this->fetch("adv/edit_adv");
 		}
@@ -277,5 +288,33 @@ class Adv extends BaseShop
 			return $adv->deleteAdv([ [ 'adv_id', 'in', $adv_ids ], [ 'site_id', '=', $this->site_id ] ]);
 		}
 	}
+
+    /**
+     * 修改广告位状态
+     * @return array
+     */
+    public function alterAdvPositionState()
+    {
+        if (request()->isAjax()) {
+            $ap_id = input('ap_id', 0);
+            $state = input('state', 0);
+            $ap_model = new AdvPosition();
+            return $ap_model->editAdvPosition(['state' => $state], [['ap_id', '=', $ap_id], ['site_id', '=', $this->site_id]]);
+        }
+    }
+
+    /**
+     * 修改广告状态
+     * @return array
+     */
+    public function alterAdvState()
+    {
+        if (request()->isAjax()) {
+            $adv_id = input('adv_id', 0);
+            $state = input('state', 0);
+            $ap_model = new AdvModel();
+            return $ap_model->editAdv(['state' => $state], [['adv_id', '=', $adv_id], ['site_id', '=', $this->site_id]]);
+        }
+    }
 
 }

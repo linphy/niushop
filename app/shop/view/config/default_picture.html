@@ -137,12 +137,15 @@
 	var saveData = null;
 	var totalUploadNum = 0;
 	var completeUploadNum = 0;
+	var store_upload;
+	var goods_upload;
+	var member_upload;
 	layui.use(['form'], function() {
 		var form = layui.form,
 			repeat_flag = false; //防重复标识
 		form.render();
 
-		var goods_upload = new Upload({
+		goods_upload = new Upload({
 			elem: '#imgUploadGoods',
 			auto:false,
 			bindAction:'#defaultGoodsImgId',
@@ -151,7 +154,7 @@
 			}
 		});
 
-		var member_upload = new Upload({
+		member_upload = new Upload({
 			elem: '#imgUploadMember',
 			auto:false,
 			bindAction:'#defaultHeadimgId',
@@ -160,7 +163,7 @@
 			}
 		});
 
-		var store_upload = new Upload({
+		store_upload = new Upload({
 			elem: '#imgUploadStore',
 			auto:false,
 			bindAction:'#defaultStoreimgId',

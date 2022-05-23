@@ -12,6 +12,7 @@ namespace addon\wechat\shop\controller;
 
 use addon\wechat\model\Config as ConfigModel;
 use addon\wechat\model\Qrcode;
+use app\model\share\WchatShareBase as ShareModel;
 
 /**
  * 微信公众号基础功能
@@ -23,7 +24,6 @@ class Wechat extends BaseWechat
     {
         //执行父类构造函数
         parent::__construct();
-
     }
 
     /**
@@ -257,7 +257,7 @@ class Wechat extends BaseWechat
     /**
      * 分享内容设置
      */
-    public function share()
+    public function shareBack()
     {
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
@@ -284,6 +284,32 @@ class Wechat extends BaseWechat
         } else {
             $config_result = $config_model->getShareConfig($this->site_id);
             $this->assign("info", $config_result["data"]['value']);
+            return $this->fetch('wechat/share_back', [], $this->replace);
+        }
+    }
+
+    /**
+     * 分享内容设置
+     */
+    public function share()
+    {
+        if (request()->isAjax()) {
+            $data_json = input('data_json', '');
+            $data = json_decode($data_json, true);
+            $share_model = new ShareModel();
+            return $share_model->setShareConfig($this->site_id, $data);
+        } else {
+            $share_config = event('WchatShareConfig', ['site_id' => $this->site_id]);
+            uksort($share_config, function($val1, $val2){
+                return $val1['sort'] > $val2['sort'];
+            });
+            $config_list = [];
+            foreach($share_config as $data){
+                foreach($data['data'] as $val){
+                    $config_list[] = $val;
+                }
+            }
+            $this->assign('config_list', $config_list);
             return $this->fetch('wechat/share', [], $this->replace);
         }
     }

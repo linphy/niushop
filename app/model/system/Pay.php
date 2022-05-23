@@ -316,7 +316,7 @@ class Pay extends BaseModel
      * @param $total_fee  实际支付金额
      * @param $refund_type  退款方式 1 原路退款  2 线下支付
      */
-    public function refund($refund_no, $refund_fee, $out_trade_no, $refund_desc, $total_fee, $site_id, $refund_type)
+    public function refund($refund_no, $refund_fee, $out_trade_no, $refund_desc, $total_fee, $site_id, $refund_type, $order_goods_id, $is_video_number)
     {
         //是否是原理退款方式退款
         if ($refund_type == 1) {
@@ -331,7 +331,9 @@ class Pay extends BaseModel
                 "refund_desc" => $refund_desc,
                 "pay_info" => $pay_info,
                 "total_fee" => $total_fee,
-                "site_id" => $site_id
+                "site_id" => $site_id,
+                "order_goods_id" => $order_goods_id,
+                "is_video_number" => $is_video_number
             );
             //退款金额许大于0
             if ($refund_fee > 0 && !in_array($pay_info[ "pay_type" ], [ "OFFLINE_PAY", "BALANCE", "ONLINE_PAY" ])) {

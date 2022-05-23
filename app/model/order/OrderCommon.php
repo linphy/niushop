@@ -13,7 +13,6 @@ namespace app\model\order;
 
 use addon\coupon\model\Coupon;
 use app\model\express\ExpressPackage;
-use addon\fenxiao\model\FenxiaoOrder;
 use app\model\goods\Goods;
 use app\model\goods\GoodsStock;
 use app\model\member\MemberAccount;
@@ -23,6 +22,7 @@ use app\model\verify\Verify;
 use think\facade\Cache;
 use app\model\BaseModel;
 use app\model\message\Message;
+use addon\shopcomponent\model\Weapp;
 
 /**
  * 常规订单操作
@@ -548,6 +548,19 @@ class OrderCommon extends BaseModel
 
                 $order = model("order")->getInfo([['order_id', '=', $order["order_id"]]], '*');
                 $res = event("OrderPay", $order);
+                if($order['is_video_number'] == 1){
+//                    $weapp_model = new Weapp($order['site_id']);
+//                    $pay_info = model("pay")->getInfo([["out_trade_no", "=", $order["out_trade_no"]]]);
+//                    $member_info = model('member')->getInfo([["member_id", "=", $order["member_id"]]]);
+//                    $weapp_model->updateOrderType([
+//                        "order_id" => "",
+//                        "out_order_id" => $order['order_id'],
+//                        "openid" => $member_info['weapp_openid'],
+//                        "action_type" => 1,
+//                        "transaction_id" => $pay_info['trade_no'],
+//                        "pay_time" => date("Y-m-d H:i:s",$pay_info['pay_time'])
+//                    ]);
+                }
                 
                 $message_model = new Message();
                 // 发送消息
@@ -1343,6 +1356,20 @@ class OrderCommon extends BaseModel
 
         $action = empty($order_info["order_status_action"]) ? [] : json_decode($order_info["order_status_action"], true);
         $member_action = $action["member_action"] ?? [];
+        //判断是否增加批量退款操作
+        if(!in_array($order_info['order_status'], [self::ORDER_CREATE, self::ORDER_COMPLETE, self::ORDER_CLOSE])){
+            $not_apply_refund_count = model('order_goods')->getCount([
+                ['order_id', '=', $order_id],
+                ['refund_status', '=', OrderRefund::REFUND_NOT_APPLY],
+            ], 'order_goods_id');
+            if($not_apply_refund_count > 1){
+                array_push($member_action, [
+                    'action' => 'memberBatchRefund',
+                    'title' => '批量退款',
+                    'color' => '',
+                ]);
+            }
+        }
         $order_info['action'] = $member_action;
         $order_goods_list = model('order_goods')->getList([['order_id', "=", $order_id], ["member_id", "=", $member_id]]);
 

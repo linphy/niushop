@@ -81,20 +81,12 @@ class Order extends BaseShop
             //订单状态
             if ($order_status != "") {
                 if($order_status != 'refunding'){
-                    $condition[] = [ "a.order_status", "=", $order_status ];
+                    $order_goods_list = $order_common_model->getOrderGoodsList([['refund_status', "not in", [0,3]]], 'order_id')['data'];
+                    $order_id_arr = array_unique(array_column($order_goods_list, 'order_id'));
+                    $condition[] = [ "a.order_id", "in", $order_id_arr ];
                 }else{
-                    $join = [
-                        [
-                            'order_goods og',
-                            'og.order_id = a.order_id',
-                            'left'
-                        ]
-                    ];
-                    $condition[] = [ "og.refund_status", "not in", [0,3] ];
+                    $condition[] = [ "a.order_status", "=", $order_status ];
                 }
-
-            } else {
-//                $condition[] = [ 'order_status', 'in', array_keys($order_status_list) ];
             }
 
             $order = "a.create_time desc";
@@ -103,15 +95,14 @@ class Order extends BaseShop
                 $join[] = [
                     'verify v',
                     'v.verify_code = a.virtual_code',
-                    'right'
+                    'left'
                 ];
                 $condition[] = [ "v.is_verify", "=", $is_verify ];
-                $order = "a.create_time desc";
             }
 
             //订单内容 模糊查询
             if ($order_name != "") {
-                $condition[] = [ "a.order_name", 'like', "%$order_name%" ];
+                $condition[] = [ "a.order_name", 'like', "%{$order_name}%" ];
             }
             //订单来源
             if ($order_from != "") {
@@ -155,23 +146,17 @@ class Order extends BaseShop
                         $join[] = [
                             'member m',
                             'm.member_id = a.member_id',
-                            'right'
+                            'left'
                         ];
-                        $condition[] = [ 'm.nickname', 'like', "%$search_text%" ];
+                        $condition[] = [ 'm.nickname', 'like', "%{$search_text}%" ];
                         break;
                     case "sku_no":
-                            $join = [
-                                 [
-                                    'order_goods og',
-                                    'og.order_id = a.order_id',
-                                    'inner'
-                                ]
-                            ];
-                            $field = 'a.*,og.sku_no';
-                        $condition[] = [ 'og.sku_no', 'like', "%$search_text%" ];
+                        $order_goods_list = $order_common_model->getOrderGoodsList([['sku_no', "like", "%{$search_text}%"]], 'order_id')['data'];
+                        $order_id_arr = array_unique(array_column($order_goods_list, 'order_id'));
+                        $condition[] = [ "a.order_id", "in", $order_id_arr ];
                         break;
                     default:
-                        $condition[] = [ 'a.'.$order_label, 'like', "%$search_text%" ];
+                        $condition[] = [ 'a.'.$order_label, 'like', "%{$search_text}%" ];
                 }
             }
 

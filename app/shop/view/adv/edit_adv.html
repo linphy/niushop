@@ -124,6 +124,8 @@
 	var saveData = null;
 	var totalUploadNum = 0;
 	var completeUploadNum = 0;
+	var ap_id = '{$ap_id}';
+	var logo_upload;
 
 	if(adv_url_json) adv_url_json = JSON.parse(adv_url_json);
 	$(".adv-url-show").text(adv_url_json.title);
@@ -154,7 +156,7 @@
 		});
 
 		// 广告图片
-		var logo_upload = new Upload({
+		logo_upload = new Upload({
 			elem: '#adv_image',
 			auto:false,
 			bindAction:'#advImageId',
@@ -186,7 +188,7 @@
 							title:'操作提示',
 							btn: ['返回列表', '继续操作'],
 							yes: function() {
-								location.href = ns.url("shop/adv/lists")
+								location.href = ns.url("shop/adv/lists", {ap_id:ap_id})
 							},
 							btn2: function() {
 								location.reload();
@@ -261,7 +263,7 @@
 	});
 	
 	function back() {
-		location.href = ns.url("shop/adv/lists")
+		location.href = ns.url("shop/adv/lists", {ap_id:ap_id})
 	}
 	
 	function selectedLink() {

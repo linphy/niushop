@@ -230,6 +230,7 @@ var vue = new Vue({
 							$parent.find(".upload-img-box").html(`<div class="ns-upload-default"><img src="${ns_url.SHOPIMG}/upload_img.png" /></div>`);
 
 						});
+						if (self.data.menuList[i]) self.tempLink = self.data.menuList[i].link;
 					},
 					yes: function (index, layero) {
 						if ($("input[name='menu_text']").val().length == 0) {
@@ -345,7 +346,7 @@ function selectLink(i) {
 	ns.select_link(d, '', function (data) {
 		vue.tempLink = data;
 		$('.js-select-link-text').text(data.title).show();
-	}, post);
+	}, post, 0);
 }
 
 /**

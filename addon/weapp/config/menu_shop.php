@@ -59,10 +59,15 @@ return [
                 'title' => '小程序分享',
                 'url' => 'weapp://shop/weapp/share',
                 'is_show' => 1,
-                'sort' => 5
+                'sort' => 6
             ]
         ]
-
     ],
-
+    [
+        'name' => 'WEAPP_MESSAGE_EDIT',
+        'parent' => 'MESSAGE_LISTS',
+        'title' => '编辑模板消息',
+        'url' => 'weapp://shop/message/edit',
+        'is_show' => 0,
+    ],
 ];

@@ -18,7 +18,7 @@ namespace app\api\controller;
 use addon\coupon\model\CouponType;
 use addon\manjian\model\Manjian as ManjianModel;
 use app\model\order\OrderCreate as OrderCreateModel;
-
+use app\model\message\Message;
 /**
  * 订单创建
  * @author Administrator

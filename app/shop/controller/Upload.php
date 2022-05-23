@@ -206,13 +206,12 @@ class Upload extends BaseShop
     {
         $upload_model = new UploadModel($this->site_id);
         $album_id = input("album_id", 0);
-        $is_thumb = input("is_thumb", 0);
         $name = input("name", "");
         $param = array (
             "thumb_type" => [ "BIG", "MID", "SMALL" ],
             "name" => "file",
             "album_id" => $album_id,
-            "is_thumb" => $is_thumb
+            "is_thumb" => 0
         );
         $result = $upload_model->setPath("common/images/" . date("Ymd") . '/')->imageToAlbum($param);
         return $result;
@@ -341,9 +340,10 @@ class Upload extends BaseShop
                 "filename" => $filename,
                 "suffix" => $suffix
             );
-
+            $parse_res = parse_url($pic_path);
+            $pic_path = ltrim($parse_res['path'], '/');
             $result = $upload_model->setPath($pic_path)->modifyFile($upload_param);
-
+            
             return json($result);
 
         }catch (Exception $e){

@@ -24,6 +24,41 @@ use app\model\system\Upgrade;
  */
 class Config extends BaseShop
 {
+    public function copyright()
+    {
+        $upgrade_model = new Upgrade();
+        $auth_info = $upgrade_model->authInfo();
+
+        $config_model = new ConfigModel();
+        $copyright = $config_model->getCopyright($this->site_id, $this->app_module);
+        if (request()->isAjax()) {
+            $logo = input('logo', '');
+            $data = [
+                'icp' => input('icp', ''),
+                'gov_record' => input('gov_record', ''),
+                'gov_url' => input('gov_url', ''),
+                'market_supervision_url' => input('market_supervision_url', ''),
+                'logo' => '',
+                'company_name' => '',
+                'copyright_link' => '',
+                'copyright_desc' => ''
+            ];
+            if ($auth_info[ 'code' ] == 0) {
+                $data[ 'logo' ] = input('logo', '');
+                $data[ 'company_name' ] = input('company_name', '');
+                $data[ 'copyright_link' ] = input('copyright_link', '');
+                $data[ 'copyright_desc' ] = input('copyright_desc', '');
+            }
+            $this->addLog("修改版权配置");
+            $res = $config_model->setCopyright($data, $this->site_id, $this->app_module);
+            return $res;
+        }
+        $this->forthMenu();
+        $this->assign('is_auth', ( $auth_info[ 'code' ] >= 0 ? 1 : 0 ));
+        $this->assign('copyright_config', $copyright[ 'data' ][ 'value' ]);
+        return $this->fetch('config/copyright');
+    }
+
     /**
      * 支付管理
      */

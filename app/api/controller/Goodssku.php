@@ -386,19 +386,6 @@ class Goodssku extends BaseApi
                 $sort_config = $sort_config['data']['value'];
                 $order_by = 'gs.sort '.$sort_config['type'].',gs.create_time desc';
             }else if ($guess_you_like['type_show']==2){
-//                $goods_browse_model = new GoodsBrowse();
-//                $browse_where[] = ['member_id','=',$this->member_id];
-//                $browse_where[] = ['site_id','=',$this->site_id];
-//                $goods_browse = $goods_browse_model->getBrowseList($browse_where,'goods_id','browse_time desc');
-//
-//                $goods_ids = '';
-//                if(!empty($goods_browse['data'])){
-//                    foreach($goods_browse['data'] as $k=>$v){
-//                        $goods_ids = $goods_ids.','.$v['goods_id'];
-//                    }
-//                    $goods_ids = trim($goods_ids,'');
-//                }
-//                $condition[] = ['gs.goods_id','in',$goods_ids];
                 $condition[] = ['gb.member_id','=',$this->member_id];
                 $condition[] = ['gb.site_id','=',$this->site_id];
                 $order_by = 'browse_time desc';
@@ -406,7 +393,6 @@ class Goodssku extends BaseApi
                 $order_by = 'sale_num desc';
             }else{
                 $condition[] = ['gs.goods_id','in',$guess_you_like['goods_ids']];
-
             }
 
             $list = $goods->getGoodsSkuPageList($condition, $page, $page_size, $order_by, $field, $alias, $join);

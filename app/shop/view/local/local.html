@@ -562,10 +562,11 @@ var init_key = 1;
 						}
 					});
 					json.time_week =  time_week.toString();
-					json.start_time =  field.start_time;
-					json.end_time =  field.end_time;
+
 				}
 			}
+			json.start_time =  field.start_time;
+			json.end_time =  field.end_time;
 			switch(field.area_type){
 				case '1':
 					json.start_distance = field.radius_start_distance;

@@ -1,7 +1,7 @@
 {
 	"templateInfo": {
 		"name": "水果生鲜商城",
-		"desc": "牛之云网络科技专注模板设计与开发，智能装修，操作简单，助您提升店铺装修视觉体验，提高店铺转化！售后有保障，牛之云网络科技愿竭诚为您服务！",
+		"desc": "以绿色为主色调的小清新风格模板，主菜单中可自主选择设置比较热门的水果、蔬菜、生鲜等分类，结合广告位可展示力度较大的优惠活动，通过橱窗可展示商城特色产品，直击用户眼球，给用户提供最大便捷力度的购物体验，是打造生鲜商城的不二选择。\n",
 		"mark": "fresh_template"
 	},
 	"templateValue": {
@@ -13,7 +13,9 @@
 					"title": "水果生鲜商城",
 					"bgColor": "#ffffff",
 					"bgUrl": "public/diy_view/style1/img/bg_img.png",
-					"moreLink": {},
+					"moreLink": {
+						"name" : ""
+					},
 					"mpCollect": false,
 					"navStyle": 1,
 					"openBottomNav": true,
@@ -75,7 +77,7 @@
 							"name": ""
 						},
 						"imgWidth": "702",
-						"imgHeight": "230"
+						"imgHeight": "310"
 					}],
 					"addon_name": "",
 					"type": "IMAGE_ADS",
@@ -294,10 +296,17 @@
 					"backgroundColor": "",
 					"bgSelect": "yellow",
 					"marginTop": 10,
-					"list": {
-						"imageUrl": "public/diy_view/style1/img/groupbuy_title.png",
+					"list": [{
+						"style": 1,
+						"imageUrl": "public/static/img/diy_view/groupbuy_style1_title.png",
 						"title": "团购专区"
-					},
+					}, {
+						"style": 2,
+						"imageUrl": "public/static/img/diy_view/groupbuy_style2_title.png"
+					}, {
+						"style": 3,
+						"imageUrl": "public/static/img/diy_view/groupbuy_style3_title.png"
+					}],
 					"listMore": {
 						"imageUrl": "",
 						"title": "查看更多"
@@ -324,10 +333,17 @@
 					"isShowGoodsPrice": 1,
 					"isShowGoodsPrimary": 1,
 					"isShowGoodsStock": 0,
-					"list": {
-						"imageUrl": "public/diy_view/style1/img/seckill_title.png",
+					"list": [{
+						"style": 1,
+						"imageUrl": "public/static/img/diy_view/seckill_style1_title.png",
 						"title": "秒杀专区"
-					},
+					}, {
+						"style": 2,
+						"imageUrl": "public/static/img/diy_view/seckill_style2_title.png"
+					}, {
+						"style": 3,
+						"imageUrl": "public/static/img/diy_view/seckill_style3_title.png"
+					}],
 					"listMore": {
 						"imageUrl": "",
 						"title": "更多秒杀"

@@ -65,6 +65,11 @@
 		width: 294px;
 		align-items: center;
 	}
+
+	.ns-table-title .ns-title-content p{overflow: hidden;text-overflow:ellipsis;white-space: nowrap;}
+	.ns-table-title .ns-title-content .verify-type{font-size:12px;margin-right: 4px;padding: 0px 6px;display: inline-block; border: 1px solid #FF6A00; color: #FF6A00;border-radius: 3px;line-height: 18px}
+	.ns-table-title .ns-title-content .verify-code{display:inline-block;width:200px}
+	.layui-table-box .layui-table-body .laytable-cell-1-0-0{padding-top: 5px;padding-bottom: 5px}
 </style>
 {/block}
 {block name="main"}
@@ -81,6 +86,13 @@
 						<input type="text" name="verifier_name" placeholder="请输入核销员名称" autocomplete="off" class="layui-input">
 					</div>
 				</div>
+
+				<div class="layui-inline">
+					<label class="layui-form-label">核销码：</label>
+					<div class="layui-input-inline">
+						<input type="text" name="verify_code" placeholder="请输入核销码" autocomplete="off" class="layui-input">
+					</div>
+				</div>
 				<div class="layui-inline">
 					<label class="layui-form-label">核销类型：</label>
 					<div class="layui-input-inline">
@@ -92,6 +104,19 @@
 						</select>
 					</div>
 				</div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">核销地址：</label>
+                    <div class="layui-input-inline">
+                        <select name="verify_from">
+                            <option value="">请选择核销地址</option>
+							{foreach $verify_from as $k => $v}
+							<option value="{$k}">{$v}</option>
+							{/foreach}
+                        </select>
+                    </div>
+                </div>
+
 			</div>
 			
 			<div class="layui-form-item">
@@ -108,12 +133,7 @@
 					</div>
 				</div>
 				
-				<div class="layui-inline">
-					<label class="layui-form-label">核销码：</label>
-					<div class="layui-input-inline">
-					    <input type="text" name="verify_code" placeholder="请输入核销码" autocomplete="off" class="layui-input">
-					</div>
-				</div>
+
 			</div>
 
 			<div class="ns-form-row">
@@ -141,8 +161,18 @@
 			<span>+</span>
 		</div>
 
-		<div class="ns-title-content">
-			{{ d.verify_code }}
+		<div class="ns-title-content ns-table-title">
+			{{# if(d.verify_type == "pickup"){ }}
+			<div class="ns-title-pic"><img src="SHOP_IMG/hexiao_dindan.png"></div>
+			{{# } }}
+			{{# if(d.verify_type == "virtualgoods"){ }}
+			<div class="ns-title-pic"><img src="{{ns.img(d.sku_image)}}"></div>
+			{{# } }}
+			<div class="ns-title-content">
+				<p title="{{ d.order_info.order_name }}">{{ d.order_info.order_name }}</p>
+				<span class="verify-type">{{ d.verify_type_name}}</span>
+				<span class="verify-code">核销码：{{ d.verify_code }}</span>
+			</div>
 		</div>
 	</div>
 </script>
@@ -242,45 +272,52 @@
                 url: ns.url("shop/verify/records"), //数据接口
                 cols: [
                     [{
-                        title: '核销码',
-                        width: '20%',
+                        title: '核销信息',
+                        width: '30%',
                         templet: '#verify_code'
-                    }, {
-                        field: 'verify_type_name',
-                        title: '核销类型',
-                        width: '14%'
-                    }, {
+                    },
+					{
+                        field: 'order_no',
+                        title: '订单编号',
+                        width: '12%',
+						templet: function (data) {
+                            return '<a href="'+ ns.url("shop/order/detail", {order_id:data.order_info.order_id}) +'" target="_blank">'+ data.order_no +'</a>';
+                        }
+                    },{
+                        field: 'name',
+                        title: '买家姓名',
+                        width: '8%'
+                    },
+					{
+						field: 'verifyFrom',
+						title: '核销地址',
+						width: '8%',
+					},{
                         field: 'verifier_name',
                         title: '核销员',
-                        width: '13%'
-                    }, {
-                        field: 'verify_status',
-                        title: '状态',
-                        width: '13%',
+                        width: '10%',
                         templet: function (data) {
-                            var verify_name = "";
-                            if (data.is_verify == 1) {
-                                verify_name = "已核销";
-                            } else {
-                                verify_name = "尚未核销";
-                            }
-                            return verify_name; //创建时间转换方法
+                            if(data.verify_from == 'mobile'){
+								return '<a href="'+ ns.url("shop/verify/edituser", {verifier_id:data.verifier_id}) +'" target="_blank">'+ data.verifier_name +'</a>';
+                            }else{
+								return data.verifier_name;
+							}
                         }
-                    }, {
-                        field: 'create_time',
-                        title: '创建时间',
-                        width: '20%',
-                        templet: function (data) {
-                            return ns.time_to_date(data.create_time); //创建时间转换方法
-                        }
-                    }, {
+                    },
+					 {
                         field: 'verify_time',
                         title: '核销时间',
-                        width: '20%',
+                        width: '10%',
                         templet: function (data) {
                             return ns.time_to_date(data.verify_time); //创建时间转换方法
                         }
-                    }]
+                    },
+					{
+						field: 'verify_remark',
+						title: '核销备注',
+						unresize: 'false',
+						width: '15%',
+					}]
                 ]
             });
 

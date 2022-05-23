@@ -24,6 +24,7 @@ class MessageOrderUrgePayment
      */
     public function handle($param)
     {
+        trace($param, '订单催付消息event');
         //发送订单消息
         if ($param["keywords"] == "ORDER_URGE_PAYMENT") {
             //发送订单消息

@@ -22,7 +22,7 @@
 		<div class="layui-input-block ns-len-mid">
 			<select name="ap_id" lay-filter="ap_id">
 				{foreach $adv_position_list as $adv_position_k => $adv_position_v}
-				<option value="{$adv_position_v.ap_id}" data-type="{$adv_position_v.type}" data-width="{$adv_position_v.ap_width}" data-height="{$adv_position_v.ap_height}">{$adv_position_v.ap_name}</option>
+				<option value="{$adv_position_v.ap_id}" {if $ap_id == $adv_position_v.ap_id}selected{/if}  data-type="{$adv_position_v.type}" data-width="{$adv_position_v.ap_width}" data-height="{$adv_position_v.ap_height}">{$adv_position_v.ap_name}</option>
 				{/foreach}
 			</select>
 		</div>
@@ -101,6 +101,7 @@
 	var saveData = null;
 	var totalUploadNum = 0;
 	var completeUploadNum = 0;
+	var logo_upload;
 
 	layui.use(['form', 'upload', 'colorpicker'], function () {
 		var form = layui.form,
@@ -128,7 +129,7 @@
 		});
 
 		// 广告图片
-		var logo_upload = new Upload({
+		logo_upload = new Upload({
 			elem: '#adv_image',
 			auto:false,
 			bindAction:'#advImageId',
@@ -160,10 +161,10 @@
 							title:'操作提示',
 							btn: ['返回列表', '继续添加'],
 							yes: function() {
-								location.href = ns.url("shop/adv/lists")
+								location.href = ns.url("shop/adv/lists", {ap_id: '{$ap_id}'})
 							},
 							btn2: function() {
-								location.href = ns.url("shop/adv/addAdv")
+								location.reload();
 							}
 						});
 					} else {
@@ -235,7 +236,7 @@
 	});
 	
 	function back() {
-		location.href = ns.url("shop/adv/lists")
+		location.href = ns.url("shop/adv/lists", {ap_id : '{$ap_id}'})
 	}
 
 

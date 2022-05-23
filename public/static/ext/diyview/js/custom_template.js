@@ -88,7 +88,9 @@ var vue = new Vue({
 			popWindow: {
 				imageUrl: "",
 				count: -1,
-				link: {},
+				link: {
+					name : ""
+				},
 				imgWidth: '',
 				imgHeight: ''
 			},
@@ -162,7 +164,20 @@ var vue = new Vue({
 				this.autoSelected(obj.type);
 				return;	
 			}
-
+			
+			// 特殊处理多商品组·组件
+			var count = 1;
+			var arr = [];
+			for (var i=0; i<this.data.length; i++) {
+				if (this.data[i].controller == "ManyGoodsList") {
+					arr.push(parseInt(this.data[i].title.replace('多商品组','')));
+				}
+			}
+			
+			if(arr.length > 0) count = arr[arr.length-1] + 1;
+			
+			if(obj.controller == "ManyGoodsList" && obj.title == '') obj.title = '多商品组' + count;
+			
 			this.data.push(obj);
 
 			// 添加组件后（不是编辑调用的），选择最后一个

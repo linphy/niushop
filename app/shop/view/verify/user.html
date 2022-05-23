@@ -5,18 +5,51 @@
 </style>
 {/block}
 {block name="main"}
-<!-- 搜索框 -->
+<!-- 按钮容器 -->
 <div class="ns-single-filter-box">
-	<button class="layui-btn ns-bg-color" onclick="add()">添加核销人员</button>
-
-	<div class="layui-form">
-		<div class="layui-input-inline">
-			<input type="text" name="verifier_name" placeholder="请输入核销人员名称" autocomplete="off" class="layui-input">
-			<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
-				<i class="layui-icon">&#xe615;</i>
-			</button>
-		</div>
-	</div>
+    <button class="layui-btn ns-bg-color" onclick="add()">添加核销人员</button>
+</div>
+<!-- 筛选面板 -->
+<div class="ns-screen layui-collapse" lay-filter="selection_panel">
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title"><span class="put-open">收起</span></h2>
+        <form class="layui-colla-content layui-form layui-show">
+			<div class="layui-inline">
+				<label class="layui-form-label">核销员名称：</label>
+				<div class="layui-input-inline">
+					<input type="text" name="verifier_name" placeholder="请输入核销员名称" autocomplete="off"
+						   class="layui-input">
+				</div>
+			</div>
+	
+			<div class="layui-inline">
+				<label class="layui-form-label">核销员类型：</label>
+				<div class="layui-input-inline">
+					<select name="verifier_type" lay-filter="verifier_type">
+						<option value="">全部</option>
+						<option value="0">平台核销员</option>
+						<option value="1">门店核销员</option>
+					</select>
+				</div>
+			</div>
+	
+			<div class="layui-inline">
+				<label class="layui-form-label">核销门店：</label>
+				<div class="layui-input-inline">
+					<select name="store_id" lay-verify="store_id">
+						<option value="">请选择门店</option>
+						{foreach name="$store_list" item="vo"}
+						<option value="{$vo['store_id']}">{$vo['store_name']}</option>
+						{/foreach}
+					</select>
+				</div>
+			</div>
+            <div class="ns-form-row">
+                <button class="layui-btn ns-bg-color" lay-filter="search" lay-submit>筛选</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- 列表 -->
@@ -54,8 +87,35 @@
 					field: 'verifier_name',
 					title: '核销员',
 					unresize: 'false'
-				}, {
-                    title: '会员账号',
+				}, 
+				{
+                    title: '核销员类型',
+                    unresize: 'false',
+                    templet: function(data) {
+                        if(data.verifier_type != 0){
+                            return '门店核销员';
+						}else{
+                            return "平台核销员";
+						}
+                    }
+                }, 
+				{
+					title: '核销门店',
+                    unresize: 'false',
+                    templet: function(data) {
+                        if(data.store_id != 0){
+                            if(data.store_name != ''){
+                                return data.store_name;
+							}else{
+                                return "--";
+							}
+						}else{
+                            return "--";
+						}
+                    }
+				},
+				{
+					title: '会员账号',
                     unresize: 'false',
                     templet: function(data) {
                         if(data.member_id != 0){
@@ -78,7 +138,8 @@
 				}, {
 					title: '操作',
 					toolbar: '#operation',
-					unresize: 'false'
+					unresize: 'false',
+					align : 'right'
 				}]
 			],
 			bottomToolbar: ""
@@ -166,6 +227,7 @@
 				},
 				where: data.field
 			});
+			return false;
 		});
 
 	});
