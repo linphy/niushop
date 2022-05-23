@@ -145,9 +145,11 @@ class Virtualgoods extends BaseShop
             $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
 
             //获取商品海报
-            $poster_template_model = new PosterTemplateModel();
-            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
-            $this->assign('poster_list',$poster_list['data']);
+            $poster_list = event('PosterTemplate', ['site_id' => $this->site_id]);
+            if(!empty($poster_list)){
+                $poster_list = $poster_list['data'];
+            }
+            $this->assign('poster_list', $poster_list);
 
             $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
 
@@ -269,9 +271,11 @@ class Virtualgoods extends BaseShop
             $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
 
             //获取商品海报
-            $poster_template_model = new PosterTemplateModel();
-            $poster_list = $poster_template_model ->getPosterTemplateList([['site_id', '=', $this->site_id],['template_status','=',1]],'template_id,poster_name,site_id');
-            $this->assign('poster_list',$poster_list['data']);
+            $poster_list = event('PosterTemplate', ['site_id' => $this->site_id]);
+            if(!empty($poster_list)){
+                $poster_list = $poster_list['data'];
+            }
+            $this->assign('poster_list', $poster_list);
 
             return $this->fetch("virtualgoods/edit_goods");
         }
