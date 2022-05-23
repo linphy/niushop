@@ -83,7 +83,11 @@
 					            <h3 class="layui-timeline-title">下载小程序代码包</h3>
 					            <div style="margin-top: 10px;">
 					            	<a class="layui-btn layui-btn-primary" href="{:addon_url('weapp://shop/weapp/download')}" target="_blank">下载小程序代码包</a>
+					            	{if $is_auth}
+					            	<a class="layui-btn layui-btn-primary" href="{:addon_url('weapp://shop/weapp/downloaduniapp')}" target="_blank">下载UNIAPP源码包</a>
+					            	{else/}
 					            	<a class="layui-btn layui-btn-primary" href="javascript:;" onclick="authLayer()">下载UNIAPP源码包</a>
+					            	{/if}
 					            </div>
 					            {if $is_new_version}
 					            <div class="new-version-tips">
