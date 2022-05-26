@@ -322,7 +322,7 @@ class Goods extends BaseShop
             $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
 
             //获取商品海报
-            $poster_list = event('PosterTemplate', ['site_id' => $this->site_id]);
+            $poster_list = event('PosterTemplate', ['site_id' => $this->site_id], true);
             if(!empty($poster_list)){
                 $poster_list = $poster_list['data'];
             }
@@ -447,7 +447,7 @@ class Goods extends BaseShop
             $this->assign('goods_community_qr_list',$goods_community_qr_list['data']);
 
             //获取商品海报
-            $poster_list = event('PosterTemplate', ['site_id' => $this->site_id]);
+            $poster_list = event('PosterTemplate', ['site_id' => $this->site_id], true);
             if(!empty($poster_list)){
                 $poster_list = $poster_list['data'];
             }
