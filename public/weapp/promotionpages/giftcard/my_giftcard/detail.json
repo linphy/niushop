@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "购买礼品卡",
-  "usingComponents": {
-    "uni-number-box": "/components/uni-number-box/uni-number-box",
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "ns-login": "/components/ns-login/ns-login",
-    "ns-payment": "/components/payment/payment"
-  }
-}

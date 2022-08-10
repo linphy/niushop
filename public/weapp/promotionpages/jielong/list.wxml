@@ -1,1 +1,0 @@
-<view><block wx:for="{{jieLong}}" wx:for-item="item" wx:for-index="index" wx:key="index"><view><view data-event-opts="{{[['tap',[['goJielongDetail',['$0'],[[['jieLong','',index,'jielong_id']]]]]]]}}" bindtap="__e">{{''+item.jielong_name+''}}</view></view></block></view>

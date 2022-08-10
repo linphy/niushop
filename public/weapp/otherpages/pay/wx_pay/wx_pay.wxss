@@ -1,1 +1,0 @@
-.launch-mask{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8)}.launch-mask .mask-img{text-align:right;margin:10% 10px 10px 30px}.launch-mask .mask-img image{width:50px;height:117px;margin-right:9%}.launch-mask .mask-word{color:#fff;text-align:center;font-weight:700;font-size:18px}.launch-mask .mask-word text{color:#ff0036!important}
