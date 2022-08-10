@@ -112,7 +112,7 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
 ![输入图片说明](image/%E5%90%8E%E7%AB%AF7image.png)
 ![输入图片说明](image/%E5%90%8E%E7%AB%AF8image.png)
 
-#### 好啦！话不多说，相信你早已跃跃欲试了，那就行动起来点击下方链接赶紧下载体验吧！
+#### 好啦！话不多说，相信你早已跃跃欲试了，那就行动起来通过下方链接赶紧下载体验吧！
 ```
 git clone -b v3.2.9 https://gitee.com/niushop_team/niushop_b2c_v5_dev
 ```
