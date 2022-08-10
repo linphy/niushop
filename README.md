@@ -1,4 +1,7 @@
-### NiuShop开源商城V5版【厚积薄发，重拾信心！！！】
+### NiuShop开源商城V5开发版【前后端100%开源！！！即将上线】
+
+Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信息
+加入Niushop开发者，构建新零售电商应用开发生态
 
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220801163902.png)
 
