@@ -76,13 +76,15 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
 
 ### 看到这里，各位小主是不是都有点迫不及待想要一睹v5的风采了呢？好的，下面就部分更新功能给大家做个介绍吧~~:point_down:
 #### 先来一睹前端模板的风采吧
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF1%E5%89%8D%E7%AB%AF1.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF2%E5%89%8D%E7%AB%AF2.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF3%E5%89%8D%E7%AB%AF3.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF4%E5%89%8D%E7%AB%AF4.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF5%E5%89%8D%E7%AB%AF5.jpg)
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF6%E5%89%8D%E7%AB%AF6.jpg)
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF7%E5%89%8D%E7%AB%AF7.jpg)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF2%E5%89%8D%E7%AB%AF2.jpg)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF5%E5%89%8D%E7%AB%AF5.jpg)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF1%E5%89%8D%E7%AB%AF1.jpg)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF3%E5%89%8D%E7%AB%AF3.jpg)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF4%E5%89%8D%E7%AB%AF4.jpg)
+
+
 #### 这样高大尚的界面是不是都有点迫不及待想要体验一把了呢，别着急，接着往下看，一大波优化及新增内容来袭~~
 #### 新增登录引导页
 
