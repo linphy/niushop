@@ -1,0 +1,202 @@
+{extend name="$extend_base"/}
+{block name="resources"}
+<link rel="stylesheet" href="STATIC_EXT/colorPicker/css/colorpicker.css" />
+<link rel="stylesheet" href="STATIC_EXT/diyview/css/diyview.css" />
+{if $name == 'DIY_VIEW_GOODS_CATEGORY' }
+<!--自定义商品分类样式特殊处理-->
+<style>
+	.layui-layout-admin .layui-body .body-content{padding: 0;}
+	.preview-wrap{margin-left: 0;}
+	.custom-save{padding-left: 0;}
+</style>
+{/if}
+{/block}
+{block name="main"}
+<div class="custom-save js-top-custom-save layui-hide">
+	<span></span>
+	<div class="button-group">
+		<button class="layui-btn save-button save">保存</button>
+		{notempty name="$qrcode_info"}
+		<button class="layui-btn" onclick="preview()">预览</button>
+		{/notempty}
+		<button class="layui-btn layui-btn-primary cancel-btn">取消</button>
+	</div>
+</div>
+
+<div id="diyView">
+
+	{if $name != 'DIY_VIEW_GOODS_CATEGORY' }
+	<!-- 组件列表 -->
+	<div class="component-list">
+		<nav>
+			{foreach name="$diy_view_utils" item="vo" key="k"}
+			<h3 data-index="{$k}"><img src="__STATIC__/ext/diyview/img/component_down.png" />{$vo.type_name}</h3>
+			<ul data-index="{$k}">
+				{if $vo['type'] == 'SYSTEM'}
+				<li title="弹窗广告" @click='changeCurrentIndex(-98)'>
+					<!-- <img src="__ROOT__/public/static/ext/diyview/img/icon/pop_adv.png" data-icon="__ROOT__/public/static/ext/diyview/img/icon/pop_adv.png" data-icon-selected="__ROOT__/public/static/ext/diyview/img/icon/pop_adv_selected.png" /> -->
+					<i class="iconfont icondanchuangguanggao"></i>
+					<span>弹窗广告</span>
+				</li>
+				{/if}
+				{foreach name="$vo.list" item="li" key="li_k"}
+				<li title="{$li.title}" data-name="{$li.name}" data-max-count="{$li.max_count}" data-value='{$li.value}' data-is-delete="{$li.is_delete}"
+					{if condition="$li.value"} @click='addComponent({$li.value},{ name : "{$li.name}", title : "{$li.title}", max_count : {$li.max_count}, is_delete : "{$li.is_delete}" })'
+					:class="{ 'disabled' : !checkComponentIsAdd('{$li.name}') }"
+					{else/}class="disabled"{/if}>
+						<i class="iconfont {$li.icon}"></i>
+						<span>{$li.title}</span>
+				</li>
+				{/foreach}
+			</ul>
+			{/foreach}
+		</nav>
+	</div>
+	{/if}
+
+	<div class="preview-wrap">
+
+		<div class="loading-layer">
+			<div class="loading-anim">
+				<div class="box item"><div class="border out item"></div></div>
+			</div>
+		</div>
+
+		<div class="preview-restore-wrap">
+
+			<div class="div-wrap">
+
+				<button class="layui-btn layui-btn-primary position-page-btn" @click="changeCurrentIndex(-99)">页面设置</button>
+
+				{if $name != 'DIY_VIEW_GOODS_CATEGORY' }
+				<!-- 快捷操作 -->
+				<ul class="quick-action">
+<!--					<li>-->
+<!--						<i class="icondiy icon-system-eye-line"></i>-->
+<!--						<span>隐藏</span>-->
+<!--					</li>-->
+					<li @click="moveUpComponent()" :class="{ disabled : ((currentIndex - 1) < 0) }">
+						<i class="icondiy icon-system-jiantoushang"></i>
+						<span>上移</span>
+					</li>
+<!--					:class="{ disabled : ( data.length === 0 || (currentIndex + 1) === data.length) }"-->
+					<li @click="moveDownComponent()">
+						<i class="icondiy icon-system-jiantouxia"></i>
+						<span>下移</span>
+					</li>
+					<li @click="copyComponent()" :class="{ disabled : ( currentIndex < 0) }">
+						<i class="icondiy icon-system-file-copy-line"></i>
+						<span>复制</span>
+					</li>
+					<li @click="delComponent(currentIndex)" :class="{ disabled : currentIndex < -1 }">
+						<i class="icondiy icon-system-delete-bin-6-line"></i>
+						<span>删除</span>
+					</li>
+					<li @click="resetComponent()" :class="{ disabled : ( currentIndex < 0) }">
+						<i class="icondiy icon-system-loader-4-line"></i>
+						<span>重置</span>
+					</li>
+				</ul>
+				{/if}
+
+				<div class='diy-view-wrap layui-form' :style="{ backgroundColor : global.pageBgColor,backgroundImage : 'url('+changeImgUrl(global.bgUrl)+')' }">
+
+					<div class="preview-head" @click="changeCurrentIndex(-99)">
+
+						<!-- 顶部tabbar风格 -->
+						<tabbar :current-index="currentIndex" :global="global"></tabbar>
+
+						<!-- 页面设置 -->
+						<div :class="{selected : currentIndex==-99}" :data-sort="-99" style="display:none;" v-show="data.length==0 || currentIndex==-99">
+							<page-set :current-index="currentIndex" :global="global" :global-lazy-load="globalLazyLoad"></page-set>
+						</div>
+
+					</div>
+
+					{if $name != 'DIY_VIEW_GOODS_CATEGORY' }
+					<!-- 弹窗广告 -->
+					<pop-window :current-index="currentIndex" :global="global" :global-lazy-load="globalLazyLoad"></pop-window>
+					{/if}
+
+					<div class="preview-block">
+
+						<div v-for="(nc,index) in data" :key="index" :data-index="index" :data-id="nc.id" :class="{ 'draggable-element' : true,selected : currentIndex == nc.index }" :data-sort="index">
+							{foreach name="$diy_view_utils" item="vo"}
+								{foreach name="$vo.list" item="li"}
+								<template v-if="nc.componentName == '{$li.name}'">
+									{:event('DiyViewUtils',['name'=>$li['name'],'addon_name'=>$li['addon_name']],true)}
+								</template>
+								{/foreach}
+							{/foreach}
+						</div>
+
+						<!--背景占位，防止右侧编辑栏闪动-->
+						<div class="edit-attribute-placeholder"></div>
+
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 预览 -->
+	<template slot="preview"></template>
+
+	<div class="custom-save js-bottom-custom-save">
+		<button class="layui-btn save">保存</button>
+		{notempty name="$qrcode_info"}
+		<button class="layui-btn" onclick="preview()">预览</button>
+		{/notempty}
+		<button class="layui-btn full-screen-btn">全屏</button>
+	</div>
+</div>
+
+{notempty name="$qrcode_info"}
+<input type="hidden" name="preview_url" value="{$qrcode_info.path.h5.url}">
+<!-- 页面预览 -->
+<script type="text/html" id="diy_h5_preview">
+	<div class="goods-preview">
+		<div class="qrcode-wrap">
+			<img src="{:img($qrcode_info.path.h5.img)}" alt="推广二维码">
+			<p class="tips text-color">扫码访问页面 <a class="text-color" href="javascript:ns.copy('diy_h5_preview_1');">复制链接</a></p>
+			<input type="text" id="diy_h5_preview_1" value="{$qrcode_info.path.h5.url}" readonly />
+		</div>
+		<div class="phone-wrap">
+			<div class="iframe-wrap">
+				<iframe id="iframe" src="" frameborder="0"></iframe>
+				<div class="empty">
+					<img src="__STATIC__/img/wap_not_found.png" />
+					<p>当前手机页面无法访问</p>
+					<a href="https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842146" class="text-color" target="_blank">请检查手机端域名配置以及伪静态</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+{/notempty}
+
+{if condition="!empty($diy_view_info)"}
+<input type="hidden" id="id" value="{$diy_view_info.id}">
+<input type="hidden" id="info" value='{$diy_view_info.value??""}' />
+<input type="hidden" id="template_key" value='{$template_key??""}' />
+{/if}
+<input type="hidden" id="name" value="{$name}" />
+{/block}
+{block name="script"}
+<script>
+	var requestUrl = '{$request_url}';
+	var baseStyle = '{$base ?? "app/shop/view/base/style2.html"}';
+</script>
+<script src="STATIC_JS/vue.js"></script>
+<script src="STATIC_EXT/colorPicker/js/colorpicker.js"></script>
+<script src="STATIC_EXT/diyview/js/async_load_css.js"></script>
+<script src="STATIC_EXT/diyview/js/ddsort.js"></script>
+<script src="STATIC_EXT/ueditor/ueditor.config.js"></script>
+<script src="STATIC_EXT/ueditor/ueditor.all.js"> </script>
+<script src="STATIC_EXT/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script src="STATIC_EXT/diyview/js/components.js"></script>
+<script src="STATIC_EXT/diyview/js/custom_template.js"></script>
+{include file="app/shop/view/diy/iconfont_component.html"/}
+{/block}

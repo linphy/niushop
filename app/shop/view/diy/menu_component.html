@@ -1,0 +1,721 @@
+<template id="diy-menu">
+    <div class="component-wrap" :class="{curr: curr == 'diy-menu'}" @click="selectComponent()" :style="{padding: value.menu.margin.join(' ')}">
+        <div class="menu-wrap" :style="radius" :menu-type="value.menu.style">
+            <div class="head-wrap">
+                <div class="title">常用功能</div>
+            </div>
+            <div class="menu-list">
+                <template v-for="(item, index) in value.menu.menus">
+                    <div class="item-wrap" :key="item.tag" v-show="item.isShow">
+                        <div class="icon">
+                            <img :src="ns.img(item.img)" alt="" v-if="item.icon_type == 'img'">
+                            <div class="icon-block" v-else>
+                                <iconfont :icon="item.icon" v-if="item.icon" :value="item.style ? item.style : null"></iconfont>
+                            </div>
+                        </div>
+                        <div class="title">{{ item.text }}</div>
+                        <i class="iconfont iconyoujiantou" v-if="value.menu.style == 'list'"></i>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="selected-area"></div>
+    </div>
+</template>
+
+<!-- 组件样式 -->
+<style>
+    .menu-wrap {
+        background: #fff;
+    }
+    .menu-wrap .head-wrap {
+        display: flex;
+        padding: 15px 0;
+        margin: 0 15px;
+        align-items: center;
+    }
+    .menu-wrap .head-wrap .title {
+        flex: 1;
+        width: 0;
+        font-size: 17px;
+        font-weight: bold;
+    }
+    .menu-wrap .menu-list {
+        display: flex;
+        padding-bottom: 15px;
+        color: #333;
+        flex-wrap: wrap;
+    }
+    .menu-wrap .item-wrap {
+        width: 25%;
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .menu-wrap .item-wrap .icon {
+        width: 30px;
+        height: 30px;
+    }
+    .menu-wrap .item-wrap .icon-block {
+        width: inherit;
+        height: inherit;
+        font-size: 30px;
+    }
+    .menu-wrap .icon img {
+        width: 100%;
+        height: auto;
+    }
+    .menu-wrap .item-wrap .title {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        margin-top: 6px;
+        width: 100%;
+        text-align: center;
+    }
+    [menu-type="list"] .item-wrap {
+        width: 100%;
+        flex-direction: row;
+        padding: 10px 15px;
+    }
+    [menu-type="list"] .item-wrap .title {
+        flex: 1;
+        margin-top: 0;
+        text-align: left;
+        padding: 0 10px;
+        line-height: 1;
+    }
+</style>
+
+<script>
+    Vue.component('diy-menu', {
+        props: {
+            curr: {
+                type: String,
+                default: ''
+            },
+            value: {
+                type: Object,
+                default: function () {
+                    return {};
+                }
+            }
+        },
+        data: function () {
+            return {
+                count: 0
+            }
+        },
+        created(){
+        },
+        computed: {
+            radius(){
+                return {
+                    'border-top-left-radius': this.value.menu.radius[0],
+                    'border-top-right-radius': this.value.menu.radius[0],
+                    'border-bottom-left-radius': this.value.menu.radius[1],
+                    'border-bottom-right-radius': this.value.menu.radius[1],
+                }
+            }
+        },
+        methods: {
+            selectComponent(){
+                this.$emit('click', 'diy-menu');
+            },
+            /**
+             * 验证数据
+             * @returns {boolean}
+             */
+            verify(){
+                var verify = true, self = this;
+                for (var i = 0; i < this.value.menu.menus.length; i++) {
+                    let item = this.value.menu.menus[i];
+                    if (item.isShow) {
+                        if ( (item.icon_type == 'img' && !item.img) || (item.icon_type == 'icon' && !item.icon)) {
+                            layer.msg('请设置图标'); verify = false;
+                            break;
+                        }
+                        if (!item.text) {
+                            layer.msg('请设置菜单标题'); verify = false;
+                            break;
+                        }
+                        if (!item.link.wap_url) {
+                            layer.msg('请设置菜单链接'); verify = false;
+                            break;
+                        }
+                    }
+                }
+                return verify;
+            }
+        },
+        template: '#diy-menu'
+    })
+</script>
+
+<!--会员信息编辑组件-->
+<template id="diy-menu-edit">
+    <div class="component-wrpp diy-menu-edit">
+        <div class="edit-title">
+            <span>常用功能</span>
+            <div class="tab-wrap">
+                <span class="tab-item" :class="{active: tab == 'content'}" @click="tab = 'content'">内容</span>
+                <span class="tab-item" :class="{active: tab == 'style'}" @click="tab = 'style'">样式</span>
+            </div>
+        </div>
+        <div class="layui-form">
+            <div v-show="tab == 'content'">
+                <div class="layui-form-item">
+                    <label class="layui-form-label sm">布局样式</label>
+                    <div class="layui-input-block">
+                        <div class="layui-unselect layui-form-radio"
+                             :class="{'layui-form-radioed': value.menu.style == item.value}"
+                             v-for="(item, index) in styleList" :key="index"
+                             @click="value.menu.style = item.value"
+                        >
+                            <i class="layui-anim layui-icon"></i>
+                            <div>{{ item.title }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="group-title">
+                    <span>功能设置</span>
+                </div>
+                <div class="menu-list">
+                    <template v-for="(item, index) in value.menu.menus">
+                        <div class="menu-item" :key="item.tag" v-show="item.isShow">
+                            <div class="iconfont icontuodong"></div>
+                            <div class="main-box">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label sm">图标</label>
+                                    <div class="layui-input-block img-upload" v-show="item.icon_type == 'img'">
+                                        <div class="upload-img-block">
+                                            <div class="upload-img-box" :class="{hover: item.img}">
+                                                <div class="upload-default">
+                                                    <div class="preview_img" v-if="item.img" :id="'menu-icon-' + index">
+                                                        <img :layer-src="ns.img(item.img)" :src="ns.img(item.img)" class="img_prev"/>
+                                                    </div>
+                                                    <div class="upload" v-else @click="uploadImg(index)">
+                                                        <span class="add">+</span>
+                                                    </div>
+                                                </div>
+                                                <div class="operation">
+                                                    <div >
+                                                        <i title="图片预览" class="iconfont iconreview js-preview" @click="previewImg(index)"></i>
+                                                        <i title="删除图片" class="layui-icon layui-icon-delete js-delete" @click="deleteImg(index)"></i>
+                                                    </div>
+                                                    <div class="replace_img js-replace" @click="uploadImg(index)">点击替换</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-input-block icon" v-show="item.icon_type == 'icon'">
+                                        <div class="icon-box">
+                                            <div class="select-icon" v-if="!item.icon" @click="uploadImg(index)">
+                                                <span class="add">+</span>
+                                            </div>
+                                            <template v-else>
+                                                <iconfont :icon="item.icon" v-if="item.icon" :value="item.style ? item.style : null"></iconfont>
+                                                <div class="operation">
+                                                    <div class="operation-warp">
+                                                        <i title="图标预览" class="iconfont iconreview js-preview"></i>
+                                                        <i title="删除图标" class="layui-icon layui-icon-delete" @click="deleteIcon(index)"></i>
+                                                    </div>
+                                                    <div class="js-replace" @click="uploadImg(index)">点击替换</div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="action-box">
+                                            <div class="action" @click="iconStyle($event, index)"><i class="iconfont iconpifu"></i></div>
+                                            <div class="action" :id="'color-' + item.tag"><i class="iconfont iconyanse"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label sm">标题</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" class="layui-input" v-model="item.text">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label sm">链接</label>
+                                    <div class="layui-input-block">
+                                        <div class="select-url" @click="selectLink(index)">
+                                            <div class="text" :class="{'text-color': item.link.title }">{{ item.link.title ? item.link.title : '请选择链接' }}</div>
+                                            <i class="layui-icon layui-icon-right"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="del" @click="deleteMenu(index)">x</i>
+                        </div>
+                    </template>
+                </div>
+                <div class="add-menu" @click="addMemu()">
+                    <i class="iconfont iconjia2"></i>
+                    添加菜单
+                </div>
+            </div>
+
+            <div v-show="tab == 'style'">
+                <div class="group-title">
+                    <span>组件样式</span>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label sm">上边距</label>
+                    <div class="layui-input-block slide-wrap">
+                        <div class="top"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label sm">下边距</label>
+                    <div class="layui-input-block slide-wrap">
+                        <div class="bottom"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label sm">左右边距</label>
+                    <div class="layui-input-block slide-wrap">
+                        <div class="about"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label sm">上圆角</label>
+                    <div class="layui-input-block slide-wrap">
+                        <div class="top-radius"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label sm">下圆角</label>
+                    <div class="layui-input-block slide-wrap">
+                        <div class="bottom-radius"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>
+
+<style>
+    .diy-menu-edit {
+
+    }
+    .diy-menu-edit .add-menu {
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        border: 1px solid #eee;
+        cursor: pointer;
+        color: #666;
+        margin-top: 10px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+    .diy-menu-edit .menu-item {
+        background: #fff;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        user-select: none;
+        position: relative;
+        border: 1px dashed #eee;
+    }
+    .diy-menu-edit .menu-item .del {
+        background: #999;
+        color: #FFFFFF;
+        position: absolute;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        font-style: normal;
+        line-height: 18px;
+        text-align: center;
+        right: -10px;
+        top: -10px;
+        cursor: pointer;
+        z-index: 1;
+        display: none;
+    }
+    .diy-menu-edit .menu-item:hover .del {
+        display: block;
+    }
+    .diy-menu-edit .menu-item .icontuodong {
+        cursor: move;
+        margin-right: 10px;
+    }
+    .diy-menu-edit .menu-item .main-box {
+        flex: 1;
+        width: 0;
+    }
+    .diy-menu-edit .menu-item .layui-form-label {
+        width: 50px;
+    }
+    .diy-menu-edit .menu-item .layui-form-label.sm + .layui-input-block {
+        margin-left: 60px;
+    }
+    .diy-menu-edit .menu-item .layui-form-item:last-child {
+        margin-bottom: 0;
+    }
+    .diy-menu-edit .menu-item .select-url {
+        background: #fff;
+        height: 32px;
+        cursor: pointer;
+        display: flex;
+        align-items: end;
+        color: #666;
+    }
+    .diy-menu-edit .select-url .text {
+        flex: 1;
+        width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        text-align: right;
+        color: #000;
+    }
+    .diy-menu-edit .select-url .layui-icon {
+        font-size: 12px;
+        margin-top: 1px;
+    }
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        font-size: 60px;
+        border: 1px dashed #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0!important;
+        cursor: pointer;
+        position: relative;
+    }
+    .icon-box .select-icon {
+        width: inherit;
+        height: inherit;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+    .icon-box .select-icon .add {
+        font-size: 26px;
+        color: var(--base-color);
+    }
+    .icon-box .operation {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,.6);
+        flex-direction: column;
+        display: none;
+    }
+    .icon-box:hover .operation {
+        display: flex;
+    }
+    .icon-box .operation-warp {
+        flex: 1;
+        height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+    }
+    .icon-box .iconfont {
+        margin: 0 3px;
+        font-size: 16px!important;
+    }
+    .icon-box .operation .js-replace{
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        background: rgba(0,0,0,.7);
+        font-size: 12px;
+    }
+    .diy-menu-edit .layui-input-block.icon {
+        display: flex;
+        align-items: center;
+        margin-left: 60px;
+    }
+    .diy-menu-edit .layui-input-block.icon .action-box {
+        display: flex;
+    }
+    .diy-menu-edit .layui-input-block.icon .action {
+        margin-left: 10px;
+        width: 42px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        border: 1px solid #EEEEEE;
+        cursor: pointer;
+    }
+    .diy-menu-edit .layui-input-block.icon .iconfont {
+        font-size: 20px;
+    }
+    .diy-menu-edit .layui-input-block.icon .action:hover {
+        border-color: var(--base-color);
+        color: var(--base-color);
+    }
+</style>
+
+<script>
+    var _colorPicker = {};
+    Vue.component('diy-menu-edit', {
+        props: {
+            value: {
+                type: Object,
+                default: function () {
+                    return {};
+                }
+            }
+        },
+        data: function () {
+            return {
+                styleList: [
+                    { title: '宫格式', value: 'block'},
+                    { title: '列表式', value: 'list'}
+                ],
+                tab: 'content'
+            }
+        },
+        mounted(){
+            var self = this;
+            slider.render({
+                elem: '.diy-menu-edit .top',
+                input: true,
+                value: self.value.menu.margin[0].split('px')[0],
+                change: function (value) {
+                    self.value.menu.margin[0] = value + 'px';
+                    self.updateArray('margin');
+                }
+            });
+            slider.render({
+                elem: '.diy-menu-edit .bottom',
+                input: true,
+                value: self.value.menu.margin[2].split('px')[0],
+                change: function (value) {
+                    self.value.menu.margin[2] = value + 'px';
+                    self.updateArray('margin');
+                }
+            });
+            slider.render({
+                elem: '.diy-menu-edit .about',
+                input: true,
+                max: 20,
+                value: self.value.menu.margin[1].split('px')[0],
+                change: function (value) {
+                    self.value.menu.margin[1] = value + 'px';
+                    self.value.menu.margin[3] = value + 'px';
+                    self.updateArray('margin');
+                }
+            });
+            slider.render({
+                elem: '.diy-menu-edit .top-radius',
+                input: true,
+                value: self.value.menu.radius[0].split('px')[0],
+                max: 30,
+                change: function (value) {
+                    self.value.menu.radius[0] = value + 'px';
+                    self.updateArray('radius');
+                }
+            });
+            slider.render({
+                elem: '.diy-menu-edit .bottom-radius',
+                input: true,
+                value: self.value.menu.radius[1].split('px')[0],
+                max: 30,
+                change: function (value) {
+                    self.value.menu.radius[1] = value + 'px';
+                    self.updateArray('radius');
+                }
+            });
+
+            var downIndex = 0;
+            $('.diy-menu-edit .menu-list').DDSort({
+                //拖拽数据源
+                target: '.menu-item',
+                down: function (index) {
+                    downIndex = index;
+                },
+                //拖拽结束
+                up: function () {
+                    var index = $(this).index();
+                    var temp = self.value.menu.menus.splice(downIndex, 1);
+                    self.value.menu.menus.splice(index, 0, temp[0]);
+                }
+            });
+
+            this.fetchAllMenuIconColor();
+        },
+        methods: {
+            /**
+             * 选择链接
+             * @param index
+             */
+            selectLink(index){
+                var self = this;
+                ns.select_link(this.value.menu.menus[index].link, function (data) {
+                    self.value.menu.menus[index].link = data;
+                    self.updateArray('menus');
+                });
+            },
+            /**
+             * 选择图片或图标
+             * @param index
+             */
+            uploadImg(index){
+                var self = this;
+                openAlbum(function (obj) {
+                    if (typeof obj == 'object') {
+                        for (var i = 0; i < obj.length; i++) {
+                            self.value.menu.menus[index].img = obj[i].pic_path;
+                            self.value.menu.menus[index].icon_type = 'img';
+                            self.updateArray('menus');
+                        }
+                    } else {
+                        self.value.menu.menus[index].icon = obj;
+                        self.value.menu.menus[index].icon_type = 'icon';
+                        if (!self.value.menu.menus[index].style) {
+                            self.$set(self.value.menu.menus[index], 'style', {
+                                fontSize: 60,
+                                iconBgColor: ["#7b00ff"],
+                                iconBgColorDeg: 180,
+                                iconBgImg: 'public/static/ext/diyview/img/icon_bg/bg_05.png',
+                                bgRadius: 38,
+                                iconColor: ['#fff'],
+                                iconColorDeg: 0,
+                            })
+                        }
+
+                        self.colorRender('color-' + self.value.menu.menus[index].tag, '', function (elem, color) {
+                            index = $(elem).parents('.menu-item').index();
+                            if (self.value.menu.menus[index].style.iconBgImg || self.value.menu.menus[index].style.iconBgColor.length) {
+                                self.value.menu.menus[index].style.iconBgColor = [color];
+                            } else {
+                                self.value.menu.menus[index].style.iconColor = [color];
+                            }
+                            self.updateArray('menus');
+                            self.$forceUpdate();
+                        })
+                    }
+                    self.updateArray('menus');
+                }, 1, 0, 'img', 'img,icon');
+            },
+            previewImg(index){
+                layer.photos({
+                    photos: '#menu-icon-' + index,
+                    anim: 5
+                });
+                $('#menu-icon-' + index + ' img').click()
+            },
+            deleteImg(index){
+                this.value.menu.menus[index].img = '';
+                this.updateArray('menus');
+            },
+            deleteMenu(index){
+                var self = this;
+                layer.confirm('确定要删除吗?', function(_index){
+                    if (self.value.menu.menus[index].isSystem) {
+                        self.value.menu.menus[index].isShow = 0;
+                        self.updateArray('menus');
+                    } else {
+                        self.value.menu.menus.splice(index, 1);
+                    }
+                    layer.close(_index);
+                });
+            },
+            updateArray(key){
+                this.value.menu[key].push('')
+                this.value.menu[key].pop()
+            },
+            addMemu(){
+                this.value.menu.menus.push({
+                    tag: ns.gen_non_duplicate(6),
+                    text: '',
+                    img: '',
+                    icon_type: 'img',
+                    link: {
+                        name: ''
+                    },
+                    isShow: 1,
+                    isSystem: 0
+                })
+            },
+            /**
+             * 选择图标风格
+             * @param index
+             */
+            iconStyle(event, index){
+                var self = this;
+                selectIconStyle({
+                    elem: event.currentTarget,
+                    icon: self.value.menu.menus[index].icon,
+                    callback: function (data) {
+                        if (data) {
+                            self.value.menu.menus[index].style = data;
+                            self.updateArray('menus');
+                        } else {
+                            iconStyleSet({
+                                query: {
+                                    icon: self.value.menu.menus[index].icon
+                                }
+                            }, function(style){
+                                self.value.menu.menus[index].style = style;
+                                self.updateArray('menus');
+                            })
+                        }
+                    }
+                })
+            },
+            deleteIcon(index){
+                this.value.menu.menus[index].icon = '';
+                this.updateArray('menus');
+            },
+            /**
+             * 渲染颜色组件
+             * @param id
+             * @param color
+             * @param callback
+             */
+            colorRender(id, color, callback){
+                if (_colorPicker[id]) return;
+                setTimeout(function () {
+                    _colorPicker[id] = Colorpicker.create({
+                        el: id,
+                        color: color,
+                        change: function (elem, hex) {
+                            callback(elem, hex)
+                        }
+                    });
+                })
+            },
+            /**
+             * 渲染全部菜单颜色选择器
+             */
+            fetchAllMenuIconColor(){
+                var self = this;
+                this.value.menu.menus.forEach(function (item, index) {
+                    if (item.icon_type == 'icon') {
+                        self.colorRender('color-' + item.tag, '', function (elem, color) {
+                            index = $(elem).parents('.menu-item').index();
+                            if (self.value.menu.menus[index].style.iconBgImg || self.value.menu.menus[index].style.iconBgColor.length) {
+                                self.value.menu.menus[index].style.iconBgColor = [color];
+                            } else {
+                                self.value.menu.menus[index].style.iconColor = [color];
+                            }
+                            self.updateArray('menus');
+                            self.$forceUpdate();
+                        })
+                    }
+                })
+            }
+        },
+        template: '#diy-menu-edit'
+    })
+</script>

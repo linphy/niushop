@@ -1,0 +1,98 @@
+{extend name="base"/}
+{block name="resources"}
+<style>
+    .exchange-type{display: inline-block;width: 141px;height: 68px;border: 1px solid #ededed;border-radius: 4px;margin-right: 10px;line-height: 68px;position: relative;cursor: pointer;}
+    .style{display: flex;-webkit-box-align: center;align-items: center;-webkit-box-pack: center;justify-content: center;padding: 0 20px;}
+    .style div{width: 50px;height: 16px;}
+    .style p{margin-left: 14px;font-size: 12px;color: #333;}
+    .style.style-red div{background: url(SHOP_IMG/style/default.png) no-repeat;}
+    .style.style-green div{background: url(SHOP_IMG/style/green.png) no-repeat;}
+    .style.style-blue div{background: url(SHOP_IMG/style/blue.png) no-repeat;}
+	.style.style-pink div{background: url(SHOP_IMG/style/pink.png) no-repeat;}
+	.style.style-golden div{background: url(SHOP_IMG/style/gold.png) no-repeat;}
+	.style.style-yellow div{background: url(SHOP_IMG/style/yellow.png) no-repeat;}
+	.style.style-purple div{background: url(SHOP_IMG/style/purple.png) no-repeat;}
+	.style.style-black div{background: url(SHOP_IMG/style/black.png) no-repeat;}
+    .preview-style img{margin-right: 64px; margin-bottom: 50px; height: 595px;width: 275px;-webkit-box-shadow: 5px 5px 20px #f5f5f5;box-shadow: 5px 5px 20px #f5f5f5;}
+</style>
+{/block}
+{block name="main"}
+<div class="layui-form form-wrap">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <div class="exchange-type" data-title="热情红" data-name="default" data-main-color="#FF4646" data-aux-color="#F7B500">
+                <div class="style style-red"><div></div><p>热情红</p></div>
+            </div>
+            <div class="exchange-type exchange_blue" data-title="商务蓝" data-name="blue" data-main-color="#36ABFF" data-aux-color="#FA6400">
+                <div class="style style-blue"><div></div><p>商务蓝</p></div>
+            </div>
+            <div class="exchange-type exchange_green" data-title="纯净绿" data-name="green" data-main-color="#19C650" data-aux-color="#FA6400">
+                <div class="style style-green"><div></div><p>纯净绿</p></div>
+            </div>
+			<div class="exchange-type exchange_pink" data-title="樱花粉" data-name="pink" data-main-color="#FF407E" data-aux-color="#F7B500">
+			    <div class="style style-pink"><div></div><p>樱花粉</p></div>
+			</div>
+			<div class="exchange-type exchange_golden" data-title="魅力金" data-name="gold" data-main-color="#CFAF70" data-aux-color="#444444">
+			    <div class="style style-golden"><div></div><p>魅力金</p></div>
+			</div>
+            <div class="exchange-type exchange_purple" data-title="丁香紫" data-name="purple" data-main-color="#A253FF" data-aux-color="#222222">
+                <div class="style style-purple"><div></div><p>丁香紫</p></div>
+            </div>
+            <div class="exchange-type exchange_yellow" data-title="明艳黄" data-name="yellow" data-main-color="#FFD002" data-aux-color="#1D262E">
+                <div class="style style-yellow"><div></div><p>明艳黄</p></div>
+            </div>
+            <div class="exchange-type exchange_yellow" data-title="炫酷黑" data-name="black" data-main-color="#222222" data-aux-color="#FFFFFF">
+                <div class="style style-black"><div></div><p>炫酷黑</p></div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-input-block">
+        <div class="preview-style">
+            <img src="SHOP_IMG/style/decorate-default-1.jpg" alt="">
+            <img src="SHOP_IMG/style/decorate-default-2.jpg" alt="">
+			<img src="SHOP_IMG/style/decorate-default-3.jpg" alt="">
+        </div>
+    </div>
+    <div class="form-row">
+        <input type="hidden" name="style_theme" value="{$style|json_encode}">
+        <button class="layui-btn" lay-submit lay-filter="save">保存</button>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+	var theme = JSON.parse($("input[name='style_theme']").val());
+    $(".exchange-type").click(function() {
+        $(this).addClass("border-color").siblings("div").removeClass("border-color");
+        var obj = {
+        	title:$(this).attr('data-title'),
+			name:$(this).attr('data-name'),
+			main_color:$(this).attr('data-main-color'),
+			aux_color:$(this).attr('data-aux-color'),
+        };
+        $("input[name='style_theme']").val(JSON.stringify(obj));
+        $(".preview-style").html("<img src='SHOP_IMG/style/decorate-"+ obj.name +"-1.jpg'/><img src='SHOP_IMG/style/decorate-"+ obj.name +"-2.jpg'/><img src='SHOP_IMG/style/decorate-"+ obj.name +"-3.jpg'/>");
+    });
+	$('.exchange-type[data-name="' + theme.name + '"]').click();
+
+    layui.use('form', function() {
+        var form = layui.form, repeat_flag = false; //防重复标识
+        form.on('submit(save)', function(data) {
+            if (repeat_flag) return;
+            repeat_flag = true;
+			data.field = JSON.parse(data.field.style_theme);
+            $.ajax({
+                url: ns.url("shop/diy/style"),
+                data: data.field,
+                dataType: 'JSON',
+                type: 'POST',
+                success: function(res) {
+                    repeat_flag = false;
+                    layer.msg(res.message);
+                }
+            });
+
+        });
+    });
+</script>
+{/block}

@@ -1,0 +1,284 @@
+{extend name="base"/}
+{block name="resources"}
+<style>
+	.layui-table-view td:last-child>div{overflow: inherit;}
+	.operation-wrap{position: relative;}
+	.layui-table-box{overflow: inherit;}
+	.layui-table-body{overflow: inherit;}
+	.set-home{display:inline-block;margin-left: 5px;padding: 3px;font-size: 12px;line-height: 1;color: #fff;}
+	.popup-qrcode-wrap{text-align: center;background: #fff;border-radius: 2px;box-shadow: 0 2px 8px 0 rgba(200,201,204,.5);padding: 10px;position: absolute;z-index: 1;top: -73px;left: -180px;display: none;width: 170px;height: 230px;}
+	.popup-qrcode-wrap:before, .popup-qrcode-wrap:after {left: 100%;top: 50%;border: solid transparent;content: " ";height: 0;width: 0;position: absolute;pointer-events: none;}
+	.popup-qrcode-wrap:before {border-color: transparent;border-left-color: #e5e5e5;border-width: 8px;margin-top: -29px;}
+	.popup-qrcode-wrap:after {border-color: transparent;border-left-color: #ffffff;border-width: 7px;margin-top: -31px;}
+	.popup-qrcode-wrap img{width: 150px;height: 150px;max-width: initial;}
+	.popup-qrcode-wrap p{font-size: 12px;margin: 5px 0;line-height: 1.8!important;}
+	.popup-qrcode-wrap a{font-size: 12px;}
+	.popup-qrcode-wrap input{opacity: 0;position: absolute;}
+	.popup-qrcode-wrap .popup-qrcode-loadimg {width: 16px!important; height: 16px!important; margin-top: 107px;}
+</style>
+{/block}
+{block name="main"}
+
+<div class="single-filter-box">
+	<button class="layui-btn" onclick="location.href = ns.url('shop/diy/edit')">新建页面</button>
+</div>
+
+<table id="diy_list" lay-filter="diy_list"></table>
+
+<script type="text/html" id="action">
+	<div class="operation-wrap" data-id="{{d.id}}">
+		<div class="table-btn">
+			<div class="popup-qrcode-wrap"><img class="popup-qrcode-loadimg" src="__STATIC__/loading/loading.gif" /></div>
+			{{# if(d.name != 'DIY_VIEW_INDEX' || d.is_default == 0){ }}
+			<a class="layui-btn" lay-event="setHome">设为主页</a>
+			{{# } }}
+			<a class="layui-btn text-color" lay-event="promote">推广</a>
+			<a class="layui-btn" lay-event="edit">编辑</a>
+			<a class="layui-btn" lay-event="copy">复制页面</a>
+			<a class="layui-btn" lay-event="delete">删除</a>
+		</div>
+	</div>
+</script>
+
+<script type="text/html" id="toolbarOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>
+</script>
+
+<script type="text/html" id="batchOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>
+</script>
+
+<script type="text/html" id="promote">
+	<div class="goods-preview">
+		<div class="qrcode-wrap">
+			<img src="{{ ns.img(d.path.h5.img) }}" alt="推广二维码">
+			<p class="tips text-color">扫码访问店铺 <a class="text-color" href="javascript:ns.copy('diy_preview_1');">复制链接</a></p>
+			<input type="text" id="diy_preview_1" value="{{d.path.h5.url}}" readonly />
+		</div>
+		<div class="phone-wrap">
+			<div class="iframe-wrap">
+				<iframe id="iframe" src="{{ d.path.h5.url }}?preview=1&time={:time()}" frameborder="0"></iframe>
+				<div class="empty">
+					<img src="__STATIC__/img/wap_not_found.png" />
+					<p>当前手机页面无法访问</p>
+					<a href="https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842146" class="text-color" target="_blank">请检查手机端域名配置以及伪静态</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</script>
+{/block}
+{block name="script"}
+<script>
+	var form,laytpl,table,repeat_flag = false;
+	layui.use([ 'laytpl', 'form'], function () {
+		laytpl = layui.laytpl;
+		form = layui.form;
+		table = new Table({
+			elem: '#diy_list',
+			filter: "diy_list",
+			url: ns.url("shop/diy/lists"),
+			cols: [[{
+				type: 'checkbox',
+				width: '3%'
+			}, {
+				width: '25%',
+				title: '页面名称',
+				templet: function (res) {
+					var html = '';
+					html += `<span>${res.title}</span>`;
+					if (res.name == 'DIY_VIEW_INDEX' && res.is_default == 1)
+						html += `<span class="bg-color set-home">主页</span>`;
+					return html;
+				}
+			}, {
+				field: 'click_num',
+				width: '10%',
+				title: '浏览量',
+			}, {
+				width: '20%',
+				title: '创建时间',
+				templet: function (d) {
+					return ns.time_to_date(d.create_time);
+				}
+			},{
+				title: '操作',
+				toolbar: '#action',
+				width: '30%',
+				align: 'right'
+			}]],
+			toolbar: '#toolbarOperation',
+			bottomToolbar: "#batchOperation"
+		});
+
+		//监听工具条
+		table.tool(function (obj) {
+			var data = obj.data;
+			if (obj.event === 'promote') {
+				promote(data.id,data.is_default);
+			} else if (obj.event === 'edit') {
+				window.open(ns.url("shop/diy/edit", {id: data.id}));
+			} else if (obj.event === "delete") {
+				deleteSiteDiyView(data.id);
+			} else if (obj.event === "setHome") {
+				$.ajax({
+					type: "post",
+					url: ns.url("shop/diy/setHome"),
+					data: {'id': data.id},
+					dataType: "JSON",
+					success: function (res) {
+						layer.msg(res.message);
+						if (res.code >= 0) {
+							table.reload();
+						}
+					}
+				});
+			} else if (obj.event === "copy") {
+				layer.confirm('确定要复制该微页面模板吗？', function (index) {
+					$.ajax({
+						type: "post",
+						url: ns.url("shop/diy/copySiteDiyView"),
+						data: {'id': data.id},
+						dataType: "JSON",
+						success: function (res) {
+							layer.msg(res.message);
+							if (res.code >= 0) {
+								table.reload();
+							}
+						}
+					});
+					layer.close(index);
+				});
+			}
+		});
+
+		//批量操作
+		table.bottomToolbar(function (obj) {
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			switch (obj.event) {
+				case "delete":
+					var id_array = [];
+					for (var i in obj.data) id_array.push(obj.data[i].id);
+					deleteSiteDiyView(id_array.toString());
+					break;
+			}
+		});
+
+		//批量操作
+		table.toolbar(function (obj) {
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			switch (obj.event) {
+				case "delete":
+					var id_array = [];
+					for (var i in obj.data) id_array.push(obj.data[i].id);
+					deleteSiteDiyView(id_array.toString());
+					break;
+			}
+		});
+
+	});
+
+	// 删除店铺微页面
+	function deleteSiteDiyView(id_array) {
+		layer.confirm('确定要删除这些微页面模板吗', function (index) {
+			$.ajax({
+				url: ns.url("shop/diy/deleteSiteDiyView"),
+				data: {'id': id_array},
+				dataType: "JSON",
+				success: function (res) {
+					layer.msg(res.message);
+					if (res.code == 0) {
+						table.reload();
+					}
+				}
+			});
+			layer.close(index);
+		});
+	}
+
+	// 推广链接
+	function promote(id,is_default) {
+		$.ajax({
+			type: "POST",
+			url: ns.url("shop/diy/promote"),
+			data: {
+				id: id,
+				is_default:is_default
+			},
+			dataType: 'JSON',
+			success: function (res) {
+				if (res.code == 0) {
+					var data = res.data.path;
+					if (data.h5.status == 1) {
+						layui.use('laytpl', function () {
+							var laytpl = layui.laytpl;
+							$.ajax({
+								type: 'get',
+								url: res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString()),
+								dataType: 'json',
+								error: function (obj){
+									laytpl($("#promote").html()).render(res.data, function (html) {
+										var layerIndex = layer.open({
+											title: '微页面',
+											skin: 'layer-tips-class',
+											type: 1,
+											area: ['600px', '700px'],
+											content: html,
+											success: function () {
+												if(obj.status == 0 || obj.status == 200){
+													$("#promote #iframe").show();
+													$(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
+												} else {
+													$(".goods-preview .phone-wrap .iframe-wrap .empty").show();
+													$("#h5_preview #iframe").hide();
+												}
+												var url = res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString());
+												$("#promote #iframe").attr("src",url);
+											}
+										});
+									});
+								},
+								success: function (obj){
+									laytpl($("#promote").html()).render(res.data, function (html) {
+										var layerIndex = layer.open({
+											title: '微页面',
+											skin: 'layer-tips-class',
+											type: 1,
+											area: ['600px', '700px'],
+											content: html,
+											success: function () {
+												if(obj.status == 0 || obj.status == 200){
+													$("#promote #iframe").show();
+													$(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
+												} else {
+													$(".goods-preview .phone-wrap .iframe-wrap .empty").show();
+													$("#h5_preview #iframe").hide();
+												}
+												var url = res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString());
+												$("#promote #iframe").attr("src",url);
+											}
+										});
+									});
+								},
+
+							});
+						})
+
+					}else{
+						layer.msg('加载失败，请重试');
+					}
+				} else {
+					layer.msg('加载失败，请重试');
+				}
+			}
+		});
+	}
+</script>
+{/block}

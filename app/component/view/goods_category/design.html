@@ -1,0 +1,56 @@
+<nc-component :data="data[index]" class="goods-category">
+	
+	<!-- 预览 -->
+	<template slot="preview">
+		<div class="real-image-box" data-disabled="1">
+			<img :src="'{$resource_path}/goods_category/img/category_style_' + nc.template + '.jpg'">
+		</div>
+	</template>
+	
+	<!-- 内容编辑 -->
+	<template slot="edit-content">
+
+		<template v-if="nc.lazyLoad">
+			<goods-category></goods-category>
+		</template>
+
+		<div class="goods-category-popup-wrap">
+			<div class="goods-classification-style layui-form">
+				<ul class="style-content">
+					<li>
+						<div  :class="{'style-img-box':true,'selected border-color': nc.template == 1}">
+							<img src="{$resource_path}/goods_category/img/category_style_1.jpg" alt="">
+						</div>
+						<div  :class="{'style-img-box':true,'selected border-color': nc.template == 2}">
+							<img src="{$resource_path}/goods_category/img/category_style_2.jpg" alt="">
+						</div>
+						<div :class="{'style-img-box':true,'selected border-color': nc.template == 3}">
+							<img src="{$resource_path}/goods_category/img/category_style_3.jpg" alt="">
+						</div>
+					</li>
+				</ul>
+				<input type="hidden" class="layui-input" name="level">
+				<input type="hidden" class="layui-input" name="template">
+
+				<div class="btn-box">
+					<button class="layui-btn" lay-submit lay-filter="confirm">确定</button>
+					<button class="layui-btn layui-btn-primary back">返回</button>
+				</div>
+
+			</div>
+		</div>
+	</template>
+
+	<!-- 样式编辑 -->
+	<template slot="edit-style"></template>
+	
+	<!-- 资源 -->
+	<template slot="resource">
+		<js>
+			var goodsCategoryResourcePath = "{$resource_path}";
+		</js>
+		<css src="{$resource_path}/goods_category/css/design.css"></css>
+		<js src="{$resource_path}/goods_category/js/design.js"></js>
+	</template>
+
+</nc-component>

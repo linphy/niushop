@@ -1,0 +1,90 @@
+{extend name="base"/}
+
+{block name="resources"}
+<style>
+    .card-common:first-of-type{margin-top: 0;}
+    .layui-card-body{display: flex;padding-bottom: 0 !important;padding-right: 50px !important;padding-left: 50px !important;flex-wrap: wrap;}
+    .layui-card-body .content{width: 33.3%;display: flex;flex-direction: column;margin-bottom: 30px;justify-content: center;}
+    .layui-card-body .content .title{color: #909399;font-size: 14px;}
+    .layui-card-body .money{color: #303133;font-size: 26px;margin-top: 10px;max-width: 250px;}
+    .layui-card-body .bottom-title{color: #909399;font-size: 14px;margin-top: 5px;}
+    .table-bottom .layui-table-page{top: 0;position: static;}
+    .table-tab .layui-tab-content{margin-bottom: 0;}
+    .layui-layout-admin.admin-style-2 .screen{margin-bottom: 15px;}
+    .align-center {text-align: center!important;}
+    .layui-table td, .layui-table th {padding: 15px}
+</style>
+{/block}
+
+{block name="main"}
+<div class="layui-card card-common card-brief">
+    <div class="layui-card-header">
+        <div>
+            <span class="card-title">积分概况</span>
+        </div>
+    </div>
+    <div class="layui-card-body">
+
+        <div class="content">
+            <p class="title">可用积分 <a href="{:addon_url('shop/memberaccount/point')}" class="text-color">明细</a></p>
+            <p class="money">{$total_usable_point}</p>
+        </div>
+        <div class="content">
+            <p class="title">累计发放积分 <a href="{:addon_url('shop/memberaccount/point')}" class="text-color">明细</a></p>
+            <p class="money">{$grant_point}</p>
+        </div>
+        <div class="content">
+            <p class="title">累计使用积分 <a href="{:addon_url('shop/memberaccount/point')}" class="text-color">明细</a></p>
+            <p class="money">{$consume_point}</p>
+        </div>
+    </div>
+</div>
+
+<div class="layui-card card-common card-brief">
+    <div class="layui-card-header">
+        <div>
+            <span class="card-title">积分规则</span>
+        </div>
+    </div>
+    <div class="layui-card-body" style="padding: 10px 25px!important;">
+        <table class="layui-table" lay-skin="nob">
+            <colgroup>
+                <col width="20%">
+                <col width="50%">
+                <col width="15%">
+                <col width="15%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>规则名称</th>
+                    <th>规则详情</th>
+                    <th>更新时间</th>
+                    <th class="align-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach name="$rule" item="vo"}
+                <tr>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.content}</td>
+                    <td>{if $vo.update_time}{:time_to_date($vo.update_time)}{else/}-{/if}</td>
+                    <td class="align-center"><a href="{:addon_url($vo.url)}" class="text-color" target="_blank">查看</a></td>
+                </tr>
+                {/foreach}
+            <tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+
+<script>
+    var form, laydate;
+    layui.use(['laydate','form', 'element'], function(){
+        form = layui.form;
+        laydate = layui.laydate;
+    })
+</script>
+{/block}

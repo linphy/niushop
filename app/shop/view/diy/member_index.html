@@ -1,0 +1,51 @@
+{extend name="base"/}
+
+{block name="resources"}
+<link rel="stylesheet" href="SHOP_CSS/diy_member.css">
+{/block}
+
+{block name="main"}
+<div id="diyView" class="diy-view">
+
+    <div class="diy-wrap">
+        <!-- 展示区域 -->
+        <div class="preview-wrap">
+            <div class="phone-wrap" v-if="value">
+                <div class="preview-head">
+                    <img src="STATIC_EXT/diyview/img/preview_head.png" alt="">
+                </div>
+                <diy-member-info ref="memberInfo" :curr="currComponent" :value="value" @click="selectComponent($event)"></diy-member-info>
+                <diy-order ref="order" :curr="currComponent" :value="value" @click="selectComponent($event)"></diy-order>
+                <diy-adv ref="adv" :curr="currComponent" :value="value" @click="selectComponent($event)"></diy-adv>
+                <diy-menu ref="menu" :curr="currComponent" :value="value" @click="selectComponent($event)"></diy-menu>
+            </div>
+        </div>
+
+        <!-- 编辑区域 -->
+        <div class="edit-wrap" v-if="value">
+            <component :is="currComponent + '-edit'" :value="value"></component>
+        </div>
+    </div>
+    <div class="footer-wrap">
+        <button class="layui-btn" @click="save">保存</button>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script src="STATIC_JS/vue.js"></script>
+<script src="STATIC_EXT/colorPicker/js/colorpicker.js"></script>
+<script src="STATIC_EXT/diyview/js/ddsort.js"></script>
+{include file="diy/member_info_component"/}
+{include file="diy/order_component"/}
+{include file="diy/adv_component"/}
+{include file="diy/menu_component"/}
+{include file="diy/iconfont_component"/}
+<script src="SHOP_JS/diy_member.js"></script>
+<script>
+    var systemColor = {:json_encode($system_color)};
+    setTimeout(function() {
+        vue._data.value = {:json_encode($diy_info)};
+    }, 300)
+</script>
+{/block}

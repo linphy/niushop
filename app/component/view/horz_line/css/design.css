@@ -1,0 +1,4 @@
+@CHARSET "UTF-8";
+/*辅助线组件*/
+.draggable-element .auxiliary-line-content {height: 0;margin-bottom: 0px;padding-top: 10px;}
+.auxiliary-line-bottom{width: 100%;height: 10px}

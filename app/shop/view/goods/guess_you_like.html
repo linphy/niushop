@@ -1,0 +1,339 @@
+{extend name="base"/}
+{block name="resources"}
+<style>
+    .layui-card.card-common.card-brief .balance-boday{padding-left: 20px}
+    .layui-card.card-common.card-brief .layui-form-radio{margin: 0px}
+    .invoice-content-block .layui-form-select{margin-bottom:10px}
+    .invoice-content-block .layui-form-select:last-child{margin-bottom:0}
+    .invoice-content-block .item{position:relative;margin-bottom:10px}
+    .invoice-content-block .item .layui-icon-close{font-size:12px;position:absolute;top:-8px;right:-8px;width:16px;height:16px;line-height:16px;text-align:center;color:#fff;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;background:rgba(0,0,0,.3);cursor:pointer}
+</style>
+{/block}
+{block name="main"}
+
+<div class="layui-form">
+    <div class="layui-card card-common card-brief">
+        <div class="layui-form-item balance-boday">
+            <label class="layui-form-label">适用页面：</label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="goodsdetail" value="1" lay-skin="primary" title="商品详情" {if isset($guess_you_like.goodsdetail) && $guess_you_like.goodsdetail == 1} checked {/if}>
+                    <input type="checkbox" name="cart" value="1" lay-skin="primary" title="购物车"  {if isset($guess_you_like.cart) && $guess_you_like.cart == 1} checked {/if}>
+                    <input type="checkbox" name="collect" value="1" lay-skin="primary" title="关注页面"  {if isset($guess_you_like.collect) && $guess_you_like.collect == 1} checked {/if}>
+                    <input type="checkbox" name="memberindex" value="1" lay-skin="primary" title="会员中心" {if isset($guess_you_like.memberindex) && $guess_you_like.memberindex == 1} checked {/if} >
+                    {if addon_is_exit('supermember')}
+                    <input type="checkbox" name="supermember" value="1" lay-skin="primary" title="超级会员卡" {if isset($guess_you_like.supermember) && $guess_you_like.supermember == 1} checked {/if} >
+                    {/if}
+
+                    {if addon_is_exit('divideticket')}
+                    <input type="checkbox" name="guafen" value="1" lay-skin="primary" title="好友瓜分券" {if isset($guess_you_like.guafen) && $guess_you_like.guafen == 1} checked {/if} >
+                    {/if}
+                    <input type="checkbox" name="orderdetail" value="1" lay-skin="primary" title="订单详情" {if isset($guess_you_like.orderdetail) && $guess_you_like.orderdetail == 1} checked {/if} >
+
+                </div>
+            </div>
+            <div class="word-aux">是否显示设置，控制猜你喜欢模块在页面中的显示与隐藏</div>
+        </div>
+        <div class="layui-form-item balance-boday" style="margin-top: 30px" id="type_show">
+            <label class="layui-form-label">数据来源：</label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline">
+                    <input type="radio" name="type_show" lay-filter="oneRadio" value="1" title="按排序获取" autocomplete="off" class="layui-input len-long" {if $guess_you_like.type_show == 1} checked {/if}>
+                    <input type="radio" name="type_show" lay-filter="oneRadio" value="2" title="按最近浏览" autocomplete="off" class="layui-input len-long" {if $guess_you_like.type_show == 2} checked {/if}>
+                    <input type="radio" name="type_show" lay-filter="oneRadio" value="3" title="按销量获取" autocomplete="off" class="layui-input len-long" {if $guess_you_like.type_show == 3} checked {/if}>
+                    <input type="radio" name="type_show" lay-filter="oneRadio" value="4" title="手动设置" autocomplete="off" class="layui-input len-long" {if $guess_you_like.type_show == 4} checked {/if}>
+                </div>
+            </div>
+            <div class="word-aux" id="detail_1">默认获取，会按照商品列表中商品的排序作为数据来源</div>
+            <div class="word-aux" id="detail_2" style="display: none;">按最近浏览，会根据会员最近浏览的商品类型在同类商品作为数据来源</div>
+            <div class="word-aux" id="detail_3" style="display: none;">按销量获取。会根据当前畅销的商品获取商品作为数据来源</div>
+            <div class="word-aux" id="detail_4" style="display: none;">手动设置，按照手动设置的商品作为数据来源</div>
+            <div class="layui-form-item goods_list" style="display:none">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-block">
+                    <table id="selected_sku_list"></table>
+                    <input type="hidden" name="goods_ids" lay-verify="goods_ids">
+                    <button class="layui-btn" onclick="addGoods()">选择商品</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <button class="layui-btn" lay-submit lay-filter="save">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 操作 -->
+<script type="text/html" id="operation">
+    <div class="table-btn">
+        <a class="layui-btn" onclick="delGoods({{d.goods_id}})">删除</a>
+    </div>
+</script>
+{/block}
+{block name="script"}
+<script>
+    {notempty name="$guess_you_like.goods_list"}
+        var goods_list = JSON.parse('{:json_encode($guess_you_like.goods_list, JSON_UNESCAPED_UNICODE)}');
+    {else/}
+        var goods_list = [];
+    {/notempty}
+</script>
+<script>
+    var  selectedGoodsId = [], goods_id=[];
+    var _system = {if !empty($config.system) && $config.system == 1} 1 {else/} 0 {/if};
+    $.each(goods_list, function(index, item) {
+        var id = item.goods_id;
+        selectedGoodsId.push(id);
+        goods_id.push(id);
+    });
+    $("input[name='goods_ids']").val(goods_id.toString());
+    layui.use(['form', 'laydate', 'laytpl'], function() {
+        var form = layui.form;
+        var repeat_flag = false; //防重复标识
+        form.render();
+        renderTable(goods_list); // 初始化表格
+        is_show();
+        var show_type_value = $('[name="type_show"]:checked').val();
+        show_type(show_type_value);
+        //监听活动商品类型
+        activeRadio(_system);
+        form.on('radio(is_show)', function(data){
+            activeRadio(data.value);
+            is_show()
+        });
+
+        //监听活动商品类型
+        form.on('radio(oneRadio)', function(data){
+            activeRadio(data.value);
+            show_type(data.value);
+        });
+
+        function activeRadio(value){
+            // 后期扩展可以分为俩个数组分别遍历
+            let arr = ['weapp','open','open_pc','open_url'];
+            if(value == 1){
+                // socket_url
+                $("input[name='socket_url']").each(function(i) {
+                    $(this).removeAttr("disabled").removeClass('layui-disabled');
+                });
+                arr.forEach(item=>{
+                    if(item == 'open_url'){
+                        // 当为输入框
+                        $("input[name='open_url']").each(function(i) {
+                            $(this).attr('disabled', 'disabled').addClass('layui-disabled');
+                        });
+                    }else{
+                        //当为单选框
+                        $("input[name='"+ item +"']").each(function(i) {
+                            $(this).attr('disabled', 'disabled');
+                            $(this).next().addClass('layui-radio-disbaled layui-disabled');
+                        });
+                    }
+                })
+            } else {
+                // socket_url
+                $("input[name='socket_url']").each(function(i) {
+                    $(this).attr('disabled', 'disabled').addClass('layui-disabled');
+                });
+                arr.forEach(item=>{
+                    if(item == 'open_url'){
+                        // 当为输入框
+                        $("input[name='open_url']").each(function(i) {
+                            $(this).removeAttr("disabled").removeClass('layui-disabled');
+                        });
+                    }else{
+                        // 当为单选框
+                        $("input[name='"+ item +"']").each(function(i) {
+                            $(this).removeAttr('disabled', 'disabled');
+                            $(this).next().removeClass('layui-radio-disbaled layui-disabled');
+                        });
+                    }
+                })
+            }
+        }
+
+        /**
+         * 表单验证
+         */
+        form.verify({
+            goods_ids: function(value){
+                var type = $('[name="type_show"]:checked').val();
+                if(type==4){
+                    if (!/[\S]+/.test(value)) {
+                        return '请选择商品';
+                    }
+                }
+            },
+        });
+
+        form.on('submit(save)', function(data) {
+            if (repeat_flag) return;
+            repeat_flag = true;
+            data.field.goodsdetail = $('[name="goodsdetail"]:checked').val() ? $('[name="goodsdetail"]:checked').val() : 0;
+            data.field.cart = $('[name="cart"]:checked').val() ? $('[name="cart"]:checked').val() : 0;
+            data.field.collect = $('[name="collect"]:checked').val() ? $('[name="collect"]:checked').val() : 0;
+            data.field.memberindex = $('[name="memberindex"]:checked').val() ? $('[name="memberindex"]:checked').val() : 0;
+            $.ajax({
+                type: 'POST',
+                url: ns.url("shop/goods/guessyoulike"),
+                data: data.field,
+                dataType: 'JSON',
+                success: function(res) {
+                    repeat_flag = false;
+                    if (res.code == 0 && !res.message) {
+                        location.reload();
+                        return;
+                    }
+                    layer.msg(res.message);
+                }
+            });
+        });
+    });
+
+    /* 商品 */
+    function addGoods(){
+        goodsSelect(function (res) {
+            if (!res.length) return false;
+
+            for(var i=0;i<res.length;i++) {
+                goods_id.push(res[i].goods_id);
+                goods_list.push(res[i]);
+            }
+
+            renderTable(goods_list);
+            $("input[name='goods_ids']").val(goods_id.toString());
+            selectedGoodsId = goods_id;
+
+        }, selectedGoodsId, {mode: "spu"});
+    }
+
+    // 删除选中商品
+    function delGoods(id) {
+        var i, j;
+        $.each(goods_list, function(index, item) {
+            var goods_id = item.goods_id;
+
+            if (id == Number(goods_id)) {
+                i = index;
+            }
+        });
+        goods_list.splice(i, 1);
+        renderTable(goods_list);
+
+        $.each(selectedGoodsId, function(index, item) {
+            if (id == Number(item)) {
+                j = index;
+            }
+        });
+        selectedGoodsId.splice(j, 1);
+        goods_id = selectedGoodsId;
+        $("input[name='goods_ids']").val(goods_id.toString());
+    }
+
+
+    function showDemo(){
+        layer.open({
+            title: false,
+            type: 1,
+            area: ['420px', '720px'],
+            content: '<img src="../public/img/pay.png">'
+        })
+    }
+
+    function is_show(){
+        let goodsdetail = $('[name="goodsdetail"]:checked').val();
+        let cart = $('[name="cart"]:checked').val();
+        let collect = $('[name="collect"]:checked').val();
+        let memberindex = $('[name="memberindex"]:checked').val();
+
+        // if(goodsdetail || cart || collect || memberindex){
+        //     $("#type_show").css("display","block");
+        // }else{
+        //     $("#type_show").css("display","none");
+        // }
+    }
+
+    function show_type(value){
+        if(value == 4){
+            $("#detail_4").css("display","block");
+            $("#detail_3").css("display","none");
+            $("#detail_2").css("display","none");
+            $("#detail_1").css("display","none");
+            $(".goods_list").css("display","block");
+        }else if(value==3){
+            $(".goods_list").css("display","none");
+            $("#detail_4").css("display","none");
+            $("#detail_3").css("display","block");
+            $("#detail_2").css("display","none");
+            $("#detail_1").css("display","none");
+        }else if(value==2){
+            $(".goods_list").css("display","none");
+            $("#detail_4").css("display","none");
+            $("#detail_3").css("display","none");
+            $("#detail_2").css("display","block");
+            $("#detail_1").css("display","none");
+        }else{
+            $(".goods_list").css("display","none");
+            $("#detail_4").css("display","none");
+            $("#detail_3").css("display","none");
+            $("#detail_2").css("display","none");
+            $("#detail_1").css("display","block");
+        }
+    }
+    // 表格渲染
+    function renderTable(goods_list) {
+        //展示已知数据
+        table = new Table({
+            elem: '#selected_sku_list',
+            page: false,
+            limit: Number.MAX_VALUE,
+            cols: [
+                [{
+                    field: 'goods_name',
+                    title: '商品名称',
+                    unresize: 'false',
+                    width: '30%',
+                    templet: function(data) {
+                        var html = '';
+                        html += `
+
+							<div class="table-title">
+							<div class="title-pic">
+
+                               <img src="${data.goods_image ? ns.img(data.goods_image.split(",")[0],'small') : ''}" alt="">
+                            </div>
+                             <div class="title-content">
+                                <p class="multi-line-hiding goods-name">${data.goods_name}</p>
+                             </div>
+
+							</div>
+						`;
+                        return html;
+                    }
+                }, {
+                    field: 'price',
+                    title: '商品价格(元)',
+                    unresize: 'false',
+                    align: 'left',
+                    width: '20%',
+                    templet: function(data) {
+                        return '￥' + data.price;
+                    }
+                }, {
+                    field: 'goods_stock',
+                    title: '库存',
+                    unresize: 'false',
+                    align: 'left',
+                    width: '20%'
+                }, {
+                    title: '操作',
+                    toolbar: '#operation',
+                    unresize: 'false',
+				    align:'right'
+                }],
+            ],
+            data: goods_list,
+        });
+    }
+</script>
+{/block}

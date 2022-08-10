@@ -1,0 +1,213 @@
+{extend name="app/shop/view/base.html"/}
+{block name="resources"}
+<style>
+	.input-text span{margin-right: 15px;}
+	.form-wrap {margin-top: 0;}
+	.file-upload {display: inline-block; margin-right: 5px;}
+</style>
+{/block}
+{block name="main"}
+<div class="layui-form form-wrap">
+	<div class="layui-form-item">
+		<label class="layui-form-label">商户号：</label>
+		<div class="layui-input-block">
+			<input name="mch_id" type="text" value="{$info.value.mch_id ?? ''}" class="layui-input len-long">
+		</div>
+		<div class="word-aux"><span>[MCHID]</span>微信支付商户号</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">APIv2密钥 ：</label>
+		<div class="layui-input-block">
+			<input name="pay_signkey" type="text" value="{$info.value.pay_signkey ?? ''}" class="layui-input len-long">
+		</div>
+		<div class="word-aux"><span>[paySignKey]</span>微信商户API密钥</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">支付证书cert：</label>
+		<div class="layui-input-block">
+			{notempty name="$info.value.apiclient_cert"}
+			<p class="file-upload">已上传</p>
+			{else/}
+			<p class="file-upload">未上传</p>
+			{/notempty}
+			<button type="button" class="layui-btn" id="cert_upload">
+				<i class="layui-icon">&#xe67c;</i>上传文件
+			</button>
+			<input type="hidden" name="apiclient_cert" class="layui-input len-long" value="{$info.value.apiclient_cert ?? ''}">
+		</div>
+		<div class="word-aux">上传apiclient_cert.pem文件</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">支付证书key：</label>
+		<div class="layui-input-block">
+			{notempty name="$info.value.apiclient_key"}
+			<p class="file-upload">已上传</p>
+			{else/}
+			<p class="file-upload">未上传</p>
+			{/notempty}
+			<button type="button" class="layui-btn" id="key_upload">
+				<i class="layui-icon">&#xe67c;</i>上传文件
+			</button>
+			<input type="hidden" name="apiclient_key" class="layui-input len-long" value="{$info.value.apiclient_key ?? ''}">
+		</div>
+		<div class="word-aux">上传apiclient_key.pem文件</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否启用支付：</label>
+		<div class="layui-input-inline">
+			<input type="checkbox" name="pay_status" value="1" lay-skin="switch" {if condition="$info.value && $info.value.pay_status == 1"} checked {/if} />
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否启用退款：</label>
+		<div class="layui-input-inline">
+			<input type="checkbox" name="refund_status" value="1" lay-skin="switch" {if condition="$info.value && $info.value.refund_status == 1"} checked {/if} />
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否启用转账：</label>
+		<div class="layui-input-inline">
+			<input type="checkbox" name="transfer_status" value="1" lay-skin="switch" {if condition="$info.value && $info.value.transfer_status == 1"} checked {/if} lay-filter="transfer_status"/>
+		</div>
+	</div>
+
+	<div class="transfer-config" {if condition="!$info.value || $info.value.transfer_status != 1"}style="display:none;"{/if}>
+		<div class="layui-form-item">
+			<label class="layui-form-label">转账使用产品：</label>
+			<div class="layui-input-inline">
+				<input type="radio" title="企业付款到零钱" name="transfer_type" lay-filter="transfer_type" value="v2" {if !$info.value || ($info.value && $info.value.transfer_type eq 'v2')}checked{/if}>
+				<input type="radio" title="商家转账到零钱" name="transfer_type" lay-filter="transfer_type" value="v3" {if $info.value && $info.value.transfer_type eq 'v3'}checked{/if}>
+			</div>
+		</div>
+
+		<div class="v3-config" {if condition="!$info.value || $info.value.transfer_type != 'v3'"}style="display:none;"{/if}>
+			<div class="layui-form-item">
+				<label class="layui-form-label">微信支付平台证书：</label>
+				<div class="layui-input-block">
+					{notempty name="$info.value.plateform_cert"}
+					<p class="file-upload">已上传</p>
+					{else/}
+					<p class="file-upload">未上传</p>
+					{/notempty}
+					<button type="button" class="layui-btn" id="plateform_upload">
+						<i class="layui-icon">&#xe67c;</i>上传文件
+					</button>
+					<input type="hidden" name="plateform_cert" class="layui-input len-long" value="{$info.value.plateform_cert ?? ''}">
+				</div>
+				<div class="word-aux">微信支付平台证书</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-row">
+		<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+		<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script>
+	layui.use(['form'], function() {
+		var form = layui.form,
+			repeat_flag = false; //防重复标识
+		form.render();
+
+		form.on('switch(transfer_status)', function (data) {
+			if ($(data.elem).is(':checked')) {
+				$('.transfer-config').show()
+			} else {
+				$('.transfer-config').hide()
+			}
+		})
+
+		form.on('radio(transfer_type)', function (data) {
+			if (data.value == 'v3') {
+				$('.v3-config').show()
+			} else {
+				$('.v3-config').hide()
+			}
+		})
+
+		new Upload({
+			elem: '#cert_upload',
+			url: ns.url("wechatpay://shop/pay/uploadwechatcert"),
+			accept: 'file',
+			callback:function (res) {
+				if (res.code >= 0) {
+					$("input[name='apiclient_cert']").val(res.data.path);
+					$("input[name='apiclient_cert']").siblings(".file-upload").text("已上传");
+				}
+			}
+		});
+
+		new Upload({
+			elem: '#key_upload',
+			url: ns.url("wechatpay://shop/pay/uploadwechatcert"),
+			accept: 'file',
+			callback:function (res) {
+				if (res.code >= 0) {
+					$("input[name='apiclient_key']").val(res.data.path);
+					$("input[name='apiclient_key']").siblings(".file-upload").text("已上传");
+				}
+			}
+		});
+
+		new Upload({
+			elem: '#plateform_upload',
+			url: ns.url("wechatpay://shop/pay/uploadwechatcert"),
+			accept: 'file',
+			callback:function (res) {
+				if (res.code >= 0) {
+					$("input[name='plateform_cert']").val(res.data.path);
+					$("input[name='plateform_cert']").siblings(".file-upload").text("已上传");
+				}
+			}
+		});
+
+		/**
+		 * 监听提交
+		 */
+		form.on('submit(save)', function(data) {
+			
+			if (repeat_flag) return false;
+			repeat_flag = true;
+
+			$.ajax({
+				url: ns.url("wechatpay://shop/pay/config"),
+				data: data.field,
+				dataType: 'JSON',
+				type: 'POST',
+				success: function(res) {
+					repeat_flag = false;
+					
+					if (res.code == 0) {
+						layer.confirm('编辑成功', {
+							title:'操作提示',
+							btn: ['返回列表', '继续操作'],
+							yes: function(){
+								location.href = ns.url("shop/config/pay")
+							},
+							btn2: function() {
+								location.reload();
+							}
+						});
+					}else{
+						layer.msg(res.message);
+					}
+				}
+			});
+		});
+	});
+
+	function back() {
+		location.href = ns.url("shop/config/pay");
+	}
+</script>
+{/block}
