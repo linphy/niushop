@@ -9,10 +9,15 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
 默默耕耘，是为了在明天硕果累累；沉淀积累，是为了在未来厚积薄发！！自Niushop单商户V4于2020年上线以来，历时两年时间的迭代更新，应广大用户的要求，Niushop单商户V5时代终于来啦~ V5是一个全新的开始，升级重构多门店、收银一体化、软硬件物联、商品线上线下营销完全打通；前后端代码重组优化80%以上；
 更加强大的DIY自定义装修；完全内置消息队列、Redis缓存服务，是大型商城运营的首选，抓紧下载体验起来吧~
 
-### 操作指南
- [Niushop开源商城单商户V5使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842076)
+ ### 操作指南 
+  :fa-th-list:  [官网地址](https://www.niushop.com)
+ | [服务市场]()
+ | [系统功能]()
+ | [系统演示](https://v5.niuteam.cn/)
+ | [使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842076)
+ | [二开手册]()
  | [论坛地址](https://bbs.niushop.com)
- | [官网地址](https://www.niushop.com)
+ | [留言评论](https://bbs.niushop.com)
 
 ### 内测演示站后台[<a href='https://v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
 <a href='https://v5.niuteam.cn/shop' target="_blank">https://v5.niuteam.cn/shop</a>  账号：admin  密码：niushop168168
@@ -88,8 +93,6 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
     20.在线一键安装部署，自动检测系统环境一键安装，省时省力快捷部署；
 
 
-### 系统功能
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD2.png)
 ### 前端部分界面展示
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF7%E5%89%8D%E7%AB%AF7.jpg)
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF6%E5%89%8D%E7%AB%AF6.jpg)
