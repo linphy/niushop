@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "购卡订单",
+  "usingComponents": {
+    "loading-cover": "/components/loading-cover/loading-cover",
+    "ns-payment": "/components/ns-payment/ns-payment"
+  }
+}

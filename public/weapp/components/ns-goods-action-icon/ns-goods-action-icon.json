@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "ns-contact": "/components/ns-contact/ns-contact"
+  }
+}

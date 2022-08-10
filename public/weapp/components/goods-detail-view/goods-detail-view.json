@@ -1,0 +1,12 @@
+{
+  "component": true,
+  "usingComponents": {
+    "pengpai-fadein-out": "/components/pengpai-fadein-out/pengpai-fadein-out",
+    "diy-icon": "/components/diy-components/diy-icon",
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "ns-goods-recommend": "/components/ns-goods-recommend/ns-goods-recommend",
+    "ns-copyright": "/components/ns-copyright/ns-copyright",
+    "ns-login": "/components/ns-login/ns-login",
+    "to-top": "/components/toTop/toTop"
+  }
+}

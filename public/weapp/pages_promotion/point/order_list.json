@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "ns-empty": "/components/ns-empty/ns-empty",
+    "ns-payment": "/components/ns-payment/ns-payment",
+    "loading-cover": "/components/loading-cover/loading-cover"
+  }
+}

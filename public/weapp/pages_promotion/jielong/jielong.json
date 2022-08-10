@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "社群接龙",
+  "usingComponents": {
+    "uni-count-down": "/components/uni-count-down/uni-count-down",
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "ns-login": "/components/ns-login/ns-login",
+    "loading-cover": "/components/loading-cover/loading-cover",
+    "ns-goods-sku-category": "/components/ns-goods-sku/ns-goods-sku-category"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "代付款订单",
+  "usingComponents": {
+    "common-payment": "/components/common-payment/common-payment"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "bind-mobile": "/components/bind-mobile/bind-mobile",
+    "register-reward": "/components/register-reward/register-reward"
+  }
+}

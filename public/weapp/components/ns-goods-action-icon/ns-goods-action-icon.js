@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/ns-goods-action-icon/ns-goods-action-icon"],{"0770":function(t,n,e){"use strict";e.r(n);var r=e("a14e"),c=e.n(r);for(var a in r)"default"!==a&&function(t){e.d(n,t,(function(){return r[t]}))}(a);n["default"]=c.a},4766:function(t,n,e){"use strict";var r=e("dcbd"),c=e.n(r);c.a},"5d47":function(t,n,e){"use strict";e.r(n);var r=e("671a"),c=e("0770");for(var a in c)"default"!==a&&function(t){e.d(n,t,(function(){return c[t]}))}(a);e("4766");var o,u=e("f0c5"),i=Object(u["a"])(c["default"],r["b"],r["c"],!1,null,null,null,!1,r["a"],o);n["default"]=i.exports},"671a":function(t,n,e){"use strict";e.d(n,"b",(function(){return c})),e.d(n,"c",(function(){return a})),e.d(n,"a",(function(){return r}));var r={nsContact:function(){return e.e("components/ns-contact/ns-contact").then(e.bind(null,"cdb5"))}},c=function(){var t=this,n=t.$createElement,e=(t._self._c,"客服"!=t.text&&t.cornerMark.length?parseInt(t.cornerMark):null);t.$mp.data=Object.assign({},{$root:{m0:e}})},a=[]},a14e:function(t,n,e){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default=void 0;var r={name:"ns-goods-action-icon",props:{icon:{type:String,default:""},text:{type:String,default:""},cornerMark:{type:String,default:""},cornerMarkBg:{type:String,default:""},cornerMarkColor:{type:String,default:"#fff"},openType:{type:String,default:""},sendData:{type:Object,default:function(){return{title:"",path:"",img:""}}},chatParam:{type:Object,default:function(){return{}}}},methods:{clickEvent:function(){this.$emit("click")}}};n.default=r},dcbd:function(t,n,e){}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/ns-goods-action-icon/ns-goods-action-icon-create-component',
+    {
+        'components/ns-goods-action-icon/ns-goods-action-icon-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("5d47"))
+        })
+    },
+    [['components/ns-goods-action-icon/ns-goods-action-icon-create-component']]
+]);

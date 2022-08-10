@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/ns-chat/ns-chat-order"],{"280c":function(e,r,t){"use strict";Object.defineProperty(r,"__esModule",{value:!0}),r.default=void 0;var o={name:"ns-chat-order",props:{orderId:{type:[Number,String]},isCanSend:Boolean,orderdetails:{type:[Object]}},data:function(){return{orderInfo:{}}},mounted:function(){this.getGoodsInfo()},methods:{getGoodsInfo:function(){var e=this;this.orderId&&this.$api.sendRequest({url:"/api/order/detail",data:{order_id:this.orderId},success:function(r){r.code>=0&&(e.orderInfo=r.data)}})},sendMsg:function(){this.$emit("sendMsg","order")}}};r.default=o},"283b":function(e,r,t){"use strict";t.r(r);var o=t("64f1"),n=t("3d34");for(var d in n)"default"!==d&&function(e){t.d(r,e,(function(){return n[e]}))}(d);t("b180");var a,i=t("f0c5"),s=Object(i["a"])(n["default"],o["b"],o["c"],!1,null,null,null,!1,o["a"],a);r["default"]=s.exports},"3d34":function(e,r,t){"use strict";t.r(r);var o=t("280c"),n=t.n(o);for(var d in o)"default"!==d&&function(e){t.d(r,e,(function(){return o[e]}))}(d);r["default"]=n.a},"64f1":function(e,r,t){"use strict";var o;t.d(r,"b",(function(){return n})),t.d(r,"c",(function(){return d})),t.d(r,"a",(function(){return o}));var n=function(){var e=this,r=e.$createElement,t=(e._self._c,e.orderdetails?e.$util.img(e.orderdetails.order_goods?e.orderdetails.order_goods[0].sku_image:""):null),o=!e.orderdetails&&e.orderInfo?e.$util.img(e.orderInfo.order_goods?e.orderInfo.order_goods[0].sku_image:""):null;e.$mp.data=Object.assign({},{$root:{g0:t,g1:o}})},d=[]},6885:function(e,r,t){},b180:function(e,r,t){"use strict";var o=t("6885"),n=t.n(o);n.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/ns-chat/ns-chat-order-create-component',
+    {
+        'components/ns-chat/ns-chat-order-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("283b"))
+        })
+    },
+    [['components/ns-chat/ns-chat-order-create-component']]
+]);

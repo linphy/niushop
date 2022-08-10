@@ -1,0 +1,1 @@
+<page-meta page-style="{{themeColor}}"></page-meta><view><view class="closeBox"><image src="{{$root.g0}}" mode="widthFix"></image><text class="close-title">{{textVal}}</text></view></view>

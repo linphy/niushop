@@ -1,0 +1,1 @@
+<page-meta page-style="{{themeColor}}" class="data-v-7f1ecd00"></page-meta><view class="data-v-7f1ecd00"><common-payment vue-id="5c79021e-1" api="{{api}}" create-data-key="pintuanOrderCreateData" data-ref="payment" class="data-v-7f1ecd00 vue-ref" bind:__l="__l"></common-payment></view>

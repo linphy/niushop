@@ -1,0 +1,10 @@
+{
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "uni-count-down": "/components/uni-count-down/uni-count-down",
+    "ns-contact": "/components/ns-contact/ns-contact",
+    "ns-payment": "/components/payment/payment",
+    "loading-cover": "/components/loading-cover/loading-cover",
+    "ns-goods-recommend": "/components/ns-goods-recommend/ns-goods-recommend"
+  }
+}

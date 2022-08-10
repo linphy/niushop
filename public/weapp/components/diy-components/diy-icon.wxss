@@ -1,0 +1,1 @@
+.diy-icon{width:100%;height:100%;font-size:100%;color:#000;display:flex;align-items:center;justify-content:center}.diy-icon .icondiy{font-size:50%;line-height:1;padding:1rpx}.diy-icon .icondiy.gradient{-webkit-background-clip:text!important;-webkit-text-fill-color:transparent}

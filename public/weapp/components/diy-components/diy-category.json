@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "diy-category-item": "/components/diy-components/diy-category-item",
+    "ns-goods-sku-category": "/components/ns-goods-sku/ns-goods-sku-category"
+  }
+}

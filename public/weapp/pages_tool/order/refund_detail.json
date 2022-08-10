@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "ns-contact": "/components/ns-contact/ns-contact",
+    "loading-cover": "/components/loading-cover/loading-cover"
+  }
+}
