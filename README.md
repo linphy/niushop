@@ -1,8 +1,8 @@
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220801163902.png)
 ### NiuShop开源商城V5开发版【前后端100%开源！！！即将上线】
-
-Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信息
-加入Niushop开发者，构建新零售电商应用开发生态
+ <br/>
+Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信息 <br/>
+**马上加入Niushop开发者，共同构建新零售电商应用开发生态！！！**
 
 ### 产品介绍 
  **快速搭建专属店铺，迅速展开线上业务** <br/>
@@ -127,7 +127,9 @@ git clone -b v3.2.9 https://gitee.com/niushop_team/niushop_b2c_v5_dev
 
 4.本版本源码全部开源;包括前端，后端，无任何加密。
 
-5.马上加入Niushop开发者，构建新零售电商应用开发生态。
+5.商用请仔细审查代码和漏洞，不得用于任一国家许可范围之外的商业应用，产生的一切任何后果责任自负;
+
+6.马上加入Niushop开发者，构建新零售电商应用开发生态。
 
 ### 合作伙伴
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0725/120430_ab7fff0d_6569472.png "画板 1 拷贝 3(4).png")
