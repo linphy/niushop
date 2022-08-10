@@ -258,13 +258,15 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
 
 ### 开源版使用须知
 
-1.仅允许用于个人学习研究使用;
+1.允许用于个人学习、毕业设计、教学案例、公益事业、商业使用;
 
-2.开源版不建议商用，如果商用必须保留版权信息，望自觉遵守;
+2.如果商用必须保留版权信息，请自觉遵守;
 
-3.禁止将本开源的代码和资源进行任何形式任何名义的出售，否则产生的一切任何后果责任由侵权者自负。
+3.禁止将本开源的代码和资源进行任何形式任何名义的出售，否则产生的一切任何后果责任由侵权者自负;
 
-4.本基础版本后台源码全部开源，小程序为uniapp编译版，如需小程序源码，请购买授权。
+4.本版本源码全部开源;包括前端，后端，无任何加密。
+
+5.马上加入Niushop开发者，构建新零售电商应用开发生态。
 
 ### Niushop官方群
  Niushop商城qq开发群1:<a href="https://jq.qq.com/?_wv=1027&k=VrVzi1FI" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群2:<a href="https://jq.qq.com/?_wv=1027&k=MCtjz6B9" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群3:<a href="https://jq.qq.com/?_wv=1027&k=H9FLIfTP" target="_blank"><img src="//pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>
