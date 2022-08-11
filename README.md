@@ -19,6 +19,26 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
  | [论坛地址](https://bbs.niushop.com)
  | [留言评论](https://bbs.niushop.com)
 
+## 相关文档
+
+系统功能：<a href=""  target="_blank">功能清单</a>
+
+系统脑图：<a href=""  target="_blank">思维脑图</a>
+
+安装教程：<a href=""  target="_blank">安装教程</a>
+
+目录结构：<a href=""  target="_blank">目录结构</a>
+
+接口文档：<a href=""  target="_blank">在线接口</a>
+
+数据字典：<a href=""  target="_blank">数据字典</a>
+
+二开教程：<a href=""  target="_blank">niushop Uniapp前端二开视频教程 点击学习</a>
+
+二开文档：<a href=""  target="_blank">二开文档</a>
+
+技术交流社区：<a href=""  target="_blank"></a>
+
 ### 演示站后台[<a href='https://v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
 <a href='https://v5.niuteam.cn/shop' target="_blank">https://v5.niuteam.cn/shop</a>  账号：admin  密码：niushop168168
 ###  演示二维码
@@ -94,13 +114,9 @@ Niushop开源商城开发版 - 前后端全部100%开源，商用保留版权信
 
 
 ### 前端部分界面展示
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF7%E5%89%8D%E7%AB%AF7.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF6%E5%89%8D%E7%AB%AF6.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF2%E5%89%8D%E7%AB%AF2.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF5%E5%89%8D%E7%AB%AF5.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF1%E5%89%8D%E7%AB%AF1.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF3%E5%89%8D%E7%AB%AF3.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF4%E5%89%8D%E7%AB%AF4.jpg)
+![输入图片说明](image/%E5%89%8D%E7%AB%AF%E9%A6%96%E9%A1%B5%E5%89%8D%E7%AB%AF%E9%A6%96%E9%A1%B5.png)
+![输入图片说明](image/%E5%89%8D%E7%AB%AF%E5%88%86%E7%B1%BB%E5%95%86%E5%93%81%E8%AF%A6%E6%83%85%E5%89%8D%E7%AB%AF%E5%95%86%E5%93%81%E5%88%86%E7%B1%BB%E8%AF%A6%E6%83%85.png)
+![输入图片说明](image/%E5%89%8D%E7%AB%AF%E4%BC%9A%E5%91%98%E4%B8%AD%E5%BF%83%E5%89%8D%E7%AB%AF%E4%BC%9A%E5%91%98%E4%B8%AD%E5%BF%83.png)
 
 ### 后端部分界面展示
 ![输入图片说明](image/%E5%90%8E%E7%AB%AF1image.png)
