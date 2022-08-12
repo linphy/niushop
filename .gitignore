@@ -4,9 +4,7 @@
 /.idea
 /.htaccess
 /.buildpath
-/cert.key
 *.log
 *.txt
-/h5
 /web
 /mshop
