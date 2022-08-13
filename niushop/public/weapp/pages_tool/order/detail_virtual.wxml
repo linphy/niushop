@@ -1,0 +1,1 @@
+<page-meta page-style="{{themeColor}}"></page-meta><view><loading-cover class="vue-ref" vue-id="a451e56c-1" data-ref="loadingCover" bind:__l="__l"></loading-cover></view>

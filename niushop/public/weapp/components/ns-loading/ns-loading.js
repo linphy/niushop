@@ -1,0 +1,11 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/ns-loading/ns-loading"],{1013:function(n,t,e){"use strict";e.r(t);var r=e(1014),o=e(1016);for(var u in o)"default"!==u&&function(n){e.d(t,n,(function(){return o[n]}))}(u);e(1018);var i,c=e(14),a=Object(c["default"])(o["default"],r["render"],r["staticRenderFns"],!1,null,null,null,!1,r["components"],i);a.options.__file="components/ns-loading/ns-loading.vue",t["default"]=a.exports},1014:function(n,t,e){"use strict";e.r(t);var r=e(1015);e.d(t,"render",(function(){return r["render"]})),e.d(t,"staticRenderFns",(function(){return r["staticRenderFns"]})),e.d(t,"recyclableRender",(function(){return r["recyclableRender"]})),e.d(t,"components",(function(){return r["components"]}))},1015:function(n,t,e){"use strict";var r;e.r(t),e.d(t,"render",(function(){return o})),e.d(t,"staticRenderFns",(function(){return i})),e.d(t,"recyclableRender",(function(){return u})),e.d(t,"components",(function(){return r}));var o=function(){var n=this,t=n.$createElement;n._self._c},u=!1,i=[];o._withStripped=!0},1016:function(n,t,e){"use strict";e.r(t);var r=e(1017),o=e.n(r);for(var u in r)"default"!==u&&function(n){e.d(t,n,(function(){return r[n]}))}(u);t["default"]=o.a},1017:function(n,t,e){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r={name:"ns-loading",props:{downText:{type:String,default:"加载中"},isRotate:{type:Boolean,default:!1}},data:function(){return{isShow:!0}},methods:{show:function(){this.isShow=!0},hide:function(){this.isShow=!1}}};t.default=r},1018:function(n,t,e){"use strict";e.r(t);var r=e(1019),o=e.n(r);for(var u in r)"default"!==u&&function(n){e.d(t,n,(function(){return r[n]}))}(u);t["default"]=o.a},1019:function(n,t,e){}}]);
+//# sourceMappingURL=../../../.sourcemap/mp-weixin/components/ns-loading/ns-loading.js.map
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/ns-loading/ns-loading-create-component',
+    {
+        'components/ns-loading/ns-loading-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('1')['createComponent'](__webpack_require__(1013))
+        })
+    },
+    [['components/ns-loading/ns-loading-create-component']]
+]);

@@ -1,0 +1,96 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.data-v-a379adb2 .fixed {
+  position: relative;
+  top: 0;
+}
+.cart-empty.data-v-a379adb2 {
+  padding-top: 308rpx;
+}
+.notice-list .notice-item.data-v-a379adb2 {
+  margin: 20rpx 30rpx;
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 32rpx 34rpx 23rpx 34rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+.notice-list .notice-item .title-info.data-v-a379adb2 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2rpx solid #f3f3f3;
+  padding-bottom: 20rpx;
+  overflow: hidden;
+}
+.notice-list .notice-item .title-info .title.data-v-a379adb2 {
+  flex: 4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+.notice-list .notice-item .title-info .title .txt.data-v-a379adb2 {
+  color: #000;
+  font-size: 28rpx;
+  line-height: 28rpx;
+}
+.notice-list .notice-item .title-info .title .tag.data-v-a379adb2 {
+  font-size: 22rpx;
+  color: #FFFFFF;
+  line-height: 28rpx;
+  border-radius: 6rpx;
+  padding: 2rpx 6rpx;
+  margin-right: 10rpx;
+}
+.notice-list .notice-item .title-info .release-time.data-v-a379adb2 {
+  flex: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: 20rpx;
+  color: #909399;
+  text-align: right;
+  font-size: 24rpx;
+}
+.notice-list .notice-item .content.data-v-a379adb2 {
+  margin-top: 10rpx;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  color: #909399;
+  font-size: 22rpx;
+  padding-bottom: 30rpx;
+}
+.notice-list .notice-item .more.data-v-a379adb2 {
+  width: 100%;
+  padding-top: 20rpx;
+  font-size: 24rpx;
+  align-items: center;
+}
+.notice-list .notice-item .more .detail.data-v-a379adb2 {
+  width: 505rpx;
+  float: left;
+  color: #606266;
+  font-size: 24rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+.notice-list .notice-item .more .iconright.data-v-a379adb2 {
+  float: right;
+  color: #909399;
+  font-size: 28rpx;
+}
+

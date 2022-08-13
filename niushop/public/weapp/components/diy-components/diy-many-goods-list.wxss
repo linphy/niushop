@@ -1,0 +1,48 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+scroll-view.data-v-639f5f05 {
+  width: 100%;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 40rpx 20rpx;
+}
+scroll-view .scroll-item.data-v-639f5f05 {
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+scroll-view .scroll-item .item-wrap.data-v-639f5f05 {
+  display: flex;
+  align-items: center;
+}
+scroll-view .scroll-item .split-line.data-v-639f5f05 {
+  display: inline-block;
+  width: 1rpx;
+  height: 30rpx;
+  background-color: #e5e5e5;
+  margin: 0 35rpx;
+}
+scroll-view .scroll-item.active .name.data-v-639f5f05 {
+  font-weight: bold;
+}
+scroll-view .scroll-item.active .desc.data-v-639f5f05 {
+  color: #ffffff;
+  border-radius: 20rpx;
+}
+scroll-view .scroll-item .name.data-v-639f5f05 {
+  font-size: 32rpx;
+  color: #303133;
+  line-height: 1;
+}
+scroll-view .scroll-item .desc.data-v-639f5f05 {
+  font-size: 24rpx;
+  color: #909399;
+  height: 36rpx;
+  line-height: 36rpx;
+  margin-top: 10rpx;
+  min-width: 120rpx;
+}
+

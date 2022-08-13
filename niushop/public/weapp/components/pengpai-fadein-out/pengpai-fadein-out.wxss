@@ -1,0 +1,73 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.message.data-v-22835ea4 {
+  position: absolute;
+  z-index: 8;
+  opacity: 0;
+}
+.round.data-v-22835ea4 {
+  border-radius: 50px;
+}
+.bg-gradual-orange.data-v-22835ea4 {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+.shadow.data-v-22835ea4 {
+  box-shadow: 40rpx 40rpx 50rpx rgba(217, 109, 26, 0.2);
+}
+.flex.data-v-22835ea4 {
+  display: flex;
+  flex-direction: row;
+}
+.justify-start.data-v-22835ea4 {
+  justify-content: flex-start;
+}
+.cu-avatar.data-v-22835ea4 {
+  font-variant: small-caps;
+  display: inline-flex;
+  white-space: nowrap;
+  background-size: cover;
+  background-position: center;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background-color: #ccc;
+  color: #ffffff;
+  position: relative;
+  width: 300rpx;
+  height: 300rpx;
+  font-size: 300rpx;
+}
+.cu-a-sm.data-v-22835ea4 {
+  width: 60rpx;
+  height: 60rpx;
+  font-size: 20rpx;
+}
+.padding-lr-sm.data-v-22835ea4 {
+  padding-left: 20rpx;
+  padding-right: 20rpx;
+}
+.align-center.data-v-22835ea4 {
+  align-items: center;
+}
+.margin-left-xs.data-v-22835ea4 {
+  margin-left: 10rpx;
+}
+.text-bold.data-v-22835ea4 {
+  font-weight: bold;
+}
+.margin-lr-sm.data-v-22835ea4 {
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+}
+.text-sm.data-v-22835ea4 {
+  font-size: 24rpx;
+  color: #ffffff;
+}
+

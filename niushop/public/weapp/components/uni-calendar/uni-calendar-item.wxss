@@ -1,0 +1,69 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.uni-calendar-item__weeks-box.data-v-09f1e40c {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.uni-calendar-item__weeks-box-text.data-v-09f1e40c {
+  font-size: 24rpx;
+  color: #fff;
+}
+.uni-calendar-item__weeks-lunar-text.data-v-09f1e40c {
+  font-size: 28rpx;
+  color: #333;
+}
+.uni-calendar-item__weeks-box-item.data-v-09f1e40c {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+}
+.uni-calendar-item__weeks-box-circle.data-v-09f1e40c {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 16rpx;
+  background-color: #dd524d;
+}
+.uni-calendar-item--disable.data-v-09f1e40c {
+  color: #feaa93;
+}
+.uni-calendar-item--isDay-text.data-v-09f1e40c {
+  color: #fff;
+}
+.uni-calendar-item--isDay.data-v-09f1e40c {
+  color: #000;
+  background-color: #fff;
+  border-radius: 50%;
+}
+.uni-calendar-item--checked.data-v-09f1e40c {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+.uni-calendar-item--multiple.data-v-09f1e40c {
+  background-color: #007aff;
+  color: #fff;
+  opacity: 0.8;
+}
+.uni-calendar-item--before-checked.data-v-09f1e40c {
+  background-color: #ff5a5f;
+  color: #fff;
+}
+.uni-calendar-item--after-checked.data-v-09f1e40c {
+  background-color: #ff5a5f;
+  color: #fff;
+}
+

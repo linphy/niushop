@@ -1,0 +1,1 @@
+<view class="rich-text-box" style="{{(richTextWarpCss)}}"><rich-text nodes="{{html}}"></rich-text></view>

@@ -1,0 +1,71 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.goods-select .top.data-v-2d69825d {
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  background: #FFFFFF;
+}
+.goods-select .top text.data-v-2d69825d {
+  font-size: 30rpx;
+  margin: 0 10rpx;
+  font-weight: bold;
+}
+.goods-select .iconfont.data-v-2d69825d {
+  font-size: 40rpx;
+}
+.goods-select .body.data-v-2d69825d {
+  margin: 30rpx;
+  border-radius: 10rpx;
+  background: #FFFFFF;
+  padding: 30rpx 0 0;
+}
+.goods-select .body .item.data-v-2d69825d {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx 30rpx;
+}
+.goods-select .body .item image.data-v-2d69825d {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 10rpx;
+}
+.goods-select .body .item .title.data-v-2d69825d {
+  width: 368rpx;
+  height: 180rpx;
+  font-size: 28rpx;
+}
+.goods-select .body .item .title text.data-v-2d69825d {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.goods-select .bottom-all.data-v-2d69825d {
+  padding-left: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.goods-select .bottom-all .next.data-v-2d69825d {
+  padding: 16rpx 80rpx;
+  color: #FFFFFF;
+  background: #ff4544;
+}
+.goods-select .bottom-all .nexthover.data-v-2d69825d {
+  background: #e7dcdc !important;
+}
+

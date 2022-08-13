@@ -1,0 +1,164 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.data-v-1be05ebd .fixed {
+  position: relative;
+  top: 0;
+}
+.cart-empty.data-v-1be05ebd {
+  padding-top: 208rpx !important;
+}
+.address-list.data-v-1be05ebd {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 40rpx;
+}
+.address-list .local.data-v-1be05ebd {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 30rpx;
+  background-color: #fff;
+  padding: 30rpx;
+  border-radius: 10rpx;
+}
+.address-list .local text.data-v-1be05ebd {
+  margin-right: 10rpx;
+}
+.address-list .address-item.data-v-1be05ebd {
+  margin: 20rpx 0 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  padding: 30rpx;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+.address-list .address-item .address-item-top.data-v-1be05ebd {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1rpx solid #eeeeee;
+}
+.address-list .address-item .address-item-top .address-top-info.data-v-1be05ebd {
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+}
+.address-list .address-item .address-item-top .address-top-info .address-name.data-v-1be05ebd {
+  color: #000000;
+  font-size: 32rpx;
+}
+.address-list .address-item .address-item-top .address-top-info .address-tel.data-v-1be05ebd {
+  color: #000000;
+  font-size: 32rpx;
+  margin-left: 26rpx;
+}
+.address-list .address-item .address-item-top .address-top-info .address-status.data-v-1be05ebd {
+  color: #f00;
+  font-size: 28rpx;
+  position: absolute;
+  right: 0;
+}
+.address-list .address-item .address-item-top .address-info.data-v-1be05ebd {
+  font-size: 28rpx;
+  color: #909399;
+  margin-top: 10rpx;
+  margin-bottom: 28rpx;
+}
+.address-list .address-item .address-item-bottom.data-v-1be05ebd {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 30rpx;
+}
+.address-list .address-item .address-item-bottom .address-default.data-v-1be05ebd {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  line-height: 1;
+}
+.address-list .address-item .address-item-bottom .address-default .default.data-v-1be05ebd {
+  padding-left: 10rpx;
+}
+.address-list .address-item .address-item-bottom .address-default .iconfont.data-v-1be05ebd {
+  line-height: 1;
+}
+.address-list .address-item .address-item-bottom .address-btn.data-v-1be05ebd {
+  font-size: 28rpx;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+.address-list .address-item .address-item-bottom .address-btn .edit text.data-v-1be05ebd {
+  vertical-align: center;
+  margin-right: 10rpx;
+  font-size: 30rpx;
+}
+.address-list .address-item .address-item-bottom .address-btn .delete.data-v-1be05ebd {
+  padding-left: 40rpx;
+}
+.address-list .address-item .address-item-bottom .address-btn .delete text.data-v-1be05ebd {
+  margin-right: 10rpx;
+  font-size: 26rpx;
+}
+.address-list .btn-add.data-v-1be05ebd {
+  margin-top: 60rpx;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  position: fixed;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.address-list .btn-add .add-address.data-v-1be05ebd {
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 10rpx;
+  margin: 30rpx 0 30rpx;
+}
+.address-list .btn-add .add-address text.data-v-1be05ebd {
+  margin-right: 10rpx;
+  font-size: 28rpx;
+}
+.address-list .wx-add.data-v-1be05ebd {
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+  text-align: center;
+  height: 80rpx;
+  line-height: 80rpx;
+  border: 2rpx solid #cccccc;
+  border-radius: 10rpx;
+}
+.button-wrap.data-v-1be05ebd {
+  height: 250rpx;
+  margin: auto;
+  margin-top: 30rpx;
+  width: calc(100% - 60rpx);
+  z-index: 9;
+  text-align: center;
+  overflow: hidden;
+}
+.button-wrap .add-address.data-v-1be05ebd {
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 10rpx;
+  margin: 30rpx 0 30rpx;
+}
+.button-wrap .add-address text.data-v-1be05ebd {
+  margin-right: 10rpx;
+  font-size: 28rpx;
+}
+.button-wrap .add-wx.data-v-1be05ebd {
+  background-color: none;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+  width: 100%;
+  text-align: center;
+  height: 92rpx;
+  line-height: 92rpx;
+  border: 2rpx solid #cccccc;
+  border-radius: 92rpx;
+}
+

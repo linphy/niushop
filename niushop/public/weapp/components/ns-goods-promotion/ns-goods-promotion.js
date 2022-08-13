@@ -1,0 +1,11 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/ns-goods-promotion/ns-goods-promotion"],{843:function(n,t,e){"use strict";e.r(t);var o=e(844),r=e(846);for(var u in r)"default"!==u&&function(n){e.d(t,n,(function(){return r[n]}))}(u);e(848);var i,c=e(14),s=Object(c["default"])(r["default"],o["render"],o["staticRenderFns"],!1,null,null,null,!1,o["components"],i);s.options.__file="components/ns-goods-promotion/ns-goods-promotion.vue",t["default"]=s.exports},844:function(n,t,e){"use strict";e.r(t);var o=e(845);e.d(t,"render",(function(){return o["render"]})),e.d(t,"staticRenderFns",(function(){return o["staticRenderFns"]})),e.d(t,"recyclableRender",(function(){return o["recyclableRender"]})),e.d(t,"components",(function(){return o["components"]}))},845:function(n,t,e){"use strict";var o;e.r(t),e.d(t,"render",(function(){return r})),e.d(t,"staticRenderFns",(function(){return i})),e.d(t,"recyclableRender",(function(){return u})),e.d(t,"components",(function(){return o}));var r=function(){var n=this,t=n.$createElement;n._self._c},u=!1,i=[];r._withStripped=!0},846:function(n,t,e){"use strict";e.r(t);var o=e(847),r=e.n(o);for(var u in o)"default"!==u&&function(n){e.d(t,n,(function(){return o[n]}))}(u);t["default"]=r.a},847:function(n,t,e){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var o={name:"ns-goods-promotion",props:{promotion:{type:String,default:""}},data:function(){return{goodsPromotion:{type:Array}}},created:function(){},methods:{refresh:function(n){this.goodsPromotion=n},redirectTo:function(n,t){this.$util.redirectTo(n,t)}}};t.default=o},848:function(n,t,e){"use strict";e.r(t);var o=e(849),r=e.n(o);for(var u in o)"default"!==u&&function(n){e.d(t,n,(function(){return o[n]}))}(u);t["default"]=r.a},849:function(n,t,e){}}]);
+//# sourceMappingURL=../../../.sourcemap/mp-weixin/components/ns-goods-promotion/ns-goods-promotion.js.map
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/ns-goods-promotion/ns-goods-promotion-create-component',
+    {
+        'components/ns-goods-promotion/ns-goods-promotion-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('1')['createComponent'](__webpack_require__(843))
+        })
+    },
+    [['components/ns-goods-promotion/ns-goods-promotion-create-component']]
+]);

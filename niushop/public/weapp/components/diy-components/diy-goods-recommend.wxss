@@ -1,0 +1,229 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.goods-list .goods-item.data-v-3b95f027 {
+  line-height: 1;
+}
+.goods-list .goods-item .sale.data-v-3b95f027 {
+  line-height: 1;
+  color: #909399;
+  font-size: 20rpx;
+}
+.goods-list .goods-item .info-wrap .goods-name.data-v-3b95f027 {
+  margin-bottom: 10rpx;
+  line-height: 1.3;
+}
+.goods-list.style-1.data-v-3b95f027 {
+  width: 100%;
+  white-space: nowrap;
+  background-repeat: round;
+}
+.goods-list.style-1 .top-wrap.data-v-3b95f027 {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+}
+.goods-list.style-1 .top-wrap .icondiy.data-v-3b95f027 {
+  border-radius: 50%;
+  font-size: 40rpx;
+  margin-right: 10rpx;
+  width: 70rpx;
+  height: 70rpx;
+  text-align: center;
+  line-height: 70rpx;
+}
+.goods-list.style-1 .top-wrap .line.data-v-3b95f027 {
+  height: 28rpx;
+  margin: 0 10rpx;
+  border: 2rpx solid;
+}
+.goods-list.style-1 .top-wrap .title.data-v-3b95f027 {
+  font-weight: bold;
+  font-size: 32rpx;
+}
+.goods-list.style-1 .top-wrap .sub.data-v-3b95f027 {
+  font-size: 24rpx;
+}
+.goods-list.style-1 .flex-between.data-v-3b95f027 {
+  justify-content: space-between;
+}
+.goods-list.style-1 .swiper.data-v-3b95f027 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 20rpx;
+}
+.goods-list.style-1 .swiper .swiper-item.data-v-3b95f027 {
+  display: flex;
+  align-items: center;
+}
+.goods-list.style-1 .goods-item.data-v-3b95f027 {
+  overflow: hidden;
+  width: 200rpx;
+  display: inline-block;
+  box-sizing: border-box;
+}
+.goods-list.style-1 .goods-item.data-v-3b95f027:nth-child(3n+3) {
+  width: 198rpx;
+}
+.goods-list.style-1 .goods-item.shadow.data-v-3b95f027 {
+  margin-top: 8rpx;
+}
+.goods-list.style-1 .goods-item .goods-img.data-v-3b95f027 {
+  width: 100%;
+  height: 196rpx;
+}
+.goods-list.style-1 .goods-item .info-wrap.data-v-3b95f027 {
+  display: flex;
+  flex-direction: column;
+  padding: 10rpx;
+}
+.goods-list.style-1 .goods-item .info-wrap.multi-content.data-v-3b95f027 {
+  height: 130rpx;
+  box-sizing: border-box;
+}
+.goods-list.style-1 .goods-item .info-wrap .goods-name.data-v-3b95f027 {
+  font-size: 26rpx;
+}
+.goods-list.style-1 .goods-item .info-wrap .goods-name.using-hidden.data-v-3b95f027 {
+  display: block;
+}
+.goods-list.style-1 .goods-item .info-wrap .goods-name.multi-hidden.data-v-3b95f027 {
+  white-space: break-spaces;
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info.data-v-3b95f027 {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info .discount-price.data-v-3b95f027 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info .discount-price .price-wrap.data-v-3b95f027 {
+  line-height: 1;
+  white-space: nowrap;
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info .discount-price .price-wrap .unit.data-v-3b95f027 {
+  font-size: 24rpx;
+  color: var(--base-color);
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info .discount-price .price-wrap .price.data-v-3b95f027 {
+  font-size: 32rpx;
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info .discount-price .price-wrap text.data-v-3b95f027 {
+  font-weight: bold;
+  color: var(--base-color);
+}
+.goods-list.style-1 .goods-item .info-wrap .pro-info .delete-price.data-v-3b95f027 {
+  margin-left: 10rpx;
+  text-decoration: line-through;
+  flex: 1;
+  line-height: 28rpx;
+  color: #909399;
+  font-size: 20rpx;
+}
+.goods-list.style-2.data-v-3b95f027 {
+  width: 100%;
+  white-space: nowrap;
+  background-repeat: round;
+  padding-bottom: 20rpx;
+}
+.goods-list.style-2 .top-wrap.data-v-3b95f027 {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+}
+.goods-list.style-2 .top-wrap .icondiy.data-v-3b95f027 {
+  border-radius: 50%;
+  font-size: 40rpx;
+  margin-right: 20rpx;
+  width: 70rpx;
+  height: 70rpx;
+  text-align: center;
+  line-height: 70rpx;
+}
+.goods-list.style-2 .top-wrap .line.data-v-3b95f027 {
+  height: 28rpx;
+  margin: 0 10rpx;
+  border: 2rpx solid;
+}
+.goods-list.style-2 .top-wrap .title.data-v-3b95f027 {
+  font-weight: bold;
+  font-size: 32rpx;
+}
+.goods-list.style-2 .top-wrap .sub.data-v-3b95f027 {
+  font-size: 24rpx;
+}
+.goods-list.style-2 .swiper.data-v-3b95f027 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 20rpx;
+  padding: 20rpx;
+  border-radius: 20rpx;
+  background-color: #fff;
+}
+.goods-list.style-2 .goods-item.data-v-3b95f027 {
+  overflow: hidden;
+  width: 200rpx;
+  display: inline-block;
+  box-sizing: border-box;
+}
+.goods-list.style-2 .goods-item.shadow.data-v-3b95f027 {
+  margin-top: 8rpx;
+  width: 200rpx;
+}
+.goods-list.style-2 .goods-item .goods-img.data-v-3b95f027 {
+  width: 100%;
+  height: 200rpx;
+}
+.goods-list.style-2 .goods-item .info-wrap.data-v-3b95f027 {
+  padding: 10rpx;
+}
+.goods-list.style-2 .goods-item .info-wrap .goods-name.data-v-3b95f027 {
+  line-height: 1;
+}
+.goods-list.style-2 .goods-item .info-wrap .goods-name.using-hidden.data-v-3b95f027 {
+  display: block;
+}
+.goods-list.style-2 .goods-item .info-wrap .goods-name.multi-hidden.data-v-3b95f027 {
+  line-height: 1.3;
+  height: 68rpx;
+  white-space: break-spaces;
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info.data-v-3b95f027 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info .discount-price.data-v-3b95f027 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info .discount-price .price-wrap.data-v-3b95f027 {
+  line-height: 1.3;
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info .discount-price .price-wrap .unit.data-v-3b95f027 {
+  font-size: 24rpx;
+  color: var(--base-color);
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info .discount-price .price-wrap text.data-v-3b95f027 {
+  font-weight: bold;
+  color: var(--base-color);
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info .discount-price .price-wrap text.data-v-3b95f027:last-of-type {
+  font-size: 32rpx;
+}
+.goods-list.style-2 .goods-item .info-wrap .pro-info .delete-price.data-v-3b95f027 {
+  margin-left: 10rpx;
+  text-decoration: line-through;
+  flex: 1;
+  line-height: 28rpx;
+  color: #909399;
+  font-size: 20rpx;
+}
+

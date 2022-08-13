@@ -1,0 +1,1 @@
+<block wx:if="{{isShow}}"><view class="loading-layer"><block wx:if="{{themeStyle}}"><view class="loading-anim"><view class="box item"><view class="border out item" style="{{'border-left-color:'+(themeStyle.main_color)+';'+('border-top-color:'+(themeStyle.main_color)+';')}}"></view></view></view></block></view></block>

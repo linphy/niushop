@@ -1,0 +1,109 @@
+@charset "UTF-8";
+/**
+ * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ */
+.u-navbar.data-v-58ae6514 {
+  width: 100%;
+  transition: all 0.5s;
+}
+.u-navbar-content-title.data-v-58ae6514 {
+  padding: 0 0 0 30rpx;
+}
+.u-navbar-placeholder.data-v-58ae6514 {
+  height: 80rpx;
+}
+.u-navbar-fixed.data-v-58ae6514 {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 991;
+}
+.u-navbar-inner.data-v-58ae6514 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  align-items: center;
+  padding-bottom: 20rpx;
+}
+.u-navbar-content-title.data-v-58ae6514 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+.u-navbar-content-title .search.data-v-58ae6514 {
+  flex: 0.4;
+  margin-left: 30rpx;
+  padding: 0 20rpx;
+  height: 50rpx;
+  background-color: #fff;
+  text-align: left;
+  border-radius: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border: 1px solid #eeeeee;
+  color: #666666;
+}
+.u-navbar-content-title .search .iconsousuo.data-v-58ae6514 {
+  color: #909399;
+  font-size: 24rpx;
+  margin-right: 10rpx;
+}
+.u-title.data-v-58ae6514 {
+  line-height: 1;
+  font-size: 32rpx;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold;
+}
+.u-title.img.data-v-58ae6514 {
+  height: 60rpx;
+  width: 170rpx;
+  max-width: 170rpx;
+}
+.u-title.img image.data-v-58ae6514 {
+  height: 100%;
+  width: 100%;
+}
+.u-navbar-content-title_img .u-title.data-v-58ae6514 {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold;
+}
+.u-navbar-content-title_img .u-title.img_text.data-v-58ae6514 {
+  display: flex !important;
+  align-items: center;
+  font-size: 28rpx !important;
+}
+.u-navbar-content-title_img .u-title.img_text > view.data-v-58ae6514 {
+  height: 60rpx;
+  line-height: 60rpx;
+  width: 170rpx;
+  margin-right: 20rpx;
+}
+.u-navbar-content-title_img .u-title.img_text > view text.data-v-58ae6514 {
+  font-size: 24rpx;
+}
+.u-navbar-content-title_img .u-title.img_text > view image.data-v-58ae6514 {
+  width: 100%;
+  height: 100%;
+}
+.u-navbar-content-title_img .u-title.img_text > view.data-v-58ae6514:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
