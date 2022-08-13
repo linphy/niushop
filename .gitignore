@@ -1,11 +1,7 @@
 /.project
 /.vscode
 /.settings
-/.idea
-/.htaccess
 /.buildpath
 *.log
 *.txt
-/web
-/mshop
 /.idea
