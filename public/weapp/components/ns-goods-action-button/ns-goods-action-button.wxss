@@ -1,1 +1,0 @@
-.action-buttom-wrap{flex:1;height:70rpx;font-weight:600;font-size:30rpx;line-height:70rpx;border:none;color:#fff;text-align:center;border-radius:10rpx}.action-buttom-wrap.has-second{line-height:50rpx}.action-buttom-wrap.has-second text{display:block;line-height:1.2}.action-buttom-wrap:active{opacity:.8}.action-buttom-wrap.disabled{background:#ccc}

@@ -1,1 +1,0 @@
-<video style="{{(videoWarpCss)}}" src="{{$root.g0}}" poster="{{$root.g1}}" class="data-v-d5ed6348"></video>

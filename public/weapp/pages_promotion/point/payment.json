@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "uni-popup": "/components/uni-popup/uni-popup",
-    "ns-payment": "/components/ns-payment/ns-payment",
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "time-popup": "/components/ns-selectTime/ns-selectTime"
-  }
-}

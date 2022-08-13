@@ -1,1 +1,0 @@
-<page-meta page-style="{{themeColor}}" class="data-v-542f96fa"></page-meta><view class="data-v-542f96fa"><common-payment vue-id="3a98127c-1" api="{{api}}" create-data-key="bargainOrderCreateData" data-ref="payment" class="data-v-542f96fa vue-ref" bind:__l="__l"></common-payment></view>

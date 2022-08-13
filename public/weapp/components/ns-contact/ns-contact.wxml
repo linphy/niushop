@@ -1,1 +1,0 @@
-<view class="contact-wrap"><slot></slot><button class="contact-button" type="default" hover-class="none" open-type="{{openType}}" send-message-title="{{sendMessageTitle}}" send-message-path="{{sendMessagePath}}" send-message-img="{{sendMessageImg}}" data-event-opts="{{[['tap',[['contactServicer',['$event']]]]]}}" bindtap="__e"></button></view>

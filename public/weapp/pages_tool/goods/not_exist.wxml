@@ -1,1 +1,0 @@
-<page-meta page-style="{{themeColor}}"></page-meta><view><view class="closeBox"><image src="{{$root.g0}}" mode="widthFix"></image><text class="close-title">您查看的商品不存在，可能已下架或被删除</text></view></view>

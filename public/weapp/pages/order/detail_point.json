@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "ns-contact": "/components/ns-contact/ns-contact",
-    "ns-payment": "/components/ns-payment/ns-payment",
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "ns-goods-recommend": "/components/ns-goods-recommend/ns-goods-recommend"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "ns-empty": "/components/ns-empty/ns-empty",
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "xiao-star-component": "/components/xiao-star-component/xiao-star-component"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "礼品卡详情",
-  "usingComponents": {
-    "loading-cover": "/components/loading-cover/loading-cover",
-    "uni-popup": "/components/uni-popup/uni-popup"
-  }
-}

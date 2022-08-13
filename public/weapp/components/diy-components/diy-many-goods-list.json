@@ -1,6 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "diy-goods-list": "/components/diy-components/diy-goods-list"
-  }
-}

@@ -1,1 +1,0 @@
-<page-meta page-style="{{themeColor}}"></page-meta><block wx:if="{{show==true}}"><view class="launch-mask"><view class="mask-img"><image src="{{$root.g0}}" mode="aspectFit"></image></view><view class="mask-word">点击右上角跳转到浏览器打开</view></view></block>
