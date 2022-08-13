@@ -1,5 +1,4 @@
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220801163902.png)
- <br/>
+![输入图片说明](https://res.niushop.com/upload/1/common/images/20220813/20220813032129166037528985541.png) <br/>
 ### Niushop开源商城开发版 - 前后端全部100%开源
 
 ### 马上加入Niushop开发者，共同构建新零售电商应用开发生态！！！<br/>
