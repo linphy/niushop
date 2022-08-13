@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5cac35d4-4ee9-476a-a4ce-4cea6662be0b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/niushop_b2c_v4_standard.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/niushop_b2c_v4_standard.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image/前端会员中心前端会员中心.png" beforeDir="false" afterPath="$PROJECT_DIR$/image/front_member.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image/前端分类商品详情前端商品分类详情.png" beforeDir="false" afterPath="$PROJECT_DIR$/image/front_goods.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image/前端首页前端首页.png" beforeDir="false" afterPath="$PROJECT_DIR$/image/front_index.png" afterDir="false" />
-    </list>
+    <list default="true" id="5cac35d4-4ee9-476a-a4ce-4cea6662be0b" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,12 +17,17 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="375">
-                <caret line="99" column="32" selection-start-line="99" selection-start-column="32" selection-end-line="99" selection-end-column="32" />
+              <first_editor relative-caret-position="273">
+                <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
               </first_editor>
               <second_editor />
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/front_goods.png">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -198,15 +195,16 @@
       <option name="presentableId" value="Default" />
       <updated>1653280135305</updated>
       <workItem from="1653280136648" duration="679000" />
-      <workItem from="1660380691206" duration="304000" />
+      <workItem from="1660380691206" duration="566000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="983000" />
+    <option name="totallyTimeSpent" value="1245000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1" y="3" width="1934" height="1100" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="1" side_tool="true" />
@@ -248,9 +246,6 @@
     <entry file="file://$PROJECT_DIR$/微信图片_20220813111515.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/image/front_goods.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/微信图片_20220813111517.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -260,11 +255,14 @@
     <entry file="file://$PROJECT_DIR$/image/front_member.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/image/front_goods.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="375">
-            <caret line="99" column="32" selection-start-line="99" selection-start-column="32" selection-end-line="99" selection-end-column="32" />
+          <first_editor relative-caret-position="273">
+            <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
           </first_editor>
           <second_editor />
         </state>
