@@ -92,7 +92,6 @@
     19.支持队列降低流量高峰，解除代码耦合性，高可用性;
     20.在线一键安装部署，自动检测系统环境一键安装，省时省力快捷部署；
 
-
 ### 前端部分界面展示
 
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_index.png)
