@@ -95,20 +95,20 @@
 
 ### 前端部分界面展示
 
-![输入图片说明](image/front_index.png)
-![输入图片说明](image/front_goods.png)
-![输入图片说明](image/front_member.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_index.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_goods.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_member.png)
 
 ### 后端部分界面展示
 
-![输入图片说明](image/%E5%90%8E%E7%AB%AF1image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF2image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF3image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF4image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF5image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF6image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF7image.png)
-![输入图片说明](image/%E5%90%8E%E7%AB%AF8image.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end1.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end2.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end3.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end4.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end5.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end6.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end7.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end8.png)
 
 #### 好啦！话不多说，相信你早已跃跃欲试了，那就行动起来通过下方链接赶紧下载体验吧！
 ```
