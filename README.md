@@ -94,13 +94,11 @@
 
 
 ### 前端部分界面展示
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF7%E5%89%8D%E7%AB%AF7.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF6%E5%89%8D%E7%AB%AF6.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF2%E5%89%8D%E7%AB%AF2.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF5%E5%89%8D%E7%AB%AF5.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF1%E5%89%8D%E7%AB%AF1.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF3%E5%89%8D%E7%AB%AF3.jpg)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E5%89%8D%E7%AB%AF4%E5%89%8D%E7%AB%AF4.jpg)
+
+![输入图片说明](%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220813111515.jpg)
+![输入图片说明](%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220813111517.jpg)
+![输入图片说明](%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220813111519.jpg)
+
 
 ### 后端部分界面展示
 ![输入图片说明](image/%E5%90%8E%E7%AB%AF1image.png)
