@@ -57,7 +57,10 @@
     Redis 支持
 
 ### Niushop官方群
- NiuShop商城  <a href="https://jq.qq.com/?_wv=1027&k=VrVzi1FI" target="_blank">QQ开发群1<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | <a href="https://jq.qq.com/?_wv=1027&k=MCtjz6B9" target="_blank">QQ开发群2<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /> </a> | qq开发群3:<a href="https://jq.qq.com/?_wv=1027&k=H9FLIfTP" target="_blank">QQ开发群3<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>
+<a href="https://jq.qq.com/?_wv=1027&k=vhqhuiQg" target="_blank">QQ开发群 【Niushop开源商城V5 Dev全开源技术讨论群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
+
+<a href="https://jq.qq.com/?_wv=1027&k=AuMkAK55" target="_blank">QQ开发群 【Niushop开源商城V5交流群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
+
 
 ### V5商城特色
 强大的营销功能模块，丰富的行业模板和装修组件，快速搭建最适合自己的电商平台，轻松获客、裂变。开启电商运营之路。
