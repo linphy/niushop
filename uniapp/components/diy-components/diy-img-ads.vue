@@ -24,11 +24,11 @@
 					v-if="item.imageUrl"
 					@click="$util.diyRedirectTo(item.link)"
 				>
-					<view class="item" :style="{ height: item.imgHeight }"><image :src="$util.img(item.imageUrl)" mode="aspectFit"></image></view>
+					<view class="item" :style="{ height: item.imgHeight }"><image :src="$util.img(item.imageUrl)" mode="aspectFill"></image></view>
 				</swiper-item>
 			</swiper>
 			<!-- #ifdef MP-WEIXIN -->
-			<view v-if="imgAdsValue.list.length" :class="['swiper-dot-box',{'straightLine': imgAdsValue.carouselStyle == 'line'},
+			<view v-if="imgAdsValue.list.length > 1" :class="['swiper-dot-box',{'straightLine': imgAdsValue.carouselStyle == 'line'},
 					{'swiper-left': imgAdsValue.indicatorLocation == 'left'},
 					{'swiper-right': imgAdsValue.indicatorLocation == 'right'}]">
 				<view v-for="(numItem, numIndex) in imgAdsValue.list.length" :key="numIndex" :class="['swiper-dot',{'active':numIndex==swiperIndex}]" :style="[numIndex==swiperIndex&&{'backgroundColor':imgAdsValue.indicatorColor}]"></view>

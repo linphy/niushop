@@ -76,7 +76,9 @@
 								<text v-if="goodsSkuDetail.is_free_shipping">快递 包邮</text>
 								<text v-else>快递 买家承担</text>
 							</block>
-							<text :style="goodsSkuDetail.is_virtual&&'text-align: left'"><text v-if="goodsSkuDetail.sale_show">销量 {{ goodsSkuDetail.sale_num }} {{ goodsSkuDetail.unit }}</text></text>
+							
+							<text v-if="goodsSkuDetail.stock_show">库存 {{ goodsSkuDetail.stock }} {{ goodsSkuDetail.unit }}</text>
+							<text v-if="goodsSkuDetail.sale_show">销量 {{ goodsSkuDetail.sale_num }} {{ goodsSkuDetail.unit }}</text>
 						</view>
 					</view>
 				</view>

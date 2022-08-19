@@ -1,7 +1,6 @@
 <template>
 	<view
 		class="coupon-wrap"
-		
 		v-if="computedCouponList.length > 0"
 		:style="[
 			value.couponType == 'img' && { backgroundImage: 'url(' + $util.img(value.couponBgUrl) + ')' },
@@ -283,6 +282,36 @@
 					</div>
 				</swiper-item>
 			</swiper>
+		</template>
+		
+		<template v-if="value.style == '7'">
+			<scroll-view class="coupon-style-seven" scroll-x="true">
+				<view class="coupon-list" v-for="(item, index) in computedCouponList" :key="index" @click="couponAction(item, index)">
+					<image :src="$util.img('public/uniapp/coupon/style7_bg.png')"></image>
+					<view class="coupon">
+						<view class="coupon-info">
+							<view class="coupon-num" v-if="item.discount == '0.00'" :style="{ color: value.moneyColor }">
+								<text class="coupon-size">{{ item.money | moneyConduct }}</text>
+								<text class="font-size-tag coupon-sign">元</text>
+							</view>
+							<view class="coupon-num" v-else :style="{ color: value.moneyColor }">
+								<text class="coupon-size">{{ item.discount | moneyConduct }}</text>
+								<text class="font-size-tag coupon-sign">折</text>
+							</view>
+						</view>
+						<view class="coupon-type">
+							<text class="coupon-name" :style="{ color: value.limitColor }" v-if="item.at_least > 0">满{{ Number(item.at_least) }}元可用</text>
+							<text class="coupon-name" :style="{ color: value.limitColor }" v-else>无门槛优惠券</text>
+							<view class="coupon-least" :style="{ color: value.limitColor }">有效期至{{ $util.timeStampTurnTime(item.end_time,'yearmonthday') }}</view>
+						</view>
+						<view class="coupon-line"></view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >
+							{{ value.btnStyle.text || '立即领取' }}
+						</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+					</view>
+				</view>
+			</scroll-view>
 		</template>
 		<ns-login ref="login"></ns-login>
 	</view>
@@ -987,6 +1016,82 @@ export default {
 		}
 	}
 }
+
+//风格七
+/deep/ .coupon-style-seven {
+	.uni-scroll-view-content{
+		display: flex;
+	}
+	.coupon-list {
+		margin-right: 16rpx;
+		flex-shrink: 0;
+		width: 608rpx;
+		height: 160rpx;
+		position: relative;
+		padding: 10rpx 0;
+
+		image {
+			width: 100%;
+			height: 100%;
+		}
+
+		.coupon {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.coupon-info {
+				min-width: 25%;
+				max-width: 30%;
+				padding: 0;
+
+				.coupon-num {
+					margin: 0;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					width: 100%;
+
+					.coupon-size {
+						font-size: 60rpx;
+						font-weight: bold;
+						margin-right: 4rpx;
+					}
+				}
+			}
+
+			.coupon-line {
+				border-left: 1rpx dashed #FD463E;
+				height: 65%;
+			}
+			.coupon-type {
+				.coupon-name {
+					display: block;
+					font-size: 32rpx;
+					font-weight: bold;
+					width: 280rpx;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+				.coupon-least {
+					font-size: $font-size-tag;
+					color: #999;
+				}
+			}
+			.coupon-get {
+				padding: 4rpx 40rpx;
+				width: 130rpx;
+				font-size: $font-size-tag;
+				box-sizing: border-box;
+				flex-shrink: 0;
+			}
+		}
+	}
+}
+
 
 /deep/.uni-scroll-view ::-webkit-scrollbar {
 	/* 隐藏滚动条，但依旧具备可以滚动的功能 */

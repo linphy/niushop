@@ -163,7 +163,7 @@
 					<view class="cart-empty">
 						<image :src="$util.img('public/uniapp/cart/empty.png')" mode="aspectFit"></image>
 						<view class="color-tip margin-top margin-bottom">{{ $lang('emptyTips') }}</view>
-						<button type="primary" size="mini" class="button" v-if="token != ''" @click="$util.redirectTo('/pages/index/index', {}, 'reLaunch')">去逛逛</button>
+						<button type="primary" size="mini" class="button visit-the" v-if="token != ''" @click="$util.redirectTo('/pages/index/index', {}, 'reLaunch')">去逛逛</button>
 						<button type="primary" size="mini" class="button" v-else @click="toLogin">去登录</button>
 					</view>
 				</block>
@@ -289,7 +289,7 @@
 		<loading-cover ref="loadingCover"></loading-cover>
 		<!-- 底部tabBar -->
 		<view id="tab-bar">
-			<diy-bottom-nav type="shop"></diy-bottom-nav>
+			<diy-bottom-nav></diy-bottom-nav>
 		</view>
 		<!-- 返回顶部 -->
 		<to-top v-if="showTop" @toTop="scrollToTopNative()"></to-top>

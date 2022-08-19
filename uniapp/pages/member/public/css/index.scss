@@ -345,6 +345,8 @@
 .adv-wrap {
 	width: 100%;
 	overflow: hidden;
+	position: relative;
+	z-index: 1;
 	
 	.swiper-wrap {
 		width: 100%;

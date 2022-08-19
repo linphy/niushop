@@ -39,6 +39,9 @@
 }
 
 .cart-wrap {
+	margin: 0 24rpx 0;
+	border-radius: 16rpx;
+	overflow: hidden;
 
 	.fixed-wrap {
 		height: 116rpx;
@@ -48,7 +51,19 @@
 		background: #fff;
 		box-sizing: border-box;
 		position: relative;
-		padding: 0 0 30rpx 30rpx;
+		padding: 30rpx 0 30rpx 30rpx;
+		&::after{
+			content: "";
+			position: absolute;
+			left: 20rpx;
+			right: 20rpx;
+			height: 2rpx;
+			bottom: 0;
+			background-color: #f2f2f2;
+		}
+		&:last-of-type::after{
+			height: 0;
+		}
 
 		.goods-wrap {
 			display: flex;
@@ -88,8 +103,7 @@
 			.goods-info {
 				flex: 1;
 				width: 0;
-				border-bottom: 2rpx solid #eee;
-				padding: 0 30rpx 30rpx 20rpx;
+				padding: 0 30rpx;
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
@@ -224,10 +238,6 @@
 		}
 	}
 	
-	.coupon-use-tips + .cart-goods {
-		padding-top: 30rpx;
-	}
-
 	.invalid-goods {
 		.invalid-mark {
 			color: $color-tip;
@@ -332,6 +342,7 @@
 			line-height: 70rpx;
 			font-size: $font-size-base;
 			font-weight: bold;
+			border-radius: 50rpx;
 			&.delete {
 				height: 50rpx;
 				line-height: 46rpx;
@@ -357,6 +368,10 @@
 		height: 70rpx;
 		line-height: 70rpx !important;
 		font-size: $font-size-base;
+		border-radius: 50rpx;
+		&.visit-the{
+			font-weight: bold;
+		}
 	}
 }
 

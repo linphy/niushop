@@ -8,6 +8,7 @@
 					<input class="uni-input" maxlength="50" v-model="keyword" @confirm="search()" placeholder="请输入您要搜索的商品" />
 					<text class="iconfont iconsousuo1" @click.stop="search()"></text>
 				</view>
+				<view class="iconfont" :class="{ iconapps: isList, iconlist1: !isList }" @click="changeListStyle()"></view>
 			</view>
 
 			<!-- 排序 -->
@@ -21,14 +22,12 @@
 				<view class="price-wrap" @click="sortTabClick('discount_price')">
 					<text :class="{ 'color-base-text': orderType === 'discount_price' }">价格</text>
 					<view class="iconfont-wrap">
-						<view class="iconfont iconshangsanjiao-copy" :class="{ 'color-base-text': priceOrder === 'asc' && orderType === 'discount_price' }"></view>
-						<view class="iconfont iconsanjiao" :class="{ 'color-base-text': priceOrder === 'desc' && orderType === 'discount_price' }"></view>
+						<view class="iconfont iconiconangledown-copy asc" :class="{ 'color-base-text': priceOrder === 'asc' && orderType === 'discount_price' }"></view>
+						<view class="iconfont iconiconangledown desc" :class="{ 'color-base-text': priceOrder === 'desc' && orderType === 'discount_price' }"></view>
 					</view>
 				</view>
 
 				<view :class="{ 'color-base-text': orderType === 'screen' }" class="screen-wrap">
-					<view class="iconfont font-size-base" :class="{ iconapps: isList, iconlist1: !isList }" @click="changeListStyle()"></view>
-					<text style="padding: 0 14rpx; color: #E3E3E3;">|</text>
 					<text @click="sortTabClick('screen')">筛选</text>
 					<view @click="sortTabClick('screen')" class="iconfont-wrap"><view class="iconfont iconshaixuan color-tip"></view></view>
 				</view>
@@ -63,13 +62,13 @@
 								</view>
 							</view>
 							<view class="pro-info">
-								<view class="delete-price font-size-activity-tag color-tip price-font">
+								<view class="delete-price color-tip price-font">
 									<block v-if="item.market_price_show">
 										<text class="unit">{{ $lang('common.currencySymbol') }}</text>
 										{{ item.market_price > 0 ? item.market_price : item.price }}
 									</block>
 								</view>
-								<view class="sale font-size-activity-tag color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
+								<view class="sale color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
 							</view>
 						</view>
 					</view>
@@ -105,14 +104,14 @@
 								</view>
 							</view>
 							<view class="pro-info">
-								<view class="delete-price font-size-activity-tag color-tip price-font">
+								<view class="delete-price color-tip price-font">
 									<block>
 										<text class="unit">{{ $lang('common.currencySymbol') }}</text>
 										{{ item.market_price > 0 ? item.market_price : item.price }}
 										
 									</block>
 								</view>
-								<view class="sale font-size-activity-tag color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
+								<view class="sale color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
 							</view>
 						</view>
 					</view>

@@ -11,6 +11,10 @@
 		font-size: $font-size-tag;
 		display: flex;
 		align-items: center;
+		.iconfont{
+			margin-left: 16rpx;
+			font-size: 36rpx;
+		}
 		.input-wrap {
 			flex: 1;
 			display: flex;
@@ -89,11 +93,18 @@
 				flex-direction: column;
 				width: 40rpx;
 				.iconfont {
+					position: relative;
 					float: left;
-					font-size: 24rpx;
+					font-size: 32rpx;
 					line-height: 1;
 					height: 20rpx;
 					color: #909399;
+					&.asc{
+						top: -2rpx;
+					}
+					&.desc{
+						top: -6rpx;
+					}
 				}
 			}
 		}
@@ -305,6 +316,7 @@
 			// overflow: hidden;
 			border-radius: $border-radius;
 			margin-right: 20rpx;
+			overflow: hidden;
 
 			image {
 				width: 200rpx;
@@ -396,6 +408,7 @@
 
 			& > view {
 				line-height: 1;
+				font-size: $font-size-tag !important;
 
 				&:nth-child(2) {
 					text-align: right;
@@ -433,6 +446,7 @@
 		background-color: #fff;
 		width: calc((100% - 30rpx) / 2);
 		border-radius: $border-radius;
+		overflow: hidden;
 
 		&:nth-child(2n) {
 			margin-right: 0;
@@ -526,6 +540,7 @@
 
 			& > view {
 				line-height: 1;
+				font-size: $font-size-tag !important;
 
 				&:nth-child(2) {
 					text-align: right;

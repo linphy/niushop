@@ -1,10 +1,33 @@
 <template>
 	<view class="order-container" :class="{ 'safe-area': isIphoneX }">
 		<template v-if="paymentData">
+			<!-- 配送方式 -->
+			<view class="delivery-mode" v-if="goodsData.express_type.length > 1">
+				<view class="head">
+					<view class="icon">
+						<image :src="$util.img('public/uniapp/order/icon-express-type.png')" mode="widthFix"></image>
+					</view>
+					<text>配送方式</text>
+				</view>
+				<view class="action">
+					<button
+						v-for="(item, index) in goodsData.express_type"
+						:key="index"
+						:type="item.name == orderCreateData.delivery.delivery_type ? 'primary' : 'default'"
+						@click="selectDeliveryType(item)"
+						size="mini"
+					>
+						{{ item.title }}
+					</button>
+				</view>
+			</view>
+			
 			<template v-if="paymentData.is_virtual">
 				<!-- 虚拟商品联系方式 -->
 				<view class="mobile-wrap">
-					<view class="tips color-base-text">购买虚拟类商品需填写手机号，方便商家与您联系</view>
+					<view class="tips color-base-text">
+						<text class="iconfont icongantanhao"></text>
+						购买虚拟类商品需填写手机号，方便商家与您联系</view>
 					<view class="form-group">
 						<text class="icon">
 							<image :src="$util.img('public/uniapp/order/icon-mobile.png')" mode="widthFix"></image>
@@ -66,7 +89,7 @@
 						<view class="cell-more"><view class="iconfont iconright"></view></view>
 					</view>
 					
-					<view class="local-box">
+					<view class="local-box" v-if="goodsData.local_config && goodsData.local_config.info.time_is_open == 1">
 						<view class="pick-block" @click="localtime">
 							<view class="font-size-base">送达时间</view>
 							<view class="time-picker">
@@ -116,27 +139,6 @@
 				</view>
 				
 			</template>
-			
-			<!-- 配送方式 -->
-			<view class="delivery-mode" v-if="goodsData.express_type.length > 1">
-				<view class="head">
-					<view class="icon">
-						<image :src="$util.img('public/uniapp/order/icon-express-type.png')" mode="widthFix"></image>
-					</view>
-					<text>配送方式</text>
-				</view>
-				<view class="action">
-					<button
-						v-for="(item, index) in goodsData.express_type"
-						:key="index"
-						:type="item.name == orderCreateData.delivery.delivery_type ? 'primary' : 'default'"
-						@click="selectDeliveryType(item)"
-						size="mini"
-					>
-						{{ item.title }}
-					</button>
-				</view>
-			</view>
 			
 			<!-- 店铺 -->
 			<view class="site-wrap order-goods">
@@ -250,7 +252,7 @@
 				<view class="order-money">
 					<view class="order-cell">
 						<text class="tit">商品金额</text>
-						<view class="box ">
+						<view class="box">
 							<text class="unit color-title price-font">{{ $lang('common.currencySymbol') }}</text>
 							<text class="money color-title price-font">{{ calculateData.goods_money | moneyFormat }}</text>
 						</view>
@@ -553,7 +555,7 @@
 			</view>
 			
 			<!-- 门店自提时间 -->
-			<ns-selectTime  @selectTime='selectPickupTime' ref="timePopup"></ns-selectTime>
+			<ns-select-time  @selectTime='selectPickupTime' ref="timePopup"></ns-select-time>
 		</template>
 		
 		<ns-login ref="login"></ns-login>

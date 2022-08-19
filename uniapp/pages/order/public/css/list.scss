@@ -1,6 +1,5 @@
 .order-container {
 	width: 100vw;
-	height: 100vh;
 }
 
 .align-right {
@@ -28,20 +27,19 @@
 	position: fixed;
 	left: 0;
 	z-index: 998;
+	justify-content: space-around;
 
 	.uni-tab-item {
-		flex: 1;
-		padding-left: 24rpx;
-		padding-right: 24rpx;
+		width: 120rpx;
+		text-align: center;
 	}
 
 	.uni-tab-item-title {
 		font-size: $font-size-base;
-		display: block;
+		display: inline-block;
 		height: 86rpx;
 		line-height: 90rpx;
 		border-bottom: 1px solid #fff;
-		padding: 0 10rpx;
 		flex-wrap: nowrap;
 		/* #ifndef APP-PLUS */
 		white-space: nowrap;
@@ -51,10 +49,8 @@
 	}
 
 	.uni-tab-item-title-active {
-		display: block;
 		height: 86rpx;
 		border-bottom: 2px solid #ffffff;
-		padding: 0 10rpx;
 	}
 
 	::-webkit-scrollbar {

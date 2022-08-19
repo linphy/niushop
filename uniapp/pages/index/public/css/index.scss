@@ -34,14 +34,25 @@ image {
 	height: 100vh;
 	/* #endif */
 }
+
 .page_img {
 	background-size: contain !important;
 	background-repeat: no-repeat !important;
 }
+
+.page-header {
+	background-size: contain !important;
+	background-repeat: no-repeat !important;
+	background-position: top center;
+	background-attachment: fixed; 
+}
+
 .bg-index {
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
+	background-size: contain !important;
+	background-repeat: no-repeat !important;
 }
 
 .wap-floating {

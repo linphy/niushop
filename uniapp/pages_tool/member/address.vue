@@ -56,7 +56,7 @@
 							</button>
 						</view>
 					</template>
-					<view v-if="addressList.length == 0 && showEmpty" class="empty-box cart-empty"><ns-empty text="暂无可用地址" :isIndex="isIndex" :fixed="false"></ns-empty></view>
+					<view v-if="addressList.length == 0 && showEmpty" class="empty-box cart-empty"><ns-empty text="暂无可用地址" :isIndex="isIndex"></ns-empty></view>
 					<view class="button-wrap" v-if="addressList.length == 0 && showEmpty">
 						<!-- #ifdef H5 -->
 						<button type="primary" class="add-address" @click="getChooseAddress()" v-if="$util.isWeiXin() && local != 1">{{ $lang('getAddress') }}</button>

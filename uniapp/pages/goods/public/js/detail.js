@@ -70,6 +70,9 @@ export default {
 				});
 			}
 		}
+		// #ifdef MP-WEIXIN
+		this.getShareImg();
+		// #endif
 	},
 	async onShow() {
 		//同步获取商品详情
@@ -516,5 +519,22 @@ export default {
 				}
 			});
 		},
+		/**
+		 * 获取分享图
+		 */
+		getShareImg(){
+			let posterParams = {
+				goods_id: this.goodsId
+			};
+			this.$api.sendRequest({
+				url: '/api/goods/shareimg',
+				data: {
+					qrcode_param: JSON.stringify(posterParams)
+				},
+				success: res => {
+					if (res.code == 0) this.shareImg = res.data.path;
+				}
+			})
+		}
 	}
 }

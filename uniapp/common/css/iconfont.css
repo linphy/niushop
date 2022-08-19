@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2016310 */
-  src: url('@/common/css/iconfont.woff2?t=1658807361791') format('woff2'),
-       url('@/common/css/iconfont.woff?t=1658807361791') format('woff'),
-       url('@/common/css/iconfont.ttf?t=1658807361791') format('truetype');
+  src: url('@/common/css/iconfont.woff2?t=1660359089907') format('woff2'),
+       url('@/common/css/iconfont.woff?t=1660359089907') format('woff'),
+       url('@/common/css/iconfont.ttf?t=1660359089907') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.iconbiaoqing_nanguo:before {
+  content: "\e6bf";
+}
+
+.iconkanjiachenggong:before {
+  content: "\e6be";
+}
+
+.icongantanhao:before {
+  content: "\e724";
+}
+
+.icongonggao:before {
+  content: "\e6bd";
+}
+
+.iconfutou:before {
+  content: "\e6bc";
+}
+
+.iconkanjiajindu:before {
+  content: "\e6bb";
+}
+
+.icondingdan4:before {
+  content: "\e6b9";
+}
+
+.iconchenggong:before {
+  content: "\e6ba";
+}
+
+.iconyaoqinghaoyou:before {
+  content: "\e89a";
 }
 
 .iconxiangshangzhanhang:before {

@@ -3,14 +3,12 @@
 		<view @touchmove.prevent.stop>
 			<uni-popup ref="auth" :custom="true" :mask-click="false">
 				<view class="uni-tip">
+					<view class="uni-tip-icon"><image :src="$util.img('/public/uniapp/member/login.png')" mode="widthFix"></image></view>
 					<view class="uni-tip-title">您还未登录</view>
 					<view class="uni-tip-content">请先登录之后再进行操作</view>
-					<view class="uni-tip-icon"><image :src="$util.img('/upload/uniapp/member/login.png')" mode="widthFix"></image></view>
 					<view class="uni-tip-group-button">
-						<button type="default" class="uni-tip-button color-title close" @click="close">暂不登录</button>
-						<!-- #ifdef MP-WEIXIN  -->
 						<button type="primary" class="uni-tip-button" @click="login">立即登录</button>
-						<!-- #endif  -->
+						<view class="close" @click="close">我再看看</view>
 					</view>
 				</view>
 			</uni-popup>
@@ -63,7 +61,6 @@ export default {
 			});
 		},
 		open(url) {
-			
 			if (url) this.url = url;
 			// #ifdef MP-WEIXIN 
 			this.$refs.auth.open();
@@ -204,7 +201,7 @@ export default {
 .uni-tip-icon {
 	width: 100%;
 	text-align: center;
-	margin-top: 50rpx;
+	margin-top: 60rpx;
 }
 
 .uni-tip-icon image {
@@ -214,26 +211,27 @@ export default {
 .uni-tip-group-button {
 	margin-top: 30rpx;
 	line-height: 120rpx;
-	display: flex;
 	padding: 0 50rpx 50rpx 50rpx;
-	justify-content: space-between;
 }
 
 .uni-tip-button {
-	width: 200rpx;
+	width: 100%;
 	height: 80rpx;
 	line-height: 80rpx;
 	text-align: center;
 	border: none;
 	border-radius: 80rpx;
 	padding: 0 !important;
-	margin: 0 !important;
-	background: #fff;
+	margin: 20rpx 0 0 0 !important;
+	background: $base-color;
 	font-size: $font-size-base;
 }
 
 .uni-tip-group-button .close {
-	border: 1px solid #eee;
+	color: #999;
+	font-size: 28rpx;
+	text-align: center;
+	margin-top: 20rpx;
 }
 
 .uni-tip-button:after {

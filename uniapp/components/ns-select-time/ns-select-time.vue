@@ -38,6 +38,7 @@
 <script>
 import unipopup from '@/components/uni-popup/uni-popup.vue';
 export default {
+	name: "nsSelectTime",
 	components: {
 		unipopup
 	},

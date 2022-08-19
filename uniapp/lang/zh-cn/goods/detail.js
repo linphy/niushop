@@ -1,6 +1,6 @@
 export const lang = {
 	//title为每个页面的标题
-	title: '商品详情',
+	title: '',
 	select: '选择',
 	params: '参数',
 	service: '商品服务',

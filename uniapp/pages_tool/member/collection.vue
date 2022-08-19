@@ -22,7 +22,7 @@
 					</view>
 				</block>
 				<!-- 第一个列表为空时 -->
-				<ns-empty v-if="collectionList.length == 0 && isShowEmpty" text="暂无关注的商品" :fixed="false" :isIndex="false"></ns-empty>
+				<ns-empty v-if="collectionList.length == 0 && isShowEmpty" text="暂无关注的商品" :isIndex="false"></ns-empty>
 				<ns-goods-recommend ref="goodsRecommend"></ns-goods-recommend>
 			</view>
 		</mescroll-uni>

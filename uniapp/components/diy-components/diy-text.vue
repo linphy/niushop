@@ -537,7 +537,9 @@ export default {
 
 	.style8-box {
 		text-align: left !important;
-
+		.style8-title{
+			margin-left: 20rpx;
+		}
 		.style8-wrap {
 			height: 100%;
 			position: absolute;
@@ -829,8 +831,8 @@ export default {
 	}
 
 	image {
-		max-height: 50rpx;
-		max-width: 76rpx;
+		height: 50rpx;
+		width: 76rpx;
 	}
 
 	.right-img {

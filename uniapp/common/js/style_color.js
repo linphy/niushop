@@ -2,17 +2,17 @@ export default {
 	'default':{
 		//红色
 		name:'default',
-		main_color : '#FF4646',
+		main_color : '#F4391c',
 		aux_color : '#F7B500',
 		bg_color: '#FF4646',//主题背景
 		bg_color_shallow: '#FF4646',//主题背景渐变浅色
 		promotion_color: '#FF4646',//活动背景
 		promotion_aux_color: '#F7B500',//活动背景辅色
 		main_color_shallow: '#FFF4F4',//淡背景
-		price_color: 'rgba(252,82,39,1)',//价格颜色
+		price_color: 'rgb(252,82,39)',//价格颜色
 		btn_text_color: '#FFFFFF',//按钮文字颜色
 		goods_detail : {
-			goods_price : 'rgba(252,82,39,1)',//价格
+			goods_price : 'rgb(252,82,39,1)',//价格
 			promotion_tag:'#FF4646',
 			goods_card_bg:'#201A18',//会员卡背景
 			goods_card_bg_shallow:'#7C7878',//会员卡背景浅色
@@ -25,13 +25,24 @@ export default {
 		pintuan:{
 			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	},
 	'green':{
 		name:'green',
@@ -56,15 +67,26 @@ export default {
 			goods_btn_color_shallow:'#FA6400',//副按钮颜色
 		},
 		pintuan:{
-			pintuan_label_bg:'#FA6400',
+			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	},
 	'blue':{
 		name:'blue',
@@ -89,15 +111,26 @@ export default {
 			goods_btn_color_shallow:'#FA6400',//副按钮颜色
 		},
 		pintuan:{
-			pintuan_label_bg:'#FA6400',
+			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	}, 
 	'pink':{
 		name:'pink',
@@ -124,13 +157,24 @@ export default {
 		pintuan:{
 			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	}, 
 	'gold':{
 		name:'gold',
@@ -155,15 +199,26 @@ export default {
 			goods_btn_color_shallow:'#444444',//副按钮颜色
 		},
 		pintuan:{
-			pintuan_label_bg:'#444444',
+			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	},
 	'purple':{
 		name:'purple',
@@ -188,15 +243,26 @@ export default {
 			goods_btn_color_shallow:'#222222',//副按钮颜色
 		},
 		pintuan:{
-			pintuan_label_bg:'#222222',
+			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	},
 	'yellow':{
 		name:'yellow',
@@ -221,15 +287,26 @@ export default {
 			goods_btn_color_shallow:'#1D262E',//副按钮颜色
 		},
 		pintuan:{
-			pintuan_label_bg:'#1D262E',
+			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#7c7878',
 			super_member_end_bg: '#201a18',
 			super_member_start_text_color: '#FFDBA6',
 			super_member_end_text_color: '#FFEBCA',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	},
 	'black':{
 		name:'black',
@@ -254,14 +331,25 @@ export default {
 			goods_btn_color_shallow:'#FA8B00',//副按钮颜色
 		},
 		pintuan:{
-			pintuan_label_bg:'#FFFFFF',
+			pintuan_label_bg:'#F7B500',
 			pintuan_label_color:'#FFFFFF',
+			pintuan_color:'#FA6400',
+			pintuan_promotion_color: '#FA3A1D',//活动背景
+			pintuan_promotion_aux_color: '#FD9A01',//活动背景辅色
 		},
 		super_member: {
 			super_member_start_bg: '#fadcb5',
 			super_member_end_bg: '#f6bd74',
 			super_member_start_text_color: '#ab6126',
 			super_member_end_text_color: '#d19336',
-		}
+		},
+		bargain:{
+			bargain_promotion_color: '#F0353E',//活动背景
+			bargain_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		seckill:{
+			seckill_promotion_color: '#F83530',//活动背景
+			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
 	}
 }

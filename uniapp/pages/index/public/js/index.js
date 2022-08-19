@@ -21,6 +21,9 @@ export default {
 			name: '',
 			isDefault: '',
 
+			store: {}, //首页展示的门店详情
+			storeId: 0, //首页展示的门店id
+
 			pageHeight: '0',
 			headerHeight: '0',
 			bottomHeight: '0',
@@ -30,15 +33,19 @@ export default {
 			showTip: false,
 			mpCollect: false,
 			mpShareData: null, //小程序分享数据
-			diyPageReturn: [] //自定义页面
+			diyPageReturn: [], //自定义页面
+			scrollTop: 0, // 滚动位置
+			paddingTop: 0,
+			marginTop: 0
 		};
 	},
 	onLoad(data) {
 		uni.hideTabBar();
 
 		this.name = data.name || 'DIY_VIEW_INDEX';
-		
+
 		this.isDefault = data.is_default || '';
+		this.storeId = data.store_id || 0;
 
 		if (data.source_member) uni.setStorageSync('source_member', data.source_member);
 
@@ -53,6 +60,10 @@ export default {
 			}
 		}
 
+		// if (uni.getStorageSync(this.name)) {
+		// this.diyData = JSON.parse(uni.getStorageSync(this.name));
+		// }
+
 	},
 	onShow() {
 		if (uni.getStorageSync('token')) {
@@ -60,25 +71,30 @@ export default {
 				this.memberId = resolve;
 			});
 		}
-		
+
 		if (this.name == 'DIY_VIEW_INDEX' && this.siteInfo) {
+			// this.diyData.global.title = this.siteInfo.site_name;
 			this.$langConfig.title(this.siteInfo.site_name);
 		}
 
+		this.store = uni.getStorageSync('store') ? uni.getStorageSync('store') : null;
+		if (this.store) this.storeId = this.store.store_id;
+
 		this.getDiyInfo();
 		this.getHeight();
-		
+
 		//记录分享关系
 		if (uni.getStorageSync('token') && uni.getStorageSync('source_member')) {
 			this.$util.onSourceMember(uni.getStorageSync('source_member'));
 		}
-		
+
 		//小程序分享
 		// #ifdef MP-WEIXIN
 		this.$util.getMpShare().then(res => {
 			this.mpShareData = res;
 		});
 		// #endif
+
 	},
 	computed: {
 		bgColor() {
@@ -115,8 +131,7 @@ export default {
 			}
 		},
 		backgroundUrl() {
-			var str = this.bgUrl && this.bgUrl != 'transparent' ? 'background:' + 'url(' + this.$util.img(this.bgUrl) +
-				') no-repeat 0 0/100%' : '';
+			var str = this.diyData.global.bgUrl && this.diyData.global.bgUrl != 'transparent' ? 'url(' +this.$util.img(this.diyData.global.bgUrl) +') ' : '';
 			return str;
 		},
 		textNavColor() {
@@ -180,6 +195,9 @@ export default {
 		}
 	},
 	methods: {
+		scroll(e) {
+			this.scrollTop = e.detail.scrollTop;
+		},
 		callback() {
 			if (this.$refs.indexPage) {
 				this.$refs.indexPage.initPageIndex();
@@ -201,6 +219,9 @@ export default {
 					.select('.page-header')
 					.boundingClientRect(data => {
 						this.headerHeight = data.height * 2 + 'rpx';
+						// 从状态栏高度开始算
+						this.paddingTop = data.height + 'px';
+						this.marginTop = -data.height + 'px';
 					})
 					.exec();
 			});
@@ -214,6 +235,7 @@ export default {
 					})
 					.exec();
 			});
+
 		},
 		getDiyInfo(isRefresh) {
 			// 用于自定义页面赋值
@@ -240,13 +262,17 @@ export default {
 					}
 
 					let diyDatavalue = res.data;
+					// console.log(JSON.parse(diyDatavalue.value))
 					//处理后台组件input输入单引号问题 -- 英文状态下
 					// diyDatavalue.value = diyDatavalue.value.replace(/\@/g, "'");
 					if (diyDatavalue.value) {
+						// uni.setStorageSync(this.name, diyDatavalue.value);
 						this.diyData = JSON.parse(diyDatavalue.value);
 
-						if (this.name == 'DIY_VIEW_INDEX' && this.siteInfo) {
-							this.diyData.global.title = this.siteInfo.site_name;
+						if (this.name == 'DIY_VIEW_INDEX') {
+							if (this.siteInfo) {
+								this.diyData.global.title = this.siteInfo.site_name;
+							}
 						} else {
 							this.$langConfig.title(this.diyData.global.title);
 						}

@@ -30,7 +30,7 @@
 						</view>
 						<view
 							class="search"
-							@click="$util.redirectTo('/pages/goods/search')"
+							@click="$util.redirectTo('/pages_tool/goods/search')"
 							:style="{ height: menuButtonInfo.height - 2 + 'px', lineHeight: menuButtonInfo.height - 2 + 'px' }"
 						>
 							<text class="iconfont iconsousuo"></text>
@@ -94,6 +94,10 @@ export default {
 		customBack: {
 			type: Function,
 			default: null
+		},
+		scrollTop: {
+			type: [String, Number],
+			default: '0'
 		}
 	},
 	data() {
@@ -110,7 +114,7 @@ export default {
 			style += 'height:' + menuButtonInfo.height * 2 + 'rpx;';
 			// // 如果是各家小程序，导航栏内部的宽度需要减少右边胶囊的宽度
 			// #ifdef MP
-			let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width*2 + 'rpx' : '70rpx';
+			let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width * 2 + 'rpx' : '70rpx';
 			// style.marginRight = 'calc(' + rightButtonWidth + ' + 30rpx)';
 			// style += 'margin-right:calc(' + rightButtonWidth + ' + 30rpx);';
 			// style += 'width:calc(100vw - ' + menuButtonInfo.width + ' - 30rpx);';
@@ -133,11 +137,18 @@ export default {
 			// #endif
 		},
 		bgColor() {
+			var color = '';
 			if (!this.globalS.topNavBg) {
-				return this.globalS.topNavColor;
+				color = this.globalS.topNavColor;
 			} else {
-				return 'transparent';
+				color = 'transparent';
+				if (this.scrollTop > 80) {
+					color = this.globalS.topNavColor;
+				} else {
+					color = 'transparent';
+				}
 			}
+			return color;
 		}
 	},
 	created(e) {},

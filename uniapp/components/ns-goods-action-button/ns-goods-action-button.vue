@@ -2,7 +2,7 @@
 	<view>
 		<view class="action-buttom-wrap disabled" v-if="disabled" @click="clickEvent">{{ disabledText }}</view>
 		<view class="action-buttom-wrap" :class="[backgroundClass, textPrice ? 'has-second' : '', background ? 'color-join-cart' : 'color-base-bg']" :style="{background:backgroundColor+'!important', 'color':textColor ? textColor : '#ffffff'}" v-else @click="clickEvent">
-			<text>{{ textPrice }}</text>
+			<text class="price-font">{{ textPrice }}</text>
 			<text>{{ text }}</text>
 		</view>
 	</view>

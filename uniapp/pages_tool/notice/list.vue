@@ -8,12 +8,9 @@
 						<view class="title-info">
 							<view class="title">
 								<text v-if="item.is_top == 1" class="color-base-bg tag">置顶</text>
-								<text class="txt">{{ item.title }}</text>
+								<text class="txt using-hidden">{{ item.title }}</text>
 							</view>
 							<text class="release-time">{{ $util.timeStampTurnTime(item.create_time, 1) }}</text>
-						</view>
-						<view class="more">							
-							<view class="detail"> {{item.info}} </view>
 							<view class="iconfont iconright"></view>
 						</view>
 					</view>
@@ -60,9 +57,6 @@
 						//设置列表数据
 						if (mescroll.num == 1) this.dataList = []; //如果是第一页需手动制空列表
 						this.dataList = this.dataList.concat(newArr); //追加新数据
-						this.dataList.forEach(item => {
-							item.info = item.content.replace(/<[^>]+>/g, '');
-						});
 						if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 					},
 					fail: res => {
@@ -104,7 +98,7 @@
 			margin: $margin-updown $margin-both;
 			background: #fff;
 			border-radius: 10rpx;
-			padding: 32rpx 34rpx 23rpx 34rpx;
+			padding: 32rpx 34rpx;
 			box-sizing: border-box;
 			display: flex;
 			flex-direction: column;
@@ -116,8 +110,6 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				border-bottom: 2rpx solid #f3f3f3;
-				padding-bottom: 20rpx;
 				overflow: hidden;
 
 				.title {
@@ -129,6 +121,7 @@
 					align-items: center;
 
 					.txt {
+						display: block;
 						color: #000;
 						font-size: $font-size-base;
 						line-height: 28rpx;
@@ -153,6 +146,10 @@
 					text-align: right;
 					font-size: $font-size-tag;
 				}
+				.iconfont{
+					color: $color-tip;
+					font-size: $font-size-tag;
+				}
 			}
 
 			.content {
@@ -165,32 +162,6 @@
 				color: $color-tip;
 				font-size: $font-size-goods-tag;
 				padding-bottom: 30rpx;
-			}
-
-			.more {
-				width: 100%;
-				// display: flex; 兼容问题不能使用
-				// justify-content: space-between;
-				padding-top: 20rpx;
-				font-size: $font-size-tag;
-				align-items: center;
-
-				.detail {
-					width: 505rpx;
-					float: left;
-					color: $color-sub;
-					font-size: $font-size-tag;
-					display: -webkit-box;
-					-webkit-box-orient: vertical;
-					-webkit-line-clamp: 1;
-					overflow: hidden;
-				}
-
-				.iconright {
-					float: right;
-					color: $color-tip;
-					font-size: $font-size-base;
-				}
 			}
 		}
 	}

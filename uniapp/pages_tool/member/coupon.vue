@@ -57,7 +57,7 @@
 					</view>
 				</view>
 				<view v-if="!list.length && showEmpty" class="margin-top cart-empty" :fixed="false">
-					<ns-empty :isIndex="true" :emptyBtn ="{url: '/pages_tool/goods/coupon',text: '去逛逛'}" text="暂无优惠券"></ns-empty>
+					<ns-empty :isIndex="true" :emptyBtn ="{url: '/pages/index/index',text: '去逛逛'}" text="暂无优惠券"></ns-empty>
 				</view>
 			</block>
 		</mescroll-uni>

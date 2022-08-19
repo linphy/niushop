@@ -75,6 +75,7 @@ export default {
 			});
 		},
 		close(type, callback) {
+			
 			if (!this.maskClick && type) return;
 			this.$emit('change', {
 				show: false

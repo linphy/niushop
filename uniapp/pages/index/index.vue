@@ -1,18 +1,20 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
-	<view :style="{ backgroundColor: bgColor, backgroundImage: bgImg, minHeight: 'calc(100vh - 55px)' }" class="page_img">
+	<view :style="{ backgroundColor: bgColor, minHeight: 'calc(100vh - 55px)' }" class="page_img">
 		<!-- #ifndef H5 -->
-		<view class="page-header"><ns-navbar :background="bgNav" :title-color="textNavColor" :globalS="diyData.global"></ns-navbar></view>
+		<view class="page-header" :style="{ backgroundImage: bgImg }">
+			<ns-navbar :background="bgNav" :title-color="textNavColor" :globalS="diyData.global" :scrollTop="scrollTop"></ns-navbar>
+		</view>
 		<!-- #endif -->
 
 		<diy-index-page ref="indexPage" :value="topIndexValue" :scrollHeight="scrollHeight" :scrollTopHeight="scrollTopHeight" :bgUrl="bgUrl" v-if="topIndexValue">
-			<diy-group ref="diyGroup" :diyData="diyData" v-if="diyData.value" :height="scrollTopHeight"></diy-group>
+			<diy-group ref="diyGroup" :diyData="diyData" :storeId="storeId" v-if="diyData.value" :height="scrollTopHeight"></diy-group>
 			<view class="padding-bottom"><ns-copy-right></ns-copy-right></view>
 		</diy-index-page>
 
-		<scroll-view v-else scroll-y="true" show-scrollbar="false" :style="{ height: 'calc(100vh - headerHeight - 55px)' }">
-			<view class="bg-index" :style="backgroundUrl">
-				<diy-group ref="diyGroup" :diyData="diyData" v-if="diyData.value"></diy-group>
+		<scroll-view v-else scroll-y="true" show-scrollbar="false" :style="{ height: 'calc(100vh - ' + headerHeight + ' - 55px)' }" @scroll="scroll">
+			<view class="bg-index" :style="{ backgroundImage: backgroundUrl, paddingTop: paddingTop, marginTop: marginTop }">
+				<diy-group ref="diyGroup" :diyData="diyData" v-if="diyData.value" :storeId="storeId"></diy-group>
 				<view class="padding-bottom"><ns-copy-right></ns-copy-right></view>
 			</view>
 		</scroll-view>
@@ -34,7 +36,7 @@
 		</template>
 
 		<!-- 底部tabBar -->
-		<view class="page-bottom" v-if="openBottomNav"><diy-bottom-nav type="shop" @callback="callback"></diy-bottom-nav></view>
+		<view class="page-bottom" v-if="openBottomNav"><diy-bottom-nav @callback="callback" :name="name"></diy-bottom-nav></view>
 
 		<!-- 自定义页面跳转返回 -->
 		<text class="diy-pages-return" v-if="diyPageReturn.length > 1" @click="diyPageFn">返回</text>

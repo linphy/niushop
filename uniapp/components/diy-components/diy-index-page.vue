@@ -175,7 +175,7 @@
 									</view>
 								</view>
 							</view>
-							<ns-empty v-else-if="!isloading" :fixed="false" :isIndex="false" text="该分类下暂无商品"></ns-empty>
+							<ns-empty v-else-if="!isloading" :isIndex="false" text="该分类下暂无商品"></ns-empty>
 						</view>
 						<view class="loading" v-show="isloading"><ns-loading ref="loading"></ns-loading></view>
 					</view>

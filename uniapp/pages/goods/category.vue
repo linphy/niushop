@@ -14,7 +14,7 @@
 
 		<!-- 底部tabBar -->
 		<view id="tab-bar">
-			<diy-bottom-nav type="shop"></diy-bottom-nav>
+			<diy-bottom-nav></diy-bottom-nav>
 		</view>
 	</view>
 </template>

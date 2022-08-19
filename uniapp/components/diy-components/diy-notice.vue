@@ -1,7 +1,7 @@
 <template>
 	<view class="diy-notice">
-		<view class="notice notice-1" :style="noticeWrapCss">
-			<image v-if="value.iconType == 'img'" class="notice-img" :src="$util.img(value.imageUrl)" mode="heightFix"></image>
+		<view :class="['notice',value.contentStyle]" :style="noticeWrapCss">
+			<image v-if="value.iconType == 'img'" class="notice-img" :src="$util.img(value.imageUrl)" mode="aspectFit"></image>
 			<diy-icon
 				v-if="value.iconType == 'icon'"
 				:icon="value.icon"
@@ -10,6 +10,7 @@
 			></diy-icon>
 			<view class="notice-xian"></view>
 			<view class="main-wrap">
+				<text v-if="value.contentStyle == 'style-2'" class="iconfont icongonggao" :style="{ color: value.textColor }"></text>
 				<view class="uni-swiper-msg">
 					<swiper vertical="true" autoplay="true" duration="0" circular="true">
 						<swiper-item v-for="(item, index) in list" :key="index" @touchmove.stop>
@@ -17,6 +18,7 @@
 						</swiper-item>
 					</swiper>
 				</view>
+				<text v-if="value.contentStyle == 'style-2'" class="iconfont iconright arrows" @click="toLink"></text>
 			</view>
 		</view>
 	</view>
@@ -68,7 +70,8 @@ export default {
 			});
 		},
 		toLink(item) {
-			if (this.value.sources == 'default') this.$util.redirectTo('/pages_tool/notice/detail', { notice_id: item.id });
+			if (this.value.sources == 'initial') this.$util.redirectTo('/pages_tool/notice/detail', { notice_id: item.id });
+			else if(!item) this.$util.redirectTo('/pages_tool/notice/list');
 			else this.$util.diyRedirectTo(item.link);
 		}
 	}
@@ -76,7 +79,7 @@ export default {
 </script>
 
 <style lang="scss">
-.notice-1 {
+.notice {
 	height: 80rpx;
 	position: relative;
 	display: flex;
@@ -84,6 +87,7 @@ export default {
 	overflow: hidden;
 	padding: 20rpx;
 	font-size: 70rpx;
+	box-sizing: border-box;
 
 	.notice-img {
 		width: 212rpx;
@@ -95,6 +99,22 @@ export default {
 		height: 26rpx;
 		background-color: #e4e4e4;
 		margin: 0 22rpx;
+	}
+	&.style-2{
+		.main-wrap {
+			display: flex;
+			align-items: center;
+			.uni-swiper-msg{
+				width: 400rpx;
+				margin: 0 10rpx;
+			}
+			.arrows{
+				color: #999;
+				font-size: $font-size-sub;
+			}
+		}
+		
+		
 	}
 }
 
@@ -110,7 +130,7 @@ swiper {
 
 .beyond-hiding {
 	display: inline-block;
-	width: 100%;
+	width: auto;
 	white-space: nowrap;
 }
 

@@ -217,9 +217,12 @@ export default {
 			image {
 				width: 100%;
 				position: absolute;
-				top: 50%;
+				// top: 50%;
+				top: 0;
+				bottom: 0;
 				left: 0;
-				transform: translateY(-50%);
+				right: 0;
+				// transform: translateY(-50%);
 			}
 		}
 

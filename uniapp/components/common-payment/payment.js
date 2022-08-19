@@ -205,6 +205,14 @@ export default {
 						
 						this.paymentData = data;
 						this.calculate();
+					}else{
+						this.$util.showToast({
+							title: res.message
+						});
+						
+						setTimeout(() => {
+							this.$util.redirectTo('/pages/index/index');
+						}, 1000)
 					}
 				}
 			})
@@ -365,7 +373,7 @@ export default {
 					}
 				}
 			
-				if (this.orderCreateData.delivery.delivery_type == 'local') {
+				if (this.orderCreateData.delivery.delivery_type == 'local' && this.goodsData.local_config && this.goodsData.local_config.info.time_is_open == 1) {
 					if (!this.deliveryTime) {
 						this.$util.showToast({
 							title: '请选择送达时间'

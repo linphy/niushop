@@ -574,7 +574,7 @@ scroll-view ::-webkit-scrollbar {
 
 // 价格样式
 .price-color{
-	color: var(--price-color);
+	color: var(--price-color)!important;
 }
 .price-style{
 	font-family: 'myFont','-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Segoe UI', 'Arial', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei','sans-serif';

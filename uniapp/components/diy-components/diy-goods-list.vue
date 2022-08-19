@@ -347,6 +347,7 @@
 <style lang="scss" scoped>
 	.goods-list {
 		.goods-item {
+			overflow: hidden;
 			line-height: 1;
 
 			.sale {
@@ -435,7 +436,7 @@
 	// 商品列表单列样式
 	.goods-list.row1-of1 {
 		.goods-item {
-			overflow: hidden;
+			// overflow: hidden;
 			background-color: #fff;
 			display: flex;
 			margin-bottom: 20rpx;
@@ -536,42 +537,42 @@
 		justify-content: space-between;
 
 		.goods-item {
-			overflow: hidden;
+			// overflow: hidden;//排查开启此行回影响IOS字体颜色
 			margin-top: 20rpx;
 			width: calc(50% - 10rpx);
 			display: flex;
 			flex-direction: column;
 			box-sizing: border-box;
-
+		
 			&:nth-child(2n) {
 				margin-right: 0 !important;
 			}
-
+		
 			&:nth-of-type(1),
 			&:nth-of-type(2) {
 				margin-top: 0;
 			}
-
+		
 			&.shadow {
 				width: calc(50% - 18rpx);
-
+		
 				&:nth-child(2n-1) {
 					margin-left: 8rpx;
 				}
 				&:nth-child(2n) {
 					margin-right: 8rpx !important;
 				}
-
+		
 				&:nth-of-type(1),
 				&:nth-of-type(2) {
 					margin-top: 8rpx;
 				}
 			}
-
+		
 			.goods-img {
 				width: 100%;
 			}
-
+		
 			.info-wrap {
 				display: flex;
 				flex-direction: column;
@@ -580,29 +581,28 @@
 				.sale{
 					flex-basis: 100%;
 				}
-
+		
 				.pro-info {
 					margin-top: auto;
 					display: flex;
 					justify-content: space-between;
-
+		
 					.discount-price {
 						.price-wrap {
 							white-space: nowrap;
 							.unit {
 								font-weight: bold;
 								font-size: $font-size-tag !important;
-								color: var(--price-color)!important;
 							}
- 
+		 
 							.price{
 								font-weight: bold;
-								font-size: $font-size-toolbar;
-								color: var(--price-color)!important;
+								font-size: $font-size-toolbar!important;
 							}
+							
 						}
 					}
-
+		
 					.delete-price {
 						text-decoration: line-through;
 						flex: 1;
@@ -622,6 +622,9 @@
 					align-items: baseline;
 					.price-wrap {
 						display: inline-block;
+						text{
+							font-weight: bold;
+						}
 					}
 					.price-wrap{
 						line-height: 1;
@@ -708,7 +711,7 @@
 		.goods-item {
 			display: flex;
 			flex-direction: column;
-			overflow: hidden;
+			// overflow: hidden;
 			margin-top: 20rpx;
 			width: calc(33.3333333% - 14rpx);
 			box-sizing: border-box;
@@ -866,7 +869,7 @@
 			justify-content: space-between;
 		}
 		.goods-item {
-			overflow: hidden;
+			// overflow: hidden;
 			width: 200rpx;
 			display: inline-block;
 			box-sizing: border-box;

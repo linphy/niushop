@@ -1,8 +1,9 @@
 @mixin wrap {
-	margin: 0 0 $margin-updown 0;
+	margin: 20rpx 24rpx 0;
 	border-radius: 0;
 	background: #fff;
 	padding: 30rpx 30rpx;
+	border-radius: 16rpx;
 }
 
 input,
@@ -26,7 +27,16 @@ view {
 	@include wrap;
 	.tips {
 		font-size: $font-size-goods-tag;
-		margin-bottom: 10rpx;
+		margin-bottom: 30rpx;
+		background: var(--main-color-shallow);
+		border-radius: $border-radius;
+		padding: 20rpx 30rpx;
+		line-height: 1;
+		display: flex;
+		align-items: center;
+		.iconfont{
+			margin-right: 5rpx;
+		}
 	}
 	&.local-mobile{
 		border-bottom: 2rpx solid #eeeeee;
@@ -36,6 +46,7 @@ view {
 		border-top: 2rpx solid #eeeeee;
 		margin: 20rpx 0 0 0;
 		padding: 20rpx 0;
+		border-radius: 0;
 	}
 	.form-group {
 		display: flex;
@@ -734,11 +745,16 @@ view {
 
 // 收货地址
 .address-box {
-	border-radius: $border-radius;
-	margin: 0 0 $margin-updown;
+	@include wrap;
+	padding: 0;
+	// border-radius: $border-radius;
+	// margin: 0 0 $margin-updown;
+	border-radius: 16rpx;
+	margin: 20rpx 24rpx 0;
 	background-color: #fff;
 	position: relative;
 	padding-bottom: 6rpx;
+	overflow: hidden;
 	.address-line{
 		position: absolute;
 		bottom: 0rpx;
@@ -812,7 +828,6 @@ view {
 .local-box {
 	margin: 0 30rpx;
 	padding-bottom: 20rpx;
-	border-radius: $border-radius;
 	border-top: 2rpx solid $color-line;
 	.order-cell {
 		padding-top: 30rpx;
@@ -1068,7 +1083,7 @@ view {
 }
 
 .agreement {
-	margin: 0 $margin-both;
+	margin: 20rpx $margin-both 0;
 	
 	text {
 		color: $base-color;

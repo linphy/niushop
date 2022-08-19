@@ -376,8 +376,11 @@ export default {
 	}
 
 	.auth-login {
-		width: 300rpx;
-		margin: 20rpx auto 60rpx auto;
+		width: calc(100% - 100rpx);
+		margin: 20rpx auto 50rpx auto;
+		height: 80rpx;
+		line-height: 80rpx;
+		border-radius: 80rpx;
 	}
 
 	.bind-tip-icon {

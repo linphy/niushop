@@ -78,6 +78,8 @@ export default {
 					this.districtArr = await this.getAreasAsync(this.cityArr[this.multiIndex[col]].value);
 					break;
 				case 2:
+					if (!this.cityArr.length) this.cityArr = await this.getAreasAsync(this.pickerValueArray[0][0].value)
+					if (!this.districtArr.length) this.districtArr = await this.getAreasAsync(this.cityArr[0].value);
 					break;
 			}
 		},

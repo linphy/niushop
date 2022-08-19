@@ -784,7 +784,7 @@ export default {
 	 * 设置公众号分享
 	 * @param {Object} shareData
 	 */
-	setPublicShare(shareData) {
+	setPublicShare(shareData, callback) {
 		if (!this.isWeiXin()) return;
 		Http.sendRequest({
 			url: '/wechat/api/wechat/jssdkconfig',
@@ -804,7 +804,7 @@ export default {
 						link: shareData.link ?? location.href,
 						imgUrl: shareData.imgUrl ? this.img(shareData.imgUrl) : ''
 					}, (res) => {
-						console.log(res);
+						typeof callback == 'function' && callback(res);
 					})
 				}
 			}

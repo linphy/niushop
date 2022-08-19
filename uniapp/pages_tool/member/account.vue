@@ -25,7 +25,7 @@
 					<button class="add-account" type="primary" @click="editAccount('add')">{{ $lang('newAddAccount') }}</button>
 				</view>
 				<view v-else class="cart-empty">
-					<ns-empty text="暂无账号信息" :isIndex="false" :fixed="false" class="zw"></ns-empty>
+					<ns-empty text="暂无账号信息" :isIndex="false" class="zw"></ns-empty>
 					<button class="add-account" type="primary" @click="editAccount('add')">{{ $lang('newAddAccount') }}</button>
 				</view>
 			</block>

@@ -1,10 +1,13 @@
 <template>
 	<view v-if="advList.length">
-		<swiper :indicator-dots="advList.length > 1" indicator-active-color="#ffffff" :autoplay="true" :interval="3000" :duration="1000" v-if="advList.length" class="ns-adv">
+		<swiper :indicator-dots="advList.length > 1" indicator-active-color="#ffffff" :autoplay="true" :interval="3000" :duration="1000" v-if="advList.length > 1" class="ns-adv">
 			<swiper-item v-for="(item, index) in advList" :key="index" @click="jumppage(item.adv_url)">
 				<view class="image-box" :style="{ 'background-color': item.background }"><image :src="$util.img(item.adv_image)"></image></view>
 			</swiper-item>
 		</swiper>
+		<view v-else>
+			<image :src="$util.img(advList[0]['adv_image'])" mode="widthFix"></image>
+		</view>
 	</view>
 </template>
 

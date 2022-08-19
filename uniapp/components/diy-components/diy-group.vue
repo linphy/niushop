@@ -1,7 +1,6 @@
 <template>
 	<view class="diy-group">
 		<view v-for="(item, index) in diyGlobalData.value" :key="index" :style="item.pageStyle">
-
 			<template v-if="item.componentName == 'Text'">
 				<!-- 文本 -->
 				<diy-text :value="item"></diy-text>

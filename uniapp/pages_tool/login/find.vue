@@ -135,7 +135,7 @@ export default {
 			if (this.stepShow > 0) {
 				this.stepShow -= 1;
 			} else {
-				this.$util.redirectTo('/pages_tool/login/login', '', '', 'redirectTo');
+				this.$util.redirectTo('/pages_tool/login/login', '', 'redirectTo');
 			}
 		},
 		// 下一步

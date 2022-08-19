@@ -8,23 +8,38 @@
 						<view class="icon" v-if="tabBarList.type == 1 || tabBarList.type == 2" :animation="cartAnimation">
 							<block v-if="verify(item.link)">
 								<image v-if="item.selected_icon_type == 'img'" :src="$util.img(item.selectedIconPath)" />
-								<diy-icon v-if="item.selected_icon_type == 'icon'" :icon="item.selectedIconPath" :value="item.selected_style ? item.selected_style : null"></diy-icon>
+								<diy-icon
+									v-if="item.selected_icon_type == 'icon'"
+									:icon="item.selectedIconPath"
+									:value="item.selected_style ? item.selected_style : null"
+								></diy-icon>
 							</block>
 							<block v-else>
-								<image v-if="item.icon_type == 'img'" :src=" $util.img(item.iconPath)" />
+								<image v-if="item.icon_type == 'img'" :src="$util.img(item.iconPath)" />
 								<diy-icon v-if="item.icon_type == 'icon'" :icon="item.iconPath" :value="item.style ? item.style : null"></diy-icon>
 							</block>
-							<view class="cartNumberBtn font-size-activity-tag" :class="{max:item.link.wap_url == '/pages/goods/cart' && cartNumber > 99}" :style="{background: 'var(--price-color)'}" v-if="item.link.wap_url == '/pages/goods/cart' && cartNumber > 0">{{ cartNumber > 99 ? '99+' : cartNumber  }}</view>
+							<view
+								class="cartNumberBtn font-size-activity-tag"
+								:class="{ max: item.link.wap_url == '/pages/goods/cart' && cartNumber > 99 }"
+								:style="{ background: 'var(--price-color)' }"
+								v-if="item.link.wap_url == '/pages/goods/cart' && cartNumber > 0"
+							>
+								{{ cartNumber > 99 ? '99+' : cartNumber }}
+							</view>
 						</view>
 					</block>
 					<block v-else>
 						<view class="icon" v-if="tabBarList.type == 1 || tabBarList.type == 2">
 							<block v-if="verify(item.link)">
 								<image v-if="item.selected_icon_type == 'img'" :src="$util.img(item.selectedIconPath)" />
-								<diy-icon v-if="item.selected_icon_type == 'icon'" :icon="item.selectedIconPath" :value="item.selected_style ? item.selected_style : null"></diy-icon>
+								<diy-icon
+									v-if="item.selected_icon_type == 'icon'"
+									:icon="item.selectedIconPath"
+									:value="item.selected_style ? item.selected_style : null"
+								></diy-icon>
 							</block>
 							<block v-else>
-								<image v-if="item.icon_type == 'img'" :src=" $util.img(item.iconPath)" />
+								<image v-if="item.icon_type == 'img'" :src="$util.img(item.iconPath)" />
 								<diy-icon v-if="item.icon_type == 'icon'" :icon="item.iconPath" :value="item.style ? item.style : null"></diy-icon>
 							</block>
 						</view>
@@ -34,7 +49,6 @@
 						v-if="(tabBarList.type == 1 || tabBarList.type == 3) && tabBarList.theme == 'diy'"
 						:style="{ color: verify(item.link) ? tabBarList.textHoverColor : tabBarList.textColor }"
 					>
-					
 						{{ item.text }}
 					</view>
 					<view
@@ -42,7 +56,6 @@
 						v-if="(tabBarList.type == 1 || tabBarList.type == 3) && tabBarList.theme == 'default'"
 						:style="{ color: verify(item.link) ? 'var(--base-color)' : '#333333' }"
 					>
-					
 						{{ item.text }}
 					</view>
 				</view>
@@ -59,10 +72,6 @@ export default {
 	props: {
 		value: {
 			type: Object
-		},
-		type: {
-			type: String,
-			default: ''
 		},
 		name: {
 			type: String,
@@ -85,23 +94,23 @@ export default {
 		cartNumber() {
 			return this.$store.state.cartNumber;
 		},
-		cartChange(){
+		cartChange() {
 			return this.$store.state.cartChange;
 		}
 	},
 	watch: {
-		cartChange: function(nval, oval){
+		cartChange: function(nval, oval) {
 			if (nval > oval) {
 				let animation = uni.createAnimation({
 					duration: 200,
-					timingFunction: 'ease',
-				})
+					timingFunction: 'ease'
+				});
 				animation.scale(1.2).step();
-				this.cartAnimation = animation.export()
+				this.cartAnimation = animation.export();
 				setTimeout(() => {
 					animation.scale(1).step();
-					this.cartAnimation = animation.export()
-				}, 300)
+					this.cartAnimation = animation.export();
+				}, 300);
 			}
 		}
 	},
@@ -117,7 +126,11 @@ export default {
 			} else {
 				var url = this.currentRoute;
 			}
-			if (link.wap_url.indexOf(url) != -1) {
+
+			// 首页特殊处理
+			if (link.wap_url == '/pages/index/index' && this.name == 'DIY_VIEW_INDEX') {
+				return true;
+			} else if (link.wap_url.indexOf(url) != -1) {
 				return true;
 			}
 			return false;
@@ -256,7 +269,7 @@ export default {
 			top: -8rpx;
 			right: -18rpx;
 			width: 24rpx;
-			height: 24rpx!important;
+			height: 24rpx !important;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -264,7 +277,7 @@ export default {
 			padding: 6rpx;
 			border-radius: 50%;
 			z-index: 99;
-			&.max{
+			&.max {
 				width: 40rpx;
 				border-radius: 24rpx;
 				right: -28rpx;

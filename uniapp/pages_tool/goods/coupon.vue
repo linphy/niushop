@@ -57,7 +57,7 @@
 						</view>
 					</view>
 				</view>
-				<view v-if="list.length == 0"><ns-empty text="暂无可领取的优惠券" :isIndex="false" :fixed="false"></ns-empty></view>
+				<view v-if="list.length == 0"><ns-empty text="暂无可领取的优惠券" :isIndex="false"></ns-empty></view>
 			</block>
 		</mescroll-uni>
 		<loading-cover ref="loadingCover"></loading-cover>

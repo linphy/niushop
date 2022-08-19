@@ -5,9 +5,9 @@
 }
 
 @mixin wrap {
-	margin: $margin-updown $margin-both;
+	margin: $margin-updown 24rpx;
 	padding: 30rpx;
-	border-radius: $border-radius;
+	border-radius: 16rpx;
 	background: #fff;
 	position: relative;
 }
@@ -16,8 +16,8 @@ view {
 	font-size: $font-size-tag;
 }
 .bottom-safe-area {
-	padding-bottom: calc(constant(safe-area-inset-bottom) + 10rpx);
-	padding-bottom: calc(env(safe-area-inset-bottom) + 10rpx);
+	padding-bottom: calc(constant(safe-area-inset-bottom) + 10rpx)!important;
+	padding-bottom: calc(env(safe-area-inset-bottom) + 10rpx)!important;
 }
 .align-right {
 	text-align: right;

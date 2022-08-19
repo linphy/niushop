@@ -107,7 +107,7 @@
 												</view>
 												<block v-else>
 													<block v-if="cart['goods_' + item.goods_id]">
-														<view class="num-action" @click="reduce(item)">
+														<view class="num-action reduce" @click="reduce(item)">
 															<text class="iconfont iconjian"></text>
 														</view>
 														<view class="num">{{ cart['goods_' + item.goods_id]['sku_' + item.sku_id].num }}</view>
@@ -185,7 +185,7 @@
 										</view>
 										<block v-else>
 											<block v-if="cart['goods_' + item.goods_id]">
-												<view class="num-action" @click="reduce(item)">
+												<view class="num-action reduce" @click="reduce(item)">
 													<text class="iconfont iconjian"></text>
 												</view>
 												<view class="num">{{ cart['goods_' + item.goods_id]['sku_' + item.sku_id].num }}</view>
@@ -782,12 +782,13 @@
 					}
 					
 					.num-action {
+						display: flex;
+						align-items: center;
+						justify-content: center;
 						width: 40rpx;
 						height: 40rpx;
-						text-align: center;
-						line-height: 40rpx;
 						background: $base-color;
-						border-radius: 12rpx;
+						border-radius: 50%;
 						position: relative;
 						
 						.click-event {
@@ -799,22 +800,34 @@
 							transform: translate(-50%, -50%);
 							z-index: 5;
 						}
+						&.reduce{
+							width: 38rpx;
+							height: 38rpx;
+							background-color: transparent;
+							border: 2rpx solid $base-color;
+							box-sizing: border-box;
+							.iconjian{
+								color: $base-color;
+							}
+						}
 					}
 					.iconjian, .iconjia {
 						color: var(--btn-text-color);
 						font-weight: bold;
 						font-size: 26rpx;
+						line-height: 1;
 					}
 					
 					.select-sku {
 						color: var(--btn-text-color);
 						font-size: 24rpx;
-						padding: 0 20rpx;
+						padding: 16rpx 24rpx;
 						border-radius: 12rpx;
 						position: relative;
-						height: 40rpx;
-						line-height: 40rpx;
+						// height: 40rpx;
+						line-height: 1;
 						text-align: center;
+						border-radius: 50rpx;
 						
 						.num-tag {
 							position: absolute;
@@ -877,11 +890,10 @@
 	
 	.screen-category-wrap {
 		display: flex;
-		align-items: center;
 		
 		.iconunfold {
-			font-size: 32rpx;
-			color: #666666;
+			font-size: 30rpx;
+			color: #999;
 			padding: 0 0 0 20rpx;
 		}
 	}
@@ -897,7 +909,7 @@
 			background: #F5F5F5;
 			color: #666;
 			margin-right: 20rpx;
-			border-radius: 8rpx;
+			border-radius: 40rpx;
 			&.selected{
 				background-color: $base-color;
 				color: var(--btn-text-color);;

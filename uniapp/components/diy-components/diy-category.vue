@@ -522,6 +522,7 @@
 			margin: 0 0 0 20rpx;
 			width: 200rpx;
 			font-weight: bold;
+			border-radius: 50rpx;
 		}
 	}
 	
