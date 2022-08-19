@@ -17,14 +17,24 @@ view {
   padding-bottom: 188rpx;
 }
 .mobile-wrap {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
 }
 .mobile-wrap .tips {
   font-size: 22rpx;
-  margin-bottom: 10rpx;
+  margin-bottom: 30rpx;
+  background: var(--main-color-shallow);
+  border-radius: 10rpx;
+  padding: 20rpx 30rpx;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+.mobile-wrap .tips .iconfont {
+  margin-right: 5rpx;
 }
 .mobile-wrap.local-mobile {
   border-bottom: 2rpx solid #eeeeee;
@@ -34,6 +44,7 @@ view {
   border-top: 2rpx solid #eeeeee;
   margin: 20rpx 0 0 0;
   padding: 20rpx 0;
+  border-radius: 0;
 }
 .mobile-wrap .form-group {
   display: flex;
@@ -144,10 +155,11 @@ view {
   color: var(--price-color);
 }
 .site-wrap {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
   padding: 40rpx 0;
 }
 .site-wrap.order-goods {
@@ -247,10 +259,11 @@ view {
   margin-bottom: 0;
 }
 .order-money {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
 }
 .order-money .order-cell:last-child {
   margin-bottom: 0;
@@ -482,10 +495,11 @@ view {
   background: #fff;
 }
 .coupon-popup .coupon-item {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
   margin: 20rpx 20rpx 0;
   padding: 0;
   position: relative;
@@ -664,11 +678,18 @@ view {
           transform: scale(0.8);
 }
 .address-box {
-  border-radius: 10rpx;
-  margin: 0 0 20rpx;
+  margin: 20rpx 24rpx 0;
+  border-radius: 0;
+  background: #fff;
+  padding: 30rpx 30rpx;
+  border-radius: 16rpx;
+  padding: 0;
+  border-radius: 16rpx;
+  margin: 20rpx 24rpx 0;
   background-color: #fff;
   position: relative;
   padding-bottom: 6rpx;
+  overflow: hidden;
 }
 .address-box .address-line {
   position: absolute;
@@ -739,7 +760,6 @@ view {
 .local-box {
   margin: 0 30rpx;
   padding-bottom: 20rpx;
-  border-radius: 10rpx;
   border-top: 2rpx solid #eeeeee;
 }
 .local-box .order-cell {
@@ -771,10 +791,11 @@ view {
   color: #909399;
 }
 .delivery-mode {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
 }
 .delivery-mode .head {
   display: flex;
@@ -806,10 +827,11 @@ view {
   background-color: #f8f8f8;
 }
 .store-box {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
   padding-bottom: 26rpx;
   padding-top: 20rpx;
   position: relative;
@@ -974,14 +996,15 @@ view {
   display: block;
 }
 .system-form-wrap {
-  margin: 0 0 20rpx 0;
+  margin: 20rpx 24rpx 0;
   border-radius: 0;
   background: #fff;
   padding: 30rpx 30rpx;
+  border-radius: 16rpx;
   padding: 0 30rpx;
 }
 .agreement {
-  margin: 0 30rpx;
+  margin: 20rpx 30rpx 0;
 }
 .agreement text {
   color: var(--base-color);

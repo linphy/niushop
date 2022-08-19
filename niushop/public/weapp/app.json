@@ -130,11 +130,13 @@
       "desc": "为了更好地为您提供服务"
     }
   },
+  "requiredPrivateInfos": ["getLocation"],
   "usingComponents": {
     "loading-cover": "/components/loading-cover/loading-cover",
     "ns-empty": "/components/ns-empty/ns-empty",
     "mescroll-uni": "/components/mescroll/my-list-mescroll",
     "mescroll-body": "/components/mescroll/mescroll-body",
     "ns-login": "/components/ns-login/ns-login"
-  }
+  },
+  "sitemapLocation": "sitemap.json"
 }

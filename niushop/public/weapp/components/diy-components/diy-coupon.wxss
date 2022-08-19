@@ -434,6 +434,69 @@
   font-size: 50rpx;
   margin-top: 60rpx;
 }
+ .coupon-style-seven .uni-scroll-view-content {
+  display: flex;
+}
+ .coupon-style-seven .coupon-list {
+  margin-right: 16rpx;
+  flex-shrink: 0;
+  width: 608rpx;
+  height: 160rpx;
+  position: relative;
+  padding: 10rpx 0;
+}
+ .coupon-style-seven .coupon-list image {
+  width: 100%;
+  height: 100%;
+}
+ .coupon-style-seven .coupon-list .coupon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-info {
+  min-width: 25%;
+  max-width: 30%;
+  padding: 0;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-info .coupon-num {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-info .coupon-num .coupon-size {
+  font-size: 60rpx;
+  font-weight: bold;
+  margin-right: 4rpx;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-line {
+  border-left: 1rpx dashed #FD463E;
+  height: 65%;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-type .coupon-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  width: 280rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-type .coupon-least {
+  font-size: 24rpx;
+  color: #999;
+}
+ .coupon-style-seven .coupon-list .coupon .coupon-get {
+  padding: 4rpx 40rpx;
+  width: 130rpx;
+  font-size: 24rpx;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
  .uni-scroll-view ::-webkit-scrollbar {
   /* 隐藏滚动条，但依旧具备可以滚动的功能 */
   display: none;

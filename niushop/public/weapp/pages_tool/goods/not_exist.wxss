@@ -3,16 +3,20 @@
  * 你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
  * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
  */
+.page {
+  height: 100vh;
+  overflow: hidden;
+}
 .closeBox {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 330rpx;
+  margin-top: 260rpx;
 }
 image {
-  width: 240rpx;
+  width: 400rpx;
 }
 .close-title {
   font-size: 28rpx;

@@ -219,6 +219,9 @@
 .style8 .style8-box {
   text-align: left !important;
 }
+.style8 .style8-box .style8-title {
+  margin-left: 20rpx;
+}
 .style8 .style8-box .style8-wrap {
   height: 100%;
   position: absolute;
@@ -463,8 +466,8 @@
   margin: 0 10rpx;
 }
 .style13 image {
-  max-height: 50rpx;
-  max-width: 76rpx;
+  height: 50rpx;
+  width: 76rpx;
 }
 .style13 .right-img {
   -webkit-transform: rotateY(180deg);

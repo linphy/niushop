@@ -59,10 +59,10 @@
 .goods-list.double-column .goods-item .goods-img image {
   width: 100%;
   position: absolute;
-  top: 50%;
+  top: 0;
+  bottom: 0;
   left: 0;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
+  right: 0;
 }
 .goods-list.double-column .goods-item .goods-tag {
   color: #fff;

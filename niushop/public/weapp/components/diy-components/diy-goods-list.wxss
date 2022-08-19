@@ -4,6 +4,7 @@
  * 建议使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
  */
 .goods-list .goods-item.data-v-74397cfa {
+  overflow: hidden;
   line-height: 1;
 }
 .goods-list .goods-item .sale.data-v-74397cfa {
@@ -76,7 +77,6 @@
   font-size: 80rpx;
 }
 .goods-list.row1-of1 .goods-item.data-v-74397cfa {
-  overflow: hidden;
   background-color: #fff;
   display: flex;
   margin-bottom: 20rpx;
@@ -161,7 +161,6 @@
   justify-content: space-between;
 }
 .goods-list.row1-of2 .goods-item.data-v-74397cfa {
-  overflow: hidden;
   margin-top: 20rpx;
   width: calc(50% - 10rpx);
   display: flex;
@@ -209,12 +208,10 @@
 .goods-list.row1-of2 .goods-item .info-wrap .pro-info .discount-price .price-wrap .unit.data-v-74397cfa {
   font-weight: bold;
   font-size: 24rpx !important;
-  color: var(--price-color) !important;
 }
 .goods-list.row1-of2 .goods-item .info-wrap .pro-info .discount-price .price-wrap .price.data-v-74397cfa {
   font-weight: bold;
-  font-size: 32rpx;
-  color: var(--price-color) !important;
+  font-size: 32rpx !important;
 }
 .goods-list.row1-of2 .goods-item .info-wrap .pro-info .delete-price.data-v-74397cfa {
   text-decoration: line-through;
@@ -230,6 +227,9 @@
 }
 .goods-list.row1-of2.style-1 .pro-info .discount-price .price-wrap.data-v-74397cfa {
   display: inline-block;
+}
+.goods-list.row1-of2.style-1 .pro-info .discount-price .price-wrap text.data-v-74397cfa {
+  font-weight: bold;
 }
 .goods-list.row1-of2.style-1 .pro-info .discount-price .price-wrap.data-v-74397cfa {
   line-height: 1;
@@ -299,7 +299,6 @@
 .goods-list.row1-of3 .goods-item.data-v-74397cfa {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   margin-top: 20rpx;
   width: calc(33.3333333% - 14rpx);
   box-sizing: border-box;
@@ -425,7 +424,6 @@
   justify-content: space-between;
 }
 .goods-list.horizontal-slide .goods-item.data-v-74397cfa {
-  overflow: hidden;
   width: 200rpx;
   display: inline-block;
   box-sizing: border-box;

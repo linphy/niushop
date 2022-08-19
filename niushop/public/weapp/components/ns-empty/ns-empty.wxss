@@ -13,7 +13,7 @@
   justify-content: center;
 }
 .empty .empty_img {
-  width: 63%;
+  width: 50%;
   height: 450rpx;
 }
 .empty .empty_img image {
@@ -27,6 +27,8 @@
   height: 70rpx;
   line-height: 70rpx !important;
   font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 100rpx;
 }
 .fixed {
   position: fixed;

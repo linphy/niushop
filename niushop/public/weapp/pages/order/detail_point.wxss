@@ -8,8 +8,8 @@ view {
   font-size: 24rpx;
 }
 .bottom-safe-area {
-  padding-bottom: calc(constant(safe-area-inset-bottom) + 10rpx);
-  padding-bottom: calc(env(safe-area-inset-bottom) + 10rpx);
+  padding-bottom: calc(constant(safe-area-inset-bottom) + 10rpx) !important;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 10rpx) !important;
 }
 .align-right {
   text-align: right;
@@ -83,9 +83,9 @@ view {
   background: rgba(0, 0, 0, 0) !important;
 }
 .address-wrap {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
   min-height: 100rpx;
@@ -134,9 +134,9 @@ view {
   color: #999;
 }
 .pickup-info {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
 }
@@ -203,9 +203,9 @@ view {
   border: 0.5px solid #666;
 }
 .virtual-mobile-wrap {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
   margin-top: -69rpx;
@@ -216,9 +216,9 @@ view {
   text-align: right;
 }
 .verify-code-wrap {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
 }
@@ -262,9 +262,9 @@ view {
   margin-top: 20rpx;
 }
 .verify-info-wrap {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
 }
@@ -309,9 +309,9 @@ view {
   border: 2rpx solid #d2d2d2;
 }
 .site-wrap {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
 }
@@ -454,9 +454,9 @@ view {
   margin-left: 6rpx;
 }
 .order-summary {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
 }
@@ -493,9 +493,9 @@ view {
   margin-bottom: 20rpx;
 }
 .order-money {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
 }
@@ -521,9 +521,9 @@ view {
   color: var(--price-color);
 }
 .kefu {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
   margin: 30rpx 0 10rpx;
@@ -624,9 +624,9 @@ view {
   font-size: 20rpx;
 }
 .store-wrap {
-  margin: 20rpx 30rpx;
+  margin: 20rpx 24rpx;
   padding: 30rpx;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   background: #fff;
   position: relative;
   margin-top: -76rpx;
