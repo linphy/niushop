@@ -41,7 +41,7 @@
  | [留言评论](https://bbs.niushop.com)
 
 ### 演示站后台[<a href='https://v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
-<a href='https://v5.niuteam.cn/shop' target="_blank">https://v5.niuteam.cn/shop</a>  账号：admin  密码：niushop168168
+<a href='https://v5.niuteam.cn/shop' target="_blank">https://v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
 ###  演示二维码
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E6%BC%94%E7%A4%BA%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220801173711.png)
 
