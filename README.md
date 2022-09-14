@@ -34,14 +34,14 @@
   :fa-th-list:  [官网地址](https://www.niushop.com)
  | [服务市场]()
  | [系统功能]()
- | [系统演示](https://v5.niuteam.cn/)
+ | [系统演示](https://uniapp.v5.niuteam.cn/)
  | [使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842076)
  | [二开手册]()
  | [论坛地址](https://bbs.niushop.com)
  | [留言评论](https://bbs.niushop.com)
 
-### 演示站后台[<a href='https://v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
-<a href='https://v5.niuteam.cn/shop' target="_blank">https://v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
+### 演示站后台[<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
+<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank">https://uniapp.v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
 ###  演示二维码
 ![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E6%BC%94%E7%A4%BA%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220801173711.png)
 
