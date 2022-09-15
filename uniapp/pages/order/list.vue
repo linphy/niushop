@@ -4,7 +4,7 @@
 		<view class="cate-search">
 			<view class="search-box">
 				<input class="uni-input" maxlength="50" v-model="searchText" confirm-type="search" placeholder="请输入商品名称/订单编号" @confirm="search()"/>
-				<text class="iconfont iconsousuo1" @click="search()"></text>
+				<text class="iconfont icon-sousuo3" @click="search()"></text>
 			</view>
 		</view>
 		<view class="order-nav" v-if="token">
@@ -22,7 +22,7 @@
 						<view class="order-header" :class="{ waitpay: orderStatus == 'waitpay' && orderItem.order_status == 0 }">
 							<view
 								class="iconfont"
-								:class="$util.inArray(orderItem.order_id, mergePayOrder) == -1 ? 'iconyuan_checkbox' : 'iconyuan_checked color-base-text'"
+								:class="$util.inArray(orderItem.order_id, mergePayOrder) == -1 ? 'icon-yuan_checkbox' : 'icon-yuan_checked color-base-text'"
 								@click="selectOrder(orderItem.order_id, orderItem.pay_money)"
 								v-if="orderStatus == 'waitpay' && orderItem.order_status == 0"
 							></view>
@@ -59,7 +59,7 @@
 											
 										</text>
 										<text class="goods-num">
-											<text class="iconfont iconclose"></text>
+											<text class="iconfont icon-close"></text>
 											{{ goodsItem.num }}
 										</text>
 									</view>

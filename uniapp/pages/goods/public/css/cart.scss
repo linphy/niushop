@@ -15,8 +15,8 @@
 	align-items: center;
 	justify-content: space-between;
 	line-height: 36rpx;
-	background: #F7F7F7;
-	
+	background: #f7f7f7;
+
 	.num-wrap {
 		margin-left: $margin-both;
 		color: #666666;
@@ -52,8 +52,8 @@
 		box-sizing: border-box;
 		position: relative;
 		padding: 30rpx 0 30rpx 30rpx;
-		&::after{
-			content: "";
+		&::after {
+			content: '';
 			position: absolute;
 			left: 20rpx;
 			right: 20rpx;
@@ -61,7 +61,7 @@
 			bottom: 0;
 			background-color: #f2f2f2;
 		}
-		&:last-of-type::after{
+		&:last-of-type::after {
 			height: 0;
 		}
 
@@ -78,7 +78,7 @@
 				transform: translateY(-50%);
 				transition: all 0.2s;
 			}
-			& > .iconyuan_checkbox {
+			& > .icon-yuan_checkbox {
 				color: $color-disabled;
 			}
 
@@ -107,7 +107,7 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
-				
+
 				.goods-name {
 					display: -webkit-box;
 					-webkit-box-orient: vertical;
@@ -117,27 +117,34 @@
 					font-size: $font-size-base;
 				}
 
-				.sku {
-					line-height: 1;
-					margin: 10rpx 0 18rpx 0;
-					display: inline-flex;
-					align-items: center;
-					background: #F4F4F4;
-					border-radius: 8rpx;
-					padding: 0 10rpx 0 20rpx;
-					
-					.goods-spec {
-						color: #666666;
-						font-size: 24rpx;
-						white-space: nowrap;
-						overflow: hidden;
-						text-overflow: ellipsis;
-					}
-					
-					.iconfont {
-						font-size: 28rpx;
-						padding-left: 10rpx;
-						color: #666666;
+				.sku-wrap {
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					width: 100%;
+
+					.sku {
+						line-height: 1;
+						margin: 10rpx 0 18rpx 0;
+						display: inline-flex;
+						align-items: center;
+						background: #f4f4f4;
+						border-radius: 8rpx;
+						padding: 0 10rpx 0 20rpx;
+
+						.goods-spec {
+							color: #666666;
+							font-size: 24rpx;
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+						}
+
+						.iconfont {
+							font-size: 28rpx;
+							padding-left: 10rpx;
+							color: #666666;
+						}
 					}
 				}
 
@@ -169,7 +176,7 @@
 							}
 						}
 					}
-					
+
 					/deep/ .decrease {
 						width: 52rpx;
 						height: 52rpx;
@@ -191,8 +198,8 @@
 				}
 			}
 		}
-		
-		&:first-child{
+
+		&:first-child {
 			padding-top: 30rpx;
 		}
 		&:last-child {
@@ -201,13 +208,13 @@
 				padding-bottom: 0;
 			}
 		}
-		
+
 		.discount-wrap {
 			line-height: 1.5;
 			font-size: 24rpx;
 			margin-top: 20rpx;
 			display: flex;
-			
+
 			.discount-tag {
 				color: $base-color;
 				line-height: 1;
@@ -225,7 +232,7 @@
 				border-left: 2rpx solid #ddd;
 				white-space: nowrap;
 				margin-top: 10rpx;
-				&:last-child{
+				&:last-child {
 					display: none;
 				}
 			}
@@ -237,7 +244,7 @@
 			}
 		}
 	}
-	
+
 	.invalid-goods {
 		.invalid-mark {
 			color: $color-tip;
@@ -270,7 +277,7 @@
 			left: 30rpx;
 			transform: translateY(-50%);
 		}
-		& > .iconyuan_checkbox {
+		& > .icon-yuan_checkbox {
 			color: $color-disabled;
 		}
 
@@ -289,16 +296,16 @@
 		flex-direction: column;
 		justify-content: center;
 		text-align: right;
-		
+
 		.money {
 			line-height: 1;
 			font-size: 32rpx;
-			
+
 			.value {
 				font-weight: bold;
 				color: var(--price-color);
 			}
-			
+
 			.unit {
 				font-size: $font-size-tag;
 				margin-right: 4rpx;
@@ -311,13 +318,13 @@
 			font-size: 22rpx;
 			color: #666666;
 			margin-top: 10rpx;
-			
+
 			.iconfont {
 				font-size: 28rpx;
 				margin-left: 6rpx;
-				transition: all .1s;
+				transition: all 0.1s;
 				display: inline-block;
-				&.open{
+				&.open {
 					transform: rotate(180deg);
 				}
 			}
@@ -335,7 +342,7 @@
 		align-items: center;
 		margin-right: 30rpx;
 		white-space: nowrap;
-		
+
 		button {
 			padding: 0 30rpx;
 			height: 70rpx;
@@ -357,7 +364,7 @@
 .cart-empty {
 	text-align: center;
 	padding: 140rpx $padding 80rpx $padding;
-	
+
 	image {
 		width: 380rpx;
 	}
@@ -369,7 +376,7 @@
 		line-height: 70rpx !important;
 		font-size: $font-size-base;
 		border-radius: 50rpx;
-		&.visit-the{
+		&.visit-the {
 			font-weight: bold;
 		}
 	}
@@ -404,35 +411,33 @@
 	}
 
 	.popup-body {
-		
 	}
-
 }
 
 .discount-popup {
 	.popup-body {
 		min-height: 300rpx;
 	}
-	
+
 	.detail-item {
 		height: 60rpx;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 30rpx;
-		
+
 		.money {
 			font-weight: bold;
 		}
-		
+
 		.reduce {
 			color: var(--price-color);
 		}
 	}
-	
+
 	.total {
 		margin-top: 20rpx;
-		
+
 		.title {
 			font-size: 36rpx;
 			font-weight: bold;
@@ -448,11 +453,11 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	
+
 	& view {
 		line-height: 1;
 	}
-	
+
 	.iconfont {
 		font-size: 28rpx;
 		margin-left: 4rpx;
@@ -474,7 +479,7 @@
 	padding: 0;
 	position: relative;
 	background-color: #fff2f0;
-	
+
 	&:before,
 	&:after {
 		position: absolute;
@@ -500,7 +505,7 @@
 		display: flex;
 		width: 100%;
 		position: relative;
-		
+
 		.info-wrap {
 			width: 220rpx;
 			height: 190rpx;

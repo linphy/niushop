@@ -1,6 +1,6 @@
 <template>
-	<view class="contact-wrap">
-		<slot></slot>
+	<view class="contact-wrap" >
+		<slot v-if="config && config.type != 'none'"></slot>
 		<button type="default" hover-class="none" :open-type="openType" class="contact-button" @click="contactServicer" 
 			:send-message-title="sendMessageTitle" 
 			:send-message-path="sendMessagePath" 
@@ -58,6 +58,7 @@
 							this.config = res.data.weapp;
 							if (this.config.type == 'weapp') this.openType = 'contact';
 							// #endif
+							
 						}
 					}
 				});

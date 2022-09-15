@@ -33,7 +33,7 @@
 							@click="$util.redirectTo('/pages_tool/goods/search')"
 							:style="{ height: menuButtonInfo.height - 2 + 'px', lineHeight: menuButtonInfo.height - 2 + 'px' }"
 						>
-							<text class="iconfont iconsousuo"></text>
+							<text class="iconfont icon-sousuo3"></text>
 							请输入商品名称
 						</view>
 					</view>
@@ -231,7 +231,7 @@ export default {
 		border: 1px solid #eeeeee;
 		color: rgb(102, 102, 102);
 
-		.iconsousuo {
+		.icon-sousuo3 {
 			color: #909399;
 			font-size: $font-size-tag;
 			margin-right: 10rpx;

@@ -175,7 +175,7 @@ export default {
 
 <style lang="scss">
 .uni-tip {
-	width: 580rpx;
+	width: 540rpx;
 	background: #fff;
 	box-sizing: border-box;
 	border-radius: 10rpx;
@@ -215,14 +215,14 @@ export default {
 }
 
 .uni-tip-button {
-	width: 100%;
+	width: 80%;
 	height: 80rpx;
 	line-height: 80rpx;
 	text-align: center;
 	border: none;
 	border-radius: 80rpx;
 	padding: 0 !important;
-	margin: 20rpx 0 0 0 !important;
+	margin: 20rpx auto 0 !important;
 	background: $base-color;
 	font-size: $font-size-base;
 }

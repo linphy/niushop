@@ -43,6 +43,10 @@ export default {
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
 		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	},
 	'green':{
 		name:'green',
@@ -86,6 +90,10 @@ export default {
 		seckill:{
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	},
 	'blue':{
@@ -131,6 +139,10 @@ export default {
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
 		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	}, 
 	'pink':{
 		name:'pink',
@@ -174,6 +186,10 @@ export default {
 		seckill:{
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	}, 
 	'gold':{
@@ -219,6 +235,10 @@ export default {
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
 		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	},
 	'purple':{
 		name:'purple',
@@ -262,6 +282,10 @@ export default {
 		seckill:{
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	},
 	'yellow':{
@@ -307,6 +331,10 @@ export default {
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
 		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	},
 	'black':{
 		name:'black',
@@ -350,6 +378,10 @@ export default {
 		seckill:{
 			seckill_promotion_color: '#F83530',//活动背景
 			seckill_promotion_aux_color: '#FD9A01',//活动辅色
+		},
+		giftcard:{
+			giftcard_promotion_color: '#FF3369',//活动背景
+			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	}
 }

@@ -18,7 +18,7 @@
 
 				<view class="history-wrap" @click="switchAction('consultrecord')">
 					<view>协商记录</view>
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
 				</view>
 
 				<view class="refund-address-wrap" v-if="detail.refund_status == 4">
@@ -133,7 +133,7 @@
 				<view class="history-bottom" :class="{ 'bottom-safe-area': isIphoneX }">
 					<ns-contact :niushop="{order_id: detail.order_id}">
 						<view>
-							<text class="iconfont iconziyuan"></text>
+							<text class="iconfont icon-ziyuan"></text>
 							<text>联系客服</text>
 						</view>
 					</ns-contact>

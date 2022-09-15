@@ -14,7 +14,7 @@
 						@confirm="search()"
 						:placeholder="placWords ? placWords : $lang('inputPlaceholder')"
 					/>
-					<text class="iconfont iconsousuo1" @click="search()"></text>
+					<text class="iconfont icon-sousuo3" @click="search()"></text>
 				</view>
 			</view>
 			<view class="search-content">
@@ -23,14 +23,14 @@
 					<view class="history-box">
 						<view class="history-top">
 							<view class="title">{{ $lang('history') }}</view>
-							<view class="icon iconfont iconicon7" @click="deleteHistoryList"></view>
+							<view class="icon iconfont icon-icon7" @click="deleteHistoryList"></view>
 						</view>
 						<view class="history-bottom " id="history-list" :style="{ maxHeight: !isAllHistory ? '100%' : '168rpx' }">
 							<view class="history-li" v-for="(item, index) in historyList" :key="index" @click="otherSearch(item)">
 								<button type="primary">{{ item }}</button>
 							</view>
 							<view class="history-li history_more" v-if="isAllHistory" @click="isAllHistory = false">
-								<button type="primary"><text class="iconfont iconiconangledown"></text></button>
+								<button type="primary"><text class="iconfont icon-iconangledown"></text></button>
 							</view>
 						</view>
 					</view>

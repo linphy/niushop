@@ -29,7 +29,7 @@ export default {
 		defaultRegions: {
 			handler(arr, oldArr = []) {
 				// 避免传的是字面量的时候重复触发
-				if (arr.length !== 3 || arr.join('') === oldArr.join('')) return;
+				if (arr.length != this.selectArr || arr.join('') === oldArr.join('')) return;
 				this.handleDefaultRegions();
 			},
 			immediate: true
@@ -102,7 +102,7 @@ export default {
 				for (let i = 0; i < this.defaultRegions.length; i++) {
 					for (let j = 0; j < this.pickerValueArray[i].length; j++) {
 						// 匹配省
-						if (this.defaultRegions[i] == this.pickerValueArray[i][j].value && this.pickerValueArray[i][j].level == 1) {
+						if ( (this.defaultRegions[i] == this.pickerValueArray[i][j].value || this.defaultRegions[i] == this.pickerValueArray[i][j].label) && this.pickerValueArray[i][j].level == 1) {
 							// 设置选中省
 							this.$set(this.multiIndex, i, j);
 
@@ -111,7 +111,7 @@ export default {
 								this.cityArr = data;
 
 								for (let k = 0; k < this.cityArr.length; k++) {
-									if (this.defaultRegions[1] == this.cityArr[k].value) {
+									if (this.defaultRegions[1] == this.cityArr[k].value || this.defaultRegions[1] == this.cityArr[k].label) {
 										// 设置选中市
 										this.$set(this.multiIndex, 1, k);
 
@@ -121,7 +121,7 @@ export default {
 
 											// 设置选中区县
 											for (let u = 0; u < this.districtArr.length; u++) {
-												if (this.defaultRegions[2] == this.districtArr[u].value) {
+												if (this.defaultRegions[2] == this.districtArr[u].value || this.defaultRegions[2] == this.districtArr[u].label) {
 													this.$set(this.multiIndex, 2, u);
 													this.handleValueChange({
 														detail: {

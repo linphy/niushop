@@ -47,7 +47,7 @@
 						{{ formData.full_address ? formData.full_address : '请选择省市区县' }}
 					</view>
 
-					<text @click="selectAddress" class="padding-left iconfont iconlocation"></text>
+					<text @click="selectAddress" class="padding-left iconfont icon-location"></text>
 				</view>
 			</block>
 			<block v-else>
@@ -444,7 +444,7 @@ export default {
 		}
 	}
 
-	.iconlocation {
+	.icon-location {
 		color: #606266;
 		align-self: flex-start;
 		margin-top: 20rpx;

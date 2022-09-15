@@ -71,7 +71,7 @@ export default {
 
 					if (res.code == -1) {
 						uni.setStorageSync('token', '');
-						this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+						this.$util.redirectTo('/pages/index/index');
 					}
 				}
 			});

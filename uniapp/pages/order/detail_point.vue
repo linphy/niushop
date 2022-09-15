@@ -22,8 +22,8 @@
 					<view @click="goDetail(orderData.exchange_goods_id)" class="goods-img">
 						<image :src="exchangeImage(orderData)" @error="imageError()" mode="aspectFill"></image>
 					</view>
-					<view class="goods-info">
-						<view @click="goDetail(orderData.exchange_goods_id)" class="goods-name">{{ orderData.exchange_name }}</view>
+					<view class="goods-info" @click="goDetail(orderData.exchange_goods_id)" >
+						<view class="goods-name">{{ orderData.exchange_name }}</view>
 						<view class="goods-sub-section">
 							<view>
 								<text class="goods-price color-base-text">
@@ -39,7 +39,7 @@
 							</view>
 							<view>
 								<text>
-									<text class="iconfont iconclose"></text>
+									<text class="iconfont icon-close"></text>
 									{{ orderData.num }}
 								</text>
 							</view>
@@ -80,7 +80,7 @@
 			<ns-contact>
 				<view class="kefu">
 					<view>
-						<text class="iconfont iconziyuan"></text>
+						<text class="iconfont icon-ziyuan"></text>
 						<text>联系客服</text>
 					</view>
 				</view>

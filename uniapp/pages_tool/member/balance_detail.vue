@@ -11,14 +11,14 @@
 				<picker mode="date" :value="searchType.date" @change="bindDateChange" fields="month">
 					<view class="uni-input">
 						{{ date }}
-						<text class="iconfont iconiconangledown"></text>
+						<text class="iconfont icon-iconangledown"></text>
 					</view>
 				</picker>
 			</view>
 			<view class="tab-right">
 				<picker @change="bindPickerChange" :value="balanceIndex" :range="balanceType" class="picker" range-key="label">
 					<text class="desc uni-input">{{ balanceType[balanceIndex].label }}</text>
-					<text class="iconfont iconiconangledown"></text>
+					<text class="iconfont icon-iconangledown"></text>
 				</picker>
 			</view>
 		</view>

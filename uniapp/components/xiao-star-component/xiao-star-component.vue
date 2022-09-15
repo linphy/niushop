@@ -1,6 +1,6 @@
 <template>
 	<view class="star-container">
-		<view class="star-view star-view" style="display: flex;align-items: center;height: 36rpx; overflow: hidden;margin-top:8rpx;">
+		<view class="star-view star-view" style="display: flex;align-items: center;height: 36rpx; overflow: hidden;margin-top:2rpx;">
 			<view class="star-icon-con">
 				<view
 					@tap="evaluateTap(item, index)"
@@ -226,8 +226,9 @@ export default {
 			align-items: center;
 			height: 36rpx;
 			.star-icon-item-font {
-				font-size: 38rpx;
+				font-size: 32rpx;
 				color: rgb(244, 209, 119) !important;
+				margin-left: -4rpx;
 			}
 		}
 		.iconwujiaoxing3 {

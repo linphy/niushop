@@ -115,7 +115,7 @@
 		<view @touchmove.prevent.stop>
 			<uni-popup ref="uniPopup" type="center" class="wap-floating" :maskClick="false">
 				<view class="popup-box" @click="close()">
-					<text class="iconfont iconclose" @click="$refs.uniPopup.close()"></text>
+					<text class="iconfont icon-close" @click="$refs.uniPopup.close()"></text>
 					<image class="pic" :src="$util.img('public/uniapp/signin/bg1.png')"></image>
 					<view class="popup-content">
 						<view class="popup-content-wrap">
@@ -159,17 +159,20 @@ export default {
 		};
 	},
 	onLoad(option) {
-		if (!this.addonIsExist.membersignin) {
-			this.$util.showToast({
-				title: '商家未开启会员签到',
-				mask: true,
-				duration: 2000
-			});
-			setTimeout(() => {
-				this.$util.redirectTo('/pages/index/index', {}, 'redirectTo');
-			}, 2000);
-			return;
-		}
+		setTimeout( () => {
+			if (this.addonIsExist && !this.addonIsExist.membersignin) {
+				this.$util.showToast({
+					title: '商家未开启会员签到',
+					mask: true,
+					duration: 2000
+				});
+				setTimeout(() => {
+					this.$util.redirectTo('/pages/index/index');
+				}, 2000);
+				return;
+			}
+		}, 1000);
+		 
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 		if (option.back) this.back = option.back;
 		if (option.redirect) this.redirect = option.redirect;
@@ -510,7 +513,7 @@ uni-page-refresh {
 	flex-direction: column;
 	align-items: center;
 
-	.iconclose {
+	.icon-close {
 		display: block;
 		width: 42rpx;
 		height: 42rpx;

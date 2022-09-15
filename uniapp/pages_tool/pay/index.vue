@@ -57,7 +57,7 @@ export default {
 							title: '未获取到支付信息！'
 						});
 						setTimeout(() => {
-							this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+							this.$util.redirectTo('/pages/index/index');
 						}, 1500);
 					}
 				},

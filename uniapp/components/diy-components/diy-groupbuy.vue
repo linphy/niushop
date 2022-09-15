@@ -292,9 +292,10 @@ scroll-view ::-webkit-scrollbar {
 					bottom: 10rpx;
 					right: 20rpx;
 					margin: 0;
-					padding: 0 16rpx;
+					padding: 0 20rpx;
 					background-color: $base-color;
 					color: #fff;
+					min-width: 112rpx;
 					height: 52rpx;
 					line-height: 52rpx;
 					font-size: $font-size-tag;

@@ -98,6 +98,21 @@
 				<!-- 文章 -->
 				<diy-article :value="item"></diy-article>
 			</template>
+
+			<template v-if="item.componentName == 'MemberInfo'">
+				<!-- 自定义会员中心——会员信息 -->
+				<diy-member-info ref="diyMemberIndex" :value="item" :token="token"></diy-member-info>
+			</template>
+
+			<template v-if="item.componentName == 'MemberMyOrder'">
+				<!-- 自定义会员中心——我的订单 -->
+				<diy-member-my-order ref="diyMemberMyOrder" :value="item" :token="token"></diy-member-my-order>
+			</template>
+
+			<!-- 自定义扩展组件 -->
+			<template v-if="diyGlobalData.compExtend.indexOf(item.componentName) != -1">
+				<diy-comp-extend :value="item"></diy-comp-extend>
+			</template>
 		</view>
 	</view>
 </template>
@@ -111,6 +126,9 @@ export default {
 		},
 		storeId: {
 			type: [String, Number]
+		},
+		token: {
+			type: String
 		},
 		height: {
 			type: String,

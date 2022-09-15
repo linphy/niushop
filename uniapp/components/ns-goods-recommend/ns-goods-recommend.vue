@@ -190,16 +190,14 @@ export default {
 // 商品列表双列样式
 .goods-list.double-column {
 	display: flex;
+	justify-content: space-between;
 	flex-wrap: wrap;
-	margin: 0 $margin-both;
+	margin: 0 24rpx;
 
 	.goods-item {
-		flex: 1;
 		position: relative;
 		background-color: #fff;
-		flex-basis: 48%;
-		max-width: calc((100% - 30rpx) / 2);
-		margin-right: $margin-both;
+		width: calc(50% - 10rpx);
 		margin-bottom: $margin-updown;
 		border-radius: $border-radius;
 

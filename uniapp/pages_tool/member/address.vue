@@ -25,17 +25,17 @@
 
 							<view class="address-item-bottom">
 								<view class="address-default" @click="setDefault(item.id)">
-									<view class="iconfont" :class="item.is_default == 1 ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"></view>
+									<view class="iconfont" :class="item.is_default == 1 ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></view>
 									<text class="default" v-if="localType == 2 && item.local_data" :class="{ 'color-base-text': item.is_default == 1 }">默认地址</text>
 									<text class="default" v-else :class="{ 'color-base-text': item.is_default == 1 }">默认地址</text>
 								</view>
 								<view class="address-btn">
 									<text class="edit" @click="addAddress('edit', item.id)">
-										<text class="iconfont iconbianji"></text>
+										<text class="iconfont icon-bianji"></text>
 										{{ $lang('modify') }}
 									</text>
 									<text class="delete" v-if="item.is_default != 1" @click="deleteAddress(item.id, item.is_default)">
-										<text class="iconfont iconicon7"></text>
+										<text class="iconfont icon-icon7"></text>
 										{{ $lang('del') }}
 									</text>
 								</view>
@@ -51,7 +51,7 @@
 							<button type="primary" class="add-address" @click="getChooseAddress()" v-if="$util.isWeiXin() && local != 1">{{ $lang('getAddress') }}</button>
 							<!-- #endif -->
 							<button type="primary" class="add-address" @click="addAddress('add')">
-								<text class="iconfont iconadd1"></text>
+								<text class="iconfont icon-add1"></text>
 								{{ $lang('newAddAddress') }}
 							</button>
 						</view>
@@ -69,7 +69,7 @@
 						<!-- #endif -->
 
 						<button type="primary" class="add-address" @click="addAddress('add')">
-							<text class="iconfont iconadd1"></text>
+							<text class="iconfont icon-add1"></text>
 							{{ $lang('newAddAddress') }}
 						</button>
 					</view>

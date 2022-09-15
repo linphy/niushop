@@ -1,7 +1,7 @@
 <template>
 	<view v-if="list.length" :class="['goods-list', goodsValue.style]" :style="goodsListWarpCss">
 		<view class="top-wrap">
-			<text :class="['icondiy', goodsValue.topStyle.icon.value]" :style="{ backgroundColor: goodsValue.topStyle.icon.bgColor, color: goodsValue.topStyle.icon.color }"></text>
+			<text :class="['js-icon', goodsValue.topStyle.icon.value]" :style="{ backgroundColor: goodsValue.topStyle.icon.bgColor, color: goodsValue.topStyle.icon.color }"></text>
 			<text class="title" :style="{ color: goodsValue.topStyle.color }">{{ goodsValue.topStyle.title }}</text>
 			<text class="line" :style="{ color: goodsValue.topStyle.subColor }"></text>
 			<text class="sub" :style="{ color: goodsValue.topStyle.subColor }">{{ goodsValue.topStyle.subTitle }}</text>
@@ -226,7 +226,7 @@ export default {
 		display: flex;
 		align-items: center;
 		padding: 20rpx 0;
-		.icondiy {
+		.js-icon {
 			border-radius: 50%;
 			font-size: 40rpx;
 			margin-right: 10rpx;
@@ -344,7 +344,7 @@ export default {
 		display: flex;
 		align-items: center;
 		padding: 20rpx;
-		.icondiy {
+		.js-icon {
 			border-radius: 50%;
 			font-size: 40rpx;
 			margin-right: 20rpx;

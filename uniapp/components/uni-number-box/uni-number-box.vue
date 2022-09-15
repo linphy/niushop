@@ -84,10 +84,17 @@ export default {
 			} else if (type === 'plus') {
 				value += step;
 			}
-			if (value < this.min || value > this.max) {
+			
+			if (value < this.min && type === 'minus') {
 				this.$emit('limit', { value: this.inputValue, type }, this.index);
 				return;
 			}
+			
+			if (value > this.max && type === 'plus') {
+				this.$emit('limit', { value: this.inputValue, type }, this.index);
+				return;
+			}
+			
 			this.inputValue = value / scale;
 		},
 		_getDecimalScale() {

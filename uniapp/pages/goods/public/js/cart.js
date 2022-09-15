@@ -112,7 +112,7 @@ export default {
 					this.invalidGoods.push(item);
 				}
 			});
-	
+
 			this.cartData = [];
 			Object.keys(temp).forEach(key => {
 				this.cartData.push(temp[key]);
@@ -183,14 +183,15 @@ export default {
 				let totalPrice = 0,
 					totalCount = 0,
 					siteAllElectionCount = 0;
-	
+
 				this.cartData.forEach(siteItem => {
 					let siteGoodsCount = 0;
 					siteItem.cartList.forEach(item => {
 						if (item.checked) {
 							siteGoodsCount += 1;
 							totalCount += parseInt(item.num);
-							if (Number(item.member_price) > 0 && Number(item.member_price) < Number(item.discount_price)) {
+							if (Number(item.member_price) > 0 && Number(item.member_price) < Number(item
+									.discount_price)) {
 								totalPrice += item.member_price * item.num;
 							} else {
 								totalPrice += item.discount_price * item.num;
@@ -231,10 +232,12 @@ export default {
 				cart_id.push(this.cartData[siteIndex].cartList[cartIndex].cart_id);
 			}
 			if (cart_id.length == 0) {
-				this.$util.showToast({ title: '请选择要删除的商品' });
+				this.$util.showToast({
+					title: '请选择要删除的商品'
+				});
 				return;
 			}
-	
+
 			uni.showModal({
 				title: '提示',
 				content: '确定要删除这些商品吗？',
@@ -245,12 +248,15 @@ export default {
 						this.getCartNumber();
 						this.$api.sendRequest({
 							url: '/api/cart/delete',
-							data: { cart_id },
+							data: {
+								cart_id
+							},
 							success: res => {
 								if (res.code >= 0) {
 									if (tag == 'all') {
 										for (var i = 0; i < this.cartData.length; i++) {
-											for (var j = 0; j < this.cartData[i].cartList.length; j++) {
+											for (var j = 0; j < this.cartData[i].cartList
+												.length; j++) {
 												var item = this.cartData[i].cartList[j];
 												if (item.checked) {
 													this.cartData[i].cartList.splice(j, 1);
@@ -264,12 +270,15 @@ export default {
 										}
 									} else {
 										this.cartData[siteIndex].cartList.splice(cartIndex, 1);
-										if (this.cartData[siteIndex].cartList.length == 0) this.cartData.splice(siteIndex, 1);
+										if (this.cartData[siteIndex].cartList.length == 0) this
+											.cartData.splice(siteIndex, 1);
 									}
 									this.calculationTotalPrice();
 									this.getCartNumber();
 								} else {
-									this.$util.showToast({ title: res.message });
+									this.$util.showToast({
+										title: res.message
+									});
 								}
 							}
 						});
@@ -288,7 +297,7 @@ export default {
 				min_buy = data.min_buy > 0 ? data.min_buy : 1;
 			if (num > max_buy) num = max_buy;
 			if (num < min_buy) num = min_buy;
-	
+
 			this.modifyFlag = true;
 			this.$api.sendRequest({
 				url: '/api/cart/edit',
@@ -302,7 +311,9 @@ export default {
 						this.calculationTotalPrice();
 						this.getCartNumber();
 					} else {
-						this.$util.showToast({ title: res.message });
+						this.$util.showToast({
+							title: res.message
+						});
 					}
 				}
 			});
@@ -320,12 +331,13 @@ export default {
 						}
 					});
 				});
-				
-				if (this.discount.coupon_info && this.discount.coupon_info.receive_type == 'wait') this.receiveCoupon(this.discount.coupon_info.coupon_type_id, false);
-	
+
+				if (this.discount.coupon_info && this.discount.coupon_info.receive_type == 'wait') this.receiveCoupon(
+					this.discount.coupon_info.coupon_type_id, false);
+
 				if (this.isSub) return;
 				this.isSub = true;
-				
+
 				uni.removeStorageSync('delivery');
 				uni.setStorage({
 					key: 'orderCreateData',
@@ -355,13 +367,17 @@ export default {
 						if (cart_ids.length) {
 							this.$api.sendRequest({
 								url: '/api/cart/delete',
-								data: { cart_id: cart_ids.toString() },
+								data: {
+									cart_id: cart_ids.toString()
+								},
 								success: res => {
 									if (res.code >= 0) {
 										this.invalidGoods = [];
 										this.getCartNumber();
 									} else {
-										this.$util.showToast({ title: res.message });
+										this.$util.showToast({
+											title: res.message
+										});
 									}
 								}
 							});
@@ -375,7 +391,9 @@ export default {
 			this.$forceUpdate();
 		},
 		toGoodsDetail(item) {
-			this.$util.redirectTo('/pages/goods/detail', { sku_id: item.sku_id });
+			this.$util.redirectTo('/pages/goods/detail', {
+				sku_id: item.sku_id
+			});
 		},
 		// 购物车数量
 		getCartNumber() {
@@ -388,12 +406,18 @@ export default {
 			let data = this.cartData[0].cartList[index];
 			if (event.type == 'plus') {
 				if (data.max_buy > 0 && data.max_buy < data.stock) {
-					this.$util.showToast({ title: '该商品每人限购' + data.max_buy + '件' });
+					this.$util.showToast({
+						title: '该商品每人限购' + data.max_buy + '件'
+					});
 				} else {
-					this.$util.showToast({ title: '库存不足' });
+					this.$util.showToast({
+						title: '库存不足'
+					});
 				}
 			} else {
-				this.$util.showToast({ title: '最少购买' + event.value + '件' });
+				this.$util.showToast({
+					title: '最少购买' + event.value + '件'
+				});
 			}
 		},
 		toLogin() {
@@ -412,17 +436,19 @@ export default {
 			this.isAction = !this.isAction;
 			this.resetEditStatus();
 		},
-		selectSku(data){
+		selectSku(data) {
 			let goodsSkuDetail = this.$util.deepClone(data);
-			if (goodsSkuDetail.goods_spec_format) goodsSkuDetail.goods_spec_format = JSON.parse(goodsSkuDetail.goods_spec_format);
+			if (goodsSkuDetail.goods_spec_format) goodsSkuDetail.goods_spec_format = JSON.parse(goodsSkuDetail
+				.goods_spec_format);
 			this.goodsSkuDetail = goodsSkuDetail;
+			
 			setTimeout(() => {
 				this.$refs.selectSku.show('confirm', (sku_id, num) => {
 					this.$api.sendRequest({
 						url: '/api/cart/editcartsku',
 						data: {
 							cart_id: data.cart_id,
-							sku_id: sku_id, 
+							sku_id: sku_id,
 							num: num
 						},
 						success: res => {
@@ -431,14 +457,16 @@ export default {
 								this.getCartData();
 								this.getCartNumber();
 							} else {
-								this.$util.showToast({ title: res.message });
+								this.$util.showToast({
+									title: res.message
+								});
 							}
 						}
 					});
-				})
+				}, this.goodsSkuDetail);
 			})
 		},
-		toggleDiscountPopup(){
+		toggleDiscountPopup() {
 			if (this.$refs.discountPopup.showPopup) this.$refs.discountPopup.close();
 			else this.$refs.discountPopup.open();
 			this.discountPopupShow = !this.discountPopupShow;
@@ -446,12 +474,15 @@ export default {
 		/**
 		 * 优惠信息计算
 		 */
-		discountCalculate(){
+		discountCalculate() {
 			let skuIds = [];
 			this.cartData.forEach(siteItem => {
 				siteItem.cartList.forEach(item => {
 					if (item.checked) {
-						skuIds.push({sku_id: item.sku_id, num: item.num});
+						skuIds.push({
+							sku_id: item.sku_id,
+							num: item.num
+						});
 					}
 				});
 			});
@@ -465,12 +496,14 @@ export default {
 					sku_ids: JSON.stringify(skuIds)
 				},
 				success: res => {
-					if (res.code >= 0 && res.data && (res.data.coupon_money > 0 || res.data.promotion_money > 0)) {
+					if (res.code >= 0 && res.data && (res.data.coupon_money > 0 || res.data
+							.promotion_money > 0)) {
 						this.discount = res.data;
 						let manjian = {};
 						res.data.goods_list.forEach(item => {
 							if (item.promotion && item.promotion.manjian) {
-								manjian['sku_' + item.sku_id] = JSON.parse(item.promotion.manjian.rule_json); 
+								manjian['sku_' + item.sku_id] = JSON.parse(item.promotion.manjian
+									.rule_json);
 							}
 						})
 						Object.assign(this.manjian, manjian);
@@ -496,7 +529,9 @@ export default {
 					if (res.code == 0) {
 						this.$set(this.discount.coupon_info, 'receive_type', '');
 					} else {
-						if (tips) this.$util.showToast({ title: res.message });
+						if (tips) this.$util.showToast({
+							title: res.message
+						});
 						this.receiveSub = false;
 					}
 				}
@@ -506,11 +541,11 @@ export default {
 			if (isNaN(parseFloat(money))) return money;
 			return parseFloat(money).toFixed(2);
 		},
-		refreshSkuDetail(goodsSkuDetail){
+		refreshSkuDetail(goodsSkuDetail) {
 			this.goodsSkuDetail = goodsSkuDetail;
 		}
 	},
-	onHide(){
-		this.isAction  = false;
+	onHide() {
+		this.isAction = false;
 	}
 }

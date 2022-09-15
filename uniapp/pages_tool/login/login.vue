@@ -1,7 +1,7 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
 	<scroll-view scroll-y="true" class="container">
-		<!-- <view class="iconfont iconclose back-btn" @click="$util.redirectTo('/pages/member/index')"></view> -->
+		<!-- <view class="iconfont icon-close back-btn" @click="$util.redirectTo('/pages/member/index')"></view> -->
 		<view class="header-wrap">
 			<view class="title">登录</view>
 			<view class="regisiter-agreement" v-if="registerConfig.register != ''">
@@ -44,7 +44,7 @@
 				<text @click="switchLoginMode" v-show="loginMode == 'account' && registerConfig.login.indexOf('mobile') != -1">使用手机号登录</text>
 			</view>
 			<view class="btn_view">
-				<button type="primary" @click="login" class="login-btn color-base-border color-base-bg">登录</button>			
+				<button type="primary" @click="login" class="login-btn color-base-border color-base-bg">登录</button>
 				<!-- #ifdef MP -->
 				<button open-type="getPhoneNumber" class="auth-login color-base-border" @getphonenumber="mobileAuthLogin">
 					<text class="color-base-text color-base-border">一键授权手机号快捷登录</text>
@@ -103,8 +103,7 @@ export default {
 		this.getCaptchaConfig();
 		this.authInfo = uni.getStorageSync('authInfo');
 	},
-	onShow() {
-	},
+	onShow() {},
 	onReady() {
 		if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 	},
@@ -367,7 +366,7 @@ export default {
 				}
 			});
 		},
-		refreshDynacodeData(){
+		refreshDynacodeData() {
 			this.getCaptcha();
 			clearInterval(this.dynacodeData.timer);
 			this.dynacodeData = {

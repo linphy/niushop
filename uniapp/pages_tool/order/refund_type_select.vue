@@ -8,14 +8,14 @@
 						<text>退款无需退货</text>
 						<text class="font-size-goods-tag color-tip">没收到货，或与卖家协商同意无需退货只退款</text>
 					</view>
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
 				</view>
 				<view class="option-item" @click="selectRefundType(2)" v-if="refund_data.order_status == 3">
 					<view>
 						<text>退货退款</text>
 						<text class="font-size-goods-tag color-tip">已收到货，需退还收到的货物</text>
 					</view>
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
 				</view>
 			</view>
 			

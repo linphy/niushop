@@ -60,11 +60,18 @@ export default {
 					method: method,
 					data: data,
 					header: params.header || {
+						'Accept': 'application/json',
 						'content-type': 'application/x-www-form-urlencoded;application/json'
 					},
 					dataType: params.dataType || 'json',
 					responseType: params.responseType || 'text',
 					success: (res) => {
+						try {
+							res.data = JSON.parse(res.data);
+						} catch (e) {
+							//TODO handle the exception
+							console.log('api error：', e);
+						}
 						if (res.data.code == -3 && store.state.siteState > 0) {
 							store.commit('setSiteState', -3)
 							Util.redirectTo('/pages_tool/storeclose/storeclose', {}, 'reLaunch');
@@ -98,11 +105,18 @@ export default {
 				method: method,
 				data: data,
 				header: params.header || {
+					'Accept': 'application/json',
 					'content-type': 'application/x-www-form-urlencoded;application/json'
 				},
 				dataType: params.dataType || 'json',
 				responseType: params.responseType || 'text',
 				success: (res) => {
+					try {
+						res.data = JSON.parse(res.data);
+					} catch (e) {
+						//TODO handle the exception
+						console.log('api error：', e);
+					}
 					if (res.data.code == -3 && store.state.siteState > 0) {
 						store.commit('setSiteState', -3)
 						Util.redirectTo('/pages_tool/storeclose/storeclose', {}, 'reLaunch');

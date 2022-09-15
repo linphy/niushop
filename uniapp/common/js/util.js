@@ -435,61 +435,6 @@ export default {
 	 */
 	diyRedirectTo(link) {
 		if (link == null || Object.keys(link).length == 1) return;
-		// 自定义页面跳转
-		if (link.wap_url && link.wap_url.indexOf('/pages/index/index') != -1) {
-
-			var pages = getCurrentPages();
-			let curPage = pages[pages.length - 1]; // 当前页
-			let curentRoute = getCurrentPages()[0]; // 获取当前打开过的页面路由数组
-
-			// console.log('curPage', curPage);
-
-			if (curentRoute.route == 'pages/index/index') {
-
-				if (link.wap_url.indexOf('?name=') != -1) {
-					let index = link.wap_url.indexOf('name=') + 5;
-					curentRoute.name = link.wap_url.substr(index);
-				} else {
-					curentRoute.name = 'DIY_VIEW_INDEX';
-				}
-
-				// 制作自定义页面返回导航记录
-				var routeArr = ['DIY_VIEW_INDEX'];
-				if (routeArr.indexOf(curentRoute.name) == -1) {
-					routeArr.push(curentRoute.name);
-				}
-				uni.setStorageSync('diy_page_route', routeArr); // 用于自定义页面跳转，重置
-
-				// #ifdef H5
-				curentRoute.$refs.loadingCover.show();
-				curentRoute.getDiyInfo(true); // 请求自定义页面数据
-				// #endif
-
-				// #ifdef MP
-				uni.setStorageSync('diy_name', curentRoute.name);
-				curentRoute.onShow();
-				// #endif
-
-				// 如果当前不在首页，则返回
-				if (curPage.route != 'pages/index/index') {
-					// console.log('如果当前不在首页，则返回');
-					uni.navigateBack({
-						delta: 1
-					});
-				}
-
-				return;
-			} else if (link.wap_url.indexOf('/pages/index/index') != -1 && link.diy_name) {
-
-				// console.log('如果当前不在首页，要跳转', link);
-				uni.setStorageSync('diy_name', link.diy_name);
-				// 如果当前不在首页，要跳转
-				uni.switchTab({
-					url: link.wap_url,
-				})
-				return;
-			}
-		}
 
 		if (link.wap_url && link.wap_url.indexOf('http') != -1 || link.wap_url && link.wap_url.indexOf('http') != -1) {
 			// #ifdef H5
@@ -525,12 +470,14 @@ export default {
 			defaultImg.goods = this.img(defaultImg.goods);
 			defaultImg.head = this.img(defaultImg.head);
 			defaultImg.store = this.img(defaultImg.store);
+			defaultImg.article = this.img(defaultImg.article);
 			return defaultImg;
 		} else {
 			return {
 				goods: '',
 				head: '',
-				store: ''
+				store: '',
+				article: ''
 			};
 		}
 	},

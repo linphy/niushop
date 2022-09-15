@@ -20,11 +20,11 @@
 										class="icon iconfont"
 										:class="
 											goodsEvalList[index].explain_type == '1'
-												? 'iconhaoping1 color-base-text'
+												? 'icon-haoping1 color-base-text'
 												: goodsEvalList[index].explain_type == '2'
-												? 'iconzhongchaping color-base-text'
+												? 'icon-zhongchaping color-base-text'
 												: goodsEvalList[index].explain_type == '3'
-												? 'iconzhongchaping'
+												? 'icon-zhongchaping'
 												: ''
 										"
 									></view>
@@ -50,10 +50,10 @@
 							<view class="other-info">
 								<view class="other-info-box" v-for="(i, t) in imgList[index]" :key="t">
 									<image :src="$util.img(i)" mode="aspectFill" @click="preview(i, index)"></image>
-									<view class="imgDel" @click="deleteImg(i, index ,t)"><text class=" icon iconfont icondelete"></text></view>
+									<view class="imgDel" @click="deleteImg(i, index ,t)"><text class=" icon iconfont icon-delete"></text></view>
 								</view>
 								<view class="other-info-box active" @click="addImg(index)" v-if="imgList[index].length < 6 || imgList[index].length == undefined">
-									<text class="icon iconfont iconzhaoxiangji"></text>
+									<text class="icon iconfont icon-zhaoxiangji"></text>
 									<text>{{ imgList[index].length ? 6 - imgList[index].length : 0 }}/6</text>
 								</view>
 							</view>
@@ -63,7 +63,7 @@
 			</view>
 			<view class="eval-bottom" :class="{ 'safe-area': isIphoneX }">
 				<view class="all-election" @click="isAll()" v-if="!isEvaluate">
-					<view class="iconfont color-base-text" :class="isAnonymous ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"></view>
+					<view class="iconfont color-base-text" :class="isAnonymous ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></view>
 					<text>匿名</text>
 				</view>
 				<view class="action-btn"><button type="primary" @click="save()">提交</button></view>

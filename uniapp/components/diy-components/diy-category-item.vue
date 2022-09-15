@@ -17,7 +17,7 @@
 				</view>
 			</block>
 			
-			<block v-if="value.level == 3">
+			<block v-if="value.level == 3"> 
 				<block v-for="(one, oneIndex) in category.child_list" :key="oneIndex">
 					<view class="category-title">{{ one.category_name }}</view>
 					<view class="category-list">
@@ -37,18 +37,18 @@
 				<!-- 分类筛选 -->
 				<block v-if="category.child_list && value.goodsLevel == 2">
 					<view class="screen-category-wrap">
-						<scroll-view scroll-x="true" class="screen-category" 
+						<scroll-view scroll-x="true" class="screen-category" :class="{'screen-category-4': value.template == 4}" 
 							:scroll-with-animation="true"
 							:scroll-into-view="scrollIntoView"
 							>
 							<view class="item" id="category-2--1" :class="{selected: categoryId == -1}" @click="selectCategoey(-1)">全部</view>
 							<view class="item" :id="'category-2-' + oneIndex" :class="{selected: categoryId == oneIndex}" @click="selectCategoey(oneIndex)" v-for="(one, oneIndex) in category.child_list" :key="oneIndex">{{ one.category_name }}</view>
 						</scroll-view>
-						<view class="iconfont iconunfold" @click="$refs.screenCategoryPopup.open()"></view>
+						<view class="iconfont icon-unfold" @click="$refs.screenCategoryPopup.open()"></view>
 					</view>
 					<uni-popup type="top" ref="screenCategoryPopup">
 						<view class="screen-category-popup" @click="$refs.screenCategoryPopup.close()">
-							<scroll-view scroll-y="true" class="screen-category">
+							<scroll-view scroll-y="true" class="screen-category" :class="{'screen-category-4': value.template == 4}">
 								<view class="title">全部</view>
 								<view class="item" :class="{selected: categoryId == oneIndex}" @click="selectCategoey(oneIndex)" v-for="(one, oneIndex) in category.child_list" :key="oneIndex">{{ one.category_name }}</view>
 							</scroll-view>
@@ -66,7 +66,7 @@
 						<block v-if="goodsList.length"> 
 							<view class="goods-item" v-for="(item, index) in goodsList" :key="index">
 								<view class="goods-img" @click="toDetail(item)">
-									<image :src="goodsImg(item.goods_image)" mode="widthFix" @error="imgError(index)" :lazy-load="true"></image>
+									<image :src="goodsImg(item.goods_image)" mode="widthFix" @error="imgError(index)"></image>
 									<view class="color-base-bg goods-tag" v-if="item.label_name">{{ item.label_name }}</view>
 								</view>
 								<view class="info-wrap">
@@ -96,7 +96,7 @@
 												</block>
 											</view>
 										</view>
-										<view class="right-wrap" v-if="value.template == 2">
+										<view class="right-wrap" v-if="value.template == 2 || value.template == 4">
 											<block v-if="item.is_virtual">
 												<view class="color-base-bg select-sku" @click="toDetail(item)">立即购买</view>
 											</block>
@@ -108,16 +108,16 @@
 												<block v-else>
 													<block v-if="cart['goods_' + item.goods_id]">
 														<view class="num-action reduce" @click="reduce(item)">
-															<text class="iconfont iconjian"></text>
+															<text class="iconfont icon-jian"></text>
 														</view>
 														<view class="num">{{ cart['goods_' + item.goods_id]['sku_' + item.sku_id].num }}</view>
 														<view class="num-action" :id="'cart-num-' + index" @click="increase($event, item)">
-															<text class="iconfont iconjia"></text>
+															<text class="iconfont icon-jia"></text>
 															<view class="click-event"></view>
 														</view>
 													</block>
 													<view class="num-action" v-else :id="'cart-num-' + index" @click="increase($event, item, 0)">
-														<text class="iconfont iconjia"></text>
+														<text class="iconfont icon-jia"></text>
 														<view class="click-event"></view>
 													</view>
 												</block>
@@ -134,7 +134,7 @@
 							<image :src="$util.img('public/uniapp/category/empty.png')" mode="widthFix"></image>
 						</view>
 						<view class="end-tips" ref="endTips" v-if="last && (categoryId == -1 || !category.child_list || (category.child_list && categoryId == category.child_list.length - 1))">已经到底了~</view>
-						<view class="end-tips" ref="endTips" v-else @click="switchCategory('next')"><text class="iconfont iconxiangshangzhanhang"></text>上滑查看下一分类</view>
+						<view class="end-tips" ref="endTips" v-else @click="switchCategory('next')"><text class="iconfont icon-xiangshangzhanhang"></text>上滑查看下一分类</view>
 					</view>
 					<loading-cover ref="loadingCover" :init-show="loading"></loading-cover>
 				</scroll-view>
@@ -186,16 +186,16 @@
 										<block v-else>
 											<block v-if="cart['goods_' + item.goods_id]">
 												<view class="num-action reduce" @click="reduce(item)">
-													<text class="iconfont iconjian"></text>
+													<text class="iconfont icon-jian"></text>
 												</view>
 												<view class="num">{{ cart['goods_' + item.goods_id]['sku_' + item.sku_id].num }}</view>
 												<view class="num-action" :id="'cart-num-' + index" @click="increase($event, item)">
-													<text class="iconfont iconjia"></text>
+													<text class="iconfont icon-jia"></text>
 													<view class="click-event"></view>
 												</view>
 											</block>
 											<view class="num-action" v-else :id="'cart-num-' + index" @click="increase($event, item, 0)">
-												<text class="iconfont iconjia"></text>
+												<text class="iconfont icon-jia"></text>
 												<view class="click-event"></view>
 											</view>
 										</block>
@@ -232,6 +232,10 @@
 				default: 0
 			},
 			select: {
+				type: Number,
+				default: 0
+			},
+			oneCategorySelect: {
 				type: Number,
 				default: 0
 			},
@@ -293,6 +297,11 @@
 					})
 				}
 				this.cart = cart;
+			},
+			oneCategorySelect:function(){
+				this.scrollTop = -1;
+				this.goodsList= [];
+				this.selectCategoey(-1);
 			},
 			select: function(){
 				if (this.index == this.select) {
@@ -806,12 +815,12 @@
 							background-color: transparent;
 							border: 2rpx solid $base-color;
 							box-sizing: border-box;
-							.iconjian{
+							.icon-jian{
 								color: $base-color;
 							}
 						}
 					}
-					.iconjian, .iconjia {
+					.icon-jian, .icon-jia {
 						color: var(--btn-text-color);
 						font-weight: bold;
 						font-size: 26rpx;
@@ -819,6 +828,7 @@
 					}
 					
 					.select-sku {
+						font-weight: bold;
 						color: var(--btn-text-color);
 						font-size: 24rpx;
 						padding: 16rpx 24rpx;
@@ -869,6 +879,7 @@
 				}
 			}
 			.select-sku {
+				font-weight: bold;
 				width: 128rpx;
 				height: 52rpx!important;
 				line-height: 52rpx!important;
@@ -891,8 +902,8 @@
 	.screen-category-wrap {
 		display: flex;
 		
-		.iconunfold {
-			font-size: 30rpx;
+		.icon-unfold {
+			font-size: 24rpx;
 			color: #999;
 			padding: 0 0 0 20rpx;
 		}
@@ -969,4 +980,15 @@
 			margin-top: 50rpx;
 		}
 	}
+	.screen-category-4 .item{
+		background-color: #F2f2f2 !important;
+		padding: 10rpx 24rpx;
+		line-height: 1;
+		font-size: $font-size-tag;
+		&.selected{
+			background-color: var(--main-color-shallow) !important;
+			color: var(--main-color);
+		}
+	}
+	
 </style>

@@ -13,7 +13,7 @@
 					
 					<view class="price-info">
 						<view class="icon-box">
-							<text class="iconfont icontutechan-copy-copy-copy"></text>
+							<text class="iconfont icon-tutechan"></text>
 						</view>
 						<view class="price-box">
 							<view class="promotion-text">限时折扣</view>
@@ -64,8 +64,8 @@
 							<text class="money price-font" v-else-if="goodsSkuDetail.market_price > 0">{{ goodsSkuDetail.market_price }}</text>
 						</view>
 						<view class="follow-and-share">
-							<text class="follow iconfont iconfenxiang2" @click="openSharePopup()"></text>
-							<text class="share iconfont" @click="editCollection()" :class="whetherCollection == 1 ? 'iconlikefill color-base-text' : 'iconguanzhu'"></text>
+							<text class="follow iconfont icon-fenxiang" @click="openSharePopup()"></text>
+							<text class="share iconfont" @click="editCollection()" :class="whetherCollection == 1 ? 'icon-likefill color-base-text' : 'icon-guanzhu'"></text>
 						</view>
 					</view>
 					<view class="goods-module-wrap info">
@@ -83,22 +83,10 @@
 					</view>
 				</view>
 
-				<!-- 当前商品参与的营销活动入口 -->
-				<view class="group-wrap"><ns-goods-promotion ref="goodsPromotion" promotion="discount"></ns-goods-promotion></view>
-
 			</template>
 
 			<!-- 入口区域 -->
 			<template v-slot:entrance>
-				<!-- 已选规格 -->
-				<view class="item selected-sku-spec" v-if="goodsSkuDetail.sku_spec_format" @click="choiceSku">
-					<view class="label">选择</view>
-					<view class="box">
-						<text v-for="(item, index) in goodsSkuDetail.sku_spec_format" :key="index">{{ item.spec_name }}/{{ item.spec_value_name }}</text>
-					</view>
-					<text class="iconfont iconright"></text>
-					<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
-				</view>
 				<view class="item coupon" v-if="couponList.length && couponList[0]['useState'] != 2" @click="openCouponPopup()">
 					<view class="label">领券</view>
 					<view class="coupon-list">
@@ -106,29 +94,75 @@
 							<view class="">{{ item.coupon_name }}</view>
 						</view>
 					</view>
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
+					<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+				</view>
+				<view class="item delivery-type" v-if="goodsSkuDetail.is_virtual == 0" @click="$refs.deliveryType.open()">
+					<view class="label">配送</view>
+					<block v-if="deliveryType">
+						<view class="box">
+							<block v-for="(item, index) in deliveryType" :key="index">
+								<text v-if="goodsSkuDetail.support_trade_type.indexOf(index) != -1">{{ item.name }}</text>
+							</block>
+						</view>
+						<text class="iconfont icon-right"></text>
+					</block>
+					<block v-else>
+						<view class="box">
+							商家未配置配送方式
+						</view>
+					</block>
+				</view>
+				<!-- 已选规格 -->
+				<view class="item selected-sku-spec" v-if="goodsSkuDetail.sku_spec_format" @click="choiceSku">
+					<view class="label">选择</view>
+					<view class="box">
+						<text v-for="(item, index) in goodsSkuDetail.sku_spec_format" :key="index">{{ item.spec_name }}/{{ item.spec_value_name }}</text>
+					</view>
+					<text class="iconfont icon-right"></text>
 					<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 				</view>
 				<view class="item free" v-if="manjian.rule_json !== null && addonIsExist.manjian" @click="openManjianPopup()">
 					<view class="label">促销</view>
 					<text class="free-tip color-base-text">满减</text>
 					<text class="font-size-base value">{{ manjian.manjian_name }}</text>
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
 					<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 				</view>
+				<!-- 配送方式 -->
+				<uni-popup ref="deliveryType" type="bottom">
+					<view class="deliverytype-popup-layer popup-layer">
+						<view class="head-wrap" @click="$refs.deliveryType.close()">
+							<text>配送</text>
+							<text class="iconfont icon-close"></text>
+						</view>
+						<scroll-view scroll-y class="type-body">
+							<block v-for="(item, index) in deliveryType" :key="index">
+								<view class="type-item" :class="{'not-support': goodsSkuDetail.support_trade_type.indexOf(index) == -1}">
+									<text class="iconfont" :class="item.icon"></text>
+									<view class="content">
+										<view class="title">{{ item.name }}</view>
+										<view class="desc">{{ item.desc }}</view>
+									</view>
+								</view>
+							</block>
+						</scroll-view>
+					</view>
+				</uni-popup>
 			</template>
 
 			<!-- 业务区域 -->
 			<template v-slot:business>
 				<!-- SKU选择 -->
 				<ns-goods-sku
+					v-if="goodsSkuDetail.goods_id"
 					ref="goodsSku"
 					@refresh="refreshGoodsSkuDetail"
-					@levelInfo="refreshLevelInfo"
+					:goods-id="goodsSkuDetail.goods_id"
 					:goods-detail="goodsSkuDetail"
 					:max-buy="goodsSkuDetail.max_buy"
 					:min-buy="goodsSkuDetail.min_buy"
-					:GetSkuid="SetSkuid"
+					@getSkuId="setSkuId"
 				></ns-goods-sku>
 
 				<!-- 组合套餐 -->
@@ -139,7 +173,7 @@
 								<text class="tit">组合套餐</text>
 								<text>{{ bundling[0].bl_name }}</text>
 							</view>
-							<text class="iconfont iconright"></text>
+							<text class="iconfont icon-right"></text>
 							<!-- <view class="more-img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 						</view>
 						<scroll-view class="combo-goods-wrap color-tip" scroll-x="true">
@@ -177,7 +211,7 @@
 							<view class="bundling-popup-layer popup-layer">
 								<view class="head-wrap" @click="closeBundlingPopup()">
 									<text>组合套餐</text>
-									<text class="iconfont iconclose"></text>
+									<text class="iconfont icon-close"></text>
 								</view>
 								<scroll-view scroll-y class="bundling-body">
 									<view class="bundling-view">
@@ -185,7 +219,7 @@
 											<view class="bundling-item">
 												<view class="title" @click="toComoDetail(item.bl_id)">
 													<text>{{ item.bl_name }}</text>
-													<text class="iconfont iconright"></text>
+													<text class="iconfont icon-right"></text>
 												</view>
 												<scroll-view scroll-x>
 													<view class="goods-wrap">
@@ -237,7 +271,7 @@
 						<view class="goods-coupon-popup-layer popup-layer">
 							<view class="head-wrap" @click="closeCouponPopup()">
 								<text>优惠券</text>
-								<text class="iconfont iconclose"></text>
+								<text class="iconfont icon-close"></text>
 							</view>
 							<scroll-view class="coupon-body" scroll-y>
 								<view
@@ -296,7 +330,7 @@
 						<view class="manjian-popup-layer popup-layer">
 							<view class="head-wrap" @click="closeManjianPopup()">
 								<text>促销</text>
-								<text class="iconfont iconclose"></text>
+								<text class="iconfont icon-close"></text>
 							</view>
 							<scroll-view scroll-y class="manjian-body">
 								<view class="item" v-if="manjian.manjian != undefined" style="display: flex;">
@@ -316,16 +350,16 @@
 						</view>
 					</uni-popup>
 				</view>
-			</template>
+			</template>			
 
 			<!-- 操作区域 -->
 			<template v-slot:action>
 				<!-- 商品底部导航 -->
 				<ns-goods-action :safeArea="isIphoneX">
 					<template v-if="goodsSkuDetail.goods_state == 1">
-						<ns-goods-action-icon text="首页" icon="iconshouye1" @click="goHome" />
-						<ns-goods-action-icon text="客服" icon="iconiconicon-kefu" :send-data="contactData" :chatParam="chatRoomParams"/>
-						<ns-goods-action-icon text="购物车" :cornerMarkBg="themeStyle.goods_detail.goods_cart_num_corner" icon="icongouwuche2" :corner-mark="cartCount > 0 ? cartCount + '' : ''" @click="goCart" />
+						<ns-goods-action-icon text="首页" icon="icon-shouye1" @click="goHome" />
+						<ns-goods-action-icon text="客服" icon="icon-kefu" :send-data="contactData" :chatParam="chatRoomParams"/>
+						<ns-goods-action-icon text="购物车" :cornerMarkBg="themeStyle.goods_detail.goods_cart_num_corner" icon="icon-gouwuche2" :corner-mark="cartCount > 0 ? cartCount + '' : ''" @click="goCart" />
 						<block v-if="goodsSkuDetail.stock == 0 && !goodsSkuDetail.sku_spec_format">
 							<ns-goods-action-button class="goods-action-button active3" disabled-text="库存不足" :disabled="true" />
 							<!-- <ns-goods-action-button v-if="goodsSkuDetail.sku_spec_format" class="goods-action-button active3" disabled-text="库存不足" :disabled="true" @click="joinCart" /> -->
@@ -379,7 +413,6 @@ import uniCountDown from '@/components/uni-count-down/uni-count-down.vue';
 import detail from './public/js/detail.js';
 import scroll from '@/common/js/scroll-view.js';
 import toTop from '@/components/toTop/toTop.vue';
-import nsGoodsPromotion from '@/components/ns-goods-promotion/ns-goods-promotion.vue';
 import goodsDetailBase from '@/common/js/goods_detail_base.js';
 import goodsDetailView from '@/components/goods-detail-view/goods-detail-view.vue';
 
@@ -391,7 +424,6 @@ export default {
 		uniPopup,
 		nsGoodsSku,
 		uniCountDown,
-		nsGoodsPromotion,
 		goodsDetailView,
 		toTop
 	},
@@ -399,11 +431,11 @@ export default {
 };
 </script>
 <style lang="scss">
-@import './../../common/css/goods_detail.scss';
+@import '@/common/css/goods_detail.scss';
 @import './public/css/detail.scss';
 </style>
 <style scoped>
-/deep/ .action-icon-wrap .iconfont.iconshouye1 {
+/deep/ .action-icon-wrap .iconfont.icon-shouye1 {
 	font-size: 40rpx;
 }
 /deep/ .uni-video-cover {

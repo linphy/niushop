@@ -3,24 +3,24 @@
 	<view class="container">
 		<view class="action-wrap">
 			<view class="record-wrap color-base-text" @click="$util.redirectTo('/pages_tool/verification/list')">
-				<text class="iconfont iconjilu color-base-text"></text>
+				<text class="iconfont icon-jilu color-base-text"></text>
 				<text>核销记录</text>
 			</view>
 
 			<view class="sweep-code ns-gradient-otherpages-member-balance-balance-rechange" @click="scanCode" v-show="operationType == 'sweepCode'">
-				<text class="iconfont iconsaoma"></text>
+				<text class="iconfont icon-saoma"></text>
 			</view>
 			<view class="manual-input" v-show="operationType == 'manualInput'">
 				<view class="process-wrap">
 					<view class="wrap">
-						<view class="_icon"><text class="iconfont iconshurutianxiebi color-base-text"></text></view>
+						<view class="_icon"><text class="iconfont icon-shurutianxiebi color-base-text"></text></view>
 						<view class="_text">输入核销码</view>
 					</view>
 					<view>
-						<view><text class="iconfont iconjiang-copy color-tip"></text></view>
+						<view><text class="iconfont icon-jiang-copy color-tip"></text></view>
 					</view>
 					<view class="wrap">
-						<view class="_icon"><text class="iconfont iconhexiao color-base-text"></text></view>
+						<view class="_icon"><text class="iconfont icon-hexiao color-base-text"></text></view>
 						<view class="_text">核销</view>
 					</view>
 				</view>
@@ -32,12 +32,12 @@
 
 		<view class="action-type-wrap">
 			<view class="action" @click="changeOperationType('sweepCode')">
-				<view class="_icon"><text class="iconfont iconsaoma"></text></view>
+				<view class="_icon"><text class="iconfont icon-saoma"></text></view>
 				<view class="_text">扫码核销</view>
 			</view>
-			<view class="iconfont icontiaoxingmasaomiao ns-gradient-otherpages-member-balance-balance-rechange"></view>
+			<view class="iconfont icon-tiaoxingmasaomiao ns-gradient-otherpages-member-balance-balance-rechange"></view>
 			<view class="action" @click="changeOperationType('manualInput')">
-				<view class="_icon"><text class="iconfont iconshuru"></text></view>
+				<view class="_icon"><text class="iconfont icon-shuru"></text></view>
 				<view class="_text" @click="focus">手动输入</view>
 			</view>
 		</view>
@@ -153,7 +153,7 @@ export default {
 					if (!res.data) {
 						this.$util.showToast({ title: '非核销员无此权限' });
 						setTimeout(() => {
-							this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+							this.$util.redirectTo('/pages/member/index');
 						}, 1000);
 					}
 					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
@@ -324,7 +324,7 @@ export default {
 			}
 		}
 
-		.icontiaoxingmasaomiao {
+		.icon-tiaoxingmasaomiao {
 			width: 110rpx;
 			height: 110rpx;
 			border-radius: 50%;

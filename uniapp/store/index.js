@@ -14,11 +14,30 @@ const store = new Vuex.Store({
 			bundling: 0,
 			coupon: 0,
 			discount: 0,
+			fenxiao: 0,
+			gift: 0,
+			groupbuy: 0,
 			manjian: 0,
 			memberconsume: 0,
+			memberrecharge: 0,
 			memberregister: 0,
 			membersignin: 0,
+			memberwithdraw: 0,
+			memberrecommend: 0,
+			pintuan: 0,
+			pointexchange: 0,
+			seckill: 0,
+			store: 0,
+			topic: 0,
+			bargain: 0,
 			membercancel: 0,
+			servicer: 0,
+			supermember: 0,
+			giftcard: 0,
+			divideticket: 0,
+			scenefestival: 0,
+			birthdaygift: 0,
+			pinfan: 0
 		},
 		sourceMember: 0, // 来源会员
 		authInfo: {}, // 授权信息
@@ -109,14 +128,6 @@ const store = new Vuex.Store({
 							this.commit('setDefaultImg', data.default_img);
 
 							this.commit('setSiteInfo', data.site_info);
-
-							let indexPage = getCurrentPages()[getCurrentPages().length - 1];
-							if (indexPage && indexPage.route == 'pages/index/index' &&
-								indexPage.name == 'DIY_VIEW_INDEX') {
-								uni.setNavigationBarTitle({
-									title: data.site_info.site_name
-								});
-							}
 
 							uni.setStorageSync('copyright', data.copyright);
 

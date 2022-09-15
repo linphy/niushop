@@ -16,11 +16,15 @@
 					<view class="msg">{{ $lang('paymentFail') }}</view>
 				</template>
 				<view class="action">
-					<!-- <view class="btn" @click="$util.redirectTo('/pages/member/index', {}, 'reLaunch')" v-if="token">
+					<!-- <view class="btn" @click="$util.redirectTo('/pages/member/index')" v-if="token">
 					{{ $lang('memberCenter') }}
 				</view> -->
 					<template v-if="token">
 						<view v-if="paySource == 'recharge'" class="btn" @click="toRecharge()">充值记录</view>
+						<view v-else-if="paySource == 'membercard'" class="btn" @click="toCard()">会员卡</view>
+						<view v-else-if="paySource == 'presale'" class="btn" @click="toPresaleOrder()">查看订单</view>
+						<view v-else-if="paySource == 'giftcard'" class="btn" @click="toOrder()">查看订单</view>
+						<view v-else-if="paySource == 'pointexchange'" class="btn" @click="toExchangeOrder()">查看订单</view>
 						<view v-else class="btn" @click="toOrderDetail(payInfo.order_id)">查看订单</view>
 					</template>
 					<view class="btn" @click="goHome()">{{ $lang('goHome') }}</view>
@@ -103,7 +107,9 @@ export default {
 					this.$util.redirectTo('/pages_tool/member/coupon', {});
 					break;
 				default:
-				this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+					this.$util.redirectTo('/pages/member/index');
+					break;
+				
 			}
 		},
 		getConsume(){
@@ -144,7 +150,7 @@ export default {
 							title: '未获取到支付信息！'
 						});
 						setTimeout(() => {
-							this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+							this.$util.redirectTo('/pages/index/index');
 						}, 1500);
 					}
 				},
@@ -154,7 +160,7 @@ export default {
 			});
 		},
 		goHome() {
-			this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+			this.$util.redirectTo('/pages/index/index');
 		},
 		toOrderDetail(id) {
 			if (this.payInfo.order_type == 2) {
@@ -167,6 +173,26 @@ export default {
 				this.$util.redirectTo('/pages/order/detail', { order_id: id }, 'redirectTo');
 			}
 		},
+		toOrder(id) {
+			this.$util.redirectTo('/pages_promotion/giftcard/order_list', {}, 'redirectTo');
+			uni.setStorageSync('paySource', '');
+		},
+		toRecharge() {
+			this.$util.redirectTo('/pages_tool/recharge/order_list', {}, 'redirectTo');
+			uni.setStorageSync('paySource', '');
+		},
+		toCard(){
+			this.$util.redirectTo('/pages_tool/member/card', {}, 'redirectTo');
+			uni.setStorageSync('paySource', '');
+		},
+		toPresaleOrder(){
+			this.$util.redirectTo('/pages_promotion/presale/order_list', {}, 'redirectTo');
+			uni.setStorageSync('paySource', '');
+		},
+		toExchangeOrder(){
+			this.$util.redirectTo('/pages_promotion/point/order_list', {}, 'redirectTo');
+			uni.setStorageSync('paySource', '');
+		}
 	}
 };
 </script>

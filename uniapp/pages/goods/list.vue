@@ -6,9 +6,9 @@
 			<view class="search-wrap uni-flex uni-row">
 				<view class="flex-item input-wrap">
 					<input class="uni-input" maxlength="50" v-model="keyword" @confirm="search()" placeholder="请输入您要搜索的商品" />
-					<text class="iconfont iconsousuo1" @click.stop="search()"></text>
+					<text class="iconfont icon-sousuo3" @click.stop="search()"></text>
 				</view>
-				<view class="iconfont" :class="{ iconapps: isList, iconlist1: !isList }" @click="changeListStyle()"></view>
+				<view class="iconfont" :class="{ 'icon-apps': isList, 'icon-list': !isList }" @click="changeListStyle()"></view>
 			</view>
 
 			<!-- 排序 -->
@@ -22,14 +22,14 @@
 				<view class="price-wrap" @click="sortTabClick('discount_price')">
 					<text :class="{ 'color-base-text': orderType === 'discount_price' }">价格</text>
 					<view class="iconfont-wrap">
-						<view class="iconfont iconiconangledown-copy asc" :class="{ 'color-base-text': priceOrder === 'asc' && orderType === 'discount_price' }"></view>
-						<view class="iconfont iconiconangledown desc" :class="{ 'color-base-text': priceOrder === 'desc' && orderType === 'discount_price' }"></view>
+						<view class="iconfont icon-iconangledown-copy asc" :class="{ 'color-base-text': priceOrder === 'asc' && orderType === 'discount_price' }"></view>
+						<view class="iconfont icon-iconangledown desc" :class="{ 'color-base-text': priceOrder === 'desc' && orderType === 'discount_price' }"></view>
 					</view>
 				</view>
 
 				<view :class="{ 'color-base-text': orderType === 'screen' }" class="screen-wrap">
 					<text @click="sortTabClick('screen')">筛选</text>
-					<view @click="sortTabClick('screen')" class="iconfont-wrap"><view class="iconfont iconshaixuan color-tip"></view></view>
+					<view @click="sortTabClick('screen')" class="iconfont-wrap"><view class="iconfont icon-shaixuan color-tip"></view></view>
 				</view>
 			</view>
 		</view>

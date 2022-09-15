@@ -50,12 +50,12 @@
 							<view class="footer-right">
 								<view class="change_num" v-if="number > 0">
 									<view class="num-action" @click="changeNum('-')">
-										<text class="desc iconfont iconjianshao color-base-text"></text>
+										<text class="desc iconfont icon-jianshao color-base-text"></text>
 										<view class="click-event"></view>
 									</view>
 									<input type="number" class="uni-input" @blur="blur" v-model="number" placeholder="0" @input="keyInput(false)" />
 									<view class="num-action" :id="'select-sku-num-' + goodsDetail.goods_id" @click="changeNum('+', $event)">
-										<text class="add iconfont iconadd-fill color-base-text change_hover"></text>
+										<text class="add iconfont icon-add-fill color-base-text change_hover"></text>
 										<view class="click-event"></view>
 									</view>
 								</view>
@@ -71,7 +71,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="sku-close iconfont icon2guanbi" @click="closeSkuPopup()"></view>
+			<view class="sku-close iconfont icon-close-guanbi" @click="closeSkuPopup()"></view>
 		</uni-popup>
 
 		<ns-login ref="login"></ns-login>
@@ -80,7 +80,6 @@
 
 <script>
 import uniPopup from '@/components/uni-popup/uni-popup-sku-new.vue';
-import htmlParser from '@/common/js/html-parser';
 // 商品SKU
 export default {
 	name: 'ns-goods-sku-category',
@@ -107,6 +106,7 @@ export default {
 			cartData: [], //购物车
 			cartIdArr: [],
 			goodsDetail: {},
+			goodsSkuList: {}, // 商品规格项集合
 			maxBuy: 0,
 			minBuy: 0,
 			isLoad: false,
@@ -128,18 +128,19 @@ export default {
 		}
 	},
 	methods: {
-		show(type, goodsDetail, callback) {
-			this.goodsDetail = goodsDetail;
-			this.dealData();
-			this.$refs.skuPopup.open();
+		show(type, data, callback) {
 			this.type = type;
 			this.callback = callback;
+			this.goodsDetail = data;
+			this.getGoodsSkuList(this.goodsDetail.goods_id);
 			this.skuId = this.goodsDetail.sku_id;
 			this.maxBuy = this.goodsDetail.max_buy;
 			this.minBuy = this.goodsDetail.min_buy;
+			this.keyInput(false);
 			this.isLoad = true;
 			this.getCartData();
 			this.getGoodsCartNum();
+			this.$refs.skuPopup.open();
 		},
 		hide() {
 			this.$refs.skuPopup.close();
@@ -160,7 +161,9 @@ export default {
 			}
 
 			this.isLoad = true;
-			this.getGoodsSkuInfo();
+			if (this.goodsSkuList['sku_' + skuId]) {
+				this.goodsDetail = Object.assign({}, this.goodsDetail, this.goodsSkuList['sku_' + skuId]);
+			}
 		},
 		//查看规格图片
 		previewMedia() {
@@ -175,59 +178,48 @@ export default {
 				urls: paths
 			});
 		},
-		// 获取普通商品详情
-		getGoodsSkuInfo() {
-			this.getCartData();
-			let res = this.$api.sendRequest({
-				url: '/api/goodssku/getInfoForCategory',
+		// 获取普通商品规格集合
+		getGoodsSkuList(goods_id) {
+			this.$api.sendRequest({
+				url: '/api/goodssku/goodsSkuByCategory',
 				data: {
-					sku_id: this.skuId == undefined ? this.goodsDetail.sku_id : this.skuId
+					goods_id
 				},
 				success: res => {
-					let data = res.data;
-					if (data != null) {
-						data.unit = data.unit || '件';
-						this.goodsDetail = data;
-						this.dealData();
-						this.btnSwitch = false;
-						var tempInfo = this.goodsDetail;
-						tempInfo.num = this.cartData[this.skuId] !== undefined ? this.cartData[this.skuId] : 0;
-						this.$emit('refresh', tempInfo);
-					} else {
-						this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+					if (res.code >= 0) {
+						let data = res.data,
+							obj = {};
+
+						res.data.forEach((item, index) => {
+							// 当前商品SKU规格
+							if (item.sku_spec_format) item.sku_spec_format = JSON.parse(item.sku_spec_format);
+
+							// 商品SKU格式
+							if (item.goods_spec_format) item.goods_spec_format = JSON.parse(item.goods_spec_format);
+
+							// 限时折扣
+							if (item.promotion_type == 1) {
+								item.discountTimeMachine = this.$util.countDown(item.end_time - res.timestamp);
+							}
+
+							if (item.promotion_type == 1 && item.discountTimeMachine) {
+								if (item.member_price > 0 && Number(item.member_price) <= Number(item.discount_price)) {
+									item.show_price = item.member_price;
+								} else {
+									item.show_price = item.discount_price;
+								}
+							} else if (item.member_price > 0) {
+								item.show_price = item.member_price;
+							} else {
+								item.show_price = item.price;
+							}
+
+							obj['sku_' + item.sku_id] = item;
+						});
+						this.goodsSkuList = obj;
 					}
-				},
-				fail: res => {
-					this.btnSwitch = false;
-					this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
 				}
 			});
-		},
-
-		dealData() {
-			if (this.goodsDetail.promotion_type == 1) {
-				if (this.goodsDetail.member_price && this.goodsDetail.member_price <= this.goodsDetail.price) {
-					this.goodsDetail.show_price = this.goodsDetail.member_price;
-				} else {
-					this.goodsDetail.show_price = this.goodsDetail.discount_price;
-				}
-			} else {
-				if (this.goodsDetail.member_price) {
-					this.goodsDetail.show_price = this.goodsDetail.member_price;
-				} else {
-					this.goodsDetail.show_price = this.goodsDetail.price;
-				}
-			}
-
-			// 当前商品SKU规格
-			if (this.goodsDetail.sku_spec_format && typeof this.goodsDetail.sku_spec_format == 'string') this.goodsDetail.sku_spec_format = JSON.parse(this.goodsDetail.sku_spec_format);
-
-			// 商品SKU格式
-			if (this.goodsDetail.goods_spec_format && typeof this.goodsDetail.goods_spec_format == 'string') this.goodsDetail.goods_spec_format = JSON.parse(this.goodsDetail.goods_spec_format);
-
-			this.goodsDetail.unit = this.goodsDetail.unit || '件';
-
-			this.keyInput(false);
 		},
 		changeNum(tag, event) {
 			if (this.goodsDetail.stock == 0) return;
@@ -275,13 +267,16 @@ export default {
 						}
 					}
 				}
-				
+
 				const query = uni.createSelectorQuery().in(this);
-				query.select('#'+ event.currentTarget.id + ' .click-event').boundingClientRect(data => {
-					if (data) {
-						this.$emit('addCart', data.left, data.top);
-					}
-				}).exec();
+				query
+					.select('#' + event.currentTarget.id + ' .click-event')
+					.boundingClientRect(data => {
+						if (data) {
+							this.$emit('addCart', data.left, data.top);
+						}
+					})
+					.exec();
 			} else if (tag == '-') {
 				// 减
 				if (this.number > min) {
@@ -391,7 +386,7 @@ export default {
 					});
 					return;
 				}
-				
+
 				this.$emit('addCart', event.detail.x, event.detail.y);
 
 				if (this.btnSwitch) return;
@@ -406,7 +401,6 @@ export default {
 						var data = res.data;
 						if (data > 0) {
 							this.getCartData();
-							this.getGoodsSkuInfo();
 							this.$store.dispatch('getCartNumber');
 							this.$util.showToast({
 								title: '加入购物车成功'
@@ -771,7 +765,8 @@ export default {
 	align-items: center;
 	justify-content: flex-end;
 }
-.change_num > text, .change_num .iconfont {
+.change_num > text,
+.change_num .iconfont {
 	font-size: 48rpx;
 }
 .change_num input {
@@ -783,7 +778,7 @@ export default {
 .change_num .num-action {
 	position: relative;
 }
-.change_num .num-action .click-event{
+.change_num .num-action .click-event {
 	position: absolute;
 	width: 2rpx;
 	height: 2rpx;

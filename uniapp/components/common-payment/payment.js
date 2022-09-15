@@ -1,4 +1,5 @@
 export default {
+	options: { styleIsolation: 'shared' },
 	data() {
 		return {
 			outTradeNo: '',
@@ -23,11 +24,16 @@ export default {
 			localMemberAddress: null, // 会员本地配送收货地址
 			isRepeat: false,
 			promotionInfo: null,
-			transactionAgreement: {} // 购买须知
+			transactionAgreement: {}, // 购买须知
+			tempFormData: null,
+			menuButtonBounding: {} // 小程序胶囊属性
 		}
 	},
 	inject: ['promotion'],
 	created(){
+		// #ifdef MP
+		this.menuButtonBounding = uni.getMenuButtonBoundingClientRect();
+		// #endif
 		this.isIphoneX = this.$util.uniappIsIPhoneX()
 		if (uni.getStorageSync('token')) {
 			Object.assign(this.orderCreateData, uni.getStorageSync(this.createDataKey))
@@ -168,7 +174,7 @@ export default {
 						// #endif
 						
 						// 配送方式
-						if (data.shop_goods_list.express_type && data.shop_goods_list.express_type.length) {
+						if (data.shop_goods_list && data.shop_goods_list.express_type && data.shop_goods_list.express_type.length) {
 							let deliveryStorage = uni.getStorageSync('delivery');
 							if (deliveryStorage) {
 								data.shop_goods_list.express_type.forEach(item => {
@@ -193,12 +199,15 @@ export default {
 						}
 						
 						// 优惠券
-						if (data.shop_goods_list.coupon_list && data.shop_goods_list.coupon_list[0]) 
+						if (data.shop_goods_list && data.shop_goods_list.coupon_list && data.shop_goods_list.coupon_list[0]) 
 							this.orderCreateData.coupon = {coupon_id: data.shop_goods_list.coupon_list[0].coupon_id };
 						// 地址、手机号
 						if (data.is_virtual) {
 							this.orderCreateData.member_address = {mobile: data.member_account.mobile ?? '' }
 						}
+							
+						// 处理表单数据
+						data = this.handleGoodsFormData(data);
 						
 						// 该方法在父级组件中
 						this.promotionInfo = this.promotion(data);
@@ -216,6 +225,35 @@ export default {
 					}
 				}
 			})
+		},
+		/**
+		 * 处理商品表单数据
+		 * @param {Object} data
+		 */
+		handleGoodsFormData(data){
+			let goodsFormData = uni.getStorageSync('goodFormData');
+			data.shop_goods_list.goods_list.forEach(item => {
+				if (item.goods_form) {
+					let formData = {};
+					if (item.form_data) {
+						item.form_data.map(formIem => {
+							formData[formIem.id] = formIem;
+						})
+					} else if (goodsFormData && goodsFormData.goods_id == item.goods_id) {
+						goodsFormData.form_data.map(formIem => {
+							formData[formIem.id] = formIem;
+						})
+					}
+					if (Object.keys(formData).length) {
+						item.goods_form.json_data.forEach(formIem => {
+							if (formData[formIem.id]) {
+								formIem.val = formData[formIem.id].val;
+							}
+						})
+					}
+				}
+			})
+			return data;
 		},
 		/**
 		 * 订单创建
@@ -249,7 +287,6 @@ export default {
 		create(){
 			if (!this.verify() || this.isRepeat) return;
 			this.isRepeat = true;
-			
 			uni.showLoading({title: ''})
 			this.$api.sendRequest({
 				url: this.api.create,
@@ -259,6 +296,8 @@ export default {
 					if (res.code == 0) {
 						this.outTradeNo = res.data;
 						uni.removeStorageSync('deliveryTime');
+						uni.removeStorageSync('goodFormData');
+						uni.setStorageSync('paySource', '');
 						if (this.calculateData.pay_money == 0) {
 							// #ifdef MP-WEIXIN
 							if (this.paymentData.is_virtual || this.orderCreateData.delivery.delivery_type == 'store') {
@@ -285,7 +324,21 @@ export default {
 		 */
 		handleCreateData(){
 			let data = this.$util.deepClone(this.orderCreateData);
-			if (this.paymentData && this.paymentData.system_form && this.$refs.form) data.form_data = { form_id: this.paymentData.system_form.id, form_data: this.$util.deepClone(this.$refs.form.formData) };
+			// 订单表单
+			if (this.$refs.form) {
+				data.form_data = { form_id: this.paymentData.system_form.id, form_data: this.$util.deepClone(this.$refs.form.formData) };
+			} 
+			// 商品表单
+			if (this.$refs.goodsForm) {
+				if (!data.form_data) data.form_data = {};
+				data.form_data.goods_form = {};
+				this.$refs.goodsForm.forEach(item => {
+					data.form_data.goods_form[item._props.customAttr.sku_id] = {
+						form_id: item._props.customAttr.form_id,
+						form_data: this.$util.deepClone(item.formData)
+					}
+				})
+			}
 			Object.keys(data).forEach((key) => {
 				let item = data[key];
 				if (typeof item == 'object') data[key] = JSON.stringify(item);
@@ -297,7 +350,6 @@ export default {
 		 * 打开支付弹窗
 		 */
 		openChoosePayment(){
-			uni.setStorageSync('paySource', '');
 			// #ifdef MP-WEIXIN
 			if (this.paymentData.is_virtual) {
 				this.$util.subscribeMessage('ORDER_URGE_PAYMENT,ORDER_PAY');
@@ -314,6 +366,7 @@ export default {
 						break;
 				}
 			}
+			
 			// #endif
 			this.$refs.choosePaymentPopup.getPayInfo(this.outTradeNo);
 		},
@@ -383,6 +436,17 @@ export default {
 				}
 			}
 			
+			if (this.$refs.goodsForm) {
+				let formVerify = true;
+				for (let i = 0; i < this.$refs.goodsForm.length; i++) {
+					let item = this.$refs.goodsForm[i];
+					formVerify = item.verify();
+					if (!formVerify) {
+						break;
+					}
+				}
+				if (!formVerify) return false;
+			}
 			if (this.paymentData.system_form) {
 				let formVerify = this.$refs.form.verify();
 				if (!formVerify) return false;
@@ -510,7 +574,7 @@ export default {
 					time_type:this.$util.deepClone(delivery_store_info).time_type,
 					end_time:this.$util.deepClone(delivery_store_info).end_time,
 					start_time:this.$util.deepClone(delivery_store_info).start_time,
-					time_week:this.$util.deepClone(delivery_store_info).time_week,
+					time_week:this.$util.deepClone(delivery_store_info).time_week
 				};
 				let obj = {
 					delivery:this.orderCreateData.delivery,
@@ -531,9 +595,9 @@ export default {
 			let Year =  nowDate.getFullYear();
 			let timeData = data.data.month.split('月');
 			let month = timeData[0];
-			let date = timeData[1].split('日')[0]
-			this.orderCreateData.buyer_ask_delivery_time = Year + '-' + month + '-' + date + ' ' + data.data.time + ':00'
-			
+			let date = timeData[1].split('日')[0];
+			this.orderCreateData.buyer_ask_delivery_time = Year + '-' + month + '-' + date + ' ' + data.data.time
+	
 			//将时间缓存，避免切换地址时重置
 			uni.setStorageSync('deliveryTime',{
 				'deliveryTime' : this.deliveryTime,
@@ -651,7 +715,6 @@ export default {
 		 * 保存留言
 		 */
 		saveBuyerMessage(){
-			this.calculate();
 			this.$refs.buyerMessagePopup.close();
 		},
 		/**
@@ -702,15 +765,13 @@ export default {
 		 * 同城配送送达时间
 		 */
 		localtime(type = ''){
-			let data = {
-				time_type:this.$util.deepClone(this.goodsData.local_config.info).time_type,
-				end_time:this.$util.deepClone(this.goodsData.local_config.info).end_time,
-				start_time:this.$util.deepClone(this.goodsData.local_config.info).start_time,
-				time_week:this.$util.deepClone(this.goodsData.local_config.info).time_week,
-			};
+			let data = this.$util.deepClone(this.goodsData.local_config.info);
+			if (data.delivery_time) {
+				data.end_time = data.delivery_time[ (data.delivery_time.length - 1) ].end_time;
+			}
 			let obj = {
-				delivery:this.orderCreateData.delivery,
-				dataTime:data
+				delivery: this.orderCreateData.delivery,
+				dataTime: data
 			}
 			this.$refs.timePopup.open(obj,type);
 		},
@@ -736,6 +797,19 @@ export default {
 					if (res.data) this.transactionAgreement = res.data;
 				}
 			})
+		},
+		editForm(index){
+			this.tempFormData = {
+				index: index,
+				json_data: this.$util.deepClone(this.goodsData.goods_list[index].goods_form.json_data)
+			}
+			this.$refs.editFormPopup.open();
+		},
+		saveForm(){
+			if (this.$refs.tempForm.verify()) {
+				this.$set(this.paymentData.shop_goods_list.goods_list[ this.tempFormData.index ].goods_form, 'json_data', this.$refs.tempForm.formData);
+				this.$refs.editFormPopup.close();
+			}
 		}
 	},
 	filters: {

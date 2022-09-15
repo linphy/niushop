@@ -1,15 +1,11 @@
 <template>
 	<view v-if="show">
-		<view class="ns-copyright-info" v-if="copyright">
-			<view class="ns-copyright-pic code-pic" v-if="copyright.logo" @click="link(copyright.copyright_link)">
+		<view class="ns-copyright-info">
+			<view class="ns-copyright-pic" v-if="copyright.logo" @click="link(copyright.copyright_link)">
 				<image :src="$util.img(copyright.logo)" @error="error" mode="widthFix"></image>
 			</view>
 			<!-- <view class="copyright-desc color-tip" v-if="copyright.company_name" @click="link(copyright.copyright_link)">{{ copyright.company_name }}</view> -->
 			<!-- <view class="copyright-desc color-tip" v-else @click="link('http://www.niushop.com')">牛之云科技提供技术支持</view> -->
-		</view>
-		<view class="ns-copyright-info" v-else @click="link('http://www.niushop.com')">
-			<view class="ns-copyright-pic"><image :src="$util.img('public/uniapp/common/logo_copy.png')" mode="widthFix"></image></view>
-			<!-- <view class="copyright-desc color-tip">牛之云科技提供技术支持</view> -->
 		</view>
 	</view>
 </template>
@@ -24,7 +20,13 @@ export default {
 	created() {},
 	computed: {
 		copyright() {
-			return uni.getStorageSync('copyright');
+			let copyright = uni.getStorageSync('copyright');
+			// 判断是否授权
+			if (copyright && !copyright.auth) {
+				copyright.logo = 'public/uniapp/common/logo_copy.png';
+				copyright.copyright_link = 'http://www.niushop.com';
+			}
+			return copyright;
 		}
 	},
 	methods: {
@@ -49,8 +51,8 @@ export default {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-	margin-top: 14rpx;
-	margin-bottom: 14rpx;
+	margin-top: 20rpx;
+	margin-bottom: 40rpx;
 }
 
 .ns-copyright-info .ns-copyright-pic image {

@@ -5,7 +5,7 @@
 				<view class="title">
 					<block v-if="obj.delivery && obj.delivery.delivery_type == 'local'">选择送达时间</block>
 					<block v-if="obj.delivery && obj.delivery.delivery_type == 'store'">选择自提时间</block>
-					<text class="iconfont iconclose" @click="close"></text>
+					<text class="iconfont icon-close" @click="close"></text>
 				</view>
 				<view class="body">
 					<!-- 左侧日期选择 -->
@@ -26,7 +26,7 @@
 							@click="selectTime('time', index, 'yes')"
 						>
 							{{ item }}
-							<text v-if="key == keyJudge && index == keys" class="iconfont iconyuan_checked color-base-text"></text>
+							<text v-if="key == keyJudge && index == keys" class="iconfont icon-yuan_checked color-base-text"></text>
 						</view>
 					</scroll-view>
 				</view>
@@ -237,58 +237,48 @@ export default {
 				this.keyJudge = 0;
 			}
 
-			this.timeData = [];
-
+			let timeData = [];
+			
+			if (!this.obj.dataTime.delivery_time) {
+				this.obj.dataTime.delivery_time = [ {start_time: this.obj.dataTime.start_time, end_time: this.obj.dataTime.end_time} ]
+			}
+			
+			//判断选中是否为当天
 			let remainder = 0;
 			//当天配送自提的话，向后推迟30分钟
 			let newDayTime = JSON.parse(JSON.stringify(this.dayTime));
 			newDayTime = Math.ceil(this.dayTime / 600) * 600 + 1800;
-
+			
 			//判断选中是否为当天
 			let timeJudage = false;
 			if (this.dayData[this.keyJudge] && this.dayData[this.keyJudge].type && newDayTime > this.obj.dataTime.start_time) timeJudage = true;
-
-			//后台返回初始时间与结束时间为0时,为方便判断,修改结束时间
-			if (this.obj.dataTime.end_time == 0 && this.obj.dataTime.start_time == 0) {
-				this.obj.dataTime.end_time = 86400;
-			}
-
-			// 左侧时间循环次数
-			let num = 0;
-			// 左侧列表添加的时间
-			let time = 0;
-
-			if (timeJudage) {
-				//配送、自提时间为当天时间的话
-				// 配送、自提时间为当天时间的话,当前时间向后推迟30分钟
-				num = parseInt((parseInt(this.obj.dataTime.end_time) - parseInt(newDayTime)) / 1200) + 1;
-				remainder = (parseInt(this.obj.dataTime.end_time) - parseInt(newDayTime)) % 1200;
-				time = parseInt(newDayTime);
-			} else {
-				//配送、自提时间不为当天时间的话
-				num = parseInt((parseInt(this.obj.dataTime.end_time) - parseInt(this.obj.dataTime.start_time)) / 1200);
-				remainder = (parseInt(this.obj.dataTime.end_time) - parseInt(this.obj.dataTime.start_time)) % 1200;
-
-				if (remainder != 0) {
-					this.obj.dataTime.start_time = parseInt(parseInt(this.obj.dataTime.start_time) / 1200) * 1200;
-				}
-
-				time = parseInt(this.obj.dataTime.start_time);
-			}
-			let end_time = 0;
-			for (let i = 0; i < num; i++) {
-				if (timeJudage) {
-					if (i != 0) {
-						time = parseInt(time) + 1200;
+			
+			let timeInterval = this.obj.dataTime.time_interval ? this.obj.dataTime.time_interval * 60 : 1200;
+			
+			this.obj.dataTime.delivery_time.forEach(item => {
+				item.end_time = item.end_time ? item.end_time : 86400; 
+				let num = parseInt((parseInt(item.end_time) - parseInt(item.start_time)) / timeInterval);
+				let time = parseInt(item.start_time);
+				for (let i = 0; i < num; i++) {
+					if (timeJudage) {
+						if (time >= newDayTime) {
+							if (this.obj.dataTime.time_interval) {
+								if (time <= item.end_time) timeData.push(this.$util.getTimeStr(time) + '-' + this.$util.getTimeStr(time + timeInterval));
+							} else {
+								timeData.push(this.$util.getTimeStr(time));
+							}
+						}
+					} else {
+						if (this.obj.dataTime.time_interval) {
+							if (time <= item.end_time) timeData.push(this.$util.getTimeStr(time) + '-' + this.$util.getTimeStr(time + timeInterval));
+						} else {
+							timeData.push(this.$util.getTimeStr(time));
+						}
 					}
-				} else {
-					if (i != 0) {
-						time = parseInt(time) + 1200;
-					}
-					// time = parseInt(time) + 1200
+					time = parseInt(time) + timeInterval;
 				}
-				this.timeData[i] = this.$util.getTimeStr(time);
-			}
+			})
+			this.timeData = timeData;
 			this.$forceUpdate();
 		}
 	}
@@ -308,7 +298,7 @@ export default {
 		height: 90rpx;
 		line-height: 90rpx;
 		border-bottom: 1rpx solid #f7f4f4;
-		.iconclose {
+		.icon-close {
 			font-size: 26rpx;
 			color: #909399;
 			position: absolute;
@@ -352,8 +342,8 @@ export default {
 				align-items: center;
 				justify-content: space-between;
 				height: 72rpx;
-				.iconyuan_checked {
-					font-size: 28rpx;
+				.icon-yuan_checked {
+					font-size: 38rpx;
 					margin-right: 30rpx;
 				}
 			}

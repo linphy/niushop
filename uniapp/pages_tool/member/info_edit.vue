@@ -122,6 +122,23 @@
 				<button type="primary">{{ $lang('save') }}</button>
 			</view>
 		</view>
+		<view v-if="indent == 'address'" class="edit-info">
+			<view class="edit-info-box">
+				<text class="info-name">所在地区</text>
+				<pick-regions :default-regions="defaultRegions" select-arr="3" @getRegions="handleGetRegions">
+					<text class="select-address " :class="{'color-tip': !formData.fullAddress }">
+						{{ formData.fullAddress ? formData.fullAddress : '请选择省市区县' }}
+					</text>
+				</pick-regions>
+			</view>
+			<view class="edit-info-box">
+				<text class="info-name">详细地址</text>
+				<input class="uni-input info-content" type="text" placeholder="详细地址" v-model="formData.address" />
+			</view>
+			<view class="save-item" @click="save('address')">
+				<button type="primary">{{ $lang('save') }}</button>
+			</view>
+		</view>
 		<ns-login ref="login"></ns-login>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
@@ -265,12 +282,8 @@ export default {
 	}
 
 	.info-content {
-		&:first-of-type {
-			width: auto !important;
-		}
-
-		margin-right: auto;
-		width: 250rpx;
+		flex: 1;
+		width: 0;
 		font-size: $font-size-base;
 		padding: 0;
 	}
@@ -295,6 +308,10 @@ export default {
 	uni-radio .uni-radio-input {
 		width: 32rpx;
 		height: 32rpx;
+	}
+	
+	.pick-regions {
+		flex: 1;
 	}
 }
 

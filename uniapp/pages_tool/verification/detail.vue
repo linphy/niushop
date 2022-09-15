@@ -20,7 +20,7 @@
 							<view class="money-wrap">
 								<view class="align-right">{{ $lang('common.currencySymbol') }}{{ goodsItem.price | abs }}</view>
 								<view class="align-right color-tip">
-									<text class="iconfont iconclose"></text>
+									<text class="iconfont icon-close"></text>
 									{{ goodsItem.num }}
 								</view>
 							</view>
@@ -112,8 +112,9 @@
 			}
 		},
 		onShow() {
+			
 			if (uni.getStorageSync('token')) this.checkIsVerifier();
-			else this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+			else this.$util.redirectTo('/pages/member/index');
 
 			this.getVerifyInfo();
 		},
@@ -127,7 +128,7 @@
 								title: '非核销员无此权限'
 							});
 							setTimeout(() => {
-								this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+								this.$util.redirectTo('/pages/member/index');
 							}, 1000);
 						}
 					}
@@ -152,7 +153,7 @@
 								title: res.message
 							});
 							setTimeout(() => {
-								this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+								this.$util.redirectTo('/pages/member/index');
 							}, 1000);
 						}
 					},
@@ -175,7 +176,7 @@
 						});
 						if (res.code >= 0) {
 							setTimeout(() => {
-								this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+								this.$util.redirectTo('/pages/member/index');
 							}, 1000);
 						} else {
 							this.isSub = false;

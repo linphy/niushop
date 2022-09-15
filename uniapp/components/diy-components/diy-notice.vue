@@ -1,6 +1,6 @@
 <template>
 	<view class="diy-notice">
-		<view :class="['notice',value.contentStyle]" :style="noticeWrapCss">
+		<view :class="['notice', value.contentStyle]" :style="noticeWrapCss">
 			<image v-if="value.iconType == 'img'" class="notice-img" :src="$util.img(value.imageUrl)" mode="aspectFit"></image>
 			<diy-icon
 				v-if="value.iconType == 'icon'"
@@ -10,15 +10,27 @@
 			></diy-icon>
 			<view class="notice-xian"></view>
 			<view class="main-wrap">
-				<text v-if="value.contentStyle == 'style-2'" class="iconfont icongonggao" :style="{ color: value.textColor }"></text>
+				<text v-if="value.contentStyle == 'style-2'" class="iconfont icon-gonggao" :style="{ color: value.textColor }"></text>
 				<view class="uni-swiper-msg">
-					<swiper vertical="true" autoplay="true" duration="0" circular="true">
-						<swiper-item v-for="(item, index) in list" :key="index" @touchmove.stop>
-							<text @click="toLink(item)" class="beyond-hiding animate" :style="{ color: value.textColor }">{{ item.title }}</text>
-						</swiper-item>
-					</swiper>
+					<!-- 横向滚动：horizontal -->
+					<template v-if="value.scrollWay == 'horizontal'">
+						<swiper :vertical="false" :duration="0" autoplay="true" circular="true">
+							<swiper-item v-for="(item, index) in list" :key="index" @touchmove.stop>
+								<text @click="toLink(item)" class="beyond-hiding animate" :style="{ color: value.textColor }">{{ item.title }}</text>
+							</swiper-item>
+						</swiper>
+					</template>
+
+					<!-- 上下滚动：upDown -->
+					<template v-if="value.scrollWay == 'upDown'">
+						<swiper :vertical="true" :duration="500" autoplay="true" circular="true">
+							<swiper-item v-for="(item, index) in list" :key="index">
+								<text @click="toLink(item)" class="beyond-hiding" :style="{ color: value.textColor }">{{ item.title }}</text>
+							</swiper-item>
+						</swiper>
+					</template>
 				</view>
-				<text v-if="value.contentStyle == 'style-2'" class="iconfont iconright arrows" @click="toLink"></text>
+				<text v-if="value.contentStyle == 'style-2'" class="iconfont icon-right arrows" @click="toLink"></text>
 			</view>
 		</view>
 	</view>
@@ -37,6 +49,11 @@ export default {
 			list: []
 		};
 	},
+	created() {
+		// 数据源：公告系统
+		if (this.value.sources == 'default') this.getData();
+		else this.list = this.value.list;
+	},
 	computed: {
 		noticeWrapCss: function() {
 			var obj = '';
@@ -49,11 +66,6 @@ export default {
 			}
 			return obj;
 		}
-	},
-	created() {
-		// 数据源：公告系统
-		if (this.value.sources == 'default') this.getData();
-		else this.list = this.value.list;
 	},
 	methods: {
 		getData() {
@@ -71,7 +83,7 @@ export default {
 		},
 		toLink(item) {
 			if (this.value.sources == 'initial') this.$util.redirectTo('/pages_tool/notice/detail', { notice_id: item.id });
-			else if(!item) this.$util.redirectTo('/pages_tool/notice/list');
+			else if (!item) this.$util.redirectTo('/pages_tool/notice/list');
 			else this.$util.diyRedirectTo(item.link);
 		}
 	}
@@ -100,21 +112,19 @@ export default {
 		background-color: #e4e4e4;
 		margin: 0 22rpx;
 	}
-	&.style-2{
+	&.style-2 {
 		.main-wrap {
 			display: flex;
 			align-items: center;
-			.uni-swiper-msg{
+			.uni-swiper-msg {
 				width: 400rpx;
 				margin: 0 10rpx;
 			}
-			.arrows{
+			.arrows {
 				color: #999;
 				font-size: $font-size-sub;
 			}
 		}
-		
-		
 	}
 }
 
@@ -130,11 +140,14 @@ swiper {
 
 .beyond-hiding {
 	display: inline-block;
-	width: auto;
+	width: 100%;
 	white-space: nowrap;
 }
 
 .animate {
+	width: auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	padding-left: 40rpx;
 	font-size: $font-size-base;
 	color: #000;

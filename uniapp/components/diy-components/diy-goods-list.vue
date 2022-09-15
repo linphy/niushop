@@ -56,13 +56,13 @@
 							<view v-if="goodsValue.btnStyle.style == 'icon-cart'" :style="{
 									color: goodsValue.btnStyle.theme == 'diy' ? goodsValue.btnStyle.textColor : '',
 									borderColor: goodsValue.btnStyle.theme == 'diy' ? goodsValue.btnStyle.textColor : ''
-								}" class="cart shopping-cart-btn iconfont icongouwuche"></view>
+								}" class="cart shopping-cart-btn iconfont icon-gouwuche"></view>
 
 							<!--加号图标 -->
 							<view v-else-if="goodsValue.btnStyle.style == 'icon-add'" :style="{
 									color: goodsValue.btnStyle.theme == 'diy' ? goodsValue.btnStyle.textColor : '',
 									borderColor: goodsValue.btnStyle.theme == 'diy' ? goodsValue.btnStyle.textColor : ''
-								}" class="cart plus-sign-btn iconfont iconadd1"></view>
+								}" class="cart plus-sign-btn iconfont icon-add1"></view>
 
 							<!-- 按钮 -->
 							<view v-else-if="goodsValue.btnStyle.style == 'button'" :style="{
@@ -346,6 +346,7 @@
 
 <style lang="scss" scoped>
 	.goods-list {
+		overflow: hidden;
 		.goods-item {
 			overflow: hidden;
 			line-height: 1;
@@ -522,7 +523,7 @@
 				right: 0;
 				min-width: 112rpx;
 				height: 52rpx;
-				padding: 0 16rpx;
+				padding: 0 20rpx;
 				line-height: 52rpx;
 				text-align: center;
 				box-sizing: border-box;
@@ -663,9 +664,9 @@
 					position: absolute;
 					bottom: 8rpx;
 					right: 0;
-					min-width: 112rpx;
+					min-width: 56px;
 					height: 52rpx;
-					padding: 0 16rpx;
+					padding: 0 20rpx;
 					line-height: 52rpx;
 					text-align: center;
 					box-sizing: border-box;
@@ -845,7 +846,7 @@
 					right: 0;
 					min-width: 112rpx;
 					height: 52rpx;
-					padding: 0 16rpx;
+					padding: 0 20rpx;
 					line-height: 52rpx;
 					text-align: center;
 					box-sizing: border-box;
@@ -1062,7 +1063,7 @@
 			.buy-btn{
 				min-width: 112rpx;
 				height: 52rpx;
-				padding: 0 16rpx;
+				padding: 0 20rpx;
 				line-height: 52rpx;
 				text-align: center;
 				box-sizing: border-box;

@@ -23,8 +23,6 @@ export default {
 			}],
 
 			levelInfo: {},
-			showFenxiao: 0,
-			membercard: null, // 会员卡信息
 			hackReset: true,
 		}
 	},
@@ -44,17 +42,6 @@ export default {
 				flag = true;
 			}
 			return flag;
-		},
-		memberCardDiscount() {
-			let discount = 0,
-				showPrice = this.goodsSkuDetail.member_price > 0 && Number(this.goodsSkuDetail.member_price) < Number(
-					this.goodsSkuDetail
-					.discount_price) ? this.goodsSkuDetail.member_price : this.goodsSkuDetail.discount_price;
-			if (this.membercard && this.membercard.member_price > 0 && (parseFloat(showPrice) > parseFloat(this
-					.membercard.member_price))) {
-				discount = parseFloat(showPrice) - parseFloat(this.membercard.member_price);
-			}
-			return discount.toFixed(2);
 		}
 	},
 	onLoad(data) {
@@ -87,32 +74,17 @@ export default {
 			//组合套餐
 			this.getBundling();
 
-			if (this.addonIsExist.fenxiao == 1) {
-				this.getFenxiaoGoodsDetail()
-			}
 		}
 	},
 	onHide() {
 		this.couponBtnSwitch = false;
 	},
 	methods: {
-		SetSkuid(val) {
-			this.skuId = val;
-			this.getBundling();
-		},
-		//请求佣金详情
-		getFenxiaoGoodsDetail() {
-			this.$api.sendRequest({
-				url: '/fenxiao/api/goods/detail',
-				data: {
-					sku_id: this.skuId,
-				},
-				success: res => {
-					if (res.code == 0 && res.data) {
-						this.levelInfo = res.data
-					}
-				}
-			});
+		setSkuId(val) {
+			if (val) {
+				this.skuId = val;
+				this.getBundling();
+			}
 		},
 		// 获取商品详情
 		async getGoodsSkuDetail() {
@@ -126,8 +98,7 @@ export default {
 			});
 			let data = res.data;
 			if (data.goods_sku_detail != null) {
-				if (data.goods_sku_detail.promotion_type == 'presale' && (data.goods_sku_detail.end_time - res
-						.timestamp) > 0) {
+				if (data.goods_sku_detail.promotion_type == 'presale' && data.goods_sku_detail.presale_id) {
 					this.$util.redirectTo('/pages_promotion/presale/detail', {
 						id: data.goods_sku_detail.presale_id,
 						sku_id: this.skuId
@@ -189,20 +160,11 @@ export default {
 					}
 				}
 
-				if (this.token != '' && this.preview == 0) {
-					if (this.addonIsExist.supermember) {
-						this.getMemberInfo();
-					}
-				}
-
 				if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 
 			} else {
 				this.$util.redirectTo('/pages_tool/goods/not_exist', {}, 'redirectTo');
 			}
-		},
-		refreshLevelInfo(data) {
-			this.$refs.refLeverInfo.levelInfo.commission_money = data.commission_money;
 		},
 		choiceSku() {
 			this.$refs.goodsSku.show("buy_now", () => {
@@ -481,9 +443,6 @@ export default {
 			this.bundling[index].bundling_goods[goods_index].sku_image = this.$util.getDefaultImage().goods;
 			this.$forceUpdate();
 		},
-		fenxiao() {
-			this.$refs.fenxiaoPopup.show()
-		},
 		toGoodsDetail(item) {
 			this.$util.redirectTo(this.goodsRoute, {
 				sku_id: item
@@ -495,34 +454,9 @@ export default {
 			});
 		},
 		/**
-		 * 获取会员信息
-		 */
-		getMemberInfo() {
-			this.$api.sendRequest({
-				url: '/api/member/info',
-				success: res => {
-					if (res.code == 0 && res.data && res.data.member_level_type == 0) this
-						.getMemberCardInfo();
-				}
-			});
-		},
-		getMemberCardInfo() {
-			this.$api.sendRequest({
-				url: '/supermember/api/membercard/recommendcard',
-				data: {
-					sku_id: this.goodsSkuDetail.sku_id
-				},
-				success: res => {
-					if (res.code == 0 && res.data) {
-						this.membercard = res.data;
-					}
-				}
-			});
-		},
-		/**
 		 * 获取分享图
 		 */
-		getShareImg(){
+		getShareImg() {
 			let posterParams = {
 				goods_id: this.goodsId
 			};

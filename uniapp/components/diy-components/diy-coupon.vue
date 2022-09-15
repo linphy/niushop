@@ -529,9 +529,10 @@ export default {
 
 			.coupon-get {
 				position: relative;
-				right: 4px;
-				writing-mode: vertical-rl;
+				right: 14rpx;
 				font-size: 24rpx;
+				width: 26rpx;
+				line-height: 1.1;
 			}
 
 			.coupon-info {
@@ -574,11 +575,11 @@ export default {
 
 			.coupon-get {
 				position: relative;
-				top: 6rpx;
-				right: 8rpx;
-				writing-mode: vertical-rl;
+				top: 2rpx;
+				right: 12rpx;
 				font-size: 24rpx;
 				letter-spacing: 16rpx;
+				width: 26rpx;
 
 				&.use {
 					top: 0;
@@ -674,9 +675,10 @@ export default {
 			.coupon-get {
 				position: relative;
 				top: 0;
-				right: 8rpx;
-				writing-mode: vertical-rl;
+				right: 12rpx;
 				font-size: 24rpx;
+				width: 26rpx;
+				line-height: 1.1;
 			}
 
 			.coupon-info {

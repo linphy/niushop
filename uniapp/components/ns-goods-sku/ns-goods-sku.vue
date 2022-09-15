@@ -1,7 +1,7 @@
 <template>
 	<view class="goods-sku" @touchmove.prevent.stop>
-		<uni-popup ref="skuPopup" type="bottom" class="sku-layer">
-			<view class="sku-info" :style="{ height: goodsDetail.goods_spec_format ? 48 + goodsDetail.goods_spec_format.length * 9.5 + 'vh' : '48vh' }">
+		<uni-popup ref="skuPopup" type="bottom" class="sku-layer" @change="popclose">
+			<view class="sku-info" :style="{ height: skuHeight }">
 				<view class="header">
 					<view class="img-wrap" @click="previewMedia()"><image :src="$util.img(goodsDetail.sku_image, { size: 'mid' })" @error="imageError()" mode="aspectFit" /></view>
 
@@ -10,23 +10,95 @@
 							<text class="unit price-style small">￥</text>
 							<block v-if="goodsDetail.discount_price > 0">
 								<block v-if="goodsDetail.member_price">
-									<text class="price price-style large" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.member_price)">{{ parseFloat(goodsDetail.discount_price).toFixed(2).split('.')[0] }}</text>
-									<text class="price price-style large" v-else>{{ parseFloat(goodsDetail.member_price).toFixed(2).split('.')[0] }}</text>
-									<text class="unit price-style small" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.member_price)">.{{ parseFloat(goodsDetail.discount_price).toFixed(2).split('.')[1] }}</text>
-									<text class="unit price-style small" v-else>.{{ parseFloat(goodsDetail.member_price).toFixed(2).split('.')[1] }}</text>
+									<text class="price price-style large" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.member_price)">
+										{{
+											parseFloat(goodsDetail.discount_price)
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="price price-style large" v-else>
+										{{
+											parseFloat(goodsDetail.member_price)
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="unit price-style small" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.member_price)">
+										.{{
+											parseFloat(goodsDetail.discount_price)
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
+									<text class="unit price-style small" v-else>
+										.{{
+											parseFloat(goodsDetail.member_price)
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
 								</block>
 								<block v-else>
-									<text class="price price-style large" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.price)">{{ parseFloat(goodsDetail.discount_price).toFixed(2).split('.')[0] }}</text>
-									<text class="price price-style large" v-else>{{ parseFloat(goodsDetail.price).toFixed(2).split('.')[0] }}</text>
-									<text class="unit price-style small" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.price)">.{{ parseFloat(goodsDetail.discount_price).toFixed(2).split('.')[1] }}</text>
-									<text class="unit price-style small" v-else>.{{ parseFloat(goodsDetail.price).toFixed(2).split('.')[1] }}</text>
+									<text class="price price-style large" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.price)">
+										{{
+											parseFloat(goodsDetail.discount_price)
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="price price-style large" v-else>
+										{{
+											parseFloat(goodsDetail.price)
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="unit price-style small" v-if="showPrice(goodsDetail.discount_price) < showPrice(goodsDetail.price)">
+										.{{
+											parseFloat(goodsDetail.discount_price)
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
+									<text class="unit price-style small" v-else>
+										.{{
+											parseFloat(goodsDetail.price)
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
 								</block>
 							</block>
 							<block v-else>
-								<text class="price price-style large" v-if="goodsDetail.member_price">{{ parseFloat(goodsDetail.member_price).toFixed(2).split('.')[0] }}</text>
-								<text class="price price-style large" v-else>{{ parseFloat(goodsDetail.price).toFixed(2).split('.')[0] }}</text>
-								<text class="unit price-style small" v-if="goodsDetail.member_price">.{{ parseFloat(goodsDetail.member_price).toFixed(2).split('.')[1] }}</text>
-								<text class="unit price-style small" v-else>.{{ parseFloat(goodsDetail.price).toFixed(2).split('.')[1] }}</text>
+								<text class="price price-style large" v-if="goodsDetail.member_price">
+									{{
+										parseFloat(goodsDetail.member_price)
+											.toFixed(2)
+											.split('.')[0]
+									}}
+								</text>
+								<text class="price price-style large" v-else>
+									{{
+										parseFloat(goodsDetail.price)
+											.toFixed(2)
+											.split('.')[0]
+									}}
+								</text>
+								<text class="unit price-style small" v-if="goodsDetail.member_price">
+									.{{
+										parseFloat(goodsDetail.member_price)
+											.toFixed(2)
+											.split('.')[1]
+									}}
+								</text>
+								<text class="unit price-style small" v-else>
+									.{{
+										parseFloat(goodsDetail.price)
+											.toFixed(2)
+											.split('.')[1]
+									}}
+								</text>
 							</block>
 						</view>
 						<view class="stock">
@@ -39,7 +111,7 @@
 						</view>
 					</view>
 
-					<view class="sku-close iconfont iconclose" @click="closeSkuPopup()"></view>
+					<view class="sku-close iconfont icon-close" @click="closeSkuPopup()"></view>
 				</view>
 
 				<view class="body-item">
@@ -111,7 +183,6 @@
 
 <script>
 import uniPopup from '@/components/uni-popup/uni-popup-sku.vue';
-import htmlParser from '@/common/js/html-parser';
 // 商品SKU
 export default {
 	name: 'ns-goods-sku',
@@ -119,6 +190,10 @@ export default {
 		uniPopup
 	},
 	props: {
+		goodsId: {
+			type: [Number, String],
+			default: 0
+		},
 		goodsDetail: {
 			type: Object,
 			default: null
@@ -126,6 +201,9 @@ export default {
 		disabled: {
 			type: Boolean,
 			default: false
+		},
+		pointLimit: {
+			type: [Number, String]
 		},
 		maxBuy: {
 			type: Number,
@@ -150,16 +228,29 @@ export default {
 			//是否开启预览，0：不开启，1：开启
 			preview: 0,
 			cartNumber: 0, // 购物车中商品存在的数量
-			goodsSkuDetail: {}
+			goodsSkuDetail: {},
+			goodsSkuInfo: null, //所有的商品规格信息
+			isLoad: false // 是否首次加载
 		};
 	},
 	created() {
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 		this.systemInfo = uni.getSystemInfoSync();
+		this.isLoad = true;
+		if (this.goodsId && this.goodsDetail.goods_spec_format) {
+			this.skuId = this.goodsDetail.sku_id;
+			this.getAllGoodsSkuInfo();
+		}
 	},
 	watch: {
-		goodsDetail(newData, oldData) {
-			this.skuId = newData.sku_id;
+		pointLimit(newNum, oldNum) {
+			this.limitNumber = Number(newNum);
+		},
+		goodsDetail: {
+			handler(newData, oldData) {
+				this.skuId = newData.sku_id;
+			},
+			deep: true // 深度监听父组件传过来对象变化
 		},
 		minBuy(newData, oldData) {
 			if (this.minBuy > 1) {
@@ -175,20 +266,112 @@ export default {
 		increaseDisabled: function() {
 			let max = this.maxBuy > 0 && this.maxBuy < this.goodsDetail.stock ? this.maxBuy : this.goodsDetail.stock;
 			return this.number >= max;
+		},
+		skuHeight() {
+			let height = 48;
+			if (this.goodsDetail) {
+				if (this.goodsDetail.goods_spec_format && this.goodsDetail.goods_spec_format.length) {
+					height = 51 + this.goodsDetail.goods_spec_format.length * 9.5;
+				}
+			}
+			height += 'vh';
+			return height;
 		}
 	},
 	methods: {
-		show(type, callback) {
+		//【普通商品】获取所有规格信息
+		getAllGoodsSkuInfo(callback) {
+			this.$api.sendRequest({
+				url: '/api/goodssku/goodsSku',
+				data: {
+					goods_id: this.goodsId
+				},
+				success: res => {
+					if (res.code >= 0) {
+						let data = res.data,
+							obj = {};
+
+						res.data.forEach((item, index) => {
+							item = this.handleData(item);
+
+							// 限时折扣
+							if (item.promotion_type == 1) {
+								item.discountTimeMachine = this.$util.countDown(item.end_time - res.timestamp);
+							}
+
+							if (item.promotion_type == 1 && item.discountTimeMachine) {
+								if (item.member_price > 0 && Number(item.member_price) <= Number(item.discount_price)) {
+									item.show_price = item.member_price;
+								} else {
+									item.show_price = item.discount_price;
+								}
+							} else if (item.member_price > 0) {
+								item.show_price = item.member_price;
+							} else {
+								item.show_price = item.price;
+							}
+
+							obj['sku_' + item.sku_id] = item;
+						});
+						if (this.skuId == 0) this.skuId = res.data[0].sku_id;
+						this.goodsSkuInfo = obj;
+						this.isLoad = false;
+						if (callback) callback();
+					} else {
+						this.$util.redirectTo('/pages/index/index');
+					}
+				}
+			});
+		},
+		handleData(item) {
+			if (item.sku_images) item.sku_images = item.sku_images.split(',');
+			else item.sku_images = [];
+
+			// 多规格时合并主图
+			if (item.goods_spec_format && item.goods_image) {
+				item.goods_image = item.goods_image.split(',');
+				item.sku_images = item.goods_image.concat(item.sku_images);
+			}
+
+			// 当前商品SKU规格
+			if (item.sku_spec_format) item.sku_spec_format = JSON.parse(item.sku_spec_format);
+
+			// 商品SKU格式
+			if (item.goods_spec_format) item.goods_spec_format = JSON.parse(item.goods_spec_format);
+
+			return item;
+		},
+		show(type, callback, data) {
 			this.callback = callback;
-			this.$refs.skuPopup.open();
+
+			// 排除购物车切换规格
+			if (this.type != 'confirm') {
+				this.$refs.skuPopup.open();
+			}
 			this.type = type;
 			this.skuId = this.goodsDetail.sku_id;
 			this.preview = this.goodsDetail.preview || 0;
+			if (this.type == 'confirm') {
+				if (this.isLoad) return;
+
+				// 购物车切换规格
+				this.goodsId = data.goods_id;
+				this.skuId = data.sku_id;
+				this.getAllGoodsSkuInfo(() => {
+					this.$refs.skuPopup.open();
+				});
+			}
 			if (this.type == 'join_cart') this.getCartData();
 			this.$forceUpdate();
 		},
 		hide() {
+			this.$emit('hideSkuPop');
 			this.$refs.skuPopup.close();
+		},
+		popclose() {
+			if (this.$refs.skuPopup.showPopup) {
+				this.$emit('hideSkuPop');
+			}
 		},
 		//查看规格图片
 		previewMedia() {
@@ -204,9 +387,12 @@ export default {
 			});
 		},
 		change(skuId, spec_id) {
+			if (this.goodsSkuInfo == null) return;
 			if (this.disabled) return;
 			this.btnSwitch = false;
+
 			this.skuId = skuId;
+
 			// 清空选择
 			for (var i = 0; i < this.goodsDetail.goods_spec_format.length; i++) {
 				var sku = this.goodsDetail.goods_spec_format[i];
@@ -218,98 +404,13 @@ export default {
 				}
 			}
 
-			this.getGoodsSkuInfo();
+			this.goodsSkuDetail = this.goodsSkuInfo['sku_' + this.skuId];
+			this.$emit('refresh', this.goodsSkuDetail);
+			this.$emit('getSkuId', this.skuId);
+			this.keyInput(true);
 		},
 		showPrice(price) {
 			return parseFloat(price);
-		},
-		// 获取普通商品详情
-		getGoodsSkuInfo() {
-			let res = this.$api.sendRequest({
-				url: '/api/goodssku/info',
-				data: {
-					sku_id: this.skuId
-				},
-				success: res => {
-					let data = res.data;
-					if (data != null) {
-
-						data.unit = data.unit || '件';
-						this.goodsSkuDetail = data;
-						this.dealData();
-
-						// 限时折扣
-						if (this.goodsSkuDetail.promotion_type == 1) {
-							this.goodsSkuDetail.discountTimeMachine = this.$util.countDown(this.goodsSkuDetail.end_time - res.timestamp);
-						}
-
-						if (this.goodsSkuDetail.promotion_type == 1 && this.goodsSkuDetail.discountTimeMachine) {
-							if (this.goodsSkuDetail.member_price > 0 && Number(this.goodsSkuDetail.member_price) <= Number(this.goodsSkuDetail.discount_price)) {
-								this.goodsSkuDetail.show_price = this.goodsSkuDetail.member_price;
-							} else {
-								this.goodsSkuDetail.show_price = this.goodsSkuDetail.discount_price;
-							}
-						} else {
-							if (this.goodsSkuDetail.member_price > 0) {
-								this.goodsSkuDetail.show_price = this.goodsSkuDetail.member_price;
-							} else {
-								this.goodsSkuDetail.show_price = this.goodsSkuDetail.price;
-							}
-						}
-
-						this.btnSwitch = false;
-						this.$emit('refresh', this.goodsSkuDetail);
-						this.$emit('GetSkuid', this.skuId);
-						this.$emit('levelInfo', this.levelInfo);
-						this.$forceUpdate();
-					} else {
-						this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
-					}
-				},
-				fail: res => {
-					this.btnSwitch = false;
-					this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
-				}
-			});
-		},
-
-		dealData(item = this.goodsSkuDetail) {
-			if (item.sku_images) item.sku_images = item.sku_images.split(',');
-			else item.sku_images = [];
-
-			// 多规格时合并主图
-			if (item.goods_spec_format && item.goods_image) {
-				item.goods_image = item.goods_image.split(',');
-				item.sku_images = item.goods_image.concat(item.sku_images);
-			}
-
-			// 当前商品SKU规格
-			if (item.sku_spec_format) item.sku_spec_format = JSON.parse(item.sku_spec_format);
-
-			// 商品属性
-			if (item.goods_attr_format) {
-				let goods_attr_format = JSON.parse(item.goods_attr_format);
-				item.goods_attr_format = this.$util.unique(goods_attr_format, 'attr_id');
-				for (var i = 0; i < item.goods_attr_format.length; i++) {
-					for (var j = 0; j < goods_attr_format.length; j++) {
-						if (item.goods_attr_format[i].attr_id == goods_attr_format[j].attr_id && item.goods_attr_format[i].attr_value_id != goods_attr_format[j].attr_value_id) {
-							item.goods_attr_format[i].attr_value_name += '、' + goods_attr_format[j].attr_value_name;
-						}
-					}
-				}
-			}
-
-			// 商品SKU格式
-			if (item.goods_spec_format) item.goods_spec_format = JSON.parse(item.goods_spec_format);
-
-			// 商品详情
-			item.goods_content = htmlParser(item.goods_content);
-
-			this.goodsDetail.unit = this.goodsDetail.unit || '件';
-
-			this.keyInput(true);
-
-			if (this.type != 'confirm') this.$langConfig.title(item.goods_name);
 		},
 		changeNum(tag) {
 			if (this.goodsDetail.stock == 0) return;
@@ -359,6 +460,20 @@ export default {
 							});
 							return;
 						}
+					}
+
+					if (this.type == 'seckill' && this.goodsDetail.seckill_id && this.goodsDetail.num > 0) {
+						this.$util.showToast({
+							title: '该商品每人限购' + this.goodsDetail.num + this.goodsDetail.unit
+						});
+						return;
+					}
+
+					if (this.type == 'presale' && this.goodsDetail.presale_id && this.goodsDetail.presale_num > 0) {
+						this.$util.showToast({
+							title: '该商品每人限购' + this.goodsDetail.presale_num + this.goodsDetail.unit
+						});
+						return;
 					}
 				}
 			} else if (tag == '-') {
@@ -507,8 +622,6 @@ export default {
 				if (this.btnSwitch) return;
 				this.btnSwitch = true;
 
-				//this.$emit("GetSkuid",this.skuId);
-
 				if (this.type == 'join_cart') {
 					this.$api.sendRequest({
 						url: '/api/cart/add',
@@ -555,6 +668,7 @@ export default {
 			});
 		},
 		closeSkuPopup() {
+			this.$emit('hideSkuPop');
 			this.$refs.skuPopup.close();
 		},
 		imageError() {

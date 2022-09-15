@@ -1,7 +1,7 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
 	<view class="find">
-		<view class="iconfont iconclose" @click="navigateBack()"></view>
+		<view class="iconfont icon-close" @click="navigateBack()"></view>
 		<view class="header-wrap">
 			<block v-if="stepShow == 0">
 				<view class="title">请输入手机号</view>
@@ -426,7 +426,7 @@ page {
 	}
 }
 
-.iconclose {
+.icon-close {
 	font-size: 52rpx;
 	position: fixed;
 	left: 24rpx;

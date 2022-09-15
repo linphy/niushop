@@ -68,7 +68,7 @@
 							</scroll-view>
 						</view>
 					</view>
-					<view class="close-btn" @click="closeRewardPopup()"><i class="iconfont iconclose"></i></view>
+					<view class="close-btn" @click="closeRewardPopup()"><text class="iconfont icon-close"></text></view>
 				</view>
 			</uni-popup>
 		</view>
@@ -168,7 +168,7 @@ export default {
 					if (this.back != '') {
 						this.$util.redirectTo(this.back, {}, 'reLaunch');
 					} else {
-						this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+						this.$util.redirectTo('/pages/member/index');
 					}
 			}
 		}

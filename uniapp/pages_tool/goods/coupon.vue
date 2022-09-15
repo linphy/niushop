@@ -102,17 +102,19 @@ export default {
 		}
 	},
 	onShow() {
-		if (!this.addonIsExist.coupon) {
-			this.$util.showToast({
-				title: '商家未开启优惠券',
-				mask: true,
-				duration: 2000
-			});
-			setTimeout(() => {
-				this.$util.redirectTo('/pages/index/index', {}, 'redirectTo');
-			}, 2000);
-			return;
-		}
+		setTimeout( () => {
+			if (this.addonIsExist && !this.addonIsExist.coupon) {
+				this.$util.showToast({
+					title: '商家未开启优惠券',
+					mask: true,
+					duration: 2000
+				});
+				setTimeout(() => {
+					this.$util.redirectTo('/pages/index/index');
+				}, 2000);
+				return;
+			}
+		}, 1000);
 
 		//记录分享关系
 		if (uni.getStorageSync('token') && uni.getStorageSync('source_member')) {

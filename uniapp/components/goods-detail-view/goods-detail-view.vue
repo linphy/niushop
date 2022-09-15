@@ -35,7 +35,9 @@
 				</view>
 
 				<!-- 价格区域 -->
-				<slot name="price"></slot>
+				<view class="goods-gression">
+					<slot name="price"></slot>
+				</view>
 
 				<view class="newdetail margin-bottom">
 					<!-- 入口区域 -->
@@ -46,7 +48,7 @@
 						<view class="box">
 							<text v-for="(item, index) in goodsSkuDetail.goods_attr_format" :key="index" v-if="index < 2">{{ item.attr_name }}: {{ item.attr_value_name }}</text>
 						</view>
-						<text class="iconfont iconright"></text>
+						<text class="iconfont icon-right"></text>
 						<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 					</view>
 					<view class="item service" @click="openMerchantsServicePopup()" v-if="goodsSkuDetail.goods_service.length">
@@ -55,7 +57,7 @@
 							<view class="item-wrap" v-for="(item, index) in goodsSkuDetail.goods_service" :key="index" v-if="index < 3">
 								<view class="item-wrap-box">
 									<view class="item-wrap-icon">
-										<text class="iconfont icondui" v-if="!item.icon || (!item.icon.imageUrl && !item.icon.icon)"></text>
+										<text class="iconfont icon-dui" v-if="!item.icon || (!item.icon.imageUrl && !item.icon.icon)"></text>
 										<image class="icon-img" v-else-if="item.icon.iconType == 'img'" :src=" $util.img(item.icon.imageUrl)" />
 										<diy-icon class="icon-box" v-else-if="item.icon.iconType == 'icon'" :icon="item.icon.icon" :value="item.icon.style ? item.icon.style : null"></diy-icon>
 									</view>
@@ -63,7 +65,7 @@
 								</view>
 							</view>
 						</view>
-						<text class="iconfont iconright"></text>
+						<text class="iconfont icon-right"></text>
 						<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 					</view>
 				</view>
@@ -74,7 +76,7 @@
 						<view class="goods-attribute-popup-layer popup-layer">
 							<view class="head-wrap" @click="closeAttributePopup()">
 								<text>商品属性</text>
-								<text class="iconfont iconclose"></text>
+								<text class="iconfont icon-close"></text>
 							</view>
 							<scroll-view scroll-y class="goods-attribute-body">
 								<view class="item" v-for="(item, index) in goodsSkuDetail.goods_attr_format" :key="index">
@@ -93,12 +95,12 @@
 						<view class="goods-merchants-service-popup-layer popup-layer">
 							<view class="head-wrap" @click="closeMerchantsServicePopup()">
 								<text>商品服务</text>
-								<text class="iconfont iconclose"></text>
+								<text class="iconfont icon-close"></text>
 							</view>
 							<scroll-view scroll-y>
 								<view class="item" :class="{ 'empty-desc': !item.desc }" v-for="(item, index) in goodsSkuDetail.goods_service" :key="index">
 									<view class="item-icon" :class="{'empty-desc':!item.desc}">
-										<text class="iconfont icondui color-base-text" v-if="!item.icon || (!item.icon.imageUrl && !item.icon.icon)"></text>
+										<text class="iconfont icon-dui color-base-text" v-if="!item.icon || (!item.icon.imageUrl && !item.icon.icon)"></text>
 										<image class="icon-img" v-else-if="item.icon.iconType == 'img'" :src=" $util.img(item.icon.imageUrl)" />
 										<diy-icon class="icon-box" v-else-if="item.icon.iconType == 'icon'" :icon="item.icon.icon" :value="item.icon.style ? item.icon.style : null"></diy-icon>
 									</view>
@@ -116,20 +118,55 @@
 				<!-- 业务区域 -->
 				<slot name="business"></slot>
 
+				<view class="detail-community" v-if="goodsSkuDetail.qr_data && goodsSkuDetail.qr_data.qr_state == 1">
+					<view class="community-box">
+						<image :src="$util.img('public/uniapp/goods/detail_erweiImage.png')" mode="aspectFill"></image>
+						<view class="community-content">
+							<view class="community-title">{{ goodsSkuDetail.qr_data.qr_name }}</view>
+							<view class="community-txt">{{ goodsSkuDetail.qr_data.community_describe }}</view>
+						</view>
+					</view>
+					<view class="community-btn" @click="onCommunity()">添加</view>
+				</view>
+
+				<!-- 促销 -->
+				<view class="community-model" @touchmove.prevent.stop @click.stop="onCloseCommunity()" v-show="isCommunity">
+					<view class="community-model-content" @click.stop>
+						<view class="community-model-content-radius"><view>添加社群</view></view>
+						<view class="community-model-content-draw" v-if="goodsSkuDetail.qr_data && goodsSkuDetail.qr_data.qr_img">
+							<image
+								:src="
+									goodsSkuDetail.qr_data.qr_img != '' && goodsSkuDetail.qr_data.qr_state == 1
+										? $util.img(goodsSkuDetail.qr_data.qr_img)
+										: $util.img('public/uniapp/goods/detail_erweiImage.png')
+								"
+								mode="aspectFill"
+								show-menu-by-longpress="true"
+							></image>
+						</view>
+						<view class="community-model-content-text">长按识别二维码，添加社群</view>
+					</view>
+					<view class="community-model-close" @click.stop="onCloseCommunity()"><text class="iconfont icon-close"></text></view>
+				</view>
+
+
+				<!-- 参与流程 -->
+				<slot name="articipation"></slot>
+
 				<!-- 商品评价 -->
 				<view class="group-wrap" v-if="evaluateConfig.evaluate_show == 1">
 					<view class="goods-evaluate" @click="toEvaluateDetail(goodsSkuDetail.goods_id)">
 						<view class="tit">
 							<!-- <view class="tit" :class="{ active: goodsEvaluate.content }"> -->
 							<view>
-								<text class="color-title font-size-toolbar">
+								<text class="color-title font-size-base">
 									评价
 									<text class="font-size-base">({{ goodsSkuDetail.evaluate }})</text>
 								</text>
 								<text class="evaluate-item-empty" v-if="!goodsSkuDetail.evaluate">暂无评价</text>
 								<view class="evaluate-item-empty" v-else>
 									<text class="font-size-tag">查看全部</text>
-									<text class="iconfont iconright font-size-tag"></text>
+									<text class="iconfont icon-right font-size-tag"></text>
 								</view>
 							</view>
 						</view>
@@ -150,10 +187,13 @@
 											mode="aspectFill"
 										/>
 									</view>
-									<text class="evaluator-name" v-if="item.member_name.length > 2 && item.is_anonymous == 1">
-										{{ item.member_name[0] }}***{{ item.member_name[item.member_name.length - 1] }}
-									</text>
-									<text class="evaluator-name" v-else>{{ item.member_name }}</text>
+									<view class="evaluator-name-wrap">
+										<text class="evaluator-name using-hidden" v-if="item.member_name.length > 2 && item.is_anonymous == 1">
+											{{ item.member_name[0] }}***{{ item.member_name[item.member_name.length - 1] }}
+										</text>
+										<text class="evaluator-name using-hidden" v-else>{{ item.member_name }}</text>
+										<view v-if="item.scores" class="evaluator-xing"><xiaoStarComponent :starCount="item.scores * 2"></xiaoStarComponent></view>
+									</view>
 								</view>
 								<text class="time color-tip">{{ $util.timeStampTurnTime(item.create_time) }}</text>
 							</view>
@@ -172,9 +212,9 @@
 				<!-- 详情 -->
 				<view class="goods-detail-tab">
 					<view class="detail-tab">
-						<view class="tab-line"></view>
+						<!-- <view class="tab-line"></view> -->
 						<view class="tab-item">商品详情</view>
-						<view class="tab-line"></view>
+						<!-- <view class="tab-line"></view> -->
 						<!-- <view v-if="service.is_display == 1" class="tab-item" :class="detailTab == 1 ? 'active color-base-text' : ''" @click="detailTab = 1">售后保障</view> -->
 					</view>
 
@@ -214,7 +254,7 @@
 								<view class="save">长按保存图片</view>
 								<!-- #endif -->
 							</view>
-							<view class="close iconfont iconclose" @click="closePosterPopup()"></view>
+							<view class="close iconfont icon-close" @click="closePosterPopup()"></view>
 						</template>
 						<view v-else class="msg">{{ posterMsg }}</view>
 					</uni-popup>
@@ -229,22 +269,31 @@
 								<!-- #ifdef MP -->
 								<view class="share-box">
 									<button class="share-btn" :plain="true" open-type="share">
-										<view class="iconfont iconiconfenxianggeihaoyou"></view>
+										<view class="iconfont icon-share-friend"></view>
 										<text>分享给好友</text>
+									</button>
+								</view>
+								<!-- #endif -->
+
+								<!-- #ifdef MP-WEIXIN -->
+								<view class="share-box" v-if="goodsCircle">
+									<button class="share-btn" :plain="true" @click="openBusinessView">
+										<view class="iconfont icon-haowuquan"></view>
+										<text>分享到好物圈</text>
 									</button>
 								</view>
 								<!-- #endif -->
 
 								<view class="share-box" @click="openPosterPopup">
 									<button class="share-btn" :plain="true">
-										<view class="iconfont iconpengyouquan"></view>
+										<view class="iconfont icon-pengyouquan"></view>
 										<text>生成分享海报</text>
 									</button>
 								</view>
 								<!-- #ifdef H5 -->
 								<view class="share-box" @click="copyUrl">
 									<button class="share-btn" :plain="true">
-										<view class="iconfont iconfuzhilianjie"></view>
+										<view class="iconfont icon-fuzhilianjie"></view>
 										<text>复制链接</text>
 									</button>
 								</view>
@@ -254,6 +303,8 @@
 						</view>
 					</uni-popup>
 				</view>
+				
+				<slot name="fixedbtn"></slot>
 			</view>
 		</view>
 
@@ -265,6 +316,7 @@
 </template>
 
 <script>
+import xiaoStarComponent from '@/components/xiao-star-component/xiao-star-component.vue';
 // 商品详情视图
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 import nsGoodsRecommend from '@/components/ns-goods-recommend/ns-goods-recommend.vue';
@@ -288,6 +340,7 @@ export default {
 		uniPopup,
 		nsGoodsRecommend,
 		pengpaiFadeinOut,
+		xiaoStarComponent,
 		toTop
 	},
 	mixins: [scroll, detail]

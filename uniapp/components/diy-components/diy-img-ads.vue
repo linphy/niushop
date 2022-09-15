@@ -1,7 +1,28 @@
 <template>
 	<view class="single-graph">
 		<view :style="imgAdsMarginWarp" class="swiper-box">
+			<block v-if="imgAdsValue.list.length == 1">
+				<view class="simple-graph-wrap" :style="imgAdsSwiper" @click="$util.diyRedirectTo(imgAdsValue.list[0].link)">
+					<image :style="{ height: imgAdsValue.list[0].imgHeight }" :src="$util.img(imgAdsValue.list[0].imageUrl)" mode="widthFix"></image>
+					<!-- 热区功能 -->
+					<view v-if="imgAdsValue.list[0].heatMapData">
+						<view
+							class="heat-map"
+							v-for="(mapItem, mapIndex) in imgAdsValue.list[0].heatMapData"
+							:key="mapIndex"
+							:style="{
+								width: mapItem.width + '%',
+								height: mapItem.height + '%',
+								left: mapItem.left + '%',
+								top: mapItem.top + '%'
+							}"
+							@click.stop="$util.diyRedirectTo(mapItem.link)"
+						></view>
+					</view>
+				</view>
+			</block>
 			<swiper
+				v-else
 				class="swiper"
 				:style="{ height: swiperHeight }"
 				:class="{
@@ -24,14 +45,42 @@
 					v-if="item.imageUrl"
 					@click="$util.diyRedirectTo(item.link)"
 				>
-					<view class="item" :style="{ height: item.imgHeight }"><image :src="$util.img(item.imageUrl)" mode="aspectFill"></image></view>
+					<view class="item" :style="{ height: item.imgHeight }">
+						<image :src="$util.img(item.imageUrl)" mode="aspectFill"></image>
+						<!-- 热区功能 -->
+						<view v-if="item.heatMapData">
+							<view
+								class="heat-map"
+								v-for="(mapItem, mapIndex) in item.heatMapData"
+								:key="mapIndex"
+								:style="{
+									width: mapItem.width + '%',
+									height: mapItem.height + '%',
+									left: mapItem.left + '%',
+									top: mapItem.top + '%'
+								}"
+								@click.stop="$util.diyRedirectTo(mapItem.link)"
+							></view>
+						</view>
+					</view>
 				</swiper-item>
 			</swiper>
 			<!-- #ifdef MP-WEIXIN -->
-			<view v-if="imgAdsValue.list.length > 1" :class="['swiper-dot-box',{'straightLine': imgAdsValue.carouselStyle == 'line'},
-					{'swiper-left': imgAdsValue.indicatorLocation == 'left'},
-					{'swiper-right': imgAdsValue.indicatorLocation == 'right'}]">
-				<view v-for="(numItem, numIndex) in imgAdsValue.list.length" :key="numIndex" :class="['swiper-dot',{'active':numIndex==swiperIndex}]" :style="[numIndex==swiperIndex&&{'backgroundColor':imgAdsValue.indicatorColor}]"></view>
+			<view
+				v-if="imgAdsValue.list.length > 1"
+				:class="[
+					'swiper-dot-box',
+					{ straightLine: imgAdsValue.carouselStyle == 'line' },
+					{ 'swiper-left': imgAdsValue.indicatorLocation == 'left' },
+					{ 'swiper-right': imgAdsValue.indicatorLocation == 'right' }
+				]"
+			>
+				<view
+					v-for="(numItem, numIndex) in imgAdsValue.list.length"
+					:key="numIndex"
+					:class="['swiper-dot', { active: numIndex == swiperIndex }]"
+					:style="[numIndex == swiperIndex && { backgroundColor: imgAdsValue.indicatorColor }]"
+				></view>
 			</view>
 			<!-- #endif -->
 		</view>
@@ -92,7 +141,7 @@ export default {
 		}
 	},
 	methods: {
-		swiperChange(e){
+		swiperChange(e) {
 			this.swiperIndex = e.detail.current;
 		},
 		calcSingleRow() {
@@ -141,6 +190,17 @@ export default {
 	align-items: center;
 	box-sizing: border-box;
 }
+.simple-graph-wrap {
+	line-height: 0;
+	overflow: hidden;
+	position: relative;
+	image {
+		width: 100%;
+	}
+	.heat-map {
+		position: absolute;
+	}
+}
 .item.active text {
 	background: rgba(0, 0, 0, 0.3);
 	position: absolute;
@@ -174,6 +234,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
+	position: relative;
 
 	.item {
 		width: 100%;
@@ -187,10 +248,13 @@ export default {
 			max-width: 100%;
 			height: 100%;
 		}
+		.heat-map {
+			position: absolute;
+		}
 	}
 }
 
-.swiper-dot-box{
+.swiper-dot-box {
 	position: absolute;
 	bottom: 20rpx;
 	width: 100%;
@@ -199,67 +263,67 @@ export default {
 	justify-content: center;
 	padding: 0 40rpx 8rpx;
 	box-sizing: border-box;
-	&.swiper-left{
+	&.swiper-left {
 		justify-content: flex-start;
 	}
-	&.swiper-right{
+	&.swiper-right {
 		justify-content: flex-end;
 	}
-	
-	.swiper-dot{
+
+	.swiper-dot {
 		background-color: #b2b2b2;
 		width: 15rpx;
 		border-radius: 50%;
 		height: 15rpx;
 		margin: 8rpx;
-		&.active{
-			background-color: rgba(0,0,0,1);
+		&.active {
+			background-color: rgba(0, 0, 0, 1);
 		}
 	}
-	&.straightLine{
-		.swiper-dot{
+	&.straightLine {
+		.swiper-dot {
 			width: 18rpx;
 			height: 6rpx;
 			border-radius: 4rpx;
-			&.active{
+			&.active {
 				width: 36rpx;
-				background-color: rgba(0,0,0,1);
+				background-color: rgba(0, 0, 0, 1);
 			}
 		}
 	}
 }
-	
-	/* 隐藏滚动条，但依旧具备可以滚动的功能 */
-	/deep/.uni-scroll-view::-webkit-scrollbar {
-		display: none;
-	}
-	.swiper /deep/ .uni-swiper-dots-horizontal {
-		bottom: 25rpx;
-	}
-	.swiper-left /deep/ .uni-swiper-dots-horizontal {
-		left: 40rpx;
-		transform: translate(0);
-	}
-	.swiper-right /deep/ .uni-swiper-dots-horizontal {
-		right: 40rpx;
-		display: flex;
-		justify-content: flex-end;
-		transform: translate(0);
-	}
-	.carousel-angle /deep/ .uni-swiper-dots-horizontal .uni-swiper-dot {
-		width: 24rpx;
-		border-radius: 0;
-		height: 8rpx;
-	}
-	.swiper /deep/ .swiper-item .item uni-image > div {
-		background-size: cover !important;
-	}
-	.swiper.ns-indicator-dots /deep/ .uni-swiper-dot {
-		width: 18rpx;
-		height: 6rpx;
-		border-radius: 4rpx;
-	}
-	.swiper.ns-indicator-dots /deep/ .uni-swiper-dot-active{
-		width: 36rpx;
-	}
+
+/* 隐藏滚动条，但依旧具备可以滚动的功能 */
+/deep/.uni-scroll-view::-webkit-scrollbar {
+	display: none;
+}
+.swiper /deep/ .uni-swiper-dots-horizontal {
+	bottom: 25rpx;
+}
+.swiper-left /deep/ .uni-swiper-dots-horizontal {
+	left: 40rpx;
+	transform: translate(0);
+}
+.swiper-right /deep/ .uni-swiper-dots-horizontal {
+	right: 40rpx;
+	display: flex;
+	justify-content: flex-end;
+	transform: translate(0);
+}
+.carousel-angle /deep/ .uni-swiper-dots-horizontal .uni-swiper-dot {
+	width: 24rpx;
+	border-radius: 0;
+	height: 8rpx;
+}
+.swiper /deep/ .swiper-item .item uni-image > div {
+	background-size: cover !important;
+}
+.swiper.ns-indicator-dots /deep/ .uni-swiper-dot {
+	width: 18rpx;
+	height: 6rpx;
+	border-radius: 4rpx;
+}
+.swiper.ns-indicator-dots /deep/ .uni-swiper-dot-active {
+	width: 36rpx;
+}
 </style>

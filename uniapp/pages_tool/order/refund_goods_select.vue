@@ -8,8 +8,8 @@
 		<view class="body">
 			<view class="item" v-for="(item,index) in refund_data" :key="index">
 				<view @click="single(index)">
-					<text v-if="item.judge" class="iconfont iconyuan_checked color-base-text"></text>
-					<text v-else class="iconfont iconyuan_checkbox"></text>
+					<text v-if="item.judge" class="iconfont icon-yuan_checked color-base-text"></text>
+					<text v-else class="iconfont icon-yuan_checkbox"></text>
 				</view>
 				<image :src="$util.img(item.sku_image)" @error="error(index)"></image>
 				<view class="title">
@@ -20,8 +20,8 @@
 		
 		<view class="bottom-all">
 			<view @click="all">
-				<text v-if="judge" class="iconfont iconyuan_checked color-base-text"></text>
-				<text v-else class="iconfont iconyuan_checkbox"></text>
+				<text v-if="judge" class="iconfont icon-yuan_checked color-base-text"></text>
+				<text v-else class="iconfont icon-yuan_checkbox"></text>
 			</view>
 			
 			<view v-if="nexthover" class="next" @click="next">下一步</view>

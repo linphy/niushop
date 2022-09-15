@@ -9,7 +9,7 @@
 			<view class="single" :style="{ fontSize: value.fontSize * 2 + 'rpx', color: value.textColor ? value.textColor : 'rgba(0,0,0,0)' }">
 				{{ value.list[0].text }}
 				<text class="subhead">{{ value.list[0].secondText }}</text>
-				<!-- <text :style="{ fontSize: value.fontSize * 2 + 'rpx'}" class="iconfont iconright font-size-goods-tag"></text> -->
+				<!-- <text :style="{ fontSize: value.fontSize * 2 + 'rpx'}" class="iconfont icon-right font-size-goods-tag"></text> -->
 			</view>
 		</view>
 		<view v-else class="diy-text-nav" :style="{ background: value.backgroundColor }">

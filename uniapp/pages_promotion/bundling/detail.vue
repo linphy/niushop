@@ -63,17 +63,19 @@ export default {
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 	},
 	onShow() {
-		if (!this.addonIsExist.bundling) {
-			this.$util.showToast({
-				title: '商家未开启组合套餐',
-				mask: true,
-				duration: 2000
-			});
-			setTimeout(() => {
-				this.$util.redirectTo('/pages/index/index', {}, 'redirectTo');
-			}, 2000);
-			return;
-		}
+		setTimeout( () => {
+			if (this.addonIsExist && !this.addonIsExist.bundling) {
+				this.$util.showToast({
+					title: '商家未开启组合套餐',
+					mask: true,
+					duration: 2000
+				});
+				setTimeout(() => {
+					this.$util.redirectTo('/pages/index/index');
+				}, 2000);
+				return;
+			}
+		}, 1000);
 		
 		
 		this.getDetail();

@@ -9,8 +9,8 @@
 
 			<view class="agreement-btn">
 				<view class="align-center agreement-btn-select">
-					<text v-if="isSelect" class="iconfont icondui color-base-text" @click="changeSelect"></text>
-					<text v-else class="iconfont iconyuan_checkbox" @click="changeSelect"></text>
+					<text v-if="isSelect" class="iconfont icon-dui color-base-text" @click="changeSelect"></text>
+					<text v-else class="iconfont icon-yuan_checkbox" @click="changeSelect"></text>
 					<text class="agreement-text" @click="changeSelect">勾选即表示您已阅读并同意本协议</text>
 				</view>
 				<button class="btn color-base-bg" @click="next">下一步</button>

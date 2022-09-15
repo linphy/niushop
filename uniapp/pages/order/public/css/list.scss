@@ -75,20 +75,20 @@
 		&.waitpay {
 			padding-left: 70rpx;
 
-			.iconyuan_checked,
-			.iconyuan_checkbox {
+			.icon-yuan_checked,
+			.icon-yuan_checkbox {
 				font-size: $font-size-toolbar;
 				position: absolute;
 				top: 48%;
 				left: 20rpx;
 				transform: translateY(-50%);
 			}
-			.iconyuan_checkbox {
+			.icon-yuan_checkbox {
 				color: $color-tip;
 			}
 		}
 
-		.icondianpu {
+		.icon-dianpu {
 			display: inline-block;
 			line-height: 1;
 			margin-right: 12rpx;

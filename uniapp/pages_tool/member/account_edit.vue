@@ -13,7 +13,7 @@
 			<text class="tit">{{ $lang('accountType') }}</text>
 			<picker @change="bindPickerChange" :value="index" :range="payList" class="picker">
 				<text class="desc uni-input">{{ payList[index] }}</text>
-				<text class="iconfont iconright"></text>
+				<text class="iconfont icon-right"></text>
 			</picker>
 		</view>
 		<view class="edit-item" v-if="formData.withdraw_type == 'bank'">

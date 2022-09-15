@@ -20,7 +20,7 @@
 				@click="search()"
 				:placeholderStyle="placeholderStyle"
 			/>
-			<text class="iconfont iconsousuo" @click="search()" :style="{ color: value.textColor ? value.textColor : 'rgba(0,0,0,0)' }"></text>
+			<text class="iconfont icon-sousuo3" @click="search()" :style="{ color: value.textColor ? value.textColor : 'rgba(0,0,0,0)' }"></text>
 		</view>
 	</view>
 </template>
@@ -119,11 +119,12 @@ export default {
 .search-content .iconfont {
 	position: absolute;
 	top: 50%;
-	right: 40rpx;
+	right: 4rpx;
 	transform: translateY(-50%);
-	font-size: $font-size-toolbar;
+	font-size: 36rpx;
 	z-index: 10;
 	width: 80rpx;
+	font-weight: bold;
 	text-align: center;
 }
 </style>

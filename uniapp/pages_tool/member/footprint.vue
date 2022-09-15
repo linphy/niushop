@@ -11,7 +11,7 @@
 						<view class="datetime">{{ datetime(item) }}</view>
 						<view class="goods-item" :class="{manage:manage}">
 							<view class="checkbox-wrap" v-if="manage" @click="singleElection(item)">
-								<text class="iconfont" :class="$util.inArray(item.id, idArr) != -1 ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"></text>
+								<text class="iconfont" :class="$util.inArray(item.id, idArr) != -1 ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></text>
 							</view>
 							<view class="goods-img" @click="toDetail(item)">
 								<image :src="goodsImg(item.goods_image)" mode="widthFix" @error="imgError(index)"></image>
@@ -51,7 +51,7 @@
 
 				<view class="bottom-wrap" v-if="goodsList.length && manage">
 					<view class="all-election" @click="allElection">
-						<view class="iconfont" :class="isAll ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"></view>
+						<view class="iconfont" :class="isAll ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></view>
 						<text>全选</text>
 					</view>
 					<view class="action-btn"><button type="primary" @click="deleteFootprint()" class="delete" :class="{ disabled: selected }">删除</button></view>

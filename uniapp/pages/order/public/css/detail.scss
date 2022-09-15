@@ -129,7 +129,7 @@ view {
 			line-height: 50rpx;
 			font-size: $font-size-base;
 		}
-		.iconmendian {
+		.icon-mendian {
 			font-size: $font-size-toolbar;
 		}
 	}
@@ -368,7 +368,7 @@ view {
 		display: flex;
 		align-items: center;
 
-		.icondianpu {
+		.icon-dianpu {
 			display: inline-block;
 			line-height: 1;
 			margin-right: 12rpx;
@@ -377,6 +377,13 @@ view {
 	}
 
 	.site-body {
+		.goods-item {
+			border-bottom: 2rpx solid #f7f7f7;
+			&:last-child {
+				border-bottom: 0;
+			}
+		}
+		
 		.goods-wrap {
 			margin-bottom: 20rpx;
 			display: flex;
@@ -447,25 +454,44 @@ view {
 					}
 				}
 
-				.goods-action {
-					text-align: right;
-					padding-top: 20rpx;
-
-					navigator {
-						display: inline-block;
-					}
-
-					.order-box-btn {
-						height: 48rpx !important;
-						line-height: 48rpx !important;
-						font-size: $font-size-tag !important;
-						display: inline-block;
-						background: #fff;
-						border: 2rpx solid #999;
-						margin-left: 10rpx;
-						box-sizing: content-box;
-					}
+			}
+		}
+		
+		.goods-form {
+			.tit {
+				font-size: $font-size-base;
+			}
+			
+			.box {
+				display: flex;
+				align-items: center;
+			
+				text {
+					font-size: $font-size-base;
+					word-wrap: break-word; 
+					word-break: break-all;
+					
 				}
+			}
+		}
+		
+		.goods-action {
+			text-align: right;
+			padding-top: 20rpx;
+		
+			navigator {
+				display: inline-block;
+			}
+		
+			.order-box-btn {
+				height: 48rpx !important;
+				line-height: 48rpx !important;
+				font-size: $font-size-tag !important;
+				display: inline-block;
+				background: #fff;
+				border: 2rpx solid #999;
+				margin-left: 10rpx;
+				box-sizing: content-box;
 			}
 		}
 	}
@@ -742,7 +768,7 @@ view {
 				line-height: 50rpx;
 				font-size: $font-size-base;
 			}
-			.iconmendian {
+			.icon-mendian {
 				font-size: $font-size-toolbar;
 			}
 		}

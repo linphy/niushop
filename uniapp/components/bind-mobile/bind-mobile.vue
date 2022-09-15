@@ -4,26 +4,34 @@
 			<uni-popup ref="bindMobile" :custom="true" :mask-click="true">
 				<view class="bind-wrap">
 					<!-- #ifdef H5 -->
-					<view class="head color-base-bg">检测到您还未绑定手机请立即绑定您的手机号</view>
+					<view class="head">检测到您还未绑定手机号码</view>
 					<view class="form-wrap">
 						<view class="label">手机号码</view>
-						<view class="form-item"><input type="number" placeholder="请输入您的手机号码" v-model="formData.mobile" /></view>
+						<view class="form-item">
+							<view class="input-wrap">
+								<input type="number" placeholder="请输入您的手机号码" placeholder-class="placeholder" v-model="formData.mobile" />
+							</view>
+						</view>
 						<block v-if="captchaConfig">
 							<view class="label">验证码</view>
 							<view class="form-item">
-								<input type="number" placeholder="请输入验证码" v-model="formData.vercode" />
+								<view class="input-wrap">
+									<input type="number" placeholder="请输入验证码" placeholder-class="placeholder" v-model="formData.vercode" />
+								</view>
 								<image :src="captcha.img" class="captcha" @click="getCaptcha"></image>
 							</view>
 						</block>
 						<view class="label">动态码</view>
 						<view class="form-item">
-							<input type="number" placeholder="请输入动态码" v-model="formData.dynacode" />
+							<view class="input-wrap">
+								<input type="number" placeholder="请输入动态码" placeholder-class="placeholder" v-model="formData.dynacode" />
+							</view>
 							<view class="send color-base-text" @click="sendMobileCode">{{ dynacodeData.codeText }}</view>
 						</view>
 					</view>
 					<view class="footer">
-						<view @click="cancel">取消</view>
-						<view class="color-base-text" @click="confirm">确定</view>
+						<view class="confirm" @click="confirm">确定</view>
+						<view @click="cancel" class="cancel">取消</view>
 					</view>
 					<!-- #endif -->
 
@@ -189,7 +197,7 @@ export default {
 		 * 发送手机动态码
 		 */
 		sendMobileCode() {
-			if (this.dynacodeData.seconds != 120) return;
+			if (this.dynacodeData.seconds != 120 || this.dynacodeData.isSend) return;
 			var data = {
 				mobile: this.formData.mobile,
 				captcha_id: this.captcha.id,
@@ -204,7 +212,6 @@ export default {
 				this.$util.showToast({ title: validate.error });
 				return;
 			}
-			if (this.dynacodeData.isSend) return;
 			this.dynacodeData.isSend = true;
 
 			if (this.dynacodeData.seconds == 120) {
@@ -218,17 +225,16 @@ export default {
 				url: '/api/tripartite/mobileCode',
 				data: data,
 				success: res => {
-					this.dynacodeData.isSend = false;
 					if (res.code >= 0) {
 						this.formData.key = res.data.key;
 					} else {
 						this.$util.showToast({ title: res.message });
-						thi.refreshDynacodeData();
+						this.refreshDynacodeData();
 					}
 				},
 				fail: () => {
 					this.$util.showToast({ title: 'request:fail' });
-					this.dynacodeData.isSend = false;
+					this.refreshDynacodeData();
 				}
 			});
 		},
@@ -303,44 +309,68 @@ export default {
 
 <style lang="scss">
 .bind-wrap {
-	width: 600rpx;
 	background: #fff;
 	box-sizing: border-box;
 	border-radius: 20rpx;
 	overflow: hidden;
-
+	width: calc(100vw - 168rpx);
+	margin: 0 auto;
+	
 	.head {
 		text-align: center;
-		height: 90rpx;
-		line-height: 90rpx;
-		color: #fff;
-		font-size: $font-size-tag;
+		height: 118rpx;
+		line-height: 118rpx;
+		background-color: #F6F6F6;
+		color: #333333;
+		font-size: 36rpx;
+		font-weight: 600;
 	}
 
 	.form-wrap {
-		padding: 30rpx 40rpx;
+		padding: 30rpx 70rpx;
 
 		.label {
 			color: #000;
 			font-size: $font-size-base;
 			line-height: 1.3;
+			font-weight: bold;
 		}
 
 		.form-item {
-			margin: 20rpx 0;
+			margin: 24rpx 0;
 			display: flex;
-			padding-bottom: 10rpx;
-			border-bottom: 2rpx solid #eee;
-			align-items: center;
+			align-items: flex-end;
+			
+			.input-wrap {
+				padding-bottom: 30rpx;
+				border-bottom: 2rpx solid #F2F2F2;
+				flex: 1;
+				width: 0;
+				margin-right: 20rpx;
+				
+				&:last-child {
+					margin-right: 0;
+				}
+			}
+			
+			.placeholder {
+				font-size: $font-size-tag;
+				color: #A3A3A3;
+				height: 100%;
+			}
 
 			input {
 				font-size: $font-size-tag;
-				flex: 1;
 			}
 
 			.send {
+				border: 2rpx solid $base-color;
+				height: 60rpx;
+				line-height: 60rpx;
+				border-radius: 60rpx;
 				font-size: $font-size-tag;
-				line-height: 1;
+				text-align: center;
+				padding: 0 40rpx;
 			}
 
 			.captcha {
@@ -352,19 +382,21 @@ export default {
 	}
 
 	.footer {
-		border-top: 2rpx solid #eee;
-		display: flex;
-
-		view {
-			flex: 1;
-			height: 100rpx;
-			line-height: 100rpx;
+		.confirm {
+			height: 78rpx;
+			line-height: 78rpx;
+			border-radius: 78rpx;
 			text-align: center;
-
-			&:first-child {
-				font-size: 28rpx;
-				border-right: 2rpx solid #eee;
-			}
+			background: $base-color;
+			color: #fff;
+			margin: 0 54rpx;
+		}
+		.cancel {
+			text-align: center;
+			padding: 30rpx 0;
+			font-size: 24rpx;
+			line-height: 1;
+			color: #666;
 		}
 	}
 

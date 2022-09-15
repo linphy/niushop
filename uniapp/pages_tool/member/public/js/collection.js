@@ -28,7 +28,8 @@ export default {
 			}).then((res) => {
 				let newArr = res.data.list;
 				for (var i = 0; i < newArr.length; i++) {
-					newArr[i].composite_score = Math.floor((parseFloat(newArr[i].shop_desccredit) + parseFloat(newArr[i].shop_servicecredit) +
+					newArr[i].composite_score = Math.floor((parseFloat(newArr[i].shop_desccredit) + parseFloat(
+							newArr[i].shop_servicecredit) +
 						parseFloat(newArr[i].shop_deliverycredit)) / 3).toFixed(1);
 				}
 				array = array.concat(newArr);

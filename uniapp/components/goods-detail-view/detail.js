@@ -44,6 +44,7 @@ export default {
 			service: null,
 			shareUrl: '', // 分享链接
 			source_member: 0, //分享人的id
+			isCommunity: false, //社群弹窗
 
 			poster: "-1", //海报
 			posterMsg: "", //海报错误信息
@@ -67,6 +68,7 @@ export default {
 			this.source_member = params.source_member;
 			this.whetherCollection = params.whetherCollection;
 			this.posterParams = params.posterParams;
+			
 			this.shareUrl = params.shareUrl;
 			this.memberId = params.memberId;
 			this.goodsRoute = params.goodsRoute;
@@ -75,8 +77,11 @@ export default {
 			
 			// 评价设置
 			this.getEvaluateConfig();
-			
 			this.videoContext = uni.createVideoContext('goodsVideo');
+			
+			// #ifdef MP-WEIXIN
+			this.goodsSyncToGoodsCircle();
+			// #endif
 			
 			this.getWhetherCollection();
 		},
@@ -134,7 +139,10 @@ export default {
 								.replace(
 									this.goodsEvaluate[index].member_name.substring(1, this
 										.goodsEvaluate[index].member_name.length - 1), '***')
-						});
+						})
+						// if (this.goodsEvaluate.images) this.goodsEvaluate.images = this.goodsEvaluate.images.split(",");
+						// if (this.goodsEvaluate.is_anonymous == 1) this.goodsEvaluate.member_name = this.goodsEvaluate.member_name.replace(
+						// this.goodsEvaluate.member_name.substring(1, this.goodsEvaluate.member_name.length - 1), '***')
 					}
 				}
 			});
@@ -340,6 +348,50 @@ export default {
 				}
 			});
 		},
+		
+		// #ifdef MP-WEIXIN
+		/**
+		 *	将商品同步到微信圈子 
+		 */
+		goodsSyncToGoodsCircle() {
+			this.$api.sendRequest({
+				url: '/goodscircle/api/goods/sync',
+				data: {
+					goods_id: this.goodsSkuDetail.goods_id
+				},
+				success: res => {
+					if (res.code == 0) {
+						this.goodsCircle = true;
+					}
+				}
+			})
+		},
+		/**
+		 * 将商品推荐到微信圈子
+		 */
+		openBusinessView() {
+			if (wx.openBusinessView) {
+				wx.openBusinessView({
+					businessType: 'friendGoodsRecommend',
+					extraData: {
+						product: {
+							item_code: this.goodsSkuDetail.goods_id,
+							title: this.goodsSkuDetail.sku_name,
+							image_list: this.goodsSkuDetail.sku_images.map((ele) => {
+								return this.$util.img(ele);
+							})
+						}
+					},
+					success: function(res) {
+						console.log('success', res);
+					},
+					fail: function(res) {
+						console.log('fail', res);
+					}
+				})
+			}
+		},
+		// #endif
 		getEvaluateConfig() {
 			this.$api.sendRequest({
 				url: '/api/goodsevaluate/config',
@@ -382,6 +434,17 @@ export default {
 				urls: arrImg,
 			})
 		},
+
+		//-------------------------------------社群-------------------------------------
+
+		//添加福利群
+		onCommunity() {
+			this.isCommunity = true
+		},
+		onCloseCommunity() {
+			this.isCommunity = false
+		}
+		
  
 	}
 	

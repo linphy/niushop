@@ -26,7 +26,7 @@
 								<text class="color-tip" v-if="!refund_reason.length">请选择</text>
 								<text class="color-tip" v-else>{{ refund_reason }}</text>
 							</view>
-							<text class="iconfont iconright"></text>
+							<text class="iconfont icon-right"></text>
 						</view>
 						<view class="item-wrap">
 							<view class="label">退款方式：</view>
@@ -75,14 +75,14 @@
 					<view class="refund-reason-popup popup">
 						<view class="popup-header">
 							<view><text class="tit">退款原因</text></view>
-							<view class="align-right" @click="closePopup('refundReasonPopup')"><text class="iconfont iconclose"></text></view>
+							<view class="align-right" @click="closePopup('refundReasonPopup')"><text class="iconfont icon-close"></text></view>
 						</view>
 						<view class="popup-body">
 							<scroll-view scroll-y="true" class="scroll-view" :class="{ 'safe-area': isIphoneX }">
 								<view class="reason-list">
 									<view class="item" v-for="(item, index) in refund_data.refund_reason_type" :key="index" @click="changeReason(item)">
 										<view class="reason">{{ item }}</view>
-										<view class="iconfont" :class="refund_reason == item ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"></view>
+										<view class="iconfont" :class="refund_reason == item ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></view>
 									</view>
 								</view>
 							</scroll-view>

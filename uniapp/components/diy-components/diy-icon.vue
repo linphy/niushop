@@ -1,6 +1,6 @@
 <template>
 	<view class="diy-icon" :style="iconBgStyle">
-		<text class="icondiy" :class="iconClass" :style="iconStyle"></text>
+		<text class="js-icon" :class="iconClass" :style="iconStyle"></text>
 	</view>
 </template>
 
@@ -71,7 +71,7 @@
 	    align-items: center;
 	    justify-content: center;
 		
-		.icondiy {
+		.js-icon {
 		    font-size: 50%;
 		    line-height:1;
 			padding: 1rpx;

@@ -34,6 +34,9 @@ export default {
 		siteInfo() {
 			return uni.getStorageSync('siteInfo');
 		},
+		storeToken() {
+			return this.$store.state.token;
+		}
 	},
 	methods: {
 		themeColorSet(){
@@ -49,6 +52,10 @@ export default {
 					this.themeColor += '--'+key.replace(/_/g, "-")+':'+data+';';
 				}
 			});
+			for(let i = 9; i >= 5; i--) {
+				let color = this.$util.colourBlend(theme.main_color, '#ffffff', (i / 10));
+				this.themeColor += `--base-color-light-${i}:${color};`;
+			}
 		},
 		// 颜色变浅（>0）、变深函数（<0）
 		lightenDarkenColor(color, amount) {

@@ -6,14 +6,14 @@
 				<picker mode="date" :value="searchType.date" @change="bindDateChange" fields="month">
 					<view class="uni-input">
 						{{ date }}
-						<text class="iconfont iconiconangledown"></text>
+						<text class="iconfont icon-iconangledown"></text>
 					</view>
 				</picker>
 			</view>
 			<view class="tab-right">
 				<picker @change="bindPickerChange" :value="pointIndex" :range="pointType" class="picker" range-key="label">
 					<text class="desc uni-input">{{ pointType[pointIndex].label }}</text>
-					<text class="iconfont iconiconangledown"></text>
+					<text class="iconfont icon-iconangledown"></text>
 				</picker>
 			</view>
 		</view>
@@ -309,69 +309,6 @@ export default {
 
 .cart-empty {
 	margin-top: 208rpx !important;
-}
-
-.account-box {
-	width: 100%;
-	box-sizing: border-box;
-	position: relative;
-
-	> image {
-		width: 100%;
-		position: absolute;
-		top: 0;
-		z-index: 1;
-	}
-
-	.accout-btn {
-		display: flex;
-		margin-top: 30rpx;
-
-		view {
-			width: 170rpx;
-			height: 44rpx;
-			border-radius: 22rpx;
-			border: 2rpx solid rgba(255, 255, 255, 0.4);
-			color: #fff;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin-right: 44rpx;
-		}
-	}
-
-	.account-text {
-		position: relative;
-		padding: 50rpx 30rpx 34rpx 30rpx;
-		display: flex;
-		align-items: center;
-		z-index: 9;
-
-		.headimg {
-			width: 100rpx;
-			height: 100rpx;
-			background: #fff;
-			border: 4rpx solid #fff;
-			border-radius: 50%;
-			overflow: hidden;
-
-			image {
-				width: 100%;
-				height: 100%;
-			}
-		}
-
-		.point {
-			margin-left: 30rpx;
-			color: #fff;
-			font-size: 36rpx;
-		}
-
-		.iconjifen1 {
-			color: #fff;
-			margin-left: 8rpx;
-		}
-	}
 }
 
 .detailed-wrap {

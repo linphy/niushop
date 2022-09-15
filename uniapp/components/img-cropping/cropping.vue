@@ -17,8 +17,8 @@
 			<view class="oper">
 				<view class="btn-wrapper" v-if="sO">
 					<view @click="fClose" class="cancel" :style="{ width: bW }"><text>取消</text></view>
-					<view @click="fSelect" :style="{ width: bW }"><text class="iconfont iconshangchuan"></text></view>
-					<view @click="fRotate" :style="{ width: bW, display: bD }"><text class="iconfont iconxuanzhuan"></text></view>
+					<view @click="fSelect" :style="{ width: bW }"><text class="iconfont icon-shangchuan"></text></view>
+					<view @click="fRotate" :style="{ width: bW, display: bD }"><text class="iconfont icon-xuanzhuan"></text></view>
 					<!-- <view @click="fPreview" hover-class="hover" :style="{width: bW}"><text>预览</text></view> -->
 					<view @click="fUpload" :style="{ width: bW }"><text class="upload">上传</text></view>
 				</view>

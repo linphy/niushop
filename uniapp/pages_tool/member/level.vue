@@ -11,7 +11,7 @@
 					<view class="font-size-activity-tag">当前等级：{{ userInfo.member_level_name }}</view>
 				</view>
 				<view class="growth-rules font-size-tag" @click="growthRules">
-					<text class="iconfont iconwenhao font-size-tag"></text>
+					<text class="iconfont icon-wenhao font-size-tag"></text>
 					成长规则
 				</view>
 			</view>
@@ -150,7 +150,7 @@
 			<view class="coupon-popup-box">
 				<view class="coupon-popup-title" @click="closeCoupon">
 					优惠券
-					<text class="iconfont iconclose"></text>
+					<text class="iconfont icon-close"></text>
 				</view>
 				<scroll-view class="coupon-popup-content" scroll-y>
 					<view class="coupon-item" v-for="(item, index) in couponPopList" :key="index">
@@ -394,7 +394,7 @@ export default {
 		if (options.from === 'navigateBack') {
 			return false;
 		}
-		this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+		this.$util.redirectTo('/pages/member/index');
 		return true;
 	},
 	watch: {

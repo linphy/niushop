@@ -22,9 +22,7 @@
 			"path": "pages/goods/category",
 			"style": {
 				"disableScroll": true,
-				// #ifdef H5
 				"navigationStyle": "custom",
-				// #endif
 				"navigationBarTitleText": "商品分类"
 			}
 		},
@@ -61,9 +59,7 @@
 		{
 			"path": "pages/order/payment",
 			"style": {
-				// #ifdef H5
 				"navigationStyle": "custom"
-				// #endif
 			}
 		},
 		{
@@ -138,8 +134,7 @@
 		{
 			//*****************其他模块（26）******************
 			"root": "pages_tool",
-			"pages": [
-				{
+			"pages": [{
 					"path": "webview/webview",
 					"style": {
 						// #ifdef H5
@@ -147,7 +142,15 @@
 						// #endif
 					}
 				},
-				
+				{
+					"path": "index/diy",
+					"style": {
+						// #ifdef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "微页面"
+					}
+				},
 				//******************会员模块（20）******************
 				{
 					"path": "member/modify_face",

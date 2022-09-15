@@ -105,7 +105,7 @@ export default {
 									this.$util.showToast({ title: '修改成功' });
 									setTimeout(() => {
 										if (this.back) this.$util.redirectTo(this.back, {}, 'redirectTo');
-										else this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+										else this.$util.redirectTo('/pages/member/index');
 									}, 2000);
 								} else {
 									this.initInfo();
@@ -148,7 +148,7 @@ export default {
 										this.$util.redirectTo('/pages_tool/member/info', { action: 'mobile', back: this.back }, 'redirectTo');
 									} else {
 										if (this.back) this.$util.redirectTo(this.back);
-										else this.$util.redirectTo('/pages/member/index', {}, 'redirectTo');
+										else this.$util.redirectTo('/pages/member/index');
 									}
 								}
 							});

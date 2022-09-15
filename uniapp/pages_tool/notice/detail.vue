@@ -2,11 +2,11 @@
 	<page-meta :page-style="themeColor"></page-meta>
 	<view class="page">
 		<view class="notice-title">{{ detail.title }}</view>
-		<view class="notice-content">
-			<rich-text :nodes="content"></rich-text>
-		</view>
 		<view class="notice-meta">
 			<text class="notice-time">发表时间: {{ $util.timeStampTurnTime(detail.create_time) }}</text>
+		</view>
+		<view class="notice-content">
+			<rich-text :nodes="content"></rich-text>
 		</view>
 		<loading-cover ref="loadingCover"></loading-cover>
 
@@ -82,7 +82,8 @@
 
 	.notice-title {
 		font-size: $font-size-toolbar;
-		text-align: center;
+		text-align: left;
+		font-weight: bold;
 	}
 
 	.notice-content {
@@ -92,7 +93,7 @@
 	}
 
 	.notice-meta {
-		text-align: right;
+		text-align: left;
 		margin-top: $margin-updown;
 		color: $color-tip;
 

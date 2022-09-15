@@ -11,11 +11,23 @@
 							<view class="goods_opection">
 								<view class="left  lineheight-clear ">
 									<text class="symbol price-style small">￥</text>
-									<text class="price price-style large" >{{ parseFloat(item.discount_price).toFixed(2).split(".")[0] }}</text>
-								    <text class="symbol price-style small">.{{ parseFloat(item.discount_price).toFixed(2).split(".")[1] }}</text>
+									<text class="price price-style large">
+										{{
+											parseFloat(item.discount_price)
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="symbol price-style small">
+										.{{
+											parseFloat(item.discount_price)
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
 								</view>
 								<view class="right">
-									<view class="cars" @click.stop="deleteItem(item.goods_id)"><view class="icon iconfont iconicon7"></view></view>
+									<view class="cars" @click.stop="deleteItem(item.goods_id)"><view class="icon iconfont icon-icon7"></view></view>
 								</view>
 							</view>
 						</view>
@@ -45,7 +57,6 @@ export default {
 		};
 	},
 	onShow() {
-
 		if (uni.getStorageSync('token')) {
 			this.token = uni.getStorageSync('token');
 			if (this.$refs.mescroll) this.$refs.mescroll.refresh();

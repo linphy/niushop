@@ -2,9 +2,11 @@
 	margin: 20rpx 24rpx 0;
 	border-radius: 0;
 	background: #fff;
-	padding: 30rpx 30rpx;
+	padding: 30rpx 24rpx;
 	border-radius: 16rpx;
 }
+
+$margin-both: 24rpx;
 
 input,
 view {
@@ -16,11 +18,56 @@ view {
 }
 
 .order-container {
-	padding-bottom: 160rpx;
-
-	&.safe-area {
-		padding-bottom: 188rpx;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: linear-gradient(180deg, $base-color 10%, $color-bg 100%); 
+	background-size: 100% 260rpx;
+	background-repeat: no-repeat;
+	
+	// #ifdef MP-WEIXIN
+	background-size: 100% 380rpx;
+	// #endif
+	
+	.order-scroll-container {
+		width: 100%;
+		height: 0;
+		flex: 1;
 	}
+	
+	// #ifdef H5
+	.payment-navbar-block {
+		height: 60rpx;
+	}
+	// #endif
+}
+
+.payment-navbar {
+	width: 100vw;
+	padding-bottom: 20rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 100;
+	background: linear-gradient(180deg, $base-color 10%, $color-bg 100%);
+	background-size: 100% 260rpx;
+	
+	// #ifdef MP-WEIXIN
+	background-size: 100% 380rpx;
+	// #endif
+	
+	.navbar-title {
+		color: #fff;
+		font-size: 32rpx;
+	}
+}
+
+.payment-navbar-block {
+	padding-bottom: 20rpx;
 }
 
 .mobile-wrap {
@@ -39,11 +86,11 @@ view {
 		}
 	}
 	&.local-mobile{
-		border-bottom: 2rpx solid #eeeeee;
+		border-bottom: 2rpx solid #F4F4F6;
 		margin: 0;
 	}
 	&.store-mobile{
-		border-top: 2rpx solid #eeeeee;
+		border-top: 2rpx solid #F4F4F6;
 		margin: 20rpx 0 0 0;
 		padding: 20rpx 0;
 		border-radius: 0;
@@ -61,6 +108,7 @@ view {
 			line-height: 50rpx;
 			padding-right: 10rpx;
 			font-size: $font-size-base;
+			font-weight: bold;
 		}
 
 		.placeholder {
@@ -95,12 +143,14 @@ view {
 		
 	}
 	text {
-		font-size: $font-size-tag;
+		font-size: 28rpx;
 	}
 	.tit {
 		text-align: left;
 		font-size: $font-size-base;
 		min-width: 160rpx;
+		color: #000;
+		font-weight: bold;
 		text {
 			font-size: $font-size-base;
 		}
@@ -131,7 +181,7 @@ view {
 			}
 		}
 		
-		.iconright{
+		.icon-right{
 			color: #303133;
 			margin-left: 20rpx;
 		}
@@ -172,18 +222,36 @@ view {
 	@include wrap;
 	padding: 40rpx 0;
 	&.order-goods{
-		padding-bottom: 1rpx;
+		padding: 0;
 	}
 	.site-body {
 		margin: 0 $margin-both;
+		.goods-item {
+			border-bottom: 2rpx solid #F4F4F6;
+			&:last-child {
+				border-bottom: 0;
+			}
+			
+			.error-tips {
+				color: #ff443f;
+				padding: 10rpx 20rpx;
+				display: inline-flex;
+				align-items: center;
+				line-height: 1;
+				background: #ffecec;
+				margin-top: 20rpx;
+				border-radius: 12rpx;
+				width: auto;
+				
+				.iconfont {
+					margin-right: 10rpx;
+				}
+			}
+		}
 		.goods-wrap {
-			margin-bottom: 30rpx;
 			display: flex;
 			position: relative;
-			&:last-of-type {
-				padding-bottom: $padding;
-				border-bottom: 2rpx solid $color-line;
-			}
+			padding: 30rpx 0;
 
 			.goods-img {
 				width: 180rpx;
@@ -201,8 +269,12 @@ view {
 			.goods-info {
 				flex: 1;
 				position: relative;
-				width: calc(100% - 220rpx);
+				width: 0;
 				margin-top: -4rpx;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				
 				.goods-name {
 					display: -webkit-box;
 					-webkit-box-orient: vertical;
@@ -210,6 +282,7 @@ view {
 					overflow: hidden;
 					line-height: 1.5;
 					font-size: $font-size-base;
+					font-weight: bold;
 				}
 
 				.sku {
@@ -236,10 +309,6 @@ view {
 				}
 
 				.goods-sub-section {
-					position: absolute;
-					left: 0;
-					bottom: 0;
-					width: 100%;
 					.unit {
 						font-size: $font-size-tag;
 						margin-right: 4rpx;
@@ -265,6 +334,7 @@ view {
 							position: absolute;
 							right: 0;
 							bottom: 0;
+							font-weight: bold;
 						}
 					}
 				}
@@ -279,6 +349,62 @@ view {
 				margin-bottom: 0;
 			}
 		}
+	}
+}
+
+/deep/ .goods-form {
+	display: flex;
+	align-items: center;
+	position: relative;
+	
+	ns-form {
+		display: flex;
+		width: 100%;
+	}
+	
+	.shade {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 5;
+	}
+	
+	.cell-more {
+	    margin-left: 50rpx;
+	    float: right;
+	    color: #909399;
+	    font-size: 24rpx;
+	}
+	
+	.form-wrap {
+		flex: 1;
+		width: 0;
+		
+		.icon-right {
+			display: none;
+		}
+	}
+	.form-wrap > view, .form-wrap > picker {
+		display: none; 
+	}
+	.form-wrap > view:first-child, .form-wrap > picker:first-child {
+		display: block;
+		border-bottom: none;
+		
+		.required {
+			display: none;
+		}
+	}
+	.order-cell .name {
+		width: auto;
+	}
+	.order-cell .tit {
+		font-weight: bold;
+	}
+	.order-cell .tit:after {
+		content: "：";
 	}
 }
 
@@ -310,11 +436,8 @@ view {
 	text-align: right;
 	display: flex;
 	align-items: center;
-
-	&.bottom-safe-area {
-		padding-bottom: constant(safe-area-inset-bottom);
-		padding-bottom: env(safe-area-inset-bottom);
-	}
+	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
 
 	.order-settlement-info {
 		flex: 1;
@@ -358,6 +481,11 @@ view {
 			font-size: $font-size-base;
 		}
 	}
+}
+.order-submit-block {
+	height: 120rpx;
+	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
 }
 
 .popup {
@@ -410,7 +538,7 @@ view {
 			line-height: 80rpx;
 			color: #fff;
 			text-align: center;
-			margin: 20rpx 40rpx 40rpx;
+			margin: 20rpx 32rpx 40rpx;
 			border-radius: $border-radius;
 			font-size: $font-size-base;
 			&.color-base-bg{
@@ -500,8 +628,6 @@ view {
 
 
 .buyermessag-popup {
-	height: 83vh;
-	padding: 18rpx 0;
 	box-sizing: border-box;
 	position: relative;
 
@@ -517,7 +643,7 @@ view {
 		.buyermessag-cell {
 			padding: 30rpx 0;
 			border-top: 2rpx solid $color-line;
-			margin: 0 48rpx;
+			margin: 0 32rpx;
 
 			&:first-of-type {
 				border-top: none;
@@ -551,7 +677,7 @@ view {
 
 	.coupon-item {
 		@include wrap;
-		margin: $margin-updown $margin-updown 0;
+		margin: $margin-updown 32rpx 0;
 		padding: 0;
 		position: relative;
 		background-color: #fff2f0;
@@ -653,7 +779,7 @@ view {
 				right: 20rpx;
 				transform: translate(-50%, -50%);
 			}
-			.iconyuan_checkbox {
+			.icon-yuan_checkbox {
 				color: $color-tip;
 			}
 		}
@@ -745,16 +871,18 @@ view {
 
 // 收货地址
 .address-box {
-	@include wrap;
-	padding: 0;
-	// border-radius: $border-radius;
-	// margin: 0 0 $margin-updown;
-	border-radius: 16rpx;
-	margin: 20rpx 24rpx 0;
+	margin: 0 24rpx 0;
 	background-color: #fff;
 	position: relative;
-	padding-bottom: 6rpx;
 	overflow: hidden;
+	border-bottom-left-radius: 16rpx;
+	border-bottom-right-radius: 16rpx;
+	padding: 30rpx 24rpx;
+	
+	&.not-delivery-type {
+		border-radius: 16rpx;
+	}
+	
 	.address-line{
 		position: absolute;
 		bottom: 0rpx;
@@ -763,18 +891,28 @@ view {
 		height: 6rpx;
 	}
 	.info-wrap {
-		padding: 20rpx 30rpx;
 		display: flex;
 		align-items: center;
+		
+		&.local {
+			padding-bottom: 20rpx;
+		}
 		.content {
 			flex: 1;
 			.name {
 				margin-right: 10rpx;
+				font-weight: bold;
+				font-size: 28rpx;
+			}
+			.mobile {
+				font-weight: bold;
+				font-size: 28rpx;
 			}
 		}
 		.desc-wrap {
 			word-break: break-word;
-			font-size: $font-size-base;
+			font-size: 26rpx;
+			color: #666;
 		}
 	}
 	.icon-wrap {
@@ -794,20 +932,11 @@ view {
 		}
 	}
 	.empty-wrap {
-		height: 100rpx;
-		line-height: 100rpx;
+		height: 80rpx;
+		line-height: 80rpx;
 		display: flex;
 		align-items: center;
-		margin: 0 $margin-both;
 
-		.icon-wrap {
-			line-height: 100rpx;
-			height: unset;
-			width: unset;
-			margin-right:0;
-			position:unset;
-			align-self:unset;
-		}
 		.info {
 			flex: 1;
 			font-size: $font-size-base;
@@ -826,11 +955,11 @@ view {
 
 // 外卖配送
 .local-box {
-	margin: 0 30rpx;
-	padding-bottom: 20rpx;
 	border-top: 2rpx solid $color-line;
 	.order-cell {
 		padding-top: 30rpx;
+		margin-bottom: 0;
+		
 		.box {
 			padding: 0;
 		}
@@ -843,6 +972,10 @@ view {
 		> view {
 			flex: 1;
 		}
+		.title {
+			font-weight: bold;
+		}
+		
 		.time-picker {
 			display: flex;
 			align-items: center;
@@ -862,33 +995,77 @@ view {
 
 // 配送方式
 .delivery-mode {
-	@include wrap;
-	.head {
-		display: flex;
-		align-items: center;
-		.iconfont {
-			margin-right: 26rpx;
-			font-size: $font-size-toolbar;
-		}
-		text {
-			font-size: $font-size-base;
-		}
-	}
+	margin: 0 24rpx;
+	overflow: hidden;
+	border-top-left-radius: 16rpx;
+	border-top-right-radius: 16rpx;
+	background-color: $base-color;
+	
 	.action {
 		display: flex;
-		margin: $margin-updown 0;
-		button {
+		background: var(--base-color-light-7);
+		
+		> view {
 			flex: 1;
-			margin-right: 40rpx !important;
-			height: 70rpx;
-			line-height: 70rpx;
-			border-width: 0;
-			font-size: 28rpx;
-			&:last-child {
-				margin-right: 0 !important;
+			text-align: center;
+			height: 76rpx;
+			line-height: 76rpx;
+			font-size: 30rpx;
+			color: #000;
+			position: relative;
+			
+			&:nth-child(2), &:nth-child(3) {
+				&.active {
+					border-top-left-radius: 16rpx;
+				}
 			}
-			&[type='default'] {
-				background-color: $color-bg;
+			
+			.out-radio:after,.out-radio:before {
+				position: absolute;
+				content: "";
+				width: 20rpx;
+				height: 20rpx;
+				background-color: #fff;
+				bottom: 0px;
+				display: none;
+			}
+			
+			.out-radio:after {
+				transform: translateX(100%);
+				right: 0;
+			}
+			.out-radio:before {
+				left: 0;
+				transform: translateX(-100%);
+			}
+		}
+		
+		.active {
+			background: #fff;
+			color: $base-color;
+			border-top-right-radius: 16rpx;
+			
+			&:after, &:before {
+				position: absolute;
+				content: "";
+				width: 40rpx;
+				height: 40rpx;
+				background-color: var(--base-color-light-7);
+				bottom: 0px;
+				transform: translateX(100%);
+				border-radius: 50%;
+				z-index: 5;
+			}
+			&:after{
+				transform: translateX(100%);
+				right: 0;
+			}
+			&:before {
+				left: 0;
+				transform: translateX(-100%);
+			}
+			.out-radio:after,.out-radio:before { 
+				display: block;
 			}
 		}
 	}
@@ -896,10 +1073,18 @@ view {
 
 // 门店自提
 .store-box {
-	@include wrap;
-	padding-bottom: 26rpx;
-	padding-top: 20rpx;
 	position: relative;
+	padding: 30rpx 24rpx;
+	margin: 0 24rpx 0;
+	background-color: #fff;
+	border-bottom-left-radius: 16rpx;
+	border-bottom-right-radius: 16rpx;
+	overflow: hidden;
+	
+	&.not-delivery-type {
+		border-radius: 16rpx;
+	}
+	
 	.address-line{
 	    position: absolute;
 	    bottom: 0px;
@@ -932,12 +1117,12 @@ view {
 			}
 		}
 		.store-address-info{
-			width: calc(100% - 50rpx);
+			width: 100%;
 			display: flex;
 			align-items: center;
 			.info-wrap {
 				flex: 1;
-				width: calc(100% - 30rpx);
+				width: 0;
 				.title {
 					margin-bottom: 10rpx;
 					font-size: $font-size-base;
@@ -952,7 +1137,7 @@ view {
 				}
 				.store-detail view {
 					word-break: break-word;
-					font-size: $font-size-base;
+					font-size: 26rpx;
 				}
 				.store-detail{
 					.address{
@@ -976,7 +1161,7 @@ view {
 		text-align: center;
 	}
 	.store-time{
-		border-top:2rpx solid #eeeeee;
+		border-top:2rpx solid #F4F4F6;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -984,6 +1169,9 @@ view {
 		box-sizing: border-box;
 		view{
 			font-size: 28rpx;
+		}
+		.left {
+			font-weight: bold;
 		}
 		.right{
 			display: flex;
@@ -998,13 +1186,17 @@ view {
 	}
 }
 
+.buyer-message {
+	padding: 30rpx 24rpx;
+	
+	.order-cell {
+		margin-bottom: 0;
+	}
+}
+
 .member-card-wrap {
-	box-sizing: border-box;
-	width: 100%;
-	margin-top: 20rpx;
-	background-color: var(--main-color-shallow);
-	border-radius: 10rpx;
-	padding: 0 20rpx!important;
+	background-color: #FFFBF4;
+	padding: 0 30rpx!important;
 	
 	.head {
 		display: flex;
@@ -1012,15 +1204,15 @@ view {
 		height: 80rpx;
 	}
 	
-	.iconyuan_checked,.iconyuan_checkbox {
+	.icon-yuan_checked,.icon-yuan_checkbox {
 		font-size: 32rpx;
 	}
 	
-	.iconhuiyuan {
+	.icon-huiyuan {
 		margin-right: 10rpx;
 		line-height: 1;
-		font-size: 32rpx;
-		background-image:-webkit-linear-gradient(top,#E3B66B,#F7DAA5);
+		font-size: 36rpx;
+		background-image:linear-gradient(156deg, #814635 0%, #3A221B 100%);
 		-webkit-background-clip:text; 
 		-webkit-text-fill-color:transparent; 
 	}
@@ -1055,6 +1247,7 @@ view {
 				bottom: 0;
 				font-size: 32rpx;
 				display: none;
+				line-height: 1;
 			}
 			
 			&:last-child{
@@ -1079,7 +1272,23 @@ view {
 
 .system-form-wrap {
 	@include wrap;
-	padding: 0 30rpx;
+	padding: 0;
+	overflow: hidden;
+		
+	.order-cell {
+		padding: 30rpx 24rpx;
+		margin-bottom: 0;
+		border-bottom: 2rpx solid #F4F4F6;
+	}
+	
+	/deep/ .form-wrap {
+		margin: 0 24rpx;
+		
+		.icon-right {
+			color: #909399;
+			font-size: 24rpx;
+		}
+	}
 }
 
 .agreement {
@@ -1117,4 +1326,12 @@ view {
 	width: 38rpx;
 	margin: -6rpx auto;
 	max-height: 50rpx;
+}
+
+.form-popup {
+	height: 60vh!important;
+	.popup-body {
+		padding: 20rpx 30rpx;
+		box-sizing: border-box;
+	}
 }

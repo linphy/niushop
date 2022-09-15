@@ -22,11 +22,11 @@
 
 		<view class="menu-wrap">
 			<view class="menu-item" @click="$util.redirectTo('/pages_tool/member/point_detail')">
-				<text class="iconfont iconjifen-"></text>
+				<text class="iconfont icon-jifen-"></text>
 				<text class="font-size-base">积分明细</text>
 			</view>
 			<view class="menu-item" @click="$util.redirectTo('/pages_promotion/point/list')">
-				<text class="iconfont icondianpu"></text>
+				<text class="iconfont icon-dianpu"></text>
 				<text class="font-size-base">积分商城</text>
 			</view>
 		</view>
@@ -34,17 +34,17 @@
 		<view class="task-wrap">
 			<view class="title">
 				<text class="box left">
-					<text class="color-base-text iconfont iconAK-YKfangkuai_fill"></text>
-					<text class="color-base-text-light iconfont iconAK-YKfangkuai_fill "></text>
+					<text class="color-base-text iconfont icon-fangkuai-fill"></text>
+					<text class="color-base-text-light iconfont icon-fangkuai-fill "></text>
 				</text>
 				<text class="text">积分任务</text>
 				<text class="box right">
-					<text class="color-base-text iconfont iconAK-YKfangkuai_fill"></text>
-					<text class="color-base-text-light iconfont iconAK-YKfangkuai_fill"></text>
+					<text class="color-base-text iconfont icon-fangkuai-fill"></text>
+					<text class="color-base-text-light iconfont icon-fangkuai-fill"></text>
 				</text>
 			</view>
 			<view class="task-item" @click="toSign">
-				<view class="icon color-base-bg"><text class="iconfont iconqiandao1"></text></view>
+				<view class="icon color-base-bg"><text class="iconfont icon-qiandao1"></text></view>
 				<view class="wrap">
 					<view>每日签到</view>
 					<view class="color-tip font-size-tag">连续签到可获得更多积分</view>
@@ -52,7 +52,7 @@
 				<view class="btn color-base-text color-base-border">去签到</view>
 			</view>
 			<view class="task-item" @click="$util.redirectTo('/pages/index/index')">
-				<view class="icon color-base-bg"><text class="iconfont iconshangpin-"></text></view>
+				<view class="icon color-base-bg"><text class="iconfont icon-shangpin-"></text></view>
 				<view class="wrap">
 					<view>购买商品</view>
 					<view class="color-tip font-size-tag">购买商品可获得积分</view>
@@ -175,7 +175,7 @@ export default {
 		if (options.from === 'navigateBack') {
 			return false;
 		}
-		this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+		this.$util.redirectTo('/pages/member/index');
 		return true;
 	},
 	watch: {

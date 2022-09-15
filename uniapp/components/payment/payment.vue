@@ -5,7 +5,7 @@
 			<view class="choose-payment-popup popup" @touchmove.prevent.stop>
 				<view class="popup-header">
 					<text class="tit">支付方式</text>
-					<text class="iconfont iconclose" @click="close()"></text>
+					<text class="iconfont icon-close" @click="close()"></text>
 				</view>
 				<scroll-view scroll-y="true" class="popup-body">
 					<view class="pay-money">
@@ -13,7 +13,7 @@
 					</view>
 
 					<view class="payment-item" v-if="balanceDeduct > 0 && balanceUsable && balanceConfig == 1">
-						<view class="iconfont iconyue"></view>
+						<view class="iconfont icon-yue"></view>
 						<view class="info-wrap">
 							<text class="name">余额抵扣</text>
 							<view class="money">可用¥{{ balanceDeduct|moneyFormat }}</view>
@@ -27,7 +27,7 @@
 								<view class="iconfont" :class="item.icon"></view>
 								<text class="name">{{ item.name }}</text>
 								<text class="iconfont"
-									:class="payIndex == index ? 'iconyuan_checked color-base-text' : 'iconcheckboxblank'"></text>
+									:class="payIndex == index ? 'icon-yuan_checked color-base-text' : 'icon-checkboxblank'"></text>
 							</view>
 						</block>
 						<block v-else>
@@ -73,12 +73,12 @@
 				// #ifdef H5
 				payTypeList: [{
 						name: '支付宝支付',
-						icon: 'iconzhifubaozhifu-',
+						icon: 'icon-zhifubaozhifu-',
 						type: 'alipay'
 					},
 					{
 						name: '微信支付',
-						icon: 'iconweixin1',
+						icon: 'icon-weixin1',
 						type: 'wechatpay'
 					}
 				],
@@ -88,7 +88,7 @@
 				payTypeList: [{
 					name: '微信支付',
 					provider: 'wxpay',
-					icon: 'iconweixin1',
+					icon: 'icon-weixin1',
 					type: 'wechatpay'
 				}],
 				// #endif
@@ -270,7 +270,7 @@
 													payData = res.data.data;
 												wxJS.init(jssdkRes.data);
 												wxJS.pay({
-														timestamp: payData.timestamp,
+														timestamp: payData.timestamp ? payData.timestamp : payData.timeStamp,
 														nonceStr: payData.nonceStr,
 														package: payData.package,
 														signType: payData.signType,
@@ -471,7 +471,7 @@
 	};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.popup {
 		width: 75vw;
 		background: #fff;
@@ -551,24 +551,24 @@
 				font-size: 64rpx;
 			}
 
-			.iconyue {
+			.icon-yue {
 				color: #faa218;
 			}
 
-			.iconweixin1 {
+			.icon-weixin1 {
 				color: #24af41;
 			}
 
-			.iconzhifubaozhifu- {
+			.icon-zhifubaozhifu- {
 				color: #00a0e9;
 			}
 
-			.iconcheckboxblank {
+			.icon-checkboxblank {
 				font-size: 40rpx;
 				color: $color-line;
 			}
 
-			.iconyuan_checked {
+			.icon-yuan_checked {
 				font-size: 40rpx;
 			}
 

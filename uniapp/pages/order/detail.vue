@@ -31,7 +31,7 @@
 
 		<!-- 地址信息 -->
 		<view class="address-wrap" v-if="orderData.order_type == 1 || orderData.order_type == 3">
-			<view class="icon"><view class="iconfont iconlocation"></view></view>
+			<view class="icon"><view class="iconfont icon-location"></view></view>
 			<view class="address-info">
 				<view class="info">
 					<text class="font-size-base">{{ orderData.name }}&nbsp;{{ orderData.mobile }}</text>
@@ -41,9 +41,9 @@
 				</view>
 			</view>
 			<template v-if="orderData.order_type == 3">
-				<view v-if="orderData.buyer_ask_delivery_time" class="pick-block first-pick-block">
+				<view v-if="orderData.buyer_ask_delivery_time && orderData.buyer_ask_delivery_time != 0" class="pick-block first-pick-block">
 					<view class="font-size-base">送达时间：</view>
-					<view class="last-child">{{ $util.timeStampTurnTime(orderData.buyer_ask_delivery_time) }}</view>
+					<view class="last-child">{{ orderData.buyer_ask_delivery_time.indexOf('-') != -1 ? orderData.buyer_ask_delivery_time : $util.timeStampTurnTime(orderData.buyer_ask_delivery_time) }}</view>
 				</view>
 				<view v-else class="pick-block first-pick-block">
 					<view>送达时间：</view>
@@ -67,20 +67,19 @@
 			<view class="store-wrap">
 				<view>
 					<view class="store-info" v-if="orderData.delivery_store_info">
-						<view class="icon"><view class="iconfont iconmendian"></view></view>
+						<view class="icon"><view class="iconfont icon-mendian"></view></view>
 						<view class="store-info-detail">
 							<view
 								class="store-name"
 								@click="
 									$util.diyRedirectTo({
-										diy_name: 'DIY_STORE_' + orderData.delivery_store_id,
 										store_id: orderData.delivery_store_id,
-										wap_url: '/pages/index/index?name=' + 'DIY_STORE_' + orderData.delivery_store_id
+										wap_url: '/pages_tool/index/diy?name=' + 'DIY_STORE_' + orderData.delivery_store_id
 									})
 								"
 							>
 								<text class="name font-size-base">{{ orderData.delivery_store_name }}</text>
-								<text class="iconfont iconright font-size-base"></text>
+								<text class="iconfont icon-right font-size-base"></text>
 							</view>
 							<view class="detail store-detail">
 								<view class="color-tip" v-if="orderData.delivery_store_info.open_date">营业时间：{{ orderData.delivery_store_info.open_date }}</view>
@@ -129,55 +128,72 @@
 		<!-- 店铺 -->
 		<view class="site-wrap" :style="orderData.virtual_goods ? 'margin-top: -69rpx;' : ''">
 			<view class="site-body">
-				<view class="goods-wrap" v-for="(goodsItem, goodsIndex) in orderData.order_goods" :key="goodsIndex">
-					<view class="goods-img" @click="goDetail(goodsItem)">
-						<image :src="$util.img(goodsItem.sku_image, { size: 'mid' })" @error="imageError(goodsIndex)" mode="aspectFill"></image>
-					</view>
-					<view class="goods-info">
-						<view @click="goDetail(goodsItem)" class="goods-name">{{ goodsItem.sku_name }}</view>
-						<view class="sku" v-if="goodsItem.sku_spec_format">
-							<view class="goods-spec">
-								<block v-for="(x, i) in goodsItem.sku_spec_format" :key="i">
-									{{ x.spec_value_name }} {{ i < goodsItem.sku_spec_format.length - 1 ? '; ' : '' }}
-								</block>
-							</view>
+				<view v-for="(goodsItem, goodsIndex) in orderData.order_goods" :key="goodsIndex" class="goods-item">
+					<view class="goods-wrap">
+						<view class="goods-img" @click="goDetail(goodsItem)">
+							<image :src="$util.img(goodsItem.sku_image, { size: 'mid' })" @error="imageError(goodsIndex)" mode="aspectFill"></image>
 						</view>
-						<view class="goods-sub-section">
-							<view>
-								<text class="goods-price ">
-									<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
-									<text class="price-style large">
-										{{
-											parseFloat(goodsItem.price)
-												.toFixed(2)
-												.split('.')[0]
-										}}
-									</text>
-									<text class="unit price-style small">
-										.{{
-											parseFloat(goodsItem.price)
-												.toFixed(2)
-												.split('.')[1]
-										}}
-									</text>
-								</text>
-							</view>
-							<view>
-								<text class="font-size-base">
-									<text class="iconfont iconclose"></text>
-									{{ goodsItem.num }}
-								</text>
-							</view>
-						</view>
-						<view class="goods-action">
-							<block v-if="orderData.is_enable_refund">
-								<view @click="goRefund(goodsItem.order_goods_id)" v-if="goodsItem.refund_status == 0 || goodsItem.refund_status == -1">
-									<view class="order-box-btn" v-if="orderData.promotion_type != 'blindbox'">{{ orderData.order_status == 10 ? '申请售后' : '申请退款' }}</view>
+						<view class="goods-info" @click="goDetail(goodsItem)" >
+							<view class="goods-name">{{ goodsItem.sku_name }}</view>
+							<view class="sku" v-if="goodsItem.sku_spec_format">
+								<view class="goods-spec">
+									<block v-for="(x, i) in goodsItem.sku_spec_format" :key="i">
+										{{ x.spec_value_name }} {{ i < goodsItem.sku_spec_format.length - 1 ? '; ' : '' }}
+									</block>
 								</view>
-							</block>
-							<view @click="goRefundDetail(goodsItem.order_goods_id)" v-if="goodsItem.refund_status != 0 && goodsItem.refund_status != -1">
-								<view class="order-box-btn">{{ orderData.order_status == 10 ? '查看售后' : '查看退款' }}</view>
 							</view>
+							<view class="goods-sub-section">
+								<view>
+									<text class="goods-price ">
+										<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
+										<text class="price-style large">
+											{{
+												parseFloat(goodsItem.price)
+													.toFixed(2)
+													.split('.')[0]
+											}}
+										</text>
+										<text class="unit price-style small">
+											.{{
+												parseFloat(goodsItem.price)
+													.toFixed(2)
+													.split('.')[1]
+											}}
+										</text>
+									</text>
+								</view>
+								<view>
+									<text class="font-size-base">
+										<text class="iconfont icon-close"></text>
+										{{ goodsItem.num }}
+									</text>
+								</view>
+							</view>
+						</view>
+					</view>
+					
+					<view class="goods-form" v-if="goodsItem.form">
+						<view class="order-cell" v-for="(item, index) in goodsItem.form" :key="index">
+							<text class="tit">{{ item.value.title }}：</text>
+							<view class="box img-box" v-if="item.controller == 'Img'">
+								<view class="img" v-for="(img, imgIndex) in item.img_lists" :key="imgIndex">
+									<image :src="$util.img(img)" mode="widthFix" @click="previewMedia($util.img(img))"></image>
+								</view>
+							</view>
+							<view class="box" v-else>
+								<text class="color-title">{{ item.val }}</text>
+							</view>
+						</view>
+					</view>
+					
+					<view class="goods-action">
+						<block v-if="orderData.is_enable_refund">
+							<view @click="goRefund(goodsItem.order_goods_id)" v-if="goodsItem.refund_status == 0 || goodsItem.refund_status == -1">
+								<view class="order-box-btn" v-if="orderData.promotion_type != 'blindbox'">{{ orderData.order_status == 10 ? '申请售后' : '申请退款' }}</view>
+							</view>
+						</block>
+						<view @click="goRefundDetail(goodsItem.order_goods_id)" v-if="goodsItem.refund_status != 0 && goodsItem.refund_status != -1">
+							<view class="order-box-btn">{{ orderData.order_status == 10 ? '查看售后' : '查看退款' }}</view>
 						</view>
 					</view>
 				</view>
@@ -287,9 +303,11 @@
 			<block v-if="orderData.form">
 				<view class="hr"></view>
 				<view class="order-cell" v-for="(item, index) in orderData.form" :key="index">
-					<text class="tit">{{ item.title }}：</text>
+					<text class="tit">{{ item.value.title }}：</text>
 					<view class="box img-box" v-if="item.controller == 'Img'">
-						<view class="img" v-for="(img, imgIndex) in item.img_lists" :key="imgIndex"><image :src="$util.img(img)" mode="widthFix"></image></view>
+						<view class="img" v-for="(img, imgIndex) in item.img_lists" :key="imgIndex">
+							<image :src="$util.img(img)" mode="widthFix" @click="previewMedia($util.img(img))"></image>
+						</view>
 					</view>
 					<view class="box" v-else>
 						<text class="color-title">{{ item.val }}</text>
@@ -300,7 +318,7 @@
 			<ns-contact :niushop="{ order_id: orderData.order_id }">
 				<view class="kefu">
 					<view>
-						<text class="iconfont iconziyuan"></text>
+						<text class="iconfont icon-ziyuan"></text>
 						<text>联系客服</text>
 					</view>
 				</view>

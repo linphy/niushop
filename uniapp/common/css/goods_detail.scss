@@ -343,7 +343,9 @@
 		font-size: $font-size-toolbar;
 		vertical-align: middle;
 		&:first-child {
-			font-size: 30rpx;
+			font-size: 36rpx;
+			// color: #28C445;
+			// font-weight: normal;
 		}
 		&:last-child {
 			margin-right: 0;
@@ -430,13 +432,15 @@
 					border-radius: 50%;
 				}
 			}
-
+			.evaluator-name-wrap{
+				margin-left: 20rpx;
+				line-height: 1;
+			}
 			.evaluator-name {
 				display: block;
-				width: 200rpx;
-				margin-left: 20rpx;
+				width: 230rpx;
 				font-size: $font-size-base;
-				max-width: 50%;
+				white-space: nowrap;
 			}
 			.time {
 				font-size: $font-size-goods-tag;
@@ -762,10 +766,10 @@
 				font-size: 80rpx;
 				line-height: initial;
 			}
-			.iconfuzhilianjie,
-			.iconpengyouquan,
-			.iconhaowuquan,
-			.iconiconfenxianggeihaoyou {
+			.icon-fuzhilianjie,
+			.icon-pengyouquan,
+			.icon-haowuquan,
+			.icon-share-friend {
 				color: #07c160;
 			}
 		}
@@ -842,7 +846,7 @@
 							font-size: 34rpx;
 							padding: 2rpx;
 						}
-						.icondui {
+						.icon-dui {
 							font-size: $font-size-base;
 							margin-right: 6rpx;
 							line-height: 30rpx;
@@ -879,6 +883,36 @@
 					margin-right: 10rpx;
 					&:last-child {
 						margin-right: 0;
+					}
+				}
+			}
+		}
+		
+		&.delivery-type {
+			.box {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				
+				text {
+					padding-right: 30rpx;
+					position: relative;
+					
+					&:after {
+						content: " ";
+						width: 6rpx;
+						height: 6rpx;
+						border-radius: 50%;
+						background: #000;
+						position: absolute;
+						top: 50%;
+						right: 0;
+						transform: translate(-12rpx, -50%);
+					}
+					
+					&:last-child:after {
+						content: "";
+						display: none;
 					}
 				}
 			}
@@ -942,7 +976,38 @@
 	}
 }
 
-.iconright {
+.deliverytype-popup-layer {
+	.type-body {
+		padding: 30rpx;
+		box-sizing: border-box;
+	}
+	
+	.type-item {
+		display: flex;
+		margin-bottom: 40rpx;
+		
+		.iconfont {
+			margin-right: 30rpx;
+			color: $base-color;
+		}
+		
+		.title {
+			font-weight: bold;
+			margin-bottom: 20rpx;
+		}
+		.desc {
+			font-size: 24rpx;
+		}
+		
+		&.not-support {
+			.title, .desc, .iconfont {
+				color: #aaa;
+			}
+		}
+	}
+}
+
+.icon-right {
 	color: $color-tip;
 	font-size: $font-size-base;
 	position: absolute;

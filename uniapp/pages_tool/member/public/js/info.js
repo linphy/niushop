@@ -22,7 +22,12 @@ export default {
 				mobileVercode: '', //手机验证码
 				mobileDynacode: '', //手机动态验证吗
 				mobileCodeText: "",
-				username: ''
+				username: '',
+				provinceId: 0,
+				cityId: 0,
+				districtId: 0,
+				fullAddress: '',
+				address: ''
 			},
 			memberInfoformData: {
 				userHeadImg: '',
@@ -67,11 +72,12 @@ export default {
 			memberConfig: {
 				is_audit: 0,
 				is_enable: 0
-			}
+			},
+			defaultRegions: []
 		};
 	},
 	onLoad(option) {
-		
+
 		this.formData.mobileCodeText = this.$lang('findanimateCode');
 		if (option.back) {
 			this.back = option.back;
@@ -82,7 +88,7 @@ export default {
 			this.indent = option.action;
 			this.setNavbarTitle()
 		}
-		
+
 		this.getRegisterConfig();
 		this.isIphoneX = this.$util.uniappIsIPhoneX()
 		this.initLang();
@@ -145,7 +151,7 @@ export default {
 				}
 			}
 		},
-		setNavbarTitle(){
+		setNavbarTitle() {
 			let title = '个人资料';
 			switch (this.indent) {
 				case 'name':
@@ -168,7 +174,7 @@ export default {
 					break;
 			}
 			uni.setNavigationBarTitle({
-			    title: title
+				title: title
 			});
 		},
 		// 初始化用户信息
@@ -181,17 +187,29 @@ export default {
 						this.memberInfoformData.userHeadImg = this.memberInfo.headimg;
 						this.memberInfoformData.number = this.memberInfo.username; //账号
 						this.memberInfoformData.nickName = this.memberInfo.nickname; //昵称
-						this.memberInfoformData.realName = this.memberInfo.realname ? this.memberInfo.realname : '请输入真实姓名'; //真实姓名
-						this.memberInfoformData.sex = this.memberInfo.sex == 0 ? '未知' : this.memberInfo.sex == 1 ? '男' : '女'; //性别
-						this.memberInfoformData.birthday = this.memberInfo.birthday ? this.$util.timeStampTurnTime(this.memberInfo.birthday,
-							'YYYY-MM-DD') : '请选择生日'; //生日
+						this.memberInfoformData.realName = this.memberInfo.realname ? this.memberInfo
+							.realname : '请输入真实姓名'; //真实姓名
+						this.memberInfoformData.sex = this.memberInfo.sex == 0 ? '未知' : this.memberInfo
+							.sex == 1 ? '男' : '女'; //性别
+						this.memberInfoformData.birthday = this.memberInfo.birthday ? this.$util
+							.timeStampTurnTime(this.memberInfo.birthday,
+								'YYYY-MM-DD') : '请选择生日'; //生日
 						this.memberInfoformData.mobile = this.memberInfo.mobile; //手机号
 						this.formData.username = this.memberInfo.username; //用户名
 						this.formData.nickName = this.memberInfo.nickname; //昵称
 						this.formData.realName = this.memberInfo.realname; //真实姓名
 						this.formData.sex = this.memberInfo.sex; //性别
-						this.formData.birthday = this.memberInfo.birthday ? this.$util.timeStampTurnTime(this.memberInfo.birthday,
+						this.formData.birthday = this.memberInfo.birthday ? this.$util.timeStampTurnTime(
+							this.memberInfo.birthday,
 							'YYYY-MM-DD') : '请选择生日'; //生日
+						this.formData.provinceId = this.memberInfo.province_id;
+						this.formData.cityId = this.memberInfo.city_id;
+						this.formData.districtId = this.memberInfo.district_id;
+						this.formData.fullAddress = this.memberInfo.full_address;
+						this.formData.address = this.memberInfo.address;
+						if (this.memberInfo.full_address) this.defaultRegions = [this.memberInfo
+							.province_id, this.memberInfo.city_id, this.memberInfo.district_id
+						];
 					}
 					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 				},
@@ -205,7 +223,7 @@ export default {
 			switch (action) {
 				case 'cancellation':
 					this.getCancelStatus();
-				break;
+					break;
 				case 'language':
 					let newArray = [];
 					for (let i = 0; i < this.langList.length; i++) {
@@ -219,9 +237,11 @@ export default {
 							}
 						}
 					});
-				break;
+					break;
 				default:
-					this.$util.redirectTo('/pages_tool/member/info_edit', { action });
+					this.$util.redirectTo('/pages_tool/member/info_edit', {
+						action
+					});
 			}
 		},
 		getCancelStatus() {
@@ -287,6 +307,7 @@ export default {
 								//购物车数量
 								uni.removeStorageSync('userInfo')
 								this.$store.dispatch('getCartNumber').then((e) => {})
+
 								this.$util.redirectTo('/pages/member/index');
 							}
 						});
@@ -337,11 +358,14 @@ export default {
 				case 'mobile':
 					this.modifyMobile();
 					break;
+				case 'address':
+					this.modifyAddress();
+					break;
 			}
 		},
-		
+
 		// ------------------------修改用户名------------------------------
-		modifyUserName(){
+		modifyUserName() {
 			if (this.formData.username == this.memberInfo.username) {
 				this.$util.showToast({
 					title: this.$lang('alikeusername')
@@ -379,9 +403,9 @@ export default {
 					title: validate.error
 				});
 			}
-		},	
+		},
 		// ------------------------修改昵称------------------------------
-		
+
 		modifyNickName() {
 			if (this.formData.nickName == this.memberInfo.nickname) {
 				this.$util.showToast({
@@ -871,6 +895,49 @@ export default {
 				});
 			}
 		},
+		modifyAddress() {
+			var rule = [{
+					name: 'fullAddress',
+					checkType: 'required',
+					errorMsg: '请选择所在地区'
+				},
+				{
+					name: 'address',
+					checkType: 'required',
+					errorMsg: '请输入详细地址'
+				}
+			];
+			if (!rule.length) return;
+			var checkRes = validate.check(this.formData, rule);
+			if (checkRes) {
+				this.$api.sendRequest({
+					url: '/api/member/modifyaddress',
+					data: {
+						province_id: this.formData.provinceId,
+						city_id: this.formData.cityId,
+						district_id: this.formData.districtId,
+						address: this.formData.address,
+						full_address: this.formData.fullAddress
+					},
+					success: res => {
+						if (res.code == 0) {
+							this.$util.showToast({
+								title: this.$lang("updateSuccess")
+							});
+							this.NavReturn();
+						} else {
+							this.$util.showToast({
+								title: res.message
+							});
+						}
+					}
+				});
+			} else {
+				this.$util.showToast({
+					title: validate.error
+				});
+			}
+		},
 		initFormData() {
 			this.formData.currentPassword = '';
 			this.formData.newPassword = '';
@@ -878,6 +945,15 @@ export default {
 			this.formData.mobileVercode = '';
 			this.formData.mobileDynacode = '';
 			this.formData.mobile = '';
+		},
+		handleGetRegions(regions) {
+			this.formData.fullAddress = '';
+			this.formData.fullAddress += regions[0] != undefined ? regions[0].label : '';
+			this.formData.fullAddress += regions[1] != undefined ? '-' + regions[1].label : '';
+			this.formData.fullAddress += regions[2] != undefined ? '-' + regions[2].label : '';
+			this.formData.provinceId = regions[0] ? regions[0].value : 0;
+			this.formData.cityId = regions[1] ? regions[1].value : 0;
+			this.formData.districtId = regions[2] ? regions[2].value : 0;
 		}
 	}
 };

@@ -16,14 +16,14 @@
 								<text class="title color-base-text">优惠券</text>
 								<text class="desc">领券结算最高可减{{ discount.coupon_info.coupon_money|moneyFormat }}元</text>
 							</view>
-							<view class="color-base-text" @click="$refs.couponPopup.open()">点击{{ discount.coupon_info.receive_type == 'wait' ? '领取' : '查看' }}<text class="iconfont iconright"></text></view>
+							<view class="color-base-text" @click="$refs.couponPopup.open()">点击{{ discount.coupon_info.receive_type == 'wait' ? '领取' : '查看' }}<text class="iconfont icon-right"></text></view>
 						</view>
 						<block v-for="(item, cartIndex) in siteItem.cartList" :key="cartIndex">
 							<view class="cart-goods">
 								<view class="goods-wrap" :class="{ edit: item.edit }">
 									<view
 										class="iconfont"
-										:class="item.checked ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"
+										:class="item.checked ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"
 										@click="singleElection(siteIndex, cartIndex)"
 									></view>
 									<view @click="toGoodsDetail(item)" class="goods-img">
@@ -32,14 +32,14 @@
 									<view class="goods-info">
 										<view>
 											<view @click="toGoodsDetail(item)" class="goods-name">{{ item.goods_name }}</view>
-											<view>
+											<view class="sku-wrap">
 												<view class="sku">
 													<view class="goods-spec" v-if="item.sku_spec_format.length" @click="selectSku(item)">
 														<block v-for="(x, i) in item.sku_spec_format" :key="i">
 															{{ x.spec_name }}:{{ x.spec_value_name }} {{ i < item.sku_spec_format.length - 1 ? ';' : '' }}
 														</block>
 													</view>
-													<text class="iconfont iconunfold" v-if="item.sku_spec_format.length"></text>
+													<text class="iconfont icon-unfold" v-if="item.sku_spec_format.length"></text>
 												</view>
 											</view>
 										</view>
@@ -70,7 +70,7 @@
 											</block>
 											<block v-else>
 												<block v-if="Number(item.member_price) > 0">
-													<view class="goods-price ">
+													<view class="goods-price">
 														<view class="bottom-price price-style large">
 															<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
 															{{ parseFloat( item.member_price).toFixed(2).split(".")[0] }}
@@ -80,7 +80,7 @@
 													</view>
 												</block>
 												<block v-else>
-													<view class="goods-price ">
+													<view class="goods-price">
 														<view class="bottom-price price-style large">
 															<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
 															{{ parseFloat( item.price).toFixed(2).split(".")[0] }}
@@ -124,7 +124,7 @@
 						<block v-for="(goodsItem, goodsIndex) in invalidGoods" :key="goodsIndex">
 							<view class="cart-goods invalid-goods">
 								<view class="goods-wrap">
-									<view class="iconfont iconyuan_checked color-tip"></view>
+									<view class="iconfont icon-yuan_checked color-tip"></view>
 									<view class="goods-img"><image :src="$util.img(goodsItem.sku_image, { size: 'mid' })" mode="aspectFill"></image></view>
 									<view class="goods-info">
 										<view class="goods-name">{{ goodsItem.sku_name }}</view>
@@ -161,10 +161,12 @@
 				</block>
 				<block v-else>
 					<view class="cart-empty">
-						<image :src="$util.img('public/uniapp/cart/empty.png')" mode="aspectFit"></image>
+						<!-- <image :src="$util.img('public/uniapp/cart/empty.png')" mode="aspectFit"></image>
 						<view class="color-tip margin-top margin-bottom">{{ $lang('emptyTips') }}</view>
-						<button type="primary" size="mini" class="button visit-the" v-if="token != ''" @click="$util.redirectTo('/pages/index/index', {}, 'reLaunch')">去逛逛</button>
-						<button type="primary" size="mini" class="button" v-else @click="toLogin">去登录</button>
+						<button type="primary" size="mini" class="button visit-the" v-if="token != ''" @click="$util.redirectTo('/pages/index/index')">去逛逛</button>
+						<button type="primary" size="mini" class="button" v-else @click="toLogin">去登录</button> -->
+						<ns-empty text="购物车为空" subText="赶紧去逛逛, 购买心仪的商品吧" :isIndex="Boolean(token)"></ns-empty>
+						<button type="primary" size="mini" class="button" v-if="!token" @click="toLogin">去登录</button>
 					</view>
 				</block>
 				<nsGoodsRecommend ref="goodrecommend" route="cart"></nsGoodsRecommend>
@@ -173,7 +175,7 @@
 					<view class="discount-popup popup" v-if="Object.keys(discount).length">
 						<view class="popup-header">
 							<text class="tit">优惠明细</text>
-							<text class="iconfont iconclose" @click="toggleDiscountPopup"></text>
+							<text class="iconfont icon-close" @click="toggleDiscountPopup"></text>
 						</view>
 						<view class="popup-body" :class="{ 'safe-area': isIphoneX }" @click="toggleDiscountPopup">
 							<view class="detail-item">
@@ -200,7 +202,7 @@
 					<view class="coupon-popup popup">
 						<view class="popup-header">
 							<text class="tit">优惠券</text>
-							<text class="iconfont iconclose" @click="$refs.couponPopup.close()"></text>
+							<text class="iconfont icon-close" @click="$refs.couponPopup.close()"></text>
 						</view>
 						<view class="popup-body" :class="{ 'safe-area': isIphoneX }" @click="$refs.couponPopup.close()">
 							<view class="coupon-item">
@@ -246,7 +248,7 @@
 			
 			<view class="cart-bottom" :class="{ active: isIphoneX }" v-if="hasData">
 				<view class="all-election" @click="allElection">
-					<view class="iconfont" :class="checkAll ? 'iconyuan_checked color-base-text' : 'iconyuan_checkbox'"></view>
+					<view class="iconfont" :class="checkAll ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></view>
 					<text>{{ $lang('allElection') }}</text>
 				</view>
 				<view class="settlement-info" :style="{ visibility: isAction ? 'hidden' : 'visible' }">
@@ -263,7 +265,7 @@
 						</block>
 					</view>
 					<view class="detail" @click="toggleDiscountPopup" v-if="Object.keys(discount).length">
-						优惠明细<text class="iconfont iconunfold" :class="{open: !discountPopupShow}"></text>
+						优惠明细<text class="iconfont icon-unfold" :class="{open: !discountPopupShow}"></text>
 					</view>
 				</view>
 				<view class="action-btn" v-if="isAction">
@@ -280,9 +282,11 @@
 		
 		<!-- 加载动画 -->
 		<ns-goods-sku ref="selectSku" 
-			:goods-detail="goodsSkuDetail" 
+			v-if="goodsSkuDetail"
+			:goods-detail="goodsSkuDetail"
+			:goods-id="goodsSkuDetail.goods_id"
 			:max-buy="goodsSkuDetail.max_buy"
-			:min-buy="goodsSkuDetail.min_buy" v-if="goodsSkuDetail"
+			:min-buy="goodsSkuDetail.min_buy"
 			@refresh="refreshSkuDetail">
 		</ns-goods-sku>
 		

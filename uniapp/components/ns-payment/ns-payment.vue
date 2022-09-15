@@ -5,16 +5,15 @@
 			<view class="choose-payment-popup popup" @touchmove.prevent.stop>
 				<view class="popup-header">
 					<text class="tit">支付方式</text>
-					<text class="iconfont iconclose" @click="close()"></text>
+					<text class="iconfont icon-close" @click="close()"></text>
 				</view>
 				<scroll-view scroll-y="true" class="popup-body" :class="{ 'safe-area': isIphoneX }">
 					<view class="pay-money">
 						<!-- <text class="unit">{{ $lang('common.currencySymbol') }}</text> -->
 						<text class="money">支付金额{{ payMoney | moneyFormat }}元</text>
 					</view>
-
 					<view class="payment-item" v-if="balanceDeduct > 0 && balanceConfig == 1 && sale">
-						<view class="iconfont iconyue"></view>
+						<view class="iconfont icon-yue"></view>
 						<view class="info-wrap">
 							<text class="name">余额抵扣</text>
 							<view class="money">可用¥{{ balanceDeduct }}</view>
@@ -26,7 +25,7 @@
 							<view class="payment-item" v-for="(item, index) in payTypeList" :key="index" @click="payIndex = index">
 								<view class="iconfont" :class="item.icon"></view>
 								<text class="name">{{ item.name }}</text>
-								<text class="iconfont" :class="payIndex == index ? 'iconyuan_checked color-base-text' : 'iconcheckboxblank'"></text>
+								<text class="iconfont" :class="payIndex == index ? 'icon-yuan_checked color-base-text' : 'icon-checkboxblank'"></text>
 							</view>
 						</block>
 						<block v-else><view class="empty">平台尚未配置支付方式！</view></block>
@@ -75,12 +74,12 @@ export default {
 			payTypeList: [
 				{
 					name: '支付宝支付',
-					icon: 'iconzhifubaozhifu-',
+					icon: 'icon-zhifubaozhifu-',
 					type: 'alipay'
 				},
 				{
 					name: '微信支付',
-					icon: 'iconweixin1',
+					icon: 'icon-weixin1',
 					type: 'wechatpay'
 				}
 			],
@@ -91,7 +90,7 @@ export default {
 				{
 					name: '微信支付',
 					provider: 'wxpay',
-					icon: 'iconweixin1',
+					icon: 'icon-weixin1',
 					type: 'wechatpay'
 				}
 			],
@@ -163,7 +162,7 @@ export default {
 							title: '未获取到支付信息！'
 						});
 						setTimeout(() => {
-							this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+							this.$util.redirectTo('/pages/index/index');
 						}, 1500);
 					}
 				}
@@ -243,7 +242,7 @@ export default {
 											wxJS.init(jssdkRes.data);
 											wxJS.pay(
 												{
-													timestamp: payData.timestamp,
+													timestamp: payData.timestamp ? payData.timestamp : payData.timeStamp,
 													nonceStr: payData.nonceStr,
 													package: payData.package,
 													signType: payData.signType,
@@ -453,6 +452,8 @@ export default {
 			text-align: center;
 			margin: 20rpx 30rpx 0;
 			border-radius: $border-radius;
+			font-size: $font-size-base;
+			
 		}
 
 		&.bottom-safe-area {
@@ -479,20 +480,20 @@ export default {
 		.iconfont {
 			font-size: 64rpx;
 		}
-		.iconyue {
+		.icon-yue {
 			color: #faa218;
 		}
-		.iconweixin1 {
+		.icon-weixin1 {
 			color: #24af41;
 		}
-		.iconzhifubaozhifu- {
+		.icon-zhifubaozhifu- {
 			color: #00a0e9;
 		}
-		.iconcheckboxblank {
+		.icon-checkboxblank {
 			font-size: 40rpx;
 			color: $color-line;
 		}
-		.iconyuan_checked {
+		.icon-yuan_checked {
 			font-size: 40rpx;
 		}
 		.name {

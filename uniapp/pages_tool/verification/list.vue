@@ -31,7 +31,7 @@
 											</view>
 											<view class="money-wrap">
 												<view class="align-right color-tip font-size-goods-tag">
-													<text class="iconfont iconclose font-size-goods-tag"></text>
+													<text class="iconfont icon-close font-size-goods-tag"></text>
 													{{ citem.num }}
 												</view>
 											</view>

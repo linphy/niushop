@@ -73,7 +73,7 @@ export default {
 			if (this.back != '') {
 				this.$util.redirectTo(this.back, {}, this.redirect);
 			} else {
-				this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+				this.$util.redirectTo('/pages/member/index');
 			}
 		},
 		//获取rule

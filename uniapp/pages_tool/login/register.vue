@@ -1,7 +1,7 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
 	<scroll-view scroll-y="true" class="container">
-		<!-- <view class="iconfont iconclose back-btn" @click="$util.goBack()"></view> -->
+		<!-- <view class="iconfont icon-close back-btn" @click="$util.goBack()"></view> -->
 		<view class="header-wrap">
 			<view class="title">注册</view>
 			<view class="regisiter-agreement">
@@ -55,7 +55,7 @@
 		<view @touchmove.prevent>
 			<uni-popup ref="registerPopup" type="center" :maskClick="false">
 				<view class="conten-box">
-					<view class="close"><text class="iconfont iconclose" @click="toClose"></text></view>
+					<view class="close"><text class="iconfont icon-close" @click="toClose"></text></view>
 					<view class="title">{{ regisiterAgreement.title }}</view>
 					<view class="con">
 						<scroll-view scroll-y="true" class="con"><rich-text :nodes="regisiterAgreement.content"></rich-text></scroll-view>
@@ -173,7 +173,7 @@ export default {
 						if (this.registerConfig.register == '') {
 							this.$util.showToast({ title: '平台未启用注册!' });
 							setTimeout(() => {
-								this.$util.redirectTo('/pages/index/index', {}, 'tabbar');
+								this.$util.redirectTo('/pages/index/index');
 							}, 1000);
 						} else if (this.registerConfig.register.indexOf('username') != -1) {
 							this.registerMode = 'account';

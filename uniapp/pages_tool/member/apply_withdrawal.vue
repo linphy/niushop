@@ -17,7 +17,7 @@
 				</view>
 			</view>
 			<text class="tx-to" v-else>请添加提现方式</text>
-			<view class="iconfont iconright"></view>
+			<view class="iconfont icon-right"></view>
 		</view>
 		<view class="empty-box"></view>
 		<view class="withdraw-wrap">
@@ -109,7 +109,7 @@ export default {
 					if (res.code >= 0 && res.data) {
 						this.withdrawInfo = res.data;
 						if (this.withdrawInfo.config.is_use == 0) {
-							this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+							this.$util.redirectTo('/pages/member/index');
 						}
 					}
 					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();

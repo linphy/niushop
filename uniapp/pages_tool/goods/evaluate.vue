@@ -18,10 +18,10 @@
 
 							<view class="evaluator-info">
 								<view class="evaluator-info-left">
-									<view class="evaluator-name" v-if="item.member_name.length > 2 && item.is_anonymous == 1">
+									<view class="evaluator-name using-hidden" v-if="item.member_name.length > 2 && item.is_anonymous == 1">
 										{{ item.member_name[0] }}***{{ item.member_name[item.member_name.length - 1] }}
 									</view>
-									<text class="evaluator-name" v-else>{{ item.member_name }}</text>
+									<text class="evaluator-name using-hidden" v-else>{{ item.member_name }}</text>
 									<view class="evaluator-time color-tip">{{ $util.timeStampTurnTime(item.create_time) }}</view>
 								</view>
 								<view class="evaluator-xing"><xiaoStarComponent :starCount="item.scores * 2"></xiaoStarComponent></view>
@@ -239,6 +239,7 @@ export default {
 					color: #303133;
 					font-size: $font-size-base;
 					line-height: 1;
+					width: 250rpx;
 				}
 
 				.evaluator-time {

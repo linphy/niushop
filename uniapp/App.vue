@@ -22,7 +22,7 @@ export default {
 						// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
 						updateManager.applyUpdate();
 					}
-				},
+				}
 			});
 		});
 
@@ -45,11 +45,11 @@ export default {
 					showCancel: false
 				});
 			}
-		});		
-		
+		});
+
 		this.$store.dispatch('init');
-		
-		// 自动授权登录 
+
+		// 自动授权登录
 		if (!uni.getStorageSync('token')) {
 			this.getAuthInfo();
 		} else {
@@ -58,7 +58,7 @@ export default {
 				complete: () => {
 					if (!uni.getStorageSync('token')) this.getAuthInfo();
 				}
-			})
+			});
 		}
 	},
 	onShow: function() {},
@@ -67,23 +67,23 @@ export default {
 		/**
 		 * 获取授权信息
 		 */
-		getAuthInfo(){
+		getAuthInfo() {
 			// #ifdef H5
 			if (this.$util.isWeiXin()) {
 				this.$util.getUrlCode(urlParams => {
 					if (urlParams.source_member) uni.setStorageSync('source_member', urlParams.source_member);
-					
+
 					if (urlParams.code == undefined) {
 						this.$api.sendRequest({
 							url: '/wechat/api/wechat/authcode',
 							data: {
 								redirect_url: location.href,
-								scopes: 'snsapi_userinfo',
+								scopes: 'snsapi_userinfo'
 							},
 							success: res => {
 								if (res.code >= 0) {
 									location.href = res.data;
-								} 
+								}
 							}
 						});
 					} else {
@@ -106,11 +106,11 @@ export default {
 				});
 			}
 			// #endif
-			
+
 			// #ifdef MP
-			this.getCode((data) => {
+			this.getCode(data => {
 				this.authLogin(data, 'authOnlyLogin');
-			})
+			});
 			// #endif
 		},
 		/**
@@ -118,12 +118,12 @@ export default {
 		 */
 		authLogin(data, type = 'authLogin') {
 			if (uni.getStorageSync('source_member')) data.source_member = uni.getStorageSync('source_member');
-			
+
 			uni.setStorage({
 				key: 'authInfo',
 				data: data
 			});
-		
+
 			this.$api.sendRequest({
 				url: type == 'authLogin' ? '/api/login/auth' : '/api/login/authonlylogin',
 				data,
@@ -137,14 +137,14 @@ export default {
 								this.$store.commit('setToken', res.data.token);
 							}
 						});
-					} 
+					}
 				}
 			});
 		},
 		/**
 		 * 公众号分享设置
 		 */
-		shareConfig(){
+		shareConfig() {
 			this.$api.sendRequest({
 				url: '/wechat/api/wechat/share',
 				data: {
@@ -154,38 +154,40 @@ export default {
 					if (res.code == 0) {
 						var wxJS = new Weixin();
 						wxJS.init(res.data.jssdk_config);
-						
+
 						let share_data = JSON.parse(JSON.stringify(res.data.share_config.data));
-						if(share_data){
-							wxJS.setShareData({
-								title: share_data.title,
-								desc: share_data.desc,
-								link: share_data.link,
-								imgUrl: this.$util.img(share_data.imgUrl)
-							},(res)=>{
-								console.log(res);
-							})
+						if (share_data) {
+							wxJS.setShareData(
+								{
+									title: share_data.title,
+									desc: share_data.desc,
+									link: share_data.link,
+									imgUrl: this.$util.img(share_data.imgUrl)
+								},
+								res => {
+									console.log(res);
+								}
+							);
 						}
-						
+
 						let hideOptionMenu = res.data.share_config.permission.hideOptionMenu;
 						let hideMenuItems = res.data.share_config.permission.hideMenuItems;
-						
-						if(hideOptionMenu){
-							wxJS.weixin.hideOptionMenu();//屏蔽分享好友等按钮
-						}else{
-							wxJS.weixin.showOptionMenu();//放开分享好友等按钮
+
+						if (hideOptionMenu) {
+							wxJS.weixin.hideOptionMenu(); //屏蔽分享好友等按钮
+						} else {
+							wxJS.weixin.showOptionMenu(); //放开分享好友等按钮
 						}
 					}
 				},
-				fail:err=>{
-				}
-			})
-		},
+				fail: err => {}
+			});
+		}
 	},
-	watch:{
-		$route:{
+	watch: {
+		$route: {
 			handler(newName, oldName) {
-				if(this.$util.isWeiXin()){
+				if (this.$util.isWeiXin()) {
 					this.shareConfig();
 				}
 			},
@@ -196,7 +198,10 @@ export default {
 };
 </script>
 <style lang="scss">
-@import url('/common/css/iconfont.css');
-@import url('/common/css/icon-select/iconfont.css'); // 配合后台icon选择
+@import './common/css/iconfont.css';
+@import './common/css/icondiy.css'; // 自定义图标库
 @import './common/css/main.scss';
+
+// ********** 这里要引用扩展图标库文件 **********
+@import './common/css/icon_extend/diy_default1.css';
 </style>

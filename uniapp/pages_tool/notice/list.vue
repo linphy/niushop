@@ -11,7 +11,7 @@
 								<text class="txt using-hidden">{{ item.title }}</text>
 							</view>
 							<text class="release-time">{{ $util.timeStampTurnTime(item.create_time, 1) }}</text>
-							<view class="iconfont iconright"></view>
+							<view class="iconfont icon-right"></view>
 						</view>
 					</view>
 				</view>

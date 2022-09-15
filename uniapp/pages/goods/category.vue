@@ -20,7 +20,6 @@
 </template>
 
 <script>
-
 export default {
 	components: {},
 	data() {
@@ -74,4 +73,26 @@ export default {
 /deep/ .loading-layer {
 	background: #fff!important;
 }
+
+// 分类四一级展开
+/deep/ .category-template-4 .template-four .uni-popup__wrapper-box{
+	border-radius: 0px 0px 14px 14px !important;
+	overflow: hidden;
+}
+/deep/ .category-template-4 .template-four .uni-popup{
+	top: 100rpx;
+}
+/* #ifndef H5 */
+/deep/ .category-template-4 .template-four.wx .uni-popup{
+	top: 165rpx;
+}
+/* #endif */
+/deep/ .category-template-4 .content-wrap .categoty-goods-wrap .goods-list{
+	margin-top: 30rpx;
+}
+/deep/ .category-template-4 .content-wrap .goods-list .goods-item .footer-wrap .right-wrap .num-action{
+	width: 44rpx;
+	height: 44rpx;
+}
+		
 </style>

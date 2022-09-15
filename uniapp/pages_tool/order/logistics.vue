@@ -21,7 +21,7 @@
 								<view class="goods-sub-section">
 									<view>
 										<text>
-											<text class="iconfont iconclose"></text>
+											<text class="iconfont icon-close"></text>
 											{{ goodsItem.num }}
 										</text>
 									</view>
@@ -42,7 +42,7 @@
 								运单号：
 								<text class="color-tip">{{ packageItem.delivery_no }}</text>
 							</text>
-							<text class="iconfont iconfuzhi" @click="copyDeliveryNo(packageItem.delivery_no)"></text>
+							<text class="iconfont icon-fuzhi" @click="copyDeliveryNo(packageItem.delivery_no)"></text>
 						</view>
 					</view>
 				</view>

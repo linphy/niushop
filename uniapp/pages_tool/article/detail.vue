@@ -2,9 +2,13 @@
 	<page-meta :page-style="themeColor"></page-meta>
 	<view class="page">
 		<view class="help-title">{{ detail.article_title }}</view>
-		<view class="help-content"><rich-text :nodes="content"></rich-text></view>
-		<view class="help-meta">
+		<view class="help-meta" v-if="detail.is_show_release_time == 1">
 			<text class="help-time">发表时间: {{ $util.timeStampTurnTime(detail.create_time) }}</text>
+		</view>
+		<view class="help-content"><rich-text :nodes="content"></rich-text></view>
+		<view class="bottom-area">
+			<view v-if="detail.is_show_read_num == 1">阅读：<text class="price-font">{{ detail.read_num + detail.initial_read_num }}</text></view>
+			<view v-if="detail.is_show_dianzan_num == 1"><text class="price-font">{{ detail.dianzan_num + detail.initial_dianzan_num }}</text>人已赞</view>
 		</view>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
@@ -81,7 +85,8 @@ export default {
 
 .help-title {
 	font-size: $font-size-toolbar;
-	text-align: center;
+	text-align: left;
+	font-weight: bold;
 }
 
 .help-content {
@@ -90,12 +95,27 @@ export default {
 }
 
 .help-meta {
-	text-align: right;
+	text-align: left;
 	margin-top: $margin-updown;
 	color: $color-tip;
 
 	.help-time {
 		font-size: $font-size-tag;
+	}
+}
+
+.bottom-area {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 40rpx;
+	
+	.price-font {
+		font-weight: normal!important;
+	}
+	view {
+		color: #999;
+		font-size: 24rpx;
 	}
 }
 </style>

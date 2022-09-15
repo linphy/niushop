@@ -50,7 +50,7 @@
 													<view class="item-time" v-if="item.open_date">营业时间：{{ item.open_date }}</view>
 													<view class="item-address">{{ item.full_address + item.address }}</view>
 												</view>
-												<view class="item-right" @click="selectStore(item.store_id)"><text class="iconfont iconright"></text></view>
+												<view class="item-right" @click="selectStore(item.store_id)"><text class="iconfont icon-right"></text></view>
 											</view>
 										</view>
 										<view class="line" v-if="index != dataList.length - 1"></view>
@@ -111,7 +111,7 @@ export default {
 	},
 	methods: {
 		navigateBack() {
-			this.$util.redirectTo('/pages/index/index', {}, 'redirectTo');
+			this.$util.redirectTo('/pages/index/index');
 		},
 		search() {},
 		getData(mescroll) {
@@ -181,14 +181,13 @@ export default {
 		},
 		storeTap(item) {
 			uni.setStorageSync('store', item);
-			this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+			this.$util.redirectTo('/pages/index/index');
 		},
 		selectStore(id) {
 			let store_id = id ? id : this.storeId;
 			this.$util.diyRedirectTo({
-				diy_name: 'DIY_STORE_' + store_id,
 				store_id:store_id,
-				wap_url: '/pages/index/index?name=' + 'DIY_STORE_' + store_id
+				wap_url: '/pages_tool/index/diy?name=' + 'DIY_STORE_' + store_id
 			});
 		}
 	}

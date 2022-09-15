@@ -9,14 +9,14 @@
 			<view class="uni-calendar__header">
 				<view class="uni-calendar__header-btn-box" @click.stop="pre">
 					<!-- <view class="uni-calendar__header-btn uni-calendar--left"></view> -->
-					<text class="iconfont iconback_light"></text>
+					<text class="iconfont icon-back_light"></text>
 				</view>
 				<picker mode="date" :value="date" fields="month" @change="bindDateChange">
 					<text class="uni-calendar__header-text">{{ (nowDate.year || '') + '年' + (nowDate.month || '') + '月' }}</text>
 				</picker>
 				<view class="uni-calendar__header-btn-box" @click.stop="next">
 					<!-- <view class="uni-calendar__header-btn uni-calendar--right"></view> -->
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
 				</view>
 			</view>
 			<view class="uni-calendar__box">

@@ -37,7 +37,7 @@ export default {
 						this.state = res.data.state;
 						if (res.data.state == 1) {
 							uni.setStorageSync('token', '');
-							this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
+							this.$util.redirectTo('/pages/index/index');
 						}
 					}
 				}

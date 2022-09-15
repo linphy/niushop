@@ -41,17 +41,20 @@ export default {
 		};
 	},
 	onLoad(data) {
-		if (!this.addonIsExist.coupon) {
-			this.$util.showToast({
-				title: '商家未开启优惠券',
-				mask: true,
-				duration: 2000
-			});
-			setTimeout(() => {
-				this.$util.redirectTo('/pages/index/index', {}, 'redirectTo');
-			}, 2000);
-			return;
-		}
+		setTimeout( () => {
+			if (this.addonIsExist && !this.addonIsExist.coupon) {
+				this.$util.showToast({
+					title: '商家未开启优惠券',
+					mask: true,
+					duration: 2000
+				});
+				setTimeout(() => {
+					this.$util.redirectTo('/pages/index/index');
+				}, 2000);
+				return;
+			}
+		}, 1000);
+		
 		if (data.source_member) uni.setStorageSync('source_member', data.source_member);
 
 		if (data.coupon_type_id) this.couponTypeId = data.coupon_type_id;

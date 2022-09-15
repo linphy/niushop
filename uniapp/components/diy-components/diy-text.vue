@@ -82,7 +82,7 @@
 								@click.stop="$util.diyRedirectTo(value.more.link)"
 							>
 								{{ value.more.text }}
-								<view class="iconfont iconright" :style="{ color: value.more.color }"></view>
+								<view class="iconfont icon-right" :style="{ color: value.more.color }"></view>
 							</view>
 						</view>
 						<text class="sub-title" :style="{ color: value.subTitle.color }">{{ value.subTitle.text }}</text>
@@ -113,7 +113,7 @@
 							<view class="right-img"><image :src="$util.img('public/uniapp/diy/style10-2.png')"></image></view>
 							<view class="style10-more" v-if="value.more.isShow" :style="{ color: value.more.color }" @click.stop="$util.diyRedirectTo(value.more.link)">
 								{{ value.more.text }}
-								<view class="iconfont iconright" :style="{ color: value.more.color }"></view>
+								<view class="iconfont icon-right" :style="{ color: value.more.color }"></view>
 							</view>
 						</view>
 						<text class="sub-title" :style="{ color: value.subTitle.color }">{{ value.subTitle.text }}</text>
@@ -140,7 +140,7 @@
 								</view>
 								<view class="style11-more" v-if="value.more.isShow" :style="{ color: value.more.color }" @click.stop="$util.diyRedirectTo(value.more.link)">
 									{{ value.more.text }}
-									<view class="iconfont iconright" :style="{ color: value.more.color }"></view>
+									<view class="iconfont icon-right" :style="{ color: value.more.color }"></view>
 								</view>
 
 								<image class="center-img" :src="$util.img('public/uniapp/diy/style11-1.png')" mode="widthFix"></image>
@@ -165,7 +165,7 @@
 				<text class="style12-sub-title" :style="{ color: value.subTitle.color }">{{ value.subTitle.text }}</text>
 				<view class="style12-more" v-if="value.more.isShow" :style="{ color: value.more.color }" @click.stop="$util.diyRedirectTo(value.more.link)">
 					<text>{{ value.more.text }}</text>
-					<view class="iconfont iconright" :style="{ color: value.more.color }"></view>
+					<view class="iconfont icon-right" :style="{ color: value.more.color }"></view>
 				</view>
 			</view>
 			<view class="style13" v-else-if="value.style == 'style-13'">
@@ -190,9 +190,9 @@
 						</text>
 						<text class="zone" :style="{ fontSize: value.fontSize * 2 + 'rpx', fontWeight: value.fontWeight }">专区</text>
 					</view>
-					<text class="iconfont icondanxuan-xuanzhong" :style="{ color: value.textColor, fontWeight: value.fontWeight }"></text>
-					<text class="iconfont icondanxuan-xuanzhong" :style="{ color: value.textColor, fontWeight: value.fontWeight }"></text>
-					<text class="iconfont icondanxuan-xuanzhong" :style="{ color: value.textColor, fontWeight: value.fontWeight }"></text>
+					<text class="iconfont icon-danxuan-xuanzhong" :style="{ color: value.textColor, fontWeight: value.fontWeight }"></text>
+					<text class="iconfont icon-danxuan-xuanzhong" :style="{ color: value.textColor, fontWeight: value.fontWeight }"></text>
+					<text class="iconfont icon-danxuan-xuanzhong" :style="{ color: value.textColor, fontWeight: value.fontWeight }"></text>
 					<view
 						class="sub-title"
 						v-show="value.subTitle.text"
@@ -203,7 +203,7 @@
 				</view>
 				<view v-show="value.more.isShow == 1" class="more" :style="{ color: value.more.color }">
 					<text>{{ value.more.text }}</text>
-					<text class="iconfont iconright"></text>
+					<text class="iconfont icon-right"></text>
 				</view>
 			</view>
 
@@ -252,12 +252,12 @@
 					{{ value.text }}
 				</view>
 				<view class="style16-sub-title" v-show="value.subTitle.text" :style="{ color: value.subTitle.color, backgroundColor: value.subTitle.bgColor }">
-					<text :class="['icondiy', value.subTitle.icon]" :style="{ backgroundColor: value.subTitle.bgColor }"></text>
+					<text :class="['js-icon', value.subTitle.icon]" :style="{ backgroundColor: value.subTitle.bgColor }"></text>
 					<text :style="{ fontWeight: value.subTitle.fontWeight }">{{ value.subTitle.text }}</text>
 				</view>
 				<view class="style16-more" v-if="value.more.isShow" :style="{ color: value.more.color }" @click.stop="$util.diyRedirectTo(value.more.link)">
 					<text>{{ value.more.text }}</text>
-					<view class="iconfont iconright" :style="{ color: value.more.color }"></view>
+					<view class="iconfont icon-right" :style="{ color: value.more.color }"></view>
 				</view>
 			</view>
 		</view>
@@ -966,7 +966,7 @@ export default {
 		align-items: center;
 		padding: 0 20rpx;
 		position: relative;
-		&> .icondiy {
+		&> .js-icon {
 			padding: 8rpx;
 			background-image: radial-gradient(transparent 30%, #fff);
 			border-radius: 50%;

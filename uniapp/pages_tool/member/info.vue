@@ -70,6 +70,13 @@
 				<text class="cell-tit">{{ $lang('paypassword') }}</text>
 				<text class="cell-more"></text>
 			</view> -->
+			
+			<view class="info-list-cell info-list-con" hover-class="cell-hover" @click="modifyInfo('address')">
+				<text class="cell-tit">所在地址</text>
+				<text class="cell-tip" v-if="memberInfo.full_address">{{ memberInfo.full_address }} {{ memberInfo.address }}</text>
+				<text class="cell-tip" v-else>去设置</text>
+				<text class="cell-more"></text>
+			</view>
 
 			<!-- 注销 -->
 			<view class="info-list-cell info-list-con" hover-class="cell-hover" @click="modifyInfo('cancellation')" v-if="addonIsExist.membercancel && memberConfig.is_enable == 1">
@@ -149,6 +156,10 @@ export default {
 
 	&:first-child {
 		padding: 28rpx 30rpx;
+	}
+	
+	.cell-tit {
+		white-space: nowrap;
 	}
 
 	.cell-tip1 {
@@ -235,14 +246,10 @@ export default {
 	}
 
 	.info-content {
-		&:first-of-type {
-			width: auto !important;
-		}
-
-		margin-right: auto;
-		width: 250rpx;
+		width: 0;
 		font-size: $font-size-base;
 		padding: 0;
+		flex: 1; 
 	}
 
 	.dynacode {

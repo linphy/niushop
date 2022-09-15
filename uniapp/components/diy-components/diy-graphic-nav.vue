@@ -228,12 +228,17 @@ export default {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding: 14rpx 0 ;
+		padding: 14rpx 0;
 		box-sizing: border-box;
 
 		.graphic-text {
 			padding-top: 12rpx;
-			line-height: 1;
+			line-height: 1.5;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			width: 100%;
+			text-align: center;
 
 			&.alone {
 				padding-top: 0;

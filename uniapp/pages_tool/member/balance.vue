@@ -28,12 +28,12 @@
 			<view @click="toBalanceDetail">
 				<image :src="$util.img('public/uniapp/member/balance_detail/recharge_detail.png')"></image>
 				<text>{{ $lang('balanceDetailed') }}</text>
-				<text class="iconfont iconright"></text>
+				<text class="iconfont icon-right"></text>
 			</view>
 			<view v-if="addonIsExist.memberrecharge && memberrechargeConfig && memberrechargeConfig.is_use" @click="toOrderList">
 				<image :src="$util.img('public/uniapp/member/balance_detail/recharge_recode.png')"></image>
 				<text>{{ $lang('rechargeRecord') }}</text>
-				<text class="iconfont iconright"></text>
+				<text class="iconfont icon-right"></text>
 			</view>
 		</view>
 
@@ -141,7 +141,7 @@ export default {
 		if (options.from === 'navigateBack') {
 			return false;
 		}
-		this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
+		this.$util.redirectTo('/pages/member/index');
 		return true;
 	},
 	watch: {
@@ -189,7 +189,7 @@ page {
 				height: 19rpx;
 			}
 
-			.iconyincang {
+			.icon-yincang {
 				vertical-align: middle;
 				font-size: 40rpx;
 			}

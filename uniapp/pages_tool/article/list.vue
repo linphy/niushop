@@ -4,14 +4,22 @@
 		<mescroll-uni @getData="getData" ref="mescroll">
 			<block slot="list">
 				<view class="article-wrap" v-if="list.length">
+					<view class="ns-adv">
+						<ns-adv keyword="NS_ARTICLE"></ns-adv>
+					</view>
+					
 					<view class="item" v-for="(item, index) in list" :key="index" @click="toDetail(item)">
-						<image class="cover-img" :src="$util.img(item.cover_img)" mode="widthFix" @error="imgError(index)"></image>
+						<view class="article-img">
+							<image class="cover-img" :src="$util.img(item.cover_img)" mode="widthFix" @error="imgError(index)"></image>
+						</view>
 						<view class="info-wrap">
 							<text class="title">{{ item.article_title }}</text>
-							<text class="abstract">{{ item.article_abstract }}</text>
 							<view class="read-wrap">
-								<text class="iconfont iconchakan"></text>
-								<text>{{ item.read_num }}人</text>
+								<block v-if="item.category_name">
+									<text class="category-icon"></text>
+									<text>{{ item.category_name }}</text>
+								</block>
+								<text class="date">{{ $util.timeStampTurnTime(item.create_time, 'date') }}</text>
 							</view>
 						</view>
 					</view>
@@ -67,7 +75,7 @@ export default {
 			});
 		},
 		imgError(index) {
-			if (this.list[index]) this.list[index].cover_img = this.$util.getDefaultImage().goods;
+			if (this.list[index]) this.list[index].cover_img = this.$util.getDefaultImage().article;
 		}
 	},
 	onShareAppMessage(res) {
@@ -95,16 +103,43 @@ export default {
 
 .article-wrap {
 	background: #f8f8f8;
+	
+	.ns-adv {
+		margin: 24rpx 24rpx 0 24rpx;
+		border-radius: $border-radius;
+		overflow: hidden;
+		
+		/deep/ view {
+			line-height: 1;
+		}
+		
+		image {
+			width: 100%;
+			line-height: 1;
+		}
+	}
+	
 	.item {
 		display: flex;
 		padding: 20rpx;
 		background-color: #fff;
-		margin-bottom: 20rpx;
-		image {
+		margin: 24rpx;
+		border-radius: 16rpx;
+		
+		.article-img {
 			margin-right: 20rpx;
-			width: 240rpx;
-			height: 240rpx;
+			width: 160rpx;
+			height: 160rpx;
+			overflow: hidden;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			
+			image {
+				width: 100%;
+			}
 		}
+		
 		.info-wrap {
 			flex: 1;
 			display: flex;
@@ -116,9 +151,10 @@ export default {
 				overflow: hidden;
 				text-overflow: ellipsis;
 				display: -webkit-box;
-				-webkit-line-clamp: 1;
+				-webkit-line-clamp: 2;
 				-webkit-box-orient: vertical;
-				font-size: $font-size-tag;
+				font-size: 30rpx;
+				line-height: 1.5;
 			}
 			.abstract {
 				overflow: hidden;
@@ -131,7 +167,7 @@ export default {
 			.read-wrap {
 				display: flex;
 				color: #999ca7;
-				justify-content: flex-end;
+				justify-content: flex-start;
 				align-items: center;
 				margin-top: 10rpx;
 				line-height: 1;
@@ -142,6 +178,16 @@ export default {
 					font-size: 36rpx;
 					vertical-align: bottom;
 					margin-right: 10rpx;
+				}
+				.category-icon {
+					width: 8rpx;
+					height: 8rpx;
+					border-radius: 50%;
+					background: $base-color;
+					margin-right: 10rpx;
+				}
+				.date {
+					margin-left: 20rpx;
 				}
 			}
 		}
