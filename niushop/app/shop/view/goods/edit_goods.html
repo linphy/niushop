@@ -252,30 +252,44 @@
 						<span class="card-title">配送信息</span>
 					</div>
 					<div class="layui-card-body">
-
-						<div class="layui-form-item">
-							<label class="layui-form-label">是否免邮：</label>
+						<div class="layui-form-item" lay-verify="express_type">
+							<label class="layui-form-label">配送方式：</label>
 							<div class="layui-input-block">
-								<input type="radio" name="is_free_shipping" value="1" title="是" lay-filter="is_free_shipping" {if $goods_info['is_free_shipping'] == 1 }checked{/if}>
-								<input type="radio" name="is_free_shipping" value="0" title="否" lay-filter="is_free_shipping" {if $goods_info['is_free_shipping'] == 0 }checked{/if}>
+								{notempty name="$express_type"}
+								{foreach name="$express_type" item="vo" key="key"}
+								<input type="checkbox" name="support_trade_type" value="{$key}" title="{$vo.name}" lay-skin="primary" lay-filter="support_trade_type" {if strpos($goods_info['support_trade_type'], $key) !== false}checked{/if}>
+								{/foreach}
+								{else/}
+								<a href="{:url('shop/delivery/express')}">未配置配送方式，请先配置配送方式</a>
+								{/notempty}
 							</div>
+							{notempty name="$express_type"}<div class="word-aux"><a href="{:url('shop/delivery/express')}" target="_blank" class="text-color">配送方式管理</a></div>{/notempty}
 						</div>
 
-						<div class="layui-form-item js-shipping-template" {if $goods_info['is_free_shipping'] == 0 }style="display:block;"{/if}>
-							<label class="layui-form-label">运费模板：</label>
-							<div class="layui-input-inline">
-								<select name="shipping_template" lay-search="" lay-verify="shipping_template">
-									<option value="">请选择运费模板</option>
-									{foreach name="$express_template_list" item="vo"}
-									<option value="{$vo['template_id']}" {if $goods_info['shipping_template'] ==$vo['template_id'] }selected{/if}>{$vo['template_name']}</option>
-									{/foreach}
-								</select>
+						<div class="trade-type express" {if empty($express_type) || strpos($goods_info['support_trade_type'], 'express') === false}style="display:none;"{/if}>
+							<div class="layui-form-item">
+								<label class="layui-form-label">是否免邮：</label>
+								<div class="layui-input-block">
+									<input type="radio" name="is_free_shipping" value="1" title="是" lay-filter="is_free_shipping" {if $goods_info['is_free_shipping'] == 1 }checked{/if}>
+									<input type="radio" name="is_free_shipping" value="0" title="否" lay-filter="is_free_shipping" {if $goods_info['is_free_shipping'] == 0 }checked{/if}>
+								</div>
 							</div>
-							<div class="layui-input-inline">
-								<a class="default text-color" href="{:addon_url('shop/express/addtemplate')}" target="_blank">新建模板</a>
+
+							<div class="layui-form-item js-shipping-template" {if $goods_info['is_free_shipping'] == 0 }style="display:block;"{/if}>
+								<label class="layui-form-label">运费模板：</label>
+								<div class="layui-input-inline">
+									<select name="shipping_template" lay-search="" lay-verify="shipping_template">
+										<option value="">请选择运费模板</option>
+										{foreach name="$express_template_list" item="vo"}
+										<option value="{$vo['template_id']}" {if $goods_info['shipping_template'] ==$vo['template_id'] }selected{/if}>{$vo['template_name']}</option>
+										{/foreach}
+									</select>
+								</div>
+								<div class="layui-input-inline">
+									<a class="default text-color" href="{:addon_url('shop/express/addtemplate')}" target="_blank">新建模板</a>
+								</div>
 							</div>
 						</div>
-
 					</div>
 				</div>
 
@@ -513,7 +527,7 @@
 						</select>
 						<input type="hidden" name="goods_attr_name" value="{$goods_info['goods_attr_name']}" />
 					</div>
-					<div class="word-aux">商品可以添加自定义参数，也可以通过商品参数模板批量设置商品参数</div>
+					<div class="word-aux">商品可以添加自定义商品参数，也可以通过参数模板批量设置商品参数</div>
 				</div>
 
 				<div class="layui-form-item js-new-attr-list">
@@ -611,6 +625,24 @@
 							</select>
 						</div>
 					</div>
+
+					{if $form_is_exit}
+					<div class="layui-form-item">
+						<label class="layui-form-label">商品表单：</label>
+						<div class="layui-input-block len-mid">
+							<select name="form_id">
+								<option value="0">请选择商品表单</option>
+								{foreach name="$form_list" item="vo"}
+								<option value="{$vo.id}" {if $goods_info.form_id == $vo.id} selected {/if}>{$vo.form_name}</option>
+								{/foreach}
+							</select>
+						</div>
+						<div class="word-aux">
+							<a href="{:addon_url('form://shop/form/addform?form_type=goods')}" class="text-color" target="_blank">创建商品表单</a>
+							<a href="javascript:;" onclick="refreshFormList()" class="text-color">刷新</a>
+						</div>
+					</div>
+					{/if}
 				</div>
 
 			</div>

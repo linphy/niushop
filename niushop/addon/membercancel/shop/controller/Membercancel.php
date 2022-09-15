@@ -69,6 +69,7 @@ class Membercancel extends BaseShop
                 'nickname' => '昵称'
             ];
             $this->assign('search_type', $search_type);
+            $this->forthMenu();
             return $this->fetch('membercancel/lists');
         }
     }
@@ -134,7 +135,7 @@ class Membercancel extends BaseShop
             $config_model = new ConfigModel();
             $document_info = $config_model->getCancelDocument($this->site_id, 'shop');
             $this->assign('document_info', $document_info);
-
+            $this->forthMenu();
             return $this->fetch('membercancel/cancel_agreement');
         }
     }
@@ -158,6 +159,7 @@ class Membercancel extends BaseShop
             $value = $config_info['data']['value'];
 
             $this->assign('value', $value);
+            $this->forthMenu();
             return $this->fetch('membercancel/cancel_config');
         }
     }

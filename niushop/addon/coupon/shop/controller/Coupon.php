@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace addon\coupon\shop\controller;
 
@@ -31,15 +30,7 @@ class Coupon extends BaseShop
     {
         $this->app_module = input('app_module', SHOP_MODULE);
         if ($this->app_module == 'store') {
-            $this->site_id = input('site_id', 0);
-            $config_model = new ConfigModel();
-            $base = $config_model->getStyle($this->site_id);
-            $this->assign('base', $base);
-
-            $site_model = new Site();
-            $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time')[ 'data' ];
-            $this->assign("shop_info", $shop_info);
-            $this->assign('app_module', $this->app_module);
+            $this->initConstructInfo(); // 加载构造函数重要信息
         } else {
             parent::__construct();
         }

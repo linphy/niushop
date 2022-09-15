@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace app\model\system;
 
@@ -116,7 +115,9 @@ class Menu extends BaseModel
 
     /**
      * 刷新菜单
-     * @param unknown $app_module
+     * @param $app_module
+     * @param $addon
+     * @return array
      */
     public function refreshMenu($app_module, $addon)
     {
@@ -143,6 +144,49 @@ class Menu extends BaseModel
             halt($list);
         }
 
+    }
+
+    /**
+     * 刷新全部菜单
+     */
+    public function refreshAllMenu()
+    {
+        $shop_menu_res = $this->refreshMenu("shop", '');
+        $addon_model = new Addon();
+        $addon_list = $addon_model->getAddonList([], 'name');
+        $addon_list = $addon_list[ 'data' ];
+        foreach ($addon_list as $k_addon => $v_addon) {
+            $addon_menu_res = $this->refreshMenu('shop', $v_addon[ 'name' ]);
+        }
+    }
+
+    /**
+     * 刷新店铺端菜单
+     * @param $addon
+     * @param string $app_module
+     * @return array|int
+     */
+    public function cacheMenu($addon, $app_module = 'shop')
+    {
+        if (!empty($addon)) {
+            $tree_name = 'addon/' . $addon . '/config/menu_' . $app_module . '.php';
+        } else {
+            $tree_name = $addon . '/config/menu_' . $app_module . '.php';
+        }
+
+        if (file_exists($tree_name)) {
+            model('menu')->delete([ [ 'app_module', "=", $app_module ], [ 'addon', "=", $addon ] ]);
+            $tree = require $tree_name;
+            $list = $this->getAddonMenuList($tree, $app_module, $addon);
+            if (!empty($list)) {
+                $res = model('menu')->addList($list);
+                return $res;
+            } else {
+                return $this->success();
+            }
+        } else {
+            return $this->success();
+        }
     }
 
     /**
@@ -251,5 +295,6 @@ class Menu extends BaseModel
             }
         }
     }
+
 
 }

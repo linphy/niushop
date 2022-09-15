@@ -245,6 +245,16 @@ $(function () {
 			}
 		});
 
+		form.on('checkbox(support_trade_type)', function (data) {
+			if (data.value == 'express') {
+				if ($(data.elem).is(':checked')) {
+					$('.trade-type.express').show()
+				} else {
+					$('.trade-type.express').hide()
+				}
+			}
+		})
+
 		//编辑商品
 		initEditData();
 		isNullTable();
@@ -736,9 +746,13 @@ $(function () {
 					}
 				}
 			},
+			express_type: function(){
+				if ($('[name="support_trade_type"]').val() == undefined) return '请先配置配送方式';
+				if (!$('[name="support_trade_type"]:checked').val()) return '请选择配送方式';
+			},
 			//运费模板
 			shipping_template: function (value) {
-				if ($("input[name='is_free_shipping']:checked").val() == 0) {
+				if ($('[name="support_trade_type"][value="express"]').is(':checked') && $("input[name='is_free_shipping']:checked").val() == 0) {
 					if (value == "") {
 						element.tabChange('goods_tab', "basic");
 						return '请选择运费模板';
@@ -953,6 +967,12 @@ $(function () {
 					goodsAttrFormat.push(attr);
 				}
 			});
+
+			var supportTradeType = [];
+			$('[name="support_trade_type"]:checked').each(function () {
+				supportTradeType.push($(this).val())
+			})
+			data.field.support_trade_type = supportTradeType.toString();
 
 			data.field.goods_attr_format = JSON.stringify(goodsAttrFormat);//商品参数格式
 
@@ -1641,7 +1661,6 @@ function refreshSkuTable() {
 
 //刷新商品sku数据
 refreshGoodsSkuData = function () {
-
 	var arr = goodsSpecFormat;
 	var tempGoodsSkuData = JSON.parse(JSON.stringify(goodsSkuData));// 记录原始数据，后续用作对比
 	goodsSkuData = [];
@@ -1703,19 +1722,22 @@ refreshGoodsSkuData = function () {
 
 	// return goodsSkuData;
 	// 比对已存在的规格项/值，并且赋值
-	for (var i=0;i<tempGoodsSkuData.length;i++) {
-		for (var j=0;j<goodsSkuData.length;j++) {
-			if(tempGoodsSkuData[i].spec_name == goodsSkuData[j].spec_name){
+	for (var i = 0; i < tempGoodsSkuData.length; i++) {
+		for (var j = 0; j < goodsSkuData.length; j++) {
+			var count = matchSkuSpecCount(tempGoodsSkuData[i].sku_spec_format, goodsSkuData[j].sku_spec_format);
+			if (count === goodsSkuData[j].sku_spec_format.length) {
+				var spec_name = goodsSkuData[j].spec_name;
 				var sku_spec_format = goodsSkuData[j].sku_spec_format;
 				Object.assign(goodsSkuData[j], tempGoodsSkuData[i]);
+				goodsSkuData[j].spec_name = spec_name;
 				goodsSkuData[j].sku_spec_format = sku_spec_format;
 				break;
 			}
 		}
 	}
 
-	for(var k = 0; k < goodsSkuData.length; k ++){
-        sku_sort.push({"spec_name" : goodsSkuData[k].spec_name, "sort" : k+1});
+	for (var k = 0; k < goodsSkuData.length; k++) {
+		sku_sort.push({"spec_name": goodsSkuData[k].spec_name, "sort": k + 1});
 	}
 	// if ($("input[name='goods_id']").length == 1) {
 	// 	$(".js-edit-sku-list>div").each(function (i) {
@@ -1735,6 +1757,20 @@ refreshGoodsSkuData = function () {
 	// }
 	return goodsSkuData;
 };
+
+// 匹配规格值
+function matchSkuSpecCount(oVal,nVal) {
+	var count = 0;// 匹配次数，与规格值相等时为匹配成功
+	for (var i = 0; i < oVal.length; i++) {
+		for (var j = 0; j < nVal.length; j++) {
+			if (oVal[i].spec_value_name === nVal[j].spec_value_name) {
+				count++;
+				break;
+			}
+		}
+	}
+	return count;
+}
 
 //绑定规格项下拉搜索
 function bindSpecSearchableSelect() {
@@ -2064,7 +2100,7 @@ function initEditData() {
 				is_default: $(this).children("input[name='edit_is_default']").val(),
 			};
 			for (var s = 0; s < sku_sort.length; s ++){
-				if(item.spec_name == sku_sort[s].spec_name){
+				if(item.spec_name === sku_sort[s].spec_name){
                     item.sort = sku_sort[s].sort;
 				}
 			}
@@ -2145,7 +2181,7 @@ function addNewAttr() {
 		'<input type="text" class="layui-input add-attr-value" />' +
 		'</td>' +
 		'<td>' +
-		'<input type="number" class="layui-input add-attr-sort" value="0" />' +
+		'<input type="number" class="layui-input add-attr-sort" value="' + $('.goods-attr-tr').length + '" />' +
 		'</td>' +
 		'<td>' +
 		'<div class="table-btn"><a class="layui-btn" onclick="delAttr(this)">删除</a></div>' +
@@ -2252,3 +2288,20 @@ function dealWithPicThumb(data){
 	}
 }
 
+function refreshFormList(){
+	$.ajax({
+		url: ns.url("form://shop/form/getformlist"),
+		dataType: 'JSON',
+		type: 'POST',
+		success: function (res) {
+			if(res.code >= 0 && res.data.length){
+				var h = '<option value="0">请选择商品表单</option>';
+				res.data.forEach(function (item) {
+					h += '<option value="'+ item.id +'">'+ item.form_name +'</option>';
+				})
+				$('[name="form_id"]').html(h);
+				form.render();
+			}
+		}
+	});
+}

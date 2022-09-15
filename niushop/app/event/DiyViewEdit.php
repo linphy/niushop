@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace app\event;
 
@@ -26,6 +25,10 @@ class DiyViewEdit extends Controller
      */
     public function handle($data)
     {
+        if (empty($data[ 'is_default' ])) {
+            $data[ 'is_default' ] = 1;
+        }
+
         $diy_view = new DiyViewModel();
 
         $support_diy_view = !empty($data[ 'support_diy_view' ]) ? implode(',', $data[ 'support_diy_view' ]) : [ '' ];
@@ -36,6 +39,19 @@ class DiyViewEdit extends Controller
         $utils = $diy_view->getDiyViewUtilList($util_condition)[ 'data' ];
 
         $diy_view_utils = [];
+        $extend_comp = []; // 第三方扩展的特定页面组件
+
+        // 查询默认的系统模板页面
+        if (!empty($data[ 'name' ])) {
+            if (in_array($data[ 'name' ], $diy_view->getPage()) !== false) {
+                $diy_view_utils[] = [
+                    'type' => $data[ 'name' ],
+                    'type_name' => '页面组件',
+                    'list' => []
+                ];
+            }
+        }
+
         if (!empty($utils)) {
 
             // 先遍历，组件分类
@@ -61,8 +77,39 @@ class DiyViewEdit extends Controller
                             $is_add = false;
                         }
                     }
-                    if ($diy_v[ 'type' ] == $v[ 'type' ] && $is_add) {
+
+                    // 特定页面组件归类
+                    if (!empty($v[ 'support_diy_view' ]) && $v[ 'support_diy_view' ] == $diy_v[ 'type' ] && $is_add) {
+                        if ($v[ 'type' ] == 'EXTEND') {
+                            // 第三方扩展的特定页面组件
+                            $extend_comp[] = $v;
+                        } else {
+                            array_push($diy_view_utils[ $diy_k ][ 'list' ], $v);
+                        }
+                        break;
+                    } elseif ($diy_v[ 'type' ] == $v[ 'type' ] && $is_add) {
                         array_push($diy_view_utils[ $diy_k ][ 'list' ], $v);
+                    }
+                }
+            }
+        }
+
+        // 第三方组件——>特定页面组件
+        if (!empty($extend_comp)) {
+            foreach ($diy_view_utils as $k => $v) {
+                if ($v[ 'type' ] == 'EXTEND') {
+                    if (empty($v[ 'list' ])) {
+                        $diy_view_utils[ $k ][ 'type_name' ] = '页面组件';
+                        $diy_view_utils[ $k ][ 'list' ] = array_merge($extend_comp, $diy_view_utils[ $k ][ 'list' ]);
+                    } else {
+                        // 页面组件排在第一位置
+                        array_splice($diy_view_utils, $k, 0, [
+                            [
+                                'type' => 'EXTEND',
+                                'type_name' => '页面组件',
+                                'list' => $extend_comp
+                            ]
+                        ]);
                     }
                 }
             }

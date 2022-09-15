@@ -1,5 +1,6 @@
 {extend name="base"/}
 {block name="resources"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/ext/layui/extend/cascader/cascader.css"/>
 <style>
 	.layui-layer-content .form-wrap {padding: 0}
 	.layui-layer-page .layui-layer-content {overflow-y: auto!important;}
@@ -12,6 +13,7 @@
 	.member-info .headimg img {max-width: 100%;height: auto}
 	.member-info .info {flex: 1;width: 0;display: flex;flex-wrap: wrap}
 	.member-info .info .data-item {width: 50%;padding-right: 10px;box-sizing: border-box;line-height: 30px}
+	.member-info .data-item .layui-icon {cursor: pointer}
 	.layui-tab-content {padding: 0}
 	.screen {margin: 15px 0}
 </style>
@@ -87,6 +89,11 @@
 						<span>最后访问时间：</span>
 						<span>{:time_to_date($member_info.data.last_visit_time)}</span>
 					</div>
+					<div class="data-item" style="width: 100%">
+						<span>会员地址：</span>
+						<span>{$member_info.data.full_address ? $member_info.data.full_address : '--'} {$member_info.data.address ? $member_info.data.address : ''}</span>
+						<i class="layui-icon text-color" style="margin-left: 5px;" onclick="editMemberAddress(this)"> </i>
+					</div>
 
 					<input type="hidden" name="member_id" value="{$member_info.data.member_id}" />
 					<input type="hidden" class="birthday" value="{$member_info.data.birthday}" />
@@ -139,7 +146,7 @@
 		<ul class="layui-tab-title">
 			<li class="layui-this" lay-id="basic_info">账户明细</li>
 			<li lay-id="basic_info">订单管理</li>
-			<li lay-id="basic_info">会员地址</li>
+			<li lay-id="basic_info">收货地址</li>
 			<li lay-id="basic_info">收藏记录</li>
 			<li lay-id="basic_info">浏览记录</li>
 			<li lay-id="basic_info">优惠券</li>
@@ -222,9 +229,15 @@
 	var birthday = $(".birthday").val();
 	$("input[name=birthday]").attr("value", ns.time_to_date(birthday, "YYYY-MM-DD"));
 
-	layui.use(['form'], function() {
+	layui.extend({
+		layCascader: '__STATIC__/ext/layui/extend/cascader/cascader'
+	})
+
+	var layCascader, areaTree = [];
+	layui.use(['form', 'layCascader'], function() {
 		var form = layui.form,
-				repeat_flag = false; //防重复标识
+			repeat_flag = false; //防重复标识
+		layCascader = layui.layCascader;
 		form.render();
 
 		/**
@@ -928,6 +941,103 @@
 				typeof callback == 'function' && callback(res);
 			}
 		});
+	}
+
+	function editMemberAddress(event){
+		var html = `<div class="layui-form form-wrap">
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width:auto"><span class="required">*</span>所在地区：</label>
+				<div class="layui-input-inline len-mid" style="margin: 0;">
+					<input name="full_address" type="text" lay-verify="required" value="{$member_info.data.full_address}" class="layui-input len-mid">
+				</div>
+			</div>
+		</div>
+		<input name="province_id" type="hidden" value="{$member_info.data.province_id}" class="layui-input len-mid">
+		<input name="city_id" type="hidden" value="{$member_info.data.city_id}" class="layui-input len-mid">
+		<input name="district_id" type="hidden" value="{$member_info.data.district_id}" class="layui-input len-mid">
+		<div class="layui-form form-wrap">
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width:auto"><span class="required">*</span>详细地址：</label>
+				<div class="layui-input-block" style="margin-left: 0;">
+					<input name="address" type="text" lay-verify="required" value="{$member_info.data.address}" class="layui-input len-mid">
+				</div>
+			</div>
+		</div>`;
+		layer.open({
+			title: '会员地址',
+			skin: 'edit-member-layer',
+			type: 1,
+			area: '380px',
+			content: html,
+			success: function(){
+				form.render();
+				if (!areaTree.length) {
+					$.ajax({
+						url : ns.url("shop/express/getareatree"),
+						dataType: 'JSON',
+						type: 'POST',
+						async: false,
+						success: function(res) {
+							areaTree = res.data;
+						}
+					})
+				}
+
+				var _cascader = layCascader({
+					elem: $('[name="full_address"]'),
+					options: areaTree,
+					separator: '-',
+					props: {
+						value: 'id',
+						label: 'name',
+						children: 'children'
+					}
+				});
+				{if !empty($member_info.data.full_address)}
+					_cascader.setValue({$member_info.data.district_id});
+				{/if}
+
+				_cascader.changeEvent(function (value, node) {
+					$('[name="province_id"]').val(node.path[0] ? node.path[0].data.id : 0)
+					$('[name="city_id"]').val(node.path[1] ? node.path[1].data.id : 0)
+					$('[name="district_id"]').val(node.path[2] ? node.path[2].data.id : 0)
+					var fullAddress = [];
+					node.path.forEach(function (item) {
+						fullAddress.push(item.data.name);
+					})
+					$('[name="full_address"]').val(fullAddress.join('-'));
+				});
+			},
+			btn: ['保存', '取消'],
+			yes: function () {
+				var data = {
+					province_id: $.trim($('[name="province_id"]').val()),
+					city_id: $.trim($('[name="city_id"]').val()),
+					district_id: $.trim($('[name="district_id"]').val()),
+					address: $.trim($('[name="address"]').val()),
+					full_address: $.trim($('[name="full_address"]').val())
+				};
+				if (!reg.required.test(data.full_address)) {
+					layer.msg('请选择所在地区', {icon: 5});
+					return;
+				}
+				if (!reg.required.test(data.address)) {
+					layer.msg('请输入详细地址', {icon: 5});
+					return;
+				}
+				editMember(data, function(res){
+					if (res.code == 0) {
+						$(event).prev('span').text(data.realname);
+						layer.closeAll();
+						setTimeout(function(){
+							location.reload()
+						}, 1500)
+					} else {
+						layer.msg(res.message);
+					}
+				});
+			}
+		})
 	}
 </script>
 <!-- 积分弹框html -->

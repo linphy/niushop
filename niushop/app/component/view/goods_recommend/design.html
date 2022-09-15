@@ -9,7 +9,7 @@
 		     borderBottomRightRadius: (nc.componentAngle == 'round' ? nc.bottomAroundRadius + 'px' : 0) }">
 
 			<div class="top-wrap">
-				<i :class="['icondiy',nc.topStyle.icon.value]" :style="{ backgroundColor : nc.topStyle.icon.bgColor, color : nc.topStyle.icon.color }"></i>
+				<i :class="[nc.topStyle.icon.value]" :style="{ backgroundColor : nc.topStyle.icon.bgColor, color : nc.topStyle.icon.color }"></i>
 				<h3 :style="{ color : nc.topStyle.color }">{{ nc.topStyle.title }}</h3>
 				<span class="line" :style="{ color : nc.topStyle.subColor }"></span>
 				<span class="sub" :style="{ color : nc.topStyle.subColor }">{{ nc.topStyle.subTitle }}</span>
@@ -191,7 +191,7 @@
 				<div class="style-list-con">
 					<div class="style-li" v-for="(value,name,index) in nc.tempData.styleList" :key="name" :class="{'selected border-color': nc.style == name}" :data_key="name">
 						<span class="layui-hide">风格{{index + 1}}</span>
-						<img :src="'{$resource_path}/goods_recommend/img/style' + (index+1) + '.png'" />
+						<img :src="'{$resource_path}/img/style' + (index+1) + '.png'" />
 					</div>
 				</div>
 				<input type="hidden" name="style">
@@ -381,8 +381,8 @@
 		<js>
 			var goodsRecommendListResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/goods_recommend/css/design.css"></css>
-		<js src="{$resource_path}/goods_recommend/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 	
 </nc-component>

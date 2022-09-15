@@ -1,11 +1,11 @@
 @font-face {
   font-family: "icondiy";
-  src: url('https://cdn3.codesign.qq.com/icons/MQmlyZwl3GjWRA1/latest/iconfont.eot?t=e4725af62860f0106687be95f45866f1'); /* IE9 */
-  src: url('https://cdn3.codesign.qq.com/icons/MQmlyZwl3GjWRA1/latest/iconfont.eot?t=e4725af62860f0106687be95f45866f1#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('https://cdn3.codesign.qq.com/icons/MQmlyZwl3GjWRA1/latest/iconfont.woff?t=e4725af62860f0106687be95f45866f1') format('woff2'),
-  url('https://cdn3.codesign.qq.com/icons/MQmlyZwl3GjWRA1/latest/iconfont.woff?t=e4725af62860f0106687be95f45866f1') format('woff'),
-  url('https://cdn3.codesign.qq.com/icons/MQmlyZwl3GjWRA1/latest/iconfont.ttf?t=e4725af62860f0106687be95f45866f1') format('truetype'),
-  url('https://cdn3.codesign.qq.com/icons/MQmlyZwl3GjWRA1/latest/iconfont.svg?t=e4725af62860f0106687be95f45866f1#icondiy') format('svg');
+  src: url('iconfont.eot?t=3e83fc826caf716bdcd6caa20c9a0de5'); /* IE9 */
+  src: url('iconfont.eot?t=3e83fc826caf716bdcd6caa20c9a0de5#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=3e83fc826caf716bdcd6caa20c9a0de5') format('woff2'),
+  url('iconfont.woff?t=3e83fc826caf716bdcd6caa20c9a0de5') format('woff'), /* chrome、firefox */
+  url('iconfont.ttf?t=3e83fc826caf716bdcd6caa20c9a0de5') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=3e83fc826caf716bdcd6caa20c9a0de5#icondiy') format('svg'); /* iOS 4.1- */
 }
 
 .icondiy {

@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -82,7 +81,7 @@ class Upgrade extends BaseShop
             if ($res[ 'code' ] != 0) return $res;
 
             $auth_info = $upgrade_model->authInfo();
-            session('system_upgrade_new_version', $auth_info['data']['newest_version']);
+            session('system_upgrade_new_version', $auth_info[ 'data' ][ 'newest_version' ]);
             $errors = $this->checkSystemUpgradeRight($res[ 'data' ]);
             session('system_upgrade_info_ready', $res[ 'data' ]);
             return success(0, '操作成功', [
@@ -197,7 +196,7 @@ class Upgrade extends BaseShop
 
             $app_info = config('info');
             $system_upgrade_info_ready = session('system_upgrade_info_ready');
-            $name_text = $app_info['version']."_".$system_upgrade_info_ready[0]['latest_version_name'];
+            $name_text = $app_info[ 'version' ] . "_" . $system_upgrade_info_ready[ 0 ][ 'latest_version_name' ];
 
             //将系统和插件的文件及sql都整合到一起
             $files = [];
@@ -432,8 +431,8 @@ class Upgrade extends BaseShop
                         'code' => 0,
                         'message' => $file_path,
                         'download_root' => "upload/upgrade/{$upgrade_no}/",
-                        'current' => $app_info['version'],
-                        'upgrade' => $system_upgrade_info_ready[0]['latest_version_name'],
+                        'current' => $app_info[ 'version' ],
+                        'upgrade' => $system_upgrade_info_ready[ 0 ][ 'latest_version_name' ],
                         'newVersion' => session('system_upgrade_new_version')
                     ]);
                 } else {
@@ -476,7 +475,7 @@ class Upgrade extends BaseShop
 
             $to_path = './';
             //文件替换
-            dir_copy($download_root, $to_path, ["download.lock"]);
+            dir_copy($download_root, $to_path, [ "download.lock" ]);
 
             return json([ 'code' => 0, 'message' => '操作成功' ]);
         } catch (\Exception $e) {
@@ -792,7 +791,7 @@ class Upgrade extends BaseShop
     {
         if (request()->isAjax()) {
 
-            try{
+            try {
                 Cache::clear();
                 if (is_dir('runtime/schema')) {
                     rmdirs("schema");
@@ -805,7 +804,7 @@ class Upgrade extends BaseShop
                 $menu = new Menu();
                 $shop_menu_res = $menu->refreshMenu('shop', '');
 
-                if(addon_is_exit('store', $this->site_id) == 1){
+                if (addon_is_exit('store', $this->site_id) == 1) {
                     $menu->refreshMenu('store', 'store');
                 };
 
@@ -817,37 +816,34 @@ class Upgrade extends BaseShop
                 $addon_list = $addon_list[ 'data' ];
                 foreach ($addon_list as $k => $v) {
                     $menu->refreshMenu('shop', $v[ 'name' ]);
-                }
-
-                $arr = [ '', 'bargain', 'blindbox', 'coupon', 'divideticket', 'fenxiao', 'giftcard', 'groupbuy', 'hongbao', 'live', 'notes', 'pinfan', 'pintuan', 'pointexchange', 'presale', 'seckill', 'store', 'memberrecommend', 'topic' ];
-                $addon = new Addon();
-                foreach ($arr as $k => $v) {
-                    $res = $addon->refreshDiyView($v);
+                    $addon_model->refreshDiyView($v[ 'name' ]);
                 }
 
                 return success('', '刷新成功', '');
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
 
-                return error('',$e->getMessage());
+                return error('', $e->getMessage());
             }
 
         }
     }
 
-    public function downComplete(){
+    public function downComplete()
+    {
         $system_upgrade_info = session('system_upgrade_info');
         $upgrade_no = $system_upgrade_info[ 'upgrade_no' ];
         $download_root = "upload/upgrade/{$upgrade_no}";
 
-        file_put_contents($download_root."/download.lock", "");
+        file_put_contents($download_root . "/download.lock", "");
     }
 
-    public function verificationDown(){
+    public function verificationDown()
+    {
         $system_upgrade_info = session('system_upgrade_info');
         $upgrade_no = $system_upgrade_info[ 'upgrade_no' ];
         $download_root = "upload/upgrade/{$upgrade_no}";
 
-        if(file_exists($download_root."/download.lock")){
+        if (file_exists($download_root . "/download.lock")) {
             return true;
         }
         return false;

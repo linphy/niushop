@@ -35,8 +35,7 @@ class GoodsPromotion
             $promotion_addon = json_decode($goods_info['promotion_addon'], true);
             if (!empty($promotion_addon['discount'])) {
                 $discount_model = new Discount();
-                $goods_detail   = $discount_model->getDiscountGoodsDetail($promotion_addon['discount'], $param['goods_id'], $param['sku_id']);
-                $goods_detail   = $goods_detail['data'];
+                $goods_detail   = $discount_model->getDiscountGoodsDetail($promotion_addon['discount'], $param['goods_id'], $param['sku_id'])['data'];
                 if (!empty($goods_detail)) {
                     $goods_detail['promotion_type'] = 'discount';
                     $goods_detail['promotion_name'] = '限时折扣';

@@ -379,7 +379,7 @@ class OrderCommon extends BaseModel
 
         model('order')->startTrans();
         try {
-            $order_info = model('order')->getInfo([ [ 'order_id', '=', $order_id ] ], 'out_trade_no,coupon_id,pay_status,member_id,is_lock,balance_money,order_no,mobile,order_status,site_id');
+            $order_info = model('order')->getInfo([ [ 'order_id', '=', $order_id ] ], '*');
             if ($order_info[ 'order_status' ] == -1) {
                 model('order')->commit();
                 return $this->success();
@@ -479,7 +479,7 @@ class OrderCommon extends BaseModel
                 }
             }
             //订单关闭后操作
-            $close_result = event('OrderClose', [ 'order_id' => $order_id ]);
+            $close_result = event('OrderClose', $order_info);
 
             if (empty($close_result)) {
                 foreach ($close_result as $k => $v) {
@@ -555,6 +555,9 @@ class OrderCommon extends BaseModel
             //订单支付消息
             foreach ($order_list as $k => $order) {
                 if ($order[ 'order_status' ] == -1) {
+                    continue;
+                }
+                if ($order[ 'pay_status' ] == 1) {
                     continue;
                 }
                 switch ( $order[ 'order_type' ] ) {
@@ -1269,6 +1272,10 @@ class OrderCommon extends BaseModel
         $order_info[ 'verifier_name' ] = model('verify')->getValue([ [ 'verify_code', '=', $order_info[ 'delivery_code' ] ] ], 'verifier_name');
 
         $order_goods_list = model('order_goods')->getList([ [ 'order_id', '=', $order_id ] ]);
+        foreach ($order_goods_list as $k => $v) {
+            $form_info = model('form_data')->getInfo([ [ 'relation_id', '=', $v['order_goods_id'] ], [ 'scene', '=', 'goods' ] ], 'form_data');
+            if (!empty($form_info)) $order_goods_list[ $k ][ 'form' ] = json_decode($form_info[ 'form_data' ], true);
+        }
         $order_info[ 'order_goods' ] = $order_goods_list;
         switch ( $order_info[ 'order_type' ] ) {
             case 1:
@@ -1290,19 +1297,10 @@ class OrderCommon extends BaseModel
 
         $temp_info = $order_model->orderDetail($order_info);
         $order_info = array_merge($order_info, $temp_info);
-//        if(!empty($order_info['package_list'])){
-//            foreach ($order_info['package_list'] as $package_key => $package_val){
-//                if(!empty($package_val['trace']['list'])){
-//                    $order_info['package_list'][$package_key]['trace']['list'] = array_reverse($package_val['trace']['list']);
-//                }
-//            }
-//        }
 
-        if (addon_is_exit('form', $order_info[ 'site_id' ])) {
-            $form_info = model('form_data')->getInfo([ [ 'relation_id', '=', $order_id ], [ 'scene', '=', 'order' ] ], 'form_data');
-            if (!empty($form_info)) {
-                $order_info[ 'form' ] = json_decode($form_info[ 'form_data' ], true);
-            }
+        $form_info = model('form_data')->getInfo([ [ 'relation_id', '=', $order_id ], [ 'scene', '=', 'order' ] ], 'form_data');
+        if (!empty($form_info)) {
+            $order_info[ 'form' ] = json_decode($form_info[ 'form_data' ], true);
         }
 
         $order_info[ 'order_log' ] = model('order_log')->getList([ [ 'order_id', '=', $order_id ] ], '*', 'action_time desc,id desc');
@@ -1510,6 +1508,8 @@ class OrderCommon extends BaseModel
             $refund_action = empty($v[ 'refund_status_action' ]) ? [] : json_decode($v[ 'refund_status_action' ], true);
             $refund_action = $refund_action[ 'member_action' ] ?? [];
             $order_goods_list[ $k ][ 'refund_action' ] = $refund_action;
+            $form_info = model('form_data')->getInfo([ [ 'relation_id', '=', $v['order_goods_id'] ], [ 'scene', '=', 'goods' ] ], 'form_data');
+            if (!empty($form_info)) $order_goods_list[ $k ][ 'form' ] = json_decode($form_info[ 'form_data' ], true);
         }
         $order_info[ 'order_goods' ] = $order_goods_list;
 

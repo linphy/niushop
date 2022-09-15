@@ -1,1 +1,0 @@
-<view class="{{['ns-goods-action','bottom-safe-area',(safeArea)?'bottom-safe-area':'']}}"><slot></slot></view>

@@ -98,6 +98,41 @@ class Address extends BaseModel
     }
 
     /**
+     * 获取地址树结构
+     * @param $level
+     * @return array
+     */
+    public function getAddressTreeList($level){
+        $condition      = [['level', '<=', $level]];
+        $json_condition = json_encode($condition);
+        $cache          = Cache::get("area_getAddressTreeList" . $json_condition);
+        if (!empty($cache)) {
+            return $this->success($cache);
+        }
+        $area_list = $this->getAreaList($condition, "id, pid, name", "id asc")['data'];
+        $tree = $this->toTree($area_list);
+        Cache::tag("area")->set("area_getAddressTreeList" . $json_condition, $tree);
+        return $this->success($tree);
+    }
+
+    /**
+     * 列表转树结构
+     * @param $array
+     * @param  int  $pid
+     * @return array
+     */
+    public function toTree($array, $pid = 0){
+        $tree = array();
+        foreach ($array as $key => $value) {
+            if ($value['pid'] == $pid) {
+                $value['children'] = $this->toTree($array, $value['id']);
+                $tree[] = $value;
+            }
+        }
+        return $tree;
+    }
+
+    /**
      * 获取地址
      * @param array $condition
      * @param string $field

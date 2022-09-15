@@ -42,8 +42,7 @@ class Coupon extends BaseApi
         ];
 
         $coupon_type_model = new CouponTypeModel();
-        $qrcode = $coupon_type_model->qrcode($coupon_type_id, $app_type, $this->site_id);
-        $qrcode = $qrcode[ 'data' ];
+        $qrcode = $coupon_type_model->qrcode($coupon_type_id, $app_type, $this->site_id)[ 'data' ];
 
         $info = $coupon_model->getCouponTypeInfo($condition);
         if (!empty($info[ 'data' ]) && !empty($qrcode)) {

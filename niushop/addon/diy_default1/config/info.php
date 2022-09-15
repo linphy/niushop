@@ -15,7 +15,7 @@ return [
     'type' => 'system', //插件类型  system :系统插件(自动安装), business:业务插件    promotion:营销插件  tool:工具插件
     'status' => 1,
     'author' => '',
-    'version' => '5.0.1',
-    'version_no' => '520220808001',
+    'version' => '5.0.3',
+    'version_no' => '520220907001',
     'content' => '',
 ];

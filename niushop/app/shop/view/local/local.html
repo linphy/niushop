@@ -70,7 +70,7 @@
 				</div>
 			</div>
 			<div class="time-view ">
-				<div class="layui-form-item time-type-view">
+				<div class="layui-form-item time-type-view" lay-verify="time_week">
 					<div class="layui-inline">
 						<label class="layui-form-label"></label>
 						<div class="layui-input-inline">
@@ -84,16 +84,41 @@
 						</div>
 					</div>
 				</div>
-				<div class="layui-form-item time-type-view-all" >
-					<label class="layui-form-label"></label>
-					<div class="layui-input-inline">
-						<input type="text" class="layui-input" id="startTime" lay-verify="start_time" placeholder="配送开始时间" value="" readonly >
-						<input type="hidden" class="layui-input" name="start_time" placeholder="配送开始时间" value="{$local_info.start_time}">
+				<div class="time-type-view-all">
+					<div class="delivery-time">
+						{foreach name="$local_info.delivery_time" key="k" item="item"}
+						<div class="layui-form-item" >
+							<label class="layui-form-label">{$k == 0 ? '配送时段设置：' : ''}</label>
+							<div class="layui-input-inline">
+								<input type="text" class="layui-input" id="startTime{$k == 0 ? '' : $k}" lay-verify="start_time" placeholder="配送开始时间" value="" readonly >
+								<input type="hidden" class="layui-input" name="start_time" placeholder="配送开始时间" value="{$item.start_time}">
+							</div>
+							<div class="layui-form-mid layui-word-aux">~</div>
+							<div class="layui-input-inline">
+								<input type="text" class="layui-input" id="endTime{$k == 0 ? '' : $k}" lay-verify="end_time" placeholder="配送结束时间" value="" readonly >
+								<input type="hidden" class="layui-input" name="end_time" placeholder="配送结束时间" value="{$item.end_time}">
+							</div>
+							<div class="layui-form-mid layui-word-aux">
+								{if $k eq 0}
+								<a href="javascript:;" class="text-color add">添加</a>
+								{else/}
+								<a href="javascript:;" class="text-color delete">删除</a>
+								{/if}
+							</div>
+						</div>
+						{/foreach}
 					</div>
-					<div class="layui-form-mid layui-word-aux">~</div>
-					<div class="layui-input-inline">
-						<input type="text" class="layui-input" id="endTime" lay-verify="end_time" placeholder="配送结束时间" value="" readonly >
-						<input type="hidden" class="layui-input" name="end_time" placeholder="配送结束时间" value="{$local_info.end_time}">
+				</div>
+
+				<div class="layui-form-item" {if $local_info.time_is_open == 0} style="display:none;"{/if}>
+					<div class="layui-inline">
+						<label class="layui-form-label">细分时段：</label>
+						<div class="layui-input-block">
+							<input type="radio" name="time_interval" value="30" title="30分钟" {if $local_info.time_interval == 30}checked{/if}/>
+							<input type="radio" name="time_interval" value="60" title="一小时" {if $local_info.time_interval == 60}checked{/if}/>
+							<input type="radio" name="time_interval" value="90" title="90分钟" {if $local_info.time_interval == 90}checked{/if}/>
+							<input type="radio" name="time_interval" value="120" title="两小时" {if $local_info.time_interval == 120}checked{/if}/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -374,30 +399,60 @@ var init_key = 1;
 		var formSelects = layui.formSelects;
 
 		form = layui.form;
-	laytpl = layui.laytpl;
-		//时间选择器
-		laydate.render({
-			elem: '#startTime'
-			, type: 'time'
+		laytpl = layui.laytpl;
 
-			,value: "{:date('H:i:s', strtotime(date('Y-m-d')) + $local_info.start_time)}"
-			,done: function(value, date, endDate){
-				var time = date.hours * 3600 + date.minutes * 60 + date.seconds;
-				$("input[name=start_time]").val(time);
-			}
+		function fetchTimeSelect(){
+			$('.delivery-time .layui-form-item').each(function (index, item) {
+				//时间选择器
+				var startTime = $(item).find("input[name=start_time]").val(), endTime = $(item).find("input[name=end_time]").val(), initTime = parseInt({:strtotime(date('Y-m-d'))});
+				laydate.render({
+					elem: '#startTime' + (index ? index : '')
+					,type: 'time'
+					,value: startTime ? ns.time_to_date((initTime + parseInt(startTime)), 'h:m:s') : ''
+					,done: function(value, date, endDate){
+						var time = date.hours * 3600 + date.minutes * 60 + date.seconds;
+						$(item).find("input[name=start_time]").val(time);
+					}
+				});
+				//时间选择器
+				laydate.render({
+					elem: '#endTime' + (index ? index : '')
+					,type: 'time'
+					,value: startTime ? ns.time_to_date((initTime + parseInt(endTime)), 'h:m:s') : ''
+					,done: function(value, date, endDate){
+						var time = date.hours * 3600 + date.minutes * 60 + date.seconds;
+						$(item).find("input[name=end_time]").val(time);
+					}
+				});
+			})
+		}
+		fetchTimeSelect();
 
-		});
-		//时间选择器
-		laydate.render({
-			elem: '#endTime'
-			, type: 'time'
-			,value: "{:date('H:i:s', strtotime(date('Y-m-d')) + $local_info.end_time)}"
-			,done: function(value, date, endDate){
-				var time = date.hours * 3600 + date.minutes * 60 + date.seconds;
-				$("input[name=end_time]").val(time);
-			}
-		});
+		$('body').on('click', '.delivery-time .delete', function () {
+			$(this).parents('.layui-form-item').remove()
+		})
 
+		$('body').on('click', '.delivery-time .add', function () {
+			var length = $('.delivery-time .layui-form-item').length;
+			if (length >= 3) { layer.msg('最多添加三个时段'); return;}
+			var h = `<div class="layui-form-item" >
+				<label class="layui-form-label"></label>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input" id="startTime`+ length +`" lay-verify="start_time" placeholder="配送开始时间" value="" readonly >
+					<input type="hidden" class="layui-input" name="start_time" placeholder="配送开始时间" value="">
+				</div>
+				<div class="layui-form-mid layui-word-aux">~</div>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input" id="endTime`+ length +`" lay-verify="end_time" placeholder="配送结束时间" value="" readonly >
+					<input type="hidden" class="layui-input" name="end_time" placeholder="配送结束时间" value="">
+				</div>
+				<div class="layui-form-mid layui-word-aux">
+					<a href="javascript:;" class="text-color delete">删除</a>
+				</div>
+			</div>`;
+			$('.delivery-time').append(h);
+			fetchTimeSelect();
+		})
 
 		//开启定时达
 		form.on('radio(time_is_open)', function(data){
@@ -428,20 +483,29 @@ var init_key = 1;
 
 		form.verify({
 			start_time: function(value, item){ //value：表单的值、item：表单的DOM对象
-				var end_time = $("input[name=end_time]").val();
-				var start_time = $("input[name=start_time]").val();
+				var end_time = $(item).parents('.layui-form-item').find("input[name=end_time]").val();
+				var start_time = $(item).parents('.layui-form-item').find("input[name=start_time]").val();
 				if(parseInt(start_time) > parseInt(end_time)){
 					return '配送开始时间不能大于配送结束时间';
 				}
-
+				var prev_endtime = $(item).parents('.layui-form-item').prev('.layui-form-item').find("input[name=end_time]").val();
+				if (prev_endtime && parseInt(prev_endtime) > parseInt(start_time)) return '配送开始时间不能小于上一阶段配送结束时间';
 			},
 			end_time: function(value, item){ //value：表单的值、item：表单的DOM对象
-				var end_time = $("input[name=end_time]").val();
-				var start_time = $("input[name=start_time]").val();
+				var end_time = $(item).parents('.layui-form-item').find("input[name=end_time]").val();
+				var start_time = $(item).parents('.layui-form-item').find("input[name=start_time]").val();
+				var time_interval = $('[name="time_interval"]:checked').val();
 
 				if(parseInt(end_time) < parseInt(start_time)){
 					return '配送结束时间不能小于配送开始时间';
 				}
+				if((parseInt(end_time) - parseInt(start_time)) < parseInt(time_interval)){
+					return '配送时间间隔不能小于' + time_interval + '分钟';
+				}
+			},
+			time_week: function(){
+				if ($('[name="time_is_open"]:checked').val() == 1 && $('[name="time_type"]:checked').val() == 1 && !$('.time-week:checked').length)
+					return '请选择可配送日期';
 			},
 			radius_start_distance: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();
@@ -599,6 +663,7 @@ var init_key = 1;
 			json.area_type = field.area_type;
 			//是否开启定时达
 			json.time_is_open = field.time_is_open;
+			json.time_interval = field.json;
 			if(field.time_is_open){
 				//时间类型
 				json.time_type =  field.time_type;
@@ -614,8 +679,20 @@ var init_key = 1;
 
 				}
 			}
-			json.start_time =  field.start_time;
-			json.end_time =  field.end_time;
+
+			json.delivery_time = [];
+			$('.delivery-time .layui-form-item').each(function (index, item) {
+				json.delivery_time.push({
+					start_time: $(item).find("input[name=start_time]").val(),
+					end_time: $(item).find("input[name=end_time]").val()
+				})
+			})
+
+			json.start_time =  json.delivery_time[0].start_time;
+			json.end_time =  json.delivery_time[0].end_time;
+
+			json.delivery_time = JSON.stringify(json.delivery_time);
+
 			switch(field.area_type){
 				case '1':
 					json.start_distance = field.radius_start_distance;

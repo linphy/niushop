@@ -28,15 +28,7 @@ class Diy extends BaseShop
     {
         $this->app_module = input('app_module', SHOP_MODULE);
         if ($this->app_module == 'store') {
-            $this->site_id = input('site_id', 0);
-            $config_model = new ConfigModel();
-            $base = $config_model->getStyle($this->site_id);
-            $this->assign('base', $base);
-
-            $site_model = new Site();
-            $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time')[ 'data' ];
-            $this->assign("shop_info", $shop_info);
-            $this->assign('app_module', $this->app_module);
+            $this->initConstructInfo(); // 加载构造函数重要信息
         } else {
             parent::__construct();
         }
@@ -81,7 +73,6 @@ class Diy extends BaseShop
             'site_id' => $this->site_id,
             'name' => 'DIY_VIEW_INDEX',
             'support_diy_view' => [ '', 'DIY_VIEW_INDEX' ],
-            'is_default' => 1,
             'source' => input('source', ''), // 来源，template：模板
             'template_key' => input('template_key', '') // 模板标识
         ];
@@ -99,7 +90,6 @@ class Diy extends BaseShop
             'site_id' => $this->site_id,
             'name' => 'DIY_VIEW_GOODS_CATEGORY',
             'support_diy_view' => [ 'DIY_VIEW_GOODS_CATEGORY' ],
-            'is_default' => 1
         ];
         $edit_view = event('DiyViewEdit', $data, true);
         return $edit_view;
@@ -110,19 +100,14 @@ class Diy extends BaseShop
      */
     public function memberIndex()
     {
-        $diy_view = new DiyViewModel();
-        if (request()->isAjax()) {
-            $value = input('value', '{}');
-            $data = json_decode($value, true);
-            $res = $diy_view->setMemberIndexDiyConfig($data, $this->site_id);
-            return $res;
-        } else {
-            $info = $diy_view->getMemberIndexDiyConfig($this->site_id);
-            $this->assign('app_module', $this->app_module);
-            $this->assign('diy_info', $info[ 'data' ][ 'value' ]);
-            $this->assign('system_color', $diy_view->getStyleConfig($this->site_id)[ 'data' ][ 'value' ]);
-            return $this->fetch('diy/member_index');
-        }
+        $data = [
+            'app_module' => $this->app_module,
+            'site_id' => $this->site_id,
+            'name' => 'DIY_VIEW_MEMBER_INDEX',
+            'support_diy_view' => [ '', 'DIY_VIEW_MEMBER_INDEX' ],
+        ];
+        $edit_view = event('DiyViewEdit', $data, true);
+        return $edit_view;
     }
 
     /**
@@ -151,7 +136,7 @@ class Diy extends BaseShop
                     $res = $diy_view->addSiteDiyView($data);
                     // 如果存在模板标识，则保存模板数据（自定义页面、底部导航），第一个页面除外
                     if (!empty($template_key)) {
-                        event('useDiyTemplate', [ 'site_id' => $this->site_id, 'name' => $template_key ], true);
+                        event('UseDiyTemplate', [ 'site_id' => $this->site_id, 'name' => $template_key ], true);
                     }
                 } else {
                     $res = $diy_view->editSiteDiyView($data, [ [ 'id', '=', $id ] ]);
@@ -163,8 +148,7 @@ class Diy extends BaseShop
             $data = [
                 'app_module' => $this->app_module,
                 'site_id' => $this->site_id,
-                'id' => $id,
-                'is_default' => 1
+                'id' => $id
             ];
             $edit_view = event('DiyViewEdit', $data, true);
 
@@ -188,6 +172,15 @@ class Diy extends BaseShop
             ];
             $order_by = 'is_default desc,INSTR(\'DIY_VIEW_INDEX\', name) desc, create_time desc';
             $list = $diy_view->getSiteDiyViewPageList($condition, $page_index, $page_size, $order_by);
+            if (!empty($list[ 'data' ])) {
+                foreach ($list[ 'data' ][ 'list' ] as $k => $v) {
+                    $list[ 'data' ][ 'list' ][ $k ][ 'promote' ] = $diy_view->qrcode([
+                        'site_id' => $this->site_id,
+                        'id' => $v[ 'id' ],
+                        'is_default' => $v[ 'is_default' ]
+                    ])[ 'data' ];
+                }
+            }
             return $list;
         } else {
             return $this->fetch('diy/lists');
@@ -352,7 +345,7 @@ class Diy extends BaseShop
     {
         if (request()->isAjax()) {
             $name = input('name', '');
-            $res = event('useDiyTemplate', [ 'site_id' => $this->site_id, 'name' => $name ], true);
+            $res = event('UseDiyTemplate', [ 'site_id' => $this->site_id, 'name' => $name ], true);
             return $res;
         }
     }
@@ -397,20 +390,13 @@ class Diy extends BaseShop
      */
     public function iconfont()
     {
+        $diy_view = new DiyViewModel();
         $icon = input('icon', '');
         if (request()->isAjax()) {
             $type = input('type', 'icon'); // 图标类型
-            $file_path = 'public/static/ext/diyview/css/font/iconfont.css'; // iconfont文件地址
-            if (file_exists($file_path)) {
-                $fp = fopen($file_path, "r");
-                $str = fread($fp, filesize($file_path)); // 指定读取大小，这里把整个文件内容读取出来
-                $exc = '/[.](' . $type . '\S+):before{1}/';// 匹配图标，格式：.icon名字:before
-                preg_match_all($exc, $str, $match);
-                sort($match[ 1 ]); // 按名称正序排序
-                return success(0, '操作成功', $match[ 1 ]);
-            }
+            $icon_list = $diy_view->getIconList($type);
+            return $icon_list;
         } else {
-            $diy_view = new DiyViewModel();
             $icon_type = $diy_view->getIconType();
             $this->assign('icon_type', $icon_type);
             $this->assign('icon', $icon);

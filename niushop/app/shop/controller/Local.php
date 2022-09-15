@@ -39,9 +39,6 @@ class Local extends BaseShop
                 return $local_model->error([], '店铺地址尚为配置');
             }
 
-            $start_time = input('start_time', 0);
-            $end_time = input('end_time', 0);
-
             $data = [
                 'type' => input('type', 'default'),//配送方式  default 商家自配送  other 第三方配送
                 'area_type' => input('area_type', 1),//配送区域
@@ -49,10 +46,9 @@ class Local extends BaseShop
                 'time_is_open' => input('time_is_open', 0),
                 'time_type' => input('time_type', 0),//时间选取类型 0 全天  1 自定义
                 'time_week' => input('time_week', ''),
-                'start_time' => $start_time,
-                'end_time' => $end_time,
+                'start_time' => input('start_time', 0),
+                'end_time' => input('end_time', 0),
                 'update_time' => time(),
-
                 'is_open_step' => input('is_open_step', 0),
                 'start_distance' => input('start_distance', 0),
                 'start_delivery_money' => input('start_delivery_money', 0),
@@ -64,6 +60,8 @@ class Local extends BaseShop
                 'man_money' => input('man_money', ''),
                 'man_type' => input('man_type', ''),
                 'man_discount' => input('man_discount', ''),
+                'time_interval' => input('time_interval', 30),
+                'delivery_time' => input('delivery_time', '')
             ];
 
             $condition = array (

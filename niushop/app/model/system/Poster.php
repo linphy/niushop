@@ -205,7 +205,8 @@ class Poster extends BaseModel
                     $line = '一一一一';
                 }
                 if(!empty($poster_data['data']['background'])){
-                    list($width,$height,$type,$attr)=getimagesize(img($poster_data['data']['background']));
+                    $background = str_replace(" ", "", img($poster_data['data']['background']));
+                    list($width,$height,$type,$attr)=getimagesize($background);
 
                     $height = 720*$height/$width;
                     $back_ground = [
@@ -418,7 +419,7 @@ class Poster extends BaseModel
      */
     private function getGoodsInfo($goods_id)
     {
-        $field = 'g.goods_name,g.introduction,g.price,gs.discount_price,g.goods_image,gs.collect_num,g.template_id,g.market_price,gs.sku_image';
+        $field = 'g.goods_id,g.goods_name,g.introduction,g.price,gs.discount_price,g.goods_image,g.sku_id,gs.collect_num,g.template_id,g.market_price,gs.sku_image';
         $info = model('goods')->getInfo(['g.goods_id' => $goods_id], $field, 'g', [
             ['goods_sku gs', 'gs.sku_id=g.sku_id', 'left']
         ]);
@@ -454,5 +455,125 @@ class Poster extends BaseModel
     {
         $info = model('poster_template')->getInfo(['template_id' => $template_id], 'template_id,template_status');
         return $info;
+    }
+
+    /**
+     * 分享图片
+     * @param $page
+     * @param $qrcode_param
+     * @param $site_id
+     * @return array|\extend\multitype|PosterExtend|string|string[]
+     */
+    public function shareImg($page, $qrcode_param, $site_id)
+    {
+        try {
+            $goods_info = $this->getGoodsInfo($qrcode_param['goods_id']);
+            if (empty($goods_info)) return $this->error('未获取到商品信息');
+
+//            $file_path = 'upload/share_img/goods_'.$goods_info['goods_id'] .'/sku_'.$goods_info['sku_id'] .'.jpg';
+//            if (file_exists($file_path)) return $this->success(['path' => $file_path]);
+
+            $poster_width = 600;
+            $poster_height = 480;
+
+            $poster = new PosterExtend($poster_width, $poster_height);
+            $option = [
+                [
+                    'action' => 'setBackground', // 设背景色
+                    'data'   => [255, 255, 255]
+                ],
+                [
+                    'action' => 'imageCopy', // 商品图
+                    'data'   => [
+                        $goods_info['sku_image'],
+                        30,
+                        50,
+                        200,
+                        200,
+                        'square',
+                        50,
+                        1
+                    ]
+                ],
+                [
+                    'action' => 'imageText', // 写入商品名称
+                    'data'   => [
+                        $goods_info['goods_name'],
+                        25,
+                        [51, 51, 51],
+                        250,
+                        100,
+                        330,
+                        2,
+                        false,
+                        1
+                    ]
+                ],
+                [
+                    'action' => 'imageText', // 写入商品价格
+                    'data'   => [
+                        '¥',
+                        15,
+                        [255, 0, 0],
+                        250,
+                        230,
+                        300,
+                        2,
+                        false,
+                        1,
+                        PUBLIC_PATH . 'static/font/custom.ttf'
+                    ]
+                ],
+                [
+                    'action' => 'imageText', // 写入商品价格
+                    'data'   => [
+                        $goods_info['discount_price'],
+                        32,
+                        [255, 0, 0],
+                        265,
+                        230,
+                        300,
+                        2,
+                        false,
+                        1,
+                        PUBLIC_PATH . 'static/font/custom.ttf'
+                    ]
+                ],
+                [
+                    'action' => 'imageCopy', // 背景图
+                    'data' => [
+                        img('upload/share_img/bg/goods_1.png'),
+                        0,
+                        0,
+                        600,
+                        480,
+                        'square',
+                        0,
+                        1
+                    ]
+                ],
+            ];
+
+            $option_res = $poster->create($option);
+            if (is_array($option_res)) {
+                return $option_res;
+            }
+
+            $res = $option_res->jpeg('upload/share_img/goods_'.$goods_info['goods_id'],
+                'sku_'.$goods_info['sku_id']);
+            return $res;
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * 删除分享图片
+     * @param  int $goods_id
+     */
+    public function clearShareImg(int $goods_id)
+    {
+        $dir = 'upload/share_img/goods_' . $goods_id;
+        @deleteDir($dir);
     }
 }

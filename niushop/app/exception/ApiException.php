@@ -1,5 +1,5 @@
 <?php
-declare (strict_types=1);
+declare ( strict_types = 1 );
 
 namespace app\exception;
 
@@ -10,8 +10,8 @@ class ApiException extends BaseException
 
     public function __construct($code, $message)
     {
-        $this->code    = $code;
-        $this->message = $message;
+        $this->code = $code;
+        $this->message = !empty($message) ? $message : 'API接口调用失败';
     }
 
     public function getErrorCode()

@@ -121,11 +121,46 @@
 		<p>说明：如果门店未上传门店logo，那么前后端都默认展示该图片。</p>
 	</div>
 
+	<div class="layui-form-item">
+		<label class="layui-form-label">默认文章图片：</label>
+		<div class="layui-input-inline">
+			<div class="upload-img-block">
+				<div class="upload-img-box {if !empty($default_img.article)}hover{/if}">
+					<div class="upload-default" id="imgUploadArticle">
+						{if empty($default_img.article)}
+						<div class="upload">
+							<i class="iconfont iconshangchuan"></i>
+							<p>点击上传</p>
+						</div>
+						{else/}
+						<div id="preview_imgUploadArticle" class="preview_img">
+							<img layer-src src="{:img($default_img.article)}" alt="" class="img_prev">
+						</div>
+						{/if}
+					</div>
+					<div class="operation">
+						<div>
+							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+						</div>
+						<div class="replace_img js-replace">点击替换</div>
+					</div>
+					<input type="hidden" name="article" {if $default_img} value="{$default_img.article}" {/if}>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="word-aux">
+		<p>说明：文章封面图没有或者错误时展示该默认图。</p>
+	</div>
+
 	<div class="form-row">
 		<button class="layui-btn" lay-submit lay-filter="save">保存</button>
 		<a id="defaultGoodsImgId"></a>
 		<a id="defaultHeadimgId"></a>
 		<a id="defaultStoreimgId"></a>
+		<a id="defaultArticleimgId"></a>
 	</div>
 </div>
 {/block}
@@ -137,6 +172,7 @@
 	var store_upload;
 	var goods_upload;
 	var member_upload;
+	var article_upload;
 	layui.use(['form'], function() {
 		var form = layui.form,
 			repeat_flag = false; //防重复标识
@@ -166,6 +202,15 @@
 			bindAction:'#defaultStoreimgId',
 			callback: function(res) {
 				uploadComplete('store', res.data.pic_path);
+			}
+		});
+
+		article_upload = new Upload({
+			elem: '#imgUploadArticle',
+			auto:false,
+			bindAction:'#defaultArticleimgId',
+			callback: function(res) {
+				uploadComplete('article', res.data.pic_path);
 			}
 		});
 
@@ -206,6 +251,9 @@
 			if (!data.field.head && member_upload.path != 'public/static/img/default_img/head.png') member_upload.delete();
 
 			if (!data.field.store && store_upload.path != 'public/static/img/default_img/square.png') store_upload.delete();
+
+			if (!data.field.article && article_upload.path != 'public/static/img/default_img/article.png') article_upload.delete();
+
 			saveData = data;
 			var obj = $("img.img_prev[data-prev='1']");
 			totalUploadNum = obj.length;

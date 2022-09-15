@@ -52,8 +52,7 @@ class Upload extends BaseApi
         $album_info = $album_model->getAlbumInfo([
             [ 'site_id', '=', $this->site_id ],
             [ 'is_default', '=', 1 ]
-        ], 'album_id');
-        $album_info = $album_info[ 'data' ];
+        ], 'album_id')[ 'data' ];
         if (empty($album_id)) {
             $album_id = $album_info[ 'album_id' ];
         }

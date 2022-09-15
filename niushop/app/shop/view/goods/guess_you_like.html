@@ -20,7 +20,7 @@
                     <input type="checkbox" name="goodsdetail" value="1" lay-skin="primary" title="商品详情" {if isset($guess_you_like.goodsdetail) && $guess_you_like.goodsdetail == 1} checked {/if}>
                     <input type="checkbox" name="cart" value="1" lay-skin="primary" title="购物车"  {if isset($guess_you_like.cart) && $guess_you_like.cart == 1} checked {/if}>
                     <input type="checkbox" name="collect" value="1" lay-skin="primary" title="关注页面"  {if isset($guess_you_like.collect) && $guess_you_like.collect == 1} checked {/if}>
-                    <input type="checkbox" name="memberindex" value="1" lay-skin="primary" title="会员中心" {if isset($guess_you_like.memberindex) && $guess_you_like.memberindex == 1} checked {/if} >
+<!--                    <input type="checkbox" name="memberindex" value="1" lay-skin="primary" title="会员中心" {if isset($guess_you_like.memberindex) && $guess_you_like.memberindex == 1} checked {/if} >-->
                     {if addon_is_exit('supermember')}
                     <input type="checkbox" name="supermember" value="1" lay-skin="primary" title="超级会员卡" {if isset($guess_you_like.supermember) && $guess_you_like.supermember == 1} checked {/if} >
                     {/if}
@@ -195,6 +195,7 @@
         goodsSelect(function (res) {
             if (!res.length) return false;
 
+            goods_id = []; goods_list = [];
             for(var i=0;i<res.length;i++) {
                 goods_id.push(res[i].goods_id);
                 goods_list.push(res[i]);

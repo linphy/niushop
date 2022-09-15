@@ -42,7 +42,7 @@ Vue.component("goods-recommend-sources", {
 					elementBgColor: '#FFFFFF',
 					topStyle: {
 						icon: {
-							value: "icon-system-tuijian",
+							value: "icondiy icon-system-tuijian",
 							color: "#FF3D3D",
 							bgColor: "",
 						},
@@ -58,7 +58,7 @@ Vue.component("goods-recommend-sources", {
 					elementBgColor: '#FFFFFF',
 					topStyle: {
 						icon: {
-							value: "icon-system-tuijian",
+							value: "icondiy icon-system-tuijian",
 							color: "#1278FE",
 							bgColor: "#FFFFFF",
 						},

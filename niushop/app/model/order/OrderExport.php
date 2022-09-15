@@ -64,7 +64,8 @@ class OrderExport extends BaseModel
         'delivery_status_name' => '发货状态',
         'is_settlement' => '是否进行结算',
         'delivery_store_name' => '门店名称',
-        'promotion_type_name' => '营销类型'
+        'promotion_type_name' => '营销类型',
+        'form_data' => '表单数据'
     ];
 
     //订单商品信息
@@ -94,7 +95,8 @@ class OrderExport extends BaseModel
         'refund_remark' => '退款说明',
         'refund_delivery_remark' => '买家退货说明',
         'refund_address' => '退货地址',
-        'is_refund_stock' => '是否返还库存'
+        'is_refund_stock' => '是否返还库存',
+        'form_data' => '表单数据'
     ];
 
 
@@ -112,6 +114,7 @@ class OrderExport extends BaseModel
         'is_settlement' => ['type' => 2, 'data' => ['否', '是']],//是否进行结算
         'refund_type' => ['type' => 2, 'data' => [1 => '仅退款', 2 => '退款退货']],//退货方式
         'is_refund_stock' => ['type' => 2, 'data' => ['否', '是']],//是否返还库存
+        'form_data' => ['type' => 3],//表单数据
     ];
 
 
@@ -139,11 +142,23 @@ class OrderExport extends BaseModel
                         switch ($type) {
 
                             case 1:
-                                $data[$k][$key] = time_to_date($v[$key]);
+                                $data[$k][$key] = time_to_date((int)$v[$key]);
                                 break;
                             case 2:
                                 $define_data_data = $define_data[$key]['data'];
                                 $data[$k][$key] = !empty($v[$key]) ? $define_data_data[$v[$key]] : '';
+                            case 3:
+                                if (!empty($v[$key])) {
+                                    $form_data = json_decode($v[$key], true);
+                                    $form_content = '';
+                                    if (is_array($form_data)) {
+                                        foreach ($form_data as $item) {
+                                            $form_content .= $item['value']['title'] . '：' . $item['val'] .'   ';
+                                        }
+                                    }
+                                    $data[$k][$key] = $form_content;
+                                }
+                                break;
                         }
 
                     }
@@ -244,6 +259,11 @@ class OrderExport extends BaseModel
                     'm.member_id = o.member_id',
                     'left'
                 ];
+                $join[] = [
+                    'form_data fm',
+                    "fm.relation_id = o.order_id and scene = 'order'",
+                    'left'
+                ];
                 $order_table = $this->parseJoin($order_table, $join);
 
                 $first_line = implode(',', $field_value);
@@ -252,7 +272,7 @@ class OrderExport extends BaseModel
 
                 $temp_line = implode(',', $field_key) . "\n";
 
-                $table_field = 'o.*,m.nickname';
+                $table_field = 'o.*,m.nickname,fm.form_data';
                 $order_table->field($table_field)->chunk(5000, function ($item_list) use ($fp, $temp_line, $field_key_array) {
                     //写入导出信息
                     $this->itemExport($item_list, $field_key_array, $temp_line, $fp);
@@ -333,10 +353,15 @@ class OrderExport extends BaseModel
                 'm.member_id = og.member_id',
                 'left'
             ];
+            $join[] = [
+                'form_data fm',
+                "fm.relation_id = og.order_goods_id and scene = 'goods'",
+                'left'
+            ];
 
             $order_field = 'o.order_no,o.site_name,o.order_name,o.order_from_name,o.order_type_name,o.order_promotion_name,o.out_trade_no,o.out_trade_no_2,o.delivery_code,o.order_status_name,o.pay_status,o.delivery_status,o.refund_status,o.pay_type_name,o.delivery_type_name,o.name,o.mobile,o.telephone,o.full_address,o.buyer_ip,o.buyer_ask_delivery_time,o.buyer_message,o.goods_money,o.delivery_money,o.promotion_money,o.coupon_money,o.order_money,o.adjust_money,o.balance_money,o.pay_money,o.refund_money,o.pay_time,o.delivery_time,o.sign_time,o.finish_time,o.remark,o.goods_num,o.delivery_status_name,o.is_settlement,o.delivery_store_name,o.promotion_type_name,o.address,m.nickname';
 
-            $order_goods_field = 'og.order_goods_id,og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock,og.refund_status_name';
+            $order_goods_field = 'og.order_goods_id,og.sku_name,og.sku_no,og.is_virtual,og.goods_class_name,og.price,og.cost_price,og.num,og.goods_money,og.cost_money,og.delivery_no,og.refund_no,og.refund_type,og.refund_apply_money,og.refund_reason,og.refund_real_money,og.refund_delivery_name,og.refund_delivery_no,og.refund_time,og.refund_refuse_reason,og.refund_action_time,og.real_goods_money,og.refund_remark,og.refund_delivery_remark,og.refund_address,og.is_refund_stock,og.refund_status_name,fm.form_data';
 
             $table_field = $order_field . ',' . $order_goods_field;
 

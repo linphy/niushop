@@ -64,7 +64,7 @@ class Upload extends BaseModel
 
             $file_name = $file_path . $this->createNewFileName();
             $extend_name = $file->getOriginalExtension();
-            $thumb_type = $param[ "thumb_type" ];
+//            $thumb_type = $param[ "thumb_type" ];
             //原图保存
             $new_file = $file_name . "." . $extend_name;
             $image = $this->getImageService($tmp_name);
@@ -164,11 +164,11 @@ class Upload extends BaseModel
             if ($result[ "code" ] < 0)
                 return $result;
             
-//            if($is_thumb == 1){
-//                $thumb_res = $this->thumbBatch($result['data'], $file_name, $extend_name, $thumb_type);//生成缩略图
-//                if ($thumb_res[ "code" ] < 0)
-//                return $result;
-//            }
+            if($is_thumb == 1){
+                $thumb_res = $this->thumbBatch($result['data'], $file_name, $extend_name, $thumb_type);//生成缩略图
+                if ($thumb_res[ "code" ] < 0)
+                return $result;
+            }
             $pic_name_first = substr(strrchr($original_name, '.'), 1);
             $pic_name = basename($original_name, "." . $pic_name_first);
             $data = array (
@@ -523,14 +523,17 @@ class Upload extends BaseModel
      * 删除文件
      * @param $file_name
      */
-    private function deleteFile($file_name)
+    public function deleteFile($file_name)
     {
-        $res = @unlink($file_name);
-        if ($res) {
-            return $this->success();
-        } else {
-            return $this->error();
+        if(file_exists($file_name)){
+            $res = @unlink($file_name);
+            if ($res) {
+                return $this->success();
+            } else {
+                return $this->error();
+            }
         }
+        return $this->success();
 
     }
 

@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace addon\wechat\model;
 
@@ -27,7 +26,6 @@ class Material extends BaseModel
     public function addMaterial($data)
     {
         $res = model('wechat_media')->add($data);
-        Cache::tag("wechat_media")->clear();
         return $this->success($res);
     }
 
@@ -40,7 +38,6 @@ class Material extends BaseModel
     public function editMaterial($data, $condition)
     {
         $res = model('wechat_media')->update($data, $condition);
-        Cache::tag("wechat_media")->clear();
         return $this->success($res);
     }
 
@@ -52,7 +49,6 @@ class Material extends BaseModel
     public function deleteMaterial($condition)
     {
         $res = model('wechat_media')->delete($condition);
-        Cache::tag("wechat_media")->clear();
         return $this->success($res);
     }
 
@@ -64,13 +60,8 @@ class Material extends BaseModel
      */
     public function getMaterialInfo($condition, $field = '*')
     {
-        $data  = json_encode([$condition, $field]);
-        $cache = Cache::get("wechat_media_getMaterialInfo_" . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
+
         $res = model('wechat_media')->getInfo($condition, $field);
-        Cache::tag("wechat_media")->set("wechat_media_getMaterialInfo_" . $data, $res);
         return $this->success($res);
     }
 
@@ -83,13 +74,7 @@ class Material extends BaseModel
      */
     public function getMaterialList($condition = [], $field = '*', $order = '', $limit = null)
     {
-        $data  = json_encode([$condition, $field, $order, $limit]);
-        $cache = Cache::get("wechat_media_getMaterialList_" . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $res = model('wechat_media')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag("wechat_media")->set("wechat_media_getMaterialList_" . $data, $res);
         return $this->success($res);
     }
 
@@ -104,13 +89,7 @@ class Material extends BaseModel
      */
     public function getMaterialPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'update_time desc', $field = '*')
     {
-        $data  = json_encode([$condition, $field, $order, $page, $page_size]);
-        $cache = Cache::get("wechat_media_getMaterialPageList_" . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('wechat_media')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag("wechat_media")->set("wechat_media_getMaterialPageList_" . $data, $list);
         return $this->success($list);
     }
 

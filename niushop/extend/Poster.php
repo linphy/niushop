@@ -102,13 +102,13 @@ class Poster
      * @param number $max_line 最大行数
      * @param string $blod 是否加粗
      */
-    public function imageText(string $text, int $size, array $color, int $x, int $y, $max_width = 0, $max_line = 1, $blod = false, $is_view = 1)
+    public function imageText(string $text, int $size, array $color, int $x, int $y, $max_width = 0, $max_line = 1, $blod = false, $is_view = 1, $fontfile = PUBLIC_PATH . 'static/font/Microsoft.ttf')
     {
-        $text = $this->handleStr($text, $size, $max_width, $max_line);
+        $text = $this->handleStr($text, $size, $max_width, $max_line, $fontfile);
         $color = $this->createColor(...$color);
         if ($is_view > 0) {
-            imagettftext($this->poster, $size, 0, $x, $y, $color, PUBLIC_PATH . 'static/font/Microsoft.ttf', $text);
-            if ($blod) imagettftext($this->poster, $size, 0, ( $x + 1 ), ( $y + 1 ), $color, PUBLIC_PATH . 'static/font/Microsoft.ttf', $text);
+            imagettftext($this->poster, $size, 0, $x, $y, $color, $fontfile, $text);
+            if ($blod) imagettftext($this->poster, $size, 0, ( $x + 1 ), ( $y + 1 ), $color, $fontfile, $text);
         }
     }
 
@@ -119,7 +119,7 @@ class Poster
      * @param unknown $max_width
      * @param unknown $max_line
      */
-    private function handleStr($str, $size, $max_width, $max_line)
+    private function handleStr($str, $size, $max_width, $max_line, $fontfile)
     {
         if (empty($str)) return $str;
         mb_internal_encoding("UTF-8");
@@ -131,7 +131,7 @@ class Poster
         }
         foreach ($letter as $l) {
             $temp_str = $content . " " . $l;
-            $fontBox = imagettfbbox($size, 0, PUBLIC_PATH . 'static/font/Microsoft.ttf', $temp_str);
+            $fontBox = imagettfbbox($size, 0, $fontfile, $temp_str);
             if (( $fontBox[ 2 ] > $max_width ) && ( $content !== "" )) {
                 $content .= "\n";
                 $line += 1;
@@ -237,6 +237,18 @@ class Poster
     }
 
     /**
+     * 划线
+     * @param $x1
+     * @param $y1
+     * @param $x2
+     * @param $y2
+     */
+    private function imageline($x1, $y1, $x2, $y2, $rgb){
+        $color = $this->createColor(...$rgb);
+        imageline($this->poster, $x1, $y1, $x2, $y2, $color);
+    }
+
+    /**
      * 创建海报内容
      * @param unknown $data
      * @return \extend\Poster|multitype:
@@ -265,16 +277,16 @@ class Poster
         $ext = explode('/', $mime)[ 1 ];
         switch ( $ext ) {
             case "png":
-                $image = imagecreatefrompng($filename);
+                $image = @imagecreatefrompng($filename);
                 break;
             case "jpeg":
-                $image = imagecreatefromjpeg($filename);
+                $image = @imagecreatefromjpeg($filename);
                 break;
             case "jpg":
-                $image = imagecreatefromjpeg($filename);
+                $image = @imagecreatefromjpeg($filename);
                 break;
             case "gif":
-                $image = imagecreatefromgif($filename);
+                $image = @imagecreatefromgif($filename);
                 break;
         }
         return [
@@ -312,7 +324,7 @@ class Poster
         try {
             $filename = $path . '/' . $name . '.jpg';
             header("Content-type: image/jpeg"); // 定义输出类型
-            imagejpeg($this->poster, $filename); // 输出图片
+            imagejpeg($this->poster, $filename, 100); // 输出图片
             imagedestroy($this->poster); // 销毁图片资源
             header("Content-type: text/plain");
             return success(0, '', [ 'path' => $filename ]);

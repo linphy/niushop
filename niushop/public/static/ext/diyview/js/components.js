@@ -536,6 +536,7 @@ Vue.component("img-upload", {
 					self.myData.data.imgWidth = obj[i].pic_spec.split("*")[0];
 					self.myData.data.imgHeight = obj[i].pic_spec.split("*")[1];
 					if (self.myData.callback) self.myData.callback.call(this);
+					loadImgMagnify();
 				}
 			}, 1);
 		},
@@ -634,7 +635,7 @@ var imgIconHtml = `
 			<template v-else>
 				<i class="add" @click="uploadImg">+</i>
 			</template>
-		</div>		
+		</div>
 	</div>
 `;
 
@@ -912,10 +913,23 @@ var pageSetHtml = '<div class="edit-attribute">';
 								pageSetHtml += '</ul>';
 							pageSetHtml += '</div>';
 						pageSetHtml += '</div>';
+
+					pageSetHtml += '<div class="layui-form-item checkbox-wrap">';
+						pageSetHtml += '<label class="layui-form-label sm">导航栏</label>';
+						pageSetHtml += '<div class="layui-input-block">';
+							pageSetHtml += '<span v-if="global.navBarSwitch == true">显示</span>';
+							pageSetHtml += '<span v-else>隐藏</span>';
+							pageSetHtml += '<div v-if="global.navBarSwitch == true" @click="global.navBarSwitch = false" class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>';
+							pageSetHtml += '<div v-else @click="global.navBarSwitch = true" class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>';
+						pageSetHtml += '</div>';
+						pageSetHtml += '<div class="word-aux diy-word-aux">此处控制当前页面导航栏是否显示</div>';
+					pageSetHtml += '</div>';
+
 					pageSetHtml += '</div>';
 
 					pageSetHtml += '<div class="template-edit-title">';
 						pageSetHtml += '<h3>底部导航</h3>';
+
 						pageSetHtml += '<div class="layui-form-item checkbox-wrap">';
 							pageSetHtml += '<label class="layui-form-label sm">底部导航</label>';
 							pageSetHtml += '<div class="layui-input-block">';
@@ -923,18 +937,12 @@ var pageSetHtml = '<div class="edit-attribute">';
 								pageSetHtml += '<span v-else>隐藏</span>';
 								pageSetHtml += '<div v-if="global.openBottomNav == true" @click="global.openBottomNav = false" class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>';
 								pageSetHtml += '<div v-else @click="global.openBottomNav = true" class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>';
-
-								// pageSetHtml += '<div @click="global.openBottomNav = true" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : global.openBottomNav }"><i class="layui-anim layui-icon">{{ global.openBottomNav ? '&#xe643;':'&#xe63f;' }}</i><div>显示</div></div>';
-								// pageSetHtml += '<div @click="global.openBottomNav = false" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : !global.openBottomNav }"><i class="layui-anim layui-icon">{{ !global.openBottomNav ? '&#xe643;':'&#xe63f;' }}</i><div>隐藏</div></div>';
-								// pageSetHtml += '<div class="layui-unselect layui-form-switch" @click="global.openBottomNav=!global.openBottomNav" :class="{ 'layui-form-onswitch' : global.openBottomNav }" lay-skin="_switch">';
-								// 	pageSetHtml += '<em></em>';
-								// 	pageSetHtml += '<i></i>';
-								// pageSetHtml += '</div>';
-
 							pageSetHtml += '</div>';
 							pageSetHtml += '<div class="word-aux diy-word-aux">此处控制当前页面底部导航菜单是否显示</div>';
 						pageSetHtml += '</div>';
+
 					pageSetHtml += '</div>';
+
 				pageSetHtml += '</div>';
 
 				pageSetHtml += '<div class="edit-style-wrap" style="display: none;">';
@@ -1113,7 +1121,7 @@ Vue.component("tabbar", {
 var iconHtml = '<div class="layui-form-item component-icon">';
 		iconHtml += '<label class="layui-form-label sm">{{data.label || "图标"}}</label>';
 		iconHtml += '<div class="layui-input-block">';
-			iconHtml += '<span class="sm" @click="selected()"><i :class="[\'text-color\',{\'iconfont iconjia\': !parent[data.field] },{\'icondiy\': parent[data.field]},parent[data.field]]" :style="{\'color\': parent[data.field] && parent[data.color] + \'!important\'}"></i></span>';
+			iconHtml += '<span class="sm" @click="selected()"><i :class="[\'text-color\',{\'iconfont iconjia\': !parent[data.field] },{\'js-icon\': parent[data.field]},parent[data.field]]" :style="{\'color\': parent[data.field] && parent[data.color] + \'!important\'}"></i></span>';
 		iconHtml += '</div>';
 	iconHtml += '</div>';
 

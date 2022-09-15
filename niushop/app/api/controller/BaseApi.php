@@ -5,7 +5,6 @@
  * Copy right 2015-2025 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -53,26 +52,26 @@ class BaseApi
         $shop_status = $shop_model->getShopStatus($this->site_id, 'shop');
 
         //默认APP类型处理
-        if(!isset($this->params['app_type'])) $this->params['app_type'] = 'h5';
+        if (!isset($this->params[ 'app_type' ])) $this->params[ 'app_type' ] = 'h5';
 
-        if($this->params['app_type'] == 'pc'){
-            if (!$shop_status['data']['value']['shop_pc_status']) {
+        if ($this->params[ 'app_type' ] == 'pc') {
+            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_pc_status' ]) {
                 $error = $this->error([], 'SITE_CLOSE');
-                throw new ApiException($error['code'], $error['message']);
+                throw new ApiException($error[ 'code' ], $error[ 'message' ]);
             }
-        }else if ($this->params['app_type'] == 'weapp'){
-            if (!$shop_status['data']['value']['shop_weapp_status']) {
+        } else if ($this->params[ 'app_type' ] == 'weapp') {
+            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_weapp_status' ]) {
                 $error = $this->error([], 'SITE_CLOSE');
-                throw new ApiException($error['code'], $error['message']);
+                throw new ApiException($error[ 'code' ], $error[ 'message' ]);
             }
-        }else{
-            if (!$shop_status['data']['value']['shop_h5_status']) {
+        } else {
+            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_h5_status' ]) {
                 $error = $this->error([], 'SITE_CLOSE');
-                throw new ApiException($error['code'], $error['message']);
+                throw new ApiException($error[ 'code' ], $error[ 'message' ]);
             }
         }
 
-        if (isset($this->params['encrypt']) && !empty($this->params['encrypt'])) {
+        if (isset($this->params[ 'encrypt' ]) && !empty($this->params[ 'encrypt' ])) {
             $this->decryptParams();
         }
     }
@@ -84,7 +83,7 @@ class BaseApi
     {
         $api_model = new Api();
         $config = $api_model->getApiConfig();
-        $config = $config['data'];
+        $config = $config[ 'data' ];
 
         if ($config[ 'is_use' ] && !empty($config[ 'value' ])) {
             $decrypted = RSA::decrypt(urldecode($this->params[ 'encrypt' ]), $config[ 'value' ][ 'private_key' ], $config[ 'value' ][ 'public_key' ]);
@@ -105,7 +104,7 @@ class BaseApi
         $key = 'site' . $this->site_id;
         $api_model = new Api();
         $api_config = $api_model->getApiConfig();
-        $api_config = $api_config['data'];
+        $api_config = $api_config[ 'data' ];
         if ($api_config[ 'is_use' ] && isset($api_config[ 'value' ][ 'private_key' ]) && !empty($api_config[ 'value' ][ 'private_key' ])) {
             $key = $api_config[ 'value' ][ 'private_key' ] . $key;
         }
@@ -117,18 +116,18 @@ class BaseApi
         if (!isset($data[ 'member_id' ]) || empty($data[ 'member_id' ])) return $this->error('', 'TOKEN_ERROR');
 
         $member_model = new MemberModel();
-        $member_info = $member_model->getMemberInfo([ ['member_id', '=', $data[ 'member_id' ]], ['is_delete', '=', 0], ['site_id', '=', $this->site_id] ], 'member_id')['data'];
+        $member_info = $member_model->getMemberInfo([ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'is_delete', '=', 0 ], [ 'site_id', '=', $this->site_id ] ], 'member_id')[ 'data' ];
         if (empty($member_info)) return $this->error('', 'TOKEN_ERROR');
 
         $blacklist = $member_model->getMemberBlacklist($this->site_id);
-        if (!empty($blacklist['data']) && in_array($data[ 'member_id' ], $blacklist['data'])) {
-            return $this->error('','TOKEN_EXPIRE');
+        if (!empty($blacklist[ 'data' ]) && in_array($data[ 'member_id' ], $blacklist[ 'data' ])) {
+            return $this->error('', 'TOKEN_EXPIRE');
         }
         if ($data[ 'expire_time' ] < time()) {
-            if($data[ 'expire_time' ] != 0){
-                return $this->error('','TOKEN_EXPIRE');
+            if ($data[ 'expire_time' ] != 0) {
+                return $this->error('', 'TOKEN_EXPIRE');
             }
-        } else if (($data[ 'expire_time' ] - time()) < 300 && !Cache::get('member_token' . $data[ 'member_id' ])) {
+        } else if (( $data[ 'expire_time' ] - time() ) < 300 && !Cache::get('member_token' . $data[ 'member_id' ])) {
             $this->refresh_token = $this->createToken($data[ 'member_id' ]);
             Cache::set('member_token' . $data[ 'member_id' ], $this->refresh_token, 360);
         }
@@ -148,16 +147,15 @@ class BaseApi
         $config_result = $api_model->getApiConfig();
         $config = $config_result[ "data" ];
         # $expire_time 有效时间  0为永久 单位s
-        if($config){
-            $expire_time = round($config['value']['long_time'] * 3600);
-        }else{
+        if ($config) {
+            $expire_time = round($config[ 'value' ][ 'long_time' ] * 3600);
+        } else {
             $expire_time = 0;
         }
 
         $key = 'site' . $this->site_id;
         $api_model = new Api();
-        $api_config = $api_model->getApiConfig();
-        $api_config = $api_config['data'];
+        $api_config = $api_model->getApiConfig()[ 'data' ];
         if ($api_config[ 'is_use' ] && isset($api_config[ 'value' ][ 'private_key' ]) && !empty($api_config[ 'value' ][ 'private_key' ])) {
             $key = $api_config[ 'value' ][ 'private_key' ] . $key;
         }

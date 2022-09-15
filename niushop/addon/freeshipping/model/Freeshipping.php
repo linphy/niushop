@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace addon\freeshipping\model;
 
@@ -25,8 +24,8 @@ class Freeshipping extends BaseModel
         $data[ 'create_time' ] = time();
         $area_ids = json_decode($data[ 'area_ids' ], true);
         if (!empty($area_ids)) {
-            foreach ($area_ids[ '2' ] as $k => $v) {
-                if (!empty($area_ids[ '2' ])) {
+            foreach ($area_ids[ '3' ] as $k => $v) {
+                if (!empty($area_ids[ '3' ])) {
                     foreach ($v as $area_id) {
 
                         //判断该城市是否已存在
@@ -65,8 +64,8 @@ class Freeshipping extends BaseModel
         $data[ 'update_time' ] = time();
         $area_ids = json_decode($data[ 'area_ids' ], true);
         if (!empty($area_ids)) {
-            foreach ($area_ids[ '2' ] as $k => $v) {
-                if (!empty($area_ids[ '2' ])) {
+            foreach ($area_ids[ '3' ] as $k => $v) {
+                if (!empty($area_ids[ '3' ])) {
                     foreach ($v as $area_id) {
 
                         //判断该城市是否已存在
@@ -136,16 +135,16 @@ class Freeshipping extends BaseModel
     /**
      * 是否符合满额包邮
      * @param $money
-     * @param $city_id
+     * @param $district_id
      * @param $site_id
      * @return array
      */
-    public function calculate($money, $city_id, $site_id)
+    public function calculate($money, $district_id, $site_id)
     {
         $condition = array (
             [ 'price', "<=", $money ],
             [ 'site_id', "=", $site_id ],
-            [ 'area_ids', 'like', '%"' . $city_id . '"%' ]
+            [ 'area_ids', 'like', '%"' . $district_id . '"%' ]
         );
 
         $info = model('promotion_freeshipping')->getInfo($condition, '*');

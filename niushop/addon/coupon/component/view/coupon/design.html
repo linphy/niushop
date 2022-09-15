@@ -5,7 +5,7 @@
 			<div class="coupon-box coupon-box-1" v-if="nc.style == 1" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
 				<div class="coupon-box-list" v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
 					<div class="coupon" v-for="(item, index) in nc.previewList" v-if="index < 3" :style="{marginRight: (40-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/style1-bg.png">
+						<img src="{$resource_path}/img/style1-bg.png">
 						<div class="coupon-intro" >
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-if="item.type == 'reward'">￥<span>{{nc.tempData.methods.moneyConduct(item.money)}}</span></p>
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-else><span>{{nc.tempData.methods.moneyConduct(item.discount)}}</span>折</p>
@@ -17,7 +17,7 @@
 				</div>
 				<div class="coupon-box-list" v-else>
 					<div class="coupon" v-for="item in 3" :style="{marginRight: (40-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/style1-bg.png">
+						<img src="{$resource_path}/img/style1-bg.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}">￥<span>500</span></p>
 							<p class="coupon-desc" :style="{color: nc.limitColor}">满3000可用</p>
@@ -30,7 +30,7 @@
 			<div class="coupon-box coupon-box-2" v-else-if="nc.style == 2" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
 				<template v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
 					<div class="coupon"  v-for="(item, index) in nc.previewList" v-if="index <= 3"  :style="{marginRight: (41-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/coupon_bg.png">
+						<img src="{$resource_path}/img/coupon_bg.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-if="item.type == 'reward'">￥<span>{{nc.tempData.methods.moneyConduct(item.money)}}</span></p>
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-else><span>{{nc.tempData.methods.moneyConduct(item.discount)}}</span>折</p>
@@ -42,7 +42,7 @@
 				</template>
 				<template v-else>
 					<div class="coupon" v-for="item in 3" :style="{marginRight: (41-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/coupon_bg.png">
+						<img src="{$resource_path}/img/coupon_bg.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}">￥<span>500</span></p>
 							<p class="coupon-desc" :style="{color: nc.limitColor}">满3000元可用</p>
@@ -54,7 +54,7 @@
 			<div class="coupon-box" :class="'coupon-box-'+ nc.style" v-if="nc.style == 3" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
 				<div class="coupon-block" v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
 					<div class="coupon" v-for="(item, previewIndex) in nc.previewList" v-if="previewIndex < 3" :style="{marginRight: (46-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/style3-bg-2.png">
+						<img src="{$resource_path}/img/style3-bg-2.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-if="item.type == 'reward'">￥<span>{{nc.tempData.methods.moneyConduct(item.money)}}</span></p>
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-else><span>{{nc.tempData.methods.moneyConduct(item.discount)}}</span>折</p>
@@ -68,7 +68,7 @@
 				</div>
 				<div class="coupon-block" v-else>
 					<div class="coupon" v-for="item in 3" :style="{marginRight: (46-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/style3-bg-2.png">
+						<img src="{$resource_path}/img/style3-bg-2.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}">￥<span>500</span></p>
 							<p class="coupon-desc" :style="{color: nc.limitColor}">满3000元可用</p>
@@ -82,7 +82,7 @@
 			<div class="coupon-box" :class="'coupon-box-'+ nc.style" v-else-if="nc.style == 4" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
 				<template v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
 					<div class="coupon" v-for="(item, previewIndex) in nc.previewList" v-if="previewIndex < 3" :style="{marginRight: (44-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/style4-bg-1.png">
+						<img src="{$resource_path}/img/style4-bg-1.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-if="item.type == 'reward'">￥<span>{{nc.tempData.methods.moneyConduct(item.money)}}</span></p>
 							<p class="coupon-price" :style="{color: nc.moneyColor}" v-else><span>{{nc.tempData.methods.moneyConduct(item.discount)}}</span>折</p>
@@ -94,7 +94,7 @@
 				</template>
 				<template v-else>
 					<div class="coupon" v-for="item in 3" :style="{marginRight: (44-nc.margin.both*2)/2 + 'px'}">
-						<img src="{$resource_path}/coupon/img/style4-bg-1.png">
+						<img src="{$resource_path}/img/style4-bg-1.png">
 						<div class="coupon-intro">
 							<p class="coupon-price" :style="{color: nc.moneyColor}">￥<span>100</span></p>
 							<p class="coupon-desc" :style="{color: nc.limitColor}">满1000可用</p>
@@ -107,7 +107,7 @@
 			<div class="coupon-box" :class="'coupon-box-'+ nc.style" v-else-if="nc.style == 5" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
 				<template v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
 					<div class="coupon" v-for="item in nc.previewList">
-						<img src="{$resource_path}/coupon/img/style5-bg-1.png">
+						<img src="{$resource_path}/img/style5-bg-1.png">
 						<div class="coupon-price" :style="{color: nc.moneyColor}" v-if="item.type == 'reward'">{{nc.tempData.methods.moneyConduct(item.money)}}<span>元</span>
 						</div>
 						<div class="coupon-price" :style="{color: nc.moneyColor}" v-else>{{nc.tempData.methods.moneyConduct(item.discount)}}<span>折</span>
@@ -125,7 +125,7 @@
 				</template>
 				<template v-else>
 					<div class="coupon" v-for="item in 2">
-						<img src="{$resource_path}/coupon/img/style5-bg-1.png">
+						<img src="{$resource_path}/img/style5-bg-1.png">
 						<div class="coupon-price" :style="{color: nc.moneyColor}">
 							100<span>元</span>
 						</div>
@@ -144,7 +144,7 @@
 			<div class="coupon-box" :class="'coupon-box-'+ nc.style" v-else-if="nc.style == 6" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
 				<template v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
 					<template v-for="(item, previewIndex) in nc.previewList">
-						<div class="coupon" v-if="previewIndex < 3" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/coupon/img/style6-bg-1.png)', marginRight: (43-nc.margin.both*2)/2 + 'px'}">
+						<div class="coupon" v-if="previewIndex < 3" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/img/style6-bg-1.png)', marginRight: (43-nc.margin.both*2)/2 + 'px'}">
 							<div class="coupon-content" :style="{color: nc.moneyColor}">
 								<div class="price-wrap">
 									<span class="price">{{ nc.tempData.methods.moneyConduct(item.type == 'reward' ? item.money : item.discount)}}</span>
@@ -158,7 +158,7 @@
 						</div>
 					</template>
 
-					<div v-if="nc.previewList.length <= 2" class="coupon coupon-null" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/coupon/img/style6-bg-2.png)'}">
+					<div v-if="nc.previewList.length <= 2" class="coupon coupon-null" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/img/style6-bg-2.png)'}">
 						<div class="coupon-content" :style="{color: nc.moneyColor}">
 							<span class="price">+</span>
 							<span class="text">暂无优惠券</span>
@@ -167,7 +167,7 @@
 					</div>
 				</template>
 				<template v-else>
-					<div class="coupon" v-for="item in 2" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/coupon/img/style6-bg-1.png)', marginRight: (43-nc.margin.both*2)/2 + 'px'}" >
+					<div class="coupon" v-for="item in 2" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/img/style6-bg-1.png)', marginRight: (43-nc.margin.both*2)/2 + 'px'}" >
 						<div class="coupon-content" :style="{color: nc.moneyColor}">
 							<div class="price-wrap">
 								<span class="price">10</span>
@@ -178,12 +178,45 @@
 						<span class="btn" :style="{color: nc.btnStyle.textColor,backgroundColor: nc.btnStyle.bgColor, borderTopLeftRadius: (nc.btnStyle.aroundRadius+'px'), borderBottomLeftRadius: (nc.btnStyle.aroundRadius+'px')}"><span>{{nc.btnStyle.text}}</span></span>
 						<span class="limit" :style="{color: nc.limitColor}">满129使用</span>
 					</div>
-					<div class="coupon coupon-null" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/coupon/img/style6-bg-2.png)'}">
+					<div class="coupon coupon-null" :style="{color: nc.moneyColor,backgroundImage: 'url({$resource_path}/img/style6-bg-2.png)'}">
 						<div class="coupon-content" :style="{color: nc.moneyColor}">
 							<span class="price">+</span>
 							<span class="text">暂无优惠券</span>
 						</div>
 						<span class="limit">去逛逛</span>
+					</div>
+				</template>
+			</div>
+
+			<div class="coupon-box" :class="'coupon-box-'+ nc.style" v-else-if="nc.style == 7" :style="[nc.couponType == 'img'&&{backgroundImage: 'url('+ changeImgUrl(nc.couponBgUrl) + ')'},nc.couponType == 'color'&&{backgroundColor: nc.couponBgColor}]">
+				<template v-if="nc.sources == 'diy' && nc.couponIds.length > 0">
+					<div class="coupon" v-for="item in nc.previewList">
+						<img src="{$resource_path}/img/style7-bg-1.png">
+						<div class="coupon-price" :style="{color: nc.moneyColor}" v-if="item.type == 'reward'">{{nc.tempData.methods.moneyConduct(item.money)}}<span>元</span>
+						</div>
+						<div class="coupon-price" :style="{color: nc.moneyColor}" v-else>{{nc.tempData.methods.moneyConduct(item.discount)}}<span>折</span>
+						</div>
+						<div class="coupon-intro">
+							<p class="coupon-name" :style="{color: nc.limitColor}" v-if="parseFloat(item.at_least) > 0">满{{item.at_least.split('.')[0]}}元可用</p>
+							<p class="coupon-name" :style="{color: nc.limitColor}" v-else>无门槛使用</p>
+							<p class="coupon-desc" :style="{color: nc.limitColor}">有效期至2022-12-31</p>
+						</div>
+						<div class="coupon-line"></div>
+						<div class="coupon-btn" :style="{color: nc.btnStyle.textColor,backgroundColor: nc.btnStyle.bgColor, borderRadius: (nc.btnStyle.aroundRadius+'px')}">{{nc.btnStyle.text}}</div>
+					</div>
+				</template>
+				<template v-else>
+					<div class="coupon" v-for="item in 2">
+						<img src="{$resource_path}/img/style7-bg-1.png">
+						<div class="coupon-price" :style="{color: nc.moneyColor}">
+							100<span>元</span>
+						</div>
+						<div class="coupon-intro">
+							<p :style="{color: nc.limitColor}" class="coupon-name">满1000元可用</p>
+							<p :style="{color: nc.limitColor}" class="coupon-desc">有效期至2022-12-31</p>
+						</div>
+						<div class="coupon-line"></div>
+						<div class="coupon-btn" :style="{color: nc.btnStyle.textColor,backgroundColor: nc.btnStyle.bgColor, borderRadius: (nc.btnStyle.aroundRadius+'px')}">{{nc.btnStyle.text}}</div>
 					</div>
 				</template>
 			</div>
@@ -274,33 +307,37 @@
 			<div class="style-list-coupon layui-form">
 				<div class="style-list-con-coupon">
 					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 1}">
-						<img src="{$resource_path}/coupon/img/style1.png" />
+						<img src="{$resource_path}/img/style1.png" />
 						<span class="layui-hide">风格一</span>
 					</div>
 					
 					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 2}">
-						<img src="{$resource_path}/coupon/img/style2.png" />
+						<img src="{$resource_path}/img/style2.png" />
 						<span class="layui-hide">风格二</span>
 					</div>
 					
 					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 3}">
-						<img src="{$resource_path}/coupon/img/style3.png" />
+						<img src="{$resource_path}/img/style3.png" />
 						<span class="layui-hide">风格三</span>
 					</div>
 					
 					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 4}">
-						<img src="{$resource_path}/coupon/img/style4.png" />
+						<img src="{$resource_path}/img/style4.png" />
 						<span class="layui-hide">风格四</span>
 					</div>
 
 					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 5}">
-						<img src="{$resource_path}/coupon/img/style5.png" />
+						<img src="{$resource_path}/img/style5.png" />
 						<span class="layui-hide">风格五</span>
 					</div>
 
 					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 6}">
-						<img src="{$resource_path}/coupon/img/style6.png" />
+						<img src="{$resource_path}/img/style6.png" />
 						<span class="layui-hide">风格六</span>
+					</div>
+					<div class="style-li-coupon" :class="{'selected border-color': nc.style == 7}">
+						<img src="{$resource_path}/img/style7.png" />
+						<span class="layui-hide">风格七</span>
 					</div>
 
 				</div>
@@ -358,8 +395,8 @@
 		<js>
 			var couponResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/coupon/css/design.css"></css>
-		<js src="{$resource_path}/coupon/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 
 </nc-component>

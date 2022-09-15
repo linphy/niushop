@@ -92,6 +92,8 @@ class GdClass
      * @param $fill_color
      */
     public function thumb($image, $width, $height, $fit = 'center', $fill_color = 'ffffff'){
+
+
         if(!empty($fit)){
             $image = $image->fit($width, $height, function ($constraint) {
 //                $constraint->aspectRatio();

@@ -29,7 +29,8 @@ class SiteAddress extends BaseModel
     {
         model('site_address')->startTrans();
         try {
-            if (empty($data['site_id']) || empty($data['contact_name']) || empty($data['mobile']) || empty($data['province_id']) || empty($data['city_id']) || empty($data['district_id']) || empty($data['address']) || empty($data['full_address'])){
+
+            if (empty($data['site_id']) || empty($data['contact_name']) || empty($data['mobile']) || empty($data['province_id']) || empty($data['city_id']) || empty($data['address']) || empty($data['full_address'])){
                 return $this->error('','参数错误');
             }
             $data[ "update_time" ] = time();
@@ -57,7 +58,7 @@ class SiteAddress extends BaseModel
     {
         model('site_address')->startTrans();
         try {
-            if (empty($data['contact_name']) || empty($data['mobile']) || empty($data['province_id']) || empty($data['city_id']) || empty($data['district_id']) || empty($data['address']) || empty($data['full_address'])){
+            if (empty($data['contact_name']) || empty($data['mobile']) || empty($data['province_id']) || empty($data['city_id']) || empty($data['address']) || empty($data['full_address'])){
                 return $this->error('','参数错误');
             }
             if($data['is_return_default'] == 1){

@@ -31,8 +31,7 @@ class MemberReceiveRegisterGift
         $register_model       = new RegisterModel();
         $member_account_model = new MemberAccountModel();
 
-        $register_config = $register_model->getConfig($param['site_id']);
-        $register_config = $register_config['data'];
+        $register_config = $register_model->getConfig($param['site_id'])['data'];
 
         $res = [];
         if ($register_config['is_use']) {

@@ -64,9 +64,6 @@ class Ordercreate extends BaseApi
         if (empty($data[ 'bl_id' ])) {
             return $this->response($this->error('', '缺少必填参数商品数据'));
         }
-        if($data['buyer_ask_delivery_time']){
-            $data['buyer_ask_delivery_time'] = strtotime($data["buyer_ask_delivery_time"]);
-        }
         $res = $order_create->create($data);
         return $this->response($res);
     }

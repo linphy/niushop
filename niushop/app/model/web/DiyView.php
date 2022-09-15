@@ -21,7 +21,7 @@ class DiyView extends BaseModel
 {
 
     // 系统自定义页面
-    private $page = [ 'DIY_VIEW_INDEX', 'DIY_VIEW_GOODS_CATEGORY', 'DIY_STORE', 'DIY_FENXIAO_MARKET' ];
+    private $page = [ 'DIY_VIEW_INDEX', 'DIY_VIEW_GOODS_CATEGORY', 'DIY_VIEW_MEMBER_INDEX', 'DIY_STORE', 'DIY_FENXIAO_MARKET' ];
 
     // 图标分类，（后续可以扩展分类：建筑、家具、母婴、动物、医疗）
     private $icon_type = [
@@ -36,10 +36,27 @@ class DiyView extends BaseModel
         'icon-tourism' => '旅游',
     ];
 
+    private $icon_path = 'public/static/ext/diyview/css/font/iconfont.css'; // iconfont文件地址
+
     // 获取系统自定义页面
     public function getPage()
     {
         return $this->page;
+    }
+
+    /**
+     * 组件分类
+     * @param $type
+     * @return mixed
+     */
+    public function getTypeName($type)
+    {
+        $arr = [
+            'SYSTEM' => '基础组件', // 排序号范围：10000~20000
+            'PROMOTION' => '营销组件', // 排序号范围：30000~40000
+            'EXTEND' => '扩展组件', // 排序号范围：50000~60000
+        ];
+        return $arr[ $type ];
     }
 
     /**
@@ -48,7 +65,84 @@ class DiyView extends BaseModel
      */
     public function getIconType()
     {
+        $extend_icon = event('DiyIcon', []); // 扩展图标库
+        if (!empty($extend_icon)) {
+            foreach ($extend_icon as $k => $v) {
+                if (!empty($v[ 'type' ])) {
+                    // 合并扩展图标库
+                    $this->icon_type = array_merge($this->icon_type, $v[ 'type' ]);
+                }
+            }
+        }
         return $this->icon_type;
+    }
+
+    /**
+     * 获取图标库
+     * @param $type
+     * @return array
+     */
+    public function getIconList($type)
+    {
+        $file_path = $this->icon_path; // iconfont文件地址
+        $icon_list = [];
+        if (file_exists($file_path)) {
+            $fp = fopen($file_path, "r");
+            $str = fread($fp, filesize($file_path)); // 指定读取大小，这里把整个文件内容读取出来
+            $exc = '/[.](' . $type . '\S+):before{1}/';// 匹配图标，格式：.icon名字:before
+            preg_match_all($exc, $str, $match);
+            sort($match[ 1 ]); // 按名称正序排序
+            foreach ($match[ 1 ] as $ck => $cv) {
+                $match[ 1 ][ $ck ] = 'icondiy ' . $cv; // 拼接字体图标名称
+            }
+            $icon_list = $match[ 1 ];
+        }
+        $extend_icon = event('DiyIcon', []); // 扩展图标库
+        if (!empty($extend_icon)) {
+            foreach ($extend_icon as $k => $v) {
+                if (!empty($v[ 'icon' ]) && !empty($v[ 'icon' ][ 'path' ])) {
+                    $file_path = $v[ 'icon' ][ 'path' ];
+                    if (file_exists($file_path)) {
+                        $fp = fopen($file_path, "r");
+                        $str = fread($fp, filesize($file_path)); // 指定读取大小，这里把整个文件内容读取出来
+                        $exc = '/[.](' . $type . '\S+):before{1}/';// 匹配图标，格式：.icon名字:before
+                        preg_match_all($exc, $str, $match);
+                        sort($match[ 1 ]); // 按名称正序排序
+                        foreach ($match[ 1 ] as $ck => $cv) {
+                            $match[ 1 ][ $ck ] = $v[ 'icon' ][ 'name' ] . ' ' . $cv; // 拼接字体图标名称
+                        }
+                        $icon_list = array_merge($icon_list, $match[ 1 ]);
+                    }
+                }
+            }
+        }
+        return $this->success($icon_list);
+    }
+
+    /**
+     * 获取图标库文件路径
+     * @return array
+     */
+    public function getIconUrl()
+    {
+        $url = [];
+        $url[] = __PUBLIC__ . '/static/' . str_replace('public/static/', '', $this->icon_path); // iconfont文件地址
+        $extend_icon = event('DiyIcon', []); // 扩展图标库
+        if (!empty($extend_icon)) {
+            foreach ($extend_icon as $k => $v) {
+                if (!empty($v[ 'icon' ]) && !empty($v[ 'icon' ][ 'path' ])) {
+                    $url[] = __ROOT__ . '/' . $v[ 'icon' ][ 'path' ]; // 自定义图标文件
+                }
+                if (!empty($v[ 'comp' ]) && !empty($v[ 'comp' ][ 'path' ])) {
+                    $url[] = __ROOT__ . '/' . $v[ 'comp' ][ 'path' ]; // 组件图标文件
+                }
+            }
+        }
+        foreach ($url as $k => $v) {
+            $url[ $k ] = '<link rel="stylesheet" type="text/css" href="' . $v . '" />';
+        }
+
+        return $this->success($url);
     }
 
     /**
@@ -258,20 +352,6 @@ class DiyView extends BaseModel
     }
 
     /**
-     * 组件分类
-     * @param $type
-     * @return mixed
-     */
-    public function getTypeName($type)
-    {
-        $arr = [
-            'SYSTEM' => '基础组件', // 排序：10000~11000
-            'PROMOTION' => '营销组件', // 排序：12000~13000
-        ];
-        return $arr[ $type ];
-    }
-
-    /**
      * 设置平台端的底部导航配置
      * @param $data
      * @param $site_id
@@ -304,8 +384,8 @@ class DiyView extends BaseModel
                 "bulge" => true,
                 "list" => [
                     [
-                        "iconPath" => "icon-system-shouyeweixuanzhongbeifen",
-                        "selectedIconPath" => "icon-system-shouyexuanzhongbeifen2",
+                        "iconPath" => "icondiy icon-system-shouyeweixuanzhongbeifen",
+                        "selectedIconPath" => "icondiy icon-system-shouyexuanzhongbeifen2",
                         "text" => "主页",
                         "link" => [
                             "name" => "INDEX",
@@ -339,8 +419,8 @@ class DiyView extends BaseModel
                         ]
                     ],
                     [
-                        "iconPath" => "icon-system-fenleiweixuanzhongbeifen2",
-                        "selectedIconPath" => "icon-system-fenleixuanzhongbeifen1",
+                        "iconPath" => "icondiy icon-system-fenleiweixuanzhongbeifen2",
+                        "selectedIconPath" => "icondiy icon-system-fenleixuanzhongbeifen1",
                         "text" => "商品分类",
                         "link" => [
                             "name" => "SHOP_CATEGORY",
@@ -374,8 +454,8 @@ class DiyView extends BaseModel
                         ]
                     ],
                     [
-                        "iconPath" => "icon-system-cart",
-                        "selectedIconPath" => "icon-system-cart-selected",
+                        "iconPath" => "icondiy icon-system-cart",
+                        "selectedIconPath" => "icondiy icon-system-cart-selected",
                         "text" => "购物车",
                         "link" => [
                             "name" => "SHOPPING_TROLLEY",
@@ -409,8 +489,8 @@ class DiyView extends BaseModel
                         ]
                     ],
                     [
-                        "iconPath" => "icon-system-my",
-                        "selectedIconPath" => "icon-system-my-selected",
+                        "iconPath" => "icondiy icon-system-my",
+                        "selectedIconPath" => "icondiy icon-system-my-selected",
                         "text" => "我的",
                         "link" => [
                             "name" => "MEMBER_CENTER",
@@ -514,9 +594,12 @@ class DiyView extends BaseModel
             return $this->success();
         }
 
-        $page_path = ''; // '/pages/index/index';
+        $page_path = 'pages_tool/index/diy';
         if ($diy_view_info[ 'name' ] == 'DIY_VIEW_GOODS_CATEGORY') {
             $page_path = '/pages/goods/category'; // 商品分类页面特殊处理
+        }
+        if ($diy_view_info[ 'name' ] == 'DIY_VIEW_MEMBER_INDEX') {
+            $page_path = '/pages/member/index'; // 会员中心页面特殊处理
         }
         $data = [
             'app_type' => "all", // all为全部
@@ -549,7 +632,7 @@ class DiyView extends BaseModel
                     if (!empty($params[ 'is_default' ]) && $diy_view_info[ 'name' ] == 'DIY_VIEW_INDEX') {
                         // 判断是否为首页
                         $path[ $k ][ 'url' ] = $h5_domain;
-                    } elseif ($diy_view_info[ 'name' ] == 'DIY_VIEW_GOODS_CATEGORY') {
+                    } elseif ($diy_view_info[ 'name' ] == 'DIY_VIEW_GOODS_CATEGORY' || $diy_view_info[ 'name' ] == 'DIY_VIEW_MEMBER_INDEX') {
                         $path[ $k ][ 'url' ] = $h5_domain . $page_path;
                     } else {
                         $path[ $k ][ 'url' ] = $h5_domain . '?name=' . $diy_view_info[ 'name' ] . '&is_default=' . $diy_view_info[ 'is_default' ];
@@ -642,376 +725,6 @@ class DiyView extends BaseModel
         }
     }
 
-    public function getMemberIndexDiyConfig($site_id)
-    {
-        $res = ( new ConfigModel() )->getConfig([
-            [ 'site_id', '=', $site_id ],
-            [ 'app_module', '=', 'shop' ],
-            [ 'config_key', '=', 'DIY_MEMBER_INDEX_CONFIG_SHOP_' . $site_id ]
-        ]);
-        if (!empty($res[ 'data' ][ 'value' ])) {
-            $custom = array_column($res[ 'data' ][ 'value' ][ 'menu' ][ 'menus' ], null, 'tag');
-            $res[ 'data' ][ 'value' ][ 'menu' ][ 'menus' ] = $this->getMemberMemus($site_id, $custom);
-        } else {
-            $res[ 'data' ][ 'value' ] = [
-                'member_info' => [
-                    'style' => 2,
-                    'margin' => '15px',
-                    'background_type' => 'system',
-                    'background' => [ '129deg', '#FF7130', '#FF1542' ]
-                ],
-                'order' => [
-                    'margin' => [ '15px', '15px', '0px', '15px' ],
-                    'radius' => [ '9px', '9px' ],
-                    'icon_style' => 0,
-                    'icon' => [
-                        'waitPay' => [
-                            'title' => '待付款',
-                            'icon' => 'icon-system-daifukuan2',
-                            'style' => [
-                                'bgRadius' => 0,
-                                'fontSize' => 65,
-                                'iconBgColor' => [],
-                                'iconBgColorDeg' => 0,
-                                'iconBgImg' => "",
-                                'iconColor' => [ "#FF7B1D", "#FF1544" ],
-                                'iconColorDeg' => 111,
-                            ]
-                        ],
-                        'waitSend' => [
-                            'title' => '待发货',
-                            'icon' => 'icon-system-daifahuo2',
-                            'style' => [
-                                'bgRadius' => 0,
-                                'fontSize' => 65,
-                                'iconBgColor' => [],
-                                'iconBgColorDeg' => 0,
-                                'iconBgImg' => "",
-                                'iconColor' => [ "#FF7B1D", "#FF1544" ],
-                                'iconColorDeg' => 111,
-                            ]
-                        ],
-                        'waitConfirm' => [
-                            'title' => '待收货',
-                            'icon' => 'icon-system-daishouhuo2',
-                            'style' => [
-                                'bgRadius' => 0,
-                                'fontSize' => 65,
-                                'iconBgColor' => [],
-                                'iconBgColorDeg' => 0,
-                                'iconBgImg' => "",
-                                'iconColor' => [ "#FF7B1D", "#FF1544" ],
-                                'iconColorDeg' => 111,
-                            ]
-                        ],
-                        'waitRate' => [
-                            'title' => '待评价',
-                            'icon' => 'icon-system-daipingjie2',
-                            'style' => [
-                                'bgRadius' => 0,
-                                'fontSize' => 65,
-                                'iconBgColor' => [],
-                                'iconBgColorDeg' => 0,
-                                'iconBgImg' => "",
-                                'iconColor' => [ "#FF7B1D", "#FF1544" ],
-                                'iconColorDeg' => 111,
-                            ]
-                        ],
-                        'refunding' => [
-                            'title' => '售后',
-                            'icon' => 'icon-system-shuhou2',
-                            'style' => [
-                                'bgRadius' => 0,
-                                'fontSize' => 65,
-                                'iconBgColor' => [],
-                                'iconBgColorDeg' => 0,
-                                'iconBgImg' => "",
-                                'iconColor' => [ "#FF7B1D", "#FF1544" ],
-                                'iconColorDeg' => 111,
-                            ]
-                        ]
-                    ],
-                ],
-                'menu' => [
-                    'style' => 'block',
-                    'margin' => [ '15px', '15px', '15px', '15px' ],
-                    'radius' => [ '9px', '9px' ],
-                    'menus' => $this->getMemberMemus($site_id)
-                ],
-                'adv' => [
-                    'margin' => [ '15px', '15px', '0px', '15px' ],
-                    'radius' => [ '9px', '9px' ],
-                    'list' => []
-                ]
-            ];
-        }
-        return $res;
-    }
-
-    /**
-     * 获取菜单
-     * @param $site_id
-     * @return array
-     */
-    public function getMemberMemus($site_id, $custom = [])
-    {
-        $menus = [
-            "userinfo" => [
-                "tag" => "userinfo",
-                "text" => "个人资料",
-                "img" => "public/uniapp/member/index/menu/default_person.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "MEMBER_INFO",
-                    "title" => "个人资料",
-                    "wap_url" => "/pages_tool/member/info",
-                    "parent" => "MALL_LINK"
-                ],
-                "icon" => "icon-system-idcard",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#44D7B7"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "address" => [
-                "tag" => "address",
-                "text" => "收货地址",
-                "img" => "public/uniapp/member/index/menu/default_address.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "SHIPPING_ADDRESS",
-                    "title" => "收货地址",
-                    "wap_url" => "/pages_tool/member/address",
-                    "parent" => "MALL_LINK"
-                ],
-                "icon" => "icon-system-delivery-address",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#fa6400"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "follow" => [
-                "tag" => "follow",
-                "text" => "我的关注",
-                "img" => "public/uniapp/member/index/menu/default_like.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "ATTENTION",
-                    "title" => "我的关注",
-                    "wap_url" => "/pages_tool/member/collection",
-                    "parent" => "MALL_LINK"
-                ],
-                "icon" => "icon-system-my-focus",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#6236ff"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "footprint" => [
-                "tag" => "footprint",
-                "text" => "我的足迹",
-                "img" => "public/uniapp/member/index/menu/default_toot.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "FOOTPRINT",
-                    "title" => "我的足迹",
-                    "wap_url" => "/pages_tool/member/footprint",
-                    "parent" => "MALL_LINK"
-                ],
-                "icon" => "icon-system-my-footprint",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#ff4d4d"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "memberwithdraw" => [
-                "tag" => "memberwithdraw",
-                "text" => "账户列表",
-                "img" => "public/uniapp/member/index/menu/default_cash.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "ACCOUNT",
-                    "title" => "账户列表",
-                    "wap_url" => "/pages_tool/member/account",
-                    "parent" => "MALL_LINK"
-                ],
-                "icon" => "icon-system-account-list",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#2e88fd"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "coupon" => [
-                "tag" => "coupon",
-                "text" => "优惠券",
-                "img" => "public/uniapp/member/index/menu/default_discount.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "COUPON",
-                    "title" => "优惠券",
-                    "wap_url" => "/pages_tool/member/coupon",
-                    "parent" => "MALL_LINK"
-                ],
-                "icon" => "icon-system-coupon",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#44D7B7"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "membersignin" => [
-                "tag" => "membersignin",
-                "text" => "签到",
-                "img" => "public/uniapp/member/index/menu/default_sign.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "SIGN_IN",
-                    "title" => "签到",
-                    "wap_url" => "/pages_tool/member/signin",
-                    "parent" => "MARKETING_LINK"
-                ],
-                "icon" => "icon-system-signin",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#ff4d4d"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1"
-            ],
-            "verifier" => [
-                "tag" => "verifier",
-                "text" => "核销台",
-                "img" => "public/uniapp/member/index/menu/default_verification.png",
-                "icon_type" => "icon",
-                "link" => [
-                    "name" => "VERIFICATION_PLATFORM",
-                    "title" => "核销台",
-                    "wap_url" => "/pages_tool/verification/index",
-                    "parent" => "MARKETING_LINK"
-                ],
-                "icon" => "icon-system-check-station",
-                "style" => [
-                    "fontSize" => 50,
-                    "iconBgColor" => [
-                        "#23b5ee"
-                    ],
-                    "iconBgColorDeg" => 0,
-                    "iconBgImg" => "public/static/ext/diyview/img/icon_bg/bg_03.png",
-                    "bgRadius" => 38,
-                    "iconColor" => [
-                        "#FFFFFF"
-                    ],
-                    "iconColorDeg" => 0
-                ],
-                "isShow" => "1",
-                "isSystem" => "1",
-                "remark" => "成为核销员时显示"
-            ]
-        ];
-        // 判断与系统内置的菜单 差异部分
-        if (!empty($custom)) {
-            $diff = array_diff(array_keys($menus), array_keys($custom));
-            if (!empty($diff)) {
-                foreach ($diff as $key) {
-                    $custom[ $key ] = $menus[ $key ];
-                }
-            }
-            $menus = $custom;
-        }
-        $addons = model('addon')->getColumn([ [ 'status', '=', 1 ] ], 'name');
-        foreach ($menus as $addon => $item) {
-            if (in_array($addon, $addons)) $menus[ $addon ][ 'isShow' ] = $item[ 'isShow' ] && addon_is_exit($addon, $site_id) ? 1 : 0;
-        }
-        return array_values($menus);
-    }
-
-    /**
-     * 设置自定义会员中心配置
-     * @param $data
-     * @param $site_id
-     * @return array
-     */
-    public function setMemberIndexDiyConfig($data, $site_id)
-    {
-        $config = new ConfigModel();
-        $res = $config->setConfig($data, '自定义会员中心', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'DIY_MEMBER_INDEX_CONFIG_SHOP_' . $site_id ] ]);
-        return $res;
-    }
-
     /**
      * 修改微页面排序
      * @param $sort
@@ -1047,7 +760,7 @@ class DiyView extends BaseModel
             'site_id' => $params[ 'site_id' ],
             'name' => $params[ 'name' ] ?? ''
         ];
-        $template = event('showDiyTemplate', $data);
+        $template = event('ShowDiyTemplate', $data);
         // 如果只查询一项，则返回一个
         if (!empty($data[ 'name' ]) && !empty($template)) {
             $template = $template[ 0 ];
@@ -1068,35 +781,37 @@ class DiyView extends BaseModel
 
             if (!empty($params[ 'page' ])) {
                 foreach ($params[ 'page' ] as $k => $v) {
-                    $v[ 'site_id' ] = $params[ 'site_id' ];
-                    $v[ 'template_key' ] = $params[ 'name' ];
-                    $v[ 'is_default' ] = 1;
-                    $v[ 'value' ] = json_encode($v[ 'value' ]);
+                    if (!empty($v)) {
+                        $v[ 'site_id' ] = $params[ 'site_id' ];
+                        $v[ 'template_key' ] = $params[ 'name' ];
+                        $v[ 'is_default' ] = 1;
+                        $v[ 'value' ] = json_encode($v[ 'value' ]);
 
-                    // 检测模板页面是否存在，有则改，无则加
-                    $site_diy_view_info = $this->getSiteDiyViewInfo([
-                        [ 'name', '=', $v[ 'name' ] ],
-                        [ 'site_id', '=', $v[ 'site_id' ] ],
-                        [ 'template_key', '=', $v[ 'template_key' ] ],
-                        [ 'type', '=', $v[ 'type' ] ]
-                    ], 'id')[ 'data' ];
+                        // 检测模板页面是否存在，有则改，无则加
+                        $site_diy_view_info = $this->getSiteDiyViewInfo([
+                            [ 'name', '=', $v[ 'name' ] ],
+                            [ 'site_id', '=', $v[ 'site_id' ] ],
+                            [ 'template_key', '=', $v[ 'template_key' ] ],
+                            [ 'type', '=', $v[ 'type' ] ]
+                        ], 'id')[ 'data' ];
 
-                    // 清除默认页面
-                    $this->editSiteDiyView([ 'is_default' => 0 ], [
-                        [ 'site_id', '=', $params[ 'site_id' ] ],
-                        [ 'name', '=', $v[ 'name' ] ],
-                        [ 'type', '=', $v[ 'type' ] ]
-                    ]);
+                        // 清除默认页面
+                        $this->editSiteDiyView([ 'is_default' => 0 ], [
+                            [ 'site_id', '=', $params[ 'site_id' ] ],
+                            [ 'name', '=', $v[ 'name' ] ],
+                            [ 'type', '=', $v[ 'type' ] ]
+                        ]);
 
-                    if (!empty($site_diy_view_info)) {
-                        // 修改相同页面的默认标识
-                        $v[ 'modify_time' ] = time();
-                        $this->editSiteDiyView($v, [ [ 'id', '=', $site_diy_view_info[ 'id' ] ] ]);
-                    } else {
-                        $v[ 'create_time' ] = time();
-                        $this->addSiteDiyView($v);
+                        if (!empty($site_diy_view_info)) {
+                            // 修改相同页面的默认标识
+                            $v[ 'modify_time' ] = time();
+                            $this->editSiteDiyView($v, [ [ 'id', '=', $site_diy_view_info[ 'id' ] ] ]);
+                        } else {
+                            $v[ 'create_time' ] = time();
+                            $this->addSiteDiyView($v);
+                        }
+
                     }
-
                 }
             }
             model('site_diy_view')->commit();

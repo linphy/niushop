@@ -94,9 +94,9 @@
 				<div class="text-title-box" v-show="nc.text">
 					<div class="left"></div>
 					<div class="center">
-						<div><img src="{$resource_path}/text/img/style9-1.png" /></div>
+						<div><img src="{$resource_path}/img/style9-1.png" /></div>
 						<span class="text-title-con" :style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.text }}</span>
-						<div><img src="{$resource_path}/text/img/style9-2.png" /></div>
+						<div><img src="{$resource_path}/img/style9-2.png" /></div>
 					</div>
 					<div v-show="nc.more.isShow == 1" class="more" :style="{ color: nc.more.color, opacity: nc.more.color ? 1 : 0 }">{{nc.more.text}} <i class="iconfont iconyoujiantou"></i></div>
 				</div>
@@ -110,10 +110,10 @@
 				<div class="text-title-box" v-show="nc.text">
 					<div class="left"></div>
 					<div class="center">
-						<div><img src="{$resource_path}/text/img/style10-1.png" /></div>
+						<div><img src="{$resource_path}/img/style10-1.png" /></div>
 						<span class="text-title-con" :style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, paddingBottom: 3+'px', fontWeight: nc.fontWeight }">{{ nc.text }}</span>
-						<div><img src="{$resource_path}/text/img/style10-2.png" /></div>
-						<img src="{$resource_path}/text/img/style10-3.png" />
+						<div><img src="{$resource_path}/img/style10-2.png" /></div>
+						<img src="{$resource_path}/img/style10-3.png" />
 					</div>
 					<div v-show="nc.more.isShow == 1" class="more" :style="{ color: nc.more.color, opacity: nc.more.color ? 1 : 0 }">{{nc.more.text}} <i class="iconfont iconyoujiantou"></i></div>
 				</div>
@@ -132,8 +132,8 @@
 						</div>
 					</div>
 					<div v-show="nc.more.isShow == 1" class="more" :style="{ color: nc.more.color, opacity: nc.more.color ? 1 : 0 }"><span>{{nc.more.text}}</span> <i class="iconfont iconyoujiantou"></i></div>
-					<img class="left-img" src="{$resource_path}/text/img/style11-1.png" />
-					<img class="right-img" src="{$resource_path}/text/img/style11-2.png" />
+					<img class="left-img" src="{$resource_path}/img/style11-1.png" />
+					<img class="right-img" src="{$resource_path}/img/style11-2.png" />
 				</div>
 			</div>
 
@@ -149,9 +149,9 @@
 			<!-- 图十三 -->
 			<div class="text-title" :class="'text-'+ nc.style" v-else-if="nc.style == 'style-13'" >
 				<div class="text-title-box" v-show="nc.text">
-					<img class="left-img" src="{$resource_path}/text/img/style13-1.png" />
+					<img class="left-img" src="{$resource_path}/img/style13-1.png" />
 					<span class="text-title" :style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, opacity: nc.textColor ? 1 : 0,fontWeight: nc.fontWeight }">{{ nc.text }}</span>
-					<img class="right-img" src="{$resource_path}/text/img/style13-1.png" />
+					<img class="right-img" src="{$resource_path}/img/style13-1.png" />
 				</div>
 			</div>
 
@@ -199,7 +199,7 @@
 				<div class="text-title-box" v-show="nc.text">
 					<span class="title" :style="{ fontSize : nc.fontSize + 'px', color : nc.textColor, fontWeight: nc.fontWeight }">{{ nc.text }}</span>
 					<div class="sub-title" v-show="nc.subTitle.text" :style="{ backgroundColor: nc.subTitle.bgColor, fontSize : nc.subTitle.fontSize + 'px', color: nc.subTitle.color, opacity: nc.subTitle.color ? 1 : 0 }">
-						<i :class="['icondiy',nc.subTitle.icon]" :style="{ backgroundColor: nc.subTitle.bgColor}"></i>
+						<i :class="[nc.subTitle.icon]" :style="{ backgroundColor: nc.subTitle.bgColor}"></i>
 						<span :style="{ fontWeight: nc.subTitle.fontWeight}">{{nc.subTitle.text}}</span>
 					</div>
 					<div v-show="nc.more.isShow == 1" class="more" :style="{ color: nc.more.color, opacity: nc.more.color ? 1 : 0 }"><span>{{nc.more.text}}</span> <i class="iconfont iconyoujiantou"></i></div>
@@ -257,7 +257,7 @@
 					<div class="style-list-con">
 						<div class="style-li" v-for="(value,name,index) in nc.tempData.styleList" :key="name" :class="{'selected border-color': nc.style == name}" :data_key="name">
 							<span class="layui-hide">风格{{index + 1}}</span>
-							<img :src="'{$resource_path}/text/img/style' + (index+1) + '.png'" />
+							<img :src="'{$resource_path}/img/style' + (index+1) + '.png'" />
 						</div>
 					</div>
 					<input type="hidden" name="style">
@@ -273,15 +273,14 @@
 		<template v-if="nc.lazyLoad">
 			<div class="template-edit-title">
 				<h3>标题样式</h3>
-				<text-font-size :data="{ field : 'fontSize', label : '文字大小', max: 16 }"></text-font-size>
+				<slide :data="{ field : 'fontSize', label : '文字大小', min: 12, max : 20 }"></slide>
 				<text-font-weight></text-font-weight>
 				<color :data="{ field : 'textColor', label : '文字颜色',defaultColor : '#303133'}"></color>
 			</div>
 
 			<div class="template-edit-title" v-if="nc.subTitle.isElementShow">
 				<h3>副标题样式</h3>
-
-				<text-font-size :data="{ field : 'fontSize', label : '文字大小', max: 14,parent : 'subTitle' }"></text-font-size>
+				<slide :data="{ field : 'fontSize',parent:'subTitle', label : '文字大小', min: 12, max : 16 }"></slide>
 				<color :data="{ field : 'color', label : '文字颜色', parent : 'subTitle',defaultColor : '#999999'}"></color>
 				<div v-show="nc.style == 'style-16'">
 					<color :data="{ field : 'bgColor', label : '背景颜色', parent : 'subTitle',defaultColor: ''}"></color>
@@ -312,8 +311,8 @@
 		<js>
 			var textResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/text/css/design.css"></css>
-		<js src="{$resource_path}/text/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 
 </nc-component>

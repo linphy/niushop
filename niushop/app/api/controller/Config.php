@@ -11,6 +11,7 @@
 
 namespace app\api\controller;
 
+use app\model\express\Config as ExpressConfig;
 use app\model\goods\Cart as CartModel;
 use app\model\system\Servicer;
 use app\model\web\Config as ConfigModel;
@@ -138,5 +139,14 @@ class Config extends BaseApi
         $config_model = new ConfigModel();
         $config_info = $config_model->getCategoryConfig($this->site_id);
         return $this->response($this->success($config_info[ 'data' ][ 'value' ]));
+    }
+
+    /**
+     *
+     * @return false|string
+     */
+    public function enabledExpressType(){
+        $express_type = (new ExpressConfig())->getEnabledExpressType($this->site_id);
+        return $this->response($this->success($express_type));
     }
 }

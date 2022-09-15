@@ -41,27 +41,29 @@
 </script>
 
 <script type="text/html" id="upgrade_desc">
-    <div><span>需更新版本数：{{d.scripts.length}}</span></div>
-    <table class="layui-table" lay-skin="lg">
-        <colgroup>
-            <col width="20%">
-            <col width="80%">
-        </colgroup>
-        <thead>
-            <tr>
-                <th>版本号</th>
-                <th>更新说明</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#  layui.each(d.scripts, function(index, item){  }}
-            <tr>
-                <td>{{item.version_no}}</td>
-                <td>{{item.description}}</td>
-            </tr>
-            {{#  })  }}
-        </tbody>
-    </table>
+    <div style="height:100%; overflow-y: auto;">
+        <div><span>需更新版本数：{{d.scripts.length}}</span></div>
+        <table class="layui-table" lay-skin="lg">
+            <colgroup>
+                <col width="20%">
+                <col width="80%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>版本号</th>
+                    <th>更新说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#  layui.each(d.scripts, function(index, item){  }}
+                <tr>
+                    <td>{{item.version_no}}</td>
+                    <td>{{item.description}}</td>
+                </tr>
+                {{#  })  }}
+            </tbody>
+        </table>
+    </div>
 </script>
 
 <script type="text/html" id="upgrade_file">
@@ -209,7 +211,7 @@
                 layer.open({
                     type: 1,
                     title: '更新说明',
-                    area: ['700px', '500px'],
+                    area: ['700px', '600px'],
                     content: html
                 });
             })
@@ -222,7 +224,7 @@
                 layer.open({
                     type: 1,
                     title: '更新文件',
-                    area: ['700px', '500px'],
+                    area: ['700px', '600px'],
                     content: html
                 });
             })

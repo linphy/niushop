@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace app\model\system;
 
@@ -127,8 +126,7 @@ class H5 extends BaseModel
     private function paramReplace($string)
     {
         $api_model = new Api();
-        $api_config = $api_model->getApiConfig();
-        $api_config = $api_config['data'];
+        $api_config = $api_model->getApiConfig()['data'];
 
         $web_config_model = new Config();
         $web_config = $web_config_model->getMapConfig();

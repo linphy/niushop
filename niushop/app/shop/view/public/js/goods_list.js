@@ -1227,7 +1227,7 @@ function batchSetting(){
 
 			if(type == 'calculate'){
 				field.sign = patent_obj.find('[name="sign"]').val();
-				field.precise = patent_obj.find('[name="precise"]').val();
+				field.precise = patent_obj.find('[name="precise"]:checked').val();
 				field.calculate_price = patent_obj.find('[name="calculate_price"]').val();
 				field.calculate_price_type = patent_obj.find('[name="calculate_price_type"]').val();
 			}

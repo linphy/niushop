@@ -201,56 +201,59 @@ class VirtualOrder extends OrderCommon
         $goods_info = model('goods')->getInfo([['goods_id', '=', $goods_id]], 'goods_class,is_need_verify,virtual_deliver_type');
 
         if ($order_info['is_lock'] == 0) {
-            if ($goods_info['goods_class'] == 2) {
-                switch($goods_info['virtual_deliver_type']){
-                    case 'auto_deliver'://自动发货
-                        $result = $this->virtualDelivery($order_info);//
-                        break;
-                    case 'artificial_deliver'://手动发货
+            if (in_array($order_info['promotion_type'], ['pintuan', 'pinfan'])) {
+            } else {
+                if ($goods_info['goods_class'] == 2) {
 
-                        break;
-                    case 'verify'://到店核销
+                    switch ($goods_info['virtual_deliver_type']) {
+                        case 'auto_deliver'://自动发货
+                            $result = $this->virtualDelivery($order_info);//
+                            break;
+                        case 'artificial_deliver'://手动发货
 
-                        $order_status_item = $this->order_status[self::ORDER_DELIVERY];
-                        $order_status_item['action'] = [];
-                        $order_status_item['member_action'] = [];
-                        $data = array(
-                            'order_status' => self::ORDER_DELIVERY,
-                            'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
-                            'order_status_action' => json_encode($order_status_item, JSON_UNESCAPED_UNICODE),
-                        );
-                        $res = model('order')->update($data, [['order_id', "=", $order_info['order_id']]]);
+                            break;
+                        case 'verify'://到店核销
 
-                        if($goods_info['is_need_verify']){
-                            //虚拟产品发货
-                            $this->virtualOrderTakeDelivery($order_info['order_id']);
-                        }else{
-                            //虚拟产品收货
-                            $this->orderCommonTakeDelivery($order_info['order_id']);
-                        }
-                        break;
-                }
+                            $order_status_item = $this->order_status[self::ORDER_DELIVERY];
+                            $order_status_item['action'] = [];
+                            $order_status_item['member_action'] = [];
+                            $data = array(
+                                'order_status' => self::ORDER_DELIVERY,
+                                'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
+                                'order_status_action' => json_encode($order_status_item, JSON_UNESCAPED_UNICODE),
+                            );
+                            $res = model('order')->update($data, [['order_id', "=", $order_info['order_id']]]);
+
+                            if ($goods_info['is_need_verify']) {
+                                //虚拟产品发货
+                                $this->virtualOrderTakeDelivery($order_info['order_id']);
+                            } else {
+                                //虚拟产品收货
+                                $this->orderCommonTakeDelivery($order_info['order_id']);
+                            }
+                            break;
+                    }
 
 
-            } elseif ($goods_info['goods_class'] == 3) {
-                $order_status_item = $this->order_status[self::ORDER_DELIVERY];
-                $order_status_item['action'] = [];
-                $order_status_item['member_action'] = [];
-                $data = array(
-                    'order_status' => self::ORDER_DELIVERY,
-                    'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
-                    'order_status_action' => json_encode($order_status_item, JSON_UNESCAPED_UNICODE),
-                );
-                $res = model('order')->update($data, [['order_id', "=", $order_info['order_id']]]);
+                } elseif ($goods_info['goods_class'] == 3) {
+                    $order_status_item = $this->order_status[self::ORDER_DELIVERY];
+                    $order_status_item['action'] = [];
+                    $order_status_item['member_action'] = [];
+                    $data = array(
+                        'order_status' => self::ORDER_DELIVERY,
+                        'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
+                        'order_status_action' => json_encode($order_status_item, JSON_UNESCAPED_UNICODE),
+                    );
+                    $res = model('order')->update($data, [['order_id', "=", $order_info['order_id']]]);
 
-                // 卡密商品发货
-                $result = $this->virtualcardTakeDelivery($order_info['order_id']);
-                if($result['code'] < 0){
-                    return $result;
+                    // 卡密商品发货
+                    $result = $this->virtualcardTakeDelivery($order_info['order_id']);
+                    if ($result['code'] < 0) {
+                        return $result;
+                    }
                 }
             }
         }
-
         return $this->success($res);
     }
 
@@ -487,6 +490,11 @@ class VirtualOrder extends OrderCommon
      */
     public function virtualDelivery($params){
         $order_id = $params['order_id'] ?? 0;
+        //todo  核验订单是否处于锁定
+        $local_result = $this->verifyOrderLock($order_id);
+        if ($local_result[ 'code' ] < 0)
+            return $local_result;
+
         $site_id = $params['site_id'] ?? 0;
         $condition = [['order_id', "=", $params['order_id']]];
         if($site_id > 0){
@@ -537,6 +545,65 @@ class VirtualOrder extends OrderCommon
         $result = $this->orderCommonTakeDelivery($order_id);
         if($result['code'] < 0){
             return $result;
+        }
+        return $this->success();
+    }
+
+
+    /**
+     * to发送
+     * @param $params
+     */
+    public function toSend($params){
+        $order_id = $params['order_id'];
+        $goods_id = model('order_goods')->getValue([['order_id', '=', $order_id]], 'goods_id');
+        //判断商品是否需要核销
+        $goods_info = model('goods')->getInfo([['goods_id', '=', $goods_id]], 'goods_class,is_need_verify,virtual_deliver_type');
+        $order_info = model('order')->getInfo([['order_id', '=', $order_id]]);
+        if ($goods_info['goods_class'] == 2) {
+            switch($goods_info['virtual_deliver_type']){
+                case 'auto_deliver'://自动发货
+                    $result = $this->virtualDelivery($order_info);//
+                    break;
+                case 'artificial_deliver'://手动发货
+
+                    break;
+                case 'verify'://到店核销
+
+                    $order_status_item = $this->order_status[self::ORDER_DELIVERY];
+                    $order_status_item['action'] = [];
+                    $order_status_item['member_action'] = [];
+                    $data = array(
+                        'order_status' => self::ORDER_DELIVERY,
+                        'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
+                        'order_status_action' => json_encode($order_status_item, JSON_UNESCAPED_UNICODE),
+                    );
+                    $res = model('order')->update($data, [['order_id', "=", $order_info['order_id']]]);
+
+                    if($goods_info['is_need_verify']){
+                        //虚拟产品发货
+                        $this->virtualOrderTakeDelivery($order_info['order_id']);
+                    }else{
+                        //虚拟产品收货
+                        $this->orderCommonTakeDelivery($order_info['order_id']);
+                    }
+                    break;
+            }
+        } elseif ($goods_info['goods_class'] == 3) {
+            $order_status_item = $this->order_status[self::ORDER_DELIVERY];
+            $order_status_item['action'] = [];
+            $order_status_item['member_action'] = [];
+            $data = array(
+                'order_status' => self::ORDER_DELIVERY,
+                'order_status_name' => $this->order_status[self::ORDER_DELIVERY]["name"],
+                'order_status_action' => json_encode($order_status_item, JSON_UNESCAPED_UNICODE),
+            );
+            $res = model('order')->update($data, [['order_id', "=", $order_info['order_id']]]);
+            // 卡密商品发货
+            $result = $this->virtualcardTakeDelivery($order_info['order_id']);
+            if($result['code'] < 0){
+                return $result;
+            }
         }
         return $this->success();
     }

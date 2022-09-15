@@ -51,9 +51,8 @@ class OrderMessage extends BaseModel
         // 发送短信
         if (!empty($member_info) && !empty($member_info['mobile'])) {
             $var_parse = array(
-                'goodsname' => $order_info['order_name'],//商品名称
-                'expiretime' => time_to_date($execute_time),
-                'url' => '/'. $this->handleUrl($order_info['order_type'], $data['order_id'])
+                'goodsname' => replaceSpecialChar(str_sub($order_info['order_name'])),//商品名称
+                'expiretime' => date('d', $execute_time).'日'.date('H', $execute_time).'时'.date('i', $execute_time).'分'
             );
             $data["sms_account"] = $member_info["mobile"];//手机号
             $data["var_parse"] = $var_parse;
@@ -487,7 +486,7 @@ class OrderMessage extends BaseModel
         $data["template_data"] = [
             'keyword1' => $order_info['order_no'],
             'keyword2' => $order_goods_info["refund_apply_money"],
-            'keyword3' => time_to_date($order_goods_info['refund_time']),
+            'keyword3' => time_to_date(time()),
         ];
         $data["page"] = $this->handleUrl($order_info['order_type'], $order_id);
         $wechat_model->sendMessage($data);

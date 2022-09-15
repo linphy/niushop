@@ -21,7 +21,8 @@ class Local extends BaseModel
 {
     /**
      * 添加站点外卖配送配置
-     * @param unknown $data
+     * @param $data
+     * @return array
      */
     public function addLocal($data)
     {
@@ -45,7 +46,8 @@ class Local extends BaseModel
 
     /**
      * 删除站点外卖配送 (通常删除站点会用到)
-     * @param unknown $condition
+     * @param $condition
+     * @return array
      */
     public function deleteLocal($condition)
     {
@@ -94,6 +96,13 @@ class Local extends BaseModel
                 $area_array = explode(',', $info[ 'area_array' ]);
             }
             $info[ 'area_array' ] = $area_array;
+            if (empty($info['delivery_time'])) {
+                $info['delivery_time'] = [
+                    [ 'start_time' => $info['start_time'], 'end_time' => $info['end_time'] ]
+                ];
+            } else {
+                $info['delivery_time'] = json_decode($info['delivery_time'], true);
+            }
             Cache::tag('local')->set('local_getLocalInfo_' . $data, $info);
         }
         return $this->success($info);

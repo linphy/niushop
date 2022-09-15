@@ -68,8 +68,7 @@ class Member extends BaseModel
 
         $register_model = new RegisterModel();
 
-        $register_config = $register_model->getConfig($data[ 'site_id' ]);
-        $register_config = $register_config[ 'data' ];
+        $register_config = $register_model->getConfig($data[ 'site_id' ])[ 'data' ];
         if ($register_config[ 'is_use' ]) {
             $data[ 'can_receive_registergift' ] = 1;
         }
@@ -495,7 +494,7 @@ class Member extends BaseModel
 
         if ($total_count[ 'data' ]) {
             foreach ($list[ 'data' ] as $item) {
-                $count = $this->getMemberAreaCount([ [ 'nsm.site_id', '=', $site_id ], [ 'nma.is_default', '=', 1 ], [ 'nma.province_id', '=', $item[ 'id' ] ], [ 'nsm.is_delete', '=', 0 ] ], 'nsm', [ [ 'member_address nma', 'nsm.member_id = nma.member_id', 'left' ] ], 'nma.member_id');
+                $count = $this->getMemberAreaCount([ [ 'site_id', '=', $site_id ], [ 'province_id', '=', $item[ 'id' ] ], [ 'is_delete', '=', 0 ] ]);
                 if ($handle) {
                     if ($count[ 'data' ] > 0) {
                         array_push($data, [

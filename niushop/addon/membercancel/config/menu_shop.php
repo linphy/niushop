@@ -20,7 +20,6 @@ return [
                 'is_show' => 1,
                 'sort' => 1,
                 'child_list' => [
-
                 ]
             ],
             [

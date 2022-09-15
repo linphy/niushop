@@ -33,7 +33,7 @@ class Member extends BaseApi
         if ($token[ 'code' ] < 0) return $this->response($token);
 
         $member_model = new MemberModel();
-        $info = $member_model->getMemberInfo([ [ 'member_id', '=', $token[ 'data' ][ 'member_id' ], [ 'site_id', '=', $this->site_id ] ] ], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time,is_edit_username,is_fenxiao');
+        $info = $member_model->getMemberInfo([ [ 'member_id', '=', $token[ 'data' ][ 'member_id' ], [ 'site_id', '=', $this->site_id ] ] ], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time,is_edit_username,is_fenxiao,province_id,city_id,district_id,community_id,address,full_address,longitude,latitude');
         if (!empty($info[ 'data' ])) {
             $info[ 'data' ][ 'password' ] = empty($info[ 'data' ][ 'password' ]) ? 0 : 1;
 
@@ -510,6 +510,26 @@ class Member extends BaseApi
         $member_model = new MemberModel();
         $result = $member_model->alterShareRelation($this->member_id, $share_member, $this->site_id);
         return $this->response($result);
+    }
+
+    /**
+     * 修改会员地址
+     * @return false|string
+     */
+    public function modifyaddress(){
+        $token = $this->checkToken();
+        if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $data = [
+            'province_id' => $this->params['province_id'] ?? 0,
+            'city_id' => $this->params['city_id'] ?? 0,
+            'district_id' => $this->params['district_id'] ?? 0,
+            'address' => $this->params['address'] ?? '',
+            'full_address' => $this->params['full_address'] ?? ''
+        ];
+        $member_model = new MemberModel();
+        $res = $member_model->editMember($data, [ [ 'member_id', '=', $token[ 'data' ][ 'member_id' ], [ 'site_id', '=', $this->site_id ] ] ]);
+        return $this->response($res);
     }
 
 }

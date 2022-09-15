@@ -10,10 +10,12 @@
 
 namespace app\shop\controller;
 
+use addon\diy_default1\event\UseTemplate;
 use app\model\system\Addon;
 use app\model\system\Database;
 use app\model\system\Menu;
 use app\model\web\Config as ConfigModel;
+use app\model\web\DiyView as DiyViewModel;
 use extend\database\Database as dbdatabase;
 use think\facade\Cache;
 
@@ -28,40 +30,90 @@ class System extends BaseShop
     {
         if (request()->isAjax()) {
             $type = input("key", '');
-            $msg = '缓存更新成功';
-            switch ( $type ) {
-                case 'all':
-                    // 清除缓存
-                case 'content':
-                    Cache::clear();
-                    if ($type == 'content') {
+            $type_list = explode(',', $type);
+            $msg = '';
+            foreach ($type_list as $k => $v) {
+                switch ( $v ) {
+                    case 'content':
+                        Cache::clear();
                         $msg = '数据缓存清除成功';
                         break;
-                    }
-                // 数据表缓存清除
-                case 'data_table_cache':
-                    if (is_dir('runtime/schema')) {
-                        rmdirs("schema");
-                    }
-                    if ($type == 'data_table_cache') {
+                    case 'data_table_cache':
+                        // 数据表缓存清除
+                        if (is_dir('runtime/schema')) {
+                            rmdirs("schema");
+                        }
                         $msg = '数据表缓存清除成功';
                         break;
-                    }
-                // 模板缓存清除
-                case 'template_cache':
-                    if (is_dir('runtime/temp')) {
-                        rmdirs("temp");
-                    }
-                    if ($type == 'template_cache') {
+                    case 'template_cache':
+                        // 模板缓存清除
+                        if (is_dir('runtime/temp')) {
+                            rmdirs("temp");
+                        }
                         $msg = '模板缓存清除成功';
                         break;
-                    }
+                    case 'addon_cache':
+                        //刷新插件info
+                        $addon_model = new Addon();
+                        $addon_model->cacheAddon();
+                        $msg = '刷新插件成功';
+                        break;
+                    case 'addon_menu_cache':
+                        //刷新插件菜单
+                        $addon_model = new Addon();
+                        $addon_model->cacheAddonMenu();
+                        $msg = '刷新插件菜单成功';
+                        break;
+                    case 'shop_menu_cache':
+                        //刷新店铺端菜单
+                        $menu = new Menu();
+                        $menu->refreshMenu('shop', '');
+                        $msg = '刷新店铺端菜单成功';
+                        break;
+                    case 'diy_view':
+                        $this->refreshDiy();
+                        $msg = '刷新自定义模板成功';
+                        break;
+                    case 'handle_version_data_temp':
+                        $msg = $this->handleVersionDataTemp();// 处理升级版本数据遇到的数据问题（临时）
+                        $this->refreshDiy();
+                        Cache::clear();
+                        break;
+                    case 'all':
+                        // 清除缓存
+                        $msg = '一键刷新成功';
+                        break;
+                }
             }
             return success(0, $msg, '');
         } else {
             $config_model = new ConfigModel();
             $cache_list = $config_model->getCacheList();
 
+            $this->assign("cache_list", $cache_list);
+            return $this->fetch('system/cache');
+        }
+    }
+
+
+    public function cach1e()
+    {
+        if (request()->isAjax()) {
+            $type = input("key", '');
+            $type_list = explode(',', $type);
+            $msg = '';
+            foreach ($type_list as $k => $v) {
+                switch ( $v ) {
+                    case 'all':
+                        $msg = '一键刷新成功';
+                        break;
+                }
+            }
+
+            return success(0, $msg, '');
+        } else {
+            $config_model = new ConfigModel();
+            $cache_list = $config_model->getCacheList();
             $this->assign("cache_list", $cache_list);
             return $this->fetch('system/cache');
         }
@@ -414,40 +466,205 @@ class System extends BaseShop
      */
     public function refresh()
     {
-        try {
+        $menu = new Menu();
+        $res = $menu->refreshAllMenu();
+        var_dump($res);
+    }
 
-            $menu = new Menu();
-            $res = $menu->refreshMenu('shop', '');
-            //dd($res);
-            if (addon_is_exit('store', $this->site_id) == 1) {
-                $menu->refreshMenu('store', 'store');
-            };
-
-            $addon_model = new Addon();
-            $addon_list = $addon_model->getAddonList([], 'name');
-            $addon_list = $addon_list[ 'data' ];
-            foreach ($addon_list as $k => $v) {
-                var_dump($v[ 'name' ]);
-                $addon_shop_menu_res = $menu->refreshMenu('shop', $v[ 'name' ]);
-                var_dump($addon_shop_menu_res);
-            }
-            var_dump($res);
-        } catch (\Exception $e) {
-            var_dump("error：" . $e->getMessage());
+    /**
+     * 刷新自定义组件
+     */
+    public function refreshDiy()
+    {
+        $addon = new Addon();
+        $addon_list = $addon->getAddonList([], 'name')[ 'data' ];
+        $addon->refreshDiyView('');
+        foreach ($addon_list as $k => $v) {
+            $res = $addon->refreshDiyView($v[ 'name' ]);
         }
     }
 
     /**
-     * 刷新自定义组件 测试
+     * 处理升级版本数据遇到的数据问题（临时）
      */
-    public function refreshDiy()
+    public function handleVersionDataTemp()
     {
-        $arr = [ '', 'bargain', 'blindbox', 'coupon', 'divideticket', 'fenxiao', 'giftcard', 'groupbuy', 'hongbao', 'live', 'notes', 'pinfan', 'pintuan', 'pointexchange', 'presale', 'seckill', 'store', 'memberrecommend', 'topic' ];
-        $addon = new Addon();
-        foreach ($arr as $k => $v) {
-            $res = $addon->refreshDiyView($v);
-            var_dump($res);
+        $msg = '处理成功';
+        try {
+
+            model('goods_service')->startTrans();
+
+            // 处理商品服务图标问题
+            $goods_service_list = model('goods_service')->getList([ [ 'icon', '<>', '' ] ], 'id,icon');
+            if (!empty($goods_service_list)) {
+                foreach ($goods_service_list as $k => $v) {
+                    $v[ 'icon' ] = json_decode($v[ 'icon' ], true);
+                    $icon = $v[ 'icon' ][ 'icon' ];
+                    if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                        $v[ 'icon' ][ 'icon' ] = 'icondiy ' . $icon;
+                        model('goods_service')->update([ 'icon' => json_encode($v[ 'icon' ]) ], [ [ 'id', '=', $v[ 'id' ] ] ]);
+                    }
+                }
+            }
+
+            // 处理底部导航图标问题
+            $bottom_nav_config = model('config')->getInfo([ [ 'config_key', 'like', '%DIY_VIEW_SHOP_BOTTOM_NAV_CONFIG_SHOP_%' ] ], 'id,value');
+            if (!empty($bottom_nav_config) && !empty($bottom_nav_config[ 'value' ])) {
+                $value = json_decode($bottom_nav_config[ 'value' ], true);
+                if (!empty($value[ 'list' ])) {
+                    foreach ($value[ 'list' ] as $k => $v) {
+
+                        $iconPath = $v[ 'iconPath' ];
+                        if (!empty($iconPath) && strpos($iconPath, 'icondiy') === false) {
+                            $value[ 'list' ][ $k ][ 'iconPath' ] = 'icondiy ' . $iconPath;
+                        }
+
+                        $selectedIconPath = $v[ 'selectedIconPath' ];
+                        if (!empty($selectedIconPath) && strpos($selectedIconPath, 'icondiy') === false) {
+                            $value[ 'list' ][ $k ][ 'selectedIconPath' ] = 'icondiy ' . $selectedIconPath;
+                        }
+
+                    }
+                    model('config')->update([ 'value' => json_encode($value) ], [ [ 'id', '=', $bottom_nav_config[ 'id' ] ] ]);
+                }
+
+            }
+
+            // 处理会员中心
+            model('config')->delete([ [ 'config_key', 'like', '%DIY_MEMBER_INDEX_CONFIG_SHOP_%' ] ]);
+
+            $diy_view = new DiyViewModel();
+
+            $diy_view->deleteSiteDiyView([ [ 'name', '=', 'DIY_VIEW_MEMBER_INDEX' ] ]);
+
+            $diy_default_template = new UseTemplate();
+            $member_index_page = $diy_default_template->getMemberIndexPage();
+            $member_index_page[ 'site_id' ] = $this->site_id;
+            $member_index_page[ 'is_default' ] = 1;
+            $member_index_page[ 'value' ] = json_encode($member_index_page[ 'value' ]);
+
+            // 添加自定义会员中心页面
+            $diy_view->addSiteDiyView($member_index_page);
+
+            // 处理微页面数据、图标显示问题
+            $page = model('site_diy_view')->getList([], 'id,value');
+            foreach ($page as $k => $v) {
+                if (!empty($v[ 'value' ])) {
+                    $value = json_decode($v[ 'value' ], true);
+
+                    // 导航栏显示隐藏开关，默认开启
+                    if (!isset($value[ 'global' ][ 'navBarSwitch' ])) {
+                        $value[ 'global' ][ 'navBarSwitch' ] = true;
+                    }
+                    foreach ($value[ 'value' ] as $ck => $cv) {
+
+                        // 旧数据结构
+                        if (!empty($cv[ 'controller' ])) {
+
+                            if ($cv[ 'controller' ] == 'ImageAds') {
+                                $value[ 'value' ][ $ck ][ 'componentName' ] = $cv[ 'controller' ];
+                                $value[ 'value' ][ $ck ][ 'componentTitle' ] = $cv[ 'name' ];
+                                $value[ 'value' ][ $ck ][ 'indicatorColor' ] = '#ffffff';
+                                $value[ 'value' ][ $ck ][ 'carouselStyle' ] = 'circle';
+                                $value[ 'value' ][ $ck ][ 'isDelete' ] = 0;
+                                $value[ 'value' ][ $ck ][ 'pageBgColor' ] = '';
+                                $value[ 'value' ][ $ck ][ 'componentBgColor' ] = '';
+                                $value[ 'value' ][ $ck ][ 'componentAngle' ] = 'round';
+                                $value[ 'value' ][ $ck ][ 'topAroundRadius' ] = 0;
+                                $value[ 'value' ][ $ck ][ 'bottomAroundRadius' ] = 0;
+                                $value[ 'value' ][ $ck ][ 'topElementAroundRadius' ] = 0;
+                                $value[ 'value' ][ $ck ][ 'bottomElementAroundRadius' ] = 0;
+                                $value[ 'value' ][ $ck ][ 'margin' ] = [
+                                    "top" => 0,
+                                    "bottom" => 0,
+                                    "both" => 0
+                                ];
+
+                            }
+                        }
+
+                        if ($cv[ 'componentName' ] == 'Text') {
+                            // 标题组件
+                            if ($cv[ 'style' ] == 'style-16') {
+                                $icon = $cv[ 'subTitle' ][ 'icon' ];
+                                if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                                    $value[ 'value' ][ $ck ][ 'subTitle' ][ 'icon' ] = 'icondiy ' . $icon;
+                                }
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'Notice') {
+                            // 公告组件
+                            if (!isset($cv[ 'scrollWay' ])) {
+                                $cv[ 'scrollWay' ] = 'horizontal'; // 滚动方式
+                            }
+                            if (!empty($cv[ 'iconType' ]) && $cv[ 'iconType' ] == 'icon') {
+                                $icon = $cv[ 'icon' ];
+                                if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                                    $value[ 'value' ][ $ck ][ 'icon' ] = 'icondiy ' . $icon;
+                                }
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'GraphicNav') {
+                            // 图文导航组件
+                            foreach ($cv[ 'list' ] as $gn_k => $gn_v) {
+                                if (!empty($gn_v[ 'iconType' ]) && $gn_v[ 'iconType' ] == 'icon' && !empty($gn_v[ 'icon' ])) {
+                                    $icon = $gn_v[ 'icon' ];
+                                    if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                                        $value[ 'value' ][ $ck ][ 'list' ][ $gn_k ][ 'icon' ] = 'icondiy ' . $icon;
+                                    }
+                                }
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'Search') {
+                            // 搜索框组件
+                            if (!empty($cv[ 'iconType' ]) && $cv[ 'iconType' ] == 'icon') {
+                                $icon = $cv[ 'icon' ];
+                                if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                                    $value[ 'value' ][ $ck ][ 'icon' ] = 'icondiy ' . $icon;
+                                }
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'GoodsList') {
+                            // 商品列表组件
+                            if ($cv[ 'btnStyle' ][ 'style' ] == 'icon-diy') {
+                                $icon = $cv[ 'btnStyle' ][ 'iconDiy' ][ 'icon' ];
+                                if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                                    $value[ 'value' ][ $ck ][ 'btnStyle' ] [ 'iconDiy' ][ 'icon' ] = 'icondiy ' . $icon;
+                                }
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'ManyGoodsList') {
+                            // 多商品组组件
+                            if ($cv[ 'btnStyle' ][ 'style' ] == 'icon-diy') {
+                                $icon = $cv[ 'btnStyle' ][ 'iconDiy' ][ 'icon' ];
+                                if (!empty($icon) && strpos($icon, 'icondiy') === false) {
+                                    $value[ 'value' ][ $ck ][ 'btnStyle' ] [ 'iconDiy' ][ 'icon' ] = 'icondiy ' . $icon;
+                                }
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'GoodsRecommend') {
+                            // 商品推荐组件
+                            $icon = $cv[ 'topStyle' ][ 'icon' ][ 'value' ];
+                            if (!empty($icon) && strpos($icon, 'icondiy') == false) {
+                                $value[ 'value' ][ $ck ][ 'topStyle' ] [ 'icon' ][ 'value' ] = 'icondiy ' . $icon;
+                            }
+                        } elseif ($cv[ 'componentName' ] == 'Seckill') {
+                            // 秒杀组件
+                            if ($cv[ 'titleStyle' ][ 'style' ] == 'style-2') {
+                                $icon = $cv[ 'titleStyle' ][ 'timeImageUrl' ];
+                                if (!empty($icon) && strpos($icon, 'icondiy') == false) {
+                                    $value[ 'value' ][ $ck ][ 'titleStyle' ] [ 'timeImageUrl' ] = 'icondiy ' . $icon;
+                                }
+                            }
+                        }
+
+                    }
+
+                    model('site_diy_view')->update([ 'value' => json_encode($value) ], [ [ 'id', '=', $v[ 'id' ] ] ]);
+                }
+            }
+
+            model('goods_service')->commit();
+        } catch (\Exception $e) {
+            model('goods_service')->rollback();
+            $msg = 'File：' . $e->getFile() . '，Line：' . $e->getLine() . '，Message：' . $e->getMessage() . ',Code：' . $e->getCode();
         }
+        return $msg;
     }
+
 
 }

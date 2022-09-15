@@ -11,6 +11,7 @@ var goodsImage = [];//商品主图
 const GOODS_IMAGE_MAX = 10;//商品主图数量
 const GOODS_SKU_MAX = 10;//商品SKU数量
 var attribute_img_type = 0;//规格项是否保存图片
+var sku_sort = [];
 
 //正则表达式
 var regExp = {
@@ -1533,7 +1534,6 @@ function refreshSkuTable() {
 
 //刷新商品sku数据
 refreshGoodsSkuData = function () {
-
 	var arr = goodsSpecFormat;
 	var tempGoodsSkuData = JSON.parse(JSON.stringify(goodsSkuData));// 记录原始数据，后续用作对比
 	goodsSkuData = [];
@@ -1592,17 +1592,23 @@ refreshGoodsSkuData = function () {
 	}
 
 	// 比对已存在的规格项/值，并且赋值
-	for (var i=0;i<tempGoodsSkuData.length;i++) {
-		for (var j=0;j<goodsSkuData.length;j++) {
-			if(tempGoodsSkuData[i].spec_name == goodsSkuData[j].spec_name){
+	for (var i = 0; i < tempGoodsSkuData.length; i++) {
+		for (var j = 0; j < goodsSkuData.length; j++) {
+			var count = matchSkuSpecCount(tempGoodsSkuData[i].sku_spec_format, goodsSkuData[j].sku_spec_format);
+			if (count === goodsSkuData[j].sku_spec_format.length) {
+				var spec_name = goodsSkuData[j].spec_name;
 				var sku_spec_format = goodsSkuData[j].sku_spec_format;
 				Object.assign(goodsSkuData[j], tempGoodsSkuData[i]);
+				goodsSkuData[j].spec_name = spec_name;
 				goodsSkuData[j].sku_spec_format = sku_spec_format;
 				break;
 			}
 		}
 	}
 
+	for (var k = 0; k < goodsSkuData.length; k++) {
+		sku_sort.push({"spec_name": goodsSkuData[k].spec_name, "sort": k + 1});
+	}
 	// if ($("input[name='goods_id']").length == 1) {
 	// 	$(".js-edit-sku-list>div").each(function (i) {
 	// 		goodsSkuData[i].sku_id = $(this).children("input[name='edit_sku_id']").val();
@@ -1617,9 +1623,22 @@ refreshGoodsSkuData = function () {
 	// 		if (goodsSkuData[i].sku_images_arr.length === 0) goodsSkuData[i].sku_images_arr = $(this).children("input[name='edit_sku_images']").val() ? $(this).children("input[name='edit_sku_images']").val().split(",") : [];
 	// 	});
 	// }
-
 	return goodsSkuData;
 };
+
+// 匹配规格值
+function matchSkuSpecCount(oVal,nVal) {
+	var count = 0;// 匹配次数，与规格值相等时为匹配成功
+	for (var i = 0; i < oVal.length; i++) {
+		for (var j = 0; j < nVal.length; j++) {
+			if (oVal[i].spec_value_name === nVal[j].spec_value_name) {
+				count++;
+				break;
+			}
+		}
+	}
+	return count;
+}
 
 //绑定规格项下拉搜索
 function bindSpecSearchableSelect() {
@@ -1940,6 +1959,11 @@ function initEditData() {
 				is_default: $(this).children("input[name='edit_is_default']").val(),
 				verify_num: $(this).children("input[name='edit_verify_num']").val(),
 			};
+			for (var s = 0; s < sku_sort.length; s ++){
+				if(item.spec_name === sku_sort[s].spec_name){
+					item.sort = sku_sort[s].sort;
+				}
+			}
 			goodsSkuData.push(item);
 		});
 
@@ -2014,7 +2038,7 @@ function addNewAttr() {
 		'<input type="text" class="layui-input add-attr-value" />' +
 		'</td>' +
 		'<td>' +
-		'<input type="number" class="layui-input add-attr-sort" />' +
+		'<input type="number" class="layui-input add-attr-sort" value="' + $('.goods-attr-tr').length + '" />' +
 		'</td>' +
 		'<td>' +
 		'<div class="table-btn"><a class="layui-btn" onclick="delAttr(this)">删除</a></div>' +
@@ -2119,4 +2143,22 @@ function dealWithPicThumb(data){
 			}
 		});
 	}
+}
+
+function refreshFormList(){
+	$.ajax({
+		url: ns.url("form://shop/form/getformlist"),
+		dataType: 'JSON',
+		type: 'POST',
+		success: function (res) {
+			if(res.code >= 0 && res.data.length){
+				var h = '<option value="0">请选择商品表单</option>';
+				res.data.forEach(function (item) {
+					h += '<option value="'+ item.id +'">'+ item.form_name +'</option>';
+				})
+				$('[name="form_id"]').html(h);
+				form.render();
+			}
+		}
+	});
 }

@@ -102,14 +102,9 @@ Vue.component("graphic-nav-list", {
 					src: "iconyihangliangge"
 				}
 			],
-			fontSizeList: [
-				{label: "小", value: "12", src: "iconwenzi-copy"},
-				{label: "中", value: "14", src: "iconwenzi-copy1"},
-				{label: "大", value: "16", src: "iconwenzi"}
-			],
 			thicknessList: [
-				{name: "加粗", src: "iconbold", value: "600"},
-				{name: "常规", src: "iconbold-copy", value: "500"}
+				{name: "加粗", src: "iconbold", value: "bold"},
+				{name: "常规", src: "iconbold-copy", value: "normal"}
 			]
 		};
 	},
@@ -129,7 +124,6 @@ Vue.component("graphic-nav-list", {
 			carouselList: this.carouselList,
 			rowCountList: this.rowCountList,
 			pageCountList: this.pageCountList,
-			fontSizeList:this.fontSizeList,
 			thicknessList:this.thicknessList,
 			carouselIndex: 0,
 			methods: {
@@ -157,7 +151,8 @@ Vue.component("graphic-nav-list", {
 				down: function (index) {
 					moveBeforeIndex = index;
 				},
-				up: function (index) {
+				up: function () {
+					var index = $(this).index();
 					var temp = _this.list[moveBeforeIndex];
 					_this.list.splice(moveBeforeIndex, 1);
 					_this.list.splice(index, 0, temp);

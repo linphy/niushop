@@ -1,6 +1,6 @@
 {extend name="base"/}
 {block name="resources"}
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="SHOP_CSS/jquery-ui.css">
 <style>
     .content-box {position: relative;width: 800px;height: 400px;background-color: rgb(242, 244, 244);top:50%;left:50%;transform: translate(-50%,8%);border: 1px dashed #333;background-size:100% 100%;}
     .box {width: 100px;height: 100px;background-color: rgba(255,255,255,0.7);border: 1px solid #ccc;position: absolute;left: 0px;top: 0px;}
@@ -336,6 +336,7 @@
 
     //初始化盒子
     function initContentBox(){
+        if(imageData == null) return;
         if(imageData.imgWidth > imageData.imgHeight){
             contentBoxHeight = contentBoxWidth * imageData.imgHeight / imageData.imgWidth;
         }else{

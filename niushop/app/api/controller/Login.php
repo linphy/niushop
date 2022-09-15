@@ -86,6 +86,24 @@ class Login extends BaseApi
     }
 
     /**
+     * 授权登录仅登录
+     * @return false|string
+     */
+    public function authOnlyLogin(){
+        $login = new LoginModel();
+        $res = $login->authOnlyLogin($this->params);
+        //生成access_token
+        if ($res[ 'code' ] >= 0) {
+            $token = $this->createToken($res[ 'data' ][ 'member_id' ]);
+            $data = [
+                'token' => $token,
+            ];
+            return $this->response($this->success($data));
+        }
+        return $this->response($res);
+    }
+
+    /**
      * 检测openid是否存在
      */
     public function openidIsExits()

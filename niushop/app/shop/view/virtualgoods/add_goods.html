@@ -464,7 +464,7 @@
 						</select>
 						<input type="hidden" name="goods_attr_name" />
 					</div>
-					<div class="word-aux">商品可以添加自定义参数，也可以通过商品参数模板批量设置商品参数</div>
+					<div class="word-aux">商品可以添加自定义商品参数，也可以通过参数模板批量设置商品参数</div>
 				</div>
 
 				<div class="layui-form-item js-new-attr-list">
@@ -563,6 +563,25 @@
 							</select>
 						</div>
 					</div>
+
+					{if $form_is_exit}
+					<div class="layui-form-item">
+						<label class="layui-form-label">商品表单：</label>
+						<div class="layui-input-block len-mid">
+							<select name="form_id">
+								<option value="0">请选择商品表单</option>
+								{foreach name="$form_list" item="vo"}
+								<option value="{$vo.id}">{$vo.form_name}</option>
+								{/foreach}
+							</select>
+						</div>
+						<div class="word-aux">
+							<a href="{:addon_url('form://shop/form/addform?form_type=goods')}" class="text-color" target="_blank">创建商品表单</a>
+							<a href="javascript:;" onclick="refreshFormList()" class="text-color">刷新</a>
+						</div>
+					</div>
+					{/if}
+
 				</div>
 
 			</div>

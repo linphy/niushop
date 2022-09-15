@@ -31,7 +31,7 @@ var ncComponentHtml = '<div v-show="data.lazyLoadCss && data.lazyLoad" :key="dat
 					ncComponentHtml += '</div>';
 
 					// 样式
-					ncComponentHtml += '<div class="edit-style-wrap">';
+					ncComponentHtml += '<div class="edit-style-wrap" style="display: none;">';
 						ncComponentHtml += '<slot name="edit-style"></slot>';
 						ncComponentHtml += '<common-set v-if="data.ignoreLoad" :ignore="data.ignore"></common-set>';
 					ncComponentHtml += '</div>';
@@ -96,6 +96,7 @@ var vue = new Vue({
 			pageBgColor: "#ffffff", // 页面背景颜色
 			topNavColor: "#ffffff",
 			topNavBg: false,
+			navBarSwitch: true, // 导航栏是否显示
 			textNavColor: "#333333",
 			topNavImg: "",
 			moreLink: {
@@ -117,7 +118,9 @@ var vue = new Vue({
 				imgWidth: '',
 				imgHeight: ''
 			},
-			bgUrl: "",
+			bgUrl: '',
+			imgWidth : '',
+			imgHeight : '',
 
 			// 公共模板属性，所有组件都继承，不需要重复定义，组件内部根据业务自行调用
 			template: {
@@ -277,6 +280,8 @@ var vue = new Vue({
 					self.currentIndex = -99;
 				}
 				layer.close(index);
+
+				self.refreshQuick(true);
 
 			});
 		},
@@ -470,7 +475,7 @@ var vue = new Vue({
 				// 如果当前编辑的组件不存在了，则选中最后一个
 				if (parseInt(self.currentIndex) >= self.data.length) self.currentIndex--;
 
-				$(".draggable-element[data-index=" + self.currentIndex + "] .edit-attribute .attr-wrap").css("height", ($(window).height() - 163) + "px");
+				$(".draggable-element[data-index=" + self.currentIndex + "] .edit-attribute .attr-wrap").css("height", ($(window).height() - 135) + "px");
 
 				if (self.isAdd && self.changeIndex > -1 && (self.changeIndex !== self.currentIndex) && self.changeIndex < (self.data.length - 1)) {
 					var curr = $(".draggable-element[data-index=" + self.changeIndex + "]");
@@ -607,11 +612,15 @@ var vue = new Vue({
 
 			this.refresh();
 
-			$(".edit-attribute-placeholder").show();
+			// $(".edit-attribute-placeholder").show();
 
 			var self = this;
 
-			setTimeout(function () {
+			// $(".edit-attribute-placeholder").hide();
+			fullScreenSize();
+
+			var count = 0;
+			var time = setInterval(function () {
 				var div = $(".draggable-element .edit-attribute .attr-wrap");
 				div.each(function () {
 					if ($(this).find('.edit-content-wrap').children().length === 0 || $(this).find('.edit-style-wrap').children().length === 0) {
@@ -620,15 +629,15 @@ var vue = new Vue({
 						$(this).find('.tab-wrap').css('display', 'flex');
 					}
 				});
+				count++;
+				if (count > 10 || ($(this).find('.edit-content-wrap').children().length > 0 || $(this).find('.edit-style-wrap').children().length > 0)) {
+					clearInterval(time);
+					$('.loading-layer').hide();
+					$('.preview-wrap .preview-restore-wrap').css('visibility', 'visible');
+					self.changeCurrentIndex(0); // 选择第一个
+				}
+			}, 10);
 
-				$('.loading-layer').hide();
-				$(".edit-attribute-placeholder").hide();
-				$('.preview-wrap .preview-restore-wrap').css('visibility', 'visible');
-
-				self.changeCurrentIndex(0); // 选择第一个
-
-				fullScreenSize();
-			}, 10 * 5 * self.data.length);
 		},
 
 		/**
@@ -670,8 +679,8 @@ var vue = new Vue({
 // 自适应全屏宽高
 function fullScreenSize(isFull) {
 	var size = 0;
-	if (baseStyle === 'app/shop/view/base/style1.html') size = 215; // 公式：头部layui-header（61px）+ 面包屑crumbs（44px） + 自定义模板区域上内边距diyview（20px） + 底部保存按钮（90px）
-	else size = 165; // 公式：二级面包屑layui-header-crumbs-second （55px）+ 自定义模板区域上内边距diyview（20px） + 底部保存按钮（90px）
+	if (baseStyle === 'app/shop/view/base/style1.html') size = 189; // 公式：头部layui-header（61px）+ 面包屑crumbs（44px） + 自定义模板区域上内边距diyview（20px） + 底部保存按钮（90px）
+	else size = 139; // 公式：二级面包屑layui-header-crumbs-second （55px）+ 自定义模板区域上内边距diyview（20px） + 底部保存按钮（90px）
 
 	if (isFull) size = 75; // 顶部面包屑（55px） + 自定义模板区域上内边距diyview（20px）
 	var commonHeight = $(window).height() - size;
@@ -679,7 +688,7 @@ function fullScreenSize(isFull) {
 		$(obj).css("height", (commonHeight) + "px");
 	});
 	$('.loading-layer').css('height', (commonHeight - 70) + "px"); // 70px是头部高度
-	$(".component-list nav").css("height", (commonHeight + 20) + "px");// 20px是自定义模板区域上内边距
+	$(".component-list nav").css("height", (commonHeight + 20 - 55) + "px");// 20px是自定义模板区域上内边距，55px是标准/第三方组件tab切换高度
 	$(".edit-attribute .attr-wrap").css("height", (commonHeight - 1) + "px");// 1px是上边框
 	$(".preview-block").css("min-height", (commonHeight - 104) + "px"); // 公式：高度 - 自定义模板区域上内边距（20px） - 自定义模板区域下外编辑（20px）- 自定义模板头部（64px）
 }
@@ -696,6 +705,21 @@ layui.use(['form'], function () {
 	} else {
 		vue.globalLazyLoad = true;
 	}
+
+	// 标准/第三方组件切换
+	$("body").on("click", ".component-list .tab span", function () {
+		var type = $(this).attr("data-type");
+		$('.component-list h3').hide();
+		$('.component-list ul').hide();
+		if(type === 'EXTEND'){
+			$('.component-list h3[data-type="EXTEND"]').show();
+			$('.component-list ul[data-type="EXTEND"]').show();
+		}else{
+			$('.component-list h3[data-type!="EXTEND"]').show();
+			$('.component-list ul[data-type!="EXTEND"]').show();
+		}
+		$(this).addClass('selected').siblings().removeClass('selected');
+	});
 
 	// 组件列表
 	$("body").on("click", ".component-list h3", function () {
@@ -880,17 +904,5 @@ layui.use(['form'], function () {
 // 预览
 function preview() {
 	let url = $('input[name="preview_url"]').val();
-	if (url.indexOf('?') != -1) url += '&preview=1&time=' + parseInt((new Date().getTime()/1000).toString());
-	else url += '?preview=1&time=' + parseInt((new Date().getTime()/1000).toString());
-	var layerIndex = layer.open({
-		title: '访问页面',
-		skin: 'layer-tips-class',
-		type: 1,
-		area: ['600px', '700px'],
-		content: $("#diy_h5_preview").html(),
-		success: function () {
-			$("#iframe").attr('src', url).show();
-			$(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
-		}
-	});
+	window.open(ns.url('index/index/h5preview',{url : url}));
 }

@@ -37,6 +37,7 @@ class Stat extends BaseModel
      */
     public function addShopStat($data)
     {
+        Log::write('addShopStat' . '-'.date('y-m-d H:i:s', time()).'-'.json_encode($data));
         $site_id = $data[ 'site_id' ];
         $carbon = Carbon::now();
         $condition = [
@@ -232,7 +233,7 @@ class Stat extends BaseModel
             'month' => $month,
             'day' => $day
         ];
-        $info = model('stat_shop')->getInfo($condition, '*');
+        $info = model('stat_shop')->setIsCache(0)->getInfo($condition, '*');
 
         if (empty($info)) {
             $condition[ 'day_time' ] = strtotime(date("{$year}-{$month}-{$day}"));

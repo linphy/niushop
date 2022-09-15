@@ -8,7 +8,18 @@
  * =========================================================
  */
 return [
-    'template' => [],
-    'util' => [],
-    'link' => [],
+    'util' => [
+//        [
+//            'name' => 'TextExtend', // 组件控制器名称
+//            'title' => '扩展标题',
+//            'type' => 'EXTEND', // 组件类型，SYSTEM：基础组件，PROMOTION：营销组件，EXTEND：扩展组件
+//            'value' => '{}',
+//            'sort' => '50000',
+//            'support_diy_view' => '', // 支持的自定义页面（为空表示公共组件都支持）
+//            'max_count' => 0, // 限制添加次数，0表示可以无限添加该组件
+//            'is_delete' => 0, // 组件是否可以删除，0 允许，1 禁用
+//            'icon' => 'icon-comp-diy-default icon-wenben', // 组件字体图标
+//        ],
+    ],
+    'link' => []
 ];

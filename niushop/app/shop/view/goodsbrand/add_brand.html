@@ -81,7 +81,8 @@
 
 		// 普通图片上传
 		var logo_upload = new Upload({
-			elem: '#imgUpload'
+			elem: '#imgUpload',
+			url: ns.url('giftcard://shop/media/upload')
 		});
 		form.on('submit(save)', function (data) {
 			

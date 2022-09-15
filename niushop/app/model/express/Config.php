@@ -205,4 +205,38 @@ class Config extends BaseModel
         return [ 'express' => $express[ 'express_name' ], 'store' => $store[ 'store_name' ], 'local' => $local[ 'local_name' ] ];
 
     }
+
+    /**
+     * 获取已启用的配送方式
+     * @param $site_id
+     */
+    public function getEnabledExpressType($site_id){
+        $local = $this->getLocalDeliveryConfig($site_id)[ 'data' ];
+        $store = $this->getStoreConfig($site_id)[ 'data' ];
+        $express = $this->getExpressConfig($site_id)[ 'data' ];
+
+        $express_type = [];
+        if ($express['is_use']) {
+            $express_type['express'] = [
+                'name' => $express['value'][ 'express_name' ],
+                'icon' => 'iconwuliu',
+                'desc' => '支持'.$express['value'][ 'express_name' ].'的商品在购买后将会通过快递的方式进行配送，可在订单中查看物流信息'
+            ];
+        }
+        if ($store['is_use']) {
+            $express_type['store'] = [
+                'name' => $store['value'][ 'store_name' ],
+                'icon' => 'icondianpu',
+                'desc' => '支持'.$store['value'][ 'store_name' ].'的商品在购买后用户可自行到下单时所选择的自提点进行提货'
+            ];
+        }
+        if ($local['is_use']) {
+            $express_type['local'] = [
+                'name' => $local['value'][ 'local_name' ],
+                'icon' => 'iconwaimaifuwu',
+                'desc' => '支持'.$local['value'][ 'local_name' ].'的商品在购买后平台将安排配送人员配送到用户指定的收货地点'
+            ];
+        }
+        return $express_type;
+    }
 }

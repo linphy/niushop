@@ -351,6 +351,19 @@ class Express extends BaseShop
     }
 
     /**
+     * 获取地区树结构
+     */
+    public function getAreaTree()
+    {
+        if (request()->isAjax()) {
+            $address_model = new AddressModel();
+            $area_level = input('level', 4);
+            $area_list = $address_model->getAddressTreeList($area_level);
+            return $area_list;
+        }
+    }
+
+    /**
      * 查询可用物流公司
      */
     public function getShopExpressCompanyList()

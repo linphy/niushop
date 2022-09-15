@@ -325,6 +325,11 @@ class Member extends BaseShop
             if (isset($input[ 'sex' ])) $data[ 'sex' ] = $input[ 'sex' ];
             if (isset($input[ 'birthday' ])) $data[ 'birthday' ] = $input[ 'birthday' ] ? strtotime($input[ 'birthday' ]) : 0;
             if (isset($input[ 'mobile' ])) $data[ 'mobile' ] = $input[ 'mobile' ];
+            if (isset($input[ 'province_id' ])) $data[ 'province_id' ] = $input[ 'province_id' ];
+            if (isset($input[ 'city_id' ])) $data[ 'city_id' ] = $input[ 'city_id' ];
+            if (isset($input[ 'district_id' ])) $data[ 'district_id' ] = $input[ 'district_id' ];
+            if (isset($input[ 'address' ])) $data[ 'address' ] = $input[ 'address' ];
+            if (isset($input[ 'full_address' ])) $data[ 'full_address' ] = $input[ 'full_address' ];
 
             $member_id = input('member_id', 0);
             $member_model = new MemberModel();
@@ -479,7 +484,7 @@ class Member extends BaseShop
         $remark = input('remark', '商家调整');
         $this->addLog("会员余额调整id:" . $member_id . "金额" . $adjust_num);
         $member_account_model = new MemberAccountModel();
-        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'balance', $adjust_num, 'adjust', 0, $remark);
+        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'balance', $adjust_num, 'adjust', 0, $remark ? $remark : '商家调整');
     }
 
     /**
@@ -492,7 +497,7 @@ class Member extends BaseShop
         $remark = input('remark', '商家调整');
         $this->addLog("会员积分调整id:" . $member_id . "数量" . $adjust_num);
         $member_account_model = new MemberAccountModel();
-        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'point', $adjust_num, 'adjust', 0, $remark);
+        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'point', $adjust_num, 'adjust', 0, $remark ? $remark : '商家调整');
     }
 
     /**
@@ -505,7 +510,7 @@ class Member extends BaseShop
         $remark = input('remark', '商家调整');
         $this->addLog("会员成长值调整id:" . $member_id . "数量" . $adjust_num);
         $member_account_model = new MemberAccountModel();
-        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'growth', $adjust_num, 'adjust', 0, $remark);
+        return $member_account_model->addMemberAccount($this->site_id, $member_id, 'growth', $adjust_num, 'adjust', 0, $remark ? $remark : '商家调整');
     }
 
     /**

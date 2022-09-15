@@ -3,7 +3,6 @@
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/picture_manager.css" />
 <style>
 	.layui-layout-admin.admin-style-1 .type-tab{    margin-left: -15px!important;width: calc(100% - 253px)!important;}
-
 </style>
 {/block}
 {block name="main"}
@@ -227,7 +226,6 @@
 					<input type="radio" name="group" value="{$v.album_id}" title="{$v.album_name}">
 					{{# } }}
 				</div>
-
 				{/foreach}
 			{/if}
         {/foreach}
@@ -405,14 +403,12 @@
 									// uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
 									//禁止点击
 									if ($(".multuple-list li").length <= 1) {
-										$("#chooseListAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled",
-											"disabled");
+										$("#chooseListAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 									}
 								});
 								//开启点击
 								if ($(".multuple-list li").length > 1) {
-									$("#chooseListAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr(
-										"disabled");
+									$("#chooseListAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
 								}
 
 							});
@@ -508,14 +504,12 @@
 									// uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
 									//禁止点击
 									if ($(".multuple-list li").length <= 1) {
-										$("#chooseListAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled",
-											"disabled");
+										$("#chooseListAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 									}
 								});
 								//开启点击
 								if ($(".multuple-list li").length > 1) {
-									$("#chooseVideoAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr(
-										"disabled");
+									$("#chooseVideoAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
 								}
 							});
 						},
@@ -557,10 +551,6 @@
 			})
 		});
 	}
-
-	/**
-	 * 替换图片，单张
-	 */
 
 	// 上传图片是禁止操作
 	function submitOne(){
@@ -616,8 +606,7 @@
 
 									//禁止点击
 									if ($(".multuple-list li").length <= 1) {
-										$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled",
-												"disabled");
+										$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 										//未选择图片时，显示添加按钮
 										$("#modifyFile").show();
 									}
@@ -626,8 +615,7 @@
 
 								//禁止点击
 								if ($(".multuple-list li").length > 1) {
-									$("#modifyFileAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr(
-											"disabled");
+									$("#modifyFileAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
 									//隐藏添加按钮，仅替换一张图片
 									$("#modifyFile").hide();
 								}
@@ -711,7 +699,6 @@
 		})
 	}
 
-
 	function switchGroup(obj){
 		$('.album-list .selected').removeClass('selected text-color');
 		$(obj).addClass('selected text-color');
@@ -768,7 +755,6 @@
 				},
 				error: function () {
 					flag_add_group = false;
-
 				}
 			});
 		});
@@ -1069,12 +1055,15 @@
 			})
 		})
 	}
+
 	$('body').on(' mouseenter','.upload-image-curtain',function(){
 		$(this).siblings(".tips").show();
-	})
+	});
+
 	$('body').on('  mouseleave','.upload-image-curtain',function(){
 		$(this).siblings(".tips").hide();
-	})
+	});
+
 	function JScopy() {
 		ns.copy("path_file", function(res) {
 			$("#hidden_image_path").val(res.url);

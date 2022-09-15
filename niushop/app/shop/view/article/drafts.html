@@ -139,26 +139,27 @@
 		if (repeat_flag) return false;
 		repeat_flag = true;
 
-		layer.confirm('确定要删除该文章内容吗?', function() {
-					$.ajax({
-						url: ns.url("shop/article/delete"),
-						data: {article_id},
-						dataType: 'JSON',
-						type: 'POST',
-						success: function(res) {
-							layer.msg(res.message);
-							repeat_flag = false;
-							if (res.code == 0) {
-								layer.close(layer.index - 1);
-								table.reload();
-							}
+		layer.confirm('确定要删除该文章内容吗?',
+			function () {
+				$.ajax({
+					url: ns.url("shop/article/delete"),
+					data: {article_id},
+					dataType: 'JSON',
+					type: 'POST',
+					success: function (res) {
+						layer.msg(res.message);
+						repeat_flag = false;
+						if (res.code == 0) {
+							layer.close(layer.index - 1);
+							table.reload();
 						}
-					});
-				},
-				function() {
-					repeat_flag = false;
-					layer.close();
+					}
 				});
+			},
+			function () {
+				repeat_flag = false;
+				layer.close();
+			});
 	}
 
 	// 监听单元格编辑

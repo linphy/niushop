@@ -549,7 +549,7 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon_new/goods_list_new.png',
                 'picture_selected' => 'app/shop/view/public/img/icon_new/goods_list_select.png',
-                'child_list' =>[
+                'child_list' => [
                     [
                         'name' => 'GOODS_LIST',
                         'title' => '商品列表',
@@ -913,7 +913,7 @@ return [
                 'is_icon' => 0,
                 'picture' => 'app/shop/view/public/img/icon_new/goods_list_new.png',
                 'picture_selected' => 'app/shop/view/public/img/icon_new/goods_list_select.png',
-                'child_list' =>[
+                'child_list' => [
                     [
                         'name' => 'PHYSICAL_GOODS_IMPORT',
                         'title' => '商品导入',
@@ -1876,26 +1876,26 @@ return [
                         'is_show' => 1,
                         'is_control' => 1,
                         'is_icon' => 0,
-                        'sort' => 1,
+                        'sort' => 0,
                     ],
                 ]
             ],
         ]
     ],
-/*    [
-        'name' => 'STORE_ROOT',
-        'title' => '门店',
-        'url' => 'shop/store/lists',
-        'is_show' => 1,
-        'is_control' => 1,
-        'is_icon' => 0,
-        'picture' => 'app/shop/view/public/img/menu_icon/icon7.png',
-        'picture_selected' => 'app/shop/view/public/img/icon/store.png',
-        'sort' => 7,
-        'child_list' => [
+    /*    [
+            'name' => 'STORE_ROOT',
+            'title' => '门店',
+            'url' => 'shop/store/lists',
+            'is_show' => 1,
+            'is_control' => 1,
+            'is_icon' => 0,
+            'picture' => 'app/shop/view/public/img/menu_icon/icon7.png',
+            'picture_selected' => 'app/shop/view/public/img/icon/store.png',
+            'sort' => 7,
+            'child_list' => [
 
-        ]
-    ],*/
+            ]
+        ],*/
     [
         'name' => 'ACCOUNT_ROOT',
         'title' => '财务',
@@ -1908,96 +1908,96 @@ return [
         'picture_selected' => '',
         'sort' => 8,
         'child_list' => [
-           [
-               'name' => 'ACCOUNT_MANAGE',
-               'title' => '财务管理',
-               'url' => 'shop/account/dashboard',
-               'parent' => '',
-               'is_show' => 1,
-               'is_control' => 1,
-               'is_icon' => 0,
-               'picture' => 'app/shop/view/public/img/menu_icon/icon9.png',
-               'picture_selected' => '',
-               'sort' => 8,
-               'child_list' => [
+            [
+                'name' => 'ACCOUNT_MANAGE',
+                'title' => '财务管理',
+                'url' => 'shop/account/dashboard',
+                'parent' => '',
+                'is_show' => 1,
+                'is_control' => 1,
+                'is_icon' => 0,
+                'picture' => 'app/shop/view/public/img/menu_icon/icon9.png',
+                'picture_selected' => '',
+                'sort' => 8,
+                'child_list' => [
 
-                   [
-                       'name' => 'ACCOUNT_DASHBOARD',
-                       'title' => '财务报表',
-                       'url' => 'shop/account/dashboard',
-                       'is_show' => 1,
-                       'picture' => 'app/shop/view/public/img/icon_new/money_new.png',
-                       'picture_selected' => 'app/shop/view/public/img/icon_new/money_select.png',
-                       'sort' => 1,
-                       'child_list' => []
-                   ],
-                   [
-                       'name' => 'INVOICE_LIST',
-                       'title' => '发票管理',
-                       'url' => 'shop/order/invoiceorderlist',
-                       'is_show' => 1,
-                       'is_control' => 1,
-                       'is_icon' => 0,
-                       'picture' => 'app/shop/view/public/img/icon_new/invoice_management_new.png',
-                       'picture_selected' => 'app/shop/view/public/img/icon_new/invoice_management_select.png',
-                       'sort' => 2,
-                       'child_list' => [
-                           [
-                               'name' => 'INVOICE_EDIT',
-                               'title' => '发票编辑',
-                               'url' => 'shop/order/invoiceedit',
-                               'is_show' => 0,
-                               'is_control' => 1,
-                               'is_icon' => 0,
-                               'picture' => '',
-                               'picture_selected' => '',
-                               'sort' => 1,
-                           ],
-                       ]
-                   ],
-                   [
-                       'name' => 'MEMBER_WITHDRAW_LIST',
-                       'title' => '余额提现',
-                       'url' => 'shop/memberwithdraw/lists',
-                       'is_show' => 1,
-                       'picture' => 'app/shop/view/public/img/icon_new/member_withdraw_new.png',
-                       'picture_selected' => 'app/shop/view/public/img/icon_new/member_withdraw_select.png',
-                       'sort' => 3,
-                       'child_list' => [
-                           [
-                               'name' => 'MEMBER_WITHDRAW_DETAIL',
-                               'title' => '提现详情',
-                               'url' => 'shop/memberwithdraw/detail',
-                               'is_show' => 0,
-                           ],
-                           [
-                               'name' => 'MEMBER_WITHDRAW_TRANSFERFINISH',
-                               'title' => '手动转账',
-                               'url' => 'shop/memberwithdraw/transferfinish',
-                               'is_show' => 0,
-                           ],
-                           [
-                               'name' => 'MEMBER_WITHDRAW_agree',
-                               'title' => '同意转账',
-                               'url' => 'shop/memberwithdraw/agree',
-                               'is_show' => 0,
-                           ],
-                           [
-                               'name' => 'MEMBER_WITHDRAW_refuse',
-                               'title' => '拒绝转账',
-                               'url' => 'shop/memberwithdraw/refuse',
-                               'is_show' => 0,
-                           ],
-                           [
-                               'name' => 'ONLINE_TRANSFER',
-                               'title' => '在线转账',
-                               'url' => 'memberwithdraw://shop/withdraw/transfer',
-                               'is_show' => 0,
-                           ],
-                       ]
-                   ],
-               ]
-           ],
+                    [
+                        'name' => 'ACCOUNT_DASHBOARD',
+                        'title' => '财务报表',
+                        'url' => 'shop/account/dashboard',
+                        'is_show' => 1,
+                        'picture' => 'app/shop/view/public/img/icon_new/money_new.png',
+                        'picture_selected' => 'app/shop/view/public/img/icon_new/money_select.png',
+                        'sort' => 1,
+                        'child_list' => []
+                    ],
+                    [
+                        'name' => 'INVOICE_LIST',
+                        'title' => '发票管理',
+                        'url' => 'shop/order/invoiceorderlist',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => 'app/shop/view/public/img/icon_new/invoice_management_new.png',
+                        'picture_selected' => 'app/shop/view/public/img/icon_new/invoice_management_select.png',
+                        'sort' => 2,
+                        'child_list' => [
+                            [
+                                'name' => 'INVOICE_EDIT',
+                                'title' => '发票编辑',
+                                'url' => 'shop/order/invoiceedit',
+                                'is_show' => 0,
+                                'is_control' => 1,
+                                'is_icon' => 0,
+                                'picture' => '',
+                                'picture_selected' => '',
+                                'sort' => 1,
+                            ],
+                        ]
+                    ],
+                    [
+                        'name' => 'MEMBER_WITHDRAW_LIST',
+                        'title' => '余额提现',
+                        'url' => 'shop/memberwithdraw/lists',
+                        'is_show' => 1,
+                        'picture' => 'app/shop/view/public/img/icon_new/member_withdraw_new.png',
+                        'picture_selected' => 'app/shop/view/public/img/icon_new/member_withdraw_select.png',
+                        'sort' => 3,
+                        'child_list' => [
+                            [
+                                'name' => 'MEMBER_WITHDRAW_DETAIL',
+                                'title' => '提现详情',
+                                'url' => 'shop/memberwithdraw/detail',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_WITHDRAW_TRANSFERFINISH',
+                                'title' => '手动转账',
+                                'url' => 'shop/memberwithdraw/transferfinish',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_WITHDRAW_agree',
+                                'title' => '同意转账',
+                                'url' => 'shop/memberwithdraw/agree',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'MEMBER_WITHDRAW_refuse',
+                                'title' => '拒绝转账',
+                                'url' => 'shop/memberwithdraw/refuse',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'ONLINE_TRANSFER',
+                                'title' => '在线转账',
+                                'url' => 'memberwithdraw://shop/withdraw/transfer',
+                                'is_show' => 0,
+                            ],
+                        ]
+                    ],
+                ]
+            ],
         ],
     ],
     [
@@ -2904,7 +2904,7 @@ return [
                                 'name' => 'GOODS_AFTERSALE',
                                 'title' => '售后保障',
                                 'url' => 'shop/config/aftersale',
-                                'is_show' => 1,
+                                'is_show' => 0,
                                 'is_control' => 1,
                                 'is_icon' => 0,
                                 'sort' => 6,
@@ -3019,7 +3019,7 @@ return [
                         'child_list' => [],
                     ],
                     [
-                        'name' =>'AUTH_INFO',
+                        'name' => 'AUTH_INFO',
                         'title' => '系统授权',
                         'url' => 'shop/upgrade/auth',
                         'is_show' => 1,

@@ -54,21 +54,19 @@ class BaseApi
         if ($_SERVER[ 'REQUEST_METHOD' ] == 'OPTIONS') {
             exit;
         }
-
         $this->url = strtolower(request()->parseUrl());
-
         $this->addon = request()->addon() ? request()->addon() : '';
-
         //获取参数
         $this->params = input();
         $this->getApiConfig();
         $this->decryptParams();
-
         $this->site_id = request()->siteid();
-
-        if (!addon_is_exit('mobileshop', $this->site_id)) {
-            $error = $this->error([], 'ADDON_NOT_EXIST');
-            throw new ApiException($error['code'], $error['message']);
+        //todo  基于将这个类所谓api基类的解决方案(主观应该提取公共部分重新封装)
+        if($this->app_module == 'shop'){
+            if (!addon_is_exit('mobileshop', $this->site_id)) {
+                $error = $this->error([], 'ADDON_NOT_EXIST');
+                throw new ApiException($error['code'], $error['message']);
+            }
         }
     }
 
@@ -125,6 +123,7 @@ class BaseApi
             return $this->error('', 'TOKEN_EXPIRE');
         }
         $this->user_info = $data[ 'user_info' ];
+        $this->app_module = $this->user_info['app_module'];
 
         $this->uid = $data[ 'user_info' ][ 'uid' ];
 

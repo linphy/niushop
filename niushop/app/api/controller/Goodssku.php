@@ -30,7 +30,7 @@ class Goodssku extends BaseApi
 {
 
     /**
-     * 基础信息
+     * 【废弃】基础信息
      */
     public function info()
     {
@@ -40,17 +40,22 @@ class Goodssku extends BaseApi
         }
 
         $goods = new Goods();
-        $info = $goods->getGoodsSkuDetail($sku_id, $this->site_id);
+        $field = 'gs.goods_id,gs.sku_id,g.goods_image,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.promotion_type
+        ,gs.start_time,gs.end_time,gs.stock,gs.sku_image,gs.sku_images,gs.goods_spec_format,gs.unit,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type';
+        $info = $goods->getGoodsSkuDetail($sku_id, $this->site_id, $field);
+
+        if (empty($info[ 'data' ])) return $this->response($this->error());
+
         $token = $this->checkToken();
         if ($token[ 'code' ] >= 0) {
             // 是否参与会员等级折扣
-            $goods_member_price = $goods->getGoodsPrice($sku_id, $this->member_id);
-            $goods_member_price = $goods_member_price[ 'data' ];
+            $goods_member_price = $goods->getGoodsPrice($sku_id, $this->member_id)[ 'data' ];
             if (!empty($goods_member_price[ 'member_price' ])) {
                 $info[ 'data' ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
             }
             if ($info[ 'data' ][ 'is_limit' ] && $info[ 'data' ][ 'limit_type' ] == 2 && $info[ 'data' ][ 'max_buy' ] > 0) $res[ 'goods_sku_detail' ][ 'purchased_num' ] = $goods->getGoodsPurchasedNum($info[ 'data' ][ 'goods_id' ], $this->member_id);
         }
+
         // 查询当前商品参与的营销活动信息
         $goods_promotion = event('GoodsPromotion', [ 'goods_id' => $info[ 'data' ][ 'goods_id' ], 'sku_id' => $info[ 'data' ][ 'sku_id' ] ]);
         $info[ 'data' ][ 'goods_promotion' ] = $goods_promotion;
@@ -78,20 +83,18 @@ class Goodssku extends BaseApi
         if (empty($sku_id) && empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_ID'));
         }
-        $res = [];
-        $goods_sku_detail = $goods->getGoodsSkuDetail($sku_id, $this->site_id);
-        $goods_sku_detail = $goods_sku_detail[ 'data' ];
+
+        $goods_sku_detail = $goods->getGoodsSkuDetail($sku_id, $this->site_id)[ 'data' ];
+
+        if (empty($goods_sku_detail)) return $this->response($this->error());
+
+        $goods_sku_detail[ 'purchased_num' ] = 0; // 该商品已购数量
         $res[ 'goods_sku_detail' ] = $goods_sku_detail;
-
-        if (empty($goods_sku_detail)) return $this->response($this->error($res));
-
-        $res[ 'goods_sku_detail' ][ 'purchased_num' ] = 0; // 该商品已购数量
 
         $token = $this->checkToken();
         if ($token[ 'code' ] >= 0) {
             // 是否参与会员等级折扣
-            $goods_member_price = $goods->getGoodsPrice($sku_id, $this->member_id);
-            $goods_member_price = $goods_member_price[ 'data' ];
+            $goods_member_price = $goods->getGoodsPrice($sku_id, $this->member_id)[ 'data' ];
             if (!empty($goods_member_price[ 'member_price' ])) {
                 $res[ 'goods_sku_detail' ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
             }
@@ -109,6 +112,7 @@ class Goodssku extends BaseApi
 
         //判断是否参与预售
         $is_join_presale = event('IsJoinPresale', [ 'sku_id' => $sku_id ], true);
+
         //获取社群信息
         $goods_community_model = new GoodsCommunityQrCode();
         $qr_data = $goods_community_model->getQrInfo($goods_sku_detail[ 'qr_id' ], $this->site_id);
@@ -119,6 +123,46 @@ class Goodssku extends BaseApi
 
         return $this->response($this->success($res));
     }
+
+    /**
+     * 查询商品SKU集合
+     * @return false|string
+     */
+    public function goodsSku()
+    {
+        $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        if (empty($goods_id)) {
+            return $this->response($this->error('', 'REQUEST_ID'));
+        }
+        $goods = new Goods();
+        $list = $goods->getGoodsSku($goods_id, $this->site_id);
+
+        $token = $this->checkToken();
+        foreach ($list[ 'data' ] as $k => $v) {
+
+            if ($token[ 'code' ] >= 0) {
+                // 是否参与会员等级折扣
+                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id)[ 'data' ];
+                if (!empty($goods_member_price[ 'member_price' ])) {
+                    $list[ 'data' ][ $k ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
+                }
+            }
+
+            // 查询当前商品参与的营销活动信息
+            $goods_promotion = event('GoodsPromotion', [ 'goods_id' => $goods_id, 'sku_id' => $v[ 'sku_id' ] ]);
+            $list[ 'data' ][ $k ][ 'goods_promotion' ] = $goods_promotion;
+
+            //判断是否参与预售
+            $is_join_presale = event('IsJoinPresale', [ 'sku_id' => $v[ 'sku_id' ] ], true);
+            if (!empty($is_join_presale) && $is_join_presale[ 'code' ] == 0) {
+                $list[ 'data' ][ $k ] = array_merge($list[ 'data' ][ $k ], $is_join_presale[ 'data' ]);
+            }
+        }
+
+        return $this->response($list);
+
+    }
+
 
     /**
      * 商品详情，商品分类用
@@ -133,20 +177,50 @@ class Goodssku extends BaseApi
         }
 
         $goods = new Goods();
-        $field = 'gs.goods_id,gs.sku_id,gs.goods_name,gs.is_limit,gs.limit_type,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.promotion_type,gs.stock,gs.sku_image,gs.goods_spec_format,gs.unit,gs.is_virtual,gs.max_buy,gs.min_buy,g.goods_image,g.stock_show,g.sale_show';
+        $field = 'gs.goods_id,gs.sku_id,gs.goods_name,gs.is_limit,gs.limit_type,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.stock,gs.sku_image,gs.goods_spec_format,gs.unit,gs.max_buy,gs.min_buy';
         $goods_sku_detail = $goods->getGoodsSkuDetail($sku_id, $this->site_id, $field);
 
         $token = $this->checkToken();
         if ($token[ 'code' ] >= 0) {
             // 是否参与会员等级折扣
-            $goods_member_price = $goods->getGoodsPrice($sku_id, $this->member_id);
-            $goods_member_price = $goods_member_price[ 'data' ];
+            $goods_member_price = $goods->getGoodsPrice($sku_id, $this->member_id)[ 'data' ];
             if (!empty($goods_member_price[ 'member_price' ])) {
                 $goods_sku_detail[ 'data' ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
             }
             if ($goods_sku_detail[ 'data' ][ 'max_buy' ] > 0) $goods_sku_detail[ 'data' ][ 'purchased_num' ] = $goods->getGoodsPurchasedNum($goods_sku_detail[ 'data' ][ 'goods_id' ], $this->member_id);
         }
         return $this->response($goods_sku_detail);
+    }
+
+    /**
+     * 查询商品SKU集合，商品分类用
+     * @return false|string
+     */
+    public function goodsSkuByCategory()
+    {
+        $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        if (empty($goods_id)) {
+            return $this->response($this->error('', 'REQUEST_ID'));
+        }
+
+        $goods = new Goods();
+        $field = 'gs.sku_id,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.promotion_type,gs.end_time,gs.stock,gs.sku_image,gs.goods_spec_format';
+        $list = $goods->getGoodsSku($goods_id, $this->site_id, $field);
+
+        $token = $this->checkToken();
+        foreach ($list[ 'data' ] as $k => $v) {
+
+            if ($token[ 'code' ] >= 0) {
+                // 是否参与会员等级折扣
+                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id)[ 'data' ];
+                if (!empty($goods_member_price[ 'member_price' ])) {
+                    $list[ 'data' ][ $k ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
+                }
+            }
+        }
+
+        return $this->response($list);
+
     }
 
     /**
@@ -186,12 +260,10 @@ class Goodssku extends BaseApi
             $goods_category_model = new GoodsCategoryModel();
 
             // 查询当前
-            $category_list = $goods_category_model->getCategoryList([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ], 'category_id,pid,level');
-            $category_list = $category_list[ 'data' ];
+            $category_list = $goods_category_model->getCategoryList([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ], 'category_id,pid,level')[ 'data' ];
 
             // 查询子级
-            $category_child_list = $goods_category_model->getCategoryList([ [ 'pid', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ], 'category_id,pid,level');
-            $category_child_list = $category_child_list[ 'data' ];
+            $category_child_list = $goods_category_model->getCategoryList([ [ 'pid', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ], 'category_id,pid,level')[ 'data' ];
 
             $temp_category_list = [];
             if (!empty($category_list)) {
@@ -263,8 +335,7 @@ class Goodssku extends BaseApi
                 [ 'coupon_type_id', '=', $coupon ],
                 [ 'site_id', '=', $this->site_id ],
                 [ 'goods_type', '=', 2 ]
-            ], 'goods_ids');
-            $coupon_type_info = $coupon_type_info[ 'data' ];
+            ], 'goods_ids')[ 'data' ];
             if (isset($coupon_type_info[ 'goods_ids' ]) && !empty($coupon_type_info[ 'goods_ids' ])) {
                 $condition[] = [ 'g.goods_id', 'in', explode(',', trim($coupon_type_info[ 'goods_ids' ], ',')) ];
             }
@@ -288,8 +359,7 @@ class Goodssku extends BaseApi
                 foreach ($list[ 'data' ][ 'list' ] as $k => $v) {
 
                     // 是否参与会员等级折扣
-                    $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id);
-                    $goods_member_price = $goods_member_price[ 'data' ];
+                    $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id)[ 'data' ];
                     if (!empty($goods_member_price[ 'member_price' ])) {
                         $list[ 'data' ][ 'list' ][ $k ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
                     }
@@ -434,8 +504,7 @@ class Goodssku extends BaseApi
         if (!empty($list[ 'data' ][ 'list' ])) {
             foreach ($list[ 'data' ][ 'list' ] as $k => $v) {
                 // 是否参与会员等级折扣
-                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id);
-                $goods_member_price = $goods_member_price[ 'data' ];
+                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id)[ 'data' ];
                 if (!empty($goods_member_price[ 'member_price' ])) {
                     $list[ 'data' ][ 'list' ][ $k ][ 'member_price' ] = $goods_member_price[ 'member_price' ];
                 }
@@ -456,9 +525,8 @@ class Goodssku extends BaseApi
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
         $goods_model = new Goods();
-        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'sku_id', '=', $sku_id ] ], 'sku_id,goods_name');
-        $goods_sku_info = $goods_sku_info[ 'data' ];
-        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ], $this->site_id);
+        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'sku_id', '=', $sku_id ] ], 'goods_id,sku_id,goods_name')[ 'data' ];
+        $res = $goods_model->qrcode($goods_sku_info[ 'goods_id' ], $goods_sku_info[ 'goods_name' ], $this->site_id);
         return $this->response($res);
     }
 }

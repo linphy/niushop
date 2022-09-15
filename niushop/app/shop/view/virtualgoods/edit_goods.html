@@ -616,6 +616,24 @@
 							</select>
 						</div>
 					</div>
+
+					{if $form_is_exit}
+					<div class="layui-form-item">
+						<label class="layui-form-label">商品表单：</label>
+						<div class="layui-input-block len-mid">
+							<select name="form_id">
+								<option value="0">请选择商品表单</option>
+								{foreach name="$form_list" item="vo"}
+								<option value="{$vo.id}" {if $goods_info.form_id == $vo.id} selected {/if}>{$vo.form_name}</option>
+								{/foreach}
+							</select>
+						</div>
+						<div class="word-aux">
+							<a href="{:addon_url('form://shop/form/addform?form_type=goods')}" class="text-color" target="_blank">创建商品表单</a>
+							<a href="javascript:;" onclick="refreshFormList()" class="text-color">刷新</a>
+						</div>
+					</div>
+					{/if}
 				</div>
 
 			</div>

@@ -68,27 +68,6 @@
         {/if}
     </div>
 </div>
-
-<!-- 店铺预览 -->
-<script type="text/html" id="h5_preview">
-    <div class="goods-preview">
-        <div class="qrcode-wrap">
-            <img src="{{ ns.img(d.path.h5.img) }}" alt="推广二维码">
-            <p class="tips text-color">扫码访问店铺 <a class="text-color" href="javascript:ns.copy('h5_preview_1');">复制链接</a></p>
-            <input type="text" id="h5_preview_1" value="{{d.path.h5.url}}" readonly />
-        </div>
-        <div class="phone-wrap">
-            <div class="iframe-wrap">
-                <iframe id="iframe" src="{{ d.path.h5.url }}?preview=1&time={:time()}" frameborder="0"></iframe>
-                <div class="empty">
-                    <img src="__STATIC__/img/wap_not_found.png" />
-                    <p>当前手机页面无法访问</p>
-                    <a href="https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842146" class="text-color" target="_blank">请检查手机端域名配置以及伪静态</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
 {/block}
 
 {block name="script"}
@@ -105,47 +84,7 @@
     });
 
     function getShopUrl(e) {
-        $.ajax({
-            type: "POST",
-            dataType: 'JSON',
-            url: ns.url("index/index/shopUrl"),
-            success: function (res) {
-                if (res.data.path.h5.status == 1) {
-                    layui.use('laytpl', function () {
-                        var laytpl = layui.laytpl;
-                        $.ajax({
-                            type: 'get',
-                            url: res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString()),
-                            dataType: 'json',
-                            error: function (obj) {
-                                laytpl($("#h5_preview").html()).render(res.data, function (html) {
-                                    var layerIndex = layer.open({
-                                        title: '访问店铺',
-                                        skin: 'layer-tips-class',
-                                        type: 1,
-                                        area: ['600px', '700px'],
-                                        content: html,
-                                        success: function () {
-                                            if(obj.status == 0 || obj.status == 200){
-                                                $("#h5_preview #iframe").show();
-                                                $(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
-                                            } else {
-                                                $(".goods-preview .phone-wrap .iframe-wrap .empty").show();
-                                                $("#h5_preview #iframe").hide();
-                                            }
-                                            var url = res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString());
-                                            $("#h5_preview #iframe").attr("src",url);
-                                        }
-                                    });
-                                });
-                            }
-                        });
-                    })
-                } else {
-                    layer.msg(res.data.path.h5.message);
-                }
-            }
-        });
+        window.open("{:url('index/index/h5preview')}")
     }
 </script>
 {/block}

@@ -53,8 +53,7 @@ class Account extends BaseApi
         $condition = array (
             [ "site_id", "=", $this->site_id ]
         );
-        $shop_info = $shop_model->getShopInfo($condition, 'site_name,logo,account, account_withdraw,account_withdraw_apply,shop_open_fee,shop_baozhrmb');
-        $shop_info = $shop_info[ 'data' ];
+        $shop_info = $shop_model->getShopInfo($condition, 'site_name,logo,account, account_withdraw,account_withdraw_apply,shop_open_fee,shop_baozhrmb')[ 'data' ];
         $data[ 'shop_info' ] = $shop_info;
 
         //余额

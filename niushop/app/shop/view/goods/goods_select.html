@@ -34,7 +34,7 @@
 	.select-goods .select-goods-classification .layui-colla-title.arrow:after{content: '';border: 4px solid #333;position: absolute;border-top-color: transparent !important;border-left-color: transparent !important;left: 3px;top: 50%;transition: all .3s;transform: rotate(-45deg) translateY(-50%);}
 	.select-goods .select-goods-classification .layui-colla-content{padding: 0;font-size: 12px;border-top: 0;}
 	.select-goods .select-goods-classification .layui-colla-item{border: 0;font-size: 12px;}
-	.select-goods .select-goods-classification .classification-item{cursor: pointer;border: 0;font-size: 12px;}
+	.select-goods .select-goods-classification .classification-item{cursor: pointer;border: 0;font-size: 14px;}
 	.select-goods .select-goods-classification .select-goods-classification .classification-item{padding-left: 26px;}
 	.select-goods .select-goods-classification .select-goods-classification .classification-item.arrow:after{left: 15px;}
 	.select-goods .select-goods-classification .select-goods-classification .layui-colla-content.classification-item{padding-left: 38px;}
@@ -79,7 +79,7 @@
 	<div class="select-goods-right">
 		<!-- 筛选 -->
 		<div class="single-filter-box">
-			<div ></div>
+			<div></div>
 			<div class="layui-form">
 				<div class="layui-inline">
 					<div class="layui-input-inline">
@@ -99,16 +99,18 @@
 						</select>
 					</div>
 				</div>
+				{if $is_disabled_goods_type == 0}
 				<div class="layui-input-inline">
 					<select name="goods_class" lay-filter="goods_class">
 						<option value="">选择商品类型</option>
-						<option value="1">实物商品</option>
-						<option value="2">虚拟商品</option>
+						<option value="1" {if $goods_type == 1} selected{/if}>实物商品</option>
+						<option value="2" {if $goods_type == 2} selected{/if}>虚拟商品</option>
 						{if $virtualcard_exit}
-						<option value="3">电子卡密</option>
+						<option value="3" {if $goods_type == 3} selected{/if}>电子卡密</option>
 						{/if}
 					</select>
 				</div>
+				{/if}
 				<div class="layui-input-inline">
 					<input type="text" name="search_text" placeholder="请输入商品名称{if in_array($promotion, ['', 'all', 'module'])}或编码{/if}" autocomplete="off" class="layui-input">
 					<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
@@ -190,7 +192,7 @@
 			filterData = {promotion_type: '',label_id: '',goods_name:''}, //筛选数据
 			goodsIdArr = [],
 			skuIdAll = [],
-
+			
 			//------新代码
 			table, form,laytpl,element,
 			selected_id_arr = select_id.length ? select_id.split(',') : [], //已选中的商品id
@@ -388,7 +390,7 @@
 			table = new Table({
 				elem: '#goods_list',
 				url: '{:addon_url("shop/goods/goodsselect")}',
-				where: {is_virtual: "{$is_virtual}",promotion: setItem.promotion},
+				where: {is_virtual: "{$is_virtual}",promotion: setItem.promotion,goods_class: "{$goods_type}"},
 				cols: goodsCols,
 				callback : function (res) {
 					if(setItem.mode == "sku") {

@@ -95,8 +95,7 @@ class Goodsattr extends BaseShop
             $this->assign("class_id", $class_id);
 
             //商品类型信息
-            $attr_class_info = $goods_attr_model->getAttrClassInfo([ [ 'class_id', '=', $class_id ], [ 'site_id', '=', $this->site_id ] ]);
-            $attr_class_info = $attr_class_info[ 'data' ];
+            $attr_class_info = $goods_attr_model->getAttrClassInfo([ [ 'class_id', '=', $class_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
             if (empty($attr_class_info)) $this->error('未获取到属性数据', addon_url('shop/goodsattr/lists'));
             $this->assign("attr_class_info", $attr_class_info);
 
@@ -216,11 +215,9 @@ class Goodsattr extends BaseShop
             $attr_id = input('attr_id', 0);// 属性id
 
             $goods_attr_model = new GoodsAttributeModel();
-            $attr_info = $goods_attr_model->getAttributeInfo([ [ 'attr_class_id', '=', $attr_class_id ], [ 'attr_id', '=', $attr_id ], [ 'site_id', '=', $this->site_id ] ]);
-            $attr_info = $attr_info[ 'data' ];
+            $attr_info = $goods_attr_model->getAttributeInfo([ [ 'attr_class_id', '=', $attr_class_id ], [ 'attr_id', '=', $attr_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
             if (!empty($attr_info)) {
-                $attr_value_list = $goods_attr_model->getAttributeValueList([ [ 'attr_class_id', '=', $attr_class_id ], [ 'attr_id', '=', $attr_id ] ]);
-                $attr_value_list = $attr_value_list[ 'data' ];
+                $attr_value_list = $goods_attr_model->getAttributeValueList([ [ 'attr_class_id', '=', $attr_class_id ], [ 'attr_id', '=', $attr_id ] ])[ 'data' ];
                 $attr_info[ 'value' ] = $attr_value_list;
                 return success(0, '', $attr_info);
             } else {

@@ -174,7 +174,7 @@ class Order extends BaseApi
             $condition[] = ['o.' . $order_label, 'like', "%$search_text%"];
         }
         $order_common_model = new OrderCommonModel();
-        $field = 'o.order_id, o.order_no, o.order_type,o.order_status, o.order_status_name, o.order_status_action, o.pay_type_name, o.name, o.mobile, o.address, o.full_address, o.order_money, o.create_time, o.remark, o.promotion_type_name, o.promotion_status_name';
+        $field = 'o.order_id, o.order_no, o.order_type,o.order_status, o.order_status_name, o.order_status_action, o.pay_type_name, o.name, o.mobile, o.address, o.full_address, o.order_money, o.create_time, o.remark, o.promotion_type_name, o.promotion_status_name, o.buyer_message';
         $oder_goods_field = 'order_goods_id, goods_id, sku_id, sku_image, goods_class_name, price, num, is_present, goods_name, sku_spec_format, refund_status, refund_status_name';
         $list = $order_common_model->getOrderPageList($condition, $page_index, $page_size, "o.create_time desc", $field, $alias, $join, $oder_goods_field);
         return $this->response($list);
@@ -235,7 +235,12 @@ class Order extends BaseApi
     {
         $order_id = isset($this->params['order_id']) ? $this->params['order_id'] : 0;
         $order_common_model = new OrderCommonModel();
-        $result = $order_common_model->orderClose($order_id);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action_way' => 2
+        ];
+        $result = $order_common_model->orderClose($order_id, $log_data);
         return $this->response($result);
     }
 
@@ -275,7 +280,13 @@ class Order extends BaseApi
             "site_id" => $this->site_id,
             "template_id" => isset($this->params['template_id']) ? $this->params['template_id'] : '0'//电子面单模板id
         );
-        $result = $order_model->orderGoodsDelivery($data);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action' => '商家对订单进行了发货',
+            'action_way' => 2
+        ];
+        $result = $order_model->orderGoodsDelivery($data, 1, $log_data);
         return $this->response($result);
     }
 
@@ -338,7 +349,14 @@ class Order extends BaseApi
             ["order_id", "=", $order_id],
             ["site_id", "=", $this->site_id]
         );
-        $result = $order_model->orderAddressUpdate($data, $condition);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action' => '商家修改了收货地址',
+            'action_way' => '2',
+            'order_id' => $order_id
+        ];
+        $result = $order_model->orderAddressUpdate($data, $condition, $log_data);
         return $this->response($result);
     }
 
@@ -391,7 +409,14 @@ class Order extends BaseApi
         $data = array(
             "remark" => $remark
         );
-        $result = $order_common_model->orderUpdate($data, $condition);
+        $log_data = [
+            'action' => '商家备注了订单，备注内容：' . $remark,
+            'action_way' => 2,
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'order_id' => $order_id
+        ];
+        $result = $order_common_model->orderUpdate($data, $condition, $log_data);
         return $this->response($result);
     }
 
@@ -422,7 +447,12 @@ class Order extends BaseApi
     {
         $order_id = isset($this->params['order_id']) ? $this->params['order_id'] : 0;
         $order_common_model = new OrderCommonModel();
-        $order_detail_result = $order_common_model->orderOfflinePay($order_id);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action_way' => 2
+        ];
+        $order_detail_result = $order_common_model->orderOfflinePay($order_id, $log_data);
         return $this->response($order_detail_result);
     }
 
@@ -566,7 +596,12 @@ class Order extends BaseApi
     {
         $order_id = isset($this->params['order_id']) ? $this->params['order_id'] : 0;// 订单id
         $order_model = new OrderCommonModel();
-        $result = $order_model->orderCommonTakeDelivery($order_id);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action_way' => 2
+        ];
+        $result = $order_model->orderCommonTakeDelivery($order_id, $log_data);
         return $this->response($result);
     }
 

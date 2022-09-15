@@ -33,6 +33,7 @@ class AddStoreDiyView
                         "pageBgColor" => "#FFFFFF",
                         "topNavColor" => "#FFFFFF",
                         "topNavBg" => false,
+                        "navBarSwitch" => true,
                         "textNavColor" => "#333333",
                         "topNavImg" => "",
                         "moreLink" => [
@@ -53,6 +54,8 @@ class AddStoreDiyView
                             "imgHeight" => ""
                         ],
                         "bgUrl" => "",
+                        "imgWidth" => "",
+                        "imgHeight" => "",
                         "template" => [
                             "pageBgColor" => "",
                             "textColor" => "#303133",

@@ -37,7 +37,7 @@
 					{/if}
 					</div>
 					<div class="operation">
-						<div >
+						<div>
 							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
 							<i title="删除图片" class="layui-icon layui-icon-delete js-delete" ></i>
 						</div>
@@ -146,7 +146,7 @@
     </div>
 
     <div class="time-view">
-        <div class="layui-form-item time-type-view">
+        <div class="layui-form-item time-type-view" lay-verify="time_week">
             <div class="layui-inline">
                 <label class="layui-form-label"></label>
                 <div class="layui-input-inline">
@@ -307,11 +307,11 @@
 					return '请选择城市';
 				}
 			},
-			district_id : function(value, item){
-				if(value == ''){
-					return '请选择区/县';
-				}
-			},
+			// district_id : function(value, item){
+			// 	if(value == ''){
+			// 		return '请选择区/县';
+			// 	}
+			// },
 			tel : function(value, item) {
 				var tel = /^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/; //固定电话
 				var phone = /^1[345678]\d{9}$/; //手机
@@ -325,6 +325,10 @@
 				if(value == ""){
 					return '请输入门店名称';
 				}
+			},
+			time_week: function(){
+				if ($('[name="time_type"]:checked').val() == 1 && !$('.time-week:checked').length)
+					return '请选择可配送日期';
 			}
 		});
 

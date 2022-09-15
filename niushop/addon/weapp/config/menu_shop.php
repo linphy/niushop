@@ -41,17 +41,15 @@ return [
                 'url' => 'weapp://shop/message/config',
                 'is_show' => 0,
                 'sort' => 4,
-                'chile_list' => [
-                    [
-                        'name'           => 'WEAPP_PACKAGE_EDIT',
-                        'title'          => '编辑订阅消息',
-                        'url' => 'weapp://shop/message/edit',
-                        'is_show'        => 0,
-                        'picture'        => '',
-                        'picture_select' => '',
-                        'sort'           => 1,
-                    ],
-                ]
+                'chile_list' => []
+            ],
+            [
+                'name' => 'WEAPP_PACKAGE_EDIT',
+                'parent' => 'MESSAGE_LISTS',
+                'title' => '编辑订阅消息',
+                'url' => 'weapp://shop/message/edit',
+                'is_show' => 0,
+                'sort' => 1,
             ],
             [
                 'name' => 'WEAPP_SHARE',

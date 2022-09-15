@@ -27,7 +27,11 @@ class Cart extends BaseModel
     {
         $cart_info = model("goods_cart")->getInfo([ [ 'sku_id', '=', $data[ 'sku_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ], 'cart_id, num');
         if (!empty($cart_info)) {
-            $res = model("goods_cart")->update([ 'num' => $cart_info[ 'num' ] + $data[ 'num' ] ], [ [ 'cart_id', '=', $cart_info[ 'cart_id' ] ] ]);
+            $update = [
+                'num' =>  $cart_info[ 'num' ] + $data[ 'num' ]
+            ];
+            if (isset($data['form_data']) && !empty($data['form_data'])) $update['form_data'] = $data['form_data'];
+            $res = model("goods_cart")->update($update, [ [ 'cart_id', '=', $cart_info[ 'cart_id' ] ] ]);
         } else {
             $res = model("goods_cart")->add($data);
         }
@@ -40,7 +44,11 @@ class Cart extends BaseModel
      */
     public function editCart($data)
     {
-        $res = model("goods_cart")->update([ 'num' => $data[ 'num' ] ], [ [ 'cart_id', '=', $data[ 'cart_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ]);
+        $update = [
+            'num' => $data[ 'num' ]
+        ];
+        if (isset($data['form_data']) && !empty($data['form_data'])) $update['form_data'] = $data['form_data'];
+        $res = model("goods_cart")->update($update, [ [ 'cart_id', '=', $data[ 'cart_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ]);
         return $this->success($res);
     }
 
@@ -71,7 +79,7 @@ class Cart extends BaseModel
      */
     public function getCart($member_id, $site_id)
     {
-        $field = 'ngc.cart_id, ngc.site_id, ngc.member_id, ngc.sku_id, ngc.num, ngs.sku_name,
+        $field = 'ngc.cart_id, ngc.site_id, ngc.member_id, ngc.sku_id, ngc.num, ngs.sku_name,ngs.goods_id,
             ngs.sku_no, ngs.sku_spec_format,ngs.price,ngs.market_price, ngs.goods_spec_format,
             ngs.discount_price, ngs.promotion_type, ngs.start_time, ngs.end_time, ngs.stock, 
             ngs.sku_image, ngs.sku_images, ngs.goods_state, ngs.goods_stock_alarm, ngs.is_virtual, ngs.goods_name,

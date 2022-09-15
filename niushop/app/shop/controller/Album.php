@@ -13,6 +13,7 @@ namespace app\shop\controller;
 use app\model\system\Site;
 use app\model\upload\Album as AlbumModel;
 use app\model\web\Config as ConfigModel;
+use app\model\web\DiyView as DiyViewModel;
 
 /**
  * 相册
@@ -24,15 +25,7 @@ class Album extends BaseShop
     {
         $this->app_module = input('app_module', SHOP_MODULE);
         if ($this->app_module == 'store') {
-            $this->site_id = input('site_id', 0);
-            $config_model = new ConfigModel();
-            $base = $config_model->getStyle($this->site_id);
-            $this->assign('base', $base);
-
-            $site_model = new Site();
-            $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time')[ 'data' ];
-            $this->assign("shop_info", $shop_info);
-            $this->assign('app_module', $this->app_module);
+            $this->initConstructInfo(); // 加载构造函数重要信息
         } else {
             parent::__construct();
         }
@@ -67,7 +60,7 @@ class Album extends BaseShop
             $album_list = $album_model->getAlbumList([ [ 'site_id', "=", $this->site_id ], [ 'type', '=', $type ] ]);
             $album_list_tree = $album_model->getAlbumListTree([ [ 'site_id', "=", $this->site_id ], [ 'type', '=', $type ] ]);
             $this->assign("album_list", $album_list[ 'data' ]);
-            $this->assign("album_list_tree", $album_list_tree['data']);
+            $this->assign("album_list_tree", $album_list_tree[ 'data' ]);
             $this->assign('type_list', $album_model->getType());
             $this->assign('type', $type);
             return $this->fetch('album/lists');

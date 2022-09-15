@@ -412,7 +412,7 @@ class GoodsEvaluate extends BaseModel
      * @param $order
      * @return \multitype
      */
-    public function getSecondEvaluateInfo($condition, $field = 'evaluate_id,order_goods_id,goods_id,sku_id,sku_name,sku_price,content,images,explain_first,member_name,member_headimg,member_id,is_anonymous,again_content,again_images,again_explain,create_time,again_time', $order = "create_time desc")
+    public function getSecondEvaluateInfo($condition, $field = 'evaluate_id,order_goods_id,goods_id,sku_id,sku_name,sku_price,content,images,explain_first,member_name,member_headimg,member_id,is_anonymous,again_content,again_images,again_explain,create_time,again_time,scores', $order = "create_time desc")
     {
         $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("goods_evaluate_getSecondEvaluateInfo_" . $data);

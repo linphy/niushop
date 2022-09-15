@@ -36,8 +36,20 @@ class MemberAddress extends BaseModel
         }
         $res = model('member_address')->add($data);
         $count = model('member_address')->getCount([ 'member_id' => $data[ 'member_id' ] ]);
-        if ($count == 1)
+        if ($count == 1) {
             model('member_address')->update([ 'is_default' => 1 ], [ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'id', '=', $res ], [ 'type', '=', $data[ 'type' ] ] ]);
+            // 设置会员地址
+            model('member')->update([
+                'province_id' => $data[ 'province_id' ],
+                'city_id' => $data[ 'city_id' ],
+                'district_id' => $data[ 'district_id' ],
+                'community_id' => $data[ 'community_id' ],
+                'address' => $data[ 'address' ],
+                'full_address' => $data[ 'full_address' ],
+                'longitude' => $data[ 'longitude' ],
+                'latitude' => $data[ 'latitude' ],
+            ], [ [ 'member_id', '=', $data[ 'member_id' ] ] ]);
+        }
         Cache::tag("member_address_" . $data[ 'member_id' ])->clear();
         return $this->success($res);
     }

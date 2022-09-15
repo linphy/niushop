@@ -22,8 +22,7 @@ class SmsTemplateInfo
     public function handle($param)
     {
         $config_model = new Config();
-        $sms_config = $config_model->getSmsConfig($param['site_id'], 'shop');
-        $sms_config = $sms_config[ 'data' ];
+        $sms_config = $config_model->getSmsConfig($param['site_id'], 'shop')[ 'data' ];
         if ($sms_config['is_use']) {
             $template_info = model('sms_template')->getInfo([ ['keywords', '=', $param['keywords'] ]]);
             return $template_info;

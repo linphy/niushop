@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace addon\wechatpay\model;
 
@@ -40,6 +39,7 @@ class Config extends BaseModel
         $config = new ConfigModel();
         $res    = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'WECHAT_PAY_CONFIG']]);
         if (!empty($res['data']['value'])) {
+            $res['data']['value']['api_type'] = $res['data']['value']['api_type'] ?? 'v2';
             $res['data']['value']['transfer_type'] = $res['data']['value']['transfer_type'] ?? 'v2';
         }
         return $res;

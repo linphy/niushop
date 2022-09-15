@@ -31,3 +31,7 @@
 .notice .diy-img .action .iconfont {font-size: 20px;}
 .notice .diy-img .action:hover {border-color: var(--base-color);color: var(--base-color);}
 .notice .diy-img .desc{flex: 1;color: #B2B2B2;font-size: 12px;line-height: 1.6;}
+
+/* 风格二 */
+.notice .notice-box.style-2 .notice-icon-one{margin-right: 5px;}
+.notice .notice-box.style-2 .notice-icon-two{color: #999;}

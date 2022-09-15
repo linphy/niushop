@@ -10,6 +10,7 @@
 
 namespace app\shop\controller;
 
+use addon\form\model\Form;
 use addon\postertemplate\model\PosterTemplate as PosterTemplateModel;
 use app\model\express\ExpressTemplate as ExpressTemplateModel;
 use app\model\goods\Batch;
@@ -28,6 +29,7 @@ use app\model\web\Config;
 use app\model\web\Config as ConfigModel;
 use app\model\goods\GoodsImport;
 use app\model\goods\GoodsPoster;
+use app\model\express\Config as ExpressConfig;
 
 /**
  * 实物商品
@@ -41,15 +43,7 @@ class Goods extends BaseShop
     {
         $this->app_module = input('app_module', SHOP_MODULE);
         if ($this->app_module == 'store') {
-            $this->site_id = input('site_id', 0);
-            $config_model = new ConfigModel();
-            $base = $config_model->getStyle($this->site_id);
-            $this->assign('base', $base);
-
-            $site_model = new Site();
-            $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time')[ 'data' ];
-            $this->assign("shop_info", $shop_info);
-            $this->assign('app_module', $this->app_module);
+            $this->initConstructInfo(); // 加载构造函数重要信息
         } else {
             parent::__construct();
         }
@@ -177,31 +171,26 @@ class Goods extends BaseShop
                 [ 'site_id', '=', $this->site_id ]
             ];
 
-            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
-            $goods_category_list = $goods_category_list[ 'data' ];
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate')[ 'data' ];
             $this->assign("goods_category_list", $goods_category_list);
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
-            $label_list = $label_list[ 'data' ];
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc')[ 'data' ];
             $this->assign("label_list", $label_list);
             // 商品品牌
             $goods_brand_model = new GoodsBrandModel();
-            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], 'brand_id,brand_name', 'sort asc');
-            $brand_list = $brand_list[ 'data' ];
+            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], 'brand_id,brand_name', 'sort asc')[ 'data' ];
             $this->assign("brand_list", $brand_list);
 
             // 商品服务
             $goods_service_model = new GoodsServiceModel();
-            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon');
-            $service_list = $service_list[ 'data' ];
+            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon')[ 'data' ];
             $this->assign("service_list", $service_list);
 
             //获取运费模板
             $express_template_model = new ExpressTemplateModel();
-            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc');
-            $express_template_list = $express_template_list[ 'data' ];
+            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc')[ 'data' ];
             $this->assign("express_template_list", $express_template_list);
 
             //判断会员价插件
@@ -302,7 +291,9 @@ class Goods extends BaseShop
                 'stock_show' => input('stock_show', 0),//
                 'market_price_show' => input('market_price_show', 0),//
                 'barrage_show' => input('barrage_show', 0),//
-                'template_id' => input('template_id', 0)//商品海报id
+                'template_id' => input('template_id', 0),//商品海报id
+                'form_id' => input('form_id', 0),
+                'support_trade_type' => input('support_trade_type', '')
             ];
             $goods_model = new GoodsModel();
             $res = $goods_model->addGoods($data);
@@ -316,32 +307,27 @@ class Goods extends BaseShop
                 [ 'site_id', '=', $this->site_id ]
             ];
 
-            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
-            $goods_category_list = $goods_category_list[ 'data' ];
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate')[ 'data' ];
             $this->assign("goods_category_list", $goods_category_list);
 
             //获取运费模板
             $express_template_model = new ExpressTemplateModel();
-            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc');
-            $express_template_list = $express_template_list[ 'data' ];
+            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc')[ 'data' ];
             $this->assign("express_template_list", $express_template_list);
 
             //获取商品类型
             $goods_attr_model = new GoodsAttributeModel();
-            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name');
-            $attr_class_list = $attr_class_list[ 'data' ];
+            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name')[ 'data' ];
             $this->assign("attr_class_list", $attr_class_list);
 
             // 商品服务
             $goods_service_model = new GoodsServiceModel();
-            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon');
-            $service_list = $service_list[ 'data' ];
+            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon')[ 'data' ];
             $this->assign("service_list", $service_list);
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
-            $label_list = $label_list[ 'data' ];
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc')[ 'data' ];
             $this->assign("label_list", $label_list);
 
             //商品默认排序值
@@ -351,8 +337,7 @@ class Goods extends BaseShop
             $this->assign("sort_config", $sort_config);
             //获取品牌
             $goods_brand_model = new GoodsBrandModel();
-            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name");
-            $brand_list = $brand_list[ 'data' ];
+            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name")[ 'data' ];
             $this->assign("brand_list", $brand_list);
             //获取社群二维码
             $goods_community_model = new GoodsCommunityQrCode();
@@ -363,8 +348,17 @@ class Goods extends BaseShop
             $poster_template_model = new PosterTemplateModel();
             $poster_list = $poster_template_model->getPosterTemplateList([ [ 'site_id', '=', $this->site_id ], [ 'template_status', '=', 1 ] ], 'template_id,poster_name,site_id');
             $this->assign('poster_list', $poster_list[ 'data' ]);
-
             $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
+
+            $form_is_exit = addon_is_exit('form', $this->site_id);
+            if ($form_is_exit) {
+                $form_list = (new Form())->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')['data'];
+                $this->assign('form_list', $form_list);
+            }
+            $this->assign('form_is_exit', $form_is_exit);
+
+            $express_type = (new ExpressConfig())->getEnabledExpressType($this->site_id);
+            $this->assign('express_type', $express_type);
 
             return $this->fetch("goods/add_goods");
         }
@@ -430,7 +424,9 @@ class Goods extends BaseShop
                 'stock_show' => input('stock_show', 0),//
                 'market_price_show' => input('market_price_show', 0),//
                 'barrage_show' => input('barrage_show', 0),//
-                'template_id' => input('template_id', 0)//商品海报id
+                'template_id' => input('template_id', 0),//商品海报id
+                'form_id' => input('form_id', 0),
+                'support_trade_type' => input('support_trade_type', '')
             ];
 
             $res = $goods_model->editGoods($data);
@@ -438,12 +434,10 @@ class Goods extends BaseShop
         } else {
 
             $goods_id = input("goods_id", 0);
-            $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ]);
-            $goods_info = $goods_info[ 'data' ];
+            $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
             if (empty($goods_info)) $this->error('未获取到商品数据', addon_url('shop/goods/lists'));
 
-            $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,weight,volume,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default", '');
-            $goods_sku_list = $goods_sku_list[ 'data' ];
+            $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,weight,volume,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default", '')[ 'data' ];
             $goods_info[ 'sku_list' ] = $goods_sku_list;
             $this->assign("goods_info", $goods_info);
 
@@ -454,36 +448,30 @@ class Goods extends BaseShop
                 [ 'site_id', '=', $this->site_id ]
             ];
 
-            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
-            $goods_category_list = $goods_category_list[ 'data' ];
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate')[ 'data' ];
             $this->assign("goods_category_list", $goods_category_list);
 
             //获取运费模板
             $express_template_model = new ExpressTemplateModel();
-            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc');
-            $express_template_list = $express_template_list[ 'data' ];
+            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc')[ 'data' ];
             $this->assign("express_template_list", $express_template_list);
 
             //获取商品类型
             $goods_attr_model = new GoodsAttributeModel();
-            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name');
-            $attr_class_list = $attr_class_list[ 'data' ];
+            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name')[ 'data' ];
             $this->assign("attr_class_list", $attr_class_list);
             //获取品牌
             $goods_brand_model = new GoodsBrandModel();
-            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name");
-            $brand_list = $brand_list[ 'data' ];
+            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name")[ 'data' ];
             $this->assign("brand_list", $brand_list);
             // 商品服务
             $goods_service_model = new GoodsServiceModel();
-            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon');
-            $service_list = $service_list[ 'data' ];
+            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon')[ 'data' ];
             $this->assign("service_list", $service_list);
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
-            $label_list = $label_list[ 'data' ];
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc')[ 'data' ];
             $this->assign("label_list", $label_list);
 
             //获取社群二维码
@@ -493,8 +481,18 @@ class Goods extends BaseShop
 
             //获取商品海报
             $poster_template_model = new PosterTemplateModel();
-            $poster_list = $poster_template_model->getPosterTemplateList([ [ 'site_id', '=', $this->site_id ], [ 'template_status', '=', 1 ], [ 'template_type', '=', 'goods' ] ], 'template_id,poster_name,site_id');
-            $this->assign('poster_list', $poster_list[ 'data' ]);
+            $poster_list = $poster_template_model->getPosterTemplateList([ [ 'site_id', '=', $this->site_id ], [ 'template_status', '=', 1 ], [ 'template_type', '=', 'goods' ] ], 'template_id,poster_name,site_id')[ 'data' ];
+            $this->assign('poster_list', $poster_list);
+
+            $form_is_exit = addon_is_exit('form', $this->site_id);
+            if ($form_is_exit) {
+                $form_list = (new Form())->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')['data'];
+                $this->assign('form_list', $form_list);
+            }
+            $this->assign('form_is_exit', $form_is_exit);
+
+            $express_type = (new ExpressConfig())->getEnabledExpressType($this->site_id);
+            $this->assign('express_type', $express_type);
 
             return $this->fetch("goods/edit_goods");
         }
@@ -547,8 +545,7 @@ class Goods extends BaseShop
                 [ 'site_id', '=', $this->site_id ]
             ];
 
-            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
-            $goods_category_list = $goods_category_list[ 'data' ];
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate')[ 'data' ];
             $this->assign("goods_category_list", $goods_category_list);
             $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
             return $this->fetch("goods/recycle");
@@ -781,7 +778,6 @@ class Goods extends BaseShop
 
                 $order = 'sort ' . $sort_config[ 'type' ] . ',create_time desc';
 
-
                 $field = 'goods_id,goods_name,goods_class_name,goods_image,price,goods_stock,create_time,is_virtual';
                 $goods_list = $goods_model->getGoodsPageList($condition, $page, $page_size, $order, $field);
                 if (!empty($goods_list[ 'data' ][ 'list' ])) {
@@ -797,13 +793,18 @@ class Goods extends BaseShop
 
             //已经选择的商品sku数据
             $select_id = input('select_id', '');
+
             $mode = input('mode', 'spu');
             $max_num = input('max_num', 0);
             $min_num = input('min_num', 0);
             $is_virtual = input('is_virtual', '');
             $disabled = input('disabled', 0);
             $promotion = input('promotion', '');//营销活动标识：pintuan、groupbuy、seckill、fenxiao
+            $goods_type = input('goods_type', ''); //查找商品类型
+            $is_disabled_goods_type = input('is_disabled_goods_type', 0); //是否禁用商品类型筛选 0开启 1关闭
 
+            $this->assign('is_disabled_goods_type', $is_disabled_goods_type);
+            $this->assign('goods_type', $goods_type);
             $this->assign('select_id', $select_id);
             $this->assign('mode', $mode);
             $this->assign('max_num', $max_num);
@@ -818,8 +819,7 @@ class Goods extends BaseShop
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
-            $label_list = $label_list[ 'data' ];
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc')[ 'data' ];
             $this->assign("label_list", $label_list);
 
             //分类过滤
@@ -850,11 +850,9 @@ class Goods extends BaseShop
             //电子卡密插件是否存在
             $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
 
-            // 商品分组
-            $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc');
-            $label_list = $label_list[ 'data' ];
-            $this->assign("label_list", $label_list);
+
+            $goods_model = new GoodsModel();
+            $goods_model->getGoodsTotalCount();
 
             return $this->fetch("goods/goods_select");
         }

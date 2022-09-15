@@ -31,19 +31,20 @@ var goodsCategoryHtml = '<div class="goods-category-edit layui-form">';
 				goodsCategoryHtml += '</div>';
 			goodsCategoryHtml += '</div>';
 		goodsCategoryHtml += '</div>';
-		goodsCategoryHtml += '<div class="layui-form-item" v-show="data.template == 2 || data.template == 3">';
+		goodsCategoryHtml += '<div class="layui-form-item" v-show="data.template == 2 || data.template == 3 || data.template == 4">';
 			goodsCategoryHtml += '<label class="layui-form-label sm">展示分类</label>';
-			goodsCategoryHtml += '<div class="layui-input-block">';
+			goodsCategoryHtml += '<div class="layui-input-block">'; 
 				goodsCategoryHtml += '<div @click="data.goodsLevel = 1" :class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (data.goodsLevel == 1) }">';
 				goodsCategoryHtml += '<i class="layui-anim layui-icon">&#xe63f;</i>';
-				goodsCategoryHtml += '<div>一级分类</div>';
+				goodsCategoryHtml += '<div>{{data.template == 4 ? "二级分类" : "一级分类"}}</div>';
 			goodsCategoryHtml += '</div>';
 			goodsCategoryHtml += '<div @click="data.goodsLevel = 2" :class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (data.goodsLevel == 2) }">';
 				goodsCategoryHtml += '<i class="layui-anim layui-icon">&#xe63f;</i>';
-				goodsCategoryHtml += '<div>二级分类</div>';
+				goodsCategoryHtml += '<div>{{data.template == 4 ? "三级分类" : "二级分类"}}</div>';
 			goodsCategoryHtml += '</div>';
 			goodsCategoryHtml += '</div>';
 		goodsCategoryHtml += '</div>';
+		
 		goodsCategoryHtml += '<div class="layui-form-item" v-show="(data.template == 2 || data.template == 3) && data.goodsLevel == 1">';
 			goodsCategoryHtml += '<label class="layui-form-label sm">加载模式</label>';
 			goodsCategoryHtml += '<div class="layui-input-block">';
@@ -57,7 +58,7 @@ var goodsCategoryHtml = '<div class="goods-category-edit layui-form">';
 				goodsCategoryHtml += '</div>';
 			goodsCategoryHtml += '</div>';
 		goodsCategoryHtml += '</div>';
-		goodsCategoryHtml += '<div class="layui-form-item" v-show="data.template == 2">';
+		goodsCategoryHtml += '<div class="layui-form-item" v-show="data.template == 2 || data.template == 4">';
 			goodsCategoryHtml += '<label class="layui-form-label sm">快捷购买</label>';
 			goodsCategoryHtml += '<div class="layui-input-block">';
 				goodsCategoryHtml += '<div class="layui-unselect layui-form-checkbox" lay-skin="primary" @click="data.quickBuy = data.quickBuy == 1 ? 0 : 1" :class="{ \'layui-form-checked\' : data.quickBuy == 1 }">';
@@ -72,7 +73,37 @@ Vue.component("goods-category", {
 	template: goodsCategoryHtml,
 	data: function () {
 		return {
-			data: this.$parent.data
+			data: this.$parent.data,
+			categoryData:[
+				{
+					search: 1,
+					level:2,
+					goodsLevel: 1,
+					loadType: 'all',
+					quickBuy: 0
+				},
+				{
+					search: 1,
+					level:2,
+					goodsLevel: 1,
+					loadType: 'part',
+					quickBuy: 1
+				},
+				{
+					search: 1,
+					level:2,
+					goodsLevel: 1,
+					loadType: 'part',
+					quickBuy: 0
+				},
+				{
+					search: 1,
+					level:2,
+					goodsLevel: 1,
+					loadType: 'part',
+					quickBuy: 1
+				}
+			]
 		}
 	},
 	created:function() {
@@ -92,9 +123,10 @@ Vue.component("goods-category", {
 		selectClassificationStyle: function () {
 			var self = this;
 			layer.open({
-				type: 1,
+				type: 0,
 				title: '选择风格',
 				area: ['930px', '630px'],
+				btn: ['确定', '返回'],
 				content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .goods-category-popup-wrap").html(),
 				success: function (layero, index) {
 					layui.use(['form'], function () {
@@ -120,20 +152,16 @@ Vue.component("goods-category", {
 							$(".layui-layer-content input[name='template']").val($(this).index() + 1);
 							$(this).addClass("selected border-color").siblings().removeClass("selected border-color");
 						});
-
-						//确定
-						form.on("submit(confirm)", function (data) {
-							self.data.level = data.field.level;
-							self.data.template = data.field.template;
-							layer.closeAll()
-						});
-
-						// 返回
-						$(".layui-layer-content .back").click(function () {
-							layer.closeAll()
-						});
-
 					});
+				},
+				yes: function(index, layero){
+					self.data.level = $(".layui-layer-content input[name='level']").val();
+					self.data.template = $(".layui-layer-content input[name='template']").val();
+					self.data = Object.assign(self.data,self.categoryData[self.data.template-1])
+					layer.closeAll();
+				},
+				btn2: function(index, layero){
+					layer.closeAll();
 				}
 			});
 		}

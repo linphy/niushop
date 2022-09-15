@@ -61,10 +61,7 @@
             </div>
 
         </div>
-        <div class="order-information-contentTwo">
-
-
-        </div>
+        <div class="order-information-contentTwo"></div>
     </div>
     
     <div class="title">订单状态</div>
@@ -204,9 +201,7 @@
                     <a class="text-color" href='{:addon_url("shop/orderrefund/detail?order_goods_id=".$order_goods_item["order_goods_id"])}'>{$order_goods_item.refund_status_name}</a>
                     {/if}
                 </td>
-                <td>
-                    {$order_goods_item.delivery_status_name}
-                </td>
+                <td>{$order_goods_item.delivery_status_name}</td>
             </tr>
             {/foreach}
             </tbody>

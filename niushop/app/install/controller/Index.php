@@ -227,6 +227,7 @@ class Index extends BaseInstall
                     $table_name = $match_data[ "1" ];
                     $new_table_name = $dbprefix . $table_name;
                     $alter_sql_item = $this->str_replace_first($table_name, $new_table_name, $alter_sql_item);
+                    $alter_sql_item = str_replace("\r\n",' ',$alter_sql_item);
                     @mysqli_query($conn, $alter_sql_item);
                 } else {
                     return $this->returnError([], '索引插入解析失败！');
@@ -269,7 +270,6 @@ class Index extends BaseInstall
 
             //安装插件
             $addon_model = new Addon();
-            $addon_model->refreshDiyView('');
             $addon_result = $addon_model->installAllAddon();
             if ($addon_result[ "code" ] < 0) {
                 return $this->returnError([], $addon_result[ "message" ]);

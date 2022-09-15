@@ -17,6 +17,7 @@ class Cart extends BaseApi
 
         $sku_id = isset($this->params[ 'sku_id' ]) ? $this->params[ 'sku_id' ] : 0;
         $num = isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 0;
+        $form_data = $this->params[ 'form_data' ] ?? '';
         if (empty($sku_id)) {
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
@@ -28,7 +29,8 @@ class Cart extends BaseApi
             'site_id' => $this->site_id,
             'member_id' => $token[ 'data' ][ 'member_id' ],
             'sku_id' => $sku_id,
-            'num' => $num
+            'num' => $num,
+            'form_data' => $form_data
         ];
         $res = $cart->addCart($data);
         return $this->response($res);
@@ -44,6 +46,7 @@ class Cart extends BaseApi
 
         $cart_id = isset($this->params[ 'cart_id' ]) ? $this->params[ 'cart_id' ] : 0;
         $num = isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 0;
+        $form_data = $this->params[ 'form_data' ] ?? '';
         if (empty($cart_id)) {
             return $this->response($this->error('', 'REQUEST_CART_ID'));
         }
@@ -55,7 +58,8 @@ class Cart extends BaseApi
         $data = [
             'cart_id' => $cart_id,
             'member_id' => $token[ 'data' ][ 'member_id' ],
-            'num' => $num
+            'num' => $num,
+            'form_data' => $form_data
         ];
         $res = $cart->editCart($data);
         return $this->response($res);

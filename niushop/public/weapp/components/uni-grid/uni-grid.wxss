@@ -1,9 +1,0 @@
-
-@charset "UTF-8";
-.uni-grid {
-	display: flex;
-	flex-wrap: wrap;
-	box-sizing: border-box;
-	border-left: 2rpx #e5e5e5 solid;
-}
-

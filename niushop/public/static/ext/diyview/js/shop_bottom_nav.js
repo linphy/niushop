@@ -41,19 +41,19 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 
 		bottomMenuHtml += '<div class="template-edit-title">';
 			bottomMenuHtml += '<h3>导航内容设置</h3>';
-bottomMenuHtml += '</div>';
+		bottomMenuHtml += '</div>';
+
 		bottomMenuHtml += '<ul class="bottom-menu-set">';
 			bottomMenuHtml += '<li v-for="(item,index) in menuList" :key="item.id">';
-
 
 				bottomMenuHtml += '<div class="content-block">';
 
 					bottomMenuHtml += '<div class="layui-form-item" v-show="$parent.data.type != 3">';
 						bottomMenuHtml += '<label class="layui-form-label sm">图标</label>';
 						bottomMenuHtml += '<div class="layui-input-block">';
-							bottomMenuHtml += '<div class="image-block" >';
-							bottomMenuHtml += '<icon-upload :data="{ data : item, field : \'iconPath\'}" ></icon-upload>';
-							bottomMenuHtml += '<icon-upload :data="{ data : item, field : \'selectedIconPath\'}" ></icon-upload>';
+							bottomMenuHtml += '<div class="image-block">';
+								bottomMenuHtml += '<icon-upload :data="{ data : item, field : \'iconPath\'}" ></icon-upload>';
+								bottomMenuHtml += '<icon-upload :data="{ data : item, field : \'selectedIconPath\'}" ></icon-upload>';
 							bottomMenuHtml += '</div>';
 						bottomMenuHtml += '</div>';
 					bottomMenuHtml += '</div>';
@@ -191,16 +191,14 @@ var iconHtml = '<div class="icon-block layui-form" :id="id">';
 		iconHtml += '<template v-else>';
 			iconHtml += '<template v-if="myData.data.icon_type == \'icon\'">';
 				iconHtml += '<div class="icon-box">';
-					iconHtml += '<template>';
-						iconHtml += '<iconfont :icon="myData.data[data.field]" :value="myData.data.style ? myData.data.style : null"></iconfont>';
-						iconHtml += '<div class="operation">';
-							iconHtml += '<div class="operation-warp">';
+					iconHtml += '<iconfont :icon="myData.data[data.field]" :value="myData.data.style ? myData.data.style : null"></iconfont>';
+					iconHtml += '<div class="operation">';
+						iconHtml += '<div class="operation-warp">';
 							iconHtml += '<i title="图片预览" class="iconfont iconreview js-preview"></i>';
 							iconHtml += '<i title="删除图标" class="layui-icon layui-icon-delete" @click="deleteIcon()"></i>';
-							iconHtml += '</div>';
-							iconHtml += '<div @click="uploadImg(\'icon_type\')" class="js-replace">点击替换</div>';
 						iconHtml += '</div>';
-					iconHtml += '</template>';
+						iconHtml += '<div @click="uploadImg(\'icon_type\')" class="js-replace">点击替换</div>';
+					iconHtml += '</div>';
 				iconHtml += '</div>';
 				iconHtml += '<div class="action-box">';
 					iconHtml += '<div class="action" @click="iconStyle($event, \'style\')"><i class="iconfont iconpifu"></i></div>';
@@ -210,14 +208,14 @@ var iconHtml = '<div class="icon-block layui-form" :id="id">';
 
 			iconHtml += '<template v-if="myData.data.icon_type == \'img\'">';
 				iconHtml += '<div class="upload-box">';
-				iconHtml += '<img :layer-src="img(myData.data[data.field])" :src="img(myData.data[data.field])" class="img_prev"/>';
-				iconHtml += '<div class="operation">';
-					iconHtml += '<div class="operation-warp">';
-					iconHtml += '<i title="图片预览" class="iconfont iconreview js-preview" @click="previewImg()"></i>';
-					iconHtml += '<i title="删除图片" class="layui-icon layui-icon-delete js-delete" @click="deleteImg()"></i>';
+					iconHtml += '<img :layer-src="img(myData.data[data.field])" :src="img(myData.data[data.field])" class="img_prev"/>';
+					iconHtml += '<div class="operation">';
+						iconHtml += '<div class="operation-warp">';
+							iconHtml += '<i title="图片预览" class="iconfont iconreview js-preview" @click="previewImg()"></i>';
+							iconHtml += '<i title="删除图片" class="layui-icon layui-icon-delete js-delete" @click="deleteImg()"></i>';
+						iconHtml += '</div>';
+						iconHtml += '<div @click="uploadImg(\'icon_type\')" class="js-replace">点击替换</div>';
 					iconHtml += '</div>';
-					iconHtml += '<div @click="uploadImg(\'icon_type\')" class="js-replace">点击替换</div>';
-				iconHtml += '</div>';
 				iconHtml += '</div>';
 			iconHtml += '</template>';
 		iconHtml += '</template>';
@@ -241,7 +239,7 @@ var iconHtml = '<div class="icon-block layui-form" :id="id">';
 							iconHtml += '<i title="图片预览" class="iconfont iconreview js-preview"></i>';
 							iconHtml += '<i title="删除图标" class="layui-icon layui-icon-delete" @click="deleteIcon()"></i>';
 							iconHtml += '</div>';
-							iconHtml += '<div @click="uploadImg(\'selected_icon_type\')" class="js-replace">点击替换</div>';
+							iconHtml += '<div @click="uploadImg(\'selected_icon_type\',\'icon\')" class="js-replace">点击替换</div>';
 						iconHtml += '</div>';
 					iconHtml += '</template>';
 				iconHtml += '</div>';
@@ -253,14 +251,14 @@ var iconHtml = '<div class="icon-block layui-form" :id="id">';
 
 			iconHtml += '<template v-if="myData.data.selected_icon_type == \'img\'">';
 				iconHtml += '<div class="upload-box">';
-				iconHtml += '<img :layer-src="img(myData.data[data.field])" :src="img(myData.data[data.field])" class="img_prev"/>';
-				iconHtml += '<div class="operation">';
-					iconHtml += '<div class="operation-warp">';
-					iconHtml += '<i title="图片预览" class="iconfont iconreview js-preview" @click="previewImg()"></i>';
-					iconHtml += '<i title="删除图片" class="layui-icon layui-icon-delete js-delete" @click="deleteImg()"></i>';
+					iconHtml += '<img :layer-src="img(myData.data[data.field])" :src="img(myData.data[data.field])" class="img_prev"/>';
+					iconHtml += '<div class="operation">';
+						iconHtml += '<div class="operation-warp">';
+							iconHtml += '<i title="图片预览" class="iconfont iconreview js-preview" @click="previewImg()"></i>';
+							iconHtml += '<i title="删除图片" class="layui-icon layui-icon-delete js-delete" @click="deleteImg()"></i>';
+						iconHtml += '</div>';
+						iconHtml += '<div @click="uploadImg(\'selected_icon_type\',\'img\')" class="js-replace">点击替换</div>';
 					iconHtml += '</div>';
-					iconHtml += '<div @click="uploadImg(\'selected_icon_type\')" class="js-replace">点击替换</div>';
-				iconHtml += '</div>';
 				iconHtml += '</div>';
 			iconHtml += '</template>';
 		iconHtml += '</template>';
@@ -304,11 +302,12 @@ Vue.component("icon-upload", {
 	},
 	methods: {
 		selectedIcon: function () {
-			iconSelect((data)=>{
+			iconSelect((data) => {
 				this.myData.data[this.data.field] = data;
 			})
 		},
-		uploadImg(field){
+		uploadImg(field, display_type) {
+			display_type = display_type || 'img,icon';
 			var self = this;
 			openAlbum(function (obj) {
 				if (typeof obj == 'object') {
@@ -326,28 +325,27 @@ Vue.component("icon-upload", {
 						iconColor: ['#000'],
 						iconColorDeg: 0,
 					};
-					if(!self.myData.data.selected_style) self.$set(self.myData.data, 'selected_style', defaultStyle)
-					if(!self.myData.data.style) self.$set(self.myData.data, 'style', defaultStyle)
+					if (!self.myData.data.selected_style) self.$set(self.myData.data, 'selected_style', defaultStyle)
+					if (!self.myData.data.style) self.$set(self.myData.data, 'style', defaultStyle)
 				}
 				self.$forceUpdate();
-			}, 1, 0, 'img', 'img,icon');
+			}, 1, 0, 'img', display_type);
 		},
-		previewImg(){
-			$('#'+this.id).find('.upload-box>img').click();
+		previewImg() {
+			$('#' + this.id).find('.upload-box>img').click();
 		},
-		deleteImg(){
+		deleteImg() {
 			this.myData.data[this.data.field] = '';
 			this.$forceUpdate();
 		},
-		deleteIcon(index){
+		deleteIcon(index) {
 			this.myData.data[this.data.field] = '';
 			this.$forceUpdate();
 		},
-		img(path){
+		img(path) {
 			return ns.img(path)
 		},
-		selectColor(id, style_field){
-
+		selectColor(id, style_field) {
 			let self = this;
 			colorRender(id, '', function (elem, color) {
 				if (self.myData.data[style_field].iconBgImg || self.myData.data[style_field]['iconBgColor'].length) {
@@ -360,9 +358,10 @@ Vue.component("icon-upload", {
 		},
 		/**
 		 * 选择图标风格
-		 * @param index
+		 * @param event
+		 * @param style_field
 		 */
-		iconStyle(event, style_field){
+		iconStyle(event, style_field) {
 			var self = this;
 			selectIconStyle({
 				elem: event,
@@ -376,7 +375,7 @@ Vue.component("icon-upload", {
 							query: {
 								icon: self.myData.data[self.data.field]
 							},
-						}, function(style){
+						}, function (style) {
 							self.myData.data[style_field] = style;
 							self.$forceUpdate();
 						})
@@ -568,4 +567,3 @@ $("button.save").click(function () {
 		}
 	});
 });
-

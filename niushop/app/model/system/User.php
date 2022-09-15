@@ -189,7 +189,7 @@ class User extends BaseModel
     {
         if(addon_is_exit("demo"))
         {
-            return $this->error('', '权限不足');
+            return $this->error('', '权限不足，请联系客服');
         }
         $res = model('user')->getInfo($condition, "uid,password");
         if (!empty($res)) {
@@ -379,9 +379,8 @@ class User extends BaseModel
         if ($this->checkAuth($url, $app_module, $group_info) == false) {
 
             $menu_model = new Menu();
-            $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module, $addon);
+            $menu_info = $menu_model->getMenuInfoByUrl($url, $app_module, $addon)[ 'data' ];
 
-            $menu_info = $menu_info[ 'data' ];
             if(empty($menu_info))
             {
                 //针对空值特殊
@@ -393,17 +392,15 @@ class User extends BaseModel
                     ];
                 }
             }
-            $menu_count = $menu_model->getMenuCount([ [ 'url', "=", $url ], [ 'app_module', "=", $app_module ] ]);
+            $menu_count = $menu_model->getMenuCount([ [ 'url', "=", $url ], [ 'app_module', "=", $app_module ] ])[ 'data' ];
 
-            $menu_count = $menu_count[ 'data' ];
             if ($menu_count == 1) {
                 return [];
             }
 
             if ($menu_info[ 'level' ] == 1) {
             } elseif ($menu_info[ 'level' ] == 2) {
-                $menu_second_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 2 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
-                $menu_second_info = $menu_second_info[ 'data' ];
+                $menu_second_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 2 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ])[ 'data' ];
 
                 if (!empty($menu_second_info)) {
                     if($menu_info['addon'] == $menu_second_info['addon']){
@@ -411,19 +408,16 @@ class User extends BaseModel
                     }
                 }
             } elseif ($menu_info[ 'level' ] == 3) {
-                $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 3 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
-                $check_menu_info = $check_menu_info[ 'data' ];
+                $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 3 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ])[ 'data' ];
 
                 if (!empty($check_menu_info)) {
                     if($menu_info['addon'] == $check_menu_info['addon']){
                         return $check_menu_info;
                     }
                 } else {
-                    $parent_menu_info = $menu_model->getMenuInfo([ [ 'name', '=', $menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'app_module', '=', $app_module ] ]);
-                    $parent_menu_info = $parent_menu_info[ 'data' ];
+                    $parent_menu_info = $menu_model->getMenuInfo([ [ 'name', '=', $menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'app_module', '=', $app_module ] ])[ 'data' ];
 
-                    $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $parent_menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ]);
-                    $check_menu_info = $check_menu_info[ 'data' ];
+                    $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $parent_menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ])[ 'data' ];
                     if (!empty($check_menu_info)) {
                         if($menu_info['addon'] == $check_menu_info['addon']){
                             return $check_menu_info;

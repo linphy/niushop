@@ -54,6 +54,23 @@ class Diyview extends BaseApi
         }
 
         $info = $diy_view->getSiteDiyViewDetail($condition);
+
+        // 如果查询的是首页，那么标题显示店铺名称， && $info[ 'data' ][ 'name' ] == 'DIY_VIEW_INDEX'
+        if (!empty($info[ 'data' ])) {
+//            $site_api = new Site();
+//            $site_info = json_decode($site_api->info(), true)[ 'data' ];
+//            $value = json_decode($info[ 'data' ][ 'value' ], true);
+//            $value[ 'global' ][ 'title' ] = $site_info[ 'site_name' ];
+//            $info[ 'data' ][ 'value' ] = json_encode($value);
+
+            // 查询自定义扩展组件
+            $info[ 'data' ][ 'comp_extend' ] = $diy_view->getDiyViewUtilList([ [ 'type', '=', 'EXTEND' ] ], 'name')[ 'data' ];
+            if (!empty($info[ 'data' ][ 'comp_extend' ])) {
+                $info[ 'data' ][ 'comp_extend' ] = array_column($info[ 'data' ][ 'comp_extend' ], 'name');
+            }
+
+        }
+
         return $this->response($info);
     }
 
@@ -86,20 +103,4 @@ class Diyview extends BaseApi
         return $this->response($res);
     }
 
-    /**
-     * 自定义会员中心配置
-     * @return string
-     */
-    public function memberIndex()
-    {
-        $site_id = $this->site_id;
-        if (empty($site_id)) {
-            return $this->response($this->error('', 'REQUEST_SITE_ID'));
-        }
-        $diy_view = new DiyViewModel();
-        $info = $diy_view->getMemberIndexDiyConfig($site_id)[ 'data' ][ 'value' ];
-        $info[ 'menu' ][ 'menus' ] = array_column($info[ 'menu' ][ 'menus' ], null, 'tag');
-        $info[ 'system_color' ] = $diy_view->getStyleConfig($this->site_id)[ 'data' ][ 'value' ];
-        return $this->response($this->success($info));
-    }
 }

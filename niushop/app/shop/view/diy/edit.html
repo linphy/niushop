@@ -28,10 +28,14 @@
 	{if $name != 'DIY_VIEW_GOODS_CATEGORY' }
 	<!-- 组件列表 -->
 	<div class="component-list">
+		<div class="tab">
+			<span class="selected">内置组件</span>
+			<span data-type="EXTEND">第三方组件</span>
+		</div>
 		<nav>
 			{foreach name="$diy_view_utils" item="vo" key="k"}
-			<h3 data-index="{$k}"><img src="__STATIC__/ext/diyview/img/component_down.png" />{$vo.type_name}</h3>
-			<ul data-index="{$k}">
+			<h3 data-index="{$k}" data-type="{$vo.type}" {if $vo['type'] == 'EXTEND'}style="display:none;"{/if}><img src="__STATIC__/ext/diyview/img/component_down.png" />{$vo.type_name}</h3>
+			<ul data-index="{$k}" data-type="{$vo.type}" {if $vo['type'] == 'EXTEND'}style="display:none;"{/if}>
 				{if $vo['type'] == 'SYSTEM'}
 				<li title="弹窗广告" @click='changeCurrentIndex(-98)'>
 					<!-- <img src="__ROOT__/public/static/ext/diyview/img/icon/pop_adv.png" data-icon="__ROOT__/public/static/ext/diyview/img/icon/pop_adv.png" data-icon-selected="__ROOT__/public/static/ext/diyview/img/icon/pop_adv_selected.png" /> -->
@@ -44,7 +48,7 @@
 					{if condition="$li.value"} @click='addComponent({$li.value},{ name : "{$li.name}", title : "{$li.title}", max_count : {$li.max_count}, is_delete : "{$li.is_delete}" })'
 					:class="{ 'disabled' : !checkComponentIsAdd('{$li.name}') }"
 					{else/}class="disabled"{/if}>
-						<i class="iconfont {$li.icon}"></i>
+						<i class="{$li.icon}"></i>
 						<span>{$li.title}</span>
 				</li>
 				{/foreach}
@@ -124,7 +128,7 @@
 							{foreach name="$diy_view_utils" item="vo"}
 								{foreach name="$vo.list" item="li"}
 								<template v-if="nc.componentName == '{$li.name}'">
-									{:event('DiyViewUtils',['name'=>$li['name'],'addon_name'=>$li['addon_name']],true)}
+									{:event('DiyViewUtils',[ 'name' => $li['name'], 'addon_name' => $li['addon_name'] ],true)}
 								</template>
 								{/foreach}
 							{/foreach}
@@ -155,26 +159,6 @@
 
 {notempty name="$qrcode_info"}
 <input type="hidden" name="preview_url" value="{$qrcode_info.path.h5.url}">
-<!-- 页面预览 -->
-<script type="text/html" id="diy_h5_preview">
-	<div class="goods-preview">
-		<div class="qrcode-wrap">
-			<img src="{:img($qrcode_info.path.h5.img)}" alt="推广二维码">
-			<p class="tips text-color">扫码访问页面 <a class="text-color" href="javascript:ns.copy('diy_h5_preview_1');">复制链接</a></p>
-			<input type="text" id="diy_h5_preview_1" value="{$qrcode_info.path.h5.url}" readonly />
-		</div>
-		<div class="phone-wrap">
-			<div class="iframe-wrap">
-				<iframe id="iframe" src="" frameborder="0"></iframe>
-				<div class="empty">
-					<img src="__STATIC__/img/wap_not_found.png" />
-					<p>当前手机页面无法访问</p>
-					<a href="https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842146" class="text-color" target="_blank">请检查手机端域名配置以及伪静态</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</script>
 {/notempty}
 
 {if condition="!empty($diy_view_info)"}

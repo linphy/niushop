@@ -27,8 +27,8 @@
 					borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
 					backgroundColor: nc.elementBgColor,
 					boxShadow:  nc.ornament.type == 'shadow' ? ('0 0 5px ' + nc.ornament.color) : '',
-					marginLeft: nc.template == 'horizontal-slide' && (nc.slideMode == 'scroll' && nc.goodsMarginType=='diy' && (nc.goodsMarginNum+'px') || ((60 - nc.margin.both*2) /6 + 'px')), 
-					marginRight: nc.template == 'horizontal-slide' && (nc.slideMode == 'scroll' && nc.goodsMarginType=='diy' && (nc.goodsMarginNum+'px') || ((60 - nc.margin.both*2) /6 + 'px')),
+					marginLeft: nc.template == 'horizontal-slide' && (nc.slideMode == 'scroll' && nc.goodsMarginType=='diy' && (nc.goodsMarginNum+'px') || ((60 - nc.margin.both*2) /6 + 'px')) || '', 
+					marginRight: nc.template == 'horizontal-slide' && (nc.slideMode == 'scroll' && nc.goodsMarginType=='diy' && (nc.goodsMarginNum+'px') || ((60 - nc.margin.both*2) /6 + 'px')) || '',
 					border: nc.ornament.type == 'stroke' ?  '1px solid ' + nc.ornament.color : ''}">
 				   <div class="goods-img":style="{ borderRadius:  nc.imgAroundRadius + 'px' }">
 					   <img :src="item.goods_image ? changeImgUrl(item.goods_image) : changeImgUrl('public/static/img/default_img/square.png')" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }" onerror="this.src = changeImgUrl('public/static/img/default_img/square.png');" />
@@ -434,23 +434,6 @@
 						</div>
 					</div>
 				</div>
-				
-				<template v-if="nc.template == 'horizontal-slide' && nc.slideMode == 'scroll'">
-					<div class="layui-form-item">
-						<label class="layui-form-label sm">商品边距</label>
-						<div class="layui-input-block">
-							<div @click="nc.goodsMarginType='default'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.goodsMarginType == 'default') }">
-								<i class="layui-anim layui-icon">{{ nc.goodsMarginType == 'default' ? "&#xe643;" : "&#xe63f;" }}</i>
-								<div>自适应</div>
-							</div>
-							<div @click="nc.goodsMarginType='diy'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.goodsMarginType == 'diy') }">
-								<i class="layui-anim layui-icon">{{ nc.goodsMarginType == 'diy' ? "&#xe643;" : "&#xe63f;" }}</i>
-								<div>自定义</div>
-							</div>
-						</div>
-					</div>
-					<slide v-if="nc.goodsMarginType=='diy'" :data="{ field : 'goodsMarginNum', label: '商品边距数值', min:0, max: 20 }"></slide>
-				</template>
 
 				<div class="layui-form-item" v-show="nc.goodsNameStyle.control">
 					<label class="layui-form-label sm">商品名称</label>
@@ -528,10 +511,10 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var goodsListResourcePath = "{$resource_path}";
+			var manyGoodsListResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/many_goods_list/css/design.css"></css>
-		<js src="{$resource_path}/many_goods_list/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 	
 </nc-component>

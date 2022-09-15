@@ -183,7 +183,7 @@ class Article extends BaseShop
             if (!empty($article_ids)) {
                 $condition[] = [ 'pn.article_id', 'in', $article_ids ];
             }
-            $list = $article_model->getArticlePageList($condition, $page, $page_size, 'pn.create_time desc', 'pn.article_id,pn.article_title,pn.article_abstract,pn.cover_img,pn.read_num,png.category_name');
+            $list = $article_model->getArticlePageList($condition, $page, $page_size, 'pn.create_time desc', 'pn.article_id,pn.article_title,pn.article_abstract,pn.cover_img,pn.read_num,pn.create_time,png.category_name');
             return $list;
         } else {
             //已经选择的商品sku数据

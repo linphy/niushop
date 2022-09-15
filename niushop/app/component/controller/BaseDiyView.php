@@ -26,16 +26,16 @@ class BaseDiyView extends Controller
     {
         parent::__construct();
 
-        $class  = get_class($this);
+        $class = get_class($this);
         $routes = explode('\\', $class);
-        if ($routes[0] == 'app') {
+        if ($routes[ 0 ] == 'app') {
             //系统·组件：app/component/controller/Text
-            $this->path          = './' . $routes[0] . '/';
-            $this->resource_path = __ROOT__ . '/' . $routes[0] . '/' . $routes[1] . '/view';
-        } elseif ($routes[0] == 'addon') {
+            $this->path = './' . $routes[ 0 ] . '/';
+            $this->resource_path = __ROOT__ . '/' . $routes[ 0 ] . '/' . $routes[ 1 ] . '/view';
+        } elseif ($routes[ 0 ] == 'addon') {
             //插件·组件：addon/seckill/component/controller/seckill
-            $this->path          = './' . $routes[0] . '/' . $routes[1] . '/';
-            $this->resource_path = __ROOT__ . '/' . $routes[0] . '/' . $routes[1] . '/' . $routes[2] . '/view';
+            $this->path = './' . $routes[ 0 ] . '/' . $routes[ 1 ] . '/';
+            $this->resource_path = __ROOT__ . '/' . $routes[ 0 ] . '/' . $routes[ 1 ] . '/' . $routes[ 2 ] . '/view';
         }
 
     }
@@ -50,7 +50,9 @@ class BaseDiyView extends Controller
      */
     protected function fetch($template = '', $vars = [], $replace = [])
     {
+        $comp_folder_name = explode('/', $template)[ 0 ];// 获取组件文件夹名称
         $template = $this->path . 'component/view/' . $template;
+        $this->resource_path .= '/' . $comp_folder_name; // 拼接组件文件夹名称
         parent::assign("resource_path", $this->resource_path);
         return parent::fetch($template, $vars, $replace);
     }

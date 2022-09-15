@@ -13,31 +13,29 @@
 	<div class="layui-card-body layui-field-box">
 		<div class="site_list item-block-parent item-five">
 			{if !empty($list)}
-			{foreach $list as $list_k => $list_v}
-			{if $list_v['type_mark'] == 'shop'}
-			<a class="item-block item-block-hover" href="#">
-				<div class="item-block-wrap">
-					<div class="item-pic">
-						<img src="{$list_v.logo_img}" />
-					</div>
-					<div class="item-con">
-						<div class="item-content-title">
-							{$list_v.goods_name}
+				{foreach $list as $list_k => $list_v}
+					{if $list_v['type_mark'] == 'shop'}
+					<a class="item-block item-block-hover" href="#">
+						<div class="item-block-wrap">
+							<div class="item-pic">
+								<img src="{$list_v.logo_img}" />
+							</div>
+							<div class="item-con">
+								<div class="item-content-title">{$list_v.goods_name}</div>
+								<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
+							</div>
 						</div>
-						<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
-					</div>
-				</div>
-				<div class="item-float-wrap">
-					<div class="item-float">
-						<div class="item-float-con">
-							<i class="bg-color-red"></i>
-							<span></span>
+						<div class="item-float-wrap">
+							<div class="item-float">
+								<div class="item-float-con">
+									<i class="bg-color-red"></i>
+									<span></span>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-			</a>
-			{/if}
-			{/foreach}
+					</a>
+					{/if}
+				{/foreach}
 			{/if}
 		</div>
 	</div>
@@ -50,31 +48,29 @@
 	<div class="layui-card-body layui-field-box">
 		<div class="site_list item-block-parent item-five">
 			{if !empty($list)}
-			{foreach $list as $list_k => $list_v}
-			{if $list_v['type_mark'] == 'member'}
-			<a class="item-block item-block-hover" href="#">
-				<div class="item-block-wrap">
-					<div class="item-pic">
-						<img src="{$list_v.logo_img}" />
-					</div>
-					<div class="item-con">
-						<div class="item-content-title">
-							{$list_v.goods_name}
+				{foreach $list as $list_k => $list_v}
+					{if $list_v['type_mark'] == 'member'}
+					<a class="item-block item-block-hover" href="#">
+						<div class="item-block-wrap">
+							<div class="item-pic">
+								<img src="{$list_v.logo_img}" />
+							</div>
+							<div class="item-con">
+								<div class="item-content-title">{$list_v.goods_name}</div>
+								<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
+							</div>
 						</div>
-						<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
-					</div>
-				</div>
-				<div class="item-float-wrap">
-					<div class="item-float">
-						<div class="item-float-con">
-							<i class="bg-color-red"></i>
-							<span></span>
+						<div class="item-float-wrap">
+							<div class="item-float">
+								<div class="item-float-con">
+									<i class="bg-color-red"></i>
+									<span></span>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-			</a>
-			{/if}
-			{/foreach}
+					</a>
+					{/if}
+				{/foreach}
 			{/if}
 		</div>
 	</div>
@@ -87,31 +83,29 @@
 	<div class="layui-card-body layui-field-box">
 		<div class="site_list item-block-parent item-five">
 			{if !empty($list)}
-			{foreach $list as $list_k => $list_v}
-			{if $list_v['type_mark'] == 'tool'}
-			<a class="item-block item-block-hover" href="#">
-				<div class="item-block-wrap">
-					<div class="item-pic">
-						<img src="{$list_v.logo_img}" />
-					</div>
-					<div class="item-con">
-						<div class="item-content-title">
-							{$list_v.goods_name}
+				{foreach $list as $list_k => $list_v}
+					{if $list_v['type_mark'] == 'tool'}
+					<a class="item-block item-block-hover" href="#">
+						<div class="item-block-wrap">
+							<div class="item-pic">
+								<img src="{$list_v.logo_img}" />
+							</div>
+							<div class="item-con">
+								<div class="item-content-title">{$list_v.goods_name}</div>
+								<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
+							</div>
 						</div>
-						<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
-					</div>
-				</div>
-				<div class="item-float-wrap">
-					<div class="item-float">
-						<div class="item-float-con">
-							<i class="bg-color-red"></i>
-							<span></span>
+						<div class="item-float-wrap">
+							<div class="item-float">
+								<div class="item-float-con">
+									<i class="bg-color-red"></i>
+									<span></span>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-			</a>
-			{/if}
-			{/foreach}
+					</a>
+					{/if}
+				{/foreach}
 			{/if}
 		</div>
 	</div>
@@ -124,31 +118,29 @@
 	<div class="layui-card-body layui-field-box">
 		<div class="site_list item-block-parent item-five">
 			{if !empty($list)}
-			{foreach $list as $list_k => $list_v}
-			{if $list_v['type_mark'] == 'system'}
-			<a class="item-block item-block-hover" href="#">
-				<div class="item-block-wrap">
-					<div class="item-pic">
-						<img src="{$list_v.logo_img}" />
-					</div>
-					<div class="item-con">
-						<div class="item-content-title">
-							{$list_v.goods_name}
+				{foreach $list as $list_k => $list_v}
+					{if $list_v['type_mark'] == 'system'}
+					<a class="item-block item-block-hover" href="#">
+						<div class="item-block-wrap">
+							<div class="item-pic">
+								<img src="{$list_v.logo_img}" />
+							</div>
+							<div class="item-con">
+								<div class="item-content-title">{$list_v.goods_name}</div>
+								<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
+							</div>
 						</div>
-						<p class="item-content-desc line-hiding" title="{$list_v.introduction}">{$list_v.introduction}</p>
-					</div>
-				</div>
-				<div class="item-float-wrap">
-					<div class="item-float">
-						<div class="item-float-con">
-							<i class="bg-color-red"></i>
-							<span></span>
+						<div class="item-float-wrap">
+							<div class="item-float">
+								<div class="item-float-con">
+									<i class="bg-color-red"></i>
+									<span></span>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-			</a>
-			{/if}
-			{/foreach}
+					</a>
+					{/if}
+				{/foreach}
 			{/if}
 		</div>
 	</div>

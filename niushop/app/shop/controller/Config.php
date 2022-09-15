@@ -83,6 +83,7 @@ class Config extends BaseShop
                 "goods" => input("goods", ""),
                 "head" => input("head", ""),
                 "store" => input("store", ""),
+                "article" => input("article", ""),
             );
             $this->addLog("修改默认图配置");
             $res = $upload_config_model->setDefaultImg($data, $this->site_id, $this->app_module);

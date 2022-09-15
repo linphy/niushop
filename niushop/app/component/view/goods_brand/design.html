@@ -13,12 +13,12 @@
 			<h3 class="title-wrap" v-show="nc.title" :style="{ color : nc.textColor, fontWeight : nc.fontWeight ? 'bold' : ''}">{{ nc.title }}</h3>
 			<ul v-if="nc.previewList && Object.keys(nc.previewList).length">
 				<li v-for="(item, previewIndex) in nc.previewList" :key="previewIndex">
-					<img :src="item.image_url ? changeImgUrl(item.image_url) : '{$resource_path}/goods_brand/img/default.png'" :style="{
+					<img :src="item.image_url ? changeImgUrl(item.image_url) : '{$resource_path}/img/default.png'" :style="{
 					     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 					     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 					     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
 					     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0)
-					      }" onerror="this.src = '{$resource_path}/goods_brand/img/default.png';" />
+					      }" onerror="this.src = '{$resource_path}/img/default.png';" />
 				</li>
 			</ul>
 		</div>
@@ -105,8 +105,8 @@
 	
 	<!-- 资源 -->
 	<template slot="resource">
-		<css src="{$resource_path}/goods_brand/css/design.css"></css>
-		<js src="{$resource_path}/goods_brand/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 	
 </nc-component>

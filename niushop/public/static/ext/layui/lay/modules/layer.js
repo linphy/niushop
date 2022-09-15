@@ -526,6 +526,7 @@
 			return f.skin ? " " + f.skin + " " + f.skin + "-" + e : ""
 		};
 	r.prompt = function(e, t) {
+		e.rquired = e.rquired == undefined ? true : e.rquired;
 		var a = "";
 		if (e = e || {}, "function" == typeof e && (t = e), e.area) {
 			var o = e.area;
@@ -547,7 +548,7 @@
 			resize: !1,
 			yes: function(i) {
 				var n = s.val();
-				"" === n ? s.focus() : n.length > (e.maxlength || 500) ? r.tips("&#x6700;&#x591A;&#x8F93;&#x5165;" + (e.maxlength ||
+				"" === n && e.rquired ? s.focus() : n.length > (e.maxlength || 500) ? r.tips("&#x6700;&#x591A;&#x8F93;&#x5165;" + (e.maxlength ||
 					500) + "&#x4E2A;&#x5B57;&#x6570;", s, {
 					tips: 1
 				}) : t && t(n, i, s)

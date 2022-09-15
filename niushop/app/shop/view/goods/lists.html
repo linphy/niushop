@@ -175,17 +175,17 @@
             <span>+</span>
         </div>
         <div class="title-pic" id="goods_img_{{d.goods_id}}" {if addon_is_exit('pc')} onclick="pc_url({{d.sku_id}})" {/if}>
-        <!--layer-src="{{ns.img(d.goods_image.split(',')[0], 'big')}}" -->
-        <img src="{{ns.img(d.goods_image.split(',')[0], 'small')}}"/>
-    </div>
-    {if addon_is_exit('pc')}
-    <div class="title-content"  onclick="pc_url({{d.sku_id}})">
-        <a href="javascript:;" class="multi-line-hiding text-color-sub" title="{{d.goods_name}}">{{d.goods_name}}</a>
+            <!--layer-src="{{ns.img(d.goods_image.split(',')[0], 'big')}}" -->
+            <img src="{{ns.img(d.goods_image.split(',')[0], 'small')}}"/>
+        </div>
+        {if addon_is_exit('pc')}
+        <div class="title-content"  onclick="pc_url({{d.sku_id}})">
+            <a href="javascript:;" class="multi-line-hiding text-color-sub" title="{{d.goods_name}}">{{d.goods_name}}</a>
         {else /}
         <div class="title-content">
             <a href="javascript:;" class="multi-line-hiding text-color-sub" title="{{d.goods_name}}" lay-event="preview">{{d.goods_name}}</a>
-            {/if}
-            {{# if(d.promotion_addon){ }}
+        {/if}
+            {{# if(d.promotion_addon && d.promotion_addon_list){ }}
             <span class="promotion-addon">
 					{{# for(var i=0;i<d.promotion_addon_list.length;i++){ }}
 						<a href="{{ns.url( d.promotion_addon_list[i].url )}}">
@@ -210,7 +210,7 @@
             </div>
             {{# } }}
         </div>
-
+        
     </div>
 </script>
 
@@ -279,7 +279,7 @@
             <ul class="sku-list">
                 {{# for(var i=0;i
                 <d.list.length
-                        ;i++){ }}
+                ;i++){ }}
                 <li>
                     <div class="img-wrap">
                         <img layer-src="{{ns.img(d.list[i].sku_image, 'big')}}" src="{{ns.img(d.list[i].sku_image, 'small')}}">
@@ -769,10 +769,10 @@
             <!--后续做搜索-->
             <ul>
                 {foreach name="$goods_category_list" item="vo"}
-                {{# if(d.category_id_1 == '{$vo['category_id']}' ){ }}
-                <li data-category-id="{$vo['category_id']}" data-commission-rate="{$vo['commission_rate']}" data-level="{$vo['level']}" class="selected">
+                    {{# if(d.category_id_1 == '{$vo['category_id']}' ){ }}
+                    <li data-category-id="{$vo['category_id']}" data-commission-rate="{$vo['commission_rate']}" data-level="{$vo['level']}" class="selected">
                     {{# }else{ }}
-                <li data-category-id="{$vo['category_id']}" data-commission-rate="{$vo['commission_rate']}" data-level="{$vo['level']}">
+                    <li data-category-id="{$vo['category_id']}" data-commission-rate="{$vo['commission_rate']}" data-level="{$vo['level']}">
                     {{# } }}
                     <span class="category-name">{$vo['category_name']}</span>
                     <span class="right-arrow">&gt;</span>

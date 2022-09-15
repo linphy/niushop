@@ -98,8 +98,7 @@ class Goodscategory extends BaseShop
             $goods_attribute_model = new GoodsAttributeModel();
 
             // 商品类型列表
-            $attr_class_list = $goods_attribute_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name');
-            $attr_class_list = $attr_class_list[ 'data' ];
+            $attr_class_list = $goods_attribute_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name')[ 'data' ];
             $this->assign("attr_class_list", $attr_class_list);
 
             return $this->fetch('goodscategory/add_category');
@@ -128,10 +127,10 @@ class Goodscategory extends BaseShop
             $attr_class_id = input('attr_class_id', '');// 关联商品类型id
             $attr_class_name = input('attr_class_name', '');// 关联商品类型名称
             $commission_rate = input('commission_rate', '');// 佣金比率%
-            $category_id_1 = input('category_id_1', 0);// 一级分类id
-            $category_id_2 = input('category_id_2', 0);// 二级分类id
-            $category_id_3 = input('category_id_3', 0);// 三级分类id
-            $category_full_name = input('category_full_name', '');// 组装名称
+//            $category_id_1 = input('category_id_1', 0);// 一级分类id
+//            $category_id_2 = input('category_id_2', 0);// 二级分类id
+//            $category_id_3 = input('category_id_3', 0);// 三级分类id
+//            $category_full_name = input('category_full_name', '');// 组装名称
             $link_url = input('link_url', '');// 广告链接
             $data = [
                 'site_id' => $this->site_id,
@@ -149,10 +148,10 @@ class Goodscategory extends BaseShop
                 'attr_class_id' => $attr_class_id,
                 'attr_class_name' => $attr_class_name,
                 'commission_rate' => $commission_rate,
-                'category_id_1' => $category_id_1,
-                'category_id_2' => $category_id_2,
-                'category_id_3' => $category_id_3,
-                'category_full_name' => $category_full_name,
+//                'category_id_1' => $category_id_1,
+//                'category_id_2' => $category_id_2,
+//                'category_id_3' => $category_id_3,
+//                'category_full_name' => $category_full_name,
                 'link_url' => $link_url
             ];
             $this->addLog("编辑商品分类:" . $category_name);
@@ -168,8 +167,7 @@ class Goodscategory extends BaseShop
                 $this->error("缺少参数category_id");
             }
 
-            $goods_category_info = $goods_category_model->getCategoryInfo([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ]);
-            $goods_category_info = $goods_category_info[ 'data' ];
+            $goods_category_info = $goods_category_model->getCategoryInfo([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
             if (empty($goods_category_info)) $this->error('未获取到分类数据', addon_url('shop/goodscategory/lists'));
 
             $this->assign("goods_category_info", $goods_category_info);
@@ -183,6 +181,12 @@ class Goodscategory extends BaseShop
             $attr_class_list = $goods_attribute_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name');
             $this->assign("attr_class_list", $attr_class_list[ 'data' ]);
 
+            $condition = [];
+            $condition[] = [ 'site_id', '=', $this->site_id];
+            $condition[] = ['category_id', '<>', $category_id];
+            $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate';
+            $list = $goods_category_model->getCategoryTree($condition, $field);
+            $this->assign("list", $list['data']);
             return $this->fetch('goodscategory/edit_category');
         }
     }
@@ -278,6 +282,21 @@ class Goodscategory extends BaseShop
             } else {
                 $res = $goods_category_model->modifyGoodsCategorySort($sort, $category_id, $this->site_id);
             }
+            return $res;
+        }
+    }
+
+    public function checkEditCategory()
+    {
+        if (request()->isAjax()) {
+            $pid = input('pid', 0);
+            $category_id = input('category_id', 0);
+            $goods_category_model = new GoodsCategoryModel();
+            $res = $goods_category_model->checkEditCategory([
+                'pid' => $pid,
+                'category_id' => $category_id,
+                'site_id' => $this->site_id
+            ]);
             return $res;
         }
     }

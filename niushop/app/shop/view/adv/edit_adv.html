@@ -53,7 +53,6 @@
 							<i class="iconfont iconshangchuan"></i>
 							<p>点击上传</p>
 						</div>
-							
 						{/if}
 					</div>
 					<div class="operation">
@@ -129,9 +128,8 @@
 	if(adv_url_json) adv_url_json = JSON.parse(adv_url_json);
 	$(".adv-url-show").text(adv_url_json.title);
 	
-	layui.use(['form', 'upload', 'colorpicker'], function () {
+	layui.use(['form', 'colorpicker'], function () {
 		var form = layui.form,
-			upload = layui.upload,
 			colorpicker = layui.colorpicker,
 			repeat_flag = false; //防重复标识
 		form.render();

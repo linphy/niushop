@@ -9,6 +9,7 @@
 .layui-layer-content .category-wrap .category-item {cursor: pointer;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
 
 /* 商品块基础样式 */
+/*.goods-list{overflow: hidden;}*/
 .goods-list .goods-item {line-height: 1;}
 .goods-list .goods-item .sale {align-self: flex-end;font-size: 12px;}
 .goods-list .goods-item .info-wrap .goods-name{margin-bottom: 5px;font-size: 14px;line-height: 1.3;}

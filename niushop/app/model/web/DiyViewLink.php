@@ -61,7 +61,7 @@ class DiyViewLink extends BaseModel
                 'name' => $page_v[ 'name' ],
                 'title' => $page_v[ 'title' ],
                 'parent' => 'MICRO_PAGE_LIST',
-                'wap_url' => '/pages/index/index?name=' . $page_v[ 'name' ]
+                'wap_url' => '/pages_tool/index/diy?name=' . $page_v[ 'name' ]
             ];
         }
         Cache::tag("site_diy_view")->set("site_diy_view_getMicroPageLinkList_" . $site_id . "_" . $data, $link_mic);

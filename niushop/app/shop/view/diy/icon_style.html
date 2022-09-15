@@ -25,11 +25,11 @@
         align-items: center;
         justify-content: center;
     }
-    .icon-block .icondiy {
+    .icon-block .js-icon {
         font-size: 50%;
         line-height:1;
     }
-    .icon-block .icondiy.gradient {
+    .icon-block .js-icon.gradient {
         -webkit-background-clip:text!important;
         -webkit-text-fill-color:transparent;
     }
@@ -77,14 +77,14 @@
         justify-content: center;
         cursor: pointer;
     }
-    .icon-color .color-item .icondiy {
+    .icon-color .color-item .js-icon {
         font-size: 12px;
         color: #aaa;
     }
     .icon-color .color-item.disabled {
         cursor: not-allowed;
     }
-    .icon-color .color-item.disabled .icondiy {
+    .icon-color .color-item.disabled .js-icon {
         color: #eee;
         border-color: #eee;
     }
@@ -102,7 +102,7 @@
         <label class="layui-form-label">图标：</label>
         <div class="layui-input-block icon-block main-icon">
             <div class="icon" :style="iconBgStyle">
-                <i class="icondiy {$icon}" :class="{gradient: style.iconColor.length > 1}" :style="iconStyle"></i>
+                <i class="js-icon {$icon}" :class="{gradient: style.iconColor.length > 1}" :style="iconStyle"></i>
             </div>
         </div>
     </div>

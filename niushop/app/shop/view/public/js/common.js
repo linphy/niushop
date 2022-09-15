@@ -37,7 +37,7 @@ function openAlbum(callback, imgNum = 9999, is_thumb = 0, type = 'img',display_t
  * 商品选择器
  * @param callback 回调函数
  * @param selectId 已选商品id
- * @param params mode：模式(spu、sku), max_num：最大数量，min_num 最小数量, is_virtual 是否虚拟 0 1, disabled: 开启禁用已选 0 1，promotion：营销活动标识 pintuan、groupbuy、fenxiao （module 表示组件）
+ * @param params mode：模式(spu、sku), max_num：最大数量，min_num 最小数量, is_virtual 是否虚拟 0 1, disabled: 开启禁用已选 0 1，promotion：营销活动标识 pintuan、groupbuy、fenxiao （module 表示组件） is_disabled_goods_type: 1表示关闭商品类型筛选 0表示开启商品类型筛选  goods_type: 1 实物商品 2虚拟商品 3电子商品 不传查全部
  */
 function goodsSelect(callback, selectId, params={}) {
 	layui.use(['layer'], function () {
@@ -49,6 +49,8 @@ function goodsSelect(callback, selectId, params={}) {
 		params.disabled = params.disabled == 0 ? 0 : 1;
 		params.site_id = ns_url.siteId;
 		params.app_module = ns_url.appModule;
+		params.is_disabled_goods_type = params.is_disabled_goods_type || 0;
+		params.goods_type = params.goods_type || "";
 
 		// if(!params.post) params.post = 'shop';
 
@@ -264,8 +266,8 @@ function selectIconStyle(option) {
                     <iframe src="`+ ns.url('shop/diy/selecticonstyle', {icon: option.icon}) +`" frameborder="0"></iframe>
                 </div>
             </div>
-        `
-	$('body').append(h)
+        `;
+	$('body').append(h);
 	// 点击任意位置关闭弹窗
 	$('.select-icon-style').click(function () {
 		$(this).remove();

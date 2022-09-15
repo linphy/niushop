@@ -31,17 +31,22 @@ class Pay extends BaseApi
     {
         $out_trade_no = $this->params[ 'out_trade_no' ];
         $pay = new PayModel();
-        $info = $pay->getPayInfo($out_trade_no);
-        $order_model = new OrderModel();
-        if (!empty($info[ 'data' ])) {
-            $order_info = $order_model->getOrderInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_type');
-            $order_info = $order_info[ 'data' ];
-            if (!empty($order_info)) {
-                $info[ 'data' ][ 'order_id' ] = $order_info[ 'order_id' ];
-                $info[ 'data' ][ 'order_type' ] = $order_info[ 'order_type' ];
+        $info = $pay->getPayInfo($out_trade_no)['data'] ?? [];
+
+        if (!empty($info)) {
+            switch($info['event']){
+                case 'OrderPayNotify':
+                    $order_model = new OrderModel();
+                    $order_info = $order_model->getOrderInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_type')[ 'data' ];
+                    if (!empty($order_info)) {
+                        $info[ 'order_id' ] = $order_info[ 'order_id' ];
+                        $info[ 'order_type' ] = $order_info[ 'order_type' ];
+                    }
+                    break;
             }
+
         }
-        return $this->response($info);
+        return $this->response($this->success($info));
     }
 
     /**
@@ -107,9 +112,8 @@ class Pay extends BaseApi
         $token = $this->checkToken();
         if ($token[ 'code' ] < 0) return $this->response($token);
         $out_trade_no = $this->params[ 'out_trade_no' ];
-        //默认是订单
-        $order_pay_model = new OrderPay();
-        $result = $order_pay_model->reset0rderTradeNo([ 'out_trade_no' => $out_trade_no ]);
+        $pay = new PayModel();
+        $result = $pay->resetPay(['out_trade_no' => $out_trade_no]);
         return $this->response($result);
     }
 }

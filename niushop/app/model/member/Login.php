@@ -135,6 +135,54 @@ class Login extends BaseModel
     }
 
     /**
+     * 授权登录仅登录
+     * @param $data
+     * @return array
+     */
+    public function authOnlyLogin($data)
+    {
+        $info = [];
+        $auth_tag = '';
+        foreach ($data as $key => $value) {
+            if (in_array($key, ['wx_unionid', 'wx_openid', 'weapp_openid', 'qq_openid', 'ali_openid', 'baidu_openid', 'toutiao_openid'])) {
+                $auth_tag = $key;
+                if (empty($value)) return $this->error('', 'PARAMETER_ERROR');
+                $info = model("member")->getInfo(
+                    [
+                        [$key, '=', $value],
+                        ['site_id', '=', $data['site_id']],
+                        ['is_delete', '=', 0]
+                    ], 'member_id,username, nickname, mobile, email, status, last_login_time, can_receive_registergift'
+                );
+                if (!empty($info)) break;
+            }
+        }
+        if (empty($auth_tag)) return $this->error('', 'PARAMETER_ERROR');
+
+        if (empty($info)) {
+            return $this->error('', 'MEMBER_NOT_EXIST');
+        } elseif ($info['status'] == 0) {
+            return $this->error('', 'MEMBER_IS_LOCKED');
+        } else {
+            //更新登录时间
+            model("member")->update([
+                'login_time'      => time(),
+                'last_login_time' => time(),
+                'can_receive_registergift' => 0,
+                'login_ip'        => request()->ip(),
+                'login_type'      => $data['app_type'] ?? '',
+                'login_type_name' => $data['app_type_name'] ?? '',
+            ], [['member_id', '=', $info['member_id']]]);
+
+            //执行登录奖励
+            event("MemberLogin", ['member_id' => $info['member_id'], 'site_id' => $data['site_id']], true);
+            //用户第三方信息刷新
+            $this->refreshAuth($info['member_id'], $data);
+            return $this->success($info);
+        }
+    }
+
+    /**
      * 刷新第三方信息
      * @param unknown $member_id
      * @param unknown $data

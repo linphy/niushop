@@ -8,19 +8,16 @@
  * =========================================================
  */
 return [
-    'template' => [],
     'util' => [
         [
             'name' => 'Coupon',
             'title' => '优惠券',
             'type' => 'PROMOTION',
-            // 旧数据结构不要删除，后续写升级函数作参考
-//            'value' => '{ "sources": "default" ,"style": 1, "couponCount" : "6", "styleName": "风格一", "backgroundColor": "", "marginTop": 0, "status": 1, "couponIds": [] }',
             'value' => '{"style":1,"sources":"initial","styleName":"风格一","couponIds":[],"count":6,"previewList":[],"nameColor":"","moneyColor":"#FFFFFF","limitColor":"#FFFFFF","btnStyle":{"maxLen": 4,"textColor":"#FFFFFF","bgColor":"","text":"立即领取","aroundRadius":0,"isBgColor":false,"isAroundRadius":false},"isName":false,"couponBgColor":"","couponBgUrl":"","couponType":"img","ifNeedBg":true}',
-            'sort' => '12006',
+            'sort' => '30000',
             'support_diy_view' => '',
             'max_count' => 0,
-            'icon' => 'iconyouhuiquan',
+            'icon' => 'iconfont iconyouhuiquan',
         ],
     ],
     'link' => [
@@ -42,6 +39,5 @@ return [
                 ]
             ]
         ],
-    ],
-
+    ]
 ];

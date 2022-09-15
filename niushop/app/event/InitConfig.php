@@ -106,6 +106,7 @@ class InitConfig
             'tpl_cache' => false,           //模板缓存，部署模式后改为true
             'tpl_replace_string' => [
                 '__ROOT__' => __ROOT__,
+                '__PUBLIC__' => __PUBLIC__,
                 'ROOT_URL' => ROOT_URL,
                 '__STATIC__' => __PUBLIC__ . '/static',
                 'STATIC_EXT' => __PUBLIC__ . '/static/ext',

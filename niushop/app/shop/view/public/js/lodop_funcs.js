@@ -17,7 +17,7 @@ function loadCLodop() {
     JS2.src = "http://localhost:18000/CLodopfuncs.js?priority=1";
 
     //最后如本地无C-Lodop时，则演示通过本服务远程打印：
-    JS3.src = "/CLodopfuncs.js";
+    // JS3.src = "/app/shop/view/public/js/CLodopfuncs.js";
 
     JS1.onload  = JS2.onload  = JS3.onload = function() {CLodopJsState = "complete";}
     JS1.onerror = JS2.onerror = JS3.onerror = function(evt) {CLodopJsState = "complete";}
@@ -45,13 +45,13 @@ function getLodop(oOBJECT, oEMBED) {
             LODOP = getCLodop(); //获得主对象（getCLodop是在CLodopfuncs.js定义的）
         } catch (err) {}
 
-        if (!LODOP && CLodopJsState !== "complete") {
-            if (CLodopJsState == "loading")
-                alert("网页还没下载完毕，请稍等一下再操作.");
-            else
-                alert("没有加载CLodop的主js，请先调用loadCLodop过程.");
-            return;
-        }
+        // if (!LODOP && CLodopJsState !== "complete") {
+        //     if (CLodopJsState == "loading")
+        //         alert("网页还没下载完毕，请稍等一下再操作.");
+        //     else
+        //         alert("没有加载CLodop的主js，请先调用loadCLodop过程.");
+        //     return;
+        // }
 		
 		if (!LODOP) {
 			// document.body.innerHTML = strCLodopInstall_1 + (CLodopIsLocal ? strCLodopInstall_2 : "") + strCLodopInstall_3 + document.body.innerHTML;

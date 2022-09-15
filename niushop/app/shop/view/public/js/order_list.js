@@ -301,10 +301,14 @@ Order.prototype.tbody = function () {
 		// tbody += '<span class="order-item-header" style="margin-right:50px;">订单类型：' + order.order_type_name + '</span>';
 		if (pay_type_name) tbody += '<span class="order-item-header">支付方式：' + pay_type_name +'</span>';
 
-        if (order_type == 2 && buyer_ask_delivery_time) tbody += '<span class="order-item-header" style="margin-left:50px;">要求自提时间：' + ns.time_to_date(order.buyer_ask_delivery_time) + '</span>';
-
-        if (order_type == 3 && buyer_ask_delivery_time) tbody += '<span class="order-item-header" style="margin-left:50px;">要求送达时间：' + ns.time_to_date(order.buyer_ask_delivery_time) + '</span>';
-
+        if (order_type == 2) {
+        	if (order.buyer_ask_delivery_time != '' && order.buyer_ask_delivery_time != 0) tbody += '<span class="order-item-header" style="margin-left:50px;">要求自提时间：' + (order.buyer_ask_delivery_time.indexOf('-') != -1 ? order.buyer_ask_delivery_time : ns.time_to_date(order.buyer_ask_delivery_time) ) + '</span>';
+			else tbody += '<span class="order-item-header" style="margin-left:50px;">要求自提时间：立即自提</span>';
+		}
+        if (order_type == 3) {
+			if (order.buyer_ask_delivery_time != '' && order.buyer_ask_delivery_time != 0) tbody += '<span class="order-item-header" style="margin-left:50px;">要求送达时间：' + (order.buyer_ask_delivery_time.indexOf('-') != -1 ? order.buyer_ask_delivery_time : ns.time_to_date(order.buyer_ask_delivery_time) ) + '</span>';
+			else tbody += '<span class="order-item-header" style="margin-left:50px;">要求送达时间：立即送达</span>';
+		}
 		tbody += '</td>';
 		tbody += '<td colspan="2">';
 			tbody += '<div class="table-btn order-list-top-line" style="align:right;">';

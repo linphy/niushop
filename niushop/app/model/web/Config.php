@@ -40,6 +40,36 @@ class Config extends BaseModel
             'key' => 'template_cache',
             'icon' => 'public/static/img/cache/template.png'
         ],
+        [
+            'name' => '刷新插件',
+            'desc' => '刷新插件的info信息',
+            'key' => 'addon_cache',
+            'icon' => 'public/static/img/cache/template.png'
+        ],
+        [
+            'name' => '刷新所有插件菜单',
+            'desc' => '刷新所有插件菜单',
+            'key' => 'addon_menu_cache',
+            'icon' => 'public/static/img/cache/template.png'
+        ],
+        [
+            'name' => '刷新店铺端菜单',
+            'desc' => '刷新店铺端菜单',
+            'key' => 'shop_menu_cache',
+            'icon' => 'public/static/img/cache/template.png'
+        ],
+        [
+            'name' => '刷新自定义模板',
+            'desc' => '刷新自定义模板',
+            'key' => 'diy_view',
+            'icon' => 'public/static/img/cache/template.png'
+        ],
+        [
+            'name' => '升级5.0.3版本遇到的问题（临时）',
+            'desc' => '自定义图标显示问题、自定义会员中心页面数据',
+            'key' => 'handle_version_data_temp',
+            'icon' => 'public/static/img/cache/template.png'
+        ],
     ];
 
     /**
@@ -113,6 +143,7 @@ class Config extends BaseModel
                 "store" => "public/static/img/default_img/square.png"
             ];
         }
+        $res[ 'data' ][ 'value' ][ 'article' ] = $res[ 'data' ][ 'value' ][ 'article' ] ?? 'public/static/img/default_img/article.png';
         return $res;
     }
 
@@ -133,12 +164,21 @@ class Config extends BaseModel
 
     /**
      * 获取版权信息
+     * @param int $site_id
+     * @param string $app_module
      * @return array
      */
     public function getCopyright($site_id = 1, $app_module = 'shop')
     {
         $config = new ConfigModel();
         $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'COPYRIGHT' ] ]);
+
+        $auth_info = cache("auth_info_copyright");
+        if (empty($auth_info)) {
+            $upgrade_model = new Upgrade();
+            $auth_info = $upgrade_model->authInfo();
+            cache("auth_info_copyright", $auth_info, [ 'expire' => 604800 ]);
+        }
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
                 'logo' => '',
@@ -151,12 +191,6 @@ class Config extends BaseModel
                 'market_supervision_url' => ''
             ];
         } else {
-            $auth_info = cache("authinfo_copyright");
-            if (empty($auth_info)) {
-                $upgrade_model = new Upgrade();
-                $auth_info = $upgrade_model->authInfo();
-                cache("authinfo_copyright", $auth_info, [ 'expire' => 604800 ]);
-            }
             if (is_null($auth_info) || $auth_info[ 'code' ] != 0) {
                 $res[ 'data' ][ 'value' ][ 'logo' ] = '';
                 $res[ 'data' ][ 'value' ][ 'company_name' ] = '';
@@ -164,6 +198,12 @@ class Config extends BaseModel
                 $res[ 'data' ][ 'value' ][ 'copyright_desc' ] = '';
             }
 
+        }
+        // 检查是否授权
+        if (!empty($auth_info) && $auth_info[ 'code' ] >= 0) {
+            $res[ 'data' ][ 'value' ][ 'auth' ] = true;
+        } else {
+            $res[ 'data' ][ 'value' ][ 'auth' ] = false;
         }
         return $res;
     }

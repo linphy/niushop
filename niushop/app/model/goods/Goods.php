@@ -68,10 +68,8 @@ class Goods extends BaseModel
 //                    $goods_image = $data[ 'goods_sku_data' ][ 0 ][ 'sku_image' ];
 //                }
             }
-            if ($data[ 'is_free_shipping' ] == 0) {
-                if (empty($data[ 'shipping_template' ])) {
-                    return $this->error('', '运费模板不能为空');
-                }
+            if (isset($data[ 'support_trade_type' ]) && strpos($data[ 'support_trade_type' ], 'express') !== false && $data[ 'is_free_shipping' ] == 0 && empty($data[ 'shipping_template' ])) {
+                return $this->error('', '运费模板不能为空');
             }
 
             //获取标签名称
@@ -136,7 +134,8 @@ class Goods extends BaseModel
                 'recommend_way' => $data[ 'recommend_way' ],
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data[ 'qr_id' ] : 0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data[ 'template_id' ] : 0,
-
+                'form_id' => $data[ 'form_id' ] ?? 0,
+                'support_trade_type' => $data[ 'support_trade_type' ] ?? ''
             );
 
             $goods_id = model('goods')->add(array_merge($goods_data, $common_data));
@@ -238,10 +237,8 @@ class Goods extends BaseModel
 //                }
             }
 
-            if ($data[ 'is_free_shipping' ] == 0) {
-                if (empty($data[ 'shipping_template' ])) {
-                    return $this->error('', '运费模板不能为空');
-                }
+            if (strpos($data[ 'support_trade_type' ], 'express') !== false && $data[ 'is_free_shipping' ] == 0 && empty($data[ 'shipping_template' ])) {
+                return $this->error('', '运费模板不能为空');
             }
 
             //获取标签名称
@@ -273,6 +270,7 @@ class Goods extends BaseModel
                 'stock_show' => $data[ 'stock_show' ],
                 'market_price_show' => $data[ 'market_price_show' ],
                 'barrage_show' => $data[ 'barrage_show' ],
+                'support_trade_type' => $data[ 'support_trade_type' ] ?? ''
             );
 
             $common_data = array (
@@ -306,6 +304,8 @@ class Goods extends BaseModel
                 'limit_type' => $data[ 'limit_type' ],
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data[ 'qr_id' ] : 0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data[ 'template_id' ] : 0,
+                'form_id' => $data[ 'form_id' ] ?? 0,
+                'support_trade_type' => $data[ 'support_trade_type' ] ?? ''
             );
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
 
@@ -653,9 +653,9 @@ class Goods extends BaseModel
      * @param array $condition
      * @param string $field
      */
-    public function getGoodsInfo($condition, $field = '*')
+    public function getGoodsInfo($condition, $field = '*', $alias = 'a', $join = [])
     {
-        $info = model('goods')->getInfo($condition, $field);
+        $info = model('goods')->getInfo($condition, $field, $alias, $join);
         return $this->success($info);
     }
 
@@ -714,7 +714,7 @@ class Goods extends BaseModel
      * @param string $field
      * @return array
      */
-    public function getGoodsSkuInfo($condition, $field = "sku_id,sku_name,sku_spec_format,price,market_price,discount_price,promotion_type,start_time,end_time,stock,click_num,sale_num,collect_num,sku_image,sku_images,goods_id,site_id,goods_content,goods_state,is_virtual,is_free_shipping,goods_spec_format,goods_attr_format,introduction,unit,video_url")
+    public function getGoodsSkuInfo($condition, $field = "sku_id,sku_name,sku_spec_format,price,market_price,discount_price,promotion_type,start_time,end_time,stock,click_num,sale_num,collect_num,sku_image,sku_images,goods_id,site_id,goods_content,goods_state,is_virtual,is_free_shipping,goods_spec_format,goods_attr_format,introduction,unit,video_url,sku_no,goods_name,goods_class,goods_class_name")
     {
         $info = model('goods_sku')->getInfo($condition, $field);
         return $this->success($info);
@@ -731,7 +731,10 @@ class Goods extends BaseModel
     {
         $prefix = config('database.connections.mysql.prefix');
         if (empty($field)) {
-            $field = 'gs.goods_id,gs.sku_id,gs.qr_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images,gs.goods_id,gs.site_id,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,g.goods_image,g.keywords,g.stock_show,g.sale_show,g.market_price_show,g.barrage_show,
+            $field = 'gs.goods_id,gs.sku_id,gs.qr_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time
+            ,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images
+            ,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url
+            ,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,gs.support_trade_type,g.goods_image,g.keywords,g.stock_show,g.sale_show,g.market_price_show,g.barrage_show,
             (SELECT count(evaluate_id) FROM ' . $prefix . 'goods_evaluate nge WHERE gs.goods_id = nge.goods_id and is_show = 1 and is_audit = 1) as evaluate';
         }
 
@@ -740,6 +743,29 @@ class Goods extends BaseModel
         ];
         $info = model('goods_sku')->getInfo([ [ 'gs.sku_id', '=', $sku_id ], [ 'gs.site_id', '=', $site_id ], [ 'gs.is_delete', '=', 0 ] ], $field, 'gs', $join);
         return $this->success($info);
+    }
+
+    /**
+     * 获取商品SKU集合
+     * @param $goods_id
+     * @param $site_id
+     * @param string $field
+     * @return array
+     */
+    public function getGoodsSku($goods_id, $site_id, $field = 'gs.sku_id,g.goods_image,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.promotion_type,gs.end_time,gs.stock,gs.sku_image,gs.sku_images,gs.goods_spec_format,gs.is_limit,gs.limit_type')
+    {
+        $join = [
+            [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
+        ];
+
+        $condition = [
+            [ 'gs.goods_id', '=', $goods_id ],
+            [ 'gs.site_id', '=', $site_id ],
+            [ 'gs.is_delete', '=', 0 ],
+        ];
+
+        $list = model('goods_sku')->getList($condition, $field, 'gs.sku_id asc', 'gs', $join);
+        return $this->success($list);
     }
 
     /**
@@ -976,6 +1002,8 @@ class Goods extends BaseModel
                             //没有匹配到规格值，则禁用
                             if (!isset($sku_format[ $sku_k ][ 'value' ][ $sku_value_k ][ 'selected' ])) {
                                 $sku_format[ $sku_k ][ 'value' ][ $sku_value_k ][ 'disabled' ] = false;
+//                                var_dump(json_encode($sku_format));
+//                                var_dump('==========');
                             }
 
                         }

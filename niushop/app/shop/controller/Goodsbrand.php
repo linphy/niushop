@@ -94,8 +94,7 @@ class Goodsbrand extends BaseShop
             return $res;
         } else {
             $brand_id = input('brand_id', 0);
-            $brand_info = $goods_brand_model->getBrandInfo([ [ 'brand_id', '=', $brand_id ] ]);
-            $brand_info = $brand_info[ 'data' ];
+            $brand_info = $goods_brand_model->getBrandInfo([ [ 'brand_id', '=', $brand_id ] ])[ 'data' ];
             $this->assign("brand_info", $brand_info);
             return $this->fetch('goodsbrand/edit_brand');
         }

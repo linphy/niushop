@@ -192,6 +192,8 @@ class Goods extends BaseApi
             'market_price_show' => $this->params[ 'market_price_show' ] ?? 0,
             'barrage_show' => $this->params[ 'barrage_show' ] ?? 0,
             'brand_id' => $this->params[ 'brand_id' ] ?? 0,
+            'support_trade_type' => $this->params[ 'support_trade_type' ] ?? '',
+
         ];
 
         $goods_model = new GoodsModel();
@@ -255,6 +257,7 @@ class Goods extends BaseApi
             'market_price_show' => $this->params[ 'market_price_show' ] ?? 0,
             'barrage_show' => $this->params[ 'barrage_show' ] ?? 0,
             'brand_id' => $this->params[ 'brand_id' ] ?? 0,
+            'support_trade_type' => $this->params[ 'support_trade_type' ] ?? '',
         ];
 
         $res = $goods_model->editGoods($data);
@@ -270,17 +273,14 @@ class Goods extends BaseApi
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
 
         $goods_model = new GoodsModel();
-        $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ]);
-        $goods_info = $goods_info[ 'data' ];
-        $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,weight,volume,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default,verify_num", '');
-        $goods_sku_list = $goods_sku_list[ 'data' ];
+        $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
+        $goods_sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,weight,volume,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default,verify_num", '')[ 'data' ];
         $goods_info[ 'goods_sku_data' ] = $goods_sku_list;
 
         if (!empty($goods_info[ 'shipping_template' ])) {
             //获取运费模板
             $express_template_model = new ExpressTemplateModel();
-            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ], [ 'template_id', '=', $goods_info[ 'shipping_template' ] ] ], 'template_name');
-            $express_template_list = $express_template_list[ 'data' ];
+            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ], [ 'template_id', '=', $goods_info[ 'shipping_template' ] ] ], 'template_name')[ 'data' ];
             if (!empty($express_template_list)) {
                 $goods_info[ 'template_name' ] = $express_template_list[ 0 ][ 'template_name' ];
             }
@@ -588,8 +588,7 @@ class Goods extends BaseApi
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : '';
 
         $goods_model = new GoodsModel();
-        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name');
-        $goods_sku_info = $goods_sku_info[ 'data' ];
+        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name')[ 'data' ];
         $res = $goods_model->qrcode($goods_id, $goods_sku_info[ 'goods_name' ], $this->site_id);
         return $this->response($res);
     }
@@ -602,9 +601,8 @@ class Goods extends BaseApi
     {
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : '';
         $goods_model = new GoodsModel();
-        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name');
-        $goods_sku_info = $goods_sku_info[ 'data' ];
-        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ]);
+        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name')[ 'data' ];
+        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ],$this->site_id);
         return $this->response($res);
     }
 

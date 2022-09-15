@@ -12,7 +12,7 @@
 .goods-classification-style .style-title{display: flex;margin-bottom: 20px;}
 .goods-classification-style .style-title li{width: 110px;height: 35px;line-height: 35px;text-align: center;border: 1px solid #f1f1f1;color: #666;margin-right: 15px;cursor: pointer;}
 .goods-classification-style .style-title li.selected{color: #fff;}
-.goods-classification-style .style-content li{display: flex;justify-content: space-between;}
-.goods-classification-style .style-content li .style-img-box{overflow: hidden;position: relative;width: 280px;height: 480px;border: 1px solid #f4f4f4;display: flex;justify-content: space-between;align-items: center;cursor: pointer;}
+.goods-classification-style .style-content li{display: flex;justify-content: space-between;flex-wrap: wrap;}
+.goods-classification-style .style-content li .style-img-box{overflow: hidden;position: relative;width: 280px;height: 480px;border: 1px solid #f4f4f4;display: flex;justify-content: space-between;align-items: center;cursor: pointer;margin-top: 15px;}
+.goods-classification-style .style-content li .style-img-box:nth-child(1), .goods-classification-style .style-content li .style-img-box:nth-child(2), .goods-classification-style .style-content li .style-img-box:nth-child(3){margin-top: 0;}
 .goods-classification-style .style-content li .style-img-box img{max-height: 100%;max-width: 100%;}
-.btn-box{margin-top: 30px;text-align: center;}

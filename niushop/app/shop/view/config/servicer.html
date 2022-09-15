@@ -246,15 +246,6 @@
 		});
 	});
 
-	function divClick(data){
-		if(data == 0){
-			$("#other").css("display","block");
-		}else {
-			$("#other").css("display","none");
-		}
-
-	}
-
 	function showDemo(){
 		layer.open({
 			title: '查看示例',
@@ -265,7 +256,7 @@
 	}
 
 	function editService(){
-		serviceOpen	= layer.open({
+		serviceOpen= layer.open({
 			title:'客服设置',
 			type:1,
 			area: 'auto',

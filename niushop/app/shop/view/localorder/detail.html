@@ -47,7 +47,15 @@
             </div>
             <div class="contentOne-content">
                 <div class="contentOne-content-title">要求送达时间：</div>
-                <div class="contentOne-content-text">{if $order_detail['buyer_ask_delivery_time'] == 0}立即送达{else/}{:date("Y-m-d H:i:s", $order_detail['buyer_ask_delivery_time'])}{/if}</div>
+                <div class="contentOne-content-text">
+                    {if $order_detail['buyer_ask_delivery_time'] == 0}
+                        立即送达
+                    {elseif strpos($order_detail['buyer_ask_delivery_time'], '-') !== false}
+                        {$order_detail['buyer_ask_delivery_time']}
+                    {else/}
+                        {:date("Y-m-d H:i:s", $order_detail['buyer_ask_delivery_time'])}
+                    {/if}
+                </div>
             </div>
             {notempty name="$order_detail.package_list"}
             <div class="contentOne-content">

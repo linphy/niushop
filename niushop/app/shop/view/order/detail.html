@@ -342,6 +342,34 @@
 						{$order_goods_item.delivery_status_name}
 					</td>
 				</tr>
+				{if isset($order_goods_item.form)}
+				<tr>
+					<td colspan="6">
+						<div class="order-goods-form">
+							{foreach name="$order_goods_item.form" item="vo"}
+							<div class="form-item">
+								<div class="field-title">{$vo.value.title}：</div>
+								<div class="field-content">
+									{if $vo.controller == 'Img'}
+									{foreach name="$vo.img_lists" item="io"}
+									<div class="form-img">
+										<div class="form-img-wrap">
+											<img src="{:img($io)}" layer-src>
+										</div>
+									</div>
+									{/foreach}
+									{else/}
+									{if isset($vo.val)}
+									{$vo.val}
+									{/if}
+									{/if}
+								</div>
+							</div>
+							{/foreach}
+						</div>
+					</td>
+				</tr>
+				{/if}
 				{/foreach}
 			</tbody>
 		</table>

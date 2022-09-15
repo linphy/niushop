@@ -360,7 +360,7 @@ class Upload extends BaseShop
 
             return json($result);
 
-        } catch ( Exception $e ) {
+        } catch ( \Exception $e ) {
             return json($base_model->error($e, 'FAIL'));
         }
 

@@ -143,10 +143,11 @@
 }
 .image-ads .image-ad-list>ul>li>.iconfont {
 	position: absolute;
-	top: 40px;
-	left: 15px;
-	cursor: move;
-	font-size: 20px;
+    top: 50%;
+    left: 15px;
+    cursor: move;
+    font-size: 20px;
+    transform: translateY(-50%);
 }
 
 .image-ads .add-item {

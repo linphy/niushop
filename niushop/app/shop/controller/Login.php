@@ -15,6 +15,7 @@ use app\model\store\Store;
 use app\model\system\Site;
 use app\model\system\User as UserModel;
 use app\model\web\Config as ConfigModel;
+use app\model\web\DiyView as DiyViewModel;
 use extend\QRcode as QRcodeExtend;
 use think\captcha\facade\Captcha as ThinkCaptcha;
 use think\facade\Cache;
@@ -41,6 +42,11 @@ class Login extends Controller
             request()->siteid($this->site_id);
         }
         $this->assign('app_module', $this->app_module);
+
+        // 加载自定义图标库
+        $diy_view = new DiyViewModel();
+        $diy_icon_url = $diy_view->getIconUrl()[ 'data' ];
+        $this->assign('load_diy_icon_url', $diy_icon_url);
     }
 
     /**
@@ -109,8 +115,7 @@ class Login extends Controller
             }
 
             // 验证码
-            $captcha = $this->captcha();
-            $captcha = $captcha[ 'data' ];
+            $captcha = $this->captcha()[ 'data' ];
             $this->assign('site_id', $site_id);
             $this->assign("captcha", $captcha);
             $this->assign('port_data', $resultData);

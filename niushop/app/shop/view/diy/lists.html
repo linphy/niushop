@@ -48,26 +48,6 @@
 	<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>
 </script>
 
-<script type="text/html" id="promote">
-	<div class="goods-preview">
-		<div class="qrcode-wrap">
-			<img src="{{ ns.img(d.path.h5.img) }}" alt="推广二维码">
-			<p class="tips text-color">扫码访问店铺 <a class="text-color" href="javascript:ns.copy('diy_preview_1');">复制链接</a></p>
-			<input type="text" id="diy_preview_1" value="{{d.path.h5.url}}" readonly />
-		</div>
-		<div class="phone-wrap">
-			<div class="iframe-wrap">
-				<iframe id="iframe" src="{{ d.path.h5.url }}?preview=1&time={:time()}" frameborder="0"></iframe>
-				<div class="empty">
-					<img src="__STATIC__/img/wap_not_found.png" />
-					<p>当前手机页面无法访问</p>
-					<a href="https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842146" class="text-color" target="_blank">请检查手机端域名配置以及伪静态</a>
-				</div>
-			</div>
-		</div>
-	</div>
-
-</script>
 {/block}
 {block name="script"}
 <script>
@@ -116,7 +96,7 @@
 		table.tool(function (obj) {
 			var data = obj.data;
 			if (obj.event === 'promote') {
-				promote(data.id,data.is_default);
+				window.open(ns.url('index/index/h5preview',{ url : data.promote.path.h5.url }));
 			} else if (obj.event === 'edit') {
 				window.open(ns.url("shop/diy/edit", {id: data.id}));
 			} else if (obj.event === "delete") {
@@ -200,84 +180,6 @@
 				}
 			});
 			layer.close(index);
-		});
-	}
-
-	// 推广链接
-	function promote(id,is_default) {
-		$.ajax({
-			type: "POST",
-			url: ns.url("shop/diy/promote"),
-			data: {
-				id: id,
-				is_default:is_default
-			},
-			dataType: 'JSON',
-			success: function (res) {
-				if (res.code == 0) {
-					var data = res.data.path;
-					if (data.h5.status == 1) {
-						layui.use('laytpl', function () {
-							var laytpl = layui.laytpl;
-							$.ajax({
-								type: 'get',
-								url: res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString()),
-								dataType: 'json',
-								error: function (obj){
-									laytpl($("#promote").html()).render(res.data, function (html) {
-										var layerIndex = layer.open({
-											title: '微页面',
-											skin: 'layer-tips-class',
-											type: 1,
-											area: ['600px', '700px'],
-											content: html,
-											success: function () {
-												if(obj.status == 0 || obj.status == 200){
-													$("#promote #iframe").show();
-													$(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
-												} else {
-													$(".goods-preview .phone-wrap .iframe-wrap .empty").show();
-													$("#h5_preview #iframe").hide();
-												}
-												var url = res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString());
-												$("#promote #iframe").attr("src",url);
-											}
-										});
-									});
-								},
-								success: function (obj){
-									laytpl($("#promote").html()).render(res.data, function (html) {
-										var layerIndex = layer.open({
-											title: '微页面',
-											skin: 'layer-tips-class',
-											type: 1,
-											area: ['600px', '700px'],
-											content: html,
-											success: function () {
-												if(obj.status == 0 || obj.status == 200){
-													$("#promote #iframe").show();
-													$(".goods-preview .phone-wrap .iframe-wrap .empty").hide();
-												} else {
-													$(".goods-preview .phone-wrap .iframe-wrap .empty").show();
-													$("#h5_preview #iframe").hide();
-												}
-												var url = res.data.path.h5.url + "?preview=1&time=" + parseInt((new Date().getTime()/1000).toString());
-												$("#promote #iframe").attr("src",url);
-											}
-										});
-									});
-								},
-
-							});
-						})
-
-					}else{
-						layer.msg('加载失败，请重试');
-					}
-				} else {
-					layer.msg('加载失败，请重试');
-				}
-			}
 		});
 	}
 </script>

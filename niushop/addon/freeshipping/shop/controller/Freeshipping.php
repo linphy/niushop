@@ -61,7 +61,7 @@ class Freeshipping extends BaseShop
         } else {
 
             // 地区等级设置 将来从配置中查询数据
-            $area_level = 2;
+            $area_level = 3;
             $this->assign('area_level', $area_level);//地址级别
             return $this->fetch("freeshipping/add");
         }
@@ -93,11 +93,11 @@ class Freeshipping extends BaseShop
         } else {
             $this->assign('freeshipping_id', $freeshipping_id);
             // 地区等级设置 将来从配置中查询数据
-            $area_level = 2;
+            $area_level = 3;
             $this->assign('area_level', $area_level);//地址级别
 
-            $info = $model->getFreeshippingInfo([['freeshipping_id', '=', $freeshipping_id], ['site_id', '=', $this->site_id]]);
-            $this->assign('info', $info['data']);
+            $info = $model->getFreeshippingInfo([['freeshipping_id', '=', $freeshipping_id], ['site_id', '=', $this->site_id]])['data'];
+            $this->assign('info', $info);
             return $this->fetch("freeshipping/edit");
         }
     }

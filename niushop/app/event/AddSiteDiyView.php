@@ -22,7 +22,7 @@ class AddSiteDiyView
         if (!empty($param[ 'site_id' ])) {
 
             $name = 'official_default_round'; // 官方模板一
-            $res = event('useDiyTemplate', [ 'site_id' => $param[ 'site_id' ], 'name' => $name ], true);
+            $res = event('UseDiyTemplate', [ 'site_id' => $param[ 'site_id' ], 'name' => $name ], true);
             return $res;
         }
     }

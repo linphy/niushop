@@ -232,7 +232,7 @@ class Adv extends BaseShop
                 'slide_sort' => input('slide_sort', 0),
                 'price' => input('price', 0),
                 'background' => input('background', ''),
-                'state' => input('state', 0),
+//                'state' => input('state', 0),
             ];
             return $adv->editAdv($data, [ [ 'adv_id', '=', $adv_id ], [ 'site_id', '=', $this->site_id ] ]);
         } else {

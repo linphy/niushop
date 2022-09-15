@@ -20,6 +20,7 @@ use app\model\system\Site;
 use app\model\system\User as UserModel;
 use app\model\upload\Config as UploadConfigModel;
 use app\model\web\Config as ConfigModel;
+use app\model\web\DiyView as DiyViewModel;
 
 class BaseShop extends Controller
 {
@@ -83,12 +84,12 @@ class BaseShop extends Controller
             if (!request()->isAjax()) {
                 $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info, $this->addon);
                 if (empty($menu_info)) {
-                    $this->error('权限不足');
+                    $this->error('权限不足，请联系客服');
                 } else {
                     $this->redirect(addon_url($menu_info[ 'url' ]));
                 }
             } else {
-                echo json_encode(error(-1, '权限不足'));
+                echo json_encode(error(-1, '权限不足，请联系客服'));
                 exit;
             }
 
@@ -106,6 +107,11 @@ class BaseShop extends Controller
 
             $this->initBaseInfo();
         }
+
+        // 加载自定义图标库
+        $diy_view = new DiyViewModel();
+        $diy_icon_url = $diy_view->getIconUrl()[ 'data' ];
+        $this->assign('load_diy_icon_url', $diy_icon_url);
 
         // 上传图片配置
         $uplode_config_model = new UploadConfigModel();
@@ -156,7 +162,6 @@ class BaseShop extends Controller
         $this->assign("url", $this->url);
         $this->assign("menu", $init_menu);
 
-
         //加载版权信息
         $config_model = new ConfigModel();
         $copyright = $config_model->getCopyright();
@@ -170,7 +175,30 @@ class BaseShop extends Controller
     }
 
     /**
+     * 加载构造函数信息
+     */
+    public function initConstructInfo(){
+        $this->site_id = input('site_id', 0);
+        $config_model = new ConfigModel();
+        $base = $config_model->getStyle($this->site_id);
+        $this->assign('base', $base);
+
+        $site_model = new Site();
+        $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time')[ 'data' ];
+        $this->assign("shop_info", $shop_info);
+        $this->assign('app_module', $this->app_module);
+
+        // 加载自定义图标库
+        $diy_view = new DiyViewModel();
+        $diy_icon_url = $diy_view->getIconUrl()[ 'data' ];
+        $this->assign('load_diy_icon_url', $diy_icon_url);
+    }
+
+    /**
      * layui化处理菜单数据
+     * @param $menus_list
+     * @param string $parent
+     * @return array
      */
     public function initMenu($menus_list, $parent = "")
     {
@@ -210,7 +238,7 @@ class BaseShop extends Controller
 
     /**
      * 获取上级菜单列表
-     * @param number $menu_id
+     * @param string $name
      */
     private function getParentMenuList($name = '')
     {
@@ -240,7 +268,6 @@ class BaseShop extends Controller
             //门店登录,用户权限对应站点id是门店id
             $this->store_id = $this->group_info[ 'site_id' ];
         }
-
     }
 
     /**
@@ -259,6 +286,9 @@ class BaseShop extends Controller
      */
     private function checkAuth()
     {
+        if($this->user_info[ 'is_admin' ] == 1){
+            return true;
+        }
         $user_model = new UserModel();
         $res = $user_model->checkAuth($this->url, $this->app_module, $this->group_info, $this->addon);
         return $res;
@@ -291,12 +321,11 @@ class BaseShop extends Controller
             return $v[ 'parent' ] == '0';
         });
         return $list;
-
     }
 
     /**
      * 四级菜单
-     * @param unknown $params
+     * @param array $params
      */
     protected function forthMenu($params = [])
     {

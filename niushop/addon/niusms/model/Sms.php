@@ -436,8 +436,7 @@ class Sms extends BaseModel
     public function send($params)
     {
         $config_model = new ConfigModel();
-        $sms_config = $config_model->getSmsConfig($params['site_id'], 'shop');
-        $sms_config = $sms_config['data'];
+        $sms_config = $config_model->getSmsConfig($params['site_id'], 'shop')['data'];
         if ($sms_config['is_use']) {
             $config = $sms_config['value'];
             if (empty($config)) return $this->error([], "牛云短信尚未配置");

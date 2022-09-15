@@ -163,7 +163,6 @@
     {{#  } }}
 </script>
 
-
 <!-- 添加分组 -->
 <script type="text/html" id="addGroup">
 	<div class="layui-form">
@@ -245,7 +244,6 @@
 			return false;
 		});
 	});
-
 
 	function switchGroup(obj){
 		$('.album-list .selected').removeClass('selected text-color');
@@ -397,8 +395,7 @@
 			if (item_index > index) {
 				active_array[i]["index"] = item_index - 1;
 				if ($("#album").find(".media-list-item[data-pic-id = '" + item["id"] + "']").length > 0) {
-					$("#album").find(".media-list-item[data-pic-id = '" + item["id"] + "']").find(".image-box-active i ").text(item[
-						"index"]);
+					$("#album").find(".media-list-item[data-pic-id = '" + item["id"] + "']").find(".image-box-active i ").text(item["index"]);
 				}
 			}
 		})

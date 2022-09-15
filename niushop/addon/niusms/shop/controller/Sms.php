@@ -34,8 +34,7 @@ class Sms extends BaseShop
         $return = input("return", 0);
         $sms_model = new SmsModel();
         $config_model = new ConfigModel();
-        $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module);
-        $sms_config = $sms_config[ 'data' ];
+        $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module)[ 'data' ];
         if (!empty($sms_config[ 'value' ][ 'username' ])) {
             if ($return == 1) {
                 return $this->returnUrl();

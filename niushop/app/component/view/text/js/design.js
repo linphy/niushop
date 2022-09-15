@@ -55,7 +55,7 @@ Vue.component("text-style", {
 					"text": "为您推荐",
 					"textColor": "#3b2ce7",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "夏日清爽出行必备",
@@ -68,7 +68,7 @@ Vue.component("text-style", {
 					"text": "为您推荐",
 					"textColor": "#FF95AC",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "夏日清爽出行必备",
@@ -81,7 +81,7 @@ Vue.component("text-style", {
 					"text": "为您推荐",
 					"textColor": "#FF3B3B",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "夏日清爽出行必备",
@@ -100,7 +100,7 @@ Vue.component("text-style", {
 					"text": "标题栏",
 					"textColor": "#303133",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "副标题",
@@ -119,7 +119,7 @@ Vue.component("text-style", {
 					"text": "夏日纳凉精选",
 					"textColor": "#FFC425",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {"isElementShow": false},
 					"more": {"isElementShow": false}
 				},
@@ -127,7 +127,7 @@ Vue.component("text-style", {
 					"text": "标题",
 					"textColor": "#9849FF",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "TITLE ZONE",
@@ -146,7 +146,7 @@ Vue.component("text-style", {
 					"text": "标题专区",
 					"textColor": "#9849FF",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "TITLE ZONE",
@@ -159,15 +159,15 @@ Vue.component("text-style", {
 					"text": "标题专区",
 					"textColor": "#303133",
 					"fontSize": 16,
-					"fontWeight": 600,
+					"fontWeight": 'bold',
 					"subTitle": {
 						"fontSize": 14,
 						"text": "副标题",
 						"isElementShow": true,
 						"color": "#FFFFFF",
 						"bgColor": "#FC0F85",
-						"icon": "icon-system-bargain-one",
-						"fontWeight": 600,
+						"icon": "icondiy icon-system-bargain-one",
+						"fontWeight": 'bold',
 
 					},
 					"more": {
@@ -258,8 +258,8 @@ Vue.component("text-font-weight", {
 		return {
 			data: this.$parent.data,
 			thicknessList: [
-				{name: "加粗", src: "iconbold", value: "600"},
-				{name: "常规", src: "iconbold-copy", value: "500"}
+				{name: "加粗", src: "iconbold", value: "bold"},
+				{name: "常规", src: "iconbold-copy", value: "normal"}
 			]
 		};
 	},
@@ -269,60 +269,6 @@ Vue.component("text-font-weight", {
 	methods: {
 		change: function (item) {
 			this.data.fontWeight = item.value;
-		}
-	},
-});
-
-// 文字大小
-var textFontSizeHtml = '<div class="layui-form-item icon-radio">';
-	textFontSizeHtml +=	 '<label class="layui-form-label sm">{{data.label}}</label>';
-	textFontSizeHtml +=	 '<div class="layui-input-block">';
-	textFontSizeHtml +=		 '<template v-for="(item, index) in list">';
-	textFontSizeHtml +=			 '<span :class="[item.value == parent[data.field] ? \'\' : \'layui-hide\']">{{item.value}}px</span>';
-	textFontSizeHtml +=		 '</template>';
-	textFontSizeHtml +=		 '<ul class="icon-wrap">';
-	textFontSizeHtml +=			 '<li v-for="(item, index) in list" :class="[item.value == parent[data.field] ? \'text-color border-color\' : \'\']" :title="item.value + \'px\'" @click="parent[data.field] = item.value">';
-	textFontSizeHtml +=				 '<i class="iconfont" :class="[{\'text-color\': item.value == parent[data.field]},item.src]" /></i>';
-	textFontSizeHtml +=			 '</li>';
-	textFontSizeHtml +=		 '</ul>';
-	textFontSizeHtml +=	 '</div>';
-	textFontSizeHtml += '</div>';
-
-Vue.component("text-font-size", {
-	template: textFontSizeHtml,
-	props: {
-		data: {
-			type: Object,
-			default: function () {
-				return {
-					field: "fontSize",
-					label: "文字大小",
-					max: 16
-				};
-			}
-		}
-	},
-	data: function () {
-		return {
-			list: [],
-			parent: this.$parent.data,
-		};
-	},
-	created: function () {
-		if (this.data.parent !== undefined) this.parent = this.$parent.data[this.data.parent];
-		if (this.data.max == 12) {
-			this.list = [{label: "小", value: "12", src: "iconwenzi-copy"}];
-		} else if (this.data.max == 14) {
-			this.list = [
-				{label: "小", value: "12", src: "iconwenzi-copy"},
-				{label: "中", value: "14", src: "iconwenzi-copy1"}
-			]
-		} else {
-			this.list = [
-				{label: "小", value: "12", src: "iconwenzi-copy"},
-				{label: "中", value: "14", src: "iconwenzi-copy1"},
-				{label: "大", value: "16", src: "iconwenzi"}
-			];
 		}
 	},
 });

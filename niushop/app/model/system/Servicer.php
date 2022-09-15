@@ -51,6 +51,9 @@ class Servicer extends BaseModel
                 ]
             ];
         }
+        $res[ 'data' ][ 'value' ][ 'h5' ][ 'type' ] = $res[ 'data' ][ 'value' ][ 'h5' ][ 'type' ] ?? 'none';
+        $res[ 'data' ][ 'value' ][ 'weapp' ][ 'type' ] = $res[ 'data' ][ 'value' ][ 'weapp' ][ 'type' ] ?? 'none';
+        $res[ 'data' ][ 'value' ][ 'pc' ][ 'type' ] = $res[ 'data' ][ 'value' ][ 'pc' ][ 'type' ] ?? 'none';
         return $res;
     }
 }

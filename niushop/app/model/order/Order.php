@@ -752,6 +752,16 @@ class Order extends OrderCommon
                     return $this->error('', $e->getMessage());
                 }
             } else {
+                if ($log_data) {
+                    //记录订单日志 start
+                    $log_data = array_merge($log_data, [
+                        'order_id' => $order_id,
+                        'order_status' => $order_info['order_status'],
+                        'order_status_name' => $this->order_status[ $order_info['order_status'] ][ 'name' ]
+                    ]);
+                    $this->addOrderLog($log_data);
+                    //记录订单日志 end
+                }
                 return $this->success();
             }
         } else {

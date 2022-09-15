@@ -87,8 +87,10 @@
      */
     function CreateTwoFormPage(html){
         LODOP=getLodop();
-        LODOP.PRINT_INIT("打印电子面单");
-        LODOP.ADD_PRINT_HTM(0,10,"95%","100%",html);
+        if(LODOP) {
+            LODOP.PRINT_INIT("打印电子面单");
+            LODOP.ADD_PRINT_HTM(0, 10, "95%", "100%", html);
+        }
     }
 
     function expressSheet(html) {

@@ -170,7 +170,13 @@ class Orderrefund extends BaseApi
             "refund_refuse_reason" => $refund_refuse_reason,
             'site_id' => $this->site_id
         );
-        $res = $order_refund_model->orderRefundRefuse($data, $this->user_info, $refund_refuse_reason);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action' => '商家拒绝了维权',
+            'action_way' => 2
+        ];
+        $res = $order_refund_model->orderRefundRefuse($data, $this->user_info, $refund_refuse_reason, $log_data);
         return $this->response($res);
     }
 
@@ -226,7 +232,13 @@ class Orderrefund extends BaseApi
             'shop_refund_remark' => $shop_refund_remark,
             'refund_real_money' => $refund_real_money
         );
-        $res = $order_refund_model->orderRefundFinish($data, $this->user_info);
+        $log_data = [
+            'uid' => $this->user_info[ 'uid' ],
+            'nick_name' => $this->user_info[ 'username' ],
+            'action' => '商家对维权进行了转账，维权结束',
+            'action_way' => 2
+        ];
+        $res = $order_refund_model->orderRefundFinish($data, $this->user_info, $log_data);
         return $this->response($res);
     }
 

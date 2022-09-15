@@ -152,8 +152,16 @@ class Member extends BaseApi
             $condition[] = [ 'account_type', '=', $account_type ];
         }
         $field = 'id,member_id,account_type,account_data,from_type,type_name,type_tag,remark,create_time,username,mobile,email';
-        $info = $memberAcc->getMemberAccountPageList($condition, $page_index, $page_size, 'create_time desc', $field);
-        return $this->response($info);
+        $data = $memberAcc->getMemberAccountPageList($condition, $page_index, $page_size, 'create_time desc', $field);
+
+        if (!empty($data['data']['list'])) {
+            $account_type = $memberAcc->getAccountType();
+            $data['data']['list'] = array_map(function ($item) use ($account_type) {
+                $item['account_type_name'] = $account_type[ $item['account_type'] ];
+                return $item;
+            }, $data['data']['list']);
+        }
+        return $this->response($data);
     }
 
     /**
@@ -224,6 +232,8 @@ class Member extends BaseApi
      */
     public function modifyBalanceMoney()
     {
+        return $this->response($this->error());
+
         $member_id = isset($this->params['member_id']) ? $this->params['member_id'] : 0;
         $adjust_num = isset($this->params['adjust_num']) ? $this->params['adjust_num'] : 0;
         $remark = isset($this->params['remark']) ? $this->params['remark'] : '商家调整';

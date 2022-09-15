@@ -35,7 +35,7 @@ class Model
     //错误信息
     protected $error;
 
-    protected $is_cache;
+    protected $is_cache = 1;
 
     public function __construct($table = '')
     {
@@ -645,7 +645,7 @@ class Model
      */
     final public function rollback()
     {
-
+        Cache::clear();
         return Db::rollback();
     }
 
@@ -781,5 +781,10 @@ class Model
         }
 
         return $result;
+    }
+
+    public function setIsCache($is_cache = 1){
+        $this->is_cache = $is_cache;
+        return $this;
     }
 }

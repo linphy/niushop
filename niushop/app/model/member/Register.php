@@ -37,8 +37,7 @@ class Register extends BaseModel
         if($examine_username_exit) return $this->error('','用户名已存在');
         $this->cancelBind($data);
         $member_level = new MemberLevel();
-        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
-        $member_level_info = $member_level_info[ 'data' ];
+        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*')[ 'data' ];
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
             if (!$count) $data[ 'source_member' ] = 0;
@@ -220,8 +219,7 @@ class Register extends BaseModel
         if($examine_mobile_exit) return $this->error('','手机号已存在');
         $this->cancelBind($data);
         $member_level = new MemberLevel();
-        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
-        $member_level_info = $member_level_info[ 'data' ];
+        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*')[ 'data' ];
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
             if (!$count) $data[ 'source_member' ] = 0;
@@ -310,8 +308,7 @@ class Register extends BaseModel
         $this->cancelBind($data);
 
         $member_level = new MemberLevel();
-        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
-        $member_level_info = $member_level_info[ 'data' ];
+        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*')[ 'data' ];
 
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ] ]);

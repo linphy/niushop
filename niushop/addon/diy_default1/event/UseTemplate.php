@@ -31,8 +31,8 @@ class UseTemplate
             // 添加模板页面
             $res = $diy_view->addTemplatePage([
                 'site_id' => $params[ 'site_id' ],
-                'page' => [ $this->index_page, $this->goods_category_page ],
-                'name' => $params[ 'name' ]
+                'name' => $params[ 'name' ],
+                'page' => [ $this->index_page, $this->goods_category_page, $this->member_index_page ], // 自定义页面集合
             ]);
 
             return $res;
@@ -50,6 +50,7 @@ class UseTemplate
                 "pageBgColor" => "#F6F9FF",
                 "topNavColor" => "#FFFFFF",
                 "topNavBg" => false,
+                "navBarSwitch" => true,
                 "textNavColor" => "#333333",
                 "topNavImg" => "",
                 "moreLink" => [
@@ -70,6 +71,8 @@ class UseTemplate
                     "imgHeight" => ""
                 ],
                 "bgUrl" => __ROOT__ . '/addon/diy_default1/shop/view/public/img/bg.png',
+                "imgWidth" => "2250",
+                "imgHeight" => "1110",
                 "template" => [
                     "pageBgColor" => "",
                     "textColor" => "#303133",
@@ -87,8 +90,6 @@ class UseTemplate
                         "both" => 12
                     ]
                 ],
-                "imgWidth" => "2250",
-                "imgHeight" => "1110"
             ],
             "value" => [
                 [
@@ -113,7 +114,21 @@ class UseTemplate
                     "pageBgColor" => "#FFFFFF",
                     "textColor" => "#303133",
                     "componentBgColor" => "",
-                    "elementBgColor" => "#F6F9FF"
+                    "elementBgColor" => "#F6F9FF",
+                    "iconType" => "img",
+                    "icon" => "",
+                    "style" => [
+                        "fontSize" => "60",
+                        "iconBgColor" => [],
+                        "iconBgColorDeg" => 0,
+                        "iconBgImg" => "",
+                        "bgRadius" => 0,
+                        "iconColor" => [
+                            "#000000"
+                        ],
+                        "iconColorDeg" => 0
+                    ],
+                    "imageUrl" => ""
                 ],
                 [
                     "id" => "2o7za2qmi900",
@@ -127,6 +142,15 @@ class UseTemplate
                             "imgHeight" => "320",
                             "id" => "1iy3xvq2ngf40"
                         ],
+                        [
+                            "link" => [
+                                "name" => ""
+                            ],
+                            "imageUrl" => __ROOT__ . '/addon/diy_default1/shop/view/public/img/banner2.png',
+                            "imgWidth" => "750",
+                            "imgHeight" => "320",
+                            "id" => "zcrfm65uiu8"
+                        ]
                     ],
                     "indicatorColor" => "#ffffff",
                     "carouselStyle" => "circle",
@@ -166,13 +190,13 @@ class UseTemplate
                     "aroundRadius" => 25,
                     "font" => [
                         "size" => 14,
-                        "weight" => 500,
+                        "weight" => 'normal',
                         "color" => "#303133"
                     ],
                     "list" => [
                         [
                             "title" => "团购",
-                            "icon" => "icon-system-groupbuy-nav",
+                            "icon" => "icondiy icon-system-groupbuy-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -206,7 +230,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "拼团",
-                            "icon" => "icon-system-pintuan-nav",
+                            "icon" => "icondiy icon-system-pintuan-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -240,7 +264,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "秒杀",
-                            "icon" => "icon-system-seckill-time",
+                            "icon" => "icondiy icon-system-seckill-time",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -274,7 +298,7 @@ class UseTemplate
                         ],
                         [
                             "title" => " 积分",
-                            "icon" => "icon-system-point-nav",
+                            "icon" => "icondiy icon-system-point-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -308,7 +332,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "专题活动",
-                            "icon" => "icon-system-topic-nav",
+                            "icon" => "icondiy icon-system-topic-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -342,7 +366,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "砍价",
-                            "icon" => "icon-system-bargain-nav",
+                            "icon" => "icondiy icon-system-bargain-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -376,7 +400,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "领券",
-                            "icon" => "icon-system-get-coupon",
+                            "icon" => "icondiy icon-system-get-coupon",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -410,7 +434,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "文章",
-                            "icon" => "icon-system-article-nav",
+                            "icon" => "icondiy icon-system-article-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -444,7 +468,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "公告",
-                            "icon" => "icon-system-notice-nav",
+                            "icon" => "icondiy icon-system-notice-nav",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -478,7 +502,7 @@ class UseTemplate
                         ],
                         [
                             "title" => "帮助",
-                            "icon" => "icon-system-help",
+                            "icon" => "icondiy icon-system-help",
                             "imageUrl" => "",
                             "iconType" => "icon",
                             "style" => [
@@ -589,8 +613,8 @@ class UseTemplate
                         "isElementShow" => true,
                         "color" => "#FFFFFF",
                         "bgColor" => "#FF9F29",
-                        "icon" => "icon-system-coupon",
-                        "fontWeight" => 600
+                        "icon" => "icondiy icon-system-coupon",
+                        "fontWeight" => 'bold'
                     ],
                     "link" => [
                         "name" => "COUPON_PREFECTURE",
@@ -600,7 +624,7 @@ class UseTemplate
                     ],
                     "fontSize" => 16,
                     "styleName" => "风格16",
-                    "fontWeight" => 600,
+                    "fontWeight" => 'bold',
                     "more" => [
                         "text" => "",
                         "link" => [
@@ -829,6 +853,7 @@ class UseTemplate
                     "pageBgColor" => "#FFFFFF",
                     "topNavColor" => "#FFFFFF",
                     "topNavBg" => false,
+                    "navBarSwitch" => true,
                     "textNavColor" => "#333333",
                     "topNavImg" => "",
                     "moreLink" => [
@@ -849,6 +874,8 @@ class UseTemplate
                         "imgHeight" => ""
                     ],
                     "bgUrl" => "",
+                    "imgWidth" => "",
+                    "imgHeight" => "",
                     "template" => [
                         "pageBgColor" => "",
                         "textColor" => "#303133",
@@ -888,4 +915,567 @@ class UseTemplate
             ]
     ];
 
+    // 【会员中心】自定义页面数据
+    private $member_index_page = [
+        'title' => '会员中心',
+        'name' => "DIY_VIEW_MEMBER_INDEX",
+        'type' => "shop",
+        'value' => [
+            "global" => [
+                "title" => "会员中心",
+                "pageBgColor" => "#F8F8F8",
+                "topNavColor" => "#FFFFFF",
+                "topNavBg" => true,
+                "navBarSwitch" => false,
+                "textNavColor" => "#333333",
+                "topNavImg" => "",
+                "moreLink" => [
+                    "name" => ""
+                ],
+                "openBottomNav" => true,
+                "navStyle" => 1,
+                "textImgPosLink" => "center",
+                "mpCollect" => false,
+                "popWindow" => [
+                    "imageUrl" => "",
+                    "count" => -1,
+                    "show" => 0,
+                    "link" => [
+                        "name" => ""
+                    ],
+                    "imgWidth" => "",
+                    "imgHeight" => ""
+                ],
+                "bgUrl" => "",
+                "imgWidth" => "",
+                "imgHeight" => "",
+                "template" => [
+                    "pageBgColor" => "",
+                    "textColor" => "#303133",
+                    "componentBgColor" => "",
+                    "componentAngle" => "round",
+                    "topAroundRadius" => 0,
+                    "bottomAroundRadius" => 0,
+                    "elementBgColor" => "",
+                    "elementAngle" => "round",
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 0,
+                        "bottom" => 0,
+                        "both" => 0
+                    ]
+                ]
+            ],
+            "value" => [
+                [
+                    "style" => 2,
+                    "theme" => "default",
+                    "bgColorStart" => "#FF7230",
+                    "bgColorEnd" => "#FF1544",
+                    "gradientAngle" => "129",
+                    "infoMargin" => 15,
+                    "id" => "1tkaoxbhavj4",
+                    "componentName" => "MemberInfo",
+                    "componentTitle" => "会员信息",
+                    "isDelete" => 0,
+                    "pageBgColor" => "",
+                    "textColor" => "#303133",
+                    "componentBgColor" => "",
+                    "componentAngle" => "round",
+                    "topAroundRadius" => 0,
+                    "bottomAroundRadius" => 0,
+                    "elementBgColor" => "",
+                    "elementAngle" => "round",
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 0,
+                        "bottom" => 0,
+                        "both" => 0
+                    ]
+                ],
+                [
+                    "style" => "style-12",
+                    "styleName" => "风格12",
+                    "text" => "我的订单",
+                    "link" => [
+                        "name" => ""
+                    ],
+                    "fontSize" => 17,
+                    "fontWeight" => 'bold',
+                    "subTitle" => [
+                        "fontSize" => 14,
+                        "text" => "",
+                        "isElementShow" => true,
+                        "color" => "#999999",
+                        "bgColor" => "#303133"
+                    ],
+                    "more" => [
+                        "text" => "全部订单",
+                        "link" => [
+                            "name" => "ALL_ORDER",
+                            "title" => "全部订单",
+                            "wap_url" => "/pages/order/list",
+                            "parent" => "MALL_LINK"
+                        ],
+                        "isShow" => true,
+                        "isElementShow" => true,
+                        "color" => "#999999"
+                    ],
+                    "id" => "2txcvx3d5u6",
+                    "componentName" => "Text",
+                    "componentTitle" => "标题",
+                    "isDelete" => 0,
+                    "pageBgColor" => "",
+                    "textColor" => "#303133",
+                    "componentBgColor" => "#FFFFFF",
+                    "componentAngle" => "round",
+                    "topAroundRadius" => 9,
+                    "bottomAroundRadius" => 0,
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 15,
+                        "bottom" => 0,
+                        "both" => 15
+                    ]
+                ],
+                [
+                    "color" => "#EEEEEE",
+                    "borderStyle" => "solid",
+                    "id" => "3hsh2st470e0",
+                    "componentName" => "HorzLine",
+                    "componentTitle" => "辅助线",
+                    "isDelete" => 0,
+                    "pageBgColor" => "",
+                    "topAroundRadius" => 0,
+                    "bottomAroundRadius" => 0,
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 0,
+                        "bottom" => 0,
+                        "both" => 20
+                    ]
+                ],
+                [
+                    "icon" => [
+                        "waitPay" => [
+                            "title" => "待付款",
+                            "icon" => "icondiy icon-system-daifukuan2",
+                            "style" => [
+                                "bgRadius" => 0,
+                                "fontSize" => 65,
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "iconColor" => [
+                                    "#ffa3a3",
+                                    "#FF4646"
+                                ],
+                                "iconColorDeg" => 0
+                            ]
+                        ],
+                        "waitSend" => [
+                            "title" => "待发货",
+                            "icon" => "icondiy icon-system-daifahuo2",
+                            "style" => [
+                                "bgRadius" => 0,
+                                "fontSize" => 65,
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "iconColor" => [
+                                    "#ffa3a3",
+                                    "#FF4646"
+                                ],
+                                "iconColorDeg" => 0
+                            ]
+                        ],
+                        "waitConfirm" => [
+                            "title" => "待收货",
+                            "icon" => "icondiy icon-system-daishouhuo2",
+                            "style" => [
+                                "bgRadius" => 0,
+                                "fontSize" => 65,
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "iconColor" => [
+                                    "#ffa3a3",
+                                    "#FF4646"
+                                ],
+                                "iconColorDeg" => 0
+                            ]
+                        ],
+                        "waitRate" => [
+                            "title" => "待评价",
+                            "icon" => "icondiy icon-system-daipingjie2",
+                            "style" => [
+                                "bgRadius" => 0,
+                                "fontSize" => 65,
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "iconColor" => [
+                                    "#ffa3a3",
+                                    "#FF4646"
+                                ],
+                                "iconColorDeg" => 0
+                            ]
+                        ],
+                        "refunding" => [
+                            "title" => "售后",
+                            "icon" => "icondiy icon-system-shuhou2",
+                            "style" => [
+                                "bgRadius" => 0,
+                                "fontSize" => 65,
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "iconColor" => [
+                                    "#ffa3a3",
+                                    "#FF4646"
+                                ],
+                                "iconColorDeg" => 0
+                            ]
+                        ]
+                    ],
+                    "style" => 1,
+                    "id" => "51h05xpcanw0",
+                    "componentName" => "MemberMyOrder",
+                    "componentTitle" => "我的订单",
+                    "isDelete" => 0,
+                    "pageBgColor" => "",
+                    "textColor" => "#303133",
+                    "componentBgColor" => "#FFFFFF",
+                    "componentAngle" => "round",
+                    "topAroundRadius" => 0,
+                    "bottomAroundRadius" => 9,
+                    "elementBgColor" => "",
+                    "elementAngle" => "round",
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 0,
+                        "bottom" => 0,
+                        "both" => 15
+                    ]
+                ],
+                [
+                    "style" => "style-12",
+                    "styleName" => "风格12",
+                    "text" => "常用工具",
+                    "link" => [
+                        "name" => ""
+                    ],
+                    "fontSize" => 17,
+                    "fontWeight" => 'bold',
+                    "subTitle" => [
+                        "fontSize" => 14,
+                        "text" => "",
+                        "isElementShow" => true,
+                        "color" => "#999999",
+                        "bgColor" => "#303133"
+                    ],
+                    "more" => [
+                        "text" => "",
+                        "link" => [
+                            "name" => ""
+                        ],
+                        "isShow" => 0,
+                        "isElementShow" => true,
+                        "color" => "#999999"
+                    ],
+                    "id" => "405rb6vv3rq0",
+                    "componentName" => "Text",
+                    "componentTitle" => "标题",
+                    "isDelete" => 0,
+                    "pageBgColor" => "",
+                    "textColor" => "#303133",
+                    "componentBgColor" => "#FFFFFF",
+                    "componentAngle" => "round",
+                    "topAroundRadius" => 9,
+                    "bottomAroundRadius" => 0,
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 15,
+                        "bottom" => 0,
+                        "both" => 15
+                    ]
+                ],
+                [
+                    "mode" => "graphic",
+                    "type" => "img",
+                    "showStyle" => "fixed",
+                    "ornament" => [
+                        "type" => "default",
+                        "color" => "#EDEDED"
+                    ],
+                    "rowCount" => 4,
+                    "pageCount" => 2,
+                    "carousel" => [
+                        "type" => "circle",
+                        "color" => "#FFFFFF"
+                    ],
+                    "imageSize" => 30,
+                    "aroundRadius" => 0,
+                    "font" => [
+                        "size" => 13,
+                        "weight" => 'normal',
+                        "color" => "#303133"
+                    ],
+                    "list" => [
+                        [
+                            "title" => "个人资料",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_person.png",
+                            "iconType" => "img",
+                            "style" => [
+                                "fontSize" => "60",
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "bgRadius" => 0,
+                                "iconColor" => [
+                                    "#000000"
+                                ],
+                                "iconColorDeg" => 0
+                            ],
+                            "link" => [
+                                "name" => "MEMBER_INFO",
+                                "title" => "个人资料",
+                                "wap_url" => "/pages_tool/member/info",
+                                "parent" => "MALL_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "icon" => "",
+                            "id" => "10rhv0x6phhc0"
+                        ],
+                        [
+                            "title" => "收货地址",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_address.png",
+                            "iconType" => "img",
+                            "style" => [
+                                "fontSize" => "60",
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "bgRadius" => 0,
+                                "iconColor" => [
+                                    "#000000"
+                                ],
+                                "iconColorDeg" => 0
+                            ],
+                            "link" => [
+                                "name" => "SHIPPING_ADDRESS",
+                                "title" => "收货地址",
+                                "wap_url" => "/pages_tool/member/address",
+                                "parent" => "MALL_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "icon" => "",
+                            "id" => "1n8gycn6xqe80"
+                        ],
+                        [
+                            "title" => "我的关注",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_like.png",
+                            "iconType" => "img",
+                            "style" => [
+                                "fontSize" => "60",
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "bgRadius" => 0,
+                                "iconColor" => [
+                                    "#000000"
+                                ],
+                                "iconColorDeg" => 0
+                            ],
+                            "link" => [
+                                "name" => "ATTENTION",
+                                "title" => "我的关注",
+                                "wap_url" => "/pages_tool/member/collection",
+                                "parent" => "MALL_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "icon" => "",
+                            "id" => "cnamoch6cvk0"
+                        ],
+                        [
+                            "title" => "我的足迹",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_toot.png",
+                            "iconType" => "img",
+                            "style" => [
+                                "fontSize" => "60",
+                                "iconBgColor" => [],
+                                "iconBgColorDeg" => 0,
+                                "iconBgImg" => "",
+                                "bgRadius" => 0,
+                                "iconColor" => [
+                                    "#000000"
+                                ],
+                                "iconColorDeg" => 0
+                            ],
+                            "link" => [
+                                "name" => "FOOTPRINT",
+                                "title" => "我的足迹",
+                                "wap_url" => "/pages_tool/member/footprint",
+                                "parent" => "MALL_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "icon" => "",
+                            "id" => "drf3hi3slo00"
+                        ],
+                        [
+                            "title" => "账户列表",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_cash.png",
+                            "iconType" => "img",
+                            "style" => "",
+                            "link" => [
+                                "name" => "ACCOUNT",
+                                "title" => "账户列表",
+                                "wap_url" => "/pages_tool/member/account",
+                                "parent" => "MALL_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "iconfont" => [
+                                "value" => "",
+                                "color" => ""
+                            ],
+                            "id" => "1l4axfhbayqo0"
+                        ],
+                        [
+                            "title" => "优惠券",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_discount.png",
+                            "iconType" => "img",
+                            "style" => "",
+                            "link" => [
+                                "name" => "COUPON",
+                                "title" => "优惠券",
+                                "wap_url" => "/pages_tool/member/coupon",
+                                "parent" => "MALL_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "iconfont" => [
+                                "value" => "",
+                                "color" => ""
+                            ],
+                            "id" => "1tnu0vihrnq80"
+                        ],
+                        [
+                            "title" => "签到",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_sign.png",
+                            "iconType" => "img",
+                            "style" => "",
+                            "link" => [
+                                "name" => "SIGN_IN",
+                                "title" => "签到",
+                                "wap_url" => "/pages_tool/member/signin",
+                                "parent" => "MARKETING_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "iconfont" => [
+                                "value" => "",
+                                "color" => ""
+                            ],
+                            "id" => "hodjcxowf8g0"
+                        ],
+                        [
+                            "title" => "核销台",
+                            "imageUrl" => "public/uniapp/member/index/menu/default_verification.png",
+                            "iconType" => "img",
+                            "style" => "",
+                            "link" => [
+                                "name" => "VERIFICATION_PLATFORM",
+                                "title" => "核销台",
+                                "wap_url" => "/pages_tool/verification/index",
+                                "parent" => "MARKETING_LINK"
+                            ],
+                            "label" => [
+                                "control" => false,
+                                "text" => "热门",
+                                "textColor" => "#FFFFFF",
+                                "bgColorStart" => "#F83287",
+                                "bgColorEnd" => "#FE3423"
+                            ],
+                            "iconfont" => [
+                                "value" => "",
+                                "color" => ""
+                            ],
+                            "id" => "1covfhv2fxy80"
+                        ]
+                    ],
+                    "id" => "5ywbzsnigpw0",
+                    "componentName" => "GraphicNav",
+                    "componentTitle" => "图文导航",
+                    "isDelete" => 0,
+                    "pageBgColor" => "",
+                    "componentBgColor" => "#FFFFFF",
+                    "componentAngle" => "round",
+                    "topAroundRadius" => 0,
+                    "bottomAroundRadius" => 9,
+                    "topElementAroundRadius" => 0,
+                    "bottomElementAroundRadius" => 0,
+                    "margin" => [
+                        "top" => 0,
+                        "bottom" => 0,
+                        "both" => 15
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    /**
+     * 获取自定义会员中心数据
+     * @return array
+     */
+    public function getMemberIndexPage()
+    {
+        return $this->member_index_page;
+    }
 }

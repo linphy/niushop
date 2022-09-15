@@ -130,7 +130,7 @@ class Message extends BaseModel
                                 'USER_CANCEL_SUCCESS','USER_CANCEL_FAIL','ORDER_URGE_PAYMENT','ORDER_CLOSE','ORDER_PAY',
                                 'ORDER_DELIVERY','ORDER_COMPLETE','ORDER_VERIFY_OUT_TIME','VERIFY_CODE_EXPIRE','VERIFY',
                                 'ORDER_REFUND_AGREE','ORDER_REFUND_REFUSE','USER_WITHDRAWAL_SUCCESS','USER_BALANCE_CHANGE_NOTICE'
-                                ,'COMMISSION_GRANT','FENXIAO_WITHDRAWAL_SUCCESS','FENXIAO_WITHDRAWAL_ERROR')");
+                                ,'COMMISSION_GRANT','FENXIAO_WITHDRAWAL_SUCCESS','FENXIAO_WITHDRAWAL_ERROR','BARGAIN_COMPLETE', 'PINTUAN_COMPLETE', 'PINTUAN_FAIL', 'SECKILL_START')");
                 break;
             case 2:
                 $order = Db::raw("field(keywords,'BUYER_PAY','BUYER_ORDER_COMPLETE','BUYER_REFUND','BUYER_DELIVERY_REFUND',
@@ -231,7 +231,18 @@ class Message extends BaseModel
             foreach ($keyword as $item) {
                 $shop_message = model('message')->getInfo([ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ], 'wechat_template_id');
                 if (!empty($shop_message)) {
-                    model('message')->update([ 'wechat_is_open' => $wechat_is_open ], [ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ]);
+
+                    $update_data = [ 'wechat_is_open' => $wechat_is_open ];
+                    if($shop_message[ 'wechat_template_id' ]){
+                        $res = $wechat->deleteTemplate($shop_message[ 'wechat_template_id' ]);
+                        if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) {
+                            $update_data[ 'wechat_template_id' ] = '';
+                        }else{
+                            return $this->error($res, $res[ 'errmsg' ]);
+                        }
+                    }
+
+                    model('message')->update($update_data, [ [ 'keywords', '=', $item ], [ "site_id", "=", $site_id ] ]);
                 } else {
                     model('message')->add([
                         'site_id' => $site_id,
@@ -316,7 +327,7 @@ class Message extends BaseModel
 
             return $result;
         } catch (\Exception $e) {
-            return $this->error('', "MESSAGE_FAIL");
+            return $this->error('', $e->getMessage().$e->getFile().$e->getLine());
         }
     }
 }

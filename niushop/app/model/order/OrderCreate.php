@@ -252,8 +252,8 @@ class OrderCreate extends BaseModel
                     'point_money' => $order_goods[ 'point_money' ] ?? 0.00,
                     'create_time' => time(),
                 );
-                model('order_goods')->add($data_order_goods);
-
+                $order_goods_id = model('order_goods')->add($data_order_goods);
+                $calculate_data[ 'shop_goods_list' ][ 'goods_list' ][ $k_order_goods ][ 'order_goods_id' ] = $order_goods_id;
             }
 
             //todo  满减送
@@ -293,7 +293,7 @@ class OrderCreate extends BaseModel
             }
 
             //订单生成后操作
-            $result_list = event('OrderCreate', [ 'order_id' => $order_id, 'create_data' => $calculate_data ]);
+            $result_list = event('OrderCreate', [ 'order_id' => $order_id, 'site_id' => $data['site_id'], 'create_data' => $calculate_data ]);
             if (!empty($result_list)) {
                 foreach ($result_list as $k => $v) {
                     if (!empty($v) && $v[ 'code' ] < 0) {
@@ -670,7 +670,7 @@ class OrderCreate extends BaseModel
         }
 
         $calculate_data[ 'shop_goods_list' ][ 'express_type' ] = $express_type;
-        $payment_event_data = event('OrderPayment', $data);
+        $payment_event_data = event('OrderPayment', $calculate_data);
 
         if (!empty($payment_event_data)) {
             $calculate_data = array_merge($calculate_data, ...$payment_event_data);
@@ -758,10 +758,10 @@ class OrderCreate extends BaseModel
     {
         $goods_model = new Goods();
         //组装商品列表
-        $field = ' ngc.member_id, ngc.sku_id, ngc.num, ngs.is_limit, ngs.limit_type, ngs.sku_name, ngs.sku_no,
+        $field = ' ngc.member_id, ngc.sku_id, ngc.num, ngc.form_data, ngs.is_limit, ngs.limit_type, ngs.sku_name, ngs.sku_no,
             ngs.price, ngs.discount_price, ngs.cost_price, ngs.stock, ngs.weight, ngs.volume, ngs.sku_image, 
             ngs.site_id, ngs.goods_state, ngs.is_virtual, 
-            ngs.is_free_shipping, ngs.shipping_template, ngs.goods_class, ngs.goods_class_name, ngs.goods_id,ns.site_name,ngs.sku_spec_format,ngs.goods_name,ngs.max_buy,ngs.min_buy';
+            ngs.is_free_shipping, ngs.shipping_template, ngs.goods_class, ngs.goods_class_name, ngs.goods_id,ns.site_name,ngs.sku_spec_format,ngs.goods_name,ngs.max_buy,ngs.min_buy,ngs.support_trade_type';
         $alias = 'ngc';
         $join = [
             [
@@ -783,6 +783,7 @@ class OrderCreate extends BaseModel
 
         $shop_goods_list = [];
         if (!empty($goods_list)) {
+            $express_type_list = ( new \app\model\express\Config() )->getExpressTypeList($data['site_id']);
             foreach ($goods_list as $k => $v) {
 
                 if ($v[ 'site_id' ] != $site_id) {
@@ -803,6 +804,7 @@ class OrderCreate extends BaseModel
                     }
                 }
 
+                $v[ 'form_data' ] = !empty($v['form_data']) ? json_decode($v['form_data'], true) : '';
                 $v[ 'price' ] = $price;
                 $v[ 'goods_money' ] = $price * $v[ 'num' ];
                 $v[ 'real_goods_money' ] = $v[ 'goods_money' ];
@@ -848,6 +850,11 @@ class OrderCreate extends BaseModel
                         'min_buy' => $v[ 'min_buy' ]
                     ];
                 }
+
+                if (isset($data[ 'delivery' ][ 'delivery_type' ]) && !empty($data[ 'delivery' ][ 'delivery_type' ]) && strpos($v['support_trade_type'], $data[ 'delivery' ][ 'delivery_type' ]) === false) {
+                    $delivery_type_name = $express_type_list[ $data[ 'delivery' ][ 'delivery_type' ] ] ?? '';
+                    $this->setError(1, '有商品不支持'.$delivery_type_name);
+                }
             }
         }
         return $shop_goods_list;
@@ -867,7 +874,7 @@ class OrderCreate extends BaseModel
                 'inner'
             ]
         ];
-        $field = 'sku_id, sku_name, sku_no, price, discount_price,cost_price, stock, volume, weight, sku_image, ngs.site_id, goods_state, is_virtual, is_free_shipping, shipping_template,goods_class, goods_class_name, goods_id, ns.site_name,sku_spec_format,goods_name,max_buy,min_buy,is_limit,limit_type';
+        $field = 'sku_id, sku_name, sku_no, price, discount_price,cost_price, stock, volume, weight, sku_image, ngs.site_id, goods_state, is_virtual, is_free_shipping, shipping_template,goods_class, goods_class_name, goods_id, ns.site_name,sku_spec_format,goods_name,max_buy,min_buy,is_limit,limit_type,support_trade_type';
         $sku_info = model('goods_sku')->getInfo([ [ 'sku_id', '=', $data[ 'sku_id' ] ], [ 'ngs.site_id', '=', $data[ 'site_id' ] ] ], $field, 'ngs', $join);
         if (empty($sku_info)) {
             return $this->error([], '不存在的商品!');
@@ -916,6 +923,11 @@ class OrderCreate extends BaseModel
                 ]
             ]
         ];
+        if (isset($data[ 'delivery' ][ 'delivery_type' ]) && !empty($data[ 'delivery' ][ 'delivery_type' ]) && strpos($sku_info['support_trade_type'], $data[ 'delivery' ][ 'delivery_type' ]) === false) {
+            $express_type_list = ( new \app\model\express\Config() )->getExpressTypeList($data['site_id']);
+            $delivery_type_name = $express_type_list[ $data[ 'delivery' ][ 'delivery_type' ] ] ?? '';
+            $this->setError(1, '有商品不支持'.$delivery_type_name);
+        }
         return $shop_goods;
     }
 
@@ -956,8 +968,7 @@ class OrderCreate extends BaseModel
         } else {
             $express_config_model = new ExpressConfig();
 
-            $deliver_type = $express_config_model->getDeliverTypeSort($site_id);
-            $deliver_type = $deliver_type[ 'data' ];
+            $deliver_type = $express_config_model->getDeliverTypeSort($site_id)[ 'data' ];
             $shop_goods[ 'deliver_sort' ] = explode(',', $deliver_type[ 'value' ][ 'deliver_type' ]);
             //查询店铺是否开启快递配送
             $express_config_result = $express_config_model->getExpressConfig($site_id);
@@ -1734,8 +1745,8 @@ class OrderCreate extends BaseModel
 
         if (addon_is_exit('freeshipping', $data[ 'site_id' ])) {
             $free_shipping_model = new Freeshipping();
-            $city_id = $data[ 'member_address' ][ 'city_id' ] ?? 0;
-            $free_result = $free_shipping_model->calculate($shop_goods[ 'goods_money' ], $city_id, $data[ 'site_id' ]);
+            $district_id = $data[ 'member_address' ][ 'district_id' ] ?? 0;
+            $free_result = $free_shipping_model->calculate($shop_goods[ 'goods_money' ], $district_id, $data[ 'site_id' ]);
             if ($free_result[ 'code' ] >= 0) {
                 $shop_goods[ 'promotion' ][ 'freeshipping' ] = $free_result[ 'data' ]; //优惠活动  满额包邮
                 $shop_goods[ 'is_free_delivery' ] = true;

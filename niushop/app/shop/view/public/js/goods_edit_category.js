@@ -162,7 +162,7 @@ $(function () {
 					categoryFullName.push(category_name);
 				}
 			}
-			
+
 			$(".js-pid span").text(category_name);
 			$("input[name='pid']").val(pid);
 			$("input[name='level']").val(level + 1);//当前添加的层级+1
@@ -275,77 +275,101 @@ function addSelectedPid() {
 	});
 }
 
+
 /**
  * 编辑时，选择上级分类
  */
 function editSelectedPid() {
-	
-	var level = parseInt($("input[name='level']").val());
-	
-	if (level == 2) {
-		
-		//查询一级商品分类
-		getCategoryList({pid: 0}, function (list) {
-			
-			var html = $("#selectedCategory").html();
-			var data = {
-				category_id_1: $("input[name='category_id_1']").val(),
-				category_list_1: list
-			};
-			laytpl(html).render(data, function (html) {
-				layerIndex = layer.open({
-					title: '选择商品分类',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['450px'],
-					content: html,
-					success: function () {
-						form.render();
+	var html = $("#selectedCategory").html();
+	laytpl(html).render({}, function (html) {
+		layerIndex = layer.open({
+			title: '选择商品分类',
+			skin: 'select-category',
+			type: 1,
+			area: ['650px'],
+			content: html,
+			btn: ['确定', '取消'],
+			success: function () {
+				let pid = $('input[name="pid"]').val();
+				let level = $('input[name="level"]').val();
+				$('.table_div input[name="category_id"][data-category-id="'+pid+'"]').attr('checked', true);
+				if(level == 3) $('.table_div div[data-cateid="'+pid+'"]').parents('.table_two_div').show().prev('.table_tr').find('.switch').attr('data-open', 1).html('-');
+				form.render();
+
+				$(".js-switch").click(function (event) {
+					event.stopPropagation();
+					var category_id = $(this).attr("data-category-id");
+					var level = $(this).attr("data-level");
+					var open = parseInt($(this).attr("data-open").toString());
+					if(open){
+						$(".goods-category-list .layui-table tr[data-category-id-"+ level+"='" + category_id + "']").hide();
+						// $(this).children("img").removeClass('rotate');
+						$(this).text("+");
+						if(level == 1) $(this).parents('.table_tr').siblings('.table_two_div').hide();
+						else if(level == 2) $(this).parents('.table_tr').siblings('.table_three').hide();
+
+					}else{
+						$(".goods-category-list .layui-table tr[data-category-id-"+ level+"='" + category_id + "']").show();
+						$(this).text("-");
+						// $(this).children("img").addClass('rotate');
+						if(level == 1) $(this).parents('.table_tr').siblings('.table_two_div').show();
+						else if(level == 2) $(this).parents('.table_tr').siblings('.table_three').show();
+
+					}
+					$(this).attr("data-open", (open ? 0 : 1));
+				});
+
+				form.on('checkbox(category)', function (data) {
+					if(data.elem.checked==true){
+						$('.table_move').children('div').removeClass('layui-form-checked');
+						$(".table_move input").prop("checked",false);
+					}
+					$(this).parents('.table_move').children('div').addClass('layui-form-checked');
+					$(this).parents('.table_move').find('input').prop("checked",true);
+					return false;
+				});
+
+			},
+			yes: function(index, layero){
+				let obj = $('.table_div input[name="category_id"]:checked');
+				let num = $(obj).length;
+				if(num > 1){
+					layer.msg('只能选择一个上级');
+					return false;
+				}
+
+				let parent_level = $(obj).attr('data-level');
+				let pid = $(obj).val();
+				let parent_name = $(obj).attr('data-name')
+				if(num < 1){
+					parent_level = 0;
+					pid = 0;
+					parent_name = '顶级分类';
+				}
+
+				$.ajax({
+					url: ns.url("shop/goodscategory/checkEditCategory"),
+					data: {
+						category_id: $('#category_id').val(),
+						pid : pid
+					},
+					dataType: 'json',
+					type: 'post',
+					async: false,
+					success: function (res) {
+						if(res.code >= 0){
+							$(".js-pid span").text(parent_name);
+							$("input[name='pid']").val(pid);
+							$("input[name='level']").val(parseInt(parent_level) + 1);//当前添加的层级+1
+							layer.close(layerIndex);
+						}else{
+							layer.msg(res.message)
+						}
 					}
 				});
-			});
+			}
 		});
-		
-	} else if (level == 3) {
-		
-		//查询二级商品分类
-		getCategoryList({level: 2}, function (list) {
-			
-			var html = $("#selectedCategory").html();
-			var data = {
-				category_id_2: $("input[name='category_id_2']").val(),
-				category_list_2: list
-			};
-			laytpl(html).render(data, function (html) {
-				layerIndex = layer.open({
-					title: '选择商品分类',
-					skin: 'layer-tips-class',
-					type: 1,
-					area: ['450px'],
-					content: html,
-					success: function () {
-						form.render();
-						
-						form.on('select(category_id_2)', function (item) {
-							
-							var option_category_id_2 = $("select[name='category_id_2'] option:checked[value!='0']");
-							var category_id = option_category_id_2.attr("data-category-id-1");
-							$("input[name='category_id_1']").val(category_id);
-							getCategoryInfo(category_id, function (data) {
-								$("input[name='category_name_1']").val(data.category_name);
-							});
-							
-						});
-						
-						$("select[name='category_id_2']").siblings("div.layui-form-select").find("dl dd[lay-value='" + $("input[name='category_id_2']").val() + "']").click();
-						
-					}
-				});
-			});
-		});
-		
-	}
-	
+	});
 }
 
 /**

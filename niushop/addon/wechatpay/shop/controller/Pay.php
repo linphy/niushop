@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace addon\wechatpay\shop\controller;
 
@@ -36,7 +35,9 @@ class Pay extends BaseShop
             $refund_status   = input("refund_status", 0);//退款启用状态
             $transfer_status = input("transfer_status", 0);//转账启用状态
             $transfer_type   = input("transfer_type", 'v2');
+            $api_type   = input("api_type", 'v2');
             $plateform_cert   = input("plateform_cert", '');
+            $v3_pay_signkey = input('v3_pay_signkey', '');
             $data            = array(
                 "appid"           => $appid,
                 "mch_id"          => $mch_id,
@@ -49,7 +50,9 @@ class Pay extends BaseShop
                 "transfer_status" => $transfer_status,
                 "app_type"        => $app_type,
                 'transfer_type'   => $transfer_type,
-                'plateform_cert'  => $plateform_cert
+                'plateform_cert'  => $plateform_cert,
+                'api_type'        => $api_type,
+                'v3_pay_signkey'  => $v3_pay_signkey
             );
             $result          = $config_model->setPayConfig($data, $this->site_id, $this->app_module);
             return $result;

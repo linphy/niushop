@@ -198,7 +198,7 @@ function childLinkCallback(name) {
 		getCategory(name);
 	} else if (goodsLink.indexOf(name) !== -1) {
 		var html = "<div class='search'>";
-		html += "<input name='search_text' class='layui-input search-input layui-input-inline len-mid' placeholder='请输入商品名称'/>";
+		html += `<input name='search_text' class='layui-input search-input layui-input-inline len-mid' placeholder='请输入商品名称' onkeyup="if(event.keyCode === 13) getGoodsList('${name}') " />`;
 		html += `<button onclick="getGoodsList('${name}')" class='layui-btn'>搜索</button>`;
 		html += "</div>";
 		html += `<table id="goods_list" lay-filter="goods_list"></table>`;
@@ -210,6 +210,11 @@ function childLinkCallback(name) {
 		$(".link-right.js-extend").html(html).show();
 		$(".link-right.js-system").hide();
 		getGameList(name);
+	} else if (['DIY_FORM'].indexOf(name) !== -1) {
+		var html = `<table id="diy_form_list" lay-filter="diy_form_list"></table>`;
+		$(".link-right.js-extend").html(html).show();
+		$(".link-right.js-system").hide();
+		getDiyFormList(name);
 	}
 }
 
@@ -322,7 +327,7 @@ function getGoodsList(name) {
 					return `<input type="checkbox" name="goods_checkbox" value="${data.pintuan_id}" data-goods-name="${data.goods_name}" lay-skin="primary" lay-filter="goods_checkbox" ${data.pintuan_id == selectLink.pinfan_id ? 'checked' : ''} />`;
 				}
 			}, {
-				title: '拼团返利商品',
+				title: '拼团返利',
 				unresize: 'false',
 				width: '52%',
 				templet: '#goods_info'
@@ -472,12 +477,20 @@ function getGoodsList(name) {
  */
 function getGameList(name) {
 	var addon_url = '';
-	if (name == 'CARDS_GAME') {
-		addon_url = ns.url('cards://shop/cards/lists', {app_module: ns_url.appModule, site_id: ns_url.siteId});
-	} else if (name == 'TURNTABLE_GAME') {
-		addon_url = ns.url('turntable://shop/turntable/lists', {app_module: ns_url.appModule, site_id: ns_url.siteId});
-	} else if (name == 'EGG_GAME') {
-		addon_url = ns.url('egg://shop/egg/lists', {app_module: ns_url.appModule, site_id: ns_url.siteId});
+	if (name === 'CARDS_GAME') {
+		addon_url = ns.url('cards://shop/cards/lists', {
+			status: 1,
+			app_module: ns_url.appModule,
+			site_id: ns_url.siteId
+		});
+	} else if (name === 'TURNTABLE_GAME') {
+		addon_url = ns.url('turntable://shop/turntable/lists', {
+			status: 1,
+			app_module: ns_url.appModule,
+			site_id: ns_url.siteId
+		});
+	} else if (name === 'EGG_GAME') {
+		addon_url = ns.url('egg://shop/egg/lists', {status: 1, app_module: ns_url.appModule, site_id: ns_url.siteId});
 	}
 	var gameCols = [
 		[
@@ -492,7 +505,7 @@ function getGameList(name) {
 				field: 'game_name',
 				title: '游戏名称',
 				unresize: 'false',
-				width: '62%',
+				width: '60%',
 			},
 			{
 				field: 'status',
@@ -533,14 +546,62 @@ function getGameList(name) {
 }
 
 /**
+ * 获取小游戏
+ * @param name
+ */
+function getDiyFormList(name) {
+	var addon_url = ns.url('form://shop/form/lists', {
+		form_type: 'custom',
+		is_use: 1,
+		app_module: ns_url.appModule,
+		site_id: ns_url.siteId
+	});
+	var diyFormCols = [
+		[
+			{
+				unresize: 'false',
+				width: '10%',
+				templet: function (data) {
+					return `<input type="checkbox" name="diy_form_checkbox" value="${data.id}" data-form-name="${data.form_name}" lay-skin="primary" lay-filter="diy_form_checkbox" ${data.id == selectLink.form_id ? 'checked' : ''} />`;
+				}
+			},
+			{
+				field: 'form_name',
+				title: '表单名称',
+				unresize: 'false',
+				width: '80%',
+			}
+		]
+	];
+	new Table({
+		elem: '#diy_form_list',
+		url: addon_url,
+		cols: diyFormCols
+	});
+
+	// 勾选自定义表单
+	form.on('checkbox(diy_form_checkbox)', function (data) {
+		if (data.elem.checked) {
+			$("input[name='diy_form_checkbox']:checked").prop("checked", false);
+			$(data.elem).prop("checked", true);
+			form.render();
+		}
+	});
+
+}
+
+/**
  * 保存前处理数据的回调
  * @param oV 原链接
  */
 function beforeSaveCallback(oV) {
+	var name = $('.link-box .link-left dd.text-color').attr('data-name');
 	var value = {};
+
 	// 选择商品分类
 	var category = $("input[name='category_id']:checked");
 	if (category.length) {
+		value.name = name;
 		value.wap_url = '/pages/goods/list?category_id=' + category.val();
 		value.title = category.attr('data-category-name');
 		value.category_id = category.val();
@@ -549,12 +610,13 @@ function beforeSaveCallback(oV) {
 	// 选择商品
 	var goods = $("input[name='goods_checkbox']:checked");
 	if (goods.length) {
+		value.name = name;
 		value.title = goods.attr('data-goods-name');
-		switch ($('.link-box .link-left dd.text-color').attr('data-name')) {
+		switch (name) {
 			case 'BARGAIN_GOODS':
 				// 砍价商品
 				value.bargain_id = goods.val();
-				value.wap_url = '/pages_promotion/bargain/detail?bargain_id=';
+				value.wap_url = '/pages_promotion/bargain/detail?b_id=';
 				break;
 			case 'GROUPBUY_GOODS':
 				// 团购商品
@@ -588,11 +650,12 @@ function beforeSaveCallback(oV) {
 	// 选择小游戏
 	var game = $("input[name='game_checkbox']:checked");
 	if(game.length) {
+		value.name = name;
 		value.wap_url = '';
 		value.title = game.attr('data-game-name');
 		value.game_id = game.val();
 
-		switch ($('.link-box .link-left dd.text-color').attr('data-name')) {
+		switch (name) {
 			case 'CARDS_GAME':
 				value.wap_url = '/pages_promotion/game/cards?id=';
 				break;
@@ -603,7 +666,18 @@ function beforeSaveCallback(oV) {
 				value.wap_url = '/pages_promotion/game/smash_eggs?id=';
 				break;
 		}
+		value.wap_url += game.val();
 
+	}
+
+	// 选择自定义表单
+	var diyForm = $("input[name='diy_form_checkbox']:checked");
+	if(diyForm.length) {
+		value.name = name;
+		value.wap_url = '/pages_tool/form/form?id=';
+		value.title = diyForm.attr('data-form-name');
+		value.form_id = diyForm.val();
+		value.wap_url += diyForm.val();
 	}
 
 	// 如果没有选择以上链接，则还原最初链接

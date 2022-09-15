@@ -112,4 +112,17 @@ class Goods extends BaseApi
         $data = $order->getOrderGoodsPageList([ [ 'og.site_id', '=', $this->site_id ], [ 'og.goods_id', '=', $goods_id ], [ 'o.pay_status', '=', 1 ] ], 1, 20, 'og.order_goods_id desc', $field, 'og', $join, 'o.member_id');
         return $this->response($data);
     }
+
+    /**
+     * 小程序分享图
+     * @return false|string
+     */
+    public function shareImg()
+    {
+        $qrcode_param = json_decode($this->params[ 'qrcode_param' ] ?? '{}', true);
+
+        $poster = new Poster();
+        $res = $poster->shareImg($this->params[ 'page' ] ?? '', $qrcode_param, $this->site_id);
+        return $this->response($res);
+    }
 }

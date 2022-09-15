@@ -62,6 +62,34 @@ class GoodsCategory extends BaseModel
         return $this->success($category_id);
     }
 
+    /**
+     * 验证分类是否可以修改
+     */
+    public function checkEditCategory($data)
+    {
+        $category_id = $data['category_id'];
+        $pid = $data['pid'] ?? 0;
+        $parent_category_info = model('goods_category')->getInfo([ [ 'category_id', '=', $pid ], [ 'site_id', '=', $data['site_id'] ] ]) ?? [];
+        if(empty($parent_category_info)) return $this->success();
+        $category_info = model('goods_category')->getInfo([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $data['site_id'] ] ]) ?? [];
+        if($parent_category_info['category_id'] == $category_info['category_id']){
+            return $this->error('', '不能修改上级为自己');
+        }
+        if ($category_info['level'] < 3 && $parent_category_info['level'] == 2) {
+            $child_list = model('goods_category')->getCount([ [ 'pid', '=', $category_info['category_id'] ] ], 'category_id');
+            if($child_list > 0) return $this->error('', '当前等级存在下级，不可修改为该上级');
+        }
+        if ($category_info['level'] == 1 && $parent_category_info['level'] == 1) {
+            $child_list = model('goods_category')->getColumn([ [ 'pid', '=', $category_info['category_id'] ] ], 'category_id');
+
+            if($child_list){
+                $child_child_list = model('goods_category')->getCount([ [ 'pid', 'in', $child_list ] ], 'category_id');
+                if($child_child_list > 0) return $this->error('', '当前等级存在下下级，不可修改为该上级');
+            }
+        }
+
+        return $this->success();
+    }
 
     /**
      * 修改商品分类
@@ -74,11 +102,16 @@ class GoodsCategory extends BaseModel
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
-
+        $check_res = $this->checkEditCategory($data);
+        if($check_res['code'] < 0) return $check_res;
         model('goods_category')->startTrans();
         try {
             //仅限当分类不支持跨级别修改
             $pid = $data['pid'];
+            $level = 1;
+            $parent_category_info = model('goods_category')->getInfo([ [ 'category_id', '=', $data['pid'] ], [ 'site_id', '=', $site_id ] ]);
+            if($parent_category_info) $level = (int)$parent_category_info['level'] + 1;
+            $data['level'] = $level;
 
             //获取该分类信息
             $info = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id' ] ], [ 'site_id', '=', $site_id ] ]);
@@ -87,16 +120,17 @@ class GoodsCategory extends BaseModel
                 'category_id_2' => 0,
                 'category_id_3' => 0,
             );
-            switch ( $info[ 'level' ] ) {
+            switch ( $level ) {
                 case 1:
                     $common_data['category_id_1'] = $info['category_id'];
                     break;
-
                 case 2:
-                    $common_data['category_id_1'] = $data['pid'];//这让我并没有验证合法性,业务发生变动之后要注意(author:周)
+                    $common_data['category_id_1'] = $data['pid'];
                     $common_data['category_id_2'] = $info['category_id'];
                     //二三级要同步改动
                     model('goods_category')->update($common_data, [['pid', '=', $info['category_id']]]);
+
+                    model('goods_category')->update(['category_id_3' => Db::raw('category_id')], [['pid', '=', $info['category_id']], ['level', '=','3']]);
 
                     break;
                 case 3:
@@ -110,9 +144,10 @@ class GoodsCategory extends BaseModel
             }
             $info = array_merge($info, $common_data);
             $data = array_merge($data, $common_data);
+
             if ($data[ 'is_show' ] == -1) {
 
-                switch ( $info[ 'level' ] ) {
+                switch ( $level ) {
                     case 1:
                         model('goods_category')->update([ 'is_show' => -1 ], [ [ 'category_id_1', '=', $info[ 'category_id_1' ] ] ]);
                         $data['category_full_name'] = $data['category_name'];
@@ -135,7 +170,7 @@ class GoodsCategory extends BaseModel
                         break;
                 }
             } else {
-                switch ( $info[ 'level' ] ) {
+                switch ( $level ) {
                     case 1:
                         model('goods_category')->update([ 'is_show' => 0 ], [ [ 'category_id_1', '=', $info[ 'category_id_1' ] ] ]);
 
@@ -145,6 +180,7 @@ class GoodsCategory extends BaseModel
                         model('goods_category')->update([ 'is_show' => 0 ], [ [ 'category_id', '=', $info[ 'category_id_1' ] ] ]);
 
                         $info_1 = model('goods_category')->getInfo([ [ 'category_id', '=', $data[ 'category_id_1' ] ], [ 'site_id', '=', $site_id ] ],'category_id_1,category_id_2,category_id_3,level,category_name');
+
                         $category_full_name = $info_1['category_name'].'/'.$data['category_name'];
                         $data['category_full_name'] = $category_full_name;
                         break;
@@ -160,7 +196,7 @@ class GoodsCategory extends BaseModel
             }
 
             if ($info[ 'pid' ] != $data[ 'pid' ]) {
-                if ($info[ 'level' ] == 2) {
+                if ($level == 2) {
                     model('goods')->update([
                         'category_json' => Db::raw("REPLACE(category_json, '[\"{$info['pid']},{$data[ 'category_id' ]},', '[\"{$data['pid']},{$data[ 'category_id' ]},')")
                     ], [ [ 'category_id', 'like', "%,{$info['pid']},{$data[ 'category_id' ]},%" ], [ 'site_id', '=', $site_id ] ]);
@@ -185,6 +221,15 @@ class GoodsCategory extends BaseModel
             }
 
             $res = model('goods_category')->update($data, [ [ 'category_id', '=', $data[ 'category_id' ] ], [ 'site_id', '=', $site_id ] ]);
+
+            //变更下级等级层级
+            $child_list =  model('goods_category')->getColumn([ ['site_id', '=', $site_id], ['pid', '=', $data['category_id']] ], 'category_id');
+            if($child_list) {
+                model('goods_category')->update(['level' => (int)$data['level']+1], [ ['category_id', 'in', $child_list] ]);
+                $child_child_list =  model('goods_category')->getColumn([ ['site_id', '=', $site_id], ['pid','in', $child_list] ], 'category_id');
+                model('goods_category')->update(['level' => (int)$data['level']+2], [ ['category_id', 'in', $child_child_list] ]);
+            }
+
             Cache::tag("goods_category_" . $site_id)->clear();
 
             model('goods_category')->commit();
@@ -193,7 +238,7 @@ class GoodsCategory extends BaseModel
         } catch (\Exception $e) {
 
             model('goods_category')->rollback();
-            return $this->error('', $e->getMessage());
+            return $this->error('', $e->getMessage().$e->getFile().$e->getLine());
         }
 
     }
@@ -222,6 +267,7 @@ class GoodsCategory extends BaseModel
         $field = "category_id_" . $goods_category_info[ 'level' ];
 
         $res = model('goods_category')->delete([ [ $field, '=', $category_id ], [ 'site_id', '=', $site_id ] ]);
+        model('goods_category')->delete([ [ 'category_id', '=', $category_id ], [ 'site_id', '=', $site_id ] ]);
         Cache::tag("goods_category_" . $site_id)->clear();
         return $this->success($res);
     }

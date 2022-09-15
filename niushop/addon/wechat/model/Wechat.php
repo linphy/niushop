@@ -1,13 +1,12 @@
 <?php
-// +---------------------------------------------------------------------+
-// | NiuCloud | [ WE CAN DO IT JUST NiuCloud ]                |
-// +---------------------------------------------------------------------+
-// | Copy right 2019-2029 www.niucloud.com                          |
-// +---------------------------------------------------------------------+
-// | Author | NiuCloud <niucloud@outlook.com>                       |
-// +---------------------------------------------------------------------+
-// | Repository | https://github.com/niucloud/framework.git          |
-// +---------------------------------------------------------------------+
+/**
+ * Niushop商城系统 - 团队十年电商经验汇集巨献!
+ * =========================================================
+ * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
+ * ----------------------------------------------
+ * 官方网址: https://www.niushop.com
+ * =========================================================
+ */
 
 namespace addon\wechat\model;
 
@@ -814,6 +813,24 @@ class Wechat extends BaseModel
     {
         try {
             $res = $this->app()->template_message->addTemplate($shortId);
+            if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) return $res;
+            $errormsg = [
+                '45026' => '模板数量超出限制'
+            ];
+            return ['errcode' => $res[ 'errcode' ], 'errmsg' => $errormsg[$res[ 'errcode' ]] ?? $res[ 'errmsg' ] ];
+        } catch (\Exception $e) {
+            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * 删除模板消息
+     * @param unknown $shortId
+     */
+    public function deleteTemplate($templateId)
+    {
+        try {
+            $res = $this->app()->template_message->deletePrivateTemplate($templateId);
             if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) return $res;
             $errormsg = [
                 '45026' => '模板数量超出限制'

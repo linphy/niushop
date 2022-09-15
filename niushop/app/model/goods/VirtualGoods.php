@@ -140,6 +140,7 @@ class VirtualGoods extends BaseModel
                 'recommend_way' => $data[ 'recommend_way' ],
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
+                'form_id' => $data[ 'form_id' ] ?? 0
             );
 
             $goods_id = model('goods')->add(array_merge($goods_data, $common_data));
@@ -309,6 +310,7 @@ class VirtualGoods extends BaseModel
                 'recommend_way' => $data[ 'recommend_way' ],
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
+                'form_id' => $data[ 'form_id' ] ?? 0
             );
 
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);

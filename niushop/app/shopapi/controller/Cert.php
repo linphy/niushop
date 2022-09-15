@@ -53,8 +53,7 @@ class Cert extends BaseApi
         $promotions = $promotion_model->getPromotions();
         $promotions = $promotions[ 'shop' ];
         //店铺等级
-        $shop_group = $shop_group_model->getGroupList([ [ 'is_own', '=', 0 ] ], '*', 'fee asc');
-        $shop_group = $shop_group[ 'data' ];
+        $shop_group = $shop_group_model->getGroupList([ [ 'is_own', '=', 0 ] ], '*', 'fee asc')[ 'data' ];
 
         foreach ($shop_group as $k => $v) {
             $addon_array = !empty($v[ 'addon_array' ]) ? explode(',', $v[ 'addon_array' ]) : [];
@@ -229,8 +228,7 @@ class Cert extends BaseApi
             $promotions = $promotion_model->getPromotions();
             $promotions = $promotions[ 'shop' ];
             //店铺等级
-            $shop_group = $shop_group_model->getGroupList([ [ 'is_own', '=', 0 ] ], '*', 'fee asc');
-            $shop_group = $shop_group[ 'data' ];
+            $shop_group = $shop_group_model->getGroupList([ [ 'is_own', '=', 0 ] ], '*', 'fee asc')[ 'data' ];
 
             foreach ($shop_group as $k => $v) {
                 $addon_array = !empty($v[ 'addon_array' ]) ? explode(',', $v[ 'addon_array' ]) : [];

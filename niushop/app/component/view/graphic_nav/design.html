@@ -1,4 +1,4 @@
-<nc-component :data="data[index]" :class="['graphic-navigation']">
+<nc-component :data="data[index]" class="graphic-navigation">
 
 	<!-- 预览 -->
 	<template slot="preview">
@@ -183,23 +183,14 @@
 				<h3>图片设置</h3>
 				<template v-if="nc.type == 'img'">
 					<slide :data="{ field : 'aroundRadius', label : '图片圆角', max : 50 }"></slide>
-					<slide :data="{ field : 'imageSize', label : '图片大小', min: 40, max : 50 }"></slide>
+					<slide :data="{ field : 'imageSize', label : '图片大小', min: 30, max : 50 }"></slide>
 				</template>
 			</div>
 
 			<div class="template-edit-title" v-if="['graphic','text'].includes(nc.mode)">
 				<h3>文字设置</h3>
-				<div class="layui-form-item icon-radio">
-					<label class="layui-form-label sm">文字大小</label>
-					<div class="layui-input-block">
-						<span>{{nc.font.size}}px</span>
-						<ul class="icon-wrap">
-							<li v-for="item in nc.tempData.fontSizeList" :class="[item.value == nc.font.size ? 'text-color border-color' : '']" :title="item.value + 'px'" @click="nc.font.size = item.value">
-								<i class="iconfont" :class="[{'text-color': item.value == nc.font.size},item.src]" /></i>
-							</li>
-						</ul>
-					</div>
-				</div>
+
+				<slide :data="{ field : 'size',parent:'font', label : '文字大小', min: 12, max : 16 }"></slide>
 
 				<div class="layui-form-item icon-radio">
 					<label class="layui-form-label sm">文字粗细</label>
@@ -224,8 +215,8 @@
 		<js>
 			var graphicNavResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/graphic_nav/css/design.css"></css>
-		<js src="{$resource_path}/graphic_nav/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 
 	</template>
 

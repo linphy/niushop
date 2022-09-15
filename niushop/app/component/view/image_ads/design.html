@@ -45,6 +45,10 @@
 							<img-upload :data="{ data: item}" data-disabled="1"></img-upload>
 							<div class="content-block">
 								<nc-link :data="{ field : item.link }"></nc-link>
+								<div class="selected-style" :class="{'text-color' : item.heatMapData }" @click="nc.tempData.methods.setHeatMap(index)">
+									<span>热区设置</span>
+									<i class="layui-icon layui-icon-right"></i>
+								</div>
 							</div>
 							<div class="error-msg"></div>
 							<i class="del" @click="nc.tempData.methods.deleteItem(index)" data-disabled="1">x</i>
@@ -89,8 +93,8 @@
 		<js>
 			var imageAdsResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/image_ads/css/design.css"></css>
-		<js src="{$resource_path}/image_ads/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 
 </nc-component>

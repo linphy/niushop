@@ -40,7 +40,9 @@ Vue.component("article-sources", {
                 this.$parent.data.previewList["brand_id_" + ns.gen_non_duplicate(i)] = {
                     article_title: "文章标题",
                     article_abstract: '这里是文章内容',
-                    read_num: (i + 1) * 12
+                    read_num: (i + 1) * 12,
+                    category_name: '文章分类',
+                    create_time: 1662202804
                 };
             }
         }
@@ -51,6 +53,7 @@ Vue.component("article-sources", {
             ornamentList: this.ornamentList,
             methods: {
                 addArticle: this.addArticle,
+                timeFormat: this.timeFormat
             },
         };
     },
@@ -70,5 +73,8 @@ Vue.component("article-sources", {
                 self.$parent.data.previewList = res.list;
             }, {select_id: self.$parent.data.articleIds.toString()});
         },
+        timeFormat(time, format){
+            return ns.time_to_date(time, format)
+        }
     }
 });

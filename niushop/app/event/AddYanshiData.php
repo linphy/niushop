@@ -30,31 +30,31 @@ class AddYanshiData
                     'site_id' => $param[ 'site_id' ],
                     'service_name' => '7天无理由退货',
                     'desc' => '支持7天无理由退货(拆封后不支持)',
-                    'icon' => '{"imageUrl":"","icon":"icon-system-7days-return","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
+                    'icon' => '{"imageUrl":"","icon":"icondiy icon-system-7days-return","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
                 ],
                 [
                     'site_id' => $param[ 'site_id' ],
                     'service_name' => '闪电退款',
                     'desc' => '闪电退款为会员提供的快速退款服务',
-                    'icon' => '{"imageUrl":"","icon":"icon-system-lightning-refund","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
+                    'icon' => '{"imageUrl":"","icon":"icondiy icon-system-lightning-refund","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
                 ],
                 [
                     'site_id' => $param[ 'site_id' ],
                     'service_name' => '货到付款',
                     'desc' => '支持送货上门后再收款，支持现金、POS机刷卡等方式',
-                    'icon' => '{"imageUrl":"","icon":"icon-system-cash-delivery","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
+                    'icon' => '{"imageUrl":"","icon":"icondiy icon-system-cash-delivery","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
                 ],
                 [
                     'site_id' => $param[ 'site_id' ],
                     'service_name' => '运费险',
                     'desc' => '卖家为您购买的商品投保退货运费险（保单生效以确认订单页展示的运费险为准）',
-                    'icon' => '{"imageUrl":"","icon":"icon-system-freight","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
+                    'icon' => '{"imageUrl":"","icon":"icondiy icon-system-freight","iconType":"icon","style":{"fontSize":100,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
                 ],
                 [
                     'site_id' => $param[ 'site_id' ],
                     'service_name' => '公益宝贝',
                     'desc' => '购买该商品，每笔成交都会有相应金额捐赠给公益。感谢您的支持，愿公益的快乐伴随您每一天',
-                    'icon' => '{"imageUrl":"","icon":"icon-system-gongyi","iconType":"icon","style":{"fontSize":87,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
+                    'icon' => '{"imageUrl":"","icon":"icondiy icon-system-gongyi","iconType":"icon","style":{"fontSize":87,"iconBgColor":[],"iconBgColorDeg":0,"iconBgImg":"","bgRadius":0,"iconColor":["#888888","#888888"],"iconColorDeg":125}}'
                 ]
             ];
             $model = new GoodsServiceModel();
@@ -165,7 +165,8 @@ class AddYanshiData
                     "sale_show" => 1,
                     "stock_show" => 1,
                     "market_price_show" => 1,
-                    "barrage_show" => 1
+                    "barrage_show" => 1,
+                    'support_trade_type' => 'express'
                 ],
                 [
                     "goods_name" => '演示商品二',
@@ -226,7 +227,8 @@ class AddYanshiData
                     "sale_show" => 1,
                     "stock_show" => 1,
                     "market_price_show" => 1,
-                    "barrage_show" => 1
+                    "barrage_show" => 1,
+                    'support_trade_type' => 'express'
                 ],
                 [
                     "goods_name" => '演示商品三',
@@ -287,7 +289,8 @@ class AddYanshiData
                     "sale_show" => 1,
                     "stock_show" => 1,
                     "market_price_show" => 1,
-                    "barrage_show" => 1
+                    "barrage_show" => 1,
+                    'support_trade_type' => 'express'
                 ],
                 [
                     'goods_name' => '演示商品四',
@@ -348,7 +351,8 @@ class AddYanshiData
                     "sale_show" => 1,
                     "stock_show" => 1,
                     "market_price_show" => 1,
-                    "barrage_show" => 1
+                    "barrage_show" => 1,
+                    'support_trade_type' => 'express'
                 ]
             ];
 

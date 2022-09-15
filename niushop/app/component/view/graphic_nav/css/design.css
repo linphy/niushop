@@ -213,7 +213,12 @@
 }
 
 .graphic-navigation .graphic-nav .graphic-nav-item .graphic-text{
-	padding-top: 5px;
+	padding-top: 6px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 100%;
+	text-align: center;
 }
 
 .graphic-navigation .graphic-nav .graphic-nav-item .graphic-img{

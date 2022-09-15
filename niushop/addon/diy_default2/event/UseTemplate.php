@@ -18,6 +18,7 @@ use app\model\web\DiyView as DiyViewModel;
  */
 class UseTemplate
 {
+    
     /**
      * 模板数据
      * @param $params

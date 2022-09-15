@@ -7,11 +7,11 @@ return [
 
     'listen' => [
         // 自定义模板信息
-        'showDiyTemplate' => [
+        'ShowDiyTemplate' => [
             'addon\diy_default2\event\TemplateInfo',
         ],
         // 使用自定义模板
-        'useDiyTemplate' => [
+        'UseDiyTemplate' => [
             'addon\diy_default2\event\UseTemplate',
         ],
     ],

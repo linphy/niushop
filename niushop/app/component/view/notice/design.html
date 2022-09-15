@@ -10,7 +10,7 @@
 			     borderBottomLeftRadius: (nc.componentAngle == 'round' ? nc.bottomAroundRadius + 'px' : 0),
 			     borderBottomRightRadius: (nc.componentAngle == 'round' ? nc.bottomAroundRadius + 'px' : 0),
 			     backgroundColor : nc.componentBgColor }">
-				<div class="notice-box">
+				<div :class="['notice-box',nc.contentStyle]">
 					<div class="notice-con" v-for="(item, previewIndex) in nc.list" v-if="previewIndex < 1">
 						<div :class="['img-wrap',nc.iconType]" v-if="previewIndex == 0">
 							<img v-if="nc.iconType == 'img'" :src="changeImgUrl(nc.imageUrl)" />
@@ -19,7 +19,9 @@
 							</div>
 						</div>
 						<div class="notice-con-split"></div>
+						<span v-if="nc.contentStyle=='style-2'" class="iconfont icongonggao notice-icon-one" :style="{color: nc.textColor ? nc.textColor : 'rgba(0,0,0,0)'}"></span>
 						<span class="notice-con-font" :style="{color: nc.textColor ? nc.textColor : 'rgba(0,0,0,0)'}">{{ item.title }}</span>
+						<span v-if="nc.contentStyle=='style-2'" class="iconfont iconyoujiantou  notice-icon-two"></span>
 					</div>
 				</div>
 			</div>
@@ -60,6 +62,32 @@
 							<div class="desc">高度20像素，宽度自适应</div>
 						</div>
 					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label sm">风格</label>
+						<div class="layui-input-block">
+							<div @click="nc.contentStyle='style-1'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.contentStyle=='style-1') }">
+								<i class="layui-anim layui-icon">{{ nc.contentStyle=='style-1' ? "&#xe643;" : "&#xe63f;" }}</i>
+								<div>风格一</div>
+							</div>
+							<div @click="nc.contentStyle='style-2'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.contentStyle=='style-2') }">
+								<i class="layui-anim layui-icon">{{ nc.contentStyle=='style-2' ? "&#xe643;" : "&#xe63f;" }}</i>
+								<div>风格二</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label sm">滚动方式</label>
+						<div class="layui-input-block">
+							<div @click="nc.scrollWay='upDown'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.scrollWay=='upDown') }">
+								<i class="layui-anim layui-icon">{{ nc.scrollWay=='upDown' ? "&#xe643;" : "&#xe63f;" }}</i>
+								<div>上下滚动</div>
+							</div>
+							<div @click="nc.scrollWay='horizontal'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.scrollWay=='horizontal') }">
+								<i class="layui-anim layui-icon">{{ nc.scrollWay=='horizontal' ? "&#xe643;" : "&#xe63f;" }}</i>
+								<div>横向滚动</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -98,7 +126,7 @@
 								</div>
 								<nc-link :data="{ field : nc.list[index].link }"></nc-link>
 							</div>
-							<i class="del" @click="list.splice(index,1)">x</i>
+							<i class="del" @click="nc.list.splice(index,1)">x</i>
 						</li>
 					</ul>
 					<div class="add-item text-color border-color" @click="nc.list.push({ title:'公告',link:{name:''}})">
@@ -126,8 +154,8 @@
 		<js>
 			var noticeResourcePath = "{$resource_path}";
 		</js>
-		<css src="{$resource_path}/notice/css/design.css"></css>
-		<js src="{$resource_path}/notice/js/design.js"></js>
+		<css src="{$resource_path}/css/design.css"></css>
+		<js src="{$resource_path}/js/design.js"></js>
 	</template>
 
 </nc-component>

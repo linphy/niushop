@@ -40,8 +40,7 @@ class MemberSignin
             $member_account_model = new MemberAccountModel();
 
             // 查询当前用户连签天数
-            $member_info = $member_model->getMemberInfo([['member_id', '=', $param['member_id']]], 'sign_days_series,site_id');
-            $member_info = $member_info['data'];
+            $member_info = $member_model->getMemberInfo([['member_id', '=', $param['member_id']]], 'sign_days_series,site_id')['data'];
 
             $award = $config['value']['reward'];
 

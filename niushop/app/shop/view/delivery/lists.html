@@ -475,16 +475,18 @@
     var LODOP; //声明为全局变量
     function PrintOneURL(url){
         LODOP=getLodop();
-        LODOP.PRINT_INIT("发货单打印");
-        LODOP.ADD_PRINT_TBURL(5,10,"770","95%",url);
-        LODOP.SET_PRINT_STYLEA(0,"HOrient",3);
-        LODOP.SET_PRINT_STYLEA(0,"VOrient",3);
-        LODOP.ADD_PRINT_TEXT(590,680,130,22,"页号：第#页/共&页");
-        LODOP.SET_PRINT_STYLEA(0,"ItemType",2);
-        LODOP.SET_PRINT_STYLEA(0,"Horient",1);
-        LODOP.SET_PRINT_STYLEA(0,"Vorient",1);
-        LODOP.SET_SHOW_MODE("MESSAGE_GETING_URL",""); //该语句隐藏进度条或修改提示信息
-        // LODOP.SET_SHOW_MODE("MESSAGE_PARSING_URL","");//该语句隐藏进度条或修改提示信息
+        if(LODOP) {
+			LODOP.PRINT_INIT("发货单打印");
+			LODOP.ADD_PRINT_TBURL(5, 10, "770", "95%", url);
+			LODOP.SET_PRINT_STYLEA(0, "HOrient", 3);
+			LODOP.SET_PRINT_STYLEA(0, "VOrient", 3);
+			LODOP.ADD_PRINT_TEXT(590, 680, 130, 22, "页号：第#页/共&页");
+			LODOP.SET_PRINT_STYLEA(0, "ItemType", 2);
+			LODOP.SET_PRINT_STYLEA(0, "Horient", 1);
+			LODOP.SET_PRINT_STYLEA(0, "Vorient", 1);
+			LODOP.SET_SHOW_MODE("MESSAGE_GETING_URL", ""); //该语句隐藏进度条或修改提示信息
+			// LODOP.SET_SHOW_MODE("MESSAGE_PARSING_URL","");//该语句隐藏进度条或修改提示信息
+		}
     }
 
     function dispatchBill(url) {

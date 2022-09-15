@@ -20,9 +20,9 @@
 		<label class="layui-form-label img-upload-lable">网站logo：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
-				<div class="upload-img-box {if condition="$shop_info.logo"}hover{/if} ">
+				<div class="upload-img-box {if condition="!empty($shop_info.logo)"}hover{/if} ">
 					<div class="upload-default" id="logoUpload">
-						{if condition="$shop_info.logo"}
+						{if condition="!empty($shop_info.logo)"}
 							<div id="preview_logoUpload" class="preview_img">
 								<img layer-src src="{:img($shop_info.logo)}" class="img_prev"/>
 							</div>
@@ -34,13 +34,13 @@
 						{/if}
 					</div>
 					<div class="operation">
-						<div >
+						<div>
 							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
 							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
 						</div>
 						<div class="replace_img js-replace">点击替换</div>
 					</div>
-					<input type="hidden" name="logo" value="{$shop_info.logo}"/>
+					<input type="hidden" name="logo" value="{$shop_info.logo ?? ''}"/>
 				</div>
 				<!-- <p id="logoUpload" class=" {if condition="$shop_info.logo"} replace {else/} no-replace{/if}">替换</p>
 				<input type="hidden" name="logo" value="{$shop_info.logo}"/>
@@ -56,9 +56,9 @@
 		<label class="layui-form-label img-upload-lable">方形logo：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
-				<div class="upload-img-box {if condition="$shop_info.logo_square"}hover{/if} ">
+				<div class="upload-img-box {if condition="!empty($shop_info.logo_square)"}hover{/if} ">
 					<div class="upload-default" id="logo_squareUpload">
-						{if condition="$shop_info.logo_square"}
+						{if condition="!empty($shop_info.logo_square)"}
 							<div id="preview_logo_squareUpload" class="preview_img">
 								<img layer-src src="{:img($shop_info.logo_square)}" class="img_prev"/>
 							</div>
@@ -70,13 +70,13 @@
 						{/if}
 					</div>
 					<div class="operation">
-						<div >
+						<div>
 							<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
 							<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
 						</div>
 						<div class="replace_img js-replace">点击替换</div>
 					</div>
-					<input type="hidden" name="logo_square" value="{$shop_info.logo_square}"/>
+					<input type="hidden" name="logo_square" value="{$shop_info.logo_square ?? ''}"/>
 				</div>
 			</div>
 		</div>

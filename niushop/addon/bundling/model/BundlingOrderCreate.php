@@ -190,7 +190,9 @@ class BundlingOrderCreate extends OrderCreate
                     'goods_name' => $order_goods[ 'goods_name' ],
                     'sku_spec_format' => $order_goods[ 'sku_spec_format' ],
                 );
-                model("order_goods")->add($data_order_goods);
+                $order_goods_id = model("order_goods")->add($data_order_goods);
+                $calculate_data[ 'shop_goods_list' ][ 'goods_list' ][ $k_order_goods ][ 'order_goods_id' ] = $order_goods_id;
+
                 //库存变化
                 $stock_result = $goods_stock_model->decStock([ "sku_id" => $order_goods[ 'sku_id' ], "num" => $order_goods[ 'num' ] ]);
                 if ($stock_result[ "code" ] != 0) {
@@ -199,7 +201,7 @@ class BundlingOrderCreate extends OrderCreate
                 }
             }
 
-            $result_list = event("OrderCreate", [ 'order_id' => $order_id, 'site_id' => $shop_goods_list[ 'site_id' ] ]);
+            $result_list = event("OrderCreate", [ 'order_id' => $order_id, 'site_id' => $shop_goods_list[ 'site_id' ],'create_data' => $calculate_data ]);
             if (!empty($result_list)) {
                 foreach ($result_list as $k => $v) {
                     if (!empty($v) && $v[ "code" ] < 0) {
@@ -371,7 +373,7 @@ class BundlingOrderCreate extends OrderCreate
         }
 
         $calculate_data[ 'shop_goods_list' ][ "express_type" ] = $express_type;
-        $payment_event_data = event('OrderPayment', $data);
+        $payment_event_data = event('OrderPayment', $calculate_data);
 
         if (!empty($payment_event_data)) {
             $calculate_data = array_merge($calculate_data, ...$payment_event_data);
@@ -394,7 +396,7 @@ class BundlingOrderCreate extends OrderCreate
 //        {
 //            return $cache;
 //        }
-        $goods_list = $this->getBundingGoodsList($data[ "bl_id" ], $data[ 'num' ]);
+        $goods_list = $this->getBundingGoodsList($data[ "bl_id" ], $data[ 'num' ], $data);
 
         $goods_list[ 'promotion_money' ] = 0;
         $shop_goods_list = $goods_list;
@@ -406,12 +408,12 @@ class BundlingOrderCreate extends OrderCreate
      * 获取组合套餐商品列表信息
      * @param unknown $bl_id
      */
-    public function getBundingGoodsList($bl_id, $num)
+    public function getBundingGoodsList($bl_id, $num, $data)
     {
         //组装商品列表
         $field = ' ngbg.sku_id, ngs.sku_name, ngs.sku_no,
             ngs.price, ngs.discount_price, ngs.cost_price, ngs.stock, ngs.weight, ngs.volume, ngs.sku_image, 
-            ngs.site_id, ngs.goods_state, ngs.is_virtual, 
+            ngs.site_id, ngs.goods_state, ngs.is_virtual, ngs.support_trade_type,
             ngs.is_free_shipping, ngs.shipping_template, ngs.goods_class, ngs.goods_class_name, ngs.goods_id, ns.site_name,ngs.sku_spec_format,ngs.goods_name';
         $alias = 'ngbg';
         $join = [
@@ -430,6 +432,7 @@ class BundlingOrderCreate extends OrderCreate
         $goods_list = model("promotion_bundling_goods")->getList([ [ 'ngbg.bl_id', '=', $bl_id ] ], $field, '', $alias, $join);
         $shop_goods_list = [];
         if (!empty($goods_list)) {
+            $express_type_list = ( new \app\model\express\Config() )->getExpressTypeList($data['site_id']);
             foreach ($goods_list as $k => $v) {
                 $v[ "num" ] = $num;
                 $site_id = $v[ 'site_id' ];
@@ -454,6 +457,12 @@ class BundlingOrderCreate extends OrderCreate
                     $shop_goods_list[ 'order_name' ] = string_split("", ",", $v[ 'sku_name' ]);
                     $shop_goods_list[ 'goods_num' ] = $v[ 'num' ];
                     $shop_goods_list[ 'goods_list' ][] = $v;
+                }
+
+                if (isset($data[ 'delivery' ][ 'delivery_type' ]) && !empty($data[ 'delivery' ][ 'delivery_type' ]) && strpos($v['support_trade_type'], $data[ 'delivery' ][ 'delivery_type' ]) === false) {
+                    $delivery_type_name = $express_type_list[ $data[ 'delivery' ][ 'delivery_type' ] ] ?? '';
+                    $this->error = 1;
+                    $this->error_msg = '有商品不支持'.$delivery_type_name;
                 }
             }
         }

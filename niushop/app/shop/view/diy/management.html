@@ -157,7 +157,8 @@
 							{notempty name="$qrcode_info"}
 							<img layer-src src="{:img($qrcode_info['img'])}" />
 							<div class="blockflex">
-								<a class="text-color" onclick="ns.copy('management_link')">复制链接</a>
+<!--								ns.copy('management_link')-->
+								<a class="text-color" href="{:url('index/index/h5preview')}" target="_blank">访问店铺</a>
 							</div>
 							<input type="hidden" name="" id="management_link" value="{$qrcode_info['url']}" />
 							{/notempty}

@@ -10,6 +10,7 @@
 
 namespace app\shop\controller;
 
+use addon\form\model\Form;
 use app\model\goods\Goods as GoodsModel;
 use app\model\goods\GoodsAttribute as GoodsAttributeModel;
 use app\model\goods\GoodsBrand as GoodsBrandModel;
@@ -89,7 +90,8 @@ class Virtualgoods extends BaseShop
                 'market_price_show' => input('market_price_show', 0),//
                 'barrage_show' => input('barrage_show', 0),//
                 'virtual_deliver_type' => input('virtual_deliver_type', ''),
-                'virtual_receive_type' => input('virtual_receive_type', '')
+                'virtual_receive_type' => input('virtual_receive_type', ''),
+                'form_id' => input('form_id', 0)
             ];
 
             if ($data[ 'verify_validity_type' ] == 1) {
@@ -110,32 +112,27 @@ class Virtualgoods extends BaseShop
                 [ 'site_id', '=', $this->site_id ]
             ];
 
-            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
-            $goods_category_list = $goods_category_list[ 'data' ];
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate')[ 'data' ];
             $this->assign("goods_category_list", $goods_category_list);
 
             //获取商品类型
             $goods_attr_model = new GoodsAttributeModel();
-            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name');
-            $attr_class_list = $attr_class_list[ 'data' ];
+            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name')[ 'data' ];
             $this->assign("attr_class_list", $attr_class_list);
 
             // 商品服务
             $goods_service_model = new GoodsServiceModel();
-            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon');
-            $service_list = $service_list[ 'data' ];
+            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon')[ 'data' ];
             $this->assign("service_list", $service_list);
 
             // 商品分组
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC');
-            $label_list = $label_list[ 'data' ];
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC')[ 'data' ];
             $this->assign("label_list", $label_list);
 
             // 商品品牌
             $goods_brand_model = new GoodsBrandModel();
-            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], 'brand_id,brand_name', 'sort asc');
-            $brand_list = $brand_list[ 'data' ];
+            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], 'brand_id,brand_name', 'sort asc')[ 'data' ];
             $this->assign("brand_list", $brand_list);
 
             //商品默认排序值
@@ -157,6 +154,13 @@ class Virtualgoods extends BaseShop
 
             $this->assign('poster_list', $poster_list);
             $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
+
+            $form_is_exit = addon_is_exit('form', $this->site_id);
+            if ($form_is_exit) {
+                $form_list = (new Form())->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')['data'];
+                $this->assign('form_list', $form_list);
+            }
+            $this->assign('form_is_exit', $form_is_exit);
 
             return $this->fetch("virtualgoods/add_goods");
         }
@@ -226,7 +230,8 @@ class Virtualgoods extends BaseShop
                 'market_price_show' => input('market_price_show', 0),//
                 'barrage_show' => input('barrage_show', 0),//
                 'virtual_deliver_type' => input('virtual_deliver_type', ''),
-                'virtual_receive_type' => input('virtual_receive_type', '')
+                'virtual_receive_type' => input('virtual_receive_type', ''),
+                'form_id' => input('form_id', 0)
             ];
 
             if ($data[ 'verify_validity_type' ] == 1) {
@@ -241,11 +246,9 @@ class Virtualgoods extends BaseShop
 
             $goods_model = new GoodsModel();
             $goods_id = input("goods_id", 0);
-            $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ]);
-            $goods_info = $goods_info[ 'data' ];
+            $goods_info = $goods_model->editGetGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
 
-            $goods_sku_list = $virtual_goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,virtual_indate,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default,verify_num", '');
-            $goods_sku_list = $goods_sku_list[ 'data' ];
+            $goods_sku_list = $virtual_goods_model->getGoodsSkuList([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], "sku_id,sku_name,sku_no,sku_spec_format,price,market_price,cost_price,stock,virtual_indate,sku_image,sku_images,goods_spec_format,spec_name,stock_alarm,is_default,verify_num", '')[ 'data' ];
             $goods_info[ 'sku_list' ] = $goods_sku_list;
             $this->assign("goods_info", $goods_info);
 
@@ -255,32 +258,27 @@ class Virtualgoods extends BaseShop
                 [ 'pid', '=', 0 ],
                 [ 'site_id', '=', $this->site_id ]
             ];
-            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate');
-            $goods_category_list = $goods_category_list[ 'data' ];
+            $goods_category_list = $goods_category_model->getCategoryList($condition, 'category_id,category_name,level,commission_rate')[ 'data' ];
             $this->assign("goods_category_list", $goods_category_list);
 
             //获取商品类型
             $goods_attr_model = new GoodsAttributeModel();
-            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name');
-            $attr_class_list = $attr_class_list[ 'data' ];
+            $attr_class_list = $goods_attr_model->getAttrClassList([ [ 'site_id', '=', $this->site_id ] ], 'class_id,class_name')[ 'data' ];
             $this->assign("attr_class_list", $attr_class_list);
 
             // 商品服务
             $goods_service_model = new GoodsServiceModel();
-            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon');
-            $service_list = $service_list[ 'data' ];
+            $service_list = $goods_service_model->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'id,service_name,icon')[ 'data' ];
             $this->assign("service_list", $service_list);
 
             //获取品牌
             $goods_brand_model = new GoodsBrandModel();
-            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name");
-            $brand_list = $brand_list[ 'data' ];
+            $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name")[ 'data' ];
             $this->assign("brand_list", $brand_list);
 
             // 商品标签
             $goods_label_model = new GoodsLabelModel();
-            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC');
-            $label_list = $label_list[ 'data' ];
+            $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC')[ 'data' ];
             $this->assign("label_list", $label_list);
 
             //获取社群二维码
@@ -294,6 +292,13 @@ class Virtualgoods extends BaseShop
                 $poster_list = $poster_list[ 'data' ];
             }
             $this->assign('poster_list', $poster_list);
+
+            $form_is_exit = addon_is_exit('form', $this->site_id);
+            if ($form_is_exit) {
+                $form_list = (new Form())->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')['data'];
+                $this->assign('form_list', $form_list);
+            }
+            $this->assign('form_is_exit', $form_is_exit);
 
             return $this->fetch("virtualgoods/edit_goods");
         }

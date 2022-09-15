@@ -1383,8 +1383,8 @@ function getFileMap($path, $arr = [])
  * 判断一个坐标是否在一个多边形内（由多个坐标围成的）
  * 基本思想是利用射线法，计算射线与多边形各边的交点，如果是偶数，则点在多边形外，否则
  * 在多边形内。还会考虑一些特殊情况，如点在多边形顶点上，点在多边形边上等特殊情况。
- * @param $point 指定点坐标  $point=['longitude'=>121.427417,'latitude'=>31.20357];
- * @param $pts 多边形坐标 顺时针方向  $arr=[['longitude'=>121.23036,'latitude'=>31.218609],['longitude'=>121.233666,'latitude'=>31.210579].............];
+ * @param array $point 指定点坐标  $point=['longitude'=>121.427417,'latitude'=>31.20357];
+ * @param array $pts 多边形坐标 顺时针方向  $arr=[['longitude'=>121.23036,'latitude'=>31.218609],['longitude'=>121.233666,'latitude'=>31.210579].............];
  */
 function is_point_in_polygon($point, $pts)
 {
@@ -1501,7 +1501,7 @@ function getweeks($time = '', $format = 'Y-m-d')
     //组合数据
     $date = [];
     for ($i = 1; $i <= 10; $i++) {
-        $date[ $i ] = date($format, strtotime('+' . $i - 10 . ' days', $time));
+        $date[ $i ] = date($format, strtotime('+' . ($i - 10) . ' days', $time));
     }
     return $date;
 }
@@ -1694,4 +1694,45 @@ function short_url(string $url) : string
         $result = floor($result / 62);
     }
     return $show;
+}
+
+function isMobile() {
+    // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
+    if (isset($_SERVER['HTTP_X_WAP_PROFILE'])) {
+        return true;
+    }
+    // 如果via信息含有wap则一定是移动设备,部分服务商会屏蔽该信息
+    if (isset($_SERVER['HTTP_VIA'])) {
+        // 找不到为flase,否则为true
+        return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
+    }
+    // 脑残法，判断手机发送的客户端标志,兼容性有待提高。其中'MicroMessenger'是电脑微信
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        $clientkeywords = array('nokia','sony','ericsson','mot','samsung','htc','sgh','lg','sharp','sie-','philips','panasonic','alcatel','lenovo','iphone','ipod','blackberry','meizu','android','netfront','symbian','ucweb','windowsce','palm','operamini','operamobi','openwave','nexusone','cldc','midp','wap','mobile','MicroMessenger');
+        // 从HTTP_USER_AGENT中查找手机浏览器的关键字
+        if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($_SERVER['HTTP_USER_AGENT']))) {
+            return true;
+        }
+    }
+    // 协议法，因为有可能不准确，放到最后判断
+    if (isset ($_SERVER['HTTP_ACCEPT'])) {
+        // 如果只支持wml并且不支持html那一定是移动设备
+        // 如果支持wml和html但是wml在html之前则是移动设备
+        if ((strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') !== false) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html')))) {
+            return true;
+        }
+    }
+    return false;
+}
+//读取csv数据, 配合生成器使用
+function getCsvRow($file){
+    $handle =  fopen($file, 'rb');
+    if($handle === false){
+        throw new \Exception();
+    }
+
+    while (feof($handle) === false) {
+        yield fgetcsv($handle);
+    }
+    fclose($handle);
 }

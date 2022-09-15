@@ -84,7 +84,7 @@ return [
         'MemberPromotion' => [],
         //会员注册后执行事件
         'MemberRegister' => [
-            
+
         ],
         'MemberLogin' => [
             'app\event\MemberLogin'
@@ -177,21 +177,24 @@ return [
         'CloseDeletePoint' => [
             'app\event\CloseDeletePoint'
         ],
-        /**
-         * 自定义模板事件
-         * 自定义模板展示调用相关功能
-         */
-        //自定义模板
+
+        // 自定义组件
         'DiyViewUtils' => [
-            'app\event\DiyViewUtils',//自定义组件
+            'app\event\DiyViewUtils',
         ],
+
+        // 自定义页面编辑
         'DiyViewEdit' => [
-            'app\event\DiyViewEdit',//自定义页面编辑
+            'app\event\DiyViewEdit',
         ],
+
+        // 扩展自定义图标库
+        'DiyIcon' => [],
 
         /**
          * 物流公司
          */
+
         //物流跟踪
         'Trace' => [
             'app\event\Kd100Trace',//快递100 物流查询
@@ -320,12 +323,12 @@ return [
 
         //网站部署配置
         'SiteDeployData' => [
-			// 域名跳转
-			'app\event\DomainJumpSiteDeployData',
-			// h5
+            // 域名跳转
+            'app\event\DomainJumpSiteDeployData',
+            // h5
             'app\event\H5SiteDeployData',
-			// 客服
-			'app\event\ServicerSiteDeployData'
+            // 客服
+            'app\event\ServicerSiteDeployData'
         ],
 
         //微信分享数据

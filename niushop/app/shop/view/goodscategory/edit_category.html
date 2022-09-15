@@ -9,6 +9,35 @@
 	}
 	.link-url-show{margin-right: 10px}
 	.click-link{height: 34px;line-height: 34px;display: inline-block;white-space: nowrap;text-align: center;border-radius: 2px;cursor: pointer;padding: 0 16px;border: 1px solid #C9C9C9;background-color: #fff;color: #555;}
+	.goods-category-list .layui-table td{border-left: 0;border-right: 0;}
+	.goods-category-list .layui-table .switch{font-size: 16px;cursor: pointer;width: 12px;line-height: 1;display: inline-block;text-align: center;vertical-align: middle;}
+	.goods-category-list .layui-table img{width: 40px;}
+	/* 分类样式*/
+	.table_div{color:#666}
+	.table_head{display: flex;font-weight: bold;background-color: #F7F7F7;}
+	.table_head li{height: 50px;line-height: 50px;border: 0;padding: 0 22px;font-size: 14px;}
+	.table_head .operate{text-align: right;}
+	.table_head li:first-child{padding-right: 0;}
+	.table_tr{display: flex;border-bottom: 1px solid #e6e6e6;background: #fff;height: 52px !important;}
+	.table_tr .table_td{position: relative;padding: 11px 22px 8px;min-height: 30px;line-height: 33px;font-size: 14px;display: flex;align-items: center;}
+	.table_tr .table_td span{cursor: pointer;}
+	.table_tr .table_td span>img{width:12px;height:12px}
+	.table_tr .table_td span>img.rotate{transform:rotate(90deg);}
+	.table_tr .table_td .img-box{width:30px;height:30px;line-height: 30px;}
+	.table_tr .table_td:first-child{padding-right:0}
+	.table_tr .table-btn{display: flex;flex-wrap: wrap;justify-content: flex-end;}
+	.table_tr .layui-btn{display: flex;justify-content: center;align-items: center;height: 23px;border-radius: 50px;background-color: transparent;color: var(--base-color);text-align: center;padding: 2px 0;margin: 5px 0 5px 10px;position: relative;}
+	.table_two_div{display: none;}
+	.table_three{display: none;}
+	.empty_switch{display: inline-block;width:30px;height:25px;padding-right:15px;}
+	.js-switch{display: inline-block;width:30px;text-align: center;}
+	.table_move{float:left;margin-right: 10px;}
+	.table_moves{float:left;margin-right: 10px;}
+	.tables_move{float:left;margin-right: 20px;padding-left: 70px;}
+	.select-category .layui-layer-content{overflow: auto!important;}
+	.table_three .table_td.checkbox{
+		padding-left: 70px;
+	}
 </style>
 {/block}
 {block name="main"}
@@ -47,9 +76,7 @@
 			<input type="hidden" name="category_id_2" value="{$goods_category_info['category_id_2']}">
 			<input type="hidden" name="category_id_3" value="{$goods_category_info['category_id_3']}">
 			<input type="hidden" name="category_name_1" value="">
-			{if $goods_category_info['level'] > 1}
 			<a class="text-color" href="javascript:selectedCategoryPopup();">选择分类</a>
-			{/if}
 		</div>
 		<div class="word-aux">
 			{if $goods_category_info['level'] == 1}
@@ -202,7 +229,7 @@
 		</div>
 	</div>
 
-	<input type="hidden" name="category_id" value="{$goods_category_info['category_id']}">
+	<input type="hidden" id="category_id" name="category_id" value="{$goods_category_info['category_id']}">
 	<input type="hidden" name="category_full_name" value="{$goods_category_info['category_full_name']}">
 	
 	<div class="form-row">
@@ -212,50 +239,95 @@
 </form>
 
 <script type="text/html" id="selectedCategory">
-	
-	<form class="layui-form">
-		
-		{if $goods_category_info['level'] == 2}
-		<!--二级分类修改一级-->
-		<div class="layui-form-item">
-			<label class="layui-form-label sm">一级分类</label>
-			<div class="layui-input-block len-mid">
-				<select name="category_id_1" lay-filter="category_id_1">
-					{{# for(var i=0;i<d.category_list_1.length;i++){ }}
-						{{# if(d.category_id_1 ==d.category_list_1[i].category_id){ }}
-						<option value="{{ d.category_list_1[i].category_id }}" data-level="{{d.category_list_1[i].level}}" selected>{{ d.category_list_1[i].category_name }}</option>
-						{{# }else{ }}
-						<option value="{{ d.category_list_1[i].category_id }}" data-level="{{d.category_list_1[i].level}}">{{ d.category_list_1[i].category_name }}</option>
-						{{# } }}
-					{{# } }}
-				</select>
+	<div class="goods-category-list layui-form">
+		<div class="table_div" >
+			<ul class="table_head">
+				<li style="width:60px"></li>
+				<li style="flex:6">分类名称</li>
+				<li style="flex:2">是否显示</li>
+			</ul>
+			<div class="table_body">
+				{if condition="$list"}
+				{foreach name="$list" item="vo" key="index"}
+				<li class="table_one" data-index="{$index}" data-sort="{$vo['sort']}" data-cateid="{$vo['category_id']}">
+					<div class="table_tr">
+						<div class="table_td" style="width:60px">
+							<div class="table_move">
+								<input type="checkbox" name="category_id" title="" lay-skin="primary" data-name="{$vo['category_name']}" value="{$vo['category_id']}" data-category-id="{$vo['category_id']}" data-level="{$vo['level']}" data-open="0" lay-filter="category">
+							</div>
+							{notempty name="$vo['child_list']"}
+							<span class="switch text-color js-switch" data-category-id="{$vo['category_id']}" data-level="{$vo['level']}" data-open="0">
+							+
+						</span>
+
+							{/notempty}
+						</div>
+						<div class="table_td" style="flex:6">{$vo['category_name']}</div>
+
+						<div class="table_td" style="flex:2">
+							{if $vo['is_show'] == 0} 显示 {else /} 不显示 {/if}
+						</div>
+
+					</div>
+					{notempty name="$vo['child_list']"}
+					<div class="table_two_div">
+						{foreach name="$vo['child_list']" item="second"}
+
+						<div class="table_two" data-index="{$index}" data-sort="{$second['sort']}" data-cateid="{$second['category_id']}">
+
+							<div class="table_tr">
+								<div class="table_td" style="width: 36px">
+								</div>
+								<div class="table_td" style="flex:6.4">
+									<div class="table_move">
+										<input type="checkbox" name="category_id" title="" lay-skin="primary" value="{$second['category_id']}" data-category-id="{$second['category_id']}" data-level="{$second['level']}" data-open="0" data-name="{$second['category_name']}" lay-filter="category">
+									</div>
+<!--									<span class="switch text-color empty_switch" >  </span>-->
+									<span>{$second['category_name']}</span>
+								</div>
+
+								<div class="table_td" style="flex:2">
+									{if $second['is_show'] == 0} 显示 {else /} 不显示 {/if}
+								</div>
+
+							</div>
+							{notempty name="$second['child_list']"}
+
+							<div class="table_three layui-hide">
+								{foreach name="$second['child_list']" item="third"}
+								<div class="table_tr table_three_tr" data-sort="{$third['sort']}" data-cateid="{$third['category_id']}">
+									<div class="table_td" style="width: 36px">
+									</div>
+									<div class="table_td checkbox" style="flex:5.5">
+										<input type="checkbox" name="category_id" title="" lay-skin="primary" data-name="{$third['category_name']}" value="{$third['category_id']}" data-category-id="{$third['category_id']}" data-level="{$third['level']}" data-open="0">
+										<div>{$third['category_name']}</div>
+									</div>
+
+									<div class="table_td" style="flex:2">
+										{if $third['is_show'] == 0} 显示 {else /} 不显示 {/if}
+									</div>
+
+								</div>
+								{/foreach}
+
+							</div>
+							{/notempty}
+						</div>
+						{/foreach}
+					</div>
+					{/notempty}
+				</li>
+
+				{/foreach}
+				{else/}
+				<div class="table_tr">
+					<div class="table_td" style="flex:1;text-align: center;">暂无数据</div>
+				</div>
+				{/if}
 			</div>
 		</div>
-		{/if}
-		
-		{if $goods_category_info['level'] == 3}
-		<!--三级分类修改二级-->
-		<div class="layui-form-item">
-			<label class="layui-form-label sm">二级分类</label>
-			<div class="layui-input-block len-mid">
-				<select name="category_id_2" lay-filter="category_id_2">
-					{{# for(var i=0;i<d.category_list_2.length;i++){ }}
-						{{# if(d.category_id_2 ==d.category_list_2[i].category_id){ }}
-						<option value="{{ d.category_list_2[i].category_id }}" data-level="{{d.category_list_2[i].level}}" data-category-id-1="{{d.category_list_2[i].category_id_1}}" selected>{{ d.category_list_2[i].category_name }}</option>
-						{{# }else{ }}
-						<option value="{{ d.category_list_2[i].category_id }}" data-level="{{d.category_list_2[i].level}}" data-category-id-1="{{d.category_list_2[i].category_id_1}}">{{ d.category_list_2[i].category_name }}</option>
-						{{# } }}
-					{{# } }}
-				</select>
-			</div>
-		</div>
-		{/if}
-		
-		<div class="form-row sm">
-			<button class="layui-btn" lay-submit lay-filter="save_pid">保存</button>
-		</div>
-	
-	</form>
+
+	</div>
 </script>
 {/block}
 {block name="script"}

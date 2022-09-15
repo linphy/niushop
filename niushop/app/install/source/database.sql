@@ -78,784 +78,386 @@ DROP TABLE IF EXISTS form_data;
 
 DROP TABLE IF EXISTS giftcard;
 
+DROP TABLE IF EXISTS giftcard_card;
+
+DROP TABLE IF EXISTS giftcard_card_blessing;
+
+DROP TABLE IF EXISTS giftcard_card_goods;
+
+DROP TABLE IF EXISTS giftcard_card_import;
+
+DROP TABLE IF EXISTS giftcard_card_log;
+
+DROP TABLE IF EXISTS giftcard_card_use_records;
+
+DROP TABLE IF EXISTS giftcard_card_use_records_goods;
+
+DROP TABLE IF EXISTS giftcard_category;
+
+DROP TABLE IF EXISTS giftcard_goods;
+
+DROP TABLE IF EXISTS giftcard_media;
+
+DROP TABLE IF EXISTS giftcard_member_card;
+
 DROP TABLE IF EXISTS giftcard_order;
 
-DROP TABLE IF EXISTS giftcard_record;
+DROP TABLE IF EXISTS giftcard_order_goods;
 
-DROP TABLE IF EXISTS giftcard_transfer_record;
+DROP TABLE IF EXISTS goods;
 
 DROP TABLE IF EXISTS goods_attribute;
 
 DROP TABLE IF EXISTS goods_attribute_value;
 
-
 DROP TABLE IF EXISTS goods_attr_class;
-
 
 DROP TABLE IF EXISTS goods_brand;
 
-
 DROP TABLE IF EXISTS goods_browse;
-
 
 DROP TABLE IF EXISTS goods_cart;
 
-
 DROP TABLE IF EXISTS goods_category;
-
 
 DROP TABLE IF EXISTS goods_collect;
 
-
 DROP TABLE IF EXISTS goods_community_qrcode;
-
 
 DROP TABLE IF EXISTS goods_evaluate;
 
-
 DROP TABLE IF EXISTS goods_giftcard;
-
 
 DROP TABLE IF EXISTS goods_grab;
 
-
 DROP TABLE IF EXISTS goods_grab_detail;
-
 
 DROP TABLE IF EXISTS goods_import_record;
 
-
 DROP TABLE IF EXISTS goods_label;
-
 
 DROP TABLE IF EXISTS goods_poster;
 
-
 DROP TABLE IF EXISTS goods_recommend;
-
 
 DROP TABLE IF EXISTS goods_service;
 
-
 DROP TABLE IF EXISTS goods_sku;
-
 
 DROP TABLE IF EXISTS goods_virtual;
 
-
 DROP TABLE IF EXISTS `group`;
-
 
 DROP TABLE IF EXISTS help;
 
-
 DROP TABLE IF EXISTS help_class;
-
 
 DROP TABLE IF EXISTS link;
 
-
 DROP TABLE IF EXISTS `local`;
-
 
 DROP TABLE IF EXISTS local_delivery_package;
 
-
 DROP TABLE IF EXISTS member;
-
 
 DROP TABLE IF EXISTS member_account;
 
-
 DROP TABLE IF EXISTS member_address;
-
 
 DROP TABLE IF EXISTS member_auth;
 
-
 DROP TABLE IF EXISTS member_bank_account;
-
 
 DROP TABLE IF EXISTS member_cancel;
 
-
 DROP TABLE IF EXISTS member_cluster;
-
 
 DROP TABLE IF EXISTS member_import_log;
 
-
 DROP TABLE IF EXISTS member_import_record;
-
 
 DROP TABLE IF EXISTS member_label;
 
-
 DROP TABLE IF EXISTS member_level;
-
 
 DROP TABLE IF EXISTS member_level_order;
 
-
 DROP TABLE IF EXISTS member_level_records;
-
 
 DROP TABLE IF EXISTS member_log;
 
-
 DROP TABLE IF EXISTS member_recharge;
-
 
 DROP TABLE IF EXISTS member_recharge_card;
 
-
 DROP TABLE IF EXISTS member_recharge_order;
-
 
 DROP TABLE IF EXISTS member_recommend;
 
-
 DROP TABLE IF EXISTS member_recommend_award;
-
 
 DROP TABLE IF EXISTS member_withdraw;
 
-
 DROP TABLE IF EXISTS menu;
-
 
 DROP TABLE IF EXISTS message;
 
-
 DROP TABLE IF EXISTS message_email_records;
-
 
 DROP TABLE IF EXISTS message_send_log;
 
-
 DROP TABLE IF EXISTS message_sms_records;
-
 
 DROP TABLE IF EXISTS message_template;
 
-
 DROP TABLE IF EXISTS message_variable;
-
 
 DROP TABLE IF EXISTS message_wechat_records;
 
-
 DROP TABLE IF EXISTS notes;
-
 
 DROP TABLE IF EXISTS notes_dianzan_record;
 
-
 DROP TABLE IF EXISTS notes_group;
-
 
 DROP TABLE IF EXISTS notice;
 
-
 DROP TABLE IF EXISTS `order`;
-
 
 DROP TABLE IF EXISTS order_export;
 
-
 DROP TABLE IF EXISTS order_goods;
-
 
 DROP TABLE IF EXISTS order_import_file;
 
-
 DROP TABLE IF EXISTS order_import_file_log;
-
 
 DROP TABLE IF EXISTS order_log;
 
-
 DROP TABLE IF EXISTS order_promotion_detail;
-
 
 DROP TABLE IF EXISTS order_refund_export;
 
-
 DROP TABLE IF EXISTS order_refund_log;
-
 
 DROP TABLE IF EXISTS pay;
 
-
 DROP TABLE IF EXISTS pay_refund;
-
 
 DROP TABLE IF EXISTS pc_floor;
 
-
 DROP TABLE IF EXISTS pc_floor_block;
-
 
 DROP TABLE IF EXISTS pc_friendly_link;
 
-
 DROP TABLE IF EXISTS pc_nav;
-
-
-DROP TABLE IF EXISTS poster_muban;
-
-
-DROP TABLE IF EXISTS poster_record;
-
-
-DROP TABLE IF EXISTS poster_template;
-
-
-DROP TABLE IF EXISTS printer;
-
-
-DROP TABLE IF EXISTS printer_template;
-
-
-DROP TABLE IF EXISTS promotion_bale;
-
-
-DROP TABLE IF EXISTS promotion_bargain;
-
-
-DROP TABLE IF EXISTS promotion_bargain_goods;
-
-
-DROP TABLE IF EXISTS promotion_bargain_launch;
-
-
-DROP TABLE IF EXISTS promotion_bargain_record;
-
-
-DROP TABLE IF EXISTS promotion_birthdaygift;
-
-
-DROP TABLE IF EXISTS promotion_birthdaygift_record;
-
-
-DROP TABLE IF EXISTS promotion_bundling;
-
-
-DROP TABLE IF EXISTS promotion_bundling_goods;
-
-
-DROP TABLE IF EXISTS promotion_consume_record;
-
-
-DROP TABLE IF EXISTS promotion_coupon;
-
-
-DROP TABLE IF EXISTS promotion_coupon_type;
-
-
-DROP TABLE IF EXISTS promotion_discount;
-
-
-DROP TABLE IF EXISTS promotion_discount_goods;
-
-
-DROP TABLE IF EXISTS promotion_exchange;
-
-
-DROP TABLE IF EXISTS promotion_exchange_goods;
-
-
-DROP TABLE IF EXISTS promotion_exchange_order;
-
-
-DROP TABLE IF EXISTS promotion_festival;
-
-
-DROP TABLE IF EXISTS promotion_festival_award;
-
-
-DROP TABLE IF EXISTS promotion_festival_draw_record;
-
-
-DROP TABLE IF EXISTS promotion_freeshipping;
-
-
-DROP TABLE IF EXISTS promotion_friends_coupon;
-
-
-DROP TABLE IF EXISTS promotion_friends_coupon_group;
-
-
-DROP TABLE IF EXISTS promotion_games;
-
-
-DROP TABLE IF EXISTS promotion_games_award;
-
-
-DROP TABLE IF EXISTS promotion_games_draw_record;
-
-
-DROP TABLE IF EXISTS promotion_groupbuy;
-
-
-DROP TABLE IF EXISTS promotion_hongbao;
-
-
-DROP TABLE IF EXISTS promotion_hongbao_group;
-
-
-DROP TABLE IF EXISTS promotion_jielong;
-
-
-DROP TABLE IF EXISTS promotion_jielong_cart;
-
-
-DROP TABLE IF EXISTS promotion_jielong_goods;
-
-
-DROP TABLE IF EXISTS promotion_jielong_order;
-
-
-DROP TABLE IF EXISTS promotion_manjian;
-
-
-DROP TABLE IF EXISTS promotion_manjian_goods;
-
-
-DROP TABLE IF EXISTS promotion_mansong_record;
-
-
-DROP TABLE IF EXISTS promotion_pinfan;
-
-
-DROP TABLE IF EXISTS promotion_pinfan_goods;
-
-
-DROP TABLE IF EXISTS promotion_pinfan_group;
-
-
-DROP TABLE IF EXISTS promotion_pinfan_order;
-
-
-DROP TABLE IF EXISTS promotion_pintuan;
-
-
-DROP TABLE IF EXISTS promotion_pintuan_goods;
-
-
-DROP TABLE IF EXISTS promotion_pintuan_group;
-
-
-DROP TABLE IF EXISTS promotion_pintuan_order;
-
-
-DROP TABLE IF EXISTS promotion_presale;
-
-
-DROP TABLE IF EXISTS promotion_presale_goods;
-
-
-DROP TABLE IF EXISTS promotion_presale_order;
-
-
-DROP TABLE IF EXISTS promotion_present;
-
-
-DROP TABLE IF EXISTS promotion_seckill;
-
-
-DROP TABLE IF EXISTS promotion_seckill_goods;
-
-
-DROP TABLE IF EXISTS promotion_seckill_time;
-
-
-DROP TABLE IF EXISTS promotion_topic;
-
-
-DROP TABLE IF EXISTS promotion_topic_goods;
-
-
-DROP TABLE IF EXISTS servicer;
-
-
-DROP TABLE IF EXISTS servicer_dialogue;
-
-
-DROP TABLE IF EXISTS servicer_fast_reply;
-
-
-DROP TABLE IF EXISTS servicer_keyword_reply;
-
-
-DROP TABLE IF EXISTS servicer_member;
-
-
-DROP TABLE IF EXISTS shopcompoent_category;
-
-
-DROP TABLE IF EXISTS shopcompoent_category_audit;
-
-
-DROP TABLE IF EXISTS shopcompoent_goods;
-
-
-DROP TABLE IF EXISTS shop_accept_message;
-
-
-DROP TABLE IF EXISTS shop_address;
-
-
-DROP TABLE IF EXISTS site;
-
-
-DROP TABLE IF EXISTS site_address;
-
-
-DROP TABLE IF EXISTS sms_template;
-
-
-DROP TABLE IF EXISTS stat_shop;
-
-
-DROP TABLE IF EXISTS stat_shop_hour;
-
-
-DROP TABLE IF EXISTS stock_content;
-
-
-DROP TABLE IF EXISTS store;
-
-
-DROP TABLE IF EXISTS store_goods;
-
-
-DROP TABLE IF EXISTS store_goods_sku;
-
-
-DROP TABLE IF EXISTS store_member;
-
-
-DROP TABLE IF EXISTS store_settlement;
-
-
-DROP TABLE IF EXISTS store_stock_import;
-
-
-DROP TABLE IF EXISTS store_stock_import_log;
-
-
-DROP TABLE IF EXISTS supplier;
-
-
-DROP TABLE IF EXISTS sys_upgrade_log;
-
-
-DROP TABLE IF EXISTS `user`;
-
-
-DROP TABLE IF EXISTS user_log;
-
-
-DROP TABLE IF EXISTS v3_upgrade_log;
-
-
-DROP TABLE IF EXISTS verifier;
-
-
-DROP TABLE IF EXISTS verify;
-
-
-DROP TABLE IF EXISTS verify_record;
-
-
-DROP TABLE IF EXISTS virtual_stock;
-
-
-DROP TABLE IF EXISTS weapp_audit_record;
-
-
-DROP TABLE IF EXISTS weapp_experiencer;
-
-
-DROP TABLE IF EXISTS weapp_goods;
-
-
-DROP TABLE IF EXISTS weapp_live_room;
-
-
-DROP TABLE IF EXISTS wechat_fans;
-
-
-DROP TABLE IF EXISTS wechat_fans_tag;
-
-
-DROP TABLE IF EXISTS wechat_mass_recording;
-
-
-DROP TABLE IF EXISTS wechat_media;
-
-
-DROP TABLE IF EXISTS wechat_qrcode;
-
-
-DROP TABLE IF EXISTS wechat_replay_rule;
-
 
 DROP TABLE IF EXISTS poster;
 
+DROP TABLE IF EXISTS poster_muban;
 
-DROP TABLE IF EXISTS goods;
+DROP TABLE IF EXISTS poster_record;
 
+DROP TABLE IF EXISTS poster_template;
 
-DROP TABLE IF EXISTS site_diy_view;
+DROP TABLE IF EXISTS printer;
 
+DROP TABLE IF EXISTS printer_template;
+
+DROP TABLE IF EXISTS promotion_bale;
+
+DROP TABLE IF EXISTS promotion_bargain;
+
+DROP TABLE IF EXISTS promotion_bargain_goods;
+
+DROP TABLE IF EXISTS promotion_bargain_launch;
+
+DROP TABLE IF EXISTS promotion_bargain_record;
+
+DROP TABLE IF EXISTS promotion_birthdaygift;
+
+DROP TABLE IF EXISTS promotion_birthdaygift_record;
+
+DROP TABLE IF EXISTS promotion_bundling;
+
+DROP TABLE IF EXISTS promotion_bundling_goods;
+
+DROP TABLE IF EXISTS promotion_consume_record;
+
+DROP TABLE IF EXISTS promotion_coupon;
+
+DROP TABLE IF EXISTS promotion_coupon_type;
+
+DROP TABLE IF EXISTS promotion_discount;
+
+DROP TABLE IF EXISTS promotion_discount_goods;
+
+DROP TABLE IF EXISTS promotion_exchange;
+
+DROP TABLE IF EXISTS promotion_exchange_goods;
+
+DROP TABLE IF EXISTS promotion_exchange_order;
+
+DROP TABLE IF EXISTS promotion_festival;
+
+DROP TABLE IF EXISTS promotion_festival_award;
+
+DROP TABLE IF EXISTS promotion_festival_draw_record;
+
+DROP TABLE IF EXISTS promotion_freeshipping;
+
+DROP TABLE IF EXISTS promotion_friends_coupon;
+
+DROP TABLE IF EXISTS promotion_friends_coupon_group;
+
+DROP TABLE IF EXISTS promotion_games;
+
+DROP TABLE IF EXISTS promotion_games_award;
+
+DROP TABLE IF EXISTS promotion_games_draw_record;
+
+DROP TABLE IF EXISTS promotion_groupbuy;
+
+DROP TABLE IF EXISTS promotion_hongbao;
+
+DROP TABLE IF EXISTS promotion_hongbao_group;
+
+DROP TABLE IF EXISTS promotion_jielong;
+
+DROP TABLE IF EXISTS promotion_jielong_cart;
+
+DROP TABLE IF EXISTS promotion_jielong_goods;
+
+DROP TABLE IF EXISTS promotion_jielong_order;
+
+DROP TABLE IF EXISTS promotion_manjian;
+
+DROP TABLE IF EXISTS promotion_manjian_goods;
+
+DROP TABLE IF EXISTS promotion_mansong_record;
+
+DROP TABLE IF EXISTS promotion_pinfan;
+
+DROP TABLE IF EXISTS promotion_pinfan_goods;
+
+DROP TABLE IF EXISTS promotion_pinfan_group;
+
+DROP TABLE IF EXISTS promotion_pinfan_order;
+
+DROP TABLE IF EXISTS promotion_pintuan;
+
+DROP TABLE IF EXISTS promotion_pintuan_goods;
+
+DROP TABLE IF EXISTS promotion_pintuan_group;
+
+DROP TABLE IF EXISTS promotion_pintuan_order;
+
+DROP TABLE IF EXISTS promotion_presale;
+
+DROP TABLE IF EXISTS promotion_presale_goods;
+
+DROP TABLE IF EXISTS promotion_presale_order;
+
+DROP TABLE IF EXISTS promotion_present;
+
+DROP TABLE IF EXISTS promotion_seckill;
+
+DROP TABLE IF EXISTS promotion_seckill_goods;
+
+DROP TABLE IF EXISTS promotion_seckill_time;
+
+DROP TABLE IF EXISTS promotion_topic;
+
+DROP TABLE IF EXISTS promotion_topic_goods;
+
+DROP TABLE IF EXISTS servicer;
+
+DROP TABLE IF EXISTS servicer_dialogue;
+
+DROP TABLE IF EXISTS servicer_fast_reply;
+
+DROP TABLE IF EXISTS servicer_keyword_reply;
+
+DROP TABLE IF EXISTS servicer_member;
 
 DROP TABLE IF EXISTS shop;
 
+DROP TABLE IF EXISTS shopcompoent_category;
 
---
--- `shop`
---
-CREATE TABLE shop (
-  site_id int(11) NOT NULL,
-  shop_status int(11) NOT NULL DEFAULT 1 COMMENT '店铺经营状态（0.关闭，1正常）',
-  close_info varchar(255) NOT NULL DEFAULT '' COMMENT '店铺关闭原因',
-  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
-  start_time int(11) NOT NULL DEFAULT 0 COMMENT '经营时间',
-  end_time int(11) NOT NULL DEFAULT 0 COMMENT '关闭时间',
-  avatar varchar(255) NOT NULL DEFAULT '' COMMENT '店铺头像（大图）',
-  banner varchar(255) NOT NULL DEFAULT '' COMMENT '店铺条幅',
-  qq varchar(20) NOT NULL DEFAULT '' COMMENT '联系人qq',
-  ww varchar(20) NOT NULL DEFAULT '' COMMENT '联系人阿里旺旺',
-  name varchar(255) NOT NULL DEFAULT '' COMMENT '联系人姓名',
-  telephone varchar(20) NOT NULL DEFAULT '' COMMENT '联系电话',
-  mobile varchar(11) NOT NULL DEFAULT '' COMMENT '联系手机号',
-  workingtime int(11) NOT NULL DEFAULT 0 COMMENT '工作时间',
-  province int(11) NOT NULL DEFAULT 0 COMMENT '省id',
-  province_name varchar(50) NOT NULL DEFAULT '' COMMENT '省名称',
-  city int(11) NOT NULL DEFAULT 0 COMMENT '城市id',
-  city_name varchar(50) NOT NULL DEFAULT '' COMMENT '城市名称',
-  district int(11) NOT NULL DEFAULT 0 COMMENT '区县id',
-  district_name varchar(50) NOT NULL DEFAULT '' COMMENT '区县地址',
-  community int(11) NOT NULL DEFAULT 0 COMMENT '乡镇地址id',
-  community_name varchar(50) NOT NULL DEFAULT '' COMMENT '乡镇地址名称',
-  address varchar(255) NOT NULL DEFAULT '' COMMENT '详细地址',
-  full_address varchar(255) NOT NULL DEFAULT '' COMMENT '完整地址',
-  longitude varchar(20) NOT NULL DEFAULT '' COMMENT '经度',
-  latitude varchar(20) NOT NULL DEFAULT '' COMMENT '纬度',
-  email varchar(50) NOT NULL DEFAULT '',
-  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  store_settlement_time int(11) NOT NULL DEFAULT 0 COMMENT '门店最后结算时间',
-  work_week varchar(50) NOT NULL DEFAULT '' COMMENT '工作日',
-  PRIMARY KEY (site_id)
-)
-ENGINE = INNODB,
-CHARACTER SET utf8,
-COLLATE utf8_general_ci,
-COMMENT = '店铺表';
+DROP TABLE IF EXISTS shopcompoent_category_audit;
 
---
--- `site_diy_view`
---
-CREATE TABLE site_diy_view (
-  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
-  name varchar(50) NOT NULL DEFAULT '',
-  addon_name varchar(50) NOT NULL DEFAULT '' COMMENT '插件名称',
-  title varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
-  value longtext DEFAULT NULL COMMENT '配置值',
-  type varchar(255) NOT NULL DEFAULT 'shop' COMMENT '应用模块:shop、store',
-  icon varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
-  click_num int(11) NOT NULL DEFAULT 0 COMMENT '浏览量',
-  template_key varchar(255) NOT NULL DEFAULT '' COMMENT '所选模板标识',
-  is_default int(11) NOT NULL DEFAULT 0 COMMENT '是否默认页面（针对自定义模板设置），1：是，0：否',
-  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
-  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
-  PRIMARY KEY (id)
-)
-ENGINE = INNODB,
-CHARACTER SET utf8,
-COLLATE utf8_general_ci,
-COMMENT = '店铺自定义模板表';
+DROP TABLE IF EXISTS shopcompoent_goods;
 
---
--- `IDX_nc_site_diy_view` on table `site_diy_view`
---
-ALTER TABLE site_diy_view
-ADD INDEX IDX_nc_site_diy_view (site_id, name);
+DROP TABLE IF EXISTS shop_accept_message;
 
---
--- `goods`
---
-CREATE TABLE goods (
-  goods_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品id',
-  goods_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
-  goods_class int(11) NOT NULL DEFAULT 1 COMMENT '商品种类1.实物商品2.虚拟商品3.卡券商品',
-  goods_class_name varchar(25) NOT NULL DEFAULT '' COMMENT '商品种类',
-  goods_attr_class int(11) NOT NULL DEFAULT 1 COMMENT '商品类型id',
-  goods_attr_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品类型名称',
-  site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
-  site_name varchar(255) NOT NULL DEFAULT '' COMMENT '所属店铺名称',
-  goods_image varchar(1000) NOT NULL DEFAULT '' COMMENT '商品主图路径',
-  goods_content text DEFAULT NULL COMMENT '商品详情',
-  goods_state tinyint(4) NOT NULL DEFAULT 1 COMMENT '商品状态（1.正常0下架）',
-  category_id varchar(255) NOT NULL DEFAULT '' COMMENT '商品分类id,逗号隔开',
-  category_json varchar(500) NOT NULL DEFAULT '' COMMENT '分类json字符串',
-  brand_id int(11) NOT NULL DEFAULT 0 COMMENT '商品品牌id',
-  brand_name varchar(255) NOT NULL DEFAULT '' COMMENT '品牌名称',
-  price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品价格（取第一个sku）',
-  market_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '划线价格（取第一个sku）',
-  cost_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '成本价（取第一个sku）',
-  goods_stock int(11) NOT NULL DEFAULT 0 COMMENT '商品库存（总和）',
-  goods_stock_alarm int(11) NOT NULL DEFAULT 0 COMMENT '库存预警',
-  is_virtual tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟类商品（0实物1.虚拟）',
-  virtual_indate int(11) NOT NULL DEFAULT 1 COMMENT '虚拟商品有效期',
-  is_free_shipping tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否免邮',
-  shipping_template int(11) NOT NULL DEFAULT 0 COMMENT '指定运费模板',
-  goods_spec_format text DEFAULT NULL COMMENT '商品规格格式',
-  goods_attr_format text DEFAULT NULL COMMENT '商品属性格式',
-  is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否已经删除',
-  introduction varchar(255) NOT NULL DEFAULT '' COMMENT '促销语',
-  keywords varchar(255) NOT NULL DEFAULT '' COMMENT '关键词',
-  unit varchar(255) NOT NULL DEFAULT '' COMMENT '单位',
-  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
-  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
-  video_url varchar(555) NOT NULL DEFAULT '' COMMENT '视频',
-  sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
-  evaluate int(11) NOT NULL DEFAULT 0 COMMENT '评价数',
-  evaluate_shaitu int(11) NOT NULL DEFAULT 0 COMMENT '评价晒图数',
-  evaluate_shipin int(11) NOT NULL DEFAULT 0 COMMENT '评价视频数',
-  evaluate_zhuiping int(11) NOT NULL DEFAULT 0 COMMENT '评价追评数',
-  evaluate_haoping int(11) NOT NULL DEFAULT 0 COMMENT '评价好评数',
-  evaluate_zhongping int(11) NOT NULL DEFAULT 0 COMMENT '评价中评数',
-  evaluate_chaping int(11) NOT NULL DEFAULT 0 COMMENT '评价差评数',
-  is_fenxiao tinyint(1) NOT NULL DEFAULT 0 COMMENT '参与分销（0不参与 1参与）',
-  fenxiao_type tinyint(1) NOT NULL DEFAULT 1 COMMENT '分销佣金类型（1默认  2自行设置）',
-  supplier_id int(11) NOT NULL DEFAULT 0 COMMENT '供应商id',
-  is_consume_discount tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否参与会员等级折扣',
-  discount_config tinyint(1) NOT NULL DEFAULT 0 COMMENT '优惠设置（0默认 1自定义）',
-  discount_method varchar(20) NOT NULL DEFAULT '' COMMENT '优惠方式（discount打折 manjian 满减 fixed_price 指定价格）',
-  sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
-  promotion_addon varchar(255) NOT NULL DEFAULT '' COMMENT '当前参与的营销活动，逗号分隔（限时折扣、团购、拼团、秒杀、专题活动）',
-  goods_service_ids varchar(255) NOT NULL DEFAULT '' COMMENT '商品服务id',
-  label_id int(11) NOT NULL DEFAULT 0 COMMENT '商品分组id',
-  label_name varchar(50) NOT NULL DEFAULT '' COMMENT '商品分组名称',
-  virtual_sale int(11) NOT NULL DEFAULT 0 COMMENT '虚拟销量',
-  max_buy int(11) NOT NULL DEFAULT 0 COMMENT '限购',
-  min_buy int(11) NOT NULL DEFAULT 0 COMMENT '起购数',
-  recommend_way int(11) NOT NULL DEFAULT 0 COMMENT '推荐方式，1：新品，2：精品，3；推荐',
-  timer_on int(11) NOT NULL DEFAULT 0 COMMENT '定时上架',
-  timer_off int(11) NOT NULL DEFAULT 0 COMMENT '定时下架',
-  is_need_verify int(11) NOT NULL DEFAULT 0 COMMENT '是否需要核销 ',
-  verify_validity_type int(11) NOT NULL DEFAULT 0 COMMENT '核销有效期类型 0：永久有效 1：购买后x天有效 2：指定过期日期',
-  is_limit int(11) NOT NULL DEFAULT 0 COMMENT '商品是否限购(0:否 1:是)',
-  limit_type int(11) NOT NULL DEFAULT 1 COMMENT '限购类型(1:单次限购 2:长期限购)',
-  qr_id int(11) NOT NULL DEFAULT 0 COMMENT '社群二维码id',
-  template_id int(11) NOT NULL DEFAULT 0 COMMENT '海报id',
-  success_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价审核通过数',
-  fail_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价审核失败数',
-  wait_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价待审核数',
-  sale_show int(11) NOT NULL DEFAULT 0 COMMENT '销量是否展示',
-  stock_show int(11) NOT NULL DEFAULT 0 COMMENT '库存是否展示',
-  virtual_deliver_type varchar(20) NOT NULL DEFAULT '' COMMENT '虚拟商品发货方式',
-  virtual_receive_type varchar(20) NOT NULL DEFAULT '' COMMENT '虚拟商品收货方式',
-  barrage_show int(11) NOT NULL DEFAULT 0 COMMENT '弹幕是否展示',
-  market_price_show int(11) NOT NULL DEFAULT 0 COMMENT '划线价是否展示',
-  PRIMARY KEY (goods_id)
-)
-ENGINE = INNODB,
-CHARACTER SET utf8,
-COLLATE utf8_general_ci,
-COMMENT = '商品表';
+DROP TABLE IF EXISTS shop_address;
 
---
--- `IDX_ns_goods_category_id` on table `goods`
---
-ALTER TABLE goods
-ADD INDEX IDX_ns_goods_category_id (category_id);
+DROP TABLE IF EXISTS site;
 
---
--- `IDX_ns_goods_goods_class` on table `goods`
---
-ALTER TABLE goods
-ADD INDEX IDX_ns_goods_goods_class (goods_class);
+DROP TABLE IF EXISTS site_address;
 
---
--- `IDX_ns_goods_is_delete` on table `goods`
---
-ALTER TABLE goods
-ADD INDEX IDX_ns_goods_is_delete (is_delete);
+DROP TABLE IF EXISTS site_diy_view;
 
---
--- `IDX_ns_goods_site_id` on table `goods`
---
-ALTER TABLE goods
-ADD INDEX IDX_ns_goods_site_id (site_id);
+DROP TABLE IF EXISTS sms_template;
 
---
--- `IDX_ns_goods_sku_id` on table `goods`
---
-ALTER TABLE goods
-ADD INDEX IDX_ns_goods_sku_id (sku_id);
+DROP TABLE IF EXISTS stat_shop;
 
---
--- `IDX_ns_goods_sort` on table `goods`
---
-ALTER TABLE goods
-ADD INDEX IDX_ns_goods_sort (sort);
+DROP TABLE IF EXISTS stat_shop_hour;
 
---
--- `poster`
---
-CREATE TABLE poster (
-  poster_id int(11) NOT NULL AUTO_INCREMENT,
-  site_id int(11) NOT NULL DEFAULT 0,
-  template_id int(11) NOT NULL DEFAULT 0 COMMENT '海报模版id',
-  relation_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
-  headimg_is_show int(11) NOT NULL DEFAULT 0 COMMENT '头像是否显示',
-  headimg_shape varchar(255) NOT NULL DEFAULT '' COMMENT '头像形式  circle 圆  square  方形',
-  nickname_is_show int(11) NOT NULL DEFAULT 0 COMMENT '昵称是否显示',
-  nickname_font_size decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称字体大小',
-  nickname_color varchar(255) NOT NULL DEFAULT '' COMMENT '昵称文字颜色',
-  background varchar(255) NOT NULL DEFAULT '' COMMENT '海报背景',
-  qrcode_type varchar(255) NOT NULL DEFAULT '' COMMENT '带参二维码，常规二维码',
-  headimg_width decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片长度',
-  headimg_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片高度',
-  headimg_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片距离顶部高度',
-  headimg_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片距离左侧长度',
-  nickname_width decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称长度',
-  nickname_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称高度',
-  nickname_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称距离顶部高度',
-  nickname_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称距离左侧长度',
-  qrcode_width decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码长度',
-  qrcode_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码高度',
-  qrcode_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码距离顶部高度',
-  qrcode_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码距离左侧长度',
-  visit_num int(11) NOT NULL DEFAULT 0 COMMENT '访客数量',
-  order_num int(11) NOT NULL DEFAULT 0 COMMENT '订单数量',
-  fission_level int(11) NOT NULL DEFAULT 0 COMMENT '裂变等级',
-  pv_num int(11) NOT NULL DEFAULT 0 COMMENT '访问数量',
-  type varchar(255) NOT NULL DEFAULT 'goods' COMMENT '类型，goods：商品，friend_fission：好友裂变',
-  create_time int(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY (poster_id)
-)
-ENGINE = INNODB,
-CHARACTER SET utf8,
-COLLATE utf8_general_ci,
-COMMENT = '海报表';
+DROP TABLE IF EXISTS stock_content;
 
---
--- `IDX_ns_poster` on table `poster`
---
-ALTER TABLE poster
-ADD INDEX IDX_ns_poster (site_id, type);
+DROP TABLE IF EXISTS store;
 
---
--- `wechat_replay_rule`
---
+DROP TABLE IF EXISTS store_goods;
+
+DROP TABLE IF EXISTS store_goods_sku;
+
+DROP TABLE IF EXISTS store_member;
+
+DROP TABLE IF EXISTS store_settlement;
+
+DROP TABLE IF EXISTS store_stock_import;
+
+DROP TABLE IF EXISTS store_stock_import_log;
+
+DROP TABLE IF EXISTS supplier;
+
+DROP TABLE IF EXISTS sys_upgrade_log;
+
+DROP TABLE IF EXISTS `user`;
+
+DROP TABLE IF EXISTS user_log;
+
+DROP TABLE IF EXISTS v3_upgrade_log;
+
+DROP TABLE IF EXISTS verifier;
+
+DROP TABLE IF EXISTS verify;
+
+DROP TABLE IF EXISTS verify_record;
+
+DROP TABLE IF EXISTS virtual_stock;
+
+DROP TABLE IF EXISTS weapp_audit_record;
+
+DROP TABLE IF EXISTS weapp_experiencer;
+
+DROP TABLE IF EXISTS weapp_goods;
+
+DROP TABLE IF EXISTS weapp_live_room;
+
+DROP TABLE IF EXISTS wechat_fans;
+
+DROP TABLE IF EXISTS wechat_fans_tag;
+
+DROP TABLE IF EXISTS wechat_mass_recording;
+
+DROP TABLE IF EXISTS wechat_media;
+
+DROP TABLE IF EXISTS wechat_qrcode;
+
+DROP TABLE IF EXISTS wechat_replay_rule;
+
 CREATE TABLE wechat_replay_rule (
   rule_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -872,9 +474,6 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信回复规则';
 
---
--- `wechat_qrcode`
---
 CREATE TABLE wechat_qrcode (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '实例ID',
   background varchar(255) NOT NULL DEFAULT '' COMMENT '背景图片',
@@ -899,13 +498,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信推广二维码模板管理';
 
---
--- `wechat_media`
---
 CREATE TABLE wechat_media (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
-  type int(3) NOT NULL DEFAULT 0 COMMENT '类型',
+  type int(11) NOT NULL DEFAULT 0 COMMENT '类型',
   value text DEFAULT NULL COMMENT '值',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
@@ -917,9 +513,6 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信素材表';
 
---
--- `wechat_mass_recording`
---
 CREATE TABLE wechat_mass_recording (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   status int(11) NOT NULL DEFAULT 0 COMMENT '发送状态1-成功  0-失败',
@@ -936,9 +529,6 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信消息记录';
 
---
--- `wechat_fans_tag`
---
 CREATE TABLE wechat_fans_tag (
   id int(11) NOT NULL AUTO_INCREMENT,
   tags varchar(3000) NOT NULL DEFAULT '' COMMENT '微信拉取到的标签内容 json格式',
@@ -951,15 +541,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信粉丝标签表';
 
---
--- `IDX_ns_wechat_fans_tag` on table `wechat_fans_tag`
---
-ALTER TABLE wechat_fans_tag
-ADD INDEX IDX_ns_wechat_fans_tag (tag_id);
 
---
--- `wechat_fans`
---
+ALTER TABLE wechat_fans_tag ADD INDEX IDX_ns_wechat_fans_tag (tag_id);
+
+
 CREATE TABLE wechat_fans (
   fans_id int(11) NOT NULL AUTO_INCREMENT COMMENT '粉丝ID',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -975,7 +560,7 @@ CREATE TABLE wechat_fans (
   openid varchar(255) NOT NULL DEFAULT '' COMMENT '用户的标识，对当前公众号唯一     用户的唯一身份ID',
   unionid varchar(255) NOT NULL DEFAULT '' COMMENT '粉丝unionid',
   groupid int(11) NOT NULL DEFAULT 0 COMMENT '粉丝所在组id',
-  is_subscribe bigint(1) NOT NULL DEFAULT 1 COMMENT '是否订阅',
+  is_subscribe bigint(20) NOT NULL DEFAULT 1 COMMENT '是否订阅',
   remark varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   subscribe_time int(11) NOT NULL DEFAULT 0 COMMENT '关注时间',
   subscribe_scene varchar(100) NOT NULL DEFAULT '' COMMENT '返回用户关注的渠道来源',
@@ -992,15 +577,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信粉丝列表';
 
---
--- `IDX_ns_weixin_fans` on table `wechat_fans`
---
-ALTER TABLE wechat_fans
-ADD INDEX IDX_ns_weixin_fans (unionid, openid);
 
---
--- `weapp_live_room`
---
+ALTER TABLE wechat_fans ADD INDEX IDX_ns_weixin_fans (unionid, openid);
+
+
 CREATE TABLE weapp_live_room (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1022,9 +602,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '小程序直播直播间表';
 
---
--- `weapp_goods`
---
+
 CREATE TABLE weapp_goods (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1036,16 +614,14 @@ CREATE TABLE weapp_goods (
   url varchar(2000) NOT NULL DEFAULT '' COMMENT '商品小程序链接',
   audit_id int(11) NOT NULL DEFAULT 0 COMMENT '审核单id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品sku_id',
-  third_party_tag int(1) NOT NULL DEFAULT 1 COMMENT '商品来源 0在小程序平台添加的商品  1/2通过api添加的商品',
+  third_party_tag int(11) NOT NULL DEFAULT 1 COMMENT '商品来源 0在小程序平台添加的商品  1/2通过api添加的商品',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `weapp_experiencer`
---
+
 CREATE TABLE weapp_experiencer (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1059,9 +635,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信小程序体验者';
 
---
--- `weapp_audit_record`
---
+
 CREATE TABLE weapp_audit_record (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '审核id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1079,13 +653,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '小程序审核记录表';
 
---
--- `virtual_stock`
---
+
 CREATE TABLE virtual_stock (
   stock_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   stock_name varchar(255) NOT NULL DEFAULT '' COMMENT '虚拟评价库名称',
-  num int(3) NOT NULL DEFAULT 0 COMMENT '评论条数',
+  num int(11) NOT NULL DEFAULT 0 COMMENT '评论条数',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1095,11 +667,9 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `verify_record`
---
+
 CREATE TABLE verify_record (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   verify_code varchar(255) NOT NULL DEFAULT '' COMMENT '核销码',
   verifier_id int(11) NOT NULL DEFAULT 0 COMMENT '核销员id',
@@ -1114,11 +684,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '核销记录表';
 
---
--- `verify`
---
+
 CREATE TABLE verify (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '站点名称',
   verify_code varchar(255) NOT NULL DEFAULT '' COMMENT '核销码',
@@ -1142,46 +710,29 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '核销编码管理';
 
---
--- `IDX_ns_verify_is_verify` on table `verify`
---
-ALTER TABLE verify
-ADD INDEX IDX_ns_verify_is_verify (is_verify);
 
---
--- `IDX_ns_verify_site_id` on table `verify`
---
-ALTER TABLE verify
-ADD INDEX IDX_ns_verify_site_id (site_id);
+ALTER TABLE verify ADD INDEX IDX_ns_verify_is_verify (is_verify);
 
---
--- `IDX_ns_verify_verify_code` on table `verify`
---
-ALTER TABLE verify
-ADD INDEX IDX_ns_verify_verify_code (verify_code);
 
---
--- `IDX_ns_verify_verify_time` on table `verify`
---
-ALTER TABLE verify
-ADD INDEX IDX_ns_verify_verify_time (verify_time);
+ALTER TABLE verify ADD INDEX IDX_ns_verify_site_id (site_id);
 
---
--- `IDX_ns_verify_verify_type` on table `verify`
---
-ALTER TABLE verify
-ADD INDEX IDX_ns_verify_verify_type (verify_type);
 
---
--- `verifier`
---
+ALTER TABLE verify ADD INDEX IDX_ns_verify_verify_code (verify_code);
+
+
+ALTER TABLE verify ADD INDEX IDX_ns_verify_verify_time (verify_time);
+
+
+ALTER TABLE verify ADD INDEX IDX_ns_verify_verify_type (verify_type);
+
+
 CREATE TABLE verifier (
-  verifier_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '核销员id',
+  verifier_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '核销员id',
   verifier_name varchar(255) NOT NULL DEFAULT '' COMMENT '核销员姓名',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '商家id',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '前台会员id',
   uid int(11) NOT NULL DEFAULT 0 COMMENT '后台用户id',
-  verifier_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '核销员类型：0平台核销员，1门店核销员',
+  verifier_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '核销员类型：0平台核销员，1门店核销员',
   store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
@@ -1192,21 +743,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '核销员（商品或订单商品）';
 
---
--- `IDX_ns_verifier_member_id` on table `verifier`
---
-ALTER TABLE verifier
-ADD INDEX IDX_ns_verifier_member_id (member_id);
 
---
--- `IDX_ns_verifier_site_id` on table `verifier`
---
-ALTER TABLE verifier
-ADD INDEX IDX_ns_verifier_site_id (site_id);
+ALTER TABLE verifier ADD INDEX IDX_ns_verifier_member_id (member_id);
 
---
--- `v3_upgrade_log`
---
+
+ALTER TABLE verifier ADD INDEX IDX_ns_verifier_site_id (site_id);
+
+
 CREATE TABLE v3_upgrade_log (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   module varchar(255) NOT NULL DEFAULT '' COMMENT '模块标识',
@@ -1221,11 +764,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = 'v3Tov4迁移数据日志';
 
---
--- `user_log`
---
+
 CREATE TABLE user_log (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   uid int(11) NOT NULL DEFAULT 0 COMMENT '操作用户ID',
   username varchar(255) NOT NULL DEFAULT '' COMMENT '昵称',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1241,16 +782,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '用户操作日志';
 
---
--- `IDX_ns_user_log` on table `user_log`
---
-ALTER TABLE user_log
-ADD INDEX IDX_ns_user_log (uid, site_id);
 
---
--- `user`
---
-CREATE TABLE user (
+ALTER TABLE user_log ADD INDEX IDX_ns_user_log (uid, site_id);
+
+
+CREATE TABLE `user` (
   uid int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   sys_uid int(11) NOT NULL DEFAULT 0 COMMENT '系统用户id',
   app_module varchar(255) NOT NULL DEFAULT '' COMMENT '应用模块',
@@ -1274,33 +810,19 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '站点后台用户表';
 
---
--- `IDX_ns_user` on table `user`
---
-ALTER TABLE `user`
-ADD INDEX IDX_ns_user (group_id, app_module);
 
---
--- `IDX_ns_user_member_id` on table `user`
---
-ALTER TABLE `user`
-ADD INDEX IDX_ns_user_member_id (member_id);
+ALTER TABLE `user` ADD INDEX IDX_ns_user (group_id, app_module);
 
---
--- `IDX_ns_user_site_id` on table `user`
---
-ALTER TABLE `user`
-ADD INDEX IDX_ns_user_site_id (site_id);
 
---
--- `IDX_ns_user_username` on table `user`
---
-ALTER TABLE `user`
-ADD INDEX IDX_ns_user_username (username);
+ALTER TABLE `user` ADD INDEX IDX_ns_user_member_id (member_id);
 
---
--- `sys_upgrade_log`
---
+
+ALTER TABLE `user` ADD INDEX IDX_ns_user_site_id (site_id);
+
+
+ALTER TABLE `user` ADD INDEX IDX_ns_user_username (username);
+
+
 CREATE TABLE sys_upgrade_log (
   log_id int(11) NOT NULL AUTO_INCREMENT,
   upgrade_no varchar(255) NOT NULL DEFAULT '' COMMENT '升级编号 每次的编号都不同',
@@ -1308,7 +830,7 @@ CREATE TABLE sys_upgrade_log (
   version_info longtext DEFAULT NULL COMMENT '版本信息 json数据 包含升级前和升级后的基本信息',
   backup_root varchar(255) NOT NULL DEFAULT '' COMMENT '备份文件和sql的根目录',
   download_root varchar(255) NOT NULL DEFAULT '' COMMENT '下载文件的根目录',
-  status tinyint(3) NOT NULL DEFAULT 0 COMMENT '升级状态 0 进行中 1 升级成功 2 升级失败',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '升级状态 0 进行中 1 升级成功 2 升级失败',
   error_message varchar(255) NOT NULL DEFAULT '' COMMENT '升级失败错误信息',
   PRIMARY KEY (log_id)
 )
@@ -1317,12 +839,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统升级日志';
 
---
--- `supplier`
---
+
 CREATE TABLE supplier (
-  supplier_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  supplier_site_id int(10) NOT NULL DEFAULT 0 COMMENT '供应商站点',
+  supplier_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  supplier_site_id int(11) NOT NULL DEFAULT 0 COMMENT '供应商站点',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '供应商名称',
   logo varchar(255) NOT NULL DEFAULT '' COMMENT '供应商logo',
   `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '供应商简介',
@@ -1349,9 +869,6 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '供应商';
 
---
--- `store_stock_import_log`
---
 CREATE TABLE store_stock_import_log (
   id int(11) NOT NULL AUTO_INCREMENT,
   store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
@@ -1361,7 +878,7 @@ CREATE TABLE store_stock_import_log (
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'skuid',
   sku_name varchar(255) NOT NULL DEFAULT '' COMMENT 'sku名称',
   stock int(11) NOT NULL DEFAULT 0 COMMENT '库存（增/减）',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0成功 -1失败）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0成功 -1失败）',
   reason varchar(255) NOT NULL DEFAULT '' COMMENT '原因',
   PRIMARY KEY (id)
 )
@@ -1370,9 +887,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '门店导入库存失败记录';
 
---
--- `store_stock_import`
---
+
 CREATE TABLE store_stock_import (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -1389,9 +904,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = ' 门店库存导入批量修改';
 
---
--- `store_settlement`
---
+
 CREATE TABLE store_settlement (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   settlement_no varchar(255) NOT NULL DEFAULT '' COMMENT '流水号',
@@ -1404,12 +917,12 @@ CREATE TABLE store_settlement (
   refund_platform_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '平台退款抽成',
   platform_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '平台抽成',
   refund_shop_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '店铺退款金额',
-  refund_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '退款金额',
+  refund_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '退款金额',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '账期开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '账期结束时间',
   commission decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '佣金支出',
-  is_settlement tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否结算',
+  is_settlement tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否结算',
   remark varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
   offline_order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '线下支付的订单金额',
   offline_refund_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '线下退款金额',
@@ -1419,9 +932,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `store_member`
---
+
 CREATE TABLE store_member (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
@@ -1438,15 +949,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '门店会员管理';
 
---
--- `store_goods_sku`
---
+
 CREATE TABLE store_goods_sku (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  store_stock int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '库存',
-  store_sale_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '销量',
+  store_stock int(11) NOT NULL DEFAULT 0 COMMENT '库存',
+  store_sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
   store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
@@ -1457,11 +966,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '门店sku表';
 
---
--- `store_goods`
---
+
 CREATE TABLE store_goods (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
   store_goods_stock int(11) NOT NULL DEFAULT 0 COMMENT '商品库存',
@@ -1475,9 +982,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '门店商品表';
 
---
--- `store`
---
+
 CREATE TABLE store (
   store_id int(11) NOT NULL AUTO_INCREMENT COMMENT '门店站点id',
   store_name varchar(50) NOT NULL DEFAULT '' COMMENT '门店名称',
@@ -1501,11 +1006,11 @@ CREATE TABLE store (
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   username varchar(255) NOT NULL DEFAULT '' COMMENT '门店管理员',
-  order_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '付款后订单金额',
-  order_complete_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '订单完成-订单金额',
-  order_num int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单数',
-  order_complete_num int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单完成数量',
-  is_frozen tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否冻结0-未冻结 1已冻结',
+  order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '付款后订单金额',
+  order_complete_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '订单完成-订单金额',
+  order_num int(11) NOT NULL DEFAULT 0 COMMENT '订单数',
+  order_complete_num int(11) NOT NULL DEFAULT 0 COMMENT '订单完成数量',
+  is_frozen tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否冻结0-未冻结 1已冻结',
   uid int(11) DEFAULT 0 COMMENT '门店管理员id',
   time_type int(11) NOT NULL DEFAULT 0 COMMENT '时间选取类型 0 每天  1 自定义',
   time_week varchar(255) NOT NULL DEFAULT '' COMMENT '营业时间  周一 周二.......',
@@ -1518,9 +1023,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '线下门店表';
 
---
--- `stock_content`
---
+
 CREATE TABLE stock_content (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   stock_id int(11) NOT NULL DEFAULT 0 COMMENT '虚拟评价库id',
@@ -1533,11 +1036,9 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `stat_shop_hour`
---
+
 CREATE TABLE stat_shop_hour (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   year int(11) NOT NULL DEFAULT 0 COMMENT '年',
   month int(11) NOT NULL DEFAULT 0 COMMENT '月',
@@ -1598,45 +1099,25 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `IDX_ns_stat_shop_hour_day` on table `stat_shop_hour`
---
-ALTER TABLE stat_shop_hour
-ADD INDEX IDX_ns_stat_shop_hour_day (day);
 
---
--- `IDX_ns_stat_shop_hour_day_time` on table `stat_shop_hour`
---
-ALTER TABLE stat_shop_hour
-ADD INDEX IDX_ns_stat_shop_hour_day_time (day_time);
+ALTER TABLE stat_shop_hour ADD INDEX IDX_ns_stat_shop_hour_day (day);
 
---
--- `IDX_ns_stat_shop_hour_hour` on table `stat_shop_hour`
---
-ALTER TABLE stat_shop_hour
-ADD INDEX IDX_ns_stat_shop_hour_hour (hour);
 
---
--- `IDX_ns_stat_shop_hour_month` on table `stat_shop_hour`
---
-ALTER TABLE stat_shop_hour
-ADD INDEX IDX_ns_stat_shop_hour_month (month);
+ALTER TABLE stat_shop_hour ADD INDEX IDX_ns_stat_shop_hour_day_time (day_time);
 
---
--- `IDX_ns_stat_shop_hour_site_id` on table `stat_shop_hour`
---
-ALTER TABLE stat_shop_hour
-ADD INDEX IDX_ns_stat_shop_hour_site_id (site_id);
 
---
--- `IDX_ns_stat_shop_hour_year` on table `stat_shop_hour`
---
-ALTER TABLE stat_shop_hour
-ADD INDEX IDX_ns_stat_shop_hour_year (year);
+ALTER TABLE stat_shop_hour ADD INDEX IDX_ns_stat_shop_hour_hour (hour);
 
---
--- `stat_shop`
---
+
+ALTER TABLE stat_shop_hour ADD INDEX IDX_ns_stat_shop_hour_month (month);
+
+
+ALTER TABLE stat_shop_hour ADD INDEX IDX_ns_stat_shop_hour_site_id (site_id);
+
+
+ALTER TABLE stat_shop_hour ADD INDEX IDX_ns_stat_shop_hour_year (year);
+
+
 CREATE TABLE stat_shop (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -1698,50 +1179,33 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `IDX_ns_stat_shop_day` on table `stat_shop`
---
-ALTER TABLE stat_shop
-ADD INDEX IDX_ns_stat_shop_day (day);
 
---
--- `IDX_ns_stat_shop_day_time` on table `stat_shop`
---
-ALTER TABLE stat_shop
-ADD INDEX IDX_ns_stat_shop_day_time (day_time);
+ALTER TABLE stat_shop ADD INDEX IDX_ns_stat_shop_day (day);
 
---
--- `IDX_ns_stat_shop_month` on table `stat_shop`
---
-ALTER TABLE stat_shop
-ADD INDEX IDX_ns_stat_shop_month (month);
 
---
--- `IDX_ns_stat_shop_site_id` on table `stat_shop`
---
-ALTER TABLE stat_shop
-ADD INDEX IDX_ns_stat_shop_site_id (site_id);
+ALTER TABLE stat_shop ADD INDEX IDX_ns_stat_shop_day_time (day_time);
 
---
--- `IDX_ns_stat_shop_year` on table `stat_shop`
---
-ALTER TABLE stat_shop
-ADD INDEX IDX_ns_stat_shop_year (year);
 
---
--- `sms_template`
---
+ALTER TABLE stat_shop ADD INDEX IDX_ns_stat_shop_month (month);
+
+
+ALTER TABLE stat_shop ADD INDEX IDX_ns_stat_shop_site_id (site_id);
+
+
+ALTER TABLE stat_shop ADD INDEX IDX_ns_stat_shop_year (year);
+
+
 CREATE TABLE sms_template (
   template_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   tem_id int(11) NOT NULL DEFAULT 0 COMMENT '返回的模板id',
   keywords varchar(255) NOT NULL DEFAULT '',
-  template_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '模板类型（1验证码  2行业通知  3营销推广 ）',
+  template_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '模板类型（1验证码  2行业通知  3营销推广 ）',
   template_name varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
   template_content varchar(255) NOT NULL DEFAULT '' COMMENT '模板内容',
   param_json varchar(255) NOT NULL DEFAULT '' COMMENT '模板变量json',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '启用状态（1 启用，0 禁用）',
-  audit_status tinyint(1) NOT NULL DEFAULT 0 COMMENT '审核状态（0 未审核，1 待审核，2 审核通过， 3 审核不通过）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '启用状态（1 启用，0 禁用）',
+  audit_status tinyint(4) NOT NULL DEFAULT 0 COMMENT '审核状态（0 未审核，1 待审核，2 审核通过， 3 审核不通过）',
   create_time int(11) NOT NULL DEFAULT 0,
   update_time int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (template_id)
@@ -1753,9 +1217,33 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '牛云短信模板';
 
---
--- `site_address`
---
+
+CREATE TABLE site_diy_view (
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  name varchar(50) NOT NULL DEFAULT '',
+  addon_name varchar(50) NOT NULL DEFAULT '' COMMENT '插件名称',
+  title varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
+  value longtext DEFAULT NULL COMMENT '配置值',
+  type varchar(255) NOT NULL DEFAULT 'shop' COMMENT '应用模块:shop、store',
+  icon varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
+  click_num int(11) NOT NULL DEFAULT 0 COMMENT '浏览量',
+  template_key varchar(255) NOT NULL DEFAULT '' COMMENT '所选模板标识',
+  is_default int(11) NOT NULL DEFAULT 0 COMMENT '是否默认页面（针对自定义模板设置），1：是，0：否',
+  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '店铺自定义模板表';
+
+
+ALTER TABLE site_diy_view ADD INDEX IDX_nc_site_diy_view (site_id, name);
+
+
 CREATE TABLE site_address (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -1779,11 +1267,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '站点地址库';
 
---
--- `site`
---
+
 CREATE TABLE site (
-  site_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '站点id',
+  site_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '站点id',
   site_type varchar(255) NOT NULL DEFAULT '' COMMENT '站点类型',
   site_domain varchar(255) NOT NULL DEFAULT '' COMMENT '站点域名',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -1801,9 +1287,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '站点基础表';
 
---
--- `shop_address`
---
+
 CREATE TABLE shop_address (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -1816,9 +1300,9 @@ CREATE TABLE shop_address (
   community_id int(11) NOT NULL DEFAULT 0 COMMENT '乡镇',
   address varchar(255) NOT NULL DEFAULT '' COMMENT '详细地址',
   full_address varchar(255) NOT NULL DEFAULT '' COMMENT '收票地址',
-  is_return tinyint(1) NOT NULL DEFAULT 0 COMMENT '退货地址',
-  is_return_default tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是默认退货地址',
-  is_delivery tinyint(1) NOT NULL DEFAULT 0 COMMENT '发货地址',
+  is_return tinyint(4) NOT NULL DEFAULT 0 COMMENT '退货地址',
+  is_return_default tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是默认退货地址',
+  is_delivery tinyint(4) NOT NULL DEFAULT 0 COMMENT '发货地址',
   update_time int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 )
@@ -1827,14 +1311,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商家地址库';
 
---
--- `shop_accept_message`
---
+
 CREATE TABLE shop_accept_message (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id（接受消息的会员id）',
-  type tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型（0统一设置   1单独设置）',
+  type tinyint(4) NOT NULL DEFAULT 0 COMMENT '类型（0统一设置   1单独设置）',
   keywords varchar(255) NOT NULL DEFAULT '' COMMENT '消息关键字（针对单独设置有效）',
   create_time int(11) NOT NULL DEFAULT 0,
   update_time int(11) NOT NULL DEFAULT 0,
@@ -1848,9 +1330,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商家接受消息设置';
 
---
--- `shopcompoent_goods`
---
+
 CREATE TABLE shopcompoent_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -1873,9 +1353,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '小程序交易组件商品表';
 
---
--- `shopcompoent_category_audit`
---
+
 CREATE TABLE shopcompoent_category_audit (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -1884,7 +1362,7 @@ CREATE TABLE shopcompoent_category_audit (
   qualification_pics varchar(5000) NOT NULL DEFAULT '' COMMENT '商品资质材料',
   audit_id varchar(2000) NOT NULL DEFAULT '' COMMENT '审核ID',
   audit_time int(11) NOT NULL DEFAULT 0 COMMENT '审核时间',
-  status int(1) NOT NULL DEFAULT 0 COMMENT '审核状态, 0：审核中，1：审核成功，9：审核拒绝',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '审核状态, 0：审核中，1：审核成功，9：审核拒绝',
   reject_reason varchar(5000) NOT NULL DEFAULT '' COMMENT '拒绝原因',
   PRIMARY KEY (id)
 )
@@ -1893,9 +1371,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '小程序交易组件类目审核表';
 
---
--- `shopcompoent_category`
---
+
 CREATE TABLE shopcompoent_category (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   first_cat_id int(11) NOT NULL DEFAULT 0 COMMENT '第一级类目ID',
@@ -1905,8 +1381,8 @@ CREATE TABLE shopcompoent_category (
   second_cat_name varchar(200) NOT NULL DEFAULT '' COMMENT '二级类目名称',
   third_cat_name varchar(200) NOT NULL DEFAULT '' COMMENT '三级类目名称',
   qualification varchar(2000) NOT NULL DEFAULT '' COMMENT '类目资质',
-  qualification_type int(1) NOT NULL DEFAULT 0 COMMENT '类目资质类型,0:不需要,1:必填,2:选填',
-  product_qualification_type int(1) NOT NULL DEFAULT 0 COMMENT '商品资质类型,0:不需要,1:必填,2:选填',
+  qualification_type int(11) NOT NULL DEFAULT 0 COMMENT '类目资质类型,0:不需要,1:必填,2:选填',
+  product_qualification_type int(11) NOT NULL DEFAULT 0 COMMENT '商品资质类型,0:不需要,1:必填,2:选填',
   product_qualification varchar(2000) NOT NULL DEFAULT '' COMMENT '商品资质',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (id)
@@ -1916,15 +1392,52 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '小程序交易组件类目表';
 
---
--- `servicer_member`
---
+
+CREATE TABLE shop (
+  site_id int(11) NOT NULL,
+  shop_status int(11) NOT NULL DEFAULT 1 COMMENT '店铺经营状态（0.关闭，1正常）',
+  close_info varchar(255) NOT NULL DEFAULT '' COMMENT '店铺关闭原因',
+  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
+  start_time int(11) NOT NULL DEFAULT 0 COMMENT '经营时间',
+  end_time int(11) NOT NULL DEFAULT 0 COMMENT '关闭时间',
+  avatar varchar(255) NOT NULL DEFAULT '' COMMENT '店铺头像（大图）',
+  banner varchar(255) NOT NULL DEFAULT '' COMMENT '店铺条幅',
+  qq varchar(20) NOT NULL DEFAULT '' COMMENT '联系人qq',
+  ww varchar(20) NOT NULL DEFAULT '' COMMENT '联系人阿里旺旺',
+  name varchar(255) NOT NULL DEFAULT '' COMMENT '联系人姓名',
+  telephone varchar(20) NOT NULL DEFAULT '' COMMENT '联系电话',
+  mobile varchar(11) NOT NULL DEFAULT '' COMMENT '联系手机号',
+  workingtime int(11) NOT NULL DEFAULT 0 COMMENT '工作时间',
+  province int(11) NOT NULL DEFAULT 0 COMMENT '省id',
+  province_name varchar(50) NOT NULL DEFAULT '' COMMENT '省名称',
+  city int(11) NOT NULL DEFAULT 0 COMMENT '城市id',
+  city_name varchar(50) NOT NULL DEFAULT '' COMMENT '城市名称',
+  district int(11) NOT NULL DEFAULT 0 COMMENT '区县id',
+  district_name varchar(50) NOT NULL DEFAULT '' COMMENT '区县地址',
+  community int(11) NOT NULL DEFAULT 0 COMMENT '乡镇地址id',
+  community_name varchar(50) NOT NULL DEFAULT '' COMMENT '乡镇地址名称',
+  address varchar(255) NOT NULL DEFAULT '' COMMENT '详细地址',
+  full_address varchar(255) NOT NULL DEFAULT '' COMMENT '完整地址',
+  longitude varchar(20) NOT NULL DEFAULT '' COMMENT '经度',
+  latitude varchar(20) NOT NULL DEFAULT '' COMMENT '纬度',
+  email varchar(50) NOT NULL DEFAULT '',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  store_settlement_time int(11) NOT NULL DEFAULT 0 COMMENT '门店最后结算时间',
+  work_week varchar(50) NOT NULL DEFAULT '' COMMENT '工作日',
+  PRIMARY KEY (site_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '店铺表';
+
+
 CREATE TABLE servicer_member (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据ID',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '关联会员ID',
   servicer_id int(11) NOT NULL DEFAULT 0 COMMENT '关联客服ID',
   member_name varchar(64) NOT NULL DEFAULT '' COMMENT '会员名称',
-  online tinyint(2) NOT NULL DEFAULT 0 COMMENT '是否在线',
+  online tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否在线',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '登录时间',
   last_online_time int(11) NOT NULL DEFAULT 0 COMMENT '上次在线时间',
   delete_time int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
@@ -1937,16 +1450,14 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '聊天会员在线状态表';
 
---
--- `servicer_keyword_reply`
---
+
 CREATE TABLE servicer_keyword_reply (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
   keyword varchar(50) NOT NULL DEFAULT '' COMMENT '关键词',
-  content_type tinyint(3) NOT NULL DEFAULT 0 COMMENT '内容类型',
+  content_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '内容类型',
   content text DEFAULT NULL COMMENT '回复内容',
-  is_use tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否使用',
+  is_use tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否使用',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   sort int(11) NOT NULL DEFAULT 10 COMMENT '排序',
   PRIMARY KEY (id)
@@ -1956,15 +1467,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '客服关键词回复表';
 
---
--- `INDEX` on table `servicer_keyword_reply`
---
-ALTER TABLE servicer_keyword_reply
-ADD INDEX `INDEX` (keyword);
+ALTER TABLE servicer_keyword_reply ADD INDEX `INDEX` (keyword);
 
---
--- `servicer_fast_reply`
---
+
 CREATE TABLE servicer_fast_reply (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -1977,24 +1482,22 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '客服快捷回复表';
 
---
--- `servicer_dialogue`
---
+
 CREATE TABLE servicer_dialogue (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据ID',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员ID（匿名聊天则为0）',
   servicer_id int(11) NOT NULL DEFAULT 0 COMMENT '客服ID',
   create_day date DEFAULT NULL COMMENT '聊天创建日',
   create_time time DEFAULT NULL COMMENT '聊天创建时间',
-  add_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间戳',
+  add_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间戳',
   content_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '内容类型（0文本1商品2订单3图片）',
-  `read` tinyint(2) NOT NULL DEFAULT 0 COMMENT '消息是否已读',
+  `read` tinyint(4) NOT NULL DEFAULT 0 COMMENT '消息是否已读',
   shop_id int(11) NOT NULL DEFAULT 0 COMMENT '商户ID',
   goods_sku_id int(11) NOT NULL DEFAULT 0 COMMENT '关联商品ID',
   order_id int(11) NOT NULL DEFAULT 0 COMMENT '关联订单ID',
   consumer_say text DEFAULT NULL COMMENT '顾客说',
   servicer_say text DEFAULT NULL COMMENT '客服说',
-  type tinyint(2) NOT NULL DEFAULT 0 COMMENT '0: say,客户咨询，1：answer,客服回答',
+  type tinyint(4) NOT NULL DEFAULT 0 COMMENT '0: say,客户咨询，1：answer,客服回答',
   ralate_data varchar(3000) NOT NULL DEFAULT '' COMMENT '相关数据 json格式',
   content text DEFAULT NULL COMMENT '聊天内容',
   message text DEFAULT NULL COMMENT '消息内容 纯文本消息',
@@ -2005,18 +1508,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '客服对话内容';
 
---
--- `index_create_day` on table `servicer_dialogue`
---
-ALTER TABLE servicer_dialogue
-ADD INDEX index_create_day (create_day) COMMENT '聊天日期索引';
+ALTER TABLE servicer_dialogue ADD INDEX index_create_day (create_day) COMMENT '聊天日期索引';
 
---
--- `servicer`
---
+
 CREATE TABLE servicer (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '客服ID',
-  is_platform tinyint(2) NOT NULL DEFAULT 1 COMMENT '是否平台客服',
+  is_platform tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否平台客服',
   shop_id int(11) NOT NULL DEFAULT 0 COMMENT '商户ID',
   user_id int(11) NOT NULL DEFAULT 0 COMMENT '客服账号归属用户ID',
   nickname varchar(50) NOT NULL DEFAULT '' COMMENT '客服昵称',
@@ -2025,7 +1522,7 @@ CREATE TABLE servicer (
   last_online_time int(11) NOT NULL DEFAULT 0 COMMENT '最近在线时间',
   delete_time int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   client_id varchar(64) NOT NULL DEFAULT '' COMMENT 'session会话临时ID',
-  online tinyint(2) NOT NULL DEFAULT 0 COMMENT '是否在线',
+  online tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否在线',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -2033,11 +1530,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '客服基础表';
 
---
--- `promotion_topic_goods`
---
+
 CREATE TABLE promotion_topic_goods (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   topic_id int(11) NOT NULL DEFAULT 0 COMMENT '对应活动Id',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
@@ -2045,7 +1540,7 @@ CREATE TABLE promotion_topic_goods (
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'skuId',
   topic_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '折扣价',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  `default` int(1) NOT NULL DEFAULT 0 COMMENT '是否为默认展示规格',
+  `default` int(11) NOT NULL DEFAULT 0 COMMENT '是否为默认展示规格',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -2053,45 +1548,28 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '限时折扣商品列表';
 
---
--- `IDX_ns_promotion_topic_goods_end_time` on table `promotion_topic_goods`
---
-ALTER TABLE promotion_topic_goods
-ADD INDEX IDX_ns_promotion_topic_goods_end_time (end_time);
 
---
--- `IDX_ns_promotion_topic_goods_site_id` on table `promotion_topic_goods`
---
-ALTER TABLE promotion_topic_goods
-ADD INDEX IDX_ns_promotion_topic_goods_site_id (site_id);
+ALTER TABLE promotion_topic_goods ADD INDEX IDX_ns_promotion_topic_goods_end_time (end_time);
 
---
--- `IDX_ns_promotion_topic_goods_sku_id` on table `promotion_topic_goods`
---
-ALTER TABLE promotion_topic_goods
-ADD INDEX IDX_ns_promotion_topic_goods_sku_id (sku_id);
 
---
--- `IDX_ns_promotion_topic_goods_start_time` on table `promotion_topic_goods`
---
-ALTER TABLE promotion_topic_goods
-ADD INDEX IDX_ns_promotion_topic_goods_start_time (start_time);
+ALTER TABLE promotion_topic_goods ADD INDEX IDX_ns_promotion_topic_goods_site_id (site_id);
 
---
--- `IDX_ns_promotion_topic_goods_topic_id` on table `promotion_topic_goods`
---
-ALTER TABLE promotion_topic_goods
-ADD INDEX IDX_ns_promotion_topic_goods_topic_id (topic_id);
 
---
--- `promotion_topic`
---
+ALTER TABLE promotion_topic_goods ADD INDEX IDX_ns_promotion_topic_goods_sku_id (sku_id);
+
+
+ALTER TABLE promotion_topic_goods ADD INDEX IDX_ns_promotion_topic_goods_start_time (start_time);
+
+
+ALTER TABLE promotion_topic_goods ADD INDEX IDX_ns_promotion_topic_goods_topic_id (topic_id);
+
+
 CREATE TABLE promotion_topic (
-  topic_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-  site_id int(10) NOT NULL DEFAULT 0 COMMENT '站点id',
+  topic_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   topic_name varchar(255) NOT NULL DEFAULT '' COMMENT '专题名称',
   topic_adv varchar(255) NOT NULL DEFAULT '' COMMENT '专题广告',
-  status tinyint(1) NOT NULL DEFAULT 1 COMMENT '活动状态 1未开始  2进行中  3已结束',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '活动状态 1未开始  2进行中  3已结束',
   remark varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
@@ -2105,9 +1583,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '专题活动';
 
---
--- `promotion_seckill_time`
---
+
 CREATE TABLE promotion_seckill_time (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -2124,12 +1600,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '秒杀时段';
 
---
--- `promotion_seckill_goods`
---
+
 CREATE TABLE promotion_seckill_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  seckill_id int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '主键',
+  seckill_id int(11) NOT NULL DEFAULT 0 COMMENT '主键',
   seckill_time_id varchar(255) NOT NULL DEFAULT '' COMMENT '秒杀时间段',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品sku_id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
@@ -2140,7 +1614,7 @@ CREATE TABLE promotion_seckill_goods (
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
   stock int(11) NOT NULL DEFAULT 0 COMMENT '秒杀库存',
   max_buy int(11) NOT NULL DEFAULT 0 COMMENT '每人限购',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中 2已结束 -1已关闭（手动）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中 2已结束 -1已关闭（手动）',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -2148,14 +1622,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '秒杀参与商品';
 
---
--- `promotion_seckill`
---
+
 CREATE TABLE promotion_seckill (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 1 COMMENT '站点id',
   seckill_name varchar(255) NOT NULL DEFAULT '' COMMENT '活动名称',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中 2已结束 -1已关闭（手动）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中 2已结束 -1已关闭（手动）',
   remark varchar(1000) NOT NULL DEFAULT '' COMMENT '备注',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
@@ -2176,9 +1648,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '秒杀活动';
 
---
--- `promotion_present`
---
+
 CREATE TABLE promotion_present (
   present_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺ID',
@@ -2186,7 +1656,7 @@ CREATE TABLE promotion_present (
   sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品sku',
   sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
-  is_virtual tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
+  is_virtual tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
   sku_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品原价',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
@@ -2194,7 +1664,7 @@ CREATE TABLE promotion_present (
   limit_num int(11) NOT NULL DEFAULT 0 COMMENT '每人限制领取数量',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
-  status tinyint(3) NOT NULL DEFAULT 1 COMMENT '状态（1未开始  2进行中  3已结束）',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态（1未开始  2进行中  3已结束）',
   stock int(11) NOT NULL DEFAULT 0 COMMENT '赠品库存',
   PRIMARY KEY (present_id)
 )
@@ -2203,35 +1673,21 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '赠品';
 
---
--- `IDX_ns_promotion_present_goods_id` on table `promotion_present`
---
-ALTER TABLE promotion_present
-ADD INDEX IDX_ns_promotion_present_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_present_site_id` on table `promotion_present`
---
-ALTER TABLE promotion_present
-ADD INDEX IDX_ns_promotion_present_site_id (site_id);
+ALTER TABLE promotion_present ADD INDEX IDX_ns_promotion_present_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_present_sku_id` on table `promotion_present`
---
-ALTER TABLE promotion_present
-ADD INDEX IDX_ns_promotion_present_sku_id (sku_id);
 
---
--- `IDX_ns_promotion_present_status` on table `promotion_present`
---
-ALTER TABLE promotion_present
-ADD INDEX IDX_ns_promotion_present_status (status);
+ALTER TABLE promotion_present ADD INDEX IDX_ns_promotion_present_site_id (site_id);
 
---
--- `promotion_presale_order`
---
+
+ALTER TABLE promotion_present ADD INDEX IDX_ns_promotion_present_sku_id (sku_id);
+
+
+ALTER TABLE promotion_present ADD INDEX IDX_ns_promotion_present_status (status);
+
+
 CREATE TABLE promotion_presale_order (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '站点名称',
   presale_id int(11) NOT NULL DEFAULT 0 COMMENT '预售id',
@@ -2275,7 +1731,7 @@ CREATE TABLE promotion_presale_order (
   presale_deposit decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '预售定金单价',
   presale_deposit_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '定金总额',
   presale_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '抵扣金额单价',
-  presale_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '抵扣总额',
+  presale_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '抵扣总额',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品单价',
   goods_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品总额',
   balance_deposit_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '余额支付定金金额',
@@ -2335,9 +1791,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '预售定金表';
 
---
--- `promotion_presale_goods`
---
+
 CREATE TABLE promotion_presale_goods (
   id int(11) NOT NULL AUTO_INCREMENT,
   presale_id int(11) NOT NULL DEFAULT 0,
@@ -2353,9 +1807,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `promotion_presale`
---
+
 CREATE TABLE promotion_presale (
   presale_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   presale_name varchar(255) NOT NULL DEFAULT '' COMMENT '预售活动名称',
@@ -2367,10 +1819,10 @@ CREATE TABLE promotion_presale (
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '定金结束时间',
   pay_start_time int(11) NOT NULL DEFAULT 0 COMMENT '尾款支付时间',
   pay_end_time int(11) NOT NULL DEFAULT 0 COMMENT '尾款结束时间',
-  deliver_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '发货方式（0固定时间   1尾款支付后N天）',
+  deliver_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '发货方式（0固定时间   1尾款支付后N天）',
   deliver_time int(11) NOT NULL DEFAULT 0 COMMENT '发货时间',
-  is_fenxiao tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3失效  4删除）',
+  is_fenxiao tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3失效  4删除）',
   status_name varchar(20) NOT NULL DEFAULT '' COMMENT '状态名称',
   sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
   create_time int(11) NOT NULL DEFAULT 0,
@@ -2378,7 +1830,7 @@ CREATE TABLE promotion_presale (
   presale_deposit decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '预售定金',
   presale_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '抵扣金额',
   sku_id int(11) NOT NULL DEFAULT 0,
-  is_deposit_back tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否退定金是0 否1',
+  is_deposit_back tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否退定金是0 否1',
   deposit_agreement text DEFAULT NULL COMMENT '定金协议',
   remark text DEFAULT NULL COMMENT '活动规则说明',
   PRIMARY KEY (presale_id)
@@ -2388,9 +1840,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品预售';
 
---
--- `promotion_pintuan_order`
---
+
 CREATE TABLE promotion_pintuan_order (
   id int(11) NOT NULL AUTO_INCREMENT,
   pintuan_id int(11) NOT NULL DEFAULT 0 COMMENT '拼团id',
@@ -2404,6 +1854,7 @@ CREATE TABLE promotion_pintuan_order (
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '订单会员id',
   member_img varchar(255) NOT NULL DEFAULT '' COMMENT '会员头像图',
   nickname varchar(255) NOT NULL DEFAULT '' COMMENT '会员昵称',
+  pintuan_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团人数(活动规格)',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -2411,44 +1862,27 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团订单';
 
---
--- `IDX_ns_promotion_pintuan_order_head_id` on table `promotion_pintuan_order`
---
-ALTER TABLE promotion_pintuan_order
-ADD INDEX IDX_ns_promotion_pintuan_order_head_id (head_id);
 
---
--- `IDX_ns_promotion_pintuan_order_member_id` on table `promotion_pintuan_order`
---
-ALTER TABLE promotion_pintuan_order
-ADD INDEX IDX_ns_promotion_pintuan_order_member_id (member_id);
+ALTER TABLE promotion_pintuan_order ADD INDEX IDX_ns_promotion_pintuan_order_head_id (head_id);
 
---
--- `IDX_ns_promotion_pintuan_order_order_id` on table `promotion_pintuan_order`
---
-ALTER TABLE promotion_pintuan_order
-ADD INDEX IDX_ns_promotion_pintuan_order_order_id (order_id);
 
---
--- `IDX_ns_promotion_pintuan_order_pintuan_id` on table `promotion_pintuan_order`
---
-ALTER TABLE promotion_pintuan_order
-ADD INDEX IDX_ns_promotion_pintuan_order_pintuan_id (pintuan_id);
+ALTER TABLE promotion_pintuan_order ADD INDEX IDX_ns_promotion_pintuan_order_member_id (member_id);
 
---
--- `IDX_ns_promotion_pintuan_order_site_id` on table `promotion_pintuan_order`
---
-ALTER TABLE promotion_pintuan_order
-ADD INDEX IDX_ns_promotion_pintuan_order_site_id (site_id);
 
---
--- `promotion_pintuan_group`
---
+ALTER TABLE promotion_pintuan_order ADD INDEX IDX_ns_promotion_pintuan_order_order_id (order_id);
+
+
+ALTER TABLE promotion_pintuan_order ADD INDEX IDX_ns_promotion_pintuan_order_pintuan_id (pintuan_id);
+
+
+ALTER TABLE promotion_pintuan_order ADD INDEX IDX_ns_promotion_pintuan_order_site_id (site_id);
+
+
 CREATE TABLE promotion_pintuan_group (
   group_id int(11) NOT NULL AUTO_INCREMENT COMMENT '拼团分组id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  is_virtual_goods tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否虚拟商品',
+  is_virtual_goods tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟商品',
   pintuan_id int(11) NOT NULL DEFAULT 0 COMMENT '拼团活动id',
   head_id int(11) NOT NULL DEFAULT 0 COMMENT '团长id',
   pintuan_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团数量',
@@ -2456,9 +1890,9 @@ CREATE TABLE promotion_pintuan_group (
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '拼团结束时间',
   status int(11) NOT NULL DEFAULT 0 COMMENT '当前状态 0未支付 1拼团失败 2.组团中3.拼团成功',
-  is_virtual_buy tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
-  is_single_buy tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
-  is_promotion tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
+  is_virtual_buy tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
+  is_single_buy tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
+  is_promotion tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
   buy_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团限制购买',
   head_member_img varchar(255) NOT NULL DEFAULT '' COMMENT '组长会员头像',
   head_nickname varchar(255) NOT NULL DEFAULT '' COMMENT '组长会员昵称',
@@ -2469,45 +1903,25 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团组';
 
---
--- `IDX_ns_promotion_pintuan_group_end_time` on table `promotion_pintuan_group`
---
-ALTER TABLE promotion_pintuan_group
-ADD INDEX IDX_ns_promotion_pintuan_group_end_time (end_time);
 
---
--- `IDX_ns_promotion_pintuan_group_goods_id` on table `promotion_pintuan_group`
---
-ALTER TABLE promotion_pintuan_group
-ADD INDEX IDX_ns_promotion_pintuan_group_goods_id (goods_id);
+ALTER TABLE promotion_pintuan_group ADD INDEX IDX_ns_promotion_pintuan_group_end_time (end_time);
 
---
--- `IDX_ns_promotion_pintuan_group_head_id` on table `promotion_pintuan_group`
---
-ALTER TABLE promotion_pintuan_group
-ADD INDEX IDX_ns_promotion_pintuan_group_head_id (head_id);
 
---
--- `IDX_ns_promotion_pintuan_group_pintuan_id` on table `promotion_pintuan_group`
---
-ALTER TABLE promotion_pintuan_group
-ADD INDEX IDX_ns_promotion_pintuan_group_pintuan_id (pintuan_id);
+ALTER TABLE promotion_pintuan_group ADD INDEX IDX_ns_promotion_pintuan_group_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_pintuan_group_site_id` on table `promotion_pintuan_group`
---
-ALTER TABLE promotion_pintuan_group
-ADD INDEX IDX_ns_promotion_pintuan_group_site_id (site_id);
 
---
--- `IDX_ns_promotion_pintuan_group_status` on table `promotion_pintuan_group`
---
-ALTER TABLE promotion_pintuan_group
-ADD INDEX IDX_ns_promotion_pintuan_group_status (status);
+ALTER TABLE promotion_pintuan_group ADD INDEX IDX_ns_promotion_pintuan_group_head_id (head_id);
 
---
--- `promotion_pintuan_goods`
---
+
+ALTER TABLE promotion_pintuan_group ADD INDEX IDX_ns_promotion_pintuan_group_pintuan_id (pintuan_id);
+
+
+ALTER TABLE promotion_pintuan_group ADD INDEX IDX_ns_promotion_pintuan_group_site_id (site_id);
+
+
+ALTER TABLE promotion_pintuan_group ADD INDEX IDX_ns_promotion_pintuan_group_status (status);
+
+
 CREATE TABLE promotion_pintuan_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   pintuan_id int(11) NOT NULL DEFAULT 0 COMMENT '拼团id',
@@ -2516,6 +1930,8 @@ CREATE TABLE promotion_pintuan_goods (
   pintuan_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '拼团价',
   promotion_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '团长优惠价',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  pintuan_price_2 decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '阶梯二拼团价',
+  pintuan_price_3 decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '阶梯三拼团价',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -2523,40 +1939,26 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团商品表';
 
---
--- `IDX_ns_promotion_pintuan_goods_goods_id` on table `promotion_pintuan_goods`
---
-ALTER TABLE promotion_pintuan_goods
-ADD INDEX IDX_ns_promotion_pintuan_goods_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_pintuan_goods_pintuan_id` on table `promotion_pintuan_goods`
---
-ALTER TABLE promotion_pintuan_goods
-ADD INDEX IDX_ns_promotion_pintuan_goods_pintuan_id (pintuan_id);
+ALTER TABLE promotion_pintuan_goods ADD INDEX IDX_ns_promotion_pintuan_goods_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_pintuan_goods_site_id` on table `promotion_pintuan_goods`
---
-ALTER TABLE promotion_pintuan_goods
-ADD INDEX IDX_ns_promotion_pintuan_goods_site_id (site_id);
 
---
--- `IDX_ns_promotion_pintuan_goods_sku_id` on table `promotion_pintuan_goods`
---
-ALTER TABLE promotion_pintuan_goods
-ADD INDEX IDX_ns_promotion_pintuan_goods_sku_id (sku_id);
+ALTER TABLE promotion_pintuan_goods ADD INDEX IDX_ns_promotion_pintuan_goods_pintuan_id (pintuan_id);
 
---
--- `promotion_pintuan`
---
+
+ALTER TABLE promotion_pintuan_goods ADD INDEX IDX_ns_promotion_pintuan_goods_site_id (site_id);
+
+
+ALTER TABLE promotion_pintuan_goods ADD INDEX IDX_ns_promotion_pintuan_goods_sku_id (sku_id);
+
+
 CREATE TABLE promotion_pintuan (
-  pintuan_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '拼团id',
+  pintuan_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '拼团id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   site_name varchar(50) NOT NULL DEFAULT '' COMMENT '店铺名称',
   pintuan_name varchar(30) NOT NULL DEFAULT '' COMMENT '活动名称',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  is_virtual_goods tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
+  is_virtual_goods tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
   pintuan_num int(11) NOT NULL DEFAULT 0 COMMENT '参团人数',
   pintuan_time int(11) NOT NULL DEFAULT 1 COMMENT '拼团有效期',
   remark text DEFAULT NULL COMMENT '备注',
@@ -2567,13 +1969,16 @@ CREATE TABLE promotion_pintuan (
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
   buy_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团限制购买',
   pintuan_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '拼团价',
-  is_single_buy tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
-  is_virtual_buy tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
-  is_promotion tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0正常 1活动进行中  2活动已结束  3失效  4删除）',
+  is_single_buy tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
+  is_virtual_buy tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
+  is_promotion tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0正常 1活动进行中  2活动已结束  3失效  4删除）',
   group_num int(11) NOT NULL DEFAULT 0 COMMENT '开团组数',
   success_group_num int(11) NOT NULL DEFAULT 0 COMMENT '成团组数',
   order_num int(11) NOT NULL DEFAULT 0 COMMENT '购买人数',
+  pintuan_type varchar(50) NOT NULL DEFAULT 'ordinary' COMMENT '拼团类型 ordinary 普通团 ladder 阶梯团',
+  pintuan_num_2 int(11) NOT NULL DEFAULT 0 COMMENT '阶梯二参团人数',
+  pintuan_num_3 int(11) NOT NULL DEFAULT 0 COMMENT '阶梯三参团人数',
   PRIMARY KEY (pintuan_id)
 )
 ENGINE = INNODB,
@@ -2581,45 +1986,25 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团活动表';
 
---
--- `IDX_ns_promotion_pintuan_end_time` on table `promotion_pintuan`
---
-ALTER TABLE promotion_pintuan
-ADD INDEX IDX_ns_promotion_pintuan_end_time (end_time);
 
---
--- `IDX_ns_promotion_pintuan_goods_id` on table `promotion_pintuan`
---
-ALTER TABLE promotion_pintuan
-ADD INDEX IDX_ns_promotion_pintuan_goods_id (goods_id);
+ALTER TABLE promotion_pintuan ADD INDEX IDX_ns_promotion_pintuan_end_time (end_time);
 
---
--- `IDX_ns_promotion_pintuan_is_recommend` on table `promotion_pintuan`
---
-ALTER TABLE promotion_pintuan
-ADD INDEX IDX_ns_promotion_pintuan_is_recommend (is_recommend);
 
---
--- `IDX_ns_promotion_pintuan_site_id` on table `promotion_pintuan`
---
-ALTER TABLE promotion_pintuan
-ADD INDEX IDX_ns_promotion_pintuan_site_id (site_id);
+ALTER TABLE promotion_pintuan ADD INDEX IDX_ns_promotion_pintuan_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_pintuan_start_time` on table `promotion_pintuan`
---
-ALTER TABLE promotion_pintuan
-ADD INDEX IDX_ns_promotion_pintuan_start_time (start_time);
 
---
--- `IDX_ns_promotion_pintuan_status` on table `promotion_pintuan`
---
-ALTER TABLE promotion_pintuan
-ADD INDEX IDX_ns_promotion_pintuan_status (status);
+ALTER TABLE promotion_pintuan ADD INDEX IDX_ns_promotion_pintuan_is_recommend (is_recommend);
 
---
--- `promotion_pinfan_order`
---
+
+ALTER TABLE promotion_pintuan ADD INDEX IDX_ns_promotion_pintuan_site_id (site_id);
+
+
+ALTER TABLE promotion_pintuan ADD INDEX IDX_ns_promotion_pintuan_start_time (start_time);
+
+
+ALTER TABLE promotion_pintuan ADD INDEX IDX_ns_promotion_pintuan_status (status);
+
+
 CREATE TABLE promotion_pinfan_order (
   id int(11) NOT NULL AUTO_INCREMENT,
   pintuan_id int(11) NOT NULL DEFAULT 0 COMMENT '拼团id',
@@ -2640,44 +2025,27 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团订单';
 
---
--- `IDX_promotion_pintuan_order_head_id` on table `promotion_pinfan_order`
---
-ALTER TABLE promotion_pinfan_order
-ADD INDEX IDX_promotion_pintuan_order_head_id (head_id);
 
---
--- `IDX_promotion_pintuan_order_member_id` on table `promotion_pinfan_order`
---
-ALTER TABLE promotion_pinfan_order
-ADD INDEX IDX_promotion_pintuan_order_member_id (member_id);
+ALTER TABLE promotion_pinfan_order ADD INDEX IDX_promotion_pintuan_order_head_id (head_id);
 
---
--- `IDX_promotion_pintuan_order_order_id` on table `promotion_pinfan_order`
---
-ALTER TABLE promotion_pinfan_order
-ADD INDEX IDX_promotion_pintuan_order_order_id (order_id);
 
---
--- `IDX_promotion_pintuan_order_pintuan_id` on table `promotion_pinfan_order`
---
-ALTER TABLE promotion_pinfan_order
-ADD INDEX IDX_promotion_pintuan_order_pintuan_id (pintuan_id);
+ALTER TABLE promotion_pinfan_order ADD INDEX IDX_promotion_pintuan_order_member_id (member_id);
 
---
--- `IDX_promotion_pintuan_order_site_id` on table `promotion_pinfan_order`
---
-ALTER TABLE promotion_pinfan_order
-ADD INDEX IDX_promotion_pintuan_order_site_id (site_id);
 
---
--- `promotion_pinfan_group`
---
+ALTER TABLE promotion_pinfan_order ADD INDEX IDX_promotion_pintuan_order_order_id (order_id);
+
+
+ALTER TABLE promotion_pinfan_order ADD INDEX IDX_promotion_pintuan_order_pintuan_id (pintuan_id);
+
+
+ALTER TABLE promotion_pinfan_order ADD INDEX IDX_promotion_pintuan_order_site_id (site_id);
+
+
 CREATE TABLE promotion_pinfan_group (
   group_id int(11) NOT NULL AUTO_INCREMENT COMMENT '拼团分组id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  is_virtual_goods tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否虚拟商品',
+  is_virtual_goods tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟商品',
   pintuan_id int(11) NOT NULL DEFAULT 0 COMMENT '拼团活动id',
   head_id int(11) NOT NULL DEFAULT 0 COMMENT '团长id',
   pintuan_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团数量',
@@ -2685,9 +2053,9 @@ CREATE TABLE promotion_pinfan_group (
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '拼团结束时间',
   status int(11) NOT NULL DEFAULT 0 COMMENT '当前状态 0未支付 1拼团失败 2.组团中3.拼团成功',
-  is_virtual_buy tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
-  is_single_buy tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
-  is_promotion tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
+  is_virtual_buy tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
+  is_single_buy tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
+  is_promotion tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
   buy_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团限制购买',
   head_member_img varchar(255) NOT NULL DEFAULT '' COMMENT '组长会员头像',
   head_nickname varchar(255) NOT NULL DEFAULT '' COMMENT '组长会员昵称',
@@ -2698,45 +2066,25 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团返现组';
 
---
--- `IDX_promotion_pintuan_group_end_time` on table `promotion_pinfan_group`
---
-ALTER TABLE promotion_pinfan_group
-ADD INDEX IDX_promotion_pintuan_group_end_time (end_time);
 
---
--- `IDX_promotion_pintuan_group_goods_id` on table `promotion_pinfan_group`
---
-ALTER TABLE promotion_pinfan_group
-ADD INDEX IDX_promotion_pintuan_group_goods_id (goods_id);
+ALTER TABLE promotion_pinfan_group ADD INDEX IDX_promotion_pintuan_group_end_time (end_time);
 
---
--- `IDX_promotion_pintuan_group_head_id` on table `promotion_pinfan_group`
---
-ALTER TABLE promotion_pinfan_group
-ADD INDEX IDX_promotion_pintuan_group_head_id (head_id);
 
---
--- `IDX_promotion_pintuan_group_pintuan_id` on table `promotion_pinfan_group`
---
-ALTER TABLE promotion_pinfan_group
-ADD INDEX IDX_promotion_pintuan_group_pintuan_id (pintuan_id);
+ALTER TABLE promotion_pinfan_group ADD INDEX IDX_promotion_pintuan_group_goods_id (goods_id);
 
---
--- `IDX_promotion_pintuan_group_site_id` on table `promotion_pinfan_group`
---
-ALTER TABLE promotion_pinfan_group
-ADD INDEX IDX_promotion_pintuan_group_site_id (site_id);
 
---
--- `IDX_promotion_pintuan_group_status` on table `promotion_pinfan_group`
---
-ALTER TABLE promotion_pinfan_group
-ADD INDEX IDX_promotion_pintuan_group_status (status);
+ALTER TABLE promotion_pinfan_group ADD INDEX IDX_promotion_pintuan_group_head_id (head_id);
 
---
--- `promotion_pinfan_goods`
---
+
+ALTER TABLE promotion_pinfan_group ADD INDEX IDX_promotion_pintuan_group_pintuan_id (pintuan_id);
+
+
+ALTER TABLE promotion_pinfan_group ADD INDEX IDX_promotion_pintuan_group_site_id (site_id);
+
+
+ALTER TABLE promotion_pinfan_group ADD INDEX IDX_promotion_pintuan_group_status (status);
+
+
 CREATE TABLE promotion_pinfan_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   pintuan_id int(11) NOT NULL DEFAULT 0 COMMENT '拼团id',
@@ -2752,43 +2100,29 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团返现商品表';
 
---
--- `IDX_promotion_pintuan_goods_goods_id` on table `promotion_pinfan_goods`
---
-ALTER TABLE promotion_pinfan_goods
-ADD INDEX IDX_promotion_pintuan_goods_goods_id (goods_id);
 
---
--- `IDX_promotion_pintuan_goods_pintuan_id` on table `promotion_pinfan_goods`
---
-ALTER TABLE promotion_pinfan_goods
-ADD INDEX IDX_promotion_pintuan_goods_pintuan_id (pintuan_id);
+ALTER TABLE promotion_pinfan_goods ADD INDEX IDX_promotion_pintuan_goods_goods_id (goods_id);
 
---
--- `IDX_promotion_pintuan_goods_site_id` on table `promotion_pinfan_goods`
---
-ALTER TABLE promotion_pinfan_goods
-ADD INDEX IDX_promotion_pintuan_goods_site_id (site_id);
 
---
--- `IDX_promotion_pintuan_goods_sku_id` on table `promotion_pinfan_goods`
---
-ALTER TABLE promotion_pinfan_goods
-ADD INDEX IDX_promotion_pintuan_goods_sku_id (sku_id);
+ALTER TABLE promotion_pinfan_goods ADD INDEX IDX_promotion_pintuan_goods_pintuan_id (pintuan_id);
 
---
--- `promotion_pinfan`
---
+
+ALTER TABLE promotion_pinfan_goods ADD INDEX IDX_promotion_pintuan_goods_site_id (site_id);
+
+
+ALTER TABLE promotion_pinfan_goods ADD INDEX IDX_promotion_pintuan_goods_sku_id (sku_id);
+
+
 CREATE TABLE promotion_pinfan (
-  pintuan_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '拼团id',
+  pintuan_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '拼团id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   site_name varchar(50) NOT NULL DEFAULT '' COMMENT '店铺名称',
   pintuan_name varchar(30) NOT NULL DEFAULT '' COMMENT '活动名称',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  is_virtual_goods tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
+  is_virtual_goods tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
   pintuan_num int(11) NOT NULL DEFAULT 0 COMMENT '参团人数',
-  chengtuan_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '实际成功人数',
-  reward_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '拼团成功但是未发货奖励1消费余额2现金红包3优惠券4.积分',
+  chengtuan_num int(11) NOT NULL DEFAULT 0 COMMENT '实际成功人数',
+  reward_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '拼团成功但是未发货奖励1消费余额2现金红包3优惠券4.积分',
   reward_type_num varchar(1000) NOT NULL DEFAULT '' COMMENT '奖励类型数量：余额积分数量，优惠券id组',
   pintuan_time int(11) NOT NULL DEFAULT 1 COMMENT '拼团有效期',
   remark text DEFAULT NULL COMMENT '备注',
@@ -2799,10 +2133,10 @@ CREATE TABLE promotion_pinfan (
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
   buy_num int(11) NOT NULL DEFAULT 0 COMMENT '拼团限制购买',
   pintuan_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '拼团价',
-  is_single_buy tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
-  is_virtual_buy tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
-  is_promotion tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0正常 1活动进行中  2活动已结束  3失效  4删除）',
+  is_single_buy tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否单独购买',
+  is_virtual_buy tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟成团',
+  is_promotion tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否团长优惠',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0正常 1活动进行中  2活动已结束  3失效  4删除）',
   group_num int(11) NOT NULL DEFAULT 0 COMMENT '开团组数',
   success_group_num int(11) NOT NULL DEFAULT 0 COMMENT '成团组数',
   order_num int(11) NOT NULL DEFAULT 0 COMMENT '购买人数',
@@ -2813,45 +2147,25 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '拼团返现活动表';
 
---
--- `IDX_promotion_pintuan_end_time` on table `promotion_pinfan`
---
-ALTER TABLE promotion_pinfan
-ADD INDEX IDX_promotion_pintuan_end_time (end_time);
 
---
--- `IDX_promotion_pintuan_goods_id` on table `promotion_pinfan`
---
-ALTER TABLE promotion_pinfan
-ADD INDEX IDX_promotion_pintuan_goods_id (goods_id);
+ALTER TABLE promotion_pinfan ADD INDEX IDX_promotion_pintuan_end_time (end_time);
 
---
--- `IDX_promotion_pintuan_is_recommend` on table `promotion_pinfan`
---
-ALTER TABLE promotion_pinfan
-ADD INDEX IDX_promotion_pintuan_is_recommend (is_recommend);
 
---
--- `IDX_promotion_pintuan_site_id` on table `promotion_pinfan`
---
-ALTER TABLE promotion_pinfan
-ADD INDEX IDX_promotion_pintuan_site_id (site_id);
+ALTER TABLE promotion_pinfan ADD INDEX IDX_promotion_pintuan_goods_id (goods_id);
 
---
--- `IDX_promotion_pintuan_start_time` on table `promotion_pinfan`
---
-ALTER TABLE promotion_pinfan
-ADD INDEX IDX_promotion_pintuan_start_time (start_time);
 
---
--- `IDX_promotion_pintuan_status` on table `promotion_pinfan`
---
-ALTER TABLE promotion_pinfan
-ADD INDEX IDX_promotion_pintuan_status (status);
+ALTER TABLE promotion_pinfan ADD INDEX IDX_promotion_pintuan_is_recommend (is_recommend);
 
---
--- `promotion_mansong_record`
---
+
+ALTER TABLE promotion_pinfan ADD INDEX IDX_promotion_pintuan_site_id (site_id);
+
+
+ALTER TABLE promotion_pinfan ADD INDEX IDX_promotion_pintuan_start_time (start_time);
+
+
+ALTER TABLE promotion_pinfan ADD INDEX IDX_promotion_pintuan_status (status);
+
+
 CREATE TABLE promotion_mansong_record (
   id int(11) NOT NULL AUTO_INCREMENT,
   manjian_id int(11) NOT NULL DEFAULT 0 COMMENT '满减送活动id',
@@ -2871,16 +2185,14 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '满送记录表';
 
---
--- `promotion_manjian_goods`
---
+
 CREATE TABLE promotion_manjian_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   manjian_id int(11) NOT NULL DEFAULT 0 COMMENT '满减活动id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
-  manjian_type tinyint(1) NOT NULL DEFAULT 1 COMMENT '1全部商品参与  2指定商品 3指定商品不参与 ',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0未开始1进行中2已结束-1已关闭）',
+  manjian_type tinyint(4) NOT NULL DEFAULT 1 COMMENT '1全部商品参与  2指定商品 3指定商品不参与 ',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0未开始1进行中2已结束-1已关闭）',
   rule_json varchar(2000) NOT NULL DEFAULT '' COMMENT '满减规则json',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
@@ -2891,45 +2203,28 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '满减商品表';
 
---
--- `IDX_ns_promotion_manjian_goods_end_time` on table `promotion_manjian_goods`
---
-ALTER TABLE promotion_manjian_goods
-ADD INDEX IDX_ns_promotion_manjian_goods_end_time (end_time);
 
---
--- `IDX_ns_promotion_manjian_goods_goods_id` on table `promotion_manjian_goods`
---
-ALTER TABLE promotion_manjian_goods
-ADD INDEX IDX_ns_promotion_manjian_goods_goods_id (goods_id);
+ALTER TABLE promotion_manjian_goods ADD INDEX IDX_ns_promotion_manjian_goods_end_time (end_time);
 
---
--- `IDX_ns_promotion_manjian_goods_manjian_id` on table `promotion_manjian_goods`
---
-ALTER TABLE promotion_manjian_goods
-ADD INDEX IDX_ns_promotion_manjian_goods_manjian_id (manjian_id);
 
---
--- `IDX_ns_promotion_manjian_goods_manjian_type` on table `promotion_manjian_goods`
---
-ALTER TABLE promotion_manjian_goods
-ADD INDEX IDX_ns_promotion_manjian_goods_manjian_type (manjian_type);
+ALTER TABLE promotion_manjian_goods ADD INDEX IDX_ns_promotion_manjian_goods_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_manjian_goods_start_time` on table `promotion_manjian_goods`
---
-ALTER TABLE promotion_manjian_goods
-ADD INDEX IDX_ns_promotion_manjian_goods_start_time (start_time);
 
---
--- `promotion_manjian`
---
+ALTER TABLE promotion_manjian_goods ADD INDEX IDX_ns_promotion_manjian_goods_manjian_id (manjian_id);
+
+
+ALTER TABLE promotion_manjian_goods ADD INDEX IDX_ns_promotion_manjian_goods_manjian_type (manjian_type);
+
+
+ALTER TABLE promotion_manjian_goods ADD INDEX IDX_ns_promotion_manjian_goods_start_time (start_time);
+
+
 CREATE TABLE promotion_manjian (
   manjian_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   manjian_name varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
-  manjian_type tinyint(1) NOT NULL DEFAULT 1 COMMENT '1全部商品参与  2指定商品 3指定商品不参与 ',
-  type int(1) NOT NULL DEFAULT 0 COMMENT '条件类型 0:满N元  1:满N件',
+  manjian_type tinyint(4) NOT NULL DEFAULT 1 COMMENT '1全部商品参与  2指定商品 3指定商品不参与 ',
+  type int(11) NOT NULL DEFAULT 0 COMMENT '条件类型 0:满N元  1:满N件',
   goods_ids text DEFAULT NULL COMMENT '商品id集',
   status int(11) NOT NULL DEFAULT 0 COMMENT '状态（0未开始1进行中2已结束-1已关闭）',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
@@ -2945,45 +2240,25 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '满减活动';
 
---
--- `IDX_ns_promotion_manjian_end_time` on table `promotion_manjian`
---
-ALTER TABLE promotion_manjian
-ADD INDEX IDX_ns_promotion_manjian_end_time (end_time);
 
---
--- `IDX_ns_promotion_manjian_manjian_type` on table `promotion_manjian`
---
-ALTER TABLE promotion_manjian
-ADD INDEX IDX_ns_promotion_manjian_manjian_type (manjian_type);
+ALTER TABLE promotion_manjian ADD INDEX IDX_ns_promotion_manjian_end_time (end_time);
 
---
--- `IDX_ns_promotion_manjian_site_id` on table `promotion_manjian`
---
-ALTER TABLE promotion_manjian
-ADD INDEX IDX_ns_promotion_manjian_site_id (site_id);
 
---
--- `IDX_ns_promotion_manjian_start_time` on table `promotion_manjian`
---
-ALTER TABLE promotion_manjian
-ADD INDEX IDX_ns_promotion_manjian_start_time (start_time);
+ALTER TABLE promotion_manjian ADD INDEX IDX_ns_promotion_manjian_manjian_type (manjian_type);
 
---
--- `IDX_ns_promotion_manjian_status` on table `promotion_manjian`
---
-ALTER TABLE promotion_manjian
-ADD INDEX IDX_ns_promotion_manjian_status (status);
 
---
--- `IDX_ns_promotion_manjian_type` on table `promotion_manjian`
---
-ALTER TABLE promotion_manjian
-ADD INDEX IDX_ns_promotion_manjian_type (type);
+ALTER TABLE promotion_manjian ADD INDEX IDX_ns_promotion_manjian_site_id (site_id);
 
---
--- `promotion_jielong_order`
---
+
+ALTER TABLE promotion_manjian ADD INDEX IDX_ns_promotion_manjian_start_time (start_time);
+
+
+ALTER TABLE promotion_manjian ADD INDEX IDX_ns_promotion_manjian_status (status);
+
+
+ALTER TABLE promotion_manjian ADD INDEX IDX_ns_promotion_manjian_type (type);
+
+
 CREATE TABLE promotion_jielong_order (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -3019,7 +2294,7 @@ CREATE TABLE promotion_jielong_order (
   pay_time int(11) NOT NULL DEFAULT 0 COMMENT '支付时间',
   pay_type varchar(55) NOT NULL DEFAULT '' COMMENT '支付方式',
   pay_type_name varchar(50) NOT NULL DEFAULT '' COMMENT '支付类型名称',
-  order_status tinyint(3) NOT NULL DEFAULT 0 COMMENT '订单状态',
+  order_status tinyint(4) NOT NULL DEFAULT 0 COMMENT '订单状态',
   order_status_name varchar(255) NOT NULL DEFAULT '' COMMENT '状态名称',
   order_status_action varchar(1000) NOT NULL DEFAULT '' COMMENT '订单操作',
   delivery_type varchar(50) NOT NULL DEFAULT '0' COMMENT '配送方式',
@@ -3034,9 +2309,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '接龙活动订单表';
 
---
--- `promotion_jielong_goods`
---
+
 CREATE TABLE promotion_jielong_goods (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '接龙活动商品表ID',
   jielong_id int(11) NOT NULL DEFAULT 0 COMMENT '接龙活动表ID',
@@ -3050,9 +2323,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '接龙活动商品表';
 
---
--- `promotion_jielong_cart`
---
+
 CREATE TABLE promotion_jielong_cart (
   cart_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -3067,15 +2338,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = ' 购物车';
 
---
--- `IDX_ns_goods_cart_member_id` on table `promotion_jielong_cart`
---
-ALTER TABLE promotion_jielong_cart
-ADD INDEX IDX_ns_goods_cart_member_id (member_id);
 
---
--- `promotion_jielong`
---
+ALTER TABLE promotion_jielong_cart ADD INDEX IDX_ns_goods_cart_member_id (member_id);
+
+
 CREATE TABLE promotion_jielong (
   jielong_id int(11) NOT NULL AUTO_INCREMENT COMMENT '社群接龙活动ID',
   jielong_name varchar(255) NOT NULL DEFAULT '' COMMENT '接龙活动名称',
@@ -3083,9 +2349,9 @@ CREATE TABLE promotion_jielong (
   goods_ids text NOT NULL COMMENT '商品ID集'',''英文逗号分隔',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中  2已结束 3 手动关闭',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中  2已结束 3 手动关闭',
   status_name varchar(20) NOT NULL DEFAULT '' COMMENT '状态名称',
-  is_delete tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除0未删除1已删除',
+  is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否删除0未删除1已删除',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   `desc` varchar(255) DEFAULT NULL COMMENT '活动描述',
@@ -3096,9 +2362,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '接龙活动表';
 
---
--- `promotion_hongbao_group`
---
+
 CREATE TABLE promotion_hongbao_group (
   group_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   hongbao_id int(11) NOT NULL DEFAULT 0 COMMENT '活动Id',
@@ -3119,9 +2383,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '好友瓜分券参与活动组';
 
---
--- `promotion_hongbao`
---
+
 CREATE TABLE promotion_hongbao (
   hongbao_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点Id',
@@ -3150,9 +2412,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '红包裂变活动表';
 
---
--- `promotion_groupbuy`
---
+
 CREATE TABLE promotion_groupbuy (
   groupbuy_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺ID',
@@ -3160,7 +2420,7 @@ CREATE TABLE promotion_groupbuy (
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品ID',
   goods_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
   goods_image varchar(1000) NOT NULL DEFAULT '' COMMENT '商品图片',
-  is_virtual_goods tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
+  is_virtual_goods tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是虚拟商品（0否 1是）',
   goods_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品原价',
   groupbuy_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '团购价',
   buy_num int(11) NOT NULL DEFAULT 0 COMMENT '最低购买量',
@@ -3169,7 +2429,7 @@ CREATE TABLE promotion_groupbuy (
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
   sell_num int(11) NOT NULL DEFAULT 0 COMMENT '已出售数量',
-  status tinyint(3) NOT NULL DEFAULT 1 COMMENT '状态（1未开始  2进行中  3已结束）',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态（1未开始  2进行中  3已结束）',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品sku',
   PRIMARY KEY (groupbuy_id)
 )
@@ -3178,39 +2438,22 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '团购';
 
---
--- `IDX_ns_promotion_groupbuy_end_time` on table `promotion_groupbuy`
---
-ALTER TABLE promotion_groupbuy
-ADD INDEX IDX_ns_promotion_groupbuy_end_time (end_time);
 
---
--- `IDX_ns_promotion_groupbuy_goods_id` on table `promotion_groupbuy`
---
-ALTER TABLE promotion_groupbuy
-ADD INDEX IDX_ns_promotion_groupbuy_goods_id (goods_id);
+ALTER TABLE promotion_groupbuy ADD INDEX IDX_ns_promotion_groupbuy_end_time (end_time);
 
---
--- `IDX_ns_promotion_groupbuy_site_id` on table `promotion_groupbuy`
---
-ALTER TABLE promotion_groupbuy
-ADD INDEX IDX_ns_promotion_groupbuy_site_id (site_id);
 
---
--- `IDX_ns_promotion_groupbuy_start_time` on table `promotion_groupbuy`
---
-ALTER TABLE promotion_groupbuy
-ADD INDEX IDX_ns_promotion_groupbuy_start_time (start_time);
+ALTER TABLE promotion_groupbuy ADD INDEX IDX_ns_promotion_groupbuy_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_groupbuy_status` on table `promotion_groupbuy`
---
-ALTER TABLE promotion_groupbuy
-ADD INDEX IDX_ns_promotion_groupbuy_status (status);
 
---
--- `promotion_games_draw_record`
---
+ALTER TABLE promotion_groupbuy ADD INDEX IDX_ns_promotion_groupbuy_site_id (site_id);
+
+
+ALTER TABLE promotion_groupbuy ADD INDEX IDX_ns_promotion_groupbuy_start_time (start_time);
+
+
+ALTER TABLE promotion_groupbuy ADD INDEX IDX_ns_promotion_groupbuy_status (status);
+
+
 CREATE TABLE promotion_games_draw_record (
   record_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -3219,13 +2462,13 @@ CREATE TABLE promotion_games_draw_record (
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   member_nick_name varchar(255) NOT NULL DEFAULT '' COMMENT '会员昵称',
   points int(11) NOT NULL DEFAULT 0 COMMENT '参与消耗积分',
-  is_winning tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否中奖（0未中  1中奖）',
+  is_winning tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否中奖（0未中  1中奖）',
   award_id int(11) NOT NULL DEFAULT 0 COMMENT '奖品id',
   award_name varchar(255) NOT NULL DEFAULT '' COMMENT '奖品名称',
-  award_type tinyint(3) NOT NULL DEFAULT 0 COMMENT '奖品类型（1积分  2余额（不可提现）  3优惠券  4赠品）',
+  award_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '奖品类型（1积分  2余额（不可提现）  3优惠券  4赠品）',
   relate_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id（根据奖品类型）',
   relate_name varchar(255) NOT NULL DEFAULT '' COMMENT '关联商品名称（优惠券或者赠品名称）',
-  is_receive tinyint(3) NOT NULL DEFAULT 0 COMMENT '是否领取（0未领取 1领取）奖品为优惠券 赠品是使用',
+  is_receive tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否领取（0未领取 1领取）奖品为优惠券 赠品是使用',
   point int(11) NOT NULL DEFAULT 0 COMMENT '奖励积分数',
   balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '奖励余额',
   remark varchar(255) NOT NULL DEFAULT '' COMMENT '说明',
@@ -3237,16 +2480,14 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '抽奖记录';
 
---
--- `promotion_games_award`
---
+
 CREATE TABLE promotion_games_award (
   award_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   game_id int(11) NOT NULL DEFAULT 0 COMMENT '游戏id',
   award_name varchar(255) NOT NULL DEFAULT '' COMMENT '奖品名称',
   award_img varchar(255) NOT NULL DEFAULT '' COMMENT '图片',
-  award_type tinyint(3) NOT NULL DEFAULT 0 COMMENT '奖品类型（1积分  2余额（不可提现）  3优惠券  4赠品）',
+  award_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '奖品类型（1积分  2余额（不可提现）  3优惠券  4赠品）',
   relate_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id（根据奖品类型）',
   relate_name varchar(255) NOT NULL DEFAULT '' COMMENT '关联商品名称（优惠券或者赠品名称）',
   point int(11) NOT NULL DEFAULT 0 COMMENT '积分数',
@@ -3263,11 +2504,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '游戏奖品';
 
---
--- `promotion_games`
---
+
 CREATE TABLE promotion_games (
-  game_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '游戏id',
+  game_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '游戏id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   game_name varchar(255) NOT NULL DEFAULT '' COMMENT '游戏活动名称',
   game_type varchar(30) NOT NULL DEFAULT '1' COMMENT '游戏类型（插件名称）',
@@ -3297,39 +2536,22 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '营销游戏（概率游戏）';
 
---
--- `IDX_ns_promotion_games_end_time` on table `promotion_games`
---
-ALTER TABLE promotion_games
-ADD INDEX IDX_ns_promotion_games_end_time (end_time);
 
---
--- `IDX_ns_promotion_games_game_type` on table `promotion_games`
---
-ALTER TABLE promotion_games
-ADD INDEX IDX_ns_promotion_games_game_type (game_type);
+ALTER TABLE promotion_games ADD INDEX IDX_ns_promotion_games_end_time (end_time);
 
---
--- `IDX_ns_promotion_games_site_id` on table `promotion_games`
---
-ALTER TABLE promotion_games
-ADD INDEX IDX_ns_promotion_games_site_id (site_id);
 
---
--- `IDX_ns_promotion_games_start_time` on table `promotion_games`
---
-ALTER TABLE promotion_games
-ADD INDEX IDX_ns_promotion_games_start_time (start_time);
+ALTER TABLE promotion_games ADD INDEX IDX_ns_promotion_games_game_type (game_type);
 
---
--- `IDX_ns_promotion_games_status` on table `promotion_games`
---
-ALTER TABLE promotion_games
-ADD INDEX IDX_ns_promotion_games_status (status);
 
---
--- `promotion_friends_coupon_group`
---
+ALTER TABLE promotion_games ADD INDEX IDX_ns_promotion_games_site_id (site_id);
+
+
+ALTER TABLE promotion_games ADD INDEX IDX_ns_promotion_games_start_time (start_time);
+
+
+ALTER TABLE promotion_games ADD INDEX IDX_ns_promotion_games_status (status);
+
+
 CREATE TABLE promotion_friends_coupon_group (
   group_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   promotion_id int(11) NOT NULL DEFAULT 0 COMMENT '活动Id',
@@ -3351,9 +2573,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '好友瓜分券参与活动组';
 
---
--- `promotion_friends_coupon`
---
+
 CREATE TABLE promotion_friends_coupon (
   coupon_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点Id',
@@ -3391,9 +2611,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '好友瓜分券活动表';
 
---
--- `promotion_freeshipping`
---
+
 CREATE TABLE promotion_freeshipping (
   freeshipping_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -3410,9 +2628,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '满额包邮';
 
---
--- `promotion_festival_draw_record`
---
+
 CREATE TABLE promotion_festival_draw_record (
   record_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -3428,9 +2644,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `promotion_festival_award`
---
+
 CREATE TABLE promotion_festival_award (
   award_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -3442,7 +2656,7 @@ CREATE TABLE promotion_festival_award (
   award_num int(11) NOT NULL DEFAULT 0 COMMENT '奖品数量',
   remaining_num int(11) NOT NULL DEFAULT 0 COMMENT '剩余数量',
   receive_num int(11) NOT NULL DEFAULT 0 COMMENT '已领取数量',
-  balance_type int(3) NOT NULL DEFAULT 0 COMMENT '0不可提现 1可提现',
+  balance_type int(11) NOT NULL DEFAULT 0 COMMENT '0不可提现 1可提现',
   balance_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '可提现',
   PRIMARY KEY (award_id)
 )
@@ -3450,9 +2664,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `promotion_festival`
---
+
 CREATE TABLE promotion_festival (
   festival_id int(11) NOT NULL AUTO_INCREMENT,
   activity_name varchar(255) NOT NULL DEFAULT '' COMMENT '活动名',
@@ -3469,18 +2681,16 @@ CREATE TABLE promotion_festival (
   remark varchar(1000) NOT NULL DEFAULT '' COMMENT '说明',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
-  join_time int(2) NOT NULL DEFAULT 0 COMMENT '0自定义节日 1传统节日',
-  join_type int(3) NOT NULL DEFAULT 0 COMMENT '1活动时间内 0活动开始前',
-  join_frequency int(3) NOT NULL DEFAULT 0 COMMENT '天数',
+  join_time int(11) NOT NULL DEFAULT 0 COMMENT '0自定义节日 1传统节日',
+  join_type int(11) NOT NULL DEFAULT 0 COMMENT '1活动时间内 0活动开始前',
+  join_frequency int(11) NOT NULL DEFAULT 0 COMMENT '天数',
   PRIMARY KEY (festival_id)
 )
 ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `promotion_exchange_order`
---
+
 CREATE TABLE promotion_exchange_order (
   order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   order_no varchar(255) NOT NULL DEFAULT '' COMMENT '订单编号',
@@ -3536,23 +2746,15 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '积分兑换订单';
 
---
--- `IDX_ns_promotion_exchange_order` on table `promotion_exchange_order`
---
-ALTER TABLE promotion_exchange_order
-ADD INDEX IDX_ns_promotion_exchange_order (member_id, order_status);
 
---
--- `IDX_ns_promotion_exchange_order_relate_order_id` on table `promotion_exchange_order`
---
-ALTER TABLE promotion_exchange_order
-ADD INDEX IDX_ns_promotion_exchange_order_relate_order_id (relate_order_id);
+ALTER TABLE promotion_exchange_order ADD INDEX IDX_ns_promotion_exchange_order (member_id, order_status);
 
---
--- `promotion_exchange_goods`
---
+
+ALTER TABLE promotion_exchange_order ADD INDEX IDX_ns_promotion_exchange_order_relate_order_id (relate_order_id);
+
+
 CREATE TABLE promotion_exchange_goods (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT ' 站点id',
   type int(11) NOT NULL DEFAULT 1 COMMENT '兑换形式',
   type_name varchar(255) NOT NULL DEFAULT '' COMMENT '兑换类型名称',
@@ -3577,35 +2779,21 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '积分兑换(主表)';
 
---
--- `IDX_ns_promotion_exchange_site_id` on table `promotion_exchange_goods`
---
-ALTER TABLE promotion_exchange_goods
-ADD INDEX IDX_ns_promotion_exchange_site_id (site_id);
 
---
--- `IDX_ns_promotion_exchange_state` on table `promotion_exchange_goods`
---
-ALTER TABLE promotion_exchange_goods
-ADD INDEX IDX_ns_promotion_exchange_state (state);
+ALTER TABLE promotion_exchange_goods ADD INDEX IDX_ns_promotion_exchange_site_id (site_id);
 
---
--- `IDX_ns_promotion_exchange_type` on table `promotion_exchange_goods`
---
-ALTER TABLE promotion_exchange_goods
-ADD INDEX IDX_ns_promotion_exchange_type (type);
 
---
--- `IDX_ns_promotion_exchange_type_id` on table `promotion_exchange_goods`
---
-ALTER TABLE promotion_exchange_goods
-ADD INDEX IDX_ns_promotion_exchange_type_id (type_id);
+ALTER TABLE promotion_exchange_goods ADD INDEX IDX_ns_promotion_exchange_state (state);
 
---
--- `promotion_exchange`
---
+
+ALTER TABLE promotion_exchange_goods ADD INDEX IDX_ns_promotion_exchange_type (type);
+
+
+ALTER TABLE promotion_exchange_goods ADD INDEX IDX_ns_promotion_exchange_type_id (type_id);
+
+
 CREATE TABLE promotion_exchange (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT ' 站点id',
   type int(11) NOT NULL DEFAULT 1 COMMENT '兑换形式',
   type_name varchar(255) NOT NULL DEFAULT '' COMMENT '兑换类型名称',
@@ -3613,7 +2801,7 @@ CREATE TABLE promotion_exchange (
   name varchar(255) NOT NULL DEFAULT '' COMMENT '兑换名称',
   image varchar(255) NOT NULL DEFAULT '' COMMENT '图片',
   stock int(11) NOT NULL DEFAULT 0 COMMENT '当前库存',
-  pay_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '支付类型（0积分  1积分加钱）',
+  pay_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '支付类型（0积分  1积分加钱）',
   point int(11) NOT NULL DEFAULT 0 COMMENT '积分数',
   market_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '市场价',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '兑换价',
@@ -3626,9 +2814,9 @@ CREATE TABLE promotion_exchange (
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
   exchange_goods_id int(11) NOT NULL DEFAULT 0,
   delivery_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '物流费用（礼品有效）',
-  delivery_type tinyint(1) NOT NULL DEFAULT 1 COMMENT '运费类型（ 0 固定运费  1运费模板  2按照商品）',
+  delivery_type tinyint(4) NOT NULL DEFAULT 1 COMMENT '运费类型（ 0 固定运费  1运费模板  2按照商品）',
   shipping_template int(11) NOT NULL DEFAULT 0 COMMENT '运费模板',
-  is_free_shipping tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否免邮（0不免邮  1免邮）',
+  is_free_shipping tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否免邮（0不免邮  1免邮）',
   rule text DEFAULT NULL COMMENT '商品兑换规则',
   PRIMARY KEY (id)
 )
@@ -3637,35 +2825,21 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '积分兑换';
 
---
--- `IDX_ns_promotion_exchange_site_id` on table `promotion_exchange`
---
-ALTER TABLE promotion_exchange
-ADD INDEX IDX_ns_promotion_exchange_site_id (site_id);
 
---
--- `IDX_ns_promotion_exchange_state` on table `promotion_exchange`
---
-ALTER TABLE promotion_exchange
-ADD INDEX IDX_ns_promotion_exchange_state (state);
+ALTER TABLE promotion_exchange ADD INDEX IDX_ns_promotion_exchange_site_id (site_id);
 
---
--- `IDX_ns_promotion_exchange_type` on table `promotion_exchange`
---
-ALTER TABLE promotion_exchange
-ADD INDEX IDX_ns_promotion_exchange_type (type);
 
---
--- `IDX_ns_promotion_exchange_type_id` on table `promotion_exchange`
---
-ALTER TABLE promotion_exchange
-ADD INDEX IDX_ns_promotion_exchange_type_id (type_id);
+ALTER TABLE promotion_exchange ADD INDEX IDX_ns_promotion_exchange_state (state);
 
---
--- `promotion_discount_goods`
---
+
+ALTER TABLE promotion_exchange ADD INDEX IDX_ns_promotion_exchange_type (type);
+
+
+ALTER TABLE promotion_exchange ADD INDEX IDX_ns_promotion_exchange_type_id (type_id);
+
+
 CREATE TABLE promotion_discount_goods (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   discount_id int(11) NOT NULL DEFAULT 0 COMMENT '对应活动Id',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
@@ -3682,45 +2856,28 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '限时折扣商品列表';
 
---
--- `IDX_ns_promotion_discount_goods_discount_id` on table `promotion_discount_goods`
---
-ALTER TABLE promotion_discount_goods
-ADD INDEX IDX_ns_promotion_discount_goods_discount_id (discount_id);
 
---
--- `IDX_ns_promotion_discount_goods_end_time` on table `promotion_discount_goods`
---
-ALTER TABLE promotion_discount_goods
-ADD INDEX IDX_ns_promotion_discount_goods_end_time (end_time);
+ALTER TABLE promotion_discount_goods ADD INDEX IDX_ns_promotion_discount_goods_discount_id (discount_id);
 
---
--- `IDX_ns_promotion_discount_goods_goods_id` on table `promotion_discount_goods`
---
-ALTER TABLE promotion_discount_goods
-ADD INDEX IDX_ns_promotion_discount_goods_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_discount_goods_sku_id` on table `promotion_discount_goods`
---
-ALTER TABLE promotion_discount_goods
-ADD INDEX IDX_ns_promotion_discount_goods_sku_id (sku_id);
+ALTER TABLE promotion_discount_goods ADD INDEX IDX_ns_promotion_discount_goods_end_time (end_time);
 
---
--- `IDX_ns_promotion_discount_goods_start_time` on table `promotion_discount_goods`
---
-ALTER TABLE promotion_discount_goods
-ADD INDEX IDX_ns_promotion_discount_goods_start_time (start_time);
 
---
--- `promotion_discount`
---
+ALTER TABLE promotion_discount_goods ADD INDEX IDX_ns_promotion_discount_goods_goods_id (goods_id);
+
+
+ALTER TABLE promotion_discount_goods ADD INDEX IDX_ns_promotion_discount_goods_sku_id (sku_id);
+
+
+ALTER TABLE promotion_discount_goods ADD INDEX IDX_ns_promotion_discount_goods_start_time (start_time);
+
+
 CREATE TABLE promotion_discount (
-  discount_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  discount_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 1 COMMENT '站点id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '站点名称',
   discount_name varchar(255) NOT NULL DEFAULT '' COMMENT '活动名称',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中 2已结束 -1已关闭（手动）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '活动状态 0未开始 1进行中 2已结束 -1已关闭（手动）',
   remark varchar(1000) NOT NULL DEFAULT '' COMMENT '备注',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
@@ -3735,27 +2892,16 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '限时折扣';
 
---
--- `IDX_ns_promotion_discount_end_time` on table `promotion_discount`
---
-ALTER TABLE promotion_discount
-ADD INDEX IDX_ns_promotion_discount_end_time (end_time);
 
---
--- `IDX_ns_promotion_discount_start_time` on table `promotion_discount`
---
-ALTER TABLE promotion_discount
-ADD INDEX IDX_ns_promotion_discount_start_time (start_time);
+ALTER TABLE promotion_discount ADD INDEX IDX_ns_promotion_discount_end_time (end_time);
 
---
--- `IDX_ns_promotion_discount_status` on table `promotion_discount`
---
-ALTER TABLE promotion_discount
-ADD INDEX IDX_ns_promotion_discount_status (status);
 
---
--- `promotion_coupon_type`
---
+ALTER TABLE promotion_discount ADD INDEX IDX_ns_promotion_discount_start_time (start_time);
+
+
+ALTER TABLE promotion_discount ADD INDEX IDX_ns_promotion_discount_status (status);
+
+
 CREATE TABLE promotion_coupon_type (
   coupon_type_id int(11) NOT NULL AUTO_INCREMENT COMMENT '优惠券类型Id',
   type varchar(32) NOT NULL DEFAULT '' COMMENT '优惠券类型 reward-满减 discount-折扣 random-随机',
@@ -3765,43 +2911,43 @@ CREATE TABLE promotion_coupon_type (
   image varchar(255) NOT NULL DEFAULT '' COMMENT '优惠券图片',
   count int(11) NOT NULL DEFAULT 0 COMMENT '发放数量',
   lead_count int(11) NOT NULL DEFAULT 0 COMMENT '已领取数量',
-  used_count int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '已使用数量',
-  goods_type tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '适用商品类型1-全部商品可用；2-指定商品可用；3-指定商品不可用',
+  used_count int(11) NOT NULL DEFAULT 0 COMMENT '已使用数量',
+  goods_type tinyint(4) UNSIGNED NOT NULL DEFAULT 1 COMMENT '适用商品类型1-全部商品可用；2-指定商品可用；3-指定商品不可用',
   goods_ids varchar(2000) NOT NULL DEFAULT '' COMMENT '适用商品id',
-  is_limit tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '使用门槛0-无门槛 1-有门槛',
+  is_limit tinyint(4) NOT NULL DEFAULT 0 COMMENT '使用门槛0-无门槛 1-有门槛',
   at_least decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '满多少元使用 0代表无限制',
   money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '发放面额 当type为reward时需要添加',
-  discount decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '1 =< 折扣 <= 9.9 当type为discount时需要添加',
+  discount decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '1 =< 折扣 <= 9.9 当type为discount时需要添加',
   discount_limit decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '最多折扣金额 当type为discount时可选择性添加',
-  min_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '最低金额 当type为radom时需要添加',
-  max_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '最大金额 当type为radom时需要添加',
-  validity_type tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '过期类型1-时间范围过期 2-领取之日固定日期后过期 3-领取次日固定日期后过期',
-  start_use_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '使用开始日期 过期类型1时必填',
-  end_use_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '使用结束日期 过期类型1时必填',
-  fixed_term int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '当validity_type为2或者3时需要添加 领取之日起或者次日N天内有效',
-  is_limit_member tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否限制会员身份0-不限制 1限制',
+  min_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '最低金额 当type为radom时需要添加',
+  max_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '最大金额 当type为radom时需要添加',
+  validity_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '过期类型0-古固定时间范围过期 1-领取之日固定日期后过期 2长期有效',
+  start_use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用开始日期 过期类型0时必填',
+  end_use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用结束日期 过期类型0时必填',
+  fixed_term int(11) NOT NULL DEFAULT 0 COMMENT '当validity_type为1时需要添加 领取之日起或者次日N天内有效',
+  is_limit_member tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否限制会员身份0-不限制 1限制',
   member_level_ids varchar(255) NOT NULL DEFAULT '' COMMENT '若开启会员身份限制,需要添加会员等级id',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
-  is_limitless tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否无限制0-否 1是',
-  max_fetch int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '每人最大领取个数',
-  is_expire_notice tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否开启过期提醒0-不开启 1-开启',
-  expire_notice_fixed_term int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '过期前N天提醒',
-  is_mark tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否同时给会员打标签 0-否 1-是',
+  is_limitless tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否无限制0-否 1是',
+  max_fetch int(11) NOT NULL DEFAULT 0 COMMENT '每人最大领取个数',
+  is_expire_notice tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否开启过期提醒0-不开启 1-开启',
+  expire_notice_fixed_term int(11) NOT NULL DEFAULT 0 COMMENT '过期前N天提醒',
+  is_mark tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否同时给会员打标签 0-否 1-是',
   member_label_ids varchar(255) NOT NULL DEFAULT '' COMMENT '会员标签id',
-  is_share tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '分享设置 优惠券允许分享给好友领取',
-  is_handsel tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '转赠设置 优惠券允许转赠给好友',
-  is_forbid_preference tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '优惠叠加 0-不限制 1- 优惠券仅原价购买商品时可用',
-  is_show int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否显示',
-  discount_order_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '订单的优惠总金额',
-  order_money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '用券总成交额',
-  is_forbidden tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否禁止发放0-否 1-是',
-  old_member_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '使用优惠券的老会员数',
-  new_member_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '平台第一次购买使用优惠券的会员数',
-  order_goods_num int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '使用优惠券购买的商品数量',
+  is_share tinyint(4) NOT NULL DEFAULT 0 COMMENT '分享设置 优惠券允许分享给好友领取',
+  is_handsel tinyint(4) NOT NULL DEFAULT 0 COMMENT '转赠设置 优惠券允许转赠给好友',
+  is_forbid_preference tinyint(4) NOT NULL DEFAULT 0 COMMENT '优惠叠加 0-不限制 1- 优惠券仅原价购买商品时可用',
+  is_show int(11) NOT NULL DEFAULT 0 COMMENT '是否显示',
+  discount_order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '订单的优惠总金额',
+  order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '用券总成交额',
+  is_forbidden tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否禁止发放0-否 1-是',
+  old_member_num int(11) NOT NULL DEFAULT 0 COMMENT '使用优惠券的老会员数',
+  new_member_num int(11) NOT NULL DEFAULT 0 COMMENT '平台第一次购买使用优惠券的会员数',
+  order_goods_num int(11) NOT NULL DEFAULT 0 COMMENT '使用优惠券购买的商品数量',
   status int(11) NOT NULL DEFAULT 0 COMMENT '状态（1进行中2已结束-1已关闭）',
-  create_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  update_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
-  end_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '有效日期结束时间',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  update_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  end_time int(11) NOT NULL DEFAULT 0 COMMENT '有效日期结束时间',
   promotion_type int(11) NOT NULL DEFAULT 0 COMMENT '发布类型   0为普通优惠券   1为瓜分优惠券',
   promotion_name varchar(64) NOT NULL DEFAULT '' COMMENT '发布插件名称',
   PRIMARY KEY (coupon_type_id)
@@ -3811,45 +2957,40 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '优惠券类型表';
 
---
--- `IDX_ns_promotion_coupon_type_site_id` on table `promotion_coupon_type`
---
-ALTER TABLE promotion_coupon_type
-ADD INDEX IDX_ns_promotion_coupon_type_site_id (site_id);
 
---
--- `promotion_coupon`
---
+ALTER TABLE promotion_coupon_type ADD INDEX IDX_ns_promotion_coupon_type_site_id (site_id);
+
+
 CREATE TABLE promotion_coupon (
   coupon_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '优惠券id',
   type varchar(255) NOT NULL DEFAULT '' COMMENT '优惠券类型 reward-满减 discount-折扣 random-随机',
   coupon_name varchar(50) NOT NULL DEFAULT '' COMMENT '优惠券名称',
-  coupon_type_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '优惠券类型id',
-  site_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '站点Id',
+  coupon_type_id int(11) NOT NULL DEFAULT 0 COMMENT '优惠券类型id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点Id',
   coupon_code varchar(255) NOT NULL DEFAULT '' COMMENT '优惠券编码',
-  member_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '领用人',
-  use_order_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '优惠券使用订单id',
-  goods_type tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '适用商品类型1-全部商品可用；2-指定商品可用；3-指定商品不可用',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '领用人',
+  use_order_id int(11) NOT NULL DEFAULT 0 COMMENT '优惠券使用订单id',
+  goods_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '适用商品类型1-全部商品可用；2-指定商品可用；3-指定商品不可用',
   goods_ids varchar(2000) NOT NULL DEFAULT '' COMMENT '适用商品id',
-  at_least decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '最小金额',
-  money decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '面额',
-  discount decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '1 =< 折扣 <= 9.9 当type为discount时需要添加',
-  discount_limit decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '最多折扣金额 当type为discount时可选择性添加',
-  is_mark tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否同时给会员打标签 0-否 1-是',
+  at_least decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '最小金额',
+  money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '面额',
+  discount decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '1 =< 折扣 <= 9.9 当type为discount时需要添加',
+  discount_limit decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '最多折扣金额 当type为discount时可选择性添加',
+  is_mark tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否同时给会员打标签 0-否 1-是',
   member_label_ids varchar(255) NOT NULL DEFAULT '' COMMENT '会员标签id',
-  is_share tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '分享设置 优惠券允许分享给好友领取',
-  is_handsel tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '转赠设置 优惠券允许转赠给好友',
-  is_forbid_preference tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '优惠叠加 0-不限制 1- 优惠券仅原价购买商品时可用',
-  is_expire_notice tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否开启过期提醒0-不开启 1-开启',
-  expire_notice_fixed_term int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '过期前N天提醒',
-  is_noticed tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否已提醒',
-  state tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '优惠券状态 1已领用（未使用） 2已使用 3已过期 4已关闭',
-  get_type tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '获取方式1订单2.直接领取3.活动领取 4转赠 5分享获取',
-  related_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '获取优惠券的关联id',
-  fetch_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '领取时间',
-  use_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '使用时间',
-  start_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '可使用的开始时间',
-  end_time int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '有效期结束时间',
+  is_share tinyint(4) NOT NULL DEFAULT 0 COMMENT '分享设置 优惠券允许分享给好友领取',
+  is_handsel tinyint(4) NOT NULL DEFAULT 0 COMMENT '转赠设置 优惠券允许转赠给好友',
+  is_forbid_preference tinyint(4) NOT NULL DEFAULT 0 COMMENT '优惠叠加 0-不限制 1- 优惠券仅原价购买商品时可用',
+  is_expire_notice tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否开启过期提醒0-不开启 1-开启',
+  expire_notice_fixed_term int(11) NOT NULL DEFAULT 0 COMMENT '过期前N天提醒',
+  is_noticed tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否已提醒',
+  state tinyint(4) NOT NULL DEFAULT 0 COMMENT '优惠券状态 1已领用（未使用） 2已使用 3已过期 4已关闭',
+  get_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '获取方式1订单2.直接领取3.活动领取 4转赠 5分享获取',
+  related_id int(11) NOT NULL DEFAULT 0 COMMENT '获取优惠券的关联id',
+  fetch_time int(11) NOT NULL DEFAULT 0 COMMENT '领取时间',
+  use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用时间',
+  start_time int(11) NOT NULL DEFAULT 0 COMMENT '可使用的开始时间',
+  end_time int(11) NOT NULL DEFAULT 0 COMMENT '有效期结束时间',
   PRIMARY KEY (coupon_id)
 )
 ENGINE = INNODB,
@@ -3857,33 +2998,19 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '优惠券表';
 
---
--- `IDX_ns_promotion_coupon_coupon_type_id` on table `promotion_coupon`
---
-ALTER TABLE promotion_coupon
-ADD INDEX IDX_ns_promotion_coupon_coupon_type_id (coupon_type_id);
 
---
--- `IDX_ns_promotion_coupon_end_time` on table `promotion_coupon`
---
-ALTER TABLE promotion_coupon
-ADD INDEX IDX_ns_promotion_coupon_end_time (end_time);
+ALTER TABLE promotion_coupon ADD INDEX IDX_ns_promotion_coupon_coupon_type_id (coupon_type_id);
 
---
--- `IDX_ns_promotion_coupon_member_id` on table `promotion_coupon`
---
-ALTER TABLE promotion_coupon
-ADD INDEX IDX_ns_promotion_coupon_member_id (member_id);
 
---
--- `IDX_ns_promotion_coupon_site_id` on table `promotion_coupon`
---
-ALTER TABLE promotion_coupon
-ADD INDEX IDX_ns_promotion_coupon_site_id (site_id);
+ALTER TABLE promotion_coupon ADD INDEX IDX_ns_promotion_coupon_end_time (end_time);
 
---
--- `promotion_consume_record`
---
+
+ALTER TABLE promotion_coupon ADD INDEX IDX_ns_promotion_coupon_member_id (member_id);
+
+
+ALTER TABLE promotion_coupon ADD INDEX IDX_ns_promotion_coupon_site_id (site_id);
+
+
 CREATE TABLE promotion_consume_record (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -3892,9 +3019,9 @@ CREATE TABLE promotion_consume_record (
   order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
   member_id int(11) NOT NULL DEFAULT 0,
   remark varchar(255) NOT NULL DEFAULT '' COMMENT '备注（优惠券）',
-  config varchar(5000) NOT NULL DEFAULT '0' COMMENT '配置',
+  config varchar(5000) NOT NULL DEFAULT '' COMMENT '配置',
   create_time int(11) NOT NULL DEFAULT 0,
-  is_recycled int(1) NOT NULL DEFAULT 0 COMMENT '奖励是否已回收',
+  is_recycled int(11) NOT NULL DEFAULT 0 COMMENT '奖励是否已回收',
   out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '支付流水号',
   PRIMARY KEY (id)
 )
@@ -3903,13 +3030,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '消费奖励记录表';
 
---
--- `promotion_bundling_goods`
---
+
 CREATE TABLE promotion_bundling_goods (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   bl_id int(11) NOT NULL DEFAULT 0 COMMENT '组合id',
-  sku_id int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '商品skuid',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品skuid',
   sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品sku原价',
   sku_image varchar(1000) NOT NULL DEFAULT '' COMMENT 'sku图片',
@@ -3922,27 +3047,16 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '组合套餐活动商品表';
 
---
--- `IDX_ns_promotion_bundling_goods_bl_id` on table `promotion_bundling_goods`
---
-ALTER TABLE promotion_bundling_goods
-ADD INDEX IDX_ns_promotion_bundling_goods_bl_id (bl_id);
 
---
--- `IDX_ns_promotion_bundling_goods_site_id` on table `promotion_bundling_goods`
---
-ALTER TABLE promotion_bundling_goods
-ADD INDEX IDX_ns_promotion_bundling_goods_site_id (site_id);
+ALTER TABLE promotion_bundling_goods ADD INDEX IDX_ns_promotion_bundling_goods_bl_id (bl_id);
 
---
--- `IDX_ns_promotion_bundling_goods_sku_id` on table `promotion_bundling_goods`
---
-ALTER TABLE promotion_bundling_goods
-ADD INDEX IDX_ns_promotion_bundling_goods_sku_id (sku_id);
 
---
--- `promotion_bundling`
---
+ALTER TABLE promotion_bundling_goods ADD INDEX IDX_ns_promotion_bundling_goods_site_id (site_id);
+
+
+ALTER TABLE promotion_bundling_goods ADD INDEX IDX_ns_promotion_bundling_goods_sku_id (sku_id);
+
+
 CREATE TABLE promotion_bundling (
   bl_id int(11) NOT NULL AUTO_INCREMENT COMMENT '组合ID',
   bl_name varchar(50) NOT NULL DEFAULT '' COMMENT '组合名称',
@@ -3950,8 +3064,8 @@ CREATE TABLE promotion_bundling (
   site_name varchar(100) NOT NULL DEFAULT '' COMMENT '站点名称',
   bl_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品组合价格',
   goods_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品总价',
-  shipping_fee_type tinyint(1) NOT NULL DEFAULT 1 COMMENT '运费承担方式 1卖家承担运费 2买家承担运费',
-  status tinyint(1) NOT NULL DEFAULT 1 COMMENT '组合状态 0-关闭/1-开启',
+  shipping_fee_type tinyint(4) NOT NULL DEFAULT 1 COMMENT '运费承担方式 1卖家承担运费 2买家承担运费',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '组合状态 0-关闭/1-开启',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (bl_id)
 )
@@ -3960,21 +3074,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '组合套餐活动表';
 
---
--- `IDX_ns_promotion_bundling_site_id` on table `promotion_bundling`
---
-ALTER TABLE promotion_bundling
-ADD INDEX IDX_ns_promotion_bundling_site_id (site_id);
 
---
--- `IDX_ns_promotion_bundling_status` on table `promotion_bundling`
---
-ALTER TABLE promotion_bundling
-ADD INDEX IDX_ns_promotion_bundling_status (status);
+ALTER TABLE promotion_bundling ADD INDEX IDX_ns_promotion_bundling_site_id (site_id);
 
---
--- `promotion_birthdaygift_record`
---
+
+ALTER TABLE promotion_bundling ADD INDEX IDX_ns_promotion_bundling_status (status);
+
+
 CREATE TABLE promotion_birthdaygift_record (
   record_id int(11) NOT NULL AUTO_INCREMENT,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
@@ -3987,13 +3093,11 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `promotion_birthdaygift`
---
+
 CREATE TABLE promotion_birthdaygift (
   id int(11) NOT NULL AUTO_INCREMENT,
   activity_name varchar(255) NOT NULL DEFAULT '' COMMENT '活动名称',
-  activity_time_type int(3) NOT NULL DEFAULT 1 COMMENT '活动时间(1生日当天2生日当周3生日当月)',
+  activity_time_type int(11) NOT NULL DEFAULT 1 COMMENT '活动时间(1生日当天2生日当周3生日当月)',
   level_id varchar(255) NOT NULL DEFAULT '' COMMENT '参与活动会员等级(0全体会员)',
   level_name varchar(255) NOT NULL DEFAULT '' COMMENT '等级名称',
   type varchar(255) NOT NULL DEFAULT '' COMMENT '奖励类型',
@@ -4004,9 +3108,9 @@ CREATE TABLE promotion_birthdaygift (
   site_id int(11) NOT NULL DEFAULT 0,
   create_time int(11) NOT NULL DEFAULT 0,
   update_time int(11) NOT NULL DEFAULT 0,
-  status int(3) NOT NULL DEFAULT 0 COMMENT '1进行中-1已结束',
-  is_delete int(3) NOT NULL DEFAULT 0 COMMENT '是否删除',
-  balance_type int(3) NOT NULL DEFAULT 0 COMMENT '0不可提现 1可提现',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '1进行中-1已结束',
+  is_delete int(11) NOT NULL DEFAULT 0 COMMENT '是否删除',
+  balance_type int(11) NOT NULL DEFAULT 0 COMMENT '0不可提现 1可提现',
   balance_money decimal(10, 0) NOT NULL DEFAULT 0 COMMENT '可提现',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
@@ -4016,9 +3120,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `promotion_bargain_record`
---
+
 CREATE TABLE promotion_bargain_record (
   id int(11) NOT NULL AUTO_INCREMENT,
   launch_id int(11) NOT NULL DEFAULT 0 COMMENT '砍价发起id',
@@ -4033,27 +3135,16 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `IDX_ns_promotion_bargain_record_bargain_time` on table `promotion_bargain_record`
---
-ALTER TABLE promotion_bargain_record
-ADD INDEX IDX_ns_promotion_bargain_record_bargain_time (bargain_time);
 
---
--- `IDX_ns_promotion_bargain_record_launch_id` on table `promotion_bargain_record`
---
-ALTER TABLE promotion_bargain_record
-ADD INDEX IDX_ns_promotion_bargain_record_launch_id (launch_id);
+ALTER TABLE promotion_bargain_record ADD INDEX IDX_ns_promotion_bargain_record_bargain_time (bargain_time);
 
---
--- `IDX_ns_promotion_bargain_record_member_id` on table `promotion_bargain_record`
---
-ALTER TABLE promotion_bargain_record
-ADD INDEX IDX_ns_promotion_bargain_record_member_id (member_id);
 
---
--- `promotion_bargain_launch`
---
+ALTER TABLE promotion_bargain_record ADD INDEX IDX_ns_promotion_bargain_record_launch_id (launch_id);
+
+
+ALTER TABLE promotion_bargain_record ADD INDEX IDX_ns_promotion_bargain_record_member_id (member_id);
+
+
 CREATE TABLE promotion_bargain_launch (
   launch_id int(11) NOT NULL AUTO_INCREMENT,
   bargain_id int(11) NOT NULL DEFAULT 0 COMMENT '砍价活动id',
@@ -4079,8 +3170,8 @@ CREATE TABLE promotion_bargain_launch (
   first_bargain_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '首刀金额',
   curr_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '当前金额',
   is_own int(11) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
-  is_differ_new_user tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
-  distinguish tinyint(1) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
+  is_differ_new_user tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
+  distinguish tinyint(4) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
   new_low decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '新用户最低随机金额',
   aged_tall decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户最高随机金额',
   aged_fixation decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户固定砍价金额',
@@ -4091,47 +3182,27 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '砍价发起表';
 
---
--- `IDX_ns_promotion_bargain_launch_bargain_id` on table `promotion_bargain_launch`
---
-ALTER TABLE promotion_bargain_launch
-ADD INDEX IDX_ns_promotion_bargain_launch_bargain_id (bargain_id);
 
---
--- `IDX_ns_promotion_bargain_launch_end_time` on table `promotion_bargain_launch`
---
-ALTER TABLE promotion_bargain_launch
-ADD INDEX IDX_ns_promotion_bargain_launch_end_time (end_time);
+ALTER TABLE promotion_bargain_launch ADD INDEX IDX_ns_promotion_bargain_launch_bargain_id (bargain_id);
 
---
--- `IDX_ns_promotion_bargain_launch_goods_id` on table `promotion_bargain_launch`
---
-ALTER TABLE promotion_bargain_launch
-ADD INDEX IDX_ns_promotion_bargain_launch_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_bargain_launch_site_id` on table `promotion_bargain_launch`
---
-ALTER TABLE promotion_bargain_launch
-ADD INDEX IDX_ns_promotion_bargain_launch_site_id (site_id);
+ALTER TABLE promotion_bargain_launch ADD INDEX IDX_ns_promotion_bargain_launch_end_time (end_time);
 
---
--- `IDX_ns_promotion_bargain_launch_sku_id` on table `promotion_bargain_launch`
---
-ALTER TABLE promotion_bargain_launch
-ADD INDEX IDX_ns_promotion_bargain_launch_sku_id (sku_id);
 
---
--- `IDX_ns_promotion_bargain_launch_start_time` on table `promotion_bargain_launch`
---
-ALTER TABLE promotion_bargain_launch
-ADD INDEX IDX_ns_promotion_bargain_launch_start_time (start_time);
+ALTER TABLE promotion_bargain_launch ADD INDEX IDX_ns_promotion_bargain_launch_goods_id (goods_id);
 
---
--- `promotion_bargain_goods`
---
+
+ALTER TABLE promotion_bargain_launch ADD INDEX IDX_ns_promotion_bargain_launch_site_id (site_id);
+
+
+ALTER TABLE promotion_bargain_launch ADD INDEX IDX_ns_promotion_bargain_launch_sku_id (sku_id);
+
+
+ALTER TABLE promotion_bargain_launch ADD INDEX IDX_ns_promotion_bargain_launch_start_time (start_time);
+
+
 CREATE TABLE promotion_bargain_goods (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   bargain_id int(11) NOT NULL DEFAULT 0 COMMENT '砍价id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
@@ -4140,24 +3211,26 @@ CREATE TABLE promotion_bargain_goods (
   bargain_stock int(11) NOT NULL DEFAULT 0 COMMENT '砍价库存',
   floor_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '底价',
   bargain_name varchar(50) NOT NULL DEFAULT '' COMMENT '砍价活动名称',
-  is_fenxiao tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
-  buy_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '购买方式（0任意金额可购买 1砍到指定价格）',
-  bargain_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
+  is_fenxiao tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
+  buy_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '购买方式（0任意金额可购买 1砍到指定价格）',
+  bargain_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
   bargain_num int(11) NOT NULL DEFAULT 0 COMMENT '帮砍价人数',
   bargain_time int(11) NOT NULL DEFAULT 1 COMMENT '砍价有效期',
-  remark text DEFAULT NULL COMMENT '活动规则说明',
+  remark text NOT NULL COMMENT '活动规则说明',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3已关闭）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3已关闭）',
   status_name varchar(20) NOT NULL DEFAULT '' COMMENT '状态名称',
-  is_own tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
+  is_own tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
   sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
   join_num int(11) NOT NULL DEFAULT 0 COMMENT '参与人数',
-  is_differ_new_user tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
-  distinguish tinyint(1) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
+  is_differ_new_user tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
+  distinguish tinyint(4) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
   new_low decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '新用户最低随机金额',
   aged_tall decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户最高随机金额',
   aged_fixation decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户固定砍价金额',
+  bargain_max_num int(11) NOT NULL DEFAULT 0 COMMENT '最大砍价人数',
+  help_bargain_num int(11) NOT NULL DEFAULT 0 COMMENT '帮助砍价人数',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -4165,48 +3238,31 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '砍价活动表';
 
---
--- `IDX_ns_promotion_bargain_goods_bargain_id` on table `promotion_bargain_goods`
---
-ALTER TABLE promotion_bargain_goods
-ADD INDEX IDX_ns_promotion_bargain_goods_bargain_id (bargain_id);
 
---
--- `IDX_ns_promotion_bargain_goods_goods_id` on table `promotion_bargain_goods`
---
-ALTER TABLE promotion_bargain_goods
-ADD INDEX IDX_ns_promotion_bargain_goods_goods_id (goods_id);
+ALTER TABLE promotion_bargain_goods ADD INDEX IDX_ns_promotion_bargain_goods_bargain_id (bargain_id);
 
---
--- `IDX_ns_promotion_bargain_goods_is_own` on table `promotion_bargain_goods`
---
-ALTER TABLE promotion_bargain_goods
-ADD INDEX IDX_ns_promotion_bargain_goods_is_own (is_own);
 
---
--- `IDX_ns_promotion_bargain_goods_sku_id` on table `promotion_bargain_goods`
---
-ALTER TABLE promotion_bargain_goods
-ADD INDEX IDX_ns_promotion_bargain_goods_sku_id (sku_id);
+ALTER TABLE promotion_bargain_goods ADD INDEX IDX_ns_promotion_bargain_goods_goods_id (goods_id);
 
---
--- `IDX_ns_promotion_bargain_goods_status` on table `promotion_bargain_goods`
---
-ALTER TABLE promotion_bargain_goods
-ADD INDEX IDX_ns_promotion_bargain_goods_status (status);
 
---
--- `promotion_bargain`
---
+ALTER TABLE promotion_bargain_goods ADD INDEX IDX_ns_promotion_bargain_goods_is_own (is_own);
+
+
+ALTER TABLE promotion_bargain_goods ADD INDEX IDX_ns_promotion_bargain_goods_sku_id (sku_id);
+
+
+ALTER TABLE promotion_bargain_goods ADD INDEX IDX_ns_promotion_bargain_goods_status (status);
+
+
 CREATE TABLE promotion_bargain (
-  bargain_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '砍价id',
+  bargain_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '砍价id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
   bargain_name varchar(50) NOT NULL DEFAULT '' COMMENT '砍价活动名称',
-  is_fenxiao tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
-  buy_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '购买方式（0任意金额可购买 1砍到指定价格）',
-  bargain_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
+  is_fenxiao tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否参与分销（0不参与  1参与）',
+  buy_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '购买方式（0任意金额可购买 1砍到指定价格）',
+  bargain_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '砍价金额类型（0固定金额 1随机金额）',
   bargain_num int(11) NOT NULL DEFAULT 0 COMMENT '帮砍价人数',
   bargain_time int(11) NOT NULL DEFAULT 1 COMMENT '砍价有效期（小时）',
   remark text DEFAULT NULL COMMENT '活动规则说明',
@@ -4214,18 +3270,22 @@ CREATE TABLE promotion_bargain (
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '活动开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '活动结束时间',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3失效  4删除）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0未开始 1活动进行中  2活动已结束  3失效  4删除）',
   status_name varchar(20) NOT NULL DEFAULT '' COMMENT '状态名称',
-  is_own tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
+  is_own tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否自己砍价（0不支持  1支持）',
   sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
   join_num int(11) NOT NULL DEFAULT 0 COMMENT '参与人数',
   bargain_stock int(11) NOT NULL DEFAULT 0 COMMENT '砍价总库存',
   floor_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '底价',
-  is_differ_new_user tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
-  distinguish tinyint(1) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
+  is_differ_new_user tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否区分新老用户',
+  distinguish tinyint(4) NOT NULL DEFAULT 1 COMMENT '新用户区分标准',
   new_low decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '新用户最低随机金额',
   aged_tall decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户最高随机金额',
   aged_fixation decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '老用户固定砍价金额',
+  bargain_max_num int(11) NOT NULL DEFAULT 0 COMMENT '最大砍价人数',
+  help_bargain_num int(11) NOT NULL DEFAULT 0 COMMENT '帮助砍价人数',
+  browse_num int(11) NOT NULL DEFAULT 0 COMMENT '浏览人数',
+  share_num int(11) NOT NULL DEFAULT 0 COMMENT '分享人数',
   PRIMARY KEY (bargain_id)
 )
 ENGINE = INNODB,
@@ -4233,32 +3293,24 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '砍价活动表';
 
---
--- `IDX_ns_promotion_bargain_end_time` on table `promotion_bargain`
---
-ALTER TABLE promotion_bargain
-ADD INDEX IDX_ns_promotion_bargain_end_time (end_time);
 
---
--- `IDX_ns_promotion_bargain_start_time` on table `promotion_bargain`
---
-ALTER TABLE promotion_bargain
-ADD INDEX IDX_ns_promotion_bargain_start_time (start_time);
+ALTER TABLE promotion_bargain ADD INDEX IDX_ns_promotion_bargain_end_time (end_time);
 
---
--- `promotion_bale`
---
+
+ALTER TABLE promotion_bargain ADD INDEX IDX_ns_promotion_bargain_start_time (start_time);
+
+
 CREATE TABLE promotion_bale (
   bale_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   name varchar(50) NOT NULL DEFAULT '' COMMENT '活动名称',
   num int(11) NOT NULL DEFAULT 0 COMMENT '数量',
   price decimal(19, 2) NOT NULL DEFAULT 0.00 COMMENT '一口价',
-  goods_ids varchar(2500) NOT NULL,
+  goods_ids varchar(2500) NOT NULL DEFAULT '',
   sku_ids varchar(2500) NOT NULL DEFAULT '' COMMENT '参与活动的sku',
   start_time int(11) NOT NULL DEFAULT 0 COMMENT '开始时间',
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '结束时间',
-  shipping_fee_type tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否包邮（0卖家承担运费  1买家承担运费）',
+  shipping_fee_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否包邮（0卖家承担运费  1买家承担运费）',
   status int(11) NOT NULL DEFAULT 0 COMMENT '状态 0未开始 1进行中 2已关闭',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (bale_id)
@@ -4268,9 +3320,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '打包一口价';
 
---
--- `printer_template`
---
+
 CREATE TABLE printer_template (
   template_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -4278,15 +3328,15 @@ CREATE TABLE printer_template (
   template_type varchar(255) NOT NULL DEFAULT '' COMMENT '模板类型（预留字段）',
   template_name varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '小票名称',
-  head tinyint(1) NOT NULL DEFAULT 0 COMMENT '头部内容',
-  buy_notes tinyint(1) NOT NULL DEFAULT 0 COMMENT '买家留言（0否 1是）',
-  seller_notes tinyint(1) NOT NULL DEFAULT 0 COMMENT '卖家留言（0否  1是）',
-  buy_name tinyint(1) NOT NULL DEFAULT 0 COMMENT '买家姓名',
-  buy_mobile tinyint(1) NOT NULL DEFAULT 0 COMMENT '买家联系电话',
-  buy_address tinyint(1) NOT NULL DEFAULT 0 COMMENT '买家地址',
-  shop_mobile tinyint(1) NOT NULL DEFAULT 0 COMMENT '商家联系电话',
-  shop_address tinyint(1) NOT NULL DEFAULT 0 COMMENT '商家地址',
-  shop_qrcode tinyint(1) NOT NULL DEFAULT 0 COMMENT '商家二维码',
+  head tinyint(4) NOT NULL DEFAULT 0 COMMENT '头部内容',
+  buy_notes tinyint(4) NOT NULL DEFAULT 0 COMMENT '买家留言（0否 1是）',
+  seller_notes tinyint(4) NOT NULL DEFAULT 0 COMMENT '卖家留言（0否  1是）',
+  buy_name tinyint(4) NOT NULL DEFAULT 0 COMMENT '买家姓名',
+  buy_mobile tinyint(4) NOT NULL DEFAULT 0 COMMENT '买家联系电话',
+  buy_address tinyint(4) NOT NULL DEFAULT 0 COMMENT '买家地址',
+  shop_mobile tinyint(4) NOT NULL DEFAULT 0 COMMENT '商家联系电话',
+  shop_address tinyint(4) NOT NULL DEFAULT 0 COMMENT '商家地址',
+  shop_qrcode tinyint(4) NOT NULL DEFAULT 0 COMMENT '商家二维码',
   qrcode_url varchar(255) NOT NULL DEFAULT '' COMMENT '二维码链接',
   bottom varchar(255) NOT NULL DEFAULT '' COMMENT '底部内容',
   create_time int(11) NOT NULL DEFAULT 0,
@@ -4304,9 +3354,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '打印机模板';
 
---
--- `printer`
---
+
 CREATE TABLE printer (
   printer_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -4316,8 +3364,7 @@ CREATE TABLE printer (
   printer_key varchar(255) NOT NULL DEFAULT '' COMMENT '打印机秘钥',
   open_id varchar(255) NOT NULL DEFAULT '' COMMENT '开发者id',
   apikey varchar(255) NOT NULL DEFAULT '' COMMENT '开发者密钥',
-  print_num tinyint(3) NOT NULL DEFAULT 1 COMMENT '打印张数',
-  order_type varchar(255) NOT NULL DEFAULT '' COMMENT '打印的订单类型',
+  print_num tinyint(4) NOT NULL DEFAULT 1 COMMENT '打印张数',
   template_id int(11) NOT NULL DEFAULT 0 COMMENT '模板id',
   store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
   create_time int(11) NOT NULL DEFAULT 0,
@@ -4341,9 +3388,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '小票打印机';
 
---
--- `poster_template`
---
+
 CREATE TABLE poster_template (
   template_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -4354,7 +3399,7 @@ CREATE TABLE poster_template (
   qrcode_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码高度',
   qrcode_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码距离顶部高度',
   qrcode_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码距离左侧长度',
-  template_status int(1) NOT NULL DEFAULT 1 COMMENT '模板状态  0-关闭  1-开启',
+  template_status int(11) NOT NULL DEFAULT 1 COMMENT '模板状态  0-关闭  1-开启',
   template_type varchar(25) NOT NULL DEFAULT '' COMMENT '模板类型  goods：商品海报',
   template_json text DEFAULT NULL COMMENT '拓展json',
   create_time int(11) NOT NULL DEFAULT 0,
@@ -4365,9 +3410,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '海报模板表';
 
---
--- `poster_record`
---
+
 CREATE TABLE poster_record (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -4386,9 +3429,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '海报访问记录表';
 
---
--- `poster_muban`
---
+
 CREATE TABLE poster_muban (
   muban_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   qrcode_width decimal(10, 0) NOT NULL DEFAULT 0,
@@ -4407,11 +3448,50 @@ AVG_ROW_LENGTH = 5461,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `pc_nav`
---
+
+CREATE TABLE poster (
+  poster_id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0,
+  template_id int(11) NOT NULL DEFAULT 0 COMMENT '海报模版id',
+  relation_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
+  headimg_is_show int(11) NOT NULL DEFAULT 0 COMMENT '头像是否显示',
+  headimg_shape varchar(255) NOT NULL DEFAULT '' COMMENT '头像形式  circle 圆  square  方形',
+  nickname_is_show int(11) NOT NULL DEFAULT 0 COMMENT '昵称是否显示',
+  nickname_font_size decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称字体大小',
+  nickname_color varchar(255) NOT NULL DEFAULT '' COMMENT '昵称文字颜色',
+  background varchar(255) NOT NULL DEFAULT '' COMMENT '海报背景',
+  qrcode_type varchar(255) NOT NULL DEFAULT '' COMMENT '带参二维码，常规二维码',
+  headimg_width decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片长度',
+  headimg_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片高度',
+  headimg_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片距离顶部高度',
+  headimg_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '头像图片距离左侧长度',
+  nickname_width decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称长度',
+  nickname_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称高度',
+  nickname_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称距离顶部高度',
+  nickname_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '昵称距离左侧长度',
+  qrcode_width decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码长度',
+  qrcode_height decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码高度',
+  qrcode_top decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码距离顶部高度',
+  qrcode_left decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二维码距离左侧长度',
+  visit_num int(11) NOT NULL DEFAULT 0 COMMENT '访客数量',
+  order_num int(11) NOT NULL DEFAULT 0 COMMENT '订单数量',
+  fission_level int(11) NOT NULL DEFAULT 0 COMMENT '裂变等级',
+  pv_num int(11) NOT NULL DEFAULT 0 COMMENT '访问数量',
+  type varchar(255) NOT NULL DEFAULT 'goods' COMMENT '类型，goods：商品，friend_fission：好友裂变',
+  create_time int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (poster_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '海报表';
+
+
+ALTER TABLE poster ADD INDEX IDX_ns_poster (site_id, type);
+
+
 CREATE TABLE pc_nav (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
   nav_title varchar(255) NOT NULL DEFAULT '' COMMENT '导航名称',
   nav_url varchar(255) NOT NULL DEFAULT '' COMMENT '链接地址',
@@ -4420,7 +3500,7 @@ CREATE TABLE pc_nav (
   create_time int(11) DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) DEFAULT 0 COMMENT '修改时间',
   nav_icon varchar(255) NOT NULL DEFAULT '' COMMENT '导航图标',
-  is_show smallint(1) NOT NULL DEFAULT 1 COMMENT '是否显示 1显示 0不显示',
+  is_show smallint(6) NOT NULL DEFAULT 1 COMMENT '是否显示 1显示 0不显示',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -4428,11 +3508,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = 'PC导航管理';
 
---
--- `pc_friendly_link`
---
+
 CREATE TABLE pc_friendly_link (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '索引id',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '索引id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
   link_title varchar(100) NOT NULL DEFAULT '' COMMENT '标题',
   link_url varchar(100) NOT NULL DEFAULT '' COMMENT '链接',
@@ -4447,9 +3525,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = 'PC友情链接表';
 
---
--- `pc_floor_block`
---
+
 CREATE TABLE pc_floor_block (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据ID',
   name varchar(50) NOT NULL DEFAULT '' COMMENT '标识',
@@ -4465,9 +3541,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = 'PC端首页楼层模板';
 
---
--- `pc_floor`
---
+
 CREATE TABLE pc_floor (
   id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据ID',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
@@ -4484,11 +3558,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = 'PC端首页楼层';
 
---
--- `pay_refund`
---
+
 CREATE TABLE pay_refund (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   refund_no varchar(255) NOT NULL DEFAULT '' COMMENT '退款编号',
   out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '对应支付流水号',
@@ -4504,17 +3576,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '退款记录';
 
---
--- `UK_ns_pay_refund_out_trade_no` on table `pay_refund`
---
-ALTER TABLE pay_refund
-ADD INDEX UK_ns_pay_refund_out_trade_no (out_trade_no);
+ALTER TABLE pay_refund ADD INDEX UK_ns_pay_refund_out_trade_no (out_trade_no);
 
---
--- `pay`
---
+
 CREATE TABLE pay (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '支付流水号',
   pay_type varchar(255) NOT NULL DEFAULT '' COMMENT '支付方式',
@@ -4541,15 +3607,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '支付记录';
 
---
--- `UK_ns_pay_out_trade_no` on table `pay`
---
-ALTER TABLE pay
-ADD UNIQUE INDEX UK_ns_pay_out_trade_no (out_trade_no);
+ALTER TABLE pay ADD UNIQUE INDEX UK_ns_pay_out_trade_no (out_trade_no);
 
---
--- `order_refund_log`
---
+
 CREATE TABLE order_refund_log (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -4569,15 +3629,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单退款操作表';
 
---
--- `IDX_ns_order_refund_log_order_goods_id` on table `order_refund_log`
---
-ALTER TABLE order_refund_log
-ADD INDEX IDX_ns_order_refund_log_order_goods_id (order_goods_id, site_id);
 
---
--- `order_refund_export`
---
+ALTER TABLE order_refund_log ADD INDEX IDX_ns_order_refund_log_order_goods_id (order_goods_id, site_id);
+
+
 CREATE TABLE order_refund_export (
   export_id int(11) NOT NULL AUTO_INCREMENT,
   `condition` varchar(2000) NOT NULL DEFAULT '' COMMENT '条件  json',
@@ -4592,9 +3647,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单维权导出记录表';
 
---
--- `order_promotion_detail`
---
+
 CREATE TABLE order_promotion_detail (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -4613,9 +3666,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单满减优惠表';
 
---
--- `order_log`
---
+
 CREATE TABLE order_log (
   id int(11) NOT NULL AUTO_INCREMENT,
   order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
@@ -4623,7 +3674,7 @@ CREATE TABLE order_log (
   uid int(11) NOT NULL DEFAULT 0 COMMENT '操作人id',
   nick_name varchar(50) NOT NULL DEFAULT '' COMMENT '操作人名称',
   order_status int(11) NOT NULL DEFAULT 0 COMMENT '订单状态，操作后',
-  action_way bigint(2) NOT NULL DEFAULT 2 COMMENT '操作类型1买家2卖家',
+  action_way bigint(20) NOT NULL DEFAULT 2 COMMENT '操作类型1买家2卖家',
   order_status_name varchar(255) NOT NULL DEFAULT '' COMMENT '订单状态名称，操作后',
   action_time int(11) NOT NULL DEFAULT 0 COMMENT '操作时间',
   PRIMARY KEY (id)
@@ -4633,22 +3684,17 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单操作表(传统表，不用设计)';
 
---
--- `IDX_ns_order_log_order_id` on table `order_log`
---
-ALTER TABLE order_log
-ADD INDEX IDX_ns_order_log_order_id (order_id);
 
---
--- `order_import_file_log`
---
+ALTER TABLE order_log ADD INDEX IDX_ns_order_log_order_id (order_id);
+
+
 CREATE TABLE order_import_file_log (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
   file_id int(11) NOT NULL DEFAULT 0 COMMENT '上传文件id',
   order_no varchar(255) NOT NULL DEFAULT '' COMMENT '订单编号',
   order_name varchar(255) NOT NULL DEFAULT '' COMMENT '订单内容',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态',
   reason varchar(255) NOT NULL DEFAULT '' COMMENT '原因',
   PRIMARY KEY (id)
 )
@@ -4657,9 +3703,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单导入明细';
 
---
--- `order_import_file`
---
+
 CREATE TABLE order_import_file (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -4679,9 +3723,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单批量导入发货';
 
---
--- `order_goods`
---
+
 CREATE TABLE order_goods (
   order_goods_id int(11) NOT NULL AUTO_INCREMENT,
   order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
@@ -4724,20 +3766,20 @@ CREATE TABLE order_goods (
   refund_address varchar(255) NOT NULL DEFAULT '' COMMENT '退货地址',
   is_refund_stock int(11) NOT NULL DEFAULT 0 COMMENT '是否返还库存',
   refund_money_type int(11) NOT NULL DEFAULT 1 COMMENT '退款方式   1 原路退款 2线下退款3退款到余额',
-  shop_active_refund tinyint(1) NOT NULL DEFAULT 0 COMMENT '商家主动退款（0否  1是）',
+  shop_active_refund tinyint(4) NOT NULL DEFAULT 0 COMMENT '商家主动退款（0否  1是）',
   shop_refund_remark varchar(255) NOT NULL DEFAULT '' COMMENT '商家退款说明',
-  refund_mode int(1) NOT NULL DEFAULT 1 COMMENT '退款类型 1退款 2售后',
+  refund_mode int(11) NOT NULL DEFAULT 1 COMMENT '退款类型 1退款 2售后',
   promotion_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '优惠金额',
   coupon_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '优惠券金额',
   adjust_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '调整金额',
   goods_name varchar(400) NOT NULL DEFAULT '' COMMENT '商品名称',
   sku_spec_format varchar(1000) NOT NULL DEFAULT '' COMMENT 'sku规格格式',
-  is_fenxiao int(1) NOT NULL DEFAULT 1,
+  is_fenxiao int(11) NOT NULL DEFAULT 1,
   use_point int(11) NOT NULL DEFAULT 0 COMMENT '积分抵扣所用积分数',
   point_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '积分抵扣金额',
   refund_delivery_money decimal(10, 2) NOT NULL DEFAULT 0.00,
   create_time int(11) NOT NULL DEFAULT 0,
-  out_aftersale_id varchar(255) NOT NULL DEFAULT '0' COMMENT '视频号订单编号',
+  out_aftersale_id varchar(255) NOT NULL DEFAULT '' COMMENT '关联视频号订单',
   refund_address_id int(11) NOT NULL DEFAULT 0 COMMENT '退货地址id',
   refund_pay_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '真实退款金额',
   PRIMARY KEY (order_goods_id)
@@ -4747,51 +3789,28 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单商品表';
 
---
--- `IDX_ns_order_goods_goods_id` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_goods_id (goods_id);
 
---
--- `IDX_ns_order_goods_is_fenxiao` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_is_fenxiao (is_fenxiao);
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_goods_id (goods_id);
 
---
--- `IDX_ns_order_goods_is_virtual` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_is_virtual (is_virtual);
 
---
--- `IDX_ns_order_goods_member_id` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_member_id (member_id);
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_is_fenxiao (is_fenxiao);
 
---
--- `IDX_ns_order_goods_order_id` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_order_id (order_id);
 
---
--- `IDX_ns_order_goods_refund_status` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_refund_status (refund_status);
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_is_virtual (is_virtual);
 
---
--- `IDX_ns_order_goods_sku_id` on table `order_goods`
---
-ALTER TABLE order_goods
-ADD INDEX IDX_ns_order_goods_sku_id (sku_id);
 
---
--- `order_export`
---
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_member_id (member_id);
+
+
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_order_id (order_id);
+
+
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_refund_status (refund_status);
+
+
+ALTER TABLE order_goods ADD INDEX IDX_ns_order_goods_sku_id (sku_id);
+
+
 CREATE TABLE order_export (
   export_id int(11) NOT NULL AUTO_INCREMENT,
   `condition` varchar(2000) NOT NULL DEFAULT '' COMMENT '条件  json',
@@ -4807,9 +3826,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单导出记录表';
 
---
--- `order`
---
+
 CREATE TABLE `order` (
   order_id int(11) NOT NULL AUTO_INCREMENT,
   order_no varchar(50) NOT NULL DEFAULT '' COMMENT '订单编号',
@@ -4850,7 +3867,7 @@ CREATE TABLE `order` (
   longitude varchar(50) NOT NULL DEFAULT '' COMMENT '购买人地址经度',
   latitude varchar(50) NOT NULL DEFAULT '' COMMENT '购买人地址纬度',
   buyer_ip varchar(20) NOT NULL DEFAULT '' COMMENT '购买人ip',
-  buyer_ask_delivery_time int(11) NOT NULL DEFAULT 0 COMMENT '购买人要求配送时间',
+  buyer_ask_delivery_time varchar(50) NOT NULL DEFAULT '' COMMENT '购买人要求配送时间',
   buyer_message varchar(50) NOT NULL DEFAULT '' COMMENT '购买人留言信息',
   goods_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品总金额',
   delivery_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '配送费用',
@@ -4876,7 +3893,7 @@ CREATE TABLE `order` (
   goods_num int(11) NOT NULL DEFAULT 0 COMMENT '商品件数',
   delivery_store_id int(11) NOT NULL DEFAULT 0 COMMENT '门店id',
   delivery_status_name varchar(50) NOT NULL DEFAULT '' COMMENT '发货状态',
-  is_settlement tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否进行结算',
+  is_settlement tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否进行结算',
   store_settlement_id int(11) NOT NULL DEFAULT 0 COMMENT '门店结算id',
   delivery_store_name varchar(255) NOT NULL DEFAULT '' COMMENT '门店名称',
   promotion_type varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型',
@@ -4899,17 +3916,17 @@ CREATE TABLE `order` (
   is_tax_invoice int(11) NOT NULL DEFAULT 0 COMMENT '是否需要增值税专用发票',
   invoice_email varchar(255) NOT NULL DEFAULT '' COMMENT '发票发送邮件',
   invoice_title_type int(11) NOT NULL DEFAULT 0 COMMENT '发票抬头类型  1 个人  2 企业',
-  is_fenxiao int(1) NOT NULL DEFAULT 1 COMMENT '是否参与分销 0不参与 1参与',
+  is_fenxiao int(11) NOT NULL DEFAULT 1 COMMENT '是否参与分销 0不参与 1参与',
   point_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '积分抵现金额',
   member_card_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '会员卡订单金额',
   member_card_order int(11) NOT NULL DEFAULT 0 COMMENT '会员卡订单id',
-  invoice_status tinyint(1) NOT NULL DEFAULT 0 COMMENT '发票状态（0待开票   1已开票）',
+  invoice_status tinyint(4) NOT NULL DEFAULT 0 COMMENT '发票状态（0待开票   1已开票）',
   invoice_remark text DEFAULT NULL COMMENT '发票备注',
   invoice_code varchar(255) NOT NULL DEFAULT '' COMMENT '发票编码',
   invoice_image varchar(255) NOT NULL DEFAULT '' COMMENT '发票凭证',
   invoice_time int(11) NOT NULL DEFAULT 0 COMMENT '开票时间',
   predict_delivery_time int(11) NOT NULL DEFAULT 0 COMMENT '预计发货时间',
-  is_video_number int(1) NOT NULL DEFAULT 0 COMMENT '订单是否同步到视频号',
+  is_video_number int(11) NOT NULL DEFAULT 0 COMMENT '订单是否同步到视频号',
   close_cause varchar(255) NOT NULL DEFAULT '' COMMENT '关闭原因',
   PRIMARY KEY (order_id)
 )
@@ -4918,66 +3935,37 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '订单表';
 
---
--- `IDX_ns_order_create_time` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_create_time (create_time);
 
---
--- `IDX_ns_order_finish_time` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_finish_time (finish_time);
+ALTER TABLE `order` ADD INDEX IDX_ns_order_create_time (create_time);
 
---
--- `IDX_ns_order_is_tax_invoice` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_is_tax_invoice (is_tax_invoice);
 
---
--- `IDX_ns_order_member_id` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_member_id (member_id);
+ALTER TABLE `order` ADD INDEX IDX_ns_order_finish_time (finish_time);
 
---
--- `IDX_ns_order_order_from` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_order_from (order_from);
 
---
--- `IDX_ns_order_order_status` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_order_status (order_status);
+ALTER TABLE `order` ADD INDEX IDX_ns_order_is_tax_invoice (is_tax_invoice);
 
---
--- `IDX_ns_order_order_type` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_order_type (order_type);
 
---
--- `IDX_ns_order_pay_status` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_pay_status (pay_status);
+ALTER TABLE `order` ADD INDEX IDX_ns_order_member_id (member_id);
 
---
--- `IDX_ns_order_promotion_id` on table `order`
---
-ALTER TABLE `order`
-ADD INDEX IDX_ns_order_promotion_id (promotion_id);
 
---
--- `notice`
---
+ALTER TABLE `order` ADD INDEX IDX_ns_order_order_from (order_from);
+
+
+ALTER TABLE `order` ADD INDEX IDX_ns_order_order_status (order_status);
+
+
+ALTER TABLE `order` ADD INDEX IDX_ns_order_order_type (order_type);
+
+
+ALTER TABLE `order` ADD INDEX IDX_ns_order_pay_status (pay_status);
+
+
+ALTER TABLE `order` ADD INDEX IDX_ns_order_promotion_id (promotion_id);
+
+
 CREATE TABLE notice (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-  site_id int(10) NOT NULL DEFAULT 0 COMMENT '站点id',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '主题',
   content text DEFAULT NULL COMMENT '内容',
   is_top int(11) NOT NULL DEFAULT 0 COMMENT '是否置顶',
@@ -4993,9 +3981,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '公告';
 
---
--- `notes_group`
---
+
 CREATE TABLE notes_group (
   group_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5012,9 +3998,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '笔记分组';
 
---
--- `notes_dianzan_record`
---
+
 CREATE TABLE notes_dianzan_record (
   record_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   note_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5026,21 +4010,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '笔记点赞记录';
 
---
--- `IDX_ns_notes_dianzan_record_member_id` on table `notes_dianzan_record`
---
-ALTER TABLE notes_dianzan_record
-ADD INDEX IDX_ns_notes_dianzan_record_member_id (member_id);
 
---
--- `IDX_ns_notes_dianzan_record_note_id` on table `notes_dianzan_record`
---
-ALTER TABLE notes_dianzan_record
-ADD INDEX IDX_ns_notes_dianzan_record_note_id (note_id);
+ALTER TABLE notes_dianzan_record ADD INDEX IDX_ns_notes_dianzan_record_member_id (member_id);
 
---
--- `notes`
---
+
+ALTER TABLE notes_dianzan_record ADD INDEX IDX_ns_notes_dianzan_record_note_id (note_id);
+
+
 CREATE TABLE notes (
   note_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5048,15 +4024,15 @@ CREATE TABLE notes (
   note_title varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
   note_abstract varchar(255) NOT NULL DEFAULT '' COMMENT '摘要',
   group_id int(11) NOT NULL DEFAULT 0 COMMENT '分组id',
-  cover_type tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '封面图片类型（0单图 1多图）',
+  cover_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '封面图片类型（0单图 1多图）',
   cover_img varchar(2000) NOT NULL DEFAULT '' COMMENT '封面图片',
   goods_ids varchar(255) NOT NULL DEFAULT '' COMMENT '商品id（根据类型判断商品是单个还是多个）',
   goods_highlights varchar(255) NOT NULL DEFAULT '' COMMENT '商品亮点（单品有效）',
-  note_content text DEFAULT NULL COMMENT '内容',
-  status tinyint(3) NOT NULL DEFAULT 0 COMMENT '状态（0草稿箱  1发布）',
-  is_show_release_time tinyint(1) NOT NULL DEFAULT 0 COMMENT '发布时间是否显示',
-  is_show_read_num tinyint(1) NOT NULL DEFAULT 0 COMMENT '阅读数是否显示',
-  is_show_dianzan_num tinyint(1) NOT NULL DEFAULT 0 COMMENT '点赞数是否显示',
+  note_content longtext DEFAULT NULL COMMENT '内容',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0草稿箱  1发布）',
+  is_show_release_time tinyint(4) NOT NULL DEFAULT 0 COMMENT '发布时间是否显示',
+  is_show_read_num tinyint(4) NOT NULL DEFAULT 0 COMMENT '阅读数是否显示',
+  is_show_dianzan_num tinyint(4) NOT NULL DEFAULT 0 COMMENT '点赞数是否显示',
   read_num int(11) NOT NULL DEFAULT 0 COMMENT '阅读数',
   dianzan_num int(11) NOT NULL DEFAULT 0 COMMENT '点赞数',
   create_time int(11) DEFAULT 0,
@@ -5074,21 +4050,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '店铺笔记';
 
---
--- `IDX_ns_promotion_notes_group_id` on table `notes`
---
-ALTER TABLE notes
-ADD INDEX IDX_ns_promotion_notes_group_id (group_id);
 
---
--- `IDX_ns_promotion_notes_site_id` on table `notes`
---
-ALTER TABLE notes
-ADD INDEX IDX_ns_promotion_notes_site_id (site_id);
+ALTER TABLE notes ADD INDEX IDX_ns_promotion_notes_group_id (group_id);
 
---
--- `message_wechat_records`
---
+
+ALTER TABLE notes ADD INDEX IDX_ns_promotion_notes_site_id (site_id);
+
+
 CREATE TABLE message_wechat_records (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5108,9 +4076,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '微信公众号消息发送记录';
 
---
--- `message_variable`
---
+
 CREATE TABLE message_variable (
   id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(50) NOT NULL DEFAULT '' COMMENT '变量名',
@@ -5125,11 +4091,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '消息模板变量';
 
---
--- `message_template`
---
+
 CREATE TABLE message_template (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   addon varchar(255) NOT NULL DEFAULT '' COMMENT '插件',
   keywords varchar(50) NOT NULL DEFAULT '' COMMENT '关键字',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '主题',
@@ -5152,9 +4116,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '消息管理';
 
---
--- `message_sms_records`
---
+
 CREATE TABLE message_sms_records (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5179,11 +4141,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '短信消息发送记录';
 
---
--- `message_send_log`
---
+
 CREATE TABLE message_send_log (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   keywords varchar(255) NOT NULL DEFAULT '' COMMENT '关键字',
   message_type varchar(255) NOT NULL DEFAULT '' COMMENT '消息类型',
@@ -5201,9 +4161,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '消息发送日志';
 
---
--- `message_email_records`
---
+
 CREATE TABLE message_email_records (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5223,14 +4181,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '邮箱信息发送记录';
 
---
--- `message`
---
+
 CREATE TABLE message (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   keywords varchar(50) NOT NULL DEFAULT '' COMMENT '关键字',
-  sms_is_open tinyint(1) NOT NULL DEFAULT 0 COMMENT '短信消息是否启动',
+  sms_is_open tinyint(4) NOT NULL DEFAULT 0 COMMENT '短信消息是否启动',
   wechat_is_open int(11) NOT NULL DEFAULT 0 COMMENT '微信公众号消息',
   wechat_template_id varchar(255) NOT NULL DEFAULT '' COMMENT '微信公众号ID',
   weapp_is_open int(11) NOT NULL DEFAULT 0 COMMENT '微信小程序是否启动',
@@ -5244,11 +4200,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '消息管理';
 
---
--- `menu`
---
+
 CREATE TABLE menu (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
   app_module varchar(255) NOT NULL DEFAULT 'admin' COMMENT '应用模块',
   addon varchar(255) NOT NULL DEFAULT '' COMMENT '所属插件',
   title varchar(50) NOT NULL DEFAULT '' COMMENT '菜单标题',
@@ -5256,13 +4210,13 @@ CREATE TABLE menu (
   parent varchar(255) NOT NULL DEFAULT '' COMMENT '上级菜单',
   level int(11) NOT NULL DEFAULT 1 COMMENT '深度等级',
   url varchar(255) NOT NULL DEFAULT '' COMMENT '链接地址',
-  is_show tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否展示',
-  sort int(10) NOT NULL DEFAULT 0 COMMENT '排序（同级有效）',
+  is_show tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否展示',
+  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序（同级有效）',
   `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
-  is_icon tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是矢量菜单图',
+  is_icon tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是矢量菜单图',
   picture varchar(255) NOT NULL DEFAULT '' COMMENT '图片(矢量图)',
   picture_select varchar(255) NOT NULL DEFAULT '' COMMENT '图片(矢量图)(选中)',
-  is_control tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否控制权限',
+  is_control tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否控制权限',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -5270,45 +4224,25 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '菜单表';
 
---
--- `IDX_ns_menu_app_module` on table `menu`
---
-ALTER TABLE menu
-ADD INDEX IDX_ns_menu_app_module (app_module);
 
---
--- `IDX_ns_menu_is_control` on table `menu`
---
-ALTER TABLE menu
-ADD INDEX IDX_ns_menu_is_control (is_control);
+ALTER TABLE menu ADD INDEX IDX_ns_menu_app_module (app_module);
 
---
--- `IDX_ns_menu_is_show` on table `menu`
---
-ALTER TABLE menu
-ADD INDEX IDX_ns_menu_is_show (is_show);
 
---
--- `IDX_ns_menu_name` on table `menu`
---
-ALTER TABLE menu
-ADD INDEX IDX_ns_menu_name (name);
+ALTER TABLE menu ADD INDEX IDX_ns_menu_is_control (is_control);
 
---
--- `IDX_ns_menu_parent` on table `menu`
---
-ALTER TABLE menu
-ADD INDEX IDX_ns_menu_parent (parent);
 
---
--- `IDX_ns_menu_url` on table `menu`
---
-ALTER TABLE menu
-ADD INDEX IDX_ns_menu_url (url);
+ALTER TABLE menu ADD INDEX IDX_ns_menu_is_show (is_show);
 
---
--- `member_withdraw`
---
+
+ALTER TABLE menu ADD INDEX IDX_ns_menu_name (name);
+
+
+ALTER TABLE menu ADD INDEX IDX_ns_menu_parent (parent);
+
+
+ALTER TABLE menu ADD INDEX IDX_ns_menu_url (url);
+
+
 CREATE TABLE member_withdraw (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5324,7 +4258,7 @@ CREATE TABLE member_withdraw (
   apply_time int(11) NOT NULL DEFAULT 0 COMMENT '申请时间',
   audit_time int(11) NOT NULL DEFAULT 0 COMMENT '审核时间',
   payment_time int(11) NOT NULL DEFAULT 0 COMMENT '转账时间',
-  status int(11) NOT NULL DEFAULT 0 COMMENT '状态0待审核1.待转账2已转账 -1拒绝',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '状态0待审核1.待转账2已转账 -1拒绝 -2转账失败',
   memo varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
   refuse_reason varchar(100) NOT NULL DEFAULT '' COMMENT '拒绝理由',
   member_headimg varchar(255) NOT NULL DEFAULT '',
@@ -5336,7 +4270,7 @@ CREATE TABLE member_withdraw (
   certificate varchar(255) NOT NULL DEFAULT '' COMMENT '凭证',
   certificate_remark varchar(255) NOT NULL DEFAULT '' COMMENT '凭证说明',
   account_name varchar(50) NOT NULL DEFAULT '' COMMENT '账号',
-  applet_type int(1) NOT NULL DEFAULT 0,
+  applet_type int(11) NOT NULL DEFAULT 0,
   fail_reason varchar(255) NOT NULL DEFAULT '' COMMENT '失败原因',
   PRIMARY KEY (id)
 )
@@ -5345,9 +4279,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员提现表';
 
---
--- `member_recommend_award`
---
+
 CREATE TABLE member_recommend_award (
   award_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -5369,9 +4301,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `member_recommend`
---
+
 CREATE TABLE member_recommend (
   recommend_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -5396,9 +4326,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `member_recharge_order`
---
+
 CREATE TABLE member_recharge_order (
   order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   recharge_id int(11) NOT NULL DEFAULT 0 COMMENT '套餐ID',
@@ -5408,12 +4336,12 @@ CREATE TABLE member_recharge_order (
   out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '订单流水号',
   recharge_name varchar(255) NOT NULL DEFAULT '' COMMENT '套餐名称',
   cover_img varchar(255) NOT NULL DEFAULT '' COMMENT '封面',
-  face_value decimal(11, 2) NOT NULL DEFAULT 0.00 COMMENT '面值',
-  buy_price decimal(11, 2) NOT NULL DEFAULT 0.00 COMMENT '价格',
+  face_value decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '面值',
+  buy_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '价格',
   point int(11) NOT NULL DEFAULT 0 COMMENT '积分',
   growth int(11) NOT NULL DEFAULT 0 COMMENT '成长值',
   coupon_id varchar(255) NOT NULL DEFAULT '0' COMMENT '优惠券ID',
-  price decimal(11, 2) NOT NULL DEFAULT 0.00 COMMENT '实付金额',
+  price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '实付金额',
   pay_type varchar(20) NOT NULL DEFAULT '' COMMENT '支付方式',
   pay_type_name varchar(255) NOT NULL DEFAULT '' COMMENT '支付方式名称',
   status varchar(255) NOT NULL DEFAULT '1' COMMENT '支付状态（1未支付 2已支付）',
@@ -5431,12 +4359,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '充值卡订单';
 
---
--- `member_recharge_card`
---
+
 CREATE TABLE member_recharge_card (
   card_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  recharge_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '套餐ID',
+  recharge_id int(11) NOT NULL DEFAULT 0 COMMENT '套餐ID',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺ID',
   site_name varchar(50) NOT NULL DEFAULT '' COMMENT '店铺名称',
   card_account varchar(255) NOT NULL DEFAULT '' COMMENT '充值卡号',
@@ -5446,14 +4372,14 @@ CREATE TABLE member_recharge_card (
   point int(11) NOT NULL DEFAULT 0 COMMENT '积分',
   growth int(11) NOT NULL DEFAULT 0 COMMENT '成长值',
   coupon_id varchar(255) NOT NULL DEFAULT '' COMMENT '优惠券ID',
-  buy_price decimal(11, 2) NOT NULL DEFAULT 0.00 COMMENT '购买金额',
-  member_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '会员ID',
+  buy_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '购买金额',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员ID',
   member_img varchar(255) NOT NULL DEFAULT '' COMMENT '会员头像',
   nickname varchar(255) NOT NULL DEFAULT '' COMMENT '会员昵称',
   order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单ID',
   order_no varchar(255) NOT NULL DEFAULT '' COMMENT '订单编号',
-  from_type tinyint(3) NOT NULL DEFAULT 0 COMMENT '获取来源',
-  use_status tinyint(3) NOT NULL DEFAULT 1 COMMENT '使用状态（1未使用 2已使用）',
+  from_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '获取来源',
+  use_status tinyint(4) NOT NULL DEFAULT 1 COMMENT '使用状态（1未使用 2已使用）',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用时间',
   PRIMARY KEY (card_id)
@@ -5463,9 +4389,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '充值卡';
 
---
--- `member_recharge`
---
+
 CREATE TABLE member_recharge (
   recharge_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺ID',
@@ -5480,7 +4404,7 @@ CREATE TABLE member_recharge (
   sale_num int(11) NOT NULL DEFAULT 0 COMMENT '发放数量',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态（1正常 2关闭）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（1正常 2关闭）',
   PRIMARY KEY (recharge_id)
 )
 ENGINE = INNODB,
@@ -5488,11 +4412,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员充值套餐';
 
---
--- `member_log`
---
+
 CREATE TABLE member_log (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   action varchar(255) NOT NULL DEFAULT '' COMMENT '操作行为插件',
   action_name varchar(255) NOT NULL DEFAULT '' COMMENT '操作行为名称',
@@ -5505,23 +4427,21 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员操作日志表';
 
---
--- `member_level_records`
---
+
 CREATE TABLE member_level_records (
   id int(11) NOT NULL AUTO_INCREMENT,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   site_id int(11) NOT NULL DEFAULT 0,
   before_level_id int(11) NOT NULL DEFAULT 0 COMMENT '变更前会员卡id',
   before_level_name varchar(255) NOT NULL DEFAULT '' COMMENT '变更前会员卡名称',
-  before_level_type int(1) NOT NULL DEFAULT 0 COMMENT '变更前会员卡类型 0免费卡 1付费卡',
+  before_level_type int(11) NOT NULL DEFAULT 0 COMMENT '变更前会员卡类型 0免费卡 1付费卡',
   before_expire_time int(11) NOT NULL DEFAULT 0 COMMENT '变更前会员卡过期时间 0永久',
   after_level_id int(11) NOT NULL DEFAULT 0 COMMENT '变更后会员卡id',
   after_level_name varchar(255) NOT NULL DEFAULT '' COMMENT '变更后会员卡名称',
-  after_level_type int(1) NOT NULL DEFAULT 0 COMMENT '变更后会员卡类型 0免费卡 1付费卡',
+  after_level_type int(11) NOT NULL DEFAULT 0 COMMENT '变更后会员卡类型 0免费卡 1付费卡',
   prev_id int(11) NOT NULL DEFAULT 0 COMMENT '本次变更前该会员最新变更记录id',
   change_time int(11) NOT NULL DEFAULT 0 COMMENT '变更时间',
-  action_uid int(1) NOT NULL DEFAULT 0 COMMENT '操作人id',
+  action_uid int(11) NOT NULL DEFAULT 0 COMMENT '操作人id',
   action_type varchar(255) NOT NULL DEFAULT '' COMMENT '操作人类型 user后台用户 member会员自身',
   action_name varchar(255) NOT NULL DEFAULT '' COMMENT '操作人昵称',
   action_desc varchar(2500) NOT NULL DEFAULT '' COMMENT '操作描述',
@@ -5534,9 +4454,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员等级变更记录表';
 
---
--- `member_level_order`
---
+
 CREATE TABLE member_level_order (
   order_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -5544,8 +4462,8 @@ CREATE TABLE member_level_order (
   out_trade_no varchar(50) NOT NULL DEFAULT '' COMMENT '交易号',
   level_name varchar(255) NOT NULL DEFAULT '' COMMENT '会员卡名称',
   level_id int(11) NOT NULL DEFAULT 0 COMMENT '会员卡id',
-  order_type int(1) NOT NULL DEFAULT 1 COMMENT '订单类型 1购卡 2续费',
-  charge_type int(1) NOT NULL DEFAULT 0 COMMENT '会员卡付费类型 0付款 1充值',
+  order_type int(11) NOT NULL DEFAULT 1 COMMENT '订单类型 1购卡 2续费',
+  charge_type int(11) NOT NULL DEFAULT 0 COMMENT '会员卡付费类型 0付款 1充值',
   period_unit varchar(255) NOT NULL DEFAULT '' COMMENT '单位 week-周 month-月 quarter-季 year-年',
   buy_num int(11) NOT NULL DEFAULT 1 COMMENT '购买时长',
   order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '订单金额',
@@ -5554,8 +4472,8 @@ CREATE TABLE member_level_order (
   headimg varchar(255) NOT NULL DEFAULT '' COMMENT '购买人头像',
   pay_type varchar(255) NOT NULL DEFAULT '' COMMENT '支付方式',
   pay_type_name varchar(255) NOT NULL DEFAULT '' COMMENT '支付方式名称',
-  pay_status int(1) NOT NULL DEFAULT 0 COMMENT '支付状态 0待支付 1已支付',
-  order_status int(1) NOT NULL DEFAULT 0 COMMENT '订单状态',
+  pay_status int(11) NOT NULL DEFAULT 0 COMMENT '支付状态 0待支付 1已支付',
+  order_status int(11) NOT NULL DEFAULT 0 COMMENT '订单状态',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   pay_time int(11) NOT NULL DEFAULT 0 COMMENT '支付时间',
   PRIMARY KEY (order_id)
@@ -5565,9 +4483,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员卡订单表';
 
---
--- `member_level`
---
+
 CREATE TABLE member_level (
   level_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '会员等级',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5576,18 +4492,18 @@ CREATE TABLE member_level (
   growth decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '所需成长值',
   remark varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   is_default int(11) NOT NULL DEFAULT 0 COMMENT '是否默认，0：否，1：是',
-  is_free_shipping tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否包邮',
+  is_free_shipping tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否包邮',
   consume_discount decimal(10, 2) NOT NULL DEFAULT 100.00 COMMENT '消费折扣',
   point_feedback decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '积分回馈倍率',
   send_point int(11) NOT NULL DEFAULT 0 COMMENT '赠送积分（等级礼包）',
   send_balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '赠送红包（等级礼包）',
   send_coupon varchar(255) NOT NULL DEFAULT '' COMMENT '赠送优惠券',
-  level_type int(1) NOT NULL DEFAULT 0 COMMENT '等级类型 0免费卡 1付费卡',
+  level_type int(11) NOT NULL DEFAULT 0 COMMENT '等级类型 0免费卡 1付费卡',
   charge_rule text DEFAULT NULL COMMENT '付费规则',
-  charge_type int(1) NOT NULL DEFAULT 0 COMMENT '付费类型 0付款 1充值',
+  charge_type int(11) NOT NULL DEFAULT 0 COMMENT '付费类型 0付款 1充值',
   bg_color varchar(255) NOT NULL DEFAULT '#333',
-  status int(1) NOT NULL DEFAULT 1 COMMENT '状态 0已下架 1发售中 ',
-  is_recommend int(1) NOT NULL DEFAULT 0 COMMENT '是否推荐',
+  status int(11) NOT NULL DEFAULT 1 COMMENT '状态 0已下架 1发售中 ',
+  is_recommend int(11) NOT NULL DEFAULT 0 COMMENT '是否推荐',
   PRIMARY KEY (level_id)
 )
 ENGINE = INNODB,
@@ -5595,12 +4511,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员等级';
 
---
--- `member_label`
---
+
 CREATE TABLE member_label (
-  label_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '标签id',
-  site_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'site_id',
+  label_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '标签id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT 'site_id',
   label_name varchar(50) NOT NULL DEFAULT '' COMMENT '标签名称',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
@@ -5614,9 +4528,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员标签';
 
---
--- `member_import_record`
---
+
 CREATE TABLE member_import_record (
   id int(11) NOT NULL AUTO_INCREMENT,
   member_num int(11) DEFAULT 0 COMMENT '会员总数',
@@ -5631,9 +4543,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员导入记录';
 
---
--- `member_import_log`
---
+
 CREATE TABLE member_import_log (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   mobile varchar(255) NOT NULL DEFAULT '' COMMENT '手机号',
@@ -5653,9 +4563,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员导入记录';
 
---
--- `member_cluster`
---
+
 CREATE TABLE member_cluster (
   cluster_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '会员群体ID',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -5672,9 +4580,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员群体表';
 
---
--- `member_cancel`
---
+
 CREATE TABLE member_cancel (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5682,7 +4588,7 @@ CREATE TABLE member_cancel (
   username varchar(255) NOT NULL DEFAULT '' COMMENT '会员账号',
   mobile varchar(255) NOT NULL DEFAULT '' COMMENT '电话',
   nickname varchar(255) NOT NULL DEFAULT '' COMMENT '会员昵称',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态',
   audit_uid int(11) NOT NULL DEFAULT 0 COMMENT '审核人UID',
   audit_username varchar(255) NOT NULL DEFAULT '' COMMENT '审核人账号',
   reason varchar(255) NOT NULL DEFAULT '' COMMENT '审核拒绝原因',
@@ -5697,9 +4603,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员注销表';
 
---
--- `member_bank_account`
---
+
 CREATE TABLE member_bank_account (
   id int(11) NOT NULL AUTO_INCREMENT,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
@@ -5718,9 +4622,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员提现账号';
 
---
--- `member_auth`
---
+
 CREATE TABLE member_auth (
   auth_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5742,11 +4644,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员实名认证表';
 
---
--- `member_address`
---
+
 CREATE TABLE member_address (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   name varchar(255) NOT NULL DEFAULT '' COMMENT '用户姓名',
@@ -5769,11 +4669,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '用户地址管理';
 
---
--- `member_account`
---
+
 CREATE TABLE member_account (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
   account_type varchar(255) NOT NULL DEFAULT 'point' COMMENT '账户类型',
@@ -5796,40 +4694,26 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '账户流水';
 
---
--- `IDX_ns_member_account_account_type` on table `member_account`
---
-ALTER TABLE member_account
-ADD INDEX IDX_ns_member_account_account_type (account_type);
 
---
--- `IDX_ns_member_account_create_time` on table `member_account`
---
-ALTER TABLE member_account
-ADD INDEX IDX_ns_member_account_create_time (create_time);
+ALTER TABLE member_account ADD INDEX IDX_ns_member_account_account_type (account_type);
 
---
--- `IDX_ns_member_account_from_type` on table `member_account`
---
-ALTER TABLE member_account
-ADD INDEX IDX_ns_member_account_from_type (from_type);
 
---
--- `IDX_ns_member_account_member_id` on table `member_account`
---
-ALTER TABLE member_account
-ADD INDEX IDX_ns_member_account_member_id (member_id);
+ALTER TABLE member_account ADD INDEX IDX_ns_member_account_create_time (create_time);
 
---
--- `member`
---
+
+ALTER TABLE member_account ADD INDEX IDX_ns_member_account_from_type (from_type);
+
+
+ALTER TABLE member_account ADD INDEX IDX_ns_member_account_member_id (member_id);
+
+
 CREATE TABLE member (
   member_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   share_member int(11) NOT NULL DEFAULT 0 COMMENT '分享人',
   source_member int(11) NOT NULL DEFAULT 0 COMMENT '推荐人',
   fenxiao_id int(11) NOT NULL DEFAULT 0 COMMENT '分销商（分销有效）',
-  is_fenxiao tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是分销商',
+  is_fenxiao tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是分销商',
   username varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
   nickname varchar(50) NOT NULL DEFAULT '' COMMENT '用户昵称',
   mobile varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
@@ -5879,7 +4763,7 @@ CREATE TABLE member (
   order_complete_num int(11) NOT NULL DEFAULT 0 COMMENT '订单完成-消费次数',
   balance_withdraw_apply decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '提现中余额',
   balance_withdraw decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '已提现余额',
-  is_delete tinyint(1) NOT NULL DEFAULT 0 COMMENT '0正常  1已删除',
+  is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '0正常  1已删除',
   member_level_type int(11) NOT NULL DEFAULT 0 COMMENT '会员卡类型 0免费卡 1付费卡',
   level_expire_time int(11) NOT NULL DEFAULT 0 COMMENT '会员卡过期时间',
   is_edit_username int(11) NOT NULL DEFAULT 0 COMMENT '是否可修改用户名',
@@ -5887,6 +4771,14 @@ CREATE TABLE member (
   can_receive_registergift int(11) NOT NULL DEFAULT 0 COMMENT '是否可以领取新人礼(只针对后台注册的用户 1可以 0不可以)',
   balance_lock decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '冻结中的不可提现余额',
   balance_money_lock decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '冻结中的可提现余额',
+  province_id int(11) NOT NULL DEFAULT 0 COMMENT '省id',
+  city_id int(11) NOT NULL DEFAULT 0 COMMENT '市id',
+  district_id int(11) NOT NULL DEFAULT 0 COMMENT '区县id',
+  community_id int(11) NOT NULL DEFAULT 0 COMMENT '社区id',
+  address varchar(255) NOT NULL DEFAULT '' COMMENT '地址信息',
+  full_address varchar(255) NOT NULL DEFAULT '' COMMENT '详细地址信息',
+  longitude varchar(255) NOT NULL DEFAULT '' COMMENT '经度',
+  latitude varchar(255) NOT NULL DEFAULT '' COMMENT '纬度',
   PRIMARY KEY (member_id)
 )
 ENGINE = INNODB,
@@ -5894,51 +4786,28 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统用户表';
 
---
--- `IDX_ns_member_weapp_openid` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_ns_member_weapp_openid (weapp_openid);
 
---
--- `IDX_sys_user_user_email` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_sys_user_user_email (email);
+ALTER TABLE member ADD INDEX IDX_ns_member_weapp_openid (weapp_openid);
 
---
--- `IDX_sys_user_user_name` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_sys_user_user_name (username);
 
---
--- `IDX_sys_user_user_password` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_sys_user_user_password (password);
+ALTER TABLE member ADD INDEX IDX_sys_user_user_email (email);
 
---
--- `IDX_sys_user_user_tel` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_sys_user_user_tel (mobile);
 
---
--- `IDX_sys_user_wx_openid` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_sys_user_wx_openid (wx_openid);
+ALTER TABLE member ADD INDEX IDX_sys_user_user_name (username);
 
---
--- `IDX_sys_user_wx_unionid` on table `member`
---
-ALTER TABLE member
-ADD INDEX IDX_sys_user_wx_unionid (wx_unionid);
 
---
--- `local_delivery_package`
---
+ALTER TABLE member ADD INDEX IDX_sys_user_user_password (password);
+
+
+ALTER TABLE member ADD INDEX IDX_sys_user_user_tel (mobile);
+
+
+ALTER TABLE member ADD INDEX IDX_sys_user_wx_openid (wx_openid);
+
+
+ALTER TABLE member ADD INDEX IDX_sys_user_wx_unionid (wx_unionid);
+
+
 CREATE TABLE local_delivery_package (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -5960,10 +4829,8 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '外卖配送物流信息表';
 
---
--- `local`
---
-CREATE TABLE local (
+
+CREATE TABLE `local` (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   type varchar(255) NOT NULL DEFAULT 'default' COMMENT '配送方式  default 商家自配送  other 第三方配送',
@@ -5976,7 +4843,7 @@ CREATE TABLE local (
   end_time int(11) NOT NULL DEFAULT 0 COMMENT '当日的营业结束时间',
   update_time int(11) NOT NULL DEFAULT 0,
   is_open_step int(11) NOT NULL DEFAULT 0 COMMENT '是否启用阶梯价(适用于行政区域)',
-  start_distance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '多少距离以内,...',
+  start_distance decimal(10, 2) NOT NULL DEFAULT 1.00 COMMENT '多少距离以内,...',
   start_delivery_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '多少距离以内,多少钱',
   continued_distance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '每增加多少距离',
   continued_delivery_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '每增加多少距离,运费增加',
@@ -5986,6 +4853,8 @@ CREATE TABLE local (
   man_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '满多少钱',
   man_type varchar(255) NOT NULL DEFAULT '' COMMENT '满足条件优惠类型  free  discount',
   man_discount decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '满减优惠金额',
+  time_interval int(11) NOT NULL DEFAULT 30 COMMENT '时段设置单位分钟',
+  delivery_time varchar(2000) NOT NULL DEFAULT '' COMMENT '配送时间段',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -5993,9 +4862,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '本地配送设置';
 
---
--- `link`
---
+
 CREATE TABLE link (
   id int(11) NOT NULL AUTO_INCREMENT,
   addon_name varchar(50) NOT NULL DEFAULT '',
@@ -6015,18 +4882,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '链接入口';
 
---
--- `IDX_nc_link` on table `link`
---
-ALTER TABLE link
-ADD INDEX IDX_nc_link (addon_name);
 
---
--- `help_class`
---
+ALTER TABLE link ADD INDEX IDX_nc_link (addon_name);
+
+
 CREATE TABLE help_class (
-  class_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-  site_id int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'site_id',
+  class_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT 'site_id',
   app_module varchar(255) NOT NULL DEFAULT '' COMMENT '应用模块',
   class_name varchar(50) NOT NULL DEFAULT '' COMMENT '帮助类型名称',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
@@ -6039,12 +4901,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '帮助类型';
 
---
--- `help`
---
+
 CREATE TABLE help (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  site_id int(10) NOT NULL DEFAULT 0 COMMENT 'site_id',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT 'site_id',
   app_module varchar(255) NOT NULL DEFAULT '' COMMENT '应用模块',
   title varchar(255) NOT NULL DEFAULT '' COMMENT '帮助主题',
   link_address varchar(1000) NOT NULL DEFAULT '' COMMENT '链接地址',
@@ -6061,16 +4921,14 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '帮助文章表';
 
---
--- `group`
---
+
 CREATE TABLE `group` (
-  group_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  group_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id（店铺，分站,门店，供应商）,总平台端为0',
   app_module varchar(255) NOT NULL DEFAULT '' COMMENT '使用端口',
   group_name varchar(50) NOT NULL DEFAULT '' COMMENT '用户组名称',
   group_status int(11) NOT NULL DEFAULT 1 COMMENT '用户组状态',
-  is_system int(1) NOT NULL DEFAULT 0 COMMENT '是否是系统用户组',
+  is_system int(11) NOT NULL DEFAULT 0 COMMENT '是否是系统用户组',
   menu_array text DEFAULT NULL COMMENT '系统菜单权限组，用，隔开',
   `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -6082,9 +4940,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '用户组表';
 
---
--- `goods_virtual`
---
+
 CREATE TABLE goods_virtual (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
@@ -6110,11 +4966,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '用户虚拟商品表';
 
---
--- `goods_sku`
---
+
 CREATE TABLE goods_sku (
-  sku_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品sku_id',
+  sku_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品sku_id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku名称',
@@ -6166,8 +5020,8 @@ CREATE TABLE goods_sku (
   evaluate_chaping int(11) NOT NULL DEFAULT 0 COMMENT '差评数',
   spec_name varchar(255) NOT NULL DEFAULT '' COMMENT '规格名称',
   supplier_id int(11) NOT NULL DEFAULT 0 COMMENT '供应商id',
-  is_consume_discount tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否参与会员等级折扣',
-  discount_config tinyint(1) NOT NULL DEFAULT 0 COMMENT '优惠设置（0默认 1自定义）',
+  is_consume_discount tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否参与会员等级折扣',
+  discount_config tinyint(4) NOT NULL DEFAULT 0 COMMENT '优惠设置（0默认 1自定义）',
   discount_method varchar(20) NOT NULL DEFAULT '' COMMENT '优惠方式（discount打折 manjian 满减 fixed_price 指定价格）',
   member_price varchar(255) NOT NULL DEFAULT '' COMMENT '会员价',
   goods_service_ids varchar(255) NOT NULL DEFAULT '' COMMENT '商品服务id',
@@ -6178,10 +5032,10 @@ CREATE TABLE goods_sku (
   fenxiao_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '分销计算价格',
   stock_alarm int(11) NOT NULL DEFAULT 0 COMMENT 'sku库存预警',
   sale_sort int(11) NOT NULL DEFAULT 0 COMMENT '销量排序字段 占位用',
-  is_default tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否默认',
+  is_default tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否默认',
   verify_num int(11) NOT NULL DEFAULT 0 COMMENT '核销次数',
-  is_limit int(1) NOT NULL DEFAULT 0 COMMENT '是否限购(0否1是)',
-  limit_type int(1) NOT NULL DEFAULT 1 COMMENT '限购类型(1单次限购2长期限购)',
+  is_limit int(11) NOT NULL DEFAULT 0 COMMENT '是否限购(0否1是)',
+  limit_type int(11) NOT NULL DEFAULT 1 COMMENT '限购类型(1单次限购2长期限购)',
   qr_id int(11) NOT NULL DEFAULT 0 COMMENT '社群二维码id',
   template_id int(11) NOT NULL DEFAULT 0 COMMENT '海报id',
   success_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价审核通过数',
@@ -6189,6 +5043,8 @@ CREATE TABLE goods_sku (
   wait_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价待审核数',
   brand_id int(11) NOT NULL DEFAULT 0 COMMENT '品牌id',
   brand_name varchar(255) NOT NULL DEFAULT '' COMMENT '品牌名称',
+  form_id int(11) NOT NULL DEFAULT 0 COMMENT '表单id',
+  support_trade_type varchar(255) NOT NULL DEFAULT '' COMMENT '支持的配送方式',
   PRIMARY KEY (sku_id)
 )
 ENGINE = INNODB,
@@ -6196,33 +5052,19 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品表';
 
---
--- `IDX_ns_goods_goods_class` on table `goods_sku`
---
-ALTER TABLE goods_sku
-ADD INDEX IDX_ns_goods_goods_class (goods_class);
 
---
--- `IDX_ns_goods_is_delete` on table `goods_sku`
---
-ALTER TABLE goods_sku
-ADD INDEX IDX_ns_goods_is_delete (is_delete);
+ALTER TABLE goods_sku ADD INDEX IDX_ns_goods_goods_class (goods_class);
 
---
--- `IDX_ns_goods_site_id` on table `goods_sku`
---
-ALTER TABLE goods_sku
-ADD INDEX IDX_ns_goods_site_id (site_id);
 
---
--- `IDX_ns_goods_sort` on table `goods_sku`
---
-ALTER TABLE goods_sku
-ADD INDEX IDX_ns_goods_sort (sort);
+ALTER TABLE goods_sku ADD INDEX IDX_ns_goods_is_delete (is_delete);
 
---
--- `goods_service`
---
+
+ALTER TABLE goods_sku ADD INDEX IDX_ns_goods_site_id (site_id);
+
+
+ALTER TABLE goods_sku ADD INDEX IDX_ns_goods_sort (sort);
+
+
 CREATE TABLE goods_service (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6238,17 +5080,15 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品服务';
 
---
--- `goods_recommend`
---
+
 CREATE TABLE goods_recommend (
   id int(11) NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL DEFAULT '' COMMENT '排行名称',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
   number int(11) NOT NULL DEFAULT 0 COMMENT '数量',
-  type int(11) NOT NULL DEFAULT 0 COMMENT '类型  1一周销售排名    2一月销售排名    3自定义推荐',
+  type int(11) NOT NULL DEFAULT 0 COMMENT '类型：1一周销售排名，2一月销售排名，3自定义推荐',
   category_id int(11) NOT NULL DEFAULT 0 COMMENT '商品分类ID',
-  goods_ids varchar(255) NOT NULL DEFAULT '' COMMENT '自定义推荐     商品ID',
+  goods_ids varchar(255) NOT NULL DEFAULT '' COMMENT '自定义推荐商品ID',
   create_time int(11) NOT NULL DEFAULT 0,
   modify_time int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
@@ -6258,15 +5098,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品热门排行';
 
---
--- `goods_poster`
---
+
 CREATE TABLE goods_poster (
   poster_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
   poster_name varchar(255) NOT NULL DEFAULT '' COMMENT '海报名',
-  poster_type tinyint(3) NOT NULL DEFAULT 1 COMMENT '海报类型 1商品海报',
-  scan_num tinyint(10) NOT NULL DEFAULT 0 COMMENT '扫码数',
-  status tinyint(2) NOT NULL DEFAULT 0 COMMENT '状态 1启用0未启用',
+  poster_type tinyint(4) NOT NULL DEFAULT 1 COMMENT '海报类型 1商品海报',
+  scan_num tinyint(4) NOT NULL DEFAULT 0 COMMENT '扫码数',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态 1启用0未启用',
   json_data text NOT NULL COMMENT 'json数据',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
@@ -6277,9 +5115,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `goods_label`
---
+
 CREATE TABLE goods_label (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6295,9 +5131,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品标签';
 
---
--- `goods_import_record`
---
+
 CREATE TABLE goods_import_record (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -6314,9 +5148,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品导入记录';
 
---
--- `goods_grab_detail`
---
+
 CREATE TABLE goods_grab_detail (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
@@ -6325,7 +5157,7 @@ CREATE TABLE goods_grab_detail (
   type varchar(255) DEFAULT '' COMMENT '采集平台',
   type_name varchar(255) NOT NULL DEFAULT '' COMMENT '采集平台名称',
   reason varchar(255) NOT NULL DEFAULT '' COMMENT '失败原因',
-  status tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态（1成功  2失败）',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态（1成功  2失败）',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -6333,14 +5165,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '采集明细';
 
---
--- `goods_grab`
---
+
 CREATE TABLE goods_grab (
   grab_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0,
-  is_virtual tinyint(1) NOT NULL DEFAULT 0 COMMENT '商品类型（0实物1.虚拟）',
-  category_id int(11) NOT NULL DEFAULT 0 COMMENT '商品分类',
+  is_virtual tinyint(4) NOT NULL DEFAULT 0 COMMENT '商品类型（0实物1.虚拟）',
+  category_id varchar(255) NOT NULL DEFAULT '' COMMENT '商品分类',
   category_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品分类名称',
   total_num int(11) NOT NULL DEFAULT 0 COMMENT '采集数',
   success_num int(11) NOT NULL DEFAULT 0 COMMENT '成功数',
@@ -6353,9 +5183,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品采集';
 
---
--- `goods_giftcard`
---
+
 CREATE TABLE goods_giftcard (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6368,9 +5196,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `goods_evaluate`
---
+
 CREATE TABLE goods_evaluate (
   evaluate_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '评价ID',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6389,13 +5215,13 @@ CREATE TABLE goods_evaluate (
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '评价人id',
   member_name varchar(100) NOT NULL DEFAULT '' COMMENT '评价人名称',
   member_headimg varchar(255) NOT NULL DEFAULT '' COMMENT '评价人头像',
-  is_anonymous tinyint(1) NOT NULL DEFAULT 0 COMMENT '0表示不是 1表示是匿名评价',
-  scores tinyint(1) NOT NULL DEFAULT 0 COMMENT '1-5分',
+  is_anonymous tinyint(4) NOT NULL DEFAULT 0 COMMENT '0表示不是 1表示是匿名评价',
+  scores tinyint(4) NOT NULL DEFAULT 0 COMMENT '1-5分',
   again_content varchar(255) NOT NULL DEFAULT '' COMMENT '追加评价内容',
   again_images varchar(1000) NOT NULL DEFAULT '' COMMENT '追评评价图片',
   again_explain varchar(255) NOT NULL DEFAULT '' COMMENT '追加解释内容',
   explain_type int(11) NOT NULL DEFAULT 0 COMMENT '1好评2中评3差评',
-  is_show int(1) NOT NULL DEFAULT 1 COMMENT '1显示 0隐藏',
+  is_show int(11) NOT NULL DEFAULT 1 COMMENT '1显示 0隐藏',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '评价时间',
   again_time int(11) NOT NULL DEFAULT 0 COMMENT '追加评价时间',
   shop_desccredit decimal(10, 2) NOT NULL DEFAULT 5.00 COMMENT '描述分值',
@@ -6410,11 +5236,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品评价表';
 
---
--- `goods_community_qrcode`
---
+
 CREATE TABLE goods_community_qrcode (
-  qr_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '社群二维码id',
+  qr_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '社群二维码id',
   qr_img varchar(255) NOT NULL DEFAULT '' COMMENT '社群二维码图片',
   qr_name varchar(255) NOT NULL DEFAULT '' COMMENT '社群二维码名称',
   community_describe varchar(255) NOT NULL DEFAULT '' COMMENT '社群描述',
@@ -6428,11 +5252,9 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `goods_collect`
---
+
 CREATE TABLE goods_collect (
-  collect_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  collect_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'skuid',
@@ -6441,7 +5263,7 @@ CREATE TABLE goods_collect (
   sku_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品价格',
   sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '收藏时间',
-  site_id int(10) NOT NULL DEFAULT 0 COMMENT '站点id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   PRIMARY KEY (collect_id)
 )
 ENGINE = INNODB,
@@ -6449,21 +5271,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品收藏表';
 
---
--- `IDX_ns_goods_collect_member_id` on table `goods_collect`
---
-ALTER TABLE goods_collect
-ADD INDEX IDX_ns_goods_collect_member_id (member_id);
 
---
--- `IDX_ns_goods_collect_sku_id` on table `goods_collect`
---
-ALTER TABLE goods_collect
-ADD INDEX IDX_ns_goods_collect_sku_id (sku_id);
+ALTER TABLE goods_collect ADD INDEX IDX_ns_goods_collect_member_id (member_id);
 
---
--- `goods_category`
---
+
+ALTER TABLE goods_collect ADD INDEX IDX_ns_goods_collect_sku_id (sku_id);
+
+
 CREATE TABLE goods_category (
   category_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6492,21 +5306,16 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = ' 商品分类';
 
---
--- `pid_level` on table `goods_category`
---
-ALTER TABLE goods_category
-ADD INDEX pid_level (pid, level);
+ALTER TABLE goods_category ADD INDEX pid_level (pid, level);
 
---
--- `goods_cart`
---
+
 CREATE TABLE goods_cart (
   cart_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
   num int(11) NOT NULL DEFAULT 0 COMMENT '数量',
+  form_data text NOT NULL COMMENT '表单数据',
   PRIMARY KEY (cart_id)
 )
 ENGINE = INNODB,
@@ -6514,20 +5323,15 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = ' 购物车';
 
---
--- `IDX_ns_goods_cart_member_id` on table `goods_cart`
---
-ALTER TABLE goods_cart
-ADD INDEX IDX_ns_goods_cart_member_id (member_id);
 
---
--- `goods_browse`
---
+ALTER TABLE goods_cart ADD INDEX IDX_ns_goods_cart_member_id (member_id);
+
+
 CREATE TABLE goods_browse (
   id int(11) NOT NULL AUTO_INCREMENT,
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '浏览人',
   browse_time int(11) NOT NULL DEFAULT 0 COMMENT '浏览时间',
-  site_id int(10) NOT NULL DEFAULT 0 COMMENT '站点id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   PRIMARY KEY (id)
@@ -6537,21 +5341,13 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品浏览历史';
 
---
--- `IDX_ns_goods_browse_member_id` on table `goods_browse`
---
-ALTER TABLE goods_browse
-ADD INDEX IDX_ns_goods_browse_member_id (member_id);
 
---
--- `IDX_ns_goods_browse_sku_id` on table `goods_browse`
---
-ALTER TABLE goods_browse
-ADD INDEX IDX_ns_goods_browse_sku_id (sku_id);
+ALTER TABLE goods_browse ADD INDEX IDX_ns_goods_browse_member_id (member_id);
 
---
--- `goods_brand`
---
+
+ALTER TABLE goods_browse ADD INDEX IDX_ns_goods_browse_sku_id (sku_id);
+
+
 CREATE TABLE goods_brand (
   brand_id bigint(20) NOT NULL AUTO_INCREMENT COMMENT '索引ID',
   brand_name varchar(100) NOT NULL DEFAULT '' COMMENT '品牌名称',
@@ -6568,9 +5364,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品品牌表';
 
---
--- `goods_attr_class`
---
+
 CREATE TABLE goods_attr_class (
   class_id int(11) NOT NULL AUTO_INCREMENT,
   class_name varchar(50) NOT NULL DEFAULT '' COMMENT '类型名称',
@@ -6583,9 +5377,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = ' 商品类型';
 
---
--- `goods_attribute_value`
---
+
 CREATE TABLE goods_attribute_value (
   attr_value_id int(11) NOT NULL AUTO_INCREMENT,
   attr_value_name varchar(50) NOT NULL DEFAULT '' COMMENT '属性值名称',
@@ -6599,9 +5391,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品属性值表';
 
---
--- `goods_attribute`
---
+
 CREATE TABLE goods_attribute (
   attr_id int(11) NOT NULL AUTO_INCREMENT,
   attr_name varchar(50) NOT NULL DEFAULT '' COMMENT '属性名称',
@@ -6622,138 +5412,488 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品属性';
 
---
--- `giftcard_transfer_record`
---
-CREATE TABLE giftcard_transfer_record (
-  transfer_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  record_id int(11) NOT NULL DEFAULT 0 COMMENT '卡密id',
-  has_member_mobile varchar(255) NOT NULL DEFAULT '' COMMENT '持有人手机号',
-  has_member_username varchar(255) NOT NULL DEFAULT '' COMMENT '持有人账号',
-  has_member_name varchar(255) NOT NULL DEFAULT '' COMMENT '赠送人',
-  has_member_id int(11) NOT NULL DEFAULT 0 COMMENT '持有人id',
-  receive_member_mobile varchar(255) DEFAULT '' COMMENT '持有人手机号',
-  receive_member_username varchar(255) NOT NULL DEFAULT '' COMMENT '接收人账号',
-  receive_member_name varchar(255) NOT NULL DEFAULT '' COMMENT '接收人',
-  receive_member_id int(11) NOT NULL DEFAULT 0 COMMENT '领取人id',
-  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  site_id int(3) NOT NULL DEFAULT 0 COMMENT '站点id',
-  leav_message varchar(255) NOT NULL DEFAULT '' COMMENT '留言',
-  status int(1) NOT NULL DEFAULT 0 COMMENT '0待领取1已领取',
-  has_member_headimg varchar(255) NOT NULL DEFAULT '' COMMENT '赠送人头像',
-  share_key varchar(50) NOT NULL DEFAULT '',
-  PRIMARY KEY (transfer_id)
-)
-ENGINE = INNODB,
-CHARACTER SET utf8,
-COLLATE utf8_general_ci;
 
---
--- `giftcard_record`
---
-CREATE TABLE giftcard_record (
-  id int(11) NOT NULL AUTO_INCREMENT,
-  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
-  use_member_id int(11) NOT NULL DEFAULT 0 COMMENT '领取用户id',
-  elect_status int(1) NOT NULL DEFAULT 0 COMMENT '0待使用1已使用2已过期',
-  entity_status int(1) NOT NULL DEFAULT 0 COMMENT '实体卡状态0-未激活  1-待使用   2-已作废 3-已使用 4-已过期',
-  carmichael_text varchar(50) DEFAULT '' COMMENT '实体卡卡密',
-  create_time int(11) NOT NULL DEFAULT 0 COMMENT '生成时间',
-  activation_time int(11) NOT NULL DEFAULT 0 COMMENT '激活时间',
-  use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用时间',
-  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
-  number varchar(11) DEFAULT '' COMMENT '电子卡编号',
-  source_from int(2) NOT NULL DEFAULT 0 COMMENT '来源1购买电子卡2别人赠送',
-  no int(11) NOT NULL DEFAULT 0 COMMENT 'NO',
-  entity_bianhao varchar(255) NOT NULL DEFAULT '' COMMENT '实体卡编号',
-  PRIMARY KEY (id)
+CREATE TABLE goods (
+  goods_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品id',
+  goods_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+  goods_class int(11) NOT NULL DEFAULT 1 COMMENT '商品种类1.实物商品2.虚拟商品3.卡券商品',
+  goods_class_name varchar(25) NOT NULL DEFAULT '' COMMENT '商品种类',
+  goods_attr_class int(11) NOT NULL DEFAULT 1 COMMENT '商品类型id',
+  goods_attr_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品类型名称',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '所属店铺id',
+  site_name varchar(255) NOT NULL DEFAULT '' COMMENT '所属店铺名称',
+  goods_image varchar(1000) NOT NULL DEFAULT '' COMMENT '商品主图路径',
+  goods_content text DEFAULT NULL COMMENT '商品详情',
+  goods_state tinyint(4) NOT NULL DEFAULT 1 COMMENT '商品状态（1.正常0下架）',
+  category_id varchar(255) NOT NULL DEFAULT '' COMMENT '商品分类id,逗号隔开',
+  category_json varchar(500) NOT NULL DEFAULT '' COMMENT '分类json字符串',
+  brand_id int(11) NOT NULL DEFAULT 0 COMMENT '商品品牌id',
+  brand_name varchar(255) NOT NULL DEFAULT '' COMMENT '品牌名称',
+  price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品价格（取第一个sku）',
+  market_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '划线价格（取第一个sku）',
+  cost_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '成本价（取第一个sku）',
+  goods_stock int(11) NOT NULL DEFAULT 0 COMMENT '商品库存（总和）',
+  goods_stock_alarm int(11) NOT NULL DEFAULT 0 COMMENT '库存预警',
+  is_virtual tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否虚拟类商品（0实物1.虚拟）',
+  virtual_indate int(11) NOT NULL DEFAULT 1 COMMENT '虚拟商品有效期',
+  is_free_shipping tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否免邮',
+  shipping_template int(11) NOT NULL DEFAULT 0 COMMENT '指定运费模板',
+  goods_spec_format text DEFAULT NULL COMMENT '商品规格格式',
+  goods_attr_format text DEFAULT NULL COMMENT '商品属性格式',
+  is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否已经删除',
+  introduction varchar(255) NOT NULL DEFAULT '' COMMENT '促销语',
+  keywords varchar(255) NOT NULL DEFAULT '' COMMENT '关键词',
+  unit varchar(255) NOT NULL DEFAULT '' COMMENT '单位',
+  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  video_url varchar(555) NOT NULL DEFAULT '' COMMENT '视频',
+  sale_num int(11) NOT NULL DEFAULT 0 COMMENT '销量',
+  evaluate int(11) NOT NULL DEFAULT 0 COMMENT '评价数',
+  evaluate_shaitu int(11) NOT NULL DEFAULT 0 COMMENT '评价晒图数',
+  evaluate_shipin int(11) NOT NULL DEFAULT 0 COMMENT '评价视频数',
+  evaluate_zhuiping int(11) NOT NULL DEFAULT 0 COMMENT '评价追评数',
+  evaluate_haoping int(11) NOT NULL DEFAULT 0 COMMENT '评价好评数',
+  evaluate_zhongping int(11) NOT NULL DEFAULT 0 COMMENT '评价中评数',
+  evaluate_chaping int(11) NOT NULL DEFAULT 0 COMMENT '评价差评数',
+  is_fenxiao tinyint(4) NOT NULL DEFAULT 0 COMMENT '参与分销（0不参与 1参与）',
+  fenxiao_type tinyint(4) NOT NULL DEFAULT 1 COMMENT '分销佣金类型（1默认  2自行设置）',
+  supplier_id int(11) NOT NULL DEFAULT 0 COMMENT '供应商id',
+  is_consume_discount tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否参与会员等级折扣',
+  discount_config tinyint(4) NOT NULL DEFAULT 0 COMMENT '优惠设置（0默认 1自定义）',
+  discount_method varchar(20) NOT NULL DEFAULT '' COMMENT '优惠方式（discount打折 manjian 满减 fixed_price 指定价格）',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
+  promotion_addon varchar(255) NOT NULL DEFAULT '' COMMENT '当前参与的营销活动，逗号分隔（限时折扣、团购、拼团、秒杀、专题活动）',
+  goods_service_ids varchar(255) NOT NULL DEFAULT '' COMMENT '商品服务id',
+  label_id int(11) NOT NULL DEFAULT 0 COMMENT '商品分组id',
+  label_name varchar(50) NOT NULL DEFAULT '' COMMENT '商品分组名称',
+  virtual_sale int(11) NOT NULL DEFAULT 0 COMMENT '虚拟销量',
+  max_buy int(11) NOT NULL DEFAULT 0 COMMENT '限购',
+  min_buy int(11) NOT NULL DEFAULT 0 COMMENT '起购数',
+  recommend_way int(11) NOT NULL DEFAULT 0 COMMENT '推荐方式，1：新品，2：精品，3；推荐',
+  timer_on int(11) NOT NULL DEFAULT 0 COMMENT '定时上架',
+  timer_off int(11) NOT NULL DEFAULT 0 COMMENT '定时下架',
+  is_need_verify int(11) NOT NULL DEFAULT 0 COMMENT '是否需要核销 ',
+  verify_validity_type int(11) NOT NULL DEFAULT 0 COMMENT '核销有效期类型 0：永久有效 1：购买后x天有效 2：指定过期日期',
+  is_limit int(11) NOT NULL DEFAULT 0 COMMENT '商品是否限购(0:否 1:是)',
+  limit_type int(11) NOT NULL DEFAULT 1 COMMENT '限购类型(1:单次限购 2:长期限购)',
+  qr_id int(11) NOT NULL DEFAULT 0 COMMENT '社群二维码id',
+  template_id int(11) NOT NULL DEFAULT 0 COMMENT '海报id',
+  success_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价审核通过数',
+  fail_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价审核失败数',
+  wait_evaluate_num int(11) NOT NULL DEFAULT 0 COMMENT '评价待审核数',
+  sale_show int(11) NOT NULL DEFAULT 0 COMMENT '销量是否展示',
+  stock_show int(11) NOT NULL DEFAULT 0 COMMENT '库存是否展示',
+  virtual_deliver_type varchar(20) NOT NULL DEFAULT '' COMMENT '虚拟商品发货方式',
+  virtual_receive_type varchar(20) NOT NULL DEFAULT '' COMMENT '虚拟商品收货方式',
+  barrage_show int(11) NOT NULL DEFAULT 0 COMMENT '弹幕是否展示',
+  market_price_show int(11) NOT NULL DEFAULT 0 COMMENT '划线价是否展示',
+  form_id int(11) NOT NULL DEFAULT 0 COMMENT '商品表单id',
+  support_trade_type varchar(255) NOT NULL DEFAULT '' COMMENT '支持的配送方式',
+  PRIMARY KEY (goods_id)
 )
 ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
-COMMENT = '兑换卡密';
+COMMENT = '商品表';
 
---
--- `giftcard_order`
---
+
+ALTER TABLE goods ADD INDEX IDX_ns_goods_category_id (category_id);
+
+
+ALTER TABLE goods ADD INDEX IDX_ns_goods_goods_class (goods_class);
+
+
+ALTER TABLE goods ADD INDEX IDX_ns_goods_is_delete (is_delete);
+
+
+ALTER TABLE goods ADD INDEX IDX_ns_goods_site_id (site_id);
+
+
+ALTER TABLE goods ADD INDEX IDX_ns_goods_sku_id (sku_id);
+
+
+ALTER TABLE goods ADD INDEX IDX_ns_goods_sort (sort);
+
+
+CREATE TABLE giftcard_order_goods (
+  order_goods_id int(11) NOT NULL AUTO_INCREMENT,
+  order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
+  order_no varchar(20) NOT NULL DEFAULT '' COMMENT '订单编号',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '商家id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '购买会员id',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品skuid',
+  sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+  sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
+  sku_no varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
+  goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
+  goods_name varchar(400) NOT NULL DEFAULT '' COMMENT '商品名称',
+  goods_class int(11) NOT NULL DEFAULT 0 COMMENT '商品种类(1.实物 2.虚拟3.卡券)',
+  goods_class_name varchar(50) NOT NULL DEFAULT '' COMMENT '商品类型名称',
+  price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品卖价',
+  num int(11) NOT NULL DEFAULT 0 COMMENT '购买数量',
+  card_right_type varchar(50) NOT NULL DEFAULT '' COMMENT '卡权益类型balance储值  goods商品',
+  balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '单个储值余额',
+  total_balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '总的储值余额',
+  goods_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品总价',
+  refund_no varchar(50) NOT NULL DEFAULT '' COMMENT '退款编号（申请产生）',
+  refund_status int(11) NOT NULL DEFAULT 0 COMMENT '退款状态',
+  refund_status_name varchar(50) NOT NULL DEFAULT '' COMMENT '退款状态名称',
+  refund_status_action varchar(1000) NOT NULL DEFAULT '' COMMENT '退款操作',
+  refund_apply_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '退款申请金额',
+  refund_reason varchar(255) NOT NULL DEFAULT '' COMMENT '退款原因',
+  refund_real_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '实际退款金额',
+  refund_time int(11) NOT NULL DEFAULT 0 COMMENT '实际退款时间',
+  refund_refuse_reason varchar(255) NOT NULL DEFAULT '' COMMENT '退款拒绝原因',
+  refund_action_time int(11) NOT NULL DEFAULT 0 COMMENT '退款时间',
+  real_goods_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '实际商品购买价',
+  refund_remark varchar(255) NOT NULL DEFAULT '' COMMENT '退款说明',
+  refund_pay_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '真实退款金额',
+  refund_money_type int(11) NOT NULL DEFAULT 1 COMMENT '退款方式   1 原路退款 2线下退款3退款到余额',
+  is_fenxiao int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (order_goods_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡订单商品表';
+
+
 CREATE TABLE giftcard_order (
-  order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  order_number varchar(255) NOT NULL DEFAULT '' COMMENT '订单编号',
-  card_id int(11) NOT NULL DEFAULT 0 COMMENT '电子卡id',
-  card_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '单价',
-  num int(3) NOT NULL DEFAULT 0 COMMENT '购买数量',
-  order_total_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '总价',
+  order_id int(11) NOT NULL AUTO_INCREMENT,
+  order_no varchar(50) NOT NULL DEFAULT '' COMMENT '订单编号',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '商家id',
+  site_name varchar(50) NOT NULL DEFAULT '' COMMENT '店铺名称',
+  order_name varchar(1000) NOT NULL DEFAULT '' COMMENT '订单内容',
+  out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '支付流水号',
+  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '礼品卡id',
+  card_right_type varchar(50) NOT NULL DEFAULT '' COMMENT '礼品卡权益类型1储值2商品',
+  card_cover varchar(500) NOT NULL DEFAULT '' COMMENT '礼品卡封面',
+  media_id int(11) NOT NULL DEFAULT 0,
+  order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '订单合计金额',
+  goods_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品总额',
+  pay_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '实际应付现金金额',
+  pay_type varchar(55) NOT NULL DEFAULT '' COMMENT '支付方式',
+  pay_type_name varchar(50) NOT NULL DEFAULT '' COMMENT '支付类型名称',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '下单时间',
   pay_time int(11) NOT NULL DEFAULT 0 COMMENT '支付时间',
-  status int(3) NOT NULL DEFAULT 0 COMMENT '状态0待支付1已完成2已取消',
-  site_id int(3) NOT NULL DEFAULT 0 COMMENT '站点id',
-  member_id int(3) NOT NULL DEFAULT 0 COMMENT '会员id',
-  out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '支付流水号',
+  order_status varchar(50) NOT NULL DEFAULT '' COMMENT '状态topay待支付complete已完成close已取消',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   buyer_ip varchar(255) NOT NULL DEFAULT '' COMMENT '购买人ip',
   order_from varchar(255) NOT NULL DEFAULT '' COMMENT '订单来源',
-  pay_type_name varchar(255) NOT NULL DEFAULT '' COMMENT '支付名',
-  pay_type varchar(255) NOT NULL DEFAULT '' COMMENT '支付方式',
-  is_delete int(1) NOT NULL DEFAULT 0 COMMENT '0未删除1已删除',
   order_from_name varchar(255) NOT NULL DEFAULT '' COMMENT '订单来源名',
-  is_invoice int(1) NOT NULL DEFAULT 0 COMMENT '是否需要发票 0 无发票  1 有发票',
-  invoice_type int(1) NOT NULL DEFAULT 1 COMMENT '发票类型  1 纸质发票 2 电子发票',
-  invoice_title varchar(255) NOT NULL DEFAULT '' COMMENT '发票抬头',
-  taxpayer_number varchar(255) NOT NULL DEFAULT '' COMMENT '纳税人识别号',
-  invoice_content varchar(255) NOT NULL DEFAULT '' COMMENT '发票内容',
-  invoice_full_address varchar(255) NOT NULL DEFAULT '' COMMENT '发票邮寄地址',
-  is_tax_invoice int(1) NOT NULL DEFAULT 0 COMMENT '是否需要增值税专用发票',
-  invoice_email varchar(255) NOT NULL DEFAULT '' COMMENT '发票发送邮件',
-  invoice_title_type int(1) NOT NULL DEFAULT 0 COMMENT '发票抬头类型  1 个人  2 企业',
+  close_cause varchar(255) NOT NULL DEFAULT '' COMMENT '关闭原因',
+  is_delete int(11) NOT NULL DEFAULT 0 COMMENT '0未删除1已删除',
+  buyer_message varchar(255) NOT NULL DEFAULT '' COMMENT '买家留言',
+  validity_type varchar(50) NOT NULL DEFAULT '' COMMENT '有效期类型 forever：永久有效 day：购买后x天有效 date：指定过期日期',
+  validity_time int(11) NOT NULL DEFAULT 0 COMMENT '有效时间',
+  validity_day int(11) NOT NULL DEFAULT 0 COMMENT '有效天数',
+  num int(11) NOT NULL DEFAULT 1 COMMENT '礼品卡套数',
+  close_time int(11) NOT NULL DEFAULT 0 COMMENT '订单关闭时间',
+  pay_status int(11) NOT NULL DEFAULT 0 COMMENT '支付状态',
+  is_allow_transfer int(11) NOT NULL DEFAULT 0 COMMENT '是否允许转赠',
+  card_right_goods_type varchar(50) NOT NULL DEFAULT '' COMMENT '卡权益商品类型all总体数量item按照商品数量',
+  card_right_goods_count int(11) NOT NULL DEFAULT 0 COMMENT '针对总体数量设置总数量',
+  card_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '礼品卡单价',
   PRIMARY KEY (order_id)
 )
 ENGINE = INNODB,
 CHARACTER SET utf8,
-COLLATE utf8_general_ci;
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡订单表';
 
---
--- `giftcard`
---
-CREATE TABLE giftcard (
-  id int(11) NOT NULL AUTO_INCREMENT,
-  code varchar(255) NOT NULL DEFAULT '' COMMENT '卡编号',
-  card_count int(11) NOT NULL DEFAULT 0 COMMENT '生成数量',
-  carmichael_length int(11) NOT NULL DEFAULT 0 COMMENT '卡密位数',
-  carmichael_prefix varchar(25) DEFAULT '' COMMENT '卡密前缀',
-  carmichael_suffix varchar(255) DEFAULT '' COMMENT '卡密后缀',
-  carmichael_type varchar(25) NOT NULL DEFAULT '',
-  goods_ids varchar(100) NOT NULL DEFAULT '0' COMMENT '商品id',
-  point decimal(10, 0) NOT NULL DEFAULT 0 COMMENT '积分',
-  growth decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '成长值',
-  balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '不可提现余额',
-  sale_num int(11) NOT NULL DEFAULT 0 COMMENT '电子卡销量',
-  balance_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '可提现余额',
-  is_balance tinyint(3) NOT NULL DEFAULT 0 COMMENT '是否使用余额抵扣',
-  coupon int(11) NOT NULL DEFAULT 0 COMMENT '优惠卷',
-  status tinyint(3) NOT NULL DEFAULT 0 COMMENT '0-未激活  1-已激活 2-作废',
-  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  card_name varchar(255) NOT NULL DEFAULT '' COMMENT '礼品卡名称',
-  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
-  card_cover varchar(255) NOT NULL DEFAULT '' COMMENT '礼品卡封面',
-  selling_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '销售价',
-  market_price varchar(255) NOT NULL DEFAULT '' COMMENT '市场价',
-  max_buy varchar(255) NOT NULL DEFAULT '' COMMENT '限购',
-  time_type int(3) NOT NULL DEFAULT 1 COMMENT '1永久有效2有效期限至3领取多少天之内有效',
-  youxiao_time int(11) NOT NULL DEFAULT 0 COMMENT '有效时间',
-  youxiao_day int(3) NOT NULL DEFAULT 0 COMMENT '有效天数',
-  type int(3) NOT NULL DEFAULT 0 COMMENT '1电子卡2实体卡',
+
+CREATE TABLE giftcard_member_card (
+  member_card_id int(11) NOT NULL AUTO_INCREMENT,
+  card_id int(11) NOT NULL DEFAULT 0 COMMENT '卡id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
-  is_delete int(1) NOT NULL DEFAULT 0 COMMENT '0未删除1已删除',
-  elect_is_use int(1) NOT NULL DEFAULT 0 COMMENT '0未上架1已上架',
+  from_member_id int(11) NOT NULL DEFAULT 0 COMMENT '来源用户id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '领取用户id',
+  to_member_id int(11) NOT NULL DEFAULT 0 COMMENT '领取用户id',
+  is_transfer int(11) NOT NULL DEFAULT 0 COMMENT '是否已被转赠',
+  source varchar(50) NOT NULL DEFAULT '' COMMENT '来源  order 购买电子卡 gift别人赠送',
+  get_time int(11) NOT NULL DEFAULT 0 COMMENT '生成时间',
+  transfer_time int(11) NOT NULL DEFAULT 0 COMMENT '使用时间',
+  snapshot text DEFAULT NULL COMMENT '快照',
+  PRIMARY KEY (member_card_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡会员所属记录';
+
+
+CREATE TABLE giftcard_media (
+  media_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  media_type varchar(50) NOT NULL DEFAULT 'img' COMMENT '类型  img 图片',
+  is_system tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否是系统素材',
+  media_name varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
+  media_path varchar(255) NOT NULL DEFAULT '' COMMENT '路径',
+  media_spec varchar(255) NOT NULL DEFAULT '' COMMENT '规格',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '添加时间',
+  update_time int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (media_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '相册图片表';
+
+
+CREATE TABLE giftcard_goods (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
+  goods_id int(11) NOT NULL DEFAULT 0 COMMENT '关联商品id',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT '关联商品sku_id',
+  goods_num int(11) NOT NULL DEFAULT 0 COMMENT '关联商品数量（实体卡商品数量）',
+  goods_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '关联商品价格',
+  site_id int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
-COMMENT = '兑换卡';
+COMMENT = '礼品卡关联商品';
 
---
--- `form_data`
---
+
+CREATE TABLE giftcard_category (
+  category_id int(11) NOT NULL AUTO_INCREMENT,
+  category_name varchar(255) NOT NULL DEFAULT '' COMMENT '分组名称',
+  font_color varchar(255) NOT NULL DEFAULT '' COMMENT '字体颜色',
+  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  create_time int(11) NOT NULL DEFAULT 0,
+  update_time int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (category_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci;
+
+
+CREATE TABLE giftcard_card_use_records_goods (
+  records_goods_id int(11) NOT NULL AUTO_INCREMENT,
+  records_id int(11) NOT NULL DEFAULT 0 COMMENT '使用记录id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  card_goods_id int(11) NOT NULL DEFAULT 0 COMMENT '关联礼品卡项id',
+  goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品skuid',
+  sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+  sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
+  goods_name varchar(400) NOT NULL DEFAULT '' COMMENT '商品名称',
+  sku_no varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
+  use_num int(11) NOT NULL DEFAULT 0 COMMENT '使用数量',
+  balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '储值余额',
+  member_id int(11) NOT NULL DEFAULT 0,
+  order_goods_id int(11) NOT NULL DEFAULT 0,
+  order_id int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (records_goods_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡使用记录商品项';
+
+
+CREATE TABLE giftcard_card_use_records (
+  records_id int(11) NOT NULL AUTO_INCREMENT,
+  card_id int(11) NOT NULL DEFAULT 0 COMMENT '卡id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '礼品卡活动id',
+  card_right_type varchar(50) NOT NULL DEFAULT '' COMMENT '礼品卡权益类型1储值2商品',
+  use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用时间',
+  member_id int(11) NOT NULL DEFAULT 0,
+  member_card_id int(11) NOT NULL DEFAULT 0,
+  order_id int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (records_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡使用记录卡项';
+
+
+CREATE TABLE giftcard_card_log (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  card_id int(11) NOT NULL DEFAULT 0 COMMENT '卡id',
+  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '活动id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '领取用户id',
+  status varchar(50) NOT NULL DEFAULT '' COMMENT '0未激活1待使用2已使用-1已过期-2已作废',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '时间',
+  operator_type varchar(255) NOT NULL DEFAULT '' COMMENT '操作人类型  system  系统  shop 站点管理员  member  会员',
+  `operator` int(11) NOT NULL DEFAULT 0 COMMENT '操作人id',
+  operator_name varchar(255) NOT NULL DEFAULT '' COMMENT '操作人名称',
+  `type` varchar(255) NOT NULL DEFAULT '' COMMENT '操作类型',
+  `type_id` int(11) NOT NULL DEFAULT 0 COMMENT '操作主键id',
+  remark varchar(2000) NOT NULL DEFAULT '' COMMENT '描述',
+  extend text DEFAULT NULL COMMENT '扩展字段',
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡操作日志记录';
+
+
+CREATE TABLE giftcard_card_import (
+  import_id int(11) NOT NULL AUTO_INCREMENT COMMENT ' ',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  giftcard_id int(11) NOT NULL DEFAULT 0,
+  total_count int(11) NOT NULL DEFAULT 0 COMMENT '总数量',
+  imported_count int(11) NOT NULL DEFAULT 0 COMMENT '已经导入的数量',
+  success_count int(11) NOT NULL DEFAULT 0 COMMENT '成功数量',
+  fail_count int(11) NOT NULL DEFAULT 0 COMMENT '失败数量',
+  import_time int(11) NOT NULL DEFAULT 0 COMMENT '导入时间',
+  `type` varchar(255) NOT NULL DEFAULT '' COMMENT '导入方式',
+  cdk_length int(11) NOT NULL DEFAULT 0,
+  card_prefix varchar(255) NOT NULL DEFAULT '',
+  card_suffix varchar(255) NOT NULL DEFAULT '',
+  cdk_type varchar(255) NOT NULL DEFAULT '',
+  `file_name` varchar(255) NOT NULL DEFAULT '',
+  create_time int(11) NOT NULL DEFAULT 0,
+  card_cdk varchar(255) NOT NULL DEFAULT '',
+  error varchar(255) NOT NULL DEFAULT '' COMMENT '错误',
+  name varchar(255) NOT NULL DEFAULT '' COMMENT '导入批次名称',
+  use_count int(11) NOT NULL DEFAULT 0 COMMENT '使用量',
+  invalid_count int(11) NOT NULL DEFAULT 0 COMMENT '作废数量',
+  activate_count int(11) NOT NULL DEFAULT 0 COMMENT '激活数量',
+  del_count int(11) NOT NULL DEFAULT 0 COMMENT '删卡数量',
+  status int(11) NOT NULL DEFAULT 1 COMMENT '状态  1 正常  2作废',
+  card_type varchar(255) NOT NULL DEFAULT '' COMMENT '卡类型',
+  PRIMARY KEY (import_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡导入记录';
+
+
+CREATE TABLE giftcard_card_goods (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  card_id int(11) NOT NULL DEFAULT 0 COMMENT '卡id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
+  card_right_type varchar(50) NOT NULL DEFAULT '0' COMMENT '礼品卡权益类型1储值2商品',
+  balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '储值金额',
+  goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
+  sku_id int(11) NOT NULL DEFAULT 0 COMMENT '商品skuid',
+  sku_name varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+  sku_image varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片',
+  goods_name varchar(400) NOT NULL DEFAULT '' COMMENT '商品名称',
+  sku_no varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
+  price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品卖价',
+  total_num int(11) NOT NULL DEFAULT 0 COMMENT '总数量',
+  use_num int(11) NOT NULL DEFAULT 0 COMMENT '已提货数量',
+  order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
+  order_goods_id int(11) NOT NULL DEFAULT 0 COMMENT '订单项id',
+  total_balance decimal(10, 2) NOT NULL DEFAULT 0.00,
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡获取记录商品项';
+
+
+CREATE TABLE giftcard_card_blessing (
+  blessing_id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  card_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
+  member_card_id int(11) NOT NULL DEFAULT 0 COMMENT '用户卡id',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '0 正常1 已作废',
+  to_member_id int(11) NOT NULL DEFAULT 0,
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  to_time int(11) NOT NULL DEFAULT 0 COMMENT '领取时间',
+  blessing text DEFAULT NULL COMMENT '祝福语',
+  `no` varchar(255) NOT NULL DEFAULT '' COMMENT '匹配key值(建议六十二进制)',
+  PRIMARY KEY (blessing_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡祝福语';
+
+
+CREATE TABLE giftcard_card (
+  card_id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  card_no varchar(255) NOT NULL DEFAULT '' COMMENT '卡编号',
+  card_cdk varchar(255) NOT NULL DEFAULT '' COMMENT '卡密(实体卡有效)',
+  giftcard_id int(11) NOT NULL DEFAULT 0 COMMENT '活动id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '领取用户id',
+  status varchar(50) NOT NULL DEFAULT '' COMMENT '0未激活1待使用2已使用-1已过期-2已作废',
+  source varchar(50) NOT NULL DEFAULT '' COMMENT '来源  order 购买电子卡 gift别人赠送',
+  card_right_type varchar(50) NOT NULL DEFAULT '' COMMENT '礼品卡权益类型balance储值goods商品',
+  card_right_goods_type varchar(255) NOT NULL DEFAULT '' COMMENT '卡权益商品类型all总体数量item按照商品数量',
+  card_right_goods_count int(11) NOT NULL DEFAULT 0 COMMENT '针对总体数量设置总数量',
+  use_count int(11) NOT NULL DEFAULT 0 COMMENT '已使用次数',
+  balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '储值金额',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '生成时间',
+  activate_time int(11) NOT NULL DEFAULT 0 COMMENT '激活时间',
+  use_time int(11) NOT NULL DEFAULT 0 COMMENT '使用时间',
+  order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单id',
+  valid_time int(11) NOT NULL DEFAULT 0 COMMENT '有效期',
+  is_allow_transfer int(11) NOT NULL DEFAULT 0 COMMENT '是否允许转赠',
+  init_member_id int(11) NOT NULL DEFAULT 0 COMMENT '初始所属会员',
+  card_name varchar(255) NOT NULL DEFAULT '' COMMENT '礼品卡名称',
+  card_cover varchar(500) NOT NULL DEFAULT '',
+  card_import_id int(11) NOT NULL DEFAULT 0,
+  card_type varchar(255) NOT NULL DEFAULT '' COMMENT '卡类型',
+  invalid_time int(11) NOT NULL DEFAULT 0 COMMENT '失效时间',
+  PRIMARY KEY (card_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡获取记录';
+
+
+CREATE TABLE giftcard (
+  giftcard_id int(11) NOT NULL AUTO_INCREMENT,
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  category_id int(11) NOT NULL DEFAULT 0 COMMENT '卡分类id',
+  card_cover varchar(2000) NOT NULL DEFAULT '' COMMENT '礼品卡封面',
+  media_ids varchar(255) NOT NULL DEFAULT '' COMMENT '素材id',
+  card_name varchar(255) NOT NULL DEFAULT '' COMMENT '礼品卡名称',
+  cdk_length int(11) NOT NULL DEFAULT 0 COMMENT '卡密位数',
+  cdk_type varchar(25) NOT NULL DEFAULT '' COMMENT '卡密类型  number  数字  letter  英文字母',
+  card_prefix varchar(25) NOT NULL DEFAULT '' COMMENT '卡号前缀',
+  card_suffix varchar(255) NOT NULL DEFAULT '' COMMENT '卡号后缀',
+  card_right_type varchar(50) NOT NULL DEFAULT '' COMMENT '卡权益类型balance储值  goods商品',
+  card_right_goods_type varchar(50) NOT NULL DEFAULT '' COMMENT '卡权益商品类型all总体数量item按照商品数量',
+  card_right_goods_count int(11) NOT NULL DEFAULT 0 COMMENT '针对总体数量设置总数量',
+  card_price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '礼品卡价格',
+  balance decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '储值余额',
+  sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
+  validity_type varchar(50) NOT NULL DEFAULT '' COMMENT '有效期类型 forever：永久有效 day：购买后x天有效 date：指定过期日期',
+  validity_time int(11) NOT NULL DEFAULT 0 COMMENT '有效时间',
+  validity_day int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '有效天数',
+  is_delete int(11) NOT NULL DEFAULT 0 COMMENT '0未删除1已删除',
+  is_allow_transfer int(11) NOT NULL DEFAULT 0 COMMENT '是否允许转赠',
+  status int(11) NOT NULL DEFAULT 1 COMMENT '0未上架1已上架',
+  create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  update_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `desc` text DEFAULT NULL COMMENT '活动详情',
+  card_num int(11) NOT NULL DEFAULT 0 COMMENT '制卡数量',
+  card_type varchar(255) NOT NULL DEFAULT '' COMMENT '卡类型',
+  sale_num int(11) NOT NULL DEFAULT 0 COMMENT '卡销量(获取数量)',
+  use_count int(11) NOT NULL DEFAULT 0 COMMENT '使用量',
+  invalid_count int(11) NOT NULL DEFAULT 0 COMMENT '作废数量',
+  activate_count int(11) NOT NULL DEFAULT 0 COMMENT '激活数量',
+  card_count int(11) NOT NULL DEFAULT 0 COMMENT '制卡总数',
+  del_count int(11) NOT NULL DEFAULT 0 COMMENT '删除卡总数',
+  instruction text NOT NULL COMMENT '使用说明',
+  PRIMARY KEY (giftcard_id)
+)
+ENGINE = INNODB,
+CHARACTER SET utf8,
+COLLATE utf8_general_ci,
+COMMENT = '礼品卡';
+
+
 CREATE TABLE form_data (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6770,14 +5910,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统表单数据';
 
---
--- `form`
---
+
 CREATE TABLE form (
   id int(11) NOT NULL AUTO_INCREMENT,
   form_name varchar(255) NOT NULL DEFAULT '' COMMENT '表单名称',
-  form_type tinyint(3) NOT NULL DEFAULT 0 COMMENT '表单类型：0会员资料1分销商资料2统一下单3商品表单',
-  is_use tinyint(3) NOT NULL DEFAULT 0 COMMENT '是否启用0禁用1启用',
+  form_type varchar(50) NOT NULL DEFAULT '' COMMENT '表单类型：order 统一下单 goods 商品表单',
+  is_use tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否启用0禁用1启用',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '关联id',
   json_data text NOT NULL COMMENT 'json',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -6788,9 +5926,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `fenxiao_withdraw`
---
+
 CREATE TABLE fenxiao_withdraw (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6824,12 +5960,10 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '会员余额提现记录表';
 
---
--- `fenxiao_order`
---
+
 CREATE TABLE fenxiao_order (
   fenxiao_order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  order_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单ID',
+  order_id int(11) NOT NULL DEFAULT 0 COMMENT '订单ID',
   order_no varchar(255) NOT NULL DEFAULT '' COMMENT '订单编号',
   order_goods_id int(11) NOT NULL DEFAULT 0 COMMENT '订单项ID',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点ID',
@@ -6859,8 +5993,8 @@ CREATE TABLE fenxiao_order (
   three_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '三级分销比例',
   three_commission decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '三级分销佣金',
   three_fenxiao_name varchar(255) NOT NULL DEFAULT '' COMMENT '三级分销商名',
-  is_settlement tinyint(3) NOT NULL DEFAULT 0 COMMENT '是否结算',
-  is_refund tinyint(3) NOT NULL DEFAULT 0 COMMENT '是否退款',
+  is_settlement tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否结算',
+  is_refund tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否退款',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (fenxiao_order_id)
 )
@@ -6869,9 +6003,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销配置表';
 
---
--- `fenxiao_level`
---
+
 CREATE TABLE fenxiao_level (
   level_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6880,9 +6012,9 @@ CREATE TABLE fenxiao_level (
   one_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '一级佣金比例',
   two_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二级佣金比例',
   three_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '三级佣金比例',
-  upgrade_type tinyint(3) NOT NULL DEFAULT 0 COMMENT '升级方式（0满足任意条件  1满足全部条件）',
+  upgrade_type tinyint(4) NOT NULL DEFAULT 0 COMMENT '升级方式（0满足任意条件  1满足全部条件）',
   fenxiao_order_num int(11) NOT NULL DEFAULT 0 COMMENT '订单总数',
-  fenxiao_order_meney decimal(10, 2) DEFAULT 0.00 COMMENT '订单总金额',
+  fenxiao_order_meney decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '订单总金额',
   one_fenxiao_order_num int(11) NOT NULL DEFAULT 0 COMMENT '一级分销订单总数',
   one_fenxiao_total_order decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '一级分销订单总额',
   one_fenxiao_order_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '一级分销订单佣金总额',
@@ -6892,10 +6024,10 @@ CREATE TABLE fenxiao_level (
   child_fenxiao_num int(11) NOT NULL DEFAULT 0 COMMENT '下线分销商人数',
   one_child_num int(11) NOT NULL DEFAULT 0 COMMENT '一级下线人数',
   one_child_fenxiao_num int(11) NOT NULL DEFAULT 0 COMMENT '一级下线分销商',
-  status tinyint(3) NOT NULL DEFAULT 0 COMMENT '状态（0关闭 1启用）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0关闭 1启用）',
   create_time int(11) NOT NULL DEFAULT 0,
   update_time int(11) NOT NULL DEFAULT 0,
-  is_default int(1) NOT NULL DEFAULT 0 COMMENT '是否是默认等级',
+  is_default int(11) NOT NULL DEFAULT 0 COMMENT '是否是默认等级',
   PRIMARY KEY (level_id)
 )
 ENGINE = INNODB,
@@ -6903,9 +6035,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销等级配置表';
 
---
--- `fenxiao_goods_sku`
---
+
 CREATE TABLE fenxiao_goods_sku (
   goods_sku_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品ID',
@@ -6924,17 +6054,15 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商品sku表';
 
---
--- `fenxiao_goods_collect`
---
+
 CREATE TABLE fenxiao_goods_collect (
-  collect_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  collect_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   fenxiao_id int(11) NOT NULL DEFAULT 0 COMMENT '分销商id',
   goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'skuid',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '收藏时间',
-  site_id int(10) NOT NULL DEFAULT 0 COMMENT '站点id',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   PRIMARY KEY (collect_id)
 )
 ENGINE = INNODB,
@@ -6942,28 +6070,20 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商关注商品表';
 
---
--- `IDX_ns_fenxiao_goods_collect_member_id` on table `fenxiao_goods_collect`
---
-ALTER TABLE fenxiao_goods_collect
-ADD INDEX IDX_ns_fenxiao_goods_collect_member_id (member_id);
 
---
--- `IDX_ns_fenxiao_goods_collect_sku_id` on table `fenxiao_goods_collect`
---
-ALTER TABLE fenxiao_goods_collect
-ADD INDEX IDX_ns_fenxiao_goods_collect_sku_id (sku_id);
+ALTER TABLE fenxiao_goods_collect ADD INDEX IDX_ns_fenxiao_goods_collect_member_id (member_id);
 
---
--- `fenxiao_goods`
---
+
+ALTER TABLE fenxiao_goods_collect ADD INDEX IDX_ns_fenxiao_goods_collect_sku_id (sku_id);
+
+
 CREATE TABLE fenxiao_goods (
   fenxiao_goods_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  goods_id int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '商品ID',
-  one_rate decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '一级佣金',
-  two_rate decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '二级佣金',
-  three_rate decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '三级佣金',
-  state tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否参与',
+  goods_id int(11) NOT NULL DEFAULT 0 COMMENT '商品ID',
+  one_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '一级佣金',
+  two_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '二级佣金',
+  three_rate decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '三级佣金',
+  state tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否参与',
   PRIMARY KEY (fenxiao_goods_id)
 )
 ENGINE = INNODB,
@@ -6971,9 +6091,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商品表';
 
---
--- `fenxiao_apply`
---
+
 CREATE TABLE fenxiao_apply (
   apply_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -6986,11 +6104,11 @@ CREATE TABLE fenxiao_apply (
   level_id int(11) NOT NULL DEFAULT 0 COMMENT '申请等级',
   level_name varchar(50) NOT NULL DEFAULT '' COMMENT '等级名称',
   order_complete_money decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '订单完成-消费金额',
-  order_complete_num int(10) NOT NULL DEFAULT 0 COMMENT '订单完成-消费次数',
+  order_complete_num int(11) NOT NULL DEFAULT 0 COMMENT '订单完成-消费次数',
   reg_time int(11) NOT NULL DEFAULT 0 COMMENT '注册时间',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '申请时间',
   update_time int(11) NOT NULL DEFAULT 0,
-  status tinyint(1) NOT NULL DEFAULT 1 COMMENT '申请状态（1申请中  2通过 -1拒绝）',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '申请状态（1申请中  2通过 -1拒绝）',
   PRIMARY KEY (apply_id)
 )
 ENGINE = INNODB,
@@ -6998,9 +6116,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商申请表';
 
---
--- `fenxiao_account`
---
+
 CREATE TABLE fenxiao_account (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   account_no varchar(255) NOT NULL DEFAULT '' COMMENT '账单编号',
@@ -7018,9 +6134,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商流水表';
 
---
--- `fenxiao`
---
+
 CREATE TABLE fenxiao (
   fenxiao_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) DEFAULT 0 COMMENT '站点id',
@@ -7035,7 +6149,7 @@ CREATE TABLE fenxiao (
   account decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '当前佣金',
   account_withdraw decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '已提现佣金',
   account_withdraw_apply decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '提现中佣金',
-  status tinyint(3) NOT NULL DEFAULT 1 COMMENT '状态（1已审核 2拒绝 -1已冻结）',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态（1已审核 2拒绝 -1已冻结）',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   audit_time int(11) NOT NULL DEFAULT 0 COMMENT '成为经分销商时间',
   lock_time int(11) NOT NULL DEFAULT 0 COMMENT '冻结时间',
@@ -7046,7 +6160,7 @@ CREATE TABLE fenxiao (
   one_child_fenxiao_num int(11) NOT NULL DEFAULT 0 COMMENT '一级下线分销商',
   two_child_fenxiao_num int(11) NOT NULL DEFAULT 0 COMMENT '二级下线分销商',
   total_commission decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '累计佣金',
-  is_delete tinyint(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除 0未删除 1已删除',
+  is_delete tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否删除 0未删除 1已删除',
   PRIMARY KEY (fenxiao_id)
 )
 ENGINE = INNODB,
@@ -7054,57 +6168,31 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '分销商表';
 
---
--- `IDX_ns_fenxiao_audit_time` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_audit_time (audit_time);
 
---
--- `IDX_ns_fenxiao_create_time` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_create_time (create_time);
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_audit_time (audit_time);
 
---
--- `IDX_ns_fenxiao_grand_parent` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_grand_parent (grand_parent);
 
---
--- `IDX_ns_fenxiao_level_id` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_level_id (level_id);
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_create_time (create_time);
 
---
--- `IDX_ns_fenxiao_member_id` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_member_id (member_id);
 
---
--- `IDX_ns_fenxiao_parent` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_parent (parent);
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_grand_parent (grand_parent);
 
---
--- `IDX_ns_fenxiao_site_id` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_site_id (site_id);
 
---
--- `IDX_ns_fenxiao_status` on table `fenxiao`
---
-ALTER TABLE fenxiao
-ADD INDEX IDX_ns_fenxiao_status (status);
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_level_id (level_id);
 
---
--- `express_template_item`
---
+
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_member_id (member_id);
+
+
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_parent (parent);
+
+
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_site_id (site_id);
+
+
+ALTER TABLE fenxiao ADD INDEX IDX_ns_fenxiao_status (status);
+
+
 CREATE TABLE express_template_item (
   item_id int(11) NOT NULL AUTO_INCREMENT,
   template_id int(11) NOT NULL DEFAULT 0 COMMENT '模板id',
@@ -7122,21 +6210,12 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '运费模板细节';
 
---
--- `IDX_ns_express_template_item_fee_type` on table `express_template_item`
---
-ALTER TABLE express_template_item
-ADD INDEX IDX_ns_express_template_item_fee_type (fee_type);
 
---
--- `IDX_ns_express_template_item_template_id` on table `express_template_item`
---
-ALTER TABLE express_template_item
-ADD INDEX IDX_ns_express_template_item_template_id (template_id);
+ALTER TABLE express_template_item ADD INDEX IDX_ns_express_template_item_fee_type (fee_type);
 
---
--- `express_template_free_shipping`
---
+ALTER TABLE express_template_item ADD INDEX IDX_ns_express_template_item_template_id (template_id);
+
+
 CREATE TABLE express_template_free_shipping (
   item_id int(11) NOT NULL AUTO_INCREMENT,
   template_id int(11) NOT NULL DEFAULT 0 COMMENT '模板id',
@@ -7151,9 +6230,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '运费模板免邮地区';
 
---
--- `express_template`
---
+
 CREATE TABLE express_template (
   template_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '商家店铺id',
@@ -7172,26 +6249,16 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '运费模板';
 
---
--- `IDX_ns_express_template_is_default` on table `express_template`
---
-ALTER TABLE express_template
-ADD INDEX IDX_ns_express_template_is_default (is_default);
+ALTER TABLE express_template ADD INDEX IDX_ns_express_template_is_default (is_default);
 
---
--- `IDX_ns_express_template_site_id` on table `express_template`
---
-ALTER TABLE express_template
-ADD INDEX IDX_ns_express_template_site_id (site_id);
+ALTER TABLE express_template ADD INDEX IDX_ns_express_template_site_id (site_id);
 
---
--- `express_electronicsheet`
---
+
 CREATE TABLE express_electronicsheet (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   template_name varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
-  company_id int(1) NOT NULL DEFAULT 0 COMMENT '物流公司id',
+  company_id int(11) NOT NULL DEFAULT 0 COMMENT '物流公司id',
   company_name varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司名称',
   express_no varchar(255) NOT NULL DEFAULT '' COMMENT '编码',
   customer_name varchar(255) NOT NULL DEFAULT '' COMMENT 'CustomerName',
@@ -7199,10 +6266,10 @@ CREATE TABLE express_electronicsheet (
   send_site varchar(255) NOT NULL DEFAULT '' COMMENT 'SendSite',
   send_staff varchar(255) NOT NULL DEFAULT '' COMMENT 'SendStaff',
   month_code varchar(255) NOT NULL DEFAULT '' COMMENT 'MonthCode',
-  postage_payment_method tinyint(3) NOT NULL DEFAULT 0 COMMENT '邮费支付方式（1现付 2到付 3月结）',
-  is_notice tinyint(3) NOT NULL DEFAULT 0 COMMENT '快递员上门揽件（0否 1是）',
-  status tinyint(3) NOT NULL DEFAULT 0 COMMENT '状态（0正常 -1不使用）',
-  is_default tinyint(3) NOT NULL DEFAULT 0 COMMENT '是否默认（0否 1是）',
+  postage_payment_method tinyint(4) NOT NULL DEFAULT 0 COMMENT '邮费支付方式（1现付 2到付 3月结）',
+  is_notice tinyint(4) NOT NULL DEFAULT 0 COMMENT '快递员上门揽件（0否 1是）',
+  status tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态（0正常 -1不使用）',
+  is_default tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否默认（0否 1是）',
   create_time int(11) NOT NULL DEFAULT 0,
   update_time int(11) NOT NULL DEFAULT 0,
   print_style int(11) NOT NULL DEFAULT 0 COMMENT '模板风格',
@@ -7213,9 +6280,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '电子面单';
 
---
--- `express_delivery_package`
---
+
 CREATE TABLE express_delivery_package (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -7241,21 +6306,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '商品订单物流信息表（多次发货）';
 
---
--- `IDX_ns_express_delivery_package_order_id` on table `express_delivery_package`
---
-ALTER TABLE express_delivery_package
-ADD INDEX IDX_ns_express_delivery_package_order_id (order_id);
+ALTER TABLE express_delivery_package ADD INDEX IDX_ns_express_delivery_package_order_id (order_id);
 
---
--- `IDX_ns_express_delivery_package_site_id` on table `express_delivery_package`
---
-ALTER TABLE express_delivery_package
-ADD INDEX IDX_ns_express_delivery_package_site_id (site_id);
+ALTER TABLE express_delivery_package ADD INDEX IDX_ns_express_delivery_package_site_id (site_id);
 
---
--- `express_deliver`
---
+
 CREATE TABLE express_deliver (
   deliver_id int(11) NOT NULL AUTO_INCREMENT COMMENT '配送员id',
   deliver_name varchar(255) NOT NULL DEFAULT '' COMMENT '配送员名称',
@@ -7269,9 +6324,7 @@ ENGINE = INNODB,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci;
 
---
--- `express_company_template`
---
+
 CREATE TABLE express_company_template (
   company_id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -7290,19 +6343,16 @@ CREATE TABLE express_company_template (
   scale decimal(10, 2) NOT NULL DEFAULT 1.00 COMMENT '真实尺寸（mm）与显示尺寸（px）的比例',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   modify_time int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
-  is_electronicsheet tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否支持电子面单（0不支持  1支持）',
+  is_electronicsheet tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否支持电子面单（0不支持  1支持）',
   print_style varchar(2000) NOT NULL DEFAULT '' COMMENT '电子面单打印风格',
   PRIMARY KEY (company_id)
 )
 ENGINE = INNODB,
-AVG_ROW_LENGTH = 1820,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统物流公司表';
 
---
--- `express_company`
---
+
 CREATE TABLE express_company (
   id int(11) NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
@@ -7325,9 +6375,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '店铺物流公司';
 
---
--- `document`
---
+
 CREATE TABLE document (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id（店铺，分站）,总平台端为0',
@@ -7344,32 +6392,18 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统配置性相关文件';
 
---
--- `IDX_ns_document_app_module` on table `document`
---
-ALTER TABLE document
-ADD INDEX IDX_ns_document_app_module (app_module);
+ALTER TABLE document ADD INDEX IDX_ns_document_app_module (app_module);
 
---
--- `IDX_ns_document_document_key` on table `document`
---
-ALTER TABLE document
-ADD INDEX IDX_ns_document_document_key (document_key);
+ALTER TABLE document ADD INDEX IDX_ns_document_document_key (document_key);
 
---
--- `IDX_ns_document_site_id` on table `document`
---
-ALTER TABLE document
-ADD INDEX IDX_ns_document_site_id (site_id);
+ALTER TABLE document ADD INDEX IDX_ns_document_site_id (site_id);
 
---
--- `diy_view_util`
---
+
 CREATE TABLE diy_view_util (
   id int(11) NOT NULL AUTO_INCREMENT,
   name varchar(50) NOT NULL DEFAULT '' COMMENT '标识',
   title varchar(50) NOT NULL DEFAULT '' COMMENT '组件名称',
-  type varchar(50) NOT NULL DEFAULT 'SYSTEM' COMMENT '组件类型，SYSTEM 基础组件，ADDON 营销组件，OTHER 其他组件',
+  type varchar(50) NOT NULL DEFAULT 'SYSTEM' COMMENT '组件类型',
   value text DEFAULT NULL COMMENT '配置:json格式',
   addon_name varchar(50) NOT NULL DEFAULT '' COMMENT '插件标识',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
@@ -7384,29 +6418,15 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '自定义模板组件';
 
---
--- `IDX_nc_diy_view_util_sort` on table `diy_view_util`
---
-ALTER TABLE diy_view_util
-ADD INDEX IDX_nc_diy_view_util_sort (sort);
+ALTER TABLE diy_view_util ADD INDEX IDX_nc_diy_view_util_sort (sort);
 
---
--- `IDX_nc_diy_view_util_type` on table `diy_view_util`
---
-ALTER TABLE diy_view_util
-ADD INDEX IDX_nc_diy_view_util_type (type);
+ALTER TABLE diy_view_util ADD INDEX IDX_nc_diy_view_util_type (type);
 
---
--- `name` on table `diy_view_util`
---
-ALTER TABLE diy_view_util
-ADD UNIQUE INDEX name (name);
+ALTER TABLE diy_view_util ADD UNIQUE INDEX name (name);
 
---
--- `cron_log`
---
+
 CREATE TABLE cron_log (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL DEFAULT '' COMMENT '任务名称',
   event varchar(255) NOT NULL DEFAULT '' COMMENT '任务事件',
   execute_time varchar(255) NOT NULL DEFAULT '' COMMENT '执行时间',
@@ -7420,17 +6440,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '事件执行记录';
 
---
--- `IDX_nc_cron_execute_list_execute_time` on table `cron_log`
---
-ALTER TABLE cron_log
-ADD INDEX IDX_nc_cron_execute_list_execute_time (execute_time);
+ALTER TABLE cron_log ADD INDEX IDX_nc_cron_execute_list_execute_time (execute_time);
 
---
--- `cron`
---
+
 CREATE TABLE cron (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   type int(11) NOT NULL DEFAULT 1 COMMENT '1.固定任务 2.循环任务',
   period int(11) NOT NULL DEFAULT 0 COMMENT '循环周期（分钟）',
   period_type int(11) NOT NULL DEFAULT 0 COMMENT '循环周期类型 0默认分钟 1.月 2.周 3. 日',
@@ -7446,17 +6460,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '计划任务表';
 
---
--- `IDX_sys_cron_execute_time` on table `cron`
---
-ALTER TABLE cron
-ADD INDEX IDX_sys_cron_execute_time (execute_time);
+ALTER TABLE cron ADD INDEX IDX_sys_cron_execute_time (execute_time);
 
---
--- `config`
---
+
 CREATE TABLE config (
-  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id（店铺，分站）,总平台端为0',
   app_module varchar(255) NOT NULL DEFAULT '' COMMENT '应用端口关键字',
   config_key varchar(255) NOT NULL DEFAULT '' COMMENT '配置项关键字',
@@ -7472,15 +6480,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '系统配置表';
 
---
--- `IDX_sys_config_site_id` on table `config`
---
-ALTER TABLE config
-ADD UNIQUE INDEX IDX_sys_config_site_id (site_id, app_module, config_key);
+ALTER TABLE config ADD UNIQUE INDEX IDX_sys_config_site_id (site_id, app_module, config_key);
 
---
--- `blindbox_order`
---
+
 CREATE TABLE blindbox_order (
   order_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   order_number varchar(255) NOT NULL DEFAULT '' COMMENT '订单编号',
@@ -7488,30 +6490,30 @@ CREATE TABLE blindbox_order (
   blindbox_goods_id int(11) NOT NULL DEFAULT 0 COMMENT '盲盒商品Id',
   sku_id int(11) NOT NULL DEFAULT 0 COMMENT 'sku_id',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '单价',
-  num int(3) NOT NULL DEFAULT 0 COMMENT '购买数量',
+  num int(11) NOT NULL DEFAULT 0 COMMENT '购买数量',
   create_time int(11) NOT NULL DEFAULT 0 COMMENT '下单时间',
   pay_time int(11) NOT NULL DEFAULT 0 COMMENT '支付时间',
-  status int(3) NOT NULL DEFAULT 0 COMMENT '状态0待支付1已完成2已取消',
-  site_id int(3) NOT NULL DEFAULT 0 COMMENT '站点id',
-  member_id int(3) NOT NULL DEFAULT 0 COMMENT '会员id',
+  status int(11) NOT NULL DEFAULT 0 COMMENT '状态0待支付1已完成2已取消',
+  site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
+  member_id int(11) NOT NULL DEFAULT 0 COMMENT '会员id',
   out_trade_no varchar(255) NOT NULL DEFAULT '' COMMENT '支付流水号',
   buyer_ip varchar(255) NOT NULL DEFAULT '' COMMENT '购买人ip',
   order_from varchar(255) NOT NULL DEFAULT '' COMMENT '订单来源',
   pay_type_name varchar(255) NOT NULL DEFAULT '' COMMENT '支付名',
   pay_type varchar(255) NOT NULL DEFAULT '' COMMENT '支付方式',
-  is_delete int(1) NOT NULL DEFAULT 0 COMMENT '0未删除1已删除',
+  is_delete int(11) NOT NULL DEFAULT 0 COMMENT '0未删除1已删除',
   order_from_name varchar(255) NOT NULL DEFAULT '' COMMENT '订单来源名',
-  is_invoice int(1) NOT NULL DEFAULT 0 COMMENT '是否需要发票 0 无发票  1 有发票',
-  invoice_type int(1) NOT NULL DEFAULT 1 COMMENT '发票类型  1 纸质发票 2 电子发票',
+  is_invoice int(11) NOT NULL DEFAULT 0 COMMENT '是否需要发票 0 无发票  1 有发票',
+  invoice_type int(11) NOT NULL DEFAULT 1 COMMENT '发票类型  1 纸质发票 2 电子发票',
   invoice_title varchar(255) NOT NULL DEFAULT '' COMMENT '发票抬头',
   taxpayer_number varchar(255) NOT NULL DEFAULT '' COMMENT '纳税人识别号',
   invoice_content varchar(255) NOT NULL DEFAULT '' COMMENT '发票内容',
   invoice_full_address varchar(255) NOT NULL DEFAULT '' COMMENT '发票邮寄地址',
-  is_tax_invoice int(1) NOT NULL DEFAULT 0 COMMENT '是否需要增值税专用发票',
+  is_tax_invoice int(11) NOT NULL DEFAULT 0 COMMENT '是否需要增值税专用发票',
   invoice_email varchar(255) NOT NULL DEFAULT '' COMMENT '发票发送邮件',
-  invoice_title_type int(1) NOT NULL DEFAULT 0 COMMENT '发票抬头类型  1 个人  2 企业',
+  invoice_title_type int(11) NOT NULL DEFAULT 0 COMMENT '发票抬头类型  1 个人  2 企业',
   address_id int(11) NOT NULL DEFAULT 0 COMMENT '地址Id',
-  is_dispatch int(1) NOT NULL DEFAULT 0 COMMENT '待发货 0 是 1已发货',
+  is_dispatch int(11) NOT NULL DEFAULT 0 COMMENT '待发货 0 是 1已发货',
   PRIMARY KEY (order_id)
 )
 ENGINE = INNODB,
@@ -7519,9 +6521,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '盲盒订单表';
 
---
--- `blindbox_member_group`
---
+
 CREATE TABLE blindbox_member_group (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   blindbox_id int(11) NOT NULL DEFAULT 0 COMMENT '盲盒活动Id',
@@ -7538,9 +6538,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '盲盒参与组';
 
---
--- `blindbox_goods`
---
+
 CREATE TABLE blindbox_goods (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   blindbox_id int(11) NOT NULL DEFAULT 0 COMMENT '盲盒Id',
@@ -7558,9 +6556,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '盲盒商品表（盒子表）';
 
---
--- `blindbox_category`
---
+
 CREATE TABLE blindbox_category (
   category_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   category_name varchar(64) NOT NULL DEFAULT '' COMMENT '分类名称',
@@ -7575,9 +6571,7 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '盲盒分类表';
 
---
--- `blindbox`
---
+
 CREATE TABLE blindbox (
   blindbox_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   category_id int(11) NOT NULL DEFAULT 0 COMMENT '分类Id',
@@ -7606,11 +6600,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '盲盒表';
 
---
--- `article_category`
---
+
 CREATE TABLE article_category (
-  category_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  category_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   category_name varchar(255) NOT NULL DEFAULT '' COMMENT '分类名称',
   sort int(11) NOT NULL DEFAULT 0 COMMENT '排序',
@@ -7624,11 +6616,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '文章分类';
 
---
--- `article`
---
+
 CREATE TABLE article (
-  article_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  article_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '店铺id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '店铺名称',
   article_title varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
@@ -7654,21 +6644,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '文章表';
 
---
--- `IDX_ns_article_class_id` on table `article`
---
-ALTER TABLE article
-ADD INDEX IDX_ns_article_class_id (category_id);
+ALTER TABLE article ADD INDEX IDX_ns_article_class_id (category_id);
 
---
--- `IDX_ns_article_site_id` on table `article`
---
-ALTER TABLE article
-ADD INDEX IDX_ns_article_site_id (site_id);
+ALTER TABLE article ADD INDEX IDX_ns_article_site_id (site_id);
 
---
--- `area`
---
+
 CREATE TABLE area (
   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   pid int(11) NOT NULL DEFAULT 0 COMMENT '父级',
@@ -7678,7 +6658,7 @@ CREATE TABLE area (
   latitude varchar(30) NOT NULL DEFAULT '' COMMENT '纬度',
   level smallint(6) NOT NULL DEFAULT 0 COMMENT '级别',
   sort mediumint(9) NOT NULL DEFAULT 0 COMMENT '排序',
-  status tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态1有效',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态1有效',
   PRIMARY KEY (id)
 )
 ENGINE = INNODB,
@@ -7688,42 +6668,24 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '地址表';
 
---
--- `IDX_nc_area` on table `area`
---
-ALTER TABLE area
-ADD INDEX IDX_nc_area (name, shortname);
+ALTER TABLE area ADD INDEX IDX_nc_area (name, shortname);
 
---
--- `level` on table `area`
---
-ALTER TABLE area
-ADD INDEX level (level, sort, status);
+ALTER TABLE area ADD INDEX level (level, sort, status);
 
---
--- `longitude` on table `area`
---
-ALTER TABLE area
-ADD INDEX longitude (longitude, latitude);
+ALTER TABLE area ADD INDEX longitude (longitude, latitude);
 
---
--- `pid` on table `area`
---
-ALTER TABLE area
-ADD INDEX pid (pid);
+ALTER TABLE area ADD INDEX pid (pid);
 
---
--- `album_pic`
---
+
 CREATE TABLE album_pic (
-  pic_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+  pic_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   pic_name varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
   pic_path varchar(255) NOT NULL DEFAULT '' COMMENT '路径',
   pic_spec varchar(255) NOT NULL DEFAULT '' COMMENT '规格',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   update_time int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   album_id int(11) NOT NULL DEFAULT 0 COMMENT '相册id',
-  is_thumb tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否缩略图 0否 1是',
+  is_thumb tinyint(4) NOT NULL DEFAULT 1 COMMENT '是否缩略图 0否 1是',
   type varchar(50) NOT NULL DEFAULT '' COMMENT '类型',
   PRIMARY KEY (pic_id)
 )
@@ -7732,17 +6694,11 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '相册图片表';
 
---
--- `IDX_sys_album_pic_site_id` on table `album_pic`
---
-ALTER TABLE album_pic
-ADD INDEX IDX_sys_album_pic_site_id (site_id);
+ALTER TABLE album_pic ADD INDEX IDX_sys_album_pic_site_id (site_id);
 
---
--- `album`
---
+
 CREATE TABLE album (
-  album_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  album_id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   site_name varchar(255) NOT NULL DEFAULT '' COMMENT '站点名称',
   album_name varchar(50) NOT NULL DEFAULT '' COMMENT '相册,名称',
@@ -7762,29 +6718,15 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '相册表';
 
---
--- `IDX_sys_album_is_default` on table `album`
---
-ALTER TABLE album
-ADD INDEX IDX_sys_album_is_default (is_default);
+ALTER TABLE album ADD INDEX IDX_sys_album_is_default (is_default);
 
---
--- `IDX_sys_album_site_id` on table `album`
---
-ALTER TABLE album
-ADD INDEX IDX_sys_album_site_id (site_id);
+ALTER TABLE album ADD INDEX IDX_sys_album_site_id (site_id);
 
---
--- `IDX_sys_album_sort` on table `album`
---
-ALTER TABLE album
-ADD INDEX IDX_sys_album_sort (sort);
+ALTER TABLE album ADD INDEX IDX_sys_album_sort (sort);
 
---
--- `adv_position`
---
+
 CREATE TABLE adv_position (
-  ap_id mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '广告位置id',
+  ap_id mediumint(9) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '广告位置id',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
   ap_name varchar(100) NOT NULL DEFAULT '' COMMENT '广告位置名',
   ap_intro varchar(255) NOT NULL DEFAULT '' COMMENT '广告位简介',
@@ -7794,20 +6736,18 @@ CREATE TABLE adv_position (
   ap_background_color varchar(50) NOT NULL DEFAULT '#FFFFFF' COMMENT '广告位背景色 默认白色',
   type tinyint(4) NOT NULL DEFAULT 1 COMMENT '广告位所在位置类型   1 pc端  2 手机端',
   keyword varchar(255) NOT NULL DEFAULT '' COMMENT '关键字',
-  is_system tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否系统',
-  state tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1：启用 0：关闭',
+  is_system tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否系统',
+  state tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态 1：启用 0：关闭',
   PRIMARY KEY (ap_id)
 )
 ENGINE = INNODB,
-AUTO_INCREMENT = 18,
+AUTO_INCREMENT = 19,
 AVG_ROW_LENGTH = 2048,
 CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '广告位表';
 
---
--- `adv`
---
+
 CREATE TABLE adv (
   adv_id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   site_id int(11) NOT NULL DEFAULT 0 COMMENT '站点id',
@@ -7818,7 +6758,7 @@ CREATE TABLE adv (
   slide_sort int(11) NOT NULL DEFAULT 0 COMMENT '排序号',
   price decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '广告价格/月',
   background varchar(255) NOT NULL DEFAULT '#FFFFFF' COMMENT '背景色',
-  state tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1：启用 0：关闭',
+  state tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态 1：启用 0：关闭',
   PRIMARY KEY (adv_id)
 )
 ENGINE = INNODB,
@@ -7828,11 +6768,9 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '广告表';
 
---
--- `addon_quick`
---
+
 CREATE TABLE addon_quick (
-  id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   name varchar(40) NOT NULL DEFAULT '' COMMENT '插件名称或者标识',
   package_name varchar(255) NOT NULL DEFAULT '' COMMENT '套餐名称',
   type varchar(255) NOT NULL DEFAULT '' COMMENT '插件类型',
@@ -7851,23 +6789,17 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '插件表';
 
---
--- `UK_nc_addons_name` on table `addon_quick`
---
-ALTER TABLE addon_quick
-ADD UNIQUE INDEX UK_nc_addons_name (name);
+ALTER TABLE addon_quick ADD UNIQUE INDEX UK_nc_addons_name (name);
 
---
--- `addon`
---
+
 CREATE TABLE addon (
-  id int(10) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  id int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   name varchar(40) NOT NULL DEFAULT '' COMMENT '插件名称或者标识',
   type varchar(255) NOT NULL DEFAULT '' COMMENT '插件类型',
   icon varchar(255) NOT NULL DEFAULT '' COMMENT '插件图标',
   title varchar(20) NOT NULL DEFAULT '' COMMENT '中文名',
   description text DEFAULT NULL COMMENT '插件描述',
-  status tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  status tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态',
   author varchar(40) NOT NULL DEFAULT '' COMMENT '作者',
   version varchar(20) NOT NULL DEFAULT '' COMMENT '版本号',
   version_no varchar(255) NOT NULL DEFAULT '' COMMENT '版本编号',
@@ -7880,16 +6812,8 @@ CHARACTER SET utf8,
 COLLATE utf8_general_ci,
 COMMENT = '插件表';
 
---
--- `UK_nc_addons_name` on table `addon`
---
-ALTER TABLE addon
-ADD UNIQUE INDEX UK_nc_addons_name (name);
+ALTER TABLE addon ADD UNIQUE INDEX UK_nc_addons_name (name);
 
-
---
--- Dumping data for table sms_template
---
 INSERT INTO sms_template VALUES
 (1, 1, 0, 'ORDER_CREATE', 2, '订单创建通知', '尊敬的会员，您的订单已创建，订单号{orderno}。', '{"orderno":"other_number"}', 0, 0, 0, 1596437584),
 (2, 1, 0, 'ORDER_CLOSE', 2, '订单关闭通知', '尊敬的会员，您的订单{orderno}，已关闭。', '{"orderno":"other_number"}', 0, 0, 0, 1596427379),
@@ -7911,85 +6835,68 @@ INSERT INTO sms_template VALUES
 (18, 1, 0, 'BUYER_DELIVERY_REFUND', 2, '买家发起退款提醒', '{username}申请了退款，订单号为{orderno}的商品{goodsname}，退款单号为{refundno}，退款金额{refundmoney}，退款原因{refundreason}。', '{"username":"others","orderno":"other_number","goodsname":"others","refundno":"other_number","refundmoney":"amount","refundreason":"others"}', 0, 0, 0, 1596437579),
 (19, 1, 0, 'BUYER_TAKE_DELIVERY', 2, '买家收货提醒', '订单号为{orderno}，买家已收货。', '{"orderno":"other_number"}', 0, 0, 0, 1599040477),
 (20, 1, 0, 'BUYER_PAY', 2, '买家支付提醒', '订单号为{orderno}，买家已支付，支付金额为{ordermoney}。', '{"orderno":"other_number","ordermoney":"amount"}', 0, 0, 0, 1599040486),
-(21, 1, 0, 'USER_CANCEL_SUCCESS', 2, '会员注销成功', '尊敬的{username}，您的账号已注销成功。', '{"username":"others"}', 0, 0, 0, 1603694000),
-(22, 1, 0, 'USER_CANCEL_FAIL', 2, '会员注销失败', '尊敬的{username}，您的账号商家拒绝注销。', '{"username":"others"}', 0, 0, 0, 1603693993),
-(23, 1, 0, 'USER_CANCEL_APPLY', 2, '会员注销申请', '账号为{username}，会员申请注销。', '{"username":"others"}', 0, 0, 0, 1603693989),
-(24, 1, 0, 'USER_BALANCE_CHANGE_NOTICE', 2, '会员余额变动通知', '尊敬的{username}，您的账户余额发生变动。当前账户不可提现余额：{balance}，可提现余额：{balance_money}。', '{"username":"others","balance":"amount","balance_money":"amount"}', 0, 0, 0, 1616229040),
-(25, 1, 0, 'ORDER_URGE_PAYMENT', 2, '订单催付通知', '您购买的“{goodsname}”还没付款哦，店家将为您预留到{expiretime}，再不付款宝贝就被别人买走啦。', '{"expiretime":"others","goodsname":"others"}', 1, 2, 0, 1641538343),
-(26, 1, 0, 'BUYER_ORDER_COMPLETE', 2, '买家订单完成提醒', '订单号为{orderno}的订单已完成。', '{"orderno":"other_number"}', 1, 2, 0, 0),
-(27, 1, 0, 'ORDER_VERIFY_OUT_TIME', 2, '核销商品临期提醒', '尊敬的{username}，您的商品{sku_name}，订单的核销时间将于{expire_time}到期！', '{"expire_time":"date","sku_name":"others","username":"others"}', 1, 2, 0, 0),
-(28, 1, 0, 'VERIFY_CODE_EXPIRE', 2, '核销码过期提醒', '您在{sitename}购买的{sku_name}已过期！', '{"sitename":"others","sku_name":"others"}', 1, 2, 0, 0),
-(29, 1, 0, 'VERIFY', 2, '核销成功通知', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"others"}', 1, 2, 0, 0);
+(21, 1, 0, 'USER_WITHDRAWAL_APPLY', 2, '会员申请提现通知', '会员{username}申请余额提现，提现金额为{money}', '{"username":"others","money":"amount"}', 0, 0, 0, 1599876409),
+(22, 1, 0, 'FENXIAO_WITHDRAWAL_APPLY', 2, '分销申请提现通知', '分销商{fenxiaoname}申请佣金提现，提现金额为{money}', '{"fenxiaorname":"others","money":"amount"}', 0, 0, 0, 1599820140),
+(23, 1, 0, 'USER_WITHDRAWAL_SUCCESS', 2, '会员提现成功通知', '尊敬的{username}，您申请的{money}余额，已提现成功。', '{"username":"others","money":"amount"}', 0, 0, 0, 1599876399),
+(24, 1, 0, 'FENXIAO_WITHDRAWAL_SUCCESS', 2, '分销提现成功通知', '尊敬的{username}，您申请的{money}佣金，已提现成功。', '{"fenxiaorname":"others","money":"amount"}', 0, 0, 0, 1599820115),
+(25, 1, 0, 'USER_CANCEL_SUCCESS', 2, '会员注销成功', '尊敬的{username}，您的账号已注销成功。', '{"username":"others"}', 0, 0, 0, 1603694000),
+(26, 1, 0, 'USER_CANCEL_FAIL', 2, '会员注销失败', '尊敬的{username}，您的账号商家拒绝注销。', '{"username":"others"}', 0, 0, 0, 1603693993),
+(27, 1, 0, 'USER_CANCEL_APPLY', 2, '会员注销申请', '账号为{username}，会员申请注销。', '{"username":"others"}', 0, 0, 0, 1603693989),
+(28, 1, 0, 'FENXIAO_WITHDRAWAL_ERROR', 2, '分销提现失败结果通知', '尊敬的{fenxiaoname}，您申请的{money}余额，提现审核失败。', '{"fenxiaoname":"others","money":"amount"}', 0, 0, 0, 1608274672),
+(29, 1, 0, 'USER_BALANCE_CHANGE_NOTICE', 2, '会员余额变动通知', '尊敬的{username}，您的账户余额发生变动。当前账户不可提现余额：{balance}，可提现余额：{balance_money}。', '{"username":"others","balance":"amount","balance_money":"amount"}', 0, 0, 0, 1616229040),
+(30, 1, 0, 'ORDER_URGE_PAYMENT', 2, '订单催付通知', '您购买的“{goodsname}”还没付款哦，店家将为您预留到{expiretime}，再不付款宝贝就被别人买走啦。', '{"expiretime":"others","goodsname":"others"}', 1, 2, 0, 1641538343),
+(31, 1, 0, 'BUYER_ORDER_COMPLETE', 2, '买家订单完成提醒', '订单号为{orderno}的订单已完成。', '{"orderno":"other_number"}', 1, 2, 0, 0),
+(32, 1, 0, 'ORDER_VERIFY_OUT_TIME', 2, '核销商品临期提醒', '尊敬的{username}，您的商品{sku_name}，订单的核销时间将于{expire_time}到期！', '{"expire_time":"date","sku_name":"others","username":"others"}', 1, 2, 0, 0),
+(33, 1, 0, 'VERIFY_CODE_EXPIRE', 2, '核销码过期提醒', '您在{sitename}购买的{sku_name}已过期！', '{"sitename":"others","sku_name":"others"}', 1, 2, 0, 0),
+(34, 1, 0, 'VERIFY', 2, '核销成功通知', '尊敬的会员，您的订单{orderno}，商家核销成功。', '{"orderno":"others"}', 1, 2, 0, 0),
+(35, 1, 0, 'COMMISSION_GRANT', 2, '分销佣金发放通知', '您在{sitename}推荐的{level}用户{username}付款啦，推广奖励已到账，继续加油哦', '{"level":"others","sitename":"others","username":"others"}', 1, 2, 0, 0);
 
---
--- Dumping data for table poster_muban
---
 INSERT INTO poster_muban VALUES
 (1, 80, 80, 528, 253, '{"headimg_is_show":"1","headimg_shape":"circle","headimg_width":"30","headimg_height":"30","headimg_top":"30","headimg_left":"20","nickname_is_show":"1","nickname_font_size":"14","nickname_width":"150","nickname_height":"19","nickname_top":"36","nickname_left":"59","nickname_color":"#ffffff","store_logo_is_show":"1","store_logo_width":"60","store_logo_height":"18","store_logo_top":"16","store_logo_left":"259","store_name_is_show":"1","store_name_font_size":"14","store_name_color":"#ffffff","store_name_width":"70","store_name_height":"14","store_name_top":"39","store_name_left":"260","goods_img_is_show":"1","goods_img_width":"248","goods_img_height":"236","goods_img_top":"239","goods_img_left":"57","goods_name_is_show":"1","goods_name_font_size":"14","goods_name_color":"#ffffff","goods_name_width":"230","goods_name_height":"17","goods_name_top":"194","goods_name_left":"69","goods_price_is_show":"1","goods_price_font_size":"18","goods_price_color":"#FF4544","goods_price_width":"100","goods_price_height":"14","goods_price_top":"524","goods_price_left":"27","goods_market_is_show":"1","goods_market_price":0,"goods_market_price_font_size":"14","goods_market_price_color":"#ff4544","goods_market_price_width":"100","goods_market_price_height":"14","goods_market_price_top":"526","goods_market_price_left":"125"}', 'addon/postertemplate/shop/view/public/img/poster_bg1.png ', 'goods', 'qrcode'),
 (2, 66, 67, 495, 249, '{"headimg_is_show":"1","headimg_shape":"circle","headimg_width":"41","headimg_height":"42","headimg_top":"506","headimg_left":"41","nickname_is_show":"1","nickname_font_size":"14","nickname_width":"150","nickname_height":"19","nickname_top":"506","nickname_left":"93","nickname_color":"#000000","store_logo_is_show":"1","store_logo_width":"59","store_logo_height":"21","store_logo_top":"32","store_logo_left":"97","store_name_is_show":"1","store_name_font_size":"14","store_name_color":"#000000","store_name_width":"69","store_name_height":"14","store_name_top":"36","store_name_left":"169","goods_img_is_show":"1","goods_img_width":"269","goods_img_height":"262","goods_img_top":"100","goods_img_left":"46","goods_name_is_show":"1","goods_name_font_size":"16","goods_name_color":"#000000","goods_name_width":"290","goods_name_height":"30","goods_name_top":"391","goods_name_left":"42","goods_price_is_show":"1","goods_price_font_size":"18","goods_price_color":"#FF4544","goods_price_width":"100","goods_price_height":"14","goods_price_top":"442","goods_price_left":"44","goods_market_is_show":"1","goods_market_price":0,"goods_market_price_font_size":"14","goods_market_price_color":"#606060","goods_market_price_width":"100","goods_market_price_height":"14","goods_market_price_top":"447","goods_market_price_left":"147"}', 'addon/postertemplate/shop/view/public/img/poster_bg2.png ', 'goods', 'qrcode'),
 (3, 82, 77, 483, 140, '{"headimg_is_show":"1","headimg_shape":"circle","headimg_width":"38","headimg_height":"38","headimg_top":"22","headimg_left":"26","nickname_is_show":"1","nickname_font_size":"14","nickname_width":"150","nickname_height":"19","nickname_top":"29","nickname_left":"81","nickname_color":"#ffffff","store_logo_is_show":"1","store_logo_width":"60","store_logo_height":"21","store_logo_top":"13","store_logo_left":"276","store_name_is_show":"1","store_name_font_size":"14","store_name_color":"#000000","store_name_width":"69","store_name_height":"14","store_name_top":"42","store_name_left":"277","goods_img_is_show":"1","goods_img_width":"283","goods_img_height":"283","goods_img_top":"95","goods_img_left":"38","goods_name_is_show":"1","goods_name_font_size":"14","goods_name_color":"#ffffff","goods_name_width":"285","goods_name_height":"21","goods_name_top":"432","goods_name_left":"40","goods_price_is_show":"1","goods_price_font_size":"18","goods_price_color":"#ffffff","goods_price_width":"100","goods_price_height":"14","goods_price_top":"401","goods_price_left":"35","goods_market_is_show":"1","goods_market_price":0,"goods_market_price_font_size":"14","goods_market_price_color":"#ffffff","goods_market_price_width":"100","goods_market_price_height":"14","goods_market_price_top":"403","goods_market_price_left":"127"}', 'addon/postertemplate/shop/view/public/img/poster_bg3.png ', 'goods', 'qrcode');
 
---
--- Dumping data for table poster
---
--- Table v5_empty4.poster does not contain any data (it is empty)
-
---
--- Dumping data for table pc_nav
---
--- Table v5_empty4.pc_nav does not contain any data (it is empty)
-
---
--- Dumping data for table pc_friendly_link
---
--- Table v5_empty4.pc_friendly_link does not contain any data (it is empty)
-
---
--- Dumping data for table pc_floor_block
---
 INSERT INTO pc_floor_block VALUES
 (1, 'floor-style-1', '样式1', '{"goodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"leftImg":{"type":"img","value":{"url":"","link":""}},"bottomImg":{"type":"img","value":{"url":"","link":""}},"title":{"type":"text","value":{"text":"楼层名称","link":"","color":"#333333"}}}', 0),
 (2, 'floor-style-2', '样式2', '{"goodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"bottomImg":{"type":"img","value":{"url":"","link":""}},"title":{"type":"text","value":{"text":"楼层标题","link":"","color":"#333"}},"subTitle":{"type":"text","value":{"text":"楼层副标题","link":"","color":"#b0b0b0"}}}', 1),
 (3, 'floor-style-3', '样式3', '{"title":{"type":"text","value":{"text":"楼层标题","link":"","color":"#333"}},"rightGoodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"bottomGoodsList":{"type":"goods","value":{"goods_ids":"","list":[]}},"categoryList":{"type":"category","value":{"category_ids":"","list":[]}},"leftImg":{"type":"img","value":{"url":"","link":""}}}', 2);
 
---
--- Dumping data for table message_variable
---
 INSERT INTO message_variable VALUES
 (1, '店铺名称', 'shopname', ',REGISTER,NEW_ORDER,LOGIN,'),
 (2, '会员名称', 'membername', ',REGISTER,NEW_ORDER,LOGIN,'),
 (3, '验证码', 'number', ',REGISTER,LOGIN,');
 
---
--- Dumping data for table message_template
---
-INSERT INTO `message_template` VALUES (2, '', 'ORDER_CLOSE', '订单关闭通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5df2\\u5173\\u95ed\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM205543831\",\"template_id\":\"v3WG7D2sXYbFxSr34tn4H37mYOod6le3aCrc9Ifr0co\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"#dc6a13\",\"bottomtextcolor\":\"#2a9a08\",\"content\":\"\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u5173\\u95ed\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}\"}', '', '', 'sms,wechat', '订单未付款自动关闭后进行发送');
-INSERT INTO `message_template` VALUES (3, '', 'ORDER_COMPLETE', '订单完成通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u4ea4\\u6613\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412034601\",\"template_id\":\"VhtPPIYyYkS93uuZ7CKqYqApnB3YmtrA8mVBTC6gd1k\",\"headtext\":\"\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002\",\"bottomtext\":\"\\u8be6\\u60c5\\u8bf7\\u767b\\u5f55\\u516c\\u4f17\\u53f7\\u67e5\\u770b\\u3002\",\"headtextcolor\":\"#fe0000\",\"bottomtextcolor\":\"#1f7af2\",\"content\":\"\\u8ba2\\u5355\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '订单交易状态为已完成时对买家进行发送');
-INSERT INTO `message_template` VALUES (4, '', 'ORDER_PAY', '订单支付通知', 1, '{\"orderno\":\"订单号\",\"username\":\"会员名称\",\"ordermoney\":\"订单金额\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u4eb2\\u7231\\u7684${username},\\u4f60\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u6210\\u529f\\u652f\\u4ed8,\\u652f\\u4ed8\\u91d1\\u989d${ordermoney}\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM402074360\",\"template_id\":\"W703NbjLcYFPo230M_LuuwRCOsPitGZyb0JHIb9hYhU\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '{\"tid\":\"30808\",\"kidList\":[1,2,4,3],\"content\":\"\\u4e0b\\u5355\\u65f6\\u95f4{{time2.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing4.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount3.DATA}}\",\"sceneDesc\":\"\\u8ba2\\u5355\\u5b8c\\u6210\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '买家订单支付成功后发送通知');
-INSERT INTO `message_template` VALUES (5, '', 'ORDER_DELIVERY', '订单发货通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u53d1\\u8d27\\uff0c\\u8ba2\\u5355\\u53f7${orderno}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM406700005\",\"template_id\":\"Lbk1erxo_tvieaEFJmKP7pQ0EjwqlbsN1kQ2-G80TjE\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4ef6\\u6570\\uff1a{{keyword3.DATA}}\\n\\u652f\\u4ed8\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}\"}', '{\"tid\":\"30766\",\"kidList\":[2,1,7,3],\"content\":\"\\u8ba2\\u5355\\u53f7{{character_string2.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing1.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount7.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4{{date3.DATA}}\",\"sceneDesc\":\"\\u8ba2\\u5355\\u53d1\\u8d27\\u901a\\u77e5\"}', '', 'sms,wechat,weapp', '只针对实物商品物流发货，卖家发货完成后进行发送');
-INSERT INTO `message_template` VALUES (7, '', 'ORDER_REFUND_AGREE', '商家同意退款', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412135258\",\"template_id\":\"dGuS1yW7yxsclYRL9M6bE4cLCvy-eQ5j7Ur3O56TaVI\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"30825\",\"kidList\":[3,1,7],\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount1.DATA}}\\n\\u7533\\u8bf7\\u7ed3\\u679c{{phrase7.DATA}}\",\"sceneDesc\":\"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\"}', '', 'sms,wechat,weapp', '卖家统一退款后对买家发送');
-INSERT INTO `message_template` VALUES (8, '', 'ORDER_REFUND_REFUSE', '商家拒绝退款', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u62d2\\u7edd\\u9000\\u6b3e\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM417819857\",\"template_id\":\"Z-NHMwRfF53v_WI5o7pTef3NFONmFDa0r86OI-CpIbQ\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"30824\",\"kidList\":[4,3],\"content\":\"\\u8ba2\\u5355\\u53f7{{character_string4.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount3.DATA}}\",\"sceneDesc\":\"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\"}', '', 'sms,wechat,weapp', '卖家拒绝退款申请后对买家进行发送');
-INSERT INTO `message_template` VALUES (9, '', 'VERIFY', '核销成功通知', 1, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u6838\\u9500\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM206215005\",\"template_id\":\"\",\"headtext\":\"\\u4f60\\u597d\\uff0c\\u5546\\u54c1\\u6838\\u9500\\u6210\\u529f\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u6570\\u91cf\\uff1a{{keyword2.DATA}}\\n\\u6838\\u9500\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"31517\",\"kidList\":[1,2,3],\"content\":\"\\u6838\\u9500\\u72b6\\u6001{{phrase1.DATA}}\\n\\u6838\\u9500\\u65f6\\u95f4{{thing2.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}},\",\"sceneDesc\":\"\\u6838\\u9500\\u7801\\u8fc7\\u671f\\u63d0\\u9192\"}', '', 'sms,wechat,weapp', '核销码核销成功后对买家发送，可以是虚拟商品核销、门店自提订单核销');
-INSERT INTO `message_template` VALUES (10, '', 'BUYER_REFUND', '订单维权通知', 2, '{\"username\":\"会员名称\",\"goodsname\":\"商品名称\",\"orderno\":\"订单号\",\"refundmoney\":\"退款金额\",\"refundreason\":\"退款原因\",\"refundno\":\"退款单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"${username}\\u7533\\u8bf7\\u4e86\\u9000\\u6b3e\\uff0c\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u5546\\u54c1${goodsname}\\uff0c\\u9000\\u6b3e\\u5355\\u53f7\\u4e3a${refundno}\\uff0c\\u9000\\u6b3e\\u91d1\\u989d${refundmoney}\\uff0c\\u9000\\u6b3e\\u539f\\u56e0${refundreason}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412244458\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u9000\\u6b3e\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u7533\\u8bf7\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '买家提交退款申请后对卖家进行发送');
-INSERT INTO `message_template` VALUES (11, '', 'BUYER_DELIVERY_REFUND', '买家已退货通知', 2, '{\"orderno\":\"订单号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\uff0c\\u4e70\\u5bb6\\u9000\\u8d27\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM206905995\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u9000\\u8d27\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u8d27\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u9000\\u8d27\\u6570\\u91cf\\uff1a{{keyword3.DATA}}\\n\\u9000\\u8d27\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '', '', 'sms,wechat', '买家提交退货信息后对卖家进行发送');
-INSERT INTO `message_template` VALUES (12, '', 'REGISTER_CODE', '注册验证', 1, '{\"code\":\"验证码\",\"site_name\":\"站点名称\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员注册时填写手机号，点击获取动态码进行发送');
-INSERT INTO `message_template` VALUES (14, '', 'FIND_PASSWORD', '找回密码', 1, '{\"code\":\"验证码\",\"site_name\":\"站点名称\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请找回密码时，点击获取动态码时发送');
-INSERT INTO `message_template` VALUES (16, '', 'MEMBER_BIND', '账户绑定', 1, '{\"code\":\"验证码\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请账号绑定时， 点击获取动态码时发送');
-INSERT INTO `message_template` VALUES (17, '', 'LOGIN_CODE', '动态码登录', 1, '{\"code\":\"验证码\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员手机号登录时，点击获取验证码时发送');
-INSERT INTO `message_template` VALUES (18, '', 'SET_PASSWORD', '设置密码', 1, '{\"code\":\"验证码\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员修改密码时，点击获取动态码时发送');
-INSERT INTO `message_template` VALUES (20, '', 'BUYER_PAY', '买家支付通知', 2, '{\"orderno\":\"订单号\",\"ordermoney\":\"订单金额\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458\\u8ba2\\u5355${orderno}\\u652f\\u4ed8\\u6210\\u529f\\uff0c\\u8ba2\\u5355\\u91d1\\u989d\\uff1a${ordermoney}\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM402074360\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\"}', '', '', 'sms,wechat', '买家订单支付成功后对卖家发送');
-INSERT INTO `message_template` VALUES (25, '', 'USER_CANCEL_SUCCESS', '会员注销成功', 1, '{\"username\":\"会员账号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u6ce8\\u9500\\u6210\\u529f\\u3002\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请账号注销成功后发送');
-INSERT INTO `message_template` VALUES (26, '', 'USER_CANCEL_FAIL', '会员注销失败', 1, '{\"username\":\"会员账号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u6ce8\\u9500\\u5931\\u8d25\\uff01\",\"smssign\":\"\"}}', '', '', '', '', 'sms', '会员申请账号注销失败后发送');
-INSERT INTO `message_template` VALUES (27, '', 'USER_CANCEL_APPLY', '会员注销申请', 2, '{\"username\":\"会员账号\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458${username}\\u7533\\u8bf7\\u6ce8\\u9500\\u8d26\\u53f7\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM413481457\",\"template_id\":\"\",\"headtext\":\"\",\"bottomtext\":\"\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"申请人：{{keyword1.DATA}}\\n手机号码：{{keyword2.DATA}}\"}', '', '', 'sms,wechat', '会员提交账户注销申请后对商家进行发送');
-INSERT INTO `message_template` VALUES (29, '', 'USER_BALANCE_CHANGE_NOTICE', '会员余额变动通知', 1, '{\"username\":\"会员名称\",\"balance\":\"不可提现余额\",\"balance_money\":\"可提现余额\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u4f59\\u989d\\u53d1\\u751f\\u53d8\\u52a8\\uff1a${balance_money}\\/${balance}\\uff08\\u53ef\\u63d0\\u73b0\\/\\u4e0d\\u53ef\\u63d0\\u73b0\\uff09\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM406440024\",\"template_id\":\"\", \"headtext\": \"\", \"bottomtext\": \"\", \"headtextcolor\": \"\", \"bottomtextcolor\": \"\", \"content\": \"变动原因：{{keyword1.DATA}}\\n变动明细：{{keyword2.DATA}}\\n当前余额：{{keyword3.DATA}}\"}', '', '', 'sms,wechat', '会员余额发生收入、支出发生改变时发送');
-INSERT INTO `message_template` VALUES (30, '', 'ORDER_VERIFY_OUT_TIME', '核销商品临期提醒', 1, '{\"username\":\"会员名称\",\"sku_name\":\"商品名称\",\"expire_time\":\"核销码到期时间\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u5546\\u54c1${sku_name}\\uff0c\\u8ba2\\u5355\\u7684\\u6838\\u9500\\u65f6\\u95f4\\u5c06\\u4e8e${expire_time}\\u5230\\u671f\\uff01\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM409367252\",\"template_id\":\"\",\"headtext\":\"\\u60a8\\u597d\\uff0c\\u60a8\\u6709\\u4e00\\u4e2a\\u8ba2\\u5355\\u5373\\u5c06\\u8fc7\\u671f\\u3002\",\"bottomtext\":\"\\u8bf7\\u53ca\\u65f6\\u5904\\u7406\\u8ba2\\u5355\\uff0c\\u8c22\\u8c22\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"30781\",\"kidList\":[1,2,3],\"content\":\"\\u670d\\u52a1\\u540d\\u79f0{{thing1.DATA}}\\n\\u5230\\u671f\\u65f6\\u95f4{{date2.DATA}}\\n\\u6e29\\u99a8\\u63d0\\u793a{{thing3.DATA}}\",\"sceneDesc\":\"\\u6838\\u9500\\u7801\\u4e34\\u671f\\u63d0\\u9192\"}', '', 'sms,wechat,weapp', '核销码过期前一段时间（可设置时间）对买家发送');
-INSERT INTO `message_template` VALUES (32, '', 'ORDER_URGE_PAYMENT', '订单催付通知', 1, '{\"goodsname\":\"商品名称\",\"expiretime\":\"到期时间\",\"url\":\"商品链接\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u8d2d\\u4e70\\u7684\\u201c${goodsname}\\u201d\\u8fd8\\u6ca1\\u4ed8\\u6b3e\\u54e6\\uff0c\\u5e97\\u5bb6\\u5c06\\u4e3a\\u60a8\\u9884\\u7559\\u5230${expiretime}\\uff0c\\u518d\\u4e0d\\u4ed8\\u6b3e\\u5b9d\\u8d1d\\u5c31\\u88ab\\u522b\\u4eba\\u4e70\\u8d70\\u5566\\u3002\\u67e5\\u770b\\u8be6\\u60c5 ${url}\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM412091556\",\"template_id\":\"\",\"headtext\":\"\\u60a8\\u5728\\u5546\\u57ce\\u8d2d\\u4e70\\u7684\\u5b9d\\u8d1d\\u8fd8\\u672a\\u4ed8\\u6b3e\\u54e6\\uff01\\u4e3a\\u786e\\u4fdd\\u60a8\\u5fc3\\u7231\\u7684\\u5b9d\\u8d1d\\u65e9\\u65e5\\u542f\\u7a0b\\u3001\\u987a\\u5229\\u62b5\\u8fbe\\uff0c\\u8bb0\\u5f97\\u5c3d\\u65e9\\u4ed8\\u6b3e\\u54e6\\uff01\",\"bottomtext\":\"\\u611f\\u8c22\\u4f60\\u7684\\u4f7f\\u7528\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword4.DATA}}\"}', '{\"tid\":\"30782\",\"kidList\":[1,2,3],\"content\":\"\\u8BA2\\u5355\\u7F16\\u53F7{{character_string1.DATA}}\\n\\u8BA2\\u5355\\u5185\\u5BB9{{thing2.DATA}}\\n\\u652F\\u4ED8\\u91D1\\u989D{{character_string3.DATA}}\",\"sceneDesc\":\"\\u8BA2\\u5355\\u50AC\\u4ED8\\u63D0\\u9192\"}', '', 'sms,wechat,weapp', '未付款订单将会在订单关闭前10分钟对买家进行催付提醒');
-INSERT INTO `message_template` VALUES (33, '', 'VERIFY_CODE_EXPIRE', '核销码过期提醒', 1, '{\"sitename\":\"站点名称\",\"sku_name\":\"商品名称\"}', '', '{\"alisms\":{\"template_id\":\"\",\"content\":\"\\u60a8\\u5728${sitename}\\u8d2d\\u4e70\\u7684${sku_name}\\u5df2\\u8fc7\\u671f\\uff01\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM409367252\",\"template_id\":\"\",\"headtext\":\"\\u60a8\\u597d\\uff0c\\u60a8\\u6709\\u4e00\\u4e2a\\u6838\\u9500\\u7801\\u5df2\\u8fc7\\u671f\\u3002\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\"}', '{\"tid\":\"31934\",\"kidList\":[2,3,5,6],\"content\":\"\\u8BA2\\u5355\\u7F16\\u53F7{{character_string6.DATA}}\\n\\u4E0B\\u5355\\u65F6\\u95F4{{time2.DATA}}\\n\\u8FC7\\u671F\\u65F6\\u95F4{{time3.DATA}}\\n\\u6E29\\u99A8\\u63D0\\u793A{{thing5.DATA}}\",\"sceneDesc\":\"\\u6838\\u9500\\u7801\\u5230\\u671F\\u63D0\\u9192\"}', '', 'sms,wechat,weapp', '核销码过期后对买家发送提醒');
-INSERT INTO `message_template` VALUES (36, '', 'BUYER_ORDER_COMPLETE', '买家订单完成通知', 2, '{\"orderno\":\"订单号\"}', '', '{\"template_id\":20,\"site_id\":0,\"tem_id\":22765,\"keywords\":\"BUYER_TAKE_DELIVERY\",\"template_type\":2,\"template_name\":\"\\u4e70\\u5bb6\\u6536\\u8d27\\u63d0\\u9192\",\"template_content\":\"\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\uff0c\\u4e70\\u5bb6\\u5df2\\u6536\\u8d27\\u3002\",\"param_json\":\"{\\\"orderno\\\":\\\"other_number\\\"}\",\"status\":0,\"audit_status\":2,\"create_time\":0,\"update_time\":1599040477,\"alisms\":{\"template_id\":\"\",\"content\":\"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u60a8\\u7684\\u4f1a\\u5458\\u8d2d\\u4e70\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002\",\"smssign\":\"\"}}', '', '{\"template_id_short\":\"OPENTM202531033\",\"template_id\":\"\",\"headtext\":\"\\u4e70\\u5bb6\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\",\"bottomtext\":\"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002\",\"headtextcolor\":\"\",\"bottomtextcolor\":\"\",\"content\":\"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u8be6\\u60c5\\uff1a{{keyword2.DATA}}\"}', '{\"tid\":\"30893\",\"kidList\":[1,2,4,6,10],\"content\":\"\\u8BA2\\u5355\\u7F16\\u53F7{{character_string1.DATA}}\\n\\u8BA2\\u5355\\u91D1\\u989D{{amount10.DATA}}\\n\\u5546\\u54C1\\u540D\\u79F0{{thing2.DATA}}\\n\\u6536\\u8D27\\u4EBA{{thing6.DATA}}\\n\\u5B8C\\u6210\\u65F6\\u95F4{{date4.DATA}}\",\"sceneDesc\":\"\\u4E70\\u5BB6\\u8BA2\\u5355\\u5B8C\\u6210\\u901A\\u77E5\"}', '', 'sms,wechat,weapp', '买家订单交易完成后对卖家发送');
+INSERT INTO message_template VALUES
+(2, '', 'ORDER_CLOSE', '订单关闭通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5df2\\u5173\\u95ed\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM205543831","template_id":"v3WG7D2sXYbFxSr34tn4H37mYOod6le3aCrc9Ifr0co","headtext":"456","bottomtext":"789","headtextcolor":"#dc6a13","bottomtextcolor":"#2a9a08","content":"\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u5173\\u95ed\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}"}', '', '', 'sms,wechat', '订单未付款自动关闭后进行发送'),
+(3, '', 'ORDER_COMPLETE', '订单完成通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u4ea4\\u6613\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412034601","template_id":"VhtPPIYyYkS93uuZ7CKqYqApnB3YmtrA8mVBTC6gd1k","headtext":"\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002","bottomtext":"\\u8be6\\u60c5\\u8bf7\\u767b\\u5f55\\u516c\\u4f17\\u53f7\\u67e5\\u770b\\u3002","headtextcolor":"#fe0000","bottomtextcolor":"#1f7af2","content":"\\u8ba2\\u5355\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '', '', 'sms,wechat', '订单交易状态为已完成时对买家进行发送'),
+(4, '', 'ORDER_PAY', '订单支付通知', 1, '{"orderno":"订单号","username":"会员名称","ordermoney":"订单金额"}', '', '{"alisms":{"template_id":"","content":"\\u4eb2\\u7231\\u7684${username},\\u4f60\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u6210\\u529f\\u652f\\u4ed8,\\u652f\\u4ed8\\u91d1\\u989d${ordermoney}","smssign":""}}', '', '{"template_id_short":"OPENTM402074360","template_id":"W703NbjLcYFPo230M_LuuwRCOsPitGZyb0JHIb9hYhU","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '{"tid":"30808","kidList":[1,2,4,3],"content":"\\u4e0b\\u5355\\u65f6\\u95f4{{time2.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing4.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount3.DATA}}","sceneDesc":"\\u8ba2\\u5355\\u5b8c\\u6210\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '买家订单支付成功后发送通知'),
+(5, '', 'ORDER_DELIVERY', '订单发货通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355\\u5df2\\u53d1\\u8d27\\uff0c\\u8ba2\\u5355\\u53f7${orderno}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM406700005","template_id":"Lbk1erxo_tvieaEFJmKP7pQ0EjwqlbsN1kQ2-G80TjE","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4ef6\\u6570\\uff1a{{keyword3.DATA}}\\n\\u652f\\u4ed8\\u91d1\\u989d\\uff1a{{keyword4.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4\\uff1a{{keyword5.DATA}}"}', '{"tid":"30766","kidList":[2,1,7,3],"content":"\\u8ba2\\u5355\\u53f7{{character_string2.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing1.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d{{amount7.DATA}}\\n\\u53d1\\u8d27\\u65f6\\u95f4{{date3.DATA}}","sceneDesc":"\\u8ba2\\u5355\\u53d1\\u8d27\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '只针对实物商品物流发货，卖家发货完成后进行发送'),
+(7, '', 'ORDER_REFUND_AGREE', '商家同意退款', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412135258","template_id":"dGuS1yW7yxsclYRL9M6bE4cLCvy-eQ5j7Ur3O56TaVI","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '{"tid":"30825","kidList":[3,1,7],"content":"\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount1.DATA}}\\n\\u7533\\u8bf7\\u7ed3\\u679c{{phrase7.DATA}}","sceneDesc":"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e"}', '', 'sms,wechat,weapp', '卖家统一退款后对买家发送'),
+(8, '', 'ORDER_REFUND_REFUSE', '商家拒绝退款', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u62d2\\u7edd\\u9000\\u6b3e\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM417819857","template_id":"Z-NHMwRfF53v_WI5o7pTef3NFONmFDa0r86OI-CpIbQ","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u91d1\\u989d\\uff1a{{keyword2.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '{"tid":"30824","kidList":[4,3],"content":"\\u8ba2\\u5355\\u53f7{{character_string4.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d{{amount3.DATA}}","sceneDesc":"\\u5546\\u5bb6\\u540c\\u610f\\u9000\\u6b3e"}', '', 'sms,wechat,weapp', '卖家拒绝退款申请后对买家进行发送'),
+(9, '', 'VERIFY', '核销成功通知', 1, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u4f1a\\u5458\\uff0c\\u60a8\\u7684\\u8ba2\\u5355${orderno}\\uff0c\\u5546\\u5bb6\\u6838\\u9500\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM206215005","template_id":"","headtext":"\\u4f60\\u597d\\uff0c\\u5546\\u54c1\\u6838\\u9500\\u6210\\u529f","bottomtext":"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002","headtextcolor":"","bottomtextcolor":"","content":"\\u5546\\u54c1\\u540d\\u79f0\\uff1a{{keyword1.DATA}}\\n\\u5546\\u54c1\\u6570\\u91cf\\uff1a{{keyword2.DATA}}\\n\\u6838\\u9500\\u65f6\\u95f4\\uff1a{{keyword3.DATA}}"}', '{"tid":"31517","kidList":[1,2,3],"content":"\\u6838\\u9500\\u72b6\\u6001{{phrase1.DATA}}\\n\\u6838\\u9500\\u65f6\\u95f4{{thing2.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7{{character_string3.DATA}},","sceneDesc":"\\u6838\\u9500\\u7801\\u8fc7\\u671f\\u63d0\\u9192"}', '', 'sms,wechat,weapp', '核销码核销成功后对买家发送，可以是虚拟商品核销、门店自提订单核销'),
+(10, '', 'BUYER_REFUND', '订单维权通知', 2, '{"username":"会员名称","goodsname":"商品名称","orderno":"订单号","refundmoney":"退款金额","refundreason":"退款原因","refundno":"退款单号"}', '', '{"alisms":{"template_id":"","content":"${username}\\u7533\\u8bf7\\u4e86\\u9000\\u6b3e\\uff0c\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\u7684\\u5546\\u54c1${goodsname}\\uff0c\\u9000\\u6b3e\\u5355\\u53f7\\u4e3a${refundno}\\uff0c\\u9000\\u6b3e\\u91d1\\u989d${refundmoney}\\uff0c\\u9000\\u6b3e\\u539f\\u56e0${refundreason}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM412244458","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u9000\\u6b3e\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u7533\\u8bf7\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}\\n\\u9000\\u6b3e\\u91d1\\u989d\\uff1a{{keyword3.DATA}}"}', '', '', 'sms,wechat', '买家提交退款申请后对卖家进行发送'),
+(11, '', 'BUYER_DELIVERY_REFUND', '买家已退货通知', 2, '{"orderno":"订单号"}', '', '{"alisms":{"template_id":"","content":"\\u8ba2\\u5355\\u53f7\\u4e3a${orderno}\\uff0c\\u4e70\\u5bb6\\u9000\\u8d27\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM206905995","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u9000\\u8d27\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u9000\\u8d27\\u5546\\u54c1\\uff1a{{keyword2.DATA}}\\n\\u9000\\u8d27\\u6570\\u91cf\\uff1a{{keyword3.DATA}}\\n\\u9000\\u8d27\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '', '', 'sms,wechat', '买家提交退货信息后对卖家进行发送'),
+(12, '', 'REGISTER_CODE', '注册验证', 1, '{"code":"验证码","site_name":"站点名称"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员注册时填写手机号，点击获取动态码进行发送'),
+(14, '', 'FIND_PASSWORD', '找回密码', 1, '{"code":"验证码","site_name":"站点名称"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms', '会员申请找回密码时，点击获取动态码时发送'),
+(16, '', 'MEMBER_BIND', '账户绑定', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员申请账号绑定时， 点击获取动态码时发送'),
+(17, '', 'LOGIN_CODE', '动态码登录', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801\\u4e3a\\uff1a${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u7801 5 \\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员手机号登录时，点击获取验证码时发送'),
+(18, '', 'SET_PASSWORD', '设置密码', 1, '{"code":"验证码"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u7684\\u9a8c\\u8bc1\\u7801${code}\\uff0c\\u8be5\\u9a8c\\u8bc1\\u78015\\u5206\\u949f\\u5185\\u6709\\u6548\\uff0c\\u8bf7\\u52ff\\u6cc4\\u6f0f\\u4e8e\\u4ed6\\u4eba\\uff01","smssign":""}}', '', '', '', '', 'sms', '会员修改密码时，点击获取动态码时发送'),
+(20, '', 'BUYER_PAY', '买家支付通知', 2, '{"orderno":"订单号","ordermoney":"订单金额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458\\u8ba2\\u5355${orderno}\\u652f\\u4ed8\\u6210\\u529f\\uff0c\\u8ba2\\u5355\\u91d1\\u989d\\uff1a${ordermoney}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM402074360","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"\\u4e0b\\u5355\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword2.DATA}}\\n\\u5546\\u54c1\\u4fe1\\u606f\\uff1a{{keyword3.DATA}}\\n\\u8ba2\\u5355\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '', '', 'sms,wechat', '买家订单支付成功后对卖家发送'),
+(21, '', 'USER_WITHDRAWAL_APPLY', '会员申请提现通知', 2, '{"username":"会员名称","money":"提现金额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458${username}\\u7533\\u8bf7\\u63d0\\u73b0\\uff0c\\u63d0\\u73b0\\u91d1\\u989d${money}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM416719519","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '买家申请余额提现后对卖家进行通知'),
+(22, '', 'FENXIAO_WITHDRAWAL_APPLY', '分销申请提现通知', 2, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u5206\\u9500\\u5546${fenxiaoname}\\u7533\\u8bf7\\u63d0\\u73b0\\uff0c\\u63d0\\u73b0\\u91d1\\u989d${money}\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM416719519","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n创建时间：{{keyword2.DATA}}\\n申请金额：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '买家发起佣金提现后对卖家进行通知'),
+(23, '', 'USER_WITHDRAWAL_SUCCESS', '会员提现成功通知', 1, '{"username":"会员名称","money":"提现金额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684{username}\\uff0c\\u4f60\\u63d0\\u73b0{money}\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '{"tid":"30790","kidList":[6,3],"content":"\\u63d0\\u73b0\\u91d1\\u989d{{amount6.DATA}}\\n\\u63d0\\u73b0\\u65f6\\u95f4{{date3.DATA}}","sceneDesc":"\\u4f1a\\u5458\\u63d0\\u73b0\\u6210\\u529f\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '会员余额提现到账后进行发送'),
+(24, '', 'FENXIAO_WITHDRAWAL_SUCCESS', '分销提现成功通知', 1, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u5206\\u9500\\u5546${fenxiaoname}\\uff0c${money}\\u63d0\\u73b0\\u6210\\u529f\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM203174659","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"提现金额：{{keyword1.DATA}}\\n到账时间：{{keyword2.DATA}}"}', '{"tid":"30813","kidList":[1,2,3],"content":"\\u63d0\\u73b0\\u91d1\\u989d{{amount1.DATA}}\\n\\u63d0\\u73b0\\u65f6\\u95f4{{time2.DATA}}\\n\\u5907\\u6ce8{{thing3.DATA}}","sceneDesc":"\\u4f1a\\u5458\\u7533\\u8bf7\\u63d0\\u73b0\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '会员佣金提现成功后进行发送'),
+(25, '', 'USER_CANCEL_SUCCESS', '会员注销成功', 1, '{"username":"会员账号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u6ce8\\u9500\\u6210\\u529f\\u3002","smssign":""}}', '', '', '', '', 'sms', '会员申请账号注销成功后发送'),
+(26, '', 'USER_CANCEL_FAIL', '会员注销失败', 1, '{"username":"会员账号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u8d26\\u53f7\\u6ce8\\u9500\\u5931\\u8d25\\uff01","smssign":""}}', '', '', '', '', 'sms', '会员申请账号注销失败后发送'),
+(27, '', 'USER_CANCEL_APPLY', '会员注销申请', 2, '{"username":"会员账号"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u4f1a\\u5458${username}\\u7533\\u8bf7\\u6ce8\\u9500\\u8d26\\u53f7\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM413481457","template_id":"","headtext":"","bottomtext":"","headtextcolor":"","bottomtextcolor":"","content":"申请人：{{keyword1.DATA}}\\n手机号码：{{keyword2.DATA}}"}', '', '', 'sms,wechat', '会员提交账户注销申请后对商家进行发送'),
+(28, '', 'FENXIAO_WITHDRAWAL_ERROR', '分销提现失败通知', 1, '{"fenxiaoname":"分销商名称","money":"提现金额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684{username}\\uff0c\\u60a8\\u7533\\u8bf7\\u7684{money}\\u4f63\\u91d1\\uff0c\\u63d0\\u73b0\\u5931\\u8d25\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM417749055","template_id":"","headtext":"\\u4f1a\\u5458\\u63d0\\u73b0\\u5931\\u8d25\\u901a\\u77e5","bottomtext":"\\u8fdb\\u5165\\u5546\\u57ce\\u67e5\\u770b\\u8be6\\u60c5","headtextcolor":"","bottomtextcolor":"","content":"\\u63d0\\u73b0\\u65f6\\u95f4\\uff1a{{keyword1.DATA}}\\n\\u5ba1\\u6838\\u72b6\\u6001\\uff1a{{keyword2.DATA}}\\n\\u63d0\\u73b0\\u65b9\\u5f0f\\uff1a{{keyword3.DATA}}\\n\\u63d0\\u73b0\\u91d1\\u989d\\uff1a{{keyword4.DATA}}"}', '{"tid":"31387","kidList":[2,4],"content":"\\u63d0\\u73b0\\u91d1\\u989d{{amount2.DATA}}\\n\\u63d0\\u73b0\\u8fdb\\u5ea6{{thing4.DATA}}","sceneDesc":"\\u5206\\u9500\\u63d0\\u73b0\\u5931\\u8d25\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '会员佣金提现失败后进行发送'),
+(29, '', 'USER_BALANCE_CHANGE_NOTICE', '会员余额变动通知', 1, '{"username":"会员名称","balance":"不可提现余额","balance_money":"可提现余额"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u4f59\\u989d\\u53d1\\u751f\\u53d8\\u52a8\\uff1a${balance_money}\\/${balance}\\uff08\\u53ef\\u63d0\\u73b0\\/\\u4e0d\\u53ef\\u63d0\\u73b0\\uff09","smssign":""}}', '', '{"template_id_short":"OPENTM406440024","template_id":"", "headtext": "", "bottomtext": "", "headtextcolor": "", "bottomtextcolor": "", "content": "变动原因：{{keyword1.DATA}}\\n变动明细：{{keyword2.DATA}}\\n当前余额：{{keyword3.DATA}}"}', '', '', 'sms,wechat', '会员余额发生收入、支出发生改变时发送'),
+(30, '', 'ORDER_VERIFY_OUT_TIME', '核销商品临期提醒', 1, '{"username":"会员名称","sku_name":"商品名称","expire_time":"核销码到期时间"}', '', '{"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684${username}\\uff0c\\u60a8\\u7684\\u5546\\u54c1${sku_name}\\uff0c\\u8ba2\\u5355\\u7684\\u6838\\u9500\\u65f6\\u95f4\\u5c06\\u4e8e${expire_time}\\u5230\\u671f\\uff01","smssign":""}}', '', '{"template_id_short":"OPENTM409367252","template_id":"","headtext":"\\u60a8\\u597d\\uff0c\\u60a8\\u6709\\u4e00\\u4e2a\\u8ba2\\u5355\\u5373\\u5c06\\u8fc7\\u671f\\u3002","bottomtext":"\\u8bf7\\u53ca\\u65f6\\u5904\\u7406\\u8ba2\\u5355\\uff0c\\u8c22\\u8c22\\u3002","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}"}', '{"tid":"30781","kidList":[1,2,3],"content":"\\u670d\\u52a1\\u540d\\u79f0{{thing1.DATA}}\\n\\u5230\\u671f\\u65f6\\u95f4{{date2.DATA}}\\n\\u6e29\\u99a8\\u63d0\\u793a{{thing3.DATA}}","sceneDesc":"\\u6838\\u9500\\u7801\\u4e34\\u671f\\u63d0\\u9192"}', '', 'sms,wechat,weapp', '核销码过期前一段时间（可设置时间）对买家发送'),
+(32, '', 'ORDER_URGE_PAYMENT', '订单催付通知', 1, '{"goodsname":"商品名称","expiretime":"到期时间","url":"商品链接"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u8d2d\\u4e70\\u7684\\u201c${goodsname}\\u201d\\u8fd8\\u6ca1\\u4ed8\\u6b3e\\u54e6\\uff0c\\u5e97\\u5bb6\\u5c06\\u4e3a\\u60a8\\u9884\\u7559\\u5230${expiretime}\\uff0c\\u518d\\u4e0d\\u4ed8\\u6b3e\\u5b9d\\u8d1d\\u5c31\\u88ab\\u522b\\u4eba\\u4e70\\u8d70\\u5566\\u3002\\u67e5\\u770b\\u8be6\\u60c5 ${url}","smssign":""}}', '', '{"template_id_short":"OPENTM412091556","template_id":"","headtext":"\\u60a8\\u5728\\u5546\\u57ce\\u8d2d\\u4e70\\u7684\\u5b9d\\u8d1d\\u8fd8\\u672a\\u4ed8\\u6b3e\\u54e6\\uff01\\u4e3a\\u786e\\u4fdd\\u60a8\\u5fc3\\u7231\\u7684\\u5b9d\\u8d1d\\u65e9\\u65e5\\u542f\\u7a0b\\u3001\\u987a\\u5229\\u62b5\\u8fbe\\uff0c\\u8bb0\\u5f97\\u5c3d\\u65e9\\u4ed8\\u6b3e\\u54e6\\uff01","bottomtext":"\\u611f\\u8c22\\u4f60\\u7684\\u4f7f\\u7528\\u3002","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword4.DATA}}"}', '{"tid":"30782","kidList":[1,2,3],"content":"\\u8BA2\\u5355\\u7F16\\u53F7{{character_string1.DATA}}\\n\\u8BA2\\u5355\\u5185\\u5BB9{{thing2.DATA}}\\n\\u652F\\u4ED8\\u91D1\\u989D{{character_string3.DATA}}","sceneDesc":"\\u8BA2\\u5355\\u50AC\\u4ED8\\u63D0\\u9192"}', '', 'sms,wechat,weapp', '未付款订单将会在订单关闭前10分钟对买家进行催付提醒'),
+(33, '', 'VERIFY_CODE_EXPIRE', '核销码过期提醒', 1, '{"sitename":"站点名称","sku_name":"商品名称"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u5728${sitename}\\u8d2d\\u4e70\\u7684${sku_name}\\u5df2\\u8fc7\\u671f\\uff01","smssign":""}}', '', '{"template_id_short":"OPENTM409367252","template_id":"","headtext":"\\u60a8\\u597d\\uff0c\\u60a8\\u6709\\u4e00\\u4e2a\\u6838\\u9500\\u7801\\u5df2\\u8fc7\\u671f\\u3002","bottomtext":"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528\\u3002","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u7f16\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u5185\\u5bb9\\uff1a{{keyword2.DATA}}\\n\\u8ba2\\u5355\\u72b6\\u6001\\uff1a{{keyword3.DATA}}"}', '{"tid":"31934","kidList":[2,3,5,6],"content":"\\u8BA2\\u5355\\u7F16\\u53F7{{character_string6.DATA}}\\n\\u4E0B\\u5355\\u65F6\\u95F4{{time2.DATA}}\\n\\u8FC7\\u671F\\u65F6\\u95F4{{time3.DATA}}\\n\\u6E29\\u99A8\\u63D0\\u793A{{thing5.DATA}}","sceneDesc":"\\u6838\\u9500\\u7801\\u5230\\u671F\\u63D0\\u9192"}', '', 'sms,wechat,weapp', '核销码过期后对买家发送提醒'),
+(35, '', 'COMMISSION_GRANT', '分销佣金发放通知', 1, '{"sitename":"站点名称","level":"级别","username":"用户名称"}', '', '{"alisms":{"template_id":"","content":"\\u60a8\\u5728${sitename}\\u63a8\\u8350\\u7684${level}\\u7528\\u6237[${username}]\\u4ed8\\u6b3e\\u5566\\uff0c\\u63a8\\u5e7f\\u5956\\u52b1\\u5df2\\u5230\\u8d26\\uff0c\\u7ee7\\u7eed\\u52a0\\u6cb9\\u54e6","smssign":""}}', '', '{"template_id_short":"OPENTM400094720","template_id":"","headtext":"\\u606d\\u559c\\u60a8\\uff0c\\u83b7\\u5f97\\u4e86\\u4e00\\u7b14\\u65b0\\u7684\\u4f63\\u91d1\\uff0c\\u60a8\\u53ef\\u4ee5\\u5728\\u201c\\u6211\\u7684\\u4f63\\u91d1\\u201d\\u4e2d\\u67e5\\u770b\\u8be6\\u7ec6\\u4f63\\u91d1\\u4fe1\\u606f\\u3002","bottomtext":"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002","headtextcolor":"","bottomtextcolor":"","content":"\\u4f63\\u91d1\\u91d1\\u989d\\uff1a{{keyword1.DATA}}\\n\\u65f6\\u95f4\\uff1a{{keyword2.DATA}}"}', '{"tid":"30948","kidList":[1,2,3],"content":"\\u8ba2\\u5355\\u91d1\\u989d{{amount1.DATA}}\\n\\u9884\\u4f30\\u4f63\\u91d1{{amount2.DATA}}\\n\\u5546\\u54c1\\u540d\\u79f0{{thing3.DATA}}\\n\\u65f6\\u95f4{{time4.DATA}}","sceneDesc":"\\u5206\\u9500\\u4f63\\u91d1\\u53d1\\u653e\\u901a\\u77e5"}', '', 'sms,wechat,weapp', '订单完成后对该笔订单的分销商发送'),
+(36, '', 'BUYER_ORDER_COMPLETE', '买家订单完成通知', 2, '{"orderno":"订单号"}', '', '{"template_id":20,"site_id":0,"tem_id":22765,"keywords":"BUYER_TAKE_DELIVERY","template_type":2,"template_name":"\\u4e70\\u5bb6\\u6536\\u8d27\\u63d0\\u9192","template_content":"\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\uff0c\\u4e70\\u5bb6\\u5df2\\u6536\\u8d27\\u3002","param_json":"{\\"orderno\\":\\"other_number\\"}","status":0,"audit_status":2,"create_time":0,"update_time":1599040477,"alisms":{"template_id":"","content":"\\u5c0a\\u656c\\u7684\\u5546\\u5bb6\\uff0c\\u60a8\\u7684\\u4f1a\\u5458\\u8d2d\\u4e70\\u7684\\u8ba2\\u5355\\u53f7\\u4e3a{orderno}\\u7684\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210\\u3002","smssign":""}}', '', '{"template_id_short":"OPENTM202531033","template_id":"","headtext":"\\u4e70\\u5bb6\\u8ba2\\u5355\\u5df2\\u5b8c\\u6210","bottomtext":"\\u611f\\u8c22\\u60a8\\u7684\\u4f7f\\u7528,\\u795d\\u60a8\\u751f\\u610f\\u5174\\u9686\\u3002","headtextcolor":"","bottomtextcolor":"","content":"\\u8ba2\\u5355\\u53f7\\uff1a{{keyword1.DATA}}\\n\\u8ba2\\u5355\\u8be6\\u60c5\\uff1a{{keyword2.DATA}}"}', '{"tid":"30893","kidList":[1,2,4,6,10],"content":"\\u8BA2\\u5355\\u7F16\\u53F7{{character_string1.DATA}}\\n\\u8BA2\\u5355\\u91D1\\u989D{{amount10.DATA}}\\n\\u5546\\u54C1\\u540D\\u79F0{{thing2.DATA}}\\n\\u6536\\u8D27\\u4EBA{{thing6.DATA}}\\n\\u5B8C\\u6210\\u65F6\\u95F4{{date4.DATA}}","sceneDesc":"\\u4E70\\u5BB6\\u8BA2\\u5355\\u5B8C\\u6210\\u901A\\u77E5"}', '', 'sms,wechat,weapp', '买家订单交易完成后对卖家发送');
 
---
--- Dumping data for table area
---
 INSERT INTO area VALUES
 (110000, 0, '北京市', '北京', '116.40529', '39.904987', 1, 0, 1),
 (110100, 110000, '北京市', '北京', '116.40529', '39.904987', 2, 0, 1),
@@ -11202,3 +10109,26 @@ INSERT INTO area VALUES
 (659008, 659000, '可克达拉市', '可克达拉', '81.04476', '43.94799', 3, 0, 1),
 (659009, 659000, '昆玉市', '昆玉', '79.29133', '37.20948', 3, 0, 1),
 (659010, 659000, '胡杨河市', '胡杨河', '84.827387', '44.69295', 3, 0, 1);
+
+INSERT INTO adv_position VALUES
+(9, 1, '拼团', '拼团', 0, 0, '', '#FFFFFF', 2, 'NS_PINTUAN', 0, 1),
+(10, 1, '团购', '团购', 0, 0, '', '#FFFFFF', 2, 'NS_GROUPBUY', 0, 1),
+(11, 1, '秒杀', '秒杀', 0, 0, '', '#FFFFFF', 2, 'NS_SECKILL', 0, 1),
+(12, 1, '专题', '专题', 0, 0, '', '#FFFFFF', 2, 'NS_TOPIC', 0, 1),
+(13, 1, '砍价', '砍价', 0, 0, '', '#FFFFFF', 2, 'NS_BARGAIN', 0, 1),
+(14, 1, '预售', '预售', 0, 0, '', '#FFFFFF', 2, 'NS_PRESALE', 0, 1),
+(15, 1, '礼品卡', '礼品卡', 0, 0, '', '#FFFFFF', 2, 'NS_GIFTCARD', 0, 1),
+(16, 1, '拼团返利', '拼团返利', 0, 0, '', '#FFFFFF', 2, 'NS_PINFAN', 0, 1),
+(18, 1, '文章中心', '文章', 0, 0, '', '#FFFFFF', 2, 'NS_ARTICLE', 0, 1),
+(19, 1, '积分兑换', '积分兑换', 0, 0, '', '#FFFFFF', 2, 'NS_POINTEXCHANGE', 0, 1);
+
+
+INSERT INTO adv VALUES
+(13, 1, 9, '广告一', '', 'public/static/img/diy_view/index_pintuan_gg.png', 0, 0.00, '#FFFFFF', 1),
+(14, 1, 10, '广告一', '', 'public/static/img/diy_view/index_groupbuy_gg.png', 0, 0.00, '#FFFFFF', 1),
+(15, 1, 11, '广告一', '', 'public/static/img/diy_view/index_seckill_gg.png', 0, 0.00, '#FFFFFF', 1),
+(16, 1, 12, '广告一', '', 'public/static/img/diy_view/index_topic_gg.png', 0, 0.00, '#FFFFFF', 1),
+(17, 1, 13, '广告一', '', 'public/static/img/diy_view/index_bargain_gg.png', 0, 0.00, '#FFFFFF', 1),
+(18, 1, 14, '广告一', '', 'public/static/img/diy_view/index_presale.png', 0, 0.00, '#FFFFFF', 1),
+(19, 1, 15, '广告一', '', 'public/static/img/diy_view/index_giftcard.png', 0, 0.00, '#FFFFFF', 1),
+(20, 1, 19, '广告一', '', 'public/static/img/diy_view/index_pointexchange.png', 0, 0.00, '#FFFFFF', 1);

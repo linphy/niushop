@@ -68,12 +68,17 @@ class ShowPromotion
         }
         //获取活动概况,需要获取开始时间与结束时间
         if (isset($params[ 'summary' ])) {
+            $join = [
+                [ 'goods g', 'd.goods_id = g.goods_id', 'inner' ]
+            ];
             $list = model("promotion_discount")->getList([
                 [ '', 'exp', Db::raw('not ( (`start_time` >= ' . $params[ 'end_time' ] . ')  or (`end_time` <= ' . $params[ 'start_time' ] . '))') ],
-                [ 'site_id', '=', $params[ 'site_id' ] ],
-                [ 'status', '<>', 2 ],
-                [ 'status', '<>', -1 ]
-            ], 'discount_name as promotion_name,discount_id as promotion_id,start_time,end_time');
+                [ 'd.site_id', '=', $params[ 'site_id' ] ],
+                [ 'd.status', '<>', 2 ],
+                [ 'd.status', '<>', -1 ],
+                [ 'g.goods_state', '=', 1 ],
+                [ 'g.is_delete', '=', 0 ]
+            ], 'd.discount_name as promotion_name,d.discount_id as promotion_id,d.start_time,d.end_time', 'd.create_time desc', 'd', $join);
             return !empty($list) ? [
                 'time_limit' => [
                     'count' => count($list),

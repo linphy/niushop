@@ -59,8 +59,7 @@ class Consume extends BaseModel
         $coupon_list = [];
         if($res['data']['value']['is_return_coupon'] != 0 && $res['data']['value']['return_coupon'] != '') {
             $coupon = new CouponType();
-            $coupon_list = $coupon->getCouponTypeList([ ['site_id','=',$site_id],['status','=',1],['coupon_type_id','in',$res['data']['value']['return_coupon']] ]);
-            $coupon_list = $coupon_list['data'];
+            $coupon_list = $coupon->getCouponTypeList([ ['site_id','=',$site_id],['status','=',1],['coupon_type_id','in',$res['data']['value']['return_coupon']] ])['data'];
         }
         $res['data']['value']['coupon_list'] = $coupon_list;
         $res['data']['value']['is_recovery_reward'] = $res['data']['value']['is_recovery_reward'] ?? 0;
@@ -83,8 +82,8 @@ class Consume extends BaseModel
                 break;
             case 'GiftCardOrderPayNotify':
                 //礼品卡
-                $order_info = model("giftcard_order")->getInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_total_price');
-                $order_money = $order_info['order_total_price'] ?? '0.00';
+                $order_info = model("giftcard_order")->getInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_money');
+                $order_money = $order_info['order_money'] ?? '0.00';
                 break;
             case 'BlindboxGoodsOrderPayNotify':
                 //盲盒
@@ -117,7 +116,7 @@ class Consume extends BaseModel
                 break;
             case 'GiftCardOrderPayNotify':
                 //礼品卡
-                $order_info = model("giftcard_order")->getInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_total_price as order_money, site_id, member_id');
+                $order_info = model("giftcard_order")->getInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_money, site_id, member_id');
                 break;
             case 'BlindboxGoodsOrderPayNotify':
                 //盲盒
@@ -133,8 +132,7 @@ class Consume extends BaseModel
             return $this->success();
         }
 
-        $consume_config = $this->getConfig($order_info['site_id']);
-        $consume_config = $consume_config['data'];
+        $consume_config = $this->getConfig($order_info['site_id'])['data'];
 
         if ($consume_config['is_use'] &&
                 (
@@ -197,8 +195,7 @@ class Consume extends BaseModel
 
             if (!empty($consume_config['is_return_coupon']) && !empty($consume_config['return_coupon'])) {
                 $coupon_type = new CouponType();
-                $coupon_list = $coupon_type->getCouponTypeList([ ['site_id','=',$order_info['site_id']],['status','=',1],['coupon_type_id','in',$consume_config['return_coupon']] ]);
-                $coupon_list = $coupon_list['data'];
+                $coupon_list = $coupon_type->getCouponTypeList([ ['site_id','=',$order_info['site_id']],['status','=',1],['coupon_type_id','in',$consume_config['return_coupon']] ])['data'];
                 $coupon = new Coupon();
                 foreach ($coupon_list as $k => $v){
                     $coupon->giveCoupon([ ['coupon_type_id' => $v['coupon_type_id'], 'num' => 1] ], $order_info['site_id'], $order_info['member_id'], 6);
@@ -268,8 +265,7 @@ class Consume extends BaseModel
             $site_id = $list[0]['site_id'];
             $member_id = $list[0]['member_id'];
 
-            $consume_config = $this->getConfig($site_id);
-            $consume_config = $consume_config['data'];
+            $consume_config = $this->getConfig($site_id)['data'];
             // 回收权益
             if ($consume_config['value']['is_recovery_reward']) {
                 $member_account = new MemberAccount();

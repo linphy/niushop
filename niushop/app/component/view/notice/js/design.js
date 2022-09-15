@@ -23,7 +23,7 @@ Vue.component("notice-sources", {
 					text: "系统图标",
 					type: 'img',
 					src: "iconshangpinfenlei",
-					icon: [(noticeResourcePath + "/notice/img/notice_01.png"), (noticeResourcePath + "/notice/img/notice_02.png")]
+					icon: [(noticeResourcePath + "/img/notice_01.png"), (noticeResourcePath + "/img/notice_02.png"), (noticeResourcePath + "/img/notice_03.png")]
 				},
 				diy: {
 					type: 'icon',
@@ -84,7 +84,8 @@ Vue.component("notice-sources", {
 					self.$parent.data.noticeIds.push(res[i].id);
 					self.$parent.data.list[i] = {
 						title: res[i].title,
-						link: {}
+						link: {},
+						id: res[i].id
 					};
 				}
 			}, self.$parent.data.noticeIds);

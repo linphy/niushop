@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 .draggable-element .top-category .preview-draggable .preview-box {border-radius: 0;}
-.top-category{width: 100%;height: 35px;box-sizing: border-box;display: flex;align-items: center;}
+.top-category{}
 .top-category .top-category-item{display: inline-block;padding: 3px 10px;font-size: 14px;}
 .top-category .top-category-item.active{font-size: 16px;font-weight: 600;}
 .top-category .top-category-item.active .line {width: 100%;height: 2px;margin-top: 5px;}

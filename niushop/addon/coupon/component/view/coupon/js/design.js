@@ -14,11 +14,11 @@ Vue.component("coupon-set", {
 					src: "iconshangpinfenlei"
 				},
 				diy: {
-					text : "手动选择",
+					text: "手动选择",
 					src: "iconshoudongxuanze"
 				}
 			},
-			couponList:[
+			couponList: [
 				{
 					"ifNeedBg": true,
 					"couponBgColor": "",
@@ -62,7 +62,7 @@ Vue.component("coupon-set", {
 				{
 					"ifNeedBg": true,
 					"couponBgColor": "#FFFFFF",
-					"couponBgUrl": couponResourcePath + "/coupon/img/style3-bg-1.png",
+					"couponBgUrl": couponResourcePath + "/img/style3-bg-1.png",
 					"couponType": "img",
 					"isName": false,
 					"nameColor": "",
@@ -136,6 +136,26 @@ Vue.component("coupon-set", {
 						"isBgColor": true,
 						"isAroundRadius": true,
 						"maxLen": 3
+					},
+					"bgColor": ""
+				},
+				{
+					"ifNeedBg": true,
+					"couponBgColor": "",
+					"couponBgUrl": "",
+					"couponType": "img",
+					"isName": true,
+					"nameColor": "",
+					"moneyColor": "#FD463E",
+					"limitColor": "#FD463E",
+					"btnStyle": {
+						"textColor": "#FF3D3D",
+						"bgColor": "",
+						"text": "立即领取",
+						"aroundRadius": 0,
+						"isBgColor": false,
+						"isAroundRadius": false,
+						"maxLen": 4
 					},
 					"bgColor": ""
 				}

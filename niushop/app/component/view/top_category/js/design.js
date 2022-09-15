@@ -15,24 +15,24 @@ var topStyleHtml = '<div>';
 
 Vue.component("style-choose",{
 	template : topStyleHtml,
-	data : function(){
+	data : function() {
 		return {
-			data : this.$parent.data,
+			data: this.$parent.data,
 			list: [
 				{
-					label: "线条标签", 
+					label: "线条标签",
 					value: "line",
-					icon_img:topCategoryResourcePath + "/search/img/text_left.png",
-					icon_img_active:topCategoryResourcePath + "/search/img/text_left_hover.png"
+					icon_img: topCategoryResourcePath + "/img/text_left.png",
+					icon_img_active: topCategoryResourcePath + "/img/text_left_hover.png"
 				},
 				{
-					label: "填充标签", 
+					label: "填充标签",
 					value: "fill",
-					icon_img:topCategoryResourcePath + "/search/img/text_right.png",
-					icon_img_active:topCategoryResourcePath + "/search/img/text_right_hover.png"
+					icon_img: topCategoryResourcePath + "/img/text_right.png",
+					icon_img_active: topCategoryResourcePath + "/img/text_right_hover.png"
 				},
 			],
-			styleName:'线条标签'
+			styleName: '线条标签'
 		};
 	},
 	created:function(){

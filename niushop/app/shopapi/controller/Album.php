@@ -64,4 +64,18 @@ class Album extends BaseApi
         $list = $album_model->getAlbumPicPageList($condition, $page, $limit, 'update_time desc','pic_path');
         return $this->response($list);
     }
+
+    /**
+     * 生成缩略图
+     */
+    public function createThumb()
+    {
+        ignore_user_abort(true);
+        $upload_model = new AlbumModel();
+        $pic_path = isset($this->params[ 'pic_path' ]) ? $this->params[ 'pic_path' ] : '';
+        $pic_ids = $upload_model->getAlbumPicList([ ['pic_path', 'in', $pic_path], ['site_id', '=', $this->site_id] ], 'pic_id')['data'] ?? [];
+        $pic_ids = array_column($pic_ids, 'pic_id');
+        $thumb_batch = $upload_model->createThumbBatch($this->site_id, $pic_ids);
+        return $this->response($thumb_batch);
+    }
 }

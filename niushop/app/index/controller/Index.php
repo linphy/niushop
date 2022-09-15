@@ -145,4 +145,32 @@ class Index extends Controller
         // dump($res);exit;
         return $res;
     }
+
+    /**
+     * 手机端预览
+     */
+    public function h5Preview()
+    {
+        $url = input('url', '');
+
+        $shop_model = new ShopModel();
+        $res = $shop_model->qrcode(1);
+        $h5_data = $res[ 'data' ][ 'path' ][ 'h5' ] ?? [];
+
+        if (!empty($url)) {
+            if (strpos($url, '?') !== false) {
+                $url .= '&time=' . time();
+            } else {
+                $url .= '?time=' . time();
+            }
+            $h5_data[ 'url' ] = $url;
+        } else {
+            $h5_data[ 'url' ] .= '?time=' . time();
+        }
+
+        $this->assign('h5_data', $h5_data);
+        $this->assign('is_mobile', isMobile());
+        return $this->fetch("index/h5_preview");
+    }
+
 }

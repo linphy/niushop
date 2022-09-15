@@ -292,12 +292,12 @@ class Addon extends BaseModel
                     $util_item = [
                         'name' => $v[ 'name' ], // 组件标识
                         'title' => $v[ 'title' ], // 组件名称
-                        'type' => $v[ 'type' ], // 组件类型，SYSTEM 基础组件，PROMOTION 营销组件
+                        'type' => $v[ 'type' ], // 组件类型，SYSTEM：基础组件，PROMOTION：营销组件，EXTEND：扩展组件
                         'value' => $v[ 'value' ], // 组件数据结构json格式
                         'sort' => $v[ 'sort' ],
                         'support_diy_view' => $v[ 'support_diy_view' ] ?? '', // 支持的自定义页面（为空表示公共组件都支持）
                         'addon_name' => $addon,
-                        'max_count' => $v[ 'max_count' ] ?? 0, // 限制添加次数
+                        'max_count' => $v[ 'max_count' ] ?? 0, // 限制添加次数，0表示可以无限添加该组件
                         'is_delete' => $v[ 'is_delete' ] ?? 0, // 组件是否可以删除，0 允许，1 禁用
                         'icon' => $v[ 'icon' ] ?? '' // 组件字体图标
                     ];
@@ -411,4 +411,37 @@ class Addon extends BaseModel
         return $this->success();
     }
     /************************************************************* 安装全部插件 end *************************************************************/
+
+    /**
+     * 刷新应用插件
+     * @return array
+     */
+    public function cacheAddon()
+    {
+        //刷新插件信息
+        $addon_list = model('addon')->getList();
+        foreach ($addon_list as $k => $v) {
+            $data = require 'addon/' . $v[ 'name' ] . '/config/info.php';
+            if (empty($data)) {
+                $data = [];
+            }
+            $data[ 'create_time' ] = time();
+            $data[ 'icon' ] = 'addon/' . $v[ 'name' ] . '/icon.png';
+            model('addon')->update($data, [ 'name' => $v[ 'name' ] ]);
+        }
+        return $this->success();
+    }
+
+    /**
+     * 刷新所有插件菜单
+     */
+    public function cacheAddonMenu()
+    {
+        $addon_list = model('addon')->getList([], 'name');
+        $menu_model = new Menu();
+        foreach ($addon_list as $k => $v) {
+            $addon_menu_res = $menu_model->refreshMenu('shop', $v[ 'name' ]);
+        }
+        return $this->success($addon_menu_res);
+    }
 }
