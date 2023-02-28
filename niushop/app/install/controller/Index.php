@@ -47,7 +47,7 @@ class Index extends BaseInstall
             $host = ( empty($_SERVER[ 'REMOTE_ADDR' ]) ? $_SERVER[ 'REMOTE_HOST' ] : $_SERVER[ 'REMOTE_ADDR' ] );
             $name = $_SERVER[ 'SERVER_NAME' ];
 
-            $verison = version_compare(PHP_VERSION, '7.1.0') == -1 ? false : true;
+            $verison = version_compare(PHP_VERSION, '7.4.0') == -1 ? false : true;
             //pdo
             $pdo = extension_loaded('pdo') && extension_loaded('pdo_mysql');
             $system_variables[] = [ "name" => "pdo", "need" => "开启", "status" => $pdo ];
