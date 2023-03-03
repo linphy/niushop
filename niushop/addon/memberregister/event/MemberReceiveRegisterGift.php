@@ -60,15 +60,4 @@ class MemberReceiveRegisterGift
 
     }
 
-    private function accountType($key)
-    {
-        $type = [
-            'point'   => '积分',
-            'balance' => '余额',
-            'growth'  => '成长值',
-            'coupon'  => '优惠券'
-        ];
-        return $type[$key];
-    }
-
 }

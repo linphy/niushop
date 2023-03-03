@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -17,20 +16,15 @@ use addon\freeshipping\model\Freeshipping as FreeshippingModel;
 class Freeshipping extends BaseShop
 {
 
-    /*
-     *  团购活动列表
-     */
     public function lists()
     {
         $model = new FreeshippingModel();
 
-        $condition[] = ['site_id', '=', $this->site_id];
-        //获取续签信息
+        $condition[] = [ 'site_id', '=', $this->site_id ];
         if (request()->isAjax()) {
-
-            $page      = input('page', 1);
+            $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
-            $list      = $model->getFreeshippingPageList($condition, $page, $page_size, 'price asc');
+            $list = $model->getFreeshippingPageList($condition, $page, $page_size, 'price asc');
             return $list;
         } else {
             return $this->fetch("freeshipping/lists");
@@ -45,17 +39,17 @@ class Freeshipping extends BaseShop
     {
         if (request()->isAjax()) {
 
-            $price            = input("price", '');
-            $json             = input("json", "");
+            $price = input("price", '');
+            $json = input("json", "");
             $surplus_area_ids = input('surplus_area_ids', '');
 
-            $json_data                = json_decode($json, true);
-            $data                     = $json_data['1'];
-            $data['price']            = $price;
-            $data['site_id']          = $this->site_id;
-            $data['surplus_area_ids'] = $surplus_area_ids;
-            $model                    = new FreeshippingModel();
-            $result                   = $model->addFreeshipping($data);
+            $json_data = json_decode($json, true);
+            $data = $json_data[ '1' ];
+            $data[ 'price' ] = $price;
+            $data[ 'site_id' ] = $this->site_id;
+            $data[ 'surplus_area_ids' ] = $surplus_area_ids;
+            $model = new FreeshippingModel();
+            $result = $model->addFreeshipping($data);
             return $result;
 
         } else {
@@ -72,20 +66,20 @@ class Freeshipping extends BaseShop
      */
     public function edit()
     {
-        $model           = new FreeshippingModel();
+        $model = new FreeshippingModel();
         $freeshipping_id = input('freeshipping_id', 0);
         if (request()->isAjax()) {
 
-            $price            = input("price", '');
-            $json             = input("json", "");
+            $price = input("price", '');
+            $json = input("json", "");
             $surplus_area_ids = input('surplus_area_ids', '');
 
-            $json_data                = json_decode($json, true);
-            $data                     = $json_data['1'];
-            $data['price']            = $price;
-            $data['site_id']          = $this->site_id;
-            $data['surplus_area_ids'] = $surplus_area_ids;
-            $data['freeshipping_id']  = $freeshipping_id;
+            $json_data = json_decode($json, true);
+            $data = $json_data[ '1' ];
+            $data[ 'price' ] = $price;
+            $data[ 'site_id' ] = $this->site_id;
+            $data[ 'surplus_area_ids' ] = $surplus_area_ids;
+            $data[ 'freeshipping_id' ] = $freeshipping_id;
 
             $result = $model->editFreeshipping($data);
             return $result;
@@ -96,7 +90,7 @@ class Freeshipping extends BaseShop
             $area_level = 3;
             $this->assign('area_level', $area_level);//地址级别
 
-            $info = $model->getFreeshippingInfo([['freeshipping_id', '=', $freeshipping_id], ['site_id', '=', $this->site_id]])['data'];
+            $info = $model->getFreeshippingInfo([ [ 'freeshipping_id', '=', $freeshipping_id ], [ 'site_id', '=', $this->site_id ] ])[ 'data' ];
             $this->assign('info', $info);
             return $this->fetch("freeshipping/edit");
         }
@@ -108,7 +102,7 @@ class Freeshipping extends BaseShop
     public function delete()
     {
         $freeshipping_id = input('freeshipping_id', '');
-        $site_id         = $this->site_id;
+        $site_id = $this->site_id;
 
         $model = new FreeshippingModel();
         return $model->deleteFreeshipping($freeshipping_id, $site_id);

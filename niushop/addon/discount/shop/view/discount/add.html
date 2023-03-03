@@ -161,6 +161,7 @@
 			})
 
 			data.field.goods_data = goods_data;
+
 			if (repeat_flag) return;
 			repeat_flag = true;
 			$.ajax({
@@ -217,7 +218,6 @@
 			}
 		});
 
-
 	});
 
 
@@ -233,7 +233,7 @@
 		}
 		$(obj).parents("tr").remove();
 
-		$("#goods_num").html(goods_ids.length)
+		$("#goods_num").html(goods_ids.length);
 		selectedGoodsId = goods_ids.toString();
 
 	}
@@ -289,7 +289,6 @@
 					unresize: 'false',
 					width: '13%',
 					templet: '#discountPrice'
-
 				}, {
 					title: '操作',
 					toolbar: '#operation',
@@ -304,7 +303,6 @@
 		 * 批量操作
 		 */
 		table.toolbar(function(obj) {
-
 			if (obj.data.length < 1) {
 				layer.msg('请选择要操作的数据');
 				return;
@@ -325,9 +323,9 @@
 
 		layer.open({
 			type: 1,
-			title:"修改"+text[textIndex].name,
-			area:['600px'],
-			btn:["保存","返回"],
+			title: "修改" + text[textIndex].name,
+			area: ['600px'],
+			btn: ["保存", "返回"],
 			content: `
 			<div class="layui-form-item">
 				<label class="layui-form-label"><span class="required">*</span>${text[textIndex].name}：</label>
@@ -336,15 +334,15 @@
 				</div>
 			</div>
 		`,
-			yes: function(index, layero){
+			yes: function (index, layero) {
 				var val = $("input[name='bargain_edit_input']").val();
-				if (!val){
+				if (!val) {
 					layer.msg("请输入" + text[textIndex].name);
 					return false;
 				}
-				data.data.forEach(function (item,index) {
-					sku_list.forEach(function (skuItem,skuIndex) {
-						if (item.sku_id == skuItem.sku_id){
+				data.data.forEach(function (item, index) {
+					sku_list.forEach(function (skuItem, skuIndex) {
+						if (item.sku_id == skuItem.sku_id) {
 							sku_list[skuIndex][text[textIndex].value] = val;
 						}
 					})
@@ -356,13 +354,12 @@
 	}
 
 	/* 商品 */
-	function addGoods(){
-
+	function addGoods() {
 		goodsSelect(function (res) {
 			if (!res.length) return false;
 			goods_id = [];
 			sku_list = [];
-			for(var i=0;i<res.length;i++) {
+			for (var i = 0; i < res.length; i++) {
 				for (var k = 0; k < res[i].selected_sku_list.length; k++) {
 					var item = res[i].selected_sku_list[k];
 					item.discount_price = item.price;
@@ -372,21 +369,18 @@
 			}
 			renderTable(sku_list);
 			selectedGoodsId = goods_id;
-
 			$("#goods_num").html(selectedGoodsId.length)
 		}, selectedGoodsId);
-		sku_list.splice(0,sku_list.length);
-
 	}
 
 	function setGoodsSku(type, sku_id, obj){
 		$.each(sku_list, function (i, e) {
 			if(sku_id == e.sku_id){
 				if(parseFloat(sku_list[i]['price']) < parseFloat($(obj).val())){
-					$(obj).val(sku_list[i]['price'])
+					$(obj).val(sku_list[i]['price']);
 					return layer.msg('折扣价格不能大于商品价格');
 				} else if($(obj).val()<0){
-					$(obj).val(sku_list[i]['price'])
+					$(obj).val(sku_list[i]['price']);
 					return layer.msg('折扣价格不能小于0');
 				}else{
 					sku_list[i][type] = $(obj).val();

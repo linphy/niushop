@@ -3,18 +3,8 @@
 <style>
 	.discount { display: flex; justify-content: space-between; height: 34px; line-height: 34px; padding: 5px 15px; background-color: #F6FBFD; border: 1px dashed #BCE8F1; }
 	.exchange-type {padding: 0 20px; position: relative;}
-	.exchange-type:hover {border: 1px solid #ff8143;}
-	.exchange-selected {border-color: #ff8143!important;}
-	.exchange-selected:after {
-		content: "";
-		display: inline-block;
-		width: 20px;
-		height: 20px;
-		background-image: url(__STATIC__/img/selected.png);
-		position: absolute;
-		bottom: 0;
-		right: 0;
-	}
+	.exchange-type i{position: absolute;bottom: -10px;right: -1px;display: none;}
+	.exchange-type.border-color i{display: block;}
 	.form-wrap {position: relative;}
 	.custom-right {
 		position: absolute;
@@ -79,8 +69,6 @@
 		transform: translate(0, -50%);
 	}
 	
-	
-	
 	.item-info {
 		margin:0 20px 0 0;
 		width: 100px;
@@ -136,7 +124,6 @@
 </style>
 {/block}
 {block name="main"}
-
 <div class="layui-form form-wrap">
 
 	<div class="layui-form-item">
@@ -150,8 +137,8 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">优惠券类型：</label>
 			<div class="layui-input-block">
-				<button class="layui-btn layui-btn-primary exchange-type exchange-selected" data-status="reward">满减</button>
-				<button class="layui-btn layui-btn-primary exchange-type" data-status="discount">折扣</button>
+				<button class="layui-btn layui-btn-primary exchange-type border-color" data-status="reward">满减<i class="iconfont iconxuanzhong text-color"></i></button>
+				<button class="layui-btn layui-btn-primary exchange-type" data-status="discount">折扣<i class="iconfont iconxuanzhong text-color"></i></button>
 				<input type="hidden" name="type" value="reward">
 			</div>
 		</div>
@@ -219,7 +206,7 @@
 	</div>
 
 	<div class="layui-form-item">
-		<label class="layui-form-label img-upload-lable">优惠券图片：</label>
+		<label class="layui-form-label">优惠券图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
 				<div class="upload-img-box">
@@ -285,7 +272,6 @@
 	<div class="layui-form-item goods_list" style="display:none">
 		<label class="layui-form-label"></label>
 		<div class="layui-input-block">
-
 			<table id="selected_goods_list"></table>
 			<button class="layui-btn" onclick="addGoods()">选择商品</button>  <span class="goods_num">已选商品（<span id="goods_num" class="text-color">0</span>）</span>
 		</div>
@@ -304,7 +290,7 @@
 				<div class="item-base">
 					<div class="aaa">
 						<div class="use_price">
-							<span class="priceaaaa">￥__<span>
+							<span class="priceaaaa">￥__</span>
 						</div>
 						<div class="use_condition font-size-tag">满<span class="use_price2">__</span>元可用</div>
 					</div>
@@ -349,7 +335,7 @@
 		$('.priceaaaa').html('￥' + aa)
 	});
 	
-	$("body").on("change",'input[name="discount"]',function(){		
+	$("body").on("change",'input[name="discount"]',function(){
 		let bb = $('input[name="discount"]').val();
 		$('.pricebbbb').html(bb + ' 折 ')
 	});
@@ -396,17 +382,17 @@
 			}
         });
 		
-		      var date = new Date(currentDate);
-		      var y = date.getFullYear();
-			  var m = date.getMonth() + 1;
-			  m = m < 10 ? ('0' + m) : m;
-			  var d = date.getDate();
-		 	  d = d < 10 ? ('0' + d) : d;
-		      var h = date.getHours();
-			  var minute = date.getMinutes();
-			  var second = date.getSeconds();
-			  minute = minute < 10 ? ('0' + minute) : minute;
-			  let time = y + '-' + m + '-' + d+' '+h+':'+minute+':'+second; 
+      var date = new Date(currentDate);
+      var y = date.getFullYear();
+	  var m = date.getMonth() + 1;
+	  m = m < 10 ? ('0' + m) : m;
+	  var d = date.getDate();
+      d = d < 10 ? ('0' + d) : d;
+      var h = date.getHours();
+	  var minute = date.getMinutes();
+	  var second = date.getSeconds();
+	  minute = minute < 10 ? ('0' + minute) : minute;
+	  let time = y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
 		$('.time-aaa').html('有效期：' + time);
 		var time_time = $('input[name="fixed_term"]').val();
 		$('.time-bbb').html('有效期：领取之日起' + time_time + '日内有效');
@@ -654,12 +640,12 @@
         };
 
         $(".exchange-type").click(function() {
-            $(this).addClass("exchange-selected");
-            $(this).siblings("button").removeClass("exchange-selected");
+            $(this).addClass("border-color");
+            $(this).siblings("button").removeClass("border-color");
 
             var type = $(this).attr('data-status');
-			
             var current_type = $("input[name='type']").val();
+
             if(current_type == type){
                 return false;
             }
@@ -725,40 +711,40 @@
 
     // 表格渲染
     function renderTable(goods_list) {
-        //展示已知数据
-        table = new Table({
-            elem: '#selected_goods_list',
-            cols: [
-                [{
-                    field: 'goods_name',
-                    title: '商品名称',
-                    unresize: 'false',
-                    width: '50%'
-                }, {
-                    field: 'price',
-                    title: '商品价格(元)',
-                    unresize: 'false',
-                    align: 'right',
-                    width: '20%',
-                    templet: function(data) {
-                        return '￥' + data.price;
-                    }
-                }, {
-                    field: 'goods_stock',
-                    title: '库存',
-                    unresize: 'false',
-                    align: 'center',
-                    width: '20%'
-                }, {
-                    title: '操作',
-                    toolbar: '#operation',
-                    unresize: 'false',
-					align:'right'
-                }],
-            ],
-            data: goods_list,
-        });
-    }
+		//展示已知数据
+		table = new Table({
+			elem: '#selected_goods_list',
+			cols: [
+				[{
+					field: 'goods_name',
+					title: '商品名称',
+					unresize: 'false',
+					width: '50%'
+				}, {
+					field: 'price',
+					title: '商品价格(元)',
+					unresize: 'false',
+					align: 'right',
+					width: '20%',
+					templet: function (data) {
+						return '￥' + data.price;
+					}
+				}, {
+					field: 'goods_stock',
+					title: '库存',
+					unresize: 'false',
+					align: 'center',
+					width: '20%'
+				}, {
+					title: '操作',
+					toolbar: '#operation',
+					unresize: 'false',
+					align: 'right'
+				}],
+			],
+			data: goods_list,
+		});
+	}
 
     // 删除选中商品
     function delGoods(id) {

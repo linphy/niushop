@@ -14,7 +14,6 @@ namespace addon\memberregister\event;
 
 use addon\memberregister\model\Register as RegisterModel;
 use app\model\member\MemberAccount as MemberAccountModel;
-use addon\coupon\model\CouponType;
 use addon\coupon\model\Coupon;
 
 /**
@@ -56,17 +55,6 @@ class MemberRegister
 
         return $res;
 
-    }
-
-    private function accountType($key)
-    {
-        $type = [
-            'point'   => '积分',
-            'balance' => '余额',
-            'growth'  => '成长值',
-            'coupon'  => '优惠券'
-        ];
-        return $type[$key];
     }
 
 }

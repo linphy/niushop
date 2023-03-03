@@ -18,6 +18,7 @@ use app\model\BaseModel;
 use addon\weapp\model\Config as WeappConfig;
 use addon\wechat\model\Config as WechatConfig;
 use app\model\system\Pay as PayModel;
+use EasyWeChat\Factory;
 use think\facade\Log;
 
 /**
@@ -90,6 +91,7 @@ class Pay extends BaseModel
         try {
             $this->app = new $class($this->config);
         } catch (\Exception $e) {
+            Log::write('微信支付配置错误:' . $e->getMessage().$e->getFile().$e->getLine());
             throw new ApiException(-1, "微信支付配置错误");
         }
     }
@@ -100,6 +102,8 @@ class Pay extends BaseModel
      */
     public function pay($param)
     {
+        if (!$this->config['pay_status']) return $this->error([], '平台未启用微信支付');
+
         ///绑定商户数据
         $pay_model = new PayModel();
         $pay_model->bindMchPay($param["out_trade_no"], ["app_id" => $this->config["appid"]]);
@@ -172,6 +176,10 @@ class Pay extends BaseModel
         if (!$this->config['refund_status']) return $this->error([], '平台未启用微信退款');
 
         try {
+            $mch_info = empty($param["pay_info"]['mch_info']) ? [] : json_decode($param["pay_info"]['mch_info'], true);
+            $this->config["appid"] = $mch_info["app_id"] ?? $this->config["appid"];//替换为商户自己的appid
+            $this->factory();
+
             return $this->app->refund($param);
         } catch (\Exception $e) {
             Log::write('微信退款失败，请求参数：'. json_encode($param) .' 错误原因：'. $e->getMessage().$e->getFile().$e->getLine());
@@ -280,5 +288,35 @@ class Pay extends BaseModel
         $video_number_scene = [ 1175, 1176, 1177, 1191, 1195 ]; // 视频号场景值
         if (in_array($scene, $video_number_scene)) model('order')->update(['is_video_number' => 1], [['order_id', '=', $order_info['order_id'] ]]);
         return $data;
+    }
+
+
+    /**
+     * 付款码支付
+     * @param $param
+     * @return array
+     */
+    public function micropay($param){
+        if (!$this->config['pay_status']) return $this->error([], '平台未启用微信支付');
+
+        if ($this->api != 'v2') {
+            $this->api = 'v2';
+            $this->factory();
+        }
+
+        try {
+            $res = $this->app->micropay($param);
+            if ($res['code'] != 0) return $res;
+
+            $pay_model = new PayModel();
+            $pay_model->bindMchPay($param["out_trade_no"], ["app_id" => $this->config["appid"]]);
+
+            $res = $pay_model->onlinePay($param['out_trade_no'], 'wechatpay', $res['data'][ 'transaction_id' ], 'wechatpay');
+
+            return $res;
+        } catch (\Exception $e) {
+            Log::write('微信付款码支付失败，请求参数：'. json_encode($param) .' 错误原因：'. $e->getMessage().$e->getFile().$e->getLine());
+            return $this->error([], '微信付款码支付失败');
+        }
     }
 }

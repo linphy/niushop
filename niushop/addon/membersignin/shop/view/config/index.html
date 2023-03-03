@@ -224,7 +224,7 @@
 					var str = $(item).parents(".layui-block").find("span").text();
 					var _str = $(item).siblings().val();
 					
-					if (value.trim() == "" || value == undefined || value == null) {
+					if (value == null || value.trim() == "" || value == undefined || value == null) {
 						if (str) {
 							return str + "不能为空";
 						} else {

@@ -13,7 +13,6 @@ namespace addon\bundling\model;
 use app\model\order\Config;
 use app\model\order\OrderCreate;
 use addon\coupon\model\Coupon;
-use app\model\goods\GoodsStock;
 use app\model\store\Store;
 use think\facade\Cache;
 use app\model\express\Express;
@@ -85,14 +84,13 @@ class BundlingOrderCreate extends OrderCreate
         //循环生成多个订单
         try {
             $pay_money = 0;
-            $goods_stock_model = new GoodsStock();
             $shop_goods_list = $calculate_data[ 'shop_goods_list' ];
             $item_delivery = $shop_goods_list[ 'delivery' ] ?? [];
             $delivery_type = $item_delivery[ 'delivery_type' ] ?? '';
 
-            $site_id = $data['site_id'];
-            $express_type_list = (new \app\model\express\Config())->getExpressTypeList($site_id);
-            $delivery_type_name = $express_type_list[$delivery_type] ?? '';
+            $site_id = $data[ 'site_id' ];
+            $express_type_list = ( new \app\model\express\Config() )->getExpressTypeList($site_id);
+            $delivery_type_name = $express_type_list[ $delivery_type ] ?? '';
             //订单主表
             $order_type = $this->orderType($shop_goods_list, $calculate_data);
             $order_no = $this->createOrderNo($shop_goods_list[ 'site_id' ], $data[ 'member_id' ]);
@@ -157,6 +155,7 @@ class BundlingOrderCreate extends OrderCreate
                 'invoice_title_type' => $shop_goods_list[ "invoice_title_type" ] ?? 0,
 
                 'buyer_ask_delivery_time' => $shop_goods_list[ 'buyer_ask_delivery_time' ] ?? '',
+                'store_id' => $shop_goods_list[ 'store_id' ]
             ];
 
             $order_id = model("order")->add($data_order);
@@ -189,19 +188,20 @@ class BundlingOrderCreate extends OrderCreate
 
                     'goods_name' => $order_goods[ 'goods_name' ],
                     'sku_spec_format' => $order_goods[ 'sku_spec_format' ],
+                    'store_id' => $shop_goods_list[ 'store_id' ]
                 );
                 $order_goods_id = model("order_goods")->add($data_order_goods);
                 $calculate_data[ 'shop_goods_list' ][ 'goods_list' ][ $k_order_goods ][ 'order_goods_id' ] = $order_goods_id;
 
                 //库存变化
-                $stock_result = $goods_stock_model->decStock([ "sku_id" => $order_goods[ 'sku_id' ], "num" => $order_goods[ 'num' ] ]);
+                $stock_result = $this->skuDecStock($order_goods, $shop_goods_list[ 'store_id' ]);
                 if ($stock_result[ "code" ] != 0) {
                     model("order")->rollback();
                     return $stock_result;
                 }
             }
 
-            $result_list = event("OrderCreate", [ 'order_id' => $order_id, 'site_id' => $shop_goods_list[ 'site_id' ],'create_data' => $calculate_data ]);
+            $result_list = event("OrderCreate", [ 'order_id' => $order_id, 'site_id' => $shop_goods_list[ 'site_id' ], 'create_data' => $calculate_data ]);
             if (!empty($result_list)) {
                 foreach ($result_list as $k => $v) {
                     if (!empty($v) && $v[ "code" ] < 0) {
@@ -243,7 +243,6 @@ class BundlingOrderCreate extends OrderCreate
             Cache::tag("order_create_bunding_" . $data[ 'member_id' ])->clear();
             model("order")->commit();
             return $this->success($out_trade_no);
-
         } catch (\Exception $e) {
             model("order")->rollback();
             return $this->error('', $e->getMessage() . $e->getFile() . $e->getLine());
@@ -302,6 +301,7 @@ class BundlingOrderCreate extends OrderCreate
         $coupon_list = $this->getOrderCouponList($calculate_data);
         $calculate_data[ 'shop_goods_list' ][ "coupon_list" ] = $coupon_list;
         $express_type = [];
+        $store_model = new Store();
         if ($this->is_virtual == 0) {
             foreach ($calculate_data[ 'shop_goods_list' ][ 'deliver_sort' ] as $type) {
                 // 物流
@@ -315,7 +315,6 @@ class BundlingOrderCreate extends OrderCreate
                 // 自提
                 if ($type == 'store' && $calculate_data[ 'shop_goods_list' ][ "store_config" ][ "is_use" ] == 1) {
                     //根据坐标查询门店
-                    $store_model = new Store();
                     $store_condition = array (
                         [ 'site_id', '=', $data[ 'site_id' ] ],
                         [ 'is_pickup', '=', 1 ],
@@ -330,35 +329,11 @@ class BundlingOrderCreate extends OrderCreate
                     $store_list_result = $store_model->getLocationStoreList($store_condition, '*', $latlng);
                     $store_list = $store_list_result[ "data" ];
 
-                    //如果用户默认选中了门店
-                    $store_id = 0;
-                    if ($data[ 'default_store_id' ] > 0) {
-                        if (!empty($store_list)) {
-                            $store_array = array_column($store_list, 'store_id');
-                            if (in_array($data[ 'default_store_id' ], $store_array)) {
-                                $store_id = $data[ 'default_store_id' ];
-                            } else {
-                                $store_condition = array (
-                                    [ 'site_id', '=', $data[ 'site_id' ] ],
-                                    [ 'is_pickup', '=', 1 ],
-                                    [ 'status', '=', 1 ],
-                                    [ 'is_frozen', '=', 0 ],
-                                    [ 'store_id', '=', $data[ 'default_store_id' ] ],
-                                );
-                                $store_info_result = $store_model->getStoreInfo($store_condition, '*');
-                                $store_info = $store_info_result[ 'data' ];
-                                if (!empty($store_info)) {
-                                    $store_id = $data[ 'default_store_id' ];
-                                    $store_list[] = $store_info;
-                                }
-                            }
-                        }
-                    }
                     $title = $calculate_data[ 'shop_goods_list' ][ "store_config" ][ 'value' ][ 'store_name' ];
                     if ($title == "") {
                         $title = Express::express_type[ "store" ][ "title" ];
                     }
-                    $express_type[] = [ "title" => $title, "name" => "store", "store_list" => $store_list, 'store_id' => $store_id ];
+                    $express_type[] = [ "title" => $title, "name" => "store", "store_list" => $store_list ];
                 }
                 // 外卖
                 if ($type == 'local' && $calculate_data[ 'shop_goods_list' ][ "local_config" ][ "is_use" ] == 1) {
@@ -367,7 +342,24 @@ class BundlingOrderCreate extends OrderCreate
                     if ($title == "") {
                         $title = '外卖配送';
                     }
-                    $express_type[] = [ "title" => $title, "name" => "local" ];
+                    $store_condition = array (
+                        [ 'site_id', '=', $data[ 'site_id' ] ]
+                    );
+                    if (addon_is_exit('store', $data[ 'site_id' ])) {
+                        $store_condition[] = [ 'is_o2o', '=', 1 ];
+                        $store_condition[] = [ 'status', '=', 1 ];
+                        $store_condition[] = [ 'is_frozen', '=', 0 ];
+                    } else {
+                        $store_condition[] = [ 'is_default', '=', 1 ];
+                    }
+                    $latlng = array (
+                        'lat' => $data[ 'latitude' ],
+                        'lng' => $data[ 'longitude' ],
+                    );
+                    $store_list_result = $store_model->getLocationStoreList($store_condition, '*', $latlng);
+                    $store_list = $store_list_result[ 'data' ];
+
+                    $express_type[] = [ "title" => $title, "name" => "local", 'store_list' => $store_list ];
                 }
             }
         }
@@ -378,9 +370,7 @@ class BundlingOrderCreate extends OrderCreate
         if (!empty($payment_event_data)) {
             $calculate_data = array_merge($calculate_data, ...$payment_event_data);
         }
-
         return $calculate_data;
-
     }
 
     /**
@@ -432,7 +422,7 @@ class BundlingOrderCreate extends OrderCreate
         $goods_list = model("promotion_bundling_goods")->getList([ [ 'ngbg.bl_id', '=', $bl_id ] ], $field, '', $alias, $join);
         $shop_goods_list = [];
         if (!empty($goods_list)) {
-            $express_type_list = ( new \app\model\express\Config() )->getExpressTypeList($data['site_id']);
+            $express_type_list = ( new \app\model\express\Config() )->getExpressTypeList($data[ 'site_id' ]);
             foreach ($goods_list as $k => $v) {
                 $v[ "num" ] = $num;
                 $site_id = $v[ 'site_id' ];
@@ -459,10 +449,10 @@ class BundlingOrderCreate extends OrderCreate
                     $shop_goods_list[ 'goods_list' ][] = $v;
                 }
 
-                if (isset($data[ 'delivery' ][ 'delivery_type' ]) && !empty($data[ 'delivery' ][ 'delivery_type' ]) && strpos($v['support_trade_type'], $data[ 'delivery' ][ 'delivery_type' ]) === false) {
+                if (isset($data[ 'delivery' ][ 'delivery_type' ]) && !empty($data[ 'delivery' ][ 'delivery_type' ]) && strpos($v[ 'support_trade_type' ], $data[ 'delivery' ][ 'delivery_type' ]) === false) {
                     $delivery_type_name = $express_type_list[ $data[ 'delivery' ][ 'delivery_type' ] ] ?? '';
                     $this->error = 1;
-                    $this->error_msg = '有商品不支持'.$delivery_type_name;
+                    $this->error_msg = '有商品不支持' . $delivery_type_name;
                 }
             }
         }
@@ -525,6 +515,7 @@ class BundlingOrderCreate extends OrderCreate
         $order_money = 0;      //订单金额
         $balance_money = 0;    //会员余额
         $pay_money = 0;        //应付金额
+        $store_id = 0;
 
         //计算邮费
         if ($this->is_virtual == 1) {
@@ -550,9 +541,9 @@ class BundlingOrderCreate extends OrderCreate
             $shop_goods[ "local_config" ] = $local_config;
 
             //如果本地配送开启, 则查询出本地配送的配置
-            if ($shop_goods[ "local_config" ][ 'is_use' ] == 1) {
+            if ($shop_goods[ "local_config" ][ 'is_use' ] == 1 && isset($data[ 'delivery' ][ 'store_id' ])) {
                 $local_model = new Local();
-                $local_info_result = $local_model->getLocalInfo([ [ 'site_id', '=', $site_id ] ]);
+                $local_info_result = $local_model->getLocalInfo([ [ 'site_id', '=', $site_id ], [ 'store_id', '=', $data[ 'delivery' ][ 'store_id' ] ] ]);
                 $local_info = $local_info_result[ 'data' ];
                 $shop_goods[ "local_config" ][ 'info' ] = $local_info;
             }
@@ -574,6 +565,7 @@ class BundlingOrderCreate extends OrderCreate
                     $shop_goods[ 'delivery' ][ 'store_id' ] = $data[ 'delivery' ][ "store_id" ];
                     $shop_goods[ 'buyer_ask_delivery_time' ] = $data[ 'buyer_ask_delivery_time' ];
                     $shop_goods = $this->storeOrderData($shop_goods, $data);
+                    $store_id = $data[ 'delivery' ][ 'store_id' ] ?? 0;
                 }
             } else {
                 if (empty($data[ 'member_address' ])) {
@@ -610,6 +602,9 @@ class BundlingOrderCreate extends OrderCreate
                             $this->error = 1;
                             $this->error_msg = "外卖配送方式未开启!";
                         } else {
+                            if (empty($data[ 'delivery' ][ 'store_id' ])) {
+                                $this->setError(1, '门店未选择!');
+                            }
                             $local_delivery_time = 0;
                             if (!empty($data[ 'buyer_ask_delivery_time' ])) {
                                 $local_delivery_time = $data[ 'buyer_ask_delivery_time' ];
@@ -634,7 +629,7 @@ class BundlingOrderCreate extends OrderCreate
 
                             $shop_goods[ 'delivery' ][ 'error' ] = $this->error;
                             $shop_goods[ 'delivery' ][ 'error_msg' ] = $this->error_msg;
-
+                            $store_id = $data[ 'delivery' ][ 'store_id' ] ?? 0;
                         }
                     }
                 }
@@ -674,6 +669,7 @@ class BundlingOrderCreate extends OrderCreate
         $this->balance_money += $balance_money;//累计余额
 
         //总结计算
+        $shop_goods[ 'store_id' ] = $store_id;
         $shop_goods[ 'goods_money' ] = $goods_money;
         $shop_goods[ 'delivery_money' ] = $delivery_money;
         $shop_goods[ 'coupon_money' ] = $coupon_money;

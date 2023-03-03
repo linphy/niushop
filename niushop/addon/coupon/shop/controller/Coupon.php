@@ -11,8 +11,6 @@
 namespace addon\coupon\shop\controller;
 
 use addon\coupon\model\MemberCoupon;
-use app\model\system\Site;
-use app\model\web\Config as ConfigModel;
 use app\shop\controller\BaseShop;
 use addon\coupon\model\CouponType as CouponTypeModel;
 use addon\coupon\model\Coupon as CouponModel;
@@ -66,7 +64,6 @@ class Coupon extends BaseShop
             $coupon_type_model = new CouponTypeModel();
             return $coupon_type_model->addCouponType($data);
         } else {
-
             return $this->fetch("coupon/add");
         }
     }
@@ -189,7 +186,6 @@ class Coupon extends BaseShop
                 $res[ 'data' ][ 'list' ][ $key ][ 'status_name' ] = $coupon_type_status_arr[ $val[ 'status' ] ];
             }
             return $res;
-
         } else {
             $this->forthMenu();
             //优惠券状态

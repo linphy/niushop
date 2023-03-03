@@ -5,13 +5,13 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
 namespace addon\bundling\event;
 
 use addon\bundling\model\Bundling;
+
 /**
  * 删除商品
  */

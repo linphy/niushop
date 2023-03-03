@@ -334,8 +334,8 @@ WxReplay.prototype.clickEvent = {
 		$("#add_reply").find("input[name='key_id']").val(key_id);
 		$("#add_reply").find("textarea[name='reply_content']").val(reply_content);
 		
-		$(".image,.voice").css("display", "none");
-		$(".image,.voice").next("span").css("display", "none");
+		$(".voice").css("display", "none");
+		$(".voice").next("span").css("display", "none");
 		
 		if (request_type == 'music') {
 			var active_pic = '';

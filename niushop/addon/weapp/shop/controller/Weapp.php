@@ -7,6 +7,7 @@
  * 官方网址: https://www.niushop.com
  * =========================================================
  */
+
 namespace addon\weapp\shop\controller;
 
 use addon\weapp\model\Config as ConfigModel;
@@ -134,6 +135,34 @@ class Weapp extends BaseShop
     }
 
     /**
+     * 小程序包管理
+     */
+    public function deploy()
+    {
+        $config = new ConfigModel();
+        $weapp_config = $config->getWeappConfig($this->site_id);
+        $weapp_config = $weapp_config[ 'data' ][ 'value' ];
+        $this->assign('config', $weapp_config);
+
+        $is_new_version = 0;
+        // 获取站点小程序版本信息
+        $version_info = $config->getWeappVersion($this->site_id);
+        $version_info = $version_info[ 'data' ][ 'value' ];
+        $currrent_version_info = config('info');
+        if (!isset($version_info[ 'version' ]) || ( isset($version_info[ 'version' ]) && $version_info[ 'version' ] != $currrent_version_info[ 'version_no' ] )) {
+            $is_new_version = 1;
+        }
+        $this->assign('is_new_version', $is_new_version);
+
+        // 检测授权
+        $upgrade_model = new Upgrade();
+        $auth_info = $upgrade_model->authInfo();
+        $this->assign('is_auth', ( $auth_info[ 'code' ] == 0 ));
+
+        return $this->fetch('addon/weapp/shop/view/weapp/deploy.html', [], $this->replace);
+    }
+
+    /**
      * 小程序包下载
      */
     public function download()
@@ -169,7 +198,7 @@ class Weapp extends BaseShop
                 readfile($filename);
                 @unlink($filename);
             } else {
-                return $this->error($res[ 'message' ]);
+                $this->error($res[ 'message' ]);
             }
         }
     }

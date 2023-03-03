@@ -7,7 +7,6 @@
 {/block}
 {block name="main"}
 <!-- 搜索框 -->
-
 <div class="screen layui-collapse" lay-filter="selection_panel">
 	<div class="layui-colla-item">
 		<form class="layui-colla-content layui-form layui-show">
@@ -164,36 +163,6 @@
 					break;
 			}
 		});
-
-		/**
-		 * 删除
-		 */
-		function deleteBund(id) {
-			if (repeat_flag) return false;
-			repeat_flag = true;
-
-			layer.confirm('确定要删除该组合套餐吗?', function() {
-				$.ajax({
-					url: ns.url("bundling://shop/bundling/delete"),
-					data: {
-						"bl_id": id
-					},
-					dataType: 'JSON',
-					type: 'POST',
-					success: function(res) {
-						layer.msg(res.message);
-						repeat_flag = false;
-
-						if (res.code == 0) {
-							table.reload();
-						}
-					}
-				});
-			}, function() {
-				layer.close();
-				repeat_flag = false;
-			});
-		}
 
         //开始时间
         laydate.render({

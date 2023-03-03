@@ -1,13 +1,9 @@
 {extend name="app/shop/view/base.html"/}
 {block name="resources"}
 <style>
-    .panel-content{padding-left: 15px;box-sizing: border-box;}
-    .custom-panel .custom-panel-title .panel-content{width: calc(100% - 190px);}
     .account-value, .split{line-height: 34px;}
     .account-value span{font-size: 24px;}
-    .custom-panel .custom-panel-from{display: block;}
     .layui-input-block + .layui-word-aux{display: block;margin-left: 100px;}
-    .shop-account{display: flex;align-items: center;position: relative;padding: 15px;box-sizing: border-box;}
     .shop-detail{display: flex;flex-wrap: wrap;width: 940px;}
     .shop-detail p{display: inline-block;width: 300px;line-height: 30px;}
     .shop-detail p:last-of-type{width: auto;max-width: 430px;}
@@ -17,7 +13,6 @@
     .cut:hover{color: #fd852d;}
     .cut:active{color: #fd852d;}
     .tel-class{width: 200px;height: 30px;border: 1px solid #ccc;border-radius: 5px;padding-left: 5px;}
-    .tel-tishi{color: #666;font-size: 14px;}
     .code-class{width:100px}
     .code-last{font-size: 12px;display: inline-block;margin-left: 10px;color: #fd852d;cursor: pointer;width: 90px;border: 0px}
     .table-tab .layui-tab-title{margin-bottom: 15px;}
@@ -431,7 +426,6 @@
                         title: '通知详情',
                         area: ['550px'],
                         content: html
-
                     });
                 })
             }
@@ -480,7 +474,6 @@
                 }
             });
         });
-
 
         form.on('submit(setCode)', function(data) {
             if (data.field.code == ""){
@@ -625,7 +618,6 @@
     }
 
     function updateTel(){
-
         code_label = layer.open({
             title: "获取动态码",
             skin: 'layer-tips-class',
@@ -656,8 +648,7 @@
             }
         });
     }
-    
-    
+
     function closeCodeLabel(){
         // curCount = 0;
         layer.close(code_label);
@@ -686,38 +677,38 @@
             <col width="80%">
         </colgroup>
         <tbody>
-        <tr>
-            <td>接收账号</td>
-            <td colspan="3">{{d.account}}</td>
-        </tr>
-        <tr>
-            <td>通知名称</td>
-            <td colspan="3">{{d.keywords_name}}</td>
-        </tr>
-        <tr>
-            <td>创建时间</td>
-            <td colspan="3">{{ns.time_to_date(d.create_time)}}</td>
-        </tr>
-        <tr>
-            <td>发送时间</td>
-            <td colspan="3">{{ns.time_to_date(d.send_time)}}</td>
-        </tr>
-        <tr>
-            <td>状态</td>
-            <td>{{# if(d.status == 0){ }}发送中
-                {{# }else if(d.status == 1){ }}发送成功
-                {{# }else{ }}发送失败
-                {{# } }}
-            </td>
-        </tr>
-        <tr>
-            <td>通知内容</td>
-            <td colspan="3">{{d.content}}</td>
-        </tr>
-        <tr>
-            <td>返回结果</td>
-            <td colspan="3">{{d.result}}</td>
-        </tr>
+            <tr>
+                <td>接收账号</td>
+                <td colspan="3">{{d.account}}</td>
+            </tr>
+            <tr>
+                <td>通知名称</td>
+                <td colspan="3">{{d.keywords_name}}</td>
+            </tr>
+            <tr>
+                <td>创建时间</td>
+                <td colspan="3">{{ns.time_to_date(d.create_time)}}</td>
+            </tr>
+            <tr>
+                <td>发送时间</td>
+                <td colspan="3">{{ns.time_to_date(d.send_time)}}</td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td>{{# if(d.status == 0){ }}发送中
+                    {{# }else if(d.status == 1){ }}发送成功
+                    {{# }else{ }}发送失败
+                    {{# } }}
+                </td>
+            </tr>
+            <tr>
+                <td>通知内容</td>
+                <td colspan="3">{{d.content}}</td>
+            </tr>
+            <tr>
+                <td>返回结果</td>
+                <td colspan="3">{{d.result}}</td>
+            </tr>
         </tbody>
     </table>
 </script>

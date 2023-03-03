@@ -36,7 +36,7 @@ class Ordercreate extends BaseApi
             'bl_id' => isset($this->params[ 'bl_id' ]) ? $this->params[ 'bl_id' ] : '',//组合套餐id
             'num' => isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 1,//组合套餐数量(买几套)
             'member_id' => $this->member_id,
-            'site_id' => $this->site_id,//站点id
+            'site_id' => $this->site_id,
             'order_from' => $this->params[ 'app_type' ],
             'order_from_name' => $this->params[ 'app_type_name' ],
             'is_balance' => isset($this->params[ 'is_balance' ]) ? $this->params[ 'is_balance' ] : 0,//是否使用余额
@@ -59,10 +59,13 @@ class Ordercreate extends BaseApi
             'invoice_email' => $this->params[ "invoice_email" ] ?? '',
             'invoice_title_type' => $this->params[ "invoice_title_type" ] ?? 0,
             'buyer_ask_delivery_time' => $this->params[ "buyer_ask_delivery_time" ] ?? '',
-            'form_data'  => isset($this->params["form_data"]) && !empty($this->params["form_data"]) ? json_decode($this->params["form_data"], true) : [],
+            'form_data' => isset($this->params[ "form_data" ]) && !empty($this->params[ "form_data" ]) ? json_decode($this->params[ "form_data" ], true) : [],
         ];
         if (empty($data[ 'bl_id' ])) {
             return $this->response($this->error('', '缺少必填参数商品数据'));
+        }
+        if ($data[ 'num' ] < 1) {
+            return $this->response($this->error('', '购买数量不能小于1'));
         }
         $res = $order_create->create($data);
         return $this->response($res);

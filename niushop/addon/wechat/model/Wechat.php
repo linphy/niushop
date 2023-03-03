@@ -29,29 +29,29 @@ class Wechat extends BaseModel
     public $app;//微信公众对象
     private $site_id;//站点
     //公众号类型
-    public $service_type = array(
+    public $service_type = array (
         0 => "订阅号",
         1 => "由历史老帐号升级后的订阅号",
         2 => "服务号",
     );
 
     //公众号认证类型
-    public $verify_type = array(
+    public $verify_type = array (
         -1 => "未认证",
-        0  => "微信认证",
-        1  => "新浪微博认证",
-        2  => "腾讯微博认证",
-        3  => "已资质认证通过但还未通过名称认证",
-        4  => "已资质认证通过、还未通过名称认证，但通过了新浪微博认证",
-        5  => "已资质认证通过、还未通过名称认证，但通过了腾讯微博认证",
+        0 => "微信认证",
+        1 => "新浪微博认证",
+        2 => "腾讯微博认证",
+        3 => "已资质认证通过但还未通过名称认证",
+        4 => "已资质认证通过、还未通过名称认证，但通过了新浪微博认证",
+        5 => "已资质认证通过、还未通过名称认证，但通过了腾讯微博认证",
     );
 
     //business_info 说明
-    public $business_type = array(
+    public $business_type = array (
         'open_store' => "是否开通微信门店功能",
-        'open_scan'  => "是否开通微信扫商品功能",
-        'open_pay'   => "是否开通微信支付功能",
-        'open_card'  => "是否开通微信卡券功能",
+        'open_scan' => "是否开通微信扫商品功能",
+        'open_pay' => "是否开通微信支付功能",
+        'open_card' => "是否开通微信卡券功能",
         'open_shake' => "是否开通微信摇一摇功能",
     );
 
@@ -68,26 +68,26 @@ class Wechat extends BaseModel
      */
     public function app()
     {
-        $config_model  = new Config();
+        $config_model = new Config();
         $config_result = $config_model->getWechatConfig($this->site_id);
-        $config        = $config_result["data"];
+        $config = $config_result[ "data" ];
         if (!empty($config)) {
-            $config_info = $config["value"];
+            $config_info = $config[ "value" ];
         }
         //授权方式  手动授权 或 自动授权(通过开放平台)
-        $auth_type = $config_info["is_authopen"] ?? '';
+        $auth_type = $config_info[ "is_authopen" ] ?? '';
 
         if ($auth_type == "1") {
-            $oplatform_model     = new Oplatform();
-            $config_info['type'] = 'wechat';
+            $oplatform_model = new Oplatform();
+            $config_info[ 'type' ] = 'wechat';
 
             $this->app = $oplatform_model->app($config_info);
         } else {
-            $config    = [
-                'app_id'        => $config_info["appid"] ?? '',
-                'secret'        => $config_info["appsecret"] ?? '',
-                'token'         => $config_info["token"] ?? '',          // Token
-                'aes_key'       => $config_info['encodingaeskey'] ?? '',                    // EncodingAESKey，兼容与安全模式下请一定要填写！！！
+            $config = [
+                'app_id' => $config_info[ "appid" ] ?? '',
+                'secret' => $config_info[ "appsecret" ] ?? '',
+                'token' => $config_info[ "token" ] ?? '',          // Token
+                'aes_key' => $config_info[ 'encodingaeskey' ] ?? '',                    // EncodingAESKey，兼容与安全模式下请一定要填写！！！
                 // 指定 API 调用返回结果的类型：array(default)/collection/object/raw/自定义类名
                 'response_type' => 'array',
                 /**
@@ -97,13 +97,13 @@ class Wechat extends BaseModel
                  * permission：日志文件权限(可选)，默认为null（若为null值,monolog会取0644）
                  * file：日志文件位置(绝对路径!!!)，要求可写权限
                  */
-                'log'           => [
-                    'level'      => 'debug',
+                'log' => [
+                    'level' => 'debug',
                     'permission' => 0777,
-                    'file'       => 'runtime/log/wechat/easywechat.logs',
+                    'file' => 'runtime/log/wechat/easywechat.logs',
                 ],
             ];
-            if(empty($config['app_id']) || empty($config['secret'])){
+            if (empty($config[ 'app_id' ]) || empty($config[ 'secret' ])) {
                 throw new \Exception('商家公众号配置有误，请联系平台管理员');
             }
 
@@ -120,10 +120,10 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->menu->create($buttons);
-            if ($result['errcode'] == 0) {
+            if ($result[ 'errcode' ] == 0) {
                 return $this->success();
             } else {
-                return $this->error($result, $result["errmsg"]);
+                return $this->error($result, $result[ "errmsg" ]);
             }
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
@@ -140,8 +140,8 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->user->list($nextOpenId);  // $nextOpenId 可选
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error($result, $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error($result, $result[ "errmsg" ]);
             }
             return $this->success($result);
         } catch (\Exception $e) {
@@ -157,8 +157,8 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->user->select($user_list);  // $nextOpenId 可选
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error($result, $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error($result, $result[ "errmsg" ]);
             }
             return $this->success($result);
         } catch (\Exception $e) {
@@ -173,8 +173,8 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->user->get($openId);  // $nextOpenId 可选
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error($result, $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error($result, $result[ "errmsg" ]);
             }
             return $this->success($result);
         } catch (\Exception $e) {
@@ -191,10 +191,10 @@ class Wechat extends BaseModel
     public function authCodeToOpenid($params = [])
     {
         try {
-            if (empty($_REQUEST["code"])) {
+            if (empty($_REQUEST[ "code" ])) {
                 $auth_result = $this->getAuthCode(request()->url(true));
-                if ($auth_result["code"] >= 0) {
-                    Header("Location: " . $auth_result["data"]);
+                if ($auth_result[ "code" ] >= 0) {
+                    Header("Location: " . $auth_result[ "data" ]);
                 } else {
                     return $auth_result;
                 }
@@ -202,14 +202,17 @@ class Wechat extends BaseModel
             }
             $user = $this->app()->oauth->user();//获取授权用户
             $data = [
-                'openid'   => $user->getId(),
+                'openid' => $user->getId(),
                 'userinfo' => [
                     'avatarUrl' => $user->getAvatar(),
-                    'nickName'  => $user->getNickname()
+                    'nickName' => $user->getNickname()
                 ]
             ];
             return $this->success($data);
         } catch (\Exception $e) {
+            if (property_exists($e, 'body')) {
+                return $this->handleError($e->body[ 'errcode' ], $e->body[ 'errmsg' ]);
+            }
             return $this->error([], $e->getMessage());
         }
     }
@@ -222,20 +225,23 @@ class Wechat extends BaseModel
     public function getAuthByCode($params)
     {
         try {
-            $user = $this->app()->oauth->userByCode($params['code']);//获取授权用户
+            $user = $this->app()->oauth->userByCode($params[ 'code' ]);//获取授权用户
             $original = $user->getOriginal();
             $data = [
-                'openid'   => $original['openid'],
+                'openid' => $original[ 'openid' ],
                 'userinfo' => [
-                    'avatarUrl' => $original['headimgurl'] ?? '',
-                    'nickName'  => $original['nickname'] ?? ''
+                    'avatarUrl' => $original[ 'headimgurl' ] ?? '',
+                    'nickName' => $original[ 'nickname' ] ?? ''
                 ]
             ];
-            if (isset($original['unionid'])) {
-                $data['unionid'] = $original['unionid'];
+            if (isset($original[ 'unionid' ])) {
+                $data[ 'unionid' ] = $original[ 'unionid' ];
             }
             return $this->success($data);
         } catch (\Exception $e) {
+            if (property_exists($e, 'body')) {
+                return $this->handleError($e->body[ 'errcode' ], $e->body[ 'errmsg' ]);
+            }
             return $this->error([], $e->getMessage());
         }
     }
@@ -243,13 +249,13 @@ class Wechat extends BaseModel
     /**
      * 获取公众号网页授权code
      * @param $redirect
-     * @param  string  $scopes  snsapi_base:静默授权 snsapi_userinfo:用户授权
+     * @param string $scopes snsapi_base:静默授权 snsapi_userinfo:用户授权
      * @return array
      */
     public function getAuthCode($redirect, $scopes = 'snsapi_base')
     {
         try {
-            $response = $this->app()->oauth->scopes([$scopes])->redirect($redirect);
+            $response = $this->app()->oauth->scopes([ $scopes ])->redirect($redirect);
             return $this->success($response->getTargetUrl());
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
@@ -263,13 +269,13 @@ class Wechat extends BaseModel
     public function getQrcode($uid)
     {
         $result = $this->app()->qrcode->forever($uid);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
 
-        $url = $this->app()->qrcode->url($result['data']['ticket']);
-        if (isset($url['errcode']) && $url['errcode'] != 0) {
-            return $this->error($url, $url["errmsg"]);
+        $url = $this->app()->qrcode->url($result[ 'data' ][ 'ticket' ]);
+        if (isset($url[ 'errcode' ]) && $url[ 'errcode' ] != 0) {
+            return $this->error($url, $url[ "errmsg" ]);
         }
 
         return $this->success($url);
@@ -280,19 +286,23 @@ class Wechat extends BaseModel
      * @param $scene
      * @return array
      */
-    public function getTempQrcode($scene, $seconds){
+    public function getTempQrcode($scene, $seconds)
+    {
         try {
             $result = $this->app()->qrcode->temporary($scene, $seconds);
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error($result, $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error($result, $result[ "errmsg" ]);
             }
 
-            $url = $this->app()->qrcode->url($result['ticket']);
-            if (isset($url['errcode']) && $url['errcode'] != 0) {
-                return $this->error($url, $url["errmsg"]);
+            $url = $this->app()->qrcode->url($result[ 'ticket' ]);
+            if (isset($url[ 'errcode' ]) && $url[ 'errcode' ] != 0) {
+                return $this->handleError($url[ 'errcode' ], $url[ "errmsg" ]);
             }
             return $this->success($url);
         } catch (\Exception $e) {
+            if (property_exists($e, 'body')) {
+                return $this->handleError($e->body[ 'errcode' ], $e->body[ 'errmsg' ]);
+            }
             return $this->error([], $e->getMessage());
         }
     }
@@ -303,9 +313,16 @@ class Wechat extends BaseModel
      */
     public function getJssdkConfig($url)
     {
-        $this->app()->jssdk->setUrl($url);
-        $res = $this->app->jssdk->buildConfig([], false, false, false);
-        return $this->success($res);
+        try {
+            $this->app()->jssdk->setUrl($url);
+            $res = $this->app->jssdk->buildConfig([], false, false, false);
+            return $this->success($res);
+        } catch (\Exception $e) {
+            if (property_exists($e, 'body')) {
+                return $this->handleError($e->body[ 'errcode' ], $e->body[ 'errmsg' ]);
+            }
+            return $this->error([], $e->getMessage());
+        }
     }
 
     /********************************************************** 数据统计与分析start *******************************************************************/
@@ -336,10 +353,10 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->data_cube->userSummary($from, $to);
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error([], $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error([], $result[ "errmsg" ]);
             }
-            return $this->success($result["list"]);
+            return $this->success($result[ "list" ]);
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
         }
@@ -354,10 +371,10 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->data_cube->userCumulate($from, $to);
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error([], $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error([], $result[ "errmsg" ]);
             }
-            return $this->success($result["list"]);
+            return $this->success($result[ "list" ]);
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
         }
@@ -373,10 +390,10 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->data_cube->interfaceSummaryHourly($from, $to);
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error([], $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error([], $result[ "errmsg" ]);
             }
-            return $this->success($result["list"]);
+            return $this->success($result[ "list" ]);
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
         }
@@ -392,10 +409,10 @@ class Wechat extends BaseModel
     {
         try {
             $result = $this->app()->data_cube->interfaceSummary($from, $to);
-            if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error([], $result["errmsg"]);
+            if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+                return $this->error([], $result[ "errmsg" ]);
             }
-            return $this->success($result["list"]);
+            return $this->success($result[ "list" ]);
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
         }
@@ -412,8 +429,8 @@ class Wechat extends BaseModel
     function uploadImage($path)
     {
         $result = $this->app()->material->uploadImage($path);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -426,8 +443,8 @@ class Wechat extends BaseModel
     function uploadVoice($path)
     {
         $result = $this->app()->material->uploadVoice($path);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -440,8 +457,8 @@ class Wechat extends BaseModel
     function uploadVideo($path)
     {
         $result = $this->app()->material->uploadVideo($path);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -454,8 +471,8 @@ class Wechat extends BaseModel
     function uploadThumb($path)
     {
         $result = $this->app()->material->uploadThumb($path);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -471,8 +488,8 @@ class Wechat extends BaseModel
             $article_data[] = new Article($v);
         }
         $result = $this->app()->material->uploadArticle($article_data);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -487,8 +504,8 @@ class Wechat extends BaseModel
     public function updateArticle($mediaId, $data, $index = 0)
     {
         $result = $this->app()->material->updateArticle($mediaId, $data, $index);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -503,8 +520,8 @@ class Wechat extends BaseModel
     public function uploadArticleImage($path)
     {
         $result = $this->app()->material->uploadArticleImage($path);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
 
@@ -518,8 +535,8 @@ class Wechat extends BaseModel
     public function getMaterial($mediaId)
     {
         $result = $this->app()->material->get($mediaId);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -532,8 +549,8 @@ class Wechat extends BaseModel
     public function deleteMaterial($mediaId)
     {
         $result = $this->app()->material->delete($mediaId);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -549,153 +566,153 @@ class Wechat extends BaseModel
      */
     public function relateWeixin()
     {
-        $server  = $this->app->server;
+        $server = $this->app->server;
         $message = $server->getMessage();
-        if (isset($message['MsgType'])) {
-            switch ($message['MsgType']) {
+        if (isset($message[ 'MsgType' ])) {
+            switch ( $message[ 'MsgType' ] ) {
                 case 'event':
-                    $this->app->server->push(function ($res) {
-                        if ($res['Event'] == 'subscribe') {
+                    $this->app->server->push(function($res) {
+                        if ($res[ 'Event' ] == 'subscribe') {
                             // 关注公众号
-                            $Userstr = $this->getUser($res['FromUserName']);
+                            $Userstr = $this->getUser($res[ 'FromUserName' ]);
                             //获取用户信息
-                            $wechat_user = $this->app->user->get($res['FromUserName']);
+                            $wechat_user = $this->app->user->get($res[ 'FromUserName' ]);
 
-                            if (preg_match("/^qrscene_/", $res['EventKey'])) {
-                                $source_uid             = substr($res['EventKey'], 8);
-                                $_SESSION['source_uid'] = $source_uid;
-                            } elseif (!empty($_SESSION['source_uid'])) {
-                                $source_uid = $_SESSION['source_uid'];
+                            if (preg_match("/^qrscene_/", $res[ 'EventKey' ])) {
+                                $source_uid = substr($res[ 'EventKey' ], 8);
+                                $_SESSION[ 'source_uid' ] = $source_uid;
+                            } elseif (!empty($_SESSION[ 'source_uid' ])) {
+                                $source_uid = $_SESSION[ 'source_uid' ];
                             } else {
                                 $source_uid = 0;
                             }
 
-                            if (preg_match("/^qrscene_key_/", $res['EventKey'])){
+                            if (preg_match("/^qrscene_key_/", $res[ 'EventKey' ])) {
                                 //新增2021.06.02
-                                $key = substr($res['EventKey'], 12);
-                                $cache = Cache::get('wechat_'.$key);
-                                if (!empty($cache)){
-                                    Cache::set('wechat_'.$key,$wechat_user);
+                                $key = substr($res[ 'EventKey' ], 12);
+                                $cache = Cache::get('wechat_' . $key);
+                                if (!empty($cache)) {
+                                    Cache::set('wechat_' . $key, $wechat_user);
                                 }
                             }
-                            if (preg_match("/^verify_/", $res['EventKey'])) {
-                                $cache = Cache::get($res['EventKey']);
+                            if (preg_match("/^verify_/", $res[ 'EventKey' ])) {
+                                $cache = Cache::get($res[ 'EventKey' ]);
                                 if (empty($cache)) {
-                                    Cache::set($res['EventKey'], $wechat_user, 7200);
+                                    Cache::set($res[ 'EventKey' ], $wechat_user, 7200);
                                 }
                             }
 
-                            $nickname_decode = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $wechat_user['nickname']);
-                            $headimgurl      = $wechat_user['headimgurl'];
-                            $sex             = $wechat_user['sex'];
-                            $language        = $wechat_user['language'];
-                            $country         = $wechat_user['country'];
-                            $province        = $wechat_user['province'];
-                            $city            = $wechat_user['city'];
-                            $district        = "无";
-                            $openid          = $wechat_user['openid'];
-                            $nickname        = $wechat_user['nickname'];
-                            if (!empty($wechat_user['unionid'])) {
-                                $unionid = $wechat_user['unionid'];
+                            $nickname_decode = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $wechat_user[ 'nickname' ]);
+                            $headimgurl = $wechat_user[ 'headimgurl' ];
+                            $sex = $wechat_user[ 'sex' ];
+                            $language = $wechat_user[ 'language' ];
+                            $country = $wechat_user[ 'country' ];
+                            $province = $wechat_user[ 'province' ];
+                            $city = $wechat_user[ 'city' ];
+                            $district = "无";
+                            $openid = $wechat_user[ 'openid' ];
+                            $nickname = $wechat_user[ 'nickname' ];
+                            if (!empty($wechat_user[ 'unionid' ])) {
+                                $unionid = $wechat_user[ 'unionid' ];
                             } else {
                                 $unionid = '';
                             }
-                            $memo = $wechat_user['remark'];
-                            $data = array(
-                                'site_id'          => $this->site_id,
-                                'nickname'         => $nickname,
-                                'nickname_decode'  => $nickname_decode,
-                                'headimgurl'       => $headimgurl,
-                                'sex'              => $sex,
-                                'language'         => $language,
-                                'country'          => $country,
-                                'province'         => $province,
-                                'city'             => $city,
-                                'district'         => $district,
-                                'openid'           => $openid,
-                                'unionid'          => $unionid,
-                                'groupid'          => '',
-                                'is_subscribe'     => 1,
-                                'remark'           => $memo,
-                                'subscribe_time'   => $wechat_user['subscribe_time'] ?? 0,
-                                'subscribe_scene'  => $wechat_user['subscribe_scene'] ?? 0,
-                                'unsubscribe_time' => $wechat_user['unsubscribe_time'] ?? 0,
-                                'update_date'      => time()
+                            $memo = $wechat_user[ 'remark' ];
+                            $data = array (
+                                'site_id' => $this->site_id,
+                                'nickname' => $nickname,
+                                'nickname_decode' => $nickname_decode,
+                                'headimgurl' => $headimgurl,
+                                'sex' => $sex,
+                                'language' => $language,
+                                'country' => $country,
+                                'province' => $province,
+                                'city' => $city,
+                                'district' => $district,
+                                'openid' => $openid,
+                                'unionid' => $unionid,
+                                'groupid' => '',
+                                'is_subscribe' => 1,
+                                'remark' => $memo,
+                                'subscribe_time' => $wechat_user[ 'subscribe_time' ] ?? 0,
+                                'subscribe_scene' => $wechat_user[ 'subscribe_scene' ] ?? 0,
+                                'unsubscribe_time' => $wechat_user[ 'unsubscribe_time' ] ?? 0,
+                                'update_date' => time()
                             );
 
-                            $fans      = new Fans();
-                            $fans_info = $fans->getFansInfo([['openid', '=', $openid], ['site_id', '=', $this->site_id]]);
-                            if (empty($fans_info['data'])) {
+                            $fans = new Fans();
+                            $fans_info = $fans->getFansInfo([ [ 'openid', '=', $openid ], [ 'site_id', '=', $this->site_id ] ]);
+                            if (empty($fans_info[ 'data' ])) {
                                 $fans->addFans($data);
                             } else {
-                                $fans->editFans($data, [['openid', '=', $openid], ['site_id', '=', $this->site_id]]);
+                                $fans->editFans($data, [ [ 'openid', '=', $openid ], [ 'site_id', '=', $this->site_id ] ]);
                             }
 
                             //获取关注发送消息内容
-                            $replay         = new Replay();
+                            $replay = new Replay();
                             $replay_content = $replay->getWechatFollowReplay($this->site_id);
-                            return new Text($replay_content['data']);
-                        } else if ($res['Event'] == 'unsubscribe') {
+                            return new Text($replay_content[ 'data' ]);
+                        } else if ($res[ 'Event' ] == 'unsubscribe') {
                             //取消关注
-                            $fans   = new Fans();
-                            $openid = $res['FromUserName'];
-                            $fans->unfollowWechat((string)$openid);
-                        } else if ($res['Event'] == 'unsubscribe') {
+                            $fans = new Fans();
+                            $openid = $res[ 'FromUserName' ];
+                            $fans->unfollowWechat((string) $openid);
+                        } else if ($res[ 'Event' ] == 'unsubscribe') {
                             //取消关注
-                            $fans   = new Fans();
-                            $openid = $res['FromUserName'];
-                            $fans->unfollowWechat((string)$openid);
-                        } else if ($res['Event'] == 'SCAN') {
+                            $fans = new Fans();
+                            $openid = $res[ 'FromUserName' ];
+                            $fans->unfollowWechat((string) $openid);
+                        } else if ($res[ 'Event' ] == 'SCAN') {
                             // SCAN事件 - 用户已关注时的事件推送 - 扫描带参数二维码事件
-                            $openid = $res['FromUserName'];
-                            $data   = $res['EventKey'];
+                            $openid = $res[ 'FromUserName' ];
+                            $data = $res[ 'EventKey' ];
 
-                            if (preg_match("/^key_/", $data)){
-                                $key = substr($data,4);
-                                $cache = Cache::get('wechat_'.$key);
-                                if (!empty($cache)){
-                                    $wechat_user = $this->app->user->get($res['FromUserName']);
-                                    Cache::set('wechat_'.$key,$wechat_user);
+                            if (preg_match("/^key_/", $data)) {
+                                $key = substr($data, 4);
+                                $cache = Cache::get('wechat_' . $key);
+                                if (!empty($cache)) {
+                                    $wechat_user = $this->app->user->get($res[ 'FromUserName' ]);
+                                    Cache::set('wechat_' . $key, $wechat_user);
                                 }
                             }
-                            if (preg_match("/^verify_/", $res['EventKey'])) {
-                                $cache = Cache::get($res['EventKey']);
+                            if (preg_match("/^verify_/", $res[ 'EventKey' ])) {
+                                $cache = Cache::get($res[ 'EventKey' ]);
                                 if (empty($cache)) {
-                                    $wechat_user = $this->app->user->get($res['FromUserName']);
-                                    Cache::set($res['EventKey'], $wechat_user, 7200);
+                                    $wechat_user = $this->app->user->get($res[ 'FromUserName' ]);
+                                    Cache::set($res[ 'EventKey' ], $wechat_user, 7200);
                                 }
                             }
                             return new Text('扫码成功。');
-                        } else if ($res['Event'] == 'CLICK') {
+                        } else if ($res[ 'Event' ] == 'CLICK') {
                             // CLICK事件 - 自定义菜单事件
-                            $openid = $res['FromUserName'];
-                            $data   = $res['EventKey'];
+                            $openid = $res[ 'FromUserName' ];
+                            $data = $res[ 'EventKey' ];
 
-                            if (strpos($res['EventKey'], 'MATERIAL_GRAPHIC_MESSAGE_') === 0) {
-                                $material_id   = substr($res['EventKey'], 25);
+                            if (strpos($res[ 'EventKey' ], 'MATERIAL_GRAPHIC_MESSAGE_') === 0) {
+                                $material_id = substr($res[ 'EventKey' ], 25);
                                 $material_type = 1;
-                            } else if (strpos($res['EventKey'], 'MATERIAL_PICTURE_') === 0) {
-                                $material_id   = substr($res['EventKey'], 17);
+                            } else if (strpos($res[ 'EventKey' ], 'MATERIAL_PICTURE_') === 0) {
+                                $material_id = substr($res[ 'EventKey' ], 17);
                                 $material_type = 2;
-                            } else if (strpos($res['EventKey'], 'MATERIAL_TEXT_MESSAGE_') === 0) {
-                                $material_id   = substr($res['EventKey'], 22);
+                            } else if (strpos($res[ 'EventKey' ], 'MATERIAL_TEXT_MESSAGE_') === 0) {
+                                $material_id = substr($res[ 'EventKey' ], 22);
                                 $material_type = 5;
                             }
-                            $material   = new Material();
-                            $media_info = $material->getMaterialInfo([['id', '=', $material_id, 'type', '=', $material_type]]);
-                            $media_info = $media_info['data'];
+                            $material = new Material();
+                            $media_info = $material->getMaterialInfo([ [ 'id', '=', $material_id, 'type', '=', $material_type ] ]);
+                            $media_info = $media_info[ 'data' ];
                             if ($media_info) {
-                                $value = json_decode($media_info['value'], true);
+                                $value = json_decode($media_info[ 'value' ], true);
                                 if ($material_type == 1) {
                                     //图文
-                                    $url   = __ROOT__;
-                                    $url   = $url . '/index.php/wechat/api/auth/wechatArticle?id=' . $media_info['id'];
+                                    $url = __ROOT__;
+                                    $url = $url . '/index.php/wechat/api/auth/wechatArticle?id=' . $media_info[ 'id' ];
                                     $items = [
                                         new NewsItem([
-                                            'title'       => $value[0]['title'],
-                                            'description' => strip_tags($value[0]['content']),
-                                            'url'         => $url,
-                                            'image'       => $value[0]['cover']['path'],
+                                            'title' => $value[ 0 ][ 'title' ],
+                                            'description' => strip_tags($value[ 0 ][ 'content' ]),
+                                            'url' => $url,
+                                            'image' => $value[ 0 ][ 'cover' ][ 'path' ],
                                         ]),
                                     ];
                                     return new News($items);
@@ -705,21 +722,21 @@ class Wechat extends BaseModel
 
                                 } else if ($material_type == 5) {
                                     //文字
-                                    return new Text($value['content']);
+                                    return new Text($value[ 'content' ]);
                                 }
                             }
-                        } else if ($res['Event'] == 'weapp_audit_success') {
+                        } else if ($res[ 'Event' ] == 'weapp_audit_success') {
                             // 小程序审核通过 自动发布
                             if (addon_is_exit('wxoplatform')) {
-                                $weapp_original = $res['ToUserName'];
-                                $site_info      = model('config')->getInfo([['app_module', '=', 'shop'], ['config_key', '=', 'WEAPP_CONFIG'], ['value', 'like', '%is_authopen%'], ['value', 'like', '%' . $weapp_original . '%']], 'site_id');
+                                $weapp_original = $res[ 'ToUserName' ];
+                                $site_info = model('config')->getInfo([ [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'WEAPP_CONFIG' ], [ 'value', 'like', '%is_authopen%' ], [ 'value', 'like', '%' . $weapp_original . '%' ] ], 'site_id');
                                 if (!empty($site_info)) {
                                     // 先将审核中的变更为审核成功
-                                    model('weapp_audit_record')->update(['status' => 1, 'audit_time' => time()], [['status', '=', 0], ['site_id', '=', $site_info['site_id']]]);
-                                    $platform = new OpenPlatform($site_info['site_id']);
-                                    $result   = $platform->release();
-                                    if ($result['code'] >= 0) {
-                                        model('weapp_audit_record')->update(['status' => 5, 'release_time' => time()], [['status', '=', 1], ['site_id', '=', $site_info['site_id']]]);
+                                    model('weapp_audit_record')->update([ 'status' => 1, 'audit_time' => time() ], [ [ 'status', '=', 0 ], [ 'site_id', '=', $site_info[ 'site_id' ] ] ]);
+                                    $platform = new OpenPlatform($site_info[ 'site_id' ]);
+                                    $result = $platform->release();
+                                    if ($result[ 'code' ] >= 0) {
+                                        model('weapp_audit_record')->update([ 'status' => 5, 'release_time' => time() ], [ [ 'status', '=', 1 ], [ 'site_id', '=', $site_info[ 'site_id' ] ] ]);
                                     }
                                 }
                             }
@@ -731,32 +748,32 @@ class Wechat extends BaseModel
 
                     break;
                 case 'text':
-                    $this->app->server->push(function ($res) {
+                    $this->app->server->push(function($res) {
                         $replay = new Replay();
-                        $rule   = $replay->getSiteWechatKeywordsReplay($res['Content'], $this->site_id);
-                        if ($rule['data']) {
-                            if ($rule['data']['type'] == 'text') {
+                        $rule = $replay->getSiteWechatKeywordsReplay($res[ 'Content' ], $this->site_id);
+                        if ($rule[ 'data' ]) {
+                            if ($rule[ 'data' ][ 'type' ] == 'text') {
                                 //文字
-                                return new Text($rule['data']['reply_content']);
+                                return new Text($rule[ 'data' ][ 'reply_content' ]);
                             } else {
 
-                                $material   = new Material();
-                                $media_info = $material->getMaterialInfo([['media_id', '=', $rule['data']['media_id']]]);
-                                $media_info = $media_info['data'];
+                                $material = new Material();
+                                $media_info = $material->getMaterialInfo([ [ 'media_id', '=', $rule[ 'data' ][ 'media_id' ] ] ]);
+                                $media_info = $media_info[ 'data' ];
 
                                 if ($media_info) {
-                                    $material_type = $media_info['type'];
-                                    $value         = json_decode($media_info['value'], true);
+                                    $material_type = $media_info[ 'type' ];
+                                    $value = json_decode($media_info[ 'value' ], true);
 
                                     if ($material_type == 1) {
-                                        $url   = __ROOT__;
-                                        $url   = $url . '/index.php/wechat/api/auth/wechatArticle?id=' . $media_info['id'];
+                                        $url = __ROOT__;
+                                        $url = $url . '/index.php/wechat/api/auth/wechatArticle?id=' . $media_info[ 'id' ];
                                         $items = [
                                             new NewsItem([
-                                                'title'       => $value[0]['title'],
-                                                'description' => strip_tags($value[0]['content']),
-                                                'url'         => $url,
-                                                'image'       => $value[0]['cover']['path'],
+                                                'title' => $value[ 0 ][ 'title' ],
+                                                'description' => strip_tags($value[ 0 ][ 'content' ]),
+                                                'url' => $url,
+                                                'image' => $value[ 0 ][ 'cover' ][ 'path' ],
                                             ]),
                                         ];
                                         return new News($items);
@@ -817,9 +834,9 @@ class Wechat extends BaseModel
             $errormsg = [
                 '45026' => '模板数量超出限制'
             ];
-            return ['errcode' => $res[ 'errcode' ], 'errmsg' => $errormsg[$res[ 'errcode' ]] ?? $res[ 'errmsg' ] ];
+            return [ 'errcode' => $res[ 'errcode' ], 'errmsg' => $errormsg[ $res[ 'errcode' ] ] ?? $res[ 'errmsg' ] ];
         } catch (\Exception $e) {
-            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+            return [ 'errcode' => -1, 'errmsg' => $e->getMessage() ];
         }
     }
 
@@ -835,9 +852,9 @@ class Wechat extends BaseModel
             $errormsg = [
                 '45026' => '模板数量超出限制'
             ];
-            return ['errcode' => $res[ 'errcode' ], 'errmsg' => $errormsg[$res[ 'errcode' ]] ?? $res[ 'errmsg' ] ];
+            return [ 'errcode' => $res[ 'errcode' ], 'errmsg' => $errormsg[ $res[ 'errcode' ] ] ?? $res[ 'errmsg' ] ];
         } catch (\Exception $e) {
-            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+            return [ 'errcode' => -1, 'errmsg' => $e->getMessage() ];
         }
     }
 
@@ -849,14 +866,14 @@ class Wechat extends BaseModel
     public function sendTemplateMessage(array $param)
     {
         $result = $this->app()->template_message->send([
-            'touser'      => $param['openid'], // openid
-            'template_id' => $param['template_id'],// 模板id
-            'url'         => $param['url'],// 跳转链接
-            'miniprogram' => $param['miniprogram'], // 跳转小程序  ['appid' => 'xxxxxxx','pagepath' => 'pages/xxx',]
-            'data'        => $param['data'] // 模板变量
+            'touser' => $param[ 'openid' ], // openid
+            'template_id' => $param[ 'template_id' ],// 模板id
+            'url' => $param[ 'url' ],// 跳转链接
+            'miniprogram' => $param[ 'miniprogram' ], // 跳转小程序  ['appid' => 'xxxxxxx','pagepath' => 'pages/xxx',]
+            'data' => $param[ 'data' ] // 模板变量
         ]);
-        if (isset($result['errcode']) && $result['errcode'] != 0) {
-            return $this->error($result, $result["errmsg"]);
+        if (isset($result[ 'errcode' ]) && $result[ 'errcode' ] != 0) {
+            return $this->error($result, $result[ "errmsg" ]);
         }
         return $this->success($result);
     }
@@ -874,7 +891,7 @@ class Wechat extends BaseModel
             $res = $this->app()->account->bindTo($open_appid);
             return $res;
         } catch (\Exception $e) {
-            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+            return [ 'errcode' => -1, 'errmsg' => $e->getMessage() ];
         }
     }
 
@@ -887,7 +904,7 @@ class Wechat extends BaseModel
             $res = $this->app()->account->unbindFrom($open_appid);
             return $res;
         } catch (\Exception $e) {
-            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+            return [ 'errcode' => -1, 'errmsg' => $e->getMessage() ];
         }
     }
 
@@ -900,9 +917,44 @@ class Wechat extends BaseModel
             $res = $this->app()->account->getBinding();
             return $res;
         } catch (\Exception $e) {
-            return ['errcode' => -1, 'errmsg' => $e->getMessage()];
+            return [ 'errcode' => -1, 'errmsg' => $e->getMessage() ];
         }
     }
 
+    /**
+     * 获取关注二维码
+     * @param $fans_id
+     * @return array|mixed
+     */
+    public function getFollowQrcode($fans_id)
+    {
+        $cache = Cache::get('wechat_follow_qrcode_' . $fans_id);
+        if ($cache) return $cache;
+
+        $res = $this->getTempQrcode('follow_key_' . $fans_id, 1728000);
+        if ($res[ 'code' ] != 0) return $res;
+
+        $data = $this->success([
+            'qrcode' => $res[ 'data' ],
+            'site_id' => $this->site_id,
+            'fans_id' => $fans_id
+        ]);
+        Cache::set('wechat_follow_qrcode_' . $fans_id, $data, 1728000);
+
+        return $data;
+    }
+
     /******************************************************************************* 开放平台end *************************************************************************/
+
+    /**
+     * 处理错误信息
+     * @param $errcode
+     * @param string $message
+     * @return array
+     */
+    public function handleError($errcode, $message = '')
+    {
+        $error = require 'addon/wechat/config/wechat_error.php';
+        return $this->error([], $error[ $errcode ] ?? $message);
+    }
 }

@@ -100,7 +100,7 @@
 {block name="script"}
 <script>
 	layui.use(['form', 'laydate', 'element', 'laytpl'], function() {
-		var table,
+		var table,repeat_flag=false,
 			form = layui.form,
             element = layui.element,
             laytpl = layui.laytpl,
@@ -280,53 +280,53 @@
 			<col width="200">
 		</colgroup>
 		<tbody>
-		<tr>
-			<td>会员账号</td>
-			<td>{{d.username}}</td>
-		</tr>
-		<tr>
-			<td>昵称</td>
-			<td>{{d.nickname}}</td>
-		</tr>
-		<tr>
-			<td>联系电话</td>
-			<td>{{d.mobile}}</td>
-		</tr>
+			<tr>
+				<td>会员账号</td>
+				<td>{{d.username}}</td>
+			</tr>
+			<tr>
+				<td>昵称</td>
+				<td>{{d.nickname}}</td>
+			</tr>
+			<tr>
+				<td>联系电话</td>
+				<td>{{d.mobile}}</td>
+			</tr>
 
-		{{# if(d.bank_type != 0){ }}
-		<tr>
-			<td>审核人账号</td>
-			<td>{{d.audit_username}}</td>
-		</tr>
-		<tr>
-			<td>审核时间</td>
-			<td>{{ ns.time_to_date(d.audit_time) }}</td>
-		</tr>
-		{{# } }}
+			{{# if(d.bank_type != 0){ }}
+			<tr>
+				<td>审核人账号</td>
+				<td>{{d.audit_username}}</td>
+			</tr>
+			<tr>
+				<td>审核时间</td>
+				<td>{{ ns.time_to_date(d.audit_time) }}</td>
+			</tr>
+			{{# } }}
 
-		{{# if(d.status == -1){ }}
-		<tr>
-			<td>拒绝原因</td>
-			<td>{{ d.reason }}</td>
-		</tr>
-		{{# } }}
+			{{# if(d.status == -1){ }}
+			<tr>
+				<td>拒绝原因</td>
+				<td>{{ d.reason }}</td>
+			</tr>
+			{{# } }}
 
-		<tr>
-			<td>状态</td>
-			<td>
-				{{# if(d.status == 0){ }}
-					待审核
-				{{#} else if(d.status == 1){ }}
-					审核通过
-				{{#} else { }}
-					审核拒绝
-				{{#} }}
-			</td>
-		</tr>
-		<tr>
-			<td>申请时间</td>
-			<td>{{ ns.time_to_date(d.create_time) }}</td>
-		</tr>
+			<tr>
+				<td>状态</td>
+				<td>
+					{{# if(d.status == 0){ }}
+						待审核
+					{{#} else if(d.status == 1){ }}
+						审核通过
+					{{#} else { }}
+						审核拒绝
+					{{#} }}
+				</td>
+			</tr>
+			<tr>
+				<td>申请时间</td>
+				<td>{{ ns.time_to_date(d.create_time) }}</td>
+			</tr>
 		</tbody>
 	</table>
 </script>

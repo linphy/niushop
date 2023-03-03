@@ -70,7 +70,6 @@ class Membercancel extends BaseApi
         return $this->response($res);
     }
 
-
     /**
      *  撤销申请
      */
@@ -83,7 +82,6 @@ class Membercancel extends BaseApi
         $res = $member_cancel_model->cancelApplyMemberCancel($this->member_id,$this->site_id);
         return $this->response($res);
     }
-
 
     /**
      * 获取注销设置

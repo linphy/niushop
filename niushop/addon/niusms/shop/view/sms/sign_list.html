@@ -26,28 +26,25 @@
 </style>
 {/block}
 {block name="body"}
-<!-- 搜索框 -->
+<div class="single-filter-box">
+    <button class="layui-btn addsign" onclick="add()">添加短信签名</button>
+</div>
 
-    <div class="single-filter-box">
-        <button class="layui-btn addsign" onclick="add()">添加短信签名</button>
+<div class="layui-tab table-tab" lay-filter="sign_tab">
+
+    <div class="layui-tab-content">
+        <!-- 列表 -->
+        <table id="sign_list" lay-filter="sign_list"></table>
+        <input class="signature" type="hidden" value="{$sms_config['signature']}"/>
     </div>
+</div>
 
-    <div class="layui-tab table-tab" lay-filter="sign_tab">
-
-        <div class="layui-tab-content">
-            <!-- 列表 -->
-            <table id="sign_list" lay-filter="sign_list"></table>
-            <input class="signature" type="hidden" value="{$sms_config['signature']}"/>
-        </div>
-    </div>
-<!-- 时间 -->
 <script type="text/html" id="use_status">
     {{# if(d.sign == "{$sms_config['signature']}" ){ }}
     使用中
     {{# }else { }}
     未使用
     {{# } }}
-
 </script>
 
 <!-- 审核状态 -->
@@ -196,7 +193,6 @@
             });
         }
 
-
         //添加签名
         form.on('submit(add_signature)', function (data) {
 
@@ -225,7 +221,6 @@
                     });
                 }
             })
-
 
         });
 

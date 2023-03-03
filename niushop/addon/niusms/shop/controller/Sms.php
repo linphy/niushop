@@ -288,8 +288,7 @@ class Sms extends BaseShop
             $page_size = input('page_size', PAGE_LIST_ROWS);
 
             $config_model = new ConfigModel();
-            $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module);
-            $sms_config = $sms_config[ 'data' ][ 'value' ];
+            $sms_config = $config_model->getSmsConfig($this->site_id, $this->app_module)[ 'data' ][ 'value' ];
 
             $sms_model = new SmsModel();
 //            [['mobile','=',$sms_config['mobile']]]

@@ -188,7 +188,7 @@ class V3 extends BaseModel
                 'out_trade_no' => $param["out_trade_no"],
                 'notify_url' => $param["notify_url"],
                 'amount' => [
-                    'total' => $param["pay_money"] * 100
+                    'total' => round($param["pay_money"] * 100)
                 ]
             ]
         ];
@@ -445,7 +445,7 @@ class V3 extends BaseModel
             'out_batch_no' => $param['out_trade_no'],
             'batch_name' => '客户提现转账',
             'batch_remark' => '客户提现转账提现交易号' . $param['out_trade_no'],
-            'total_amount' => $param['amount'] * 100,
+            'total_amount' => round($param['amount'] * 100),
             'total_num' => 1,
             'transfer_detail_list' => [
                 [
@@ -553,6 +553,8 @@ class V3 extends BaseModel
             $fail_reason = '';
             if (isset($result['data']['fail_reason'])) $fail_reason = $reason[$result['data']['fail_reason']] ?? '';
             model('member_withdraw')->update(['status' => -2, 'status_name' => '转账失败', 'fail_reason' => $fail_reason], [['id', '=', $withdraw_info['id']]]);
+        } else if ($result['data']['detail_status'] != 'SUCCESS') {
+            model('member_withdraw')->update(['status' => -2, 'status_name' => '转账失败', 'fail_reason' => '未获取到转账结果'], [['id', '=', $withdraw_info['id']]]);
         }
         Cache::delete('get_transfer_result' . $withdraw_info['withdraw_no']);
         return $this->success();

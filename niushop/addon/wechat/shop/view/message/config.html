@@ -70,6 +70,7 @@
 	var form,table;
 	layui.use(['form'], function(){
 		form = layui.form;
+		form.render();
 		var repeat_flag = false;//防重复标识
 
 		form.on('switch(is_jump_weapp)', function(data){

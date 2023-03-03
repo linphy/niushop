@@ -19,7 +19,6 @@ return [
                 'name' => 'PROMOTION_COUPON_LIST',
                 'title' => '优惠券列表',
                 'url' => 'coupon://shop/coupon/lists',
-                'parent' => '',
                 'is_show' => 1,
                 'is_control' => 1,
                 'sort' => 1,
@@ -30,8 +29,6 @@ return [
                 'title' => '会员优惠券',
                 'url' => 'shop/memberaccount/coupon',
                 'is_show' => 1,
-                'picture' => '',
-                'picture_selected' => '',
                 'sort' => 2,
             ],
             [

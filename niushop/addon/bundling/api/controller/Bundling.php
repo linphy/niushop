@@ -20,11 +20,15 @@ class Bundling extends BaseApi
 {
     /**
      * sku所关联有关组合套餐
-     * @return string
+     * @param int $id
+     * @return false|string
      */
-    public function lists()
+    public function lists($id = 0)
     {
         $sku_id = isset($this->params[ 'sku_id' ]) ? $this->params[ 'sku_id' ] : 0;
+        if (!empty($id)) {
+            $sku_id = $id;
+        }
         if (empty($sku_id)) {
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
@@ -45,7 +49,6 @@ class Bundling extends BaseApi
         $bundling_model = new BundlingModel();
         $info = $bundling_model->getBundlingDetail([ [ 'bl_id', '=', $bl_id ] ]);
         return $this->response($info);
-
     }
 
 }

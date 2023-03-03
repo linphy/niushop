@@ -21,10 +21,15 @@ class Manjian extends BaseApi
 
     /**
      * 信息
+     * @param int $id
+     * @return false|string
      */
-    public function info()
+    public function info($id = 0)
     {
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        if (!empty($id)) {
+            $goods_id = $id;
+        }
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }

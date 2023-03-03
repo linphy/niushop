@@ -12,6 +12,7 @@ namespace addon\wechat\model;
 
 use app\model\BaseModel;
 use addon\weapp\model\Config as WeappConfig;
+use addon\mobileshop\model\Config as MobileShopConfig;
 
 
 /**
@@ -62,24 +63,38 @@ class Message extends BaseModel
 			];
 
 			if (!empty($param['page'])) {
-			    $template_config_model = new Config();
-                $template_config = $template_config_model->getTemplateMessageConfig($site_id);
-                $template_config = $template_config['data']['value'];
-
-                if ($template_config['is_jump_weapp']) {
-                    // 小程序配置
-                    $weapp_config = new WeappConfig();
-                    $weapp_config_result = $weapp_config->getWeAppConfig($site_id);
-                    $weapp_config = $weapp_config_result['data']["value"];
-
+			    // 商家消息
+			    if ($message_info['message_type'] == 2 && addon_is_exit('mobileshop', $site_id)) {
+                    $config = new MobileShopConfig();
+                    $weapp_config = $config->getWeAppConfig($site_id)['data']["value"];
                     if (!empty($weapp_config['appid'])) {
                         $data['miniprogram'] = [
                             'appid' => $weapp_config['appid'],
                             'pagepath' => $param['page']
                         ];
                     }
+                    $mshop_config = $config->getMShopDomainName($site_id)['data']['value'];
+                    $data['url'] = $mshop_config['domain_name_mobileshop'] . '/' . $param['page'];
+                } else {
+                    $template_config_model = new Config();
+                    $template_config = $template_config_model->getTemplateMessageConfig($site_id);
+                    $template_config = $template_config['data']['value'];
+
+                    if ($template_config['is_jump_weapp']) {
+                        // 小程序配置
+                        $weapp_config = new WeappConfig();
+                        $weapp_config_result = $weapp_config->getWeAppConfig($site_id);
+                        $weapp_config = $weapp_config_result['data']["value"];
+
+                        if (!empty($weapp_config['appid'])) {
+                            $data['miniprogram'] = [
+                                'appid' => $weapp_config['appid'],
+                                'pagepath' => $param['page']
+                            ];
+                        }
+                    }
+                    $data['url'] = getH5Domain() . '/' . $param['page'];
                 }
-                $data['url'] = getH5Domain() . '/' . $param['page'];
 			}
 			$wechat = new Wechat($site_id);
 			$res = $wechat->sendTemplateMessage($data);

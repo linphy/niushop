@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -25,10 +24,10 @@ class OrderComplete
      */
     public function handle($data)
     {
-        $order  = new OrderCommon();
-        $order_info = $order->getOrderInfo([ ['order_id','=',$data['order_id']] ],'out_trade_no')['data'];
+        $order = new OrderCommon();
+        $order_info = $order->getOrderInfo([ [ 'order_id', '=', $data[ 'order_id' ] ] ], 'out_trade_no')[ 'data' ];
         $consume_model = new ConsumeModel();
-        $res           = $consume_model->memberConsume(['out_trade_no' => $order_info['out_trade_no'] ?? '', 'status' => 'complete']);
+        $res = $consume_model->memberConsume([ 'out_trade_no' => $order_info[ 'out_trade_no' ] ?? '', 'status' => 'complete' ]);
         return $res;
     }
 }

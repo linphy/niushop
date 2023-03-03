@@ -69,28 +69,28 @@
 								<col width="20%">
 							</colgroup>
 							<thead>
-							<tr>
-								<th>优惠券</th>
-								<th>优惠内容</th>
-								<th style="text-align:center;">操作</th>
-							</tr>
+								<tr>
+									<th>优惠券</th>
+									<th>优惠内容</th>
+									<th style="text-align:center;">操作</th>
+								</tr>
 							</thead>
 							<tbody>
-							{if isset($config.value.coupon_list) && !empty($config.value.coupon_list)}
+								{if isset($config.value.coupon_list) && !empty($config.value.coupon_list)}
 
-							{foreach $config.value.coupon_list as $k => $vo}
-							<tr data-coupon="{$vo.coupon_type_id}">
-								<td>{$vo.coupon_name }</td>
-								{if $vo.at_least > 0 }
-								<td>满{$vo.at_least }{$vo.type == 'discount' ? '打'. $vo.discount .'折' : '减' . $vo.money }</td>
-								{else/}
-								<td>无门槛，{$vo.type == 'discount' ? '打'. $vo.discount .'折' : '减' . $vo.money }</td>
+								{foreach $config.value.coupon_list as $k => $vo}
+								<tr data-coupon="{$vo.coupon_type_id}">
+									<td>{$vo.coupon_name }</td>
+									{if $vo.at_least > 0 }
+									<td>满{$vo.at_least }{$vo.type == 'discount' ? '打'. $vo.discount .'折' : '减' . $vo.money }</td>
+									{else/}
+									<td>无门槛，{$vo.type == 'discount' ? '打'. $vo.discount .'折' : '减' . $vo.money }</td>
+									{/if}
+									<td style="text-align:center;"><a href="javascript:;" onclick="deleteCoupon(this)" class="text-color">删除</a></td>
+								</tr>
+								{/foreach}
+
 								{/if}
-								<td style="text-align:center;"><a href="javascript:;" onclick="deleteCoupon(this)" class="text-color">删除</a></td>
-							</tr>
-							{/foreach}
-
-							{/if}
 							</tbody>
 						</table>
 					</div>
@@ -210,7 +210,6 @@
 
 		form.verify({
 			growthInteger: function (value) {
-
 				if(!new RegExp("^(\\d|[1-9]\\d|100)$").test(value)){
 					return '请输入0-100之间的正整数';
 				}

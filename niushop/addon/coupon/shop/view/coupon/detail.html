@@ -59,8 +59,10 @@
                 <span>
                     {if $info.validity_type == 0}
                         {:date('Y-m-d H:i:s',$info.end_time)}
+                    {elseif $info.validity_type == 1 }
+                        领取后 {$info.fixed_term} 天有效
                     {else /}
-                        领取之日起 {$info.fixed_term} 天有效
+                        长期有效
                     {/if}
                 </span>
             </div>
@@ -70,7 +72,6 @@
                     <label>活动商品：</label>
                     <span>全部商品参与</span>
                 </div>
-
             {/if}
         </div>
         <div class="promotion-view">
@@ -191,9 +192,8 @@
 <script>
     var promotion_list = {:json_encode($info.goods_list, JSON_UNESCAPED_UNICODE)},
         coupon_type_id = {$info.coupon_type_id},
-        element,
-        getType = {:json_encode($get_type)},
-        table;
+        element,table,
+        getType = {:json_encode($get_type)};
 
     layui.use('element', function() {
         element = layui.element;

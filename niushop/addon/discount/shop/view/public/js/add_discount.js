@@ -211,7 +211,7 @@ function renderTable(sku_list) {
 					}
 				}
 			}, {
-				title: '<span title="折扣价">折扣价<//span>',
+				title: '<span title="折扣价">折扣价</span>',
 				unresize: 'false',
 				width: '18%',
 				templet: function (data) {
@@ -316,7 +316,6 @@ function discount_price(index) {
 
 	let is_reload = false;
 	let sku_ids = [];
-	let checkbox = false;
 	let oneOpen = layer.open({
 		type: 1,
 		title: '修改折扣价',
@@ -362,8 +361,7 @@ function discount_price(index) {
 						unresize: 'false',
 						width: '20%',
 						templet: function (data) {
-							return `<input type="number" name="discount_price" class="layui-input len-input discount_price" value="${data.discount_price}" 
-									onchange="setSkusGoods(${data.sku_id}, this)" lay-verify="discount_price" min="0.00" oninput="ns.checkInput(this)" data-value="${data.discount_price}"/>`
+							return `<input type="number" name="discount_price" class="layui-input len-input discount_price" value="${data.discount_price}" onchange="setSkusGoods(${data.sku_id}, this)" lay-verify="discount_price" min="0.00" oninput="ns.checkInput(this)" data-value="${data.discount_price}"/>`
 						}
 					}]
 				],

@@ -42,7 +42,6 @@
 	}
 	.layui-form-label + .layui-input-block{
 		margin-left: 150px;
-
 	}
 	.word-aux{
 		margin-left: 150px;
@@ -302,10 +301,10 @@
 					if (value.trim() == "") {
 						return '会员等级折扣不能为空!';
 					}
-					if (value <= 0) {
+					if (parseFloat(value) <= 0) {
 						return '会员等级折扣必须大于0!';
 					}
-					if (value > 10) {
+					if (parseFloat(value) > 10) {
 						return '会员等级折扣必须小于10!';
 					}
 					
@@ -326,10 +325,10 @@
 					if (value.trim() == "") {
 						return '满减金额不能为空!';
 					}
-					if (value < 0) {
+					if (parseFloat(value) < 0) {
 						return '满减金额必须大于0!';
 					}
-					if (value > Number(price)) {
+					if (parseFloat(value) > Number(price)) {
 						return '满减金额不能大于商品价格!';
 					}
 					
@@ -346,14 +345,13 @@
 			fixed_price: function (value, item) {
 				if (is_consume_discount == 1) {
 					var price = $(item).parents("tr").find(".sku-price").text();
-					
 					if (value.trim() == "") {
 						return '指定价格不能为空!';
 					}
-					if (value < 0) {
+					if (parseFloat(value) <= 0) {
 						return '指定价格必须大于0!';
 					}
-					if (value > Number(price)) {
+					if (parseFloat(value) > Number(price)) {
 						return '指定价格不能大于商品价格!';
 					}
 					

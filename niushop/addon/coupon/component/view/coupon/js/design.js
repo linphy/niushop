@@ -62,7 +62,7 @@ Vue.component("coupon-set", {
 				{
 					"ifNeedBg": true,
 					"couponBgColor": "#FFFFFF",
-					"couponBgUrl": couponResourcePath + "/img/style3-bg-1.png",
+					"couponBgUrl": couponRelativePath + "/img/style3-bg-1.png",
 					"couponType": "img",
 					"isName": false,
 					"nameColor": "",

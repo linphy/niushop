@@ -93,10 +93,9 @@
 </script>
 
 <script>
-    var laytpl;
+    var form,laytpl,repeat_flag = false; //防重复标识;
     layui.use(['laydate', 'form', 'laytpl'], function () {
-        var form = layui.form,
-            repeat_flag = false; //防重复标识
+        form = layui.form,
         laytpl = layui.laytpl;
         form.render();
 

@@ -209,4 +209,26 @@ class V2 extends BaseModel
             return $this->error([], $res['return_msg']);
         }
     }
+
+    /**
+     * 付款码支付
+     * @param  array  $param
+     * @return array\
+     */
+    public function micropay(array $param){
+        $data = [
+            'body' => str_sub($param["pay_body"], 15),
+            'out_trade_no' => $param["out_trade_no"],
+            'total_fee' => $param["pay_money"] * 100,
+            'auth_code' => $param["auth_code"]
+        ];
+        $result = $this->app->base->pay($data);
+        if ($result[ 'return_code' ] == 'FAIL') {
+            return $this->error([], $result[ 'return_msg' ]);
+        }
+        if ($result[ 'result_code' ] == 'FAIL') {
+            return $this->error([], $result[ 'err_code_des' ]);
+        }
+        return $this->success($result);
+    }
 }

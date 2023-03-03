@@ -4,22 +4,6 @@
 	.iconadd_light {
 		font-size: 40px;
 	}
-	.iconchoose {
-		font-size: 35px;
-		color: #ff6a00;
-		position: absolute;
-		top: 180px;
-		left: 110px;
-		z-index: 2;
-	}
-	.zhezhao {
-		width: 100%; 
-		height: 100%; 
-		background:rgba(0, 0, 0, .5); 
-		position: absolute; 
-		top: 0; 
-		left: 0;
-	}
 	.good-poster {
 		width: 240px; 
 		height: 413px; 
@@ -83,9 +67,9 @@
 	<div class='table-title'>
 		{{# if(d.template_status == 0){ }}
 			<div class='title-pic' style="text-align:left">未启用</div>
-			{{# }else{ }}
-				<div class='title-pic text-color' style="text-align:left">启用</div>
-				{{# } }}
+		{{# }else{ }}
+			<div class='title-pic text-color' style="text-align:left">启用</div>
+		{{# } }}
 	</div>
 </script>
 <!-- 操作 -->
@@ -104,13 +88,11 @@
 
 <script type="text/html" id="add">
 	<div style="display: flex;">
-		<div id="">
+		<div>
 			<div style="width: 240px; height: 413px; border: 1px dashed #ff791a; color: #ff791a; text-align: center; line-height: 413px; cursor: pointer; display: inline-block;" onclick="toAdd()">
 				<i class="iconfont iconadd_light"></i>
 			</div>
-			<div style="text-align: center; margin-top: 10px;">
-				自定义海报
-			</div>
+			<div style="text-align: center; margin-top: 10px;">自定义海报</div>
 		</div>
 		<div style="display: inline-block; position: relative;">
 			<div style="display: flex;">
@@ -134,7 +116,7 @@
 {/block}
 {block name="script"}
 <script>
-	var laytpl,template_id,table,form,repeat_flag = false;
+	var laytpl,template_id,table,form,element,repeat_flag = false;
 	layui.use(['form', 'element', 'laytpl'], function() {
 		form = layui.form;
 		element = layui.element;

@@ -27,11 +27,10 @@
 {block name="script"}
 <script>
 	layui.use(['form'], function() {
-		var table, list = [],
-			form = layui.form;
+		var table,form = layui.form;
 		form.render();
 		
-		list = {:json_encode($conflict_data.list, JSON_UNESCAPED_UNICODE)};
+		var list = {:json_encode($conflict_data.list, JSON_UNESCAPED_UNICODE)};
 		$(".conflict-num").text(list.length);
 	
 		table = new Table({

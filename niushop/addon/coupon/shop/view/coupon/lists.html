@@ -128,8 +128,7 @@
 <script type="text/html" id="promote">
 	<div>
 		<div class="marked-message">
-			<p>活动可分享至多个渠道推广，增加商品曝光率，提升商品分享打开率。
-			</p>
+			<p>活动可分享至多个渠道推广，增加商品曝光率，提升商品分享打开率。</p>
 		</div>
 		<div class="promote-flex">
 			<div class="promote-img">
@@ -352,11 +351,11 @@
                     couponUrl(data);
                     break;
                 case 'detail': //详情
-
                     location.href = ns.url("coupon://shop/coupon/detail", {"coupon_type_id": data.coupon_type_id});
                     break;
                 case 'receive': //领取记录
                     location.href = ns.url("coupon://shop/coupon/receive", {"coupon_type_id": data.coupon_type_id});
+                    break;
             }
         });
 
@@ -416,6 +415,7 @@
 				default:
 					$(".relative-time").addClass("layui-hide");
 					$(".fixed-time").addClass("layui-hide");
+					break;
             }
         });
 

@@ -97,14 +97,54 @@ class Coupon extends BaseApi
      */
     public function typelists()
     {
+        $num = isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 0;
+        $coupon_type_id_arr = isset($this->params[ 'coupon_type_id_arr' ]) ? $this->params[ 'coupon_type_id_arr' ] : '';//coupon_type_id数组
+        $can_receive = isset($this->params[ 'can_receive' ]) ? $this->params[ 'can_receive' ] : 0;// 是否只查询可领取的
+
+        $token = $this->checkToken();
+
         $coupon_model = new CouponModel();
         $condition = [
-            [ 'site_id', '=', $this->site_id ],
             [ 'status', '=', 1 ],
-            [ 'is_show', '=', 1 ]
+            [ 'is_show', '=', 1 ],
+            [ 'site_id', '=', $this->site_id ]
         ];
 
-        $list = $coupon_model->getCouponTypeList($condition, "coupon_type_id,type,site_id,coupon_name,money,discount,max_fetch,at_least,end_time,validity_type,fixed_term,goods_type,discount_limit", "money desc", "");
+        //按类型查询
+        $type = isset($this->params[ 'type' ]) ? $this->params[ 'type' ] : '';
+        switch ( $type ) {
+            case "reward"://满减
+                $condition[] = [ "type", "=", "reward" ];
+                break;
+            case "discount"://折扣
+                $condition[] = [ "type", "=", "discount" ];
+                break;
+            case "no_threshold"://无门槛
+                $condition[] = [ "at_least", "=", 0 ];
+                break;
+        }
+
+        if (!empty($coupon_type_id_arr)) {
+            $condition[] = [ 'coupon_type_id', 'in', $coupon_type_id_arr ];
+        }
+        $field = 'coupon_type_id,type,site_id,coupon_name,money,discount,max_fetch,at_least,end_time,image,validity_type,fixed_term,status,is_show,goods_type,discount_limit,count,lead_count,IF(count < 0 or count - lead_count > 0, 1, 0) as is_remain';
+        if ($can_receive == 1) {
+            $condition[] = [ [ 'count', '<>', Db::raw('lead_count') ] ];
+        }
+
+        $order = Db::raw('IF(count < 0 or count - lead_count > 0, 1, 0) DESC,sort ASC');
+
+        $list = $coupon_model->getCouponTypeList($condition, $field, $order, $num);
+        if (!empty($list[ 'data' ]) && $this->member_id) {
+            foreach ($list[ 'data' ] as $k => $v) {
+                $list[ 'data' ][ $k ][ 'member_coupon_num' ] = $coupon_model->getCouponCount([
+                    [ 'get_type', '=', 2 ],
+                    [ 'member_id', '=', $this->member_id ],
+                    [ 'coupon_type_id', '=', $v[ 'coupon_type_id' ] ]
+                ])[ 'data' ];
+            }
+        }
+
         return $this->response($list);
     }
 
@@ -149,9 +189,9 @@ class Coupon extends BaseApi
             $condition[] = [ [ 'count', '<>', Db::raw('lead_count') ] ];
         }
 
-        if($this->member_id){
+        if ($this->member_id) {
             $prefix = config('database.connections.mysql.prefix');
-            $field .= ', (select count(coupon_id) from '.$prefix.'promotion_coupon pc where pc.coupon_type_id = ct.coupon_type_id and pc.get_type=2 and pc.member_id='.$this->member_id.') as member_coupon_num';
+            $field .= ', (select count(coupon_id) from ' . $prefix . 'promotion_coupon pc where pc.coupon_type_id = ct.coupon_type_id and pc.get_type=2 and pc.member_id=' . $this->member_id . ') as member_coupon_num';
         }
 
         $order = Db::raw('IF(count < 0 or count - lead_count > 0, 1, 0) DESC,sort ASC');
@@ -220,12 +260,17 @@ class Coupon extends BaseApi
 
     /**
      * 查询商品可用的优惠券
+     * @param int $id
+     * @return false|string
      */
-    public function goodsCoupon()
+    public function goodsCoupon($id = 0)
     {
         $this->checkToken();
         $coupon_model = new CouponModel();
         $goods_id = $this->params[ 'goods_id' ] ?? 0;
+        if (!empty($id)) {
+            $goods_id = $id;
+        }
         $condition = [
             [ 'site_id', '=', $this->site_id ],
             [ 'status', '=', 1 ],
@@ -235,9 +280,9 @@ class Coupon extends BaseApi
 
         $field = 'count,lead_count,coupon_type_id,coupon_type_id as type_id,type,site_id,coupon_name,money,discount,max_fetch,at_least,end_time,validity_type,fixed_term,goods_type,discount_limit';
 
-        if($this->member_id){
+        if ($this->member_id) {
             $prefix = config('database.connections.mysql.prefix');
-            $field .= ',(select count(coupon_id) from '.$prefix.'promotion_coupon pc where pc.coupon_type_id = type_id and pc.get_type=2 and pc.member_id='.$this->member_id.') as member_coupon_num';
+            $field .= ',(select count(coupon_id) from ' . $prefix . 'promotion_coupon pc where pc.coupon_type_id = type_id and pc.get_type=2 and pc.member_id=' . $this->member_id . ') as member_coupon_num';
         }
 
         $list = $coupon_model->getCouponTypeList($condition, $field, "money desc", null, 'ct');
@@ -249,10 +294,23 @@ class Coupon extends BaseApi
             [ 'goods_ids', 'like', "%,$goods_id,%" ]
         ];
 
-        $goods_coupon = $coupon_model->getCouponTypeList($goods_condition, $field, "money desc", null,'ct');
+        $goods_coupon = $coupon_model->getCouponTypeList($goods_condition, $field, "money desc", null, 'ct');
 
         if (!empty($goods_coupon[ 'data' ])) {
             $list[ 'data' ] = array_merge($list[ 'data' ], $goods_coupon[ 'data' ]);
+        }
+
+        if ($list[ 'data' ] && $this->member_id) {
+            foreach ($list[ 'data' ] as $k => $v) {
+                // 已抢光
+                if ($v[ 'count' ] == $v[ 'lead_count' ]) {
+                    unset($list[ 'data' ][ $k ]);
+                } elseif ($v[ 'max_fetch' ] != 0 && $v[ 'member_coupon_num' ] > 0 && $v[ 'member_coupon_num' ] >= $v[ 'max_fetch' ]) {
+                    // 已领取
+                    unset($list[ 'data' ][ $k ]);
+                }
+            }
+            $list[ 'data' ] = array_values($list[ 'data' ]);
         }
         return $this->response($list);
     }

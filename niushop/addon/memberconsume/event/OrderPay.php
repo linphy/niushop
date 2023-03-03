@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -22,7 +21,7 @@ class OrderPay
     public function handle($data)
     {
         $consume_model = new ConsumeModel();
-        $res           = $consume_model->memberConsume(['out_trade_no' => $data['out_trade_no'], 'status' => 'pay']);
+        $res = $consume_model->memberConsume([ 'out_trade_no' => $data[ 'out_trade_no' ], 'status' => 'pay' ]);
         return $res;
     }
 }

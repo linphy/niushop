@@ -7,32 +7,12 @@
 {block name="main"}
 <div class="layui-form form-wrap">
 
-<!--	<div class="layui-form-item">-->
-<!--		<label class="layui-form-label">用户名：</label>-->
-<!--		<div class="layui-input-block">-->
-<!--			<input type="text" name="access_key_id" placeholder="请输入用户名" {if $info.value } value="{$info.value.access_key_id}" {/if} autocomplete="off" class="layui-input len-long">-->
-<!--		</div>-->
-<!--	</div>-->
-
-<!--	<div class="layui-form-item">-->
-<!--		<label class="layui-form-label">密码：</label>-->
-<!--		<div class="layui-input-block">-->
-<!--			<input type="text" name="access_key_secret" placeholder="请输入密码" {if $info.value } value="{$info.value.access_key_secret}" {/if} autocomplete="off" class="layui-input len-long">-->
-<!--		</div>-->
-<!--	</div>-->
-
-<!--    &lt;!&ndash; 表单操作 &ndash;&gt;-->
-<!--    <div class="form-row">-->
-<!--        <button class="layui-btn" lay-submit lay-filter="save">保存</button>-->
-<!--        <button class="layui-btn layui-btn-primary" onclick="back()">返回</button>-->
-<!--    </div>-->
-
-	    <div class="form-row">
-	        <button class="layui-btn" onclick="getSmsPackageList()">获取短信套餐包</button>
-		    <button class="layui-btn" onclick="register()">注册</button>
-		    <button class="layui-btn" onclick="alert()">发送短信</button>
-		    <button class="layui-btn" onclick="removeChildAccount()">删除</button>
-	    </div>
+    <div class="form-row">
+        <button class="layui-btn" onclick="getSmsPackageList()">获取短信套餐包</button>
+	    <button class="layui-btn" onclick="register()">注册</button>
+	    <button class="layui-btn" onclick="alert()">发送短信</button>
+	    <button class="layui-btn" onclick="removeChildAccount()">删除</button>
+    </div>
 
 </div>
 {/block}

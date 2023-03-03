@@ -12,7 +12,6 @@
 </style>
 {/block}
 {block name="main"}
-
 <div class="layui-form form-wrap" id="add_active">
 	<div class="layui-form-item">
 		<label class="layui-form-label"><span class="required">*</span>活动名称：</label>
@@ -203,7 +202,6 @@
 				data.field.status = 0;
 			}
 			
-			
 			if(combinedPrice > originalPrice){
 				layer.msg("组合套餐价格不能高于原价");
 				$(".save-prices").text(0).focus();
@@ -215,6 +213,7 @@
 				var id = $(this).attr("data-sku_id");
 				selectGoodsSkuId.push(id);
 			});
+
 			data.field.sku_ids = selectGoodsSkuId.toString();
 
 			if(repeat_flag) return;

@@ -6,7 +6,6 @@ $.each(goods_list, function(index, item) {
 });
 $("input[name='goods_ids']").val(goods_id.toString());
 
-
 Object.values(manjian_info).forEach((item,index)=>{
 	if (item.coupon_data) {
 		var arr = [];
@@ -148,7 +147,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 			}
 			rule[limit] = {
 				limit: limit
-			}
+			};
 			if ($(this).find('[value="discount_money"]').is(':checked')) {
 				var discount_money = $(this).find('.discount-item.discount-money .layui-input').val();
 				if (!/[\S]+/.test(discount_money)) {
@@ -214,7 +213,7 @@ layui.use(['form', 'laydate', 'laytpl'], function() {
 				verify = false;
 				return false;
 			}
-		})
+		});
 
 		if (!verify) return;
 
@@ -467,8 +466,7 @@ function addDiscountLevel(){
 									      	<th style="text-align:center;">操作</th>
 									    </tr> 
 								  	</thead>
-								  	<tbody>
-								  	</tbody>
+								  	<tbody></tbody>
 								</table>
 							</div>
 						</div>
@@ -532,7 +530,6 @@ $('body').on('click', '.discount-item .select-coupon', function(e){
 		form.render();
 	});
 
-
 	/**
 	 * 监听每一行的多选按钮
 	 */
@@ -588,7 +585,7 @@ function deleteLevel(e){
 
 // 删除优惠券
 function deleteCoupon(e,index){
-	var index = $(e).parents('.level-item').index();
+	index = $(e).parents('.level-item').index();
 	coupon_id[index].splice(index, 1);
 	$(e).parents('tr').remove();
 }

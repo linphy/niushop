@@ -329,16 +329,16 @@ var manjian_info = {:json_encode($manjian_info.rule, JSON_UNESCAPED_UNICODE)};
 					<col width="27%">
 				</colgroup>
 				<thead>
-				<tr>
-					<th class="check-box">
-						<div class="layui-form">
-							<input type="checkbox" name="" lay-filter="selectAll" lay-skin="primary">
-						</div>
-					</th>
-					<th class="layui-elip">优惠券名称</th>
-					<th class="layui-elip">优惠金额/折扣</th>
-					<th class="layui-elip">结束时间</th>
-				</tr>
+					<tr>
+						<th class="check-box">
+							<div class="layui-form">
+								<input type="checkbox" name="" lay-filter="selectAll" lay-skin="primary">
+							</div>
+						</th>
+						<th class="layui-elip">优惠券名称</th>
+						<th class="layui-elip">优惠金额/折扣</th>
+						<th class="layui-elip">结束时间</th>
+					</tr>
 				</thead>
 			</table>
 			<table class="layui-table" id="goods" lay-skin="line" lay-size="lg">
@@ -349,52 +349,52 @@ var manjian_info = {:json_encode($manjian_info.rule, JSON_UNESCAPED_UNICODE)};
 					<col width="27%">
 				</colgroup>
 				<tbody class="goods-item">
-				{foreach $coupon_list.data as $coupon_list_k => $coupon_list_v}
-				<tr>
-					<td class="check-box">
+					{foreach $coupon_list.data as $coupon_list_k => $coupon_list_v}
+					<tr>
+						<td class="check-box">
 
-						<div class="layui-form">
-							{{# var a = {$coupon_list_v.coupon_type_id} }}
-							{{#  if($.inArray(a, d.coupon_id) != -1){  }}
-							<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary" checked>
-							{{#  }else{  }}
-							<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary">
-							{{#  }  }}
-							<input type="hidden" id="coupon_id" value="{$coupon_list_v.coupon_type_id}">
-						</div>
-					</td>
-					<td>
-						<div class="table-title">
-							<div class="title-pic">
-								{if condition="$coupon_list_v.image"}
-								<img src="{:img($coupon_list_v.image)}">
-								{else/}
-								<img src="__ROOT__/public/uniapp/game/coupon.png">
-								{/if}
+							<div class="layui-form">
+								{{# var a = {$coupon_list_v.coupon_type_id} }}
+								{{#  if($.inArray(a, d.coupon_id) != -1){  }}
+								<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary" checked>
+								{{#  }else{  }}
+								<input type="checkbox" name="" lay-filter="select{$coupon_list_k}" lay-skin="primary">
+								{{#  }  }}
+								<input type="hidden" id="coupon_id" value="{$coupon_list_v.coupon_type_id}">
 							</div>
-							<div class="title-content table-title-name">
-								<p class="multi-line-hiding">{$coupon_list_v.coupon_name}</p>
+						</td>
+						<td>
+							<div class="table-title">
+								<div class="title-pic">
+									{if condition="$coupon_list_v.image"}
+									<img src="{:img($coupon_list_v.image)}">
+									{else/}
+									<img src="__ROOT__/public/uniapp/game/coupon.png">
+									{/if}
+								</div>
+								<div class="title-content table-title-name">
+									<p class="multi-line-hiding">{$coupon_list_v.coupon_name}</p>
+								</div>
 							</div>
-						</div>
-					</td>
-					{if $coupon_list_v.type == 'reward'}
-					<td class="layui-elip coupon-money">{$coupon_list_v.money}元</td>
-					{else/}
-					<td class="layui-elip coupon-money">{$coupon_list_v.discount}折</td>
-					{/if}
-					{if $coupon_list_v.validity_type == 0}
-					<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
-					{elseif $coupon_list_v.validity_type == 1}
-					<td class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
-					{else/}
-					<td class="layui-elip coupon-end-time">长期有效</td>
-					{/if}
-					<input type="hidden" name="at_least" value="{$coupon_list_v.at_least}">
-					<input type="hidden" name="type" value="{$coupon_list_v.type}">
-					<input type="hidden" name="discount" value="{$coupon_list_v.discount}">
-					<input type="hidden" name="money" value="{$coupon_list_v.money}">
-				</tr>
-				{/foreach}
+						</td>
+						{if $coupon_list_v.type == 'reward'}
+						<td class="layui-elip coupon-money">{$coupon_list_v.money}元</td>
+						{else/}
+						<td class="layui-elip coupon-money">{$coupon_list_v.discount}折</td>
+						{/if}
+						{if $coupon_list_v.validity_type == 0}
+						<td class="layui-elip coupon-end-time">{:time_to_date($coupon_list_v.end_time)}</td>
+						{elseif $coupon_list_v.validity_type == 1}
+						<td class="layui-elip coupon-end-time">领取之日起{$coupon_list_v.fixed_term}天有效</td>
+						{else/}
+						<td class="layui-elip coupon-end-time">长期有效</td>
+						{/if}
+						<input type="hidden" name="at_least" value="{$coupon_list_v.at_least}">
+						<input type="hidden" name="type" value="{$coupon_list_v.type}">
+						<input type="hidden" name="discount" value="{$coupon_list_v.discount}">
+						<input type="hidden" name="money" value="{$coupon_list_v.money}">
+					</tr>
+					{/foreach}
 				</tbody>
 			</table>
 		</div>
@@ -436,6 +436,5 @@ var manjian_info = {:json_encode($manjian_info.rule, JSON_UNESCAPED_UNICODE)};
 		</td>
 	</tr>
 	{{# } }}
-
 </script>
 {/block}

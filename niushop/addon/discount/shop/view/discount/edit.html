@@ -11,7 +11,6 @@
 </style>
 {/block}
 {block name="main"}
-
 <div class="layui-form form-wrap">
 	<div class="layui-form-item">
 		<label class="layui-form-label"><span class="required">*</span>活动名称：</label>
@@ -42,8 +41,7 @@
 			</div>
 			<span class="layui-form-mid">-</span>
 			<div class="layui-input-inline len-mid end-time">
-				<input  type="text" id="end_time" lay-verify="required|time" name="end_time" value="{:date('Y-m-d H:i:s', $discount_info.end_time)}"
-						autocomplete="off" class="layui-input">
+				<input  type="text" id="end_time" lay-verify="required|time" name="end_time" value="{:date('Y-m-d H:i:s', $discount_info.end_time)}" autocomplete="off" class="layui-input">
 				<i class=" iconrili iconfont calendar"></i>
 			</div>
 		</div>
@@ -60,7 +58,6 @@
 		<button class="layui-btn" lay-submit lay-filter="save">保存</button>
 		<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
 	</div>
-
 
 	<!-- 操作 -->
 	<script type="text/html" id="operation">
@@ -84,7 +81,6 @@
 	</div>
 </script>
 
-
 <script type="text/html" id="discountPrice">
 	{{# if (d.is_select == 1){ }}
 	<input type="number" class="layui-input len-input discount_price" onchange="setGoodsSku('discount_price', {{d.sku_id}}, this)" value="{{d.discount_price}}" lay-verify="discount_price" min="0.00"/>
@@ -99,7 +95,6 @@
 	<button class="layui-btn layui-btn-primary" lay-event="discount-price">折扣价</button>
 </script>
 <script>
-
 	var goods_id = [], selectedGoodsId = [], sku_list = {:json_encode($discount_info.goods_sku, JSON_UNESCAPED_UNICODE)}
 	,info = {:json_encode($discount_info, JSON_UNESCAPED_UNICODE)};
 
@@ -219,7 +214,6 @@
 		renderTable(sku_list);
 		return false;
 	}
-
 
 	// 表格渲染
 	function renderTable(sku_list) {

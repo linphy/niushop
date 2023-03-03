@@ -43,6 +43,9 @@ class Pay
                 case 'pc' :
                     $trade_type = "NATIVE";
                     break;
+                case 'cashier':
+                    $trade_type = "NATIVE";
+                    break;
             }
             $params["trade_type"] = $trade_type;
             $pay_model            = new PayModel($is_weapp, $params['site_id']);

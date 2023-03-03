@@ -123,7 +123,6 @@ class CouponType extends BaseModel
 
         $res = model("promotion_coupon_type")->delete([ [ 'coupon_type_id', '=', $coupon_type_id ], [ 'site_id', '=', $site_id ] ]);
         if ($res) {
-
             model("promotion_coupon")->delete([ [ 'coupon_type_id', '=', $coupon_type_id ] ]);
         }
         $cron = new Cron();

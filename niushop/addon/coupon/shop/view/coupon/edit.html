@@ -15,25 +15,8 @@
 		padding: 0 20px;
 		position: relative;
 	}
-
-	.exchange-type:hover {
-		border: 1px solid #ff8143;
-	}
-
-	.exchange-selected {
-		border: 1px solid #ff8143!important;
-	}
-
-	.exchange-selected:after {
-		content: "";
-		display: inline-block;
-		width: 20px;
-		height: 20px;
-		background-image: url(__STATIC__/img/selected.png);
-		position: absolute;
-		bottom: 0;
-		right: 0;
-	}
+	.exchange-type i{position: absolute;bottom: -10px;right: -1px;display: none;}
+	.exchange-type.border-color i{display: block;}
 
 	.form-wrap {
 		position: relative;
@@ -190,8 +173,8 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">优惠券类型：</label>
 			<div class="layui-input-block">
-				<button class="layui-btn layui-btn-primary exchange-type {if $coupon_type_info.type == 'reward'} exchange-selected {/if}" data-status="reward">满减</button>
-				<button class="layui-btn layui-btn-primary exchange-type {if $coupon_type_info.type == 'discount'} exchange-selected {/if}" data-status="discount">折扣</button>
+				<button class="layui-btn layui-btn-primary exchange-type {if $coupon_type_info.type == 'reward'} border-color {/if}" data-status="reward">满减<i class="iconfont iconxuanzhong text-color"></i></button>
+				<button class="layui-btn layui-btn-primary exchange-type {if $coupon_type_info.type == 'discount'} border-color {/if}" data-status="discount">折扣<i class="iconfont iconxuanzhong text-color"></i></button>
 				<input type="hidden" name="type" value="{$coupon_type_info.type}">
 			</div>
 		</div>
@@ -284,7 +267,7 @@
 	</div>
 
 	<div class="layui-form-item">
-		<label class="layui-form-label img-upload-lable">优惠券图片：</label>
+		<label class="layui-form-label">优惠券图片：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
 				<div class="upload-img-box {notempty name=" $coupon_type_info['image']"}hover{/notempty}">
@@ -315,7 +298,6 @@
 			<p>建议尺寸：325*95像素，图片上传默认不限制大小</p>
 		</div>
 	</div>
-
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">有效期类型：</label>
@@ -359,12 +341,12 @@
 	{else /}
 	<div class="layui-form-item goods_list">
 	{/if}
-			<label class="layui-form-label"></label>
-			<div class="layui-input-block">
-				<table id="selected_sku_list"></table>
-				<button class="layui-btn" onclick="addGoods()">选择商品</button>
-				<span class="goods_num">已选商品（<span id="goods_num" class="text-color">{$coupon_type_info.goods_list_count}</span>）</span>
-			</div>
+		<label class="layui-form-label"></label>
+		<div class="layui-input-block">
+			<table id="selected_sku_list"></table>
+			<button class="layui-btn" onclick="addGoods()">选择商品</button>
+			<span class="goods_num">已选商品（<span id="goods_num" class="text-color">{$coupon_type_info.goods_list_count}</span>）</span>
+		</div>
 	</div>
 
 		<input type="hidden" name="goods_ids">
@@ -426,7 +408,6 @@
 		$('.validity-type').hide();
 		$('.validity-type-' + validity_type).show();
 
-		var submitRule;
 		var delRule, selectedGoodsId = [],
 			goods_id = [],
 			table;
@@ -497,7 +478,7 @@
 			d = d < 10 ? ('0' + d) : d;
 			var h = date.getHours();
 			var minute = date.getMinutes();
-			var second = date.getSeconds()
+			var second = date.getSeconds();
 			minute = minute < 10 ? ('0' + minute) : minute;
 			let time = y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
 			$('.time-aaa').html('有效期：' + time);
@@ -695,7 +676,7 @@
 				let new_goods_ids = [];
 				goods_list.forEach((item,i)=>{
 					new_goods_ids.push(item.goods_id)
-				})
+				});
 				data.field.goods_ids = new_goods_ids.join(',');
 
 				saveData = data;
@@ -716,8 +697,8 @@
 			};
 
 			$(".exchange-type").click(function() {
-				$(this).addClass("exchange-selected");
-				$(this).siblings("button").removeClass("exchange-selected");
+				$(this).addClass("border-color");
+				$(this).siblings("button").removeClass("border-color");
 
 				var type = $(this).attr('data-status');
 
@@ -828,7 +809,7 @@
 				if (id == goods_id) {
 					i = index;
 				}
-			})
+			});
 			goods_list.splice(i, 1);
 			renderTable(goods_list);
 
@@ -836,10 +817,10 @@
 				if (id == item) {
 					j = index;
 				}
-			})
+			});
 			selectedGoodsId.splice(j, 1);
 			goods_id = selectedGoodsId;
-			$("#goods_num").html(selectedGoodsId.length)
+			$("#goods_num").html(selectedGoodsId.length);
 			$("input[name='goods_ids']").val(goods_id.toString());
 		}
 

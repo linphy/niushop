@@ -32,8 +32,12 @@ class Coupon extends BaseModel
             6 => '活动奖励'
         ];
         $event = event('CouponGetType');
-        if (!empty($event)) $get_type = array_merge($get_type, ...$event);
-        if ($type) return $get_type[ $get_type ] ?? '';
+        if (!empty($event)) {
+            foreach ($event as $k => $v) {
+                $get_type[ array_keys($v)[ 0 ] ] = array_values($v)[ 0 ];
+            }
+        }
+        if ($type) return $get_type[ $type ] ?? '';
         else return $get_type;
     }
 
@@ -155,7 +159,8 @@ class Coupon extends BaseModel
                         'discount' => $coupon_type_info[ 'discount' ],
                         'discount_limit' => $coupon_type_info[ 'discount_limit' ],
                         'goods_ids' => $coupon_type_info[ 'goods_ids' ],
-                        'related_id' => $related_id
+                        'related_id' => $related_id,
+                        'end_time' => 0
                     ];
                     if ($coupon_type_info[ 'validity_type' ] == 0) {
                         $data[ 'end_time' ] = $coupon_type_info[ 'end_time' ];
@@ -172,7 +177,7 @@ class Coupon extends BaseModel
             if (empty($coupon_list)) return $this->error('', '没有可发放的优惠券');
 
             $res = model('promotion_coupon')->addList($coupon_list);
-            return $this->success($res, '发放成功');
+            return $this->success($res);
         } catch (\Exception $e) {
             return $this->error('', '发放失败');
         }
@@ -226,6 +231,17 @@ class Coupon extends BaseModel
     public function getCouponInfo($condition, $field)
     {
         $info = model("promotion_coupon")->getInfo($condition, $field);
+        return $this->success($info);
+    }
+
+    /**
+     * 获取优惠券数量
+     * @param $condition $coupon_code 优惠券编码
+     * @return array
+     */
+    public function getCouponCount($condition)
+    {
+        $info = model("promotion_coupon")->getCount($condition);
         return $this->success($info);
     }
 
@@ -308,9 +324,9 @@ class Coupon extends BaseModel
      * @param null $limit
      * @return array
      */
-    public function getCouponTypeList($condition = [], $field = true, $order = '', $limit = null, $alias = '')
+    public function getCouponTypeList($condition = [], $field = true, $order = '', $limit = null, $alias = '', $join = [])
     {
-        $list = model("promotion_coupon_type")->getList($condition, $field, $order, $alias, '', '', $limit);
+        $list = model("promotion_coupon_type")->getList($condition, $field, $order, $alias, $join, '', $limit);
         return $this->success($list);
     }
 
@@ -420,7 +436,6 @@ class Coupon extends BaseModel
         $res = model("promotion_coupon")->update([ 'state' => 3 ], [ [ 'state', '=', 1 ], [ 'end_time', '>', 0 ], [ 'end_time', '<=', time() ] ]);
         return $res;
     }
-
 
     /**
      * 核验会员是否还可以领用某一张优惠券

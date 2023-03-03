@@ -11,7 +11,6 @@
 namespace addon\memberconsume\event;
 
 use addon\memberconsume\model\Consume;
-use think\facade\Db;
 
 /**
  * 活动展示
@@ -73,7 +72,7 @@ class ShowPromotion
 
             $value = $config[ 'value' ];
             if ($value[ 'return_point_rate' ]) array_push($content, '消费返消费额' . $value[ 'return_point_rate' ] . '%积分');
-            if ($value[ 'return_growth_rate' ]) array_push($content, '消费返消费额' . $value[ 'return_point_rate' ] . '%成长值');
+            if ($value[ 'return_growth_rate' ]) array_push($content, '消费返消费额' . $value[ 'return_growth_rate' ] . '%成长值');
             if ($value[ 'coupon_list' ]) array_push($content, '消费送优惠券');
 
             return [

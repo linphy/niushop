@@ -2,7 +2,6 @@
 {block name="resources"}
 <style>
 	.layui-layout-admin .layui-body .body-content{min-height: initial;padding-top: 0;padding-bottom: 0;margin: 0;}
-	.form-wrap{margin-top: 0;}
 	.layui-form-label.mid{width: 100px;}
 	.layui-form-label.mid+.layui-input-block{margin-left: 100px;}
 	.new-mid{margin-left: -20px !important;}
@@ -19,7 +18,6 @@
 	.upload-img-block{width: 300px;height: 100px;}
 	.upload{top: 50% !important;height: 100px;}
 	.form-row{padding-top: 20px;}
-	.bg-color{margin-left: 800px;background: #ff6a00;}
 	.poster-tips{background: #fff;width: 280px;margin-left: 320px;padding: 20px 20px;border: 1px solid #e8e8e8;border-right: none;}
 	.set-tips{font-size: 16px;font-family: Microsoft YaHei;font-weight: bolder;color: #303133;line-height: 22px;}
 	.content{font-size: 12px;font-family: Microsoft YaHei;font-weight: 400;color: #909399;line-height: 22px;margin-top: 10px;}
@@ -37,7 +35,6 @@
 	.form-row{position: fixed;bottom: 0px;left: 180px;width: 89.7%;background: #fff;padding: 10px 0;}
 	.layui-colorpicker-main-input .layui-btn{padding: 0 10px;}
 	.circle{border-radius: 50%;}
-	.aaa{margin-top: 20px;}
 	.upload img{margin-top: 20px;}
 	.img_prev{margin-top: 0 !important;}
 	.layui-layout-admin.admin-style-2 .form-row{text-align: center;}
@@ -67,9 +64,7 @@
 
 <script type="text/html" id="poster_left">
 	<div class="poster-left">
-		<div class="poster-left-header">
-			基础设置
-		</div>
+		<div class="poster-left-header">基础设置</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label mid"><span class="required">*</span>海报名称</label>
 			<div class="layui-input-block mid">
@@ -78,7 +73,7 @@
 		</div>
 
 		<div class="layui-form-item">
-			<label class="layui-form-label img-upload-lable short-label mid"><span class="required">*</span>上传海报</label>
+			<label class="layui-form-label short-label mid"><span class="required">*</span>上传海报</label>
 			<div class="layui-input-block mid">
 				<div class="upload-img-block icon">
 					<div class="upload-img-box {{d.background ? 'hover' : ''}}" >
@@ -350,10 +345,9 @@
 	var poster_detail = JSON.parse('{:json_encode($template_info)}');
 
 	layui.use(['form', 'laytpl', 'colorpicker'], function() {
-		var form = layui.form,
-			laytpl = layui.laytpl,
-			colorpicker = layui.colorpicker,
-			repeat_flag = false; //防重复标识
+		form = layui.form;
+		laytpl = layui.laytpl;
+		colorpicker = layui.colorpicker;
 		form.render();
 
 		laytpl($("#poster_left").html()).render(poster_detail, function(html) {
@@ -361,8 +355,7 @@
 			form.render();
 			new Upload({
 				elem: '#posterImg',
-				data: {
-				},
+				data: {},
 				callback: function(res) {
 					if (res.code >= 0) {
 						$('.poster-right').css({

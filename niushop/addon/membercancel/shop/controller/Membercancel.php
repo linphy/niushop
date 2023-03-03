@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -31,36 +30,36 @@ class Membercancel extends BaseShop
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
 
-            $condition = [['site_id', '=', $this->site_id]];
+            $condition = [ [ 'site_id', '=', $this->site_id ] ];
 
             $search_text = input('search_text', '');
             $search_type = input('search_type', '');
             if (!empty($search_text)) {
                 $condition[] = [
-                    $search_type, 'like', '%'.$search_text.'%'
+                    $search_type, 'like', '%' . $search_text . '%'
                 ];
             }
             //状态
             $status = input('status', '');
             if ($status !== '') {
-                $condition[] = ['status', '=', $status];
+                $condition[] = [ 'status', '=', $status ];
             }
             //注销时间
             $start_time = input('start_time', '');
             $end_time = input('end_time', '');
             if ($start_time && $end_time) {
-                $condition[] = ['create_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
+                $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
             } elseif (!$start_time && $end_time) {
-                $condition[] = ['create_time', '<=', date_to_time($end_time)];
+                $condition[] = [ 'create_time', '<=', date_to_time($end_time) ];
 
             } elseif ($start_time && !$end_time) {
-                $condition[] = ['create_time', '>=', date_to_time($start_time)];
+                $condition[] = [ 'create_time', '>=', date_to_time($start_time) ];
             }
 
             $member_cancel_model = new MemberCancelModel();
             $list = $member_cancel_model->getMemberCancelPageList($condition, $page, $page_size);
             return $list;
-        }else{
+        } else {
 
             //筛选条件
             $search_type = [
@@ -79,19 +78,19 @@ class Membercancel extends BaseShop
      */
     public function auditPass()
     {
-        if(request()->isAjax()){
+        if (request()->isAjax()) {
 
-            $id = input('id','');
+            $id = input('id', '');
 
             $data = [
                 'id' => $id,
                 'site_id' => $this->site_id,
-                'audit_uid' => $this->user_info['uid'],
-                'audit_username' => $this->user_info['username']
+                'audit_uid' => $this->user_info[ 'uid' ],
+                'audit_username' => $this->user_info[ 'username' ]
             ];
 
             $member_cancel_model = new MemberCancelModel();
-            $res = $member_cancel_model -> memberCancelAuditPass($data);
+            $res = $member_cancel_model->memberCancelAuditPass($data);
             return $res;
         }
     }
@@ -101,20 +100,20 @@ class Membercancel extends BaseShop
      */
     public function auditRefuse()
     {
-        if(request()->isAjax()){
+        if (request()->isAjax()) {
 
-            $id = input('id','');
-            $reason = input('reason','');
+            $id = input('id', '');
+            $reason = input('reason', '');
             $data = [
                 'id' => $id,
                 'site_id' => $this->site_id,
-                'audit_uid' => $this->user_info['uid'],
-                'audit_username' => $this->user_info['username'],
+                'audit_uid' => $this->user_info[ 'uid' ],
+                'audit_username' => $this->user_info[ 'username' ],
                 'reason' => $reason
             ];
 
             $member_cancel_model = new MemberCancelModel();
-            $res = $member_cancel_model -> memberCancelAuditRefuse($data);
+            $res = $member_cancel_model->memberCancelAuditRefuse($data);
             return $res;
         }
     }
@@ -148,7 +147,7 @@ class Membercancel extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             //设置注册设置
-            $data = array(
+            $data = array (
                 'is_enable' => input('is_enable', 0),
                 'is_audit' => input('is_audit', 1),
             );
@@ -156,7 +155,7 @@ class Membercancel extends BaseShop
         } else {
             //获取注册设置
             $config_info = $config_model->getCancelConfig($this->site_id, 'shop');
-            $value = $config_info['data']['value'];
+            $value = $config_info[ 'data' ][ 'value' ];
 
             $this->assign('value', $value);
             $this->forthMenu();

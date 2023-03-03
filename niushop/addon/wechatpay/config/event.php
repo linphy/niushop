@@ -32,7 +32,11 @@ return [
         ],
         'TransferResult' => [
             'addon\wechatpay\event\TransferResult'
-        ]
+        ],
+        //付款码支付异步回调
+        'AuthcodePay'    => [
+            'addon\wechatpay\event\AuthcodePay'
+        ],
     ],
 
     'subscribe' => [

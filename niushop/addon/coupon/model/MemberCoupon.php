@@ -118,9 +118,10 @@ class MemberCoupon extends BaseModel
 
                     if ($coupon_type_info[ 'validity_type' ] == 0) {
                         $data[ 'end_time' ] = $coupon_type_info[ 'end_time' ];
-                    } else {
+                    } elseif ($coupon_type_info[ 'validity_type' ] == 1) {
                         $data[ 'end_time' ] = ( time() + $coupon_type_info[ 'fixed_term' ] * 86400 );
                     }
+
                     $res = model('promotion_coupon')->add($data);
                     if ($is_stock == 0) {
                         model('promotion_coupon_type')->setInc([ [ 'coupon_type_id', '=', $coupon_type_id ] ], 'lead_count');

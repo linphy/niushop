@@ -148,20 +148,30 @@ class Bundling extends BaseModel
         $bl_id = isset($check_condition[ 'bl_id' ]) ? $check_condition[ 'bl_id' ] : '';
         $data = model("promotion_bundling")->getInfo($condition, 'bl_id,bl_name, site_id, site_name, bl_price, goods_money, shipping_fee_type,status');
         if (!empty($data)) {
-
-            $field = 'ngs.sku_id,ngs.goods_id, ngs.sku_name, ngs.price, ngs.sku_image, ngs.stock,ngs.unit,pbg.promotion_price';
             $order = '';
             $alias = 'pbg';
+            $condition = [
+                [ 'pbg.bl_id', '=', $bl_id ],
+                [ 'ngs.is_delete', '=', 0 ]
+            ];
+
+            $field = 'ngs.sku_id,ngs.goods_id, ngs.sku_name, ngs.price, ngs.sku_image, ngs.stock,ngs.unit,pbg.promotion_price,g.sale_store';
             $join = [
                 [
                     'goods_sku ngs',
                     'pbg.sku_id = ngs.sku_id',
                     'inner'
                 ],
+                [
+                    'goods g',
+                    'g.goods_id = ngs.goods_id',
+                    'left'
+                ],
             ];
+            $bundling_goods = model("promotion_bundling_goods")->getList($condition, $field, $order, $alias, $join);
 
-            $data[ 'bundling_goods' ] = model("promotion_bundling_goods")->getList([ [ 'pbg.bl_id', '=', $bl_id ], [ 'ngs.is_delete', '=', 0 ] ], $field, $order, $alias, $join);
-            $data[ 'bundling_goods_count' ] = count($data['bundling_goods']);
+            $data[ 'bundling_goods' ] = $bundling_goods;
+            $data[ 'bundling_goods_count' ] = count($data[ 'bundling_goods' ]);
         }
         return $this->success($data);
     }
@@ -227,26 +237,26 @@ class Bundling extends BaseModel
     public function getBundlingGoodsNew($sku_id)
     {
         $goods_id = model("goods_sku")->getInfo([ [ 'sku_id', '=', $sku_id ] ], 'goods_id');
-        $sku_list_id = model("goods_sku")->getList([ [ 'goods_id', '=', $goods_id['goods_id'] ] ], 'sku_id');
+        $sku_list_id = model("goods_sku")->getList([ [ 'goods_id', '=', $goods_id[ 'goods_id' ] ] ], 'sku_id');
         $sku_id_arr = [];
-        foreach ($sku_list_id as $key => $val){
-            if($val['sku_id'] != $sku_id){
-                $sku_id_arr[] = $val['sku_id'];
+        foreach ($sku_list_id as $key => $val) {
+            if ($val[ 'sku_id' ] != $sku_id) {
+                $sku_id_arr[] = $val[ 'sku_id' ];
             }
         }
         $bundling_list1 = model("promotion_bundling_goods")->getList([ [ 'sku_id', '=', $sku_id ] ], 'bl_id');
         $bundling_list = model("promotion_bundling_goods")->getList([ [ 'sku_id', 'in', $sku_id_arr ] ], 'bl_id');
         $bl_id_arr1 = [];
-        if ($bundling_list1){
-            foreach ($bundling_list1 as $kes => $vas){
-                $bl_id_arr1[] = $vas['bl_id'];
+        if ($bundling_list1) {
+            foreach ($bundling_list1 as $kes => $vas) {
+                $bl_id_arr1[] = $vas[ 'bl_id' ];
             }
         }
 
         $bl_id_arr = [];
-        if($bundling_list){
-            foreach ($bundling_list as $ke => $va){
-                $bl_id_arr[] = $va['bl_id'];
+        if ($bundling_list) {
+            foreach ($bundling_list as $ke => $va) {
+                $bl_id_arr[] = $va[ 'bl_id' ];
             }
         }
 

@@ -99,14 +99,17 @@ class Weapp extends BaseModel
     {
         try {
             $result = $this->app->auth->session($param['code']);
-            if (isset($result['errcode'])) {
-                return $this->error('', $result['errmsg']);
+            if (isset($result['errcode']) && $result['errcode'] != 0) {
+                return $this->handleError($result['errcode'], $result['errmsg']);
             } else {
                 Cache::set('weapp_' . $result['openid'], $result);
                 unset($result['session_key']);
                 return $this->success($result);
             }
         } catch (\Exception $e) {
+            if (property_exists($e, 'formattedResponse')) {
+                return $this->handleError($e->formattedResponse['errcode'], $e->formattedResponse['errmsg']);
+            }
             return $this->error('', $e->getMessage());
         }
     }
@@ -142,9 +145,12 @@ class Weapp extends BaseModel
                 $filename .= $response->saveAs($param['qrcode_path'], $param['qrcode_name'] . '_' . $param['app_type'] . '.png');
                 return $this->success(['path' => $filename]);
             } else {
-                return $this->error($response, $response['errmsg']);
+                return $this->handleError($response['errcode'], $response['errmsg']);
             }
         } catch (\Exception $e) {
+            if (property_exists($e, 'formattedResponse')) {
+                return $this->handleError($e->formattedResponse['errcode'], $e->formattedResponse['errmsg']);
+            }
             return $this->error('', $e->getMessage());
         }
     }
@@ -384,10 +390,34 @@ class Weapp extends BaseModel
             $session_key = $cache['session_key'] ?? '';
             $result      = $this->app->encryptor->decryptData($session_key, $param['iv'], $param['encryptedData']);
             if (isset($result['errcode']) && $result['errcode'] != 0) {
-                return $this->error([], $result["errmsg"]);
+                return $this->handleError($result['errcode'], $result['errmsg']);
             }
             return $this->success($result);
         } catch (\Exception $e) {
+            if (property_exists($e, 'formattedResponse')) {
+                return $this->handleError($e->formattedResponse['errcode'], $e->formattedResponse['errmsg']);
+            }
+            return $this->error([], $e->getMessage());
+        }
+    }
+
+    /**
+     * 获取用户手机号
+     * @param $code
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getUserPhoneNumber($code){
+        try {
+            $result      = $this->app->auth->phoneNumber($code);
+            if (isset($result['errcode']) && $result['errcode'] != 0) {
+                return $this->handleError($result['errcode'], $result['errmsg']);
+            }
+            return $this->success($result['phone_info']);
+        } catch (\Exception $e) {
+            if (property_exists($e, 'formattedResponse')) {
+                return $this->handleError($e->formattedResponse['errcode'], $e->formattedResponse['errmsg']);
+            }
             return $this->error([], $e->getMessage());
         }
     }
@@ -497,5 +527,16 @@ class Weapp extends BaseModel
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage());
         }
+    }
+
+    /**
+     * 处理错误信息
+     * @param $errcode
+     * @param  string  $message
+     * @return array
+     */
+    public function handleError($errcode, $message = ''){
+        $error = require 'addon/weapp/config/weapp_error.php';
+        return $this->error([], $error[ $errcode ] ?? $message);
     }
 }

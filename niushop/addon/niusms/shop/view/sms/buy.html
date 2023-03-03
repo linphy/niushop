@@ -122,9 +122,7 @@
 			<div>
 				<input type="radio" name="invoice" value="0" title="无需发票" lay-filter="invoice" checked>
 				{foreach name="$sms_package_list['invoice_list']" item="vo"}
-				<input type="radio" name="invoice" value="{$vo['id']}" title="{$vo['name']}" lay-filter="invoice"
-					   data-rate="{$vo['rate']}" data-type="{$vo['type']}" data-invoice-type="{$vo['invoice_type']}"
-					   data-invoice-content="{$vo['invoice_content']}">
+				<input type="radio" name="invoice" value="{$vo['id']}" title="{$vo['name']}" lay-filter="invoice" data-rate="{$vo['rate']}" data-type="{$vo['type']}" data-invoice-type="{$vo['invoice_type']}" data-invoice-content="{$vo['invoice_content']}">
 				{/foreach}
 			</div>
 			<div class="layui-form-item">
@@ -282,7 +280,7 @@
 			required: function (value, item) {
 				var str = $(item).parent().parent().find("label").text().toString().replace("*", "").replace("：", "");
 				if (parseInt($("input[name='invoice']:checked").val())) {
-					if (value.trim() == "" || value == undefined || value == null) {
+					if (value == null || value.trim() == "" || value == undefined || value == null) {
 						return str + "不能为空";
 					}
 				}

@@ -86,9 +86,12 @@
 }
 
 .coupon-wrap .coupon-box.coupon-box-1 .coupon .coupon-btn {
-	bottom: 2px;
-	font-size: 12px;
-	line-height: 13px;
+	bottom: 50%;
+    font-size: 12px;
+    line-height: 13px;
+	transform: translateY(50%);
+	word-break: break-all;
+    width: 12px;
 }
 
 .coupon-box-1 .coupon-title {

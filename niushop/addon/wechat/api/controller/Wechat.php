@@ -11,8 +11,10 @@
 namespace addon\wechat\api\controller;
 
 use addon\wechat\model\Config as ConfigModel;
+use addon\wechat\model\Fans;
 use addon\wechat\model\Wechat as WechatModel;
 use app\api\controller\BaseApi;
+use app\model\member\Member as MemberModel;
 use think\facade\Cache;
 
 class Wechat extends BaseApi
@@ -106,7 +108,6 @@ class Wechat extends BaseApi
             Cache::set($key, $res[ "data" ][ "openid" ]);
             return $this->response($res);
         }
-
     }
 
     /**
@@ -145,5 +146,40 @@ class Wechat extends BaseApi
             }
         }
         return $this->response($this->error());
+    }
+
+    /**
+     * 获取公众号关注二维码
+     * @return false|string
+     */
+    public function followQrcode()
+    {
+        if (!in_array($this->params[ 'app_type' ], [ 'weapp', 'wechat' ])) return $this->response($this->error('', '该接口仅支持微信浏览器中调用'));
+
+        $token = $this->checkToken();
+        if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $member_model = new MemberModel();
+        $member_info = $member_model->getMemberInfo([ [ 'member_id', '=', $token[ 'data' ][ 'member_id' ], [ 'site_id', '=', $this->site_id ] ] ], 'member_id,wx_openid')[ 'data' ];
+        if (!empty($member_info) && !empty($member_info[ 'wx_openid' ])) {
+
+            $wechat_fans = ( new Fans() )->getFansInfo([ [ 'site_id', '=', $this->site_id ], [ 'openid', '=', $member_info[ 'wx_openid' ] ], [ 'is_subscribe', '=', 1 ] ], 'fans_id')[ 'data' ];
+            if (!empty($wechat_fans)) return $this->response($this->success());
+
+            if (!empty($wechat_fans[ 'fans_id' ])) {
+                $wechat_model = new WechatModel();
+                $res = $wechat_model->getFollowQrcode($wechat_fans[ 'fans_id' ]);
+                if ($res[ 'code' ] == 0) return $this->response($res);
+            }
+        }
+
+//        $fans_info = ( new MemberFans() )->getFansInfo([ [ 'fans_id', '=', $this->fans_id ] ], 'openid')[ 'data' ];
+//        $wechat_fans = ( new Fans() )->getFansInfo([ [ 'site_id', '=', $this->site_id ], [ 'is_subscribe', '=', 1 ], [ 'openid', '=', $fans_info[ 'openid' ] ] ], 'fans_id');
+//        if (!empty($wechat_fans[ 'data' ])) return $this->response($this->success());
+
+        $config_model = new ConfigModel();
+        $config_result = $config_model->getWechatConfig($this->site_id)[ 'data' ][ 'value' ];
+
+        return $this->response($this->success([ 'qrcode' => $config_result[ 'qrcode' ] ]));
     }
 }

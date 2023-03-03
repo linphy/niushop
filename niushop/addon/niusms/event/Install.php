@@ -20,7 +20,6 @@ class Install
      */
     public function handle()
     {
-
         return success();
     }
 }

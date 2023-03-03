@@ -153,13 +153,13 @@ layui.use(['form', 'laydate', 'laytpl','util'], function() {
 			} 
 			rule[limit] = {
 				limit: limit
-			}
+			};
 			if ($(this).find('[value="discount_money"]').is(':checked')) {
 				var discount_money = $(this).find('.discount-item.discount-money .layui-input').val();
 				if (!/[\S]+/.test(discount_money)) {
 					showErrMsg('请输入优惠金额', $(this).find('.discount-item.discount-money .layui-input'));
 					verify = false;
-					return false;	
+					return false;
 				}
 				discount_money = parseFloat(discount_money);
 				if (discount_money <= 0) {
@@ -227,9 +227,9 @@ layui.use(['form', 'laydate', 'laytpl','util'], function() {
 			if (rule[limit].discount_money == undefined && rule[limit].free_shipping == undefined && rule[limit].point == undefined && rule[limit].coupon == undefined) {
 				showErrMsg('请选择活动层级'+ (i + 1) +'的优惠内容');
 				verify = false;
-				return false;	
+				return false;
 			}
-		})
+		});
 		
 		if (!verify) return;
 
@@ -512,8 +512,7 @@ function addDiscountLevel(){
 									      	<th style="text-align:center;">操作</th>
 									    </tr> 
 								  	</thead>
-								  	<tbody>
-								  	</tbody>
+								  	<tbody></tbody>
 								</table>
 							</div>
 						</div>
@@ -577,13 +576,6 @@ $('body').on('click', '.discount-item .select-coupon', function(e){
         form.render();
     });
 
-
-	form.on('select(selectRule)', function(data){
-		console.log(data.elem); //得到select原始DOM对象
-		console.log(data.value); //得到被选中的值
-		console.log(data.othis); //得到美化后的DOM对象
-	});
-
 	/**
      * 监听每一行的多选按钮
      */
@@ -640,7 +632,7 @@ function deleteLevel(e){
 
 // 删除优惠券
 function deleteCoupon(e,index){
-	var index = $(e).parents('.level-item').index();
+	index = $(e).parents('.level-item').index();
 	coupon_id[index].splice(index, 1);
 	$(e).parents('tr').remove();
 }

@@ -32,8 +32,9 @@
                 <div class="misc">
                     <!-- 	   <a href="javascript:;" class="js-replay" nc-event="click" nc-action="emotion">表情</a> -->
                     <a href="javascript:;" class="js-replay" nc-event="click" nc-action="hyperlink">插入链接</a>
+                    <a href="javascript:;" class="image" onclick="material(5);">文本消息</a>
                     <!-- 		   <a href="javascript:;" class="js-replay" nc-event="click" nc-action="music">音乐</a> -->
-                    <!-- <a href="javascript:;" class="js-replay" onclick="material(1);">选择图文</a> -->
+                     <a href="javascript:;" class="js-replay" onclick="material(1);">选择图文</a>
                     <!--<div  class="others">-->
                         <!--<a href="javascript:;">其他<i class="caret"></i></a>-->
                         <!--<ul class="dropdown-menu">-->
@@ -236,6 +237,33 @@
         $('.complex-backdrop').css("display", "block");
         $("#add_reply").find("textarea[name='reply_content']").val(data.value[0].title);
         $("#hidden_reply_type").val('articles');
+        $("#hidden_media_id").val(data.media_id);
+    }
+
+    function chooseTextMessage(data){
+        var active_pic = '';
+        active_pic += '<div class="ng ng-single">';
+        active_pic += '<a href="javascript:;" class="close--circle js-delete-complex">×</a>';
+        active_pic += '<div class="ng-item">';
+        active_pic += '<span class="label label-success">文 本</span>';
+        active_pic += '<div class="ng-title">';
+        active_pic += '<a href="javascript:;" title="'+data.value.content+'">' + data.value.content + '</a>';
+        active_pic += '</div>';
+        // active_pic += '<a href="h" target="_blank" class="new-window" title="' + data.value.content + '"><span class="label label-success">' + data.value.content + '</span></a>';
+        active_pic += '</div>';
+        active_pic += '<div class="ng-item view-more">';
+        active_pic += '<a href="" target="_blank" class="clearfix new-window">';
+        active_pic += '<span class="pull-left">阅读全文</span>';
+        active_pic += '<span class="pull-right">&gt;</span>';
+        active_pic += '</a>';
+        active_pic += '</div>';
+        active_pic += '</div>';
+
+        $("#add_reply").find(".complex-content").html(active_pic);
+        $('.complex-backdrop').css("display", "block");
+        $("#add_reply").find("textarea[name='reply_content']").val(data.value.content);
+        $("#add_reply").find("span.pull-right").hide();
+        $("#hidden_reply_type").val('text');
         $("#hidden_media_id").val(data.media_id);
     }
 

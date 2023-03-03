@@ -65,13 +65,13 @@ class Sms extends BaseModel
     {
         $config_model = new ConfigModel();
         $sms_config = $config_model->getSmsConfig($site_id, $app_module);
-        $sms_config = $sms_config['data']['value'];
+        $sms_config = $sms_config[ 'data' ][ 'value' ];
         $tKey = time();
         $data = [
-            'username' => $sms_config['username'],
-            'password' => md5(md5($sms_config['password']) . $tKey),
+            'username' => $sms_config[ 'username' ],
+            'password' => md5(md5($sms_config[ 'password' ]) . $tKey),
             'tKey' => $tKey,
-            'sign' => input('signature', $sms_config['signature']),//短信签名
+            'sign' => input('signature', $sms_config[ 'signature' ]),//短信签名
         ];
         $url = 'https://api.mix2.zthysms.com/sms/v1/sign/query';
         $res = $this->sendSms($url, $data);
@@ -87,9 +87,9 @@ class Sms extends BaseModel
     {
         $url = $this->api . '/sms/createChildAccountNew';
         $res = $this->httpPost($url, $data);
-        if ($res['code'] == 0) {
+        if ($res[ 'code' ] == 0) {
             $config_model = new ConfigModel();
-            $data['signature'] = "";
+            $data[ 'signature' ] = "";
             $config_model->setSmsConfig($data, 1, $site_id, $app_module);
         }
         return $res;
@@ -106,13 +106,13 @@ class Sms extends BaseModel
     {
         $url = $this->api . '/sms/loginAccount';
         $res = $this->httpPost($url, $data);
-        if ($res['code'] == 0 && !empty($res['data'])) {
+        if ($res[ 'code' ] == 0 && !empty($res[ 'data' ])) {
             $config_model = new ConfigModel();
-            $res['data']['password'] = $data['password'];
-            $config_model->setSmsConfig($res['data'], 1, $site_id, $app_module);
+            $res[ 'data' ][ 'password' ] = $data[ 'password' ];
+            $config_model->setSmsConfig($res[ 'data' ], 1, $site_id, $app_module);
 
             // 清空短信模板配置信息
-            model('sms_template')->update(['tem_id' => 0, 'status' => 0, 'audit_status' => 0], [['site_id', '=', $site_id]]);
+            model('sms_template')->update([ 'tem_id' => 0, 'status' => 0, 'audit_status' => 0 ], [ [ 'site_id', '=', $site_id ] ]);
 
             // 刷新模板id
             $this->getSmsTemplatePageList($site_id, [], 1, 0, 'template_id desc', 'template_id,tem_id,template_name,audit_status');
@@ -227,7 +227,7 @@ class Sms extends BaseModel
     public function enableTemplate($template_id, $status, $sms_config, $site_id, $app_module)
     {
         //获取模板信息
-        $template_info = model('sms_template')->getInfo([['template_id', '=', $template_id]]);
+        $template_info = model('sms_template')->getInfo([ [ 'template_id', '=', $template_id ] ]);
         if (empty($template_info)) {
             return $this->error('', '模板不存在');
         }
@@ -240,31 +240,31 @@ class Sms extends BaseModel
         try {
 
             $signature_status = $this->querySignature($site_id, $app_module);
-            if ($signature_status['auditResult'] != 2) {
+            if ($signature_status[ 'auditResult' ] != 2) {
                 model('sms_template')->rollback();
-                return $this->error('', $signature_status['msg']);
+                return $this->error('', $signature_status[ 'msg' ]);
             }
 
-            if ($template_info['tem_id'] == 0) {
+            if ($template_info[ 'tem_id' ] == 0) {
 
                 $data = [
-                    'username' => $sms_config['username'],
-                    'signature' => $sms_config['signature'],
-                    'template_name' => $template_info['template_name'],
-                    'template_type' => $template_info['template_type'],
-                    'template_content' => $template_info['template_content'],
-                    'param_json' => $template_info['param_json']
+                    'username' => $sms_config[ 'username' ],
+                    'signature' => $sms_config[ 'signature' ],
+                    'template_name' => $template_info[ 'template_name' ],
+                    'template_type' => $template_info[ 'template_type' ],
+                    'template_content' => $template_info[ 'template_content' ],
+                    'param_json' => $template_info[ 'param_json' ]
                 ];
                 $url = $this->api . '/sms/addChildSmsTemplate';
                 $res = $this->httpPost($url, $data);
-                if ($res['code'] < 0) {
+                if ($res[ 'code' ] < 0) {
                     model('sms_template')->rollback();
                     return $res;
                 }
 
                 //修改状态
                 $template_data = [
-                    'tem_id' => $res['data']['temId'],
+                    'tem_id' => $res[ 'data' ][ 'temId' ],
                     'status' => $status,
                     'audit_status' => 1,
                     'update_time' => time()
@@ -277,19 +277,19 @@ class Sms extends BaseModel
                     'update_time' => time()
                 ];
             }
-            model('sms_template')->update($template_data, [['template_id', '=', $template_id]]);
+            model('sms_template')->update($template_data, [ [ 'template_id', '=', $template_id ] ]);
 
             //判断message信息是否存在
-            $message_info = model('message')->getInfo([['keywords', '=', $template_info['keywords']]]);
+            $message_info = model('message')->getInfo([ [ 'keywords', '=', $template_info[ 'keywords' ] ] ]);
             if ($message_info) {
                 $message_data = [
                     'sms_is_open' => $status
                 ];
-                model('message')->update($message_data, [['keywords', '=', $template_info['keywords']]]);
+                model('message')->update($message_data, [ [ 'keywords', '=', $template_info[ 'keywords' ] ] ]);
             } else {
                 $message_data = [
                     'site_id' => 1,
-                    'keywords' => $template_info['keywords'],
+                    'keywords' => $template_info[ 'keywords' ],
                     'sms_is_open' => $status
                 ];
                 model('message')->add($message_data);
@@ -314,7 +314,7 @@ class Sms extends BaseModel
     public function disableTemplate($template_ids, $status, $sms_config)
     {
         //获取模板信息
-        $template_list = model('sms_template')->getList([['template_id', 'in', $template_ids]]);
+        $template_list = model('sms_template')->getList([ [ 'template_id', 'in', $template_ids ] ]);
         if (empty($template_list)) {
             return $this->error('', '模板不存在');
         }
@@ -332,20 +332,20 @@ class Sms extends BaseModel
                 'update_time' => time()
             ];
 
-            model('sms_template')->update($template_data, [['template_id', 'in', $template_ids]]);
+            model('sms_template')->update($template_data, [ [ 'template_id', 'in', $template_ids ] ]);
 
             foreach ($template_list as $k => $v) {
                 //判断message信息是否存在
-                $message_info = model('message')->getInfo([['keywords', '=', $v['keywords']]]);
+                $message_info = model('message')->getInfo([ [ 'keywords', '=', $v[ 'keywords' ] ] ]);
                 if ($message_info) {
                     $message_data = [
                         'sms_is_open' => $status
                     ];
-                    model('message')->update($message_data, [['keywords', '=', $v['keywords']]]);
+                    model('message')->update($message_data, [ [ 'keywords', '=', $v[ 'keywords' ] ] ]);
                 } else {
                     $message_data = [
                         'site_id' => 1,
-                        'keywords' => $v['keywords'],
+                        'keywords' => $v[ 'keywords' ],
                         'sms_is_open' => $status
                     ];
                     model('message')->add($message_data);
@@ -370,7 +370,7 @@ class Sms extends BaseModel
      */
     public function modifyAuditStatus($audit_status, $template_id)
     {
-        $res = model('sms_template')->update(['audit_status' => $audit_status], [['template_id', '=', $template_id]]);
+        $res = model('sms_template')->update([ 'audit_status' => $audit_status ], [ [ 'template_id', '=', $template_id ] ]);
         return $this->success($res);
     }
 
@@ -402,23 +402,23 @@ class Sms extends BaseModel
 
         $config_model = new ConfigModel();
         $sms_config = $config_model->getSmsConfig($site_id, 'shop');
-        $sms_config = $sms_config['data']['value'];
+        $sms_config = $sms_config[ 'data' ][ 'value' ];
 
         $url = $this->api . '/sms/getChildSmsTemplateList';
-        $sms_template_list = $this->httpPost($url, ['username' => $sms_config['username']]);
-        $sms_template_list = $sms_template_list['data'];
+        $sms_template_list = $this->httpPost($url, [ 'username' => $sms_config[ 'username' ] ]);
+        $sms_template_list = $sms_template_list[ 'data' ];
 
         // 修改模板id、审核状态
         if (!empty($sms_template_list)) {
-            foreach ($res['list'] as $k => $v) {
-                if ($v['tem_id'] == 0 || $v['audit_status'] != 2) {
+            foreach ($res[ 'list' ] as $k => $v) {
+                if ($v[ 'tem_id' ] == 0 || $v[ 'audit_status' ] != 2) {
                     foreach ($sms_template_list as $ck => $cv) {
 
-                        if ($cv['temName'] == $v['template_name'] && $cv['auditResult'] == 2) {
-                            $res['list'][$k]['tem_id'] = $cv['temId'];
-                            $res['list'][$k]['audit_status'] = 2;
-                            $res['list'][$k]['status'] = 1;
-                            model('sms_template')->update(['tem_id' => $cv['temId'], 'audit_status' => 2, 'status' => 1], [['template_id', '=', $v['template_id']]]);
+                        if ($cv[ 'temName' ] == $v[ 'template_name' ] && $cv[ 'auditResult' ] == 2) {
+                            $res[ 'list' ][ $k ][ 'tem_id' ] = $cv[ 'temId' ];
+                            $res[ 'list' ][ $k ][ 'audit_status' ] = 2;
+                            $res[ 'list' ][ $k ][ 'status' ] = 1;
+                            model('sms_template')->update([ 'tem_id' => $cv[ 'temId' ], 'audit_status' => 2, 'status' => 1 ], [ [ 'template_id', '=', $v[ 'template_id' ] ] ]);
                         }
                     }
                 }
@@ -436,32 +436,32 @@ class Sms extends BaseModel
     public function send($params)
     {
         $config_model = new ConfigModel();
-        $sms_config = $config_model->getSmsConfig($params['site_id'], 'shop')['data'];
-        if ($sms_config['is_use']) {
-            $config = $sms_config['value'];
+        $sms_config = $config_model->getSmsConfig($params[ 'site_id' ], 'shop')[ 'data' ];
+        if ($sms_config[ 'is_use' ]) {
+            $config = $sms_config[ 'value' ];
             if (empty($config)) return $this->error([], "牛云短信尚未配置");
 
-            $sms_info = $params["message_info"]["sms_json_array"];//消息类型模板 短信模板信息
+            $sms_info = $params[ "message_info" ][ "sms_json_array" ];//消息类型模板 短信模板信息
             if (empty($sms_info)) return $this->error([], "消息模板尚未配置");
-            if ($sms_info['audit_status'] != 2) return $this->error([], "消息模板尚未审核通过");
+            if ($sms_info[ 'audit_status' ] != 2) return $this->error([], "消息模板尚未审核通过");
 
             $time = time();
             $data = [
-                'username' => $config['username'],
-                'password' => md5(md5($config['password']) . $time),
-                'signature' => $config['signature'],
+                'username' => $config[ 'username' ],
+                'password' => md5(md5($config[ 'password' ]) . $time),
+                'signature' => $config[ 'signature' ],
                 'tKey' => $time,
-                'tpId' => $sms_info['tem_id'],
+                'tpId' => $sms_info[ 'tem_id' ],
                 'records' => [
-                    'mobile' => $params['sms_account'],
-                    'tpContent' => $params['var_parse']
+                    'mobile' => $params[ 'sms_account' ],
+                    'tpContent' => $params[ 'var_parse' ]
                 ]
             ];
             $result = $this->sendSms('https://api.mix2.zthysms.com/v2/sendSmsTp', $data);
-            if ($result['code'] == 200) {
-                return $this->success(["addon" => "niusms", "addon_name" => "牛云短信", "content" => $sms_info["template_content"]]);
+            if ($result[ 'code' ] == 200) {
+                return $this->success([ "addon" => "niusms", "addon_name" => "牛云短信", "content" => $sms_info[ "template_content" ] ]);
             } else {
-                return $this->error([], $this->error_msg[$result['code']] ?? $result['msg']);
+                return $this->error([], $this->error_msg[ $result[ 'code' ] ] ?? $result[ 'msg' ]);
             }
         }
     }
@@ -481,14 +481,14 @@ class Sms extends BaseModel
         curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // 对认证证书来源的检查
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); // 从证书中检查SSL加密算法是否存在
-        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
+        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER[ 'HTTP_USER_AGENT' ]); // 模拟用户使用的浏览器
         curl_setopt($curl, CURLOPT_POST, true); // 发送一个常规的Post请求
 
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data)); // Post提交的数据包
         curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); // 获取的信息以文件流的形式返回
         curl_setopt($curl, CURLOPT_HEADER, false); //开启header
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array (
             'Content-Type: application/json; charset=utf-8',
         )); //类型为json
         //类型为json
@@ -499,10 +499,10 @@ class Sms extends BaseModel
         curl_close($curl); // 关键CURL会话
         $return = json_decode($result, true); // 返回数据
         if (!empty($return)) {
-            if ($return['code'] < 0) {
-                return $this->error($return['code'], $return['message']);
+            if ($return[ 'code' ] < 0) {
+                return $this->error($return[ 'code' ], $return[ 'message' ]);
             } else {
-                return $this->success($return['data']);
+                return $this->success($return[ 'data' ]);
             }
         } else {
             return $result;
@@ -516,14 +516,14 @@ class Sms extends BaseModel
         curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // 对认证证书来源的检查
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); // 从证书中检查SSL加密算法是否存在
-        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
+        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER[ 'HTTP_USER_AGENT' ]); // 模拟用户使用的浏览器
         curl_setopt($curl, CURLOPT_POST, true); // 发送一个常规的Post请求
 
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data)); // Post提交的数据包
         curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); // 获取的信息以文件流的形式返回
         curl_setopt($curl, CURLOPT_HEADER, false); //开启header
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array (
             'Content-Type: application/json; charset=utf-8',
         )); //类型为json
         //类型为json
@@ -535,9 +535,10 @@ class Sms extends BaseModel
         return json_decode($result, true); // 返回数据
     }
 
-    public function updateNiusmsTel($mobiles, $username){
+    public function updateNiusmsTel($mobiles, $username)
+    {
         $url = $this->api . '/sms/updateMemberNiusmsTel';
-        $res = $this->httpPost($url, ['mobiles' => $mobiles, "username" => $username]);
+        $res = $this->httpPost($url, [ 'mobiles' => $mobiles, "username" => $username ]);
         return $res;
     }
 

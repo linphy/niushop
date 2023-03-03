@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -29,22 +28,22 @@ class Signin extends BaseModel
     {
         if (!empty($data)) {
             $day = 0;
-            foreach ($data['reward'] as $k => $v) {
-                if ($v['day'] == 0) {
+            foreach ($data[ 'reward' ] as $k => $v) {
+                if ($v[ 'day' ] == 0) {
                     return $this->error('', '连续签到天数不能设置为0');
                 }
-                
+
                 if ($k != 0) {
 
-                    if ($v['day'] <= $day) {
+                    if ($v[ 'day' ] <= $day) {
                         return $this->error('', '连续签到天数不能相同或者小于上一个签到天数');
                     }
                 }
-                $day = $v['day'];
+                $day = $v[ 'day' ];
             }
         }
         $config = new ConfigModel();
-        $res = $config->setConfig($data, '会员签到奖励设置', $is_use, [['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
+        $res = $config->setConfig($data, '会员签到奖励设置', $is_use, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG' ] ]);
         return $res;
     }
 
@@ -54,9 +53,9 @@ class Signin extends BaseModel
     public function getConfig($site_id)
     {
         $config = new ConfigModel();
-        $res = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', 'shop'], ['config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG']]);
-        if (empty($res['data']['value'])) {
-            $res['data']['value'] = [
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', 'shop' ], [ 'config_key', '=', 'MEMBER_SIGNIN_REWARD_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
                 'cycle' => 30,
                 'reward' => [
                     [

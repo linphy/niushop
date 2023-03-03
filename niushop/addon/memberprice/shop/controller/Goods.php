@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -30,29 +29,29 @@ class Goods extends BaseShop
         $goods_id = input('goods_id');
         //商品信息
         $goods_model = new GoodsModel();
-        $goods_info  = $goods_model->getGoodsDetail($goods_id);
-        $this->assign('goods_info', $goods_info['data']);
+        $goods_info = $goods_model->getGoodsDetail($goods_id);
+        $this->assign('goods_info', $goods_info[ 'data' ]);
 
         //会员等级
         $member_level_model = new MemberLevel();
-        $condition          = [['site_id', '=', $this->site_id]];
-        $order              = 'level_type asc,growth asc';
-        $field              = '*';
-        $level_list         = $member_level_model->getMemberLevelList($condition, $field, $order);
-        $this->assign('level_list', $level_list['data']);
+        $condition = [ [ 'site_id', '=', $this->site_id ] ];
+        $order = 'level_type asc,growth asc';
+        $field = '*';
+        $level_list = $member_level_model->getMemberLevelList($condition, $field, $order);
+        $this->assign('level_list', $level_list[ 'data' ]);
 
         if (request()->isAjax()) {
 
             $goods_sku_model = new MemberPrice();
-            $data            = [
+            $data = [
                 'is_consume_discount' => input('is_consume_discount', 0),
-                'discount_config'     => input('discount_config', 0),
-                'discount_method'     => input('discount_method', ''),
+                'discount_config' => input('discount_config', 0),
+                'discount_method' => input('discount_method', ''),
             ];
-            $member_price    = input('member_price', '');
-            $goods_id        = input('goods_id');
-            $condition[]     = ['goods_id', '=', $goods_id];
-            $condition[]     = ['site_id', '=', $this->site_id];
+            $member_price = input('member_price', '');
+            $goods_id = input('goods_id');
+            $condition[] = [ 'goods_id', '=', $goods_id ];
+            $condition[] = [ 'site_id', '=', $this->site_id ];
 
             return $goods_sku_model->editGoodsMemberPrice($condition, $data, $member_price);
         }

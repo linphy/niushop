@@ -22,11 +22,11 @@ class Qrcode extends BaseModel
     /**
      * 添加微信二维码
      * @param $data
-     * @return int|string
+     * @return array
      */
     public function addQrcode($data)
     {
-        $data["update_time"] = time();
+        $data[ "update_time" ] = time();
         Cache::tag("wechat_qrcode")->clear();
         $result = model("wechat_qrcode")->add($data);
         return $this->success($result);
@@ -39,7 +39,7 @@ class Qrcode extends BaseModel
      */
     public function editQrcode($data, $condition)
     {
-        $data["update_time"] = time();
+        $data[ "update_time" ] = time();
         Cache::tag("wechat_qrcode")->clear();
         $result = model("wechat_qrcode")->update($data, $condition);
         return $this->success($result);
@@ -65,8 +65,8 @@ class Qrcode extends BaseModel
     {
         //将全部模板设置为非默认
         Cache::tag("wechat_qrcode")->clear();
-        model("wechat_qrcode")->update(["is_default" => 0], ['is_default' => 1]);
-        $res = model("wechat_qrcode")->update(["is_default" => 1], $condition);
+        model("wechat_qrcode")->update([ "is_default" => 0 ], [ 'is_default' => 1 ]);
+        $res = model("wechat_qrcode")->update([ "is_default" => 1 ], $condition);
         return $this->success($res);
     }
 
@@ -76,7 +76,7 @@ class Qrcode extends BaseModel
      */
     public function getQrcodeInfo($condition, $field = "*")
     {
-        $data  = json_encode([$condition, $field]);
+        $data = json_encode([ $condition, $field ]);
         $cache = Cache::get("wechat_qrcode_getQrcodeInfo_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -96,7 +96,7 @@ class Qrcode extends BaseModel
      */
     public function getQrcodePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
     {
-        $data  = json_encode([$condition, $page, $page_size, $order, $field]);
+        $data = json_encode([ $condition, $page, $page_size, $order, $field ]);
         $cache = Cache::get("wechat_qrcode_getQrcodePageList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
