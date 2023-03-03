@@ -28,30 +28,26 @@ class Adv extends BaseApi
      */
     public function detail()
     {
-        $keyword = isset($this->params['keyword']) ? $this->params['keyword'] : '';
-        if (empty($keyword)) {
-            return $this->response($this->error('', 'REQUEST_KEYWORD'));
-        }
-
+        $keyword = isset($this->params[ 'keyword' ]) ? $this->params[ 'keyword' ] : '';
         //广告位
         $adv_position_model = new AdvPositionModel();
         $adv_position_info = $adv_position_model->getAdvPositionInfo([
-            ['keyword', '=', $keyword],
-            ['site_id', '=', $this->site_id],
-            ['state', '=', 1],
-        ])['data'];
+            [ 'keyword', '=', $keyword ],
+            [ 'site_id', '=', $this->site_id ],
+            [ 'state', '=', 1 ],
+        ])[ 'data' ];
 
         //广告图
         $adv_list = [];
-        if(!empty($adv_position_info)){
+        if (!empty($adv_position_info)) {
             $adv_model = new AdvModel();
             $adv_list = $adv_model->getAdvList(
                 [
-                    ['ap_id', '=', $adv_position_info['ap_id']],
-                    ['state', '=', 1],
+                    [ 'ap_id', '=', $adv_position_info[ 'ap_id' ] ],
+                    [ 'state', '=', 1 ],
                 ],
                 $field = 'adv_id, adv_title, ap_id, adv_url, adv_image, slide_sort, price, background'
-            )['data'];
+            )[ 'data' ];
         }
 
         $res = [

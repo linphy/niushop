@@ -22,7 +22,7 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label img-upload-lable short-label"><span class="required">*</span>二维码图片：</label>
+        <label class="layui-form-label short-label"><span class="required">*</span>二维码图片：</label>
         <div class="layui-input-inline">
             <div class="upload-img-block square">
                 <div class="upload-img-box">
@@ -77,20 +77,20 @@
          * 表单验证
          */
         form.verify({
-            qr_name: function(value){
-                    if (!/[\S]+/.test(value)) {
-                        return '请输入二维码名称';
-                    }
-                    if (value < 0) {
-                        return '金额不能小于0!';
-                    }
+            qr_name: function (value) {
+                if (!/[\S]+/.test(value)) {
+                    return '请输入二维码名称';
+                }
+                if (value < 0) {
+                    return '金额不能小于0!';
+                }
             },
-            community_describe: function(value){
-                    if (!/[\S]+/.test(value)) {
-                        return '请输入社群描述';
-                    }
+            community_describe: function (value) {
+                if (!/[\S]+/.test(value)) {
+                    return '请输入社群描述';
+                }
             },
-            qr_img: function(value){
+            qr_img: function (value) {
                 if (!/[\S]+/.test(value)) {
                     return '请上传社群二维码';
                 }

@@ -15,12 +15,16 @@ use addon\fenxiao\model\FenxiaoApply;
 use addon\fenxiao\model\FenxiaoWithdraw;
 use addon\niusms\model\Config as NiuSmsConfig;
 use addon\niusms\model\Sms as NiuSms;
+use addon\weapp\model\Config as WeappConfigModel;
 use app\model\goods\Goods as GoodsModel;
+use app\model\member\Member;
 use app\model\member\Member as MemberModel;
 use app\model\order\OrderCommon;
+use app\model\shop\Shop as ShopModel;
 use app\model\system\Config as SystemConfig;
 use app\model\system\Promotion as PrmotionModel;
 use app\model\system\Stat;
+use app\model\web\Config as WebConfigModel;
 use Carbon\Carbon;
 use app\model\order\OrderRefund as OrderRefundModel;
 use think\facade\Cache;
@@ -28,6 +32,7 @@ use addon\wechat\model\Config as WechatConfig;
 use addon\weapp\model\Config as WeappConfig;
 use addon\alipay\model\Config as AlipayConfig;
 use addon\wechatpay\model\Config as WechatpayConfig;
+use app\model\order\Order;
 
 class Index extends BaseShop
 {
@@ -84,7 +89,42 @@ class Index extends BaseShop
 
             $this->assign('site_complete', !empty($this->shop_info[ 'logo' ]));
         }
+        $this->init();
+        $this->assign('img_extension_error', config('upload.driver') == 'imagick' && !extension_loaded('imagick'));
         return $this->fetch("index/index");
+    }
+
+    private function init()
+    {
+        $is_new_version = 0; // 检查小程序是否有新版本
+        if (addon_is_exit("weapp")) {
+            $weapp_config_model = new WeappConfigModel();
+            // 获取站点小程序版本信息
+            $version_info = $weapp_config_model->getWeappVersion($this->site_id);
+            $version_info = $version_info[ 'data' ][ 'value' ];
+            $currrent_version_info = config('info');
+            if (!isset($version_info[ 'version' ]) || ( isset($version_info[ 'version' ]) && $version_info[ 'version' ] != $currrent_version_info[ 'version_no' ] )) {
+                $is_new_version = 1;
+            }
+        }
+        $this->assign('is_new_version', $is_new_version);
+
+        $is_new_domain = 0; // 检查域名是否发生变化
+
+        $web_config_model = new WebConfigModel();
+        $shop_domain_config = $web_config_model->getShopDomainConfig()[ 'data' ][ 'value' ];
+        if ($shop_domain_config[ 'domain_name' ] != __ROOT__) {
+            $is_new_domain = 1;
+        }
+        $this->assign('is_new_domain', $is_new_domain);
+
+
+        //商城状态
+        $shop_model = new ShopModel();
+        $shop_status_result = $shop_model->getShopStatus($this->site_id, $this->app_module);
+
+        $shop_status = $shop_status_result[ 'data' ][ 'value' ];
+        $this->assign('shop_status', $shop_status);
     }
 
     /**
@@ -135,16 +175,19 @@ class Index extends BaseShop
             $stat_shop_model = new Stat();
             $today = Carbon::now();
             $yesterday = Carbon::yesterday();
-            $stat_today = $stat_shop_model->getStatShop($this->site_id, $today->year, $today->month, $today->day);
-            $stat_yesterday = $stat_shop_model->getStatShop($this->site_id, $yesterday->year, $yesterday->month, $yesterday->day);
-
+            $stat_today = $stat_shop_model->getShopStatSum($this->site_id, $today->startOfDay()->timestamp, $today->endOfDay()->timestamp);
+            $stat_yesterday = $stat_shop_model->getShopStatSum($this->site_id, $yesterday->startOfDay()->timestamp, $yesterday->endOfDay()->timestamp);
+            $order = new Order();
             //获取总数
             $shop_stat_sum = $stat_shop_model->getShopStatSum($this->site_id);
             $goods_model = new GoodsModel();
             $goods_sum = $goods_model->getGoodsTotalCount([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ]);
             $shop_stat_sum[ 'data' ][ 'goods_count' ] = $goods_sum[ 'data' ];
+            $shop_stat_sum[ 'data' ]['member_count'] = (new Member())->getMemberCount([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ])[ 'data' ];
+            $shop_stat_sum[ 'data' ][ 'order_pay_count' ] = $order->getOrderCount([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ], [ 'pay_status', '=', 1 ] ])['data'];
+            $shop_stat_sum[ 'data' ][ 'earnings_total_money' ] = $order->getOrderMoneySum([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ], [ 'pay_status', '=', 1 ] ], 'pay_money')['data'];
 
-            //日同比
+                //日同比
             $day_rate[ 'order_pay_count' ] = diff_rate($stat_today[ 'data' ][ 'order_pay_count' ], $stat_yesterday[ 'data' ][ 'order_pay_count' ]);
             $day_rate[ 'order_total' ] = diff_rate($stat_today[ 'data' ][ 'order_total' ], $stat_yesterday[ 'data' ][ 'order_total' ]);
             $day_rate[ 'earnings_total_money' ] = diff_rate($stat_today[ 'data' ][ 'earnings_total_money' ], $stat_yesterday[ 'data' ][ 'earnings_total_money' ]);
@@ -177,7 +220,7 @@ class Index extends BaseShop
         if (request()->isAjax()) {
             $goods_model = new GoodsModel();
             $order = new OrderCommon();
-            $waitpay = $order->getOrderCount([ [ 'order_status', '=', 0 ], [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ]);
+            $waitpay = $order->getOrderCount([ [ 'order_status', '=', 0 ], [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ], [ 'order_scene', '=', 'online' ] ]);
             $waitsend = $order->getOrderCount([ [ 'order_status', '=', 1 ], [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ]);
             $order_refund_model = new OrderRefundModel();
             $refund_num = $order_refund_model->getRefundOrderGoodsCount([

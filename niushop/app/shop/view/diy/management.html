@@ -46,9 +46,9 @@
 		border-bottom: 0;
 	}
 	.management-info .management-info-left .management-info-top{
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		/*display: flex;*/
+		/*justify-content: space-between;*/
+		/*align-items: center;*/
 		border-bottom: 1px solid #eee;
 		padding-bottom: 20px;
 		
@@ -59,19 +59,8 @@
 		display: flex;
 		align-items: center;
 	}
-	.management-info .management-info-top-title span{
-		font-size: 14px;
-		color: #999;
-	}
-	.management-info .item-wrap-share{
-		margin: 0 10px;
-	}
-	.management-info .management-info-top-title .button{
-		color: #fff;
-	}
-	.management-info .button a{
-		color: #fff;
-		display: inline-block;
+	.management-info .management-info-left .management-info-top .word-aux{
+		margin: 10px 0 0 0;
 	}
 	.management-info .management-info-box{
 		margin-top: 20px;
@@ -127,7 +116,7 @@
 		<div class="phone-wrap">
 			<div class="iframe-wrap">
 				{if !empty($qrcode_info) && $qrcode_info['url']}
-				<iframe id="iframe-management" src="{$qrcode_info['url']}?preview=1&time={:time()}" frameborder="0"></iframe>
+				<iframe id="iframe-management" src="{$qrcode_info['url']}" frameborder="0"></iframe>
 				{else/}
 				<div class="management-empty">
 					<img src="__STATIC__/img/wap_not_found.png" />
@@ -141,11 +130,11 @@
 			<div class="management-info-left-box">
 				<div class="management-info-top">
 					<div class="management-info-title">
-						<button type="button" class="layui-btn" onclick="toIndex()">首页装修</button>
+						<button type="button" class="layui-btn" onclick="toIndex()">装修</button>
 					</div>
-					<div class="management-info-top-title">
-						
-					</div>
+					{if $store_business == 'store'}
+					<p class="word-aux text-color">当前系统为连锁门店运营模式，首页按照门店页面装修</p>
+					{/if}
 				</div>
 				<div class="management-info-content">
 					<div class="management-info-box">
@@ -157,10 +146,9 @@
 							{notempty name="$qrcode_info"}
 							<img layer-src src="{:img($qrcode_info['img'])}" />
 							<div class="blockflex">
-<!--								ns.copy('management_link')-->
+
 								<a class="text-color" href="{:url('index/index/h5preview')}" target="_blank">访问店铺</a>
 							</div>
-							<input type="hidden" name="" id="management_link" value="{$qrcode_info['url']}" />
 							{/notempty}
 						</div>
 					</div>
@@ -185,7 +173,7 @@
 							<div class="management-info-box-title">微信公众号</div>
 							<div class="management-info-box-title-bottom">需要配置已认证的微信公众号，才能使用该功能哦！</div>
 						</div>
-						<div class="layui-btn button public-button"><a href="{:addon_url('wechat://shop/wechat/config')}" target="_blank">立即配置</a></div>
+						<button type="button" class="layui-btn jump-type" onclick="window.open('{:addon_url(\'wechat://shop/wechat/config\')}')">立即配置</button>
 					</div>
 					{/notempty}
 
@@ -209,7 +197,7 @@
 							<div class="management-info-box-title">微信小程序</div>
 							<div class="management-info-box-title-bottom">需要配置已认证的微信小程序，才能使用该功能哦！</div>
 						</div>
-						<div class="layui-btn button wx-button"><a href="{:addon_url('weapp://shop/weapp/config')}" target="_blank">立即配置</a></div>
+						<button type="button" class="layui-btn jump-type" onclick="window.open('{:addon_url(\'weapp://shop/weapp/config\')}')">立即配置</button>
 					</div>
 					{/notempty}
 				</div>
@@ -220,8 +208,10 @@
 {/block}
 {block name="script"}
 <script type="text/javascript">
+	var storeBusiness = '{$store_business}'; // 店铺运营模式
 	function toIndex(){
-		location.href = ns.url('shop/diy/index');
+		if(storeBusiness == 'shop') location.href = ns.url('shop/diy/index');
+		else if(storeBusiness == 'store') location.href = ns.url('store://shop/store/diy');
 	}
 </script>
 {/block}

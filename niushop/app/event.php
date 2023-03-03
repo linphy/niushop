@@ -55,7 +55,8 @@ return [
             'app\event\AddSiteDelivery',//增加默认配送管理数据
             'app\event\AddSiteExpressCompany',//增加默认物流公司数据
             'app\event\AddMemberClusterCronRefresh',//增加会员群体定时刷新任务
-            'app\event\AddSiteAdv'// 增加默认广告
+            'app\event\AddSiteAdv', // 增加默认广告
+            'app\event\AddStoreDiyView', //增加门店主页装修
         ],
         // 添加店铺演示数据
         'AddYanshiData' => [
@@ -67,7 +68,6 @@ return [
 
         //添加门店事件
         'AddStore' => [
-            'app\event\AddStoreDiyView',//增加默认自定义数据：门店主页
         ],
 
         /**
@@ -77,6 +77,9 @@ return [
         //添加会员账户数据
         'AddMemberAccount' => [
             'app\event\UpdateMemberLevel',//会员账户变化检测会员等级
+        ],
+        'MemberLevelUpdate' => [
+            'app\event\MemberLevelUpdate',//会员等级更新
         ],
         //会员行为事件
         'MemberAction' => [],
@@ -116,6 +119,7 @@ return [
 
         //订单创建后执行事件
         'OrderCreate' => [
+            'app\event\OrderCreate'
         ],
         'OrderPay' => [
             'app\event\ShopOrderCalc',  //订单支付后统计
@@ -174,9 +178,7 @@ return [
         'CronOrderUrgePayment' => [
             'app\event\CronOrderUrgePayment'
         ],
-        'CloseDeletePoint' => [
-            'app\event\CloseDeletePoint'
-        ],
+
 
         // 自定义组件
         'DiyViewUtils' => [
@@ -187,9 +189,6 @@ return [
         'DiyViewEdit' => [
             'app\event\DiyViewEdit',
         ],
-
-        // 扩展自定义图标库
-        'DiyIcon' => [],
 
         /**
          * 物流公司
@@ -282,6 +281,8 @@ return [
             'app\event\MessageCancelApply',
             // 会员账户变动通知通知
             'app\event\MessageAccountChangeNotice',
+            // 收银台会员验证验证码
+            'app\event\MessageCashierMemberVerifyCode',
         ],
         //发送短信
         'sendSms' => [
@@ -314,6 +315,11 @@ return [
         //商品下架
         'CronGoodsTimerOff' => [
             'app\event\CronGoodsTimerOff'
+        ],
+
+        'GoodsClass' => [
+            'app\event\GoodsClass',
+            'app\event\VirtualGoodsClass'
         ],
 
         //会员群体定时刷新

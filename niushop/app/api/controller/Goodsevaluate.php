@@ -6,7 +6,6 @@
  * Copy right 2015-2025 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  * @author : niuteam
  * @date : 2022.8.8
@@ -90,16 +89,21 @@ class Goodsevaluate extends BaseApi
             'goods_evaluate' => $goods_evaluate
         ];
         $goods_evaluate_model = new GoodsEvaluateModel();
-        $res = $goods_evaluate_model->evaluateAgain($data,$this->site_id);
+        $res = $goods_evaluate_model->evaluateAgain($data, $this->site_id);
         return $this->response($res);
     }
 
     /**
      * 基础信息
+     * @param int $id
+     * @return false|string
      */
-    public function firstinfo()
+    public function firstinfo($id = 0)
     {
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        if (!empty($id)) {
+            $goods_id = $id;
+        }
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }
@@ -109,7 +113,9 @@ class Goodsevaluate extends BaseApi
             [ 'is_audit', '=', 1 ],
             [ 'goods_id', '=', $goods_id ]
         ];
-        $info = $goods_evaluate_model->getSecondEvaluateInfo($condition);
+        $field = 'evaluate_id,content,images,explain_first,member_name,member_headimg,is_anonymous,again_content,again_images,again_explain,create_time,again_time,scores';
+        $order = "create_time desc";
+        $info = $goods_evaluate_model->getSecondEvaluateInfo($condition, $field, $order);
         return $this->response($info);
     }
 
@@ -121,17 +127,17 @@ class Goodsevaluate extends BaseApi
         $page = isset($this->params[ 'page' ]) ? $this->params[ 'page' ] : 1;
         $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
-        $explain_type = empty($this->params[ 'explain_type' ]) ? '': $this->params[ 'explain_type' ];
+        $explain_type = empty($this->params[ 'explain_type' ]) ? '' : $this->params[ 'explain_type' ];
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }
         $goods_evaluate_model = new GoodsEvaluateModel();
-        if(!empty($explain_type)){
-            $condition[] = ['explain_type','=',$explain_type];
+        if (!empty($explain_type)) {
+            $condition[] = [ 'explain_type', '=', $explain_type ];
         }
-        $condition[] = ['is_show','=',1];
-        $condition[] = ['is_audit','=',1];
-        $condition[] = ['goods_id','=',$goods_id];
+        $condition[] = [ 'is_show', '=', 1 ];
+        $condition[] = [ 'is_audit', '=', 1 ];
+        $condition[] = [ 'goods_id', '=', $goods_id ];
 //        $condition = [
 //            [ 'is_show', '=', 1 ],
 //            [ 'is_audit', '=', 1 ],
@@ -144,32 +150,33 @@ class Goodsevaluate extends BaseApi
     /**
      * 获取评价 1好 2中 3差
      */
-    public function getGoodsEvaluate(){
+    public function getGoodsEvaluate()
+    {
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }
         $goods_evaluate_model = new GoodsEvaluateModel();
-        $condition[] = ['is_show','=',1];
-        $condition[] = ['is_audit','=',1];
-        $condition[] = ['goods_id','=',$goods_id];
+        $condition[] = [ 'is_show', '=', 1 ];
+        $condition[] = [ 'is_audit', '=', 1 ];
+        $condition[] = [ 'goods_id', '=', $goods_id ];
         $list = $goods_evaluate_model->getEvaluateList($condition);
         $haoping = 0;
         $zhongping = 0;
         $chaping = 0;
-        if(!empty($list['data'])){
-            foreach($list['data'] as $k=>$v){
-                   if($v['explain_type']== 1 ){
-                       $haoping+=1;
-                   }else if($v['explain_type']== 2 ){
-                       $zhongping+=1;
-                   }else{
-                       $chaping+=1;
-                   }
+        if (!empty($list[ 'data' ])) {
+            foreach ($list[ 'data' ] as $k => $v) {
+                if ($v[ 'explain_type' ] == 1) {
+                    $haoping += 1;
+                } else if ($v[ 'explain_type' ] == 2) {
+                    $zhongping += 1;
+                } else {
+                    $chaping += 1;
+                }
             }
         }
         $data = [
-            'total' => count($list['data']),
+            'total' => count($list[ 'data' ]),
             'haoping' => $haoping,
             'zhongping' => $zhongping,
             'chaping' => $chaping
@@ -187,6 +194,29 @@ class Goodsevaluate extends BaseApi
         //订单评价设置
         $res = $order_evaluate_config = $config_model->getOrderEvaluateConfig($this->site_id, $this->app_module);
         return $this->response($this->success($res[ 'data' ][ 'value' ]));
+    }
+
+    /**
+     * 评论数量
+     * @param int $id
+     * @return false|string
+     */
+    public function count($id = 0)
+    {
+        $goods_id = $this->params[ 'goods_id' ] ?? 0;
+        if (!empty($id)) {
+            $goods_id = $id;
+        }
+        if (empty($goods_id)) {
+            return $this->response($this->error('', 'REQUEST_GOODS_ID'));
+        }
+        $goods_evaluate_model = new GoodsEvaluateModel();
+        $condition[] = [ 'is_show', '=', 1 ];
+        $condition[] = [ 'is_audit', '=', 1 ];
+        $condition[] = [ 'goods_id', '=', $goods_id ];
+        $count = $goods_evaluate_model->getEvaluateCount($condition);
+        return $this->response($count);
+
     }
 
 }

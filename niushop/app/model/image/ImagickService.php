@@ -42,10 +42,26 @@ class ImagickService
     {
     }
 
+
+    public function isBinary($data)
+    {
+        if (is_string($data)) {
+            $mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $data);
+            return (substr($mime, 0, 4) != 'text' && $mime != 'application/x-empty');
+        }
+
+        return false;
+    }
+
     // 载入图像
     public function open($path)
     {
-        $this->image = new \Imagick($path);
+        if($this->isBinary($path)){
+            $this->image = new \Imagick();
+            $this->image->readImageBlob($path);
+        }else{
+            $this->image = new \Imagick($path);
+        }
 
         if ($this->image) {
             $this->type = strtolower($this->image->getImageFormat());
@@ -57,7 +73,11 @@ class ImagickService
     }
 
     public function getImageParam(){
-        $size = $this->image->getImagePage();
+//        $size = $this->image->getImagePage();
+        $size = array(
+            'width' => $this->image->getImageWidth(),
+            'height' => $this->image->getImageHeight(),
+        );
         return $size;
     }
     /**
@@ -574,6 +594,7 @@ class ImagickService
 
             $draw->setFillColor($style ['fill_color']);
 
+        $draw->setTextAlignment( 2 );
         if (isset ($style ['under_color']))
 
             $draw->setTextUnderColor($style ['under_color']);
@@ -592,20 +613,19 @@ class ImagickService
     }
 
     // 保存到指定路径
-    public function save_to($path)
+    public function save_to($path, $compress = 60)
     {
         //压缩图片质量
-        $this->image->setImageFormat('JPEG');
+//        $this->image->setImageFormat('JPEG');
 
         $this->image->setImageCompression(\Imagick::COMPRESSION_JPEG);
 
-        $a = $this->image->getImageCompressionQuality() * 0.60;
-
-        if ($a == 0) {
-            $a = 60;
-
-        }
-        $this->image->setImageCompressionQuality($a);
+//        $compress = $this->image->getImageCompressionQuality() * 0.60;
+//
+//        if ($compress == 0) {
+//            $compress = 60;
+//        }
+        $this->image->setImageCompressionQuality($compress);
         $this->image->stripImage();
         if ($this->type == 'gif') {
             $this->image->writeImages($path, true);

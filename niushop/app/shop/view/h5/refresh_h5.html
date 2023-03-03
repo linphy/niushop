@@ -154,7 +154,7 @@
             var desc = $(data.elem).attr("data-desc");
             $(".js-desc").text(desc);
 			refreshArea(h5Popup)
-        })
+        });
 
         form.verify({
             domain : function(value, item) {
@@ -203,7 +203,6 @@
             success: function(res){
                 repeat_flag = false;
                 layer.msg(res.message);
-				location.reload()
             }
         });
     }

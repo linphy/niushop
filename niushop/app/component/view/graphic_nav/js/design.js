@@ -132,7 +132,7 @@ Vue.component("graphic-nav-list", {
 		};
 
 		this.list.forEach(function (e, i) {
-			e.id = ns.gen_non_duplicate(6);
+			if(!e.id ) e.id = ns.gen_non_duplicate(6);
 		});
 		this.$parent.data.list = this.list;
 
@@ -175,9 +175,20 @@ Vue.component("graphic-nav-list", {
 		addNav() {
 			this.list.push({
 				"title": "",
+				"icon": "",
 				"imageUrl": "",
-				"iconType": "icon",
-				"style": '',
+				"iconType": "img",
+				"style": {
+					"fontSize": "60",
+					"iconBgColor": [],
+					"iconBgColorDeg": 0,
+					"iconBgImg": "",
+					"bgRadius": 0,
+					"iconColor": [
+						"#000000"
+					],
+					"iconColorDeg": 0
+				},
 				"link": {
 					"name": ""
 				},
@@ -187,10 +198,6 @@ Vue.component("graphic-nav-list", {
 					"textColor": "#FFFFFF",
 					"bgColorStart": "#F83287",
 					"bgColorEnd": "#FE3423"
-				},
-				"iconfont": {
-					"value": "",
-					"color": ""
 				},
 				id: ns.gen_non_duplicate(6)
 			});

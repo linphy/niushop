@@ -86,7 +86,7 @@
 					{{# }else{ }}
 						<span class="layui-tree-iconClick"><i class="layui-tree-iconArrow layui-hide"></i></span>
 					{{# } }}
-					<div class="layui-tree-txt {{key == 0 ? 'selected text-color' : ''}}" onclick="switchGroup(this)" data-id="{{d[key].album_id}}" data-name="{{d[key].album_name}}">
+					<div class="layui-tree-txt {{key == 0 ? 'selected text-color' : ''}}" onclick="switchGroup(this)" data-id="{{ d[key].album_id }}" data-album="{{ d[key].child ? d[key].child.toString() : d[key].album_id}}" data-name="{{d[key].album_name}}">
 						<span>{{d[key].album_name}}</span>
 						<span class="num">{{d[key].num}}</span>
 					</div>
@@ -99,7 +99,7 @@
 					<div class="layui-tree-entry">
 						<div class="layui-tree-main">
 							<span class="layui-tree-iconClick"><i class="layui-tree-iconArrow layui-hide"></i></span>
-							<div class="layui-tree-txt" onclick="switchGroup(this)" data-id="{{d[key].child_list[i]['album_id']}}" data-name="{{d[key].child_list[i]['album_name']}}">
+							<div class="layui-tree-txt" onclick="switchGroup(this)" data-id="{{d[key].child_list[i]['album_id']}}" data-album="{{d[key].child_list[i]['album_id']}}" data-name="{{d[key].child_list[i]['album_name']}}">
 								<span>{{d[key].child_list[i]['album_name']}}</span>
 								<span class="num">{{d[key].child_list[i]['num']}}</span>
 							</div>
@@ -147,7 +147,7 @@
 			</ul>
 		</div>
 		<div class="form-row sm">
-			<button class="layui-btn layui-btn-disabled" disabled="disabled" onclick="submitOne()"  id="chooseVideoAction">提交</button>
+			<button class="layui-btn layui-btn-disabled" disabled="disabled" onclick="submitVideoLimit()"  id="chooseVideoAction">提交</button>
 			<button class="layui-btn layui-btn-primary" onclick="back()">返回</button>
 		</div>
 	</div>
@@ -184,7 +184,7 @@
 				<img layer-src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000), 'big') }}" src="{{ ns.img(item.pic_path + '?time=' + parseInt(new Date().getTime()/1000), 'small') }}" alt="{{item.pic_name}}">
 			{{# } }}
 			{else if($type == 'video')}
-				<video src="{{ ns.img(item.pic_path) }}" controls alt="{{item.pic_name}}"></video>
+				<video src="{{ ns.img(item.pic_path) }}" controls></video>
 			{/if}
 		</div>
         <div class="layui-form album-img-select">
@@ -389,7 +389,7 @@
 								//追加预览图片
 								var html = '';
 								html += '<li class="multuple-list-img upload-wrap" index="' + index + '">';
-									html += '<img class="multuple-list-image" src="' + result + '" alt="' + file.name + '">';
+									html += '<img layer-src class="multuple-list-image" src="' + result + '" alt="' + file.name + '">';
 									html += '<span class="upload-close-modal"  id="upload_img_' + index + '">×</span>';
 									html += '<div class="upload-image-curtain">50%</div>';
 									html += '<div class="tips"></div>';
@@ -410,6 +410,8 @@
 								if ($(".multuple-list li").length > 1) {
 									$("#chooseListAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
 								}
+
+								loadImgMagnify();
 
 							});
 						},
@@ -455,18 +457,18 @@
 	/**
 	 * 视频上传
 	 */
-	function uploadVideo(){
-		var imageArray=1;
-		laytpl($("#video_html").html()).render({}, function(html) {
+	function uploadVideo() {
+		var imageArray = 1;
+		laytpl($("#video_html").html()).render({}, function (html) {
 			layer_one = layer.open({
 				type: 1,
 				area: ['580px', '430px'],
 				title: '本地上传',
 				content: html,
-				cancel: function() {
+				cancel: function () {
 					$("#chooseVideoAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 				},
-				success: function(res) {
+				success: function (res) {
 					//上传视频
 					upload.render({
 						elem: '#VideoUpload',
@@ -558,29 +560,143 @@
 		$(".upload-image-curtain").css('display','block').text('等待中')
 		// var image_box = $(".upload-wrap").parent().find(".upload-image-curtain");
 	}
-	
+
+
+	// 上传视频是禁止操作
+	function submitVideoLimit(){
+		$("#chooseVideoAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled","disabled");
+		$(".upload-image-curtain").css('display','block').text('等待中')
+		// var image_box = $(".upload-wrap").parent().find(".upload-image-curtain");
+	}
 	function modifyFile(data) {
-		laytpl($("#modify_file_html").html()).render({}, function(html) {
+		if('{$type}' == 'img'){
+
+			laytpl($("#modify_file_html").html()).render({}, function(html) {
+				layer_one = layer.open({
+					type: 1,
+					area: ['580px', '430px'],
+					title: '替换照片',
+					content: html,
+					cancel: function() {
+						$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
+					},
+					success: function(res) {
+						//上传图片
+						upload.render({
+							elem: '#modifyFile',
+							url: ns.url("shop/upload/modifyFile"),
+							data: {
+								album_id: album_id,
+								pic_id: $(data).attr('data-id')
+							},
+							multiple: false,
+							auto: false,
+							bindAction: '#modifyFileAction',
+							choose: function(obj) {
+								//将每次选择的文件追加到文件队列
+								var files = this.files = obj.pushFile();
+								//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+								obj.preview(function(index, file, result) {
+									//追加预览图片
+									var html = '';
+									html += '<li class="multuple-list-img upload-wrap" index="' + index + '">';
+									html += '<img src="' + result + '" alt="' + file.name + '">';
+									html += '<span class="upload-close-modal"  id="upload_img_' + index + '">×</span>';
+									html += '<div class="upload-image-curtain">50%</div>';
+									html += '<div class="tips"></div>';
+									html += '</li>';
+									$(".multuple-list").prepend(html);
+
+									//删除预览图片
+									$("#upload_img_" + index).bind("click", function() {
+										delete files[index];
+										delete picture_arr[index]; //删除所选队列
+										$(this).parent('.upload-wrap').remove();
+
+										// uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+
+										//禁止点击
+										if ($(".multuple-list li").length <= 1) {
+											$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
+											//未选择图片时，显示添加按钮
+											$("#modifyFile").show();
+										}
+
+									});
+
+									//禁止点击
+									if ($(".multuple-list li").length > 1) {
+										$("#modifyFileAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
+										//隐藏添加按钮，仅替换一张图片
+										$("#modifyFile").hide();
+									}
+								});
+							},
+							before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+								$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled","disabled");
+							},
+							done: function(res, index) {
+								picture_arr.push(res.data);
+								var image_box = $(".upload-wrap[index='" + index + "']").parent().find(".upload-image-curtain");
+								var image_tips = $(".upload-wrap[index='" + index + "']").parent().find(".tips");
+								image_box.text("50%");
+								image_box.show();
+								if (res.code >= 0) {
+									setTimeout(function() {
+										image_box.text("100%");
+									}, 500);
+									setTimeout(function() {
+										getFileAlbumList(1, limit);
+										layer.close(layer_one);
+									}, 1000);
+									return delete this.files[index]; //删除文件队列已经上传成功的文件
+								} else {
+									setTimeout(function() {
+										image_box.text("上传失败");
+										image_tips.text(res.message);
+										layer.close(layer_one);
+									}, 500);
+
+								}
+							},
+							allDone: function(obj){ //当文件全部被提交后，才触发
+								$("#modifyFileAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
+							}
+						});
+
+					}
+				})
+			});
+		}else{
+			modifyVideoFile(data);
+		}
+
+	}
+
+	function modifyVideoFile(data) {
+		laytpl($("#video_html").html()).render({}, function(html) {
 			layer_one = layer.open({
 				type: 1,
-				area: ['580px', '500px'],
-				title: '替换图片',
+				area: ['580px', '430px'],
+				title: '替换视频',
 				content: html,
 				cancel: function() {
-					$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
+					$("#chooseVideoAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 				},
 				success: function(res) {
 					//上传图片
 					upload.render({
-						elem: '#modifyFile',
-						url: ns.url("shop/upload/modifyFile"),
+						elem: '#VideoUpload',
+						url: ns.url("shop/upload/modifyVideoFile"),
 						data: {
 							album_id: album_id,
 							pic_id: $(data).attr('data-id')
 						},
-						multiple: true,
+						multiple: false,
 						auto: false,
-						bindAction: '#modifyFileAction',
+						accept: 'video',
+						size: 50 * 1024,
+						bindAction: '#chooseVideoAction',
 						choose: function(obj) {
 							//将每次选择的文件追加到文件队列
 							var files = this.files = obj.pushFile();
@@ -589,7 +705,7 @@
 								//追加预览图片
 								var html = '';
 								html += '<li class="multuple-list-img upload-wrap" index="' + index + '">';
-								html += '<img src="' + result + '" alt="' + file.name + '">';
+								html += '<video class="multuple-list-image" src="' + result + '" alt="' + file.name + '"></video>';
 								html += '<span class="upload-close-modal"  id="upload_img_' + index + '">×</span>';
 								html += '<div class="upload-image-curtain">50%</div>';
 								html += '<div class="tips"></div>';
@@ -606,7 +722,7 @@
 
 									//禁止点击
 									if ($(".multuple-list li").length <= 1) {
-										$("#modifyFileAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
+										$("#chooseVideoAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 										//未选择图片时，显示添加按钮
 										$("#modifyFile").show();
 									}
@@ -615,7 +731,7 @@
 
 								//禁止点击
 								if ($(".multuple-list li").length > 1) {
-									$("#modifyFileAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
+									$("#chooseVideoAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
 									//隐藏添加按钮，仅替换一张图片
 									$("#modifyFile").hide();
 								}
@@ -663,7 +779,7 @@
 			dataType: "JSON",
 			async: false,
 			data: {
-				album_id,
+				album_id: $('.album-list .layui-tree-txt.selected').attr('data-album'),
 				pic_name: $(".album-img-sreach").val(),
 				limit,
 				page
@@ -725,7 +841,7 @@
 					$(".album-list ul").html(html);
 				});
 				if(albumList.length) {
-					album_id = albumList[0]['album_id'];
+					album_id = albumList[0].child ? albumList[0].child.toString() : albumList[0]['album_id'];
 					album_name = albumList[0]['album_name'];
 					getFileAlbumList(1, limit); //图片加载
 				}
@@ -860,9 +976,10 @@
 	var flag_modify_pic;
 
 	function modifyImgName(data) {
+		var type = '{$type}' == 'img' ? '图片' : '视频';
 		layer.prompt({
 			formType: 3,
-			title: '修改图片名称',
+			title: '修改' + type + '名称',
 			area: ["640px"],
 			value: $(data).attr('data-pic-name'),
 		}, function(value) {

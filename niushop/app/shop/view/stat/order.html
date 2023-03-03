@@ -87,8 +87,17 @@
 			<div class="data-item" data-value="order_pay_money">
 				<div class="box">
 					<div class="title">
-						<span class="title-text">订单收入</span>（元）
-						<span class="iconfont iconwenhao js-prompt-top" data-tips="统计时间内，订单的支付金额的总额"></span>
+						<span class="title-text">商城订单</span>（元）
+						<span class="iconfont iconwenhao js-prompt-top" data-tips="统计时间内，商城订单的支付金额的总额"></span>
+					</div>
+					<div class="value" data-type="money">0.00</div>
+				</div>
+			</div>
+			<div class="data-item" data-value="cashier_order_pay_money">
+				<div class="box">
+					<div class="title">
+						<span class="title-text">收银订单</span>（元）
+						<span class="iconfont iconwenhao js-prompt-top" data-tips="统计时间内，收银台订单的支付金额的总额"></span>
 					</div>
 					<div class="value" data-type="money">0.00</div>
 				</div>
@@ -162,7 +171,7 @@
 
 			<div class="layui-card layui-input-inline" data-value="order_pay_money">
 				<div class="layui-card-header">
-					<span class="hint">订单收入（元）</span>
+					<span class="hint">商城订单（元）</span>
 				</div>
 				<div class="layui-card-body">
 					<span class="num total_income value" data-type="money">0.00</span>
@@ -172,6 +181,21 @@
 				</div>
 			</div>
 			<div class="symbol"> + </div>
+
+			{if addon_is_exit('cashier', request()->siteid())}
+			<div class="layui-card layui-input-inline" data-value="cashier_order_pay_money">
+				<div class="layui-card-header">
+					<span class="hint">收银订单（元）</span>
+				</div>
+				<div class="layui-card-body">
+					<span class="num total_income value" data-type="money">0.00</span>
+				</div>
+				<div class="layui-card-footer">
+					<a href="{:addon_url('cashier://shop/order/lists')}" class="text-color">明细</a>
+				</div>
+			</div>
+			<div class="symbol"> + </div>
+			{/if}
 
 			<div class="layui-card layui-input-inline" data-value="member_recharge_total_money">
 				<div class="layui-card-header">

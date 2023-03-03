@@ -14,6 +14,7 @@ namespace app\shopapi\controller;
 
 use app\model\system\User as UserModel;
 use app\model\system\Group;
+use app\model\system\UserGroup;
 
 /**
  * 用户
@@ -57,6 +58,15 @@ class User extends BaseApi
 
         $user_model = new UserModel();
         $list = $user_model->getUserPageList($condition, $page, $page_size);
+        if (!empty($list['data']['list']) && addon_is_exit('cashier', $this->site_id)) {
+            $join = [
+                ['store s', 's.store_id = ug.store_id', 'left'],
+                ['cashier_auth_group cag', 'cag.group_id = ug.group_id', 'left']
+            ];
+            foreach ($list['data']['list'] as $k => $item) {
+                $list['data']['list'][$k]['user_group_list'] = (new UserGroup())->getUserList([ ['ug.uid', '=', $item['uid'] ] ], 's.store_name,cag.group_name', '', 'ug', $join)['data'];
+            }
+        }
         return $this->response($list);
     }
 

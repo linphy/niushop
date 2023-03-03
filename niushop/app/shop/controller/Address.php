@@ -20,7 +20,7 @@ use app\Controller;
  * Class Order
  * @package app\shop\controller
  */
-class Address extends Controller
+class Address extends BaseShop
 {
     /**
      * 通过ajax得到运费模板的地区数据
@@ -30,11 +30,17 @@ class Address extends Controller
         $address_model = new AddressModel();
         $level         = input('level', 1);
         $pid           = input("pid", 0);
+        $child         = input("child", 0);
         $condition     = array(
             "level" => $level,
             "pid"   => $pid
         );
-        $list          = $address_model->getAreaList($condition, "id, pid, name, level", "id asc");
+        $list          = $address_model->getAreaList($condition, "id, pid, name, shortname, level", "id asc");
+        if (!empty($list['data']) && $child) {
+            foreach ($list['data'] as $k => $item) {
+                $list['data'][$k]['child_num'] = $address_model->getAreaCount([ ['pid', '=', $item['id'] ] ])['data'];
+            }
+        }
         return $list;
     }
 
@@ -79,5 +85,53 @@ class Address extends Controller
         $data = curl_exec($curl);
 
         return $data;
+    }
+
+    /**
+     * 地区管理
+     * @return mixed
+     */
+    public function manage()
+    {
+        $address_model = new AddressModel();
+        $list          = $address_model->getAreaList([['level', '=', 1]], "id, pid, name, shortname, level", "id asc")['data'];
+        if (!empty($list)) {
+            foreach ($list as $k => $item) {
+                $list[$k]['child_num'] = $address_model->getAreaCount([ ['pid', '=', $item['id'] ] ])['data'];
+            }
+        }
+        $this->assign('area', $list);
+        $this->forthMenu();
+        return $this->fetch("address/manage");
+    }
+
+    /**
+     * 保存地区
+     */
+    public function saveArea(){
+        if (request()->isAjax()) {
+            $address_model = new AddressModel();
+            $data = [
+                'id' => input('id'),
+                'name' => input('name', ''),
+                'shortname' => input('shortname', ''),
+                'pid' => input('pid', 0),
+                'level' => input('level', 1),
+            ];
+            return $address_model->saveArea($data);
+        }
+    }
+
+    /**
+     * 删除地区
+     * @return array
+     */
+    public function deleteArea(){
+        if (request()->isAjax()) {
+            $address_model = new AddressModel();
+            $id = input('id');
+            $level = input('level');
+            return $address_model->deleteArae($id, $level);
+        }
     }
 }

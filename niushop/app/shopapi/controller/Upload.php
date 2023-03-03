@@ -60,7 +60,8 @@ class Upload extends BaseApi
         $param = array (
             "thumb_type" => [ "BIG", "MID", "SMALL" ],
             "name" => "file",
-            "album_id" => $album_id
+            "album_id" => $album_id,
+            "is_thumb" => 1
         );
         $result = $upload_model->setPath("common/images/" . date("Ymd") . '/')->imageToAlbum($param);
 

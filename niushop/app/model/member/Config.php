@@ -140,4 +140,38 @@ class Config extends BaseModel
         }
         return $res;
     }
+
+    /**
+     * 查询会员配置
+     * @param unknown $where
+     * @param unknown $field
+     * @param unknown $value
+     */
+    public function getMemberConfig($site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'MEMBER_LEVEL_CONFIG']]);
+        if (empty($res['data']['value'])) {
+            //默认值设置
+            $res['data']['value'] = [
+                'is_update' => 1,
+            ];
+        } else {
+            $value = $res['data']['value'];
+            $value['is_update'] = $value['is_update'] ?? 1;
+            $res['data']['value'] = $value;
+        }
+        return $res;
+    }
+
+    /**
+     * 会员配置
+     * array $data
+     */
+    public function setMemberConfig($data, $site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '会员等级更新配置', 1, [['site_id', '=', $site_id], ['app_module', '=', $app_module], ['config_key', '=', 'MEMBER_LEVEL_CONFIG']]);
+        return $res;
+    }
 }

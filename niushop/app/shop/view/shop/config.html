@@ -9,15 +9,15 @@
 {block name="main"}
 <div class="layui-form">
 	<div class="layui-form-item">
-		<label class="layui-form-label">网站标题：</label>
+		<label class="layui-form-label">网站名称：</label>
 		<div class="layui-input-block">
 			<input type="text" name="site_name" autocomplete="off" value="{$shop_info.site_name}" class="layui-input len-long">
 		</div>
-		<div class="word-aux"><p>说明：该标题在管理端头部标题展示，形式为菜单名-网站标题。</p></div>
+		<div class="word-aux"><p>说明：该标题在管理端头部标题展示，形式为菜单名-网站名称。</p></div>
 	</div>
 
 	<div class="layui-form-item">
-		<label class="layui-form-label img-upload-lable">网站logo：</label>
+		<label class="layui-form-label">网站logo：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
 				<div class="upload-img-box {if condition="!empty($shop_info.logo)"}hover{/if} ">
@@ -53,7 +53,7 @@
 		</div>
 	</div>
 	<div class="layui-form-item">
-		<label class="layui-form-label img-upload-lable">方形logo：</label>
+		<label class="layui-form-label">方形logo：</label>
 		<div class="layui-input-block img-upload">
 			<div class="upload-img-block">
 				<div class="upload-img-box {if condition="!empty($shop_info.logo_square)"}hover{/if} ">
@@ -88,7 +88,7 @@
 
 
 	<!--<div class="layui-form-item">-->
-		<!--<label class="layui-form-label img-upload-lable">店铺头像：</label>-->
+		<!--<label class="layui-form-label">店铺头像：</label>-->
 		<!--<div class="layui-input-block img-upload">-->
 			<!--<div class="upload-img-block square">-->
 				<!--<div class="upload-img-box" id="avatarUpload">-->
@@ -111,7 +111,7 @@
 	<!--</div>-->
 
 	<!--<div class="layui-form-item">-->
-		<!--<label class="layui-form-label img-upload-lable">店铺大图：</label>-->
+		<!--<label class="layui-form-label">店铺大图：</label>-->
 		<!--<div class="layui-input-block img-upload">-->
 			<!--<div class="upload-img-block">-->
 				<!--<div class="upload-img-box" id="bannerUpload">-->
@@ -132,6 +132,13 @@
 		<!--</div>-->
 	<!--</div>-->
 
+	<div class="layui-form-item">
+		<label class="layui-form-label">网站标题：</label>
+		<div class="layui-input-block">
+			<input type="text" name="seo_title" autocomplete="off" value="{$shop_info.seo_title ?? ''}" class="layui-input len-long">
+		</div>
+		<div class="word-aux"><p>说明：该标题仅在PC端首页标题展示</p></div>
+	</div>
 	<div class="layui-form-item">
 		<label class="layui-form-label">网站关键字：</label>
 		<div class="layui-input-block">
@@ -155,18 +162,18 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label">商城状态：</label>
 		<div class="layui-input-block">
-			<label class="layui-form-label label-width">pc端：</label>
-			<div>
+			<div class="layui-input-inline" style="float: none;display: block;">
+				<label class="layui-form-label label-width">pc端：</label>
 				<input type="radio" name="shop_pc_status" value="1" title="开启" {if isset($shop_status.shop_pc_status) && $shop_status.shop_pc_status == 1} checked {/if}>
 				<input type="radio" name="shop_pc_status" value="0" title="关闭" {if isset($shop_status.shop_pc_status) && $shop_status.shop_pc_status == 0} checked {/if}>
 			</div>
-			<label class="layui-form-label label-width">h5端：</label>
-			<div>
+			<div class="layui-input-inline" style="float: none;display: block;">
+				<label class="layui-form-label label-width">h5端：</label>
 				<input type="radio" name="shop_h5_status" value="1" title="开启" {if isset($shop_status.shop_h5_status) && $shop_status.shop_h5_status == 1} checked {/if}>
 				<input type="radio" name="shop_h5_status" value="0" title="关闭" {if isset($shop_status.shop_h5_status) && $shop_status.shop_h5_status == 0} checked {/if}>
 			</div>
-			<label class="layui-form-label label-width">小程序端：</label>
-			<div>
+			<div class="layui-input-inline" style="float: none;display: block;">
+				<label class="layui-form-label label-width">小程序端：</label>
 				<input type="radio" name="shop_weapp_status" value="1" title="开启" {if isset($shop_status.shop_weapp_status) && $shop_status.shop_weapp_status == 1} checked {/if}>
 				<input type="radio" name="shop_weapp_status" value="0" title="关闭" {if isset($shop_status.shop_weapp_status) && $shop_status.shop_weapp_status == 0} checked {/if}>
 			</div>

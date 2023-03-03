@@ -8,7 +8,8 @@ Vue.component("diy-member-my-order-sources", {
             styleList: [
                 {text: '样式一', value: 1},
                 {text: '样式二', value: 2},
-                {text: '样式三', value: 3}
+                {text: '样式三', value: 3},
+                {text: '样式四', value: 4}
             ],
             iconList: [
                 {
@@ -19,7 +20,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-daifukuan2",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -32,7 +33,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-daifahuo2",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -45,7 +46,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-daishouhuo2",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -53,12 +54,12 @@ Vue.component("diy-member-my-order-sources", {
                                 "iconColorDeg": 0
                             }
                         },
-                        "waitRate": {
-                            "title": "待评价",
-                            "icon": "icondiy icon-system-daipingjie2",
+                        "waitUse": {
+                            "title": "待使用",
+                            "icon": "icondiy icon-system-daishiyong2",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -71,7 +72,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-shuhou2",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -89,7 +90,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-daifukuan",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -102,7 +103,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-daifahuo",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -115,7 +116,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-daishouhuo",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -123,12 +124,12 @@ Vue.component("diy-member-my-order-sources", {
                                 "iconColorDeg": 0
                             }
                         },
-                        "waitRate": {
-                            "title": "待评价",
-                            "icon": "icondiy icon-system-daipingjie",
+                        "waitUse": {
+                            "title": "待使用",
+                            "icon": "icondiy icon-system-daishiyong",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -141,7 +142,7 @@ Vue.component("diy-member-my-order-sources", {
                             "icon": "icondiy icon-system-shuhou",
                             "style": {
                                 "bgRadius": 0,
-                                "fontSize": 65,
+                                "fontSize": 75,
                                 "iconBgColor": [],
                                 "iconBgColorDeg": 0,
                                 "iconBgImg": "",
@@ -157,8 +158,78 @@ Vue.component("diy-member-my-order-sources", {
                         "waitPay": {"title": "待付款"},
                         "waitSend": {"title": "待发货"},
                         "waitConfirm": {"title": "待收货"},
-                        "waitRate": {"title": "待评价"},
+                        "waitUse": {"title": "待使用"},
                         "refunding": {"title": "售后"}
+                    }
+                },
+                {
+                    title: "风格四",
+                    data: {
+                        "waitPay": {
+                            "title": "待支付",
+                            "icon": "icondiy icon-system-daizhifu",
+                            "style": {
+                                "bgRadius": 0,
+                                "fontSize": 90,
+                                "iconBgColor": [],
+                                "iconBgColorDeg": 0,
+                                "iconBgImg": "",
+                                "iconColor": ["#20DA86", "#03B352"],
+                                "iconColorDeg": 0
+                            }
+                        },
+                        "waitSend": {
+                            "title": "备货中",
+                            "icon": "icondiy icon-system-beihuozhong",
+                            "style": {
+                                "bgRadius": 0,
+                                "fontSize": 90,
+                                "iconBgColor": [],
+                                "iconBgColorDeg": 0,
+                                "iconBgImg": "",
+                                "iconColor": ["#20DA86", "#03B352"],
+                                "iconColorDeg": 0
+                            }
+                        },
+                        "waitConfirm": {
+                            "title": "配送中",
+                            "icon": "icondiy icon-system-paisongzhong",
+                            "style": {
+                                "bgRadius": 0,
+                                "fontSize": 90,
+                                "iconBgColor": [],
+                                "iconBgColorDeg": 0,
+                                "iconBgImg": "",
+                                "iconColor": ["#20DA86", "#03B352"],
+                                "iconColorDeg": 0
+                            }
+                        },
+                        "waitUse": {
+                            "title": "待使用",
+                            "icon": "icondiy icon-system-daishiyong2",
+                            "style": {
+                                "bgRadius": 0,
+                                "fontSize": 75,
+                                "iconBgColor": [],
+                                "iconBgColorDeg": 0,
+                                "iconBgImg": "",
+                                "iconColor": ["#20DA86", "#03B352"],
+                                "iconColorDeg": 0
+                            }
+                        },
+                        "refunding": {
+                            "title": "退换货",
+                            "icon": "icondiy icon-system-tuihuoguanli",
+                            "style": {
+                                "bgRadius": 0,
+                                "fontSize": 90,
+                                "iconBgColor": [],
+                                "iconBgColorDeg": 0,
+                                "iconBgImg": "",
+                                "iconColor": ["#20DA86", "#03B352"],
+                                "iconColorDeg": 0
+                            }
+                        }
                     }
                 }
             ]
@@ -184,7 +255,7 @@ Vue.component("diy-member-my-order-sources", {
             return res;
         },
         handleIconStyle(data) {
-            if (this.data.style == 1) {
+            if (this.data.style == 1 || this.data.style == 4) {
                 data.iconColor = [colourBlend(diyMemberMyOrderSystemColor.main_color, '#ffffff', 0.5), diyMemberMyOrderSystemColor.main_color];
             }
             return data;

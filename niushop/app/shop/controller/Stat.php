@@ -10,6 +10,7 @@
 
 namespace app\shop\controller;
 
+use app\model\stat\GoodsStat;
 use app\model\system\Stat as StatModel;
 use Carbon\Carbon;
 
@@ -46,18 +47,8 @@ class Stat extends BaseShop
             }
 
             $stat_model = new StatModel();
-            $fields = $stat_model->getStatField();
-
-            $stat_list = $stat_model->getShopStatList($this->site_id, $start_time, $end_time)[ 'data' ];
-            foreach ($fields as $field) {
-                $data[ $field ] = 0;
-                if (!empty($stat_list)) {
-                    foreach ($stat_list as $item) {
-                        if (isset($item[ $field ])) $data[ $field ] += $item[ $field ];
-                    }
-                }
-            }
-            return success(0, '', $data);
+            $data = $stat_model->getShopStatSum($this->site_id, $start_time, $end_time);
+            return $data;
         }
     }
 
@@ -77,6 +68,7 @@ class Stat extends BaseShop
 
             $stat_model = new StatModel();
             $fields = $stat_model->getStatField();
+            $fields[] = 'cashier_order_pay_money';
 
             $stat_list = $stat_model->getShopStatList($this->site_id, $start_time, $end_time)[ 'data' ];
             $stat_list = array_map(function($item) {
@@ -93,7 +85,7 @@ class Stat extends BaseShop
                 for ($i = 0; $i < $day; $i++) {
                     $date = date('Y-m-d', $start_time + $i * 86400);
                     $time[] = $date;
-                    $value[] = isset($stat_list[ $date ]) ? $stat_list[ $date ][ $field ] : 0;
+                    $value[] = isset($stat_list[ $date ]) && isset($stat_list[ $date ][ $field ]) ? $stat_list[ $date ][ $field ] : 0;
                 }
                 $data[ $field ] = $value;
                 $data[ 'time' ] = $time;
@@ -113,6 +105,7 @@ class Stat extends BaseShop
 
             $stat_model = new StatModel();
             $fields = $stat_model->getStatHourField();
+            $fields[] = 'cashier_order_pay_money';
 
             $stat_list = $stat_model->getShopStatHourList($this->site_id, $carbon->year, $carbon->month, $carbon->day)[ 'data' ];
 
@@ -123,7 +116,7 @@ class Stat extends BaseShop
                 foreach ($fields as $field) {
                     $value = [];
                     for ($i = 0; $i < 24; $i++) {
-                        $value[ $i ] = isset($stat_list[ $i ]) ? $stat_list[ $i ][ $field ] : 0;
+                        $value[ $i ] = isset($stat_list[ $i ]) && isset($stat_list[ $i ][ $field ]) ? $stat_list[ $i ][ $field ] : 0;
                     }
                     $data[ $field ] = $value;
                 }
@@ -229,5 +222,37 @@ class Stat extends BaseShop
             $res = $stat_model->getGoodsSaleMoneyRankingList($this->site_id, $start_time, $end_time, $page_index, $page_size);
             return $res;
         }
+    }
+
+    /**
+     * 销售额排行
+     * @return array
+     */
+    public function getGoodsOrderMoneyStat(){
+        $goods_stat_model = new GoodsStat();
+        $params = array(
+            'site_id' => $this->site_id,
+            'start_time' => input('start_time', 0),
+            'end_time'=> input('end_time', 0),
+            'limit' => input('limit', 5)
+        );
+        $result = $goods_stat_model->getGoodsOrderMoneyStat($params);
+        return $result;
+    }
+
+    /**
+     * 销售量排行
+     * @return array
+     */
+    public function getGoodsOrderNumStat(){
+        $goods_stat_model = new GoodsStat();
+        $params = array(
+            'site_id' => $this->site_id,
+            'start_time' => input('start_time', 0),
+            'end_time'=> input('end_time', 0),
+            'limit' => input('limit', 5)
+        );
+        $result = $goods_stat_model->getGoodsOrderNumStat($params);
+        return $result;
     }
 }

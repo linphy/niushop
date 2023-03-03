@@ -27,6 +27,13 @@ class GoodsBrowse extends BaseModel
     {
         $res = model('goods_browse')->getInfo([ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'goods_id', '=', $data[ 'goods_id' ] ] ], 'site_id,id');
         $data[ 'browse_time' ] = time();
+        $stat = new Stat();
+        $stat->switchStat([ 'type' => 'goods_visit', 'data' => [
+            'site_id' => $data[ 'site_id' ],
+            'goods_id' => $data[ 'goods_id' ],
+            'member_id' => $data['member_id']
+        ] ]);
+
         if (!empty($res)) {
             $collect_id = model('goods_browse')->update($data, [ [ 'id', '=', $res[ 'id' ] ] ]);
         } else {
@@ -34,13 +41,13 @@ class GoodsBrowse extends BaseModel
         }
         Member::modifyLastVisitTime($data[ 'member_id' ]);
         //添加浏览统计
-        $stat = new Stat();
+
         $stat->switchStat([ 'type' => 'visit', 'data' => [
             'visit_count' => 1,
             'site_id' => $data[ 'site_id' ],
-            'app_module' => $data[ 'app_module' ] ?? ''
+            'app_module' => $data[ 'app_module' ] ?? '',
+            'goods_id' => $data[ 'goods_id' ],
         ] ]);
-//        $stat->addShopStat(['visit_count' => 1, 'site_id' => $data['site_id']]);
         return $this->success($collect_id);
 
     }

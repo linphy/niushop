@@ -73,82 +73,6 @@
     </div>
 </script>
 
-<script type="text/html" id="new_adjust_price_html">
-    <div style="padding:10px;">
-        <div class="layui-form adjust-price-html">
-            <div style="color: #666;">注意 : 只有订单未付款时才支持改价,改价后请联系买家刷新订单核实订单金额后再支付。</div>
-            <table class="layui-table">
-                <colgroup>
-                    <col width="10%">
-                    <col width="4%">
-                    <col width="6%">
-                    <col width="4%">
-                    <col width="9%">
-                    <col width="4%">
-                    <col width="8%">
-                    <col width="8%">
-                    <col width="9%">
-                    <col width="10%">
-                    <col width="10%">
-                    <col width="10%">
-                    <col width="6%">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>商品信息</th>
-                        <th>单价</th>
-                        <th>数量</th>
-                        <th>小计</th>
-                        <th>商品总额</th>
-                        <th>优惠</th>
-                        <th>优惠券</th>
-                        <th>积分抵现</th>
-                        <th>发票费用</th>
-                        <th>发票邮寄费用</th>
-                        <th>调整金额</th>
-                        <th>运费</th>
-                        <th>总计</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#  layui.each(d.order_goods, function(index, item){ }}
-                    <tr data-order_money="{{ d.order_money }}"data-adjust_money="{{ d.adjust_money }}"data-delivery_money="{{ d.delivery_money }}"
-                        data-promotion_money="{{ d.promotion_money }}" data-coupon_money="{{ d.coupon_money }}" data-goods_money="{{ d.goods_money }}"
-                        data-adjust_money="{{ d.adjust_money }}"data-delivery_money="{{ d.delivery_money }}" data-invoice_rate="{{ d.invoice_rate }}"
-                        data-invoice_delivery_money="{{ d.invoice_delivery_money }}"  data-is_invoice="{{ d.is_invoice }}" data-point_money="{{ d.point_money }}" >
-                        <td>{{ item.sku_name }}</td>
-                        <td>{{ item.price }}</td>
-                        <td>{{ item.num }}</td>
-                        <td>{{ item.price*item.num }}</td>
-                        <td>{{ item.price*item.num }}</td>
-                        {{#  if(index == 0){ }}
-                        <td rowspan="{{ d.order_goods.length }}">{{ d.promotion_money }}</td>
-                        <td rowspan="{{ d.order_goods.length }}">{{ d.coupon_money }}</td>
-                        <td rowspan="{{ d.order_goods.length }}">{{ d.point_money }}</td>
-                        <td rowspan="{{ d.order_goods.length }}" class="adjust-invoice-money">{{ d.invoice_money }}</td>
-                        <td rowspan="{{ d.order_goods.length }}" class="adjust-invoice-delivery-money">{{ d.invoice_delivery_money }}</td>
-                        {{#  } }}
-                        <td><input type="number" name="adjust_money" min="{{ d.goods_money - d.promotion_money - d.coupon_money }}" class="layui-input adjust-money" onchange="adjustChange(this);" value="{{ item.adjust_money }}"/></td>
-                        {{#  if(index == 0){ }}
-                        <td rowspan="{{ d.order_goods.length }}"><input type="number"  name="delivery_money"class="layui-input delivery-money" onchange="adjustChange(this);" value="{{ d.delivery_money }}"/></td>
-                        <td rowspan="{{ d.order_goods.length }}" class="adjust-pay-money">{{ d.order_money }}</td>
-                        {{#  } }}
-                    </tr>
-                    {{#  }); }}
-                </tbody>
-            </table>
-            <div style="color: #666;">
-                <p><a class="text-color">实际商品金额</a> = 商品总额 - 优惠金额 - 优惠券金额 - 积分抵现 + 调价</p>
-                <p><a class="text-color">发票费用</a> = 实际商品金额 * 发票比率</p>
-                <p>订单总额 = <a class="text-color">实际商品金额</a> + <a class="text-color">发票费用</a> + 运费 +  发票邮寄费用</p>
-                <p>店铺优惠和优惠券，积分抵现会平摊到每个商品中，商品小计减去所有的优惠加调整金额不能小于0。</p>
-            </div>
-
-            <input type="hidden" name="order_id" value="{{ d.order_id }}"/>
-            <button class="layui-btn"  lay-submit id="submit_price" lay-filter="submit_price" style="display:none;">保存</button>
-        </div>
-    </div>
-</script>
 
 <script>
     var form;
@@ -167,11 +91,7 @@
 
         var order_info = getOrderInfo(order_id)
         //获取模板
-        if (order_info.change_price == 1) {
-            var getTpl = $("#adjust_price_html").html();
-        } else {
-            var getTpl = $("#new_adjust_price_html").html();
-        }
+        var getTpl = $("#adjust_price_html").html();
         var data = order_info;
         //渲染模板
         laytpl(getTpl).render(data, function (html) {

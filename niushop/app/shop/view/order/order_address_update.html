@@ -174,7 +174,7 @@ function orderAddressUpdate(order_id) {
                     data.field.city_name = city_name;
                     data.field.district_name = district_name;
                     // data.field.community_name = community_name;
-                    data.field.full_address = province_name + city_name + district_name;
+                    data.field.full_address = province_name + '-' + city_name + '-' + district_name;
 
                     if(repeat_flag)return;
                     repeat_flag = true;

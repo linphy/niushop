@@ -301,7 +301,7 @@
                 return;
             }
             switch (obj.event) {
-                case "del":
+                case "recovery":
                     var id_array = new Array();
                     for (i in obj.data) id_array.push({coupon_type_id: obj.data[i].coupon_type_id, coupon_id: obj.data[i].coupon_id});
                     recoveryCoupon(id_array);

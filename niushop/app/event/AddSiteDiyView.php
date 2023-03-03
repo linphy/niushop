@@ -10,6 +10,7 @@
 
 namespace app\event;
 
+use app\model\diy\Template;
 
 /**
  * 增加默认自定义数据：网站主页、商品分类、底部导航
@@ -20,10 +21,16 @@ class AddSiteDiyView
     public function handle($param)
     {
         if (!empty($param[ 'site_id' ])) {
-
-            $name = 'official_default_round'; // 官方模板一
-            $res = event('UseDiyTemplate', [ 'site_id' => $param[ 'site_id' ], 'name' => $name ], true);
-            return $res;
+            $diy_template = new Template();
+            // 查询一条模板组
+            $template_goods_info = $diy_template->getFirstTemplateGoods([], 'goods_id', 'goods_id asc')[ 'data' ];
+            if (!empty($template_goods_info)) {
+                $res = $diy_template->useTemplate([
+                    'site_id' => $param[ 'site_id' ],
+                    'goods_id' => $template_goods_info[ 'goods_id' ],
+                ]);
+                return $res;
+            }
         }
     }
 

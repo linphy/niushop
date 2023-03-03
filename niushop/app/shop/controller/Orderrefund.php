@@ -97,6 +97,7 @@ class Orderrefund extends BaseShop
             } elseif (!empty($start_time) && !empty($end_time)) {
                 $condition[] = [ 'nop.refund_action_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
             }
+
             $list = $order_refund_model->getRefundOrderGoodsPageList($condition, $page_index, $page_size, "nop.refund_action_time desc");
             return $list;
         } else {
@@ -136,8 +137,8 @@ class Orderrefund extends BaseShop
 
         //添加会员昵称
         $member = new Member();
-        $member_info = $member->getMemberInfo([ [ "member_id", '=', $order_info[ 'member_id' ] ] ], 'nickname');
-        $order_info[ 'nickname' ] = $member_info[ 'data' ][ 'nickname' ];
+        $member_info = $member->getMemberInfo([ [ "member_id", '=', $order_info[ 'member_id' ] ] ], 'nickname')['data'] ?? [];
+        $order_info[ 'nickname' ] = $member_info[ 'nickname' ] ?? '';
         $this->assign("detail", $detail);
         $this->assign("order_info", $order_info);
         return $this->fetch($template);
@@ -226,6 +227,7 @@ class Orderrefund extends BaseShop
             'action_way' => 2
         ];
         $res = $order_refund_model->orderRefundFinish($data, $this->user_info, $log_data);
+
         return $res;
     }
 

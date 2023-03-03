@@ -14,7 +14,9 @@
 			}">
 				<div class="image-ads-content">
 					<template v-for="(item,index) in nc.list">
-						<div v-if="item.imageUrl" :style="{backgroundImage: 'url('+ changeImgUrl(item.imageUrl) +')',height: nc.tempData.swiperHeight + 'px'}" :class="['image-ads-item',{'layui-hide': nc.tempData.carouselIndex != index}]"></div>
+						<div v-if="item.imageUrl" :style="{height: nc.tempData.swiperHeight + 'px'}" :class="['image-ads-item',{'layui-hide': nc.tempData.carouselIndex != index}]">
+							<nc-image :src="changeImgUrl(item.imageUrl)" :mode="item.imageMode"></nc-image>
+						</div>
  						<div v-else :style="{backgroundImage: 'url(' + changeImgUrl('public/static/img/default_img/figure.png')  + ')',height: nc.tempData.swiperHeight + 'px'}" :class="['image-ads-item',{'layui-hide': nc.tempData.carouselIndex != index}]"></div>
 					</template>
 				</div>
@@ -45,17 +47,14 @@
 							<img-upload :data="{ data: item}" data-disabled="1"></img-upload>
 							<div class="content-block">
 								<nc-link :data="{ field : item.link }"></nc-link>
-								<div class="selected-style" :class="{'text-color' : item.heatMapData }" @click="nc.tempData.methods.setHeatMap(index)">
-									<span>热区设置</span>
-									<i class="layui-icon layui-icon-right"></i>
-								</div>
+								<nc-image-mode :data="item"></nc-image-mode>
 							</div>
 							<div class="error-msg"></div>
 							<i class="del" @click="nc.tempData.methods.deleteItem(index)" data-disabled="1">x</i>
 							<div class="iconfont icontuodong"></div>
 						</li>
 					</ul>
-					<div class="add-item text-color" v-if="nc.list.length < 5" @click="nc.tempData.methods.addItem()">
+					<div class="add-item text-color" v-if="nc.list.length < 10" @click="nc.tempData.methods.addItem()">
 						<p>
 							<i>+</i>
 							<span>添加一个图片广告</span>
@@ -71,6 +70,18 @@
 		<template v-if="nc.lazyLoad">
 			<div class="template-edit-title" v-if="nc.list.length > 1">
 				<h3>指示器设置</h3>
+
+				<div class="layui-form-item checkbox-wrap">
+					<label class="layui-form-label sm">展示开关</label>
+					<div class="layui-input-block">
+						<span v-if="nc.indicatorIsShow == true">显示</span>
+						<span v-else>隐藏</span>
+						<div v-if="nc.indicatorIsShow == true" @click="nc.indicatorIsShow = false" class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>
+						<div v-else @click="nc.indicatorIsShow = true" class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon layui-icon-ok"></i></div>
+					</div>
+					<div class="word-aux diy-word-aux">此处控制当前页面导航栏是否显示</div>
+				</div>
+
 				<div class="layui-form-item icon-radio">
 					<label class="layui-form-label sm banner-sm">样式</label>
 					<div class="layui-input-block">
@@ -91,7 +102,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var imageAdsResourcePath = "{$resource_path}";
+			var imageAdsResourcePath = "{$resource_path}"; // http路径
+			var imageAdsRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

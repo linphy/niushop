@@ -19,13 +19,13 @@ class Goodscollect extends BaseApi
     public function add()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $goods_id  = isset($this->params['goods_id']) ? $this->params['goods_id'] : 0;
-        $sku_id    = isset($this->params['sku_id']) ? $this->params['sku_id'] : 0;
-        $sku_name  = isset($this->params['sku_name']) ? $this->params['sku_name'] : '';
-        $sku_price = isset($this->params['sku_price']) ? $this->params['sku_price'] : '';
-        $sku_image = isset($this->params['sku_image']) ? $this->params['sku_image'] : '';
+        $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        $sku_id = isset($this->params[ 'sku_id' ]) ? $this->params[ 'sku_id' ] : 0;
+        $sku_name = isset($this->params[ 'sku_name' ]) ? $this->params[ 'sku_name' ] : '';
+        $sku_price = isset($this->params[ 'sku_price' ]) ? $this->params[ 'sku_price' ] : '';
+        $sku_image = isset($this->params[ 'sku_image' ]) ? $this->params[ 'sku_image' ] : '';
 
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
@@ -34,16 +34,16 @@ class Goodscollect extends BaseApi
             return $this->response($this->error('', 'REQUEST_SKU_ID'));
         }
         $goods_collect_model = new GoodsCollectModel();
-        $data                = [
-            'member_id' => $token['data']['member_id'],
-            'goods_id'  => $goods_id,
-            'sku_id'    => $sku_id,
-            'sku_name'  => $sku_name,
+        $data = [
+            'member_id' => $token[ 'data' ][ 'member_id' ],
+            'goods_id' => $goods_id,
+            'sku_id' => $sku_id,
+            'sku_name' => $sku_name,
             'sku_price' => $sku_price,
             'sku_image' => $sku_image,
-            'site_id'   => $this->site_id
+            'site_id' => $this->site_id
         ];
-        $res                 = $goods_collect_model->addCollect($data);
+        $res = $goods_collect_model->addCollect($data);
         return $this->response($res);
     }
 
@@ -53,14 +53,14 @@ class Goodscollect extends BaseApi
     public function delete()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $goods_id = isset($this->params['goods_id']) ? $this->params['goods_id'] : 0;
+        $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }
         $goods_collect_model = new GoodsCollectModel();
-        $res                 = $goods_collect_model->deleteCollect($token['data']['member_id'], $goods_id);
+        $res = $goods_collect_model->deleteCollect($token[ 'data' ][ 'member_id' ], $goods_id);
         return $this->response($res);
 
     }
@@ -71,54 +71,55 @@ class Goodscollect extends BaseApi
     public function page()
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $page                = isset($this->params['page']) ? $this->params['page'] : 1;
-        $page_size           = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
-        $goods_collect_model = new GoodsCollectModel();
-        $condition           = [
-            ['member_id', '=', $token['data']['member_id']],
+        $this->initStoreData();
+
+        $page = isset($this->params[ 'page' ]) ? $this->params[ 'page' ] : 1;
+        $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
+
+        $goods_collect_model = new GoodsModel();
+
+        $condition = [
+            [ 'gc.member_id', '=', $token[ 'data' ][ 'member_id' ] ],
+            [ ' g.is_delete', '=', 0 ]
         ];
-
-        $list  = $goods_collect_model->getCollectPageList($condition, $page, $page_size);
-        $goods = new GoodsModel();
-        $config_model = new ConfigModel();
-        $guess_you_like = $config_model->getGuessYouLike($this->site_id, $this->app_module);
-        $guess_you_like = $guess_you_like['data']['value'];
-        $list['data']['guessyoulike_is_show'] = $guess_you_like['collect'];
-        if (!empty($list['data']['list'])) {
-            foreach ($list['data']['list'] as $k => $v) {
-
-                if ($token['code'] >= 0) {
-                    // 是否参与会员等级折扣
-                    $goods_member_price = $goods->getGoodsPrice($v['sku_id'], $this->member_id);
-                    $goods_member_price = $goods_member_price['data'];
-                    if (!empty($goods_member_price['member_price'])) {
-                        $list['data']['list'][$k]['member_price'] = $goods_member_price['price'];
-                    }
-                }
-            }
+        $join = [
+            [ 'goods_collect gc', 'gc.goods_id = g.goods_id', 'inner' ],
+            [ 'goods_sku sku', 'g.sku_id = sku.sku_id', 'inner' ]
+        ];
+        $field = 'gc.collect_id, gc.member_id, gc.goods_id, gc.sku_id,sku.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual, g.goods_image';
+        if ($this->store_data[ 'config' ][ 'store_business' ] == 'store') {
+            $join[] = [ 'store_goods_sku sgs', 'g.sku_id = sgs.sku_id and sgs.store_id=' . $this->store_id, 'left' ];
+            $field = str_replace('sku.price', 'IFNULL(IF(sku.is_unify_pirce = 1,sku.price,sgs.price), sku.price) as price', $field);
+            $field = str_replace('sku.discount_price', 'IFNULL(IF(sku.is_unify_pirce = 1,sku.discount_price,sgs.price), sku.discount_price) as discount_price', $field);
         }
+
+        $list = $goods_collect_model->getGoodsPageList($condition, $page, $page_size, 'gc.create_time desc', $field, 'g', $join);
         return $this->response($list);
 
     }
 
     /**
-     * 是否收藏
-     * @return string
+     * 检测用户是否收藏商品
+     * @param int $id
+     * @return false|string
      */
-    public function iscollect()
+    public function iscollect($id = 0)
     {
         $token = $this->checkToken();
-        if ($token['code'] < 0) return $this->response($token);
+        if ($token[ 'code' ] < 0) return $this->response($token);
 
-        $goods_id = isset($this->params['goods_id']) ? $this->params['goods_id'] : 0;
+        $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : 0;
+        if (!empty($id)) {
+            $goods_id = $id;
+        }
         if (empty($goods_id)) {
             return $this->response($this->error('', 'REQUEST_GOODS_ID'));
         }
 
         $goods_collect_model = new GoodsCollectModel();
-        $res                 = $goods_collect_model->getIsCollect($goods_id, $token['data']['member_id']);
+        $res = $goods_collect_model->getIsCollect($goods_id, $token[ 'data' ][ 'member_id' ]);
         return $this->response($res);
     }
 

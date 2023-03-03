@@ -67,16 +67,19 @@ class Goodsbrowse extends BaseApi
         $token = $this->checkToken();
         if ($token['code'] < 0) return $this->response($token);
 
+        $this->initStoreData();
+
         $page               = isset($this->params['page']) ? $this->params['page'] : 1;
         $page_size          = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
+
         $goods_browse_model = new GoodsBrowseModel();
         $condition          = [
             ['ngb.member_id', '=', $token['data']['member_id']]
         ];
 
         $alias = 'ngb';
-        $field = 'ngb.id,ngb.member_id,ngb.browse_time,ngb.sku_id,ngs.sku_image,ngs.discount_price,ngs.sku_name,ng.goods_id,ng.goods_name,ng.goods_image,(ngs.sale_num + ngs.virtual_sale) as sale_num,ngs.is_free_shipping,ngs.promotion_type,ngs.member_price,ngs.price,ngs.market_price,ngs.is_virtual,ng.goods_image,ng.sale_show,ngs.unit';
-        $join  = [
+        $field = 'ngb.id,ngb.member_id,ngb.browse_time,ngb.sku_id,ngs.sku_image,ngs.discount_price,ngs.sku_name,ng.goods_id,ng.goods_name,ng.goods_image,(ngs.sale_num + ngs.virtual_sale) as sale_num,ngs.is_free_shipping,ngs.promotion_type,ngs.member_price,ngs.price,ngs.market_price,ngs.is_virtual,ng.goods_image,ng.sale_show,ng.market_price_show,ngs.unit';
+        $join = [
             [
                 'goods ng',
                 'ngb.goods_id = ng.goods_id',
@@ -88,6 +91,11 @@ class Goodsbrowse extends BaseApi
                 'inner'
             ]
         ];
+        if ($this->store_data['config']['store_business'] == 'store') {
+            $join[] = [ 'store_goods_sku sgs', 'ngs.sku_id = sgs.sku_id and sgs.store_id=' . $this->store_id, 'left' ];
+            $field = str_replace('ngs.price', 'IFNULL(IF(ngs.is_unify_pirce = 1,ngs.price,sgs.price), ngs.price) as price', $field);
+            $field = str_replace('ngs.discount_price', 'IFNULL(IF(ngs.is_unify_pirce = 1,ngs.discount_price,sgs.price), ngs.discount_price) as discount_price', $field);
+        }
 
         $list = $goods_browse_model->getBrowsePageList($condition, $page, $page_size, 'ngb.browse_time desc', $field, $alias, $join);
 

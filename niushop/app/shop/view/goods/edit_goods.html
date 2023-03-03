@@ -164,14 +164,15 @@
 													<input type="text" readonly lay-verify="required" value="{$cate_v['category_name']}" autocomplete="off" class="layui-input len-mid select-category" />
 													<input type="hidden" class="category_id" value="{$cate_v['id']}" />
 												</div>
+												<a href="javascript:;" class="text-color js-refresh-category">刷新</a>&nbsp;
+												<a href="{:addon_url('shop/goodscategory/lists')}" class="text-color" target="_blank">添加分类</a>
 												{if $cate_k != 0}
-												<a href="#" class="default text-color input-text js-delete-category">删除</a>
-												{else/}
-												<a href="javascript:;" class="text-color js-add-category">添加分类</a>
+												<a href="javascript:;" class="default text-color input-text js-delete-category">删除</a>
 												{/if}
 											</div>
 											{/foreach}
 										</div>
+										<a href="javascript:;" class="text-color js-add-category" title="添加分类"><i class="iconfont iconjia"></i></a>
 									</div>
 								</div>
 							</div>
@@ -242,7 +243,70 @@
 							</div>
 						</div>
 						{/if}
-						
+
+						{if addon_is_exit('cashier') == 1}
+						<div class="layui-form-item">
+							<label class="layui-form-label">销售渠道：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="sale_channel" value="all" title="线上线下销售" {if $goods_info.sale_channel eq 'all'}checked{/if}>
+								<input type="radio" name="sale_channel" value="online" title="线上销售" {if $goods_info.sale_channel eq 'online'}checked{/if}>
+								<input type="radio" name="sale_channel" value="offline" title="线下销售" {if $goods_info.sale_channel eq 'offline'}checked{/if}>
+							</div>
+						</div>
+						{/if}
+
+						{if $store_is_exit}
+						<div class="layui-form-item">
+							<label class="layui-form-label">适用门店：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="sale_store" value="all" title="全部门店" {if $goods_info.sale_store eq 'all'}checked{/if} lay-filter="sale_store">
+								<input type="radio" name="sale_store" value="" title="部分门店" {if $goods_info.sale_store neq 'all'}checked{/if} lay-filter="sale_store">
+							</div>
+						</div>
+
+						<div class="layui-form-item sale-store-select" {if $goods_info.sale_store eq 'all'}style="display: none"{/if} lay-verify="sale_store">
+							<label class="layui-form-label"></label>
+							<div class="layui-input-block">
+								<button class="layui-btn select-store">选择门店</button>
+								<div style="width: 700px">
+									<table class="layui-table" lay-skin="nob">
+										<colgroup>
+											<col width="30%">
+											<col width="60%">
+											<col width="10%">
+										</colgroup>
+										<tr>
+											<th>门店名称</th>
+											<th>门店地址</th>
+											<th>操作</th>
+										</tr>
+										<tbody class="sale-store">
+											{if isset($store_list) && !empty($store_list)}
+												{foreach name="$store_list" item="vo"}
+												<tr data-store="{$vo.store_id}">
+													<td>{$vo.store_name}</td>
+													<td>{$vo.full_address}{$vo.address}</td>
+													<td><a href="javascript:;" class="del">删除</a></td>
+												</tr>
+												{/foreach}
+											{/if}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">是否统一售价：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="is_unify_pirce" value="1" title="是" {if $goods_info.is_unify_pirce eq '1'}checked{/if} >
+								<input type="radio" name="is_unify_pirce" value="0" title="否" {if $goods_info.is_unify_pirce eq '0'}checked{/if}>
+							</div>
+							<div class="word-aux">价格设置之后门店不能修改价格，门店按照平台设置的价格售卖</div>
+						</div>
+
+						{/if}
+
 					</div>
 				</div>
 
@@ -286,7 +350,8 @@
 									</select>
 								</div>
 								<div class="layui-input-inline">
-									<a class="default text-color" href="{:addon_url('shop/express/addtemplate')}" target="_blank">新建模板</a>
+									<a class="text-color delivery-caozuo delivery-refresh">刷新</a>
+									<a class="default text-color" href="{:addon_url('shop/express/addtemplate')}" target="_blank">新建</a>
 								</div>
 							</div>
 						</div>
@@ -330,7 +395,7 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">成本价：</label>
 						<div class="layui-input-block">
-							<input type="text" name="cost_price" value="{$goods_info['cost_price']}" placeholder="0.00" class="layui-input len-short" lay-verify="cost_price" autocomplete="off">
+							<input type="text" name="cost_price" value="{$goods_info['sku_list'][0]['cost_price']}" placeholder="0.00" class="layui-input len-short" lay-verify="cost_price" autocomplete="off">
 							<div class="layui-form-mid">元</div>
 						</div>
 						<div class="word-aux">成本价将不会对前台会员展示，用于商家统计使用</div>
@@ -701,6 +766,14 @@
 	</div>
 </script>
 
+<!-- 运费模板 -->
+<script type="text/html" id="deliveryHtml">
+	<option value="">请选择运费模板</option>
+	{{# for(var i=0;i<d.list.length;i++){ }}
+	<option value="{{d.list[i].template_id}}" {{# if(d.shipping_template == d.list[i].template_id){ }}selected{{# } }}>{{d.list[i].template_name}}</option>
+	{{# } }}
+</script>
+
 <!--规格项模板-->
 <script type="text/html" id="specTemplate">
 
@@ -873,7 +946,7 @@
 		{{# for(var i=0;i<d.list.length;i++){ }}
 			<div class="item upload_img_square_item" data-index="{{i}}">
 				<div class="img-wrap">
-					<img src="{{ns.img(d.list[i])}}" layer-src>
+					<img src="{{ns.img(d.list[i],'big')}}" layer-src>
 				</div>
 				<div class="operation">
 					<i title="图片预览" class="iconfont iconreview js-preview"></i>

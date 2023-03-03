@@ -12,6 +12,9 @@
 namespace app\model\system;
 
 use app\model\BaseModel;
+use app\model\diy\Template;
+use app\model\diy\Theme;
+use app\model\web\DiyView as DiyViewModel;
 use app\model\web\DiyViewLink;
 use think\facade\Cache;
 use think\facade\Db;
@@ -61,13 +64,12 @@ class Addon extends BaseModel
 
     /**
      * 获取插件分页列表
-     *
      * @param array $condition
-     * @param number $page
-     * @param string $page_size
+     * @param int $page
+     * @param int $page_size
      * @param string $order
      * @param string $field
-     * @return multitype:string mixed
+     * @return array
      */
     public function getAddonPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
     {
@@ -256,6 +258,7 @@ class Addon extends BaseModel
     /**
      * 刷新插件自定义页面配置
      * @param $addon
+     * @param $site_id
      * @return array
      */
     public function refreshDiyView($addon)
@@ -263,28 +266,40 @@ class Addon extends BaseModel
         try {
             if (empty($addon)) {
                 $diy_view_file = 'config/diy_view.php';
-                model('link')->delete([ [ 'addon_name', '=', '' ] ]);
-                model('diy_view_util')->delete([ [ 'addon_name', '=', '' ] ]);
             } else {
                 $diy_view_file = 'addon/' . $addon . '/config/diy_view.php';
-                model('link')->delete([ [ 'addon_name', '=', $addon ] ]);
-                model('diy_view_util')->delete([ [ 'addon_name', '=', $addon ] ]);
             }
 
             if (!file_exists($diy_view_file)) {
                 return $this->success();
             }
 
+            $link_model = new DiyViewLink();
+            $diy_view_model = new DiyViewModel();
+            $diy_template_model = new Template();
+            $diy_theme_model = new Theme();
+
+            // 查询原模板组列表，用于更新自定义页面的所属模板id
+            $diy_template_goods_list_old = $diy_template_model->getTemplateGoodsList([ [ 'addon_name', '=', $addon ] ], 'goods_id,name')[ 'data' ];
+
+            // 清空数据
+            $link_model->deleteLink([ [ 'addon_name', '=', $addon ] ]); // 链接
+            $diy_view_model->deleteUtil([ [ 'addon_name', '=', $addon ] ]); // 组件
+            $diy_template_model->deleteTemplate([ [ 'addon_name', '=', $addon ] ]); // 页面类型
+            $diy_theme_model->deleteTheme([ [ 'addon_name', '=', $addon ] ]); // 主题风格
+            $diy_template_model->deleteTemplateGoods([ [ 'addon_name', '=', $addon ] ]); // 模板组
+            $diy_template_model->deleteTemplateGoodsItem([ [ 'addon_name', '=', $addon ] ]); // 模板页面
+
             $diy_view = require $diy_view_file;
 
             // 自定义链接
             if (isset($diy_view[ 'link' ])) {
-                $link_model = new DiyViewLink();
                 $diy_view_link_data = $link_model->getViewLinkList($diy_view[ 'link' ], $addon);
                 if ($diy_view_link_data) {
                     model('link')->addList($diy_view_link_data);
                 }
             }
+
             // 自定义模板组件
             if (isset($diy_view[ 'util' ])) {
                 $diy_view_util_data = [];
@@ -304,9 +319,144 @@ class Addon extends BaseModel
                     $diy_view_util_data[] = $util_item;
                 }
                 if ($diy_view_util_data) {
-                    model('diy_view_util')->addList($diy_view_util_data);
+                    $diy_view_model->addUtilList($diy_view_util_data);
                 }
             }
+
+            // 自定义模板页面类型
+            if (isset($diy_view[ 'template' ]) && !empty($diy_view[ 'template' ])) {
+                $template_data = [];
+                foreach ($diy_view[ 'template' ] as $k => $v) {
+                    // 检测防重复
+                    $count = $diy_template_model->getTemplateCount([ [ 'name', '=', $v[ 'name' ] ] ])[ 'data' ];
+                    if ($count == 0) {
+                        $template_data[] = [
+                            'title' => $v[ 'title' ], // 模板名称
+                            'name' => $v[ 'name' ], // 模板标识
+                            'page' => $v[ 'path' ], // 页面路径
+                            'addon_name' => $addon,
+                            'value' => $v[ 'value' ] ?? '',
+                            'rule' => isset($v[ 'rule' ]) ? json_encode($v[ 'rule' ]) : '',
+                            'sort' => $v[ 'sort' ] ?? 0
+                        ];
+                    }
+                }
+
+                if (!empty($template_data)) {
+                    $diy_template_model->addTemplateList($template_data);
+                }
+            }
+
+            // 主题风格配色
+            if (isset($diy_view[ 'theme' ]) && !empty($diy_view[ 'theme' ])) {
+                $theme_data = [];
+                foreach ($diy_view[ 'theme' ] as $k => $v) {
+                    // 检测防重复
+                    $count = $diy_theme_model->getThemeCount([ [ 'name', '=', $v[ 'name' ] ] ])[ 'data' ];
+                    if ($count == 0) {
+                        $theme_value = $v;
+                        unset($theme_value[ 'title' ], $theme_value[ 'name' ], $theme_value[ 'main_color' ], $theme_value[ 'aux_color' ], $theme_value[ 'preview' ]);
+                        $theme_data[] = [
+                            'title' => $v[ 'title' ],
+                            'name' => $v[ 'name' ],
+                            'addon_name' => $addon,
+                            'main_color' => $v[ 'main_color' ],
+                            'aux_color' => $v[ 'aux_color' ],
+                            'preview' => implode(',', $v[ 'preview' ]),
+                            'color_img' => $v[ 'color_img' ],
+                            'value' => json_encode($theme_value),
+                        ];
+                    }
+
+                }
+                if (!empty($theme_data)) {
+                    $diy_theme_model->addThemeList($theme_data);
+                }
+            }
+
+            // 模板信息
+            $diy_goods_id = 0;
+            if (isset($diy_view[ 'info' ]) && !empty($diy_view[ 'info' ])) {
+                $template_goods_data = [
+                    'title' => $diy_view[ 'info' ][ 'title' ], // 模板名称
+                    'name' => $diy_view[ 'info' ][ 'name' ], // 模板标识
+                    'addon_name' => $addon,
+                    'cover' => $diy_view[ 'info' ][ 'cover' ], // 模板封面图
+                    'preview' => $diy_view[ 'info' ][ 'preview' ], // 模板预览图
+                    'desc' => $diy_view[ 'info' ][ 'desc' ], // 模板描述
+                ];
+
+                // 检测防重复
+                $count = $diy_template_model->getTemplateGoodsCount([ [ 'name', '=', $template_goods_data[ 'name' ] ] ])[ 'data' ];
+                if ($count == 0) {
+                    $diy_goods_id = $diy_template_model->addTemplateGoods($template_goods_data)[ 'data' ];
+                }
+
+                if (!empty($diy_template_goods_list_old)) {
+                    foreach ($diy_template_goods_list_old as $k => $v) {
+                        // 更新自定义页面的所属模板id
+//                        $diy_view_model->editSiteDiyView([
+//                            'template_id' => $diy_goods_id,
+//                        ], [
+//                            [ 'name', 'like', '%DIY_VIEW_RANDOM_%' ],
+//                            [ 'template_id', '=', $v[ 'goods_id' ] ]
+//                        ]);
+
+                        // 更新店铺关联模板关系id
+                        $diy_template_model->editSiteDiyTemplate([
+                            'template_goods_id' => $diy_goods_id,
+                        ], [
+                            [ 'addon_name', '=', $addon ],
+                            [ 'name', '=', $v[ 'name' ] ],
+                            [ 'template_goods_id', '=', $v[ 'goods_id' ] ]
+                        ]);
+                    }
+
+                }
+
+            } else {
+                // 模板不存在，则清除店铺与模板之间的关系
+                $diy_template_model->deleteSiteDiyTemplate([ [ 'addon_name', '=', $addon ] ]); // 模板页面关联关系
+            }
+
+            // 自定义页面数据
+            if (isset($diy_view[ 'data' ]) && !empty($diy_view[ 'data' ])) {
+                $goods_item_id = 0;
+                foreach ($diy_view[ 'data' ] as $k => $v) {
+                    $goods_item_data = [
+                        'goods_id' => $diy_goods_id, // 模板组id
+                        'title' => $v[ 'title' ], // 名称
+                        'addon_name' => $addon,
+                        'name' => $v[ 'name' ], // 所属页面（首页、分类，空为微页面）
+                        'value' => json_encode($v[ 'value' ]), // 模板数据
+                        'create_time' => time()
+                    ];
+                    $item_id = $diy_template_model->addTemplateGoodsItem($goods_item_data)[ 'data' ];
+
+                    // 默认装修第一个页面
+                    if ($k == 0) {
+                        $goods_item_id = $item_id;
+                    }
+                }
+
+                $diy_template_model->editTemplateGoods([ 'goods_item_id' => $goods_item_id ], [ [ 'goods_id', '=', $diy_goods_id ] ]);
+
+                // 更新页面的所属模板id
+                $diy_template_goods_item_list = $diy_template_model->getTemplateGoodsItemList([ [ 'addon_name', '=', $addon ] ], 'goods_id,goods_item_id,name')[ 'data' ];
+                if (!empty($diy_template_goods_item_list)) {
+                    foreach ($diy_template_goods_item_list as $k => $v) {
+                        $diy_view_model->editSiteDiyView([
+                            'template_id' => $v[ 'goods_id' ],
+                            'template_item_id' => $v[ 'goods_item_id' ]
+                        ], [
+                            [ 'name', '=', $v[ 'name' ] ],
+                            [ 'addon_name', '=', $addon ]
+                        ]);
+                    }
+                }
+
+            }
+
             return $this->success();
         } catch (\Exception $e) {
             return $this->error('', $e->getMessage() . '-' . $e->getFile() . '-' . $e->getLine());
@@ -380,15 +530,20 @@ class Addon extends BaseModel
     }
 
     /**
-     * 卸载自定义模板
-     *
-     * @param string $addon_name
-     * @return multitype:string mixed
+     * 卸载自定义数据（清除：自定义链接、组件、主题风格、模板页面类型、模板组、模板组页面、店铺拥有的模板组、店铺自定义模板）
+     * @param $addon_name
+     * @return array
      */
     private function uninstallDiyView($addon_name)
     {
-        model('link')->delete([ [ 'addon_name', '=', $addon_name ] ]);
-        model('diy_view_util')->delete([ [ 'addon_name', '=', $addon_name ] ]);
+        model('link')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 自定义链接
+        model('diy_view_util')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 自定义组件
+        model('diy_theme')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 主题风格
+        model('diy_template')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 模板页面类型
+        model('diy_template_goods')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 模板组
+        model('diy_template_goods_item')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 模板组页面
+        model('site_diy_template')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 店铺拥有的模板组
+//        model('site_diy_view')->delete([ [ 'addon_name', '=', $addon_name ] ]); // 店铺自定义模板
         return $this->success();
     }
 
@@ -441,7 +596,23 @@ class Addon extends BaseModel
         $menu_model = new Menu();
         foreach ($addon_list as $k => $v) {
             $addon_menu_res = $menu_model->refreshMenu('shop', $v[ 'name' ]);
+            // 刷新收银端权限
+            $menu_model->refreshCashierAuth($v[ 'name' ]);
         }
         return $this->success($addon_menu_res);
+    }
+
+    /**
+     * 刷新插件收银台权限
+     * @return array
+     */
+    public function refreshAddonCashierAuth()
+    {
+        $addon_list = model('addon')->getList([], 'name');
+        $menu_model = new Menu();
+        foreach ($addon_list as $k => $v) {
+            $addon_menu_res = $menu_model->refreshCashierAuth($v[ 'name' ]);
+        }
+        return $this->success();
     }
 }

@@ -4,12 +4,13 @@
 	.margin-left5 {margin-left: 5px;}
 	.layui-layout-admin.admin-style-2 .layui-body .layui-tab + .body-content {padding-top: 63px !important;}
 	.layui-layout-admin.admin-style-2 .table-tab .layui-tab-title{margin-bottom: 15px;}
+	.store-group-list {line-height: 1.5}
 </style>
 {/block}
 {block name="main"}
 
 <!-- 搜索框 -->
-<div class="single-filter-box top">
+<div class="single-filter-box">
 	<button class="layui-btn" onclick="add()">添加员工</button>
 
 	<div class="layui-form">
@@ -67,17 +68,41 @@
 				[{
 					field: 'username',
 					title: '员工名称',
-					width: '20%',
 					unresize: 'false'
 				}, {
 					field: 'group_name',
 					title: '员工角色',
 					width: '15%',
 					unresize: 'false'
-				}, {
+				},
+				{if $store_is_exit}
+				{
+					title: '门店角色',
+					width: '15%',
+					unresize: 'false',
+					templet: function (data) {
+						let h = '<div class="store-group-list">';
+						data.user_group_list.forEach(function (item) {
+							h += `<div class="store-group" title="${item.store_name}：${item.group_name}">${item.store_name}：${item.group_name}</div>`
+						})
+						h += '</div>'
+						return h;
+					}
+				},
+				{elseif $cashier_is_exit}
+				{
+					field: 'group_name',
+					title: '收银台角色',
+					width: '15%',
+					unresize: 'false',
+					templet: function (data) {
+						return data.user_group_list[0] ? data.user_group_list[0].group_name : '';
+					}
+				},
+				{/if}
+				{
 					field: 'login_ip',
 					title: '最后登录IP',
-					width: '18%',
 					unresize: 'false'
 				}, {
 					field: 'login_time',

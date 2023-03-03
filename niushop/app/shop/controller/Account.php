@@ -42,11 +42,11 @@ class Account extends BaseShop
         $start_time = input('start_time', Carbon::today()->timestamp);
         $end_time = input('end_time', Carbon::tomorrow()->timestamp);
 
-        $order_money = (new OrderModel())->getOrderMoneySum([ ['site_id', '=', $this->site_id], ['pay_time', 'between', [$start_time, $end_time] ] ], 'pay_money')['data'];
+        $order_money = (new OrderModel())->getOrderMoneySum([ ['site_id', '=', $this->site_id], ['pay_time', 'between', [$start_time, $end_time] ], ['order_scene', '=', 'online'] ], 'pay_money')['data'];
 
         $data = [
              [
-                'title' => '订单收入',
+                'title' => '商城订单',
                 'value' => $order_money,
                 'desc' => '统计时间内，所有付款订单实付金额之和',
                 'url' => 'shop/order/lists'

@@ -5,7 +5,6 @@
  * Copy right 2015-2025 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  * @author : niuteam
  */
@@ -76,7 +75,7 @@ class Tripartite extends BaseApi
 
         $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);// 生成4位随机数，左侧补0
         $message_model = new Message();
-        $res = $message_model->sendMessage([ 'type' => 'code',"mobile" => $mobile, "site_id" => $this->site_id, "support_type" => [ 'sms' ], "code" => $code, "keywords" => "MEMBER_BIND" ]);
+        $res = $message_model->sendMessage([ 'type' => 'code', "mobile" => $mobile, "site_id" => $this->site_id, "support_type" => [ 'sms' ], "code" => $code, "keywords" => "MEMBER_BIND" ]);
         if ($res[ "code" ] >= 0) {
             //将验证码存入缓存
             $key = 'bind_mobile_code_' . md5(uniqid(null, true));
@@ -105,7 +104,7 @@ class Tripartite extends BaseApi
             $res = $login->mobileLogin($this->params);
             if ($res[ 'code' ] >= 0) {
                 $token = $this->createToken($res[ 'data' ][ 'member_id' ]);
-                $res = $this->success([ 'token' => $token ,'can_receive_registergift'=>$res['data']['can_receive_registergift']]);
+                $res = $this->success([ 'token' => $token, 'can_receive_registergift' => $res[ 'data' ][ 'can_receive_registergift' ] ]);
             }
         } else {
             $res = $register->mobileRegister($this->params);
@@ -116,4 +115,17 @@ class Tripartite extends BaseApi
         }
         return $this->response($res);
     }
+
+    /**
+     * 获取手机号
+     * @return false|string
+     */
+    public function getPhoneNumber()
+    {
+        $decrypt_data = event('DecryptData', $this->params, true);
+        if ($decrypt_data[ 'code' ] < 0) return $this->response($decrypt_data);
+
+        return $this->response(success(0, '', [ 'mobile' => $decrypt_data[ 'data' ][ 'purePhoneNumber' ] ]));
+    }
+
 }

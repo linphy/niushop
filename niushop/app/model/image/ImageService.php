@@ -61,8 +61,8 @@ class ImageService
      * @param $image
      * @param $new_file
      */
-    public function save($new_file){
-        return $this->imageClass->save($this->image, $new_file);
+    public function save($new_file, $compress = 90){
+        return $this->imageClass->save($this->image, $new_file, $compress);
     }
 
     /**

@@ -25,10 +25,12 @@
 				<div class="contentOne-content-title">订单来源：</div>
 				<div class="contentOne-content-text">{$order_detail.order_from_name}</div>
 			</div>
+			{if $order_detail.pay_status == 1}
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">付款方式：</div>
 				<div class="contentOne-content-text">{$order_detail.pay_type_name}</div>
 			</div>
+			{/if}
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">买家：</div>
 				<div class="contentOne-content-text">{$order_detail.nickname}</div>
@@ -48,7 +50,7 @@
 				<div class="contentOne-content-text">{$order_detail['mobile']}</div>
 			</div>
 			<div class="contentOne-content">
-				<div class="contentOne-content-title">收货地址:</div>
+				<div class="contentOne-content-title">收货地址：</div>
 				<input type="text" class="address" id="address" value="{$order_detail['full_address']}-{$order_detail['address']}">
 				<div class="contentOne-content-text contentOne-content-text-die" title="{$order_detail['full_address']}-{$order_detail['address']}">{$order_detail['full_address']}-{$order_detail['address']}</div>
 				<div class="copy-icon-box"><a href="javascript:ns.copy('address');" class="iconfont iconfuzhi" style="margin-top: 4px"></a></div>
@@ -57,7 +59,7 @@
 		<div class="order-information-contentTwo">
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">营销活动：</div>
-				<div class="contentOne-content-text">{$order_detail['promotion_type_name']}</div>
+				<div class="contentOne-content-text">{if empty($order_detail['promotion_type_name'])}-{else/}{$order_detail['promotion_type_name']}{/if}</div>
 			</div>
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">买家留言：</div>
@@ -320,10 +322,10 @@
 				<tr class="table-trOne">
 					<th lay-data="{field:'product_name', width:200}">商品</th>
 					<th lay-data="{field:'price'}">价格</th>
+					<th lay-data="{field:'sku_no'}">商品编码</th>
 					<th lay-data="{field:'sale_num'}">数量</th>
 					<th lay-data="{field:'total_money'}">小计（元）</th>
 					<th lay-data="{field:'refund_status'}">退款状态</th>
-					<th lay-data="{field:'shipping_status'}">状态</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -331,15 +333,13 @@
 				<tr class="table-trTow">
 					<td>{$order_goods_item.sku_name}</td>
 					<td>{$order_goods_item.price}</td>
+					<td>{$order_goods_item.sku_no}</td>
 					<td>{$order_goods_item.num}</td>
 					<td>{$order_goods_item.goods_money}</td>
 					<td>
 						{if $order_goods_item.refund_status != 0}
 						<a class="text-color" href='{:addon_url("shop/orderrefund/detail?order_goods_id=".$order_goods_item["order_goods_id"])}'>{$order_goods_item.refund_status_name}</a>
 						{/if}
-					</td>
-					<td>
-						{$order_goods_item.delivery_status_name}
 					</td>
 				</tr>
 				{if isset($order_goods_item.form)}

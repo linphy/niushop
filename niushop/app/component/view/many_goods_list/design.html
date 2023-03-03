@@ -30,8 +30,8 @@
 					marginLeft: nc.template == 'horizontal-slide' && (nc.slideMode == 'scroll' && nc.goodsMarginType=='diy' && (nc.goodsMarginNum+'px') || ((60 - nc.margin.both*2) /6 + 'px')) || '', 
 					marginRight: nc.template == 'horizontal-slide' && (nc.slideMode == 'scroll' && nc.goodsMarginType=='diy' && (nc.goodsMarginNum+'px') || ((60 - nc.margin.both*2) /6 + 'px')) || '',
 					border: nc.ornament.type == 'stroke' ?  '1px solid ' + nc.ornament.color : ''}">
-				   <div class="goods-img":style="{ borderRadius:  nc.imgAroundRadius + 'px' }">
-					   <img :src="item.goods_image ? changeImgUrl(item.goods_image) : changeImgUrl('public/static/img/default_img/square.png')" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }" onerror="this.src = changeImgUrl('public/static/img/default_img/square.png');" />
+				   <div class="goods-img" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }">
+					   <img :src="item.goods_image ? changeImgUrl(item.goods_image) : changeImgUrl('public/static/img/default_img/square.png')" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }" onerror="this.src = ns.img('public/static/img/default_img/square.png');" />
 				   </div>
 
 				   <div class="info-wrap" v-if="nc.goodsNameStyle.control || nc.tag.value != 'hidden' || nc.priceStyle.mainControl || nc.priceStyle.lineControl || nc.btnStyle.control">
@@ -62,7 +62,7 @@
 							   <div v-else-if="nc.btnStyle.style == 'icon-add'" class="cart plus-sign-btn iconfont iconjia2" :style="{ color : nc.btnStyle.textColor }"></div>
 
 							   <!-- 按钮 -->
-							   <div v-else-if="nc.btnStyle.style == 'button'" class="cart buy-btn" :style="{ backgroundColor : nc.btnStyle.bgColor, color : nc.btnStyle.textColor,borderRadius : nc.btnStyle.aroundRadius + 'px' }">{{ nc.btnStyle.text }}</div>
+							   <div v-else-if="nc.btnStyle.style == 'button'" class="cart buy-btn" :style="{fontWeight: (nc.btnStyle.fontWeight ? 'bold' : 'normal'), backgroundColor : nc.btnStyle.bgColor, color : nc.btnStyle.textColor,borderRadius : nc.btnStyle.aroundRadius + 'px' ,padding : ('0 '+  nc.btnStyle.padding + 'px')}">{{ nc.btnStyle.text }}</div>
 
 							   <!-- 自定义图标 -->
 							   <div v-else-if="nc.btnStyle.style == 'icon-diy'" class="icon-diy">
@@ -128,14 +128,14 @@
 								<div class="layui-form-item">
 									<label class="layui-form-label sm">分类名称</label>
 									<div class="layui-input-block">
-										<input type="text" name='title' v-model="item.title" class="layui-input" />
+										<input type="text" name='title' v-model="item.title" maxlength="4" class="layui-input" />
 									</div>
 								</div>
 
 								<div class="layui-form-item" >
 									<label class="layui-form-label sm">副标题</label>
 									<div class="layui-input-block">
-										<input type="text" name='desc' v-model="item.desc" class="layui-input" />
+										<input type="text" name='desc' v-model="item.desc" maxlength="5" class="layui-input" />
 									</div>
 								</div>
 
@@ -198,6 +198,21 @@
 					</div>
 				</div>
 
+				<div class="layui-form-item">
+					<label class="layui-form-label sm">购物车事件</label>
+					<div class="layui-input-block">
+						<div @click="nc.btnStyle.cartEvent='detail'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.btnStyle.cartEvent=='detail') }">
+							<i class="layui-anim layui-icon">{{ nc.btnStyle.cartEvent=='detail' ? "&#xe643;" : "&#xe63f;" }}</i>
+							<div>跳转商品详情</div>
+						</div>
+						<div @click="nc.btnStyle.cartEvent='cart'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.btnStyle.cartEvent=='cart') }">
+							<i class="layui-anim layui-icon">{{ nc.btnStyle.cartEvent=='cart' ? "&#xe643;" : "&#xe63f;" }}</i>
+							<div>加入购物车</div>
+						</div>
+					</div>
+					<p class="word-aux" style="margin-left: 100px;" v-if="nc.btnStyle.cartEvent=='cart'">只有实物商品才能加入购物车，虚拟商品会跳转到商品详情</p>
+				</div>
+
 				<div v-show="nc.btnStyle.control">
 					<div class="layui-form-item btn-style">
 						<label class="layui-form-label sm">样式</label>
@@ -224,7 +239,7 @@
 							<img-icon-upload :data="{data : nc.btnStyle.iconDiy, displayType : 'icon'}"></img-icon-upload>
 							<div class="action-box">
 								<div class="action" @click="nc.tempData.methods.iconStyle($event)"><i class="iconfont iconpifu"></i></div>
-								<div class="action" :id="'many-goods-list-color-' + nc.index"><i class="iconfont iconyanse"></i></div>
+								<div class="action" :id="'many-goods-list-color-' + nc.tempData.goodsDuplicateId"><i class="iconfont iconyanse"></i></div>
 							</div>
 						</div>
 
@@ -483,6 +498,18 @@
 
 			<div class="template-edit-title" v-show="nc.btnStyle.support && nc.btnStyle.control">
 				<h3>购买按钮</h3>
+				<template v-if="nc.btnStyle.style == 'button'">
+					<div class="layui-form-item">
+						<label class="layui-form-label sm">是否加粗</label>
+						<div class="layui-input-block">
+							<div class="layui-unselect layui-form-checkbox" lay-skin="primary" @click="nc.btnStyle.fontWeight = !nc.btnStyle.fontWeight" :class="{ 'layui-form-checked' : nc.btnStyle.fontWeight }">
+								<span>{{ nc.btnStyle.fontWeight ? '加粗' : '常规' }}</span>
+								<i class="layui-icon layui-icon-ok"></i>
+							</div>
+						</div>
+					</div>
+					<slide :data="{ field : 'padding', parent : 'btnStyle', label : '按钮边距', min: 0, max : 20 }"></slide>
+				</template>
 				<slide v-show="nc.btnStyle.style == 'button'" :data="{ field : 'aroundRadius', label: '圆角', min:0, max: 50, parent: 'btnStyle' }"></slide>
 
 				<div class="layui-form-item">
@@ -511,7 +538,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var manyGoodsListResourcePath = "{$resource_path}";
+			var manyGoodsListResourcePath = "{$resource_path}"; // http路径
+			var manyGoodsListRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

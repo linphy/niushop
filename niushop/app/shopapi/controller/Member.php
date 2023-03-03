@@ -19,6 +19,7 @@ use app\model\member\MemberLabel as MemberLabelModel;
 use app\model\member\MemberLevel as MemberLevelModel;
 use app\model\order\OrderCommon;
 use app\model\order\OrderCommon as OrderCommonModel;
+use think\facade\Db;
 
 /**
  * 店铺会员
@@ -44,12 +45,21 @@ class Member extends BaseApi
     {
         $member = new MemberModel();
 
-        $page_index = isset($this->params['page']) ? $this->params['page'] : 1;
-        $page_size = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
-
-        $search_text = isset($this->params['search_text']) ? $this->params['search_text'] : '';
-        $start_date = isset($this->params['start_date']) ? $this->params['start_date'] : '';
-        $end_date = isset($this->params['end_date']) ? $this->params['end_date'] : '';
+        $page = $this->params['page'] ?? 1;
+        $page_size = $this->params['page_size'] ?? PAGE_LIST_ROWS;
+        $start_date = $this->params['start_date'] ?? '';
+        $end_date = $this->params['end_date'] ?? '';
+        $start_order_complete_money = $this->params['start_order_complete_money'] ?? '';
+        $end_order_complete_money = $this->params['end_order_complete_money'] ?? '';
+        $start_point = $this->params['start_point'] ?? '';
+        $end_point = $this->params['end_point'] ?? '';
+        $start_balance = $this->params['start_balance'] ?? '';
+        $end_balance = $this->params['end_balance'] ?? '';
+        $start_growth = $this->params['start_growth'] ?? '';
+        $end_growth = $this->params['end_growth'] ?? '';
+        $is_member = $this->params['is_member'] ?? '';
+        $status = $this->params['status'] ?? '';
+        $search_text = $this->params['search_text'] ?? '';
 
         $condition = [
             ['site_id', '=', $this->site_id]
@@ -65,7 +75,44 @@ class Member extends BaseApi
         } else if ($start_date == '' && $end_date != '') {
             $condition[] = ['reg_time', '<=', strtotime($end_date)];
         }
-        $list = $member->getMemberPageList($condition, $page_index, $page_size, 'reg_time desc', 'nickname,mobile,member_level_name,member_level,headimg,member_id,last_login_time,point,balance,balance_money,growth,status');
+        //会员状态
+        if ($status != '') {
+            $condition[] = [ 'status', '=', $status ];
+        }
+        //消费金额
+        if ($start_order_complete_money != '' && $end_order_complete_money != '') {
+            $condition[] = [ 'order_complete_money', 'between', [ $start_order_complete_money, $end_order_complete_money ] ];
+        } else if ($start_order_complete_money != '' && $end_order_complete_money == '') {
+            $condition[] = [ 'order_complete_money', '>=', $start_order_complete_money ];
+        } else if ($start_order_complete_money == '' && $end_order_complete_money != '') {
+            $condition[] = [ 'order_complete_money', '<=', $end_order_complete_money ];
+        }
+        //积分
+        if ($start_point != '' && $end_point != '') {
+            $condition[] = [ 'point', 'between', [ $start_point, $end_point ] ];
+        } else if ($start_point != '' && $end_point == '') {
+            $condition[] = [ 'point', '>=', $start_point ];
+        } else if ($start_point == '' && $end_point != '') {
+            $condition[] = [ 'point', '<=', $end_point ];
+        }
+        //余额
+        if ($start_balance != '' && $end_balance != '') {
+            $condition[] = [ '', 'exp', Db::raw("(balance + balance_money) between {$start_balance} and {$end_balance}") ];
+        } else if ($start_balance != '' && $end_balance == '') {
+            $condition[] = [ '', 'exp', Db::raw("(balance + balance_money) >= {$start_balance}") ];
+        } else if ($start_balance == '' && $end_balance != '') {
+            $condition[] = [ '', 'exp', Db::raw("(balance + balance_money) <= {$end_balance}") ];
+        }
+        //成长值
+        if ($start_growth != '' && $end_growth != '') {
+            $condition[] = [ 'growth', 'between', [ $start_growth, $end_growth ] ];
+        } else if ($start_growth != '' && $end_growth == '') {
+            $condition[] = [ 'growth', '>=', $start_growth ];
+        } else if ($start_growth == '' && $end_growth != '') {
+            $condition[] = [ 'growth', '<=', $end_growth ];
+        }
+        if ($is_member != '') $condition[] = [ 'is_member', '=', $is_member ];
+        $list = $member->getMemberPageList($condition, $page, $page_size, 'last_visit_time desc', 'nickname,mobile,member_level_name,member_level,headimg,member_id,last_login_time,point,balance,balance_money,growth,status,is_member,order_money,order_complete_money');
         return $this->response($list);
     }
 
@@ -80,7 +127,7 @@ class Member extends BaseApi
             ['member_id', '=', $member_id],
             ['site_id', '=', $this->site_id]
         ];
-        $field = 'member_id,username,headimg,nickname,mobile,member_level_name,member_label_name,birthday,sex,point,balance,growth,balance_money';
+        $field = 'member_id,username,headimg,nickname,mobile,member_level_name,member_label_name,birthday,sex,point,balance,growth,balance_money,is_member';
         $info = $member->getMemberInfo($condition, $field);
         $data['member_info'] = $info[ 'data' ];
         //会员等级

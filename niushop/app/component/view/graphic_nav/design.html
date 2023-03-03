@@ -13,36 +13,36 @@
 				border: nc.ornament.type == 'stroke' ?  '1px solid ' + nc.ornament.color : ''
 			}">
 				<template v-if="nc.showStyle == 'pageSlide'">
-					<div class="graphic-nav-wrap" v-for="(numItem,numIndex) in Math.ceil(nc.list.length / (nc.pageCount*nc.rowCount))">
+					<div class="graphic-nav-wrap" v-for="(numItem,numIndex) in Math.ceil(nc.list.length / (nc.pageCount * nc.rowCount))">
 						<div :class="['graphic-nav-item',{'layui-hide': nc.tempData.carouselIndex != numIndex}]"
 							 v-for="(item,previewIndex) in nc.list" :key="previewIndex"
-							 v-if="previewIndex >= [(numItem-1) * (nc.pageCount*nc.rowCount)] && previewIndex < [numItem * (nc.pageCount*nc.rowCount)]"
+							 v-if="previewIndex >= [(numItem-1) * (nc.pageCount * nc.rowCount)] && previewIndex < [numItem * (nc.pageCount * nc.rowCount)]"
 							 :style="{width: (100 / nc.rowCount + '%')}"
 						>
 							<div class="graphic-img" v-show="nc.mode != 'text'" :style="{'font-size' : nc.imageSize + 'px'}">
-								<img v-if="item.iconType == 'img'" :src="changeImgUrl(item.imageUrl) || changeImgUrl('public/static/img/default_img/square.png')" alt="" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px', borderRadius: nc.aroundRadius + 'px'}">
+								<img v-if="item.iconType == 'img' && item.imageUrl" :src="changeImgUrl(item.imageUrl)" alt="" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px', borderRadius: nc.aroundRadius + 'px'}">
 								<iconfont v-if="item.iconType == 'icon' && item.icon" :icon="item.icon" :value="(item.style ? item.style : null)" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px'}"></iconfont>
 								<img v-if="!item.icon && !item.imageUrl" :src="changeImgUrl('public/static/img/default_img/square.png')" alt="" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px', borderRadius: nc.aroundRadius + 'px'}">
 
 								<span class="tag" v-if="item.label.control" :style="{color: item.label.textColor,backgroundImage: 'linear-gradient(' + item.label.bgColorStart + ',' + item.label.bgColorEnd + ')'}">{{item.label.text}}</span>
 							</div>
-							<span v-show="nc.mode != 'img'" class="graphic-text" :style="{fontSize: nc.font.size+'px',fontWeight: nc.font.weight, color: nc.font.color}">{{item.title}}</span>
+							<span v-show="nc.mode != 'img'" class="graphic-text" :style="{fontSize: nc.font.size + 'px',fontWeight: nc.font.weight, color: nc.font.color}">{{item.title}}</span>
 						</div>
 					</div>
 
-					<div class="carousel-btn" v-if="Math.ceil(nc.list.length / (nc.pageCount*nc.rowCount)) -1">
+					<div class="carousel-btn" v-if="Math.ceil(nc.list.length / (nc.pageCount * nc.rowCount)) -1">
 						<div class="arrows">
 							<i class="iconfont iconback_light"  @click="nc.tempData.carouselIndex = (nc.tempData.carouselIndex ? nc.tempData.carouselIndex-1 : nc.tempData.carouselIndex)"></i>
-							<i class="iconfont iconyoujiantou" @click="nc.tempData.carouselIndex = [nc.tempData.carouselIndex < Math.ceil(nc.list.length / (nc.pageCount*nc.rowCount))-1  ? +nc.tempData.carouselIndex+1 : Math.ceil(nc.list.length / (nc.pageCount*nc.rowCount))-1]"></i>
+							<i class="iconfont iconyoujiantou" @click="nc.tempData.carouselIndex = [nc.tempData.carouselIndex < Math.ceil(nc.list.length / (nc.pageCount * nc.rowCount))-1  ? + nc.tempData.carouselIndex + 1 : Math.ceil(nc.list.length / (nc.pageCount * nc.rowCount))-1]"></i>
 						</div>
 						<div :class="['dot-wrap',nc.carousel.type]">
-							<i v-for="(numItem,numIndex) in Math.ceil(nc.list.length / (nc.pageCount*nc.rowCount))" :class="{'active': nc.tempData.carouselIndex == numIndex}" @click="nc.tempData.carouselIndex = numIndex"></i>
+							<i v-for="(numItem,numIndex) in Math.ceil(nc.list.length / (nc.pageCount * nc.rowCount))" :class="{'active': nc.tempData.carouselIndex == numIndex}" @click="nc.tempData.carouselIndex = numIndex"></i>
 						</div>
 					</div>
 				</template>
 				<div v-else class="graphic-nav-item" v-for="(item) in nc.list" :key="item.id" :style="{width: (100 / nc.rowCount + '%')}">
 					<div class="graphic-img" v-show="nc.mode != 'text'" :style="{'font-size' : nc.imageSize + 'px', width: nc.imageSize + 'px', height: nc.imageSize + 'px'}">
-						<img v-if="item.iconType == 'img'" :src="changeImgUrl(item.imageUrl) || changeImgUrl('public/static/img/default_img/square.png')" alt="" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px', borderRadius: nc.aroundRadius + 'px'}">
+						<img v-if="item.iconType == 'img' && item.imageUrl" :src="changeImgUrl(item.imageUrl)" alt="" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px', borderRadius: nc.aroundRadius + 'px'}">
 						<iconfont v-if="item.iconType == 'icon' && item.icon" :icon="item.icon" :value="(item.style ? item.style : null)" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px'}"></iconfont>
 						<img v-if="!item.icon && !item.imageUrl" :src="changeImgUrl('public/static/img/default_img/square.png')" alt="" :style="{maxWidth: nc.imageSize + 'px', maxHeight: nc.imageSize + 'px', borderRadius: nc.aroundRadius + 'px'}">
 						<span class="tag" v-if="item.label.control" :style="{color: item.label.textColor,backgroundImage: 'linear-gradient(' + item.label.bgColorStart + ',' + item.label.bgColorEnd + ')'}">{{item.label.text}}</span>
@@ -125,10 +125,10 @@
 
 							</template>
 
-							<div class="layui-form-item">
+							<div class="layui-form-item" v-if="['graphic','text'].includes(nc.mode)">
 								<label class="layui-form-label sm">标题</label>
 								<div class="layui-input-block">
-									<input type="text" name='title' v-model="item.title" maxlength="5" class="layui-input" autocomplete="off" />
+									<input type="text" name='title' v-model="item.title" maxlength="20" class="layui-input" autocomplete="off" />
 								</div>
 							</div>
 							<nc-link :data="{ field : item.link, label:'链接' }"></nc-link>
@@ -164,6 +164,7 @@
 						</div>
 					</div>
 				</div>
+
 				<color v-if="nc.ornament.type != 'default'" :data="{ field : 'color', 'label' : '边框颜色', parent : 'ornament', defaultColor : '#EDEDED' }"></color>
 
 				<div class="layui-form-item icon-radio" v-show="nc.showStyle == 'pageSlide'">
@@ -183,7 +184,7 @@
 				<h3>图片设置</h3>
 				<template v-if="nc.type == 'img'">
 					<slide :data="{ field : 'aroundRadius', label : '图片圆角', max : 50 }"></slide>
-					<slide :data="{ field : 'imageSize', label : '图片大小', min: 30, max : 50 }"></slide>
+					<slide :data="{ field : 'imageSize', label : '图片大小', min: 30, max : 60 }"></slide>
 				</template>
 			</div>
 
@@ -213,7 +214,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var graphicNavResourcePath = "{$resource_path}";
+			var graphicNavResourcePath = "{$resource_path}"; // http路径
+			var graphicNavRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

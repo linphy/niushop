@@ -177,6 +177,10 @@ class Config extends BaseShop
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $tencent_map_key = input("tencent_map_key", "");
+            $info = $config_model->checkQqMapKey($tencent_map_key, 1);
+            if($info['status'] != 0){
+                return $info;
+            }
             $result = $config_model->setMapConfig([
                 'tencent_map_key' => $tencent_map_key
             ]);

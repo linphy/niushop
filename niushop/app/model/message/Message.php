@@ -124,30 +124,33 @@ class Message extends BaseModel
      */
     public function getMessageList($site_id = 0, $message_type = 1, $field = '*', $order = '', $limit = null)
     {
+        $field = 'nmt.id, nmt.addon, nmt.keywords, nmt.title, nmt.message_type, nmt.message_json, nmt.sms_addon, nmt.sms_json, nmt.sms_content, nmt.wechat_json
+        , nmt.weapp_json, nmt.aliapp_json, nmt.support_type, nmt.remark, nm.sms_is_open, nm.wechat_is_open, nm.wechat_template_id, nm.weapp_is_open, nm.weapp_template_id, nm.aliapp_is_open, nm.aliapp_json';
         switch ( $message_type ) {
             case 1:
-                $order = Db::raw("field(keywords,'REGISTER_CODE','LOGIN_CODE','SET_PASSWORD','FIND_PASSWORD','MEMBER_BIND',
+                $order = Db::raw("field(nmt.keywords,'REGISTER_CODE','LOGIN_CODE','SET_PASSWORD','FIND_PASSWORD','MEMBER_BIND',
                                 'USER_CANCEL_SUCCESS','USER_CANCEL_FAIL','ORDER_URGE_PAYMENT','ORDER_CLOSE','ORDER_PAY',
                                 'ORDER_DELIVERY','ORDER_COMPLETE','ORDER_VERIFY_OUT_TIME','VERIFY_CODE_EXPIRE','VERIFY',
                                 'ORDER_REFUND_AGREE','ORDER_REFUND_REFUSE','USER_WITHDRAWAL_SUCCESS','USER_BALANCE_CHANGE_NOTICE'
                                 ,'COMMISSION_GRANT','FENXIAO_WITHDRAWAL_SUCCESS','FENXIAO_WITHDRAWAL_ERROR','BARGAIN_COMPLETE', 'PINTUAN_COMPLETE', 'PINTUAN_FAIL', 'SECKILL_START')");
                 break;
             case 2:
-                $order = Db::raw("field(keywords,'BUYER_PAY','BUYER_ORDER_COMPLETE','BUYER_REFUND','BUYER_DELIVERY_REFUND',
+                $order = Db::raw("field(nmt.keywords,'BUYER_PAY','BUYER_ORDER_COMPLETE','BUYER_REFUND','BUYER_DELIVERY_REFUND',
                                 'USER_WITHDRAWAL_APPLY','FENXIAO_WITHDRAWAL_APPLY','USER_CANCEL_APPLY')");
                 break;
         }
-        $list = model('message_template')->getList([ [ "message_type", "=", $message_type ] ], $field, $order, '', '', '', $limit);
+        $join = [
+            ['message nm', 'nmt.keywords = nm.keywords', 'left']
+        ];
+        $list = model('message_template')->getList([ [ "nmt.message_type", "=", $message_type ] ], $field, $order, 'nmt', $join, '', $limit);
         if (!empty($list)) {
             foreach ($list as $k => $v) {
                 $list[ $k ][ 'support_type' ] = explode(',', $v[ 'support_type' ]);
+                $list[ $k ][ 'sms_is_open' ] = $v['sms_is_open'] == null ? 0 : $v[ 'sms_is_open' ];
 
-                $message_info = model('message')->getInfo([ [ "keywords", "=", $v[ 'keywords' ] ], [ 'site_id', '=', $site_id ] ], 'sms_is_open,wechat_is_open,weapp_is_open');
-                $list[ $k ][ 'sms_is_open' ] = $message_info == null ? 0 : $message_info[ 'sms_is_open' ];
+                $list[ $k ][ 'wechat_is_open' ] = $v['wechat_is_open'] == null ? 0 : $v[ 'wechat_is_open' ];
 
-                $list[ $k ][ 'wechat_is_open' ] = $message_info == null ? 0 : $message_info[ 'wechat_is_open' ];
-
-                $list[ $k ][ 'weapp_is_open' ] = $message_info == null ? 0 : $message_info[ 'weapp_is_open' ];
+                $list[ $k ][ 'weapp_is_open' ] = $v['weapp_is_open'] == null ? 0 : $v[ 'weapp_is_open' ];
             }
         }
         return $this->success($list);

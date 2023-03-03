@@ -14,7 +14,7 @@
 	.layui-elem-quote .time {font-size:12px;margin-left:10px;}
 	.screen-title {font-size:14px;font-weight:600;}
 	.stat-list {margin-top:10px;display:flex;flex-wrap:wrap;}
-	.stat-item {padding:15px;box-sizing:border-box;margin-right:10px;width:calc((100% - 30px) / 4);margin-bottom:10px;border:1px solid #eee;box-sizing:border-box;}
+	.stat-item {padding:15px;box-sizing:border-box;margin-right:10px;width:calc((100% - 30px) / 4);margin-bottom:10px;border:1px solid #eee;}
 	.stat-name span {position:relative;}
 	.stat-name .iconfont {margin-left:5px;cursor:pointer;}
 	.stat-name>a {float:right;margin-top:1px;font-size:14px;font-weight:normal;}
@@ -174,8 +174,8 @@
 				var time_arr = value.split(' - ');
 				var start_time = time_arr[0];
 				var end_time = time_arr[1];
-				getIncomeData({start_time: dateToTime(start_time), end_time: dateToTime(end_time)})
-				getDisburseData({start_time: dateToTime(start_time), end_time: dateToTime(end_time)})
+				getIncomeData({start_time: dateToTime(start_time), end_time: dateToTime(end_time)});
+				getDisburseData({start_time: dateToTime(start_time), end_time: dateToTime(end_time)});
 				$('input[name="start_time"]').val(time_arr[0]);
 				$('input[name="end_time"]').val(time_arr[1]);
 			}

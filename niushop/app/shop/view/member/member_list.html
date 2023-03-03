@@ -18,8 +18,52 @@
     .title-content{overflow:visible !important;}
 	.member-form .layui-form-item{margin-bottom: 0}
     .member-form .layui-form-item .layui-inline{margin-bottom: 10px}
-	.channel {color: var(--base-color)}
-	.iconxiaochengxu {font-size: 12px}
+	.title-pic {position: relative;}
+	.title-pic .channel {position: absolute;right: 0;bottom: 0;color: var(--base-color);width: 20px;height: 20px;display: flex;align-items: center;justify-content: center;border-radius: 50%;font-size: 14px;}
+	.title-content .member-level {display: inline-block;white-space: nowrap;background: #eee;color: #999;font-size: 12px;padding: 3px 5px; line-height: 1;border-radius: 4px;}
+    .iconxiaochengxu {font-size: 12px}
+    .layui-unselect[data-field="balance"]>div, .layui-unselect[data-field="point"]>div{
+        display: flex;
+        align-items: center;
+    }
+	.layer-member .member-head{
+		display: flex;
+		align-items: center;
+	}
+	.layer-member .member-head .member-img{
+		flex-shrink: 0;
+		display: inline-block;
+		width: 60px;
+		height: 60px;
+		text-align: center;
+		line-height: 50px;
+		margin-left: 5px;
+	}
+	.layer-member .member-head .member-img img{
+		max-width: 100%;
+		max-height: 100%;
+	}
+	.layer-member .member-head .member-name{
+		margin-left: 15px;
+		line-height: 2;
+	}
+	.layer-member .member-head .member-sex{
+		margin-left: 20%;
+		line-height: 1.7;
+	}
+	.layer-member .member-account{
+		background: #f2f3f5;
+		padding: 20px 15px;
+		margin: 20px 0;
+		display: table;
+		box-sizing: border-box;
+		display: flex;
+	}
+	.layer-member .member-account .account-item{
+		width: 25%;
+		display: inline-block;
+		line-height: 2;
+	}
 </style>
 <link rel="stylesheet" type="text/css" href="SHOP_CSS/member.css" />
 {/block}
@@ -39,6 +83,7 @@
 						<select name="search_text_type">
 							<option value="mobile">手机号</option>
 							<option value="nickname">昵称</option>
+							<option value="member_code">会员码</option>
 						</select>
 					</div>
 					<div class="layui-input-inline split">&nbsp;</div>
@@ -145,19 +190,19 @@
 					<div class="layui-form-mid">元</div>
 				</div>
 				<div class="layui-inline">
-					<label class="layui-form-label">成长值</label>
+					<label class="layui-form-label">会员标签</label>
 					<div class="layui-input-inline">
-						<input type="text" class="layui-input" name="start_growth" id="start_growth" autocomplete="off">
-					</div>
-					<div class="layui-input-inline split">-</div>
-					<div class="layui-input-inline end-time">
-						<input type="text" class="layui-input" name="end_growth" id="end_growth" autocomplete="off">
+						<select name="label_id">
+							<option value="">请选择</option>
+							{foreach $member_label_list as $member_label_list_k=> $member_label_list_v}
+							<option value="{$member_label_list_v.label_id}">{$member_label_list_v.label_name}</option>
+							{/foreach}
+						</select>
 					</div>
 				</div>
 
 			</div>
 			<div class="layui-form-item">
-
 				<div class="layui-inline">
 					<label class="layui-form-label">消费金额</label>
 					<div class="layui-input-inline input-append">
@@ -171,19 +216,18 @@
 					<div class="layui-form-mid">元</div>
 				</div>
 				<div class="layui-inline">
-					<label class="layui-form-label">会员标签</label>
+					<label class="layui-form-label">成长值</label>
 					<div class="layui-input-inline">
-						<select name="label_id">
-							<option value="">请选择</option>
-							{foreach $member_label_list as $member_label_list_k=> $member_label_list_v}
-							<option value="{$member_label_list_v.label_id}">{$member_label_list_v.label_name}</option>
-							{/foreach}
-						</select>
+						<input type="text" class="layui-input" name="start_growth" id="start_growth" autocomplete="off">
+					</div>
+					<div class="layui-input-inline split">-</div>
+					<div class="layui-input-inline end-time">
+						<input type="text" class="layui-input" name="end_growth" id="end_growth" autocomplete="off">
 					</div>
 				</div>
 
 				<div class="layui-inline">
-					<label class="layui-form-label">来源渠道：</label>
+					<label class="layui-form-label">来源渠道</label>
 					<div class="layui-input-inline">
 						<select name="login_type">
 							<option value="">全部</option>
@@ -203,7 +247,16 @@
 						</select>
 					</div>
 				</div>
-
+				<div class="layui-inline">
+					<label class="layui-form-label">是否是会员</label>
+					<div class="layui-input-inline">
+						<select name="is_member">
+							<option value="">请选择</option>
+							<option value="1">是</option>
+							<option value="0">否</option>
+						</select>
+					</div>
+				</div>
 			</div>
 			<div class="form-row">
 				<button class="layui-btn" lay-submit lay-filter="search">筛选</button>
@@ -221,12 +274,17 @@
 <script type="text/html" id="userdetail">
 	<div class='table-title'>
 		<div class='title-pic'>
+			{{# if(d.headimg){ }}
 			<img layer-src src="{{ns.img(d.headimg)}}" onerror="this.src = '{:img('public/static/img/default_img/head.png')}' ">
+			{{# }else{ }}
+			<img layer-src src="{:img('public/static/img/default_img/head.png')}">
+			{{# } }}
+			<span class="channel {{ channelImg(d.login_type) }}" title="{{ d.login_type_name }}"></span>
 		</div>
 		<div class='title-content'>
 			<p class="layui-elip">{{d.nickname}}</p>
 			<div>
-				<span class="channel {{ channelImg(d.login_type) }}" title="{{ d.login_type_name }}"></span>
+				<span title="{{ d.mobile }}">{{ d.mobile }}</span>
 				{{# if (d.status == 0 || d.member_level_type == 1){ }}
 					{{# if (d.status == 0){ }}
 					<span class="blacklist">黑名单</span>
@@ -263,6 +321,7 @@
 <script type="text/html" id="operation">
 	<div class="table-btn" align="right">
 		<a class="layui-btn" lay-event="info">详情</a>
+		{{# if(d.is_member == 0){ }}<a class="layui-btn" lay-event="member">办理会员</a>{{# } }}
 		<a class="layui-btn" lay-event="more">更多</a>
 		<div class="more-operation">
 			{if $is_exit_fenxiao == 1}
@@ -339,6 +398,66 @@
 
 		<input type="hidden" name="member_id" value="{{d.member_id}}" />
 		<input type="hidden" name="balance" value="{{ d.balance }}" />
+	</div>
+</script>
+
+<!-- 办理会员 -->
+<script type="text/html" id="set_member">
+	<div class="layer-member">
+		<div class="member-head">
+			<div class="member-img">
+				<img src="{{ns.img(d.headimg)}}" onerror="this.src = '{:img('public/static/img/default_img/head.png')}' ">
+			</div>
+			<div class="member-name">
+				<div>昵称：{{d.nickname ? d.nickname : ''}}</div>
+				<div>手机号：{{d.mobile ? d.mobile : '--'}}</div>
+			</div>
+			<div class="member-sex">
+				<div>性别：{{d.sex == 0 ? '未知' : d.sex == 1 ? '男' : '女'}}</div>
+				<div>生日：{{d.birthday ? ns.time_to_date(d.birthday) : '--'}}</div>
+			</div>
+		</div>
+
+		<div class="member-account">
+			<div class="account-item">可用积分：{{d.point}}</div>
+			<div class="account-item">现金金额：{{d.balance_money}}</div>
+			<div class="account-item">储值余额：{{d.balance}}</div>
+			<div class="account-item">成长值：{{d.growth}}</div>
+
+		</div>
+
+	</div>
+	<div class="layui-form main-wrap add_level" lay-filter="form">
+		<div class="layui-form-item">
+			<label class="layui-form-label">会员等级：</label>
+			<div class="layui-input-inline len-mid">
+				<select name="level_id"  class="len-mid" lay-verify="required">
+					<option value="">请选择</option>
+					{foreach $member_level_list as $k=> $v}
+					{if $v['status']}
+					<option value="{$v.level_id}">{$v.level_name}</option>
+					{/if}
+					{/foreach}
+				</select>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">会员卡号：</label>
+			<div class="layui-input-block">
+				{{# if(d.member_code){ }}
+				<input type="text" class="layui-input len-mid" value="{{d.member_code}}" name="member_code" placeholder="" disabled>
+				{{# }else{ }}
+				<input type="text" class="layui-input len-mid" value="{{d.member_code}}" name="member_code" placeholder="">
+				{{# } }}
+			</div>
+			<div class="word-aux">会员卡号为会员唯一编号，若不设置将会自动生成</div>
+		</div>
+
+		<input type="hidden" value="{{d.member_id}}" name="member_id">
+		<div class="form-row">
+			<button class="layui-btn  bg-color " lay-submit="" lay-filter="savemember">保存</button>
+		</div>
 	</div>
 </script>
 {/block}
@@ -473,18 +592,29 @@
                         type: 'checkbox',
                         unresize: 'false'
                     }, {
-                    field: 'userdetail',
-                    title: '账户',
-                    width: '15%',
+                    title: '会员信息',
+                    width: '18%',
                     unresize: 'false',
                     templet: '#userdetail'
                 }, {
-                    field: 'member_level_name',
-                    title: '会员等级',
-                    width: '8%',
-                    unresize: 'false',
-										// templet: '#vipdetail'
-                }, {
+					field: 'member_level_name',
+					title: `<div class="prompt-block">
+						会员等级
+						<div class="prompt">
+							<i class="iconfont iconwenhao1 required growth"></i>
+							<div class="growth-box reason-box reason-growth prompt-box">
+								<div class="prompt-con">
+									<p>会员等级显示为非会员表示当前客户不是会员可以操作办理会员</p>
+								</div>
+							</div>
+						</div>
+					</div>`,
+					width: '12%',
+					unresize: 'false',
+					templet: function (data) {
+						return data.is_member ? `<span style="color: #000">${data.member_level_name}</span>` : '<span style="color: #666">非会员</span>';
+					},
+				}, {
                     field: 'parent_fenxiao_name',
                     title: '上级分销商',
                     width: '10%',
@@ -498,7 +628,8 @@
                     align: 'left',
                     templet: function (data) {
                         return parseInt(data.point);
-                    }
+                    },
+                    sort: true
                 }, {
                     field: 'balance',
                     title: $("#tableTitleBalance").html(),
@@ -507,21 +638,27 @@
                     align: 'right',
                     templet: function(data) {
                         var balance = parseFloat(data.balance) + parseFloat(data.balance_money);
-                        return '<span style="color: red;" title="'+ balance.toFixed(2) +'">￥' + balance.toFixed(2) + '</span>';
-                    }
+                        return '<span style="font-weight: bold" title="'+ balance.toFixed(2) +'">￥' + balance.toFixed(2) + '</span>';
+                    },
+                    sort: true
                 }, {
-                    field: 'growth',
-                    title: $("#tableTitleGrowth").html(),    
-                    width: '10%',
+                    field: 'order_complete_num',
+                    title: '成交订单数',
+                    width: '8%',
                     unresize: 'false',
-                    align: 'right'
-                }, {
-                    field: 'member_label',
-                    title: '标签',
-                    width: '15%',
-                    unresize: 'false',
-                    templet: '#member_label'
-                }, {
+                    align: 'right',
+                    sort: true
+                },  {
+					field: 'order_money',
+					title: '消费总额',
+					width: '8%',
+					unresize: 'false',
+					align: 'right',
+					templet: function(data) {
+						return '￥' + data.order_money;
+					},
+                    sort: true
+				},{
                     field: 'reg-visit',
                     title: '最后访问时间',
                     width: '12%',
@@ -548,7 +685,7 @@
             var data = obj.data;
             switch (obj.event) {
                 case 'info': //编辑
-                    location.href = ns.url("shop/member/editMember?member_id=" + data.member_id);
+					window.open(ns.url("shop/member/editMember?member_id=" + data.member_id),"_blank");
                     break;
                 case 'reset_pass': //重置密码
                     resetPassword(data);
@@ -586,6 +723,9 @@
                 case 'blacklist': // 黑名单
                     addBlacklist(data.member_id,data.status);
                     break;
+				case 'member': // 办理会员
+					setMember(data);
+					break;
             }
         });
 
@@ -594,6 +734,44 @@
                 $('.more-operation').css('display', 'none');
             }
         });
+
+		/**
+		 * 办理会员
+		 */
+		function setMember(data) {
+			laytpl($("#set_member").html()).render(data, function(html) {
+				layer_coupon = layer.open({
+					title: '办理会员',
+					skin: 'layer-tips-class',
+					type: 1,
+					area: ['700px', '542px'],
+					content: html,
+					success: function () {
+						form.render();
+					}
+				});
+			});
+		}
+
+		form.on('submit(savemember)', function(obj) {
+			if (repeat_flag) return false;
+			repeat_flag = true;
+
+			$.ajax({
+				type: "POST",
+				url: ns.url("shop/member/handleMember"),
+				data: obj.field,
+				dataType: 'JSON',
+				success: function(res) {
+					layer.msg(res.message);
+					repeat_flag = false;
+					if (res.code == 0) {
+						table.reload();
+						layer.closeAll('page');
+					}
+				}
+			});
+		});
 
         /**
          * 批量操作

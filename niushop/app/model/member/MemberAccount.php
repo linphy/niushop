@@ -115,6 +115,8 @@ class MemberAccount extends BaseModel
         $from_type[ 'balance_money' ][ 'hongbao' ] = [ 'type_name' => '裂变红包', 'type_url' => '' ];
 
         $from_type[ 'point' ][ 'point_expire' ] = [ 'type_name' => '积分到期', 'type_url' => '' ];
+        $from_type[ 'point' ][ 'point_set_zero' ] = [ 'type_name' => '积分清零', 'type_url' => '' ];
+
         $this->from_type = $from_type;
     }
 
@@ -152,7 +154,7 @@ class MemberAccount extends BaseModel
                 [ 'member_id', '=', $member_id ],
                 [ 'site_id', '=', $site_id ]
             ])->field($account_type . ', username, mobile, nickname, email')->lock(true)->find();
-            $account_new_data = (float) $member_account[ $account_type ] + (float) $account_data;
+            $account_new_data = round((float) $member_account[ $account_type ] + (float) $account_data, 2);
 
             if($from_type == "point_expire" && $account_new_data < 0){
                 $account_data = -$member_account[ $account_type ];
@@ -319,21 +321,5 @@ class MemberAccount extends BaseModel
 
     }
 
-    public function closeDeletePoint(){
 
-        try {
-            set_time_limit(0);
-            $account_list = Db::name("member_account")->where([['account_type', "=", "point"], ['account_data', ">", 0], ['point_expire', "=", 0]])->group("member_id")->field("site_id,member_id,SUM(account_data) AS account_data_total")->select();
-
-            foreach ($account_list as $key => $val){
-                $this->addMemberAccount($val['site_id'], $val['member_id'], "point", -$val['account_data_total'], 'point_expire', 0, "积分到期扣除");
-            }
-
-            model('member_account')->update(["point_expire" => 1], [['account_type', "=", "point"], ['account_data', ">", 0], ['point_expire', "=", 0]]);
-
-        } catch (\Exception $e) {
-            dump( $e->getMessage());
-            return $this->error('', $e->getMessage());
-        }
-    }
 }

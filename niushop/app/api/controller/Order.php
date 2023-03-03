@@ -20,6 +20,7 @@ use app\model\order\OrderCommon as OrderCommonModel;
 use app\model\order\OrderRefund as OrderRefundModel;
 use app\model\order\Config as ConfigModel;
 use app\model\order\VirtualOrder;
+use think\facade\Db;
 
 class Order extends BaseApi
 {
@@ -62,18 +63,27 @@ class Order extends BaseApi
         switch ( $order_status ) {
             case "waitpay"://待付款
                 $condition[] = [ "o.order_status", "=", 0 ];
+                $condition[] = [ 'o.order_scene', '=', 'online'];
                 break;
             case "waitsend"://待发货
                 $condition[] = [ "o.order_status", "=", 1 ];
                 break;
             case "waitconfirm"://待收货
                 $condition[] = [ "o.order_status", "in", [ 2, 3 ] ];
+                $condition[] = [ "o.order_type", "<>", 4 ];
+                break;
+            //todo  这儿改了之后要考虑旧数据的问题
+            case 'wait_use'://待使用
+                $condition[] = [ "o.order_status", "in", [ 3, 11 ] ];
+                $condition[] = [ "o.order_type", "=", 4 ];
                 break;
             case "waitrate"://待评价
                 $condition[] = [ "o.order_status", "in", [ 4, 10 ] ];
                 $condition[] = [ "o.is_evaluate", "=", 1 ];
                 $condition[] = [ "o.evaluate_status", "=", 0 ];
                 break;
+            default:
+                $condition[] = ['', 'exp', Db::raw("o.order_scene = 'online' OR (o.order_scene = 'cashier' AND o.pay_status = 1)") ];
         }
 //		if (c !== "all") {
 //			$condition[] = [ "order_status", "=", $order_status ];
@@ -212,6 +222,7 @@ class Order extends BaseApi
         foreach (explode(',', $this->params[ 'order_status' ]) as $order_status) {
             $condition = array (
                 [ "member_id", "=", $this->member_id ],
+                [ "order_scene", "=", "online" ]
             );
             switch ( $order_status ) {
                 case "waitpay"://待付款
@@ -222,6 +233,14 @@ class Order extends BaseApi
                     break;
                 case "waitconfirm"://待收货
                     $condition[] = [ "order_status", "in", [ 2, 3 ] ];
+                    $condition[] = [ "order_type", "<>", 4 ];
+                    break;
+                case 'wait_use'://待使用
+//                    $condition[] = [ "order_status", "in", [ 3 ] ];
+//                    $condition[] = [ "order_type", "=", 4 ];
+                    //todo 待使用状态
+                    $condition[] = [ "order_status", "in", [ 3, 11 ] ];
+                    $condition[] = [ "order_type", "=", 4 ];
                     break;
                 case "waitrate"://待评价
                     $condition[] = [ "order_status", "in", [ 4, 10 ] ];

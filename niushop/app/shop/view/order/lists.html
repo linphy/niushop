@@ -17,7 +17,7 @@
         <form class="layui-colla-content layui-form layui-show"  lay-filter="order_list">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">搜索方式：</label>
+                    <label class="layui-form-label">搜索方式</label>
                     <div class="layui-input-inline">
                         <select name="order_label" >
                             {foreach $order_label_list as $k => $label_val}
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">订单类型：</label>
+                    <label class="layui-form-label">订单类型</label>
                     <div class="layui-input-inline">
                         <select name="order_type" lay-filter="order_type">
                             {foreach $order_type_list as $order_type_k => $order_type_val}
@@ -42,8 +42,21 @@
                         </select>
                     </div>
                 </div>
+                {if addon_is_exit('store') == 1}
                 <div class="layui-inline">
-                    <label class="layui-form-label">订单状态：</label>
+                    <label class="layui-form-label">来源门店</label>
+                    <div class="layui-input-inline">
+                        <select name="store_id" lay-filter="store_id">
+                            <option value="">全部</option>
+                            {foreach $store_list as $k => $v}
+                            <option value="{$v.store_id}">{$v.store_name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                {/if}
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单状态</label>
                     <div class="layui-input-inline">
                         <select name="order_status" lay-filter="order_status">
                             <option value="">全部</option>
@@ -53,10 +66,11 @@
                         </select>
                     </div>
                 </div>
+
             </div>
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">订单来源：</label>
+                    <label class="layui-form-label">订单来源</label>
                     <div class="layui-input-inline">
                         <select name="order_from">
                             <option value="">全部</option>
@@ -67,7 +81,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">付款方式：</label>
+                    <label class="layui-form-label">付款方式</label>
                     <div class="layui-input-inline">
                         <select name="pay_type" >
                             <option value="">全部</option>
@@ -78,7 +92,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">营销类型：</label>
+                    <label class="layui-form-label">营销类型</label>
                     <div class="layui-input-inline">
                         <select name="promotion_type" lay-filter="promotion_type">
                             <option value="">全部</option>
@@ -92,7 +106,7 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">下单时间：</label>
+                    <label class="layui-form-label">下单时间</label>
                     <div class="layui-input-inline">
                         <input type="text" class="layui-input" name="start_time" placeholder="开始时间" id="start_time" readonly>
                         <i class=" iconrili iconfont calendar"></i>
@@ -106,7 +120,7 @@
                     <button class="layui-btn layui-btn-primary date-picker-btn date-picker-btn-thirty" onclick="datePick(30, this);return false;">近30天</button>
                 </div>
                 <div class="layui-inline layui-hide" id="delivery_time_box">
-                    <label class="layui-form-label">自提时间：</label>
+                    <label class="layui-form-label">自提时间</label>
                     <div class="layui-input-inline">
                         <input type="text" class="layui-input" name="delivery_start_time" placeholder="开始时间" id="delivery_start_time" readonly>
                         <i class=" iconrili iconfont calendar"></i>
@@ -167,7 +181,6 @@
 <!-- 虚拟订单发货 -->
 {include file="virtualorder/virtual_order_delivery_action" /}
 
-
 <script src="SHOP_JS/order_list.js"></script>
 <script src="SHOP_JS/lodop_funcs.js"></script>
 <script>
@@ -220,35 +233,34 @@
     }
 
     //从hash中获取数据
-    function getHashData(){
+    function getHashData() {
         var hash = ns.urlReplace(location.hash);
-        var data= [];
-
         var hash_arr = hash.substr(2).split("&");
 
         var form_json = {
-            "end_time" : "",
-            "delivery_end_time" : "",
-            "order_from" : "",
-            "order_label" : $("select[name=order_label]").val(),
-            "order_name" : "",
-            "order_status" : "",
-            "promotion_type" : "",
-            "pay_type" : "",
-            "search" : "",
-            "start_time" : "",
-            "delivery_start_time" : "",
-            "order_type" : 'all',
-            'page_size':'',
-            "page" : ""
+            "end_time": "",
+            "delivery_end_time": "",
+            "order_from": "",
+            "order_label": $("select[name=order_label]").val(),
+            "order_name": "",
+            "order_status": "",
+            "promotion_type": "",
+            "pay_type": "",
+            "search": "",
+            "start_time": "",
+            "delivery_start_time": "",
+            "order_type": 'all',
+            'page_size': '',
+            "page": "",
+            "store_id": $("select[name=store_id]").val(),
         };
-        if(hash_arr.length > 0){
+        if (hash_arr.length > 0) {
             // page = hash_arr[0].replace('#!page=', '');
-            $.each(hash_arr,function(index, itemobj){
+            $.each(hash_arr, function (index, itemobj) {
                 var item_arr = itemobj.split("=");
-                if(item_arr.length == 2){
-                    $.each(form_json,function(key, form_val){
-                        if(item_arr[0] == key){
+                if (item_arr.length == 2) {
+                    $.each(form_json, function (key, form_val) {
+                        if (item_arr[0] == key) {
                             form_json[key] = item_arr[1];
                         }
                     })
@@ -257,9 +269,9 @@
         }
 
         resetOrderStatus(form_json.order_type, 2);
-        form.val("order_list", form_json);
         switchOrderType(form_json.order_type);
         setOrderStatusTab(form_json.order_status);
+        form.val("order_list", form_json);
         return form_json;
     }
 
@@ -334,24 +346,22 @@
 
         //批量导出（订单项）
         form.on('submit(batch_export_order_goods)', function(data){
-            // location.href = ns.url("shop/order/exportOrderGoods",data.field);
+            data.field.order_ids = orderIdAll.toString(); // 选择要导出的订单
             $.ajax({
                 type: 'post',
                 dataType: 'json',
                 url: ns.url("shop/order/exportordergoods"),
                 data: data.field,
                 success: function (res) {
-
                 }
             })
             window.open(ns.url("shop/order/export",{}))
-            // location.href = ns.url("shop/order/orderexportlist",{});
             return false;
         });
 
         //批量导出（订单）
         form.on('submit(batch_export_order)', function(data){
-            // location.href = ns.url("shop/order/exportOrder",data.field);
+            data.field.order_ids = orderIdAll.toString(); // 选择要导出的订单
             $.ajax({
                 type: 'post',
                 dataType: 'json',
@@ -362,10 +372,8 @@
                 }
             })
             window.open(ns.url("shop/order/export",{}))
-            // location.href = ns.url("shop/order/orderexportlist",{});
             return false;
         });
-
 
         //订单类型
         form.on('select(order_type)', function(data){
@@ -387,12 +395,11 @@
         });
         getHashData();
         getOrderList();//筛选
-
     });
 
     function switchOrderType(value){
         if(value == 2 || value == 3){
-            var time_type = value == 2 ? '要求自提时间：': '要求送达时间：'
+            var time_type = value == 2 ? '要求自提时间：': '要求送达时间：';
             $("#delivery_time_box").removeClass('layui-hide').find('label').text(time_type);
         }else{
             $("#delivery_time_box").addClass('layui-hide');
@@ -408,6 +415,7 @@
             }
         });
     }
+
     //重置状态tab 选项卡
     function resetOrderStatus(order_type, is_tab){
         var hash_order_type = getHashOrderType();
@@ -452,7 +460,6 @@
 
     function getHashList(){
         var hash = ns.urlReplace(location.hash);
-        var data= [];
         var hash_arr = hash.split("&");
 
         var form_json = {
@@ -469,7 +476,8 @@
             "delivery_start_time" : "",
             "order_type" : 'all',
             'page_size':'',
-            "page" : ""
+            "page" : "",
+            "store_id" : $("select[name=store_id]").val()
         };
         if(hash_arr.length > 0){
             // page = hash_arr[0].replace('#!page=', '');
@@ -543,11 +551,8 @@
 
                     //获取选中的id
                     function getOrderId(){
-                        var subLen = $(".sub-selected-checkbox input:checked").length,
-                            lists = $(".sub-selected-checkbox input:checked");
-
-                        orderDataAll = [];
-
+                        var lists = $(".sub-selected-checkbox input:checked");
+                        orderIdAll = [];
                         lists.each(function(index,item){
                             if($(item).parents(".sub-selected-checkbox").attr("disabled") != "disabled"){
                                 orderIdAll.push(JSON.parse($(item).parents(".sub-selected-checkbox").attr("data-id")));

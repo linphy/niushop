@@ -60,6 +60,16 @@
         height: 430px;
         overflow: auto;
     }
+    .delivery-goods {
+        max-height: 200px;
+        overflow-y: scroll;
+    }
+    .delivery-goods::-webkit-scrollbar {
+        display: none;
+    }
+    .delivery-goods tr td {
+        padding: 8px 0;
+    }
 </style>
 <!--发送订单弹出框-->
 <script type="text/html" id="order_delivery_html">
@@ -131,10 +141,20 @@
                             <th>物流状态</th>
                         </tr>
                     </thead>
-                    <tbody>
+                </table>
+                <div class="delivery-goods">
+                    <table class="layui-table order_goods_list" lay-filter="order_goods" lay-skin="line">
+                        <colgroup>
+                            <col width="5%">
+                            <col width="38%">
+                            <col width="15%">
+                            <col width="27%">
+                            <col width="15%">
+                        </colgroup>
+                        <tbody>
                         {{# layui.each(d.order_goods_list, function(index, item){ }}
                         <tr>
-                            <td><input type="checkbox" lay-skin="primary" class="order_goods_id" lay-filter="select{{ item.order_goods_id }}" value="{{ item.order_goods_id }}" {{# if(item.delivery_status !=0){ }} disabled {{# } }}/></td>
+                            <td style="text-align: center;"><input type="checkbox" lay-skin="primary" class="order_goods_id" lay-filter="select{{ item.order_goods_id }}" value="{{ item.order_goods_id }}" {{# if(item.delivery_status !=0){ }} disabled {{# } }}/></td>
                             <td>{{ item.sku_name }}</td>
                             <td>{{ item.num }}</td>
                             <td>{{ item.delivery_no }}</td>
@@ -146,8 +166,9 @@
                             <td colspan="5" align="center">无数据</td>
                         </tr>
                         {{# } }}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -413,7 +434,7 @@
                                 data: data.field,
                                 success: function (res) {
                                     layer.msg(res.message);
-                                    if(res.code == 0){
+                                    if(res.code >= 0){
                                         layer.close(layer.index - 1);
                                         reloadList();
                                     }else{

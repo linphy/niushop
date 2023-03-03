@@ -42,6 +42,9 @@
 	.gods-box .layui-table#goods tbody{
 		width: 100%;
 	}
+	[name="growth"]::placeholder {
+		font-size: 12px;
+	}
 </style>
 {/block}
 {block name="main"}
@@ -67,12 +70,64 @@
 				</div>
 			</div>
 
-			<div class="gratis-wrap">
+			<div class="layui-form-item">
+				<label class="layui-form-label">等级封面背景色：</label>
+				<div class="layui-input-block flex">
+					<input name="bg_color" type="hidden"  value="#333333" class="layui-input len-short" id="bg_color_input">
+					<div id="bg_color">
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">等级文字颜色：</label>
+				<div class="layui-input-block ">
+					<input name="level_text_color" type="hidden"  value="#ffffff" class="layui-input len-short" id="level_text_color_input">
+					<div id="level_text_color">
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">背景图：</label>
+				<div class="layui-input-block img-upload">
+					<div class="upload-img-block">
+						<div class="upload-img-box">
+						<div class="upload-default" id="imgUpload">
+							<div class="upload">
+								<i class="iconfont iconshangchuan"></i>
+								<p>点击上传</p>
+							</div>
+						</div>
+						<div class="operation">
+							<div>
+								<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+								<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+							</div>
+							<div class="replace_img js-replace">点击替换</div>
+						</div>
+						<input type="hidden" name="level_picture" value=""/>
+					</div>
+				</div>
+			</div>
+
+			<div class="word-aux">
+				<p>尺寸：1000*525像素，小于1M，支持jpg、png、jpeg格式，上传背景图后，手机端将不会展示背景颜色，优先展示背景图</p>
+			</div>
+		</div>
+
+
+		<div class="gratis-wrap">
 				<div class="layui-form-item">
 					<label class="layui-form-label"><span class="required">*</span>所需成长值：</label>
 					<div class="layui-input-block">
-						<input name="growth" type="number" lay-verify="required" min="0" class="layui-input len-short">
+						<input name="growth" type="number" lay-verify="required|growth" min="0" class="layui-input len-short"  onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
 					</div>
+					{if $growth_up > 0}
+					<div class="word-aux">所设成长值需大于{:round($growth_up)}</div>
+					{/if}
 					<div class="word-aux">修改等级所需成长值后，部分客户会因无法达到该成长值要求而发生会员等级的变化</div>
 				</div>
 			</div>
@@ -178,19 +233,41 @@
 {block name="script"}
 <script>
     var coupon_id = [], addCoupon;
-    var form;
+    var form,colorpicker;
 
-    layui.use(['form', 'laytpl'], function() {
+    layui.use(['form', 'laytpl', 'colorpicker'], function() {
         form = layui.form;
+		colorpicker = layui.colorpicker;
 		var laytpl = layui.laytpl,
             repeat_flag = false; //防重复标识
         form.render();
+
+		var logo_upload = new Upload({
+			elem: '#imgUpload'
+		});
+
+		colorpicker.render({
+			elem: '#bg_color',  //绑定元素
+			color: "#333333",
+			done: function(color) {
+				$("#bg_color_input").attr("value", color);
+			}
+		});
+
+		colorpicker.render({
+			elem: '#level_text_color',  //绑定元素
+			color: "#ffffff",
+			done: function(color) {
+				$("#level_text_color_input").attr("value", color);
+			}
+		});
 
         /**
          * 监听保存
          */
         form.on('submit(save)', function(data) {
             data.field.send_coupon = coupon_id.toString();
+            data.field.growth = parseInt(data.field.growth);
             if (repeat_flag) return false;
 
 			repeat_flag = true;
@@ -283,7 +360,16 @@
                 if (val.length > 2) {
                     return str + "最多可保留两位小数";
                 }
-            }
+            },
+			growth: function (value, item){
+				let min = parseInt("{$growth_up}");
+				if (isNaN(parseInt(value))) {
+					return "请设置成长值";
+				}
+				if(parseInt(value) <= min){
+					return "成长值必须大于"+min;
+				}
+			}
         });
 
 		//优惠券

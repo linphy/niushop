@@ -25,8 +25,7 @@ class Goodscategory extends BaseShop
     {
         $goods_category_model = new GoodsCategoryModel();
         $condition[] = [ 'site_id', '=', $this->site_id ];
-        $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate';
-        $order = 'pid asc,category_id asc';
+        $field = 'category_id,category_name,short_name,pid,level,is_recommend,is_show,sort,image,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate,icon';
         $list = $goods_category_model->getCategoryTree($condition, $field);
         if (request()->isAjax()) return $list;
         $list = $list[ 'data' ];
@@ -41,11 +40,12 @@ class Goodscategory extends BaseShop
     {
         $goods_category_model = new GoodsCategoryModel();
         if (request()->isAjax()) {
-
             $category_name = input('category_name', ''); // 分类名称
             $short_name = input('short_name', ''); // 简称
             $pid = input('pid', 0); //默认添加的商品分类为顶级
             $level = input('level', 1); // 层级
+            $is_recommend = input('is_recommend', 0); // 是否推荐
+            $icon = input('icon', 0); // 图标
             $is_show = input('is_show', ''); // 是否显示
 //            $sort = input('sort', ''); // 排序
             $image = input('image', ''); // 分类图片
@@ -66,6 +66,7 @@ class Goodscategory extends BaseShop
                 'short_name' => $short_name,
                 'pid' => $pid,
                 'level' => $level,
+                'is_recommend' => $is_recommend,
                 'is_show' => $is_show,
 //                'sort' => $sort,
                 'image' => $image,
@@ -78,7 +79,8 @@ class Goodscategory extends BaseShop
                 'category_id_1' => $category_id_1,
                 'category_id_2' => $category_id_2,
                 'category_full_name' => $category_full_name,
-                'link_url' => $link_url
+                'link_url' => $link_url,
+                'icon' => $icon
             ];
             $res = $goods_category_model->addCategory($data);
             if (!empty($res[ 'data' ])) {
@@ -94,7 +96,6 @@ class Goodscategory extends BaseShop
             }
             return $res;
         } else {
-
             $goods_attribute_model = new GoodsAttributeModel();
 
             // 商品类型列表
@@ -110,14 +111,14 @@ class Goodscategory extends BaseShop
      */
     public function editCategory()
     {
+        $category_id = input('category_id', '');// 分类id
         $goods_category_model = new GoodsCategoryModel();
         if (request()->isAjax()) {
-
-            $category_id = input('category_id', '');// 分类id
             $category_name = input('category_name', '');// 分类名称
             $short_name = input('short_name', '');// 简称
             $pid = input('pid', 0);//默认添加的商品分类为顶级
             $level = input('level', 1);// 层级
+            $is_recommend = input('is_recommend', 0); // 是否推荐
             $is_show = input('is_show', 0);// 是否显示
 //            $sort = input('sort', 0);// 排序
             $image = input('image', '');// 分类图片
@@ -132,6 +133,7 @@ class Goodscategory extends BaseShop
 //            $category_id_3 = input('category_id_3', 0);// 三级分类id
 //            $category_full_name = input('category_full_name', '');// 组装名称
             $link_url = input('link_url', '');// 广告链接
+            $icon = input('icon', '');
             $data = [
                 'site_id' => $this->site_id,
                 'category_id' => $category_id,
@@ -139,6 +141,7 @@ class Goodscategory extends BaseShop
                 'short_name' => $short_name,
                 'pid' => $pid,
                 'level' => $level,
+                'is_recommend' => $is_recommend,
                 'is_show' => $is_show,
 //                'sort' => $sort,
                 'image' => $image,
@@ -152,17 +155,13 @@ class Goodscategory extends BaseShop
 //                'category_id_2' => $category_id_2,
 //                'category_id_3' => $category_id_3,
 //                'category_full_name' => $category_full_name,
-                'link_url' => $link_url
+                'link_url' => $link_url,
+                'icon' => $icon
             ];
             $this->addLog("编辑商品分类:" . $category_name);
             $res = $goods_category_model->editCategory($data);
-
             return $res;
-
         } else {
-
-            $category_id = input('category_id', '');// 分类id
-
             if (empty($category_id)) {
                 $this->error("缺少参数category_id");
             }
@@ -182,11 +181,11 @@ class Goodscategory extends BaseShop
             $this->assign("attr_class_list", $attr_class_list[ 'data' ]);
 
             $condition = [];
-            $condition[] = [ 'site_id', '=', $this->site_id];
-            $condition[] = ['category_id', '<>', $category_id];
+            $condition[] = [ 'site_id', '=', $this->site_id ];
+            $condition[] = [ 'category_id', '<>', $category_id ];
             $field = 'category_id,category_name,short_name,pid,level,is_show,sort,image,attr_class_name,category_id_1,category_id_2,category_id_3,commission_rate';
             $list = $goods_category_model->getCategoryTree($condition, $field);
-            $this->assign("list", $list['data']);
+            $this->assign("list", $list[ 'data' ]);
             return $this->fetch('goodscategory/edit_category');
         }
     }

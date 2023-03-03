@@ -30,7 +30,7 @@ class UpdateMemberLevel
                 $member_info = model("member")->getInfo([ [ 'member_id', '=', $data[ 'member_id' ] ] ], 'growth,member_level,member_level_type,nickname');
                 //查询会员等级
                 $member_level = new MemberLevel();
-                $level_list = $member_level->getMemberLevelList([ [ 'growth', '<=', $member_info[ 'growth' ] ], [ 'level_type', '=', 0 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], 'level_id, level_name, sort, growth, send_point, send_balance, send_coupon', 'growth desc');
+                $level_list = $member_level->getMemberLevelList([ [ 'growth', '<=', $member_info[ 'growth' ] ], [ 'level_type', '=', 0 ], [ 'site_id', '=', $data[ 'site_id' ] ], ['status', '=', 1] ], 'level_id, level_name, sort, growth, send_point, send_balance, send_coupon', 'growth desc');
                 $level_detail = [];
                 if ($member_info[ 'member_level_type' ] == 0 && !empty($level_list[ 'data' ])) {
                     //检测升级

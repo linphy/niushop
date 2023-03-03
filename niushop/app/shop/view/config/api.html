@@ -1,7 +1,6 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.form-wrap {margin-top: 0;}
 	.layui-layout-admin.admin-style-2 .layui-body .layui-tab + .body-content {padding-top: 63px !important;}
 </style>
 {/block}
@@ -47,7 +46,7 @@
 {block name="script"}
 <script>
 	layui.use('form', function() {
-		var form = layui.form;
+		var form = layui.form,
 			repeat_flag = false; //防重复标识
 		form.render();
 

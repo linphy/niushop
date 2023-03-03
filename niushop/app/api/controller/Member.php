@@ -33,7 +33,7 @@ class Member extends BaseApi
         if ($token[ 'code' ] < 0) return $this->response($token);
 
         $member_model = new MemberModel();
-        $info = $member_model->getMemberInfo([ [ 'member_id', '=', $token[ 'data' ][ 'member_id' ], [ 'site_id', '=', $this->site_id ] ] ], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time,is_edit_username,is_fenxiao,province_id,city_id,district_id,community_id,address,full_address,longitude,latitude');
+        $info = $member_model->getMemberInfo([ [ 'member_id', '=', $token[ 'data' ][ 'member_id' ], [ 'site_id', '=', $this->site_id ] ] ], 'member_id,source_member,username,nickname,mobile,email,password,status,headimg,member_level,member_level_name,member_label,member_label_name,qq,qq_openid,wx_openid,wx_unionid,ali_openid,baidu_openid,toutiao_openid,douyin_openid,realname,sex,location,birthday,point,balance,balance_money,growth,sign_days_series,password,member_level_type,level_expire_time,is_edit_username,is_fenxiao,province_id,city_id,district_id,community_id,address,full_address,longitude,latitude,member_code');
         if (!empty($info[ 'data' ])) {
             $info[ 'data' ][ 'password' ] = empty($info[ 'data' ][ 'password' ]) ? 0 : 1;
 
@@ -423,11 +423,15 @@ class Member extends BaseApi
     {
         $token = $this->checkToken();
         if ($token[ 'code' ] < 0) return $this->response($token);
-        Cache::tag('memberqrcode')->clear();
-        Cache::tag('dynamic_number')->clear();
-
         $member_id = $token[ 'data' ][ 'member_id' ];
-        $number = date_to_time(date('Y-m-d H:i')) . rand(10000000, 99999999);
+
+        $member_model = new MemberModel();
+        $member_info = $member_model->getMemberInfo([ ['member_id', '=', $member_id] ], 'member_code,mobile')['data'] ?? [];
+        if (!empty($member_info['member_code'])) {
+            $number = $member_info['member_code'];
+        } elseif (!empty($member_info['mobile'])) {
+            $number = $member_info['mobile'];
+        }
 
         // 二维码
         $qrcode_dir = 'upload/qrcode/qrcodereduceaccount';
@@ -435,65 +439,25 @@ class Member extends BaseApi
             return $this->error('', '会员码生成失败');
         }
         $qrcode_name = 'memberqrcode_' . $member_id . '_' . $this->site_id;
-//        $filename = $qrcode_dir . '/' . $qrcode_name . '_' . $this->params['app_type'] . '.png';
         // 二维码
         $res = event('Qrcode', [
             'site_id' => $this->site_id,
-            'app_type' => $this->params[ 'app_type' ],
+            'app_type' => 'h5',
             'type' => 'create',
             'data' => [ 'number' => $number ],
             'page' => $this->params[ 'page' ] ? : '',
             'qrcode_path' => 'upload/qrcode/qrcodereduceaccount',
             'qrcode_name' => 'memberqrcode_' . $member_id . '_' . $this->site_id,
+            'qrcode_size' => 16
         ], true);
-//        QRcodeExtend::png($number, $filename, 'L', 4, 1);
-//        $res = $this->success(['path' => $filename]);
 
-        Cache::tag('member_qrcode')->set($number, [ 'member_id' => $member_id, 'is_user' => 0 ], '60');
-        // 条形码
-        Cache::tag('memberqrcode')->set($number, [ 'member_id' => $member_id, 'is_user' => 0 ], '60');
-        $bar_code = getBarcode($number);
+        $bar_code = getBarcode($number, '', 3);
         $res[ 'bar_code' ] = $bar_code;
+        $res[ 'member_code' ] = $number;
         // 动态码
         $dynamic_number = NoRand(0, 9, 4);
-        Cache::tag('dynamic_number')->set($dynamic_number, [ 'member_id' => $member_id, 'is_user' => 0 ], '60');
         $res[ 'dynamic_number' ] = $dynamic_number;
         return $this->response($res);
-    }
-
-    /**
-     * 会员二维码扣款
-     */
-    public function qrcodereduceaccount()
-    {
-        $member_data = Cache::get($this->params[ 'number' ]);
-        $member_id = $member_data[ 'member_id' ];
-        if (empty($member_id)) {
-            return $this->response($this->error([], "参数已过期!"));
-        }
-        $member_model = new \app\model\member\Member();
-        $member_data = $member_model->getMemberInfo([ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $this->site_id ] ]);
-
-        $balance_money = $member_data[ 'data' ][ 'balance_money' ]; //现金余额
-        $balance = $member_data[ 'data' ][ 'balance' ]; //储值余额
-        $member_account_model = new MemberAccount();
-        $surplus_banance = $this->params[ 'money' ]; //支付金额
-        //优先扣除储值余额
-        if ($balance > 0) {
-            if ($balance >= $surplus_banance) {
-                $real_balance = $surplus_banance;
-            } else {
-                $real_balance = $balance;
-            }
-            $result = $member_account_model->addMemberAccount($this->site_id, $member_id, "balance", -$real_balance, 'membercode', 0, "会员码支付扣除");
-            $surplus_banance -= $real_balance;
-        }
-        if ($surplus_banance > 0) {
-            $result = $member_account_model->addMemberAccount($this->site_id, $member_id, "balance_money", -$surplus_banance, 'membercode', 0, "会员码支付扣除");
-        }
-        Cache::tag('memberqrcode')->clear();
-        Cache::tag('dynamic_number')->clear();
-        return $this->response($result);
     }
 
     //更改分享人信息
@@ -532,4 +496,28 @@ class Member extends BaseApi
         return $this->response($res);
     }
 
+    /**
+     * 手机号授权绑定
+     */
+    public function mobileAuth(){
+        $token = $this->checkToken();
+        if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $decrypt_data = event('PhoneNumber', $this->params, true);
+        if (empty($decrypt_data)) return $this->error('', '没有获取手机号的渠道');
+        if ($decrypt_data[ 'code' ] < 0) return $this->response($decrypt_data);
+
+        $this->params[ 'mobile' ] = $decrypt_data[ 'data' ][ 'purePhoneNumber' ];
+
+        $register = new RegisterModel();
+        $exist = $register->mobileExist($this->params[ 'mobile' ], $this->site_id);
+        if ($exist) {
+            return $this->response($this->error("", "手机号已存在"));
+        } else {
+            $mobile = isset($this->params[ 'mobile' ]) ? $this->params[ 'mobile' ] : '';
+            $member_model = new MemberModel();
+            $res = $member_model->editMember([ 'mobile' => $mobile ], [ [ 'member_id', '=', $this->member_id], [ 'site_id', '=', $this->site_id ] ]);
+            return $this->response($res);
+        }
+    }
 }

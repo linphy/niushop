@@ -19,9 +19,7 @@
 							</div>
 						</div>
 						<div class="notice-con-split"></div>
-						<span v-if="nc.contentStyle=='style-2'" class="iconfont icongonggao notice-icon-one" :style="{color: nc.textColor ? nc.textColor : 'rgba(0,0,0,0)'}"></span>
-						<span class="notice-con-font" :style="{color: nc.textColor ? nc.textColor : 'rgba(0,0,0,0)'}">{{ item.title }}</span>
-						<span v-if="nc.contentStyle=='style-2'" class="iconfont iconyoujiantou  notice-icon-two"></span>
+						<span class="notice-con-font" :style="{color: nc.textColor ? nc.textColor : 'rgba(0,0,0,0)',fontWeight: nc.fontWeight,fontSize: nc.fontSize + 'px'}">{{ item.title }}</span>
 					</div>
 				</div>
 			</div>
@@ -48,7 +46,7 @@
 						</div>
 						<div v-if="nc.iconSources == 'initial'" class="system-img">
 							<div class="system-img-item" v-for="item in nc.tempData.iconList[nc.iconSources].icon" :class="{'border-color': nc.imageUrl == item}" @click="nc.imageUrl = item">
-								<img :src="item"/>
+								<img :src="changeImgUrl(item)"/>
 							</div>
 						</div>
 					</div>
@@ -59,22 +57,22 @@
 								<div class="action" @click="nc.tempData.methods.iconStyle($event)"><i class="iconfont iconpifu"></i></div>
 								<div class="action" :id="'notice-color-' + nc.index"><i class="iconfont iconyanse"></i></div>
 							</div>
-							<div class="desc">高度20像素，宽度自适应</div>
+							<div class="desc">宽度自适应，高度20px</div>
 						</div>
 					</div>
-					<div class="layui-form-item">
-						<label class="layui-form-label sm">风格</label>
-						<div class="layui-input-block">
-							<div @click="nc.contentStyle='style-1'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.contentStyle=='style-1') }">
-								<i class="layui-anim layui-icon">{{ nc.contentStyle=='style-1' ? "&#xe643;" : "&#xe63f;" }}</i>
-								<div>风格一</div>
-							</div>
-							<div @click="nc.contentStyle='style-2'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.contentStyle=='style-2') }">
-								<i class="layui-anim layui-icon">{{ nc.contentStyle=='style-2' ? "&#xe643;" : "&#xe63f;" }}</i>
-								<div>风格二</div>
-							</div>
-						</div>
-					</div>
+<!--					<div class="layui-form-item">-->
+<!--						<label class="layui-form-label sm">风格</label>-->
+<!--						<div class="layui-input-block">-->
+<!--							<div @click="nc.contentStyle='style-1'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.contentStyle=='style-1') }">-->
+<!--								<i class="layui-anim layui-icon">{{ nc.contentStyle=='style-1' ? "&#xe643;" : "&#xe63f;" }}</i>-->
+<!--								<div>风格一</div>-->
+<!--							</div>-->
+<!--							<div @click="nc.contentStyle='style-2'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.contentStyle=='style-2') }">-->
+<!--								<i class="layui-anim layui-icon">{{ nc.contentStyle=='style-2' ? "&#xe643;" : "&#xe63f;" }}</i>-->
+<!--								<div>风格二</div>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--					</div>-->
 					<div class="layui-form-item">
 						<label class="layui-form-label sm">滚动方式</label>
 						<div class="layui-input-block">
@@ -107,7 +105,7 @@
 				<div class="layui-form-item" v-if="nc.sources == 'initial' && nc.tempData.methods">
 					<label class="layui-form-label sm">选择公告</label>
 					<div class="layui-input-block">
-						<div class="input-text selected-style" @click="nc.tempData.methods.addNotice()">
+						<div class="input-text selected-style" @click="nc.tempData.methods.selectNotice()">
 							<span v-if="nc.noticeIds.length == 0">请选择</span>
 							<span v-if="nc.noticeIds.length > 0" class="text-color">已选{{ nc.noticeIds.length }}个</span>
 							<i class="iconfont iconyoujiantou"></i>
@@ -116,20 +114,21 @@
 				</div>
 				<div class="notice-config" v-if="nc.sources == 'diy'">
 					<ul>
-						<li v-for="(item,index) in nc.list">
+						<li v-for="(item,index) in nc.list" :key="item.id">
 							<div class="content-block">
 								<div class="layui-form-item" >
-									<label class="layui-form-label sm">公告内容</label>
+									<label class="layui-form-label sm">内容</label>
 									<div class="layui-input-block">
 										<input type="text" name='title' v-model="item.title" class="layui-input" />
 									</div>
 								</div>
-								<nc-link :data="{ field : nc.list[index].link }"></nc-link>
+								<nc-link :data="{ field : nc.list[index].link, label:'链接' }"></nc-link>
 							</div>
 							<i class="del" @click="nc.list.splice(index,1)">x</i>
+							<div class="iconfont icontuodong"></div>
 						</li>
 					</ul>
-					<div class="add-item text-color border-color" @click="nc.list.push({ title:'公告',link:{name:''}})">
+					<div class="add-item text-color border-color" @click="nc.tempData.methods.addNotice()">
 						<i>+</i>
 						<span>添加一条公告</span>
 					</div>
@@ -143,8 +142,23 @@
 	<template slot="edit-style">
 		<template v-if="nc.lazyLoad">
 			<div class="template-edit-title">
-				<h3>公告样式</h3>
-				<color :data="{ field : 'textColor', 'label' : '文本颜色','defaultColor': '#303133' }"></color>
+				<h3>文字设置</h3>
+
+				<slide :data="{ field : 'fontSize', label : '文字大小', min: 12, max : 20 }"></slide>
+
+				<div class="layui-form-item icon-radio">
+					<label class="layui-form-label sm">文字粗细</label>
+					<div class="layui-input-block">
+						<span v-for="item in nc.tempData.thicknessList" :class="[item.value == nc.fontWeight ? '' : 'layui-hide']">{{item.name}}</span>
+						<ul class="icon-wrap">
+							<li v-for="(item, index) in nc.tempData.thicknessList" :class="[item.value == nc.fontWeight ? 'text-color border-color' : '']" @click="nc.fontWeight = item.value">
+								<i class="iconfont" :class="[{'text-color': item.value == nc.fontWeight}, item.src]"></i>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<color :data="{ field : 'textColor', label : '文字颜色',defaultColor: '#303133' }"></color>
 			</div>
 		</template>
 	</template>
@@ -152,7 +166,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var noticeResourcePath = "{$resource_path}";
+			var noticeResourcePath = "{$resource_path}"; // http路径
+			var noticeRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

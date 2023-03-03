@@ -73,22 +73,7 @@
 			<div class="word-aux">当启用余额支付，在客户端待支付订单会显示使用余额，反之，则不显示。 <a onclick="showDemo()" class="examples text-color">查看示例</a></div>
 		</div>
 	</div>
-	<div class="layui-card card-common card-brief">
-		<div class="layui-card-header">
-			<span class="card-title">积分到期时间</span>
-		</div>
-		<div class="layui-form-item balance-boday">
-			<div class="layui-form-item point_time_type_0">
-				<label class="layui-form-label">到期时间：</label>
-				<div class="layui-input-block">
-					<div class="layui-input-inline">
-						<input type="text" class="layui-input" name="point_time_one" placeholder="开始时间" id="start_time" readonly value="{$point_config.point_time_one}">
-						<i class=" iconrili iconfont calendar"></i>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+
 	<div class="layui-card card-common card-brief">
 		<div class="layui-card-header">
 			<span class="card-title">订单设置</span>
@@ -138,16 +123,6 @@
 				<div class="word-aux">订单完成后，多长时间内可申请维权，设置为0则订单完成后不可维权</div>
 			</div>
 
-			<div class="layui-form-item">
-				<label class="layui-form-label">未付款订单改价维度：</label>
-				<div class="layui-input-block">
-					<div class="layui-input-inline">
-						<input type="radio" name="change_price" value="1" title="在整单基础上改价" autocomplete="off" class="layui-input len-long" {if $order_event_time_config.change_price==1} checked {/if}>
-						<input type="radio" name="change_price" value="2" title="在单商品货款基础上改价" autocomplete="off" class="layui-input len-long" {if $order_event_time_config.change_price==2} checked {/if}>
-					</div>
-
-				</div>
-			</div>
 
 			<div class="layui-form-item">
 				<label class="layui-form-label">主动退款设置：</label>
@@ -277,11 +252,7 @@
 		var laydate = layui.laydate;
 		form.render();
 
-		//渲染时间
-		laydate.render({
-			elem: '#start_time'
-			,type: 'datetime'
-		});
+
 
 		form.on('submit(save)', function(data) {
 			if (repeat_flag) return;
@@ -387,16 +358,7 @@
 			$(this).parent().remove();
 		});
 
-		//是否免邮
-		form.on("radio(point_time_type)", function (data) {
-			if(data.value == 0){
-				$(".point_time_type_0").css("display", "block");
-				$(".point_time_type_1").css("display", "none");
-			}else{
-				$(".point_time_type_1").css("display", "block");
-				$(".point_time_type_0").css("display", "none");
-			}
-		});
+
 	});
 
 	function showDemo() {

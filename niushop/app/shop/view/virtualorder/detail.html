@@ -20,10 +20,12 @@
 				<div class="contentOne-content-title">订单来源：</div>
 				<div class="contentOne-content-text">{$order_detail.order_from_name}</div>
 			</div>
+			{if $order_detail.pay_status == 1}
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">付款方式：</div>
 				<div class="contentOne-content-text">{$order_detail.pay_type_name}</div>
 			</div>
+			{/if}
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">买家：</div>
 				<div class="contentOne-content-text">{$order_detail.nickname}</div>
@@ -36,7 +38,7 @@
 		<div class="order-information-contentTwo">
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">营销活动：</div>
-				<div class="contentOne-content-text">{$order_detail['promotion_type_name']}</div>
+				<div class="contentOne-content-text">{if empty($order_detail['promotion_type_name'])}-{else/}{$order_detail['promotion_type_name']}{/if}</div>
 			</div>
 			<div class="contentOne-content">
 				<div class="contentOne-content-title">买家留言：</div>
@@ -191,9 +193,8 @@
 					<th lay-data="{field:'sale_num'}">数量</th>
 					<th lay-data="{field:'total_money'}">小计（元）</th>
 					<th lay-data="{field:'refund_status'}">退款状态</th>
-					<th lay-data="{field:'shipping_status'}">状态</th>
 					{if isset($order_detail.virtual_goods)}
-						{if $order_detail.goods_class == 2}
+						{if $order_detail.goods_class == 2 }
 						<th style="text-align:center">总核销次数</th>
 						<th style="text-align:center">剩余次数</th>
 						<th style="text-align:center">核销码</th>
@@ -202,6 +203,13 @@
 						{/if}
 						{if $order_detail.goods_class == 3}
 						<th>卡密信息</th>
+						{/if}
+						{if $order_detail.goods_class == 4 }
+							<th style="text-align:center">总核销次数</th>
+							<th style="text-align:center">剩余次数</th>
+							<th style="text-align:center">核销码</th>
+							<th>有效期</th>
+							<th>操作</th>
 						{/if}
 					{/if}
 				</tr>
@@ -218,11 +226,8 @@
 						<a class="text-color" href='{:addon_url("shop/orderrefund/detail?order_goods_id=".$order_goods_item["order_goods_id"])}'>{$order_goods_item.refund_status_name}</a>
 						{/if}
 					</td>
-					<td>
-						{$order_goods_item.delivery_status_name}
-					</td>
 					{if isset($order_detail.virtual_goods)}
-						{if $order_detail.goods_class == 2}
+						{if $order_detail.goods_class == 2 }
 						<td style="text-align:center;">{$order_detail.virtual_goods.total_verify_num}</td>
 						<td style="text-align:center;">{$order_detail.virtual_goods.total_verify_num - $order_detail.virtual_goods.verify_num}</td>
 						<td style="text-align:center;">{$order_detail.virtual_code}</td>
@@ -239,8 +244,56 @@
 							</div>
 						</td>
 						{/if}
+						{if $order_detail.goods_class == 4 }
+						<td style="text-align:center;">{$order_detail.virtual_goods.total_verify_num}</td>
+						<td style="text-align:center;">{$order_detail.virtual_goods.total_verify_num - $order_detail.virtual_goods.verify_num}</td>
+						<td style="text-align:center;">{$order_detail.virtual_code}</td>
+						<td>
+							{if $order_detail.virtual_goods.expire_time > 0}{:time_to_date($order_detail.virtual_goods.expire_time)}{else/}永久有效{/if}</td>
+						<td><a href="javascript:;" class="text-color" onclick="showVerifyRecord()">核销记录</a></td>
+						{/if}
 					{/if}
 				</tr>
+				{if isset($order_goods_item.form)}
+				<tr>
+					{if isset($order_detail.virtual_goods)}
+						{if $order_detail.goods_class == 2}
+						<td colspan="10">
+						{/if}
+						{if $order_detail.goods_class == 3}
+						<td colspan="11">
+						{/if}
+						{if $order_detail.goods_class == 4}
+						<td colspan="10">
+						{/if}
+					{else/}
+					<td colspan="5">
+					{/if}
+						<div class="order-goods-form">
+							{foreach name="$order_goods_item.form" item="vo"}
+							<div class="form-item">
+								<div class="field-title">{$vo.value.title}：</div>
+								<div class="field-content">
+									{if $vo.controller == 'Img'}
+									{foreach name="$vo.img_lists" item="io"}
+									<div class="form-img">
+										<div class="form-img-wrap">
+											<img src="{:img($io)}" layer-src>
+										</div>
+									</div>
+									{/foreach}
+									{else/}
+									{if isset($vo.val)}
+									{$vo.val}
+									{/if}
+									{/if}
+								</div>
+							</div>
+							{/foreach}
+						</div>
+					</td>
+				</tr>
+				{/if}
 				{/foreach}
 			</tbody>
 		</table>

@@ -21,7 +21,11 @@ Vue.component("many-goods-list-sources", {
 					value: "default"
 				},
 				{
-					text: "销量",
+					text: "新品",
+					value: "news"
+				},
+				{
+					text: "热销",
 					value: "sales"
 				},
 				{
@@ -150,11 +154,12 @@ Vue.component("many-goods-list-sources", {
 					text: "多行",
 					value: "multiple"
 				}
-			]
+			],
+			goodsDuplicateId: ''
 		}
 	},
 	created:function() {
-		if(!this.$parent.data.verify) this.$parent.data.verify = [];
+		if (!this.$parent.data.verify) this.$parent.data.verify = [];
 		this.$parent.data.verify.push(this.verify);//加载验证方法
 
 		this.$parent.data.ignore = ['textColor']; //加载忽略内容 -- 其他设置中的属性设置
@@ -170,6 +175,8 @@ Vue.component("many-goods-list-sources", {
 			};
 		}
 
+		this.goodsDuplicateId = ns.gen_non_duplicate(10);
+
 		// 组件所需的临时数据
 		this.$parent.data.tempData = {
 			goodsSources: this.goodsSources,
@@ -178,14 +185,15 @@ Vue.component("many-goods-list-sources", {
 			ornamentList: this.ornamentList,
 			tagList: this.tagList,
 			nameLineModeList: this.nameLineModeList,
+			goodsDuplicateId: this.goodsDuplicateId,
 			previewList: previewList,
 			methods: {
 				addItem: this.addItem,
 				addGoods: this.addGoods,
 				selectCategory: this.selectCategory,
 				selectTemplate: this.selectTemplate,
-				selectTag:this.selectTag,
-				iconStyle:this.iconStyle
+				selectTag: this.selectTag,
+				iconStyle: this.iconStyle
 
 			},
 		};
@@ -349,7 +357,7 @@ Vue.component("many-goods-list-sources", {
 		 */
 		fetchIconColor(){
 			var self = this;
-			self.colorRender('many-goods-list-color-' + self.data.index, '', function (elem, color) {
+			self.colorRender('many-goods-list-color-' + this.goodsDuplicateId, '', function (elem, color) {
 				if (self.data.btnStyle.iconDiy.style.iconBgColor.length || self.data.btnStyle.iconDiy.style.iconBgImg) {
 					self.data.btnStyle.iconDiy.style.iconBgColor = [color];
 				} else {

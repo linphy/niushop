@@ -145,6 +145,7 @@ class StoreOrder extends OrderCommon
      */
     public function orderPay($order_info, $pay_type,$log_data=[])
     {
+        $member_id = $order_info['member_id'] ?? 0;
         if ($order_info['order_status'] != 0) {
             return $this->error();
         }
@@ -168,8 +169,8 @@ class StoreOrder extends OrderCommon
                 ]
             ];
             // 增加门店商品销量
-            model('store_goods')->setInc([ ['goods_id', '=', $v['goods_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'store_sale_num', $v['num']);
-            model('store_goods_sku')->setInc([ ['sku_id', '=', $v['sku_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'store_sale_num', $v['num']);
+            model('store_goods')->setInc([ ['goods_id', '=', $v['goods_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'sale_num', $v['num']);
+            model('store_goods_sku')->setInc([ ['sku_id', '=', $v['sku_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'sale_num', $v['num']);
         }
         $pay_time            = time();
         $remark_array        = array(
@@ -182,7 +183,7 @@ class StoreOrder extends OrderCommon
         );
         $verify_content_json = $verify->getVerifyJson($item_array, $remark_array);
 
-        $code          = $verify->addVerify('pickup', $order_info['site_id'], $order_info['site_name'], $verify_content_json);
+        $code          = $verify->addVerify('pickup', $order_info['site_id'], $order_info['site_name'], $verify_content_json, 0, 1, $order_info['delivery_store_id'], $member_id);
         $pay_type_list = $this->getPayType();
         $data          = array(
             'order_status'        => self::ORDER_PENDING_DELIVERY,
@@ -206,7 +207,8 @@ class StoreOrder extends OrderCommon
                 'nick_name'  => $member_info['nickname'],
                 'action_way' => 1
             ];
-            $action = '买家【'.$member_info['nickname'].'】支付了订单';
+            $buyer_name = empty($member_info[ 'nickname' ]) ? '' : '【' . $member_info[ 'nickname' ] . '】';
+            $action = '买家'.$buyer_name.'支付了订单';
         }
 
         $log_data = array_merge($log_data,[
@@ -258,6 +260,21 @@ class StoreOrder extends OrderCommon
     public function orderTakeDelivery($order_id)
     {
         $res = model('order_goods')->update(['delivery_status' => 1, 'delivery_status_name' => '已提货'], [['order_id', '=', $order_id], ['refund_status', '<>', 3]]);
+
+        $order_goods_list = model('order_goods')->getList([['order_id', '=', $order_id]]);
+        //todo 默认先将提货的发货和收货一体化,将扣除库存统一放在这
+        $order_stock_model = new OrderStock();
+
+        $order_info = model('order')->getInfo([['order_id', '=', $order_id]], 'store_id,site_id');
+        $stock_result = $order_stock_model->decOrderStock([
+            'store_id' => $order_info['store_id'],
+            'site_id' => $order_info['site_id'],
+            'goods_sku_list' => $order_goods_list
+        ]);
+        if($stock_result['code'] < 0){
+            model('order')->rollback();
+            return $stock_result;
+        }
         return $this->success($res);
     }
 
@@ -269,13 +286,8 @@ class StoreOrder extends OrderCommon
     {
         //是否入库
         if ($order_goods_info['is_refund_stock'] == 1) {
-            $goods_stock_model = new GoodsStock();
-            $item_param        = array(
-                'sku_id' => $order_goods_info['sku_id'],
-                'num'    => $order_goods_info['num'],
-            );
-            //返还库存
-            $goods_stock_model->incStock($item_param);
+            $order_stock_model = new OrderStock();
+            $order_stock_model->incOrderStock($order_goods_info);
         }
     }
 

@@ -32,7 +32,6 @@ class Delivery extends BaseShop
     {
         //执行父类构造函数
         parent::__construct();
-
     }
 
     /**

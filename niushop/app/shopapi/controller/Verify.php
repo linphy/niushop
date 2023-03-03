@@ -43,35 +43,35 @@ class Verify extends BaseApi
     {
         $verify_model = new VerifyModel();
 
-        $page = isset($this->params['page']) ? $this->params['page'] : 1;
-        $page_size = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
+        $page = isset($this->params[ 'page' ]) ? $this->params[ 'page' ] : 1;
+        $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
 
-        $order = isset($this->params['order']) ? $this->params['order'] : 'create_time desc';
-        $verify_type = isset($this->params['verify_type']) ? $this->params['verify_type'] : '';//验证类型
-        $verify_code = isset($this->params['verify_code']) ? $this->params['verify_code'] : '';//验证码
-        $verifier_name = isset($this->params['verifier_name']) ? $this->params['verifier_name'] : '';
-        $start_time = isset($this->params['start_time']) ? $this->params['start_time'] : '';
-        $end_time = isset($this->params['end_time']) ? $this->params['end_time'] : '';
+        $order = isset($this->params[ 'order' ]) ? $this->params[ 'order' ] : 'create_time desc';
+        $verify_type = isset($this->params[ 'verify_type' ]) ? $this->params[ 'verify_type' ] : '';//验证类型
+        $verify_code = isset($this->params[ 'verify_code' ]) ? $this->params[ 'verify_code' ] : '';//验证码
+        $verifier_name = isset($this->params[ 'verifier_name' ]) ? $this->params[ 'verifier_name' ] : '';
+        $start_time = isset($this->params[ 'start_time' ]) ? $this->params[ 'start_time' ] : '';
+        $end_time = isset($this->params[ 'end_time' ]) ? $this->params[ 'end_time' ] : '';
 
         $condition = [
-            ['site_id', "=", $this->site_id],
-            ['is_verify', '=', 1]
+            [ 'site_id', "=", $this->site_id ],
+            [ 'is_verify', '=', 1 ]
         ];
         if (!empty($verify_type)) {
-            $condition[] = ["verify_type", "=", $verify_type];
+            $condition[] = [ "verify_type", "=", $verify_type ];
         }
         if (!empty($verify_code)) {
-            $condition[] = ["verify_code", 'like', '%' . $verify_code . '%'];
+            $condition[] = [ "verify_code", 'like', '%' . $verify_code . '%' ];
         }
         if (!empty($verifier_name)) {
-            $condition[] = ['verifier_name', 'like', '%' . $verifier_name . '%'];
+            $condition[] = [ 'verifier_name', 'like', '%' . $verifier_name . '%' ];
         }
         if (!empty($start_time) && empty($end_time)) {
-            $condition[] = ['create_time', '>=', date_to_time($start_time)];
+            $condition[] = [ 'create_time', '>=', date_to_time($start_time) ];
         } elseif (empty($start_time) && !empty($end_time)) {
-            $condition[] = ["create_time", "<=", date_to_time($end_time)];
+            $condition[] = [ "create_time", "<=", date_to_time($end_time) ];
         } elseif (!empty($start_time) && !empty($end_time)) {
-            $condition[] = ['create_time', 'between', [date_to_time($start_time), date_to_time($end_time)]];
+            $condition[] = [ 'create_time', 'between', [ date_to_time($start_time), date_to_time($end_time) ] ];
         }
         $list = $verify_model->getVerifyPageList($condition, $page, $page_size, $order, $field = 'id, verify_code, verify_type, verify_type_name, verify_content_json, verifier_id, verifier_name, is_verify, create_time, verify_time');
 
@@ -94,10 +94,10 @@ class Verify extends BaseApi
      */
     public function verifyInfo()
     {
-        $id = isset($this->params['id']) ? $this->params['id'] : '';
+        $id = isset($this->params[ 'id' ]) ? $this->params[ 'id' ] : '';
 
         $verify_model = new VerifyModel();
-        $info = $verify_model->getVerifyInfo([['id', '=', $id], ['site_id', '=', $this->site_id]]);
+        $info = $verify_model->getVerifyInfo([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ]);
 
         return $this->response($info);
     }
@@ -109,9 +109,9 @@ class Verify extends BaseApi
     public function verifyCard()
     {
 
-        $verify_code = isset($this->params['verify_code']) ? $this->params['verify_code'] : '';
+        $verify_code = isset($this->params[ 'verify_code' ]) ? $this->params[ 'verify_code' ] : '';
         $verify_model = new VerifyModel();
-        $res = $verify_model->getVerifyInfo([["verify_code", "=", $verify_code], ["site_id", "=", $this->site_id]]);
+        $res = $verify_model->getVerifyInfo([ [ "verify_code", "=", $verify_code ], [ "site_id", "=", $this->site_id ] ]);
 
         return $this->response($res);
     }
@@ -123,15 +123,15 @@ class Verify extends BaseApi
     public function user()
     {
         $verifier = new Verifier();
-        $page = isset($this->params['page']) ? $this->params['page'] : 1;
-        $page_size = isset($this->params['page_size']) ? $this->params['page_size'] : PAGE_LIST_ROWS;
+        $page = isset($this->params[ 'page' ]) ? $this->params[ 'page' ] : 1;
+        $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
 
-        $order = isset($this->params['order']) ? $this->params['order'] : 'v.create_time desc';
-        $verifier_name = isset($this->params['verifier_name']) ? $this->params['verifier_name'] : '';
+        $order = isset($this->params[ 'order' ]) ? $this->params[ 'order' ] : 'v.create_time desc';
+        $verifier_name = isset($this->params[ 'verifier_name' ]) ? $this->params[ 'verifier_name' ] : '';
         $condition = [];
-        $condition[] = ['v.site_id', "=", $this->site_id];
+        $condition[] = [ 'v.site_id', "=", $this->site_id ];
         if ($verifier_name) {
-            $condition[] = ['v.verifier_name', '=', $verifier_name];
+            $condition[] = [ 'v.verifier_name', '=', $verifier_name ];
         }
         $list = $verifier->getVerifierPageList($condition, $page, $page_size, $order);
 
@@ -144,20 +144,20 @@ class Verify extends BaseApi
      */
     public function addUser()
     {
-        $verifier_name = isset($this->params['verifier_name']) ? $this->params['verifier_name'] : '';
-        $member_id = isset($this->params['member_id']) ? $this->params['member_id'] : 0;//会员账号
+        $verifier_name = isset($this->params[ 'verifier_name' ]) ? $this->params[ 'verifier_name' ] : '';
+        $member_id = isset($this->params[ 'member_id' ]) ? $this->params[ 'member_id' ] : 0;//会员账号
         $model = new Verifier();
         if ($member_id <= 0) {
             $model->error([], "EMPTY_BIND_MEMBER");
         }
 
-        $uid = isset($this->params['uid']) ? $this->params['uid'] : 0;//管理员账号
-        $data = array();
-        $data['site_id'] = $this->site_id;
-        $data['create_time'] = time();
-        $data["verifier_name"] = $verifier_name;
-        $data["member_id"] = $member_id;
-        $data["uid"] = $uid;
+        $uid = isset($this->params[ 'uid' ]) ? $this->params[ 'uid' ] : 0;//管理员账号
+        $data = array ();
+        $data[ 'site_id' ] = $this->site_id;
+        $data[ 'create_time' ] = time();
+        $data[ "verifier_name" ] = $verifier_name;
+        $data[ "member_id" ] = $member_id;
+        $data[ "uid" ] = $uid;
         $result = $model->addVerifier($data);
         return $this->response($result);
     }
@@ -168,25 +168,25 @@ class Verify extends BaseApi
     public function verifyUSerInfo()
     {
         $model = new Verifier();
-        $verifier_id = isset($this->params['verifier_id']) ? $this->params['verifier_id'] : 0;
+        $verifier_id = isset($this->params[ 'verifier_id' ]) ? $this->params[ 'verifier_id' ] : 0;
         //用户信息
         $condition = [
-            ["verifier_id", "=", $verifier_id],
-            ["site_id", "=", $this->site_id],
+            [ "verifier_id", "=", $verifier_id ],
+            [ "site_id", "=", $this->site_id ],
         ];
         $info_result = $model->getVerifierInfo($condition);
-        $info = $info_result["data"];
+        $info = $info_result[ "data" ];
         $member_account = "";
-        if (!empty($info["member_id"])) {
+        if (!empty($info[ "member_id" ])) {
             $member_model = new Member();
-            $member_info_result = $member_model->getMemberInfo([["member_id", "=", $info["member_id"]]], "username");
-            $member_info = $member_info_result["data"];
+            $member_info_result = $member_model->getMemberInfo([ [ "member_id", "=", $info[ "member_id" ] ] ], "username");
+            $member_info = $member_info_result[ "data" ];
             if (!empty($member_info)) {
-                $member_account = $member_info["username"];
+                $member_account = $member_info[ "username" ];
             }
 
         }
-        $info["member_account"] = $member_account;
+        $info[ "member_account" ] = $member_account;
 
         return $this->response($this->success($info));
     }
@@ -198,10 +198,10 @@ class Verify extends BaseApi
     public function editUser()
     {
         $model = new Verifier();
-        $verifier_id = isset($this->params['verifier_id']) ? $this->params['verifier_id'] : 0;//核销员id
+        $verifier_id = isset($this->params[ 'verifier_id' ]) ? $this->params[ 'verifier_id' ] : 0;//核销员id
 
-        $verifier_name = isset($this->params['verifier_name']) ? $this->params['verifier_name'] : '';
-        $member_id = isset($this->params['member_id']) ? $this->params['member_id'] : '';//会员账号
+        $verifier_name = isset($this->params[ 'verifier_name' ]) ? $this->params[ 'verifier_name' ] : '';
+        $member_id = isset($this->params[ 'member_id' ]) ? $this->params[ 'member_id' ] : '';//会员账号
         if ($member_id <= 0) {
             $model->error([], "EMPTY_BIND_MEMBER");
         }
@@ -210,11 +210,11 @@ class Verify extends BaseApi
             'verifier_name' => $verifier_name,
             'modify_time' => time(),
         ];
-        $data["member_id"] = $member_id;
-        $data["uid"] = 0;
-        $condition = array(
-            ['verifier_id', '=', $verifier_id],
-            ['site_id', '=', $this->site_id],
+        $data[ "member_id" ] = $member_id;
+        $data[ "uid" ] = 0;
+        $condition = array (
+            [ 'verifier_id', '=', $verifier_id ],
+            [ 'site_id', '=', $this->site_id ],
         );
 
         $result = $model->editVerifier($data, $condition);
@@ -230,7 +230,7 @@ class Verify extends BaseApi
     {
         $verifier = new Verifier();
 
-        $verifier_id = isset($this->params['ids']) ? $this->params['ids'] : '';
+        $verifier_id = isset($this->params[ 'ids' ]) ? $this->params[ 'ids' ] : '';
         $res = $verifier->deleteVerifier($verifier_id, $this->site_id);
 
         return $this->response($res);
@@ -242,12 +242,12 @@ class Verify extends BaseApi
     public function verify()
     {
         //先验证登录用户是否具备核销权限
-        $info = array(
+        $info = array (
             "verifier_id" => $this->uid,
-            "verifier_name" => $this->user_info['username'],
+            "verifier_name" => $this->user_info[ 'username' ],
             "verify_from" => 'mobile',
         );
-        $verify_code = isset($this->params['verify_code']) ? $this->params['verify_code'] : '';
+        $verify_code = isset($this->params[ 'verify_code' ]) ? $this->params[ 'verify_code' ] : '';
         $verify_model = new VerifyModel();
         $res = $verify_model->verify($info, $verify_code);
 
@@ -260,9 +260,9 @@ class Verify extends BaseApi
      */
     public function searchMember()
     {
-        $search_text = isset($this->params['search_text']) ? $this->params['search_text'] : '';
+        $search_text = isset($this->params[ 'search_text' ]) ? $this->params[ 'search_text' ] : '';
         $member_model = new Member();
-        $member_info = $member_model->getMemberInfo([['username|mobile', '=', $search_text]]);
+        $member_info = $member_model->getMemberInfo([ [ 'username|mobile', '=', $search_text ] ]);
 
         return $this->response($member_info);
     }

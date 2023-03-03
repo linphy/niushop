@@ -66,22 +66,85 @@
 				</div>
 			</div>
 
-			{if $level_info.is_default == 0}
+			<div class="layui-form-item">
+				<label class="layui-form-label">等级封面背景色：</label>
+				<div class="layui-input-block flex">
+					<input name="bg_color" type="hidden"  value="{$level_info.bg_color}" class="layui-input len-short" id="bg_color_input">
+					<div id="bg_color">
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">等级文字颜色：</label>
+				<div class="layui-input-block ">
+					<input name="level_text_color" type="hidden" value="{$level_info.level_text_color}" class="layui-input len-short" id="level_text_color_input">
+					<div id="level_text_color">
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">背景图：</label>
+				<div class="layui-input-block img-upload">
+					<div class="upload-img-block">
+						<div class="upload-img-box {if condition="!empty($level_info.level_picture)"}hover{/if} ">
+							<div class="upload-default" id="imgUpload">
+								{if condition="!empty($level_info.level_picture)"}
+								<div id="preview_logoUpload" class="preview_img">
+									<img layer-src src="{:img($level_info.level_picture)}" class="img_prev"/>
+								</div>
+								{else/}
+								<div class="upload">
+									<i class="iconfont iconshangchuan"></i>
+									<p>点击上传</p>
+								</div>
+								{/if}
+							</div>
+
+							<div class="operation">
+								<div>
+									<i title="图片预览" class="iconfont iconreview js-preview" style="margin-right: 20px;"></i>
+									<i title="删除图片" class="layui-icon layui-icon-delete js-delete"></i>
+								</div>
+								<div class="replace_img js-replace">点击替换</div>
+							</div>
+							<input type="hidden" name="level_picture" value="{$level_info.level_picture}"/>
+						</div>
+					</div>
+				</div>
+
+				<div class="word-aux">
+					<p>尺寸：1000*525像素，小于1M，支持jpg、png、jpeg格式，上传背景图后，手机端将不会展示背景颜色，优先展示背景图</p>
+				</div>
+			</div>
+
+
 			<div class="gratis-wrap  {if $level_info['level_type'] == 1}layui-hide{/if}">
 				<div class="layui-form-item">
 					<label class="layui-form-label"><span class="required">*</span>所需成长值：</label>
 					<div class="layui-input-block">
-						<input name="growth" value="{$level_info.growth}" type="number" {if $level_info['level_type'] == 0}lay-verify="required"{/if}  min="0" class="layui-input len-short">
+						<input name="growth" value="{:round($level_info.growth)}" type="number" {if $level_info['level_type'] == 0}lay-verify="required|growth"{/if}  min="0" class="layui-input len-short" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
 					</div>
+					{if $growth_up > 0 && $growth_down > 0}
+					<div class="word-aux">所设成长值需在{:round($growth_up)}~{:round($growth_down)}之间</div>
+					{else/}
+						{if $growth_up > 0}
+						<div class="word-aux">所设成长值需大于{:round($growth_up)}</div>
+						{/if}
+						{if $growth_down > 0}
+						<div class="word-aux">所设成长值需小于{:round($growth_down)}</div>
+						{/if}
+					{/if}
 					<div class="word-aux">修改等级所需成长值后，部分客户会因无法达到该成长值要求而发生会员等级的变化</div>
 				</div>
 			</div>
-			{/if}
 
 		</div>
 	</div>
 
-	{if $level_info.is_default == 0}
 
 	<div class="layui-card card-common card-brief level-equity">
 		<div class="layui-card-header">
@@ -199,7 +262,6 @@
 
 		</div>
 	</div>
-	{/if}
 	<input type="hidden" name="level_id" value="{$level_info.level_id}">
 	
 	<div class="layui-card card-common">
@@ -217,20 +279,41 @@
 <script type="text/javascript" src="__STATIC__/ext/colorPicker/js/colorpicker.js"></script>
 <script>
     var coupon_id = [], addCoupon;
-	var form;
-	layui.use(['form', 'laytpl'], function() {
+	var form,colorpicker;
+	layui.use(['form', 'laytpl', 'colorpicker'], function() {
 		form = layui.form;
+		colorpicker = layui.colorpicker;
 		var laytpl = layui.laytpl,
 			repeat_flag = false; //防重复标识
 		form.render();
 
         couponId();
 
+		var logo_upload = new Upload({
+			elem: '#imgUpload'
+		});
+		colorpicker.render({
+			elem: '#bg_color',  //绑定元素
+			color: "{$level_info.bg_color}",
+			done: function(color) {
+				$("#bg_color_input").attr("value", color);
+			}
+		});
+
+		colorpicker.render({
+			elem: '#level_text_color',  //绑定元素
+			color: "{$level_info.level_text_color}",
+			done: function(color) {
+				$("#level_text_color_input").attr("value", color);
+			}
+		});
+
 		/**
 		 * 监听保存
 		 */
 		form.on('submit(save)', function(data) {
             data.field.send_coupon = coupon_id.toString();
+			data.field.growth = parseInt(data.field.growth);
 			if(repeat_flag) return false;
 			repeat_flag = true;
 			
@@ -322,7 +405,24 @@
                 if (val.length > 2) {
                     return str + "最多可保留两位小数";
                 }
-            }
+            },
+			growth: function (value, item) {
+				let min = parseInt("{$growth_up}");
+				let max = parseInt("{$growth_down}");
+				if (isNaN(parseInt(value))) return "请设置成长值";
+				if (min > 0 && max > 0) {
+					if (value <= min || value >= max) {
+						return '成长值需设置为' + min + '~' + max + '之间的值';
+					}
+				} else {
+					if (value <= min) {
+						return '成长值不能小于等于' + min;
+					}
+					if (max > 0 && value >= max) {
+						return '成长值不能大于等于' + max;
+					}
+				}
+			}
 
 		});
 

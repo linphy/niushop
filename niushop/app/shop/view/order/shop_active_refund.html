@@ -22,7 +22,7 @@
                 <div class="refund-view-item">
                     <label class="refund-view-item-label">主动退款：</label>
                     <div class="refund-view-item-content">
-                        <input type='text' class="layui-input" name="do_refund_money" value="">
+                        <input type='text' class="layui-input" name="do_refund_money" value="{{ d.order_goods_info.refund_apply_money }}">
                     </div>
                 </div>
                 {{# if(d.order_goods_info.use_point > 0){ }}

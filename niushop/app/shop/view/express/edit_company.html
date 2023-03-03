@@ -26,7 +26,7 @@
 			</div>
 			
 			<div class="layui-form-item">
-				<label class="layui-form-label img-upload-lable short-label ">物流公司LOGO：</label>
+				<label class="layui-form-label short-label ">物流公司LOGO：</label>
 				<div class="layui-input-inline">
 					<div class="upload-img-block">
 						<div class="upload-img-box {if !empty($company_info.data.logo)}hover{/if}">
@@ -91,7 +91,6 @@
 					<input type="text" name="express_no_cainiao" value="{$company_info.data.express_no_cainiao}" class="layui-input len-long">
 				</div>
 			</div>-->
-
 
 		</div>
 	</div>
@@ -163,7 +162,7 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label img-upload-lable">打印背景图：</label>
+				<label class="layui-form-label">打印背景图：</label>
 				<div class="layui-input-block">
 					<div class="upload-img-block">
 						<div class="upload-img-box {if !empty($company_info.data.background_image)}hover{/if}">
@@ -197,7 +196,7 @@
 -->
 
 			<div class="layui-form-item">
-				<label class="layui-form-label img-upload-lable">是否支持电子面单：</label>
+				<label class="layui-form-label">是否支持电子面单：</label>
 				<div class="layui-input-block">
 					<input type="checkbox" name="is_electronicsheet" lay-skin="switch" lay-filter="express_sheet" {if $company_info.data.is_electronicsheet == 1}checked {/if}>
 				</div>

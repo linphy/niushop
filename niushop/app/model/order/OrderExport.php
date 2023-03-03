@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -101,20 +100,20 @@ class OrderExport extends BaseModel
 
 
     public $define_data = [
-        'pay_status' => ['type' => 2, 'data' => ['未支付', '已支付']],//支付状态
-        'delivery_status' => ['type' => 2, 'data' => ['待发货', '已发货', '已收货']],//配送状态
-        'refund_status' => ['type' => 2, 'data' => ['未退款', '已退款']],//退款状态
-        'buyer_ask_delivery_time' => ['type' => 1],//购买人要求配送时间
-        'pay_time' => ['type' => 1],//支付时间
-        'delivery_time' => ['type' => 1],//订单配送时间
-        'sign_time' => ['type' => 1],//订单签收时间
-        'finish_time' => ['type' => 1],//订单完成时间
-        'refund_time' => ['type' => 1],//退款到账时间
-        'refund_action_time' => ['type' => 1],//实际退款时间
-        'is_settlement' => ['type' => 2, 'data' => ['否', '是']],//是否进行结算
-        'refund_type' => ['type' => 2, 'data' => [1 => '仅退款', 2 => '退款退货']],//退货方式
-        'is_refund_stock' => ['type' => 2, 'data' => ['否', '是']],//是否返还库存
-        'form_data' => ['type' => 3],//表单数据
+        'pay_status' => [ 'type' => 2, 'data' => [ '未支付', '已支付' ] ],//支付状态
+        'delivery_status' => [ 'type' => 2, 'data' => [ '待发货', '已发货', '已收货' ] ],//配送状态
+        'refund_status' => [ 'type' => 2, 'data' => [ '未退款', '已退款' ] ],//退款状态
+//        'buyer_ask_delivery_time' => [ 'type' => 1 ],//购买人要求配送时间
+        'pay_time' => [ 'type' => 1 ],//支付时间
+        'delivery_time' => [ 'type' => 1 ],//订单配送时间
+        'sign_time' => [ 'type' => 1 ],//订单签收时间
+        'finish_time' => [ 'type' => 1 ],//订单完成时间
+        'refund_time' => [ 'type' => 1 ],//退款到账时间
+        'refund_action_time' => [ 'type' => 1 ],//实际退款时间
+        'is_settlement' => [ 'type' => 2, 'data' => [ '否', '是' ] ],//是否进行结算
+        'refund_type' => [ 'type' => 2, 'data' => [ 1 => '仅退款', 2 => '退款退货' ] ],//退货方式
+        'is_refund_stock' => [ 'type' => 2, 'data' => [ '否', '是' ] ],//是否返还库存
+        'form_data' => [ 'type' => 3 ],//表单数据
     ];
 
 
@@ -137,26 +136,27 @@ class OrderExport extends BaseModel
 
                     if (array_key_exists($key, $define_data)) {
 
-                        $type = $define_data[$key]['type'];
+                        $type = $define_data[ $key ][ 'type' ];
 
-                        switch ($type) {
+                        switch ( $type ) {
 
                             case 1:
-                                $data[$k][$key] = time_to_date((int)$v[$key]);
+                                $data[ $k ][ $key ] = time_to_date((int) $v[ $key ]);
                                 break;
                             case 2:
-                                $define_data_data = $define_data[$key]['data'];
-                                $data[$k][$key] = !empty($v[$key]) ? $define_data_data[$v[$key]] : '';
+                                $define_data_data = $define_data[ $key ][ 'data' ];
+                                $data[ $k ][ $key ] = !empty($v[ $key ]) ? $define_data_data[ $v[ $key ] ] : '';
+                                break;
                             case 3:
-                                if (!empty($v[$key])) {
-                                    $form_data = json_decode($v[$key], true);
+                                if (!empty($v[ $key ])) {
+                                    $form_data = json_decode($v[ $key ], true);
                                     $form_content = '';
                                     if (is_array($form_data)) {
                                         foreach ($form_data as $item) {
-                                            $form_content .= $item['value']['title'] . '：' . $item['val'] .'   ';
+                                            $form_content .= $item[ 'value' ][ 'title' ] . '：' . $item[ 'val' ] . '   ';
                                         }
                                     }
-                                    $data[$k][$key] = $form_content;
+                                    $data[ $k ][ $key ] = $form_content;
                                 }
                                 break;
                         }
@@ -173,12 +173,18 @@ class OrderExport extends BaseModel
     /**
      * 查询订单项数据并导出
      * @param $condition
+     * @param $condition_desc
+     * @param $site_id
+     * @param $join
+     * @param $is_verify
+     * @param $order_label
+     * @return array
      */
-    public function orderExport($condition, $condition_desc, $site_id = 0, $join = [], $is_verify, $order_label)
+    public function orderExport($condition, $condition_desc, $site_id, $join, $is_verify, $order_label)
     {
         try {
             //预先创建导出的记录
-            $data = array(
+            $data = array (
                 'condition' => json_encode($condition_desc),
                 'create_time' => time(),
                 'type' => 1,//订单
@@ -187,13 +193,12 @@ class OrderExport extends BaseModel
             );
             $records_result = $this->addExport($data);
 
-            $export_id = $records_result['data'] ?? 0;
+            $export_id = $records_result[ 'data' ] ?? 0;
             if ($export_id <= 0) {
                 return $this->error();
             }
 
             $alias = 'o';
-
 
             $field = $this->order_field;
             //通过分批次执行数据导出(防止内存超出配置设置的)
@@ -205,7 +210,7 @@ class OrderExport extends BaseModel
                 $file_path = $file_path . $file_name . '.csv';
                 //创建一个临时csv文件
                 $fp = fopen($file_path, 'w'); //生成临时文件
-                fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
+                fwrite($fp, chr(0xEF) . chr(0xBB) . chr(0xBF)); // 添加 BOM
                 $field_value = [];
                 $field_key = [];
                 $field_key_array = [];
@@ -219,9 +224,9 @@ class OrderExport extends BaseModel
                 $table_field = implode(',', $field_key_array);
                 $order_table = Db::name('order')->where($condition)->alias($alias);
 
-                if(!empty($join) || $is_verify != "all"){
+                if (!empty($join) || $is_verify != "all") {
 
-                    if(!empty($join) && $is_verify == "all" ){
+                    if (!empty($join) && $is_verify == "all") {
                         $join = [
                             [
                                 'order_goods og',
@@ -229,7 +234,7 @@ class OrderExport extends BaseModel
                                 'left'
                             ],
                         ];
-                    }else if($is_verify != "all" && empty($join)){
+                    } else if ($is_verify != "all" && empty($join)) {
                         $join = [
                             [
                                 'verify v',
@@ -237,7 +242,7 @@ class OrderExport extends BaseModel
                                 'left'
                             ],
                         ];
-                    }else{
+                    } else {
                         $join = [
                             [
                                 'order_goods og',
@@ -273,7 +278,7 @@ class OrderExport extends BaseModel
                 $temp_line = implode(',', $field_key) . "\n";
 
                 $table_field = 'o.*,m.nickname,fm.form_data';
-                $order_table->field($table_field)->chunk(5000, function ($item_list) use ($fp, $temp_line, $field_key_array) {
+                $order_table->field($table_field)->chunk(5000, function($item_list) use ($fp, $temp_line, $field_key_array) {
                     //写入导出信息
                     $this->itemExport($item_list, $field_key_array, $temp_line, $fp);
                     unset($item_list);
@@ -284,19 +289,19 @@ class OrderExport extends BaseModel
                 fclose($fp);  //每生成一个文件关闭
                 unset($order_table);
                 //将同步导出记录状态
-                $records_data = array(
+                $records_data = array (
                     'path' => $file_path,
                     'status' => 1
                 );
-                $records_condition = array(
-                    ['export_id', '=', $export_id]
+                $records_condition = array (
+                    [ 'export_id', '=', $export_id ]
                 );
                 $this->editExport($records_data, $records_condition);
                 return $this->success();
             } else {
                 return $this->error();
             }
-        } catch ( \Exception $e ) {
+        } catch (\Exception $e) {
             return $this->error([], $e->getMessage() . $e->getFile() . $e->getLine());
         }
 
@@ -305,13 +310,18 @@ class OrderExport extends BaseModel
     /**
      * 查询订单项数据并导出
      * @param $condition
+     * @param $condition_desc
+     * @param $site_id
+     * @param $is_verify
+     * @param $order_label
+     * @return array
      */
-    public function orderGoodsExport($condition, $condition_desc, $site_id = 0, $is_verify, $order_label)
+    public function orderGoodsExport($condition, $condition_desc, $site_id, $is_verify, $order_label)
     {
 
         try {
             //预先创建导出的记录
-            $data = array(
+            $data = array (
                 'condition' => json_encode($condition_desc),
                 'create_time' => time(),
                 'type' => 2,//订单项
@@ -320,7 +330,7 @@ class OrderExport extends BaseModel
             );
             $records_result = $this->addExport($data);
 
-            $export_id = $records_result['data'] ?? 0;
+            $export_id = $records_result[ 'data' ] ?? 0;
             if ($export_id <= 0) {
                 return $this->error();
             }
@@ -333,7 +343,7 @@ class OrderExport extends BaseModel
                 ]
             ];
 
-            if($is_verify != "all"){
+            if ($is_verify != "all") {
                 $join = [
                     [
                         'order o',
@@ -380,7 +390,7 @@ class OrderExport extends BaseModel
                 //创建一个临时csv文件
                 $file_path = $file_path . $file_name . '.csv';
                 $fp = fopen($file_path, 'w'); //生成临时文件
-                fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
+                fwrite($fp, chr(0xEF) . chr(0xBB) . chr(0xBF)); // 添加 BOM
                 $field_value = [];
                 $field_key = [];
                 $field_key_array = [];
@@ -396,30 +406,29 @@ class OrderExport extends BaseModel
 
                 $temp_line = implode(',', $field_key) . "\n";
 
-                $order_table->field($table_field)->chunk(5000, function ($item_list) use ($fp, $temp_line, $field_key_array) {
+                $order_table->field($table_field)->chunk(5000, function($item_list) use ($fp, $temp_line, $field_key_array) {
                     //写入导出信息
                     $this->itemExport($item_list, $field_key_array, $temp_line, $fp);
                     unset($item_list);
                 });
 
-
                 $order_table->removeOption();
                 fclose($fp);  //每生成一个文件关闭
                 unset($order_table);
                 //将同步导出记录状态
-                $records_data = array(
+                $records_data = array (
                     'path' => $file_path,
                     'status' => 1
                 );
-                $records_condition = array(
-                    ['export_id', '=', $export_id]
+                $records_condition = array (
+                    [ 'export_id', '=', $export_id ]
                 );
                 $this->editExport($records_data, $records_condition);
                 return $this->success();
             } else {
                 return $this->error();
             }
-        } catch ( \Exception $e ) {
+        } catch (\Exception $e) {
             return $this->error([], $e->getMessage() . $e->getLine());
         }
 
@@ -428,13 +437,16 @@ class OrderExport extends BaseModel
     /**
      * 查询订单项数据并导出
      * @param $condition
+     * @param $condition_desc
+     * @param int $site_id
+     * @return array
      */
     public function orderRefundExport($condition, $condition_desc, $site_id = 0)
     {
 
         try {
             //预先创建导出的记录
-            $data = array(
+            $data = array (
                 'condition' => json_encode($condition_desc),
                 'create_time' => time(),
                 'status' => 0,
@@ -442,7 +454,7 @@ class OrderExport extends BaseModel
             );
             $records_result = $this->addRefundExport($data);
 
-            $export_id = $records_result['data'] ?? 0;
+            $export_id = $records_result[ 'data' ] ?? 0;
             if ($export_id <= 0) {
                 return $this->error();
             }
@@ -474,7 +486,7 @@ class OrderExport extends BaseModel
                 $file_path = $file_path . $file_name . '.csv';
                 //创建一个临时csv文件
                 $fp = fopen($file_path, 'w'); //生成临时文件
-                fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
+                fwrite($fp, chr(0xEF) . chr(0xBB) . chr(0xBF)); // 添加 BOM
                 $field_value = [];
                 $field_key = [];
                 $field_key_array = [];
@@ -490,30 +502,29 @@ class OrderExport extends BaseModel
 
                 $temp_line = implode(',', $field_key) . "\n";
 
-                $order_table->field($table_field)->chunk(5000, function ($item_list) use ($fp, $temp_line, $field_key_array) {
+                $order_table->field($table_field)->chunk(5000, function($item_list) use ($fp, $temp_line, $field_key_array) {
                     //写入导出信息
                     $this->itemExport($item_list, $field_key_array, $temp_line, $fp);
                     unset($item_list);
                 });
 
-
                 $order_table->removeOption();
                 fclose($fp);  //每生成一个文件关闭
                 unset($order_table);
                 //将同步导出记录状态
-                $records_data = array(
+                $records_data = array (
                     'path' => $file_path,
                     'status' => 1
                 );
-                $records_condition = array(
-                    ['export_id', '=', $export_id]
+                $records_condition = array (
+                    [ 'export_id', '=', $export_id ]
                 );
                 $this->editRefundExport($records_data, $records_condition);
                 return $this->success();
-            }else{
+            } else {
                 return $this->error();
             }
-        } catch ( \Exception $e ) {
+        } catch (\Exception $e) {
             return $this->error([], $e->getMessage() . $e->getLine());
         }
 
@@ -530,7 +541,7 @@ class OrderExport extends BaseModel
         foreach ($join as $item) {
             list($table, $on, $type) = $item;
             $type = strtolower($type);
-            switch ($type) {
+            switch ( $type ) {
                 case "left":
                     $db_obj = $db_obj->leftJoin($table, $on);
                     break;
@@ -565,20 +576,22 @@ class OrderExport extends BaseModel
         foreach ($item_list as $k => $item_v) {
             $new_line_value = $temp_line;
             //省市县
-            $address_arr = explode("-", $item_v['full_address']);
-            $item_v['province_name'] = !empty($address_arr[0]) ? $address_arr[0] : "";
-            $item_v['city_name'] = !empty($address_arr[1]) ? $address_arr[1] : "";
-            $item_v['district_name'] = !empty($address_arr[2]) ? $address_arr[2] : "";
+            $address_arr = explode("-", $item_v[ 'full_address' ]);
+            $item_v[ 'province_name' ] = !empty($address_arr[ 0 ]) ? $address_arr[ 0 ] : "";
+            $item_v[ 'city_name' ] = !empty($address_arr[ 1 ]) ? $address_arr[ 1 ] : "";
+            $item_v[ 'district_name' ] = !empty($address_arr[ 2 ]) ? $address_arr[ 2 ] : "";
 
             foreach ($item_v as $key => $value) {
+                $value = trim($value);
 
-                if($key == 'full_address'){
-                    $address = $item_v['address'] ?? '';
-                    $value = $value.$address;
+                if ($key == 'full_address') {
+                    $address = $item_v[ 'address' ] ?? '';
+                    $value = $value . $address;
                 }
                 //CSV比较简单，记得转义 逗号就好
                 $values = str_replace(',', '\\', $value . "\t");
                 $values = str_replace("\n", '', $values);
+                $values = str_replace("\r", '', $values);
                 $new_line_value = str_replace("{\$$key}", $values, $new_line_value);
             }
             //写入第一行表头
@@ -587,7 +600,6 @@ class OrderExport extends BaseModel
             unset($new_line_value);
         }
     }
-
 
     /**
      * 添加导出记录
@@ -603,6 +615,7 @@ class OrderExport extends BaseModel
     /**
      * 更新导出记录
      * @param $data
+     * @param $condition
      * @return array
      */
     public function editExport($data, $condition)
@@ -613,23 +626,20 @@ class OrderExport extends BaseModel
 
     /**
      * 删除导出记录
-     * @param $data
+     * @param $condition
      * @return array
      */
     public function deleteExport($condition)
     {
         //先查询数据
         $list = model("order_export")->getList($condition, '*');
-        if(!empty($list)){
-            foreach($list as $k => $v){
-                if(file_exists($v['path'])){
+        if (!empty($list)) {
+            foreach ($list as $k => $v) {
+                if (file_exists($v[ 'path' ])) {
                     //删除物理文件路径
-                    if (!unlink($v['path']))
-                    {
+                    if (!unlink($v[ 'path' ])) {
                         //失败
-                    }
-                    else
-                    {
+                    } else {
                         //成功
                     }
                 }
@@ -642,7 +652,9 @@ class OrderExport extends BaseModel
 
     /**
      * 获取导出记录
-     * @param $member_id
+     * @param $condition
+     * @param string $field
+     * @param string $order
      * @return array
      */
     public function getExport($condition, $field = "*", $order = '')

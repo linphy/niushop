@@ -23,11 +23,14 @@
 						<div class="template-left">
 							<li :class="nc.mode">
 								<template v-if="nc.list[0].imageUrl!=''">
-									<div :style="{margin: nc.imageGap/2 + 'px', backgroundImage: 'url(' + changeImgUrl(nc.list[0].imageUrl) + ')', height : nc.list[0].previewHeight,
+									<div :style="{margin: nc.imageGap/2 + 'px', height : nc.list[0].previewHeight,
 								     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 								     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 								     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
-								     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0) }"></div>
+								     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
+								     overflow: 'hidden'}">
+										<nc-image :src="changeImgUrl(nc.list[0].imageUrl)" :mode="nc.list[0].imageMode"></nc-image>
+									</div>
 								</template>
 							</li>
 						</div>
@@ -36,11 +39,14 @@
 								<template v-if="index > 0">
 									<li :class="nc.mode">
 										<template v-if="item.imageUrl!=''">
-											<div :style="{margin: nc.imageGap + 'px ' + nc.imageGap/2 + 'px', backgroundImage: 'url(' + changeImgUrl(item.imageUrl) + ')', height : item.previewHeight,
+											<div :style="{margin: nc.imageGap + 'px ' + nc.imageGap/2 + 'px', height : item.previewHeight,
 										     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 										     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 										     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
-										     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0) }"></div>
+										     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
+											 overflow: 'hidden'}">
+												<nc-image :src="changeImgUrl(item.imageUrl)" :mode="item.imageMode"></nc-image>
+											</div>
 										</template>
 									</li>
 								</template>
@@ -52,11 +58,14 @@
 						<div class="template-left">
 							<li :class="nc.mode">
 								<template v-if="nc.list[0].imageUrl!=''">
-									<div :style="{marginRight: nc.imageGap/2 + 'px',backgroundImage: 'url(' + changeImgUrl(nc.list[0].imageUrl) + ')', height : nc.list[0].previewHeight,
+									<div :style="{marginRight: nc.imageGap/2 + 'px', height : nc.list[0].previewHeight,
 								     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 								     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 								     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
-								     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0) }"></div>
+								     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
+								  	 overflow: 'hidden'}">
+										<nc-image :src="changeImgUrl(nc.list[0].imageUrl)" :mode="nc.list[0].imageMode"></nc-image>
+									</div>
 								</template>
 							</li>
 						</div>
@@ -64,11 +73,14 @@
 							<div class="template-top" :style="{marginBottom: nc.imageGap + 'px'}">
 								<li :class="nc.mode">
 									<template v-if="nc.list[1].imageUrl!=''">
-										<div :style="{marginLeft: nc.imageGap/2 + 'px',backgroundImage: 'url(' + changeImgUrl(nc.list[1].imageUrl) + ')', height : nc.list[1].previewHeight,
+										<div :style="{marginLeft: nc.imageGap/2 + 'px', height : nc.list[1].previewHeight,
 									     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 									     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 									     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
-									     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0) }"></div>
+									     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
+									     overflow: 'hidden'}">
+											<nc-image :src="changeImgUrl(nc.list[1].imageUrl)" :mode="nc.list[1].imageMode"></nc-image>
+										</div>
 									</template>
 								</li>
 							</div>
@@ -78,11 +90,14 @@
 									<template v-if="index > 1">
 										<li :class="nc.mode" :style="{margin: '0 ' + nc.imageGap/2 + 'px'}">
 											<template v-if="item.imageUrl!=''">
-												<div :style="{backgroundImage: 'url(' + changeImgUrl(item.imageUrl) + ')', height : item.previewHeight,
+												<div :style="{height : item.previewHeight,
 											     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 											     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 											     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
-											     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0) }"></div>
+											     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
+											     overflow: 'hidden'}">
+													<nc-image :src="changeImgUrl(item.imageUrl)" :mode="item.imageMode"></nc-image>
+												</div>
 											</template>
 										</li>
 									</template>
@@ -93,12 +108,14 @@
 
 					<template v-else>
 						<li v-for="(item,rubikIndex) in nc.list" :key="rubikIndex" :class="nc.mode">
-							<div v-if="item.imageUrl!=''" :style="{margin: nc.imageGap/2 + 'px', backgroundImage: 'url(' + changeImgUrl(item.imageUrl) + ')', height : item.previewHeight,
+							<div v-if="item.imageUrl!=''" :style="{margin: nc.imageGap/2 + 'px', height : item.previewHeight,
 						     borderTopLeftRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 						     borderTopRightRadius: (nc.elementAngle == 'round' ? nc.topElementAroundRadius + 'px' : 0),
 						     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
-						     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0)
-							}"></div>
+						     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
+							 overflow: 'hidden'}">
+								<nc-image :src="changeImgUrl(item.imageUrl)" :mode="item.imageMode"></nc-image>
+							</div>
 						</li>
 					</template>
 				</ul>
@@ -134,7 +151,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var rubikCubeResourcePath = "{$resource_path}";
+			var rubikCubeResourcePath = "{$resource_path}"; // http路径
+			var rubikCubeRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

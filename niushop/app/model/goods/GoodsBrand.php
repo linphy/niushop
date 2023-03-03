@@ -64,17 +64,6 @@ class GoodsBrand extends BaseModel
     }
 
     /**
-     * 修改转移品牌
-     * @param int $sort
-     * @param array $condition
-     */
-    public function modifyBrandSite($site_id, $condition)
-    {
-        $res = model('goods_brand')->update([ 'site_id' => $site_id ], $condition);
-        return $this->success($res);
-    }
-
-    /**
      * 获取品牌信息
      * @param array $condition
      * @param string $field

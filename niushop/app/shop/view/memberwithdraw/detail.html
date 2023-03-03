@@ -16,37 +16,37 @@
     </div>
     <div class="layui-card-body">
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">提现状态：</label>
+            <label class="layui-form-label">提现状态：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.status_name}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">申请提现金额：</label>
+            <label class="layui-form-label">申请提现金额：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.apply_money}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">提现手续费：</label>
+            <label class="layui-form-label">提现手续费：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.service_money}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">提现到账金额：</label>
+            <label class="layui-form-label">提现到账金额：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.money}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">提现申请时间：</label>
+            <label class="layui-form-label">提现申请时间：</label>
             <div class="layui-input-block">
                 <p>{:time_to_date($withdraw_info.apply_time)}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">提现方式：</label>
+            <label class="layui-form-label">提现方式：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.transfer_type_name}</p>
             </div>
@@ -54,7 +54,7 @@
 
         {if $withdraw_info.transfer_type == "bank"}
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">银行名称：</label>
+            <label class="layui-form-label">银行名称：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info['bank_name']}</p>
             </div>
@@ -62,19 +62,19 @@
         {/if}
 
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">提现收款账号：</label>
+            <label class="layui-form-label">提现收款账号：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.account_number}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">真实姓名：</label>
+            <label class="layui-form-label">真实姓名：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.realname}</p>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">手机号：</label>
+            <label class="layui-form-label">手机号：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.mobile}</p>
             </div>
@@ -89,7 +89,7 @@
     <div class="layui-card-body">
         {if !empty($withdraw_info['certificate'])}
             <div class="layui-form-item">
-                <label class="layui-form-label img-upload-lable">转账凭证：</label>
+                <label class="layui-form-label">转账凭证：</label>
                 <div class="layui-input-block img-upload">
                     <div class="upload-img-block icon">
                         <div class="upload-img-box" >
@@ -100,7 +100,7 @@
             </div>
         {/if}
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">凭证说明：</label>
+            <label class="layui-form-label">凭证说明：</label>
             <div class="layui-input-block">
                 <p>{$withdraw_info.certificate_remark}</p>
             </div>

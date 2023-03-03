@@ -30,7 +30,7 @@ class Site extends BaseApi
      */
     public function info()
     {
-        $field = 'site_id,site_domain,site_name,logo,seo_keywords,seo_description,site_tel,logo_square';
+        $field = 'site_id,site_domain,site_name,logo,seo_title,seo_keywords,seo_description,site_tel,logo_square';
         $website_model = new SiteModel();
         $info = $website_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], $field);
 
@@ -81,4 +81,5 @@ class Site extends BaseApi
         $data = ( new ShopModel() )->getShopInfo([ [ 'site_id', '=', $this->site_id ] ], 'mobile');
         return $this->response($data);
     }
+
 }

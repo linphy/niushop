@@ -34,6 +34,10 @@ class VirtualGoods extends BaseModel
         return $this->goods_state;
     }
 
+    public function getGoodsClass(){
+        return $this->goods_class;
+    }
+
     /**
      * 商品添加
      * @param $data
@@ -88,7 +92,7 @@ class VirtualGoods extends BaseModel
 
             $goods_data = array (
                 'goods_image' => $goods_image,
-                'goods_stock' => $data[ 'goods_stock' ],
+//                'goods_stock' => $data[ 'goods_stock' ],
                 'price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'price' ]:'',
                 'market_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'market_price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'market_price' ]:'',
                 'cost_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ])?$data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ]:'',
@@ -104,8 +108,8 @@ class VirtualGoods extends BaseModel
                 'stock_show' => $data['stock_show'] ?? 1,
                 'market_price_show' => $data['market_price_show'] ?? 1,
                 'barrage_show' => $data['barrage_show'] ?? 1,
-                'virtual_deliver_type' => $data['virtual_deliver_type'],
-                'virtual_receive_type' => $data['virtual_receive_type']
+                'virtual_deliver_type' => $data['virtual_deliver_type'] ?? '',
+                'virtual_receive_type' => $data['virtual_receive_type'] ?? '',
             );
 
             $common_data = array (
@@ -121,7 +125,7 @@ class VirtualGoods extends BaseModel
                 'goods_state' => $data[ 'goods_state' ],
                 'goods_stock_alarm' => $data[ 'goods_stock_alarm' ],
                 'is_virtual' => 1,
-                'verify_validity_type' => $data['verify_validity_type'],
+                'verify_validity_type' => $data['verify_validity_type'] ?? 0,
                 'is_need_verify' => $data['is_need_verify'],
                 'virtual_indate' => $data[ 'virtual_indate' ],
                 'goods_attr_format' => $data[ 'goods_attr_format' ],
@@ -140,14 +144,16 @@ class VirtualGoods extends BaseModel
                 'recommend_way' => $data[ 'recommend_way' ],
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
-                'form_id' => $data[ 'form_id' ] ?? 0
+                'form_id' => $data[ 'form_id' ] ?? 0,
+                'sale_channel' => $data[ 'sale_channel' ] ?? 'all',
+                'sale_store' => $data[ 'sale_store' ] ?? 'all',
             );
-
             $goods_id = model('goods')->add(array_merge($goods_data, $common_data));
 
             $goods_stock = 0;
 
             $sku_arr = array ();
+            $sku_stock_list = [];
             //添加sku商品
             foreach ($data[ 'goods_sku_data' ] as $item) {
 
@@ -162,7 +168,7 @@ class VirtualGoods extends BaseModel
                     'market_price' => $item[ 'market_price' ],
                     'cost_price' => $item[ 'cost_price' ],
                     'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
-                    'stock' => $item[ 'stock' ],
+//                    'stock' => $item[ 'stock' ],
                     'stock_alarm' => $item[ 'stock_alarm' ],
                     'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
                     'sku_images' => $item[ 'sku_images' ],
@@ -172,7 +178,7 @@ class VirtualGoods extends BaseModel
                     'site_id' => $data['site_id'],
                     'verify_num' => $item['verify_num'] ?? 1
                 );
-
+                $sku_stock_list[] = ['stock' => $item[ 'stock' ], 'site_id' => $data['site_id'], 'goods_class' => $common_data['goods_class']];
                 $sku_arr[] = array_merge($sku_data, $common_data);
             }
 
@@ -181,7 +187,7 @@ class VirtualGoods extends BaseModel
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ], 'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ]], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项 / 规格值JSON字符串
@@ -199,10 +205,17 @@ class VirtualGoods extends BaseModel
 
             //添加统计
             $stat = new Stat();
-//            $stat->addShopStat([ 'add_goods_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
             $stat->switchStat(['type' => 'add_goods', 'data' => [ 'add_goods_count' => 1, 'site_id' => $data[ 'site_id' ] ]]);
-            model('goods')->commit();
 
+            // 商品设置库存
+            $goods_stock_model = new \app\model\stock\GoodsStock();
+            $sku_list = model('goods_sku')->getList([ 'goods_id' => $goods_id ], 'sku_id');
+            foreach($sku_stock_list as $k => $v){
+                $v['sku_id'] = $sku_list[$k]['sku_id'];
+                $goods_stock_model->changeGoodsStock($v);
+            }
+
+            model('goods')->commit();
             return $this->success($goods_id);
         } catch (\Exception $e) {
             model('goods')->rollback();
@@ -257,7 +270,7 @@ class VirtualGoods extends BaseModel
 
             $goods_data = array (
                 'goods_image' => $goods_image,
-                'goods_stock' => $data[ 'goods_stock' ],
+//                'goods_stock' => $data[ 'goods_stock' ],
                 'price' => $data[ 'goods_sku_data' ][ 0 ][ 'price' ],
                 'market_price' => $data[ 'goods_sku_data' ][ 0 ][ 'market_price' ],
                 'cost_price' => $data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ],
@@ -310,13 +323,16 @@ class VirtualGoods extends BaseModel
                 'recommend_way' => $data[ 'recommend_way' ],
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data['qr_id']:0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data['template_id']:0,
-                'form_id' => $data[ 'form_id' ] ?? 0
+                'form_id' => $data[ 'form_id' ] ?? 0,
+                'sale_channel' => $data[ 'sale_channel' ] ?? 'all',
+                'sale_store' => $data[ 'sale_store' ] ?? 'all',
             );
 
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
 
             $goods_stock = 0;
-
+            $goods_stock_model = new \app\model\stock\GoodsStock();
+            $sku_stock_list = [];
             // 如果只编辑价格库存就是修改，如果添加规格项/值就需要重新生成
             if (!empty($data[ 'goods_sku_data' ][ 0 ][ 'sku_id' ])) {
 
@@ -336,7 +352,7 @@ class VirtualGoods extends BaseModel
                             'market_price' => $item[ 'market_price' ],
                             'cost_price' => $item[ 'cost_price' ],
                             'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
-                            'stock' => $item[ 'stock' ],
+//                            'stock' => $item[ 'stock' ],
                             'stock_alarm' => $item[ 'stock_alarm' ],
                             'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
                             'sku_images' => $item[ 'sku_images' ],
@@ -345,11 +361,15 @@ class VirtualGoods extends BaseModel
                             'is_consume_discount' => $data['is_consume_discount'],
                             'verify_num' => $item['verify_num']
                         );
-
                         $sku_arr[] = array_merge($sku_data, $common_data);
+                        $sku_stock_list[] = ['stock' => $item[ 'stock' ], 'site_id' => $data['site_id'], 'goods_class' => $common_data['goods_class']];
                     }
 
                     model('goods_sku')->addList($sku_arr);
+                    $sku_list = model('goods_sku')->getList([ 'goods_id' => $goods_id ], 'sku_id');
+                    foreach($sku_stock_list as $k => $v){
+                        $sku_stock_list[$k]['sku_id'] = $sku_list[$k]['sku_id'];
+                    }
                 } else {
                     $discount_model = new Discount();
                     $sku_id_arr = [];
@@ -368,7 +388,7 @@ class VirtualGoods extends BaseModel
                             'price' => $item[ 'price' ],
                             'market_price' => $item[ 'market_price' ],
                             'cost_price' => $item[ 'cost_price' ],
-                            'stock' => $item[ 'stock' ],
+//                            'stock' => $item[ 'stock' ],
                             'stock_alarm' => $item[ 'stock_alarm' ],
                             'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
                             'sku_images' => $item[ 'sku_images' ],
@@ -385,9 +405,10 @@ class VirtualGoods extends BaseModel
                             model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
                         } else {
                             $sku_id = model('goods_sku')->add(array_merge($sku_data, $common_data));
+                            $item[ 'sku_id' ] = $sku_id;
                             $sku_id_arr[] = $sku_id;
                         }
-
+                        $sku_stock_list[] = ['stock' => $item[ 'stock' ],'sku_id' => $item[ 'sku_id' ], 'site_id' => $data['site_id'], 'goods_class' => $common_data['goods_class']];
                     }
 
                     // 移除不存在的商品SKU
@@ -424,7 +445,7 @@ class VirtualGoods extends BaseModel
                         'market_price' => $item[ 'market_price' ],
                         'cost_price' => $item[ 'cost_price' ],
                         'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
-                        'stock' => $item[ 'stock' ],
+//                        'stock' => $item[ 'stock' ],
                         'stock_alarm' => $item[ 'stock_alarm' ],
                         'sku_image' => !empty($item[ 'sku_image' ]) ? $item[ 'sku_image' ] : $first_image,
                         'sku_images' => $item[ 'sku_images' ],
@@ -433,16 +454,21 @@ class VirtualGoods extends BaseModel
                         'verify_num' => $item['verify_num'],
                         'is_consume_discount' => $data['is_consume_discount']
                     );
-
                     $sku_arr[] = array_merge($sku_data, $common_data);
+                    $sku_stock_list[] = ['stock' => $item[ 'stock' ], 'site_id' => $data['site_id'], 'goods_class' => $common_data['goods_class']];
                 }
 
                 model('goods_sku')->addList($sku_arr);
+
+                $sku_list = model('goods_sku')->getList([ 'goods_id' => $goods_id ], 'sku_id');
+                foreach($sku_stock_list as $k => $v){
+                    $sku_stock_list[$k]['sku_id'] = $sku_list[$k]['sku_id'];
+                }
             }
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ],'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项 / 规格值JSON字符串
@@ -458,6 +484,12 @@ class VirtualGoods extends BaseModel
             }
             if ($goods_data[ 'timer_off' ] > 0) {
                 $cron->addCron(1, 0, "商品定时下架", "CronGoodsTimerOff", $goods_data[ 'timer_off' ], $goods_id);
+            }
+            // 商品设置库存
+            //核验和校准改变的sku
+            $goods_stock_model->checkExistGoodsSku(['goods_id' => $goods_id]);
+            foreach($sku_stock_list as $k => $v){
+                $goods_stock_model->changeGoodsStock($v);
             }
 
             model('goods')->commit();

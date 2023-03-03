@@ -18,7 +18,7 @@
 			<p>分类名称最长不超过30个字符</p>
 		</div>
 	</div>
-	
+
 	<!-- <div class="layui-form-item">
 		<label class="layui-form-label">简称：</label>
 		<div class="layui-input-block len-long">
@@ -58,7 +58,7 @@
 	</div> -->
 
 	<div class="layui-form-item">
-		<label class="layui-form-label">分类图标：</label>
+		<label class="layui-form-label">分类图片：</label>
 		<div class="layui-input-block">
 			<div class="upload-img-block">
 				<div class="upload-img-box">
@@ -150,6 +150,16 @@
 			<textarea name="description" placeholder="请输入分类描述" class="layui-textarea" maxlength="150"></textarea>
 		</div>
 	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">分类图标：</label>
+		<div class="layui-input-block">
+			<input name="icon" type="text" placeholder="请输入分类图标类名，示例：iconfont home" class="layui-input len-long" autocomplete="off">
+		</div>
+		<div class="word-aux">
+			<p>通过引用外部文件，实现加载字体图标，示例：iconfont home</p>
+		</div>
+	</div>
 	
 	<!-- <div class="layui-form-item">
 		<label class="layui-form-label">排序：</label>
@@ -160,6 +170,14 @@
 			<p>排序值必须为整数</p>
 		</div>
 	</div> -->
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否推荐</label>
+		<div class="layui-input-block">
+			<input type="radio" name="is_recommend" value="1" title="是">
+			<input type="radio" name="is_recommend" value="0" title="否" checked>
+		</div>
+	</div>
 
 	<div class="layui-form-item">
 		<label class="layui-form-label">是否显示</label>

@@ -10,6 +10,7 @@
 
 namespace app\shopapi\controller;
 
+use app\model\order\Order;
 use app\model\shop\Shop as ShopModel;
 use app\model\shop\ShopReopen as ShopReopenModel;
 use app\model\system\Stat;
@@ -20,6 +21,7 @@ use app\model\goods\Goods as GoodsModel;
 use app\model\system\User as ShopUser;
 use app\model\order\OrderCommon;
 use app\model\order\OrderRefund as OrderRefundModel;
+use app\model\member\Member;
 
 class Index extends BaseApi
 {
@@ -66,13 +68,16 @@ class Index extends BaseApi
         //获取总数
         $shop_stat_sum = $stat_shop_model->getShopStatSum($this->site_id);
         $goods_model = new GoodsModel();
-        $goods_sum = $goods_model->getGoodsTotalCount([ 'site_id' => $this->site_id ]);
-        $shop_stat_sum[ 'data' ][ 'goods_count' ] = $goods_sum[ 'data' ];
+        $shop_stat_sum[ 'data' ][ 'goods_count' ] = $goods_model->getGoodsTotalCount([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ])[ 'data' ];
+        $shop_stat_sum[ 'data' ]['member_count'] = (new Member())->getMemberCount([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ])[ 'data' ];
+        $order = new Order();
+        $shop_stat_sum[ 'data' ][ 'order_pay_count' ] = $order->getOrderCount([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ], [ 'pay_status', '=', 1 ] ])['data'];
+        $shop_stat_sum[ 'data' ][ 'order_total' ] = $order->getOrderMoneySum([ [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ], [ 'pay_status', '=', 1 ] ], 'pay_money')['data'];
         $data[ 'shop_stat_sum' ] = $shop_stat_sum[ 'data' ];
 
         //数据信息统计
         $order = new OrderCommon();
-        $waitpay = $order->getOrderCount([ [ 'order_status', '=', 0 ], [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ]);
+        $waitpay = $order->getOrderCount([ [ 'order_status', '=', 0 ], [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ], ['order_scene', '=', 'online'] ]);
         $waitsend = $order->getOrderCount([ [ 'order_status', '=', 1 ], [ 'site_id', '=', $this->site_id ], [ 'is_delete', '=', 0 ] ]);
         $order_refund_model = new OrderRefundModel();
         $refund_num = $order_refund_model->getRefundOrderGoodsCount([

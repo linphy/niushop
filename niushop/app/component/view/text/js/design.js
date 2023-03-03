@@ -208,11 +208,11 @@ Vue.component("text-style", {
 				title: '风格选择',
 				area: ['930px', '630px'],
 				btn: ['确定', '返回'],
-				content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .style-list-box").html(),
+				content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .style-list-box-text").html(),
 				success: function (layero, index) {
 					$(".layui-layer-content input[name='style']").val(self.data.style);
 					$(".layui-layer-content input[name='style_name']").val(self.data.styleName);
-					$("body").on("click", ".layui-layer-content .style-list-con .style-li", function () {
+					$("body").on("click", ".layui-layer-content .style-list-con-text .style-li-text", function () {
 						$(this).addClass("selected border-color").siblings().removeClass("selected border-color bg-color-after");
 						$(".layui-layer-content input[name='style']").val($(this).attr("data_key"));
 						$(".layui-layer-content input[name='style_name']").val($(this).find("span").text());

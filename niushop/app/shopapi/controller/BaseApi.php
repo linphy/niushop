@@ -145,11 +145,11 @@ class BaseApi
      * @param int $expire_time 有效时间  0为永久 单位s
      * @return string
      */
-    protected function createToken($user_info, $expire_time = 0)
+    protected function createToken($user_info)
     {
         $data = [
             'user_info' => $user_info,
-            'expire_time' => empty($expire_time) ? 0 : time() + $expire_time
+            'expire_time' => $this->api_config[ 'value' ]['long_time'] * 3600
         ];
         if ($this->api_config[ 'is_use' ] && isset($this->api_config[ 'value' ][ 'private_key' ])
             && !empty($this->api_config[ 'value' ][ 'private_key' ])) {
@@ -325,7 +325,7 @@ class BaseApi
     /**
      * 检测权限
      */
-    private function checkAuth()
+    protected function checkAuth()
     {
         if (empty($addon)) {
             $auth_name = 'config/auth_shopapi.php';

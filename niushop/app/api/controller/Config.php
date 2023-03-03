@@ -13,6 +13,7 @@ namespace app\api\controller;
 
 use app\model\express\Config as ExpressConfig;
 use app\model\goods\Cart as CartModel;
+use app\model\system\Promotion as PrmotionModel;
 use app\model\system\Servicer;
 use app\model\web\Config as ConfigModel;
 
@@ -105,7 +106,7 @@ class Config extends BaseApi
 
         // 插件存在性
         $addon_api = new Addon();
-        $addon_is_exist = json_decode($addon_api->addonisexit(), true)[ 'data' ];
+        $addon_is_exist = json_decode($addon_api->addonIsExit(), true)[ 'data' ];
 
         // 默认图
         $config_model = new ConfigModel();
@@ -117,6 +118,10 @@ class Config extends BaseApi
         $site_api = new Site();
         $site_info = json_decode($site_api->info(), true)[ 'data' ];
 
+        $servicer = json_decode($this->servicer(), true)[ 'data' ];
+
+        $this->initStoreData();
+
         $res = [
             'cart_count' => $cart_count,
             'style_theme' => $diy_style,
@@ -124,8 +129,14 @@ class Config extends BaseApi
             'addon_is_exist' => $addon_is_exist,
             'default_img' => $default_img,
             'copyright' => $copyright,
-            'site_info' => $site_info
+            'site_info' => $site_info,
+            'servicer' => $servicer,
+            'store_config' => $this->store_data[ 'config' ]
         ];
+
+        if (!empty($this->store_data[ 'store_info' ])) {
+            $res[ 'store_info' ] = $this->store_data[ 'store_info' ];
+        }
 
         return $this->response($this->success($res));
     }
@@ -145,8 +156,23 @@ class Config extends BaseApi
      *
      * @return false|string
      */
-    public function enabledExpressType(){
-        $express_type = (new ExpressConfig())->getEnabledExpressType($this->site_id);
+    public function enabledExpressType()
+    {
+        $express_type = ( new ExpressConfig() )->getEnabledExpressType($this->site_id);
         return $this->response($this->success($express_type));
     }
+
+    /**
+     * 获取活动专区页面配置
+     * @return false|string
+     */
+    public function promotionZoneConfig()
+    {
+        $name = isset($this->params[ 'name' ]) ? $this->params[ 'name' ] : ''; // 活动名称标识
+
+        $promotion_model = new PrmotionModel();
+        $res = $promotion_model->getPromotionZoneConfig($name, $this->site_id)[ 'data' ][ 'value' ];
+        return $this->response($this->success($res));
+    }
+
 }

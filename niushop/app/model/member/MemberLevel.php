@@ -69,6 +69,17 @@ class MemberLevel extends BaseModel
     }
 
     /**
+     * 更新会员等级
+     * @param $site_id
+     */
+    public function startlevel($site_id)
+    {
+        $cron = new Cron();
+        $cron->addCron(1, 0, "会员等级更新", "MemberLevelUpdate", time(), 0);
+        return $this->success();
+    }
+
+    /**
      * 刷新会员等级排序
      */
     private function refreshSort($site_id)
@@ -206,7 +217,7 @@ class MemberLevel extends BaseModel
         model('member_level_records')->startTrans();
 
         try {
-            $member_info = model('member')->getInfo([ ['member_id', '=', $member_id] ], 'member_level,member_level_name,member_level_type,level_expire_time');
+            $member_info = model('member')->getInfo([ ['member_id', '=', $member_id] ], 'member_level,member_level_name,member_level_type,level_expire_time,is_member');
             $level_info = model('member_level')->getInfo([ ['level_id', '=', $after_level], ['site_id', '=', $site_id] ], 'level_id,level_name,level_type');
             if ($member_info['member_level'] == $level_info['level_id']) {
                 model('member_level_records')->rollback();
@@ -237,12 +248,17 @@ class MemberLevel extends BaseModel
             model('member_level_records')->add($data);
 
             // 变更会员等级
-            model('member')->update([
+            $edit_memeber_data = [
                 'member_level' => $level_info['level_id'],
                 'member_level_name' => $level_info['level_name'],
                 'member_level_type' => $level_info['level_type'],
-                'level_expire_time' => $expire_time
-            ], [ ['member_id','=',$member_id] ]);
+                'level_expire_time' => $level_info['level_type'] == 0 ? 0 : $expire_time
+            ];
+            if (!$member_info['is_member']) {
+                $edit_memeber_data['is_member'] = 1;
+                $edit_memeber_data['member_time'] = time();
+            }
+            model('member')->update($edit_memeber_data, [ ['member_id','=',$member_id] ]);
             $cron = new Cron();
             $cron->deleteCron([ ['event', '=', 'MemberLevelAutoExpire'], ['relate_id', '=', $member_id ] ]);
             if ($level_info['level_type']) {

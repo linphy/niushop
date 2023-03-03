@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -36,7 +35,7 @@ class Upload extends BaseModel
         $config_model = new Config();
         $config_result = $config_model->getUploadConfig(1, 'shop');
         $this->config = $config_result[ "data" ][ "value" ];//上传配置
-        $this->driver = config('upload')['driver'] ?? 'gd';
+        $this->driver = config('upload')[ 'driver' ] ?? 'gd';
         $this->image_service = new ImageService($this->driver);
     }
     /************************************************************上传开始*********************************************/
@@ -86,7 +85,7 @@ class Upload extends BaseModel
             // 是否需上传到云存储
 
             if (isset($param[ 'cloud' ]) && $param[ 'cloud' ]) {
-                $result = $this->imageCloud($image, $new_file);
+                $result = $this->imageCloud($image, $new_file, $file);
                 if ($result[ "code" ] < 0)
                     return $result;
             } else {
@@ -118,10 +117,12 @@ class Upload extends BaseModel
     }
 
 
-    public function getImageService($file){
+    public function getImageService($file)
+    {
         $image = $this->image_service->open($file);
         return $image;
     }
+
     /**
      * 相册图片上传
      * @param number $site_id
@@ -150,24 +151,25 @@ class Upload extends BaseModel
             $this->ext = $extend_name;
             $thumb_type = $param[ "thumb_type" ];//所留
             $album_id = $param[ "album_id" ];
-            $is_thumb = $param['is_thumb'] ?? 0;
+            $is_thumb = $param[ 'is_thumb' ] ?? 0;
             $new_file = $file_name . "." . $extend_name;
+
             $image = $this->getImageService($tmp_name);
             $width = $image->width;//图片宽
             $height = $image->height;//图片高
             // 原图不需要加水印处理
-            if($is_thumb == 1){
-                $image = $this->imageWater($image);
-            }
-            $result = $this->imageCloud($image, $new_file);//原图云上传(文档流上传)
-            
+//            if($is_thumb == 1){
+//            $image = $this->imageWater($image);
+//            }
+            $result = $this->imageCloud($image, $new_file, $file);//原图云上传(文档流上传)
+
             if ($result[ "code" ] < 0)
                 return $result;
-            
-            if($is_thumb == 1){
-                $thumb_res = $this->thumbBatch($result['data'], $file_name, $extend_name, $thumb_type);//生成缩略图
+
+            if ($is_thumb == 1) {
+                $thumb_res = $this->thumbBatch($result[ 'data' ], $file_name, $extend_name, $thumb_type);//生成缩略图
                 if ($thumb_res[ "code" ] < 0)
-                return $result;
+                    return $result;
             }
             $pic_name_first = substr(strrchr($original_name, '.'), 1);
             $pic_name = basename($original_name, "." . $pic_name_first);
@@ -202,19 +204,19 @@ class Upload extends BaseModel
     public function modifyFile($param)
     {
 //        参数校验
-        if(empty($param['album_id'])){
+        if (empty($param[ 'album_id' ])) {
             return $this->error('', "PARAMETER_ERROR");
         }
 
-        if(empty($param['pic_id'])){
+        if (empty($param[ 'pic_id' ])) {
             return $this->error('', "PARAMETER_ERROR");
         }
 
-        if(empty($param['filename'])){
+        if (empty($param[ 'filename' ])) {
             return $this->error('', "PARAMETER_ERROR");
         }
 
-        if(empty($param['suffix'])){
+        if (empty($param[ 'suffix' ])) {
             return $this->error('', "PARAMETER_ERROR");
         }
 
@@ -232,28 +234,28 @@ class Upload extends BaseModel
             $file_path = $this->path;
             // 检测目录
             $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
-            if ($checkpath_result[ "code" ] < 0){
+            if ($checkpath_result[ "code" ] < 0) {
                 return $checkpath_result;
             }
 
 //            保留原文件名和后缀
-            $file_name = $file_path . $param['filename'];
-            $extend_name = $param['suffix'];
+            $file_name = $file_path . $param[ 'filename' ];
+            $extend_name = $param[ 'suffix' ];
             $thumb_type = $param[ "thumb_type" ];//所留
             //原图保存
             $new_file = $file_name . "." . $extend_name;
             $image = $this->getImageService($tmp_name);
             $width = $image->width;//图片宽
             $height = $image->height;//图片高
-            $image = $this->imageWater($image);
+//            $image = $this->imageWater($image);
 
-            $result = $this->imageCloud($image, $new_file);//原图云上传(文档流上传)
-            if ($result[ "code" ] < 0){
+            $result = $this->imageCloud($image, $new_file, $file);//原图云上传(文档流上传)
+            if ($result[ "code" ] < 0) {
                 return $result;
             }
 
             $thumb_res = $this->thumbBatch($tmp_name, $file_name, $extend_name, $thumb_type);//生成缩略图
-            if ($thumb_res[ "code" ] < 0){
+            if ($thumb_res[ "code" ] < 0) {
                 return $thumb_res;
             }
 
@@ -267,10 +269,10 @@ class Upload extends BaseModel
             );
 
             $album_model = new Album();
-            $condition   = array(
-                ["pic_id", "=", $param['pic_id']],
-                ["site_id", "=", $this->site_id],
-                ['album_id', "=", $param['album_id']],
+            $condition = array (
+                [ "pic_id", "=", $param[ 'pic_id' ] ],
+                [ "site_id", "=", $this->site_id ],
+                [ 'album_id', "=", $param[ 'album_id' ] ],
             );
 
             $res = $album_model->editAlbumPic($data, $condition);
@@ -316,7 +318,7 @@ class Upload extends BaseModel
                     "pic_spec" => '',
                     "update_time" => time(),
                     "site_id" => $this->site_id,
-                    "album_id" => $param['album_id'],
+                    "album_id" => $param[ 'album_id' ],
                     "is_thumb" => 0,
                 );
                 $album_model = new Album();
@@ -362,6 +364,74 @@ class Upload extends BaseModel
         } else {
             return $check_res;
         }
+    }
+
+    /*
+     * 替换视频文件
+     * */
+    public function modifyVideoFile($param)
+    {
+//        参数校验
+        if (empty($param[ 'album_id' ])) {
+            return $this->error('', "PARAMETER_ERROR");
+        }
+
+        if (empty($param[ 'pic_id' ])) {
+            return $this->error('', "PARAMETER_ERROR");
+        }
+
+        $check_res = $this->checkVideo();
+
+        if ($check_res[ "code" ] >= 0) {
+
+            $file = request()->file($param[ "name" ]);
+            if (empty($file))
+                return $this->error();
+
+            $extend_name = $file->getOriginalExtension();
+            $new_name = $this->createNewFileName() . "." . $extend_name;
+            $original_name = $file->getOriginalName();//文件原名
+            $file_path = $this->path;
+
+            // 检测目录
+            $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
+            if ($checkpath_result[ "code" ] < 0) {
+                return $checkpath_result;
+            }
+
+            \think\facade\Filesystem::disk('public')->putFileAs($file_path, $file, $new_name);
+            $file_name = $file_path . $new_name;
+            $result = $this->fileCloud($file_name);
+
+            $pic_name_first = substr(strrchr($original_name, '.'), 1);
+            $pic_name = basename($original_name, "." . $pic_name_first);
+
+            $data = array (
+                "pic_path" => $result[ "data" ],//图片云存储
+                "update_time" => time(),
+            );
+
+            $album_model = new Album();
+            $condition = array (
+                [ "pic_id", "=", $param[ 'pic_id' ] ],
+                [ "site_id", "=", $this->site_id ],
+                [ 'album_id', "=", $param[ 'album_id' ] ],
+            );
+
+            $res = $album_model->editAlbumPic($data, $condition);
+
+            if ($res[ 'code' ] >= 0) {
+                $data[ "id" ] = $res[ "data" ];
+                return $this->success($data, "UPLOAD_SUCCESS");
+            } else {
+                return $this->error($res);
+            }
+
+        } else {
+            //返回错误信息
+            return $check_res;
+        }
+
     }
 
     /**
@@ -475,8 +545,12 @@ class Upload extends BaseModel
      */
     public function imageThumb($file, $thumb_name, $width, $height, $fit = 'center')
     {
-        $image = $this->getImageService($file)->thumb($width, $height, $fit);
+//        $image = $this->getImageService($file)->thumb($width, $height, $fit);
+//        $result = $this->imageCloud($image, $thumb_name);
+        $image = $this->getImageService($file);
 
+        $image = $image->thumb($width, $height, $fit);
+        $image = $this->imageWater($image);
         $result = $this->imageCloud($image, $thumb_name);
         return $result;
     }
@@ -492,8 +566,8 @@ class Upload extends BaseModel
                 case "1"://图片水印
                     if (!empty($this->config[ "water" ][ "watermark_source" ]) && is_file($this->config[ "water" ][ "watermark_source" ])) {
                         $water_path = $this->config[ "water" ][ "watermark_source" ];
-                        $water_opacity = empty($this->config[ "water" ][ "watermark_opacity" ]) ? 0 :$this->config[ "water" ][ "watermark_opacity" ];
-                        $water_rotate = empty($this->config[ "water" ][ "watermark_rotate" ])? 0 : $this->config[ "water" ][ "watermark_rotate" ];
+                        $water_opacity = empty($this->config[ "water" ][ "watermark_opacity" ]) ? 0 : $this->config[ "water" ][ "watermark_opacity" ];
+                        $water_rotate = empty($this->config[ "water" ][ "watermark_rotate" ]) ? 0 : $this->config[ "water" ][ "watermark_rotate" ];
                         $water_position = $this->config[ "water" ][ "watermark_position" ];
                         $water_x = $this->config[ "water" ][ "watermark_x" ];
                         $water_y = $this->config[ "water" ][ "watermark_y" ];
@@ -501,15 +575,28 @@ class Upload extends BaseModel
                     }
                     break;
                 case "2"://文字水印
+
                     if (!empty($this->config[ "water" ][ "watermark_text" ])) {
                         $text = $this->config[ "water" ][ "watermark_text" ];
                         $x = $this->config[ "water" ][ "watermark_x" ];
+                        if(empty($x)){
+                            $x = 0;
+                        }
                         $y = $this->config[ "water" ][ "watermark_y" ];
+                        if(empty($y)){
+                            $y = 0;
+                        }
                         $size = $this->config[ "water" ][ "watermark_text_size" ];
+                        if(empty($size)){
+                            $size = 12;
+                        }
                         $color = $this->config[ "water" ][ "watermark_text_color" ];
                         $align = $this->config[ "water" ][ "watermark_text_align" ];
                         $valign = $this->config[ "water" ][ "watermark_text_valign" ];
                         $angle = $this->config[ "water" ][ "watermark_text_angle" ];
+                        if(empty($angle)){
+                            $angle = 0;
+                        }
                         $image = $image->textWater($text, $x, $y, $size, $color, $align, $valign, $angle);
                     }
                     break;
@@ -519,13 +606,25 @@ class Upload extends BaseModel
         return $image;
     }
 
+    public function to_unicode($string)
+    {
+        $str = mb_convert_encoding($string, 'gb2312', 'UTF-8');
+        $arrstr = str_split($str, 2);
+        $unistr = '';
+        foreach ($arrstr as $n) {
+            $dec = hexdec(bin2hex($n));
+            $unistr .= '&#' . $dec . ';';
+        }
+        return $unistr;
+    }
+
     /**
      * 删除文件
      * @param $file_name
      */
     public function deleteFile($file_name)
     {
-        if(file_exists($file_name)){
+        if (file_exists($file_name)) {
             $res = @unlink($file_name);
             if ($res) {
                 return $this->success();
@@ -546,7 +645,20 @@ class Upload extends BaseModel
     public function imageCloud($image_class, $file, $tmp_file = '')
     {
         try {
-            $image_class->save($file);
+            $compress_array = array (
+                'large' => 90,
+                'medium' => 75,
+                'small' => 55,
+                'original' => null
+            );
+            $compress = $this->config[ 'upload' ][ 'compress' ] ?? 'original';
+            if ($compress == 'original' && !empty($tmp_file)) {
+                \think\facade\Filesystem::disk('public')->putFileAs('', $tmp_file, $file);
+            } else {
+                $compress = $compress_array[ $this->config[ 'upload' ][ 'compress' ] ?? 'original' ];
+                $image_class->save($file, $compress);
+            }
+
             $result = $this->fileCloud($file);
             //云上传没有成功  保存到本地
             return $result;
@@ -579,36 +691,6 @@ class Upload extends BaseModel
         }
     }
 
-    /**
-     * 检测图片上传 类型  大小
-     * @param $file_info
-     * @return \multitype
-     */
-    public function checkImage1($file_info)
-    {
-        $upload_extend = new UploadExtend('');//实例化上传类
-        $upload_extend->setFilename($file_info[ "tmp_name" ]);
-        $rule_type = $this->config[ "upload" ][ "image_allow_mime" ];//规则mine类型
-        $rule_ext = $this->config[ "upload" ][ "image_allow_ext" ];//规则 允许上传后缀
-//        $rule = [ "type" => "image/png,image/jpeg,image/gif,image/bmp", "ext" => "gif,jpg,jpeg,bmp,png" ];//上传文件验证规则
-        $rule = [ "type" => $rule_type, "ext" => $rule_ext ];//上传文件验证规则
-        $old_name = $upload_extend->getFileName($file_info[ "name" ]);//文件原名
-        $file_name = $this->site_id . "/images/" . date("Ymd") . "/" . $upload_extend->createNewFileName();
-        $extend_name = $upload_extend->getFileExt($file_info[ "name" ]);
-        $size_data = $upload_extend->getImageInfo($file_info[ "tmp_name" ]);//获取图片信息
-        $check = $upload_extend->setValidate($rule)->setUploadInfo($file_info)->checkAll($this->upload_path, $file_name . "." . $extend_name);
-        if (!$check)
-            return $this->error("", $upload_extend->getError());
-
-        $data = array (
-            "file_name" => $file_name,
-            "old_name" => $old_name,
-            "extend_name" => $extend_name,
-            "size_data" => $size_data,
-        );
-        return $this->success($data);
-
-    }
 
     /**
      * 图片验证
@@ -620,9 +702,9 @@ class Upload extends BaseModel
         try {
             $file = request()->file();
             $rule_array = [];
-            $size_rule = $this->config[ "upload" ][ "max_filesize" ];
-            $ext_rule = !empty($this->config[ "upload" ][ "image_allow_ext" ]) ? $this->config[ "upload" ][ "image_allow_ext" ] : 'jpg,jpeg,png,gif,pem,webp';
-            $mime_rule = !empty($this->config[ "upload" ][ "image_allow_mime" ]) ? $this->config[ "upload" ][ "image_allow_mime" ] : 'image/webp,image/jpg,image/jpeg,image/gif,image/png,text/plain';
+            $size_rule = $this->config[ 'upload' ][ 'max_filesize' ];
+            $ext_rule = 'jpg,jpeg,png,gif,pem,webp';
+            $mime_rule = 'image/webp,image/jpg,image/jpeg,image/gif,image/png,text/plain';
 
             if (!empty($size_rule)) {
                 $rule_array[] = "fileSize:{$size_rule}";
@@ -634,7 +716,7 @@ class Upload extends BaseModel
                 $rule_array[] = "fileMime:{$mime_rule}";
             }
             if (!empty($rule_array)) {
-                $rule = implode("|", $rule_array);
+                $rule = implode('|', $rule_array);
                 validate([ 'file' => $rule ])->check($file);
             }
             return $this->success();
@@ -652,8 +734,8 @@ class Upload extends BaseModel
     {
         try {
             $file = request()->file();
-            $suffix = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-            if($suffix == "pem" || $suffix == "crt"){
+            $suffix = pathinfo($_FILES[ 'file' ][ 'name' ], PATHINFO_EXTENSION);
+            if ($suffix == "pem" || $suffix == "crt") {
                 return $this->success();
             }
 
@@ -663,29 +745,31 @@ class Upload extends BaseModel
             $ext_rule = "txt,xlsx,xls,csv,pem";
             $mime_rule = "text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv";
 
-            if(!empty($size_rule)){
+            if (!empty($size_rule)) {
                 $rule_array[] = "fileSize:{$size_rule}";
             }
-            if(!empty($ext_rule)){
+            if (!empty($ext_rule)) {
                 $rule_array[] = "fileExt:{$ext_rule}";
             }
-            if(!empty($mime_rule)){
+            if (!empty($mime_rule)) {
                 $rule_array[] = "fileMime:{$mime_rule}";
             }
             $rule = implode("|", $rule_array);
-            $res = validate(['file'=>$rule])->check($file);
-            if($res){
+            $res = validate([ 'file' => $rule ])->check($file);
+            if ($res) {
                 return $this->success();
-            }else{
+            } else {
                 return $this->error();
             }
         } catch (\think\exception\ValidateException $e) {
             return $this->error('', $e->getMessage());
         }
     }
+
     /************************************************************上传功能组件******************************************/
 
-    public function checkVideo(){
+    public function checkVideo()
+    {
         try {
             $file = request()->file();
             $rule_array = [];
@@ -694,20 +778,20 @@ class Upload extends BaseModel
             $ext_rule = "mp4,avi";
             $mime_rule = "video/mp4,video/x-msvideo";
 
-            if(!empty($size_rule)){
+            if (!empty($size_rule)) {
                 $rule_array[] = "fileSize:{$size_rule}";
             }
-            if(!empty($ext_rule)){
+            if (!empty($ext_rule)) {
                 $rule_array[] = "fileExt:{$ext_rule}";
             }
-            if(!empty($mime_rule)){
+            if (!empty($mime_rule)) {
                 $rule_array[] = "fileMime:{$mime_rule}";
             }
             $rule = implode("|", $rule_array);
-            $res = validate(['file'=>$rule])->check($file);
-            if($res){
+            $res = validate([ 'file' => $rule ])->check($file);
+            if ($res) {
                 return $this->success();
-            }else{
+            } else {
                 return $this->error();
             }
         } catch (\think\exception\ValidateException $e) {
@@ -737,7 +821,7 @@ class Upload extends BaseModel
             return $this->success();
         }
 
-        return $this->error('', "directory {$path} creation failed");
+        return $this->error('', "上传目录 {$path} 创建失败，请检测权限");
     }
 
     /**
@@ -766,7 +850,7 @@ class Upload extends BaseModel
             $file_path = $this->path;
             // 检测目录
             $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
-            if ($checkpath_result["code"] < 0)
+            if ($checkpath_result[ "code" ] < 0)
                 return $checkpath_result;
 
             $file_name = $file_path . $this->createNewFileName();
@@ -786,11 +870,11 @@ class Upload extends BaseModel
             $image = $this->imageWater($image);
             $result = $this->imageCloud($image, $new_file);//原图云上传(文档流上传)
 
-            if ($result["code"] < 0)
+            if ($result[ "code" ] < 0)
                 return $result;
 
-            return $this->success(["pic_path" => $result["data"]]);
-        } catch ( \think\exception\ValidateException $e ) {
+            return $this->success([ "pic_path" => $result[ "data" ] ]);
+        } catch (\think\exception\ValidateException $e) {
             return $this->error('', $e->getMessage());
         }
     }
@@ -854,25 +938,24 @@ class Upload extends BaseModel
      */
     public function remotePullToLocalPic($path)
     {
-        if (stristr($path, 'http://') || stristr($path, 'https://')) {
-            $file_path = $this->path;
-            // 检测目录
-            $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
-            if ($checkpath_result[ "code" ] < 0)
-                return $checkpath_result;
-
-            $file_name = $file_path . $this->createNewFileName();
-            $new_file = $file_name . ".png";
-
-            $content = file_get_contents($path);
-            //todo  考虑imagick支持文档流的可能性
-            $image = Image::make($content);//兼容
-            $image = $this->imageWater($image);
-            $image->save($new_file);
-            return $this->success([ "path" => $new_file ]);
-        } else {
-            return $this->success([ "path" => $path ]);
+        if(strpos($path, 'http://') === false && strpos($path, 'https://') === false){
+            $path = "https:".$path;
         }
+        $file_path = $this->path;
+        // 检测目录
+        $checkpath_result = $this->checkPath($file_path);//验证写入文件的权限
+        if ($checkpath_result[ "code" ] < 0)
+            return $checkpath_result;
+
+        $file_name = $file_path . $this->createNewFileName();
+        $new_file = $file_name . ".png";
+
+        $content = file_get_contents($path);
+        //todo  考虑imagick支持文档流的可能性
+        $image = Image::make($content);//兼容
+        $image = $this->imageWater($image);
+        $image->save($new_file);
+        return $this->success([ "path" => $new_file ]);
     }
 
 
@@ -916,6 +999,7 @@ class Upload extends BaseModel
         $thumb_type = $param[ "thumb_type" ];
         //原图保存
         $new_file = $file_name . "." . $extend_name;
+
         $image = $this->getImageService($img_path);
 
         $width = $image->width;//图片宽
@@ -927,9 +1011,11 @@ class Upload extends BaseModel
         if ($result[ "code" ] < 0)
             return $result;
 
-        $thumb_res = $this->thumbBatch($img_path, $file_name, $extend_name, $thumb_type);//生成缩略图
-        if ($thumb_res[ "code" ] < 0)
-            return $result;
+        if($param['thumb_type']){
+            $thumb_res = $this->thumbBatch($img_path, $file_name, $extend_name, $thumb_type);//生成缩略图
+            if ($thumb_res[ "code" ] < 0)
+                return $result;
+        }
 
         $data = array (
             "pic_path" => $result[ "data" ],//图片云存储
@@ -945,7 +1031,7 @@ class Upload extends BaseModel
             "pic_spec" => $width . "*" . $height,
             "update_time" => time(),
             "site_id" => $this->site_id,
-            "album_id" => $param['album_id']
+            "album_id" => $param[ 'album_id' ]
         );
         $album_model = new Album();
         $res = $album_model->addAlbumPic($album_data);
@@ -956,20 +1042,21 @@ class Upload extends BaseModel
         }
     }
 
-    public function deletePic($pic_path, $site_id){
-        if(strpos($pic_path,'https://') === 0 || strpos($pic_path,'http://') === 0){
-            event("ClearAlbumPic", ["pic_path" => $pic_path, "site_id" => $site_id]);
-        }else{
-            if(file_exists($pic_path)){
+    public function deletePic($pic_path, $site_id)
+    {
+        if (strpos($pic_path, 'https://') === 0 || strpos($pic_path, 'http://') === 0) {
+            event("ClearAlbumPic", [ "pic_path" => $pic_path, "site_id" => $site_id ]);
+        } else {
+            if (file_exists($pic_path)) {
                 unlink($pic_path);
             }
-            if(file_exists(img($pic_path, 'big'))){
+            if (file_exists(img($pic_path, 'big'))) {
                 unlink(img($pic_path, 'big'));
             }
-            if(file_exists(img($pic_path, 'mid'))){
+            if (file_exists(img($pic_path, 'mid'))) {
                 unlink(img($pic_path, 'mid'));
             }
-            if(file_exists(img($pic_path, 'small'))){
+            if (file_exists(img($pic_path, 'small'))) {
                 unlink(img($pic_path, 'small'));
             }
         }

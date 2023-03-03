@@ -116,15 +116,16 @@ class Orderrefund extends BaseApi
         $member_info_result = $member_model->getMemberInfo([ [ "member_id", "=", $this->member_id ] ]);
         $member_info = $member_info_result[ "data" ];
         $order_refund_model = new OrderRefundModel();
-        $order_goods_ids = isset($this->params[ 'order_goods_ids' ]) ? $this->params[ 'order_goods_ids' ] : '0';
-        $refund_type = isset($this->params[ 'refund_type' ]) ? $this->params[ 'refund_type' ] : 1;
-        $refund_reason = isset($this->params[ 'refund_reason' ]) ? $this->params[ 'refund_reason' ] : '';
-        $refund_remark = isset($this->params[ 'refund_remark' ]) ? $this->params[ 'refund_remark' ] : '';
+        $order_goods_ids = $this->params[ 'order_goods_ids' ] ?? '0';
+        $refund_type = $this->params[ 'refund_type' ] ?? 1;
+        $refund_reason = $this->params[ 'refund_reason' ] ?? '';
+        $refund_remark = $this->params[ 'refund_remark' ] ?? '';
         if (empty($order_goods_ids)) return $this->response($this->error('', '未传order_goods_ids'));
+        $buyer_name = empty($member_info[ 'nickname' ]) ? '' : '【' . $member_info[ 'nickname' ] . '】';
         $log_data = [
             'uid' => $this->member_id,
             'nick_name' => $member_info[ 'nickname' ],
-            'action' => '买家【' . $member_info[ 'nickname' ] . '】发起了退款申请',
+            'action' => '买家'.$buyer_name.'发起了退款申请',
             'action_way' => 1
         ];
 
@@ -157,10 +158,11 @@ class Orderrefund extends BaseApi
         $data = array (
             "order_goods_id" => $order_goods_id
         );
+        $buyer_name = empty($member_info[ 'nickname' ]) ? '' : '【' . $member_info[ 'nickname' ] . '】';
         $log_data = [
             'uid' => $this->member_id,
             'nick_name' => $member_info[ 'nickname' ],
-            'action' => '买家【' . $member_info[ 'nickname' ] . '】撤销了维权',
+            'action' => '买家'.$buyer_name.'撤销了维权',
             'action_way' => 1
         ];
         $res = $order_refund_model->memberCancelRefund($data, $member_info, $log_data);

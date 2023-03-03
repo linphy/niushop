@@ -23,14 +23,9 @@
 
 {block name="script"}
 <script>
-    var table,upload,repeat_flag = false;
-    layui.use(['form', 'laydate','laytpl', 'upload'], function() {
+    var table,repeat_flag = false;
+    layui.use(['form','laytpl'], function() {
         var form = layui.form,
-            laydate = layui.laydate,
-            currentDate = new Date(),
-            laytpl = layui.laytpl,
-            minDate = "";
-            upload = layui.upload;
             record_id = $("#record_id").val();
         form.render();
         /**

@@ -247,7 +247,8 @@ class LocalOrder extends OrderCommon
                 'nick_name'  => $member_info['nickname'],
                 'action_way' => 1
             ];
-            $action = '买家【'.$member_info['nickname'].'】支付了订单';
+            $buyer_name = empty($member_info[ 'nickname' ]) ? '' : '【' . $member_info[ 'nickname' ] . '】';
+            $action = '买家'.$buyer_name.'支付了订单';
         }
 
         $log_data = array_merge($log_data,[
@@ -278,8 +279,16 @@ class LocalOrder extends OrderCommon
             $delivery_type    = $param['delivery_type'] ?? 'default';
             $order_id         = $param['order_id'] ?? 0;
             $site_id          = $param['site_id'];
+            $store_id         = $param['store_id'] ?? 0;
 
-            $order_goods_list = model('order_goods')->getList([['site_id', '=', $site_id], ['order_id', '=', $order_id], ['refund_status', '<>', 3]], 'sku_id,num,order_id,sku_name,sku_image,member_id,refund_status,order_goods_id');
+            $condition = [
+                ['site_id', '=', $site_id],
+                ['order_id', '=', $order_id],
+                ['refund_status', '<>', 3]
+            ];
+            if ($store_id) $condition[] = ['store_id', '=', $store_id];
+
+            $order_goods_list = model('order_goods')->getList($condition, '*');
             if (empty($order_goods_list))
                 return $this->error('', '发送货物不可为空!');
 
@@ -308,6 +317,18 @@ class LocalOrder extends OrderCommon
                 ]);
             }
 
+            $order_stock_model = new OrderStock();
+            $order_info = model('order')->getInfo([['order_id', '=', $order_id]]);
+            $stock_result = $order_stock_model->decOrderStock([
+                'store_id' => $order_info['store_id'],
+                'site_id' => $order_info['site_id'],
+                'goods_sku_list' => $order_goods_list,
+                'user_info' => $param['user_info'] ?? []
+            ]);
+            if($stock_result['code'] < 0){
+                model('order_goods')->rollback();
+                return $stock_result;
+            }
             //创建包裹
             $order_common_model = new OrderCommon();
             $lock_result        = $order_common_model->verifyOrderLock($order_id);
@@ -354,7 +375,7 @@ class LocalOrder extends OrderCommon
         if ($count == 0 && $delivery_count > 0) {
 
 
-            $order_info = model('order')->getInfo([['order_id', '=', $order_id]], 'site_id');
+            $order_info = model('order')->getInfo([['order_id', '=', $order_id]], 'site_id,store_id');
             model('order')->startTrans();
             try {
                 //修改订单项的配送状态
@@ -367,6 +388,7 @@ class LocalOrder extends OrderCommon
                     'delivery_time'        => time()
                 );
                 $res        = model('order')->update($order_data, [['order_id', '=', $order_id]]);
+
 
                 //获取订单自动收货时间
                 $config_model             = new Config();
@@ -420,13 +442,8 @@ class LocalOrder extends OrderCommon
     {
         //是否入库
         if ($order_goods_info['is_refund_stock'] == 1) {
-            $goods_stock_model = new GoodsStock();
-            $item_param        = array(
-                'sku_id' => $order_goods_info['sku_id'],
-                'num'    => $order_goods_info['num'],
-            );
-            //返还库存
-            $goods_stock_model->incStock($item_param);
+            $order_stock_model = new OrderStock();
+            $order_stock_model->incOrderStock($order_goods_info);
         }
     }
 

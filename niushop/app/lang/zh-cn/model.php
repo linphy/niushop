@@ -71,9 +71,9 @@ return [
     'REQUEST_DATABASE_TABLE' => '请指定要选择的数据表' ,
     //用户
     'USER_EXISTED' => '用户已存在' ,
-    'USER_NOT_EXIST' => '用户不存在' ,
+    'USER_NOT_EXIST' => '账户或密码错误' ,
     'USER_IS_LOCKED' => '用户已被锁定' ,
-    'PASSWORD_ERROR' => '用户密码错误' ,
+    'PASSWORD_ERROR' => '账户或密码错误' ,
     'PERMISSION_DENIED' => '当前用户没有权限' ,
     'USER_GROUP_NOT_ALL_DELETE' => '用户组不能批量删除' ,
     'USER_GROUP_USED' => '存在使用当前用户组的用户,不可删除!' ,

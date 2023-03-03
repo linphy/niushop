@@ -8,6 +8,7 @@ Vue.component("notice-sources", {
 	data: function () {
 		return {
 			data: this.$parent.data,
+			list: this.$parent.data.list,
 			noticeSources: {
 				initial: {
 					text: "默认",
@@ -23,7 +24,7 @@ Vue.component("notice-sources", {
 					text: "系统图标",
 					type: 'img',
 					src: "iconshangpinfenlei",
-					icon: [(noticeResourcePath + "/img/notice_01.png"), (noticeResourcePath + "/img/notice_02.png"), (noticeResourcePath + "/img/notice_03.png")]
+					icon: [(noticeRelativePath + "/img/notice_01.png"), (noticeRelativePath + "/img/notice_02.png"), (noticeRelativePath + "/img/notice_03.png")]
 				},
 				diy: {
 					type: 'icon',
@@ -31,6 +32,10 @@ Vue.component("notice-sources", {
 					src: "iconshoudongxuanze",
 				}
 			},
+			thicknessList: [
+				{name: "加粗", src: "iconbold", value: "bold"},
+				{name: "常规", src: "iconbold-copy", value: "normal"}
+			]
 		}
 	},
 	created: function () {
@@ -47,15 +52,78 @@ Vue.component("notice-sources", {
 		this.$parent.data.tempData = {
 			noticeSources: this.noticeSources,
 			iconList: this.iconList,
+			thicknessList: this.thicknessList,
 			methods: {
+				selectNotice: this.selectNotice,
 				addNotice: this.addNotice,
 				iconStyle: this.iconStyle
 			}
 		};
 
+		this.list.forEach(function (e, i) {
+			if(!e.id ) e.id = ns.gen_non_duplicate(6);
+		});
+		console.log('this.list',this.list)
+		this.$parent.data.list = this.list;
+
+		var moveBeforeIndex = 0;
+		var _this = this;
+		setTimeout(function () {
+			var componentIndex = _this.data.index;
+			$('[data-index="' + componentIndex + '"] .notice-config ul').DDSort({
+				target: 'li',
+				floatStyle: {
+					'border': '1px solid #ccc',
+					'background-color': '#fff'
+				},
+				//设置可拖拽区域
+				draggableArea: "icontuodong",
+				down: function (index) {
+					moveBeforeIndex = index;
+				},
+				up: function () {
+					var index = $(this).index();
+					var temp = _this.list[moveBeforeIndex];
+					_this.list.splice(moveBeforeIndex, 1);
+					_this.list.splice(index, 0, temp);
+					_this.$parent.data.list = _this.list;
+				}
+			});
+		})
+
 	},
 	mounted() {
 		this.fetchIconColor();
+	},
+	watch: {
+		'$parent.data.sources':function (oVal,nVal) {
+			if(oVal == 'initial') return;
+
+			var moveBeforeIndex = 0;
+			var _this = this;
+			setTimeout(function () {
+				var componentIndex = _this.data.index;
+				$('[data-index="' + componentIndex + '"] .notice-config ul').DDSort({
+					target: 'li',
+					floatStyle: {
+						'border': '1px solid #ccc',
+						'background-color': '#fff'
+					},
+					//设置可拖拽区域
+					draggableArea: "icontuodong",
+					down: function (index) {
+						moveBeforeIndex = index;
+					},
+					up: function () {
+						var index = $(this).index();
+						var temp = _this.list[moveBeforeIndex];
+						_this.list.splice(moveBeforeIndex, 1);
+						_this.list.splice(index, 0, temp);
+						_this.$parent.data.list = _this.list;
+					}
+				});
+			})
+		}
 	},
 	methods: {
 		verify: function (index) {
@@ -74,7 +142,7 @@ Vue.component("notice-sources", {
 			}
 			return res;
 		},
-		addNotice: function () {
+		selectNotice: function () {
 			var self = this;
 			self.noticeSelect(function (res) {
 				self.$parent.data.noticeIds = [];
@@ -88,7 +156,15 @@ Vue.component("notice-sources", {
 						id: res[i].id
 					};
 				}
+				self.list = self.$parent.data.list;
 			}, self.$parent.data.noticeIds);
+		},
+		addNotice:function () {
+			this.list.push({
+				id: ns.gen_non_duplicate(6),
+				title: '公告',
+				link: {name: ''}
+			})
 		},
 		/**
 		 * 选择图标风格

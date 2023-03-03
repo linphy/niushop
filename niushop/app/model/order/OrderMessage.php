@@ -252,33 +252,8 @@ class OrderMessage extends BaseModel
                         'keyword1' => $order_info['order_no'],
                         'keyword2' => str_sub($order_info['order_name']),
                     ];
-                    $data["page"] = '';
+                    $data["page"] = $this->handleMobileShopUrl($order_info['order_type'], $order_id);
                     $wechat_model->sendMessage($data);
-                }
-
-
-                //发送订阅消息
-                if (!empty($v["weapp_openid"])) {
-                    $weapp_model = new WeappMessage();
-                    $data["openid"] = $v["weapp_openid"];
-                    $data["template_data"] = [
-                        'character_string1' => [
-                            'value' => str_sub($order_info['order_no'])
-                        ],
-                        'amount10' => [
-                            'value' => $order_info['order_money']
-                        ],
-                        'thing2' => [
-                            'value' => $order_info['order_name']
-                        ],
-                        'thing6' => [
-                            'value' => $order_info['name']
-                        ],
-                        'date4' => [
-                            'value' => time_to_date($order_info['pay_time'])
-                        ]
-                    ];
-                    $weapp_model->sendMessage($data);
                 }
             }
         }
@@ -814,6 +789,7 @@ class OrderMessage extends BaseModel
                 		'keyword2' => time_to_date($order_goods_info['refund_action_time']),
                 		'keyword3' => $order_goods_info['refund_apply_money'],
                 	];
+                    $data["page"] = 'pages/order/refund/detail?order_goods_id=' . $order_goods_id;
                 	$wechat_model->sendMessage($data);
                 }
             }
@@ -855,11 +831,12 @@ class OrderMessage extends BaseModel
                 	$wechat_model = new WechatMessage();
                 	$data["openid"] = $v['wx_openid'];
                 	$data["template_data"] = [
-                			'keyword1' => $data['order_goods_info']['order_no'],
-                			'keyword2' => mb_substr($data['order_goods_info']['sku_name'],0,7,'utf-8'),
-                			'keyword3' => $data['order_goods_info']['num'],
-                			'keyword4' => $data['order_goods_info']['refund_real_money'],
+                        'keyword1' => $data['order_goods_info']['order_no'],
+                        'keyword2' => mb_substr($data['order_goods_info']['sku_name'],0,7,'utf-8'),
+                        'keyword3' => $data['order_goods_info']['num'],
+                        'keyword4' => $data['order_goods_info']['refund_real_money'],
                 	];
+                    $data["page"] = 'pages/order/refund/detail?order_goods_id=' . $data['order_goods_info']['order_goods_id'];
                 	$wechat_model->sendMessage($data);
                 }
             }
@@ -902,6 +879,7 @@ class OrderMessage extends BaseModel
                 		'keyword3' => str_sub($data['order_name']),
                 		'keyword4' => $data['order_money'],
                 	];
+                    $data["page"] = $this->handleMobileShopUrl($data['order_type'], $data['order_id']);
                 	$wechat_model->sendMessage($data);
                 }
             }
@@ -910,8 +888,8 @@ class OrderMessage extends BaseModel
 
     /**
      * 处理订单链接
-     * @param unknown $order_type
-     * @param unknown $order_id
+     * @param $order_type
+     * @param $order_id
      * @return string
      */
     public function handleUrl($order_type, $order_id)
@@ -928,6 +906,30 @@ class OrderMessage extends BaseModel
                 break;
             default:
                 return 'pages/order/detail?order_id=' . $order_id;
+                break;
+        }
+    }
+
+    /**
+     * 处理商家端订单页面路径
+     * @param $order_type
+     * @param $order_id
+     * @return string
+     */
+    public function handleMobileShopUrl($order_type, $order_id)
+    {
+        switch ($order_type) {
+            case 2:
+                return 'pages/order/detail/store?order_id=' . $order_id . '&template=store';
+                break;
+            case 3:
+                return 'pages/order/detail/local?order_id=' . $order_id . '&template=local';
+                break;
+            case 4:
+                return 'pages/order/detail/virtual?order_id=' . $order_id . '&template=virtual';
+                break;
+            default:
+                return 'pages/order/detail/basis?order_id=' . $order_id . '&template=basis';
                 break;
         }
     }

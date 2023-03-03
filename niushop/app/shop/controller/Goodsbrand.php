@@ -149,11 +149,13 @@ class Goodsbrand extends BaseShop
                 [ 'site_id', '=', $this->site_id ]
             ];
             if (!empty($search_text)) {
-                $condition[] = [ 'brand_name', 'like', '%' . $search_text . '%' ];
+                if (!empty($brand_ids)) {
+                    $condition[] = [ '', 'exp', \think\facade\Db::raw("brand_name like '%{$search_text}%' or brand_id in ({$brand_ids})") ];
+                }else {
+                    $condition[] = [ 'brand_name', 'like', '%' . $search_text . '%' ];
+                }
             }
-            if (!empty($brand_ids)) {
-                $condition[] = [ 'brand_id', 'in', $brand_ids ];
-            }
+
             $list = $goods_brand_model->getBrandPageList($condition, $page, $page_size, 'create_time desc', 'brand_id,brand_name,brand_initial,image_url');
             return $list;
         } else {

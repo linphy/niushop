@@ -83,9 +83,20 @@
                         <input type="text" class="layui-input" name="end_date" id="end_time" placeholder="请输入结束时间" autocomplete="off" readonly>
                     </div>
                 </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">转账时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" name="start_date" id="payment_start_time" placeholder="请输入开始时间" autocomplete="off" readonly>
+                    </div>
+                    <div class="layui-input-inline split">-</div>
+                    <div class="layui-input-inline end-time">
+                        <input type="text" class="layui-input" name="end_date" id="payment_end_time" placeholder="请输入结束时间" autocomplete="off" readonly>
+                    </div>
+                </div>
             </div>
             <div class="form-row">
                 <button class="layui-btn" lay-submit lay-filter="search">筛选</button>
+                <button class="layui-btn" lay-submit lay-filter="exportFn">导出</button>
             </div>
         </form>
     </div>
@@ -164,13 +175,20 @@
             elem: '#start_time',
 			type: 'datetime'
         });
-
         //结束时间
         laydate.render({
             elem: '#end_time',
 			type: 'datetime'
-        });
+        })
 
+        laydate.render({
+            elem: '#payment_start_time',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#payment_end_time',
+            type: 'datetime'
+        });
         /**
          * 重新渲染结束时间
          */
@@ -259,6 +277,11 @@
                 },
                 where: data.field
             });
+            return false;
+        });
+
+        form.on('submit(exportFn)', function(data) {
+            location.href = ns.url("shop/memberwithdraw/export",data.field);
             return false;
         });
 
@@ -479,12 +502,12 @@
         });
     }
 
-        function closePass() {
-            layer.close(layer_pass);
-        }
-        function toDetail(member_id){
-            window.location.href=ns.url('shop/member/editmember', {member_id:member_id})
-        }
+    function closePass() {
+        layer.close(layer_pass);
+    }
+    function toDetail(member_id){
+        window.location.href=ns.url('shop/member/editmember', {member_id:member_id})
+    }
 </script>
 
 <!-- 在线转账html -->
@@ -551,7 +574,7 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label img-upload-lable">转账凭证：</label>
+            <label class="layui-form-label">转账凭证：</label>
             <div class="layui-input-block img-upload">
                 <div class="upload-img-block">
                     <div class="upload-img-box">

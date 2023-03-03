@@ -49,7 +49,7 @@ class Album extends BaseShop
             $order = input("order", "update_time desc");
             $condition = array (
                 [ 'site_id', "=", $this->site_id ],
-                [ 'album_id', "=", $album_id ],
+                [ 'album_id', "in", $album_id ],
             );
             if (!empty($pic_name)) {
                 $condition[] = [ 'pic_name', 'like', '%' . $pic_name . '%' ];
@@ -228,6 +228,7 @@ class Album extends BaseShop
         $album_model = new AlbumModel();
         $type = input('type', 'img');
         $display_type = input('display_type', 'img');
+        $is_thumb = input('is_thumb', 0);
         if (request()->isAjax()) {
             $page_index = input('page', 1);
             $list_rows = input('limit', PAGE_LIST_ROWS);
@@ -235,7 +236,7 @@ class Album extends BaseShop
             $pic_name = input("pic_name", "");
             $condition = array (
                 [ 'site_id', "=", $this->site_id ],
-                [ 'album_id', "=", $album_id ],
+                [ 'album_id', "in", $album_id ],
             );
             if (!empty($pic_name)) {
                 $condition[] = [ 'pic_name', 'like', '%' . $pic_name . '%' ];
@@ -252,6 +253,7 @@ class Album extends BaseShop
             $this->assign('type_list', $album_model->getType());
             $this->assign('type', $type);
             $this->assign('display_type', $display_type);
+            $this->assign('is_thumb', $is_thumb);
             return $this->fetch('album/album');
         }
     }
@@ -269,4 +271,15 @@ class Album extends BaseShop
             return $thumb_batch;
         }
     }
+
+    /**
+     * 刷新相册数量
+     */
+    public function refreshAlbumNum()
+    {
+        ignore_user_abort(true);
+        $upload_model = new AlbumModel();
+        $upload_model->refreshAlbumNum($this->site_id);
+    }
+
 }

@@ -47,9 +47,8 @@ class Upload extends BaseShop
         if (request()->isAjax()) {
             //基础上传
             $max_filesize = input('max_filesize', '10240');//允许上传大小 默认kb
-            $image_allow_ext = trim(input('image_allow_ext', ''));//图片允许扩展名
-            $image_allow_mime = trim(input('image_allow_mime', ''));//图片允许Mime类型
 
+            $compress = trim(input('compress', ''));//图片压缩
             /*************************************************************************** 缩略图 *******************************************************************/
             $thumb_big_width = input('thumb_big_width', 400);//缩略大图 宽
             $thumb_big_height = input('thumb_big_height', 400);//缩略大图 高
@@ -79,8 +78,7 @@ class Upload extends BaseShop
                 //上传相关配置
                 'upload' => array(
                     'max_filesize' => $max_filesize * 1024,//最大上传限制,
-                    'image_allow_ext' => $image_allow_ext,
-                    'image_allow_mime' => $image_allow_mime,
+                    'compress' => $compress
                 ),
                 //缩略图相关配置
                 'thumb' => array(
@@ -140,9 +138,9 @@ class Upload extends BaseShop
                 'top-left' => '上左',
                 'top-center' => '上中',
                 'top-right' => '上右',
-                'center-left' => '左',
-                'center-center' => '中',
-                'center-right' => '右',
+                'middle-left' => '左',
+                'middle-center' => '中',
+                'middle-right' => '右',
                 'bottom-left' => '下左',
                 'bottom-center' => '下中',
                 'bottom-right' => '下右',
@@ -204,13 +202,15 @@ class Upload extends BaseShop
         $upload_model = new UploadModel($this->site_id);
         $album_id = input('album_id', 0);
         $name = input('name', '');
+        $is_thumb = input('is_thumb',0);
         $param = array(
             'thumb_type' => ['BIG', 'MID', 'SMALL'],
             'name' => 'file',
             'album_id' => $album_id,
-            'is_thumb' => 0
+            'is_thumb' => $is_thumb
         );
         $result = $upload_model->setPath('common/images/' . date('Ymd') . '/')->imageToAlbum($param);
+
         return $result;
     }
 
@@ -244,6 +244,53 @@ class Upload extends BaseShop
         );
         $result = $upload_model->setPath('common/video/' . date('Ymd') . '/')->video($param);
         return $result;
+    }
+
+    /*
+     * 替换视频文件
+     * */
+    public function modifyVideoFile()
+    {
+
+//      实例化响应数据结构生成类
+        $base_model = new BaseModel();
+
+        try {
+//            参数
+            $album_id = input('album_id', '');
+            $pic_id = input('pic_id', '');
+
+//            获取视频信息
+            $album_model = new AlbumModel($this->site_id);
+            $get_pic_info = array(
+                ['pic_id', '=', $pic_id],
+                ['site_id', '=', $this->site_id],
+            );
+
+//            视频信息
+            $pic_info = $album_model->getAlbumPicInfo($get_pic_info);
+//            判断是否找到有效视频
+
+            if (empty($pic_info) || empty($pic_info['data'])) {
+                return json($base_model->error('', 'FAIL'));
+            }
+
+//            实例化文件上传类
+            $upload_model = new UploadModel($this->site_id);
+
+            $upload_param = array(
+                'name' => 'file',
+                'album_id' => $album_id,
+                'pic_id' => $pic_id,
+            );
+            $result = $upload_model->setPath('common/video/' . date('Ymd') . '/')->modifyVideoFile($upload_param);
+
+            return json($result);
+
+        } catch ( \Exception $e ) {
+            return json($base_model->error($e, 'FAIL'));
+        }
+
     }
 
     /**
@@ -332,7 +379,6 @@ class Upload extends BaseShop
             if (empty($pic_info) || empty($pic_info['data'])) {
                 return json($base_model->error('', 'FAIL'));
             }
-
 
             $file_full_name = basename($pic_info['data']['pic_path']);
 

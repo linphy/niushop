@@ -19,6 +19,11 @@ Vue.component("search-resource", {
 					value: 2,
 					icon_img: "iconsousuo1",
 				},
+				{
+					label: "样式3",
+					value: 3,
+					icon_img: "iconsousuo12",
+				}
 			],
 			borderList: [
 				{
@@ -44,6 +49,16 @@ Vue.component("search-resource", {
 					icon_img: "iconjuzhongduiqi"
 				},
 			],
+			positionWayList: [
+				{
+					label: "正常显示",
+					value: "static",
+				},
+				{
+					label: "滚动至顶部固定",
+					value: "fixed",
+				}
+			],
 		};
 	},
 	created: function () {
@@ -57,12 +72,14 @@ Vue.component("search-resource", {
 		this.$parent.data.tempData = {
 			styleList: this.styleList,
 			textAlignList: this.textAlignList,
+			positionWayList: this.positionWayList,
 			borderList: this.borderList,
 			methods: {
 				addNotice: this.addNotice,
-				iconStyle:this.iconStyle
+				iconStyle: this.iconStyle
 			}
 		};
+
 		this.fetchIconColor();
 	},
 	methods: {

@@ -179,31 +179,30 @@
     <div class="shop-information-table">
         <table lay-filter="parse-table-order-product" lay-skin="line">
             <thead>
-            <tr class="table-trOne">
-                <th lay-data="{field:'product_name', width:200}">商品</th>
-                <th lay-data="{field:'price'}">价格</th>
-                <th lay-data="{field:'sale_num'}">数量</th>
-                <th lay-data="{field:'total_money'}">小计（元）</th>
-                <th lay-data="{field:'refund_status'}">退款状态</th>
-                <th lay-data="{field:'shipping_status'}">状态</th>
-
-            </tr>
+                <tr class="table-trOne">
+                    <th lay-data="{field:'product_name', width:200}">商品</th>
+                    <th lay-data="{field:'price'}">价格</th>
+                    <th lay-data="{field:'sale_num'}">数量</th>
+                    <th lay-data="{field:'total_money'}">小计（元）</th>
+                    <th lay-data="{field:'refund_status'}">退款状态</th>
+                    <th lay-data="{field:'shipping_status'}">状态</th>
+                </tr>
             </thead>
             <tbody>
-            {foreach $order_detail['order_goods'] as $list_k => $order_goods_item}
-            <tr class="table-trTow">
-                <td>{$order_goods_item.sku_name}</td>
-                <td>{$order_goods_item.price}</td>
-                <td>{$order_goods_item.num}</td>
-                <td>{$order_goods_item.goods_money}</td>
-                <td>
-                    {if $order_goods_item.refund_status != 0}
-                    <a class="text-color" href='{:addon_url("shop/orderrefund/detail?order_goods_id=".$order_goods_item["order_goods_id"])}'>{$order_goods_item.refund_status_name}</a>
-                    {/if}
-                </td>
-                <td>{$order_goods_item.delivery_status_name}</td>
-            </tr>
-            {/foreach}
+                {foreach $order_detail['order_goods'] as $list_k => $order_goods_item}
+                <tr class="table-trTow">
+                    <td>{$order_goods_item.sku_name}</td>
+                    <td>{$order_goods_item.price}</td>
+                    <td>{$order_goods_item.num}</td>
+                    <td>{$order_goods_item.goods_money}</td>
+                    <td>
+                        {if $order_goods_item.refund_status != 0}
+                        <a class="text-color" href='{:addon_url("shop/orderrefund/detail?order_goods_id=".$order_goods_item["order_goods_id"])}'>{$order_goods_item.refund_status_name}</a>
+                        {/if}
+                    </td>
+                    <td>{$order_goods_item.delivery_status_name}</td>
+                </tr>
+                {/foreach}
             </tbody>
         </table>
         <div class="table-trThree table-trFour">

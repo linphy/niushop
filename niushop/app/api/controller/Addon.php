@@ -31,43 +31,50 @@ class Addon extends BaseApi
         return $this->response($list);
     }
 
-    public function addonisexit()
+    public function addonIsExit()
     {
+        $addon_model = new AddonModel();
+        $addon_data = $addon_model->getAddonList([], 'name');
+        $addons = array_column($addon_data[ 'data' ], 'name');
         $res = [];
-        $res[ 'fenxiao' ] = addon_is_exit('fenxiao', $this->site_id);                        // 分销
-        $res[ 'pintuan' ] = addon_is_exit('pintuan', $this->site_id);                        // 拼团
-        $res[ 'membersignin' ] = addon_is_exit('membersignin', $this->site_id);            // 会员签到
-        $res[ 'memberrecharge' ] = addon_is_exit('memberrecharge', $this->site_id);        // 会员充值
-        $res[ 'memberwithdraw' ] = addon_is_exit('memberwithdraw', $this->site_id);        // 会员提现
-        $res[ 'pointexchange' ] = addon_is_exit('pointexchange', $this->site_id);            // 积分兑换
-        $res[ 'manjian' ] = addon_is_exit('manjian', $this->site_id);                        //满减
-        $res[ 'memberconsume' ] = addon_is_exit('memberconsume', $this->site_id);            //会员消费
-        $res[ 'memberregister' ] = addon_is_exit('memberregister', $this->site_id);        //会员注册
-        $res[ 'coupon' ] = addon_is_exit('coupon', $this->site_id);                        //优惠券
-        $res[ 'bundling' ] = addon_is_exit('bundling', $this->site_id);                    //组合套餐
-        $res[ 'discount' ] = addon_is_exit('discount', $this->site_id);                    //限时折扣
-        $res[ 'seckill' ] = addon_is_exit('seckill', $this->site_id);                        //秒杀
-        $res[ 'topic' ] = addon_is_exit('topic', $this->site_id);                            //专题活动
-        $res[ 'store' ] = addon_is_exit('store', $this->site_id);                            //门店管理
-        $res[ 'groupbuy' ] = addon_is_exit('groupbuy', $this->site_id);                    //团购
-        $res[ 'bargain' ] = addon_is_exit('bargain', $this->site_id);                    //砍价
-        $res[ 'presale' ] = addon_is_exit('presale', $this->site_id);                   // 预售
-        $res[ 'notes' ] = addon_is_exit('notes', $this->site_id);                   // 店铺笔记
-        $res[ 'membercancel' ] = addon_is_exit('membercancel', $this->site_id);        // 会员注销
-        $res[ 'servicer' ] = addon_is_exit('servicer', $this->site_id);        // 客服
-        $res[ 'live' ] = addon_is_exit('live', $this->site_id);        // 小程序直播
-        $res[ 'cards' ] = addon_is_exit('cards', $this->site_id);        // 刮刮乐
-        $res[ 'egg' ] = addon_is_exit('egg', $this->site_id);        // 砸金蛋
-        $res[ 'turntable' ] = addon_is_exit('turntable', $this->site_id);        // 幸运抽奖
-        $res[ 'memberrecommend' ] = addon_is_exit('memberrecommend', $this->site_id); // 推荐奖励
-        $res[ 'supermember' ] = addon_is_exit('supermember', $this->site_id); // 超级会员卡
-        $res[ 'giftcard' ] = addon_is_exit('giftcard', $this->site_id); // 兑换卡
-        $res[ 'divideticket' ] = addon_is_exit('divideticket', $this->site_id); // 兑换卡
-        $res[ 'birthdaygift' ] = addon_is_exit('birthdaygift', $this->site_id); // 兑换卡
-        $res[ 'scenefestival' ] = addon_is_exit('scenefestival', $this->site_id); // 兑换卡
-        $res[ 'pinfan' ] = addon_is_exit('pinfan', $this->site_id); // 拼团返利
-        $res[ 'hongbao' ] = addon_is_exit('hongbao', $this->site_id); // 裂变红包
-        $res[ 'blindbox' ] = addon_is_exit('blindbox', $this->site_id); // 盲盒
+        $res[ 'fenxiao' ] = in_array("fenxiao", $addons) ? 1 : 0;                        // 分销
+        $res[ 'pintuan' ] = in_array("pintuan", $addons) ? 1 : 0;                        // 拼团
+        $res[ 'membersignin' ] = in_array("membersignin", $addons) ? 1 : 0;            // 会员签到
+        $res[ 'memberrecharge' ] = in_array("memberrecharge", $addons) ? 1 : 0;        // 会员充值
+        $res[ 'memberwithdraw' ] = in_array("memberwithdraw", $addons) ? 1 : 0;        // 会员提现
+        $res[ 'pointexchange' ] = in_array("pointexchange", $addons) ? 1 : 0;            // 积分兑换
+        $res[ 'manjian' ] = in_array("manjian", $addons) ? 1 : 0;                       //满减
+        $res[ 'memberconsume' ] = in_array("memberconsume", $addons) ? 1 : 0;            //会员消费
+        $res[ 'memberregister' ] = in_array("memberregister", $addons) ? 1 : 0;        //会员注册
+        $res[ 'coupon' ] = in_array("coupon", $addons) ? 1 : 0;                        //优惠券
+        $res[ 'bundling' ] = in_array("bundling", $addons) ? 1 : 0;                    //组合套餐
+        $res[ 'discount' ] = in_array("discount", $addons) ? 1 : 0;                    //限时折扣
+        $res[ 'seckill' ] = in_array("seckill", $addons) ? 1 : 0;                        //秒杀
+        $res[ 'topic' ] = in_array("topic", $addons) ? 1 : 0;                              //专题活动
+        $res[ 'store' ] = in_array("store", $addons) ? 1 : 0;                             //门店管理
+        $res[ 'groupbuy' ] = in_array("groupbuy", $addons) ? 1 : 0;                    //团购
+        $res[ 'bargain' ] = in_array("bargain", $addons) ? 1 : 0;                   //砍价
+        $res[ 'presale' ] = in_array("presale", $addons) ? 1 : 0;                  // 预售
+        $res[ 'notes' ] = in_array("notes", $addons) ? 1 : 0;                   // 店铺笔记
+        $res[ 'membercancel' ] = in_array("membercancel", $addons) ? 1 : 0;         // 会员注销
+        $res[ 'servicer' ] = in_array("servicer", $addons) ? 1 : 0;        // 客服
+        $res[ 'live' ] = in_array("live", $addons) ? 1 : 0;        // 小程序直播
+        $res[ 'cards' ] = in_array("cards", $addons) ? 1 : 0;       // 刮刮乐
+        $res[ 'egg' ] = in_array("egg", $addons) ? 1 : 0;         // 砸金蛋
+        $res[ 'turntable' ] = in_array("turntable", $addons) ? 1 : 0;        // 幸运抽奖
+        $res[ 'memberrecommend' ] = in_array("memberrecommend", $addons) ? 1 : 0; // 推荐奖励
+        $res[ 'supermember' ] = in_array("supermember", $addons) ? 1 : 0; // 超级会员卡
+        $res[ 'giftcard' ] = in_array("giftcard", $addons) ? 1 : 0; // 兑换卡
+        $res[ 'divideticket' ] = in_array("divideticket", $addons) ? 1 : 0; // 兑换卡
+        $res[ 'birthdaygift' ] = in_array("birthdaygift", $addons) ? 1 : 0; // 兑换卡
+        $res[ 'scenefestival' ] = in_array("scenefestival", $addons) ? 1 : 0; // 兑换卡
+        $res[ 'pinfan' ] = in_array("pinfan", $addons) ? 1 : 0; // 拼团返利
+        $res[ 'hongbao' ] = in_array("hongbao", $addons) ? 1 : 0; // 裂变红包
+        $res[ 'blindbox' ] = in_array("blindbox", $addons) ? 1 : 0; // 盲盒
+        $res[ 'virtualcard' ] = in_array("virtualcard", $addons) ? 1 : 0; // 卡密商品
+        $res[ 'cardservice' ] = in_array("cardservice", $addons) ? 1 : 0; // 卡项与服务商品
+        $res[ 'cashier' ] = in_array("cashier", $addons) ? 1 : 0; // 收银台
+        $res[ 'form' ] = in_array("form", $addons) ? 1 : 0; // 系统表单
 
         return $this->response($this->success($res));
     }

@@ -75,15 +75,110 @@
         </table>
     </div>
 </div>
+<div class="layui-card card-common card-brief">
+    <div class="layui-card-header">
+        <div>
+            <span class="card-title">积分操作</span>
+        </div>
+    </div>
+    <div class="layui-card-body" style="padding: 10px 25px!important;">
+        <button class="layui-btn" onclick="clearpoint()">积分清零</button>
+        <button class="layui-btn" onclick="reset()">积分重置</button>
+    </div>
+</div>
 {/block}
 
 {block name="script"}
+<script id="clear_html" type="text/html">
 
+    <div class="layui-form member-form" id="reset_label" lay-filter="form">
+        <div class="layui-form-item">
+            <label class="layui-form-label sm">说明：</label>
+            <div class="layui-input-block">
+                <textarea name="remark" class="layui-textarea len-long" maxlength="150"></textarea>
+            </div>
+            <div class="word-aux sm"><p>积分清零后会将会员现有的积分全部清零,请谨慎操作</p></div>
+        </div>
+        <div class="form-row sm">
+            <button class="layui-btn" lay-submit lay-filter='clear_bth'>确定</button>
+            <button class="layui-btn layui-btn-primary" lay-submit lay-filter='clear_close_bth'>取消</button>
+        </div>
+    </div>
+</script>
 <script>
-    var form, laydate;
-    layui.use(['laydate','form', 'element'], function(){
+    var form, laydate, laytpl;
+    layui.use(['laydate','form', 'element', 'laytpl'], function(){
         form = layui.form;
         laydate = layui.laydate;
-    })
+        laytpl = layui.laytpl;
+    });
+
+    var clear_tag = false;
+    var clear_index;
+    function clearpoint(){
+
+        laytpl($("#clear_html").html()).render([], function(html) {
+            clear_index = layer.open({
+                title: '积分清零',
+                skin: 'layer-tips-class',
+                type: 1,
+                area: ['600px'],
+                content: html,
+                success: function(){
+                    form.on('submit(clear_bth)', function(obj) {
+                        var field = obj.field;
+                        if (clear_tag) return;
+                        clear_tag = true;
+                        $.ajax({
+                            type: 'POST',
+                            url: ns.url("shop/memberaccount/pointclear"),
+                            dataType: 'JSON',
+                            data: field,
+                            success: function(res) {
+                                clear_tag = false;
+                                layer.msg(res.message);
+                                if (res.code >= 0) {
+                                    location.reload();
+                                }
+                            }
+                        });
+
+                    });
+                    form.on('submit(clear_close_bth)', function(obj) {
+                        clear_tag = false;
+                        layer.close(clear_index);
+                    })
+                }
+            });
+        });
+        form.render();
+    }
+
+    var reset_tag = false;
+
+    function reset() {
+        if (reset_tag) return;
+        reset_tag = true;
+        layer.confirm('您确定要将会员现有的积分全部重置吗(重置后会员的积分以及积分记录全都会被删除)？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: 'POST',
+                url: ns.url("shop/memberaccount/pointreset"),
+                dataType: 'JSON',
+                success: function (res) {
+                    reset_tag = false;
+                    layer.msg(res.message);
+                    if (res.code >= 0) {
+                        location.reload();
+                    }
+
+                }
+            });
+        }, function () {
+            reset_tag = false;
+            layer.closeAll();
+        });
+    }
 </script>
 {/block}

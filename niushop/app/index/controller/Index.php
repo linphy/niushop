@@ -12,8 +12,11 @@
 namespace app\index\controller;
 
 use app\Controller;
+use app\model\goods\Goods as GoodsModel;
 use app\model\web\Config as ConfigModel;
 use app\model\shop\Shop as ShopModel;
+use app\model\web\DiyView as DiyViewModel;
+use app\shop\controller\Goods;
 
 class Index extends Controller
 {
@@ -151,24 +154,25 @@ class Index extends Controller
      */
     public function h5Preview()
     {
-        $url = input('url', '');
+        $id = input('id', 0);
+        $type = input('type', '');
 
-        $shop_model = new ShopModel();
-        $res = $shop_model->qrcode(1);
-        $h5_data = $res[ 'data' ][ 'path' ][ 'h5' ] ?? [];
-
-        if (!empty($url)) {
-            if (strpos($url, '?') !== false) {
-                $url .= '&time=' . time();
-            } else {
-                $url .= '?time=' . time();
-            }
-            $h5_data[ 'url' ] = $url;
+        if ($type == 'page') {
+            $diy_view = new DiyViewModel();
+            $res = $diy_view->qrcode([
+                'site_id' => 1,
+                'id' => $id,
+                'app_type' => 'h5'
+            ])[ 'data' ][ 'path' ][ 'h5' ];
+        } elseif ($type == 'goods') {
+            $goods_model = new GoodsModel();
+            $res = $goods_model->qrcode($id, '', 1)[ 'data' ][ 'path' ][ 'h5' ];
         } else {
-            $h5_data[ 'url' ] .= '?time=' . time();
+            $shop_model = new ShopModel();
+            $res = $shop_model->qrcode(1)[ 'data' ][ 'path' ][ 'h5' ];
         }
 
-        $this->assign('h5_data', $h5_data);
+        $this->assign('h5_data', $res);
         $this->assign('is_mobile', isMobile());
         return $this->fetch("index/h5_preview");
     }

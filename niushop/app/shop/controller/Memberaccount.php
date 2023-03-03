@@ -12,6 +12,7 @@
 namespace app\shop\controller;
 
 use addon\coupon\model\Coupon;
+use app\model\account\Point;
 use app\model\member\Member as MemberModel;
 use app\model\member\MemberAccount as MemberAccountModel;
 
@@ -196,4 +197,24 @@ class Memberaccount extends BaseShop
             return $res;
         }
     }
+
+
+    /**
+     * 积分清零
+     */
+    public function pointClear(){
+        $point_model = new Point();
+        $result = $point_model->pointClear(['site_id' => $this->site_id, 'remark' => input('remark', '')]);
+        return $result;
+    }
+
+    /**
+     * 积分重置
+     */
+    public function pointReset(){
+        $point_model = new Point();
+        $result = $point_model->pointReset(['site_id' => $this->site_id]);
+        return $result;
+    }
+
 }

@@ -15,6 +15,7 @@ use app\model\order\Order as OrderModel;
 use app\model\order\OrderCommon;
 use app\model\order\OrderCommon as OrderCommonModel;
 use app\model\order\OrderExport;
+use app\model\store\Store as StoreModel;
 use app\model\system\Promotion as PromotionModel;
 use app\model\web\Config as WebConfig;
 use phpoffice\phpexcel\Classes\PHPExcel;
@@ -32,7 +33,6 @@ class Order extends BaseShop
     {
         //执行父类构造函数
         parent::__construct();
-
     }
 
     /**
@@ -49,10 +49,7 @@ class Order extends BaseShop
             'mobile' => '收货人电话',
             'nick_name' => '会员昵称',
             'sku_no' => '商品编码',
-
         );
-        $order_model = new OrderModel();
-        $order_status_list = $order_model->delivery_order_status;
         $order_status = input('order_status', '');//订单状态
         $order_name = input('order_name', '');
         $pay_type = input('pay_type', '');
@@ -66,7 +63,8 @@ class Order extends BaseShop
         $promotion_type = input('promotion_type', '');//订单类型
         $order_type = input('order_type', 'all');//营销类型
         $is_verify = input('is_verify', 'all');
-        $field = 'a.*';
+        $store_id = input('store_id', 0); // 所属门店id
+        $field = 'a.*,s.store_name';
         $order_common_model = new OrderCommonModel();
         if (request()->isAjax()) {
             $page_index = input('page', 1);
@@ -74,9 +72,14 @@ class Order extends BaseShop
             $alias = 'a';
             $join = null;
             $condition = [
-//                ['order_type', '=', 1],
                 [ 'a.site_id', '=', $this->site_id ],
-                [ 'a.is_delete', '=', 0 ]
+                [ 'a.is_delete', '=', 0 ],
+                [ 'a.order_scene', '=', 'online' ]
+            ];
+            $join[] = [
+                'store s',
+                's.store_id = a.store_id',
+                'left'
             ];
             //订单状态
             if ($order_status != '') {
@@ -88,8 +91,6 @@ class Order extends BaseShop
                     $condition[] = [ 'a.order_status', '=', $order_status ];
                 }
             }
-
-            $order = 'a.create_time desc';
 
             if ($is_verify != 'all') {
                 $join[] = [
@@ -140,6 +141,10 @@ class Order extends BaseShop
                 $condition[] = [ 'a.buyer_ask_delivery_time', 'between', [ date_to_time($delivery_start_time), date_to_time($delivery_end_time) ] ];
             }
 
+            if (!empty($store_id)) {
+                $condition[] = [ 'a.store_id', '=', $store_id ];
+            }
+
             if ($search_text != '') {
                 switch ( $order_label ) {
                     case 'nick_name':
@@ -160,6 +165,8 @@ class Order extends BaseShop
                 }
             }
 
+            $order = 'a.create_time desc';
+
             $list = $order_common_model->getOrderPageList($condition, $page_index, $page_size, $order, $field, $alias, $join);
             $list[ 'data' ][ 'order_status' ] = $order_status;
             return $list;
@@ -168,11 +175,10 @@ class Order extends BaseShop
             $order_type_list = $order_common_model->getOrderTypeStatusList();
             $this->assign('order_type_list', $order_type_list);
             $this->assign('order_label_list', $order_label_list);
-            $order_model = new OrderModel();
-            $order_status_list = $order_model->order_status;
-            $this->assign('order_status_list', $order_type_list[ 1 ][ 'status' ]);//订单状态
+            $this->assign('order_status_list', $order_type_list[ 'all' ][ 'status' ]);//订单状态
+
             //订单来源 (支持端口)
-            $this->assign('order_from_list', $order_common_model->getOrderFromList());
+            $this->assign('order_from_list', $order_common_model->getOrderFromList([ 'order_scene' => 'online' ]));
 
             $pay_type = $order_common_model->getPayType();
             $this->assign('pay_type_list', $pay_type);
@@ -190,6 +196,14 @@ class Order extends BaseShop
             $config_model = new WebConfig();
             $mp_config = $config_model->getMapConfig($this->site_id);
             $this->assign('tencent_map_key', $mp_config[ 'data' ][ 'value' ][ 'tencent_map_key' ]);
+
+            if (addon_is_exit('store') == 1) {
+                $store_model = new StoreModel();
+                $store_list = $store_model->getStoreList([
+                    [ 'site_id', '=', $this->site_id ]
+                ], 'store_id,store_name')[ 'data' ];
+                $this->assign('store_list', $store_list);
+            }
 
             return $this->fetch('order/lists');
         }
@@ -209,8 +223,6 @@ class Order extends BaseShop
             'mobile' => '收货人电话',
             'nick_name' => '会员昵称',
         );
-        $order_model = new OrderModel();
-        $order_status_list = $order_model->delivery_order_status;
         $order_status = input('order_status', '');//订单状态
         $order_name = input('order_name', '');
         $pay_type = input('pay_type', '');
@@ -308,7 +320,6 @@ class Order extends BaseShop
             return $list;
         } else {
 
-            $order_type_list = $order_common_model->getOrderTypeStatusList();
             $order_type_list = array (
                 2 => [
                     'status' => [
@@ -402,7 +413,6 @@ class Order extends BaseShop
                 $condition[] = [ 'og.refund_status', 'not in', [ 0, 3 ] ];
                 $order_status_name = '维权中';
             }
-
 
         }
         $condition_desc[] = [ 'name' => '订单状态', 'value' => $order_status_name ];
@@ -685,7 +695,6 @@ class Order extends BaseShop
                 'invoice_content' => implode(',', input('invoice_content', [])),
                 'invoice_money' => number_format(input('invoice_money', 0), 2, '.', ''),
                 'invoice_type' => implode(',', input('invoice_type', [])),
-                'change_price' => input('change_price', 1),//1 整单商品基础上改价 2 单个商品基础上改价,
                 'do_refund' => input('do_refund', 1)
             ];
             //订单评价设置数据
@@ -700,16 +709,9 @@ class Order extends BaseShop
                 'balance_show' => input('balance_show', 0),//余额支付配置（0关闭 1开启）
             ];
 
-            $point_config_data = [
-                'point_time_type' => input('point_time_type', 0),
-                'point_time_one' => input('point_time_one', '') ? date_to_time(input('point_time_one')) : '',
-//                'point_time_two' => input('point_time_two', 0)
-            ];
-
             $res = $config_model->setOrderEventTimeConfig($order_event_time_config_data, $this->site_id, $this->app_module);
             $config_model->setOrderEvaluateConfig($order_evaluate_config_data, $this->site_id, $this->app_module);
             $config_model->setBalanceConfig($balance_config_data, $this->site_id, $this->app_module);
-            $config_model->setPointTimeConfig($point_config_data, $this->site_id, $this->app_module);
             return $res;
         } else {
             $this->forthMenu();
@@ -720,15 +722,11 @@ class Order extends BaseShop
             //订单评价设置
             $order_evaluate_config = $config_model->getOrderEvaluateConfig($this->site_id, $this->app_module);
 
-
             //余额支付配置
             $balance_config = $config_model->getBalanceConfig($this->site_id, $this->app_module);
             $this->assign('balance_config', $balance_config[ 'data' ][ 'value' ]);
             $this->assign('order_event_time_config', $order_event_time_config[ 'data' ][ 'value' ]);
             $this->assign('order_evaluate_config', $order_evaluate_config[ 'data' ][ 'value' ]);
-
-            $point_config = $config_model->getPointTimeConfig($this->site_id, $this->app_module);
-            $this->assign('point_config', $point_config[ 'data' ][ 'value' ]);
 
             return $this->fetch('order/config');
         }
@@ -761,19 +759,12 @@ class Order extends BaseShop
      */
     public function adjustPrice()
     {
-        $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $order_id = input('order_id', 0);
             $adjust_money = input('adjust_money', 0);
             $delivery_money = input('delivery_money', 0);
-            $order_event_time_config = $config_model->getOrderEventTimeConfig($this->site_id, $this->app_module);
-            $config = $order_event_time_config[ 'data' ][ 'value' ];
             $order_common_model = new OrderCommonModel();
-            if ($config[ 'change_price' ] == 1) { //按整单改价
-                $result = $order_common_model->orderAdjustMoney($order_id, $adjust_money, $delivery_money);
-            } else { //按单个商品改价
-                $result = $order_common_model->orderAdjustMoneyByGoods($order_id, $adjust_money, $delivery_money);
-            }
+            $result = $order_common_model->orderAdjustMoney($order_id, $adjust_money, $delivery_money);
             return $result;
         }
     }
@@ -795,13 +786,14 @@ class Order extends BaseShop
                 'order_id' => input('order_id', 0),//订单id
                 'delivery_type' => input('delivery_type', 0),//是否需要物流
                 'site_id' => $this->site_id,
-                'template_id' => input('template_id', 0)//电子面单模板id
+                'template_id' => input('template_id', 0),//电子面单模板id
+                'user_info' => $this->user_info
             );
             $log_data = [
                 'uid' => $this->user_info[ 'uid' ],
                 'nick_name' => $this->user_info[ 'username' ],
                 'action' => '商家对订单进行了发货',
-                'action_way' => 2
+                'action_way' => 2,
             ];
             $result = $order_model->orderGoodsDelivery($data, 1, $log_data);
             return $result;
@@ -918,15 +910,10 @@ class Order extends BaseShop
      */
     public function getOrderDetail()
     {
-        $config_model = new ConfigModel();
         if (request()->isAjax()) {
             $order_id = input('order_id', 0);
             $order_common_model = new OrderCommonModel();
             $result = $order_common_model->getOrderDetail($order_id);
-
-            //订单事件时间设置
-            $order_event_time_config = $config_model->getOrderEventTimeConfig($this->site_id, $this->app_module);
-            $result[ 'data' ][ 'change_price' ] = $order_event_time_config[ 'data' ][ 'value' ][ 'change_price' ]; //1在整单基础上改价 2在单个商品货款上改价
             return $result;
         }
     }
@@ -984,13 +971,22 @@ class Order extends BaseShop
         $promotion_type = input('promotion_type', '');
         $order_type = input('order_type', 'all');
         $is_verify = input('is_verify', 'all');
+        $order_ids = input('order_ids', '');
+        $store_id = input('store_id', 0);
         $condition_desc = [];
 
         $order_common_model = new OrderCommon();
         $condition = [
             [ 'o.site_id', '=', $this->site_id ],
-            [ 'o.is_delete', '=', 0 ]
+            [ 'o.is_delete', '=', 0 ],
+            [ 'o.order_scene', '=', 'online' ]
         ];
+
+        if (!empty($order_ids)) {
+            $condition[] = [ 'o.order_id', 'in', $order_ids ];
+            $condition_desc[] = [ 'name' => 'order_id', 'value' => $order_ids ];
+        }
+
         //订单类型
         $order_type_name = '全部';
         if ($order_type != 'all') {
@@ -1021,7 +1017,6 @@ class Order extends BaseShop
                 $order_status_name = '维权中';
             }
 
-
         }
         $condition_desc[] = [ 'name' => '订单状态', 'value' => $order_status_name ];
 
@@ -1097,6 +1092,14 @@ class Order extends BaseShop
             $condition[] = [ 'm.nickname', 'like', '%' . $search_text . '%' ];
         }
 
+        if (addon_is_exit('store') == 1 && !empty($store_id)) {
+            $store_model = new StoreModel();
+            $store_info = $store_model->getStoreInfo([ [ 'store_id', '=', $store_id ] ], 'store_name')[ 'data' ];
+
+            $condition[] = [ 'o.store_id', '=', $store_id ];
+            $condition_desc[] = [ 'name' => '来源门店', 'value' => $store_info[ 'store_name' ] ];
+        }
+
         $order_export_model = new OrderExport();
 
         $result = $order_export_model->orderExport($condition, $condition_desc, $this->site_id, $join ?? null, $is_verify, $order_label);
@@ -1123,6 +1126,7 @@ class Order extends BaseShop
         $order_from = input('order_from', '');
         $start_time = input('start_time', '');
         $end_time = input('end_time', '');
+        $order_ids = input('order_ids', '');
 
         $order_label = !empty($order_label_list[ input('order_label') ]) ? input('order_label') : '';
 
@@ -1130,13 +1134,21 @@ class Order extends BaseShop
         $promotion_type = input('promotion_type', '');
         $order_type = input('order_type', 'all');
         $is_verify = input('is_verify', 'all');
+        $store_id = input('store_id', 0); // 所属门店id
         $condition_desc = [];
 
         $order_common_model = new OrderCommon();
         $condition = [
             [ 'o.site_id', '=', $this->site_id ],
-            [ 'o.is_delete', '=', 0 ]
+            [ 'o.is_delete', '=', 0 ],
+            [ 'o.order_scene', '=', 'online' ]
         ];
+
+        if (!empty($order_ids)) {
+            $condition[] = [ 'o.order_id', 'in', $order_ids ];
+            $condition_desc[] = [ 'name' => 'order_id', 'value' => $order_ids ];
+        }
+
         //订单类型
         $order_type_name = '全部';
         if ($order_type != 'all') {
@@ -1234,6 +1246,14 @@ class Order extends BaseShop
             }
         } else {
             $condition[] = [ 'm.nickname', 'like', '%' . $search_text . '%' ];
+        }
+
+        if (addon_is_exit('store') == 1 && !empty($store_id)) {
+            $store_model = new StoreModel();
+            $store_info = $store_model->getStoreInfo([ [ 'store_id', '=', $store_id ] ], 'store_name')[ 'data' ];
+
+            $condition[] = [ 'o.store_id', '=', $store_id ];
+            $condition_desc[] = [ 'name' => '来源门店', 'value' => $store_info[ 'store_name' ] ];
         }
 
         $order_export_model = new OrderExport();

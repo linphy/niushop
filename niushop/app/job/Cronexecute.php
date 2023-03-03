@@ -28,7 +28,9 @@ class Cronexecute
 
             Log::write("计划任务:{$data[ 'event' ]} relate_id: {$data[ 'relate_id' ]}执行结果：" . json_encode($res, JSON_UNESCAPED_UNICODE));
             $cron_model = new Cron();
+            //定义最新的执行时间或错误
             $cron_model->addCronLog($data_log);
+
 
         } catch (\Exception $e) {
             Log::write($e->getMessage());

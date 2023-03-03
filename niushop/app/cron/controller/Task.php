@@ -57,4 +57,13 @@ class Task extends Controller
         $url = url('cron/task/execute');
         http($url, 1);
     }
+
+    /**
+     *检测自动任务是否人在进行
+     */
+    public function checkCron(){
+        $cron_model = new \app\model\system\Cron();
+        $result = $cron_model->checkCron();
+        return $result;
+    }
 }

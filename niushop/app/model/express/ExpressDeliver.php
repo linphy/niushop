@@ -79,7 +79,14 @@ class ExpressDeliver extends BaseModel
             return $this->error('', '配送员手机号不能为空!');
         }
         $data[ 'modify_time' ] = time();
-        $result = model('express_deliver')->update($data, [ [ 'deliver_id', '=', $deliver_id ], [ 'site_id', '=', $data[ 'site_id' ] ] ]);
+        $condition = [
+            [ 'deliver_id', '=', $deliver_id ],
+            [ 'site_id', '=', $data[ 'site_id' ] ]
+        ];
+        if(isset($data['store_id'])){
+            $condition[] = ['store_id', '=', $data['store_id']];
+        }
+        $result = model('express_deliver')->update($data, $condition);
         return $this->success($result);
     }
 
@@ -88,9 +95,16 @@ class ExpressDeliver extends BaseModel
      * @param $data
      * @param string
      */
-    public function deleteDeliver($deliver_id, $site_id)
+    public function deleteDeliver($deliver_id, $site_id, $store_id = 0)
     {
-        $result = model('express_deliver')->delete([ [ 'deliver_id', 'in', $deliver_id ], [ 'site_id', '=', $site_id ] ]);
+        $condition = [
+            [ 'deliver_id', 'in', $deliver_id ],
+            [ 'site_id', '=', $site_id ]
+        ];
+        if($store_id > 0){
+            $condition[] = ['store_id', '=', $store_id];
+        }
+        $result = model('express_deliver')->delete($condition);
         return $this->success($result);
     }
 
@@ -99,9 +113,16 @@ class ExpressDeliver extends BaseModel
      * @param $data
      * @param string
      */
-    public function getDeliverInfo($deliver_id, $site_id)
+    public function getDeliverInfo($deliver_id, $site_id, $store_id = 0)
     {
-        $info = model('express_deliver')->getInfo([ [ 'deliver_id', '=', $deliver_id ], [ 'site_id', '=', $site_id ] ], 'deliver_name,deliver_mobile');
+        $condition = [
+            [ 'deliver_id', '=', $deliver_id ],
+            [ 'site_id', '=', $site_id ]
+        ];
+        if($store_id > 0){
+            $condition[] = ['store_id', '=', $store_id];
+        }
+        $info = model('express_deliver')->getInfo($condition, 'deliver_name,deliver_mobile,create_time,modify_time,deliver_id');
         return $this->success($info);
     }
 

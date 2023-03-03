@@ -34,8 +34,8 @@ class GdClass
      * @param $image
      * @param $new_file
      */
-    public function save($image, $new_file){
-        return $image->save($new_file);
+    public function save($image, $new_file, $compress){
+        return $image->save($new_file, $compress);
     }
 
     public function getImageParam($image){
@@ -59,8 +59,11 @@ class GdClass
      * @return mixed
      */
     public function textWater($image, $text, $x, $y, $size, $color, $align, $valign, $angle){
+//        $x = $image->width()/2;
+//        $y = $image->height()/2;
         $image->text($text, $x, $y, function($font) use ($size, $color, $align, $valign, $angle){
 //                        $font->file($this->config["water"]["watermark_text_file"]);//设置字体文件位置
+            $font->file(PUBLIC_PATH.'static/font/Microsoft.ttf');
             $font->size($size);//设置字号大小
             $font->color($color);//设置字号颜色
             $font->align($align);//设置字号水平位置

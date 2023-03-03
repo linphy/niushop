@@ -48,6 +48,7 @@ class Shop extends BaseShop
             $shop_pc_status = input('shop_pc_status', 1);//商城pc端状态
             $shop_h5_status = input('shop_h5_status', 1);//商城h5端状态
             $shop_weapp_status = input('shop_weapp_status', 1);//商城小程序端状态
+            $seo_title = input('seo_title', '');
 
             $site_tel = input("site_tel", '');//服务电话
 
@@ -58,6 +59,7 @@ class Shop extends BaseShop
                 "seo_keywords" => $seo_keywords,
                 "seo_description" => $seo_description,
                 "site_tel" => $site_tel,
+                "seo_title" => $seo_title
             );
 
             $work_week = input("work_week", '');//工作日  例如 : 1,2,3,4,5,6,7
@@ -77,7 +79,6 @@ class Shop extends BaseShop
             $site_model->editSite($data_site, $condition);
             $res = $shop_model->editShop($data_shop, $condition, $this->site_id);
             if ($res[ 'code' ] >= 0) {
-
                 $shop_model->setShopStatus([ 'shop_pc_status' => $shop_pc_status, 'shop_h5_status' => $shop_h5_status, 'shop_weapp_status' => $shop_weapp_status ], $this->site_id, $this->app_module);
             }
             return $res;
@@ -171,6 +172,9 @@ class Shop extends BaseShop
             $config_model = new ConfigModel();
             $mp_config = $config_model->getMapConfig($this->site_id);
             $this->assign('tencent_map_key', $mp_config[ 'data' ][ 'value' ][ 'tencent_map_key' ]);
+            //效验腾讯地图KEY
+            $check_map_key = $config_model->checkQqMapKey($mp_config[ 'data' ][ 'value' ][ 'tencent_map_key' ]);
+            $this->assign('check_map_key', $check_map_key);
 
             return $this->fetch("shop/contact");
         }

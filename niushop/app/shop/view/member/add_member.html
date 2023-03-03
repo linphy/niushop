@@ -27,7 +27,7 @@
 		<div class="layui-input-block">
 			<input name="mobile" type="text" lay-verify="mobile" class="layui-input len-long">
 		</div>
-		<div class="word-aux">已进行手机号验证，请填写正确的手机号</div>
+		<div class="word-aux">请填写正确的手机号</div>
 	</div>
 
 	<div class="layui-form-item">
@@ -38,7 +38,7 @@
 	</div>
 
 	<div class="layui-form-item">
-		<label class="layui-form-label img-upload-lable short-label">头像：</label>
+		<label class="layui-form-label short-label">头像：</label>
 		<div class="layui-input-inline">
 			<div class="upload-img-block square">
 				<div class="upload-img-box">
@@ -64,9 +64,9 @@
 	</div>
 
 	<div class="layui-form-item">
-		<label class="layui-form-label"><span class="required">*</span>会员等级：</label>
+		<label class="layui-form-label">会员等级：</label>
 		<div class="layui-input-inline len-mid">
-			<select class="member_level" name="member_level" lay-verify="required" lay-filter="member_level">
+			<select class="member_level" name="member_level" lay-filter="member_level">
 				<option value="">请选择</option>
 				{volist name="member_level_list" id="member_level"}
 				<option value="{$member_level.level_id}">{$member_level.level_name}</option>
@@ -154,8 +154,7 @@
 		 * 监听提交
 		 */
 		form.on('submit(save)', function(data) {
-			
-			data.field.member_level_name = $(".member_level").find("option[value=" + data.field.member_level + "]").text();
+			if (data.field.member_level) data.field.member_level_name = $(".member_level").find("option[value=" + data.field.member_level + "]").text();
 
 			// 删除图片
 			if(!data.field.headimg) upload.delete();
@@ -176,7 +175,7 @@
 							btn: ['返回列表', '继续添加'],
 							closeBtn: 0,
 							yes: function(){
-								location.href = ns.url("shop/member/memberList")
+								location.href = ns.url("shop/member/{$type == 'member' ? 'memberList' : 'customerlist'}")
 							},
 							btn2: function () {
 								location.href = ns.url("shop/member/addMember")
@@ -192,7 +191,7 @@
 	});
 	
 	function back() {
-		location.href = ns.url("shop/member/memberList");
+		location.href = ns.url("shop/member/{$type == 'member' ? 'memberList' : 'customerlist'}");
 	}
 </script>
 {/block}

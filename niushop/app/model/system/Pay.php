@@ -68,6 +68,7 @@ class Pay extends BaseModel
         $data[ 'member_id' ] = $member_id;
         $data[ 'scene' ] = $scene;
         $res = event('Pay', $data, true);
+        if (empty($res)) return $this->error('', '没有可用的支付方式');
         return $res;
     }
 
@@ -137,9 +138,6 @@ class Pay extends BaseModel
         $pay_info_result = $this->getPayInfo($out_trade_no);
 
         $pay_info = $pay_info_result[ 'data' ];
-        Log::write('支付缓存start');
-        Log::write(json_encode($pay_info));
-        Log::write('支付缓存end');
         $pay_type = empty($pay_type) ? 'ONLINE_PAY' : $pay_type;
         //支付状态 (未支付  未取消)
         if ($pay_info[ 'pay_status' ] == 0) {
@@ -151,32 +149,30 @@ class Pay extends BaseModel
                 'pay_status' => 2
             );
             $res = model('pay')->update($data, [ [ 'out_trade_no', '=', $out_trade_no ] ]);
-            if ($res === false) {
-                return error('', 'UNKNOW_ERROR');
-            } else {
-                //成功则直接给应用异步回调地址发送
-                $return_data = array (
-                    'out_trade_no' => $out_trade_no,
-                    'trade_no' => $trade_no,
-                    'pay_type' => $pay_type,
-                    'log_data' => $log_data
-                );
+            //成功则直接给应用异步回调地址发送
+            $return_data = array (
+                'out_trade_no' => $out_trade_no,
+                'trade_no' => $trade_no,
+                'pay_type' => $pay_type,
+                'log_data' => $log_data
+            );
 
-                //根据事件成功后执行
-                if (strpos($pay_info[ 'event' ], 'http://') !== 0 || strpos($pay_info[ 'event' ], 'https://') !== 0) {
-                    $result = event($pay_info[ 'event' ], $return_data, true);
-                    if(!empty($result)){
-                        $code = $result['code'] ?? 0;
-                        if($code < 0){
-                            return $result;
-                        }
+            //根据事件成功后执行
+            if (strpos($pay_info[ 'event' ], 'http://') !== 0 || strpos($pay_info[ 'event' ], 'https://') !== 0) {
+                $result = event($pay_info[ 'event' ], $return_data, true);
+                if(!empty($result)) {
+                    $code = $result['code'] ?? 0;
+                    if ($code < 0) {
+                        model('pay')->update(['pay_status' => 0, 'pay_time' => 0], [['out_trade_no', '=', $out_trade_no]]);
+                        return $result;
                     }
-                } else {
-                    http($pay_info[ 'event' ], 1);
-
                 }
-                return $this->success($return_data);
+            } else {
+                http($pay_info[ 'event' ], 1);
             }
+
+            return $this->success($return_data);
+
         } else {
             return $this->success('', '当前单据已支付');
         }
@@ -451,35 +447,39 @@ class Pay extends BaseModel
         $balance_data = (new Member())->getMemberUsableBalance($pay_info['site_id'], $pay_info['member_id']);
         if ($balance_data['code'] != 0) return $balance_data;
         $balance_data = $balance_data['data'];
-        if (!$balance_data['usable_balance']) return $this->success();
+        if ($balance_data['usable_balance'] <= 0) return $this->success();
 
         $data = [
             'pay_money' => $pay_info['pay_money'],
             'member_id' => $pay_info['member_id']
         ];
 
-        if ($balance_data['balance']) {
-            $data['balance'] = bccomp($balance_data['balance'], $data['pay_money']) == 1 ? $data['pay_money'] : $balance_data['balance'];
+        if ($balance_data['balance'] > 0) {
+            $data['balance'] = bccomp($balance_data['balance'], $data['pay_money'], 2) == 1 ? $data['pay_money'] : $balance_data['balance'];
             $data['pay_money'] -= $data['balance'];
         }
-        if ($balance_data['balance_money'] && $data['pay_money']) {
-            $data['balance_money'] = bccomp($balance_data['balance_money'], $data['pay_money']) == 1 ? $data['pay_money'] : $balance_data['balance_money'];
+        if ($balance_data['balance_money'] > 0 && $data['pay_money'] > 0) {
+            $data['balance_money'] = bccomp($balance_data['balance_money'], $data['pay_money'], 2) == 1 ? $data['pay_money'] : $balance_data['balance_money'];
             $data['pay_money'] -= $data['balance_money'];
         }
 
         model('pay')->startTrans();
         try {
             model('pay')->update($data, [ ['out_trade_no', '=', $pay_info['out_trade_no'] ] ]);
-            if (isset($data['balance'])) model('member')->setInc([ ['site_id', '=', $pay_info['site_id']], ['member_id', '=', $pay_info['member_id']] ], 'balance_lock', $data['balance']);
-            if (isset($data['balance_money'])) model('member')->setInc([ ['site_id', '=', $pay_info['site_id']], ['member_id', '=', $pay_info['member_id']] ], 'balance_money_lock', $data['balance_money']);
-            model('pay')->commit();
+            if (isset($data['balance']) && $data['balance'] > 0) model('member')->setInc([ ['site_id', '=', $pay_info['site_id']], ['member_id', '=', $pay_info['member_id']] ], 'balance_lock', $data['balance']);
+            if (isset($data['balance_money']) && $data['balance_money'] > 0) model('member')->setInc([ ['site_id', '=', $pay_info['site_id']], ['member_id', '=', $pay_info['member_id']] ], 'balance_money_lock', $data['balance_money']);
 
-            if ($data['pay_money']) {
-                return $this->success();
-            } else {
-                $this->onlinePay($pay_info['out_trade_no'], 'BALANCE', '', '');
+            if ($data['pay_money'] == 0) {
+                $res = $this->onlinePay($pay_info['out_trade_no'], 'BALANCE', '', '');
+                if ($res['code'] != 0) {
+                    model('pay')->rollback();
+                    return $res;
+                }
+                model('pay')->commit();
                 return $this->success(['pay_success' => 1]);
             }
+            model('pay')->commit();
+            return $this->success();
         } catch (\Exception $e) {
             model('pay')->rollback();
             return $this->error('', '支付冻结余额错误');
@@ -508,6 +508,16 @@ class Pay extends BaseModel
             return $result;
 
         return $result;
+    }
+
+    /**
+     * 支付编辑(切勿调用,收银业务专用)
+     * @param $data
+     * @param $condition
+     */
+    public function edit($data, $condition){
+        model('pay')->update($data, $condition);
+        return $this->success();
     }
 
 }

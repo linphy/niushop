@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -56,61 +55,61 @@ class CashOrder extends OrderCommon
     /**
      */
     public $order_status = [
-        self::ORDER_CREATE           => [
-            'status'          => self::ORDER_CREATE,
-            'name'            => '待支付',
+        self::ORDER_CREATE => [
+            'status' => self::ORDER_CREATE,
+            'name' => '待支付',
             'is_allow_refund' => 0,
-            'icon'            => 'public/uniapp/order/order-icon.png',
-            'action'          => [
+            'icon' => 'public/uniapp/order/order-icon.png',
+            'action' => [
                 [
                     'action' => 'orderClose',
-                    'title'  => '关闭订单',
-                    'color'  => ''
+                    'title' => '关闭订单',
+                    'color' => ''
                 ],
                 [
                     'action' => 'orderAdjustMoney',
-                    'title'  => '调整价格',
-                    'color'  => ''
+                    'title' => '调整价格',
+                    'color' => ''
                 ],
             ],
-            'member_action'   => [
+            'member_action' => [
                 [
                     'action' => 'orderClose',
-                    'title'  => '关闭订单',
-                    'color'  => ''
+                    'title' => '关闭订单',
+                    'color' => ''
                 ],
                 [
                     'action' => 'orderPay',
-                    'title'  => '支付',
-                    'color'  => ''
+                    'title' => '支付',
+                    'color' => ''
                 ],
             ],
-            'color'           => ''
+            'color' => ''
         ],
-        self::ORDER_COMPLETE         => [
-            'status'          => self::ORDER_COMPLETE,
-            'name'            => '已完成',
+        self::ORDER_COMPLETE => [
+            'status' => self::ORDER_COMPLETE,
+            'name' => '已完成',
             'is_allow_refund' => 0,
-            'icon'            => 'public/uniapp/order/order-icon-received.png',
-            'action'          => [
+            'icon' => 'public/uniapp/order/order-icon-received.png',
+            'action' => [
             ],
-            'member_action'   => [
+            'member_action' => [
 
             ],
-            'color'           => ''
+            'color' => ''
         ],
-        self::ORDER_CLOSE            => [
-            'status'          => self::ORDER_CLOSE,
-            'name'            => '已关闭',
+        self::ORDER_CLOSE => [
+            'status' => self::ORDER_CLOSE,
+            'name' => '已关闭',
             'is_allow_refund' => 0,
-            'icon'            => 'public/uniapp/order/order-icon-close.png',
-            'action'          => [
+            'icon' => 'public/uniapp/order/order-icon-close.png',
+            'action' => [
 
             ],
-            'member_action'   => [
+            'member_action' => [
 
             ],
-            'color'           => ''
+            'color' => ''
         ],
     ];
 
@@ -118,61 +117,62 @@ class CashOrder extends OrderCommon
      * 订单支付
      * @param unknown $order_info
      */
-    public function orderPay($order_info, $pay_type,$log_data=[])
+    public function orderPay($order_info, $pay_type, $log_data = [])
     {
         $order_id = $order_info['order_id'];
         if ($order_info['order_status'] != 0) {
             return $this->error();
         }
 
-        $condition        = array(
+        $condition = array(
             ['order_id', '=', $order_id],
             ['order_status', '=', self::ORDER_CREATE],
         );
 
         $order_goods_list = model('order_goods')->getList([['order_id', '=', $order_id]], 'sku_image,sku_name,price,num,order_goods_id,goods_id,sku_id');
-        $item_array       = [];
+        $item_array = [];
         foreach ($order_goods_list as $k => $v) {
             $item_array[] = [
-                'img'            => $v['sku_image'],
-                'name'           => $v['sku_name'],
-                'price'          => $v['price'],
-                'num'            => $v['num'],
+                'img' => $v['sku_image'],
+                'name' => $v['sku_name'],
+                'price' => $v['price'],
+                'num' => $v['num'],
                 'order_goods_id' => $v['order_goods_id'],
-                'remark_array'   => [
+                'remark_array' => [
 
                 ]
             ];
             // 增加门店商品销量
-            model('store_goods')->setInc([ ['goods_id', '=', $v['goods_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'store_sale_num', $v['num']);
-            model('store_goods_sku')->setInc([ ['sku_id', '=', $v['sku_id'] ], ['store_id', '=', $order_info['delivery_store_id'] ] ], 'store_sale_num', $v['num']);
+            model('store_goods')->setInc([['goods_id', '=', $v['goods_id']], ['store_id', '=', $order_info['delivery_store_id']]], 'sale_num', $v['num']);
+            model('store_goods_sku')->setInc([['sku_id', '=', $v['sku_id']], ['store_id', '=', $order_info['delivery_store_id']]], 'sale_num', $v['num']);
         }
-        $pay_time            = time();
+        $pay_time = time();
         $pay_type_list = $this->getPayType();
-        $data          = array(
-            'pay_status'          => 1,
-            'pay_time'            => $pay_time,
-            'is_enable_refund'    => 0,
-            'pay_type'            => $pay_type,
-            'pay_type_name'       => $pay_type_list[$pay_type]
+        $data = array(
+            'pay_status' => 1,
+            'pay_time' => $pay_time,
+            'is_enable_refund' => 0,
+            'pay_type' => $pay_type,
+            'pay_type_name' => $pay_type_list[$pay_type]
         );
 
         //记录订单日志 start
         $action = '商家对订单进行了线下支付';
         //获取用户信息
-        if (empty($log_data)){
-            $member_info = model('member')->getInfo(['member_id'=>$order_info['member_id']],'nickname');
+        if (empty($log_data)) {
+            $member_info = model('member')->getInfo(['member_id' => $order_info['member_id']], 'nickname');
             $log_data = [
-                'uid'        => $order_info[ 'member_id' ],
-                'nick_name'  => $member_info['nickname'],
+                'uid' => $order_info['member_id'],
+                'nick_name' => $member_info['nickname'],
                 'action_way' => 1
             ];
-            $action = '买家【'.$member_info['nickname'].'】支付了订单';
+            $buyer_name = empty($member_info[ 'nickname' ]) ? '' : '【' . $member_info[ 'nickname' ] . '】';
+            $action = '买家'.$buyer_name.'支付了订单';
         }
 
-        $log_data = array_merge($log_data,[
-            'order_id'          => $order_id,
-            'action'            => $action,
+        $log_data = array_merge($log_data, [
+            'order_id' => $order_id,
+            'action' => $action,
         ]);
 
         $this->addOrderLog($log_data);
@@ -183,17 +183,14 @@ class CashOrder extends OrderCommon
         $order_goods_data = array(
             'delivery_status_name' => '已收货'
         );
-        $res              = model('order_goods')->update($order_goods_data, [['order_id', '=', $order_id]]);
+        $res = model('order_goods')->update($order_goods_data, [['order_id', '=', $order_id]]);
 
         $order_common_model = new OrderCommon();
         $result = $order_common_model->orderComplete($order_id);
-        if($result['code'] < 0)
+        if ($result['code'] < 0)
             return $result;
         return $this->success($res);
     }
-
-
-
 
 
     /**
@@ -205,9 +202,9 @@ class CashOrder extends OrderCommon
         //是否入库
         if ($order_goods_info['is_refund_stock'] == 1) {
             $goods_stock_model = new GoodsStock();
-            $item_param        = array(
+            $item_param = array(
                 'sku_id' => $order_goods_info['sku_id'],
-                'num'    => $order_goods_info['num'],
+                'num' => $order_goods_info['num'],
             );
             //返还库存
             $goods_stock_model->incStock($item_param);

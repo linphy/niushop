@@ -31,8 +31,8 @@ class ImagickClass
      * @param $image
      * @param $new_file
      */
-    public function save($image, $new_file){
-        return $image->save_to($new_file);
+    public function save($image, $new_file, $compress = ''){
+        return $image->save_to($new_file, $compress);
     }
 
     public function getImageParam($image){
@@ -56,16 +56,11 @@ class ImagickClass
      * @return mixed
      */
     public function textWater($image, $text, $x, $y, $size, $color, $align, $valign, $angle){
-        $image->text($text, $x, $y, function($font) use ($size, $color, $align, $valign, $angle){
-//                        $font->file($this->config["water"]["watermark_text_file"]);//设置字体文件位置
-            $font->size($size);//设置字号大小
-            $font->color($color);//设置字号颜色
-            $font->align($align);//设置字号水平位置
-            $font->valign($valign);//设置字号 垂直位置
-            $font->angle($angle);//设置字号倾斜角度
-        });
+//        $spec = $this->getImageParam($image);
+//        $x = $spec['width']/2;
+//        $y = $spec['height']/2;
         $style = array(
-//            'font' => $size,
+            'font' => PUBLIC_PATH.'static/font/Microsoft.ttf',
             'font_size' => $size,
 //            'fill_color' => $size,
 //            'under_color' => $size,
@@ -96,9 +91,9 @@ class ImagickClass
      */
     public function thumb($image, $width, $height, $fit = 'center', $fill_color = 'ffffff'){
         if(!empty($fit)){
-            $fit = 'scale';
+            $fit = 'force';
         }else{
-            $fit = 'scale_fill';
+            $fit = 'scale';
         }
         $image->resize_to($width, $height, $fit);
         return $image;

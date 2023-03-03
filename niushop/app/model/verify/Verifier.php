@@ -6,7 +6,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -22,32 +21,34 @@ class Verifier extends BaseModel
 
     /**
      * 添加核销人员
-     * @param unknown $data
+     * @param $data
+     * @return array
      */
     public function addVerifier($data)
     {
         //检测会员是否在本店铺存在核销员
-        if ($data["member_id"] > 0) {
-            $member_condition = array(
-                ["member_id", "=", $data["member_id"]],
-                ["site_id", "=", $data["site_id"]]
+        if ($data[ "member_id" ] > 0) {
+            $member_condition = array (
+                [ "member_id", "=", $data[ "member_id" ] ],
+                [ "site_id", "=", $data[ "site_id" ] ]
             );
-            $member_count     = model("verifier")->getCount($member_condition, "verifier_id");
+            $member_count = model("verifier")->getCount($member_condition, "verifier_id");
             if ($member_count > 0) {
                 return $this->error([], "当前会员已存在核销员身份");
             }
         }
         //检测用户是否在本店铺存在核销员
-        if ($data["uid"] > 0) {
-            $user_condition = array(
-                ["uid", "=", $data["uid"]],
-                ["site_id", "=", $data["site_id"]]
+        if ($data[ "uid" ] > 0) {
+            $user_condition = array (
+                [ "uid", "=", $data[ "uid" ] ],
+                [ "site_id", "=", $data[ "site_id" ] ]
             );
-            $user_count     = model("verifier")->getCount($user_condition, "verifier_id");
+            $user_count = model("verifier")->getCount($user_condition, "verifier_id");
             if ($user_count > 0) {
                 return $this->error([], "当前用户已存在核销员身份");
             }
         }
+        $data[ 'create_time' ] = time();
         $res = model("verifier")->add($data);
         return $this->success($res);
     }
@@ -56,37 +57,38 @@ class Verifier extends BaseModel
      * 编辑用户
      * @param $data
      * @param $condition
+     * @return array
      */
     public function editVerifier($data, $condition)
     {
         $check_condition = array_column($condition, 2, 0);
-        $site_id         = isset($check_condition['site_id']) ? $check_condition['site_id'] : '';
-        $verifier_id     = isset($check_condition['verifier_id']) ? $check_condition['verifier_id'] : '';
+        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
+        $verifier_id = isset($check_condition[ 'verifier_id' ]) ? $check_condition[ 'verifier_id' ] : '';
         //检测会员是否在本店铺存在核销员
-        if ($data["member_id"] > 0) {
-            $member_condition = array(
-                ["member_id", "=", $data["member_id"]],
-                ["site_id", "=", $site_id],
-                ["verifier_id", "<>", $verifier_id]
+        if ($data[ "member_id" ] > 0) {
+            $member_condition = array (
+                [ "member_id", "=", $data[ "member_id" ] ],
+                [ "site_id", "=", $site_id ],
+                [ "verifier_id", "<>", $verifier_id ]
             );
-            $member_count     = model("verifier")->getCount($member_condition, "verifier_id");
+            $member_count = model("verifier")->getCount($member_condition, "verifier_id");
             if ($member_count > 0) {
                 return $this->error([], "当前会员在当前店铺已存在核销员身份");
             }
         }
         //检测用户是否在本店铺存在核销员
-        if ($data["uid"] > 0) {
-            $user_condition = array(
-                ["uid", "=", $data["uid"]],
-                ["site_id", "=", $site_id],
-                ["verifier_id", "<>", $verifier_id]
+        if ($data[ "uid" ] > 0) {
+            $user_condition = array (
+                [ "uid", "=", $data[ "uid" ] ],
+                [ "site_id", "=", $site_id ],
+                [ "verifier_id", "<>", $verifier_id ]
             );
-            $user_count     = model("verifier")->getCount($user_condition, "verifier_id");
+            $user_count = model("verifier")->getCount($user_condition, "verifier_id");
             if ($user_count > 0) {
                 return $this->error([], "当前用户在当前店铺已存在核销员身份");
             }
         }
-
+        $data[ 'modify_time' ] = time();
         $res = model("verifier")->update($data, $condition);
         if ($res === false) {
             return $this->error('', 'UNKNOW_ERROR');
@@ -96,20 +98,21 @@ class Verifier extends BaseModel
 
     /**
      * 删除核销人员
-     * @param unknown $verifier_id
-     * @param unknown $site_id
-     * @return multitype:number unknown
+     * @param $verifier_id
+     * @param $site_id
+     * @return array
      */
     public function deleteVerifier($verifier_id, $site_id)
     {
-        $res = model("verifier")->delete([['verifier_id', '=', $verifier_id], ['site_id', '=', $site_id]]);
+        $res = model("verifier")->delete([ [ 'verifier_id', '=', $verifier_id ], [ 'site_id', '=', $site_id ] ]);
         return $this->success($res);
     }
 
     /**
      * 获取核销人员信息
-     * @param array $condition
+     * @param $condition
      * @param string $field
+     * @return array
      */
     public function getVerifierInfo($condition, $field = '*')
     {
@@ -122,7 +125,8 @@ class Verifier extends BaseModel
      * @param array $condition
      * @param string $field
      * @param string $order
-     * @param string $limit
+     * @param null $limit
+     * @return array
      */
     public function getVerifierList($condition = [], $field = '*', $order = '', $limit = null)
     {
@@ -133,10 +137,10 @@ class Verifier extends BaseModel
     /**
      * 获取核销人员分页列表
      * @param array $condition
-     * @param number $page
-     * @param string $page_size
+     * @param int $page
+     * @param int $page_size
      * @param string $order
-     * @param string $field
+     * @return array
      */
     public function getVerifierPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'v.create_time desc')
     {
@@ -161,6 +165,7 @@ class Verifier extends BaseModel
     /**
      * 检测会员是否是核销员
      * @param $condition
+     * @return array
      */
     public function checkIsVerifier($condition)
     {

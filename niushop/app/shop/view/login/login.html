@@ -47,22 +47,6 @@
 			<div class="form-wrap layui-form">
 				<h2 class="login-title">{if isset($store_is_exit)}智慧门店·{/if}管理中心</h2>
 
-				{if isset($store_is_exit)}
-				<div class="input-wrap">
-					<div class="icon">
-						<i class="iconfont iconshouye-mendianshu"></i>
-					</div>
-					<select name="store_id" lay-search>
-						<option value="0">总店</option>
-						{notempty name="store_list"}
-						{foreach name="store_list" item="vo"}
-						<option value="{$vo.store_id}">{$vo.store_name}</option>
-						{/foreach}
-						{/notempty}
-					</select>
-				</div>
-				{/if}
-
 				<div class="input-wrap">
 					<div class="icon">
 						<i class="iconfont iconhuiyuan1"></i>
@@ -159,8 +143,6 @@
 		form.on('submit(login)', function(data) {
 			if (login_repeat_flag) return;
 			login_repeat_flag = true;
-
-			data.field.login_module = data.field.store_id && data.field.store_id != 0 ? 'store' : 'shop';
 
 			$.ajax({
 				type: "POST",

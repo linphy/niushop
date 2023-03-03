@@ -75,7 +75,12 @@ class Memberwithdraw extends BaseShop
             $status = input('status', 'all');//提现状态
             $transfer_type = input('transfer_type', '');//提现转账方式
             $member_name = input('member_name', '');//提现转账方式
+
+            $payment_start_date = input('payment_start_date', '');
+            $payment_end_time = input('payment_end_time', '');
+
             $condition = [ [ 'site_id', '=', $this->site_id ] ];
+
             if (!empty($withdraw_no)) {
                 $condition[] = [ 'withdraw_no', 'like', '%' . $withdraw_no . '%' ];
             }
@@ -95,6 +100,15 @@ class Memberwithdraw extends BaseShop
             } else if ($start_date == '' && $end_date != '') {
                 $condition[] = [ 'apply_time', '<=', strtotime($end_date) ];
             }
+
+            if ($payment_start_date != '' && $payment_end_time != '') {
+                $condition[] = [ 'payment_time', 'between', [ strtotime($payment_start_date), strtotime($payment_end_time) ] ];
+            } else if ($payment_start_date != '' && $payment_end_time == '') {
+                $condition[] = [ 'payment_time', '>=', strtotime($payment_start_date) ];
+            } else if ($payment_start_date == '' && $payment_end_time != '') {
+                $condition[] = [ 'payment_time', '<=', strtotime($payment_end_time) ];
+            }
+
             $order = 'apply_time desc';
 
             return $withdraw_model->getMemberWithdrawPageList($condition, $page, $page_size, $order);
@@ -189,6 +203,55 @@ class Memberwithdraw extends BaseShop
             $result = $withdraw_model->transferFinish($data);
             return $result;
         }
+    }
+
+    public function export(){
+        $withdraw_model = new MemberWithdrawModel();
+
+        $withdraw_no = input('withdraw_no', '');
+        $start_date = input('start_date', '');
+        $end_date = input('end_date', '');
+        $status = input('status', 'all');//提现状态
+        $transfer_type = input('transfer_type', '');//提现转账方式
+        $member_name = input('member_name', '');//提现转账方式
+
+        $payment_start_date = input('payment_start_date', '');
+        $payment_end_time = input('payment_end_time', '');
+
+        $condition = [ [ 'site_id', '=', $this->site_id ] ];
+
+        if (!empty($withdraw_no)) {
+            $condition[] = [ 'withdraw_no', 'like', '%' . $withdraw_no . '%' ];
+        }
+        if (!empty($transfer_type)) {
+            $condition[] = [ 'transfer_type', '=', $transfer_type ];
+        }
+        if ($status != "all") {
+            $condition[] = [ 'status', '=', $status ];
+        }
+        if (!empty($member_name)) {
+            $condition[] = [ 'member_name', '=', $member_name ];
+        }
+        if ($start_date != '' && $end_date != '') {
+            $condition[] = [ 'apply_time', 'between', [ strtotime($start_date), strtotime($end_date) ] ];
+        } else if ($start_date != '' && $end_date == '') {
+            $condition[] = [ 'apply_time', '>=', strtotime($start_date) ];
+        } else if ($start_date == '' && $end_date != '') {
+            $condition[] = [ 'apply_time', '<=', strtotime($end_date) ];
+        }
+
+        if ($payment_start_date != '' && $payment_end_time != '') {
+            $condition[] = [ 'payment_time', 'between', [ strtotime($payment_start_date), strtotime($payment_end_time) ] ];
+        } else if ($payment_start_date != '' && $payment_end_time == '') {
+            $condition[] = [ 'payment_time', '>=', strtotime($payment_start_date) ];
+        } else if ($payment_start_date == '' && $payment_end_time != '') {
+            $condition[] = [ 'payment_time', '<=', strtotime($payment_end_time) ];
+        }
+
+        $order = 'apply_time desc';
+
+
+        $withdraw_model->exportWithdraw($condition, $order);
     }
 
 }

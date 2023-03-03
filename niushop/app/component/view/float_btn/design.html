@@ -5,10 +5,10 @@
 		<template v-if="nc.lazyLoad">
 			<div class="float-btn-box border-color" data-disabled="1">
 				<div v-for="(item,previewIndex) in nc.list" :key="previewIndex" :index="previewIndex" class="float-btn-item" data-disabled="1">
-					<div class="img-box" data-disabled="1" v-if="!item.iconType || item.iconType == 'img'">
-						<img :src="changeImgUrl(item.imageUrl)" alt="" data-disabled="1">
+					<div class="img-box" data-disabled="1" v-if="!item.iconType || item.iconType == 'img'" :style="{ width : nc.imageSize + 'px',height : nc.imageSize + 'px' }">
+						<img :src="changeImgUrl(item.imageUrl)" data-disabled="1">
 					</div>
-					<div class="icon-box" data-disabled="1" v-if="item.iconType && item.iconType == 'icon'">
+					<div class="icon-box" data-disabled="1" v-if="item.iconType && item.iconType == 'icon'" :style="{ width : nc.imageSize + 'px',height : nc.imageSize + 'px',fontSize : nc.imageSize + 'px' }">
 						<iconfont :icon="item.icon" v-if="item.icon" :value="item.style ? item.style : ''"></iconfont>
 					</div>
 				</div>
@@ -26,6 +26,7 @@
 			</div>
 			<div class="template-edit-title">
 				<h3>图片设置</h3>
+				<slide :data="{ field : 'imageSize', label : '图片大小', min: 40, max : 100 }"></slide>
 				<float-btn-list></float-btn-list>
 			</div>
 		</template>
@@ -37,7 +38,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var floatBtnResourcePath = "{$resource_path}";
+			var floatBtnResourcePath = "{$resource_path}"; // http路径
+			var floatBtnRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

@@ -12,7 +12,9 @@ namespace app\model\express;
 
 use app\model\BaseModel;
 use app\model\shop\Shop;
+use app\model\store\Store;
 use think\facade\Cache;
+use think\facade\Db;
 
 /**
  * 外卖配送
@@ -27,7 +29,6 @@ class Local extends BaseModel
     public function addLocal($data)
     {
         $id = model('local')->add($data);
-        Cache::tag('local')->clear();
         return $this->success($id);
     }
 
@@ -40,7 +41,6 @@ class Local extends BaseModel
     public function editLocal($data, $condition)
     {
         $res = model('local')->update($data, $condition);
-        Cache::tag('local')->clear();
         return $this->success($res);
     }
 
@@ -52,7 +52,6 @@ class Local extends BaseModel
     public function deleteLocal($condition)
     {
         $res = model('local')->delete($condition);
-        Cache::tag('local')->clear();
         return $this->success($res);
     }
 
@@ -65,16 +64,13 @@ class Local extends BaseModel
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
+        $store_id = isset($check_condition[ 'store_id' ]) ? $check_condition[ 'store_id' ] : 0;
 
-        $data = json_encode([ $condition, $field ]);
-//        $cache = Cache::get('local_getLocalInfo_' . $data);
-//        if (!empty($cache)) {
-//            return $this->success($cache);
-//        }
         $info = model('local')->getInfo($condition, $field);
         if (empty($info)) {
             $local_data = array (
                 'site_id' => $site_id,
+                'store_id' => $store_id,
                 'update_time' => time()
             );
             $this->addLocal($local_data);
@@ -103,7 +99,6 @@ class Local extends BaseModel
             } else {
                 $info['delivery_time'] = json_decode($info['delivery_time'], true);
             }
-            Cache::tag('local')->set('local_getLocalInfo_' . $data, $info);
         }
         return $this->success($info);
     }
@@ -117,14 +112,7 @@ class Local extends BaseModel
      */
     public function getLocalList($condition = [], $field = '*', $order = '', $limit = null)
     {
-        $data = json_encode([ $condition, $field, $order, $limit ]);
-        $cache = Cache::get('local_getLocalList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('local')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag('local')->set('local_getLocalList_' . $data, $list);
-
         return $this->success($list);
     }
 
@@ -138,13 +126,7 @@ class Local extends BaseModel
      */
     public function getLocalPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
     {
-        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
-        $cache = Cache::get('local_getLocalPageList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('local')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag('local')->set('local_getLocalPageList_' . $data, $list);
         return $this->success($list);
     }
 
@@ -156,17 +138,25 @@ class Local extends BaseModel
      */
     public function calculate($shop_goods, $data)
     {
+        $site_id = $data['site_id'];
         $local_condition = array (
-            [ 'site_id', '=', $data[ 'site_id' ] ]
+            [ 'site_id', '=', $site_id ]
         );
+        $store_id = $data['store_id'] ?? 0;
+        //todo  应该判断一下是否有门店运营插件
+        if(!addon_is_exit('store')){
+            $store_id = 0;
+        }
+        if ($store_id > 0) $local_condition[] = [ 'store_id', '=', $store_id ];
         $local_info_result = $this->getLocalInfo($local_condition);
         $local_info = $local_info_result[ 'data' ];
+        if (empty($local_info)) return $this->error('', '没有可以配送的门店');
 
         $start_price_error = 0;//起送价错误
         $distance_error = 0;//配送距离错误
         $time_error = 0;
         $error_code = 12;
-        $error = '';
+        $error = '所选地址无法配送';
         //判断时间   是否在时间段内
         if ($local_info[ 'time_is_open' ] == 1) {
             $week = date('w');
@@ -181,12 +171,14 @@ class Local extends BaseModel
                 }
             }
         }
-        $shop_model = new Shop();
-        $shop_info_result = $shop_model->getShopInfo([ [ 'site_id', '=', $data[ 'site_id' ] ] ]);
-        $shop_info = $shop_info_result[ 'data' ];
+        if($store_id == 0){
+            $shop_model = new Shop();
+            $shop_info = $shop_model->getShopInfo([ [ 'site_id', '=', $site_id ]])['data'] ?? [];
+        }else{
+            $store_model = new Store();
+            $shop_info = $store_model->getStoreInfo([ [ 'site_id', '=', $site_id ] , ['store_id', '=', $store_id]])['data'] ?? [];
+        }
         $is_delivery = false;
-
-
         $start_money_array = [];
         if ($local_info[ 'area_type' ] == 1 || $local_info[ 'area_type' ] == 2) {
             if ($data[ 'member_address' ][ 'longitude' ] == 0 && $data[ 'member_address' ][ 'latitude' ] == 0) {
@@ -203,6 +195,7 @@ class Local extends BaseModel
                     $delivery_money = $local_info[ 'start_delivery_money' ];
                 } else {
                     $diff_distance = $distance - $local_info[ 'start_distance' ];//减去起送距离 求得差
+                    if ($local_info[ 'continued_distance' ] == 0) return $this->error([ 'code' => $error_code ], '当前配送地址不支持配送');
                     $delivery_money = $local_info[ 'start_delivery_money' ] + ceil($diff_distance / $local_info[ 'continued_distance' ]) * $local_info[ 'continued_delivery_money' ];
                 }
             } else {
@@ -336,9 +329,9 @@ class Local extends BaseModel
             return $this->success($return_result);
         } else {
             if ($distance_error > 0) {
-                $error = '当前配送地址与商家距离过远,需重新选择可配送的配送地址';
+                $error = '当前地址不在该门店配送区域，请重新选择可配送该区域的门店';
                 $error_code = 10;
-            } else if ($start_price_error > 0) {
+            } else if ($start_price_error > 0 && !isset($data['unlimited_start_money'])) {
                 $error = '当前商品金额尚不满足商家配送的最低起送价格';
                 $error_code = 11;
             }
@@ -357,6 +350,7 @@ class Local extends BaseModel
         $local_condition = array (
             [ 'site_id', '=', $data[ 'site_id' ] ],
         );
+        if (isset($data['store_id']) && !empty($data['store_id'])) $local_condition[] = ['store_id', '=', $data['store_id']];
         $local_info_result = $this->getLocalInfo($local_condition);
         $local_info = $local_info_result[ 'data' ];
 
@@ -470,8 +464,10 @@ class Local extends BaseModel
         $local_condition = array (
             [ 'site_id', '=', $data[ 'site_id' ] ]
         );
+        if (isset($data[ 'delivery' ][ 'store_id' ] )) $local_condition[] = [ 'store_id', '=', $data[ 'delivery' ][ 'store_id' ] ];
         $local_info_result = $this->getLocalInfo($local_condition);
         $local_info = $local_info_result[ 'data' ];
+        if (empty($local_info)) return $this->error('', '没有可以配送的门店');
 
         $start_price_error = 0;//起送价错误
         $distance_error = 0;//配送距离错误
@@ -635,7 +631,7 @@ class Local extends BaseModel
             return $this->success($return_result);
         } else {
             if ($distance_error > 0) {
-                $error = '当前配送地址与商家距离过远,需重新选择可配送的配送地址';
+                $error = '当前地址不在该门店配送区域，请重新选择可配送该区域的门店';
                 $error_code = 10;
             } else if ($start_price_error > 0) {
                 $error = '当前商品金额尚不满足商家配送的最低起送价格';
@@ -651,7 +647,11 @@ class Local extends BaseModel
      * @param $site_id
      */
     public function checkIscanTradeLocal($site_id){
-        $local_info = $this->getLocalInfo([['site_id', '=', $site_id]])['data'] ?? [];
+        $store = new Store();
+        $default_store = $store->getStoreInfo([ ['site_id', '=', $site_id], ['is_default', '=', 1] ], 'store_id')['data'] ?? [];
+        $store_id = $default_store['store_id'] ?? 0;
+
+        $local_info = $this->getLocalInfo([['site_id', '=', $site_id], ['store_id', '=', $store_id] ])['data'] ?? [];
         if(empty($local_info))
             return $this->error([], '您未完成起送金额、配送费 、配送区域等同城送配置项设置，需设置并提交保存后，才能开启同城配送开关。');
 

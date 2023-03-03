@@ -79,7 +79,11 @@
 				<div class="layui-card-body">
 					<p>启用上门自提后，买家可以就近选择商品自提门店，买家下单后，您需要确保买家指定的自提门店商品库存充足。</p>
 					<div class="btn-box">
+						{if addon_is_exit('store') == 1}
+						<a class="default text-color" href="{:addon_url('store://shop/store/lists')}">自提门店</a>
+						{else /}
 						<a class="default text-color" href="{:addon_url('shop/store/lists')}">自提门店</a>
+						{/if}
 					</div>
 				</div>
 			</div>

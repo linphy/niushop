@@ -29,19 +29,14 @@
 			</div>
 
 			<div class="layui-form-item">
-				<label class="layui-form-label">图片扩展名：</label>
+				<label class="layui-form-label">图片压缩大小：</label>
 				<div class="layui-input-block">
-					<input name="image_allow_ext" type="text" value="{$config.value.upload.image_allow_ext}" class="layui-input len-long">
+					<input type="radio" name="compress" lay-filter="compress" value="small" title="小文件" {if empty($config.value.upload.compress) || $config.value.upload.compress == 'small'}checked{/if} >
+					<input type="radio" name="compress" lay-filter="compress" value="medium" title="标准" {if !empty($config.value.upload.compress) && $config.value.upload.compress == 'medium'}checked{/if} >
+					<input type="radio" name="compress" lay-filter="compress" value="large" title="大文件" {if !empty($config.value.upload.compress) && $config.value.upload.compress == 'large'}checked{/if} >
+					<input type="radio" name="compress" lay-filter="compress" value="original" title="原始文件" {if !empty($config.value.upload.compress) && $config.value.upload.compress == 'original'}checked{/if} >
 				</div>
-				<div class="word-aux">设置允许上传的文件扩展名，多个扩展名之间用“,”隔开，如不填则为不限制</div>
-			</div>
 
-			<div class="layui-form-item">
-				<label class="layui-form-label">图片Mime类型：</label>
-				<div class="layui-input-block">
-					<input name="image_allow_mime" type="text" value="{$config.value.upload.image_allow_mime}" class="layui-input len-long">
-				</div>
-				<div class="word-aux">设置允许上传的文件mime类型，多个类型之间用“,”隔开，如不填则为不限制</div>
 			</div>
 		</div>
 	</div>
@@ -123,7 +118,7 @@
 			<!-- 图片水印 -->
 			<div class="watermark-img">
 				<div class="layui-form-item">
-					<label class="layui-form-label img-upload-lable">水印图片来源：</label>
+					<label class="layui-form-label">水印图片来源：</label>
 					<div class="layui-input-block">
 						<div class="upload-img-block">
 							<!-- 用于存储图片路径 -->
@@ -313,6 +308,15 @@
 		form.on('submit(save)', function(data) {
 
 			if(data.field.is_watermark){
+				if(data.field.watermark_type == 2){
+					if(data.field.watermark_text_size == ""){
+						return layer.msg("字体大小不能为空值");
+					}
+
+					if(data.field.watermark_text_angle == ""){
+						return layer.msg("文本旋转角度不能为空值");
+					}
+				}
 				if(data.field.watermark_x == "" || data.field.watermark_y == ""){
 					return layer.msg("水印坐标不能为空值");
 				}

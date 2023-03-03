@@ -92,9 +92,14 @@
 					select_list.push(json);
 					goodsIdArr.push(notice_id);
 				} else{
-					select_list.remove(notice_id);
+					for (var i = 0; i < select_list.length; i++) {
+						if (select_list[i].notice_id == notice_id) {
+							select_list.splice(i, 1);
+						}
+					}
 					goodsIdArr.remove(notice_id);
 				}
+				$.unique(select_list);
 			});
 
 			//初始化数据

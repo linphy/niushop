@@ -25,7 +25,7 @@ Vue.component("image-ads-carouse", {
 			imgArr[i] = (item.imgWidth / item.imgHeight);
 		}
 		imgArr.sort(function (a, b) {
-			return a - b
+			return b - a
 		});
 		var swiperHeight = (370 / imgArr[0]).toFixed(2);
 		this.$parent.data.tempData.swiperHeight = swiperHeight;
@@ -41,9 +41,11 @@ Vue.component("image-ads-carouse", {
 					imgArr[i] = (item.imgWidth / item.imgHeight) || 2;
 				}
 				imgArr.sort(function (a, b) {
-					return a - b
+					return b - a
 				});
-				var swiperHeight = (370 / imgArr[0]).toFixed(2);
+				// 屏幕宽度
+				var rootWidth = 370 - this.data.margin.both*2;
+				var swiperHeight = (rootWidth / imgArr[0]).toFixed(2);
 				this.$parent.data.tempData.swiperHeight = swiperHeight;
 			},
 			deep: true
@@ -79,7 +81,7 @@ Vue.component("image-ads-list", {
 		this.$parent.data.verify.push(this.verify);//加载验证方法
 
 		this.list.forEach(function (e, i) {
-			e.id = ns.gen_non_duplicate(6);
+			if(!e.id ) e.id = ns.gen_non_duplicate(6);
 		});
 		this.$parent.data.list = this.list;
 
@@ -90,7 +92,6 @@ Vue.component("image-ads-list", {
 			methods: {
 				deleteItem: this.deleteItem,
 				addItem: this.addItem,
-				setHeatMap:this.setHeatMap
 			}
 		};
 
@@ -120,27 +121,6 @@ Vue.component("image-ads-list", {
 		});
 	},
 	methods: {
-		//热区设置
-		setHeatMap :function(index) {
-			let that = this;
-			if(!that.list[index].imageUrl){
-				layer.msg('请先上传广告图片');
-				return;
-			}
-			sessionStorage.setItem('imageData',JSON.stringify(that.list[index]));
-			ns.open_iframe({
-				title: '热区设置',
-				url:ns.url("shop/diy/heatmap"),
-				area:['100%', '100%'],
-				success: function(data){
-					that.list[index] = data;
-					that.$parent.data.list[index] = data;
-					//触发变异方法，进行视图更新
-					that.$parent.data.list.push({});
-					that.$parent.data.list.pop();
-				}
-			})
-		},
 		verify: function (index) {
 			var res = {code: true, message: ""};
 			$(".draggable-element[data-index='" + index + "'] .image-ads .image-ad-list>ul>li").each(function (i) {

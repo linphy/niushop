@@ -19,12 +19,12 @@
 				         border: nc.ornament.type == 'stroke' ?  '1px solid ' + nc.ornament.color : ''
 				     }">
 					<div class="img-wrap">
-						<img :src="item.cover_img ? changeImgUrl(item.cover_img) : changeImgUrl('public/static/img/default_img/square.png')" onerror="this.src = changeImgUrl('public/static/img/default_img/square.png');" />
+						<img :src="item.cover_img ? changeImgUrl(item.cover_img) : changeImgUrl('public/static/img/default_img/square.png')" />
 					</div>
 					<div class="info-wrap">
 						<div class="title">{{ item.article_title }}</div>
 						<div class="read-wrap">
-							<span class="category-icon" v-if="item.category_name"></span>
+							<span class="category-icon bg-color" v-if="item.category_name"></span>
 							<span v-if="item.category_name">{{ item.category_name }}</span>
 							<span class="date">{{ nc.tempData.methods ? nc.tempData.methods.timeFormat(item.create_time, 'YYYY-MM-DD') : '' }}</span>
 						</div>

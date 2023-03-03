@@ -66,7 +66,7 @@
 <div class="page-content">
     <div class="content">
         {if $h5_data && $h5_data['status']}
-        <iframe id="iframe" src="{$h5_data['url']}&preview=1" frameborder="0"></iframe>
+        <iframe id="iframe" src="{$h5_data['url']}" frameborder="0"></iframe>
         {else /}
         <div class="empty">手机端未开启，请联系管理员。</div>
 <!--        <p>当前手机页面无法访问</p>-->
@@ -75,7 +75,7 @@
         {if $h5_data && $h5_data['status']}
         <div class="qrcode-wrap">
             <img src="{:img($h5_data['img'])}" alt="推广二维码">
-            <p class="tips text-color">扫码访问店铺<a class="text-color" href="javascript:ns.copy('h5_preview_1');">复制链接</a></p>
+            <p class="tips text-color">扫码访问店铺&nbsp;&nbsp;<a class="text-color" href="javascript:ns.copy('h5_preview_1');">复制链接</a></p>
             <input type="text" id="h5_preview_1" value="{$h5_data['url']}" readonly="">
         </div>
         {/if}

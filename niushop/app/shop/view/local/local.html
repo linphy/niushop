@@ -10,13 +10,12 @@
 	.overlayers::-webkit-scrollbar-thumb{border-radius:10px;box-shadow:inset 0 0 5px #ff8143;background:#ff8143}
 	.overlayers::-webkit-scrollbar-track{box-shadow:inset 0 0 5px #ededed;border-radius:10px;background:#ededed}
 	.map{height:500px;width:100%;position: relative;}
-	.region-list{width:310px}
+	.region-list{}
 	.region-list li{padding:30px 12px;position:relative;border:1px solid transparent;border-bottom-color:#ebedf0}
-	.region-checked{border-color:#ff8143!important}
 	.area-content{overflow:hidden;margin:8px 0}
 	.area-label{display:inline-block;width:70px;float:left}
 	.area-input-inline{float:left;width:190px}
-	.region-add-block{width:290px}
+	.region-add-block{}
 	.region-add-block button{display:block;padding:0;margin:10px auto;font-size:14px;width:196px;color:#323233;line-height:32px;background:#fff;outline:0;border:1px solid #dcdee0;border-radius:2px;cursor:pointer}
 	.region-add-block button:hover{border-color:#ff8143;color:#ff8143}
 	.region-view{display:none;}
@@ -29,6 +28,12 @@
 	.area-block-delete{position:absolute;top:-2px;right:5px;font-size:12px;cursor:pointer}
 	.layui-form-item .layui-form-checkbox[lay-skin=primary] {margin-top: 0;}
 	.layui-form-radio {margin-top: 0;}
+	.empty-local-map{-webkit-box-flex:0;-webkit-flex:0 0 750px;-ms-flex:0 0 750px;flex:0 0 750px;height:500px;margin-right:20px;border-radius:4px;overflow-y:hidden;position:relative;}
+	.empty-address-text{font-size: 14px;color: #f43530;height: 34px;line-height: 34px;}
+	.day-wrap {display: flex;align-items: center}
+	.day-input {width: 80px}
+	.day-input[readonly] {background: #f5f5f5}
+	.day-wrap .layui-form-radio:nth-child(4) {margin-right: 0px}
 </style>
 <link rel="stylesheet" href="SHOP_CSS/formSelects-v4.css" />
 {/block}
@@ -36,14 +41,14 @@
 <div class="layui-form">
 	<div class="layui-card card-common card-brief">
 		<div class="layui-card-header">
-			<span class="card-title">外卖配送基础设置</span>
+			<span class="card-title">同城配送基础设置</span>
 		</div>
 		<div class="layui-card-body">
 			<div class="layui-form-item">
 				<label class="layui-form-label">配送方式：</label>
 				<div class="layui-input-inline">
 					<input type="checkbox" name="type" value="default" title="商家自配送" lay-skin="primary" checked>
-					<input type="checkbox" name="type" value="other" title="第三方配送" lay-skin="primary" disabled >
+					<input type="checkbox" name="type" value="other" title="第三方配送" lay-skin="primary" disabled>
 				</div>
 			</div>
 
@@ -57,7 +62,7 @@
 						<input type="radio" name="time_is_open" value="1" title="开启"  lay-filter="time_is_open" {if $local_info.time_is_open == 1}checked{/if}/>
 						<input type="radio" name="time_is_open" value="0" title="关闭"  lay-filter="time_is_open" {if $local_info.time_is_open == 0 || !isset($local_info.time_is_open)}checked{/if}/>
 					</div>
-					<div class="word-aux">开启后，买家下单选择外卖配送时，可选择配送时间，提交订单后，将在买家备注中显示。</div>
+					<div class="word-aux">开启后，买家下单选择同城配送时，可选择配送时间，提交订单后，将在买家备注中显示。</div>
 				</div>
 			</div>
 			<div class="layui-form-item time-view" {if $local_info.time_is_open == 0} style="display:none;"{/if}>
@@ -110,7 +115,7 @@
 					</div>
 				</div>
 
-				<div class="layui-form-item" {if $local_info.time_is_open == 0} style="display:none;"{/if}>
+				<div class="layui-form-item">
 					<div class="layui-inline">
 						<label class="layui-form-label">细分时段：</label>
 						<div class="layui-input-block">
@@ -120,6 +125,32 @@
 							<input type="radio" name="time_interval" value="120" title="两小时" {if $local_info.time_interval == 120}checked{/if}/>
 						</div>
 					</div>
+				</div>
+
+				<div class="layui-form-item">
+					<label class="layui-form-label">提前预约：</label>
+					<div class="layui-input-block day-wrap">
+						<input type="radio" name="advance_day" value="0" title="无需提前" {if $local_info.advance_day == 0}checked{/if} lay-filter="day_select"/>
+						<input type="radio" name="advance_day" value="1" title="提前" {if $local_info.advance_day != 0}checked{/if} lay-filter="day_select"/>
+						<div class="layui-input-inline">
+							<input type="number" name="advance_day_num" lay-verify="advance_day" class="layui-input day-input" {if $local_info.advance_day == 0}readonly{else/}value="{$local_info.advance_day}"{/if}>
+						</div>
+						<div class="layui-form-mid layui-word-aux">天</div>
+					</div>
+					<div class="word-aux">预约配送是否需提前进行预约</div>
+				</div>
+
+				<div class="layui-form-item">
+					<label class="layui-form-label">最长预约：</label>
+					<div class="layui-input-block day-wrap">
+						<input type="radio" name="most_day" value="0" title="仅当日" {if $local_info.most_day == 0}checked{/if} lay-filter="day_select"/>
+						<input type="radio" name="most_day" value="1" title="可预约" {if $local_info.most_day != 0}checked{/if} lay-filter="day_select"/>
+						<div class="layui-input-inline">
+							<input type="number" name="most_day_num" lay-verify="most_day" class="layui-input day-input" {if $local_info.most_day == 0}readonly{else/}value="{$local_info.most_day}"{/if}>
+						</div>
+						<div class="layui-form-mid layui-word-aux">天内</div>
+					</div>
+					<div class="word-aux">预约配送最长可预约多少天内进行提货</div>
 				</div>
 			</div>
 		</div>
@@ -229,9 +260,21 @@
 			<label class="layui-form-label">地图定位：</label>
 			<div class="layui-input-block map-view">
 					<div class="map-block">
+						{if $tencent_map_key}
+						{if $check_map_key.status == 0}
 						<div class="local-map">
 							<div class="map" id="container"></div>
 						</div>
+						{else/}
+						<div class="empty-local-map">
+							<div class="empty-address-text">{$check_map_key.message}。<a href="{:addon_url('/shop/config/map')}" class="text-color">重新配置</a></div>
+						</div>
+						{/if}
+						{else/}
+						<div class="empty-local-map">
+							<div class="empty-address-text">腾讯地图尚未配置，无法定位地址。<a href="{:addon_url('/shop/config/map')}" class="text-color">点击配置</a></div>
+						</div>
+						{/if}
 
 						<div class="overlayers">
 							<ul class="region-list"></ul>
@@ -478,34 +521,59 @@ var init_key = 1;
 			stepPriceChange(data.elem.checked ? 1 : 0);
 		});
 
+		form.on('radio(day_select)', function (data){
+			if (data.value == 1) {
+				$(data.elem).parents('.day-wrap').find('input[type="number"]').prop('readonly', false);
+			} else {
+				$(data.elem).parents('.day-wrap').find('input[type="number"]').prop('readonly', true);
+			}
+		})
+
 		init();
 		form.render();
 
 		form.verify({
 			start_time: function(value, item){ //value：表单的值、item：表单的DOM对象
-				var end_time = $(item).parents('.layui-form-item').find("input[name=end_time]").val();
-				var start_time = $(item).parents('.layui-form-item').find("input[name=start_time]").val();
-				if(parseInt(start_time) > parseInt(end_time)){
-					return '配送开始时间不能大于配送结束时间';
+				if ($('[name="time_is_open"]:checked').val() == 1) {
+					var end_time = $(item).parents('.layui-form-item').find("input[name=end_time]").val();
+					var start_time = $(item).parents('.layui-form-item').find("input[name=start_time]").val();
+					if (parseInt(start_time) > parseInt(end_time)) {
+						return '配送开始时间不能大于配送结束时间';
+					}
+					var prev_endtime = $(item).parents('.layui-form-item').prev('.layui-form-item').find("input[name=end_time]").val();
+					if (prev_endtime && parseInt(prev_endtime) > parseInt(start_time)) return '配送开始时间不能小于上一阶段配送结束时间';
 				}
-				var prev_endtime = $(item).parents('.layui-form-item').prev('.layui-form-item').find("input[name=end_time]").val();
-				if (prev_endtime && parseInt(prev_endtime) > parseInt(start_time)) return '配送开始时间不能小于上一阶段配送结束时间';
 			},
 			end_time: function(value, item){ //value：表单的值、item：表单的DOM对象
-				var end_time = $(item).parents('.layui-form-item').find("input[name=end_time]").val();
-				var start_time = $(item).parents('.layui-form-item').find("input[name=start_time]").val();
-				var time_interval = $('[name="time_interval"]:checked').val();
+				if ($('[name="time_is_open"]:checked').val() == 1) {
+					var end_time = $(item).parents('.layui-form-item').find("input[name=end_time]").val();
+					var start_time = $(item).parents('.layui-form-item').find("input[name=start_time]").val();
+					var time_interval = $('[name="time_interval"]:checked').val();
 
-				if(parseInt(end_time) < parseInt(start_time)){
-					return '配送结束时间不能小于配送开始时间';
-				}
-				if((parseInt(end_time) - parseInt(start_time)) < parseInt(time_interval)){
-					return '配送时间间隔不能小于' + time_interval + '分钟';
+					if (parseInt(end_time) < parseInt(start_time)) {
+						return '配送结束时间不能小于配送开始时间';
+					}
+					if ((parseInt(end_time) - parseInt(start_time)) < parseInt(time_interval)) {
+						return '配送时间间隔不能小于' + time_interval + '分钟';
+					}
 				}
 			},
 			time_week: function(){
 				if ($('[name="time_is_open"]:checked').val() == 1 && $('[name="time_type"]:checked').val() == 1 && !$('.time-week:checked').length)
 					return '请选择可配送日期';
+			},
+			advance_day: function (value){
+				if ($('[name="advance_day"]:checked').val() == 1) {
+					if (value == '' || value == 0) return '请输入提前预约时间';
+					if (value < 0) return '提前预约时间不能为负数';
+				}
+			},
+			most_day: function (value){
+				if ($('[name="most_day"]:checked').val() == 1) {
+					if (value == '' || value == 0) return '请输入最长可预约时间';
+					if (value < 0) return '最长可预约时间不能为负数';
+					if (value > 15) return '最长可预约时间不能超过15天';
+				}
 			},
 			radius_start_distance: function(value, item){
 				var area_type = $("input[name=area_type]:checked").val();
@@ -663,7 +731,7 @@ var init_key = 1;
 			json.area_type = field.area_type;
 			//是否开启定时达
 			json.time_is_open = field.time_is_open;
-			json.time_interval = field.json;
+			json.time_interval = $('[name="time_interval"]:checked').val();
 			if(field.time_is_open){
 				//时间类型
 				json.time_type =  field.time_type;
@@ -692,6 +760,8 @@ var init_key = 1;
 			json.end_time =  json.delivery_time[0].end_time;
 
 			json.delivery_time = JSON.stringify(json.delivery_time);
+			json.advance_day = $('[name="advance_day"]:checked').val() == 0 ? 0 : $('[name="advance_day_num"]').val();
+			json.most_day = $('[name="most_day"]:checked').val() == 0 ? 0 : $('[name="most_day_num"]').val();
 
 			switch(field.area_type){
 				case '1':
@@ -780,9 +850,9 @@ var init_key = 1;
 	}
 
 	$("body").on('click', '.region-list li', function(){
-		$('.region-list li').removeClass('region-checked');
+		$('.region-list li').removeClass('border-color');
 
-		$(this).addClass('region-checked');
+		$(this).addClass('border-color');
 		// var rule_type = $(this).find('.rule_type:checked');
 		var key = $(this).attr('key');
 		//创建覆盖物
@@ -896,9 +966,9 @@ var init_key = 1;
 		temp_data['rule_type'] = rule_type;
 		var tpl = $("#area-html").html();
 		laytpl(tpl).render(temp_data, function(html){
-			$('.region-list li').removeClass('region-checked');
+			$('.region-list li').removeClass('border-color');
 			$('.region-list').append(html);
-			$('.region-list li').last().addClass('region-checked');
+			$('.region-list li').last().addClass('border-color');
 			form.render();
 
 			form.on('radio(huafen_type'+key +')', function(data){

@@ -764,4 +764,17 @@ class Games extends BaseModel
         $solitaire = event('ExtensionInformation', $params);
         return $this->success($solitaire[0]);
     }
+
+    /**
+     * 获取首条数据
+     * @param $condition
+     * @param  string  $field
+     * @param  string  $order
+     * @return array
+     */
+    public function getFirstInfo($condition, $field = '*', $order = "")
+    {
+        $data = model('promotion_games')->getFirstData($condition, $field, $order);
+        return $this->success($data);
+    }
 }

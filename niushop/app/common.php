@@ -698,7 +698,7 @@ function img($path, $type = '')
  * @param string $path
  * @param string $ext
  */
-function qrcode($url, $path, $qrcode_name)
+function qrcode($url, $path, $qrcode_name, $size = 4)
 {
     if (!is_dir($path)) {
         $mode = intval('0777', 8);
@@ -709,7 +709,7 @@ function qrcode($url, $path, $qrcode_name)
     if (file_exists($path)) {
         unlink($path);
     }
-    QRcode::png($url, $path, '', 4, 1);
+    QRcode::png($url, $path, '', $size, 1);
     return $path;
 }
 
@@ -1597,14 +1597,16 @@ function hex2rgb($color)
 
 /**
  * 生成条形码
- *
- * @param unknown $content
+ * @param $content
+ * @param  string  $path
+ * @param  int  $scale 条形码放大比率
+ * @param  int  $size 条形码文本大小
  * @return string
  */
-function getBarcode($content,$path='')
+function getBarcode($content, $path ='', $scale = 2, $size = 14)
 {
-    $barcode = new Barcode(14, $content);
-    $path = $barcode->generateBarcode($path);
+    $barcode = new Barcode($size, $content);
+    $path = $barcode->generateBarcode($path, $scale);
     return $path;
 }
 
@@ -1670,7 +1672,7 @@ function checkQueue($params, $fun1, $fun2){
  * @param $money
  */
 function moneyFormat($money){
-    $money = round(floor($money * 100) / 100, 2);
+    $money = round($money, 2);
     return $money;
 }
 
@@ -1735,4 +1737,33 @@ function getCsvRow($file){
         yield fgetcsv($handle);
     }
     fclose($handle);
+}
+
+/**
+ * 数组内部字段求和
+ * @param $arr
+ * @param $num1
+ * @param string $num2
+ */
+function getArraySum($arr, $field1, $field2 = ''){
+    $sum = 0;
+    foreach($arr as $v){
+        $num1 = $v[$field1] ?? 0;
+        $num2 = $v[$field2] ?? 1;
+        $sum += $num1 * $num2;
+    }
+    return $sum;
+}
+
+/**
+ * 过滤Emoji
+ * @param $str
+ * @return string|string[]|null
+ */
+function filterEmoji($str) {
+    $str = preg_replace_callback(
+        '/./u', function (array $match) {
+        return strlen($match[0]) >= 4 ? '' : $match[0];
+    }, $str);
+    return $str;
 }

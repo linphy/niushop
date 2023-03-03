@@ -9,11 +9,10 @@
 	<div class="layui-form-item">
 		<label class="layui-form-label"><span class="required">*</span>品牌名称：</label>
 		<div class="layui-input-inline len-long">
-			<input name="brand_name" type="text" lay-verify="required" class="layui-input ">
+			<input name="brand_name" type="text" lay-verify="required" class="layui-input">
 		</div>
 	</div>
 
-	
 	<div class="layui-form-item">
 		<label class="layui-form-label">图片：</label>
 		<div class="layui-input-block img-upload">
@@ -81,9 +80,9 @@
 
 		// 普通图片上传
 		var logo_upload = new Upload({
-			elem: '#imgUpload',
-			url: ns.url('giftcard://shop/media/upload')
+			elem: '#imgUpload'
 		});
+
 		form.on('submit(save)', function (data) {
 			
 			if (repeat_flag) return false;

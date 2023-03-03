@@ -11,7 +11,6 @@
 namespace app\shop\controller;
 
 use app\model\system\Database;
-use app\model\system\DiyTemplate;
 use app\model\system\H5;
 use app\model\system\Menu;
 use app\model\system\Upgrade as UpgradeModel;
@@ -609,9 +608,9 @@ class Upgrade extends BaseShop
             $h5 = new H5();
             $h5->refresh();
 
-            // 刷新内置模板
-            $template = new DiyTemplate();
-            $template->refresh();
+            // 处理升级版本数据遇到的数据问题
+            $system = new System();
+            $system->handleVersionData();
 
             //清空session数据
             session('system_upgrade_info_ready', null);

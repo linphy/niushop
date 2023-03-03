@@ -13,14 +13,17 @@
 namespace app\shopapi\controller;
 
 use addon\fenxiao\model\FenxiaoData;
+use app\model\member\Withdraw;
 use app\model\order\Order as OrderModel;
 use app\model\order\OrderCommon as OrderCommonModel;
+use app\model\order\OrderRefund;
 use app\model\shop\Shop as ShopModel;
 use app\model\shop\ShopAccount;
 use app\model\shop\ShopOpenAccount;
 use app\model\shop\ShopReopen as ShopReopenModel;
 use app\model\shop\ShopSettlement;
 use app\model\web\Account as AccountModel;
+use Carbon\Carbon;
 
 class Account extends BaseApi
 {
@@ -88,68 +91,45 @@ class Account extends BaseApi
      */
     public function dashboard()
     {
-        $date = [];
-        $account_model = new AccountModel();
-        //会员余额
-        $member_balance_sum = $account_model->getMemberBalanceSum($this->site_id);
-        $is_memberwithdraw  = addon_is_exit('memberwithdraw', $this->site_id);
-        $date['is_memberwithdraw'] = $is_memberwithdraw;
-        if ($is_memberwithdraw == 1) {
-            $date['member_balance_sum'] = $member_balance_sum['data'];
-        } else {
-            $member_balance = number_format($member_balance_sum['data']['balance'] + $member_balance_sum['data']['balance_money'], 2, '.', '');
-            $date['member_balance'] = $member_balance;
-        }
+        $start_time = $this->params['start_time'] ?? Carbon::today()->timestamp;
+        $end_time = $this->params['end_time'] ?? Carbon::tomorrow()->timestamp;
 
-        //获取分销商账户统计
-        $is_addon_fenxiao = addon_is_exit('fenxiao', $this->site_id);
-        $date['is_addon_fenxiao'] = $is_addon_fenxiao;
-        if ($is_addon_fenxiao == 1) {
-            $fenxiao_data_model = new FenxiaoData();
-            $account_data       = $fenxiao_data_model->getFenxiaoAccountData($this->site_id);
-            $date['account_data'] = $account_data;
-            //累计佣金
-            $fenxiao_account = number_format($account_data['account'] + $account_data['account_withdraw'], 2, '.', '');
-            $date['fenxiao_account'] = $fenxiao_account;
-            //分销订单总金额
-            $fenxiao_order_money = $fenxiao_data_model->getFenxiaoOrderSum($this->site_id);
-            $date['fenxiao_order_money'] = $fenxiao_order_money;
-        }
-
-        $order_model = new OrderModel();
-        //获取订单总额
-        $order_total_money = $order_model->getOrderMoneySum(
+        $data = [];
+        // 收入
+        $order_money = (new OrderModel())->getOrderMoneySum([ ['site_id', '=', $this->site_id], ['pay_time', 'between', [$start_time, $end_time] ], ['order_scene', '=', 'online'] ], 'pay_money')['data'];
+        $income_data = [
             [
-                ['site_id', '=', $this->site_id],
-                ['order_status', '>', 0]
-            ], 'order_money');
-        $date['order_total_money'] = number_format($order_total_money['data'], 2, '.', '');
-
-        //获取订单退款金额
-        $refund_total_money = $order_model->getOrderMoneySum(
-            [
-                ['site_id', '=', $this->site_id],
-//				[ 'refund_status', '<>', 0 ],
-            ], 'refund_money');
-        $date['refund_total_money'] =  number_format($refund_total_money['data'], 2, '.', '');
-        $common_model = new OrderCommonModel();
-        //获取订单总数
-        $order_total_count = $common_model->getOrderCount(
-            [
-                ['site_id', '=', $this->site_id],
-                ['order_status', '>', 0]
+                'title' => '商城订单',
+                'value' => $order_money,
+                'desc' => '统计时间内，所有付款订单实付金额之和',
+                'url' => 'shop/order/lists'
             ]
-        );
-        $date['order_total_count'] = $order_total_count['data'];
-        //获取退款订单总数
-        $refund_total_count = $common_model->getOrderCount(
+        ];
+        $event = event('IncomeStatistics', ['site_id' => $this->site_id, 'start_time' => $start_time, 'end_time' => $end_time]);
+        if (!empty($event)) $income_data = array_merge($income_data, ...$event);
+        $data['total_income'] = array_sum(array_column($income_data, 'value'));
+        $data['income_data'] = $income_data;
+        // 支出
+        $disburse_data = [
             [
-                ['site_id', '=', $this->site_id],
-                ['refund_money', '>', 0],
+                'title' => '订单退款',
+                'value' => (new OrderRefund())->getRefundSum([ ['site_id', '=', $this->site_id], ['refund_money_type', '=', '1,2'], ['refund_time', 'between', [$start_time, $end_time] ] ], 'refund_pay_money')['data'],
+                'desc' => '统计时间内，所有订单退款转账金额之和',
+                'url' => 'shop/orderrefund/lists'
+            ],
+            [
+                'title' => '会员提现',
+                'value' => (new Withdraw())->getMemberWithdrawSum([ ['site_id', '=', $this->site_id], ['payment_time', 'between', [$start_time, $end_time] ] ], 'apply_money')['data'],
+                'desc' => '统计时间内，所有会员提现转账金额之和',
+                'url' => 'shop/memberwithdraw/lists'
             ]
-        );
-        $date['refund_total_count'] = $refund_total_count['data'];
-        return $this->response($this->success($date));
+        ];
+        $event = event('DisburseStatistics', ['site_id' => $this->site_id, 'start_time' => $start_time, 'end_time' => $end_time]);
+        if (!empty($event)) $disburse_data = array_merge($disburse_data, ...$event);
+        $data['total_disburse'] = array_sum(array_column($disburse_data, 'value'));
+        $data['disburse_data'] = $disburse_data;
+
+        return $this->response($this->success($data));
     }
 
     /**

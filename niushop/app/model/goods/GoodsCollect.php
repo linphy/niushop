@@ -95,13 +95,19 @@ class GoodsCollect extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getCollectPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'gc.create_time desc', $field = 'gc.collect_id, gc.member_id, gc.goods_id, gc.sku_id,sku.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual, g.goods_image')
+    public function getCollectPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'gc.create_time desc', $field = '')
     {
-        $alias = 'gc';
+
+        if(empty($field)){
+            $field = 'gc.collect_id, gc.member_id, gc.goods_id, gc.sku_id,sku.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual, g.goods_image';
+        }
         $join  = [
             ['goods g', 'gc.goods_id = g.goods_id', 'inner'],
             ['goods_sku sku', 'g.sku_id = sku.sku_id', 'inner']
         ];
+
+        $alias = 'gc';
+
         $list  = model('goods_collect')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
     }

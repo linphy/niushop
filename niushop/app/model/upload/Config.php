@@ -40,9 +40,8 @@ class Config extends BaseModel
             $res[ 'data' ][ 'value' ] =
                 [
                     "upload" => [
-                        "max_filesize" => "0",
-                        "image_allow_ext" => "",
-                        "image_allow_mime" => ""
+                        "max_filesize" => "2097152",
+                        'compress' => 'original',//压缩规格
                     ],
                     "thumb" => [
                         "thumb_big_width" => "700",

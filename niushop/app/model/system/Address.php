@@ -14,6 +14,7 @@ namespace app\model\system;
 use extend\api\HttpClient;
 use think\facade\Cache;
 use app\model\BaseModel;
+use think\facade\Db;
 
 /**
  * 地区表
@@ -54,6 +55,16 @@ class Address extends BaseModel
         $info = model("area")->getInfo([['id', '=', $circle]]);
         Cache::tag("area")->set("area_getAreaInfo_" . $circle, $info);
         return $this->success($info);
+    }
+
+    /**
+     * 获取地区数量
+     * @param $condition
+     * @return array
+     */
+    public function getAreaCount($condition){
+        $count = model("area")->getCount($condition);
+        return $this->success($count);
     }
 
     /**
@@ -165,20 +176,99 @@ class Address extends BaseModel
         $httpClient = new HttpClient();
         $res = $httpClient->post($post_url, $post_data);
         $res = json_decode($res, true);
-        $return_data = [];
         if($res['status'] == 0){
             $return_array = $res['result']['address_component'] ?? [];
             $return_data = array(
                 'province' => $return_array['province'] ?? '',
                 'city' => $return_array['city'] ?? '',
                 'district' => $return_array['district'] ?? '',
-                'address' => $return_array['street_number'] ?? ''
+                'address' => $return_array['street_number'] ?? '',
+                'full_address' => $res['result']['address'] ?? ''
             );
             return $this->success($return_data);
         }else{
             return $this->error([], $res['message']);
         }
-
     }
 
+    /**
+     * 通过地址查询
+     */
+    public function getAddressByName($address)
+    {
+        $post_url = 'https://apis.map.qq.com/ws/geocoder/v1/';
+        $config_model = new \app\model\web\Config();
+        $config_result = $config_model->getMapConfig()['data'] ?? [];
+        $config = $config_result['value'] ?? [];
+        $tencent_map_key = $config['tencent_map_key'] ?? '';
+        $post_data = array(
+            'address' => $address,
+            'key' => $tencent_map_key,
+        );
+
+        $httpClient = new HttpClient();
+        $res = $httpClient->post($post_url, $post_data);
+        $res = json_decode($res, true);
+        if($res['status'] == 0){
+            $return_array = $res['result']['location'] ?? [];
+            $return_data = array(
+                'longitude' => $return_array['lng'] ?? '',
+                'latitude' => $return_array['lat'] ?? '',
+            );
+            return $this->success($return_data);
+        }else{
+            return $this->error([], $res['message']);
+        }
+    }
+
+    /**
+     * 编辑地区
+     * @param $data
+     * @return array
+     */
+    public function saveArea($data){
+        $count = model('area')->getCount([ ['id', '=', $data['id'] ] ]);
+        if ($count) {
+            unset($data['id']);
+            $res = model('area')->update($data, [ ['id', '=', $data['id'] ] ]);
+        } else {
+            $res =  model('area')->add($data);
+        }
+        if ($res) {
+            Cache::clear("area");
+            return $this->success($res);
+        }
+        return $this->error();
+    }
+
+    /**
+     * 删除地区
+     * @param $condition
+     * @return array
+     */
+    public function deleteArae($id, $level){
+        switch ((int)$level) {
+            case 1:
+                $child = model('area')->getColumn([ ['pid', '=', $id] ], 'id');
+                if (empty($child)) {
+                    $condition = [ ['id', '=', $id], ['level', '=', $level] ];
+                } else {
+                    $child = implode(',', $child);
+                    $condition = [ ['', 'exp', Db::raw("(id = $id AND level = $level) OR (id in ($child) AND level = 2) OR (pid in ($child) AND level = 3)") ]];
+                }
+                break;
+            case 2:
+                $condition = [ ['', 'exp', Db::raw("(id = $id AND level = 2) OR (pid = $id AND level = 3)") ]];
+                break;
+            case 3:
+                $condition = [ ['id', '=', $id], ['level', '=', $level] ];
+                break;
+        }
+        $res = model('area')->delete($condition);
+        if ($res) {
+            Cache::clear("area");
+            return $this->success($res);
+        }
+        return $this->error();
+    }
 }

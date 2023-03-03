@@ -12,6 +12,7 @@
 
 namespace app\shopapi\controller;
 
+use app\model\order\OrderCommon as OrderCommonModel;
 use app\model\order\StoreOrder as StoreOrderModel;
 
 /**
@@ -40,10 +41,26 @@ class Storeorder extends BaseApi
     public function storeOrderTakeDelivery()
     {
         $order_id = isset($this->params[ 'order_id' ]) ? $this->params[ 'order_id' ] : 0;
-        $store_order_model = new StoreOrderModel();
-        $result = $store_order_model->activeTakeDelivery($order_id);
-        return $this->response($result);
 
+        $order_common_model = new OrderCommonModel();
+        $condition = array (
+            [ 'site_id', '=', $this->site_id ],
+            [ 'order_id', '=', $order_id ]
+        );
+        $order_info = $order_common_model->getOrderInfo($condition, 'delivery_code')[ 'data' ] ?? [];
+        if (empty($order_info))
+            return $order_common_model->error('', '订单不存在');
+
+        $verify_code = $order_info[ 'delivery_code' ];
+        $info = array (
+            "verifier_id" => $this->uid,
+            "verifier_name" => $this->user_info[ 'username' ],
+            "verify_from" => 'shop',
+        );
+        $verify_model = new \app\model\verify\Verify();
+        $result = $verify_model->verify($info, $verify_code);
+
+        return $this->response($result);
     }
 
 }

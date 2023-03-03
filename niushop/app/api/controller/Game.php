@@ -12,6 +12,7 @@
 
 namespace app\api\controller;
 
+use app\model\games\Games;
 use app\model\games\Record;
 
 /**
@@ -42,5 +43,14 @@ class Game extends BaseApi
         $record    = new Record();
         $list      = $record->getGamesDrawRecordPageList($condition, $page, $page_size, 'create_time desc', $field);
         return $this->response($list);
+    }
+
+    /**
+     * 最新一条正在进行的活动
+     * @return false|string
+     */
+    public function newestGame(){
+        $res = (new Games())->getFirstInfo([ ['site_id', '=', $this->site_id], ['status', '=', 1] ], 'game_id,game_type', 'game_id desc');
+        return $this->response($res);
     }
 }

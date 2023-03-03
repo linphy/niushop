@@ -42,6 +42,9 @@ class Album extends BaseModel
             return $this->error('', 'REQUEST_SITE_ID');
         }
 
+        $count = model("album")->getCount([ ['album_name', '=', $data['album_name'] ],['site_id', '=', $data['site_id'] ],['type', '=', $data['type'] ] ]);
+        if ($count) return $this->error('', '已存在相同名称的分组');
+
         $data[ "update_time" ] = time();
 
         Cache::tag("album_" . $site_id)->clear();
@@ -79,6 +82,11 @@ class Album extends BaseModel
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
+        $album_info = model("album")->getInfo($condition);
+        if (empty($album_info)) return $this->error('', '未获取到分组信息');
+
+        $count = model("album")->getCount([ ['album_id', '<>', $album_info['album_id'] ], ['album_name', '=', $data['album_name'] ],['site_id', '=', $site_id ],['type', '=', $album_info['type'] ] ]);
+        if ($count) return $this->error('', '已存在相同名称的分组');
 
         $data[ "update_time" ] = time();
         Cache::tag("album_" . $site_id)->clear();
@@ -288,7 +296,10 @@ class Album extends BaseModel
         foreach ($list as $k => $v) {
             foreach ($album_list as $ck => $cv) {
                 if ($v[ 'level' ] == 2 && $cv[ 'album_id' ] == $v[ 'pid' ]) {
+                    $album_list[ $ck ]['num'] += $v['num'];
                     $album_list[ $ck ][ 'child_list' ][] = $v;
+                    if (isset($album_list[ $ck ]['child'])) array_push($album_list[ $ck ]['child'], $v['album_id']);
+                    else $album_list[ $ck ]['child'] = [ $cv[ 'album_id' ], $v['album_id'] ];
                     unset($list[ $k ]);
                 }
             }
@@ -337,6 +348,23 @@ class Album extends BaseModel
         $res = model("album")->update($data, [ [ "album_id", "=", $album_id ] ]);
         return $this->success($res);
     }
+
+
+    /**
+     * 同步所有相册下的图片数量
+     * @param unknown $condition
+     */
+    public function refreshAlbumNum($site_id)
+    {
+        $album_list = model('album')->getList([ ['site_id', '=', $site_id] ], 'album_id');
+        foreach ($album_list as $k => $v){
+            $this->syncAlbumNum($v['album_id']);
+        }
+        return $this->success();
+    }
+
+
+
     /*******************************************************************相册编辑查询 end*****************************************************/
 
     /*******************************************************************相册图片编辑查询 start*****************************************************/
@@ -502,7 +530,7 @@ class Album extends BaseModel
      * @param string $field
      * @return multitype:string mixed
      */
-    public function getAlbumPicPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'pic_id, pic_name, pic_path, pic_spec, site_id, update_time,is_thumb')
+    public function getAlbumPicPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'pic_id, pic_name, pic_path, pic_spec, update_time,is_thumb')
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';

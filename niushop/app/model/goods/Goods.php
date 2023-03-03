@@ -14,6 +14,8 @@ use addon\discount\model\Discount;
 use app\model\BaseModel;
 use app\model\order\Order;
 use app\model\order\OrderRefund;
+use app\model\storegoods\StoreGoods;
+use app\model\storegoods\StoreSale;
 use app\model\system\Config as ConfigModel;
 use app\model\system\Cron;
 use app\model\system\Stat;
@@ -38,6 +40,11 @@ class Goods extends BaseModel
         return $this->goods_state;
     }
 
+    public function getGoodsClass()
+    {
+        return $this->goods_class;
+    }
+
     /**
      * 商品添加
      * @param $data
@@ -47,7 +54,7 @@ class Goods extends BaseModel
         model('goods')->startTrans();
 
         try {
-
+            $site_id = $data[ 'site_id' ];
             if (!empty($data[ 'goods_attr_format' ])) {
 
                 $goods_attr_format = json_decode($data[ 'goods_attr_format' ], true);
@@ -86,7 +93,6 @@ class Goods extends BaseModel
 
             $goods_data = array (
                 'goods_image' => $goods_image,
-                'goods_stock' => $data[ 'goods_stock' ],
                 'price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'price' ]) ? $data[ 'goods_sku_data' ][ 0 ][ 'price' ] : '',
                 'market_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'market_price' ]) ? $data[ 'goods_sku_data' ][ 0 ][ 'market_price' ] : '',
                 'cost_price' => !empty($data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ]) ? $data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ] : '',
@@ -135,7 +141,10 @@ class Goods extends BaseModel
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data[ 'qr_id' ] : 0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data[ 'template_id' ] : 0,
                 'form_id' => $data[ 'form_id' ] ?? 0,
-                'support_trade_type' => $data[ 'support_trade_type' ] ?? ''
+                'support_trade_type' => $data[ 'support_trade_type' ] ?? '',
+                'sale_channel' => $data[ 'sale_channel' ] ?? 'all',
+                'sale_store' => $data[ 'sale_store' ] ?? 'all',
+                'is_unify_pirce' => $data[ 'is_unify_pirce' ] ?? 1,
             );
 
             $goods_id = model('goods')->add(array_merge($goods_data, $common_data));
@@ -144,6 +153,7 @@ class Goods extends BaseModel
 
             $sku_arr = array ();
             //添加sku商品
+            $sku_stock_list = [];
             foreach ($data[ 'goods_sku_data' ] as $item) {
 
                 $goods_stock += $item[ 'stock' ];
@@ -157,7 +167,6 @@ class Goods extends BaseModel
                     'market_price' => $item[ 'market_price' ],
                     'cost_price' => $item[ 'cost_price' ],
                     'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
-                    'stock' => $item[ 'stock' ],
                     'stock_alarm' => $item[ 'stock_alarm' ],
                     'weight' => $item[ 'weight' ],
                     'volume' => $item[ 'volume' ],
@@ -167,7 +176,7 @@ class Goods extends BaseModel
                     'is_default' => $item[ 'is_default' ] ?? 0,
                     'is_consume_discount' => $data[ 'is_consume_discount' ]
                 );
-
+                $sku_stock_list[] = [ 'stock' => $item[ 'stock' ], 'site_id' => $site_id, 'goods_class' => $common_data[ 'goods_class' ] ];
                 $sku_arr[] = array_merge($sku_data, $common_data);
             }
 
@@ -176,7 +185,13 @@ class Goods extends BaseModel
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ], 'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
+
+            //同步默认门店的上下级状态
+            if ($data[ 'goods_state' ] == 1) {
+                ( new StoreGoods() )->modifyGoodsState($goods_id, $data[ 'goods_state' ], $site_id);
+            }
+
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 // 刷新SKU商品规格项/规格值JSON字符串
@@ -195,7 +210,22 @@ class Goods extends BaseModel
             //添加店铺添加统计
             $stat = new Stat();
             $stat->switchStat([ 'type' => 'add_goods', 'data' => [ 'add_goods_count' => 1, 'site_id' => $data[ 'site_id' ] ] ]);
-//            $stat->addShopStat([ 'add_goods_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
+            $stat->switchStat([ 'type' => 'goods_on', 'data' => [ 'site_id' => $data[ 'site_id' ] ] ]);
+            $sku_list = model('goods_sku')->getList([ 'goods_id' => $goods_id ], 'sku_id');
+
+
+            // 商品设置库存
+            $goods_stock_model = new \app\model\stock\GoodsStock();
+            //同步商品成本价
+            ( new StoreGoods() )->setSkuPrice([ 'goods_id' => $goods_id, 'site_id' => $site_id ]);
+            foreach ($sku_stock_list as $k => $v) {
+                $sku_stock_list[ $k ][ 'sku_id' ] = $sku_list[ $k ][ 'sku_id' ];
+            }
+            $goods_stock_model->changeGoodsStock([
+                'site_id' => $data[ 'site_id' ],
+                'goods_class' => $common_data[ 'goods_class' ],
+                'goods_sku_list' => $sku_stock_list
+            ]);
             model('goods')->commit();
 
             return $this->success($goods_id);
@@ -216,6 +246,7 @@ class Goods extends BaseModel
 
         try {
 
+            $site_id = $data[ 'site_id' ];
             if (!empty($data[ 'goods_attr_format' ])) {
 
                 $goods_attr_format = json_decode($data[ 'goods_attr_format' ], true);
@@ -237,7 +268,7 @@ class Goods extends BaseModel
 //                }
             }
 
-            if (strpos($data[ 'support_trade_type' ], 'express') !== false && $data[ 'is_free_shipping' ] == 0 && empty($data[ 'shipping_template' ])) {
+            if (isset($data[ 'support_trade_type' ]) && strpos($data[ 'support_trade_type' ], 'express') !== false && $data[ 'is_free_shipping' ] == 0 && empty($data[ 'shipping_template' ])) {
                 return $this->error('', '运费模板不能为空');
             }
 
@@ -254,7 +285,7 @@ class Goods extends BaseModel
             }
             $goods_data = array (
                 'goods_image' => $goods_image,
-                'goods_stock' => $data[ 'goods_stock' ],
+//                'goods_stock' => $data[ 'goods_stock' ],
                 'price' => $data[ 'goods_sku_data' ][ 0 ][ 'price' ],
                 'market_price' => $data[ 'goods_sku_data' ][ 0 ][ 'market_price' ],
                 'cost_price' => $data[ 'goods_sku_data' ][ 0 ][ 'cost_price' ],
@@ -270,7 +301,7 @@ class Goods extends BaseModel
                 'stock_show' => $data[ 'stock_show' ],
                 'market_price_show' => $data[ 'market_price_show' ],
                 'barrage_show' => $data[ 'barrage_show' ],
-                'support_trade_type' => $data[ 'support_trade_type' ] ?? ''
+                'support_trade_type' => $data[ 'support_trade_type' ] ?? '',
             );
 
             $common_data = array (
@@ -305,12 +336,16 @@ class Goods extends BaseModel
                 'qr_id' => isset($data[ 'qr_id' ]) ? $data[ 'qr_id' ] : 0,
                 'template_id' => isset($data[ 'template_id' ]) ? $data[ 'template_id' ] : 0,
                 'form_id' => $data[ 'form_id' ] ?? 0,
-                'support_trade_type' => $data[ 'support_trade_type' ] ?? ''
+                'support_trade_type' => $data[ 'support_trade_type' ] ?? '',
+                'sale_channel' => $data[ 'sale_channel' ] ?? 'all',
+                'sale_store' => $data[ 'sale_store' ] ?? 'all',
+                'is_unify_pirce' => $data[ 'is_unify_pirce' ] ?? 1,
             );
             model('goods')->update(array_merge($goods_data, $common_data), [ [ 'goods_id', '=', $goods_id ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
 
             $goods_stock = 0;
-
+            $goods_stock_model = new \app\model\stock\GoodsStock();
+            $sku_stock_list = [];
             // 如果只编辑价格库存就是修改，如果添加规格项/值就需要重新生成
             if (!empty($data[ 'goods_sku_data' ][ 0 ][ 'sku_id' ])) {
                 if ($data[ 'spec_type_status' ] == 1) {
@@ -331,7 +366,7 @@ class Goods extends BaseModel
                             'market_price' => $item[ 'market_price' ],
                             'cost_price' => $item[ 'cost_price' ],
                             'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
-                            'stock' => $item[ 'stock' ],
+//                            'stock' => $item[ 'stock' ],
                             'stock_alarm' => $item[ 'stock_alarm' ],
                             'weight' => $item[ 'weight' ],
                             'volume' => $item[ 'volume' ],
@@ -342,8 +377,13 @@ class Goods extends BaseModel
                             'is_consume_discount' => $data[ 'is_consume_discount' ]
                         );
                         $sku_arr[] = array_merge($sku_data, $common_data);
+                        $sku_stock_list[] = [ 'stock' => $item[ 'stock' ], 'site_id' => $site_id, 'goods_class' => $common_data[ 'goods_class' ] ];
                     }
                     model('goods_sku')->addList($sku_arr);
+                    $sku_list = model('goods_sku')->getList([ 'goods_id' => $goods_id ], 'sku_id');
+                    foreach ($sku_stock_list as $k => $v) {
+                        $sku_stock_list[ $k ][ 'sku_id' ] = $sku_list[ $k ][ 'sku_id' ];
+                    }
                 } else {
                     $discount_model = new Discount();
                     $sku_id_arr = [];
@@ -364,7 +404,7 @@ class Goods extends BaseModel
                             'price' => $item[ 'price' ],
                             'market_price' => $item[ 'market_price' ],
                             'cost_price' => $item[ 'cost_price' ],
-                            'stock' => $item[ 'stock' ],
+//                            'stock' => $item[ 'stock' ],
                             'stock_alarm' => $item[ 'stock_alarm' ],
                             'weight' => $item[ 'weight' ],
                             'volume' => $item[ 'volume' ],
@@ -382,8 +422,10 @@ class Goods extends BaseModel
                             model('goods_sku')->update(array_merge($sku_data, $common_data), [ [ 'sku_id', '=', $item[ 'sku_id' ] ], [ 'goods_class', '=', $this->goods_class[ 'id' ] ] ]);
                         } else {
                             $sku_id = model('goods_sku')->add(array_merge($sku_data, $common_data));
+                            $item[ 'sku_id' ] = $sku_id;
                             $sku_id_arr[] = $sku_id;
                         }
+                        $sku_stock_list[] = [ 'stock' => $item[ 'stock' ], 'sku_id' => $item[ 'sku_id' ], 'site_id' => $site_id, 'goods_class' => $common_data[ 'goods_class' ] ];
                     }
 
                     // 移除不存在的商品SKU
@@ -421,7 +463,7 @@ class Goods extends BaseModel
                         'market_price' => $item[ 'market_price' ],
                         'cost_price' => $item[ 'cost_price' ],
                         'discount_price' => $item[ 'price' ],//sku折扣价（默认等于单价）
-                        'stock' => $item[ 'stock' ],
+//                        'stock' => $item[ 'stock' ],
                         'stock_alarm' => $item[ 'stock_alarm' ],
                         'weight' => $item[ 'weight' ],
                         'volume' => $item[ 'volume' ],
@@ -431,20 +473,30 @@ class Goods extends BaseModel
                         'is_default' => $item[ 'is_default' ] ?? 0,
                         'is_consume_discount' => $data[ 'is_consume_discount' ]
                     );
-
+                    $sku_stock_list[] = [ 'stock' => $item[ 'stock' ], 'site_id' => $site_id, 'goods_class' => $common_data[ 'goods_class' ] ];
                     $sku_arr[] = array_merge($sku_data, $common_data);
                 }
 
                 model('goods_sku')->addList($sku_arr);
+
+                $sku_list = model('goods_sku')->getList([ 'goods_id' => $goods_id ], 'sku_id');
+                foreach ($sku_stock_list as $k => $v) {
+                    $sku_stock_list[ $k ][ 'sku_id' ] = $sku_list[ $k ][ 'sku_id' ];
+                }
             }
 
             // 赋值第一个商品sku_id
             $first_info = model('goods_sku')->getFirstData([ 'goods_id' => $goods_id ], 'sku_id', 'is_default desc,sku_id asc');
-            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ], 'goods_stock' => $goods_stock ], [ [ 'goods_id', '=', $goods_id ] ]);
+            model('goods')->update([ 'sku_id' => $first_info[ 'sku_id' ] ], [ [ 'goods_id', '=', $goods_id ] ]);
 
             if (!empty($data[ 'goods_spec_format' ])) {
                 //刷新SKU商品规格项/规格值JSON字符串
                 $this->dealGoodsSkuSpecFormat($goods_id, $data[ 'goods_spec_format' ]);
+            }
+
+            //同步默认门店的上下级状态
+            if ($data[ 'goods_state' ] == 1) {
+                ( new StoreGoods() )->modifyGoodsState($goods_id, $data[ 'goods_state' ], $site_id);
             }
 
             $cron = new Cron();
@@ -460,6 +512,20 @@ class Goods extends BaseModel
 
             event('GoodsEdit', [ 'goods_id' => $goods_id, 'site_id' => $data[ 'site_id' ] ]);
 
+            $stat = new Stat();
+            $stat->switchStat([ 'type' => 'goods_on', 'data' => [ 'site_id' => $data[ 'site_id' ] ] ]);
+
+
+            //同步商品成本价
+            ( new StoreGoods() )->setSkuPrice([ 'goods_id' => $goods_id, 'site_id' => $site_id ]);
+            //核验和校准改变的sku
+            $goods_stock_model->checkExistGoodsSku([ 'goods_id' => $goods_id ]);
+            // 商品设置库存
+            $goods_stock_model->changeGoodsStock([
+                'site_id' => $data[ 'site_id' ],
+                'goods_class' => $common_data[ 'goods_class' ],
+                'goods_sku_list' => $sku_stock_list
+            ]);
             model('goods')->commit();
             return $this->success($goods_id);
         } catch (\Exception $e) {
@@ -576,6 +642,15 @@ class Goods extends BaseModel
     {
         model('goods')->update([ 'goods_state' => $goods_state ], [ [ 'goods_id', 'in', $goods_ids ], [ 'site_id', '=', $site_id ] ]);
         model('goods_sku')->update([ 'goods_state' => $goods_state ], [ [ 'goods_id', 'in', $goods_ids ], [ 'site_id', '=', $site_id ] ]);
+
+        //同步默认门店的上下级状态
+
+        if ($goods_state == 1) {
+            ( new StoreGoods() )->modifyGoodsState($goods_ids, $goods_state, $site_id);
+        }
+
+        $stat = new Stat();
+        $stat->switchStat([ 'type' => 'goods_on', 'data' => [ 'site_id' => $site_id ] ]);
         return $this->success(1);
     }
 
@@ -590,6 +665,15 @@ class Goods extends BaseModel
     {
         model('goods')->update([ 'goods_state' => $goods_state ], $condition);
         model('goods_sku')->update([ 'goods_state' => $goods_state ], $condition);
+
+        if ($goods_state == 1) {
+            $goods_list = model('goods')->getList($condition, 'goods_id,site_id');
+            $goods_ids = array_column($goods_list, 'goods');
+            //同步默认门店的上下级状态
+            ( new StoreGoods() )->modifyGoodsState($goods_ids, $goods_state, $goods_list[ 0 ][ 'site_id' ]);
+        }
+
+
         return $this->success(1);
     }
 
@@ -714,9 +798,9 @@ class Goods extends BaseModel
      * @param string $field
      * @return array
      */
-    public function getGoodsSkuInfo($condition, $field = "sku_id,sku_name,sku_spec_format,price,market_price,discount_price,promotion_type,start_time,end_time,stock,click_num,sale_num,collect_num,sku_image,sku_images,goods_id,site_id,goods_content,goods_state,is_virtual,is_free_shipping,goods_spec_format,goods_attr_format,introduction,unit,video_url,sku_no,goods_name,goods_class,goods_class_name")
+    public function getGoodsSkuInfo($condition, $field = "sku_id,sku_name,sku_spec_format,price,market_price,discount_price,promotion_type,start_time,end_time,stock,click_num,sale_num,collect_num,sku_image,sku_images,goods_id,site_id,goods_content,goods_state,is_virtual,is_free_shipping,goods_spec_format,goods_attr_format,introduction,unit,video_url,sku_no,goods_name,goods_class,goods_class_name,cost_price", $alias = 'a', $join = null)
     {
-        $info = model('goods_sku')->getInfo($condition, $field);
+        $info = model('goods_sku')->getInfo($condition, $field, $alias, $join);
         return $this->success($info);
     }
 
@@ -729,19 +813,19 @@ class Goods extends BaseModel
      */
     public function getGoodsSkuDetail($sku_id, $site_id, $field = '')
     {
-        $prefix = config('database.connections.mysql.prefix');
+        $condition = [ [ 'gs.sku_id', '=', $sku_id ], [ 'gs.site_id', '=', $site_id ], [ 'gs.is_delete', '=', 0 ] ];
+
         if (empty($field)) {
             $field = 'gs.goods_id,gs.sku_id,gs.qr_id,gs.goods_name,gs.sku_name,gs.sku_spec_format,gs.price,gs.market_price,gs.discount_price,gs.promotion_type,gs.start_time
             ,gs.end_time,gs.stock,gs.click_num,(g.sale_num + g.virtual_sale) as sale_num,gs.collect_num,gs.sku_image,gs.sku_images
             ,gs.goods_content,gs.goods_state,gs.is_free_shipping,gs.goods_spec_format,gs.goods_attr_format,gs.introduction,gs.unit,gs.video_url
-            ,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,gs.support_trade_type,g.goods_image,g.keywords,g.stock_show,g.sale_show,g.market_price_show,g.barrage_show,
-            (SELECT count(evaluate_id) FROM ' . $prefix . 'goods_evaluate nge WHERE gs.goods_id = nge.goods_id and is_show = 1 and is_audit = 1) as evaluate';
+            ,gs.is_virtual,gs.goods_service_ids,gs.max_buy,gs.min_buy,gs.is_limit,gs.limit_type,gs.support_trade_type,g.goods_image,g.keywords,g.stock_show,g.sale_show,g.market_price_show,g.barrage_show,g.evaluate,g.goods_class';
         }
-
         $join = [
             [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
         ];
-        $info = model('goods_sku')->getInfo([ [ 'gs.sku_id', '=', $sku_id ], [ 'gs.site_id', '=', $site_id ], [ 'gs.is_delete', '=', 0 ] ], $field, 'gs', $join);
+
+        $info = model('goods_sku')->getInfo($condition, $field, 'gs', $join);
         return $this->success($info);
     }
 
@@ -752,16 +836,19 @@ class Goods extends BaseModel
      * @param string $field
      * @return array
      */
-    public function getGoodsSku($goods_id, $site_id, $field = 'gs.sku_id,g.goods_image,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.promotion_type,gs.end_time,gs.stock,gs.sku_image,gs.sku_images,gs.goods_spec_format,gs.is_limit,gs.limit_type')
+    public function getGoodsSku($goods_id, $site_id, $field = '')
     {
-        $join = [
-            [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
-        ];
-
         $condition = [
             [ 'gs.goods_id', '=', $goods_id ],
             [ 'gs.site_id', '=', $site_id ],
             [ 'gs.is_delete', '=', 0 ],
+        ];
+
+        if (empty($field)) {
+            $field = 'gs.sku_id,g.goods_image,gs.sku_name,gs.sku_spec_format,gs.price,gs.discount_price,gs.promotion_type,gs.end_time,gs.stock,gs.sku_image,gs.sku_images,gs.goods_spec_format,gs.is_limit,gs.limit_type,gs.market_price,g.goods_state';
+        }
+        $join = [
+            [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
         ];
 
         $list = model('goods_sku')->getList($condition, $field, 'gs.sku_id asc', 'gs', $join);
@@ -775,9 +862,9 @@ class Goods extends BaseModel
      * @param string $order
      * @param string $limit
      */
-    public function getGoodsList($condition = [], $field = 'goods_id,goods_class,goods_class_name,goods_attr_name,goods_name,site_id,sort,goods_image,goods_content,goods_state,price,market_price,cost_price,goods_stock,goods_stock_alarm,is_virtual,is_free_shipping,shipping_template,goods_spec_format,goods_attr_format,create_time', $order = 'create_time desc', $limit = null)
+    public function getGoodsList($condition = [], $field = 'goods_id,goods_class,goods_class_name,goods_attr_name,goods_name,site_id,sort,goods_image,goods_content,goods_state,price,market_price,cost_price,goods_stock,goods_stock_alarm,is_virtual,is_free_shipping,shipping_template,goods_spec_format,goods_attr_format,create_time', $order = 'create_time desc', $limit = null, $alias = '', $join = [])
     {
-        $list = model('goods')->getList($condition, $field, $order, '', '', '', $limit);
+        $list = model('goods')->getList($condition, $field, $order, $alias, $join, '', $limit);
         return $this->success($list);
     }
 
@@ -789,7 +876,7 @@ class Goods extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getGoodsPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'a.create_time desc', $field = 'a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete', $alias = 'a', $join = [])
+    public function getGoodsPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = 'a.create_time desc', $field = 'a.goods_id,a.goods_name,a.site_id,a.site_name,a.goods_image,a.goods_state,a.price,a.goods_stock,a.goods_stock_alarm,a.create_time,a.sale_num,a.is_virtual,a.goods_class,a.goods_class_name,a.is_fenxiao,a.fenxiao_type,a.promotion_addon,a.sku_id,a.is_consume_discount,a.discount_config,a.discount_method,a.sort,a.label_id,a.is_delete', $alias = 'a', $join = [])
     {
         $list = model('goods')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         return $this->success($list);
@@ -800,13 +887,28 @@ class Goods extends BaseModel
      * @param $goods_sku_array
      * @return array
      */
-    public function editGoodsStock($goods_sku_array)
+    public function editGoodsStock($goods_sku_array, $site_id)
     {
         $goods_sku_model = new GoodsStock();
+        $store_stock_model = new \app\model\stock\GoodsStock();
         model('goods')->startTrans();
         try {
+            $sku_stock_list = [];
             foreach ($goods_sku_array as $k => $v) {
-                $sku_info = model("goods_sku")->getInfo([ [ 'sku_id', '=', $v[ 'sku_id' ] ] ], "goods_id,stock");
+                $sku_info = model("goods_sku")->getInfo([ [ 'site_id', '=', $site_id ], [ 'sku_id', '=', $v[ 'sku_id' ] ] ], "goods_id,stock, goods_class");
+
+                $goods_id = $sku_info[ 'goods_id' ];
+                $goods_class = $sku_info[ 'goods_class' ];
+                //验证当前规格是否参加的活动
+                $discount_model = new Discount();
+                $discount_info = [];
+                if (!empty($item[ 'sku_id' ])) {
+                    $discount_info_result = $discount_model->getDiscountGoodsInfo([ [ 'pdg.sku_id', '=', $v[ 'sku_id' ] ], [ 'pd.status', '=', 1 ] ], 'id');
+                    $discount_info = $discount_info_result[ 'data' ];
+                }
+                if (empty($discount_info)) {
+                    $v[ 'discount_price' ] = $v[ 'price' ];
+                }
 
                 if ($k == 0) {//修改商品中的价格等信息
                     $goods_data = [
@@ -816,24 +918,32 @@ class Goods extends BaseModel
                     ];
                     model('goods')->update($goods_data, [ [ 'goods_id', '=', $sku_info[ 'goods_id' ] ] ]);
                 }
-                if ($v[ 'stock' ] > $sku_info[ 'stock' ]) {
-
-                    $sku_stock_data = [
-                        'sku_id' => $v[ 'sku_id' ],
-                        'num' => $v[ 'stock' ] - $sku_info[ 'stock' ]
-                    ];
-                    $goods_sku_model->incStock($sku_stock_data);
-                }
-                if ($v[ 'stock' ] < $sku_info[ 'stock' ]) {
-                    $sku_stock_data = [
-                        'sku_id' => $v[ 'sku_id' ],
-                        'num' => $sku_info[ 'stock' ] - $v[ 'stock' ]
-                    ];
-                    $goods_sku_model->decStock($sku_stock_data);
-                }
+//                if ($v[ 'stock' ] > $sku_info[ 'stock' ]) {
+//
+//                    $sku_stock_data = [
+//                        'sku_id' => $v[ 'sku_id' ],
+//                        'num' => $v[ 'stock' ] - $sku_info[ 'stock' ]
+//                    ];
+//                    $goods_sku_model->incStock($sku_stock_data);
+//                }
+//                if ($v[ 'stock' ] < $sku_info[ 'stock' ]) {
+//                    $sku_stock_data = [
+//                        'sku_id' => $v[ 'sku_id' ],
+//                        'num' => $sku_info[ 'stock' ] - $v[ 'stock' ]
+//                    ];
+//                    $goods_sku_model->decStock($sku_stock_data);
+//                }
+                $stock = $v[ 'stock' ];
                 unset($v[ 'stock' ]);
                 model('goods_sku')->update($v, [ [ 'sku_id', '=', $v[ 'sku_id' ] ] ]);
+                $sku_stock_list[] = [ 'stock' => $stock, 'sku_id' => $v[ 'sku_id' ], 'goods_class' => $goods_class ];
+
             }
+            $store_stock_model->changeGoodsStock([
+                'site_id' => $site_id,
+                'goods_sku_list' => $sku_stock_list,
+                'goods_class' => $goods_class
+            ]);
             model('goods')->commit();
             return $this->success();
         } catch (\Exception $e) {
@@ -850,9 +960,9 @@ class Goods extends BaseModel
      * @param null $limit
      * @return array
      */
-    public function getGoodsSkuList($condition = [], $field = 'sku_id,sku_name,price,stock,sale_num,sku_image,goods_id,goods_name,site_id,spec_name', $order = 'price asc', $limit = null)
+    public function getGoodsSkuList($condition = [], $field = 'sku_id,sku_name,price,stock,sale_num,sku_image,goods_id,goods_name,site_id,spec_name', $order = 'price asc', $limit = null, $alias = '', $join = [])
     {
-        $list = model('goods_sku')->getList($condition, $field, $order, '', '', '', $limit);
+        $list = model('goods_sku')->getList($condition, $field, $order, $alias, $join, '', $limit);
         return $this->success($list);
     }
 
@@ -864,9 +974,9 @@ class Goods extends BaseModel
      * @param string $order
      * @param string $field
      */
-    public function getGoodsSkuPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = '', $join = '')
+    public function getGoodsSkuPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*', $alias = '', $join = '', $group = null)
     {
-        $list = model('goods_sku')->Lists($condition, $field, $order, $page, $page_size, $alias, $join);
+        $list = model('goods_sku')->Lists($condition, $field, $order, $page, $page_size, $alias, $join, $group);
         return $this->success($list);
     }
 
@@ -1107,7 +1217,7 @@ class Goods extends BaseModel
      * @param $sku_id
      * @param $num
      */
-    public function incGoodsSaleNum($sku_id, $num)
+    public function incGoodsSaleNum($sku_id, $num, $store_id = 0)
     {
         $condition = array (
             [ "sku_id", "=", $sku_id ]
@@ -1117,8 +1227,13 @@ class Goods extends BaseModel
         if ($res !== false) {
             $sku_info = model("goods_sku")->getInfo($condition, "goods_id");
             $res = model("goods")->setInc([ [ "goods_id", "=", $sku_info[ "goods_id" ] ] ], "sale_num", $num);
+            if ($store_id > 0) {
+                $store_sale_model = new StoreSale();
+                $store_sale_model->incStoreGoodsSaleNum([ 'sku_id' => $sku_id, 'num' => $num, 'store_id' => $store_id, 'goods_id' => $sku_info[ "goods_id" ] ]);
+            }
             return $this->success($res);
         }
+
 
         return $this->error($res);
     }
@@ -1128,16 +1243,23 @@ class Goods extends BaseModel
      * @param $sku_id
      * @param $num
      */
-    public function decGoodsSaleNum($sku_id, $num)
+    public function decGoodsSaleNum($sku_id, $num, $store_id = 0)
     {
         $condition = array (
-            [ "sku_id", "=", $sku_id ]
+            [ 'sku_id', '=', $sku_id ]
         );
         //增加sku销量
-        $res = model("goods_sku")->setDec($condition, "sale_num", $num);
+        $res = model('goods_sku')->setDec($condition, 'sale_num', $num);
         if ($res !== false) {
-            $sku_info = model("goods_sku")->getInfo($condition, "goods_id");
-            $res = model("goods")->setDec([ [ "goods_id", "=", $sku_info[ "goods_id" ] ] ], "sale_num", $num);
+            $sku_info = model('goods_sku')->getInfo($condition, 'goods_id');
+            if (!empty($sku_info)) {
+                $res = model('goods')->setDec([ [ 'goods_id', '=', $sku_info[ 'goods_id' ] ] ], 'sale_num', $num);
+                if ($store_id > 0) {
+                    $store_sale_model = new StoreSale();
+                    $store_sale_model->decStoreGoodsSaleNum([ 'sku_id' => $sku_id, 'num' => $num, 'store_id' => $store_id, 'goods_id' => $sku_info[ 'goods_id' ] ]);
+                }
+            }
+
             return $this->success($res);
         }
         return $this->error($res);
@@ -1160,6 +1282,30 @@ class Goods extends BaseModel
         $result = model('goods')->update([
             'label_id' => $label_id,
             'label_name' => $label_info[ 'label_name' ],
+        ], [
+            [ 'site_id', '=', $site_id ],
+            [ 'goods_id', 'in', $goods_ids ]
+        ]);
+        return $this->success($result);
+    }
+
+    /**
+     * 修改商品表单
+     * @param $form_id
+     * @param $site_id
+     * @param $goods_ids
+     * @return array
+     */
+    public function modifyGoodsForm($form_id, $site_id, $goods_ids)
+    {
+        $result = model('goods')->update([
+            'form_id' => $form_id,
+        ], [
+            [ 'site_id', '=', $site_id ],
+            [ 'goods_id', 'in', $goods_ids ]
+        ]);
+        $result = model('goods_sku')->update([
+            'form_id' => $form_id,
         ], [
             [ 'site_id', '=', $site_id ],
             [ 'goods_id', 'in', $goods_ids ]
@@ -1293,14 +1439,27 @@ class Goods extends BaseModel
      * @param $member_id
      * @return array
      */
-    public function getGoodsPrice($sku_id, $member_id)
+    public function getGoodsPrice($sku_id, $member_id, $store_id = 0)
     {
         $res = [
             'discount_price' => 0, // 折扣价（默认等于单价）
             'member_price' => 0, // 会员价
             'price' => 0 // 最低价格
         ];
-        $goods_sku_info = model("goods_sku")->getInfo([ [ 'sku_id', '=', $sku_id ] ], 'is_consume_discount,discount_config,discount_method,price,member_price,discount_price');
+        $condition = [
+            [ 'gs.sku_id', '=', $sku_id ]
+        ];
+
+        $field = 'gs.is_consume_discount,gs.discount_config,gs.discount_method,gs.price,gs.member_price,gs.discount_price';
+        $join = [
+            [ 'goods g', 'g.goods_id = gs.goods_id', 'inner' ],
+        ];
+        if ($store_id) {
+            $join[] = [ 'store_goods_sku sgs', 'gs.sku_id = sgs.sku_id and sgs.store_id=' . $store_id, 'left' ];
+            $field = str_replace('gs.price', 'IFNULL(IF(g.is_unify_pirce = 1,gs.price,sgs.price), gs.price) as price', $field);
+            $field = str_replace('gs.discount_price', 'IFNULL(IF(g.is_unify_pirce = 1,gs.discount_price,sgs.price), gs.discount_price) as discount_price', $field);
+        }
+        $goods_sku_info = model("goods_sku")->getInfo($condition, $field, 'gs', $join);
 
         if (empty($goods_sku_info)) return $this->success($res);
 
@@ -1362,16 +1521,16 @@ class Goods extends BaseModel
      * @param $member_id
      * @param $site_id
      */
-    public function getGoodsListMemberPirce(array $goods_list, $member_id)
+    public function getGoodsListMemberPrice(array $goods_list, $member_id)
     {
-        if (!addon_is_exit("memberprice")) return $goods_list;
-
         $alias = 'm';
         $join = [
             [ 'member_level ml', 'ml.level_id = m.member_level', 'inner' ],
         ];
         $member_info = model("member")->getInfo([ [ 'member_id', '=', $member_id ] ], 'm.member_level,ml.consume_discount', $alias, $join);
         if (empty($member_info)) return $goods_list;
+
+        if (!addon_is_exit("memberprice")) return $goods_list;
 
         foreach ($goods_list as $key => $goods_item) {
             if ($goods_item[ 'is_consume_discount' ]) {
@@ -1403,6 +1562,7 @@ class Goods extends BaseModel
                             break;
                     }
                 } else {
+                    // 默认按会员享受折扣计算
                     $goods_list[ $key ][ 'member_price' ] = number_format($goods_item[ 'price' ] * $member_info[ 'consume_discount' ] / 100, 2, '.', '');
                 }
             } else {
@@ -1414,6 +1574,9 @@ class Goods extends BaseModel
 
     /**
      * 获取会员卡商品价格
+     * @param $sku_id
+     * @param $level_id
+     * @return array
      */
     public function getMemberCardGoodsPrice($sku_id, $level_id)
     {
@@ -1881,7 +2044,8 @@ class Goods extends BaseModel
                 'timer_on' => 0,//定时上架
                 'timer_off' => 0,//定时下架
                 'brand_id' => 0,
-                'is_consume_discount' => $goods_data[ 'is_consume_discount' ] == 1 || $goods_data[ 'is_consume_discount' ] == '是' ? 1 : 0 //是否参与会员折扣
+                'is_consume_discount' => $goods_data[ 'is_consume_discount' ] == 1 || $goods_data[ 'is_consume_discount' ] == '是' ? 1 : 0, //是否参与会员折扣
+                'support_trade_type' => 'express,store,local'
             ];
             $res = $this->addGoods($data);
             return $res;
@@ -1938,32 +2102,57 @@ class Goods extends BaseModel
      * @param $goods_sku_array
      * @return array
      */
-    public function editGoodsSkuStock($goods_sku_array, $stock, $type)
+    public function editGoodsSkuStock($goods_sku_array, $stock, $type, $site_id = 0)
     {
         $goods_sku_model = new GoodsStock();
         model('goods')->startTrans();
         try {
+            $stock_list = [];
             foreach ($goods_sku_array as $k => $v) {
 
                 if ($type == 'inc') {
-                    $sku_stock_data = [
-                        'sku_id' => $v[ 'sku_id' ],
-                        'num' => $stock
-                    ];
-                    $goods_sku_model->incStock($sku_stock_data);
+                    $item_stock = $v[ 'stock' ] + $stock;
+//                    $sku_stock_data = [
+//                        'sku_id' => $v[ 'sku_id' ],
+//                        'num' => $stock
+//                    ];
+//                    $goods_sku_model->incStock($sku_stock_data);
                 } else {
-                    $sku_stock_data = [
-                        'sku_id' => $v[ 'sku_id' ],
-                        'num' => $v[ 'stock' ] >= $stock ? $stock : $v[ 'stock' ]
-                    ];
-                    $goods_sku_model->decStock($sku_stock_data);
+                    $item_stock = $v[ 'stock' ] - $stock;
+                    $item_stock = $item_stock < 0 ? 0 : $item_stock;
+//                    $sku_stock_data = [
+//                        'sku_id' => $v[ 'sku_id' ],
+//                        'num' => $v[ 'stock' ] >= $stock ? $stock : $v[ 'stock' ]
+//                    ];
+//                    $goods_sku_model->decStock($sku_stock_data);
                 }
+                $goods_class = $v[ 'goods_class' ];
+                $stock_list[] = [ 'sku_id' => $v[ 'sku_id' ], 'stock' => $item_stock, 'goods_class' => $v[ 'goods_class' ] ];
+            }
+
+            $goods_stock_model = new \app\model\stock\GoodsStock();
+            $result = $goods_stock_model->changeGoodsStock([
+                'site_id' => $site_id,
+                'goods_sku_list' => $stock_list
+            ]);
+            if ($result[ 'code' ] < 0) {
+                model('goods')->rollback();
+                return $result;
             }
             model('goods')->commit();
             return $this->success();
         } catch (\Exception $e) {
             model('goods')->rollback();
-            return $this->error($e->getMessage());
+            return $this->error($e->getMessage() . $e->getFile() . $e->getLine());
         }
+    }
+
+    /**
+     * 获取商品图片大小
+     */
+    public function getGoodsImage($goods_images, $site_id)
+    {
+        $list = model('album_pic')->getList([ [ 'pic_path', 'in', $goods_images ], [ 'site_id', '=', $site_id ] ], 'pic_path,pic_spec');
+        return $this->success($list);
     }
 }

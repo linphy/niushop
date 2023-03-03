@@ -65,10 +65,14 @@ class Ordercreate extends BaseApi
             'member_card_unit' => $this->params[ "member_card_unit" ] ?? '',
             'form_data' => isset($this->params[ "form_data" ]) && !empty($this->params[ "form_data" ]) ? json_decode($this->params[ "form_data" ], true) : [],
             'jielong_id' => isset($this->params[ 'jielong_id' ]) ? $this->params[ 'jielong_id' ] : '',//接龙活动id
+            'member_goods_card' => isset($this->params[ "member_goods_card" ]) && !empty($this->params[ "member_goods_card" ]) ? json_decode($this->params[ "member_goods_card" ], true) : [],
+            //门店专属
+            'store_id' => $this->params[ "store_id" ] ?? 0,
         ];
         if (empty($data[ 'cart_ids' ]) && empty($data[ 'sku_id' ])) {
             return $this->response($this->error('', '缺少必填参数商品数据'));
         }
+
         $res = $order_create->create($data);
         return $this->response($res);
     }
@@ -164,6 +168,10 @@ class Ordercreate extends BaseApi
             'member_card_unit' => $this->params[ "member_card_unit" ] ?? '',
             'form_data' => isset($this->params[ "form_data" ]) && !empty($this->params[ "form_data" ]) ? json_decode($this->params[ "form_data" ], true) : [],
             'jielong_id' => isset($this->params[ 'jielong_id' ]) ? $this->params[ 'jielong_id' ] : '',//接龙活动id
+            'member_goods_card' => isset($this->params[ "member_goods_card" ]) && !empty($this->params[ "member_goods_card" ]) ? json_decode($this->params[ "member_goods_card" ], true) : [],
+
+            //门店专属
+            'store_id' => $this->params[ "store_id" ] ?? 0,
         ];
         if (empty($data[ 'cart_ids' ]) && empty($data[ 'sku_id' ])) {
             return $this->response($this->error('', '缺少必填参数商品数据'));
@@ -202,21 +210,15 @@ class Ordercreate extends BaseApi
             'is_open_card' => $this->params[ "is_open_card" ] ?? 0,
             'member_card_unit' => $this->params[ "member_card_unit" ] ?? '',
             'jielong_id' => isset($this->params[ 'jielong_id' ]) ? $this->params[ 'jielong_id' ] : '',//接龙活动id
+            //门店专属
+            'store_id' => $this->params[ "store_id" ] ?? 0,
         ];
 
         if (empty($data[ 'cart_ids' ]) && empty($data[ 'sku_id' ])) {
             return $this->response($this->error('', '缺少必填参数商品数据'));
         }
         $res = $order_create->orderPayment($data);
-//        $coupon_type_model = new CouponType();
-//        echo "<pre>";
-//        print_r($res['shop_goods_list']['promotion']);exit;
-//        if(!empty($res['shop_goods_list']['promotion']['manjian'])){
-//            foreach($res['shop_goods_list']['promotion']['manjian'] as $k=>&$v){
-//                     $v['coupon_num'] = explode(',',$v['discount_array']['rule']['coupon_num']);
-//                     $v['coupon'] = $coupon_type_model->getCouponTypeList([['coupon_type_id','in',$v['discount_array']['rule']['coupon']]]);
-//            }
-//        }
+
         $res[ 'shop_goods_list' ][ 'promotion' ][ 'manjian' ][ 'manjian_info' ] = [];
         if (!empty($res[ 'shop_goods_list' ][ 'promotion' ][ 'manjian' ][ 0 ][ 'manjian_id' ])) {
             $manjian_model = new ManjianModel();

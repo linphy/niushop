@@ -252,4 +252,28 @@ class Orderrefund extends BaseApi
         $res = $order_refund_model->orderRefundClose($order_goods_id, $this->site_id, $this->user_info);
         return $this->response($res);
     }
+
+    /**
+     * 主动退款
+     * @return false|string
+     */
+    public function activeRefund(){
+        $order_goods_id = $this->params['order_goods_id'] ?? 0;
+        $refund_money_type = $this->params['refund_money_type'] ?? '';
+        $shop_refund_remark = $this->params['shop_refund_remark'] ?? '';
+        $do_refund_money = $this->params['do_refund_money'] ?? '';
+
+        $order_refund_model = new OrderRefundModel();
+        $params = array (
+            'site_id' => $this->site_id,
+            'app_module' => $this->app_module,
+            'refund_money_type' => $refund_money_type,
+            'shop_refund_remark' => $shop_refund_remark,
+            'user_info' => $this->user_info,
+            'order_goods_id' => $order_goods_id,
+            'do_refund_money' => $do_refund_money
+        );
+        $res = $order_refund_model->doOrderOrderRefund($params);
+        return $this->response($res);
+    }
 }

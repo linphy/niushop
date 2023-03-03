@@ -35,7 +35,6 @@ class ExpressCompany extends BaseModel
         $data[ 'logo' ] = $company_info[ 'data' ][ 'logo' ];
         $data[ 'express_no' ] = $company_info[ 'data' ][ 'express_no' ];
         $brand_id = model('express_company')->add($data);
-        Cache::tag('express_company')->clear();
         return $this->success($brand_id);
     }
 
@@ -49,7 +48,6 @@ class ExpressCompany extends BaseModel
     {
         $data[ 'modify_time' ] = time();
         $res = model('express_company')->update($data, $condition);
-        Cache::tag('express_company')->clear();
         return $this->success($res);
     }
 
@@ -61,7 +59,6 @@ class ExpressCompany extends BaseModel
     public function deleteExpressCompany($condition)
     {
         $res = model('express_company')->delete($condition);
-        Cache::tag('express_company')->clear();
         return $this->success($res);
     }
 
@@ -73,18 +70,12 @@ class ExpressCompany extends BaseModel
      */
     public function getExpressCompanyInfo($condition, $field = 'id, site_id, company_id, express_no, content_json, background_image, font_size, width, height, create_time, modify_time, scale')
     {
-        $data = json_encode([ $condition, $field ]);
-        $cache = Cache::get('express_company_getExpressCompanyInfo_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $res = model('express_company')->getInfo($condition, $field);
         if (!empty($res)) {
             if (empty($res[ 'content_json' ])) {
                 $res[ 'content_json' ] = json_encode($this->getPrintItemList());
             }
         }
-        Cache::tag('express_company')->set('express_company_getExpressCompanyInfo_' . $data, $res);
         return $this->success($res);
     }
 
@@ -93,19 +84,15 @@ class ExpressCompany extends BaseModel
      * @param array $condition
      * @param string $field
      * @param string $order
+     * @param string $alias
+     * @param array $join
+     * @param string $group
      * @param null $limit
      * @return array
      */
-    public function getExpressCompanyList($condition = [], $field = 'id, site_id, company_id, express_no, content_json, background_image, font_size, width, height, create_time, modify_time, scale, company_name', $order = '', $limit = null)
+    public function getExpressCompanyList($condition = [], $field = 'id, site_id, company_id, express_no, content_json, background_image, font_size, width, height, create_time, modify_time, scale, company_name', $order = '', $alias = '', $join = [], $group = '', $limit = null)
     {
-        $data = json_encode([ $condition, $field, $order, $limit ]);
-        $cache = Cache::get('express_company_getExpressCompanyList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
-        $list = model('express_company')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag('express_company')->set('express_company_getExpressCompanyList_' . $data, $list);
-
+        $list = model('express_company')->getList($condition, $field, $order, $alias, $join, $group, $limit);
         return $this->success($list);
     }
 
@@ -120,13 +107,7 @@ class ExpressCompany extends BaseModel
      */
     public function getExpressCompanyPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'id, site_id, company_id,express_no, content_json, background_image, font_size, width, height, create_time, modify_time, scale')
     {
-        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
-        $cache = Cache::get('express_company_getExpressCompanyPageList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('express_company')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag('express_company')->set('express_company_getExpressCompanyPageList_' . $data, $list);
         return $this->success($list);
     }
 

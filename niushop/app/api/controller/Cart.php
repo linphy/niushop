@@ -27,7 +27,7 @@ class Cart extends BaseApi
         $cart = new CartModel();
         $data = [
             'site_id' => $this->site_id,
-            'member_id' => $token[ 'data' ][ 'member_id' ],
+            'member_id' => $this->member_id,
             'sku_id' => $sku_id,
             'num' => $num,
             'form_data' => $form_data
@@ -57,7 +57,7 @@ class Cart extends BaseApi
         $cart = new CartModel();
         $data = [
             'cart_id' => $cart_id,
-            'member_id' => $token[ 'data' ][ 'member_id' ],
+            'member_id' => $this->member_id,
             'num' => $num,
             'form_data' => $form_data
         ];
@@ -80,7 +80,7 @@ class Cart extends BaseApi
         $cart = new CartModel();
         $data = [
             'cart_id' => $cart_id,
-            'member_id' => $token[ 'data' ][ 'member_id' ]
+            'member_id' => $this->member_id,
         ];
         $res = $cart->deleteCart($data);
         return $this->response($res);
@@ -96,7 +96,7 @@ class Cart extends BaseApi
 
         $cart = new CartModel();
         $data = [
-            'member_id' => $token[ 'data' ][ 'member_id' ]
+            'member_id' => $this->member_id,
         ];
         $res = $cart->clearCart($data);
         return $this->response($res);
@@ -109,19 +109,39 @@ class Cart extends BaseApi
     {
         $token = $this->checkToken();
         if ($token[ 'code' ] < 0) return $this->response($token);
-        $cart = new CartModel();
-        $list = $cart->getCart($token[ 'data' ][ 'member_id' ], $this->site_id);
 
+        $this->initStoreData();
         $goods = new Goods();
-        if (!empty($list[ 'data' ])) {
-            foreach ($list[ 'data' ] as $k => $v) {
-                // 是否参与会员等级折扣
-                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id);
-                $goods_member_price = $goods_member_price[ 'data' ];
-                if (!empty($goods_member_price[ 'member_price' ])) {
-                    $list[ 'data' ][ $k ][ 'member_price' ] = $goods_member_price[ 'price' ];
-                }
+
+        $condition = [
+            ['ngc.site_id', '=', $this->site_id],
+            ['ngc.member_id', '=', $this->member_id],
+            ['ngs.is_delete', '=', 0 ]
+        ];
+        $field = 'ngc.cart_id, ngc.site_id, ngc.member_id, ngc.sku_id, ngc.num, ngs.sku_name,ngs.goods_id,
+            ngs.sku_no, ngs.sku_spec_format,ngs.price,ngs.market_price, ngs.goods_spec_format,
+            ngs.discount_price, ngs.promotion_type, ngs.start_time, ngs.end_time, ngs.stock, 
+            ngs.sku_image, ngs.sku_images, ngs.goods_state, ngs.goods_stock_alarm, ngs.is_virtual, ngs.goods_name, ngs.is_consume_discount, ngs.discount_config, ngs.member_price, ngs.discount_method,
+            ngs.virtual_indate, ngs.is_free_shipping, ngs.shipping_template, ngs.unit, ngs.introduction,ngs.sku_spec_format, ngs.keywords, ngs.max_buy, ngs.min_buy, ns.site_name, ngs.is_limit, ngs.limit_type';
+        $join = [
+            ['goods_cart ngc', 'ngc.sku_id = ngs.sku_id', 'inner'],
+            ['site ns', 'ns.site_id = ngs.site_id', 'left']
+        ];
+        // 如果是连锁运营模式
+        if ($this->store_data['config']['store_business'] == 'store') {
+            $join[] = [ 'store_goods_sku sgs', 'ngs.sku_id = sgs.sku_id and sgs.store_id=' . $this->store_id, 'left' ];
+            $field .= ',IFNULL(sgs.status, 0) as store_goods_status';
+
+            $field = str_replace('ngs.price', 'IFNULL(IF(ngs.is_unify_pirce = 1,ngs.price,sgs.price), ngs.price) as price', $field);
+            $field = str_replace('ngs.discount_price', 'IFNULL(IF(ngs.is_unify_pirce = 1,ngs.discount_price,sgs.price), ngs.discount_price) as discount_price', $field);
+            if ($this->store_data['store_info']['stock_type'] == 'store' ) {
+                $field = str_replace('ngs.stock', 'IFNULL(sgs.stock, 0) as stock', $field);
             }
+        }
+
+        $list = $goods->getGoodsSkuList($condition, $field, 'ngc.cart_id desc', null, 'ngs', $join);
+        if (!empty($list[ 'data' ])) {
+            $list[ 'data' ] = $goods->getGoodsListMemberPrice($list[ 'data' ], $this->member_id);
         }
         return $this->response($list);
     }
@@ -134,21 +154,25 @@ class Cart extends BaseApi
     {
         $token = $this->checkToken();
         if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $this->initStoreData();
+
         $cart = new CartModel();
-//        $list = $cart->getCartCount($token['data']['member_id']);
         $condition = [
-            [ 'gc.member_id', '=', $token[ 'data' ][ 'member_id' ] ],
+            [ 'gc.member_id', '=', $this->member_id ],
             [ 'gc.site_id', '=', $this->site_id ],
             [ 'gs.goods_state', '=', 1 ],
             [ 'gs.is_delete', '=', 0 ]
         ];
-        $list = $cart->getCartList($condition, 'gc.num');
-        $list = $list[ 'data' ];
-        $count = 0;
-        foreach ($list as $k => $v) {
-            $count += $v[ 'num' ];
+        $join = [
+            [ 'goods_sku gs', 'gc.sku_id = gs.sku_id',  'inner' ]
+        ];
+        if ($this->store_data['config']['store_business'] == 'store') {
+            $join[] = [ 'store_goods_sku sgs', 'gs.sku_id = sgs.sku_id and sgs.store_id=' . $this->store_id, 'left' ];
+            $condition[] = ['sgs.status', '=', 1];
         }
-        return $this->response($this->success($count));
+        $count = $cart->getCartSum($condition, 'gc.num', 'gc', $join);
+        return $this->response($count);
     }
 
     /**
@@ -159,19 +183,31 @@ class Cart extends BaseApi
     {
         $token = $this->checkToken();
         if ($token[ 'code' ] < 0) return $this->response($token);
-        $cart = new CartModel();
+
+        $this->initStoreData();
+        $goods = new Goods();
+
         $condition = [
-            [ 'gc.member_id', '=', $token[ 'data' ][ 'member_id' ] ],
-            [ 'gc.site_id', '=', $this->site_id ],
-            [ 'gs.goods_state', '=', 1],
-            [ 'gs.is_delete', '=', 0 ]
+            ['ngc.site_id', '=', $this->site_id],
+            ['ngc.member_id', '=', $this->member_id],
+            ['ngs.is_delete', '=', 0 ]
         ];
-        $list = $cart->getCartList($condition, 'gc.cart_id,gc.sku_id,gs.goods_id,gs.discount_price,gc.num');
+        $field = 'ngc.cart_id,ngc.sku_id,ngs.goods_id,ngs.discount_price,ngc.num';
+        $join = [
+            ['goods_cart ngc', 'ngc.sku_id = ngs.sku_id', 'inner']
+        ];
+        // 如果是连锁运营模式
+        if ($this->store_data['config']['store_business'] == 'store') {
+            $join[] = [ 'store_goods_sku sgs', 'ngs.sku_id = sgs.sku_id and sgs.store_id=' . $this->store_id, 'left' ];
+            $condition[] = ['sgs.status', '=', 1];
+            $field = str_replace('ngs.discount_price', 'IFNULL(IF(ngs.is_unify_pirce = 1,ngs.discount_price,sgs.price), ngs.discount_price) as discount_price', $field);
+        }
+        $list = $goods->getGoodsSkuList($condition, $field, 'ngc.cart_id desc', null, 'ngs', $join);
         if (!empty($list[ 'data' ])) {
             $goods = new Goods();
             foreach ($list[ 'data' ] as $k => $v) {
                 // 是否参与会员等级折扣
-                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id);
+                $goods_member_price = $goods->getGoodsPrice($v[ 'sku_id' ], $this->member_id, $this->store_id);
                 $goods_member_price = $goods_member_price[ 'data' ];
                 if (!empty($goods_member_price[ 'member_price' ]) && $goods_member_price[ 'member_price' ] < $v['discount_price']) {
                     $list[ 'data' ][ $k ][ 'discount_price' ] = $goods_member_price[ 'price' ];
@@ -227,7 +263,7 @@ class Cart extends BaseApi
         $data = [
             'cart_id' => $cart_id,
             'site_id' => $this->site_id,
-            'member_id' => $token[ 'data' ][ 'member_id' ],
+            'member_id' => $this->member_id,
             'num' => $num,
             'sku_id' => $sku_id
         ];

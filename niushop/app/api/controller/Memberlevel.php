@@ -27,9 +27,10 @@ class Memberlevel extends BaseApi
 
         $condition = [
             [ 'site_id', '=', $this->site_id ],
-            [ 'level_type', '=', 0 ]
+            [ 'level_type', '=', 0 ],
+            [ 'status', '=', 1 ],
         ];
-        $field = 'level_id,level_name,growth,remark,consume_discount,is_free_shipping,point_feedback,send_point,send_balance,send_coupon,charge_rule,charge_type,bg_color,is_default';
+        $field = 'level_id,level_name,growth,remark,consume_discount,is_free_shipping,point_feedback,send_point,send_balance,send_coupon,charge_rule,charge_type,bg_color,is_default,level_text_color,level_picture';
         $member_level_list = $member_level_model->getMemberLevelList($condition, $field, 'growth asc,level_id desc');
         return $this->response($member_level_list);
     }

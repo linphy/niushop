@@ -41,12 +41,10 @@ class Config extends BaseModel
                 'invoice_rate' => 0,//发票比率（0关闭 1开启）
                 'invoice_content' => '',//发内容（0关闭 1开启）
                 'invoice_money' => 0,//发票运费（0关闭 1开启）
-                'change_price' => 1,//订单改价（1整单 2单个商品）,
                 'do_refund' => 1//主动退款方式: 1直接确认退款  2发起退款申请
             ];
         }
         $res[ 'data' ][ 'value' ]['invoice_type'] = $res[ 'data' ][ 'value' ]['invoice_type'] ?? '1,2';
-        $res[ 'data' ][ 'value' ]['change_price'] = $res[ 'data' ][ 'value' ]['change_price'] ?? 1;
         return $res;
     }
 
@@ -139,43 +137,7 @@ class Config extends BaseModel
         return $res;
     }
 
-    /**
-     * 设置积分时间配置
-     */
-    public function setPointTimeConfig($data, $site_id, $app_module = 'shop')
-    {
-        $config = new ConfigModel();
-        $res = $config->setConfig($data, '积分时间设置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'POINT_TIME_CONFIG' ] ]);
-        if($data['point_time_one'] > 0){
-            (new Cron())->deleteCron([['event', '=', 'CloseDeletePoint']]);
-            (new Cron())->addCron(1,0, '积分到期时间', 'CloseDeletePoint', $data['point_time_one'], 0, 0);
-        }
-        return $res;
-    }
 
-    /**
-     * 获取积分时间配置
-     * @param $site_id
-     * @param string $app_module
-     * @return array
-     */
-    public function getPointTimeConfig($site_id, $app_module = 'shop')
-    {
-        $config = new ConfigModel();
-        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'POINT_TIME_CONFIG' ] ]);
-        if (empty($res[ 'data' ]) || empty($res[ 'data' ]['value'])) {
-            $res[ 'data' ][ 'value' ] = [
-                'point_time_type' => 0,
-                'point_time_one' => '',
-            ];
-        }else{
-            if($res[ 'data' ][ 'value' ]['point_time_type'] == 0 && $res[ 'data' ][ 'value' ]['point_time_one']){
-                $res[ 'data' ][ 'value' ]['point_time_one'] = date('Y-m-d H:i:s', $res[ 'data' ][ 'value' ]['point_time_one']);
-            }
-        }
-
-        return $res;
-    }
 
     /**
      * 订单核销设置

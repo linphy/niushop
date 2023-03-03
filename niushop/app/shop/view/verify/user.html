@@ -1,26 +1,27 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
-	.single-filter-box {margin-top: 0;}
 	.layui-layout-admin.admin-style-2 .screen{margin-bottom: 15px;}
 </style>
 {/block}
 {block name="main"}
 <!-- 按钮容器 -->
 <div class="single-filter-box">
-    <button class="layui-btn" onclick="add()">添加核销人员</button>
+	<button class="layui-btn" onclick="add()">添加核销人员</button>
 </div>
+
 <!-- 筛选面板 -->
 <div class="screen layui-collapse" lay-filter="selection_panel">
-    <div class="layui-colla-item">
-        <form class="layui-colla-content layui-form layui-show">
+	<div class="layui-colla-item">
+		<form class="layui-colla-content layui-form layui-show">
 			<div class="layui-inline">
 				<label class="layui-form-label">核销员名称：</label>
 				<div class="layui-input-inline">
 					<input type="text" name="verifier_name" placeholder="请输入核销员名称" autocomplete="off" class="layui-input">
 				</div>
 			</div>
-	
+
+			{if addon_is_exit('store') == 1}
 			<div class="layui-inline">
 				<label class="layui-form-label">核销员类型：</label>
 				<div class="layui-input-inline">
@@ -31,7 +32,6 @@
 					</select>
 				</div>
 			</div>
-	
 			<div class="layui-inline">
 				<label class="layui-form-label">核销门店：</label>
 				<div class="layui-input-inline">
@@ -43,12 +43,13 @@
 					</select>
 				</div>
 			</div>
-            <div class="form-row">
-                <button class="layui-btn" lay-filter="search" lay-submit>筛选</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-        </form>
-    </div>
+			{/if}
+			<div class="form-row">
+				<button class="layui-btn" lay-filter="search" lay-submit>筛选</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</form>
+	</div>
 </div>
 
 <!-- 列表 -->
@@ -60,6 +61,15 @@
 		<a class="layui-btn" lay-event="edit">编辑</a>
 		<a class="layui-btn" lay-event="delete">删除</a>
 	</div>
+</script>
+
+<script type="text/html" id="toolbarOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>
+</script>
+
+<!-- 批量删除 -->
+<script type="text/html" id="batchOperation">
+	<button class="layui-btn layui-btn-primary" lay-event="delete">批量删除</button>
 </script>
 
 {/block}
@@ -76,58 +86,59 @@
 			url: ns.url("shop/verify/user"),
 			cols: [
 				[
-					/* {
-					type: 'checkbox',
-					unresize: 'false',
-					templet: '#verifier_id',
-					width: '3%'
-				}, */
-				{
-					field: 'verifier_name',
-					title: '核销员',
-					unresize: 'false'
-				}, 
-				{
-                    title: '核销员类型',
-                    unresize: 'false',
-                    templet: function(data) {
-                        if(data.verifier_type != 0){
-                            return '门店核销员';
-						}else{
-                            return "平台核销员";
-						}
-                    }
-                }, 
-				{
-					title: '核销门店',
-                    unresize: 'false',
-                    templet: function(data) {
-                        if(data.store_id != 0){
-                            if(data.store_name != ''){
-                                return data.store_name;
+					{
+					    width: '3%',
+					    type: 'checkbox',
+					    unresize: 'false',
+					},
+					{
+						field: 'verifier_name',
+						title: '核销员',
+						unresize: 'false'
+					},
+					{
+						title: '核销员类型',
+						unresize: 'false',
+						templet: function(data) {
+							if(data.verifier_type != 0){
+								return '门店核销员';
 							}else{
-                                return "--";
+								return "平台核销员";
 							}
-						}else{
-                            return "--";
 						}
-                    }
-				},
-				{
-					title: '会员账号',
-                    unresize: 'false',
-                    templet: function(data) {
-                        if(data.member_id != 0){
-                            if(data.username != ''){
-                                return data.username;
+					},
+					{if addon_is_exit('store') == 1}
+					{
+						title: '核销门店',
+						unresize: 'false',
+						templet: function(data) {
+							if(data.store_id != 0){
+								if(data.store_name != null && data.store_name != ''){
+									return data.store_name;
+								}else{
+									return "--";
+								}
 							}else{
-                                return data.mobile;
+								return "--";
 							}
-						}else{
-                            return "--";
 						}
-                    }
-                }, {
+					},
+					{/if}
+					{
+						title: '会员账号',
+						unresize: 'false',
+						templet: function(data) {
+							if(data.member_id != 0){
+								if(data.username != ''){
+									return data.username;
+								}else{
+									return data.mobile;
+								}
+							}else{
+								return "--";
+							}
+						}
+					}, {
 					field: 'create_time',
 					title: '创建时间',
 					unresize: 'false',
@@ -141,12 +152,11 @@
 					align : 'right'
 				}]
 			],
-			bottomToolbar: ""
+			toolbar: '#toolbarOperation',
+			bottomToolbar: "#batchOperation"
 		});
 
-		/**
-		 * 监听工具栏操作
-		 */
+		// 监听工具栏操作
 		table.tool(function(obj) {
 			var data = obj.data;
 			switch (obj.event) {
@@ -159,9 +169,37 @@
 			}
 		});
 
-		/**
-		 * 删除
-		 */
+		// 批量操作
+		table.toolbar(function (obj) {
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			switch (obj.event) {
+				case "delete":
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].verifier_id);
+					deleteData(id_array.toString());
+					break;
+			}
+		});
+
+		// 批量操作
+		table.bottomToolbar(function(obj) {
+			if (obj.data.length < 1) {
+				layer.msg('请选择要操作的数据');
+				return;
+			}
+			switch (obj.event) {
+				case "delete":
+					var id_array = new Array();
+					for (i in obj.data) id_array.push(obj.data[i].verifier_id);
+					deleteData(id_array.toString());
+					break;
+			}
+		});
+
+		// 删除
 		function deleteData(ids) {
 			layer.confirm('确定要删除核销员吗?', function() {
 				$.ajax({
@@ -181,44 +219,7 @@
 			});
 		}
 
-		/**
-		 * 批量操作
-		 */
-		table.bottomToolbar(function(obj) {
-
-			if (obj.data.length < 1) {
-				layer.msg('请选择要操作的数据');
-				return;
-			}
-			switch (obj.event) {
-				case "del":
-					var id_array = new Array();
-					for (i in obj.data) id_array.push(obj.data[i].verifier_id);
-					deleteData(id_array.toString());
-					break;
-			}
-		});
-		/**
-		 * 批量操作
-		 */
-		table.bottomToolbar(function(obj) {
-
-			if (obj.data.length < 1) {
-				layer.msg('请选择要操作的数据');
-				return;
-			}
-			switch (obj.event) {
-				case "del":
-					var id_array = new Array();
-					for (i in obj.data) id_array.push(obj.data[i].company_id);
-					deleteData(id_array.toString());
-					break;
-			}
-		});
-
-		/**
-		 * 搜索功能
-		 */
+		// 搜索功能
 		form.on('submit(search)', function(data) {
 			table.reload({
 				page: {

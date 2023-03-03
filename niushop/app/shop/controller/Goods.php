@@ -20,11 +20,10 @@ use app\model\goods\GoodsBrand as GoodsBrandModel;
 use app\model\goods\GoodsBrowse;
 use app\model\goods\GoodsCategory as GoodsCategoryModel;
 use app\model\goods\GoodsCollect;
-use app\model\goods\GoodsCommunityQrCode;
 use app\model\goods\GoodsEvaluate as GoodsEvaluateModel;
 use app\model\goods\GoodsLabel as GoodsLabelModel;
 use app\model\goods\GoodsService as GoodsServiceModel;
-use app\model\system\Site;
+use app\model\store\Store as StoreModel;
 use app\model\web\Config;
 use app\model\web\Config as ConfigModel;
 use app\model\goods\GoodsImport;
@@ -141,7 +140,7 @@ class Goods extends BaseShop
                 }
             }
 
-            $field = 'goods_id,goods_name,site_id,site_name,goods_image,goods_state,price,goods_stock,goods_stock_alarm,create_time,sale_num,is_virtual,goods_class,is_fenxiao,fenxiao_type,promotion_addon,sku_id,is_consume_discount,discount_config,discount_method,sort,label_id,is_delete,label_name,virtual_deliver_type';
+            $field = 'goods_id,goods_name,site_id,site_name,goods_image,goods_state,price,goods_stock,goods_stock_alarm,create_time,sale_num,is_virtual,goods_class,goods_class_name,is_fenxiao,fenxiao_type,promotion_addon,sku_id,is_consume_discount,discount_config,discount_method,sort,label_id,is_delete,label_name,virtual_deliver_type';
             $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size, $order_by, $field);
 
             $goods_promotion_type = event('GoodsPromotionType');
@@ -215,6 +214,18 @@ class Goods extends BaseShop
                 $config = $config_model->getPcDomainName($this->site_id);
                 $this->assign('pc_domain', $config[ 'data' ][ 'value' ][ 'domain_name_pc' ] ?? '');
             }
+
+            $this->assign('goods_class', array_column(event('GoodsClass'), null, 'goods_class'));
+
+            $cardservice_is_exit = addon_is_exit('cardservice', $this->site_id);
+            $this->assign('cardservice_is_exit', $cardservice_is_exit);
+
+            $form_is_exit = addon_is_exit('form', $this->site_id);
+            if ($form_is_exit) {
+                $form_list = ( new Form() )->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')[ 'data' ];
+                $this->assign('form_list', $form_list);
+            }
+            $this->assign('form_is_exit', $form_is_exit);
 
             return $this->fetch("goods/lists");
         }
@@ -293,7 +304,10 @@ class Goods extends BaseShop
                 'barrage_show' => input('barrage_show', 0),//
                 'template_id' => input('template_id', 0),//商品海报id
                 'form_id' => input('form_id', 0),
-                'support_trade_type' => input('support_trade_type', '')
+                'support_trade_type' => input('support_trade_type', ''),
+                'sale_channel' => input('sale_channel', 'all'),
+                'sale_store' => input('sale_store', 'all'),
+                'is_unify_pirce' => input('is_unify_pirce', '1'),
             ];
             $goods_model = new GoodsModel();
             $res = $goods_model->addGoods($data);
@@ -339,10 +353,6 @@ class Goods extends BaseShop
             $goods_brand_model = new GoodsBrandModel();
             $brand_list = $goods_brand_model->getBrandList([ [ 'site_id', '=', $this->site_id ] ], "brand_id, brand_name")[ 'data' ];
             $this->assign("brand_list", $brand_list);
-            //获取社群二维码
-            $goods_community_model = new GoodsCommunityQrCode();
-            $goods_community_qr_list = $goods_community_model->getQrList([ [ 'site_id', '=', $this->site_id ], [ 'qr_state', '=', 1 ] ], 'qr_id,qr_name,site_id');
-            $this->assign('goods_community_qr_list', $goods_community_qr_list[ 'data' ]);
 
             //获取商品海报
             $poster_template_model = new PosterTemplateModel();
@@ -352,13 +362,18 @@ class Goods extends BaseShop
 
             $form_is_exit = addon_is_exit('form', $this->site_id);
             if ($form_is_exit) {
-                $form_list = (new Form())->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')['data'];
+                $form_list = ( new Form() )->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')[ 'data' ];
                 $this->assign('form_list', $form_list);
             }
             $this->assign('form_is_exit', $form_is_exit);
 
-            $express_type = (new ExpressConfig())->getEnabledExpressType($this->site_id);
+            $express_type = ( new ExpressConfig() )->getEnabledExpressType($this->site_id);
             $this->assign('express_type', $express_type);
+
+            $this->assign('all_goodsclass', event('GoodsClass'));
+            $this->assign('goods_class', ( new GoodsModel() )->getGoodsClass());
+
+            $this->assign('store_is_exit', addon_is_exit('store', $this->site_id));
 
             return $this->fetch("goods/add_goods");
         }
@@ -426,7 +441,10 @@ class Goods extends BaseShop
                 'barrage_show' => input('barrage_show', 0),//
                 'template_id' => input('template_id', 0),//商品海报id
                 'form_id' => input('form_id', 0),
-                'support_trade_type' => input('support_trade_type', '')
+                'support_trade_type' => input('support_trade_type', ''),
+                'sale_channel' => input('sale_channel', 'all'),
+                'sale_store' => input('sale_store', 'all'),
+                'is_unify_pirce' => input('is_unify_pirce', '1'),
             ];
 
             $res = $goods_model->editGoods($data);
@@ -474,10 +492,6 @@ class Goods extends BaseShop
             $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort asc')[ 'data' ];
             $this->assign("label_list", $label_list);
 
-            //获取社群二维码
-            $goods_community_model = new GoodsCommunityQrCode();
-            $goods_community_qr_list = $goods_community_model->getQrList([ [ 'site_id', '=', $this->site_id ], [ 'qr_state', '=', 1 ] ], 'qr_id,qr_name,site_id');
-            $this->assign('goods_community_qr_list', $goods_community_qr_list[ 'data' ]);
 
             //获取商品海报
             $poster_template_model = new PosterTemplateModel();
@@ -486,13 +500,20 @@ class Goods extends BaseShop
 
             $form_is_exit = addon_is_exit('form', $this->site_id);
             if ($form_is_exit) {
-                $form_list = (new Form())->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')['data'];
+                $form_list = ( new Form() )->getFormList([ [ 'site_id', '=', $this->site_id ], [ 'form_type', '=', 'goods' ], [ 'is_use', '=', 1 ] ], 'id desc', 'id, form_name')[ 'data' ];
                 $this->assign('form_list', $form_list);
             }
             $this->assign('form_is_exit', $form_is_exit);
 
-            $express_type = (new ExpressConfig())->getEnabledExpressType($this->site_id);
+            $express_type = ( new ExpressConfig() )->getEnabledExpressType($this->site_id);
             $this->assign('express_type', $express_type);
+
+            $store_is_exit = addon_is_exit('store', $this->site_id);
+            if ($store_is_exit && $goods_info[ 'sale_store' ] != 'all') {
+                $store_list = ( new StoreModel() )->getStoreList([ [ 'site_id', '=', $this->site_id ], [ 'store_id', 'in', $goods_info[ 'sale_store' ] ] ], 'store_id,store_name,status,address,full_address,is_frozen');
+                $this->assign('store_list', $store_list[ 'data' ]);
+            }
+            $this->assign('store_is_exit', $store_is_exit);
 
             return $this->fetch("goods/edit_goods");
         }
@@ -617,7 +638,7 @@ class Goods extends BaseShop
         if (request()->isAjax()) {
             $sku_list = input("sku_list", '');
             $model = new GoodsModel;
-            $res = $model->editGoodsStock($sku_list);
+            $res = $model->editGoodsStock($sku_list, $this->site_id);
             return $res;
         }
     }
@@ -702,6 +723,7 @@ class Goods extends BaseShop
             $promotion_type = input('promotion_type', "");
             $label_id = input('label_id', "");
             $select_type = input('select_type', 'all');
+            $usable_goods_class = input('usable_goods_class', '');
 
             if (!empty($promotion) && addon_is_exit($promotion)) {
                 $promotion_name = input('promotion_name', '');// 营销活动
@@ -763,6 +785,9 @@ class Goods extends BaseShop
                 if ($goods_class !== "") {
                     $condition[] = [ 'goods_class', '=', $goods_class ];
                 }
+                if ($usable_goods_class != '') {
+                    $condition[] = [ 'goods_class', 'in', $usable_goods_class ];
+                }
 
                 if ($min_price != "" && $max_price != "") {
                     $condition[] = [ 'price', 'between', [ $min_price, $max_price ] ];
@@ -802,6 +827,7 @@ class Goods extends BaseShop
             $promotion = input('promotion', '');//营销活动标识：pintuan、groupbuy、seckill、fenxiao
             $goods_type = input('goods_type', ''); //查找商品类型
             $is_disabled_goods_type = input('is_disabled_goods_type', 0); //是否禁用商品类型筛选 0开启 1关闭
+            $usable_goods_class = input('usable_goods_class', ''); // 可选择的商品类型
 
             $this->assign('is_disabled_goods_type', $is_disabled_goods_type);
             $this->assign('goods_type', $goods_type);
@@ -812,6 +838,8 @@ class Goods extends BaseShop
             $this->assign('is_virtual', $is_virtual);
             $this->assign('disabled', $disabled);
             $this->assign('promotion', $promotion);
+            $this->assign('all_goodsclass', event('GoodsClass'));
+            $this->assign('usable_goods_class', explode(',', $usable_goods_class));
 
             // 营销活动
             $goods_promotion_type = event('GoodsPromotionType');
@@ -847,9 +875,8 @@ class Goods extends BaseShop
             $tree = list_to_tree($list, 'category_id', 'pid', 'children', 0);
             $this->assign("category_list", $tree);
 
-            //电子卡密插件是否存在
             $this->assign('virtualcard_exit', addon_is_exit('virtualcard', $this->site_id));
-
+            $this->assign('cardservice_exit', addon_is_exit('cardservice', $this->site_id));
 
             $goods_model = new GoodsModel();
             $goods_model->getGoodsTotalCount();
@@ -997,21 +1024,6 @@ class Goods extends BaseShop
     }
 
     /**
-     * 商品预览
-     * return
-     */
-    public function goodsPreview()
-    {
-        $goods_id = input('goods_id', '');
-        $goods_model = new GoodsModel();
-        $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name,site_id')[ 'data' ];
-        if (!empty($goods_sku_info)) {
-            $res = $goods_model->qrcode($goods_id, $goods_sku_info[ 'goods_name' ], $goods_sku_info[ 'site_id' ]);
-            return $res;
-        }
-    }
-
-    /**
      * 商品评价回复
      */
     public function evaluateApply()
@@ -1100,8 +1112,8 @@ class Goods extends BaseShop
                             $result = $goods_model->modifyGoodsConsumeDiscount($data[ 'is_consume_discount' ], $this->site_id, $goods_ids);
                             break;
                         case 'stock':
-                            $sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', 'in', $goods_ids ], [ 'goods_class', 'in', '1,2' ] ], 'sku_id,goods_id,stock')[ 'data' ] ?? [];
-
+                            $sku_list = $goods_model->getGoodsSkuList([ [ 'goods_id', 'in', $goods_ids ], [ 'goods_class', 'in', '1,2,4,5' ] ], 'sku_id,goods_id,stock,goods_class')[ 'data' ] ?? [];
+                            // 实物,虚拟,卡项,服务
                             $result = $goods_model->editGoodsSkuStock($sku_list, $data[ 'stock' ], $data[ 'stock_type' ]);
                             break;
                         case 'price':
@@ -1112,6 +1124,9 @@ class Goods extends BaseShop
                                 'goods_ids' => $goods_ids,
                             );
                             $result = $batch_model->setPrice(array_merge($params, $data));
+                            break;
+                        case 'goods_form':
+                            $result = $goods_model->modifyGoodsForm($data[ 'form_id' ], $this->site_id, $goods_ids);
                             break;
                     }
                 }
@@ -1159,47 +1174,47 @@ class Goods extends BaseShop
     {
         $config_model = new ConfigModel();
         if (request()->isAjax()) {
-            $goodsdetail = input('goodsdetail', 0);
-            $cart = input('cart', 0);
-            $collect = input('collect', 0);
-            $memberindex = input('memberindex', 0);
-            $supermember = input('supermember', 0);
-            $guafen = input('guafen', 0);
-            $type_show = input('type_show', 1);
-            $goods_id = input('goods_ids', '');
-            $orderdetail = input('orderdetail', '');
-            if ($type_show != 4) {
-                $goods_id = '';
-            }
             $data = [
-                'goodsdetail' => $goodsdetail,
-                'cart' => $cart,
-                'collect' => $collect,
-                'memberindex' => $memberindex,
-                'type_show' => $type_show,
-                'goods_ids' => $goods_id,
-                'supermember' => $supermember,
-                'guafen' => $guafen,
-                'orderdetail' => $orderdetail,
+                'title' => input('title', ''),
+                'sources' => input('sources', ''),
+                'support_page' => input('support_page', ''),
+                'goods_ids' => input('goods_ids', ''),
+                'add_cart_switch' => input('add_cart_switch', '')
             ];
             $res = $config_model->setGuessYouLike($data, $this->site_id, $this->app_module);
             return $res;
         } else {
-            $guess_you_like = $config_model->getGuessYouLike($this->site_id, $this->app_module);
-            $guess_you_like = $guess_you_like[ 'data' ][ 'value' ];
-            $guess_you_like[ 'goods_list' ] = '';
-            if ($guess_you_like[ 'type_show' ] == 4) { // 手动设置
-                $goods_model = new GoodsModel();
-                $condition[] = [ 'goods_id', 'in', $guess_you_like[ 'goods_ids' ] ];
-                $condition[] = [ 'site_id', '=', $this->site_id ];
-                $goods_list = $goods_model->getGoodsList($condition, 'goods_id,goods_name,goods_image,price,goods_stock');
-                if (!empty($goods_list)) {
-                    $guess_you_like[ 'goods_list' ] = $goods_list[ 'data' ];
+            $config = $config_model->getGuessYouLike($this->site_id, $this->app_module)[ 'data' ][ 'value' ];
+            if (!empty($config)) {
+                if (!empty($config[ 'support_page' ])) {
+                    $config[ 'support_page' ] = explode(',', $config[ 'support_page' ]);
                 }
-
+                if (!empty($config[ 'goods_ids' ])) {
+                    $config[ 'goods_ids' ] = explode(',', $config[ 'goods_ids' ]);
+                }
             }
-            $this->assign("guess_you_like", $guess_you_like);
+            $this->assign("config", $config);
             return $this->fetch('goods/guess_you_like');
+        }
+    }
+
+    /**
+     * 商品列表配置
+     * @return mixed
+     */
+    public function goodsListConfig()
+    {
+        $config_model = new ConfigModel();
+        if (request()->isAjax()) {
+            $data = [
+                'add_cart_switch' => input('add_cart_switch', '')
+            ];
+            $res = $config_model->setGoodsListConfig($data, $this->site_id, $this->app_module);
+            return $res;
+        } else {
+            $config = $config_model->getGoodsListConfig($this->site_id, $this->app_module)[ 'data' ][ 'value' ];
+            $this->assign("config", $config);
+            return $this->fetch('goods/goods_list_config');
         }
     }
 
@@ -1270,7 +1285,7 @@ class Goods extends BaseShop
             $condition[] = [ 'gc.site_id', '=', $this->site_id ];
             $condition[] = [ 'gc.member_id', '=', $member_id ];
             $order = 'gc.create_time desc';
-            $field = 'gc.collect_id,gc.create_time,gc.member_id, gc.goods_id, gc.sku_id,gc.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual,sku.collect_num';
+            $field = 'gc.collect_id,gc.create_time,gc.member_id, gc.goods_id, gc.sku_id,gc.sku_name, gc.sku_price, gc.sku_image,g.goods_name,g.is_free_shipping,sku.promotion_type,sku.member_price,sku.discount_price,g.sale_num,g.price,g.market_price,g.is_virtual,sku.collect_num,g.goods_state';
             return $goods_collect_model->getCollectPageList($condition, $page, $page_size, $order, $field);
         } else {
             $this->forthMenu([ 'member_id' => $member_id ]);
@@ -1562,5 +1577,46 @@ class Goods extends BaseShop
         $this->assign('verify_use_num', $verify_count[ 'verify_use_num' ] ?? 0);
 
         return $this->fetch("goods/verify");
+    }
+
+    /**
+     * 商品详情配置
+     * @return mixed
+     */
+    public function goodsDetailConfig()
+    {
+        $config_model = new ConfigModel();
+        if (request()->isAjax()) {
+            $data = [
+                'nav_bar_switch' => input('nav_bar_switch', 0),
+                'introduction_color' => input('introduction_color', ''),
+            ];
+            $res = $config_model->setGoodsDetailConfig($data, $this->site_id, $this->app_module);
+            return $res;
+        } else {
+            $config = $config_model->getGoodsDetailConfig($this->site_id, $this->app_module)[ 'data' ][ 'value' ];
+            $this->assign("config", $config);
+            return $this->fetch('goods/goods_detail_config');
+        }
+    }
+
+    /**
+     * 获取运费模板
+     * @return array
+     */
+    public function getExpressTemplateList()
+    {
+        if (request()->isAjax()) {
+            $express_template_model = new ExpressTemplateModel();
+            $express_template_list = $express_template_model->getExpressTemplateList([ [ 'site_id', "=", $this->site_id ] ], 'template_id,template_name', 'is_default desc') ?? [];
+//            foreach ($express_template_list[ 'data' ] as $k => $v) {
+//                $template_item_condition = array (
+//                    [ 'template_id', '=', $v[ 'template_id' ] ],
+//                );
+//                $template_item_list = $express_template_model->getExpressTemplateItemList($template_item_condition)[ 'data' ] ?? [];
+//                $express_template_list[ 'data' ][ $k ][ 'template_item_list' ] = $template_item_list;
+//            }
+            return $express_template_list;
+        }
     }
 }

@@ -39,24 +39,6 @@ class LocalPackage extends BaseModel
     {
         $info = model('local_delivery_package')->getInfo($condition, '*');
         return $this->success($info);
-
-//        $list_result = $this->getLocalDeliveryPackageList($condition);
-//        $list = $list_result['data'];
-//        $trace_model = new Trace();
-//        foreach($list as $k => $v){
-//            $temp_array = explode(';', $v['goods_id_array']);
-//            if(!empty($temp_array)){
-//                foreach($temp_array as $temp_k => $temp_v){
-//                    $temp_item = explode(':', $temp_v);
-//                    $list[$k]['goods_list'][] = ['sku_name' => $temp_item['2'], 'num' => $temp_item['1'], 'sku_image' => $temp_item['3'], 'sku_id' => $temp_item['0']];
-//                }
-//            }
-//
-//            $trace_list = $trace_model->trace($v['delivery_no'],$v['express_company_id']);
-//            $list[$k]['trace'] = $trace_list['data'];
-//        }
-//        return $list;
-
     }
 
 
@@ -75,8 +57,7 @@ class LocalPackage extends BaseModel
 
         $member_model       = new Member();
         $member_info_result = $member_model->getMemberInfo([['member_id', '=', $member_id]], 'nickname');
-        $member_info        = $member_info_result['data'];
-
+        $member_info        = $member_info_result['data'] ?? [];
         //查询物流单号是否已存在,如果存在就合并入已存在的数据
         $condition = array(
             ['site_id', '=', $site_id],
@@ -101,7 +82,7 @@ class LocalPackage extends BaseModel
                 'delivery_no'          => $delivery_no,
                 'site_id'              => $site_id,
                 'member_id'            => $member_id,
-                'member_name'          => $member_info['nickname'],
+                'member_name'          => $member_info['nickname'] ?? '',
                 'delivery_type'        => $delivery_type,
                 'package_name'         => $package_name,
                 'delivery_time'        => time(),

@@ -119,7 +119,7 @@
 .image-ads .image-ad-list>ul>li .content-block {
 	display:inline-block;
 	width:71%;
-	height: 66px;
+	min-height: 66px;
 }
 .image-ads .image-ad-list>ul>li .content-block.textNavigation {
 	width:100%;

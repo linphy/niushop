@@ -50,4 +50,30 @@ class Article extends BaseApi
         return $this->response($list);
     }
 
+    public function lists()
+    {
+        $num = isset($this->params[ 'num' ]) ? $this->params[ 'num' ] : 0;
+        $article_id_arr = isset($this->params[ 'article_id_arr' ]) ? $this->params[ 'article_id_arr' ] : '';
+        $condition = [
+            [ 'pn.site_id', '=', $this->site_id ],
+            [ 'pn.status', '=', 1 ],
+        ];
+        if (!empty($article_id_arr)) {
+            $condition[] = [ 'article_id', 'in', $article_id_arr ];
+        }
+        $order_by = 'pn.sort desc,pn.create_time desc';
+        $alias = 'pn';
+        $join = [
+            [
+                'article_category png',
+                'png.category_id = pn.category_id',
+                'left'
+            ]
+        ];
+        $field = 'pn.*,png.category_name';
+        $article_model = new ArticleModel();
+        $list = $article_model->getArticleList($condition, $field, $order_by,$num, $alias, $join);
+        return $this->response($list);
+    }
+
 }

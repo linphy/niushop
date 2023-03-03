@@ -18,6 +18,7 @@ use app\model\order\Order as OrderModel;
 use app\model\order\OrderPay;
 use app\model\system\Pay as PayModel;
 use app\model\order\Config;
+use app\model\system\PayBalance;
 
 /**
  * 支付控制器
@@ -34,17 +35,14 @@ class Pay extends BaseApi
         $info = $pay->getPayInfo($out_trade_no)['data'] ?? [];
 
         if (!empty($info)) {
-            switch($info['event']){
-                case 'OrderPayNotify':
-                    $order_model = new OrderModel();
-                    $order_info = $order_model->getOrderInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_type')[ 'data' ];
-                    if (!empty($order_info)) {
-                        $info[ 'order_id' ] = $order_info[ 'order_id' ];
-                        $info[ 'order_type' ] = $order_info[ 'order_type' ];
-                    }
-                    break;
+            if (in_array($info['event'], ['OrderPayNotify', 'CashierOrderPayNotify'])) {
+                $order_model = new OrderModel();
+                $order_info = $order_model->getOrderInfo([ [ 'out_trade_no', '=', $out_trade_no ] ], 'order_id,order_type')[ 'data' ];
+                if (!empty($order_info)) {
+                    $info[ 'order_id' ] = $order_info[ 'order_id' ];
+                    $info[ 'order_type' ] = $order_info[ 'order_type' ];
+                }
             }
-
         }
         return $this->response($this->success($info));
     }
@@ -115,5 +113,30 @@ class Pay extends BaseApi
         $pay = new PayModel();
         $result = $pay->resetPay(['out_trade_no' => $out_trade_no]);
         return $this->response($result);
+    }
+
+    /**
+     * 会员付款码
+     */
+    public function memberPayCode() {
+        $token = $this->checkToken();
+        if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $data = (new PayBalance())->create(['member_id' => $this->member_id, 'site_id' => $this->site_id ]);
+        return $this->response($data);
+    }
+
+    /**
+     * 查询会员付款码信息
+     * @return false|string
+     */
+    public function memberPayInfo(){
+        $token = $this->checkToken();
+        if ($token[ 'code' ] < 0) return $this->response($token);
+
+        $auth_code = $this->params['auth_code'] ?? '';
+
+        $data = (new PayBalance())->getInfo([ ['member_id', '=', $this->member_id ], ['site_id', '=', $this->site_id], ['auth_code', '=', $auth_code] ], 'status,out_trade_no');
+        return $this->response($data);
     }
 }

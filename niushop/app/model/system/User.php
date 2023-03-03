@@ -11,6 +11,7 @@
 
 namespace app\model\system;
 
+use app\model\store\Store;
 use think\facade\Session;
 use app\model\BaseModel;
 
@@ -34,19 +35,18 @@ class User extends BaseModel
         $site_id = isset($data[ 'site_id' ]) ? $data[ 'site_id' ] : '';
         $app_module = isset($data[ 'app_module' ]) ? $data[ 'app_module' ] : '';
         $member_id = isset($data[ 'member_id' ]) ? $data[ 'member_id' ] : 0;
-        if ($site_id === '') {
-            return $this->error('', 'REQUEST_SITE_ID');
-        }
-        if ($app_module === '') {
-            return $this->error('', 'REQUEST_APP_MODULE');
-        }
+
+        if ($site_id === '') return $this->error('', 'REQUEST_SITE_ID');
+        if ($app_module === '') return $this->error('', 'REQUEST_APP_MODULE');
+        if (empty($data[ "username" ])) return $this->error('', '用户名不能为空');
+        if (empty($data[ "password" ])) return $this->error('', '密码不能为空');
 
         //判断 用户名 是否存在
         $user_info = model('user')->getInfo(
             [
                 [ 'username', "=", $data[ "username" ] ],
-                [ "app_module", "=", $data[ "app_module" ] ],
-                [ 'site_id', '=', $site_id ]
+                [ 'site_id', '=', $site_id ],
+                [ 'app_module', '=', $app_module ]
             ]
         );
 
@@ -78,23 +78,48 @@ class User extends BaseModel
         $group_id = isset($data[ 'group_id' ]) ? $data[ 'group_id' ] : 0;
         if ($group_id > 0) {
             $group_model = new Group();
-            if (!empty($store_id)) {
-                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $store_id ], [ "app_module", "=", $app_module ] ], "group_name");
-            } else {
-                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], [ "app_module", "=", $app_module ] ], "group_name");
-            }
-
-            $group_info = $group_info_result[ "data" ];
+            $group_info = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], [ "app_module", "=", $app_module ] ], "group_name")['data'];
             $data[ "group_name" ] = $group_info[ "group_name" ];
         }
 
         $data[ "password" ] = data_md5($data[ "password" ]);
         $data[ "create_time" ] = time();
-        $result = model("user")->add($data);
-        if ($result === false) {
-            return $this->error('', 'UNKNOW_ERROR');
+
+        model("user")->startTrans();
+        try {
+            $uid = model("user")->add($data);
+            if ($uid === false) {
+                model("user")->rollback();
+                return $this->error('', 'UNKNOW_ERROR');
+            }
+            if (isset($data['store']) && !empty($data['store'])) {
+                $store_user_list = [];
+                foreach ($data['store'] as $item) {
+                    if (empty($item['store_id'])) {
+                        model("user")->rollback();
+                        return $this->error('', '门店id不能为空');
+                    }
+                    if (empty($item['group_id'])) {
+                        model("user")->rollback();
+                        return $this->error('', '门店角色不能为空');
+                    }
+                    array_push($store_user_list, [
+                        'uid' => $uid,
+                        'site_id' => $data['site_id'],
+                        'store_id' => $item['store_id'],
+                        'group_id' => $item['group_id'],
+                        'create_time' => time(),
+                        'app_module' => 'store'
+                    ]);
+                }
+                model('user_group')->addList($store_user_list);
+            }
+            model("user")->commit();
+            return $this->success($uid);
+        } catch (\Exception $e) {
+            model("user")->rollback();
+            return $this->error('', '用户添加失败');
         }
-        return $this->success($result);
     }
 
     public function getUserColumn($condition = [], $field = '')
@@ -113,6 +138,10 @@ class User extends BaseModel
         $check_condition = array_column($condition, 2, 0);
         $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
         $app_module = isset($check_condition[ 'app_module' ]) ? $check_condition[ 'app_module' ] : '';
+        $uid = isset($check_condition[ 'uid' ]) ? $check_condition[ 'uid' ] : '';
+        if ($uid === '') {
+            return $this->error('', '缺少必须参数UID');
+        }
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
         }
@@ -122,19 +151,47 @@ class User extends BaseModel
         $group_id = isset($data[ 'group_id' ]) ? $data[ 'group_id' ] : 0;
         if ($group_id > 0) {
             $group_model = new Group();
-            if (!empty($store_id)) {
-                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $store_id ], [ "app_module", "=", $app_module ] ], "group_name");
-            } else {
-                $group_info_result = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], [ "app_module", "=", $app_module ] ], "group_name");
+            $group_info = $group_model->getGroupInfo([ [ "group_id", "=", $group_id ], [ "site_id", "=", $site_id ], ['app_module', '=', $app_module] ], "group_name")['data'];
+            $data[ "group_name" ] = $group_info[ "group_name" ] ?? '';
+        }
+        model('user')->startTrans();
+        try {
+            $res = model("user")->update($data, $condition);
+            if ($res === false) {
+                model('user')->rollback();
+                return $this->error('', 'UNKNOW_ERROR');
             }
-            $group_info = $group_info_result[ "data" ];
-            $data[ "group_name" ] = $group_info[ "group_name" ];
+
+            model('user_group')->delete([ ['site_id', '=', $site_id ], ['uid', '=', $uid ], ['app_module', '=', 'store' ] ]);
+            if (isset($data['store']) && !empty($data['store'])) {
+                $store_user_list = [];
+                foreach ($data['store'] as $item) {
+                    if (empty($item['store_id'])) {
+                        model("user")->rollback();
+                        return $this->error('', '门店id不能为空');
+                    }
+                    if (empty($item['group_id'])) {
+                        model("user")->rollback();
+                        return $this->error('', '门店角色不能为空');
+                    }
+                    array_push($store_user_list, [
+                        'uid' => $uid,
+                        'site_id' => $site_id,
+                        'store_id' => $item['store_id'],
+                        'group_id' => $item['group_id'],
+                        'create_time' => time(),
+                        'app_module' => 'store'
+                    ]);
+                }
+                model('user_group')->addList($store_user_list);
+            }
+
+            model("user")->commit();
+            return $this->success($res);
+        } catch (\Exception $e) {
+            model("user")->rollback();
+            return $this->error('', '用户编辑失败');
         }
-        $res = model("user")->update($data, $condition);
-        if ($res === false) {
-            return $this->error('', 'UNKNOW_ERROR');
-        }
-        return $this->success($res);
     }
 
     /**
@@ -146,12 +203,8 @@ class User extends BaseModel
     {
         $check_condition = array_column($condition, 2, 0);
         $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
-        $app_module = isset($check_condition[ 'app_module' ]) ? $check_condition[ 'app_module' ] : '';
         if ($site_id === '') {
             return $this->error('', 'REQUEST_SITE_ID');
-        }
-        if ($app_module === '') {
-            return $this->error('', 'REQUEST_APP_MODULE');
         }
         $data = array (
             "status" => $status,
@@ -212,6 +265,10 @@ class User extends BaseModel
     {
         $check_condition = array_column($condition, 2, 0);
         $app_module = isset($check_condition[ 'app_module' ]) ? $check_condition[ 'app_module' ] : '';
+        $uid = isset($check_condition[ 'uid' ]) ? $check_condition[ 'uid' ] : '';
+        if ($uid === '') {
+            return $this->error('', '缺少必须参数UID');
+        }
         if ($app_module === '') {
             return $this->error('', 'REQUEST_APP_MODULE');
         }
@@ -219,6 +276,7 @@ class User extends BaseModel
         if ($res === false) {
             return $this->error('', 'UNKNOW_ERROR');
         }
+        model('user_group')->delete([ ['uid', '=', $uid ] ]);
         return $this->success($res);
     }
 
@@ -259,9 +317,18 @@ class User extends BaseModel
      * @param string $field
      * @return \multitype
      */
-    public function getUserInfo($condition, $field = "uid, app_module, site_id, group_id, username, member_id, create_time, update_time, status, login_time, login_ip")
+    public function getUserInfo($condition, $field = "uid, app_module, site_id, group_id, group_name, username, member_id, create_time, update_time, status, login_time, login_ip, is_admin")
     {
         $info = model('user')->getInfo($condition, $field);
+        if (!empty($info)) {
+            if (isset($info['uid'])) {
+                $join = [
+                    ['store s', 's.store_id = ug.store_id', 'inner'],
+                    ['cashier_auth_group g', 'g.group_id = ug.group_id', 'inner']
+                ];
+                $info['user_group_list'] = model('user_group')->getList([ ['ug.uid', '=', $info['uid'] ] ], 'ug.store_id,ug.group_id,s.store_name,g.menu_array', 's.is_default desc', 'ug', $join);
+            }
+        }
         return $this->success($info);
     }
 
@@ -288,7 +355,7 @@ class User extends BaseModel
      * @param string $field
      * @return multitype:string mixed
      */
-    public function getUserPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'uid, app_module, site_id, group_id, username, member_id, create_time, update_time, status, login_time, login_ip, is_admin, group_name')
+    public function getUserPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'uid, app_module, site_id, group_id, username, member_id, create_time, update_time, status, login_time, login_ip, is_admin, group_name, login_time')
     {
         $list = model('user')->pageList($condition, $field, $order, $page, $page_size);
         return $this->success($list);
@@ -424,6 +491,22 @@ class User extends BaseModel
                         }
                     }
                 }
+            } elseif ($menu_info[ 'level' ] == 4){
+                $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $menu_info[ 'parent' ] ], [ 'level', '=', 3 ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ])[ 'data' ];
+                if (!empty($check_menu_info)) {
+                    if($menu_info['addon'] == $check_menu_info['addon']){
+                        return $check_menu_info;
+                    }
+                } else {
+                    $parent_menu_info = $menu_model->getMenuInfo([ [ 'name', '=', $menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'app_module', '=', $app_module ] ])[ 'data' ];
+
+                    $check_menu_info = $menu_model->getMenuInfo([ [ 'parent', '=', $parent_menu_info[ 'parent' ] ], [ 'is_show', '=', 1 ], [ 'name', 'in', $group_info[ 'menu_array' ], [ 'app_module', '=', $app_module ] ] ])[ 'data' ];
+                    if (!empty($check_menu_info)) {
+                        if($menu_info['addon'] == $check_menu_info['addon']){
+                            return $check_menu_info;
+                        }
+                    }
+                }
             }
         }
         return [];
@@ -446,6 +529,7 @@ class User extends BaseModel
             [ 'app_module', '=', $app_module ],
             [ 'site_id', '=', $site_id ]
         ];
+        if ($app_module == 'shop') $user_condition[] = ['group_id', '>', 0];
         $user_info = model('user')->getInfo($user_condition);
         if (empty($user_info)) {
             return $this->error('', 'USER_NOT_EXIST');
@@ -505,13 +589,24 @@ class User extends BaseModel
     {
         $time = time();
         // 验证参数 预留
-        $user_info = model('user')->getInfo([ [ 'username', "=", $username ], [ "app_module", "=", $app_module ] ]);
+        $user_info = $this->getUserInfo([ [ 'username', "=", $username ] ], 'uid,app_module,site_id,group_id,group_name,username,status,is_admin,password')['data'];
         if (empty($user_info)) {
             return $this->error('', 'USER_LOGIN_ERROR');
         } else if (data_md5($password) !== $user_info[ 'password' ]) {
             return $this->error([], 'PASSWORD_ERROR');
         } else if ($user_info[ 'status' ] !== 1) {
             return $this->error([], 'USER_IS_LOCKED');
+        }
+
+        // 查询默认门店
+        if ($app_module == 'store' && $user_info['is_admin']) {
+            $store_info = (new Store())->getDefaultStore($user_info[ 'site_id' ])['data'] ?? [];
+            if (empty($user_info['user_group_list'])) {
+                $user_info['user_group_list'] = [ $store_info ];
+            } else {
+                $store_list = array_column($user_info['user_group_list'], null, 'store_id');
+                if (!isset($store_list[ $store_info['store_id'] ])) array_push($user_info['user_group_list'], $store_info);
+            }
         }
 
         //更新登录记录
@@ -523,6 +618,7 @@ class User extends BaseModel
 
         $this->addUserLog($user_info[ 'uid' ], $user_info[ 'username' ], $user_info[ 'site_id' ], "用户登录", []); //添加日志
 
+        unset($user_info['password']);
         return $this->success($user_info);
     }
 
@@ -543,7 +639,7 @@ class User extends BaseModel
     public function loginModule($site_id)
     {
         $login_module = Session::get('app_module' . "_" . $site_id . ".login_module");
-        if(empty($login_module))
+        if(empty($login_module) || !strstr($_SERVER["REQUEST_URI"], 'store/store'))
         {
             return 'shop';
         }else{

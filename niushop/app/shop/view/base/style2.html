@@ -139,7 +139,7 @@
 	        <ul class="layui-nav layui-nav-tree">
 				{foreach $menu as $menu_k => $menu_v}
 				<li class="layui-nav-item">
-				    <a href="{$menu_v.url}" {if $menu_v.selected}class="active"{/if}>
+				    <a href="{$menu_v.url}" {if $menu_v.selected}class="active"{/if} {if $menu_v.name == 'CASHIER'}target="_blank"{/if}>
                         <!-- <img src="__ROOT__/{$menu_v.icon}" alt=""> -->
                         <i class="iconfont {$menu_v.icon}"></i>
 						<span>{$menu_v.title}</span>

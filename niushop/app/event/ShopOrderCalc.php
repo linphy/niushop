@@ -33,7 +33,7 @@ class ShopOrderCalc
 //            'goods_pay_count' => $data['goods_num'],
 //        ];
 //        $res  = $stat->addShopStat($data);
-        $res = $stat->switchStat([ 'type' => 'order', 'data' => $data ]);
+        $res = $stat->switchStat([ 'type' => 'order_pay', 'data' => $data ]);
         return $res;
     }
 

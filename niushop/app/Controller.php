@@ -234,4 +234,31 @@ abstract class Controller
 
         throw new HttpResponseException($response);
     }
+
+    /**
+     * @param array $data  验证数据
+     * @param $validate   验证类
+     * @param $scene   验证场景
+     */
+    public function validate(array $data, $validate, $scene = '')
+    {
+        try{
+            $class = new $validate;
+            if(!empty($scene))
+            {
+                $res = $class->scene($scene)->check($data);
+            }else{
+                $res = $class->check($data);
+            }
+            if(!$res){
+                return error(-1, $class->getError());
+            }else
+            return success(1);
+
+        } catch (\Exception $e)
+        {
+            return error(-1, $e->getMessage());
+        }
+
+    }
 }

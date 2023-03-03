@@ -52,25 +52,17 @@ class ExceptionHandle extends Handle
      */
     public function render($request, Throwable $e): Response
     {
-        // 添加自定义异常处理机制
-        if ($e instanceof BaseException) {
+        // 请求异常
+        if (!env('app_debug') && ($request->post()||$request->isAjax())) {
             $data = [
-                'code'      => $e->getErrorCode(),
-                'message'   => $e->getErrorMessage(),
+                'code'      => -1,
+                'message'   => "系统异常：".$e->getMessage(),
                 'timestamp' => time()
             ];
             return json($data);
-        } else if ($e instanceof HttpException) {
-            if($e->getStatusCode() == 404){
-                return \response(View::fetch('error/error'));
-            }
-        } else if ($e instanceof TemplateNotFoundException) {
-            $data = [
-                'code'      => 1,
-                'message'   => '模块不存在',
-                'timestamp' => time()
-            ];
-            return json($data);
+        }elseif($e instanceof HttpException){
+            return view(app()->getRootPath() . 'public/error/error.html');
+
         }
 
         // 其他错误交给系统处理

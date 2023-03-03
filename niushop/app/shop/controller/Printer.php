@@ -29,8 +29,7 @@ class Printer extends Controller
     {
         $order_id = input('order_id', 0);
         $order_common_model = new OrderCommonModel();
-        $order_detail_result = $order_common_model->getUnRefundOrderDetail($order_id);
-        $order_detail = $order_detail_result[ "data" ];
+        $order_detail = $order_common_model->getUnRefundOrderDetail($order_id)[ "data" ];
         $this->assign("order_detail", $order_detail);
         return $this->fetch('order/batch_print_order');
     }

@@ -72,6 +72,10 @@ class Member extends BaseModel
         if ($register_config[ 'is_use' ]) {
             $data[ 'can_receive_registergift' ] = 1;
         }
+        if ($data['member_level']) {
+            $data['is_member'] = 1;
+            $data['member_time'] = time();
+        }
 
         $res = model('member')->add($data);
         if ($res === false) {
@@ -244,7 +248,7 @@ class Member extends BaseModel
     public function getMemberInfo($condition = [], $field = '*')
     {
         $condition[] = [ 'is_delete', '=', 0 ];
-        $member_info = model('member')->getInfo($condition, $field);
+        $member_info = model('member')->setIsCache(0)->getInfo($condition, $field);
 
         if (!empty($member_info) && empty($member_info[ 'wx_openid' ]) && !empty($member_info[ 'wx_unionid' ])) {
             $fans_model = new Fans();
@@ -329,6 +333,53 @@ class Member extends BaseModel
         $where[] = [ 'is_delete', '=', 0 ];
         $res = model('member')->getList($where, $field, $order, $alias, $join, $group, $limit);
         return $this->success($res);
+    }
+
+    /**
+     * 客户设置成会员
+     * @param $member_id
+     */
+    public function makeMember($member_id)
+    {
+        $res = model('member')->update(['is_member' => 1, 'member_time' => time()], [['member_id', '=', $member_id]] );
+        return $res;
+    }
+
+    /**
+     * 检测成为会员条件
+     * @param $member_id
+     */
+    public function checkMember($member_id)
+    {
+
+        $member_info = model('member')->getInfo([['member_id', '=', $member_id]], 'member_level');
+        if(empty($member_info))
+        {
+            return false;
+        }
+        if($member_info['member_level'] == 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 检测当前的memberid是否是有效会员
+     * @param $member_id
+     * @param $site_id
+     */
+    public function checkMemberByMemberId($member_id, $site_id)
+    {
+        //检测会员是否以被删除
+        $member_info = model('member')->getInfo([[ 'member_id', '=', $member_id ], [ 'is_delete', '=', 0 ],['status', '<>', 0], [ 'site_id', '=', $site_id ]], 'member_id');
+        $check_member_id = $member_info['member_id'] ?? 0;
+        if(empty($check_member_id))
+        {
+            return false;
+        }
+        return true;
+
     }
 
     /**
@@ -759,15 +810,10 @@ class Member extends BaseModel
                 }
 
                 if ($membeer_level_id == "") {
-                    $member_level_info = model('member_level')->getInfo([ 'is_default' => 1 ]);
-                    if (empty($member_level_info)) {
-                        $not_data[ 'content' ] = "失败，未设置默认会员等级";
-                        model('member_import_log')->add($not_data);
-                        $error_num++;
-                        break;
-                    }
+                    $is_member = 0;
                 } else {
-                    $member_level_info = model('member_level')->getInfo([ 'level_id' => $membeer_level_id ]);
+                    $is_member = 1;
+                    $member_level_info = model('member_level')->getInfo([ 'level_name' => $membeer_level_id ]);
                     if (empty($member_level_info)) {
                         $not_data[ 'content' ] = "失败，未查到该会员等级";
                         model('member_import_log')->add($not_data);
@@ -781,11 +827,11 @@ class Member extends BaseModel
                     "mobile" => isset($mobile) ? $mobile : '',
                     "nickname" => $nickname,
                     "password" => data_md5($password),
-                    "member_level" => $member_level_info[ 'level_id' ],
+                    "member_level" => $member_level_info[ 'level_id' ] ?? "",
                     "wx_openid" => isset($wx_openid) ? $wx_openid : '',
                     "weapp_openid" => isset($weapp_openid) ? $weapp_openid : '',
                     "realname" => isset($realname) ? $realname : '',
-                    'member_level_name' => $member_level_info[ 'level_name' ],
+                    'member_level_name' => $member_level_info[ 'level_name' ] ?? "",
                     'point' => isset($point) ? $point : 0,
                     'growth' => isset($growth) ? $growth : 0,
                     'balance_money' => isset($balance_money) ? $balance_money : 0.00,
@@ -793,7 +839,9 @@ class Member extends BaseModel
                     'reg_time' => time(),
                     'login_time' => time(),
                     'last_login_time' => time(),
-                    'site_id' => 1
+                    'site_id' => 1,
+                    'is_member' => $is_member,
+                    'member_code' => isset($mobile) ? $mobile : ''
                 ];
 
                 model('member')->add($data);
@@ -934,8 +982,76 @@ class Member extends BaseModel
 
         $member_info[ 'balance' ] = $member_info[ 'balance' ] < 0 ? 0 : $member_info[ 'balance' ];
         $member_info[ 'balance_money' ] = $member_info[ 'balance_money' ] < 0 ? 0 : $member_info[ 'balance_money' ];
-        $member_info[ 'usable_balance' ] = $member_info[ 'balance' ] + $member_info[ 'balance_money' ];
+        $member_info[ 'usable_balance' ] = round($member_info[ 'balance' ] + $member_info[ 'balance_money' ], 2);
 
         return $this->success($member_info);
+    }
+
+
+    /**
+     * 生成随机数
+     * @param int $length
+     * @return string
+     */
+    public function memberCode($length)
+    {
+        $pattern = array(
+            '1','2','3','4','5','6','7','8','9','0'
+        );
+        $keys = array_rand($pattern, $length);
+        $key = '';
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $pattern[$keys[$i]];    //生成php随机数
+        }
+        return $key;
+    }
+
+    /**
+     * 办理会员
+     * @param $data
+     */
+    public function handleMember($data)
+    {
+        model('member')->startTrans();
+        try {
+            $member_info = model('member')->getInfo([ ['member_id', '=', $data['member_id']], ['site_id', '=', $data['site_id']] ]);
+            if($member_info['is_member'] == 1){
+                return $this->success();
+            }
+
+            $level_info = model('member_level')->getInfo([ ['site_id', '=', $data['site_id']], ['level_id', '=', $data['level_id']] ], 'level_id, sort, growth, level_name');
+            $growth = $level_info['growth'] - $member_info['growth'];
+
+            $save_data = ['is_member' => 1];
+            $member_code = $data['member_code'] ?? '';
+
+            if($member_code){
+                $member_count = model('member')->getInfo([ ['site_id', '=', $data['site_id']],['member_code', '=', $member_code], ['member_id', '<>', $data['member_id']] ]);
+                if($member_count) return $this->error('', '当前会员编码已存在，请重新设置');
+
+                $save_data['member_code'] = $member_code;
+            }else{
+                $member_code = $member_info['mobile'] ? $member_info['mobile'] : $this->memberCode(11);
+                $save_data['member_code'] = $member_code;
+            }
+
+            model('member')->update($save_data, [
+                ['member_id', '=', $data['member_id']],
+                ['site_id', '=', $data['site_id']],
+            ]);
+
+            if($growth > 0) {
+                $account = new MemberAccount();
+                $res = $account->addMemberAccount($data['site_id'], $data['member_id'], 'growth', $growth, 'adjust', '等级调整', '管理员调整客户等级', 0);
+                if($res['code'] < 0) return $res;
+            }
+
+            model('member')->commit();
+            return $this->success();
+        } catch (\Exception $e) {
+            model('member')->rollback();
+            return $this->error($e->getMessage() . $e->getFile() . $e->getLine());
+        }
+
     }
 }

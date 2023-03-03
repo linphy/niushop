@@ -12,6 +12,7 @@ namespace app\model\goods;
 
 
 use app\model\BaseModel;
+use app\model\system\Stat;
 
 /**
  * 购物车
@@ -31,9 +32,21 @@ class Cart extends BaseModel
                 'num' =>  $cart_info[ 'num' ] + $data[ 'num' ]
             ];
             if (isset($data['form_data']) && !empty($data['form_data'])) $update['form_data'] = $data['form_data'];
+
             $res = model("goods_cart")->update($update, [ [ 'cart_id', '=', $cart_info[ 'cart_id' ] ] ]);
+
+            $stat_model = new Stat();
+            $stat_model->switchStat([ 'type' => 'goods_cart', 'data' => [
+                'goods_cart_count' =>  $data[ 'num' ],
+                'site_id' => $data['site_id']
+            ] ]);
         } else {
             $res = model("goods_cart")->add($data);
+            $stat_model = new Stat();
+            $stat_model->switchStat([ 'type' => 'goods_cart', 'data' => [
+                'goods_cart_count' => $data['num'],
+                'site_id' => $data['site_id']
+            ] ]);
         }
         return $this->success($res);
     }
@@ -48,7 +61,17 @@ class Cart extends BaseModel
             'num' => $data[ 'num' ]
         ];
         if (isset($data['form_data']) && !empty($data['form_data'])) $update['form_data'] = $data['form_data'];
-        $res = model("goods_cart")->update($update, [ [ 'cart_id', '=', $data[ 'cart_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ]);
+        $condition = [ [ 'cart_id', '=', $data[ 'cart_id' ] ], [ 'member_id', '=', $data[ 'member_id' ] ] ];
+        $info = model("goods_cart")->getInfo($condition, 'site_id,num');
+        if(empty($info))
+            return $this->error();
+
+        $res = model("goods_cart")->update($update, $condition);
+        $stat_model = new Stat();
+        $stat_model->switchStat([ 'type' => 'goods_cart', 'data' => [
+            'goods_cart_count' =>  $data['num'] - $info['num'],
+            'site_id' => $info['site_id']
+        ] ]);
         return $this->success($res);
     }
 

@@ -27,6 +27,8 @@ class Request extends \think\Request
      * @var unknown
      */
     protected $parseUrl;
+
+    protected $filter = ['filterEmoji'];
     
     /**
      * 站点id

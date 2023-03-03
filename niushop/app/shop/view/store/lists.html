@@ -9,11 +9,11 @@
 <input id="store_exit" type="hidden" value="{$store_is_exit}"/>
 <!-- 搜索框 -->
 <div class="single-filter-box">
-	<button class="layui-btn" onclick="add()">添加门店</button>
+	<button class="layui-btn" onclick="add()">添加{$title}</button>
 
 	<div class="layui-form">
 		<div class="layui-input-inline">
-			<input type="text" name="keyword" placeholder="请输入门店名称" autocomplete="off" class="layui-input">
+			<input type="text" name="keyword" placeholder="请输入{$title}名称" autocomplete="off" class="layui-input">
 			<button type="button" class="layui-btn layui-btn-primary" lay-filter="search" lay-submit>
 				<i class="layui-icon">&#xe615;</i>
 			</button>
@@ -23,7 +23,7 @@
 
 <div class="layui-tab table-tab"  lay-filter="store_tab">
 	<ul class="layui-tab-title">
-		<li class="layui-this" lay-id="" lay-typer="">全部门店</li>
+		<li class="layui-this" lay-id="" lay-typer="">全部{$title}</li>
 		<li lay-id="1" lay-type="1">营业中</li>
 		<li lay-id="0" lay-type="1">休息中</li>
 		<li lay-id="1" lay-type="2">已停业</li>
@@ -33,7 +33,7 @@
 	<div id="list_page"></div>
 </div>
 
-<!-- 门店详情 -->
+<!-- {$title}详情 -->
 <script type="text/html" id="store">
 	<div class="table-title">
 		<div class="title-pic">
@@ -50,7 +50,7 @@
 	</div>
 </script>
 
-<!-- 门店管理员 -->
+<!-- {$title}管理员 -->
 <script type="text/html" id="store_admin">
 	<div class="table-title">
 		<div class="title-pic">
@@ -162,23 +162,21 @@
 							html += '</p>';
 							if(store_exit == 1){
 								html += '<p class="store-time user-name">管理员：'+ d.username +'<a class="edit-password" onclick="resetStorePassword('+ d.store_id +')">重置密码</a></p>';
-							}else{
-								html += '<p class="store-time user-name">管理员：----</p>';
 							}
 							html += '<p class="store-time">联系方式：'+ telphone +'</p>';
 							html += '<p class="store-time">地址：'+ d.full_address +' '+ d.address +'</p>';
 							html += '<div class="store-operation">';
 								html += '<span class="operation-type" onclick="editStore('+ d.store_id +')">编辑</span>';
-								html += '<span class="operation-type" onclick="deleteStore('+ d.store_id +')">删除</span>';
+								if(d.is_default != 1) {
+									html += '<span class="operation-type" onclick="deleteStore(' + d.store_id + ')">删除</span>';
+								}
 								if(d.is_frozen == 1){
 									html += '<span class="operation-type" onclick="closeStore('+ d.store_id +', '+ d.is_frozen +')">开启</span>';
 								}else{
 									html += '<span class="operation-type" onclick="closeStore('+ d.store_id +', '+ d.is_frozen +')">停业</span>';
 								}
 
-								if(store_exit == 1){
-									html += '<button class="layui-btn layui-btn-primary text-color border-color" onclick="joinStore()">进入门店</button>';
-								}
+
 
 							html += '</div>';
 						html += '</div>';
@@ -229,7 +227,7 @@
 	}
 
 	function deleteStore(data){
-		layer.confirm('门店已开始运营，确认要删除吗?', function() {
+		layer.confirm('{$title}已开始运营，确认要删除吗?', function() {
 			$.ajax({
 				url: ns.url("shop/store/deleteStore"),
 				data: { store_id : data},
@@ -248,11 +246,13 @@
 			});
 		});
 	}
-
+	function toLocal(store_id){
+		window.open(ns.url("shop/store/local",{store_id}));
+	}
 	function closeStore(store_id, is_frozen){
-		var msg = '门店已开始运营，确认要关闭吗?';
+		var msg = '{$title}已开始运营，确认要关闭吗?';
 		if(is_frozen == 1) {
-			msg = '确定要开启该门店吗？';
+			msg = '确定要开启该{$title}吗？';
 		}
 		layer.confirm(msg, function() {
 			$.ajax({

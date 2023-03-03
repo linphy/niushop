@@ -12,6 +12,7 @@
 namespace app\model\system;
 
 use addon\postertemplate\model\PosterTemplate as PosterTemplateModel;
+use addon\store\model\Config as StoreConfig;
 use app\model\BaseModel;
 use app\model\upload\Upload;
 use extend\Poster as PosterExtend;
@@ -24,11 +25,11 @@ class Poster extends BaseModel
     /**
      * 商品海报
      */
-    public function goods($app_type, $page, $qrcode_param, $promotion_type, $site_id)
+    public function goods($app_type, $page, $qrcode_param, $promotion_type, $site_id, $store_id = 0)
     {
         try {
 
-            $goods_info = $this->getGoodsInfo($qrcode_param['goods_id']);
+            $goods_info = $this->getGoodsInfo($qrcode_param['goods_id'], $site_id, $store_id);
             if (empty($goods_info)) return $this->error('未获取到商品信息');
 
             $qrcode_info = $this->getGoodsQrcode($app_type, $page, $qrcode_param, $promotion_type, $site_id);
@@ -417,12 +418,21 @@ class Poster extends BaseModel
      * 获取商品信息
      * @param unknown $sku_id
      */
-    private function getGoodsInfo($goods_id)
+    private function getGoodsInfo($goods_id, $site_id, $store_id)
     {
-        $field = 'g.goods_id,g.goods_name,g.introduction,g.price,gs.discount_price,g.goods_image,g.sku_id,gs.collect_num,g.template_id,g.market_price,gs.sku_image';
-        $info = model('goods')->getInfo(['g.goods_id' => $goods_id], $field, 'g', [
+        $field = 'g.goods_id,g.goods_name,g.introduction,gs.price,gs.discount_price,g.goods_image,g.sku_id,gs.collect_num,g.template_id,g.market_price,gs.sku_image';
+        $join = [
             ['goods_sku gs', 'gs.sku_id=g.sku_id', 'left']
-        ]);
+        ];
+        if (!empty($store_id)) {
+            $store_config = (new StoreConfig())->getStoreBusinessConfig($site_id)[ 'data' ][ 'value' ];
+            if ($store_config['store_business'] == 'store') {
+                $join[] = [ 'store_goods_sku sgs', 'gs.sku_id = sgs.sku_id and sgs.store_id=' . $store_id, 'left' ];
+                $field = str_replace('gs.price', 'IFNULL(IF(g.is_unify_pirce = 1,gs.price,sgs.price), gs.price) as price', $field);
+                $field = str_replace('gs.discount_price', 'IFNULL(IF(g.is_unify_pirce = 1,gs.discount_price,sgs.price), gs.discount_price) as discount_price', $field);
+            }
+        }
+        $info = model('goods')->getInfo(['g.goods_id' => $goods_id], $field, 'g', $join);
         return $info;
     }
 
@@ -464,10 +474,10 @@ class Poster extends BaseModel
      * @param $site_id
      * @return array|\extend\multitype|PosterExtend|string|string[]
      */
-    public function shareImg($page, $qrcode_param, $site_id)
+    public function shareImg($page, $qrcode_param, $site_id, $store_id = 0)
     {
         try {
-            $goods_info = $this->getGoodsInfo($qrcode_param['goods_id']);
+            $goods_info = $this->getGoodsInfo($qrcode_param['goods_id'], $site_id, $store_id);
             if (empty($goods_info)) return $this->error('未获取到商品信息');
 
 //            $file_path = 'upload/share_img/goods_'.$goods_info['goods_id'] .'/sku_'.$goods_info['sku_id'] .'.jpg';

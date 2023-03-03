@@ -10,12 +10,13 @@
 
 namespace app\api\controller;
 
-use app\exception\ApiException;
+use app\model\member\Member as MemberModel;
 use app\model\shop\Shop;
 use app\model\system\Api;
 use extend\RSA;
 use think\facade\Cache;
-use app\model\member\Member as MemberModel;
+use addon\store\model\Config as StoreConfig;
+use app\model\store\Store;
 
 class BaseApi
 {
@@ -31,13 +32,25 @@ class BaseApi
 
     protected $app_module = "shop";
 
-    protected $auth_key = '';
-
     public $app_type;
 
-    protected $api_config;
-
     private $refresh_token;
+
+    /**
+     * 所选门店id
+     * @var
+     */
+    protected $store_id = 0; // 门店id
+
+    /**
+     * 门店数据
+     * @var
+     */
+    protected $store_data = [
+        'config' => [
+            'store_business' => 'shop'
+        ]
+    ];
 
     public function __construct()
     {
@@ -55,24 +68,39 @@ class BaseApi
         if (!isset($this->params[ 'app_type' ])) $this->params[ 'app_type' ] = 'h5';
 
         if ($this->params[ 'app_type' ] == 'pc') {
-            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_pc_status' ]) {
-                $error = $this->error([], 'SITE_CLOSE');
-                throw new ApiException($error[ 'code' ], $error[ 'message' ]);
-            }
+            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_pc_status' ]) exit(json_encode($this->error([], 'SITE_CLOSE')));
         } else if ($this->params[ 'app_type' ] == 'weapp') {
-            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_weapp_status' ]) {
-                $error = $this->error([], 'SITE_CLOSE');
-                throw new ApiException($error[ 'code' ], $error[ 'message' ]);
-            }
-        } else {
-            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_h5_status' ]) {
-                $error = $this->error([], 'SITE_CLOSE');
-                throw new ApiException($error[ 'code' ], $error[ 'message' ]);
-            }
+            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_weapp_status' ]) exit(json_encode($this->error([], 'SITE_CLOSE')));
+        } else if ($this->params[ 'app_type' ] == 'h5') {
+            if (!$shop_status[ 'data' ][ 'value' ][ 'shop_h5_status' ]) exit(json_encode($this->error([], 'SITE_CLOSE')));
         }
 
         if (isset($this->params[ 'encrypt' ]) && !empty($this->params[ 'encrypt' ])) {
             $this->decryptParams();
+        }
+
+        $this->store_id = $this->params[ 'store_id' ] ?? 0;
+    }
+
+    /**
+     * 初始化门店数据
+     */
+    protected function initStoreData()
+    {
+        $store_model = new Store();
+        $default_store = $store_model->getDefaultStore($this->site_id)[ 'data' ];
+        $this->store_data[ 'default_store' ] = $default_store ? $default_store[ 'store_id' ] : 0;
+        $this->store_id = $this->store_id ? $this->store_id : $this->store_data[ 'default_store' ];
+
+        if (addon_is_exit('store', $this->site_id)) {
+            $this->store_data[ 'config' ] = ( new StoreConfig() )->getStoreBusinessConfig($this->site_id)[ 'data' ][ 'value' ];
+
+            if ($this->store_id == $this->store_data[ 'default_store' ]) $this->store_data[ 'store_info' ] = $default_store;
+            else $this->store_data[ 'store_info' ] = $store_model->getStoreInfo([ [ 'site_id', '=', $this->site_id ], [ 'store_id', '=', $this->store_id ] ])[ 'data' ];
+
+            if (empty($this->store_data[ 'store_info' ]) || $this->store_data[ 'store_info' ][ 'status' ] == 0) {
+                exit(json_encode($this->error([], 'STORE_CLOSE')));
+            }
         }
     }
 
@@ -103,8 +131,7 @@ class BaseApi
 
         $key = 'site' . $this->site_id;
         $api_model = new Api();
-        $api_config = $api_model->getApiConfig();
-        $api_config = $api_config[ 'data' ];
+        $api_config = $api_model->getApiConfig()[ 'data' ];
         if ($api_config[ 'is_use' ] && isset($api_config[ 'value' ][ 'private_key' ]) && !empty($api_config[ 'value' ][ 'private_key' ])) {
             $key = $api_config[ 'value' ][ 'private_key' ] . $key;
         }
@@ -116,13 +143,11 @@ class BaseApi
         if (!isset($data[ 'member_id' ]) || empty($data[ 'member_id' ])) return $this->error('', 'TOKEN_ERROR');
 
         $member_model = new MemberModel();
-        $member_info = $member_model->getMemberInfo([ [ 'member_id', '=', $data[ 'member_id' ] ], [ 'is_delete', '=', 0 ], [ 'site_id', '=', $this->site_id ] ], 'member_id')[ 'data' ];
-        if (empty($member_info)) return $this->error('', 'TOKEN_ERROR');
-
-        $blacklist = $member_model->getMemberBlacklist($this->site_id);
-        if (!empty($blacklist[ 'data' ]) && in_array($data[ 'member_id' ], $blacklist[ 'data' ])) {
+        $check_member_id = $member_model->checkMemberByMemberId($data[ 'member_id' ], $this->site_id);
+        if (!$check_member_id) {
             return $this->error('', 'TOKEN_EXPIRE');
         }
+
         if ($data[ 'expire_time' ] < time()) {
             if ($data[ 'expire_time' ] != 0) {
                 return $this->error('', 'TOKEN_EXPIRE');
@@ -285,5 +310,32 @@ class BaseApi
             $lang = $cache_common;
         }
         return $lang;
+    }
+
+    /**
+     * @param array $data 验证数据
+     * @param $validate   验证类
+     * @param $scene   验证场景
+     */
+    public function validate(array $data, $validate, $scene = '')
+    {
+        try {
+            $class = new $validate;
+            if (!empty($scene)) {
+                $res = $class->scene($scene)->check($data);
+            } else {
+                $res = $class->check($data);
+            }
+            if (!$res) {
+                return error(-1, $class->getError());
+            } else
+                return success(1);
+
+        } catch (ValidateException $e) {
+            return error(-1, $e->getError());
+        } catch (\Exception $e) {
+            return error(-1, $e->getMessage());
+        }
+
     }
 }

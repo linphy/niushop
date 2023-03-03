@@ -135,7 +135,8 @@ class Localorder extends BaseShop
             'order_id' => $order_id,
             'deliverer' => $deliverer,
             'deliverer_mobile' => $deliverer_mobile,
-            'site_id' => $this->site_id
+            'site_id' => $this->site_id,
+            'user_info' => $this->user_info
         ];
         $result = $local_order_model->orderGoodsDelivery($data);
         return $result;

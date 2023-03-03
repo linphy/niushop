@@ -10,6 +10,7 @@
 
 namespace app\api\controller;
 
+use app\model\diy\Template;
 use app\model\web\DiyView as DiyViewModel;
 
 /**
@@ -26,50 +27,42 @@ class Diyview extends BaseApi
     {
         $id = isset($this->params[ 'id' ]) ? $this->params[ 'id' ] : 0;
         $name = isset($this->params[ 'name' ]) ? $this->params[ 'name' ] : '';
-        $is_default = isset($this->params[ 'is_default' ]) ? $this->params[ 'is_default' ] : ''; // 是否默认页面（针对自定义模板设置），1：是，0：否
 
         if (empty($id) && empty($name)) {
             return $this->response($this->error('', 'REQUEST_DIY_ID_NAME'));
         }
+
+        $this->initStoreData();
+
+        // 如果是连锁运营模式，则进入门店页面
+        if ($name == 'DIY_VIEW_INDEX' && $this->store_data[ 'config' ][ 'store_business' ] == 'store') {
+            $name = 'DIY_STORE';
+        }
+
         $diy_view = new DiyViewModel();
         $condition = [
             [ 'site_id', '=', $this->site_id ]
         ];
-        if ($is_default !== '') {
-            $condition[] = [ 'is_default', '=', $is_default ];
-        }
+
         if (!empty($id)) {
             $condition[] = [ 'id', '=', $id ];
-            $diy_view->modifyClick([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ]);
-        }
-        if (!empty($name)) {
+        } elseif (!empty($name)) {
             $condition[] = [ 'name', '=', $name ];
-            if ($is_default === '' && in_array($name, $diy_view->getPage()) !== false) {
-                $is_default = 1;
-                $condition[] = [ 'is_default', '=', 1 ];
-            } else {
-                $is_default = 0;
-            }
-            $diy_view->modifyClick([ [ 'name', '=', $name ], [ 'is_default', '=', $is_default ], [ 'site_id', '=', $this->site_id ] ]);
+            $condition[] = [ 'is_default', '=', 1 ];
         }
 
         $info = $diy_view->getSiteDiyViewDetail($condition);
 
-        // 如果查询的是首页，那么标题显示店铺名称， && $info[ 'data' ][ 'name' ] == 'DIY_VIEW_INDEX'
         if (!empty($info[ 'data' ])) {
-//            $site_api = new Site();
-//            $site_info = json_decode($site_api->info(), true)[ 'data' ];
-//            $value = json_decode($info[ 'data' ][ 'value' ], true);
-//            $value[ 'global' ][ 'title' ] = $site_info[ 'site_name' ];
-//            $info[ 'data' ][ 'value' ] = json_encode($value);
-
-            // 查询自定义扩展组件
-            $info[ 'data' ][ 'comp_extend' ] = $diy_view->getDiyViewUtilList([ [ 'type', '=', 'EXTEND' ] ], 'name')[ 'data' ];
-            if (!empty($info[ 'data' ][ 'comp_extend' ])) {
-                $info[ 'data' ][ 'comp_extend' ] = array_column($info[ 'data' ][ 'comp_extend' ], 'name');
-            }
-
+            $diy_view->modifyClick([ [ 'id', '=', $info[ 'data' ][ 'id' ] ], [ 'site_id', '=', $this->site_id ] ]);
         }
+
+        // 如果是连锁运营模式，标题显示门店名称
+//        if ($name == 'DIY_STORE' && $this->store_data[ 'config' ][ 'store_business' ] == 'store' && $this->store_data[ 'store_info' ]) {
+//            $info[ 'data' ][ 'value' ] = json_decode($info[ 'data' ][ 'value' ], true);
+//            $info[ 'data' ][ 'value' ][ 'global' ][ 'title' ] = $this->store_data[ 'store_info' ][ 'store_name' ];
+//            $info[ 'data' ][ 'value' ] = json_encode($info[ 'data' ][ 'value' ]);
+//        }
 
         return $this->response($info);
     }

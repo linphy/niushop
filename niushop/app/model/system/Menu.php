@@ -147,6 +147,46 @@ class Menu extends BaseModel
     }
 
     /**
+     * 刷新收银端权限
+     * @param $addon
+     * @return array
+     */
+    public function refreshCashierAuth($addon){
+        $tree_name = 'addon/' . $addon . '/config/cashier_auth.php';
+        if (!file_exists($tree_name)) return $this->error();
+
+        $tree = require $tree_name;
+        if (!$tree) return $this->error();
+
+        model('cashier_auth')->delete([ ['addon', '=', $addon] ]);
+
+        $list = [];
+        $this->getCashierAuthList($tree, $addon, '', $list);
+        $res = model('cashier_auth')->addList($list);
+        // 清除缓存
+        Cache::clear('cashier_menu');
+        return $this->success();
+    }
+
+    /**
+     * 获取收银端权限集
+     * @param $addon
+     * @param  array  $list
+     */
+    private function getCashierAuthList($tree, $addon, $parent = '', &$list = []){
+        foreach ($tree as $item) {
+            $children = $item['children'] ?? [];
+            if (isset($item['children'])) unset($item['children']);
+
+            $item = array_merge($item, ['addon' => $addon, 'parent' => $item['parent'] ?? $parent ]);
+            ksort($item);
+            array_push($list, $item);
+
+            if (!empty($children)) $this->getCashierAuthList($children, $addon, $item['name'], $list);
+        }
+    }
+
+    /**
      * 刷新全部菜单
      */
     public function refreshAllMenu()

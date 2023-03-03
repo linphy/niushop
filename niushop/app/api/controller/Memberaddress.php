@@ -171,6 +171,7 @@ class Memberaddress extends BaseApi
         $page = isset($this->params[ 'page' ]) ? $this->params[ 'page' ] : 1;
         $page_size = isset($this->params[ 'page_size' ]) ? $this->params[ 'page_size' ] : PAGE_LIST_ROWS;
         $type = isset($this->params[ 'type' ]) ? $this->params[ 'type' ] : '';
+        $store_id = $this->params['store_id'] ?? 0;
         $member_address = new MemberAddressModel();
         $condition = [
             [ 'member_id', '=', $token[ 'data' ][ 'member_id' ] ],
@@ -185,6 +186,7 @@ class Memberaddress extends BaseApi
         if ($type == 2) {
             $local = new Local();
             foreach ($list[ 'data' ][ 'list' ] as $k => $v) {
+                $v['store_id'] = $store_id;
                 $local_res = $local->isSupportDelivery($v);
                 if ($local_res[ 'code' ] < 0) {
                     $list[ 'data' ][ 'list' ][ $k ][ 'local_data' ] = $local_res[ 'message' ];

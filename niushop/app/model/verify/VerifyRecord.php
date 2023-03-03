@@ -70,11 +70,11 @@ class VerifyRecord extends BaseModel
     {
         $alias = 'vr';
         $join = array (
-            [ 'verify v', 'v.verify_code = vr.verify_code', 'left' ]
+            [ 'verify v', 'v.verify_code = vr.verify_code', 'left' ],
+            [ 'store s', 's.store_id = vr.store_id', 'left' ]
         );
         $order = 'vr.verify_time desc';
-        $field = 'v.*,vr.*';
-
+        $field = 'v.*,vr.*,s.store_name';
 
         $list = model('verify_record')->pageList($condition, $field, $order, $page, $page_size, $alias, $join);
         $verify_model = new Verify();
@@ -82,14 +82,17 @@ class VerifyRecord extends BaseModel
             $temp = json_decode($v[ 'verify_content_json' ], true);
             $list[ "list" ][ $k ][ "item_array" ] = $temp[ "item_array" ];
             $list[ "list" ][ $k ][ "remark_array" ] = $temp[ "remark_array" ];
-            $list[ "list" ][ $k ][ 'order_no' ] = $temp[ 'remark_array' ][ 1 ][ 'value' ];
-            $order_info = model('order')->getInfo([ [ 'order_no', '=', $temp[ 'remark_array' ][ 1 ][ 'value' ] ] ], 'order_id,member_id,name,order_name');
-            $list[ 'list' ][ $k ][ 'order_info' ] = $order_info;
-            $list[ 'list' ][ $k ][ 'name' ] = model('member')->getValue([ [ 'member_id', '=', $list[ 'list' ][ $k ][ 'order_info' ][ 'member_id' ] ] ], 'username');
-            $list[ 'list' ][ $k ][ 'sku_image' ] = "";
-            if ($v[ 'verify_type' ] == "virtualgoods") {
+            if ($v['verify_type'] == 'pickup' || $v['verify_type'] == 'virtualgoods') {
+                $list[ "list" ][ $k ][ 'order_no' ] = $temp[ 'remark_array' ][ 1 ][ 'value' ];
+                $order_info = model('order')->getInfo([ [ 'order_no', '=', $temp[ 'remark_array' ][ 1 ][ 'value' ] ] ], 'order_id,member_id,name,order_name');
+                $list[ 'list' ][ $k ][ 'order_info' ] = $order_info;
+                $list[ 'list' ][ $k ][ 'name' ] = model('member')->getValue([ [ 'member_id', '=', $list[ 'list' ][ $k ][ 'order_info' ][ 'member_id' ] ] ], 'username');
+                $list[ 'list' ][ $k ][ 'sku_image' ] = "";
                 $order_goods_info = model("order_goods")->getInfo([ [ 'order_id', '=', $order_info[ 'order_id' ] ] ], "sku_image");
                 $list[ 'list' ][ $k ][ 'sku_image' ] = $order_goods_info[ 'sku_image' ];
+            } else {
+                $list[ 'list' ][ $k ][ 'sku_image' ] = $temp[ "item_array" ][0]['img'];
+                $list[ 'list' ][ $k ][ 'name' ] = $temp[ "item_array" ][0]['name'];
             }
             unset($list[ "list" ][ $k ][ "verify_content_json" ]);
             $list[ 'list' ][ $k ][ 'verifyFrom' ] = $verify_model->verifyFrom[ $v[ 'verify_from' ] ];

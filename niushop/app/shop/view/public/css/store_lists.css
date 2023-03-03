@@ -50,7 +50,15 @@
 	overflow: hidden;
 	text-overflow:ellipsis;
 }
-
+.store-default{
+	color: #FF6A00;
+	background: #fff;
+	border: 1px solid #FF6A00;
+	font-weight: 500;
+	padding: 1px 5px;
+	border-radius: 2px;
+	margin-right: 5px;
+}
 .store-time {
 	font-size: 14px;
 	color: #999999;

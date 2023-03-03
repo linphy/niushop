@@ -63,7 +63,7 @@
             {{#  layui.each(d.item_array, function(index, item){ }}
             <div class="verify-info-item">
                 <div class="verify-info-img">
-                    <img src="{{ ns.img(item.img) }}" alt="">
+                    <img src="{{ ns.img(item.img, 'mid') }}" alt="">
                 </div>
                 <div class="verify-info-inner-item">
                     <p class="verify-info-name">
@@ -102,7 +102,7 @@
             if(submitting){return false;}
             submitting = true;
             $.ajax({
-                url: '{:addon_url("shop/verify/verifyCard")}',
+                url: '{:addon_url("shop/verify/verifycard")}',
                 data: data.field,
                 dataType: 'json',
                 type: "post",

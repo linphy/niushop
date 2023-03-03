@@ -17,7 +17,7 @@ Order.prototype.setData = function(data){
 Order.prototype.cols = [
     {
         title : '<span style="margin-left:10px;">商品信息</span>',
-        width : "40%",
+        width : "38%",
         className : "product-info",
         template : function(item){
             var h = '<div class="img-block" >';
@@ -43,8 +43,23 @@ Order.prototype.cols = [
         }
     },
     {
-        title : "退款金额",
+        title : "买家",
         width : "10%",
+        align : "right",
+        className : "order-money",
+        template : function(item){
+            var h = '<div style="padding-right: 15px;">';
+            if(item.member_id)
+                h += '<a class="text-color" target="_blank" href="' + ns.url("shop/member/editmember?member_id=") + item.member_id + '">' + item.nickname + '</a>';
+            else
+                h += '<span>散客</span>';
+            h += '</div>';
+            return h;
+        }
+    },
+    {
+        title : "退款金额",
+        width : "8%",
         align : "right",
         className : "refund-money",
         template : function(item){
@@ -56,7 +71,7 @@ Order.prototype.cols = [
     },
     {
         title : "申请时间",
-        width : "15%",
+        width : "13%",
         align : "center",
         className : "apply-time",
         merge : true,
@@ -66,7 +81,7 @@ Order.prototype.cols = [
     },
     {
         title : "退款状态",
-        width : "15%",
+        width : "13%",
         align : "center",
         className : "refund-status",
         merge : true,
@@ -83,7 +98,7 @@ Order.prototype.cols = [
     },
     {
         title : "操作",
-        width : "10%",
+        width : "8%",
         align : "right",
         className : "operation",
         merge : true,
@@ -134,10 +149,10 @@ Order.prototype.tbody = function(){
 		
 		// tbody += '<tr class="separation-row"><td colspan="7"><hr /></td></tr>';
         tbody += '<tr class="header-row">';
-        tbody += '<td colspan="6">';
+        tbody += '<td colspan="7">';
         tbody += '<span class="order-item-header" style="margin-right:50px;">退款编号：' + item.refund_no + '</span>';
-        tbody += '<span class="order-item-header" style="margin-right:50px;">订单编号：' + item.order_no + '</span>';
-        tbody += '<span class="order-item-header" style="display: inline-block;height: 23px;padding: 0 8px 0 0; margin: 5px 0 5px 5px;">订单状态：' + item.delivery_status_name + '</span>';
+        tbody += '<a class="order-item-header text-color" style="margin-right:50px;" target="_blank" href="' + ns.url("shop/order/lists") + '#!order_label=order_no&page=1&search=' + item.order_no + '">订单编号：' + item.order_no + '</a>';
+        // tbody += '<span class="order-item-header" style="display: inline-block;height: 23px;padding: 0 8px 0 0; margin: 5px 0 5px 5px;">订单状态：' + item.delivery_status_name + '</span>';
         tbody += '</td>';
         tbody += '</tr>';
 

@@ -5,7 +5,6 @@
  * Copy right 2015-2025 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  * @author : niuteam
  * @date : 2022.8.8
@@ -24,23 +23,23 @@ class Helpclass extends BaseApi
      */
     public function lists()
     {
-        $help      = new HelpModel();
+        $help = new HelpModel();
         $condition = [
-            ['site_id', '=', $this->site_id]
+            [ 'site_id', '=', $this->site_id ]
         ];
-        $list      = $help->getHelpClassList($condition, 'class_id, class_name', 'sort asc, create_time desc');
-        $order     = 'sort asc, create_time desc';
-        $field     = 'id,title,link_address';
-        if (!empty($list['data'])) {
+        $list = $help->getHelpClassList($condition, 'class_id, class_name', 'sort asc, create_time desc');
+        $order = 'sort asc, create_time desc';
+        $field = 'id,title,link_address';
+        if (!empty($list[ 'data' ])) {
 
-            foreach ($list['data'] as $k => $v) {
-                $condition                      = [
-                    ['class_id', '=', $v['class_id']],
-                    ['site_id', '=', $this->site_id]
+            foreach ($list[ 'data' ] as $k => $v) {
+                $condition = [
+                    [ 'class_id', '=', $v[ 'class_id' ] ],
+                    [ 'site_id', '=', $this->site_id ]
                 ];
-                $child_list                     = $help->getHelpList($condition, $field, $order);
-                $child_list                     = $child_list['data'];
-                $list['data'][$k]['child_list'] = $child_list;
+                $child_list = $help->getHelpList($condition, $field, $order);
+                $child_list = $child_list[ 'data' ];
+                $list[ 'data' ][ $k ][ 'child_list' ] = $child_list;
             }
         }
         return $this->response($list);

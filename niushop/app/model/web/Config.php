@@ -24,50 +24,38 @@ class Config extends BaseModel
     private $cache_list = [
         [
             'name' => '数据缓存',
-            'desc' => '数据缓存',
+            'desc' => '清除cache数据缓存',
             'key' => 'content',
+            'btn' => '清除',
             'icon' => 'public/static/img/cache/data.png'
         ],
         [
             'name' => '数据表缓存',
-            'desc' => '数据表缓存',
+            'desc' => '新增/修改数据表后，需要清除数据表缓存',
             'key' => 'data_table_cache',
+            'btn' => '清除',
             'icon' => 'public/static/img/cache/data_table.png'
         ],
         [
             'name' => '模板缓存',
             'desc' => '模板缓存',
             'key' => 'template_cache',
+            'btn' => '清除',
             'icon' => 'public/static/img/cache/template.png'
         ],
+
         [
-            'name' => '刷新插件',
-            'desc' => '刷新插件的info信息',
-            'key' => 'addon_cache',
-            'icon' => 'public/static/img/cache/template.png'
-        ],
-        [
-            'name' => '刷新所有插件菜单',
-            'desc' => '刷新所有插件菜单',
-            'key' => 'addon_menu_cache',
-            'icon' => 'public/static/img/cache/template.png'
-        ],
-        [
-            'name' => '刷新店铺端菜单',
-            'desc' => '刷新店铺端菜单',
-            'key' => 'shop_menu_cache',
+            'name' => '刷新菜单',
+            'desc' => '新增/修改插件菜单后，需要刷新插件菜单',
+            'key' => 'menu_cache',
+            'btn' => '刷新',
             'icon' => 'public/static/img/cache/template.png'
         ],
         [
             'name' => '刷新自定义模板',
-            'desc' => '刷新自定义模板',
+            'desc' => '新增/修改自定义组件后，需要刷新自定义模板',
             'key' => 'diy_view',
-            'icon' => 'public/static/img/cache/template.png'
-        ],
-        [
-            'name' => '升级5.0.3版本遇到的问题（临时）',
-            'desc' => '自定义图标显示问题、自定义会员中心页面数据',
-            'key' => 'handle_version_data_temp',
+            'btn' => '刷新',
             'icon' => 'public/static/img/cache/template.png'
         ],
     ];
@@ -122,6 +110,9 @@ class Config extends BaseModel
             if ($data[ 'store' ] && $config_info[ 'store' ] && $data[ 'store' ] != $config_info[ 'store' ]) {
                 $upload_model->deletePic($config_info[ 'store' ], $site_id);
             }
+            if ($data[ 'article' ] && $config_info[ 'article' ] && $data[ 'article' ] != $config_info[ 'article' ]) {
+                $upload_model->deletePic($config_info[ 'article' ], $site_id);
+            }
         }
 
         $config = new ConfigModel();
@@ -140,10 +131,20 @@ class Config extends BaseModel
             $res[ 'data' ][ 'value' ] = [
                 "goods" => "public/static/img/default_img/square.png",
                 "head" => "public/static/img/default_img/head.png",
-                "store" => "public/static/img/default_img/square.png"
+                "store" => "public/static/img/default_img/store.png",
+                "article" => "public/static/img/default_img/article.png",
             ];
         }
-        $res[ 'data' ][ 'value' ][ 'article' ] = $res[ 'data' ][ 'value' ][ 'article' ] ?? 'public/static/img/default_img/article.png';
+
+        if (empty($res[ 'data' ][ 'value' ][ 'head' ])) {
+            $res[ 'data' ][ 'value' ][ 'head' ] = 'public/static/img/default_img/head.png';
+        }
+        if (empty($res[ 'data' ][ 'value' ][ 'article' ])) {
+            $res[ 'data' ][ 'value' ][ 'article' ] = 'public/static/img/default_img/article.png';
+        }
+        if (empty($res[ 'data' ][ 'value' ][ 'store' ])) {
+            $res[ 'data' ][ 'value' ][ 'store' ] = 'public/static/img/default_img/store.png';
+        }
         return $res;
     }
 
@@ -280,6 +281,12 @@ class Config extends BaseModel
                 return $this->error('', '请输入正确的域名地址');
             }
         }
+        // 默认部署，更新店铺域名
+        if ($data[ 'deploy_way' ] == 'default') {
+            $this->setShopDomainConfig([
+                'domain_name' => __ROOT__
+            ], $site_id);
+        }
         $config = new ConfigModel();
         $res = $config->setConfig($data, 'H5域名配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_modle ], [ 'config_key', '=', 'H5_DOMAIN_NAME' ] ]);
 
@@ -300,14 +307,6 @@ class Config extends BaseModel
                 'deploy_way' => 'default'
             ];
         }
-//        else {
-//            if ($res[ 'data' ][ 'value' ][ 'domain_name_h5' ] == '' || empty($res[ 'data' ][ 'value' ][ 'deploy_way' ]) || $res[ 'data' ][ 'value' ][ 'deploy_way' ] == 'default') {
-//                $res[ 'data' ][ 'value' ] = [
-//                    'domain_name_h5' => __ROOT__ . '/h5'
-//                ];
-//            }
-//            $res[ 'data' ][ 'value' ][ 'deploy_way' ] = $res[ 'data' ][ 'value' ][ 'deploy_way' ] ?? 'default';
-//        }
         return $res;
     }
 
@@ -352,6 +351,12 @@ class Config extends BaseModel
             if (!preg_match($search, $data[ 'domain_name_pc' ])) {
                 return $this->error('', '请输入正确的域名地址');
             }
+        }
+        // 默认部署，更新店铺域名
+        if ($data[ 'deploy_way' ] == 'default') {
+            $this->setShopDomainConfig([
+                'domain_name' => __ROOT__
+            ], $site_id);
         }
         $config = new ConfigModel();
         $res = $config->setConfig($data, 'PC域名配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_modle ], [ 'config_key', '=', 'PC_DOMAIN_NAME' ] ]);
@@ -414,7 +419,7 @@ class Config extends BaseModel
     }
 
     /**
-     * 设置猜你喜欢
+     * 设置商品推荐—猜你喜欢
      * @param $data
      * @param $site_id
      * @param $app_module
@@ -423,12 +428,12 @@ class Config extends BaseModel
     public function setGuessYouLike($data, $site_id, $app_module)
     {
         $config = new ConfigModel();
-        $res = $config->setConfig($data, '商品猜你喜欢', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_GUESS_YOU_LIKE_CONFIG' ] ]);
+        $res = $config->setConfig($data, '商品推荐', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_GUESS_YOU_LIKE_CONFIG' ] ]);
         return $res;
     }
 
     /**
-     * 获取商品猜你喜欢
+     * 获取商品推荐—猜你喜欢
      * @param $site_id
      * @param $app_module
      * @return array
@@ -439,17 +444,45 @@ class Config extends BaseModel
         $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_GUESS_YOU_LIKE_CONFIG' ] ]);
         if (empty($res[ 'data' ][ 'value' ])) {
             $res[ 'data' ][ 'value' ] = [
-                'goodsdetail' => 1,
-                'memberindex' => 1,
-                'cart' => 1,
-                'collect' => 1,
-                'type_show' => 1,
-                'goods_ids' => '',
-                'supermember' => 1,
-                'guafen' => 1,
-                'orderdetail' => 1,
+                'title' => '猜你喜欢',
+                'support_page' => 'goods_detail,cart,collect,pay,order_detail,super_member,guafen',
+                'sources' => 'sort',
+                'goods_ids' => ''
             ];
         }
+        $res[ 'data' ][ 'value' ][ 'add_cart_switch' ] = $res[ 'data' ][ 'value' ][ 'add_cart_switch' ] ?? 0; // 加入购物车开关
+        return $res;
+    }
+
+    /**
+     * 设置商品列表配置
+     * @param $data
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function setGoodsListConfig($data, $site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '商品列表配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_LIST_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 设置商品列表配置
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function getGoodsListConfig($site_id, $app_module)
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_LIST_CONFIG' ] ]);
+        //数据格式化
+        $data = [
+            'add_cart_switch' => $res[ 'data' ][ 'value' ][ 'add_cart_switch' ] ?? 0, // 加入购物车开关
+        ];
+        $res[ 'data' ][ 'value' ] = $data;
         return $res;
     }
 
@@ -484,7 +517,6 @@ class Config extends BaseModel
         }
         return $res;
     }
-
 
     /**
      * 设置商品排序方式
@@ -575,4 +607,90 @@ class Config extends BaseModel
         return $res;
     }
 
+    /**
+     * 设置商品详情配置
+     * @param $data
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function setGoodsDetailConfig($data, $site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '商品详情配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_DETAIL_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取商品详情配置
+     * @param $site_id
+     * @param $app_module
+     * @return array
+     */
+    public function getGoodsDetailConfig($site_id, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'GOODS_DETAIL_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'nav_bar_switch' => 0, // 是否透明，0：不透明，1：透明
+                'introduction_color' => '#303133',
+            ];
+        }
+        return $res;
+    }
+
+    /**
+     * 设置店铺域名配置
+     * @param $data
+     * @param int $site_id
+     * @param string $app_module
+     * @return array
+     */
+    public function setShopDomainConfig($data, $site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->setConfig($data, '店铺域名配置', 1, [ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_DOMAIN_CONFIG' ] ]);
+        return $res;
+    }
+
+    /**
+     * 获取店铺域名配置
+     * @param int $site_id
+     * @param string $app_module
+     * @return array
+     */
+    public function getShopDomainConfig($site_id = 1, $app_module = 'shop')
+    {
+        $config = new ConfigModel();
+        $res = $config->getConfig([ [ 'site_id', '=', $site_id ], [ 'app_module', '=', $app_module ], [ 'config_key', '=', 'SHOP_DOMAIN_CONFIG' ] ]);
+        if (empty($res[ 'data' ][ 'value' ])) {
+            $res[ 'data' ][ 'value' ] = [
+                'domain_name' => __ROOT__,
+            ];
+            $this->setShopDomainConfig($res[ 'data' ][ 'value' ], $site_id);
+        }
+        return $res;
+    }
+
+    public function checkQqMapKey($tencent_map_key, $type = 0)
+    {
+        $url = 'https://apis.map.qq.com/ws/location/v1/ip?key=' . $tencent_map_key;
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        $data = curl_exec($curl);
+        if (!empty($data)) {
+            $data = json_decode($data, true);
+            if ($data[ 'status' ] != 0 && $type == 0) {
+                $data[ 'message' ] = "腾讯地图配置错误，无法定位地址";
+            }
+        }
+        return $data;
+    }
 }

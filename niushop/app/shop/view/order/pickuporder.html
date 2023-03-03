@@ -14,7 +14,7 @@
     <form class="layui-colla-content layui-form layui-show"  lay-filter="order_list">
       <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">搜索方式：</label>
+          <label class="layui-form-label">搜索方式</label>
           <div class="layui-input-inline">
             <select name="order_label" >
               {foreach $order_label_list as $k => $label_val}
@@ -28,7 +28,7 @@
 
         </div>
         <div class="layui-inline">
-          <label class="layui-form-label">营销类型：</label>
+          <label class="layui-form-label">营销类型</label>
           <div class="layui-input-inline">
             <select name="promotion_type" lay-filter="promotion_type">
               <option value="">全部</option>
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="layui-inline">
-          <label class="layui-form-label">订单来源：</label>
+          <label class="layui-form-label">订单来源</label>
           <div class="layui-input-inline">
             <select name="order_from">
               <option value="">全部</option>
@@ -52,7 +52,7 @@
       </div>
       <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">下单时间：</label>
+          <label class="layui-form-label">下单时间</label>
           <div class="layui-input-inline">
             <input type="text" class="layui-input" name="start_time" placeholder="开始时间" id="start_time" readonly>
             <i class=" iconrili iconfont calendar"></i>
@@ -66,7 +66,7 @@
           <button class="layui-btn layui-btn-primary date-picker-btn date-picker-btn-thirty" onclick="datePick(30, this);return false;">近30天</button>
         </div>
         <div class="layui-inline">
-          <label class="layui-form-label">付款方式：</label>
+          <label class="layui-form-label">付款方式</label>
           <div class="layui-input-inline">
             <select name="pay_type" >
               <option value="">全部</option>
@@ -259,7 +259,6 @@
 
     //批量导出（订单项）
     form.on('submit(batch_export_order_goods)', function(data){
-      // location.href = ns.url("shop/order/exportOrderGoods",data.field);
       $.ajax({
         type: 'post',
         dataType: 'json',
@@ -270,13 +269,11 @@
         }
       })
       window.open(ns.url("shop/order/export",{}))
-      // location.href = ns.url("shop/order/orderexportlist",{});
       return false;
     });
 
     //批量导出（订单）
     form.on('submit(batch_export_order)', function(data){
-      // location.href = ns.url("shop/order/exportOrder",data.field);
       $.ajax({
         type: 'post',
         dataType: 'json',
@@ -287,7 +284,6 @@
         }
       })
       window.open(ns.url("shop/order/export",{}))
-      // location.href = ns.url("shop/order/orderexportlist",{});
       return false;
     });
 

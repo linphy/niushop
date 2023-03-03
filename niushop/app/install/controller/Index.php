@@ -47,7 +47,7 @@ class Index extends BaseInstall
             $host = ( empty($_SERVER[ 'REMOTE_ADDR' ]) ? $_SERVER[ 'REMOTE_HOST' ] : $_SERVER[ 'REMOTE_ADDR' ] );
             $name = $_SERVER[ 'SERVER_NAME' ];
 
-            $verison = version_compare(PHP_VERSION, '7.4.0') == -1 ? false : true;
+            $verison = version_compare(PHP_VERSION, '7.1.0') == -1 ? false : true;
             //pdo
             $pdo = extension_loaded('pdo') && extension_loaded('pdo_mysql');
             $system_variables[] = [ "name" => "pdo", "need" => "开启", "status" => $pdo ];
@@ -198,70 +198,39 @@ class Index extends BaseInstall
 
             //导入SQL并执行。
             $get_sql_data = file_get_contents($file_name);
-
+            $sql_query = $this->getSqlQuery($get_sql_data);
             @mysqli_query($conn, "SET NAMES utf8");
-            //提取create
-            preg_match_all("/Create table .*\(.*\).*\;/iUs", $get_sql_data, $create_sql_arr);
-            $create_sql_arr = $create_sql_arr[ 0 ];
+            $query_count = count($sql_query);
+            for ($i = 0; $i < $query_count; $i++) {
+                $sql = trim($sql_query[$i]);
+                if (strstr($sql, 'CREATE TABLE')) {
+                    $match_item = preg_match('/CREATE TABLE [`]?(\\w+)[`]?/is', $sql, $match_data);
+                } elseif(strstr($sql, 'ALTER TABLE')) {
+                    $match_item = preg_match('/ALTER TABLE [`]?(\\w+)[`]?/is', $sql, $match_data);
 
-            foreach ($create_sql_arr as $create_sql_item) {
-                //正则匹配到数据表名,
-                $match_item = preg_match('/CREATE TABLE [`]?(\\w+)[`]?/is', $create_sql_item, $match_data);
-                if ($match_item > 0) {
-                    $table_name = $match_data[ "1" ];
-                    $new_table_name = $dbprefix . $table_name;
-                    $create_sql_item = $this->str_replace_first($table_name, $new_table_name, $create_sql_item);
-                    @mysqli_query($conn, $create_sql_item);
-                } else {
-                    return $this->returnError('数据表解析失败！');
+                }elseif(strstr($sql, 'INSERT INTO')){
+                    $match_item = preg_match('/INSERT INTO [`]?(\\w+)[`]?/is', $sql, $match_data);
+                }else{
+                    $match_item = 0;
                 }
-            }
-
-            //插入索引
-            preg_match_all("/ALTER TABLE .*\(.*\)?;/iUs", $get_sql_data, $alter_sql_arr);
-            $alter_sql_arr = $alter_sql_arr[ 0 ];
-
-            foreach ($alter_sql_arr as $alter_sql_item) {
-                $match_item = preg_match('/ALTER TABLE [`]?(\\w+)[`]?/is', $alter_sql_item, $match_data);
                 if ($match_item > 0) {
-                    $table_name = $match_data[ "1" ];
-                    $new_table_name = $dbprefix . $table_name;
-                    $alter_sql_item = $this->str_replace_first($table_name, $new_table_name, $alter_sql_item);
-                    $alter_sql_item = str_replace("\r\n",' ',$alter_sql_item);
-                    @mysqli_query($conn, $alter_sql_item);
-                } else {
-                    return $this->returnError([], '索引插入解析失败！');
-                }
-            }
-
-            //提取insert
-            preg_match_all("/INSERT INTO .*\(.*\)\;/iUs", $get_sql_data, $insert_sql_arr);
-            $insert_sql_arr = $insert_sql_arr[ 0 ];
-
-            //插入数据
-            foreach ($insert_sql_arr as $insert_sql_item) {
-                $match_item = preg_match('/INSERT INTO [`]?(\\w+)[`]?/is', $insert_sql_item, $match_data);
-                if ($match_item > 0) {
-                    $table_name = $match_data[ "1" ];
-                    $new_table_name = $dbprefix . $table_name;
-                    $insert_sql_item = $this->str_replace_first($table_name, $new_table_name, $insert_sql_item);
-                    @mysqli_query($conn, $insert_sql_item);
-                } else {
-                    return $this->returnError([], '数据插入解析失败！');
+                    try{
+                        $table_name = $match_data[ "1" ];
+                        $new_table_name = $dbprefix . $table_name;
+                        $sql_item = $this->str_replace_first($table_name, $new_table_name, $sql);
+                        @mysqli_query($conn, $sql_item);
+                    }catch(\Exception $e){
+                        return $this->returnError([], '数据库解析失败'.$e->getMessage());
+                    }
                 }
             }
 
             @mysqli_close($conn);
             $database_config = include $target_dir . DIRECTORY_SEPARATOR . $target_file;
-//			config("database", $database_config);
             \think\facade\Config::set($database_config, "database");
 
             //安装菜单
             $menu = new Menu();
-//            $admin_menu_res = $menu->refreshMenu('admin', '');
-//            if ($admin_menu_res[ "code" ] < 0) {
-//                return $this->returnError([], '平台菜单安装失败！');
-//            }
 
             $shop_menu_res = $menu->refreshMenu('shop', '');
             if ($shop_menu_res[ "code" ] < 0) {
@@ -443,6 +412,32 @@ class Index extends BaseInstall
         }
     }
 
+    /**
+     * @param $sql_data sql文件
+     * @return array
+     */
+    public function getSqlQuery($sql_data)
+    {
+        $sql_data = preg_replace("/TYPE=(InnoDB|MyISAM|MEMORY)( DEFAULT CHARSET=[^; ]+)?/", "ENGINE=\\1 DEFAULT CHARSET=utf8", $sql_data);
+
+        $sql_data = str_replace("\r", "\n", $sql_data);
+        $sql_query = [];
+        $num = 0;
+        $sql_arr = explode(";\n", trim($sql_data));
+        unset($sql);
+        foreach ($sql_arr as $sql) {
+            $sql_query[$num] = '';
+            $sqls = explode("\n", trim($sql));
+            $sqls = array_filter($sqls);
+            foreach ($sqls as $query) {
+                $str1 = substr($query, 0, 1);
+                if ($str1 != '#' && $str1 != '-')
+                    $sql_query[$num] .= $query;
+            }
+            $num++;
+        }
+        return $sql_query;
+    }
     /**
      * 初始化平台数据
      */

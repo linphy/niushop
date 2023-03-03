@@ -252,10 +252,10 @@
 			</div>
 
 			<!-- 弹框 -->
-			<article class="style-list-box">
-				<div class="style-list layui-form">
-					<div class="style-list-con">
-						<div class="style-li" v-for="(value,name,index) in nc.tempData.styleList" :key="name" :class="{'selected border-color': nc.style == name}" :data_key="name">
+			<article class="style-list-box-text">
+				<div class="style-list-text layui-form">
+					<div class="style-list-con-text">
+						<div class="style-li-text" v-for="(value,name,index) in nc.tempData.styleList" :key="name" :class="{'selected border-color': nc.style == name}" :data_key="name">
 							<span class="layui-hide">风格{{index + 1}}</span>
 							<img :src="'{$resource_path}/img/style' + (index+1) + '.png'" />
 						</div>
@@ -309,7 +309,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var textResourcePath = "{$resource_path}";
+			var textResourcePath = "{$resource_path}"; // http路径
+			var textRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

@@ -75,7 +75,6 @@
 							<div class="layui-form-item">
 								<label class="layui-form-label">商品类型配置：</label>
 								<div class="layui-input-block">
-
 									<ul>
 										<li><input type="radio" lay-filter="encrypt" title="实物商品" class="type" name="type" value="1" checked><a class="text-color" href="{:img('public/static/img/goods_csv/goods.xlsx')}">下载模板</a>
 										</li>
@@ -135,28 +134,6 @@
 	</div>
 </div>
 </form>
-<!--商品主图列表-->
-<script type="text/html" id="goodsImage">
-{{# if(d.list.length){ }}
-	{{# for(var i=0;i<d.list.length;i++){ }}
-		<div class="item upload_img_square_item" data-index="{{i}}">
-			<div class="img-wrap">
-				<img src="{{ns.img(d.list[i])}}" layer-src>
-			</div>
-			<div class="operation">
-				<i title="图片预览" class="iconfont iconreview js-preview"></i>
-				<i title="删除图片" class="layui-icon layui-icon-delete js-delete" data-index="{{i}}"></i>
-				<div class="replace_img" data-index="{{i}}">点击替换</div>
-			</div>
-		</div>
-		{{# } }}
-			{{# if(d.list.length < d.max){ }}
-				<div class="item js-add-goods-image upload_img_square">+</div>
-				{{# } }}
-					{{# }else{ }}
-						<div class="item js-add-goods-image upload_img_square">+</div>
-						{{# } }}
-</script>
 {/block}
 {block name="script"}
 <script>

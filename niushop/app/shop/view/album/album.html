@@ -57,7 +57,7 @@
 										{else /}
 										<span class="layui-tree-iconClick"><i class="layui-tree-iconArrow layui-hide"></i></span>
 										{/if}
-										<div class="layui-tree-txt {$k == 0 ? 'selected text-color' : ''}" onclick="switchGroup(this)" data-id="{$v['album_id']}" data-name="{$v['album_name']}">
+										<div class="layui-tree-txt {$k == 0 ? 'selected text-color' : ''}" onclick="switchGroup(this)" data-id="{$v['album_id']}" data-album="{$v['child'] ? implode(',', $v['child']) : $v['album_id']}" data-name="{$v['album_name']}">
 											<span>{$v['album_name']}</span>
 											<span class="num">{$v['num']}</span>
 										</div>
@@ -70,7 +70,7 @@
 										<div class="layui-tree-entry">
 											<div class="layui-tree-main">
 												<span class="layui-tree-iconClick"><i class="layui-tree-iconArrow layui-hide"></i></span>
-												<div class="layui-tree-txt" onclick="switchGroup(this)" data-id="{$val['album_id']}" data-name="{$val['album_name']}">
+												<div class="layui-tree-txt" onclick="switchGroup(this)" data-id="{$val['album_id']}" data-album="{$val['album_id']}" data-name="{$val['album_name']}">
 													<span>{$val['album_name']}</span>
 													<span class="num">{$val['num']}</span>
 												</div>
@@ -146,7 +146,11 @@
         <div class="bg-color-gray">
 
 			{if $type == 'img'}
-			<img src="{{ ns.img(item.pic_path) }}" alt="{{item.pic_name}}">
+	            {{# if(item.is_thumb == 1){ }}
+	                <img src="{{ ns.img(item.pic_path,'mid') }}" alt="{{item.pic_name}}">
+	            {{# }else{ }}
+	                <img src="{{ ns.img(item.pic_path) }}" alt="{{item.pic_name}}">
+	            {{# } }}
 			{else if($type == 'video')}
 			<video src="{{ ns.img(item.pic_path) }}" load="none" alt="{{item.pic_name}}"></video>
 			{/if}
@@ -285,7 +289,7 @@
 	 * @param limit
 	 */
 	function albumImgList(page, limit) {
-		var album_id = $('.album-list .selected').attr("data-id");
+		var album_id = $('.album-list .selected').attr("data-album");
 		$.ajax({
 			url: ns.url("shop/Album/Album"),
 			type: "POST",
@@ -438,19 +442,18 @@
 					$("#chooseListAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled", "disabled");
 				},
 				success: function(res) {
-
 					//上传图片
 					upload.render({
 						elem: '#ImgUpload',
 						url: ns.url("shop/upload/album"),
 						data: {
 							album_id : album_id,
+							is_thumb:'{$is_thumb}'
 						},
 						multiple: true,
 						auto: false,
 						bindAction: '#chooseListAction',
 						choose: function(obj) {
-
 							//将每次选择的文件追加到文件队列
 							var files = this.files = obj.pushFile();
 
@@ -485,9 +488,12 @@
 								}
 							});
 						},
+						before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+							$("#chooseListAction").removeClass("bg-color").addClass("layui-btn-disabled").attr("disabled","disabled");
+						},
 						done: function(res, index) {
-							// picture_arr.push(res.data);
 
+							// picture_arr.push(res.data);
 							var image_box = $(".upload-wrap[index='" + index + "']").parent().find(".upload-image-curtain");
 							image_box.text("50%");
 							image_box.show();
@@ -503,11 +509,15 @@
 								}, 1000);
 								return delete this.files[index]; //删除文件队列已经上传成功的文件
 							} else {
+
 								setTimeout(function() {
 									image_box.text("上传失败");
 								}, 500);
 								layer.msg(res.message); //删除文件队列已经上传成功的文件
 							}
+						},
+						allDone: function(obj){ //当文件全部被提交后，才触发
+							$("#chooseListAction").addClass("bg-color").removeClass("layui-btn-disabled").removeAttr("disabled");
 						}
 					});
 
@@ -666,5 +676,6 @@
 			}
 		});
 	}
+
 </script>
 {/block}

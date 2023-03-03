@@ -11,6 +11,7 @@
 namespace app\shop\controller;
 
 use addon\fenxiao\model\Fenxiao;
+use addon\supermember\model\MemberCard;
 use app\model\member\Member as MemberModel;
 use app\model\member\MemberAddress as MemberAddressModel;
 use app\model\member\MemberLabel as MemberLabelModel;
@@ -107,6 +108,7 @@ class Member extends BaseShop
             $start_growth = input('start_growth', '');//成长值
             $end_growth = input('end_growth', '');
             $login_type = input('login_type', '');//来源渠道
+            $is_member = input('is_member', '');
 
             $condition[] = [ 'site_id', '=', $this->site_id ];
             //下拉选择
@@ -193,7 +195,7 @@ class Member extends BaseShop
             if ($login_type != '') {
                 $condition[] = [ 'login_type', '=', $login_type ];
             }
-
+            if ($is_member != '') $condition[] = [ 'is_member', '=', $is_member ];
             $order = 'last_visit_time desc';
             $field = '*';
 
@@ -240,7 +242,7 @@ class Member extends BaseShop
         } else {
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id, level_name, level_type', 'growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id, level_name, level_type,status', 'growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
 
             //会员标签
@@ -308,6 +310,8 @@ class Member extends BaseShop
             $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ], [ 'level_type', '=', 0 ] ], 'level_id, level_name', 'growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
 
+            $this->assign('type', input('type', 'member'));
+
             return $this->fetch('member/add_member');
         }
     }
@@ -336,7 +340,6 @@ class Member extends BaseShop
             $this->addLog("编辑会员:id" . $member_id, $data);
             return $member_model->editMember($data, [ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $this->site_id ] ]);
         } else {
-
             //会员信息
             $member_id = input('member_id', 0);
 
@@ -349,16 +352,17 @@ class Member extends BaseShop
 
             //会员等级
             $member_level_model = new MemberLevelModel();
-            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id,level_name,level_type,is_free_shipping,consume_discount,point_feedback', 'level_type asc,growth asc');
+            $member_level_list = $member_level_model->getMemberLevelList([ [ 'site_id', '=', $this->site_id ] ], 'level_id,level_name,level_type,is_free_shipping,consume_discount,point_feedback,charge_rule', 'level_type asc,growth asc');
             $this->assign('member_level_list', $member_level_list[ 'data' ]);
-
-            //会员详情四级菜单
-//            $this->forthMenu([ 'member_id' => $member_id ]);
 
             //账户类型和来源类型
             $member_account_model = new MemberAccountModel();
             $account_type_arr = $member_account_model->getAccountType();
             $this->assign('account_type_arr', $account_type_arr);
+
+            $supermember_is_exit = addon_is_exit('supermember', $this->site_id);
+            $this->assign('supermember_is_exit', $supermember_is_exit);
+            $this->assign('level_time', $member_level_model->level_time);
 
             return $this->fetch('member/edit_member');
         }
@@ -402,6 +406,7 @@ class Member extends BaseShop
      */
     public function modifyPassword()
     {
+
         $member_ids = input('member_ids', '');
         $password = input('password', '123456');
         $member_model = new MemberModel();
@@ -413,10 +418,11 @@ class Member extends BaseShop
      */
     public function accountDetail()
     {
+        $account_type = input('account_type', '');
         if (request()->isAjax()) {
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
-            $account_type = input('account_type', '');
+
             $from_type = input('from_type', '');
             $start_date = input('start_date', '');
             $end_date = input('end_date', '');
@@ -426,7 +432,7 @@ class Member extends BaseShop
             $condition[] = [ 'member_id', '=', $member_id ];
             //账户类型
             if ($account_type != '') {
-                $condition[] = [ 'account_type', '=', $account_type ];
+                $condition[] = [ 'account_type', 'in', $account_type ];
             }
             //来源类型
             if ($from_type != '') {
@@ -463,12 +469,11 @@ class Member extends BaseShop
             //账户类型和来源类型
             $member_account_model = new MemberAccountModel();
             $account_type_arr = $member_account_model->getAccountType();
-//			$from_type_arr = $member_account_model->getFromType();
+			$from_type_arr = $member_account_model->getFromType();
             $this->assign('account_type_arr', $account_type_arr);
-//			$this->assign('from_type_arr', $from_type_arr['point']);
-
-            //会员详情四级菜单
-            $this->forthMenu([ 'member_id' => $member_id ]);
+			$this->assign('from_type_arr', $from_type_arr[$account_type] ?? []);
+			$this->assign('account_type', $account_type);
+			$this->assign('member_id', $member_id);
 
             return $this->fetch('member/account_detail');
         }
@@ -981,7 +986,7 @@ class Member extends BaseShop
         $phpExcel->getActiveSheet()->setCellValue('I1', '成长值');
         $phpExcel->getActiveSheet()->setCellValue('J1', '余额(可提现)');
         $phpExcel->getActiveSheet()->setCellValue('K1', '余额(不可提现)');
-        $phpExcel->getActiveSheet()->setCellValue('L1', '会员等级(id)');
+        $phpExcel->getActiveSheet()->setCellValue('L1', '会员等级(名称)');
         // 设置第一个sheet为工作的sheet
         $phpExcel->setActiveSheetIndex(0);
         // 保存Excel 2007格式文件，保存路径为当前路径，名字为export.xlsx
@@ -1106,8 +1111,24 @@ class Member extends BaseShop
         if (request()->isAjax()) {
             $member_id = input('member_id', 0);
             $level_id = input('level_id', 0);
+            $period_unit = input('period_unit', '');
+            $expire_time = 0;
+            switch ($period_unit) {
+                case 'week':
+                    $expire_time = strtotime('+1 week');
+                    break;
+                case 'month':
+                    $expire_time = strtotime('+1 month');
+                    break;
+                case 'quarter':
+                    $expire_time = strtotime('+3 month');
+                    break;
+                case 'year':
+                    $expire_time = strtotime('+1 year');
+                    break;
+            }
             $member_level = new MemberLevelModel();
-            $res = $member_level->addMemberLevelChangeRecord($member_id, $this->site_id, $level_id, 0, 'adjust', $this->user_info[ 'uid' ], 'user', $this->user_info[ 'username' ]);
+            $res = $member_level->addMemberLevelChangeRecord($member_id, $this->site_id, $level_id, $expire_time, 'adjust', $this->user_info[ 'uid' ], 'user', $this->user_info[ 'username' ]);
             return $res;
         }
     }
@@ -1129,6 +1150,26 @@ class Member extends BaseShop
                 ]);
             }
             return success(0, '', $data);
+        }
+    }
+
+    /**
+     * 办理会员
+     */
+    public function handleMember()
+    {
+        if (request()->isAjax()) {
+            $member_id = input('member_id', 0);
+            $level_id = input('level_id', 0);
+            $member_code = input('member_code', '');
+            $member_model = new MemberModel();
+            $res = $member_model->handleMember([
+                'member_id' => $member_id,
+                'level_id' => $level_id,
+                'member_code' => $member_code,
+                'site_id' => $this->site_id
+            ]);
+            return $res;
         }
     }
 

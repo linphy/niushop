@@ -9,6 +9,7 @@
 .notice .notice-config ul>li .content-block div{margin-top:10px;}
 .notice .notice-config ul>li .content-block div:last-child{margin-top:0;}
 .notice .notice-config ul li:hover .del{display:block;background-color: #909399;}
+.notice .notice-config ul li .iconfont {position: absolute;top: calc(50% - 10px);left: 15px;cursor: move;font-size: 20px;}
 
 .notice .add-item{padding: 10px;border: 1px dashed ;margin: 20px 0 10px 15px;cursor: pointer;text-align: center;}
 .notice .add-item i{display: inline-block;height: 24px; line-height: 24px; font-size: 18px;font-style: normal;margin-right: 10px;}
@@ -19,7 +20,7 @@
 .notice .notice-box .img-wrap {flex-shrink: 0;height: 20px;text-align: center;line-height: 20px;}
 .notice .notice-box .img-wrap img {max-width: 100%;max-height: 100%;vertical-align: top;}
 .notice .notice-box .img-wrap .icon-box {overflow: hidden;display: flex;justify-content: center;align-items: center;width: 30px;height: 30px;font-size: 40px;margin-top: -5px;}
-.notice .notice-box .notice-con-split {width: 1px;height: 13px;background-color: #E4E4E4;margin: 0 11px;}
+.notice .notice-box .notice-con-split {width: 1px;height: 13px;background-color: #E4E4E4;margin: 0 8px;}
 .notice .notice-box .notice-con-font {font-size: 14px;color: #666666;flex: 1;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
 .notice .goods-list-edit .system-img{margin: 10px 15px 0;display: flex;align-items: center;flex-wrap: wrap;padding: 10px 20px;background-color: #f5f5f5;border-radius: 3px;}
 .notice .goods-list-edit .system-img  .system-img-item{width: 60px;height: 25px;margin-right: 10px;line-height: 25px;cursor: pointer;border: 1px solid transparent;border-radius: 3px;padding: 5px;}

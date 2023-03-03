@@ -13,6 +13,7 @@ namespace app\model\stat;
 
 use app\model\BaseModel;
 use app\model\system\Stat;
+use app\model\store\Stat as StoreStat;
 
 /**
  * 统计
@@ -22,16 +23,66 @@ use app\model\system\Stat;
 class OrderStat extends BaseModel
 {
     /**
-     * 用于订单(同与订单支付后调用)
+     * 用于订单(同与订单创建后调用)
      * @param $params
      */
-    public function addOrderStat($params){
+    public function addOrderCreateStat($params){
         $order_id = $params['order_id'];
         $site_id = $params['site_id'] ?? 0;
         $order_condition = array(
             ['order_id', '=', $order_id],
-            ['site_id', '=', $site_id]
         );
+        if($site_id > 0){
+            $order_condition[] = ['site_id', '=', $site_id];
+        }
+        $order_info = model('order')->getInfo($order_condition);
+        if(empty($order_info))
+            return $this->error();
+        $order_create_money = $order_info['order_money'];
+        $goods_num = $order_info['goods_num'];
+        //如果是第一笔订单才能累加下单会员数
+        $time_region = getDayStartAndEndTime();
+        $today_start_time = $time_region['start_time'];
+        $today_end_time = $time_region['end_time'];
+
+        $stat_data = array(
+            'site_id' => $site_id,
+            'order_create_count' => 1,//下单数
+            'order_create_money' => $order_create_money,// 销售额  order_money
+            'goods_order_count' => $goods_num,
+        );
+        //订单商品种数
+        $order_goods_ids = model('order_goods')->getColumn($order_condition, 'goods_id');
+        $order_goods_ids = array_unique($order_goods_ids);
+        $other_order_condition = array(
+            ['order_id', '<>', $order_id],
+            ['goods_id', 'in', $order_goods_ids],
+            ['create_time', 'between', [$today_start_time, $today_end_time]],
+        );
+        $other_order_goods_ids = model('order_goods')->getColumn($other_order_condition, 'goods_id');
+        $other_order_goods_ids = array_unique($other_order_goods_ids);
+        $goods_order_type_count = count($order_goods_ids) - count($other_order_goods_ids);
+        if($goods_order_type_count > 0){
+            $stat_data['goods_order_type_count'] = $goods_order_type_count;
+        }
+        $stat_model = new Stat();
+        $result = $stat_model->addShopStat($stat_data);
+        return $result;
+    }
+
+    /**
+     * 用于订单(同与订单支付后调用)
+     * @param $params
+     */
+    public function addOrderPayStat($params){
+        $order_id = $params['order_id'];
+        $site_id = $params['site_id'] ?? 0;
+        $order_condition = array(
+            ['order_id', '=', $order_id],
+        );
+        if($site_id > 0){
+            $order_condition[] = ['site_id', '=', $site_id];
+        }
         $order_info = model('order')->getInfo($order_condition);
         if(empty($order_info))
             return $this->error();
@@ -67,8 +118,8 @@ class OrderStat extends BaseModel
 
         //销售额  order_money
         $stat_model = new Stat();
-
         $result = $stat_model->addShopStat($stat_data);
+
         return $result;
     }
 
@@ -78,11 +129,13 @@ class OrderStat extends BaseModel
      */
     public function addOrderRefundStat($params){
         $order_goods_id = $params['order_goods_id'];
-        $site_id = $params['site_id'];
+        $site_id = $params['site_id'] ?? 0;
         $order_goods_condition = array(
-            ['site_id', '=', $site_id],
             ['order_goods_id', '=', $order_goods_id],
         );
+        if($site_id > 0){
+            $order_goods_condition[] = ['site_id', '=', $site_id];
+        }
         $order_goods_info = model('order_goods')->getInfo($order_goods_condition);
         if(empty($order_goods_info))
             return $this->error();
@@ -95,8 +148,19 @@ class OrderStat extends BaseModel
         $refund_money = $params['refund_pay_money'];
         $stat_data['refund_total'] = $refund_money;
         $stat_model = new Stat();
-
         $result = $stat_model->addShopStat($stat_data);
+        // 门店退款统计
+        if ($order_goods_info['store_id']) {
+            $order_scene = model('order')->getValue([ ['order_id', '=', $order_goods_info['order_id'] ] ], 'order_scene');
+            if ($order_scene == 'cashier') {
+                (new StoreStat())->addStoreStat([
+                    'site_id' => $site_id,
+                    'store_id' => $order_goods_info['store_id'],
+                    'refund_count' => 1,
+                    'refund_money' => $refund_money
+                ]);
+            }
+        }
         return $result;
     }
 }

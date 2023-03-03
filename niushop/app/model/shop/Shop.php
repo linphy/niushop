@@ -103,7 +103,7 @@ class Shop extends BaseModel
             'app_type' => "all", // all为全部
             'type' => $type, // 类型 create创建 get获取
             'data' => [],
-            'page' => '/pages/index/index',
+            'page' => '',
             'qrcode_path' => 'upload/qrcode/shop/',
             'qrcode_name' => "shop_qrcode_" . $site_id,
         ];

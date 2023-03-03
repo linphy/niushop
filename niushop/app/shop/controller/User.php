@@ -10,9 +10,13 @@
 
 namespace app\shop\controller;
 
+use app\model\store\Store;
 use app\model\system\Group;
 use app\model\system\Menu;
 use app\model\system\User as UserModel;
+use addon\cashier\model\Group as StoreUserGroup;
+use app\model\system\UserGroup;
+use think\facade\Db;
 
 /**
  * 用户
@@ -44,10 +48,21 @@ class User extends BaseShop
             }
 
             $user_model = new UserModel();
-            $list = $user_model->getUserPageList($condition, $page, $page_size, "create_time desc");
+            $list = $user_model->getUserPageList($condition, $page, $page_size, "is_admin desc,create_time desc");
+            if (!empty($list['data']['list']) && addon_is_exit('cashier', $this->site_id)) {
+                $join = [
+                    ['store s', 's.store_id = ug.store_id', 'left'],
+                    ['cashier_auth_group cag', 'cag.group_id = ug.group_id', 'left']
+                ];
+                foreach ($list['data']['list'] as $k => $item) {
+                    $list['data']['list'][$k]['user_group_list'] = (new UserGroup())->getUserList([ ['ug.uid', '=', $item['uid'] ] ], 's.store_name,cag.group_name', '', 'ug', $join)['data'];
+                }
+            }
             return $list;
         } else {
             $this->forthMenu();
+            $this->assign('store_is_exit', addon_is_exit('store', $this->site_id));
+            $this->assign('cashier_is_exit', addon_is_exit('cashier', $this->site_id));
             return $this->fetch("user/user_list");
         }
     }
@@ -62,6 +77,7 @@ class User extends BaseShop
             $username = input("username", "");
             $password = input("password", "");
             $group_id = input("group_id", "");
+            $store = input("store", "[]");
 
             $user_model = new UserModel();
             $data = array (
@@ -69,7 +85,8 @@ class User extends BaseShop
                 "password" => $password,
                 "group_id" => $group_id,
                 "app_module" => $this->app_module,
-                "site_id" => $this->site_id
+                "site_id" => $this->site_id,
+                "store" => json_decode($store, true)
             );
             $result = $user_model->addUser($data, '', 'add');
             return $result;
@@ -78,6 +95,16 @@ class User extends BaseShop
             $group_list_result = $group_model->getGroupList([ [ "site_id", "=", $this->site_id ], [ "app_module", "=", $this->app_module ] ]);
             $group_list = $group_list_result[ "data" ];
             $this->assign("group_list", $group_list);
+
+            $cashier_is_exit = addon_is_exit('cashier', $this->site_id);
+            $this->assign('store_is_exit', addon_is_exit('store', $this->site_id));
+            $this->assign('cashier_is_exit', $cashier_is_exit);
+            if ($cashier_is_exit) {
+                $store_user_group = (new StoreUserGroup())->getGroupList([ ['', 'exp', Db::raw("keyword = '' OR site_id = {$this->site_id}") ] ], 'group_id,group_name')['data'];
+                $this->assign('store_user_group', $store_user_group);
+                $store_info = (new Store())->getDefaultStore($this->site_id)['data'] ?? [];
+                $this->assign('default_store_id', $store_info['store_id'] ?? 0);
+            }
             return $this->fetch("user/add_user");
         }
     }
@@ -93,6 +120,7 @@ class User extends BaseShop
             $group_id = input("group_id", "");
             $status = input("status", "");
             $uid = input("uid", 0);
+            $store = input("store", "[]");
 
             //用户信息
             $condition = array (
@@ -114,7 +142,8 @@ class User extends BaseShop
             );
             $data = array (
                 "group_id" => $group_id,
-                "status" => $status
+                "status" => $status,
+                "store" => json_decode($store, true)
             );
 
             $this->addLog("编辑用户:" . $uid);
@@ -123,22 +152,6 @@ class User extends BaseShop
             return $result;
         } else {
             $uid = input("uid", 0);
-
-            //用户信息
-            $condition = array (
-                [ "uid", "=", $uid ],
-                [ "site_id", "=", $this->site_id ],
-                [ "app_module", "=", $this->app_module ],
-            );
-            $user_info_result = $user_model->getUserInfo($condition, 'is_admin, uid');
-            $user_info = $user_info_result[ "data" ];
-
-            if ($user_info[ 'is_admin' ]) {
-                $this->error('超级管理员不可编辑');
-            }
-
-            $this->assign("uid", $uid);
-
             //用户信息
             $condition = array (
                 [ "uid", "=", $uid ],
@@ -149,7 +162,9 @@ class User extends BaseShop
             $user_info = $user_info_result[ "data" ];
 
             if (empty($user_info)) $this->error('未获取到用户数据', addon_url('shop/user/user'));
+            if ($user_info[ 'is_admin' ]) $this->error('超级管理员不可编辑');
 
+            $this->assign("uid", $uid);
             $this->assign("edit_user_info", $user_info);
 
             //用户组
@@ -157,6 +172,16 @@ class User extends BaseShop
             $group_list_result = $group_model->getGroupList([ [ "site_id", "=", $this->site_id ], [ "app_module", "=", $this->app_module ] ]);
             $group_list = $group_list_result[ "data" ];
             $this->assign("group_list", $group_list);
+
+            $cashier_is_exit = addon_is_exit('cashier', $this->site_id);
+            $this->assign('store_is_exit', addon_is_exit('store', $this->site_id));
+            $this->assign('cashier_is_exit', $cashier_is_exit);
+            if ($cashier_is_exit) {
+                $store_user_group = (new StoreUserGroup())->getGroupList([ ['', 'exp', Db::raw("keyword = '' OR site_id = {$this->site_id}") ] ], 'group_id,group_name')['data'];
+                $this->assign('store_user_group', $store_user_group);
+                $store_info = (new Store())->getDefaultStore($this->site_id)['data'] ?? [];
+                $this->assign('default_store_id', $store_info['store_id'] ?? 0);
+            }
 
             return $this->fetch("user/edit_user");
         }

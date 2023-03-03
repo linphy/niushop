@@ -31,7 +31,8 @@
 
 	.card-common:first-of-type{margin-top: 0;}
 	.layui-card-body{display: flex;padding-bottom: 0 !important;padding-right: 50px !important;padding-left: 50px !important;flex-wrap: wrap;}
-	.layui-card-body .content{width: 25%;display: flex;flex-direction: column;margin-bottom: 30px;justify-content: center;}
+	.layui-card-body .content{flex: 1;display: flex;flex-direction: column;margin-bottom: 30px;justify-content: center;}
+	.layui-card-body .content:first-child {flex: unset;margin-right: 30px}
 	.layui-card-body .content .title{color: #909399;font-size: 14px;}
 	.layui-card-body .money{color: #303133;font-size: 26px;margin-top: 10px;max-width: 250px;}
 	.layui-card-body .bottom-title{color: #909399;font-size: 14px;margin-top: 5px;}
@@ -52,6 +53,7 @@
 			<p class="bottom-title">
 				<span>虚拟商品：{$verify_goods_count}</span> &nbsp;&nbsp;
 				<span>订单自提：{$pickup_count}</span>
+				<span>卡项商品：{$card_goods_count}</span>
 			</p>
 		</div>
 		<div class="content">
@@ -78,6 +80,14 @@
 				<span>&nbsp;</span>
 			</p>
 		</div>
+		<div class="content">
+			<p class="title">待核销（卡项商品）</p>
+			<p class="money">{$card_goods_num}</p>
+			<p class="bottom-title">
+				<span>&nbsp;</span>
+				<span>&nbsp;</span>
+			</p>
+		</div>
 	</div>
 </div>
 
@@ -88,14 +98,14 @@
 			<div class="layui-form-item">
 
 				<div class="layui-inline">
-					<label class="layui-form-label">核销码：</label>
+					<label class="layui-form-label">核销码</label>
 					<div class="layui-input-inline">
 						<input type="text" name="verify_code" placeholder="请输入核销码" autocomplete="off" class="layui-input">
 					</div>
 				</div>
 
 				<div class="layui-inline">
-					<label class="layui-form-label">核销码类型：</label>
+					<label class="layui-form-label">核销码类型</label>
 					<div class="layui-input-inline">
 						<select name="verify_type">
 							<option value="">全部</option>
@@ -106,15 +116,13 @@
 					</div>
 				</div>
 				<div class="layui-inline">
-					<label class="layui-form-label">核销码状态：</label>
+					<label class="layui-form-label">核销码状态</label>
 					<div class="layui-input-inline">
 						<select name="is_verify">
 							<option value="">全部</option>
-
 							<option value="0">待核销</option>
 							<option value="1">已核销</option>
 							<option value="-1">已过期</option>
-
 						</select>
 					</div>
 				</div>
@@ -143,9 +151,7 @@
 		<div class='title-pic'>
 			<img layer-src src="{{ns.img(d.headimg)}}" onerror="this.src = '{:img('public/static/img/default_img/head.png')}' ">
 		</div>
-		<div class='title-content'>
-			{{d.nickname}}
-		</div>
+		<div class='title-content'>{{d.nickname}}</div>
 	</div>
 </script>
 
@@ -157,16 +163,26 @@
 		</div>
 		<div class="title-content table-title" style="overflow: unset;">
 			{{# if(d.verify_type == "pickup"){ }}
-			<div class="title-pic"><img src="SHOP_IMG/hexiao_dindan.png"></div>
+			<div class="title-pic"><img src="{{ns.img(d.sku_image)}}" onerror="this.src = 'SHOP_IMG/hexiao_dindan.png' "></div>
 			{{# } }}
 			{{# if(d.verify_type == "virtualgoods"){ }}
 			<div class="title-pic"><img src="{{ns.img(d.sku_image)}}"></div>
 			{{# } }}
+			{{# if(d.verify_type == "pickup" || d.verify_type == "virtualgoods"){ }}
 			<div class="title-content" style="overflow: unset;">
 				<p title="{{ d.order_info.order_name }}">{{ d.order_info.order_name }}</p>
 				<span class="verify-type text-color border-color">{{ d.verify_type_name}}</span>
 				<span class="verify-code">核销码：{{ d.verify_code }}</span>
 			</div>
+			{{# } }}
+			{{# if(d.verify_type == "cardgoods"){ }}
+			<div class="title-pic"><img src="{{ns.img(d.sku_image)}}"></div>
+			<div class="title-content" style="overflow: unset;">
+				<p title="{{ d.name }}">{{ d.sku_name }}</p>
+				<span class="verify-type text-color border-color">{{ d.verify_type_name}}</span>
+				<span class="verify-code">核销码：{{ d.verify_code }}</span>
+			</div>
+			{{# } }}
 		</div>
 	</div>
 </script>
@@ -275,7 +291,7 @@
 						title: '已核销/可核销',
 						align: 'center',
 						templet: function (data) {
-							return data.verify_use_num + '/' + data.verify_total_count;
+							return data.verify_use_num + '/' + (data.verify_total_count ? data.verify_total_count : '不限次');
 						}
 					},{
 						field: '',
@@ -306,7 +322,7 @@
 				var data = obj.data;
 				switch (obj.event) {
 					case 'record':
-						window.open(ns.url("shop/verify/records?verify_code=" + data.verify_code))
+						window.open(ns.url("shop/verify/records?verify_code=" + data.verify_code));
 						break;
 				}
 			});
@@ -330,7 +346,7 @@
                 return false;
             });
         });
-    })
+    });
 
 	function memberDetail(member_id){
 		window.open(ns.url("shop/member/editmember", {'member_id':member_id}))

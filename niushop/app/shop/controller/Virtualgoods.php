@@ -15,10 +15,10 @@ use app\model\goods\Goods as GoodsModel;
 use app\model\goods\GoodsAttribute as GoodsAttributeModel;
 use app\model\goods\GoodsBrand as GoodsBrandModel;
 use app\model\goods\GoodsCategory as GoodsCategoryModel;
-use app\model\goods\GoodsCommunityQrCode;
 use app\model\goods\GoodsLabel as GoodsLabelModel;
 use app\model\goods\GoodsService as GoodsServiceModel;
 use app\model\goods\VirtualGoods as VirtualGoodsModel;
+use app\model\store\Store as StoreModel;
 use app\model\web\Config as ConfigModel;
 
 
@@ -91,7 +91,9 @@ class Virtualgoods extends BaseShop
                 'barrage_show' => input('barrage_show', 0),//
                 'virtual_deliver_type' => input('virtual_deliver_type', ''),
                 'virtual_receive_type' => input('virtual_receive_type', ''),
-                'form_id' => input('form_id', 0)
+                'form_id' => input('form_id', 0),
+                'sale_channel' => input('sale_channel', 'all'),
+                'sale_store' => input('sale_store', 'all'),
             ];
 
             if ($data[ 'verify_validity_type' ] == 1) {
@@ -141,11 +143,6 @@ class Virtualgoods extends BaseShop
             $sort_config = $sort_config[ 'data' ][ 'value' ];
             $this->assign("sort_config", $sort_config);
 
-            //获取社群二维码
-            $goods_community_model = new GoodsCommunityQrCode();
-            $goods_community_qr_list = $goods_community_model->getQrList([ [ 'site_id', '=', $this->site_id ], [ 'qr_state', '=', 1 ] ], 'qr_id,qr_name,site_id');
-            $this->assign('goods_community_qr_list', $goods_community_qr_list[ 'data' ]);
-
             //获取商品海报
             $poster_list = event('PosterTemplate', [ 'site_id' => $this->site_id ], true);
             if (!empty($poster_list)) {
@@ -161,6 +158,11 @@ class Virtualgoods extends BaseShop
                 $this->assign('form_list', $form_list);
             }
             $this->assign('form_is_exit', $form_is_exit);
+
+            $this->assign('all_goodsclass', event('GoodsClass'));
+            $this->assign('goods_class', (new VirtualGoodsModel())->getGoodsClass());
+
+            $this->assign('store_is_exit', addon_is_exit('store', $this->site_id));
 
             return $this->fetch("virtualgoods/add_goods");
         }
@@ -231,7 +233,9 @@ class Virtualgoods extends BaseShop
                 'barrage_show' => input('barrage_show', 0),//
                 'virtual_deliver_type' => input('virtual_deliver_type', ''),
                 'virtual_receive_type' => input('virtual_receive_type', ''),
-                'form_id' => input('form_id', 0)
+                'form_id' => input('form_id', 0),
+                'sale_channel' => input('sale_channel', 'all'),
+                'sale_store' => input('sale_store', 'all'),
             ];
 
             if ($data[ 'verify_validity_type' ] == 1) {
@@ -281,11 +285,6 @@ class Virtualgoods extends BaseShop
             $label_list = $goods_label_model->getLabelList([ [ 'site_id', '=', $this->site_id ] ], 'id,label_name', 'sort ASC')[ 'data' ];
             $this->assign("label_list", $label_list);
 
-            //获取社群二维码
-            $goods_community_model = new GoodsCommunityQrCode();
-            $goods_community_qr_list = $goods_community_model->getQrList([ [ 'site_id', '=', $this->site_id ], [ 'qr_state', '=', 1 ] ], 'qr_id,qr_name,site_id');
-            $this->assign('goods_community_qr_list', $goods_community_qr_list[ 'data' ]);
-
             //获取商品海报
             $poster_list = event('PosterTemplate', [ 'site_id' => $this->site_id ], true);
             if (!empty($poster_list)) {
@@ -299,6 +298,13 @@ class Virtualgoods extends BaseShop
                 $this->assign('form_list', $form_list);
             }
             $this->assign('form_is_exit', $form_is_exit);
+
+            $store_is_exit = addon_is_exit('store', $this->site_id);
+            if ($store_is_exit && $goods_info['sale_store'] != 'all') {
+                $store_list = (new StoreModel())->getStoreList([ ['site_id', '=', $this->site_id ], ['store_id', 'in', $goods_info['sale_store'] ] ], 'store_id,store_name,status,address,full_address,is_frozen');
+                $this->assign('store_list', $store_list['data']);
+            }
+            $this->assign('store_is_exit', $store_is_exit);
 
             return $this->fetch("virtualgoods/edit_goods");
         }

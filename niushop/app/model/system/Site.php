@@ -55,7 +55,7 @@ class Site extends BaseModel
             $upload_model = new Upload();
             $upload_model->deletePic($site_info['data']['logo'], $site_info['data']['site_id']);
         }
-        if($site_info['data'] && $site_data['logo_square'] && $site_info['data']['logo_square'] != $site_data['logo_square']){
+        if($site_info['data'] && !empty($site_data['logo_square']) && $site_info['data']['logo_square'] != $site_data['logo_square']){
             $upload_model = new Upload();
             $upload_model->deletePic($site_info['data']['logo_square'], $site_info['data']['site_id']);
         }

@@ -5,7 +5,6 @@
  * Copy right 2019-2029 杭州牛之云科技有限公司, 保留所有权利。
  * ----------------------------------------------
  * 官方网址: https://www.niushop.com
-
  * =========================================================
  */
 
@@ -207,7 +206,6 @@ class Express extends BaseShop
         }
     }
 
-
     /**
      * 添加运费模板
      * @return mixed
@@ -370,12 +368,21 @@ class Express extends BaseShop
     {
         if (request()->isAjax()) {
             $express_company_model = new ExpressCompany();
-            //店铺物流公司
-            $result = $express_company_model->getExpressCompanyList([ [ "site_id", "=", $this->site_id ] ]);
+            // 店铺物流公司
+            $condition = [
+                [ "ec.site_id", "=", $this->site_id ]
+            ];
+            $field = 'ec.id, ec.company_id, ec.express_no, ec.content_json, ec.background_image, ec.font_size, ec.width, ec.height, ec.scale, ec.company_name';
+            $order = 'ect.sort desc';
+            $alias = 'ec';
+            $join = [
+                [ 'express_company_template ect', 'ec.company_id = ect.company_id', 'left' ]
+            ];
+
+            $result = $express_company_model->getExpressCompanyList($condition, $field, $order, $alias, $join);
             return $result;
         }
     }
-
 
     /**
      * 物流跟踪

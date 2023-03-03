@@ -162,9 +162,9 @@ class Article extends BaseModel
      * @param string $order
      * @param string $limit
      */
-    public function getArticleList($condition = [], $field = '*', $order = '', $limit = null)
+    public function getArticleList($condition = [], $field = '*', $order = '', $limit = null, $alias = '', $join = [])
     {
-        $list = model('article')->getList($condition, $field, $order, '', '', '', $limit);
+        $list = model('article')->getList($condition, $field, $order, $alias, $join, '', $limit);
         return $this->success($list);
     }
 

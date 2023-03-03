@@ -21,6 +21,7 @@ use think\facade\Cache;
 use addon\memberwithdraw\model\Withdraw as MemberWithdraw;
 use addon\wechat\model\Message as WechatMessage;
 use addon\weapp\model\Message as WeappMessage;
+use think\facade\Db;
 
 /**
  * 会员提现
@@ -90,7 +91,7 @@ class Withdraw extends BaseModel
 
         $transfer_type      = $data["transfer_type"];
         $transfer_type_list = $this->getTransferType($site_id, $app_module);
-        $transfer_type_name = $transfer_type_list[$transfer_type];
+        $transfer_type_name = $transfer_type_list[$transfer_type] ?? '';
         if (empty($transfer_type_name))
             return $this->error([], "不支持的提现方式");
 
@@ -153,7 +154,10 @@ class Withdraw extends BaseModel
             //减少现金余额
             $member_account = new MemberAccount();
             $account_res = $member_account->addMemberAccount($site_id, $member_id, 'balance_money', -$apply_money, 'withdraw', '会员提现', '会员提现扣除');
-            if ($account_res['code'] != 0) return $account_res;
+            if ($account_res['code'] < 0){
+                model('member_withdraw')->rollback();
+                return $account_res;
+            }
 
             //增加提现中余额
             model("member")->setInc([["member_id", "=", $member_id]], "balance_withdraw_apply", $apply_money);
@@ -579,4 +583,59 @@ class Withdraw extends BaseModel
         }
     }
 
+    public function exportWithdraw($condition, $order){
+        try {
+            $file_name = date('Y年m月d日-余额提现', time()) . '.csv';
+//            $file_name = date('YmdHis').'.csv';//csv文件名
+            //通过分批次执行数据导出(防止内存超出配置设置的)
+            set_time_limit(0);
+            ini_set('memory_limit', '256M');
+            //设置header头
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment; filename="' . $file_name . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            //打开php数据输入缓冲区
+            $fp = fopen('php://output', 'a');
+//            fwrite($fp, chr(0xEF).chr(0xBB).chr(0xBF)); // 添加 BOM
+            $heade = [ '会员账号', '提现方式', '申请提现金额', '提现手续费', '实际转账金额', '提现状态', '申请时间', '银行名称', '收款账号', '真实姓名', '手机号' ];
+            //将数据编码转换成GBK格式
+            mb_convert_variables('GBK', 'UTF-8', $heade);
+            //将数据格式化为CSV格式并写入到output流中
+            fputcsv($fp, $heade);
+            //写入第一行表头
+            Db::name('member_withdraw')->where($condition)->order($order)->chunk(500, function($item_list) use ($fp) {
+                //写入导出信息
+                foreach ($item_list as $k => $item_v) {
+                    $temp_data = [
+                        $item_v['member_name'] . "\t",
+                        $item_v[ 'transfer_type_name' ] . "\t",
+                        (float) $item_v[ 'apply_money' ] . "\t",
+                        (float) $item_v[ 'service_money' ] . "\t",
+                        (float) $item_v[ 'money' ] . "\t",
+                        $item_v[ 'status_name' ] . "\t",
+                        time_to_date($item_v[ 'apply_time' ]) . "\t",
+                        $item_v['bank_name']. "\t" ,
+                        $item_v['account_number']. "\t",
+                        $item_v['realname']. "\t",
+                        $item_v['mobile']. "\t",
+                    ];
+                    mb_convert_variables('GBK', 'UTF-8', $temp_data);
+                    fputcsv($fp, $temp_data);
+                    //将已经存储到csv中的变量数据销毁，释放内存
+                    unset($item_v);
+                }
+                unset($item_list);
+            });
+
+            //关闭句柄
+            fclose($fp);
+            die;
+
+        } catch (\Exception $e) {
+            return $this->error([], $e->getMessage() . $e->getFile() . $e->getLine());
+        }
+    }
 }

@@ -351,3 +351,73 @@ function articleSelect(callback,  params={}) {
 		});
 	});
 }
+
+function storeSelect(callback, params={}) {
+	layui.use(['layer'], function () {
+
+		//iframe层-父子操作
+		layer.open({
+			title: "选择门店",
+			type: 2,
+			area: ['950px', '550px'],
+			fixed: false, //不固定
+			btn: ['保存', '返回'],
+			content: ns.url("shop/store/selectstore", params),
+			yes: function (index, layero) {
+				var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+
+				iframeWin.selectStore(function (obj) {
+					if (typeof callback == "string") {
+						try {
+							eval(callback + '(obj)');
+							layer.close(index);
+						} catch (e) {
+							console.error('回调函数' + callback + '未定义');
+						}
+					} else if (typeof callback == "function") {
+						callback(obj);
+						layer.close(index);
+					}
+
+				});
+			}
+		});
+	});
+}
+
+function showNotify(option){
+	var node = {};
+	if (option.icon && ['success', 'fail', 'info', 'warning'].indexOf(option.icon) != -1) node.icon =  '<div class="icon"><i class="'+ option.icon +'"></i></div>';
+	if (option.title) node.title = '<div class="title">'+ option.title +'</div>';
+	if (option.content) node.content = '<div class="content">'+ option.content +'</div>';
+
+	var h = `<div class="notify-item">
+		`+ (node.icon ? node.icon : '')  +`
+		<span class="iconfont iconclose_light"></span>
+		<div class="box">
+			`+ (node.title ? node.title : '')  +`
+			`+ (node.content ? node.content : '')  +`
+		</div>
+	</div>`;
+
+	if ($('.notify-wrap').length) {
+		$('.notify-wrap').append(h);
+	} else {
+		$('body').append('<div class="notify-wrap">' + h + '</div>');
+	}
+
+	let elem = $('.notify-wrap .notify-item:last-child');
+
+	// 手动关闭
+	elem.find('.iconclose_light').click(function () {
+		$(this).parents('.notify-item').remove();
+	})
+
+	// 自动关闭
+	let duration = option.duration != undefined ? option.duration : 4500;
+	if (duration) {
+		setTimeout(function () {
+			elem.remove();
+		}, duration)
+	}
+}

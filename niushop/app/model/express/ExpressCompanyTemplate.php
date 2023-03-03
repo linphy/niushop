@@ -27,7 +27,6 @@ class ExpressCompanyTemplate extends BaseModel
     public function addExpressCompanyTemplate($data)
     {
         $id = model('express_company_template')->add($data);
-        Cache::tag('express_company_template')->clear();
         return $this->success($id);
     }
 
@@ -38,7 +37,6 @@ class ExpressCompanyTemplate extends BaseModel
     public function addExpressCompanyTemplateList($data)
     {
         $id = model('express_company_template')->addList($data);
-        Cache::tag('express_company_template')->clear();
         return $this->success($id);
     }
 
@@ -50,7 +48,6 @@ class ExpressCompanyTemplate extends BaseModel
     public function editExpressCompanyTemplate($data)
     {
         $res = model('express_company_template')->update($data, [ [ 'company_id', '=', $data[ 'company_id' ] ], [ 'site_id', '=', $data[ 'site_id' ] ] ]);
-        Cache::tag('express_company_template')->clear();
         return $this->success($res);
     }
 
@@ -61,7 +58,6 @@ class ExpressCompanyTemplate extends BaseModel
     public function deleteExpressCompanyTemplate($condition)
     {
         $res = model('express_company_template')->delete($condition);
-        Cache::tag('express_company_template')->clear();
         return $this->success($res);
     }
 
@@ -72,18 +68,12 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function getExpressCompanyTemplateInfo($condition, $field = '*')
     {
-        $data = json_encode([ $condition, $field ]);
-        $cache = Cache::get('express_company_template_getExpressCompanyTemplateInfo_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $res = model('express_company_template')->getInfo($condition, $field);
         if (!empty($res)) {
             if (empty($res[ 'content_json' ])) {
                 $res[ 'content_json' ] = json_encode($this->getPrintItemList());
             }
         }
-        Cache::tag('express_company_template')->set('express_company_template_getExpressCompanyTemplateInfo_' . $data, $res);
         return $this->success($res);
     }
 
@@ -96,14 +86,7 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function getExpressCompanyTemplateList($condition = [], $field = '*', $order = '', $limit = null)
     {
-        $data = json_encode([ $condition, $field, $order, $limit ]);
-        $cache = Cache::get('express_company_template_getExpressCompanyTemplateList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('express_company_template')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag('express_company_template')->set('express_company_template_getExpressCompanyTemplateList_' . $data, $list);
-
         return $this->success($list);
     }
 
@@ -117,13 +100,7 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function getExpressCompanyTemplatePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
     {
-        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
-        $cache = Cache::get('express_company_template_getExpressCompanyTemplatePageList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('express_company_template')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag('express_company_template')->set('express_company_template_getExpressCompanyTemplatePageList_' . $data, $list);
         return $this->success($list);
     }
 
@@ -135,7 +112,6 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function modifyExpressCompanyTemplateSort($sort, $company_id)
     {
-        Cache::tag('express_company_template')->clear();
         $res = model('express_company_template')->update([ 'sort' => $sort ], [ [ 'company_id', '=', $company_id ] ]);
         return $this->success($res);
     }
@@ -155,7 +131,6 @@ class ExpressCompanyTemplate extends BaseModel
         $company_info = $this->getExpressCompanyTemplateInfo([ [ 'company_id', '=', $data[ 'company_id' ] ] ]);
         $data[ 'company_name' ] = $company_info[ 'data' ][ 'company_name' ];
         $brand_id = model('express_company_template_shop')->add($data);
-        Cache::tag('express_company_template_shop')->clear();
         return $this->success($brand_id);
     }
 
@@ -168,7 +143,6 @@ class ExpressCompanyTemplate extends BaseModel
     {
         $data[ 'modify_time' ] = time();
         $res = model('express_company_template_shop')->update($data, $condition);
-        Cache::tag('express_company_template_shop')->clear();
         return $this->success($res);
     }
 
@@ -179,7 +153,6 @@ class ExpressCompanyTemplate extends BaseModel
     public function deleteExpressCompanyTemplateShop($condition)
     {
         $res = model('express_company_template_shop')->delete($condition);
-        Cache::tag('express_company_template_shop')->clear();
         return $this->success($res);
     }
 
@@ -190,18 +163,12 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function getExpressCompanyTemplateShopInfo($condition, $field = 'id, site_id, company_id, content_json, background_image, font_size, width, height, create_time, modify_time, scale')
     {
-        $data = json_encode([ $condition, $field ]);
-        $cache = Cache::get('express_company_template_shop_getExpressCompanyTemplateShopInfo_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $res = model('express_company_template_shop')->getInfo($condition, $field);
         if (!empty($res)) {
             if (empty($res[ 'content_json' ])) {
                 $res[ 'content_json' ] = json_encode($this->getPrintItemList());
             }
         }
-        Cache::tag('express_company_template_shop')->set('express_company_template_shop_getExpressCompanyTemplateShopInfo_' . $data, $res);
         return $this->success($res);
     }
 
@@ -214,14 +181,7 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function getExpressCompanyTemplateShopList($condition = [], $field = 'company_id as id, site_id, company_id, content_json, background_image, font_size, width, height, create_time, modify_time, scale, company_name', $order = '', $limit = null)
     {
-        $data = json_encode([ $condition, $field, $order, $limit ]);
-        $cache = Cache::get('express_company_template_shop_getExpressCompanyTemplateShopList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('express_company_template')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag('express_company_template_shop')->set('express_company_template_shop_getExpressCompanyTemplateShopList_' . $data, $list);
-
         return $this->success($list);
     }
 
@@ -235,13 +195,7 @@ class ExpressCompanyTemplate extends BaseModel
      */
     public function getExpressCompanyTemplateShopPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'id, site_id, company_id, content_json, background_image, font_size, width, height, create_time, modify_time, scale')
     {
-        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
-        $cache = Cache::get('express_company_template_shop_getExpressCompanyTemplateShopPageList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('express_company_template_shop')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag('express_company_template_shop')->set('express_company_template_shop_getExpressCompanyTemplateShopPageList_' . $data, $list);
         return $this->success($list);
     }
 

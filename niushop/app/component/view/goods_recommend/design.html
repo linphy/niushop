@@ -8,7 +8,7 @@
 		     borderBottomLeftRadius: (nc.componentAngle == 'round' ? nc.bottomAroundRadius + 'px' : 0),
 		     borderBottomRightRadius: (nc.componentAngle == 'round' ? nc.bottomAroundRadius + 'px' : 0) }">
 
-			<div class="top-wrap">
+			<div class="top-wrap" v-if="nc.topStyle.support">
 				<i :class="[nc.topStyle.icon.value]" :style="{ backgroundColor : nc.topStyle.icon.bgColor, color : nc.topStyle.icon.color }"></i>
 				<h3 :style="{ color : nc.topStyle.color }">{{ nc.topStyle.title }}</h3>
 				<span class="line" :style="{ color : nc.topStyle.subColor }"></span>
@@ -25,17 +25,21 @@
 					     borderBottomLeftRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
 					     borderBottomRightRadius: (nc.elementAngle == 'round' ? nc.bottomElementAroundRadius + 'px' : 0),
 						 boxShadow:  nc.ornament.type == 'shadow' ? ('0 0 5px ' + nc.ornament.color) : '',
-						 marginLeft: (51 - nc.margin.both*2) /6 + 'px', 
-						 marginRight: (51 - nc.margin.both*2) /6 + 'px', 
+						 marginLeft: (51 - nc.margin.both * 2) /6 + 'px',
+						 marginRight: (51 - nc.margin.both * 2) /6 + 'px',
 					     border: nc.ornament.type == 'stroke' ?  '1px solid ' + nc.ornament.color : ''}">
 
 						<div class="goods-img" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }">
-							<img :src="item.goods_image ? changeImgUrl(item.goods_image) : changeImgUrl('public/static/img/default_img/square.png')" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }" onerror="this.src = changeImgUrl('public/static/img/default_img/square.png');" />
+							<img :src="item.goods_image ? changeImgUrl(item.goods_image) : changeImgUrl('public/static/img/default_img/square.png')" :style="{ borderRadius:  nc.imgAroundRadius + 'px' }" onerror="this.src = ns.img('public/static/img/default_img/square.png');" />
 						</div>
 
-						<div class="info-wrap" v-if="nc.goodsNameStyle.control || nc.priceStyle.mainControl || nc.priceStyle.lineControl">
+						<div class="info-wrap" v-if="nc.goodsNameStyle.control || nc.priceStyle.mainControl || nc.priceStyle.lineControl || nc.labelStyle.support">
 							<div class="goods-name" v-if="nc.goodsNameStyle.control" :style="{ color : nc.goodsNameStyle.color,fontWeight : nc.goodsNameStyle.fontWeight ? 'bold' : '' }" :class="[{'using-hidden' : nc.nameLineMode == 'single'},{'multi-hidden' : nc.nameLineMode == 'multiple'}]">{{ item.goods_name }}</div>
 							<div class="pro-info">
+								<div class="label-wrap" v-if="nc.labelStyle.support" :style="{ background : nc.labelStyle.bgColor,color : nc.labelStyle.color}">
+									<img src="{$resource_path}/img/label.png" />
+									<span>{{nc.labelStyle.title}}</span>
+								</div>
 								<div class="discount-price">
 									<div class="price-wrap" v-if="nc.priceStyle.mainControl">
 										<span class="unit" :style="{ color : nc.priceStyle.mainColor }">¥</span>
@@ -73,7 +77,7 @@
 				</div>
 			</div>
 
-			<div class="template-edit-title">
+			<div class="template-edit-title" v-if="nc.topStyle.support">
 				<h3>推荐标题</h3>
 
 				<div class="layui-form-item">
@@ -91,6 +95,7 @@
 				</div>
 
 			</div>
+
 			<div class="template-edit-title">
 				<h3>推荐商品</h3>
 				<div class="layui-form-item" v-if="nc.tempData.goodsSources">
@@ -139,9 +144,21 @@
 				</div>
 			</div>
 
+			<div class="template-edit-title" v-if="nc.labelStyle.support">
+				<h3>标签内容</h3>
+
+				<div class="layui-form-item">
+					<label class="layui-form-label sm">标签</label>
+					<div class="layui-input-block">
+						<input type="text" v-model="nc.labelStyle.title" maxlength="4" placeholder="请输入标签" class="layui-input">
+					</div>
+				</div>
+
+			</div>
+
 			<div class="template-edit-title">
 				<h3>显示内容</h3>
-				<div class="layui-form-item">
+				<div class="layui-form-item" v-show="nc.goodsNameStyle.support">
 					<label class="layui-form-label sm">商品名称</label>
 					<div class="layui-input-block">
 						<div class="layui-unselect layui-form-checkbox" lay-skin="primary" @click="nc.goodsNameStyle.control = !nc.goodsNameStyle.control" :class="{ 'layui-form-checked' : nc.goodsNameStyle.control }">
@@ -186,10 +203,10 @@
 		</template>
 
 		<!-- 弹框 -->
-		<article class="style-list-box">
-			<div class="style-list layui-form">
-				<div class="style-list-con">
-					<div class="style-li" v-for="(value,name,index) in nc.tempData.styleList" :key="name" :class="{'selected border-color': nc.style == name}" :data_key="name">
+		<article class="style-list-box-goods-recommend">
+			<div class="style-list-goods-recommend layui-form">
+				<div class="style-list-con-goods-recommend">
+					<div class="style-li-goods-recommend" v-for="(value,name,index) in nc.tempData.styleList" :key="name" :class="{'selected border-color': nc.style == name}" :data_key="name">
 						<span class="layui-hide">风格{{index + 1}}</span>
 						<img :src="'{$resource_path}/img/style' + (index+1) + '.png'" />
 					</div>
@@ -257,7 +274,7 @@
 					            </tr>
 						            {notempty name="$second['child_list']"}
 							            {foreach name="$second['child_list']" item="third"}
-							            <tr class='category-line'data-category-id-1="{$third['category_id_1']}" data-category-id-2="{$third['category_id_2']}" style="display:none;">
+							            <tr class='category-line' data-category-id-1="{$third['category_id_1']}" data-category-id-2="{$third['category_id_2']}" style="display:none;">
 							                <td><input type="checkbox" name="category_select_id" lay-skin="primary" value='{:json_encode($third)}' data-category_select_id = '{$third['category_id']}'lay-filter="category_select_id"{if !empty($link_array.category_id) && $link_array.category_id == $third['category_id']}checked{/if}></td>
 							                <td></td>
 							                <td style="padding-left: 80px;">
@@ -294,13 +311,15 @@
 			<div class="template-edit-title">
 				<h3>头部样式</h3>
 
-				<nc-icon :data="{ field : 'value',label:'选择图标', parent : nc.topStyle.icon, color: 'color'}"></nc-icon>
+				<div v-if="nc.topStyle.support">
+					<nc-icon :data="{ field : 'value',label:'选择图标', parent : nc.topStyle.icon, color: 'color'}"></nc-icon>
 
-				<color :data="{ field : 'color', 'label' : '图标颜色', parent : nc.topStyle.icon, 'defaultColor': '#303133' }"></color>
+					<color :data="{ field : 'color', 'label' : '图标颜色', parent : nc.topStyle.icon, 'defaultColor': '#303133' }"></color>
 
-				<color :data="{ field : 'bgColor', 'label' : '图标背景', parent : nc.topStyle.icon }"></color>
-				<color :data="{ field : 'color', 'label' : '标题颜色', parent : nc.topStyle, defaultColor : '#303133' }"></color>
-				<color :data="{ field : 'subColor', 'label': '副标题颜色', parent : nc.topStyle, defaultColor : '#999CA7' }"></color>
+					<color :data="{ field : 'bgColor', 'label' : '图标背景', parent : nc.topStyle.icon }"></color>
+					<color :data="{ field : 'color', 'label' : '标题颜色', parent : nc.topStyle, defaultColor : '#303133' }"></color>
+					<color :data="{ field : 'subColor', 'label': '副标题颜色', parent : nc.topStyle, defaultColor : '#999CA7' }"></color>
+				</div>
 
 				<div class="layui-form-item">
 					<label class="layui-form-label sm">背景图片</label>
@@ -361,7 +380,9 @@
 				</div>
 
 				<div v-show="nc.theme == 'diy'">
-					<color :data="{ field : 'color', 'label' : '商品名称', parent : 'goodsNameStyle', defaultColor : '#303133' }"></color>
+					<div v-show="nc.goodsNameStyle.support">
+						<color :data="{ field : 'color', 'label' : '商品名称', parent : 'goodsNameStyle', defaultColor : '#303133' }"></color>
+					</div>
 					<color :data="{ field : 'mainColor', 'label' : '销售价', parent : 'priceStyle', defaultColor : '#FF6A00' }"></color>
 					<div v-show="nc.priceStyle.lineSupport">
 						<color :data="{ field : 'lineColor', 'label' : '划线价', parent : 'priceStyle', defaultColor : '#999CA7' }"></color>
@@ -379,7 +400,8 @@
 	<!-- 资源 -->
 	<template slot="resource">
 		<js>
-			var goodsRecommendListResourcePath = "{$resource_path}";
+			var goodsRecommendResourcePath = "{$resource_path}"; // http路径
+			var goodsRecommendRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

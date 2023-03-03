@@ -127,8 +127,11 @@ function orderRemark(order_id){
  * 关闭订单
  * @param order_id
  */
+var closeRepeat = false;
 function orderClose(order_id){
     var temp_index = layer.confirm('确定要关闭该订单吗?', function() {
+        if (closeRepeat) return;
+        closeRepeat = true;
         $.ajax({
             url: ns.url("shop/order/close"),
             data: {order_id : order_id},
@@ -137,14 +140,17 @@ function orderClose(order_id){
             success: function(res) {
                 layer.msg(res.message);
                 if(res.code == 0){
-
                     layer.close(layer.index - 1);
                     reloadList();
+                    closeRepeat = false;
+                } else {
+                    closeRepeat = false;
                 }
             }
         });
     }, function () {
         layer.close();
+        closeRepeat = false;
     });
 }
 
@@ -152,8 +158,11 @@ function orderClose(order_id){
 * 线下支付
 * @param order_id
 */
+var payRepeat = false;
 function offlinePay(order_id){
     layer.confirm('确定要线下支付吗?', function() {
+        if (payRepeat) return;
+        payRepeat = true;
         $.ajax({
             url: ns.url("shop/order/offlinePay"),
             data: {order_id : order_id},
@@ -163,14 +172,19 @@ function offlinePay(order_id){
                 layer.msg(res.message);
                 if(res.code == 0){
                     layer.close(layer.index - 1);
+                    payRepeat = false;
                     reloadList();
+                } else {
+                    payRepeat = false;
                 }
             }
         });
     }, function () {
         layer.close();
+        payRepeat = false;
     });
 }
+
 /**
  * 删除订单
  * @param order_id
@@ -226,4 +240,4 @@ function takeDelivery(order_id, type = 0){
 }
 </script>
 <!-- 修改订单价格 -->
-{include file="order/order_adjust_price" /}
+{include file="app/shop/view/order/order_adjust_price.html" /}

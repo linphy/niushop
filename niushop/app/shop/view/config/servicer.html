@@ -1,6 +1,10 @@
 {extend name="base"/}
 {block name="resources"}
 <style>
+	.layui-layout-admin .layui-body .body-content{
+		background-color: transparent;
+		padding: 0;
+	}
 	.input-text span{margin-right: 15px;}
 	.form-wrap {margin-top: 0; position: relative;background: none;padding: 0}
 	.layui-layout-admin .layui-body .body-content{margin: 0 !important;}
@@ -24,13 +28,13 @@
 	.layui-form-item.top .layui-form-label{text-align: left;font-weight: bold;padding-left: 15px;}
 	.layui-form-item.top .border-left{border-left: 3px solid;padding-right: 5px;}
 	.layui-unselect.layui-form-radio.layui-form-radioed.layui-radio-disbaled i:after{background:#eee !important;}
-	.service-box .box .layui-form-label{width: 196px !important;height: 38px;line-height: 38px;}
+	.service-box .box .layui-form-label{width: 158px !important;height: 38px;line-height: 38px;}
 	.service-popup-box .layui-form-label{width: 140px;}
 	.service-popup-box .layui-form-label + .layui-input-block {margin-left: 140px}
 	.service-popup-box .word-aux{margin-left: 140px;}
 	.service-popup-box .all-box-left{margin-left: 140px;}
 	.service-box .box .top {margin-bottom: 0;}
-	.service-box{padding-bottom: 40px;}
+	.service-box{padding-bottom: 40px; width: calc(100% / 3);}
 </style>
 {/block}
 {block name="main"}
@@ -80,18 +84,17 @@
 {/block}
 {block name="script"}
 <script>
-	function refreshArea(_formWin){
-		var _formWinObj = $("#layui-layer"+_formWin);
+	function refreshArea(_formWin) {
+		var _formWinObj = $("#layui-layer" + _formWin);
 		var w = _formWinObj.outerWidth();
 		var h = _formWinObj.outerHeight();
-		var l = ($(document).width()-w)/2;
-		var t = ($(window).height()-h)/2;
+		var l = ($(document).width() - w) / 2;
+		var t = ($(window).height() - h) / 2;
 		_formWinObj.css({
-			"left":l,
-			"top":t
+			"left": l,
+			"top": t
 		});
 	}
-
 </script>
 <script type="text/html" id="contentService">
 	<div class="layui-form form-wrap service-popup-box">

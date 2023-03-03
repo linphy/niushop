@@ -16,6 +16,7 @@ use app\model\system\Promotion as PrmotionModel;
 use app\model\member\MemberAccount;
 use app\model\order\Order;
 use app\model\system\Config as SystemConfig;
+use app\model\web\Config as ConfigModel;
 
 /**
  * 营销
@@ -219,4 +220,43 @@ class Promotion extends BaseShop
             return $config->setConfig($value, '常用功能设置', 1, $condition);
         }
     }
+
+    /**
+     * 活动专区页配置
+     * @return mixed
+     */
+    public function zoneConfig()
+    {
+        $promotion_model = new PrmotionModel();
+        if (request()->isAjax()) {
+            $data = [
+                'name' => input('name', ''),
+                'title' => input('title', ''),
+                'bg_color' => input('bg_color', ''), // 背景色
+            ];
+            $res = $promotion_model->setPromotionZoneConfig($data, $this->site_id, $this->app_module);
+            return $res;
+        } else {
+            $promotion_zone_list = event('PromotionZoneConfig');
+            $this->assign('promotion_zone_list', $promotion_zone_list);
+
+            $promotion_config_list = []; // 活动专区页面配置列表
+            $config = []; // 第一个活动页面配置
+
+            if (!empty($promotion_zone_list)) {
+                foreach ($promotion_zone_list as $k => $v) {
+                    $promotion_config_list[ $v[ 'name' ] ] = $promotion_model->getPromotionZoneConfig($v[ 'name' ], $this->site_id, $this->app_module)[ 'data' ][ 'value' ];
+                    if ($k == 0) {
+                        $config = $promotion_config_list[ $v[ 'name' ] ];
+                    }
+                }
+            }
+
+            $this->assign("config", $config);
+            $this->assign("promotion_config_list", $promotion_config_list);
+
+            return $this->fetch("promotion/zone_config");
+        }
+    }
+
 }

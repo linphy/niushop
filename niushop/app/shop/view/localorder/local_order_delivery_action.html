@@ -82,9 +82,10 @@
     /**
      * 外卖配送订单发货
      */
-    var submitting = false;
+
 
     function orderLocalDelivery(order_id) {
+        var submitting = false;
         var product_arr = [];
         layui.use(['table', 'form', 'laytpl'], function () {
             var laytpl = layui.laytpl, table = layui.table, form = layui.form;

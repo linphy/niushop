@@ -234,7 +234,7 @@
 .graphic-navigation .graphic-nav .graphic-nav-item .graphic-img .tag{
 	position: absolute;
     top: -5px;
-    right: -18px;
+    right: -12px;
     color: #fff;
     background-color: red;
     border-radius: 12px;
@@ -387,10 +387,6 @@
 	text-align: center;
 	border: 1px solid #EEEEEE;
 	cursor: pointer;
-}
-
-.graphic-navigation .edit-attribute .navigation-set-list .iconfont {
-	font-size: 20px;
 }
 
 .graphic-navigation .edit-attribute .navigation-set-list .action:hover {

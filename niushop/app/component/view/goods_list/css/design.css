@@ -18,7 +18,7 @@
 .goods-list .goods-item .info-wrap .tag-wrap .hollow-tag{border: 1px solid;border-radius: 2px;margin-right: 5px;box-sizing: border-box;line-height: 1.2;padding: 1px 2px 0;max-width: 100%;}
 .goods-list .goods-item .shopping-cart-btn{font-size: 18px;border: 1px solid;border-radius: 50%;padding: 5px;}
 .goods-list .goods-item .plus-sign-btn{font-size: 18px;border: 1px solid;border-radius: 50%;padding: 5px;}
-.goods-list .goods-item .buy-btn{color: #fff;font-size: 12px;height: 26px;line-height: 26px;min-width: 56px;text-align: center;}
+.goods-list .goods-item .buy-btn{color: #fff;font-size: 12px;height: 26px;line-height: 28px;padding:0 10px;text-align: center;}
 .goods-list .goods-item .price-wrap{font-size: 0;}
 .goods-list .goods-item .icon-diy{font-size: 40px;}
 
@@ -124,3 +124,6 @@
 .goods-list .diy-icon .action {margin-right: 10px;width: 42px;height: 28px;line-height: 28px;text-align: center;border: 1px solid #EEEEEE;cursor: pointer;}
 .goods-list .diy-icon .action .iconfont {font-size: 20px;}
 .goods-list .diy-icon .action:hover {border-color: var(--base-color);color: var(--base-color);}
+
+.goods-list .edit-content-wrap .layui-form-radio{margin-right:5px;}
+.goods-list .edit-content-wrap .layui-form-radio:last-child{margin-right: 0;padding-right: 0;}

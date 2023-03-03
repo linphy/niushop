@@ -13,6 +13,7 @@ namespace app\model\system;
 use app\model\BaseModel;
 use app\model\order\OrderCommon;
 use app\model\order\OrderRefund;
+use app\model\stat\GoodsCartStat;
 use app\model\stat\GoodsStat;
 use app\model\stat\MemberStat;
 use app\model\stat\MemberWithdrawStat;
@@ -63,28 +64,6 @@ class Stat extends BaseModel
             ];
             $insert_data = array_merge($insert_data, $stat_data);
             $res = model('stat_shop')->add(
-//                [
-//                    'site_id'         => $site_id,
-//                    'year'            => $carbon->year,
-//                    'month'           => $carbon->month,
-//                    'day'             => $carbon->day,
-//                    'day_time'        => Carbon::today()->timestamp,
-//                    'order_total'     => $data['order_total'] ?? 0,
-//                    'shipping_total'  => $data['shipping_total'] ?? 0,
-//                    'refund_total'    => $data['refund_total'] ?? 0,
-//                    'order_pay_count' => $data['order_pay_count'] ?? 0,
-//                    'goods_pay_count' => $data['goods_pay_count'] ?? 0,
-//                    'shop_money'      => $data['shop_money'] ?? 0,
-//                    'platform_money'  => $data['platform_money'] ?? 0,
-//                    'collect_shop'    => $data['collect_shop'] ?? 0,
-//                    'collect_goods'   => $data['collect_goods'] ?? 0,
-//                    'visit_count'     => $data['visit_count'] ?? 0,
-//                    'order_count'     => $data['order_count'] ?? 0,
-//                    'goods_count'     => $data['goods_count'] ?? 0,
-//                    'add_goods_count' => $data['add_goods_count'] ?? 0,
-//                    'member_count'    => $data['member_count'] ?? 0,
-//                    'create_time'     => time()
-//                ]
                 $insert_data
             );
 
@@ -99,7 +78,6 @@ class Stat extends BaseModel
                     }
                 }
             }
-
             if (!empty($update_data)) {
                 $res = Db::name('stat_shop')->where($condition)
                     ->update($update_data);
@@ -107,26 +85,6 @@ class Stat extends BaseModel
                 Cache::tag("cache_table" . "stat_shop")->clear();
 
             }
-
-//            $res = Db::name('stat_shop')->where($condition)
-//                ->update(
-//                    [
-//                        'order_total'     => isset($data['order_total']) ? Db::raw('order_total+' . $data['order_total']) : Db::raw('order_total'),
-//                        'shipping_total'  => isset($data['shipping_total']) ? Db::raw('shipping_total+' . $data['shipping_total']) : Db::raw('shipping_total'),
-//                        'refund_total'    => isset($data['refund_total']) ? Db::raw('refund_total+' . $data['refund_total']) : Db::raw('refund_total'),
-//                        'order_pay_count' => isset($data['order_pay_count']) ? Db::raw('order_pay_count+' . $data['order_pay_count']) : Db::raw('order_pay_count'),
-//                        'goods_pay_count' => isset($data['goods_pay_count']) ? Db::raw('goods_pay_count+' . $data['goods_pay_count']) : Db::raw('goods_pay_count'),
-//                        'shop_money'      => isset($data['shop_money']) ? Db::raw('shop_money+' . $data['shop_money']) : Db::raw('shop_money'),
-//                        'platform_money'  => isset($data['platform_money']) ? Db::raw('platform_money+' . $data['platform_money']) : Db::raw('platform_money'),
-//                        'collect_shop'    => isset($data['collect_shop']) ? Db::raw('collect_shop+' . $data['collect_shop']) : Db::raw('collect_shop'),
-//                        'collect_goods'   => isset($data['collect_goods']) ? Db::raw('collect_goods+' . $data['collect_goods']) : Db::raw('collect_goods'),
-//                        'visit_count'     => isset($data['visit_count']) ? Db::raw('visit_count+' . $data['visit_count']) : Db::raw('visit_count'),
-//                        'order_count'     => isset($data['order_count']) ? Db::raw('order_count+' . $data['order_count']) : Db::raw('order_count'),
-//                        'goods_count'     => isset($data['goods_count']) ? Db::raw('goods_count+' . $data['goods_count']) : Db::raw('goods_count'),
-//                        'add_goods_count' => isset($data['add_goods_count']) ? Db::raw('add_goods_count+' . $data['add_goods_count']) : Db::raw('add_goods_count'),
-//                        'member_count'    => isset($data['member_count']) ? Db::raw('member_count+' . $data['member_count']) : Db::raw('member_count'),
-//                        'modify_time'     => time()
-//                    ]);
         }
         //增加当天时统计
         $this->addShopHourStat($data, $carbon);
@@ -259,27 +217,31 @@ class Stat extends BaseModel
         if (!empty($end_time)) {
             $condition[] = [ 'day_time', '<=', $end_time ];
         }
-        $info = model('stat_shop')->getInfo($condition,
-            'SUM(order_total) as order_total,SUM(shipping_total) as shipping_total,SUM(refund_total) as refund_total,SUM(order_pay_count) as order_pay_count,SUM(goods_pay_count) as goods_pay_count,SUM(shop_money) as shop_money,SUM(platform_money) as platform_money,SUM(collect_shop) as collect_shop,SUM(collect_goods) as collect_goods,SUM(visit_count) as visit_count,SUM(order_count) as order_count,SUM(goods_count) as goods_count,SUM(add_goods_count) as add_goods_count,SUM(member_count) as member_count, SUM(earnings_total_money) as earnings_total_money');
-        if ($info[ 'order_total' ] == null) {
-            $info = [
-                'order_total' => 0,
-                'shipping_total' => 0,
-                'refund_total' => 0,
-                'order_pay_count' => 0,
-                'goods_pay_count' => 0,
-                'shop_money' => 0,
-                'platform_money' => 0,
-                'collect_shop' => 0,
-                'collect_goods' => 0,
-                'visit_count' => 0,
-                'order_count' => 0,
-                'goods_count' => 0,
-                'add_goods_count' => 0,
-                'member_count' => 0,
-                'earnings_total_money' => 0,
-            ];
-        }
+        $field = array_map(function ($field){
+            switch ($field) {
+                case 'earnings_total_money':
+                    return "sum(earnings_total_money) + sum(cashier_billing_money) + sum(cashier_buycard_money) as earnings_total_money";
+                    break;
+                case 'expenditure_total_money':
+                    return "sum(expenditure_total_money) + sum(cashier_refund_money) as expenditure_total_money";
+                    break;
+                case 'cashier_billing_money':
+                    return "sum(cashier_billing_money) + sum(cashier_buycard_money) as cashier_order_pay_money";
+                    break;
+                case 'refund_total':
+                    return "sum(refund_total) + sum(cashier_refund_money) as refund_total";
+                    break;
+                case 'expected_earnings_total_money':
+                    return "sum(expected_earnings_total_money) + sum(cashier_billing_money) + sum(cashier_buycard_money) - sum(cashier_refund_money) as expected_earnings_total_money";
+                    break;
+                case 'order_pay_count':
+                    return "sum(order_pay_count) + sum(cashier_billing_count) + sum(cashier_buycard_count) as order_pay_count";
+                    break;
+                default:
+                    return "sum($field) as $field";
+            }
+        }, $this->getStatField());
+        $info = model('stat_shop')->getInfo($condition, $field);
         return $this->success($info);
     }
 
@@ -295,8 +257,38 @@ class Stat extends BaseModel
             [ 'day_time', '>=', $start_time ],
             [ 'day_time', '<=', $end_time ],
         ];
-        $list = model('stat_shop')->getList($condition, '*');
+        $list = model('stat_shop')->getList($condition, $this->handleStatField());
         return $this->success($list);
+    }
+
+    /**
+     * 处理查询字段
+     */
+    private function handleStatField(){
+        $fields = Db::name('stat_shop')->getTableFields('');
+        foreach ($fields as $k => $field) {
+            switch ($field) {
+                case 'earnings_total_money':
+                    $fields[ $k ] = "earnings_total_money + cashier_billing_money + cashier_buycard_money as earnings_total_money";
+                    break;
+                case 'expenditure_total_money':
+                    $fields[ $k ] = "expenditure_total_money + cashier_refund_money as expenditure_total_money";
+                    break;
+                case 'cashier_billing_money':
+                    $fields[ $k ] = "cashier_billing_money + cashier_buycard_money as cashier_order_pay_money";
+                    break;
+                case 'refund_total':
+                    $fields[ $k ] = "refund_total + cashier_refund_money as refund_total";
+                    break;
+                case 'expected_earnings_total_money':
+                    $fields[ $k ] = "expected_earnings_total_money + cashier_billing_money + cashier_buycard_money - cashier_refund_money as expected_earnings_total_money";
+                    break;
+                case 'order_pay_count':
+                    $fields[ $k ] = "order_pay_count + cashier_billing_count + cashier_buycard_count as order_pay_count";
+                    break;
+            }
+        }
+        return implode(',', $fields);
     }
 
     /**
@@ -315,8 +307,36 @@ class Stat extends BaseModel
             [ 'month', '=', $month ],
             [ 'day', '=', $day ],
         ];
-        $list = model('stat_shop_hour')->getList($condition, '*', 'id desc');
+        $list = model('stat_shop_hour')->getList($condition, $this->handleStatHourField(), 'id desc');
         return $this->success($list);
+    }
+
+    /**
+     * 处理查询字段
+     */
+    private function handleStatHourField(){
+        $fields = Db::name('stat_shop_hour')->getTableFields('');
+        foreach ($fields as $k => $field) {
+            switch ($field) {
+                case 'earnings_total_money':
+                    $fields[ $k ] = "earnings_total_money + cashier_billing_money + cashier_buycard_money as earnings_total_money";
+                    break;
+                case 'expenditure_total_money':
+                    $fields[ $k ] = "expenditure_total_money + cashier_refund_money as expenditure_total_money";
+                    break;
+                case 'refund_total':
+                    $fields[ $k ] = "refund_total + cashier_refund_money as refund_total";
+                    break;
+                case 'expected_earnings_total_money':
+                    $fields[ $k ] = "expected_earnings_total_money + cashier_billing_money + cashier_buycard_money - cashier_refund_money as expected_earnings_total_money";
+                    break;
+                case 'order_pay_count':
+                    $fields[ $k ] = "order_pay_count + cashier_billing_count + cashier_buycard_count as order_pay_count";
+                    break;
+            }
+        }
+        $fields[] = 'cashier_billing_money + cashier_buycard_money as cashier_order_pay_money';
+        return implode(',', $fields);
     }
 
     /**
@@ -411,9 +431,13 @@ class Stat extends BaseModel
         $result = event('AddStat', $params, true);
         if (empty($result)) {
             switch ( $type ) {
-                case 'order'://下单
+                case 'order_create'://订单支付
                     $order_stat_model = new OrderStat();
-                    $result = $order_stat_model->addOrderStat($temp_params);
+                    $result = $order_stat_model->addOrderCreateStat($temp_params);
+                    break;
+                case 'order_pay'://订单支付
+                    $order_stat_model = new OrderStat();
+                    $result = $order_stat_model->addOrderPayStat($temp_params);
                     break;
                 case 'order_refund'://退款
                     $order_stat_model = new OrderStat();
@@ -442,6 +466,18 @@ class Stat extends BaseModel
                 case 'add_member':
                     $member_model = new MemberStat();
                     $result = $member_model->addMemberStat($temp_params);
+                    break;
+                case 'goods_cart'://购物车加购
+                    $goods_cart_stat_model = new GoodsCartStat();
+                    $result = $goods_cart_stat_model->addGoodsCartStat($temp_params);
+                    break;
+                case 'goods_visit'://购物车加购
+                    $goods_stat_model = new GoodsStat();
+                    $result = $goods_stat_model->addGoodsVisit($temp_params);
+                    break;
+                case 'goods_on'://上下架
+                    $goods_stat_model = new GoodsStat();
+                    $result = $goods_stat_model->addGoodsOnStat($temp_params);
                     break;
             }
         }

@@ -29,7 +29,7 @@ class Article extends BaseShop
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $search_text = input('search_text', '');
-            $condition = [ [ 'pn.site_id', '=', $this->site_id ], ['status', '=', 1] ];
+            $condition = [ [ 'pn.site_id', '=', $this->site_id ], [ 'status', '=', 1 ] ];
             $condition[] = [ 'pn.article_title', 'like', '%' . $search_text . '%' ];
             $order_by = 'pn.create_time desc';
 
@@ -44,12 +44,13 @@ class Article extends BaseShop
     /**
      * 草稿箱
      */
-    public function drafts(){
+    public function drafts()
+    {
         if (request()->isAjax()) {
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $search_text = input('search_text', '');
-            $condition = [ [ 'pn.site_id', '=', $this->site_id ], ['status', '=', 0] ];
+            $condition = [ [ 'pn.site_id', '=', $this->site_id ], [ 'status', '=', 0 ] ];
             $condition[] = [ 'pn.article_title', 'like', '%' . $search_text . '%' ];
             $order_by = 'pn.create_time desc';
 
@@ -60,6 +61,7 @@ class Article extends BaseShop
             return $this->fetch('article/drafts');
         }
     }
+
     /**
      * 文章添加
      */
@@ -81,14 +83,12 @@ class Article extends BaseShop
                 'is_show_dianzan_num' => input('is_show_dianzan_num', ''),
                 'initial_read_num' => input('initial_read_num', ''),
                 'initial_dianzan_num' => input('initial_dianzan_num', '')
-
             ];
-
             return $article_model->addArticle($articles_data);
         } else {
             $article_category_model = new ArticleCategory();
-            $article_category_list = $article_category_model->getArticleCategoryList([ [ 'site_id', '=', $this->site_id ] ], 'category_id, category_name');
-            $this->assign('category_list', $article_category_list[ 'data' ]);
+            $article_category_list = $article_category_model->getArticleCategoryList([ [ 'site_id', '=', $this->site_id ] ], 'category_id, category_name')[ 'data' ];
+            $this->assign('category_list', $article_category_list);
 
             return $this->fetch('article/add');
         }
@@ -117,9 +117,7 @@ class Article extends BaseShop
                 'is_show_dianzan_num' => input('is_show_dianzan_num', ''),
                 'initial_read_num' => input('initial_read_num', ''),
                 'initial_dianzan_num' => input('initial_dianzan_num', '')
-
             ];
-
             return $article_model->editArticle($articles_data);
         } else {
             $this->assign('article_id', $article_id);
@@ -128,8 +126,8 @@ class Article extends BaseShop
             $this->assign('info', $article_info[ 'data' ]);
 
             $article_category_model = new ArticleCategory();
-            $article_category_list = $article_category_model->getArticleCategoryList([ [ 'site_id', '=', $this->site_id ] ], 'category_id, category_name');
-            $this->assign('article_category_list', $article_category_list[ 'data' ]);
+            $article_category_list = $article_category_model->getArticleCategoryList([ [ 'site_id', '=', $this->site_id ] ], 'category_id, category_name')[ 'data' ];
+            $this->assign('category_list', $article_category_list);
             return $this->fetch('article/edit');
         }
     }

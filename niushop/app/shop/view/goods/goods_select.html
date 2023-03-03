@@ -103,11 +103,11 @@
 				<div class="layui-input-inline">
 					<select name="goods_class" lay-filter="goods_class">
 						<option value="">选择商品类型</option>
-						<option value="1" {if $goods_type == 1} selected{/if}>实物商品</option>
-						<option value="2" {if $goods_type == 2} selected{/if}>虚拟商品</option>
-						{if $virtualcard_exit}
-						<option value="3" {if $goods_type == 3} selected{/if}>电子卡密</option>
-						{/if}
+						{foreach name="all_goodsclass" item="vo"}
+							{if empty($usable_goods_class) || (!empty($usable_goods_class) && in_array($vo.goods_class, $usable_goods_class)) }
+							<option value="{$vo.goods_class}" {if $goods_type == $vo.goods_class} selected{/if}>{$vo.goods_class_name}</option>
+							{/if}
+						{/foreach}
 					</select>
 				</div>
 				{/if}
@@ -325,8 +325,7 @@
 					unresize: 'false',
 					width: '8%',
 					templet: '#checkbox'
-				},
-					{
+				}, {
 						field: 'presale_name',
 						title: '活动名称',
 						unresize: 'false',
@@ -351,8 +350,7 @@
 					unresize: 'false',
 					width: '8%',
 					templet: '#checkbox'
-				},
-					{
+				}, {
 						field: 'pintuan_name',
 						title: '拼团返利',
 						unresize: 'false',
@@ -383,17 +381,22 @@
 	}
 
 	$(function () {
-		layui.use(['form','laytpl','element'], function () {
+		layui.use(['form', 'laytpl', 'element'], function () {
 			form = layui.form;
 			laytpl = layui.laytpl;
 			element = layui.element;
 			table = new Table({
 				elem: '#goods_list',
 				url: '{:addon_url("shop/goods/goodsselect")}',
-				where: {is_virtual: "{$is_virtual}",promotion: setItem.promotion,goods_class: "{$goods_type}"},
+				where: {
+					is_virtual: "{$is_virtual}",
+					promotion: setItem.promotion,
+					goods_class: "{$goods_type}",
+					usable_goods_class: "{:implode(',', $usable_goods_class)}"
+				},
 				cols: goodsCols,
-				callback : function (res) {
-					if(setItem.mode == "sku") {
+				callback: function (res) {
+					if (setItem.mode == "sku") {
 						//存储这sku的具体id
 						$("input[name='goods_checkbox'][data-goods-id]").each(function () {
 							var goods_id = $(this).attr("data-goods-id");
@@ -410,16 +413,16 @@
 						});
 					}
 					// 更新商品复选框状态
-					if(setItem.mode == 'spu') {
-						for (var i=0;i<goodsIdArr.length;i++) {
+					if (setItem.mode == 'spu') {
+						for (var i = 0; i < goodsIdArr.length; i++) {
 							var selected_goods = $("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']");
 							if (selected_goods.length) {
 								$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").prop("checked", true);
 
-								// var json = {};
-								// json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
-								// json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
-								// select_list.push(json);
+								var json = {};
+								json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
+								json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id="+ goodsIdArr[i] +"]").val());
+								select_list.push(json);
 
 								if (setItem.disabled == 1) {
 									$("input[name='goods_checkbox'][data-goods-id='" + goodsIdArr[i] + "']").attr("disabled", "disabled");
@@ -427,8 +430,8 @@
 							}
 						}
 					}
-					if(setItem.mode == 'sku'){
-						for (var i=0;i<skuIdAll.length;i++) {
+					if (setItem.mode == 'sku') {
+						for (var i = 0; i < skuIdAll.length; i++) {
 							var selected_goods_sku = $("input[name='goods_sku_checkbox'][data-sku-id='" + skuIdAll[i] + "']");
 							$("input[name='goods_sku_checkbox'][data-sku-id='" + skuIdAll[i] + "']").prop("checked", true);
 							if (selected_goods_sku.length) {
@@ -447,16 +450,16 @@
 			});
 
 			//修改一级分类箭头切换
-			element.on('collapse(oneCategory)', function(data){
+			element.on('collapse(oneCategory)', function (data) {
 				$(".layui-colla-title").removeClass("active");
-				if (data.show){
+				if (data.show) {
 					$(data.title).addClass("active");
 				}
 			});
 			//修改二级分类箭头切换
-			element.on('collapse(twoCategory)', function(data){
+			element.on('collapse(twoCategory)', function (data) {
 				$(".select-goods-classification .select-goods-classification .layui-colla-title").removeClass("active");
-				if (data.show){
+				if (data.show) {
 					$(data.title).addClass("active");
 				}
 			});
@@ -464,26 +467,25 @@
 			//搜索商品名称或编码
 			form.on('submit(search)', function (data) {
 				formSearch();
-				return false;
 			});
 
 			//搜索类型切换
-			form.on('select(select_type)', function(data){
+			form.on('select(select_type)', function (data) {
 				formSearch();
-			})
+			});
 
 			//商品标签筛选
-			form.on('select(label_id)', function(data){
+			form.on('select(label_id)', function (data) {
 				formSearch();
-			})
+			});
 
 			//商品类型筛选
-			form.on('select(goods_class)', function(data){
+			form.on('select(goods_class)', function (data) {
 				formSearch();
-			})
+			});
 
 			//公共搜索方法
-			function formSearch(){
+			function formSearch() {
 				var data = {};
 				data.search_text = $("input[name='search_text']").val();
 				data.select_type = $("select[name='select_type']").val();
@@ -501,39 +503,39 @@
 			}
 
 			// 勾选商品
-			form.on('checkbox(goods_checkbox_all)', function(data) {
+			form.on('checkbox(goods_checkbox_all)', function (data) {
 				var all_checked = data.elem.checked;
-				$("input[name='goods_checkbox']").each(function(){
+				$("input[name='goods_checkbox']").each(function () {
 					var checked = $(this).prop('checked');
-					if(all_checked != checked){
+					if (all_checked != checked) {
 						$(this).next().click();
 					}
-				})
+				});
+				dealWithTableSelectedNum();
 			});
 
 			// 勾选商品
-			form.on('checkbox(goods_checkbox)', function(data) {
+			form.on('checkbox(goods_checkbox)', function (data) {
 				var goods_id = $(data.elem).attr("data-goods-id"),
-						json = {};
+					json = {};
 
-				$("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']").prop("checked",data.elem.checked);
+				$("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']").prop("checked", data.elem.checked);
 				form.render();
 
-				var spuLen = $("input[name='goods_checkbox'][data-goods-id="+ goods_id +"]:checked").length;
-				if (spuLen){
-					json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goods_id +"]").val());
+				var spuLen = $("input[name='goods_checkbox'][data-goods-id=" + goods_id + "]:checked").length;
+				if (spuLen) {
+					json = JSON.parse($("input[name='goods_json'][data-goods-id=" + goods_id + "]").val());
 
-					json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id="+ goods_id +"]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id="+ goods_id +"]").val());
+					json.selected_sku_list = $("input[name='goods_sku_list_json'][data-goods-id=" + goods_id + "]").val() == "undefined" ? [] : JSON.parse($("input[name='goods_sku_list_json'][data-goods-id=" + goods_id + "]").val());
 					delete json.LAY_INDEX;
 					delete json.LAY_TABLE_INDEX;
 					delete json.create_time;
 					select_list.push(json);
 					goodsIdArr.push(goods_id);
 					$.unique(goodsIdArr);
-				}
-				else{
-					for (var g = 0; g < select_list.length; g ++){
-						if(select_list[g].goods_id == goods_id){
+				} else {
+					for (var g = 0; g < select_list.length; g++) {
+						if (select_list[g].goods_id == goods_id) {
 							select_list.splice(g, 1);
 						}
 					}
@@ -541,38 +543,36 @@
 					$.unique(goodsIdArr);
 				}
 
-				if (setItem.mode == "spu") return false;
-				var skuLen = $("input[name='goods_sku_checkbox'][data-goods-id="+ goods_id +"]").length;
-				if(!skuLen){
+				var skuLen = $("input[name='goods_sku_checkbox'][data-goods-id=" + goods_id + "]").length;
+				if (!skuLen) {
 					skuIdAll = [];
 				}
-				for (var i = 0; i < skuLen; i++){
-					var skuId = $("input[name='goods_sku_checkbox'][data-goods-id="+ goods_id +"]").eq(i).attr("data-sku-id");
+				for (var i = 0; i < skuLen; i++) {
+					var skuId = $("input[name='goods_sku_checkbox'][data-goods-id=" + goods_id + "]").eq(i).attr("data-sku-id");
 					if (spuLen)
 						skuIdAll.push(skuId);
-					else{
+					else {
 						skuIdAll.remove(skuId);
 					}
 				}
 				dealWithTableSelectedNum();
 			});
 
-
 			// 勾选商品SKU
-			form.on('checkbox(goods_sku_checkbox)', function(data) {
+			form.on('checkbox(goods_sku_checkbox)', function (data) {
 
 				var goods_id = $(data.elem).attr("data-goods-id"),
-						sku_id = $(data.elem).attr("data-sku-id"),
-						json = {};
+					sku_id = $(data.elem).attr("data-sku-id"),
+					json = {};
 
-				if($("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']:checked").length) {
-					var skuNoSelect = $("input[name='goods_sku_checkbox'][data-goods-id='"+ goods_id +"']:checked").length - 1;
-					var skuSelect = $("input[name='goods_sku_checkbox'][data-goods-id='"+ goods_id +"']").length;
+				if ($("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']:checked").length) {
+					var skuNoSelect = $("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']:checked").length - 1;
+					var skuSelect = $("input[name='goods_sku_checkbox'][data-goods-id='" + goods_id + "']").length;
 
-					if(skuNoSelect < skuSelect){
+					if (skuNoSelect < skuSelect) {
 						goodsIdArr.push(goods_id);
 
-						json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goods_id +"]").val());
+						json = JSON.parse($("input[name='goods_json'][data-goods-id=" + goods_id + "]").val());
 						delete json.LAY_INDEX;
 						delete json.LAY_TABLE_INDEX;
 						delete json.create_time;
@@ -581,7 +581,7 @@
 					}
 
 					$("input[name='goods_checkbox'][data-goods-id='" + goods_id + "']").prop("checked", true);
-				}else{
+				} else {
 					$("input[name='goods_checkbox'][data-goods-id='" + goods_id + "']").prop("checked", false);
 					goodsIdArr.remove(goods_id);
 					select_list.remove(goods_id);
@@ -590,14 +590,14 @@
 				if (!select_list.length) {
 					skuIdAll = [];
 				}
-				for (var i = 0; i < select_list.length; i++){
-					if (select_list[i].goods_id == goods_id){
+				for (var i = 0; i < select_list.length; i++) {
+					if (select_list[i].goods_id == goods_id) {
 						// var skuLen = $("input[name='goods_sku_checkbox'][data-sku-id="+ sku_id +"]:checked").length;
-						if (data.elem.checked){
+						if (data.elem.checked) {
 							skuIdAll.push(sku_id);
-							var skuVal = $("input[name='goods_sku_json'][data-sku-id="+ sku_id +"]").val()
+							var skuVal = $("input[name='goods_sku_json'][data-sku-id=" + sku_id + "]").val()
 							select_list[i].selected_sku_list.push(JSON.parse(skuVal));
-						}else{
+						} else {
 							skuIdAll.remove(sku_id);
 							select_list[i].selected_sku_list.remove(sku_id);
 						}
@@ -608,15 +608,15 @@
 			});
 
 			//初始化数据
-			function initData(){
+			function initData() {
 				var goodsLen = $("input[name='goods_checkbox'][data-goods-id]:checked").length;
 
 				//父级
-				for (var i = 0; i < goodsLen; i++){
+				for (var i = 0; i < goodsLen; i++) {
 					var goodsId = $("input[name='goods_checkbox'][data-goods-id]:checked").eq(i).attr("data-goods-id");
 					var ident = false;
-					for (var k = 0; k < select_list.length; k++){
-						if(select_list[k].goods_id == goodsId){
+					for (var k = 0; k < select_list.length; k++) {
+						if (select_list[k].goods_id == goodsId) {
 							ident = true;
 							break;
 						}
@@ -624,17 +624,17 @@
 
 					if (ident) return;
 
-					json = JSON.parse($("input[name='goods_json'][data-goods-id="+ goodsId +"]").val());
+					json = JSON.parse($("input[name='goods_json'][data-goods-id=" + goodsId + "]").val());
 					delete json.LAY_INDEX;
 					delete json.LAY_TABLE_INDEX;
 					delete json.create_time;
 
 					//子级
-					var goodsSkuLen = $("input[name='goods_sku_checkbox'][data-goods-id="+ goodsId +"]:checked").length;
+					var goodsSkuLen = $("input[name='goods_sku_checkbox'][data-goods-id=" + goodsId + "]:checked").length;
 					json.selected_sku_list = [];
-					for (var j = 0; j < goodsSkuLen; j++){
-						var goodsSkuId = $("input[name='goods_sku_checkbox'][data-goods-id="+ goodsId +"]:checked").eq(j).attr("data-sku-id");
-						var skuVal = $("input[name='goods_sku_json'][data-sku-id="+ goodsSkuId +"]").val();
+					for (var j = 0; j < goodsSkuLen; j++) {
+						var goodsSkuId = $("input[name='goods_sku_checkbox'][data-goods-id=" + goodsId + "]:checked").eq(j).attr("data-sku-id");
+						var skuVal = $("input[name='goods_sku_json'][data-sku-id=" + goodsSkuId + "]").val();
 						json.selected_sku_list.push(JSON.parse(skuVal));
 					}
 					select_list.push(json);
@@ -642,22 +642,22 @@
 
 				// 查询其他页的商品
 				var goods_ids = [];
-				for (var i=0;i<goodsIdArr.length;i++){
+				for (var i = 0; i < goodsIdArr.length; i++) {
 					var is_not = true;
-					for (var j=0;j<select_list.length;j++){
-						if(goodsIdArr[i] ==select_list[j].goods_id) {
+					for (var j = 0; j < select_list.length; j++) {
+						if (goodsIdArr[i] == select_list[j].goods_id) {
 							is_not = false;
 						}
 					}
-					if(is_not) goods_ids.push([goodsIdArr[i]]);
+					if (is_not) goods_ids.push([goodsIdArr[i]]);
 
 				}
 
-				if(mode == 'spu') {
+				if (mode == 'spu') {
 					if (goods_ids.length > 0) {
 						$.ajax({
 							url: ns.url("shop/goods/goodsselect"),
-							data: {goods_ids: goods_ids.toString(), select_type : 'selected'},
+							data: {goods_ids: goods_ids.toString(), select_type: 'selected'},
 							dataType: 'JSON',
 							type: 'POST',
 							success: function (res) {
@@ -672,11 +672,11 @@
 
 			$(".select-goods .select-goods-left dd").hover(function () {
 				$(this).addClass("active");
-			},function () {
+			}, function () {
 				$(this).removeClass("active");
 			});
 
-			$("body").on("click",".select-goods-left .marketing-campaign dd",function () {
+			$("body").on("click", ".select-goods-left .marketing-campaign dd", function () {
 				$(this).addClass("text-color").siblings().removeClass("text-color");
 				filterData.promotion_type = $(this).attr("data-type");
 				table.reload({
@@ -687,7 +687,7 @@
 				});
 			});
 
-			$("body").on("click",".select-goods-left .commodity-group dd",function () {
+			$("body").on("click", ".select-goods-left .commodity-group dd", function () {
 				$(this).addClass("text-color").siblings().removeClass("text-color");
 				filterData.label_id = $(this).attr("data-group-id");
 				table.reload({
@@ -698,22 +698,22 @@
 				});
 			});
 
-			$("body").on("click",".select-goods-left dl",function () {
-				if ($(this).hasClass("fold")){
+			$("body").on("click", ".select-goods-left dl", function () {
+				if ($(this).hasClass("fold")) {
 					$(this).removeClass("fold");
-				}else{
+				} else {
 					$(this).addClass("fold");
 				}
 			});
 
-			$("body").on("click",".select-goods-left dd",function (event) {
+			$("body").on("click", ".select-goods-left dd", function (event) {
 				$(this).parents("dl").removeClass("fold");
 				$(this).parents("dl").siblings().addClass("fold");
 				event.stopPropagation();
 			});
 
 			//分类切换
-			$("body").on("click",".classification-item",function (event) {
+			$("body").on("click", ".classification-item", function (event) {
 				var categoryId = $(this).attr("data-category_id");
 				$(".classification-item").removeClass("text-color border-after-color");
 				$(this).addClass("text-color border-after-color");

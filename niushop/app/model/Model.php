@@ -371,11 +371,13 @@ class Model
      */
     final public function add($data = [], $is_return_pk = true)
     {
+
+
+        $res = Db::name($this->table)->insert($data, true, $is_return_pk);
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
-
-        return Db::name($this->table)->insert($data, true, $is_return_pk);
+        return $res;
     }
 
     /**
@@ -385,11 +387,13 @@ class Model
      */
     final public function addList($data = [], $limit = null)
     {
+
+
+        $res =  Db::name($this->table)->insertAll($data, false, $limit);
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
-
-        return Db::name($this->table)->insertAll($data, false, $limit);
+        return $res;
     }
 
     /**
@@ -399,11 +403,14 @@ class Model
      */
     final public function update($data = [], $where = [])
     {
+
+        $res = Db::name($this->table)->where($where)->update($data);
+
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
+        return $res;
 
-        return Db::name($this->table)->where($where)->update($data);
     }
 
     /**
@@ -414,7 +421,14 @@ class Model
      */
     final public function setFieldValue($where = [], $field = '', $value = '')
     {
-        return $this->update([ $field => $value ], $where);
+
+        $res = $this->update([ $field => $value ], $where);
+
+        if ($this->is_cache) {
+            Cache::tag("cache_table" . $this->table)->clear();
+        }
+        return $res;
+
     }
 
     /**
@@ -424,11 +438,13 @@ class Model
      */
     final public function setList($data_list = [], $replace = false)
     {
+
+
+        $res = Db::name($this->table)->saveAll($data_list, $replace);
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
-
-        return Db::name($this->table)->saveAll($data_list, $replace);
+        return $res;
     }
 
     /**
@@ -437,11 +453,13 @@ class Model
      */
     final public function delete($where = [])
     {
+
+        $res = Db::name($this->table)->where($where)->delete();
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
+        return $res;
 
-        return Db::name($this->table)->where($where)->delete();
     }
 
     /**
@@ -541,7 +559,7 @@ class Model
     }
 
     /**
-     * SQL执行
+     * SQL执行,注意只能处理查询问题，如果执行修改需要手动删除缓存
      */
     final public function execute($sql = '')
     {
@@ -667,11 +685,13 @@ class Model
      */
     final public function setInc($where, $field, $num = 1)
     {
+
+        $res = Db::name($this->table)->where($where)->inc($field, $num)->update();
+
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
-
-        return Db::name($this->table)->where($where)->inc($field, $num)->update();
+        return $res;
     }
 
     /**
@@ -684,10 +704,15 @@ class Model
      */
     final public function setDec($where, $field, $num = 1)
     {
+
+        $res = Db::name($this->table)->where($where)->dec($field, $num)->update();
+
         if ($this->is_cache) {
             Cache::tag("cache_table" . $this->table)->clear();
         }
-        return Db::name($this->table)->where($where)->dec($field, $num)->update();
+
+        return $res;
+
     }
 
     /**

@@ -19,7 +19,19 @@ class DiyViewLink extends BaseModel
     public $list = [];
 
     /**
-     * 获取链接
+     * 获取链接信息
+     * @param array $condition
+     * @param string $field
+     * @return array
+     */
+    public function getLinkInfo($condition, $field = '*')
+    {
+        $list = model('link')->getInfo($condition, $field);
+        return $this->success($list);
+    }
+
+    /**
+     * 获取链接列表
      * @param array $condition
      * @param string $field
      * @param string $order
@@ -33,6 +45,27 @@ class DiyViewLink extends BaseModel
     }
 
     /**
+     * 链接分页列表
+     * @param array $condition
+     * @param int $page
+     * @param int $page_size
+     * @param string $order
+     * @param string $field
+     * @return array
+     */
+    public function getLinkPageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = '*')
+    {
+        $data = json_encode([ $condition, $page, $page_size, $order, $field ]);
+        $cache = Cache::get("link_getLinkPageList_" . $data);
+        if (!empty($cache)) {
+            return $this->success($cache);
+        }
+        $list = model('link')->pageList($condition, $field, $order, $page, $page_size);
+        Cache::tag("link")->set("link_getLinkPageList_" . $data, $list);
+        return $this->success($list);
+    }
+
+    /**
      * 查询自定义微页面
      * @param $site_id
      * @return array
@@ -40,16 +73,19 @@ class DiyViewLink extends BaseModel
     public function getMicroPageLinkList($site_id)
     {
         $diy_view_model = new DiyViewModel();
+
         $condition = [
             [ 'site_id', '=', $site_id ],
             [ 'name', 'like', '%DIY_VIEW_RANDOM_%' ]
         ];
+
         $data = json_encode($condition);
         $cache = Cache::get("site_diy_view_getMicroPageLinkList_" . $site_id . "_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
-        $site_diy_view_list = $diy_view_model->getSiteDiyViewPageList($condition, 1, 0, 'sort desc,create_time desc', 'name, title')[ 'data' ][ 'list' ];
+        $site_diy_view_list = $diy_view_model->getSiteDiyViewList($condition, 'sort desc,create_time desc', 'name, title')[ 'data' ];
+
         $link_mic = [
             'name' => 'MICRO_PAGE_LIST',
             'title' => '微页面',
@@ -81,7 +117,7 @@ class DiyViewLink extends BaseModel
             [ 'level', '<=', isset($params[ 'level' ]) ? $params[ 'level' ] : 4 ]
         ];
 
-        $data = json_encode($condition);
+        $data = json_encode([ $condition, $field, $order ]);
         $cache = Cache::get("site_diy_view_getLinkTree_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
@@ -165,12 +201,23 @@ class DiyViewLink extends BaseModel
                     }
                 }
             } else {
-                $link_list[$k]['child_list'] = [];
+                $link_list[ $k ][ 'child_list' ] = [];
             }
         }
 
         Cache::tag("site_diy_view")->set("site_diy_view_getLinkTree_" . $data, $link_list);
         return $this->success($link_list);
+    }
+
+    /**
+     * 删除自定义链接
+     * @param $condition
+     * @return array
+     */
+    public function deleteLink($condition)
+    {
+        $res = model('link')->delete($condition);
+        return $this->success($res);
     }
 
     /**

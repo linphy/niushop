@@ -51,13 +51,13 @@
         <form class="layui-colla-content layui-form layui-show">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">昵称/手机号：</label>
+                    <label class="layui-form-label">昵称/手机号</label>
                     <div class="layui-input-inline">
                         <input type="text" name="search_text" placeholder="请输入会员昵称/手机号" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">发生方式：</label>
+                    <label class="layui-form-label">发生方式</label>
                     <div class="layui-input-inline">
                         <select name="from_type">
                             <option value="">全部</option>
@@ -70,7 +70,7 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">发生时间：</label>
+                    <label class="layui-form-label">发生时间</label>
                     <div class="layui-input-inline">
                         <input type="text" class="layui-input" name="start_time" placeholder="开始时间" id="start_time" readonly>
                         <i class=" iconrili iconfont calendar"></i>
@@ -163,6 +163,7 @@
                     unresize: 'false',
                     align: 'right',
                     templet: function (d) {
+                        if (d.account_data > 0) return '+' + parseFloat(d.account_data).toFixed(2);
                         return parseFloat(d.account_data).toFixed(2);
                     }
                 }, {

@@ -12,7 +12,6 @@
 
 namespace app\shopapi\controller;
 
-use addon\supply\model\Supplier as SupplierModel;
 use app\model\express\ExpressTemplate as ExpressTemplateModel;
 use app\model\goods\Goods as GoodsModel;
 use app\model\goods\GoodsAttribute as GoodsAttributeModel;
@@ -20,7 +19,6 @@ use app\model\goods\GoodsBrowse;
 use app\model\goods\GoodsCategory as GoodsCategoryModel;
 use app\model\goods\GoodsCollect;
 use app\model\goods\GoodsEvaluate as GoodsEvaluateModel;
-use app\model\goods\GoodsShopCategory as GoodsShopCategoryModel;
 use app\model\web\Config as ConfigModel;
 
 /**
@@ -114,6 +112,7 @@ class Goods extends BaseApi
         if (!empty($start_price)) $condition[] = [ 'price', '>=', $start_price ];
         if (!empty($end_price)) $condition[] = [ 'price', '<=', $end_price ];
         if (!empty($goods_shop_category_ids)) $condition[] = [ 'goods_shop_category_ids', 'like', [ $goods_shop_category_ids, '%' . $goods_shop_category_ids . ',%', '%' . $goods_shop_category_ids, '%,' . $goods_shop_category_ids . ',%' ], 'or' ];
+
         $res = $goods_model->getGoodsPageList($condition, $page_index, $page_size, $order_by);
 
         if (!empty($res[ 'data' ][ 'list' ])) {
@@ -193,7 +192,7 @@ class Goods extends BaseApi
             'barrage_show' => $this->params[ 'barrage_show' ] ?? 0,
             'brand_id' => $this->params[ 'brand_id' ] ?? 0,
             'support_trade_type' => $this->params[ 'support_trade_type' ] ?? '',
-
+            'form_id' => $this->params['goods_form'] ?? 0
         ];
 
         $goods_model = new GoodsModel();
@@ -258,6 +257,7 @@ class Goods extends BaseApi
             'barrage_show' => $this->params[ 'barrage_show' ] ?? 0,
             'brand_id' => $this->params[ 'brand_id' ] ?? 0,
             'support_trade_type' => $this->params[ 'support_trade_type' ] ?? '',
+            'form_id' => $this->params['goods_form'] ?? 0
         ];
 
         $res = $goods_model->editGoods($data);
@@ -386,7 +386,7 @@ class Goods extends BaseApi
         if (!empty($sku_list)) {
             $sku_list = json_decode($sku_list, true);
             $model = new GoodsModel;
-            $res = $model->editGoodsStock($sku_list);
+            $res = $model->editGoodsStock($sku_list, $this->site_id);
         }
         return $this->response($res);
     }
@@ -602,7 +602,7 @@ class Goods extends BaseApi
         $goods_id = isset($this->params[ 'goods_id' ]) ? $this->params[ 'goods_id' ] : '';
         $goods_model = new GoodsModel();
         $goods_sku_info = $goods_model->getGoodsSkuInfo([ [ 'goods_id', '=', $goods_id ] ], 'sku_id,goods_name')[ 'data' ];
-        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ],$this->site_id);
+        $res = $goods_model->qrcode($goods_sku_info[ 'sku_id' ], $goods_sku_info[ 'goods_name' ], $this->site_id);
         return $this->response($res);
     }
 
@@ -791,4 +791,44 @@ class Goods extends BaseApi
         return $this->response($this->success());
     }
 
+    /**
+     * 核销码
+     */
+    public function verify()
+    {
+        $goods_id = $this->params['goods_id'] ?? 0;
+        $virtual_goods_model = new \app\model\goods\VirtualGoods();
+
+        $verify_count = $virtual_goods_model->getVirtualGoodsInfo([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], 'count(id) as total_count, sum(verify_use_num) as verify_use_num')[ 'data' ] ?? [];
+        return $this->response($this->success($verify_count));
+    }
+
+    public function virtualGoodsList()
+    {
+        $virtual_goods_model = new \app\model\goods\VirtualGoods();
+
+        $goods_id = $this->params['goods_id'] ?? 0;
+        $search_text = input("search_text", '');
+
+        $field = 'gv.*, m.nickname,m.headimg';
+
+        $page_index = input('page', 1);
+        $page_size = input('page_size', PAGE_LIST_ROWS);
+        $alias = 'gv';
+        $condition = [
+            [ "gv.site_id", "=", $this->site_id ],
+            [ "gv.goods_id", "=", $goods_id ],
+        ];
+        if ($search_text) $condition[] = [ 'm.nickname|gv.code', 'like', '%' . $search_text . '%' ];
+        $order = "gv.id desc";
+        $join = [
+            [
+                'member m',
+                'm.member_id = gv.member_id',
+                'left'
+            ]
+        ];
+        $list = $virtual_goods_model->getVirtualGoodsPageList($condition, $page_index, $page_size, $order, $field, $alias, $join);
+        return $this->response($list);
+    }
 }

@@ -1,5 +1,5 @@
 var floatBtnListHtml = '<div class="float-btn-list">';
-		floatBtnListHtml += '<p class="hint" style="font-size: 12px; margin: 5px 0 8px;">建议上传正方形图片，大小建议为33px * 33px</p>';
+		floatBtnListHtml += '<p class="hint" style="font-size: 12px; margin: 5px 0 8px;">建议上传正方形图片</p>';
 		floatBtnListHtml += '<ul>';
 			floatBtnListHtml += '<li v-for="(item,index) in list" :key="item.id">';
 				floatBtnListHtml += '<img-icon-upload :data="{data : item}"></img-icon-upload>';
@@ -53,9 +53,7 @@ Vue.component("float-btn-list",{
 	watch : {
 		list : function(){
 			this.changeShowAddItem();
-			setTimeout(()=>{
-				getElementPosition(this.$parent)
-			},10);
+			getElementPosition(this.$parent)
 		},
 		screenWidth(val){
 			// 为了避免频繁触发resize函数导致页面卡顿，使用定时器
@@ -157,7 +155,7 @@ Vue.component("float-btn-list",{
 			this.list.push({ imageUrl : '', title : '', link : {name: ''}, iconType: 'img', icon: '', style: {fontSize: 60, iconBgColor: [], iconBgColorDeg: 0,iconBgImg: '',bgRadius: 0,iconColor: ['#000'],iconColorDeg: 0}})
 
 			this.colorRender('float-btn-color-' + (this.list.length - 1), '', function (elem, color) {
-				index = $(elem).parents('li').index();
+				var index = $(elem).parents('li').index();
 				if (self.list[index].style.iconBgColor.length || self.list[index].style.iconBgImg) {
 					self.list[index].style.iconBgColor = [color];
 				} else {
@@ -185,8 +183,8 @@ var btnPosition = '<div class="layui-form-item icon-radio">';
 	btnPosition += 		 '</template>';
 	btnPosition +=	 	'<ul class="icon-wrap">';
 	btnPosition +=		 	'<template v-for="(item,index) in list">';
-	btnPosition +=		 		'<li @click="clickFun(item.value)" :class="{\'text-color border-color\':parent[data.field] == item.value}">';
-	btnPosition += 					'<i class="iconfont" :class="item.icon_img"/>';
+	btnPosition +=		 		'<li @click="changePosition(item.value)" :class="{\'border-color\':parent[data.field] == item.value}">';
+	btnPosition += 					'<i class="iconfont" :class="[item.icon_img,parent[data.field] == item.value ? \'text-color\' : \'\']"></i>';
 	btnPosition +=		 		'</li>';
 	btnPosition +=		 	'</template>';
 	btnPosition +=	 	'</ul>';
@@ -208,60 +206,51 @@ Vue.component("btn-position", {
 		return {
 			list: [
 				{
-					label: "左上", 
+					label: "左上",
 					value: "1",
 					icon_img: "iconzuoshangjiao",
 				},
 				{
-					label: "右上", 
+					label: "右上",
 					value: "2",
 					icon_img: "iconyoushangjiao",
 				},
 				{
-					label: "左下", 
+					label: "左下",
 					value: "3",
 					icon_img: "iconzuoxiajiao",
 				},
 				{
-					label: "右下", 
+					label: "右下",
 					value: "4",
 					icon_img: "iconyouxiajiao",
 				},
 			],
 			parent: this.$parent.data,
-			imglist:this.$parent.data.list,
-			bottomPos:1,
+			imageSize: this.$parent.data.imageSize,
 		};
 	},
 	created: function () {
-		this.bottomPos = this.parent.bottomPosition;
-		// 将边框进行隐藏掉
-		$('.float-btn').parent('.draggable-element').css({"border": "none"});
+		$('.float-btn').parent('.draggable-element').css({"border": "none"});// 将边框进行隐藏掉
 	},
 	watch: {
-		imglist:function(val, oldVal){
-			var height = val.length > 1 ? ((val.length - 1) * 50) + 40 :40;
-			$(".draggable-element .float-btn").css({
-				height:height
-			});
-			$(".float-btn .float-btn-box").css({
-				height:height
-			})
-		},
+		"$parent.data.imageSize": function () {
+			getElementPosition(this.$parent);
+		}
 	},
 	methods: {
-		clickFun:function(val){
-			this.bottomPos = val;
-			this.parent[this.data.field] = val;
+		changePosition:function(val){
+			this.parent.bottomPosition = val;
 			getElementPosition(this.$parent)
 		}
 	},
 	template: btnPosition
 });
 
-function getElementPosition(data) {
-	var type = parseInt(data.data.bottomPosition),  //布局类型，1为第一种，2为第二种依次类推
-		bottomNumber = parseInt(data.data.btnBottom); //上下偏移的变量
+function getElementPosition(params) {
+	var type = parseInt(params.data.bottomPosition),  //布局类型，1为第一种，2为第二种依次类推
+		bottomNumber = parseInt(params.data.btnBottom); //上下偏移的变量
+
 	/**
 	 * #diyView .diy-view-wrap .preview-block =》 显示框【定位的参照对象是body】，#diyView =》 外边框【定位的参照对象是body】
 	 * 1、弹窗按钮是根据“外边框”进行定位的,但弹窗按钮是需要在“显示框”中展示
@@ -271,35 +260,39 @@ function getElementPosition(data) {
 
 	var box = document.querySelector("#diyView .diy-view-wrap .preview-block").getBoundingClientRect();
 	var box1 = document.querySelector("#diyView").getBoundingClientRect();
-	var floatBtn = document.querySelector(".float-btn-box").getBoundingClientRect(); //弹窗按钮
+
 	var topVal = 0; //弹窗按钮的top
 	var leftVal = 0; //弹窗按钮的left
-	var leftOff = 30; //弹窗按钮左右的偏移量
-	var topOff = 50; //弹窗按钮上下的偏移量
+	var leftOffSet = 30; //弹窗按钮左右的偏移量
 
 	if (type == 1) {
+
 		// topVal = 显示框的top - 外边框的top + 距离显示框下边距的50px + 偏移量
 		// leftVal = 显示框的left - 外边框的left + 距离显示框右边距的30px
-		topVal = box.top - box1.top + topOff + bottomNumber + "px";
-		leftVal = box.left - box1.left + leftOff + "px";
+		topVal = 100 + bottomNumber + "px";
+		leftVal = box.left - box1.left + leftOffSet + "px";
+
 	} else if (type == 2) {
+
 		// topVal = 显示框的top - 外边框的top + 距离显示框下边距的50px + 偏移量
-		// leftVal = 显示框的left - 外边框的left + 显示框的width - 弹窗按钮的width - 距离显示框右边距的30px
-		topVal = box.top - box1.top + topOff + bottomNumber + "px";
-		leftVal = box.left - box1.left + box.width - floatBtn.width - leftOff + "px";
+		// leftVal = 显示框的left - 外边框的left + 显示框的width（82） - 弹窗按钮的width - 距离显示框右边距的30px
+		topVal = 100 + bottomNumber + "px";
+		leftVal = box.left - box1.left + box.width - params.data.imageSize - 2 - leftOffSet + "px";
+
 	} else if (type == 3) {
-		// topVal = 显示框的top - 外边框的top + 显示框的height - 弹窗按钮的height - 距离显示框下边距的50px - 偏移量
+
+		// topVal = 显示框的top - 外边框的上边距(20) - 防止贴边(20) - 弹出按钮高度 - 弹出按钮的下外边距 - 偏移量
 		// leftVal = 显示框的left - 外边框的left + 距离显示框左边距的30px
-		topVal = box.top - box1.top + box.height - floatBtn.height - topOff - bottomNumber + "px";
-		leftVal = box.left - box1.left + leftOff + "px";
+		// topVal = box.top - box1.top + box.height - 82 - topOff - bottomNumber + "px";
+		topVal = $("#diyView .preview-wrap .div-wrap").height() - 20 - 20 - (params.data.list.length * params.data.imageSize) - ((params.data.list.length - 1) * 10) - bottomNumber + 'px';
+		leftVal = box.left - box1.left + leftOffSet + "px";
 
-		topVal = $("#diyView .preview-wrap .div-wrap").height() - 90 - bottomNumber + 'px';
 	} else if (type == 4) {
-		// topVal = 显示框的top - 外边框的top + 显示框的height - 弹窗按钮的height - 距离显示框下边距的50px - 偏移量
-		// leftVal = 显示框的left - 外边框的left + 显示框的width - 弹窗按钮的width - 距离显示框右边距的30px
-		topVal = $("#diyView .preview-wrap .div-wrap").height() - 90 - bottomNumber + 'px';
-		leftVal = box.left - box1.left + box.width - floatBtn.width - leftOff + "px";
 
+		// topVal = 显示框的top - 外边框的上边距(20) - 防止贴边(20) - 弹出按钮高度 - 弹出按钮的下外边距 - 偏移量
+		// leftVal = 显示框的left - 外边框的left + 显示框的width - 弹窗按钮的width - 边框width - 距离显示框右边距的30px
+		topVal = $("#diyView .preview-wrap .div-wrap").height() - 20 - 20 - (params.data.list.length * params.data.imageSize) - ((params.data.list.length - 1) * 10) - bottomNumber + 'px';
+		leftVal = box.left - box1.left + box.width - params.data.imageSize - 2 - leftOffSet + "px";
 	}
 
 	$(".draggable-element .float-btn").css({
@@ -310,7 +303,7 @@ function getElementPosition(data) {
 
 	$(".draggable-element .float-btn .edit-attribute").css({
 		position: 'fixed',
-		right: '10px',
+		right: '15px',
 		top: Math.abs(box1.top)
 	})
 }

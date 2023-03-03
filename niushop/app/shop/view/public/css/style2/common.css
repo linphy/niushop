@@ -177,7 +177,8 @@
 	color: #FFF !important;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
+	padding: 0 20px 0 10px;
 }
 
 .layui-layout-admin .first-nav .layui-side-scroll .layui-nav-tree .layui-nav-item a i {
@@ -444,6 +445,7 @@
 	height: 100px;
 	font-size: 100px;
 	margin: 0 auto;
+	background: #fff;
 }
 
 /**
@@ -2192,4 +2194,74 @@ select:-webkit-autofill {
 
 .common-loading-layer:before {
 	content: ''
+}
+
+.notify-wrap {
+	display: flex;
+	flex-direction: column;
+	width: 330px;
+	padding: 20px;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 1000;
+}
+.notify-wrap .notify-item {
+	display: flex;
+	background: #fff;
+	padding: 15px 25px 15px 15px;
+	box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+	transition: opacity .3s,transform .3s,left .3s,right .3s,top .4s,bottom .3s;
+	position: relative;
+	margin-bottom: 15px;
+	border-radius: 6px;
+}
+.notify-wrap .notify-item .iconclose_light {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+}
+.notify-wrap .notify-item .box {
+	flex: 1;
+	width: 0;
+	margin-left: 10px;
+}
+.notify-wrap .notify-item .icon {
+	width: 24px;
+	height: 24px;
+}
+.notify-wrap .icon i {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: url('../../img/notify_icon.png') no-repeat;
+}
+.notify-wrap .icon i.success {
+	background-position-x: -24px;
+}
+.notify-wrap .icon i.fail {
+	background-position-x: -48px;
+}
+.notify-wrap .icon i.warning {
+	background-position-x: 0px;
+}
+.notify-wrap .icon i.info {
+	background-position-x: -72px;
+}
+.notify-item .box .title {
+	font-weight: 700;
+	font-size: 16px;
+	color: #303133;
+	white-space: break-spaces;
+}
+.notify-item .box .content {
+	margin-top: 10px;
+	font-size: 14px;
+	line-height: 21px;
+	margin: 6px 0 0;
+	color: #606266;
+	text-align: justify;
+	white-space: break-spaces;
+	overflow: hidden;
 }

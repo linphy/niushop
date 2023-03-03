@@ -32,10 +32,9 @@ class Addon extends BaseApi
 
     public function addonisexit()
     {
-        $res = [];
-        $res[ 'virtualcard' ] = addon_is_exit('virtualcard', $this->site_id);// 卡密商品
-
-        return $this->response($this->success($res));
+        $addon_api = new \app\api\controller\Addon();
+        $res = $addon_api->addonIsExit();
+        return $res;
     }
 
     /**

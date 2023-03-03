@@ -61,7 +61,6 @@ class ExpressTemplate extends BaseModel
                 model('express_template_free_shipping')->add($data_item);
             }
         }
-        Cache::tag('express_template_' . $data[ 'site_id' ])->clear();
         return $this->success($template_id);
     }
 
@@ -107,7 +106,6 @@ class ExpressTemplate extends BaseModel
             }
         }
 
-        Cache::tag('express_template_' . $data[ 'site_id' ])->clear();
         return $this->success($res);
     }
 
@@ -122,8 +120,6 @@ class ExpressTemplate extends BaseModel
             model('express_template_item')->delete([ [ 'template_id', 'in', $template_id ] ]);
             model('express_template_free_shipping')->delete([ [ 'template_id', 'in', $template_id ] ]);
         }
-
-        Cache::tag('express_template_' . $site_id)->clear();
         return $this->success($res);
     }
 
@@ -138,8 +134,6 @@ class ExpressTemplate extends BaseModel
             model('express_template')->update([ 'is_default' => 0 ], [ 'site_id' => $site_id ]);
         }
         $res = model('express_template')->update([ 'is_default' => 1 ], [ 'template_id' => $template_id ]);
-
-        Cache::tag('express_template_' . $site_id)->clear();
         return $this->success($res);
     }
 
@@ -151,16 +145,12 @@ class ExpressTemplate extends BaseModel
      */
     public function getExpressTemplateInfo($template_id, $site_id)
     {
-        $cache = Cache::get('express_template_getExpressTemplateInfo_' . $template_id . '_' . $site_id);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
+
         $res = model('express_template')->getInfo([ [ 'template_id', '=', $template_id ], [ 'site_id', '=', $site_id ] ], 'template_id, site_id, template_name, fee_type, create_time, modify_time, is_default, surplus_area_ids, appoint_free_shipping, shipping_surplus_area_ids');
         if ($res) {
             $res[ 'template_item' ] = model('express_template_item')->getList([ [ 'template_id', '=', $template_id ] ], '*');
             $res[ 'shipping_template_item' ] = model('express_template_free_shipping')->getList([ [ 'template_id', '=', $template_id ] ], '*');
         }
-        Cache::tag('express_template_' . $site_id)->set('express_template_getExpressTemplateInfo_' . $template_id . '_' . $site_id, $res);
         return $this->success($res);
     }
 
@@ -171,16 +161,12 @@ class ExpressTemplate extends BaseModel
      */
     public function getDefaultTemplate($site_id)
     {
-        $cache = Cache::get('express_template_getDefaultTemplate_' . $site_id);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
+
         $res = model('express_template')->getInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $site_id ] ], 'template_id, site_id, template_name, fee_type, create_time, modify_time, is_default');
         if ($res) {
             $res[ 'template_item' ] = model('express_template_item')->getList([ [ 'template_id', '=', $res[ 'template_id' ] ] ], '*');
             $res[ 'shipping_template_item' ] = model('express_template_free_shipping')->getList([ [ 'template_id', '=', $res[ 'template_id' ] ] ], '*');
         }
-        Cache::tag('express_template_' . $site_id)->set('express_template_getDefaultTemplate_' . $site_id, $res);
         return $this->success($res);
     }
 
@@ -193,17 +179,8 @@ class ExpressTemplate extends BaseModel
      */
     public function getExpressTemplateList($condition = [], $field = 'template_id, site_id, template_name, fee_type, create_time, modify_time, is_default', $order = '', $limit = null)
     {
-        $check_condition = array_column($condition, 2, 0);
-        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
 
-        $data = json_encode([ $condition, $field, $order, $limit ]);
-        $cache = Cache::get('express_template_getExpressTemplateList_' . $data);
-        if (!empty($cache)) {
-            return $this->success($cache);
-        }
         $list = model('express_template')->getList($condition, $field, $order, '', '', '', $limit);
-        Cache::tag('express_template_' . $site_id)->set('express_template_getExpressTemplateList_' . $data, $list);
-
         return $this->success($list);
     }
 
@@ -216,15 +193,27 @@ class ExpressTemplate extends BaseModel
      */
     public function getExpressTemplatePageList($condition = [], $page = 1, $page_size = PAGE_LIST_ROWS, $order = '', $field = 'template_id, site_id, template_name, fee_type, create_time, modify_time, is_default')
     {
-        $check_condition = array_column($condition, 2, 0);
-        $site_id = isset($check_condition[ 'site_id' ]) ? $check_condition[ 'site_id' ] : '';
-        $data = json_encode([ $condition, $field, $order, $page, $page_size ]);
-        $cache = Cache::get('express_template_getExpressTemplatePageList_' . $data);
+        $list = model('express_template')->pageList($condition, $field, $order, $page, $page_size);
+        return $this->success($list);
+    }
+
+    /**
+     * 获取运费模板地域运费列表（主表查询）
+     * @param array $condition
+     * @param string $field
+     * @param string $order
+     * @param string $limit
+     */
+    public function getExpressTemplateItemList($condition = [], $field = '*', $order = '', $limit = null)
+    {
+        $data = json_encode([ $condition, $field, $order, $limit ]);
+        $cache = Cache::get("express_template_getExpressTemplateItemList_" . $data);
         if (!empty($cache)) {
             return $this->success($cache);
         }
-        $list = model('express_template')->pageList($condition, $field, $order, $page, $page_size);
-        Cache::tag('express_template_' . $site_id)->set('express_company_getExpressTemplatePageList_' . $data, $list);
+        $list = model('express_template_item')->getList($condition, $field, $order, '', '', '', $limit);
+        Cache::tag("express_template_")->set("express_template_getExpressTemplateItemList_" . $data, $list);
+
         return $this->success($list);
     }
 

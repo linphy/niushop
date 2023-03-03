@@ -42,7 +42,7 @@ class Goods extends BaseApi
         $qrcode_param = json_decode($this->params[ 'qrcode_param' ], true);
         $qrcode_param[ 'source_member' ] = $this->member_id;
         $poster = new Poster();
-        $res = $poster->goods($this->params[ 'app_type' ], $this->params[ 'page' ], $qrcode_param, $promotion_type, $this->site_id);
+        $res = $poster->goods($this->params[ 'app_type' ], $this->params[ 'page' ], $qrcode_param, $promotion_type, $this->site_id, $this->store_id);
         return $this->response($res);
     }
 
@@ -85,6 +85,10 @@ class Goods extends BaseApi
     {
         $goods_service = new GoodsService();
         $data = $goods_service->getServiceList([ [ 'site_id', '=', $this->site_id ] ], 'service_name,desc,icon');
+        foreach ($data['data'] as $key => $val){
+            $data['data'][$key]['icon'] = json_decode($val['icon'], true);
+        }
+
         return $this->response($data);
     }
 
@@ -122,7 +126,7 @@ class Goods extends BaseApi
         $qrcode_param = json_decode($this->params[ 'qrcode_param' ] ?? '{}', true);
 
         $poster = new Poster();
-        $res = $poster->shareImg($this->params[ 'page' ] ?? '', $qrcode_param, $this->site_id);
+        $res = $poster->shareImg($this->params[ 'page' ] ?? '', $qrcode_param, $this->site_id, $this->store_id);
         return $this->response($res);
     }
 }

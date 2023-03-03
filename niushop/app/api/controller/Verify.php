@@ -57,7 +57,7 @@ class Verify extends BaseApi
     }
 
     /**
-     *获取核销类型
+     * 获取核销类型
      */
     public function getVerifyType()
     {

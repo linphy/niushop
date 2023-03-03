@@ -83,6 +83,7 @@ class BaseShop extends Controller
         if (!$this->checkAuth()) {
             if (!request()->isAjax()) {
                 $menu_info = $user_model->getRedirectUrl($this->url, $this->app_module, $this->group_info, $this->addon);
+
                 if (empty($menu_info)) {
                     $this->error('权限不足，请联系客服');
                 } else {
@@ -96,7 +97,7 @@ class BaseShop extends Controller
         }
         //获取店铺信息
         $site_model = new Site();
-        $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_name,logo,seo_keywords,seo_description, create_time');
+        $shop_info = $site_model->getSiteInfo([ [ 'site_id', '=', $this->site_id ] ], 'site_id,site_name,logo,seo_keywords,seo_description, create_time');
         $this->shop_info = $shop_info[ 'data' ];
 
         $this->assign("shop_info", $shop_info[ 'data' ]);
@@ -177,7 +178,8 @@ class BaseShop extends Controller
     /**
      * 加载构造函数信息
      */
-    public function initConstructInfo(){
+    public function initConstructInfo()
+    {
         $this->site_id = input('site_id', 0);
         $config_model = new ConfigModel();
         $base = $config_model->getStyle($this->site_id);
@@ -286,7 +288,7 @@ class BaseShop extends Controller
      */
     private function checkAuth()
     {
-        if($this->user_info[ 'is_admin' ] == 1){
+        if ($this->user_info[ 'is_admin' ] == 1) {
             return true;
         }
         $user_model = new UserModel();
@@ -307,6 +309,10 @@ class BaseShop extends Controller
             $menus = $menu_model->getMenuList([ [ 'name', 'in', $this->group_info[ 'menu_array' ] ], [ 'app_module', "=", $this->app_module ] ], '*', 'level asc,sort asc');
             $control_menu = $menu_model->getMenuList([ [ 'is_control', '=', 0 ], [ 'app_module', "=", $this->app_module ] ], '*', 'sort asc');
             $menus[ 'data' ] = array_merge($control_menu[ 'data' ], $menus[ 'data' ]);
+            $keys = array_column($menus[ 'data' ], 'sort');
+            if (!empty($keys)) {
+                array_multisort($keys, SORT_ASC, SORT_NUMERIC, $menus[ 'data' ]);
+            }
         }
 
         return $menus[ 'data' ];
@@ -411,29 +417,36 @@ class BaseShop extends Controller
                     }
                 }
             }
-            $all_tool = array_filter(array_column($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ], 'addon'));
-            $tool_diff = array_filter(array_diff($tool_addon, $all_tool));
-            if (!empty($tool_diff)) {
-                foreach ($tool_diff as $addon) {
-                    $addon_menu = require 'addon/' . $addon . '/config/menu_' . $this->app_module . '.php';
-                    $addon_info = require 'addon/' . $addon . '/config/info.php';
-                    if (isset($addon_menu[ 0 ])) {
-                        array_push($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ],
-                            array_merge($addon_menu[ 0 ], [ 'title' => $addon_info[ 'title' ], 'selected' => false, 'url' => addon_url($addon_menu[ 0 ][ 'url' ]) ]));
+
+            if(!empty($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ])){
+                $all_tool = array_filter(array_column($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ], 'addon'));
+                $tool_diff = array_filter(array_diff($tool_addon, $all_tool));
+                if (!empty($tool_diff)) {
+                    foreach ($tool_diff as $addon) {
+                        $addon_menu = require 'addon/' . $addon . '/config/menu_' . $this->app_module . '.php';
+                        $addon_info = require 'addon/' . $addon . '/config/info.php';
+                        if (isset($addon_menu[ 0 ])) {
+                            array_push($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ],
+                                array_merge($addon_menu[ 0 ], [ 'title' => $addon_info[ 'title' ], 'selected' => false, 'url' => addon_url($addon_menu[ 0 ][ 'url' ]) ]));
+                        }
                     }
                 }
             }
+
 
             foreach ($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_CENTER' ][ 'child_list' ] as $k => &$val) {
                 if (!empty($val[ 'addon' ]) && ( $val[ 'addon' ] != $this->addon && !in_array($val[ 'addon' ], $promotion_addon) )) {
                     unset($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_CENTER' ][ 'child_list' ][ $k ]);
                 }
             }
-            foreach ($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ] as $k => &$val) {
-                if (!empty($val[ 'addon' ]) && ( $val[ 'addon' ] != $this->addon && !in_array($val[ 'addon' ], $tool_addon) )) {
-                    unset($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ][ $k ]);
+            if(!empty($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ])){
+                foreach ($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ] as $k => &$val) {
+                    if (!empty($val[ 'addon' ]) && ( $val[ 'addon' ] != $this->addon && !in_array($val[ 'addon' ], $tool_addon) )) {
+                        unset($menu_list[ 'PROMOTION_ROOT' ][ 'child_list' ][ 'PROMOTION_TOOL' ][ 'child_list' ][ $k ]);
+                    }
                 }
             }
+            
 
         }
         return $menu_list;
@@ -441,6 +454,6 @@ class BaseShop extends Controller
 
     public function __call($method, $args)
     {
-        return $this->fetch('error/error');
+        return $this->fetch(app()->getRootPath() . 'public/error/error.html');
     }
 }

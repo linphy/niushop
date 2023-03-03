@@ -92,6 +92,7 @@ class Virtualgoods extends BaseApi
            'brand_id' => $this->params['brand_id'] ?? 0,
            'virtual_deliver_type' => $this->params['virtual_deliver_type'] ?? '',
            'virtual_receive_type' => $this->params['virtual_receive_type'] ?? '',
+           'form_id' => $this->params['goods_form'] ?? 0
         ];
 
         if ($data['verify_validity_type'] == 2) {
@@ -167,6 +168,7 @@ class Virtualgoods extends BaseApi
             'brand_id' => $this->params['brand_id'] ?? 0,
             'virtual_deliver_type' => $this->params['virtual_deliver_type'] ?? '',
             'virtual_receive_type' => $this->params['virtual_receive_type'] ?? '',
+            'form_id' => $this->params['goods_form'] ?? 0
         ];
 
         if ($data['verify_validity_type'] == 2) {

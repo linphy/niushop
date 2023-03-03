@@ -4,14 +4,43 @@
 {/block}
 
 {block name="main"}
-<!--<div class="top-tips pink">-->
-<!--    <i class="iconfont icongantanhao"></i>-->
-<!--    <div>店铺剩余短信条数 5 条，如需正常发送短信，请订购短信套餐<a href="">立即订购</a></div>-->
-<!--</div>-->
 {if isset($sms_num) && $sms_num < 500}
 <div class="top-tips">
     <i class="iconfont icongantanhao"></i>
     <div>店铺剩余短信条数 <span>{$sms_num}</span> 条，如需正常发送短信，请订购短信套餐<a href="{:addon_url('niusms://shop/sms/index?buy=1')}">立即订购</a></div>
+</div>
+{/if}
+
+{if $is_new_version == 1}
+<div class="top-tips">
+    <i class="iconfont icongantanhao"></i>
+    <div>小程序已更新，为了不影响您的使用请尽快下载小程序上传<a href="{:addon_url('shop/config/sitedeploy')}" target="_blank" style="margin-left: 0;">更新</a></div>
+</div>
+{/if}
+
+<div class="top-tips check-cron layui-hide">
+    <i class="iconfont icongantanhao"></i>
+    <div></div>
+</div>
+
+{if $is_new_domain == 1}
+<div class="top-tips">
+    <i class="iconfont icongantanhao"></i>
+    <div>检测到店铺域名发生变化，为了不影响您的使用，请尽快 <a href="{:addon_url('shop/config/sitedeploy')}" target="_blank" style="margin-left: 0;">部署网站</a>（手机端、电脑端、手机商家管理端、微信小程序等上传更新）独立部署除外</div>
+</div>
+{/if}
+
+{if $shop_status.shop_pc_status == 0 || $shop_status.shop_h5_status == 0 || $shop_status.shop_weapp_status == 0}
+<div class="top-tips">
+    <i class="iconfont icongantanhao"></i>
+    <div>该商城{if $shop_status.shop_pc_status == 0}pc端、{/if}{if $shop_status.shop_h5_status == 0}h5端、{/if}{if $shop_status.shop_weapp_status == 0}小程序端{/if}为关闭状态，用户无法访问。  <a href="{:addon_url('shop/shop/config')}" target="_blank" style="margin-left: 0;">点击跳转开启</a></div>
+</div>
+{/if}
+
+{if $img_extension_error}
+<div class="top-tips">
+    <i class="iconfont icongantanhao"></i>
+    <div>检测到当前配置的图片处理引擎为imagemagick，但未检测到该扩展，为了不影响您的使用，请安装该扩展或切换为使用GD库</div>
 </div>
 {/if}
 
@@ -180,10 +209,10 @@
     </div>
     <div class="body summary-wrap todo-list">
         <div class="summary-item" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=0'">
-            <div class="title">待付款订单</div>
+            <div class="title">待付款订单<span class="iconfont iconwenhao js-prompt-top" data-tips="线上订单未支付订单数"></span></div>
             <div class="value" id="waitpay">0</div>
         </div>
-        <div class="summary-item" onclick="location.href='{:addon_url('shop/delivery/lists')}'">
+        <div class="summary-item" onclick="location.href='{:addon_url('shop/order/lists')}#!order_status=1'">
             <div class="title">待发货订单</div>
             <div class="value" id="waitsend">0</div>
         </div>
@@ -345,12 +374,15 @@
 {block name="script"}
 <script src="SHOP_JS/echarts.min.js"></script>
 <script>
+
     // 今日昨日统计
     getDayCount();
+
     // 综合统计
-    getSumCount()
+    getSumCount();
+
     // 图形统计
-    getChartCount()
+    getChartCount();
 
     function getDay(day){
         var today = new Date();
@@ -550,6 +582,23 @@
     $('.guide .iconclose_light').click(function () {
         $.cookie('guideClose', 1, { expires: 365 });
         $('.guide').slideUp();
-    })
+    });
+
+    //检测自动任务标识缓存是否已过期
+    checkCron(); 
+    function checkCron() {
+        $.ajax({
+            type:'post',
+            dataType:'json',
+            url:ns.url('cron/task/checkCron'),
+            success:function(res){
+                if(res.code < 0){
+                    $(".check-cron").removeClass("layui-hide");
+                    let data = `因${res.message}，请联系客服解决。`;
+                    $(".check-cron > div").text(data);
+                }
+            }
+        })
+    }
 </script>
 {/block}

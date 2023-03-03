@@ -34,7 +34,6 @@ class GoodsEvaluate extends BaseModel
     public function addEvaluate($data, $site_id)
     {
         model('goods')->startTrans();
-        model('goods_sku')->startTrans();
         try {
             $res = model('goods_evaluate')->getInfo([ [ 'order_id', '=', $data[ 'order_id' ] ] ], 'evaluate_id');
             if (empty($res)) {
@@ -48,7 +47,6 @@ class GoodsEvaluate extends BaseModel
                 foreach ($data[ 'goods_evaluate' ] as $k => $v) {
                     if (empty($v[ 'content' ])) {
                         model('goods')->rollback();
-                        model('goods_sku')->rollback();
                         return $this->error('', '商品的评价不能为空!');
                     }
                     $item = [
@@ -124,9 +122,10 @@ class GoodsEvaluate extends BaseModel
                 $order_common_model = new OrderCommon();
                 $member_info = model('member')->getInfo([ 'member_id' => $data[ 'member_id' ] ], 'nickname');
                 $order_info = model('order')->getInfo([ 'order_id' => $data[ 'order_id' ] ], 'order_status,order_status_name');
+                $buyer_name = empty($member_info[ 'nickname' ]) ? '' : '【' . $member_info[ 'nickname' ] . '】';
                 $log_data = [
                     'order_id' => $data[ 'order_id' ],
-                    'action' => '买家【' . $member_info[ 'nickname' ] . '】评价了订单',
+                    'action' => '买家'.$buyer_name.'评价了订单',
                     'uid' => $data[ 'member_id' ],
                     'nick_name' => $member_info[ 'nickname' ],
                     'action_way' => 1,
@@ -141,7 +140,6 @@ class GoodsEvaluate extends BaseModel
                 model("order")->update([ 'is_evaluate' => 1, 'evaluate_status' => 1, 'evaluate_status_name' => $this->evaluate_status[ 1 ] ], [ [ 'order_id', '=', $data[ 'order_id' ] ] ]);
                 $evaluate_id = model('goods_evaluate')->addList($data_arr);
                 model('goods')->commit();
-                model('goods_sku')->commit();
                 Cache::tag("goods_evaluate")->clear();
                 return $this->success($evaluate_id);
             } else {
@@ -461,6 +459,16 @@ class GoodsEvaluate extends BaseModel
         $list = model('goods_evaluate')->pageList($condition, $field, $order, $page, $page_size);
         Cache::tag("goods_evaluate")->set("goods_evaluate_getEvaluatePageList_" . $data, $list);
         return $this->success($list);
+    }
+
+    /**
+     *  查询评论数量
+     * @param $condition
+     * @return array
+     */
+    public function getEvaluateCount($condition){
+        $count = model('goods_evaluate')->getCount($condition);
+        return $this->success($count);
     }
 
 }

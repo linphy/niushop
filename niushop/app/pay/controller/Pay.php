@@ -12,6 +12,7 @@
 namespace app\pay\controller;
 
 use app\Controller;
+use app\model\system\Pay as PayModel;
 
 /**
  * 支付控制器
@@ -31,6 +32,19 @@ class Pay extends Controller
     public function payReturn()
     {
 
+    }
+
+    /**
+     * 付款码支付
+     */
+    public function authcodePay(){
+        $param = input();
+        $result = event('AuthcodePay', $param, true);
+        if(empty($result)){
+            $pay_model = new PayModel();
+            return json($pay_model->error([], '付款码未通过校验!'));
+        }
+        return json($result);
     }
 
 }

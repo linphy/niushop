@@ -31,6 +31,15 @@
 								<span class="level-name">普通会员</span>
 							</div>
 						</template>
+						<template v-if="nc.style == 4">
+							<div class="nickname">
+								<span class="name">勇敢的小鱼</span>
+							</div>
+							<div class="member-level">
+								<img :src="changeImgUrl('{$resource_path}/img/style_4_vip_tag.png')" alt="" class="level-icon">
+								<span class="level-name">普通会员</span>
+							</div>
+						</template>
 					</div>
 					<i class="iconfont iconico member-code"></i>
 				</div>
@@ -71,6 +80,43 @@
 						<span class="see">查看特权</span>
 					</div>
 				</div>
+				<div class="member-info-style4" v-if="nc.style == 4">
+					<div class="super-member">
+						<div class="super-info">
+							<img :src="changeImgUrl('{$resource_path}/img/style_4_vip_huangguan.png')" class="title">
+							<div class="desc">开通会员 享六大权益</div>
+						</div>
+						<div class="super-text">
+							<span class="see">立即开通</span>
+						</div>
+					</div>
+	
+					<div class="account-info" :style="{'margin-left': nc.infoMargin + 'px', 'margin-right': nc.infoMargin + 'px' }">
+						<div class="account-item">
+							<div class="value">200</div>
+							<div class="title">余额</div>
+						</div>
+						<div class="solid"></div>
+						<div class="account-item">
+							<div class="value">80</div>
+							<div class="title">积分</div>
+						</div>
+						<div class="solid"></div>
+						<div class="account-item">
+							<div class="value">4</div>
+							<div class="title">优惠券</div>
+						</div>
+					</div>
+					<div class="style4-other">
+						<div class="style4-btn-wrap">
+							<button :style="{'backgroundColor': nc.tempData.baseColor}">余额充值</button>
+							<button :style="{'color': nc.tempData.baseColor, 'borderColor': nc.tempData.baseColor}">专属顾问</button>
+						</div>
+						<div class="code" :style="{'backgroundColor': nc.tempData.baseColor}">
+							<img :src="changeImgUrl('{$resource_path}/img/style_4_code.png')" alt="">
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="account-info" v-show="nc.style == 2" :style="{'margin-left': nc.infoMargin + 'px', 'margin-right': nc.infoMargin + 'px' }">
@@ -89,7 +135,6 @@
 					<div class="title">优惠券</div>
 				</div>
 			</div>
-
 		</div>
 	</template>
 
@@ -108,28 +153,24 @@
 				</div>
 			</div>
 
-			<template v-if="nc.style == 1 || nc.style == 2">
-
-				<div class="layui-form-item">
-					<label class="layui-form-label sm">色调</label>
-					<div class="layui-input-block">
-						<div @click="nc.theme='default'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.theme == 'default') }">
-							<i class="layui-anim layui-icon">{{ nc.theme == 'default' ? "&#xe643;" : "&#xe63f;" }}</i>
-							<div>跟随主题风格</div>
-						</div>
-						<div @click="nc.theme='diy'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.theme == 'diy') }">
-							<i class="layui-anim layui-icon">{{ nc.theme == 'diy' ? "&#xe643;" : "&#xe63f;" }}</i>
-							<div>自定义</div>
-						</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label sm">背景</label>
+				<div class="layui-input-block">
+					<div @click="nc.theme='default'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.theme == 'default') }">
+						<i class="layui-anim layui-icon">{{ nc.theme == 'default' ? "&#xe643;" : "&#xe63f;" }}</i>
+						<div>跟随主题风格</div>
+					</div>
+					<div @click="nc.theme='diy'" :class="{ 'layui-unselect layui-form-radio' : true,'layui-form-radioed' : (nc.theme == 'diy') }">
+						<i class="layui-anim layui-icon">{{ nc.theme == 'diy' ? "&#xe643;" : "&#xe63f;" }}</i>
+						<div>自定义</div>
 					</div>
 				</div>
+			</div>
 
-				<div v-show="nc.theme == 'diy'">
-					<color :data="{ field : 'bgColorStart,bgColorEnd', 'label' : '背景颜色', defaultColor : '#FF7130,#FF1542' }"></color>
-					<slide :data="{ field : 'gradientAngle', label: '渐变角度', min:0, max: 365 }"></slide>
-				</div>
-
-			</template>
+			<div v-show="nc.theme == 'diy'">
+				<color :data="{ field : 'bgColorStart,bgColorEnd', 'label' : '背景颜色', defaultColor : '#FF7130,#FF1542' }"></color>
+				<slide :data="{ field : 'gradientAngle', label: '渐变角度', min:0, max: 365 }"></slide>
+			</div>
 
 		</template>
 	</template>
@@ -145,6 +186,8 @@
 	<template slot="resource">
 		<js>
 			var diyMemberInfoSystemColor = {:json_encode($system_color)};
+			var memberInfoResourcePath = "{$resource_path}"; // http路径
+			var memberInfoRelativePath = "{$relative_path}"; // 相对路径
 		</js>
 		<css src="{$resource_path}/css/design.css"></css>
 		<js src="{$resource_path}/js/design.js"></js>

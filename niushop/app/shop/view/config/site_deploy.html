@@ -6,7 +6,7 @@
 	.layui-layout-admin .layui-body .body-content{margin: 0 !important;}
 	.form-wrap .top{background: #f5f5f5;}
 	.layui-form-item.top .layui-form-label{text-align: left;font-weight: bold;padding-left: 15px;}
-	.layui-form-label{width: 100px ;}
+	.layui-form-label{width: 110px;}
 	.layui-form-label + .layui-input-block{margin-left: 94px ;}
 	.layui-form-item.top .border-left{border-left: 3px solid;padding-right: 5px;}
 	.layui-unselect.layui-form-radio.layui-form-radioed.layui-radio-disbaled i:after{background:#eee !important;}
@@ -16,16 +16,17 @@
 	.shop-information .title{color:#333333;margin-bottom: 0;width: 50%;height: 16px;line-height: 16px;padding-left: 10px;border-left: 3px solid rgb(254,106,0);box-sizing: border-box;font-size: 17px;}
 	.shop-information .main-title span{cursor: pointer;}
 	.layui-layout-admin .layui-body .body-content{background: none;}
-	.form-wrap .form-box{width: 100%;margin-bottom: 20px !important;display: flex;align-items: center;justify-content: space-between;}
-	.form-wrap .form-box .box-item{width: 32.6%;border-radius: 5px;margin-left: 20px;}
+	.form-wrap .form-box{width: 100%;margin-bottom: 20px !important;display: flex;flex-wrap:wrap;}
+	.form-wrap .form-box .box-item{width: 32%;border-radius: 5px;margin-left: 20px;margin-bottom: 20px;background: #fff}
 	.form-wrap .form-box .box-item:nth-child(1){margin-left: 0;}
+	.form-wrap .form-box .box-item:nth-child(3n+1){margin-left: 0;}
 	.layui-layout-admin .layui-body .body-content{padding: 0 !important;}
 	.serviceOperation:after{overflow: hidden;content: "";height: 0;clear: both;display: block;}
 	.all-shop-information{margin:0 !important;padding: 20px !important;}
 	.href{padding-left: 66px;box-sizing: border-box;}
 	.all-shop-information .all-content{margin-top: 34px;}
-	.word-aux{margin-left: 100px}
-	.all-box-left{margin-left: 100px;}
+	.word-aux{margin-left: 110px}
+	.all-box-left{margin-left: 110px;}
 	.card-common{margin-top: 0;}
 	.layui-layout-admin.admin-style-2 .body-content{margin: 15px !important;}
 	.layui-layout-admin.admin-style-2 .form-wrap{padding-top: 0;}
@@ -39,21 +40,31 @@
 	
 		<!-- 各端设置手机、电脑、商家 -->
 		<div class="form-box">
+			{if !empty($site_deploy_data['h5'])}
 			<div class="box-item">
-				{if !empty($site_deploy_data['h5'])}
-					{php}echo $site_deploy_data['h5']['html'];{/php}
-				{/if}
+				{php}echo $site_deploy_data['h5']['html'];{/php}
 			</div>
+			{/if}
+			{if !empty($site_deploy_data['pc'])}
 			<div class="box-item">
-				{if !empty($site_deploy_data['pc'])}
-					{php}echo $site_deploy_data['pc']['html'];{/php}
-				{/if}
+				{php}echo $site_deploy_data['pc']['html'];{/php}
 			</div>
+			{/if}
+			{if !empty($site_deploy_data['mshop'])}
 			<div class="box-item">
-				{if !empty($site_deploy_data['mshop'])}
-					{php}echo $site_deploy_data['mshop']['html'];{/php}
-				{/if}
+				{php}echo $site_deploy_data['mshop']['html'];{/php}
 			</div>
+			{/if}
+			{if !empty($site_deploy_data['weapp'])}
+			<div class="box-item">
+				{php}echo $site_deploy_data['weapp']['html'];{/php}
+			</div>
+			{/if}
+			{if !empty($site_deploy_data['cashier'])}
+			<div class="box-item">
+				{php}echo $site_deploy_data['cashier']['html'];{/php}
+			</div>
+			{/if}
 		</div>
 
 	</div>

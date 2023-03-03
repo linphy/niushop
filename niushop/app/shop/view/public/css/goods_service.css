@@ -134,8 +134,8 @@
 	display: flex;
 }
 .icon-img-box img{
-	width: 40px;
-	max-height: 40px;
+	width: 30px;
+	max-height: 30px;
 }
 .icon-wrap {
 	width: inherit;

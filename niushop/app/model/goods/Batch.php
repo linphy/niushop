@@ -11,6 +11,7 @@
 namespace app\model\goods;
 
 use app\model\BaseModel;
+use app\model\storegoods\StoreGoods;
 use think\facade\Db;
 
 /**
@@ -105,8 +106,12 @@ class Batch extends BaseModel
             $sku_update_data[ 'discount_price' ] = Db::raw('if(discount_price = price,' . $todo_price . ',discount_price)');
             $sku_update_data[ $price_field ] = $update_data[ $price_field ];
         }
-
         model('goods_sku')->update($sku_update_data, $condition);
+        //如果销售价被改动,默认门店的价格也都会被改动
+        if(in_array($price_type, ['sale', 'cost'])){
+            $store_goods_model = new StoreGoods();
+            $store_goods_model->syncGoodsData(['update_data' => $update_data, 'condition' => $condition, 'site_id' => $site_id]);
+        }
         return $this->success($update_data);
     }
 }

@@ -113,6 +113,7 @@ var rubikCubeHtml = '<div class="layui-form-item">';
 							rubikCubeHtml += '<div class="content-block">';
 								rubikCubeHtml += '<span style="padding-left: 2px;">{{li.name}}</span>';
 								rubikCubeHtml += '<nc-link :data="{ field : $parent.data.list[i].link }" :callback="linkCallBack"></nc-link>';
+								rubikCubeHtml += '<nc-image-mode :data="$parent.data.list[i]"></nc-image-mode>';
 							rubikCubeHtml += '</div>';
 						rubikCubeHtml += '</li>';
 
@@ -405,12 +406,15 @@ Vue.component("rubik-cube", {
 		calcSingleRow: function (params) {
 			let maxHeight = 0;
 			this.currentList.forEach((item, index) => {
-				var ratio = item.imgHeight / item.imgWidth; // 获取原图比例
+				let ratio = item.imgHeight / item.imgWidth; // 获取原图比例
 				if (isNaN(ratio)) ratio = 0;
 
-				item.previewWidth = this.windowWidth / params.ratio;
+				let width = this.windowWidth - (this.data.margin.both * 2); // 减去左右间距
+				if (this.data.imageGap > 0) {
+					width -= params.ratio * this.data.imageGap ; // 减去间隙
+				}
 
-				item.previewWidth -= this.data.margin.both * 2;
+				item.previewWidth = width / params.ratio;
 				item.previewHeight = item.previewWidth * ratio;
 
 				// 获取最大高度

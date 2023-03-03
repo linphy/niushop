@@ -16,6 +16,7 @@ use app\model\express\Local as LocalModel;
 use app\model\shop\Shop as ShopModel;
 use app\model\system\Address as AddressModel;
 use app\model\web\Config as WebConfig;
+use app\model\store\Store;
 
 /**
  * 配送
@@ -34,6 +35,9 @@ class Local extends BaseShop
         $shop_info_result = $shop_model->getShopInfo([ [ 'site_id', '=', $this->site_id ] ]);
         $shop_info = $shop_info_result[ 'data' ];
         $local_model = new LocalModel();
+        $store = new Store();
+        $default_store = $store->getStoreInfo([ ['site_id', '=', $this->site_id], ['is_default', '=', 1] ], 'store_id')['data'] ?? [];
+        $store_id = $default_store['store_id'] ?? 0;
         if (request()->isAjax()) {
             if (empty($shop_info)) {
                 return $local_model->error([], '店铺地址尚为配置');
@@ -61,11 +65,14 @@ class Local extends BaseShop
                 'man_type' => input('man_type', ''),
                 'man_discount' => input('man_discount', ''),
                 'time_interval' => input('time_interval', 30),
-                'delivery_time' => input('delivery_time', '')
+                'delivery_time' => input('delivery_time', ''),
+                'advance_day' => input('advance_day', 0),
+                'most_day' => input('most_day', 7)
             ];
 
             $condition = array (
-                [ 'site_id', '=', $this->site_id ]
+                [ 'site_id', '=', $this->site_id ],
+                [ 'store_id', '=', $store_id ]
             );
             return $local_model->editLocal($data, $condition);
         } else {
@@ -73,7 +80,8 @@ class Local extends BaseShop
                 $this->error('店铺地址尚为配置');
             }
             $this->assign('shop_detail', $shop_info);
-            $local_result = $local_model->getLocalInfo([ [ 'site_id', '=', $this->site_id ] ]);
+
+            $local_result = $local_model->getLocalInfo([ [ 'site_id', '=', $this->site_id ], ['store_id', '=', $store_id] ]);
 
             $district_list = [];
             if ($shop_info[ 'province' ] > 0 && $shop_info[ 'city' ] > 0) {
@@ -88,10 +96,9 @@ class Local extends BaseShop
             $config_model = new WebConfig();
             $mp_config = $config_model->getMapConfig($this->site_id);
             $this->assign('tencent_map_key', $mp_config['data']['value']['tencent_map_key']);
-
-            $config_model = new WebConfig();
-            $mp_config = $config_model->getMapConfig($this->site_id);
-            $this->assign('tencent_map_key', $mp_config[ 'data' ][ 'value' ][ 'tencent_map_key' ]);
+            //效验腾讯地图KEY
+            $check_map_key = $config_model->checkQqMapKey($mp_config[ 'data' ][ 'value' ][ 'tencent_map_key' ]);
+            $this->assign('check_map_key', $check_map_key);
 
             return $this->fetch('local/local');
         }
@@ -132,6 +139,7 @@ class Local extends BaseShop
             $data = [
                 'deliver_name' => input('deliver_name', ''),
                 'deliver_mobile' => input('deliver_mobile', ''),
+                'store_id' => input('store_id', 0),
                 'site_id' => $this->site_id,
             ];
             $result = $deliver_model->addDeliver($data);

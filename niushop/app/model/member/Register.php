@@ -37,7 +37,7 @@ class Register extends BaseModel
         if($examine_username_exit) return $this->error('','用户名已存在');
         $this->cancelBind($data);
         $member_level = new MemberLevel();
-        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*')[ 'data' ];
+        $member_level_info = $member_level->getMemberLevelInfo([ [ 'site_id', '=', $data[ 'site_id' ] ], [ 'level_type', '=', 0 ], ['growth', '=', 0] ], '*')[ 'data' ];
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
             if (!$count) $data[ 'source_member' ] = 0;
@@ -66,8 +66,10 @@ class Register extends BaseModel
             'baidu_openid'      => isset($data['baidu_openid']) ? $data['baidu_openid'] : '',
             'toutiao_openid'    => isset($data['toutiao_openid']) ? $data['toutiao_openid'] : '',
             'headimg'           => isset($data['headimg']) ? $data['headimg'] : '',
-            'member_level'      => $member_level_info['level_id'],
-            'member_level_name' => $member_level_info['level_name'],
+            'member_level'      => !empty($member_level_info) ? $member_level_info['level_id'] : 0,
+            'member_level_name' => !empty($member_level_info) ? $member_level_info['level_name'] : '',
+            'is_member'         => !empty($member_level_info) ? 1 : 0,
+            'member_time'       => !empty($member_level_info) ? time() : 0,
             'reg_time'          => time(),
             'login_time'        => time(),
             'last_login_time'   => time(),
@@ -76,25 +78,26 @@ class Register extends BaseModel
         ];
         $res = model("member")->add($data_reg);
         if ($res) {
-
-            $member_account_model = new MemberAccount();
-            //赠送红包
-            if ($member_level_info[ 'send_balance' ] > 0) {
-                $balance = $member_level_info[ 'send_balance' ];
-                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员等级升级奖励');
-            }
-            //赠送积分
-            if ($member_level_info[ 'send_point' ] > 0) {
-                $send_point = $member_level_info[ 'send_point' ];
-                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员等级升级奖励');
-            }
-
-            //给用户发放优惠券
-            $coupon_model = new Coupon();
-            $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
-            if (!empty($coupon_array)) {
-                foreach ($coupon_array as $k => $v) {
-                    $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+            // 发放等级奖励
+            if (!empty($member_level_info)) {
+                $member_account_model = new MemberAccount();
+                //赠送红包
+                if ($member_level_info[ 'send_balance' ] > 0) {
+                    $balance = $member_level_info[ 'send_balance' ];
+                    $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员等级升级奖励');
+                }
+                //赠送积分
+                if ($member_level_info[ 'send_point' ] > 0) {
+                    $send_point = $member_level_info[ 'send_point' ];
+                    $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员等级升级奖励');
+                }
+                //给用户发放优惠券
+                $coupon_model = new Coupon();
+                $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
+                if (!empty($coupon_array)) {
+                    foreach ($coupon_array as $k => $v) {
+                        $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+                    }
                 }
             }
 
@@ -106,8 +109,6 @@ class Register extends BaseModel
             Member::modifyLastVisitTime($res);
             //添加统计
             $stat = new Stat();
-//            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
-
             $stat->switchStat(['type' => 'add_member', 'data' => [ 'member_count' => 1, 'site_id' => $data['site_id'] ]]);
             return $this->success($res);
         } else {
@@ -120,106 +121,13 @@ class Register extends BaseModel
      * @param $data
      * @return array|mixed
      */
-//    public function mobileRegister($data)
-//    {
-//        $this->cancelBind($data);
-//        $member_level = new MemberLevel();
-//        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*');
-//        $member_level_info = $member_level_info[ 'data' ];
-//
-//        if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
-//            $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
-//            if (!$count) $data[ 'source_member' ] = 0;
-//        }
-//        $nickname = $data[ 'mobile' ];
-//        if (isset($data[ 'nickname' ]) && !empty($data[ 'nickname' ])) {
-//            $nickname = preg_replace_callback('/./u',
-//                function(array $match) {
-//                    return strlen($match[ 0 ]) >= 4 ? '' : $match[ 0 ];
-//                },
-//                $data[ 'nickname' ]);
-//        }
-//        //新增2021.06.18
-//        if (isset($data['wx_openid']) && !empty($data['nickname'])){
-//            $nickname = $data['nickname'];
-//        }
-//
-//        $data_reg = [
-//            'site_id'           => $data['site_id'],
-//            'source_member'     => isset($data['source_member']) ? $data['source_member'] : 0,
-//            'mobile'            => $data['mobile'],
-//            'nickname'          => $nickname, //默认昵称为手机号
-//            'password'          => '',
-//            'qq_openid'         => isset($data['qq_openid']) ? $data['qq_openid'] : '',
-//            'wx_openid'         => isset($data['wx_openid']) ? $data['wx_openid'] : '',
-//            'weapp_openid'      => isset($data['weapp_openid']) ? $data['weapp_openid'] : '',
-//            'wx_unionid'        => isset($data['wx_unionid']) ? $data['wx_unionid'] : '',
-//            'ali_openid'        => isset($data['ali_openid']) ? $data['ali_openid'] : '',
-//            'baidu_openid'      => isset($data['baidu_openid']) ? $data['baidu_openid'] : '',
-//            'toutiao_openid'    => isset($data['toutiao_openid']) ? $data['toutiao_openid'] : '',
-//            'headimg'           => isset($data['headimg']) ? $data['headimg'] : '',
-//            'member_level'      => $member_level_info['level_id'],
-//            'member_level_name' => $member_level_info['level_name'],
-//            'reg_time'          => time(),
-//            'login_time'        => time(),
-//            'last_login_time'   => time(),
-//            'login_type'        => $data['app_type'] ?? '',
-//            'login_type_name'   => $data['app_type_name'] ?? '',
-//        ];
-//
-//        $res = model("member")->add($data_reg);
-//        if ($res) {
-//
-//            $member_account_model = new MemberAccount();
-//
-//            //赠送红包
-//            if ($member_level_info[ 'send_balance' ] > 0) {
-//                $balance = $member_level_info[ 'send_balance' ];
-//                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员升级得红包' . $balance);
-//            }
-//
-//            //赠送积分
-//            if ($member_level_info[ 'send_point' ] > 0) {
-//                $send_point = $member_level_info[ 'send_point' ];
-//                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员升级得积分' . $send_point);
-//            }
-//
-//            //给用户发放优惠券
-//            $coupon_model = new Coupon();
-//            $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
-//            if (!empty($coupon_array)) {
-//                foreach ($coupon_array as $k => $v) {
-//                    $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
-//                }
-//            }
-//
-//            //会员注册事件
-//            event("MemberRegister", [ 'member_id' => $res, 'site_id' => $data[ 'site_id' ] ]);
-//            $data[ 'member_id' ] = $res;
-//            $this->pullHeadimg($data);
-//
-//            //添加统计
-//            $stat = new Stat();
-//            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
-//
-//            return $this->success($res);
-//        } else {
-//            return $this->error();
-//        }
-//    }
-
-    /**
-     * 手机号密码注册(必传mobile， password),之前检测重复性
-     * @param $data
-     * @return array|mixed
-     */
     public function mobileRegister($data)
     {
         $examine_mobile_exit = $this ->mobileExist($data[ 'mobile' ],$data[ 'site_id' ]);
         if($examine_mobile_exit) return $this->error('','手机号已存在');
         $this->cancelBind($data);
         $member_level = new MemberLevel();
-        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*')[ 'data' ];
+        $member_level_info = $member_level->getMemberLevelInfo([ [ 'site_id', '=', $data[ 'site_id' ] ], [ 'level_type', '=', 0 ], ['growth', '=', 0] ], '*')[ 'data' ];
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ],['is_delete','=',0] ]);
             if (!$count) $data[ 'source_member' ] = 0;
@@ -238,7 +146,7 @@ class Register extends BaseModel
             'source_member' => isset($data[ 'source_member' ]) ? $data[ 'source_member' ] : 0,
             'mobile' => $data[ 'mobile' ],
             'nickname' => $nickname, //默认昵称为手机号
-            'password' => '',
+            'password' => isset($data[ 'password' ]) && !empty($data[ 'password' ]) ? data_md5($data['password']) : '',
             'qq_openid' => isset($data[ 'qq_openid' ]) ? $data[ 'qq_openid' ] : '',
             'wx_openid' => isset($data[ 'wx_openid' ]) ? $data[ 'wx_openid' ] : '',
             'weapp_openid' => isset($data[ 'weapp_openid' ]) ? $data[ 'weapp_openid' ] : '',
@@ -247,8 +155,10 @@ class Register extends BaseModel
             'baidu_openid' => isset($data[ 'baidu_openid' ]) ? $data[ 'baidu_openid' ] : '',
             'toutiao_openid' => isset($data[ 'toutiao_openid' ]) ? $data[ 'toutiao_openid' ] : '',
             'headimg' => isset($data[ 'headimg' ]) ? $data[ 'headimg' ] : '',
-            'member_level' => $member_level_info[ 'level_id' ],
-            'member_level_name' => $member_level_info[ 'level_name' ],
+            'member_level' => !empty($member_level_info) ? $member_level_info['level_id'] : 0,
+            'member_level_name' => !empty($member_level_info) ? $member_level_info['level_name'] : '',
+            'is_member'  => !empty($member_level_info) ? 1 : 0,
+            'member_time' => !empty($member_level_info) ? time() : 0,
             'reg_time' => time(),
             'login_time' => time(),
             'last_login_time' => time(),
@@ -260,27 +170,25 @@ class Register extends BaseModel
 
         $res = model("member")->add($data_reg);
         if ($res) {
-
-            $member_account_model = new MemberAccount();
-
-            //赠送红包
-            if ($member_level_info[ 'send_balance' ] > 0) {
-                $balance = $member_level_info[ 'send_balance' ];
-                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员等级升级奖励');
-            }
-
-            //赠送积分
-            if ($member_level_info[ 'send_point' ] > 0) {
-                $send_point = $member_level_info[ 'send_point' ];
-                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员等级升级奖励');
-            }
-
-            //给用户发放优惠券
-            $coupon_model = new Coupon();
-            $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
-            if (!empty($coupon_array)) {
-                foreach ($coupon_array as $k => $v) {
-                    $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+            if (!empty($member_level_info)) {
+                $member_account_model = new MemberAccount();
+                //赠送红包
+                if ($member_level_info[ 'send_balance' ] > 0) {
+                    $balance = $member_level_info[ 'send_balance' ];
+                    $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员等级升级奖励');
+                }
+                //赠送积分
+                if ($member_level_info[ 'send_point' ] > 0) {
+                    $send_point = $member_level_info[ 'send_point' ];
+                    $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员等级升级奖励');
+                }
+                //给用户发放优惠券
+                $coupon_model = new Coupon();
+                $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
+                if (!empty($coupon_array)) {
+                    foreach ($coupon_array as $k => $v) {
+                        $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+                    }
                 }
             }
 
@@ -293,7 +201,6 @@ class Register extends BaseModel
             //添加统计
             $stat = new Stat();
             $stat->switchStat(['type' => 'add_member', 'data' => [ 'member_count' => 1, 'site_id' => $data['site_id'] ]]);
-//            $stat->addShopStat([ 'member_count' => 1, 'site_id' => $data[ 'site_id' ] ]);
 
             return $this->success($res);
         } else {
@@ -308,7 +215,7 @@ class Register extends BaseModel
         $this->cancelBind($data);
 
         $member_level = new MemberLevel();
-        $member_level_info = $member_level->getMemberLevelInfo([ [ 'is_default', '=', 1 ], [ 'site_id', '=', $data[ 'site_id' ] ] ], '*')[ 'data' ];
+        $member_level_info = $member_level->getMemberLevelInfo([ [ 'site_id', '=', $data[ 'site_id' ] ], [ 'level_type', '=', 0 ], ['growth', '=', 0] ], '*')[ 'data' ];
 
         if (isset($data[ 'source_member' ]) && !empty($data[ 'source_member' ])) {
             $count = model("member")->getCount([ [ 'member_id', '=', $data[ 'source_member' ] ], [ 'site_id', '=', $data[ 'site_id' ] ] ]);
@@ -339,8 +246,10 @@ class Register extends BaseModel
             'baidu_openid'      => isset($data['baidu_openid']) ? $data['baidu_openid'] : '',
             'toutiao_openid'    => isset($data['toutiao_openid']) ? $data['toutiao_openid'] : '',
             'headimg'           => isset($data['avatarUrl']) ? $data['avatarUrl'] : '',
-            'member_level'      => $member_level_info['level_id'],
-            'member_level_name' => $member_level_info['level_name'],
+            'member_level'      => !empty($member_level_info) ? $member_level_info['level_id'] : 0,
+            'member_level_name' => !empty($member_level_info) ? $member_level_info['level_name'] : '',
+            'is_member'         => !empty($member_level_info) ? 1 : 0,
+            'member_time'       => !empty($member_level_info) ? time() : 0,
             'reg_time'          => time(),
             'login_time'        => time(),
             'last_login_time'   => time(),
@@ -350,27 +259,25 @@ class Register extends BaseModel
         ];
         $res = model("member")->add($data_reg);
         if ($res) {
-
-            $member_account_model = new MemberAccount();
-
-            //赠送红包
-            if ($member_level_info[ 'send_balance' ] > 0) {
-                $balance = $member_level_info[ 'send_balance' ];
-                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员等级升级奖励');
-            }
-
-            //赠送积分
-            if ($member_level_info[ 'send_point' ] > 0) {
-                $send_point = $member_level_info[ 'send_point' ];
-                $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员等级升级奖励');
-            }
-
-            //给用户发放优惠券
-            $coupon_model = new Coupon();
-            $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
-            if (!empty($coupon_array)) {
-                foreach ($coupon_array as $k => $v) {
-                    $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+            if (!empty($member_level_info)) {
+                $member_account_model = new MemberAccount();
+                //赠送红包
+                if ($member_level_info[ 'send_balance' ] > 0) {
+                    $balance = $member_level_info[ 'send_balance' ];
+                    $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'balance', $balance, 'upgrade', '会员升级得红包' . $balance, '会员等级升级奖励');
+                }
+                //赠送积分
+                if ($member_level_info[ 'send_point' ] > 0) {
+                    $send_point = $member_level_info[ 'send_point' ];
+                    $member_account_model->addMemberAccount($data[ 'site_id' ], $res, 'point', $send_point, 'upgrade', '会员升级得积分' . $send_point, '会员等级升级奖励');
+                }
+                //给用户发放优惠券
+                $coupon_model = new Coupon();
+                $coupon_array = empty($member_level_info[ 'send_coupon' ]) ? [] : explode(',', $member_level_info[ 'send_coupon' ]);
+                if (!empty($coupon_array)) {
+                    foreach ($coupon_array as $k => $v) {
+                        $coupon_model->receiveCoupon($v, $data[ 'site_id' ], $res, 3);
+                    }
                 }
             }
 

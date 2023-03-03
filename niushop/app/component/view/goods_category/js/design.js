@@ -44,6 +44,16 @@ var goodsCategoryHtml = '<div class="goods-category-edit layui-form">';
 			goodsCategoryHtml += '</div>';
 			goodsCategoryHtml += '</div>';
 		goodsCategoryHtml += '</div>';
+
+		goodsCategoryHtml += '<div class="layui-form-item" v-show="data.template == 2 || data.template == 3 || data.template == 4">';
+			goodsCategoryHtml += '<label class="layui-form-label sm">商品排序</label>';
+			goodsCategoryHtml += '<div class="layui-input-block">';
+				goodsCategoryHtml += '<div v-for="(item,sortIndex) in sortWayList" :key="sortIndex" @click="data.sortWay=item.value" :class="{ \'layui-unselect layui-form-radio\' : true,\'layui-form-radioed\' : (data.sortWay==item.value) }">';
+					goodsCategoryHtml += '<i class="layui-anim layui-icon">{{ data.sortWay == item.value ? "&#xe643;" : "&#xe63f;" }}</i>';
+					goodsCategoryHtml += '<div>{{item.text}}</div>';
+				goodsCategoryHtml += '</div>';
+			goodsCategoryHtml += '</div>';
+		goodsCategoryHtml += '</div>';
 		
 		goodsCategoryHtml += '<div class="layui-form-item" v-show="(data.template == 2 || data.template == 3) && data.goodsLevel == 1">';
 			goodsCategoryHtml += '<label class="layui-form-label sm">加载模式</label>';
@@ -58,6 +68,7 @@ var goodsCategoryHtml = '<div class="goods-category-edit layui-form">';
 				goodsCategoryHtml += '</div>';
 			goodsCategoryHtml += '</div>';
 		goodsCategoryHtml += '</div>';
+
 		goodsCategoryHtml += '<div class="layui-form-item" v-show="data.template == 2 || data.template == 4">';
 			goodsCategoryHtml += '<label class="layui-form-label sm">快捷购买</label>';
 			goodsCategoryHtml += '<div class="layui-input-block">';
@@ -103,7 +114,25 @@ Vue.component("goods-category", {
 					loadType: 'part',
 					quickBuy: 1
 				}
-			]
+			],
+			sortWayList: [
+				{
+					text: "综合",
+					value: "default"
+				},
+				{
+					text: "新品",
+					value: "news"
+				},
+				{
+					text: "热销",
+					value: "sales"
+				},
+				{
+					text: "价格",
+					value: "price"
+				}
+			],
 		}
 	},
 	created:function() {
@@ -114,6 +143,7 @@ Vue.component("goods-category", {
 		this.$parent.data.ignoreLoad = true; // 等待忽略数组赋值后加载
 		if (!this.data.goodsLevel) this.$set(this.data, 'goodsLevel', 1);
 		if (!this.data.loadType) this.$set(this.data, 'loadType', 'part');
+		if (!this.data.sortWay) this.$set(this.data, 'sortWay', 'default');
 	},
 	methods: {
 		verify : function (index) {

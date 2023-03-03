@@ -27,7 +27,7 @@
 				</div>
 				<p class="item-content-desc over-hide-second">{$val.desc}</p>
 			</div>
-			<button type="button" class="layui-btn" onclick="clear_cache('{$val.key}')">清除</button>
+			<button type="button" class="layui-btn" onclick="clear_cache('{$val.key}')">{$val.btn}</button>
 		</div>
 		{/foreach}
 		<div class="cache-all-btn">
@@ -43,6 +43,10 @@
 {block name="script"}
 <script>
 	var laytpl, form, element,repeat_flag = false; //防重复标识
+	layui.use(['form'], function() {
+		form = layui.form;
+		form.render();
+	});
 	function clear_cache(key) {
 		if(key == 'multi') {
 			var checked_arr = [];

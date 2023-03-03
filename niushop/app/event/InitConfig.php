@@ -52,6 +52,9 @@ class InitConfig
         define('ADDON_PATH', 'addon/');
         //分页每页数量
         define('PAGE_LIST_ROWS', 10);
+
+        define('MEMBER_LEVEL', 10);
+
         //伪静态模式是否开启
         define('REWRITE_MODULE', true);
 

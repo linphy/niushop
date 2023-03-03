@@ -18,28 +18,14 @@ Vue.component("style-choose",{
 	data : function() {
 		return {
 			data: this.$parent.data,
-			list: [
-				{
-					label: "线条标签",
-					value: "line",
-					icon_img: topCategoryResourcePath + "/img/text_left.png",
-					icon_img_active: topCategoryResourcePath + "/img/text_left_hover.png"
-				},
-				{
-					label: "填充标签",
-					value: "fill",
-					icon_img: topCategoryResourcePath + "/img/text_right.png",
-					icon_img_active: topCategoryResourcePath + "/img/text_right_hover.png"
-				},
-			],
 			styleName: '线条标签'
 		};
 	},
-	created:function(){
-		if(this.data.styleType == 'line') this.styleName = '线条标签';
-		else  this.styleName = '填充标签';
+	created:function() {
+		if (this.data.styleType == 'line') this.styleName = '线条标签';
+		else this.styleName = '填充标签';
 
-		this.$parent.data.ignore = ['marginBoth','textColor','elementAngle','componentAngle','elementBgColor']; //加载忽略内容 -- 其他设置中的属性设置
+		this.$parent.data.ignore = ['marginBoth', 'marginTop', 'marginBottom', 'textColor', 'elementAngle', 'componentAngle', 'elementBgColor']; //加载忽略内容 -- 其他设置中的属性设置
 		this.$parent.data.ignoreLoad = true; // 等待忽略数组赋值后加载
 	},
 	methods:{
@@ -48,7 +34,7 @@ Vue.component("style-choose",{
 			layer.open({
 				type: 1,
 				title: '风格选择',
-				area:['930px','630px'],
+				area:['500px','300px'],
 				btn: ['确定', '返回'],
 				content: $(".draggable-element[data-index='" + self.data.index + "'] .edit-attribute .top-category-style").html(),
 				success: function(layero, index) {

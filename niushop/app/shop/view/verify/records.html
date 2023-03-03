@@ -51,12 +51,12 @@
 				</div>
 
                 <div class="layui-inline">
-                    <label class="layui-form-label">核销地址：</label>
+                    <label class="layui-form-label">核销门店：</label>
                     <div class="layui-input-inline">
-                        <select name="verify_from">
-                            <option value="">请选择核销地址</option>
-							{foreach $verify_from as $k => $v}
-							<option value="{$k}">{$v}</option>
+                        <select name="store_id">
+                            <option value="">请选择核销门店</option>
+							{foreach $store_list as $k => $v}
+							<option value="{$v.store_id}">{$v.store_name}</option>
 							{/foreach}
                         </select>
                     </div>
@@ -113,11 +113,21 @@
 			{{# if(d.verify_type == "virtualgoods"){ }}
 			<div class="title-pic"><img src="{{ns.img(d.sku_image)}}"></div>
 			{{# } }}
+			{{# if(d.verify_type == "pickup" || d.verify_type == "virtualgoods"){ }}
 			<div class="title-content" style="overflow: unset;">
 				<p title="{{ d.order_info.order_name }}">{{ d.order_info.order_name }}</p>
 				<span class="verify-type text-color border-color">{{ d.verify_type_name}}</span>
 				<span class="verify-code">核销码：{{ d.verify_code }}</span>
 			</div>
+			{{# } }}
+			{{# if(d.verify_type == "cardgoods"){ }}
+			<div class="title-pic"><img src="{{ns.img(d.sku_image)}}"></div>
+			<div class="title-content" style="overflow: unset;">
+				<p title="{{ d.name }}">{{ d.name }}</p>
+				<span class="verify-type text-color border-color">{{ d.verify_type_name}}</span>
+				<span class="verify-code">核销码：{{ d.verify_code }}</span>
+			</div>
+			{{# } }}
 		</div>
 	</div>
 </script>
@@ -222,21 +232,11 @@
                         templet: '#verify_code'
                     },
 					{
-                        field: 'order_no',
-                        title: '订单编号',
-                        width: '12%',
-						templet: function (data) {
-                            return '<a href="'+ ns.url("shop/order/detail", {order_id:data.order_info.order_id}) +'" target="_blank">'+ data.order_no +'</a>';
-                        }
-                    },{
-                        field: 'name',
-                        title: '买家姓名',
-                        width: '8%'
-                    },
-					{
-						field: 'verifyFrom',
-						title: '核销地址',
+						title: '核销门店',
 						width: '8%',
+						templet: function (data) {
+							return data.store_name ? data.store_name : '--';
+						}
 					},{
                         field: 'verifier_name',
                         title: '核销员',
@@ -257,6 +257,11 @@
                             return ns.time_to_date(data.verify_time); //创建时间转换方法
                         }
                     },
+					{
+						field: 'verify_num',
+						title: '核销次数',
+						width: '10%',
+					},
 					{
 						field: 'verify_remark',
 						title: '核销备注',

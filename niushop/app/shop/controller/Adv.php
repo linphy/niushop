@@ -141,12 +141,20 @@ class Adv extends BaseShop
     {
         $adv = new AdvModel();
         $adv_position = new AdvPosition();
+
         $ap_id = input('ap_id', '');
+        $keyword = input('keyword', '');
+        if (!empty($keyword)) {
+            $info = $adv_position->getAdvPositionInfo([ [ 'keyword', '=', $keyword ] ], 'ap_id')[ 'data' ];
+            if (!empty($info)) {
+                $ap_id = $info[ 'ap_id' ];
+            }
+        }
+
         if (request()->isAjax()) {
             $page = input('page', 1);
             $page_size = input('page_size', PAGE_LIST_ROWS);
             $search_text = input('search_text', '');
-            $ap_id = input('ap_id', '');
             $slide_sort = input('sort', '');
             //查询所有手机端广告位
             $conditions[] = [ 'type', '=', 2 ];
@@ -178,8 +186,8 @@ class Adv extends BaseShop
             $this->forthMenu();
 
             $adv_position = new AdvPosition();
-            $adv_position_list = $adv_position->getAdvPositionList([ [ 'site_id', '=', $this->site_id ], [ 'type', '=', 2 ] ], 'ap_id,ap_name');
-            $this->assign('adv_position', $adv_position_list[ 'data' ]);
+            $adv_position_list = $adv_position->getAdvPositionList([ [ 'site_id', '=', $this->site_id ], [ 'type', '=', 2 ] ], 'ap_id,ap_name')[ 'data' ];
+            $this->assign('adv_position', $adv_position_list);
 
             return $this->fetch("adv/lists");
         }

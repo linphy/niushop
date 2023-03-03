@@ -15,16 +15,16 @@
 	text-overflow: ellipsis;
 }
 
-.component-title .style-list-box {
+.component-title .style-list-box-text {
 	display: none;
 }
 
-.style-list-con {
+.style-list-con-text {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.style-list-con .style-li {
+.style-list-con-text .style-li-text {
 	overflow: hidden;
 	display: flex;
 	align-items: center;
@@ -38,16 +38,16 @@
 	background: #f7f8fa;
 }
 
-.style-list-con .style-li img {
+.style-list-con-text .style-li-text img {
 	max-width: 280px;
 	max-height: 220px;
 }
 
-.style-list-con .style-li:nth-child(1), .style-list-con .style-li:nth-child(2), .style-list-con .style-li:nth-child(3) {
+.style-list-con-text .style-li-text:nth-child(1), .style-list-con-text .style-li-text:nth-child(2), .style-list-con-text .style-li-text:nth-child(3) {
 	margin-top: 0;
 }
 
-.style-list-con .style-li:nth-child(3n) {
+.style-list-con-text .style-li-text:nth-child(3n) {
 	margin-right: 0;
 }
 
@@ -504,6 +504,11 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	font-size: 12px;
+	margin-right: 4px;
+}
+.component-title .text-style-12 .text-title-box .more > i{
+	font-size: 12px;
 }
 
 /* 图十三 */

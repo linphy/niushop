@@ -55,7 +55,9 @@ class Memberaccount extends BaseApi
 
         $condition[] = [ 'account_type', 'in', $account_type ];
         $condition[] = [ 'member_id', '=', $token[ 'data' ][ 'member_id' ] ];
-        $condition[] = [ 'create_time', 'between', [ $start_time, $end_time ] ];
+        if ($this->params['app_type'] != 'pc') {
+            $condition[] = [ 'create_time', 'between', [ $start_time, $end_time ] ];
+        }
         if (!empty($from_type)) {
             $condition[] = [ 'from_type', '=', $from_type ];
         }
