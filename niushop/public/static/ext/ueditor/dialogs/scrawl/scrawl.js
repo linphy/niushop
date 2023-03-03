@@ -32,11 +32,11 @@ var scrawl = function (options) {
             me._addAddImgListener();//添加增添背景图片处理
             me._addRemoveImgListenter();//删除背景图片处理
             me._addScalePicListenter();//添加缩放处理
-            me._addClearSelectionListenter();//添加清楚选中状态处理
+            me._addClearSelectionListenter();//添加清除选中状态处理
 
             me._originalColorSelect(options.drawBrushColor);//初始化颜色选中
             me._originalBrushSelect(options.drawBrushSize);//初始化画笔选中
-            me._clearSelection();//清楚选中状态
+            me._clearSelection();//清除选中状态
         },
 
         originalState:function (options) {

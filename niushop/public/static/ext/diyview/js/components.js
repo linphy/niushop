@@ -79,6 +79,133 @@ Vue.component("js", {
 	}
 });
 
+/**
+ * 系统内置属性组件
+ */
+var imageHtml = `<div :style="style"></div>`;
+
+//图片组件
+Vue.component("nc-image", {
+	props: {
+		src: {
+			type: String,
+			default: ''
+		},
+		mode: {
+			type: String,
+			default: 'scaleToFill'
+		},
+		width: {
+			type: String,
+			default: '100%'
+		},
+		height: {
+			type: String,
+			default: '100%'
+		}
+	},
+	data: function () {
+		return {
+			style: {
+				'background-image': 'url('+ this.src +')',
+				'background-repeat': 'no-repeat',
+				'width': this.width,
+				'height': this.height,
+				'background-position': 'center',
+				'background-size': ''
+			},
+			modeList: {
+				aspectFit: {'background-size': 'contain'}, // 缩放
+				scaleToFill: {'background-size': '100% 100%'}, // 拉伸
+				aspectFill: {'background-size': 'cover'}, // 填充
+				center: {'background-size': 'auto auto'} // 居中裁剪
+			}
+		}
+	},
+	template: imageHtml,
+	created: function () {
+		if (this.modeList[ this.mode ]) Object.assign(this.style, this.modeList[ this.mode ]);
+	},
+	watch: {
+		mode: function (val) {
+			this.$set(this.style, 'background-size', this.modeList[ this.mode ]['background-size'])
+		},
+		src: function (val) {
+			this.$set(this.style, 'background-image', 'url('+ this.src +')')
+		}
+	}
+});
+
+/**
+ * 图片显示模式组件
+ */
+var imageModeHtml = `
+	<div class="layui-form-item component-links">
+		<label class="layui-form-label sm">缩放模式</label>
+		<div class="layui-input-block">
+			<span class="sm text-color" @click="selected()">
+				<span :title="modeList[ data.imageMode ].name">{{ modeList[ data.imageMode ].name }}</span>
+				<i class="layui-icon layui-icon-right"></i>
+			</span>
+		</div>
+	</div>
+`;
+Vue.component("nc-image-mode", {
+	props: {
+		data: {
+			type: Object,
+			default: function () {
+				return {
+					imageMode: "scaleToFill"
+				};
+			}
+		},
+	},
+	template: imageModeHtml,
+	data: function () {
+		return {
+			modeList:{
+				scaleToFill: {mode: 'scaleToFill', name: '拉伸'},
+				aspectFit: {mode: 'aspectFit', name: '缩放'},
+				aspectFill: {mode: 'aspectFill', name: '填充'},
+				// center: {mode: 'center', name: '中心裁剪'}
+			}
+		};
+	},
+	created: function () {
+		if (!this.data.imageMode) this.$set(this.data, 'imageMode', 'scaleToFill');
+	},
+	methods: {
+		selected: function () {
+			var $self = this;
+			var h = `<div class="layui-form"><div class="layui-form-item component-links"><label class="layui-form-label sm">缩放模式：</label><div class="layui-input-block">`;
+			Object.keys(this.modeList).forEach(function (key) {
+				let item = $self.modeList[key];
+				h += '<input type="radio" name="image_mode" value="'+ item.mode +'" title="'+ item.name +'" '+ (key == $self.data.imageMode ? ' checked' : '') +'>';
+			})
+			h += '</div></div></div>'
+			layer.open({
+				title: "图片缩放模式设置",
+				type: 1,
+				area: ['450px', '190px'],
+				fixed: false, //不固定
+				content: h,
+				success: function(){
+					layui.use('form', function(){
+						layui.form.render();
+					})
+				},
+				btn: ['保存', '取消'],
+				yes: function () {
+					let mode = $('[name="image_mode"]:checked').val();
+					$self.data.imageMode = mode;
+					layer.closeAll();
+				}
+			})
+		}
+	}
+});
+
 //[对齐方式]属性组件
 var textAlignHtml = '<div class="layui-form-item">';
 		textAlignHtml += '<label class="layui-form-label sm">{{data.label}}</label>';
@@ -789,7 +916,7 @@ Vue.component("common-set", {
 	},
 });
 
-var popWindowHtml = '<div :class="{selected : currentIndex==-98}" :data-sort="-98" style="display:none;" v-show="currentIndex==-98">';
+var popWindowHtml = '<div class="pop-window-wrap" :class="{selected : currentIndex==-98}" :data-sort="-98" v-show="currentIndex==-98">';
 		popWindowHtml += '<div class="edit-attribute">';
 			popWindowHtml += '<div class="attr-wrap">';
 				popWindowHtml += '<div class="restore-wrap">';
@@ -894,6 +1021,8 @@ var pageSetHtml = '<div class="edit-attribute">';
 								pageSetHtml += '<img-upload :data="{ data : global, field : \'topNavImg\', text: \'\',isShow:true }"></img-upload>';
 							pageSetHtml += '</div>';
 						pageSetHtml += '</div>';
+						pageSetHtml += '<div class="word-aux diy-word-aux" v-if="global.navStyle == 2">宽度自适应（最大150px），高度28px</div>';
+						pageSetHtml += '<div class="word-aux diy-word-aux" v-if="global.navStyle == 3">宽度自适应（85px），高度30px</div>';
 
 						pageSetHtml += '<template v-if="globalLazyLoad">';
 							pageSetHtml += '<nc-link :data="{ field : global.moreLink }"></nc-link>';
@@ -905,7 +1034,6 @@ var pageSetHtml = '<div class="edit-attribute">';
 								pageSetHtml += '<template v-for="(item, index) in textImgPositionList">';
 									pageSetHtml += '<span :class="{\'layui-hide\':item.value != global.textImgPosLink}">{{item.text}}</span>';
 								pageSetHtml += '</template>';
-
 								pageSetHtml += '<ul class="icon-wrap">';
 									pageSetHtml += '<li v-for="(item, index) in textImgPositionList" :class="{\'text-color border-color\':item.value == global.textImgPosLink}" @click="global.textImgPosLink = item.value">';
 										pageSetHtml += '<i class="iconfont" :class="[item.src]"></i>';
@@ -1041,24 +1169,35 @@ Vue.component("page-set", {
 	created: function () {
 	},
 	methods: {
-		//选择页面顶部风格
+		//选择页面顶部风格，默认文字、图片+文字、图片+搜索框、定位门店
 		selectPageStyle: function () {
 			var html = '<div class="nav-style">';
 			for (var i = 0; i < 3; i++) {
-				html += '<div class="text-title' + ((this.global.navStyle == (i + 1)) ? ' border-color' : '') + '" onclick="changeStyle(' + (i + 1) + ')">';
+				html += '<div class="text-title' + ((this.global.navStyle == (i + 1)) ? ' border-color' : '') + '" data-style="' + (i + 1) + '">';
 					html += '<img src="' + ns_url.staticExt + '/diyview/img/nav_style/nav_style' + i + '.png"/>';
+				html += '</div>';
+			}
+			// 门店插件存在则显示
+			if(storeIsExit == 1) {
+				html += '<div class="text-title' + ((this.global.navStyle == 4) ? ' border-color' : '') + '" data-style="4">';
+					html += '<img src="' + ns_url.staticExt + '/diyview/img/nav_style/nav_style_store.png"/>';
 				html += '</div>';
 			}
 			html += '</div>';
 			layer.open({
 				type: 1,
 				title: '风格选择',
-				area: ['930px', '630px'],
+				area: ['800px', '380px'],
 				btn: ['确定', '返回'],
 				content: html,
-				success: function (layero, index) {},
+				success: function (layero, index) {
+					$('.nav-style .text-title').click(function () {
+						$(this).addClass('border-color').siblings().removeClass('border-color');
+					});
+				},
 				yes: function (index, layero) {
-					layer.closeAll()
+					changeStyle($('.nav-style .text-title.border-color').attr('data-style'));
+					layer.closeAll();
 				}
 			});
 		}
@@ -1073,25 +1212,29 @@ function changeStyle(val) {
 	// vue.$forceUpdate()
 }
 
-var tabbarHtml = '<div class="nav-tabbar">';
-	tabbarHtml += '<div v-if="global.navStyle == 1" class="preview-head_div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor,textAlign:global.textImgPosLink}">';
-		tabbarHtml += '<span v-if="global.navStyle == 1">{{global.title}}</span>';
+var tabbarHtml = '<div :class="[\'nav-tabbar\',\'style-\' + global.navStyle,global.textImgPosLink]">';
+	tabbarHtml += '<div v-if="global.navStyle == 1" class="preview-head-div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor,textAlign:global.textImgPosLink}">';
+		tabbarHtml += '<span>{{global.title}}</span>';
 	tabbarHtml += '</div>';
 
-	tabbarHtml += '<div v-if="global.navStyle == 2" class="preview-head_div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">';
-		tabbarHtml += '<div class="search">';
-			tabbarHtml += '<div class="img" :style="{backgroundImage : \'url(\'+changeImgUrl(global.topNavImg)+\')\'}"></div>';
-			tabbarHtml += '<span >{{global.title}}</span>';
-		tabbarHtml += '</div>';
+	tabbarHtml += '<div v-if="global.navStyle == 2" class="preview-head-div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">';
+			tabbarHtml += '<img :src="changeImgUrl(global.topNavImg)">';
+			tabbarHtml += '<span>{{global.title}}</span>';
 	tabbarHtml += '</div>';
 
-	tabbarHtml += '<div v-if="global.navStyle == 3" class="preview-head_div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">';
+	tabbarHtml += '<div v-if="global.navStyle == 3" class="preview-head-div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">';
 		tabbarHtml += '<div class="img-text-search">';
-			tabbarHtml += '<div class="img" :style="{backgroundImage : \'url(\'+changeImgUrl(global.topNavImg)+\')\'}"></div>';
-			tabbarHtml += '<div class="top-search-box border-circle" style="border-radius:30px;background: rgb(255, 255, 255); text-align: center;color:#909399;line-height: 2.1;border:1px solid #E6E6E6">';
-				tabbarHtml += '<i class="iconfont iconsousuo" style="color: #909399;float:left;line-height: 1"></i><span style="line-height: 1">请输入商品名称</span>';
+			tabbarHtml += '<img :src="changeImgUrl(global.topNavImg)">';
+			tabbarHtml += '<div class="top-search-box">';
+				tabbarHtml += '<i class="iconfont iconsousuo"></i><span style="line-height: 1">请输入商品名称</span>';
 			tabbarHtml += '</div>';
 		tabbarHtml += '</div>';
+	tabbarHtml += '</div>';
+
+	tabbarHtml += '<div v-if="global.navStyle == 4" class="preview-head-div" :style="{ backgroundColor : global.topNavColor,color:global.textNavColor}">';
+		tabbarHtml += '<i class="iconfont icondingwei"></i>';
+		tabbarHtml += '<span>门店名称</span>';
+		tabbarHtml += '<i class="iconfont iconyoujiantou"></i>';
 	tabbarHtml += '</div>';
 
 tabbarHtml += '</div>';

@@ -192,10 +192,11 @@ $(".link-box .link-save").click(function () {
  */
 function childLinkCallback(name) {
 	if (name === 'GOODS_CATEGORY') {
-		var html = `<div id="category_list"></div>`;
+		// 商品分类
+		var html = `<div id="goods_category_list"></div>`;
 		$(".link-right.js-extend").html(html).show();
 		$(".link-right.js-system").hide();
-		getCategory(name);
+		getGoodsCategory();
 	} else if (goodsLink.indexOf(name) !== -1) {
 		var html = "<div class='search'>";
 		html += `<input name='search_text' class='layui-input search-input layui-input-inline len-mid' placeholder='请输入商品名称' onkeyup="if(event.keyCode === 13) getGoodsList('${name}') " />`;
@@ -221,9 +222,9 @@ function childLinkCallback(name) {
 /**
  * 获取商品分类数据
  */
-function getCategory() {
-	laytpl($("#categoryHtml").html()).render([], function (html) {
-		$("#category_list").html(html);
+function getGoodsCategory() {
+	laytpl($("#goodsCategoryHtml").html()).render([], function (html) {
+		$("#goods_category_list").html(html);
 
 		//展开收齐点击事件
 		$(".js-switch").click(function () {

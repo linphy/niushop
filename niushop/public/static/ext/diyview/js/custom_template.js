@@ -12,8 +12,7 @@ var ncComponentHtml = '<div v-show="data.lazyLoadCss && data.lazyLoad" :key="dat
 			ncComponentHtml += '<div class="comp-title">{{ data.componentTitle }}</div>';
 		ncComponentHtml += '</div>';
 
-		// ($slots.edit ? '1' : '0')
-		ncComponentHtml += '<div class="edit-attribute" :data-have-edit="1" v-show="$parent.currentIndex == data.index">'; //  && $slots.edit
+		ncComponentHtml += '<div class="edit-attribute" :data-have-edit="1">';
 			ncComponentHtml += '<div class="attr-wrap">';
 				ncComponentHtml += '<div class="restore-wrap">';
 
@@ -86,8 +85,6 @@ var vue = new Vue({
 	data: {
 		//当前编辑的组件位置
 		currentIndex: -99,
-		changeIndex: -1,
-		isAdd: false,
 		globalLazyLoad: false,
 
 		//全局属性
@@ -97,6 +94,7 @@ var vue = new Vue({
 			topNavColor: "#ffffff",
 			topNavBg: false,
 			navBarSwitch: true, // 导航栏是否显示
+			navStyle: 1, // 导航栏风格
 			textNavColor: "#333333",
 			topNavImg: "",
 			moreLink: {
@@ -104,7 +102,6 @@ var vue = new Vue({
 			},
 			//是否显示底部导航标识
 			openBottomNav: true,
-			navStyle: 1,
 			textImgPosLink: 'center',
 			mpCollect: false,
 			// 弹框形式，不弹出 -1，首次弹出 1，每次弹出 0
@@ -119,8 +116,8 @@ var vue = new Vue({
 				imgHeight: ''
 			},
 			bgUrl: '',
-			imgWidth : '',
-			imgHeight : '',
+			imgWidth: '',
+			imgHeight: '',
 
 			// 公共模板属性，所有组件都继承，不需要重复定义，组件内部根据业务自行调用
 			template: {
@@ -179,6 +176,8 @@ var vue = new Vue({
 
 			//第一次添加组件时，添加以下字段
 			if (other) {
+				// 第一次添加组件时，添加以下字段
+				obj.addonName = other.addon_name; // 如果插件不存在，后台则会清除组件
 				obj.componentName = other.name;
 				obj.componentTitle = other.title;
 				obj.isDelete = parseInt(other.is_delete);
@@ -192,36 +191,45 @@ var vue = new Vue({
 				}
 			}
 
-			this.data.push(obj);
+			if (this.currentIndex === -99 || this.currentIndex === -98) {
+				this.data.push(obj);
+				// 添加组件后（不是编辑调用的），选择最后一个
+				if (other) this.currentIndex = this.data.length - 1;
+			}else {
+				// 查询当前选中索引，插入到指定位置
+				if (other && other.index) {
+					this.data.splice(other.index, 0, obj);// 指定下标
+				} else {
+					this.data.splice(++this.currentIndex, 0, obj);
+				}
+			}
 
-			// 添加组件后（不是编辑调用的），选择最后一个
-			if (other) this.currentIndex = this.data.length - 1;
-			this.isAdd = true;
+			$('.loading-layer').hide();
+			$('.preview-wrap .preview-restore-wrap').css('visibility', 'visible');
 
 			this.refresh();
-
-			$(".edit-attribute-placeholder").show();
 
 			var self = this;
 
 			setTimeout(function () {
-				if (obj.componentName !== "FloatBtn" && (self.changeIndex === -1 || (self.changeIndex !== self.currentIndex))) {
-					$(".preview-wrap .preview-restore-wrap .div-wrap").scrollTop($(".diy-view-wrap").height());
+				if (obj.componentName !== "FloatBtn" && obj.componentName !== "FollowOfficialAccount") {
+					// 如果在末尾添加组件，则定位到最后的位置
+					if (self.currentIndex === -99 || ((self.currentIndex + 1) === self.data.length)) {
+						$(".preview-wrap .preview-restore-wrap .div-wrap").scrollTop($(".diy-view-wrap").height());
+					} else {
+						// 如果在其他位置添加组件，则定位到组件位置
+						var element = $(".draggable-element[data-index=" + self.currentIndex + "]");
+						var warp = $(".preview-wrap .preview-restore-wrap .div-wrap");
+						var height = 0;
+						$(".draggable-element:lt(" + (element.index() + 1) + ")").each(function (i) {
+							height += $(this).outerHeight();
+						});
+						height -= element.outerHeight() + 30;
+						warp.animate({scrollTop: height}, 300);
+					}
 				}
-				var div = $(".draggable-element[data-index=" + self.currentIndex + "] .edit-attribute .attr-wrap");
-				if (div.find('.edit-content-wrap').children().length === 0 || div.find('.edit-style-wrap').children().length === 0) {
-					div.find('.tab-wrap').css('display', 'none');
-				} else {
-					div.find('.tab-wrap').css('display', 'flex');
-				}
-				$(".edit-attribute-placeholder").hide();
-				// console.log('div',div,div.find('.edit-content-wrap').children(),div.find('.edit-content-wrap').children().length ,div.find('.edit-style-wrap').children().length)
-				if (div.find('.edit-content-wrap').children().length !== 0 || div.find('.edit-style-wrap').children().length !== 0) {
 
-					// 默认选中内容
-					$(".draggable-element[data-index='" + self.currentIndex + "'] .edit-attribute .attr-wrap .restore-wrap .attr-title .tab-wrap span:eq(0)").click();
-				}
-			}, 160);
+			}, 50);
 		},
 
 		//检测组件是否允许添加，true：允许 false：不允许
@@ -253,13 +261,6 @@ var vue = new Vue({
 		//改变当前编辑的组件选中
 		changeCurrentIndex: function (sort) {
 			this.currentIndex = parseInt(sort);
-			this.changeIndex = this.currentIndex;
-			this.isAdd = false;
-			// 默认选中内容
-			var self = this;
-			setTimeout(function () {
-				$(".draggable-element[data-index='" + self.currentIndex + "'] .edit-attribute .attr-wrap .restore-wrap .attr-title .tab-wrap span:eq(0)").click();
-			}, 50);
 			this.refresh();
 		},
 
@@ -269,29 +270,30 @@ var vue = new Vue({
 			var self = this;
 
 			layer.confirm('确定要删除吗?', {title: '操作提示'}, function (index) {
-
 				self.data.splice(i, 1);
-				//删除当前组件后，选中最后一个组件进行编辑
-				if (self.data[self.data.length - 1]) {
-					self.currentIndex = $(".draggable-element:last").attr("data-index");
-					//删除组件后，进行重新排序
-					self.refresh();
-				} else {
+
+				// 如果组件全部删除，则选中页面设置
+				if(self.data.length === 0){
 					self.currentIndex = -99;
 				}
-				layer.close(index);
 
+				// 如果当前选中的组件不存在，则选择上一个
+				if(self.currentIndex === self.data.length){
+					self.currentIndex--;
+				}
+
+				self.refresh();
 				self.refreshQuick(true);
-
+				layer.close(index);
 			});
 		},
 
 		// 重置当前组件数据
 		resetComponent: function () {
-			var self = this;
 			if (this.currentIndex < 0) return; // 从0开始
 			// if (self.data.length < 1) return; // 重置全部用
 
+			var self = this;
 			layer.confirm('确认要重置组件默认数据吗?', {title: '操作提示'}, function (index) {
 
 				// 重置当前选中的组件数据
@@ -304,17 +306,18 @@ var vue = new Vue({
 						for (var i = 0; i < info.value.length; i++) {
 							if (info.value[i].id === id) {
 								info.value[i].index = self.currentIndex;
-								info.value[i].sort = 0;
-								info.value[i].lazyLoadCss = false; // 资源懒加载，防止看到界面缓慢加载
-								info.value[i].lazyLoad = false; // 资源懒加载，防止看到界面缓慢加载
-								info.value[i].outerCountJs = 0;
-								info.value[i].ignore = []; // 忽略模板属性
-								info.value[i].tempData = {}; // 临时数据
+								info.value[i].sort = self.data[self.currentIndex].sort;
+								info.value[i].lazyLoadCss = true; // 资源懒加载，防止看到界面缓慢加载
+								info.value[i].lazyLoad = true; // 资源懒加载，防止看到界面缓慢加载
+								info.value[i].outerCountJs = self.data[self.currentIndex].outerCountJs;
+								info.value[i].ignore = self.data[self.currentIndex].ignore; // 忽略模板属性
+								info.value[i].tempData = self.data[self.currentIndex].tempData; // 临时数据
 								info.value[i].id = ns.gen_non_duplicate(5);
 								temp = info.value[i];
 								break;
 							}
 						}
+						$("#info").val(JSON.stringify(info));
 					}
 				}
 
@@ -323,10 +326,13 @@ var vue = new Vue({
 					var component = $('.component-list ul li[data-name="' + self.data[self.currentIndex].componentName + '"]');
 					var value = JSON.parse(component.attr('data-value'));
 					let index = self.currentIndex;
+
 					self.data.splice(index, 1);
 					self.addComponent(value, {
+						index: index, // 指定下标
 						name: component.attr('data-name'),
 						title: component.attr('title'),
+						addon_name: component.attr('data-addon-name'),
 						max_count: component.attr('data-max-count'),
 						is_delete: component.attr('data-is-delete')
 					});
@@ -334,8 +340,6 @@ var vue = new Vue({
 				} else {
 					self.data.splice(self.currentIndex, 1, temp);
 				}
-
-				// console.log('self.currentIndex', self.currentIndex, temp)
 
 				setTimeout(function () {
 					fullScreenSize();
@@ -365,7 +369,10 @@ var vue = new Vue({
 			var prevIndex = parseInt(prev.attr('data-index'));
 
 			var temp = this.deepClone(this.data[this.currentIndex]); // 当前选中组件
+			temp.id = ns.gen_non_duplicate(5); // 更新id，刷新组件数据
+
 			var temp2 = this.deepClone(this.data[prevIndex]); // 上个组件
+			temp2.id = ns.gen_non_duplicate(5); // 更新id，刷新组件数据
 
 			this.data[this.currentIndex] = temp2;
 			this.data[prevIndex] = temp;
@@ -373,21 +380,27 @@ var vue = new Vue({
 			this.changeCurrentIndex(prevIndex);
 
 			this.refreshQuick();
+
+			var self = this;
+			setTimeout(function () {
+				self.$forceUpdate();
+			},10);
 		},
 
 		// 下移组件
 		moveDownComponent: function () {
-			// if (this.data.length === 0 || (this.currentIndex + 1) === this.data.length) return; // 最后一个不能下移
-
 			var element = $(".draggable-element[data-index=" + this.currentIndex + "]");
 			var next = element.next('.draggable-element'); // 上一个组件
 
-			if(next.length === 0) return;
+			if(next.length === 0) return; // 最后一个不能下移
 
 			var nextIndex = parseInt(next.attr('data-index'));
 
 			var temp = this.deepClone(this.data[this.currentIndex]); // 当前选中组件
+			temp.id = ns.gen_non_duplicate(5); // 更新id，刷新组件数据
+
 			var temp2 = this.deepClone(this.data[nextIndex]); // 下个组件
+			temp2.id = ns.gen_non_duplicate(5); // 更新id，刷新组件数据
 
 			this.data[this.currentIndex] = temp2;
 			this.data[nextIndex] = temp;
@@ -395,6 +408,11 @@ var vue = new Vue({
 			this.changeCurrentIndex(nextIndex);
 
 			this.refreshQuick();
+
+			var self = this;
+			setTimeout(function () {
+				self.$forceUpdate();
+			},10);
 		},
 
 		// 复制组件
@@ -403,7 +421,7 @@ var vue = new Vue({
 
 			var temp = this.deepClone(this.data[this.currentIndex]); // 当前选中组件
 			temp.index++;
-			temp.id = ns.gen_non_duplicate(5);
+			temp.id = ns.gen_non_duplicate(5); // 更新id，刷新组件数据
 			var component = $('.component-list ul li[data-name="' + temp.componentName + '"]');
 			var maxCount = parseInt(component.attr('data-max-count'));
 
@@ -412,25 +430,12 @@ var vue = new Vue({
 				return;
 			}
 
-			var index = this.currentIndex;
+			var index = this.currentIndex + 1;
 			this.data.splice(index, 0, temp);
 
-			this.changeCurrentIndex(index + 1);
+			this.changeCurrentIndex(index);
 
 			this.refreshQuick(true);
-
-			var self = this;
-
-			setTimeout(function () {
-				var curr = $(".draggable-element[data-index=" + index + "]");
-				var last = $(".draggable-element[data-index=" + (self.data.length - 1) + "]");
-				// 调试代码，勿删
-				// window.curr = curr;
-				// window.last = last;
-				// console.log("curr",curr);
-				// console.log("last",last);
-				curr.after(last);
-			}, 10);
 
 		},
 
@@ -467,40 +472,10 @@ var vue = new Vue({
 					self.data[i].sort = $(".draggable-element[data-index=" + i + "]").attr("data-sort");
 				}
 
-				// 触发变异方法，进行视图更新。不能用sort()方法，会改变组件的顺序，导致显示的顺序错乱
-				// self.data.push({});
-				// self.data.pop();
-				// console.log(self.currentIndex);
-
 				// 如果当前编辑的组件不存在了，则选中最后一个
 				if (parseInt(self.currentIndex) >= self.data.length) self.currentIndex--;
 
 				$(".draggable-element[data-index=" + self.currentIndex + "] .edit-attribute .attr-wrap").css("height", ($(window).height() - 135) + "px");
-
-				if (self.isAdd && self.changeIndex > -1 && (self.changeIndex !== self.currentIndex) && self.changeIndex < (self.data.length - 1)) {
-					var curr = $(".draggable-element[data-index=" + self.changeIndex + "]");
-					var last = $(".draggable-element[data-index=" + (self.data.length - 1) + "]");
-					// 调试代码，勿删
-					// window.curr = curr;
-					// window.last = last;
-					// console.log("curr",curr);
-					// console.log("last",last);
-					curr.after(last);
-					// console.log('self.currentIndex',self.currentIndex)
-					self.changeIndex = self.currentIndex;
-
-					// 定位到当前位置
-					// setTimeout(function () {
-					// console.log("定位到当前位置",parseFloat((curr.position().top + last.outerHeight())));
-					// $(".preview-wrap .preview-restore-wrap .div-wrap").scrollTop(curr.position().top + last.outerHeight());
-					// $(".preview-wrap .preview-restore-wrap .div-wrap").scrollTop($(".diy-view-wrap").height());
-					// },1600);
-					// console.log("self.changeIndex",self.changeIndex);
-					// console.log("self.currentIndex",self.currentIndex);
-				}
-
-				// 显示插件添加的数量，防止一进入看到代码
-				// $(".js-component-add-count").show();
 
 			}, 50);
 
@@ -528,8 +503,8 @@ var vue = new Vue({
 				this.currentIndex = -99;
 				this.refresh();
 				return false;
-			} else if (this.global.title.length > 50) {
-				layer.msg('页面名称最多50个字符');
+			} else if (this.global.title.length > 15) {
+				layer.msg('页面名称最多15个字符');
 				this.currentIndex = -99;
 				this.refresh();
 				return false;
@@ -607,36 +582,15 @@ var vue = new Vue({
 
 			this.setGlobal(info.global);
 
-			this.data = info.value;
-			this.isAdd = true;
+			if(info.value.length) {
+				this.data = info.value;
+				this.changeCurrentIndex(0); // 选择第一个
+				this.refresh();
+			}
 
-			this.refresh();
-
-			// $(".edit-attribute-placeholder").show();
-
-			var self = this;
-
-			// $(".edit-attribute-placeholder").hide();
 			fullScreenSize();
-
-			var count = 0;
-			var time = setInterval(function () {
-				var div = $(".draggable-element .edit-attribute .attr-wrap");
-				div.each(function () {
-					if ($(this).find('.edit-content-wrap').children().length === 0 || $(this).find('.edit-style-wrap').children().length === 0) {
-						$(this).find('.tab-wrap').css('display', 'none');
-					} else {
-						$(this).find('.tab-wrap').css('display', 'flex');
-					}
-				});
-				count++;
-				if (count > 10 || ($(this).find('.edit-content-wrap').children().length > 0 || $(this).find('.edit-style-wrap').children().length > 0)) {
-					clearInterval(time);
-					$('.loading-layer').hide();
-					$('.preview-wrap .preview-restore-wrap').css('visibility', 'visible');
-					self.changeCurrentIndex(0); // 选择第一个
-				}
-			}, 10);
+			$('.loading-layer').hide();
+			$('.preview-wrap .preview-restore-wrap').css('visibility', 'visible');
 
 		},
 
@@ -646,30 +600,18 @@ var vue = new Vue({
 		 */
 		refreshQuick: function (isScroll) {
 			var self = this;
-			$(".edit-attribute-placeholder").show();
 			vue.$nextTick(function () {
-				self.data.push({});
-				self.data.pop();
-				setTimeout(function () {
-					var div = $(".draggable-element[data-index=" + self.currentIndex + "] .edit-attribute .attr-wrap");
-					if (div.find('.edit-content-wrap').children().length === 0 || div.find('.edit-style-wrap').children().length === 0) {
-						div.find('.tab-wrap').css('display', 'none');
-					} else {
-						div.find('.tab-wrap').css('display', 'flex');
-					}
-					if (!isScroll) {
-						var element = $(".draggable-element[data-index=" + self.currentIndex + "]");
-						var warp = $(".preview-wrap .preview-restore-wrap .div-wrap");
-						var height = 0;
-						$(".draggable-element:lt(" + (element.index() + 1) + ")").each(function (i) {
-							height += $(this).outerHeight();
-						});
-						height -= element.outerHeight() + 30;
-						warp.animate({scrollTop: height}, 300);
-					}
-					$(".edit-attribute-placeholder").hide();
+				if (!isScroll) {
+					var element = $(".draggable-element[data-index=" + self.currentIndex + "]");
+					var warp = $(".preview-wrap .preview-restore-wrap .div-wrap");
+					var height = 0;
+					$(".draggable-element:lt(" + (element.index() + 1) + ")").each(function (i) {
+						height += $(this).outerHeight();
+					});
+					height -= element.outerHeight() + 30;
+					warp.animate({scrollTop: height}, 300);
+				}
 
-				}, 50);
 			});
 		}
 
@@ -684,7 +626,7 @@ function fullScreenSize(isFull) {
 
 	if (isFull) size = 75; // 顶部面包屑（55px） + 自定义模板区域上内边距diyview（20px）
 	var commonHeight = $(window).height() - size;
-	['.preview-wrap .preview-restore-wrap .div-wrap', '.edit-attribute-placeholder'].forEach(function (obj) {
+	['.preview-wrap .preview-restore-wrap .div-wrap'].forEach(function (obj) {
 		$(obj).css("height", (commonHeight) + "px");
 	});
 	$('.loading-layer').css('height', (commonHeight - 70) + "px"); // 70px是头部高度
@@ -703,6 +645,7 @@ layui.use(['form'], function () {
 	if ($("#info").val()) {
 		vue.refreshComponent();
 	} else {
+		if($("#title").val()) vue.global.title = $("#title").val();
 		vue.globalLazyLoad = true;
 	}
 
@@ -799,15 +742,27 @@ layui.use(['form'], function () {
 
 		//拖拽中，隐藏右侧编辑属性栏
 		move: function (index) {
-			if ($(".draggable-element[data-index='" + index + "'] .edit-attribute").attr("data-have-edit") == 1) $(".draggable-element[data-index='" + index + "'] .edit-attribute").hide();
+			var curr = $(".draggable-element[data-index='" + index + "'] .edit-attribute");
+			if (curr.attr("data-have-edit") == 1) curr.hide();
 		},
 
 		//拖拽结束后，选择当前拖拽，并且显示右侧编辑属性栏，刷新数据
-		up: function (index) {
-			if ($(".draggable-element[data-index='" + index + "'] .edit-attribute").attr("data-have-edit") == 1) {
-				vue.currentIndex = index;
-				$(".draggable-element[data-index='" + index + "'] .edit-attribute").show();
-			}
+		up: function (beforeIndex,afterIndex) {
+			var temp = [];
+			$('.draggable-element').each(function (index) {
+				var dIndex = $(this).attr('data-index');
+				temp[index] = vue.deepClone(vue.data[dIndex]);
+			});
+
+			temp.forEach(function (item, index) {
+				item.index = index;
+				item.id = ns.gen_non_duplicate(5); // 更新id，刷新组件数据
+				vue.$set(vue.data, index, item)
+			});
+
+			vue.currentIndex = afterIndex;
+			$(".draggable-element.selected .edit-attribute").show();
+
 		}
 	});
 
@@ -870,20 +825,19 @@ layui.use(['form'], function () {
 					data: {
 						id: $("#id").val(),
 						name: $("#name").val(),
+						template_id: $("#template_id").val(),
+						page_type: $("#page_type").val(), // 页面类型
 						title: vue.global.title,
 						value: JSON.stringify(v), // .replace(/\'/g, "@")
 						site_id: ns_url.siteId,
-						app_module: ns_url.appModule,
-						template_key: $("#template_key").val() // 来源：模板标识
+						app_module: ns_url.appModule
 					},
 					dataType: "JSON",
 					success: function (res) {
 						layer.msg(res.message);
 						if (res.code == 0) {
 
-							if ($("#template_key").val()) {
-								location.href = ns.url("shop/diy/index");
-							} else if ($("#id").val() || $("#name").val().indexOf('DIY_VIEW_RANDOM_') == -1) {
+							if ($("#id").val() || $("#name").val().indexOf('DIY_VIEW_RANDOM_') == -1) {
 								// location.reload(); // 不刷新
 								repeat_flag = false;
 							} else {
@@ -903,6 +857,5 @@ layui.use(['form'], function () {
 
 // 预览
 function preview() {
-	let url = $('input[name="preview_url"]').val();
-	window.open(ns.url('index/index/h5preview',{url : url}));
+	window.open(ns.url('index/index/h5preview', {id: $('#id').val(), type: 'page'}));
 }

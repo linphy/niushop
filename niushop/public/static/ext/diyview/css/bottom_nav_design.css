@@ -12,7 +12,7 @@
 .preview-block ul li img{width: 20px;max-height: 100%;}
 .preview-block ul li span{text-overflow: ellipsis;white-space: nowrap;overflow: hidden;display: block;}
 .preview-block ul li .icon-wrap{font-size: 20px}
-#bottomNav .edit-attribute{position: relative;border: 1px solid #e5e5e5;width:400px;float: left;margin-left: 20px;overflow-y: scroll;overflow: auto;}
+#bottomNav .edit-attribute{position: relative;border: 1px solid #e5e5e5;width:400px;float: left;margin-left: 20px;overflow-y: scroll;overflow-x: auto;display: block;}
 
 .edit-attribute .img-block{width: 50px;height: 48px;display: inline-block;padding: 8px;margin-right: 10px;cursor: pointer;vertical-align: top; line-height: 1;background-color: #EEEEEE;text-align: center;font-size: 12px;}
 .edit-attribute .img-block i.add{display:block;font-style: normal;text-align: center;font-size:30px;line-height: 48px;}

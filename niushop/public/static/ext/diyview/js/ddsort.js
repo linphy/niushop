@@ -173,7 +173,7 @@
 					that.scrollTop(scrollVal);
 
 					var index = recursiveQueryIndex($(THIS));
-					settings.currentIndex = index; // 当前拖拽元素
+					settings.beforeIndex = index; // 当前拖拽元素
 					settings.move.call(THIS, index);
 
 				})
@@ -185,7 +185,8 @@
 						//click的时候也会触发mouseup事件，加上判断阻止这种情况
 						if (!hasClone) {
 							clone.before($this.removeAttr('style')).remove();
-							settings.up.call(THIS, settings.currentIndex);
+							settings.afterIndex = $this.index();
+							settings.up.call(THIS, settings.beforeIndex, settings.afterIndex);
 						}
 					});
 

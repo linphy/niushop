@@ -76,7 +76,7 @@ var bottomMenuHtml = '<div class="bottom-menu-config">';
 
 		bottomMenuHtml += '</ul>';
 
-		bottomMenuHtml += '<div class="add-item text-color" v-if="showAddItem" @click="menuList.push({iconPath: \'\', selectedIconPath: \'\', text: \'菜单\', link: {}, iconClass : \'\'})">';
+		bottomMenuHtml += '<div class="add-item text-color" v-if="showAddItem" @click="addMemu">';
 			bottomMenuHtml += '<i>+</i>';
 			bottomMenuHtml += '<span>添加一个图文导航</span>';
 		bottomMenuHtml += '</div>';
@@ -119,7 +119,7 @@ Vue.component("bottom-menu", {
 		this.changeShowAddItem();
 
 		this.menuList.forEach(function(e, i){
-			e.id = ns.gen_non_duplicate(6);
+			if(!e.id ) e.id = ns.gen_non_duplicate(6);
 		});
 		this.$parent.data.list = this.menuList;
 
@@ -168,6 +168,18 @@ Vue.component("bottom-menu", {
 		changeShowAddItem: function () {
 			if (this.menuList.length >= this.maxTip) this.showAddItem = false;
 			else this.showAddItem = true;
+		},
+		addMemu(){
+			this.menuList.push({
+				iconPath: '',
+				selectedIconPath: '',
+				text: '菜单',
+				link: {},
+				iconClass : '',
+				style: null,
+				selected_style: null,
+				id: ns.gen_non_duplicate(6)
+			})
 		}
 	},
 	
@@ -325,8 +337,8 @@ Vue.component("icon-upload", {
 						iconColor: ['#000'],
 						iconColorDeg: 0,
 					};
-					if (!self.myData.data.selected_style) self.$set(self.myData.data, 'selected_style', defaultStyle)
-					if (!self.myData.data.style) self.$set(self.myData.data, 'style', defaultStyle)
+					if (!self.myData.data.selected_style) self.$set(self.myData.data, 'selected_style', JSON.parse(JSON.stringify(defaultStyle)))
+					if (!self.myData.data.style) self.$set(self.myData.data, 'style', JSON.parse(JSON.stringify(defaultStyle)))
 				}
 				self.$forceUpdate();
 			}, 1, 0, 'img', display_type);

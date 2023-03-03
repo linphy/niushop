@@ -417,36 +417,6 @@ ns.select_link = function (link, callback) {
 	}
 };
 
-var show_promote_flag = true;
-
-/**
- * 推广链接
- * @param data
- */
-ns.page_promote = function (data) {
-
-	var url = ns.url("shop/diy/promote");
-	if (show_promote_flag) {
-		show_promote_flag = false;
-		$.post(url, {data: JSON.stringify(data)}, function (str) {
-			window.promoteIndex = layer.open({
-				type: 1,
-				title: "推广链接",
-				content: str,
-				btn: [],
-				area: ['680px', '600px'], //宽高
-				maxWidth: 1920,
-				cancel: function (index, layero) {
-					show_promote_flag = true;
-				},
-				end: function () {
-					show_promote_flag = true;
-				}
-			});
-		});
-	}
-};
-
 /**
  * 打开iframe弹框
  * @param param
@@ -928,7 +898,7 @@ layui.use('form', function () {
 			var str = $(item).parents(".layui-form-item").find("label").text().split("*").join("");
 			str = str.substring(0, str.length - 1);
 
-			if (value.trim() == "" || value == undefined || value == null) return str + "不能为空";
+			if (value == null || value.trim() == "" || value == undefined || value == null) return str + "不能为空";
 		}
 	});
 });
@@ -1260,4 +1230,20 @@ function colourBlend(c1, c2, ratio) {
 	g = ('0' + (g || 0).toString(16)).slice(-2)
 	b = ('0' + (b || 0).toString(16)).slice(-2)
 	return '#' + r + g + b
+}
+
+//判空函数
+ns.checkIsNotNull = function (param) {
+	if (param) {
+		if (typeof (param) == 'object') {
+			if (Array.isArray(param)) {
+				if (param.length > 0) return true
+			} else {
+				if (JSON.stringify(param) != '{}') return true
+			}
+		} else {
+			return true;
+		}
+	}
+	return false;
 }
