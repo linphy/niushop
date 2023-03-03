@@ -308,10 +308,7 @@ return [
                                     "iconColorDeg" => 0
                                 ],
                                 "link" => [
-                                    "name" => "GROUPBUY_PREFECTURE",
-                                    "title" => "团购专区",
-                                    "wap_url" => "/pages_promotion/groupbuy/list",
-                                    "parent" => "MARKETING_LINK"
+                                    "name" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -342,10 +339,7 @@ return [
                                     "iconColorDeg" => 0
                                 ],
                                 "link" => [
-                                    "name" => "PINTUAN_PREFECTURE",
-                                    "title" => "拼团专区",
-                                    "wap_url" => "/pages_promotion/pintuan/list",
-                                    "parent" => "MARKETING_LINK"
+                                    "name" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -376,10 +370,7 @@ return [
                                     "iconColorDeg" => 0
                                 ],
                                 "link" => [
-                                    "name" => "SECKILL_PREFECTURE",
-                                    "title" => "秒杀专区",
-                                    "wap_url" => "/pages_promotion/seckill/list",
-                                    "parent" => "MARKETING_LINK"
+                                    "name" => ""
                                 ],
                                 "label" => [
                                     "control" => true,
@@ -410,10 +401,7 @@ return [
                                     "iconColorDeg" => 0
                                 ],
                                 "link" => [
-                                    "name" => "INTEGRAL_STORE",
-                                    "title" => "积分商城",
-                                    "wap_url" => "/pages_promotion/point/list",
-                                    "parent" => "MARKETING_LINK"
+                                    "name" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -444,10 +432,7 @@ return [
                                     "iconColorDeg" => 0
                                 ],
                                 "link" => [
-                                    "name" => "THEMATIC_ACTIVITIES_LIST",
-                                    "title" => "专题活动列表",
-                                    "wap_url" => "/pages_promotion/topics/list",
-                                    "parent" => "MARKETING_LINK"
+                                    "name" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -478,10 +463,7 @@ return [
                                     "iconColorDeg" => 0
                                 ],
                                 "link" => [
-                                    "name" => "BARGAIN_PREFECTURE",
-                                    "title" => "砍价专区",
-                                    "wap_url" => "/pages_promotion/bargain/list",
-                                    "parent" => "MARKETING_LINK"
+                                    "name" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -810,266 +792,6 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 10,
-                            "both" => 12
-                        ]
-                    ],
-                    [
-                        "id" => "3moj09pl5c20",
-                        "style" => "style-1",
-                        "sources" => "initial",
-                        "count" => 6,
-                        "goodsId" => [],
-                        "ornament" => [
-                            "type" => "default",
-                            "color" => "#EDEDED"
-                        ],
-                        "nameLineMode" => "single",
-                        "template" => "row1-of1",
-                        "goodsMarginType" => "default",
-                        "goodsMarginNum" => 10,
-                        "btnStyle" => [
-                            "text" => "去秒杀",
-                            "textColor" => "#FFFFFF",
-                            "theme" => "default",
-                            "aroundRadius" => 25,
-                            "control" => true,
-                            "support" => true,
-                            "bgColorStart" => "#FF7B1D",
-                            "bgColorEnd" => "#FF1544"
-                        ],
-                        "imgAroundRadius" => 10,
-                        "saleStyle" => [
-                            "color" => "#999CA7",
-                            "control" => true,
-                            "support" => true
-                        ],
-                        "progressStyle" => [
-                            "control" => true,
-                            "support" => true,
-                            "currColor" => "#FDBE6C",
-                            "bgColor" => "#FCECD7"
-                        ],
-                        "titleStyle" => [
-                            "backgroundImage" => "addon/seckill/component/view/seckill/img/style_title_3_bg.png",
-                            "isShow" => true,
-                            "leftStyle" => "img",
-                            "leftImg" => "addon/seckill/component/view/seckill/img/style_title_3_name.png",
-                            "style" => "style-3",
-                            "styleName" => "风格3",
-                            "leftText" => "限时秒杀",
-                            "fontSize" => 16,
-                            "fontWeight" => true,
-                            "textColor" => "#FFFFFF",
-                            "bgColorStart" => "#FA6400",
-                            "bgColorEnd" => "#FF287A",
-                            "more" => "更多",
-                            "moreColor" => "#FFFFFF",
-                            "moreFontSize" => 12,
-                            "moreSupport" => true,
-                            "timeBgColor" => "",
-                            "timeImageUrl" => "",
-                            "colonColor" => "#FFFFFF",
-                            "numBgColorStart" => "#FFFFFF",
-                            "numBgColorEnd" => "#FFFFFF",
-                            "numTextColor" => "#FD3B54"
-                        ],
-                        "slideMode" => "scroll",
-                        "theme" => "default",
-                        "priceStyle" => [
-                            "mainColor" => "#FF1745",
-                            "mainControl" => true,
-                            "lineColor" => "#999CA7",
-                            "lineControl" => true,
-                            "lineSupport" => true
-                        ],
-                        "goodsNameStyle" => [
-                            "color" => "#303133",
-                            "control" => true,
-                            "fontWeight" => false
-                        ],
-                        'addonName' => 'seckill',
-                        "componentName" => "Seckill",
-                        "componentTitle" => "秒杀",
-                        "isDelete" => 0,
-                        "pageBgColor" => "",
-                        "componentBgColor" => "",
-                        "componentAngle" => "round",
-                        "topAroundRadius" => 10,
-                        "bottomAroundRadius" => 10,
-                        "elementBgColor" => "#FFFFFF",
-                        "elementAngle" => "round",
-                        "topElementAroundRadius" => 0,
-                        "bottomElementAroundRadius" => 0,
-                        "margin" => [
-                            "top" => 0,
-                            "bottom" => 12,
-                            "both" => 12
-                        ]
-                    ],
-                    [
-                        "id" => "z9bdab3tm34",
-                        "style" => "style-1",
-                        "sources" => "initial",
-                        "count" => 6,
-                        "goodsId" => [],
-                        "ornament" => [
-                            "type" => "default",
-                            "color" => "#EDEDED"
-                        ],
-                        "nameLineMode" => "single",
-                        "template" => "horizontal-slide",
-                        "goodsMarginType" => "default",
-                        "goodsMarginNum" => 10,
-                        "btnStyle" => [
-                            "text" => "去拼团",
-                            "textColor" => "#FFFFFF",
-                            "theme" => "default",
-                            "aroundRadius" => 25,
-                            "control" => false,
-                            "support" => false,
-                            "bgColorStart" => "#FF1544",
-                            "bgColorEnd" => "#FF1544"
-                        ],
-                        "imgAroundRadius" => 10,
-                        "saleStyle" => [
-                            "color" => "#FF1544",
-                            "control" => false,
-                            "support" => false
-                        ],
-                        "groupStyle" => [
-                            "color" => "#FFFFFF",
-                            "control" => true,
-                            "support" => true,
-                            "bgColorStart" => "#FA2379",
-                            "bgColorEnd" => "#FF4F61"
-                        ],
-                        "priceStyle" => [
-                            "mainColor" => "#FF1544",
-                            "mainControl" => true,
-                            "lineColor" => "#999CA7",
-                            "lineControl" => true,
-                            "lineSupport" => true
-                        ],
-                        "slideMode" => "scroll",
-                        "theme" => "default",
-                        "goodsNameStyle" => [
-                            "color" => "#303133",
-                            "control" => true,
-                            "fontWeight" => false
-                        ],
-                        "titleStyle" => [
-                            "bgColorStart" => "#6236FF",
-                            "bgColorEnd" => "#0091FF",
-                            "isShow" => true,
-                            "leftStyle" => "img",
-                            "leftImg" => "addon/pintuan/component/view/pintuan/img/horizontal_slide_name.png",
-                            "style" => "style-1",
-                            "styleName" => "风格1",
-                            "leftText" => "超值拼团",
-                            "fontSize" => 16,
-                            "fontWeight" => true,
-                            "textColor" => "#FFFFFF",
-                            "more" => "查看更多",
-                            "moreColor" => "#FFFFFF",
-                            "moreFontSize" => 12,
-                            "backgroundImage" => "addon/pintuan/component/view/pintuan/img/horizontal_slide_bg.png"
-                        ],
-                        'addonName' => 'pintuan',
-                        "componentName" => "Pintuan",
-                        "componentTitle" => "拼团",
-                        "isDelete" => 0,
-                        "pageBgColor" => "",
-                        "componentBgColor" => "#FFFFFF",
-                        "componentAngle" => "round",
-                        "topAroundRadius" => 0,
-                        "bottomAroundRadius" => 10,
-                        "elementBgColor" => "",
-                        "elementAngle" => "round",
-                        "topElementAroundRadius" => 0,
-                        "bottomElementAroundRadius" => 0,
-                        "margin" => [
-                            "top" => 0,
-                            "bottom" => 12,
-                            "both" => 12
-                        ]
-                    ],
-                    [
-                        "id" => "xwdnfttfj7k",
-                        "style" => "style-1",
-                        "sources" => "initial",
-                        "count" => 6,
-                        "goodsId" => [],
-                        "ornament" => [
-                            "type" => "default",
-                            "color" => "#EDEDED"
-                        ],
-                        "nameLineMode" => "single",
-                        "template" => "horizontal-slide",
-                        "goodsMarginType" => "default",
-                        "goodsMarginNum" => 10,
-                        "btnStyle" => [
-                            "text" => "立即抢购",
-                            "textColor" => "#FFFFFF",
-                            "theme" => "default",
-                            "aroundRadius" => 25,
-                            "control" => false,
-                            "support" => false,
-                            "bgColorStart" => "#FF7B1D",
-                            "bgColorEnd" => "#FF1544"
-                        ],
-                        "imgAroundRadius" => 5,
-                        "saleStyle" => [
-                            "color" => "#FFFFFF",
-                            "control" => true,
-                            "support" => true
-                        ],
-                        "slideMode" => "scroll",
-                        "theme" => "default",
-                        "goodsNameStyle" => [
-                            "color" => "#303133",
-                            "control" => true,
-                            "fontWeight" => false
-                        ],
-                        "priceStyle" => [
-                            "mainColor" => "#FF1745",
-                            "mainControl" => true,
-                            "lineColor" => "#999CA7",
-                            "lineControl" => true,
-                            "lineSupport" => true
-                        ],
-                        "titleStyle" => [
-                            "bgColorStart" => "#FF209D",
-                            "bgColorEnd" => "#B620E0",
-                            "isShow" => true,
-                            "leftStyle" => "img",
-                            "leftImg" => "",
-                            "style" => "style-1",
-                            "styleName" => "风格1",
-                            "leftText" => "疯狂砍价",
-                            "fontSize" => 16,
-                            "fontWeight" => true,
-                            "textColor" => "#FFFFFF",
-                            "more" => "更多",
-                            "moreColor" => "#FFFFFF",
-                            "moreFontSize" => 12,
-                            "backgroundImage" => ""
-                        ],
-                        'addonName' => 'bargain',
-                        "componentName" => "Bargain",
-                        "componentTitle" => "砍价",
-                        "isDelete" => 0,
-                        "pageBgColor" => "",
-                        "componentBgColor" => "#FFFFFF",
-                        "componentAngle" => "round",
-                        "topAroundRadius" => 0,
-                        "bottomAroundRadius" => 10,
-                        "elementBgColor" => "",
-                        "elementAngle" => "round",
-                        "topElementAroundRadius" => 0,
-                        "bottomElementAroundRadius" => 0,
-                        "margin" => [
-                            "top" => 0,
-                            "bottom" => 12,
                             "both" => 12
                         ]
                     ],
@@ -1780,270 +1502,6 @@ return [
                                     "color" => ""
                                 ],
                                 "id" => "hodjcxowf8g0"
-                            ],
-                            [
-                                "title" => "我的拼单",
-                                "imageUrl" => "public/uniapp/member/index/menu/default_store.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "MY_PINTUAN",
-                                    "title" => "我的拼团",
-                                    "wap_url" => "/pages_promotion/pintuan/my_spell",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "uoarcfsleio0"
-                            ],
-                            [
-                                "title" => "积分兑换",
-                                "imageUrl" => "public/uniapp/member/index/menu/default_point_recond.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "INTEGRAL_CONVERSION",
-                                    "title" => "积分兑换",
-                                    "wap_url" => "/pages_promotion/point/order_list",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "rnyw8xo5rdc0"
-                            ],
-                            [
-                                "title" => "分销中心",
-                                "imageUrl" => "public/uniapp/member/index/menu/default_fenxiao.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "DISTRIBUTION_CENTRE",
-                                    "title" => "分销中心",
-                                    "wap_url" => "/pages_promotion/fenxiao/index",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "yevac1grnlc0"
-                            ],
-                            [
-                                "title" => "我的砍价",
-                                "imageUrl" => "public/uniapp/member/index/menu/default_bargain.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "MY_BARGAIN",
-                                    "title" => "我的砍价",
-                                    "wap_url" => "/pages_promotion/bargain/my_bargain",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "13uz22sbag000"
-                            ],
-                            [
-                                "title" => "邀请有礼",
-                                "imageUrl" => "public/uniapp/member/index/menu/default_memberrecommend.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "MEMBER_RECOMMEND",
-                                    "title" => "邀请有礼",
-                                    "wap_url" => "/pages_tool/member/invite_friends",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "1h34nmfisge80"
-                            ],
-                            [
-                                "title" => "我的预售",
-                                "imageUrl" => "public/uniapp/member/index/menu/my_presale.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "PRESALE",
-                                    "title" => "我的预售",
-                                    "wap_url" => "/pages_promotion/presale/order_list",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "1a3cqyziwqdc0"
-                            ],
-                            [
-                                "title" => "我的礼品卡",
-                                "imageUrl" => "public/uniapp/member/index/menu/my_giftcard.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "GIFTCARD",
-                                    "title" => "我的礼品卡",
-                                    "wap_url" => "/pages_promotion/giftcard/member",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "1es42rgg2mhs0"
-                            ],
-                            [
-                                "title" => "好友瓜分券",
-                                "imageUrl" => "public/uniapp/member/index/menu/my_divideticket.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "DIVIDETICKET",
-                                    "title" => "我的好友瓜分券",
-                                    "wap_url" => "/pages_promotion/divideticket/my_guafen",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "14rxg7u5yu2k0"
-                            ],
-                            [
-                                "title" => "拼团返利",
-                                "imageUrl" => "public/uniapp/member/index/menu/my_pinfan.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "PINFAN",
-                                    "title" => "我的拼团返利",
-                                    "wap_url" => "/pages_promotion/pinfan/my_rebate",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "20eeayo377xc0"
-                            ],
-                            [
-                                "title" => "裂变红包",
-                                "imageUrl" => "public/uniapp/member/index/menu/my_hongbao.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "HONGBAO",
-                                    "title" => "我的裂变红包",
-                                    "wap_url" => "/pages_tool/hongbao/my_hongbao",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "nbthjkdt5c00"
-                            ],
-                            [
-                                "title" => "盲盒",
-                                "imageUrl" => "public/uniapp/member/index/menu/my_box.png",
-                                "iconType" => "img",
-                                "style" => "",
-                                "link" => [
-                                    "name" => "BLINDBOX",
-                                    "title" => "我的盲盒",
-                                    "wap_url" => "/pages_promotion/blindbox/my_box",
-                                    "parent" => "MARKETING_LINK"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "iconfont" => [
-                                    "value" => "",
-                                    "color" => ""
-                                ],
-                                "id" => "1i61b1fdeasg0"
                             ]
                         ],
                         "id" => "5ywbzsnigpw0",
