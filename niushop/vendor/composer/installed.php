@@ -145,6 +145,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'lizhichao/word' => array(
+            'pretty_version' => 'v2.1',
+            'version' => '2.1.0.0',
+            'reference' => 'f17172d45f505e7140da0bde2103defc13255326',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../lizhichao/word',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'maennchen/zipstream-php' => array(
             'pretty_version' => '2.2.1',
             'version' => '2.2.1.0',

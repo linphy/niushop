@@ -25,13 +25,29 @@ if (!file_exists('./install.lock')) {
 	header('location: ./install.php');
 	exit();
 }
+$query_string = $_SERVER['REQUEST_URI'];
+if(!empty($query_string))
+{
+    $file_ext = substr($query_string, -3);
+    $array = [ 'jpg', 'png', 'css', '.js', 'txt', 'doc', 'ocx', 'peg' ];
+    if (in_array($file_ext, $array)) {
+        exit();
+    }
+    $query_string_array = explode('/', $query_string);
+    $app_name = $query_string_array[1] ?? '';
+    switch ($app_name) {
+        case 'h5':
+            echo file_get_contents('./h5/index.html');exit();
+//        case 'web':
+//            echo file_get_contents('./web/index.html',);exit();
+        case 'mshop':
+            echo file_get_contents('./mshop/index.html',);exit();
+        case 'cashregister':
+            echo file_get_contents('./cashregister/index.html', );exit();
+    }
 
-
-$query_string = substr($_SERVER["QUERY_STRING"], -3);
-$array = [ 'jpg', 'png', 'css', '.js', 'txt', 'doc', 'ocx', 'peg' ];
-if (in_array($query_string, $array)) {
-	exit();
 }
+
 require __DIR__ . '/vendor/autoload.php';
 
 // 执行HTTP应用并响应

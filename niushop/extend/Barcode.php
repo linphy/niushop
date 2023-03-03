@@ -23,10 +23,10 @@ class Barcode{
     }
     
     //生成条形码
-    public function generateBarcode($path=''){
+    public function generateBarcode($path='', $scale = 2){
         try {
             $code = new \BCGcode128();
-            $code->setScale(2);
+            $code->setScale($scale);
             $code->setThickness(30); // 条形码的厚度
             $code->setForegroundColor($this->color_black); // 条形码颜色
             $code->setBackgroundColor($this->color_white); // 空白间隙颜色

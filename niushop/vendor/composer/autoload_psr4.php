@@ -53,6 +53,7 @@ return array(
     'MyCLabs\\Enum\\' => array($vendorDir . '/myclabs/php-enum/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
+    'Lizhichao\\Word\\' => array($vendorDir . '/lizhichao/word/Lib'),
     'Liz\\Flysystem\\QiNiu\\' => array($vendorDir . '/liz/flysystem-qiniu/src'),
     'League\\MimeTypeDetection\\' => array($vendorDir . '/league/mime-type-detection/src'),
     'League\\Flysystem\\Cached\\' => array($vendorDir . '/league/flysystem-cached-adapter/src'),

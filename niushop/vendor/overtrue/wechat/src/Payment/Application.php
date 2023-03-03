@@ -20,7 +20,7 @@ use EasyWeChat\OfficialAccount;
 
 /**
  * Class Application.
- *
+ * @property \EasyWeChat\Payment\Base\Client              $base
  * @property \EasyWeChat\Payment\Bill\Client              $bill
  * @property \EasyWeChat\Payment\Fundflow\Client          $fundflow
  * @property \EasyWeChat\Payment\Jssdk\Client             $jssdk

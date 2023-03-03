@@ -40,4 +40,19 @@ class Client extends BaseClient
 
         return $this->httpGet('sns/jscode2session', $params);
     }
+
+    /**
+     * 获取手机号
+     * @param  string  $code
+     * @return array|\EasyWeChat\Kernel\Support\Collection|object|\Psr\Http\Message\ResponseInterface|string
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function phoneNumber(string $code)
+    {
+        $params = [
+            'code' => $code
+        ];
+        return $this->httpPostJson('wxa/business/getuserphonenumber', $params);
+    }
 }

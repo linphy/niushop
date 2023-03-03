@@ -115,6 +115,7 @@ class ComposerStaticInit516d2ac39a060b91610bddcc729d2cf4
         ),
         'L' => 
         array (
+            'Lizhichao\\Word\\' => 15,
             'Liz\\Flysystem\\QiNiu\\' => 20,
             'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\Cached\\' => 24,
@@ -340,6 +341,10 @@ class ComposerStaticInit516d2ac39a060b91610bddcc729d2cf4
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Lizhichao\\Word\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lizhichao/word/Lib',
         ),
         'Liz\\Flysystem\\QiNiu\\' => 
         array (

@@ -81,6 +81,28 @@ return [
                         'sort' => 3,
                     ],
                     [
+                        'name' => 'SHOP_DIY_GOODS_DETAIL_CONFIG',
+                        'title' => '商品详情',
+                        'url' => 'shop/goods/goodsdetailconfig',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 4,
+                    ],
+                    [
+                        'name' => 'SHOP_DIY_PROMOTION_ZONE_CONFIG',
+                        'title' => '活动专区',
+                        'url' => 'shop/promotion/zoneconfig',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 5,
+                    ],
+                    [
                         'name' => 'SHOP_DIY_LISTS',
                         'title' => '微页面',
                         'url' => 'shop/diy/lists',
@@ -89,7 +111,7 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 4,
+                        'sort' => 6,
                         'child_list' => [
                             [
                                 'name' => 'SHOP_DIY_EDIT',
@@ -97,7 +119,30 @@ return [
                                 'url' => 'shop/diy/edit',
                                 'is_show' => 0,
                             ],
+                            [
+                                'name' => 'SHOP_DIY_DELETE',
+                                'title' => '删除自定义页面',
+                                'url' => 'shop/diy/deleteSiteDiyView',
+                                'is_show' => 0,
+                            ],
+                            [
+                                'name' => 'SHOP_DIY_SET_USE',
+                                'title' => '设为使用',
+                                'url' => 'shop/diy/setUse',
+                                'is_show' => 0,
+                            ],
                         ],
+                    ],
+                    [
+                        'name' => 'SHOP_DIY_ROUTE',
+                        'title' => '页面路径',
+                        'url' => 'shop/diy/route',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 7,
                     ],
                     [
                         'name' => 'SHOP_DIY_BOTTOM_NAV',
@@ -108,18 +153,18 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 5,
+                        'sort' => 8,
                     ],
                     [
                         'name' => 'SHOP_STYLE_CONFIG',
                         'title' => '商城风格',
                         'url' => 'shop/diy/style',
-                        'is_show' => 1,
+                        'is_show' => 0,
                         'is_control' => 1,
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 6,
+                        'sort' => 9,
                     ],
                     [
                         'name' => 'SHOP_STYLE_TEMPLATE',
@@ -130,7 +175,7 @@ return [
                         'is_icon' => 0,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 7,
+                        'sort' => 10,
                         'child_list' => [
                             [
                                 'name' => 'SHOP_STYLE_TEMPLATE_EDIT',
@@ -141,28 +186,6 @@ return [
                         ],
                     ],
                     [
-                        'name' => 'SHOP_DIY_DELETE',
-                        'title' => '删除微页面',
-                        'url' => 'shop/diy/deleteSiteDiyView',
-                        'is_show' => 0,
-                        'is_control' => 1,
-                        'is_icon' => 0,
-                        'picture' => '',
-                        'picture_selected' => '',
-                        'sort' => 8,
-                    ],
-                    [
-                        'name' => 'SHOP_DIY_HOME_PAGE',
-                        'title' => '设为主页',
-                        'url' => 'shop/diy/setHome',
-                        'is_show' => 0,
-                        'is_control' => 1,
-                        'is_icon' => 0,
-                        'picture' => '',
-                        'picture_selected' => '',
-                        'sort' => 9,
-                    ],
-                    [
                         'name' => 'MOBILE_ADV',
                         'title' => '广告管理',
                         'url' => 'shop/adv/index',
@@ -170,7 +193,7 @@ return [
                         'is_show' => 1,
                         'picture' => '',
                         'picture_selected' => '',
-                        'sort' => 10,
+                        'sort' => 11,
                         'child_list' => [
                             [
                                 'name' => 'MOBILE_ADV_POSITION',
@@ -257,7 +280,19 @@ return [
                         'is_show' => 1,
                         'is_control' => 1,
                         'is_icon' => 0,
-                        'sort' => 11,
+                        'sort' => 12,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'child_list' => []
+                    ],
+                    [
+                        'name' => 'GOODS_LIST_CONFIG',
+                        'title' => '商品列表',
+                        'url' => 'shop/goods/goodslistconfig',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'sort' => 13,
                         'picture' => '',
                         'picture_selected' => '',
                         'child_list' => []
@@ -537,7 +572,7 @@ return [
         'is_icon' => 0,
         'picture' => 'iconshangpin',
         'picture_selected' => '',
-        'sort' => 3,
+        'sort' => 4,
         'child_list' => [
             [
                 'name' => 'GOODS_MANAGE',
@@ -948,7 +983,7 @@ return [
         'is_icon' => 0,
         'picture' => 'icondingdan',
         'picture_selected' => '',
-        'sort' => 4,
+        'sort' => 5,
         'child_list' => [
             [
                 'name' => 'ORDER_MANAGE',
@@ -964,7 +999,7 @@ return [
                 'child_list' => [
                     [
                         'name' => 'EXPRESS_ORDER_LIST',
-                        'title' => '商品订单',
+                        'title' => '商城订单',
                         'url' => 'shop/order/lists',
                         'is_show' => 1,
                         'is_control' => 1,
@@ -1433,7 +1468,7 @@ return [
         'is_icon' => 0,
         'picture' => 'iconhuiyuan1',
         'picture_selected' => '',
-        'sort' => 5,
+        'sort' => 6,
         'child_list' => [
 
             [
@@ -1454,7 +1489,7 @@ return [
                         'is_icon' => 0,
                         'picture' => 'app/shop/view/public/img/icon_new/member_new.png',
                         'picture_selected' => 'app/shop/view/public/img/icon_new/member_select.png',
-                        'sort' => 1,
+                        'sort' => 0,
                     ],
                     [
                         'name' => 'MEMBER_LIST',
@@ -1820,7 +1855,7 @@ return [
         'is_icon' => 0,
         'picture' => 'iconyingxiaozhongxin',
         'picture_selected' => '',
-        'sort' => 6,
+        'sort' => 7,
         'child_list' => [
             [
                 'name' => 'PROMOTION_CENTER',
@@ -2067,6 +2102,17 @@ return [
                         'picture_selected' => 'app/shop/view/public/img/icon_new/stat_icon_select.png',
                         'sort' => 5,
                     ],
+                    [
+                        'name' => 'STAT_GOODS',
+                        'title' => '商品数据',
+                        'url' => 'shop/stat/goods',
+                        'is_show' => 1,
+                        'is_control' => 1,
+                        'is_icon' => 0,
+                        'picture' => '',
+                        'picture_selected' => '',
+                        'sort' => 6,
+                    ],
                 ]
             ],
         ]
@@ -2156,76 +2202,18 @@ return [
                                     ],
                                 ]
                             ],
-                        ]
-                    ],
-                    [
-                        'name' => 'STORE_LIST',
-                        'title' => '门店管理',
-                        'url' => 'shop/store/lists',
-                        'is_show' => 1,
-                        'is_control' => 1,
-                        'is_icon' => 0,
-                        'sort' => 2,
-                        'picture' => 'app/shop/view/public/img/icon_new/store_new.png',
-                        'picture_selected' => 'app/shop/view/public/img/icon_new/store_select.png',
-                        'child_list' => [
                             [
-                                'name' => 'STORE_ADD',
-                                'title' => '添加门店',
-                                'url' => 'shop/store/addstore',
-                                'is_show' => 0,
-                                'is_control' => 1,
-                                'is_icon' => 0,
+                                'name' => 'ADDRESS_MANAGE',
+                                'title' => '地区管理',
+                                'url' => 'shop/address/manage',
+                                'is_show' => 1,
                                 'picture' => '',
                                 'picture_selected' => '',
-                                'sort' => 1,
-                            ],
-                            [
-                                'name' => 'STORE_EDIT',
-                                'title' => '修改门店',
-                                'url' => 'shop/store/editstore',
-                                'is_show' => 0,
-                                'is_control' => 1,
-                                'is_icon' => 0,
-                                'picture' => '',
-                                'picture_selected' => '',
-                                'sort' => 1,
-                            ],
-                            [
-                                'name' => 'STORE_DELETE',
-                                'title' => '删除门店',
-                                'url' => 'shop/store/deletestore',
-                                'is_show' => 0,
-                                'is_control' => 1,
-                                'is_icon' => 0,
-                                'picture' => '',
-                                'picture_selected' => '',
-                                'sort' => 1,
-                            ],
-                            [
-                                'name' => 'STORE_FROZEN',
-                                'title' => '关闭门店',
-                                'url' => 'shop/store/frozenStore',
-                                'is_show' => 0,
-                                'is_control' => 1,
-                                'is_icon' => 0,
-                                'picture' => '',
-                                'picture_selected' => '',
-                                'sort' => 1,
-                            ],
-                            [
-                                'name' => 'STORE_MODIFY_PASSWORD',
-                                'title' => '重置密码',
-                                'url' => 'shop/store/modifyPassword',
-                                'is_show' => 0,
-                                'is_control' => 1,
-                                'is_icon' => 0,
-                                'picture' => '',
-                                'picture_selected' => '',
-                                'sort' => 1,
+                                'sort' => 5,
                             ],
                         ]
                     ],
+
                     [
                         'name' => 'USER_AUTH',
                         'title' => '员工管理',
@@ -2297,7 +2285,7 @@ return [
                             ],
                             [
                                 'name' => 'USER_GROUP',
-                                'title' => '角色管理',
+                                'title' => '员工角色',
                                 'url' => 'shop/user/group',
                                 'is_show' => 1,
                                 'is_control' => 1,
@@ -2605,7 +2593,7 @@ return [
                                     ],
                                     [
                                         'name' => 'EXPRESS_LOCAL_STATUS',
-                                        'title' => '外卖配送开关',
+                                        'title' => '同城配送开关',
                                         'url' => 'shop/delivery/modifylocalstatus',
                                         'is_show' => 1,
                                         'is_control' => 1,
@@ -2616,7 +2604,7 @@ return [
                                     ],
                                     [
                                         'name' => 'EXPRESS_LOCALDELIVERY_CONFIG',
-                                        'title' => '外卖配送',
+                                        'title' => '同城配送',
                                         'url' => 'shop/local/local',
                                         'is_show' => 0,
                                         'is_control' => 1,
@@ -2784,6 +2772,62 @@ return [
                                         'picture_selected' => '',
                                         'sort' => 2,
                                     ],
+
+                                    [
+                                        'name' => 'SHOP_STORE_LIST',
+                                        'title' => '自提点管理',
+                                        'url' => 'shop/store/lists',
+                                        'is_show' => 0,
+                                        'is_control' => 1,
+                                        'is_icon' => 0,
+                                        'picture' => '',
+                                        'picture_selected' => '',
+                                        'sort' => 2,
+                                    ],
+                                    [
+                                        'name' => 'SHOP_STORE_ADD',
+                                        'title' => '添加自提点',
+                                        'url' => 'shop/store/addstore',
+                                        'is_show' => 0,
+                                        'is_control' => 1,
+                                        'is_icon' => 0,
+                                        'picture' => '',
+                                        'picture_selected' => '',
+                                        'sort' => 1,
+                                    ],
+                                    [
+                                        'name' => 'SHOP_STORE_EDIT',
+                                        'title' => '修改自提点',
+                                        'url' => 'shop/store/editstore',
+                                        'is_show' => 0,
+                                        'is_control' => 1,
+                                        'is_icon' => 0,
+                                        'picture' => '',
+                                        'picture_selected' => '',
+                                        'sort' => 1,
+                                    ],
+                                    [
+                                        'name' => 'SHOP_STORE_DELETE',
+                                        'title' => '删除自提点',
+                                        'url' => 'shop/store/deletestore',
+                                        'is_show' => 0,
+                                        'is_control' => 1,
+                                        'is_icon' => 0,
+                                        'picture' => '',
+                                        'picture_selected' => '',
+                                        'sort' => 1,
+                                    ],
+                                    [
+                                        'name' => 'SHOP_STORE_FROZEN',
+                                        'title' => '关闭自提点',
+                                        'url' => 'shop/store/frozenStore',
+                                        'is_show' => 0,
+                                        'is_control' => 1,
+                                        'is_icon' => 0,
+                                        'picture' => '',
+                                        'picture_selected' => '',
+                                        'sort' => 1,
+                                    ],
                                 ]
                             ],
 
@@ -2904,7 +2948,7 @@ return [
                                 'name' => 'GOODS_AFTERSALE',
                                 'title' => '售后保障',
                                 'url' => 'shop/config/aftersale',
-                                'is_show' => 0,
+                                'is_show' => 1,
                                 'is_control' => 1,
                                 'is_icon' => 0,
                                 'sort' => 6,
@@ -2946,7 +2990,6 @@ return [
                                 'picture_selected' => '',
                                 'sort' => 10,
                             ],
-
                         ]
                     ],
                 ]

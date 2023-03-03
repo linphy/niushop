@@ -273,7 +273,12 @@ class Poster
      */
     private function getImageResources($filename)
     {
-        [ 0 => $width, 1 => $height, 'mime' => $mime ] = getimagesize($filename);
+        try {
+            [ 0 => $width, 1 => $height, 'mime' => $mime ] = getimagesize($filename);
+        } catch (\Exception $e) {
+            $filename = 'public/static/img/default_img/square.png'; // 默认图片
+            [ 0 => $width, 1 => $height, 'mime' => $mime ] = getimagesize($filename);
+        }
         $ext = explode('/', $mime)[ 1 ];
         switch ( $ext ) {
             case "png":

@@ -12,6 +12,8 @@ return [
     'app_namespace'    => '',
     // 是否启用路由
     'with_route'       => true,
+    //url模式
+    'url_model' => 3,
     // 是否启用事件
     'with_event'       => true,
     // 默认应用
