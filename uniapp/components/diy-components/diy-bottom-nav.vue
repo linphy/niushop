@@ -5,7 +5,7 @@
 			<view class="item" v-for="(item, index) in tabBarList.list" :key="index" @click="redirectTo(item.link)">
 				<view class="bd">
 					<block v-if="item.link.wap_url == '/pages/goods/cart'">
-						<view class="icon" v-if="tabBarList.type == 1 || tabBarList.type == 2" :animation="cartAnimation">
+						<view class="icon" v-if="tabBarList.type == 1 || tabBarList.type == 2" :animation="cartAnimation" id="tabbarCart">
 							<block v-if="verify(item.link)">
 								<image v-if="item.selected_icon_type == 'img'" :src="$util.img(item.selectedIconPath)" />
 								<diy-icon
@@ -89,6 +89,20 @@ export default {
 		let currentPage = getCurrentPages()[getCurrentPages().length - 1];
 		this.currentRoute = currentPage.route;
 		this.$store.dispatch('getCartNumber');
+		
+		this.$nextTick(() => {
+			if (!this.$store.state.cartPosition) {
+				let query = uni.createSelectorQuery().in(this);
+				setTimeout(() => {
+					query
+						.select('#tabbarCart')
+						.boundingClientRect(data => {
+							if (data) this.$store.commit('setCartPosition', data);
+						})
+						.exec();
+				}, 2000);				
+			}
+		})			
 	},
 	computed: {
 		cartNumber() {

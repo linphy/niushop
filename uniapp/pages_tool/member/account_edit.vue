@@ -48,16 +48,16 @@ export default {
 			flag: false,
 			transferType: [],
 			accountInfo: null,
-			back: ''
+			back: '',
+			type: 'member'
 		};
 	},
 	onLoad(option) {
 		if (option.id) this.formData.id = option.id;
 		if (option.back) this.back = option.back;
+		if (option.type) this.type = option.type; // 区分是从会员提现还是从分销提现
 	},
 	onShow() {
-		
-		
 		if (this.formData.id) {
 			this.getAccountDetail(this.formData.id);
 		} else {
@@ -103,10 +103,12 @@ export default {
 		 */
 		getTransferType() {
 			this.payList = [];
+			let url = this.type == "member" ? "/api/memberwithdraw/transferType" : "/fenxiao/api/withdraw/transferType";
 			this.$api.sendRequest({
-				url: '/api/memberwithdraw/transferType',
+				url: url,
 				success: res => {
 					if (res.code >= 0 && res.data) {
+						delete res.data.balance;
 						this.transferType = res.data;
 						for (let v in this.transferType) {
 							this.payList.push(this.transferType[v]);
@@ -302,9 +304,11 @@ export default {
 	margin-top: 60rpx;
 	height: 80rpx;
 	line-height: 80rpx !important;
+	border-radius: 80rpx;
 	font-weight: 500;
 	width: calc(100% - 60rpx);
 	margin-left: 30rpx;
+	font-size: 32rpx;
 }
 
 .btn {

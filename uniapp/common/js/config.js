@@ -18,6 +18,9 @@ var config = {
 	//本地端主动给服务器ping的时间, 0 则不开启 , 单位秒
 	pingInterval: 1500,
 
+	// 版本号
+	version: '5.1.7'
+
 };
 
 export default config;

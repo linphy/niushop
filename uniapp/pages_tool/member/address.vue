@@ -7,75 +7,82 @@
 					<template v-if="addressList.length !== 0">
 						<view class="address-item" v-for="(item, index) in addressList" :key="index">
 							<view class="address-item-top" v-if="localType == 2 && item.local_data">
-								<view class="address-top-info">
-									<view class="address-name">{{ item.name }}</view>
-									<view class="address-tel">{{ item.mobile }}</view>
-									<view class="address-status" v-if="localType == 2 && item.local_data">{{ item.local_data }}</view>
+								<view class="address-item-left">
+									<view class="address-top-info">
+										<view class="address-name">{{ item.name }}</view>
+										<view class="address-tel">{{ item.mobile }}</view>
+										<view class="address-status" v-if="localType == 2 && item.local_data">{{ item.local_data }}</view>
+									</view>
+									<view class="address-info">{{ item.full_address }}{{ item.address }}</view>
 								</view>
-								<view class="address-info">{{ item.full_address }}{{ item.address }}</view>
+								<view class="address-item-edit" @click="addAddress('edit', item.id)">
+									{{ $lang('modify') }}
+								</view>
 							</view>
 
 							<view class="address-item-top" v-else @click="setDefault(item.id)">
-								<view class="address-top-info">
-									<view class="address-name">{{ item.name }}</view>
-									<view class="address-tel">{{ item.mobile }}</view>
+								<view class="address-item-left">
+									<view class="address-top-info">
+										<view class="address-name">{{ item.name }}</view>
+										<view class="address-tel">{{ item.mobile }}</view>
+									</view>
+									<view class="address-info">{{ item.full_address }}{{ item.address }}</view>
 								</view>
-								<view class="address-info">{{ item.full_address }}{{ item.address }}</view>
+								<view class="address-item-edit" @click.stop="addAddress('edit', item.id)">
+									{{ $lang('modify') }}
+								</view>
 							</view> 
-
+								
 							<view class="address-item-bottom">
-								<view class="address-default" @click="setDefault(item.id)">
-									<view class="iconfont" :class="item.is_default == 1 ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></view>
-									<text class="default" v-if="localType == 2 && item.local_data" :class="{ 'color-base-text': item.is_default == 1 }">默认地址</text>
-									<text class="default" v-else :class="{ 'color-base-text': item.is_default == 1 }">默认地址</text>
+								<view class="address-default" @click="setDefault(item.id,item.is_default)">
+									<text class="default" v-if="localType == 2 && item.local_data" >设为默认地址</text>
+									<text class="default" v-else >设为默认地址</text>
+									<switch v-if="item.is_default == 1" checked disabled style="transform:scale(0.7)" :color="themeStyle.main_color"/>
+									<switch v-else style="transform:scale(0.7)" :color="themeStyle.main_color"/>
 								</view>
 								<view class="address-btn">
-									<text class="edit" @click="addAddress('edit', item.id)">
-										<text class="iconfont icon-bianji"></text>
-										{{ $lang('modify') }}
-									</text>
+									 
 									<text class="delete" v-if="item.is_default != 1" @click="deleteAddress(item.id, item.is_default)">
 										<text class="iconfont icon-icon7"></text>
-										{{ $lang('del') }}
 									</text>
 								</view>
 							</view>
 						</view>
-						<view class="btn-add">
-							<!-- #ifdef MP-WEIXIN -->
-							<view class="wx-add" @click="getChooseAddress()" v-if="local != 1">
-								<text class="">{{ $lang('getAddress') }}</text>
-							</view>
-							<!-- #endif -->
-							<!-- #ifdef H5 -->
-							<button type="primary" class="add-address" @click="getChooseAddress()" v-if="$util.isWeiXin() && local != 1">{{ $lang('getAddress') }}</button>
-							<!-- #endif -->
-							<button type="primary" class="add-address" @click="addAddress('add')">
-								<text class="iconfont icon-add1"></text>
-								{{ $lang('newAddAddress') }}
-							</button>
-						</view>
+						
 					</template>
-					<view v-if="addressList.length == 0 && showEmpty" class="empty-box cart-empty"><ns-empty text="暂无可用地址" :isIndex="isIndex"></ns-empty></view>
-					<view class="button-wrap" v-if="addressList.length == 0 && showEmpty">
+					
+					<view v-if="addressList.length == 0 && showEmpty" class="empty-box">
+						<image :src="$util.img('public/uniapp/member/address/empty.png')" mode="widthFix"></image>
+						<view class="tips">暂无收货地址，请添加</view>
+						
+						<button type="primary" class="add-address" @click="addAddress('add')">{{ $lang('newAddAddress') }}</button>
+						
 						<!-- #ifdef H5 -->
-						<button type="primary" class="add-address" @click="getChooseAddress()" v-if="$util.isWeiXin() && local != 1">{{ $lang('getAddress') }}</button>
+						<button type="primary" class="get-address" @click="getChooseAddress()" v-if="$util.isWeiXin() && local != 1">{{ $lang('getAddress') }}</button>
 						<!-- #endif -->
 						<!-- #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO -->
-						<view class="wx-add" @click="getChooseAddress()" v-if="local != 1">
-							<text class="">{{ $lang('getAddress') }}</text>
-						</view>
-						<!-- <button type="primary" class="add-wx color-base-text" @click="getChooseAddress()">{{ $lang('getAddress') }}</button> -->
+						<button type="primary" class="get-address" @click="getChooseAddress()" v-if="local != 1">{{ $lang('getAddress') }}</button>
 						<!-- #endif -->
-
-						<button type="primary" class="add-address" @click="addAddress('add')">
-							<text class="iconfont icon-add1"></text>
-							{{ $lang('newAddAddress') }}
-						</button>
 					</view>
 				</view>
 			</block>
 		</mescroll-uni>
+		
+		<view class="btn-add"  v-if="addressList.length !== 0">
+			<!-- #ifdef MP-WEIXIN -->
+			<view class="wx-add" @click="getChooseAddress()" v-if="local != 1">
+				<text class="">{{ $lang('getAddress') }}</text>
+			</view>
+			<!-- #endif -->
+			<!-- #ifdef H5 -->
+			<button type="primary" class="add-address" @click="getChooseAddress()" v-if="$util.isWeiXin() && local != 1">{{ $lang('getAddress') }}</button>
+			<!-- #endif -->
+			<button type="primary" class="add-address" @click="addAddress('add')">
+				<text class="iconfont icon-add1"></text>
+				{{ $lang('newAddAddress') }}
+			</button>
+		</view>
+		
 		<ns-login ref="login"></ns-login>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
@@ -125,13 +132,19 @@ export default {
 	},
 	methods: {
 		getListData(mescroll) {
+			let storeId = 0;
+			let delivery = uni.getStorageSync('delivery');
+			if (delivery && delivery.delivery_type == 'local') {
+				storeId = delivery.store_id || 0;
+			}
 			this.showEmpty = false;
 			this.$api.sendRequest({
 				url: '/api/memberaddress/page',
 				data: {
 					page: mescroll.num,
 					page_size: mescroll.size,
-					type: this.localType
+					type: this.localType,
+					store_id: storeId
 				},
 				success: res => {
 					this.showEmpty = true;
@@ -148,6 +161,7 @@ export default {
 					//设置列表数据
 					if (mescroll.num == 1) this.addressList = []; //如果是第一页需手动制空列表
 					this.addressList = this.addressList.concat(newArr); //追加新数据
+					this.$forceUpdate();
 					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 				},
 				fail: res => {
@@ -205,7 +219,8 @@ export default {
 				}
 			});
 		},
-		setDefault(id) {
+		setDefault(id,is_default) {
+			if(is_default == 1) return;
 			this.$api.sendRequest({
 				url: '/api/memberaddress/setdefault',
 				data: {
@@ -217,6 +232,8 @@ export default {
 						if (this.back != '') {
 							this.$util.redirectTo(this.back, {}, 'redirectTo');
 						} else {
+							if (this.$refs.loadingCover) this.$refs.loadingCover.show();
+							this.addressList = [];
 							this.$refs.mescroll.refresh();
 							this.$util.showToast({
 								title: '修改默认地址成功'
@@ -335,11 +352,6 @@ export default {
 				this.$refs.mescroll.refresh();
 			}
 		}
-	},
-	computed: {
-		storeToken() {
-			return this.$store.state.token;
-		}
 	}
 };
 </script>
@@ -375,28 +387,42 @@ export default {
 		display: flex;
 		flex-direction: column;
 		background-color: #ffffff;
-		padding: 30rpx;
+		padding: 24rpx 30rpx;
 		box-sizing: border-box;
 		border-radius: 0;
 
 		.address-item-top {
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 			border-bottom: 1rpx solid $color-line;
-
+			justify-content: space-between;
+			align-items: center;
+			.address-item-left{
+				display: flex;
+				flex-direction: column;
+				width: calc(100% - 100rpx);
+			}
+			.address-item-edit{
+				color: #999;
+				font-size: 24rpx;
+				width: 100rpx;
+				text-align: right;
+			}
 			.address-top-info {
 				display: flex;
 				justify-content: flex-start;
 				position: relative;
 				.address-name {
-					color: #000000;
-					font-size: $font-size-toolbar;
+					color: #333333;
+					font-size: 30rpx;
+					font-weight: bold;
 				}
 
 				.address-tel {
-					color: #000000;
-					font-size: $font-size-toolbar;
+					color: #333333;
+					font-size: 30rpx;
 					margin-left: 26rpx;
+					font-weight: bold;
 				}
 				.address-status {
 					color: #f00;
@@ -407,8 +433,8 @@ export default {
 			}
 
 			.address-info {
-				font-size: $font-size-base;
-				color: $color-tip;
+				font-size: 26rpx;
+				color: #888888;
 				margin-top: 10rpx;
 				margin-bottom: 28rpx;
 			}
@@ -417,16 +443,16 @@ export default {
 		.address-item-bottom {
 			display: flex;
 			justify-content: space-between;
-			padding-top: 30rpx;
+			padding-top: 24rpx;
 
 			.address-default {
 				display: flex;
 				align-items: center;
-				font-size: $font-size-base;
+				font-size: 24rpx;
 				line-height: 1;
-
+				color: #666666;
 				.default {
-					padding-left: 10rpx;
+					
 				}
 
 				.iconfont {
@@ -450,82 +476,110 @@ export default {
 
 				.delete {
 					padding-left: 40rpx;
-
+					background: #F1F1F1;
+					justify-content: center;
+					align-items: center;
+					border-radius: 50%;
+					padding: 10rpx;
+					text-align: center;
+					width: 48rpx;
+					height: 48rpx;
+					box-sizing: border-box;
 					text {
-						margin-right: 10rpx;
 						font-size: 26rpx;
 					}
 				}
 			}
 		}
 	}
-
-	.btn-add {
-		margin-top: 60rpx;
-		bottom: 0;
-		width: 100%;
-		background: #fff;
-		position: fixed;
-		padding: 0 30rpx;
-		box-sizing: border-box;
-		padding-bottom: constant(safe-area-inset-bottom);
-		padding-bottom: env(safe-area-inset-bottom);
-		.add-address {
-			height: 80rpx;
-			line-height: 80rpx;
-			border-radius: $border-radius;
-			margin: 30rpx 0 30rpx;
-
-			text {
-				margin-right: 10rpx;
-				font-size: $font-size-base;
-			}
-		}
-	}
-
-	.wx-add {
-		margin-top: 30rpx;
-		margin-bottom: 30rpx;
-		text-align: center;
-		height: 80rpx;
-		line-height: 80rpx;
-		border: 2rpx solid #cccccc;
-		border-radius: $border-radius;
-	}
 }
-
-.button-wrap {
-	height: 250rpx;
-	margin: auto;
-	margin-top: 30rpx;
-	width: calc(100% - 60rpx);
-
-	z-index: 9;
-	text-align: center;
-	overflow: hidden;
-
+.btn-add {
+	margin-top: 60rpx;
+	bottom: 0;
+	width: 100%;
+	background: #fff;
+	position: fixed;
+	padding: 0 30rpx;
+	box-sizing: border-box;
+	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
+	z-index: 10;
 	.add-address {
 		height: 80rpx;
 		line-height: 80rpx;
-		border-radius: $border-radius;
+		border-radius: 80rpx;
 		margin: 30rpx 0 30rpx;
-
+		font-size: $font-size-toolbar;
 		text {
 			margin-right: 10rpx;
 			font-size: $font-size-base;
 		}
 	}
+}
 
-	.add-wx {
-		background-color: none;
-		margin-top: 30rpx;
-		margin-bottom: 30rpx;
-		width: 100%;
-		text-align: center;
-		height: 92rpx;
-		line-height: 92rpx;
-		border: 2rpx solid #cccccc;
-		border-radius: 92rpx;
+.wx-add {
+	margin-top: 30rpx;
+	margin-bottom: 30rpx;
+	text-align: center;
+	border-radius: 80rpx;
+	height: 80rpx;
+	line-height: 80rpx;
+	background-color: var(--main-color);
+	border: 2rpx solid var(--main-color);
+	color: #FFFFFF;
+	font-size: $font-size-toolbar;
+}
+
+.empty-box {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	
+	image {
+		width: 50%;
+	}
+	
+	.tips {
+		color: #999999;
+		font-size: 26rpx;
+	}
+	
+	.get-address,.add-address {
+		width: 50%;
+		height: 78rpx;
+		line-height: 78rpx;
+		border-radius: 78rpx;
+		margin-top: 50rpx;
+		
+		font-size: $font-size-toolbar;
+	}
+	.get-address {
+		width: 50%;
+		border: 2rpx solid $base-color;
+		margin-top: 20rpx;
+		box-sizing: border-box;
 	}
 }
+
+.mescroll-downwarp + .empty-box {
+	height: calc(100vh - 260rpx);
+}
+</style>
+<style>
+	.address-item >>> .uni-switch-wrapper .uni-switch-input{
+		height: 48rpx!important;
+		width: 88rpx!important;
+	}
+	.address-item >>> .uni-switch-wrapper .uni-switch-input:after{
+		height: 44rpx!important;
+		width: 44rpx!important;
+	}
+	.address-item >>> .uni-switch-wrapper .uni-switch-input:before{
+		background-color: #EDEDED!important;
+		height: 44rpx!important;
+		width: 90rpx!important;
+	}
 </style>

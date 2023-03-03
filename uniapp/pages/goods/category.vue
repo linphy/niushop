@@ -56,6 +56,10 @@ export default {
 		toLogin(){
 			this.$refs.login.open('/pages/goods/category')
 		}
+	},
+	onPullDownRefresh(){
+		uni.hideTabBar();
+		this.getDiyInfo();
 	}
 };
 </script>
@@ -79,20 +83,14 @@ export default {
 	border-radius: 0px 0px 14px 14px !important;
 	overflow: hidden;
 }
-/deep/ .category-template-4 .template-four .uni-popup{
-	top: 100rpx;
-}
-/* #ifndef H5 */
-/deep/ .category-template-4 .template-four.wx .uni-popup{
-	top: 165rpx;
-}
-/* #endif */
 /deep/ .category-template-4 .content-wrap .categoty-goods-wrap .goods-list{
 	margin-top: 30rpx;
 }
 /deep/ .category-template-4 .content-wrap .goods-list .goods-item .footer-wrap .right-wrap .num-action{
-	width: 44rpx;
-	height: 44rpx;
+	width: 46rpx;
+	height: 46rpx;
 }
-		
+/deep/ .uni-page-refresh-inner .uni-page-refresh__path{
+	stroke: rgb(1,1,1) !important;
+}
 </style>

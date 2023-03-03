@@ -13,7 +13,7 @@
 						</template>
 						<text v-if="orderNum.waitpay > 0" class="order-num color-base-bg price-font">{{ orderNum.waitpay > 99 ? '99+' : orderNum.waitpay }}</text>
 					</view>
-					<view class="title">待付款</view>
+					<view class="title">{{ value.icon.waitPay.title }}</view>
 				</view>
 				<view class="item-wrap" @click="redirect('/pages/order/list?status=waitsend')">
 					<view class="icon-block">
@@ -26,7 +26,7 @@
 						</template>
 						<text v-if="orderNum.waitsend > 0" class="order-num color-base-bg price-font">{{ orderNum.waitsend > 99 ? '99+' : orderNum.waitsend }}</text>
 					</view>
-					<view class="title">待发货</view>
+					<view class="title">{{ value.icon.waitSend.title }}</view>
 				</view>
 				<view class="item-wrap" @click="redirect('/pages/order/list?status=waitconfirm')">
 					<view class="icon-block">
@@ -43,20 +43,20 @@
 						</template>
 						<text v-if="orderNum.waitconfirm > 0" class="order-num color-base-bg price-font">{{ orderNum.waitconfirm > 99 ? '99+' : orderNum.waitconfirm }}</text>
 					</view>
-					<view class="title">待收货</view>
+					<view class="title">{{ value.icon.waitConfirm.title }}</view>
 				</view>
-				<view class="item-wrap" @click="redirect('/pages/order/list?status=waitrate')">
+				<view class="item-wrap" @click="redirect('/pages/order/list?status=wait_use')">
 					<view class="icon-block">
 						<template v-if="value.style == 3">
-							<image :src="$util.img('public/uniapp/member/order/wait_rate.png')" mode="widthFix"></image>
+							<image :src="$util.img('public/uniapp/member/order/wait_use.png')" mode="widthFix"></image>
 							<view class="icon-shade" :style="'-webkit-mask-image: url(' + $util.img('public/uniapp/member/order/wait_rate_shade.png') + ')'"></view>
 						</template>
 						<template v-else>
-							<diy-icon :icon="value.icon.waitRate.icon" v-if="value.icon.waitRate" :value="value.icon.waitRate.style ? value.icon.waitRate.style : null"></diy-icon>
+							<diy-icon :icon="value.icon.waitUse.icon" v-if="value.icon.waitUse" :value="value.icon.waitUse.style ? value.icon.waitUse.style : null"></diy-icon>
 						</template>
-						<text v-if="orderNum.waitrate > 0" class="order-num color-base-bg price-font">{{ orderNum.waitrate > 99 ? '99+' : orderNum.waitrate }}</text>
+						<text v-if="orderNum.wait_use > 0" class="order-num color-base-bg price-font">{{ orderNum.wait_use > 99 ? '99+' : orderNum.wait_use }}</text>
 					</view>
-					<view class="title">待评价</view>
+					<view class="title">{{ value.icon.waitUse.title }}</view>
 				</view>
 				<view class="item-wrap" @click="redirect('/pages_tool/order/activist')">
 					<view class="icon-block">
@@ -73,7 +73,7 @@
 						</template>
 						<text v-if="orderNum.refunding > 0" class="order-num color-base-bg price-font">{{ orderNum.refunding > 99 ? '99+' : orderNum.refunding }}</text>
 					</view>
-					<view class="title">售后</view>
+					<view class="title">{{ value.icon.refunding.title }}</view>
 				</view>
 			</view>
 		</view>
@@ -99,17 +99,22 @@ export default {
 				waitpay: 0,
 				waitsend: 0,
 				waitconfirm: 0,
-				waitrate: 0,
-				refunding: 0
+				refunding: 0,
+				wait_use: 0,
+				waitrate: 0
 			}
 		};
 	},
 	created() {
-		this.getOrderNum();
+		this.init();
 	},
 	watch: {
 		token(nVal, oVal) {
-			this.getOrderNum();
+			this.init();
+		},
+		// 组件刷新监听
+		componentRefresh: function(nval) {
+			this.init();
 		}
 	},
 	computed: {
@@ -126,6 +131,20 @@ export default {
 		}
 	},
 	methods: {
+		init() {
+			if (uni.getStorageSync('token')) {
+				this.getOrderNum();
+			} else {
+				this.orderNum = {
+					waitpay: 0,
+					waitsend: 0,
+					waitconfirm: 0,
+					refunding: 0,
+					wait_use: 0,
+					waitrate: 0
+				};
+			}
+		},
 		/**
 		 * 获取订单数量
 		 */
@@ -133,11 +152,20 @@ export default {
 			this.$api.sendRequest({
 				url: '/api/order/num',
 				data: {
-					order_status: 'waitpay,waitsend,waitconfirm,waitrate,refunding'
+					order_status: 'waitpay,waitsend,waitconfirm,refunding,wait_use,waitrate'
 				},
 				success: res => {
 					if (res.code == 0) {
 						this.orderNum = res.data;
+					} else {
+						this.orderNum = {
+							waitpay: 0,
+							waitsend: 0,
+							waitconfirm: 0,
+							refunding: 0,
+							wait_use: 0,
+							waitrate: 0
+						};
 					}
 				}
 			});

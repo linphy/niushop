@@ -1,5 +1,5 @@
 <template>
-	<view v-if="showPopup" class="uni-popup">
+	<view v-if="showPopup" class="uni-popup" :style="{'top': top}">
 		<view :class="[ani, animation ? 'ani' : '', !custom ? 'uni-custom' : '']" class="uni-popup__mask" @click="close(true)" />
 		<view
 			:class="[type, ani, animation ? 'ani' : '', !custom ? 'uni-custom' : '']"
@@ -42,6 +42,10 @@ export default {
 		show: {
 			type: Boolean,
 			default: true
+		},
+		top: {
+			type: String,
+			default: '0'
 		}
 	},
 	data() {

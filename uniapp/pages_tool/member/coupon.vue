@@ -50,7 +50,7 @@
 							<view class="use_time" v-else>有效期：长期有效</view>
 						</view>
 						<view class="item-btn">
-							<view class="tag" v-if="item.state == 1" @click="toGoodsList(item)">去使用</view>
+							<view class="tag" v-if="item.state == 1">去使用</view>
 							<view class="tag disabled" v-if="item.state == 2">已使用</view>
 							<view class="tag disabled" v-if="item.state == 3">已过期</view>
 						</view>
@@ -180,11 +180,6 @@ export default {
 				this.token = nVal;
 				this.$refs.mescroll.refresh();
 			}
-		}
-	},
-	computed: {
-		storeToken() {
-			return this.$store.state.token;
 		}
 	}
 };

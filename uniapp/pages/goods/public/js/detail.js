@@ -22,8 +22,9 @@ export default {
 				}
 			}],
 
-			levelInfo: {},
+			membercard: null, // 会员卡信息
 			hackReset: true,
+			cardOff: false
 		}
 	},
 	computed: {
@@ -42,11 +43,23 @@ export default {
 				flag = true;
 			}
 			return flag;
+		},
+		memberCardDiscount() {
+			let discount = 0,
+				showPrice = this.goodsSkuDetail.member_price > 0 && Number(this.goodsSkuDetail.member_price) < Number(
+					this.goodsSkuDetail
+					.discount_price) ? this.goodsSkuDetail.member_price : this.goodsSkuDetail.discount_price;
+			if (this.membercard && this.membercard.member_price > 0 && (parseFloat(showPrice) > parseFloat(this
+					.membercard.member_price))) {
+				discount = parseFloat(showPrice) - parseFloat(this.membercard.member_price);
+			}
+			return discount.toFixed(2);
 		}
 	},
 	onLoad(data) {
 		this.skuId = data.sku_id || 0;
 		this.goodsId = data.goods_id || 0;
+
 		// 小程序扫码进入
 		if (data.scene) {
 			var sceneParams = decodeURIComponent(data.scene);
@@ -57,6 +70,7 @@ export default {
 				});
 			}
 		}
+
 		// #ifdef MP-WEIXIN
 		this.getShareImg();
 		// #endif
@@ -64,17 +78,6 @@ export default {
 	async onShow() {
 		//同步获取商品详情
 		await this.getGoodsSkuDetail();
-
-		// 开启预览，禁止任何操作和跳转
-		if (this.preview == 0) {
-			this.getCoupon();
-
-			this.getManjian();
-
-			//组合套餐
-			this.getBundling();
-
-		}
 	},
 	onHide() {
 		this.couponBtnSwitch = false;
@@ -107,8 +110,10 @@ export default {
 				}
 
 				this.goodsSkuDetail = data.goods_sku_detail;
+
 				if (!this.skuId) this.skuId = this.goodsSkuDetail.sku_id;
 				if (!this.goodsId) this.goodsId = this.goodsSkuDetail.goods_id;
+
 				// 分享参数、链接
 				this.shareQuery = 'goods_id=' + this.goodsSkuDetail.goods_id;
 				this.shareUrl = this.goodsRoute + '?' + this.shareQuery;
@@ -160,6 +165,33 @@ export default {
 					}
 				}
 
+				// 满减
+				if (this.goodsSkuDetail.manjian) {
+					this.getManjian(this.goodsSkuDetail.manjian);
+				}
+
+				// 会员卡
+				if (this.goodsSkuDetail.membercard) {
+					this.membercard = this.goodsSkuDetail.membercard;
+				}
+
+				// 优惠券
+				if (this.goodsSkuDetail.coupon_list) {
+					this.couponList = this.goodsSkuDetail.coupon_list;
+					this.couponList.forEach(v => {
+						if (v.count == v.lead_count) v.useState = 2;
+						else if (v.max_fetch != 0 && v.member_coupon_num && v
+							.member_coupon_num >= v.max_fetch) v.useState = 1;
+						else v.useState = 0;
+					});
+					this.couponList = this.couponList.sort(this.sortBy('useState'))
+				}
+
+				// 组合套餐
+				if (this.goodsSkuDetail.bundling_list) {
+					this.handleBundlingData(this.goodsSkuDetail.bundling_list);
+				}
+
 				if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 
 			} else {
@@ -193,35 +225,9 @@ export default {
 				this.$refs.login.open(this.shareUrl);
 				return;
 			}
-			this.$refs.goodsSku.show("buy_now", () => {
-				this.getCartCount();
-			});
+			this.$refs.goodsSku.show("buy_now", () => {});
 		},
 
-		//-------------------------------------优惠券-------------------------------------
-
-		getCoupon() {
-			this.$api.sendRequest({
-				url: "/coupon/api/coupon/goodsCoupon",
-				data: {
-					goods_id: this.goodsSkuDetail.goods_id
-				},
-				success: res => {
-					let data = res.data;
-					if (data) {
-						this.couponList = data;
-
-						this.couponList.forEach(v => {
-							if (v.count == v.lead_count) v.useState = 2;
-							else if (v.max_fetch != 0 && v.member_coupon_num && v
-								.member_coupon_num >= v.max_fetch) v.useState = 1;
-							else v.useState = 0;
-						});
-						this.couponList = this.couponList.sort(this.sortBy('useState'))
-					}
-				}
-			});
-		},
 		sortBy(field) {
 			//根据传过来的字段进行排序,y-x 得分从高到低，x-y 从低到高
 			return (y, x) => {
@@ -296,93 +302,71 @@ export default {
 				this.couponBtnSwitch = false;
 			}
 		},
-		//更新优惠券信息
-		refreshCoupon(couponTypeId) {
-			for (let i in this.couponList) {
-				var info = this.couponList[i]
-				if (couponTypeId == info.coupon_type_id) {
-					this.$set(this.couponList[i], 'is_lingqu', 1);
-				}
-			}
-
-			this.$forceUpdate()
-		},
 
 		//-------------------------------------满减-------------------------------------
 
 		//获取满减信息
-		getManjian() {
-			this.$api.sendRequest({
-				url: "/manjian/api/manjian/info",
-				data: {
-					goods_id: this.goodsSkuDetail.goods_id
-				},
-				success: res => {
-					let data = res.data;
-					if (data) {
-						this.manjian = data;
-						let limit = data.type == 0 ? '元' : '件';
-						Object.keys(data.rule_json).forEach((key) => {
-							var item = data.rule_json[key];
-							if (item.coupon_data) {
-								for (var i = 0; i < item.coupon_data.length; i++) {
-									item.coupon_data[i].coupon_num = item.coupon_num[i]
-								}
-							}
-							item.limit = data.type == 0 ? parseFloat(item.limit).toFixed(2) :
-								parseInt(item.limit);
-							// 满减
-							if (item.discount_money != undefined) {
-								if (this.manjian.manjian == undefined) {
-									this.manjian.manjian = '满' + item.limit + limit + '减' + item
-										.discount_money + '元';
-								} else {
-									this.manjian.manjian += '；满' + item.limit + limit + '减' + item
-										.discount_money + '元';
-								}
-							}
-							// 满送
-							if (item.point != undefined || item.coupon != undefined) {
-								let text = '';
-								if (item.point != undefined) {
-									text = '送' + item.point + '积分';
-								}
-								if (item.coupon != undefined && item.coupon_data != undefined) {
-									item.coupon_data.forEach((couponItem, couponIndex) => {
-										if (couponItem.type == 'discount') {
-											if (text == '') text = '送' + item.coupon_num[
-												couponIndex] + '张' + parseFloat(
-												couponItem.discount) + '折优惠券';
-											else text += '、送' + item.coupon_num[
-												couponIndex] + '张' + parseFloat(
-												couponItem
-												.discount) + '折优惠券';
-										} else {
-											if (text == '') text = '送' + item.coupon_num[
-												couponIndex] + '张' + parseFloat(
-												couponItem.money) + '元优惠券';
-											else text += '、送' + item.coupon_num[
-												couponIndex] + '张' + parseFloat(
-												couponItem
-												.money) + '元优惠券';
-										}
-									})
-								}
-								if (this.manjian.mansong == undefined) {
-									this.manjian.mansong = '满' + item.limit + limit + text;
-								} else {
-									this.manjian.mansong += '；' + '满' + item.limit + limit + text;
-								}
-							}
-							// 包邮
-							if (item.free_shipping != undefined) {
-								if (this.manjian.free_shipping == undefined) {
-									this.manjian.free_shipping = '满' + item.limit + limit + '包邮';
-								} else {
-									this.manjian.free_shipping += '；满' + item.limit + limit + '包邮';
-								}
+		getManjian(data) {
+			this.manjian = data;
+			let limit = data.type == 0 ? '元' : '件';
+			Object.keys(data.rule_json).forEach((key) => {
+				var item = data.rule_json[key];
+				if (item.coupon_data) {
+					for (var i = 0; i < item.coupon_data.length; i++) {
+						item.coupon_data[i].coupon_num = item.coupon_num[i]
+					}
+				}
+				item.limit = data.type == 0 ? parseFloat(item.limit).toFixed(2) :
+					parseInt(item.limit);
+				// 满减
+				if (item.discount_money != undefined) {
+					if (this.manjian.manjian == undefined) {
+						this.manjian.manjian = '满' + item.limit + limit + '减' + item
+							.discount_money + '元';
+					} else {
+						this.manjian.manjian += '；满' + item.limit + limit + '减' + item
+							.discount_money + '元';
+					}
+				}
+				// 满送
+				if (item.point != undefined || item.coupon != undefined) {
+					let text = '';
+					if (item.point != undefined) {
+						text = '送' + item.point + '积分';
+					}
+					if (item.coupon != undefined && item.coupon_data != undefined) {
+						item.coupon_data.forEach((couponItem, couponIndex) => {
+							if (couponItem.type == 'discount') {
+								if (text == '') text = '送' + item.coupon_num[
+									couponIndex] + '张' + parseFloat(
+									couponItem.discount) + '折优惠券';
+								else text += '、送' + item.coupon_num[
+									couponIndex] + '张' + parseFloat(
+									couponItem
+									.discount) + '折优惠券';
+							} else {
+								if (text == '') text = '送' + item.coupon_num[
+									couponIndex] + '张' + parseFloat(
+									couponItem.money) + '元优惠券';
+								else text += '、送' + item.coupon_num[
+									couponIndex] + '张' + parseFloat(
+									couponItem
+									.money) + '元优惠券';
 							}
 						})
+					}
+					if (this.manjian.mansong == undefined) {
+						this.manjian.mansong = '满' + item.limit + limit + text;
+					} else {
+						this.manjian.mansong += '；' + '满' + item.limit + limit + text;
+					}
+				}
+				// 包邮
+				if (item.free_shipping != undefined) {
+					if (this.manjian.free_shipping == undefined) {
+						this.manjian.free_shipping = '满' + item.limit + limit + '包邮';
+					} else {
+						this.manjian.free_shipping += '；满' + item.limit + limit + '包邮';
 					}
 				}
 			});
@@ -398,34 +382,40 @@ export default {
 
 		//获取当前商品关联的组合套餐
 		getBundling() {
+			// 连锁门店没有营销活动
+			if (this.globalStoreConfig && this.globalStoreConfig.store_business == 'store') return;
+
 			this.$api.sendRequest({
 				url: "/bundling/api/bundling/lists",
 				data: {
 					sku_id: this.skuId
 				},
 				success: res => {
-					this.bundling = res.data;
-					if (res.data && res.data.length) {
+					this.handleBundlingData(res.data);
+				}
+			});
+		},
+		handleBundlingData(data) {
+			this.bundling = data;
+			if (this.bundling.length) {
 
-						for (var i = 0; i < this.bundling[0].bundling_goods.length; i++) {
-							if (this.bundling[0].bundling_goods[i].sku_id == this.skuId) {
-								this.bundlingType = true;
-								break;
-							} else {
-								this.bundlingType = false;
-							}
-						}
+				for (var i = 0; i < this.bundling[0].bundling_goods.length; i++) {
+					if (this.bundling[0].bundling_goods[i].sku_id == this.skuId) {
+						this.bundlingType = true;
+						break;
+					} else {
+						this.bundlingType = false;
+					}
+				}
 
-						for (var i = 0; i < this.bundling.length; i++) {
-							for (var j = 0; j < this.bundling[i].bundling_goods.length; j++) {
-								if (this.bundling[i].bundling_goods[j].sku_id == this.skuId) {
-									this.bundling[i].bundling_goods.splice(j, 1);
-								}
-							}
+				for (var i = 0; i < this.bundling.length; i++) {
+					for (var j = 0; j < this.bundling[i].bundling_goods.length; j++) {
+						if (this.bundling[i].bundling_goods[j].sku_id == this.skuId) {
+							this.bundling[i].bundling_goods.splice(j, 1);
 						}
 					}
 				}
-			});
+			}
 		},
 		// 打开组合套餐弹出层
 		openBundlingPopup() {
@@ -442,6 +432,9 @@ export default {
 		bundlingImageError(index, goods_index) {
 			this.bundling[index].bundling_goods[goods_index].sku_image = this.$util.getDefaultImage().goods;
 			this.$forceUpdate();
+		},
+		fenxiao() {
+			this.$refs.fenxiaoPopup.show()
 		},
 		toGoodsDetail(item) {
 			this.$util.redirectTo(this.goodsRoute, {
@@ -466,9 +459,27 @@ export default {
 					qrcode_param: JSON.stringify(posterParams)
 				},
 				success: res => {
-					if (res.code == 0) this.shareImg = res.data.path;
+					if (res.code == 0) this.shareImg = res.data.path + '?no=' + parseInt((new Date())
+						.getTime() / 1000);
 				}
 			})
+		},
+		/**
+		 * 金额格式化输出
+		 * @param {Object} money
+		 */
+		decimalPointFormat(money) {
+			if (isNaN(parseFloat(money))) return money;
+			let arr = money.toString().split(".");
+			let arr1 = arr[1].split("").reverse();
+			let arr2 = [];
+			arr1.forEach((item, index) => {
+				if (item > 1) {
+					arr2 = arr1.splice(index);
+				}
+			});
+			let str = arr2.length ? (arr[0] + "." + arr2.reverse().join("")) : arr[0];
+			return str;
 		}
 	}
 }

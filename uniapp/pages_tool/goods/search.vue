@@ -228,7 +228,6 @@ export default {
 
 .cate-search {
 	width: 100%;
-	height: 100rpx;
 	background: #ffffff;
 	padding: 10rpx 30rpx;
 	box-sizing: border-box;
@@ -238,9 +237,8 @@ export default {
 
 	input {
 		font-size: $font-size-base;
-		height: 60rpx;
-		padding: 15rpx 25rpx 15rpx 30rpx;
-		line-height: 60rpx;
+		height: 100%;
+		padding: 0 25rpx 0 30rpx;
 		width: calc(100% - 120rpx);
 	}
 
@@ -253,7 +251,7 @@ export default {
 
 	.search-box {
 		width: 100%;
-		height: 100%;
+		height: 64rpx;
 		background: $color-bg;
 		display: flex;
 		justify-content: center;

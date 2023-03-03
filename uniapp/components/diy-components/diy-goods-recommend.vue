@@ -1,13 +1,13 @@
 <template>
 	<view v-if="list.length" :class="['goods-list', goodsValue.style]" :style="goodsListWarpCss">
-		<view class="top-wrap">
+		<view class="top-wrap" v-if="goodsValue.topStyle.support">
 			<text :class="['js-icon', goodsValue.topStyle.icon.value]" :style="{ backgroundColor: goodsValue.topStyle.icon.bgColor, color: goodsValue.topStyle.icon.color }"></text>
 			<text class="title" :style="{ color: goodsValue.topStyle.color }">{{ goodsValue.topStyle.title }}</text>
 			<text class="line" :style="{ color: goodsValue.topStyle.subColor }"></text>
 			<text class="sub" :style="{ color: goodsValue.topStyle.subColor }">{{ goodsValue.topStyle.subTitle }}</text>
 		</view>
 		<swiper :autoplay="false" class="swiper" :style="{ height: swiperHeight }">
-			<swiper-item v-for="(item,index) in page" :key="index" :class="['swiper-item', [list[index].length / 3] >= 1 && 'flex-between']">
+			<swiper-item v-for="(item, index) in page" :key="index" :class="['swiper-item', [list[index].length / 3] >= 1 && 'flex-between']">
 				<view
 					class="goods-item"
 					v-for="(dataItem, dataIndex) in list[index]"
@@ -19,12 +19,15 @@
 					<image
 						class="goods-img"
 						:style="{ borderRadius: value.imgAroundRadius * 2 + 'rpx' }"
-						:src="$util.img(dataItem.goods_image,{size: 'mid'})"
+						:src="$util.img(dataItem.goods_image, { size: 'mid' })"
 						mode="widthFix"
-						@error="imgError(dataIndex)"
+						@error="imgError(index,dataIndex)"
 						:lazy-load="true"
 					></image>
-					<view :class="['info-wrap', { 'multi-content': value.nameLineMode == 'multiple' }]" v-if="goodsValue.goodsNameStyle.control || goodsValue.priceStyle.mainControl || goodsValue.priceStyle.lineControl">
+					<view
+						:class="['info-wrap', { 'multi-content': value.nameLineMode == 'multiple' }]"
+						v-if="goodsValue.goodsNameStyle.control || goodsValue.priceStyle.mainControl || goodsValue.priceStyle.lineControl || goodsValue.labelStyle.support"
+					>
 						<view
 							v-if="goodsValue.goodsNameStyle.control"
 							class="goods-name"
@@ -34,18 +37,32 @@
 							{{ dataItem.goods_name }}
 						</view>
 						<view class="pro-info">
+							<view
+								class="label-wrap"
+								v-if="goodsValue.labelStyle.support"
+								:style="{ background: goodsValue.labelStyle.bgColor, color: goodsValue.labelStyle.color }"
+							>
+								<image :src="$util.img('app/component/view/goods_recommend/img/label.png')" mode="widthFix"></image>
+								<text>{{ goodsValue.labelStyle.title }}</text>
+							</view>
 							<view class="discount-price">
 								<view class="price-wrap" v-if="goodsValue.priceStyle.mainControl">
-									<text class="unit price-style small" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.mainColor +'!important' : '' }">￥</text>
-									<text class="price price-style large" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.mainColor +'!important' : '' }">{{ showPrice(dataItem).split(".")[0] }}</text>
-									<text class="unit price-style small" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.mainColor +'!important' : '' }">{{ "."+showPrice(dataItem).split(".")[1] }}</text>
+									<text class="unit price-style small" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.mainColor + '!important' : '' }">
+										￥
+									</text>
+									<text class="price price-style large" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.mainColor + '!important' : '' }">
+										{{ showPrice(dataItem).split('.')[0] }}
+									</text>
+									<text class="unit price-style small" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.mainColor + '!important' : '' }">
+										{{ '.' + showPrice(dataItem).split('.')[1] }}
+									</text>
 								</view>
 								<view
-									v-if="goodsValue.priceStyle.lineControl"
+									v-if="goodsValue.priceStyle.lineControl && showMarketPrice(dataItem)"
 									class="delete-price price-font"
 									:style="{ color: goodsValue.theme == 'diy' ? goodsValue.priceStyle.lineColor : '' }"
 								>
-									￥{{ dataItem.market_price > 0 ? dataItem.market_price : dataItem.price }}
+									￥{{ showMarketPrice(dataItem) }}
 								</view>
 								<view class="sale" v-if="goodsValue.saleStyle.control" :style="{ color: goodsValue.theme == 'diy' ? goodsValue.saleStyle.color : '' }">
 									售{{ dataItem.sale_num }}{{ dataItem.unit ? dataItem.unit : '件' }}
@@ -81,6 +98,20 @@ export default {
 		this.goodsValue = this.value;
 		this.getGoodsList();
 	},
+	watch: {
+		'globalStoreInfo.store_id': {
+			handler(nval, oval) {
+				if (nval != oval) {
+					this.getGoodsList();
+				}
+			},
+			deep: true
+		},
+		// 组件刷新监听
+		componentRefresh: function(nval) {
+			this.getGoodsList();
+		}
+	},
 	computed: {
 		goodsListWarpCss() {
 			var obj = '';
@@ -107,29 +138,31 @@ export default {
 				obj += 'border-bottom-right-radius:' + this.goodsValue.bottomElementAroundRadius * 2 + 'rpx;';
 			}
 			if (this.goodsValue.ornament.type == 'shadow') {
-				obj += 'box-shadow:' + '0 0 10rpx ' + this.goodsValue.ornament.color + ";";
+				obj += 'box-shadow:' + '0 0 10rpx ' + this.goodsValue.ornament.color + ';';
 			}
 			if (this.goodsValue.ornament.type == 'stroke') {
-				obj += 'border:' + '2rpx solid ' + this.goodsValue.ornament.color + ";";
+				obj += 'border:' + '2rpx solid ' + this.goodsValue.ornament.color + ';';
 			}
 			const screenWidth = uni.getSystemInfoSync().safeArea.width || uni.getSystemInfoSync().screenWidth;
-			var width = "";
-			if(this.goodsValue.style != "style-2"){
-				width = [screenWidth - (this.rpxUpPx(20)*2) - (this.rpxUpPx(200)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
-			}else{
-				width = [screenWidth - (this.rpxUpPx(20)*2) - (this.rpxUpPx(20)*2) - (this.rpxUpPx(200)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
+			var width = '';
+			if (this.goodsValue.style != 'style-2') {
+				width = [screenWidth - this.rpxUpPx(20) * 2 - this.rpxUpPx(200) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
+			} else {
+				width = [screenWidth - this.rpxUpPx(20) * 2 - this.rpxUpPx(20) * 2 - this.rpxUpPx(200) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
 			}
-			obj += 'margin-left:' + width + "px;";
-			obj += 'margin-right:' + width + "px;";
+			obj += 'margin-left:' + width + 'px;';
+			obj += 'margin-right:' + width + 'px;';
 			return obj;
 		},
 		swiperHeight() {
-			if(this.goodsValue.style != "style-2"){
+			if (this.goodsValue.style == 'style-3') {
+				return '330rpx';
+			} else if (this.goodsValue.style != 'style-2') {
 				if (this.value.nameLineMode == 'multiple') {
 					return '348rpx';
 				}
 				return '312rpx';
-			}else{
+			} else {
 				if (this.value.nameLineMode == 'multiple') {
 					return '360rpx';
 				}
@@ -138,32 +171,31 @@ export default {
 		}
 	},
 	methods: {
-		rpxUpPx(res){
+		rpxUpPx(res) {
 			const screenWidth = uni.getSystemInfoSync().safeArea.width || uni.getSystemInfoSync().screenWidth;
-			var data = screenWidth * parseInt(res) / 750;
+			var data = (screenWidth * parseInt(res)) / 750;
 			return Math.floor(data);
 		},
 		getGoodsList() {
 			var data = {
-				page: 1,
-				page_size: this.goodsValue.count
+				num: this.goodsValue.count
 			};
 			if (this.goodsValue.sources == 'category') {
 				data.category_id = this.goodsValue.categoryId;
 				data.category_level = 1;
 			} else if (this.goodsValue.sources == 'diy') {
-				data.page_size = 0;
+				data.num = 0;
 				data.goods_id_arr = this.goodsValue.goodsId.toString();
 			}
 			data.order = this.goodsValue.sortWay;
 
 			this.$api.sendRequest({
-				url: '/api/goodssku/pagecomponents',
+				url: '/api/goodssku/components',
 				data: data,
 				success: res => {
 					if (res.code == 0 && res.data) {
 						let data = res.data;
-						this.list = data.list;
+						this.list = data;
 
 						// 切屏滚动，每页显示固定数量
 						let size = 3;
@@ -186,14 +218,23 @@ export default {
 				goods_id: item.goods_id
 			});
 		},
-		imgError(index) {
-			if (this.list[index]) this.list[index].goods_image = this.$util.getDefaultImage().goods;
+		imgError(pageIndex,index) {
+			this.list[pageIndex][index].goods_image = this.$util.getDefaultImage().goods;
 		},
 		showPrice(data) {
 			let price = data.discount_price;
 			if (data.member_price && parseFloat(data.member_price) < parseFloat(price)) price = data.member_price;
 			return price;
-		}
+		},
+		showMarketPrice(item) {
+			let price = this.showPrice(item);
+			if (item.market_price > 0) {
+				return item.market_price;
+			} else if (item.price > price) {
+				return item.price;
+			}
+			return '';
+		},
 	}
 };
 </script>
@@ -255,7 +296,7 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		margin: 0 20rpx;
-		.swiper-item{
+		.swiper-item {
 			display: flex;
 			align-items: center;
 		}
@@ -265,7 +306,7 @@ export default {
 		width: 200rpx;
 		display: inline-block;
 		box-sizing: border-box;
-		&:nth-child(3n+3){
+		&:nth-child(3n + 3) {
 			width: 198rpx;
 		}
 
@@ -280,16 +321,13 @@ export default {
 			display: flex;
 			flex-direction: column;
 			padding: 10rpx;
-			&.multi-content{
+			&.multi-content {
 				height: 130rpx;
 				box-sizing: border-box;
 			}
 
 			.goods-name {
 				font-size: $font-size-sub;
-				&.using-hidden{
-					display: block;
-				}
 				&.multi-hidden {
 					white-space: break-spaces;
 				}
@@ -311,7 +349,7 @@ export default {
 							font-size: $font-size-tag;
 							color: $base-color;
 						}
-						.price{
+						.price {
 							font-size: $font-size-toolbar;
 						}
 						text {
@@ -392,7 +430,7 @@ export default {
 
 			.goods-name {
 				line-height: 1;
-				&.using-hidden{
+				&.using-hidden {
 					display: block;
 				}
 				&.multi-hidden {
@@ -434,6 +472,78 @@ export default {
 					line-height: 28rpx;
 					color: $color-tip;
 					font-size: $font-size-activity-tag;
+				}
+			}
+		}
+	}
+}
+
+.goods-list.style-3 {
+	background-position: bottom;
+
+	.swiper {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 0 20rpx;
+		padding: 10rpx 0;
+		.swiper-item {
+			display: flex;
+			align-items: center;
+		}
+	}
+	.goods-item {
+		overflow: hidden;
+		width: 200rpx;
+		display: inline-block;
+		box-sizing: border-box;
+		&.shadow {
+			// margin-top: 20rpx;
+		}
+		.goods-img {
+			width: 100%;
+			height: 200rpx;
+		}
+		.info-wrap {
+			display: flex;
+			flex-direction: column;
+			padding: 10rpx;
+			.pro-info {
+				text-align: center;
+				.label-wrap {
+					border-radius: 40rpx;
+					display: inline-block;
+					margin: 10rpx 0;
+					position: relative;
+					padding-left: 52rpx;
+					padding-right: 16rpx;
+					line-height: 1.7;
+					image {
+						position: absolute;
+						top: -2rpx;
+						left: -2rpx;
+						width: 46rpx;
+						height: 46rpx;
+					}
+					text {
+						font-size: $font-size-tag;
+					}
+				}
+				.discount-price {
+					.price-wrap {
+						line-height: 1;
+						white-space: nowrap;
+						.unit {
+							font-size: $font-size-tag;
+							color: $base-color;
+						}
+						.price {
+							font-size: $font-size-toolbar;
+						}
+						text {
+							font-weight: bold;
+							color: $base-color;
+						}
+					}
 				}
 			}
 		}

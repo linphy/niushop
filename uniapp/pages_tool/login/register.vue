@@ -73,6 +73,7 @@
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 import validate from 'common/js/validate.js';
 import registerReward from '@/components/register-reward/register-reward.vue';
+import htmlParser from '@/common/js/html-parser';
 
 export default {
 	components: {
@@ -123,9 +124,7 @@ export default {
 		this.getRegisterConfig();
 		this.authInfo = uni.getStorageSync('authInfo');
 	},
-	onShow() {
-		
-	},
+	onShow() {},
 	onReady() {
 		if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 	},
@@ -157,6 +156,7 @@ export default {
 				success: res => {
 					if (res.code >= 0) {
 						this.regisiterAgreement = res.data;
+						if (this.regisiterAgreement.content) this.regisiterAgreement.content = htmlParser(this.regisiterAgreement.content);
 					}
 				}
 			});
@@ -243,19 +243,11 @@ export default {
 								key: 'token',
 								data: res.data.token,
 								success: () => {
-									if (this.$refs.registerReward.getReward()) {
-										this.$util.showToast({
-											title: '注册成功'
-										});
-
-										this.$refs.registerReward.open(this.back);
-									} else {
-										if (this.back != '') {
-											this.$util.redirectTo(decodeURIComponent(this.back), {}, 'reLaunch');
-										} else {
-											this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
-										}
-									}
+									let back = this.back ? this.back : '/pages/member/index';
+									this.$util.showToast({
+										title: '注册成功'
+									});
+									this.$refs.registerReward.open(back);
 								}
 							});
 						} else {
@@ -396,7 +388,7 @@ export default {
 				}
 			});
 		},
-		refreshDynacodeData(){
+		refreshDynacodeData() {
 			this.getCaptcha();
 			clearInterval(this.dynacodeData.timer);
 			this.dynacodeData = {

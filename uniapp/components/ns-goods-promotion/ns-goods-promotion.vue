@@ -5,8 +5,44 @@
 			<view v-if="item.promotion_type == 'discount'" class="item" @click="redirectTo('/pages/goods/detail', { goods_id: item.goods_id })">
 				<text class="promotion-mark ">限时折扣</text>
 				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
-				<text class="iconfont iconright"></text>
+				<text class="iconfont icon-right"></text>
 				<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+			</view>
+			<view v-else-if="item.promotion_type == 'groupbuy'" class="item" @click="redirectTo('/pages_promotion/groupbuy/detail', { groupbuy_id: item.groupbuy_id })">
+				<!-- <view v-else-if="item.promotion_type == 'groupbuy'" class="item" @click="redirectTo('/pages_promotion/groupbuy/detail', { id: item.groupbuy_id })"> -->
+				<text class="promotion-mark ">团购</text>
+				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
+				<text class="iconfont icon-right"></text>
+				<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+			</view>
+			<view v-else-if="item.promotion_type == 'pintuan'" class="item" @click="redirectTo('/pages_promotion/pintuan/detail', { pintuan_id: item.pintuan_id })">
+				<text class="promotion-mark ">拼团</text>
+				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
+				<text class="iconfont icon-right"></text>
+				<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+			</view>
+			<view v-else-if="item.promotion_type == 'seckill'" class="item" @click="redirectTo('/pages_promotion/seckill/detail', { seckill_id: item.id })">
+				<text class="promotion-mark ">秒杀</text>
+				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
+				<text class="iconfont icon-right"></text>
+				<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+			</view>
+			<view v-else-if="item.promotion_type == 'topic'" class="item" @click="redirectTo('/pages_promotion/topics/goods_detail', { id: item.id })">
+				<text class="promotion-mark ">专题活动</text>
+				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
+				<text class="iconfont icon-right"></text>
+				<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+			</view>
+			<view v-else-if="item.promotion_type == 'bargain'" class="item" @click="redirectTo('/pages_promotion/bargain/detail', { b_id: item.bargain_id })">
+				<text class="promotion-mark ">砍价</text>
+				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
+				<text class="iconfont icon-right"></text>
+				<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+			</view>
+			<view v-else-if="item.promotion_type == 'pinfan'" class="item" @click="redirectTo('/pages_promotion/pinfan/detail', { pinfan_id: item.pintuan_id })">
+				<text class="promotion-mark ">拼团返利</text>
+				<text class="title">当前商品正在参加{{ item.promotion_name }}</text>
+				<text class="iconfont icon-right"></text>
 			</view>
 		</view>
 	</view>

@@ -218,7 +218,8 @@ export default {
 										this.$util.showToast({
 											title: '登录成功'
 										});
-										this.$refs.registerReward.open();
+										let back = this.back ? this.back : '/pages/member/index';
+										this.$refs.registerReward.open(back);
 									} else {
 										if (this.back != '') {
 											this.$util.redirectTo(decodeURIComponent(this.back), {}, 'reLaunch');

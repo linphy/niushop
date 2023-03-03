@@ -46,9 +46,6 @@ view {
 .payment-navbar {
 	width: 100vw;
 	padding-bottom: 20rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -60,9 +57,26 @@ view {
 	background-size: 100% 380rpx;
 	// #endif
 	
+	.nav-wrap {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		position: relative;
+	}
+	
 	.navbar-title {
 		color: #fff;
 		font-size: 32rpx;
+	}
+	
+	.icon-back_light {
+		color: #fff;
+		position: absolute;
+		left: 24rpx;
+		font-size: 40rpx;
 	}
 }
 
@@ -405,6 +419,20 @@ view {
 	}
 	.order-cell .tit:after {
 		content: "：";
+	}
+}
+
+.member-goods-card {
+	margin-bottom: 0;
+	padding-bottom: 30rpx;
+	
+	.text {
+		margin-right: 10rpx;
+		color: #999;
+	}
+	
+	.price-font {
+		color: var(--price-color);
 	}
 }
 
@@ -951,6 +979,33 @@ view {
 			color: $color-tip;
 		}
 	}
+	.local-delivery-store {
+		display: flex;
+		align-items: center;
+		padding-bottom: 20rpx;
+		margin-bottom: 20rpx;
+		border-bottom: 2rpx solid #eeeeee;
+		
+		.info {
+			flex: 1;
+			width: 0;
+			font-size: 28rpx;
+		}
+		.store-name {
+			color: $base-color;
+			margin: 0 10rpx;
+		}
+		.cell-more {
+			font-size: 28rpx;
+			display: flex;
+			align-items: center;
+		}
+		.icon-right {
+			float: right;
+			color: #909399;
+			font-size: 24rpx
+		}
+	}
 }
 
 // 外卖配送
@@ -988,6 +1043,9 @@ view {
 				.iconfont{
 					color: $color-tip;
 				}
+			}
+			text {
+				white-space: nowrap;
 			}
 		}
 	}
@@ -1177,6 +1235,7 @@ view {
 			display: flex;
 			align-items: center;
 			line-height: 1;
+			font-size: 24rpx;
 			.iconfont{
 				font-size: 24rpx;
 				margin-left: 14rpx;
@@ -1241,7 +1300,7 @@ view {
 			position: relative;
 			overflow: hidden;
 			
-			.iconicon {
+			.icon-icon {
 				position: absolute;
 				right: 0;
 				bottom: 0;
@@ -1249,7 +1308,6 @@ view {
 				display: none;
 				line-height: 1;
 			}
-			
 			&:last-child{
 				margin-right: 0;
 			}
@@ -1264,7 +1322,7 @@ view {
 			}
 		}
 		
-		.active .iconicon {
+		.active .icon-icon {
 			display: block;
 		}
 	}
@@ -1333,5 +1391,43 @@ view {
 	.popup-body {
 		padding: 20rpx 30rpx;
 		box-sizing: border-box;
+	}
+}
+
+.goods-card-popup {
+	.card-item {
+		display: flex;
+		padding: 30rpx;
+		background: var(--base-color-light-9);
+		margin: 24rpx 20rpx;
+		border-radius: 18rpx;
+		
+		.content {
+			flex: 1;
+			width: 0;
+			margin-right: 30rpx;
+			
+			.title {
+				line-height: 40rpx;
+				font-size: 28rpx;
+				font-weight: 600;
+			}
+			
+			.info text {
+				line-height: 1;
+				font-size: 24rpx;
+				color: #666666;
+				margin-top: 20rpx;
+				margin-right: 8rpx;
+				display: inline-block;
+			}
+		}
+		
+		.iconfont {
+			font-size: 44rpx;
+		}
+		.icon-yuan_checkbox {
+			color: $color-tip;
+		}
 	}
 }

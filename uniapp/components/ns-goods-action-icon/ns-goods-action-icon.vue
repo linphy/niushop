@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import nsContact from '@/components/ns-contact/ns-contact.vue';
 export default {
 	name: 'ns-goods-action-icon',
 	props: {
@@ -70,6 +71,9 @@ export default {
 				return {}
 			}
 		}
+	},
+	components:{
+		nsContact
 	},
 	methods: {
 		clickEvent() {

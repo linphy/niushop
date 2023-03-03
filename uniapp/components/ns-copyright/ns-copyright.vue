@@ -51,12 +51,13 @@ export default {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-	margin-top: 20rpx;
+	margin-top: 40rpx;
 	margin-bottom: 40rpx;
 }
 
 .ns-copyright-info .ns-copyright-pic image {
 	width: 160rpx;
+	height: 24rpx;
 }
 
 .ns-copyright-info text {

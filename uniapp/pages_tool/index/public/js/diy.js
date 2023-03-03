@@ -1,9 +1,11 @@
 export default {
 	data() {
-		return {};
+		return {
+			diyRoute: '/pages_tool/index/diy'
+		};
 	},
-	onLoad(data) {},
+	onLoad(option) {},
 	onShow() {},
-	computed: {},
-	methods: {},
+	methods: {
+	},
 }

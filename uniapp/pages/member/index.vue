@@ -1,34 +1,25 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
-	<view :style="{ backgroundColor: bgColor, minHeight: 'calc(100vh - 55px)' }" class="page-img">
-		<!-- #ifndef H5 -->
+	<view :style="{ backgroundColor: bgColor, minHeight: openBottomNav ? 'calc(100vh - 55px)' : '' }" class="page-img">
 		<view class="page-header" v-if="diyData.global && diyData.global.navBarSwitch" :style="{ backgroundImage: bgImg }">
-			<ns-navbar :background="bgNav" :title-color="textNavColor" :globalS="diyData.global" :scrollTop="scrollTop"></ns-navbar>
+			<ns-navbar :title-color="textNavColor" :data="diyData.global" :scrollTop="scrollTop" :isBack="true"></ns-navbar>
 		</view>
-		<!-- #endif -->
 
-		<diy-index-page ref="indexPage" :value="topIndexValue" :scrollHeight="scrollHeight" :scrollTopHeight="scrollTopHeight" :bgUrl="bgUrl" v-if="topIndexValue">
-			<diy-group ref="diyGroup" v-if="diyData.value" :diyData="diyData" :storeId="storeId" :height="scrollTopHeight" :token="storeToken"></diy-group>
-			<view class="padding-bottom"><ns-copyright></ns-copyright></view>
+		<diy-index-page v-if="topIndexValue" ref="indexPage" :value="topIndexValue" :bgUrl="bgUrl" :paddingTop="paddingTop" :scrollTop="scrollTop" :diyGlobal="diyData.global" class="diy-index-page">
+			<diy-group ref="diyGroup" v-if="diyData.value" :diyData="diyData" :token="storeToken" :scrollTop="scrollTop" :haveTopCategory="true"></diy-group>
+			<ns-copyright></ns-copyright>
 		</diy-index-page>
 
-		<scroll-view v-else scroll-y="true" show-scrollbar="false" :style="{ height: 'calc(100vh - ' + headerHeight + ' - 55px)' }" @scroll="scroll">
-			<view class="bg-index" :style="{ backgroundImage: backgroundUrl, paddingTop: paddingTop, marginTop: marginTop }">
-				<diy-group ref="diyGroup" v-if="diyData.value" :diyData="diyData" :storeId="storeId" :token="storeToken"></diy-group>
-				<view class="padding-bottom"><ns-copyright></ns-copyright></view>
-			</view>
-		</scroll-view>
+		<view v-else class="bg-index" :style="{ backgroundImage: backgroundUrl, paddingTop: paddingTop, marginTop: marginTop }">
+			<diy-group ref="diyGroup" v-if="diyData.value" :diyData="diyData" :token="storeToken" :scrollTop="scrollTop"></diy-group>
+			<ns-copyright></ns-copyright>
+		</view>
 
 		<template v-if="diyData.global && diyData.global.popWindow && diyData.global.popWindow.count != -1 && diyData.global.popWindow.imageUrl">
 			<view @touchmove.prevent.stop>
 				<uni-popup ref="uniPopupWindow" type="center" class="wap-floating" :maskClick="false">
 					<view class="image-wrap">
-						<image
-							:src="$util.img(diyData.global.popWindow.imageUrl)"
-							:style="popWindowStyle"
-							@click="$util.diyRedirectTo(diyData.global.popWindow.link)"
-							mode="aspectFit"
-						></image>
+						<image :src="$util.img(diyData.global.popWindow.imageUrl)" :style="popWindowStyle" @click="uniPopupWindowFn()" mode="aspectFit"></image>
 					</view>
 					<text class="iconfont icon-round-close" @click="closePopupWindow"></text>
 				</uni-popup>
@@ -36,7 +27,7 @@
 		</template>
 
 		<!-- 底部tabBar -->
-		<view class="page-bottom" v-if="openBottomNav"><diy-bottom-nav @callback="callback"></diy-bottom-nav></view>
+		<view id="tab-bar" :class="{ hide: bottomNavHidden }" v-if="openBottomNav"><diy-bottom-nav @callback="callback"></diy-bottom-nav></view>
 
 		<!-- 收藏 -->
 		<uni-popup ref="collectPopupWindow" type="top" class="wap-floating wap-floating-collect">
@@ -46,7 +37,6 @@
 			</view>
 		</uni-popup>
 
-		<ns-login ref="login"></ns-login>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
 </template>
@@ -55,13 +45,14 @@
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 import nsNavbar from '@/components/ns-navbar/ns-navbar.vue';
 import diyJs from '@/common/js/diy.js';
-import index from './public/js/index.js';
+import indexJs from './public/js/index.js';
+
 export default {
 	components: {
 		uniPopup,
 		nsNavbar
 	},
-	mixins: [diyJs, index]
+	mixins: [diyJs, indexJs]
 };
 </script>
 
@@ -73,6 +64,10 @@ export default {
 .wap-floating >>> .uni-popup__wrapper.uni-custom .uni-popup__wrapper-box {
 	background: none !important;
 }
+/deep/.diy-index-page .uni-popup .uni-popup__wrapper-box{border-radius: 0;}
+.choose-store >>> .goodslist-uni-popup-box {
+	width: 80%;
+}
 /deep/ .placeholder {
 	height: 0;
 }
@@ -82,8 +77,7 @@ export default {
 	background-color: transparent;
 	display: none;
 }
-/deep/ .ns-copyright-info {
-	margin-top: 40rpx;
-	margin-bottom: 0;
+.hide {
+	display: none;
 }
 </style>

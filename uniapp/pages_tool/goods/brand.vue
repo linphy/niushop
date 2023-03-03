@@ -90,7 +90,7 @@ export default {
 
 <style lang="scss">
 /deep/ .uni-grid-item {
-	width: calc(100% / 3) !important;
+	width: calc((100vw - (#{$margin-both} * 2)) / 3) !important;
 }
 
 .brand-head {

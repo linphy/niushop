@@ -63,28 +63,30 @@
 								transitionTimingFunction: 'ease'
 							}"
 						>
-							<image :src="$util.img('public/uniapp/level/level_' + (Number(i % 5) + 1) + '.png')"></image>
+							<image v-if="levelList[curIndex]['level_picture']" :src="$util.img(levelList[curIndex]['level_picture'])"></image>
+							<image v-else :style="{backgroundColor:levelList[curIndex]['bg_color']}"></image>
+							
 							<view class="info">
-								<view class="level-detail">
+								<view class="level-detail" :style="{color:levelList[curIndex]['level_text_color']}">
 									{{ levelList[curIndex].level_name }}
-									<text class="isnow " v-if="levelId == item.level_id">当前等级</text>
+									<text class="isnow "  :style="{color:levelList[curIndex]['level_text_color']}" v-if="levelId == item.level_id">当前等级</text>
 								</view>
-								<view class="growr-name">当前成长值</view>
-								<view class="growr-value">{{ growth }}</view>
+								<view class="growr-name"  :style="{color:levelList[curIndex]['level_text_color']}">当前成长值</view>
+								<view class="growr-value"  :style="{color:levelList[curIndex]['level_text_color']}">{{ growth }}</view>
 								<block v-if="levelId == item.level_id">
 									<block v-if="levelList[curIndex + 1] != undefined">
 										<ns-progress :progress="levelList[curIndex + 1].rate"></ns-progress>
-										<view class="residue-growr-value">
+										<view class="residue-growr-value"  :style="{color:levelList[curIndex]['level_text_color']}">
 											再获得{{ levelList[curIndex + 1].needGrowth > 0 ? levelList[curIndex + 1].needGrowth : 0 }}成长值成为{{
 												levelList[curIndex + 1].level_name
 											}}
 										</view>
 									</block>
-									<block v-else><view class="residue-growr-value">您现在已经是最高等级</view></block>
+									<block v-else><view class="residue-growr-value"  :style="{color:levelList[curIndex]['level_text_color']}">您现在已经是最高等级</view></block>
 								</block>
 								<block v-else>
 									<ns-progress :progress="levelList[curIndex].rate" v-if="levelList[curIndex].needGrowth > 0"></ns-progress>
-									<view class="residue-growr-value" v-if="levelList[curIndex].needGrowth > 0">
+									<view class="residue-growr-value" v-if="levelList[curIndex].needGrowth > 0" :style="{color:levelList[curIndex]['level_text_color']}">
 										再获得{{ levelList[curIndex].needGrowth }}成长值成为{{ levelList[curIndex].level_name }}
 									</view>
 								</block>
@@ -178,7 +180,7 @@
 </template>
 
 <script>
-import nsProgress from '@/components/ns-progress/ns-progress.vue';
+import nsProgress from '@/pages_tool/components/ns-progress/ns-progress.vue';
 import toTop from '@/components/toTop/toTop.vue';
 import scroll from '@/common/js/scroll-view.js';
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
@@ -240,9 +242,6 @@ export default {
 			} else {
 				return this.curIndex + 1;
 			}
-		},
-		storeToken() {
-			return this.$store.state.token;
 		}
 	},
 	onLoad() {

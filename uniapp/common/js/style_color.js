@@ -47,6 +47,10 @@ export default {
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	},
 	'green':{
 		name:'green',
@@ -94,6 +98,10 @@ export default {
 		giftcard:{
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	},
 	'blue':{
@@ -143,6 +151,10 @@ export default {
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	}, 
 	'pink':{
 		name:'pink',
@@ -190,6 +202,10 @@ export default {
 		giftcard:{
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	}, 
 	'gold':{
@@ -239,6 +255,10 @@ export default {
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	},
 	'purple':{
 		name:'purple',
@@ -286,6 +306,10 @@ export default {
 		giftcard:{
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	},
 	'yellow':{
@@ -335,6 +359,10 @@ export default {
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
 		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
+		},
 	},
 	'black':{
 		name:'black',
@@ -382,6 +410,10 @@ export default {
 		giftcard:{
 			giftcard_promotion_color: '#FF3369',//活动背景
 			giftcard_promotion_aux_color: '#F7B500',//活动辅色
+		},
+		groupby:{
+			groupby_promotion_color: '#E64136',//活动背景
+			groupby_promotion_aux_color: '#F7B500',//活动辅色
 		},
 	}
 }

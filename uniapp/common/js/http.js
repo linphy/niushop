@@ -39,15 +39,23 @@ const app_type_name = 'APP';
 
 export default {
 	sendRequest(params) {
+		if (!Config.baseUrl) {
+			uni.showToast({ title: '未配置请求域名', 'icon': 'none', duration: 10000});
+			return;
+		} 
+		
 		var method = params.data != undefined ? 'POST' : 'GET', // 请求方式
 			url = Config.baseUrl + params.url, // 请求路径
 			data = {
 				app_type,
 				app_type_name
 			};
-
+			
 		// token
 		if (uni.getStorageSync('token')) data.token = uni.getStorageSync('token');
+
+		// 门店id
+		if (uni.getStorageSync('store_info')) data.store_id = uni.getStorageSync('store_info').store_id;
 
 		// 参数
 		if (params.data != undefined) Object.assign(data, params.data);
@@ -60,18 +68,18 @@ export default {
 					method: method,
 					data: data,
 					header: params.header || {
-						'Accept': 'application/json',
+						// 'Accept': 'application/json',
 						'content-type': 'application/x-www-form-urlencoded;application/json'
 					},
 					dataType: params.dataType || 'json',
 					responseType: params.responseType || 'text',
 					success: (res) => {
-						try {
-							res.data = JSON.parse(res.data);
-						} catch (e) {
-							//TODO handle the exception
-							console.log('api error：', e);
-						}
+						// try {
+						// 	res.data = JSON.parse(res.data);
+						// } catch (e) {
+						// 	//TODO handle the exception
+						// 	console.log('api error：', e);
+						// }
 						if (res.data.code == -3 && store.state.siteState > 0) {
 							store.commit('setSiteState', -3)
 							Util.redirectTo('/pages_tool/storeclose/storeclose', {}, 'reLaunch');
@@ -91,9 +99,17 @@ export default {
 						resolve(res.data);
 					},
 					fail: (res) => {
+						if (res.errMsg && res.errMsg == 'request:fail url not in domain list') {
+							uni.showToast({ title: Config.baseUrl + '不在request 合法域名列表中', 'icon': 'none', duration: 10000});
+							return;
+						}
 						reject(res);
 					},
 					complete: (res) => {
+						if ((res.errMsg && res.errMsg != "request:ok") || (res.statusCode && [200, 500].indexOf(res.statusCode) == -1)) {
+							uni.showToast({ title: Config.baseUrl + '请求失败', 'icon': 'none', duration: 10000})
+							return;
+						}
 						reject(res);
 					}
 				});
@@ -105,18 +121,18 @@ export default {
 				method: method,
 				data: data,
 				header: params.header || {
-					'Accept': 'application/json',
+					// 'Accept': 'application/json',
 					'content-type': 'application/x-www-form-urlencoded;application/json'
 				},
 				dataType: params.dataType || 'json',
 				responseType: params.responseType || 'text',
 				success: (res) => {
-					try {
-						res.data = JSON.parse(res.data);
-					} catch (e) {
-						//TODO handle the exception
-						console.log('api error：', e);
-					}
+					// try {
+					// 	res.data = JSON.parse(res.data);
+					// } catch (e) {
+					// 	//TODO handle the exception
+					// 	console.log('api error：', e);
+					// }
 					if (res.data.code == -3 && store.state.siteState > 0) {
 						store.commit('setSiteState', -3)
 						Util.redirectTo('/pages_tool/storeclose/storeclose', {}, 'reLaunch');
@@ -136,9 +152,17 @@ export default {
 					typeof params.success == 'function' && params.success(res.data);
 				},
 				fail: (res) => {
+					if (res.errMsg && res.errMsg == 'request:fail url not in domain list') {
+						uni.showToast({ title: Config.baseUrl + '不在request 合法域名列表中', 'icon': 'none', duration: 10000});
+						return;
+					}
 					typeof params.fail == 'function' && params.fail(res);
 				},
 				complete: (res) => {
+					if ((res.errMsg && res.errMsg != "request:ok") || (res.statusCode && [200, 500].indexOf(res.statusCode) == -1)) {
+						uni.showToast({ title: Config.baseUrl + '请求失败', 'icon': 'none', duration: 10000})
+						return;
+					}
 					typeof params.complete == 'function' && params.complete(res);
 				}
 			});

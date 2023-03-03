@@ -28,19 +28,41 @@ export default {
 									typeof callback == 'function' && callback(this.authInfo);
 								} else {
 									this.$util.showToast({
-										title: '小程序配置错误'
+										title: res.message ? res.message : '小程序配置错误'
 									});
 								}
 							}
 						})
 					}
 				},
-				fail: () => {
-					this.$util.showToast({
-						title: '请求失败'
-					});
+				fail: (res) => {
+					// #ifdef MP-WEIXIN
+					let scene = wx.getLaunchOptionsSync().scene;
+					if ([1154, 1155].indexOf(scene) == -1) {
+						this.$util.showToast({
+							title: res.errMsg
+						});
+					}
+					// #endif
 				}
 			})
+			// #endif
+			
+			// #ifdef H5
+			if (this.$util.isWeiXin()){
+				this.$api.sendRequest({
+					url: '/wechat/api/wechat/authcode',
+					data: {
+						redirect_url: location.href,
+						scopes: 'snsapi_userinfo'
+					},
+					success: res => {
+						if (res.code >= 0) {
+							location.href = res.data;
+						}
+					}
+				});
+			}
 			// #endif
 		}
 	}

@@ -48,7 +48,8 @@ export default {
 		});
 
 		this.$store.dispatch('init');
-
+		
+		// #ifdef H5
 		// 自动授权登录
 		if (!uni.getStorageSync('token')) {
 			this.getAuthInfo();
@@ -60,8 +61,23 @@ export default {
 				}
 			});
 		}
+		// #endif
 	},
-	onShow: function() {},
+	onShow: function() {
+		// #ifdef MP-WEIXIN
+		// 自动授权登录
+		if (!uni.getStorageSync('token')) {
+			this.getAuthInfo();
+		} else {
+			this.$api.sendRequest({
+				url: '/api/member/info',
+				complete: () => {
+					if (!uni.getStorageSync('token')) this.getAuthInfo();
+				}
+			});
+		}
+		// #endif
+	},
 	onHide: function() {},
 	methods: {
 		/**
@@ -198,10 +214,8 @@ export default {
 };
 </script>
 <style lang="scss">
+@import './common/css/main.scss';
 @import './common/css/iconfont.css';
 @import './common/css/icondiy.css'; // 自定义图标库
-@import './common/css/main.scss';
-
-// ********** 这里要引用扩展图标库文件 **********
-@import './common/css/icon_extend/diy_default1.css';
+@import './common/css/icon/extend.css'; // 扩展图标库
 </style>

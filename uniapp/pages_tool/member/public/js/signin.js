@@ -1,10 +1,8 @@
-import Calendar from '@/components/uni-calendar/util.js';
+import Calendar from '@/pages_tool/components/uni-calendar/util.js';
 export default {
 	data() {
 		return {
-			rule: [
-				{}
-			],
+			rule: [{}],
 			hasSign: 0, //今天是否签到
 			signDaysSeries: 0, //连续签到次数
 			timestamp: "", //当前的时间戳
@@ -24,7 +22,9 @@ export default {
 			signPoint: 0,
 			signGrowth: 0,
 			rewardRuleDay: [],
-			cycle: 0 
+			cycle: 0,
+			reward: {},
+			fixBtnShow: false,
 		};
 	},
 	methods: {
@@ -78,21 +78,68 @@ export default {
 		},
 		//获取rule
 		getRule() {
+			this.rewardRuleDay = [];
 			this.$api.sendRequest({
 				url: '/api/membersignin/award',
 				success: res => {
 					if (res.code == 0) {
-						this.cycle = res.data.cycle; 
-						this.rule = res.data.reward;
-						if (this.rule.length > 1) {
-							this.rule.forEach((item, index)=>{
-								if (index) this.rewardRuleDay.push(parseInt(item.day));
-							})
-						} 
-						var showSignDays = [];
-						for (let i = 1; i <= res.data.cycle; i++) {
-							showSignDays.push({day: i})
+
+						this.cycle = res.data.cycle || 0;
+						this.rule = res.data.reward || [];
+						let default_point = 0;
+
+						if (this.rule.length > 0) {
+							this.rule.forEach((item, index) => {
+								if (item.day == 1) default_point = item.point;
+								this.rewardRuleDay.push(parseInt(item.day));
+								this.reward[item.day] = item.point;
+							});
 						}
+
+						//展示7天
+						var showSignDays = [];
+						var start_day = 1;
+						var end_day = 7;
+						var total_day = res.data.cycle;
+						if (this.signDaysSeries > 5) {
+							start_day = this.signDaysSeries - 5;
+						}
+						if (total_day >= (this.signDaysSeries + 1)) {
+							end_day = this.signDaysSeries + 1;
+						}
+						if (this.signDaysSeries <= 5) {
+							end_day = 8 - start_day;
+						}
+
+						if ((end_day - start_day) < 7 && total_day >= start_day + 6) {
+							end_day = start_day + 6;
+						}
+						if (total_day == this.signDaysSeries) {
+							start_day = this.signDaysSeries - 6;
+							end_day = this.signDaysSeries;
+						}
+
+						for (let i = 1; i <= res.data.cycle; i++) {
+							if (i >= start_day && i <= end_day) {
+								showSignDays.push({
+									day: i,
+									is_last: 0,
+									point: default_point
+								})
+							}
+						}
+
+						if (showSignDays && showSignDays.length) {
+							showSignDays[showSignDays.length - 1]['is_last'] = 1;
+						}
+
+						for (let i in showSignDays) {
+							let item = showSignDays[i];
+							if (this.$util.inArray(item.day, this.rewardRuleDay) != -1) {
+								showSignDays[i]['point'] = parseInt(this.reward[item.day]) + parseInt(default_point);
+							}
+						}
+
 						this.showSignDays = showSignDays;
 					}
 				}
@@ -108,7 +155,7 @@ export default {
 						this.time = this.$util.timeStampTurnTime(this.timestamp).slice(0, 10)
 						this.headimg = res.data.headimg;
 						this.signDaysSeries = res.data.sign_days_series;
-						
+						this.getRule();
 						this.$refs.loadingCover.hide();
 					}
 				}
@@ -120,7 +167,7 @@ export default {
 				url: '/api/membersignin/issign',
 				success: res => {
 					if (res.code == 0) {
-						this.hasSign = res.data
+						this.hasSign = res.data;
 						this.getSignInfo();
 						this.getSignPointData();
 						this.getSignGrowthData();
@@ -161,8 +208,8 @@ export default {
 			this.$refs.uniPopup.close()
 		}
 	},
-	computed:{
-		pointTomorrow: function(){
+	computed: {
+		pointTomorrow: function() {
 			var signDaysSeries = this.signDaysSeries + 1;
 			var point = this.rule[0].point ? parseInt(this.rule[0].point) : 0;
 			for (let i = 1; i < this.rule.length; i++) {
@@ -171,7 +218,7 @@ export default {
 			}
 			return point;
 		},
-		showDay: function(){
+		showDay: function() {
 			return parseInt(this.signDaysSeries / 7) * 7 + 1;
 		}
 	}

@@ -14,6 +14,10 @@ export default {
 	data() {
 		return {};
 	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		horzBlankGaugeWrap: function() {
 			var obj = '';

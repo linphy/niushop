@@ -20,17 +20,16 @@ export default {
 			dataList: []
 		};
 	},
-	onLoad() {
+	onLoad() {},
+	onShow() {
+		this.setPublicShare();
 		this.getData();
 	},
-	onShow() {},
 	methods: {
 		getData() {
 			this.$api.sendRequest({
 				url: '/api/helpclass/lists',
-				data: {
-					app_module: 'shop'
-				},
+				data: {},
 				success: res => {
 					if (res.code == 0 && res.data) {
 						this.dataList = res.data;
@@ -48,24 +47,32 @@ export default {
 		},
 		helpDetail(e) {
 			// #ifndef MP-WEIXIN
-				if (e.link_address) {
-					uni.redirectTo({
-						url: '/pages_tool/webview/webview?src=' + encodeURIComponent(e.link_address)
-					});
-				} else {
-					this.$util.redirectTo('/pages_tool/help/detail', {
-						id: e.id
-					});
-				}
-			// #endif
-			
-			// #ifdef MP-WEIXIN
+			if (e.link_address) {
+				uni.redirectTo({
+					url: '/pages_tool/webview/webview?src=' + encodeURIComponent(e.link_address)
+				});
+			} else {
 				this.$util.redirectTo('/pages_tool/help/detail', {
 					id: e.id
 				});
+			}
 			// #endif
-			
-			
+
+			// #ifdef MP-WEIXIN
+			this.$util.redirectTo('/pages_tool/help/detail', {
+				id: e.id
+			});
+			// #endif
+		},
+		// 设置公众号分享
+		setPublicShare() {
+			let shareUrl = this.$config.h5Domain + '/pages_tool/help/list';
+			this.$util.setPublicShare({
+				title: '帮助中心',
+				desc: '',
+				link: shareUrl,
+				imgUrl: ''
+			});
 		}
 	},
 	onShareAppMessage(res) {
@@ -101,7 +108,7 @@ export default {
 			font-size: 30rpx;
 			color: #000;
 			border-bottom: 2rpx solid #f1f1f1;
-			&.empty{
+			&.empty {
 				padding-bottom: 0;
 				border-bottom: none;
 			}

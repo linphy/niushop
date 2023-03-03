@@ -1,13 +1,18 @@
 <template>
-	<view class="goods-sku" @touchmove.prevent.stop>
-		<uni-popup ref="skuPopup" type="center" class="sku-layer">
+	<view class="goods-sku" @touchmove.prevent.stop> 
+		<uni-popup ref="skuPopup" :type="popupType" class="sku-layer">
 			<view class="sku-content">
 				<view class="sku-info" :style="{ height: systemInfo.windowHeight * 2 + 'rpx' }">
 					<view class="header">
 						<view class="img-wrap" @click="previewMedia()"><image :src="$util.img(goodsDetail.sku_image, { size: 'mid' })" @error="imageError()" /></view>
 						<view class="main">
 							<view class="goodname">{{ goodsDetail.goods_name }}</view>
-							<view class="stock color-tip">库存{{ goodsDetail.stock }}{{ goodsDetail.unit }}</view>
+							<view class="other-info">
+								<view class="stock color-tip">库存{{ goodsDetail.stock }}{{ goodsDetail.unit }}</view>
+								<view class="starting-num" v-if="parseFloat(goodsDetail.min_buy)">
+									起售{{goodsDetail.min_buy}}件
+								</view>
+							</view>
 						</view>
 					</view>
 					<view class="body-item">
@@ -91,6 +96,13 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		pointLimit: {
+			type: [Number, String]
+		},
+		popupType: {
+			type: String,
+			default: "center"
+		}
 	},
 	data() {
 		return {
@@ -110,7 +122,8 @@ export default {
 			maxBuy: 0,
 			minBuy: 0,
 			isLoad: false,
-			goodsCartNumber: 0
+			goodsCartNumber: 0,
+			timeout: null
 		};
 	},
 	created() {
@@ -118,6 +131,9 @@ export default {
 		this.systemInfo = uni.getSystemInfoSync();
 	},
 	watch: {
+		pointLimit(newNum, oldNum) {
+			this.limitNumber = Number(newNum);
+		},
 		goodsDetail(newData, oldData) {
 			this.skuId = newData.sku_id;
 		},
@@ -164,6 +180,7 @@ export default {
 			if (this.goodsSkuList['sku_' + skuId]) {
 				this.goodsDetail = Object.assign({}, this.goodsDetail, this.goodsSkuList['sku_' + skuId]);
 			}
+			this.number = this.cartData[this.skuId] ? this.cartData[this.skuId] : 0;
 		},
 		//查看规格图片
 		previewMedia() {
@@ -222,7 +239,7 @@ export default {
 			});
 		},
 		changeNum(tag, event) {
-			if (this.goodsDetail.stock == 0) return;
+			if (this.goodsDetail.stock == 0 || this.btnSwitch) return;
 
 			var stock = this.goodsDetail.stock;
 			var min = 1;
@@ -354,6 +371,13 @@ export default {
 				this.$refs.login.open();
 				return;
 			}
+			if (this.goodsDetail.goods_state == 0) {
+				this.$util.showToast({
+					title: '商品已下架'
+				});
+				return;
+			}
+			
 			this.number = 1;
 			//纠正数量
 			this.keyInput(true, () => {
@@ -457,23 +481,26 @@ export default {
 		cartNumChange(num, cartid) {
 			if (num < 1) num = 1;
 			this.modifyFlag = true;
-			this.$api.sendRequest({
-				url: '/api/cart/edit',
-				data: {
-					num,
-					cart_id: cartid
-				},
-				success: res => {
-					if (res.code >= 0) {
-						this.cartData[this.skuId] = num;
-						// this.calculationTotalPrice();
-						this.$store.dispatch('getCartNumber');
-						this.getGoodsCartNum();
-					} else {
-						// this.$util.showToast({ title: res.message });
+			
+			if (this.timeout) clearTimeout(this.timeout);
+			this.cartData[this.skuId] = num;
+			
+			this.timeout = setTimeout(()=> {
+				this.$api.sendRequest({
+					url: '/api/cart/edit',
+					data: {
+						num,
+						cart_id: cartid
+					},
+					success: res => {
+						if (res.code >= 0) {
+							this.$store.dispatch('getCartNumber');
+							this.getGoodsCartNum();
+						} else {
+						}
 					}
-				}
-			});
+				});
+			}, 800)
 		},
 		/**
 		 * 删除购物车
@@ -481,6 +508,8 @@ export default {
 		 * @param {Object} cartIndex
 		 */
 		deleteCart() {
+			if (this.timeout) clearTimeout(this.timeout);
+			
 			this.$api.sendRequest({
 				url: '/api/cart/delete',
 				data: { cart_id: this.cartIdArr[this.skuId] },
@@ -523,7 +552,7 @@ export default {
 	color: #fff;
 	width: 50rpx;
 	text-align: center;
-	font-size: 76rpx;
+	font-size: 60rpx;
 	border-radius: 50%;
 	margin: 40rpx auto 0;
 }
@@ -584,6 +613,16 @@ export default {
 	-webkit-line-clamp: 2;
 	line-height: 1.3;
 }
+.sku-layer .sku-info .main .other-info{
+	margin-top: 20rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.sku-layer .sku-info .main .starting-num{
+	color: $color-tip;
+	font-size: $font-size-tag;
+}
 .footer-left .price {
 	word-wrap: break-word;
 	font-size: $font-size-toolbar;
@@ -591,7 +630,6 @@ export default {
 }
 
 .sku-layer .sku-info .main .stock {
-	margin-top: 20rpx;
 	line-height: 1;
 	font-size: $font-size-tag;
 }

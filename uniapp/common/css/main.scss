@@ -465,15 +465,18 @@ uni-slider .uni-slider-track {
 	display: inline-block;
 	line-height: 56rpx;
 	padding: 0 30rpx;
-	font-size: $font-size-base;
+	font-size: 26rpx;
 	color: $color-title;
 	border: 1.5px solid #999;
 	box-sizing: border-box;
-	border-radius: 10rpx;
+	border-radius: 60rpx;
 	margin-left: $margin-both;
 	&.order-pay {
 		color: #fff;
 		border-color: #fff;
+	}
+	&.color-base-bg {
+		color: #fff;
 	}
 }
 
@@ -561,6 +564,7 @@ scroll-view ::-webkit-scrollbar {
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
+	white-space: break-spaces;
 }
 /* 多行超出隐藏 */
 .multi-hidden {
@@ -601,3 +605,86 @@ scroll-view ::-webkit-scrollbar {
 	max-height: unset !important;
 	overflow: unset !important;
 }
+
+// #ifdef H5
+// 下拉加载动画【页面】
+/deep/ body uni-page-refresh div{
+	width: 14rpx !important;
+	height: 14rpx !important;
+	background-color: #ccc;
+	box-shadow: inherit !important;
+	clip: rect(-152rpx, 90rpx, 90rpx, -30rpx) !important;
+	animation:.6s backgroundChange linear infinite;
+}
+/deep/ body uni-page-refresh div::after{
+	content: "";
+	position: absolute;
+	left: -22rpx;
+	width: 14rpx !important;
+	height: 14rpx !important;
+	border-radius: 50%;
+	background-color: #ccc;
+	animation:.5s backgroundChange linear infinite;
+}
+/deep/ body uni-page-refresh div::before{
+	content: "";
+	position: absolute;
+	right: -22rpx;
+	width: 14rpx !important;
+	height: 14rpx !important;
+	border-radius: 50%;
+	background-color: #ccc;
+	animation:.7s backgroundChange linear infinite;
+}
+/deep/ body uni-page-refresh > div > div{
+	display: none !important;
+}
+
+// 下拉加载动画【scroll-view】
+/deep/ body .uni-scroll-view-refresher{
+	background-color: transparent !important;
+}
+/deep/ body .uni-scroll-view-refresher div{
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 14rpx !important;
+	height: 14rpx !important;
+	background-color: #ccc;
+	box-shadow: inherit !important;
+	border-radius: 50%;
+	clip: rect(-152rpx, 90rpx, 90rpx, -30rpx) !important;
+	animation:.6s backgroundChange linear infinite;
+}
+/deep/ body .uni-scroll-view-refresher div::after{
+	content: "";
+	position: absolute;
+	left: -22rpx;
+	width: 14rpx !important;
+	height: 14rpx !important;
+	border-radius: 50%;
+	background-color: #ccc;
+	animation:.5s backgroundChange linear infinite;
+}
+/deep/ body .uni-scroll-view-refresher div::before{
+	content: "";
+	position: absolute;
+	right: -22rpx;
+	width: 14rpx !important;
+	height: 14rpx !important;
+	border-radius: 50%;
+	background-color: #ccc;
+	animation:.7s backgroundChange linear infinite;
+}
+/deep/ body .uni-scroll-view-refresher > div > div{
+	display: none !important;
+}
+@keyframes backgroundChange {
+	from {
+		background-color: #ccc;
+	}
+	to {
+		background-color: #999;
+	}
+}
+// #endif

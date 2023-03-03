@@ -122,6 +122,15 @@
 				<button type="primary">{{ $lang('save') }}</button>
 			</view>
 		</view>
+		<!-- 绑定手机号 -->
+		<view v-if="indent == 'bind_mobile'" class="edit-info">
+			<view class="save-item bind-mobile">
+				<button type="primary" open-type="getPhoneNumber" @getphonenumber="mobileAuth">一键授权绑定</button>
+			</view>
+			<view class="save-item bind-mobile">
+				<button type="primary" @click="manualBinding">手动绑定</button>
+			</view>
+		</view>	
 		<view v-if="indent == 'address'" class="edit-info">
 			<view class="edit-info-box">
 				<text class="info-name">所在地区</text>
@@ -145,12 +154,14 @@
 </template>
 
 <script>
-import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
+import uniNavBar from '@/pages_tool/components/uni-nav-bar/uni-nav-bar.vue';
+import pickRegions from '@/components/pick-regions/pick-regions.vue';
 import info from './public/js/info.js';
 
 export default {
 	components: {
-		uniNavBar
+		uniNavBar,
+		pickRegions
 	},
 	data() {
 		return {};
@@ -328,6 +339,12 @@ export default {
 
 	button {
 		font-size: 30rpx;
+	}
+}
+
+.bind-mobile {
+	button {
+		border-radius: 60rpx;
 	}
 }
 

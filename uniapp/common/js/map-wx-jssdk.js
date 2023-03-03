@@ -6,6 +6,8 @@
  * @author v_ylyue@tencent.com
  */
 
+import Util from './util.js'
+
 var ERROR_CONF = {
     KEY_ERR: 311,
     KEY_ERR_MSG: 'key格式错误',
@@ -340,7 +342,7 @@ var Utils = {
      * 使用微信接口进行定位
      */
     getWXLocation(success, fail, complete) {
-		this.$util.getLocation({
+		Util.getLocation({
 			type: 'gcj02',
 			success: success,
 			fail: fail,

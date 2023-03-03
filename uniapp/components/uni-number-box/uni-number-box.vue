@@ -6,7 +6,8 @@
 		> -->
 		<!-- :style="'background-image:url(' + $util.img('public/uniapp/jian.png') + ')'" -->
 		<!-- </view> -->
-		<input :disabled="disabled" class="uni-input uni-numbox__value" type="number" @input="_onInput" @blur="_onInput" :class="{ small: size == 'small' }" :value="value"/>
+		<!-- <input :disabled="disabled || inputDisabled" class="uni-input uni-numbox__value" type="number" @input="_onInput" @blur="_onInput" :class="{ small: size == 'small' }" v-model="inputValue"/> -->
+		<input :disabled="disabled || inputDisabled" class="uni-input uni-numbox__value" type="number" @blur="_onInput" :class="{ small: size == 'small' }" v-model="inputValue"/>
 		<button type="default" class="increase" :class="{ disabled: inputValue >= max || disabled, small: size == 'small' }" @click="_calcValue('plus')">+</button>
 		<!-- <view 
 			class="uni-numbox__plus" @click="_calcValue('plus')"
@@ -36,6 +37,10 @@ export default {
 			default: 1
 		},
 		disabled: {
+			type: Boolean,
+			default: false
+		},
+		inputDisabled: {
 			type: Boolean,
 			default: false
 		},
@@ -108,18 +113,25 @@ export default {
 		_onInput(event) {
 			setTimeout(() => {
 				let value = event.detail.value;
-				if (!/(^[1-9]\d*$)/.test(value)) value = this.min;
-				if (!value) {
-					this.inputValue = 0;
-					return;
-				}
+				// if (!/(^[1-9]\d*$)/.test(value)) value = this.min;
+				// if (!value) {
+				// 	this.inputValue = 0;
+				// 	return;
+				// }
 				value = +value;
+			
 				if (value > this.max) {
 					value = this.max;
+					this.$util.showToast({ title: '商品库存不足' });
 				} else if (value < this.min) {
+					this.$util.showToast({ title: '商品最少购买'+this.min+ '件' });
 					value = this.min;
 				}
+				// 如果没有最小购买，同时也删除了输入框的内容，默认赋值为1
+				if(!value) value = 1;
+				
 				this.inputValue = value;
+				this.$forceUpdate();
 			}, 0);
 		}
 	}

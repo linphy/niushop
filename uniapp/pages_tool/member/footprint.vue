@@ -9,7 +9,7 @@
 				<view class="goods-list single-column" v-if="goodsList.length">
 					<view v-for="(item, index) in goodsList" :key="index">
 						<view class="datetime">{{ datetime(item) }}</view>
-						<view class="goods-item" :class="{manage:manage}">
+						<view class="goods-item" :class="{ manage: manage }">
 							<view class="checkbox-wrap" v-if="manage" @click="singleElection(item)">
 								<text class="iconfont" :class="$util.inArray(item.id, idArr) != -1 ? 'icon-yuan_checked color-base-text' : 'icon-yuan_checkbox'"></text>
 							</view>
@@ -21,12 +21,24 @@
 								<view class="name-wrap">
 									<view class="goods-name">{{ item.goods_name }}</view>
 								</view>
-								
+
 								<view class="lineheight-clear">
 									<view class="discount-price">
 										<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
-										<text class="price price-style large" >{{ parseFloat(showPrice(item)).toFixed(2).split(".")[0] }}</text>
-									    <text class="unit price-style small">.{{ parseFloat(showPrice(item)).toFixed(2).split(".")[1] }}</text>
+										<text class="price price-style large">
+											{{
+												parseFloat(showPrice(item))
+													.toFixed(2)
+													.split('.')[0]
+											}}
+										</text>
+										<text class="unit price-style small">
+											.{{
+												parseFloat(showPrice(item))
+													.toFixed(2)
+													.split('.')[1]
+											}}
+										</text>
 									</view>
 									<view class="member-price-tag" v-if="item.member_price && item.member_price == showPrice(item)">
 										<image :src="$util.img('public/uniapp/index/VIP.png')" mode="widthFix"></image>
@@ -36,10 +48,9 @@
 									</view>
 								</view>
 								<view class="pro-info">
-									<view class="delete-price font-size-activity-tag color-tip price-font">
+									<view class="delete-price font-size-activity-tag color-tip price-font" v-if="showMarketPrice(item)">
 										<text class="unit">{{ $lang('common.currencySymbol') }}</text>
-										{{ item.market_price > 0 ? item.market_price : item.price }}
-										
+										<text>{{ showMarketPrice(item) }}</text>
 									</view>
 									<view class="sale font-size-activity-tag color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
 								</view>
@@ -80,7 +91,6 @@ export default {
 		};
 	},
 	onShow() {
-
 		if (uni.getStorageSync('token')) {
 			this.token = uni.getStorageSync('token');
 			if (this.$refs.mescroll) this.$refs.mescroll.refresh();
@@ -96,9 +106,6 @@ export default {
 		},
 		isAll() {
 			return this.idArr.length == this.goodsList.length;
-		},
-		storeToken() {
-			return this.$store.state.token;
 		}
 	},
 	methods: {
@@ -183,6 +190,17 @@ export default {
 			let price = data.discount_price;
 			if (data.member_price && parseFloat(data.member_price) < parseFloat(price)) price = data.member_price;
 			return price;
+		},
+		showMarketPrice(item) {
+			if (item.market_price_show) {
+				let price = this.showPrice(item);
+				if (item.market_price > 0) {
+					return item.market_price;
+				} else if (parseFloat(item.price) > parseFloat(price)) {
+					return item.price;
+				}
+			}
+			return '';
 		},
 		goodsTag(data) {
 			return data.label_name || '';

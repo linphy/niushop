@@ -277,6 +277,10 @@ export default {
 		return {};
 	},
 	created() {},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		warpCss() {
 			var obj = '';
@@ -813,6 +817,11 @@ export default {
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
+			font-size: 24rpx;
+			margin-right: 8rpx;
+		}
+		.iconfont{
+			font-size: 24rpx;
 		}
 	}
 }

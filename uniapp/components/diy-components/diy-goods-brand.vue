@@ -3,11 +3,9 @@
 		<view :class="[value.style]">
 			<view class="title-wrap" v-show="value.title" :style="{ color: value.textColor, fontWeight: value.fontWeight ? 'bold' : '' }">{{ value.title }}</view>
 			<view class="ul-wrap">
-				<uni-grid :column="4" :showBorder="!1">
-					<uni-grid-item v-for="(item, index) in list" :key="index" index="index">
-						<image class="brand-pic" :src="$util.img(item.image_url)" mode="aspectFit" @click="toDetail(item)" @error="imgError(index)" :style="itemCss"></image>
-					</uni-grid-item>
-				</uni-grid>
+				<view class="li-item" v-for="(item, index) in list" :key="index" index="index">
+					<image class="brand-pic" :src="$util.img(item.image_url)" mode="aspectFit" @click="toDetail(item)" @error="imgError(index)" :style="itemCss"></image>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -35,6 +33,12 @@ export default {
 	},
 	created() {
 		this.getBrandList();
+	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {
+			this.getBrandList();
+		}
 	},
 	computed: {
 		warpCss() {
@@ -114,12 +118,22 @@ export default {
 			padding: 20rpx 0 10rpx;
 		}
 		.ul-wrap {
+			display: flex;
+			flex-wrap: wrap;
 			padding: 20rpx;
-			.brand-pic {
-				width: 90%;
-			}
-			.uni-grid-item{
-				width: calc(100% / 4) !important;
+
+			.li-item {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: calc(100% / 4 - 20rpx) !important;
+				height: 124rpx;
+				margin: 10rpx;
+				background-color: #fff;
+				.brand-pic {
+					width: 100%;
+					height: 100%;
+				}
 			}
 		}
 	}

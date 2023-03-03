@@ -18,33 +18,36 @@
 		<!-- 店铺 -->
 		<view class="site-wrap" style="margin-top: -69rpx">
 			<view class="site-body">
-				<view class="goods-wrap">
-					<view @click="goDetail(orderData.exchange_goods_id)" class="goods-img">
-						<image :src="exchangeImage(orderData)" @error="imageError()" mode="aspectFill"></image>
-					</view>
-					<view class="goods-info" @click="goDetail(orderData.exchange_goods_id)" >
-						<view class="goods-name">{{ orderData.exchange_name }}</view>
-						<view class="goods-sub-section">
-							<view>
-								<text class="goods-price color-base-text">
-									<text>
-										<text>{{ orderData.point }}积分</text>
-										<text v-if="orderData.price > 0" class="price-color">
-											+
-											<text class="unit">{{ $lang('common.currencySymbol') }}</text>
-											{{ orderData.price }}
+				<view class="goods-item">
+					<view class="goods-wrap">
+						<view @click="goDetail(orderData.exchange_goods_id)" class="goods-img">
+							<image :src="exchangeImage(orderData)" @error="imageError()" mode="aspectFill"></image>
+						</view>
+						<view class="goods-info" @click="goDetail(orderData.exchange_goods_id)" >
+							<view class="goods-name">{{ orderData.exchange_name }}</view>
+							<view class="goods-sub-section">
+								<view>
+									<text class="goods-price color-base-text">
+										<text>
+											<text>{{ orderData.point }}积分</text>
+											<text v-if="orderData.price > 0" class="price-color">
+												+
+												<text class="unit">{{ $lang('common.currencySymbol') }}</text>
+												{{ orderData.price }}
+											</text>
 										</text>
 									</text>
-								</text>
-							</view>
-							<view>
-								<text>
-									<text class="iconfont icon-close"></text>
-									{{ orderData.num }}
-								</text>
+								</view>
+								<view>
+									<text>
+										<text class="iconfont icon-close"></text>
+										{{ orderData.num }}
+									</text>
+								</view>
 							</view>
 						</view>
 					</view>
+					<view class="goods-action"></view>
 				</view>
 			</view>
 		</view>
@@ -77,7 +80,7 @@
 				</view>
 			</view>
 			<!-- 联系客服 -->
-			<ns-contact>
+			<ns-contact :niushop="{ order_id: orderData.order_id }">
 				<view class="kefu">
 					<view>
 						<text class="iconfont icon-ziyuan"></text>
@@ -122,7 +125,7 @@
 			</view>
 		</view>
 
-		<nsGoodsRecommend ref="goodrecommend" route="orderdetail"></nsGoodsRecommend>
+		<ns-goods-recommend ref="goodrecommend" route="order_detail"></ns-goods-recommend>
 		<!-- 选择支付方式弹窗 -->
 		<ns-payment ref="choosePaymentPopup" :payMoney="orderData.order_money" @confirm="orderPay(orderData)"></ns-payment>
 		<loading-cover ref="loadingCover"></loading-cover>
@@ -131,9 +134,11 @@
 
 <script>
 import nsGoodsRecommend from '@/components/ns-goods-recommend/ns-goods-recommend.vue';
+import nsContact from '@/components/ns-contact/ns-contact.vue';
 export default {
 	components: {
-		nsGoodsRecommend
+		nsGoodsRecommend,
+		nsContact
 	},
 	data() {
 		return {

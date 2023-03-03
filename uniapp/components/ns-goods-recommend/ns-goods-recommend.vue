@@ -1,61 +1,80 @@
 <template>
-	<view class="goods-recommend">
-		<view v-if="list.length">
-			<view class="goods-recommend-title"><image :src="$util.img('public/uniapp/goods/guess-like.png')"></image></view>
+	<view class="goods-recommend" v-if="list.length">
+		<view class="goods-recommend-title">
+			<text class="title">{{ config.title }}</text>
+		</view>
 
-			<view class="goods-list double-column">
-				<view class="goods-item margin-bottom" v-for="(item, index) in list" :key="index" @click="toDetail(item)">
-					<view class="goods-img">
-						<image :src="goodsImg(item.goods_image)" mode="widthFix" @error="imgError(index)" :lazy-load="true"></image>
-						<view class="color-base-bg goods-tag" v-if="goodsTag(item) != ''">{{ goodsTag(item) }}</view>
+		<view class="goods-list double-column">
+			<view class="goods-item margin-bottom" v-for="(item, index) in list" :key="index" @click="toDetail(item)">
+				<view class="goods-img">
+					<image :src="goodsImg(item.goods_image)" mode="widthFix" @error="imgError(index)" :lazy-load="true"></image>
+					<view class="color-base-bg goods-tag" v-if="goodsTag(item) != ''">{{ goodsTag(item) }}</view>
+				</view>
+				<view class="info-wrap">
+					<view class="name-wrap">
+						<view class="goods-name">{{ item.goods_name }}</view>
 					</view>
-					<view class="info-wrap">
-						<view class="name-wrap">
-							<view class="goods-name">{{ item.goods_name }}</view>
+
+					<view class="lineheight-clear">
+						<view class="discount-price">
+							<text class="unit  price-style small">{{ $lang('common.currencySymbol') }}</text>
+							<text class="price price-style large">
+								{{
+									parseFloat(showPrice(item))
+										.toFixed(2)
+										.split('.')[0]
+								}}
+							</text>
+							<text class="unit price-style small">
+								.{{
+									parseFloat(showPrice(item))
+										.toFixed(2)
+										.split('.')[1]
+								}}
+							</text>
 						</view>
-						
-						<view class="lineheight-clear">
-							<view class="discount-price">
-								<text class="unit  price-style small">{{ $lang('common.currencySymbol') }}</text>
-								<text class="price  price-style large">{{ parseFloat(showPrice(item)).toFixed(2).split(".")[0] }}</text>
-								<text class="unit  price-style small">.{{ parseFloat(showPrice(item)).toFixed(2).split(".")[1] }}</text>
-								
-							</view>
-							<view class="member-price-tag" v-if="item.member_price && item.member_price == showPrice(item)">
-								<image :src="$util.img('public/uniapp/index/VIP.png')" mode="widthFix"></image>
-							</view>
-							<view class="member-price-tag" v-else-if="item.promotion_type == 1">
-								<image :src="$util.img('public/uniapp/index/discount.png')" mode="widthFix"></image>
-							</view>
+						<view class="member-price-tag" v-if="item.member_price && item.member_price == showPrice(item)">
+							<image :src="$util.img('public/uniapp/index/VIP.png')" mode="widthFix"></image>
 						</view>
-						<view class="pro-info">
-							<view class="delete-price font-size-activity-tag color-tip price-font">
-								<block>
-									<text class="unit">{{ $lang('common.currencySymbol') }}</text>
-									{{ item.market_price > 0 ? item.market_price : item.price }}
-								</block>
-							</view>
-							<view class="sale font-size-activity-tag color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
+						<view class="member-price-tag" v-else-if="item.promotion_type == 1">
+							<image :src="$util.img('public/uniapp/index/discount.png')" mode="widthFix"></image>
 						</view>
+						<view class="delete-price font-size-activity-tag color-tip price-font" v-if="showMarketPrice(item)">
+							<text class="unit">{{ $lang('common.currencySymbol') }}</text>
+							<text>{{ showMarketPrice(item) }}</text>
+						</view>
+					</view>
+					<view class="pro-info">
+						<view class="sale font-size-activity-tag color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
+						<view v-if="config.add_cart_switch == 1" class="cart-buy-btn" @click.stop="$refs.goodsSkuIndex.addCart('cart', item, $event)">购买</view>
 					</view>
 				</view>
 			</view>
 		</view>
 		<view class="circle-box" v-if="showLoading && load"><ns-loading></ns-loading></view>
+
+		<ns-goods-sku-index ref="goodsSkuIndex" @cartListChange="cartListChange" @addCart="addCart"></ns-goods-sku-index>
 	</view>
 </template>
 
 <script>
 import nsLoading from '@/components/ns-loading/ns-loading.vue';
+import nsGoodsSkuIndex from '@/components/ns-goods-sku/ns-goods-sku-index.vue';
+
 // 商品推荐
 export default {
 	name: 'ns-goods-recommend',
 	components: {
-		nsLoading
+		nsLoading,
+		nsGoodsSkuIndex
 	},
 	data() {
 		return {
 			list: [],
+			config: {
+				title: '猜你喜欢',
+				add_cart_switch: 0
+			},
 			page: 1,
 			isAll: true,
 			isClick: true,
@@ -108,7 +127,6 @@ export default {
 			if (this.page > 1) this.showLoading = true;
 			return new Promise((resolve, reject) => {
 				that.$api.sendRequest({
-					// url: '/api/goodssku/pagecomponents',
 					url: '/api/goodssku/recommend',
 					data: {
 						page: this.page,
@@ -122,6 +140,7 @@ export default {
 							if (this.page == 1) {
 								this.list = [];
 							}
+							this.config = res.data.config;
 							this.list = this.list.concat(res.data.list);
 							if (this.list.length == res.data.count) this.isAll = false;
 							this.page += 1;
@@ -143,9 +162,26 @@ export default {
 			if (data.member_price && parseFloat(data.member_price) < parseFloat(price)) price = data.member_price;
 			return price;
 		},
+		showMarketPrice(item) {
+			if (item.market_price_show) {
+				let price = this.showPrice(item);
+				if (item.market_price > 0) {
+					return item.market_price;
+				} else if (parseFloat(item.price) > parseFloat(price)) {
+					return item.price;
+				}
+			}
+			return '';
+		},
 		goodsTag(data) {
 			return data.label_name || '';
-		}
+		},
+		// 监听加入购物车变化
+		cartListChange(e) {},
+		/**
+		 * 添加购物车回调
+		 */
+		addCart(id) {}
 	}
 };
 </script>
@@ -159,11 +195,29 @@ export default {
 		text-align: center;
 		margin-bottom: 40rpx;
 
-		image {
-			// width: 306rpx;
-			// height: 62rpx;
-			width: 690rpx;
-			height: 40rpx;
+		.title {
+			font-size: 30rpx;
+			font-weight: 500;
+			position: relative;
+			color: #333;
+
+			&::before,
+			&::after {
+				content: ' ';
+				width: 80rpx;
+				border-top: 2rpx solid #969696;
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			&::before {
+				left: 0;
+				transform: translateX(-130%);
+			}
+			&::after {
+				right: 0;
+				transform: translateX(130%);
+			}
 		}
 	}
 }
@@ -264,14 +318,16 @@ export default {
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
 			margin-top: 20rpx;
-			height: 68rpx;
+		}
+
+		.lineheight-clear {
+			margin-top: 16rpx;
 		}
 
 		.discount-price {
 			display: inline-block;
 			font-weight: bold;
 			line-height: 1;
-			margin-top: 16rpx;
 			color: var(--price-color);
 			.unit {
 				margin-right: 6rpx;
@@ -281,22 +337,45 @@ export default {
 		.pro-info {
 			display: flex;
 			margin-top: auto;
+			align-items: center;
 
-			.delete-price {
-				text-decoration: line-through;
+			.sale {
 				flex: 1;
-
-				.unit {
-					margin-right: 6rpx;
-				}
 			}
 
 			& > view {
 				line-height: 1;
+				font-size: $font-size-tag !important;
 
 				&:nth-child(2) {
 					text-align: right;
 				}
+			}
+
+			.cart-buy-btn {
+				display: inline-block;
+				text-align: center;
+				box-sizing: border-box;
+				color: #fff;
+				background-color: $base-color;
+				border-radius: 50rpx;
+				font-size: 24rpx;
+				padding: 12rpx 30rpx;
+				line-height: 1;
+				margin-left: 20rpx;
+			}
+		}
+
+		.delete-price {
+			display: inline-block;
+			margin-left: 6rpx;
+			float: right;
+			.unit {
+				margin-right: 6rpx;
+			}
+			text {
+				line-height: 1;
+				font-size: $font-size-tag !important;
 			}
 		}
 

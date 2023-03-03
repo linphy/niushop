@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import sxRate from '@/components/sx-rate/index.vue';
+import sxRate from '@/pages_tool/components/sx-rate/index.vue';
 import evaluate from './public/js/evaluate.js';
 export default {
 	components: {

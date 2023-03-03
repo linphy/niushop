@@ -1,7 +1,7 @@
 <template>
 	<view class="empty" :class="{ fixed: fixed }">
 		<view class="empty_img"><image :src="$util.img('public/uniapp/common/common-empty.png')" mode="aspectFit"></image></view>
-		<view class="color-tip margin-top title" :style="{color:textColor}">{{ text }}</view>
+		<view class="color-tip margin-top title" :style="{ color: textColor + ' !important' }">{{ text }}</view>
 		<view class="color-tip margin-bottom font-size-sub">{{ subText }}</view>
 		<button type="primary" size="mini" class="button" @click="goIndex()" v-if="isIndex">{{ emptyBtn.text }}</button>
 	</view>
@@ -37,8 +37,8 @@ export default {
 		},
 		textColor: {
 			type: String,
-			default: '暂无相关数据'
-		},
+			default: ''
+		}
 	},
 	methods: {
 		goIndex() {
@@ -64,7 +64,7 @@ export default {
 	padding: $padding;
 	box-sizing: border-box;
 	justify-content: center;
-	.title{
+	.title {
 		font-size: 30rpx;
 	}
 	.empty_img {

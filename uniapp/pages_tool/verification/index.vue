@@ -41,7 +41,7 @@
 				<view class="_text" @click="focus">手动输入</view>
 			</view>
 		</view>
-			
+
 		<ns-login ref="login"></ns-login>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
@@ -66,7 +66,6 @@ export default {
 	components: {},
 	onLoad() {},
 	onShow() {
-		
 		if (uni.getStorageSync('token')) {
 			this.checkIsVerifier();
 		} else {
@@ -186,11 +185,6 @@ export default {
 			if (nVal) {
 				this.checkIsVerifier();
 			}
-		}
-	},
-	computed: {
-		storeToken() {
-			return this.$store.state.token;
 		}
 	}
 };

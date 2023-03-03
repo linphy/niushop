@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import imgCropping from '@/components/img-cropping/cropping.vue';
+import imgCropping from '@/pages_tool/components/img-cropping/cropping.vue';
 
 export default {
 	data() {

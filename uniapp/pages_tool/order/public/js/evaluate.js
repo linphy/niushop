@@ -50,8 +50,10 @@ export default {
 				success: res => {
 					if (res.code == 0) {
 						this.isEvaluate = res.data.evaluate_status
-						this.orderNo = res.data.list[0].order_no;
 						this.goodsList = res.data.list;
+						if (this.goodsList.length) {
+							this.orderNo = res.data.list[0].order_no;
+						}
 						if (this.isEvaluate) {
 							for (let i = 0; i < res.data.list.length; i++) {
 								let array = [];
@@ -130,7 +132,7 @@ export default {
 			});
 		},
 		//删除图片
-		deleteImg(i,index,j) {
+		deleteImg(i, index, j) {
 			this.imgList[index].splice(j, 1);
 			if (this.isEvaluate) {
 				this.goodsEvalList[index].again_images = this.imgList[index].toString()
@@ -161,6 +163,13 @@ export default {
 			for (let i = 0; i < this.goodsEvalList.length; i++) {
 				if (this.isEvaluate) {
 					if (!this.goodsEvalList[i].again_content.trim().length) {
+						this.$util.showToast({
+							title: "商品的评价不能为空哦"
+						});
+						return;
+					}
+				} else {
+					if (!this.goodsEvalList[i].content.trim().length) {
 						this.$util.showToast({
 							title: "商品的评价不能为空哦"
 						});

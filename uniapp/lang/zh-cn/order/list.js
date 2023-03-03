@@ -7,6 +7,7 @@ export const lang = {
 	readyDelivery: '待发货',
 	waitDelivery: '待收货',
 	waitEvaluate: '待评价',
+	waitUse: '待使用',
 	update: "释放刷新",
 	updateIng: "加载中..."
 }

@@ -4,14 +4,10 @@
 		<mescroll-uni @getData="getData" ref="mescroll">
 			<block slot="list">
 				<view class="article-wrap" v-if="list.length">
-					<view class="ns-adv">
-						<ns-adv keyword="NS_ARTICLE"></ns-adv>
-					</view>
-					
+					<view class="ns-adv"><ns-adv keyword="NS_ARTICLE"></ns-adv></view>
+
 					<view class="item" v-for="(item, index) in list" :key="index" @click="toDetail(item)">
-						<view class="article-img">
-							<image class="cover-img" :src="$util.img(item.cover_img)" mode="widthFix" @error="imgError(index)"></image>
-						</view>
+						<view class="article-img"><image class="cover-img" :src="$util.img(item.cover_img)" mode="widthFix" @error="imgError(index)"></image></view>
 						<view class="info-wrap">
 							<text class="title">{{ item.article_title }}</text>
 							<view class="read-wrap">
@@ -32,13 +28,19 @@
 </template>
 
 <script>
+import nsAdv from '@/components/ns-adv/ns-adv.vue';
 export default {
 	data() {
 		return {
 			list: []
 		};
 	},
-	onShow() {},
+	components: {
+		nsAdv
+	},
+	onShow() {
+		this.setPublicShare();
+	},
 	methods: {
 		getData(mescroll) {
 			this.$api.sendRequest({
@@ -76,6 +78,16 @@ export default {
 		},
 		imgError(index) {
 			if (this.list[index]) this.list[index].cover_img = this.$util.getDefaultImage().article;
+		},
+		// 设置公众号分享
+		setPublicShare() {
+			let shareUrl = this.$config.h5Domain + '/pages_tool/article/list';
+			this.$util.setPublicShare({
+				title: '文章列表',
+				desc: '',
+				link: shareUrl,
+				imgUrl: ''
+			});
 		}
 	},
 	onShareAppMessage(res) {
@@ -86,6 +98,16 @@ export default {
 			path: path,
 			success: res => {},
 			fail: res => {}
+		};
+	},
+	//分享到朋友圈
+	onShareTimeline() {
+		var title = '文章列表';
+		var query = '/pages_tool/article/list';
+		return {
+			title: title,
+			query: query,
+			imageUrl: ''
 		};
 	}
 };
@@ -103,29 +125,29 @@ export default {
 
 .article-wrap {
 	background: #f8f8f8;
-	
+
 	.ns-adv {
 		margin: 24rpx 24rpx 0 24rpx;
 		border-radius: $border-radius;
 		overflow: hidden;
-		
+
 		/deep/ view {
 			line-height: 1;
 		}
-		
+
 		image {
 			width: 100%;
 			line-height: 1;
 		}
 	}
-	
+
 	.item {
 		display: flex;
 		padding: 20rpx;
 		background-color: #fff;
 		margin: 24rpx;
 		border-radius: 16rpx;
-		
+
 		.article-img {
 			margin-right: 20rpx;
 			width: 160rpx;
@@ -134,12 +156,12 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			
+
 			image {
 				width: 100%;
 			}
 		}
-		
+
 		.info-wrap {
 			flex: 1;
 			display: flex;

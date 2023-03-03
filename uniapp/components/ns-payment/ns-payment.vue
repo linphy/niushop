@@ -122,6 +122,14 @@ export default {
 		// #endif
 	},
 	methods: {
+		// #ifdef MP-WEIXIN
+		payIsMatched(){
+			if (uni.getStorageSync('is_test')) {
+				this.isMatched = 1;
+				return;
+			}
+		},
+		// #endif
 		open() {
 			this.$refs.choosePaymentPopup.open();
 		},

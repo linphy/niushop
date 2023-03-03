@@ -3,8 +3,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationStyle": "custom"
-				// "enablePullDownRefresh": true
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
 			}
 		},
 
@@ -23,7 +23,8 @@
 			"style": {
 				"disableScroll": true,
 				"navigationStyle": "custom",
-				"navigationBarTitleText": "商品分类"
+				"navigationBarTitleText": "商品分类",
+				"enablePullDownRefresh": true
 			}
 		},
 
@@ -31,10 +32,7 @@
 		{
 			"path": "pages/goods/detail",
 			"style": {
-				// #ifdef H5
-				"navigationStyle": "custom",
-				// #endif
-				"navigationBarTitleText": ""
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -52,7 +50,7 @@
 			"path": "pages/member/index",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTitleText": "会员中心"
+				"enablePullDownRefresh": true
 			}
 		},
 		//******************订单模块（12）******************
@@ -74,9 +72,8 @@
 			"path": "pages/order/detail",
 			"style": {
 				// #ifdef H5
-				"navigationStyle": "custom",
+				"navigationStyle": "custom"
 				// #endif
-				"enablePullDownRefresh": true
 			}
 		},
 		// 本地配送订单详情
@@ -145,10 +142,8 @@
 				{
 					"path": "index/diy",
 					"style": {
-						// #ifdef H5
 						"navigationStyle": "custom",
-						// #endif
-						"navigationBarTitleText": "微页面"
+						"enablePullDownRefresh": true
 					}
 				},
 				//******************会员模块（20）******************
@@ -187,9 +182,7 @@
 				{
 					"path": "member/balance",
 					"style": {
-						// #ifdef H5
 						"navigationStyle": "custom"
-						// #endif
 					}
 				},
 				{
@@ -215,6 +208,13 @@
 						"navigationStyle": "custom",
 						// #endif
 						"disableScroll": true
+					}
+				},
+				{
+					"path": "member/contact",
+					"style": {
+						"navigationStyle": "custom",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -244,9 +244,7 @@
 				{
 					"path": "member/point",
 					"style": {
-						// #ifdef H5
 						"navigationStyle": "custom"
-						// #endif
 					}
 				},
 				{
@@ -368,9 +366,8 @@
 					"path": "login/find",
 					"style": {
 						// #ifdef H5
-						"navigationStyle": "custom",
+						"navigationStyle": "custom"
 						// #endif
-						"navigationBarTitleText": ""
 					}
 				},
 
@@ -474,33 +471,6 @@
 						// #endif
 					}
 				},
-
-				//******************核销模块（4）******************
-				{
-					"path": "verification/index",
-					"style": {
-						// #ifdef H5
-						"navigationStyle": "custom"
-						// #endif
-					}
-				},
-				{
-					"path": "verification/list",
-					"style": {
-						// #ifdef H5
-						"navigationStyle": "custom"
-						// #endif
-					}
-				},
-				{
-					"path": "verification/detail",
-					"style": {
-						// #ifdef H5
-						"navigationStyle": "custom"
-						// #endif
-					}
-				},
-
 				//******************支付模块（2）******************
 				{
 					"path": "pay/index",
@@ -520,6 +490,14 @@
 				},
 				{
 					"path": "pay/result",
+					"style": {
+						// #ifdef H5
+						"navigationStyle": "custom"
+						// #endif
+					}
+				},
+				{
+					"path": "pay/cashier",
 					"style": {
 						// #ifdef H5
 						"navigationStyle": "custom"
@@ -627,6 +605,34 @@
 						// #endif
 						"navigationBarTitleText": "注册"
 					}
+				},
+				//******************核销模块（4）******************
+				{
+					"path": "verification/index",
+					"style": {
+						// #ifdef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "核销台"
+					}
+				},
+				{
+					"path": "verification/list",
+					"style": {
+						// #ifdef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "核销列表"
+					}
+				},
+				{
+					"path": "verification/detail",
+					"style": {
+						// #ifdef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "核销详情"
+					}
 				}
 			]
 		}
@@ -649,19 +655,19 @@
 		"borderStyle": "white",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"text": "首页"
+				"text": ""
 			},
 			{
 				"pagePath": "pages/goods/category",
-				"text": "分类"
+				"text": ""
 			},
 			{
 				"pagePath": "pages/goods/cart",
-				"text": "购物车"
+				"text": ""
 			},
 			{
 				"pagePath": "pages/member/index",
-				"text": "个人中心"
+				"text": ""
 			}
 		]
 	},

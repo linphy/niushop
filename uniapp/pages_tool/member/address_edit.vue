@@ -484,10 +484,11 @@ export default {
 	margin-top: 60rpx;
 	height: 80rpx;
 	line-height: 80rpx !important;
-	border-radius: $border-radius;
+	border-radius: 80rpx;
 	font-weight: 500;
 	width: calc(100% - 60rpx);
 	margin-left: 30rpx;
+	font-size: 32rpx;
 }
 
 .btn {

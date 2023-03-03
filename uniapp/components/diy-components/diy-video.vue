@@ -15,6 +15,10 @@ export default {
 		return {};
 	},
 	created() {},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		videoWarpCss: function() {
 			var obj = '';

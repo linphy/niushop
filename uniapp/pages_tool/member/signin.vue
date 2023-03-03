@@ -1,152 +1,171 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
 	<view class="signin">
-		<!-- #ifdef H5 -->
-		<view class="head-nav color-base-bg"></view>
-		<!-- #endif -->
-		<view class="sigin-box">
-			<view class="sigin-bg"><image :src="$util.img('public/uniapp/signin/bg4.png')" mode="widthFix"></image></view>
+		<block v-if="signState">
+			<!-- #ifdef H5 -->
+			<view class="head-nav color-base-bg"></view>
+			<!-- #endif -->
+			<view class="sigin-box">
+				<view class="sigin-bg"></view>
 
-			<view class="signin-wrap">
-				<view class="member-info">
-					<view class="headimg">
-						<view class="headimg-img">
-							<image
-								:src="headimg ? $util.img(headimg) : $util.getDefaultImage().head"
-								mode="aspectFill"
-								@error="headimg = $util.getDefaultImage().head"
-							></image>
-						</view>
-
-						<view class="signin-info">
-							<view>
-								已连续签到
-								<text>{{ signDaysSeries }}</text>
-								天
+				<view class="signin-wrap">
+					<view class="member-info">
+						<view class="headimg">
+							<view class="headimg-img">
+								<image :src="headimg ? $util.img(headimg) : $util.getDefaultImage().head" mode="aspectFill" @error="headimg = $util.getDefaultImage().head"></image>
 							</view>
-							<view>{{ hasSign ? '明日' : '今日' }}签到可获得{{ pointTomorrow }}积分</view>
-						</view>
-					</view>
 
-					<view class="point-box">
-						<text class="point font-size-base">积分：{{ signPoint }}</text>
-					</view>
-				</view>
-
-				<view class="signin-days-wrap">
-					<view class="signin-desc">连续签到领好礼</view>
-					<view class="signin-day-list">
-						<view class="signin-day-con">
-							<scroll-view class="signin-day-scroll" scroll-with-animation="true" :scroll-x="true" :show-scrollbar="false" :scroll-into-view="'id_' + showDay">
-								<block v-for="(item, index) in showSignDays">
-									<view :id="'id_' + item.day" class="signin-day-item" v-if="item.day < signDaysSeries || (item.day == signDaysSeries && hasSign == 0)">
-										<view class="">第{{ item.day }}天</view>
-										<image :src="$util.img('public/uniapp/signin/signed.png')"></image>
-									</view>
-									<view :id="'id_' + item.day" class="signin-day-item" v-else-if="item.day == signDaysSeries && hasSign == 1" style="background: #FF4544;">
-										<view style="color:#fff">第{{ item.day }}天</view>
-										<image :src="$util.img('public/uniapp/signin/sginin.png')"></image>
-									</view>
-									<view :id="'id_' + item.day" class="signin-day-item" v-else-if="$util.inArray(item.day, rewardRuleDay) != -1">
-										<view class="">第{{ item.day }}天</view>
-										<image :src="$util.img('public/uniapp/signin/award.png')"></image>
-									</view>
-									<view :id="'id_' + item.day" class="signin-day-item" v-else>
-										<view class="">第{{ item.day }}天</view>
-										<image :src="$util.img('public/uniapp/signin/gold1.png')"></image>
-									</view>
-								</block>
-							</scroll-view>
-						</view>
-					</view>
-
-					<view class="signin-btn">
-						<button class="sign-btn" :class="hasSign == 1 || signState == 0 ? 'btn-active' : ''" @click="sign()">{{ hasSign == 1 ? '已签到' : '签到' }}</button>
-					</view>
-				</view>
-
-				<view class="my-signin">
-					<view class="my-signin-title">我的签到</view>
-
-					<view class="my-signin-con">
-						<view class="my-signin-item">
-							<image :src="$util.img('public/uniapp/signin/bg2.png')"></image>
-							<view class="my-signin-item-num">
-								<text>{{ signPoint }}</text>
-								<text>积分</text>
+							<view class="signin-info">
+								<view>
+									已连续签到
+									<text>{{ signDaysSeries }}</text>
+									天
+								</view>
+								<view>{{ hasSign ? '明日' : '今日' }}签到可获得{{ pointTomorrow }}积分</view>
 							</view>
-							<view>累计获得积分</view>
 						</view>
-						<view class="my-signin-item">
-							<image :src="$util.img('public/uniapp/signin/bg3.png')"></image>
-							<view class="my-signin-item-num">
-								<text>{{ signGrowth }}</text>
-								<text>成长值</text>
+
+						<view class="point-box" @click="sign()">
+							<image :src="$util.img(hasSign == 1 ? 'public/uniapp/signin/sign-btn-res.png' : 'public/uniapp/signin/sign-btn.png')" mode="widthFix"></image>
+						</view>
+					</view>
+
+					<view class="signin-days-wrap">
+						<view class="signin-desc">连续签到领好礼</view>
+						<view class="signin-day-list">
+							<view class="signin-day-con">
+								<view class="signin-day-scroll">
+									<block v-for="(item, index) in showSignDays">
+										<view
+											v-if="!item.is_last"
+											:id="'id_' + item.day"
+											class="signin-day-item"
+											:class="{
+												signed: item.day < signDaysSeries || (item.day == signDaysSeries && hasSign == 0) || (item.day == signDaysSeries && hasSign == 1)
+											}"
+										>
+											<view class="day">第{{ item.day }}天</view>
+											<image :src="$util.img('public/uniapp/signin/sign-icon.png')"></image>
+											<view class="point">{{ item.point }}积分</view>
+										</view>
+										<view
+											v-else
+											:id="'id_' + item.day"
+											class="signin-day-item last"
+											:class="{
+												signed: item.day < signDaysSeries || (item.day == signDaysSeries && hasSign == 0) || (item.day == signDaysSeries && hasSign == 1)
+											}"
+										>
+											<view>
+												<view class="day">第{{ item.day }}天</view>
+												<view class="point">{{ item.point }}积分</view>
+											</view>
+											<image :src="$util.img('public/uniapp/signin/sign-box.png')" mode="widthFix"></image>
+										</view>
+									</block>
+								</view>
 							</view>
-							<view>累计获得成长值</view>
 						</view>
 					</view>
-				</view>
 
-				<view class="signin-rule">
-					<view class="signin-rule-title">
-						<image :src="$util.img('public/uniapp/signin/icon2.png')"></image>
-						<text>签到规则</text>
-						<image :src="$util.img('public/uniapp/signin/icon1.png')"></image>
+					<view class="my-signin">
+						<view class="my-signin-title">我的签到</view>
+
+						<view class="my-signin-con">
+							<view class="my-signin-item">
+								<image :src="$util.img('public/uniapp/signin/sign-bg-yellow.png')"></image>
+								<view class="my-signin-item-num">积分：{{ signPoint }}</view>
+								<view>累计获得积分</view>
+							</view>
+							<view class="my-signin-item">
+								<image :src="$util.img('public/uniapp/signin/sign-bg-pink.png')"></image>
+								<view class="my-signin-item-num">成长值：{{ signGrowth }}</view>
+								<view>累计获得成长值</view>
+							</view>
+						</view>
 					</view>
 
-					<view class="signin-rule-con">
-						<view class="rule-item" v-for="(item, index) in rule" :key="index">
-							<block v-if="index == 0">1. 每日签到奖励：</block>
-							<block v-else>{{ index + 1 + '. 连续签到' + item.day + '天额外奖励：' }}</block>
-							<text v-if="item.point">{{ item.point + '积分 ' }}</text>
-							<text v-if="item.growth">{{ item.growth + '成长值' }}</text>
-						</view>
+					<view class="signin-rule" v-if="rule && rule.length">
+						<view class="signin-rule-title">签到规则</view>
 
-						<view class="rule-item">{{ rule.length + 1 }}.连续签到{{ cycle }}天为一个周期，连续签到天数签满一个周期或者签到中断，将清空连签天数重新计算签到天数</view>
-						<view class="rule-item">
-							{{ rule.length + 2 }}. 用户可在签到页每日签到一次，签到后可获得每日签到奖励；连续签到天数达到连签奖励的当天，可额外获得连签奖励
+						<view class="signin-rule-con">
+							<view class="rule-item" v-for="(item, index) in rule" :key="index">
+								<block v-if="index == 0">1. 每日签到奖励：</block>
+								<block v-else>{{ index + 1 + '. 连续签到' + item.day + '天额外奖励：' }}</block>
+								<text v-if="item.point">{{ item.point + '积分 ' }}</text>
+								<text v-if="item.growth">{{ item.growth + '成长值' }}</text>
+							</view>
+
+							<view class="rule-item">
+								{{ rule.length + 1 }}.连续签到{{ cycle }}天为一个周期，连续签到天数签满一个周期或者签到中断，将清空连签天数重新计算签到天数
+							</view>
+							<view class="rule-item">
+								{{ rule.length + 2 }}. 用户可在签到页每日签到一次，签到后可获得每日签到奖励；连续签到天数达到连签奖励的当天，可额外获得连签奖励
+							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-		</view>
 
-		<view @touchmove.prevent.stop>
-			<uni-popup ref="uniPopup" type="center" class="wap-floating" :maskClick="false">
-				<view class="popup-box" @click="close()">
-					<text class="iconfont icon-close" @click="$refs.uniPopup.close()"></text>
-					<image class="pic" :src="$util.img('public/uniapp/signin/bg1.png')"></image>
-					<view class="popup-content">
-						<view class="popup-content-wrap">
-							<view class="title" v-if="successTip.point || successTip.growth">
-								<text>恭喜您获得</text>
-								<text v-if="successTip.point">
-									<text class="num color-base-text">{{ successTip.point }}</text>
-									积分
-								</text>
-								<text v-if="successTip.growth">
-									<text class="num color-base-text">{{ successTip.growth }}</text>
-									成长值
-								</text>
+			<view @touchmove.prevent.stop>
+				<uni-popup ref="uniPopup" type="center" class="wap-floating" :maskClick="false">
+					<view class="popup-box" @click="close()">
+						<text class="iconfont icon-close" @click="$refs.uniPopup.close()"></text>
+						<image class="pic" :src="$util.img('public/uniapp/signin/bg1.png')"></image>
+						<view class="popup-content">
+							<view class="popup-content-wrap">
+								<view class="title" v-if="successTip.point || successTip.growth">
+									<text>恭喜您获得</text>
+									<text v-if="successTip.point">
+										<text class="num color-base-text">{{ successTip.point }}</text>
+										积分
+									</text>
+									<text v-if="successTip.growth">
+										<text class="num color-base-text">{{ successTip.growth }}</text>
+										成长值
+									</text>
+								</view>
+								<view class="desc">连续签到可获得更多奖励！</view>
 							</view>
-							<view class="desc">连续签到可获得更多奖励！</view>
+							<view class="other-info color-base-bg" @click="$refs.uniPopup.close()">知道了</view>
 						</view>
-						<view class="other-info color-base-bg" @click="$refs.uniPopup.close()">知道了</view>
 					</view>
+				</uni-popup>
+			</view>
+
+			<!-- 悬浮按钮 -->
+			<view class="fixed-box" :style="{ height: fixBtnShow ? '330rpx' : '120rpx' }">
+				<!-- 规则 -->
+				<view class="btn-item" v-if="fixBtnShow" @click="$util.redirectTo('/pages/index/index')">
+					<text class="iconfont icon-shouye1"></text>
+					<view>首页</view>
 				</view>
-			</uni-popup>
-		</view>
+				<view class="btn-item" v-if="fixBtnShow" @click="$util.redirectTo('/pages/member/index')">
+					<text class="iconfont icon-yonghu"></text>
+					<view>我的</view>
+				</view>
+
+				<view class="btn-item icon-xiala" v-if="fixBtnShow" @click="fixBtnShow ? (fixBtnShow = false) : (fixBtnShow = true)">
+					<text class="iconfont icon-unfold"></text>
+				</view>
+				<view class="btn-item switch" v-else :class="{ show: fixBtnShow }" @click="fixBtnShow ? (fixBtnShow = false) : (fixBtnShow = true)">
+					<view class="">快捷</view>
+					<view>导航</view>
+				</view>
+			</view>
+		</block>
+		<block v-else><ns-empty text="暂未开启签到奖励" subText="请到营销中心开启签到奖励" :isIndex="false"></ns-empty></block>
+
 		<loading-cover ref="loadingCover"></loading-cover>
 
 		<ns-login ref="login"></ns-login>
 	</view>
 </template>
 <script>
-import uniCalender from '@/components/uni-calendar/uni-calendar.vue';
+import uniCalender from '@/pages_tool/components/uni-calendar/uni-calendar.vue';
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 import signIn from './public/js/signin.js';
-import Calendar from '@/components/uni-calendar/util.js';
+import Calendar from '@/pages_tool/components/uni-calendar/util.js';
 export default {
 	components: {
 		uniPopup,
@@ -159,7 +178,7 @@ export default {
 		};
 	},
 	onLoad(option) {
-		setTimeout( () => {
+		setTimeout(() => {
 			if (this.addonIsExist && !this.addonIsExist.membersignin) {
 				this.$util.showToast({
 					title: '商家未开启会员签到',
@@ -172,25 +191,18 @@ export default {
 				return;
 			}
 		}, 1000);
-		 
+
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 		if (option.back) this.back = option.back;
 		if (option.redirect) this.redirect = option.redirect;
-		this.getRule();
+
 		this.getSignState();
 	},
-	computed: {
-		storeToken() {
-			return this.$store.state.token;
-		}
-	},
 	onShow() {
-		
 		this.getSignPointData();
 		this.getSignGrowthData();
 
 		if (uni.getStorageSync('token')) {
-			this.getSignInfo();
 			this.getIsSign();
 		} else {
 			setTimeout(() => {
@@ -202,7 +214,6 @@ export default {
 	watch: {
 		storeToken: function(nVal, oVal) {
 			if (nVal) {
-				this.getSignInfo();
 				this.getIsSign();
 			}
 		}
@@ -241,7 +252,9 @@ uni-page-refresh {
 		position: absolute;
 		top: 0;
 		z-index: 1;
-
+		background: linear-gradient(136deg, #fe7849 0%, #ff1959 100%);
+		height: 500rpx;
+		border-radius: 0 0 100% 100%/0 0 20% 20%;
 		image {
 			width: 100%;
 		}
@@ -267,7 +280,7 @@ uni-page-refresh {
 				width: 100rpx;
 				height: 100rpx;
 				background: #fff;
-				border: 2px solid #fff;
+				border: 0px solid #fff;
 				border-radius: 50%;
 				overflow: hidden;
 				margin-right: 20rpx;
@@ -281,14 +294,15 @@ uni-page-refresh {
 			.signin-info {
 				view {
 					color: #ffffff;
-					font-size: $font-size-base;
+					font-size: 24rpx;
 					line-height: 1;
 
 					&:first-child {
 						margin-bottom: 18rpx;
-
+						font-size: 32rpx;
+						font-weight: bold;
 						text {
-							color: #fffc00;
+							margin: 0 9rpx;
 						}
 					}
 				}
@@ -299,12 +313,14 @@ uni-page-refresh {
 			display: flex;
 			align-items: center;
 			height: 68rpx;
-			padding: 13rpx 20rpx 13rpx 15rpx;
+			padding: 13rpx 0 13rpx 0;
 			box-sizing: border-box;
 
 			image {
-				width: 42rpx;
-				height: 42rpx;
+				width: 160rpx;
+				height: 68rpx;
+				max-height: 80rpx;
+				margin-bottom: -6rpx;
 			}
 
 			.point {
@@ -319,12 +335,13 @@ uni-page-refresh {
 		position: relative;
 		z-index: 9;
 		background-color: #ffffff;
-		border-radius: 10rpx;
-		padding: 30rpx 0 160rpx;
+		border-radius: 18rpx;
+		padding: 30rpx 0 30rpx;
 		position: relative;
-
+		height: 468rpx;
 		.signin-desc {
-			font-size: 30rpx;
+			font-size: 32rpx;
+			font-weight: bold;
 			line-height: 1;
 			padding: 0 30rpx;
 		}
@@ -333,7 +350,7 @@ uni-page-refresh {
 			margin-top: 30rpx;
 			display: flex;
 			justify-content: space-between;
-			padding: 0 20rpx;
+			padding: 0 30rpx;
 
 			.signin-day-con {
 				width: 100%;
@@ -341,24 +358,52 @@ uni-page-refresh {
 
 			.signin-day-scroll {
 				display: flex;
-				flex-wrap: nowrap;
+				flex-wrap: wrap;
 				width: 100%;
 				flex-direction: row;
 				white-space: nowrap;
 				line-height: 1;
-
 				.signin-day-item {
 					flex-shrink: 0;
-					margin-right: calc((100% - 85rpx * 7) / 6);
-
+					background: #f5f6fa;
+					margin-right: 30rpx;
+					width: calc((100% - 90rpx) / 4);
+					height: 155rpx;
+					border-radius: 18rpx;
+					margin-bottom: 24rpx;
 					&:last-child {
+						margin-right: 0;
+						width: calc((100% - 30rpx) / 2);
+					}
+					&:nth-child(4n) {
 						margin-right: 0;
 					}
 
 					image {
-						width: 52rpx;
-						height: 52rpx;
-						margin-top: 13rpx;
+						width: 60rpx;
+						height: 60rpx;
+						margin-top: 10rpx;
+					}
+					&.signed {
+						background: linear-gradient(136deg, #fe7849 0%, #ff1959 100%);
+						view {
+							color: #ffffff;
+						}
+					}
+					&.last {
+						display: flex;
+						flex-direction: row;
+						> view {
+							width: 50%;
+							.point {
+								margin: 15rpx;
+							}
+						}
+						image {
+							width: 40%;
+							margin-top: 20rpx;
+							max-width: 130rpx;
+						}
 					}
 				}
 
@@ -380,10 +425,17 @@ uni-page-refresh {
 				background-color: #f6f6fb;
 				flex-shrink: 0;
 
-				view {
-					font-size: 22rpx;
+				.day {
+					font-size: 24rpx;
 					line-height: 1;
-					margin-top: 15rpx;
+					margin-top: 18rpx;
+					font-weight: bold;
+				}
+				.point {
+					font-size: 20rpx;
+					line-height: 1;
+					margin-top: -4rpx;
+					color: #abb0c1;
 				}
 
 				image {
@@ -417,29 +469,29 @@ uni-page-refresh {
 
 	.my-signin {
 		padding: 30rpx;
-		margin-top: 68rpx;
+		margin-top: 30rpx;
 		background-color: #ffffff;
-		border-radius: 10rpx;
-
+		border-radius: 18rpx;
 		.my-signin-title {
-			font-size: 30rpx;
+			font-size: 32rpx;
 			line-height: 1;
+			font-weight: bold;
 		}
 
 		.my-signin-con {
 			display: flex;
 			justify-content: space-between;
-			margin-top: 20rpx;
+			margin-top: 30rpx;
 		}
 
 		.my-signin-item {
 			width: 300rpx;
-			height: 133rpx;
+			height: 155rpx;
 			position: relative;
 
 			image {
 				width: 300rpx;
-				height: 133rpx;
+				height: 155rpx;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -448,25 +500,16 @@ uni-page-refresh {
 			.my-signin-item-num {
 				position: relative;
 				z-index: 9;
-				padding: 36rpx 17rpx 0;
+				padding: 44rpx 28rpx 0;
 				line-height: $font-size-toolbar;
-
-				text:first-child {
-					font-size: $font-size-toolbar;
-					color: #ffffff;
-				}
-
-				text:last-child {
-					font-size: $font-size-activity-tag;
-					color: #ffffff;
-				}
+				font-weight: bold;
 			}
 
 			view:last-child {
 				position: relative;
 				z-index: 9;
-				padding-left: 17rpx;
-				color: #ffffff;
+				color: #abb0c1;
+				padding-left: 28rpx;
 				font-size: $font-size-activity-tag;
 				line-height: 1;
 				margin-top: 16rpx;
@@ -475,31 +518,26 @@ uni-page-refresh {
 	}
 
 	.signin-rule {
-		margin-top: 55rpx;
-
+		margin-top: 30rpx;
+		background-color: #ffffff;
+		border-radius: 18rpx;
+		padding: 30rpx;
 		.signin-rule-title {
 			display: flex;
 			align-items: center;
-			justify-content: center;
+			justify-content: flex-start;
 			line-height: $font-size-toolbar;
-
-			image {
-				width: 21rpx;
-				height: 14rpx;
-			}
-
-			text {
-				margin: 0 21rpx;
-				font-size: $font-size-toolbar;
-			}
+			font-size: 32rpx;
+			font-weight: bold;
+			text-align: left;
 		}
 
 		.signin-rule-con {
-			margin-top: 52rpx;
-			padding: 0 38rpx;
+			margin-top: 30rpx;
+			padding: 0 0;
 
 			.rule-item {
-				font-size: $font-size-tag;
+				font-size: 26rpx;
 				color: $color-sub;
 			}
 		}
@@ -577,6 +615,50 @@ uni-page-refresh {
 		align-items: center;
 		justify-content: center;
 		margin-top: 40rpx;
+	}
+}
+//悬浮按钮
+.fixed-box {
+	position: fixed;
+	right: 20rpx;
+	bottom: 300rpx;
+	z-index: 10;
+	background: #fff;
+	box-shadow: 2rpx 2rpx 22rpx rgba(0, 0, 0, 0.3);
+	border-radius: 120rpx;
+	padding: 20rpx 0;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	width: 120rpx;
+	box-sizing: border-box;
+	transition: 0.3s;
+	overflow: hidden;
+	.btn-item {
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		flex-direction: column;
+		line-height: 1;
+		margin: 14rpx 0;
+		transition: 0.1s;
+		text {
+			font-size: 44rpx;
+			font-weight: bold;
+		}
+		view {
+			font-size: 26rpx;
+			font-weight: bold;
+		}
+		&.show {
+			transform: rotate(180deg);
+		}
+		&.switch {
+		}
+		&.icon-xiala {
+			margin: 0;
+			margin-top: 0.1rpx;
+		}
 	}
 }
 </style>

@@ -4,16 +4,16 @@
 		<view v-if="value.mode == 'custom-rubik-cube'">
 			<view style="position: relative;"><rich-text :nodes="customHtml"></rich-text></view>
 		</view>
-		<view v-else :class="['rubik-cube',value.mode]" :style="rubikCubeWrapCss">
+		<view v-else :class="['rubik-cube', value.mode]" :style="rubikCubeWrapCss">
 			<!-- 1左2右 -->
 			<template v-if="value.mode == 'row1-lt-of2-rt'">
 				<view class="template-left">
 					<view
 						:class="['item', value.mode]"
 						@click="$util.diyRedirectTo(value.list[0].link)"
-						:style="{ padding: value.imageGap + 'rpx', height: list[0].imgHeight * 2 + 'rpx' }"
+						:style="{ marginRight: value.imageGap * 2 + 'rpx', width: list[0].imgWidth, height: list[0].imgHeight + 'px' }"
 					>
-						<image :src="$util.img(value.list[0].imageUrl)" mode="aspectFill" :style="list[0].pageItemStyle"></image>
+						<image :src="$util.img(value.list[0].imageUrl)" :mode="list[0].imageMode || 'scaleToFill'" :style="list[0].pageItemStyle" :show-menu-by-longpress="true"></image>
 					</view>
 				</view>
 
@@ -24,9 +24,9 @@
 								:key="index"
 								:class="['item', value.mode]"
 								@click="$util.diyRedirectTo(item.link)"
-								:style="{ padding: value.imageGap + 'rpx', height: item.imgHeight }"
+								:style="{ marginBottom: value.imageGap * 2 + 'rpx', width: item.imgWidth, height: item.imgHeight + 'px' }"
 							>
-								<image :src="$util.img(item.imageUrl)" mode="aspectFill" :style="item.pageItemStyle"></image>
+								<image :src="$util.img(item.imageUrl)" :mode="item.imageMode || 'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"></image>
 							</view>
 						</template>
 					</template>
@@ -35,21 +35,25 @@
 
 			<!-- 1左3右 -->
 			<template v-else-if="value.mode == 'row1-lt-of1-tp-of2-bm'">
-				<view class="template-left" :style="{ paddingRight: value.imageGap + 'rpx' }">
-					<view :class="['item', value.mode]" :style="{ height: list[0].imgHeight + 'rpx' }" @click="$util.diyRedirectTo(value.list[0].link)">
-						<image :src="$util.img(value.list[0].imageUrl)" mode="aspectFill" :style="list[0].pageItemStyle"></image>
+				<view class="template-left">
+					<view
+						:class="['item', value.mode]"
+						:style="{ marginRight: value.imageGap * 2 + 'rpx', width: list[0].imgWidth, height: list[0].imgHeight + 'px' }"
+						@click="$util.diyRedirectTo(value.list[0].link)"
+					>
+						<image :src="$util.img(value.list[0].imageUrl)" :mode="list[0].imageMode || 'scaleToFill'" :style="list[0].pageItemStyle" :show-menu-by-longpress="true"></image>
 					</view>
 				</view>
 
-				<view class="template-right" :style="{ paddingLeft: value.imageGap + 'rpx' }">
+				<view class="template-right">
 					<view
 						:class="['item', value.mode]"
-						:style="{ height: list[1].imgHeight + 'rpx', paddingBottom: value.imageGap + 'rpx' }"
+						:style="{ marginBottom: value.imageGap * 2 + 'rpx', width: list[1].imgWidth, height: list[1].imgHeight + 'px' }"
 						@click="$util.diyRedirectTo(value.list[1].link)"
 					>
-						<image :src="$util.img(value.list[1].imageUrl)" mode="aspectFill" :style="list[1].pageItemStyle"></image>
+						<image :src="$util.img(value.list[1].imageUrl)" :mode="list[1].imageMode || 'scaleToFill'" :style="list[1].pageItemStyle" :show-menu-by-longpress="true"></image>
 					</view>
-					<view class="template-bottom" :style="{ paddingTop: value.imageGap + 'rpx' }">
+					<view class="template-bottom">
 						<template v-for="(item, index) in list">
 							<template v-if="index > 1">
 								<view
@@ -57,11 +61,12 @@
 									:class="['item', value.mode]"
 									@click="$util.diyRedirectTo(item.link)"
 									:style="{
-										height: item.imgHeight + 'rpx',
-										paddingLeft: index == 3 ? value.imageGap * 2 + 'rpx' : 0
+										marginRight: value.imageGap * 2 + 'rpx',
+										width: item.imgWidth,
+										height: item.imgHeight + 'px'
 									}"
 								>
-									<image :src="$util.img(item.imageUrl)" mode="aspectFill" :style="item.pageItemStyle"></image>
+									<image :src="$util.img(item.imageUrl)" :mode="item.imageMode || 'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"></image>
 								</view>
 							</template>
 						</template>
@@ -75,9 +80,9 @@
 					v-for="(item, index) in list"
 					:key="index"
 					@click="$util.diyRedirectTo(item.link)"
-					:style="{ padding: value.imageGap + 'rpx', height: item.imgHeight * 2 + 'rpx' }"
+					:style="{ marginRight: value.imageGap * 2 + 'rpx', marginBottom: value.imageGap * 2 + 'rpx', width: item.imgWidth, height: item.imgHeight + 'px' }"
 				>
-					<image :src="$util.img(item.imageUrl)" mode="aspectFill" :style="item.pageItemStyle"></image>
+					<image :src="$util.img(item.imageUrl)" :mode="item.imageMode || 'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"></image>
 				</view>
 			</template>
 		</view>
@@ -110,17 +115,18 @@ export default {
 			var singleRow = {
 				'row1-of2': {
 					ratio: 2,
-					width: '50%'
+					width: 'calc((100% - ' + uni.upx2px(this.value.imageGap * 2) + 'px) / 2)'
 				},
 				'row1-of3': {
 					ratio: 3,
-					width: '33.33%'
+					width: 'calc((100% - ' + uni.upx2px(this.value.imageGap * 4) + 'px) / 3)'
 				},
 				'row1-of4': {
 					ratio: 4,
-					width: '25%'
+					width: 'calc((100% - ' + uni.upx2px(this.value.imageGap * 6) + 'px) / 4)'
 				}
 			};
+
 			if (singleRow[this.value.mode]) {
 				this.calcSingleRow(singleRow[this.value.mode]);
 			} else if (this.value.mode == 'row2-lt-of2-rt') {
@@ -133,6 +139,13 @@ export default {
 				this.calcRowOneLeftOfOneTopOfTwoBottom();
 			}
 		}
+		this.$nextTick(() => {
+			this.$store.commit('setComponentState', { RubikCube: true });
+		});
+	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
 	},
 	computed: {
 		list() {
@@ -168,8 +181,12 @@ export default {
 				uni.getSystemInfo({
 					success: res => {
 						var ratio = item.imgHeight / item.imgWidth;
-						item.imgWidth = 375 / params.ratio;
-						item.imgWidth -= this.value.margin.both * 2;
+
+						let width = res.windowWidth - uni.upx2px(this.value.margin.both * 2); // 减去左右间距
+						if (this.value.imageGap > 0) {
+							width -= uni.upx2px(params.ratio * this.value.imageGap * 2); // 减去间隙
+						}
+						item.imgWidth = width / params.ratio;
 						item.imgHeight = item.imgWidth * ratio;
 					}
 				});
@@ -192,8 +209,12 @@ export default {
 				uni.getSystemInfo({
 					success: res => {
 						var ratio = item.imgHeight / item.imgWidth;
-						item.imgWidth = 375 / 2;
-						item.imgWidth -= this.value.margin.both * 2;
+						item.imgWidth = res.windowWidth;
+						item.imgWidth -= uni.upx2px(this.value.margin.both * 4);
+						if (this.value.imageGap > 0) {
+							item.imgWidth -= uni.upx2px(this.value.imageGap * 2);
+						}
+						item.imgWidth = item.imgWidth / 2;
 						item.imgHeight = item.imgWidth * ratio;
 					}
 				});
@@ -210,7 +231,7 @@ export default {
 				}
 			});
 			this.list.forEach((item, index) => {
-				item.imgWidth = '50%';
+				item.imgWidth = 'calc((100% - ' + uni.upx2px(this.value.imageGap * 2) + 'px) / 2)';
 				if (index <= 1) {
 					item.imgHeight = maxHeightFirst;
 				} else if (index > 1) {
@@ -230,32 +251,18 @@ export default {
 					success: res => {
 						if (index == 0) {
 							var ratio = item.imgHeight / item.imgWidth; // 获取左图的尺寸比例
-							item.imgWidth = 375 / 2;// 因为这里使用px进行计算；最后结果会转换为rpx来适应屏幕的变化
-							item.imgWidth -= (this.value.margin.both * 2 + this.value.imageGap / 2);
+							item.imgWidth = res.windowWidth - uni.upx2px(this.value.margin.both * 4) - uni.upx2px(this.value.imageGap * 2);
+							item.imgWidth = item.imgWidth / 2;
 							item.imgHeight = item.imgWidth * ratio;
-							rightHeight = item.imgHeight / 2 - this.value.imageGap / 2;
+							rightHeight = (item.imgHeight - uni.upx2px(this.value.imageGap * 2)) / 2;
+							item.imgWidth += 'px';
 						} else {
 							item.imgWidth = this.list[0].imgWidth;
-							item.imgHeight = rightHeight * 2;
-							item.imgHeight += 'rpx';
-							// if (divide == 'left') {
-							// 	item.imgWidth = this.list[0].imgWidth;
-							// 	item.imgHeight = rightHeight / 100;
-							// } else {
-							// 	var ratio = item.imgHeight / item.imgWidth; // 获取右图的尺寸比例
-							// 	if (isNaN(ratio)) ratio = 0;
-							// 	item.imgWidth = res.windowWidth * ratio;
-							// 	item.imgHeight = item.imgHeight * ratio;
-							// 	if (this.list[1].imgHeight) this.list[0].imgHeight = this.list[1].imgHeight * 2;
-							// }
+							item.imgHeight = rightHeight;
 						}
 					}
 				});
 			});
-			// this.list.forEach((item, index) => {
-			// 	if (index == 0) item.imgHeight += this.value.imageGap;
-			// 	item.imgHeight += 'px';
-			// });
 		},
 		/**
 		 * 魔方：1上2下
@@ -266,10 +273,12 @@ export default {
 				uni.getSystemInfo({
 					success: res => {
 						var ratio = item.imgHeight / item.imgWidth; // 获取左图的尺寸比例
-						if (index == 0) item.imgWidth = 375;
-						else if (index > 0) item.imgWidth = 375 / 2;
-
-						item.imgWidth -= this.value.margin.both * 2;
+						if (index == 0) {
+							item.imgWidth = res.windowWidth - uni.upx2px(this.value.margin.both * 4);
+						} else if (index > 0) {
+							item.imgWidth = res.windowWidth - uni.upx2px(this.value.margin.both * 4) - uni.upx2px(this.value.imageGap * 2);
+							item.imgWidth = item.imgWidth / 2;
+						}
 
 						item.imgHeight = item.imgWidth * ratio;
 
@@ -279,11 +288,8 @@ export default {
 				});
 			});
 			this.list.forEach((item, index) => {
-				if (index == 0) item.imgWidth -= this.value.margin.both * 2; // 减去左右边距
-				if (index > 0) item.imgWidth -= this.value.margin.both * 2; // 减去左右边距
-				item.imgWidth += item.imgWidth * 2 + 'rpx';
+				item.imgWidth += 'px';
 				if (index > 0) item.imgHeight = maxHeight;
-				// else item.imgHeight += 'px';
 			});
 		},
 		/**
@@ -295,37 +301,24 @@ export default {
 					success: res => {
 						// 左图
 						if (index == 0) {
-							var ratio = item.imgHeight / item.imgWidth;
-							item.imgWidth = 375 / 2;
-							item.imgWidth -= this.value.margin.both * 2;
+							var ratio = item.imgHeight / item.imgWidth; // 获取左图的尺寸比例
+							item.imgWidth = res.windowWidth - uni.upx2px(this.value.margin.both * 4) - uni.upx2px(this.value.imageGap * 2);
+							item.imgWidth = item.imgWidth / 2;
 							item.imgHeight = item.imgWidth * ratio;
 						} else if (index == 1) {
-							item.imgWidth = 375 / 2;
-							item.imgWidth -= this.value.margin.both * 2;
-							item.imgHeight = this.list[0].imgHeight / 2;
+							item.imgWidth = this.list[0].imgWidth;
+							item.imgHeight = (this.list[0].imgHeight - uni.upx2px(this.value.imageGap * 2)) / 2;
 						} else if (index > 1) {
-							item.imgWidth = this.list[0].imgWidth / 2;
-							item.imgHeight = this.list[0].imgHeight / 2;
+							item.imgWidth = (this.list[0].imgWidth - uni.upx2px(this.value.imageGap * 2)) / 2;
+							item.imgHeight = this.list[1].imgHeight;
 						}
 					}
 				});
 			});
 
 			this.list.forEach((item, index) => {
-				if (index == 0) {
-					item.imgHeight += this.value.imageGap;
-					item.imgHeight *= 2;
-				} else {
-					item.imgHeight *= 2;
-				}
-				if (index > 1) {
-					item.imgWidth -= this.value.imageGap / 2;
-					item.imgWidth -= this.value.margin.both; // 减去左右边距
-					item.imgWidth = item.imgWidth * 2 + 'rpx';
-				} else {
-					item.imgWidth -= this.value.margin.both * 2; // 减去左右边距
-					item.imgWidth = item.imgWidth * 2 + 'rpx';
-				}
+				item.imgWidth += 'px';
+				item.imgHeight;
 			});
 		},
 		countBorderRadius(type, index) {
@@ -396,134 +389,122 @@ export default {
 	width: 100%;
 	max-width: 100%;
 	height: 100%;
+	will-change: transform;
 }
 
 // 一行两个
 .rubik-cube .item.row1-of2 {
-	width: 50% !important;
 	box-sizing: border-box;
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .rubik-cube .item.row1-of2:nth-child(1) {
-	padding-left: 0 !important;
+	margin-left: 0 !important;
 }
 
 .rubik-cube .item.row1-of2:nth-child(2) {
-	padding-right: 0 !important;
+	margin-right: 0 !important;
 }
 
 // 一行三个
 .rubik-cube .item.row1-of3 {
-	width: 33.33%;
 	box-sizing: border-box;
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .rubik-cube .item.row1-of3:nth-child(1) {
-	padding-left: 0 !important;
+	margin-left: 0 !important;
 }
 
 .rubik-cube .item.row1-of3:nth-child(3) {
-	padding-right: 0 !important;
+	margin-right: 0 !important;
 }
 
 // 一行四个
 .rubik-cube .item.row1-of4 {
-	width: 25%;
 	box-sizing: border-box;
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .rubik-cube .item.row1-of4:nth-child(1) {
-	padding-left: 0 !important;
+	margin-left: 0 !important;
 }
 
 .rubik-cube .item.row1-of4:nth-child(4) {
-	padding-right: 0 !important;
+	margin-right: 0 !important;
 }
 
 // 两左两右
 .rubik-cube .item.row2-lt-of2-rt {
-	width: 50%;
+	// width: 50%;
 	display: inline-block;
 	box-sizing: border-box;
 }
 
 .rubik-cube .item.row2-lt-of2-rt:nth-child(1) {
-	padding-left: 0 !important;
-	padding-top: 0 !important;
+	margin-left: 0 !important;
+	margin-top: 0 !important;
 }
 
 .rubik-cube .item.row2-lt-of2-rt:nth-child(2) {
-	padding-right: 0 !important;
-	padding-top: 0 !important;
+	margin-right: 0 !important;
+	margin-top: 0 !important;
 }
 
 .rubik-cube .item.row2-lt-of2-rt:nth-child(3) {
-	padding-left: 0 !important;
-	padding-bottom: 0 !important;
+	margin-left: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .rubik-cube .item.row2-lt-of2-rt:nth-child(4) {
-	padding-right: 0 !important;
-	padding-bottom: 0 !important;
+	margin-right: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 // 一左两右
 .rubik-cube .template-left,
 .rubik-cube .template-right {
-	width: 50%;
+	// width: 50%;
 	box-sizing: border-box;
 }
 
 .rubik-cube .template-left .item.row1-lt-of2-rt:nth-child(1) {
-	width: auto;
-	padding-top: 0 !important;
-	padding-left: 0 !important;
-	padding-bottom: 0 !important;
-}
-
-.rubik-cube .template-right .item.row1-lt-of2-rt:nth-child(1) {
-	padding-top: 0 !important;
-	padding-right: 0 !important;
+	margin-bottom: 0;
 }
 
 .rubik-cube .template-right .item.row1-lt-of2-rt:nth-child(2) {
-	padding-right: 0 !important;
-	padding-bottom: 0 !important;
+	margin-bottom: 0 !important;
 }
-.rubik-cube.row1-lt-of2-rt .template-right{
+.rubik-cube.row1-lt-of2-rt .template-right {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 }
 
-
 // 一上两下
 .rubik-cube .item.row1-tp-of2-bm:nth-child(1) {
 	width: 100%;
 	box-sizing: border-box;
-	padding-top: 0 !important;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
+	margin-top: 0 !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
 }
 
 .rubik-cube .item.row1-tp-of2-bm:nth-child(2) {
-	width: 50%;
+	// width: 50%;
 	box-sizing: border-box;
-	padding-left: 0 !important;
-	padding-bottom: 0 !important;
+	margin-left: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .rubik-cube .item.row1-tp-of2-bm:nth-child(3) {
-	width: 50%;
+	// width: 50%;
 	box-sizing: border-box;
-	padding-right: 0 !important;
-	padding-bottom: 0 !important;
+	margin-right: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 // 一左三右
@@ -536,7 +517,7 @@ export default {
 	align-items: center;
 	justify-content: space-between;
 }
-.rubik-cube .template-bottom .item.row1-lt-of1-tp-of2-bm {
-	width: 50%;
+.rubik-cube .template-bottom .item:nth-child(2) {
+	margin-right: 0 !important;
 }
 </style>

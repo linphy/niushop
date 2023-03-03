@@ -6,6 +6,7 @@
 					<!-- #ifdef MP-WEIXIN -->
 					 <view
 						class="graphic-nav-item"
+						:class="[value.mode]"
 						v-for="(item, index) in value.list"
 						:key="index"
 						v-if="index >= [(numItem) * (value.pageCount * value.rowCount)] && index < [(numItem+1) * (value.pageCount * value.rowCount)]"
@@ -16,6 +17,7 @@
 					<!-- #ifdef H5 -->
 					<view
 						class="graphic-nav-item"
+						:class="[value.mode]"
 						v-for="(item, index) in value.list"
 						:key="index"
 						v-if="index >= [(numItem - 1) * (value.pageCount * value.rowCount)] && index < [numItem * (value.pageCount * value.rowCount)]"
@@ -25,7 +27,7 @@
 					<!-- #endif -->
 						<view
 							class="graphic-img"
-							v-show="value.mode != 'text'"
+							v-if="value.mode != 'text'"
 							:style="{ fontSize: value.imageSize * 2 + 'rpx', width: value.imageSize * 2 + 'rpx', height: value.imageSize * 2 + 'rpx' }"
 						>
 							<image
@@ -51,7 +53,7 @@
 							</text>
 						</view>
 						<text
-							v-show="value.mode != 'img'"
+							v-if="value.mode != 'img'"
 							class="graphic-text"
 							:style="{ fontSize: value.font.size * 2 + 'rpx', fontWeight: value.font.weight, color: value.font.color }"
 						>
@@ -73,10 +75,10 @@
 				<view class="uni-scroll-view-content">
 				<!-- #endif -->
 				
-					<view class="graphic-nav-item" v-for="(item, index) in value.list" :key="index" :style="{ width: 100 / value.rowCount + '%' }" @click="redirectTo(item.link)">
+					<view class="graphic-nav-item" :class="[value.mode]" v-for="(item, index) in value.list" :key="index" :style="{ width: 100 / value.rowCount + '%' }" @click="redirectTo(item.link)">
 						<view
 							class="graphic-img"
-							v-show="value.mode != 'text'"
+							v-if="value.mode != 'text'"
 							:style="{ fontSize: value.imageSize * 2 + 'rpx', width: value.imageSize * 2 + 'rpx', height: value.imageSize * 2 + 'rpx' }"
 						>
 							<image
@@ -99,7 +101,7 @@
 								{{ item.label.text }}
 							</text>
 						</view>
-						<text v-show="value.mode != 'img'" class="graphic-text" :style="{ fontSize: value.font.size * 2 + 'rpx', fontWeight: value.font.weight, color: value.font.color }">
+						<text v-if="value.mode != 'img'" class="graphic-text" :style="{ fontSize: value.font.size * 2 + 'rpx', fontWeight: value.font.weight, color: value.font.color }">
 							{{ item.title }}
 						</text>
 					</view>
@@ -110,6 +112,7 @@
 				
 			
 		</scroll-view>
+		<ns-login ref="login"></ns-login>
 	</view>
 </template>
 
@@ -130,6 +133,10 @@ export default {
 	},
 	created() {
 	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		componentStyle() {
 			var css = '';
@@ -147,10 +154,14 @@ export default {
 		// 滑块容器的高度
 		swiperHeight() {
 			var css = '';
-			var height = 88 * this.value.pageCount; // 88 = 文字的高度 + 图片的高度
-
-			if (this.value.mode == 'img') height -= 21 * this.value.pageCount; // 21 = 文字的高度
-			if (this.value.mode == 'text') height -= 50 * this.value.pageCount; // 21 = 文字的高度
+			var height = 0;
+			if (this.value.mode == 'graphic'){
+				height = (21 + 6 + 14 + 8 + this.value.imageSize) * this.value.pageCount; // 21 = 文字高度，8 = 文字上边距，14 = 上下内边距，8 = 外边距
+			}else if (this.value.mode == 'img') {
+				height = (14 + 8 + this.value.imageSize)  * this.value.pageCount; // 14 = 上下内边距，8 = 外边距
+			}else if(this.value.mode == 'text') {
+				height = (21 + 14 + 8) * this.value.pageCount; // 21 = 文字高度，14 = 上下内边距，8 = 外边距
+			}
 			css += 'height:' + height * 2 + 'rpx';
 			return css;
 		},
@@ -158,14 +169,19 @@ export default {
 		isIndicatorDots() {
 			var bool = true;
 			bool = this.value.carousel.type == 'hide' || Math.ceil(this.value.list.length / (this.value.pageCount * this.value.rowCount)) == 1 ? false : true;
-			
 			return bool;
 		}
 	},
 	methods: {
 		redirectTo(link) {
+			if (link.wap_url) {
+				if (this.$util.getCurrRoute() == 'pages/member/index' && !uni.getStorageSync('token')) {
+					this.$refs.login.open(link.wap_url);
+					return;
+				} 
+			} 
 			this.$util.diyRedirectTo(link);
-		},
+		}, 
 		swiperChange(e){
 			this.swiperCurrent = e.detail.current
 		}
@@ -202,8 +218,6 @@ export default {
  
 </style>
 <style lang="scss">
-	
-	
 .graphic-nav {
 	padding: 16rpx;
 	box-sizing: border-box;
@@ -244,6 +258,13 @@ export default {
 				padding-top: 0;
 			}
 		}
+		
+		&.text{
+			
+			.graphic-text {
+				padding-top: 0;
+			}
+		}
 
 		.graphic-img {
 			position: relative;
@@ -256,7 +277,7 @@ export default {
 			.tag {
 				position: absolute;
 				top: -10rpx;
-				right: -36rpx;
+				right: -24rpx;
 				color: #fff;
 				border-radius: 24rpx;
 				border-bottom-left-radius: 0;

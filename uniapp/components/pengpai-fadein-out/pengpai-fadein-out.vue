@@ -1,8 +1,8 @@
 <template>
-	<view v-if="penpaiData && Object.keys(penpaiData).length">
+	<view v-if="isShow">
 		<view ref="ani" :animation="animationData" class="message" :style="{ top: top + 'px', left: left + 'px' }" v-if="show">
 			<view class="round bg-gradual-orange flex justify-start shadow" style="padding: 3px;">
-				<view class="cu-avatar cu-a-sm round" :style="{ backgroundImage: `url(${penpaiData.img})` }">
+				<view class="cu-avatar cu-a-sm round" :style="{ backgroundImage: 'url(' + $util.img(penpaiData.img) + ')' }">
 					<!-- #ifdef APP-NVUE -->
 					<!-- <image :src="penpaiData.img" class="avatarimg"></image> -->
 					<!-- #endif -->
@@ -64,6 +64,11 @@ export default {
 			penpaiData: {},
 			timeIndex: 0
 		};
+	},
+	computed:{
+		isShow(){
+			return this.penpaiData && Object.keys(this.penpaiData).length;
+		}
 	},
 	mounted() {
 		this.initData();

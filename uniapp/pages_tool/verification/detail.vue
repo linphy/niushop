@@ -10,9 +10,7 @@
 			<view class="site-body">
 				<block v-for="(goodsItem, goodsIndex) in verifyInfo.item_array" :key="goodsIndex">
 					<view class="goods-wrap">
-						<view class="goods-img">
-							<image :src="$util.img(goodsItem.img)" @error="imageError(goodsIndex)" mode="aspectFill"></image>
-						</view>
+						<view class="goods-img"><image :src="$util.img(goodsItem.img)" @error="imageError(goodsIndex)" mode="aspectFill"></image></view>
 						<view class="info-wrap">
 							<view class="goods-info">
 								<text class="goods-name font-size-base">{{ goodsItem.name }}</text>
@@ -79,127 +77,126 @@
 		<view class="verify-btn" @click="verify" v-if="verifyInfo.is_verify == 0"><button type="primary">确认使用</button></view>
 
 		<loading-cover ref="loadingCover"></loading-cover>
-
 	</view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				code: '',
-				verifyInfo: {
-					verify_content: {
-						item_array: [],
-						remark_array: []
-					}
-				},
-				info: [],
-				isSub: false
-			};
-		},
-		onLoad(option) {
-			if (option.code) this.code = option.code;
-			// 小程序扫码进入
-			if (option.scene) {
-				var sceneParams = decodeURIComponent(option.scene);
-				sceneParams = sceneParams.split('&');
-				if (sceneParams.length) {
-					sceneParams.forEach(item => {
-						if (item.indexOf('code') != -1) this.code = item.split('-')[1];
-					});
+export default {
+	data() {
+		return {
+			code: '',
+			verifyInfo: {
+				verify_content: {
+					item_array: [],
+					remark_array: []
 				}
+			},
+			info: [],
+			isSub: false
+		};
+	},
+	onLoad(option) {
+		if (option.code) this.code = option.code;
+		// 小程序扫码进入
+		if (option.scene) {
+			var sceneParams = decodeURIComponent(option.scene);
+			sceneParams = sceneParams.split('&');
+			if (sceneParams.length) {
+				sceneParams.forEach(item => {
+					if (item.indexOf('code') != -1) this.code = item.split('-')[1];
+				});
 			}
-		},
-		onShow() {
-			
-			if (uni.getStorageSync('token')) this.checkIsVerifier();
-			else this.$util.redirectTo('/pages/member/index');
+		}
+	},
+	onShow() {
+		if (uni.getStorageSync('token')) this.checkIsVerifier();
+		else this.$util.redirectTo('/pages/member/index');
 
-			this.getVerifyInfo();
+		this.getVerifyInfo();
+	},
+	methods: {
+		checkIsVerifier() {
+			this.$api.sendRequest({
+				url: '/api/verify/checkisverifier',
+				success: res => {
+					if (!res.data) {
+						this.$util.showToast({
+							title: '非核销员无此权限'
+						});
+						setTimeout(() => {
+							this.$util.redirectTo('/pages/member/index');
+						}, 1000);
+					}
+				}
+			});
 		},
-		methods: {
-			checkIsVerifier() {
-				this.$api.sendRequest({
-					url: '/api/verify/checkisverifier',
-					success: res => {
-						if (!res.data) {
-							this.$util.showToast({
-								title: '非核销员无此权限'
-							});
-							setTimeout(() => {
-								this.$util.redirectTo('/pages/member/index');
-							}, 1000);
-						}
-					}
-				});
-			},
-			getVerifyInfo() {
-				this.$api.sendRequest({
-					url: '/api/verify/verifyInfo',
-					data: {
-						verify_code: this.code
-					},
-					success: res => {
-						if (res.code >= 0) {
-							this.verifyInfo = res.data;
-							this.info = this.verifyInfo.remark_array.splice(0, 1);
-							this.verifyInfo.item_array.forEach(item => {
-								item.all = item.num * item.price;
-							});
-							if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
-						} else {
-							this.$util.showToast({
-								title: res.message
-							});
-							setTimeout(() => {
-								this.$util.redirectTo('/pages/member/index');
-							}, 1000);
-						}
-					},
-					fail: res => {
+		getVerifyInfo() {
+			this.$api.sendRequest({
+				url: '/api/verify/verifyInfo',
+				data: {
+					verify_code: this.code
+				},
+				success: res => {
+					if (res.code >= 0) {
+						this.verifyInfo = res.data;
+						this.info = this.verifyInfo.remark_array.splice(0, 1);
+						this.verifyInfo.item_array.forEach(item => {
+							item.all = item.num * item.price;
+						});
+						
 						if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
-					}
-				});
-			},
-			verify() {
-				if (this.isSub) return;
-				this.isSub = true;
-				this.$api.sendRequest({
-					url: '/api/verify/verify',
-					data: {
-						verify_code: this.code
-					},
-					success: res => {
+					} else {
 						this.$util.showToast({
 							title: res.message
 						});
-						if (res.code >= 0) {
-							setTimeout(() => {
-								this.$util.redirectTo('/pages/member/index');
-							}, 1000);
-						} else {
-							this.isSub = false;
-						}
+						setTimeout(() => {
+							this.$util.redirectTo('/pages/member/index');
+						}, 1000);
 					}
-				});
-			},
-			imageError(index) {
-				this.verifyInfo.item_array[index].img = this.$util.getDefaultImage().goods;
-				this.$forceUpdate();
-			},
-			copy(str) {
-				this.$util.copy(str);
-			}
+				},
+				fail: res => {
+					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
+				}
+			});
 		},
-		filters: {
-			abs(value) {
-				return Math.abs(parseFloat(value)).toFixed(2);
-			}
+		verify() {
+			if (this.isSub) return;
+			this.isSub = true;
+			this.$api.sendRequest({
+				url: '/api/verify/verify',
+				data: {
+					verify_code: this.code
+				},
+				success: res => {
+					this.$util.showToast({
+						title: res.message
+					});
+					if (res.code >= 0) {
+						setTimeout(() => {
+							this.$util.redirectTo('/pages_tool/verification/index');
+						}, 1000);
+					} else {
+						this.isSub = false;
+					}
+				}
+			});
+		},
+		imageError(index) {
+			this.verifyInfo.item_array[index].img = this.$util.getDefaultImage().goods;
+			this.$forceUpdate();
+		},
+		copy(str) {
+			this.$util.copy(str);
 		}
-	};
+	},
+	filters: {
+		abs(value) {
+			return Math.abs(parseFloat(value)).toFixed(2);
+		}
+	}
+};
 </script>
 
 <style lang="scss">
-	@import './public/css/detail.scss';
+@import './public/css/detail.scss';
 </style>

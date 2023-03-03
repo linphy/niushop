@@ -149,7 +149,7 @@
 <script>
 import refundMethod from './public/js/refundMethod.js';
 import validate from 'common/js/validate.js';
-
+import nsContact from '@/components/ns-contact/ns-contact.vue';
 export default {
 	data() {
 		return {
@@ -167,7 +167,9 @@ export default {
 			isSub: false
 		};
 	},
-	components: {},
+	components: {
+		nsContact
+	},
 	mixins: [refundMethod],
 	onLoad(option) {
 		if (option.order_goods_id) this.order_goods_id = option.order_goods_id;

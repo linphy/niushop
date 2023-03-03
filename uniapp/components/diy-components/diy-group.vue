@@ -1,14 +1,10 @@
 <template>
 	<view class="diy-group">
-		<view v-for="(item, index) in diyGlobalData.value" :key="index" :style="item.pageStyle">
+		<view v-for="(item, index) in diyDataArray" :key="index" :style="item.pageStyle">
+
 			<template v-if="item.componentName == 'Text'">
 				<!-- 文本 -->
 				<diy-text :value="item"></diy-text>
-			</template>
-
-			<template v-if="item.componentName == 'TextNav'">
-				<!-- 文本导航 -->
-				<diy-text-nav :value="item"></diy-text-nav>
 			</template>
 
 			<template v-if="item.componentName == 'Notice'">
@@ -23,15 +19,12 @@
 
 			<template v-if="item.componentName == 'ImageAds'">
 				<!-- 图片广告 -->
-				<view :class="!showStore || !addonIsExist.store ? 'noStore-bg' : ''"><diy-img-ads :value="item"></diy-img-ads></view>
+				<diy-img-ads :value="item"></diy-img-ads>
 			</template>
 
 			<template v-if="item.componentName == 'Search'">
 				<!-- 搜索 -->
-				<view :class="!showStore || !addonIsExist.store ? 'noStore-bg' : ''"><diy-search :value="item"></diy-search></view>
-				<!-- <view :class="!showStore || !addonIsExist.store ? 'noStore-bg' : 'isStore-top'">
-					<diy-search :value="item"></diy-search>
-				</view> -->
+				<diy-search :value="item" :topNavColor="topNavColor" :global="diyGlobalData.global" :haveTopCategory="haveTopCategory"></diy-search>
 			</template>
 
 			<template v-if="item.componentName == 'RichText'">
@@ -74,11 +67,6 @@
 				<diy-video :value="item"></diy-video>
 			</template>
 
-			<view class="diy-goods-level-wrap" v-if="item.componentName == 'GoodsCategory'">
-				<!-- 商品分类 使用view替代template目的是限制商品分类在自定义首页的高度-->
-				<diy-category :value="item"></diy-category>
-			</view>
-
 			<template v-if="item.componentName == 'FloatBtn'">
 				<!-- 浮动按钮 -->
 				<diy-float-btn :value="item"></diy-float-btn>
@@ -101,7 +89,7 @@
 
 			<template v-if="item.componentName == 'MemberInfo'">
 				<!-- 自定义会员中心——会员信息 -->
-				<diy-member-info ref="diyMemberIndex" :value="item" :token="token"></diy-member-info>
+				<diy-member-info ref="diyMemberIndex" :value="item" :token="token" :global="diyGlobalData.global"></diy-member-info>
 			</template>
 
 			<template v-if="item.componentName == 'MemberMyOrder'">
@@ -109,10 +97,18 @@
 				<diy-member-my-order ref="diyMemberMyOrder" :value="item" :token="token"></diy-member-my-order>
 			</template>
 
-			<!-- 自定义扩展组件 -->
-			<template v-if="diyGlobalData.compExtend.indexOf(item.componentName) != -1">
-				<diy-comp-extend :value="item"></diy-comp-extend>
+			<template v-if="item.componentName == 'QuickNav'">
+				<!-- 快捷导航 -->
+				<diy-quick-nav :value="item"></diy-quick-nav>
 			</template>
+
+			<template v-if="item.componentName == 'HotArea'">
+				<!-- 热区 -->
+				<diy-hot-area :value="item"></diy-hot-area>
+			</template>
+
+			<!-- 自定义扩展组件 -->
+			<diy-comp-extend :value="item"></diy-comp-extend>
 		</view>
 	</view>
 </template>
@@ -124,54 +120,53 @@ export default {
 		diyData: {
 			type: Object
 		},
-		storeId: {
-			type: [String, Number]
-		},
 		token: {
 			type: String
 		},
-		height: {
-			type: String,
-			default() {
-				return '100vh';
-			}
+		scrollTop: {
+			type: [String, Number],
+			default: '0'
+		},
+		haveTopCategory: {
+			type: Boolean
 		}
 	},
 	data() {
 		return {
-			showStore: false,
 			diyGlobalData: null
 		};
 	},
 	created() {
 		this.diyGlobalData = JSON.parse(JSON.stringify(this.diyData));
-		this.setPagestyle();
 	},
 	computed: {
-		bgColor() {
-			let str = '';
-			if (this.diyData && this.diyData.global) {
-				str = this.diyData.global.bgColor;
+		topNavColor() {
+			var color = '';
+			if (this.diyData.global.topNavBg) {
+				color = 'transparent';
+				if (this.scrollTop > 20) {
+					color = this.diyData.global.topNavColor;
+				} else {
+					color = 'transparent';
+				}
+			} else {
+				color = this.diyData.global.topNavColor;
 			}
-			return str;
+			return color;
 		},
-		bgUrl() {
-			let str = '';
-			if (this.diyData && this.diyData.global) {
-				str = this.diyData.global.bgUrl;
-			}
-			return str;
-		}
-	},
-	mounted() {
-		if (this.diyData != undefined) {
-			this.dealData();
-		}
-	},
-	methods: {
+		// 修改属性样式
 		setPagestyle() {
 			this.diyGlobalData.value.forEach((item, index) => {
 				item.pageStyle = '';
+				// 给每个组件增加位置属性，用于定位，搜索、分类导航等定位
+				item.moduleIndex = index + 1;
+
+				// 特殊处理搜索框 当显示位置为滚动至顶部固定时，只设置背景颜色
+				if (item.componentName == 'Search' && item.positionWay == 'fixed') {
+					// item.pageStyle = 'background-color:' + item.pageBgColor + ';';
+					return false;
+				}
+
 				item.pageStyle += 'background-color:' + item.pageBgColor + ';';
 				if (item.margin) {
 					item.pageStyle += 'padding-top:' + item.margin.top * 2 + 'rpx' + ';';
@@ -180,25 +175,28 @@ export default {
 					item.pageStyle += 'padding-left:' + item.margin.both * 2 + 'rpx' + ';';
 				}
 			});
+
+			return this.diyGlobalData.value;
 		},
-		// 刷新数据
-		refresh(data) {
-			this.diyGlobalData = {}; // 必须先清空自定义组件集合，然后异步刷新
-			setTimeout(() => {
-				this.diyGlobalData = data;
-				this.setPagestyle();
-			}, 1);
-		},
-		dealData() {
-			if (Array.isArray(this.diyData.value)) {
-				for (var i = 0; i < this.diyData.value.length; i++) {
-					if (this.diyData.value[i].componentName == 'StoreShow') {
-						this.showStore = true;
+		// 过滤组件的渲染
+		diyDataArray() {
+			let data = [],
+				showModuleData = this.$store.state.diyGroupShowModule ? JSON.parse(this.$store.state.diyGroupShowModule) : '';
+
+			if (showModuleData.length) {
+				if (showModuleData.includes('null')) return [];
+
+				let diyDataArr = this.setPagestyle;
+				diyDataArr.forEach((item, index) => {
+					if (showModuleData.includes(item.componentName)) {
+						data.push(item);
 					}
-				}
-			}
+				});
+			} else data = this.setPagestyle;
+			return data;
 		}
-	}
+	},
+	methods: {}
 };
 </script>
 
@@ -206,8 +204,4 @@ export default {
 .diy-group {
 	width: 100%;
 }
-// .diy-goods-level-wrap {
-// 	position: relative;
-// 	height: 60vh;
-// }
 </style>

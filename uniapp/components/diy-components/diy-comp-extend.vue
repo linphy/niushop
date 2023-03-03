@@ -1,12 +1,5 @@
 <template>
-	<view>
-		<!-- 扩展组件 -->
-
-		<!-- 扩展标题 -->
-		<template v-if="value.componentName == 'TextExtend'">
-			<diy-text-extend :value="value"></diy-text-extend>
-		</template>
-	</view>
+	<view></view>
 </template>
 
 <script>

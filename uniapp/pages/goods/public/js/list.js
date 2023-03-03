@@ -35,6 +35,9 @@ export default {
 			debounce: null,
 			brandId: 0,
 			brandList: [], //品牌筛选项
+			config: {
+				add_cart_switch: 0 // 加入购物车开关
+			},
 		}
 	},
 
@@ -201,6 +204,7 @@ export default {
 					}
 					this.category_title = '';
 					this.coupon_name = '';
+					this.config = res.data.config;
 					if (this.categoryId) {
 						this.share_select(this.categoryList, this.categoryId).then(resolve => {
 							this.category_title = resolve
@@ -334,6 +338,17 @@ export default {
 			if (data.member_price && parseFloat(data.member_price) < parseFloat(price)) price = data.member_price;
 			return price;
 		},
+		showMarketPrice(item) {
+			if (item.market_price_show) {
+				let price = this.showPrice(item);
+				if (item.market_price > 0) {
+					return item.market_price;
+				} else if (parseFloat(item.price) > parseFloat(price)) {
+					return item.price;
+				}
+			}
+			return '';
+		},
 		goodsTag(data) {
 			return data.label_name || '';
 		},
@@ -402,8 +417,11 @@ export default {
 				}
 			});
 		},
-	},
-	watch: {
-
+		// 监听加入购物车变化
+		cartListChange(e) {},
+		/**
+		 * 添加购物车回调
+		 */
+		addCart(id) {},
 	}
 }

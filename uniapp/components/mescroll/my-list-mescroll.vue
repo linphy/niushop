@@ -1,6 +1,19 @@
 <template>
 	<!-- top="xxx"下拉布局往下偏移,防止被悬浮菜单遮住 -->
-	<mescroll v-if="isInit" :top="top" :down="downOption" @down="downCallback" :up="upOption" @up="upCallback" @emptyclick="emptyClick" @init="mescrollInit">
+	<mescroll
+		v-if="isInit"
+		:top="top"
+		:down="downOption"
+		:fixed="fixed"
+		:topbar="topbar"
+		:background="background"
+		:paddingBoth="paddingBoth"
+		@down="downCallback"
+		:up="upOption"
+		@up="upCallback"
+		@emptyclick="emptyClick"
+		@init="mescrollInit"
+	>
 		<!-- 数据列表 -->
 		<slot name="list"></slot>
 	</mescroll>
@@ -37,7 +50,22 @@ export default {
 	},
 	props: {
 		top: [String, Number],
-		size: [String, Number]
+		size: [String, Number],
+		fixed: {
+			// 是否通过fixed固定mescroll的高度, 默认true
+			type: Boolean,
+			default() {
+				return true;
+			}
+		},
+		background: String,
+		topbar: Boolean,
+		paddingBoth: {
+			type: [String, Number],
+			default() {
+				return 0;
+			}
+		}
 	},
 	created() {
 		if (this.size) this.upOption.page.size = this.size;
@@ -73,6 +101,9 @@ export default {
 		refresh() {
 			this.mescroll.resetUpScroll();
 			this.listenRefresh();
+		},
+		myScrollTo(y, t) {
+			this.mescroll.myScrollTo(y, t);
 		},
 		listenRefresh() {
 			this.$emit('listenRefresh', true);

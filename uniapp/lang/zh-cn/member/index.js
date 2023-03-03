@@ -10,7 +10,6 @@ export const lang = {
 	waitPay: '待付款',
 	readyDelivery: '待发货',
 	waitDelivery: '待收货',
-	waitEvaluate: '待评价',
 	refunding: '退款',
 	// 会员中心入口
 	sign: '签到',

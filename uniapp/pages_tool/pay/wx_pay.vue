@@ -2,7 +2,7 @@
 	<page-meta :page-style="themeColor"></page-meta>
 	<view class="launch-mask" v-if="show == true">
 		<view class="mask-img">
-			<image :src="$util.img('public/uniapp/invite_friends_share.png')" mode="aspectFit"></image>
+			<image :src="$util.img('public/uniapp/pay/invite_friends_share.png')" mode="aspectFit"></image>
 		</view>
 		<view class="mask-word">
 			点击右上角跳转到浏览器打开

@@ -9,12 +9,10 @@
 				:key="index"
 				@click="changeCateIndex(item, index)"
 			>
-				<view class="item-wrap">
-					<view class="split-line" v-if="index > 0"></view>
-					<view class="cate">
-						<view class="name">{{ item.title }}</view>
-						<view class="desc" :class="{ 'color-base-bg': index == cateIndex && item.desc }">{{ item.desc }}</view>
-					</view>
+				<view class="split-line" v-if="index > 0"></view>
+				<view class="cate">
+					<view class="name">{{ item.title }}</view>
+					<view class="desc" :class="{ 'color-base-bg': index == cateIndex && item.desc }">{{ item.desc }}</view>
 				</view>
 			</view>
 		</scroll-view>
@@ -41,6 +39,12 @@ export default {
 	},
 	created() {
 		this.changeCateIndex(this.value.list[0], 0, true);
+	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {
+			this.changeCateIndex(this.value.list[0], 0, true);
+		}
 	},
 	methods: {
 		changeCateIndex(item, index, isFirst) {
@@ -71,8 +75,7 @@ export default {
 				theme: this.value.theme,
 				priceStyle: this.value.priceStyle,
 				slideMode: this.value.slideMode,
-				imgAroundRadius: this.value.imgAroundRadius,
-				cartEvent: this.value.cartEvent
+				imgAroundRadius: this.value.imgAroundRadius
 			};
 
 			// 如果是第一次加载，不需要执行下面代码
@@ -89,16 +92,18 @@ scroll-view {
 	width: 100%;
 	white-space: nowrap;
 	box-sizing: border-box;
-	padding: 40rpx 20rpx;
+	padding: 20rpx 0;
 
 	.scroll-item {
 		display: inline-block;
 		text-align: center;
 		vertical-align: top;
-
-		.item-wrap {
-			display: flex;
-			align-items: center;
+		width: calc(25% - 40rpx);
+		position: relative;
+		padding: 0 20rpx;
+		&:first-child {
+			width: calc(25% - 20rpx);
+			padding-left: 0;
 		}
 
 		.split-line {
@@ -106,7 +111,10 @@ scroll-view {
 			width: 1rpx;
 			height: 30rpx;
 			background-color: #e5e5e5;
-			margin: 0 35rpx;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
 		}
 
 		&.active {
@@ -125,6 +133,9 @@ scroll-view {
 			color: $color-title;
 			line-height: 1;
 		}
+		.cate {
+			display: inline-block;
+		}
 
 		.desc {
 			font-size: $font-size-tag;
@@ -133,6 +144,10 @@ scroll-view {
 			line-height: 36rpx;
 			margin-top: 10rpx;
 			min-width: 120rpx;
+			max-width: 220rpx;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			padding: 0 10rpx;
 		}
 	}
 }

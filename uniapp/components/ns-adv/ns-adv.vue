@@ -1,12 +1,12 @@
 <template>
-	<view v-if="advList.length">
+	<view v-if="advList.length" class="adv-wrap">
 		<swiper :indicator-dots="advList.length > 1" indicator-active-color="#ffffff" :autoplay="true" :interval="3000" :duration="1000" v-if="advList.length > 1" class="ns-adv">
 			<swiper-item v-for="(item, index) in advList" :key="index" @click="jumppage(item.adv_url)">
 				<view class="image-box" :style="{ 'background-color': item.background }"><image :src="$util.img(item.adv_image)"></image></view>
 			</swiper-item>
 		</swiper>
-		<view v-else>
-			<image :src="$util.img(advList[0]['adv_image'])" mode="widthFix"></image>
+		<view v-else class="adv-wrap ns-adv">
+			<image :src="$util.img(advList[0]['adv_image'])" mode="widthFix" lazy-load="true" @load="imageLoad" @click="jumppage(advList[0].adv_url)"></image>
 		</view>
 	</view>
 </template>
@@ -21,7 +21,8 @@ export default {
 	},
 	data() {
 		return {
-			advList: []
+			advList: [],
+			isImage: false
 		};
 	},
 	created() {
@@ -52,12 +53,18 @@ export default {
 		},
 		jumppage(e) {
 			this.$util.diyRedirectTo(e);
+		},
+		imageLoad(data) {
+			this.isImage = true;
 		}
 	}
 };
 </script>
 
 <style>
+.adv-wrap {
+	width: 100%;
+}
 .bg {
 	width: 100%;
 	height: 158rpx;
@@ -72,7 +79,6 @@ export default {
 	/* #endif */
 }
 .ns-adv {
-	background: #fff;
 	height: 300rpx;
 	border-radius: 10rpx;
 	/* padding: 8rpx 24rpx 24rpx; */
@@ -86,7 +92,8 @@ export default {
 
 .ns-adv image {
 	width: 100%;
-	height: 100%;
+	height: auto;
 	border-radius: 10rpx;
+	will-change: transform;
 }
 </style>

@@ -4,21 +4,43 @@
 		<template v-if="payInfo.pay_status != undefined">
 			<view class="result-box">
 				<template v-if="payInfo.pay_status">
-					<image :src="$util.img('public/uniapp/pay/pay_success.png')" mode="widthFix" class="result-image"></image>
-					<view class="msg">{{ $lang('paymentSuccess') }}</view>
+					<image :src="$util.img('public/uniapp/pay/pay_success.png')" mode="widthFix" lazy-load="true"  class="result-image"></image>
+					<view class="msg success">{{ $lang('paymentSuccess') }}</view>
 					<view class="pay-amount">
-						￥
-						<text>{{ payInfo.pay_money|moneyFormat }}</text>
+						<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
+						<text class="price-style large">{{ parseFloat(payInfo.pay_money).toFixed(2).split(".")[0] }}</text>
+						<text class="price-style small">.{{ parseFloat(payInfo.pay_money).toFixed(2).split(".")[1] }}</text>
 					</view>
 				</template>
 				<template v-else>
 					<image :src="$util.img('public/uniapp/pay/pay_fail.png')" mode="widthFix" class="result-image"></image>
-					<view class="msg">{{ $lang('paymentFail') }}</view>
+					<view class="msg fail">{{ $lang('paymentFail') }}</view>
 				</template>
+				
+				<view class="consume-box" v-if="addonIsExist.memberconsume && consumeStatus == 1 && payInfo.pay_status">
+					<view class="consume-head">
+						<view class="consume-head-text">恭喜您获得</view>
+					</view>
+					<view class="consume-list">
+						<view class="consume-item" v-if="consumeInfo.point_num > 0">
+							<image :src="$util.img('public/uniapp/pay/point.png')" mode="widthFix"></image>
+							<view class="consume-value color-base-text">{{ consumeInfo.point_num }}</view>
+							<view class="consume-type">积分</view>
+						</view>
+						<view class="consume-item" v-if="consumeInfo.growth_num > 0">
+							<image :src="$util.img('public/uniapp/pay/growth.png')" mode="widthFix"></image>
+							<view class="consume-value color-base-text">{{ consumeInfo.growth_num }}</view>
+							<view class="consume-type">成长值</view>
+						</view>
+						<view class="consume-item" v-if="consumeInfo.coupon_list.length > 0">
+							<image :src="$util.img('public/uniapp/pay/coupon.png')" mode="widthFix"></image>
+							<view class="consume-value color-base-text">{{ consumeInfo.coupon_list.length }}</view>
+							<view class="consume-type">张优惠券</view>
+						</view>
+					</view>
+				</view>
+				
 				<view class="action">
-					<!-- <view class="btn" @click="$util.redirectTo('/pages/member/index')" v-if="token">
-					{{ $lang('memberCenter') }}
-				</view> -->
 					<template v-if="token">
 						<view v-if="paySource == 'recharge'" class="btn" @click="toRecharge()">充值记录</view>
 						<view v-else-if="paySource == 'membercard'" class="btn" @click="toCard()">会员卡</view>
@@ -27,45 +49,11 @@
 						<view v-else-if="paySource == 'pointexchange'" class="btn" @click="toExchangeOrder()">查看订单</view>
 						<view v-else class="btn" @click="toOrderDetail(payInfo.order_id)">查看订单</view>
 					</template>
-					<view class="btn" @click="goHome()">{{ $lang('goHome') }}</view>
+					<view class="btn go-home" @click="goHome()">{{ $lang('goHome') }}</view>
 				</view>
 			</view>
-			<!-- 消费奖励 -->
-			<view class="consume-box" v-if="addonIsExist.memberconsume && consumeStatus == 1 && payInfo.pay_status">
-				<view class="consume-head">
-					<view class="consume-line"></view>
-					<view class="consume-head-text">恭喜获得以下奖励</view>
-					<view class="consume-line"></view>
-					<view class="clear"></view>
-				</view>
-				<view class="consume-list">
-					<view class="consume-item" v-if="consumeInfo.point_num > 0">
-						<view class="consume-type">积分</view>
-						<view class="consume-value color-base-text">{{ consumeInfo.point_num }}</view>
-						<view class="consume-btn btn color-base-bg color-base-border" v-if="consumeInfo.return_point_status == 'pay'" @click="consume('point')">查看</view>
-					</view>
-					<view class="consume-item" v-if="consumeInfo.growth_num > 0">
-						<view class="consume-type">成长值</view>
-						<view class="consume-value color-base-text">{{ consumeInfo.growth_num }}</view>
-						<view class="consume-btn btn color-base-bg color-base-border" v-if="consumeInfo.return_point_status == 'pay'" @click="consume('growth')">查看</view>
-					</view>
-					<view class="consume-item" v-if="consumeInfo.coupon_list.length > 0">
-						<view class="consume-type">优惠券</view>
-						<view class="consume-value color-base-text">{{ consumeInfo.coupon_list.length }}</view>
-						<view class="consume-btn btn color-base-bg color-base-border" v-if="consumeInfo.return_point_status == 'pay'" @click="consume('coupon')">查看</view>
-					</view>
-					<view class="clear"></view>
-				</view>
-				<view class="consume-remark" v-if="consumeInfo.return_point_status == 'receive'">
-					注：订单收货后即可获得
-				</view>
-				<view class="consume-remark" v-if="consumeInfo.return_point_status == 'complete'">
-					注：订单完成后即可获得
-				</view>
-			</view>
-			
 
-			<ns-goods-recommend></ns-goods-recommend>
+			<ns-goods-recommend route="pay"></ns-goods-recommend>
 		</template>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
@@ -88,8 +76,6 @@ export default {
 		this.paySource = uni.getStorageSync('paySource');
 	},
 	onShow() {
-		
-		
 		if (uni.getStorageSync('token')) this.token = uni.getStorageSync('token');
 		this.getPayInfo();
 		this.getConsume();
@@ -107,7 +93,7 @@ export default {
 					this.$util.redirectTo('/pages_tool/member/coupon', {});
 					break;
 				default:
-					this.$util.redirectTo('/pages/member/index');
+					this.$util.redirectTo('/pages/member/index', {}, 'reLaunch');
 					break;
 				
 			}
@@ -150,7 +136,7 @@ export default {
 							title: '未获取到支付信息！'
 						});
 						setTimeout(() => {
-							this.$util.redirectTo('/pages/index/index');
+							this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
 						}, 1500);
 					}
 				},
@@ -160,7 +146,7 @@ export default {
 			});
 		},
 		goHome() {
-			this.$util.redirectTo('/pages/index/index');
+			this.$util.redirectTo('/pages/index/index', {}, 'reLaunch');
 		},
 		toOrderDetail(id) {
 			if (this.payInfo.order_type == 2) {
@@ -200,47 +186,43 @@ export default {
 <style lang="scss">
 .consume-box{
 	padding: $padding;
-	margin-top: 60rpx;
-	width: 100%;
-	.consume-line{
-		background: #bfbfbf;
-		float: left;
-		width: 15%;
-		text-align: center;
-		height: 2rpx;
-		box-sizing: border-box;
-		margin: 0 15% 0 5%;
-		&:first-child{
-			margin: 0 5% 0 15%;
+	background: #F8F8F8;
+	width: calc(100% - 48rpx);
+	margin: 0 24rpx 0 24rpx;
+	box-sizing: border-box;
+	border-radius: 20rpx;
+	
+	.consume-head {
+		display: flex;
+		justify-content: center;
+		font-weight: 500;
+		font-size: 26rpx;
+		
+		.consume-head-text {
+			line-height: 1;
 		}
 	}
-	.consume-head-text{
-		width: 30%;
-		float: left;
-		text-align: center;
-		margin-top: -26rpx;
-		color: $color-title;
-		font-size: $font-size-base;
+	
+	.consume-list {
+		display: flex;
 	}
+	
 	.consume-item{
-		background-color: #FFFFFF;
-		float: left;
-		width: 29%;
-		margin-left: 3.25%;
-		text-align: center;
-		margin-top: 45rpx;
-		padding: $padding 0;
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		color: $color-title;
 		font-size: $font-size-base;
-		.consume-value{
-			font-size:$font-size-toolbar;
-			font-weight: bold;
+		margin-top: 10rpx;
+		
+		image {
+			width: 24rpx;
+			margin-right: 4rpx;
 		}
-		.consume-btn{
-			color: #fff;
-			width: 100rpx;
-			border-radius: $border-radius;
-			margin: 4rpx auto;
+		
+		.consume-value{
+			font-size: 26rpx;
 		}
 	}
 	.consume-remark{
@@ -254,7 +236,6 @@ export default {
 }
 
 .container {
-	
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -268,25 +249,38 @@ export default {
 		padding-bottom: 40rpx;
 	}
 	.result-image {
-		width: 160rpx;
-		height: 120rpx;
+		width: 80rpx;
+		height: auto;
+		will-change: transform;
 	}
 	.msg {
 		font-size: 32rpx;
-		margin-top: 30rpx;
-		height: $font-size-toolbar;
-		line-height: $font-size-toolbar;
-		font-weight: bold;
+		margin-top: 25rpx;
+		&.success {
+			color: #09BB07;
+		}
+		&.fail {
+			color: #FF4646;
+		}
 	}
 	.pay-amount {
 		font-size: 30rpx;
-		margin-top: 70rpx;
+		margin: 40rpx 0 24rpx 0;
 		font-weight: 600;
-		height: 50rpx;
 		line-height: 50rpx;
-		color: var(--main-color);
+		
 		text {
-			font-size: 50rpx;
+			color: #333333!important;
+			font-weight: bold!important;
+		}
+		.unit {
+			margin-right: 4rpx;
+		}
+		.large {
+			font-size: 60rpx!important;
+		}
+		.small {
+			font-size: 36rpx!important;
 		}
 	}
 	.action {
@@ -295,22 +289,32 @@ export default {
 		display: flex;
 		justify-content: center;
 		box-sizing: border-box;
-		margin-top: 90rpx;
+		margin-top: 24rpx;
 
 		.btn {
-			font-size: $font-size-base;
+			font-size: 30rpx;
 			width: 200rpx;
-			height: 70rpx;
+			height: 66rpx;
 			line-height: 66rpx;
 			text-align: center;
-			border-radius: $border-radius;
+			border-radius: 66rpx;
 			border: 1px solid $color-tip;
 			box-sizing: border-box;
 
 			&:last-child {
-				margin-left: 100rpx;
+				margin-left: 40rpx;
 			}
 		}
+		
+		.go-home {
+			background-color: $base-color;
+			color: #fff;
+			border-color: $base-color;
+		}
 	}
+}
+
+/deep/ .goods-recommend {
+	margin-top: 30rpx;
 }
 </style>

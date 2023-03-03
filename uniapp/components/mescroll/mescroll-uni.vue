@@ -13,7 +13,10 @@
 				top: fixedTop,
 				bottom: fixedBottom,
 				bottom: fixedBottomConstant,
-				bottom: fixedBottomEnv
+				bottom: fixedBottomEnv,
+				background: background,
+				'padding-left': paddingBoth,
+				'padding-right': paddingBoth
 			}"
 			:scroll-top="scrollTop"
 			:scroll-with-animation="scrollAnim"
@@ -74,9 +77,40 @@ import MescrollTop from './components/mescroll-top.vue';
 import nsLoading from '@/components/ns-loading/ns-loading.vue';
 
 export default {
+	name: 'mescroll-uni',
 	components: {
 		MescrollEmpty,
 		MescrollTop
+	},
+	props: {
+		down: Object, // 下拉刷新的参数配置
+		up: Object, // 上拉加载的参数配置
+		top: [String, Number], // 下拉布局往下的偏移量 (支持20, "20rpx", "20px", "20%"格式的值, 其中纯数字则默认单位rpx, 百分比则相对于windowHeight)
+		topbar: Boolean, // top的偏移量是否加上状态栏高度, 默认false (使用场景:取消原生导航栏时,配置此项可自动加上状态栏高度的偏移量)
+		bottom: [String, Number], // 上拉布局往上的偏移量 (支持20, "20rpx", "20px", "20%"格式的值, 其中纯数字则默认单位rpx, 百分比则相对于windowHeight)
+		safearea: Boolean, // bottom的偏移量是否加上底部安全区的距离, 默认false (需要适配iPhoneX时使用)
+		fixed: {
+			// 是否通过fixed固定mescroll的高度, 默认true
+			type: Boolean,
+			default() {
+				return true;
+			}
+		},
+		height: [String, Number], // 指定mescroll的高度, 此项有值,则不使用fixed. (支持20, "20rpx", "20px", "20%"格式的值, 其中纯数字则默认单位rpx, 百分比则相对于windowHeight)
+		showTop: {
+			//是否需要展示返回顶部按钮
+			type: Boolean,
+			default() {
+				return true;
+			}
+		},
+		background: String,
+		paddingBoth: {
+			type: [String, Number],
+			default() {
+				return 0;
+			}
+		}
 	},
 	data() {
 		return {
@@ -100,29 +134,6 @@ export default {
 			statusBarHeight: 0 // 状态栏高度
 		};
 	},
-	props: {
-		down: Object, // 下拉刷新的参数配置
-		up: Object, // 上拉加载的参数配置
-		top: [String, Number], // 下拉布局往下的偏移量 (支持20, "20rpx", "20px", "20%"格式的值, 其中纯数字则默认单位rpx, 百分比则相对于windowHeight)
-		topbar: Boolean, // top的偏移量是否加上状态栏高度, 默认false (使用场景:取消原生导航栏时,配置此项可自动加上状态栏高度的偏移量)
-		bottom: [String, Number], // 上拉布局往上的偏移量 (支持20, "20rpx", "20px", "20%"格式的值, 其中纯数字则默认单位rpx, 百分比则相对于windowHeight)
-		safearea: Boolean, // bottom的偏移量是否加上底部安全区的距离, 默认false (需要适配iPhoneX时使用)
-		fixed: {
-			// 是否通过fixed固定mescroll的高度, 默认true
-			type: Boolean,
-			default() {
-				return true;
-			}
-		},
-		height: [String, Number], // 指定mescroll的高度, 此项有值,则不使用fixed. (支持20, "20rpx", "20px", "20%"格式的值, 其中纯数字则默认单位rpx, 百分比则相对于windowHeight)
-		showTop: {
-			//是否需要展示返回顶部按钮
-			type: Boolean,
-			default() {
-				return true;
-			}
-		}
-	},
 	computed: {
 		// 是否使用fixed定位 (当height有值,则不使用)
 		isFixed() {
@@ -140,7 +151,13 @@ export default {
 		},
 		// 下拉布局往下偏移的距离 (px)
 		numTop() {
+			// #ifdef H5
 			return this.toPx(this.top) + (this.topbar ? this.statusBarHeight : 0);
+			// #endif
+
+			// #ifdef MP
+			return this.toPx(this.top) + (this.topbar ? 44 + this.statusBarHeight : 0);
+			// #endif
 		},
 		fixedTop() {
 			return this.isFixed ? this.numTop + this.windowTop + 'px' : 0;

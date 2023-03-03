@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import nsProgress from '@/components/ns-progress/ns-progress.vue';
+import nsProgress from '@/pages_tool/components/ns-progress/ns-progress.vue';
 import toTop from '@/components/toTop/toTop.vue';
 import scroll from '@/common/js/scroll-view.js';
 export default {

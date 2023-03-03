@@ -84,6 +84,10 @@
 				<!-- <text class="cell-tip">{{ $lang('modify') }}</text> -->
 				<text class="cell-more"></text>
 			</view>
+			<view class="info-list-cell info-list-con" hover-class="cell-hover">
+				<text class="cell-tit">版本号</text>
+				<text class="cell-tip cell-tip1">{{ version }}</text>
+			</view>
 
 			<!-- 语言 -->
 			<!-- <view class="info-list-cell info-item info-list-con" hover-class="cell-hover" @click="modifyInfo('language')">
@@ -96,10 +100,11 @@
 				<text class="cell-tit color-base-text"></text>
 			</view> -->
 			<!-- #ifdef H5 -->
-			<view class="save-item" @click="logout" v-if="!$util.isWeiXin()">
+			
+			<!-- #endif -->
+			<view class="save-item" @click="logout">
 				<button type="primary">{{ $lang('logout') }}</button>
 			</view>
-			<!-- #endif -->
 		</view>
 		
 		<ns-login ref="login"></ns-login>
@@ -108,7 +113,7 @@
 </template>
 
 <script>
-import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
+import uniNavBar from '@/pages_tool/components/uni-nav-bar/uni-nav-bar.vue';
 import info from './public/js/info.js';
 
 export default {
@@ -116,7 +121,12 @@ export default {
 		uniNavBar
 	},
 	data() {
-		return {};
+		return {
+			version: ''
+		};
+	},
+	onLoad() {
+		this.version = this.$config.version;
 	},
 	mixins: [info],
 	filters: {
@@ -285,7 +295,7 @@ export default {
 }
 
 .save-item {
-	margin-top: 50rpx;
+	margin: 50rpx auto;
 
 	button {
 		font-size: 30rpx;

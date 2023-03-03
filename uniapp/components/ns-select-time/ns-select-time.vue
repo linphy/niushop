@@ -119,6 +119,9 @@ export default {
 		 */
 		toDay(type, obj) {
 			let today = new Date();
+			if (this.obj.dataTime.advance_day) {
+				today = new Date(today.getTime() + (this.obj.dataTime.advance_day * 86400000));
+			}
 			let nowYear = today.getFullYear(); //当前年
 			let nowMonth = today.getMonth() + 1; //当前月
 			let nowDate = today.getDate(); //当前日
@@ -126,51 +129,37 @@ export default {
 			let endDay = new Date(nowYear, nowMonth, 0).getDate(); //当月多少天
 			let Hours = today.getHours();
 			let Minutes = today.getMinutes();
-			this.dayTime = Number(Hours) * 3600 + Number(Minutes) * 60; //获取到当前时分秒的时间戳
+			this.dayTime = this.obj.dataTime.advance_day ? 0 : Number(Hours) * 3600 + Number(Minutes) * 60; //获取到当前时分秒的时间戳
 			let judge = false;
 			let num = 1; //记录循环执行过的次数
-
+			let mostDay = this.obj.dataTime.most_day ? this.obj.dataTime.most_day + 1 : 1;  // 最多可预约天数
+			let startTime = parseInt(today.getTime() / 1000);
+			let week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 			if (obj.time_week && obj.time_week.length == 7) {
 				//判断是否七天全有
 				judge = true;
 			}
 
-			for (let i = 0; i < 7; i++) {
+			for (let i = 0; i < mostDay; i++) {
 				let objects = {};
-				let dayStr = '';
-				switch (nowDay) {
-					case 1:
-						dayStr = '周一';
-						break;
-					case 2:
-						dayStr = '周二';
-						break;
-					case 3:
-						dayStr = '周三';
-						break;
-					case 4:
-						dayStr = '周四';
-						break;
-					case 5:
-						dayStr = '周五';
-						break;
-					case 6:
-						dayStr = '周六';
-						break;
-					case 0:
-						dayStr = '周日';
-						break;
+				let dayStr = week[ nowDay ];
+				// 判断最大可预约时间
+				if (this.obj.dataTime.most_day > 0 && ((startTime + num * 86400) > (startTime + this.obj.dataTime.most_day * 86400) ) ) {
+					this.judge = true;
+					break;
 				}
 				//判断当天是否能够配送、自提
 				if (type == 0 || judge || obj.indexOf(nowDay.toString()) != -1) {
+					let endTime = this.obj.dataTime.delivery_time[ (this.obj.dataTime.delivery_time.length - 1) ].end_time;
+						endTime -= this.obj.dataTime.time_interval * 60;
 					switch (num) {
 						case 1:
 							if (i == 0) {
-								if (this.obj.dataTime.end_time < this.dayTime) {
+								if (endTime < this.dayTime) {
 									i = i - 1;
 								} else {
 									objects = {
-										title: '今天',
+										title: this.obj.dataTime.advance_day == 0 ? '今天' : '',
 										type: 'special',
 										month: nowMonth + '月' + nowDate + '日',
 										Day: '(' + dayStr + ')'
@@ -182,7 +171,7 @@ export default {
 						case 2:
 							if (i == 0 || i == 1) {
 								objects = {
-									title: '明天',
+									title: this.obj.dataTime.advance_day == 0 ? '明天' : '',
 									month: nowMonth + '月' + nowDate + '日',
 									Day: '(' + dayStr + ')'
 								};
@@ -218,8 +207,8 @@ export default {
 					nowDay = 0;
 				}
 				num += 1;
-
-				if (i == 6) {
+				
+				if (this.obj.dataTime.most_day == 0 && i == 0) {
 					this.judge = true;
 				}
 			}
@@ -247,7 +236,7 @@ export default {
 			let remainder = 0;
 			//当天配送自提的话，向后推迟30分钟
 			let newDayTime = JSON.parse(JSON.stringify(this.dayTime));
-			newDayTime = Math.ceil(this.dayTime / 600) * 600 + 1800;
+			// newDayTime = Math.ceil(this.dayTime / 600) * 600 + 1800;
 			
 			//判断选中是否为当天
 			let timeJudage = false;
@@ -258,12 +247,21 @@ export default {
 			this.obj.dataTime.delivery_time.forEach(item => {
 				item.end_time = item.end_time ? item.end_time : 86400; 
 				let num = parseInt((parseInt(item.end_time) - parseInt(item.start_time)) / timeInterval);
-				let time = parseInt(item.start_time);
+				let time = timeJudage ? parseInt(newDayTime) : parseInt(item.start_time);
 				for (let i = 0; i < num; i++) {
+					if (parseInt(time) + parseInt(timeInterval) > item.end_time) break;
 					if (timeJudage) {
 						if (time >= newDayTime) {
 							if (this.obj.dataTime.time_interval) {
-								if (time <= item.end_time) timeData.push(this.$util.getTimeStr(time) + '-' + this.$util.getTimeStr(time + timeInterval));
+								if (time <= item.end_time) {
+									let text = '';
+									if (this.obj.delivery.delivery_type == 'local' && i == 0) {
+										text = '立即配送（'+ this.$util.getTimeStr(time) + '-' + this.$util.getTimeStr(time + timeInterval) + '）';
+									} else {
+										text = this.$util.getTimeStr(time) + '-' + this.$util.getTimeStr(time + timeInterval);
+									}
+									timeData.push(text);
+								} 
 							} else {
 								timeData.push(this.$util.getTimeStr(time));
 							}

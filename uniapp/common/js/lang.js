@@ -79,22 +79,22 @@ export default {
 		this.title(this.lang("title"));
 
 		//设置tabbar的文字语言
-		uni.setTabBarItem({
-			index: 0,
-			text: this.lang("tabBar.home")
-		});
-		uni.setTabBarItem({
-			index: 1,
-			text: this.lang("tabBar.category")
-		});
-		uni.setTabBarItem({
-			index: 2,
-			text: this.lang("tabBar.cart")
-		});
-		uni.setTabBarItem({
-			index: 3,
-			text: this.lang("tabBar.member")
-		});
+		// uni.setTabBarItem({
+		// 	index: 0,
+		// 	text: this.lang("tabBar.home")
+		// });
+		// uni.setTabBarItem({
+		// 	index: 1,
+		// 	text: this.lang("tabBar.category")
+		// });
+		// uni.setTabBarItem({
+		// 	index: 2,
+		// 	text: this.lang("tabBar.cart")
+		// });
+		// uni.setTabBarItem({
+		// 	index: 3,
+		// 	text: this.lang("tabBar.member")
+		// });
 	},
 	title(str) {
 		if (str) {

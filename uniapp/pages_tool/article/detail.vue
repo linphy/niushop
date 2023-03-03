@@ -7,8 +7,14 @@
 		</view>
 		<view class="help-content"><rich-text :nodes="content"></rich-text></view>
 		<view class="bottom-area">
-			<view v-if="detail.is_show_read_num == 1">阅读：<text class="price-font">{{ detail.read_num + detail.initial_read_num }}</text></view>
-			<view v-if="detail.is_show_dianzan_num == 1"><text class="price-font">{{ detail.dianzan_num + detail.initial_dianzan_num }}</text>人已赞</view>
+			<view v-if="detail.is_show_read_num == 1">
+				阅读：
+				<text class="price-font">{{ detail.read_num + detail.initial_read_num }}</text>
+			</view>
+			<view v-if="detail.is_show_dianzan_num == 1">
+				<text class="price-font">{{ detail.dianzan_num + detail.initial_dianzan_num }}</text>
+				人已赞
+			</view>
 		</view>
 		<loading-cover ref="loadingCover"></loading-cover>
 	</view>
@@ -30,9 +36,10 @@ export default {
 			this.$util.redirectTo('/pages_tool/help/list', {}, 'redirectTo');
 			return;
 		}
+	},
+	onShow() {
 		this.getData();
 	},
-	onShow() {},
 	methods: {
 		getData() {
 			this.$api.sendRequest({
@@ -45,6 +52,7 @@ export default {
 						this.detail = res.data;
 						this.$langConfig.title(this.detail.article_title);
 						this.content = htmlParser(this.detail.article_content);
+						this.setPublicShare();
 					} else {
 						this.$util.showToast({
 							title: res.message
@@ -59,6 +67,16 @@ export default {
 					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 				}
 			});
+		},
+		// 设置公众号分享
+		setPublicShare() {
+			let shareUrl = this.$config.h5Domain + '/pages_tool/article/detail?article_id=' + this.articleId;
+			this.$util.setPublicShare({
+				title: this.detail.article_title,
+				desc: '',
+				link: shareUrl,
+				imgUrl: ''
+			});
 		}
 	},
 	onShareAppMessage(res) {
@@ -69,6 +87,16 @@ export default {
 			path: path,
 			success: res => {},
 			fail: res => {}
+		};
+	},
+	//分享到朋友圈
+	onShareTimeline() {
+		var title = this.detail.article_title;
+		var query = '/pages_tool/article/detail?article_id=' + this.articleId;
+		return {
+			title: title,
+			query: query,
+			imageUrl: ''
 		};
 	}
 };
@@ -109,9 +137,9 @@ export default {
 	align-items: center;
 	justify-content: space-between;
 	margin-top: 40rpx;
-	
+
 	.price-font {
-		font-weight: normal!important;
+		font-weight: normal !important;
 	}
 	view {
 		color: #999;

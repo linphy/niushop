@@ -16,7 +16,11 @@ export default {
 			discount: {},
 			manjian: {},
 			receiveSub: false,
-			discountPopupShow: false
+			discountPopupShow: false,
+
+			startX: '', // 触摸开始位置
+			endX: '', // 触摸结束位置
+			refresherTriggered: false ,// 设置当前下拉刷新状态，true 表示下拉刷新已经被触发，false 表示下拉刷新未被触发
 		};
 	},
 	onLoad() {
@@ -28,12 +32,14 @@ export default {
 		} else {
 			this.token = '';
 			this.cartData = [];
+			this.invalidGoods = [];
 			this.calculationTotalPrice();
 		}
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 		if (this.$util.uniappIsIPhone11()) {
 			this.cartBottom = '90px';
 		}
+		
 	},
 	onReady() {
 		if (!uni.getStorageSync('token')) {
@@ -43,9 +49,6 @@ export default {
 	computed: {
 		hasData() {
 			return this.cartData.length > 0 || this.invalidGoods.length > 0;
-		},
-		storeToken() {
-			return this.$store.state.token;
 		}
 	},
 	watch: {
@@ -74,6 +77,7 @@ export default {
 					} else {
 						this.token = '';
 					}
+					this.refresherTriggered = false;
 					if (this.$refs.loadingCover) this.$refs.loadingCover.hide();
 				},
 				fail: res => {
@@ -90,8 +94,10 @@ export default {
 			var temp = {};
 			data.forEach((item, index) => {
 				if (item.goods_state == 1) {
-					// 如果最小限购超出库存则该商品失效
-					if (item.min_buy > 0 && item.min_buy > item.stock) {
+					if (item.store_goods_status != undefined && item.store_goods_status != 1) {
+						this.invalidGoods.push(item);
+					} else if (item.min_buy > 0 && item.min_buy > item.stock) {
+						// 如果最小限购超出库存则该商品失效
 						this.invalidGoods.push(item);
 					} else {
 						item.checked = true;
@@ -441,7 +447,7 @@ export default {
 			if (goodsSkuDetail.goods_spec_format) goodsSkuDetail.goods_spec_format = JSON.parse(goodsSkuDetail
 				.goods_spec_format);
 			this.goodsSkuDetail = goodsSkuDetail;
-			
+
 			setTimeout(() => {
 				this.$refs.selectSku.show('confirm', (sku_id, num) => {
 					this.$api.sendRequest({
@@ -507,6 +513,9 @@ export default {
 							}
 						})
 						Object.assign(this.manjian, manjian);
+						this.refresherTriggered = false;
+					} else {
+						this.discount = {};
 					}
 				}
 			})
@@ -537,15 +546,44 @@ export default {
 				}
 			});
 		},
+		// 手指触摸事件 用于菜单左滑
+		touchS(e) {
+			this.startX = e.touches[0].clientX;
+			// console.log('开始' + e.touches[0].clientX);
+		},
+		touchE(e, cartIndex) {
+			this.endX = e.changedTouches[0].clientX;
+			// 触摸开始到停止的差值，小于0左滑，大于0右滑
+			var disX = this.startX - this.endX;
+			// cartIndex.edit = disX > 50;
+			if (disX > 50) cartIndex.edit = true;
+			else if (disX < 0) cartIndex.edit = false;
+			this.$forceUpdate();
+		},
 		moneyFormat(money) {
 			if (isNaN(parseFloat(money))) return money;
 			return parseFloat(money).toFixed(2);
 		},
 		refreshSkuDetail(goodsSkuDetail) {
 			this.goodsSkuDetail = goodsSkuDetail;
+		},
+		onRefresh(e) {
+			this.refresherTriggered = true;
+			if (uni.getStorageSync('token')) {
+				this.getCartData();
+			} else {
+				this.token = '';
+				this.cartData = [];
+				this.invalidGoods = [];
+				this.calculationTotalPrice();
+			}
+			this.isIphoneX = this.$util.uniappIsIPhoneX();
+			if (this.$util.uniappIsIPhone11()) {
+				this.cartBottom = '90px';
+			}
 		}
 	},
 	onHide() {
 		this.isAction = false;
-	}
+	},
 }

@@ -153,27 +153,36 @@
 										@input="keyInput(false)"
 									/>
 									<button type="default" class="increase color-line-border" :class="{ disabled: increaseDisabled }" @click="changeNum('+')">+</button>
-									<!-- v-if="max_buy == 1" -->
-									<!-- <button v-else type="default" class="increase color-line-border" @click="changeNum('+')">+</button> -->
 								</view>
 							</view>
 						</view>
 					</scroll-view>
 				</view>
 				<view class="footer" @click="confirm()">
-					<button type="primary" v-if="goodsDetail.stock && goodsDetail.stock != 0 && type == 'join_cart'">加入购物车</button>
-					<button type="primary" v-else-if="goodsDetail.stock && goodsDetail.stock != 0 && type == 'buy_now'">立即购买</button>
-					<button type="primary" v-else-if="goodsDetail.stock && goodsDetail.stock != 0 && type == 'confirm'">确认</button>
-					<template v-else-if="goodsDetail.stock && goodsDetail.stock != 0">
-						<template v-if="goodsDetail.buy_num">
-							<button type="primary" v-if="goodsDetail.buy_num <= goodsDetail.stock">立即抢购</button>
-							<button type="primary" v-else disabled="true">库存不足</button>
+					<button
+						type="primary"
+						v-if="goodsDetail.stock && goodsDetail.stock != 0 && goodsDetail.is_virtual == 0 && type == 'buy_now'"
+						:style="{ background: themeStyle.goods_detail.goods_btn_color_shallow, color: '#fff' }"
+						@click.stop="confirm(true)"
+					>
+						加入购物车
+					</button>
+					<block v-if="goodsDetail.goods_state == 1">
+						<button type="primary" v-if="goodsDetail.stock && goodsDetail.stock != 0 && type == 'join_cart'">加入购物车</button>
+						<button type="primary" v-else-if="goodsDetail.stock && goodsDetail.stock != 0 && type == 'buy_now'">立即购买</button>
+						<button type="primary" v-else-if="goodsDetail.stock && goodsDetail.stock != 0 && type == 'confirm'">确认</button>
+						<template v-else-if="goodsDetail.stock && goodsDetail.stock != 0">
+							<template v-if="goodsDetail.buy_num">
+								<button type="primary" v-if="goodsDetail.buy_num <= goodsDetail.stock">立即抢购</button>
+								<button type="primary" v-else disabled="true">库存不足</button>
+							</template>
+							<template v-else>
+								<button type="primary">立即抢购</button>
+							</template>
 						</template>
-						<template v-else>
-							<button type="primary">立即抢购</button>
-						</template>
-					</template>
-					<button type="primary" v-else disabled="true">库存不足</button>
+						<button type="primary" v-else disabled="true">库存不足</button>
+					</block>
+					<button type="primary" v-else disabled="true">该商品已下架</button>
 				</view>
 			</view>
 		</uni-popup>
@@ -223,6 +232,7 @@ export default {
 			type: '', //join_cart：加入购物车，buy_now：立即购买
 			callback: null, //回调
 			skuId: 0,
+			pintuanId: 0, // 拼团id
 			limitNumber: 0, // 限购
 			minNumber: 0,
 			//是否开启预览，0：不开启，1：开启
@@ -230,6 +240,7 @@ export default {
 			cartNumber: 0, // 购物车中商品存在的数量
 			goodsSkuDetail: {},
 			goodsSkuInfo: null, //所有的商品规格信息
+			goodsForm: null,
 			isLoad: false // 是否首次加载
 		};
 	},
@@ -239,7 +250,9 @@ export default {
 		this.isLoad = true;
 		if (this.goodsId && this.goodsDetail.goods_spec_format) {
 			this.skuId = this.goodsDetail.sku_id;
-			this.getAllGoodsSkuInfo();
+			this.getGeneralGoodsSkuList();
+		} else {
+			this.skuId = this.goodsDetail.sku_id;
 		}
 	},
 	watch: {
@@ -249,6 +262,12 @@ export default {
 		goodsDetail: {
 			handler(newData, oldData) {
 				this.skuId = newData.sku_id;
+				if (this.goodsDetail.goods_form && !this.goodsForm) this.goodsForm = this.goodsDetail.goods_form;
+
+				// 切换商品，重新赋值
+				if (newData.goods_id != oldData.goods_id) {
+					this.getGeneralGoodsSkuList();
+				}
 			},
 			deep: true // 深度监听父组件传过来对象变化
 		},
@@ -273,6 +292,10 @@ export default {
 				if (this.goodsDetail.goods_spec_format && this.goodsDetail.goods_spec_format.length) {
 					height = 51 + this.goodsDetail.goods_spec_format.length * 9.5;
 				}
+
+				if (this.goodsForm && this.goodsForm.length) {
+					height += this.goodsForm.length * 5;
+				}
 			}
 			height += 'vh';
 			return height;
@@ -280,7 +303,7 @@ export default {
 	},
 	methods: {
 		//【普通商品】获取所有规格信息
-		getAllGoodsSkuInfo(callback) {
+		getGeneralGoodsSkuList(callback) {
 			this.$api.sendRequest({
 				url: '/api/goodssku/goodsSku',
 				data: {
@@ -341,8 +364,9 @@ export default {
 
 			return item;
 		},
-		show(type, callback, data) {
+		show(type, callback, data = {}) {
 			this.callback = callback;
+			this.number = 1; //默认为一件
 
 			// 排除购物车切换规格
 			if (this.type != 'confirm') {
@@ -357,11 +381,15 @@ export default {
 				// 购物车切换规格
 				this.goodsId = data.goods_id;
 				this.skuId = data.sku_id;
-				this.getAllGoodsSkuInfo(() => {
+				this.getGeneralGoodsSkuList(() => {
 					this.$refs.skuPopup.open();
 				});
 			}
 			if (this.type == 'join_cart') this.getCartData();
+			// 起售
+			if (this.minBuy > 1) {
+				this.number = Number(this.minBuy);
+			}
 			this.$forceUpdate();
 		},
 		hide() {
@@ -407,6 +435,15 @@ export default {
 			this.goodsSkuDetail = this.goodsSkuInfo['sku_' + this.skuId];
 			this.$emit('refresh', this.goodsSkuDetail);
 			this.$emit('getSkuId', this.skuId);
+			if (this.goodsDetail.bale_id) {
+				// 一口价活动
+				if (this.$util.inArray(skuId + '', this.goodsDetail.activity_sku_ids) == -1) {
+					this.confirmDisabled = true;
+					this.$util.showToast({ title: '该规格未参与打包一口价活动' });
+				} else {
+					this.confirmDisabled = false;
+				}
+			}
 			this.keyInput(true);
 		},
 		showPrice(price) {
@@ -460,20 +497,6 @@ export default {
 							});
 							return;
 						}
-					}
-
-					if (this.type == 'seckill' && this.goodsDetail.seckill_id && this.goodsDetail.num > 0) {
-						this.$util.showToast({
-							title: '该商品每人限购' + this.goodsDetail.num + this.goodsDetail.unit
-						});
-						return;
-					}
-
-					if (this.type == 'presale' && this.goodsDetail.presale_id && this.goodsDetail.presale_num > 0) {
-						this.$util.showToast({
-							title: '该商品每人限购' + this.goodsDetail.presale_num + this.goodsDetail.unit
-						});
-						return;
 					}
 				}
 			} else if (tag == '-') {
@@ -549,9 +572,8 @@ export default {
 				if (callback) callback();
 			}, 0);
 		},
-
 		//提交
-		confirm() {
+		confirm(isJoinCartBtn = false) {
 			// 删除待付款物流方式缓存
 			uni.removeStorageSync('delivery');
 			if (this.preview) {
@@ -560,6 +582,7 @@ export default {
 				});
 				return;
 			}
+			if (this.goodsDetail.goods_state == 0) return;
 
 			if (!uni.getStorageSync('token')) {
 				this.$refs.login.open();
@@ -612,7 +635,7 @@ export default {
 					return;
 				}
 
-				if (this.type == 'join_cart' && this.goodsDetail.is_limit == 1 && this.maxBuy > 0 && this.cartNumber + this.number > this.maxBuy) {
+				if ((this.type == 'join_cart' || isJoinCartBtn) && this.goodsDetail.is_limit == 1 && this.maxBuy > 0 && this.cartNumber + this.number > this.maxBuy) {
 					this.$util.showToast({
 						title: '该商品每人限购' + this.maxBuy + this.goodsDetail.unit
 					});
@@ -622,7 +645,7 @@ export default {
 				if (this.btnSwitch) return;
 				this.btnSwitch = true;
 
-				if (this.type == 'join_cart') {
+				if (this.type == 'join_cart' || isJoinCartBtn) {
 					this.$api.sendRequest({
 						url: '/api/cart/add',
 						data: {
@@ -832,6 +855,7 @@ export default {
 .sku-layer .body-item .number-wrap .number-line {
 	padding: 20rpx 0;
 	line-height: 72rpx;
+	display: flex;
 }
 
 .sku-layer .body-item .number-wrap .title {
@@ -846,6 +870,8 @@ export default {
 	height: 72rpx;
 	border-radius: 6rpx;
 	float: right;
+	justify-content: flex-end;
+	flex: 1;
 }
 
 .sku-layer .body-item .number-wrap .number button {
@@ -883,7 +909,7 @@ export default {
 	display: inline-block;
 	line-height: 64rpx;
 	height: 68rpx;
-	width: 72rpx;
+	min-width: 90rpx;
 	text-align: center;
 	font-weight: 700;
 	border: 2rpx solid;
@@ -891,6 +917,8 @@ export default {
 	padding: 0;
 	vertical-align: top;
 	background-color: $color-bg !important;
+	flex: 0;
+	padding: 0 5px;
 }
 
 .sku-layer .footer {
@@ -911,6 +939,25 @@ export default {
 		height: 80rpx;
 		background-color: var(--goods-btn-color);
 		font-weight: bold;
+	}
+}
+
+.presale-stock {
+	height: auto !important;
+}
+
+.balance {
+	margin-left: 10rpx;
+	display: inline-block;
+	line-height: 1.3;
+	font-size: $font-size-tag;
+
+	text {
+		font-weight: normal;
+	}
+
+	.unit {
+		margin-right: 0 !important;
 	}
 }
 </style>

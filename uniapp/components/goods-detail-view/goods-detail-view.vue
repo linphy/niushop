@@ -3,10 +3,10 @@
 		<view scroll-y="true" class="goods-detail" :class="isIphoneX ? 'active' : ''">
 			<view class="goods-container">
 				<!-- 弹幕 -->
-				<pengpai-fadein-out v-if="goodsSkuDetail.barrage_show && goodsSkuDetail.barrageData" ref="pengpai" :duration="1600" :wait="1900" :top="400" :left="0" :radius="60" :loop="true" :info="goodsSkuDetail.barrageData"></pengpai-fadein-out>
+				<pengpai-fadein-out v-if="goodsSkuDetail.barrage_show && goodsSkuDetail.barrageData" ref="pengpai" :duration="1600" :wait="1900" :top="200" :left="0" :radius="60" :loop="true" :info="goodsSkuDetail.barrageData"></pengpai-fadein-out>
 				
 				<!-- 商品媒体信息 -->
-				<view class="goods-media">
+				<view class="goods-media" :style="{height: goodsSkuDetail.swiperHeight}">
 					<!-- 商品图片 -->
 					<view class="goods-img" :class="{ show: switchMedia == 'img' }">
 						<swiper class="swiper" @change="swiperChange" :interval="swiperInterval" :autoplay="swiperAutoplay" autoplay="true" interval="4000" circular="true">
@@ -42,15 +42,21 @@
 				<view class="newdetail margin-bottom">
 					<!-- 入口区域 -->
 					<slot name="entrance"></slot>
-
-					<view class="item goods-attribute" @click="openAttributePopup()" v-if="goodsSkuDetail.goods_attr_format && goodsSkuDetail.goods_attr_format.length > 0">
-						<view class="label">属性</view>
-						<view class="box">
-							<text v-for="(item, index) in goodsSkuDetail.goods_attr_format" :key="index" v-if="index < 2">{{ item.attr_name }}: {{ item.attr_value_name }}</text>
-						</view>
-						<text class="iconfont icon-right"></text>
-						<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
+					
+					<!-- 配送 -->
+					<view class="item delivery-type" v-if="goodsSkuDetail.is_virtual == 0" @click="$refs.deliveryType.open()">
+						<view class="label">配送</view>
+						<block v-if="deliveryType">
+							<view class="box">
+								<block v-for="(item, index) in deliveryType" :key="index">
+									<text v-if="goodsSkuDetail.support_trade_type.indexOf(index) != -1">{{ item.name }}</text>
+								</block>
+							</view>
+							<text class="iconfont icon-right"></text>
+						</block>
+						<block v-else><view class="box">商家未配置配送方式</view></block>
 					</view>
+					
 					<view class="item service" @click="openMerchantsServicePopup()" v-if="goodsSkuDetail.goods_service.length">
 						<view class="label">服务</view>
 						<view class="list-wrap">
@@ -66,25 +72,28 @@
 							</view>
 						</view>
 						<text class="iconfont icon-right"></text>
-						<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 					</view>
 				</view>
-
-				<!-- 商品属性 -->
+				
+				<!-- 配送方式 -->
 				<view @touchmove.prevent.stop>
-					<uni-popup ref="attributePopup" type="bottom">
-						<view class="goods-attribute-popup-layer popup-layer">
-							<view class="head-wrap" @click="closeAttributePopup()">
-								<text>商品属性</text>
+					<uni-popup ref="deliveryType" type="bottom">
+						<view class="deliverytype-popup-layer popup-layer">
+							<view class="head-wrap" @click="$refs.deliveryType.close()">
+								<text>配送</text>
 								<text class="iconfont icon-close"></text>
 							</view>
-							<scroll-view scroll-y class="goods-attribute-body">
-								<view class="item" v-for="(item, index) in goodsSkuDetail.goods_attr_format" :key="index">
-									<text class="attr-name">{{ item.attr_name }}</text>
-									<text class="value-name">{{ item.attr_value_name }}</text>
-								</view>
+							<scroll-view scroll-y class="type-body">
+								<block v-for="(item, index) in deliveryType" :key="index">
+									<view class="type-item" :class="{ 'not-support': goodsSkuDetail.support_trade_type.indexOf(index) == -1 }">
+										<text class="iconfont" :class="item.icon"></text>
+										<view class="content">
+											<view class="title">{{ item.name }}</view>
+											<view class="desc">{{ item.desc }}</view>
+										</view>
+									</view>
+								</block>
 							</scroll-view>
-							<view class="button-box"><button type="primary" @click="closeAttributePopup()">确定</button></view>
 						</view>
 					</uni-popup>
 				</view>
@@ -161,9 +170,9 @@
 							<view>
 								<text class="color-title font-size-base">
 									评价
-									<text class="font-size-base">({{ goodsSkuDetail.evaluate }})</text>
+									<text class="font-size-base">({{ evaluateCount }})</text>
 								</text>
-								<text class="evaluate-item-empty" v-if="!goodsSkuDetail.evaluate">暂无评价</text>
+								<text class="evaluate-item-empty" v-if="!evaluateCount">暂无评价</text>
 								<view class="evaluate-item-empty" v-else>
 									<text class="font-size-tag">查看全部</text>
 									<text class="iconfont icon-right font-size-tag"></text>
@@ -208,6 +217,26 @@
 						</view>
 					</view>
 				</view>
+				
+				<view class="goods-attr" v-if="goodsSkuDetail.goods_attr_format && goodsSkuDetail.goods_attr_format.length > 0">
+					<view class="title">规格属性</view>
+					<view class="attr-wrap">
+						<block v-for="(item, index) in goodsSkuDetail.goods_attr_format" :key="index">
+							<view class="item" v-if="goodsAttrShow || (!goodsAttrShow && index < 4)">
+								<text class="attr-name">{{ item.attr_name }}</text>
+								<text class="value-name">{{ item.attr_value_name }}</text>
+							</view>
+						</block>
+						<view class="attr-action" v-if="goodsSkuDetail.goods_attr_format.length > 4" @click="switchGoodsAttr">
+							<block v-if="!goodsAttrShow">
+								展开<text class="iconfont icon-iconangledown"></text>
+							</block>
+							<block v-else>
+								收起<text class="iconfont icon-iconangledown-copy"></text>
+							</block>
+						</view>
+					</view>
+				</view>
 
 				<!-- 详情 -->
 				<view class="goods-detail-tab">
@@ -237,7 +266,7 @@
 				</view>
 
 				<!-- 商品推荐 -->
-				<ns-goods-recommend ref="goodrecommend" route="goodsdetail"></ns-goods-recommend>
+				<ns-goods-recommend ref="goodrecommend" route="goods_detail"></ns-goods-recommend>
 				
 				<ns-copyright></ns-copyright>
 				
@@ -316,14 +345,14 @@
 </template>
 
 <script>
-import xiaoStarComponent from '@/components/xiao-star-component/xiao-star-component.vue';
 // 商品详情视图
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 import nsGoodsRecommend from '@/components/ns-goods-recommend/ns-goods-recommend.vue';
+import pengpaiFadeinOut from '@/components/pengpai-fadein-out/pengpai-fadein-out.vue';
+import xiaoStarComponent from '@/components/xiao-star-component/xiao-star-component.vue';
 import scroll from '@/common/js/scroll-view.js';
 import toTop from '@/components/toTop/toTop.vue';
 import goodsDetailBase from '@/common/js/goods_detail_base.js';
-import pengpaiFadeinOut from '@/components/pengpai-fadein-out/pengpai-fadein-out.vue';
 import detail from './detail.js';
 
 export default {
@@ -340,8 +369,8 @@ export default {
 		uniPopup,
 		nsGoodsRecommend,
 		pengpaiFadeinOut,
-		xiaoStarComponent,
-		toTop
+		toTop,
+		xiaoStarComponent
 	},
 	mixins: [scroll, detail]
 };

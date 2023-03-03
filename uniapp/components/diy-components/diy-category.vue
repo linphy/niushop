@@ -2,7 +2,7 @@
 	<view class="" :class="['category-page-wrap', 'category-template-' + value.template]">
 		<!-- #ifndef H5 -->
 		<block v-if="value.template == 4">
-			<view class="search-box u-navbar-content-title" v-if="value.search" @click="$util.redirectTo('/pages_tool/goods/search')" :style="navbarInnerStyle">
+			<view class="search-box" v-if="value.search" @click="$util.redirectTo('/pages_tool/goods/search')" :style="navbarInnerStyle">
 				<view class="search-content">
 					<input type="text" class="uni-input font-size-tag" maxlength="50" placeholder="商品搜索" confirm-type="search" disabled="true" />
 					<text class="iconfont icon-sousuo3"></text>
@@ -12,18 +12,18 @@
 		</block>
 		<block v-if="value.template != 4">
 			<view :style="navbarInnerStyle">商品分类</view>
-			<view class="search-box" v-if="value.search" @click="$util.redirectTo('/pages_tool/goods/search')">
+			<view class="search-box" v-if="value.search" @click="$util.redirectTo('/pages_tool/goods/search')" :style="wxSearchHeight">
 				<view class="search-content">
-					<input type="text" class="uni-input font-size-tag" maxlength="50" placeholder="商品搜索" confirm-type="search" disabled="true" />
+					<input type="text" class="uni-input" maxlength="50" placeholder="商品搜索" confirm-type="search" disabled="true" />
 					<text class="iconfont icon-sousuo3"></text>
 				</view>
 			</view>
 		</block>
 		<!-- #endif -->
-		<!-- #ifdef  H5 -->
+		<!-- #ifdef H5 -->
 		<view class="search-box" v-if="value.search" @click="$util.redirectTo('/pages_tool/goods/search')">
 			<view class="search-content">
-				<input type="text" class="uni-input font-size-tag" maxlength="50" placeholder="商品搜索" confirm-type="search" disabled="true" />
+				<input type="text" class="uni-input" maxlength="50" placeholder="商品搜索" confirm-type="search" disabled="true" />
 				<text class="iconfont icon-sousuo3"></text>
 			</view>
 		</view>
@@ -48,7 +48,7 @@
 					<image class="img" :src="$util.img('/public/uniapp/category/unfold.png')" mode="aspectFill"></image>
 				</view>
 			</view>
-			<uni-popup type="top" ref="templateFourPopup" class="aaa">
+			<uni-popup type="top" ref="templateFourPopup" :top="uniPopupTop">
 				<view class="template-four-popup">
 					<scroll-view scroll-y="true" class="template-four-scroll" enable-flex="true">
 						<view
@@ -248,6 +248,10 @@ export default {
 			if (this.value.template == 1) this.getHeightArea(-1);
 		}, 500);
 	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		cartMoney() {
 			let cartMoney = parseFloat(this.$store.state.cartMoney).toFixed(2);
@@ -276,22 +280,43 @@ export default {
 			let style = '';
 			// 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
 			// style += 'height:' + this.navbarHeight + 'px;';
-			style += 'height:' + menuButtonInfo.height * 2 + 'rpx;';
 			// // 如果是各家小程序，导航栏内部的宽度需要减少右边胶囊的宽度
-			style += 'padding-top:' + this.navbarHeight + 'px;';
 			// #ifdef MP
 			if (this.value.template == 4 && this.value.search) {
+				style += 'height:' + menuButtonInfo.height + 'px;';
 				let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width * 2 + 'rpx' : '70rpx';
 				style += 'padding-right:calc(' + rightButtonWidth + ' + 30rpx);';
+				style += 'padding-top:' + this.navbarHeight + 'px;';
 			}
 			// #endif
 			if (this.value.template != 4 || (this.value.template == 4 && !this.value.search)) {
+				style += 'height:' + menuButtonInfo.height * 2 + 'rpx;';
+				style += 'padding-top:' + this.navbarHeight + 'px;';
 				style += 'text-align: center;';
 				style += 'line-height:' + menuButtonInfo.height * 2 + 'rpx;';
-				style += 'font-size: 24rpx;';
+				style += 'font-size: 28rpx;';
 				style += 'padding-bottom: 10rpx;';
 			}
 			return style;
+		},
+		wxSearchHeight() {
+			let style = '';
+			// #ifdef MP
+			style += 'height: 64rpx;';
+			// #endif
+			return style;
+		},
+		uniPopupTop() {
+			let top = 0;
+			// #ifdef MP
+			top = this.navbarHeight + menuButtonInfo.height + 'px';
+			// #endif
+
+			// #ifdef H5
+			top = '100rpx';
+			// #endif
+
+			return top;
 		}
 	},
 	methods: {
@@ -621,7 +646,12 @@ export default {
 
 	.search-content {
 		position: relative;
-		height: 70rpx;
+		/* #ifndef MP-WEIXIN */
+		height: 64rpx;
+		/* #endif */
+		/* #ifdef MP-WEIXIN */
+		height: 100%;
+		/* #endif */
 		border-radius: 40rpx;
 		flex: 1;
 		background-color: #f5f5f5;
@@ -629,7 +659,7 @@ export default {
 		input {
 			box-sizing: border-box;
 			display: block;
-			height: 70rpx;
+			height: 100%;
 			width: 100%;
 			padding: 0 20rpx 0 40rpx;
 			background: #f5f5f5;
@@ -763,9 +793,8 @@ export default {
 // 风格四
 .category-template-4 {
 	.search-box {
-		background-color: #f0f5ff;
 		.search-content input {
-			background-color: #fff;
+			background-color: #f1f1f1;
 		}
 	}
 	.cart-box {
@@ -776,15 +805,6 @@ export default {
 	/deep/ .template-four {
 		position: relative;
 		z-index: 1;
-		&:after {
-			content: '';
-			position: absolute;
-			bottom: 20rpx;
-			height: 4rpx;
-			left: 0;
-			right: 0;
-			box-shadow: 0 20rpx 14rpx rgba(0, 0, 0, 0.2);
-		}
 		.template-four-wrap {
 			position: relative;
 			z-index: 1;
@@ -792,10 +812,10 @@ export default {
 			padding-right: 80rpx;
 			padding-bottom: 10rpx;
 			display: flex;
-			height: 180rpx;
+			height: 172rpx;
 			align-items: baseline;
 			box-sizing: border-box;
-			background-image: linear-gradient(#f0f5ff 45%, #fff);
+			box-shadow: 0 4rpx 4rpx rgba(123, 123, 123, 0.1);
 		}
 
 		.template-four-popup {
@@ -895,7 +915,6 @@ export default {
 				justify-content: center;
 				align-items: center;
 				z-index: 2;
-				background-image: linear-gradient(#f0f5ff 45%, #fff);
 			}
 
 			.text {
@@ -911,14 +930,13 @@ export default {
 			}
 			&::after {
 				content: '';
-				box-shadow: -4rpx 10rpx 20rpx rgba(0, 0, 0, 0.1);
+				// box-shadow: -4rpx 10rpx 20rpx rgba(0, 0, 0, 0.1);
 				position: absolute;
 				left: 0;
 				width: 10rpx;
 				// height: 100rpx;
 				top: 20%;
 				bottom: 20%;
-				background-image: linear-gradient(#f0f5ff 45%, #fff);
 				// transform: translateY(-50%);
 				// background-color: #F0F5FF;
 			}
@@ -952,6 +970,9 @@ export default {
 				width: 84rpx;
 				height: 84rpx;
 				border-radius: 32rpx;
+			}
+			.text {
+				font-size: $font-size-tag;
 			}
 		}
 		.select {

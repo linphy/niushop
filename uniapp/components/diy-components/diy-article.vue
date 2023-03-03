@@ -2,9 +2,7 @@
 	<view class="article-wrap" :style="warpCss" v-if="list.length > 0">
 		<view :class="['list-wrap', value.style]" :style="warpCss">
 			<view :class="['item', value.ornament.type]" v-for="(item, index) in list" :key="index" @click="toDetail(item)" :style="itemCss">
-				<view class="article-img">
-					<image class="cover-img" :src="$util.img(item.cover_img)" mode="widthFix" @error="imgError(index)"></image>
-				</view>
+				<view class="article-img"><image class="cover-img" :src="$util.img(item.cover_img)" mode="widthFix" @error="imgError(index)"></image></view>
 				<view class="info-wrap">
 					<text class="title">{{ item.article_title }}</text>
 					<view class="read-wrap">
@@ -35,7 +33,13 @@ export default {
 		};
 	},
 	created() {
-		this.getBrandList();
+		this.getList();
+	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {
+			this.getList();
+		}
 	},
 	computed: {
 		warpCss() {
@@ -69,23 +73,22 @@ export default {
 		}
 	},
 	methods: {
-		getBrandList() {
+		getList() {
 			var data = {
-				page: 1,
-				page_size: this.value.count
+				num: this.value.count
 			};
 			if (this.value.sources == 'diy') {
-				data.page_size = 0;
+				data.num = 0;
 				data.article_id_arr = this.value.articleIds.toString();
 			}
 
 			this.$api.sendRequest({
-				url: '/api/article/page',
+				url: '/api/article/lists',
 				data: data,
 				success: res => {
 					if (res.code == 0 && res.data) {
 						let data = res.data;
-						this.list = data.list;
+						this.list = data;
 					}
 				}
 			});
@@ -109,8 +112,11 @@ export default {
 			.item {
 				display: flex;
 				padding: 20rpx;
-				margin: 24rpx 0;
-				
+				margin-top: 24rpx;
+				&:first-of-type {
+					margin-top: 0;
+				}
+
 				.article-img {
 					margin-right: 20rpx;
 					width: 160rpx;
@@ -119,12 +125,12 @@ export default {
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					
+
 					image {
 						width: 100%;
 					}
 				}
-				
+
 				.info-wrap {
 					flex: 1;
 					display: flex;

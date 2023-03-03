@@ -130,9 +130,6 @@ export default {
 		},
 		endDate() {
 			return this.getDate('end');
-		},
-		storeToken() {
-			return this.$store.state.token;
 		}
 	},
 	methods: {
@@ -201,7 +198,7 @@ export default {
 						this.formData.sex = this.memberInfo.sex; //性别
 						this.formData.birthday = this.memberInfo.birthday ? this.$util.timeStampTurnTime(
 							this.memberInfo.birthday,
-							'YYYY-MM-DD') : '请选择生日'; //生日
+							'YYYY-MM-DD') : ''; //生日
 						this.formData.provinceId = this.memberInfo.province_id;
 						this.formData.cityId = this.memberInfo.city_id;
 						this.formData.districtId = this.memberInfo.district_id;
@@ -237,6 +234,14 @@ export default {
 							}
 						}
 					});
+					break;
+				case 'mobile':
+					// #ifdef MP-WEIXIN
+					this.$util.redirectTo('/pages_tool/member/info_edit', { action: 'bind_mobile' });
+					// #endif
+					// #ifndef MP-WEIXIN
+					this.$util.redirectTo('/pages_tool/member/info_edit', { action });
+					// #endif
 					break;
 				default:
 					this.$util.redirectTo('/pages_tool/member/info_edit', {
@@ -303,11 +308,11 @@ export default {
 						uni.removeStorage({
 							key: 'token',
 							success: res => {
-								uni.setStorageSync('loginLock', 1);
+								uni.removeStorageSync('userInfo');
+								uni.removeStorageSync('token');
+								uni.removeStorageSync('authInfo');
 								//购物车数量
-								uni.removeStorageSync('userInfo')
 								this.$store.dispatch('getCartNumber').then((e) => {})
-
 								this.$util.redirectTo('/pages/member/index');
 							}
 						});
@@ -541,6 +546,12 @@ export default {
 		},
 
 		modifyBirthday() {
+			if (this.formData.birthday.length == 0) {
+				this.$util.showToast({
+					title: '请选择生日'
+				});
+				return;
+			}
 			this.$api.sendRequest({
 				url: '/api/member/modifybirthday',
 				data: {
@@ -954,6 +965,36 @@ export default {
 			this.formData.provinceId = regions[0] ? regions[0].value : 0;
 			this.formData.cityId = regions[1] ? regions[1].value : 0;
 			this.formData.districtId = regions[2] ? regions[2].value : 0;
+		},
+		/**
+		 * 手动绑定手机号
+		 */
+		manualBinding(){
+			this.indent = 'mobile';
+		},
+		mobileAuth(e){
+			if (e.detail.errMsg == 'getPhoneNumber:ok') {
+				var data = {
+					code: e.detail.code
+				};
+				
+				this.$api.sendRequest({
+					url: '/api/member/mobileauth',
+					data,
+					success: res => {
+						if (res.code == 0) {
+							this.$util.showToast({
+								title: this.$lang("updateSuccess")
+							});
+							this.NavReturn();
+						} else {
+							this.$util.showToast({
+								title: res.message
+							});
+						}
+					}
+				})
+			}
 		}
 	}
 };

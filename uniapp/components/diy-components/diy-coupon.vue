@@ -1,6 +1,7 @@
 <template>
 	<view
 		class="coupon-wrap"
+		:class="'coupon-box-' + value.style"
 		v-if="computedCouponList.length > 0"
 		:style="[
 			value.couponType == 'img' && { backgroundImage: 'url(' + $util.img(value.couponBgUrl) + ')' },
@@ -9,11 +10,7 @@
 	>
 		<template v-if="value.style == '1'">
 			<swiper class="coupon-style-one" circular>
-				<swiper-item
-					v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)"
-					:key="numIndex"
-					class="coupon-item-box"
-				>
+				<swiper-item v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)" :key="numIndex" class="coupon-item-box">
 					<view
 						class="coupon-item"
 						v-for="(item, index) in computedCouponList"
@@ -40,8 +37,8 @@
 								{{ item.at_least > 0 ? '满' + Number(item.at_least) + '元可用' : '无门槛优惠券' }}
 							</view>
 						</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >{{ value.btnStyle.text }}</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0">{{ value.btnStyle.text }}</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)">去使用</view>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -49,11 +46,7 @@
 
 		<template v-if="value.style == '2'">
 			<swiper class="coupon-style-two" circular>
-				<swiper-item
-					v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)"
-					:key="numIndex"
-					class="coupon-item-box"
-				>
+				<swiper-item v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)" :key="numIndex" class="coupon-item-box">
 					<view
 						class="coupon-item"
 						v-for="(item, index) in computedCouponList"
@@ -80,8 +73,8 @@
 								{{ item.at_least > 0 ? '满' + Number(item.at_least) + '元可用' : '无门槛优惠券' }}
 							</view>
 						</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >{{ value.btnStyle.text || '领取' }}</view>
-						<view class="coupon-get use" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0">{{ value.btnStyle.text || '领取' }}</view>
+						<view class="coupon-get use" :style="couponBtnStyle" v-if="parseInt(item.useState)">去使用</view>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -89,12 +82,7 @@
 
 		<template v-if="value.style == '3'">
 			<swiper class="coupon-style-three" circular>
-				<swiper-item
-					v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)"
-					:key="numIndex"
-					class="coupon-item-box"
-					
-				>
+				<swiper-item v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)" :key="numIndex" class="coupon-item-box">
 					<view
 						class="coupon-item"
 						v-for="(item, index) in computedCouponList"
@@ -121,8 +109,8 @@
 							<view class="item-text" v-if="">{{ item.goods_type == 1 ? '所有商品可用' : '指定商品可用' }}</view>
 						</view>
 
-						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >{{ value.btnStyle.text || '领取' }}</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0">{{ value.btnStyle.text || '领取' }}</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)">去使用</view>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -130,11 +118,7 @@
 
 		<template v-if="value.style == '4'">
 			<swiper class="coupon-style-four" circular>
-				<swiper-item
-					v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)"
-					:key="numIndex"
-					class="coupon-item-box"
-				>
+				<swiper-item v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)" :key="numIndex" class="coupon-item-box">
 					<view
 						class="coupon-item"
 						v-for="(item, index) in computedCouponList"
@@ -161,10 +145,8 @@
 								{{ item.at_least > 0 ? '满' + Number(item.at_least) + '元可用' : '无门槛优惠券' }}
 							</view>
 						</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >
-							{{ value.btnStyle.text || '立即使用' }}
-						</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0">{{ value.btnStyle.text || '立即使用' }}</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)">去使用</view>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -194,11 +176,9 @@
 										<text class="coupon-least" :style="{ color: value.limitColor }" v-if="item.at_least > 0">满{{ Number(item.at_least) }}元可用</text>
 										<text class="coupon-least" :style="{ color: value.limitColor }" v-else>无门槛优惠券</text>
 									</view>
-									<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >
-										{{ value.btnStyle.text || '立即领取' }}
-									</view>
+									<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0">{{ value.btnStyle.text || '立即领取' }}</view>
 
-									<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+									<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)">去使用</view>
 								</view>
 							</view>
 						</view>
@@ -209,11 +189,7 @@
 
 		<template v-if="value.style == '6'">
 			<swiper class="coupon-style-six" circular>
-				<swiper-item
-					class="style-six-wrap"
-					v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)"
-					:key="numIndex"
-				>
+				<swiper-item class="style-six-wrap" v-for="(numItem, numIndex) in Math.ceil(computedCouponList.length / 3)" :key="numIndex">
 					<view
 						class="coupon"
 						v-for="(item, index) in computedCouponList"
@@ -249,7 +225,6 @@
 						<text
 							class="btn"
 							v-if="parseInt(item.useState)"
-							
 							:style="{
 								color: value.btnStyle.textColor,
 								backgroundColor: value.btnStyle.bgColor,
@@ -265,10 +240,10 @@
 
 					<div
 						v-if="computedCouponList.length <= 2"
-						@click="$util.redirectTo('/pages/goods/category');"
+						@click="$util.redirectTo('/pages/goods/category')"
 						class="coupon coupon-null"
-						:style="{ 
-							color: value.moneyColor, 
+						:style="{
+							color: value.moneyColor,
 							backgroundImage: 'url(' + $util.img('public/uniapp/coupon/style6-bg-2.png') + ')',
 							marginRight: couponItemHeight + 'px',
 							marginLeft: couponItemHeight + 'px'
@@ -283,7 +258,7 @@
 				</swiper-item>
 			</swiper>
 		</template>
-		
+
 		<template v-if="value.style == '7'">
 			<scroll-view class="coupon-style-seven" scroll-x="true">
 				<view class="coupon-list" v-for="(item, index) in computedCouponList" :key="index" @click="couponAction(item, index)">
@@ -302,13 +277,11 @@
 						<view class="coupon-type">
 							<text class="coupon-name" :style="{ color: value.limitColor }" v-if="item.at_least > 0">满{{ Number(item.at_least) }}元可用</text>
 							<text class="coupon-name" :style="{ color: value.limitColor }" v-else>无门槛优惠券</text>
-							<view class="coupon-least" :style="{ color: value.limitColor }">有效期至{{ $util.timeStampTurnTime(item.end_time,'yearmonthday') }}</view>
+							<view class="coupon-least" :style="{ color: value.limitColor }">有效期至{{ $util.timeStampTurnTime(item.end_time, 'yearmonthday') }}</view>
 						</view>
 						<view class="coupon-line"></view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0" >
-							{{ value.btnStyle.text || '立即领取' }}
-						</view>
-						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)" >去使用</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="item.useState == 0">{{ value.btnStyle.text || '立即领取' }}</view>
+						<view class="coupon-get" :style="couponBtnStyle" v-if="parseInt(item.useState)">去使用</view>
 					</view>
 				</view>
 			</scroll-view>
@@ -336,11 +309,17 @@ export default {
 			isHave: true,
 			couponBtnSwitch: false,
 			isSuccess: false,
-			load:true
+			load: true
 		};
 	},
 	created() {
 		this.getCanReceiveCouponQuery();
+	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {
+			this.getCanReceiveCouponQuery();
+		}
 	},
 	computed: {
 		computedCouponList() {
@@ -350,20 +329,15 @@ export default {
 			});
 			return list;
 		},
-		couponItemHeight(){
-			var width = "";
+		couponItemHeight() {
+			var width = '';
 			const screenWidth = uni.getSystemInfoSync().safeArea.width || uni.getSystemInfoSync().screenWidth;
-			if(this.value.style == '1')
-				width = [screenWidth - (this.rpxUpPx(210)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
-			else if(this.value.style == '2')
-				width = [screenWidth - (this.rpxUpPx(210)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
-			else if(this.value.style == '3')
-				width = [screenWidth - (this.rpxUpPx(24)*2) - (this.rpxUpPx(194)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
-			else if(this.value.style == '4')
-				width = [screenWidth - (this.rpxUpPx(206)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
-			else if(this.value.style == '6')
-				width = [screenWidth - (this.rpxUpPx(208)*3) - (this.rpxUpPx(this.value.margin.both*2)*2)]/6;
-			
+			if (this.value.style == '1') width = [screenWidth - this.rpxUpPx(210) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
+			else if (this.value.style == '2') width = [screenWidth - this.rpxUpPx(210) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
+			else if (this.value.style == '3') width = [screenWidth - this.rpxUpPx(24) * 2 - this.rpxUpPx(194) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
+			else if (this.value.style == '4') width = [screenWidth - this.rpxUpPx(206) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
+			else if (this.value.style == '6') width = [screenWidth - this.rpxUpPx(208) * 3 - this.rpxUpPx(this.value.margin.both * 2) * 2] / 6;
+
 			return width;
 		},
 		couponBtnStyle() {
@@ -375,9 +349,9 @@ export default {
 		}
 	},
 	methods: {
-		rpxUpPx(res){
+		rpxUpPx(res) {
 			const screenWidth = uni.getSystemInfoSync().safeArea.width || uni.getSystemInfoSync().screenWidth;
-			var data = screenWidth * parseInt(res) / 750;
+			var data = (screenWidth * parseInt(res)) / 750;
 			return Math.floor(data);
 		},
 		couponTap(item, index) {
@@ -392,24 +366,23 @@ export default {
 		},
 		getCanReceiveCouponQuery() {
 			var data = {
-				page: 1,
-				page_size: this.value.count,
+				num: this.value.count,
 				can_receive: 1
 			};
 			if (this.value.sources == 'diy') {
 				data.coupon_type_id_arr = this.value.couponIds.toString();
 			}
 			this.$api.sendRequest({
-				url: '/coupon/api/coupon/typepagelists',
+				url: '/coupon/api/coupon/typelists',
 				data: data,
 				success: res => {
 					let data = res.data;
 					if (data != null) {
-						this.couponList = data.list;
+						this.couponList = data;
 						this.couponList.forEach(v => {
-							if(v.max_fetch != 0 && v.member_coupon_num && v.member_coupon_num >= v.max_fetch){
+							if (v.max_fetch != 0 && v.member_coupon_num && v.member_coupon_num >= v.max_fetch) {
 								v.useState = 1;
-							}else{
+							} else {
 								v.useState = 0;
 							}
 						});
@@ -417,10 +390,10 @@ export default {
 				}
 			});
 		},
-		couponAction(item, index){
-			if(item.useState == 0) {
+		couponAction(item, index) {
+			if (item.useState == 0) {
 				this.receiveCoupon(item, index);
-			}else if(parseInt(item.useState)){
+			} else if (parseInt(item.useState)) {
 				this.couponTap(item, index);
 			}
 		},
@@ -459,7 +432,7 @@ export default {
 						this.$util.showToast({
 							title: msg
 						});
-						
+
 						this.$forceUpdate();
 						this.couponBtnSwitch = false;
 					},
@@ -610,6 +583,9 @@ export default {
 }
 
 // 风格三
+.coupon-wrap.coupon-box-3 {
+	background-size: 100% 100%;
+}
 /deep/.coupon-style-three {
 	height: 284rpx;
 	padding: 20rpx;
@@ -930,7 +906,7 @@ export default {
 			align-items: center;
 			font-size: 24rpx;
 			height: 200rpx;
-			
+
 			.price-wrap {
 				margin-top: 60rpx;
 			}
@@ -1021,7 +997,7 @@ export default {
 
 //风格七
 /deep/ .coupon-style-seven {
-	.uni-scroll-view-content{
+	.uni-scroll-view-content {
 		display: flex;
 	}
 	.coupon-list {
@@ -1065,7 +1041,7 @@ export default {
 			}
 
 			.coupon-line {
-				border-left: 1rpx dashed #FD463E;
+				border-left: 1rpx dashed #fd463e;
 				height: 65%;
 			}
 			.coupon-type {
@@ -1093,7 +1069,6 @@ export default {
 		}
 	}
 }
-
 
 /deep/.uni-scroll-view ::-webkit-scrollbar {
 	/* 隐藏滚动条，但依旧具备可以滚动的功能 */

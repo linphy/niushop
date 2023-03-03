@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import htmlParser from '@/common/js/html-parser';
 export default {
 	data() {
 		return {
@@ -28,7 +29,6 @@ export default {
 		};
 	},
 	onLoad(option) {
-
 		if (option.back) this.back = option.back;
 		// 判断登录
 		if (!uni.getStorageSync('token')) {
@@ -44,6 +44,7 @@ export default {
 				success: res => {
 					if (res.code >= 0) {
 						this.agreement = res.data;
+						if (this.agreement.content) this.agreement.content = htmlParser(this.agreement.content);
 					}
 				}
 			});

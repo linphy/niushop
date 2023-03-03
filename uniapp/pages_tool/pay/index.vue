@@ -15,13 +15,9 @@
 	</scroll-view>
 </template>
 
-<script>
-import loadingCover from '@/components/loading-cover/loading-cover.vue';
-
+<script> 
 export default {
-	components: {
-		loadingCover
-	},
+	components: {},
 	data() {
 		return {
 			isIphoneX: false,

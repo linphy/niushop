@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import uniPopup from '../uni-popup/uni-popup.vue';
+import uniPopup from '@/components/uni-popup/uni-popup.vue';
 
 // 注册奖励弹出层
 export default {
@@ -91,36 +91,22 @@ export default {
 		};
 	},
 	created() {
-		if (this.addonIsExist.memberregister) {
-			// this.getLoginReward()
-			this.getRegisterReward();
-		}
 	},
 	methods: {
 		getReward() {
 			return this.reward;
 		},
 		open(back) {
-			this.back = back;
-			// console.log('open', this.back);
-			this.$refs.registerReward.open();
+			if (back) this.back = back;
+			if (this.addonIsExist.memberregister) {
+				this.getRegisterReward();
+			} else {
+				this.closeRewardPopup();
+			}
 		},
 		cancel() {
 			this.$refs.registerReward.close();
 		},
-		/* getLoginReward() {
-			var tokenT = uni.getStorageSync('token')
-			console.log(tokenT)
-			this.$api.sendRequest({
-				url: '/memberregister/api/receivegift/info',
-				data:{
-					token:tokenT
-				},
-				success: res => {
-					console.log(res)
-				}
-			});
-		}, */
 		/**
 		 * 获取新人礼配置
 		 */
@@ -132,24 +118,20 @@ export default {
 						let data = res.data;
 						if (data.is_use == 1 && (data.value.point > 0 || data.value.balance > 0 || data.value.growth > 0 || data.value.coupon_list.length > 0)) {
 							this.reward = data.value;
+						 	setTimeout(()=> {
+								this.$refs.registerReward.open();
+							}) 
+						} else {
+							this.closeRewardPopup();
 						}
+					} else {
+						this.closeRewardPopup();
 					}
 				}
 			});
 		},
-
-		/* getUpdateInfo(){
-			this.$api.sendRequest({
-				url: '/memberregister/api/receivegift/updateInfo',
-				success: res => {
-					console.log(res)
-				}
-			});
-		}, */
 		closeRewardPopup(type) {
-			// this.getUpdateInfo()
-			this.$refs.registerReward.close();
-
+			if (this.$refs.registerReward) this.$refs.registerReward.close();
 			switch (type) {
 				case 'point':
 					this.$util.redirectTo('/pages_tool/member/point_detail', {});
@@ -164,12 +146,7 @@ export default {
 					this.$util.redirectTo('/pages_tool/member/coupon', {});
 					break;
 				default:
-					// console.log('链接', this.back);
-					if (this.back != '') {
-						this.$util.redirectTo(this.back, {}, 'reLaunch');
-					} else {
-						this.$util.redirectTo('/pages/member/index');
-					}
+					if (this.back) this.$util.redirectTo(decodeURIComponent(this.back), {}, 'reLaunch');
 			}
 		}
 	}

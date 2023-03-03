@@ -2,9 +2,14 @@ export default {
 	data() {
 		return {
 			memberInfo: null,
+			diyRoute: '/pages/member/index'
 		};
 	},
-	computed: {},
+	computed: {
+		bottomNavHidden() {
+			return this.$store.state.bottomNavHidden;
+		}
+	},
 	watch: {
 		storeToken: function(nVal, oVal) {
 			if (nVal) {
@@ -42,20 +47,6 @@ export default {
 		}
 	},
 	methods: {
-		/**
-		 * 自定义跳转
-		 * @param {Object} data
-		 */
-		// diyRedirect(data) {
-		// 	if (data.wap_url && data.wap_url.indexOf('http') == -1 && data.wap_url.indexOf('https') == -1) {
-		// 		if (!uni.getStorageSync('token')) {
-		// 			this.$refs.login.open(data.wap_url);
-		// 			return;
-		// 		}
-		// 	}
-		// 	data.diy_name = data.name;
-		// 	this.$util.diyRedirectTo(data);
-		// },
 		/**
 		 * 查询会员信息
 		 */
@@ -100,5 +91,5 @@ export default {
 				}
 			});
 		},
-	}
+	},
 };

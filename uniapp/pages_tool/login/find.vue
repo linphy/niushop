@@ -88,7 +88,7 @@
 
 <script>
 import validate from 'common/js/validate.js';
-import mypOne from '@/components/myp-one/myp-one.vue';
+import mypOne from '@/pages_tool/components/myp-one/myp-one.vue';
 export default {
 	components: {
 		mypOne

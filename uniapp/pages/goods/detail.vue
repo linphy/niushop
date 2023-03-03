@@ -1,20 +1,19 @@
 <template>
 	<page-meta :page-style="themeColor"></page-meta>
 	<view>
-		
+		<!-- #ifndef H5 -->
+		<view class="page-header" v-if="goodsSkuDetail && goodsSkuDetail.config && goodsSkuDetail.config.nav_bar_switch == 0">
+			<ns-navbar :data="navbarData" :isBack="true"></ns-navbar>
+		</view>
+		<!-- #endif -->
+
 		<goods-detail-view :goodsSkuDetail="goodsSkuDetail" ref="goodsDetailView">
 			<!-- 价格区域 -->
 			<template v-slot:price>
 				<!-- 限时折扣 -->
-				<view
-					v-if="showDiscount && goodsSkuDetail.discountTimeMachine"
-					class="goods-promotion"
-				>
-					
+				<view v-if="showDiscount && goodsSkuDetail.discountTimeMachine" class="goods-promotion">
 					<view class="price-info">
-						<view class="icon-box">
-							<text class="iconfont icon-tutechan"></text>
-						</view>
+						<view class="icon-box"><text class="iconfont icon-tutechan"></text></view>
 						<view class="price-box">
 							<view class="promotion-text">限时折扣</view>
 							<view class="sale-num" v-if="goodsSkuDetail.sale_show">已售{{ goodsSkuDetail.sale_num }}{{ goodsSkuDetail.unit }}</view>
@@ -38,51 +37,164 @@
 
 				<view class="group-wrap padding-top">
 					<view class="goods-module-wrap">
-						<text class="price-symbol price-font">{{ $lang('common.currencySymbol') }}</text>
 						<template v-if="showDiscount">
-							<text class="price price-font" >{{ parseFloat(goodsSkuDetail.discount_price).toFixed(2).split(".")[0] }}</text>
-							<text class="price-symbol price-font">.{{ parseFloat(goodsSkuDetail.discount_price).toFixed(2).split(".")[1] }}</text>
+							<text class="price-symbol price-font">{{ $lang('common.currencySymbol') }}</text>
+							<text class="price price-font">
+								{{
+									parseFloat(goodsSkuDetail.discount_price)
+										.toFixed(2)
+										.split('.')[0]
+								}}
+							</text>
+							<text class="price-symbol price-font">
+								.{{
+									parseFloat(goodsSkuDetail.discount_price)
+										.toFixed(2)
+										.split('.')[1]
+								}}
+							</text>
 						</template>
 						<template v-else>
 							<template v-if="goodsSkuDetail.member_price > 0">
-								<text class="price price-font" >{{ parseFloat(goodsSkuDetail.member_price).toFixed(2).split(".")[0] }}</text>
-								<text class="price-symbol price-font">.{{ parseFloat(goodsSkuDetail.member_price).toFixed(2).split(".")[1] }}</text>
-								<view class="member-price-wrap">
-									<view class="img-wrap"><image :src="$util.img('public/uniapp/index/VIP.png')" mode="aspectFit"></image></view>
+								<text class="price-symbol price-font">{{ $lang('common.currencySymbol') }}</text>
+								<text class="price price-font">
+									{{
+										parseFloat(goodsSkuDetail.member_price)
+											.toFixed(2)
+											.split('.')[0]
+									}}
+								</text>
+								<text class="price-symbol price-font">
+									.{{
+										parseFloat(goodsSkuDetail.member_price)
+											.toFixed(2)
+											.split('.')[1]
+									}}
+								</text>
+								<view class="member-vip-wrap"><image :src="$util.img('public/uniapp/goods/member_vip.png')" mode="aspectFit"></image></view>
+								<view class="member-price-wrap" v-if="!goodsSkuDetail.market_price_show">
+									<text class="unit price-font">原价</text>
 									<text class="unit price-font">{{ $lang('common.currencySymbol') }}</text>
 									<text class="money price-font">{{ goodsSkuDetail.price }}</text>
 								</view>
 							</template>
 							<template v-else>
-								<text class="price price-font" >{{ parseFloat(goodsSkuDetail.price).toFixed(2).split(".")[0] }}</text>
-								<text class="price-symbol price-font">.{{ parseFloat(goodsSkuDetail.price).toFixed(2).split(".")[1] }}</text>
+								<text class="price-symbol price-font">{{ $lang('common.currencySymbol') }}</text>
+								<text class="price price-font">
+									{{
+										parseFloat(goodsSkuDetail.price)
+											.toFixed(2)
+											.split('.')[0]
+									}}
+								</text>
+								<text class="price-symbol price-font">
+									.{{
+										parseFloat(goodsSkuDetail.price)
+											.toFixed(2)
+											.split('.')[1]
+									}}
+								</text>
 							</template>
 						</template>
 						<view class="market-price-wrap" v-if="goodsSkuDetail.market_price_show">
-							<text class="unit price-font" v-if="(showDiscount && goodsSkuDetail.price > 0) || goodsSkuDetail.market_price > 0">{{ $lang('common.currencySymbol') }}</text>
+							<text class="unit price-font" v-if="(showDiscount && goodsSkuDetail.price > 0) || goodsSkuDetail.market_price > 0">
+								{{ $lang('common.currencySymbol') }}
+							</text>
 							<text class="money price-font" v-if="showDiscount && goodsSkuDetail.price > 0">{{ goodsSkuDetail.price }}</text>
 							<text class="money price-font" v-else-if="goodsSkuDetail.market_price > 0">{{ goodsSkuDetail.market_price }}</text>
 						</view>
 						<view class="follow-and-share">
-							<text class="follow iconfont icon-fenxiang" @click="openSharePopup()"></text>
+							<text class="follow iconfont icon-share" @click="openSharePopup()"></text>
 							<text class="share iconfont" @click="editCollection()" :class="whetherCollection == 1 ? 'icon-likefill color-base-text' : 'icon-guanzhu'"></text>
 						</view>
 					</view>
 					<view class="goods-module-wrap info">
 						<text class="sku-name-wrap">{{ goodsSkuDetail.goods_name }}</text>
-						<text class="introduction " v-if="goodsSkuDetail.introduction">{{ goodsSkuDetail.introduction }}</text>
+						<text class="introduction" v-if="goodsSkuDetail.introduction" :style="{ color: goodsSkuDetail.config ? goodsSkuDetail.config.introduction_color : '' }">
+							{{ goodsSkuDetail.introduction }}
+						</text>
+						<view class="goods-tag-list" v-if="goodsSkuDetail.label_name">
+							<text class="tag-item">{{ goodsSkuDetail.label_name }}</text>
+						</view>
 						<view class="logistics-wrap">
-							<block v-if="!goodsSkuDetail.is_virtual">
-								<text v-if="goodsSkuDetail.is_free_shipping">快递 包邮</text>
-								<text v-else>快递 买家承担</text>
-							</block>
-							
 							<text v-if="goodsSkuDetail.stock_show">库存 {{ goodsSkuDetail.stock }} {{ goodsSkuDetail.unit }}</text>
 							<text v-if="goodsSkuDetail.sale_show">销量 {{ goodsSkuDetail.sale_num }} {{ goodsSkuDetail.unit }}</text>
+						</view>
+						<!-- 会员卡 -->
+						<view class="member-card-wrap" @click="$util.redirectTo('/pages_tool/member/card_buy')" v-if="membercard">
+							<text class="iconfont icon-huiyuan"></text>
+							<view class="info">开通{{ membercard.level_name }}仅需{{ membercard.member_price }}元</view>
+							<text class="btn">立即开通</text>
 						</view>
 					</view>
 				</view>
 
+				<!-- 当前商品参与的营销活动入口 -->
+				<view class="group-wrap"><ns-goods-promotion ref="goodsPromotion" promotion="discount"></ns-goods-promotion></view>
+
+				<view
+					class="group-wrap fenxiao-detail"
+					v-if="
+						goodsSkuDetail.fenxiao_detail &&
+							goodsSkuDetail.fenxiao_detail.words_account &&
+							goodsSkuDetail.fenxiao_detail.commission_money > 0 &&
+							goodsSkuDetail.fenxiao_detail.is_commission_money == 1
+					"
+				>
+					<view class="title color-base-text">{{ goodsSkuDetail.fenxiao_detail.words_account }}详情</view>
+					<view class="commission-ratio">
+						<view class="item">
+							<view>一级{{ goodsSkuDetail.fenxiao_detail.words_account }}</view>
+							<view class="price-color">
+								<text class="unit">￥</text>
+								<text class="money">
+									{{
+										parseFloat(goodsSkuDetail.fenxiao_detail.commission_money)
+											.toFixed(2)
+											.split('.')[0]
+									}}
+								</text>
+								<text class="unit">
+									.{{
+										parseFloat(goodsSkuDetail.fenxiao_detail.commission_money)
+											.toFixed(2)
+											.split('.')[1]
+									}}
+								</text>
+							</view>
+						</view>
+					</view>
+				</view>
+
+				<view class="group-wrap card-info" v-if="goodsSkuDetail.goods_class == 5 && goodsSkuDetail.card_info && goodsSkuDetail.card_info.relation_goods.length">
+					<view class="card-title">- 套餐包含以下的服务及商品 -</view>
+					<view class="card-desc" v-if="goodsSkuDetail.card_info.card_type == 'timecard' || goodsSkuDetail.card_info.card_type == 'commoncard'">
+						{{ goodsSkuDetail.card_info.card_type == 'commoncard' ? '卡项内项目/商品总的可用次数为' + goodsSkuDetail.card_info.common_num + ' ,' : '' }}
+						{{ goodsSkuDetail.card_info.card_type == 'timecard' ? '次数不限 ,' : '' }} 有效期为{{
+							(goodsSkuDetail.card_info.validity_type == 0 && '永久') ||
+								(goodsSkuDetail.card_info.validity_type == 1 && goodsSkuDetail.card_info.validity_day + '天') ||
+								(goodsSkuDetail.card_info.validity_type == 2 && $util.timeStampTurnTime(goodsSkuDetail.card_info.validity_time))
+						}}
+					</view>
+					<view class="card-content" :style="{ height: [cardOff ? 'auto' : '198rpx'] }">
+						<view
+							class="card-item"
+							v-for="(item, index) in goodsSkuDetail.card_info.relation_goods"
+							@click="$util.redirectTo('/pages/goods/detail', { goods_id: item.goods_id })"
+						>
+							<image :src="$util.img(item.sku_image)" mode="aspectFill"></image>
+							<view class="content">
+								<view class="name multi-hidden">{{ item.sku_name }}</view>
+								<view class="price">￥{{ item.price }}</view>
+								<text class="num" v-if="goodsSkuDetail.card_info.card_type == 'oncecard'">x{{ item.num }}</text>
+							</view>
+						</view>
+					</view>
+					<view class="card-off" @click="cardOff = !cardOff" v-if="goodsSkuDetail.card_info.relation_goods.length > 1">
+						<text>{{ cardOff ? '收起' : '展开' }}</text>
+						<text class="icondiy" :class="[cardOff ? 'icon-system-jiantoushang' : 'icon-system-jiantouxia']"></text>
+					</view>
+				</view>
 			</template>
 
 			<!-- 入口区域 -->
@@ -91,27 +203,17 @@
 					<view class="label">领券</view>
 					<view class="coupon-list">
 						<view class="coupon-item" v-for="(item, index) in couponList" :key="index" v-if="index < 3 && item.useState != 2">
-							<view class="">{{ item.coupon_name }}</view>
+							<view class="">
+								{{
+									parseFloat(item.at_least) > 0
+										? '满' + decimalPointFormat(item.at_least) + '减' + decimalPointFormat(item.money)
+										: '无门槛使用' + decimalPointFormat(item.money)
+								}}
+							</view>
 						</view>
 					</view>
 					<text class="iconfont icon-right"></text>
 					<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
-				</view>
-				<view class="item delivery-type" v-if="goodsSkuDetail.is_virtual == 0" @click="$refs.deliveryType.open()">
-					<view class="label">配送</view>
-					<block v-if="deliveryType">
-						<view class="box">
-							<block v-for="(item, index) in deliveryType" :key="index">
-								<text v-if="goodsSkuDetail.support_trade_type.indexOf(index) != -1">{{ item.name }}</text>
-							</block>
-						</view>
-						<text class="iconfont icon-right"></text>
-					</block>
-					<block v-else>
-						<view class="box">
-							商家未配置配送方式
-						</view>
-					</block>
 				</view>
 				<!-- 已选规格 -->
 				<view class="item selected-sku-spec" v-if="goodsSkuDetail.sku_spec_format" @click="choiceSku">
@@ -129,26 +231,6 @@
 					<text class="iconfont icon-right"></text>
 					<!-- <view class="img-wrap"><image :src="$util.img('public/uniapp/goods/detail_more.png')" mode="aspectFit" /></view> -->
 				</view>
-				<!-- 配送方式 -->
-				<uni-popup ref="deliveryType" type="bottom">
-					<view class="deliverytype-popup-layer popup-layer">
-						<view class="head-wrap" @click="$refs.deliveryType.close()">
-							<text>配送</text>
-							<text class="iconfont icon-close"></text>
-						</view>
-						<scroll-view scroll-y class="type-body">
-							<block v-for="(item, index) in deliveryType" :key="index">
-								<view class="type-item" :class="{'not-support': goodsSkuDetail.support_trade_type.indexOf(index) == -1}">
-									<text class="iconfont" :class="item.icon"></text>
-									<view class="content">
-										<view class="title">{{ item.name }}</view>
-										<view class="desc">{{ item.desc }}</view>
-									</view>
-								</view>
-							</block>
-						</scroll-view>
-					</view>
-				</uni-popup>
 			</template>
 
 			<!-- 业务区域 -->
@@ -258,7 +340,6 @@
 											</view>
 										</block>
 									</view>
-									
 								</scroll-view>
 							</view>
 						</uni-popup>
@@ -266,7 +347,7 @@
 				</view>
 
 				<!-- 优惠券 -->
-				<view @touchmove.prevent.stop v-if="couponList.length">
+				<view @touchmove.prevent.stop>
 					<uni-popup ref="couponPopup" type="bottom">
 						<view class="goods-coupon-popup-layer popup-layer">
 							<view class="head-wrap" @click="closeCouponPopup()">
@@ -274,17 +355,9 @@
 								<text class="iconfont icon-close"></text>
 							</view>
 							<scroll-view class="coupon-body" scroll-y>
-								<view
-									class="coupon-item ns-gradient-diy-goods-list"
-									v-for="(item, index) in couponList"
-									:key="index"
-									v-if="hackReset"
-								>
-									<view class="coupon-info" :style="{ backgroundColor: item.useState == 2 ? '#F2F2F2' : 'var(--main-color-shallow)'}">
-										<view
-											class="info-wrap"
-											:class="{ disabled: item.useState == 2 }"
-										>
+								<view class="coupon-item ns-gradient-diy-goods-list" v-for="(item, index) in couponList" :key="index" v-if="hackReset">
+									<view class="coupon-info" :style="{ backgroundColor: item.useState == 2 ? '#F2F2F2' : 'var(--main-color-shallow)' }">
+										<view class="info-wrap" :class="{ disabled: item.useState == 2 }">
 											<image class="coupon-line" mode="heightFix" :src="$util.img('public/uniapp/coupon/coupon_line.png')"></image>
 											<view class="coupon-money">
 												<template v-if="item.type == 'reward'">
@@ -350,48 +423,66 @@
 						</view>
 					</uni-popup>
 				</view>
-			</template>			
+			</template>
 
 			<!-- 操作区域 -->
 			<template v-slot:action>
 				<!-- 商品底部导航 -->
 				<ns-goods-action :safeArea="isIphoneX">
 					<template v-if="goodsSkuDetail.goods_state == 1">
-						<ns-goods-action-icon text="首页" icon="icon-shouye1" @click="goHome" />
-						<ns-goods-action-icon text="客服" icon="icon-kefu" :send-data="contactData" :chatParam="chatRoomParams"/>
-						<ns-goods-action-icon text="购物车" :cornerMarkBg="themeStyle.goods_detail.goods_cart_num_corner" icon="icon-gouwuche2" :corner-mark="cartCount > 0 ? cartCount + '' : ''" @click="goCart" />
-						<block v-if="goodsSkuDetail.stock == 0 && !goodsSkuDetail.sku_spec_format">
-							<ns-goods-action-button class="goods-action-button active3" disabled-text="库存不足" :disabled="true" />
-							<!-- <ns-goods-action-button v-if="goodsSkuDetail.sku_spec_format" class="goods-action-button active3" disabled-text="库存不足" :disabled="true" @click="joinCart" /> -->
-							<!-- <ns-goods-action-button v-else class="goods-action-button active3" disabled-text="库存不足" :disabled="true" /> -->
-						</block>
-						<block
-							v-else-if="
-								goodsSkuDetail.is_limit == 1 &&
-									goodsSkuDetail.limit_type == 2 &&
-									goodsSkuDetail.max_buy != 0 &&
-									goodsSkuDetail.purchased_num >= goodsSkuDetail.max_buy
-							"
-						>
-							<!-- (goodsSkuDetail.is_limit == 1 && goodsSkuDetail.limit_type == 1 && goodsSkuDetail.max_buy != 0) -->
-							<ns-goods-action-button class="goods-action-button active3" disabled-text="已达最大限购数量" :disabled="true" />
-						</block>
+						<ns-goods-action-button
+							class="goods-action-button active3"
+							disabled-text="该商品已下架"
+							:disabled="true"
+							v-if="goodsSkuDetail.store_goods_status != undefined && goodsSkuDetail.store_goods_status != 1"
+						/>
 						<block v-else>
-							<!-- :class="goodsSkuDetail.is_virtual == 0 ? 'active1' : ''" -->
-							<ns-goods-action-button
-								class="goods-action-button"
-								
-								text="加入购物车"
-								:backgroundColor="themeStyle.goods_detail.goods_btn_color_shallow"
-								@click="joinCart"
-								v-if="goodsSkuDetail.is_virtual == 0"
+							<ns-goods-action-icon text="首页" icon="icon-shouye1" @click="goHome" />
+							<ns-goods-action-icon text="客服" icon="icon-kefu" :send-data="contactData" :chatParam="chatRoomParams" />
+							<ns-goods-action-icon
+								text="购物车"
+								:cornerMarkBg="themeStyle.goods_detail.goods_cart_num_corner"
+								icon="icon-gouwuche2"
+								:corner-mark="cartCount > 0 ? cartCount + '' : ''"
+								@click="goCart"
 							/>
-							<!-- :class="goodsSkuDetail.is_virtual == 0 ? 'active2' : 'active4'" -->
-							<ns-goods-action-button class="goods-action-button" :backgroundColor="themeStyle.goods_detail.goods_btn_color" :textColor="themeStyle.btn_text_color"  text="立即购买" @click="buyNow" />
+							<block v-if="goodsSkuDetail.stock == 0 && !goodsSkuDetail.sku_spec_format">
+								<ns-goods-action-button class="goods-action-button active3" disabled-text="库存不足" :disabled="true" />
+								<!-- <ns-goods-action-button v-if="goodsSkuDetail.sku_spec_format" class="goods-action-button active3" disabled-text="库存不足" :disabled="true" @click="joinCart" /> -->
+								<!-- <ns-goods-action-button v-else class="goods-action-button active3" disabled-text="库存不足" :disabled="true" /> -->
+							</block>
+							<block
+								v-else-if="
+									goodsSkuDetail.is_limit == 1 &&
+										goodsSkuDetail.limit_type == 2 &&
+										goodsSkuDetail.max_buy != 0 &&
+										goodsSkuDetail.purchased_num >= goodsSkuDetail.max_buy
+								"
+							>
+								<!-- (goodsSkuDetail.is_limit == 1 && goodsSkuDetail.limit_type == 1 && goodsSkuDetail.max_buy != 0) -->
+								<ns-goods-action-button class="goods-action-button active3" disabled-text="已达最大限购数量" :disabled="true" />
+							</block>
+							<block v-else>
+								<!-- :class="goodsSkuDetail.is_virtual == 0 ? 'active1' : ''" -->
+								<ns-goods-action-button
+									class="goods-action-button"
+									text="加入购物车"
+									:backgroundColor="themeStyle.goods_detail.goods_btn_color_shallow"
+									@click="joinCart"
+									v-if="goodsSkuDetail.is_virtual == 0"
+								/>
+								<!-- :class="goodsSkuDetail.is_virtual == 0 ? 'active2' : 'active4'" -->
+								<ns-goods-action-button
+									class="goods-action-button"
+									:backgroundColor="themeStyle.goods_detail.goods_btn_color"
+									:textColor="themeStyle.btn_text_color"
+									text="立即购买"
+									@click="buyNow"
+								/>
+							</block>
 						</block>
 					</template>
 					<template v-else>
-						
 						<ns-goods-action-button class="goods-action-button active3" disabled-text="该商品已下架" :disabled="true" />
 					</template>
 				</ns-goods-action>
@@ -413,6 +504,7 @@ import uniCountDown from '@/components/uni-count-down/uni-count-down.vue';
 import detail from './public/js/detail.js';
 import scroll from '@/common/js/scroll-view.js';
 import toTop from '@/components/toTop/toTop.vue';
+import nsGoodsPromotion from '@/components/ns-goods-promotion/ns-goods-promotion.vue';
 import goodsDetailBase from '@/common/js/goods_detail_base.js';
 import goodsDetailView from '@/components/goods-detail-view/goods-detail-view.vue';
 
@@ -424,6 +516,7 @@ export default {
 		uniPopup,
 		nsGoodsSku,
 		uniCountDown,
+		nsGoodsPromotion,
 		goodsDetailView,
 		toTop
 	},

@@ -11,11 +11,11 @@
 	display: flex;
 	background-color: #fff;
 	height: 90rpx;
-	
+
 	& > view {
 		flex: 1;
 		text-align: center;
-		
+
 		text {
 			line-height: 86rpx;
 			border-bottom: 4rpx solid #fff;
@@ -68,7 +68,6 @@
 		}
 
 		.body {
-			
 			.content-item {
 				display: flex;
 				padding-top: 24rpx;
@@ -114,11 +113,11 @@
 						justify-content: space-between;
 						width: 100%;
 						align-items: center;
-						
+
 						& > view {
 							line-height: 1;
 						}
-						
+
 						.unit {
 							font-weight: normal;
 							font-size: $font-size-tag;
@@ -131,7 +130,7 @@
 						}
 					}
 				}
-				
+
 				.money-wrap {
 					font-weight: bold;
 				}

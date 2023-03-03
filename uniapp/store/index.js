@@ -47,15 +47,41 @@ const store = new Vuex.Store({
 		defaultImg: {
 			goods: '',
 			head: '',
-			store: ''
+			store: '',
+			article: ''
 		},
 		cartNumber: 0,
 		cartList: {},
 		cartMoney: 0,
 		siteInfo: null,
-		cartChange: 0
+		cartChange: 0,
+		bottomNavHidden: false, // 底部导航是否隐藏，true：隐藏，false：显示
+		globalStoreConfig: null, // 门店配置
+		globalStoreInfo: null, // 门店信息
+		componentsLoad: {
+			Search: false,
+			ImageAds: false,
+			RubikCube: false
+		},
+		cartPosition: null, // 购物车所在位置
+		componentRefresh: 0, // 组件刷新
+		servicerConfig: null ,// 客服配置
+		diySeckillInterval: null,
+		diyGroupPositionObj:{},
+		diyGroupShowModule: ''
 	},
 	mutations: {
+		// 设置那些组件展示
+		setDiyGroupShowModule(state,data){
+			state.diyGroupShowModule = data;
+		},
+		// 设置diyGroup中组件原有高度，通过他们来实现在首页的定位
+		setDiyGroupPositionObj(state, data){
+			state.diyGroupPositionObj = Object.assign({},state.diyGroupPositionObj,data);
+		},
+		setComponentState(state, val) {
+			state.componentsLoad = Object.assign({}, state.componentsLoad, val);
+		},
 		setSiteState(state, siteStateVal) {
 			state.siteState = siteStateVal;
 		},
@@ -105,7 +131,37 @@ const store = new Vuex.Store({
 		},
 		setCartChange(state) {
 			state.cartChange += 1;
-		}
+		},
+		setBottomNavHidden(state, value) {
+			state.bottomNavHidden = value;
+			uni.setStorageSync('bottomNavHidden', value)
+		},
+		setGlobalStoreConfig(state, value) {
+			state.globalStoreConfig = value;
+			uni.setStorageSync('store_config', value);
+		},
+		setGlobalStoreInfo(state, value) {
+			if (value) {
+				state.globalStoreInfo = value;
+				uni.setStorageSync('store_info', value);
+			} else {
+				uni.removeStorageSync('store_info');
+			}
+		},
+		setCartPosition(state, value) {
+			state.cartPosition = value;
+		},
+		setComponentRefresh(state) {
+			state.componentRefresh += 1;
+		},
+		// 客服配置
+		setServicerConfig(state, value) {
+			state.servicerConfig = value;
+			uni.setStorageSync('servicer_config', value);
+		},
+		setDiySeckillInterval(state, value) {
+			state.diySeckillInterval = value;
+		},
 	},
 	actions: {
 		init() {
@@ -129,7 +185,20 @@ const store = new Vuex.Store({
 
 							this.commit('setSiteInfo', data.site_info);
 
+							this.commit('setServicerConfig', data.servicer);
+
 							uni.setStorageSync('copyright', data.copyright);
+
+							this.commit('setGlobalStoreConfig', data.store_config);
+
+							// 默认总店
+							if (data.store_info) {
+								uni.setStorageSync('default_store_info', data.store_info);
+							} else {
+								// 清空不存在的门店信息
+								uni.removeStorageSync('default_store_info');
+								this.commit('setGlobalStoreInfo', null);
+							}
 
 							resolve(data);
 						}
@@ -164,6 +233,12 @@ const store = new Vuex.Store({
 				this.commit('setCartMoney', 0);
 			}
 		},
+		// 清空购物车 ns-goods-sku-index组件中引用
+		emptyCart() {
+			this.commit('setCartNumber', 0);
+			this.commit('setCartList', {});
+			this.commit('setCartMoney', 0);
+		}
 	}
 })
 export default store

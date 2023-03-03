@@ -17,6 +17,13 @@ export default {
 			html: ''
 		};
 	},
+	created() {
+		this.html = htmlParser(this.value.html);
+	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		richTextWarpCss: function() {
 			var obj = '';
@@ -29,9 +36,6 @@ export default {
 			}
 			return obj;
 		}
-	},
-	created() {
-		this.html = htmlParser(this.value.html);
 	},
 	mounted() {},
 	methods: {}

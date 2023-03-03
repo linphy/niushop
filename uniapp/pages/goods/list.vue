@@ -46,13 +46,24 @@
 							<view class="name-wrap">
 								<view class="goods-name">{{ item.goods_name }}</view>
 							</view>
-							
+
 							<view class="lineheight-clear">
 								<view class="discount-price">
-									<text class="unit  price-style small">{{ $lang('common.currencySymbol') }}</text>
-									<text class="price  price-style large">{{ parseFloat(showPrice(item)).toFixed(2).split(".")[0] }}</text>
-									<text class="unit  price-style small">.{{ parseFloat(showPrice(item)).toFixed(2).split(".")[1] }}</text>
-									
+									<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
+									<text class="price price-style large">
+										{{
+											parseFloat(showPrice(item))
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="unit price-style small">
+										.{{
+											parseFloat(showPrice(item))
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
 								</view>
 								<view class="member-price-tag" v-if="item.member_price && item.member_price == showPrice(item)">
 									<image :src="$util.img('public/uniapp/index/VIP.png')" mode="widthFix"></image>
@@ -62,13 +73,12 @@
 								</view>
 							</view>
 							<view class="pro-info">
-								<view class="delete-price color-tip price-font">
-									<block v-if="item.market_price_show">
-										<text class="unit">{{ $lang('common.currencySymbol') }}</text>
-										{{ item.market_price > 0 ? item.market_price : item.price }}
-									</block>
+								<view class="delete-price color-tip price-font" v-if="showMarketPrice(item)">
+									<text class="unit">{{ $lang('common.currencySymbol') }}</text>
+									<text>{{ showMarketPrice(item) }}</text>
 								</view>
 								<view class="sale color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
+								<view class="cart-buy-btn" v-if="config.add_cart_switch == 1" @click.stop="$refs.goodsSkuIndex.addCart('cart', item, $event)">购买</view>
 							</view>
 						</view>
 					</view>
@@ -89,12 +99,24 @@
 							<view class="name-wrap">
 								<view class="goods-name">{{ item.goods_name }}</view>
 							</view>
-							
+
 							<view class="lineheight-clear">
 								<view class="discount-price">
 									<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
-									<text class="price price-style large">{{ parseFloat(showPrice(item)).toFixed(2).split(".")[0] }}</text>
-									<text class="unit price-style small">.{{ parseFloat(showPrice(item)).toFixed(2).split(".")[1] }}</text>
+									<text class="price price-style large">
+										{{
+											parseFloat(showPrice(item))
+												.toFixed(2)
+												.split('.')[0]
+										}}
+									</text>
+									<text class="unit price-style small">
+										.{{
+											parseFloat(showPrice(item))
+												.toFixed(2)
+												.split('.')[1]
+										}}
+									</text>
 								</view>
 								<view class="member-price-tag" v-if="item.member_price && item.member_price == showPrice(item)">
 									<image :src="$util.img('public/uniapp/index/VIP.png')" mode="widthFix"></image>
@@ -102,16 +124,14 @@
 								<view class="member-price-tag" v-else-if="item.promotion_type == 1">
 									<image :src="$util.img('public/uniapp/index/discount.png')" mode="widthFix"></image>
 								</view>
+								<view class="delete-price color-tip price-font" v-if="showMarketPrice(item)">
+									<text class="unit">{{ $lang('common.currencySymbol') }}</text>
+									<text>{{ showMarketPrice(item) }}</text>
+								</view>
 							</view>
 							<view class="pro-info">
-								<view class="delete-price color-tip price-font">
-									<block>
-										<text class="unit">{{ $lang('common.currencySymbol') }}</text>
-										{{ item.market_price > 0 ? item.market_price : item.price }}
-										
-									</block>
-								</view>
 								<view class="sale color-tip" v-if="item.sale_show">已售{{ item.sale_num }}{{ item.unit ? item.unit : '件' }}</view>
+								<view class="cart-buy-btn" v-if="config.add_cart_switch == 1" @click.stop="$refs.goodsSkuIndex.addCart('cart', item, $event)">购买</view>
 							</view>
 						</view>
 					</view>
@@ -119,6 +139,8 @@
 				<view v-if="goodsList.length == 0 && emptyShow"><ns-empty text="暂无商品"></ns-empty></view>
 			</block>
 		</mescroll-uni>
+
+		<ns-goods-sku-index ref="goodsSkuIndex" @cartListChange="cartListChange" @addCart="addCart"></ns-goods-sku-index>
 
 		<!-- 筛选弹出框 -->
 		<uni-drawer :visible="showScreen" mode="right" @close="showScreen = false" class="screen-wrap">
@@ -178,12 +200,14 @@
 <script>
 import uniDrawer from '@/components/uni-drawer/uni-drawer.vue';
 import uniTag from '@/components/uni-tag/uni-tag.vue';
+import nsGoodsSkuIndex from '@/components/ns-goods-sku/ns-goods-sku-index.vue';
 import list from './public/js/list.js';
 
 export default {
 	components: {
 		uniDrawer,
-		uniTag
+		uniTag,
+		nsGoodsSkuIndex
 	},
 	data() {
 		return {};

@@ -306,7 +306,7 @@ export default {
 		});
 	},
 	//上传
-	upload_file_server(tempFilePath, data, path, url = "") {
+	upload_file_server(tempFilePath, data, path, url = "", callback) {
 		if (url) {
 			var uploadUrl = Config.baseUrl + url
 		} else {
@@ -322,6 +322,7 @@ export default {
 					var path_str = JSON.parse(res.data);
 					if (path_str.code >= 0) {
 						resolve(path_str.data.pic_path);
+						typeof callback == 'function' && callback(path_str.data.pic_path);
 					} else {
 						reject("error");
 					}
@@ -436,26 +437,98 @@ export default {
 	diyRedirectTo(link) {
 		if (link == null || Object.keys(link).length == 1) return;
 
+		// 外部链接
 		if (link.wap_url && link.wap_url.indexOf('http') != -1 || link.wap_url && link.wap_url.indexOf('http') != -1) {
+
 			// #ifdef H5
 			window.location.href = link.wap_url;
 			// #endif
+
 			// #ifdef MP
 			this.redirectTo('/pages_tool/webview/webview', {
 				src: encodeURIComponent(link.wap_url)
 			});
 			// #endif
+
 		} else if (link.appid) {
+			// 跳转其他小程序
+
 			uni.navigateToMiniProgram({
 				appId: link.appid,
 				path: link.page
 			})
+
 		} else if (link.name == 'MOBILE' && !link.wap_url) {
+			// 拨打电话
+
 			uni.makePhoneCall({
 				phoneNumber: link.mobile,
 				success: (res) => {},
 				fail: (res) => {}
 			});
+
+		} else if (link.name == 'MEMBER_CONTACT') {
+			// 客服
+			let servicerConfig = uni.getStorageSync('servicer_config');
+			let config = {
+				type: 'none'
+			};
+
+			// #ifdef H5
+			config = servicerConfig.h5;
+			// #endif
+
+			// #ifdef MP-WEIXIN
+			config = servicerConfig.weapp;
+			// #endif
+
+			switch (config.type) {
+				case 'wxwork':
+					// 企业微信客服
+
+					// #ifdef H5
+					window.location.href = config.wxwork_url;
+					// #endif
+
+					// #ifdef MP-WEIXIN
+					wx.openCustomerServiceChat({
+						extInfo: {
+							url: config.wxwork_url
+						},
+						corpId: config.corpid,
+						showMessageCard: true,
+						sendMessageTitle: 'this.sendMessageTitle',
+						sendMessagePath: 'this.sendMessagePath',
+						sendMessageImg: 'this.sendMessageImg'
+					});
+					// #endif
+					break;
+				case 'third':
+					// 第三方客服
+					window.location.href = config.third_url;
+					break;
+				case 'niushop':
+					// Niushop客服
+					this.redirectTo('/pages_tool/chat/room');
+					break;
+				case 'weapp':
+					// 微信小程序，由于需要手动点击按钮触发，所以要跳转到中间页
+					this.redirectTo(link.wap_url);
+					break;
+				default:
+					// 拨打客服电话
+					let siteInfo = uni.getStorageSync('siteInfo');
+					if (siteInfo && siteInfo.site_tel) {
+						uni.makePhoneCall({
+							phoneNumber: siteInfo.site_tel
+						});
+					} else {
+						this.showToast({
+							title: '抱歉，商家暂无客服，请线下联系',
+						})
+					}
+			}
+
 		} else if (link.wap_url) {
 			this.redirectTo(link.wap_url);
 		}
@@ -684,6 +757,11 @@ export default {
 		if (!path) {
 			let route = this.getCurrentRoute();
 			path = route.path;
+			if (path == '/pages/member/index') {
+				return new Promise((resolve, reject) => {
+					resolve({})
+				});
+			};
 		}
 		return new Promise((resolve, reject) => {
 			Http.sendRequest({
@@ -847,9 +925,15 @@ export default {
 			'y'
 		], 2));
 		// D每次在AB方向上移动的距离
-		const EACH_MOVE_AD = -(DIST_AB / times);
-		// E每次在BC方向上移动的距离
-		const EACH_MOVE_BE = -(DIST_BC / times);
+		if (points[0]['x'] > points[2]['x']) {
+			var EACH_MOVE_AD = -(DIST_AB / times);
+			// E每次在BC方向上移动的距离
+			var EACH_MOVE_BE = -(DIST_BC / times);
+		} else {
+			var EACH_MOVE_AD = +(DIST_AB / times);
+			// E每次在BC方向上移动的距离
+			var EACH_MOVE_BE = +(DIST_BC / times);
+		}
 		// 点AB的正切
 		const TAN_AB = (points[1]['y'] - points[0]['y']) / (points[1]['x'] - points[0]['x']);
 		// 点BC的正切

@@ -3,22 +3,7 @@
 		<view :style="imgAdsMarginWarp" class="swiper-box">
 			<block v-if="imgAdsValue.list.length == 1">
 				<view class="simple-graph-wrap" :style="imgAdsSwiper" @click="$util.diyRedirectTo(imgAdsValue.list[0].link)">
-					<image :style="{ height: imgAdsValue.list[0].imgHeight }" :src="$util.img(imgAdsValue.list[0].imageUrl)" mode="widthFix"></image>
-					<!-- 热区功能 -->
-					<view v-if="imgAdsValue.list[0].heatMapData">
-						<view
-							class="heat-map"
-							v-for="(mapItem, mapIndex) in imgAdsValue.list[0].heatMapData"
-							:key="mapIndex"
-							:style="{
-								width: mapItem.width + '%',
-								height: mapItem.height + '%',
-								left: mapItem.left + '%',
-								top: mapItem.top + '%'
-							}"
-							@click.stop="$util.diyRedirectTo(mapItem.link)"
-						></view>
-					</view>
+					<image :style="{ height: imgAdsValue.list[0].imgHeight }" :src="$util.img(imgAdsValue.list[0].imageUrl)" mode="widthFix" :show-menu-by-longpress="true"></image>
 				</view>
 			</block>
 			<swiper
@@ -45,29 +30,12 @@
 					v-if="item.imageUrl"
 					@click="$util.diyRedirectTo(item.link)"
 				>
-					<view class="item" :style="{ height: item.imgHeight }">
-						<image :src="$util.img(item.imageUrl)" mode="aspectFill"></image>
-						<!-- 热区功能 -->
-						<view v-if="item.heatMapData">
-							<view
-								class="heat-map"
-								v-for="(mapItem, mapIndex) in item.heatMapData"
-								:key="mapIndex"
-								:style="{
-									width: mapItem.width + '%',
-									height: mapItem.height + '%',
-									left: mapItem.left + '%',
-									top: mapItem.top + '%'
-								}"
-								@click.stop="$util.diyRedirectTo(mapItem.link)"
-							></view>
-						</view>
-					</view>
+					<view class="item" :style="{ height: item.imgHeight }"><image :src="$util.img(item.imageUrl)" :mode="item.imageMode || 'scaleToFill'"></image></view>
 				</swiper-item>
 			</swiper>
 			<!-- #ifdef MP-WEIXIN -->
 			<view
-				v-if="imgAdsValue.list.length > 1"
+				v-if="imgAdsValue.list.length > 1 && value.indicatorIsShow"
 				:class="[
 					'swiper-dot-box',
 					{ straightLine: imgAdsValue.carouselStyle == 'line' },
@@ -109,6 +77,10 @@ export default {
 	created() {
 		this.calcSingleRow();
 	},
+	watch: {
+		// 组件刷新监听
+		componentRefresh: function(nval) {}
+	},
 	computed: {
 		imgAdsMarginWarp: function() {
 			var obj = '';
@@ -145,7 +117,7 @@ export default {
 			this.swiperIndex = e.detail.current;
 		},
 		calcSingleRow() {
-			let maxHeight = 0;
+			let minHeight = 0;
 
 			// 深拷贝一层数据，防止数据更改越权
 			this.imgAdsValue = JSON.parse(JSON.stringify(this.value));
@@ -159,22 +131,35 @@ export default {
 					}
 				});
 
-				// 获取最大高度
-				if (maxHeight == 0 || maxHeight < item.imgHeight) maxHeight = item.imgHeight;
+				// 获取最大高度 if (maxHeight == 0 || maxHeight < item.imgHeight) maxHeight = item.imgHeight;
+				if (minHeight == 0 || minHeight > item.imgHeight) minHeight = item.imgHeight;
 			});
 			this.imgAdsValue.list.forEach((item, index) => {
-				item.imgHeight = maxHeight * 2 + 'rpx';
-				this.swiperHeight = maxHeight * 2 + 'rpx';
+				item.imgHeight = minHeight * 2 + 'rpx';
+				this.swiperHeight = minHeight * 2 + 'rpx';
 			});
 			this.imgAdsValue.indicatorColor = this.imgAdsValue.indicatorColor || '#fff';
+			
+			if (this.value.indicatorIsShow === undefined) {
+				this.value.indicatorIsShow = true; // 控制指示点是否展示
+			}
 
 			// 是否显示指示器
 			if (this.imgAdsValue.list.length <= 1) {
 				this.isDots = false;
 			}
+			
+			// #ifdef H5
+			this.isDots = this.value.indicatorIsShow;
+			// #endif
+
 			// #ifdef MP-WEIXIN
 			this.isDots = false;
 			// #endif
+
+			this.$nextTick(() => {
+				this.$store.commit('setComponentState', { ImageAds: true });
+			});
 		}
 	}
 };
@@ -196,6 +181,7 @@ export default {
 	position: relative;
 	image {
 		width: 100%;
+		will-change: transform;
 	}
 	.heat-map {
 		position: absolute;
@@ -247,6 +233,7 @@ export default {
 			width: 100%;
 			max-width: 100%;
 			height: 100%;
+			will-change: transform;
 		}
 		.heat-map {
 			position: absolute;
@@ -314,9 +301,6 @@ export default {
 	width: 24rpx;
 	border-radius: 0;
 	height: 8rpx;
-}
-.swiper /deep/ .swiper-item .item uni-image > div {
-	background-size: cover !important;
 }
 .swiper.ns-indicator-dots /deep/ .uni-swiper-dot {
 	width: 18rpx;

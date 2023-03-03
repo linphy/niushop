@@ -6,7 +6,7 @@ export default {
 	data() {
 		return {
 			skuId: 0,
-			goodsId:0,
+			goodsId: 0,
 			isIphoneX: false, //判断手机是否是iphoneX以上
 			whetherCollection: 0,
 
@@ -51,15 +51,43 @@ export default {
 			posterHeight: 0,
 			posterParams: {}, //海报所需参数
 			detailTab: 0,
-			goodsRoute:'',
-			posterApi:'',
+			goodsRoute: '',
+			posterApi: '',
+			goodsAttrShow: false, // 商品属性是否展开
+
+			//门店列表
+			storeList: {
+				data: [],
+				page: 1,
+				page_size: 10
+			},
+			isShowStore: false,
+			latitude: null, // 纬度
+			longitude: null, // 经度
+			evaluateCount: 0, // 商品评论数量
+			deliveryType: null, // 配送方式
+			isVirtual: 0 //是否为虚拟商品
 		}
 	},
 	created() {
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 		this.token = uni.getStorageSync('token');
+
+		if (this.location) {
+			this.latitude = this.location.latitude;
+			this.longitude = this.location.longitude;
+		} else {
+			this.$util.getLocation();
+		}
 	},
-	
+	watch: {
+		location: function(nVal) {
+			if (nVal) {
+				this.latitude = nVal.latitude;
+				this.longitude = nVal.longitude;
+			}
+		}
+	},
 	methods: {
 		init(params) {
 			this.skuId = params.sku_id;
@@ -68,22 +96,35 @@ export default {
 			this.source_member = params.source_member;
 			this.whetherCollection = params.whetherCollection;
 			this.posterParams = params.posterParams;
-			
+
 			this.shareUrl = params.shareUrl;
 			this.memberId = params.memberId;
 			this.goodsRoute = params.goodsRoute;
 			this.posterApi = params.posterApi;
+			this.isVirtual = params.isVirtual;
+			this.deliveryType = params.deliveryType;
+			this.evaluateConfig = params.evaluateConfig;
+
+			if (this.evaluateConfig.evaluate_show == 1) {
+				//商品评论
+				this.getGoodsEvaluate(params.evaluateList);
+				this.evaluateCount = params.evaluateCount;
+			}
+
+			for (let k in this.deliveryType) {
+				if (k == 'store') {
+					this.isShowStore = true;
+				}
+			}
+
 			this.getService();
-			
-			// 评价设置
-			this.getEvaluateConfig();
+
 			this.videoContext = uni.createVideoContext('goodsVideo');
-			
+
 			// #ifdef MP-WEIXIN
 			this.goodsSyncToGoodsCircle();
 			// #endif
-			
-			this.getWhetherCollection();
+
 		},
 		swiperChange(e) {
 			this.swiperCurrent = e.detail.current + 1;
@@ -98,56 +139,37 @@ export default {
 			this.$refs.merchantsServicePopup.close();
 		},
 
+		//-------------------------------------门店列表-------------------------------------
+		openStoreListPopup() {
+			this.$refs.storeListPopup.open();
+		},
+		closeStoreListPopup() {
+			this.$refs.storeListPopup.close();
+		},
 		//-------------------------------------属性-------------------------------------
 
-		openAttributePopup() {
-			this.$refs.attributePopup.open();
-		},
-		closeAttributePopup() {
-			this.$refs.attributePopup.close();
-		},
-		//获取用户是否关注
-		async getWhetherCollection() {
-			this.$api.sendRequest({
-				url: "/api/goodscollect/iscollect",
-				data: {
-					goods_id: this.goodsId
-				},
-				success: res => {
-					this.whetherCollection = res.data;
-				}
-			});
+		switchGoodsAttr() {
+			this.goodsAttrShow = !this.goodsAttrShow;
 		},
 		//-------------------------------------评价-------------------------------------
 		//商品评论列表
-		getGoodsEvaluate() {
-			
-			this.$api.sendRequest({
-				url: "/api/goodsevaluate/firstinfo",
-				data: {
-					goods_id: this.goodsSkuDetail.goods_id
-				},
-				success: res => {
-					let data = res.data;
-					if (data) {
-						this.goodsEvaluate = data;
-						this.goodsEvaluate.forEach((item, index) => {
-							if (this.goodsEvaluate[index].images) this.goodsEvaluate[index].images =
-								this.goodsEvaluate[index].images.split(",");
-							if (this.goodsEvaluate[index].is_anonymous == 1) this.goodsEvaluate[
-									index].member_name = this.goodsEvaluate[index].member_name
-								.replace(
-									this.goodsEvaluate[index].member_name.substring(1, this
-										.goodsEvaluate[index].member_name.length - 1), '***')
-						})
-						// if (this.goodsEvaluate.images) this.goodsEvaluate.images = this.goodsEvaluate.images.split(",");
-						// if (this.goodsEvaluate.is_anonymous == 1) this.goodsEvaluate.member_name = this.goodsEvaluate.member_name.replace(
-						// this.goodsEvaluate.member_name.substring(1, this.goodsEvaluate.member_name.length - 1), '***')
-					}
-				}
-			});
+		getGoodsEvaluate(list) {
+			if (list) {
+				this.goodsEvaluate = list;
+				this.goodsEvaluate.forEach((item, index) => {
+					if (this.goodsEvaluate[index].images) this.goodsEvaluate[index].images =
+						this.goodsEvaluate[index].images.split(",");
+					if (this.goodsEvaluate[index].is_anonymous == 1) this.goodsEvaluate[
+							index].member_name = this.goodsEvaluate[index].member_name
+						.replace(
+							this.goodsEvaluate[index].member_name.substring(1, this
+								.goodsEvaluate[index].member_name.length - 1), '***')
+				})
+				// if (this.goodsEvaluate.images) this.goodsEvaluate.images = this.goodsEvaluate.images.split(",");
+				// if (this.goodsEvaluate.is_anonymous == 1) this.goodsEvaluate.member_name = this.goodsEvaluate.member_name.replace(
+				// this.goodsEvaluate.member_name.substring(1, this.goodsEvaluate.member_name.length - 1), '***')
+			}
 		},
-
 		// 预览评价图片
 		previewEvaluate(index, img_index, field) {
 			var paths = [];
@@ -160,14 +182,14 @@ export default {
 			});
 		},
 		//-------------------------------------关注-------------------------------------
-		editCollection() {
+		async collection() {
 			if (this.preview) return; // 开启预览，禁止任何操作和跳转
 
 			if (this.token) {
 
 				//未关注添加关注
 				if (this.whetherCollection == 0) {
-					this.$api.sendRequest({
+					let res = await this.$api.sendRequest({
 						url: "/api/goodscollect/add",
 						data: {
 							sku_id: this.skuId,
@@ -176,42 +198,33 @@ export default {
 							sku_price: this.goodsSkuDetail.show_price,
 							sku_image: this.goodsSkuDetail.sku_image
 						},
-						success: res => {
-							var data = res.data;
-							if (data > 0) {
-								this.whetherCollection = 1;
-							}
-						}
+						async: false,
 					});
+					var data = res.data;
+					if (data > 0) {
+						this.whetherCollection = 1;
+					}
 				} else {
 					//已关注取消关注
-					this.$api.sendRequest({
+					let res = await this.$api.sendRequest({
 						url: "/api/goodscollect/delete",
 						data: {
 							goods_id: this.goodsSkuDetail.goods_id
 						},
-						success: res => {
-							var data = res.data;
-							if (data > 0) {
-								this.whetherCollection = 0;
-							}
-						}
+						async: false,
 					});
+					var data = res.data;
+					if (data > 0) {
+						this.whetherCollection = 0;
+					}
 				}
+				return this.whetherCollection;
 			} else {
 				if (this.source_member) {
 					this.$refs.login.open(this.shareUrl + '&source_member=' + this.source_member);
 				} else {
 					this.$refs.login.open(this.shareUrl);
 				}
-			}
-		},
-		
-		collection() {
-			if (this.preview) return; // 开启预览，禁止任何操作和跳转
-			this.editCollection();
-			if (this.token) {
-				return this.whetherCollection ? 0 : 1;
 			}
 		},
 		//-------------------------------------分享-------------------------------------
@@ -261,7 +274,7 @@ export default {
 		//生成海报
 		getGoodsPoster() {
 			uni.showLoading({
-				'title' : '海报生成中...'
+				'title': '海报生成中...'
 			})
 			//活动海报信息
 			if (this.memberId) this.posterParams.source_member = this.memberId;
@@ -348,7 +361,7 @@ export default {
 				}
 			});
 		},
-		
+
 		// #ifdef MP-WEIXIN
 		/**
 		 *	将商品同步到微信圈子 
@@ -392,21 +405,6 @@ export default {
 			}
 		},
 		// #endif
-		getEvaluateConfig() {
-			this.$api.sendRequest({
-				url: '/api/goodsevaluate/config',
-				success: res => {
-					if (res.code == 0) {
-						var data = res.data;
-						this.evaluateConfig = data;
-						if (this.evaluateConfig.evaluate_show == 1) {
-							//商品评论
-							this.getGoodsEvaluate();
-						}
-					}
-				}
-			});
-		},
 		toEvaluateDetail(id) {
 			this.$util.redirectTo('/pages_tool/goods/evaluate', {
 				goods_id: id
@@ -443,9 +441,8 @@ export default {
 		},
 		onCloseCommunity() {
 			this.isCommunity = false
-		}
-		
- 
+		},
+
 	}
-	
+
 }

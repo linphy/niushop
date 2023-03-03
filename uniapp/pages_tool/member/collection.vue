@@ -73,11 +73,6 @@ export default {
 				this.$refs.mescroll.refresh();
 			}
 		}
-	},
-	computed: {
-		storeToken() {
-			return this.$store.state.token;
-		}
 	}
 };
 </script>

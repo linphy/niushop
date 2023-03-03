@@ -9,13 +9,18 @@
 		</view>
 		<view class="order-nav" v-if="token">
 			<view v-for="(statusItem, statusIndex) in statusList" :key="statusIndex" class="uni-tab-item" :id="statusItem.id" :data-current="statusIndex" @click="ontabtap">
-				<text class="uni-tab-item-title" :class="statusItem.status == orderStatus ? 'uni-tab-item-title-active color-base-border  color-base-text' : ''">
+				<text class="uni-tab-item-title" :class="statusItem.status == orderStatus ? 'uni-tab-item-title-active color-base-text' : ''">
 					{{ statusItem.name }}
 				</text>
 			</view>
 		</view>
-
-		<mescroll-uni ref="mescroll" @getData="getListData" top="220rpx" v-if="token">
+		
+		<!-- #ifdef MP -->
+		<mescroll-uni ref="mescroll" @getData="getListData" top="176rpx" v-if="token">
+		<!-- #endif -->
+		<!-- #ifndef MP -->
+		<mescroll-uni ref="mescroll" @getData="getListData" top="196rpx" v-if="token">
+		<!-- #endif -->
 			<block slot="list">
 				<view class="order-list" v-if="orderList.length > 0">
 					<view class="order-item" v-for="(orderItem, orderIndex) in orderList" :key="orderIndex">
@@ -26,46 +31,67 @@
 								@click="selectOrder(orderItem.order_id, orderItem.pay_money)"
 								v-if="orderStatus == 'waitpay' && orderItem.order_status == 0"
 							></view>
-							<text class="font-size-base">订单号：{{ orderItem.order_no }}</text>
-							<text class="status-name color-base-text">{{ orderItem.order_status_name }}</text>
+							<text class="order-no">订单号：{{ orderItem.order_no }}</text>
+							<text class="status-name">{{ orderItem.order_status_name }}</text>
 						</view>
 						<view class="order-body" @click="orderDetail(orderItem)">
-							<view class="goods-wrap" v-for="(goodsItem, goodsIndex) in orderItem.order_goods" :key="goodsIndex">
-								<view class="goods-img">
-									<image
-										:src="$util.img(goodsItem.sku_image, { size: 'mid' })"
-										@error="imageError(orderIndex, goodsIndex)"
-										mode="aspectFill"
-										:lazy-load="true"
-									></image>
-								</view>
-								<view class="goods-info">
-									<view class="pro-info">
-										<view class="goods-name" v-if="goodsItem.goods_class == 2">{{ goodsItem.goods_name }}</view>
-										<view class="goods-name" v-else>{{ goodsItem.sku_name }}</view>
-										<view class="sku" v-if="goodsItem.sku_spec_format">
-											<view class="goods-spec">
-												<block v-for="(x, i) in goodsItem.sku_spec_format" :key="i">
-													{{ x.spec_value_name }} {{ i < goodsItem.sku_spec_format.length - 1 ? '; ' : '' }}
-												</block>
+							<block v-if="orderItem.order_goods.length == 1">
+								<view class="goods-wrap" v-for="(goodsItem, goodsIndex) in orderItem.order_goods" :key="goodsIndex">
+									<view class="goods-img">
+										<image
+											:src="$util.img(goodsItem.sku_image, { size: 'mid' })"
+											@error="imageError(orderIndex, goodsIndex)"
+											mode="aspectFill"
+											:lazy-load="true"
+										></image>
+									</view>
+									<view class="goods-info">
+										<view class="pro-info">
+											<view class="goods-name" v-if="goodsItem.goods_class == 2">{{ goodsItem.goods_name }}</view>
+											<view class="goods-name" v-else>{{ goodsItem.sku_name }}</view>
+											<view class="sku" v-if="goodsItem.sku_spec_format">
+												<view class="goods-spec">
+													<block v-for="(x, i) in goodsItem.sku_spec_format" :key="i">
+														{{ x.spec_value_name }} {{ i < goodsItem.sku_spec_format.length - 1 ? '; ' : '' }}
+													</block>
+												</view>
 											</view>
 										</view>
+										<!-- <view class="goods-sub-section">
+											<text class="goods-price">
+												<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
+												<text class="price-style large">{{ parseFloat(goodsItem.price).toFixed(2).split(".")[0] }}</text>
+												<text class="unit price-style small">.{{ parseFloat(goodsItem.price).toFixed(2).split(".")[1] }}</text>
+												
+											</text>
+											<text class="goods-num">
+												<text class="iconfont icon-close"></text>
+												{{ goodsItem.num }}
+											</text>
+										</view> -->
+										<view class="goods-action"><!-- <view class="action-btn">加购物车</view> --></view>
 									</view>
-									<view class="goods-sub-section">
-										<text class="goods-price">
-											<text class="unit price-style small">{{ $lang('common.currencySymbol') }}</text>
-											<text class="price-style large">{{ parseFloat(goodsItem.price).toFixed(2).split(".")[0] }}</text>
-										    <text class="unit price-style small">.{{ parseFloat(goodsItem.price).toFixed(2).split(".")[1] }}</text>
-											
-										</text>
-										<text class="goods-num">
-											<text class="iconfont icon-close"></text>
-											{{ goodsItem.num }}
-										</text>
-									</view>
-									<view class="goods-action"><!-- <view class="action-btn">加购物车</view> --></view>
 								</view>
-							</view>
+							</block>
+							<block v-else>
+								<view class="multi-order-goods">
+									<scroll-view scroll-x="true" class="scroll-view">
+										<view class="goods-wrap">
+											<view class="goods-img" v-for="(goodsItem, goodsIndex) in orderItem.order_goods" :key="goodsIndex">
+												<image
+													:src="$util.img(goodsItem.sku_image, { size: 'mid' })"
+													@error="imageError(orderIndex, goodsIndex)"
+													mode="aspectFill"
+													:lazy-load="true"
+												></image>
+											</view>
+										</view>
+									</scroll-view>
+									<view class="shade">
+										<image :src="$util.img('public/uniapp/order/order-shade.png')"></image>
+									</view>
+								</view>
+							</block>
 						</view>
 						<view class="order-footer">
 							<view class="order-base-info">
@@ -100,7 +126,7 @@
 								</view>
 								<view
 									class="order-box-btn"
-									:class="{ 'color-base-border color-base-text': operationItem.action == 'orderPay' }"
+									:class="{ 'color-base-border color-base-bg': operationItem.action == 'orderPay' }"
 									v-for="(operationItem, operationIndex) in orderItem.action"
 									:key="operationIndex"
 									@click="operation(operationItem.action, orderItem)"
@@ -114,7 +140,7 @@
 									<text v-else-if="orderItem.evaluate_status == 1">追评</text>
 								</view>
 							</view>
-							<view class="order-action" v-else><view class="order-box-btn color-base-border color-base-text" @click="orderDetail(orderItem)">查看详情</view></view>
+							<view class="order-action" v-else><view class="order-box-btn" @click="orderDetail(orderItem)">查看详情</view></view>
 						</view>
 					</view>
 				</view>
@@ -172,7 +198,6 @@ export default {
 		if (option.order_id) this.order_id = option.order_id;
 	},
 	onShow() {
-		
 		
 		this.isIphoneX = this.$util.uniappIsIPhoneX();
 		this.getEvaluateConfig();
@@ -272,8 +297,8 @@ export default {
 					id: 'status_3'
 				},
 				{
-					status: 'waitrate',
-					name: this.$lang('waitEvaluate'),
+					status: 'wait_use',
+					name: this.$lang('waitUse'),
 					id: 'status_4'
 				}
 			];
@@ -399,9 +424,6 @@ export default {
 		mpOrderList() {
 			if (!this.orderList[this.status]) return;
 			return this.orderList[this.status].list || [];
-		},
-		storeToken() {
-			return this.$store.state.token;
 		}
 	},
 	watch: {
@@ -417,42 +439,6 @@ export default {
 
 <style lang="scss">
 @import './public/css/list.scss';
-.cate-search {
-		width: 100%;
-		height: 100rpx;
-		background: #ffffff;
-		padding: 10rpx 30rpx;
-		box-sizing: border-box;
-		/* #ifdef H5 */
-		padding-top: 30rpx;
-		/* #endif */
-		position: relative;
-		z-index: 998;
-		input {
-			font-size: $font-size-base;
-			height: 76rpx;
-			padding: 0 25rpx 0 30rpx;
-			line-height: 60rpx;
-			width: calc(100% - 120rpx);
-		}
-
-		text {
-			font-size: 32rpx;
-			color: $color-tip;
-			width: 120rpx;
-			text-align: center;
-		}
-
-		.search-box {
-			width: 100%;
-			height: 100%;
-			background: $color-bg;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			border-radius: 40rpx;
-		}
-	}
 </style>
 <style scoped>
 /deep/ .uni-page {
