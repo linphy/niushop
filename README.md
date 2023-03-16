@@ -59,7 +59,7 @@
 ### Niushop官方群
 <a href="https://jq.qq.com/?_wv=1027&k=vhqhuiQg" target="_blank">QQ开发群 【Niushop开源商城V5 Dev全开源技术讨论群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
 
-<a href="https://jq.qq.com/?_wv=1027&k=AuMkAK55" target="_blank">QQ开发群 【Niushop开源商城V5交流群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
+<a href="https://jq.qq.com/?_wv=1027&k=Hpni18Fd" target="_blank">QQ开发群 【Niushop开源商城V5交流群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
 
 
 ### V5商城特色
