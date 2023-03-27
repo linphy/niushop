@@ -43,7 +43,7 @@
 ### 演示站后台[<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
 <a href='https://uniapp.v5.niuteam.cn/shop' target="_blank">https://uniapp.v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
 ###  演示二维码
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/%E6%BC%94%E7%A4%BA%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220801173711.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_V5_stand/raw/master/image/微信图片_20230327153016.png)
 
 ### 推荐阿里云服务器配置
 
@@ -59,7 +59,7 @@
 ### Niushop官方群
 <a href="https://jq.qq.com/?_wv=1027&k=vhqhuiQg" target="_blank">QQ开发群 【Niushop开源商城V5 Dev全开源技术讨论群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
 
-<a href="https://jq.qq.com/?_wv=1027&k=Hpni18Fd" target="_blank">QQ开发群 【Niushop开源商城V5交流群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
+<a href="https://jq.qq.com/?_wv=1027&k=Hpni18Fd" target="_blank">QQ开发群 【Niushop开源商城V4交流群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
 
 
 ### V5商城特色
