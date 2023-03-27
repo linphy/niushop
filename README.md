@@ -43,7 +43,7 @@
 ### 演示站后台[<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
 <a href='https://uniapp.v5.niuteam.cn/shop' target="_blank">https://uniapp.v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
 ###  演示二维码
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_V5_stand/raw/master/image/微信图片_20230327153016.png)
+![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_V5_stand/raw/master/image/image/微信图片_20230327153016.png)
 
 ### 推荐阿里云服务器配置
 
