@@ -1547,7 +1547,7 @@ class OrderCommon extends BaseModel
     public function orderQrcode($order_info)
     {
 
-        $app_type = 'h5';
+        $app_type = 'weapp';
         switch ( $order_info[ 'order_type' ] ) {
             case 2:
                 $code = $order_info[ 'delivery_code' ];
