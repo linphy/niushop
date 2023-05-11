@@ -160,9 +160,13 @@
                                     if(res.code == 0){
                                         layer.close(layer.index - 1);
                                         reloadList();
-                                    }else{
-                                        submitting = false;
                                     }
+                                    // else{
+                                    //     submitting = false;
+                                    // }
+                                },
+                                complete: function(){
+                                    submitting = false;
                                 }
                             })
                         });
