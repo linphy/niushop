@@ -35,10 +35,10 @@
  | [服务市场]()
  | [系统功能]()
  | [系统演示](https://uniapp.v5.niuteam.cn/)
- | [使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4/1842076)
- | [二开手册]()
- | [论坛地址](https://bbs.niushop.com)
- | [留言评论](https://bbs.niushop.com)
+ | [使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v5/3037616)
+ | [二开手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4_develop/1839354)
+ | [论坛地址](https://www.niushop.com/web/community/index.html)
+ | [留言评论](https://www.niushop.com/web/community/index.html)
 
 ### 演示站后台[<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
 <a href='https://uniapp.v5.niuteam.cn/shop' target="_blank">https://uniapp.v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
