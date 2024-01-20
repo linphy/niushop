@@ -1,146 +1,83 @@
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/top_banner.png) <br/>
-### Niushop开源商城开发版 - 前后端全部100%开源
+![输入图片说明](https://www.niucloud.com/img/readme/%E9%A1%B6%E9%83%A8%E5%B9%BF%E5%91%8A1.jpg)
 
-### 马上加入Niushop开发者，共同构建新零售电商应用开发生态！！！<br/>
+### niucloud-admin是什么？
+niucloud-admin是一款快速开发通用管理后台框架，前端采用最新的技术栈Vite+TypeScript+Vue3+ElementPlus最流行技术架构，后台结合PHP8、Java SDK、Python等主流后端语言搭建，内置集成用户权限、代码生成器、表单设计、云存储、短信发送、素材中心、微信及公众号、Api模块一系列开箱即用功能，是一款快速可以开发企业级应用的软件系统。
 
-**开源啦** ！！！**商城后端开源** ！！！**前端Uniapp代码开源** ！！！**100%开源** ！！！<br/>
-**无任何加密** ！！！<br/>
-**简单而又暴力** ！！！
+### niucloud-admin采用的技术亮点
 
-技术亮点
+- 后台php采用thinkphp6+php8+mysql,支持composer快速安装扩展，支持redis缓存以及消息队列，支持多语言设计开发，同时开发采用严格的restful的api设计开发。
 
-- 标准API接口，前后端分离，二次开发更方便<br/>
-- 内置消息队列，全面支持redis缓存机制，支持大数据、高并发、大流量<br/>
-- 钩子 + 插件，组件化开发，可复用，开发便捷<br/>
-- 结构化的商城模板设计，制作<br/>
+- 后台前后端分离采用element-plus、vue3.0、typescript、vite、pina等前端技术,同时使用i18n支持国际化多语言开发。
 
-加入NiuShop商城开发者生态您将可以获得
+- 手机端采用uniapp前后端分离，同时使用uview、vue3.0、typescript、vite、pina等前端技术，同时使用i18n支持国际化多语言开发，可以灵活编译成h5,微信小程序，支付宝小程序，抖音小程序等使用场景。
 
-1. 加入官方每周一场的商城开发互动直播
-2. 学习商城架构，表设计，插件设计，模块化开发思路
-3. 官方提供免费而有价值的专业二次开发教程
-4. 商城二开项目的接单
-5. 开发者开发插件，商城模板，与官方共同销售分成
+- niucloud-admin采用多租户的saas系统设计，能够提供企业级软件服务运营 ，同时满足用户多站点，多商户，多门店等系统开发需求。
 
-...
+- niucloud-admin结合当前市面上很多框架结构不规范，导致基础结构不稳定等情况，严格定义了分层设计的开发规范，同时api接口严格采用restful的开发规范，能够满足大型业务系统或者微服务的开发需求。
 
+- niucloud-admin前端以及后端采用严格的多语言开发规范，包括前端展示，api接口返回，数据验证，错误返回等全部使用多语言设计规范，使开发者能够真生意义上实现多语言的开发需求。
 
-### 产品介绍 
- **快速搭建专属店铺，迅速展开线上业务** <br/>
-默默耕耘，是为了在明天硕果累累；沉淀积累，是为了在未来厚积薄发！！自Niushop单商户于2016年上线以来，历时几年时间的迭代更新，应广大用户的要求，Niushop单商户V5时代终于来啦~ V5是一个全新的开始，升级重构多门店、收银一体化、软硬件物联、商品线上线下营销完全打通；前后端代码重组优化80%以上；
-更加强大的DIY自定义装修；完全内置消息队列、Redis缓存服务，是大型商城运营的首选，抓紧下载体验起来吧~
+- niucloud-admin已经搭建好常规系统的开发底层，具体的底层功能包括：管理员管理，权限管理，网站设置，计划任务管理，素材管理，会员管理，会员账户管理，微信公众号以及小程序管理，支付管理，第三方登录管理，消息管理，短信管理，文章管理，前端装修等全面的基础功能，这样开发者不需要开发基础的结构而专心开发业务。
 
- ### 操作指南 
-  :fa-th-list:  [官网地址](https://www.niushop.com)
- | [服务市场]()
- | [系统功能]()
- | [系统演示](https://uniapp.v5.niuteam.cn/)
- | [使用手册](https://www.kancloud.cn/niucloud/niushop_b2c_v5/3037616)
- | [二开手册](https://www.kancloud.cn/niucloud/niushop_b2c_v4_develop/1839354)
- | [论坛地址](https://www.niushop.com/web/community/index.html)
- | [留言评论](https://www.niushop.com/web/community/index.html)
+- niucloud-admin系统内置支持微信/支付宝支付，微信公众号/小程序/短信消息管理，阿里云/腾讯云短信，七牛云/阿里云存储等基础的功能扩展，后续会根据实际业务不断扩展基础组件。
 
-### 演示站后台[<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank"> 查看 </a>]       
-<a href='https://uniapp.v5.niuteam.cn/shop' target="_blank">https://uniapp.v5.niuteam.cn/shop</a>  账号：test  密码：niushoptest
-###  演示二维码
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/企业群二维码.png)
+- niucloud-admin结合系统结构特点专门开发了代码生成器，这样开发者根据数据表就可以一键生成基础的业务代码，包括：后台php业务代码以及对应的前端vue代码。
 
-### 推荐阿里云服务器配置
+- 前端采用标准的element-plus，开发者不需要详细了解前端，只需要用标准的element组件就可以。
 
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0731/095424_ac477fe3_6569472.png "fuwuqi.png")
+- 手机端设计开发了自定义装修，同时提供了基础的开发组件，方便开发者设计开发手机自定义页面装修的开发需求。
 
-### 环境要求
+- 手机端使用uniapp ，同时使用uview页面展示，可以开发出丰富的手机样式，同时不需要专门学习小程序，app等开发语言，只需要通过uniapp编译就可以。
 
-    Nignx/Apache
-    PHP  7.4 
-    MySQL 5.6~8.0
-    Redis 支持
+### 软件截图
+![输入图片说明](https://media.niucloud.com/1704066345d7742c4c0a1a941e836e8d633f209396_aliyun.jpg)
+![输入图片说明](https://media.niucloud.com/17040664219c6ce47b234eac495c3c4aa6e83920b6_aliyun.png)
+![输入图片说明](https://media.niucloud.com/17040665085ed007bd6daf220cc1ecd4e301c6008f_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1704066609bad8bba9c5bfe5a243f5ebcec54866af_aliyun.png)
+![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
+![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1704067302721c5360c622b4934fae659ee1eb0987_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
 
-### Niushop官方群
-<a href="https://jq.qq.com/?_wv=1027&k=vhqhuiQg" target="_blank">QQ开发群 【Niushop开源商城V5 Dev全开源技术讨论群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
+### 操作指南
+ [官网地址](https://www.niucloud.com)
+ | [服务市场](https://www.niucloud.com)
+ | [使用手册](https://www.kancloud.cn/niucloud/niucloud-admin-develop/3153336)
+ | [二开手册](https://www.kancloud.cn/niucloud/niucloud-admin-develop/3153336)
+ | [API接口手册](https://www.niucloud.com/apidoc.html)
+ | [论坛地址](https://www.niucloud.com/bbs)
 
-<a href="https://jq.qq.com/?_wv=1027&k=Hpni18Fd" target="_blank">QQ开发群 【Niushop开源商城V4交流群】<img src="https://pub.idqqimg.com/wpa/images/group.png" border="0" alt="QQ" /></a>   
+### 演示地址
+- 站点后台演示网址：[<a href='http://demo-saas.site.niucloud.com/site/' target="_blank"> 查看 </a>]       
+<a href='http://demo-saas.site.niucloud.com/site/' target="_blank">http://demo-saas.site.niucloud.com/site/    
+旅游系统账号：tourtest  密码：123456<br/>
+商城系统账号：shoptest  密码：123456<br/>
+会员卡系统账号：cardtest  密码：123456<br/>
+- 平台后台演示网址：[<a href='http://demo-saas.site.niucloud.com/admin/' target="_blank"> 查看 </a>]       
+<a href='http://demo-saas.site.niucloud.com/admin/' target="_blank">http://demo-saas.site.niucloud.com/admin/  账号：admin  密码：123456
 
-
-### V5商城特色
-强大的营销功能模块，丰富的行业模板和装修组件，快速搭建最适合自己的电商平台，轻松获客、裂变。开启电商运营之路。
-
-1. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121556_a96bd648_6569472.png"/>&nbsp;&nbsp;ThinkPhp6 + LayUi + ElementUi,学习维护成本低<br/>
-2. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121615_f801f981_6569472.png"/>&nbsp;&nbsp;前端由UNI-APP框架编写，支持多端，易于维护<br/>
-3. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121635_e51987c4_6569472.png"/>&nbsp;&nbsp;钩子 + 插件，组件化开发，可复用，开发便捷<br/>
-4. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121645_df103f55_6569472.png"/>&nbsp;&nbsp;标准API接口，前后端分离，二次开发更方便<br/>
-5. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121635_e51987c4_6569472.png"/>&nbsp;&nbsp;内置消息队列，全面支持redis缓存机制，支持大数据、高并发、大流量<br/>
-6. &nbsp;<img src="https://images.gitee.com/uploads/images/2020/0724/121708_74c55984_6569472.png"/>&nbsp;&nbsp;代码全部开源，方便企业扩展自身业务需求
-
-### 亮点
-
-    1.框架采用全新thinkphp6+事件开发设计+layui+uniapp进行设计，代码完全重构，支持百万级！
-    2.前端以layui + uniapp模块化开发；
-    3.数据导出采用phpExcel,使数据更加直观，更方便于管理统计；
-    4.插件钩子机制，功能模块独立，更有助于二次开发；
-    5.后台采用ECharts,直观体现关系数据可视化的图，支持图与图之间的混搭。实现完善的数据统计和分析；
-    6.EasyWeChat部署微信开发,微信接入更加快捷,简单；
-    7.内置强大灵活的权限管理体系，有利于专人专项运营；
-    8.内置组合数据统计,系统配置,管理碎片化数据统计；
-    9.客户端完善的交互效果和动画，提升用户端视觉体验；
-    10.可以完美对接公众号和小程序,并且数据同步,实现真正意义上的一端开发，多端使用；
-    11.内置客服系统,可以对接企微客服、腾讯客服、小程序客服以及Niushop客服,客服在线实时聊天；
-    12.高频数据redis缓存,数据库读写分离，很大程度减轻服务器压力，提升访问速度；
-    13.后台设置菜单中可以一键数据备份和恢复，完全傻瓜式操作就可以轻松升级备份；
-    14.在线一键升级，轻松跨越到最新版本；
-    15.标准Api接口、前后端分离，二次开发更方便快捷;
-    16.支持数据库结构、数据、模板在线缓存清除，提升用户体验；
-    17.可视化DIY店铺装修，方便、快捷、直观，可以随心所欲装扮自己的店铺；
-    18.无缝事件机制行为扩展更方便，方便二次开发；
-    19.支持队列降低流量高峰，解除代码耦合性，高可用性;
-    20.在线一键安装部署，自动检测系统环境一键安装，省时省力快捷部署；
-
-### 前端部分界面展示
-
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_index.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_goods.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/front_member.png)
-
-### 后端部分界面展示
-
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end1.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end2.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end3.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end4.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end5.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end6.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end7.png)
-![输入图片说明](https://gitee.com/niushop_team/niushop_b2c_v5_stand/raw/master/image/back_end8.png)
-
-#### 好啦！话不多说，相信你早已跃跃欲试了，那就行动起来通过下方链接赶紧下载体验吧！
-```
-git clone -b v3.2.9 https://gitee.com/niushop_team/niushop_b2c_v5_dev
-```
-
-### 开源版使用须知
+### 开源使用须知
 
 1.允许用于个人学习、毕业设计、教学案例、公益事业、商业使用;
 
-2.如果商用必须保留版权信息，请自觉遵守;
+2.本框架应用源代码所有权和著作权归niucloud官方所有，基于niucloud-admin框架开发的应用，所有权和著作权归应用开发商所有。但必须明确声明是基于niucloud-admin框架开发，请自觉遵守，否则产生的一切任何后果责任由侵权者自负;
 
-3.禁止将本开源的代码和资源进行任何形式任何名义的出售，否则产生的一切任何后果责任由侵权者自负;
+3.禁止修改框架代码并再次发布框架衍生版等与niucloud-admin框架产生恶意竞争或对抗的行为;
 
-4.本版本源码全部开源;包括前端，后端，无任何加密;
+4.本框架源码全部开源;包括前端，后端，无任何加密;
 
 5.商用请仔细审查代码和漏洞，不得用于任一国家许可范围之外的商业应用，产生的一切任何后果责任自负;
 
-6.马上加入NiuShop开发者，构建新零售电商应用开发生态;
+6.一切事物有个人喜好的标准，本开源代码意在分享，不喜勿喷。
 
-7.一切事物有个人喜好的标准，本开源代码意在分享，不喜勿喷。
-
-### 合作伙伴
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0725/120430_ab7fff0d_6569472.png "画板 1 拷贝 3(4).png")
 
 
 ### 版权信息
-
-版权所有Copyright © 2015-2020 NiuShop开源商城&nbsp;版权所有
+版权所有Copyright © 2015-2030 niucloud-admin 版权所有
 
 All rights reserved。
- 
-杭州牛之云科技有限公司&nbsp;提供技术支持  
+
+杭州数字云动科技有限公司 
+杭州牛之云科技有限公司 
+
+提供技术支持
