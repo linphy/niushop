@@ -37,7 +37,6 @@ niucloud-admin是一款快速开发通用管理后台框架，前端采用最新
 ![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/1704067302721c5360c622b4934fae659ee1eb0987_aliyun.png)
-![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
 
 ### 商城插件
 ![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
@@ -50,7 +49,8 @@ niucloud-admin是一款快速开发通用管理后台框架，前端采用最新
 ### VIPCard会员卡插件
 ![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
 ### 旅游系统插件
-![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
+![输入图片说明](https://media.niucloud.com/17057440675004b59c88adaebcb492a31d3a909944_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1705744067bad60e348b4dd479d223aa5de963a1bf_aliyun.png)
 
 
 ### 操作指南
