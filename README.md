@@ -67,6 +67,7 @@ niucloud-admin是一款快速开发通用管理后台框架，前端采用最新
 ### 加入NIUCLOUD开发者生态，一起助力成就程序员创业梦想！！！
 
 加入企业微信群技术交流，请扫描下面二维码 :point_down: 
+
 ![输入图片说明](https://media.niucloud.com/170312377249fc5bc70c5f914fda3d7c5cf3413ddc_aliyun.jpg)
 
 
