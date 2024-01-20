@@ -1,9 +1,9 @@
 ![输入图片说明](https://www.niucloud.com/img/readme/%E9%A1%B6%E9%83%A8%E5%B9%BF%E5%91%8A1.jpg)
 
-### NIUCLOUD-admin是什么？
+### NIUCLOUD-ADMIN 是什么？
 niucloud-admin是一款快速开发通用管理后台框架，前端采用最新的技术栈Vite+TypeScript+Vue3+ElementPlus最流行技术架构，后台结合PHP8、Java SDK、Python等主流后端语言搭建，内置集成用户权限、代码生成器、表单设计、云存储、短信发送、素材中心、微信及公众号、Api模块一系列开箱即用功能，是一款快速可以开发企业级应用的软件系统。
 
-### NIUCLOUD-admin采用的技术亮点
+### NIUCLOUD-ADMIN 采用的技术亮点
 
 - 后台php采用thinkphp8+php8+mysql,支持composer快速安装扩展，支持redis缓存以及消息队列，支持多语言设计开发，同时开发采用严格的restful的api设计开发。
 
@@ -29,7 +29,7 @@ niucloud-admin是一款快速开发通用管理后台框架，前端采用最新
 
 - 手机端使用uniapp ，同时使用uview页面展示，可以开发出丰富的手机样式，同时不需要专门学习小程序，app等开发语言，只需要通过uniapp编译就可以。
 
-### NIUCLOUD框架截图
+### NIUCLOUD 框架截图
 ![输入图片说明](https://media.niucloud.com/1704066345d7742c4c0a1a941e836e8d633f209396_aliyun.jpg)
 ![输入图片说明](https://media.niucloud.com/17040664219c6ce47b234eac495c3c4aa6e83920b6_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/17040665085ed007bd6daf220cc1ecd4e301c6008f_aliyun.png)
@@ -85,7 +85,7 @@ niucloud-admin是一款快速开发通用管理后台框架，前端采用最新
 
 
 ### 版权信息
-版权所有Copyright © 2015-2030 niucloud-admin 版权所有
+版权所有Copyright © 2015-2025 niucloud-admin 版权所有
 
 All rights reserved。
 
