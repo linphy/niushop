@@ -8,7 +8,7 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 
 ### NIUCLOUD-ADMIN-SAAS 采用的技术亮点 
 
- **NIUCLOUD-ADMIN = 前端（Vite+TypeScript+Vue3+ElementPlus）+ API接口 + 后端（PHP8+THINKPHP8) + 数据库（MYSQL8.0+）** 
+ 前端（**Vite+TypeScript+Vue3+ElementPlus**）+ **API接口** + 后端（**PHP8+THINKPHP8**) + 数据库（**MYSQL8.0+**） 
 ```
 - 后台php采用thinkphp8+php8+mysql,支持composer快速安装扩展，支持redis缓存以及消息队列，支持多语言设计开发，同时开发采用严格的restful的api设计开发。
 - 后台前后端分离采用element-plus、vue3.0、typescript、vite、pina等前端技术,同时使用i18n支持国际化多语言开发。
