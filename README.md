@@ -10,11 +10,10 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 
   :fa-quote-left: 前端（**Vite+TypeScript+Vue3+ElementPlus**）+ **API**接口完全分离 + 后端（**PHP8+THINKPHP8**) + 数据库（**MYSQL8.0+**） :fa-quote-right: 
 ```
-- 后台php采用thinkphp8+php8+mysql,支持composer快速安装扩展，支持redis缓存以及消息队列，支持多语言设计开发，同时开发采用严格的restful的api设计开发。
+- 支持composer快速安装扩展，支持redis缓存以及消息队列，支持多语言设计开发，采用严格的restful的api设计开发。
 - 后台前后端分离采用element-plus、vue3.0、typescript、vite、pina等前端技术,同时使用i18n支持国际化多语言开发。
-- 手机端采用uniapp前后端分离，同时使用uview、vue3.0、typescript、vite、pina等前端技术，同时使用i18n支持国际化多语言开发，可以灵活编译成h5,微信小程序，支付宝小程序，抖音小程序等使用场景。
-- niucloud-admin采用多租户的saas系统设计，能够提供企业级软件服务运营 ，同时满足用户多站点，多商户，多门店等系统开发需求。
-- niucloud-admin结合当前市面上很多框架结构不规范，导致基础结构不稳定等情况，严格定义了分层设计的开发规范，同时api接口严格采用restful的开发规范，能够满足大型业务系统或者微服务的开发需求。
+- 手机端采用uniapp前后端分离，使用uview、vue3.0、typescript、vite、pina前端技术，支持h5,微信小程序，支付宝小程序，抖音小程序等使用场景。
+- niucloud-admin采用多租户的saas系统设计，支持多站点多商户多门店多应用多插件组合使用。
 - niucloud-admin前端以及后端采用严格的多语言开发规范，包括前端展示，api接口返回，数据验证，错误返回等全部使用多语言设计规范，使开发者能够真生意义上实现多语言的开发需求。
 - niucloud-admin已经搭建好常规系统的开发底层，具体的底层功能包括：管理员管理，权限管理，网站设置，计划任务管理，素材管理，会员管理，会员账户管理，微信公众号以及小程序管理，支付管理，第三方登录管理，消息管理，短信管理，文章管理，前端装修等全面的基础功能，这样开发者不需要开发基础的结构而专心开发业务。
 - niucloud-admin系统内置支持微信/支付宝支付，微信公众号/小程序/短信消息管理，阿里云/腾讯云短信，七牛云/阿里云存储等基础的功能扩展，后续会根据实际业务不断扩展基础组件。
@@ -74,9 +73,11 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 
 ![输入图片说明](https://media.niucloud.com/170312377249fc5bc70c5f914fda3d7c5cf3413ddc_aliyun.jpg)
 
+
 ### 产品LOGO
-![输入图片说明](https://www.niucloud.com/_nuxt/login_logo.650a27e2.png)
 ![输入图片说明](https://foruda.gitee.com/avatar/1682227978769691031/1342405_niushop_1682227978.png)
+
+![输入图片说明](https://www.niucloud.com/_nuxt/login_logo.650a27e2.png)
 
 
 ### 开源使用须知
