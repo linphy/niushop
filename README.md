@@ -28,23 +28,23 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 ![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/1704067302721c5360c622b4934fae659ee1eb0987_aliyun.png)
 
-### 商城SHOP插件
+### 商城插件 :registered: SHOP
 ![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
 
-### 分销FENXIAO插件
+### 分销插件:registered: FENXIAO
 ![输入图片说明](https://media.niucloud.com/1705744442d046875f3a6356e20b4201683c2f08fe_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/17057444230b1a32898072457faa8888b77d9621ff_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/17057444220f55b9430e07e635968a843bcc3e2845_aliyun.png)
 
-### 上门服务O2O插件
+### 上门服务插件:registered: O2O
 ![输入图片说明](https://media.niucloud.com/1705739434bf20bb824783fcee9eea6361f3cfb7aa_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/1705739434483707b8617e0e1489d7d2f51cda111c_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/17057394343bdd84db9c1fa966c7cb0c03c5618ad9_aliyun.png)
 
-### 会员卡VIPCard插件
+### 会员卡VIPCard插件:registered: VIPCard
 ![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
 
-### TOURS旅游系统插件
+### 旅游系统插件:registered: TOURS
 ![输入图片说明](https://media.niucloud.com/17057440675004b59c88adaebcb492a31d3a909944_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/1705744067bad60e348b4dd479d223aa5de963a1bf_aliyun.png)
 
