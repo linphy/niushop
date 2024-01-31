@@ -150,9 +150,8 @@ abstract class BasePay extends Storage
                 $type => [
                     'default' => $config
                 ]
-            ]
-
-
+            ],
+            ['_force' => true]
         );
     }
 
@@ -164,9 +163,6 @@ abstract class BasePay extends Storage
             $return_value = $param->all();
         } else {
             $return_value = $param;
-        }
-        if(isset($return_value['code'])){
-            throw new PayException($return_value['message']);
         }
         return $return_value;
     }

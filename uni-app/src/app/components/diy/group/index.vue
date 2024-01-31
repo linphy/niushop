@@ -1,7 +1,7 @@
 <template>
     <view class="diy-group" id="componentList">
         <view v-for="(component, index) in data.value" :key="component.id"
-        @click="diyStore.changeCurrentIndex(index, component)" class="draggable-element relative cursor-move"
+        @click="diyStore.changeCurrentIndex(index, component)" class="draggable-element relative"
         :class="{ selected: diyStore.currentIndex == index,decorate : diyStore.mode == 'decorate' }" :style="component.pageStyle">
             <template v-if="component.componentName == 'AddonList'">
                 <diy-addon-list :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-addon-list>
@@ -21,24 +21,36 @@
             <template v-if="component.componentName == 'MemberInfo'">
                 <diy-member-info :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-member-info>
             </template>
+            <template v-if="component.componentName == 'Notice'">
+                <diy-notice :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-notice>
+            </template>
             <template v-if="component.componentName == 'RubikCube'">
                 <diy-rubik-cube :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-rubik-cube>
             </template>
             <template v-if="component.componentName == 'Text'">
                 <diy-text :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-text>
             </template>
+            <template v-if="component.componentName == 'GoodsList'">
+                <diy-goods-list :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-goods-list>
+            </template>
+            <template v-if="component.componentName == 'ShopSearch'">
+                <diy-shop-search :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-shop-search>
+            </template>
         </view>
         <template v-if="diyStore.mode == '' && data.global.bottomTabBarSwitch">
             <view class="pt-[20rpx]"></view>
-            <tabbar />
+            <tabbar :addon="tabbarAddonName" />
         </template>
     </view>
 </template>
 <script lang="ts" setup>
+   import diyGoodsList from '@/addon/shop/components/diy/goods-list/index.vue';
+   import diyShopSearch from '@/addon/shop/components/diy/shop-search/index.vue';
    import useDiyStore from '@/app/stores/diy';
-   import { onMounted, nextTick, computed, ref,watch } from 'vue';
+   import { onMounted, nextTick, computed } from 'vue';
    import Sortable from 'sortablejs';
    import { range } from 'lodash-es';
+   import useConfigStore from '@/stores/config'
    const props = defineProps(['data','pullDownRefreshCount']);
    const diyStore = useDiyStore();
 
@@ -48,6 +60,10 @@
        } else {
            return props.data;
        }
+   })
+
+   const tabbarAddonName = computed(() => {
+       return useConfigStore().addon;
    })
 
    onMounted(() => {

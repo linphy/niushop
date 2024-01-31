@@ -11,7 +11,7 @@ export function getCaptcha() {
  * 获取微信公众号授权码
  */
 export function getWechatAuthCode(data : AnyObject) {
-    return request.get('wechat/codeurl', data)
+    return request.get('wechat/codeurl', data, { showErrorMessage: false })
 }
 
 /**
@@ -46,7 +46,7 @@ export function sendSms(data : AnyObject) {
  * 获取微信jssdk config
  */
 export function getWechatSkdConfig(data : AnyObject) {
-    return request.get('wechat/jssdkconfig', data)
+    return request.get('wechat/jssdkconfig', data, { showErrorMessage: false })
 }
 
 /**

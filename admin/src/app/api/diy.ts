@@ -86,26 +86,40 @@ export function getLink(params: Record<string, any>) {
 }
 
 /**
- * 获取底部导航数据
+ * 获取底部导航列表
  */
-export function getDiyBottom(params: Record<string, any>) {
+export function getDiyBottomList(params: Record<string, any>) {
     return request.get(`diy/bottom`, {params})
 }
 
 /**
- * 配置底部导航数据
+ * 获取底部导航数据
+ */
+export function getDiyBottomConfig(params: Record<string, any>) {
+    return request.get(`diy/bottom/config`, {params})
+}
+
+/**
+ * 设置底部导航数据
  * @param params
  * @returns
  */
-export function setDiyBottom(params: Record<string, any>) {
+export function setDiyBottomConfig(params: Record<string, any>) {
     return request.post('diy/bottom', params, {showSuccessMessage: true})
 }
 
 /**
- * 获取页面模板
+ * 获取页面模板类型
  */
 export function getDiyTemplate(params: Record<string, any>) {
     return request.get(`diy/template`, {params})
+}
+
+/**
+ * 获取模板页面列表
+ */
+export function getDiyTemplatePages(params: Record<string, any>) {
+    return request.get(`diy/template/pages`, {params})
 }
 
 /**
@@ -115,6 +129,14 @@ export function getDiyTemplate(params: Record<string, any>) {
  */
 export function getDiyRouteList(params: Record<string, any>) {
     return request.get(`diy/route`, {params})
+}
+
+/**
+ * 获取路由列表（存在的应用插件列表）
+ * @returns
+ */
+export function getDiyRouteAppList() {
+    return request.get(`diy/route/apps`)
 }
 
 /**
@@ -152,10 +174,10 @@ export function changeTemplate(params: Record<string, any>) {
 }
 
 /**
- * 获取预览数据
+ * 获取模板页面（存在的应用插件列表）
  * @param params
  * @returns
  */
-export function getPreviewData(params: Record<string, any>) {
-    return request.put(`diy/preview`, params, {showSuccessMessage: false})
+export function getApps(params: Record<string, any>) {
+    return request.get(`diy/apps`)
 }

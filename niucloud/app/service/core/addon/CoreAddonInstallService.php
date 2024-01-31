@@ -282,19 +282,30 @@ class CoreAddonInstallService extends CoreAddonBaseService
 
         // 放入的文件
         $to_admin_dir = $this->root_path . 'admin' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
-        $to_web_dir = $this->root_path . 'web' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
+        $to_web_dir = $this->root_path . 'web' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
         $to_wap_dir = $this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
         $to_resource_dir = public_path() . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
 
         // 安装admin管理端
         if (file_exists($from_admin_dir)) {
-            dir_copy($from_admin_dir, $to_admin_dir, $this->files['admin']);
+            dir_copy($from_admin_dir, $to_admin_dir, $this->files['admin'], exclude_dirs:['icon']);
+            // 判断图标目录是否存在
+            if (is_dir($from_admin_dir . 'icon')) {
+                $addon_icon_dir = $this->root_path . 'admin' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'styles' . DIRECTORY_SEPARATOR . 'icon' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon;
+                dir_copy($from_admin_dir . 'icon', $addon_icon_dir);
+            }
             // 编译后台图标库文件
             $this->compileAdminIcon();
         }
 
         // 安装电脑端
         if (file_exists($from_web_dir)) {
+            // 安装布局文件
+            $layout = $from_web_dir . 'layouts';
+            if (is_dir($layout)) {
+                dir_copy($layout, $this->root_path . 'web' . DIRECTORY_SEPARATOR . 'layouts');
+                del_target_dir($layout, true);
+            }
             dir_copy($from_web_dir, $to_web_dir, $this->files['web']);
         }
 
@@ -575,17 +586,23 @@ class CoreAddonInstallService extends CoreAddonBaseService
     {
         // 将要删除的根目录
         $to_admin_dir = $this->root_path . 'admin' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
-        $to_web_dir = $this->root_path . 'web' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
+        $to_web_dir = $this->root_path . 'web' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
+        $to_web_layouts = $this->root_path . 'web' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
         $to_wap_dir = $this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
         $to_resource_dir = public_path() . 'addon' . DIRECTORY_SEPARATOR . $this->addon . DIRECTORY_SEPARATOR;
 
         // 卸载admin管理端
         if (is_dir($to_admin_dir)) del_target_dir($to_admin_dir, true);
+        // 移除admin图标
+        $addon_icon_dir = $this->root_path . 'admin' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'styles' . DIRECTORY_SEPARATOR . 'icon' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $this->addon;
+        if (is_dir($addon_icon_dir)) del_target_dir($addon_icon_dir, true);
+
         // 编译后台图标库文件
         $this->compileAdminIcon();
 
         // 卸载pc端
         if (is_dir($to_web_dir)) del_target_dir($to_web_dir, true);
+        if (is_dir($to_web_layouts)) del_target_dir($to_web_layouts, true);
 
         // 卸载手机端
         if (is_dir($to_wap_dir)) del_target_dir($to_wap_dir, true);

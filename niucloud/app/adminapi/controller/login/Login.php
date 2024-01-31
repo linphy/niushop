@@ -11,12 +11,15 @@
 
 namespace app\adminapi\controller\login;
 
+use addon\vipcard\app\service\core\CoreOrderRefundService;
 use app\service\admin\auth\ConfigService;
 use app\service\admin\auth\LoginService;
 use app\service\admin\upgrade\UpgradeService;
 use app\service\core\addon\CoreAddonDevelopBuildService;
 use app\service\core\menu\CoreMenuService;
+use app\service\core\upload\CoreFileService;
 use core\base\BaseAdminController;
+use think\facade\Db;
 use think\Response;
 
 class Login extends BaseAdminController
@@ -64,7 +67,6 @@ class Login extends BaseAdminController
     }
 
     public function test(){
-        (new CoreMenuService())->refreshAddonMenu('shop');
-//        (new CoreAddonDevelopBuildService())->build('shop');
+        dd(rtrim(dirname(root_path()) . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR));
     }
 }

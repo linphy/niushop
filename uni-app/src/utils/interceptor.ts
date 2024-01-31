@@ -2,7 +2,7 @@ import { language } from '@/locale'
 import { checkNeedLogin } from '@/utils/auth'
 import { redirect, urlDeconstruction, getToken, getSiteId } from '@/utils/common'
 import { memberLog } from '@/app/api/auth'
-import { nextTick } from 'vue'
+import useConfigStore from "@/stores/config";
 
 /**
  * 页面跳转拦截器
@@ -14,6 +14,9 @@ export const redirectInterceptor = () => {
 		uni.addInterceptor(name, {
 			invoke(args) {
 				const route = urlDeconstruction(args.url)
+
+				// 检测当前访问的是系统（app）还是插件
+				setAddonName(route.path);
 
 				// 加载语言包
 				language.loadLocaleMessages(route.path, uni.getLocale())
@@ -31,7 +34,7 @@ export const redirectInterceptor = () => {
 				checkNeedLogin(route)
 
 				// 添加会员访问日志
-				if (getToken()) memberLog({ route: route.path, params: JSON.stringify(route.query), pre_route: getCurrentPages()[0].route })
+				if (getToken()) memberLog({ route: route.path, params: JSON.stringify(route.query), pre_route: getCurrentPages()[0]?.route })
 			}
 		})
 	})
@@ -48,7 +51,7 @@ export const launchInterceptor = () => {
 	// #ifdef H5
 	if (process.env.NODE_ENV == 'development') {
 		// 后台DIY装修页面时，获取站点ID
-		
+
 		if (location.search.indexOf('site_id=') != -1) {
 			let site_id = location.search.substr(location.search.indexOf('site_id=')+8);
 			uni.setStorageSync('wap_site_id', site_id);
@@ -60,6 +63,9 @@ export const launchInterceptor = () => {
 		}
 	}
 	// #endif
+
+	// 检测当前访问的是系统（app）还是插件
+	setAddonName(launch.path);
 
 	// 加载语言包
 	language.loadLocaleMessages(launch.path, uni.getLocale())
@@ -74,4 +80,16 @@ export const launchInterceptor = () => {
 
 	// 添加会员访问日志
 	if (getToken()) memberLog({ route: launch.path, params: JSON.stringify(launch.query || {}), pre_route: '' })
+}
+
+/**
+ * 检测当前访问的是系统（app）还是插件，设置插件的底部导航
+  * @param path
+ */
+const setAddonName = (path: string)=>{
+	let pathArr = path.split('/')
+	let route = pathArr[1] == 'addon' ? pathArr[2] : 'app';
+	const configStore = useConfigStore()
+	configStore.addon = route;
+	configStore.getTabbarConfig();
 }

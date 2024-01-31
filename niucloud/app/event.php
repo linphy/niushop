@@ -46,6 +46,8 @@ $system_event = [
         'AppManage' => [
             'app\listener\system\AppManageListener'
         ],
+        //协议类型加载
+        'AgreementType' => [],
         //站点首页加载
         'SiteIndex' => [
             'app\listener\system\SiteIndexListener'
@@ -57,6 +59,9 @@ $system_event = [
         //平台首页加载
         'AdminIndex' => [
             'app\listener\system\AdminIndexListener'
+        ],
+        'BottomNavigation' => [
+            'app\listener\system\BottomNavigationListener'
         ],
         //消息模板数据内容
         'NoticeData' => [

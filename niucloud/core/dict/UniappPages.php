@@ -11,18 +11,22 @@
 namespace core\dict;
 
 
-use app\service\admin\addon\AddonService;
-
 class UniappPages extends BaseDict
 {
     /**
      * 系统uniapp页面
-     * @param array $data //系统
+     * @param array $data
      * @return array|mixed
      */
-    public function load(array $data)
+    public function load(array $data = [])
     {
-        $addons = (new AddonService())->getAddonKeysBySiteId(request()->siteId());
+        // 筛选插件
+        if (!empty($data[ 'addon' ])) {
+            $addons = [ $data[ 'addon' ] ];
+        } else {
+            $addons = $this->getLocalAddons();
+        }
+
         $page_files = [];
         foreach ($addons as $v) {
             $page_path = $this->getAddonDictPath($v) . "diy" . DIRECTORY_SEPARATOR . "pages.php";
@@ -31,7 +35,11 @@ class UniappPages extends BaseDict
             }
         }
         $page_files_data = $this->loadFiles($page_files);
-        $pages = $data;
+        if (!empty($data[ 'addon' ])) {
+            $pages = [];
+        } else {
+            $pages = $data;
+        }
         foreach ($page_files_data as $file_data) {
             if (empty($pages)) {
                 $pages = $file_data;

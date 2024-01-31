@@ -1,0 +1,1 @@
+import{_ as o}from"./delivery-personnel-edit.vue_vue_type_style_index_0_lang-d6e3fe0f.js";import"./index-a2233f8b.js";/* empty css                   *//* empty css                   *//* empty css                  *//* empty css                */import"./el-form-item-4ed993c7.js";/* empty css                 */import"./delivery-af7aa755.js";export{o as default};

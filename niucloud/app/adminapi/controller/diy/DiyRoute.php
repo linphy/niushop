@@ -30,7 +30,9 @@ class DiyRoute extends BaseAdminController
     public function lists()
     {
         $data = $this->request->params([
-            ["title", ""],
+            [ 'title', '' ], // 页面名称
+            [ 'url', '' ], // 路由地址，格式：/app/pages/index/index
+            [ 'addon_name', '' ] // 插件标识
         ]);
         return success((new DiyRouteService())->getList($data));
     }
@@ -62,15 +64,15 @@ class DiyRoute extends BaseAdminController
     public function add()
     {
         $data = $this->request->params([
-            ["title", ""],
-            ["name", ""],
-            ["page", ""],
-            ["share", ""],
-            ["is_share", ""]
+            [ "title", "" ],
+            [ "name", "" ],
+            [ "page", "" ],
+            [ "share", "" ],
+            [ "is_share", "" ]
         ]);
         $this->validate($data, 'app\validate\diy\DiyRoute.add');
         $id = (new DiyRouteService())->add($data);
-        return success('ADD_SUCCESS', ['id' => $id]);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
     /**
@@ -81,11 +83,11 @@ class DiyRoute extends BaseAdminController
     public function edit($id)
     {
         $data = $this->request->params([
-            ["title", ""],
-            ["name", ""],
-            ["page", ""],
-            ["share", ""],
-            ["is_share", ""]
+            [ "title", "" ],
+            [ "name", "" ],
+            [ "page", "" ],
+            [ "share", "" ],
+            [ "is_share", "" ]
         ]);
         $this->validate($data, 'app\validate\diy\DiyRoute.edit');
         (new DiyRouteService())->edit($id, $data);
@@ -109,15 +111,25 @@ class DiyRoute extends BaseAdminController
     public function modifyShare()
     {
         $data = $this->request->params([
-            ['share', ''],
-            ['title', ''],
-            ['name', ''],
-            ['page', ''],
-            ['is_share', 0],
-            ['sort', 0]
+            [ 'share', '' ],
+            [ 'title', '' ],
+            [ 'name', '' ],
+            [ 'page', '' ],
+            [ 'is_share', 0 ],
+            [ 'sort', 0 ]
         ]);
         (new DiyRouteService())->modifyShare($data);
         return success('MODIFY_SUCCESS');
+    }
+
+
+    /**
+     * 获取模板页面（存在的应用插件列表）
+     * @return Response
+     */
+    public function getApps()
+    {
+        return success((new DiyRouteService())->getApps());
     }
 
 }
