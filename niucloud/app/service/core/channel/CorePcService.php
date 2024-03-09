@@ -11,8 +11,7 @@
 
 namespace app\service\core\channel;
 
-use app\dict\sys\ConfigKeyDict;
-use app\model\sys\SysAttachment;
+use app\dict\common\ChannelDict;
 use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
 
@@ -21,23 +20,16 @@ use core\base\BaseCoreService;
  * Class CoreAttachmentService
  * @package app\service\core\sys
  */
-class CoreH5Service extends BaseCoreService
+class CorePcService extends BaseCoreService
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->model = new SysAttachment();
-    }
-
-
 
     /**
-     * 获取h5配置
+     * 获取pc配置
      * @return array|mixed
      */
-    public function getH5(int $site_id)
+    public function getPc(int $site_id)
     {
-        $info = (new CoreConfigService())->getConfig($site_id, ConfigKeyDict::H5)['value'] ?? [];
+        $info = (new CoreConfigService())->getConfig($site_id, ChannelDict::PC)['value'] ?? [];
         if(empty($info))
         {
             $info = [

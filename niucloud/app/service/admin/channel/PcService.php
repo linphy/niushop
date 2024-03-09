@@ -9,51 +9,47 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\service\api\sys;
+namespace app\service\admin\channel;
 
-use app\service\core\sys\CoreSysConfigService;
-use core\base\BaseApiService;
+use app\dict\common\ChannelDict;
+use app\service\core\channel\CorePcService;
+use app\service\core\sys\CoreConfigService;
+use core\base\BaseAdminService;
 
 /**
  * 配置服务层
  * Class ConfigService
  * @package app\service\core\sys
  */
-class ConfigService extends BaseApiService
+class PcService extends BaseAdminService
 {
     //系统配置文件
-
+    public $core_config_service;
 
     public function __construct()
     {
         parent::__construct();
-
+        $this->core_config_service = new CoreConfigService();
     }
 
     /**
-     * 获取版权信息(网站整体，不按照站点设置)
-     * @return array|mixed
+     * 设置pc信息
+     * @param array $value
+     * @return bool
      */
-    public function getCopyright()
+    public function setPc(array $value)
     {
-       return (new CoreSysConfigService())->getCopyright($this->site_id);
+        $data = [
+            'is_open' => $value['is_open']
+        ];
+        return $this->core_config_service->setConfig($this->site_id,ChannelDict::PC, $data);
     }
 
     /**
-     * 获取前端域名
-     * @return array|string[]
+     * 获取pc配置
+     * @return mixed
      */
-    public function getSceneDomain(){
-        return (new CoreSysConfigService())->getSceneDomain($this->site_id);
-    }
-
-    /**
-     * 获取手机端首页列表
-     * @param $data
-     * @return array
-     */
-    public function getWapIndexList($data = [])
-    {
-        return ( new CoreSysConfigService() )->getWapIndexList($data);
+    public function getPc(){
+        return (new CorePcService())->getPc($this->site_id);
     }
 }
