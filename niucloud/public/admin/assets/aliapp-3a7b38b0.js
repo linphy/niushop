@@ -1,1 +1,0 @@
-import{a2 as t}from"./index-a2233f8b.js";function e(){return t.get("aliapp/config")}function p(a){return t.put("aliapp/config",a,{showSuccessMessage:!0})}function n(){return t.get("aliapp/static")}export{n as a,e as g,p as s};
