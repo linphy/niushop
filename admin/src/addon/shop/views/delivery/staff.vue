@@ -21,9 +21,7 @@
                         <el-input v-model="tableData.searchParam.deliver_name" :placeholder="t('deliverNamePlaceholder')" />
                     </el-form-item>
                     <el-form-item :label="t('deliverMobile')" prop="deliver_mobile">
-                        <el-input v-model="tableData.searchParam.deliver_mobile"
-                            :placeholder="t('deliverMobilePlaceholder')"
-                            onkeyup="this.value = this.value.replace(/[^\d]/g,'');" />
+                        <el-input v-model="tableData.searchParam.deliver_mobile" :placeholder="t('deliverMobilePlaceholder')" @keyup="filterNumber($event)" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="getShopDeliveryFn()">{{ t('search') }}</el-button>
@@ -41,8 +39,7 @@
                     <el-table-column :label="t('operation')" fixed="right" align="right" width="120">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-                            <el-button type="primary" link @click="deleteEvent(row.deliver_id)">{{ t('delete')
-                            }}</el-button>
+                            <el-button type="primary" link @click="deleteEvent(row.deliver_id)">{{ t('delete') }}</el-button>
                         </template>
                     </el-table-column>
 
@@ -64,6 +61,7 @@ import deliveryPersonnelEdit from '@/addon/shop/views/delivery/components/delive
 import { getShopDelivery, deleteShopDeliver } from '@/addon/shop/api/delivery'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, FormInstance } from 'element-plus'
+import { filterNumber } from '@/utils/common'
 
 const route = useRoute()
 const router = useRouter()

@@ -2,13 +2,12 @@
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
             <div class="flex justify-between items-center">
-                <span class="text-[20px]">{{ pageName }}</span>
+                <span class="text-page-title">{{ pageName }}</span>
             </div>
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="invoiceManagementTableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('headerName')" prop="header_type">
-                        <el-input v-model="invoiceManagementTableData.searchParam.header_name"
-                            :placeholder="t('headerNamePlaceholder')" clearable />
+                        <el-input v-model="invoiceManagementTableData.searchParam.header_name" :placeholder="t('headerNamePlaceholder')" clearable />
                     </el-form-item>
                     <el-form-item :label="t('createTime')" prop="create_time">
                         <el-date-picker v-model="invoiceManagementTableData.searchParam.create_time" type="datetimerange"
@@ -33,8 +32,7 @@
             </el-tabs>
             <!-- 表格数据 -->
             <div>
-                <el-table :data="invoiceManagementTableData.data" size="large"
-                    v-loading="invoiceManagementTableData.loading">
+                <el-table :data="invoiceManagementTableData.data" size="large" v-loading="invoiceManagementTableData.loading">
                     <template #empty>
                         <span>{{ !invoiceManagementTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
@@ -61,8 +59,7 @@
                     <el-table-column :label="t('operation')" fixed="right" align="center" width="130">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="detailEvent(row)">{{ t('detail') }}</el-button>
-                            <el-button type="primary" link @click="invoiceEvent(row)" v-if="row.is_invoice === 0">{{
-                                t('invoice') }}</el-button>
+                            <el-button type="primary" link @click="invoiceEvent(row)" v-if="row.is_invoice === 0">{{ t('invoice') }}</el-button>
                             <el-button type="primary" link @click="checkOrder(row)">{{ t('viewOrder') }}</el-button>
                         </template>
                     </el-table-column>
@@ -89,6 +86,7 @@ import { FormInstance } from 'element-plus'
 import InvoiceDetail from '@/addon/shop/views/order/components/invoice-detail.vue'
 import InvoiceDialog from '@/addon/shop/views/order/components/invoice-dialog.vue'
 import { useRouter, useRoute } from 'vue-router'
+
 const route = useRoute()
 const router = useRouter()
 

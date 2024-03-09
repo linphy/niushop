@@ -2,24 +2,21 @@
     <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap"
         :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
-                <el-form-item :label="t('serviceName')" prop="service_name">
-                    <el-input v-model="formData.service_name" clearable :placeholder="t('serviceNamePlaceholder')" class="input-width" />
-                </el-form-item>
-				<el-form-item :label="t('image')">
-					<upload-image v-model="formData.image" />
-				</el-form-item>
-                <el-form-item :label="t('desc')" >
-                    <el-input v-model="formData.desc" type="textarea" rows="4" clearable :placeholder="t('descPlaceholder')" class="input-width"/>
-                </el-form-item>
-
+            <el-form-item :label="t('serviceName')" prop="service_name">
+                <el-input v-model="formData.service_name" clearable :placeholder="t('serviceNamePlaceholder')" class="input-width" />
+            </el-form-item>
+            <el-form-item :label="t('image')">
+                <upload-image v-model="formData.image" />
+            </el-form-item>
+            <el-form-item :label="t('desc')" >
+                <el-input v-model="formData.desc" type="textarea" rows="4" clearable :placeholder="t('descPlaceholder')" class="input-width"/>
+            </el-form-item>
         </el-form>
 
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>
@@ -43,7 +40,6 @@ const initialFormData = {
     service_name: '',
     image: '',
     desc: ''
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
@@ -54,7 +50,6 @@ const formRules = computed(() => {
     return {
         service_name: [
             { required: true, message: t('serviceNamePlaceholder'), trigger: 'blur' }
-
         ]
     }
 })

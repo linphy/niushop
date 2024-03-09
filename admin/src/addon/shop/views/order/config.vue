@@ -1,17 +1,18 @@
 <template>
     <div class="main-container pt-[20px]">
         <div class="flex ml-[18px] justify-between items-center">
-            <span class="text-[20px]">{{ pageName }}</span>
+            <span class="text-page-title">{{ pageName }}</span>
         </div>
         <el-form :model="formData" label-width="95" ref="formRef" :rules="rules" class="page-form" v-loading="loading">
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-sm pl-[15px]">{{ t('closeOrderInfo') }}</h3>
                 <el-form-item prop="close_length">
                     <div>
-                        <p class="!text-sm"><span>{{ t('closeOrderInfoLeft') }}</span><el-input
-                                v-model="formData.close_length" class="!w-[120px] mx-[10px]"
-                                onkeyup="this.value = this.value.replace(/[^\d]/g,'');" clearable /><span>{{
-                                    t('closeOrderInfoRight') }}</span></p>
+                        <p class="!text-sm">
+                            <span>{{ t('closeOrderInfoLeft') }}</span>
+                            <el-input v-model="formData.close_length" class="!w-[120px] mx-[10px]" @keyup="filterNumber($event)" clearable />
+                            <span>{{ t('closeOrderInfoRight') }}</span>
+                        </p>
                         <p class="text-[12px] text-[#a9a9a9] leading-normal  mt-[5px]">{{ t('closeOrderInfoBottom') }}</p>
                     </div>
                 </el-form-item>
@@ -23,9 +24,11 @@
                 <h3 class="panel-title !text-sm pl-[15px]">{{ t('confirm') }}</h3>
                 <el-form-item prop="finish_length">
                     <div>
-                        <p class="!text-sm"><span>{{ t('confirmLeft') }}</span><el-input v-model="formData.finish_length"
-                                class="!w-[120px] mx-[10px]" onkeyup="this.value = this.value.replace(/[^\d]/g,'');"
-                                clearable /><span>{{ t('confirmRight') }}</span></p>
+                        <p class="!text-sm">
+                            <span>{{ t('confirmLeft') }}</span>
+                            <el-input v-model="formData.finish_length" class="!w-[120px] mx-[10px]" @keyup="filterNumber($event)" clearable />
+                            <span>{{ t('confirmRight') }}</span>
+                        </p>
                         <p class="text-[12px] text-[#a9a9a9] leading-normal  mt-[5px]">{{ t('confirmBottom') }}</p>
                     </div>
                 </el-form-item>
@@ -37,15 +40,16 @@
                 <h3 class="panel-title !text-sm pl-[15px]">{{ t('refund') }}</h3>
                 <el-form-item prop="refund_length">
                     <div>
-                        <p class="!text-sm"><span>{{ t('refundLeft') }}</span><el-input v-model="formData.refund_length"
-                                class="!w-[120px] mx-[10px]" onkeyup="this.value = this.value.replace(/[^\d]/g,'');"
-                                clearable /><span>{{ t('refundRight') }}</span></p>
+                        <p class="!text-sm">
+                            <span>{{ t('refundLeft') }}</span>
+                            <el-input v-model="formData.refund_length" class="!w-[120px] mx-[10px]" @keyup="filterNumber($event)" clearable />
+                            <span>{{ t('refundRight') }}</span>
+                        </p>
                         <p class="text-[12px] text-[#a9a9a9] leading-normal  mt-[5px]">{{ t('refundBottom') }}</p>
                     </div>
                 </el-form-item>
                 <el-form-item prop="no_allow_refund">
-                    <el-checkbox v-model="formData.no_allow_refund" :label="t('noAllowRefund')" true-label="1"
-                        false-label="2" />
+                    <el-checkbox v-model="formData.no_allow_refund" :label="t('noAllowRefund')" true-label="1" false-label="2" />
                 </el-form-item>
             </el-card>
             <el-card class="box-card !border-none" shadow="never">
@@ -85,11 +89,9 @@
                     <div class="flex">
                         <div>{{ t('invoiceContent') }}</div>
                         <div class="mx-[10px]">
-                            <div v-for="(item, index) in formData.invoice_content"
-                                :class="['w-[120px] relative', index ? 'mt-[15px]' : '']" :key="index">
+                            <div v-for="(item, index) in formData.invoice_content" :class="['w-[120px] relative', index ? 'mt-[15px]' : '']" :key="index">
                                 <el-input v-model="formData.invoice_content[index]" class="!w-[120px]" clearable />
-                                <el-icon v-if="index" color="rgba(0, 0, 0, 0.3)" class="!absolute right-[-6px] top-[-5px]"
-                                    @click="clearInvoiceContent(index)">
+                                <el-icon v-if="index" color="rgba(0, 0, 0, 0.3)" class="!absolute right-[-6px] top-[-5px]" @click="clearInvoiceContent(index)">
                                     <CircleCloseFilled />
                                 </el-icon>
                             </div>
@@ -118,6 +120,7 @@ import { ref } from 'vue'
 import { t } from '@/lang'
 import { getConfig, setConfig } from '@/addon/shop/api/order'
 import { useRoute } from 'vue-router'
+import { filterNumber } from '@/utils/common'
 
 const route = useRoute()
 const pageName = route.meta.title

@@ -10,16 +10,12 @@
             <span class="right">{{ pageName }}</span>
         </div>
         <el-card class="box-card !border-none" shadow="never">
-            <el-form label-width="120px" ref="formRef" :rules="formRules" :model="formData" class="page-form"
-                v-loading="loading">
+            <el-form label-width="120px" ref="formRef" :rules="formRules" :model="formData" class="page-form" v-loading="loading">
                 <el-form-item :label="t('deliveryAddress')" prop="delivery_address">
                     <div class="flex flex-col">
                         <div class="flex">
-                            {{ defaultDeliveryAddress ? defaultDeliveryAddress.full_address :
-                                t('defaultDeliveryAddressEmpty') }}
-                            <el-button type="primary" @click="router.push('/shop/order/address')" link class="ml-[10px]">{{
-                                defaultDeliveryAddress ? t('update') : t('toSetting')
-                            }}</el-button>
+                            {{ defaultDeliveryAddress ? defaultDeliveryAddress.full_address : t('defaultDeliveryAddressEmpty') }}
+                            <el-button type="primary" @click="router.push('/shop/order/address')" link class="ml-[10px]">{{ defaultDeliveryAddress ? t('update') : t('toSetting') }}</el-button>
                         </div>
                         <div class="text-error leading-none"
                             v-if="formData.center.lat && defaultDeliveryAddress && (formData.center.lat != defaultDeliveryAddress.lat || formData.center.lng != defaultDeliveryAddress.lng)">
@@ -76,15 +72,12 @@
                 </el-form-item>
 
                 <el-form-item prop="area" v-loading="mapLoading">
-                    <div class="relative">
+                    <div class="relative w-full">
                         <div id="container" class="w-full h-[520px]"></div>
                         <div class="absolute bg-white w-[270px] h-[500px] z-[1000] top-[10px] left-[10px] region-list">
                             <el-scrollbar>
-                                <div class="p-[10px] region-item pr-[50px] relative" v-for="(item, index) in formData.area"
-                                    :key="index" :class="{ '!border-primary': index == currArea }"
-                                    @click="selectArea(index)">
-                                    <el-form label-width="80px" :model="item" :rules="formRules" class="page-form"
-                                        ref="areaFromRef">
+                                <div class="p-[10px] region-item pr-[50px] relative" v-for="(item, index) in formData.area" :key="index" :class="{ '!border-primary': index == currArea }" @click="selectArea(index)">
+                                    <el-form label-width="80px" :model="item" :rules="formRules" class="page-form" ref="areaFromRef">
                                         <div class="pb-[18px]">
                                             <el-form-item :label="t('areaName')" prop="area_name">
                                                 <el-input v-model="formData.area[index].area_name" type="text" />
@@ -101,19 +94,14 @@
                                             </el-form-item>
                                         </div>
                                         <el-form-item :label="t('areaType')">
-                                            <el-radio-group v-model="formData.area[index].area_type" @click.stop=""
-                                                @change="areaTypeChange(index)">
-                                                <el-radio label="radius" size="large" class="!mr-[10px]">{{ t('radius')
-                                                }}</el-radio>
-                                                <el-radio label="custom" size="large" class="!mr-[0px]">{{ t('custom')
-                                                }}</el-radio>
+                                            <el-radio-group v-model="formData.area[index].area_type" @click.stop="" @change="areaTypeChange(index)">
+                                                <el-radio label="radius" size="large" class="!mr-[10px]">{{ t('radius') }}</el-radio>
+                                                <el-radio label="custom" size="large" class="!mr-[0px]">{{ t('custom') }}</el-radio>
                                             </el-radio-group>
                                         </el-form-item>
                                     </el-form>
                                     <el-button type="primary" link class="absolute z-1 top-[10px] right-[10px]"
-                                        @click.stop="deleteArea(index)">{{
-                                            t('delete')
-                                        }}</el-button>
+                                        @click.stop="deleteArea(index)">{{ t('delete') }}</el-button>
                                 </div>
                                 <div class="p-[10px] text-center">
                                     <el-button type="default" plain @click="addArea">{{ t('addDeliveryArea') }}</el-button>

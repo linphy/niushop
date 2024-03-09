@@ -9,11 +9,9 @@
             <span class="right">{{ pageName }}</span>
         </div>
         <el-card class="box-card !border-none" shadow="never">
-            <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form"
-                v-loading="loading">
+            <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('templateName')" prop="template_name">
-                    <el-input v-model="formData.template_name" clearable :placeholder="t('templateNamePlaceholder')"
-                        class="input-width" />
+                    <el-input v-model="formData.template_name" clearable :placeholder="t('templateNamePlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('feeTypeName')" prop="fee_type">
                     <el-radio-group v-model="formData.fee_type">
@@ -54,8 +52,7 @@
                         </el-table-column>
                         <el-table-column :label="t('operation')" align="right" width="150">
                             <template #default="{ $index }">
-                                <el-button type="primary" @click="delArea('fee', $index)" link v-if="$index">{{ t('delete')
-                                }}</el-button>
+                                <el-button type="primary" @click="delArea('fee', $index)" link v-if="$index">{{ t('delete') }}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -72,8 +69,7 @@
                         <el-table-column :label="t('freeShippingArea')">
                             <template #default="{ row, $index }">
                                 <div class="area-input">
-                                    <el-input v-model="row.free_shipping_area_names" :placeholder="t('areaPlaceholder')"
-                                        readonly @click="selectArea('free_shipping', $index)" />
+                                    <el-input v-model="row.free_shipping_area_names" :placeholder="t('areaPlaceholder')" readonly @click="selectArea('free_shipping', $index)" />
                                 </div>
                             </template>
                         </el-table-column>
@@ -89,15 +85,13 @@
                         </el-table-column>
                         <el-table-column :label="t('operation')" align="right" width="150">
                             <template #default="{ $index }">
-                                <el-button type="primary" @click="delArea('free_shipping', $index)" link>{{ t('delete')
-                                }}</el-button>
+                                <el-button type="primary" @click="delArea('free_shipping', $index)" link>{{ t('delete') }}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                     <div class="form-tip">{{ t('freeShippingAreaTips') }}</div>
                     <div class="mt-[10px]">
-                        <el-button type="primary" @click="addArea('free_shipping')">{{ t('addFreeShippingArea')
-                        }}</el-button>
+                        <el-button type="primary" @click="addArea('free_shipping')">{{ t('addFreeShippingArea') }}</el-button>
                     </div>
                 </el-form-item>
                 <!-- 指定区域不配送 -->
@@ -116,8 +110,7 @@
                         </el-table-column>
                         <el-table-column :label="t('operation')" align="right" width="150">
                             <template #default="{ $index }">
-                                <el-button type="primary" @click="delArea('no_delivery', $index)" link>{{ t('delete')
-                                }}</el-button>
+                                <el-button type="primary" @click="delArea('no_delivery', $index)" link>{{ t('delete') }}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -136,20 +129,16 @@
     </div>
 
     <!-- 选择地区弹窗 -->
-    <el-dialog v-model="showSelectAreaDialog" :title="t('selectArea')" width="80%" class="diy-dialog-wrap"
-        :destroy-on-close="true" @opened="showSelectOpened">
+    <el-dialog v-model="showSelectAreaDialog" :title="t('selectArea')" width="80%" class="diy-dialog-wrap" :destroy-on-close="true" @opened="showSelectOpened">
 
         <el-scrollbar height="50vh">
-            <el-tree :data="areaTreeData" :props="{ children: 'child', label: 'name' }" default-expand-all show-checkbox
-                ref="areaTreeRef" :default-checked-keys="selectedArea" node-key="id" />
+            <el-tree :data="areaTreeData" :props="{ children: 'child', label: 'name' }" default-expand-all show-checkbox ref="areaTreeRef" :default-checked-keys="selectedArea" node-key="id" />
         </el-scrollbar>
 
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showSelectAreaDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirmSelectArea">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirmSelectArea">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>

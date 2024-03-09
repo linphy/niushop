@@ -41,9 +41,7 @@
 						<span class="block w-[150px]">{{ item.datetime }}</span><span class="block w-[500px]">{{ item.remark }}</span>
 					</div>
 				</template>
-				<div>
-					{{ packageData.traces.reason}}
-				</div>
+				<div>{{ packageData.traces.reason}}</div>
 			</div>
 			<div v-else>
 				<div>{{ t('notLogistics') }}</div>

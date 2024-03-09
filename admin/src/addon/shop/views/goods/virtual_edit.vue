@@ -54,10 +54,8 @@
                             <el-cascader v-model="formData.goods_category" :options="goodsCategoryOptions"
                                 :props="goodsCategoryProps" clearable filterable @change="categoryHandleChange" />
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsCategory">{{
-                                    t('refresh') }}</span>
-                                <span class="cursor-pointer text-primary" @click="toGoodsCategoryEvent">{{
-                                    t('addGoodsCategory') }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsCategory">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary" @click="toGoodsCategoryEvent">{{ t('addGoodsCategory') }}</span>
                             </div>
                         </el-form-item>
 
@@ -67,49 +65,36 @@
                                     :value="item.brand_id" />
                             </el-select>
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsBrand">{{
-                                    t('refresh') }}</span>
-                                <span class="cursor-pointer text-primary" @click="toGoodsBrandEvent">{{ t('addGoodsBrand')
-                                }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsBrand">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary" @click="toGoodsBrandEvent">{{ t('addGoodsBrand') }}</span>
                             </div>
                         </el-form-item>
                         <el-form-item :label="t('label')">
                             <el-checkbox-group v-model="formData.label_ids">
-                                <el-checkbox :label="item.label_id" v-for="(item, index) in labelOptions" :key="index" >{{ item.label_name }}
-                                </el-checkbox>
+                                <el-checkbox :label="item.label_id" v-for="(item, index) in labelOptions" :key="index" >{{ item.label_name }}</el-checkbox>
                             </el-checkbox-group>
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsLabel">{{
-                                    t('refresh') }}</span>
-                                <span class="cursor-pointer text-primary" @click="toGoodsLabelEvent">{{ t('addGoodsLabel')
-                                }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsLabel">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary" @click="toGoodsLabelEvent">{{ t('addGoodsLabel') }}</span>
                             </div>
                         </el-form-item>
                         <el-form-item :label="t('goodsService')">
                             <el-checkbox-group v-model="formData.service_ids">
-                                <el-checkbox :label="item.service_id" v-for="(item, index) in serviceOptions" :key="index" >{{ item.service_name
-                                }}
-                                </el-checkbox>
+                                <el-checkbox :label="item.service_id" v-for="(item, index) in serviceOptions" :key="index" >{{ item.service_name }}</el-checkbox>
                             </el-checkbox-group>
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsService">{{
-                                    t('refresh') }}</span>
-                                <span class="cursor-pointer text-primary" @click="toGoodsServiceEvent">{{
-                                    t('addGoodsService') }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsService">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary" @click="toGoodsServiceEvent">{{ t('addGoodsService') }}</span>
                             </div>
                         </el-form-item>
 
-                        <el-form-item :label="t('supplier')"
-                            v-if="formData.addon_shop_supplier && formData.addon_shop_supplier.status == 1">
+                        <el-form-item :label="t('supplier')" v-if="formData.addon_shop_supplier && formData.addon_shop_supplier.status == 1">
                             <el-select v-model="formData.supplier_id" :placeholder="t('supplierPlaceholder')" clearable>
-                                <el-option v-for="item in supplierOptions" :key="item.supplier_id"
-                                    :label="item.supplier_name" :value="item.supplier_id" />
+                                <el-option v-for="item in supplierOptions" :key="item.supplier_id" :label="item.supplier_name" :value="item.supplier_id" />
                             </el-select>
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshSupplier">{{ t('refresh')
-                                }}</span>
-                                <span class="cursor-pointer text-primary" @click="toSupplierEvent">{{ t('addSupplier')
-                                }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshSupplier">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary" @click="toSupplierEvent">{{ t('addSupplier') }}</span>
                             </div>
                         </el-form-item>
                         <el-form-item :label="t('status')">
@@ -119,8 +104,7 @@
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item :label="t('unit')" prop="unit">
-                            <el-input v-model="formData.unit" clearable :placeholder="t('unitPlaceholder')"
-                                class="input-width" show-word-limit maxlength="6" />
+                            <el-input v-model="formData.unit" clearable :placeholder="t('unitPlaceholder')" class="input-width" show-word-limit maxlength="6" />
                         </el-form-item>
                         <el-form-item :label="t('virtualSaleNum')" prop="virtual_sale_num">
                             <el-input v-model="formData.virtual_sale_num" clearable
@@ -138,8 +122,7 @@
 
                 </el-tab-pane>
                 <el-tab-pane :label="t('priceStockTab')" name="price_stock">
-                    <el-form :model="formData" label-width="120px" ref="priceStockFormRef" :rules="formRules"
-                        class="page-form">
+                    <el-form :model="formData" label-width="120px" ref="priceStockFormRef" :rules="formRules" class="page-form">
                         <el-form-item :label="t('specType')" prop="spec_type">
                             <el-radio-group v-model="formData.spec_type">
                                 <el-radio label="single">{{ t('singleSpec') }}</el-radio>
@@ -149,34 +132,29 @@
 
                         <template v-if="formData.spec_type == 'single'">
                             <el-form-item :label="t('price')" prop="price">
-                                <el-input v-model="formData.price" clearable placeholder="0.00" class="input-width"
-                                    type="number" maxlength="10">
+                                <el-input v-model="formData.price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
 
                             <el-form-item :label="t('marketPrice')" prop="market_price">
-                                <el-input v-model="formData.market_price" clearable placeholder="0.00" class="input-width"
-                                    type="number" maxlength="10">
+                                <el-input v-model="formData.market_price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
 
                             <el-form-item :label="t('costPrice')" prop="cost_price">
-                                <el-input v-model="formData.cost_price" clearable placeholder="0.00" class="input-width"
-                                    type="number" maxlength="10">
+                                <el-input v-model="formData.cost_price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('goodsStock')" prop="stock">
-                                <el-input v-model="formData.stock" clearable :placeholder="t('goodsStockPlaceholder')"
-                                    class="input-width" type="number" maxlength="10">
+                                <el-input v-model="formData.stock" clearable :placeholder="t('goodsStockPlaceholder')" class="input-width" maxlength="10">
                                     <template #append>{{ formData.unit ? formData.unit : t('defaultUnit') }}</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('skuNo')">
-                                <el-input v-model="formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')"
-                                    class="input-width" maxlength="50" />
+                                <el-input v-model="formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" />
                             </el-form-item>
                         </template>
 
@@ -204,15 +182,13 @@
                                                         @input="specValueNameInputListener">
 
                                                     </el-input>
-                                                    <el-icon class="icon" :size="20" color="#7b7b7b"
-                                                        @click="deleteSpecValue(index, specIndex)">
+                                                    <el-icon class="icon" :size="20" color="#7b7b7b" @click="deleteSpecValue(index, specIndex)">
                                                         <CircleCloseFilled />
                                                     </el-icon>
 
                                                 </li>
                                             </ul>
-                                            <span class="text-color text-[14px] add-spec-value"
-                                                @click="addSpecValue(index)">{{ t('addSpecValue') }}</span>
+                                            <span class="text-color text-[14px] add-spec-value" @click="addSpecValue(index)">{{ t('addSpecValue') }}</span>
                                             <div class="box"></div>
                                         </div>
 
@@ -239,13 +215,13 @@
                                     </el-select>
 
                                     <el-input v-model="batchOperation.price" clearable :placeholder="t('price')"
-                                        class="set-input" type="number" maxlength="10" />
+                                        class="set-input" maxlength="10" />
                                     <el-input v-model="batchOperation.market_price" clearable
-                                        :placeholder="t('marketPrice')" class="set-input" type="number" maxlength="10" />
+                                        :placeholder="t('marketPrice')" class="set-input" maxlength="10" />
                                     <el-input v-model="batchOperation.cost_price" clearable :placeholder="t('costPrice')"
-                                        class="set-input" type="number" maxlength="10" />
+                                        class="set-input" maxlength="10" />
                                     <el-input v-model="batchOperation.stock" clearable :placeholder="t('stock')"
-                                        class="set-input" type="number" maxlength="10" />
+                                        class="set-input" maxlength="10" />
                                     <el-input v-model="batchOperation.sku_no" clearable maxlength="50"
                                         :placeholder="t('skuNo')" class="set-input" />
                                     <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
@@ -257,8 +233,7 @@
                                     <div class="el-table--fit el-table--default el-table" style="width: 100%;">
                                         <div class="el-table__inner-wrapper">
                                             <div class="el-table__header-wrapper">
-                                                <table class="el-table__header" border="0" cellpadding="0" cellspacing="0"
-                                                    style="width: 100%;">
+                                                <table class="el-table__header" border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
                                                     <thead>
                                                         <tr>
 
@@ -297,27 +272,20 @@
                                             <div class="el-table__body-wrapper">
                                                 <div class="el-scrollbar">
                                                     <div class="el-scrollbar__wrap el-scrollbar__wrap--hidden-default">
-                                                        <div class="el-scrollbar__view"
-                                                            style="display: inline-block; vertical-align: middle;">
-                                                            <table class="el-table__body" cellspacing="0" cellpadding="0"
-                                                                border="0" style="table-layout: fixed; width: 100%;">
+                                                        <div class="el-scrollbar__view" style="display: inline-block; vertical-align: middle;">
+                                                            <table class="el-table__body" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed; width: 100%;">
                                                                 <tbody tabindex="-1">
                                                                     <tr class="el-table__row"
                                                                         v-for="(item, key, index) in goodsSkuData" :key="key">
                                                                         <template v-for="(c, cIndex) in specData" :key="cIndex">
-                                                                            <td class="el-table__cell" :rowspan="c.rowSpan"
-                                                                                v-if="c.index == index">
-                                                                                <div class="cell">{{
-                                                                                    c.spec_value_name
-                                                                                }}
-                                                                                </div>
+                                                                            <td class="el-table__cell" :rowspan="c.rowSpan" v-if="c.index == index">
+                                                                                <div class="cell">{{ c.spec_value_name }}</div>
                                                                             </td>
                                                                         </template>
 
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <upload-image v-model="item.sku_image"
-                                                                                    :limit="1" width="50px" height="50px" />
+                                                                                <upload-image v-model="item.sku_image" :limit="1" width="50px" height="50px" />
                                                                             </div>
                                                                         </td>
 
@@ -325,9 +293,7 @@
                                                                             <div class="cell">
                                                                                 <el-form-item prop="sku_price"
                                                                                     class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.price" clearable
-                                                                                        placeholder="0.00" maxlength="10"
-                                                                                        type="number" />
+                                                                                    <el-input v-model="item.price" clearable placeholder="0.00" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
@@ -335,9 +301,7 @@
                                                                             <div class="cell">
                                                                                 <el-form-item prop="sku_market_price"
                                                                                     class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.market_price"
-                                                                                        clearable placeholder="0.00"
-                                                                                        maxlength="10" type="number" />
+                                                                                    <el-input v-model="item.market_price" clearable placeholder="0.00" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
@@ -345,9 +309,7 @@
                                                                             <div class="cell">
                                                                                 <el-form-item prop="'sku_cost_price"
                                                                                     class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.cost_price"
-                                                                                        clearable placeholder="0.00"
-                                                                                        maxlength="10" type="number" />
+                                                                                    <el-input v-model="item.cost_price" clearable placeholder="0.00" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
@@ -358,14 +320,13 @@
                                                                                     <el-input v-model="item.stock" clearable
                                                                                         placeholder="0"
                                                                                         @input="specStockSum" maxlength="10"
-                                                                                        type="number" />
+                                                                                        />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-input v-model="item.sku_no" clearable
-                                                                                    maxlength="50" />
+                                                                                <el-input v-model="item.sku_no" clearable maxlength="50" />
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">

@@ -8,15 +8,12 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="t('company')" v-if="formData.delivery_type == 'express'" prop="express_company_id">
-                    <el-select v-model="formData.express_company_id" :placeholder="t('companyPlaceholder')"
-                        class="input-width">
-                        <el-option v-for="(item) in companyData" :key="item.index" :label="item.company_name"
-                            :value="item.company_id" />
+                    <el-select v-model="formData.express_company_id" :placeholder="t('companyPlaceholder')" class="input-width">
+                        <el-option v-for="(item) in companyData" :key="item.index" :label="item.company_name" :value="item.company_id" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="t('expressNumber')" v-if="formData.delivery_type == 'express'" prop="express_number">
-                    <el-input v-model="formData.express_number" clearable :placeholder="t('expressNumberPlaceholder')"
-                        class="input-width" />
+                    <el-input v-model="formData.express_number" clearable :placeholder="t('expressNumberPlaceholder')" class="input-width" />
                 </el-form-item>
             </el-form>
             <el-table :data="goodsDataArr" size="large" @selection-change="handleSelectionChange">
@@ -24,16 +21,13 @@
                 <el-table-column prop="goods_name" :label="t('goodsName')" min-width="200" />
                 <el-table-column prop="num" :label="t('num')" min-width="80" />
                 <el-table-column prop="status_name" :label="t('refundStatusName')" min-width="120" />
-                <el-table-column prop="delivery_status_name" :label="t('deliveryStatusName')" min-width="120"
-                    align="right" />
+                <el-table-column prop="delivery_status_name" :label="t('deliveryStatusName')" min-width="120" align="right" />
             </el-table>
         </div>
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>

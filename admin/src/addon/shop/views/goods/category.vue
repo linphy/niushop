@@ -3,7 +3,7 @@
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
             <div class="flex justify-between items-center">
-                <span class="text-[20px]">{{ pageName }}</span>
+                <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" @click="addEvent">
                     {{ t('addCategory') }}
                 </el-button>
@@ -38,7 +38,7 @@
                         </template>
                     </el-table-column>
                     <!-- <el-table-column prop="sort" :label="t('sort')" width="120" /> -->
-                    <el-table-column :label="t('operation')" fixed="right" align="right" width="120">
+                    <el-table-column :label="t('operation')" fixed="right" align="right" width="200">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="spreadEvent(row)">{{ t('spreadGoodsCategory') }}</el-button>
                             <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>

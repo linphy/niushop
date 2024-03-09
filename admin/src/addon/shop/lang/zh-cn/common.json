@@ -18,5 +18,7 @@
   "goodsSelectPopupAfterTip": "个商品",
   "goodsSelectPopupClearGoods": "取消选择",
   "goodsSelectPopupGoodsMinTip": "所选商品数量不能少于",
-  "goodsSelectPopupGoodsMaxTip": "所选商品数量不能超过"
+  "goodsSelectPopupGoodsMaxTip": "所选商品数量不能超过",
+  "goodsStyle": "商品样式",
+  "goodsBgColor": "商品背景"
 }

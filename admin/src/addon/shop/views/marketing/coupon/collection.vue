@@ -18,8 +18,7 @@
                     <el-row class="flex">
                         <el-col :span="8" class="min-w-[100px]">
                             <div class="statistic-card">
-                                <el-statistic
-                                    :value="couponStatistics.receive_count ? Number.parseInt(couponStatistics.receive_count) : '0'"></el-statistic>
+                                <el-statistic :value="couponStatistics.receive_count ? Number.parseInt(couponStatistics.receive_count) : '0'"></el-statistic>
                                 <div class="statistic-footer">
                                     <div class="footer-item text-[14px] text-[#666]">
                                         <span>{{ t('receiveCount') }}</span>
@@ -29,8 +28,7 @@
                         </el-col>
                         <el-col :span="8" class="min-w-[100px]">
                             <div class="statistic-card">
-                                <el-statistic
-                                    :value="couponStatistics.receive_use_count ? Number.parseInt(couponStatistics.receive_use_count) : '0'"></el-statistic>
+                                <el-statistic :value="couponStatistics.receive_use_count ? Number.parseInt(couponStatistics.receive_use_count) : '0'"></el-statistic>
                                 <div class="statistic-footer">
                                     <div class="footer-item text-[14px] text-[#666]">
                                         <span>{{ t('receiveUseCount') }}</span>
@@ -40,9 +38,7 @@
                         </el-col>
                         <el-col :span="8" class="min-w-[100px]">
                             <div class="statistic-card">
-                                <el-statistic
-                                    :value="couponStatistics.receive_expire_count ? Number.parseInt(couponStatistics.receive_expire_count) : '0'"></el-statistic>
-
+                                <el-statistic :value="couponStatistics.receive_expire_count ? Number.parseInt(couponStatistics.receive_expire_count) : '0'"></el-statistic>
                                 <div class="statistic-footer">
                                     <div class="footer-item text-[14px] text-[#666]">
                                         <span>{{ t('receiveExpireCount') }}</span>
@@ -60,8 +56,7 @@
                 <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                     <el-form :inline="true" :model="tableData.searchParam" ref="searchFormRef">
                         <el-form-item :label="t('memberInfo')" prop="keywords">
-                            <el-input v-model="tableData.searchParam.keywords" class="w-[240px]"
-                                :placeholder="t('memberInfoPlaceholder')" />
+                            <el-input v-model="tableData.searchParam.keywords" class="w-[240px]" :placeholder="t('memberInfoPlaceholder')" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="couponCollection()">{{ t('search') }}</el-button>
@@ -95,8 +90,7 @@
                         <el-table-column prop="expire_time" :label="t('expireTime')" />
                         <el-table-column :label="t('operation')" fixed="right" align="right">
                             <template #default="{ row }">
-                                <el-button type="primary" v-if="row.use_time != 0" link @click="showOrder(row)">{{
-                                    t('showOrder') }}</el-button>
+                                <el-button type="primary" v-if="row.use_time != 0" link @click="showOrder(row)">{{ t('showOrder') }}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>

@@ -16,14 +16,13 @@
 				<!-- 优惠券信息： -->
 				<!-- 优惠券名称： -->
 				<el-form-item :label="t('title')" prop="title">
-					<el-input v-model="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width"
-						:maxlength="20" />
+					<el-input v-model="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
 				</el-form-item>
 
 				<!-- 优惠券面额： -->
 				<el-form-item :label="t('price')" prop="price">
-					<el-input type="number" οninput="value=value.replace(/[^\d.]/g,'')" v-model="formData.price" clearable
-						:placeholder="t('pricePlaceholder')" class="input-width" maxlength="60">
+					<el-input v-model="formData.price" clearable
+						:placeholder="t('pricePlaceholder')" class="input-width" maxlength="60" @keyup="filterDigit($event)">
 						<template #append>元</template>
 					</el-input>
 				</el-form-item>
@@ -39,8 +38,7 @@
 
 				<el-form-item v-show="formData.type == 2">
 					<div>
-						<el-cascader v-model="formData.goods_category_ids" :options="options" :props="props"
-							placeholder="请选择商品分类" collapse-tags collapse-tags-tooltip clearable />
+						<el-cascader v-model="formData.goods_category_ids" :options="options" :props="props" placeholder="请选择商品分类" collapse-tags collapse-tags-tooltip clearable />
 					</div>
 				</el-form-item>
 
@@ -62,9 +60,8 @@
 
 				<el-form-item v-show="formData.threshold == 1">
 					最低满
-					<div class="flex items-center" type="number" οninput="value=value.replace(/[^\d.]/g,'')"
-						style="padding-left: 5px;">
-						<el-input type="number" v-model="formData.min_condition_money" clearable class="!w-[100px]" />
+					<div class="flex items-center" style="padding-left: 5px;">
+						<el-input v-model="formData.min_condition_money" @keyup="filterDigit($event)" clearable class="!w-[100px]" />
 					</div>
 					元可用
 				</el-form-item>
@@ -80,7 +77,7 @@
 				<el-form-item v-show="formData.valid_type == 1">
 					领劵后立即生效，有效期
 					<div class="flex items-center" style="padding-left: 5px;">
-						<el-input type="number" v-model="formData.length" clearable class="!w-[100px]" />
+						<el-input v-model="formData.length" @keyup="filterNumber($event)" clearable class="!w-[100px]" />
 						天
 					</div>
 				</el-form-item>
@@ -129,7 +126,7 @@
 
 				<el-form-item v-show="formData.limit == 1 && formData.receive_type == 1" prop="remain_count">
 					<div>
-						<el-input type="number" onkeypress='return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )'
+						<el-input onkeypress='return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )'
 							v-model="formData.remain_count" clearable :placeholder="t('remainCountPlaceholder')"
 							class="input-width" :min="1" :max="100000" :controls="false">
 							<template #append>张</template>
@@ -140,7 +137,7 @@
 
 				<!-- 用户可领取数量 -->
 				<el-form-item :label="t('userLimitCount')" prop="limit_count" v-show="formData.receive_type == 1">
-					<el-input type="number" onkeypress='return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )'
+					<el-input onkeypress='return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )'
 						v-model="formData.limit_count" clearable :placeholder="t('userLimitCountPlaceholder')"
 						class="input-width" :min="1" :max="100000">
 						<template #append>张</template>
@@ -165,6 +162,7 @@ import { t } from '@/lang'
 import { useRouter } from 'vue-router'
 import { getGoodsCategoryList, addCoupon } from '@/addon/shop/api/marketing'
 import type { FormInstance } from 'element-plus'
+import { filterNumber,filterDigit } from '@/utils/common'
 import goodsSelectPopup from '@/addon/shop/views/goods/components/goods-select-popup.vue'
 
 // const route = useRoute()
@@ -224,7 +222,6 @@ const formRules = computed(() => {
         title: [
             { required: true, message: t('titlePlaceholder'), trigger: 'blur' }
         ],
-
         price: [
             { required: true, validator: priceRule, trigger: 'blur' }
         ],

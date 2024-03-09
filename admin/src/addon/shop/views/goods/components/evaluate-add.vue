@@ -10,13 +10,11 @@
                 <upload-image v-model="formData.member_head" />
             </el-form-item>
             <el-form-item :label="t('memberName')" prop="member_name">
-                <el-input v-model="formData.member_name" clearable :placeholder="t('memberNamePlaceholder')"
-                    class="input-width" />
+                <el-input v-model="formData.member_name" clearable :placeholder="t('memberNamePlaceholder')" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('createTime')" prop="create_time">
                 <div class="input-width">
-                    <el-date-picker clearable v-model="formData.create_time" type="datetime"
-                        :placeholder="t('createTimePlaceholder')" value-format="YYYY-MM-DD HH:mm:ss" />
+                    <el-date-picker clearable v-model="formData.create_time" type="datetime" :placeholder="t('createTimePlaceholder')" value-format="YYYY-MM-DD HH:mm:ss" />
                 </div>
             </el-form-item>
 
@@ -30,8 +28,7 @@
                 <el-rate clearable v-model="formData.scores" />
             </el-form-item>
             <el-form-item :label="t('content')" prop="content">
-                <el-input v-model="formData.content" type="textarea" rows="4" clearable
-                    :placeholder="t('contentPlaceholder')" class="input-width" />
+                <el-input v-model="formData.content" type="textarea" rows="4" clearable :placeholder="t('contentPlaceholder')" class="input-width" />
             </el-form-item>
 
             <el-form-item :label="t('images')">
@@ -42,9 +39,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
 
@@ -85,7 +80,6 @@ const formRules = computed(() => {
     return {
         goods_id: [
             { required: true, message: t('goodsIdPlaceholder'), trigger: 'blur' }
-
         ],
         member_head: [
             { required: true, message: t('memberHeadPlaceholder'), trigger: 'blur' }
@@ -95,15 +89,12 @@ const formRules = computed(() => {
         ],
         content: [
             { required: true, message: t('contentPlaceholder'), trigger: 'blur' }
-
         ],
         images: [
             { required: true, message: t('imagesPlaceholder'), trigger: 'blur' }
-
         ],
         create_time: [
             { required: true, message: t('createTimePlaceholder'), trigger: 'blur' }
-
         ]
     }
 })

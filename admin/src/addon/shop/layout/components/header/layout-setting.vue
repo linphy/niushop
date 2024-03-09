@@ -7,7 +7,7 @@
                 <!-- 黑暗模式 -->
                 <div class="setting-item flex items-center justify-between mb-[10px]">
                     <div class="title text-base text-tx-secondary">{{ t('layout.darkMode') }}</div>
-                    <div class="">
+                    <div>
                         <el-switch v-model="dark" :active-value="true" :inactive-value="false" />
                     </div>
                 </div>

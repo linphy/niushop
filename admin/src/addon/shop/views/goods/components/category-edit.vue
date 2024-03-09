@@ -1,17 +1,13 @@
 <template>
-    <el-dialog v-model="showDialog" :title="title" width="480"
-        class="diy-dialog-wrap" :destroy-on-close="true">
-        <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form"
-            v-loading="loading">
+    <el-dialog v-model="showDialog" :title="title" width="480" class="diy-dialog-wrap" :destroy-on-close="true">
+        <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
             <el-form-item :label="t('categoryName')" prop="category_name">
-                <el-input v-model="formData.category_name" clearable :placeholder="t('categoryNamePlaceholder')"
-                    class="input-width" maxlength="10" show-word-limit />
+                <el-input v-model="formData.category_name" clearable :placeholder="t('categoryNamePlaceholder')" class="input-width" maxlength="10" show-word-limit />
             </el-form-item>
             <el-form-item :label="t('pid')" prop="pid">
                 <el-select v-model="formData.pid" clearable :disabled="!!formData.child_count" placeholder="Select" class="input-width">
                     <el-option label="顶级分类" :value="0" />
-                    <el-option v-for="(item) in optionList" :key="item.category_id" :label="item.category_name"
-                        :value="item.category_id" />
+                    <el-option v-for="(item) in optionList" :key="item.category_id" :label="item.category_name" :value="item.category_id" />
                 </el-select>
             </el-form-item>
             <el-form-item :label="t('image')">
@@ -26,9 +22,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>
@@ -56,7 +50,6 @@ const initialFormData = {
     child_count: 0,
     // sort: 9999,
     level: 1
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
@@ -67,18 +60,16 @@ const formRules = computed(() => {
     return {
         category_id: [
             { required: true, message: t('categoryIdPlaceholder'), trigger: 'blur' }
-
         ],
         category_name: [
             { required: true, message: t('categoryNamePlaceholder'), trigger: 'blur' }
-
         ],
         pid: [
             { required: true, message: t('pidPlaceholder'), trigger: 'change' }
-
         ]
     }
 })
+
 interface optionListType {
     category_id: number
     category_name: string
