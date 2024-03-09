@@ -4,14 +4,13 @@
 		<el-card class="box-card !border-none" shadow="never">
 
 			<div class="flex justify-between items-center">
-				<span class="text-[20px]">{{ pageName }}</span>
+				<span class="text-page-title">{{ pageName }}</span>
 			</div>
 
 			<el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
 				<el-form :inline="true" :model="orderTable.searchParam" ref="searchFormRef">
 					<el-form-item :label="t('orderRefundNo')" prop="order_refund_no">
-						<el-input v-model="orderTable.searchParam.order_refund_no"
-							:placeholder="t('orderRefundNoPlaceholder')" />
+						<el-input v-model="orderTable.searchParam.order_refund_no" :placeholder="t('orderRefundNoPlaceholder')" />
 					</el-form-item>
 					<el-form-item :label="t('createTime')" prop="create_time">
 						<el-date-picker v-model="orderTable.searchParam.create_time" type="datetimerange"
@@ -48,23 +47,19 @@
 					<div v-if="!orderTable.loading">
 						<template v-if="orderTable.data.length">
 							<div v-for="(item, index) in orderTable.data" :key="index">
-								<div
-									class="flex items-center justify-between bg-[#f7f8fa] mt-[10px] border-[#e4e7ed] border-solid border-b-[1px] px-3 h-[35px] text-[12px] text-[#666]">
+								<div class="flex items-center justify-between bg-[#f7f8fa] mt-[10px] border-[#e4e7ed] border-solid border-b-[1px] px-3 h-[35px] text-[12px] text-[#666]">
 									<div>
-										<span class="ml-5">{{ t('orderRefundNo') }}：{{ (item as any).order_refund_no
-										}}</span>
+										<span class="ml-5">{{ t('orderRefundNo') }}：{{ (item as any).order_refund_no }}</span>
 									</div>
 								</div>
 
-								<el-table :data="(item as any).order_goods" size="large" :show-header="false"
-									ref="multipleTable">
+								<el-table :data="(item as any).order_goods" size="large" :show-header="false" ref="multipleTable">
 									<el-table-column type="selection" width="40" />
 									<el-table-column align="left" min-width="240">
 										<template #default="{ row }">
 											<div class="flex cursor-pointer">
 												<div class="flex items-center min-w-[50px] mr-[10px]">
-													<img class="w-[50px] h-[50px]" v-if="row.goods_image_thumb_small"
-														:src="img(row.goods_image_thumb_small)" alt="">
+													<img class="w-[50px] h-[50px]" v-if="row.goods_image_thumb_small" :src="img(row.goods_image_thumb_small)" alt="">
 													<img class="w-[50px] h-[50px]" v-else src="" alt="">
 												</div>
 												<div class="flex">
@@ -82,8 +77,7 @@
 									</el-table-column>
 									<el-table-column min-width="120">
 										<template #default>
-											<el-button link type="primary" @click="memberEvent(item.member.member_id)">{{
-												item.member.nickname }}</el-button>
+											<el-button link type="primary" @click="memberEvent(item.member.member_id)">{{ item.member.nickname }}</el-button>
 										</template>
 									</el-table-column>
 									<el-table-column min-width="120">
@@ -108,17 +102,17 @@
 									</el-table-column>
 									<el-table-column align="right" min-width="120">
 										<template #default>
-											<el-button type="primary" link @click="detailEvent(item)">{{ t('info')
-											}}</el-button>
+											<el-button type="primary" link @click="detailEvent(item)">{{ t('info') }}</el-button>
 										</template>
 									</el-table-column>
 								</el-table>
-								<div v-if="item.shop_remark"
-									class="text-[14px] h-[30px] leading-[30px] px-3 bg-[#fff0e5] text-[#ff7f5b]"><span
-										class="mr-[5px]">{{ t('notes') }}：</span><span>{{ item.shop_remark }}</span></div>
+								<div v-if="item.shop_remark" class="text-[14px] h-[30px] leading-[30px] px-3 bg-[#fff0e5] text-[#ff7f5b]">
+									<span class="mr-[5px]">{{ t('notes') }}：</span>
+									<span>{{ item.shop_remark }}</span>
+								</div>
 							</div>
 						</template>
-						<el-empty v-else :description="t('emptyData')" />
+						<el-empty v-else :image-size="1" :description="t('emptyData')" />
 					</div>
 				</div>
 				<div class="mt-[16px] flex justify-end">

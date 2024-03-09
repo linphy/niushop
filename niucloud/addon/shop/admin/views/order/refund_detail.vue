@@ -76,14 +76,11 @@
 					<el-col :span="8">
 						<el-form-item :label="t('refundVoucher')">
 							<div class="input-width flex" v-if="formData.voucher">
-								<div class="mr-3" v-for="(voucherItem, voucherIndex) in formData.voucher"
-									:key="voucherIndex">
-									<el-image v-if="voucherItem" class="w-[70px] h-[70px]" :src="img(voucherItem)"
-										fit="contain">
+								<div class="mr-3" v-for="(voucherItem, voucherIndex) in formData.voucher" :key="voucherIndex">
+									<el-image v-if="voucherItem" class="w-[70px] h-[70px]" :src="img(voucherItem)" fit="contain">
 										<template #error>
 											<div class="image-slot">
-												<img class="w-[70px] h-[70px]"
-													src="@/addon/shop/assets/goods_default.png" />
+												<img class="w-[70px] h-[70px]" src="@/addon/shop/assets/goods_default.png" />
 											</div>
 										</template>
 									</el-image>
@@ -97,21 +94,16 @@
 				</el-row>
 				<h3 class="panel-title">{{ t('refundStatus') }}</h3>
 				<div class="mb-[20px]">
-					<p><span class="ml-[30px] text-[14px] mr-[20px]">{{ t('refundStatus') }}：</span><span
-							class="text-[14px]">{{ formData.status_name }}</span></p>
+					<p>
+						<span class="ml-[30px] text-[14px] mr-[20px]">{{ t('refundStatus') }}：</span>
+						<span class="text-[14px]">{{ formData.status_name }}</span>
+					</p>
 					<div class="flex mt-[10px]">
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							v-if="formData.status == 1" @click="agreeEvent">{{ t('agree') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							v-if="formData.status == 1" @click="refuseEvent">{{ t('refuse') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							v-if="formData.status == 4 && formData.refund_type == 2" @click="deliverEvent">{{
-								t('confirmDelivery') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							v-if="formData.status == 4 && formData.refund_type == 2" @click="deliveryRefuseEvent">{{
-								t('refuse') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							v-if="formData.status == 6" @click="transferEvent">{{ t('transferAccounts') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" v-if="formData.status == 1" @click="agreeEvent">{{ t('agree') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" v-if="formData.status == 1" @click="refuseEvent">{{ t('refuse') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" v-if="formData.status == 4 && formData.refund_type == 2" @click="deliverEvent">{{ t('confirmDelivery') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" v-if="formData.status == 4 && formData.refund_type == 2" @click="deliveryRefuseEvent">{{ t('refuse') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" v-if="formData.status == 6" @click="transferEvent">{{ t('transferAccounts') }}</span>
 					</div>
 					<div class="flex ml-[30px] mt-[15px]">
 						<span class="text-[14px] text-[#ff7f5b]">{{ t('remind') }}：</span>
@@ -143,8 +135,7 @@
 				<h3 class="mt-[50px] mb-[20px]" v-if="formData.refund_log.length > 0">{{ t('operateLog') }}</h3>
 				<div class="mb-[100px]" style="min-height: 100px">
 					<template v-if="formData.refund_log.length > 0">
-						<div  class="flex" v-for="(items, index) in formData.refund_log"
-						:key="index">
+						<div class="flex" v-for="(items, index) in formData.refund_log" :key="index">
 							<div class="mr-[20px]">
 								<div class="leading-[1] w-full text-[14px] w-[100px] flex justify-end">
 									{{ items.create_time.split(' ')[0] }}
@@ -154,12 +145,10 @@
 								</div>
 							</div>
 							<div>
-								<div
-									class="w-[16px] h-[16px] flex items-center bg-[#D1EBFF] border-[1px] border-[#0091FF] rounded-[999px]">
+								<div class="w-[16px] h-[16px] flex items-center bg-[#D1EBFF] border-[1px] border-[#0091FF] rounded-[999px]">
 									<div class="w-[8px] h-[8px] mx-auto bg-[#0091FF] rounded-[999px]"></div>
 								</div>
-								<div v-if="index + 1 != formData.refund_log.length"
-									class="w-[2px] h-[50px] bg-[#D1EBFF] mx-auto">
+								<div v-if="index + 1 != formData.refund_log.length" class="w-[2px] h-[50px] bg-[#D1EBFF] mx-auto">
 								</div>
 							</div>
 							<div>
@@ -178,10 +167,8 @@
 				<el-empty :description="t('orderInfoEmpty')" />
 			</el-card>
 		</el-form>
-		<el-dialog v-model="refuseShowDialog" :title="t('orderRefundRefuse')" width="460px" class="diy-dialog-wrap"
-			:destroy-on-close="true">
-			<el-form :model="refuseFormData" label-width="90px" ref="refuseFormRef" :rules="refundFormRules"
-				class="page-form">
+		<el-dialog v-model="refuseShowDialog" :title="t('orderRefundRefuse')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
+			<el-form :model="refuseFormData" label-width="90px" ref="refuseFormRef" :rules="refundFormRules" class="page-form">
 				<el-form-item :label="t('refuseReason')" prop="shop_reason">
 					<el-input v-model="refuseFormData.shop_reason" type="textarea" rows="4" clearable class="input-width" />
 				</el-form-item>
@@ -189,17 +176,13 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="refuseShowDialog = false">{{ t('cancel') }}</el-button>
-					<el-button type="primary" :loading="loading" @click="confirm(refuseFormRef)">{{
-						t('confirm')
-					}}</el-button>
+					<el-button type="primary" :loading="loading" @click="confirm(refuseFormRef)">{{ t('confirm') }}</el-button>
 				</span>
 			</template>
 		</el-dialog>
 
-		<el-dialog v-model="agreeRefundDialog" :title="t('orderRefundAgree')" width="460px" class="diy-dialog-wrap"
-			:destroy-on-close="true">
-			<el-form :model="refuseFormData" label-width="120px" ref="formRef" :rules="formRules" class="page-form"
-				v-loading="loading">
+		<el-dialog v-model="agreeRefundDialog" :title="t('orderRefundAgree')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
+			<el-form :model="refuseFormData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 				<el-form-item :label="t('applyMoney')">
 					<span>￥{{ refuseFormData.apply_money }}</span>
 				</el-form-item>
@@ -208,17 +191,14 @@
 				</el-form-item>
 				<el-form-item :label="t('refundDeliveryAddress')" v-if="refuseFormData.refund_type == 2">
 					<el-select v-model="refuseFormData.refund_address_id" clearable class="input-item">
-						<el-option v-for="(item, index) in refundAddress" :key="index" :label="item.full_address"
-							:value="item.id"></el-option>
+						<el-option v-for="(item, index) in refundAddress" :key="index" :label="item.full_address" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="agreeRefundDialog = false">{{ t('cancel') }}</el-button>
-					<el-button type="primary" :loading="loading" @click="agreeRefundEvent(formRef)">{{
-						t('confirm')
-					}}</el-button>
+					<el-button type="primary" :loading="loading" @click="agreeRefundEvent(formRef)">{{ t('confirm') }}</el-button>
 				</span>
 			</template>
 		</el-dialog>

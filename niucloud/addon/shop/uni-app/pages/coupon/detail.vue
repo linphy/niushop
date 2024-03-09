@@ -21,10 +21,8 @@
                 <text v-else>满{{ detail.coupon_min_price }}元可用</text>
             </view>
             <view class="text-[28rpx] text-[#909399] mt-[14rpx] text-center">
-                <text v-if="detail.valid_type == 1">领取之日起<text class="text-[#FF4543]">{{
-                    detail.length}}</text>天内有效</text>
-                <text v-else> 有效期至<text class="text-[#FF4543]">{{ detail.valid_end_time ?
-                    detail.valid_end_time.slice(0, 10) : '' }}</text></text>
+                <text v-if="detail.valid_type == 1">领取之日起<text class="text-[#FF4543]">{{ detail.length}}</text>天内有效</text>
+                <text v-else> 有效期至<text class="text-[#FF4543]">{{ detail.valid_end_time ? detail.valid_end_time.slice(0, 10) : '' }}</text></text>
             </view>
             <view class="flex justify-center items-center mt-[80rpx]">
                 <button v-if="detail.btnType === 'collected'"
@@ -96,7 +94,7 @@ const getShopCouponInfoFn = (id: number) => {
         loading.value = false
         detail.value = {}
         setTimeout(() => {
-				redirect({ url: '/addon/shop/pages/index', mode: 'reLaunch' })
+            redirect({ url: '/addon/shop/pages/index', mode: 'reLaunch' })
 		}, 600)
     })
 }

@@ -14,7 +14,7 @@
                 <el-scrollbar class="h-[calc( 100vh - 64px )]">
                     <el-menu :default-active="oneMenuActive" :router="true" class="aside-menu" unique-opened="true" :collapse="systemStore.menuIsCollapse">
                         <template v-for="(item, index) in oneMenuData" :key="index">
-                            <el-menu-item :index="item.path" @click="router.push({ name: item.name })" v-if="item.meta.show">
+                            <el-menu-item :index="item.original_name" @click="router.push({ name: item.name })" v-if="item.meta.show">
                                 <div v-if="item.meta.icon" class="w-[16px] h-[16px] relative flex justify-center">
                                     <el-image class="w-[16px] h-[16px] rounded-[50%] overflow-hidden" :src="item.meta.icon" fit="fill" v-if="isUrl(item.meta.icon)"/>
                                     <icon :name="item.meta.icon" class="absolute top-[50%] -translate-y-[50%]" v-else />
@@ -63,6 +63,7 @@ const twoMenuData = ref<Record<string, any>[]>([])
 const addonRouters: Record<string, any> = {}
 
 routers.forEach(item => {
+    item.original_name = item.name
     if (item.meta.addon == '') {
         if (item.children && item.children.length) {
             item.name = findFirstValidRoute(item.children)
@@ -71,7 +72,7 @@ routers.forEach(item => {
     } else if (item.meta.addon != '' && siteInfo?.apps.length <= 1 && siteInfo?.apps[0].key == item.meta.addon) {
         if (item.children) {
             item.children.forEach((citem: Record<string, any>) => {
-                citem.path = `${item.path}/${citem.path}`
+                citem.original_name = citem.name
                 if (citem.children && citem.children.length) {
                     citem.name = findFirstValidRoute(citem.children)
                 }
@@ -98,29 +99,30 @@ if (siteInfo?.apps.length > 1) {
                 app: item.app,
                 show: true
             },
+            original_name: item.key,
             name: addonIndexRoute[item.key]
         })
     })
     oneMenuData.value.unshift(...routers)
 }
 
-const oneMenuActive = ref(route.matched[1].path)
+const oneMenuActive = ref(route.matched[1].name)
 
 watch(route, () => {
     // 多应用
     if (siteInfo?.apps.length > 1) {
         twoMenuData.value = route.matched[1].children
-        oneMenuActive.value = route.matched[1].path
+        oneMenuActive.value = route.matched[1].name
     } else {
         // 单应用
         if (route.meta.addon == '') {
-            oneMenuActive.value = route.matched[1].path
+            oneMenuActive.value = route.matched[1].name
             twoMenuData.value = route.matched[1].children ?? []
         } else if (route.meta.addon && route.meta.addon != siteInfo?.apps[0].key) {
             oneMenuActive.value = '/site/app'
             twoMenuData.value = route.matched[1].children ?? []
         } else {
-            oneMenuActive.value = route.matched[2].path
+            oneMenuActive.value = route.matched[2].name
             twoMenuData.value = route.matched[2].children ?? []
         }
     }
@@ -174,11 +176,10 @@ watch(route, () => {
                 font-size: 14px;
             }
             &.is-active{
-                background-color:  #f3f3f3 !important;
-                color: #333;
+                background-color: var(--el-color-primary-light-9) !important;
             }
             &:hover{
-                background-color: transparent;
+                background-color: #f7f7f7;
                 color: var(--el-color-primary);
             }
         }
@@ -196,7 +197,7 @@ watch(route, () => {
                     font-size: 14px;
                 }
                 &:hover{
-                    background-color: transparent;
+                    background-color: #f7f7f7;
                     color: var(--el-color-primary);
                 }
                 .el-icon.el-sub-menu__icon-arrow{

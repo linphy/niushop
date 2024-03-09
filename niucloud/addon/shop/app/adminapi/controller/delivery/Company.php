@@ -22,15 +22,16 @@ use addon\shop\app\service\admin\delivery\CompanyService;
  */
 class Company extends BaseAdminController
 {
-   /**
-    * 获取物流公司列表
-    * @return \think\Response
-    */
-    public function lists(){
-        $data = $this->request->params([
-             ["company_name",""],
-        ]);
-        return success((new CompanyService())->getPage($data));
+    /**
+     * 获取物流公司列表
+     * @return \think\Response
+     */
+    public function lists()
+    {
+        $data = $this->request->params( [
+            [ "company_name", "" ],
+        ] );
+        return success( ( new CompanyService() )->getPage( $data ) );
     }
 
     /**
@@ -38,24 +39,26 @@ class Company extends BaseAdminController
      * @param int $id
      * @return \think\Response
      */
-    public function info(int $id){
-        return success((new CompanyService())->getInfo($id));
+    public function info(int $id)
+    {
+        return success( ( new CompanyService() )->getInfo( $id ) );
     }
 
     /**
      * 添加物流公司
      * @return \think\Response
      */
-    public function add(){
-        $data = $this->request->params([
-             ["company_name",""],
-             ["logo",""],
-             ["url",""],
-             ["express_no",""],
-        ]);
-        $this->validate($data, 'addon\shop\app\validate\delivery\Company.add');
-        $id = (new CompanyService())->add($data);
-        return success('ADD_SUCCESS', ['id' => $id]);
+    public function add()
+    {
+        $data = $this->request->params( [
+            [ "company_name", "" ],
+            [ "logo", "" ],
+            [ "url", "" ],
+            [ "express_no", "" ],
+        ] );
+        $this->validate( $data, 'addon\shop\app\validate\delivery\Company.add' );
+        $id = ( new CompanyService() )->add( $data );
+        return success( 'ADD_SUCCESS', [ 'id' => $id ] );
     }
 
     /**
@@ -63,16 +66,17 @@ class Company extends BaseAdminController
      * @param $id  物流公司id
      * @return \think\Response
      */
-    public function edit($id){
-        $data = $this->request->params([
-             ["company_name",""],
-             ["logo",""],
-             ["url",""],
-             ["express_no",""],
-        ]);
-        $this->validate($data, 'addon\shop\app\validate\delivery\Company.edit');
-        (new CompanyService())->edit($id, $data);
-        return success('EDIT_SUCCESS');
+    public function edit($id)
+    {
+        $data = $this->request->params( [
+            [ "company_name", "" ],
+            [ "logo", "" ],
+            [ "url", "" ],
+            [ "express_no", "" ],
+        ] );
+        $this->validate( $data, 'addon\shop\app\validate\delivery\Company.edit' );
+        ( new CompanyService() )->edit( $id, $data );
+        return success( 'EDIT_SUCCESS' );
     }
 
     /**
@@ -80,9 +84,10 @@ class Company extends BaseAdminController
      * @param $id  物流公司id
      * @return \think\Response
      */
-    public function del(int $id){
-        (new CompanyService())->del($id);
-        return success('DELETE_SUCCESS');
+    public function del(int $id)
+    {
+        ( new CompanyService() )->del( $id );
+        return success( 'DELETE_SUCCESS' );
     }
 
 

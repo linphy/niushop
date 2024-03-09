@@ -34,6 +34,8 @@
 	import useDiyStore from '@/app/stores/diy';
 	import { useShare } from '@/hooks/useShare'
 	import { img, redirect } from '@/utils/common';
+    import diyGroup from '@/addon/components/diy/group/index.vue'
+    import fixedGroup from '@/addon/components/fixed/group/index.vue'
 
 	const { setShare, onShareAppMessage, onShareTimeline } = useShare()
 	const loading = ref(true);

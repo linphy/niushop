@@ -154,7 +154,7 @@ class CouponService extends BaseAdminService
         } else {
             if ($data[ 'receive_type_time' ] == 1) {
                 if (!empty($data[ 'receive_time' ])) {
-                    $data[ 'start_time' ] = strtotime($data[ 'receive_time' ][ 0 ]);;
+                    $data[ 'start_time' ] = strtotime($data[ 'receive_time' ][ 0 ]);
                     $data[ 'end_time' ] = strtotime($data[ 'receive_time' ][ 1 ]);
                 } else {
                     $data[ 'start_time' ] = '';
@@ -260,7 +260,7 @@ class CouponService extends BaseAdminService
         } else {
             if ($data[ 'receive_type_time' ] == 1) {
                 if (!empty($data[ 'receive_time' ])) {
-                    $data[ 'start_time' ] = strtotime($data[ 'receive_time' ][ 0 ]);;
+                    $data[ 'start_time' ] = strtotime($data[ 'receive_time' ][ 0 ]);
                     $data[ 'end_time' ] = strtotime($data[ 'receive_time' ][ 1 ]);
                 } else {
                     $data[ 'start_time' ] = '';

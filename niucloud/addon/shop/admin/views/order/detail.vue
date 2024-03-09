@@ -8,8 +8,7 @@
 			<span class="adorn">|</span>
 			<span class="right">{{ pageName }}</span>
 		</div>
-		<el-form :model="formData" label-width="100px" ref="formRef" class="page-form" v-loading="loading"
-			label-position="left">
+		<el-form :model="formData" label-width="100px" ref="formRef" class="page-form" v-loading="loading" label-position="left">
 			<el-card class="box-card !border-none relative" shadow="never" v-if="formData">
 				<h3 class="panel-title">{{ t('orderInfo') }}</h3>
 				<el-row class="row-bg px-[30px] mb-[20px]" :gutter="20">
@@ -68,17 +67,15 @@
 				</el-row>
 				<h3 class="panel-title">{{ t('orderStatus') }}</h3>
 				<div class="mb-[20px]">
-					<p><span class="ml-[30px] text-[14px] mr-[20px]">{{ t('orderStatus') }}：</span><span
-							class="text-[14px]">{{ formData.status_name.name }}</span></p>
+					<p>
+						<span class="ml-[30px] text-[14px] mr-[20px]">{{ t('orderStatus') }}：</span>
+						<span class="text-[14px]">{{ formData.status_name.name }}</span>
+					</p>
 					<div class="flex mt-[10px]">
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#ff7f5b] bg-[#fff0e5] cursor-pointer"
-							@click="setNotes">{{ t('notes') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							@click="delivery" v-if="formData.status == 2">{{ t('delivery') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							@click="close" v-if="formData.status == 1">{{ t('close') }}</span>
-						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer"
-							@click="finish" v-if="formData.status == 3">{{ t('finish') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#ff7f5b] bg-[#fff0e5] cursor-pointer" @click="setNotes">{{ t('notes') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="delivery" v-if="formData.status == 2">{{ t('delivery') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="close" v-if="formData.status == 1">{{ t('close') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="finish" v-if="formData.status == 3">{{ t('finish') }}</span>
 						<div class="flex" v-if="formData.order_delivery">
 							<template v-for="(item, index) in formData.order_delivery" :key="index">
 								<span v-if="item.delivery_type == 'express'"
@@ -141,19 +138,17 @@
 					<div class="flex" v-for="(items, index) in formData.order_log" :key="index">
 						<div class="mr-[20px]">
 							<div class="leading-[1] w-full text-[14px] w-[100px] flex justify-end">
-								{{ items.create_time.split(' ')[0] }}
+								{{ items.create_time && items.create_time.split(' ')[0] }}
 							</div>
 							<div class="leading-[1] w-full text-[14px]  w-[100px] flex justify-end mt-[15px]">
-								{{ items.create_time.split(' ')[1] }}
+								{{ items.create_time && items.create_time.split(' ')[1] }}
 							</div>
 						</div>
 						<div>
-							<div
-								class="w-[16px] h-[16px] flex items-center bg-[#D1EBFF] border-[1px] border-[#0091FF] rounded-[999px]">
+							<div class="w-[16px] h-[16px] flex items-center bg-[#D1EBFF] border-[1px] border-[#0091FF] rounded-[999px]">
 								<div class="w-[8px] h-[8px] mx-auto bg-[#0091FF] rounded-[999px]"></div>
 							</div>
-							<div v-if="index + 1 != formData.order_log.length"
-								class="w-[2px] h-[50px] bg-[#D1EBFF] mx-auto">
+							<div v-if="index + 1 != formData.order_log.length" class="w-[2px] h-[50px] bg-[#D1EBFF] mx-auto">
 							</div>
 						</div>
 						<div>
@@ -204,7 +199,6 @@ const setFormData = async (orderId: number = 0) => {
             formData.value = data
         })
         .catch(() => {
-
         })
     loading.value = false
 }

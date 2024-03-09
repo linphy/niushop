@@ -4,7 +4,7 @@
         <el-card class="box-card !border-none" shadow="never">
 
             <div class="flex justify-between items-center">
-                <span class="text-[20px]">{{ pageName }}</span>
+                <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" @click="addEvent">
                     {{ t('addGoods') }}
                 </el-button>
@@ -43,7 +43,7 @@
                             <input type="text" :placeholder="t('endSaleNumPlaceholder')" maxlength="10" v-model="goodsTable.searchParam.end_sale_num">
                         </div>
                     </el-form-item>
-                    <el-form-item :label="t('skuPrice')">
+                    <el-form-item :label="t('skuPrice')" prop="sku_price">
                         <div class="region-input">
                             <input type="text" :placeholder="t('startPricePlaceholder')" maxlength="10" v-model="goodsTable.searchParam.start_price">
                             <span class="separator">-</span>
@@ -220,7 +220,7 @@ const goodsTable = reactive({
     }
 })
 
-const searchFormRef = ref()
+const searchFormRef = ref<FormInstance>()
 
 // 正则表达式
 const regExp = {
@@ -600,6 +600,10 @@ const deleteEvent = (id: number) => {
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
+    goodsTable.searchParam.start_price = ''
+    goodsTable.searchParam.end_price = ''
+    goodsTable.searchParam.start_sale_num = ''
+    goodsTable.searchParam.end_sale_num = ''
 
     loadGoodsList()
 }

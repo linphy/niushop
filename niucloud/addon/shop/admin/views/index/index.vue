@@ -143,45 +143,35 @@
 				<el-col :span="4">
 					<el-statistic :value="statOrder.wait_delivery_order">
 						<template #title>
-							<div style="display: inline-flex; align-items: center">
-								{{t('waitDeliveryOrder')}}
-							</div>
+							<div style="display: inline-flex; align-items: center">{{t('waitDeliveryOrder')}}</div>
 						</template>
 					</el-statistic>
 				</el-col>
 				<el-col :span="4">
 					<el-statistic :value="statOrder.wait_take_order">
 						<template #title>
-							<div style="display: inline-flex; align-items: center">
-								{{t('waitTakeOrder')}}
-							</div>
+							<div style="display: inline-flex; align-items: center">{{t('waitTakeOrder')}}</div>
 						</template>
 					</el-statistic>
 				</el-col>
 				<el-col :span="4">
 					<el-statistic :value="statOrder.refund_order">
 						<template #title>
-							<div style="display: inline-flex; align-items: center">
-								退款订单
-							</div>
+							<div style="display: inline-flex; align-items: center">退款订单</div>
 						</template>
 					</el-statistic>
 				</el-col>
 				<el-col :span="4">
 					<el-statistic :value="statGoods.sale_goods_num">
 						<template #title>
-							<div style="display: inline-flex; align-items: center">
-								{{t('saleGoodsNum')}}
-							</div>
+							<div style="display: inline-flex; align-items: center">{{t('saleGoodsNum')}}</div>
 						</template>
 					</el-statistic>
 				</el-col>
 				<el-col :span="4">
 					<el-statistic :value="statGoods.warehouse_goods_num">
 						<template #title>
-							<div style="display: inline-flex; align-items: center">
-								{{t('warehouseGoodsNum')}}
-							</div>
+							<div style="display: inline-flex; align-items: center">{{t('warehouseGoodsNum')}}</div>
 						</template>
 					</el-statistic>
 				</el-col>

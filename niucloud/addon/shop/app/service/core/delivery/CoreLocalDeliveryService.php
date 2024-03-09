@@ -107,7 +107,7 @@ class CoreLocalDeliveryService extends BaseCoreService
         if ($local[ 'fee_type' ] == 'distance') {
             // 按距离收费
             // 计算收货地址与取货地址的距离
-            $distance = ( new Vincenty() )->getDistance($address_point, $local_address_point);
+            $distance = round(( new Vincenty() )->getDistance($address_point, $local_address_point)/1000, 2);
             $order->basic[ 'delivery_money' ] = $local[ 'base_price' ];
             if ($distance > $local[ 'base_dist' ]) {
                 $order->basic[ 'delivery_money' ] += round(ceil(( $distance - $local[ 'base_dist' ] ) / $local[ 'grad_dist' ]) * $local[ 'grad_price' ], 2);

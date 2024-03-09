@@ -1,12 +1,10 @@
 <template>
     <div>
-        <el-dialog v-model="showDialog" :title="t('editStockPopupTitle')" width="600px" :close-on-press-escape="false"
-            :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :title="t('editStockPopupTitle')" width="600px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 
             <div class="flex items-center mb-[10px]">
                 <div class="min-w-[70px] h-[70px] flex items-center justify-center">
-                    <el-image v-if="goods.goods_cover_thumb_small" class="w-[70px] h-[70px]"
-                        :src="img(goods.goods_cover_thumb_small)" fit="contain">
+                    <el-image v-if="goods.goods_cover_thumb_small" class="w-[70px] h-[70px]" :src="img(goods.goods_cover_thumb_small)" fit="contain">
                         <template #error>
                             <div class="image-slot">
                                 <img class="w-[70px] h-[70px]" src="@/addon/shop/assets/goods_default.png" />
@@ -24,8 +22,7 @@
             <!-- 批量设置 -->
             <div class="batch-operation-sku" v-if="goodsTable.data.length > 1">
                 <label>{{ t('batchOperationSku') }}</label>
-                <el-input v-model="batchOperation.value" clearable :placeholder="t('stock')" class="set-input"
-                    maxlength="20" :autofocus="true" />
+                <el-input v-model="batchOperation.value" clearable :placeholder="t('stock')" class="set-input" maxlength="20" :autofocus="true" />
                 <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
             </div>
 
@@ -38,7 +35,7 @@
                 <el-table-column prop="price" :label="t('price')" min-width="120" />
                 <el-table-column prop="stock" :label="t('stock')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.stock" clearable placeholder="0" maxlength="10" type="number" />
+                        <el-input v-model="row.stock" clearable placeholder="0" maxlength="10" />
                     </template>
                 </el-table-column>
 

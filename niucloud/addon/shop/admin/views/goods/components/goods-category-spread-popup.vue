@@ -56,9 +56,9 @@ getUrl().then((res: any) => {
         wapUrl.value = wapDomain.value + '/wap'
     }
 
-    const wapDomainstorage = storage.get('wap_domain')
-    if (wapDomainstorage) {
-        wapUrl.value = wapDomainstorage
+    const wapDomainStorage = storage.get('wap_domain')
+    if (wapDomainStorage) {
+        wapUrl.value = wapDomainStorage
     }
 })
 

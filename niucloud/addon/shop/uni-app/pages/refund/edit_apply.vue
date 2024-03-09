@@ -166,8 +166,7 @@
     })
 
     const applyMoney = computed(() => {
-        let money = 0
-			money = orderDetail.value.goods_money - orderDetail.value.discount_money
+        let money = orderDetail.value.goods_money - orderDetail.value.discount_money
         return moneyFormat(money)
     })
 

@@ -22,8 +22,7 @@
                 </view>
             </view>
             <view class="p-[30rpx] pt-0 text-sm" v-show="current == 1">
-                <view class="mt-[30rpx] p-[30rpx] border-1 !border-[#eee] border-solid rounded-[20rpx] bg-[#f5f5f5]"
-                    v-for="item in disabledCouponList">
+                <view class="mt-[30rpx] p-[30rpx] border-1 !border-[#eee] border-solid rounded-[20rpx] bg-[#f5f5f5]" v-for="item in disabledCouponList">
                     <view class="flex border-0 !border-b !border-[#ddd] border-dashed pb-[20rpx]">
                         <view class="flex-1 w-0">
                             <view class="text-base font-bold">{{ item.title }}</view>
@@ -65,25 +64,23 @@
 
     watch(() => prop.orderKey, () => {
         if (prop.orderKey && !couponList.value.length) {
-            orderCoupon({ order_key: prop.orderKey })
-                .then(({ data }) => {
-                    const list = [], disabled = []
+            orderCoupon({order_key: prop.orderKey}).then(({data}) => {
+                const list = [], disabled = []
 
-                    if (data.length) {
-                        data.forEach(item => {
-                            item.is_normal ? list.push(item) : disabled.push(item)
-                        })
-                    }
+                if (data.length) {
+                    data.forEach(item => {
+                        item.is_normal ? list.push(item) : disabled.push(item)
+                    })
+                }
 
-                    disabledCouponList.value = disabled
-                    couponList.value = list
+                disabledCouponList.value = disabled
+                couponList.value = list
 
-                    if (list.length) {
-                        coupon.value = list[0]
-                        emits('confirm', coupon.value)
-                    }
-                })
-                .catch()
+                if (list.length) {
+                    coupon.value = list[0]
+                    emits('confirm', coupon.value)
+                }
+            }).catch()
         }
     }, { immediate: true })
 

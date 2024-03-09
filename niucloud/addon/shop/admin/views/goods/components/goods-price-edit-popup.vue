@@ -1,12 +1,10 @@
 <template>
     <div>
-        <el-dialog v-model="showDialog" :title="t('editPricePopupTitle')" width="800px" :close-on-press-escape="false"
-            :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :title="t('editPricePopupTitle')" width="800px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 
             <div class="flex items-center mb-[10px]">
                 <div class="min-w-[70px] h-[70px] flex items-center justify-center">
-                    <el-image v-if="goods.goods_cover_thumb_small" class="w-[70px] h-[70px]"
-                        :src="img(goods.goods_cover_thumb_small)" fit="contain">
+                    <el-image v-if="goods.goods_cover_thumb_small" class="w-[70px] h-[70px]" :src="img(goods.goods_cover_thumb_small)" fit="contain">
                         <template #error>
                             <div class="image-slot">
                                 <img class="w-[70px] h-[70px]" src="@/addon/shop/assets/goods_default.png" />
@@ -26,17 +24,14 @@
                 <label>{{ t('batchOperationSku') }}</label>
 
                 <div v-if="batchOperation.field">
-                    <el-input v-model="batchOperation.value" clearable :placeholder="t(batchOperation.field)"
-                        class="set-input" maxlength="20" :autofocus="true" />
+                    <el-input v-model="batchOperation.value" clearable :placeholder="t(batchOperation.field)" class="set-input" maxlength="20" :autofocus="true" />
                     <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
                     <el-button @click="clearBatch">{{ t('cancel') }}</el-button>
                 </div>
                 <div v-else>
                     <el-button type="primary" link @click="setBatchField('price')">{{ t('price') }}</el-button>
-                    <el-button type="primary" link @click="setBatchField('marketPrice')">{{ t('marketPrice') }}
-                    </el-button>
-                    <el-button type="primary" link @click="setBatchField('costPrice')">{{ t('costPrice') }}
-                    </el-button>
+                    <el-button type="primary" link @click="setBatchField('marketPrice')">{{ t('marketPrice') }}</el-button>
+                    <el-button type="primary" link @click="setBatchField('costPrice')">{{ t('costPrice') }}</el-button>
                 </div>
             </div>
 
@@ -48,19 +43,19 @@
                 <el-table-column prop="sku_name" :label="t('skuName')" min-width="120" v-if="goodsTable.data.length > 1" />
                 <el-table-column prop="price" :label="t('price')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.price" clearable placeholder="0.00" maxlength="10" type="number" />
+                        <el-input v-model="row.price" clearable placeholder="0.00" maxlength="10" />
                     </template>
                 </el-table-column>
 
                 <el-table-column prop="market_price" :label="t('marketPrice')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.market_price" clearable placeholder="0.00" maxlength="10" type="number" />
+                        <el-input v-model="row.market_price" clearable placeholder="0.00" maxlength="10" />
                     </template>
                 </el-table-column>
 
                 <el-table-column prop="cost_price" :label="t('costPrice')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.cost_price" clearable placeholder="0.00" maxlength="10" type="number" />
+                        <el-input v-model="row.cost_price" clearable placeholder="0.00" maxlength="10" />
                     </template>
                 </el-table-column>
 

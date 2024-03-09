@@ -11,8 +11,7 @@
 				<span class="right">{{ pageName }}</span>
 			</div>
 		</div>
-		<el-form :model="formData" label-width="150px" ref="formRef" :rules="formRules" class="page-form"
-			v-loading="loading">
+		<el-form :model="formData" label-width="150px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 			<el-card class="box-card !border-none" shadow="never">
 				<el-form-item :label="t('interfaceType')" prop="interface_type" class="">
 					<div>
@@ -21,15 +20,14 @@
 							<el-radio :label="2" size="large">{{ t('kd100') }}</el-radio>
 						</el-radio-group>
 						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 1">
-							{{ t('promptTips1-1') }}<el-button class="button-size" type="primary" link
-								@click="kdnEvent">https://www.kdniao.com/</el-button>
+							{{ t('promptTips1-1') }}<el-button class="button-size" type="primary" link @click="kdnEvent">https://www.kdniao.com/</el-button>
 						</p>
 						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 1">
 							{{ t('promptTips1-2') }}
 						</p>
-						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 2">{{ t('promptTips2')
-						}}<el-button class="button-size" type="primary" link
-								@click="kdnEvent">https://www.kuaidi100.com/</el-button></p>
+						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 2">
+							{{ t('promptTips2') }}<el-button class="button-size" type="primary" link @click="kdnEvent">https://www.kuaidi100.com/</el-button>
+						</p>
 					</div>
 				</el-form-item>
 				<div v-if="formData.interface_type == 1">
@@ -42,16 +40,14 @@
 
 					<el-form-item label="EBusinessID" class="input-item">
 						<div>
-							<el-input v-model="formData.kdniao_id" :placeholder="t('kdnEBusinessIDPlaceholder')"
-								class="input-width" clearable />
+							<el-input v-model="formData.kdniao_id" :placeholder="t('kdnEBusinessIDPlaceholder')" class="input-width" clearable />
 							<p class="text-[12px] text-[#b2b2b2]">{{ t('kdnEBusinessIDTips') }}</p>
 						</div>
 					</el-form-item>
 
 					<el-form-item label="APPKEY" class="input-item">
 						<div>
-							<el-input v-model="formData.kdniao_app_key" clearable :placeholder="t('kdnAppKeyPlaceholder')"
-								class="input-width" />
+							<el-input v-model="formData.kdniao_app_key" clearable :placeholder="t('kdnAppKeyPlaceholder')" class="input-width" />
 							<p class="text-[12px] text-[#b2b2b2]">{{ t('kdnAppKeyTips') }}</p>
 						</div>
 					</el-form-item>
@@ -61,16 +57,14 @@
 				<div v-if="formData.interface_type == 2">
 					<el-form-item label="APPKEY" class="input-item">
 						<div>
-							<el-input v-model="formData.kd100_app_key" clearable :placeholder="t('kd100AppKeyPlaceholder')"
-								class="input-width" />
+							<el-input v-model="formData.kd100_app_key" clearable :placeholder="t('kd100AppKeyPlaceholder')" class="input-width" />
 							<p class="text-[12px] text-[#b2b2b2]">{{ t('kd100AppKeyTips') }}</p>
 						</div>
 					</el-form-item>
 
 					<el-form-item label="CUSTOMER" class="input-item">
 						<div>
-							<el-input v-model="formData.kd100_customer" :placeholder="t('kd100CustomerPlaceholder')"
-								class="input-width" clearable />
+							<el-input v-model="formData.kd100_customer" :placeholder="t('kd100CustomerPlaceholder')" class="input-width" clearable />
 							<p class="text-[12px] text-[#b2b2b2]">{{ t('kd100CustomerTips') }}</p>
 						</div>
 					</el-form-item>

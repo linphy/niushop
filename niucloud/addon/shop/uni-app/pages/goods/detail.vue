@@ -95,12 +95,10 @@
 					<view class="mx-[20rpx] pb-[20rpx] border-0 border-b-[2rpx] border-solid border-[#eee] mb-[20rpx]">
 						<view class="flex items-center  justify-between">
 							<view class="flex items-center">
-								<u-avatar class="mr-[10rpx]" :src="img(item.member_head)" :size="'50rpx'"
-									leftIcon="none"></u-avatar>
+								<u-avatar class="mr-[10rpx]" :src="img(item.member_head)" :size="'50rpx'" leftIcon="none"></u-avatar>
 								<text class="text-sm">{{ item.member_name }}</text>
 							</view>
-							<text class="text-xs text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : ''
-							}}</text>
+							<text class="text-xs text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : '' }}</text>
 						</view>
 						<view class="text-sm text-[#666] mt-[10rpx] multi-hidden">{{ item.content }}</view>
 						<scroll-view scroll-x="true" class="scroll-Y box-border py-[24rpx] bg-white">
@@ -124,7 +122,7 @@
 
 		<view class="px-[10px] pd-[10px] mt-[20rpx] bg-white mx-[24rpx] rounded-[16rpx]">
 			<view class="py-[20rpx] text-base">商品详情</view>
-			<u-parse :content="goodsDetail.goods.goods_desc"></u-parse>
+			<u-parse :content="goodsDetail.goods.goods_desc" :tagStyle="{img: 'vertical-align: top;'}"></u-parse>
 		</view>
 		<!-- tabber -->
 		<view class="tab-bar-placeholder"></view>
@@ -167,15 +165,13 @@
 			<view class="min-h-[480rpx] rounded-t-[20rpx] overflow-hidden bg-[#fff]">
 				<view class="flex items-center justify-center py-[34rpx] relative">
 					<text class="text-[32rpx] leading-[36rpx] font-600">商品服务</text>
-					<view class="absolute right-[37rpx]  iconfont iconguanbi text-[50rpx]"
-						@click="servicesDataShow = false">
+					<view class="absolute right-[37rpx]  iconfont iconguanbi text-[50rpx]" @click="servicesDataShow = false">
 					</view>
 				</view>
 				<scroll-view class="h-[520rpx]" scroll-y="true">
 					<view class="pl-[22rpx] pt-[28rpx] pr-[37rpx]">
 						<view class="flex mb-[28rpx]" v-for="(item, index) in goodsDetail.service">
-							<image class="max-w-[34rpx] max-h-[34rpx] mr-[14rpx]"
-								:src="img(item.image || 'addon/shop/icon_service.png')" mode="aspectFit" />
+							<image class="max-w-[34rpx] max-h-[34rpx] mr-[14rpx]" :src="img(item.image || 'addon/shop/icon_service.png')" mode="aspectFit" />
 							<view class="flex-1">
 								<view class="text-[26rpx] leading-[36rpx] text-[#222] mb-[4rpx] w-[643rpx]">
 									{{ item.service_name }}</view>
@@ -210,8 +206,7 @@
 									<text class="text-[28rpx]">￥</text>
 									<text class="text-[48rpx]">{{ item.price }}</text>
 								</view>
-								<text class="text-xs mt-[12rpx]">{{ Number(item.min_condition_money) ? ('满' +
-									item.min_condition_money + '元可以使用') : '无门槛优惠券' }}</text>
+								<text class="text-xs mt-[12rpx]">{{ Number(item.min_condition_money) ? ('满' + item.min_condition_money + '元可以使用') : '无门槛优惠券' }}</text>
 							</view>
 							<view class="ml-[20rpx] flex-1 flex flex-col py-[20rpx]">
 								<text class="text-xs">{{ item.title }}</text>
@@ -407,16 +402,6 @@ const imgListPreview = (item) => {
 @import '@/addon/shop/styles/common.scss';
 </style>
 <style lang="scss" scoped>
-/* 多行超出隐藏 */
-.multi-hidden {
-	word-break: break-all;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-}
-
 .text-color {
 	color: var(--primary-color);
 }

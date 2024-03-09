@@ -95,7 +95,7 @@ return [
         'page_shop_member_index' => '商城个人中心',
 
         'shop_title' => '商城',
-        'shop_link' => '商城链接',
+        'shop_link' => '商城',
         'shop_link_index' => '商城首页',
         'shop_link_goods_category' => '商品分类',
         'shop_link_goods_list' => '商品列表',

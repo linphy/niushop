@@ -10,16 +10,14 @@
                     <el-input v-model="formData.memo" type="textarea" clearable :placeholder="t('memoPlaceholder')" class="input-width"/>
                 </el-form-item>
                 <el-form-item :label="t('sort')" >
-                    <el-input v-model="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');"/>
+                    <el-input v-model="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)"/>
                 </el-form-item>
         </el-form>
 
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>
@@ -29,6 +27,7 @@
 import { ref, reactive, computed } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
+import { filterNumber } from '@/utils/common'
 
 import { addLabel, editLabel, getLabelInfo } from '@/addon/shop/api/goods'
 
@@ -55,7 +54,6 @@ const formRules = computed(() => {
     return {
         label_name: [
             { required: true, message: t('labelNamePlaceholder'), trigger: 'blur' }
-
         ]
     }
 })

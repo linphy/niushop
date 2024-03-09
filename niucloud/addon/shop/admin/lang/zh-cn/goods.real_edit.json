@@ -69,7 +69,7 @@
   "virtualSaleNumNotZeroTips": "虚拟销量不能小于0",
   "maxAddSpecTips": "最多添加5个规格项",
   "pleaseEditSpecPlaceholder": "请编辑规格信息",
-
+  "refreshSuccess": "刷新成功",
   "deliveryTab": "配送设置",
   "deliveryType": "配送方式",
   "deliveryTypePlaceholder": "请选择配送方式",

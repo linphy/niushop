@@ -16,8 +16,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="invoiceDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="refundDialogLoading" @click="refundDialogConfirm(makeInvoiceFormRef)">{{ t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="refundDialogLoading" @click="refundDialogConfirm(makeInvoiceFormRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>

@@ -2,10 +2,9 @@
 <template>
     <div class="main-container pt-[20px]" v-loading="loading">
         <div class="flex ml-[18px] justify-between items-center">
-            <span class="text-[20px]">{{ pageName }}</span>
+            <span class="text-page-title">{{ pageName }}</span>
         </div>
-        <el-form v-if="Object.keys(formData).length" :model="formData" label-width="170" ref="formRef" :rules="rules"
-            class="page-form">
+        <el-form v-if="Object.keys(formData).length" :model="formData" label-width="170" ref="formRef" :rules="rules" class="page-form">
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-[16px] pl-[15px]">{{ t('categoryTemplate') }}</h3>
                 <el-form-item :label="t('categoryType')">
@@ -28,8 +27,7 @@
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-[16px] pl-[15px]">{{ t('pageSettings') }}</h3>
                 <el-form-item :label="t('pageTitle')" prop="page_title">
-                    <el-input v-model="formData.page_title" clearable :placeholder="t('pageTitlePlaceholder')"
-                        class="input-width" maxlength="10" show-word-limit />
+                    <el-input v-model="formData.page_title" clearable :placeholder="t('pageTitlePlaceholder')" class="input-width" maxlength="10" show-word-limit />
                 </el-form-item>
                 <el-form-item :label="t('searchControl')">
                     <el-radio-group class="mx-[10px]" v-model="formData.search.control">
@@ -38,8 +36,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="formData.search.control" :label="t('searchTitle')" prop="search.title">
-                    <el-input v-model="formData.search.title" clearable :placeholder="t('searchTitlePlaceholder')"
-                        class="input-width" maxlength="12" show-word-limit />
+                    <el-input v-model="formData.search.title" clearable :placeholder="t('searchTitlePlaceholder')" class="input-width" maxlength="12" show-word-limit />
                 </el-form-item>
                 <template v-if="formData.level!=2||(formData.level===2&&formData.template != 'style-1')">
                     <!-- <el-form-item :label="t('sort')" prop="sort">
@@ -65,10 +62,8 @@
                     <template v-if="formData.cart.control">
                         <el-form-item :label="t('cartStyle')" class="carStyle">
                             <div class="flex items-center">
-                                <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-1' ? '!border-[1px]' : '']"
-                                    @click="carStyleClick(1)">
-                                    <div
-                                        class="text-[#fff] bg-color h-[20px] text-[12px] px-[10px] leading-[20px] rounded-[10px]">
+                                <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-1' ? '!border-[1px]' : '']" @click="carStyleClick(1)">
+                                    <div class="text-[#fff] bg-color h-[20px] text-[12px] px-[10px] leading-[20px] rounded-[10px]">
                                         {{ formData.cart.text }}
                                     </div>
                                 </div>
@@ -78,23 +73,19 @@
                                         <CirclePlusFilled />
                                     </el-icon>
                                 </div> -->
-                                <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-3' ? '!border-[1px]' : '']"
-                                    @click="carStyleClick(3)">
+                                <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-3' ? '!border-[1px]' : '']" @click="carStyleClick(3)">
                                     <span class="text-color iconfont icongouwuche !text-[30px]"></span>
                                 </div>
                                 <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-4' ? '!border-[1px]' : '']"
                                     @click="carStyleClick(4)">
-                                    <div
-                                        class="text-[#fff] bg-color h-[30px] w-[30px] leading-[30px] rounded-[30px] text-center">
+                                    <div class="text-[#fff] bg-color h-[30px] w-[30px] leading-[30px] rounded-[30px] text-center">
                                         <span class=" iconfont icongouwuche !text-[20px]"></span>
                                     </div>
-
                                 </div>
                             </div>
                         </el-form-item>
                         <el-form-item v-if="formData.cart.style === 'style-1'" prop="cart.text">
-                            <el-input v-model="formData.cart.text" clearable :placeholder="t('cartTextPlaceholder')"
-                                class="input-width" maxlength="3" show-word-limit />
+                            <el-input v-model="formData.cart.text" clearable :placeholder="t('cartTextPlaceholder')" class="input-width" maxlength="3" show-word-limit />
                         </el-form-item>
                         <el-form-item :label="t('cartEvent')">
                             <el-radio-group class="mx-[10px]" v-model="formData.cart.event">
@@ -145,7 +136,6 @@ const rules = computed(() => {
     return {
         page_title: [
             { required: true, message: t('pageTitlePlaceholder'), trigger: 'blur' }
-
         ],
         'search.title': [
             { required: true, message: t('searchTitlePlaceholder'), trigger: 'blur' }

@@ -1,6 +1,5 @@
 <template>
-    <swiper :indicator-dots="false" :autoplay="false" :disable-touch="true" :current="step" class="h-screen"
-        :duration="300" v-if="detail">
+    <swiper :indicator-dots="false" :autoplay="false" :disable-touch="true" :current="step" class="h-screen" :duration="300" v-if="detail">
         <swiper-item>
             <scroll-view scroll-y="true" class="bg-page h-screen">
                 <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
@@ -12,8 +11,7 @@
 						</u--image>
 						<view class="flex flex-1 w-0 flex-col justify-between ml-[20rpx]">
 							<view>
-								<view
-									class="text-ellipsis text-[#333] text-sm leading-normal font-bold">
+								<view class="text-ellipsis text-[#333] text-sm leading-normal font-bold">
 									{{orderDetail.goods_name}}
 								</view>
 								<view class="mt-[10rpx] text-[26rpx] text-gray-subtitle">{{ orderDetail.sku_name }}</view>
@@ -165,8 +163,7 @@
     })
 
     const applyMoney = computed(() => {
-        let money = 0
-			money = orderDetail.value.goods_money - orderDetail.value.discount_money
+        let money = orderDetail.value.goods_money - orderDetail.value.discount_money
         return moneyFormat(money)
     })
 

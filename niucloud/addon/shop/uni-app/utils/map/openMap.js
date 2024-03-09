@@ -19,8 +19,7 @@ function openMapByAndroid(latitude, longitude, name) {
 	if (plus.runtime.isApplicationExist({
 			pname: 'com.baidu.BaiduMap'
 		})) { // baidumap
-		url =
-			`baidumap://map/marker?location=${latitude},${longitude}&title=${name}&coord_type=gcj02&src=andr.baidu.openAPIdemo`
+		url = `baidumap://map/marker?location=${latitude},${longitude}&title=${name}&coord_type=gcj02&src=andr.baidu.openAPIdemo`
 		identity = 'com.baidu.BaiduMap'
 		openURL(url, identity)
 	} else if (plus.runtime.isApplicationExist({

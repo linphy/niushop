@@ -5,7 +5,7 @@
 
             <el-card class="box-card !border-none" shadow="never" v-if="item.child != ''">
                 <div class="flex justify-between items-center">
-                    <span class="text-[20px]">{{item.name}}</span>
+                    <span class="text-page-title">{{item.name}}</span>
                 </div>
                 <div class="flex flex-wrap plug-list pb-10 plug-large">
                     <div v-for="(ite, index) in item.child" :key="index">

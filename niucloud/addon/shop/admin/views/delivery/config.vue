@@ -2,7 +2,7 @@
 <template>
 	<div class="main-container" v-loading="loading">
 		<div class="flex ml-[18px] justify-between items-center mt-[20px]">
-			<span class="text-[20px]">{{ pageName }}</span>
+			<span class="text-page-title">{{ pageName }}</span>
 		</div>
 		<div class="p-[18px] logistics-body" ref="tableRef" :key="toggleIndex" v-if="!loading">
 			<template v-for="(item, index) in tableData" :key="item.key">
@@ -25,28 +25,16 @@
 							<span class="text-[#666666] text-[14px]">{{ t(item.key) }}</span>
 							<div>
 								<template v-if="item.key === 'local_delivery'">
-									<el-button type="primary" link @click="goRouter('/shop/order/delivery/staff')">{{
-										t('deliveryStaff') }}
-									</el-button>
-									<el-button type="primary" link @click="goRouter('/shop/order/delivery/local')">{{
-										t('localConfig') }}
-									</el-button>
+									<el-button type="primary" link @click="goRouter('/shop/order/delivery/staff')">{{ t('deliveryStaff') }}</el-button>
+									<el-button type="primary" link @click="goRouter('/shop/order/delivery/local')">{{ t('localConfig') }}</el-button>
 								</template>
 								<template v-if="item.key === 'express'">
-									<el-button type="primary" link @click="goRouter('/shop/order/delivery/company')">{{
-										t('deliveryCompany') }}
-									</el-button>
-									<el-button type="primary" link @click="goRouter('/shop/order/shipping/template')">{{
-										t('deliveryTemplate') }}
-									</el-button>
-									<el-button type="primary" link @click="goRouter('/shop/order/delivery/search')">{{
-										t('deliverySearch') }}
-									</el-button>
+									<el-button type="primary" link @click="goRouter('/shop/order/delivery/company')">{{ t('deliveryCompany') }}</el-button>
+									<el-button type="primary" link @click="goRouter('/shop/order/shipping/template')">{{ t('deliveryTemplate') }}</el-button>
+									<el-button type="primary" link @click="goRouter('/shop/order/delivery/search')">{{ t('deliverySearch') }}</el-button>
 								</template>
 								<template v-if="item.key === 'store'">
-									<el-button type="primary" link @click="goRouter('/shop/order/delivery/store')">{{
-										t('deliveryStore') }}
-									</el-button>
+									<el-button type="primary" link @click="goRouter('/shop/order/delivery/store')">{{ t('deliveryStore') }}</el-button>
 								</template>
 							</div>
 						</div>
@@ -77,7 +65,7 @@ const getShopDeliveryListFn = () => {
     loading.value = true
     getShopDeliveryList().then(res => {
         tableData.value = res.data
-        loading.value = false 
+        loading.value = false
 		nextTick(() => {
         if(rowDrop) rowDrop()
     })
@@ -86,7 +74,7 @@ const getShopDeliveryListFn = () => {
     })
 }
 onMounted(() => {
-   
+
     getShopDeliveryListFn()
 })
 const vFocus = {

@@ -4,14 +4,13 @@
         <el-card class="box-card !border-none" shadow="never">
 
             <div class="flex justify-between items-center">
-                <span class="text-[20px]">{{ pageName }}</span>
+                <span class="text-page-title">{{ pageName }}</span>
             </div>
 
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="goodsTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('goodsName')" prop="goods_name">
-                        <el-input v-model="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')"
-                            maxlength="60" />
+                        <el-input v-model="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" maxlength="60" />
                     </el-form-item>
                     <el-form-item :label="t('goodsCategory')" prop="goods_category">
                         <el-cascader :props="goodsCategoryProps" v-model="goodsTable.searchParam.goods_category"
@@ -19,8 +18,7 @@
                             filterable @change="categoryHandleChange" />
                     </el-form-item>
                     <el-form-item :label="t('goodsType')" prop="goods_type">
-                        <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsTypePlaceholder')"
-                            clearable>
+                        <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsTypePlaceholder')" clearable>
                             <el-option v-for="item in goodsType" :key="item.type" :label="item.name" :value="item.type" />
                         </el-select>
                     </el-form-item>
@@ -35,13 +33,11 @@
             <div class="mt-[10px]">
 
                 <div class="mb-[10px] flex items-center">
-                    <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange"
-                        :indeterminate="isIndeterminate" />
+                    <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange" :indeterminate="isIndeterminate" />
                     <el-button @click="batchRecycle" size="small">{{ t('batchRecycle') }}</el-button>
                 </div>
 
-                <el-table :data="goodsTable.data" size="large" v-loading="goodsTable.loading" ref="goodsListTableRef"
-                    @sort-change="sortChange" @selection-change="handleSelectionChange">
+                <el-table :data="goodsTable.data" size="large" v-loading="goodsTable.loading" ref="goodsListTableRef" @sort-change="sortChange" @selection-change="handleSelectionChange">
                     <template #empty>
                         <span>{{ !goodsTable.loading ? t('emptyData') : '' }}</span>
                     </template>
@@ -91,8 +87,7 @@
                 </el-table>
                 <div class="mt-[16px] flex">
                     <div class="flex items-center flex-1">
-                        <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange"
-                            :indeterminate="isIndeterminate" />
+                        <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange" :indeterminate="isIndeterminate" />
                         <el-button @click="batchRecycle" size="small">{{ t('batchRecycle') }}</el-button>
                     </div>
 

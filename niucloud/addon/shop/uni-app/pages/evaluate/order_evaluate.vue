@@ -13,32 +13,21 @@
                               </u--image>
                               <view class="flex-1 flex flex-wrap ml-[20rpx]">
                                    <view>
-                                        <view
-                                             class="text-[26rpx] font-500 h-[80rpx] leading-[40rpx]  multi-hidden mb-[10rpx]">
-                                             {{ item.goods_name }}
-                                        </view>
-                                        <view
-                                             class="w-[404rpx] mt-[12rpx] truncate text-[#888] text-[24rpx] leading-[32rpx] font-500">
-                                             {{ item.sku_name }}
-                                        </view>
+                                        <view class="text-[26rpx] font-500 h-[80rpx] leading-[40rpx]  multi-hidden mb-[10rpx]">{{ item.goods_name }}</view>
+                                        <view class="w-[404rpx] mt-[12rpx] truncate text-[#888] text-[24rpx] leading-[32rpx] font-500">{{ item.sku_name }}</view>
                                    </view>
                                    <view class="mt-auto flex  self-end justify-between w-[100%]">
                                         <view class="flex flex-col">
-                                             <text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ item.price
-                                             }}</text>
-
+                                             <text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ item.price }}</text>
                                         </view>
                                         <text class="text--[24rpx] text-[#666]">x{{ item.num }}</text>
                                    </view>
                               </view>
                          </view>
                          <view class="pt-[20rpx] flex items-center border-0 border-t-[2rpx] border-solid border-[#ebebec]">
-                              <u-rate :count="5" v-model="form[index].scores" active-color="var(--primary-color)"
-                                   :size="'40rpx'"></u-rate>
+                              <u-rate :count="5" v-model="form[index].scores" active-color="var(--primary-color)" :size="'40rpx'"></u-rate>
                               <text class="ml-[60rpx] text-[26rpx] text-[#888]">{{ form[index].scores === 1 ? '差评' :
-                                   form[index].scores ===
-                                        2 ||
-                                        form[index].scores === 3 ? '中评' : '好评' }}</text>
+                                   form[index].scores === 2 || form[index].scores === 3 ? '中评' : '好评' }}</text>
                          </view>
                          <textarea class="!text-[26rpx] mt-[20rpx] w-[100%]" v-model="form[index].content"
                               placeholder="请在此处输入你的评价" maxlength="200" />
@@ -58,8 +47,7 @@
                               :class="{'text-[var(--primary-color)]' :is_anonymous === '1', 'text-[#676767]':is_anonymous !== '1'}">匿名</text>
                     </view>
 
-                    <button class="!w-[444rpx] !h-[80rpx] text-[32rpx] !m-0 leading-[80rpx] rounded-full text-white bg-[var(--primary-color)] remove-border"  @click="submit">
-						提交</button>
+                    <button class="!w-[444rpx] !h-[80rpx] text-[32rpx] !m-0 leading-[80rpx] rounded-full text-white bg-[var(--primary-color)] remove-border"  @click="submit">提交</button>
                </view>
           </u-tabbar>
           <u-loading-page bg-color="rgb(248,248,248)" :loading="loading" fontSize="16" color="#333"></u-loading-page>

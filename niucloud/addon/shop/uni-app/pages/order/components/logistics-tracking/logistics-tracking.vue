@@ -4,8 +4,7 @@
 			<view class="h-[70vh] px-[24rpx] bg-page" v-if="Object.keys(showList).length">
 				<view class="text-center text-[32rpx] leading-8">{{t('detailedInformation')}}</view>
 				<view class="flex mt-[10rpx] menu" v-if="packageList.length > 1">
-					<u-tabs :list="packageList" @click="handleClick" :current="current" itemStyle="font-size:28rpx;"
-					        lineWidth="55" lineColor="#ff4500"></u-tabs>
+					<u-tabs :list="packageList" @click="handleClick" :current="current" itemStyle="font-size:28rpx;" lineWidth="55" lineColor="#ff4500"></u-tabs>
 				</view>
 				<view class="text-[28rpx] mt-[35rpx] ">
 					<view class="flex justify-between mb-[20rpx]">
@@ -23,8 +22,7 @@
 							<view class="text-[28rpx] text-[#bfbfbf] leading-8">暂无物流信息～～</view>
 						</view>
 					</view>
-					<scroll-view v-else scroll-y="true" style="height:56vh;padding: 20rpx;box-sizing: border-box;"
-					             class="bg-white rounded-md">
+					<scroll-view v-else scroll-y="true" style="height:56vh;padding: 20rpx;box-sizing: border-box;" class="bg-white rounded-md">
 						<u-steps current="0" dot direction="column" activeColor="#ff4500">
 							<template v-for="(item,index) in showList.traces.list">
 								<u-steps-item :title="item.remark" :desc="item.datetime">

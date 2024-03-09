@@ -27,11 +27,9 @@
                             <view v-if="!$u.test.isEmpty(orderData.delivery.take_address)">
                                 <view class="font-500 text-[30rpx] mb-[10rpx]">
                                     {{ orderData.delivery.take_address.name }}
-                                    <text class="text-[30rpx]">{{ mobileHide(orderData.delivery.take_address.mobile)
-                                    }}</text>
+                                    <text class="text-[30rpx]">{{ mobileHide(orderData.delivery.take_address.mobile) }}</text>
                                 </view>
-                                <view class="text-[26rpx] text-gray-subtitle mt-[10rpx]">{{
-                                    orderData.delivery.take_address.full_address }}</view>
+                                <view class="text-[26rpx] text-gray-subtitle mt-[10rpx]">{{ orderData.delivery.take_address.full_address }}</view>
                             </view>
                             <view v-else class="text-[26rpx]">
                                 添加收货地址
@@ -49,10 +47,8 @@
                                     {{ orderData.delivery.take_store.store_name }}
                                     <text class="text-[26rpx]">{{ orderData.delivery.take_store.store_mobile }}</text>
                                 </view>
-                                <view class="text-[26rpx] text-gray-subtitle mt-[10rpx]">{{
-                                    orderData.delivery.take_store.full_address }}</view>
-                                <view class="text-[26rpx] text-gray-subtitle mt-[16rpx]">营业时间：{{
-                                    orderData.delivery.take_store.trade_time }}</view>
+                                <view class="text-[26rpx] text-gray-subtitle mt-[10rpx]">{{ orderData.delivery.take_store.full_address }}</view>
+                                <view class="text-[26rpx] text-gray-subtitle mt-[16rpx]">营业时间：{{ orderData.delivery.take_store.trade_time }}</view>
                             </view>
                             <view v-else class="text-[26rpx]">
                                 请选择自提点
@@ -81,8 +77,7 @@
                             </view>
                             <view class="mt-[10rpx] text-[26rpx] text-gray-subtitle">{{ item.sku_name }}</view>
                         </view>
-                        <u-alert type="error" description="该商品不支持当前所选配送方式" fontSize="12"
-                            v-if="item.not_support_delivery"></u-alert>
+                        <u-alert type="error" description="该商品不支持当前所选配送方式" fontSize="12" v-if="item.not_support_delivery"></u-alert>
                         <view class="flex justify-between">
                             <view class="text-[var(--price-text-color)] font-500 price-font">
                                 <text class="text-xs">￥</text>
@@ -100,8 +95,7 @@
             <view class="mb-[20rpx] p-[24rpx] rounded-md bg-white flex">
                 <view class="text-[28rpx] font-500 w-[150rpx]">买家留言</view>
                 <view class="flex-1">
-                    <input type="text" v-model="createData.member_remark" class="text-right text-[28rpx]" maxlength="50"
-                        placeholder="请输入留言信息给卖家">
+                    <input type="text" v-model="createData.member_remark" class="text-right text-[28rpx]" maxlength="50" placeholder="请输入留言信息给卖家">
                 </view>
             </view>
 
@@ -119,8 +113,7 @@
                 </view>
 
                 <!-- 发票 -->
-                <view class="p-[24rpx] flex items-center" @click="invoiceRef.open()"
-                    v-if="invoiceRef && invoiceRef.invoiceOpen">
+                <view class="p-[24rpx] flex items-center" @click="invoiceRef.open()" v-if="invoiceRef && invoiceRef.invoiceOpen">
                     <view class="text-[28rpx] font-500 w-[150rpx]">发票信息</view>
                     <view class="flex-1 w-0 text-right truncate">
                         <text class="text-[28rpx] text-gray-subtitle">{{ createData.invoice.header_name || '不需要发票' }}</text>
@@ -158,10 +151,9 @@
                 <view class="whitespace-nowrap px-[30rpx] text-color font-600 leading-[45rpx]">
                     <text class="text-[#333333] text-[26rpx]">合计：</text>
                     <text class="text-[24rpx] font-500 text-[var(--price-text-color)] price-font">￥</text>
-                    <text class="text-[34rpx] mr-[10rpx]  font-500  text-[var(--price-text-color)] price-font">{{
-                        moneyFormat(orderData.basic.order_money) }}</text>
+                    <text class="text-[34rpx] mr-[10rpx]  font-500  text-[var(--price-text-color)] price-font">{{ moneyFormat(orderData.basic.order_money) }}</text>
                 </view>
-                <button class="!w-[204rpx] !h-[80rpx] text-[32rpx] mr-[30rpx] leading-[80rpx] rounded-full text-white bg-[var(--primary-color)] remove-border"
+                <button class="!min-w-[204rpx] !h-[80rpx] text-[32rpx] mr-[30rpx] leading-[80rpx] rounded-full text-white bg-[var(--primary-color)] remove-border"
                     :loading="createLoading" @click="create">提交订单</button>
             </view>
         </u-tabbar>

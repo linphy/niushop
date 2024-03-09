@@ -100,9 +100,6 @@ const storeTable = reactive({
 
 const searchFormRef = ref<FormInstance>()
 
-// 选中数据
-// const selectData = ref<any[]>([])
-
 /**
  * 获取自提门店列表
  */

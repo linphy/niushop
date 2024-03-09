@@ -10,8 +10,7 @@
                 </div>
             </slot>
         </div>
-        <el-dialog v-model="showDialog" :title="t('goodsSelectPopupSelectGoodsDialog')" width="1000px"
-            :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :title="t('goodsSelectPopupSelectGoodsDialog')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 
             <el-form :inline="true" :model="goodsTable.searchParam" ref="searchFormRef">
                 <el-form-item prop="select_type" class="form-item-wrap">
@@ -41,8 +40,7 @@
                 </el-form-item>
             </el-form>
 
-            <el-table :data="goodsTable.data" size="large" v-loading="goodsTable.loading" ref="goodsListTableRef"
-                max-height="400" @select="handleSelectChange" @select-all="handleSelectAllChange">
+            <el-table :data="goodsTable.data" size="large" v-loading="goodsTable.loading" ref="goodsListTableRef" max-height="400" @select="handleSelectChange" @select-all="handleSelectAllChange">
                 <template #empty>
                     <span>{{ !goodsTable.loading ? t('emptyData') : '' }}</span>
                 </template>
@@ -51,16 +49,14 @@
                     <template #default="{ row }">
                         <div class="flex items-center cursor-pointer">
                             <div class="min-w-[60px] h-[60px] flex items-center justify-center">
-                                <el-image v-if="row.goods_cover_thumb_small" class="w-[60px] h-[60px]"
-                                    :src="img(row.goods_cover_thumb_small)" fit="contain">
+                                <el-image v-if="row.goods_cover_thumb_small" class="w-[60px] h-[60px]" :src="img(row.goods_cover_thumb_small)" fit="contain">
                                     <template #error>
                                         <div class="image-slot">
                                             <img class="w-[60px] h-[60px]" src="@/addon/shop/assets/goods_default.png" />
                                         </div>
                                     </template>
                                 </el-image>
-                                <img v-else class="w-[70px] h-[60px]" src="@/addon/shop/assets/goods_default.png"
-                                    fit="contain" />
+                                <img v-else class="w-[70px] h-[60px]" src="@/addon/shop/assets/goods_default.png" fit="contain" />
                             </div>
                             <div class="ml-2">
                                 <span :title="row.goods_name" class="multi-hidden">{{ row.goods_name }}</span>
@@ -86,9 +82,7 @@
                         <span class="text-primary mx-[2px]">{{ selectGoodsNum }}</span>
                         <span>{{ t('goodsSelectPopupAfterTip') }}</span>
                     </div>
-                    <el-button type="primary" link @click="clear" v-show="selectGoodsNum">{{
-                        t('goodsSelectPopupClearGoods') }}
-                    </el-button>
+                    <el-button type="primary" link @click="clear" v-show="selectGoodsNum">{{ t('goodsSelectPopupClearGoods') }}</el-button>
                 </div>
                 <el-pagination v-model:current-page="goodsTable.page" v-model:page-size="goodsTable.limit"
                     layout="total, sizes, prev, pager, next, jumper" :total="goodsTable.total"

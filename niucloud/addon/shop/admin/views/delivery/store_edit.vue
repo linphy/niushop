@@ -13,52 +13,41 @@
         <el-card class="box-card !border-none" shadow="never">
             <el-form :model="formData" label-width="140px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('storeName')" prop="store_name">
-                    <el-input v-model="formData.store_name" clearable :placeholder="t('storeNamePlaceholder')"
-                        class="input-width" />
+                    <el-input v-model="formData.store_name" clearable :placeholder="t('storeNamePlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('storeDesc')">
-                    <el-input v-model="formData.store_desc" type="textarea" rows="4" clearable
-                        :placeholder="t('storeDescPlaceholder')" class="input-width" />
+                    <el-input v-model="formData.store_desc" type="textarea" rows="4" clearable :placeholder="t('storeDescPlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('storeLogo')">
                     <upload-image v-model="formData.store_logo" />
                 </el-form-item>
                 <el-form-item :label="t('storeMobile')" prop="store_mobile">
-                    <el-input v-model="formData.store_mobile" clearable :placeholder="t('storeMobilePlaceholder')"
-                        class="input-width" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
+                    <el-input v-model="formData.store_mobile" clearable :placeholder="t('storeMobilePlaceholder')" class="input-width" @keyup="filterNumber($event)" />
                 </el-form-item>
                 <el-form-item :label="t('tradeTime')" prop="trade_time">
                     <div>
-                        <el-input v-model="formData.trade_time" clearable :placeholder="t('tradeTimePlaceholder')"
-                            class="input-width" />
+                        <el-input v-model="formData.trade_time" clearable :placeholder="t('tradeTimePlaceholder')" class="input-width" />
                         <p class="text-[12px] text-[#999]">{{ t('tradeTimeTips') }}</p>
                     </div>
                 </el-form-item>
                 <el-form-item :label="t('storeAddress')" prop="address_area">
-                    <el-select v-model="formData.province_name" value-key="id" clearable class="w-[200px]"
-                        @change="checkCity">
+                    <el-select v-model="formData.province_name" value-key="id" clearable class="w-[200px]" @change="checkCity">
                         <el-option :label="t('provincePlaceholder')" value="" />
-                        <el-option v-for="(provinceId, provinceIndex) in areaList.province " :key="provinceIndex"
-                            :label="provinceId.name" :value="provinceId" />
+                        <el-option v-for="(provinceId, provinceIndex) in areaList.province " :key="provinceIndex" :label="provinceId.name" :value="provinceId" />
                     </el-select>
-                    <el-select v-model="formData.city_name" value-key="id" clearable class="w-[200px] ml-3"
-                        @change="checkDistrict">
+                    <el-select v-model="formData.city_name" value-key="id" clearable class="w-[200px] ml-3" @change="checkDistrict">
                         <el-option :label="t('cityPlaceholder')" value="" />
-                        <el-option v-for="(cityId, cityIndex) in areaList.city " :key="cityIndex" :label="cityId.name"
-                            :value="cityId" />
+                        <el-option v-for="(cityId, cityIndex) in areaList.city " :key="cityIndex" :label="cityId.name" :value="cityId" />
                     </el-select>
-                    <el-select v-model="formData.district_name" value-key="id" clearable class="w-[200px] ml-3"
-                        @change="check">
+                    <el-select v-model="formData.district_name" value-key="id" clearable class="w-[200px] ml-3" @change="check">
                         <el-option :label="t('districtPlaceholder')" value="" />
-                        <el-option v-for="(districtId, districtIndex) in areaList.district " :key="districtIndex"
-                            :label="districtId.name" :value="districtId" />
+                        <el-option v-for="(districtId, districtIndex) in areaList.district " :key="districtIndex" :label="districtId.name" :value="districtId" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="t('storeAddressDetail')" prop="address">
                     <div>
                         <div>
-                            <el-input v-model="formData.address" clearable :placeholder="t('storeAddressDetailPlaceholder')"
-                                class="input-width" />
+                            <el-input v-model="formData.address" clearable :placeholder="t('storeAddressDetailPlaceholder')" class="input-width" />
                             <el-button class="ml-3" @click="searchOn">{{ t('search') }}</el-button>
                         </div>
                         <div class="mt-4">
@@ -85,12 +74,12 @@ import { getStoreInfo, addStore, editStore } from '@/addon/shop/api/delivery'
 import { useRoute, useRouter } from 'vue-router'
 import { getAreaListByPid, getAreatree, getAddressInfo, getContraryAddress, getMap } from '@/app/api/sys'
 import { AnyObject } from '@/types/global'
+import { filterNumber } from '@/utils/common'
 
 const route = useRoute()
 const router = useRouter()
 const id: number = parseInt(route.query.id as string)
 const loading = ref(false)
-// const pageName = route.meta.title
 
 /**
  * 表单数据

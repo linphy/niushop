@@ -4,7 +4,7 @@
         <el-card class="box-card !border-none" shadow="never">
 
             <div class="flex justify-between items-center">
-                <span class="text-[20px]">{{ pageName }}</span>
+                <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" @click="addEvent">
                     {{ t('addEvaluate') }}
                 </el-button>
@@ -31,18 +31,15 @@
                         <template #default="{ row }">
                             <div class="flex cursor-pointer">
                                 <div class="flex items-center min-w-[50px] mr-[10px]">
-                                    <el-image v-if="row.goods.goods_cover_thumb_small" class="w-[50px] h-[50px]"
-                                        :src="img(row.goods.goods_cover_thumb_small)" fit="contain">
+                                    <el-image v-if="row.goods.goods_cover_thumb_small" class="w-[50px] h-[50px]" :src="img(row.goods.goods_cover_thumb_small)" fit="contain">
                                         <template #error>
                                             <div class="image-slot">
-                                                <img class="w-[50px] h-[50px]"
-                                                    src="@/addon/shop/assets/goods_default.png" />
+                                                <img class="w-[50px] h-[50px]" src="@/addon/shop/assets/goods_default.png" />
                                             </div>
                                         </template>
                                     </el-image>
 
-                                    <img v-else class="w-[50px] h-[50px]" src="@/addon/shop/assets/goods_default.png"
-                                        fit="contain" />
+                                    <img v-else class="w-[50px] h-[50px]" src="@/addon/shop/assets/goods_default.png" fit="contain" />
                                 </div>
                                 <div class="flex">
                                     <p class="multi-hidden">{{ row.goods.goods_name }}</p>
@@ -56,20 +53,17 @@
                                 <p class="text-[14px]">{{ row.content }}</p>
                                 <div class="flex flex-wrap mt-[10px]" v-if="row.image_small?.length > 0">
                                     <div v-for="(imageItem, imageIndex) in row.image_small" :key="imageIndex" class="mr-4">
-                                        <el-image v-if="imageItem" class="w-[40px] h-[40px]" :src="img(imageItem)"
-                                            fit="contain">
+                                        <el-image v-if="imageItem" class="w-[40px] h-[40px]" :src="img(imageItem)" fit="contain">
                                             <template #error>
                                                 <div class="image-slot">
-                                                    <img class="w-[40px] h-[40px]"
-                                                        src="@/addon/shop/assets/goods_default.png" />
+                                                    <img class="w-[40px] h-[40px]" src="@/addon/shop/assets/goods_default.png" />
                                                 </div>
                                             </template>
                                         </el-image>
                                         <img v-else class="w-[40px] h-[40px]" src="@/addon/shop/assets/goods_default.png" />
                                     </div>
                                 </div>
-                                <p class="mt-[15px] text-[14px]" v-if="row.explain_first"><span class="text-[#ff7f5b]">{{
-                                    t('explainFirst') }}：</span>{{ row.explain_first }}</p>
+                                <p class="mt-[15px] text-[14px]" v-if="row.explain_first"><span class="text-[#ff7f5b]">{{ t('explainFirst') }}：</span>{{ row.explain_first }}</p>
                             </div>
                         </template>
                     </el-table-column>
@@ -83,18 +77,12 @@
                     <el-table-column :label="t('operation')" fixed="right" min-width="100" align="right">
                         <template #default="{ row }">
                             <div>
-                                <el-button type="primary" link @click="adoptEvent(row.evaluate_id)"
-                                    v-if="row.is_audit == 1">{{ t('adopt') }}</el-button>
-                                <el-button type="primary" link @click="refuseEvent(row.evaluate_id)"
-                                    v-if="row.is_audit == 1">{{ t('refuse') }}</el-button>
-                                <el-button type="primary" link @click="replyEvent(row.evaluate_id)"
-                                    v-if="row.explain_first == ''">{{ t('reply') }}</el-button>
-                                <el-button type="primary" link @click="deleteEvent(row.evaluate_id)">{{ t('delete')
-                                }}</el-button>
-                                <el-button type="primary" link @click="toppingEvent(row.evaluate_id, 'topping')"
-                                    v-if="row.is_audit == 2 && row.topping == 0">{{ t('topping') }}</el-button>
-                                <el-button type="primary" link @click="toppingEvent(row.evaluate_id, 'cancel_topping')"
-                                    v-if="row.topping == 1">{{ t('cancelTopping') }}</el-button>
+                                <el-button type="primary" link @click="adoptEvent(row.evaluate_id)" v-if="row.is_audit == 1">{{ t('adopt') }}</el-button>
+                                <el-button type="primary" link @click="refuseEvent(row.evaluate_id)" v-if="row.is_audit == 1">{{ t('refuse') }}</el-button>
+                                <el-button type="primary" link @click="replyEvent(row.evaluate_id)" v-if="row.explain_first == ''">{{ t('reply') }}</el-button>
+                                <el-button type="primary" link @click="deleteEvent(row.evaluate_id)">{{ t('delete') }}</el-button>
+                                <el-button type="primary" link @click="toppingEvent(row.evaluate_id, 'topping')" v-if="row.is_audit == 2 && row.topping == 0">{{ t('topping') }}</el-button>
+                                <el-button type="primary" link @click="toppingEvent(row.evaluate_id, 'cancel_topping')" v-if="row.topping == 1">{{ t('cancelTopping') }}</el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -121,9 +109,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="replyShowDialog = false">{{ t('cancel') }}</el-button>
-                    <el-button type="primary" @click="confirm(formRef)">{{
-                        t('confirm')
-                    }}</el-button>
+                    <el-button type="primary" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
                 </span>
             </template>
         </el-dialog>

@@ -4,8 +4,7 @@
 			<view v-if="detail.status_name" class="flex status-item text-[32rpx] bg-primary h-[240rpx]">
 				<view class="ml-[50rpx]">
 					<img v-if="detail.status == 1" class="w-[70rpx] h-[70rpx] mt-[45rpx]" :src="img('addon/shop/payment.png')" />
-					<img v-if="detail.status == 2 || detail.status == 3" class="w-[70rpx] h-[70rpx] mt-[45rpx]"
-						:src="img('addon/shop/delivery.png')" />
+					<img v-if="detail.status == 2 || detail.status == 3" class="w-[70rpx] h-[70rpx] mt-[45rpx]" :src="img('addon/shop/delivery.png')" />
 					<img v-if="detail.status == 5" class="w-[70rpx] h-[70rpx] mt-[45rpx]" :src="img('addon/shop/complete.png')" />
 					<img v-if="detail.status == -1" class="w-[70rpx] h-[70rpx] mt-[45rpx]" :src="img('addon/shop/close.png')" />
 				</view>
@@ -13,8 +12,7 @@
 					{{ detail.status_name.name }}
 				</view>
 			</view>
-			<view class="bg-[#fff] mx-[30rpx] p-[30rpx] mt-[-70rpx] rounded-[10rpx]"
-				v-if="detail.delivery_type != 'virtual'">
+			<view class="bg-[#fff] mx-[30rpx] p-[30rpx] mt-[-70rpx] rounded-[10rpx]" v-if="detail.delivery_type != 'virtual'">
 				<view v-if="detail.delivery_type == 'express'">
 					<view class="text-[28rpx]">
 						<text>{{ detail.taker_name }}</text>
@@ -68,13 +66,11 @@
 							<text class="text-[28rpx] text-item leading-[40rpx]">{{ goodsItem.goods_name }}</text>
 							<view class="flex" v-if="goodsItem.sku_name">
 								<text
-									class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{
-										goodsItem.sku_name }}</text>
+									class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{ goodsItem.sku_name }}</text>
 							</view>
 						</view>
 						<view class="flex justify-between">
-							<text class="text-right text-[28rpx]  text-[var(--price-text-color)] price-font">￥{{ goodsItem.price
-							}}</text>
+							<text class="text-right text-[28rpx]  text-[var(--price-text-color)] price-font">￥{{ goodsItem.price }}</text>
 							<text class="text-right text-sm"><text class="text-[26rpx]">x</text>{{ goodsItem.num }}</text>
 						</view>
 
@@ -142,8 +138,9 @@
 				</view>
 				<view
 					class="flex justify-end text-[28rpx] pt-[20rpx] border-top-[2rpx] border-[solid] border-[#f1f1f1] mt-[40rpx]">
-					<view><text>{{ t('orderMoney') }}：</text><text class=" text-[var(--price-text-color)] price-font">￥{{
-						detail.order_money }}</text></view>
+					<view>
+						<text>{{ t('orderMoney') }}：</text>
+						<text class=" text-[var(--price-text-color)] price-font">￥{{ detail.order_money }}</text></view>
 				</view>
 			</view>
 
@@ -198,7 +195,6 @@ let detail = ref<Object>({});
 let loading = ref<boolean>(true);
 let type = ref('')
 let orderId = ref('')
-let orderStepsNum = ref(1)
 let orderStepsShow = ref(false)
 let evaluateConfig = ref<Object>({});
 
