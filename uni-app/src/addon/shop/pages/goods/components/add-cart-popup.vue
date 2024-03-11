@@ -16,11 +16,10 @@
 					<view class="flex flex-1 flex-col justify-between ml-[20rpx]">
 						<view class="w-[100%]">
 							<view class=" text-[var(--price-text-color)] price-font">
-								<text class="text-[28rpx] font-bold">￥</text><text
-									class="text-[42rpx] mr-[10rpx]  font-bold">{{ detail.sale_price }}</text>
+								<text class="text-[28rpx] font-bold">￥</text>
+								<text class="text-[42rpx] mr-[10rpx]  font-bold">{{ detail.sale_price }}</text>
 							</view>
-							<view class="text-[24rpx] leading-[32rpx] text-[#666] mt-[12rpx]">库存{{ detail.stock }}{{
-								goodsDetail.goods.unit }}</view>
+							<view class="text-[24rpx] leading-[32rpx] text-[#666] mt-[12rpx]">库存{{ detail.stock }}{{ goodsDetail.goods.unit }}</view>
 						</view>
 						<view class="w-[100%]" style="max-height: calc(204rpx - 126rpx); overflow: hidden;"
 							v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
@@ -47,29 +46,25 @@
 							v-model="buyNum" :min="0" :max="detail.stock" integer :step="1" input-width="98rpx"
 							input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]"
-									:class="{ '!text-[#c8c9cc]': buyNum === 0 }"></text>
+								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === 0 }"></text>
 							</template>
 							<template #input>
 								<text class="text-[#333] fext-[23rpx] font-500 mx-[16rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]"
-									:class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
+								<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
 							</template>
 						</u-number-box>
 						<u-number-box v-else v-model="buyNum" :min="1" :max="detail.stock" integer :step="1"
 							input-width="98rpx" input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]"
-									:class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 							</template>
 							<template #input>
 								<text class="text-[#333] fext-[23rpx] font-500 mx-[16rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]"
-									:class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
+								<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
 							</template>
 						</u-number-box>
 

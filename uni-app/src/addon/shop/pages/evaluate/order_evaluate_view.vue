@@ -24,9 +24,7 @@
                                    </view>
                                    <view class="mt-auto flex  self-end justify-between w-[100%]">
                                         <view class="flex flex-col">
-                                             <text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ item.order_goods.price
-                                             }}</text>
-
+                                             <text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ item.order_goods.price }}</text>
                                         </view>
                                         <text class="text--[24rpx] text-[#666]">x{{ item.order_goods.num }}</text>
                                    </view>
@@ -35,9 +33,7 @@
                          <view class="pt-[20rpx] flex items-center border-0 border-t-[2rpx] border-solid border-[#ebebec]">
                               <u-rate :count="5" v-model="item.scores" active-color="red" :size="'40rpx'" readonly></u-rate>
                               <text class="ml-[60rpx] text-[26rpx] text-[#888]">{{ item.scores === 1 ? '差评' :
-                                   item.scores ===
-                                        2 ||
-                                        item.scores === 3 ? '中评' : '好评' }}</text>
+                                   item.scores === 2 || item.scores === 3 ? '中评' : '好评' }}</text>
                          </view>
                          <view class=" text-[28rpx] text-[#888] my-[20rpx] overflow-clip">{{ item.content }}</view>
                          <template v-if="item.image_mid.length === 1">

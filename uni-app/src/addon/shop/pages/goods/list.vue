@@ -219,27 +219,6 @@ onMounted(() => {
 	word-break: keep-all;
 }
 
-/* 单行超出隐藏 */
-.using-hidden {
-	word-break: break-all;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-	white-space: break-spaces;
-}
-
-/* 多行超出隐藏 */
-.multi-hidden {
-	word-break: break-all;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-}
-
 .label-chunk {
 	color: var(--primary-color);
 	background-color: var(--primary-color-light);

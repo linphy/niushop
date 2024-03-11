@@ -1,8 +1,7 @@
 <template>
     <view class="flex flex-wrap">
         <view v-for="(item, index) in value" :class="['mb-[18rpx] relative', (index + 1) % 3 === 0 ? '' : 'mr-[18rpx]']">
-            <u--image class="rounded-[10rpx] overflow-hidden" width="204rpx" height="204rpx" :src="img(item || '')"
-                model="aspectFill">
+            <u--image class="rounded-[10rpx] overflow-hidden" width="204rpx" height="204rpx" :src="img(item || '')" model="aspectFill">
                 <template #error>
                     <u-icon name="photo" color="#999" size="50"></u-icon>
                 </template>
@@ -11,8 +10,7 @@
         </view>
         <view class="w-[204rpx] h-[204rpx]">
             <u-upload @afterRead="afterRead" :maxCount="maxCount" :multiple="prop.multiple">
-                <view
-                    class="flex items-center justify-center w-[204rpx] h-[204rpx] border-[2rpx] border-dashed border-[#ebebec] text-center text-[#888]">
+                <view class="flex items-center justify-center w-[204rpx] h-[204rpx] border-[2rpx] border-dashed border-[#ebebec] text-center text-[#888]">
                     <view>
                         <view class="iconfont iconzhaoxiangji text-[50rpx]"></view>
                         <view class=" text-[24rpx] mt-[10rpx]">{{ value.length }}/{{ maxCount }}</view>

@@ -27,8 +27,7 @@
 						<text class="text-[28rpx] text-item leading-[40rpx]">{{ detail.order_goods.goods_name }}</text>
 						<view class="flex" v-if="detail.order_goods.sku_name">
 							<text
-								class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{
-									detail.order_goods.sku_name }}</text>
+								class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{ detail.order_goods.sku_name }}</text>
 						</view>
 					</view>
 					<view class="flex justify-between">
@@ -102,8 +101,7 @@
 						<text class="text-[28rpx] text-item leading-[40rpx]">{{ detail.order_goods.goods_name }}</text>
 						<view class="flex" v-if="detail.order_goods.sku_name">
 							<text
-								class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{
-									detail.order_goods.sku_name }}</text>
+								class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{ detail.order_goods.sku_name }}</text>
 						</view>
 					</view>
 					<view class="flex justify-between">

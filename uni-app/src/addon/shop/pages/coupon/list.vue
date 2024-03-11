@@ -13,16 +13,14 @@
 							class="relative pt-[50rpx] w-[244rpx] h-[222rpx] bg-[#93979D] text-[#fff] text-center box-border px-[40rpx] box-border">
 							<view class="w-[100%]">
 								<view class="leading-[40rpx] font-500 price-font">
-									<text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price
-									}}</text>
+									<text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price }}</text>
 								</view>
 								<view class="mt-[35rpx] text-[23rpx] leading-[32rpx] font-500">
 									<text v-if="item.min_condition_money === '0.00'">无门槛</text>
 									<text v-else>满{{ item.coupon_min_price }}元可用</text>
 								</view>
 							</view>
-							<image class="w-[10rpx] h-[222rpx] absolute right-[-2rpx] top-0 "
-								:src="img('addon/shop/coupon/coupon_border.png')" mode="aspectFill"></image>
+							<image class="w-[10rpx] h-[222rpx] absolute right-[-2rpx] top-0 " :src="img('addon/shop/coupon/coupon_border.png')" mode="aspectFill"/>
 						</view>
 						<view class="h-[222rpx] flex flex-1 flex-wrap pt-[24rpx] box-border ml-[19rpx] mr-[9rpx]">
 							<view class="text-[27rpx] text-[#303133] leading-[38rpx] w-[100%]">
@@ -40,12 +38,8 @@
 						<button
 							class="!w-[128rpx] !h-[50rpx] text-[23rpx] !text-[#93979D]  !mr-[34rpx] !border-0 !bg-[#EEEEEE] !border-0 rounded-full text-white leading-[50rpx] remove-border"
 							 disabled>已领完</button>
-						<view
-							class="absolute top-[50%] left-0 mt-[-20rpx] h-[40rpx] w-[20rpx] rounded-tr-[20rpx] rounded-br-[20rpx] bg-[#fff] ">
-						</view>
-						<view
-							class="absolute top-[50%] right-0 mt-[-20rpx] h-[40rpx] w-[20rpx] rounded-tl-[20rpx] rounded-bl-[20rpx] bg-[#fff] ">
-						</view>
+						<view class="absolute top-[50%] left-0 mt-[-20rpx] h-[40rpx] w-[20rpx] rounded-tr-[20rpx] rounded-br-[20rpx] bg-[#fff] "></view>
+						<view class="absolute top-[50%] right-0 mt-[-20rpx] h-[40rpx] w-[20rpx] rounded-tl-[20rpx] rounded-bl-[20rpx] bg-[#fff] "></view>
 					</view>
 					<view v-else class ="flex items-center relative w-[100%] rounded-[16rpx] overflow-hidden bg-[#FFF4F4]"
 						:class="{'mt-[20rpx]':index}"
@@ -54,17 +48,14 @@
 							class="relative pt-[50rpx] w-[244rpx] h-[222rpx] bg-[#FF4646] text-[#fff] text-center box-border px-[40rpx] box-border">
 							<view class="w-[100%]">
 								<view class="leading-[40rpx] font-500 price-font">
-									<text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price
-									}}</text>
+									<text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price }}</text>
 								</view>
 								<view class="mt-[35rpx] text-[23rpx] leading-[32rpx] font-500">
 									<text v-if="item.min_condition_money === '0.00'">无门槛</text>
 									<text v-else>满{{ item.coupon_min_price }}元可用</text>
 								</view>
 							</view>
-							<image class="w-[10rpx] h-[222rpx] absolute right-[-2rpx] top-0 "
-								:src="img('addon/shop/coupon/coupon_border_active.png')" mode="aspectFill">
-							</image>
+							<image class="w-[10rpx] h-[222rpx] absolute right-[-2rpx] top-0 " :src="img('addon/shop/coupon/coupon_border_active.png')" mode="aspectFill"/>
 						</view>
 						<view class="h-[222rpx] flex flex-1 flex-wrap pt-[24rpx] box-border ml-[19rpx] mr-[9rpx]">
 							<view class="text-[27rpx] text-[#303133] leading-[38rpx] w-[100%]">
@@ -75,10 +66,8 @@
 							</view>
 							<view
 								class="self-end w-[100%] pt-[19rpx] pb-[20rpx] text-[20rpx] leading-[30rpx] text-[#90939A] border-0 border-t-[1px] border-dashed border-[#ccc]">
-								<text v-if="item.valid_type == 1">领取之日起<text class="text-[#FF4543]">{{
-									item.length || '' }}</text>天内有效</text>
-								<text v-else> 有效期至<text class="text-[#FF4543]">{{ item.valid_end_time ?
-									item.valid_end_time.slice(0, 10) : '' }}</text></text>
+								<text v-if="item.valid_type == 1">领取之日起<text class="text-[#FF4543]">{{ item.length || '' }}</text>天内有效</text>
+								<text v-else> 有效期至<text class="text-[#FF4543]">{{ item.valid_end_time ? item.valid_end_time.slice(0, 10) : '' }}</text></text>
 							</view>
 						</view>
 						<view v-if="item.btnType === 'collecting'" @click.stop="collecting(item.id, index)" class="!mr-[34rpx]">

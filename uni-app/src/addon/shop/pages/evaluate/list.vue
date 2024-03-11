@@ -19,15 +19,12 @@
                                 <u-avatar class="mr-[10rpx]" :src="img(item.member_head)" :size="'50rpx'" leftIcon="none"></u-avatar>
                                 <text class="text-[28rpx]">{{ item.member_name }}</text>
                             </view>
-                            <text class="text--[26rpx] text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : ''
-                            }}</text>
+                            <text class="text--[26rpx] text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : '' }}</text>
                         </view>
 
                         <view class="pt-[20rpx] flex items-center">
-                            <u-rate :count="5" v-model="item.scores" active-color="var(--primary-color)"
-                                :size="'40rpx'" readonly></u-rate>
-                            <text class="ml-[60rpx] text-[28rpx] text-[#888]">{{ item.scores === 1 ? '差评' :
-                                item.scores === 2 || item.scores === 3 ? '中评' : '好评' }}</text>
+                            <u-rate :count="5" v-model="item.scores" active-color="var(--primary-color)" :size="'40rpx'" readonly></u-rate>
+                            <text class="ml-[60rpx] text-[28rpx] text-[#888]">{{ item.scores === 1 ? '差评' : item.scores === 2 || item.scores === 3 ? '中评' : '好评' }}</text>
                         </view>
                         <view class="text-[26rpx] text-[#666] my-[20rpx] overflow-clip">{{ item.content }}</view>
                         <template v-if="item.image_small.length === 1">
@@ -150,7 +147,6 @@ import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue'
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js'
 import { onPageScroll, onReachBottom } from '@dcloudio/uni-app'
-
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom)
 const list = ref<Array<Object>>([]);

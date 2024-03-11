@@ -3,8 +3,7 @@
 		<view class="fixed left-0 top-0 right-0 z-10" v-if="statusLoading">
 			<scroll-view scroll-x="true" class="scroll-Y box-border px-[24rpx] bg-white">
 				<view class="flex whitespace-nowrap justify-around">
-					<view :class="['text-sm leading-[90rpx]', { 'class-select': orderState === item.status.toString() }]"
-						@click="orderStateFn(item.status)" v-for="(item, index) in orderStateList">{{ item.name }}</view>
+					<view :class="['text-sm leading-[90rpx]', { 'class-select': orderState === item.status.toString() }]" @click="orderStateFn(item.status)" v-for="(item, index) in orderStateList">{{ item.name }}</view>
 				</view>
 			</scroll-view>
 		</view>
@@ -23,12 +22,9 @@
 								</view>
 							</view>
 							<view class="px-[24rpx]">
-								<view class="order-goods-item flex mt-[50rpx]" v-for="(subitem, index) in item.order_goods"
-									:key="index">
+								<view class="order-goods-item flex mt-[50rpx]" v-for="(subitem, index) in item.order_goods" :key="index">
 									<view class="w-[160rpx] h-[160rpx] flex-2">
-										<u--image class="rounded-[10rpx] overflow-hidden" width="160rpx" height="160rpx"
-											:src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')"
-											model="aspectFill">
+										<u--image class="rounded-[10rpx] overflow-hidden" width="160rpx" height="160rpx" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" model="aspectFill">
 											<template #error>
 												<u-icon name="photo" color="#999" size="50"></u-icon>
 											</template>
@@ -36,17 +32,13 @@
 									</view>
 									<view class="ml-[20rpx] flex flex-1 flex-col justify-between">
 										<view>
-											<text class="text-[28rpx] text-item  leading-[40rpx]">{{ subitem.goods_name
-											}}</text>
+											<text class="text-[28rpx] text-item  leading-[40rpx]">{{ subitem.goods_name }}</text>
 											<view class="flex" v-if="subitem.sku_name">
-												<text
-													class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{
-														subitem.sku_name }}</text>
+												<text class="block text-[20rpx] text-item mt-[10rpx] text-[#ccc] bg-[#f5f5f5] px-[16rpx] py-[6rpx] rounded-[999rpx]">{{ subitem.sku_name }}</text>
 											</view>
 										</view>
 										<view class="flex justify-between">
-											<text class="text-right text-[28rpx] text-[var(--price-text-color)] price-font">￥{{
-												subitem.price }}</text>
+											<text class="text-right text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ subitem.price }}</text>
 											<text class="text-right text-[24rpx]">x{{ subitem.num }}</text>
 										</view>
 									</view>
@@ -55,8 +47,7 @@
 						</view>
 						<view class="flex justify-between text-[28rpx] px-[24rpx] mt-[40rpx]">
 							<text class="text-[#999]">{{ item.create_time }}</text>
-							<text>{{ t('actualPayment') }}：<text class=" text-[var(--price-text-color)] price-font">￥{{
-								item.order_money }}</text></text>
+							<text>{{ t('actualPayment') }}：<text class=" text-[var(--price-text-color)] price-font">￥{{ item.order_money }}</text></text>
 						</view>
 						<view class="mt-[34rpx] flex justify-end z-10 px-[24rpx]">
 							<view
@@ -181,7 +172,6 @@ const orderBtnFn = (data, type = '') => {
 		} else {
 			redirect({ url: '/addon/shop/pages/evaluate/order_evaluate_view', param: { order_id: data.order_id } })
 		}
-
 	}
 }
 
@@ -368,4 +358,5 @@ const finish = (item: any) => {
 		left: 50%;
 		transform: translateX(-50%);
 	}
-}</style>
+}
+</style>

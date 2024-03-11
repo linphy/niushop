@@ -2,7 +2,7 @@
 	<view :style="warpCss">
 		<div class="flex flex-wrap justify-between">
 			<block v-if="diyComponent.style == 'style1'">
-				<view :class="['w-[332rpx] bg-[#fff] box-border rounded-[12rpx] overflow-hidden',{'mt-[24rpx]': index > 1}]" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+				<view :class="['w-[332rpx] bg-[#fff] box-border rounded-[12rpx] overflow-hidden',{'mt-[24rpx]': index > 1}]" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 					<u--image width="332rpx" height="332rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 						<template #error>
 							<u-icon name="photo" color="#999" size="50"></u-icon>
@@ -18,16 +18,14 @@
 				</view>
 			</block>
 			<block v-if="diyComponent.style == 'style2'">
-				<view :class="['bg-white w-full flex p-[20rpx] rounded-[16rpx]',{'mt-[20rpx]': index > 0}]"  v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
+				<view :class="['bg-white w-full flex p-[20rpx] overflow-hidden',{'mt-[20rpx]': index > 0}]" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 					<u--image class="rounded-[10rpx] overflow-hidden" width="200rpx" height="200rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 						<template #error>
 							<u-icon name="photo" color="#999" size="50"></u-icon>
 						</template>
 					</u--image>
 					<view class="flex-1 flex flex-col ml-[20rpx]">
-						<view class="text-[26rpx] h-[80rpx] leading-[40rpx]  multi-hidden mb-[10rpx]">
-							{{item.goods_name}}
-						</view>
+						<view class="text-[26rpx] h-[80rpx] leading-[40rpx]  multi-hidden mb-[10rpx]">{{item.goods_name}}</view>
 						<view class="mt-auto flex justify-between items-end">
 							<text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{item.goodsSku.price}}</text>
 							<text class="text--[24rpx] text-[#666]">已售{{item.sale_num}}{{item.unit || '件'}}</text>
@@ -69,6 +67,16 @@
 		return style;
 	})
 
+    const itemCss = computed(() => {
+        var style = '';
+        if (diyComponent.value.elementBgColor) style += 'background-color:' + diyComponent.value.elementBgColor + ';';
+        if (diyComponent.value.topElementRounded) style += 'border-top-left-radius:' + diyComponent.value.topElementRounded * 2 + 'rpx;';
+        if (diyComponent.value.topElementRounded) style += 'border-top-right-radius:' + diyComponent.value.topElementRounded * 2 + 'rpx;';
+        if (diyComponent.value.bottomElementRounded) style += 'border-bottom-left-radius:' + diyComponent.value.bottomElementRounded * 2 + 'rpx;';
+        if (diyComponent.value.bottomElementRounded) style += 'border-bottom-right-radius:' + diyComponent.value.bottomElementRounded * 2 + 'rpx;';
+        return style;
+    })
+
 	watch(
 		() => props.pullDownRefreshCount,
 		(newValue, oldValue) => {
@@ -89,24 +97,13 @@
 
 	onMounted(() => {
 		refresh();
-		// 装修模式下刷新
-		if (diyStore.mode == 'decorate') {
-			watch(
-				() => diyComponent.value,
-				(newValue, oldValue) => {
-					if (newValue && newValue.componentName == 'AddonList') {
-						refresh();
-					}
-				}
-			)
-		}
 	});
 
 	const refresh = () => {
 		// 装修模式下设置默认图
 		if (diyStore.mode == 'decorate') {
 			let obj = {
-				goods_cover: "",
+				goods_cover_thumb_mid: "",
 				goods_name: "商品名称",
 				sale_num: "100",
 				unit: "件",
@@ -126,26 +123,6 @@
 </script>
 
 <style lang="scss" scoped>
-	/* 单行超出隐藏 */
-	.using-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 1;
-		-webkit-box-orient: vertical;
-		white-space: break-spaces;
-	}
-
-	/* 多行超出隐藏 */
-	.multi-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
 </style>
 <style>
 	@import '@/addon/shop/styles/common.scss';

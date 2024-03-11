@@ -44,15 +44,13 @@
                         </view>
                         <view class="mt-[10rpx]">
                             <u-form-item label="发票抬头" prop="header_name" :border-bottom="true">
-                                <u-input v-model="formData.header_name" border="none" clearable
-                                    placeholder="请输入发票抬头"></u-input>
+                                <u-input v-model="formData.header_name" border="none" clearable placeholder="请输入发票抬头"></u-input>
                             </u-form-item>
                         </view>
                         <view v-show="formData.header_type == 2">
                             <view class="mt-[10rpx]">
                                 <u-form-item label="纳税人识别号" prop="tax_number" :border-bottom="true">
-                                    <u-input v-model="formData.tax_number" border="none" clearable
-                                        placeholder="请输入纳税人识别号"></u-input>
+                                    <u-input v-model="formData.tax_number" border="none" clearable placeholder="请输入纳税人识别号"></u-input>
                                 </u-form-item>
                             </view>
                             <view class="py-[20rpx] flex items-end">
@@ -66,26 +64,22 @@
                             <view v-show="optionalShow">
                                 <view class="mt-[10rpx]">
                                     <u-form-item label="注册地址" :border-bottom="true">
-                                        <u-input v-model="formData.address" border="none" clearable
-                                            placeholder="(选填)请输入企业注册地址"></u-input>
+                                        <u-input v-model="formData.address" border="none" clearable placeholder="(选填)请输入企业注册地址"></u-input>
                                     </u-form-item>
                                 </view>
                                 <view class="mt-[10rpx]">
                                     <u-form-item label="注册电话" :border-bottom="true">
-                                        <u-input v-model="formData.telephone" border="none" clearable
-                                            placeholder="(选填)请输入企业注册电话"></u-input>
+                                        <u-input v-model="formData.telephone" border="none" clearable placeholder="(选填)请输入企业注册电话"></u-input>
                                     </u-form-item>
                                 </view>
                                 <view class="mt-[10rpx]">
                                     <u-form-item label="开户银行" :border-bottom="true">
-                                        <u-input v-model="formData.bank_name" border="none" clearable
-                                            placeholder="(选填)请输入企业开户银行"></u-input>
+                                        <u-input v-model="formData.bank_name" border="none" clearable placeholder="(选填)请输入企业开户银行"></u-input>
                                     </u-form-item>
                                 </view>
                                 <view class="mt-[10rpx]">
                                     <u-form-item label="银行账号" :border-bottom="true">
-                                        <u-input v-model="formData.bank_card_number" border="none" clearable
-                                            placeholder="(选填)请输入企业开户银行账号"></u-input>
+                                        <u-input v-model="formData.bank_card_number" border="none" clearable placeholder="(选填)请输入企业开户银行账号"></u-input>
                                     </u-form-item>
                                 </view>
                             </view>
@@ -127,11 +121,10 @@
         return config.value.is_invoice == 1
     })
 
-    getInvoiceConfig()
-        .then(({ data }) => {
-            config.value = data
-            data.invoice_content.length && (formData.value.name = data.invoice_content[0])
-        }).catch()
+    getInvoiceConfig().then(({ data }) => {
+        config.value = data
+        data.invoice_content.length && (formData.value.name = data.invoice_content[0])
+    }).catch()
 
     const formRef = ref(null)
 

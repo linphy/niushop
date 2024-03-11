@@ -19,8 +19,7 @@
 							class="relative pt-[50rpx] w-[244rpx] h-[222rpx] bg-[#93979D] text-[#fff] text-center box-border px-[40rpx] box-border">
 							<view class="w-[100%]">
 								<view class="leading-[40rpx] font-500 price-font">
-									<text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price
-									}}</text>
+									<text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price }}</text>
 								</view>
 								<view class="mt-[35rpx] text-[23rpx] leading-[32rpx] font-500">
 									<text v-if="item.min_condition_money === '0.00'">无门槛</text>
@@ -60,8 +59,7 @@
                             class="relative pt-[50rpx] w-[244rpx] h-[222rpx] bg-[#FF4646] text-[#fff] text-center box-border px-[40rpx] box-border">
                             <view class="w-[100%]">
                                 <view class="leading-[40rpx] font-500 price-font">
-                                    <text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price
-                                    }}</text>
+                                    <text class="text-[28rpx]">￥</text><text class="text-[50rpx]">{{ item.coupon_price }}</text>
                                 </view>
                                 <view class="mt-[35rpx] text-[23rpx] leading-[32rpx] font-500">
                                     <text v-if="item.min_condition_money === '0.00'">无门槛</text>
@@ -81,8 +79,7 @@
 							</view>
                             <view
                                 class="self-end w-[100%] pt-[19rpx] pb-[20rpx] text-[20rpx] leading-[30rpx] text-[#90939A] border-0 border-t-[1px] border-dashed border-[#ccc]">
-                                <text> 有效期至<text class="text-[#FF4543]">{{ item.expire_time ?
-                                    item.expire_time.slice(0, 10) : '' }}</text></text>
+                                <text> 有效期至<text class="text-[#FF4543]">{{ item.expire_time ? item.expire_time.slice(0, 10) : '' }}</text></text>
                             </view>
                         </view>
                         <button v-if="couponStatus === 1"

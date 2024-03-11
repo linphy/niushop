@@ -15,13 +15,13 @@
 					<view class="flex flex-1 flex-col justify-between ml-[20rpx]">
 						<view class="w-[100%]">
 							<view class=" text-[var(--price-text-color)]">
-								<text class="text-[28rpx] font-bold">￥</text><text
-									class="text-[42rpx] mr-[10rpx]  font-bold">{{goodsDetail.detail.sale_price}}</text>
+								<text class="text-[28rpx] font-bold">￥</text>
+								<text class="text-[42rpx] mr-[10rpx]  font-bold">{{goodsDetail.detail.sale_price}}</text>
 							</view>
 							<view class="text-[24rpx] leading-[32rpx] text-[#666] mt-[12rpx]">库存{{goodsDetail.detail.stock}}{{ goodsDetail.goods.unit }}</view>
 						</view>
-						<view class="w-[100%]"  style="max-height: calc(204rpx - 126rpx); overflow: hidden;"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
-							<text class="text-[24rpx] leading-[32rpx] text-[#666]">已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
+						<view class="w-[100%]"  style="max-height: calc(204rpx - 98rpx); overflow: hidden;"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
+							<text class="text-[24rpx] leading-[30rpx] text-[#666]">已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
 						</view>
 					</view>
 				</view>
@@ -42,16 +42,13 @@
 						<view class="text-[26rpx] leading-[36rpx] mb-[30rpx]">购买数量</view>
 						<u-number-box :min="1" :max="goodsDetail.stock" integer :step="1" input-width="98rpx" v-model="buyNum" input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]"
-									:class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 							</template>
 							<template #input>
 								<text class="text-[#333] fext-[23rpx] font-500 mx-[16rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-
-									<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]"
-									:class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
+								<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
 							</template>
 						</u-number-box>
 					</view>
@@ -93,6 +90,7 @@
 		goodsSkuPop.value = true;
 		callback.value = fn;
 	}
+
 	const closeFn = ()=>{
 		goodsSkuPop.value = false
 	}

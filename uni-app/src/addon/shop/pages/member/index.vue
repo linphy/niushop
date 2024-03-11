@@ -34,6 +34,8 @@
 	import useDiyStore from '@/app/stores/diy'
 	import useMemberStore from '@/stores/member'
 	import { img, redirect } from '@/utils/common';
+    import diyGroup from '@/addon/components/diy/group/index.vue'
+    import fixedGroup from '@/addon/components/fixed/group/index.vue'
 
 	const loading = ref(true);
 	const diyStore = useDiyStore();
