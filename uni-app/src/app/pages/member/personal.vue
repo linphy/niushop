@@ -1,5 +1,5 @@
 <template>
-    <view class="w-full h-screen bg-page" v-if="info">
+    <view class="w-full h-screen bg-page personal-wrap" v-if="info" :style="themeColor()">
         <view class="flex flex-col items-center pt-[30rpx]">
             <!-- #ifdef MP-WEIXIN -->
             <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar" :plain="true" class="border-0">
@@ -17,23 +17,17 @@
 
         <view class="m-[30rpx] bg-white rounded-md overflow-hidden px-[20rpx] py-[10rpx]">
             <u-cell-group :border="false">
-                <u-cell :title="t('nickname')" :is-link="true" :value="info.nickname"
-                    @click="updateNickname.modal = true"></u-cell>
-                <u-cell :title="t('sex')" :is-link="true" :value="info.sex_name || t('unknown')"
-                    @click="sexSheetShow = true"></u-cell>
+                <u-cell :title="t('nickname')" :is-link="true" :value="info.nickname" @click="updateNickname.modal = true"></u-cell>
+                <u-cell :title="t('sex')" :is-link="true" :value="info.sex_name || t('unknown')" @click="sexSheetShow = true"></u-cell>
                 <u-cell :title="t('mobile')">
                     <template #value>
                         <view v-if="info.mobile">{{ mobileConceal(info.mobile) }}</view>
-                        <view>
-                            <app-link url="/app/pages/auth/bind">
-                                <u-button type="primary" :plain="true" :text="t('bindMobile')" shape="circle"
-                                    size="mini"></u-button>
-                            </app-link>
+                        <view @click="redirect({ url: '/app/pages/auth/bind' })">
+                            <u-button type="primary" :plain="true" :text="t('bindMobile')" shape="circle" size="mini"></u-button>
                         </view>
                     </template>
                 </u-cell>
-                <u-cell :title="t('birthday')" :is-link="true" :value="info.birthday || t('unknown')"
-                    @click="birthdayPicker = true"></u-cell>
+                <u-cell :title="t('birthday')" :is-link="true" :value="info.birthday || t('unknown')" @click="birthdayPicker = true"></u-cell>
             </u-cell-group>
         </view>
 
@@ -41,13 +35,11 @@
             :show-cancel-button="true"
             @cancel="updateNickname.modal = false" :title="t('updateNickname')">
             <view class="w-full mt-[20rpx] border-0 border-b border-gray-300 border-solid py-[20rpx]">
-                <input type="nickname" v-model="updateNickname.value" :placeholder="t('nicknamePlaceholder')"
-                    @blur="bindNickname">
+                <input type="nickname" v-model="updateNickname.value" :placeholder="t('nicknamePlaceholder')" @blur="bindNickname">
             </view>
             <template #confirmButton>
                 <view class="mt-[10rpx]">
-                    <u-button type="primary" :text="t('confirm')" shape="circle"
-                        @click="updateNicknameConfirm"></u-button>
+                    <u-button type="primary" :text="t('confirm')" shape="circle" @click="updateNicknameConfirm"></u-button>
                 </view>
             </template>
         </u-modal>
@@ -66,7 +58,7 @@
     import { ref, computed, reactive, watch } from 'vue'
     import { t } from '@/locale'
     import useMemberStore from '@/stores/member'
-    import { img, mobileConceal } from '@/utils/common'
+    import { img, redirect,mobileConceal } from '@/utils/common'
     import { modifyMember } from '@/app/api/member'
     import { fetchBase64Image, uploadImage } from '@/app/api/system'
 
@@ -187,4 +179,7 @@
     }
 </style>
 <style lang="scss">
+    .personal-wrap .u-cell--clickable{
+        background-color: transparent;
+    }
 </style>

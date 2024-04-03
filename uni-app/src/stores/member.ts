@@ -37,10 +37,10 @@ const useMemberStore = defineStore('member', {
             this.info = null
             await logout().then(() => {
                 removeToken()
-                isRedirect && redirect({ url: '/app/pages/index/index' })
+                isRedirect && redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             }).catch(() => {
                 removeToken()
-                isRedirect && redirect({ url: '/app/pages/index/index' })
+                isRedirect && redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             })
         }
     }

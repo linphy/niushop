@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view :style="themeColor()">
 		<u-icon name="arrow-left" class="navigate-back" @click="navigateBack"></u-icon>
 		<web-view :src="src"></web-view>
 	</view>

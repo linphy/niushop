@@ -1,5 +1,5 @@
 <template>
-    <view class="w-screen h-screen flex flex-col">
+    <view class="w-screen h-screen flex flex-col" :style="themeColor()">
         <view class="flex-1">
             <!-- #ifdef H5 -->
             <view class="h-[100rpx]"></view>
@@ -12,31 +12,26 @@
                 <u-form labelPosition="left" :model="formData" errorType='toast' :rules="rules" ref="formRef">
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="mobile" :border-bottom="true">
-                            <u-input v-model="formData.mobile" border="none" clearable
-                                :placeholder="t('mobilePlaceholder')"></u-input>
+                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
                         </u-form-item>
                     </view>
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="code" :border-bottom="true">
-                            <u-input v-model="formData.mobile_code" border="none" type="password" clearable
-                                :placeholder="t('codePlaceholder')">
+                            <u-input v-model="formData.mobile_code" border="none" type="password" clearable :placeholder="t('codePlaceholder')">
                                 <template #suffix>
-                                    <sms-code :mobile="formData.mobile" type="find_pass"
-                                        v-model="formData.mobile_key"></sms-code>
+                                    <sms-code :mobile="formData.mobile" type="find_pass" v-model="formData.mobile_key"></sms-code>
                                 </template>
                             </u-input>
                         </u-form-item>
                     </view>
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="password" :border-bottom="true">
-                            <u-input v-model="formData.password" border="none" type="password" clearable
-                                :placeholder="t('passwordPlaceholder')"></u-input>
+                            <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')"/>
                         </u-form-item>
                     </view>
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="confirm_password" :border-bottom="true">
-                            <u-input v-model="formData.confirm_password" border="none" type="password" clearable
-                                :placeholder="t('confirmPasswordPlaceholder')"></u-input>
+                            <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')"/>
                         </u-form-item>
                     </view>
                     <view class="mt-[80rpx]">

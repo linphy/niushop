@@ -1,5 +1,5 @@
 <template>
-    <view class="w-screen h-screen flex flex-col">
+    <view class="w-screen h-screen flex flex-col" :style="themeColor()">
         <view class="flex-1">
             <!-- #ifdef H5 -->
             <view class="h-[100rpx]"></view>
@@ -19,38 +19,34 @@
                 <u-form labelPosition="left" :model="formData" errorType='toast' :rules="rules" ref="formRef">
                     <view v-show="type == 'username'">
                         <u-form-item label="" prop="username" :border-bottom="true">
-                            <u-input v-model="formData.username" border="none" clearable
-                                :placeholder="t('usernamePlaceholder')"></u-input>
+                            <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')"/>
                         </u-form-item>
                         <view class="mt-[40rpx]">
                             <u-form-item label="" prop="password" :border-bottom="true">
-                                <u-input v-model="formData.password" border="none" type="password" clearable
-                                    :placeholder="t('passwordPlaceholder')"></u-input>
+                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')"/>
                             </u-form-item>
                         </view>
                     </view>
                     <view v-show="type == 'mobile'">
                         <u-form-item label="" prop="mobile" :border-bottom="true">
-                            <u-input v-model="formData.mobile" border="none" clearable
-                                :placeholder="t('mobilePlaceholder')"></u-input>
+                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
                         </u-form-item>
                         <view class="mt-[40rpx]">
                             <u-form-item label="" prop="mobile_code" :border-bottom="true">
                                 <u-input v-model="formData.mobile_code" border="none" type="password" clearable
                                     :placeholder="t('codePlaceholder')">
                                     <template #suffix>
-                                        <sms-code :mobile="formData.mobile" type="login"
-                                            v-model="formData.mobile_key"></sms-code>
+                                        <sms-code :mobile="formData.mobile" type="login" v-model="formData.mobile_key"></sms-code>
                                     </template>
                                 </u-input>
                             </u-form-item>
                         </view>
                     </view>
                     <view class="flex text-xs justify-between mt-[20rpx] text-gray-400">
-                        <app-link url="/app/pages/auth/register">{{ t('noAccount') }}
+                        <view @click="redirect({ url: '/app/pages/auth/register' })">{{ t('noAccount') }}
                             <text class="text-primary">{{ t('toRegister') }}</text>
-                        </app-link>
-                        <app-link url="/app/pages/auth/resetpwd">{{ t('resetpwd') }}</app-link>
+                        </view>
+                        <view @click="redirect({ url: '/app/pages/auth/resetpwd' })">{{ t('resetpwd') }}</view>
                     </view>
                     <view class="mt-[80rpx]">
                         <u-button type="primary" :loading="loading" :loadingText="t('logining')" @click="handleLogin">
@@ -61,14 +57,15 @@
             </view>
         </view>
         <view class="text-xs py-[50rpx] flex justify-center w-full" v-if="configStore.login.agreement_show">
+            <text class="iconfont text-[var(--primary-color)] text-[34rpx] mr-[12rpx]" :class="isAgree ? 'iconxuanze1' : 'iconcheckbox_nol'" @click="isAgree = !isAgree"></text>
             {{ t('agreeTips') }}
-            <app-link url="/app/pages/auth/agreement?key=service">
+            <view @click="redirect({ url: '/app/pages/auth/agreement?key=service' })">
                 <text class="text-primary">{{ t('userAgreement') }}</text>
-            </app-link>
+            </view>
             {{ t('and') }}
-            <app-link url="/app/pages/auth/agreement?key=privacy">
+            <view @click="redirect({ url: '/app/pages/auth/agreement?key=privacy' })">
                 <text class="text-primary">{{ t('privacyAgreement') }}</text>
-            </app-link>
+            </view>
         </view>
     </view>
 </template>
@@ -80,6 +77,7 @@
     import useConfigStore from '@/stores/config'
     import { useLogin } from '@/hooks/useLogin'
     import { t } from '@/locale'
+    import { redirect } from '@/utils/common'
 
     const formData = reactive({
         username: '',
@@ -146,10 +144,17 @@
         }
     })
 
+    const isAgree = ref(false)
+
     const formRef = ref(null)
 
     const handleLogin = () => {
         formRef.value.validate().then(() => {
+            if (configStore.login.agreement_show && !isAgree.value) {
+                uni.showToast({ title: t('isAgreeTips'), icon: 'none' });
+                return false;
+            }
+
             if (loading.value) return
             loading.value = true
 

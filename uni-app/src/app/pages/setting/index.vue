@@ -1,5 +1,5 @@
 <template>
-    <view class="w-full h-screen bg-page">
+    <view class="w-full h-screen bg-page setting-wrap" :style="themeColor()">
         <view class="h-[30rpx]"></view>
         <view class="m-[30rpx] bg-white rounded-md overflow-hidden px-[20rpx] py-[10rpx]">
             <u-cell-group :border="false">
@@ -77,5 +77,10 @@
                 display: none;
             }
         }
+    }
+</style>
+<style>
+    .setting-wrap .u-cell--clickable{
+        background-color: transparent;
     }
 </style>

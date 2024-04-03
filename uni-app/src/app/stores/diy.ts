@@ -2,35 +2,40 @@ import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
 
 interface Diy {
-	mode : string, // 模式：decorate 装修，为空表示正常
-	pageMode : string, // 页面展示模式，diy：自定义，fixed：固定
-	currentIndex : number,
-	global : {
-		title : string,
-		pageBgColor : string, // 页面背景颜色
-		bottomTabBarSwitch : boolean, // 底部导航开关
-		bgUrl: string
-	},
-	// 组件集合
-	value : any[]
+    mode: string, // 模式：decorate 装修，为空表示正常
+    pageMode: string, // 页面展示模式，diy：自定义，fixed：固定
+    currentIndex: number,
+    global: {
+        title: string,
+		pageStartBgColor: string, // 页面背景颜色（开始）
+		pageEndBgColor: string, // 页面背景颜色（结束）
+        bottomTabBarSwitch: boolean, // 底部导航开关
+        bgUrl: string
+    },
+    // 组件集合
+    value: any[],
+    topFixedStatus: string, // 置顶组件的状态
+    scrollTop: number
 }
 
 const useDiyStore = defineStore('diy', {
 	state: () : Diy => {
-		return {
-			mode: '',
-			pageMode: 'diy',
-			currentIndex: -99,
-			global: {
-				title: "",
-				pageBgColor: "", // 页面背景颜色
-				bottomTabBarSwitch: true,
-				bgUrl: ''
-			},
-			// 组件集合
-			value: []
-		}
-	},
+        return {
+            mode: '',
+            pageMode: 'diy',
+            currentIndex: -99,
+            global: {
+                title: "",
+				pageStartBgColor: '', // 页面背景颜色（开始）
+				pageEndBgColor: '', // 页面背景颜色（结束）
+                bottomTabBarSwitch: true,
+                bgUrl: ''
+            },
+            value: [], // 组件集合
+            topFixedStatus: 'home', // 顶部 置顶组件状态，home：展示首页数据、diy：展示置顶组件定义的子页面
+            scrollTop: 0 // 滚动位置
+        }
+    },
 	getters: {
 	},
 	actions: {
@@ -56,7 +61,11 @@ const useDiyStore = defineStore('diy', {
 					if (this.value) {
 						this.value.forEach((item, index) => {
 							item.pageStyle = '';
-							if (item.pageBgColor) item.pageStyle += 'background-color:' + item.pageBgColor + ';';
+							if(item.pageStartBgColor) {
+								if (item.pageStartBgColor && item.pageEndBgColor) item.pageStyle += `background:linear-gradient(${item.pageGradientAngle},${item.pageStartBgColor},${item.pageEndBgColor});`;
+								else item.pageStyle += 'background-color:' + item.pageStartBgColor + ';';
+							}
+
 							if (item.margin) {
 								item.pageStyle += 'padding-top:' + item.margin.top * 2 + 'rpx' + ';';
 								item.pageStyle += 'padding-bottom:' + item.margin.bottom * 2 + 'rpx' + ';';
@@ -67,7 +76,7 @@ const useDiyStore = defineStore('diy', {
 					}
 					// console.log('uniapp 接受后台装修返回的组件数据', data);
 				} catch (e) {
-					console.log('uniapp接受数据错误', e)
+					console.log('uni-app diy 接受数据错误', e)
 				}
 			}, false);
 			// #endif

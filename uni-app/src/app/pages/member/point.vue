@@ -1,5 +1,5 @@
 <template>
-	<view class="bg-gray-100 min-h-[100vh]">
+	<view class="bg-gray-100 min-h-[100vh]" :class="{'bg-[#fff]':!pointList.length}" :style="themeColor()">
 		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="getPointListFn">
 			<view v-for="(item,index) in pointList" :key="item.id" :class="['bg-white relative p-[10px]',{'border-solid border-t-0 border-l-0 border-r-0 border-b-[1px] border-gray-200': pointList.length-1 != index}] ">
 				<view class="text-[14px]">{{item.from_type_name}}</view>

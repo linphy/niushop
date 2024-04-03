@@ -1,6 +1,6 @@
 import useMemberStore from '@/stores/member'
 import { t } from '@/locale'
-import {getToken, getAppChannel, getSiteId, redirect} from './common'
+import {getToken, getAppChannel, redirect} from './common'
 import qs from 'qs'
 
 interface RequestConfig {
@@ -28,11 +28,6 @@ class Request {
 		this.baseUrl.substr(-1) != '/' && (this.baseUrl += '/')
 
 		try {
-			if (process.env.NODE_ENV == 'development') {
-				this.config.header[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = getSiteId(import.meta.env.VITE_SITE_ID || uni.getStorageSync('wap_site_id'))
-			} else {
-				this.config.header[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = getSiteId(import.meta.env.VITE_SITE_ID)
-			}
 			this.config.header[import.meta.env.VITE_REQUEST_HEADER_CHANNEL_KEY] = getAppChannel()
 		} catch (e) {
 		}
@@ -43,15 +38,10 @@ class Request {
 	 * 请求拦截器
 	 */
 	private requestInterceptors() {
-		// 携带token site-id
+		// 携带token
 		try {
 			getToken() && (this.config.header[import.meta.env.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken())
 			this.config.header[import.meta.env.VITE_REQUEST_HEADER_CHANNEL_KEY] = getAppChannel()
-			if (process.env.NODE_ENV == 'development') {
-				this.config.header[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = getSiteId(import.meta.env.VITE_SITE_ID || uni.getStorageSync('wap_site_id'))
-			} else {
-				this.config.header[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = getSiteId(import.meta.env.VITE_SITE_ID)
-			}
 		} catch (e) {
 		}
 	}

@@ -33,27 +33,6 @@ export function modifyMember(data : AnyObject) {
 }
 
 /**
- * 发起充值
- */
-export function createRecharge(data : AnyObject) {
-	return request.post('order/recharge', data, { showErrorMessage: true })
-}
-
-/**
- * 充值记录列表
- */
-export function getRechargeList(data : AnyObject) {
-	return request.get('order/recharge', data, { showErrorMessage: true })
-}
-
-/**
- * 充值记录详情
- */
-export function getRechargeDetail(id:number) {
-	return request.get(`order/recharge/${id}`, {}, { showErrorMessage: true })
-}
-
-/**
  * 登录会员绑定手机号
  */
 export function bindMobile(data : AnyObject) {

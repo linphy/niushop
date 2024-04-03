@@ -155,10 +155,7 @@
                     toPayResult()
 					return
 				}
-				if (data.status != 0) {
-					uni.showToast({ title: t('pay.paymentDocuments') + data.status_name, icon: 'none' })
-					return
-				}
+
 				type.value = data.pay_type_list[0] ? data.pay_type_list[0].key : ''
 				show.value = true
 			})

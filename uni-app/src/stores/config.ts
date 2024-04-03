@@ -20,7 +20,8 @@ interface tabbarConfig {
 interface Config {
     login: loginConfig,
     tabbar: tabbarConfig | null,
-    addon: String
+    addon: String,
+    themeColor:String
 }
 
 const useConfigStore = defineStore('config', {
@@ -34,7 +35,8 @@ const useConfigStore = defineStore('config', {
                 agreement_show: 0
             },
             tabbar: null,
-            addon: ''
+            addon: '',
+            themeColor:''
         }
     },
     actions: {
@@ -56,6 +58,21 @@ const useConfigStore = defineStore('config', {
                 this.tabbar = res.data
             }).catch(() => {
             })
+        },
+        // 获取主色调
+        getThemeColor() {
+            let themeColorStorage = uni.getStorageSync('current_theme_color');
+            if (!this.themeColor && themeColorStorage) {
+                this.themeColor = JSON.parse(themeColorStorage);
+            }
+            if (this.themeColor) {
+                let style = '';
+                for (let k in this.themeColor) {
+                    style += `${k}:${this.themeColor[k]};`;
+                }
+                return style;
+            }
+            return '';
         }
     }
 })

@@ -1,49 +1,48 @@
 <template>
-    <scroll-view scroll-y="true" class="bg-page h-screen">
-		<!-- <view class="h-[88rpx]">
-		        <u-navbar title="添加地址" @rightClick="rightClick" :autoBack="true"></u-navbar>
-		</view> -->
-        <view class="h-[30rpx]"></view>
-        <view class="m-[30rpx] mt-0 p-[30rpx] pt-[10rpx] rounded-md bg-white">
-            <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules"
-                ref="formRef">
-				<view class="mt-[10rpx]">
-				    <u-form-item :label="t('name')" prop="name" :border-bottom="true">
-				        <u-input v-model="formData.name" border="none" clearable
-				            :placeholder="t('namePlaceholder')"></u-input>
-				    </u-form-item>
-				</view>
-				<view class="mt-[10rpx]">
-				    <u-form-item :label="t('mobile')" prop="mobile" :border-bottom="true">
-				        <u-input v-model="formData.mobile" border="none" clearable
-				            :placeholder="t('mobilePlaceholder')"></u-input>
-				    </u-form-item>
-				</view>
-				<view class="mt-[10rpx]">
-				    <u-form-item :label="t('deliveryAddress')" prop="address_name" :border-bottom="true">
-				        <view class="flex justify-between flex-1" @click="chooseLocation">
-				        	<view  class="text-[#c3c4d5] text-[15px]">{{formData.area ? formData.address_name : t('selectAddressPlaceholder')}}</view>
-				        	<u-icon name="arrow-right" color="#c3c4d5"></u-icon>
-				        </view>
-				    </u-form-item>
-				</view>
-                <view class="mt-[10rpx]">
-                    <u-form-item :label="t('address')" prop="address" :border-bottom="true">
-                        <u-input v-model="formData.address" border="none" clearable
-                            :placeholder="t('addressPlaceholder')"></u-input>
-                    </u-form-item>
-                </view>
-                <view class="mt-[10rpx]">
-                    <u-form-item :label="t('defaultAddress')" prop="name" :border-bottom="true" >
-                        <u-switch v-model="formData.is_default" size="20" :activeValue="1" :inactiveValue="0"></u-switch>
-                    </u-form-item>
-                </view>
-                <view class="mt-[40rpx]">
-                    <u-button type="primary" shape="circle" :text="t('save')" @click="save" :loading="operateLoading"></u-button>
-                </view>
-            </u-form>
-        </view>
-    </scroll-view>
+    <view :style="themeColor()">
+        <scroll-view scroll-y="true" class="bg-page h-screen">
+            <!-- <view class="h-[88rpx]">
+                    <u-navbar title="添加地址" @rightClick="rightClick" :autoBack="true"></u-navbar>
+            </view> -->
+            <view class="h-[30rpx]"></view>
+            <view class="m-[30rpx] mt-0 p-[30rpx] pt-[10rpx] rounded-md bg-white">
+                <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules"
+                    ref="formRef">
+                    <view class="mt-[10rpx]">
+                        <u-form-item :label="t('name')" prop="name" :border-bottom="true">
+                            <u-input v-model.trim="formData.name" border="none" clearable maxlength="25" :placeholder="t('namePlaceholder')"/>
+                        </u-form-item>
+                    </view>
+                    <view class="mt-[10rpx]">
+                        <u-form-item :label="t('mobile')" prop="mobile" :border-bottom="true">
+                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
+                        </u-form-item>
+                    </view>
+                    <view class="mt-[10rpx]">
+                        <u-form-item :label="t('deliveryAddress')" prop="address_name" :border-bottom="true">
+                            <view class="flex justify-between flex-1" @click="chooseLocation">
+                                <view  class="text-[15px]" :class="{ 'text-[#303133]': formData.area,'text-[#c3c4d5]':!formData.area  }">{{formData.area ? formData.address_name : t('selectAddressPlaceholder')}}</view>
+                                <u-icon name="arrow-right" color="#c3c4d5"></u-icon>
+                            </view>
+                        </u-form-item>
+                    </view>
+                    <view class="mt-[10rpx]">
+                        <u-form-item :label="t('address')" prop="address" :border-bottom="true">
+                            <u-input v-model.trim="formData.address" border="none" clearable maxlength="120" :placeholder="t('addressPlaceholder')"/>
+                        </u-form-item>
+                    </view>
+                    <view class="mt-[10rpx]">
+                        <u-form-item :label="t('defaultAddress')" prop="name" :border-bottom="true" >
+                            <u-switch v-model="formData.is_default" size="20" :activeValue="1" :inactiveValue="0"></u-switch>
+                        </u-form-item>
+                    </view>
+                    <view class="mt-[40rpx]">
+                        <u-button type="primary" shape="circle" :text="t('save')" @click="save" :loading="operateLoading"></u-button>
+                    </view>
+                </u-form>
+            </view>
+        </scroll-view>
+    </view>
 </template>
 
 <script setup lang="ts">
@@ -105,11 +104,15 @@
                     message: t('mobilePlaceholder'),
                     trigger: ['blur', 'change'],
                 },
-                {
-                    validator() {
-                        return uni.$u.test.mobile(formData.value.mobile)
-                    },
-                    message: t('mobileError')
+                {   
+                    validator(rule, value, callback) {
+                        let mobile = /^1[3-9]\d{9}$/;
+                        if (!mobile.test(value)){
+                            callback(new Error(t('mobileError')))
+                        } else {
+                            callback()
+                        }
+                    }
                 }
             ]
         }
@@ -119,7 +122,7 @@
     const save = ()=> {
         if (uni.$u.test.isEmpty(formData.value.area)) {
             uni.showToast({ title: t('selectAddressPlaceholder'), icon: 'none' })
-            return 
+            return
         }
         
         const save = formData.value.id ? editAddress : addAddress

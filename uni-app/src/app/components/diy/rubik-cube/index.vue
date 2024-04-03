@@ -1,82 +1,85 @@
 <template>
-	<view :class="['rubik-cube', diyStore.mode]" :style="warpCss">
+	<view :style="warpCss">
+		<view :style="maskLayer"></view>
+		<view :class="['rubik-cube relative', diyStore.mode]">
 
-		<!-- 1左2右 -->
-		<template v-if="diyComponent.mode == 'row1-lt-of2-rt'">
-			<view class="template-left">
-				<view @click="toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
-					:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[0].imgWidth, height: diyComponent.list[0].imgHeight + 'px' }">
-					<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
-					<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
+			<!-- 1左2右 -->
+			<template v-if="diyComponent.mode == 'row1-lt-of2-rt'">
+				<view class="template-left">
+					<view @click="toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
+						:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[0].imgWidth, height: diyComponent.list[0].imgHeight + 'px' }">
+						<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
+						<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
+					</view>
 				</view>
-			</view>
 
-			<view class="template-right">
-				<template v-for="(item, index) in diyComponent.list" :key="index">
-					<template v-if="index > 0">
-						<view @click="toRedirect(item.link)" :class="['item', diyComponent.mode]"
-							:style="{ marginBottom: diyComponent.imageGap * 2 + 'rpx', width: item.imgWidth, height: item.imgHeight + 'px' }">
-							<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
-							<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
-						</view>
-					</template>
-				</template>
-			</view>
-		</template>
-
-		<!-- 1左3右 -->
-		<template v-else-if="diyComponent.mode == 'row1-lt-of1-tp-of2-bm'">
-			<view class="template-left">
-				<view @click="toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
-					:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[0].imgWidth, height: diyComponent.list[0].imgHeight + 'px' }">
-					<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
-					<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
-				</view>
-			</view>
-
-			<view class="template-right">
-				<view @click="toRedirect(diyComponent.list[1].link)" :class="['item', diyComponent.mode]"
-					:style="{ marginBottom: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[1].imgWidth, height: diyComponent.list[1].imgHeight + 'px' }">
-					<image v-if="diyComponent.list[1].imageUrl" :src="img(diyComponent.list[1].imageUrl)" mode="scaleToFill" :style="diyComponent.list[1].pageItemStyle" :show-menu-by-longpress="true"/>
-					<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[1].pageItemStyle" :show-menu-by-longpress="true"/>
-				</view>
-				<view class="template-bottom">
+				<view class="template-right">
 					<template v-for="(item, index) in diyComponent.list" :key="index">
-						<template v-if="index > 1">
-							<view @click="toRedirect(item.link)" :class="['item', diyComponent.mode]" :style="{
-										marginRight: diyComponent.imageGap * 2 + 'rpx',
-										width: item.imgWidth,
-										height: item.imgHeight + 'px'
-									}">
+						<template v-if="index > 0">
+							<view @click="toRedirect(item.link)" :class="['item', diyComponent.mode]"
+								:style="{ marginBottom: diyComponent.imageGap * 2 + 'rpx', width: item.imgWidth, height: item.imgHeight + 'px' }">
 								<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
 								<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
 							</view>
 						</template>
 					</template>
 				</view>
-			</view>
-		</template>
+			</template>
 
-		<template v-else>
-			<view :class="['item', diyComponent.mode]" v-for="(item, index) in diyComponent.list" :key="index"
-                @click="toRedirect(item.link)"
-				:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', marginBottom: diyComponent.imageGap * 2 + 'rpx', width: item.widthStyle, height: item.imgHeight + 'px' }">
-				<image v-if="item.imageUrl" :src="img(item.imageUrl)" :mode="'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
-				<image v-else :src="img('static/resource/images/diy/figure.png')" :mode="'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
-			</view>
-		</template>
+			<!-- 1左3右 -->
+			<template v-else-if="diyComponent.mode == 'row1-lt-of1-tp-of2-bm'">
+				<view class="template-left">
+					<view @click="toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
+						:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[0].imgWidth, height: diyComponent.list[0].imgHeight + 'px' }">
+						<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
+						<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
+					</view>
+				</view>
 
+				<view class="template-right">
+					<view @click="toRedirect(diyComponent.list[1].link)" :class="['item', diyComponent.mode]"
+						:style="{ marginBottom: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[1].imgWidth, height: diyComponent.list[1].imgHeight + 'px' }">
+						<image v-if="diyComponent.list[1].imageUrl" :src="img(diyComponent.list[1].imageUrl)" mode="scaleToFill" :style="diyComponent.list[1].pageItemStyle" :show-menu-by-longpress="true"/>
+						<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[1].pageItemStyle" :show-menu-by-longpress="true"/>
+					</view>
+					<view class="template-bottom">
+						<template v-for="(item, index) in diyComponent.list" :key="index">
+							<template v-if="index > 1">
+								<view @click="toRedirect(item.link)" :class="['item', diyComponent.mode]" :style="{
+											marginRight: diyComponent.imageGap * 2 + 'rpx',
+											width: item.imgWidth,
+											height: item.imgHeight + 'px'
+										}">
+									<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
+									<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
+								</view>
+							</template>
+						</template>
+					</view>
+				</view>
+			</template>
+
+			<template v-else>
+				<view :class="['item', diyComponent.mode]" v-for="(item, index) in diyComponent.list" :key="index"
+	                @click="toRedirect(item.link)"
+					:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', marginBottom: diyComponent.imageGap * 2 + 'rpx', width: item.widthStyle, height: item.imgHeight + 'px' }">
+					<image v-if="item.imageUrl" :src="img(item.imageUrl)" :mode="'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
+					<image v-else :src="img('static/resource/images/diy/figure.png')" :mode="'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
+				</view>
+			</template>
+
+		</view>
 	</view>
 </template>
 
 <script setup lang="ts">
 	// 魔方
-	import { onMounted, computed, watch } from 'vue';
+	import { ref,onMounted, computed, watch,nextTick,getCurrentInstance } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
 	import { img, redirect, diyRedirect, currRoute, getToken } from '@/utils/common';
     import { useLogin } from '@/hooks/useLogin';
 
-	const props = defineProps(['component', 'index', 'pullDownRefresh']);
+	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
 	const diyStore = useDiyStore();
 
@@ -98,13 +101,40 @@
 
     const warpCss = computed(() => {
 		var style = '';
-		if (diyComponent.value.componentBgColor) style += 'background-color:' + diyComponent.value.componentBgColor + ';';
+        style += 'position:relative;';
+        if(diyComponent.value.componentStartBgColor) {
+            if (diyComponent.value.componentStartBgColor && diyComponent.value.componentEndBgColor) style += `background:linear-gradient(${diyComponent.value.componentGradientAngle},${diyComponent.value.componentStartBgColor},${diyComponent.value.componentEndBgColor});`;
+            else style += 'background-color:' + diyComponent.value.componentStartBgColor + ';';
+        }
+
+        if(diyComponent.value.componentBgUrl) {
+            style += `background-image:url('${ img(diyComponent.value.componentBgUrl) }');`;
+            style += 'background-size: cover;background-repeat: no-repeat;';
+        }
+
 		if (diyComponent.value.topRounded) style += 'border-top-left-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
 		if (diyComponent.value.topRounded) style += 'border-top-right-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
 		if (diyComponent.value.bottomRounded) style += 'border-bottom-left-radius:' + diyComponent.value.bottomRounded * 2 + 'rpx;';
 		if (diyComponent.value.bottomRounded) style += 'border-bottom-right-radius:' + diyComponent.value.bottomRounded * 2 + 'rpx;';
 		return style;
 	})
+
+    // 背景图加遮罩层
+    const maskLayer = computed(()=>{
+        var style = '';
+        if(diyComponent.value.componentBgUrl) {
+            style += 'position:absolute;top:0;width:100%;';
+            style += `background: rgba(0,0,0,${diyComponent.value.componentBgAlpha / 10});`;
+            style += `height:${height.value}px;`;
+
+            if (diyComponent.value.topRounded) style += 'border-top-left-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
+            if (diyComponent.value.topRounded) style += 'border-top-right-radius:' + diyComponent.value.topRounded * 2 + 'rpx;';
+            if (diyComponent.value.bottomRounded) style += 'border-bottom-left-radius:' + diyComponent.value.bottomRounded * 2 + 'rpx;';
+            if (diyComponent.value.bottomRounded) style += 'border-bottom-right-radius:' + diyComponent.value.bottomRounded * 2 + 'rpx;';
+        }
+
+        return style;
+    });
 
 	const countBorderRadius = (type, index) => {
 		var obj = '';
@@ -161,7 +191,7 @@
 	}
 
 	watch(
-		() => props.pullDownRefresh,
+		() => props.pullDownRefreshCount,
 		(newValue, oldValue) => {
 			// 处理下拉刷新业务
 		}
@@ -170,15 +200,20 @@
 	onMounted(() => {
 		refresh();
 		// 装修模式下刷新
-		watch(
-			() => diyComponent.value,
-			(newValue, oldValue) => {
-				if (newValue && newValue.componentName == 'RubikCube') {
-					refresh();
-				}
-			}
-		)
+        if (diyStore.mode == 'decorate') {
+            watch(
+                () => diyComponent.value,
+                (newValue, oldValue) => {
+                    if (newValue && newValue.componentName == 'RubikCube') {
+                        refresh();
+                    }
+                }
+            )
+        }
 	});
+
+    const instance = getCurrentInstance();
+    const height = ref(0)
 
 	const refresh = () => {
 		if (diyStore.mode == 'decorate') {
@@ -191,6 +226,12 @@
 			});
 		}
 		handleData()
+        nextTick(() => {
+            const query = uni.createSelectorQuery().in(instance);
+            query.select('.rubik-cube').boundingClientRect((data: any) => {
+                height.value = data.height;
+            }).exec();
+        })
 	}
 
 	const handleData = () => {

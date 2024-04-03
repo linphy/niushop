@@ -1,5 +1,5 @@
 <template>
-    <view class="w-screen h-screen flex flex-col">
+    <view class="w-screen h-screen flex flex-col" :style="themeColor()">
         <view class="flex-1">
             <!-- #ifdef H5 -->
             <view class="h-[100rpx]"></view>
@@ -10,44 +10,39 @@
             <view class="px-[60rpx]">
                 <u-form labelPosition="left" :model="formData" errorType='toast' :rules="rules" ref="formRef">
                     <u-form-item label="" prop="mobile" :border-bottom="true">
-                        <u-input v-model="formData.mobile" border="none" clearable
-                            :placeholder="t('mobilePlaceholder')"></u-input>
+                        <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
                     </u-form-item>
                     <view class="mt-[40rpx]">
                         <u-form-item label="" prop="mobile_code" :border-bottom="true">
-                            <u-input v-model="formData.mobile_code" border="none" type="password" clearable
-                                :placeholder="t('codePlaceholder')">
+                            <u-input v-model="formData.mobile_code" border="none" type="password" clearable :placeholder="t('codePlaceholder')">
                                 <template #suffix>
-                                    <sms-code :mobile="formData.mobile" type="bind_mobile"
-                                        v-model="formData.mobile_key"></sms-code>
+                                    <sms-code :mobile="formData.mobile" type="bind_mobile" v-model="formData.mobile_key"></sms-code>
                                 </template>
                             </u-input>
                         </u-form-item>
                     </view>
                     <view class="flex items-start mt-[30rpx]" v-if="!info && config.agreement_show">
                         <u-checkbox-group>
-                            <u-checkbox :checked="isAgree" shape="shape" size="14" @change="agreeChange"
-                                :customStyle="{'marginTop': '4rpx'}" />
+                            <u-checkbox :checked="isAgree" shape="shape" size="14" @change="agreeChange" :customStyle="{'marginTop': '4rpx'}" />
                         </u-checkbox-group>
                         <view class="text-xs text-gray-400 flex flex-wrap">
                             {{ t('agreeTips') }}
-                            <app-link url="/app/pages/auth/agreement?key=service">
+                            <view @click="redirect({ url: '/app/pages/auth/agreement?key=service' })">
                                 <text class="text-primary">《{{ t('userAgreement') }}》</text>
-                            </app-link>
-                            <app-link url="/app/pages/auth/agreement?key=privacy">
+                            </view>
+                            <view @click="redirect({ url: '/app/pages/auth/agreement?key=privacy' })">
                                 <text class="text-primary">《{{ t('privacyAgreement') }}》</text>
-                            </app-link>
+                            </view>
                         </view>
                     </view>
                     <view class="mt-[60rpx]">
-                        <u-button type="primary" :loading="loading" :loadingText="t('logining')" @click="handleBind">
+                        <u-button type="primary" :loading="loading" :loadingText="t('binding')" @click="handleBind">
                             {{ t('bind') }}
                         </u-button>
                     </view>
                     <!-- #ifdef MP-WEIXIN -->
                     <view class="mt-[30rpx]">
-                        <u-button type="primary" :plain="true" :text="t('weixinUserAuth')" open-type="getPhoneNumber"
-                            @getphonenumber="mobileAuth" v-if="!info.value || !config.agreement_show || isAgree"></u-button>
+                        <u-button type="primary" :plain="true" :text="t('weixinUserAuth')" open-type="getPhoneNumber" @getphonenumber="mobileAuth" v-if="info || (!info || !config.agreement_show || isAgree)"></u-button>
                         <u-button type="primary" :plain="true" :text="t('weixinUserAuth')" v-else @click="agreeTips"></u-button>
                     </view>
                     <!-- #endif -->
@@ -96,8 +91,13 @@
                 trigger: ['blur', 'change'],
             },
             {
-                validator(rule, value) {
-                    return uni.$u.test.mobile(value)
+                validator(rule, value, callback) {
+                    let mobile = /^1[3-9]\d{9}$/;
+                    if (!mobile.test(value)){
+                        callback(new Error('请输入正确的手机号'))
+                    } else {
+                        callback()
+                    }
                 },
                 message: t('mobileError'),
                 trigger: ['change', 'blur'],
@@ -148,9 +148,10 @@
             uni.showToast({ title: `${t('pleaceAgree')}《${t('userAgreement')}》《${t('privacyAgreement')}》`, icon: 'none' })
             return
         }
-        uni.showLoading({ title: '' })
 
         if (e.detail.errMsg == 'getPhoneNumber:ok') {
+            uni.showLoading({ title: '' })
+
             const request = info.value ? bindMobile : bind
 
             request({

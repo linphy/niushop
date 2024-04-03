@@ -3,13 +3,13 @@
 		<u-tabbar :value="value" @change="tabbarChange" zIndex="9999" :fixed="true" :placeholder="true" :safeAreaInsetBottom="true"
 			:inactive-color="tabbar.value.textColor" :active-color="tabbar.value.textHoverColor" v-if="tabbar">
 			<block v-for="item in tabbar.value.list">
-				<u-tabbar-item :style="{'background-color': tabbar.value.backgroundColor}" :text="item.text"
+				<u-tabbar-item class="py-[5rpx]" :style="{'background-color': tabbar.value.backgroundColor}" :text="item.text"
 					:icon="img(value == item.link.url ? item.iconSelectPath : item.iconPath)" :name="item.link.url"
 					v-if="tabbar.value.type == 1"></u-tabbar-item>
-				<u-tabbar-item :style="{'background-color': tabbar.value.backgroundColor}"
+				<u-tabbar-item class="py-[5rpx]" :style="{'background-color': tabbar.value.backgroundColor}"
 					:icon="img(value == item.link.url ? item.iconSelectPath : item.iconPath)" :name="item.link.url"
 					v-if="tabbar.value.type == 2"></u-tabbar-item>
-				<u-tabbar-item :style="{'background-color': tabbar.value.backgroundColor}" :text="item.text" :name="item.link.url"
+				<u-tabbar-item class="py-[5rpx]" :style="{'background-color': tabbar.value.backgroundColor}" :text="item.text" :name="item.link.url"
 					v-if="tabbar.value.type == 3"></u-tabbar-item>
 			</block>
 		</u-tabbar>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-	import { computed,watch } from 'vue'
+	import { computed } from 'vue'
 	import { redirect, currRoute, img } from '@/utils/common'
 	import useConfigStore from '@/stores/config'
 
@@ -44,7 +44,7 @@
 	})
 
 	const tabbarChange = (name : string) => {
-		redirect({ url: `${name}` })
+		redirect({ url: `${name}`,mode: 'reLaunch' })
 	}
 </script>
 

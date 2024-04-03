@@ -7,6 +7,7 @@
     "toRegister": "去注册",
     "and": "和",
     "agreeTips": "登录代表您同意",
+    "isAgreeTips": "请先阅读并同意协议",
     "usernameLogin": "密码登录",
     "mobileLogin": "验证码登录",
     "mobilePlaceholder": "请输入手机号"

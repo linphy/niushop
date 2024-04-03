@@ -1,5 +1,5 @@
 <template>
-	<view class="member-record-detail">
+	<view class="member-record-detail" :style="themeColor()">
 		<view class="money-wrap">
 			<text>-{{ cashOutInfo.apply_money }}</text>
 			<text>{{ cashOutInfo.status_name }}</text>

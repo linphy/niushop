@@ -36,10 +36,10 @@ export function useLogin() {
         uni.getStorage({
             key: 'loginBack',
             success: (data : AnyObject) => {
-                data ? redirect(data.data) : redirect({ url: '/app/pages/index/index' })
+                data ? redirect(data.data) : redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             },
             fail: (res) => {
-                redirect({ url: '/app/pages/index/index' })
+                redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             }
         })
     }
@@ -49,15 +49,19 @@ export function useLogin() {
      */
     const authLogin = (code : string | null) => {
         let login = null
+		let obj = {};
         // #ifdef MP-WEIXIN
         login = weappLogin
+		obj.code = code;
         // #endif
 
         // #ifdef H5
         login = wechatLogin
+		obj.code = code;
+		uni.getStorageSync('pid') && (Object.assign(obj, { pid: uni.getStorageSync('pid') }))
         // #endif
 
-        login({ code }).then((res : AnyObject) => {
+        login(obj).then((res : AnyObject) => {
             if (res.data.token) {
                 useMemberStore().setToken(res.data.token)
             } else {

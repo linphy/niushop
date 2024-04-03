@@ -1,72 +1,64 @@
 <template>
-    <scroll-view scroll-y="true" class="w-screen h-screen bg-page">
-        <view class="h-[30rpx]"></view>
-        <view class="p-[30rpx] bg-white mx-[32rpx] rounded">
-            <block v-if="formData.account_type == 'bank'">
-                <view class="text-center text-base font-bold mt-[50rpx]">{{ t('addBankCard') }}</view>
-                <view class="text-center text-sm mt-[10rpx]">{{ t('addBankCardTips') }}</view>
+    <view :style="themeColor()">
+        <scroll-view scroll-y="true" class="w-screen h-screen bg-page">
+            <view class="h-[30rpx]"></view>
+            <view class="p-[30rpx] bg-white mx-[32rpx] rounded">
+                <block v-if="formData.account_type == 'bank'">
+                    <view class="text-center text-base font-bold mt-[50rpx]">{{ t('addBankCard') }}</view>
+                    <view class="text-center text-sm mt-[10rpx]">{{ t('addBankCardTips') }}</view>
 
-                <view class="mt-[50rpx]">
-                    <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules"
-                        ref="formRef">
-                        <view class="mt-[10rpx]">
-                            <u-form-item :label="t('bankRealname')" prop="realname" :border-bottom="true">
-                                <u-input v-model="formData.realname" border="none" clearable
-                                    :placeholder="t('bankRealnamePlaceholder')"></u-input>
-                            </u-form-item>
-                        </view>
-                        <view class="mt-[10rpx]">
-                            <u-form-item :label="t('bankName')" prop="bank_name" :border-bottom="true">
-                                <u-input v-model="formData.bank_name" border="none" clearable
-                                    :placeholder="t('bankNamePlaceholder')"></u-input>
-                            </u-form-item>
-                        </view>
-                        <view class="mt-[10rpx]">
-                            <u-form-item :label="t('bankAccountNo')" prop="account_no" :border-bottom="true">
-                                <u-input v-model="formData.account_no" border="none" clearable
-                                    :placeholder="t('bankAccountNoPlaceholder')"></u-input>
-                            </u-form-item>
-                        </view>
-                    </u-form>
-                </view>
-            </block>
+                    <view class="mt-[50rpx]">
+                        <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
+                            <view class="mt-[10rpx]">
+                                <u-form-item :label="t('bankRealname')" prop="realname" :border-bottom="true">
+                                    <u-input v-model.trim="formData.realname" border="none" clearable :placeholder="t('bankRealnamePlaceholder')"/>
+                                </u-form-item>
+                            </view>
+                            <view class="mt-[10rpx]">
+                                <u-form-item :label="t('bankName')" prop="bank_name" :border-bottom="true">
+                                    <u-input v-model.trim="formData.bank_name" border="none" clearable :placeholder="t('bankNamePlaceholder')"/>
+                                </u-form-item>
+                            </view>
+                            <view class="mt-[10rpx]">
+                                <u-form-item :label="t('bankAccountNo')" prop="account_no" :border-bottom="true">
+                                    <u-input v-model.trim="formData.account_no" border="none" clearable :placeholder="t('bankAccountNoPlaceholder')"/>
+                                </u-form-item>
+                            </view>
+                        </u-form>
+                    </view>
+                </block>
 
-            <block v-if="formData.account_type == 'alipay'">
-                <view class="text-center text-base font-bold mt-[50rpx]">{{ t('addAlipayAccount') }}</view>
-                <view class="text-center text-sm mt-[10rpx]">{{ t('addAlipayAccountTips') }}</view>
+                <block v-if="formData.account_type == 'alipay'">
+                    <view class="text-center text-base font-bold mt-[50rpx]">{{ t('addAlipayAccount') }}</view>
+                    <view class="text-center text-sm mt-[10rpx]">{{ t('addAlipayAccountTips') }}</view>
 
-                <view class="mt-[50rpx]">
-                    <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules"
-                        ref="formRef">
-                        <view class="mt-[10rpx]">
-                            <u-form-item :label="t('alipayRealname')" prop="realname" :border-bottom="true">
-                                <u-input v-model="formData.realname" border="none" clearable
-                                    :placeholder="t('alipayRealnamePlaceholder')"></u-input>
-                            </u-form-item>
-                        </view>
-                        <view class="mt-[10rpx]">
-                            <u-form-item :label="t('alipayAccountNo')" prop="account_no" :border-bottom="true">
-                                <u-input v-model="formData.account_no" border="none" clearable
-                                    :placeholder="t('alipayAccountNoPlaceholder')"></u-input>
-                            </u-form-item>
-                        </view>
-                    </u-form>
-                </view>
-            </block>
+                    <view class="mt-[50rpx]">
+                        <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
+                            <view class="mt-[10rpx]">
+                                <u-form-item :label="t('alipayRealname')" prop="realname" :border-bottom="true">
+                                    <u-input v-model.trim="formData.realname" border="none" clearable :placeholder="t('alipayRealnamePlaceholder')"/>
+                                </u-form-item>
+                            </view>
+                            <view class="mt-[10rpx]">
+                                <u-form-item :label="t('alipayAccountNo')" prop="account_no" :border-bottom="true">
+                                    <u-input v-model.trim="formData.account_no" border="none" clearable :placeholder="t('alipayAccountNoPlaceholder')"/>
+                                </u-form-item>
+                            </view>
+                        </u-form>
+                    </view>
+                </block>
 
-            <view class="mt-[100rpx]">
-                <u-button :text="t('save')" type="primary" shape="circle" :loading="loading"
-                    @click="handleSave"></u-button>
-                <view class="mt-[30rpx]" v-if="formData.account_id">
-                    <u-button :text="t('delete')" type="primary" shape="circle" :plain="true" :loading="loading"
-                        @click="deleteConfirm = true"></u-button>
+                <view class="mt-[100rpx]">
+                    <u-button :text="t('save')" type="primary" shape="circle" :loading="loading" @click="handleSave"></u-button>
+                    <view class="mt-[30rpx]" v-if="formData.account_id">
+                        <u-button :text="t('delete')" type="primary" shape="circle" :plain="true" :loading="loading" @click="deleteConfirm = true"></u-button>
+                    </view>
                 </view>
             </view>
-        </view>
-    </scroll-view>
+        </scroll-view>
 
-    <u-modal :show="deleteConfirm" :content="t('deleteConfirm')" :confirmText="t('confirm')" :cancelText="t('cancel')"
-        :showCancelButton="true" @confirm="handleDelete" @cancel="deleteConfirm = false"></u-modal>
+        <u-modal :show="deleteConfirm" :content="t('deleteConfirm')" :confirmText="t('confirm')" :cancelText="t('cancel')" :showCancelButton="true" @confirm="handleDelete" @cancel="deleteConfirm = false"></u-modal>
+    </view>
 </template>
 
 <script setup lang="ts">

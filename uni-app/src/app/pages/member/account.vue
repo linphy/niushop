@@ -1,5 +1,5 @@
 <template>
-    <view class="w-screen h-screen bg-page">
+    <view class="w-screen h-screen bg-page" :style="themeColor()">
         <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="getCashoutAccountListFn">
             <view class="h-[20rpx]"></view>
             <view class="p-[30rpx] bg-white mx-[32rpx] my-[20rpx] rounded flex" v-for="(item, index) in accountList" :key="index" @click="handleClick(item)">

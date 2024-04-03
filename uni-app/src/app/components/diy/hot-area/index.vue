@@ -6,13 +6,13 @@
 
 			<template v-if="diyStore.mode != 'decorate'">
 				<!-- 热区功能 -->
-				<app-link :data="mapItem.link" custom-class="absolute" v-for="(mapItem, mapIndex) in diyComponent.heatMapData"
+				<view @click="toRedirect(mapItem.link)" class="absolute" v-for="(mapItem, mapIndex) in diyComponent.heatMapData"
 					:key="mapIndex" :style="{
 					width: mapItem.width + '%',
 					height: mapItem.height + '%',
 					left: mapItem.left + '%',
 					top: mapItem.top + '%'
-				}"></app-link>
+				}"></view>
 
 			</template>
 		</view>
@@ -23,9 +23,10 @@
 	// 热区
 	import { computed, watch, onMounted } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
-	import { img } from '@/utils/common';
+    import { img,redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
+    import { useLogin } from '@/hooks/useLogin';
 
-	const props = defineProps(['component', 'index', 'pullDownRefresh']);
+	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
 	const diyStore = useDiyStore();
 
@@ -39,7 +40,10 @@
 
 	const warpCss = computed(() => {
 		var style = '';
-		if (diyComponent.value.componentBgColor) style += 'background-color:' + diyComponent.value.componentBgColor + ';';
+        if(diyComponent.value.componentStartBgColor) {
+            if (diyComponent.value.componentStartBgColor && diyComponent.value.componentEndBgColor) style += `background:linear-gradient(${diyComponent.value.componentGradientAngle},${diyComponent.value.componentStartBgColor},${diyComponent.value.componentEndBgColor});`;
+            else style += 'background-color:' + diyComponent.value.componentStartBgColor + ';';
+        }
 		return style;
 	})
 
@@ -77,11 +81,24 @@
 	}
 
 	watch(
-		() => props.pullDownRefresh,
+		() => props.pullDownRefreshCount,
 		(newValue, oldValue) => {
 			// 处理下拉刷新业务
 		}
 	)
+
+    const toRedirect = (data: {}) => {
+        if (Object.keys(data).length) {
+            if (!data.url) return;
+            if (currRoute() == 'app/pages/member/index' && !getToken()) {
+                useLogin().setLoginBack({ url: data.url })
+                return;
+            }
+            diyRedirect(data);
+        } else {
+            redirect(data)
+        }
+    }
 </script>
 
 <style lang="scss">

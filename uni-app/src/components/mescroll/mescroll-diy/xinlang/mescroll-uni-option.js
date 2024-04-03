@@ -1,3 +1,5 @@
+import { img } from '@/utils/common';
+
 // 全局配置
 // mescroll-body 和 mescroll-uni 通用
 const GlobalOption = {
@@ -19,7 +21,7 @@ const GlobalOption = {
 		},
 		empty: {
 			use: true, // 是否显示空布局
-			icon: "https://www.mescroll.com/img/mescroll-empty.png" // 图标路径 (建议放入static目录, 如 /static/img/mescroll-empty.png )
+			icon: img("static/resource/images/system/empty.png") // 图标路径 (建议放入static目录, 如 /static/img/mescroll-empty.png )
 		}
 	},
 	// 国际化配置
@@ -35,9 +37,9 @@ const GlobalOption = {
 			},
 			up: {
 				textLoading: '加载中 ...', // 加载中的提示文本
-				textNoMore: '-- END --', // 没有更多数据的提示文本
+				textNoMore: '', // 没有更多数据的提示文本
 				empty: {
-					tip: '~ 空空如也 ~' // 空提示
+					tip: '暂无相关数据' // 空提示
 				}
 			}
 		},
@@ -52,7 +54,7 @@ const GlobalOption = {
 			},
 			up: {
 				textLoading: 'loading ...',
-				textNoMore: '-- END --',
+				textNoMore: '',
 				empty: {
 					tip: '~ absolutely empty ~'
 				}

@@ -1,9 +1,5 @@
-import { getSiteId } from './common'
-
 const handleKey = (key: string) : string => {
-    const siteid = getSiteId(0)
-    const storageKey = (siteid ? `site${siteid}.` : '') + key
-    return storageKey
+    return key
 }
 
 export function uniStorage(){

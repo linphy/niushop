@@ -1,9 +1,6 @@
 <template>
-    <view class="w-screen h-screen flex flex-col items-center justify-center">
-        <u-empty
-            :icon="img('static/resource/images/site/close.png')"
-            :text="t('noSite')"
-        >
+    <view class="w-screen h-screen flex flex-col items-center justify-center" :style="themeColor()">
+        <u-empty :icon="img('static/resource/images/site/close.png')" :text="t('noSite')">
         </u-empty>
     </view>
 </template>

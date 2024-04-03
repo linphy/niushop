@@ -1,5 +1,5 @@
 <template>
-    <view v-if="agreement" class="p-[30rpx]">
+    <view v-if="agreement" class="p-[30rpx]" :style="themeColor()">
         <u-parse :content="agreement.content" :tagStyle="{img: 'vertical-align: top;'}"></u-parse>
     </view>
 </template>

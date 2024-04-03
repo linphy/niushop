@@ -1,5 +1,5 @@
 <template>
-	<view class="member-record-list">
+	<view class="member-record-list" :style="themeColor()">
 		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="getCashOutListFn">
 			<view v-for="(item,index) in cashOutList" :key="item.id" class="member-record-item" @click="toDetailFn(item)">
 				<view class="name">{{item.transfer_type_name}}</view>
@@ -26,6 +26,7 @@ import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
 import { onPageScroll, onReachBottom } from '@dcloudio/uni-app';
+
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 
 let cashOutList = ref<Array<any>>([]);

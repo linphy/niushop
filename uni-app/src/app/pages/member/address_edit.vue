@@ -1,17 +1,14 @@
 <template>
-    <view class="px-[30rpx]">
-        <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules"
-            ref="formRef">
+    <view class="px-[30rpx]" :style="themeColor()">
+        <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
             <view class="mt-[10rpx]">
                 <u-form-item :label="t('name')" prop="name" :border-bottom="true">
-                    <u-input v-model="formData.name" border="none" clearable
-                        :placeholder="t('namePlaceholder')"></u-input>
+                    <u-input v-model.trim="formData.name" border="none" clearable maxlength="25" :placeholder="t('namePlaceholder')"/>
                 </u-form-item>
             </view>
             <view class="mt-[10rpx]">
                 <u-form-item :label="t('mobile')" prop="mobile" :border-bottom="true">
-                    <u-input v-model="formData.mobile" border="none" clearable
-                        :placeholder="t('mobilePlaceholder')"></u-input>
+                    <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
                 </u-form-item>
             </view>
             <view class="mt-[10rpx]">
@@ -22,8 +19,7 @@
             </view>
             <view class="mt-[10rpx]">
                 <u-form-item :label="t('address')" prop="address" :border-bottom="true">
-                    <u-input v-model="formData.address" border="none" clearable
-                        :placeholder="t('addressPlaceholder')"></u-input>
+                    <u-input v-model.trim="formData.address" border="none" clearable maxlength="120" :placeholder="t('addressPlaceholder')"/>
                 </u-form-item>
             </view>
             <view class="mt-[10rpx]">
@@ -92,10 +88,14 @@
                     trigger: ['blur', 'change'],
                 },
                 {
-                    validator() {
-                        return uni.$u.test.mobile(formData.value.mobile)
-                    },
-                    message: t('mobileError')
+                    validator(rule, value, callback) {
+                        let mobile = /^1[3-9]\d{9}$/;
+                        if (!mobile.test(value)){
+                            callback(new Error(t('mobileError')))
+                        } else {
+                            callback()
+                        }
+                    }
                 }
             ],
             'area': {

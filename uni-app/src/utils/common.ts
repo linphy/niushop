@@ -233,22 +233,6 @@ export function mobileConceal(mobile : string) : string {
 }
 
 /**
- * 获取站点id
- */
-export function getSiteId(siteid : number) {
-    // #ifdef H5
-    const match = location.href.match(/\/wap\/(\d*)\//);
-    if (match) return match[1]
-    else return siteid
-    // #endif
-
-    // #ifndef H5
-    return siteid
-    // #endif
-}
-
-
-/**
  * 时间戳转日期格式
  * @param {Object} timeStamp
  */

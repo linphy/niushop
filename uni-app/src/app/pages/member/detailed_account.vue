@@ -1,5 +1,5 @@
 <template>
-	<view class="member-record-list">
+	<view class="member-record-list" :style="themeColor()">
 		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="getListFn" top="">
 			<view v-for="(item,index) in list" :key="item.id" class="member-record-item">
 				<view class="name">{{item.from_type_name}}</view>
@@ -9,25 +9,38 @@
 					{{ item.account_data > 0 ? '+' + item.account_data : item.account_data }}
 				</view>
 			</view>
-			<mescroll-empty v-if="!list.length && loading" :option="{tip : (type == 'commission' ? t('commissemptyTip') : t('emptyTip') )}"></mescroll-empty>
+			<mescroll-empty v-if="!list.length && loading" :option="{tip : tip}"></mescroll-empty>
 		</mescroll-body>
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { ref } from 'vue'
+	import { ref,nextTick } from 'vue'
 	import { t } from '@/locale'
 	import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue';
 	import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 	import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
 	import { getBalanceList, getMoneyList, getCommissionList} from '@/app/api/member';
 	import { onPageScroll, onReachBottom, onLoad, onShow } from '@dcloudio/uni-app';
+
 	const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 
 	const type = ref('')
+	const tip = ref('')
 
 	onLoad((options) => {
 		type.value = options.type || 'balance';
+        nextTick(()=>{
+            setTimeout(()=>{
+                if(type.value == 'balance'){
+                    tip.value = t('balanceEmptyTip')
+                }else if(type.value == 'money'){
+                    tip.value = t('moneyEmptyTip')
+                }else if(type.value == 'commission'){
+                    tip.value = t('commissionEmptyTip')
+                }
+            },100);
+        })
 	});
 
 	const list = ref<Array<any>>([]),
