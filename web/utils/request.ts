@@ -34,7 +34,6 @@ class Http {
             const runtimeConfig = useRuntimeConfig()
 
             this.options.baseURL = runtimeConfig.public.VITE_APP_BASE_URL || `${location.origin}/api/`
-            this.options.headers[runtimeConfig.public.VITE_REQUEST_HEADER_SITEID_KEY] = useCookie('siteId').value || runtimeConfig.public.VITE_SITE_ID
             this.options.headers[runtimeConfig.public.VITE_REQUEST_HEADER_CHANNEL_KEY] = 'pc'
             if (getToken()) this.options.headers[runtimeConfig.public.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken()
         }
@@ -77,10 +76,10 @@ class Http {
 
     /**
      * 发送请求
-     * @param url 
-     * @param method 
-     * @param showMessageConfig 
-     * @returns 
+     * @param url
+     * @param method
+     * @param showMessageConfig
+     * @returns
      */
     private request(url: string, method: string, param: AnyObject = {}, config: ConfigOption = {}) {
         return new Promise((resolve, reject) => {
@@ -126,6 +125,9 @@ class Http {
         switch (code) {
             case 401:
                 useMemberStore().logout()
+                break;
+            case 402:
+                navigateTo('/site/close', { replace: true })
                 break;
         }
     }

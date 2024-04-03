@@ -12,10 +12,6 @@
             "index": "欢迎页",
             "center": "个人中心"
         },
-		"article": {
-		    "list": "文章",
-		    "detail": "文章"
-		},
         "site": {
             "close": "站点已关闭",
             "nosite": "站点不存在"
