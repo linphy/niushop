@@ -1,4 +1,4 @@
-![输入图片说明](https://www.niushop.com/app/web/view/public/img/index/banner_niushop_v6.jpg?v=1)
+![输入图片说明](https://media.niucloud.com/1712133019020249f332e83457a01a6799472e0495_aliyun.png)
 
 ### NIUSHOP 开源商城 V6 设计理念
 
