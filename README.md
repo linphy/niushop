@@ -34,16 +34,9 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 - niucloud-admin结合系统结构特点专门开发了代码生成器，这样开发者根据数据表就可以一键生成基础的业务代码，包括：后台php业务代码以及对应的前端vue代码。
 - 手机端设计开发了自定义装修，同时提供了基础的开发组件，方便开发者设计开发手机自定义页面装修的开发需求
 ```
-### NIUCLOUD 框架截图
-![输入图片说明](https://media.niucloud.com/1704066345d7742c4c0a1a941e836e8d633f209396_aliyun.jpg)
-![输入图片说明](https://media.niucloud.com/17040664219c6ce47b234eac495c3c4aa6e83920b6_aliyun.png)
-![输入图片说明](https://media.niucloud.com/17040665085ed007bd6daf220cc1ecd4e301c6008f_aliyun.png)
-![输入图片说明](https://media.niucloud.com/1704066609bad8bba9c5bfe5a243f5ebcec54866af_aliyun.png)
-![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
-![输入图片说明](https://media.niucloud.com/1704067302721c5360c622b4934fae659ee1eb0987_aliyun.png)
 
 ### 商城插件  :point_right:   SHOP
-![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1712132244c781785a8822b281c8d03f10134c9f97_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/1711597084402f1f74c47080b20c7feb4166b2ab2a_aliyun.png)
 
 ### 分销插件  :point_right:   FENXIAO
