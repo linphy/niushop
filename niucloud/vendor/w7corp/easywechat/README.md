@@ -1,99 +1,68 @@
-<h1 align="left"><a href="https://www.easywechat.com">EasyWeChat</a></h1>
+# [EasyWeChat](https://www.easywechat.com)
 
-📦 一个 PHP 微信开发 SDK。
+📦 一个 PHP 微信开发 SDK，开源 SaaS 平台提供商 [微擎](https://www.w7.cc/) 旗下开源产品。
 
-[![Test Status](https://github.com/w7corp/easywechat/workflows/Test/badge.svg)](https://github.com/w7corp/easywechat/actions) 
-[![Lint Status](https://github.com/w7corp/easywechat/workflows/Lint/badge.svg)](https://github.com/w7corp/easywechat/actions) 
-[![Latest Stable Version](https://poser.pugx.org/w7corp/easywechat/v/stable.svg)](https://packagist.org/packages/w7corp/easywechat) 
+[![Test Status](https://github.com/w7corp/easywechat/workflows/Test/badge.svg)](https://github.com/w7corp/easywechat/actions)
+[![Lint Status](https://github.com/w7corp/easywechat/workflows/Lint/badge.svg)](https://github.com/w7corp/easywechat/actions)
+[![Latest Stable Version](https://poser.pugx.org/w7corp/easywechat/v/stable.svg)](https://packagist.org/packages/w7corp/easywechat)
 [![Latest Unstable Version](https://poser.pugx.org/w7corp/easywechat/v/unstable.svg)](https://packagist.org/packages/w7corp/easywechat)
-[![Total Downloads](https://poser.pugx.org/w7corp/easywechat/downloads)](https://packagist.org/packages/w7corp/easywechat) 
-[![License](https://poser.pugx.org/w7corp/easywechat/license)](https://packagist.org/packages/w7corp/easywechat) 
-[![huntr](https://cdn.huntr.dev/huntr_security_badge_mono.svg)](https://huntr.dev)
+[![Total Downloads](https://poser.pugx.org/w7corp/easywechat/downloads)](https://packagist.org/packages/w7corp/easywechat)
+[![License](https://poser.pugx.org/w7corp/easywechat/license)](https://packagist.org/packages/w7corp/easywechat)
 
-> 📣 **公告**
-> 
->  为了更好的推进项目发展，保障项目更新迭代速度，EasyWeChat 正式并入微擎旗下，加上微擎团队的助力，将会为大家提供更强大更稳固更多元化的开源项目。
->
-> - 微擎与 EasyWeChat 结合，基于微擎技术资源方面的优势，将积极发展 EasyWeChat 的开源社区，将为 EasyWeChat 开源项目注入巨大活力。
-> - EasyWeChat 原作者 overtrue 将继续担任开源项目的核心开发者，继续参与项目的发展规划，共同打造更强大的开源生态社区。
-> - 项目从 6.0 版本开始将修改包名为 `w7corp/easywechat`，5.x 及以下版本不受影响。
+## 环境需求
 
-> 🚨 注意：请 PR 时往 5.x 提交，感谢您的贡献！
+- PHP >= 8.0.2
+- [Composer](https://getcomposer.org/) >= 2.0
 
+## 安装
 
-## Requirement
-
-1. PHP >= 7.4
-2. **[Composer](https://getcomposer.org/)**
-3. openssl 拓展
-4. fileinfo 拓展（素材管理模块需要用到）
-
-## Installation
-
-```shell
-$ composer require "overtrue/wechat:^5.0" -vvv
+```bash
+composer require w7corp/easywechat
 ```
 
-## Usage
+## 使用示例
 
-基本使用（以服务端为例）:
+基本使用（以公众号服务端为例）:
 
 ```php
 <?php
 
-use EasyWeChat\Factory;
+use EasyWeChat\OfficialAccount\Application;
 
-$options = [
-    'app_id'    => 'wx3cf0f39249eb0exxx',
-    'secret'    => 'f1c242f4f28f735d4687abb469072xxx',
-    'token'     => 'easywechat',
-    'log' => [
-        'level' => 'debug',
-        'file'  => '/tmp/easywechat.log',
-    ],
-    // ...
+$config = [
+    'app_id' => 'wx3cf0f39249eb0exxx',
+    'secret' => 'f1c242f4f28f735d4687abb469072xxx',
+    'aes_key' => 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG',
+    'token' => 'easywechat',
 ];
 
-$app = Factory::officialAccount($options);
+$app = new Application($config);
 
-$server = $app->server;
-$user = $app->user;
+$app->getServer()->with(fn() => "您好！EasyWeChat！");
 
-$server->push(function($message) use ($user) {
-    $fromUser = $user->get($message['FromUserName']);
-
-    return "{$fromUser->nickname} 您好！欢迎关注 overtrue!";
-});
-
-$server->serve()->send();
+$response = $server->serve();
 ```
 
-更多请参考 [https://www.easywechat.com/](https://www.easywechat.com/)。
+## 文档和链接
 
-## Documentation
+[官网](https://www.easywechat.com) · [讨论](https://github.com/w7corp/easywechat/discussions) · [更新策略](https://github.com/w7corp/easywechat/security/policy)
 
-[官网](https://www.easywechat.com)  · [教程](https://www.aliyundrive.com/s/6CwgtkiBqFV)  ·  [讨论](https://github.com/w7corp/easywechat/discussions)  ·  [微信公众平台](https://mp.weixin.qq.com/wiki)  ·  [WeChat Official](http://admin.wechat.com/wiki)
+## :heart: 支持我
 
-## Integration
+[![Sponsor me](https://github.com/overtrue/overtrue/blob/master/sponsor-me.svg?raw=true)](https://github.com/sponsors/overtrue)
 
-[Laravel 5 拓展包: overtrue/laravel-wechat](https://github.com/overtrue/laravel-wechat)
+如果你喜欢我的项目并想支持它，[点击这里 :heart:](https://github.com/sponsors/overtrue)
 
-## Contributors
+## 由 JetBrains 赞助
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/overtrue/wechat/graphs/contributors"><img src="https://opencollective.com/wechat/contributors.svg?width=890" /></a>
+非常感谢 Jetbrains 为我提供的 IDE 开源许可，让我完成此项目和其他开源项目上的开发工作。
 
+[![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/overtrue)
 
-## PHP 扩展包开发
+## 可爱的贡献者们
 
-> 想知道如何从零开始构建 PHP 扩展包？
->
-> 请关注我的实战课程，我会在此课程中分享一些扩展开发经验 —— [《PHP 扩展包实战教程 - 从入门到发布》](https://learnku.com/courses/creating-package)
-
+<a href="https://github.com/w7corp/easywechat/graphs/contributors"><img src="https://opencollective.com/wechat/contributors.svg?width=890" /></a>
 
 ## License
 
 MIT
-
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fovertrue%2Fwechat.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fovertrue%2Fwechat?ref=badge_large)

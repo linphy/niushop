@@ -1,156 +1,50 @@
 <?php
 
-/*
- * This file is part of the overtrue/wechat.
- *
- * (c) overtrue <i@overtrue.me>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+declare(strict_types=1);
 
 namespace EasyWeChat\Kernel\Traits;
 
-use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
-use EasyWeChat\Kernel\Support\Arr;
-use EasyWeChat\Kernel\Support\Str;
+use function array_key_exists;
+use function array_merge;
+use function json_encode;
 
-/**
- * Trait Attributes.
- */
 trait HasAttributes
 {
     /**
-     * @var array
+     * @var  array<int|string,mixed> $attributes
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
-     * @var bool
+     * @param  array<int|string,mixed>  $attributes
      */
-    protected $snakeable = true;
-
-    /**
-     * Set Attributes.
-     *
-     * @param array $attributes
-     *
-     * @return $this
-     */
-    public function setAttributes(array $attributes = [])
+    public function __construct(array $attributes)
     {
         $this->attributes = $attributes;
-
-        return $this;
     }
 
     /**
-     * Set attribute.
-     *
-     * @param string $attribute
-     * @param string $value
-     *
-     * @return $this
+     * @return array<int|string,mixed>
      */
-    public function setAttribute($attribute, $value)
+    public function toArray(): array
     {
-        Arr::set($this->attributes, $attribute, $value);
-
-        return $this;
+        return $this->attributes;
     }
 
-    /**
-     * Get attribute.
-     *
-     * @param string $attribute
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getAttribute($attribute, $default = null)
+    public function toJson(): string|false
     {
-        return Arr::get($this->attributes, $attribute, $default);
+        return json_encode($this->attributes);
     }
 
-    /**
-     * @param string $attribute
-     *
-     * @return bool
-     */
-    public function isRequired($attribute)
+    public function has(string $key): bool
     {
-        return in_array($attribute, $this->getRequired(), true);
+        return array_key_exists($key, $this->attributes);
     }
 
     /**
-     * @return array|mixed
+     * @param  array<int|string,mixed>  $attributes
      */
-    public function getRequired()
-    {
-        return property_exists($this, 'required') ? $this->required : [];
-    }
-
-    /**
-     * Set attribute.
-     *
-     * @param string $attribute
-     * @param mixed  $value
-     *
-     * @return $this
-     */
-    public function with($attribute, $value)
-    {
-        $this->snakeable && $attribute = Str::snake($attribute);
-
-        $this->setAttribute($attribute, $value);
-
-        return $this;
-    }
-
-    /**
-     * Override parent set() method.
-     *
-     * @param string $attribute
-     * @param mixed  $value
-     *
-     * @return $this
-     */
-    public function set($attribute, $value)
-    {
-        $this->setAttribute($attribute, $value);
-
-        return $this;
-    }
-
-    /**
-     * Override parent get() method.
-     *
-     * @param string $attribute
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function get($attribute, $default = null)
-    {
-        return $this->getAttribute($attribute, $default);
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function has(string $key)
-    {
-        return Arr::has($this->attributes, $key);
-    }
-
-    /**
-     * @param array $attributes
-     *
-     * @return $this
-     */
-    public function merge(array $attributes)
+    public function merge(array $attributes): static
     {
         $this->attributes = array_merge($this->attributes, $attributes);
 
@@ -158,94 +52,45 @@ trait HasAttributes
     }
 
     /**
-     * @param array|string $keys
-     *
-     * @return array
+     * @return  array<int|string,mixed>  $attributes
      */
-    public function only($keys)
+    public function jsonSerialize(): array
     {
-        return Arr::only($this->attributes, $keys);
-    }
-
-    /**
-     * Return all items.
-     *
-     * @return array
-     *
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
-     */
-    public function all()
-    {
-        $this->checkRequiredAttributes();
-
         return $this->attributes;
     }
 
-    /**
-     * Magic call.
-     *
-     * @param string $method
-     * @param array  $args
-     *
-     * @return $this
-     */
-    public function __call($method, $args)
+    public function __set(string $attribute, mixed $value): void
     {
-        if (0 === stripos($method, 'with')) {
-            return $this->with(substr($method, 4), array_shift($args));
+        $this->attributes[$attribute] = $value;
+    }
+
+    public function __get(string $attribute): mixed
+    {
+        return $this->attributes[$attribute] ?? null;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        /** @phpstan-ignore-next-line */
+        return array_key_exists($offset, $this->attributes);
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->attributes[$offset];
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        if (null === $offset) {
+            $this->attributes[] = $value;
+        } else {
+            $this->attributes[$offset] = $value;
         }
-
-        throw new \BadMethodCallException(sprintf('Method "%s" does not exists.', $method));
     }
 
-    /**
-     * Magic get.
-     *
-     * @param string $property
-     *
-     * @return mixed
-     */
-    public function __get($property)
+    public function offsetUnset(mixed $offset): void
     {
-        return $this->get($property);
-    }
-
-    /**
-     * Magic set.
-     *
-     * @param string $property
-     * @param mixed  $value
-     *
-     * @return $this
-     */
-    public function __set($property, $value)
-    {
-        return $this->with($property, $value);
-    }
-
-    /**
-     * Whether or not an data exists by key.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function __isset($key)
-    {
-        return isset($this->attributes[$key]);
-    }
-
-    /**
-     * Check required attributes.
-     *
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
-     */
-    protected function checkRequiredAttributes()
-    {
-        foreach ($this->getRequired() as $attribute) {
-            if (is_null($this->get($attribute))) {
-                throw new InvalidArgumentException(sprintf('"%s" cannot be empty.', $attribute));
-            }
-        }
+        unset($this->attributes[$offset]);
     }
 }

@@ -1,67 +1,62 @@
 <?php
 
-/*
- * This file is part of the overtrue/wechat.
- *
- * (c) overtrue <i@overtrue.me>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+declare(strict_types=1);
 
 namespace EasyWeChat\Kernel\Support;
 
+use InvalidArgumentException;
 use SimpleXMLElement;
+use function is_object;
 
-/**
- * Class XML.
- */
-class XML
+class Xml
 {
     /**
-     * XML to array.
-     *
-     * @param string $xml XML string
-     *
-     * @return array
+     * @return array<int|string,mixed>|null
      */
-    public static function parse($xml)
+    public static function parse(string $xml): array|null
     {
-        $backup = PHP_MAJOR_VERSION < 8 ? libxml_disable_entity_loader(true) : null;
+        if (empty($xml)) {
+            return null;
+        }
 
-        $result = self::normalize(simplexml_load_string(self::sanitize($xml), 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_NOCDATA | LIBXML_NOBLANKS));
+        $xml = simplexml_load_string(
+            self::sanitize($xml),
+            'SimpleXMLElement',
+            LIBXML_COMPACT | LIBXML_NOCDATA | LIBXML_NOBLANKS
+        );
 
-        PHP_MAJOR_VERSION < 8 && libxml_disable_entity_loader($backup);
+        if (!$xml) {
+            throw new InvalidArgumentException('Invalid XML');
+        }
 
-        return $result;
+        return self::normalize($xml);
     }
 
     /**
-     * XML encode.
-     *
-     * @param mixed  $data
-     * @param string $root
-     * @param string $item
-     * @param string $attr
-     * @param string $id
+     * @param  array<int|string, mixed>  $data
+     * @param  string  $root
+     * @param  string  $item
+     * @param  string|array<string, mixed>  $attr
+     * @param  string  $id
      *
      * @return string
      */
     public static function build(
-        $data,
-        $root = 'xml',
-        $item = 'item',
-        $attr = '',
-        $id = 'id'
-    ) {
+        array $data,
+        string $root = 'xml',
+        string $item = 'item',
+        string|array $attr = '',
+        string $id = 'id'
+    ): string {
         if (is_array($attr)) {
-            $_attr = [];
+            $segments = [];
 
             foreach ($attr as $key => $value) {
-                $_attr[] = "{$key}=\"{$value}\"";
+                /** @phpstan-ignore-next-line */
+                $segments[] = "{$key}=\"{$value}\"";
             }
 
-            $attr = implode(' ', $_attr);
+            $attr = implode(' ', $segments);
         }
 
         $attr = trim($attr);
@@ -73,66 +68,53 @@ class XML
         return $xml;
     }
 
-    /**
-     * Build CDATA.
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    public static function cdata($string)
+    public static function cdata(?string $string): string
     {
-        return sprintf('<![CDATA[%s]]>', $string);
+        return sprintf('<![CDATA[%s]]>', $string ?? '');
     }
 
     /**
-     * Object to array.
-     *
-     *
-     * @param SimpleXMLElement $obj
-     *
-     * @return array
+     * @psalm-suppress RedundantCondition
+     * @param  array<SimpleXMLElement>|SimpleXMLElement  $object
+     * @return array<int|string, mixed>|null
      */
-    protected static function normalize($obj)
+    protected static function normalize(SimpleXMLElement|array $object): array|null
     {
         $result = null;
 
-        if (is_object($obj)) {
-            $obj = (array) $obj;
+        if (is_object($object)) {
+            $object = (array) $object;
         }
 
-        if (is_array($obj)) {
-            foreach ($obj as $key => $value) {
-                $res = self::normalize($value);
-                if (('@attributes' === $key) && ($key)) {
-                    $result = $res; // @codeCoverageIgnore
+        if (is_array($object)) {
+            foreach ($object as $key => $value) {
+                $value = $value instanceof SimpleXMLElement ? self::normalize($value) : $value;
+
+                if ('@attributes' === $key) {
+                    $result = $value; // @codeCoverageIgnore
                 } else {
-                    $result[$key] = $res;
+                    $result[$key] = $value;
                 }
             }
-        } else {
-            $result = $obj;
         }
 
         return $result;
     }
 
     /**
-     * Array to XML.
-     *
-     * @param array  $data
-     * @param string $item
-     * @param string $id
+     * @param  array<int|string,mixed>  $data
+     * @param  string  $item
+     * @param  string  $id
      *
      * @return string
      */
-    protected static function data2Xml($data, $item = 'item', $id = 'id')
+    protected static function data2Xml(array $data, string $item = 'item', string $id = 'id'): string
     {
         $xml = $attr = '';
 
         foreach ($data as $key => $val) {
             if (is_numeric($key)) {
-                $id && $attr = " {$id}=\"{$key}\"";
+                $attr = " {$id}=\"{$key}\"";
                 $key = $item;
             }
 
@@ -141,6 +123,7 @@ class XML
             if ((is_array($val) || is_object($val))) {
                 $xml .= self::data2Xml((array) $val, $item, $id);
             } else {
+                /** @phpstan-ignore-next-line */
                 $xml .= is_numeric($val) ? $val : self::cdata($val);
             }
 
@@ -156,12 +139,20 @@ class XML
      * @see https://www.w3.org/TR/2008/REC-xml-20081126/#charsets - XML charset range
      * @see http://php.net/manual/en/regexp.reference.escape.php - escape in UTF-8 mode
      *
-     * @param string $xml
+     * @param  ?string  $xml
      *
      * @return string
      */
-    public static function sanitize($xml)
+    public static function sanitize(?string $xml): string
     {
-        return preg_replace('/[^\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]+/u', '', $xml);
+        if (empty($xml)) {
+            return '';
+        }
+
+        return preg_replace(
+            '/[^\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]+/u',
+            '',
+            $xml
+        ) ?? '';
     }
 }

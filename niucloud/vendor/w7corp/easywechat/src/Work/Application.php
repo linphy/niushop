@@ -1,124 +1,174 @@
 <?php
 
-/*
- * This file is part of the overtrue/wechat.
- *
- * (c) overtrue <i@overtrue.me>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+declare(strict_types=1);
 
 namespace EasyWeChat\Work;
 
-use EasyWeChat\Kernel\ServiceContainer;
-use EasyWeChat\Work\MiniProgram\Application as MiniProgram;
+use EasyWeChat\Kernel\Contracts\AccessToken as AccessTokenInterface;
+use EasyWeChat\Kernel\Contracts\Server as ServerInterface;
+use EasyWeChat\Kernel\HttpClient\AccessTokenAwareClient;
+use EasyWeChat\Kernel\HttpClient\Response;
+use EasyWeChat\Kernel\Traits\InteractWithCache;
+use EasyWeChat\Kernel\Traits\InteractWithClient;
+use EasyWeChat\Kernel\Traits\InteractWithConfig;
+use EasyWeChat\Kernel\Traits\InteractWithHttpClient;
+use EasyWeChat\Kernel\Traits\InteractWithServerRequest;
+use EasyWeChat\Work\Contracts\Account as AccountInterface;
+use EasyWeChat\Work\Contracts\Application as ApplicationInterface;
+use Overtrue\Socialite\Contracts\ProviderInterface as SocialiteProviderInterface;
+use Overtrue\Socialite\Providers\WeWork;
+use function array_merge;
 
-/**
- * Application.
- *
- * @author mingyoung <mingyoungcheung@gmail.com>
- *
- * @property \EasyWeChat\Work\OA\Client                             $oa
- * @property \EasyWeChat\Work\Auth\AccessToken                      $access_token
- * @property \EasyWeChat\Work\Agent\Client                          $agent
- * @property \EasyWeChat\Work\Department\Client                     $department
- * @property \EasyWeChat\Work\Media\Client                          $media
- * @property \EasyWeChat\Work\Menu\Client                           $menu
- * @property \EasyWeChat\Work\Message\Client                        $message
- * @property \EasyWeChat\Work\Message\Messenger                     $messenger
- * @property \EasyWeChat\Work\User\Client                           $user
- * @property \EasyWeChat\Work\User\TagClient                        $tag
- * @property \EasyWeChat\Work\Server\Guard                          $server
- * @property \EasyWeChat\Work\Jssdk\Client                          $jssdk
- * @property \Overtrue\Socialite\Providers\WeWork                   $oauth
- * @property \EasyWeChat\Work\Invoice\Client                        $invoice
- * @property \EasyWeChat\Work\Chat\Client                           $chat
- * @property \EasyWeChat\Work\ExternalContact\Client                $external_contact
- * @property \EasyWeChat\Work\ExternalContact\ContactWayClient      $contact_way
- * @property \EasyWeChat\Work\ExternalContact\GroupChatWayClient    $group_chat_way
- * @property \EasyWeChat\Work\ExternalContact\StatisticsClient      $external_contact_statistics
- * @property \EasyWeChat\Work\ExternalContact\MessageClient         $external_contact_message
- * @property \EasyWeChat\Work\ExternalContact\InterceptClient       $intercept
- * @property \EasyWeChat\Work\ExternalContact\ProductClient         $product
- * @property \EasyWeChat\Work\GroupRobot\Client                     $group_robot
- * @property \EasyWeChat\Work\GroupRobot\Messenger                  $group_robot_messenger
- * @property \EasyWeChat\Work\Calendar\Client                       $calendar
- * @property \EasyWeChat\Work\Schedule\Client                       $schedule
- * @property \EasyWeChat\Work\MsgAudit\Client                       $msg_audit
- * @property \EasyWeChat\Work\Live\Client                           $live
- * @property \EasyWeChat\Work\CorpGroup\Client                      $corp_group
- * @property \EasyWeChat\Work\ExternalContact\SchoolClient          $school
- * @property \EasyWeChat\Work\ExternalContact\MessageTemplateClient $external_contact_message_template
- * @property \EasyWeChat\Work\Kf\AccountClient                      $kf_account
- * @property \EasyWeChat\Work\Kf\ServicerClient                     $kf_servicer
- * @property \EasyWeChat\Work\Kf\MessageClient                      $kf_message
- * @property \EasyWeChat\Work\GroupWelcomeTemplate\Client           $group_welcome_templage
- * @property \EasyWeChat\Work\Wedrive\Wedrive                       $wedrive
- *
- * @method mixed getCallbackIp()
- */
-class Application extends ServiceContainer
+class Application implements ApplicationInterface
 {
-    /**
-     * @var array
-     */
-    protected $providers = [
-        OA\ServiceProvider::class,
-        Auth\ServiceProvider::class,
-        Base\ServiceProvider::class,
-        Menu\ServiceProvider::class,
-        OAuth\ServiceProvider::class,
-        User\ServiceProvider::class,
-        Agent\ServiceProvider::class,
-        Media\ServiceProvider::class,
-        Message\ServiceProvider::class,
-        Department\ServiceProvider::class,
-        Server\ServiceProvider::class,
-        Jssdk\ServiceProvider::class,
-        Invoice\ServiceProvider::class,
-        Chat\ServiceProvider::class,
-        ExternalContact\ServiceProvider::class,
-        GroupRobot\ServiceProvider::class,
-        Calendar\ServiceProvider::class,
-        Schedule\ServiceProvider::class,
-        MsgAudit\ServiceProvider::class,
-        Live\ServiceProvider::class,
-        CorpGroup\ServiceProvider::class,
-        Mobile\ServiceProvider::class,
-        Kf\ServiceProvider::class,
-        GroupWelcomeTemplate\ServiceProvider::class,
-        Wedrive\ServiceProvider::class,
-    ];
+    use InteractWithConfig;
+    use InteractWithCache;
+    use InteractWithServerRequest;
+    use InteractWithHttpClient;
+    use InteractWithClient;
 
-    /**
-     * @var array
-     */
-    protected $defaultConfig = [
-        // http://docs.guzzlephp.org/en/stable/request-options.html
-        'http' => [
-            'base_uri' => 'https://qyapi.weixin.qq.com/',
-        ],
-    ];
+    protected ?Encryptor $encryptor = null;
+    protected ?ServerInterface $server = null;
+    protected ?AccountInterface $account = null;
+    protected ?JsApiTicket $ticket = null;
+    protected ?AccessTokenInterface $accessToken = null;
 
-    /**
-     * Creates the miniProgram application.
-     *
-     * @return \EasyWeChat\Work\MiniProgram\Application
-     */
-    public function miniProgram(): MiniProgram
+    public function getAccount(): AccountInterface
     {
-        return new MiniProgram($this->getConfig());
+        if (!$this->account) {
+            $this->account = new Account(
+                corpId: (string) $this->config->get('corp_id'), /** @phpstan-ignore-line */
+                secret: (string) $this->config->get('secret'), /** @phpstan-ignore-line */
+                token: (string) $this->config->get('token'), /** @phpstan-ignore-line */
+                aesKey: (string) $this->config->get('aes_key'),/** @phpstan-ignore-line */
+            );
+        }
+
+        return $this->account;
+    }
+
+    public function setAccount(AccountInterface $account): static
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    public function getEncryptor(): Encryptor
+    {
+        if (!$this->encryptor) {
+            $this->encryptor = new Encryptor(
+                corpId: $this->getAccount()->getCorpId(),
+                token: $this->getAccount()->getToken(),
+                aesKey: $this->getAccount()->getAesKey(),
+            );
+        }
+
+        return $this->encryptor;
+    }
+
+    public function setEncryptor(Encryptor $encryptor): static
+    {
+        $this->encryptor = $encryptor;
+
+        return $this;
     }
 
     /**
-     * @param string $method
-     * @param array  $arguments
-     *
-     * @return mixed
+     * @throws \ReflectionException
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
+     * @throws \Throwable
      */
-    public function __call($method, $arguments)
+    public function getServer(): Server|ServerInterface
     {
-        return $this['base']->$method(...$arguments);
+        if (!$this->server) {
+            $this->server = new Server(
+                request: $this->getRequest(),
+                encryptor: $this->getEncryptor()
+            );
+        }
+
+        return $this->server;
+    }
+
+    public function setServer(ServerInterface $server): static
+    {
+        $this->server = $server;
+
+        return $this;
+    }
+
+    public function getAccessToken(): AccessTokenInterface
+    {
+        if (!$this->accessToken) {
+            $this->accessToken = new AccessToken(
+                corpId: $this->getAccount()->getCorpId(),
+                secret: $this->getAccount()->getSecret(),
+                cache: $this->getCache(),
+                httpClient: $this->getHttpClient(),
+            );
+        }
+
+        return $this->accessToken;
+    }
+
+    public function setAccessToken(AccessTokenInterface $accessToken): static
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    public function createClient(): AccessTokenAwareClient
+    {
+        return (new AccessTokenAwareClient(
+            client: $this->getHttpClient(),
+            accessToken: $this->getAccessToken(),
+            failureJudge: fn (Response $response) => !!($response->toArray()['errcode'] ?? 0),
+            throw: !!$this->config->get('http.throw', true),
+        ))->setPresets($this->config->all());
+    }
+
+    public function getOAuth(): SocialiteProviderInterface
+    {
+        return (new WeWork(
+            [
+                'client_id' => $this->getAccount()->getCorpId(),
+                'client_secret' => $this->getAccount()->getSecret(),
+                'redirect_url' => $this->config->get('oauth.redirect_url'),
+            ]
+        ))->withApiAccessToken($this->getAccessToken()->getToken())
+            ->scopes((array) $this->config->get('oauth.scopes', ['snsapi_base']));
+    }
+
+    public function getTicket(): JsApiTicket
+    {
+        if (!$this->ticket) {
+            $this->ticket = new JsApiTicket(
+                corpId: $this->getAccount()->getCorpId(),
+                cache: $this->getCache(),
+                httpClient: $this->getClient(),
+            );
+        }
+
+        return $this->ticket;
+    }
+
+    public function setTicket(JsApiTicket $ticket): static
+    {
+        $this->ticket = $ticket;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getHttpClientDefaultOptions(): array
+    {
+        return array_merge(
+            ['base_uri' => 'https://qyapi.weixin.qq.com/',],
+            (array) $this->config->get('http', [])
+        );
     }
 }

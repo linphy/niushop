@@ -1,3 +1,158 @@
+## v3.6.3
+
+### optimized
+
+- optimize: 优化微信错误响应时的处理逻辑(#944)
+
+## v3.6.2
+
+### fixed
+
+- fix: 修复微信 App 支付参数异常问题(#941)
+
+## v3.6.1
+
+### chore
+
+- chore: 升级 `yansongda/artful` 到 v1.0.9 修复 JsonPacker 为空时 packer 错误的问题(#937)
+
+## v3.6.0
+
+### added
+
+- feat: 新增 `InvalidSignException`(#903)
+- feat: 新增 `DecryptException`(#906)
+- feat: 新增 `decrypt_wechat_contents` 解密微信加密内容(#912)
+- feat: `\Yansongda\Pay\Plugin\Wechat\Extend\Complaints\QueryDetailPlugin` 自动解密用户手机号(#912)
+- feat: 支持 微信/支付宝 多版本(#918)
+- feat: 增加 `HttpClientFactoryInterface` 方法用于工厂模式创建 http client(#921)
+- feat: 增加银联 `条码支付综合前置平台-被扫支付` 刷卡支付插件(#922)
+- feat: 增加小程序虚拟支付签名、用户签名方法(#924)
+- feat: 增加微信发票插件(#927)
+
+### changed
+
+- change: 查询API方法由 `find` 改为 `query`，同时参数只支持 array(#897)
+- change: cancel/close 的 API 参数只支持 array，不再支持 string(#900, #901)
+- change: 微信合单支付去掉独立的 `combine_app_id`,`combine_mch_id` 配置，复用其它配置(#909)
+- change: 手机网站支付快捷方式由 wap 改为 h5(#911, #915, #916, #934)
+- change: `Pay` 类对外方法由所改变，如果您有自行扩展相关插件，请检查(#926)
+- change(internal): 按场景对 支付宝/微信/银联 插件进行分类 && 插件代码优化(#894, #909, #913, #922)
+- change(internal): 将 支付/微信/银联 shortcut 从 plugin 文件夹独立出来(#895, #904, #905, #933)
+- change(internal): shortcut 完整标明各个插件，不使用 commonPlugin(#886)
+- change(internal): DirectionInterface 方法由 `parse` 改为 `guide`(#896)
+- change(internal): 错误代码 const 命名规则统一(#902, #903, #906, #909, #926)
+- change(internal): 调整 `ProviderInterface` 的返回参数，增加了 `Rocket` 返回(#909)
+- change(internal): 将 `call()` 方法重命名为 `shortcut()`(#914)
+- change(internal): `mergeCommonPlugins` 不再作为 `AbstractProvider` 的方法(#918)
+- change(internal): `AbstractProvider` 默认使用 `HttpClientFactoryInterface` 创建 http client(#921)
+- change(internal): 调整 银联 插件文件夹结构(#923)
+- change(internal): 替换为 `artful` API 请求框架(#926)
+- change(internal): 调整微信代金券插件文件结构(#928)
+
+## v3.5.3
+
+### feat
+
+- feat: 增加支付宝 分账关系维护/分账查询 插件(#874)
+
+### optimized
+
+- optimize: 支付宝公钥使用公共函数获取(#835)
+
+## v3.5.2
+
+### fixed
+
+- fix: monolog 不存在时报错问题(#834)
+- fix: `\Yansongda\Pay\Provider\AbstractProvider::call` 方法返回值类型错误问题(#834)
+
+## v3.5.1
+
+### fixed
+
+- fix: `destination` 的类型约束去掉 array(#824)
+
+## v3.5.0
+
+### deleted
+
+- deleted: 移除 `Yansongda\Pay\Direction\ArrayDirection` 类(#818, #819)
+
+## v3.4.2
+
+### changed
+
+- change: 只支持 hyperf3.x 版本(#815)
+
+## v3.4.1
+
+### optimized
+
+- optimize: 优化无签名时错误提示(#813)
+- optimize: 优化预下单失败时错误提示(#814)
+
+## v3.4.0
+
+### added
+
+- feat: 增加 `get_direction` 方法获取 `Direction` 对象(#803)
+
+### changed
+
+- change: `Exception::INVALID_PARSE` 更改为 `Exception::INVALID_DIRECTION`(#804)
+- chore: 最低支持版本变更为 php8.0(#801)
+
+### optimized
+
+- optimize: 优化 coding style 代码规范(#802)
+
+## v3.3.1
+
+### fixed
+
+- fix: 支付宝沙箱地址(#800)
+
+## v3.3.0
+
+### added
+
+- feat: 支持微信 v2 版本刷卡支付(#753)
+- feat: 增加申请代扣协议插件(#767)
+- feat: 增加支付中签约插件(#763)
+- feat: 增加只签约插件(#765)
+- feat: `shortcut` 支持 `_no_common_plugins` 参数不使用通用插件(#771)
+- feat: 增加委托代扣 shortcut(#773)
+
+### deleted
+
+- delete: 移除废弃的类(#752)
+
+### fixed
+
+- fix: 微信代金券 api 参数错误问题(#777)
+
+### refactor
+
+- refactor: 重构 ArrayParser 类(#754)
+- refactor: coding style(#769)
+- refactor: 优化现有微信v2插件代码(#772)
+- refactor: 所有参数判断使用 `$payload->has()` 判断是否存在(#778)
+
+### chore
+
+- chore: 支持 psr/http-message 2.0 版(#784)
+
+### changed
+
+- change: 所有的 `Find*Plugin` 调整为 `Query*Plugin`(#756)
+- change: 插件开始装载日志由 `info` 调整为 `debug`(#755)
+- change: ParserInterface 签名由 `?ResponseInterface $response` 变更为 `PackerInterface $packer, ?ResponseInterface $response`(#754)
+- change: \Yansongda\Pay\Plugin\Wechat\RadarSignPlugin 增加 `__construct(JsonPacker $jsonPacker, XmlPacker $xmlPacker)` 方法(#753)
+- change: 所有 `Parser` 更名为 `Direction`(#770, #774)
+- change: '_type' 类型统一定义为渠道id，如: 小程序id，公众号id等；增加 '_action' 为操作类型用于 shortcut(#781)
+- change: 默认 container 由 `php-di/php-di` 改为 `hyperf/pimple`(#786)
+
 ## v3.2.14
 
 ### fixed

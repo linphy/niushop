@@ -36,6 +36,17 @@ Route::rule('home', function () {
 Route::rule('decorate/:any', function () {
     return view(app()->getRootPath() . 'public/admin/index.html');
 })->pattern(['any' => '\w+']);
+
+//用于公众号授权证书
+Route::any('MP_verify_<name>.txt',  function ($name) {
+    header('Content-Type:text/plain; charset=utf-8');
+    echo $name;exit();
+});
+Route::any('wap/<id>/MP_verify_<name>.txt',  function ($name) {
+    header('Content-Type:text/plain; charset=utf-8');
+    echo $name;exit();
+});
+
 // 手机端
 Route::rule('wap', function () {
     return view(app()->getRootPath() . 'public/wap/index.html');
@@ -44,8 +55,3 @@ Route::rule('wap', function () {
 Route::rule('web', function () {
     return view(app()->getRootPath() . 'public/web/index.html');
 })->pattern(['any' => '\w+']);
-//用于公众号授权证书
-Route::any('MP_verify_<name>.txt',  function ($name) {
-    header('Content-Type:text/plain; charset=utf-8');
-    echo $name;exit();
-});

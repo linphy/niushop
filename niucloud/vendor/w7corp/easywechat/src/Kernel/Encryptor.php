@@ -1,27 +1,32 @@
 <?php
 
-/*
- * This file is part of the overtrue/wechat.
- *
- * (c) overtrue <i@overtrue.me>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+declare(strict_types=1);
 
 namespace EasyWeChat\Kernel;
 
 use EasyWeChat\Kernel\Exceptions\RuntimeException;
-use EasyWeChat\Kernel\Support\AES;
-use EasyWeChat\Kernel\Support\XML;
+use EasyWeChat\Kernel\Support\Pkcs7;
+use EasyWeChat\Kernel\Support\Str;
+use EasyWeChat\Kernel\Support\Xml;
+use Exception;
 use Throwable;
-use function EasyWeChat\Kernel\Support\str_random;
+use function base64_decode;
+use function base64_encode;
+use function implode;
+use function openssl_decrypt;
+use function openssl_encrypt;
+use function pack;
+use function random_bytes;
+use function sha1;
+use function sort;
+use function strlen;
+use function substr;
+use function time;
+use function trim;
+use function unpack;
+use const OPENSSL_NO_PADDING;
+use const SORT_STRING;
 
-/**
- * Class Encryptor.
- *
- * @author overtrue <i@overtrue.me>
- */
 class Encryptor
 {
     public const ERROR_INVALID_SIGNATURE = -40001; // Signature verification failed
@@ -37,183 +42,94 @@ class Encryptor
     public const ERROR_XML_BUILD = -40011; // XML build failed
     public const ILLEGAL_BUFFER = -41003; // Illegal buffer
 
-    /**
-     * App id.
-     *
-     * @var string
-     */
-    protected $appId;
+    protected string $appId;
+    protected string $token;
+    protected string $aesKey;
+    protected int $blockSize = 32;
+    protected ?string $receiveId = null;
 
-    /**
-     * App token.
-     *
-     * @var string
-     */
-    protected $token;
-
-    /**
-     * @var string
-     */
-    protected $aesKey;
-
-    /**
-     * Block size.
-     *
-     * @var int
-     */
-    protected $blockSize = 32;
-
-    /**
-     * Constructor.
-     *
-     * @param string      $appId
-     * @param string|null $token
-     * @param string|null $aesKey
-     */
-    public function __construct(string $appId, string $token = null, string $aesKey = null)
+    public function __construct(string $appId, string $token, string $aesKey, ?string $receiveId = null)
     {
         $this->appId = $appId;
         $this->token = $token;
-        $this->aesKey = base64_decode($aesKey.'=', true);
+        $this->receiveId = $receiveId;
+        $this->aesKey = base64_decode($aesKey.'=', true) ?: '';
     }
 
-    /**
-     * Get the app token.
-     *
-     * @return string
-     */
     public function getToken(): string
     {
         return $this->token;
     }
 
     /**
-     * Encrypt the message and return XML.
-     *
-     * @param string $xml
-     * @param string $nonce
-     * @param int    $timestamp
-     *
-     * @return string
-     *
-     * @throws \EasyWeChat\Kernel\Exceptions\RuntimeException
+     * @throws RuntimeException
+     * @throws Exception
      */
-    public function encrypt($xml, $nonce = null, $timestamp = null): string
+    public function encrypt(string $plaintext, string|null $nonce = null, int|string $timestamp = null): string
     {
         try {
-            $xml = $this->pkcs7Pad(str_random(16).pack('N', strlen($xml)).$xml.$this->appId, $this->blockSize);
-
-            $encrypted = base64_encode(AES::encrypt(
-                $xml,
-                $this->aesKey,
-                substr($this->aesKey, 0, 16),
-                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
-            ));
-            // @codeCoverageIgnoreStart
+            $plaintext = Pkcs7::padding(random_bytes(16).pack('N', strlen($plaintext)).$plaintext.$this->appId, 32);
+            $ciphertext = base64_encode(
+                openssl_encrypt(
+                    $plaintext,
+                    "aes-256-cbc",
+                    $this->aesKey,
+                    OPENSSL_NO_PADDING,
+                    substr($this->aesKey, 0, 16)
+                ) ?: ''
+            );
         } catch (Throwable $e) {
             throw new RuntimeException($e->getMessage(), self::ERROR_ENCRYPT_AES);
         }
-        // @codeCoverageIgnoreEnd
 
-        !is_null($nonce) || $nonce = substr($this->appId, 0, 10);
-        !is_null($timestamp) || $timestamp = time();
+        $nonce ??= Str::random();
+        $timestamp ??= time();
 
         $response = [
-            'Encrypt' => $encrypted,
-            'MsgSignature' => $this->signature($this->token, $timestamp, $nonce, $encrypted),
+            'Encrypt' => $ciphertext,
+            'MsgSignature' => $this->createSignature($this->token, $timestamp, $nonce, $ciphertext),
             'TimeStamp' => $timestamp,
             'Nonce' => $nonce,
         ];
 
-        //生成响应xml
-        return XML::build($response);
+        return Xml::build($response);
+    }
+
+    public function createSignature(mixed ...$attributes): string
+    {
+        sort($attributes, SORT_STRING);
+
+        return sha1(implode($attributes));
     }
 
     /**
-     * Decrypt message.
-     *
-     * @param string $content
-     * @param string $msgSignature
-     * @param string $nonce
-     * @param string $timestamp
-     *
-     * @return string
-     *
-     * @throws \EasyWeChat\Kernel\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
-    public function decrypt($content, $msgSignature, $nonce, $timestamp): string
+    public function decrypt(string $ciphertext, string $msgSignature, string $nonce, int|string $timestamp): string
     {
-        $signature = $this->signature($this->token, $timestamp, $nonce, $content);
+        $signature = $this->createSignature($this->token, $timestamp, $nonce, $ciphertext);
 
         if ($signature !== $msgSignature) {
             throw new RuntimeException('Invalid Signature.', self::ERROR_INVALID_SIGNATURE);
         }
 
-        $decrypted = AES::decrypt(
-            base64_decode($content, true),
-            $this->aesKey,
-            substr($this->aesKey, 0, 16),
-            OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
+        $plaintext = Pkcs7::unpadding(
+            openssl_decrypt(
+                base64_decode($ciphertext, true) ?: '',
+                "aes-256-cbc",
+                $this->aesKey,
+                OPENSSL_NO_PADDING,
+                substr($this->aesKey, 0, 16)
+            ) ?: '',
+            32
         );
-        $result = $this->pkcs7Unpad($decrypted);
-        $content = substr($result, 16, strlen($result));
-        $contentLen = unpack('N', substr($content, 0, 4))[1];
+        $plaintext = substr($plaintext, 16);
+        $contentLength = (unpack('N', substr($plaintext, 0, 4)) ?: [])[1];
 
-        if (trim(substr($content, $contentLen + 4)) !== $this->appId) {
+        if ($this->receiveId && trim(substr($plaintext, $contentLength + 4)) !== $this->receiveId) {
             throw new RuntimeException('Invalid appId.', self::ERROR_INVALID_APP_ID);
         }
 
-        return substr($content, 4, $contentLen);
-    }
-
-    /**
-     * Get SHA1.
-     *
-     * @return string
-     */
-    public function signature(): string
-    {
-        $array = func_get_args();
-        sort($array, SORT_STRING);
-
-        return sha1(implode($array));
-    }
-
-    /**
-     * PKCS#7 pad.
-     *
-     * @param string $text
-     * @param int    $blockSize
-     *
-     * @return string
-     *
-     * @throws \EasyWeChat\Kernel\Exceptions\RuntimeException
-     */
-    public function pkcs7Pad(string $text, int $blockSize): string
-    {
-        if ($blockSize > 256) {
-            throw new RuntimeException('$blockSize may not be more than 256');
-        }
-        $padding = $blockSize - (strlen($text) % $blockSize);
-        $pattern = chr($padding);
-
-        return $text.str_repeat($pattern, $padding);
-    }
-
-    /**
-     * PKCS#7 unpad.
-     *
-     * @param string $text
-     *
-     * @return string
-     */
-    public function pkcs7Unpad(string $text): string
-    {
-        $pad = ord(substr($text, -1));
-        if ($pad < 1 || $pad > $this->blockSize) {
-            $pad = 0;
-        }
-
-        return substr($text, 0, (strlen($text) - $pad));
+        return substr($plaintext, 4, $contentLength);
     }
 }

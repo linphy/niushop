@@ -1,95 +1,310 @@
 <?php
 
-/*
- * This file is part of the overtrue/wechat.
- *
- * (c) overtrue <i@overtrue.me>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+declare(strict_types=1);
 
 namespace EasyWeChat\OpenWork;
 
-use EasyWeChat\Kernel\ServiceContainer;
-use EasyWeChat\OpenWork\Work\Application as Work;
+use EasyWeChat\Kernel\Contracts\AccessToken as AccessTokenInterface;
+use EasyWeChat\Kernel\Contracts\Server as ServerInterface;
+use EasyWeChat\Kernel\Exceptions\HttpException;
+use EasyWeChat\Kernel\HttpClient\AccessTokenAwareClient;
+use EasyWeChat\Kernel\HttpClient\Response;
+use EasyWeChat\Kernel\Traits\InteractWithCache;
+use EasyWeChat\Kernel\Traits\InteractWithClient;
+use EasyWeChat\Kernel\Traits\InteractWithConfig;
+use EasyWeChat\Kernel\Traits\InteractWithHttpClient;
+use EasyWeChat\Kernel\Traits\InteractWithServerRequest;
+use EasyWeChat\OpenPlatform\Authorization;
+use EasyWeChat\OpenWork\Contracts\Account as AccountInterface;
+use EasyWeChat\OpenWork\Contracts\Application as ApplicationInterface;
+use EasyWeChat\OpenWork\Contracts\SuiteTicket as SuiteTicketInterface;
+use Overtrue\Socialite\Contracts\ProviderInterface as SocialiteProviderInterface;
+use Overtrue\Socialite\Providers\OpenWeWork;
+use function array_merge;
 
-/**
- * Application.
- *
- * @author xiaomin <keacefull@gmail.com>
- *
- * @property \EasyWeChat\OpenWork\Server\Guard            $server
- * @property \EasyWeChat\OpenWork\Corp\Client             $corp
- * @property \EasyWeChat\OpenWork\Provider\Client         $provider
- * @property \EasyWeChat\OpenWork\SuiteAuth\AccessToken   $suite_access_token
- * @property \EasyWeChat\OpenWork\Auth\AccessToken        $provider_access_token
- * @property \EasyWeChat\OpenWork\SuiteAuth\SuiteTicket   $suite_ticket
- * @property \EasyWeChat\OpenWork\MiniProgram\Client      $mini_program
- * @property \EasyWeChat\OpenWork\Media\Client            $media
- * @property \EasyWeChat\OpenWork\Contact\Client          $contact
- * @property \EasyWeChat\OpenWork\License\Client          $license_order
- * @property \EasyWeChat\OpenWork\License\Account         $license_account
- * @property \EasyWeChat\OpenWork\Device\Client           $device
- * @noinspection PhpFullyQualifiedNameUsageInspection
- */
-class Application extends ServiceContainer
+class Application implements ApplicationInterface
 {
-    /**
-     * @var array
-     */
-    protected $providers = [
-        Auth\ServiceProvider::class,
-        SuiteAuth\ServiceProvider::class,
-        Server\ServiceProvider::class,
-        Corp\ServiceProvider::class,
-        Provider\ServiceProvider::class,
-        MiniProgram\ServiceProvider::class,
-        Media\ServiceProvider::class,
-        Contact\ServiceProvider::class,
-        License\ServiceProvider::class,
-        Device\ServiceProvider::class,
-    ];
+    use InteractWithCache;
+    use InteractWithConfig;
+    use InteractWithHttpClient;
+    use InteractWithServerRequest;
+    use InteractWithClient;
 
-    /**
-     * @var array
-     */
-    protected $defaultConfig = [
-        // http://docs.guzzlephp.org/en/stable/request-options.html
-        'http' => [
-            'base_uri' => 'https://qyapi.weixin.qq.com/',
-        ],
-    ];
+    protected ?ServerInterface $server = null;
+    protected ?AccountInterface $account = null;
+    protected ?Encryptor $encryptor = null;
+    protected ?SuiteEncryptor $suiteEncryptor = null;
+    protected ?SuiteTicketInterface $suiteTicket = null;
+    protected ?AccessTokenInterface $accessToken = null;
+    protected ?AccessTokenInterface $suiteAccessToken = null;
 
-    /**
-     * Creates the miniProgram application.
-     *
-     * @return \EasyWeChat\Work\MiniProgram\Application
-     */
-    public function miniProgram(): \EasyWeChat\Work\MiniProgram\Application
+    public function getAccount(): AccountInterface
     {
-        return new \EasyWeChat\Work\MiniProgram\Application($this->getConfig());
+        if (!$this->account) {
+            $this->account = new Account(
+                corpId: (string) $this->config->get('corp_id'), /** @phpstan-ignore-line */
+                providerSecret: (string) $this->config->get('provider_secret'), /** @phpstan-ignore-line */
+                suiteId: (string) $this->config->get('suite_id'), /** @phpstan-ignore-line */
+                suiteSecret: (string) $this->config->get('suite_secret'), /** @phpstan-ignore-line */
+                token: (string) $this->config->get('token'), /** @phpstan-ignore-line */
+                aesKey: (string) $this->config->get('aes_key'),/** @phpstan-ignore-line */
+            );
+        }
+
+        return $this->account;
+    }
+
+    public function setAccount(AccountInterface $account): static
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    public function getEncryptor(): Encryptor
+    {
+        if (!$this->encryptor) {
+            $this->encryptor = new Encryptor(
+                corpId: $this->getAccount()->getCorpId(),
+                token: $this->getAccount()->getToken(),
+                aesKey: $this->getAccount()->getAesKey(),
+            );
+        }
+
+        return $this->encryptor;
+    }
+
+    public function setEncryptor(Encryptor $encryptor): static
+    {
+        $this->encryptor = $encryptor;
+
+        return $this;
+    }
+
+    public function getSuiteEncryptor(): SuiteEncryptor
+    {
+        if (!$this->suiteEncryptor) {
+            $this->suiteEncryptor = new SuiteEncryptor(
+                suiteId: $this->getAccount()->getSuiteId(),
+                token: $this->getAccount()->getToken(),
+                aesKey: $this->getAccount()->getAesKey(),
+            );
+        }
+
+        return $this->suiteEncryptor;
+    }
+
+    public function setSuiteEncryptor(SuiteEncryptor $encryptor): static
+    {
+        $this->suiteEncryptor = $encryptor;
+
+        return $this;
     }
 
     /**
-     * @param string $authCorpId    企业 corp_id
-     * @param string $permanentCode 企业永久授权码
-     *
-     * @return Work
+     * @throws \ReflectionException
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
+     * @throws \Throwable
      */
-    public function work(string $authCorpId, string $permanentCode): Work
+    public function getServer(): Server|ServerInterface
     {
-        return new Work($authCorpId, $permanentCode, $this);
+        if (!$this->server) {
+            $this->server = new Server(
+                encryptor: $this->getSuiteEncryptor(),
+                providerEncryptor: $this->getEncryptor(),
+                request: $this->getRequest(),
+            );
+
+            $this->server->withDefaultSuiteTicketHandler(function (Message $message, \Closure $next): mixed {
+                if ($message->SuiteId === $this->getAccount()->getSuiteId()) {
+                    $this->getSuiteTicket()->setTicket($message->SuiteTicket);
+                }
+
+                return $next($message);
+            });
+        }
+
+        return $this->server;
+    }
+
+    public function setServer(ServerInterface $server): static
+    {
+        $this->server = $server;
+
+        return $this;
+    }
+
+    public function getProviderAccessToken(): AccessTokenInterface
+    {
+        if (!$this->accessToken) {
+            $this->accessToken = new ProviderAccessToken(
+                corpId: $this->getAccount()->getCorpId(),
+                providerSecret: $this->getAccount()->getProviderSecret(),
+                cache: $this->getCache(),
+                httpClient: $this->getHttpClient(),
+            );
+        }
+
+        return $this->accessToken;
+    }
+
+    public function setProviderAccessToken(AccessTokenInterface $accessToken): static
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    public function getSuiteAccessToken(): AccessTokenInterface
+    {
+        if (!$this->suiteAccessToken) {
+            $this->suiteAccessToken = new SuiteAccessToken(
+                suiteId: $this->getAccount()->getSuiteId(),
+                suiteSecret: $this->getAccount()->getSuiteSecret(),
+                suiteTicket: $this->getSuiteTicket(),
+                cache: $this->getCache(),
+                httpClient: $this->getHttpClient(),
+            );
+        }
+
+        return $this->suiteAccessToken;
+    }
+
+    public function setSuiteAccessToken(AccessTokenInterface $accessToken): static
+    {
+        $this->suiteAccessToken = $accessToken;
+
+        return $this;
+    }
+
+    public function getSuiteTicket(): SuiteTicketInterface
+    {
+        if (!$this->suiteTicket) {
+            $this->suiteTicket = new SuiteTicket(
+                suiteId: $this->getAccount()->getSuiteId(),
+                cache: $this->getCache(),
+            );
+        }
+
+        return $this->suiteTicket;
+    }
+
+    public function setSuiteTicket(SuiteTicketInterface $suiteTicket): SuiteTicketInterface
+    {
+        $this->suiteTicket = $suiteTicket;
+
+        return $this->suiteTicket;
     }
 
     /**
-     * @param string $method
-     * @param array  $arguments
-     *
-     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     * @throws \EasyWeChat\Kernel\Exceptions\HttpException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
      */
-    public function __call($method, $arguments)
+    public function getAuthorization(
+        string $corpId,
+        string $permanentCode,
+        ?AccessTokenInterface $suiteAccessToken = null
+    ): Authorization {
+        $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
+
+        $response = $this->getHttpClient()->request('POST', 'cgi-bin/service/get_auth_info', [
+            'query' => [
+                'suite_access_token' => $suiteAccessToken->getToken(),
+            ],
+            'json' => [
+                'auth_corpid' => $corpId,
+                'permanent_code' => $permanentCode,
+            ],
+        ])->toArray(false);
+
+        if (empty($response['auth_corp_info'])) {
+            throw new HttpException('Failed to get auth_corp_info: '.json_encode($response, JSON_UNESCAPED_UNICODE));
+        }
+
+        return new Authorization($response);
+    }
+
+    /**
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     * @throws \EasyWeChat\Kernel\Exceptions\HttpException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     */
+    public function getAuthorizerAccessToken(
+        string $corpId,
+        string $permanentCode,
+        ?AccessTokenInterface $suiteAccessToken = null
+    ): AuthorizerAccessToken {
+        $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
+        $response = $this->getHttpClient()->request('POST', 'cgi-bin/service/get_corp_token', [
+            'query' => [
+                'suite_access_token' => $suiteAccessToken->getToken(),
+            ],
+            'json' => [
+                'auth_corpid' => $corpId,
+                'permanent_code' => $permanentCode,
+            ],
+        ])->toArray(false);
+
+        if (empty($response['access_token'])) {
+            throw new HttpException('Failed to get access_token: '.json_encode($response, JSON_UNESCAPED_UNICODE));
+        }
+
+        return new AuthorizerAccessToken($corpId, accessToken: $response['access_token']);
+    }
+
+    public function createClient(): AccessTokenAwareClient
     {
-        return $this['base']->$method(...$arguments);
+        return (new AccessTokenAwareClient(
+            client: $this->getHttpClient(),
+            accessToken: $this->getProviderAccessToken(),
+            failureJudge: fn (Response $response) => !!($response->toArray()['errcode'] ?? 0),
+            throw: !!$this->config->get('http.throw', true),
+        ))->setPresets($this->config->all());
+    }
+
+    public function getOAuth(
+        string $suiteId,
+        ?AccessTokenInterface $suiteAccessToken = null
+    ): SocialiteProviderInterface {
+        $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
+
+        return (new OpenWeWork([
+            'client_id' => $suiteId,
+            'redirect_url' => $this->config->get('oauth.redirect_url'),
+        ]))->withSuiteTicket($this->getSuiteTicket()->getTicket())
+            ->withSuiteAccessToken($suiteAccessToken->getToken())
+            ->scopes((array) $this->config->get('oauth.scopes', ['snsapi_base']));
+    }
+
+    public function getCorpOAuth(
+        string $corpId,
+        ?AccessTokenInterface $suiteAccessToken = null
+    ): SocialiteProviderInterface {
+        $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
+
+        return (new OpenWeWork([
+            'client_id' => $corpId,
+            'redirect_url' => $this->config->get('oauth.redirect_url'),
+        ]))->withSuiteTicket($this->getSuiteTicket()->getTicket())
+            ->withSuiteAccessToken($suiteAccessToken->getToken())
+            ->scopes((array) $this->config->get('oauth.scopes', ['snsapi_base']));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getHttpClientDefaultOptions(): array
+    {
+        return array_merge(
+            ['base_uri' => 'https://qyapi.weixin.qq.com/',],
+            (array) $this->config->get('http', [])
+        );
     }
 }
