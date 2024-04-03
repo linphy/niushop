@@ -1,7 +1,9 @@
 ![输入图片说明](https://media.niucloud.com/1712133019020249f332e83457a01a6799472e0495_aliyun.png)
 
-  :fa-quote-left: 前端（**Vite+TypeScript+Vue3+ElementPlus**）+ **API**接口完全分离 + 后端（**PHP8+THINKPHP8**) + 数据库（**MYSQL8.0+**） :fa-quote-right: 
-```
+ **国内首家唯一支持TP8框架 **  :fa-quote-left: 前端（**Vite+TypeScript+Vue3+ElementPlus**）+ **API**接口完全分离 + 后端（**PHP8+THINKPHP8**) + 数据库（**MYSQL8.0+**） :fa-quote-right: 
+
+
+
 ### NIUSHOP 开源商城 V6 设计理念
 
 强大的多应用+插件组合设计理念，低耦合，高内聚
