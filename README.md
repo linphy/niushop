@@ -67,13 +67,11 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
  | [论坛地址](https://bbs.niucloud.com)
 
 ### 演示地址
-- 站点后台演示网址：[<a href='http://demo-saas.site.niucloud.com/site/' target="_blank"> 查看 </a>]       
-<a href='http://demo-saas.site.niucloud.com/site/' target="_blank">http://demo-saas.site.niucloud.com/site/    
-旅游系统账号：tourtest  密码：123456<br/>
-商城系统账号：shoptest  密码：123456<br/>
-会员卡系统账号：cardtest  密码：123456<br/>
-- 平台后台演示网址：[<a href='http://demo-saas.site.niucloud.com/admin/' target="_blank"> 查看 </a>]       
-<a href='http://demo-saas.site.niucloud.com/admin/' target="_blank">http://demo-saas.site.niucloud.com/admin/  账号：admin  密码：123456
+- 管理后台演示网址：[<a href='http://v6.site.niucloud.com/' target="_blank"> 查看 </a>]       
+<a href='http://v6.site.niucloud.com/' target="_blank">http://v6.site.niucloud.com     账号：admin  密码：123456
+
+- H5前端演示网址：[<a href='https://v6.site.niucloud.com/wap/addon/shop/pages/index' target="_blank"> 查看 </a>]       
+<a href='https://v6.site.niucloud.com/wap/addon/shop/pages/index' target="_blank">https://v6.site.niucloud.com/wap/addon/shop/pages/index 
 
 ### 加入NIUCLOUD开发者生态，一起助力成就程序员创业梦想！！！
 
@@ -101,8 +99,6 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 5.商用请仔细审查代码和漏洞，不得用于任一国家许可范围之外的商业应用，产生的一切任何后果责任自负;
 
 6.一切事物有个人喜好的标准，本开源代码意在分享，不喜勿喷。
-
-![输入图片说明](https://www.niucloud.com/img/readme/%E9%A1%B6%E9%83%A8%E5%B9%BF%E5%91%8A1.jpg)
 
 
 ### 版权信息
