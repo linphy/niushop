@@ -1,3 +1,17 @@
+![输入图片说明](https://www.niushop.com/app/web/view/public/img/index/banner_niushop_v6.jpg?v=1)
+
+### NIUSHOP 开源商城 V6 设计理念
+
+强大的多应用+插件组合设计理念，低耦合，高内聚
+
+全新生态设计，多应用聚合+多插件组合运营模式全新升级 ，支持共同会员体系下商城，会员卡，上门服务等等多种商业模式随机组合，DIY装修出最强的软件系统
+
+
+### 技术选型
+NIUSHOP V6 使用 NIUCLOUD-ADMIN 底层框架设计，前端采用市面最流行的技术栈 Vite+TypeScript+Vue3+ElementPlus，后端采用THINKPHP8、PHP8语言搭建。配合Workman高性能框架实现消息队列，计划任务处理。内置集成用户权限、代码生成器、表单设计、云存储、短信发送、素材中心、微信及公众号、支付、模版消息推送Api模块一系列开箱即用功能，这是一款快速可以开发企业级应用的软件系统。
+
+### 插件化，完全为开发者二次开发而生
+V6底层采用插件化模式设计，可以做到多种插件共存，组合使用。比如您有一个项目是旅游的项目，这个项目的要求是，既有商城的功能，又有旅游项目的销售，还需要进行会员的管理，甚至于还要客服系统。传统的实现方式是，找多个源码，东拼西凑，二次开发，或者部署多套独立的系统，配合起来。而今天，使用V6，可以通过组装的方式，在一套体系中实现，随着发展，会有越来越多的各行各业的插件和应用上架。您对于项目的定制，可能只需要简单组装，装修页面，就可以最终实现功能交付。
 
 ### NIUCLOUD-ADMIN 是什么？
 niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能架构全部精心设计！代码干净整洁！低耦合，高质量！！！前后端API接口完全分离 :raised_hands: ！！！前端采用最新技术 **Vite+TypeScript+Vue3+ElementPlus** ，后台采用PHP8、MYSQL8、THINKPHP8 全部最新技术栈，内置Workman高性能消息队列，计划任务处理，完全兼容容器路由运行技术。 采用多租户多站点多应用多插件任意组合使用的SAAS架构设计，内置代码生成器，插件生成器，一键云编译、一键云部署，集成用户权限、表单设计、云存储、短信发送、素材中心、微信及公众号、Api模块一系列开箱即用功能，是一款快速搭建开发企业级应用的软件系统。源码100%开源无加密！框架采用MIT协议，终身免费，商用免费！
@@ -21,9 +35,12 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 - 手机端设计开发了自定义装修，同时提供了基础的开发组件，方便开发者设计开发手机自定义页面装修的开发需求
 ```
 ### NIUCLOUD 框架截图
-![输入图片说明](https://media.niucloud.com/1712132244c781785a8822b281c8d03f10134c9f97_aliyun.png)
-![输入图片说明](https://media.niucloud.com/17121322445aa126fd854b637de70b136e40ddc2fe_aliyun.png)
-
+![输入图片说明](https://media.niucloud.com/1704066345d7742c4c0a1a941e836e8d633f209396_aliyun.jpg)
+![输入图片说明](https://media.niucloud.com/17040664219c6ce47b234eac495c3c4aa6e83920b6_aliyun.png)
+![输入图片说明](https://media.niucloud.com/17040665085ed007bd6daf220cc1ecd4e301c6008f_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1704066609bad8bba9c5bfe5a243f5ebcec54866af_aliyun.png)
+![输入图片说明](https://media.niucloud.com/170406669739221755c392e165470c486d0025ad17_aliyun.png)
+![输入图片说明](https://media.niucloud.com/1704067302721c5360c622b4934fae659ee1eb0987_aliyun.png)
 
 ### 商城插件  :point_right:   SHOP
 ![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
@@ -49,8 +66,8 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 
 ### 操作指南
  [官网地址](https://www.niushop.com)
- | [服务市场](https://www.niushop.com)
- | [使用手册](https://www.niushop.com/doc)
+ | [服务市场](https://www.niucloud.com)
+ | [使用手册](https://www.niucloud.com/doc)
  | [二开手册](https://www.niucloud.com/doc)
  | [开发视频](https://www.niucloud.com/doc)
  | [API接口手册](https://api.niucloud.com/apidoc.html?target_id=001)
