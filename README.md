@@ -1,5 +1,7 @@
 ![输入图片说明](https://media.niucloud.com/1712133019020249f332e83457a01a6799472e0495_aliyun.png)
 
+  :fa-quote-left: 前端（**Vite+TypeScript+Vue3+ElementPlus**）+ **API**接口完全分离 + 后端（**PHP8+THINKPHP8**) + 数据库（**MYSQL8.0+**） :fa-quote-right: 
+```
 ### NIUSHOP 开源商城 V6 设计理念
 
 强大的多应用+插件组合设计理念，低耦合，高内聚
@@ -22,8 +24,6 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 
 ### NIUCLOUD-ADMIN 技术特点 
 
-  :fa-quote-left: 前端（**Vite+TypeScript+Vue3+ElementPlus**）+ **API**接口完全分离 + 后端（**PHP8+THINKPHP8**) + 数据库（**MYSQL8.0+**） :fa-quote-right: 
-```
 - 支持composer快速安装扩展，支持redis缓存以及消息队列，支持多语言设计开发，采用严格的restful的api设计开发。
 - 后台前后端分离采用element-plus、vue3.0、typescript、vite、pina等前端技术,同时使用i18n支持国际化多语言开发。
 - 手机端采用uniapp前后端分离，使用uview、vue3.0、typescript、vite、pina前端技术，支持h5,微信小程序，支付宝小程序，抖音小程序等使用场景。
