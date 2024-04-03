@@ -1,1 +1,0 @@
-const e="订单号",a="实付款",o="关闭订单",r="确认收货",t="支付",d="详情",l="评价",s={orderNo:"订单号",actualPayment:"实付款",orderClose:o,orderFinish:r,topay:"支付",orderDetail:"详情",evaluate:"评价"};export{a as actualPayment,s as default,l as evaluate,o as orderClose,d as orderDetail,r as orderFinish,e as orderNo,t as topay};

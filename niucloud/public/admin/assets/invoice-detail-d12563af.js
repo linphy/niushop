@@ -1,1 +1,0 @@
-import{_ as o}from"./invoice-detail.vue_vue_type_script_setup_true_lang-79d58b8b.js";import"./index-1d549745.js";/* empty css                   *//* empty css                   *//* empty css                  *//* empty css                     *//* empty css                             */import"./order-b9bfc26e.js";export{o as default};

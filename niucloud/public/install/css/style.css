@@ -417,28 +417,6 @@ input,button,select{
 	line-height: 45px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .step-content{
 	margin: 0 auto;
 	width: 1200px;
@@ -477,14 +455,14 @@ input.but{
 /*步骤*/
 .processBar{
 	float: left;
-	width: 329px;
+	width: 247px;
 	margin-top: 15px;
 }
 .processBar .bar{
 	/*background: #e9f4ff;*/
 	height: 3px;
 	position: relative;
-	width: 314px;
+	width: 241px;
 	margin-left: -17px;
 	border-bottom: 3px dashed rgba(40, 146, 228, 0.16);
 }
@@ -513,10 +491,10 @@ input.but{
 	left : -13px
 }
 #line2.bar {
-	width: 302px;
+	width: 240px;
 }
 #point3.c-step {
-	left : -25px
+	left : -15px
 }
 .main-hide {
 	position: absolute;
