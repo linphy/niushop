@@ -61,4 +61,12 @@ class Module extends BaseAdminController
     public function getFrameworkVersionList() {
         return success(data:(new NiucloudService())->getFrameworkVersionList());
     }
+
+    /**
+     * 申请体验
+     * @return Response
+     */
+    public function applyExperience() {
+        return success((new NiucloudService())->applyExperience());
+    }
 }

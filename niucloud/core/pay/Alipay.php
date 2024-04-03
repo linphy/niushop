@@ -35,6 +35,7 @@ class Alipay extends BasePay
         $config['app_public_cert_path'] = url_to_path($config['app_public_cert_path'] ?? '');
         $config['alipay_public_cert_path'] = url_to_path($config['alipay_public_cert_path'] ?? '');
         $config['alipay_root_cert_path'] = url_to_path($config['alipay_root_cert_path'] ?? '');
+        $config['mode'] = Pay::MODE_NORMAL;
         $this->config = $this->payConfig($config, 'alipay');
         Pay::config($this->config);
     }
@@ -66,7 +67,7 @@ class Alipay extends BasePay
      */
     public function wap(array $params)
     {
-        return $this->returnFormat(Pay::alipay()->wap([
+        return $this->returnFormat(Pay::alipay()->h5([
             'out_trade_no' => $params['out_trade_no'],
             'total_amount' => $params['money'],
             'subject' => $params['boby'],
@@ -284,7 +285,7 @@ class Alipay extends BasePay
         $order = [
             'out_trade_no' => $out_trade_no,
         ];
-        $result = $this->returnFormat(Pay::alipay()->find($order));
+        $result = $this->returnFormat(Pay::alipay()->query($order));
         if (!empty($result['msg']) && $result['msg'] == 'Success') {
             return [
                 'status' => OnlinePayDict::getAliPayStatus($result['trade_status'])
@@ -312,10 +313,10 @@ class Alipay extends BasePay
         $order = [
             'out_trade_no' => $out_trade_no,
             'out_request_no' => $refund_no,
-            '_type' => 'refund',
+            '_action' => 'refund', // 默认值，查询退款网页订单
         ];
 
-        $result = $this->returnFormat(Pay::alipay()->find($order));
+        $result = $this->returnFormat(Pay::alipay()->query($order));
         if (!empty($result['msg']) && $result['msg'] == 'Success') {
             $refund_status = $result['refund_status'] ?? '';
             if ($refund_status == 'REFUND_SUCCESS') {
@@ -345,13 +346,13 @@ class Alipay extends BasePay
      * @throws InvalidParamsException
      * @throws ServiceNotFoundException
      */
-    public function getTransfer(string $transfer_no)
+    public function getTransfer(string $transfer_no, $out_transfer_no = '')
     {
         $order = [
             'out_biz_no' => $transfer_no,
-            '_type' => 'transfer'
+            '_action' => 'transfer'
         ];
-        $result = $this->returnFormat(Pay::alipay()->find($order));
+        $result = $this->returnFormat(Pay::alipay()->query($order));
         if (!empty($result['msg']) && $result['msg'] == 'Success') {
             $status = $result['SUCCESS'] ?? '';
             $status_array = array(

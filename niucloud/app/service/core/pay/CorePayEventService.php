@@ -33,7 +33,6 @@ use Yansongda\Supports\Collection;
 class CorePayEventService extends BaseCoreService
 {
 
-    private $site_id;//站点id
     private $config;//支付配置
     private $type;//支付类型
     private $channel;//支付渠道  (特殊点,转账也算是一种)
@@ -46,17 +45,15 @@ class CorePayEventService extends BaseCoreService
 
     /**
      * 支付引擎外置触点初始化
-     * @param int $site_id
      * @param string $channel
      * @param string $type
      * @return $this
      */
-    public function init(int $site_id, string $channel = '', string $type = '')
+    public function init(string $channel = '', string $type = '')
     {
-        $this->site_id = $site_id;
         $this->channel = $channel;
         $this->type = $type;
-        $this->config = (new CorePayChannelService())->getConfigByChannelAndType($this->site_id, $this->channel, $this->type);
+        $this->config = (new CorePayChannelService())->getConfigByChannelAndType($this->channel, $this->type);
         return $this;
     }
 
@@ -68,9 +65,8 @@ class CorePayEventService extends BaseCoreService
      */
     public function app(string $action = 'query')
     {
-        $notify_url = (string)url("/api/pay/notify/$this->site_id/$this->channel/$this->type/$action", [], '', true);//异步回调通知地址
+        $notify_url = (string)url("/api/pay/notify/$this->channel/$this->type/$action", [], '', true);//异步回调通知地址
         $this->config['notify_url'] = $notify_url;
-        $this->config['site_id'] = $this->site_id;
         return new PayLoader($this->type, $this->config);
     }
 
@@ -94,18 +90,17 @@ class CorePayEventService extends BaseCoreService
         $params = array(
             'out_trade_no' => $out_trade_no,
             'money' => $money,
-            'boby' => $boby,
+            'boby' => mb_substr($boby,0,15,'utf-8').'...',
             'channel' => $this->channel,
             'refund_url' => $refund_url,
             'quit_url' => $quit_url,
             'buyer_id' => $buyer_id,
             'openid' => $openid,
-            'site_id' => $this->site_id,
             'voucher' => $voucher
         );
         switch ($this->type) {
             case PayDict::WECHATPAY:
-                $params['money'] *= 100;
+                $params['money'] = (int)bcmul($params['money'], 100);
 
                 switch ($this->channel) {
                     case ChannelDict::H5://h5
@@ -220,7 +215,6 @@ class CorePayEventService extends BaseCoreService
             $total *= 100;
         }
         return $this->app('refund')->refund([
-            'site_id' => $this->site_id,
             'out_trade_no' => $out_trade_no,
             'money' => $money,
             'total' => $total,

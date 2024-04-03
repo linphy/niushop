@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -12,11 +12,7 @@
 namespace app\adminapi\controller\auth;
 
 use app\service\admin\auth\AuthService;
-use app\service\admin\auth\AuthSiteService;
 use core\base\BaseAdminController;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\Response;
 
 
@@ -35,15 +31,19 @@ class Auth extends BaseAdminController
     }
 
     /**
-     * 获取当前站点支持的应用
-     * @return Response
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
+     * 获取授权应用
+     * @return void
      */
     public function getAuthAddonList(){
-        return success((new AuthSiteService())->getAuthAddonList());
+        $data = $this->request->params([
+            ['type', ''],
+            ['title', ''],
+            ['support_app','']
+        ]);
+        return success((new AuthService())->getAuthAddonList($data));
     }
+
+
     /**
      * 获取登录用户信息
      * @return Response
@@ -87,23 +87,13 @@ class Auth extends BaseAdminController
     }
 
     /**
-     * 获取当前登录站点信息
-     * @return Response
+     * 授权应用加星
      */
-    public function site()
-    {
-        return success((new AuthSiteService())->getSiteInfo());
-    }
-
-    /**
-     * 选择可以选择的页面
-     * @return Response
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
-     */
-    public function getShowMenuList()
-    {
-        return success((new AuthSiteService())->getShowMenuList());
+    public function setStar(){
+        $data = $this->request->params([
+            ['key', ''],
+        ]);
+        (new AuthService())->setAddonStat($data['key']);
+        return success('SUCCESS');
     }
 }

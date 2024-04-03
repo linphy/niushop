@@ -24,14 +24,13 @@ class CoreImageService extends CoreFileService
 
 
     /**
-     * @param int $site_id
      * @param string $file_path
      * @param $thumb_type  裁剪的图片规格
      * @param bool $is_throw_exception  是否要抛出错误
      * @return mixed
      * @throws Exception
      */
-    public function thumb(int $site_id, string $file_path,  $thumb_type = 'all', bool $is_throw_exception = false)
+    public function thumb(string $file_path,  $thumb_type = 'all', bool $is_throw_exception = false)
     {
         //文件转url
         $file_path = path_to_url($file_path);
@@ -46,17 +45,17 @@ class CoreImageService extends CoreFileService
             $item_domain = $item_params['domain'] ?? '';
             $item_storage_type = $v['storage_type'];
             if(str_contains($file_path, '_'.$item_storage_type)){
-                $this->upload_driver = $this->driver($site_id, $item_storage_type);
+                $this->upload_driver = $this->driver($item_storage_type);
             }else{
                 if($item_domain == $file_domain){
-                    $this->upload_driver = $this->driver($site_id, $item_storage_type);
+                    $this->upload_driver = $this->driver($item_storage_type);
                 }
             }
 
         }
         //没有云上传就用本地上传
         if(empty($this->upload_driver)){
-            $this->upload_driver = $this->driver($site_id, StorageDict::LOCAL);
+            $this->upload_driver = $this->driver(StorageDict::LOCAL);
         }
         //todo 如果是网络图片,可以将网络图片拉取到本地
         try {

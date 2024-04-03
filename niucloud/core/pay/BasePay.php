@@ -124,7 +124,7 @@ abstract class BasePay extends Storage
      * @param string $transfer_no
      * @return mixed
      */
-    abstract protected function getTransfer(string $transfer_no);
+    abstract protected function getTransfer(string $transfer_no, $out_transfer_no = '');
 
     /**
      * 初始化
@@ -161,7 +161,7 @@ abstract class BasePay extends Storage
         if ($param instanceof MessageInterface || $param instanceof Response) {
             $return_value =  $param->getBody()->getContents();
         } else if ($param instanceof Collection) {
-            $return_value = $param->all();
+            $return_value = $param->toArray();
         } else {
             $return_value = $param;
         }

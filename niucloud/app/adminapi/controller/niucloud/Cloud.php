@@ -25,6 +25,14 @@ class Cloud extends BaseAdminController
     }
 
     /**
+     * 安装时云编译
+     * @return \think\Response
+     */
+    public function installBuild() {
+        return success(data:(new CoreCloudBuildService())->installBuild());
+    }
+
+    /**
      * 获取云编译日志
      * @return \think\Response
      */

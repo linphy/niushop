@@ -35,9 +35,9 @@ class CoreH5Service extends BaseCoreService
      * 获取h5配置
      * @return array|mixed
      */
-    public function getH5(int $site_id)
+    public function getH5()
     {
-        $info = (new CoreConfigService())->getConfig($site_id, ConfigKeyDict::H5)['value'] ?? [];
+        $info = (new CoreConfigService())->getConfig(ConfigKeyDict::H5)['value'] ?? [];
         if(empty($info))
         {
             $info = [

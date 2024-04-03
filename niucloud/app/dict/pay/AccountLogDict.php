@@ -1,34 +1,32 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\dict\site;
+namespace app\dict\pay;
 
-class SiteDict
+class AccountLogDict
 {
-    public const EXPIRE = 2;//过期
-
-    public const ON = 1;//正常
-    public const CLOSE = 3;//停止
-
+    const PAY = 'pay';//支付
+    const REFUND = 'refund'; //退款
+    const TRANSFER = 'transfer'; //转账
 
     /**
      * 站点状态
      * @return array
      */
-    public static function getStatus()
+    public static function getType()
     {
         return [
-            self::ON => get_lang('dict_site.status_on'),//正常
-            self::EXPIRE => get_lang('dict_site.status_expire'),//过期
-            self::CLOSE => get_lang('dict_site.status_close'),//停止
+            self::PAY => get_lang('dict_pay.pay'),//支付
+            self::REFUND => get_lang('dict_pay.refund'),//退款
+            self::TRANSFER => get_lang('dict_pay.transfer'),//转账
         ];
     }
 

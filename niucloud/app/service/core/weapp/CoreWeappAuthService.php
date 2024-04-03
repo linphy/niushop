@@ -30,38 +30,48 @@ class CoreWeappAuthService extends BaseCoreService
 
     /**
      * 网页授权
-     * @param int $site_id
      * @param string|null $code
-     * @return string
-     * @throws InvalidConfigException
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws \EasyWeChat\Kernel\Exceptions\HttpException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function session(int $site_id, ?string $code)
+    public function session(?string $code)
     {
-        return CoreWeappService::app($site_id)->auth->session($code);
+        $utils = CoreWeappService::app()->getUtils();
+        return $utils->codeToSession($code);
     }
 
     /**
      * 开发者后台校验与解密开放数据
-     * @param int $site_id
      * @param string $session
      * @param string $iv
      * @param string $encrypted_data
      * @return array
      * @throws DecryptException
+     * @throws InvalidArgumentException
      */
-    public function decryptData(int $site_id, string $session, string $iv, string $encrypted_data){
-        return CoreWeappService::app($site_id)->encryptor->decryptData($session, $iv, $encrypted_data);
+    public function decryptData(string $session, string $iv, string $encrypted_data){
+
+        $utils = CoreWeappService::app()->getUtils();
+        return $utils->decryptSession($session, $iv, $encrypted_data);
     }
 
     /**
-     * 获取小程序手机号
-     * @param int $site_id
+     * v
      * @param string $code
-     * @return array|Collection|object|ResponseInterface|string
-     * @throws InvalidConfigException
-     * @throws GuzzleException
+     * @return \EasyWeChat\Kernel\HttpClient\Response|\Symfony\Contracts\HttpClient\ResponseInterface
+     * @throws InvalidArgumentException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function getUserPhoneNumber(int $site_id,string $code){
-        return CoreWeappService::app($site_id)->phone_number->getUserPhoneNumber($code);
+    public function getUserPhoneNumber(string $code){
+        $api = CoreWeappService::appApiClient();
+        return $api->postJson('wxa/business/getuserphonenumber', [
+            'code' => (string)$code
+        ]);
     }
 }

@@ -35,13 +35,12 @@ class CoreRechargeOrderService extends BaseCoreService
 {
     /**
      * 充值订单创建
-     * @param array $data //['site_id' => 1, ‘member_id’ => 1， 'order_from' => 'h5', 'member_message' => '','recharge_money' => 12.00]
+     * @param array $data //[ ‘member_id’ => 1， 'order_from' => 'h5', 'member_message' => '','recharge_money' => 12.00]
      * @return array
      */
     public function create(array $data)
     {
         $order_data = [
-            'site_id' => $data['site_id'],
             'order_from' => $data['order_from'] ?? 'h5',
             'order_type' => 'recharge',
             'order_status' => RechargeOrderDict::WAIT_PAY,
@@ -54,7 +53,6 @@ class CoreRechargeOrderService extends BaseCoreService
         ];
         $order_items = [
             [
-                'site_id' => $data['site_id'],
                 'member_id' => $data['member_id'],
                 'item_id' => 0,
                 'item_type' => 'recharge', //项目类型 recharge, goods
@@ -73,7 +71,7 @@ class CoreRechargeOrderService extends BaseCoreService
             $create_order = (new RechargeOrder())->create($order_data);
             $order_id = $create_order->order_id;
             //添加订单支付表
-            (new CorePayService())->create($data['site_id'], PayDict::MEMBER, $order_data['member_id'], $order_data['order_money'], $order_data['order_type'], $order_id, get_lang("dict_order.trade_type_recharge"));
+            (new CorePayService())->create(PayDict::MEMBER, $order_data['member_id'], $order_data['order_money'], $order_data['order_type'], $order_id, get_lang("dict_order.trade_type_recharge"));
             //添加订单项目表
             $order_item_model = new RechargeOrderItem();
             foreach ($order_items as $k => $order_item)
@@ -104,7 +102,7 @@ class CoreRechargeOrderService extends BaseCoreService
         try {
             $trade_id = $pay_info['trade_id'] ?? 0;
             $order_model = new RechargeOrder();
-            $order_info = $order_model->where([['site_id', '=', $pay_info['site_id']], ['order_id', '=', $trade_id]])->findOrEmpty()->toArray();
+            $order_info = $order_model->where([['order_id', '=', $trade_id]])->findOrEmpty()->toArray();
             if (empty($order_info))
                 throw new CommonException('ORDER_NOT_EXIST');
             $order_data = [
@@ -113,9 +111,9 @@ class CoreRechargeOrderService extends BaseCoreService
                 'is_enable_refund' => 1, // 是否允许退款
                 'out_trade_no' => $pay_info['out_trade_no']//支付后的交易流水号
             ];
-            $order_model->where([['site_id', '=', $pay_info['site_id']], ['order_id', '=', $trade_id]])->update($order_data);
+            $order_model->where([['order_id', '=', $trade_id]])->update($order_data);
             //会员余额
-            (new CoreMemberAccountService())->addLog($order_info['site_id'], $order_info['member_id'], MemberAccountTypeDict::BALANCE, $order_info['order_item_money'], 'recharge', '会员充值', $order_info['order_id']);
+            (new CoreMemberAccountService())->addLog($order_info['member_id'], MemberAccountTypeDict::BALANCE, $order_info['order_item_money'], 'recharge', '会员充值', $order_info['order_id']);
             return true;
         }catch ( Exception $e)
         {
@@ -125,21 +123,20 @@ class CoreRechargeOrderService extends BaseCoreService
 
     /**
      * 关闭订单
-     * @param int $site_id
      * @param int $order_id
      * @return true
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function close(int $site_id, int $order_id){
-        $order = (new RechargeOrder())->where([ ['site_id', '=', $site_id ],['order_id', '=', $order_id ], ])->find();
+    public function close(int $order_id){
+        $order = (new RechargeOrder())->where([ ['order_id', '=', $order_id ], ])->find();
         if ($order->isEmpty()) throw new CommonException('ORDER_NOT_EXIST');
         //如果是支付中的话
         //if ($order->order_status == RechargeOrderDict::CLOSE) throw new CommonException('ORDER_CLOSED');
         //关闭支付单据
         if ($order->order_status == RechargeOrderDict::WAIT_PAY)
-            (new CorePayService())->closeByTrade($site_id,'recharge', $order_id);
+            (new CorePayService())->closeByTrade('recharge', $order_id);
         $order->save(['order_status' => RechargeOrderDict::CLOSE]);
 
         return true;
@@ -147,14 +144,12 @@ class CoreRechargeOrderService extends BaseCoreService
 
     /**
      * 获取订单信息
-     * @param int $site_id
      * @param int $order_id
      * @return array
      */
-    public function orderInfo(int $site_id, int $order_id)
+    public function orderInfo(int $order_id)
     {
         return (new RechargeOrder())->where([
-            ['site_id', '=', $site_id],
             ['order_id', '=', $order_id]
         ])->field('*')->findOrEmpty()->toArray();
     }

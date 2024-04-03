@@ -88,8 +88,11 @@ class ExceptionHandle extends Handle
             'trace' => $e->getTrace(),
             'previous' => $e->getPrevious(),
         ] : [];
-        // 添加自定义异常处理机制
 
+        // 添加自定义异常处理机制
+        if (strpos($e->getMessage(), 'open_basedir') !== false) {
+            return fail('OPEN_BASEDIR_ERROR');
+        }
         if ($e instanceof DbException) {
             return fail(get_lang('DATA_GET_FAIL').':'.$e->getMessage(), [
                 'file' => $e->getFile(),

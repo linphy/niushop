@@ -89,7 +89,7 @@ class LoginService extends BaseApiService
     public function account(string $username, string $password)
     {
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['username|mobile' => $username, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['username|mobile' => $username]);
         if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
         if (!check_password($password, $member_info->password)) return false;//密码与账号不匹配
         return $this->login($member_info, MemberLoginTypeDict::USERNAME);
@@ -109,7 +109,7 @@ class LoginService extends BaseApiService
         $is_mobile = $config['is_mobile'];
         if($is_mobile != 1) throw new AuthException('MOBILE_LOGIN_UNOPENED');
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['mobile' => $mobile, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['mobile' => $mobile]);
         if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
 
         return $this->login($member_info, MemberLoginTypeDict::MOBILE);
@@ -123,7 +123,7 @@ class LoginService extends BaseApiService
     public function createToken($member_info): ?array
     {
         $expire_time = env('system.api_token_expire_time') ?? 3600;//todo  不一定和管理端合用这个token时限
-        return TokenAuth::createToken($member_info->member_id, AppTypeDict::API, ['member_id' => $member_info->member_id, 'username' => $member_info->username, 'site_id' => $member_info->site_id], $expire_time);
+        return TokenAuth::createToken($member_info->member_id, AppTypeDict::API, ['member_id' => $member_info->member_id, 'username' => $member_info->username], $expire_time);
     }
 
     /**
@@ -251,7 +251,7 @@ class LoginService extends BaseApiService
                         if(empty($member->$openid_field)){
                             //todo  定义当前第三方授权方没有退出登录功能,故这儿不做openid是否存在账号验证
 //                        $member_service = new MemberService();
-//                        $open_member = $member_service->findMemberInfo([$openid_field => $open_id, 'site_id' => $this->site_id]);
+//                        $open_member = $member_service->findMemberInfo([$openid_field => $open_id]);
 
                             $member->$openid_field = $open_id;
                             $member->save();
@@ -276,7 +276,7 @@ class LoginService extends BaseApiService
         $member_service = new MemberService();
         //校验手机验证码
         $this->checkMobileCode($mobile);
-        $member_info = $member_service->findMemberInfo(['mobile' => $mobile, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['mobile' => $mobile]);
         if ($member_info->isEmpty()) throw new AuthException('MOBILE_NOT_EXIST_MEMBER');//账号不存在
         //todo  需要考虑一下,新的密码和原密码一样能否通过验证
         $password_hash = create_password($password);

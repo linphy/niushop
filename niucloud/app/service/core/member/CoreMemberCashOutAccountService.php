@@ -28,8 +28,8 @@ class CoreMemberCashOutAccountService extends BaseCoreService
         $this->model = new MemberCashOutAccount();
     }
 
-    public function getInfo(int $account_id, int $site_id, int $member_id){
-        $field = 'account_id,site_id,member_id,account_type,bank_name,realname,account_no';
-        return $this->model->where([['account_id', '=', $account_id], ['site_id', '=', $site_id], ['member_id', '=', $member_id]])->field($field)->findOrEmpty()->toArray();
+    public function getInfo(int $account_id, int $member_id){
+        $field = 'account_id,member_id,account_type,bank_name,realname,account_no';
+        return $this->model->where([['account_id', '=', $account_id], ['member_id', '=', $member_id]])->field($field)->findOrEmpty()->toArray();
     }
 }

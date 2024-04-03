@@ -25,7 +25,6 @@ class AllowCrossDomain
     {
         $allow_header = [
             system_name('api_token_name'),
-            system_name('api_site_id_name'),
             system_name('channel_name'),
             'lang'
         ];

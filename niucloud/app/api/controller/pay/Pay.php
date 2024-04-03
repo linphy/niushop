@@ -28,7 +28,7 @@ class Pay extends BaseApiController
      * 接收消息并推送
      * @return void|null
      */
-    public function notify($site_id, $channel, $type, $action)
+    public function notify($channel, $type, $action)
     {
         return (new PayService())->notify($channel, $type, $action);
     }
@@ -68,5 +68,16 @@ class Pay extends BaseApiController
      */
     public function getPayType($trade_type){
         return success((new PayService())->getPayTypeByTrade($trade_type));
+    }
+    /**
+     * 关闭支付
+     * @return Response
+     */
+    public function close(){
+        $data = $this->request->params([
+            ['out_trade_no', ''],
+            ['type', ''],
+        ]);
+        return success('SUCCESS',(new PayService())->close($data['type'], $data['out_trade_no']));
     }
 }

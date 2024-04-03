@@ -15,6 +15,7 @@ use app\dict\diy\ComponentDict;
 use app\dict\diy\LinkDict;
 use app\dict\diy\PagesDict;
 use app\dict\diy\TemplateDict;
+use app\model\addon\Addon;
 use app\model\diy\Diy;
 use app\service\admin\sys\SystemService;
 use app\service\core\addon\CoreAddonService;
@@ -47,10 +48,9 @@ class DiyService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $where[] = [ 'site_id', '=', $this->site_id ];
-        $field = 'id,site_id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time';
+        $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
         $order = "update_time desc";
-        $search_model = $this->model->where([ [ 'site_id', '=', $this->site_id ] ])->withSearch([ "title", "type", 'mode', 'addon_name' ], $where)->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
+        $search_model = $this->model->withSearch([ "title", "type", 'mode', 'addon_name' ], $where)->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
         return $this->pageQuery($search_model);
     }
 
@@ -66,7 +66,7 @@ class DiyService extends BaseAdminService
     public function getList(array $where = [], $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time')
     {
         $order = "update_time desc";
-        return $this->model->where([ [ 'site_id', '=', $this->site_id ] ])->withSearch([ "title", "type", 'mode' ], $where)->field($field)->select()->order($order)->toArray();
+        return $this->model->withSearch([ "title", "type", 'mode' ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -76,14 +76,14 @@ class DiyService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'id,site_id,title,name,template,type,mode,value,is_default,is_change,share,visit_count';
-        return $this->model->field($field)->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->findOrEmpty()->toArray();
+        $field = 'id,title,name,template,type,mode,value,is_default,is_change,share,visit_count';
+        return $this->model->field($field)->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
     }
 
     public function getInfoByName(string $name)
     {
-        $field = 'id,site_id,title,name,template,type,mode,value,is_default,is_change,share,visit_count';
-        return $this->model->field($field)->where([ [ 'name', '=', $name ], [ 'site_id', '=', $this->site_id ], [ 'is_default', '=', 1 ] ])->findOrEmpty()->toArray();
+        $field = 'id,title,name,template,type,mode,value,is_default,is_change,share,visit_count';
+        return $this->model->field($field)->where([ [ 'name', '=', $name ], [ 'is_default', '=', 1 ] ])->findOrEmpty()->toArray();
     }
 
     /**
@@ -94,7 +94,7 @@ class DiyService extends BaseAdminService
      */
     public function getCount(array $where = [])
     {
-        return $this->model->where([ [ 'site_id', '=', $this->site_id ] ])->withSearch([ 'type' ], $where)->count();
+        return $this->model->withSearch([ 'type' ], $where)->count();
     }
 
     /**
@@ -104,7 +104,6 @@ class DiyService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data[ 'site_id' ] = $this->site_id;
         $data[ 'create_time' ] = time();
         $data[ 'update_time' ] = time();
 
@@ -115,7 +114,7 @@ class DiyService extends BaseAdminService
 
         // 将同类型页面的默认值改为0，默认页面只有一个
         if (!empty($data[ 'is_default' ])) {
-            $this->model->where([ [ 'name', '=', $data[ 'name' ] ], [ 'site_id', '=', $data[ 'site_id' ] ] ])->update([ 'is_default' => 0 ]);
+            $this->model->where([ [ 'name', '=', $data[ 'name' ] ] ])->update([ 'is_default' => 0 ]);
         }
         $res = $this->model->create($data);
         return $res->id;
@@ -130,7 +129,7 @@ class DiyService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $data[ 'update_time' ] = time();
-        $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->update($data);
+        $this->model->where([ [ 'id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -141,7 +140,7 @@ class DiyService extends BaseAdminService
      */
     public function del(int $id)
     {
-        return $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->delete();
+        return $this->model->where([ [ 'id', '=', $id ] ])->delete();
     }
 
     /**
@@ -158,8 +157,8 @@ class DiyService extends BaseAdminService
                 return false;
             }
             Db::startTrans();
-            $this->model->where([ [ 'name', '=', $info[ 'name' ] ], [ 'site_id', '=', $this->site_id ] ])->update([ 'is_default' => 0 ]);
-            $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->update([ 'is_default' => 1, 'update_time' => time() ]);
+            $this->model->where([ [ 'name', '=', $info[ 'name' ] ] ])->update([ 'is_default' => 0 ]);
+            $this->model->where([ [ 'id', '=', $id ] ])->update([ 'is_default' => 1, 'update_time' => time() ]);
             Db::commit();
             return true;
         } catch (Exception $e) {
@@ -360,7 +359,7 @@ class DiyService extends BaseAdminService
      */
     public function modifyShare(int $id, $data)
     {
-        $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->update([ 'share' => $data[ 'share' ] ]);
+        $this->model->where([ [ 'id', '=', $id ] ])->update([ 'share' => $data[ 'share' ] ]);
         return true;
     }
 
@@ -526,6 +525,84 @@ class DiyService extends BaseAdminService
             'query' => 'addon'
         ]);
         return $page_template;
+    }
+
+    /**
+     * 设置 首页/个人中心 的第一个模板 设置为启动页
+     * @param $params
+     */
+    public function setDiyData($params)
+    {
+        $app_count = (new Addon())->where([['type', '=', 'app']])->count();
+
+        $is_start = 1; // 设置是否为启动页，0：是，1：否
+
+        if ($app_count > 1) {
+            $is_start = 0;
+        }
+
+        $addon = $params[ 'addon' ] ?? '';
+        $addon_flag = $params[ 'key' ];
+
+        // 默认
+        $default_template = TemplateDict::getTemplate([
+            'key' => [ $params[ 'key' ] ]
+        ]);
+        $addon_template_info = array_shift($default_template);
+
+        // 查询插件定义的页面类型
+        $addon_template = TemplateDict::getTemplate([
+            'type' => $params[ 'type' ],
+            'addon' => $addon
+        ]);
+
+        if (!empty($addon_template)) {
+            $addon_flag = array_keys($addon_template)[ 0 ];
+            $addon_template_info = array_shift($addon_template);
+        }
+
+        $addon_index_template = $this->getFirstPageData($addon_flag, $addon);
+
+        if (!empty($addon_index_template)) {
+            $this->add([
+                "title" => $addon_index_template[ 'title' ],
+                "name" => $addon_flag,
+                "type" => $addon_flag,
+                "template" => $addon_index_template[ 'template' ],
+                "mode" => $addon_index_template[ 'mode' ],
+                "value" => json_encode($addon_index_template[ 'data' ]),
+                "is_default" => 1,
+                "is_change" => 0
+            ]);
+
+            $diy_page_list = $this->getList([
+                [ 'type', '=', $params[ 'key' ] ]
+            ], 'id,name,type');
+
+            // 多应用时，将首页和个人中心设为系统的
+            foreach ($diy_page_list as $k => $v) {
+                if ($v[ 'name' ] == $params[ 'key' ]) {
+                    $this->setUse($v[ 'id' ]);
+                    break;
+                }
+            }
+
+            if ($is_start == 1) {
+                // 查询链接，设置启动页
+                $other_page = (new DiyRouteService())->getList([ 'url' => $addon_template_info[ 'page' ], 'addon' => $addon ]);
+                if (!empty($other_page)) {
+
+                    $this->changeTemplate([
+                        'type' => $params[ 'key' ], // 页面类型
+                        'name' => $other_page[ 0 ][ 'name' ], // 链接名称标识
+                        'parent' => $other_page[ 0 ][ 'parent' ], // 链接父级名称标识
+                        'page' => $other_page[ 0 ][ 'page' ], // 链接路由
+                        'title' => $other_page[ 0 ][ 'title' ], // 链接标题
+                        'action' => $other_page[ 0 ][ 'action' ] // 是否存在操作，decorate 表示支持装修
+                    ]);
+                }
+            }
+        }
     }
 
 }

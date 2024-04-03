@@ -1,15 +1,15 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\service\admin\site;
+namespace app\service\admin\user;
 
 
 
@@ -37,9 +37,9 @@ class UserLogService extends BaseAdminService
      */
     public function getPage(array $where)
     {
-        $field = 'id, ip, site_id, uid, username, url, params, type, create_time';
+        $field = 'id, ip, uid, username, url, params, type, create_time';
         $order = 'create_time desc';
-        $search_model = $this->model->where([['site_id', '=', $this->site_id]])->withSearch(['username', 'create_time', 'uid', 'ip', 'type', 'url'], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch(['username', 'create_time', 'uid', 'ip', 'type', 'url'], $where)->field($field)->order($order);
         return $this->pageQuery($search_model);
     }
 
@@ -51,9 +51,8 @@ class UserLogService extends BaseAdminService
     public function getInfo(int $id){
         $where = array(
             ['id', '=', $id],
-            ['site_id', '=', $this->site_id]
         );
-        $field = 'id, ip, site_id, uid, username, url, params, type, create_time';
+        $field = 'id, ip, uid, username, url, params, type, create_time';
         return $this->model->where($where)->field($field)->findOrEmpty()->toArray();
     }
 
@@ -64,7 +63,6 @@ class UserLogService extends BaseAdminService
      * @throws Exception
      */
     public function add(array $data){
-        $data['site_id'] = $this->site_id;
         $res = $this->model->create($data);
         return $res->id;
     }

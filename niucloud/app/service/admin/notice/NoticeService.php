@@ -36,7 +36,7 @@ class NoticeService extends BaseAdminService
      */
     public function getList()
     {
-        return (new CoreNoticeService())->getList($this->site_id);
+        return (new CoreNoticeService())->getAddonList();
     }
 
     /**
@@ -46,7 +46,7 @@ class NoticeService extends BaseAdminService
      */
     public function getInfo(string $key)
     {
-        return (new CoreNoticeService())->getInfo($this->site_id, $key);
+        return (new CoreNoticeService())->getInfo($key);
     }
 
     /**
@@ -60,7 +60,7 @@ class NoticeService extends BaseAdminService
         $data = array(
             $field_type => $value
         );
-        return (new CoreNoticeService())->edit($this->site_id, $key, $data);
+        return (new CoreNoticeService())->edit($key, $data);
     }
 
     /**
@@ -73,7 +73,7 @@ class NoticeService extends BaseAdminService
     {
         if(!array_key_exists($type, NoticeTypeDict::getType())) throw new AdminException('NOTICE_TYPE_NOT_EXIST');
         if(!array_key_exists($key, NoticeDict::getNotice())) return fail('NOTICE_TYPE_NOT_EXIST');
-        return (new CoreNoticeService())->edit($this->site_id, $key, ['is_'.$type => $status]);
+        return (new CoreNoticeService())->edit($key, ['is_'.$type => $status]);
     }
 
     /**
@@ -99,7 +99,7 @@ class NoticeService extends BaseAdminService
             case NoticeTypeDict::WEAPP:
                 break;
         }
-        return (new CoreNoticeService())->edit($this->site_id, $key, $save_data);
+        return (new CoreNoticeService())->edit($key, $save_data);
     }
 
 

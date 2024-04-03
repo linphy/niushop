@@ -27,12 +27,11 @@ class CoreUploadConfigService extends BaseCoreService
 
     /**
      * 上传配置
-     * @param int $site_id
      * @return mixed|string[]
      */
-    public function getUploadConfig(int $site_id)
+    public function getUploadConfig()
     {
-        $info = (new  CoreConfigService())->getConfig($site_id, ConfigKeyDict::UPLOAD)['value'] ?? [];
+        $info = (new  CoreConfigService())->getConfig(ConfigKeyDict::UPLOAD)['value'] ?? [];
         if (empty($info)) {
             $info = [
                 'image_ext' => [
@@ -54,13 +53,12 @@ class CoreUploadConfigService extends BaseCoreService
 
     /**
      * 文件上传设置
-     * @param int $site_id
      * @param array $data
      * @return SysConfig|bool|Model
      */
-    public function setUploadConfig(int $site_id, array $data)
+    public function setUploadConfig(array $data)
     {
-        return (new  CoreConfigService())->setConfig($site_id, ConfigKeyDict::UPLOAD, $data);
+        return (new  CoreConfigService())->setConfig(ConfigKeyDict::UPLOAD, $data);
 
     }
 

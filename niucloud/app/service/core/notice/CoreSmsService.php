@@ -29,15 +29,15 @@ class CoreSmsService extends BaseCoreService
         parent::__construct();
     }
 
-    public function send($site_id, $mobile, $params, $key, $template_id, $content)
+    public function send($mobile, $params, $key, $template_id, $content)
     {
         //查询配置
-        $config = $this->getDefaultSmsConfig($site_id);
+        $config = $this->getDefaultSmsConfig();
         $sms_type = $config['sms_type'];
         if(empty($sms_type)) throw new NoticeException('SMS_TYPE_NOT_OPEN');
         //创建
         $core_notice_sms_log_service = new CoreNoticeSmsLogService();
-        $log_id = $core_notice_sms_log_service->add($site_id, [
+        $log_id = $core_notice_sms_log_service->add([
             'mobile' => $mobile,
             'sms_type' => $sms_type,
             'key' => $key,
@@ -54,14 +54,14 @@ class CoreSmsService extends BaseCoreService
         if (!$result) {
             //失败修改短信记录
             $error = $sms_driver->getError();
-            $core_notice_sms_log_service->edit($site_id, $log_id, [
+            $core_notice_sms_log_service->edit($log_id, [
                 'status' => SmsDict::FAIL,
                 'result' => $sms_driver->getError()
             ]);
             throw new NoticeException($error);
         }
         //成功修改短信记录
-        $core_notice_sms_log_service->edit($site_id, $log_id, [
+        $core_notice_sms_log_service->edit($log_id, [
             'status' => SmsDict::SUCCESS,
             'result' => $result
         ]);
@@ -86,12 +86,11 @@ class CoreSmsService extends BaseCoreService
     }
     /**
      * 主要用于短信发送(todo 慎用!!!!!)
-     * @param int $site_id
      * @return array
      */
-    public function getDefaultSmsConfig(int $site_id)
+    public function getDefaultSmsConfig()
     {
-        $info = (new CoreConfigService())->getConfig($site_id, 'SMS')['value'] ?? [];
+        $info = (new CoreConfigService())->getConfig('SMS')['value'] ?? [];
         if (empty($info))
             throw new NoticeException('NOTICE_SMS_NOT_OPEN');
 

@@ -26,14 +26,13 @@ use think\facade\Db;
 class CoreMemberAccountService extends BaseCoreService
 {
 
-    public function addLog(int $site_id, int $member_id, string $account_type, $account_data, string $from_type, string $memo, $related_id = 0)
+    public function addLog(int $member_id, string $account_type, $account_data, string $from_type, string $memo, $related_id = 0)
     {
         $member_model = new Member();
         $member_account_log_model = new MemberAccountLog();
         //账户检测
         $member_info = $member_model->where([
             [ 'member_id', '=', $member_id ],
-            [ 'site_id', '=', $site_id ]
         ])->field($account_type .','.$account_type."_get" .', username, mobile, nickname')->lock(true)->find();
         if(empty($member_info)) throw new CommonException('MEMBER_NOT_EXIST');
         $account_new_data = round((float) $member_info[ $account_type ] + (float) $account_data, 2);
@@ -43,7 +42,6 @@ class CoreMemberAccountService extends BaseCoreService
         }
 
         $data = array (
-            'site_id' => $site_id,
             'member_id' => $member_id,
             'account_type' => $account_type,
             'account_data' => $account_data,

@@ -88,20 +88,12 @@ class CoreMenuService extends BaseCoreService
         $addon_loader = new DictLoader("Menu");
 
         $addon_admin_tree = $addon_loader->load(["addon" => $addon, "app_type" => "admin"]);
-        $addon_site_tree = $addon_loader->load(["addon" => $addon, "app_type" => "site"]);
 
         if (isset($addon_admin_tree['delete'])) unset($addon_admin_tree['delete']);
-        if (isset($addon_site_tree['delete'])) unset($addon_site_tree['delete']);
 
-        if (!empty($addon_site_tree)) {
-            $admin_menu = $this->loadMenu($addon_admin_tree, "admin", $addon);
-            $site_menu = $this->loadMenu($addon_site_tree, "site", $addon);
-            $this->deleteByAddon($addon, false);
-            if(!empty($site_menu))
-            {
-                $this->install(array_merge($admin_menu, $site_menu));
-            }
-        }
+        $admin_menu = $this->loadMenu($addon_admin_tree, "admin", $addon);
+        $this->deleteByAddon($addon, false);
+        $this->install($admin_menu);
 
         return true;
 
@@ -184,7 +176,7 @@ class CoreMenuService extends BaseCoreService
      * @throws \think\db\exception\ModelNotFoundException
      */
     public function getRoutePathByMenuKey($menu_key, $paths = []) {
-        $menu = $this->model->where([ ['menu_key', '=', $menu_key], ['app_type', '=', 'site'] ])->field('parent_key,router_path')->find();
+        $menu = $this->model->where([ ['menu_key', '=', $menu_key], ['app_type', '=', 'admin'] ])->field('parent_key,router_path')->find();
         array_unshift($paths, $menu['router_path']);
         if (!empty($menu['parent_key'])) {
             return $this->getRoutePathByMenuKey($menu['parent_key'], $paths);

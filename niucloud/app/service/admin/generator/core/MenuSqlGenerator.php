@@ -194,7 +194,7 @@ class MenuSqlGenerator extends BaseGenerator
         }
         $data = [
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content,
                 'menu_key' => $key,
                 'parent_key' => $this->table['parent_menu'],
@@ -213,7 +213,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'列表',
                 'menu_key' => $key.'_list',
                 'parent_key' => $key,
@@ -232,7 +232,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'添加',
                 'menu_key' => $key.'_add',
                 'parent_key' => $key,
@@ -251,7 +251,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'编辑',
                 'menu_key' => $key.'_edit',
                 'parent_key' => $key,
@@ -270,7 +270,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'删除',
                 'menu_key' => $key.'_delete',
                 'parent_key' => $key,
@@ -348,7 +348,7 @@ class MenuSqlGenerator extends BaseGenerator
         }
         $data = [
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content,
                 'menu_key' => $key,
                 'parent_key' => $this->table['parent_menu'],
@@ -367,7 +367,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'列表',
                 'menu_key' => $key.'_list',
                 'parent_key' => $key,
@@ -386,7 +386,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'添加',
                 'menu_key' => $key.'_add',
                 'parent_key' => $key,
@@ -405,7 +405,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'编辑',
                 'menu_key' => $key.'_edit',
                 'parent_key' => $key,
@@ -424,7 +424,7 @@ class MenuSqlGenerator extends BaseGenerator
                 'source' => MenuDict::GENERATOR
             ],
             [
-                'app_type' => 'site',
+                'app_type' => 'admin',
                 'menu_name' => $table_content.'删除',
                 'menu_key' => $key.'_delete',
                 'parent_key' => $key,
@@ -445,7 +445,7 @@ class MenuSqlGenerator extends BaseGenerator
         ];
         $menu_model = new SysMenu();
 
-        (new SysMenu())->where([['app_type', '=', 'site'],['menu_key','in', array_column($data, 'menu_key') ]])->select()->delete();
+        (new SysMenu())->where([['app_type', '=', 'admin'],['menu_key','in', array_column($data, 'menu_key') ]])->select()->delete();
 
         (new $menu_model())->saveAll($data);
         $cache_tag_name = 'menu_cache';

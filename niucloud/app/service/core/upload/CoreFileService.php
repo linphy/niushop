@@ -72,19 +72,18 @@ class CoreFileService extends BaseCoreService
 
     /**
      * 实例化上传引擎
-     * @param int $site_id
      * @param string $storage_type
      * @return UploadLoader
      * @throws Exception
      */
-    public function driver(int $site_id, string $storage_type = ''){
+    public function driver(string $storage_type = ''){
         if(!empty($storage_type)){
             self::$storage_type = $storage_type;
             $core_storage_service = new CoreStorageService();
-            $storage_config = $core_storage_service->getStorageByType($site_id, $storage_type);
+            $storage_config = $core_storage_service->getStorageByType($storage_type);
         }else{
             $core_storage_service = new CoreStorageService();
-            $storage_config = $core_storage_service->getDefaultStorage($site_id);
+            $storage_config = $core_storage_service->getDefaultStorage();
             if(empty($storage_config)) throw new UploadFileException('UPLOAD_STORAGE_TYPE_ALL_CLOSE');
             self::$storage_type = $storage_config['storage_type'];
         }

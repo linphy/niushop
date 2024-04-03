@@ -36,7 +36,7 @@ class WechatReplyService extends BaseAdminService
      */
     public function getKeywordPage(array $data = []){
 
-        return $this->core_wechat_reply_service->getKeywordPage($this->site_id, $data);
+        return $this->core_wechat_reply_service->getKeywordPage($data);
     }
 
     /**
@@ -45,7 +45,7 @@ class WechatReplyService extends BaseAdminService
      * @return array
      */
     public function getKeywordInfo(int $id){
-        return $this->core_wechat_reply_service->getKeywordInfo($this->site_id, $id);
+        return $this->core_wechat_reply_service->getKeywordInfo($id);
     }
 
     /**
@@ -54,7 +54,7 @@ class WechatReplyService extends BaseAdminService
      * @return true
      */
     public function addKeyword(array $data){
-        return $this->core_wechat_reply_service->addKeyword($this->site_id, $data);
+        return $this->core_wechat_reply_service->addKeyword($data);
     }
 
     /**
@@ -64,7 +64,7 @@ class WechatReplyService extends BaseAdminService
      * @return WechatReply
      */
     public function editKeyword(int $id, array $data){
-        return $this->core_wechat_reply_service->editKeyword($this->site_id, $id, $data);
+        return $this->core_wechat_reply_service->editKeyword($id, $data);
     }
 
     /**
@@ -72,7 +72,7 @@ class WechatReplyService extends BaseAdminService
      * @return void|null
      */
     public function delKeyword(int $id){
-        return $this->core_wechat_reply_service->delKeyword($this->site_id, $id);
+        return $this->core_wechat_reply_service->delKeyword($id);
     }
 
     /**
@@ -80,7 +80,7 @@ class WechatReplyService extends BaseAdminService
      * @return void|null
      */
     public function getDefault(){
-        return $this->core_wechat_reply_service->delKeyword($this->site_id);
+        return $this->core_wechat_reply_service->delKeyword();
     }
 
     /**
@@ -89,7 +89,7 @@ class WechatReplyService extends BaseAdminService
      * @return void|null
      */
     public function editDefault(array $data){
-        return $this->core_wechat_reply_service->editDefault($this->site_id, $data);
+        return $this->core_wechat_reply_service->editDefault($data);
     }
 
 
@@ -98,7 +98,7 @@ class WechatReplyService extends BaseAdminService
      * @return array
      */
     public function getSubscribe(){
-        return $this->core_wechat_reply_service->getSubscribe($this->site_id);
+        return $this->core_wechat_reply_service->getSubscribe();
 
     }
 
@@ -108,6 +108,6 @@ class WechatReplyService extends BaseAdminService
      * @return void|null
      */
     public function editSubscribe(array $data){
-        return $this->core_wechat_reply_service->editSubscribe($this->site_id, $data);
+        return $this->core_wechat_reply_service->editSubscribe($data);
     }
 }

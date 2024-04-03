@@ -15,7 +15,7 @@ use app\api\middleware\ApiLog;
 use think\facade\Route;
 
 //支付异步回调
-Route::any('pay/notify/:site_id/:channel/:type/:action', 'pay.Pay/notify')
+Route::any('pay/notify/:channel/:type/:action', 'pay.Pay/notify')
     ->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)
     ->middleware(ApiLog::class);
@@ -27,8 +27,10 @@ Route::group('pay',function () {
     Route::post('', 'pay.Pay/pay');
     //支付信息
     Route::get('info/:trade_type/:trade_id', 'pay.Pay/info');
-    //
+    //获取支付类型
     Route::get('type/:trade_type', 'pay.Pay/getPayType');
+    //支付关闭
+    Route::post('close', 'pay.Pay/close');
 
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)

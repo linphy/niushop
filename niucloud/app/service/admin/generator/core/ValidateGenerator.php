@@ -65,7 +65,6 @@ class ValidateGenerator extends BaseGenerator
     {
         $content = "";
         foreach ($this->tableColumn as $column) {
-            if ($column['column_name'] == 'site_id') continue;
 
             if($column['is_required'] == 1){
                 if(!empty($column['validate_type']))
@@ -117,7 +116,6 @@ class ValidateGenerator extends BaseGenerator
     {
         $content = "";
         foreach ($this->tableColumn as $column) {
-            if ($column['column_name'] == 'site_id') continue;
 
             if($column['is_required'] == 1)
             {
@@ -158,7 +156,6 @@ class ValidateGenerator extends BaseGenerator
         $add_arr = [];
         $update_arr = [];
         foreach ($this->tableColumn as $column) {
-            if ($column['column_name'] == 'site_id') continue;
             if ($column['is_insert'] == 1 && !$column['is_pk']) $add_arr[] = "'".$column['column_name']."'";
             if ($column['is_update'] == 1 && !$column['is_pk']) $update_arr[] = "'".$column['column_name']."'";
         }

@@ -33,8 +33,7 @@ class MemberCashOutAccountService extends BaseApiService
     public function getPage(array $where = [])
     {
         $where['member_id'] = $this->member_id;
-        $where['site_id'] = $this->site_id;
-        $field = 'account_id,site_id,member_id,account_type,bank_name,realname,account_no';
+        $field = 'account_id,member_id,account_type,bank_name,realname,account_no';
         $search_model = $this->model->where($where)->field($field)->order('create_time desc');
 
         return $this->pageQuery($search_model);
@@ -47,8 +46,8 @@ class MemberCashOutAccountService extends BaseApiService
      */
     public function getInfo(int $account_id)
     {
-        $field = 'account_id,site_id,member_id,account_type,bank_name,realname,account_no';
-        return $this->model->where([['account_id', '=', $account_id], ['site_id', '=', $this->site_id], ['member_id', '=', $this->member_id]])->field($field)->findOrEmpty()->toArray();
+        $field = 'account_id,member_id,account_type,bank_name,realname,account_no';
+        return $this->model->where([['account_id', '=', $account_id], ['member_id', '=', $this->member_id]])->field($field)->findOrEmpty()->toArray();
     }
 
     /**
@@ -59,9 +58,8 @@ class MemberCashOutAccountService extends BaseApiService
      * @return array
      */
     public function getFirstInfo(array $where, $order_field = 'create_time', string $order = 'desc'){
-        $where[] = ['site_id', '=', $this->site_id];
         $where[] = ['member_id', '=', $this->member_id];
-        $field = 'account_id,site_id,member_id,account_type,bank_name,realname,account_no';
+        $field = 'account_id,member_id,account_type,bank_name,realname,account_no';
         return $this->model->where($where)->order($order_field, $order)->field($field)->findOrEmpty()->toArray();
     }
 
@@ -72,7 +70,6 @@ class MemberCashOutAccountService extends BaseApiService
      */
     public function add(array $data)
     {
-        $data['site_id'] = $this->site_id;
         $data['member_id'] = $this->member_id;
         $data['create_time'] = time();
         $res = $this->model->create($data);
@@ -88,7 +85,7 @@ class MemberCashOutAccountService extends BaseApiService
     public function edit(int $account_id, array $data)
     {
         $data['update_time'] = time();
-        $this->model->update($data, [ [ 'site_id', '=', $this->site_id ], [ 'member_id', '=', $this->member_id ], ['account_id', '=', $account_id] ]);
+        $this->model->update($data, [ [ 'member_id', '=', $this->member_id ], ['account_id', '=', $account_id] ]);
         return true;
     }
 
@@ -101,7 +98,6 @@ class MemberCashOutAccountService extends BaseApiService
     {
         $where = [
             ['member_id', '=', $this->member_id],
-            ['site_id', '=', $this->site_id],
             ['account_id', '=', $account_id]
         ];
         $this->model->where($where)->delete();

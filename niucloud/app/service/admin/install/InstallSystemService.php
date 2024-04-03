@@ -47,9 +47,7 @@ class InstallSystemService extends BaseAdminService
         $sys_menu = new SysMenu();
 
         //系统菜单
-        $admin_menus = $this->loadMenu(AppTypeDict::ADMIN);
-        $site_menus = $this->loadMenu(AppTypeDict::SITE);
-        $menus = array_merge($admin_menus, $site_menus);
+        $menus = $this->loadMenu(AppTypeDict::ADMIN);
         Db::name("sys_menu")->where([ [ 'addon', '=', '' ], ['source', '=', MenuDict::SYSTEM] ])->delete();
         $sys_menu->replace()->insertAll($menus);
         //插件菜单

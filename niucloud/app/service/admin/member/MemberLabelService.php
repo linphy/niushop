@@ -38,10 +38,10 @@ class MemberLabelService extends BaseAdminService
      * @param string $order
      * @return array
      */
-    public function getPage(array $where = [], string $order = 'create_time desc')
+    public function getPage(array $where = [], string $order = 'sort desc,create_time desc')
     {
-        $field = 'label_id, site_id, label_name, memo, sort, create_time, update_time';
-        $search_model = $this->model->where([ [ 'site_id', '=', $this->site_id ] ])->withSearch([ 'label_name'], $where)->field($field)->append(["member_num"])->order($order);
+        $field = 'label_id, label_name, memo, sort, create_time, update_time';
+        $search_model = $this->model->withSearch([ 'label_name' ], $where)->field($field)->append([ "member_num" ])->order($order);
         return $this->pageQuery($search_model);
     }
 
@@ -52,9 +52,8 @@ class MemberLabelService extends BaseAdminService
      */
     public function getInfo(int $label_id)
     {
-        $field = 'label_id, site_id, label_name, memo, sort, create_time, update_time';
-
-        return $this->model->field($field)->where([['label_id', '=', $label_id], ['site_id', '=', $this->site_id]])->findOrEmpty()->toArray();
+        $field = 'label_id, label_name, memo, sort, create_time, update_time';
+        return $this->model->field($field)->where([ [ 'label_id', '=', $label_id ] ])->findOrEmpty()->toArray();
     }
 
     /**
@@ -64,8 +63,9 @@ class MemberLabelService extends BaseAdminService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getAll(){
-        return (new CoreMemberLabelService())->getAll($this->site_id);
+    public function getAll()
+    {
+        return ( new CoreMemberLabelService() )->getAll();
     }
 
     /**
@@ -75,11 +75,9 @@ class MemberLabelService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['site_id'] = $this->site_id;
         $res = $this->model->create($data);
-        (new CoreMemberLabelService())->clearCache($this->site_id);
+        ( new CoreMemberLabelService() )->clearCache();
         return $res->label_id;
-
     }
 
     /**
@@ -90,9 +88,9 @@ class MemberLabelService extends BaseAdminService
      */
     public function edit(int $label_id, array $data)
     {
-        $data['update_time'] = time();
-        $this->model->where([['label_id', '=', $label_id], ['site_id', '=', $this->site_id]])->save($data);
-        (new CoreMemberLabelService())->clearCache($this->site_id);
+        $data[ 'update_time' ] = time();
+        $this->model->where([ [ 'label_id', '=', $label_id ] ])->save($data);
+        ( new CoreMemberLabelService() )->clearCache();
         return true;
     }
 
@@ -103,8 +101,8 @@ class MemberLabelService extends BaseAdminService
      */
     public function del(int $label_id)
     {
-        $res = $this->model->where([['label_id', '=', $label_id], ['site_id', '=', $this->site_id]])->delete();
-        (new CoreMemberLabelService())->clearCache($this->site_id);
+        $res = $this->model->where([ [ 'label_id', '=', $label_id ] ])->delete();
+        ( new CoreMemberLabelService() )->clearCache();
         return $res;
     }
 
@@ -116,8 +114,9 @@ class MemberLabelService extends BaseAdminService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getMemberLabelListByLabelIds(array $label_ids){
-        return (new CoreMemberLabelService())->getMemberLabelListByLabelIds($this->site_id, $label_ids);
+    public function getMemberLabelListByLabelIds(array $label_ids)
+    {
+        return ( new CoreMemberLabelService() )->getMemberLabelListByLabelIds($label_ids);
     }
 
 }

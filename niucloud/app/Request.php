@@ -14,7 +14,6 @@ class Request extends \think\Request
     //认证信息
     protected static $auth_info = [];
 
-    protected static $site_id = 0;
 
     /**
      * 获取请求参数
@@ -92,20 +91,6 @@ class Request extends \think\Request
         }
     }
 
-    /**
-     * 站点id
-     * @param int|string|null $site_id
-     * @return int
-     */
-    public function siteId(int|string|null $site_id = 0)
-    {
-        if ($site_id > 0) {
-            static::$site_id = (int)$site_id;
-            return $site_id;
-        } else {
-            return static::$site_id ?? $this->defaultSiteId();
-        }
-    }
 
     /**
      * 用户账号
@@ -152,27 +137,6 @@ class Request extends \think\Request
      */
     public function apiToken(){
         return $this->header(system_name('api_token_name'));
-    }
-
-    /**
-     * 平台site_id
-     * @return array|string|null
-     */
-    public function adminSiteId(){
-        return $this->header(system_name('admin_site_id_name'));
-    }
-
-    /**
-     * 客户端site_id
-     * @return array|string|null
-     */
-    public function apiSiteId(){
-        $site_id = (int)$this->header(system_name('api_site_id_name'));
-        if (!$site_id) {
-            $domain = str_replace(['http://', 'https://'], '', $this->header('origin'));
-            $site_id = (new CoreSiteService())->getSiteIdByDomain($domain);
-        }
-        return $site_id;
     }
 
     /**

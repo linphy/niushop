@@ -40,24 +40,20 @@ Route::group('sys', function () {
     //菜单新增
     Route::post('menu', 'sys.Menu/add');
     //菜单更新
-    Route::put('menu/:app_type/:menu_key', 'sys.Menu/edit');
+    Route::put('menu/:menu_key', 'sys.Menu/edit');
     //菜单列表
-    Route::get('menu/:app_type', 'sys.Menu/lists');
+    Route::get('menu', 'sys.Menu/lists');
     //删除单个菜单
-    Route::delete('menu/:app_type/:menu_key', 'sys.Menu/del');
+    Route::delete('menu/:menu_key', 'sys.Menu/del');
     //菜单类型
     Route::get('menutype', 'sys.Menu/getMenuType');
     //授权用户菜单
     Route::get('authmenu', 'sys.Auth/authMenuList');
     // 获取菜单信息
-    Route::get('menu/:app_type/info/:menu_key', 'sys.Menu/info');
-    // 初始化菜单
-    Route::post('menu/refresh', 'sys.Menu/refreshMenu');
+    Route::get('menu/info/:menu_key', 'sys.Menu/info');
 
     Route::get('menu/mothod', 'sys.Menu/getMethodType');
-
     Route::get('menu/system_menu', 'sys.Menu/getSystem');
-
     Route::get('menu/addon_menu/:app_key', 'sys.Menu/getAddonMenu');
 
     Route::get('menu/dir/:addon', 'sys.Menu/getMenuByTypeDir');
@@ -201,6 +197,9 @@ Route::group('sys', function () {
 
     /***************************************************** 清理缓存-刷新菜单 ****************************************************/
     Route::post('schema/clear', 'sys.System/schemaCache');
+    /***************************************************** 刷新菜单 ****************************************************/
+    // 刷新菜单
+    Route::post('menu/refresh', 'sys.Menu/refreshMenu');
 
     /***************************************************** 公共字典数据 ****************************************************/
     Route::get('date/month', 'sys.Common/getMonth');
@@ -220,4 +219,6 @@ Route::group('sys', function () {
     Route::get('web/website', 'sys.Config/getWebsite');
     // 获取版权信息
     Route::get('web/copyright', 'sys.Config/getCopyright');
+    // 获取install.php配置
+    Route::get('install/config', 'sys.Config/getInstallConfig');
 });

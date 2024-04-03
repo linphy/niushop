@@ -38,7 +38,7 @@ class AddressService extends BaseApiService
         $field = 'id,member_id,name,mobile,address,address_name,full_address,is_default,type';
         $order = 'is_default desc, id desc';
 
-        $list = $this->model->where([ ['site_id', '=', $this->site_id],['member_id', '=', $this->member_id ] ])->withSearch(["type"], $where)->field($field)->order($order)->select()->toArray();
+        $list = $this->model->where([ ['member_id', '=', $this->member_id ] ])->withSearch(["type"], $where)->field($field)->order($order)->select()->toArray();
         return $list;
     }
 
@@ -51,7 +51,7 @@ class AddressService extends BaseApiService
     {
         $field = 'id,member_id,name,mobile,province_id,city_id,district_id,address,address_name,full_address,lng,lat,is_default,type';
 
-        $info = $this->model->field($field)->where([ ['id', '=', $id], ['site_id', '=', $this->site_id], ['member_id', '=', $this->member_id ] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ ['id', '=', $id], ['member_id', '=', $this->member_id ] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -66,7 +66,6 @@ class AddressService extends BaseApiService
             $this->model->where([ ['member_id', '=', $this->member_id ], ['type', '=', $data['type']] ])->update(['is_default' => 0]);
         }
         $data['member_id'] = $this->member_id;
-        $data['site_id'] = $this->site_id;
         $res = $this->model->create($data);
         return $res->id;
     }
@@ -82,7 +81,7 @@ class AddressService extends BaseApiService
         if ($data['is_default']) {
             $this->model->where([ ['member_id', '=', $this->member_id ], ['type', '=', $data['type']] ])->update(['is_default' => 0]);
         }
-        $this->model->where([ ['id', '=', $id], ['site_id', '=', $this->site_id], ['member_id', '=', $this->member_id ] ])->update($data);
+        $this->model->where([ ['id', '=', $id], ['member_id', '=', $this->member_id ] ])->update($data);
         return true;
     }
 
@@ -93,7 +92,7 @@ class AddressService extends BaseApiService
      */
     public function del(int $id)
     {
-        $model = $this->model->where([ ['id', '=', $id], ['site_id', '=', $this->site_id], ['member_id', '=', $this->member_id ] ])->find();
+        $model = $this->model->where([ ['id', '=', $id], ['member_id', '=', $this->member_id ] ])->find();
         $res = $model->delete();
         return $res;
     }

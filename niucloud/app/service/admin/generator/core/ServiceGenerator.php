@@ -65,11 +65,7 @@ class ServiceGenerator extends BaseGenerator
             $this->getWithAllFunction()
         ];
         $fileds = array_column($this->tableColumn, 'column_name');
-        if (in_array('site_id', $fileds)) {
-            $vmPath = $this->getvmPath('site_service');
-        } else {
-            $vmPath = $this->getvmPath('service');
-        }
+        $vmPath = $this->getvmPath('service');
         $text = $this->replaceFileText($old, $new, $vmPath);
 
         $this->setText($text);
@@ -112,7 +108,7 @@ class ServiceGenerator extends BaseGenerator
     {
         $field = [];
         foreach ($this->tableColumn as $column) {
-            if (!$column['is_search'] || $column['column_name'] == 'site_id') {
+            if (!$column['is_search']) {
                 continue;
             }
             $field[] = '"'.$column['column_name'].'"';
@@ -317,7 +313,7 @@ class ServiceGenerator extends BaseGenerator
                 $str = strripos($column['model'],'\\');
                 $with[] = Str::camel(substr($column['model'],$str+1));
             }
-            if (!$column['is_search'] || $column['column_name'] == 'site_id') {
+            if (!$column['is_search']) {
                 continue;
             }
             $search_field[] = '"'.$column['column_name'].'"';
@@ -326,11 +322,11 @@ class ServiceGenerator extends BaseGenerator
         $search_field = implode(',', $search_field);
         if(empty($with))
         {
-            $content.= '$this->model->where([ [' ." 'site_id' ". ',"=", $this->site_id ] ])->withSearch(['."'$search_field'".'], $where)->field('.'$field'.')->order('.'$order'.');';
+            $content.= '$this->model->withSearch(['."'$search_field'".'], $where)->field('.'$field'.')->order('.'$order'.');';
 
         }else{
             $with = implode(',', $with);
-            $content.= '$this->model->where([ [' ." 'site_id' ". ',"=", $this->site_id ] ])->withSearch(['."'$search_field'".'], $where)->with('."'$with'".')->field('.'$field'.')->order('.'$order'.');';
+            $content.= '$this->model->withSearch(['."'$search_field'".'], $where)->with('."'$with'".')->field('.'$field'.')->order('.'$order'.');';
         }
 
         return $content;
@@ -400,7 +396,7 @@ class ServiceGenerator extends BaseGenerator
         {
             foreach ($with as $value)
             {
-                $content.= PHP_EOL.'    public function get'.Str::studly($value).'All(){'.PHP_EOL.'       $'.$value.'Model = new '.Str::studly($value).'();'.PHP_EOL.'       return $'.$value.'Model->where([["site_id","=",$this->site_id]])->select()->toArray();'.PHP_EOL.'    }'.PHP_EOL;
+                $content.= PHP_EOL.'    public function get'.Str::studly($value).'All(){'.PHP_EOL.'       $'.$value.'Model = new '.Str::studly($value).'();'.PHP_EOL.'       return $'.$value.'Model->select()->toArray();'.PHP_EOL.'    }'.PHP_EOL;
             }
         }
         return $content;

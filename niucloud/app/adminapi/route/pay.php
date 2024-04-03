@@ -39,6 +39,15 @@ Route::group('pay', function () {
     Route::put('refuse/:out_trade_no', 'pay.Pay/refuse');
     // 支付单据详情
     Route::get('detail/:id', 'pay.Pay/detail');
+    /***************************************************** 账单 *************************************************/
+    //账单列表
+    Route::get('account', 'pay.Account/lists');
+    //账单详情
+    Route::get('account/:id', 'pay.Account/info');
+    //账单统计
+    Route::get('account/stat', 'pay.Account/stat');
+    //账单类型
+    Route::get('account/type', 'pay.Account/accountType');
     /***************************************************** 退款 *************************************************/
     //退款列表
     Route::get('refund', 'pay.PayRefund/pages');

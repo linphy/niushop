@@ -54,7 +54,7 @@ class Qiniu extends BaseUpload
         $up_token = $this->auth()->uploadToken($bucket);
         // 初始化 UploadManager 对象并进行文件的上传。
         $upload_mgr = new UploadManager();
-        [$ret, $err] = $upload_mgr->putFile($up_token, $this->getFullPath(), $this->getRealPath());
+        [$ret, $err] = $upload_mgr->putFile($up_token, $this->getFullPath($dir), $this->getRealPath());
         if ($err !== null)
             throw new UploadFileException($err->message());
         return true;

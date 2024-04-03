@@ -29,7 +29,7 @@ class Wechat extends BaseOauth
 
     public function instance()
     {
-        return CoreWechatService::app($this->site_id)->oauth;
+        return CoreWechatService::app()->oauth;
     }
 
     public function oauth(string $code = null, array $options = [])

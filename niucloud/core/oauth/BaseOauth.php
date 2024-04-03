@@ -12,7 +12,6 @@ use core\loader\Storage;
 abstract class BaseOauth extends Storage
 {
     protected $config;//配置
-    protected $site_id;
 
     /**
      * 初始化

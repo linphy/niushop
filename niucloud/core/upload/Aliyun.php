@@ -41,7 +41,7 @@ class Aliyun extends BaseUpload
         try {
             $this->client()->uploadFile(
                 $bucket,
-                $this->getFullPath(),
+                $this->getFullPath($dir),
                 $this->getRealPath()
             );
             return true;

@@ -29,17 +29,15 @@ class CoreSysConfigService extends BaseCoreService
 
     /**
      * 暂用于单站点业务(不适用于命令行模式)
-     * @param int $site_id
      * @return array
      */
-    public function getSceneDomain(int $site_id){
+    public function getSceneDomain(){
         $wap_domain = !empty(env("system.wap_domain")) ? preg_replace('#/$#', '', env("system.wap_domain")) : request()->domain();
         $web_domain = !empty(env("system.web_domain")) ? preg_replace('#/$#', '', env("system.web_domain")) : request()->domain();
-        $site_domain = (new CoreSiteService())->getSiteCache($site_id)['site_domain'] ?? '';
 
         return  [
-            'wap_url' => $site_domain ? "http://" . $site_domain . "/wap/" : $wap_domain . "/wap/" . $site_id . "/",
-            'web_url' => $site_domain ? "http://" . $site_domain . "/wap/" : $web_domain . "/web/" . $site_id . "/"
+            'wap_url' => $wap_domain . "/wap",
+            'web_url' => $web_domain . "/web"
         ];
     }
 
@@ -47,9 +45,9 @@ class CoreSysConfigService extends BaseCoreService
      * 获取版权信息(网站整体，不按照站点设置)
      * @return array|mixed
      */
-    public function getCopyright($site_id)
+    public function getCopyright()
     {
-        $info = (new CoreConfigService())->getConfig($site_id, 'COPYRIGHT');
+        $info = (new CoreConfigService())->getConfig('COPYRIGHT');
         if(empty($info))
         {
             $info = [];

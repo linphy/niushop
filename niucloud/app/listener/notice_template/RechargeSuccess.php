@@ -14,13 +14,12 @@ class RechargeSuccess extends BaseNoticeTemplate
     {
         if ($this->key == $params[ 'key' ]) {
             $data = $params[ 'data' ];
-            $site_id = $params[ 'site_id' ];
             $order_id = $data[ 'order_id' ];
 
             $core_order_service = new CoreRechargeOrderService();
-            $order = $core_order_service->orderInfo($site_id, $order_id);
+            $order = $core_order_service->orderInfo($order_id);
             if (!empty($order)) {
-                $member = ( new CoreMemberService() )->getInfoByMemberId($site_id, $order[ 'member_id' ]);
+                $member = ( new CoreMemberService() )->getInfoByMemberId($order[ 'member_id' ]);
                 //通过订单id查询订单信息
                 return $this->toReturn(
                     [

@@ -29,7 +29,7 @@ class WechatConfigService extends BaseAdminService
      */
     public function getWechatConfig()
     {
-        return (new CoreWechatConfigService())->getWechatConfig($this->site_id);
+        return (new CoreWechatConfigService())->getWechatConfig();
     }
 
     /**
@@ -38,7 +38,7 @@ class WechatConfigService extends BaseAdminService
      * @return SysConfig|bool|Model
      */
     public function setWechatConfig(array $data){
-        return (new CoreWechatConfigService())->setWechatConfig($this->site_id, $data);
+        return (new CoreWechatConfigService())->setWechatConfig($data);
     }
 
     /**
@@ -46,6 +46,6 @@ class WechatConfigService extends BaseAdminService
      * @return array
      */
     public function getWechatStaticInfo(){
-        return (new CoreWechatConfigService())->getWechatStaticInfo($this->site_id);
+        return (new CoreWechatConfigService())->getWechatStaticInfo();
     }
 }

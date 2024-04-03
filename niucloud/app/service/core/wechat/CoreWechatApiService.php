@@ -26,47 +26,64 @@ class CoreWechatApiService extends BaseCoreService
     /**
      * 获取用户信息
      */
-    public function userInfo(int $site_id, string $openid)
+    public function userInfo(string $openid)
     {
-        return CoreWechatService::app($site_id)->user->get($openid);
+        $api = CoreWechatService::appApiClient();
+        return $api->get('/cgi-bin/user/info', [
+            'openid' => $openid,
+        ]);
     }
 
     /**
      * 批量获取用户基本信息
-     * @param int $site_id
      * @param array $openids
      * @param string $lang
      * @return mixed
      * @throws GuzzleException
      * @throws InvalidConfigException
      */
-    public function userInfoBatchget(int $site_id, array $openids, string $lang = 'zh_CN')
+    public function userInfoBatchget(array $openids, string $lang = 'zh_CN')
     {
-        return CoreWechatService::app($site_id)->user->select($openids);
+        return CoreWechatService::appApiClient()->postJson('/cgi-bin/user/info/batchget', [
+            'user_list' => array_map(function ($openid) use ($lang) {
+                return [
+                    'openid' => $openid,
+                    'lang' => $lang,
+                ];
+            }, $openids)
+            ]
+        );
     }
     
     /**
      * 用户列表(可以再外部设计一个递归查询全部的函数)  返回的是 openid
      */
-    public function userGet(int $site_id, ?string $next_openid = '')
+    public function userGet(?string $next_openid = '')
     {
-        return CoreWechatService::app($site_id)->user->list($next_openid);
+        $api = CoreWechatService::appApiClient();
+        return $api->get('/cgi-bin/user/get', ['next_openid' => $next_openid]);
     }
 
 
     /**
      * 创建菜单按钮接口
-     * @param int $site_id
      * @param array $buttons
      * @param array $match_rule
      * @return mixed
      * @throws GuzzleException
      * @throws InvalidConfigException
      */
-    public function menuCreate(int $site_id, array $buttons, array $match_rule = [])
+    public function menuCreate(array $buttons, array $match_rule = [])
     {
-//        CoreWechatService::app($site_id)->menu->current();
-        return CoreWechatService::app($site_id)->menu->create($buttons, $match_rule);
+        $api = CoreWechatService::appApiClient();
+        if (!empty($match_rule)) {
+            return $api->postJson('cgi-bin/menu/addconditional', [
+                'button' => $buttons,
+                'matchrule' => $match_rule,
+            ]);
+        }
+
+        return $api->postJson('cgi-bin/menu/create', ['button' => $buttons]);
     }
 
 

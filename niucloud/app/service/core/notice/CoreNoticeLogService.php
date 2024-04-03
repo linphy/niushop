@@ -30,25 +30,23 @@ class CoreNoticeLogService extends BaseCoreService
 
     /**
      * 新增消息记录
-     * @param int $site_id
      * @param array $data
      * @return void
      */
-    public function add(int $site_id, array $data){
-        $data['site_id'] = $site_id;
+    public function add(array $data){
         $notice_log = $this->model->create($data);
         return $notice_log?->id;
     }
 
 
-    public function getPage(int $site_id, array $where){
-        $field = 'id, site_id, key, notice_type, uid, member_id, nickname, receiver, is_click, is_visit, visit_time, create_time, params, content';
-        $search_model = $this->model->where([['site_id', '=', $site_id]])->withSearch(['key','receiver', 'create_time'], $where)->field($field)->order('create_time desc')->append(['name', 'notice_type_name']);
+    public function getPage(array $where){
+        $field = 'id, key, notice_type, uid, member_id, nickname, receiver, is_click, is_visit, visit_time, create_time, params, content';
+        $search_model = $this->model->withSearch(['key','receiver', 'create_time'], $where)->field($field)->order('create_time desc')->append(['name', 'notice_type_name']);
         return $this->pageQuery($search_model);
     }
 
-    public function getInfo(int $site_id, int $id){
-        $field = 'id, site_id, key, notice_type, uid, member_id, nickname, receiver, is_click, is_visit, visit_time, create_time, params, content';
-        return $this->model->where([['site_id', '=', $site_id], ['id', '=', $id]])->field($field)->append(['name', 'notice_type_name'])->findOrEmpty()->toArray();
+    public function getInfo(int $id){
+        $field = 'id, key, notice_type, uid, member_id, nickname, receiver, is_click, is_visit, visit_time, create_time, params, content';
+        return $this->model->where([ ['id', '=', $id]])->field($field)->append(['name', 'notice_type_name'])->findOrEmpty()->toArray();
     }
 }

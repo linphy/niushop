@@ -7,6 +7,7 @@ use think\facade\Queue;
 use think\facade\Cache;
 use core\util\Snowflake;
 use app\service\core\upload\CoreImageService;
+use app\service\core\sys\CoreSysConfigService;
 // 应用公共文件
 
 /**
@@ -173,7 +174,12 @@ function del_target_dir($path, $delDir)
         }
         closedir($handle);
         if ($delDir) {
-            return rmdir($path);
+            try {
+                return rmdir($path);
+            } catch (\Exception $e) {
+                sleep(1);
+                return rmdir($path);
+            }
         }
     } else {
         if (file_exists($path)) {
@@ -193,8 +199,6 @@ function system_name(?string $key = '')
     $params = [
         'admin_token_name' => env('system.admin_token_name', 'token'),///todo !!! 注意  header参数  不能包含_ , 会自动转成 -
         'api_token_name' => env('system.api_token_name', 'token'),
-        'admin_site_id_name' => env('system.admin_site_id_name', 'site-id'),
-        'api_site_id_name' => env('system.api_site_id_name', 'site-id'),
         'channel_name' => env('system.channel_name', 'channel'),
     ];
     if (!empty($key)) {
@@ -467,14 +471,18 @@ function array_merge2(array $array1, array $array2)
 {
     foreach ($array2 as $array2_k => $array2_v) {
         if (array_key_exists($array2_k, $array1)) {
-            foreach ($array2_v as $array2_kk => $array2_vv) {
-                if (array_key_exists($array2_kk, $array1[$array2_k])) {
-                    if (is_array($array2_vv)) {
-                        $array1[$array2_k][$array2_kk] = array_merge($array1[$array2_k][$array2_kk], $array2_vv);
+            if (is_array($array2_v)) {
+                foreach ($array2_v as $array2_kk => $array2_vv) {
+                    if (array_key_exists($array2_kk, $array1[$array2_k])) {
+                        if (is_array($array2_vv)) {
+                            $array1[$array2_k][$array2_kk] = array_merge($array1[$array2_k][$array2_kk], $array2_vv);
+                        }
+                    } else {
+                        $array1[$array2_k][$array2_kk] = $array2_vv;
                     }
-                } else {
-                    $array1[$array2_k][$array2_kk] = $array2_vv;
                 }
+            } else {
+                $array1[$array2_k] = $array2_v;
             }
         } else {
             $array1[$array2_k] = $array2_v;
@@ -758,16 +766,15 @@ function image_to_base64(string $path, $is_delete = false) {
 
 /**
  * 获取缩略图
- * @param $site_id
  * @param $image
  * @param string $thumb_type
  * @param bool $is_throw_exception
  * @return mixed
  * @throws Exception
  */
-function get_thumb_images($site_id, $image, $thumb_type = 'all', bool $is_throw_exception = false){
+function get_thumb_images($image, $thumb_type = 'all', bool $is_throw_exception = false){
 
-    return (new CoreImageService())->thumb($site_id, $image, $thumb_type, $is_throw_exception);
+    return (new CoreImageService())->thumb($image, $thumb_type, $is_throw_exception);
 }
 
 /**
@@ -847,15 +854,14 @@ function file_copy(string $source_file, string $to_file) {
 /**
  * 创建并生成二维码
  * @param $url
- * @param $site_id
  * @param $dir
  * @param $file_path
  * @param $channel
  * @param $size
  * @return string
  */
-function qrcode($url, $site_id, $dir, $file_path, $channel = '', $size = 4){
-    $dir = $dir ?: 'upload' . '/'.$site_id. '/'.'qrcode'.'/';//二维码默认存储位置
+function qrcode($url, $dir, $file_path, $channel = '', $size = 4){
+    $dir = $dir ?: 'upload/qrcode/';//二维码默认存储位置
     if (! is_dir($dir) && ! mkdir($dir, 0777, true) && ! is_dir($dir)) {
         throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
     }
@@ -869,12 +875,43 @@ function qrcode($url, $site_id, $dir, $file_path, $channel = '', $size = 4){
 
 /**
  * 获取海报
- * @param int $site_id
  * @param string|int $type
  * @param array $param
  * @param bool $is_throw_exception
  * @return string|null
  */
-function poster(int $site_id, string|int $type, array $param = [], string $channel = '',bool $is_throw_exception = true){
-    return (new \app\service\core\poster\CorePosterService())->get($site_id, $type, $param, $channel, $is_throw_exception);
+function poster( string|int $type, array $param = [], string $channel = '',bool $is_throw_exception = true){
+    return (new \app\service\core\poster\CorePosterService())->get($type, $param, $channel, $is_throw_exception);
+}
+
+/**
+ * 获取站点插件
+ * @return array
+ */
+function get_site_addons() : array {
+    $addons = Cache::get("local_install_addons");
+    return is_null($addons) ? [] : $addons;
+}
+
+/**
+ * 是否是url链接
+ * @param unknown $string
+ * @return boolean
+ */
+function is_url($string)
+{
+    if (strstr($string, 'http://') === false && strstr($string, 'https://') === false) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+/**
+ * 获取wap端域名
+ * @return string
+ */
+function get_wap_domain() {
+    $wap_url = (new CoreSysConfigService())->getSceneDomain()['wap_url'];
+    return $wap_url;
 }

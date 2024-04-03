@@ -148,7 +148,7 @@ class ModelGenerator extends BaseGenerator
         }
 
         foreach ($this->tableColumn as $column) {
-            if (!$column['is_search'] || $column['column_name'] == 'site_id') {
+            if (!$column['is_search']) {
                 continue;
             }
             $function_str .= '/**'.PHP_EOL.' * 搜索器:'.$table_content.$column['column_comment'].PHP_EOL.' * @param $value'.PHP_EOL.' * @param $data'.PHP_EOL.' */'.PHP_EOL;

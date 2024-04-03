@@ -15,6 +15,7 @@ use app\dict\addon\AddonDict;
 use app\dict\sys\AppTypeDict;
 use app\model\addon\Addon;
 use app\service\admin\site\SiteGroupService;
+use app\service\admin\sys\MenuService;
 use app\service\core\niucloud\CoreModuleService;
 use think\db\exception\DbException;
 use Throwable;
@@ -120,6 +121,11 @@ class CoreAddonService extends CoreAddonBaseService
         return $this->pageQuery($search_model);
     }
 
+    public function getList(array $where){
+        $field = 'id, title, key, desc, version, status, icon, create_time, install_time';
+        return $this->model->where($where)->field($field)->order('id desc')->select()->toArray();
+    }
+
     /**
      * 插件详情
      * @param int $id
@@ -211,6 +217,17 @@ class CoreAddonService extends CoreAddonBaseService
     public function getInstallAddonList(){
         return $this->model->where([['status', '=', AddonDict::ON]])->append(['status_name'])->column('title, icon, key, desc, status, type, support_app', 'key');
     }
+
+    public function getAddonMemuList()
+    {
+        $field = 'title, icon, key, desc, status';
+        $addonList = $this->model->where([['status', '=', AddonDict::ON]])->field($field)->append(['status_name', 'type_name'])->with('menu')->order('create_time desc')->select()->toArray();
+        foreach ($addonList as &$value) {
+            $value['children'] = (new MenuService())->menuToTree($value['menu'], 'menu_key', 'parent_key', 'children', 'auth', '', 0);
+        }
+        return $addonList;
+    }
+
 
     /**
      * 开发者插件

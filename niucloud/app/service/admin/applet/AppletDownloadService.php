@@ -36,7 +36,7 @@ class AppletDownloadService extends BaseAdminService
     public function download(int $id)
     {
         $core_applet_download_service = new CoreAppletDownloadService($id);
-        return $core_applet_download_service->download($this->site_id);
+        return $core_applet_download_service->download();
     }
 
 

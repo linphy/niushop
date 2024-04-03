@@ -38,7 +38,7 @@ class ScanService extends BaseApiService
      */
     public function checkScan(string $key)
     {
-        return $this->core_scan_service->checkScan($this->site_id, $key);
+        return $this->core_scan_service->checkScan($key);
     }
 
 }

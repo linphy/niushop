@@ -39,7 +39,6 @@ class InstallArticleService extends BaseAdminService
     {
         $article_category = new ArticleCategory();
         $category = [
-            'site_id' => $params[ 'site_id' ],
             'name' => '资讯',
             'is_show' => 1,
             'create_time' => time()
@@ -50,7 +49,6 @@ class InstallArticleService extends BaseAdminService
         $article_list = [
             [
                 'category_id' => $category_id,
-                'site_id' => $params[ 'site_id' ],
                 'title' => 'NiuCloud-admin介绍',
                 'intro' => '',
                 'summary' => '',
@@ -62,7 +60,6 @@ class InstallArticleService extends BaseAdminService
             ],
             [
                 'category_id' => $category_id,
-                'site_id' => $params[ 'site_id' ],
                 'title' => 'NiuCloud-admin 开发者联盟',
                 'intro' => 'Niucloud-admin 开发者联盟招募',
                 'summary' => '',

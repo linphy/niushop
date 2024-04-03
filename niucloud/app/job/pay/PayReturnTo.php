@@ -30,7 +30,7 @@ class PayReturnTo extends BaseJob
     {
 
         Log::write('pay_log_' . json_encode($data));
-        $res = (new CorePayService())->returnTo($data['site_id'], $data['out_trade_no']);
+        $res = (new CorePayService())->returnTo( $data['out_trade_no']);
         return true;
     }
 

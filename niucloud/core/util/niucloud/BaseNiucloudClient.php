@@ -41,7 +41,7 @@ class BaseNiucloudClient
 
     protected $config;
 
-    const PRODUCT = 'saas';
+    const PRODUCT = 'single';
 
     /**
      *官网服务主域名

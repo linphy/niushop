@@ -18,7 +18,7 @@ use think\facade\Route;
 use app\service\core\niucloud\CoreNotifyService;
 
 //公众号消息推送
-Route::any('wechat/serve/:site_id', 'wechat.Serve/serve')
+Route::any('wechat/serve', 'wechat.Serve/serve')
     ->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)
     ->middleware(ApiLog::class);

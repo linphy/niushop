@@ -31,12 +31,12 @@ return [
         'image' => [
             'ext' => ['jpg', 'jpeg', 'webp', 'png', 'gif'],
             'mime' => ['image/jpeg', 'image/gif', 'image/png', 'image/webp'],
-            'size' => 2097152
+            'size' => 10485760
         ],
         'video' => [
             'ext' => ['mp4'],
             'mime' => ['video/mp4'],
-            'size' => 2097152
+            'size' => 10485760
         ],
         'wechat' => [
             'ext' => ['pem', 'key'],

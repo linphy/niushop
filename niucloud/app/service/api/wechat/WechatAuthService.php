@@ -56,7 +56,7 @@ class WechatAuthService extends BaseApiService
     public function authorization(string $url = '', string $scopes = 'snsapi_base')
     {
         //todo  业务落地
-        return ['url' => $this->core_wechat_serve_service->authorization($this->site_id, $url, $scopes)];
+        return ['url' => $this->core_wechat_serve_service->authorization($url, $scopes)];
     }
 
     /**
@@ -66,7 +66,7 @@ class WechatAuthService extends BaseApiService
      */
     public function userFromCode(string $code)
     {
-        $userinfo = $this->core_wechat_serve_service->userFromCode($this->site_id, $code);
+        $userinfo = $this->core_wechat_serve_service->userFromCode($code);
         if (empty($userinfo)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
         $token_response = $userinfo->getTokenResponse();
         if (empty($token_response)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
@@ -111,7 +111,7 @@ class WechatAuthService extends BaseApiService
     {
 
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
         if ($member_info->isEmpty()) {
             $config = (new MemberConfigService())->getLoginConfig();
             $is_bind_mobile = $config['is_bind_mobile'];
@@ -139,9 +139,9 @@ class WechatAuthService extends BaseApiService
         //更新粉丝
         $core_wechat_fans_service = new CoreWechatFansService();
         //这儿或许可以异步
-        $core_wechat_fans_service->edit($this->site_id, $openid, ['avatar' => $avatar, 'nickname' => $nickname]);
+        $core_wechat_fans_service->edit($openid, ['avatar' => $avatar, 'nickname' => $nickname]);
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
         if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
         $member_service->editByFind($member_info, ['headimg' => $avatar, 'nickname' => $nickname]);
         return true;
@@ -161,7 +161,7 @@ class WechatAuthService extends BaseApiService
     public function register(string $openid, string $mobile = '', string $nickname = '', string $avatar = '')
     {
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
         $register_service = new RegisterService();
         return $register_service->register($mobile,
@@ -182,7 +182,7 @@ class WechatAuthService extends BaseApiService
      */
     public function jssdkConfig(string $url = '')
     {
-        return $this->core_wechat_serve_service->jssdkConfig($this->site_id, $url);
+        return $this->core_wechat_serve_service->jssdkConfig($url);
     }
 
 
@@ -196,8 +196,8 @@ class WechatAuthService extends BaseApiService
             'channel' => $this->channel,
         );
 
-        $key = (new  CoreScanService())->scan($this->site_id, ScanDict::WECHAT_LOGIN, $data, 300);
-        $url = $this->core_wechat_serve_service->scan($this->site_id, $key, 300);
+        $key = (new  CoreScanService())->scan(ScanDict::WECHAT_LOGIN, $data, 300);
+        $url = $this->core_wechat_serve_service->scan($key, 300);
         return [
             'url' => $url,
             'key' => $key

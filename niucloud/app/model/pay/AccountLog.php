@@ -1,29 +1,26 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\model\site;
+namespace app\model\pay;
 
-use app\dict\site\SiteAccountLogDict;
-use app\model\pay\Pay;
-use app\model\pay\Refund;
-use app\model\pay\Transfer;
+use app\dict\pay\AccountLogDict;
 use core\base\BaseModel;
 use think\db\Query;
 
 /**
- * 站点账单记录
- * Class SiteAccountLog
+ * 账单记录
+ * Class AccountLog
  * @package app\model\site
  */
-class SiteAccountLog extends BaseModel
+class AccountLog extends BaseModel
 {
 
     /**
@@ -36,7 +33,7 @@ class SiteAccountLog extends BaseModel
      * 模型名称
      * @var string
      */
-    protected $name = 'site_account_log';
+    protected $name = 'account_log';
 
 
     /**
@@ -47,7 +44,7 @@ class SiteAccountLog extends BaseModel
      */
     public function getTypeNameAttr($value, $data)
     {
-        return SiteAccountLogDict::getType()[$data['type']] ?? '';
+        return AccountLogDict::getType()[$data['type']] ?? '';
     }
 
     /**
@@ -60,8 +57,8 @@ class SiteAccountLog extends BaseModel
     {
         return match ($data['type']) {
             'pay' => (new Pay())->where([['out_trade_no', '=', $data['trade_no']]])->append(['type_name'])->findOrEmpty()->toArray(),
-            'refund' => (new Refund())->where([['refund_no', '=', $data['trade_no']]])->findOrEmpty()->toArray(),
-            'transfer' => (new Transfer())->where([['transfer_no', '=', $data['trade_no']]])->findOrEmpty()->toArray(),
+            'refund' => (new Refund())->where([['refund_no', '=', $data['trade_no']]])->append(['type_name'])->findOrEmpty()->toArray(),
+            'transfer' => (new Transfer())->where([['transfer_no', '=', $data['trade_no']]])->append(['transfer_type_name'])->findOrEmpty()->toArray(),
             default => [],
         };
     }
@@ -92,13 +89,6 @@ class SiteAccountLog extends BaseModel
             return $data['money'];
         } else {
             return "+" . $data['money'];
-        }
-    }
-
-    public function searchTradeNoAttr($query, $value, $data)
-    {
-        if ($value) {
-            $query->where('trade_no', 'like', "%$value%");
         }
     }
 

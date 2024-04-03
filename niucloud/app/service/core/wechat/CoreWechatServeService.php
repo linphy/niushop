@@ -13,6 +13,7 @@ namespace app\service\core\wechat;
 
 use core\base\BaseCoreService;
 use EasyWeChat\Kernel\Exceptions\BadRequestException;
+use EasyWeChat\Kernel\Exceptions\HttpException;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
 use EasyWeChat\Kernel\Exceptions\RuntimeException;
@@ -20,6 +21,11 @@ use Overtrue\Socialite\Contracts\UserInterface;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
 
 /**
@@ -33,26 +39,26 @@ class CoreWechatServeService extends BaseCoreService
 
     /**
      * 网页授权
-     * @param int $site_id
      * @param string $url
      * @param string $scopes
      * @return string
+     * @throws InvalidArgumentException
      */
-    public function authorization(int $site_id, string $url = '', string $scopes = 'snsapi_base')
+    public function authorization(string $url = '', string $scopes = 'snsapi_base')
     {
-        $oauth = CoreWechatService::app($site_id)->oauth;
+        $oauth = CoreWechatService::app()->getOauth();
         return $oauth->scopes([$scopes])->redirect($url);
     }
 
     /**
      * 处理授权回调
-     * @param int $site_id
      * @param string $code
      * @return UserInterface
+     * @throws InvalidArgumentException
      */
-    public function userFromCode(int $site_id, string $code)
+    public function userFromCode(string $code)
     {
-        $oauth = CoreWechatService::app($site_id)->oauth;
+        $oauth = CoreWechatService::app()->getOauth();
         return $oauth->userFromCode($code);
     }
 
@@ -73,33 +79,76 @@ class CoreWechatServeService extends BaseCoreService
 
     /**
      * 事件推送
-     * @param int $site_id
      * @return Response
      * @throws BadRequestException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws InvalidConfigException
+     * @throws RuntimeException
+     * @throws Throwable
      */
-    public function serve(int $site_id)
+    public function serve()
     {
 
-        $app = CoreWechatService::app($site_id);
-        $app->server->push(function ($message) use ($site_id){
-            return (new CoreWechatMessageService)->message($site_id, $message);
-            // ...
+        $app = CoreWechatService::app();
+        $server = $app->getServer();
+        $server->with(function($message, \Closure $next){
+            // 你的自定义逻辑
+            return (new CoreWechatMessageService)->message($message);
+//            return $next($message);
         });
-        $response = $app->server->serve();
-        return $response->send();
+        $response = $server->serve();
+        return $response;
+
     }
 
-    public function jssdkConfig(int $site_id, string $url = '')
+    /**
+     * 配置 生成 JS-SDK 签名
+     * @param string $url
+     * @return mixed[]
+     * @throws InvalidArgumentException
+     * @throws TransportExceptionInterface
+     * @throws HttpException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function jssdkConfig(string $url = '')
     {
-        $jssdk = CoreWechatService::app($site_id)->jssdk;
-        return $jssdk->setUrl($url)->buildConfig([], false, false, false);
+        $utils = CoreWechatService::app()->getUtils();
+        return $utils->buildJsSdkConfig(
+            url: $url,
+            jsApiList: [],
+            openTagList: [],
+            debug: false,
+        );
     }
 
-    public function scan(int $site_id, string $key, int $expire_seconds = 6 * 24 * 3600){
-        $result = CoreWechatService::app($site_id)->qrcode->temporary($key, $expire_seconds);
-        return $result['url'];
+    /**
+     * 生成临时二维码
+     * @param string $key
+     * @param int $expire_seconds
+     * @param array $params
+     * @return \EasyWeChat\Kernel\HttpClient\Response|\Symfony\Contracts\HttpClient\ResponseInterface
+     * @throws InvalidArgumentException
+     * @throws TransportExceptionInterface
+     */
+    public function scan(string $key, int $expire_seconds = 6 * 24 * 3600, $params = []){
+        $api = CoreWechatService::appApiClient();
+        if (is_int($key) && $key > 0) {
+            $type = 'QR_SCENE';
+            $sceneKey = 'scene_id';
+        } else {
+            $type = 'QR_STR_SCENE';
+            $sceneKey = 'scene_str';
+        }
+        $scene = [$sceneKey => $key];
+        $param = [
+            'expire_seconds' => $expire_seconds,
+            'action_name' => $type,
+            'action_info' => $scene,
+        ];
+        return $api->postJson('cgi-bin/qrcode/create', $param);
     }
 }

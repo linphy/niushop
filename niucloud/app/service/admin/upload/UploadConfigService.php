@@ -38,7 +38,7 @@ class UploadConfigService extends BaseAdminService
      */
     public function getUploadConfig()
     {
-        return $this->core_upload_config_service->getUploadConfig($this->site_id);
+        return $this->core_upload_config_service->getUploadConfig();
 
     }
 
@@ -49,7 +49,7 @@ class UploadConfigService extends BaseAdminService
      */
     public function setUploadConfig(array $data)
     {
-        return $this->core_upload_config_service->setUploadConfig($this->site_id, $data);
+        return $this->core_upload_config_service->setUploadConfig($data);
     }
 
 

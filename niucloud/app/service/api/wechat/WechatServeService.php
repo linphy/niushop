@@ -45,7 +45,7 @@ class WechatServeService extends BaseApiService
      * @throws Throwable
      */
     public function serve(){
-        return $this->core_wechat_serve_service->serve($this->site_id);
+        return $this->core_wechat_serve_service->serve();
     }
 
 }

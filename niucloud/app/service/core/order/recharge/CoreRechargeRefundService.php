@@ -37,17 +37,16 @@ class CoreRechargeRefundService extends BaseCoreService
 
     /**
      * 创建充值订单退款
-     * @param int $site_id
      * @param int $order_id
      * @return true
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function create(int $site_id, int $order_id) {
-        $order_model = (new RechargeOrderItem())->where([ ['site_id', '=', $site_id], ['order_id', '=', $order_id], ['item_type', '=', $this->order_type ] ])->with('ordermain')->find();
+    public function create(int $order_id) {
+        $order_model = (new RechargeOrderItem())->where([ ['order_id', '=', $order_id], ['item_type', '=', $this->order_type ] ])->with('ordermain')->find();
         $order = $order_model->toArray();
-        $order_info = (new RechargeOrder())->where([ ['site_id', '=', $site_id], ['order_id', '=', $order_id] ])->field("order_no")->find();
+        $order_info = (new RechargeOrder())->where([ ['order_id', '=', $order_id] ])->field("order_no")->find();
         if (empty($order)) throw new CommonException('ORDER_NOT_EXIST');
         if (!$order['ordermain']['is_enable_refund']) throw new CommonException('NOT_ALLOW_APPLY_REFUND');
         if ($order['ordermain']['order_status'] != RechargeOrderDict::FINISH) throw new CommonException('ORDER_UNPAID_NOT_ALLOW_APPLY_REFUND');
@@ -58,7 +57,6 @@ class CoreRechargeRefundService extends BaseCoreService
             // 查询会员账户余额
             $member_info = (new Member())->where([
                 [ 'member_id', '=', $order['member_id'] ],
-                [ 'site_id', '=', $order['site_id'] ]
             ])->field('balance')->find();
 
             if ($member_info['balance'] == 0) throw new CommonException('NO_REFUNDABLE_AMOUNT');
@@ -66,11 +64,10 @@ class CoreRechargeRefundService extends BaseCoreService
             $order['out_trade_no'] = $order['ordermain']['out_trade_no'];
             $order['money'] = $order['item_money'] > $member_info['balance'] ? $member_info['balance'] : $order['item_money'];
             $order['order_no'] = $order_info['order_no'];
-            $refund_no = (new CoreRefundService())->create($order['site_id'], $order['out_trade_no'], $order['money'], $order['reason'] ?? '');
+            $refund_no = (new CoreRefundService())->create($order['out_trade_no'], $order['money'], $order['reason'] ?? '');
             (new RechargeOrderItemRefund())->create([
                 'order_item_id' => $order['order_item_id'],
                 'order_id' => $order['order_id'],
-                'site_id' => $order['site_id'],
                 'member_id' => $order['member_id'],
                 'num' => $order['num'],
                 'money' => $order['money'],
@@ -107,9 +104,9 @@ class CoreRechargeRefundService extends BaseCoreService
      * @return void
      */
     public function refund(array $order, string $refund_no){
-        (new CoreMemberAccountService())->addLog($order['site_id'], $order['member_id'], 'balance', -$order['money'], 'recharge_refund', '充值订单退款', $order['order_id']);
+        (new CoreMemberAccountService())->addLog($order['member_id'], 'balance', -$order['money'], 'recharge_refund', '充值订单退款', $order['order_id']);
         // 调用支付退款
-        (new CoreRefundService())->refund($order['site_id'], $refund_no);
+        (new CoreRefundService())->refund($refund_no);
     }
 
     /**
@@ -130,7 +127,7 @@ class CoreRechargeRefundService extends BaseCoreService
             $model->save(['status' => RechargeOrderDict::REFUND_COMPLETED]);
             $model->item()->save([ 'refund_status' => RechargeOrderDict::REFUND_COMPLETED ]);
             (new RechargeOrder())->update(['refund_status' => RechargeOrderDict::REFUND_COMPLETED], [ ['order_id', '=', $model->order_id ] ]);
-            (new CoreRechargeOrderService())->close($model->site_id, $model->order_id);
+            (new CoreRechargeOrderService())->close($model->order_id);
             Db::commit();
             return true;
         } catch ( Exception $e) {

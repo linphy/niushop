@@ -43,7 +43,7 @@ class Config extends BaseApiController
      */
     public function site()
     {
-        return success(( new SiteService() )->getSiteCache());
+        return success(( new ConfigService() )->getWebSite());
     }
 
     /**

@@ -79,16 +79,9 @@ class UpgradeService extends BaseAdminService
         $web_dir = $this->root_path . 'web' . DIRECTORY_SEPARATOR;
         $wap_dir = $this->root_path . 'uni-app' . DIRECTORY_SEPARATOR;
 
-        try {
-            if (!is_dir($admin_dir)) throw new CommonException('ADMIN_DIR_NOT_EXIST');
-            if (!is_dir($web_dir)) throw new CommonException('WEB_DIR_NOT_EXIST');
-            if (!is_dir($wap_dir)) throw new CommonException('UNIAPP_DIR_NOT_EXIST');
-        } catch (\Exception $e) {
-            if (strpos($e->getMessage(), 'open basedir') !== false) {
-                throw new CommonException('OPEN_BASEDIR_ERROR');
-            }
-            throw new CommonException($e->getMessage());
-        }
+        if (!is_dir($admin_dir)) throw new CommonException('ADMIN_DIR_NOT_EXIST');
+        if (!is_dir($web_dir)) throw new CommonException('WEB_DIR_NOT_EXIST');
+        if (!is_dir($wap_dir)) throw new CommonException('UNIAPP_DIR_NOT_EXIST');
 
         $data = [
             // 目录检测
@@ -164,9 +157,6 @@ class UpgradeService extends BaseAdminService
             Cache::set($this->cache_key, $upgrade_tsak);
             return $upgrade_tsak;
         } catch (\Exception $e) {
-            if (strpos($e->getMessage(), 'open_basedir') !== false) {
-                throw new CommonException('OPEN_BASEDIR_ERROR');
-            }
             throw new CommonException($e->getMessage());
         }
     }

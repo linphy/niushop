@@ -29,8 +29,6 @@ use core\util\niucloud\CloudService;
  */
 class CoreWeappCloudService extends CoreCloudBaseService
 {
-    private $site_id;
-
     private $addon;
 
     private $addon_path;
@@ -51,8 +49,7 @@ class CoreWeappCloudService extends CoreCloudBaseService
     public function uploadWeapp(array $data) {
         if (!request()->isSsl()) throw new CommonException('CURR_SITE_IS_NOT_OPEN_SSL');
 
-        $this->site_id = $data['site_id'];
-        $config = (new CoreWeappConfigService())->getWeappConfig($data['site_id']);
+        $config = (new CoreWeappConfigService())->getWeappConfig();
         if (empty($config['app_id'])) throw new CommonException('WEAPP_APPID_EMPTY');
         if (empty($config['upload_private_key'])) throw new CommonException('UPLOAD_KEY_EMPTY');
         if (!file_exists($config['upload_private_key'])) throw new CommonException('UPLOAD_KEY_NOT_EXIST');
@@ -70,7 +67,6 @@ class CoreWeappCloudService extends CoreCloudBaseService
         // 如果不存在编译版小程序
         if ($compile_addon->isEmpty()) {
             dir_copy($this->root_path . 'uni-app', $uni_dir, exclude_dirs:['node_modules', 'unpackage', 'dist']);
-            $this->handleUniapp($uni_dir);
             // 替换env文件
             $this->weappEnvReplace($uni_dir . DIRECTORY_SEPARATOR . '.env.production');
         } else {
@@ -113,39 +109,6 @@ class CoreWeappCloudService extends CoreCloudBaseService
     }
 
     /**
-     * 处理uniapp 查询出站点没有的插件进行移除
-     * @param string $dir
-     * @return void
-     */
-    private function handleUniapp(string $dir) {
-        $site_addon = (new CoreSiteService())->getAddonKeysBySiteId($this->site_id);
-        $local_addon = (new Addon())->where([['status', '=', AddonDict::ON]])->column('key');
-
-        // 移除uniapp中该站点没有的插件
-        $diff_addon = array_filter(array_map(function ($key) use ($site_addon) {
-            if (!in_array($key, $site_addon)) return $key;
-        }, $local_addon));
-
-        if (!empty($diff_addon) ) {
-            foreach ($diff_addon as $addon) {
-                $this->addon = $addon;
-
-                $addon_dir = $dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'addon' . DIRECTORY_SEPARATOR . $addon;
-                if (is_dir($addon_dir)) del_target_dir($addon_dir, true);
-
-                // 编译 diy-group 自定义组件代码文件
-                $this->compileDiyComponentsCode($dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR, $addon);
-                // 编译 fixed-group 固定模板组件代码文件
-                $this->compileFixedComponentsCode($dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR, $addon);
-                // 编译 pages.json 页面路由代码文件
-                $this->uninstallPageCode($dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
-                // 编译 加载插件标题语言包
-                $this->compileLocale($dir . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR, $addon);
-            }
-        }
-    }
-
-    /**
      * 小程序上传env文件处理
      * @param string $env_file
      * @return void
@@ -154,7 +117,6 @@ class CoreWeappCloudService extends CoreCloudBaseService
         $env = file_get_contents($env_file);
         $env = str_replace("VITE_APP_BASE_URL=''", "VITE_APP_BASE_URL='" . (string)url('/api/', [], '', true) . "'", $env);
         $env = str_replace("VITE_IMG_DOMAIN=''", "VITE_IMG_DOMAIN='" . (string)url('/', [], '', true) . "'", $env);
-        $env = str_replace("VITE_SITE_ID = ''", "VITE_SITE_ID='" . $this->site_id . "'", $env);
         file_put_contents($env_file, $env);
     }
 
@@ -168,7 +130,6 @@ class CoreWeappCloudService extends CoreCloudBaseService
         $request_file = $path . DIRECTORY_SEPARATOR . 'utils' . DIRECTORY_SEPARATOR . 'request.js';
         $content = file_get_contents($request_file);
         $content = str_replace('{{$baseUrl}}',  (string)url('/api/', [], '', true), $content);
-        $content = str_replace('{{$siteId}}',  $this->site_id, $content);
         file_put_contents($request_file, $content);
 
         // 替换common.js

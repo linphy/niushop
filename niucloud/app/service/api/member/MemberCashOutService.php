@@ -38,8 +38,7 @@ class MemberCashOutService extends BaseApiService
     public function getPage(array $where = [])
     {
         $where['member_id'] = $this->member_id;
-        $where['site_id'] = $this->site_id;
-        $field = 'id,site_id,cash_out_no,member_id,account_type,transfer_type,transfer_realname,transfer_mobile,transfer_bank,transfer_account,transfer_status,transfer_time,apply_money,rate,service_money,money,audit_time,status,remark,create_time,refuse_reason';
+        $field = 'id,cash_out_no,member_id,account_type,transfer_type,transfer_realname,transfer_mobile,transfer_bank,transfer_account,transfer_status,transfer_time,apply_money,rate,service_money,money,audit_time,status,remark,create_time,refuse_reason';
         $search_model = $this->model->where($where)->withSearch(['member_id','status', 'create_time'],$where)->with(['memberInfo', 'transfer'])->field($field)->append(['account_type_name', 'transfer_type_name', 'status_name', 'transfer_status_name'])->order('create_time desc');
 
         return $this->pageQuery($search_model);
@@ -52,8 +51,8 @@ class MemberCashOutService extends BaseApiService
      */
     public function getInfo(int $id)
     {
-        $field = 'id,site_id,cash_out_no,member_id,transfer_type,transfer_realname,transfer_mobile,transfer_bank,transfer_account,transfer_fail_reason,transfer_time,apply_money,rate,service_money,money,audit_time,status,remark,create_time,refuse_reason';
-        return $this->model->where([['id', '=', $id], ['site_id', '=', $this->site_id], ['member_id', '=', $this->member_id]])->with(['memberInfo', 'transfer'])->field($field)->append(['account_type_name', 'transfer_type_name', 'status_name', 'transfer_status_name'])->findOrEmpty()->toArray();
+        $field = 'id,cash_out_no,member_id,transfer_type,transfer_realname,transfer_mobile,transfer_bank,transfer_account,transfer_fail_reason,transfer_time,apply_money,rate,service_money,money,audit_time,status,remark,create_time,refuse_reason';
+        return $this->model->where([['id', '=', $id], ['member_id', '=', $this->member_id]])->with(['memberInfo', 'transfer'])->field($field)->append(['account_type_name', 'transfer_type_name', 'status_name', 'transfer_status_name'])->findOrEmpty()->toArray();
     }
 
 
@@ -64,7 +63,7 @@ class MemberCashOutService extends BaseApiService
      */
     public function apply(array $data){
 
-        return (new CoreMemberCashOutService())->apply($this->site_id, $this->member_id, $data);
+        return (new CoreMemberCashOutService())->apply($this->member_id, $data);
     }
 
 
@@ -75,7 +74,6 @@ class MemberCashOutService extends BaseApiService
      */
     public function cancel(int $id){
         $cash_out = $this->model->where([
-            ['site_id', '=', $this->site_id],
             ['id', '=', $id],
             ['member_id', '=', $this->member_id],
         ])->findOrEmpty();
@@ -89,7 +87,7 @@ class MemberCashOutService extends BaseApiService
                 'status' => MemberCashOutDict::CANCEL
             ]
         );
-        (new CoreMemberCashOutService())->giveback($this->site_id, $cash_out);
+        (new CoreMemberCashOutService())->giveback($cash_out);
         return true;
     }
 
@@ -98,7 +96,7 @@ class MemberCashOutService extends BaseApiService
      * @return array
      */
     public function getCashOutConfig(){
-        return (new CoreMemberConfigService())->getCashOutConfig($this->site_id);
+        return (new CoreMemberConfigService())->getCashOutConfig();
     }
 
 }

@@ -28,11 +28,11 @@ class MemberCashOutConfigService extends BaseAdminService
 
 
     public function getConfig(){
-        return (new CoreMemberCashOutConfigService())->getMemberCashOutConfig($this->site_id);
+        return (new CoreMemberCashOutConfigService())->getMemberCashOutConfig();
     }
 
     public function setConfig(array $data){
-        (new CoreMemberCashOutConfigService())->setMemberCashOutConfig($this->site_id, $data);
+        (new CoreMemberCashOutConfigService())->setMemberCashOutConfig($data);
         return true;
     }
 }

@@ -45,35 +45,11 @@ abstract class BaseDict extends Storage
             return [];
         }
 
-        $headers = request()->header();
-        $admin_site_id_name = system_name('admin_site_id_name');
-        $api_site_id_name = system_name('admin_site_id_name');
-        $site_id = $headers[$admin_site_id_name] ?? $headers[$api_site_id_name] ?? 0;
+        $addons = Cache::get("local_install_addons");
+        if (!is_null($addons)) return $addons;
 
-        if ((int)$site_id) {
-            $addons = Cache::get("local_install_addons_{$site_id}");
-            if (!is_null($addons)) return $addons;
-
-            $prefix = config('database.connections.mysql.prefix');
-            $site = Db::name('site')->alias('s')->join(["{$prefix}site_group" => 'sg'], 's.group_id = sg.group_id')
-                ->where([['s.site_id', '=', $site_id]])
-                ->field('s.app,s.addons,sg.app as site_group_app,sg.addon as site_group_addon')->find();
-
-            $addons = array_unique(array_merge(
-                (empty($site['app']) ? [] : json_decode($site['app'], true)),
-                (empty($site['addons']) ? [] : json_decode($site['addons'], true)),
-                (empty($site['site_group_app']) ? [] : json_decode($site['site_group_app'], true)),
-                (empty($site['site_group_addon']) ? [] : json_decode($site['site_group_addon'], true))
-            ));
-
-            Cache::tag(CoreSiteService::$cache_tag_name . $site_id)->set("local_install_addons_{$site_id}", $addons);
-        } else {
-            $addons = Cache::get("local_install_addons");
-            if (!is_null($addons)) return $addons;
-
-            $addons = Db::name("addon")->column("key");
-            Cache::tag(CoreAddonBaseService::$cache_tag_name)->set("local_install_addons", $addons);
-        }
+        $addons = Db::name("addon")->column("key");
+        Cache::tag(CoreAddonBaseService::$cache_tag_name)->set("local_install_addons", $addons);
 
         return $addons;
     }

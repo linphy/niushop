@@ -1,22 +1,22 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\adminapi\controller\site;
+namespace app\adminapi\controller\pay;
 
-use app\dict\site\SiteAccountLogDict;
-use app\service\admin\site\SiteAccountLogService;
+use app\dict\pay\AccountLogDict;
+use app\service\admin\pay\AccountLogService;
 use core\base\BaseAdminController;
 use think\Response;
 
-class SiteAccount extends BaseAdminController
+class Account extends BaseAdminController
 {
     /**
      * 账单列表
@@ -26,10 +26,9 @@ class SiteAccount extends BaseAdminController
     {
         $data = $this->request->params([
             ['type', ''],
-            ['trade_no', ''],
             ['create_time', []],
         ]);
-        return success((new SiteAccountLogService())->getPage($data));
+        return success((new AccountLogService())->getPage($data));
     }
 
     /**
@@ -39,7 +38,7 @@ class SiteAccount extends BaseAdminController
      */
     public function info(int $id)
     {
-        return success((new SiteAccountLogService())->getInfo($id));
+        return success((new AccountLogService())->getInfo($id));
     }
 
     /**
@@ -47,11 +46,11 @@ class SiteAccount extends BaseAdminController
      */
     public function stat()
     {
-        return success((new SiteAccountLogService())->stat());
+        return success((new AccountLogService())->stat());
     }
 
     public function accountType()
     {
-        return success(SiteAccountLogDict::getType());
+        return success(AccountLogDict::getType());
     }
 }

@@ -37,7 +37,7 @@ class SiteService extends BaseApiService
      */
     public function getSiteCache(){
 
-        return (new CoreSiteService())->getSiteCache($this->site_id);
+        return (new CoreSiteService())->getSiteCache();
     }
 
 }

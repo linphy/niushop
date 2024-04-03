@@ -28,11 +28,10 @@ class CoreWechatConfigService extends BaseCoreService
 {
     /**
      * 获取微信公众号配置
-     * @param int $site_id
      * @return array
      */
-    public function getWechatConfig(int $site_id){
-        $info = (new CoreConfigService())->getConfig($site_id, ConfigKeyDict::WECHAT)['value'] ?? [];
+    public function getWechatConfig(){
+        $info = (new CoreConfigService())->getConfig(ConfigKeyDict::WECHAT)['value'] ?? [];
         return [
             'wechat_name' => $info['wechat_name'] ?? '',//公众号名称
             'wechat_original' => $info['wechat_original'] ?? '',//原始ID
@@ -47,11 +46,10 @@ class CoreWechatConfigService extends BaseCoreService
 
     /**
      * 设置微信公众号配置
-     * @param int $site_id
      * @param array $data
      * @return SysConfig|bool|Model
      */
-    public function setWechatConfig(int $site_id, array $data){
+    public function setWechatConfig(array $data){
         $config = [
             'wechat_name' => $data['wechat_name'] ?? '',//公众号名称
             'wechat_original' => $data['wechat_original'] ?? '',//原始ID
@@ -62,7 +60,7 @@ class CoreWechatConfigService extends BaseCoreService
             'encoding_aes_key'  => $data['encoding_aes_key'] ?? '',
             'encryption_type'   => $data['encryption_type'] ?? '',
         ];
-        return (new CoreConfigService())->setConfig($site_id, ConfigKeyDict::WECHAT, $config);
+        return (new CoreConfigService())->setConfig(ConfigKeyDict::WECHAT, $config);
     }
 
 
@@ -70,15 +68,15 @@ class CoreWechatConfigService extends BaseCoreService
      *查询微信需要的静态信息
      * @return array
      */
-    public function getWechatStaticInfo($site_id){
+    public function getWechatStaticInfo(){
 //        $domain = request()->domain();
-        $wap_domain = (new CoreSysConfigService())->getSceneDomain($site_id)['wap_url'] ?? '';
+        $wap_domain = (new CoreSysConfigService())->getSceneDomain()['wap_url'] ?? '';
         $wap_domain_array = explode('/', $wap_domain);
-        if(count($wap_domain_array) > 2){
-            $wap_domain = $wap_domain_array[0].'/'.$wap_domain_array[1].'/'.$wap_domain_array[2];
-        }
+//        if(count($wap_domain_array) > 2){
+//            $wap_domain = $wap_domain_array[0].'/'.$wap_domain_array[1].'/'.$wap_domain_array[2];
+//        }
         return [
-            'serve_url' => (string)url('/api/wechat/serve/'.$site_id, [],'',true),
+            'serve_url' => (string)url('/api/wechat/serve', [],'',true),
             'business_domain'   => $wap_domain,
             'js_secure_domain'  => $wap_domain,
             'web_auth_domain'   => $wap_domain,

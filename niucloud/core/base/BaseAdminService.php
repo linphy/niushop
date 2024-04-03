@@ -19,17 +19,12 @@ namespace core\base;
 class BaseAdminService extends BaseService
 {
 
-    protected $site_id;
     protected $username;
     protected $uid;
-
-    protected $app_type;
 
     public function __construct()
     {
         parent::__construct();
-        $this->app_type = $this->request->appType();
-        $this->site_id = $this->request->siteId();
         $this->username = $this->request->username();
         $this->uid = $this->request->uid();
     }

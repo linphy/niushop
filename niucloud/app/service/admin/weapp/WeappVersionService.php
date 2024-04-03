@@ -36,21 +36,19 @@ class WeappVersionService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $uploading = $this->model->where([ ['site_id', '=', $this->site_id], ['status', '=', 0] ])->field('id')->findOrEmpty();
+        $uploading = $this->model->where([ ['status', '=', 0] ])->field('id')->findOrEmpty();
         if (!$uploading->isEmpty()) throw new CommonException('WEAPP_UPLOADING');
 
-        $version_no = $this->model->where([ ['site_id', '=', $this->site_id] ])->order('version_no desc')->field('version_no')->findOrEmpty()->toArray()['version_no'] ?? 0;
+        $version_no = $this->model->order('version_no desc')->field('version_no')->findOrEmpty()->toArray()['version_no'] ?? 0;
         $version_no += 1;
         $version = "1.0.{$version_no}";
 
         $upload_res = (new CoreWeappCloudService())->uploadWeapp([
-            'site_id' => $this->site_id,
             'version' => $version,
             'desc' => $data['desc'] ?? ''
         ]);
 
         $res = $this->model->create([
-            'site_id' => $this->site_id,
             'version' => $version,
             'version_no' => $version_no,
             'desc' => $data['desc'] ?? '',
@@ -77,7 +75,6 @@ class WeappVersionService extends BaseAdminService
     {
         $field = 'id, version, version_no, desc, create_time, status, fail_reason, task_key';
         $order = 'version_no desc';
-        $where[] = ['site_id', '=', $this->site_id];
         $search_model = $this->model->where($where)->field($field)->order($order)->append(['status_name']);
         return $this->pageQuery($search_model);
     }
@@ -92,7 +89,7 @@ class WeappVersionService extends BaseAdminService
     {
         $data['status'] = 0;
         $data['update_time'] = time();
-        $this->model->where([['id', '=', $id], ['site_id', '=', $this->site_id] ])->create($data);
+        $this->model->where([['id', '=', $id] ])->create($data);
         return true;
     }
 
@@ -102,7 +99,7 @@ class WeappVersionService extends BaseAdminService
      * @return true
      */
     public function del(int $id){
-        $this->model->where([['id', '=', $id], ['site_id', '=', $this->site_id]])->delete();
+        $this->model->where([['id', '=', $id]])->delete();
         return true;
     }
 

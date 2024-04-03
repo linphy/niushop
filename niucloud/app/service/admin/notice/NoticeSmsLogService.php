@@ -32,7 +32,7 @@ class NoticeSmsLogService extends BaseAdminService
      */
     public function getPage($where)
     {
-        return (new CoreNoticeSmsLogService())->getPage($this->site_id, $where);
+        return (new CoreNoticeSmsLogService())->getPage($where);
     }
 
     /**
@@ -42,6 +42,6 @@ class NoticeSmsLogService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        return (new CoreNoticeSmsLogService())->getInfo($this->site_id, $id);
+        return (new CoreNoticeSmsLogService())->getInfo($id);
     }
 }

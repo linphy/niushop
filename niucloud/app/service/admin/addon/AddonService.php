@@ -178,20 +178,6 @@ class AddonService extends BaseAdminService
 
 
     /**
-     * 获取站点拥有的应用列表
-     * @param int $site_id
-     * @return array|mixed|string|void
-     * @throws DbException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function getAddonListBySiteId(int $site_id){
-        $addon_keys = $this->getAddonKeysBySiteId($site_id);
-        return $this->getAddonListByKeys($addon_keys);
-
-
-    }
-    /**
      * 应用key缓存
      * @param $keys
      * @return mixed|string
@@ -214,15 +200,6 @@ class AddonService extends BaseAdminService
             },
             self::$cache_tag_name
         );
-    }
-
-    /**
-     * 获取站点支持的应用插件
-     * @param int $site_id
-     * @return array
-     */
-    public function getAddonKeysBySiteId(int $site_id){
-        return (new CoreSiteService())->getAddonKeysBySiteId($site_id);
     }
 
     /**

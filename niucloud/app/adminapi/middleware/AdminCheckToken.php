@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -12,7 +12,6 @@
 namespace app\adminapi\middleware;
 
 use app\Request;
-use app\service\admin\auth\AuthService;
 use app\service\admin\auth\LoginService;
 use Closure;
 
@@ -23,17 +22,13 @@ use Closure;
  */
 class AdminCheckToken
 {
-    public function handle(Request $request, Closure $next, bool $is_home = false)
+    public function handle(Request $request, Closure $next)
     {
         //通过配置来设置系统header参数
         $token = $request->adminToken();
         $token_info = (new LoginService())->parseToken($token);
         $request->uid($token_info['uid']);
         $request->username($token_info['username']);
-        if(!$is_home){
-            //校对当前登录的用户是否拥有这个站点的管理权限
-            (new AuthService())->checkSiteAuth($request);
-        }
         return $next($request);
     }
 }

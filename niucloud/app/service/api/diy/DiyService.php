@@ -56,9 +56,7 @@ class DiyService extends BaseApiService
             $info = $start_up_page;
             return $info;
         } else {
-            $condition = [
-                [ 'site_id', '=', $this->site_id ]
-            ];
+            $condition = [];
             if (!empty($params[ 'id' ])) {
                 $condition[] = [ 'id', '=', $params[ 'id' ] ];
             } elseif (!empty($params[ 'name' ])) {
@@ -66,7 +64,7 @@ class DiyService extends BaseApiService
                 $condition[] = [ 'is_default', '=', 1 ];
             }
 
-            $field = 'id,site_id,title,name,type,template, mode,value,is_default,share,visit_count';
+            $field = 'id,title,name,type,template, mode,value,is_default,share,visit_count';
 
             $info = $this->model->field($field)->where($condition)->findOrEmpty()->toArray();
             if (empty($info)) {
@@ -75,7 +73,6 @@ class DiyService extends BaseApiService
                     $page_data = $this->getFirstPageData($params[ 'name' ]);
                     if (!empty($page_data)) {
                         $info = [
-                            'site_id' => $this->site_id,
                             'title' => $page_data[ 'title' ],
                             'name' => $page_data[ 'type' ],
                             'type' => $page_data[ 'type' ],

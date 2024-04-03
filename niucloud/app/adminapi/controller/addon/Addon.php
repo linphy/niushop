@@ -158,15 +158,17 @@ class Addon extends BaseAdminController
     public function getInstallList(){
         return success(data:(new AddonService())->getInstallList());
     }
-
     /**
      * 查询已安装有效应用
      */
     public function getAddonList()
     {
-        return success((new CoreAddonService())->getInstallAddonList());
+        return success((new CoreAddonService())->getAddonMemuList());
     }
 
+    public function getAddonByKey($key){
+        return success((new AddonService())->getInfoByKey($key));
+    }
     /**
      * 插件类型
      * @return Response

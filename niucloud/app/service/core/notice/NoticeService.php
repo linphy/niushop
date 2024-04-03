@@ -31,16 +31,15 @@ class NoticeService extends BaseCoreService
 
     /**
      * 消息发送
-     * @param $site_id
      * @param $key
      * @param $data
      * @return false|mixed
      */
-    public static function send($site_id, $key, $data){
+    public static function send($key, $data){
 
-        $template = (new CoreNoticeService())->getInfo($site_id, $key);
+        $template = (new CoreNoticeService())->getInfo($key);
         if(empty($template)) return false;
 
-        return Notice::dispatch(['site_id' => $site_id, 'key' => $key, 'data' => $data, 'template' => $template], is_async:$template['async']);
+        return Notice::dispatch(['key' => $key, 'data' => $data, 'template' => $template], is_async:$template['async']);
     }
 }

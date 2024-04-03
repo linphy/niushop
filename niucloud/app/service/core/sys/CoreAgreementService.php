@@ -31,22 +31,19 @@ class CoreAgreementService extends BaseCoreService
 
     /**
      * 获取协议内容
-     * @param int $site_id
      * @param string $key
      * @return array
      */
-    public function getAgreement(int $site_id, string $key)
+    public function getAgreement(string $key)
     {
         if(!array_key_exists($key, AgreementDict::getType())) throw new CommonException('AGREEMENT_TYPE_NOT_EXIST');
         $where = array(
             ['agreement_key', '=', $key],
-            ['site_id', '=', $site_id]
         );
-        $info = $this->model->where($where)->field('site_id, agreement_key, title, content, create_time, update_time')->append(['agreement_key_name'])->findOrEmpty()->toArray();
+        $info = $this->model->where($where)->field('agreement_key, title, content, create_time, update_time')->append(['agreement_key_name'])->findOrEmpty()->toArray();
         if(empty($info))
         {
             $info = [
-                'site_id' => $site_id,
                 'agreement_key' => $key,
                 'agreement_key_name' => AgreementDict::getType()[$key] ?? '',
                 'title' => '',
@@ -58,37 +55,33 @@ class CoreAgreementService extends BaseCoreService
         return $info;
     }
 
-    public function find(int $site_id, string $key)
+    public function find(string $key)
     {
         if(!array_key_exists($key, AgreementDict::getType())) throw new CommonException('AGREEMENT_TYPE_NOT_EXIST');
         $where = array(
             ['agreement_key', '=', $key],
-            ['site_id', '=', $site_id]
         );
         return $this->model->where($where)->findOrEmpty();
     }
     /**
      * 设置协议
-     * @param int $site_id
      * @param string $key
      * @param string $title
      * @param string $content
      * @return bool
      */
-    public function setAgreement(int $site_id, string $key, string $title, string $content)
+    public function setAgreement(string $key, string $title, string $content)
     {
         if(!array_key_exists($key, AgreementDict::getType())) throw new CommonException('AGREEMENT_TYPE_NOT_EXIST');
         $where = array(
             ['agreement_key', '=', $key],
-            ['site_id', '=', $site_id]
         );
         $data = array(
-            'site_id' => $site_id,
             'agreement_key' => $key,
             'title' => $title,
             'content' => $content
         );
-        $agreement = $this->find($site_id, $key);
+        $agreement = $this->find($key);
         if($agreement->isEmpty()){
             $data['create_time'] = time();
             $res = $this->model->create($data);

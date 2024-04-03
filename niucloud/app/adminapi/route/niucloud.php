@@ -44,6 +44,8 @@ Route::group('niucloud', function () {
 
     // 云编译
     Route::post('build', 'niucloud.Cloud/build');
+    // 云编译
+    Route::post('build/install', 'niucloud.Cloud/installBuild');
     // 获取编译任务
     Route::get('build', 'niucloud.Cloud/getBuildTask');
     // 获取云编译
@@ -52,6 +54,9 @@ Route::group('niucloud', function () {
     Route::post('build/clear', 'niucloud.Cloud/clearBuildTask');
     // 编译前环境检测
     Route::get('build/check', 'niucloud.Cloud/buildPreCheck');
+    // 申请体验
+    Route::get('apply/experience', 'niucloud.Module/applyExperience');
+
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

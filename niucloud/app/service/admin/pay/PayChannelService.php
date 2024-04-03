@@ -54,11 +54,10 @@ class PayChannelService extends BaseAdminService
         if ($channel != 'transfer') {
             if (!array_key_exists($channel, ChannelDict::getType())) throw new PayException('CHANNEL_MARK_INVALID');
         }
-        $pay_channel = $this->core_pay_channel_service->find($this->site_id, $where);
+        $pay_channel = $this->core_pay_channel_service->find($where);
         if ($pay_channel->isEmpty()) {
             $data['channel'] = $channel;
             $data['type'] = $type;
-            $data['site_id'] = $this->site_id;
             $data['config'] = $this->getConfigByPayType($data['config'], $type);
             $res = $this->model->create($data);
         } else {
@@ -78,9 +77,7 @@ class PayChannelService extends BaseAdminService
     public function getChannelList()
     {
         $channel_list = PayChannelDict::getPayChannel();
-        $where = array(
-            'site_id' => $this->site_id,
-        );
+        $where = [];
         $pay_channel_list_temp = $this->model->where($where)->field('type, channel, config, sort, status')->select()->toArray();
 
         $pay_channel_list = [];
@@ -115,7 +112,6 @@ class PayChannelService extends BaseAdminService
     public function getListByChannel(string $channel)
     {
         $where = array(
-            'site_id' => $this->site_id,
             'channel' => $channel
         );
         return $this->model->where($where)->field('type, channel, config, sort, status')->select()->toArray();

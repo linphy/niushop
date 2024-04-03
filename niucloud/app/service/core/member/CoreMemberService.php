@@ -13,6 +13,7 @@ namespace app\service\core\member;
 
 use app\model\member\Member;
 use app\model\site\Site;
+use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -34,13 +35,12 @@ class CoreMemberService extends BaseCoreService
     }
     /**
      * 修改
-     * @param int $site_id
      * @param int $member_id
      * @param string $field
      * @param $data
      * @return Member
      */
-    public function modify(int $site_id, int $member_id, string $field, $data)
+    public function modify(int $member_id, string $field, $data)
     {
         $field_name = match ($field) {
             'nickname' => 'nickname',
@@ -50,7 +50,6 @@ class CoreMemberService extends BaseCoreService
             'sex' => 'sex',
         };
         $where = array(
-            ['site_id', '=', $site_id],
             ['member_id', '=', $member_id],
         );
         return $this->model->where($where)->update([$field_name => $data]);
@@ -58,13 +57,11 @@ class CoreMemberService extends BaseCoreService
 
     /**
      * 通过会员查询openid
-     * @param int $site_id
      * @param int $member_id
      * @return array
      */
-    public function getInfoByMemberId(int $site_id, int $member_id, string $field = '*'){
+    public function getInfoByMemberId(int $member_id, string $field = '*'){
         $where = array(
-            ['site_id', '=', $site_id],
             ['member_id', '=', $member_id]
         );
         return $this->model->where($where)->field($field)->findOrEmpty()->toArray();
@@ -72,13 +69,11 @@ class CoreMemberService extends BaseCoreService
 
     /**
      * 查询会员实例
-     * @param int $site_id
      * @param int $member_id
      * @return Member|array|mixed|Model
      */
-    public function find(int $site_id, int $member_id){
+    public function find(int $member_id){
         $where = array(
-            ['site_id', '=', $site_id],
             ['member_id', '=', $member_id]
         );
         return $this->model->where($where)->findOrEmpty();
@@ -91,9 +86,6 @@ class CoreMemberService extends BaseCoreService
      */
     public function getCount(array $where = []){
         $condition = array();
-        if(!empty($where['site_id'])){
-            $condition[] = ['site_id', '=', $where['site_id']];
-        }
         if(!empty($where['create_time'])){
             $condition[] = ['create_time', 'between', $where['create_time']];
         }
@@ -108,55 +100,62 @@ class CoreMemberService extends BaseCoreService
 
     /**
      * 生成会员编码
-     * @param int $site_id
+
      * @return string
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function createMemberNo(int $site_id) {
-        $site = (new Site())->where([ ['site_id', '=', $site_id] ])->find();
-        $config = (new CoreMemberConfigService())->getMemberConfig($site_id);
+    public static function createMemberNo() {
+        $no = (new self())->getMemberNoConfig();
+        $no += 1;
+        $config = (new CoreMemberConfigService())->getMemberConfig();
 
-        $no = $site->member_no + 1;
         $member_no = $config['prefix'] . ( strlen($config['prefix']) > $config['length'] ? $no : str_pad($no, ($config['length'] - strlen($config['prefix'])), "0", STR_PAD_LEFT) );
 
-        $member = (new Member())->where([ ['site_id', '=', $site_id], ['member_no', '=', $member_no] ])->findOrEmpty();
+        $member = (new Member())->where([ ['member_no', '=', $member_no] ])->findOrEmpty();
 
         if ($member->isEmpty()) {
             return $member_no;
         } else {
             // 变更站点最大会员码值
-            $site->save(['member_no' => $no ]);
-            return self::createMemberNo($site_id);
+            (new self())->setMemberNoConfig($no);
+            return self::createMemberNo();
         }
     }
 
     /**
      * 设置会员会员码
-     * @param int $site_id
      * @param int $member_id
      * @return void
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function setMemberNo(int $site_id, int $member_id) {
-        $site = (new Site())->where([ ['site_id', '=', $site_id] ])->find();
-        $config = (new CoreMemberConfigService())->getMemberConfig($site_id);
+    public static function setMemberNo(int $member_id) {
+        $no = (new self())->getMemberNoConfig();
+        $no += 1;
+        $config = (new CoreMemberConfigService())->getMemberConfig();
 
-        $no = $site->member_no + 1;
         $member_no = $config['prefix'] . ( strlen($config['prefix']) > $config['length'] ? $no : str_pad($no, ($config['length'] - strlen($config['prefix'])), "0", STR_PAD_LEFT) );
 
-        $member = (new Member())->where([ ['site_id', '=', $site_id], ['member_no', '=', $member_no] ])->findOrEmpty();
+        $member = (new Member())->where([ ['member_no', '=', $member_no] ])->findOrEmpty();
 
         // 变更站点最大会员码值
-        $site->save(['member_no' => $no ]);
+        (new self())->setMemberNoConfig($no);
 
         if ($member->isEmpty()) {
-            (new Member())->update([ 'member_no' => $member_no ], [ ['site_id', '=', $site_id], ['member_id', '=', $member_id] ]);
+            (new Member())->update([ 'member_no' => $member_no ], [ ['member_id', '=', $member_id] ]);
         } else {
-            self::setMemberNo($site_id, $member_id);
+            self::setMemberNo($member_id);
         }
+    }
+
+    public function setMemberNoConfig(int $no) {
+        return (new CoreConfigService())->setConfig('MEMBER_NO', ['no' => $no]);
+    }
+
+    public function getMemberNoConfig() {
+        return round((new CoreConfigService())->getConfigValue('MEMBER_NO')['no'] ?? 0);
     }
 }

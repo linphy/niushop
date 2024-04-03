@@ -28,7 +28,6 @@ class Serve extends BaseController
 
     /**
      * 接收消息并推送
-     * @param $site_id
      * @return Response
      * @throws BadRequestException
      * @throws InvalidArgumentException
@@ -36,7 +35,7 @@ class Serve extends BaseController
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function serve($site_id){
+    public function serve(){
 
         return (new WechatServeService())->serve();
     }

@@ -11,7 +11,9 @@
 
 namespace app\service\core\niucloud;
 
+use app\dict\sys\ConfigKeyDict;
 use app\service\admin\niucloud\NiucloudService;
+use app\service\core\sys\CoreConfigService;
 use core\util\niucloud\BaseNiucloudClient;
 use core\util\niucloud\http\Response;
 use GuzzleHttp\Exception\GuzzleException;
@@ -122,5 +124,22 @@ class CoreModuleService extends BaseNiucloudClient
      */
     public function getFrameworkVersionList() {
         return $this->httpGet('store/framework/version', ['product_key' => self::PRODUCT])['data'] ?? false;
+    }
+
+    /**
+     * 申请体验
+     * @throws GuzzleException
+     */
+    public function applyExperience() {
+        $data = $this->httpGet('apply/experience', ['product_key' => self::PRODUCT])['data'] ?? [];
+        if (!empty($data)) {
+            (new CoreConfigService())->setConfig(ConfigKeyDict::NIUCLOUD_CONFIG, [
+                'auth_code' => $data['auth_code'],
+                'auth_secret' => $data['auth_secret']
+            ]);
+            return $data;
+        } else {
+            return false;
+        }
     }
 }

@@ -38,7 +38,7 @@ class AppletVersionSiteService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        return $this->core_applet_site_version_service->getPage($this->site_id, $where);
+        return $this->core_applet_site_version_service->getPage($where);
     }
 
     /**
@@ -48,7 +48,7 @@ class AppletVersionSiteService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        return $this->core_applet_site_version_service->getInfo($this->site_id, $id);
+        return $this->core_applet_site_version_service->getInfo( $id);
     }
 
     /**
@@ -60,7 +60,7 @@ class AppletVersionSiteService extends BaseAdminService
      * @throws ModelNotFoundException
      */
     public function getLastVersion(string $type){
-        return $this->core_applet_site_version_service->getLastVersion($this->site_id, $type);
+        return $this->core_applet_site_version_service->getLastVersion( $type);
     }
 
     /**
@@ -69,6 +69,6 @@ class AppletVersionSiteService extends BaseAdminService
      * @return null
      */
     public function getUpgradeVersion(string $type){
-        return $this->core_applet_site_version_service->getUpgradeVersion($this->site_id, $type);
+        return $this->core_applet_site_version_service->getUpgradeVersion( $type);
     }
 }

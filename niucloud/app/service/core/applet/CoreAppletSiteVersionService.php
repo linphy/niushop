@@ -34,44 +34,37 @@ class CoreAppletSiteVersionService extends BaseCoreService
 
     /**
      * 版本升级列表
-     * @param int $site_id
      * @param array $where
      * @return array
      */
-    public function getPage(int $site_id, array $where = [])
+    public function getPage(array $where = [])
     {
-        if ($site_id > 0) {
-            $where[] = ['site_id', '=', $site_id];
-        }
-        $field = 'id, site_id, version_id, type, action, version, version_num, create_time';
+        $field = 'id, version_id, type, action, version, version_num, create_time';
         $search_model = $this->model->where($where)->field($field)->order('version_num desc')->with(['appletVersion']);
         return $this->pageQuery($search_model);
     }
 
     /**
      * 获取版本升级信息
-     * @param int $site_id
      * @param int $id
      * @return array
      */
-    public function getInfo(int $site_id, int $id)
+    public function getInfo(int $id)
     {
-        $field = 'id, site_id, version_id, type, action, version, version_num, create_time';
-        return $this->model->where([['id', '=', $id], ['site_id', '=', $site_id]])->field($field)->with(['appletVersion'])->findOrEmpty()->toArray();
+        $field = 'id, version_id, type, action, version, version_num, create_time';
+        return $this->model->where([['id', '=', $id]])->field($field)->with(['appletVersion'])->findOrEmpty()->toArray();
     }
 
     /**
      * 添加版本升级记录
-     * @param int $site_id
      * @param int $version_id
      * @param string $action
      * @return true
      */
-    public function add(int $site_id, int $version_id, string $action)
+    public function add(int $version_id, string $action)
     {
         $version_info = (new CoreAppletVersionService())->getInfo($version_id);
         if (empty($version_info)) throw new CommonException('APPLET_VERSION_NOT_EXISTS');
-        $data['site_id'] = $site_id;
         $data['type'] = $version_info['type'];
         $data['create_time'] = time();
         $data['version_id'] = $version_info['id'];
@@ -84,7 +77,6 @@ class CoreAppletSiteVersionService extends BaseCoreService
 
     /**
      * 获取最后一个下载或升级的版本
-     * @param int $site_id
      * @param string $type
      * @param string $action
      * @return mixed|string
@@ -92,9 +84,9 @@ class CoreAppletSiteVersionService extends BaseCoreService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getLastVersion(int $site_id, string $type, string $action = '')
+    public function getLastVersion(string $type, string $action = '')
     {
-        $where = [['site_id', '=', $site_id], ['type', '=', $type]];
+        $where = [ ['type', '=', $type]];
         $list = $this->model->where($where)->with(['appletVersion'])->select()->toArray();
         $list = array_column($list, null, 'version_num');
         ksort($list);
@@ -104,14 +96,13 @@ class CoreAppletSiteVersionService extends BaseCoreService
 
     /**
      * 获取当前站点最新可升级的小程序版本
-     * @param int $site_id
      * @param string $type
      * @return void
      */
-    public function getUpgradeVersion(int $site_id, string $type)
+    public function getUpgradeVersion(string $type)
     {
         //查询下一次升级或下载的版本
-        $version = $this->getLastVersion($site_id, $type);
+        $version = $this->getLastVersion($type);
         $where = [['type', '=', $type]];
         if (!$version) {
             $version_num = version_to_int($version);

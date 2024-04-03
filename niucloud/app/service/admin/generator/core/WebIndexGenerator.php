@@ -326,7 +326,7 @@ class WebIndexGenerator extends BaseGenerator
     {
         $content = '';
         foreach ($this->tableColumn as $column) {
-            if (!$column['is_lists'] || $column['column_name'] == 'site_id') {
+            if (!$column['is_lists']) {
                 continue;
             }
 

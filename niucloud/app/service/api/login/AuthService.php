@@ -38,11 +38,11 @@ class AuthService extends BaseApiService
         $this->model = new Member();
     }
 
-    public function checkSiteAuth(Request $request){
+    public function checkMember(Request $request){
         //如果登录信息非法就报错
         if($this->member_id > 0){
             $member_service = new MemberService();
-            $member_info = $member_service->findMemberInfo(['member_id' => $this->member_id, 'site_id' => $this->site_id]);
+            $member_info = $member_service->findMemberInfo(['member_id' => $this->member_id]);
             if($member_info->isEmpty())
                 throw new AuthException('MEMBER_NOT_EXIST', 401);
         }
@@ -56,35 +56,17 @@ class AuthService extends BaseApiService
      */
     public function checkChannel(Request $request) {
         $channel = $request->getChannel();
-        $site_id = $request->apiSiteId();
 
         switch ($channel) {
             case ChannelDict::H5:
-                $is_open = (int)(new CoreH5Service())->getH5($site_id)['is_open'];
+                $is_open = (int)(new CoreH5Service())->getH5()['is_open'];
                 if (!$is_open) throw new AuthException('SITE_CLOSE_NOT_ALLOW', 402);
                 break;
             case ChannelDict::PC:
-                $is_open = (int)(new CorePcService())->getPc($site_id)['is_open'];
+                $is_open = (int)(new CorePcService())->getPc()['is_open'];
                 if (!$is_open) throw new AuthException('SITE_CLOSE_NOT_ALLOW', 402);
                 break;
         }
-    }
-
-    /**
-     * 检测站点的合法性
-     * @param Request $request
-     * @return true
-     */
-    public function checkSite(Request $request){
-        $site_id = $request->apiSiteId();//todo  可以是依赖传值,也可以通过domain域名来获取site_id
-        $site_info = (new CoreSiteService())->getSiteCache($site_id);
-        if(empty($site_info)) throw new AuthException('SITE_NOT_EXIST');
-        $rule = strtolower(trim($request->rule()->getRule()));
-        if($rule != 'site'){
-            if ($site_info['status'] == SiteDict::CLOSE || $site_info['expire_time'] < time()) throw new AuthException('SITE_CLOSE_NOT_ALLOW', 402);
-        }
-        $request->siteId($site_id);
-        return true;
     }
 
     /**
@@ -96,7 +78,7 @@ class AuthService extends BaseApiService
         public function bindMobile(string $mobile, string $mobile_code){
 
         if(empty($mobile)){
-            $result = (new CoreWeappAuthService())->getUserPhoneNumber($this->site_id, $mobile_code);
+            $result = (new CoreWeappAuthService())->getUserPhoneNumber($mobile_code);
             if(empty($result)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
             $phone_info = $result['phone_info'];
             $mobile = $phone_info['purePhoneNumber'];
@@ -106,13 +88,13 @@ class AuthService extends BaseApiService
             (new LoginService())->checkMobileCode($mobile);
         }
         $member_service = new MemberService();
-        $member = $member_service->findMemberInfo(['member_id' => $this->member_id, 'site_id' => $this->site_id]);
+        $member = $member_service->findMemberInfo(['member_id' => $this->member_id]);
         if($member->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');
 
         $o_mobile = $member['mobile'];//原始手机号
-        if(!empty($o_mobile)) throw new AuthException('MOBILE_IS_BIND_MEMBER');
+        if(!empty($o_mobile) && $o_mobile == $mobile) throw new AuthException('MOBILE_NOT_CHANGE');
 
-        $mobile_member = $member_service->findMemberInfo(['mobile' => $mobile, 'site_id' => $this->site_id]);
+        $mobile_member = $member_service->findMemberInfo(['mobile' => $mobile]);
         if(!$mobile_member->isEmpty()) throw new AuthException('MOBILE_IS_EXIST');
 
 //        if(empty($mobile)) throw new AuthException('MOBILE_NEEDED');//必须填写

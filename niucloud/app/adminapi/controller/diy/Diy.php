@@ -82,7 +82,7 @@ class Diy extends BaseAdminController
             [ "type", "" ],
             [ 'template', '' ],
             [ 'mode', 'diy' ], // 页面展示模式，diy：自定义，fixed：固定
-            [ "value", "" ],
+            [ "value", "", false ],
             [ 'is_default', 0 ],
             [ 'is_change', '' ]
         ]);
@@ -102,9 +102,10 @@ class Diy extends BaseAdminController
         $data = $this->request->params([
             [ "title", "" ],
             [ "name", "" ],
-            [ "value", "" ],
+            [ "value", "", false ],
             [ 'is_change', '' ]
         ]);
+
         $this->validate($data, 'app\validate\diy\Diy.edit');
         ( new DiyService() )->edit($id, $data);
         return success('MODIFY_SUCCESS');
@@ -158,6 +159,7 @@ class Diy extends BaseAdminController
         $diy_service = new DiyService();
         return success($diy_service->getLink());
     }
+
     /**
      * 获取页面模板
      * @return Response

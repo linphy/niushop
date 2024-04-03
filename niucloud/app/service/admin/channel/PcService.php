@@ -42,7 +42,7 @@ class PcService extends BaseAdminService
         $data = [
             'is_open' => $value['is_open']
         ];
-        return $this->core_config_service->setConfig($this->site_id,ChannelDict::PC, $data);
+        return $this->core_config_service->setConfig(ChannelDict::PC, $data);
     }
 
     /**
@@ -50,6 +50,6 @@ class PcService extends BaseAdminService
      * @return mixed
      */
     public function getPc(){
-        return (new CorePcService())->getPc($this->site_id);
+        return (new CorePcService())->getPc();
     }
 }

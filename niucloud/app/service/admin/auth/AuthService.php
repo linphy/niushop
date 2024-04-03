@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -11,15 +11,12 @@
 
 namespace app\service\admin\auth;
 
-use app\dict\site\SiteDict;
-use app\model\sys\SysUserRole;
 use app\Request;
+use app\service\admin\addon\AddonService;
 use app\service\admin\site\SiteUserService;
 use app\service\admin\sys\MenuService;
 use app\service\admin\sys\RoleService;
-use app\service\admin\user\UserRoleService;
 use app\service\admin\user\UserService;
-use app\service\core\site\CoreSiteService;
 use core\base\BaseAdminService;
 use core\exception\AuthException;
 use Exception;
@@ -31,28 +28,6 @@ use Exception;
  */
 class AuthService extends BaseAdminService
 {
-    /**
-     * 校验用户和传入站点是否存在从属关系
-     * @param Request $request
-     * @return true
-     */
-    public function checkSiteAuth(Request $request){
-        $site_id = $request->adminSiteId();
-        //todo  将站点编号转化为站点id
-        $site_info = (new CoreSiteService())->getSiteCache($site_id);
-        //站点不存在
-        if(empty($site_info)) throw new AuthException('SITE_NOT_EXIST');
-        //没有当前站点的信息
-        if (!AuthService::isSuperAdmin()) {
-            if(!$this->getAuthRole($site_id)) throw new AuthException('NO_SITE_PERMISSION');
-        }
-
-        $request->siteId($site_id);
-        $request->appType($site_info['app_type']);
-        return true;
-    }
-
-
 
     /**
      * 校验权限
@@ -64,14 +39,9 @@ class AuthService extends BaseAdminService
 
         $rule = strtolower(trim($request->rule()->getRule()));
         $method = strtolower(trim($request->method()));
-        $site_info = (new AuthSiteService())->getSiteInfo();
-        if($method != 'get'){
-            if($site_info['status'] == SiteDict::EXPIRE) throw new AuthException('SITE_EXPIRE_NOT_ALLOW');
-            if($site_info['status'] == SiteDict::CLOSE) throw new AuthException('SITE_CLOSE_NOT_ALLOW');
-        }
 
         $menu_service = new MenuService();
-        $all_menu_list = $menu_service->getAllApiList($this->app_type);
+        $all_menu_list = $menu_service->getAllApiList();
         //先判断当前访问的接口是否收到权限的限制
         $method_menu_list = $all_menu_list[$method] ?? [];
         if(!in_array($rule, $method_menu_list))
@@ -86,65 +56,44 @@ class AuthService extends BaseAdminService
     }
 
     /**
-     * 获取授权用户的权限信息
-     * @return mixed
-     */
-    public function getAuthRole(int $site_id){
-        $user_role_service = new UserRoleService();
-        return $user_role_service->getUserRole($site_id, $this->uid);
-    }
-
-    /**
      * 当前授权用户接口权限
      * @return array
      */
     public function getAuthApiList(){
-        if (AuthService::isSuperAdmin()) {
-            $is_admin = 1;
-        } else {
-            $user_role_info = $this->getAuthRole($this->site_id);
-            if (empty($user_role_info))
-                return [];
+        $user_info = ( new UserService())->getUserCache($this->uid);
+        if(empty($user_info))
+            return [];
 
-            $is_admin = $user_role_info['is_admin'];//是否是超级管理员组
-        }
-
+        $is_admin = $user_info['is_admin'];//是否是超级管理员组
         $menu_service = new MenuService();
         if($is_admin){//查询全部启用的权限
             //获取站点信息
-            return (new AuthSiteService())->getApiList(1);
+            return  (new MenuService())->getAllApiList(1);
         }else{
-            $user_role_ids = $user_role_info['role_ids'];
+            $user_role_ids = $user_info['role_ids'];
             $role_service = new RoleService();
-            $menu_keys = $role_service->getMenuIdsByRoleIds($this->site_id, $user_role_ids);
-
-            return $menu_service->getApiListByMenuKeys($menu_keys, $this->app_type);
+            $menu_keys = $role_service->getMenuKeysByRoleIds($user_role_ids ?? []);
+            return $menu_service->getApiListByMenuKeys($menu_keys);
         }
-
     }
 
     /**
      * 当前授权用户菜单权限
      * @return array
      */
-    public function getAuthMenuList(int $is_tree = 0, $addon = 'all'){
-        if (AuthService::isSuperAdmin()) {
-            $is_admin = 1;
-        } else {
-            $user_role_info = $this->getAuthRole($this->site_id);
-            if(empty($user_role_info))
-                return [];
-            $is_admin = $user_role_info['is_admin'];//是否是超级管理员组
-        }
-
+    public function getAuthMenuList(int $is_tree = 0, string $addon = 'all'){
+        $user_info = ( new UserService())->getUserCache($this->uid);
+        if(empty($user_info))
+            return [];
+        $is_admin = $user_info['is_admin'];//是否是超级管理员组
         $menu_service = new MenuService();
         if($is_admin){//查询全部启用的权限
-            return (new AuthSiteService())->getMenuList($is_tree, 1, $addon);
+            return (new MenuService())->getAllMenuList($is_tree, 1, $addon);
         }else{
-            $user_role_ids = $user_role_info['role_ids'];
+            $user_role_ids = $user_info['role_ids'];
             $role_service = new RoleService();
-            $menu_keys = $role_service->getMenuIdsByRoleIds($this->site_id, $user_role_ids);
-            return $menu_service->getMenuListByMenuKeys($this->site_id, $menu_keys, $this->app_type, $is_tree, $addon);
+            $menu_keys = $role_service->getMenuKeysByRoleIds($user_role_ids ?? []);
+            return $menu_service->getMenuListByMenuKeys($menu_keys, $is_tree, $addon);
         }
     }
 
@@ -152,7 +101,7 @@ class AuthService extends BaseAdminService
      * 获取授权用户信息
      */
     public function getAuthInfo(){
-        return (new SiteUserService())->getInfo($this->uid);
+        return ( new UserService())->getUserCache($this->uid);
     }
 
     /**
@@ -182,15 +131,39 @@ class AuthService extends BaseAdminService
     }
 
     /**
-     * 是否是超级管理员
-     * @return bool
+     * 获取当前账号授权的应用列表
+     * @return array|mixed|string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function isSuperAdmin() {
-        return !(new SysUserRole())->where([
-            ['uid', '=', (new self())->uid ],
-            ['site_id', '=', request()->defaultSiteId()],
-            ['is_admin', '=', 1]
-        ])->field('id')->findOrEmpty()->isEmpty();
+    public function getAuthAddonList($data= []){
+        $user_info = ( new UserService())->getUserCache($this->uid);
+        if(empty($user_info))
+            return [];
+        $is_admin = $user_info['is_admin'];//是否是超级管理员组
+        if($is_admin){//查询全部启用的权限
+            if(empty($data['type'])){
+                return (new AddonService())->getInstallAddonList($data);
+            }else{
+                return (new AddonService())->getInstallStarAddonList($data);
+            }
+        }else{
+            $user_role_ids = $user_info['role_ids'];
+            $role_service = new RoleService();
+            $addon_keys = $role_service->getAddonKeysByRoleIds($user_role_ids ?? []);
+            if(empty($data['type'])){
+                return (new AddonService())->getAddonListByKeys($addon_keys, $data);
+            }else{
+                return (new AddonService())->getStatAddonLists($addon_keys, $data);
+            }
+        }
     }
 
+    /**
+     * 应用插件加星
+     */
+    public function setAddonStat($key){
+        return (new AddonService())->setAddonStat($key);
+    }
 }

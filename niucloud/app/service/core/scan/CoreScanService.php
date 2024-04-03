@@ -33,13 +33,12 @@ class CoreScanService extends BaseCoreService
 
     /**
      * 扫码生成
-     * @param int $site_id
      * @param string $action
      * @param array $data
      * @param int|null $expire
      * @return array|string|string[]
      */
-    public function scan(int $site_id, string $action, array $data, int $expire = null){
+    public function scan(string $action, array $data, int $expire = null){
         $key = str_replace('==','', md5(uniqid(null, true)));
         $cache_name = self::$cache_name.$key;
         $data['status'] = ScanDict::WAIT;
@@ -52,12 +51,11 @@ class CoreScanService extends BaseCoreService
 
     /**
      * 更新扫码信息
-     * @param int $site_id
      * @param string $key
      * @param array $data
      * @return true
      */
-    public function actionByScan(int $site_id, string $key, array $data){
+    public function actionByScan(string $key, array $data){
         $cache_name = self::$cache_name.$key;
         $cache =  Cache::get($cache_name);
         Log::write('scan_log_'.$key);
@@ -71,11 +69,10 @@ class CoreScanService extends BaseCoreService
 
     /**
      * 校验扫码状态
-     * @param int $site_id
      * @param string $key
      * @return mixed
      */
-    public function checkScan(int $site_id, string $key){
+    public function checkScan(string $key){
         $cache_name = self::$cache_name.$key;
         $cache =  Cache::get($cache_name);
         if(empty($cache)) throw new CommonException('QRCODE_EXPIRE');

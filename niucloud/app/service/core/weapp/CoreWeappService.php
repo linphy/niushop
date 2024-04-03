@@ -13,8 +13,8 @@ namespace app\service\core\weapp;
 
 use core\base\BaseCoreService;
 use core\exception\WechatException;
-use EasyWeChat\Factory;
-use EasyWeChat\MiniProgram\Application;
+use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
+use EasyWeChat\MiniApp\Application;
 
 
 /**
@@ -26,59 +26,54 @@ class CoreWeappService extends BaseCoreService
 {
     /**
      * 获取小程序的handle
-     * @param int $site_id
      * @return Application
+     * @throws InvalidArgumentException
      */
-    public static function app(int $site_id)
+    public static function app()
     {
         $core_weapp_service = new CoreWeappConfigService();
-        $weapp_config = $core_weapp_service->getWeappConfig($site_id);
+        $weapp_config = $core_weapp_service->getWeappConfig();
         if(empty($weapp_config['app_id']) || empty($weapp_config['app_secret']))
             throw new WechatException('WEAPP_NOT_EXIST');//公众号未配置
         $config = array(
             'app_id' => $weapp_config['app_id'],
             'secret' => $weapp_config['app_secret'],
-            // 指定 API 调用返回结果的类型：array(default)/collection/object/raw/自定义类名
-            'response_type' => 'array',
-            /**
-             * 日志配置
-             * level: 日志级别, 可选为：debug/info/notice/warning/error/critical/alert/emergency
-             * path：日志文件位置(绝对路径!!!)，要求可写权限
-             */
-            'log' => [
-                'default' => env('app_debug', false) ? 'dev' : 'prod', // 默认使用的 channel，生产环境可以改为下面的 prod
-                'channels' => [
-                    // 测试环境
-                    'dev' => [
-                        'driver' => 'single',
-                        'path' => app()->getRootPath() . 'runtime'.DIRECTORY_SEPARATOR.'weapp'.DIRECTORY_SEPARATOR.'dev'.DIRECTORY_SEPARATOR . date('Ym') . DIRECTORY_SEPARATOR . date('d') . '.log',
-                        'level' => 'debug',
-                    ],
-                    // 生产环境
-                    'prod' => [
-                        'driver' => 'daily',
-                        'path' => app()->getRootPath() . 'runtime'.DIRECTORY_SEPARATOR.'weapp'.DIRECTORY_SEPARATOR.'dev'.DIRECTORY_SEPARATOR . date('Ym') . DIRECTORY_SEPARATOR . date('d') . '.log',
-                        'level' => 'info',
-                    ],
-                ],
-            ],
 
             /**
              * 接口请求相关配置，超时时间等，具体可用参数请参考：
-             * http://docs.guzzlephp.org/en/stable/request-config.html
-             * - retries: 重试次数，默认 1，指定当 http 请求失败时重试的次数。
-             * - retry_delay: 重试延迟间隔（单位：ms），默认 500
-             * - log_template: 指定 HTTP 日志模板，请参考：https://github.com/guzzle/guzzle/blob/master/src/MessageFormatter.php
+             * https://github.com/symfony/symfony/blob/5.3/src/Symfony/Contracts/HttpClient/HttpClientInterface.php
              */
             'http' => [
-                'throw' => true,//默认不抛出,还是有系统业务决定是否抛出
-                'max_retries' => 1,
-                'retry_delay' => 500,
+                'throw'  => true, // 状态码非 200、300 时是否抛出异常，默认为开启
                 'timeout' => 5.0,
                 // 'base_uri' => 'https://api.weixin.qq.com/', // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
+
+                'retry' => true, // 使用默认重试配置
+                //  'retry' => [
+                //      // 仅以下状态码重试
+                //      'status_codes' => [429, 500]
+                //       // 最大重试次数
+                //      'max_retries' => 3,
+                //      // 请求间隔 (毫秒)
+                //      'delay' => 1000,
+                //      // 如果设置，每次重试的等待时间都会增加这个系数
+                //      // (例如. 首次:1000ms; 第二次: 3 * 1000ms; etc.)
+                //      'multiplier' => 3
+                //  ],
             ],
         );
-        return Factory::miniProgram($config);
+        return new Application($config);
+    }
+
+
+    /**
+     * 微信小程序实例接口调用
+     * @return \EasyWeChat\Kernel\HttpClient\AccessTokenAwareClient
+     * @throws InvalidArgumentException
+     */
+    public static function appApiClient()
+    {
+        return self::app()->getClient();
     }
 
 }

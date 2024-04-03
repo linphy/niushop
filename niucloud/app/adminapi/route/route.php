@@ -17,7 +17,7 @@ use think\facade\Route;
  */
 Route::group(function () {
     //用户登录
-    Route::get('login/:app_type', 'login.Login/login');
+    Route::get('login', 'login.Login/login');
 
     //登录注册设置
     Route::get('login/config', 'login.Config/getConfig');

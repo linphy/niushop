@@ -8,7 +8,7 @@ return [
 			"style": {
 				"navigationBarTitleText": "%{{addon_name}}.pages.hello_world.index%"
 			}
-		}
+		},
         // PAGE_END
 EOT
 ];

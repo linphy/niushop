@@ -33,9 +33,9 @@ class FetchService extends BaseApiService
      */
     public function image(string $url){
 
-        $dir = $this->root_path.'/'.'image'.'/'.$this->site_id.'/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path.'/'.'image'.'/'.date('Ym').'/'.date('d');
         $core_upload_service = new CoreFetchService();
-        return $core_upload_service->image($url, $this->site_id, $dir);
+        return $core_upload_service->image($url, $dir);
     }
 
 

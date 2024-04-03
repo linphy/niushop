@@ -16,6 +16,7 @@ use app\service\core\addon\CoreAddonDevelopDownloadService;
 use app\service\core\addon\CoreAddonInstallService;
 use core\base\BaseCoreService;
 use core\exception\CommonException;
+use core\util\niucloud\BaseNiucloudClient;
 use core\util\niucloud\CloudService;
 use think\facade\Cache;
 
@@ -55,9 +56,6 @@ class CoreCloudBuildService extends BaseCoreService
             if (!is_dir($web_dir)) throw new CommonException('WEB_DIR_NOT_EXIST');
             if (!is_dir($wap_dir)) throw new CommonException('UNIAPP_DIR_NOT_EXIST');
         } catch (\Exception $e) {
-            if (strpos($e->getMessage(), 'open basedir') !== false) {
-                throw new CommonException('OPEN_BASEDIR_ERROR');
-            }
             throw new CommonException($e->getMessage());
         }
 
@@ -121,7 +119,7 @@ class CoreCloudBuildService extends BaseCoreService
         // 拷贝web端文件
         $web_is_compile = (new Addon())->where([ ['compile', 'like', '%web%'] ])->field('id')->findOrEmpty();
         if ($web_is_compile->isEmpty()) {
-            dir_copy($this->root_path . 'web', $package_dir . 'web', exclude_dirs:['node_modules', '.output', '.nuxt']);
+            dir_copy($this->root_path . 'web', $package_dir . 'web', exclude_dirs:['node_modules', '.output', '.nuxt', 'dist']);
         }
 
         $zip_file = $temp_dir . DIRECTORY_SEPARATOR . 'build.zip';
@@ -146,6 +144,71 @@ class CoreCloudBuildService extends BaseCoreService
         $this->build_task = [
             'task_key' => $task_key,
             'timestamp' => $query['timestamp']
+        ];
+        Cache::set($this->cache_key, $this->build_task);
+
+        return $this->build_task;
+    }
+
+    /**
+     * 安装时云编译
+     * @return void
+     */
+    public function installBuild() {
+        if ($this->build_task) throw new CommonException('CLOUD_BUILD_TASK_EXIST');
+
+        // 上传任务key
+        $task_key = uniqid();
+        // 此次上传任务临时目录
+        $temp_dir = runtime_path() . 'backup' . DIRECTORY_SEPARATOR . 'cloud_build' . DIRECTORY_SEPARATOR . $task_key . DIRECTORY_SEPARATOR;
+        $package_dir = $temp_dir . 'package' . DIRECTORY_SEPARATOR;
+        dir_mkdir($package_dir);
+
+        // 拷贝composer文件
+        file_put_contents($package_dir . 'composer.json', file_get_contents(root_path() . 'composer.json'));
+        // 拷贝手机端文件
+        $wap_is_compile = (new Addon())->where([ ['compile', 'like', '%wap%'] ])->field('id')->findOrEmpty();
+        if ($wap_is_compile->isEmpty()) {
+            dir_copy($this->root_path . 'uni-app', $package_dir . 'uni-app', exclude_dirs:['node_modules', 'unpackage', 'dist']);
+        }
+        // 拷贝admin端文件
+        $admin_is_compile = (new Addon())->where([ ['compile', 'like', '%admin%'] ])->field('id')->findOrEmpty();
+        if ($admin_is_compile->isEmpty()) {
+            dir_copy($this->root_path . 'admin', $package_dir . 'admin', exclude_dirs:['node_modules', 'dist', '.vscode', '.idea']);
+        }
+        // 拷贝web端文件
+        $web_is_compile = (new Addon())->where([ ['compile', 'like', '%web%'] ])->field('id')->findOrEmpty();
+        if ($web_is_compile->isEmpty()) {
+            dir_copy($this->root_path . 'web', $package_dir . 'web', exclude_dirs:['node_modules', '.output', '.nuxt']);
+        }
+
+        $zip_file = $temp_dir . DIRECTORY_SEPARATOR . 'build.zip';
+        (new CoreAddonDevelopDownloadService(''))->compressToZip($package_dir, $zip_file);
+
+        $query = [
+            'authorize_code' => $this->auth_code,
+            'timestamp' => time()
+        ];
+        $versions = array_merge(['niucloud-admin' => config('version.version')], ((new Addon())->column('version', 'key')));
+        ksort($versions);
+        $query['version'] = md5(json_encode($versions) . BaseNiucloudClient::PRODUCT);
+
+        $response = (new CloudService())->httpPost('cloud/install?' . http_build_query($query), [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($zip_file, 'r'),
+                    'filename' => 'build.zip'
+                ]
+            ],
+            'timeout' => 50.0
+        ]);
+        if (isset($response['code']) && $response['code'] == 0) throw new CommonException($response['msg']);
+
+        $this->build_task = [
+            'task_key' => $task_key,
+            'timestamp' => $query['timestamp'],
+            'version' => $query['version']
         ];
         Cache::set($this->cache_key, $this->build_task);
 
@@ -193,6 +256,7 @@ class CoreCloudBuildService extends BaseCoreService
                 'authorize_code' => $this->auth_code,
                 'timestamp' => $this->build_task['timestamp']
             ];
+            if (isset($this->build_task['version'])) $query['version'] = $this->build_task['version'];
             $chunk_size = 1 * 1024 * 1024;
             $temp_dir = runtime_path() . 'backup' . DIRECTORY_SEPARATOR . 'cloud_build' . DIRECTORY_SEPARATOR . $this->build_task['task_key'] . DIRECTORY_SEPARATOR;
 

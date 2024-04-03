@@ -47,7 +47,7 @@ class NiucloudService extends BaseAdminService
         $auth_info = $service->getAuthInfo()['data'] ?? [];
         if (empty($auth_info)) throw new CommonException('AUTH_NOT_EXISTS');
         $service->clearAccessToken();
-        return $this->core_config_service->setConfig(0,ConfigKeyDict::NIUCLOUD_CONFIG, $data);
+        return $this->core_config_service->setConfig(ConfigKeyDict::NIUCLOUD_CONFIG, $data);
     }
 
     /**
@@ -55,7 +55,7 @@ class NiucloudService extends BaseAdminService
      * @return mixed|string[]
      */
     public function getAuthorize(){
-        $info = $this->core_config_service->getConfig(0, ConfigKeyDict::NIUCLOUD_CONFIG);
+        $info = $this->core_config_service->getConfig(ConfigKeyDict::NIUCLOUD_CONFIG);
         if(empty($info))
         {
             $info = [];
@@ -79,5 +79,9 @@ class NiucloudService extends BaseAdminService
      */
     public function getFrameworkVersionList() {
         return (new CoreModuleService())->getFrameworkVersionList();
+    }
+
+    public function applyExperience() {
+        return (new CoreModuleService())->applyExperience();
     }
 }

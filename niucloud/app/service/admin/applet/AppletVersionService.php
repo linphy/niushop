@@ -79,7 +79,7 @@ class AppletVersionService extends BaseAdminService
         $core_upload_service = new CoreUploadService();
         $type = FileDict::APPLET;
         $dir = '/applet/'.$type.'/version/';
-        return $core_upload_service->document($file, $this->site_id, $type, $dir, FileDict::LOCAL);
+        return $core_upload_service->document($file, $type, $dir, FileDict::LOCAL);
     }
 
     /**

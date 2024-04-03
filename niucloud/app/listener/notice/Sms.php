@@ -13,7 +13,6 @@ class Sms
 
     public function handle(array $data)
     {
-        $site_id = $data['site_id'];
         $template = $data['template'];//模板
         $vars = $data['vars'];//模板变量
         $key = $data['key'];
@@ -28,7 +27,7 @@ class Sms
             if (!$mobile) {
                 //会员的
                 if ($member_id > 0) {//查询openid
-                    $info = (new CoreMemberService())->getInfoByMemberId($site_id, $member_id);
+                    $info = (new CoreMemberService())->getInfoByMemberId($member_id);
                     $mobile = $info['mobile'] ?? '';
                     $nickname = $info['nickname'] ?? '';
                 }
@@ -49,11 +48,11 @@ class Sms
                     'content' => $content,
                     'result' => ''
                 );
-                $core_sms_service->send($site_id, $mobile, $vars, $key, $sms_id, $content);
-                (new CoreNoticeLogService())->add($site_id, $log_data);
+                $core_sms_service->send($mobile, $vars, $key, $sms_id, $content);
+                (new CoreNoticeLogService())->add($log_data);
             } catch ( NoticeException $e ) {
                 $log_data['result'] = $e->getMessage();
-                (new CoreNoticeLogService())->add($site_id, $log_data);
+                (new CoreNoticeLogService())->add( $log_data);
                 //这儿决定要不要抛出
                 if (!$template['async']) {
                     throw new NoticeException($e->getMessage());

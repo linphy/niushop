@@ -37,8 +37,7 @@ class ApiCheckToken
     public function handle(Request $request, Closure $next, bool $is_throw_exception = false)
     {
         $request->appType(AppTypeDict::API);
-        //检测站点
-        ( new AuthService() )->checkSite($request);
+
         //通过配置来设置系统header参数
         try {
             $token = $request->apiToken();
@@ -52,7 +51,7 @@ class ApiCheckToken
             $request->memberId($token_info[ 'member_id' ]);
         }
         //校验会员和站点
-        ( new AuthService() )->checkSiteAuth($request);
+        ( new AuthService() )->checkMember($request);
         // 校验渠道
         ( new AuthService() )->checkChannel($request);
         return $next($request);

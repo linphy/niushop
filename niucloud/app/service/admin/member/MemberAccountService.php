@@ -40,14 +40,12 @@ class MemberAccountService extends BaseAdminService
     public function getPage(array $where = [])
     {
 
-        $field = 'member_account_log.id, member_account_log.member_id, member_account_log.site_id, member_account_log.account_type, member_account_log.account_data,member_account_log.account_sum, member_account_log.from_type, member_account_log.related_id, member_account_log.create_time, member_account_log.memo';
+        $field = 'member_account_log.id, member_account_log.member_id, member_account_log.account_type, member_account_log.account_data,member_account_log.account_sum, member_account_log.from_type, member_account_log.related_id, member_account_log.create_time, member_account_log.memo';
         $member_where = [];
         if (!empty($where[ 'keywords' ])) {
             $member_where[] = [ "member.member_no|member.nickname|member.mobile", 'like', '%' . $where[ 'keywords' ] . '%' ];
         }
-        $search_model = $this->model->where([ [ 'member_account_log.site_id', '=', $this->site_id ] ])->withSearch([ 'join_member_id' => 'member_id', 'account_type', 'from_type', 'join_create_time' => 'create_time' ], $where)->withJoin([ 'member' => function($query) {
-            $query->field("member.nickname, member.headimg, member.mobile, member.member_id, member.member_no");
-        }
+        $search_model = $this->model->withSearch([ 'join_member_id' => 'member_id', 'account_type', 'from_type', 'join_create_time' => 'create_time' ], $where)->withJoin([ 'member' => ['nickname', 'headimg', 'mobile', 'member_id', 'member_no']
         ])->where($member_where)->field($field)->order('create_time desc')->append([ 'from_type_name', 'account_type_name' ]);
         return $this->pageQuery($search_model);
     }
@@ -59,8 +57,8 @@ class MemberAccountService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'id, member_id, site_id, account_type, account_data, from_type, related_id, create_time, memo';
-        return $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->with('memberInfo')->field($field)->append([ 'from_type_name', 'account_type_name' ])->findOrEmpty()->toArray();
+        $field = 'id, member_id, account_type, account_data, from_type, related_id, create_time, memo';
+        return $this->model->where([ [ 'id', '=', $id ] ])->with('memberInfo')->field($field)->append([ 'from_type_name', 'account_type_name' ])->findOrEmpty()->toArray();
     }
 
     /**
@@ -70,7 +68,7 @@ class MemberAccountService extends BaseAdminService
      */
     public function adjustPoint(array $data)
     {
-        return ( new CoreMemberAccountService() )->addLog($this->site_id, $data[ 'member_id' ], 'point', $data[ 'account_data' ], 'adjust', $data[ 'memo' ]);
+        return ( new CoreMemberAccountService() )->addLog($data[ 'member_id' ], 'point', $data[ 'account_data' ], 'adjust', $data[ 'memo' ]);
     }
 
     /**
@@ -80,12 +78,12 @@ class MemberAccountService extends BaseAdminService
      */
     public function adjustBalance(array $data)
     {
-        return ( new CoreMemberAccountService() )->addLog($this->site_id, $data[ 'member_id' ], 'balance', $data[ 'account_data' ], 'adjust', $data[ 'memo' ]);
+        return ( new CoreMemberAccountService() )->addLog($data[ 'member_id' ], 'balance', $data[ 'account_data' ], 'adjust', $data[ 'memo' ]);
     }
 
     public function adjustMoney(array $data)
     {
-        return ( new CoreMemberAccountService() )->addLog($this->site_id, $data[ 'member_id' ], MemberAccountTypeDict::MONEY, $data[ 'account_data' ], 'adjust', $data[ 'memo' ]);
+        return ( new CoreMemberAccountService() )->addLog($data[ 'member_id' ], MemberAccountTypeDict::MONEY, $data[ 'account_data' ], 'adjust', $data[ 'memo' ]);
     }
 
     /**
@@ -105,7 +103,7 @@ class MemberAccountService extends BaseAdminService
      */
     public function getSumAccount(string $account_type)
     {
-        return $this->model->where([ [ 'site_id', '=', $this->site_id ], [ 'account_type', '=', $account_type ] ])->sum('account_data');
+        return $this->model->where([ [ 'account_type', '=', $account_type ] ])->sum('account_data');
     }
 
     /**
@@ -116,7 +114,7 @@ class MemberAccountService extends BaseAdminService
     public function getMemberAccountInfo(int $member_id)
     {
         $field = 'point, point_get, balance, balance_get, growth, growth_get, money, money_get, commission, commission_get';
-        return ( new Member() )->where([ [ 'member_id', '=', $member_id ], [ 'site_id', '=', $this->site_id ] ])->field($field)->findOrEmpty()->toArray();
+        return ( new Member() )->where([ [ 'member_id', '=', $member_id ] ])->field($field)->findOrEmpty()->toArray();
     }
 
     /**
@@ -126,7 +124,6 @@ class MemberAccountService extends BaseAdminService
     public function getWithdrawnCommission(int $member_id = 0)
     {
         $condition = [
-            [ 'site_id', '=', $this->site_id ],
             [ 'account_type', '=', MemberAccountTypeDict::COMMISSION ],
             [ 'from_type', '=', 'cash_out' ]
         ];
@@ -142,7 +139,6 @@ class MemberAccountService extends BaseAdminService
     public function getExpensesSumAccount(string $account_type, int $member_id = 0)
     {
         $condition = [
-            [ 'site_id', '=', $this->site_id ],
             [ 'account_type', '=', $account_type ],
             [ 'account_data', '<', '0' ]
         ];

@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -23,13 +23,12 @@ class Menu extends BaseAdminController
 {
 
     /**
-     * 菜单列表(todo  限制只有平台端可以访问)
+     * 菜单列表
      * @return Response
      */
-    public function lists($app_type)
+    public function lists()
     {
-
-        return success((new MenuService())->getAllMenuList($app_type, 'all', 1));
+        return success((new MenuService())->getAllMenuList('all', 1));
     }
 
     /**
@@ -37,9 +36,9 @@ class Menu extends BaseAdminController
      * @param $menu_key
      * @return Response
      */
-    public function info($app_type, $menu_key)
+    public function info($menu_key)
     {
-        return success((new MenuService())->get($app_type, $menu_key));
+        return success((new MenuService())->get($menu_key));
     }
 
     /**
@@ -49,7 +48,6 @@ class Menu extends BaseAdminController
     public function add()
     {
         $data = $this->request->params([
-            ['app_type', ''],
             ['menu_name', ''],
             ['menu_type', 0],
             ['menu_key', ''],
@@ -73,7 +71,7 @@ class Menu extends BaseAdminController
     /**
      * 菜单或接口更新
      */
-    public function edit($app_type, $menu_key)
+    public function edit($menu_key)
     {
         $data = $this->request->params([
             ['menu_name', ''],
@@ -91,7 +89,8 @@ class Menu extends BaseAdminController
             ['menu_short_name','']
         ]);
         $this->validate($data, 'app\validate\sys\Menu.edit');
-        (new MenuService())->edit($app_type, $menu_key, $data);
+
+        (new MenuService())->edit($menu_key, $data);
         return success('EDIT_SUCCESS');
     }
 
@@ -119,9 +118,9 @@ class Menu extends BaseAdminController
      * @param $menu_key
      * @return Response
      */
-    public function del($app_type, $menu_key)
+    public function del($menu_key)
     {
-        (new MenuService())->del($app_type, $menu_key);
+        (new MenuService())->del($menu_key);
         return success('DELETE_SUCCESS');
     }
 
@@ -136,7 +135,10 @@ class Menu extends BaseAdminController
      */
     public function getSystem()
     {
-        return success( (new MenuService())->getSystemMenu('all', 1));
+        $data = $this->request->params([
+            ['status', 'all'],
+        ]);
+        return success( (new MenuService())->getSystemMenu($data['status'], 1));
     }
 
     /**
@@ -155,4 +157,5 @@ class Menu extends BaseAdminController
     public function getMenuByTypeDir($addon = 'system') {
         return success( (new MenuService())->getMenuByTypeDir($addon));
     }
+
 }

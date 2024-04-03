@@ -5,9 +5,12 @@ namespace app\install\controller;
 
 use app\model\site\Site;
 use app\model\sys\SysUser;
+use app\service\admin\auth\LoginService;
 use app\service\admin\install\InstallSystemService;
 use app\service\admin\site\SiteGroupService;
 use app\service\admin\site\SiteService;
+use app\service\core\addon\CoreAddonInstallService;
+use app\service\core\addon\CoreAddonService;
 use app\service\core\schedule\CoreScheduleInstallService;
 use Exception;
 use think\facade\Cache;
@@ -56,10 +59,20 @@ class Index extends BaseInstall
             $fileinfo = extension_loaded('fileinfo');
             $system_variables[] = [ "name" => "fileinfo", "need" => "开启", "status" => $fileinfo ];
 
+            //sodium
+            $sodium = extension_loaded('sodium');
+            $system_variables[] = [ "name" => "sodium", "need" => "开启", "status" => $sodium ];
+
             $root_path = str_replace("\\", DIRECTORY_SEPARATOR, dirname(__FILE__, 4));
             $root_path = str_replace("../", DIRECTORY_SEPARATOR, $root_path);
+
+            $project_path = dirname($root_path);
+
             $dirs_list = [
                 [ "path" => $root_path . DIRECTORY_SEPARATOR, "path_name" => "niucloud/", "name" => "网站目录" ],
+                [ "path" => $project_path . DIRECTORY_SEPARATOR . 'admin', "path_name" => "admin/", "name" => "admin端源码目录" ],
+                [ "path" => $project_path . DIRECTORY_SEPARATOR . 'uni-app', "path_name" => "uni-app/", "name" => "uni-app源码目录" ],
+                [ "path" => $project_path . DIRECTORY_SEPARATOR . 'web', "path_name" => "web/", "name" => "web端源码目录" ],
                 [ "path" => $root_path . DIRECTORY_SEPARATOR . ".env", "path_name" => "niucloud/.env", "name" => "env" ],
                 [ "path" => $root_path . DIRECTORY_SEPARATOR . ".example.env", "path_name" => "niucloud/.example_env", "name" => "env" ],
                 [ "path" => $root_path . DIRECTORY_SEPARATOR . 'runtime'.DIRECTORY_SEPARATOR, "path_name" => "niucloud/runtime", "name" => "runtime" ],
@@ -100,12 +113,23 @@ class Index extends BaseInstall
         }
     }
 
+    public function build() {
+        $install_user = Cache::get('install_user');
+        $token = (new LoginService())->login($install_user['username'], $install_user['password']);
+        $this->assign('token', $token['token']);
+        return $this->fetch('index/step-4');
+    }
 
+    /**
+     * 安装成功
+     * @return string
+     */
     public function installSuccess()
     {
         Cache::delete('install_data');
         Cache::delete('install_status');
-        return $this->fetch('index/step-4');
+        $this->assign('is_build', request()->get('is_build', 1));
+        return $this->fetch('index/step-5');
     }
 
     /**
@@ -227,39 +251,14 @@ class Index extends BaseInstall
         $password = input('password', "");
         $password2 = input('password2', "");
 
-        $site_name = input('site_name', "");
-        $site_username = input('site_username', "");
-        $site_password = input('site_password', "");
-        $site_password2 = input('site_password2', "");
-
         if ($admin_name == '' || $username == '' || $password == '') {
             $this->setSuccessLog([ '平台信息不能为空', 'error' ]);
             return fail('平台信息不能为空!');
         }
 
-        if ($site_username == $username) {
-            $this->setSuccessLog([ '站点管理员和平台管理员不能相同，请重新输入', 'error' ]);
-            return fail('站点管理员和平台管理员不能相同，请重新输入');
-        }
-
         if ($password != $password2) {
             $this->setSuccessLog([ '平台两次密码输入不一样，请重新输入', 'error' ]);
             return fail('平台两次密码输入不一样，请重新输入');
-        }
-
-//        if ($site_name == '' || $site_username == '' || $site_password == '') {
-//            $this->setSuccessLog([ '平台信息不能为空', 'error' ]);
-//            return fail('平台信息不能为空!');
-//        }
-
-        if($site_username == $username) {
-            $this->setSuccessLog([ '站点账号不能跟平台账号一致', 'error' ]);
-            return fail('站点账号不能跟平台账号一致!');
-        }
-
-        if ($site_password != $site_password2) {
-            $this->setSuccessLog([ '站点两次密码输入不一样，请重新输入', 'error' ]);
-            return fail('站点两次密码输入不一样，请重新输入');
         }
 
         try {
@@ -277,6 +276,7 @@ class Index extends BaseInstall
             }
 
             Cache::set('install_status', 1);//成功
+            Cache::set('install_user', ['username' => $username, 'password' => $password]);
             return success();
         } catch ( Exception $e) {
             $this->setSuccessLog([ '安装失败' . $e->getMessage(), 'error' ]);
@@ -292,24 +292,12 @@ class Index extends BaseInstall
         $password = input('password', "");
         $password2 = input('password2', "");
 
-        $site_name = input('site_name', "");
-        $site_username = input('site_username', "");
-        $site_password = input('site_password', "");
-        $site_password2 = input('site_password2', "");
         if ($admin_name == '' || $username == '' || $password == '') {
             return fail('平台信息不能为空!');
         }
 
         if ($password != $password2) {
             return fail('平台两次密码输入不一样，请重新输入');
-        }
-
-        if($site_username == $username) {
-            return fail('站点账号不能跟平台账号一致');
-        }
-
-        if ($site_password != $site_password2) {
-            return fail('站点两次密码输入不一样，请重新输入');
         }
 
         try {
@@ -326,7 +314,6 @@ class Index extends BaseInstall
                 return fail('计划任务初始化失败');
             }
 
-
             $user = ( new SysUser() )->where([ [ 'uid', '=', 1 ] ])->findOrEmpty();
             if (!$user->isEmpty()) {
                 $user->save([
@@ -334,32 +321,49 @@ class Index extends BaseInstall
                     'password' => create_password($password),
                 ]);
             }
-            ( new Site() )->where([ [ 'site_id', '=', 1 ] ])->update(['site_id' => 0]);
-            $site = ( new Site() )->where([ [ 'site_id', '=', 0 ] ])->findOrEmpty();
-            if (!$site->isEmpty()) {
-                $site->save([
-                    'site_name' => $admin_name,
-                ]);
-            }
-            //修改自增主键默认值
-            Db::execute("alter table ".env('database.prefix', '')."site auto_increment = 100000");
-            //获取默认套餐
+
+            // 安装插件
+            $this->installAddon();
 
             $fp = fopen($this->lock_file, 'wb');
             if (!$fp) {
                 $this->setSuccessLog([ "写入失败，请检查目录" . dirname(__FILE__, 2) . "是否可写入！'", 'error' ]);
                 return fail("写入失败，请检查目录" . dirname(__FILE__, 2) . "是否可写入！'");
             }
-            $this->setSuccessLog([ '初始化成功', 'success' ]);
             fwrite($fp, '已安装');
             fclose($fp);
+
+            $this->setSuccessLog([ '初始化成功', 'success' ]);
+
             Cache::set('install_status', 2);//成功
-//            Cache::tag(MenuService::$cache_tag_name)->clear();
             return success();
         } catch ( Exception $e) {
             $this->setSuccessLog([ '安装失败' . $e->getMessage(), 'error' ]);
             return fail('安装失败' . $e->getMessage());
         }
+    }
+
+    /**
+     * 安装插件
+     * @return true
+     */
+    public function installAddon() {
+        $root_path = str_replace("\\", DIRECTORY_SEPARATOR, dirname(__FILE__, 4));
+        $root_path = str_replace("../", DIRECTORY_SEPARATOR, $root_path);
+        $addon_path = $root_path . DIRECTORY_SEPARATOR . 'addon';
+
+        $files = get_files_by_dir($addon_path);
+        if (!empty($files)) {
+            foreach ($files as $path) {
+                $data = (new CoreAddonService())->getAddonConfig($path);
+                if (isset($data['key'])) {
+                    $install_service = (new CoreAddonInstallService($data['key']));
+                    $install_service->installCheck();
+                    $install_service->install();
+                }
+            }
+        }
+        return true;
     }
 
     /**

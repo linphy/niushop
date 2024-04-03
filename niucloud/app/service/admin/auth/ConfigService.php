@@ -36,11 +36,11 @@ class ConfigService extends BaseAdminService
      */
     public function getConfig()
     {
-        $info = (new CoreConfigService())->getConfig($this->request->defaultSiteId(), ConfigKeyDict::ADMIN_LOGIN)['value'] ?? [];
+        $info = (new CoreConfigService())->getConfig(ConfigKeyDict::ADMIN_LOGIN)['value'] ?? [];
         return [
             'is_captcha' => $info['is_captcha'] ?? 0,//是否启用验证码
             'is_site_captcha' => $info['is_site_captcha'] ?? 0,//是否启用站点验证码
-            'bg' => $info['bg'] ?? '',//平台登录端 背景
+            'bg' => $info['bg'] ?? config('install.admin_login_bg'),//平台登录端 背景
             'site_bg' => $info['site_bg'] ?? '',//站点登录端  背景
         ];
     }
@@ -58,7 +58,7 @@ class ConfigService extends BaseAdminService
             'bg' => $data['bg'] ?? '',//平台登录端 背景
             'site_bg' => $data['site_bg'] ?? '',//站点登录端  背景
         ];
-        (new CoreConfigService())->setConfig($this->site_id, ConfigKeyDict::ADMIN_LOGIN, $config);
+        (new CoreConfigService())->setConfig(ConfigKeyDict::ADMIN_LOGIN, $config);
         return true;
     }
 

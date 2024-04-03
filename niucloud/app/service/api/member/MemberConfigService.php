@@ -26,7 +26,7 @@ class MemberConfigService extends BaseApiService
      */
     public function getLoginConfig(){
 
-        return (new CoreMemberConfigService())->getLoginConfig($this->site_id);
+        return (new CoreMemberConfigService())->getLoginConfig();
     }
 
 }

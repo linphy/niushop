@@ -113,7 +113,7 @@ class ControllerGenerator extends BaseGenerator
         $str = '';
         $last_field = end($this->table['fields'])['column_name'];
         foreach ($this->table['fields'] as $v){
-            if(!$v['is_pk'] && $v['is_insert'] && $v['column_name'] != 'site_id'){
+            if(!$v['is_pk'] && $v['is_insert']){
                 $str .= '             ["'.$v['column_name'].'",'.$this->getDefault($v['column_type']).']';
                 if($last_field != $v['column_name']) $str .= ','.PHP_EOL;
             }
@@ -130,7 +130,7 @@ class ControllerGenerator extends BaseGenerator
         $str = '';
         $last_field = end($this->table['fields'])['column_name'];
         foreach ($this->table['fields'] as $v){
-            if(!$v['is_pk'] && $v['is_update'] && $v['column_name'] != 'site_id'){
+            if(!$v['is_pk'] && $v['is_update']){
                 $str .= '             ["'.$v['column_name'].'",'.$this->getDefault($v['column_type']).']';
                 if($last_field != $v['column_name']) $str .= ','.PHP_EOL;
             }
@@ -147,7 +147,7 @@ class ControllerGenerator extends BaseGenerator
         $str = '';
         $last_field = end($this->table['fields'])['column_name'];
         foreach ($this->table['fields'] as $v){
-            if(!$v['is_pk'] && $v['is_search'] && $v['column_name'] != 'site_id'){
+            if(!$v['is_pk'] && $v['is_search']){
                 if($v['query_type'] == 'BETWEEN'){
                     $str .= '             ["'.$v['column_name'].'",'.'["",""]'.']';
                 }else{

@@ -12,6 +12,7 @@
 namespace app\model\addon;
 
 use app\dict\addon\AddonDict;
+use app\model\sys\SysMenu;
 use core\base\BaseModel;
 
 /**
@@ -79,6 +80,15 @@ class Addon extends BaseModel
         if ($value) {
             $query->whereLike('title', '%' . $value . '%');
         }
+    }
+
+    /**
+     * 菜单
+    //     * @return HasOne->withField('id, menu_name, menu_key, parent_key, menu_type')
+     */
+    public function menu()
+    {
+        return $this->hasMany(SysMenu::class, 'addon', 'key');
     }
 
 }

@@ -37,7 +37,7 @@ class StorageConfigService extends BaseAdminService
      */
     public function getStorageList()
     {
-        return (new CoreStorageService())->getStorageList($this->site_id);
+        return (new CoreStorageService())->getStorageList();
     }
 
     /**
@@ -49,7 +49,7 @@ class StorageConfigService extends BaseAdminService
     {
         $storage_type_list = StorageDict::getType();
         if(!array_key_exists($storage_type, $storage_type_list)) throw new AdminException('OSS_TYPE_NOT_EXIST');
-        $info = (new CoreConfigService())->getConfig($this->site_id, 'STORAGE');
+        $info = (new CoreConfigService())->getConfig('STORAGE');
         if(empty($info))
         {
             $config_type = ['default' => StorageDict::LOCAL];//初始化
@@ -88,7 +88,7 @@ class StorageConfigService extends BaseAdminService
                 throw new AdminException('STORAGE_NOT_HAS_HTTP_OR_HTTPS');
             }
         }
-        $info = (new CoreConfigService())->getConfig($this->site_id, 'STORAGE');
+        $info = (new CoreConfigService())->getConfig('STORAGE');
         if(empty($info))
         {
             $config['default'] = '';
@@ -108,7 +108,7 @@ class StorageConfigService extends BaseAdminService
             $config[$storage_type][$k_param] = $data[$k_param] ?? '';
         }
 
-        return (new CoreConfigService())->setConfig($this->site_id, 'STORAGE', $config);
+        return (new CoreConfigService())->setConfig('STORAGE', $config);
     }
 
 

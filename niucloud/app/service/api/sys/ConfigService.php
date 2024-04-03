@@ -11,6 +11,8 @@
 
 namespace app\service\api\sys;
 
+use app\service\core\addon\CoreAddonService;
+use app\service\core\sys\CoreConfigService;
 use app\service\core\sys\CoreSysConfigService;
 use core\base\BaseApiService;
 
@@ -36,7 +38,7 @@ class ConfigService extends BaseApiService
      */
     public function getCopyright()
     {
-       return (new CoreSysConfigService())->getCopyright($this->site_id);
+       return (new CoreSysConfigService())->getCopyright();
     }
 
     /**
@@ -44,7 +46,7 @@ class ConfigService extends BaseApiService
      * @return array|string[]
      */
     public function getSceneDomain(){
-        return (new CoreSysConfigService())->getSceneDomain($this->site_id);
+        return (new CoreSysConfigService())->getSceneDomain();
     }
 
     /**
@@ -55,5 +57,31 @@ class ConfigService extends BaseApiService
     public function getWapIndexList($data = [])
     {
         return ( new CoreSysConfigService() )->getWapIndexList($data);
+    }
+
+    public function getWebSite()
+    {
+        $info = ( new CoreConfigService() )->getConfigValue('WEB_SITE_INFO');
+        if (empty($info)) {
+            $info = [
+                'site_name' => '',
+                'logo' => '',
+                'desc' => '',
+                'latitude' => '',
+                'longitude' => '',
+                'province_id' => 0,
+                'city_id' => 0,
+                'district_id' => 0,
+                'address' => '',
+                'full_address' => '',
+                'phone' => '',
+                'business_hours' => '',
+                'front_end_name' => '',
+                'front_end_logo' => '',
+                'icon' => '',
+            ];
+        }
+        $info['site_addons'] = (new CoreAddonService())->getInstallAddonList();
+        return $info;
     }
 }

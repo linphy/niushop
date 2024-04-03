@@ -29,7 +29,7 @@ class Menu extends Validate
 //        'menu_key' => 'unique:sys_menu',//防止key值重复
         'menu_type' => 'require|checkMenuType',
         'methods' => 'requireWith:api_url|checkMethodType',
-        'router_path' => 'requireIf:menu_type,0|requireIf:menu_type,1',
+        'router_path' => 'requireIf:menu_type,1',
         'view_path' => 'requireIf:menu_type,1'
 
     ];

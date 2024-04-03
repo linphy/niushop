@@ -55,7 +55,7 @@ class WeappAuthService extends BaseApiService
     public function getUserInfoByCode(string $code){
 //        $iv = $this->request->param('iv', '');
 //        $encrypted_data = $this->request->param('encrypted_data', '');
-        $result = $this->core_weapp_serve_service->session($this->site_id, $code);
+        $result = $this->core_weapp_serve_service->session($code);
 //        if(empty($result)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
 //        $userinfo = $this->core_weapp_serve_service->decryptData($result['session_key'], $iv, $encrypted_data);
         $openid = $result['openid'] ?? '';//对应微信的 openid
@@ -91,7 +91,7 @@ class WeappAuthService extends BaseApiService
         ] = $this->getUserInfoByCode($code);
 
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['weapp_openid' => $openid, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['weapp_openid' => $openid]);
         if($member_info->isEmpty()){
             $config = (new MemberConfigService())->getLoginConfig();
             $is_bind_mobile = $config['is_bind_mobile'];
@@ -130,7 +130,7 @@ class WeappAuthService extends BaseApiService
         $is_bind_mobile = $config['is_bind_mobile'];
         if($is_bind_mobile == 1){
             if(empty($mobile)){
-                $result = $this->core_weapp_serve_service->getUserPhoneNumber($this->site_id, $mobile_code);
+                $result = $this->core_weapp_serve_service->getUserPhoneNumber($mobile_code);
                 if(empty($result)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
                 $phone_info = $result['phone_info'];
                 $mobile = $phone_info['purePhoneNumber'];
@@ -141,7 +141,7 @@ class WeappAuthService extends BaseApiService
             }
         }
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['weapp_openid' => $openid, 'site_id' => $this->site_id]);
+        $member_info = $member_service->findMemberInfo(['weapp_openid' => $openid]);
 
         if(!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
         $register_service = new RegisterService();

@@ -46,7 +46,7 @@ class AgreementService extends BaseAdminService
      */
     public function getAgreement(string $key)
     {
-        return (new CoreAgreementService())->getAgreement($this->site_id, $key);
+        return (new CoreAgreementService())->getAgreement($key);
     }
 
     /**
@@ -58,6 +58,6 @@ class AgreementService extends BaseAdminService
      */
     public function setAgreement(string $key, string $title, string $content)
     {
-        return (new CoreAgreementService())->setAgreement($this->site_id, $key, $title, $content);
+        return (new CoreAgreementService())->setAgreement($key, $title, $content);
     }
 }

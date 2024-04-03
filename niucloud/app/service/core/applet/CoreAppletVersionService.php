@@ -33,7 +33,7 @@ class CoreAppletVersionService extends BaseCoreService
      */
     public function getPage(array $where = [])
     {
-        $field = 'id, site_id, type, uid, version, version_num, path, create_time, update_time,desc, config';
+        $field = 'id, type, uid, version, version_num, path, create_time, update_time,desc, config';
         $search_model = $this->model->where($where)->field($field)->order('create_time desc');
         return $this->pageQuery($search_model);
     }
@@ -45,7 +45,7 @@ class CoreAppletVersionService extends BaseCoreService
      */
     public function getInfo(int $id)
     {
-        $field = 'id, site_id, type, uid, version, version_num, path, create_time, update_time,desc, config';
+        $field = 'id, type, uid, version, version_num, path, create_time, update_time,desc, config';
         return $this->model->where([[ 'id', '=', $id ]])->field($field)->findOrEmpty()->toArray();
     }
 

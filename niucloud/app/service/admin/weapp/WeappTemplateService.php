@@ -36,9 +36,8 @@ class WeappTemplateService extends BaseAdminService
      */
     public function getList()
     {
-        $site_id = $this->site_id;
         $core_notice_service = new CoreNoticeService();
-        $list = $core_notice_service->getList($site_id);
+        $list = $core_notice_service->getList();
         $template = [];
         foreach ($list as $k => $v){
             if(in_array(NoticeTypeDict::WEAPP, $v['support_type'])) $template[] = $v;
@@ -55,9 +54,8 @@ class WeappTemplateService extends BaseAdminService
      * @throws ModelNotFoundException
      */
     public function syncAll(array $keys = []){
-        $site_id = $this->site_id;
         $core_notice_service = new CoreNoticeService();
-        $list = $core_notice_service->getList($site_id, $keys);
+        $list = $core_notice_service->getList($keys);
         if(empty($list)) throw new NoticeException('NOTICE_TEMPLATE_NOT_EXIST');
 
         foreach($list as $v){
@@ -77,14 +75,14 @@ class WeappTemplateService extends BaseAdminService
         if(empty($tid)) $error = 'WECHAT_TEMPLATE_NEED_NO';
         $weapp_template_id = $item['weapp_template_id'];
         //删除原来的消息模板
-        $template_loader = (new TemplateLoader(NoticeTypeDict::WEAPP, ['site_id' => $this->site_id]));
+        $template_loader = (new TemplateLoader(NoticeTypeDict::WEAPP));
         $template_loader->delete(['template_id' => $weapp_template_id ]);
-//        (new CoreWeappTemplateService())->deleteTemplate($this->site_id, $weapp_template_id);
+//        (new CoreWeappTemplateService())->deleteTemplate($weapp_template_id);
         //新的消息模板
 
         $kid_list = $weapp['kid_list'] ?? [];
         $scene_desc = $weapp['scene_desc'] ?? '';
-//        $res = (new CoreWeappTemplateService())->addTemplate($this->site_id, $tid, $kid_list, $scene_desc);
+//        $res = (new CoreWeappTemplateService())->addTemplate( $tid, $kid_list, $scene_desc);
         $res = $template_loader->addTemplate(['tid' => $tid, 'kid_list' => $kid_list, 'scene_desc' => $scene_desc ]);
         $notice_service = new NoticeService();
         if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) {

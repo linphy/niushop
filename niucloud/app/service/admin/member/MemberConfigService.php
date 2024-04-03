@@ -28,7 +28,7 @@ class MemberConfigService extends BaseAdminService
      */
     public function getLoginConfig(){
 
-        return (new CoreMemberConfigService())->getLoginConfig($this->site_id);
+        return (new CoreMemberConfigService())->getLoginConfig();
     }
 
     /**
@@ -37,14 +37,14 @@ class MemberConfigService extends BaseAdminService
      * @return true
      */
     public function setLoginConfig(array $data){
-        return (new CoreMemberConfigService())->setLoginConfig($this->site_id, $data);
+        return (new CoreMemberConfigService())->setLoginConfig($data);
     }
     /**
      * 获取提现设置
      */
     public function getCashOutConfig(){
 
-        return (new CoreMemberConfigService())->getCashOutConfig($this->site_id);
+        return (new CoreMemberConfigService())->getCashOutConfig();
     }
 
     /**
@@ -53,14 +53,14 @@ class MemberConfigService extends BaseAdminService
      * @return true
      */
     public function setCashOutConfig(array $data){
-        return (new CoreMemberConfigService())->setCashOutConfig($this->site_id, $data);
+        return (new CoreMemberConfigService())->setCashOutConfig($data);
     }
 
     /**
      * 获取会员设置
      */
     public function getMemberConfig(){
-        return (new CoreMemberConfigService())->getMemberConfig($this->site_id);
+        return (new CoreMemberConfigService())->getMemberConfig();
     }
 
     /**
@@ -69,6 +69,6 @@ class MemberConfigService extends BaseAdminService
      * @return true
      */
     public function setMemberConfig(array $data){
-        return (new CoreMemberConfigService())->setMemberConfig($this->site_id, $data);
+        return (new CoreMemberConfigService())->setMemberConfig($data);
     }
 }

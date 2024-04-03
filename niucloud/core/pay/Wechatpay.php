@@ -6,7 +6,6 @@ use app\dict\pay\OnlinePayDict;
 use app\dict\pay\RefundDict;
 use app\dict\pay\TransferDict;
 use core\exception\PayException;
-use EasyWeChat\Factory;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use think\Response;
@@ -37,6 +36,8 @@ class Wechatpay extends BasePay
         $this->config = $config;
         $config['mch_secret_cert'] = url_to_path($config['mch_secret_cert'] ?? '');
         $config['mch_public_cert_path'] = url_to_path($config['mch_public_cert_path'] ?? '');
+        // 选填-默认为正常模式。可选为： MODE_NORMAL, MODE_SERVICE
+        $config['mode'] = Pay::MODE_NORMAL;
         Pay::config($this->payConfig($config, 'wechat'));
     }
 
@@ -89,7 +90,7 @@ class Wechatpay extends BasePay
         if (!empty($order['type'])) {
             $order['_type'] = 'mini'; // 注意这一行
         }
-        return $this->returnFormat(Pay::wechat()->wap($order));
+        return $this->returnFormat(Pay::wechat()->h5($order));
     }
 
     public function web(array $params)
@@ -140,26 +141,14 @@ class Wechatpay extends BasePay
      */
     public function pos(array $params)
     {
-        //todo  需要自定义通过plugin来侧载开发
-        $app = Factory::payment([
-            'app_id' => $this->config['appid'],        //应用id
-            'mch_id' => $this->config["mch_id"] ?? '',       //商户号
-            'key' => $this->config["pay_v2_signkey"] ?? '',          // API 密钥 todo 注意: 是v2密钥 是v2密钥 是v2密钥
-            'response_type' => 'array',
-            'log' => [
-                'level' => 'debug',
-                'permission' => 0777,
-                'file' => 'runtime/log/wechat/easywechat.logs',
-            ],
-            'sandbox' => false, // 设置为 false 或注释则关闭沙箱模式
-        ]);
-        $data = [
-            'body' => $params['boby'],
+        $order = [
             'out_trade_no' => $params['out_trade_no'],
+            'body' => $params['boby'],
             'total_fee' => $params['money'],
-            'auth_code' => $params["auth_code"],//传入的付款码
+            'spbill_create_ip' => request()->ip(),
+            'auth_code' => $params["auth_code"],
         ];
-        $result = $app->base->pay($data);//没有注释路由,调用没有问题
+        $result = Pay::wechat()->pos($order);
         return $this->returnFormat($result);
     }
 
@@ -289,7 +278,8 @@ class Wechatpay extends BasePay
         return [
             'status' => $refund_status_array[$result['status']],
             'refund_no' => $refund_no,
-            'out_trade_no' => $out_trade_no
+            'out_trade_no' => $out_trade_no,
+            'pay_refund_no' => $result['refund_id']
         ];
     }
 
@@ -371,7 +361,7 @@ class Wechatpay extends BasePay
         if (!empty($transaction_id)) {
             $order['transaction_id'] = $transaction_id;
         }
-        $result = Pay::wechat()->find($order);
+        $result = Pay::wechat()->query($order);
         if (empty($result))
             return $result;
         $result = $this->returnFormat($result);
@@ -392,10 +382,11 @@ class Wechatpay extends BasePay
     public function getRefund(?string $out_trade_no, ?string $refund_no = '')
     {
         $order = [
-            '_type' => 'refund',
+            '_action' => 'refund',
+            'transaction_id' => $out_trade_no,
             'out_refund_no' => $refund_no
         ];
-        $result = Pay::wechat()->find($order);
+        $result = Pay::wechat()->query($order);
         if (empty($result))
             return $result;
         $result = $this->returnFormat($result);
@@ -419,13 +410,15 @@ class Wechatpay extends BasePay
      * @throws ContainerException
      * @throws InvalidParamsException
      */
-    public function getTransfer(string $transfer_no)
+    public function getTransfer(string $transfer_no, $out_transfer_no = '')
     {
-        $params = [
-            'out_batch_no' => $transfer_no,
+        $order = [
+            'out_batch_no' => $out_transfer_no,
+            'out_detail_no' => $transfer_no,
+            '_action' => 'transfer',
         ];
-        $allPlugins = Pay::wechat()->mergeCommonPlugins([QueryOutBatchNoPlugin::class]);
-        $result = Pay::wechat()->pay($allPlugins, $params);
+
+        $result = Pay::wechat()->query($order);
         $result = $this->returnFormat($result);
         //微信转账状态
         $transfer_status_array = [

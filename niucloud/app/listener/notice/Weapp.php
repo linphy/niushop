@@ -13,7 +13,6 @@ class Weapp
 
     public function handle(array $data)
     {
-        $site_id = $data['site_id'];
         $template = $data['template'];//模板
         $vars = $data['vars'];//模板变量
         $key = $data['key'];
@@ -23,7 +22,7 @@ class Weapp
         if ($template['is_weapp']) {
             $member_id = $to['member_id'] ?? 0;
             if ($member_id > 0) {//查询openid
-                $info = (new CoreMemberService())->getInfoByMemberId($site_id, $member_id);
+                $info = (new CoreMemberService())->getInfoByMemberId($member_id);
                 $openid = $info['weapp_openid'] ?? '';
                 $nickname = $info['nickname'] ?? '';
             }
@@ -51,17 +50,17 @@ class Weapp
                     'content' => $weapp
                 );
                 try {
-                    (new TemplateLoader(NoticeTypeDict::WEAPP, ['site_id' => $site_id]))->send(
+                    (new TemplateLoader(NoticeTypeDict::WEAPP))->send(
                         [
                             'template_id' => $weapp_template_id,
                             'data' => $weapp_data,
                             'openid' => $openid,
                             'page' => $url,
                         ]);
-                    (new CoreNoticeLogService())->add($site_id, $log_data);
+                    (new CoreNoticeLogService())->add($log_data);
                 } catch ( NoticeException $e ) {
                     $log_data['result'] = $e->getMessage();
-                    (new CoreNoticeLogService())->add($site_id, $log_data);
+                    (new CoreNoticeLogService())->add($log_data);
                     //这儿决定要不要抛出
                     if (!$template['async']) {
                         throw new NoticeException($e->getMessage());

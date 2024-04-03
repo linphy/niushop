@@ -26,11 +26,10 @@ class  CoreWeappConfigService extends BaseCoreService
 {
     /**
      * 获取微信小程序设置
-     * @param int $site_id
      * @return array
      */
-    public function getWeappConfig(int $site_id){
-        $info = (new CoreConfigService())->getConfig($site_id, ConfigKeyDict::WEAPP)['value'] ?? [];
+    public function getWeappConfig(){
+        $info = (new CoreConfigService())->getConfig(ConfigKeyDict::WEAPP)['value'] ?? [];
         return [
             'weapp_name' => $info['weapp_name'] ?? '',//小程序名称
             'weapp_original' => $info['weapp_original'] ?? '',//原始ID
@@ -46,11 +45,10 @@ class  CoreWeappConfigService extends BaseCoreService
 
     /**
      * 微信小程序配置
-     * @param int $site_id
      * @param array $data
      * @return SysConfig|bool|Model
      */
-    public function setWeappConfig(int $site_id, array $data){
+    public function setWeappConfig(array $data){
         $config = [
             'weapp_name' => $data['weapp_name'] ?? '',//小程序名称
             'weapp_original' => $data['weapp_original'] ?? '',//原始ID
@@ -62,7 +60,7 @@ class  CoreWeappConfigService extends BaseCoreService
             'encryption_type'   => $data['encryption_type'] ?? 'not_encrypt',//加解密模式   not_encrypt 明文   compatible 兼容  safe 安全
             'upload_private_key'=> $data['upload_private_key'] ?? ''
         ];
-        return (new CoreConfigService())->setConfig($site_id, ConfigKeyDict::WEAPP, $config);
+        return (new CoreConfigService())->setConfig(ConfigKeyDict::WEAPP, $config);
     }
 
 

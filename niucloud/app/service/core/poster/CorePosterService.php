@@ -27,14 +27,12 @@ class CorePosterService extends BaseCoreService
 
     /**
      * 创建模板
-     * @param $site_id
      * @param $addon
      * @param $data
      * @return true
      */
-    public function add($site_id, $addon, $data){
+    public function add($addon, $data){
         $data['addon'] = $addon;
-        $data['site_id'] = $site_id;
         (new Poster())->create($data);
         return true;
     }
@@ -72,27 +70,24 @@ class CorePosterService extends BaseCoreService
     }
     /**
      * 实例化模板引擎
-     * @param $site_id
      * @param $poster_type
      * @return \core\upload\UploadLoader|void
      */
-    public function driver($site_id, $poster_type = 'poster'){
-
+    public function driver($poster_type = 'poster'){
         //查询启用的上传方式
         return new PosterLoader($poster_type, []);
     }
     /**
      * 获取海报
-     * @param int $site_id
      * @param string|int $type 模板类型
      * @param array $param
      * @param bool $is_throw_exception
      * @return string|void
      */
-    public function get(int $site_id, string|int $type, array $param = [], string $channel = '', bool $is_throw_exception = true)
+    public function get(string|int $type, array $param = [], string $channel = '', bool $is_throw_exception = true)
     {
         //先查询模板,如果不存在就抛出异常
-        $poster = (new Poster())->where([['site_id', '=', $site_id], ['type', '=', $type], ['status', '=', PosterDict::ON]])->findOrEmpty();
+        $poster = (new Poster())->where([['type', '=', $type], ['status', '=', PosterDict::ON]])->findOrEmpty();
         try {
             if($poster->isEmpty()) throw new CommonException('海报模板不存在');
             $poster = $poster->toArray();
@@ -100,19 +95,18 @@ class CorePosterService extends BaseCoreService
             //各类型没模板整理模板数据
             $poster_data = event('GetPosterData', [
                 'type' => $type,
-                'site_id' => $site_id,
                 'param' => $param,
                 'channel' => $channel
             ])[0] ?? [];
 
-            $dir = 'upload/'.$site_id.'/'.'poster/';
+            $dir = 'upload/poster/';
             $file_path = 'poster'.md5(json_encode($poster)).'_'.md5(json_encode($poster_data)).'.png';
             $path = $dir.DIRECTORY_SEPARATOR.$file_path;
             //判断当前海报是否存在,存在直接返回地址,不存在的话则创建
             if(is_file($path)){
                 return $path;
             }else{
-                return $this->create($site_id, $poster, $poster_data, $dir, $file_path, $channel);
+                return $this->create($poster, $poster_data, $dir, $file_path, $channel);
             }
         } catch ( Throwable $e) {
             if($is_throw_exception){
@@ -126,7 +120,6 @@ class CorePosterService extends BaseCoreService
 
     /**
      * 生成海报
-     * @param int $site_id
      * @param $poster
      * @param $data 填充数据(存在映射关系)
      * @param $dir
@@ -134,7 +127,7 @@ class CorePosterService extends BaseCoreService
      * @param $channel
      * @return void
      */
-    public function create(int $site_id, array $poster, array $data, string $dir, string $file_path, string $channel = '')
+    public function create(array $poster, array $data, string $dir, string $file_path, string $channel = '')
     {
         //将模版中的部分待填充值替换
         foreach($poster['items'] as &$v){
@@ -146,7 +139,7 @@ class CorePosterService extends BaseCoreService
                         $v['type'] = 'image';
                         //将二维码类型转化为图片类型,并且将二维码链接转化为图片路径
 
-                        $v['value'] = qrcode($data_v, $site_id, '', md5($v['value']).'.png', $channel);
+                        $v['value'] = qrcode($data_v, '', md5($v['value']).'.png', $channel);
                     }else if($v['type'] == 'image'){//校验图片文件是否是远程文件
                         //判断是否是是远程图片,远程图片需要本地化
                     }
@@ -157,7 +150,7 @@ class CorePosterService extends BaseCoreService
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
         //将填充后的数据赋值
-        return $this->driver($site_id, 'poster')->createPoster($poster, $dir, $file_path);
+        return $this->driver('poster')->createPoster($poster, $dir, $file_path);
     }
 
 

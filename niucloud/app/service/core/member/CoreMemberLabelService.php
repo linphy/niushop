@@ -34,53 +34,51 @@ class CoreMemberLabelService extends BaseCoreService
 
     /**
      * 通过标签id获取标签列表
-     * @param int $site_id
      * @param array $label_ids
      * @return mixed
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getMemberLabelListByLabelIds(int $site_id, array $label_ids){
+    public function getMemberLabelListByLabelIds(array $label_ids){
         sort($label_ids);
         $cache_name = __METHOD__ . md5(implode("_", $label_ids));
         return cache_remember(
             $cache_name,
-            function () use ($site_id, $label_ids) {
-                return array_keys_search($this->getAll($site_id), $label_ids, 'label_id');
+            function () use ($label_ids) {
+                return array_keys_search($this->getAll(), $label_ids, 'label_id');
             },
-            self::$cache_tag_name.$site_id
+            self::$cache_tag_name
         );
     }
 
     /**
      * 获取全部会员标签
-     * @param int $site_id
+
      * @return mixed
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getAll(int $site_id){
-        $cache_name = __METHOD__ . $site_id;
+    public function getAll(){
+        $cache_name = __METHOD__ ;
         return cache_remember(
             $cache_name,
-            function () use ($site_id) {
+            function () {
                 $field = 'label_id, label_name';
-                return $this->model->where([['site_id', '=', $site_id]])->field($field)->select()->toArray();
+                return $this->model->field($field)->select()->toArray();
 
             },
-            self::$cache_tag_name.$site_id
+            self::$cache_tag_name
         );
     }
 
     /**
      * 清理站点会员标签缓存
-     * @param int $site_id
      * @return true
      */
-    public function clearCache(int $site_id){
-        Cache::tag(self::$cache_tag_name.$site_id)->clear();
+    public function clearCache(){
+        Cache::tag(self::$cache_tag_name)->clear();
         return true;
     }
 }

@@ -45,16 +45,15 @@ class CoreDiyConfigService extends BaseCoreService
 
     /**
      * 获取底部导航配置
-     * @param int $site_id
      * @param string $key
      * @return array
      */
-    public function getBottomConfig(int $site_id, string $key = 'app')
+    public function getBottomConfig(string $key = 'app')
     {
         $default_config = $this->getBottomList([ 'key' => $key ])[ 0 ] ?? [];
 
         $config_key = ConfigKeyDict::DIY_BOTTOM . '_' . $key;
-        $info = (new CoreConfigService())->getConfig($site_id, $config_key)[ 'value' ] ?? [];
+        $info = (new CoreConfigService())->getConfig($config_key)[ 'value' ] ?? [];
 
         if (!empty($default_config)) {
             if (!empty($info)) {
@@ -72,36 +71,33 @@ class CoreDiyConfigService extends BaseCoreService
 
     /**
      * 设置底部导航
-     * @param int $site_id
      * @param array $data
      * @param string $key
      * @return SysConfig|bool|Model
      */
-    public function setBottomConfig(int $site_id, array $data, string $key = 'app')
+    public function setBottomConfig(array $data, string $key = 'app')
     {
-        return (new CoreConfigService())->setConfig($site_id, ConfigKeyDict::DIY_BOTTOM . '_' . $key, $data);
+        return (new CoreConfigService())->setConfig(ConfigKeyDict::DIY_BOTTOM . '_' . $key, $data);
     }
 
     /**
      * 设置启动页
-     * @param int $site_id
      * @param array $data
      * @return SysConfig|bool|Model
      */
-    public function setStartUpPageConfig(int $site_id, array $data)
+    public function setStartUpPageConfig(array $data)
     {
-        return (new CoreConfigService())->setConfig($site_id, 'START_UP_PAGE_' . strtoupper($data[ 'type' ]), $data);
+        return (new CoreConfigService())->setConfig('START_UP_PAGE_' . strtoupper($data[ 'type' ]), $data);
     }
 
     /**
      * 获取启动页配置
-     * @param int $site_id
      * @param string $type
      * @return array
      */
-    public function getStartUpPageConfig(int $site_id, string $type)
+    public function getStartUpPageConfig(string $type)
     {
-        $info = (new CoreConfigService())->getConfig($site_id, 'START_UP_PAGE_' . strtoupper($type))[ 'value' ] ?? [];
+        $info = (new CoreConfigService())->getConfig('START_UP_PAGE_' . strtoupper($type))[ 'value' ] ?? [];
         if (!empty($info)) {
             $info[ 'name' ] = isset($info[ 'name' ]) ? $info[ 'name' ] : '';
         }

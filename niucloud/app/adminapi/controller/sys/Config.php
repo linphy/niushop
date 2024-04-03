@@ -52,7 +52,6 @@ class Config extends BaseAdminController
             ["front_end_logo", ""],
             ["icon", ""]
         ]);
-        $this->validate($data, 'app\validate\site\Site.edit');
         (new ConfigService())->setWebSite($data);
 
         $service_data = $this->request->params([
@@ -222,5 +221,13 @@ class Config extends BaseAdminController
         ]);
         (new ConfigService())->setDeveloperToken($data);
         return success();
+    }
+
+    /**
+     * 获取install.php配置
+     * @return Response
+     */
+    public function getInstallConfig() {
+        return success(config('install'));
     }
 }

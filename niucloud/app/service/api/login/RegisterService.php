@@ -70,18 +70,17 @@ class RegisterService extends BaseApiService
             }
             $data[ 'register_channel' ] = $this->channel;
             $data[ 'register_type' ] = $type;
-            $data[ 'site_id' ] = $this->site_id;
-            $pid = $this->request->get('pid');
+            $pid = $this->request->get('pid', $this->request->post('pid', 0));
             if ($pid > 0) {
-                $p_member_info = $member_service->findMemberInfo([ 'member_id' => $pid, 'site_id' => $this->site_id ]);
+                $p_member_info = $member_service->findMemberInfo([ 'member_id' => $pid ]);
                 if (!$p_member_info->isEmpty()) $data[ 'pid' ] = $pid;//设置上级推荐人
             }
             $member_id = ( new MemberService() )->add($data);
             $data[ 'member_id' ] = $member_id;
             event('MemberRegister', $data);
-            CoreMemberService::setMemberNo($this->site_id, $member_id);
+            CoreMemberService::setMemberNo($member_id);
         }
-        $member_info = $member_service->findMemberInfo([ 'member_id' => $member_id, 'site_id' => $this->site_id ]);
+        $member_info = $member_service->findMemberInfo([ 'member_id' => $member_id ]);
         if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号已存在
         return ( new LoginService() )->login($member_info, $type);
     }
@@ -121,7 +120,7 @@ class RegisterService extends BaseApiService
         //未开启账号密码登录注册
         if ($is_username != 1) throw new AuthException('MEMBER_USERNAME_LOGIN_NOT_OPEN');
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo([ 'username' => $username, 'site_id' => $this->site_id ]);
+        $member_info = $member_service->findMemberInfo([ 'username' => $username ]);
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在
 
         $password_hash = create_password($password);
@@ -145,7 +144,7 @@ class RegisterService extends BaseApiService
         //未开启账号密码登录注册
         if ($is_mobile != 1) throw new AuthException('MEMBER_USERNAME_LOGIN_NOT_OPEN');
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo([ 'mobile' => $mobile, 'site_id' => $this->site_id ]);
+        $member_info = $member_service->findMemberInfo([ 'mobile' => $mobile ]);
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在
 
         $data = array (
@@ -193,7 +192,7 @@ class RegisterService extends BaseApiService
             }
             if ($is_bind_mobile == 1) {
                 $member_service = new MemberService();
-                $member = $member_service->findMemberInfo([ 'mobile' => $mobile, 'site_id' => $this->site_id ]);
+                $member = $member_service->findMemberInfo([ 'mobile' => $mobile ]);
                 if (!$member->isEmpty()) {
                     if ($type == MemberLoginTypeDict::MOBILE) {
                         throw new AuthException('MOBILE_IS_EXIST');//手机号注册时发现手机号已存在账号

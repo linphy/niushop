@@ -29,7 +29,7 @@ class WeappConfigService extends BaseAdminService
      */
     public function getWeappConfig()
     {
-        $config_info = (new CoreWeappConfigService())->getWeappConfig($this->site_id);
+        $config_info = (new CoreWeappConfigService())->getWeappConfig();
         return array_merge($config_info, $this->getWeappStaticInfo());
 
     }
@@ -40,7 +40,7 @@ class WeappConfigService extends BaseAdminService
      * @return SysConfig|bool|Model
      */
     public function setWeappConfig(array $data){
-        return (new CoreWeappConfigService())->setWeappConfig($this->site_id, $data);
+        return (new CoreWeappConfigService())->setWeappConfig($data);
     }
 
     /**
@@ -50,7 +50,7 @@ class WeappConfigService extends BaseAdminService
     public function getWeappStaticInfo(){
         $domain = request()->domain();
         return [
-            'serve_url' => (string)url('/api/weapp/serve/'.$this->site_id, [],'',true),
+            'serve_url' => (string)url('/api/weapp/serve', [],'',true),
             'request_url' => $domain,
             'socket_url'   => "wss://".request()->host(),
             'upload_url'  => $domain,

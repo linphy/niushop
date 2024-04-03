@@ -152,6 +152,7 @@ return [
     'MOBILE_NOT_BIND_MEMBER' => '当前填写的手机号没有绑定此账号',
     'MOBILE_NOT_EXIST_MEMBER' => '当前填写的手机号不存在账号',
     'MOBILE_IS_BIND_MEMBER' => '当前账号已绑定手机号',
+    'MOBILE_NOT_CHANGE' => '绑定的手机号与原手机号一致',
     'QRCODE_EXPIRE' => '登录二维码失效',
     'PASSWORD_REQUIRE' => '密码不能为空',
 

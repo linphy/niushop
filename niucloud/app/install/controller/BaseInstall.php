@@ -22,8 +22,8 @@ class BaseInstall extends BaseController
 
         $root_url = request()->domain();
         View::assign("root_url", $root_url);
+        View::assign("install_config", config('install'));
         $this->setInstallRoot();
-
     }
     /**
      * 加载模板输出

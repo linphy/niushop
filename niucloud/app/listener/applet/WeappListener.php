@@ -24,13 +24,11 @@ class WeappListener
     {
         $type = $data['type'];
         if ($type == 'weapp') {
-            $site_id = $data['site_id'];
             return [
                 [
                     'path' => 'utils/request.js',
                     'variable' => [
                         '{{$baseUrl}}' => (string)url('/api/', [], '', true),
-                        '{{$siteId}}' => $site_id
                     ],
                 ],
                 [

@@ -11,9 +11,12 @@
 
 namespace core\base;
 
+
+use core\exception\CommonException;
 use core\job\Dispatch;
+use think\facade\Log;
 use think\queue\Job;
-use Throwable;
+
 
 /**
  * 队列
@@ -22,59 +25,37 @@ abstract class BaseJob extends Dispatch
 {
 
     /**
-     * 引导
-     * @param $name
-     * @param $arguments
-     */
-    public function __call($name, $arguments)
-    {
-        $this->fire(...$arguments);
-    }
-
-
-    /**
      * 消费任务
-     * @param Job $job
      * @param $params
      */
-    public function fire(Job $job, $params): void
+    public function fire($params): void
     {
-        try {
-            $action = $params['do'] ?? 'doJob';//任务名
-            $data = $params['data'] ?? [];//数据
-            $error_count = $params['error_count'] ?? 0;//执行任务错误的最大重试次数
-            $this->runJob($action, $job, $data, $error_count);
-        } catch ( Throwable $e ) {
-            $job->delete();
-        }
+        $method = $params['method'] ?? 'doJob';//任务名
+        $data = $params['data'] ?? [];//数据
+        $this->runJob($method, $data);
     }
 
 
     /**
      * 执行任务
-     * @param string $action
-     * @param Job $job
+     * @param string $method
      * @param array $data
      * @param int $error_count
      */
-    protected function runJob(string $action, Job $job, array $data, int $error_count = 3)
+    protected function runJob(string $method, array $data)
     {
-        $action = method_exists($this, $action) ? $action : 'handle';
-        if (!method_exists($this, $action)) {
-            $job->delete();
-        }
-        if ($this->{$action}(...$data)) {
-            //删除任务
-            $job->delete();
-        } else {
-            if ($job->attempts() >= $error_count && $error_count) {
-                //删除任务
-                $job->delete();
-            } else {
-                //重发任务
-                $job->release();
+        try {
+            $method = method_exists($this, $method) ? $method : 'handle';
+            if (!method_exists($this, $method)) {
+                throw new CommonException('Job "'.static::class.'" not found！');
             }
+            $this->{$method}(...$data);
+            return true;
+        } catch (\Throwable $e) {
+            Log::write('队列错误:'.static::class.$method.'_'.'_'.$e->getMessage().'_'.$e->getFile().'_'.$e->getLine());
+            throw new CommonException('Job "'.static::class.'" has error！');
         }
+
     }
 
 }

@@ -29,17 +29,7 @@ class ApiChannel
      */
     public function handle(Request $request, Closure $next)
     {
-        //微信或支付宝
-        $channel_rules = [
-            'wechat/serve/<site_id>',
-            'pay/notify/<site_id>/<channel>/<type>/<action>'
-        ];
-        if (in_array($request->rule()->getRule(), $channel_rules)) {
-            $site_id = $request->param('site_id', -1);
-            if ($site_id != -1) {
-                $request->pushHeader([system_name('api_site_id_name') => $site_id]);
-            }
-        }
+
         return $next($request);
     }
 }

@@ -19,14 +19,12 @@ namespace core\base;
 class BaseApiService extends BaseService
 {
 
-    protected $site_id;
     protected $member_id;
     protected $channel;
 
     public function __construct()
     {
         parent::__construct();
-        $this->site_id = $this->request->siteId();
         $this->member_id = $this->request->memberId();
         $this->channel = $this->request->getChannel();
     }

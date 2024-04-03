@@ -25,12 +25,10 @@ class PayCreateListener
         $trade_type = $params['trade_type'] ?? '';
         if ($trade_type == 'recharge') {
             $trade_id = $params['trade_id'];
-            $site_id = $params['site_id'];
-            $order_info = (new CoreRechargeOrderService())->orderInfo($site_id, $trade_id);
+            $order_info = (new CoreRechargeOrderService())->orderInfo($trade_id);
             if ($order_info['order_status'] != RechargeOrderDict::WAIT_PAY) throw new CommonException('ONLY_PAYING_CAN_PAY');
             //添加订单支付表
             return [
-                'site_id' => $order_info['site_id'],
                 'main_type' => PayDict::MEMBER,
                 'main_id' => $order_info['member_id'],//买家id
                 'money' => $order_info['order_money'],//订单金额

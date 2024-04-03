@@ -27,7 +27,6 @@ $system_event = [
         'MemberAccount' => ['app\listener\member\MemberAccountListener'],
         //扫码事件
         'Scan' => ['app\listener\scan\ScanListener'],
-        'AddSiteAfter' => ['app\listener\site\AddSiteAfterListener'],
         /**
          * 支付相关事件
          */

@@ -12,6 +12,7 @@
 namespace app\service\admin\diy;
 
 use app\model\sys\SysConfig;
+use app\service\core\addon\CoreAddonService;
 use app\service\core\diy\CoreDiyConfigService;
 use app\service\core\site\CoreSiteService;
 use core\base\BaseAdminService;
@@ -34,10 +35,10 @@ class DiyConfigService extends BaseAdminService
     {
         $list = (new CoreDiyConfigService())->getBottomList($params);
 
-        $site_addon = (new CoreSiteService())->getSiteCache($this->site_id);
+        $apps = (new CoreAddonService())->getList([ ['type', '=', 'app'] ]);
 
         // 单应用，排除 系统 底部导航设置
-        if (count($site_addon[ 'apps' ]) == 1) {
+        if (count($apps) == 1) {
             foreach ($list as $k=>$v){
                 if($v['key'] = 'app'){
                     unset($list[$k]);
@@ -56,7 +57,7 @@ class DiyConfigService extends BaseAdminService
      */
     public function getBottomConfig($key)
     {
-        return (new CoreDiyConfigService())->getBottomConfig($this->site_id, $key);
+        return (new CoreDiyConfigService())->getBottomConfig($key);
     }
 
     /**
@@ -67,7 +68,7 @@ class DiyConfigService extends BaseAdminService
      */
     public function setBottomConfig($data, $key)
     {
-        return (new CoreDiyConfigService())->setBottomConfig($this->site_id, $data, $key);
+        return (new CoreDiyConfigService())->setBottomConfig($data, $key);
     }
 
     /**
@@ -77,7 +78,7 @@ class DiyConfigService extends BaseAdminService
      */
     public function setStartUpPageConfig($data)
     {
-        return (new CoreDiyConfigService())->setStartUpPageConfig($this->site_id, $data);
+        return (new CoreDiyConfigService())->setStartUpPageConfig($data);
     }
 
     /**
@@ -87,7 +88,7 @@ class DiyConfigService extends BaseAdminService
      */
     public function getStartUpPageConfig($name)
     {
-        return (new CoreDiyConfigService())->getStartUpPageConfig($this->site_id, $name);
+        return (new CoreDiyConfigService())->getStartUpPageConfig($name);
     }
 
 }

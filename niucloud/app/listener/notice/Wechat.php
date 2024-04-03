@@ -14,7 +14,6 @@ class Wechat
 
     public function handle(array $data)
     {
-        $site_id = $data[ 'site_id' ];
         $template = $data[ 'template' ];//模板
         $vars = $data[ 'vars' ];//模板变量
         $key = $data[ 'key' ];
@@ -25,7 +24,7 @@ class Wechat
             $member_id = $to[ 'member_id' ] ?? 0;
             //会员的
             if ($member_id > 0) {//查询openid
-                $info = ( new CoreMemberService() )->getInfoByMemberId($site_id, $member_id);
+                $info = ( new CoreMemberService() )->getInfoByMemberId($member_id);
                 $openid = $info[ 'wx_openid' ] ?? '';
                 $nickname = $info[ 'nickname' ] ?? '';
             }
@@ -62,7 +61,7 @@ class Wechat
 
                 $weapp_page = $vars[ '__weapp_page' ] ?? '';
                 if (!empty($weapp_page)) {
-                    $appid = ( new CoreWeappConfigService() )->getWeappConfig($site_id)[ 'app_id' ] ?? '';
+                    $appid = ( new CoreWeappConfigService() )->getWeappConfig()[ 'app_id' ] ?? '';
                     if (!empty($appid)) {
                         $miniprogram = array (
                             'appid' => $appid,
@@ -82,11 +81,11 @@ class Wechat
                     if (!empty($miniprogram)) {
                         $send_data[ 'miniprogram' ] = $miniprogram;
                     }
-                    ( new TemplateLoader(NoticeTypeDict::WECHAT, [ 'site_id' => $site_id ]) )->send($send_data);
-                    ( new CoreNoticeLogService() )->add($site_id, $log_data);
+                    ( new TemplateLoader(NoticeTypeDict::WECHAT) )->send($send_data);
+                    ( new CoreNoticeLogService() )->add($log_data);
                 } catch (NoticeException $e) {
                     $log_data[ 'result' ] = $e->getMessage();
-                    ( new CoreNoticeLogService() )->add($site_id, $log_data);
+                    ( new CoreNoticeLogService() )->add( $log_data);
                     //这儿决定要不要抛出
                     if (!$template[ 'async' ]) {
                         throw new NoticeException($e->getMessage());

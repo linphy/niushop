@@ -107,7 +107,7 @@ class WebEditGenerator extends BaseGenerator
     {
         $content = '';
         foreach ($this->tableColumn as $column) {
-            if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk'] || $column['column_name'] == 'site_id') {
+            if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk']) {
                 continue;
             }
             $old = [
@@ -260,7 +260,7 @@ class WebEditGenerator extends BaseGenerator
         $content = '';
         $isExist = [];
         foreach ($this->tableColumn as $column) {
-            if (empty($column['dict_type']) || $column['is_pk'] || $column['column_name'] == 'site_id') {
+            if (empty($column['dict_type']) || $column['is_pk']) {
                 continue;
             }
             if (in_array($column['dict_type'], $isExist)) {
@@ -293,7 +293,7 @@ class WebEditGenerator extends BaseGenerator
         $content = '';
         $isExist = [];
         foreach ($this->tableColumn as $column) {
-            if ((!$column['is_insert'] || !$column['is_update'] || $column['column_name'] == 'site_id') && !$column['is_pk']) {
+            if ((!$column['is_insert'] || !$column['is_update']) && !$column['is_pk']) {
                 continue;
             }
             if (in_array($column['column_name'], $isExist)) {
@@ -326,7 +326,7 @@ class WebEditGenerator extends BaseGenerator
         $specDictType = ['input', 'textarea', 'editor'];
 
         foreach ($this->tableColumn as $column) {
-            if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk'] || $column['column_name'] == 'site_id') {
+            if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk']) {
                 continue;
             }
             if (in_array($column['column_name'], $isExist)) {

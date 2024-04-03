@@ -23,12 +23,11 @@ class CoreStorageService extends BaseCoreService
 
     /**
      * 获取当前启用的存储方式以及配置
-     * @param int $site_id
      * @return void
      */
-    public function getDefaultStorage(int $site_id = 0)
+    public function getDefaultStorage()
     {
-        $storage_list = $this->getStorageConfigList($site_id);
+        $storage_list = $this->getStorageConfigList();
         foreach($storage_list as $k => $v){
             if($v['is_use'] == StorageDict::ON){
                 $item_storage = $v['params'] ?? [];
@@ -40,12 +39,11 @@ class CoreStorageService extends BaseCoreService
 
     /**
      * 通过存储方式获取配置
-     * @param int $site_id
      * @param string $type
      * @return array|mixed|void
      */
-    public function getStorageByType(int $site_id, string $type){
-        $storage_list = $this->getStorageConfigList($site_id);
+    public function getStorageByType(string $type){
+        $storage_list = $this->getStorageConfigList();
         foreach($storage_list as $k => $v){
             if($v['storage_type'] == $type){
                 $item_storage = $v['params'] ?? [];
@@ -57,11 +55,10 @@ class CoreStorageService extends BaseCoreService
     }
     /**
      * 获取存储配置
-     * @param int $site_id
      * @return void
      */
-    public function getStorageConfig(int $site_id){
-        $info = (new CoreConfigService())->getConfig($site_id, 'STORAGE')['value'] ?? [];
+    public function getStorageConfig(){
+        $info = (new CoreConfigService())->getConfig('STORAGE')['value'] ?? [];
         if(empty($info))
             $info = ['default' => StorageDict::LOCAL];
 
@@ -72,12 +69,11 @@ class CoreStorageService extends BaseCoreService
 
     /**
      * 获取云存储列表
-     * @param int $site_id
      * @return array
      */
-    public function getStorageList(int $site_id = 0)
+    public function getStorageList()
     {
-        $config_type = $this->getStorageConfig($site_id);
+        $config_type = $this->getStorageConfig();
         $storage_type_list = StorageDict::getType();
         $list = [];
         foreach ($storage_type_list as $k => $v) {
@@ -99,12 +95,11 @@ class CoreStorageService extends BaseCoreService
 
     /**
      * 获取配置列表
-     * @param int $site_id
      * @return array
      */
-    public function getStorageConfigList(int $site_id = 0)
+    public function getStorageConfigList()
     {
-        $config_type = $this->getStorageConfig($site_id);
+        $config_type = $this->getStorageConfig();
         $storage_type_list = StorageDict::getType();
         $list = [];
         foreach ($storage_type_list as $k => $v) {

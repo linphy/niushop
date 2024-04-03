@@ -33,11 +33,10 @@ class CoreWechatFansService extends BaseCoreService
 
     /**
      * 新增微信粉丝
-     * @param int $site_id
      * @param array $data
      * @return void
      */
-    public function add(int $site_id, array $data)
+    public function add(array $data)
     {
 
         $fans = $this->model->create($data);
@@ -52,25 +51,22 @@ class CoreWechatFansService extends BaseCoreService
 
     /**
      * 修改微信粉丝
-     * @param int $site_id
      * @param string $open_id //可以是UnionID  也可以是openid
      * @param array $data
      * @return true
      */
-    public function edit(int $site_id, string $open_id, array $data)
+    public function edit(string $open_id, array $data)
     {
         $condition = [
-            ['site_id', '=', $site_id],
             ['openid', '=', $open_id]
         ];
         $fans = $this->find($condition);
         $core_wechat_api_service = new CoreWechatApiService();
-        $userinfo = $core_wechat_api_service->userInfo($site_id, $open_id);
+        $userinfo = $core_wechat_api_service->userInfo($open_id);
         if (empty($userinfo))
             throw new CommonException('WECHAT_EMPOWER_NOT_EXIST');
 
         $save_data = array(
-            'site_id' => $site_id,
             'subscribe' => $userinfo['subscribe'],//用户是否订阅该公众号标识，值为0时，代表此用户没有关注该公众号，拉取不到其余信息。
         );
         //用户是否订阅该公众号标识，值为0时，代表此用户没有关注该公众号，拉取不到其余信息
@@ -112,15 +108,14 @@ class CoreWechatFansService extends BaseCoreService
 
     /**
      * 粉丝关注事件
-     * @param int $site_id
      * @param string $app_id
      * @param string $from_user_name
      * @return true
      */
-    public function subscribe(int $site_id, string $app_id, string $from_user_name)
+    public function subscribe(string $app_id, string $from_user_name)
     {
         $core_wechat_api_service = new CoreWechatApiService();
-        $user_info = $core_wechat_api_service->userInfo($site_id, $from_user_name);
+        $user_info = $core_wechat_api_service->userInfo($from_user_name);
 
         $data = array(
             'app_id' => $app_id,
@@ -131,23 +126,22 @@ class CoreWechatFansService extends BaseCoreService
             'subscribe_scene' => $user_info['subscribe_scene'],
             'language' => $user_info['language'],
         );
-        $this->edit($site_id, $from_user_name, $data);
+        $this->edit($from_user_name, $data);
         return true;
     }
 
     /**
      * 粉丝取消关注事件
-     * @param int $site_id
      * @param string $from_user_name
      * @return true
      */
-    public function unsubscribe(int $site_id, string $from_user_name)
+    public function unsubscribe(string $from_user_name)
     {
         $data = array(
             'subscribe' => 0,
             'unsubscribe_time' => time(),
         );
-        $this->edit($site_id, $from_user_name, $data);
+        $this->edit($from_user_name, $data);
         return true;
     }
 

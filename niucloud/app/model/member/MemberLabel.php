@@ -43,8 +43,13 @@ class MemberLabel extends BaseModel
      */
     public function getMemberNumAttr($value, $data)
     {
-        if (isset($data['label_id'])) {
-            return (new Member())->where([['member_label', 'like', '%"' . $data['label_id'] . '"%']])->count();
+        if (isset($data[ 'label_id' ])) {
+            $like_arr = [
+                '[' . $data[ 'label_id' ] . ']',
+                '[' . $data[ 'label_id' ] . ',%',
+                '%,' . $data[ 'label_id' ] . ']'
+            ];
+            return ( new Member() )->where([ [ 'member_label', "like", $like_arr, 'or' ] ])->count();
         } else
             return 0;
     }

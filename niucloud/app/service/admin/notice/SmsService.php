@@ -33,7 +33,7 @@ class SmsService extends BaseAdminService
     public function getList()
     {
         $sms_type_list = SmsDict::getType();
-        $info = (new CoreConfigService())->getConfig($this->site_id, 'SMS');
+        $info = (new CoreConfigService())->getConfig('SMS');
         if(empty($info))
         {
             $config_type = ['default' => ''];//初始化
@@ -68,7 +68,7 @@ class SmsService extends BaseAdminService
     {
         $sms_type_list = SmsDict::getType();
         if(!array_key_exists($sms_type, $sms_type_list)) throw new AdminException('SMS_TYPE_NOT_EXIST');
-        $info = (new CoreConfigService())->getConfig($this->site_id, 'SMS');
+        $info = (new CoreConfigService())->getConfig('SMS');
         if(empty($info))
         {
             $config_type = ['default' => ''];//初始化
@@ -101,7 +101,7 @@ class SmsService extends BaseAdminService
     {
         $sms_type_list = SmsDict::getType();
         if(!array_key_exists($sms_type, $sms_type_list)) throw new AdminException('SMS_TYPE_NOT_EXIST');
-        $info = (new CoreConfigService())->getConfig($this->site_id, 'SMS');
+        $info = (new CoreConfigService())->getConfig('SMS');
         if(empty($info))
         {
             $config['default'] = '';
@@ -121,7 +121,7 @@ class SmsService extends BaseAdminService
             $config[$sms_type][$k_param] = $data[$k_param] ?? '';
         }
 
-        return (new CoreConfigService())->setConfig($this->site_id, 'SMS', $config);
+        return (new CoreConfigService())->setConfig('SMS', $config);
     }
 
 

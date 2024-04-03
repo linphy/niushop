@@ -27,9 +27,9 @@ class CorePcService extends BaseCoreService
      * 获取pc配置
      * @return array|mixed
      */
-    public function getPc(int $site_id)
+    public function getPc()
     {
-        $info = (new CoreConfigService())->getConfig($site_id, ChannelDict::PC)['value'] ?? [];
+        $info = (new CoreConfigService())->getConfig(ChannelDict::PC)['value'] ?? [];
         if(empty($info))
         {
             $info = [

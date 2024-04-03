@@ -32,7 +32,7 @@ class RechargeOrderRefundService extends BaseAdminService
 
     public function create($order_id) {
         try {
-            (new CoreRechargeRefundService())->create($this->site_id, $order_id);
+            (new CoreRechargeRefundService())->create($order_id);
             return true;
         } catch ( Exception $e) {
             return $e->getMessage();
@@ -52,11 +52,9 @@ class RechargeOrderRefundService extends BaseAdminService
         {
             $member_where[] = ["member.member_id|member.nickname|member.mobile", '=', $where['keywords']];
         }
-        $search_model = $this->model->where([['recharge_order_item_refund.site_id', '=', $this->site_id]])->with(['item' => function($query) {
+        $search_model = $this->model->with(['item' => function($query) {
             $query->with('orderNo')->field('order_id, order_item_id, item_name, item_image');
-        }])->withSearch(['join_order_no' => 'order_no', 'join_status' => 'status', 'join_member_id' => 'member_id', 'refund_no' => 'refund_no', 'join_create_time' => 'create_time'],$where)->withJoin(['member' => function($query){
-            $query->field("member.nickname, member.headimg, member.mobile, member.member_id");
-        }
+        }])->withSearch(['join_order_no' => 'order_no', 'join_status' => 'status', 'join_member_id' => 'member_id', 'refund_no' => 'refund_no', 'join_create_time' => 'create_time'],$where)->withJoin(['member' => ['nickname', 'headimg', 'mobile', 'member_id', 'member_no']
         ])->where($member_where)->field($field)->order('create_time desc')->append(['status_name', 'payrefund.type_name']);
 
         return $this->pageQuery($search_model);
@@ -69,7 +67,7 @@ class RechargeOrderRefundService extends BaseAdminService
      */
     public function getDetail(int $refund_id) {
         $field = 'refund_id,num,money,refund_no,status,create_time,audit_time,transfer_time,item_type,order_item_id, order_id,member_id';
-        return $this->model->where([ ['site_id', '=', $this->site_id], ['refund_id', '=', $refund_id]])->field($field)->with(['item' => function($query) {
+        return $this->model->where([ ['refund_id', '=', $refund_id]])->field($field)->with(['item' => function($query) {
             $query->field('order_item_id, item_name, item_image');
         }, 'member' => function($query) {
             $query->field('member_id, nickname, mobile, headimg');
@@ -96,7 +94,7 @@ class RechargeOrderRefundService extends BaseAdminService
         $have = 0;
         foreach ($status as $k => &$v)
         {
-            $money = $this->model->where([['status', '=', $v['status']], ['site_id', '=', $this->site_id]])->sum("money");
+            $money = $this->model->where([['status', '=', $v['status']]])->sum("money");
             if($money == null)
             {
                 $money = 0;

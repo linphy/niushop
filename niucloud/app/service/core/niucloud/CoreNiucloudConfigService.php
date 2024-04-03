@@ -26,7 +26,7 @@ class CoreNiucloudConfigService extends BaseCoreService
      * @return array|mixed|string[]
      */
     public function getNiucloudConfig(){
-        $info = (new CoreConfigService())->getConfig(0, ConfigKeyDict::NIUCLOUD_CONFIG)['value'] ?? [];
+        $info = (new CoreConfigService())->getConfig(ConfigKeyDict::NIUCLOUD_CONFIG)['value'] ?? [];
         if(empty($info))
         {
             $info = [

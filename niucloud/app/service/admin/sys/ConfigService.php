@@ -39,7 +39,7 @@ class ConfigService extends BaseAdminService
      */
     public function getCopyright()
     {
-        return (new CoreSysConfigService())->getCopyright($this->site_id);
+        return (new CoreSysConfigService())->getCopyright();
     }
 
     /**
@@ -59,7 +59,7 @@ class ConfigService extends BaseAdminService
             'copyright_link' => $value['copyright_link'],
             'copyright_desc' => $value['copyright_desc']
         ];
-        return $this->core_config_service->setConfig($this->site_id,'COPYRIGHT', $data);
+        return $this->core_config_service->setConfig('COPYRIGHT', $data);
     }
 
     /**
@@ -68,25 +68,45 @@ class ConfigService extends BaseAdminService
      */
     public function getWebSite()
     {
-        return (new SiteService())->getInfo($this->site_id);
+        $info = ( new CoreConfigService() )->getConfig('WEB_SITE_INFO');
+        if (empty($info)) {
+            $info = [];
+            $info[ 'value' ] = [
+                'site_name' => config('install.admin_site_name'),
+                'logo' => config('install.admin_logo'),
+                'desc' => '',
+                'latitude' => '',
+                'longitude' => '',
+                'province_id' => 0,
+                'city_id' => 0,
+                'district_id' => 0,
+                'address' => '',
+                'full_address' => '',
+                'phone' => '',
+                'business_hours' => '',
+                'front_end_name' => '',
+                'front_end_logo' => '',
+                'icon' => '',
+            ];
+        }
+        return $info[ 'value' ];
 
     }
+
     /**
      * 设置网站信息
      * @return bool
      */
     public function setWebSite($data)
     {
-
-        return (new SiteService())->edit($this->site_id, $data);
-
+        return $this->core_config_service->setConfig('WEB_SITE_INFO', $data);
     }
     /**
      * 获取前端域名
      * @return array|string[]
      */
     public function getSceneDomain(){
-        return (new CoreSysConfigService())->getSceneDomain($this->site_id);
+        return (new CoreSysConfigService())->getSceneDomain();
     }
 
     /**
@@ -95,7 +115,7 @@ class ConfigService extends BaseAdminService
      */
     public function getService()
     {
-        $info = (new CoreConfigService())->getConfig(0, 'SERVICE_INFO');
+        $info = (new CoreConfigService())->getConfig('SERVICE_INFO');
         if(empty($info))
         {
             $info = [];
@@ -120,7 +140,8 @@ class ConfigService extends BaseAdminService
             "enterprise_wechat" => $value['enterprise_wechat'],
             "tel" => $value['tel']
         ];
-        return $this->core_config_service->setConfig(0,'SERVICE_INFO', $data);
+
+        return $this->core_config_service->setConfig('SERVICE_INFO', $data);
     }
 
     /**
@@ -133,7 +154,7 @@ class ConfigService extends BaseAdminService
         $data = [
             'key' => $value['key'],
         ];
-        return $this->core_config_service->setConfig($this->site_id,'MAPKEY', $data);
+        return $this->core_config_service->setConfig('MAPKEY', $data);
     }
 
     /**
@@ -141,7 +162,7 @@ class ConfigService extends BaseAdminService
      */
     public function getMap()
     {
-        $info = (new CoreConfigService())->getConfig($this->site_id, 'MAPKEY');
+        $info = (new CoreConfigService())->getConfig('MAPKEY');
         if(empty($info))
         {
             $info = [];
@@ -158,7 +179,7 @@ class ConfigService extends BaseAdminService
      */
     public function getSiteIndexConfig()
     {
-        $config = (new CoreConfigService())->getConfig($this->site_id, "site_index");
+        $config = (new CoreConfigService())->getConfig("site_index");
         if(empty($config))
         {
             $config['value'] = [
@@ -214,7 +235,7 @@ class ConfigService extends BaseAdminService
             }
         }
         if($check_tag == 0) throw new AdminException('SITE_INDEX_VIEW_PATH_NOT_EXIST');
-        (new CoreConfigService())->setConfig($this->site_id, "site_index", $config);
+        (new CoreConfigService())->setConfig("site_index", $config);
         return true;
     }
 
@@ -246,7 +267,7 @@ class ConfigService extends BaseAdminService
      */
     public function setShortcutMenu($data)
     {
-        (new CoreConfigService())->setConfig($this->site_id, 'shortcut_menu', $data);
+        (new CoreConfigService())->setConfig('shortcut_menu', $data);
         return true;
     }
 
@@ -256,7 +277,7 @@ class ConfigService extends BaseAdminService
      */
     public function getShortcutMenu()
     {
-        $config = (new CoreConfigService())->getConfig($this->site_id, 'shortcut_menu');
+        $config = (new CoreConfigService())->getConfig('shortcut_menu');
         $menu = $config['value'] ?? [];
         if(!empty($menu)){
             $menu_service = new MenuService();
@@ -280,7 +301,7 @@ class ConfigService extends BaseAdminService
      */
     public function getAdminIndexConfig()
     {
-        $config = (new CoreConfigService())->getConfig($this->site_id, "admin_index");
+        $config = (new CoreConfigService())->getConfig("admin_index");
         if(empty($config))
         {
             $config['value'] = [
@@ -336,7 +357,7 @@ class ConfigService extends BaseAdminService
             }
         }
         if($check_tag == 0) throw new AdminException('ADMIN_INDEX_VIEW_PATH_NOT_EXIST');
-        (new CoreConfigService())->setConfig($this->site_id, "admin_index", $config);
+        (new CoreConfigService())->setConfig("admin_index", $config);
         return true;
     }
 
@@ -376,7 +397,7 @@ class ConfigService extends BaseAdminService
      * @return array
      */
     public function getDeveloperToken() {
-        return (new CoreConfigService())->getConfigValue(0, "DEVELOPER_TOKEN");
+        return (new CoreConfigService())->getConfigValue("DEVELOPER_TOKEN");
     }
 
     /**
@@ -385,6 +406,6 @@ class ConfigService extends BaseAdminService
      * @return array
      */
     public function setDeveloperToken(array $data) {
-        return (new CoreConfigService())->setConfig(0, "DEVELOPER_TOKEN", $data);
+        return (new CoreConfigService())->setConfig("DEVELOPER_TOKEN", $data);
     }
 }

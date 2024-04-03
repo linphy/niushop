@@ -29,7 +29,7 @@ class AgreementService extends BaseApiService
      */
     public function getAgreement(string $key)
     {
-        return ( new CoreAgreementService() )->getAgreement($this->site_id, $key);
+        return ( new CoreAgreementService() )->getAgreement($key);
     }
 
 }

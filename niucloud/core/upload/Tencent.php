@@ -63,7 +63,7 @@ class Tencent extends BaseUpload
         try {
             $result = $this->client()->putObject(array(
                 'Bucket' => $bucket, //存储桶名称，由BucketName-Appid 组成，可以在COS控制台查看 https://console.tencentcloud.com/cos5/bucket
-                'Key' => $this->getFullPath(),
+                'Key' => $this->getFullPath($dir),
                 'Body' => fopen($this->getRealPath(), 'rb'),
             ));
             // 请求成功

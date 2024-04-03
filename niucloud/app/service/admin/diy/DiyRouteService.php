@@ -90,11 +90,10 @@ class DiyRouteService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $where[] = [ 'site_id', '=', $this->site_id ];
         $field = 'id,title,name,page,share,is_share,sort';
         $order = '';
 
-        $search_model = $this->model->where([ [ 'site_id', '=', $this->site_id ] ])->withSearch([ "title" ], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "title" ], $where)->field($field)->order($order);
         return $this->pageQuery($search_model);
     }
 
@@ -106,7 +105,7 @@ class DiyRouteService extends BaseAdminService
     public function getInfo(int $id)
     {
         $field = 'title,name,page,share,is_share,sort';
-        return $this->model->field($field)->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->findOrEmpty()->toArray();
+        return $this->model->field($field)->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
     }
 
     /**
@@ -117,7 +116,7 @@ class DiyRouteService extends BaseAdminService
     public function getInfoByName(string $name)
     {
         $field = 'id,title,name,page,share,is_share,sort';
-        return $this->model->field($field)->where([ [ 'name', '=', $name ], [ 'site_id', '=', $this->site_id ] ])->findOrEmpty()->toArray();
+        return $this->model->field($field)->where([ [ 'name', '=', $name ] ])->findOrEmpty()->toArray();
     }
 
     /**
@@ -127,7 +126,6 @@ class DiyRouteService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data[ 'site_id' ] = $this->site_id;
         $res = $this->model->create($data);
         return $res->id;
     }
@@ -140,7 +138,7 @@ class DiyRouteService extends BaseAdminService
      */
     public function edit(int $id, array $data)
     {
-        $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->update($data);
+        $this->model->where([ [ 'id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -151,7 +149,7 @@ class DiyRouteService extends BaseAdminService
      */
     public function del(int $id)
     {
-        return $this->model->where([ [ 'id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->delete();
+        return $this->model->where([ [ 'id', '=', $id ] ])->delete();
     }
 
     /**
@@ -162,10 +160,9 @@ class DiyRouteService extends BaseAdminService
     public function modifyShare($data)
     {
         $field = 'id';
-        $data[ 'site_id' ] = $this->site_id;
-        $info = $this->model->field($field)->where([ [ 'name', '=', $data[ 'name' ] ], [ 'site_id', '=', $this->site_id ] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'name', '=', $data[ 'name' ] ] ])->findOrEmpty()->toArray();
         if (!empty($info)) {
-            $this->model->where([ [ 'id', '=', $info[ 'id' ] ], [ 'site_id', '=', $this->site_id ] ])->update([ 'share' => $data[ 'share' ] ]);
+            $this->model->where([ [ 'id', '=', $info[ 'id' ] ] ])->update([ 'share' => $data[ 'share' ] ]);
         } else {
             $this->model->create($data);
         }

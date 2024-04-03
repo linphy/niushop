@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -11,7 +11,6 @@
 
 namespace app\model\sys;
 
-use app\dict\sys\RoleStatusDict;
 use app\dict\sys\UserDict;
 use core\base\BaseModel;
 use think\model\concern\SoftDelete;
@@ -47,26 +46,29 @@ class SysUser extends BaseModel
      */
     protected $deleteTime = 'delete_time';
 
+    // 设置json类型字段
+    protected $json = ['role_ids'];
+    // 设置JSON数据返回数组
+    protected $jsonAssoc = true;
     /**
      * 定义软删除字段的默认值
      * @var int
      */
     protected $defaultSoftDelete = 0;
 
-    public function userrole()
-    {
-        return $this->hasOne(SysUserRole::class, 'uid', 'uid')->joinType('inner');
-    }
+
 
     /**
-     * 权限组
-     * @return HasMany
+     * 状态字段转化
+     * @param $value
+     * @param $data
+     * @return mixed
      */
-    public function roles()
+    public function getStatusNameAttr($value, $data)
     {
-        return $this->hasMany(SysUserRole::class, 'uid', 'uid');
+        if (empty($data['status'])) return '';
+        return UserDict::getStatus()[$data['status']] ?? '';
     }
-
 
     public function getCreateTimeAttr($value, $data)
     {
@@ -100,15 +102,17 @@ class SysUser extends BaseModel
     }
 
     /**
-     * 角色状态
+     * 角色组筛选
+     * @param $query
      * @param $value
-     * @param $data
-     * @return string
+     * @return void
      */
-    public function getStatusNameAttr($value, $data)
+    public function searchRoleIdsAttr($query, $value)
     {
-        if (empty($data['status'])) return '';
-        return RoleStatusDict::getStatus()[$data['status']] ?? '';
+        if ($value) {
+            $query->whereLike('role_ids', '%' . $value . '%');
+        }
+
     }
 
     /**
@@ -119,6 +123,17 @@ class SysUser extends BaseModel
     {
         $query->where('is_del', 0);
     }
+
+    /**
+     * 状态搜索器
+     * @param $query
+     * @param $value
+     */
+    public function searchStatusAttr($query, $value)
+    {
+        $query->where('status', $value);
+    }
+
 
     /**
      * 创建时间搜索器

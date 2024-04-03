@@ -26,11 +26,10 @@ class  CoreAliappConfigService extends BaseCoreService
 {
     /**
      * 获取支付宝小程序设置
-     * @param int $site_id
      * @return array
      */
-    public function getAliappConfig(int $site_id){
-        $info = (new CoreConfigService())->getConfig($site_id, ConfigKeyDict::ALIAPP)['value'] ?? [];
+    public function getAliappConfig(){
+        $info = (new CoreConfigService())->getConfig(ConfigKeyDict::ALIAPP)['value'] ?? [];
         return [
             'name' => $info['name'] ?? '',
             'app_id' => $info['app_id'] ?? '',
@@ -45,11 +44,10 @@ class  CoreAliappConfigService extends BaseCoreService
 
     /**
      * 支付宝小程序配置
-     * @param int $site_id
      * @param array $data
      * @return SysConfig|bool|Model
      */
-    public function setAliappConfig(int $site_id, array $data){
+    public function setAliappConfig(array $data){
         $config = [
             'name' => $data['name'] ?? '',
             'app_id' => $data['app_id'] ?? '',
@@ -60,7 +58,7 @@ class  CoreAliappConfigService extends BaseCoreService
             'alipay_with_crt' =>  $data['alipay_with_crt'] ?? '',
             'qrcode' => $data['qrcode'] ?? ''
         ];
-        return (new CoreConfigService())->setConfig($site_id, ConfigKeyDict::ALIAPP, $config);
+        return (new CoreConfigService())->setConfig(ConfigKeyDict::ALIAPP, $config);
     }
 
 

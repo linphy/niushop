@@ -12,6 +12,8 @@
 namespace core\util;
 
 use Exception;
+use think\cache\driver\Redis;
+use think\facade\Cache;
 use think\facade\Log;
 use think\facade\Queue as ThinkQueue;
 
@@ -48,11 +50,6 @@ class Queue
      * @var string
      */
     protected $job;
-    /**
-     * 队列失败次数
-     * @var int
-     */
-    protected $error_count = 3;
     /**
      * 数据
      * @var array|string
@@ -113,22 +110,80 @@ class Queue
      * @param array|null $data
      * @return bool
      */
-    public function push(?array $data = null)
+    public function push()
     {
         if (!$this->job) {
             return $this->setError('JOB_NOT_EXISTS');
         }
-        $jodValue = $this->getValues($data);
-        //todo 队列扩展策略调度,
-        $res = ThinkQueue::{$this->action()}(...$jodValue);
+        $jodValue = $this->getValues();
+        $res = $this->send(...$jodValue);
         if (!$res) {
-            $res = ThinkQueue::{$this->action()}(...$jodValue);
+            $res = $this->send(...$jodValue);
             if (!$res) {
                 Log::error('队列推送失败，参数：' . json_encode($jodValue, JSON_THROW_ON_ERROR));
             }
         }
+//        //todo 队列扩展策略调度,
+
         $this->clean();
         return $res;
+    }
+
+    /**
+     * 向队列发送一条消息
+     * @param $queue
+     * @param $data
+     * @param $delay
+     * @return mixed
+     */
+    public function send($queue, $data, $delay = 0)
+    {
+//        $redis = Cache::store('redis')->handler();
+        $queue_waiting = '{redis-queue}-waiting'; //1.0.5版本之前为redis-queue-waiting
+        $queue_delay = '{redis-queue}-delayed';//1.0.5版本之前为redis-queue-delayed
+        $now = time();
+        if (extension_loaded('redis')) {
+            try {
+                $redis = new \Redis();
+
+                $redis->connect(env('redis.redis_hostname'), env('redis.port'), 8);
+                if (env('redis.redis_password', '')) {
+                    $redis->auth(env('redis.redis_password', ''));
+                }
+                $redis->select(env('redis.select'));
+                if(!$redis->ping()){
+                    $redis->connect(env('redis.redis_hostname'), env('redis.port'), 8);
+                    if (env('redis.redis_password', '')) {
+                        $redis->auth(env('redis.redis_password', ''));
+                    }
+                    $redis->select(env('redis.select'));
+                }
+                $package_str = json_encode([
+                    'id' => rand(),
+                    'time' => $now,
+                    'delay' => $delay,
+                    'attempts' => 0,
+                    'queue' => $queue,
+                    'data' => $data
+                ]);
+                if ($delay) {
+                    if(!$redis->zAdd($queue_delay, ($now + $delay), $package_str)){
+                        $res = $redis->zAdd($queue_delay, ($now + $delay), $package_str);
+                    }
+                    return true;
+                }
+                if(!$redis->lPush($queue_waiting . $queue, $package_str)){
+                    $res = $redis->lPush($queue_waiting . $queue, $package_str);
+                    Log::write($res);
+                }
+                return true;
+            } catch ( Throwable $e ) {
+                return false;
+            }
+        }else{
+            return false;
+        }
+
     }
 
     /**
@@ -139,17 +194,7 @@ class Queue
         $this->secs = 0;
         $this->data = [];
         $this->queue_name = null;
-        $this->error_count = 3;
         $this->method = $this->default_method;
-    }
-
-    /**
-     * 获取任务方式
-     * @return string
-     */
-    protected function action()
-    {
-        return $this->secs ? 'later' : 'push';
     }
 
     /**
@@ -157,19 +202,10 @@ class Queue
      * @param $data
      * @return array
      */
-    protected function getValues($data)
+    protected function getValues()
     {
-        $jobData['data'] = $data ?: $this->data;
-        $jobData['method'] = $this->method;
-        $jobData['error_count'] = $this->error_count;
-        if ($this->method != $this->default_method) {
-            $this->job .= '@' . $this->method;
-        }
-        if ($this->secs) {
-            return [$this->secs, $this->job, $jobData, $this->queue_name];
-        } else {
-            return [$this->job, $jobData, $this->queue_name];
-        }
+
+        return [$this->job, ['method' => $this->method, 'data' => $this->data], $this->secs];
     }
 
     /**

@@ -35,7 +35,7 @@ class PayService extends BaseAdminService
      */
     public function getAuditPage(array $where){
         $field = 'id, out_trade_no, type, money, body, voucher, create_time, trade_id, trade_type, status';
-        $search_model = $this->model->where([ [ 'site_id', '=', $this->site_id ], ['type', '=', PayDict::OFFLINEPAY] ])->withSearch([ 'create_time', 'out_trade_no', 'status' ], $where)->field($field)->append([ 'type_name' ])->order('create_time desc');
+        $search_model = $this->model->where([ ['type', '=', PayDict::OFFLINEPAY] ])->withSearch([ 'create_time', 'out_trade_no', 'status' ], $where)->field($field)->append([ 'type_name' ])->order('create_time desc');
         return $this->pageQuery($search_model);
     }
 
@@ -46,7 +46,7 @@ class PayService extends BaseAdminService
      */
     public function getDetail(int $id){
         $field = 'id,out_trade_no,trade_type,trade_id,trade_no,body,money,voucher,status,create_time,pay_time,cancel_time,type,channel,fail_reason';
-        return $this->model->where([ [ 'site_id', '=', $this->site_id ], ['id', '=', $id ] ])
+        return $this->model->where([ ['id', '=', $id ] ])
             ->field($field)
             ->append([ 'type_name', 'channel_name', 'status_name' ])
             ->findOrEmpty()
@@ -59,7 +59,7 @@ class PayService extends BaseAdminService
      * @return null
      */
     public function pass(string $out_trade_no) {
-        return (new CoreOfflineService())->pass($this->site_id, $out_trade_no);
+        return (new CoreOfflineService())->pass($out_trade_no);
     }
 
     /**
@@ -68,7 +68,7 @@ class PayService extends BaseAdminService
      * @param string $reason
      */
     public function refuse(string $out_trade_no, string $reason) {
-        return (new CoreOfflineService())->refuse($this->site_id, $out_trade_no, $reason);
+        return (new CoreOfflineService())->refuse($out_trade_no, $reason);
     }
 
     /**

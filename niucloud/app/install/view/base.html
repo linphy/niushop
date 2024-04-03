@@ -3,7 +3,7 @@
 <head>
 	<meta name="renderer" content="webkit" />
 	<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1" />
-	<title>安装程序 - NiuCloud-Admin</title>
+	<title>安装程序 - {$install_config['website_name']}</title>
 <!--	<script src="INSTALL_JS/jquery-2.2.js"></script>-->
 	<link rel="icon" type="image/x-icon" href="INSTALL_IMG/shop_bitbug_favicon.ico" />
 	<link rel="stylesheet" type="text/css" href="INSTALL_CSS/style.css" />
@@ -23,15 +23,17 @@
 	<div class="top">
 		<div class="top-logo">
 			<div class="top-logo-img">
-				<img src="INSTALL_IMG/logo.jpg">
+				{if is_url($install_config['logo'])}
+				<img src="{$install_config['logo']}">
+				{else/}
+				<img src="INSTALL_IMG/{$install_config['logo']}">
+				{/if}
 			</div>
-			<span class="bar">|</span>
-			<span class="logo-text">快速开发通用管理后台框架</span>
 		</div>
 		<div class="top-sub" style="flex:1;"></div>
 		<ul class="top-link">
-			<li><a href="https://www.niucloud.com/" target="_blank">官方网站</a></li>
-			<li><a href="https://bbs.niucloud.com/" target="_blank">技术论坛</a></li>
+			{notempty name="$install_config['website_url']"}<li><a href="{$install_config['website_url']}" target="_blank">官方网站</a></li>{/notempty}
+			{notempty name="$install_config['bbs_url']"}<li><a href="{$install_config['bbs_url']}" target="_blank">技术论坛</a></li>{/notempty}
 		</ul>
 	</div>
 </div>
@@ -41,28 +43,33 @@
 		<!--  标题进度条 start-->
 		<div class="content" style="margin:30px 0 0 0;width: 100%;">
 			<div class="processBar">
-				<div class="text" style="margin: 10px -25px;"><span class='poetry'>1.许可协议</span></div>
+				<div class="text" style="margin: 10px -53px;"><span class='poetry'>1.许可协议</span></div>
 				<div id="line0" class="bar">
 					<div id="point0" class="c-step c-select"></div>
 				</div>
-
 			</div>
 			<div class="processBar">
-				<div class="text" style="margin: 10px -30px;"><span class='poetry'>2.环境检测</span></div>
+				<div class="text" style="margin: 10px -58px;"><span class='poetry'>2.环境检测</span></div>
 				<div id="line1" class="bar">
 					<div id="point1" class="c-step"></div>
 				</div>
 			</div>
 			<div class="processBar">
-				<div class="text" style="margin: 10px -30px;"><span class='poetry'>3.参数配置</span></div>
+				<div class="text" style="margin: 10px -58px;"><span class='poetry'>3.参数配置</span></div>
 				<div id="line2" class="bar">
 					<div id="point2" class="c-step"></div>
 				</div>
 			</div>
-			<div class="processBar" style="width:10px;">
-				<div class="text" style="margin: 10px -39px;"><span class='poetry'>4.安装完成</span></div>
-				<div id="line3" class="bar" style="width: 0;">
+			<div class="processBar">
+				<div class="text" style="margin: 10px -50px;"><span class='poetry'>4.代码编译</span></div>
+				<div id="line3" class="bar">
 					<div id="point3" class="c-step"></div>
+				</div>
+			</div>
+			<div class="processBar" style="width:10px;">
+				<div class="text" style="margin: 10px -39px;"><span class='poetry'>5.安装完成</span></div>
+				<div id="line4" class="bar" style="width: 0;">
+					<div id="point4" class="c-step"></div>
 				</div>
 			</div>
 		</div>
@@ -96,7 +103,7 @@
 	});
 
 	function ControlContent(index) {
-		var stepContents = ["basicInfo","education","work","social"];
+		var stepContents = ["basicInfo","education","work","build","social"];
 		var key;//数组中元素的索引值
 		for (key in stepContents) {
 			var stepContent = stepContents[key];//获得元素的值

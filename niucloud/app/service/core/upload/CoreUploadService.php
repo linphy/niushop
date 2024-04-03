@@ -29,31 +29,31 @@ class CoreUploadService extends CoreFileService
     /**
      * 图片上传
      * @param string $file
-     * @param int $site_id
+
      * @param string $file_dir
      * @param int $cate_id
      * @return array
      * @throws Exception
      */
-    public function image(string $file, int $site_id, string $file_dir, int $cate_id = 0)
+    public function image(string $file, string $file_dir, int $cate_id = 0)
     {
         //实例化上传引擎
-        $this->upload_driver = $this->driver($site_id);
+        $this->upload_driver = $this->driver();
         //读取上传附件的信息用于后续得校验和数据写入
         $this->upload_driver->read($file);
         //生成缩略图....
-        return $this->after($site_id, $file_dir, FileDict::IMAGE, $cate_id);
+        return $this->after($file_dir, FileDict::IMAGE, $cate_id);
     }
 
     /**
      * 上传
-     * @param int $site_id
+
      * @param string $file_dir
      * @param string $type
      * @param int $cate_id
      * @return array
      */
-    public function after(int $site_id, string $file_dir, string $type, int $cate_id = 0)
+    public function after(string $file_dir, string $type, int $cate_id = 0)
     {
         $file_info = $this->upload_driver->getFileInfo();
         $dir = $this->root_path . '/' . $file_dir;
@@ -76,7 +76,7 @@ class CoreUploadService extends CoreFileService
                 'url' => $url,
                 'cate_id' => $cate_id,
             );
-            $att_id = $core_attachment_service->add($site_id, $data);
+            $att_id = $core_attachment_service->add($data);
         }
         $return_array = [
             'url' => $url
@@ -90,38 +90,38 @@ class CoreUploadService extends CoreFileService
     /**
      * 视频上传
      * @param string $file
-     * @param int $site_id
+
      * @param string $file_dir
      * @param int $cate_id
      * @return array
      * @throws Exception
      */
-    public function video(string $file, int $site_id, string $file_dir, int $cate_id)
+    public function video(string $file, string $file_dir, int $cate_id)
     {
         //实例化上传引擎
-        $this->upload_driver = $this->driver($site_id);
+        $this->upload_driver = $this->driver();
         //读取上传附件的信息用于后续得校验和数据写入
         $this->upload_driver->read($file);
-        return $this->after($site_id, $file_dir, FileDict::VIDEO, $cate_id);
+        return $this->after($file_dir, FileDict::VIDEO, $cate_id);
     }
 
     /**
      * 上传文件
      * @param string $file
-     * @param int $site_id
+
      * @param string $type
      * @param string $file_dir
      * @param string $storage_type
      * @return array
      * @throws Exception
      */
-    public function document(string $file, int $site_id, string $type, string $file_dir, string $storage_type)
+    public function document(string $file, string $type, string $file_dir, string $storage_type)
     {
         //实例化上传引擎
-        $this->upload_driver = $this->driver($site_id, $storage_type);
+        $this->upload_driver = $this->driver($storage_type);
         //读取上传附件的信息用于后续得校验和数据写入
         $this->upload_driver->read($file);
-        return $this->after($site_id, $file_dir, $type);
+        return $this->after($file_dir, $type);
     }
 
 }

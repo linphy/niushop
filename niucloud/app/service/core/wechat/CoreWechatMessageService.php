@@ -15,7 +15,7 @@ use app\dict\channel\WechatDict;
 use app\service\core\scan\CoreScanService;
 use Closure;
 use core\base\BaseCoreService;
-use EasyWeChat\Kernel\Messages\Text;
+
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -31,23 +31,22 @@ class CoreWechatMessageService extends BaseCoreService
 
     /**
      * 通过注入来分配消息事件类型
-     * @param int $site_id
      * @param $message
      * @return mixed
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function message(int $site_id, $message)
+    public function message($message)
     {
         switch ($message['MsgType']) {
             case WechatDict::MESSAGE_TYPE_EVENT:
-                return $this->event($site_id, $message);
+                return $this->event($message);
                 return '收到事件消息';
                 break;
             case WechatDict::MESSAGE_TYPE_TEXT:
                 //调用文本回复
-                return $this->text($site_id, $message);
+                return $this->text($message);
                 return '收到文字消息';
                 break;
             case WechatDict::MESSAGE_TYPE_IMAGE:
@@ -78,14 +77,14 @@ class CoreWechatMessageService extends BaseCoreService
      * 事件分流
      * @return void
      */
-    public function event(int $site_id, $message)
+    public function event($message)
     {
         switch ($message['Event'] ) {
             case WechatDict::EVENT_SUBSCRIBE:
-                return $this->subscribe($site_id, $message);
+                return $this->subscribe($message);
                 break;
             case WechatDict::EVENT_SCAN:
-                return $this->scan($site_id, $message);
+                return $this->scan($message);
                 break;
         }
 
@@ -93,62 +92,58 @@ class CoreWechatMessageService extends BaseCoreService
 
     /**
      * 扫码事件
-     * @param int $site_id
      * @param $message
      * @return Lang
      */
-    public function scan(int $site_id, $message){
+    public function scan($message){
         $key = str_replace('qrscene_', '', $message['EventKey']);
         $core_scan_service = new CoreScanService();
-        $core_scan_service->actionByScan($site_id, $key, ['openid' => $message['FromUserName']]);
+        $core_scan_service->actionByScan($key, ['openid' => $message['FromUserName']]);
         return get_lang('SCAN_SUCCESS');
     }
 
     /**
      * 关注事件
-     * @param int $site_id
      * @param $message
      * @return News|Text|false
      */
-    public function subscribe(int $site_id, $message){
+    public function subscribe($message){
         //todo 新增粉丝或将原有的粉丝改为关注状态
         // 因为时间的原因,这里可能需要将实践放在消息队列里面
         $core_wechat_fans_service = new CoreWechatFansService();
-        $core_wechat_fans_service->subscribe($site_id, $message['ToUserName'], $message['FromUserName']);
+        $core_wechat_fans_service->subscribe($message['ToUserName'], $message['FromUserName']);
         //扫码事件
         if(!empty($message['EventKey'])){
-            $this->scan($site_id, $message);
+            $this->scan($message);
         }
         //如果配置了关注回复,返回关注消息
         $core_wechat_reply_service = new CoreWechatReplyService();
-        return $core_wechat_reply_service->reply($site_id, WechatDict::REPLY_SUBSCRIBE) ?? false;
+        return $core_wechat_reply_service->reply(WechatDict::REPLY_SUBSCRIBE) ?? false;
     }
 
 
     /**
      * 取消关注事件
-     * @param $site_id
      * @param $message
      * @return true
      */
-    public function unsubscribe($site_id, $message){
+    public function unsubscribe($message){
         $core_wechat_fans_service = new CoreWechatFansService();
-        $core_wechat_fans_service->unsubscribe($site_id, $$message['FromUserName']);
+        $core_wechat_fans_service->unsubscribe($message['FromUserName']);
         return true;
     }
 
     /**
      * 文本回复事件
-     * @param int $site_id
      * @param $message
      * @return News|Text|false
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    function text(int $site_id, $message)
+    function text($message)
     {
         $core_wechat_reply_service = new CoreWechatReplyService();
-        return $core_wechat_reply_service->reply($site_id, WechatDict::REPLY_KEYWORD, $message['Content']) ?? false;
+        return $core_wechat_reply_service->reply(WechatDict::REPLY_KEYWORD, $message['Content']) ?? false;
     }
 }

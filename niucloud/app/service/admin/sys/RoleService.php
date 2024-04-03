@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -12,9 +12,9 @@
 namespace app\service\admin\sys;
 
 use app\dict\sys\RoleStatusDict;
+use app\model\sys\SysMenu;
 use app\model\sys\SysRole;
-use app\model\sys\SysUserRole;
-use app\service\admin\site\SiteService;
+use app\model\sys\SysUser;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
 use think\db\exception\DataNotFoundException;
@@ -43,7 +43,7 @@ class RoleService extends BaseAdminService
      */
     public function getPage(array $data)
     {
-        $where = [['site_id', '=', $this->site_id]];
+        $where = [];
         if(!empty($data['role_name'])) {
             $where[] = ['role_name', 'like', "%".$data['role_name']."%"];
         }
@@ -57,7 +57,36 @@ class RoleService extends BaseAdminService
      * @return array
      */
     public function getInfo(int $role_id){
-        return $this->model->append(['status_name'])->findOrEmpty($role_id)->toArray();
+        $info = $this->model->append(['status_name'])->findOrEmpty($role_id)->toArray();
+        if(!empty($info)){
+            $list = [];
+            $addon_keys = $info['addon_keys'];
+            $addon_keys[] = 'system';
+            $rules = $info['rules'];
+            $menus_list = (new SysMenu())->where([['menu_key', 'in', $rules]])->select()->toArray();
+
+            foreach($menus_list as $key => $v){
+                $addon = $v['addon'] ?: 'system';
+                if(in_array($addon, $addon_keys))
+                {
+                    $list[$addon][$key] = $v['menu_key'];
+                }
+            }
+
+            $role_rules['system'] = $list['system'];
+
+            unset($list['system']);
+            foreach ($addon_keys as $value)
+            {
+                if(isset($list[$value]))
+                {
+                    $list[$value] = array_values($list[$value]);
+                }
+            }
+            $role_rules['addon'] = $list;
+            $info['rules'] = $role_rules;
+        }
+        return $info;
     }
 
     /**
@@ -70,7 +99,6 @@ class RoleService extends BaseAdminService
     public function getAll()
     {
         $where = array(
-            ['site_id', '=', $this->site_id],
             ['status', '=', 1]
         );
         return $this->model->where($where)->field('role_id,role_name,status,create_time')->select()->toArray();
@@ -83,10 +111,25 @@ class RoleService extends BaseAdminService
      */
     public function add(array $data){
         $data['create_time'] = time();
-        $data['app_type'] = $this->app_type;
-        $data['site_id'] = $this->site_id;
+        $rules = $data['rules'];
+        if(!isset($rules['addon']))
+        {
+            $addon = [];
+        }else{
+            $addon = $rules['addon'];
+        }
+        $add_list = [];
+        $addon_rules = [];
+        foreach ($addon as $key => $value)
+        {
+            $add_list[] = $key;
+            $addon_rules[] = $value;
+        }
+        $addon_rules = array_reduce($addon_rules,'array_merge',[]);
+        $data['rules'] = array_merge($rules['system'],$addon_rules);
+        $data['addon_keys'] = $add_list;
         $this->model->save($data);
-        Cache::tag(self::$cache_tag_name.$this->site_id)->clear();
+        Cache::tag(self::$cache_tag_name)->clear();
         return true;
     }
 
@@ -99,25 +142,39 @@ class RoleService extends BaseAdminService
     public function edit(int $role_id, array $data){
         $where = array(
             ['role_id', '=', $role_id],
-            ['site_id', '=', $this->site_id],
         );
+        $rules = $data['rules'];
+        if(!isset($rules['addon']))
+        {
+            $addon = [];
+        }else{
+            $addon = $rules['addon'];
+        }
+        $add_list = [];
+        $addon_rules = [];
+        foreach ($addon as $key => $value)
+        {
+            $add_list[] = $key;
+            $addon_rules[] = $value;
+        }
+        $addon_rules = array_reduce($addon_rules,'array_merge',[]);
+        $data['rules'] = array_merge($rules['system'],$addon_rules);
+        $data['addon_keys'] = $add_list;
         $data['update_time'] = time();
         $this->model->update($data, $where);
-        Cache::tag(self::$cache_tag_name.$this->site_id)->clear();
+        Cache::tag(self::$cache_tag_name)->clear();
         return true;
 
     }
 
     /**
      * 获取模型对象
-     * @param int $site_id
      * @param int $role_id
      * @return mixed
      */
-    public function find(int $site_id, int $role_id){
+    public function find(int $role_id){
         $where = array(
             ['role_id', '=', $role_id],
-            ['site_id', '=', $site_id],
         );
         $role = $this->model->where($where)->findOrEmpty();
         if ($role->isEmpty())
@@ -132,66 +189,101 @@ class RoleService extends BaseAdminService
      * @throws DbException
      */
     public function del(int $role_id){
-        $role = $this->find($this->site_id, $role_id);
-        if(SysUserRole::where([['role_ids', 'like',['%"'.$role_id.'"%']]])->count() > 0)
+        $role = $this->find($role_id);
+        if(SysUser::where([['role_ids', 'like',['%"'.$role_id.'"%']]])->count() > 0)
             throw new AdminException('USER_ROLE_NOT_ALLOW_DELETE');
         $res = $role->delete();
-        Cache::tag(self::$cache_tag_name.$this->site_id)->clear();
+        Cache::tag(self::$cache_tag_name)->clear();
         return $res;
 
     }
 
     /**
      * 获取角色id为健名,角色名为键值的数据
-     * @param int $site_id
      * @return mixed|string
      */
-    public function getColumn(int $site_id){
-        $cache_name = 'role_column_'.$site_id;
+    public function getColumn(){
+        $cache_name = 'role_column';
         return cache_remember(
             $cache_name,
-            function() use($site_id) {
-                $where = [
-                    ['site_id', '=', $site_id]
-                ];
-                return $this->model->where($where)->column('role_name', 'role_id');
+            function() {
+                return $this->model->column('role_name', 'role_id');
             },
-            [MenuService::$cache_tag_name, self::$cache_tag_name.$this->site_id]
+            [MenuService::$cache_tag_name, self::$cache_tag_name]
         );
     }
 
     /**
      * 通过权限组id获取菜单id
-     * @param int $site_id
      * @param array $role_ids
      * @return array
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getMenuIdsByRoleIds(int $site_id, array $role_ids){
-        $menu_keys = (new SiteService())->getMenuIdsBySiteId($site_id, 1);
-        $allow_role_ids = array_merge($role_ids, $menu_keys);
-        sort($allow_role_ids);
-        $cache_name = 'user_role_'.$site_id.'_'.md5(implode('_', $allow_role_ids));
+    public function getMenuKeysByRoleIds(array $role_ids){
+        sort($role_ids);
+        $cache_name = 'user_role_menu_keys_'.md5(implode('_', $role_ids));
         return cache_remember(
             $cache_name,
-            function() use($role_ids, $menu_keys) {
+            function() use($role_ids) {
                 $rules = $this->model->where([['role_id', 'IN', $role_ids], ['status', '=', RoleStatusDict::ON]])->field('rules')->select()->toArray();
                 if(!empty($rules)){
                     $temp = [];
-                    foreach($rules as $k => $v){
+                    foreach($rules as $v){
                         $temp = array_merge($temp, $v['rules']);
                     }
                     $temp = array_unique($temp);
-                    if(empty($menu_keys)) return [];
+
                     if(empty($temp)) return [];
-                    return array_intersect($temp, $menu_keys);
+                    return $temp;
                 }
                 return [];
             },
-            [MenuService::$cache_tag_name, self::$cache_tag_name.$site_id]
+            [MenuService::$cache_tag_name, self::$cache_tag_name]
         );
 
+    }
+
+
+    /**
+     * 获取应用keys
+     * @param array $role_ids
+     * @return mixed|string
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
+    public function getAddonKeysByRoleIds(array $role_ids){
+        sort($role_ids);
+        $cache_name = 'user_role_addon_keys_'.md5(implode('_', $role_ids));
+        return cache_remember(
+            $cache_name,
+            function() use($role_ids) {
+                $rules = $this->model->where([['role_id', 'IN', $role_ids], ['status', '=', RoleStatusDict::ON]])->field('addon_keys')->select()->toArray();
+                if(!empty($rules)){
+                    $temp = [];
+                    foreach($rules as $v){
+                        $temp = array_merge($temp, $v['addon_keys']);
+                    }
+                    $temp = array_unique($temp);
+
+                    if(empty($temp)) return [];
+                    return $temp;
+                }
+                return [];
+            },
+            [MenuService::$cache_tag_name, self::$cache_tag_name]
+        );
+
+    }
+
+    /**
+     * 角色状态修改
+     */
+    public function setStatus(int $id, int $status)
+    {
+        $this->model->where([['role_id', '=', $id]])->update(['status' => $status]);
+        return true;
     }
 }

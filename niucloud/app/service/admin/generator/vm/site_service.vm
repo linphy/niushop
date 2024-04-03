@@ -63,7 +63,6 @@ class {UCASE_NAME}Service extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['site_id'] = $this->site_id;
         $res = $this->model->create($data);
         return $res->{PK};
 
@@ -78,7 +77,7 @@ class {UCASE_NAME}Service extends BaseAdminService
     public function edit(int $id, array $data)
     {
 
-        $this->model->where([['{PK}', '=', $id],['site_id', '=', $this->site_id]])->update($data);
+        $this->model->where([['{PK}', '=', $id]])->update($data);
         return true;
     }
 
@@ -89,7 +88,7 @@ class {UCASE_NAME}Service extends BaseAdminService
      */
     public function del(int $id)
     {
-        $model = $this->model->where([['{PK}', '=', $id],['site_id', '=', $this->site_id]])->find();
+        $model = $this->model->where([['{PK}', '=', $id]])->find();
         $res = $model->delete();
         return $res;
     }

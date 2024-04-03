@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -11,6 +11,7 @@
 
 namespace app\model\sys;
 
+use app\dict\sys\RoleStatusDict;
 use core\base\BaseModel;
 
 /**
@@ -33,15 +34,20 @@ class SysRole extends BaseModel
      */
     protected $name = 'sys_role';
     // 设置json类型字段
-    protected $json = ['rules'];
+    protected $json = ['rules','addon_keys'];
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
 
-    public function getStatusNameAttr($value, $data) {
-        if (isset($data['status'])) {
-            return $data['status'] ? get_lang('dict_role.status_on') : get_lang('dict_role.status_off');
-        }
-        return '';
+    /**
+     * 角色状态
+     * @param $value
+     * @param $data
+     * @return string
+     */
+    public function getStatusNameAttr($value, $data)
+    {
+        return RoleStatusDict::getStatus()[$data['status']] ?? '';
     }
+
 
 }

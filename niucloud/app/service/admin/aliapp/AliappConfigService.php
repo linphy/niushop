@@ -29,7 +29,7 @@ class AliappConfigService extends BaseAdminService
      */
     public function getAliappConfig()
     {
-        return (new CoreAliappConfigService())->getAliappConfig($this->site_id);
+        return (new CoreAliappConfigService())->getAliappConfig();
     }
 
     /**
@@ -38,7 +38,7 @@ class AliappConfigService extends BaseAdminService
      * @return SysConfig|bool|Model
      */
     public function setAliappConfig(array $data){
-        return (new CoreAliappConfigService())->setAliappConfig($this->site_id, $data);
+        return (new CoreAliappConfigService())->setAliappConfig($data);
     }
 
     /**

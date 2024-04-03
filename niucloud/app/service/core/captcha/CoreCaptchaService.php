@@ -32,11 +32,10 @@ class CoreCaptchaService extends BaseCoreService
 
     /**
      * 创建验证码
-     * @param int $site_id
      * @param array|null $data
      * @return array
      */
-    public function create(int $site_id = 0, ?array $data = []){
+    public function create(?array $data = []){
         $captcha_data = Captcha::create(null, true);
 
         $captcha_key   = md5(uniqid('', true));
