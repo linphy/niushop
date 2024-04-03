@@ -18,9 +18,7 @@ NIUSHOP V6 使用 > NIUCLOUD-ADMIN  底层框架设计， 国内首家唯一支�
 V6底层采用插件化模式设计，可以做到多种插件共存，组合使用。比如您有一个项目是旅游的项目，这个项目的要求是，既有商城的功能，又有旅游项目的销售，还需要进行会员的管理，甚至于还要客服系统。传统的实现方式是，找多个源码，东拼西凑，二次开发，或者部署多套独立的系统，配合起来。而今天，使用V6，可以通过组装的方式，在一套体系中实现，随着发展，会有越来越多的各行各业的插件和应用上架。您对于项目的定制，可能只需要简单组装，装修页面，就可以最终实现功能交付。
 
 ### NIUCLOUD-ADMIN 是什么？
-niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能架构全部精心设计！代码干净整洁！低耦合，高质量！！！前后端API接口完全分离 :raised_hands: ！！！前端采用最新技术 **Vite+TypeScript+Vue3+ElementPlus** ，后台采用PHP8、MYSQL8、THINKPHP8 全部最新技术栈，内置Workman高性能消息队列，计划任务处理，完全兼容容器路由运行技术。 采用多租户多站点多应用多插件任意组合使用的SAAS架构设计，内置代码生成器，插件生成器，一键云编译、一键云部署，集成用户权限、表单设计、云存储、短信发送、素材中心、微信及公众号、Api模块一系列开箱即用功能，是一款快速搭建开发企业级应用的软件系统。源码100%开源无加密！框架采用MIT协议，终身免费，商用免费！
-
-目前已经有 NIUCLOUD  **SHOP商城** + **分销** + **VIPCard** + **上门服务** 插件。 更多应用插件正在陆续上线中... :clap:  :clap:  :clap: 
+niucloud-admin是一款快速开发通用管理后台框架，整体功能架构全部精心设计！代码干净整洁！低耦合，高质量！！！前后端API接口完全分离 :raised_hands: ！！！前端采用最新技术 **Vite+TypeScript+Vue3+ElementPlus** ，后台采用PHP8、MYSQL8、THINKPHP8 全部最新技术栈，内置Workman高性能消息队列，计划任务处理，完全兼容容器路由运行技术。 内置代码生成器，插件生成器，一键云编译、一键云部署，集成用户权限、表单设计、云存储、短信发送、素材中心、微信及公众号、Api模块一系列开箱即用功能，是一款快速搭建开发企业级应用的软件系统。源码100%开源无加密！框架采用MIT协议，终身免费，商用免费！
 
 请到官方网站了解更多 http://www.niucloud.com
 
@@ -35,28 +33,11 @@ niucloud-admin-saas是一款快速开发通用管理后台框架，整体功能�
 - niucloud-admin系统内置支持微信/支付宝支付，微信公众号/小程序/短信消息管理，阿里云/腾讯云短信，七牛云/阿里云存储等基础的功能扩展，后续会根据实际业务不断扩展基础组件。
 - niucloud-admin结合系统结构特点专门开发了代码生成器，这样开发者根据数据表就可以一键生成基础的业务代码，包括：后台php业务代码以及对应的前端vue代码。
 - 手机端设计开发了自定义装修，同时提供了基础的开发组件，方便开发者设计开发手机自定义页面装修的开发需求
-```
 
-### 商城插件  :point_right:   SHOP
+### 界面截图  :point_right: 
 ![输入图片说明](https://media.niucloud.com/1712132244c781785a8822b281c8d03f10134c9f97_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/1711597084402f1f74c47080b20c7feb4166b2ab2a_aliyun.png)
 
-### 分销插件  :point_right:   FENXIAO
-![输入图片说明](https://media.niucloud.com/1705744442d046875f3a6356e20b4201683c2f08fe_aliyun.png)
-![输入图片说明](https://media.niucloud.com/17057444230b1a32898072457faa8888b77d9621ff_aliyun.png)
-![输入图片说明](https://media.niucloud.com/17057444220f55b9430e07e635968a843bcc3e2845_aliyun.png)
-
-### 上门服务插件  :point_right: O2O
-![输入图片说明](https://media.niucloud.com/1705739434bf20bb824783fcee9eea6361f3cfb7aa_aliyun.png)
-![输入图片说明](https://media.niucloud.com/1705739434483707b8617e0e1489d7d2f51cda111c_aliyun.png)
-![输入图片说明](https://media.niucloud.com/17057394343bdd84db9c1fa966c7cb0c03c5618ad9_aliyun.png)
-
-### 会员卡插件 :point_right: VIPCard
-![输入图片说明](https://media.niucloud.com/1704067355ecae8e7b09c482e8c3a5ebc1a4cd0fcc_aliyun.png)
-
-### 旅游管理插件 :point_right:  TOURS
-![输入图片说明](https://media.niucloud.com/17057440675004b59c88adaebcb492a31d3a909944_aliyun.png)
-![输入图片说明](https://media.niucloud.com/1705744067bad60e348b4dd479d223aa5de963a1bf_aliyun.png)
 
 
 ### 操作指南
