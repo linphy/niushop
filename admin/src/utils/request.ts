@@ -36,10 +36,9 @@ class Request {
         // 全局请求拦截器
         this.instance.interceptors.request.use(
             (config: InternalRequestConfig) => {
-                // 携带token site-id
+                // 携带token
                 if (getToken()) {
                     config.headers[import.meta.env.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken()
-                    config.headers[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = storage.get('siteId') || 0
                 }
                 return config
             },

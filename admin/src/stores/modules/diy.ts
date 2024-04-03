@@ -39,11 +39,15 @@ const useDiyStore = defineStore('diy', {
                 '#c7158577'
             ],
             components: [], // 组件集合
+            position: ['fixed', 'top_fixed','right_fixed','bottom_fixed','left_fixed'],
             global: {
                 title: "页面", // 页面标题
 
-                pageBgColor: "", // 页面背景颜色
+                pageStartBgColor: "", // 页面背景颜色（开始）
+                pageEndBgColor: "", // 页面背景颜色（结束）
+                pageGradientAngle: 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
                 bgUrl: '', // 页面背景图片
+                bgHeightScale: 0, // 页面背景高度比例，单位%，0为高度自适应
                 imgWidth: '',  // 页面背景图片宽度
                 imgHeight: '', // 页面背景图片高度
 
@@ -74,9 +78,15 @@ const useDiyStore = defineStore('diy', {
                 // 公共模板属性，所有组件都继承，无需重复定义，组件内部根据业务自行调用
                 template: {
                     textColor: "#303133", // 文字颜色
-                    pageBgColor: '', // 底部背景颜色
+                    pageStartBgColor: "", // 组件底部背景颜色（开始）
+                    pageEndBgColor: "", // 组件底部背景颜色（结束）
+                    pageGradientAngle: 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
 
-                    componentBgColor: '', // 组件背景颜色
+                    componentBgUrl: '', // 组件背景图片
+                    componentBgAlpha: 2, // 组件背景图片的透明度，0~10
+                    componentStartBgColor: '', // 组件背景颜色（开始）
+                    componentEndBgColor: '', // 组件背景颜色（结束）
+                    componentGradientAngle: 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
                     topRounded: 0, // 组件上圆角
                     bottomRounded: 0, // 组件下圆角
 
@@ -111,8 +121,11 @@ const useDiyStore = defineStore('diy', {
             this.global = {
                 title: "页面", // 页面标题
 
-                pageBgColor: "", // 页面背景颜色
+                pageStartBgColor: "", // 页面背景颜色（开始）
+                pageEndBgColor: "", // 页面背景颜色（结束）
+                pageGradientAngle: 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
                 bgUrl: '', // 页面背景图片
+                bgHeightScale: 100, // 页面背景高度比例，单位%
                 imgWidth: '',  // 页面背景图片宽度
                 imgHeight: '', // 页面背景图片高度
 
@@ -143,9 +156,15 @@ const useDiyStore = defineStore('diy', {
                 // 公共模板属性，所有组件都继承，无需重复定义，组件内部根据业务自行调用
                 template: {
                     textColor: "#303133", // 文字颜色
-                    pageBgColor: '', // 底部背景颜色
+                    pageStartBgColor: "", // 组件底部背景颜色（开始）
+                    pageEndBgColor: "", // 组件底部背景颜色（结束）
+                    pageGradientAngle: 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
 
-                    componentBgColor: '', // 组件背景颜色
+                    componentBgUrl: '', // 组件背景图片
+                    componentBgAlpha: 2, // 组件背景图片的透明度
+                    componentStartBgColor: '', // 组件背景颜色（开始）
+                    componentEndBgColor: '', // 组件背景颜色（结束）
+                    componentGradientAngle: 'to bottom', // 渐变角度，从上到下（to bottom）、从左到右（to right）
                     topRounded: 0, // 组件上圆角
                     bottomRounded: 0, // 组件下圆角
 
@@ -182,25 +201,36 @@ const useDiyStore = defineStore('diy', {
             delete component.type;
             delete component.icon;
 
+            // 默认继承全局属性
+            let template = cloneDeep(this.global.template);
+            Object.assign(component, template);
+
             if(component.template){
-                // 按照组件初始的属性加载
+                // 按照组件初始的属性加载覆盖
                 Object.assign(component, component.template);
                 delete component.template;
-            }else{
-                // 默认继承全局属性
-                let template = cloneDeep(this.global.template);
-                Object.assign(component, template);
             }
 
             if (!this.checkComponentIsAdd(component)) return;
 
-            if (this.currentIndex === -99) {
+            // 置顶组件，只能在第一个位置中添加
+            if(component.position && this.position.indexOf(component.position) != -1){
+
+                this.currentIndex = 0;
+                // 指定位置添加组件
+                this.value.splice(0, 0, component);
+
+            }else if (this.currentIndex === -99) {
+
                 this.value.push(component);
                 // 添加组件后（不是编辑调用的），选择最后一个
                 this.currentIndex = this.value.length - 1;
+
             } else {
+
                 // 指定位置添加组件
                 this.value.splice(++this.currentIndex, 0, component);
+
             }
 
             this.currentComponent = component.path;
@@ -271,6 +301,14 @@ const useDiyStore = defineStore('diy', {
             var temp2 = cloneDeep(this.value[prevIndex]); // 上个组件
             temp2.id = this.generateRandom(); // 更新id，刷新组件数据
 
+            if(temp.position && this.position.indexOf(temp.position) != -1){
+                ElMessage({
+                    type: 'warning',
+                    message: `${t('componentNotMoved')}`,
+                });
+                return;
+            }
+
             this.value[this.currentIndex] = temp2;
             this.value[prevIndex] = temp;
 
@@ -287,6 +325,14 @@ const useDiyStore = defineStore('diy', {
 
             var temp2 = cloneDeep(this.value[nextIndex]); // 下个组件
             temp2.id = this.generateRandom(); // 更新id，刷新组件数据
+
+            if(temp.position && this.position.indexOf(temp.position) != -1){
+                ElMessage({
+                    type: 'warning',
+                    message: `${t('componentNotMoved')}`,
+                });
+                return;
+            }
 
             this.value[this.currentIndex] = temp2;
             this.value[nextIndex] = temp;
@@ -305,6 +351,14 @@ const useDiyStore = defineStore('diy', {
                 ElMessage({
                     type: 'warning',
                     message: `${t('notCopy')}，${component.componentTitle}${t('componentCanOnlyAdd')}${component.uses}${t('piece')}`,
+                });
+                return;
+            }
+
+            if(component.position && this.position.indexOf(component.position) != -1){
+                ElMessage({
+                    type: 'warning',
+                    message: `${t('notCopy')}，${component.componentTitle}${t('componentCanOnlyAdd')}1${t('piece')}`,
                 });
                 return;
             }

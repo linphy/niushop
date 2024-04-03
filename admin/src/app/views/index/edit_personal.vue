@@ -1,9 +1,9 @@
 <template>
-    <div class="main-container w-full pt-[64px] bg-white"  v-loading="loading">
-        <div class="flex justify-between items-center h-[32px] mb-4">
-            <span class="text-page-title">{{ t('editPersonal') }}</span>
-        </div>
-        <el-card class="box-card !border-none" shadow="never">
+    <div class="main-container">
+        <el-card class="box-card !border-none" shadow="never" v-loading="loading">
+            <div class="flex justify-between items-center h-[32px] mb-4">
+                <span class="text-page-title">{{ t('personal') }}</span>
+            </div>
             <el-form :model="saveInfo" label-width="90px" ref="formRef" class="page-form">
                 <el-form-item :label="t('headImg')">
                     <upload-image v-model="saveInfo.head_img" :limit="1" />
@@ -15,11 +15,12 @@
                     <el-input v-model="saveInfo.real_name" :placeholder="t('realNamePlaceholder')" clearable class="input-width" />
                 </el-form-item>
             </el-form>
-            <div class="flex justify-center mt-[50px]">
-                <el-button type="primary" @click="submitForm(formRef)">{{ t('save') }}</el-button>
-                <el-button type="primary" @click="returnFn()">{{ t('cancel') }}</el-button>
-            </div>
         </el-card>
+        <div class="fixed-footer-wrap">
+            <div class="fixed-footer">
+                <el-button type="primary" :loading="loading" @click="save(formRef)">{{ t('save') }}</el-button>
+            </div>
+        </div>
     </div>
 </template>
 

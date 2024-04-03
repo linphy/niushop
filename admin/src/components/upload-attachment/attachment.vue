@@ -367,7 +367,6 @@ const uploadRef = ref<Record<string, any> | null>(null)
 const upload = computed(() => {
     const headers: Record<string, any> = {}
     headers[import.meta.env.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken()
-    headers[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = storage.get('siteId') || 0
 
     return {
         action: `${import.meta.env.VITE_APP_BASE_URL}/sys/${prop.type}`,

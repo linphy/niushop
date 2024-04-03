@@ -284,3 +284,11 @@ export function filterDigit(event:any){
 export function filterNumber(event:any){
     event.target.value = event.target.value.replace(/[^\d]/g,'');
 }
+/**
+ * 过滤特殊字符
+  * @param event
+ */
+export function filterSpecial(event:any){
+    event.target.value = event.target.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '')
+    event.target.value = event.target.value.replace(/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g,'')
+}

@@ -134,7 +134,6 @@ const save = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
-
             setWebsite(formData).then(() => {
                 loading.value = false
                 setStore()

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-wrap mt-[20px] min-w-[1000px]" v-if="page.use_template">
+    <div class="flex flex-wrap mt-[20px] min-w-[1200px]" v-if="page.use_template">
         <div class="page-item relative bg-no-repeat ml-[20px] mr-[40px] bg-[#f7f7f7] w-[340px] pt-[90px] pb-[20px]">
             <p class="absolute top-[54px] left-[50%] translate-x-[-50%] text-[14px] truncate w-[130px] text-center">{{ page.use_template.title }}</p>
 
@@ -26,7 +26,7 @@
 
         </div>
 
-        <div class="w-[500px]">
+        <div class="w-[700px]">
             <div class="flex flex-wrap">
                 <!-- 多应用切换启动页 -->
                 <el-button type="primary" @click="showDialog = true" v-if="siteApps.length > 1">{{ t('changePage') }}</el-button>
@@ -40,7 +40,7 @@
                         <div class="font-bold">{{ t('H5') }}</div>
 						<el-form label-width="40px" class="mt-[5px]">
 							<el-form-item :label="t('link')" class="mb-[5px]">
-								<el-input readonly :value="page.shareUrl">
+								<el-input readonly :value="page.shareUrl" class="!w-[400px]">
 									<template #append>
 										<el-button @click="copyEvent(page.shareUrl)" class="bg-primary copy">{{ t('copy') }}</el-button>
 									</template>
@@ -94,11 +94,11 @@ import { getDecoratePage, changeTemplate,getDiyTemplate } from '@/app/api/diy'
 import storage from '@/utils/storage'
 import QRCode from 'qrcode'
 import { useClipboard } from '@vueuse/core'
-import useUserStore from '@/stores/modules/user'
+import useSystemStore from "@/stores/modules/system"
 
-const userStore = useUserStore()
-const siteApps = computed(()=>{
-    return userStore.siteInfo.apps;
+const systemStore = useSystemStore()
+const siteApps = computed(() => {
+    return systemStore.apps
 })
 
 const type: any = ref('DIY_MEMBER_INDEX');
@@ -152,39 +152,56 @@ const refreshData = () => {
             wapDomain.value = page.domain_url.wap_domain
             page.wapUrl = page.domain_url.wap_url
 
+            let repeat = true; // 防重复执行
+
             if (import.meta.env.MODE == 'development') {
                 // 开发模式情况下，并且未配置wap域名，则获取缓存域名
                 if (wapDomain.value) {
                     page.wapUrl = wapDomain.value + '/wap'
+                    repeat = false
                     setDomain()
                 }
                 if (storage.get('wap_domain')) {
                     page.wapUrl = storage.get('wap_domain')
+                    repeat = false
                     setDomain()
                 }
             }
 
-            setDomain()
+            if(repeat) {
+                setDomain()
+            }
         }
     })
 }
 
 refreshData()
 
+const uniAppLoadStatus = ref(false) // uni-app 加载状态，true：加粗完成，false：未完成
+
 // 监听 uni-app 端 是否加载完成
 window.addEventListener('message', (event) => {
     try {
-        const data = JSON.parse(event.data)
-        if (['appOnLaunch', 'appOnReady'].indexOf(data.type) != -1) {
+        let data = {
+            type: ''
+        };
+        if(typeof event.data == 'string') {
+            data = JSON.parse(event.data)
+        }else if(typeof event.data == 'object') {
+            data = event.data
+        }
+
+        if (data.type && ['appOnLaunch', 'appOnReady'].indexOf(data.type) != -1) {
             page.loadingDev = false // 禁用开发环境配置
             page.loadingIframe = true // 加载iframe
-            const loadTime = new Date().getTime()
+            let loadTime = new Date().getTime()
             page.difference = loadTime - page.timeIframe
             page.isDisabledPop = false // 是否禁止打开遮罩层
+            uniAppLoadStatus.value = true // 加载完成
         }
     } catch (e) {
         initLoad()
-        console.log('后台接受数据错误', e)
+        console.log('diy member 后台接受数据错误', e)
     }
 }, false)
 
@@ -238,17 +255,38 @@ const setDomain = () => {
     QRCode.toDataURL(page.shareUrl, { errorCorrectionLevel: 'L', margin: 0, width: 100 }).then(url => {
         wapImage.value = url
     })
-    page.timeIframe = new Date().getTime()
-    postMessage()
+
+    const send = ()=>{
+        page.timeIframe = new Date().getTime()
+        postMessage()
+    }
+
+    // 同步发送一次消息
+    send()
+
+    // 如果同步发送消息的 uni-app没有接收到回应，则定时发送消息
+    let sendCount = 0;
+    let timeInterVal = setInterval(()=>{
+        // 接收 uni-app 发送的消息 或者 发送50次后未响应，则停止发送
+        if(uniAppLoadStatus.value || sendCount >= 50){
+            clearInterval(timeInterVal)
+            return
+        }
+
+        send()
+        sendCount++;
+    },200)
+
+    // 如果10秒内加载不出来，则需要配置域名
     setTimeout(() => {
         if (page.difference == 0) initLoad()
-    }, 1000 * 2)
+    }, 1000 * 10)
 }
 
 // 跳转去装修
 const toDecorate = () => {
     const query: any = {
-        back: '/site/diy/member'
+        back: '/admin/diy/member'
     }
     if (page.use_template.id) {
         query.id = page.use_template.id

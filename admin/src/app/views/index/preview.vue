@@ -83,24 +83,33 @@ setLayout('decorate')
 
 getUrl().then((res: any) => {
     wapUrl.value = res.data.wap_url
-    setDomain()
 
-    // 生产模式禁止
-    if (import.meta.env.MODE == 'production') return
+    let repeat = true; // 防重复执行
 
-    wapDomain.value = res.data.wap_domain
+    // 开发模式下执行
+    if (import.meta.env.MODE == 'development') {
 
-    // env文件配置过wap域名
-    if (wapDomain.value) {
-        wapUrl.value = wapDomain.value + '/wap'
+        wapDomain.value = res.data.wap_domain
+
+        // env文件配置过wap域名
+        if (wapDomain.value) {
+            wapUrl.value = wapDomain.value + '/wap'
+            repeat = false
+            setDomain()
+        }
+
+        const wap_domain_storage = storage.get('wap_domain')
+        if (wap_domain_storage) {
+            wapUrl.value = wap_domain_storage
+            repeat = false
+            setDomain()
+        }
+    }
+
+    if(repeat) {
         setDomain()
     }
 
-    const wap_domain_storage = storage.get('wap_domain')
-    if (wap_domain_storage) {
-        wapUrl.value = wap_domain_storage
-        setDomain()
-    }
 })
 
 const save = () => {
@@ -125,26 +134,58 @@ const setDomain = () => {
         QRCode.toDataURL(wapPreview.value, { errorCorrectionLevel: 'L', margin: 0, width: 100 }).then(url => {
             wapImage.value = url
         })
-        timeIframe.value = new Date().getTime()
+
+        const send = ()=>{
+            timeIframe.value = new Date().getTime()
+            postMessage()
+        }
+
+        // 同步发送一次消息
+        send()
+
+        // 如果同步发送消息的 uni-app没有接收到回应，则定时发送消息
+        let sendCount = 0;
+        let timeInterVal = setInterval(()=>{
+            // 接收 uni-app 发送的消息 或者 发送50次后未响应，则停止发送
+            if(uniAppLoadStatus.value || sendCount >= 50){
+                clearInterval(timeInterVal)
+                return
+            }
+
+            send()
+            sendCount++;
+        },200)
+
+        // 如果10秒内加载不出来，则需要配置域名
         setTimeout(() => {
             if (difference.value == 0) initLoad()
-        }, 1000 * 2)
+        }, 1000 * 10)
     }
 }
+
+const uniAppLoadStatus = ref(false) // uni-app 加载状态，true：加载完成，false：未完成
 
 // 监听 uni-app 端 是否加载完成
 window.addEventListener('message', (event) => {
     try {
-        const data = JSON.parse(event.data)
-        if (['appOnLaunch', 'appOnReady'].indexOf(data.type) != -1) {
+        let data = {
+            type :''
+        };
+        if(typeof event.data == 'string') {
+            data = JSON.parse(event.data)
+        }else if(typeof event.data == 'object') {
+            data = event.data
+        }
+        if (data.type && ['appOnLaunch', 'appOnReady'].indexOf(data.type) != -1) {
             loadingDev.value = false
             loadingIframe.value = true
-            const loadTime = new Date().getTime()
+            let loadTime = new Date().getTime()
+            uniAppLoadStatus.value = true // 加载完成
             difference.value = loadTime - timeIframe.value
         }
     } catch (e) {
         initLoad()
-        console.log('后台接受数据错误', e)
+        console.log('preview 后台接受数据错误', e)
     }
 }, false)
 

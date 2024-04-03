@@ -1,5 +1,5 @@
 <template>
-    <div class="main-container w-full bg-white" v-loading="loading">
+    <div class="main-container w-full bg-white">
         <el-card class="box-card !border-none" shadow="never">
             <div class="flex justify-between items-center">
                 <span class="text-page-title">应用管理</span>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            <div class="empty flex items-center  justify-center" v-if="!loading && !appList.length">
+            <div class="empty flex items-center  justify-center" v-if="!appList.length">
                 <el-empty :description="t('emptyAppData')" />
             </div>
         </el-card>
@@ -34,24 +34,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { getSiteAddons } from '@/app/api/site'
+import { computed } from 'vue'
 import { img } from '@/utils/common'
 import useUserStore from '@/stores/modules/user'
+import useSystemStore from '@/stores/modules/system'
 import { useRouter } from 'vue-router'
 import { t } from '@/lang'
 
 const addonIndexRoute = useUserStore().addonIndexRoute
 const router = useRouter()
-const appList = ref<Record<string, any>[]>([])
-
-const loading = ref(true)
-const getAppList = async () => {
-    const res = await getSiteAddons()
-    appList.value = res.data
-    loading.value = false
-}
-getAppList()
+const appList = computed(() => {
+    return useSystemStore().addons
+})
 
 const toLink = (addon: string) => {
     addonIndexRoute[addon] && router.push({ name: addonIndexRoute[addon] })

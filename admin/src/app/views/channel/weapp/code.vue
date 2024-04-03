@@ -10,8 +10,7 @@
         </el-tabs>
         <el-card class="box-card !border-none" shadow="never">
             <div class="mt-[50px]">
-                <el-button type="primary" @click="insert" :loading="uploading" :disabled="weappTableData.loading">{{
-                    t('cloudRelease') }}</el-button>
+                <el-button type="primary" @click="insert" :loading="uploading" :disabled="weappTableData.loading">{{ t('cloudRelease') }}</el-button>
                 <el-button @click="localInsert" :disabled="weappTableData.loading">{{ t('localRelease') }}</el-button>
             </div>
             <el-table class="mt-[15px]" :data="weappTableData.data" v-loading="weappTableData.loading" size="default">
@@ -28,14 +27,13 @@
                 <el-table-column prop="create_time" :label="t('createTime')" align="center" />
                 <el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
                     <template #default="{ row, $index }">
-                        <div class="" v-if="previewContent && $index == 0 && row.status == 1 && weappTableData.page == 1">
+                        <template v-if="previewContent && $index == 0 && row.status == 1 && weappTableData.page == 1">
                             <el-tooltip :content="previewContent" raw-content effect="light">
-                                <el-button type="primary" link>
-                                    {{ t('preview') }}</el-button>
+                                <el-button type="primary" link>{{ t('preview') }}</el-button>
                             </el-tooltip>
-                            <el-button type="primary" link v-if="row.status == -1" @click="handleFailReason(row)">
-                                {{ t('failReason') }}</el-button>
-                        </div>
+                        </template>
+                        <el-button type="primary" link v-if="row.status == -1" @click="handleFailReason(row)">
+                            {{ t('failReason') }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>

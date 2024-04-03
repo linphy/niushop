@@ -130,7 +130,7 @@
                     <template #description>
                         <p class="flex items-center">
                             <span>{{ t('descriptionLeft') }}</span>
-                            <el-link type="primary" @click="goRouter" class="mx-[5px]">{{ t('link') }}</el-link>
+                            <el-link type="primary" @click="market" class="mx-[5px]">{{ t('link') }}</el-link>
                             <span>{{ t('descriptionRight') }}</span>
                         </p>
                     </template>
@@ -190,8 +190,6 @@
                                     class="input-width" size="large" />
                             </el-form-item>
                         </div>
-
-                        <div class="text-sm mt-[10px] text-info">{{ t('authInfoTips') }}</div>
 
                         <div class="mt-[20px]">
                             <el-button type="primary" class="w-full" size="large" :loading="saveLoading"
@@ -396,6 +394,7 @@ import { ref, reactive, watch, h } from 'vue'
 import { t } from '@/lang'
 import { getAddonLocal, uninstallAddon, installAddon, preInstallCheck, cloudInstallAddon, getAddonInstalltask, getAddonCloudInstallLog, preUninstallCheck, cancelInstall } from '@/app/api/addon'
 import { downloadVersion, getAuthinfo, setAuthinfo } from '@/app/api/module'
+import { getInstallConfig } from '@/app/api/sys'
 import { ElMessage, ElMessageBox, ElNotification, FormInstance, FormRules } from 'element-plus'
 import 'vue-web-terminal/lib/theme/dark.css'
 import { Terminal, TerminalFlash } from 'vue-web-terminal'
@@ -417,6 +416,11 @@ const installAfterTips = ref<string[]>([])
 const userStore = useUserStore()
 const unloadHintDialog = ref(false)
 const terminalRef = ref(null)
+const installPhpConfig = ref(null)
+
+getInstallConfig().then(({ data }) => {
+    installPhpConfig.value = data
+}).catch()
 
 const currDownData = ref()
 const downEventHintFn = () => {
@@ -688,18 +692,18 @@ const handleCloudInstall = () => {
 
 const authElMessageBox = () => {
     ElMessageBox.confirm(
-        t('authTips'),
+        `云安装需先绑定授权码，如果已有授权请先进行绑定，没有授权可到${installPhpConfig.value.website_name}官网购买云服务之后再进行操作`,
         t('warning'),
         {
             distinguishCancelAndClose: true,
             confirmButtonText: t('toBind'),
-            cancelButtonText: t('toNiucloud')
+            cancelButtonText: `去${installPhpConfig.value.website_name}官网`
         }
     ).then(() => {
         authCodeApproveFn()
-    }).catch((action: string) => {
+    }).catch(async (action: string) => {
         if (action === 'cancel') {
-            window.open('https://www.niucloud.com/app')
+            window.open(installPhpConfig.value.website_url)
         }
     })
 }
@@ -808,7 +812,7 @@ const handleUninstallAddon = (key: string) => {
 }
 
 const market = () => {
-    window.open('https://www.niucloud.com/app')
+    window.open(installPhpConfig.value.website_url)
 }
 
 /**
@@ -905,10 +909,6 @@ const save = async (formEl: FormInstance | undefined) => {
                 })
         }
     })
-}
-
-const goRouter = () => {
-    window.open('https://www.niucloud.com/app')
 }
 </script>
 

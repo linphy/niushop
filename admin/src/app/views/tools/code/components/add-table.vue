@@ -1,6 +1,6 @@
 <template>
     <el-dialog v-model="showDialog" :title="t('addCode')" width="800px" :destroy-on-close="true">
-        <div class="">
+        <div>
             <el-table :data="filterTableData" size="large" v-loading="tableTableData.loading" height="400">
 
                 <template #empty>

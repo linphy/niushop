@@ -1,6 +1,6 @@
 {
       "buyerNotice": "会员消息",
-      "sellerNotice":"平台消息",
+      "sellerNotice":"商家消息",
       "sms":"短信",
       "weapp":"微信小程序",
       "wechat":"微信公众号",
@@ -18,5 +18,6 @@
       "weappTempKey" : "模板编号",
       "smsId":"短信模版ID",
       "smsIdPlaceholder":"短信模版ID",
-      "noticeType":"消息类型"
+      "noticeType":"消息类型",
+      "addon": "所属应用"
 }

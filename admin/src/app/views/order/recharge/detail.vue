@@ -19,8 +19,8 @@
                 <el-form-item :label="t('member')">
                     <div class="input-width">
                         <div class="flex flex flex-col cursor-pointer" @click="toMember(formData.member_id)">
-                            <span class="">{{ formData.member.nickname || '' }}</span>
-                            <span class="">{{ formData.member.mobile || '' }}</span>
+                            <span>{{ formData.member.nickname || '' }}</span>
+                            <span>{{ formData.member.mobile || '' }}</span>
                         </div>
                     </div>
                 </el-form-item>
@@ -83,13 +83,11 @@ const formData: Record<string, any> | null = ref(null)
 const setFormData = async (orderId: number = 0) => {
     loading.value = true
     formData.value = null
-    await getRechargeOrderInfo(orderId)
-        .then(({ data }) => {
-            formData.value = data
-        })
-        .catch(() => {
+    await getRechargeOrderInfo(orderId).then(({data}) => {
+        formData.value = data
+    }).catch(() => {
 
-        })
+    })
     loading.value = false
 }
 if (orderId) setFormData(orderId)

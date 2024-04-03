@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteLocationRaw, RouteLocationNormalizedLoaded } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { STATIC_ROUTES, NO_LOGIN_ROUTES, ROOT_ROUTER, ADMIN_ROUTE, HOME_ROUTE, SITE_ROUTE, findFirstValidRoute } from './routers'
+import { STATIC_ROUTES, NO_LOGIN_ROUTES, ROOT_ROUTER, ADMIN_ROUTE, findFirstValidRoute } from './routers'
 import { language } from '@/lang'
 import useSystemStore from '@/stores/modules/system'
 import useUserStore from '@/stores/modules/user'
@@ -10,7 +10,7 @@ import storage from '@/utils/storage'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [ADMIN_ROUTE, HOME_ROUTE, SITE_ROUTE, ...STATIC_ROUTES]
+    routes: [ADMIN_ROUTE, ...STATIC_ROUTES]
 })
 
 /**
@@ -21,7 +21,7 @@ router.push = (to: RouteLocationRaw) => {
     const route = typeof to == 'string' ? urlToRouteRaw(to) : to
     if (route.path) {
         const paths = route.path.split('/').filter((item: string) => { return item })
-        route.path = ['admin', 'site', 'home'].indexOf(paths[0]) == -1 ? `/${getAppType()}${route.path}` : route.path
+        route.path = ['admin'].indexOf(paths[0]) == -1 ? `/${getAppType()}${route.path}` : route.path
     }
     return originPush(route)
 }
@@ -34,7 +34,7 @@ router.resolve = (to: RouteLocationRaw, currentLocation?: RouteLocationNormalize
     const route = typeof to == 'string' ? urlToRouteRaw(to) : to
     if (route.path) {
         const paths = route.path.split('/').filter((item: string) => { return item })
-        route.path = ['admin', 'site', 'home'].indexOf(paths[0]) == -1 ? `/${getAppType()}${route.path}` : route.path
+        route.path = ['admin'].indexOf(paths[0]) == -1 ? `/${getAppType()}${route.path}` : route.path
     }
     return originResolve(route, currentLocation)
 }
@@ -47,14 +47,10 @@ router.beforeEach(async (to, from, next) => {
     to.redirectedFrom && (to.query = to.redirectedFrom.query)
 
     const userStore = useUserStore()
+    const systemStore = useSystemStore()
     const siteInfo = userStore.siteInfo
-    const appType = getAppType()
 
     let title: string = to.meta.title ?? ''
-
-    if (!siteInfo && appType != 'home') {
-        await userStore.getSiteInfo()
-    }
 
     if (siteInfo) {
         title += '-' + siteInfo.site_name
@@ -64,17 +60,9 @@ router.beforeEach(async (to, from, next) => {
     setWindowTitle(title)
 
     // 加载语言包
-    await language.loadLocaleMessages(to.meta.addon || '', (to.meta.view || to.path), useSystemStore().lang);
+    await language.loadLocaleMessages(to.meta.addon || '', (to.meta.view || to.path), systemStore.lang);
 
-    let matched: any = to.matched;
-
-    if (matched && matched.length && matched[0].path != '/:pathMatch(.*)*') {
-        matched = matched[0].path;
-    } else {
-        matched = appType
-    }
-
-    const loginPath = to.path == '/' ? '/admin/login' : `/${matched == '/admin' ? 'admin' : 'site'}/login`
+    const loginPath = '/admin/login'
 
     // 判断是否需登录
     if (NO_LOGIN_ROUTES.includes(to.path)) {
@@ -89,54 +77,35 @@ router.beforeEach(async (to, from, next) => {
             }
         } else {
             try {
-                if (!userStore.siteInfo || userStore.siteInfo.site_id == undefined) {
-                    if (to.path === '/home/index') {
-                        next()
-                    } else {
-                        next({ path: '/home/index', replace: true })
-                    }
-                } else {
-                    await userStore.getAuthMenus()
+                if (!systemStore.apps.length) {
+                    await systemStore.getInstallAddons()
+                }
+                await userStore.getAuthMenus()
 
-                    // 设置首页路由
-                    let firstRoute: symbol | string | undefined = findFirstValidRoute(userStore.routers)
-                    if (getAppType() != 'admin') {
-                        firstRoute = userStore.addonIndexRoute[ userStore.siteInfo?.apps[0].key ]
-                    }
-
-                    ROOT_ROUTER.redirect = { name: firstRoute }
-                    router.addRoute(ROOT_ROUTER)
-
-                    // 设置应用首页路由
-                    if (getAppType() == 'admin') {
-                        ADMIN_ROUTE.children[0].redirect = { name: firstRoute }
-                        router.addRoute(ADMIN_ROUTE)
-                    } else {
-                        SITE_ROUTE.children[0].redirect = { name: firstRoute }
-                        router.addRoute(SITE_ROUTE)
-                    }
-
-                    // 添加动态路由
-                    userStore.routers.forEach(route => {
-                        if (!route.children) {
-                            if (route.meta.app == 'admin') {
-                                router.addRoute(ADMIN_ROUTE.children[0].name, route)
-                            } else {
-                                router.addRoute(SITE_ROUTE.children[0].name, route)
-                            }
-                            return
-                        }
-
-                        // 动态添加可访问路由表
-                        if (route.meta.app == 'admin') {
-                            router.addRoute(ADMIN_ROUTE.name, route)
-                        } else {
-                            router.addRoute(SITE_ROUTE.name, route)
-                        }
-                    })
-                    next(to)
+                // 设置首页路由
+                let firstRoute: symbol | string | undefined = findFirstValidRoute(userStore.routers)
+                if (systemStore.apps[0]) {
+                    firstRoute = userStore.addonIndexRoute[ systemStore.apps[0].key ]
                 }
 
+                ROOT_ROUTER.redirect = { name: firstRoute }
+                router.addRoute(ROOT_ROUTER)
+
+                // 设置应用首页路由
+                ADMIN_ROUTE.children[0].redirect = { name: firstRoute }
+                router.addRoute(ADMIN_ROUTE)
+
+                // 添加动态路由
+                userStore.routers.forEach(route => {
+                    if (!route.children) {
+                        router.addRoute(ADMIN_ROUTE.name, route)
+                        return
+                    }
+
+                    // 动态添加可访问路由表
+                    router.addRoute(ADMIN_ROUTE.name, route)
+                })
+                next(to)
             } catch (err) {
                 console.log(err)
                 next({ path: loginPath, query: { redirect: to.fullPath } })

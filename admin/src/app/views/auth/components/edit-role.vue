@@ -19,7 +19,7 @@
                         <el-checkbox v-model="checkStrictly" :label="t('checkStrictly')" />
                     </div>
                     <el-button link type="primary" @click="menuAction()">{{ t('foldText') }}</el-button>
-
+                    
                 </div>
                 <el-scrollbar height="35vh" class="w-full">
                     <el-tree :data="menus" :props="{ label: 'menu_name' }" :default-checked-keys="formData.rules" :check-strictly="checkStrictly" show-checkbox default-expand-all @check-change="handleCheckChange" node-key="menu_key" ref="treeRef" />
@@ -40,18 +40,18 @@
 import { ref, reactive, computed, watch, toRaw } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
-import { addRole, editRole, getRoleInfo, getSiteMenus } from '@/app/api/sys'
+import { addRole, editRole, getRoleInfo, getMenus } from '@/app/api/sys'
 import { debounce } from '@/utils/common'
 
 const showDialog = ref(false)
 const loading = ref(false)
 const isOpen = ref(true)
 
-let popTitle: string = ''
+let popTitle: string = '';
 
 // 获取权限数据
 const menus = ref<Record<string, any>[]>([])
-getSiteMenus().then((res) => {
+    getMenus().then((res) => {
     menus.value = res.data
 })
 
@@ -72,29 +72,29 @@ const handleCheckChange = debounce((e) => {
 })
 
 const menuAction = () => {
-    if (isOpen.value) {
-        collapseAll(menus.value)
-        isOpen.value = false
-    } else {
-        unFoldAll(menus.value)
-        isOpen.value = true
+    if(isOpen.value){
+        collapseAll(menus.value);
+        isOpen.value = false;
+    }else{
+        unFoldAll(menus.value);
+        isOpen.value = true;
     }
 }
 
 // 全部展开
 const unFoldAll = (data:any) => {
     Object.keys(data).forEach((key:string|any) => {
-        treeRef.value.store.nodesMap[data[key].menu_key].expanded = true
-        if (data[key].children && data[key].children.length > 0) collapseAll(data[key].children)
+        treeRef.value.store.nodesMap[data[key]['menu_key']].expanded = true;
+        if(data[key].children && data[key].children.length > 0) collapseAll(data[key].children);
     })
 }
 // 全部折叠
 const collapseAll = (data:any) => {
     Object.keys(data).forEach((key:string|any) => {
-        treeRef.value.store.nodesMap[data[key].menu_key].expanded = false
-        if (data[key].children && data[key].children.length > 0) collapseAll(data[key].children)
+        treeRef.value.store.nodesMap[data[key]['menu_key']].expanded = false;
+        if(data[key].children && data[key].children.length > 0) collapseAll(data[key].children);
     })
-}
+} 
 /**
  * 表单数据
  */
@@ -140,13 +140,13 @@ const confirm = async (formEl: FormInstance | undefined) => {
         if (valid) {
             loading.value = true
 
-            const data = Object.assign({}, formData)
-            data.rules = data.rules.concat(treeRef.value.getHalfCheckedKeys())
+            const data = Object.assign({}, formData) 
+            data.rules = data.rules.concat(treeRef.value.getHalfCheckedKeys());
 
             save(data).then(res => {
                 loading.value = false
                 showDialog.value = false
-
+                
                 emit('complete')
             }).catch(() => {
                 loading.value = false
@@ -165,37 +165,42 @@ const setFormData = async (row: any = null) => {
         popTitle = t('updateRole')
         const data = await (await getRoleInfo(row.role_id)).data
         Object.keys(formData).forEach((key: string) => {
-            if (data[key] != undefined) {
-                if (key == 'rules') {
-                    const arr = data.rules
-                    const newArr:any = []
 
-                    Object.keys(data.rules).forEach((i) => {
-                        checked(data.rules[i], menus.value, newArr)
-                    })
-                    formData[key] = newArr
-                } else {
+            if (data[key] != undefined) {
+                if(key == 'rules'){
+                    var arr = data.rules;
+                    var newArr:any = [];
+                    
+                    Object.keys(data.rules).forEach( (i) => {
+                        checked(data.rules[i],menus.value,newArr)
+                    } )
+                    formData[key] = newArr;
+
+                }else{
                     formData[key] = data[key]
                 }
             }
+
         })
+        
     }
     loading.value = false
 }
 
-function checked (menuKey:string, data:any, newArr:any) {
-    Object.keys(data).forEach((key:string) => {
-        const item = data[key]
-        if (item.menu_key == menuKey) {
-            if (!item.children || item.children.length == 0) {
+
+function checked(menu_key:string,data:any,newArr:any) {
+    Object.keys(data).forEach( (key:string) =>{
+        let item = data[key]
+        if(item.menu_key == menu_key){
+            if(!item.children || item.children.length == 0){
                 newArr.push(item.menu_key)
             }
-        } else {
-            if (item.children && item.children.length > 0) {
-                checked(menuKey, item.children, newArr)
+        }else{
+            if(item.children && item.children.length > 0){
+                checked(menu_key,item.children,newArr)
             }
         }
-    })
+    } )
 }
 
 defineExpose({

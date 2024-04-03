@@ -2,7 +2,10 @@
     <template v-if="meta.show">
         <el-sub-menu v-if="routes.children" :index="String(routes.name)">
             <template #title>
-                <span :class="['ml-[10px]']">{{ meta.title }}</span>
+                <div class="w-[16px] h-[16px] relative flex items-center">
+                    <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
+                </div>
+                <span class="ml-[10px]">{{ meta.title }}</span>
             </template>
             <menu-item v-for="(route, index) in routes.children" :routes="route" :key="index" />
         </el-sub-menu>
@@ -13,13 +16,19 @@
                         <template #content>
                             该功能仅限{{ addons[meta.addon].title }}使用
                         </template>
-                        <span :class="[{'text-[15px]': routes.meta.class == 1}, {'text-[14px]': routes.meta.class != 1}, {'ml-[10px]': routes.meta.class == 2, 'ml-[15px]': routes.meta.class == 3}]">{{ meta.title }}</span>
+                        <div class="w-[16px] h-[16px] relative flex items-center">
+                            <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
+                        </div>
+                        <span class="ml-[10px]">{{ meta.title }}</span>
                     </el-tooltip>
                 </template>
             </el-menu-item>
             <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })" v-else>
                 <template #title>
-                    <span :class="[{'text-[15px]': routes.meta.class == 1}, {'text-[14px]': routes.meta.class != 1}, {'ml-[10px]': routes.meta.class == 2, 'ml-[15px]': routes.meta.class == 3}]">{{ meta.title }}</span>
+                    <div class="w-[16px] h-[16px] relative flex items-center">
+                        <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
+                    </div>
+                    <span class="ml-[10px]">{{ meta.title }}</span>
                 </template>
             </el-menu-item>
         </template>
@@ -33,7 +42,7 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { img } from '@/utils/common'
 import menuItem from './menu-item.vue'
-import useUserStore from '@/stores/modules/user'
+import useSystemStore from '@/stores/modules/system'
 
 const router = useRouter()
 const props = defineProps({
@@ -42,14 +51,13 @@ const props = defineProps({
         required: true
     }
 })
-const userStore = useUserStore()
-const siteInfo = userStore.siteInfo
+const systemStore = useSystemStore()
 const meta = computed(() => props.routes.meta)
 
 const addons = computed(() => {
     const addons:Record<string, any> = {}
-    siteInfo?.apps.forEach((item: any) => { addons[item.key] = item })
-    siteInfo?.site_addons.forEach((item: any) => { addons[item.key] = item })
+    systemStore?.apps.forEach((item: any) => { addons[item.key] = item })
+    systemStore?.addons.forEach((item: any) => { addons[item.key] = item })
     return addons
 })
 
@@ -59,9 +67,6 @@ const addons = computed(() => {
 .el-sub-menu{
     .el-icon{
         width: auto;
-    }
-    li{
-        font-size: 15px;
     }
 }
 </style>

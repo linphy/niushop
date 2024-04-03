@@ -16,20 +16,18 @@
                     <el-radio :label="2">{{ t('menuTypeButton') }}</el-radio>
                 </el-radio-group>
             </el-form-item>
-
-            <el-form-item :label="t('addon')" prop="addon" v-show="formData.app_type == 'site'">
+            <el-form-item :label="t('addon')" prop="addon">
                 <el-select v-model="formData.addon" placeholder="Select" class="input-width" @change="addonChange">
                     <el-option v-for="(item, index) in addonLst" :label="item.title" :value="item.key" :key="index" />
                 </el-select>
             </el-form-item>
-
             <el-form-item :label="t('parentMenu')" prop="parent_key">
-                <el-tree-select class="input-width" v-if="formData.addon != ''" v-model="formData.parent_key"
-                    :props="{ label: 'menu_name', value: 'menu_key' }" :data="addonMenuList" check-strictly
-                    :render-after-expand="false" />
-                <el-tree-select class="input-width" v-else v-model="formData.parent_key"
-                    :props="{ label: 'menu_name', value: 'menu_key' }" :data="sysMenuList" check-strictly
-                    :render-after-expand="false" />
+                <!-- <el-select v-model="f" placeholder="Select" class="input-width">
+                    <el-option :label="t('topLevel')" value="" />
+                    <select-menu-item :menu="item" v-for="(item, index) in sysMenuList" :key="index" />
+                </el-select> -->
+                <el-tree-select class="input-width" v-if="formData.addon!=''" v-model="formData.parent_key" :props="{label:'menu_name',value:'menu_key'}" :data="addonMenuList" check-strictly :render-after-expand="false" />
+                <el-tree-select class="input-width" v-else v-model="formData.parent_key" :props="{label:'menu_name',value:'menu_key'}" :data="sysMenuList" check-strictly :render-after-expand="false" />
             </el-form-item>
 
             <el-form-item :label="t('routePath')" prop="router_path" v-show="formData.menu_type == 1">
@@ -73,9 +71,8 @@
                 </el-radio-group>
             </el-form-item>
 
-            <el-form-item :label="t('menuShortName')">
-                <el-input v-model="formData.menu_short_name" :placeholder="t('menuShortNamePlaceholder')"
-                    class="input-width" />
+            <el-form-item :label="t('menuShortName')" >
+                <el-input v-model="formData.menu_short_name" :placeholder="t('menuShortNamePlaceholder')" class="input-width" />
             </el-form-item>
 
             <el-form-item :label="t('sort')">
@@ -96,12 +93,13 @@
 import { ref, reactive, computed } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
-import { addMenu, editMenu, getMenuInfo, getSystemMenu, getAddonMenu } from '@/app/api/sys'
+import selectMenuItem from './select-menu-item.vue'
+import { addMenu, editMenu, getMenuInfo, getSystemMenu,getAddonMenu } from '@/app/api/sys'
 import { getAddonDevelop } from '@/app/api/tools'
 
 const showDialog = ref(false)
 const loading = ref(false)
-let popTitle: string = ''
+let popTitle: string = '';
 
 /**
  * 表单数据
@@ -122,10 +120,16 @@ const initialFormData = {
     menu_key: '',
     app_type: '',
     addon: '',
-    menu_short_name: ''
+    menu_short_name:''
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
+const prop = defineProps({
+    menuTree: {
+        type: Array,
+        default: () => []
+    }
+})
 const addonLst = ref<Array<any>>([])
 const sysMenuList = ref<Array<any>>([])
 const addonMenuList = ref<Array<any>>([])
@@ -160,36 +164,39 @@ const formRules = computed(() => {
         view_path: [
             { required: formData.menu_type == 1, message: t('viewPathPlaceholder'), trigger: 'blur' }
         ],
+        icon: [
+            { required: formData.menu_type != 2, message: t('selectIconPlaceholder'), trigger: 'blur' }
+        ],
         api_url: [
             { required: formData.menu_type == 2, message: t('authIdPlaceholder'), trigger: 'blur' }
         ]
     }
 })
 
-// 获取插件列表
+//获取插件列表
 const getAddonDevelopFn = async () => {
-    const { data } = await getAddonDevelop({})
-    addonLst.value = [{ title: '系统', key: '' }]
+    let { data } = await getAddonDevelop({})
+    addonLst.value = [{ title: "系统", key: "" }]
     addonLst.value.push(...data)
 }
 
-// 获取系统菜单列表
+//获取系统菜单列表
 const getSystemMenuFn = async () => {
-    const { data } = await getSystemMenu()
-    sysMenuList.value = [{ menu_name: '顶级', menu_key: '' }]
+    let {data} = await getSystemMenu()
+    sysMenuList.value = [{ menu_name: "顶级", menu_key: "" }]
     sysMenuList.value.push(...data)
 }
 
-// 获取系统应用列表
-const getAddonMenuFn = async (key: any) => {
-    const { data } = await getAddonMenu(key)
+//获取系统应用列表
+const getAddonMenuFn = async (key:any) => {
+    let {data} = await getAddonMenu(key)
     addonMenuList.value = data
 }
 
-// 选择应用
-const addonChange = async (val: any) => {
+//选择应用
+const addonChange =async(val:any)=>{
     formData.parent_key = ''
-    if (val != '') {
+    if(val!='') {
         await getAddonMenuFn(val)
         formData.parent_key = addonMenuList.value[0].menu_key
     }
@@ -210,6 +217,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
             loading.value = true
 
             const data = formData
+            data.api_url = data.api_url ? `${data.api_url}/${formData.methods}` : ''
 
             save(data).then(res => {
                 loading.value = false
@@ -217,6 +225,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 emit('complete')
             }).catch(() => {
                 loading.value = false
+                // showDialog.value = false
             })
         }
     })
@@ -230,11 +239,11 @@ const setFormData = async (row: any = null) => {
     getSystemMenuFn()
     if (row.menu_key) {
         popTitle = t('updateMenu')
-        const data = await (await getMenuInfo(row.app_type, row.menu_key)).data
+        const data = await (await getMenuInfo(row.menu_key)).data
         Object.keys(formData).forEach((key: string) => {
             if (data[key] != undefined) formData[key] = data[key]
         })
-        if (formData.addon != '') getAddonMenuFn(formData.addon)
+        if(formData.addon!='') getAddonMenuFn(formData.addon)
     } else {
         Object.keys(formData).forEach((key: string) => {
             if (row[key] != undefined) formData[key] = row[key]

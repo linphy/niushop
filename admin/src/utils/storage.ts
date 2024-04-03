@@ -11,7 +11,7 @@ class Storage {
     private prefix = ''
 
     public constructor() {
-        this.prefix = getAppType() == 'admin' ? 'admin' : 'site'
+        this.prefix = 'admin'
     }
 
     /**

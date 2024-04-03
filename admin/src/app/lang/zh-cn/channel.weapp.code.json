@@ -34,7 +34,7 @@
 	"authTips": "上传代码需先绑定授权码，如果已有授权请先进行绑定，没有授权可到niucloud官网购买云服务之后再进行操作",
 	"toBind": "绑定授权",
 	"toNiucloud": "去niucloud官网",
-	"failReason": "失败原因：",
+	"failReason": "失败原因",
 	"toSetting": "去配置",
 	"cloudRelease": "一键云端发布",
 	"localRelease": "本地发布",

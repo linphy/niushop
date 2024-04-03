@@ -12,6 +12,6 @@ export function getStatInfo() {
  * 获取站点统计信息
  */
 export function getSiteStatInfo() {
-    return request.get(`stat/siteindex`)
+    return request.get(`stat/iteindex`)
 }
 

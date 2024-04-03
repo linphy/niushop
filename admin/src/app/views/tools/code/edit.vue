@@ -13,12 +13,10 @@
                 <el-tab-pane :label="t('basicSettings')" name="basicSettings">
                     <el-form :model="formData" label-width="70px" class="page-form">
                         <el-form-item :label="t('tableName')">
-                            <el-input v-model="formData.table_name" disabled :placeholder="t('tableNamePlaceholder')"
-                                class="input-width" maxlength="64" />
+                            <el-input v-model="formData.table_name" disabled :placeholder="t('tableNamePlaceholder')" class="input-width" maxlength="64" />
                         </el-form-item>
                         <el-form-item :label="t('tableContent')">
-                            <el-input v-model="formData.table_content" clearable :placeholder="t('tableContentPlaceholder')"
-                                class="input-width" maxlength="64" />
+                            <el-input v-model="formData.table_content" clearable :placeholder="t('tableContentPlaceholder')" class="input-width" maxlength="64" />
                         </el-form-item>
                         <el-form-item :label="t('addon')">
                             <el-select class="input-width" :placeholder="t('addonPlaceholder1')"
@@ -30,23 +28,17 @@
                         </el-form-item>
                         <el-form-item :label="t('moduleName')">
                             <div>
-                                <el-input v-model="formData.module_name" clearable :placeholder="t('moduleNamePlaceholder')"
-                                    class="input-width" />
-                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">
-                                    生成代码所属功能模块，对应路由名称，例如会员模块，充值模块，订单模块等</p>
-                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">
-                                    命名规范，小写，多个单词使用下划线连接,例如: member，article_category</p>
+                                <el-input v-model="formData.module_name" clearable :placeholder="t('moduleNamePlaceholder')" class="input-width" />
+                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">生成代码所属功能模块，对应路由名称，例如会员模块，充值模块，订单模块等</p>
+                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">命名规范，小写，多个单词使用下划线连接,例如: member，article_category</p>
                             </div>
 
                         </el-form-item>
                         <el-form-item :label="t('className')">
                             <div>
-                                <el-input v-model="formData.class_name" clearable :placeholder="t('classNamePlaceholder')"
-                                    class="input-width" />
-                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">
-                                    生成代码所属文件名称，controller，model，service，等类型文件名</p>
-                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">
-                                    命名规范，小写，多个单词使用下划线连接,例如: article_category</p>
+                                <el-input v-model="formData.class_name" clearable :placeholder="t('classNamePlaceholder')" class="input-width" />
+                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">生成代码所属文件名称，controller，model，service，等类型文件名</p>
+                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">命名规范，小写，多个单词使用下划线连接,例如: article_category</p>
                             </div>
                         </el-form-item>
                     </el-form>
@@ -61,8 +53,7 @@
                         <el-table-column :label="t('columnName')" prop="column_name" min-width="130px" />
                         <el-table-column :label="t('columnComment')" prop="" min-width="220px">
                             <template #default="{ row }">
-                                <el-input class="" v-model="row.column_comment"
-                                    :placeholder="t('columnCommentPlaceholder')" />
+                                <el-input v-model="row.column_comment" :placeholder="t('columnCommentPlaceholder')" />
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('columnType')" prop="column_type" width="100px" />
@@ -104,27 +95,19 @@
                         <el-table-column :label="t('queryType')" prop="" min-width="170px">
                             <template #default="{ row }">
                                 <div class="flex items-center">
-                                    <el-select class="" v-if="row.is_search" :placeholder="t('selectPlaceholder')"
-                                        v-model="row.query_type">
-                                        <el-option :label="item" :value="item" v-for="(item, index) in queryType"
-                                            :key="index" />
+                                    <el-select v-if="row.is_search" :placeholder="t('selectPlaceholder')" v-model="row.query_type">
+                                        <el-option :label="item" :value="item" v-for="(item, index) in queryType" :key="index" />
                                     </el-select>
                                 </div>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('formType')" prop="" min-width="225px">
                             <template #default="{ row, $index }">
-                                <el-select class="w-[146px]" :placeholder="t('selectPlaceholder')" v-model="row.view_type"
-                                    @change="viewTypeBtn(row, $index)">
-                                    <el-option :label="item.label" :value="item.value" v-for="(item, index) in viewType"
-                                        :key="index" />
+                                <el-select class="w-[146px]" :placeholder="t('selectPlaceholder')" v-model="row.view_type" @change="viewTypeBtn(row, $index)">
+                                    <el-option :label="item.label" :value="item.value" v-for="(item, index) in viewType" :key="index" />
                                 </el-select>
-                                <el-button class="ml-[10px]" v-if="['select', 'radio', 'checkbox'].includes(row.view_type)"
-                                    type="primary" link @click="viewTypeBtn(row, $index)">{{ t('setUp')
-                                    }}</el-button>
-                                <el-button class="ml-[10px]" v-if="row.view_type === 'number'" type="primary" link
-                                    @click="validatorBtn(row, $index)">{{ t('setUp')
-                                    }}</el-button>
+                                <el-button class="ml-[10px]" v-if="['select', 'radio', 'checkbox'].includes(row.view_type)" type="primary" link @click="viewTypeBtn(row, $index)">{{ t('setUp') }}</el-button>
+                                <el-button class="ml-[10px]" v-if="row.view_type === 'number'" type="primary" link @click="validatorBtn(row, $index)">{{ t('setUp') }}</el-button>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('verifyType')" prop="" min-width="260px">
@@ -135,17 +118,14 @@
                                         :disabled="!['input', 'textarea'].includes(row.view_type)">
                                         <template v-for="(item, index) in verifyType" :key="index">
                                             <el-option v-if="item.value === 'max'" :value="item.value" :label="`最大输入字符`" />
-                                            <el-option v-else-if="item.value === 'min'" :value="item.value"
-                                                :label="`最小输入字符`" />
-                                            <el-option v-else-if="item.value === 'between'" :value="item.value"
-                                                :label="`输入字符区间`" />
+                                            <el-option v-else-if="item.value === 'min'" :value="item.value" :label="`最小输入字符`" />
+                                            <el-option v-else-if="item.value === 'between'" :value="item.value" :label="`输入字符区间`" />
                                             <el-option v-else :label="item.label" :value="item.value" />
                                         </template>
                                     </el-select>
                                     <el-button class="ml-[10px]"
                                         v-if="['max', 'min', 'between'].includes(row.validate_type)" type="primary" link
-                                        @click="validatorBtn(row, $index)">{{ t('setUp')
-                                        }}</el-button>
+                                        @click="validatorBtn(row, $index)">{{ t('setUp') }}</el-button>
                                 </div>
 
                             </template>
@@ -168,22 +148,18 @@
                                     <el-radio :label="0">{{ t('physicalDeletion') }}</el-radio>
                                     <el-radio :label="1">{{ t('softDeletion') }}</el-radio>
                                 </el-radio-group>
-                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">
-                                    物理删除：从表中把记录移除。软删除：通过标识使得这条记录在系统逻辑层面上不可见</p>
-
+                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">物理删除：从表中把记录移除。软删除：通过标识使得这条记录在系统逻辑层面上不可见</p>
                             </div>
 
                         </el-form-item>
                         <el-form-item prop="delete_column_name" :label="t('deleteField')" v-if="formData.is_delete">
                             <div>
-                                <el-select class="input-width" :placeholder="t('deleteFieldPlaceholder')"
-                                    v-model="formData.delete_column_name">
+                                <el-select class="input-width" :placeholder="t('deleteFieldPlaceholder')" v-model="formData.delete_column_name">
                                     <el-option :label="`${item.column_name}:${item.column_comment}`"
                                         :value="item.column_name" v-for="(item, index) in formData.table_column "
                                         :key="index" />
                                 </el-select>
-                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">
-                                    软删除字段需为int类型，并且默认值为0</p>
+                                <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">软删除字段需为int类型，并且默认值为0</p>
                             </div>
 
                         </el-form-item>
@@ -211,8 +187,7 @@
                         </el-form-item>
                         <el-form-item :label="t('orderType')" v-if="formData.order_column_name">
                             <div>
-                                <el-select class="input-width" :placeholder="t('orderTypePlaceholder')"
-                                    v-model="formData.order_type" >
+                                <el-select class="input-width" :placeholder="t('orderTypePlaceholder')" v-model="formData.order_type" >
                                     <el-option label="正序 asc" :value="1" />
                                     <el-option label="倒序 desc" :value="2" />
                                 </el-select>
@@ -254,8 +229,7 @@
                 </el-tab-pane>
                 <el-tab-pane :label="t('associatedConfiguration')" name="associatedConfiguration">
                     <div class="mb-[20px]">
-                        <el-button type="primary" class="w-[100px]" @click="addEvent(null, -1)">{{ t('insertAssociated')
-                        }}</el-button>
+                        <el-button type="primary" class="w-[100px]" @click="addEvent(null, -1)">{{ t('insertAssociated') }}</el-button>
                     </div>
                     <el-table :data="formData.relations" size="large">
                         <el-table-column :label="t('associatedType')" prop="type" min-width="130px" />
@@ -267,8 +241,7 @@
                         <el-table-column :label="t('operation')" align="right" min-width="130px">
                             <template #default="{ row, $index }">
                                 <el-button type="primary" link @click="addEvent(row, $index)">{{ t('edit') }}</el-button>
-                                <el-button type="primary" link @click="deleteEvent($index)">{{ t('delete')
-                                }}</el-button>
+                                <el-button type="primary" link @click="deleteEvent($index)">{{ t('delete') }}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>

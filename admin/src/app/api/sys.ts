@@ -25,7 +25,7 @@ export function getUrl() {
  * @returns
  */
 export function getRoleList(params: Record<string, any>) {
-    return request.get('sys/role', { params })
+    return request.get('sys/role', {params})
 }
 
 /**
@@ -42,7 +42,7 @@ export function getRoleInfo(roleId: number) {
  * @returns
  */
 export function addRole(params: Record<string, any>) {
-    return request.post(`sys/role`, params, { showSuccessMessage: true })
+    return request.post(`sys/role`, params, {showSuccessMessage: true})
 }
 
 /**
@@ -50,7 +50,7 @@ export function addRole(params: Record<string, any>) {
  * @param params
  */
 export function editRole(params: Record<string, any>) {
-    return request.put(`sys/role/${params.role_id}`, params, { showSuccessMessage: true })
+    return request.put(`sys/role/${params.role_id}`, params, {showSuccessMessage: true})
 }
 
 /**
@@ -58,7 +58,15 @@ export function editRole(params: Record<string, any>) {
  * @param roleId
  */
 export function deleteRole(roleId: number) {
-    return request.delete(`sys/role/${roleId}`, { showSuccessMessage: true })
+    return request.delete(`sys/role/${roleId}`, {showSuccessMessage: true})
+}
+
+/**
+ * 修改用户组状态
+ * @param params
+ */
+export function edstatus(params: Record<string, any>) {
+    return request.put(`sys/role/status/${params.role_id}/${params.status}`, {showSuccessMessage: true})
 }
 
 /**
@@ -69,22 +77,38 @@ export function allRole() {
     return request.get('sys/role/all')
 }
 
+/**
+ * 获取全部权限
+ * @returns
+ */
+export function getSystem(params: Record<string, any> = {}) {
+    return request.get(`sys/menu/system_menu`, { params })
+}
+
+/**
+ * 应用权限详情列表
+ * @param key
+ */
+export function getaddonMenu(key: any) {
+    return request.get(`sys/menu/addon_menu/${key}`)
+}
+
 /***************************************************** 全部菜单 ****************************************************/
 
 /**
  * 获取全部菜单
  * @returns
  */
-export function getMenus(type: string) {
-    return request.get(`sys/menu/${type}`)
+export function getMenus() {
+    return request.get(`sys/menu`)
 }
 
 /**
  * 获取菜单信息
  * @param menu_key
  */
-export function getMenuInfo(app_type: string, menu_key: string) {
-    return request.get(`sys/menu/${app_type}/info/${menu_key}`);
+export function getMenuInfo(menu_key: string) {
+    return request.get(`sys/menu/info/${menu_key}`);
 }
 
 /**
@@ -93,7 +117,7 @@ export function getMenuInfo(app_type: string, menu_key: string) {
  * @returns
  */
 export function addMenu(params: Record<string, any>) {
-    return request.post('sys/menu', params, { showSuccessMessage: true })
+    return request.post('sys/menu', params, {showSuccessMessage: true})
 }
 
 /**
@@ -101,15 +125,15 @@ export function addMenu(params: Record<string, any>) {
  * @param params
  */
 export function editMenu(params: Record<string, any>) {
-    return request.put(`sys/menu/${params.app_type}/${params.menu_key}`, params, { showSuccessMessage: true })
+    return request.put(`sys/menu/${params.menu_key}`, params, {showSuccessMessage: true})
 }
 
 /**
  * 删除菜单
  * @param menu_key
  */
-export function deleteMenu(app_type: string, menu_key: string) {
-    return request.delete(`sys/menu/${app_type}/${menu_key}`, { showSuccessMessage: true })
+export function deleteMenu(menu_key: string) {
+    return request.delete(`sys/menu/${menu_key}`, {showSuccessMessage: true})
 }
 
 /**
@@ -134,17 +158,6 @@ export function getAddonMenu(key: any) {
  */
 export function getMenuByTypeDir(key: any = 'system') {
     return request.get(`sys/menu/dir/${key}`)
-}
-
-
-/***************************************************** 站点菜单 ****************************************************/
-
-/**
- * 获取站点菜单
- * @returns
- */
-export function getSiteMenus() {
-    return request.get(`site/site/menu`)
 }
 
 
@@ -268,13 +281,6 @@ export function deleteAttachment(params: Record<string, any>) {
  */
 export function moveAttachment(params: Record<string, any>) {
     return request.put(`sys/attachment/batchmove`, params)
-}
-
-/**
- * 获取menu菜单
- */
-export function getAuthMenu() {
-    return request.get(`auth/site/showmenu`)
 }
 
 /**
@@ -699,4 +705,11 @@ export function getDeveloperToken() {
  */
 export function setDeveloperToken(params: Record<string, any>) {
     return request.put(`sys/config/developer_token`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 获取install.php配置
+ */
+export function getInstallConfig() {
+    return request.get('sys/install/config')
 }

@@ -52,8 +52,6 @@ const upload: Record<string, any> = {
     }
 }
 upload.headers[import.meta.env.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken()
-upload.headers[import.meta.env.VITE_REQUEST_HEADER_SITEID_KEY] = storage.get('siteId') || 0
-
 </script>
 
 <style lang="scss">

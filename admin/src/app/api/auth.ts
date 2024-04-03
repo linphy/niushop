@@ -3,10 +3,9 @@ import request from '@/utils/request'
 /**
  * 登录
  * @param params
- * @param app_type
  */
-export function login(params: Record<string, any>, app_type: string) {
-    return request.get(`login/${app_type}`, {params})
+export function login(params: Record<string, any>) {
+    return request.get(`login`, {params})
 }
 
 /**

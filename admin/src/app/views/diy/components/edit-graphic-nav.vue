@@ -12,18 +12,6 @@
 					</el-radio-group>
 				</el-form-item>
 
-				<el-form-item :label="t('graphicNavTitle')">
-					<el-input v-model="diyStore.editComponent.navTitle" :placeholder="t('graphicNavTitlePlaceholder')" clearable maxlength="20" show-word-limit/>
-				</el-form-item>
-
-				<el-form-item :label="t('subGraphicNavTitle')">
-					<el-input v-model="diyStore.editComponent.subNavTitle" :placeholder="t('subGraphicNavTitlePlaceholder')" clearable maxlength="20" show-word-limit/>
-				</el-form-item>
-
-				<el-form-item :label="t('subGraphicNavTitleLink')">
-					<diy-link v-model="diyStore.editComponent.subNavTitleLink"/>
-				</el-form-item>
-
 				<el-form-item :label="t('graphicNavSelectMode')">
 					<el-radio-group v-model="diyStore.editComponent.mode">
 						<el-radio :label="'graphic'">{{t('graphicNavModeGraphic')}}</el-radio>
@@ -34,8 +22,15 @@
 
 				<view v-show="diyStore.editComponent.layout == 'horizontal'">
 
+					<el-form-item :label="t('graphicNavPageCount')">
+						<el-radio-group v-model="diyStore.editComponent.pageCount" @change="changePageCount">
+							<el-radio :label="1">{{t('singleLine')}}</el-radio>
+							<el-radio :label="2">{{t('multiline')}}</el-radio>
+						</el-radio-group>
+					</el-form-item>
+
 					<el-form-item :label="t('graphicNavShowStyle')">
-						<el-radio-group v-model="diyStore.editComponent.showStyle">
+						<el-radio-group v-model="diyStore.editComponent.showStyle" @change="changeShowStyle">
 							<el-radio :label="'fixed'">{{t('graphicNavStyleFixed')}}</el-radio>
 							<el-radio :label="'singleSlide'">{{t('graphicNavStyleSingleSlide')}}</el-radio>
 							<el-radio :label="'pageSlide'">{{t('graphicNavStylePageSlide')}}</el-radio>
@@ -47,13 +42,6 @@
 							<el-radio :label="3">3{{t('piece')}}</el-radio>
 							<el-radio :label="4">4{{t('piece')}}</el-radio>
 							<el-radio :label="5">5{{t('piece')}}</el-radio>
-						</el-radio-group>
-					</el-form-item>
-
-					<el-form-item :label="t('graphicNavPageCount')">
-						<el-radio-group v-model="diyStore.editComponent.pageCount">
-							<el-radio :label="1">1{{t('line')}}</el-radio>
-							<el-radio :label="2">2{{t('line')}}</el-radio>
 						</el-radio-group>
 					</el-form-item>
 				</view>
@@ -73,7 +61,7 @@
 						</el-form-item>
 
 						<el-form-item :label="t('graphicNavTitle')" v-show="diyStore.editComponent.mode === 'graphic' || diyStore.editComponent.mode === 'text'">
-							<el-input v-model="item.title" :placeholder="t('graphicNavTitlePlaceholder')" clearable maxlength="20" show-word-limit/>
+							<el-input v-model.trim="item.title" :placeholder="t('graphicNavTitlePlaceholder')" clearable maxlength="20" show-word-limit/>
 						</el-form-item>
 
 						<div class="del absolute cursor-pointer z-[2] top-[-8px] right-[-8px]" v-show="diyStore.editComponent.list.length > 1" @click="diyStore.editComponent.list.splice(index,1)">
@@ -119,9 +107,6 @@
 				</el-form-item>
 				<el-form-item :label="t('textColor')">
 					<el-color-picker v-model="diyStore.editComponent.font.color" show-alpha :predefine="diyStore.predefineColors"/>
-				</el-form-item>
-				<el-form-item :label="t('subTextColor')">
-					<el-color-picker v-model="diyStore.editComponent.subNavColor" show-alpha :predefine="diyStore.predefineColors"/>
 				</el-form-item>
 
 			</el-form>
@@ -223,6 +208,14 @@ onMounted(() => {
         })
     })
 })
+
+const changePageCount = (value:any)=>{
+    if(value == '1'){
+        diyStore.editComponent.showStyle = 'singleSlide';
+    }else if(value == '2'){
+        diyStore.editComponent.showStyle = 'fixed';
+    }
+}
 
 defineExpose({})
 

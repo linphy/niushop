@@ -6,7 +6,7 @@
 			<el-form label-width="80px" class="px-[10px]">
 
 				<el-form-item :label="t('imageHeight')" class="display-block">
-					<el-input v-model="diyStore.editComponent.imageHeight" :placeholder="t('imageHeightPlaceholder')" clearable maxlength="10" @blur="blurImageHeight">
+					<el-input v-model.trim="diyStore.editComponent.imageHeight" :placeholder="t('imageHeightPlaceholder')" clearable maxlength="10" @blur="blurImageHeight">
 						<template #append>px</template>
 					</el-input>
 					<div class="text-sm text-gray-400 mb-[10px]">{{ t('imageAdsTips') }}</div>
@@ -115,7 +115,7 @@ const handleHeight = (isCalcHeight:boolean = false)=> {
             // 计算第一张图片高度
             if (isCalcHeight && index == 0) {
                 const ratio = item.imgHeight / item.imgWidth
-                item.width = 375
+                item.width = 375 - (diyStore.editComponent.margin.both*2)
                 item.height = item.width * ratio
                 diyStore.editComponent.imageHeight = parseInt(item.height)
             }

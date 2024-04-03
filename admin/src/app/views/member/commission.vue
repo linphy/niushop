@@ -56,12 +56,10 @@
             <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="memberAccountLogTableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('memberInfo')" prop="keywords">
-                        <el-input v-model="memberAccountLogTableData.searchParam.keywords" class="w-[240px]"
-                            :placeholder="t('memberInfoPlaceholder')" />
+                        <el-input v-model="memberAccountLogTableData.searchParam.keywords" class="w-[240px]" :placeholder="t('memberInfoPlaceholder')" />
                     </el-form-item>
                     <el-form-item :label="t('fromType')" prop="from_type">
-                        <el-select v-model="memberAccountLogTableData.searchParam.from_type" clearable
-                            :placeholder="t('fromTypePlaceholder')" class="input-width">
+                        <el-select v-model="memberAccountLogTableData.searchParam.from_type" clearable :placeholder="t('fromTypePlaceholder')" class="input-width">
                             <el-option :label="t('selectPlaceholder')" value="" />
                             <el-option :label="item.name" :value="key" v-for="(item, key) in fromTypeList" />
                         </el-select>
@@ -94,12 +92,10 @@
                     <el-table-column :label="t('memberInfo')" min-width="150" :show-overflow-tooltip="true">
                         <template #default="{ row }">
                             <div class="flex items-center cursor-pointer" @click="toMember(row.member_id)">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg"
-                                    :src="img(row.member.headimg)" alt="">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-else
-                                    src="@/app/assets/images/default_headimg.png" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg" :src="img(row.member.headimg)" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
                                 <div class="flex flex flex-col">
-                                    <span class="">{{ row.member.nickname || '' }}</span>
+                                    <span>{{ row.member.nickname || '' }}</span>
                                 </div>
                             </div>
                         </template>
@@ -119,8 +115,7 @@
 
                     <el-table-column prop="account_sum" :label="t('accountSum')" min-width="120" align="right" />
                     <el-table-column prop="from_type_name" :label="t('fromType')" min-width="180" align="center" />
-                    <el-table-column prop="create_time" :show-overflow-tooltip="true" :label="t('createTime')"
-                        min-width="150" />
+                    <el-table-column prop="create_time" :show-overflow-tooltip="true" :label="t('createTime')" min-width="150" />
 
                     <el-table-column :label="t('operation')" align="right" fixed="right" width="100">
                         <template #default="{ row }">

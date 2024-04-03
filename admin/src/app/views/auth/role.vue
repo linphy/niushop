@@ -2,6 +2,11 @@
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
             <div class="flex justify-between items-center">
+                <span class="text-page-title">{{ pageName }}</span>
+                <el-button type="primary" class="w-[100px]" @click="addEvent">{{ t('addRole') }}</el-button>
+            </div>
+
+            <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="roleTableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('roleName')" prop="seach">
                         <el-input v-model="roleTableData.searchParam.seach" class="w-[240px]" :placeholder="t('roleNamePlaceholder')" />
@@ -11,8 +16,7 @@
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" class="w-[100px] self-start" @click="addEvent">{{ t('addRole') }}</el-button>
-            </div>
+            </el-card>
 
             <div>
                 <el-table :data="roleTableData.data" size="large" v-loading="roleTableData.loading">
@@ -22,25 +26,25 @@
                     <el-table-column prop="role_name" :label="t('roleName')" />
                     <el-table-column :label="t('status')">
                         <template #default="{ row }">
-                            <el-tag type="success" v-if="row.status == 1">{{ row.status_name }}</el-tag>
-                            <el-tag type="error" v-if="row.status == 0">{{ row.status_name }}</el-tag>
+                            <el-tag class="cursor-pointer" type="success" v-if="row.status == 1" @click="edStatusFn(row)">{{ row.status_name }}</el-tag>
+                            <el-tag class="cursor-pointer" type="error" v-if="row.status == 0" @click="edStatusFn(row)">{{ row.status_name }}</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column prop="create_time" :label="t('createTime')"></el-table-column>
-                    <el-table-column :label="t('operation')" align="right" fixed="right" width="130">
+                    <el-table-column :label="t('operation')" fixed="right"  align="right" width="130">
                         <template #default="{ row }">
-                            <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
+                            <el-button type="primary" link @click="editEvent(row.role_id)">{{ t('edit') }}</el-button>
                             <el-button type="primary" link @click="deleteEvent(row.role_id)">{{ t('delete') }}</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
 
                 <div class="mt-[16px] flex justify-end">
-                    <el-pagination v-model:current-page="roleTableData.page" v-model:page-size="roleTableData.limit" layout="total, sizes, prev, pager, next, jumper" :total="roleTableData.total" @size-change="loadRoleList()" @current-change="loadRoleList" />
+                    <el-pagination v-model:current-page="roleTableData.page" v-model:page-size="roleTableData.limit"
+                        layout="total, sizes, prev, pager, next, jumper" :total="roleTableData.total"
+                        @size-change="loadRoleList()" @current-change="loadRoleList" />
                 </div>
             </div>
-
-            <edit-role ref="editRoleDialog" @complete="loadRoleList()" />
         </el-card>
     </div>
 </template>
@@ -48,9 +52,13 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import { t } from '@/lang'
-import { getRoleList, deleteRole } from '@/app/api/sys'
+import { getRoleList, deleteRole, edstatus } from '@/app/api/sys'
 import { ElMessageBox, FormInstance } from 'element-plus'
-import EditRole from '@/app/views/auth/components/edit-role.vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
+const pageName = route.meta.title;
 
 const roleTableData = reactive({
     page: 1,
@@ -67,8 +75,8 @@ const searchFormRef = ref<FormInstance>()
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
 
-    formEl.resetFields()
-    loadRoleList()
+    formEl.resetFields();
+    loadRoleList();
 }
 /**
  * 获取角色列表
@@ -97,19 +105,35 @@ const editRoleDialog: Record<string, any> | null = ref(null)
  * 添加角色
  */
 const addEvent = () => {
-    editRoleDialog.value.setFormData()
-    editRoleDialog.value.showDialog = true
+    router.push({ path: '/auth/role_edit' })
 }
 
 /**
  * 编辑角色
- * @param data
+ * @param role_id
  */
-const editEvent = (data: any) => {
-    editRoleDialog.value.setFormData(data)
-    editRoleDialog.value.showDialog = true
+const editEvent = (role_id: any) => {
+    router.push({
+        path: '/auth/role_edit',
+        query: {
+            role_id
+        }
+    })
 }
-
+// 修改状态
+const edStatusFn=(row:any)=>{
+    roleTableData.loading = true
+    let obj={
+        role_id:row.role_id,
+        status:row.status?0:1
+    }
+    edstatus(obj).then(res=>{
+        roleTableData.loading = false
+        loadRoleList()
+    }).catch(()=>{
+        roleTableData.loading = false
+    })
+}
 /**
  * 删除角色
  */

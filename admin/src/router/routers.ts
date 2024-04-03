@@ -27,6 +27,7 @@ export const ROOT_ROUTER: RouteRecordRaw = {
 export const ADMIN_ROUTE: RouteRecordRaw = {
     path: '/admin',
     name: Symbol('admin'),
+    component: Default,
     children: [
         {
             path: '',
@@ -38,99 +39,13 @@ export const ADMIN_ROUTE: RouteRecordRaw = {
             component: () => import('@/app/views/login/index.vue')
         },
         {
-            path: 'user',
-            component: Default,
-            children: [
-                {
-                    path: 'center',
-                    meta: {
-                        type: 1,
-                        title: '个人中心'
-                    },
-                    component: () => import('@/app/views/index/personal.vue')
-                }
-            ]
-        },
-        {
-            path: 'user',
-            component: Default,
-            children: [
-                {
-                    path: 'edit_center',
-                    meta: {
-                        type: 1,
-                        title: '编辑个人中心'
-                    },
-                    component: () => import('@/app/views/index/edit_personal.vue')
-                }
-            ]
-        }
-    ]
-}
-
-// HOME端根路由
-export const HOME_ROUTE: RouteRecordRaw = {
-    path: '/home',
-    name: Symbol('home'),
-    children: [
-        {
-            path: '',
-            name: Symbol('homeRoot'),
-            component: Default
-        },
-        {
-            path: 'index',
-            name: Symbol('homeIndex'),
+            path: 'user/center',
             meta: {
                 type: 1,
-                title: '站点管理'
+                title: '个人中心',
+                show: false
             },
-            component: () => import('@/app/views/home/index.vue')
-        }
-    ]
-}
-
-// 站点端根路由
-export const SITE_ROUTE: RouteRecordRaw = {
-    path: '/site',
-    name: Symbol('site'),
-    children: [
-        {
-            path: '',
-            name: Symbol('siteRoot'),
-            component: Default
-        },
-        {
-            path: 'login',
-            component: () => import('@/app/views/login/index.vue')
-        },
-        {
-            path: 'user',
-            component: Default,
-            children: [
-                {
-                    path: 'center',
-                    meta: {
-                        type: 1,
-                        title: '个人中心'
-                    },
-                    component: () => import('@/app/views/site/personal.vue')
-                }
-            ]
-        },
-        {
-            path: 'user',
-            component: Default,
-            children: [
-                {
-                    path: 'edit_center',
-                    meta: {
-                        type: 1,
-                        title: '编辑个人中心'
-                    },
-                    component: () => import('@/app/views/site/edit_personal.vue')
-                }
-            ]
+            component: () => import('@/app/views/index/edit_personal.vue')
         }
     ]
 }
@@ -184,8 +99,7 @@ const createRoute = function (route: Route, parentRoute: RouteRecordRaw | null =
         }
     }
     if (route.menu_type == 0) {
-        record.component = parentRoute ? RouterView : () => Promise.resolve(Default)
-        if (!route.children) record.component = RouterView
+        record.component = RouterView
     } else {
         record.component = route.addon ? addonModules[`/src/addon/${route.addon}/views/${route.view_path}.vue`] : modules[`/src/app/views/${route.view_path}.vue`]
     }

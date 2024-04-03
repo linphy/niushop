@@ -5,7 +5,7 @@
 			<h3 class="mb-[10px]">{{ t('blankHeightSet') }}</h3>
 			<el-form label-width="80px" class="px-[10px]">
 				<el-form-item :label="t('blankHeight')">
-					<el-slider v-model="diyStore.editComponent.height" show-input size="small" class="ml-[10px] horz-blank-slider"/>
+					<el-slider v-model="diyStore.editComponent.height" show-input size="small" max="200" class="ml-[10px] horz-blank-slider"/>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -25,7 +25,7 @@ import { t } from '@/lang'
 import useDiyStore from '@/stores/modules/diy'
 
 const diyStore = useDiyStore()
-diyStore.editComponent.ignore = ['pageBgColor', 'topRounded', 'bottomRounded', 'marginTop', 'marginBottom', 'marginBoth'] // 忽略公共属性
+diyStore.editComponent.ignore = ['pageBgColor', 'componentBgUrl'] // 忽略公共属性
 
 defineExpose({})
 

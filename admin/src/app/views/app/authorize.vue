@@ -78,8 +78,6 @@
 									</el-form-item>
 								</div>
 
-								<div class="text-sm mt-[10px] text-info">{{ t('authInfoTips') }}</div>
-
 								<div class="mt-[20px]">
 									<el-button type="primary" class="w-full" size="large" :loading="saveLoading"
 										@click="save(formRef)">{{
@@ -119,6 +117,7 @@ import { getAuthinfo, setAuthinfo, getFrameworkVersionList } from '@/app/api/mod
 import { ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import Upgrade from '@/app/components/upgrade/index.vue'
 import CloudBuild from '@/app/components/cloud-build/index.vue'
+import { getInstallConfig } from "@/app/api/sys"
 
 const upgradeRef = ref<any>(null)
 const cloudBuildRef = ref<any>(null)
@@ -127,6 +126,11 @@ const getAuthCodeDialog: Record<string, any> | null = ref(null)
 const authCodeApproveDialog = ref(false)
 const isCheck = ref(false)
 const frameworkVersionList = ref([])
+const installPhpConfig = ref(null)
+
+getInstallConfig().then(({ data }) => {
+    installPhpConfig.value = data
+}).catch()
 
 const getFrameworkVersionListFn = () => {
     getFrameworkVersionList().then(({ data }) => {
@@ -214,8 +218,8 @@ const save = async (formEl: FormInstance | undefined) => {
     })
 }
 
-const market = () => {
-    window.open('https://www.niucloud.com/app')
+const market = async () => {
+    window.open(installPhpConfig.value?.website_url)
 }
 
 const versions = ref('')

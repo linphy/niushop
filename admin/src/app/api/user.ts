@@ -10,7 +10,7 @@ import request from '@/utils/request'
  * @returns 
  */
 export function getUserList(params: Record<string, any>) {
-    return request.get(`user/user`, { params })
+    return request.get(`user`, { params })
 }
 
 /**
@@ -19,7 +19,7 @@ export function getUserList(params: Record<string, any>) {
  * @returns 
  */
 export function getUserInfo(uid: number) {
-    return request.get(`user/user/${uid}`);
+    return request.get(`user/${uid}`);
 }
 
 /**
@@ -28,7 +28,7 @@ export function getUserInfo(uid: number) {
  * @returns 
  */
 export function addUser(params: Record<string, any>) {
-    return request.post('user/user', params, { showSuccessMessage: true })
+    return request.post('user', params, { showSuccessMessage: true })
 }
 
 /**
@@ -36,23 +36,38 @@ export function addUser(params: Record<string, any>) {
  * @param params
  */
 export function editUser(params: Record<string, any>) {
-    return request.put(`user/user/${params.uid}`, params, { showSuccessMessage: true })
+    return request.put(`user/${params.uid}`, params, { showSuccessMessage: true })
 }
 
 /**
- * 获取所有用户列表
- * @param params 
- * @returns 
+ * 锁定用户 
  */
-export function getAllUserList(params: Record<string, any>) {
-    return request.get(`user/user_all`, { params })
+export function lockUser(uid: number) {
+    return request.put(`user/lock/${uid}`, {}, { showSuccessMessage: true })
 }
 
 /**
- * 查询用户名是否存在
- * @param username 
- * @returns 
+ * 解除用户锁定 
  */
-export function checkUsernameIsExist(username: string) {
-    return request.get(`user/isexist`, { params: { username } })
+export function unlockUser(uid: number) {
+    return request.put(`user/unlock/${uid}`, {}, { showSuccessMessage: true })
+}
+
+/***************************************************** 操作日志 **************************************************/
+
+/**
+ * 获取操作日志列表
+ * @param params
+ * @returns
+ */
+export function getLogList(params: Record<string, any>) {
+    return request.get(`user/userlog`, { params })
+}
+
+/**
+ * 获取操作日志详情
+ * @param id
+ */
+export function getLogInfo(id: number) {
+    return request.get(`user/userlog/${id}`)
 }

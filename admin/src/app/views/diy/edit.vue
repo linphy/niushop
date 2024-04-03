@@ -5,16 +5,17 @@
                 <el-icon size="14">
                     <ArrowLeft />
                 </el-icon>
-                <span class="pl-[5px]">{{ t('back') }}</span>
+                <span class="pl-[5px] text-[14px]">{{ t('back') }}</span>
             </div>
             <div class="text-white ml-[10px] mr-[20px] flex items-center">
-                <span class="mr-[5px]"> ｜ {{ t('decorating') }}：{{ diyStore.typeName }}</span>
+                <span class="mr-[5px] text-[rgba(255,255,255,.5)]">｜</span>
+                <span class="mr-[5px] text-[14px]">{{ t('decorating') }}：{{ diyStore.typeName }}</span>
                 <!--<el-icon class="font-bold"><EditPen /></el-icon>-->
             </div>
 
             <div v-if="diyStore.type && diyStore.type != 'DIY_PAGE'">
                 <span class="text-white mr-[10px] text-base">{{ t('templatePagePlaceholder') }}</span>
-                <el-select v-model="template" class="w-[180px]" :placeholder="t('templatePagePlaceholder')" @change="changeTemplatePage">
+                <el-select size="small" v-model="template" class="w-[180px]" :placeholder="t('templatePagePlaceholder')" @change="changeTemplatePage">
                     <el-option :label="t('templatePageEmpty')" value="" />
                     <el-option v-for="(item, key) in templatePages" :label="item.title" :value="key" :key="key"/>
                 </el-select>
@@ -33,9 +34,10 @@
                     <el-collapse v-model="activeNames" @change="handleChange">
                         <el-collapse-item v-for="(item, key) in component" :key="key" :title="item.title" :name="key">
                             <ul class="flex flex-row flex-wrap">
-                                <li v-for="(compItem, compKey) in item.list" :key="compKey" class="w-2/6 text-center cursor-pointer h-[75px]" :title="compItem.title" @click="diyStore.addComponent(compKey, compItem)">
-                                    <icon :name="compItem.icon" size="23px" />
-                                    <span class="block text-base truncate">{{ compItem.title }}</span>
+                                <li v-for="(compItem, compKey) in item.list" :key="compKey" class="w-2/6 text-center cursor-pointer h-[65px]" :title="compItem.title" @click="diyStore.addComponent(compKey, compItem)">
+                                    <icon v-if="compItem.icon" :name="compItem.icon" size="20px" class="inline-block mt-[3px]" />
+                                    <icon v-else name="iconfont-iconkaifazujian" size="20px" class="inline-block mt-[3px]" />
+                                    <span class="block text-[12px] truncate">{{ compItem.title }}</span>
                                 </li>
                             </ul>
                         </el-collapse-item>
@@ -111,14 +113,45 @@
                                 <template #style>
                                     <div class="edit-attr-item-wrap">
                                         <h3 class="mb-[10px]">{{ t('componentStyleTitle') }}</h3>
-                                        <el-form label-width="80px" class="px-[10px]">
-                                            <el-form-item :label="t('bottomBgColor')" class="display-block" v-if="diyStore.editComponent.ignore.indexOf('pageBgColor') == -1">
-                                                <el-color-picker v-model="diyStore.editComponent.pageBgColor" show-alpha :predefine="diyStore.predefineColors" />
-                                                <div class="text-sm text-gray-400">{{ t('bottomBgTips') }}</div>
+                                        <el-form label-width="90px" class="px-[10px]">
+
+                                            <template v-if="diyStore.editComponent.ignore.indexOf('pageBgColor') == -1">
+                                                <el-form-item :label="t('bottomBgColor')">
+                                                    <el-color-picker v-model="diyStore.editComponent.pageStartBgColor" show-alpha :predefine="diyStore.predefineColors" />
+                                                    <icon name="iconfont-iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+                                                    <el-color-picker v-model="diyStore.editComponent.pageEndBgColor" show-alpha :predefine="diyStore.predefineColors" />
+                                                </el-form-item>
+                                                <div class="text-sm text-gray-400 ml-[80px] mb-[10px]">{{ t('bottomBgTips') }}</div>
+                                            </template>
+
+                                            <el-form-item :label="t('bgGradientAngle')" v-if="diyStore.editComponent.ignore.indexOf('pageBgColor') == -1">
+                                                <el-radio-group v-model="diyStore.editComponent.pageGradientAngle">
+                                                    <el-radio label="to bottom">{{ t('topToBottom') }}</el-radio>
+                                                    <el-radio label="to right">{{ t('leftToRight') }}</el-radio>
+                                                </el-radio-group>
                                             </el-form-item>
+
+                                            <el-form-item :label="t('componentBgUrl')" v-if="diyStore.editComponent.ignore.indexOf('componentBgUrl') == -1">
+                                                <upload-image v-model="diyStore.editComponent.componentBgUrl" :limit="1"/>
+                                            </el-form-item>
+
+                                            <el-form-item :label="t('componentBgAlpha')" v-if="diyStore.editComponent.ignore.indexOf('componentBgUrl') == -1 && diyStore.editComponent.componentBgUrl">
+                                                <el-slider v-model="diyStore.editComponent.componentBgAlpha" show-input size="small" :min="0" :max="10" class="ml-[10px] horz-blank-slider" />
+                                            </el-form-item>
+
                                             <el-form-item :label="t('componentBgColor')" v-if="diyStore.editComponent.ignore.indexOf('componentBgColor') == -1">
-                                                <el-color-picker v-model="diyStore.editComponent.componentBgColor" show-alpha :predefine="diyStore.predefineColors" />
+                                                <el-color-picker v-model="diyStore.editComponent.componentStartBgColor" show-alpha :predefine="diyStore.predefineColors" />
+                                                <icon name="iconfont-iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+                                                <el-color-picker v-model="diyStore.editComponent.componentEndBgColor" show-alpha :predefine="diyStore.predefineColors" />
                                             </el-form-item>
+
+                                            <el-form-item :label="t('bgGradientAngle')" v-if="diyStore.editComponent.ignore.indexOf('componentBgColor') == -1">
+                                                <el-radio-group v-model="diyStore.editComponent.componentGradientAngle">
+                                                    <el-radio label="to bottom">{{ t('topToBottom') }}</el-radio>
+                                                    <el-radio label="to right">{{ t('leftToRight') }}</el-radio>
+                                                </el-radio-group>
+                                            </el-form-item>
+
                                             <el-form-item :label="t('marginTop')" v-if="diyStore.editComponent.ignore.indexOf('marginTop') == -1">
                                                 <el-slider v-model="diyStore.editComponent.margin.top" show-input size="small" :min="0" class="ml-[10px] horz-blank-slider" />
                                             </el-form-item>
@@ -138,33 +171,6 @@
                                     </div>
                                 </template>
                             </component>
-                            <div class="edit-attr-item-wrap" v-else>
-                                <h3 class="mb-[10px]">{{ t('componentStyleTitle') }}</h3>
-                                <el-form label-width="80px" class="px-[10px]">
-                                    <el-form-item :label="t('bottomBgColor')" class="display-block" v-if="diyStore.editComponent.ignore.indexOf('pageBgColor') == -1">
-                                        <el-color-picker v-model="diyStore.editComponent.pageBgColor" show-alpha :predefine="diyStore.predefineColors" />
-                                        <div class="text-sm text-gray-400">{{ t('bottomBgTips') }}</div>
-                                    </el-form-item>
-                                    <el-form-item :label="t('componentBgColor')" v-if="diyStore.editComponent.ignore.indexOf('componentBgColor') == -1">
-                                        <el-color-picker v-model="diyStore.editComponent.componentBgColor" show-alpha :predefine="diyStore.predefineColors" />
-                                    </el-form-item>
-                                    <el-form-item :label="t('marginTop')" v-if="diyStore.editComponent.ignore.indexOf('marginTop') == -1">
-                                        <el-slider v-model="diyStore.editComponent.margin.top" show-input size="small" :min="0" class="ml-[10px] horz-blank-slider" />
-                                    </el-form-item>
-                                    <el-form-item :label="t('marginBottom')" v-if="diyStore.editComponent.ignore.indexOf('marginBottom') == -1">
-                                        <el-slider v-model="diyStore.editComponent.margin.bottom" show-input size="small" class="ml-[10px] horz-blank-slider" />
-                                    </el-form-item>
-                                    <el-form-item :label="t('marginBoth')" v-if="diyStore.editComponent.ignore.indexOf('marginBoth') == -1">
-                                        <el-slider v-model="diyStore.editComponent.margin.both" show-input size="small" class="ml-[10px] horz-blank-slider" />
-                                    </el-form-item>
-                                    <el-form-item :label="t('topRounded')" v-if="diyStore.editComponent.ignore.indexOf('topRounded') == -1">
-                                        <el-slider v-model="diyStore.editComponent.topRounded" show-input size="small" class="ml-[10px] horz-blank-slider" :max="50" />
-                                    </el-form-item>
-                                    <el-form-item :label="t('bottomRounded')" v-if="diyStore.editComponent.ignore.indexOf('bottomRounded') == -1">
-                                        <el-slider v-model="diyStore.editComponent.bottomRounded" show-input size="small" class="ml-[10px] horz-blank-slider" :max="50" />
-                                    </el-form-item>
-                                </el-form>
-                            </div>
 
                         </div>
 
@@ -199,7 +205,7 @@ route.query.name = route.query.name || ''
 route.query.url = route.query.url || '' // 页面路径
 route.query.type = route.query.type || '' // 页面模板，新页面传入
 route.query.title = route.query.title || ''
-route.query.back = route.query.back || '/site/diy/list'
+route.query.back = route.query.back || '/admin/diy/list'
 
 const backPath = route.query.back
 const template = ref('');
@@ -299,6 +305,7 @@ const changeTemplatePage = (value:any)=> {
             cancelButtonText: t('cancel'),
             type: 'warning'
         }).then(() => {
+            diyStore.changeCurrentIndex(-99)
             if (value) {
                 let data = templatePages[value].data;
                 diyStore.global = data.global;
@@ -427,28 +434,46 @@ initPage({
     wapDomain.value = data.domain_url.wap_domain
     wapUrl.value = data.domain_url.wap_url
     page.value = data.page
-    setDomain()
 
-    // 生产模式禁止
-    if (import.meta.env.MODE == 'production') return
+    let repeat = true; // 防重复执行
 
-    // env文件配置过wap域名
-    if (wapDomain.value) {
-        wapUrl.value = wapDomain.value + '/wap'
+    // 开发模式下执行
+    if (import.meta.env.MODE == 'development') {
+
+        // env文件配置过wap域名
+        if (wapDomain.value) {
+            wapUrl.value = wapDomain.value + '/wap'
+            repeat = false
+            setDomain()
+        }
+
+        let wap_domain_storage = storage.get('wap_domain')
+        if (wap_domain_storage) {
+            wapUrl.value = wap_domain_storage
+            repeat = false
+            setDomain()
+        }
+    }
+
+    if(repeat) {
         setDomain()
     }
 
-    let wap_domain_storage = storage.get('wap_domain')
-    if (wap_domain_storage) {
-        wapUrl.value = wap_domain_storage
-        setDomain()
-    }
 })
+
+const uniAppLoadStatus = ref(false) // uni-app 加载状态，true：加载完成，false：未完成
 
 // 监听组件数据 uni-app端
 window.addEventListener('message', (event) => {
     try {
-        const data = JSON.parse(event.data)
+        let data = {
+            type: ''
+        };
+        if(typeof event.data == 'string') {
+            data = JSON.parse(event.data)
+        }else if(typeof event.data == 'object') {
+            data = event.data
+        }
         if (!data.type) return
 
         switch (data.type) {
@@ -459,6 +484,7 @@ window.addEventListener('message', (event) => {
                 loadingIframe.value = true
                 let loadTime = new Date().getTime()
                 difference.value = loadTime - timeIframe.value
+                uniAppLoadStatus.value = true // 加载完成
                 break
             case 'init':
                 // 初始化，与uniapp建立连接传输数据
@@ -477,7 +503,7 @@ window.addEventListener('message', (event) => {
                 break
         }
     } catch (e) {
-        console.log('后台接受数据错误', e)
+        console.log('diy edit 后台接受数据错误', e)
     }
 }, false)
 
@@ -499,11 +525,32 @@ const saveWapDomain = () => {
 const setDomain = () => {
     wapPreview.value = `${wapUrl.value}${page.value}?mode=decorate` // 模式：decorate 装修 访问预览页面
 
-    timeIframe.value = new Date().getTime()
-    postMessage()
+    const send = ()=>{
+        timeIframe.value = new Date().getTime()
+        postMessage()
+    }
+
+    // 同步发送一次消息
+    send()
+
+    // 如果同步发送消息的 uni-app没有接收到回应，则定时发送消息
+    let sendCount = 0;
+    let timeInterVal = setInterval(()=>{
+        // 接收 uni-app 发送的消息 或者 发送50次后未响应，则停止发送
+        if(uniAppLoadStatus.value || sendCount >= 50){
+            clearInterval(timeInterVal)
+            return
+        }
+
+        send()
+        sendCount++;
+    },200)
+
+    // 如果10秒内加载不出来，则需要配置域名
     setTimeout(() => {
         if (difference.value == 0) initLoad()
-    }, 1000 * 2)
+    }, 1000 * 10)
+
 }
 
 // 将数据发送到uniapp
@@ -568,7 +615,7 @@ const preview = () => {
     save((id: number) => {
         id = diyStore.id || id
         const url = router.resolve({
-            path: '/site/preview/wap',
+            path: '/admin/preview/wap',
             query: {
                 page: page.value + '?id=' + id
             }

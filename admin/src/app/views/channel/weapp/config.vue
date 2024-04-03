@@ -14,12 +14,12 @@
                 <h3 class="panel-title !text-sm">{{ t('weappInfo') }}</h3>
 
                 <el-form-item :label="t('weappName')" prop="weapp_name">
-                    <el-input v-model="formData.weapp_name" :placeholder="t('weappNamePlaceholder')" class="input-width"
+                    <el-input v-model.trim="formData.weapp_name" :placeholder="t('weappNamePlaceholder')" class="input-width"
                         clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('weappOriginal')" prop="weapp_original">
-                    <el-input v-model="formData.weapp_original" :placeholder="t('weappOriginalPlaceholder')"
+                    <el-input v-model.trim="formData.weapp_original" :placeholder="t('weappOriginalPlaceholder')"
                         class="input-width" clearable />
                 </el-form-item>
 
@@ -34,13 +34,13 @@
                 <h3 class="panel-title !text-sm">{{ t('weappDevelopInfo') }}</h3>
 
                 <el-form-item :label="t('weappAppid')" prop="app_id">
-                    <el-input v-model="formData.app_id" :placeholder="t('appidPlaceholder')" class="input-width"
+                    <el-input v-model.trim="formData.app_id" :placeholder="t('appidPlaceholder')" class="input-width"
                         clearable />
                     <div class="form-tip">{{ t('weappAppidTips') }}</div>
                 </el-form-item>
 
                 <el-form-item :label="t('weappAppsecret')" prop="app_secret">
-                    <el-input v-model="formData.app_secret" :placeholder="t('appSecretPlaceholder')" class="input-width"
+                    <el-input v-model.trim="formData.app_secret" :placeholder="t('appSecretPlaceholder')" class="input-width"
                         clearable />
                     <div class="form-tip">{{ t('weappAppsecretTips') }}</div>
                 </el-form-item>
@@ -72,13 +72,13 @@
                 </el-form-item>
 
                 <el-form-item label="Token" prop="token">
-                    <el-input v-model="formData.token" :placeholder="t('tokenPlaceholder')" class="input-width"
+                    <el-input v-model.trim="formData.token" :placeholder="t('tokenPlaceholder')" class="input-width"
                         maxlength="32" show-word-limit clearable />
                     <div class="form-tip">{{ t('tokenTips') }}</div>
                 </el-form-item>
 
                 <el-form-item label="EncodingAESKey" prop="encoding_aes_key">
-                    <el-input v-model="formData.encoding_aes_key" :placeholder="t('encodingAesKeyPlaceholder')"
+                    <el-input v-model.trim="formData.encoding_aes_key" :placeholder="t('encodingAesKeyPlaceholder')"
                         class="input-width" maxlength="43" show-word-limit clearable />
                     <div class="form-tip">{{ t('encodingAESKeyTips') }}</div>
                 </el-form-item>

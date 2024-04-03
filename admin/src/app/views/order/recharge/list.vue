@@ -56,13 +56,11 @@
                     <el-form-item :label="t('rechargeMoney')">
                         <div class="region-input">
                             <el-form-item prop="start_money">
-                                <input type="text" :placeholder="t('startMoney')"
-                                    v-model="orderTableData.searchParam.start_money">
+                                <input type="text" :placeholder="t('startMoney')" v-model="orderTableData.searchParam.start_money">
                             </el-form-item>
                             <span class="separator">-</span>
                             <el-form-item prop="end_money">
-                                <input type="text" :placeholder="t('endMoney')"
-                                    v-model="orderTableData.searchParam.end_money">
+                                <input type="text" :placeholder="t('endMoney')" v-model="orderTableData.searchParam.end_money">
                             </el-form-item>
                         </div>
                     </el-form-item>
@@ -89,20 +87,17 @@
                     <el-table-column :show-overflow-tooltip="true" :label="t('member')" align="left" min-width="140">
                         <template #default="{ row }">
                             <div class="flex items-center cursor-pointer " @click="toMember(row.member.member_id)">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg"
-                                    :src="img(row.member.headimg)" alt="">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-else
-                                    src="@/app/assets/images/default_headimg.png" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg" :src="img(row.member.headimg)" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
                                 <div class="flex flex flex-col">
-                                    <span class="">{{ row.member.nickname || '' }}</span>
-                                    <span class="">{{ row.member.mobile || '' }}</span>
+                                    <span>{{ row.member.nickname || '' }}</span>
+                                    <span>{{ row.member.mobile || '' }}</span>
                                 </div>
                             </div>
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="order_no" :show-overflow-tooltip="true" :label="t('rechargeNo')" align="center"
-                        min-width="140" />
+                    <el-table-column prop="order_no" :show-overflow-tooltip="true" :label="t('rechargeNo')" align="center" min-width="140" />
 
                     <el-table-column prop="order_money" :label="t('rechargeMoney')" align="center" min-width="140" />
 
@@ -136,8 +131,7 @@
                                 type="primary" link @click="refundFn(row)">{{ t('refundBtn') }}</el-button>
 
                             <template v-for="(item, index) in row.order_status_info.action" :key="index">
-                                <el-button type="primary" link @click="orderEvent(row, item.class)">{{ item.name
-                                }}</el-button>
+                                <el-button type="primary" link @click="orderEvent(row, item.class)">{{ item.name }}</el-button>
                             </template>
                         </template>
                     </el-table-column>

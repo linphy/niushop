@@ -172,7 +172,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getAccountList, getAccountStat, getAccountType } from '@/app/api/site'
+import { getAccountList, getAccountStat, getAccountType } from '@/app/api/pay'
 // import { img } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { useRoute } from 'vue-router'

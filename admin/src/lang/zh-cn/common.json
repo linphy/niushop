@@ -44,6 +44,7 @@
   "emptyData": "暂无数据",
   "emptyQrCode": "暂无二维码",
   "fileErr": "无法显示",
+  "visitWap": "访问店铺",
   "upload": {
     "root": "上传",
     "selectimage": "选择图片",

@@ -1,45 +1,83 @@
 <template>
 	<!-- 内容 -->
-	<div class="content-wrap" v-show="diyStore.editTab == 'content'">
+	<div class="content-wrap notice-content-wrap" v-show="diyStore.editTab == 'content'">
 		<div class="edit-attr-item-wrap">
-			<h3 class="mb-[10px]">公告图标</h3>
-
-			<div class="px-[22px] pb-[20px]">
-				<el-radio-group v-model="diyStore.editComponent.iconType" class="mb-[18px]">
-					<el-radio label="system">系统图标</el-radio>
-					<el-radio label="custom">自定义图标</el-radio>
-				</el-radio-group>
-				<div v-if="diyStore.editComponent.iconType == 'system'" class="flex items-center flex-wrap py-[8px] px-[10px] bg-[#f4f3f7] rounded">
-					<img src="@/app/assets/images/diy/notice/style_01.png" :class="['h-[28px] px-[10px] py-[5px] mr-[10px] rounded cursor-pointer', {'border-[1px] border-solid border-[var(--el-color-primary)]': diyStore.editComponent.systemIcon == 'style_01'}]" @click="diyStore.editComponent.systemIcon = 'style_01'" alt="">
-				</div>
-				<div v-if="diyStore.editComponent.iconType == 'custom'">
-					<upload-image v-model="diyStore.editComponent.imageUrl" :limit="1"/>
-				</div>
-			</div>
-		</div>
-		<div class="edit-attr-item-wrap">
-			<h3 class="mb-[10px]">公告内容</h3>
-			<el-form label-width="80px" class="px-[10px]">
-				<el-form-item :label="t('title')">
-					<el-input v-model="diyStore.editComponent.list.text" :placeholder="t('titlePlaceholder')" clearable show-word-limit/>
-				</el-form-item>
-				<el-form-item label="点击类型">
-					<el-radio-group v-model="diyStore.editComponent.showType" class="mb-[18px]">
-						<el-radio label="popup">弹出公告内容</el-radio>
-						<el-radio label="link">跳出链接</el-radio>
+			<h3 class="mb-[10px]">{{ t('noticeStyle') }}</h3>
+			<el-form label-width="90px" class="px-[10px]">
+				<el-form-item :label="t('noticeType')">
+					<el-radio-group v-model="diyStore.editComponent.noticeType">
+						<el-radio label="img">{{ t('noticeTypeImg') }}</el-radio>
+						<el-radio label="text">{{ t('noticeTypeText') }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item :label="t('link')" class="!mb-0" v-if="diyStore.editComponent.showType == 'link'">
-					<diy-link v-model="diyStore.editComponent.list.link"/>
+				<div class="flex items-center flex-wrap py-[8px] px-[10px] bg-[#f4f3f7] rounded mb-[18px] mx-[18px]" v-show="diyStore.editComponent.noticeType == 'img'">
+					<div :class="['mr-[10px] rounded cursor-pointer', {'border-[1px] border-solid border-[var(--el-color-primary)]': diyStore.editComponent.systemUrl == 'style_1' && diyStore.editComponent.imgType == 'system'}]">
+						<img src="@/app/assets/images/diy/notice/style_1.png" :class="['h-[28px] px-[10px] py-[5px]']" @click="changeStyle('style_1')"/>
+					</div>
+
+					<div :class="['mr-[10px] rounded cursor-pointer w-[100px]', {'border-[1px] border-solid border-[var(--el-color-primary)]': diyStore.editComponent.systemUrl == 'style_2' && diyStore.editComponent.imgType == 'system'}]">
+						<img src="@/app/assets/images/diy/notice/style_2.png" class="px-[10px] py-[5px]" @click="changeStyle('style_2')"/>
+					</div>
+					<div @click="diyStore.editComponent.imgType = 'diy'" :class="['mr-[10px] rounded cursor-pointer diy-upload-img', {'border-[1px] border-solid border-[var(--el-color-primary)]': (diyStore.editComponent.imageUrl && diyStore.editComponent.imgType == 'diy') }]">
+						<upload-image v-model="diyStore.editComponent.imageUrl" :limit="1"/>
+					</div>
+				</div>
+
+				<el-form-item :label="t('noticeTitle')" v-show="diyStore.editComponent.noticeType == 'text'">
+					<el-input v-model.trim="diyStore.editComponent.noticeTitle" :placeholder="t('titlePlaceholder')" clearable maxlength="20" show-word-limit/>
 				</el-form-item>
+
+			</el-form>
+
+		</div>
+
+		<div class="edit-attr-item-wrap">
+			<h3 class="mb-[10px]">{{ t('noticeText') }}</h3>
+			<el-form label-width="90px" class="px-[10px]">
+
+				<el-form-item :label="t('noticeScrollWay')">
+					<el-radio-group v-model="diyStore.editComponent.scrollWay">
+						<el-radio label="upDown">{{ t('noticeUpDown') }}</el-radio>
+						<el-radio label="horizontal">{{ t('noticeHorizontal') }}</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item :label="t('noticeShowType')">
+					<el-radio-group v-model="diyStore.editComponent.showType">
+						<el-radio label="popup">{{ t('noticeShowPopUp') }}</el-radio>
+						<el-radio label="link">{{ t('noticeShowLink') }}</el-radio>
+					</el-radio-group>
+				</el-form-item>
+
+				<p class="text-sm text-gray-400 mb-[10px]">{{ t('dragMouseAdjustOrder') }}</p>
+
+				<div ref="noticeBoxRef">
+					<div v-for="(item,index) in diyStore.editComponent.list" :key="item.id" class="item-wrap p-[10px] pb-0 relative border border-dashed border-gray-300 mb-[16px]">
+
+						<el-form-item :label="t('noticeText')">
+							<el-input v-model.trim="item.text" :placeholder="t('noticePlaceholderText')" clearable maxlength="40" show-word-limit/>
+						</el-form-item>
+
+						<div class="del absolute cursor-pointer z-[2] top-[-8px] right-[-8px]" v-show="diyStore.editComponent.list.length > 1" @click="diyStore.editComponent.list.splice(index,1)">
+							<icon name="element-CircleCloseFilled" color="#bbb" size="20px"/>
+						</div>
+
+						<el-form-item :label="t('link')" v-if="diyStore.editComponent.showType == 'link'">
+							<diy-link v-model="item.link"/>
+						</el-form-item>
+					</div>
+				</div>
+
+				<el-button class="w-full" @click="addNotice">{{ t('addNotice') }}</el-button>
+
 			</el-form>
 		</div>
+
 	</div>
 
 	<!-- 样式 -->
 	<div class="style-wrap" v-show="diyStore.editTab == 'style'">
 		<div class="edit-attr-item-wrap">
-			<h3 class="mb-[10px]">{{ t('titleStyle') }}</h3>
+			<h3 class="mb-[10px]">{{ t('textSet') }}</h3>
 			<el-form label-width="80px" class="px-[10px]">
 				<el-form-item :label="t('textFontSize')">
 					<el-slider v-model="diyStore.editComponent.fontSize" show-input size="small" class="ml-[10px] article-slider" :min="12" :max="20"/>
@@ -64,47 +102,112 @@
 <script lang="ts" setup>
 import { t } from '@/lang'
 import useDiyStore from '@/stores/modules/diy'
-import { ref } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
+import { range } from 'lodash-es'
+import Sortable from 'sortablejs'
 
 const diyStore = useDiyStore()
 diyStore.editComponent.ignore = [] // 忽略公共属性
 
-const showDialog = ref(false)
+// 组件验证
+diyStore.editComponent.verify = (index: number) => {
+    const res = { code: true, message: '' }
 
-const showStyle = () => {
-    showDialog.value = true
+    if(diyStore.value[index].noticeType == 'text'){
+        if(diyStore.value[index].noticeTitle == ''){
+            res.code = false
+            res.message = t('noticeTypeTextPlaceholder')
+            return res
+        }
+    }
+
+    diyStore.value[index].list.forEach((item: any) => {
+        if (item.text == '') {
+            res.code = false
+            res.message = t('noticePlaceholderText')
+            return res
+        }
+    })
+    return res
 }
+
+diyStore.editComponent.list.forEach((item: any) => {
+    if (!item.id) item.id = diyStore.generateRandom()
+})
 
 const selectStyle = ref(diyStore.editComponent.style)
 
-const changeStyle = () => {
-    switch (selectStyle.value) {
-        case 'style-1':
-            diyStore.editComponent.subTitle.control = false
-            diyStore.editComponent.more.control = false
-            diyStore.editComponent.styleName = '风格1'
-            break
-        case 'style-2':
-            diyStore.editComponent.subTitle.control = true
-            diyStore.editComponent.more.control = true
-            diyStore.editComponent.styleName = '风格2'
-            break
-    }
-    diyStore.editComponent.style = selectStyle.value
-    showDialog.value = false
+const changeStyle = (value :any) => {
+    diyStore.editComponent.systemUrl = value;
+    diyStore.editComponent.imgType = 'system';
 }
+
+watch(
+    () => diyStore.editComponent.imageUrl,
+    (newValue, oldValue) => {
+	    if(newValue){
+            diyStore.editComponent.imgType = 'diy';
+	    }else{
+            diyStore.editComponent.imgType = 'system';
+	    }
+    }
+)
+
+const addNotice = () => {
+    diyStore.editComponent.list.push({
+        id: diyStore.generateRandom(),
+        text: '公告',
+        link: { name: '' },
+    })
+}
+
+const noticeBoxRef = ref()
+
+onMounted(() => {
+    nextTick(() => {
+        const sortable = Sortable.create(noticeBoxRef.value, {
+            group: 'item-wrap',
+            animation: 200,
+            onEnd: event => {
+                const temp = diyStore.editComponent.list[event.oldIndex!]
+                diyStore.editComponent.list.splice(event.oldIndex!, 1)
+                diyStore.editComponent.list.splice(event.newIndex!, 0, temp)
+                sortable.sort(
+                    range(diyStore.editComponent.list.length).map(value => {
+                        return value.toString()
+                    })
+                )
+            }
+        })
+    })
+})
 
 defineExpose({})
 </script>
 
 <style lang="scss">
-	.horz-blank-slider {
-		.el-slider__input {
-			width: 100px;
+	.notice-content-wrap {
+		.add-notice-width {
+			width: calc(100% - 20px);
 		}
-	}
-	.add-notice-width{
-		width: calc(100% - 20px);
+
+		.diy-upload-img {
+			.image-wrap {
+				width: 50px !important;
+				height: 50px !important;
+				margin-right: 0 !important;
+				background: #fff;
+			}
+
+			.content-wrap {
+				div {
+					display: none;
+				}
+			}
+			.operation{
+				display: none !important;
+			}
+		}
 	}
 </style>
 <style lang="scss" scoped></style>

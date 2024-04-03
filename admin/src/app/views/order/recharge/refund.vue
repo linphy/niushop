@@ -70,8 +70,8 @@
 								<img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg" :src="img(row.member.headimg)" alt="">
 								<img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
 								<div class="flex flex flex-col">
-									<span class="">{{ row.member.nickname || '' }}</span>
-									<span class="">{{ row.member.mobile || '' }}</span>
+									<span>{{ row.member.nickname || '' }}</span>
+									<span>{{ row.member.mobile || '' }}</span>
 								</div>
 							</div>
 						</template>

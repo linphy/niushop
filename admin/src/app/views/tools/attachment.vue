@@ -1,7 +1,7 @@
 <template>
 	<div class="main-container attachment-container">
 		<el-card class="box-card !border-none full-container" shadow="never">
-			<el-tabs v-model="type" class="">
+			<el-tabs v-model="type">
 				<el-tab-pane :label="t(tab)" v-for="(tab, index) in attachmentType" :name="tab" :key="index">
 					<attachment scene="attachment" :type="tab" />
 				</el-tab-pane>

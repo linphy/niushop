@@ -22,12 +22,12 @@
             </el-col>
             <el-col :span="12">
                 <div class="right-panel h-full flex items-center justify-end">
-                    <!-- 预览 只有站点时展示-->
-                    <i class="iconfont iconlingdang-xianxing cursor-pointer px-[8px]" :title="t('newInfo')" v-if="appType == 'site'"></i>
+                    <!-- 预览-->
+                    <i class="iconfont iconicon_huojian1 cursor-pointer px-[8px]" :title="t('visitWap')" @click="toPreview"></i>
                     <!-- 切换语言 -->
-                    <!-- <div class="navbar-item flex items-center h-full cursor-pointer">
+                    <div class="navbar-item flex items-center h-full cursor-pointer">
                         <switch-lang />
-                    </div> -->
+                    </div>
                     <!-- 切换全屏 -->
                     <!-- <div class="navbar-item flex items-center h-full cursor-pointer" @click="toggleFullscreen">
                         <icon name="iconfont-icontuichuquanping" v-if="isFullscreen" />
@@ -61,11 +61,12 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted } from 'vue'
 import layoutSetting from './layout-setting.vue'
+import switchLang from './switch-lang.vue'
 import userInfo from './user-info.vue'
 import { useFullscreen } from '@vueuse/core'
 import useSystemStore from '@/stores/modules/system'
 import useAppStore from '@/stores/modules/app'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import { t } from '@/lang'
 import storage from '@/utils/storage'
 
@@ -74,6 +75,7 @@ const { toggle: toggleFullscreen } = useFullscreen()
 const systemStore = useSystemStore()
 const appStore = useAppStore()
 const route = useRoute()
+const router = useRouter()
 const screenWidth = ref(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth)
 
 const dark = computed(() => {
@@ -83,25 +85,20 @@ const dark = computed(() => {
 // 检测登录 start
 const detectionLoginDialog = ref(false)
 const comparisonToken = ref('')
-const comparisonSiteId = ref('')
 if (storage.get('comparisonTokenStorage')) {
     comparisonToken.value = storage.get('comparisonTokenStorage')
-    // storage.remove(['comparisonTokenStorage']);
 }
-if (storage.get('comparisonSiteIdStorage')) {
-    comparisonSiteId.value = storage.get('comparisonSiteIdStorage')
-    // storage.remove(['comparisonSiteIdStorage']);
-}
+
 // 监听标签页面切换
 document.addEventListener('visibilitychange', e => {
-    if (document.visibilityState === 'visible' && (comparisonSiteId.value != storage.get('siteId') || comparisonToken.value != storage.get('token'))) {
+    if (document.visibilityState === 'visible' && comparisonToken.value != storage.get('token')) {
         detectionLoginDialog.value = true
     }
 })
 
 const detectionLoginFn = () => {
     detectionLoginDialog.value = false
-    location.href = `${location.origin}/site/`
+    location.href = `${location.origin}/`
 }
 // 检测登录 end
 
@@ -113,26 +110,6 @@ onMounted(() => {
         })()
     }
 })
-
-// watch(screenWidth, () => {
-//     if (screenWidth.value < 992) {
-//         if (!systemStore.menuIsCollapse) systemStore.toggleMenuCollapse(true)
-//     } else {
-//         if (systemStore.menuIsCollapse) systemStore.toggleMenuCollapse(false)
-//     }
-// })
-
-// 菜单栏展开折叠
-// const toggleMenuCollapse = () => {
-//     systemStore.$patch((state) => {
-//         if (screenWidth.value < 768) {
-//             state.menuDrawer = true
-//             state.menuIsCollapse = false
-//         } else {
-//             systemStore.toggleMenuCollapse(!systemStore.menuIsCollapse)
-//         }
-//     })
-// }
 
 // 刷新路由
 const refreshRouter = () => {
@@ -147,10 +124,16 @@ const breadcrumb = computed(() => {
     return matched
 })
 
-// 返回上一页
-// const backFn = () => {
-//     router.go(-1)
-// }
+// 跳转去预览
+const toPreview = () => {
+    const url = router.resolve({
+        path: '/preview/wap',
+        query: {
+            page:'/'
+        }
+    })
+    window.open(url.href)
+}
 </script>
 
 <style lang="scss" scoped>

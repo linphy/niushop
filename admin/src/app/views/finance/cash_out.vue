@@ -8,8 +8,7 @@
                 <el-row class="flex">
                     <el-col :span="12">
                         <div class="statistic-card">
-                            <el-statistic
-                                :value="statistics.transfered ? statistics.transfered.toFixed(2) : '0.00'"></el-statistic>
+                            <el-statistic :value="statistics.transfered ? statistics.transfered.toFixed(2) : '0.00'"></el-statistic>
                             <div class="statistic-footer">
                                 <div class="footer-item text-[14px] text-[#666]">
                                     <span>{{ t('totalTransfered') }}</span>
@@ -19,8 +18,7 @@
                     </el-col>
                     <el-col :span="12">
                         <div class="statistic-card">
-                            <el-statistic
-                                :value="statistics.cash_outing ? statistics.cash_outing.toFixed(2) : '0'"></el-statistic>
+                            <el-statistic :value="statistics.cash_outing ? statistics.cash_outing.toFixed(2) : '0'"></el-statistic>
                             <div class="statistic-footer">
                                 <div class="footer-item text-[14px] text-[#666]">
                                     <span>{{ t('totalCashOuting') }}</span>
@@ -84,17 +82,14 @@
                         <span>{{ !orderTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
 
-                    <el-table-column prop="order_no" :show-overflow-tooltip="true" :label="t('memberInfo')" align="center"
-                        min-width="140">
+                    <el-table-column prop="order_no" :show-overflow-tooltip="true" :label="t('memberInfo')" align="center" min-width="140">
                         <template #default="{ row }">
                             <div class="flex items-center cursor-pointer " @click="toMember(row.member.member_id)">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg"
-                                    :src="img(row.member.headimg)" alt="">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-else
-                                    src="@/app/assets/images/default_headimg.png" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg" :src="img(row.member.headimg)" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
                                 <div class="flex flex flex-col">
-                                    <span class="">{{ row.member.nickname || '' }}</span>
-                                    <span class="">{{ row.member.mobile || '' }}</span>
+                                    <span>{{ row.member.nickname || '' }}</span>
+                                    <span>{{ row.member.mobile || '' }}</span>
                                 </div>
                             </div>
                         </template>
@@ -105,8 +100,7 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="apply_money" :label="t('applicationForWithdrawalAmount')" min-width="140"
-                        align="center" />
+                    <el-table-column prop="apply_money" :label="t('applicationForWithdrawalAmount')" min-width="140" align="center" />
 
                     <el-table-column prop="money" :label="t('actualTransferAmount')" min-width="200" align="center" />
 
@@ -152,8 +146,7 @@
 
         <!-- 详情 -->
         <el-dialog v-model="cashOutShowDialog" :title="t('cashOutDetail')" width="500px" :destroy-on-close="true">
-            <el-form :model="cashOutInfo" label-width="120px" ref="formRef" :rules="formRules" class="page-form"
-                v-loading="cashOutLoading">
+            <el-form :model="cashOutInfo" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="cashOutLoading">
                 <el-form-item :label="t('nickname')">
                     <div class="input-width"> {{ cashOutInfo.nickname }} </div>
                 </el-form-item>
@@ -185,11 +178,9 @@
 
         <!-- 是否审核 -->
         <el-dialog v-model="auditShowDialog" :title="t('rejectionAudit')" width="500px" :destroy-on-close="true">
-            <el-form :model="auditFailure" label-width="90px" ref="formRef" :rules="formRules" class="page-form"
-                v-loading="loading">
+            <el-form :model="auditFailure" label-width="90px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('reasonsRefusal')" prop="label_name">
-                    <el-input v-model="auditFailure.refuse_reason" clearable :placeholder="t('reasonsRefusalPlaceholder')"
-                        class="input-width" type="textarea" />
+                    <el-input v-model="auditFailure.refuse_reason" clearable :placeholder="t('reasonsRefusalPlaceholder')" class="input-width" type="textarea" />
                 </el-form-item>
             </el-form>
             <template #footer>

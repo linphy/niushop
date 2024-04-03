@@ -5,9 +5,6 @@
 		</div>
         <el-form :model="formData" label-width="150px" ref="formRef" class="page-form">
             <el-card class="box-card !border-none" shadow="never">
-                <el-form-item :label="t('preview')" prop="weapp_name">
-                    <img class="w-[500px]" src="@/app/assets/images/channel/preview.png" alt="">
-                </el-form-item>
 
                 <el-form-item :label="t('isOpen')">
                     <el-switch v-model="formData.is_open"/>
