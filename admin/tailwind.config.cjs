@@ -60,7 +60,8 @@ module.exports = {
 				'6xl': '30px',
 				'7xl': '36px',
 				'8xl': '48px',
-				'9xl': '60px'
+				'9xl': '60px',
+				'page-title': '16px'
 			},
 			spacing: {
 				px: '1px',

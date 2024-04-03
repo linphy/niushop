@@ -33,6 +33,7 @@ const solve = () => {
     const fc = fs.readFileSync(fn, 'utf-8')
     let text = new String(fc)
     text = text.replaceAll('./assets/', '/admin/assets/')
+    text = text.replace('./niucloud.ico', '/admin/niucloud.ico')
     fs.writeFileSync(fn, text, 'utf8')
 }
 
