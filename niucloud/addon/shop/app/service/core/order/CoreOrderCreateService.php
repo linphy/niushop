@@ -51,9 +51,10 @@ class CoreOrderCreateService extends BaseCoreService
         $this->getOrderCache($order_key);
         //校验错误
         $this->checkError();
+        //普通订单校验库存
+        $this->checkStock($this->goods_data);
         $order_data = [
             //订单整体
-            'site_id' => $data['site_id'],
             'order_type' => OrderDict::TYPE,
             'status' => OrderDict::WAIT_PAY,
             'body' => $this->basic['body'],
@@ -83,11 +84,9 @@ class CoreOrderCreateService extends BaseCoreService
 
         ];//总
 
-
         $order_goods_data = [];//项
         foreach ($this->goods_data as $v) {
             $order_goods_data[] = [
-                'site_id' => $data['site_id'],
                 'member_id' => $data['member_id'],
                 'goods_id' => $v['goods_id'],
                 'sku_id' => $v['sku_id'],
@@ -137,7 +136,8 @@ class CoreOrderCreateService extends BaseCoreService
         $discount_money = $this->moneyFormat($this->basic['discount_money'] ?? 0);//优惠金额
         $delivery_money = $this->moneyFormat($this->basic['delivery_money'] ?? 0);
         $goods_money = $this->moneyFormat($this->basic['goods_money'] ?? 0);
-        $order_money = $this->moneyFormat($delivery_money + $goods_money - $discount_money);
+
+        $order_money = $this->moneyFormat($this->moneyCalculate($delivery_money,$goods_money, -$discount_money));
         $this->basic['discount_money'] = $discount_money;
         $this->basic['delivery_money'] = $delivery_money;
         $this->basic['goods_money'] = $goods_money;
@@ -162,7 +162,7 @@ class CoreOrderCreateService extends BaseCoreService
         //查看会员信息
         $member_id = $this->param['member_id'];
         $this->member_id = $member_id;
-        $member_info = (new CoreMemberService())->getInfoByMemberId($this->site_id, $member_id, 'nickname, point');
+        $member_info = (new CoreMemberService())->getInfoByMemberId($member_id, 'nickname, point');
 
         if (empty($member_info)) throw new CommonException('SHOP_ORDER_BUYER_NOT_FOUND');//无效的账号
         //会员账户信息
@@ -199,7 +199,7 @@ class CoreOrderCreateService extends BaseCoreService
         if (!empty($cart_ids)) {
             $this->cart_ids = $cart_ids;
             //查询购物车
-            $cart = (new Cart())->where([['id', 'in', $cart_ids], ['site_id', '=', $this->site_id ]])->field('goods_id, site_id, sku_id, num, market_type, market_type_id')->select();
+            $cart = (new Cart())->where([['id', 'in', $cart_ids]])->field('goods_id, sku_id, num, market_type, market_type_id')->select();
             if ($cart->isEmpty()) throw new CommonException('SHOP_ORDER_CARTS_EXPIRE');//无效的数据
             if ($cart->count() != count($cart_ids)) throw new CommonException('SHOP_ORDER_CARTS_EXPIRE');//无效的商品
             $sku_data = $cart->toArray();
@@ -209,10 +209,9 @@ class CoreOrderCreateService extends BaseCoreService
         }
         $sku_ids = array_column($sku_data, 'sku_id');
         $sku_condition = array(
-            ['sku_id', 'in', $sku_ids],
-            ['site_id', '=', $this->site_id]
+            ['sku_id', 'in', $sku_ids]
         );
-        $sku_list = (new  GoodsSku())->where($sku_condition)->with(['goods'])->field('sku_id, site_id, sku_name, sku_image, goods_id, price, stock, weight, volume,sku_id, sku_spec_format')->select()->toArray();
+        $sku_list = (new  GoodsSku())->where($sku_condition)->with(['goods'])->field('sku_id, sku_name, sku_image, goods_id, price, stock, weight, volume,sku_id, sku_spec_format')->select()->toArray();
         $sku_list = array_column($sku_list, null, 'sku_id');
         //商品数据  查询商品列表
 

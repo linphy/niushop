@@ -24,9 +24,9 @@
                         :placeholder="t('goodsSelectPopupGoodsNamePlaceholder')" maxlength="60" />
                 </el-form-item>
                 <el-form-item :label="t('goodsSelectPopupGoodsCategory')" prop="goods_category" class="form-item-wrap">
-                    <el-cascader :props="goodsCategoryProps" v-model="goodsTable.searchParam.goods_category"
+                    <el-cascader  v-model="goodsTable.searchParam.goods_category"
                         :options="goodsCategoryOptions" :placeholder="t('goodsSelectPopupGoodsCategoryPlaceholder')"
-                        clearable filterable />
+                        clearable f:props="{ value: 'value', label: 'label', emitPath:false }" />
                 </el-form-item>
                 <el-form-item :label="t('goodsSelectPopupGoodsType')" prop="goods_type" class="form-item-wrap">
                     <el-select v-model="goodsTable.searchParam.goods_type"
@@ -170,9 +170,6 @@ const handleSelectTypeChange = (value: any) => {
 
 // 商品分类
 const goodsCategoryOptions: any = reactive([])
-const goodsCategoryProps = {
-    checkStrictly: true
-}
 
 // 商品类型
 const goodsType: any = reactive([])

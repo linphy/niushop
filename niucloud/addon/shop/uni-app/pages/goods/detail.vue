@@ -1,243 +1,262 @@
 <template>
-	<view class="bg-[#f6f6f6] min-h-[100vh] relative" v-if="Object.keys(goodsDetail).length">
-		<u-swiper :list="goodsDetail.goods.goods_image" :autoplay="false" height="100vw"></u-swiper>
-		<view class="absolute top-[20rpx] right-[40rpx]">
-			<view class="w-[60rpx] h-[60rpx] flex items-center justify-center bg-[rgba(0,0,0,.2)] rounded-full"
-				@click="collectFn">
-				<text
-					:class="['iconfont', (isCollect ? 'text-[#ff0000]' : 'text-[#fff]'), (isCollect ? 'iconshoucang_shoucang' : 'icona-shoucang-weishoucang')]"></text>
-			</view>
-		</view>
-		<view class="mt-[20rpx] bg-white mx-[24rpx] rounded-[16rpx] py-[24rpx] px-[24rpx]">
-			<view class="flex items-center">
-				<text class="text-[var(--price-text-color)]">
-					<text class="text-[28rpx] font-bold price-font">￥</text>
-					<text class="text-[42rpx] mr-[10rpx]  font-bold price-font">{{ goodsDetail.sale_price }}</text>
-					<text class="text-[26rpx] text-[#999] line-through font-500">
-						<text class="price-font">￥{{ goodsDetail.market_price }}</text>
-					</text>
-				</text>
-				<view class="text-[24rpx] text-[#666] flex items-center ml-auto">
-					<text>销量</text>
-					<text class="mx-[6rpx]">{{ goodsDetail.goods.sale_num }}</text>
-					<text>{{ goodsDetail.goods.unit }}</text>
+	<view :style="themeColor()">
+		<view class="bg-[#f6f6f6] min-h-[100vh] relative" v-if="Object.keys(goodsDetail).length">
+			<!-- 自定义头部 -->
+			<view class="flex items-center fixed left-0 right-0 z-10 bg-transparent detail-head" :class="{'!bg-[#fff]' :detailHeadBgChange}" :style="navbarInnerStyle">
+				<text class="iconfont iconjiantou3" :style="navbarInnerArrowStyle" @click="goback()"></text>
+				<view class="w-[60rpx] ml-auto h-[60rpx] flex items-center justify-center bg-[rgba(255,255,255,.3)] rounded-full border-[2rpx] border-solid border-transparent" :class="{'border-[#d8d8d8]': detailHeadBgChange}" @click="collectFn">
+					<text class="iconfont" :class="{'text-[#ff0000] iconshoucang_shoucang': isCollect, 'text-[#303133] icona-shoucang-weishoucang' : !isCollect}"></text>
 				</view>
 			</view>
-			<view class="mt-[10rpx] font-600 text-[32rpx] max-h-[108rpx] multi-hidden leading-[54rpx]">
-				{{ goodsDetail.goods.goods_name }}
+			 
+			<view class="swiper-box">
+				<u-swiper :list="goodsDetail.goods.goods_image" :autoplay="false" height="100vw"></u-swiper>
 			</view>
-			<view class="flex flex-wrap" v-if="goodsDetail.label_info && goodsDetail.label_info.length">
-				<view v-for="item in goodsDetail.label_info" :key="item.label_id"
-					class="mt-[10rpx] text-[#FA6400] leading-[40rpx] text-[22rpx] h-[40rpx] px-[10rpx] border-[2rpx] border-solid border-[#FA6400] rounded-[6rpx] mr-[15rpx] box-border">
-					{{ item.label_name }}
-				</view>
-			</view>
-		</view>
-
-		<view class="mt-[20rpx] bg-white mx-[24rpx] rounded-[16rpx]">
-			<view @click="servicesDataShow = !servicesDataShow" v-if="goodsDetail.service"
-				class="flex items-center h-[88rpx] border-0 border-b-[2rpx] border-solid border-[#ebebec] px-[20rpx]">
-				<text class="text-[#999] text-[30rpx] leading-[42rpx] font-500 mr-[20rpx]">服务</text>
-				<view class="flex-1 text-[#343434] text-sm leading-[42rpx] font-500">
-					{{ goodsDetail.service[0].service_name }}
-				</view>
-				<text class="iconfont iconxiangyoujiantou text-sm"></text>
-			</view>
-			<view @click="buyFn" v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length"
-				class="flex items-center h-[88rpx] px-[20rpx] border-0 border-b-[2rpx] border-solid border-[#ebebec]">
-				<text class="text-[#999] text-[30rpx] leading-[42rpx] font-500 mr-[20rpx]">已选</text>
-				<view class="flex-1 text-[#343434] text-sm leading-[42rpx] font-500">
-					{{ goodsDetail.sku_spec_format }}
-				</view>
-				<text class="iconfont iconxiangyoujiantou text-sm"></text>
-			</view>
-			<view class="flex items-center h-[88rpx] border-0 border-b-[2rpx] border-solid border-[#ebebec] px-[20rpx]"
-				v-if="goodsDetail.goods.goods_type == 'real'&&goodsDetail.delivery_type_list&&goodsDetail.delivery_type_list.length">
-				<text class="text-[#999] text-[30rpx] leading-[42rpx] font-500 mr-[20rpx]">配送</text>
-				<view class="flex-1 flex items-center text-[#343434] text-sm leading-[42rpx] font-500">
-					<template v-for="(item, index) in goodsDetail.delivery_type_list">
-						<text v-if="index" class="w-[7rpx] h-[7rpx] rounded-[7rpx] mx-[10rpx] bg-[#333]"></text>
-						<text>{{ item }}</text>
-					</template>
-				</view>
-				<!-- <text class="iconfont iconxiangyoujiantou text-sm"></text> -->
-			</view>
-			<view v-if="couponList.length" class="flex items-center h-[88rpx] px-[20rpx]">
-				<text class="text-[#999] text-[30rpx] leading-[42rpx] font-500 mr-[20rpx]">领券</text>
-				<view
-					class="flex-1 flex items-center whitespace-nowrap overflow-hidden h-[44rpx] flex-wrap content-between">
-					<view v-for="(item, index) in couponList" :key="index"
-						class="text-xs rounded-sm border-[2rpx] px-[6rpx] py-[2rpx] border-solid border-[var(--primary-color)] text-[var(--primary-color)] mr-[8rpx] mt-[3rpx]">
-						{{ item.title }}
+			
+			<view class="-mt-[40rpx] relative bg-white mx-[20rpx] rounded-[16rpx] p-[20rpx]">
+				<view class="flex items-baseline">
+					<view class="text-[var(--price-text-color)] flex items-baseline">
+						<text class="text-[32rpx] font-medium price-font">￥</text>
+						<text class="text-[48rpx] price-font">{{ parseFloat(goodsDetail.sale_price).toFixed(2).split('.')[0] }}</text>
+						<text class="text-[32rpx] mr-[10rpx] price-font">.{{ parseFloat(goodsDetail.sale_price).toFixed(2).split('.')[1] }}</text>
+						<text class="text-[26rpx] text-[#999] line-through price-font">
+							￥{{ goodsDetail.market_price }}
+						</text>
+					</view>
+					<view class="text-[26rpx] text-[#999] flex items-baseline ml-auto">
+						<text>销量</text>
+						<text class="mx-[2rpx]">{{ goodsDetail.goods.sale_num }}</text>
+						<text>{{ goodsDetail.goods.unit }}</text>
 					</view>
 				</view>
-				<view class="ml-[8rpx] flex items-center" @click="couponListShow = true">
-					<text class="text-xs text-[#737373]">领取</text>
-					<text class="iconfont iconxiangyoujiantou text-sm"></text>
+				<view class="mt-[24rpx] font-medium text-[32rpx] multi-hidden leading-[40rpx]">
+					{{ goodsDetail.goods.goods_name }}
+				</view>
+				<view class="flex flex-wrap mt-[16rpx]" v-if="goodsDetail.label_info && goodsDetail.label_info.length">
+					<view v-for="item in goodsDetail.label_info" :key="item.label_id"
+						class="text-[#FA6400] leading-[36rpx] text-[22rpx] h-[40rpx] px-[10rpx] border-[2rpx] border-solid border-[#FA6400] rounded-[4rpx] mr-[15rpx] box-border truncate">
+						{{ item.label_name }}
+					</view>
 				</view>
 			</view>
 
-		</view>
-
-		<view class="mt-[20rpx] bg-white mx-[24rpx] rounded-[16rpx] px-[20rpx]">
-			<view class="flex items-center justify-between h-[88rpx]">
-				<text class="text-[30rpx]">宝贝评价({{ evaluate.count }})</text>
-				<view v-if="evaluate.count" class="flex items-center" @click="toLink(goodsDetail.goods_id)">
-					<!--  -->
-					<text class="text-xs text-[#737373]">查看全部</text>
-					<text class="iconfont iconxiangyoujiantou text-xs"></text>
-
+			<view class="mt-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx] py-[16rpx]">
+				<view @click="servicesDataShow = !servicesDataShow" v-if="goodsDetail.service && goodsDetail.service.length"
+					class="flex items-center h-[64rpx]">
+					<text class="text-[#666] text-[26rpx] leading-[30rpx] font-400 shrink-0">服务</text>
+					<view class="text-[#343434] text-[26rpx] leading-[30rpx] font-400 truncate ml-auto">
+						{{ goodsDetail.service[0].service_name }}
+					</view>
+					<text class="iconfont iconxiangyoujiantou text-[22rpx] text-[#999] ml-[4rpx]"></text>
 				</view>
-				<text v-if="!evaluate.count" class="text-xs text-[#737373]">暂无评价</text>
+				<view @click="buyFn" v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length" 
+					class="flex items-center h-[64rpx]">
+					<text class="text-[#666] text-[26rpx] leading-[30rpx] font-400 shrink-0">已选</text>
+					<view class="ml-auto text-[#343434] text-[26rpx] leading-[30rpx] font-400">
+						{{ goodsDetail.sku_spec_format }}
+					</view>
+					<text class="iconfont iconxiangyoujiantou text-[22rpx] text-[#999] ml-[4rpx]"></text>
+				</view>
+				<view class="flex items-center h-[64rpx]" @click="distributionDataOpen"
+					v-if="goodsDetail.goods.goods_type == 'real'&&goodsDetail.delivery_type_list&&goodsDetail.delivery_type_list.length" >
+					<text class="text-[#666] text-[26rpx] leading-[30rpx] font-400 shrink-0">配送</text>
+					<view class="ml-auto flex items-center text-[#343434] text-[26rpx] leading-[30rpx] font-400">
+						{{goodsDetail.delivery_type_list[selectDeliveryType]}}
+					</view>
+					<text class="iconfont iconxiangyoujiantou text-[22rpx] text-[#999] ml-[4rpx]"></text>
+				</view>
+				<view @click="couponListShow = true" v-if="couponList.length" class="flex items-center h-[64rpx]">
+					<text class="text-[#666] text-[26rpx] leading-[30rpx] font-400 shrink-0">领券</text>
+					<view class="ml-auto flex items-center whitespace-nowrap overflow-hidden h-[44rpx] flex-wrap content-between">
+						<block v-for="(item, index) in couponList" :key="index">
+							<text v-if="index < 3" class="text-xs rounded-sm border-[2rpx] px-[6rpx] py-[2rpx] border-solid border-[var(--primary-color)] text-[var(--primary-color)] mt-[4rpx]" :class="{'mr-[8rpx]': index < 2}">
+								{{ item.title }}
+							</text>
+						</block>
+					</view>
+					<text class="iconfont iconxiangyoujiantou text-[22rpx] text-[#999] ml-[4rpx]"></text>
+				</view>
+
 			</view>
-			<view>
-				<template v-for="(item, index) in evaluate.list" :key="index">
-					<view class="mx-[20rpx] pb-[20rpx] border-0 border-b-[2rpx] border-solid border-[#eee] mb-[20rpx]">
-						<view class="flex items-center  justify-between">
+
+			<view class="mt-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx]">
+				<view class="flex items-center justify-between h-[80rpx]">
+					<text class="text-[28rpx] text-[#303133] font-bold">宝贝评价({{ evaluate.count }})</text>
+					<view v-if="evaluate.count" class="h-[80rpx] leading-[80rpx]" @click="toLink(goodsDetail.goods_id)">
+						<text class="text-[24rpx] text-[#666] mr-[4rpx]">查看全部</text>
+						<text class="iconfont iconxiangyoujiantou text-[22rpx] text-[#999]"></text>
+					</view>
+					<text v-if="!evaluate.count" class="text-[24rpx] text-[#666]">暂无评价</text>
+				</view>
+				<view>
+					<view class="pb-[20rpx] flex justify-between" v-for="(item, index) in evaluate.list" :key="index">
+						<view class="flex flex-col">
 							<view class="flex items-center">
-								<u-avatar class="mr-[10rpx]" :src="img(item.member_head)" :size="'50rpx'" leftIcon="none"></u-avatar>
-								<text class="text-sm">{{ item.member_name }}</text>
+								<u-avatar :src="img(item.member_head)" :size="'30rpx'" leftIcon="none"></u-avatar>
+								<text class="ml-[10rpx] text-[22rpx] text-[#999]">{{ item.member_name }}</text>
 							</view>
-							<text class="text-xs text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : '' }}</text>
+							<view class="text-[26rpx] text-[#303133] leading-[36rpx] mt-[10rpx] multi-hidden">{{ item.content }}</view>
 						</view>
-						<view class="text-sm text-[#666] mt-[10rpx] multi-hidden">{{ item.content }}</view>
-						<scroll-view scroll-x="true" class="scroll-Y box-border py-[24rpx] bg-white">
-							<view class="flex items-center">
-								<template v-for="(imageItem, imageIndex) in item.image_small" :key="'item'+imageIndex">
-									<u--image class="rounded-[8rpx] overflow-hidden mr-[14rpx] mb-[14rpx]" width="200rpx"
-										height="200rpx" :src="img(imageItem)" model="aspectFill"
-										@click="imgListPreview(imageItem)">
-										<template #error>
-											<u-icon name="photo" color="#999" size="50"></u-icon>
-										</template>
-									</u--image>
-								</template>
+						<u--image v-if="item.image_mid && item.image_mid.length" class="rounded-[8rpx] ml-[50rpx] overflow-hidden" width="80rpx" height="80rpx" :src="img(item.image_mid[0])" model="aspectFill" @click="imgListPreview(item.images[0])">
+							<template #error>
+								<u-icon name="photo" color="#999" size="50"></u-icon>
+							</template>
+						</u--image>
+					</view>
+				</view>
+			</view>
+
+			<view class="my-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx] pd-[10px]">
+				<view class="text-[28rpx] h-[80rpx] leading-[80rpx] font-bold">商品详情</view>
+				<view class="u-content">
+					<u-parse :content="goodsDetail.goods.goods_desc" :tagStyle="{img: 'vertical-align: top;',p:'overflow: hidden;word-break:break-word;' }"></u-parse>
+				</view>
+			</view>
+			
+			<!-- tabber -->
+			<view class="tab-bar-placeholder"></view>
+			<view class="w-[100%] flex justify-between px-[27rpx] bg-[#fff] box-border fixed left-0 bottom-0 tab-bar">
+				<view class="flex items-center">
+					<view class="flex flex-col justify-center items-center mr-[39rpx]" @click="redirect({ url: '/addon/shop/pages/index', mode: 'reLaunch' })">
+						<view class="iconfont iconshouye1 text-[42rpx]"></view>
+						<text class="text-[18rpx] mt-1">首页</text>
+					</view>
+					<view class="flex flex-col justify-center items-center mr-[39rpx]">
+						<view class="iconfont iconfenxiang3 text-[42rpx]"></view>
+						<text class="text-[18rpx] mt-1">分享</text>
+					</view>
+					<view class="flex flex-col justify-center items-center" @click="redirect({ url: '/addon/shop/pages/goods/cart' })">
+						<view class="relative flex items-center">
+							<text class="iconfont icongouwuche3 text-[40rpx]"></text>
+							<view v-if="cartTotalNum"
+								:class="['absolute left-[26rpx] top-0 rounded-[25rpx] h-[25rpx] min-w-[25rpx] text-center leading-[25rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', cartTotalNum > 9 ? 'px-[10rpx]' : '']">
+								{{ cartTotalNum }}
+							</view>
+						</view>
+						<text class="text-[18rpx] mt-1">购物车</text>
+					</view>
+				</view>
+				<view class="flex" v-if="goodsDetail.goods.status == 1">
+					<button
+						class="!w-[200rpx] !h-[72rpx] text-[26rpx] !text-[#fff] !m-0 !mr-[20rpx] leading-[72rpx] rounded-full remove-border"
+						style="background: linear-gradient(127deg, #FFB000 0%, #FFA029 100%);" @click="buyFn('join_cart')">
+						加入购物车</button>
+					<button
+						v-if="isShowSingleSku"
+						class="!w-[200rpx] !h-[72rpx] text-[26rpx] !text-[#fff] !bg-[#FF4646] !m-0 leading-[72rpx] rounded-full remove-border"
+						@click="buyFn('buy_now')">立即购买</button>
+					<button
+						v-else
+						class="!w-[200rpx] !h-[72rpx] text-[26rpx] !text-[#fff] !bg-[#ccc] !m-0 leading-[72rpx] rounded-full remove-border"
+						>已售罄</button>
+				</view>
+				<view class="flex flex-1 ml-[40rpx]" v-else>
+					<button class="w-[100%] !h-[72rpx] text-[26rpx] !text-[#fff] !bg-[#ccc] !m-0 leading-[72rpx] rounded-full remove-border">该商品已下架</button>
+				</view>
+			</view>
+			<!-- 服务 -->
+			<view @touchmove.prevent.stop>
+				<u-popup class="popup-type" :show="servicesDataShow" @close="servicesDataShow = false">
+					<view class="min-h-[480rpx]">
+						<view class="flex items-center justify-center py-[34rpx] relative">
+							<text class="text-[32rpx] leading-[36rpx] font-500">商品服务</text>
+							<view class="absolute right-[37rpx]  iconfont iconguanbi text-[36rpx]" @click="servicesDataShow = false"></view>
+						</view>
+						<scroll-view class="h-[520rpx]" scroll-y="true">
+							<view class="pl-[22rpx] pt-[28rpx] pr-[37rpx]">
+								<view class="flex mb-[28rpx]" v-for="(item, index) in goodsDetail.service">
+									<image class="max-w-[34rpx] max-h-[34rpx] mr-[14rpx]" :src="img(item.image || 'addon/shop/icon_service.png')" mode="aspectFit" />
+									<view class="flex-1">
+										<view class="text-[26rpx] leading-[36rpx] text-[#222] mb-[4rpx] w-[643rpx]">{{ item.service_name }}</view>
+										<view class="text-[22rpx] leading-[36rpx] text-[#888] w-[643rpx]">{{ item.desc }}</view>
+									</view>
+								</view>
+							</view>
+						</scroll-view>
+						<view class="px-[32rpx] pb-[67rpx] pt-[42rpx]">
+							<button
+								class="!w-[100%] !h-[72rpx] text-[26rpx] !bg-[#FF4646]  !m-0  leading-[72rpx] rounded-full text-white"
+								@click="servicesDataShow = false">确定</button>
+						</view>
+					</view>
+				</u-popup>
+			</view>
+			<!-- 配送 -->
+			<view @touchmove.prevent.stop>
+				<u-popup class="popup-type" :show="distributionDataShow" @close="distributionDataShow = false">
+					<view class="min-h-[360rpx]">
+						<view class="flex items-center justify-center py-[34rpx] relative">
+							<text class="text-[32rpx] leading-[36rpx] font-500">配送方式</text>
+							<view class="absolute right-[37rpx]  iconfont iconguanbi text-[36rpx]" @click="distributionDataShow = false"></view>
+						</view>
+						<scroll-view class="h-[520rpx]" scroll-y="true">
+							<view class="pl-[22rpx] pt-[28rpx] pr-[37rpx]">
+								<view class="flex mb-[28rpx]" v-for="(item, index) in goodsDetail.delivery_type_list" @click="distributionListFn(item,index)">
+									<image class="w-[34rpx] h-[34rpx] mr-[14rpx]" :src="img('addon/shop/icon_service.png')" mode="aspectFit" />
+									<view class="flex-1">
+										<view class="text-[26rpx] leading-[36rpx] text-[#222] mb-[4rpx]">{{ item }}</view>
+										<view class="text-[22rpx] leading-[36rpx] text-[#888]">{{ item }}</view>
+									</view>
+								</view>
 							</view>
 						</scroll-view>
 					</view>
-
-				</template>
+				</u-popup>
 			</view>
-		</view>
-
-		<view class="px-[10px] pd-[10px] mt-[20rpx] bg-white mx-[24rpx] rounded-[16rpx]">
-			<view class="py-[20rpx] text-base">商品详情</view>
-			<u-parse :content="goodsDetail.goods.goods_desc" :tagStyle="{img: 'vertical-align: top;'}"></u-parse>
-		</view>
-		<!-- tabber -->
-		<view class="tab-bar-placeholder"></view>
-		<view
-			class=" w-[100%] flex justify-between py-[9rpx] px-[27rpx] bg-[#fff] box-border fixed left-0 bottom-0 tab-bar">
-			<view class="flex items-center">
-				<view class="flex flex-col justify-center items-center mr-[39rpx]"
-					@click="redirect({ url: '/addon/shop/pages/index' })">
-					<view class="iconfont iconshouye text-[42rpx] mb-[4rpx]"></view>
-					<text class="text-[18rpx] mt-1">首页</text>
-				</view>
-				<view class="flex flex-col justify-center items-center mr-[39rpx]">
-					<view class="iconfont iconkefu1 text-[46rpx]"></view>
-					<text class="text-[18rpx] mt-1">客服</text>
-				</view>
-				<view class="flex flex-col justify-center items-center"
-					@click="redirect({ url: '/addon/shop/pages/goods/cart' })">
-					<view class="relative">
-						<text class="iconfont icongouwuche text-[46rpx]"></text>
-						<view v-if="cartTotalNum"
-							:class="['absolute left-[26rpx] top-0 rounded-[25rpx] h-[25rpx] min-w-[25rpx] text-center leading-[25rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', cartTotalNum > 9 ? 'px-[10rpx]' : '']">
-							{{ cartTotalNum }}
-						</view>
-					</view>
-					<text class="text-[18rpx] mt-1">购物车</text>
-				</view>
-			</view>
-			<view class="flex">
-				<button
-					class="!w-[200rpx] !h-[80rpx] text-sm !text-[#fff] !m-0 !mr-[20rpx] leading-[80rpx] rounded-full remove-border"
-					style="background: linear-gradient(127deg, #FFB000 0%, #FFA029 100%);" @click="buyFn('join_cart')">
-					加入购物车</button>
-				<button
-					class="!w-[200rpx] !h-[80rpx] text-sm !text-[#fff] !bg-[#FF4646] !m-0 leading-[80rpx] rounded-full remove-border"
-					@click="buyFn('buy_now')">立即购买</button>
-			</view>
-		</view>
-		<!-- 服务 -->
-		<u-popup class="popup-type" :show="servicesDataShow" @close="servicesDataShow = false">
-			<view class="min-h-[480rpx] rounded-t-[20rpx] overflow-hidden bg-[#fff]">
-				<view class="flex items-center justify-center py-[34rpx] relative">
-					<text class="text-[32rpx] leading-[36rpx] font-600">商品服务</text>
-					<view class="absolute right-[37rpx]  iconfont iconguanbi text-[50rpx]" @click="servicesDataShow = false">
-					</view>
-				</view>
-				<scroll-view class="h-[520rpx]" scroll-y="true">
-					<view class="pl-[22rpx] pt-[28rpx] pr-[37rpx]">
-						<view class="flex mb-[28rpx]" v-for="(item, index) in goodsDetail.service">
-							<image class="max-w-[34rpx] max-h-[34rpx] mr-[14rpx]" :src="img(item.image || 'addon/shop/icon_service.png')" mode="aspectFit" />
-							<view class="flex-1">
-								<view class="text-[26rpx] leading-[36rpx] text-[#222] mb-[4rpx] w-[643rpx]">
-									{{ item.service_name }}</view>
-								<view class="text-[22rpx] leading-[36rpx] text-[#888] w-[643rpx]">{{ item.desc }}</view>
+			<!-- 优惠券 -->
+			<view @touchmove.prevent.stop>
+				<u-popup class="popup-type" :show="couponListShow" @close="couponListShow = false">
+					<view class="min-h-[480rpx]">
+						<view class="flex items-center justify-center py-[34rpx] relative">
+							<text class="text-[32rpx] leading-[36rpx] font-500">优惠券</text>
+							<view class="absolute right-[37rpx]  iconfont iconguanbi text-[36rpx]" @click="couponListShow = false">
 							</view>
 						</view>
-					</view>
-				</scroll-view>
-				<view class="px-[32rpx] pb-[67rpx] pt-[42rpx]">
-					<button
-						class="!w-[100%] !h-[80rpx] text-[30rpx] !bg-[#FF4646]  !m-0  leading-[80rpx] rounded-full text-white"
-						@click="servicesDataShow = false">确定</button>
-				</view>
-			</view>
-		</u-popup>
-		<!-- 优惠券 -->
-		<u-popup class="popup-type" :show="couponListShow" @close="couponListShow = false">
-			<view class="min-h-[480rpx] rounded-t-[20rpx] overflow-hidden bg-[#fff]">
-				<view class="flex items-center justify-center py-[34rpx] relative">
-					<text class="text-[32rpx] leading-[36rpx] font-600">优惠券</text>
-					<view class="absolute right-[37rpx]  iconfont iconguanbi text-[50rpx]" @click="couponListShow = false">
-					</view>
-				</view>
-				<scroll-view class="h-[520rpx]" scroll-y="true">
-					<view class="px-[20rpx]">
-						<view
-							class="mb-[30rpx] flex items-center border-[2rpx] border-solid border-[rgba(0,0,0,.1)] rounded"
-							v-for="(item, index) in couponList" :key="index">
-							<view
-								class="flex flex-col items-center py-[20rpx] w-[240rpx] border-0 border-r-[2rpx] border-dashed border-[rgba(0,0,0,.1)]">
-								<view class="text-xs price-font">
-									<text class="text-[28rpx]">￥</text>
-									<text class="text-[48rpx]">{{ item.price }}</text>
+						<scroll-view class="h-[520rpx]" scroll-y="true">
+							<view class="px-[20rpx]">
+								<view
+									class="mb-[30rpx] flex items-center border-[2rpx] border-solid border-[rgba(0,0,0,.1)] rounded"
+									v-for="(item, index) in couponList" :key="index">
+									<view
+										class="flex flex-col items-center py-[20rpx] w-[240rpx] border-0 border-r-[2rpx] border-dashed border-[rgba(0,0,0,.1)]">
+										<view class="text-xs price-font">
+											<text class="text-[28rpx]">￥</text>
+											<text class="text-[48rpx]">{{ item.price }}</text>
+										</view>
+										<text class="text-xs mt-[12rpx]">{{ Number(item.min_condition_money) ? ('满' + item.min_condition_money + '元可以使用') : '无门槛优惠券' }}</text>
+									</view>
+									<view class="ml-[20rpx] flex-1 flex flex-col py-[20rpx]">
+										<text class="text-xs">{{ item.title }}</text>
+										<text class="text-xs text-[#ABABAB] mt-[12rpx]">{{ item.valid_type == 1 &&
+											('领取之日起' + item.length + '天内有效') || item.valid_type == 2 &&
+											('领取之日起至' + item.valid_end_time) }}</text>
+									</view>
+									<text v-if="item.btnType === 'collecting'"
+										class="bg-[var(--primary-color)] rounded-2xl text-[#fff] text-xs mr-[20rpx] py-[8rpx] px-[16rpx]"
+										@click="getCouponFn(item, index)">领取</text>
+									<text v-else
+										class="!bg-[#fff] rounded-2xl text-[#ABABAB] text-xs mr-[20rpx] py-[8rpx] px-[16rpx]">{{
+											item.btnType
+											=== 'collected' ? '已领玩' : '已领取' }}</text>
 								</view>
-								<text class="text-xs mt-[12rpx]">{{ Number(item.min_condition_money) ? ('满' + item.min_condition_money + '元可以使用') : '无门槛优惠券' }}</text>
 							</view>
-							<view class="ml-[20rpx] flex-1 flex flex-col py-[20rpx]">
-								<text class="text-xs">{{ item.title }}</text>
-								<text class="text-xs text-[#ABABAB] mt-[12rpx]">{{ item.valid_type == 1 &&
-									('领取之日起' + item.length + '天内有效') || item.valid_type == 2 &&
-									('有效期' + item.valid_start_time + '至' + item.valid_end_time) }}</text>
-							</view>
-							<text v-if="item.btnType === 'collecting'"
-								class="bg-[var(--primary-color)] rounded-2xl text-[#fff] text-xs mr-[20rpx] py-[8rpx] px-[16rpx]"
-								@click="getCouponFn(item, index)">领取</text>
-							<text v-else
-								class="!bg-[#fff] rounded-2xl text-[#ABABAB] text-xs mr-[20rpx] py-[8rpx] px-[16rpx]">{{
-									item.btnType
-									=== 'collected' ? '已领玩' : '已领取' }}</text>
+						</scroll-view>
+						<view class="px-[32rpx] pb-[67rpx] pt-[42rpx]">
+							<button
+								class="!w-[100%] !h-[72rpx] text-[26rpx] !bg-[var(--primary-color)] !text-[#fff] !m-0 rounded-full leading-[72rpx]"
+								@click="couponListShow = false">确定</button>
 						</view>
 					</view>
-				</scroll-view>
-				<view class="px-[32rpx] pb-[67rpx] pt-[42rpx]">
-					<button
-						class="!w-[100%] !h-[80rpx] text-[30rpx] !bg-[var(--primary-color)] !text-[#fff] !m-0 rounded-full leading-[80rpx]"
-						@click="couponListShow = false">确定</button>
-				</view>
+				</u-popup>
 			</view>
-		</u-popup>
+			<ns-goods-sku ref="goodsSkuRef" :goods-detail="goodsDetail" @change="specSelectFn"></ns-goods-sku>
+		</view>
+		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
 	</view>
-	<ns-goods-sku ref="goodsSkuRef" :goods-detail="goodsDetail" @change="specSelectFn"></ns-goods-sku>
-	<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" fontSize="16" color="#333"></u-loading-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, getCurrentInstance, nextTick } from 'vue';
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { img, redirect } from '@/utils/common';
 import { t } from '@/locale';
@@ -247,6 +266,13 @@ import nsGoodsSku from '@/addon/shop/components/ns-goods-sku/ns-goods-sku.vue';
 import useCartStore from '@/addon/shop/stores/cart'
 import { useLogin } from '@/hooks/useLogin'
 import useMemberStore from '@/stores/member'
+import { useShare }from '@/hooks/useShare'
+import { onPageScroll } from '@dcloudio/uni-app';
+
+// 分享
+const{setShare,onShareAppMessage,onShareTimeline} = useShare()
+onShareAppMessage()
+onShareTimeline()
 
 // 会员信息
 const memberStore = useMemberStore()
@@ -261,6 +287,7 @@ let goodsDetail = ref({});
 
 let loading = ref<boolean>(false);
 let servicesDataShow = ref<boolean>(false)
+let distributionDataShow =  ref<boolean>(false) //配送
 let couponListShow = ref<boolean>(false) //优惠券
 onLoad((option) => {
 	getGoodsDetail({
@@ -282,17 +309,53 @@ onLoad((option) => {
 		goodsDetail.value.goods.goods_image.forEach((item, index) => {
 			goodsDetail.value.goods.goods_image[index] = img(item);
 		})
+		
+		// 分享 - start
+		if(res.data.goods){
+			let share = {
+				title: res.data.goods.goods_name,
+				desc: res.data.goods.sub_title,
+				url: res.data.goods.goods_cover_thumb_small
+			}
+			uni. setNavigationBarTitle({
+				title: res.data.goods.goods_name
+			})
+			setShare({
+				wechat:{
+					...share
+				},
+				weapp:{
+					...share
+				}
+			});
+		}
+		// 分享 - end
 
 		// 获取优惠券列表
 		getShopCouponListFn();
 
 		// 获取评价
 		getEvaluateListFn();
+
+        nextTick(() => {
+            setTimeout(()=>{
+                const query = uni.createSelectorQuery().in(instance);
+                query.select('.swiper-box').boundingClientRect(data => {
+                    swiperHeight = data ? data.height : 0;
+                }).exec();
+                query.select('.detail-head').boundingClientRect(data => {
+                    if(data) {
+                        detailHead = data.height ? data.height : 0;
+                    }
+                }).exec();
+            }, 400)
+        })
 	})
 })
 
 onShow(() => {
-
+	// 删除配送方式
+	uni.removeStorageSync('distributionType');
 	cartStore.getList();
 })
 
@@ -303,6 +366,25 @@ const specSelectFn = (id) => {
 		}
 	})
 }
+
+// 判断单规格库存是否为0
+const isShowSingleSku = computed(() => {
+	let isSingleSpec = false // 是否为单规格，true：多规格，false：单规格
+	goodsDetail.value.skuList.forEach((item,index)=>{
+		if(item.sku_spec_format){
+			isSingleSpec = true
+		}
+	})
+
+	// 单规格，库存为0，显示已售罄
+	if(!isSingleSpec && goodsDetail.value.stock <= 0){
+	    return false;
+	}else if(!isSingleSpec && goodsDetail.value.stock > 0){
+	    // 单规格，库存大于0，可以购买
+        return true;
+    }
+	return true;
+})
 
 const buyFn = (type) => {
 	goodsSkuRef.value.open(type)
@@ -374,7 +456,9 @@ const getCouponFn = (data, index) => {
 }
 
 // 获取评价
-const evaluate = ref({})
+const evaluate = ref({
+	count : 0
+})
 const getEvaluateListFn = () => {
 	getEvaluateList(goodsDetail.value.goods_id).then(res => {
 		evaluate.value = res.data
@@ -397,44 +481,134 @@ const imgListPreview = (item) => {
 	})
 }
 
+
+// 返回上一页
+const goback=()=> {
+	uni.navigateBack({
+		delta: 1
+	});
+}
+
+/************ 选择配送方式-start ****************/ 
+const selectDeliveryType = ref(0);
+const distributionDataOpen = (()=>{
+	distributionDataShow.value = true;
+});
+const distributionListFn = ((data,index)=>{
+	selectDeliveryType.value =  index;
+	distributionDataShow.value = false;
+	uni.setStorageSync('distributionType', data);
+});
+/************ 选择配送方式-end ****************/ 
+
+
+/************ 自定义头部-start ****************/ 
+// 获取系统状态栏的高度
+let systemInfo = uni.getSystemInfoSync();
+let platform = systemInfo.platform;
+let menuButtonInfo = {};
+// 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
+// #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
+menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+// #endif
+
+
+// 导航栏内部盒子的样式
+const navbarInnerStyle = computed(() => {
+	let style = '';
+	// 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
+	// #ifdef MP
+	let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width * 2 + 'rpx' : '70rpx';
+	style += 'height:' + menuButtonInfo.height + 'px;';
+	style += 'padding-right:calc(' + rightButtonWidth + ' + 30rpx);';
+	style += 'padding-left:calc(' + rightButtonWidth + ' + 30rpx);';
+	style += 'padding-top:' + menuButtonInfo.top + 'px;';
+	style += 'padding-bottom: 8px;';
+	
+	style += 'font-size: 32rpx;';
+	if (platform === 'ios') {
+		// 苹果(iOS)设备
+		style += 'font-weight: 500;';
+	} else if (platform === 'android') {
+	  // 安卓(Android)设备
+		style += 'font-size: 36rpx;';
+	}
+	// #endif
+	
+	// #ifdef H5
+	style += 'height: 100rpx;';
+	style += 'padding-right: 30rpx;';
+	style += 'padding-left: 30rpx;';
+	
+	style += 'font-size: 32rpx;';
+	if (platform === 'ios') {
+		// 苹果(iOS)设备
+		style += 'font-weight: 500;';
+	} else if (platform === 'android') {
+	  // 安卓(Android)设备
+		style += 'font-size: 36rpx;';
+	}
+	// #endif
+	return style;
+})
+
+// 导航栏内部盒子的样式
+const navbarInnerArrowStyle = computed(() => {
+	let style = '';
+	// 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
+	// #ifdef MP
+	style += "padding-left: 10rpx;"
+	style += "padding-right: 10rpx;"
+	style += 'position: absolute;';
+	style += 'left:calc( 100vw - ' + menuButtonInfo.right + 'px);';
+	style += 'font-size: 32rpx;';
+	style += 'font-weight: bold;';
+	if (platform === 'ios') {
+		// 苹果(iOS)设备
+		style += 'font-weight: 700;';
+	} else if (platform === 'android') {
+	  // 安卓(Android)设备
+	  
+	}
+	// #endif
+	return style;
+})
+
+// 头部滚动
+const instance = getCurrentInstance();
+let swiperHeight = 0
+let detailHead = 0
+
+let detailHeadBgChange = ref(false)
+onPageScroll((e)=>{
+	let height = swiperHeight - detailHead - 20;
+	detailHeadBgChange.value = false;
+	if(e.scrollTop >= height){
+		detailHeadBgChange.value = true;
+	}
+})
+/************ 自定义头部-end ****************/ 
 </script>
-<style>
-@import '@/addon/shop/styles/common.scss';
-</style>
 <style lang="scss" scoped>
-.text-color {
-	color: var(--primary-color);
-}
-
-.border-color {
-	border-color: var(--primary-color);
-}
-
-.background-color {
-	background-color: var(--primary-color-light);
-}
-
+	.remove-border {
+		&::after {
+			border: none;
+		}
+	}
 :deep(.u-cell-group__wrapper) {
 	.u-cell__body {
 		padding: 23rpx 32rpx;
 	}
 }
 
-.chatQrcode {
-	background: linear-gradient(#ecf5ff 0%, #fff 70%);
-}
-
 .popup-type {
 	:deep(.u-popup__content) {
-		background: transparent;
+		border-top-left-radius: 16rpx;
+		border-top-right-radius: 16rpx;
+		overflow: hidden;
 	}
 }
 
-.label-select {
-	color: var(--primary-color);
-	border-color: var(--primary-color);
-	background-color: var(--primary-color-light);
-}
 
 .tab-bar-placeholder {
 	padding-bottom: calc(constant(safe-area-inset-bottom) + 100rpx);
@@ -442,7 +616,8 @@ const imgListPreview = (item) => {
 }
 
 .tab-bar {
-	padding-bottom: calc(constant(safe-area-inset-bottom) + 9rpx);
-	padding-bottom: calc(env(safe-area-inset-bottom) + 9rpx);
+	padding-top: 16rpx;
+	padding-bottom: calc(constant(safe-area-inset-bottom) + 16rpx);
+	padding-bottom: calc(env(safe-area-inset-bottom) + 16rpx);
 }
 </style>

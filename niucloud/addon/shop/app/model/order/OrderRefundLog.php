@@ -11,7 +11,6 @@
 
 namespace addon\shop\app\model\order;
 
-use addon\shop\app\dict\order\OrderLogDict;
 use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\dict\order\OrderRefundLogDict;
 use app\model\member\Member;

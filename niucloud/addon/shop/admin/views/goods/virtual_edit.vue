@@ -10,14 +10,13 @@
         </div>
         <el-card class="box-card !border-none" shadow="never">
 
-            <el-tabs v-model="activeName" class="" @tab-click="tabHandleClick">
+            <el-tabs v-model="activeName" @tab-click="tabHandleClick">
                 <el-tab-pane :label="t('basicInfoTab')" name="basic">
 
                     <el-form :model="formData" label-width="120px" ref="basicFormRef" :rules="formRules" class="page-form">
                         <el-form-item :label="t('goodsType')" v-if="formData.goods_id">
                             <template v-for="(item) in goodsType" :key="item.type">
-                                <div class="goods-type-wrap"
-                                    :class="[formData.goods_type == item.type ? 'selected' : 'disabled']">
+                                <div class="goods-type-wrap" :class="[formData.goods_type == item.type ? 'selected' : 'disabled']">
                                     <div class="goods-type-name">{{ item.name }}</div>
                                     <div class="goods-type-desc">({{ item.desc }})</div>
                                     <template v-if="formData.goods_type == item.type">
@@ -28,8 +27,7 @@
                             </template>
                         </el-form-item>
                         <el-form-item :label="t('goodsType')" v-else>
-                            <div class="goods-type-wrap" :class="{ 'selected': formData.goods_type == item.type }"
-                                v-for="(item) in goodsType" :key="item.type" @click="changeGoodsType(item)">
+                            <div class="goods-type-wrap" :class="{ 'selected': formData.goods_type == item.type }" v-for="(item) in goodsType" :key="item.type" @click="changeGoodsType(item)">
                                 <div class="goods-type-name">{{ item.name }}</div>
                                 <div class="goods-type-desc">({{ item.desc }})</div>
                                 <template v-if="formData.goods_type == item.type">
@@ -39,33 +37,29 @@
                             </div>
                         </el-form-item>
                         <el-form-item :label="t('goodsName')" prop="goods_name">
-                            <el-input v-model="formData.goods_name" clearable :placeholder="t('goodsNamePlaceholder')"
-                                class="input-width" maxlength="60" show-word-limit />
+                            <el-input v-model.trim="formData.goods_name" clearable :placeholder="t('goodsNamePlaceholder')" class="input-width" maxlength="60" show-word-limit />
                         </el-form-item>
                         <el-form-item :label="t('subTitle')" prop="sub_title">
-                            <el-input v-model="formData.sub_title" clearable :placeholder="t('subTitlePlaceholder')"
-                                class="input-width" maxlength="80" show-word-limit />
+                            <el-input v-model.trim="formData.sub_title" clearable :placeholder="t('subTitlePlaceholder')" class="input-width" maxlength="80" show-word-limit />
                         </el-form-item>
                         <el-form-item :label="t('goodsImage')" prop="goods_image">
                             <upload-image v-model="formData.goods_image" :limit="10" />
                         </el-form-item>
 
                         <el-form-item :label="t('goodsCategory')" prop="goods_category">
-                            <el-cascader v-model="formData.goods_category" :options="goodsCategoryOptions"
-                                :props="goodsCategoryProps" clearable filterable @change="categoryHandleChange" />
+                            <el-cascader v-model="formData.goods_category" :options="goodsCategoryOptions" :props="goodsCategoryProps" clearable filterable @change="categoryHandleChange" />
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsCategory">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsCategory(true)">{{ t('refresh') }}</span>
                                 <span class="cursor-pointer text-primary" @click="toGoodsCategoryEvent">{{ t('addGoodsCategory') }}</span>
                             </div>
                         </el-form-item>
 
                         <el-form-item :label="t('brand')">
                             <el-select v-model="formData.brand_id" :placeholder="t('brandPlaceholder')" clearable>
-                                <el-option v-for="item in brandOptions" :key="item.brand_id" :label="item.brand_name"
-                                    :value="item.brand_id" />
+                                <el-option v-for="item in brandOptions" :key="item.brand_id" :label="item.brand_name" :value="item.brand_id" />
                             </el-select>
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsBrand">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsBrand(true)">{{ t('refresh') }}</span>
                                 <span class="cursor-pointer text-primary" @click="toGoodsBrandEvent">{{ t('addGoodsBrand') }}</span>
                             </div>
                         </el-form-item>
@@ -104,18 +98,18 @@
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item :label="t('unit')" prop="unit">
-                            <el-input v-model="formData.unit" clearable :placeholder="t('unitPlaceholder')" class="input-width" show-word-limit maxlength="6" />
+                            <el-input v-model.trim="formData.unit" clearable :placeholder="t('unitPlaceholder')" class="input-width" show-word-limit maxlength="6" />
                         </el-form-item>
                         <el-form-item :label="t('virtualSaleNum')" prop="virtual_sale_num">
-                            <el-input v-model="formData.virtual_sale_num" clearable
+                            <el-input v-model.trim="formData.virtual_sale_num" clearable
                                 :placeholder="t('virtualSaleNumPlaceholder')" class="input-width" show-word-limit
-                                maxlength="10">
+                                maxlength="10" @keyup="filterNumber($event)">
                                 <template #append>{{ formData.unit ? formData.unit : '件' }}</template>
                             </el-input>
+                            <div class="mt-[10px] text-[12px] text-[#999] leading-[20px]">虚拟销量只在前台展示中参与计算</div>
                         </el-form-item>
                         <el-form-item :label="t('sort')" prop="sort">
-                            <el-input v-model="formData.sort" clearable :placeholder="t('sortPlaceholder')"
-                                class="input-width" show-word-limit maxlength="10" />
+                            <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" show-word-limit maxlength="10" @keyup="filterNumber($event)" />
                         </el-form-item>
 
                     </el-form>
@@ -132,29 +126,29 @@
 
                         <template v-if="formData.spec_type == 'single'">
                             <el-form-item :label="t('price')" prop="price">
-                                <el-input v-model="formData.price" clearable placeholder="0.00" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
 
                             <el-form-item :label="t('marketPrice')" prop="market_price">
-                                <el-input v-model="formData.market_price" clearable placeholder="0.00" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.market_price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
 
                             <el-form-item :label="t('costPrice')" prop="cost_price">
-                                <el-input v-model="formData.cost_price" clearable placeholder="0.00" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.cost_price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('goodsStock')" prop="stock">
-                                <el-input v-model="formData.stock" clearable :placeholder="t('goodsStockPlaceholder')" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.stock" clearable :placeholder="t('goodsStockPlaceholder')" class="input-width" maxlength="10" @keyup="filterNumber($event)">
                                     <template #append>{{ formData.unit ? formData.unit : t('defaultUnit') }}</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('skuNo')">
-                                <el-input v-model="formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" />
+                                <el-input v-model.trim="formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')"  @keyup="filterSpecial($event)" class="input-width" maxlength="50" />
                             </el-form-item>
                         </template>
 
@@ -167,16 +161,13 @@
 
                                     <div class="spec-item" v-for="(item, index) in goodsSpecFormat" :key="item.id">
                                         <div class="spec-name-wrap">
-                                            <el-input v-model="item.spec_name" clearable
-                                                :placeholder="t('specNamePlaceholder')" class="input-width"
-                                                maxlength="20" />
+                                            <el-input v-model.trim="item.spec_name" clearable :placeholder="t('specNamePlaceholder')" class="input-width" maxlength="20" />
                                         </div>
                                         <div class="spec-value-wrap">
                                             <ul ref="specValueRef">
-                                                <li :class="'draggable-element' + index"
-                                                    v-for="(specValue, specIndex) in item.values" :key="specValue.id">
+                                                <li :class="'draggable-element' + index" v-for="(specValue, specIndex) in item.values" :key="specValue.id">
 
-                                                    <el-input v-model="specValue.spec_value_name" clearable
+                                                    <el-input v-model.trim="specValue.spec_value_name" clearable
                                                         :placeholder="t('specValueNamePlaceholder')" class="input-width"
                                                         :suffix-icon="Rank" maxlength="20"
                                                         @input="specValueNameInputListener">
@@ -214,16 +205,11 @@
                                         </template>
                                     </el-select>
 
-                                    <el-input v-model="batchOperation.price" clearable :placeholder="t('price')"
-                                        class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.market_price" clearable
-                                        :placeholder="t('marketPrice')" class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.cost_price" clearable :placeholder="t('costPrice')"
-                                        class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.stock" clearable :placeholder="t('stock')"
-                                        class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.sku_no" clearable maxlength="50"
-                                        :placeholder="t('skuNo')" class="set-input" />
+                                    <el-input v-model.trim="batchOperation.price" clearable :placeholder="t('price')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.market_price" clearable :placeholder="t('marketPrice')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.cost_price" clearable :placeholder="t('costPrice')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.stock" clearable :placeholder="t('stock')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.sku_no" clearable maxlength="50" :placeholder="t('skuNo')" class="set-input" />
                                     <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
                                 </div>
 
@@ -275,8 +261,7 @@
                                                         <div class="el-scrollbar__view" style="display: inline-block; vertical-align: middle;">
                                                             <table class="el-table__body" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed; width: 100%;">
                                                                 <tbody tabindex="-1">
-                                                                    <tr class="el-table__row"
-                                                                        v-for="(item, key, index) in goodsSkuData" :key="key">
+                                                                    <tr class="el-table__row" v-for="(item, key, index) in goodsSkuData" :key="key">
                                                                         <template v-for="(c, cIndex) in specData" :key="cIndex">
                                                                             <td class="el-table__cell" :rowspan="c.rowSpan" v-if="c.index == index">
                                                                                 <div class="cell">{{ c.spec_value_name }}</div>
@@ -291,49 +276,40 @@
 
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item prop="sku_price"
-                                                                                    class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.price" clearable placeholder="0.00" maxlength="10" />
+                                                                                <el-form-item prop="sku_price" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.price" clearable placeholder="0.00" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item prop="sku_market_price"
-                                                                                    class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.market_price" clearable placeholder="0.00" maxlength="10" />
+                                                                                <el-form-item prop="sku_market_price" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.market_price" clearable placeholder="0.00" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item prop="'sku_cost_price"
-                                                                                    class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.cost_price" clearable placeholder="0.00" maxlength="10" />
+                                                                                <el-form-item prop="'sku_cost_price" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.cost_price" clearable placeholder="0.00" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item prop="sku_stock"
-                                                                                    class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.stock" clearable
-                                                                                        placeholder="0"
-                                                                                        @input="specStockSum" maxlength="10"
-                                                                                        />
+                                                                                <el-form-item prop="sku_stock" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.stock" clearable placeholder="0" @input="specStockSum" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-input v-model="item.sku_no" clearable maxlength="50" />
+                                                                                <el-input v-model.trim="item.sku_no" clearable maxlength="50" />
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-switch v-model="item.is_default"
-                                                                                    :active-value="1" :inactive-value="0"
-                                                                                    @change="specValueIsDefaultChangeListener($event, key)" />
+                                                                                <el-switch v-model="item.is_default" :active-value="1" :inactive-value="0" @change="specValueIsDefaultChangeListener($event, key)" />
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -379,7 +355,7 @@ import { TabsPaneContext, ElMessage, FormInstance } from 'element-plus'
 import { Rank } from '@element-plus/icons-vue'
 import Sortable from 'sortablejs'
 import { range, cloneDeep } from 'lodash-es'
-import { debounce } from '@/utils/common'
+import { debounce,filterNumber } from '@/utils/common'
 import { useRoute, useRouter } from 'vue-router'
 
 import {
@@ -521,7 +497,7 @@ const toGoodsCategoryEvent = () => {
 }
 
 // 刷新商品分类
-const refreshGoodsCategory = () => {
+const refreshGoodsCategory = (bool = false) => {
     getCategoryTree().then((res) => {
         const data = res.data
         if (data) {
@@ -543,6 +519,12 @@ const refreshGoodsCategory = () => {
                 })
             })
             goodsCategoryOptions.splice(0, goodsCategoryOptions.length, ...goodsCategoryTree)
+            if (bool) {
+                ElMessage({
+                    message: t('refreshSuccess'),
+                    type: 'success'
+                })
+            }
         }
     })
 }
@@ -558,11 +540,17 @@ const toGoodsBrandEvent = () => {
 }
 
 // 商品品牌
-const refreshGoodsBrand = () => {
+const refreshGoodsBrand = (bool = false) => {
     getBrandList({}).then((res) => {
         const data = res.data
         if (data) {
             brandOptions.splice(0, brandOptions.length, ...data)
+            if (bool) {
+                ElMessage({
+                    message: t('refreshSuccess'),
+                    type: 'success'
+                })
+            }
         }
     })
 }
@@ -846,10 +834,10 @@ const refreshGoodsSkuData = () => {
     const tempGoodsSkuData = cloneDeep(goodsSkuData)// 记录原始数据，后续用作对比
     let skuData: any = {}
     for (const spec of arr) {
-        const item_prop_arr: any = {}
+        let item_prop_arr: any = {}
         if (Object.keys(skuData).length > 0) {
             for (const ele_2 in skuData) {
-                for (const ele_3 of spec.values) {
+                for (let ele_3 of spec.values) {
                     let sku_spec = cloneDeep(skuData[ele_2].sku_spec)// 防止对象引用
                     sku_spec.push(ele_3)
                     item_prop_arr[generateRandom()] = {
@@ -866,7 +854,7 @@ const refreshGoodsSkuData = () => {
                 }
             }
         } else {
-            for (const ele_1 of spec.values) {
+            for (let ele_1 of spec.values) {
                 let spec_name = ele_1.spec_value_name
                 item_prop_arr[generateRandom()] = {
                     spec_name: spec_name,
@@ -911,6 +899,8 @@ const refreshGoodsSkuData = () => {
         if (firstSpec == '') {
             firstSpec = key
             skuData[key].is_default = 1
+        }else{
+            skuData[key].is_default = 0
         }
         goodsSkuData[key] = skuData[key]
     }
@@ -1327,6 +1317,8 @@ const verify = (callback: any) => {
 
     if (formData.spec_type == 'multi') {
         let specVerify = true
+        let repeatSpecNameArr:any = [];
+        let repeatSpecValueNameArr:any = [];
         for (let i = 0; i < goodsSpecFormat.length; i++) {
             const spec = goodsSpecFormat[i]
             if (Test.require(spec.spec_name)) {
@@ -1334,6 +1326,14 @@ const verify = (callback: any) => {
                 ElMessage({ type: 'warning', message: `${t('specNameRequire')}` })
                 break
             }
+            if(repeatSpecNameArr.indexOf(spec.spec_name) > -1){
+                specVerify = false
+                ElMessage({ type: 'warning', message: `${t('specNameRepeat')}` })
+                break
+            }else{
+                repeatSpecNameArr.push(spec.spec_name);
+            }
+
             for (let v = 0; v < spec.values.length; v++) {
                 const value = spec.values[v]
                 if (Test.require(value.spec_value_name)) {
@@ -1341,11 +1341,32 @@ const verify = (callback: any) => {
                     ElMessage({ type: 'warning', message: `${t('specValueRequire')}` })
                     break
                 }
+
+                if(repeatSpecValueNameArr.indexOf(value.spec_value_name) > -1){
+                    specVerify = false
+                    ElMessage({ type: 'warning', message: `${t('specValueNameRepeat')}` })
+                    break
+                }else{
+                    repeatSpecValueNameArr.push(value.spec_value_name);
+                }
             }
             if (!specVerify) break
         }
         if (!specVerify) {
             activeName.value = 'price_stock'
+            return
+        }
+
+        let isHasDefaultSpec = false; // 是否存在默认规格
+        for (const k in goodsSkuData) {
+            if (goodsSkuData[k].is_default) {
+                isHasDefaultSpec = true;
+            }
+        }
+
+        if (!isHasDefaultSpec) {
+            activeName.value = 'price_stock'
+            ElMessage({type: 'warning', message: `${t('lackDefaultSpec')}`})
             return
         }
     }
@@ -1399,7 +1420,6 @@ const save = () => {
         api(data).then(res => {
             repeat.value = false
             router.push('/shop/goods/list')
-        // eslint-disable-next-line n/handle-callback-err
         }).catch(err => {
             repeat.value = false
         })
@@ -1410,6 +1430,10 @@ const back = () => {
     router.push('/shop/goods/list')
 }
 
+const filterSpecial = (event:any) => {
+    event.target.value = event.target.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, '')
+    event.target.value = event.target.value.replace(/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g, '')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -1483,6 +1507,7 @@ const back = () => {
             margin-bottom: 20px;
             position: relative;
             border-radius: 6px;
+
             .spec-name-wrap {
                 /*margin-bottom: 20px;*/
             }

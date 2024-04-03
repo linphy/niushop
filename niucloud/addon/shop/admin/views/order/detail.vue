@@ -58,10 +58,10 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item :label="t('memberRemark')">
-							<div class="input-width">{{ formData.member_remark ?? '--' }}</div>
+							<div class="input-width line-feed">{{ formData.member_remark ?? '--' }}</div>
 						</el-form-item>
 						<el-form-item :label="t('notes')">
-							<div class="input-width">{{ formData.shop_remark ?? '--' }}</div>
+							<div class="input-width line-feed">{{ formData.shop_remark ?? '--' }}</div>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -78,7 +78,7 @@
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="finish" v-if="formData.status == 3">{{ t('finish') }}</span>
 						<div class="flex" v-if="formData.order_delivery">
 							<template v-for="(item, index) in formData.order_delivery" :key="index">
-								<span v-if="item.delivery_type == 'express'"
+								<span v-if="item.delivery_type == 'express' && item.sub_delivery_type == 'express'"
 									class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#ff7f5b] bg-[#fff0e5] cursor-pointer"
 									@click="packageEvent(item.id, formData.taker_mobile)">{{ t('package') }}{{ index + 1 }}
 								</span>
@@ -100,7 +100,7 @@
 					<el-table-column :label="t('goodsName')" align="left" width="300">
 						<template #default="{ row }">
 							<div class="flex">
-								<div class="flex items-center">
+								<div class="flex items-center shrink-0">
 									<img class="w-[50px] h-[50px] mr-[10px]" :src="img(row.goods_image)" />
 								</div>
 								<div class="flex flex-col">
@@ -270,4 +270,7 @@ const packageEvent = (id:number, mobile:number) => {
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 }
+.line-feed{
+        word-wrap:break-word;
+    }
 </style>

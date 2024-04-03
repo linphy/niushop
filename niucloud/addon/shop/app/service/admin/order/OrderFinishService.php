@@ -39,7 +39,6 @@ class OrderFinishService extends BaseAdminService
         $data[ 'main_type' ] = OrderLogDict::STORE;
         $data[ 'main_id' ] = $this->uid;
         $data[ 'order_id' ] = $order_id;
-        $data[ 'site_id' ] = $this->site_id;
         ( new CoreOrderFinishService() )->finish($data);
         return true;
     }

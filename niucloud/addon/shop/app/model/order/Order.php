@@ -263,8 +263,9 @@ class Order extends BaseModel
     public function searchSearchTypeAttr($query, $value, $data)
     {
         if ($value && $data['search_name']) {
-            if($value == 'order_no') $query->where("order_no", $data['search_name']);
-            if($value == 'order_trade_no') $query->where("order_trade_no", $data['search_name']);
+            $search_name = $data['search_name'];
+            if($value == 'order_no') $query->where("order_no", "like", "%$search_name%");
+            if($value == 'out_trade_no') $query->where("order.out_trade_no", "like", "%$search_name%");
         }
     }
 

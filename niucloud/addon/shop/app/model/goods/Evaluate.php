@@ -47,7 +47,7 @@ class Evaluate extends BaseModel
      */
     public function goods()
     {
-        return $this->hasOne(Goods::class, 'goods_id', 'goods_id')->withField('site_id, goods_id, goods_name, goods_cover')
+        return $this->hasOne(Goods::class, 'goods_id', 'goods_id')->withField('goods_id, goods_name, goods_cover')
             ->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
     }
 
@@ -80,7 +80,7 @@ class Evaluate extends BaseModel
         if (!empty($data[ 'images' ])) {
             $samll_arr = [];
             foreach ($data[ 'images' ] as $k => $v) {
-                $samll_arr[] = get_thumb_images($data['site_id'], $v, FileDict::SMALL);
+                $samll_arr[] = get_thumb_images($v, FileDict::SMALL);
             }
             return $samll_arr;
         }
@@ -99,7 +99,7 @@ class Evaluate extends BaseModel
         if (!empty($data[ 'images' ])) {
             $samll_arr = [];
             foreach ($data[ 'images' ] as $k => $v) {
-                $samll_arr[] = get_thumb_images($data['site_id'], $v, FileDict::BIG);
+                $samll_arr[] = get_thumb_images($v, FileDict::BIG);
             }
             return $samll_arr;
         }
@@ -118,7 +118,7 @@ class Evaluate extends BaseModel
         if (!empty($data[ 'images' ])) {
             $samll_arr = [];
             foreach ($data[ 'images' ] as $k => $v) {
-                $samll_arr[] = get_thumb_images($data['site_id'], $v, FileDict::MID);
+                $samll_arr[] = get_thumb_images($v, FileDict::MID);
             }
             return $samll_arr;
         }

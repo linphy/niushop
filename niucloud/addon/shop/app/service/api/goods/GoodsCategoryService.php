@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\service\api\goods;
 
+use addon\shop\app\model\goods\Category;
 use addon\shop\app\service\core\goods\CoreGoodsCategoryService;
 use core\base\BaseApiService;
 
@@ -22,6 +23,7 @@ class GoodsCategoryService extends BaseApiService
     public function __construct()
     {
         parent::__construct();
+        $this->model = new Category();
     }
 
     /**
@@ -32,7 +34,7 @@ class GoodsCategoryService extends BaseApiService
      */
     public function getTree()
     {
-        return ( new CoreGoodsCategoryService() )->getTree([ [ 'is_show', '=', 1 ], [ 'site_id', '=', $this->site_id ] ], 'category_id,category_name,image,level,pid,category_full_name');
+        return ( new CoreGoodsCategoryService() )->getTree([ [ 'is_show', '=', 1 ] ], 'category_id,category_name,image,level,pid,category_full_name');
     }
 
     /**
@@ -41,7 +43,19 @@ class GoodsCategoryService extends BaseApiService
      */
     public function getGoodsCategoryConfig()
     {
-        return ( new CoreGoodsCategoryService() )->getGoodsCategoryConfig($this->site_id);
+        return ( new CoreGoodsCategoryService() )->getGoodsCategoryConfig();
+    }
+
+    /**
+     * 获取商品分类列表
+     * @param array $where
+     * @param string $field
+     * @return array
+     */
+    public function getList(array $where = [], $field = 'category_id,category_name,image,level,pid,category_full_name')
+    {
+        $order = 'sort desc,create_time desc';
+        return $this->model->where([ [ 'is_show', '=', 1 ] ])->withSearch([ "category_name", 'level', 'category_id', 'pid' ], $where)->field($field)->order($order)->select()->toArray();
     }
 
 }

@@ -26,18 +26,18 @@ class CoreConfigService extends BaseCoreService
      * @param $data
      * @return SysConfig|bool|Model
      */
-    public function setDeliverySearchConfig(int $site_id, $data)
+    public function setDeliverySearchConfig($data)
     {
-        return (new ConfigService())->setConfig($site_id,'DELIVERY_INTERFACE', $data);
+        return (new ConfigService())->setConfig('DELIVERY_INTERFACE', $data);
     }
 
     /**
      * 获取网站信息
      * @return array
      */
-    public function getDeliverySearchConfig(int $site_id)
+    public function getDeliverySearchConfig()
     {
-        $info = (new ConfigService())->getConfig($site_id, 'DELIVERY_INTERFACE');
+        $info = (new ConfigService())->getConfig('DELIVERY_INTERFACE');
         if (empty($info)) {
             $info = [];
             $info['value'] = [

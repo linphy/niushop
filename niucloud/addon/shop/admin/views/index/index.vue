@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
 	<div class="main-container p-4 bg-[#eff0f4]">
 		<!-- 实时概况 -->

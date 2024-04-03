@@ -39,7 +39,7 @@ class DeliveryService extends BaseAdminService
      */
     public function setConfig($data)
     {
-        return $this->core_delivery_config_service->setConfig($this->site_id, 'SHOP_DELIVERY_CONFIG', $data);
+        return $this->core_delivery_config_service->setConfig('SHOP_DELIVERY_CONFIG', $data);
     }
 
     /**
@@ -47,7 +47,7 @@ class DeliveryService extends BaseAdminService
      */
     public function getDeliveryConfigList()
     {
-        return $this->core_delivery_config_service->getDeliveryList($this->site_id);
+        return $this->core_delivery_config_service->getDeliveryList();
     }
 
     /**
@@ -55,7 +55,7 @@ class DeliveryService extends BaseAdminService
      */
     public function getDeliveryList()
     {
-        return $this->core_delivery_config_service->getDeliveryConfig($this->site_id);
+        return $this->core_delivery_config_service->getDeliveryConfig();
     }
 
 }

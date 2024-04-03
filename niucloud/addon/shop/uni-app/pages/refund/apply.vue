@@ -1,118 +1,111 @@
 <template>
-    <swiper :indicator-dots="false" :autoplay="false" :disable-touch="true" :current="step" class="h-screen" :duration="300" v-if="detail">
-        <swiper-item>
-            <scroll-view scroll-y="true" class="bg-page h-screen">
-                <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
-					<view class="flex py-[30rpx] border-0 !border-b !border-[#f5f5f5] border-solid">
-						<u--image width="120rpx" height="120rpx" :src="img(orderDetail.sku_image)" model="aspectFill">
-							<template #error>
-								<u-icon name="photo" color="#999" size="50"></u-icon>
-							</template>
-						</u--image>
-						<view class="flex flex-1 w-0 flex-col justify-between ml-[20rpx]">
-							<view>
-								<view class="text-ellipsis text-[#333] text-sm leading-normal font-bold">
-									{{orderDetail.goods_name}}
-								</view>
-								<view class="mt-[10rpx] text-[26rpx] text-gray-subtitle">{{ orderDetail.sku_name }}</view>
-							</view>
-						</view>
-					</view>
-                </view>
-
-                <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
-                    <view class="py-[24rpx] flex items-center" @click="selectRefundType(1)">
-                        <view class="flex-1">
-                            <view class="text-sm">仅退款</view>
-                            <view class="text-xs mt-[10rpx] text-gray-subtitle">未收到货，或与商家协商一致不用退货只退款</view>
-                        </view>
-                        <text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
-                    </view>
-                    <view class="py-[24rpx] flex items-center border-0 !border-t !border-[#f5f5f5] border-solid"
-						v-if="!orderDetail.delivery_status || orderDetail.delivery_status != 'wait_delivery'"
-                        @click="selectRefundType(2)">
-                        <view class="flex-1">
-                            <view class="text-sm">退货退款</view>
-                            <view class="text-xs mt-[10rpx] text-gray-subtitle">已收到货，需退还收到的货物</view>
-                        </view>
-                        <text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
-                    </view>
-                </view>
-            </scroll-view>
-        </swiper-item>
-        <swiper-item>
-            <scroll-view scroll-y="true" class="bg-page h-screen">
-                <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
-                    <view class="py-[24rpx] flex justify-between items-center">
-                        <view class="text-sm">退款原因</view>
-                        <view class="flex items-center" @click="refundCausePopup = true">
-							<view class="flex-1 text-right">
-							    <view class="text-xs text-gray-subtitle truncate w-[460rpx]">{{ formData.reason || '请选择' }}</view>
-							</view>
-							<text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
-						</view>
-                    </view>
-                </view>
-                <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
-                    <view class="py-[24rpx] flex items-center">
-                        <view class="text-sm">退款金额</view>
-                        <view class="flex-1 text-right">
-                            <view class="flex justify-end items-center">
-                                <text class="font-bold text-sm leading-none">￥</text>
-                                <input type="number" v-model.number="formData.apply_money"
-                                    class="font-bold text-sm leading-none"
-                                    :style="{ width: inputWidth(formData.apply_money) }">
+    <view :style="themeColor()">
+        <swiper :indicator-dots="false" :autoplay="false" :disable-touch="true" :current="step" class="h-screen" :duration="300" v-if="detail">
+            <swiper-item>
+                <scroll-view scroll-y="true" class="bg-page h-screen">
+                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                        <view class="flex py-[30rpx] border-0 !border-b !border-[#f5f5f5] border-solid">
+                            <u--image width="120rpx" height="120rpx" :src="img(orderDetail.sku_image)" model="aspectFill">
+                                <template #error>
+                                    <u-icon name="photo" color="#999" size="50"></u-icon>
+                                </template>
+                            </u--image>
+                            <view class="flex flex-1 w-0 flex-col justify-between ml-[20rpx]">
+                                <view>
+                                    <view class="text-ellipsis text-[#303133] text-sm leading-normal">{{orderDetail.goods_name}}</view>
+                                    <view class="mt-[10rpx] text-[26rpx] text-gray-subtitle">{{ orderDetail.sku_name }}</view>
+                                </view>
                             </view>
-                            <view class="text-xs text-gray-subtitle mt-[10rpx]">最多可输入金额￥{{ applyMoney }}</view>
                         </view>
                     </view>
-                </view>
-                <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
-                    <view class="py-[24rpx]">
-                        <view class="text-sm">上传凭证<text class="text-xs text-gray-subtitle ml-[10rpx]">选填</text></view>
-                        <view class="p-[20rpx] bg-[#f5f5f5] rounded mt-[20rpx]">
-                            <u-upload
-                                :fileList="voucherListPreview"
-                                @afterRead="afterRead"
-                                @delete="deletePic"
-                                multiple
-                                :maxCount="5"></u-upload>
-                        </view>
-                    </view>
-                </view>
-                <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
-                    <view class="py-[24rpx]">
-                        <view class="text-sm">补充描述<text class="text-xs text-gray-subtitle ml-[10rpx]">选填</text></view>
-                        <view class="p-[20rpx] bg-[#f5f5f5] rounded mt-[20rpx] h-[200rpx]">
-                            <textarea v-model="formData.remark" cols="30" rows="5" placeholder="补充描述,有助于更好的处理售后问题"
-                                placeholder-class="text-sm"></textarea>
-                        </view>
-                    </view>
-                </view>
-                <view class="mt-[40rpx] m-[24rpx]">
-                    <u-button type="primary" shape="circle" text="提交" @click="save" :loading="operateLoading"></u-button>
-                </view>
 
-				<!-- 退款原因 -->
-				<u-popup :show="refundCausePopup" @close="close" @open="open">
-					<view class="px-[30rpx] pb-[30rpx]">
-						<view class="flex items-center h-[90rpx] justify-between">
-							<text>退款原因</text>
-							<text class="iconfont iconguanbi" @click="refundCausePopup = false"></text>
-						</view>
-						<scroll-view scroll-y="true" class="h-[450rpx] mt-[20rpx]">
-							<u-radio-group v-model="currReasonName" placement="column">
-							    <u-radio :customStyle="{marginBottom: '8px'}"
-							      v-for="(item, index) in reason" :key="index" :label="item" :name="item">
-								</u-radio>
-							</u-radio-group>
-						</scroll-view>
-						<u-button type="primary" class="mt-[40rpx]" shape="circle" @click="refundCausePopupFn">确定</u-button>
-					</view>
-				</u-popup>
-            </scroll-view>
-        </swiper-item>
-    </swiper>
+                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                        <view class="py-[24rpx] flex items-center" @click="selectRefundType(1)">
+                            <view class="flex-1">
+                                <view class="text-sm">仅退款</view>
+                                <view class="text-xs mt-[10rpx] text-gray-subtitle">未收到货，或与商家协商一致不用退货只退款</view>
+                            </view>
+                            <text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
+                        </view>
+                        <view class="py-[24rpx] flex items-center border-0 !border-t !border-[#f5f5f5] border-solid" v-if="!orderDetail.delivery_status || orderDetail.delivery_status != 'wait_delivery'" @click="selectRefundType(2)">
+                            <view class="flex-1">
+                                <view class="text-sm">退货退款</view>
+                                <view class="text-xs mt-[10rpx] text-gray-subtitle">已收到货，需退还收到的货物</view>
+                            </view>
+                            <text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
+                        </view>
+                    </view>
+                </scroll-view>
+            </swiper-item>
+            <swiper-item>
+                <scroll-view scroll-y="true" class="bg-page h-screen">
+                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                        <view class="py-[24rpx] flex justify-between items-center">
+                            <view class="text-sm">退款原因</view>
+                            <view class="flex items-center" @click="refundCausePopup = true">
+                                <view class="flex-1 text-right">
+                                    <view class="text-xs text-gray-subtitle truncate w-[460rpx]">{{ formData.reason || '请选择' }}</view>
+                                </view>
+                                <text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                        <view class="py-[24rpx] flex items-center">
+                            <view class="text-sm">退款金额</view>
+                            <view class="flex-1 text-right">
+                                <view class="flex justify-end items-center">
+                                    <text class="font-bold text-sm leading-none">￥</text>
+                                    <input type="number" v-model.number="formData.apply_money" class="font-bold text-sm leading-none" :style="{ width: inputWidth(formData.apply_money) }" @blur="handleInput">
+                                </view>
+                                <view class="text-xs text-gray-subtitle mt-[10rpx]">最多可输入金额￥{{ applyMoney }}</view>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                        <view class="py-[24rpx]">
+                            <view class="text-sm">上传凭证<text class="text-xs text-gray-subtitle ml-[10rpx]">选填</text></view>
+                            <view class="p-[20rpx] bg-[#f5f5f5] rounded mt-[20rpx]">
+                                <u-upload
+                                    :fileList="voucherListPreview"
+                                    @afterRead="afterRead"
+                                    @delete="deletePic"
+                                    multiple
+                                    :maxCount="5"></u-upload>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                        <view class="py-[24rpx]">
+                            <view class="text-sm">补充描述<text class="text-xs text-gray-subtitle ml-[10rpx]">选填</text></view>
+                            <view class="p-[20rpx] bg-[#f5f5f5] rounded mt-[20rpx] h-[200rpx]">
+                                <textarea v-model="formData.remark" cols="30" rows="5" placeholder="补充描述,有助于更好的处理售后问题" placeholder-class="text-sm"></textarea>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="mt-[40rpx] m-[24rpx]">
+                        <u-button type="primary" shape="circle" text="提交" @click="save" :loading="operateLoading"></u-button>
+                    </view>
+
+                    <!-- 退款原因 -->
+                    <u-popup :show="refundCausePopup" @close="close" @open="open">
+                        <view class="px-[30rpx] pb-[30rpx]">
+                            <view class="flex items-center h-[90rpx] justify-between">
+                                <text>退款原因</text>
+                                <text class="iconfont iconguanbi" @click="refundCausePopup = false"></text>
+                            </view>
+                            <scroll-view scroll-y="true" class="h-[450rpx] mt-[20rpx]">
+                                <u-radio-group v-model="currReasonName" placement="column">
+                                    <u-radio activeColor="var(--primary-color)" :customStyle="{marginBottom: '8px'}" v-for="(item, index) in reason" :key="index" :label="item" :name="item"></u-radio>
+                                </u-radio-group>
+                            </scroll-view>
+                            <u-button type="primary" class="mt-[40rpx]" shape="circle" @click="refundCausePopupFn">确定</u-button>
+                        </view>
+                    </u-popup>
+                </scroll-view>
+            </swiper-item>
+        </swiper>
+    </view>
 </template>
 
 <script setup lang="ts">
@@ -217,6 +210,22 @@
 			return false;
 		}
 
+		if((Number(formData.value.apply_money).toFixed(2)) <=0 ){
+            uni.showToast({
+                title: '退款金额不能为0,保留两位小数',
+                icon: 'none'
+            });
+            return false;
+		}
+
+		if(Number(formData.value.apply_money)>Number(applyMoney.value)) {
+            uni.showToast({
+                title: '退款金额不能大于可退款总额',
+                icon: 'none'
+            });
+            return false;
+        }
+
 		if (operateLoading.value) return
 		operateLoading.value = true
 
@@ -234,10 +243,16 @@
 		formData.value.reason = currReasonName.value;
 		refundCausePopup.value = false;
 	}
+    const handleInput = (event:any) =>{
+       if(Number(event.detail.value) > Number(applyMoney.value)){
+            uni.showToast({
+				title: '退款金额不能大于可退款总额',
+				icon: 'none'
+			});
+       }
+    }
 </script>
-
 <style lang="scss" scoped>
-	@import '@/addon/shop/styles/common.scss';
     :deep(.u-upload__button) {
         width: 70px!important;
         height: 70px!important;

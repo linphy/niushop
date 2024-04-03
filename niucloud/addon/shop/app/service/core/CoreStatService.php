@@ -37,14 +37,12 @@ class CoreStatService extends BaseCoreService
         // 添加天统计
         $stat_data = [
             'date' => date('Y-m-d', time()),
-            'date_time' => strtotime(date('Y-m-d', time())),
-            'site_id' => $data['site_id']
+            'date_time' => strtotime(date('Y-m-d', time()))
         ];
         $stat = (new ShopStat())->where($stat_data)->findOrEmpty();
         if ($stat->isEmpty()) {
             $stat->allowField(array_merge(array_keys($stat_data), self::STAT_FIELD))->save(array_merge($stat_data, $data));
         } else {
-            unset($data['site_id']);
             foreach ($data as $key => $value) {
                 $stat->$key = Db::raw("{$key} + {$value}");
             }
@@ -59,12 +57,12 @@ class CoreStatService extends BaseCoreService
      * @param string $end_date
      * @return void
      */
-    public function getStatData(int $site_id, string $start_date, string $end_date) {
+    public function getStatData(string $start_date, string $end_date) {
         $start_date = strtotime($start_date);
         $end_date = strtotime($end_date);
 
         $field = implode(',', array_merge(self::STAT_FIELD, ['date']));
-        $stat_data = (new ShopStat())->where([  ['site_id', '=', $site_id], ['date_time', '>=', $start_date], ['date_time', '<=', $end_date] ])->field($field)->select()->toArray();
+        $stat_data = (new ShopStat())->where([  ['date_time', '>=', $start_date], ['date_time', '<=', $end_date] ])->field($field)->select()->toArray();
         $stat_data = !empty($stat_data) ? array_column($stat_data, null, 'date') : [];
 
         $data = [];
@@ -91,10 +89,8 @@ class CoreStatService extends BaseCoreService
      * @param string $end_date
      * @return array
      */
-    public function getStat(int $site_id, string $start_date = '', string $end_date = '') {
-        $condition = [
-            [ 'site_id', '=', $site_id ]
-        ];
+    public function getStat(string $start_date = '', string $end_date = '') {
+        $condition = [];
 
         if (!empty($start_date) && !empty($end_date)) {
             $condition[] = ['date_time', '>=', strtotime($start_date) ];

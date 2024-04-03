@@ -13,6 +13,7 @@ namespace addon\shop\app\service\admin\goods;
 
 use addon\shop\app\model\goods\Label;
 use core\base\BaseAdminService;
+use core\exception\AdminException;
 
 
 /**
@@ -36,9 +37,9 @@ class LabelService extends BaseAdminService
     public function getPage(array $where = [])
     {
         $field = 'label_id,label_name,memo,sort,create_time,update_time';
-        $order = 'create_time desc';
+        $order = 'sort asc';
 
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "label_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "label_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -51,8 +52,8 @@ class LabelService extends BaseAdminService
      */
     public function getList(array $where = [], $field = 'label_id,label_name,memo,sort,create_time,update_time')
     {
-        $order = "create_time desc";
-        return $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "label_name" ], $where)->field($field)->select()->order($order)->toArray();
+        $order = 'sort asc';
+        return $this->model->withSearch([ "label_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -64,7 +65,7 @@ class LabelService extends BaseAdminService
     {
         $field = 'label_id,label_name,memo,sort,create_time,update_time';
 
-        $info = $this->model->field($field)->where([ [ 'label_id', '=', $id ],['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'label_id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -75,11 +76,14 @@ class LabelService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['site_id'] = $this->site_id;
         $data[ 'create_time' ] = time();
+        $brandInfo = $this->model->where([ [ 'label_name', '=', $data['label_name']] ])->findOrEmpty()->toArray();
+        if($brandInfo)
+        {
+            throw new AdminException('标签已存在，请检查');
+        }
         $res = $this->model->create($data);
         return $res->label_id;
-
     }
 
     /**
@@ -91,7 +95,13 @@ class LabelService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $data[ 'update_time' ] = time();
-        $this->model->where([ [ 'label_id', '=', $id ],['site_id', '=', $this->site_id] ])->update($data);
+        $labelInfo = $this->model->where([ [ 'label_name', '=', $data['label_name']] ])->findOrEmpty()->toArray();
+        if($labelInfo && $labelInfo['label_id'] != $id )
+        {
+            throw new AdminException('品牌已存在，请检查');
+        }
+
+        $this->model->where([ [ 'label_id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -102,7 +112,7 @@ class LabelService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $model = $this->model->where([ [ 'label_id', '=', $id ],['site_id', '=', $this->site_id] ])->find();
+        $model = $this->model->where([ [ 'label_id', '=', $id ] ])->find();
         $res = $model->delete();
         return $res;
     }

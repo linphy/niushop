@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
 	<div class="main-container">
 		<div class="flex ml-[18px] justify-between items-center mt-[20px]">
@@ -13,7 +12,7 @@
 		</div>
 		<el-form :model="formData" label-width="150px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 			<el-card class="box-card !border-none" shadow="never">
-				<el-form-item :label="t('interfaceType')" prop="interface_type" class="">
+				<el-form-item :label="t('interfaceType')" prop="interface_type">
 					<div>
 						<el-radio-group v-model="formData.interface_type">
 							<el-radio :label="1" size="large">{{ t('kdn') }}</el-radio>
@@ -40,14 +39,14 @@
 
 					<el-form-item label="EBusinessID" class="input-item">
 						<div>
-							<el-input v-model="formData.kdniao_id" :placeholder="t('kdnEBusinessIDPlaceholder')" class="input-width" clearable />
+							<el-input v-model.trim="formData.kdniao_id" :placeholder="t('kdnEBusinessIDPlaceholder')" class="input-width" clearable />
 							<p class="text-[12px] text-[#b2b2b2]">{{ t('kdnEBusinessIDTips') }}</p>
 						</div>
 					</el-form-item>
 
 					<el-form-item label="APPKEY" class="input-item">
 						<div>
-							<el-input v-model="formData.kdniao_app_key" clearable :placeholder="t('kdnAppKeyPlaceholder')" class="input-width" />
+							<el-input v-model.trim="formData.kdniao_app_key" clearable :placeholder="t('kdnAppKeyPlaceholder')" class="input-width" />
 							<p class="text-[12px] text-[#b2b2b2]">{{ t('kdnAppKeyTips') }}</p>
 						</div>
 					</el-form-item>

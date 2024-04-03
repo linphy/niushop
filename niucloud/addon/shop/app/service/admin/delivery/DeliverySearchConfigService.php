@@ -30,7 +30,7 @@ class DeliverySearchConfigService extends BaseAdminService
      */
     public function setConfig($data)
     {
-        return (new CoreConfigService())->setDeliverySearchConfig($this->site_id, $data);
+        return (new CoreConfigService())->setDeliverySearchConfig($data);
     }
 
     /**
@@ -39,6 +39,6 @@ class DeliverySearchConfigService extends BaseAdminService
      */
     public function getConfig()
     {
-        return $info = (new CoreConfigService())->getDeliverySearchConfig($this->site_id);
+        return $info = (new CoreConfigService())->getDeliverySearchConfig();
     }
 }

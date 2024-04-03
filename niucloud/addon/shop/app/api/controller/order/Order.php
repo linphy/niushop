@@ -12,6 +12,7 @@
 namespace addon\shop\app\api\controller\order;
 
 use addon\shop\app\dict\order\OrderDict;
+use addon\shop\app\service\api\order\ConfigService;
 use addon\shop\app\service\api\order\OrderService;
 use core\base\BaseApiController;
 use think\Response;
@@ -55,7 +56,8 @@ class Order extends BaseApiController
      * @param $id
      * @return Response
      */
-    public function orderClose($id){
+    public function orderClose($id)
+    {
         return success(( new OrderService() )->close($id));
     }
 
@@ -64,7 +66,8 @@ class Order extends BaseApiController
      * @param $id
      * @return Response
      */
-    public function orderFinish($id){
+    public function orderFinish($id)
+    {
         return success(( new OrderService() )->finish($id));
     }
 
@@ -75,5 +78,15 @@ class Order extends BaseApiController
             [ 'mobile', '' ],
         ]);
         return success(( new OrderService() )->getDeliveryPackage($data));
+    }
+
+    /**
+     * 订单设置
+     * @param $id
+     * @return Response
+     */
+    public function getConfig()
+    {
+        return success(( new ConfigService() )->getConfig());
     }
 }

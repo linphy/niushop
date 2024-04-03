@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -13,8 +12,8 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="evaluateTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('goodsName')" prop="goods_name">
-                        <el-input v-model="evaluateTable.searchParam.goods_name" clearable
-                            :placeholder="t('goodsNamePlaceholder')" class="input-width" />
+                        <el-input v-model.trim="evaluateTable.searchParam.goods_name"
+                            :placeholder="t('goodsNamePlaceholder')" class="input-width" maxlength="60" />
                     </el-form-item> <el-form-item>
                         <el-button type="primary" @click="loadEvaluateList()">{{ t('search') }}</el-button>
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
@@ -53,7 +52,7 @@
                                 <p class="text-[14px]">{{ row.content }}</p>
                                 <div class="flex flex-wrap mt-[10px]" v-if="row.image_small?.length > 0">
                                     <div v-for="(imageItem, imageIndex) in row.image_small" :key="imageIndex" class="mr-4">
-                                        <el-image v-if="imageItem" class="w-[40px] h-[40px]" :src="img(imageItem)" fit="contain">
+                                        <el-image v-if="imageItem" class="w-[40px] h-[40px]" :src="img(imageItem)" fit="contain" :preview-src-list="row.previewList" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2">
                                             <template #error>
                                                 <div class="image-slot">
                                                     <img class="w-[40px] h-[40px]" src="@/addon/shop/assets/goods_default.png" />
@@ -102,7 +101,7 @@
             :destroy-on-close="true">
             <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('explainFirst')" prop="explain_first">
-                    <el-input v-model="formData.explain_first" type="textarea" rows="4" clearable
+                    <el-input v-model.trim="formData.explain_first" type="textarea" rows="4" clearable
                         :placeholder="t('explainFirstPlaceholder')" class="input-width" />
                 </el-form-item>
             </el-form>
@@ -158,6 +157,12 @@ const loadEvaluateList = (page: number = 1) => {
     }).then(res => {
         evaluateTable.loading = false
         evaluateTable.data = res.data.data
+        evaluateTable.data.map((item: any)=> {
+            item.previewList = item.image_small.map((el:any)=> {
+                return img(el)
+            })
+            return item
+        })
         evaluateTable.total = res.data.total
     }).catch(() => {
         evaluateTable.loading = false
@@ -258,7 +263,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
             replyEvaluate(data).then(res => {
                 loadEvaluateList()
                 replyShowDialog.value = false
-            // eslint-disable-next-line n/handle-callback-err
             }).catch(err => {
                 replyShowDialog.value = false
             })

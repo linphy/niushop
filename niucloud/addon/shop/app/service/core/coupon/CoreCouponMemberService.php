@@ -37,7 +37,8 @@ class CoreCouponMemberService extends BaseCoreService
     {
         $where = array (
             [ 'member_id', '=', $member_id ],
-            [ 'status', '=', CouponMemberDict::WAIT_USE ]
+            [ 'status', '=', CouponMemberDict::WAIT_USE ],
+            [ 'expire_time', '>', time() ]
         );
         $field = 'id, coupon_id, member_id, create_time, expire_time, use_time, type, status, price, min_condition_money, title';
         return $this->model->where($where)->field($field)->with([
@@ -71,7 +72,30 @@ class CoreCouponMemberService extends BaseCoreService
      */
     public function recover($id)
     {
+        $where = array (
+            [ 'id', '=', $id ],
+            [ 'status', '=', CouponMemberDict::USED ]
+        );
 
+        $coupon = $this->model->where($where)->findOrEmpty();
+        //恢复没必要返还错误
+        if (!$coupon->isEmpty()){
+                //判断使用时间是否过期
+                if(time() >= $coupon['expire_time']){
+                    $status = CouponMemberDict::EXPIRE;
+                }else{
+                    $status = CouponMemberDict::WAIT_USE;
+                }
+                $coupon->save(
+                    [
+                        'status' => $status,
+                        'trade_id' => 0,
+                        'use_time' => 0
+                    ]
+                );
+        }
+
+        return true;
     }
 
     /**
@@ -83,6 +107,23 @@ class CoreCouponMemberService extends BaseCoreService
 
     }
 
+    /**
+     * 过期
+     * @param $ids
+     * @return void
+     */
+    public function expire($ids)
+    {
+        $where = [
+            [ 'id', 'in', $ids ],
+            [ 'status', '=', CouponMemberDict::WAIT_USE ]
+        ];
+        $data = [
+            'status' => CouponMemberDict::EXPIRE
+        ];
+        $this->model->where($where)->update($data);
+        return true;
+    }
     /**
      * 使用
      * @param array $data
@@ -101,7 +142,7 @@ class CoreCouponMemberService extends BaseCoreService
             [
                 'status' => CouponMemberDict::USED,
                 'trade_id' => $data[ 'trade_id' ],
-                'user_time' => time()
+                'use_time' => time()
             ]
         );
         return true;

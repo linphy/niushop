@@ -40,12 +40,10 @@ class CoreOrderFinishService extends BaseCoreService
     public function finish(array $data)
     {
         $order_id = $data['order_id'];
-        $site_id = $data['site_id'];
 
         //查询订单
         $where = array(
-            ['order_id', '=', $order_id],
-            ['site_id', '=', $site_id]
+            ['order_id', '=', $order_id]
         );
         $order = $this->model->where($where)->findOrEmpty()->toArray();
         if (empty($order)) throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在

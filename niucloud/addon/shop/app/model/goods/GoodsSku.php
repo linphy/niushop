@@ -41,7 +41,7 @@ class GoodsSku extends BaseModel
     public function getSkuImageThumbSmallAttr($value, $data)
     {
         if (isset($data[ 'sku_image' ]) && $data[ 'sku_image' ] != '') {
-            return get_thumb_images($data['site_id'], $data[ 'sku_image' ], FileDict::SMALL);
+            return get_thumb_images($data[ 'sku_image' ], FileDict::SMALL);
         }
         return [];
     }
@@ -52,7 +52,7 @@ class GoodsSku extends BaseModel
     public function getSkuImageThumbMidAttr($value, $data)
     {
         if (isset($data[ 'sku_image' ]) && $data[ 'sku_image' ] != '') {
-            return get_thumb_images($data['site_id'], $data[ 'sku_image' ], FileDict::MID);
+            return get_thumb_images($data[ 'sku_image' ], FileDict::MID);
         }
         return [];
     }
@@ -63,7 +63,7 @@ class GoodsSku extends BaseModel
     public function getSkuImageThumbBigAttr($value, $data)
     {
         if (isset($data[ 'sku_image' ]) && $data[ 'sku_image' ] != '') {
-            return get_thumb_images($data['site_id'], $data[ 'sku_image' ], FileDict::BIG);
+            return get_thumb_images($data[ 'sku_image' ], FileDict::BIG);
         }
         return [];
     }
@@ -256,7 +256,7 @@ class GoodsSku extends BaseModel
     {
         return $this->hasOne(Goods::class, 'goods_id', 'goods_id')
             ->joinType('left')
-            ->withField('goods_id, site_id, goods_name, goods_type, sub_title, goods_cover, goods_image,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, status, is_free_shipping, fee_type, delivery_type, delivery_money, delivery_template_id, goods_category')
+            ->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_image,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, status, is_free_shipping, fee_type, delivery_type, delivery_money, delivery_template_id, goods_category')
             ->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_cover_thumb_big', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ]);
     }
 

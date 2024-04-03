@@ -28,6 +28,11 @@ class ShippingTemplateItem extends BaseModel
      */
     protected $pk = 'item_id';
 
+    protected $type = [
+        'sprice' => 'float',
+        'xprice' => 'float'
+    ];
+
     /**
      * 模型名称
      * @var string

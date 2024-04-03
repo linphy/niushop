@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
 	<div class="main-container">
 		<el-card class="box-card !border-none" shadow="never">
@@ -10,7 +9,7 @@
 			<el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
 				<el-form :inline="true" :model="orderTable.searchParam" ref="searchFormRef">
 					<el-form-item :label="t('orderRefundNo')" prop="order_refund_no">
-						<el-input v-model="orderTable.searchParam.order_refund_no" :placeholder="t('orderRefundNoPlaceholder')" />
+						<el-input v-model.trim="orderTable.searchParam.order_refund_no" :placeholder="t('orderRefundNoPlaceholder')" @keyup="filterNumber($event)" maxlength="30" />
 					</el-form-item>
 					<el-form-item :label="t('createTime')" prop="create_time">
 						<el-date-picker v-model="orderTable.searchParam.create_time" type="datetimerange"
@@ -36,6 +35,7 @@
 					<el-table-column type="selection" width="40" />
 					<el-table-column :label="t('goodsInfo')" min-width="240" />
 					<el-table-column :label="t('goodsMoney')" min-width="120" />
+					<el-table-column :label="t('realityMoney')" min-width="120" />
 					<el-table-column :label="t('buyMember')" min-width="120" />
 					<el-table-column :label="t('refundMoney')" min-width="120" />
 					<el-table-column :label="t('refundType')" min-width="120" />
@@ -71,13 +71,20 @@
 									<el-table-column min-width="120">
 										<template #default="{ row }">
 											<div class="flex flex-col">
-												<span class="text-[14px]">￥{{ row.goods_money - row.discount_money }}</span>
+												<span class="text-[14px]">￥{{ row.goods_money }}</span>
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column min-width="120">
+										<template #default="{ row }">
+											<div class="flex flex-col">
+												<span class="text-[14px]">￥{{ parseFloat(row.goods_money - row.discount_money).toFixed(2) }}</span>
 											</div>
 										</template>
 									</el-table-column>
 									<el-table-column min-width="120">
 										<template #default>
-											<el-button link type="primary" @click="memberEvent(item.member.member_id)">{{ item.member.nickname }}</el-button>
+											<el-button link type="primary" @click="memberEvent(item.member.member_id)" v-if="item.member">{{ item.member.nickname }}</el-button>
 										</template>
 									</el-table-column>
 									<el-table-column min-width="120">
@@ -131,7 +138,7 @@
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { orderRefuund } from '@/addon/shop/api/order'
-import { img } from '@/utils/common'
+import { img, filterNumber } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
 

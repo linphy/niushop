@@ -1,28 +1,32 @@
 <template>
-	<view class="bg-gray-100 min-h-[100vh]">
-		<view class="fixed left-0 right-0 top-0 product-warp bg-[#fff] px-[24rpx]">
-			<view class="flex items-center h-[106rpx] box-border py-[24rpx]">
-				<view class="bg-[#F5F5F5]  flex items-center justify-between h-[66rpx] rounded-[33rpx] flex-1 pl-[20rpx] mr-[40rpx]">
-					<input class="uni-input text-sm flex-1" maxlength="50" v-model="goods_name" @confirm="searchTypeFn('all')" placeholder="请搜索您想要的商品" />
-					<text class="iconfont iconxiazai17 text-[30rpx] mr-[18rpx]" @click="searchTypeFn('all')"></text>
+	<view class="bg-gray-100 min-h-[100vh]" :style="themeColor()">
+		<view class="fixed left-0 right-0 top-0 product-warp bg-[#fff] px-[30rpx]">
+			<view class="h-[88rpx] box-border py-[14rpx] flex items-center justify-between">
+				<view class="flex-1 flex items-center h-[60rpx] bg-[#F6F8F8] rounded-[33rpx] pl-[32rpx] pr-[20rpx] mr-[30rpx]">
+					<u-input class="flex-1" maxlength="50" v-model="goods_name" @confirm="searchTypeFn('all')" placeholder="请搜索您想要的商品" placeholderClass="text-[#a5a6a6] text-[26rpx]" fontSize="26rpx"  clearable border="none"></u-input>
+					<text class="iconfont iconxiazai17 text-[30rpx] ml-[18rpx] font-bold !text-[#999]" @click="searchTypeFn('all')"></text>
 				</view>
-				<text :class="['iconfont text-[44rpx]', listType ? 'iconshangpinliebiao' : 'iconliebiaoxingshi']" @click="listIconBtn"></text>
+				<view :class="['iconfont text-[44rpx]', listType ? 'iconshangpinliebiao' : 'iconliebiaoxingshi']" @click="listIconBtn"></view>
 			</view>
-			<view class="pb-3 pt-1 flex items-center justify-between">
-				<text :class="['text-sm', { 'text-color': searchType == 'all' }]" @click="searchTypeFn('all')">综合</text>
-				<view class="flex items-center" :class="[{ 'text-color': searchType == 'sale_num' }]" @click="searchTypeFn('sale_num')">
-					<text class="text-sm mr-[4rpx]">销量</text>
-					<text v-if="sale_num == 'asc'" class="text-xs iconfont iconjiantoushang font-bold"></text>
-					<text v-else class="text-xs iconfont iconxialajiantouxiao"></text>
-				</view>
-				<view class="flex items-center" :class="[{ 'text-color': searchType == 'price' }]" @click="searchTypeFn('price')">
-					<text class="text-sm mr-[4rpx]">价格</text>
-					<text v-if="price == 'asc'" class="text-xs iconfont iconjiantoushang font-bold"></text>
-					<text v-else class="text-xs iconfont iconxialajiantouxiao"></text>
-				</view>
-				<view class="flex items-center" :class="[{ 'text-color': searchType == 'label' }]" @click="searchTypeFn('label')">
-					<text class="text-sm mr-[2rpx]">筛选</text>
-					<text class="iconfont iconshaixuan"></text>
+			<view class="flex justify-between tems-center py-[22rpx] px-[20rpx]">
+				<view class=" flex items-center justify-between text-[24rpx] text-[#666] flex-1">
+					<text  :class="{ 'text-[#303133] ': searchType == 'all' }" @click="searchTypeFn('all')">综合排序</text>
+					<view class="flex items-center" :class="{ 'text-[#303133]': searchType == 'sale_num' }" @click="searchTypeFn('sale_num')">
+						<text class="mr-[4rpx]">销量</text>
+						<text v-if="(sale_num != 'asc') && ( sale_num != 'desc')" class="text-[16rpx] iconfont iconshangxiajiantouheise"></text>
+						<text v-else-if="sale_num == 'asc'" class="text-[16rpx] iconfont iconjiantoushang font-bold"></text>
+						<text  v-else-if="sale_num == 'desc'" class="text-[16rpx] iconfont iconxialajiantouxiao"></text>
+					</view>
+					<view class="flex items-center" :class="{'text-[#303133]': searchType == 'price' }" @click="searchTypeFn('price')">
+						<text class=" mr-[4rpx]">价格</text>
+						<text v-if="(price != 'asc') && ( price != 'desc')" class="text-[16rpx] iconfont iconshangxiajiantouheise"></text>
+						<text v-else-if="price == 'asc'" class="text-[16rpx] iconfont iconjiantoushang font-bold"></text>
+						<text v-else-if="price == 'desc'" class="text-[16rpx] iconfont iconxialajiantouxiao"></text>
+					</view>
+					<view class="flex items-center" :class="{'text-[#303133]': searchType == 'label' }" @click="searchTypeFn('label')">
+						<text class="mr-[2rpx]">筛选</text>
+						<text class="iconfont iconshaixuan text-[16rpx]"></text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -36,57 +40,61 @@
 			</view>
 		</u-popup>
 
-		<mescroll-body ref="mescrollRef" top="174rpx" bottom="50px" @init="mescrollInit" @down="downCallback" @up="getAllAppListFn">
-			<view :class="['p-[24rpx] !pb-0', !listType ? 'flex justify-between flex-wrap' : '']">
+		<mescroll-body ref="mescrollRef" top="160rpx" bottom="50px" @init="mescrollInit" @down="downCallback" @up="getAllAppListFn">
+			<view v-if="articleList.length" :class="['px-[30rpx]', !listType ? 'flex justify-between flex-wrap' : '']">
 				<template v-for="(item, index) in articleList">
 					<template v-if="listType" :key="item.app_id">
-						<view class="bg-white flex p-[20rpx] rounded-[16rpx]" :class="{ 'mt-[20rpx]': index }"
+						<view class="bg-white flex p-[20rpx] rounded-[16rpx] overflow-hidden mt-[20rpx]" :class="{ 'mb-[20rpx]': (index+1) == articleList.length}"
 							@click="toDetail(item.goods_id)">
-							<u--image class="rounded-[10rpx] overflow-hidden" width="200rpx" height="200rpx"
-								:src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')"
-								model="aspectFill">
+							<u--image class="rounded-[10rpx] overflow-hidden" width="190rpx" height="190rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
 								<template #error>
 									<u-icon name="photo" color="#999" size="50"></u-icon>
 								</template>
 							</u--image>
-							<view class="flex-1 flex flex-col ml-[20rpx]">
-								<view class="text-[26rpx] font-500 h-[80rpx] leading-[40rpx]  multi-hidden mb-[10rpx]">
-									{{ item.goods_name }}
-								</view>
-								<view class="mt-auto flex justify-between items-end">
-									<view class="flex flex-col">
-										<text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ item.goodsSku.price }}</text>
+							<view class="flex-1 flex flex-col ml-[20rpx] py-[6rpx]">
+								<view class="text-[28rpx] text-[#303133] leading-[40rpx]  multi-hidden mb-[10rpx]">{{ item.goods_name }}</view>
+								<view class="mt-auto flex justify-between items-baseline">
+									<view class="text-[var(--price-text-color)] price-font flex items-baseline">
+										<text class="text-[26rpx] font-500">￥</text>
+										<text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[0] }}</text>
+										<text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[1] }}</text>
 									</view>
-									<text class="text--[24rpx] text-[#666]">已售{{ item.sale_num }}{{ item.unit }}</text>
+									<text class="text-[24rpx] text-[#999]">已售{{ item.sale_num }}{{ item.unit }}</text>
 								</view>
 							</view>
 						</view>
 					</template>
 					<template v-else>
-						<view class="w-[342rpx] bg-[#fff] box-border rounded-[10rpx] overflow-hidden mt-[20rpx]" @click="toDetail(item.goods_id)">
-							<u--image width="342rpx" height="342rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
+						<view class="w-[334rpx] flex flex-col bg-[#fff] box-border rounded-[12rpx] overflow-hidden mt-[20rpx]" @click="toDetail(item.goods_id)">
+							<u--image width="334rpx" height="334rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
 								<template #error>
 									<u-icon name="photo" color="#999" size="50"></u-icon>
 								</template>
 							</u--image>
-							<view class="pl-[22rpx] pr-[30rpx] mt-[18rpx] h-[80rpx] leading-[40rpx] text-[26rpx] font-500 multi-hidden">
-								{{ item.goods_name }}
-							</view>
-							<view class="pl-[22rpx] pb-[20rpx] pr-[30rpx] flex justify-between items-end mt-[12rpx]">
-								<view class="flex justify-between items-end">
-									<text class="text-[28rpx] text-[var(--price-text-color)] price-font">￥{{ item.goodsSku.price }}</text>
-									<!-- <text class="text-[28rpx] font-bold text-[#FF3223]"
-									v-if="!parseFloat(item.price) && parseFloat(item.balance)">{{item.balance}}牛币</text>
-								<text class="text-[24rpx] ml-[6rpx]"
-									v-if="parseFloat(item.price) && parseFloat(item.balance) || !parseFloat(item.price) && !parseFloat(item.balance)">{{item.balance}}牛币</text> -->
+							<view class="px-[16rpx] flex-1 pt-[16rpx] pb-[20rpx] flex flex-col justify-between">
+								<view class="text-[#303133] leading-[40rpx] text-[28rpx] multi-hidden">
+									{{ item.goods_name }}
 								</view>
-								<text class="text--[24rpx] text-[#666] leading-[31rpx]">已售{{ item.sale_num }}{{ item.unit}}</text>
+								<view class="flex justify-between items-baseline mt-[16rpx]">
+									<view class="text-[var(--price-text-color)] price-font flex items-baseline">
+<!--										<text class="text-[20rpx]  mr-[4rpx]">￥</text>-->
+<!--										<text class="text-[36rpx] font-500">{{ item.goodsSku.price }}</text>-->
+
+										<text class="text-[26rpx] font-500">￥</text>
+										<text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[0] }}</text>
+										<text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[1] }}</text>
+
+									</view>
+									<text class="text-[24rpx] text-[#999]">已售{{ item.sale_num }}{{ item.unit}}</text>
+								</view>
 							</view>
 						</view>
 					</template>
 				</template>
 			</view>
-			<mescroll-empty v-if="!articleList.length && loading"></mescroll-empty>
+			<view class="mx-[30rpx] mt-[20rpx] bg-[#fff] rounded-[16rpx] noData flex items-center justify-center" v-if="!articleList.length && loading">
+				<mescroll-empty :option="{tip : '暂无商品'}"></mescroll-empty>
+			</view>
 		</mescroll-body>
 
 		<tabbar addon="shop"/>
@@ -120,9 +128,10 @@ let loading = ref<boolean>(false);
 // 标签
 let labelPopup = ref(false);
 let goods_name = ref("");
-let price = ref("asc");
-let sale_num = ref("asc");
+let price = ref("");
+let sale_num = ref("");
 let searchType = ref('all');
+let isShow = ref(false)//输入框清除文字按钮
 //列表类型
 let listType = ref(true)
 onLoad(async (option) => {
@@ -142,6 +151,7 @@ interface mescrollStructure {
 	endSuccess: Function,
 	[propName: string]: any
 }
+
 const getAllAppListFn = (mescroll: mescrollStructure) => {
 	loading.value = false;
 	let data: object = {
@@ -153,7 +163,6 @@ const getAllAppListFn = (mescroll: mescrollStructure) => {
 		order: searchType.value === 'all' ? '' : searchType.value,
 		sort: searchType.value == 'price' ? price.value : sale_num.value
 	};
-
 	getGoodsPages(data).then((res: any) => {
 		let newArr = (res.data.data as Array<Object>);
 		//设置列表数据
@@ -177,15 +186,23 @@ const loadCategory = (id: string) => {
 }
 // 搜索
 const searchTypeFn = (type) => {
+	searchType.value = type;
 	if (type == searchType.value && type == 'price') {
-		sale_num.value = 'asc';
-		price.value = price.value == 'asc' ? 'desc' : 'asc';
+		sale_num.value = '';
+		if(price.value){
+			price.value = price.value == 'asc' ? 'desc' : 'asc';
+		}else{
+			price.value = 'asc';
+		}
 	}
 	if (type == searchType.value && type == 'sale_num') {
-		price.value = 'asc';
-		sale_num.value = sale_num.value == 'asc' ? 'desc' : 'asc';
+		price.value = '';
+		if(sale_num.value){
+			sale_num.value = sale_num.value == 'asc' ? 'desc' : 'asc';
+		}else{
+			sale_num.value = 'asc';
+		}
 	}
-	searchType.value = type;
 	if (type == 'label') {
 		sale_num.value = 'asc';
 		price.value = 'asc';
@@ -193,6 +210,7 @@ const searchTypeFn = (type) => {
 	} else {
 		labelPopup.value = false;
 		articleList.value = [];
+
 		getMescroll().resetUpScroll();
 	}
 }
@@ -208,20 +226,20 @@ onMounted(() => {
 		getMescroll().optUp.textNoMore = t("end");
 	}, 500)
 });
+
+
 </script>
 
 <style lang="scss" scoped>
+.bg-color{
+	background: linear-gradient( 180deg, #EF000C 16%, rgba(239,0,12,0) 92%);
+}
 .nav-item.active {
 	color: $u-primary;
 }
 
 .scroll-view-wrap {
 	word-break: keep-all;
-}
-
-.label-chunk {
-	color: var(--primary-color);
-	background-color: var(--primary-color-light);
 }
 
 .text-color {
@@ -235,7 +253,7 @@ onMounted(() => {
 }
 
 :deep(.u-popup .u-transition) {
-	top: 174rpx !important;
+	top: 168rpx !important;
 }
 
 .product-warp {
@@ -249,7 +267,14 @@ onMounted(() => {
 :deep(.u-tabbar__placeholder) {
 	display: none !important;
 }
-</style>
-<style>
-@import '@/addon/shop/styles/common.scss';
+:deep(.u-input__content__clear){
+	width: 28rpx;
+	height: 28rpx;
+	font-size: 28rpx;
+	background-color: #999;
+}
+.noData{
+	height: calc(100vh - 200rpx - 50px - constant(safe-area-inset-bottom));
+	height: calc(100vh - 200rpx - 50px - env(safe-area-inset-bottom));
+ }
 </style>

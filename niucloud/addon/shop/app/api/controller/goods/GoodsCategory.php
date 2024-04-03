@@ -39,4 +39,16 @@ class GoodsCategory extends BaseApiController
         return success(( new GoodsCategoryService() )->getTree());
     }
 
+    /**
+     * 获取商品分类列表
+     * @return \think\Response
+     */
+    public function lists()
+    {
+        $data = $this->request->params([
+            [ "pid", "" ],
+        ]);
+        return success(( new GoodsCategoryService() )->getList($data));
+    }
+
 }

@@ -45,4 +45,28 @@ class Category extends BaseModel
         }
     }
 
+    /**
+     * 搜索器:商品分类id
+     * @param $value
+     * @param $data
+     */
+    public function searchCategoryIdAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("category_id", "=",  $value );
+        }
+    }
+
+    /**
+     * 搜索器:pid
+     * @param $value
+     * @param $data
+     */
+    public function searchPidAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("pid", "=",  $value );
+        }
+    }
+
 }

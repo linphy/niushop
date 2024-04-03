@@ -10,7 +10,7 @@
         </div>
         <el-card class="box-card !border-none" shadow="never">
 
-            <el-tabs v-model="activeName" class="" @tab-click="tabHandleClick">
+            <el-tabs v-model="activeName" @tab-click="tabHandleClick">
                 <el-tab-pane :label="t('basicInfoTab')" name="basic">
 
                     <el-form :model="formData" label-width="120px" ref="basicFormRef" :rules="formRules" class="page-form">
@@ -27,8 +27,7 @@
                             </template>
                         </el-form-item>
                         <el-form-item :label="t('goodsType')" v-else>
-                            <div class="goods-type-wrap" :class="{ 'selected': formData.goods_type == item.type }"
-                                v-for="(item) in goodsType" :key="item.type" @click="changeGoodsType(item)">
+                            <div class="goods-type-wrap" :class="{ 'selected': formData.goods_type == item.type }" v-for="(item) in goodsType" :key="item.type" @click="changeGoodsType(item)">
                                 <div class="goods-type-name">{{ item.name }}</div>
                                 <div class="goods-type-desc">({{ item.desc }})</div>
                                 <template v-if="formData.goods_type == item.type">
@@ -38,21 +37,20 @@
                             </div>
                         </el-form-item>
                         <el-form-item :label="t('goodsName')" prop="goods_name">
-                            <el-input v-model="formData.goods_name" clearable :placeholder="t('goodsNamePlaceholder')"
-                                class="input-width" maxlength="60" show-word-limit />
+                            <el-input v-model.trim="formData.goods_name" clearable :placeholder="t('goodsNamePlaceholder')" class="input-width" maxlength="60" show-word-limit />
                         </el-form-item>
                         <el-form-item :label="t('subTitle')" prop="sub_title">
-                            <el-input v-model="formData.sub_title" clearable :placeholder="t('subTitlePlaceholder')"
-                                class="input-width" maxlength="80" show-word-limit />
+                            <el-input v-model.trim="formData.sub_title" clearable :placeholder="t('subTitlePlaceholder')" class="input-width" maxlength="80" show-word-limit />
                         </el-form-item>
                         <el-form-item :label="t('goodsImage')" prop="goods_image">
                             <upload-image v-model="formData.goods_image" :limit="10" />
                         </el-form-item>
 
                         <el-form-item :label="t('goodsCategory')" prop="goods_category">
-                            <el-cascader v-model="formData.goods_category" :options="goodsCategoryOptions" :props="goodsCategoryProps" clearable filterable @change="categoryHandleChange" />
+                            <el-cascader v-model="formData.goods_category" :options="goodsCategoryOptions" :props="goodsCategoryProps" clearable filterable @change="categoryHandleChange" popper-class="choice" />
                             <div class="ml-[10px]">
-                                <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsCategory(true)">{{ t('refresh') }}</span>
+                                <span class="cursor-pointer text-primary mr-[10px]"
+                                    @click="refreshGoodsCategory(true)">{{ t('refresh') }}</span>
                                 <span class="cursor-pointer text-primary" @click="toGoodsCategoryEvent">{{ t('addGoodsCategory') }}</span>
                             </div>
                         </el-form-item>
@@ -68,7 +66,7 @@
                         </el-form-item>
                         <el-form-item :label="t('label')">
                             <el-checkbox-group v-model="formData.label_ids">
-                                <el-checkbox :label="item.label_id" v-for="(item,index) in labelOptions" :key="index">{{ item.label_name }}</el-checkbox>
+                                <el-checkbox :label="item.label_id" v-for="(item, index) in labelOptions" :key="index">{{ item.label_name }}</el-checkbox>
                             </el-checkbox-group>
                             <div class="ml-[10px]">
                                 <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsLabel">{{ t('refresh') }}</span>
@@ -77,7 +75,7 @@
                         </el-form-item>
                         <el-form-item :label="t('goodsService')">
                             <el-checkbox-group v-model="formData.service_ids">
-                                <el-checkbox :label="item.service_id" v-for="(item,index) in serviceOptions" :key="index">{{ item.service_name }}</el-checkbox>
+                                <el-checkbox :label="item.service_id" v-for="(item, index) in serviceOptions" :key="index">{{ item.service_name }}</el-checkbox>
                             </el-checkbox-group>
                             <div class="ml-[10px]">
                                 <span class="cursor-pointer text-primary mr-[10px]" @click="refreshGoodsService">{{ t('refresh') }}</span>
@@ -85,11 +83,9 @@
                             </div>
                         </el-form-item>
 
-                        <el-form-item :label="t('supplier')"
-                            v-if="formData.addon_shop_supplier && formData.addon_shop_supplier.status == 1">
+                        <el-form-item :label="t('supplier')" v-if="formData.addon_shop_supplier && formData.addon_shop_supplier.status == 1">
                             <el-select v-model="formData.supplier_id" :placeholder="t('supplierPlaceholder')" clearable>
-                                <el-option v-for="item in supplierOptions" :key="item.supplier_id"
-                                    :label="item.supplier_name" :value="item.supplier_id" />
+                                <el-option v-for="item in supplierOptions" :key="item.supplier_id" :label="item.supplier_name" :value="item.supplier_id" />
                             </el-select>
                             <div class="ml-[10px]">
                                 <span class="cursor-pointer text-primary mr-[10px]" @click="refreshSupplier">{{ t('refresh') }}</span>
@@ -103,18 +99,23 @@
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item :label="t('unit')" prop="unit">
-                            <el-input v-model="formData.unit" clearable :placeholder="t('unitPlaceholder')" class="input-width" show-word-limit maxlength="6" />
+                            <el-input v-model.trim="formData.unit" clearable :placeholder="t('unitPlaceholder')" class="input-width" show-word-limit maxlength="6" />
                         </el-form-item>
                         <el-form-item :label="t('virtualSaleNum')" prop="virtual_sale_num">
-                            <el-input v-model="formData.virtual_sale_num" clearable
-                                :placeholder="t('virtualSaleNumPlaceholder')" class="input-width" show-word-limit
-                                maxlength="10">
-                                <template #append>{{ formData.unit ? formData.unit : '件' }}</template>
-                            </el-input>
+                            <div>
+                                <el-input v-model.trim="formData.virtual_sale_num" clearable
+                                    :placeholder="t('virtualSaleNumPlaceholder')" class="input-width" show-word-limit
+                                    maxlength="10" @keyup="filterNumber($event)"
+                                    @blur="formData.virtual_sale_num = $event.target.value">
+                                    <template #append>{{ formData.unit ? formData.unit : '件' }}</template>
+                                </el-input>
+                                <div class="mt-[10px] text-[12px] text-[#999] leading-[20px]">虚拟销量只在前台展示中参与计算</div>
+                            </div>
                         </el-form-item>
                         <el-form-item :label="t('sort')" prop="sort">
-                            <el-input v-model="formData.sort" clearable :placeholder="t('sortPlaceholder')"
-                                class="input-width" show-word-limit maxlength="10" />
+                            <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')"
+                                class="input-width" show-word-limit maxlength="10" @keyup="filterNumber($event)"
+                                @blur="formData.sort = $event.target.value" />
                         </el-form-item>
 
                     </el-form>
@@ -131,39 +132,43 @@
 
                         <template v-if="formData.spec_type == 'single'">
                             <el-form-item :label="t('price')" prop="price">
-                                <el-input v-model="formData.price" clearable placeholder="0.00" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
 
                             <el-form-item :label="t('marketPrice')" prop="market_price">
-                                <el-input v-model="formData.market_price" clearable placeholder="0.00" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.market_price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
 
                             <el-form-item :label="t('costPrice')" prop="cost_price">
-                                <el-input v-model="formData.cost_price" clearable placeholder="0.00" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.cost_price" clearable placeholder="0.00" class="input-width" maxlength="10">
                                     <template #append>{{ t('yuan') }}</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('weight')" prop="weight">
-                                <el-input v-model="formData.weight" clearable placeholder="0.000" class="input-width" maxlength="20">
+                                <el-input v-model.trim="formData.weight" clearable placeholder="0.000" class="input-width" maxlength="20">
                                     <template #append>kg</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('volume')" prop="volume">
-                                <el-input v-model="formData.volume" clearable placeholder="0.000" class="input-width" maxlength="20">
+                                <el-input v-model.trim="formData.volume" clearable placeholder="0.000" class="input-width" maxlength="20">
                                     <template #append>m³</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('goodsStock')" prop="stock">
-                                <el-input v-model="formData.stock" clearable :placeholder="t('goodsStockPlaceholder')" class="input-width" maxlength="10">
+                                <el-input v-model.trim="formData.stock" clearable
+                                    :placeholder="t('goodsStockPlaceholder')" class="input-width" maxlength="10"
+                                    @keyup="filterNumber($event)" @blur="formData.stock = $event.target.value">
                                     <template #append>{{ formData.unit ? formData.unit : t('defaultUnit') }}</template>
                                 </el-input>
                             </el-form-item>
                             <el-form-item :label="t('skuNo')">
-                                <el-input v-model="formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')" class="input-width" maxlength="50" />
+                                <el-input v-model.trim="formData.sku_no" clearable :placeholder="t('skuNoPlaceholder')"
+                                    class="input-width" maxlength="50" @keyup="filterSpecial($event)"
+                                    @blur="formData.sku_no = $event.target.value" />
                             </el-form-item>
 
                         </template>
@@ -175,32 +180,25 @@
                             <div class="spec-wrap">
                                 <!--规格项/规格值-->
                                 <div class="spec-edit-list">
-
                                     <div class="spec-item" v-for="(item, index) in goodsSpecFormat" :key="item.id">
                                         <div class="spec-name-wrap">
-                                            <el-input v-model="item.spec_name" clearable
-                                                :placeholder="t('specNamePlaceholder')" class="input-width"
-                                                maxlength="20" />
+                                            <el-input v-model.trim="item.spec_name" clearable :placeholder="t('specNamePlaceholder')" class="input-width" maxlength="20" />
                                         </div>
                                         <div class="spec-value-wrap">
                                             <ul ref="specValueRef">
-                                                <li :class="'draggable-element' + index"
-                                                    v-for="(specValue, specIndex) in item.values" :key="specValue.id">
+                                                <li :class="'draggable-element' + index" v-for="(specValue, specIndex) in item.values" :key="specValue.id">
 
-                                                    <el-input v-model="specValue.spec_value_name" clearable
+                                                    <el-input v-model.trim="specValue.spec_value_name" clearable
                                                         :placeholder="t('specValueNamePlaceholder')" class="input-width"
                                                         :suffix-icon="Rank" maxlength="20"
                                                         @input="specValueNameInputListener">
-
                                                     </el-input>
                                                     <el-icon class="icon" :size="20" color="#7b7b7b" @click="deleteSpecValue(index, specIndex)">
                                                         <CircleCloseFilled />
                                                     </el-icon>
-
                                                 </li>
                                             </ul>
-                                            <span class="text-color text-[14px] add-spec-value"
-                                                @click="addSpecValue(index)">{{ t('addSpecValue') }}</span>
+                                            <span class="text-color text-[14px] add-spec-value" @click="addSpecValue(index)">{{ t('addSpecValue') }}</span>
                                             <div class="box"></div>
                                         </div>
 
@@ -226,20 +224,13 @@
                                         </template>
                                     </el-select>
 
-                                    <el-input v-model="batchOperation.price" clearable :placeholder="t('price')"
-                                        class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.market_price" clearable
-                                        :placeholder="t('marketPrice')" class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.cost_price" clearable :placeholder="t('costPrice')"
-                                        class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.stock" clearable :placeholder="t('stock')"
-                                        class="set-input" maxlength="10" />
-                                    <el-input v-model="batchOperation.weight" clearable :placeholder="t('skuWeight')"
-                                        class="set-input" maxlength="20" />
-                                    <el-input v-model="batchOperation.volume" clearable :placeholder="t('skuVolume')"
-                                        class="set-input" maxlength="20" />
-                                    <el-input v-model="batchOperation.sku_no" clearable maxlength="50"
-                                        :placeholder="t('skuNo')" class="set-input" />
+                                    <el-input v-model.trim="batchOperation.price" clearable :placeholder="t('price')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.market_price" clearable :placeholder="t('marketPrice')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.cost_price" clearable :placeholder="t('costPrice')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.stock" clearable :placeholder="t('stock')" class="set-input" maxlength="10" />
+                                    <el-input v-model.trim="batchOperation.weight" clearable :placeholder="t('skuWeight')" class="set-input" maxlength="14" />
+                                    <el-input v-model.trim="batchOperation.volume" clearable :placeholder="t('skuVolume')" class="set-input" maxlength="14" />
+                                    <el-input v-model.trim="batchOperation.sku_no" clearable maxlength="50" :placeholder="t('skuNo')" class="set-input" />
                                     <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
                                 </div>
 
@@ -312,49 +303,27 @@
 
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item :prop="key + '.price'" :rules="[{
-                                                                                    trigger: 'blur',
-                                                                                    validator: (rule: any, value: any, callback: any) => {
-                                                                                        if (formData.spec_type == 'multi') {
-                                                                                            if (value.length == 0) {
-                                                                                                callback(t('pricePlaceholder'))
-                                                                                            } else if (isNaN(value) || !regExp.digit.test(value)) {
-                                                                                                callback(t('priceTips'))
-                                                                                            } else if (value < 0) {
-                                                                                                callback(t('priceNotZeroTips'))
-                                                                                            } else {
-                                                                                                callback();
-                                                                                            }
-                                                                                        } else {
-                                                                                            callback();
-                                                                                        }
-
-                                                                                    }
-                                                                                }]" class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.price" clearable placeholder="0.00" maxlength="10" />
-                                                                                </el-form-item>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="el-table__cell">
-                                                                            <div class="cell">
-                                                                                <el-form-item :prop="key + '.market_price'"
+                                                                                <el-form-item :prop="key + '.price'"
                                                                                     :rules="[{
-                                                                                        trigger: 'blur',
-                                                                                        validator: (rule: any, value: any, callback: any) => {
-                                                                                            if (formData.spec_type == 'multi') {
-                                                                                                if (isNaN(value) || !regExp.digit.test(value)) {
-                                                                                                    callback(t('marketPriceTips'))
-                                                                                                } else if (value < 0) {
-                                                                                                    callback(t('marketPriceNotZeroTips'))
-                                                                                                } else {
-                                                                                                    callback();
-                                                                                                }
-                                                                                            } else {
-                                                                                                callback();
-                                                                                            }
-                                                                                        }
-                                                                                    }]" class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.market_price"
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (formData.spec_type == 'multi') {
+                        if (value.length == 0) {
+                            callback(t('pricePlaceholder'))
+                        } else if (isNaN(value) || !regExp.digit.test(value)) {
+                            callback(t('priceTips'))
+                        } else if (value < 0) {
+                            callback(t('priceNotZeroTips'))
+                        } else {
+                            callback();
+                        }
+                    } else {
+                        callback();
+                    }
+
+                }
+            }]" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.price"
                                                                                         clearable placeholder="0.00"
                                                                                         maxlength="10" />
                                                                                 </el-form-item>
@@ -362,24 +331,26 @@
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item :prop="key + '.cost_price'"
+                                                                                <el-form-item
+                                                                                    :prop="key + '.market_price'"
                                                                                     :rules="[{
-                                                                                        trigger: 'blur',
-                                                                                        validator: (rule: any, value: any, callback: any) => {
-                                                                                            if (formData.spec_type == 'multi') {
-                                                                                                if (isNaN(value) || !regExp.digit.test(value)) {
-                                                                                                    callback(t('costPriceTips'))
-                                                                                                } else if (value < 0) {
-                                                                                                    callback(t('costPriceNotZeroTips'))
-                                                                                                } else {
-                                                                                                    callback();
-                                                                                                }
-                                                                                            } else {
-                                                                                                callback();
-                                                                                            }
-                                                                                        }
-                                                                                    }]" class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.cost_price"
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (formData.spec_type == 'multi') {
+                        if (isNaN(value) || !regExp.digit.test(value)) {
+                            callback(t('marketPriceTips'))
+                        } else if (value < 0) {
+                            callback(t('marketPriceNotZeroTips'))
+                        } else {
+                            callback();
+                        }
+                    } else {
+                        callback();
+                    }
+                }
+            }]" class="sku-form-item-wrap">
+                                                                                    <el-input
+                                                                                        v-model.trim="item.market_price"
                                                                                         clearable placeholder="0.00"
                                                                                         maxlength="10" />
                                                                                 </el-form-item>
@@ -387,30 +358,51 @@
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item :prop="key + '.stock'" :rules="[{
-                                                                                    trigger: 'blur',
-                                                                                    validator: (rule: any, value: any, callback: any) => {
-                                                                                        if (formData.spec_type == 'multi') {
-                                                                                            if (value.length == 0) {
-                                                                                                callback(t('stockPlaceholder'))
-                                                                                            } else if (isNaN(value) || !regExp.number.test(value)) {
-                                                                                                callback(t('stockTips'))
-                                                                                            } else if (value < 0) {
-                                                                                                callback(t('stockNotZeroTips'))
-                                                                                            } else {
-                                                                                                callback();
-                                                                                            }
+                                                                                <el-form-item
+                                                                                    :prop="key + '.cost_price'" :rules="[{
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (formData.spec_type == 'multi') {
+                        if (isNaN(value) || !regExp.digit.test(value)) {
+                            callback(t('costPriceTips'))
+                        } else if (value < 0) {
+                            callback(t('costPriceNotZeroTips'))
+                        } else {
+                            callback();
+                        }
+                    } else {
+                        callback();
+                    }
+                }
+            }]" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.cost_price" clearable placeholder="0.00" maxlength="10" />
+                                                                                </el-form-item>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="el-table__cell">
+                                                                            <div class="cell">
+                                                                                <el-form-item :prop="key + '.stock'"
+                                                                                    :rules="[{
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (formData.spec_type == 'multi') {
+                        if (value.length == 0) {
+                            callback(t('stockPlaceholder'))
+                        } else if (isNaN(value) || !regExp.number.test(value)) {
+                            callback(t('stockTips'))
+                        } else if (value < 0) {
+                            callback(t('stockNotZeroTips'))
+                        } else {
+                            callback();
+                        }
 
-                                                                                        } else {
-                                                                                            callback();
-                                                                                        }
+                    } else {
+                        callback();
+                    }
 
-                                                                                    }
-                                                                                }]" class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.stock" clearable
-                                                                                        placeholder="0"
-                                                                                        @input="specStockSum" maxlength="10"
-                                                                                        />
+                }
+            }]" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.stock" clearable placeholder="0" @input="specStockSum" maxlength="10" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
@@ -418,57 +410,61 @@
                                                                             <div class="cell">
                                                                                 <el-form-item :prop="key + '.weight'"
                                                                                     :rules="[{
-                                                                                        trigger: 'blur',
-                                                                                        validator: (rule: any, value: any, callback: any) => {
-                                                                                            if (formData.spec_type == 'multi') {
-                                                                                                if (value.length > 0 && (isNaN(value) || !regExp.special.test(value))) {
-                                                                                                    callback(t('weightTips'))
-                                                                                                } else if (value < 0) {
-                                                                                                    callback(t('weightNotZeroTips'))
-                                                                                                } else {
-                                                                                                    callback();
-                                                                                                }
-                                                                                            } else {
-                                                                                                callback();
-                                                                                            }
-                                                                                        }
-                                                                                    }]" class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.weight" clearable placeholder="0.000" maxlength="20" />
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (formData.spec_type == 'multi') {
+                        if (value.length > 0 && (isNaN(value) || !regExp.special.test(value))) {
+                            callback(t('weightTips'))
+                        } else if (value < 0) {
+                            callback(t('weightNotZeroTips'))
+                        } else {
+                            callback();
+                        }
+                    } else {
+                        callback();
+                    }
+                }
+            }]" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.weight" clearable placeholder="0.000" maxlength="11" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-form-item :prop="key + '.volume'" :rules="[{
-                                                                                    trigger: 'blur',
-                                                                                    validator: (rule: any, value: any, callback: any) => {
-                                                                                        if (formData.spec_type == 'multi') {
-                                                                                            if (value.length > 0 && (isNaN(value) || !regExp.special.test(value))) {
-                                                                                                callback(t('volumeTips'))
-                                                                                            } else if (value < 0) {
-                                                                                                callback(t('volumeNotZeroTips'))
-                                                                                            } else {
-                                                                                                callback();
-                                                                                            }
-                                                                                        } else {
-                                                                                            callback();
-                                                                                        }
-                                                                                    }
-                                                                                }]" class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.volume" clearable placeholder="0.000" maxlength="20" />
+                                                                                <el-form-item :prop="key + '.volume'"
+                                                                                    :rules="[{
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (formData.spec_type == 'multi') {
+                        if (value.length > 0 && (isNaN(value) || !regExp.special.test(value))) {
+                            callback(t('volumeTips'))
+                        } else if (value < 0) {
+                            callback(t('volumeNotZeroTips'))
+                        } else {
+                            callback();
+                        }
+                    } else {
+                        callback();
+                    }
+                }
+            }]" class="sku-form-item-wrap">
+                                                                                    <el-input v-model.trim="item.volume" clearable placeholder="0.000" maxlength="11" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
                                                                                 <el-form-item class="sku-form-item-wrap">
-                                                                                    <el-input v-model="item.sku_no" clearable maxlength="50" />
+                                                                                    <el-input v-model.trim="item.sku_no" clearable maxlength="50" />
                                                                                 </el-form-item>
                                                                             </div>
                                                                         </td>
                                                                         <td class="el-table__cell">
                                                                             <div class="cell">
-                                                                                <el-switch v-model="item.is_default" :active-value="1" :inactive-value="0" @change="specValueIsDefaultChangeListener($event, key)" />
+                                                                                <el-switch v-model="item.is_default"
+                                                                                    :active-value="1"
+                                                                                    :inactive-value="0"
+                                                                                    @change="specValueIsDefaultChangeListener($event, key)" />
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -492,9 +488,13 @@
                     <el-form :model="formData" label-width="120px" ref="deliveryFormRef" :rules="formRules" class="page-form">
 
                         <el-form-item :label="t('deliveryType')" prop="delivery_type">
-                            <el-checkbox-group v-model="formData.delivery_type">
-                                <el-checkbox v-for="(item,index) in deliveryTypeCheckBox" :key="index" :label="item.key">{{ item.name }}</el-checkbox>
-                            </el-checkbox-group>
+                            <div>
+                                <el-checkbox-group v-model="formData.delivery_type">
+<!--                                    v-show="item.status == '1'"-->
+                                    <el-checkbox v-for="(item, index) in deliveryTypeCheckBox" :key="index" :label="item.key">{{ item.name }}</el-checkbox>
+                                </el-checkbox-group>
+                                <div v-if="deliveryTypeflag" class="text-[12px] text-[#999] leading-[20px]">请先在配置设置中设置配送方式</div>
+                            </div>
                         </el-form-item>
 
                         <el-form-item :label="t('isFreeShipping')" v-show="formData.delivery_type.indexOf('express') != -1">
@@ -507,15 +507,13 @@
                                 <el-radio label="fixed">{{ t('fixedShipping') }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        <el-form-item :label="t('deliveryMoney')" prop="delivery_money"
-                            v-show="formData.delivery_type.indexOf('express') != -1 && formData.is_free_shipping == 0 && formData.fee_type == 'fixed'">
-                            <el-input v-model="formData.delivery_money" clearable :placeholder="0.00" class="input-width" maxlength="10" >
+                        <el-form-item :label="t('deliveryMoney')" prop="delivery_money" v-show="formData.delivery_type.indexOf('express') != -1 && formData.is_free_shipping == 0 && formData.fee_type == 'fixed'">
+                            <el-input v-model="formData.delivery_money" clearable :placeholder="0.00" class="input-width" maxlength="10">
                                 <template #append>{{ t('yuan') }}</template>
                             </el-input>
                         </el-form-item>
-                        <el-form-item :label="t('deliveryTemplateId')" prop="delivery_template_id"
-                            v-show="formData.delivery_type.indexOf('express') != -1 && formData.is_free_shipping == 0 && formData.fee_type == 'template'">
-                            <el-select v-model="formData.delivery_template_id" :placeholder="t('deliveryTemplateIdPlaceholder')" clearable>
+                        <el-form-item :label="t('deliveryTemplateId')" prop="delivery_template_id" v-show="formData.delivery_type.indexOf('express') != -1 && formData.is_free_shipping == 0 && formData.fee_type == 'template'">
+                            <el-select v-model="formData.delivery_template_id" :placeholder="t('deliveryTemplateIdPlaceholder')" filterable autocomplete="off" clearable>
                                 <el-option v-for="item in deliveryTemplateOptions" :key="item.template_id" :label="item.template_name" :value="item.template_id" />
                             </el-select>
                             <div class="ml-[10px]">
@@ -529,7 +527,7 @@
                 <el-tab-pane :label="t('goodsDesc')" name="detail">
                     <el-form :model="formData" label-width="120px" ref="detailFormRef" :rules="formRules" class="page-form">
                         <el-form-item :label="t('goodsDesc')" prop="goods_desc">
-                            <editor v-model="formData.goods_desc" height="600px" class="editor-width" />
+                            <editor v-model="formData.goods_desc" height="600px" @handleBlur="handleBlur" class="editor-width" />
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
@@ -552,10 +550,9 @@ import { TabsPaneContext, ElMessage, FormInstance } from 'element-plus'
 import { Rank } from '@element-plus/icons-vue'
 import Sortable from 'sortablejs'
 import { range, cloneDeep } from 'lodash-es'
-import { debounce } from '@/utils/common'
+import { debounce, filterNumber } from '@/utils/common'
 import { useRoute, useRouter } from 'vue-router'
 import Test from '@/utils/test'
-
 import {
     getGoodsType,
     getBrandList,
@@ -673,7 +670,7 @@ const deliveryTypeCheckBox = reactive([])
 const deliveryTemplateOptions = reactive([])
 
 const goodsSpecFormat: any = reactive([]) // 规格项/规格值
-const goodsSkuData: any = reactive({})// 商品SKU规格数据
+const goodsSkuData: any = reactive({}) // 商品SKU规格数据
 const specData: any = reactive([]) // 商品规格值
 
 // 商品类型
@@ -695,7 +692,7 @@ const toGoodsCategoryEvent = () => {
 }
 
 // 刷新商品分类
-const refreshGoodsCategory = (bool=false) => {
+const refreshGoodsCategory = (bool = false) => {
     getCategoryTree().then((res) => {
         const data = res.data
         if (data) {
@@ -717,7 +714,7 @@ const refreshGoodsCategory = (bool=false) => {
                 })
             })
             goodsCategoryOptions.splice(0, goodsCategoryOptions.length, ...goodsCategoryTree)
-            if(bool){
+            if (bool) {
                 ElMessage({
                     message: t('refreshSuccess'),
                     type: 'success'
@@ -738,12 +735,12 @@ const toGoodsBrandEvent = () => {
 }
 
 // 商品品牌
-const refreshGoodsBrand = (bool=false) => {
+const refreshGoodsBrand = (bool = false) => {
     getBrandList({}).then((res) => {
         const data = res.data
         if (data) {
             brandOptions.splice(0, brandOptions.length, ...data)
-            if(bool){
+            if (bool) {
                 ElMessage({
                     message: t('refreshSuccess'),
                     type: 'success'
@@ -814,10 +811,14 @@ const refreshSupplier = () => {
 }
 
 // 配送方式
+const deliveryTypeflag = ref(false)
 getShopDeliveryList().then((res) => {
     const data = res.data
     if (data) {
         deliveryTypeCheckBox.splice(0, deliveryTypeCheckBox.length, ...data)
+        // deliveryTypeflag.value = deliveryTypeCheckBox.every(el => {
+            // return el.status == '2'
+        // })
     }
 })
 
@@ -1140,6 +1141,8 @@ const refreshGoodsSkuData = () => {
         if (firstSpec == '') {
             firstSpec = key
             skuData[key].is_default = 1
+        }else{
+            skuData[key].is_default = 0
         }
         goodsSkuData[key] = skuData[key]
     }
@@ -1238,7 +1241,7 @@ const saveBatch = () => {
         })
         return
     }
-    if (batchOperation.weight && (isNaN(batchOperation.weight) || !regExp.special.test(batchOperation.stock))) {
+    if (batchOperation.weight && (isNaN(batchOperation.weight) || !regExp.special.test(batchOperation.weight))) {
         ElMessage({
             type: 'warning',
             message: `${t('weightTips')}`
@@ -1531,7 +1534,8 @@ const formRules = computed(() => {
         ],
         goods_desc: [
             {
-                trigger: 'blur',
+                required: true,
+                trigger: ['blur', 'change'],
                 validator: (rule: any, value: any, callback: any) => {
                     if (value === '') {
                         callback(new Error(t('goodsDescPlaceholder')))
@@ -1583,25 +1587,57 @@ const verify = (callback: any) => {
 
     if (formData.spec_type == 'multi') {
         let specVerify = true
+        let repeatSpecNameArr: any = [];
+        let repeatSpecValueNameArr: any = [];
         for (let i = 0; i < goodsSpecFormat.length; i++) {
             const spec = goodsSpecFormat[i]
             if (Test.require(spec.spec_name)) {
                 specVerify = false
-                ElMessage({ type: 'warning', message: `${t('specNameRequire')}` })
+                ElMessage({type: 'warning', message: `${t('specNameRequire')}`})
                 break
             }
+            if (repeatSpecNameArr.indexOf(spec.spec_name) > -1) {
+                specVerify = false
+                ElMessage({type: 'warning', message: `${t('specNameRepeat')}`})
+                break
+            } else {
+                repeatSpecNameArr.push(spec.spec_name);
+            }
+
             for (let v = 0; v < spec.values.length; v++) {
                 const value = spec.values[v]
                 if (Test.require(value.spec_value_name)) {
                     specVerify = false
-                    ElMessage({ type: 'warning', message: `${t('specValueRequire')}` })
+                    ElMessage({type: 'warning', message: `${t('specValueRequire')}`})
                     break
+                }
+
+                if (repeatSpecValueNameArr.indexOf(value.spec_value_name) > -1) {
+                    specVerify = false
+                    ElMessage({type: 'warning', message: `${t('specValueNameRepeat')}`})
+                    break
+                } else {
+                    repeatSpecValueNameArr.push(value.spec_value_name);
                 }
             }
             if (!specVerify) break
         }
+
         if (!specVerify) {
             activeName.value = 'price_stock'
+            return
+        }
+
+        let isHasDefaultSpec = false; // 是否存在默认规格
+        for (const k in goodsSkuData) {
+            if (goodsSkuData[k].is_default) {
+                isHasDefaultSpec = true;
+            }
+        }
+
+        if (!isHasDefaultSpec) {
+            activeName.value = 'price_stock'
+            ElMessage({type: 'warning', message: `${t('lackDefaultSpec')}`})
             return
         }
     }
@@ -1634,6 +1670,7 @@ const save = () => {
                 if (goodsSkuData[k].stock) data.stock += parseInt(goodsSkuData[k].stock)
             }
         }
+
         const goodsCategory: any = []
         data.goods_category.forEach((item: any) => {
             if (typeof item == 'object') {
@@ -1655,8 +1692,7 @@ const save = () => {
         api(data).then(res => {
             repeat.value = false
             router.push('/shop/goods/list')
-        // eslint-disable-next-line n/handle-callback-err
-        }).catch(err => {
+        }).catch(() => {
             repeat.value = false
         })
     })
@@ -1666,6 +1702,13 @@ const back = () => {
     router.push('/shop/goods/list')
 }
 
+const filterSpecial = (event: any) => {
+    event.target.value = event.target.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, '')
+    event.target.value = event.target.value.replace(/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g, '')
+}
+const handleBlur = (e: any) => {
+   deliveryFormRef.value?.validateField('goods_desc')
+}
 </script>
 
 <style lang="scss" scoped>

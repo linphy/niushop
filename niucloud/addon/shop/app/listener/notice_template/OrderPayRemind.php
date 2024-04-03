@@ -17,8 +17,8 @@ class OrderPayRemind extends BaseNoticeTemplate
     public function handle(array $params)
     {
         if ($this->key == $params['key']) {
-            $order = (new CoreOrderService())->getInfo($params['order_id']);
-            if (!$order->isEmpty() && $order['status'] == OrderDict::WAIT_PAY) {
+            $order = (new CoreOrderService())->getInfo($params['data']['order_id']);
+            if (!empty($order) && $order['status'] == OrderDict::WAIT_PAY) {
                 $wap_domain = !empty(env("system.wap_domain")) ? preg_replace('#/$#', '', env("system.wap_domain")) : request()->domain();
                 return $this->toReturn(
                     [

@@ -38,7 +38,7 @@ class DeliverService extends BaseAdminService
         $field = 'deliver_id,deliver_name,deliver_mobile';
         $order = 'deliver_id desc';
 
-        $search_model = $this->model->where([['site_id', '=', $this->site_id] ])->withSearch(["deliver_name", "deliver_mobile"], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch(["deliver_name", "deliver_mobile"], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -51,7 +51,7 @@ class DeliverService extends BaseAdminService
     public function getInfo(int $id)
     {
         $field = 'deliver_id,deliver_name,deliver_mobile';
-        $info = $this->model->field($field)->where([['deliver_id', '=', $id], ['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([['deliver_id', '=', $id] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -63,7 +63,6 @@ class DeliverService extends BaseAdminService
     public function add(array $data)
     {
         $data['create_time'] = time();
-        $data['site_id'] = $this->site_id;
         $res = $this->model->create($data);
         return $res->deliver_id;
 
@@ -78,7 +77,7 @@ class DeliverService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $data['modify_time'] = time();
-        $this->model->where([['deliver_id', '=', $id], ['site_id', '=', $this->site_id] ])->update($data);
+        $this->model->where([['deliver_id', '=', $id] ])->update($data);
         return true;
     }
 
@@ -89,7 +88,7 @@ class DeliverService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $res = $this->model->where([['deliver_id', '=', $id], ['site_id', '=', $this->site_id] ])->delete();
+        $res = $this->model->where([['deliver_id', '=', $id] ])->delete();
         return $res;
     }
 

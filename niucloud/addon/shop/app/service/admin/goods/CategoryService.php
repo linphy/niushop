@@ -14,6 +14,7 @@ namespace addon\shop\app\service\admin\goods;
 use addon\shop\app\model\goods\Category;
 use addon\shop\app\service\core\goods\CoreGoodsCategoryService;
 use core\base\BaseAdminService;
+use core\exception\AdminException;
 use core\exception\CommonException;
 
 
@@ -38,9 +39,9 @@ class CategoryService extends BaseAdminService
     public function getPage(array $where = [])
     {
         $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort';
-        $order = 'sort desc,create_time desc';
+        $order = 'create_time desc';
 
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "category_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "category_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -54,7 +55,7 @@ class CategoryService extends BaseAdminService
     public function getList(array $where = [], $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort')
     {
         $order = 'sort desc,create_time desc';
-        return $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "category_name", 'level' ], $where)->field($field)->select()->order($order)->toArray();
+        return $this->model->withSearch([ "category_name", 'level' ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -65,7 +66,7 @@ class CategoryService extends BaseAdminService
      */
     public function getTree()
     {
-        return ( new CoreGoodsCategoryService() )->getTree([ ['site_id', '=', $this->site_id] ]);
+        return ( new CoreGoodsCategoryService() )->getTree();
     }
 
     /**
@@ -76,7 +77,7 @@ class CategoryService extends BaseAdminService
     public function getInfo(int $id)
     {
         $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort';
-        $info = $this->model->field($field)->where([ [ 'category_id', '=', $id ], ['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'category_id', '=', $id ] ])->findOrEmpty()->toArray();
         $info[ 'child_count' ] = 0;
         if ($info[ 'level' ] == 1) {
             $info[ 'child_count' ] = $this->model->where([ [ 'pid', '=', $info[ 'category_id' ] ] ])->count();
@@ -93,6 +94,11 @@ class CategoryService extends BaseAdminService
     {
         $data[ 'category_full_name' ] = $data[ 'category_name' ];
         $data[ 'level' ] = 1;
+        $categoryInfo = $this->model->where([ [ 'category_name', '=', $data['category_name']] ])->findOrEmpty()->toArray();
+        if($categoryInfo)
+        {
+            throw new AdminException('分类已存在，请检查');
+        }
         if ($data[ 'pid' ] > 0) {
             $info = $this->model->field("category_id, category_name")->where([ [ 'category_id', '=', $data[ 'pid' ] ] ])->findOrEmpty();
             if ($info->isEmpty()) throw new CommonException('SHOP_GOODS_CATEGORY_NOT_EXIST');
@@ -100,7 +106,6 @@ class CategoryService extends BaseAdminService
             $data[ 'level' ] = 2;
         }
 
-        $data['site_id'] = $this->site_id;
         $data[ 'create_time' ] = time();
         $res = $this->model->create($data);
         return $res->category_id;
@@ -115,7 +120,10 @@ class CategoryService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $category_info = $this->getInfo($id);
-
+        if($category_info && $category_info['category_id'] != $id )
+        {
+            throw new AdminException('品牌已存在，请检查');
+        }
         if ($category_info[ 'level' ] == 1 && $category_info[ 'pid' ] != $data[ 'pid' ] && $category_info[ 'child_count' ] > 0) {
             throw new CommonException('SHOP_GOODS_CATEGORY_EXIST_CHILD');
         }
@@ -130,7 +138,7 @@ class CategoryService extends BaseAdminService
         }
 
         $data[ 'update_time' ] = time();
-        $this->model->where([ [ 'category_id', '=', $id ], ['site_id', '=', $this->site_id] ])->update($data);
+        $this->model->where([ [ 'category_id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -142,12 +150,12 @@ class CategoryService extends BaseAdminService
     public function del(int $id)
     {
         $field = 'category_id,level,pid';
-        $info = $this->model->field($field)->where([ [ 'category_id', '=', $id ], ['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'category_id', '=', $id ] ])->findOrEmpty()->toArray();
         if (!empty($info[ 'level' ] == 1)) {
             // 删除子级分类
-            $this->model->where([ [ 'pid', '=', $id ] ])->find()->delete();
+            $this->model->where([ [ 'pid', '=', $id ] ])->delete();
         }
-        $res = $this->model->where([ [ 'category_id', '=', $id ], ['site_id', '=', $this->site_id] ])->find()->delete();
+        $res = $this->model->where([ [ 'category_id', '=', $id ] ])->delete();
         return $res;
     }
 
@@ -159,10 +167,10 @@ class CategoryService extends BaseAdminService
     public function updateCategory($data)
     {
         foreach ($data[ 'category_sort_array' ] as $key => $val) {
-            $info = $this->model->field("category_id, category_name")->where([ [ 'category_id', '=', $val[ 'category_id' ] ], ['site_id', '=', $this->site_id] ])->findOrEmpty();
+            $info = $this->model->field("category_id, category_name")->where([ [ 'category_id', '=', $val[ 'category_id' ] ] ])->findOrEmpty();
             if (!$info->isEmpty()) {
                 $data[ 'update_time' ] = time();
-                $this->model->where([ [ 'category_id', '=', $val[ 'category_id' ] ], ['site_id', '=', $this->site_id] ])->update([ 'sort' => $val[ 'sort' ] ]);
+                $this->model->where([ [ 'category_id', '=', $val[ 'category_id' ] ] ])->update([ 'sort' => $val[ 'sort' ] ]);
             }
         }
         return true;
@@ -175,7 +183,6 @@ class CategoryService extends BaseAdminService
      */
     public function setGoodsCategoryConfig(array $params = [])
     {
-        $params['site_id'] = $this->site_id;
         return ( new CoreGoodsCategoryService() )->setGoodsCategoryConfig($params);
     }
 
@@ -185,7 +192,7 @@ class CategoryService extends BaseAdminService
      */
     public function getGoodsCategoryConfig()
     {
-        return ( new CoreGoodsCategoryService() )->getGoodsCategoryConfig($this->site_id);
+        return ( new CoreGoodsCategoryService() )->getGoodsCategoryConfig();
     }
 
     /**
@@ -197,8 +204,7 @@ class CategoryService extends BaseAdminService
     public function getTreeComponents()
     {
         return ( new CoreGoodsCategoryService() )->getTree([
-            [ 'is_show', '=', 1 ],
-            [ 'site_id', '=', $this->site_id ]
+            [ 'is_show', '=', 1 ]
         ], 'category_id,category_name,image,level,pid');
     }
 

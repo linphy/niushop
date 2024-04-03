@@ -68,7 +68,7 @@ class CouponService extends BaseAdminService
     {
         $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
         $order = 'id desc';
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         foreach ($list[ 'data' ] as $k => &$v) {
             if ($v[ 'remain_count' ] != '-1') {
@@ -78,7 +78,7 @@ class CouponService extends BaseAdminService
             }
             //查询已使用数量
             $coupon_member_model = new CouponMember();
-            $v[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $v[ 'id' ] ],['site_id', '=', $this->site_id], [ 'use_time', '>', 1 ] ])->count();
+            $v[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $v[ 'id' ] ], [ 'use_time', '>', 1 ] ])->count();
         }
         return $list;
     }
@@ -90,7 +90,7 @@ class CouponService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $info = $this->model->where([ [ 'id', '=', $id ],['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
         if ($info[ 'remain_count' ] == '-1') {
             $info[ 'limit' ] = 2;
         } else {
@@ -122,9 +122,10 @@ class CouponService extends BaseAdminService
         if ($info[ 'remain_count' ] != '-1') {
             $info[ 'sum_count' ] = $info[ 'remain_count' ] + $info[ 'receive_count' ];
         } else {
-            $info['remain_count'] = 1000;
+            $info[ 'remain_count' ] = 1000;
             $info[ 'sum_count' ] = '不限量';
         }
+
         //查询已使用数量
         $coupon_member_model = new CouponMember();
         $info[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $info[ 'id' ] ], [ 'use_time', '>', 1 ] ])->count();
@@ -141,7 +142,6 @@ class CouponService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['site_id'] = $this->site_id;
         if ($data[ 'threshold' ] == 2) {
             $data[ 'min_condition_money' ] = 0;
         }
@@ -150,7 +150,6 @@ class CouponService extends BaseAdminService
             unset($data[ 'valid_time' ]);
             unset($data[ 'limit_count' ]);
             unset($data[ 'remain_count' ]);
-
         } else {
             if ($data[ 'receive_type_time' ] == 1) {
                 if (!empty($data[ 'receive_time' ])) {
@@ -167,6 +166,7 @@ class CouponService extends BaseAdminService
             if (!empty($data[ 'valid_time' ])) {
                 $data[ 'valid_start_time' ] = time();
                 $data[ 'valid_end_time' ] = strtotime($data[ 'valid_time' ]);
+                if ($data[ 'valid_end_time' ] <= $data[ 'valid_start_time' ]) throw new AdminException('SHOP_COUPON_VALID_END_TIME_NOT_ALLOW_LT_START_TIME');
             }
             if ($data[ 'limit' ] == 2) {
                 $data[ 'remain_count' ] = '-1';
@@ -179,12 +179,10 @@ class CouponService extends BaseAdminService
             if (!empty($data[ 'goods_ids' ])) {
                 Db::startTrans();
                 try {
-                    $data[ 'create_time' ] = time();
                     $res = $this->model->create($data);
                     $coupon_goods = [];
                     foreach ($data[ 'goods_ids' ] as $value) {
                         $coupon_goods[] = [
-                            'site_id' => $this->site_id,
                             'coupon_id' => $res->id,
                             'goods_id' => $value,
                         ];
@@ -208,12 +206,10 @@ class CouponService extends BaseAdminService
                 $data[ 'goods_category_ids' ] = array_keys($data[ 'goods_category_ids' ]);
                 Db::startTrans();
                 try {
-                    $data[ 'create_time' ] = time();
                     $res = $this->model->create($data);
                     $coupon_goods = [];
                     foreach ($data[ 'goods_category_ids' ] as $value) {
                         $coupon_goods[] = [
-                            'site_id' => $this->site_id,
                             'coupon_id' => $res->id,
                             'category_id' => $value,
                         ];
@@ -228,7 +224,6 @@ class CouponService extends BaseAdminService
                 }
             }
         } else {
-            $data[ 'create_time' ] = time();
             $res = $this->model->create($data);
             return $res->id;
         }
@@ -243,8 +238,8 @@ class CouponService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $coupon_member_model = new CouponMember();
-        $coupon_member_info = $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'site_id', '=', $this->site_id ] ])->find();
-        if ($coupon_member_info) {
+        $coupon_member = $coupon_member_model->where([ [ 'coupon_id', '=', $id ] ])->findOrEmpty();
+        if (!$coupon_member->isEmpty()) {
             throw new AdminException('该优惠券已被用户领取无法修改');
         }
         if ($data[ 'threshold' ] == 2) {
@@ -275,6 +270,7 @@ class CouponService extends BaseAdminService
                 if (!empty($data[ 'valid_time' ])) {
                     $data[ 'valid_start_time' ] = time();
                     $data[ 'valid_end_time' ] = strtotime($data[ 'valid_time' ]);
+                    if ($data[ 'valid_end_time' ] <= $data[ 'valid_start_time' ]) throw new AdminException('SHOP_COUPON_VALID_END_TIME_NOT_ALLOW_LT_START_TIME');
                 }
             } else {
                 $data[ 'valid_start_time' ] = '';
@@ -299,7 +295,6 @@ class CouponService extends BaseAdminService
                 $coupon_goods_model->where([ [ 'coupon_id', '=', $id ] ])->delete();
                 foreach ($data[ 'goods_ids' ] as $value) {
                     $coupon_goods[] = [
-                        'site_id' => $this->site_id,
                         'coupon_id' => $id,
                         'goods_id' => $value,
                     ];
@@ -329,7 +324,6 @@ class CouponService extends BaseAdminService
                 $coupon_goods_model->where([ [ 'coupon_id', '=', $id ] ])->delete();
                 foreach ($data[ 'goods_category_ids' ] as $value) {
                     $coupon_goods[] = [
-                        'site_id' => $this->site_id,
                         'coupon_id' => $id,
                         'category_id' => $value,
                     ];
@@ -350,7 +344,7 @@ class CouponService extends BaseAdminService
             Db::startTrans();
             try {
                 $coupon_goods_model->where([ [ 'coupon_id', '=', $id ] ])->delete();
-                $res = $this->model->where([ [ 'id', '=', $id ], ['site_id', '=', $this->site_id] ])->update($data);
+                $res = $this->model->where([ [ 'id', '=', $id ] ])->update($data);
                 Db::commit();
                 return $res;
             } catch (\Exception $e) {
@@ -387,12 +381,10 @@ class CouponService extends BaseAdminService
         $coupon_member_model = new CouponMember();
         $member_where = [];
         if (!empty($data[ 'keywords' ])) {
-            $member_where = [ [ 'member.nickname|member.mobile', '=', $data[ 'keywords' ] ] ];
+            $member_where = [ [ 'member.nickname|member.mobile', 'like', '%' . $data[ 'keywords' ] . '%' ] ];
         }
         $memberList = $coupon_member_model->where([ [ 'coupon_id', '=', $data[ 'id' ] ] ])->withJoin([
-            'member' => function($query) {
-                $query->field('member_id, nickname, mobile');
-            },
+            'member' => [ 'member_id', 'member_no', 'username', 'mobile', 'nickname' ],
         ])->where($member_where)->order('id desc')->append([ 'status_name', 'receive_type_name' ]);
         $list = $this->pageQuery($memberList);
         return $list;

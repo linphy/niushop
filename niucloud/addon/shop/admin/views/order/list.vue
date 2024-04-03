@@ -12,9 +12,9 @@
 					<el-form-item :label="t('orderInfo')" prop='search_name'>
 						<el-select v-model="orderTable.searchParam.search_type" clearable class="input-item">
 							<el-option :label="t('orderNo')" value="order_no"></el-option>
-							<el-option :label="t('orderTradoNo')" value="order_trado_no"></el-option>
+							<el-option :label="t('outTradeNo')" value="out_trade_no"></el-option>
 						</el-select>
-						<el-input class="input-item ml-3" v-model="orderTable.searchParam.search_name" />
+						<el-input class="input-item ml-3" v-model.trim="orderTable.searchParam.search_name" />
 					</el-form-item>
 					<el-form-item :label="t('payType')" prop='pay_type'>
 						<el-select v-model="orderTable.searchParam.pay_type" clearable class="input-item">
@@ -68,7 +68,7 @@
 							<div v-for="(item, index) in orderTable.data" :key="index">
 								<div class="flex items-center justify-between bg-[#f7f8fa] mt-[10px] border-[#e4e7ed] border-solid border-b-[1px] px-3 h-[35px] text-[12px] text-[#666]">
 									<div>
-										<span class="">{{ t('orderNo') }}：{{ (item as any).order_no }}</span>
+										<span>{{ t('orderNo') }}：{{ (item as any).order_no }}</span>
 										<span class="ml-5">{{ t('createTime') }}：{{ (item as any).create_time }}</span>
 										<!-- <span class="ml-5">{{ t('orderFrom') }}：{{ (item as any).order_form_name }}</span> -->
 										<span class="ml-5" v-if="item.pay">{{ t('payType') }}：{{ (item as any).pay.type_name }}</span>
@@ -145,7 +145,7 @@
 										</template>
 									</el-table-column>
 								</el-table>
-								<div v-if="item.shop_remark" class="text-[14px] h-[30px] leading-[30px] px-3 bg-[#fff0e5] text-[#ff7f5b]">
+								<div v-if="item.shop_remark" class="text-[14px] min-h-[30px] leading-[30px] px-3 bg-[#fff0e5] text-[#ff7f5b]">
 									<span class="mr-[5px]">{{ t('notes') }}：</span>
 									<span>{{ item.shop_remark }}</span>
 								</div>
@@ -160,10 +160,11 @@
 					@size-change="loadOrderList()" @current-change="loadOrderList" />
 			</div>
 		</div>
-	</el-card>
-	<delivery-action ref="deliveryActionDialog" @complete="loadOrderList"></delivery-action>
-	<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
-</div></template>
+		</el-card>
+		<delivery-action ref="deliveryActionDialog" @complete="loadOrderList"></delivery-action>
+		<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
+	</div>
+</template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
@@ -235,9 +236,6 @@ const orderTable = reactive<OrderTable>({
 })
 
 const searchFormRef = ref<FormInstance>()
-
-// 选中数据
-// const selectData = ref<any[]>([])
 
 /**
  * 获取订单列表

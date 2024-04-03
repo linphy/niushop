@@ -18,7 +18,6 @@ use think\Response;
 class OrderCreate extends BaseApiController
 {
 
-
     /**
      * 查询订单数据
      * @return Response
@@ -49,7 +48,6 @@ class OrderCreate extends BaseApiController
         ]);
         return success('SUCCESS', (new OrderCreateService())->calculate($data));
     }
-
 
     /**
      * 订单创建

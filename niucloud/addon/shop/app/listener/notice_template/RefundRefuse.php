@@ -16,8 +16,8 @@ class RefundRefuse extends BaseNoticeTemplate
     public function handle(array $params)
     {
         if ($this->key == $params['key']) {
-            $refund = (new CoreRefundService())->getInfo($params['order_refund_no']);
-            if (!$refund->isEmpty()) {
+            $refund = (new CoreRefundService())->getInfo($params['data']['order_refund_no']);
+            if (!empty($refund)) {
                 return $this->toReturn(
                     [
                         'order_refund_no' => $refund['order_refund_no'],

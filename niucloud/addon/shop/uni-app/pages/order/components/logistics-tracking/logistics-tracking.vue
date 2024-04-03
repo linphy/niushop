@@ -1,6 +1,6 @@
 <template>
-	<view class="">
-		<u-popup :show="showpop" mode="bottom" :round="10" @close="close" :closeable="true">
+	<view @touchmove.prevent.stop>
+		<u-popup :show="showpop" mode="bottom" :round="10" @close="close" :closeable="true" :safeAreaInsetBottom="true" @touchmove.prevent.stop>
 			<view class="h-[70vh] px-[24rpx] bg-page" v-if="Object.keys(showList).length">
 				<view class="text-center text-[32rpx] leading-8">{{t('detailedInformation')}}</view>
 				<view class="flex mt-[10rpx] menu" v-if="packageList.length > 1">
@@ -17,13 +17,13 @@
 				</view>
 				<view class="parcel " style="height: 56vh;">
 					<view class="h-[40vh] flex items-center justify-center" v-if="showList.traces.success == false">
-						<view class="">
+						<view>
 							<text class="iconfont iconzanwuwuliuxinxi text-[180rpx] text-[#bfbfbf]"></text>
 							<view class="text-[28rpx] text-[#bfbfbf] leading-8">暂无物流信息～～</view>
 						</view>
 					</view>
 					<scroll-view v-else scroll-y="true" style="height:56vh;padding: 20rpx;box-sizing: border-box;" class="bg-white rounded-md">
-						<u-steps current="0" dot direction="column" activeColor="#ff4500">
+						<u-steps current="0" dot direction="column" activeColor="var(--primary-color)">
 							<template v-for="(item,index) in showList.traces.list">
 								<u-steps-item :title="item.remark" :desc="item.datetime">
 								</u-steps-item>

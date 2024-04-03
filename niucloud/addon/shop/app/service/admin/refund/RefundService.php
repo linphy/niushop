@@ -36,13 +36,12 @@ class RefundService extends BaseAdminService
         $order = 'create_time desc';
 
         $search_model = $this->model
-            ->where([ ['site_id', '=', $this->site_id] ])
             ->withSearch([ 'order_refund_no', 'status', 'create_time' ], $where)
             ->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('order_goods_id, order_id, site_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money,discount_money, is_enable_refund, goods_type')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money,discount_money, is_enable_refund, goods_type')->append([ 'goods_image_thumb_small' ]);
                     },
                     'member' => function($query) {
                         $query->field('member_id, nickname');
@@ -60,7 +59,7 @@ class RefundService extends BaseAdminService
     public function getDetail(int $refund_id)
     {
         $field = 'refund_id, order_id, order_goods_id, order_refund_no, refund_type, reason, member_id, apply_money, money, status, create_time, transfer_time, remark, voucher, source, timeout, refund_no, delivery, shop_reason, refund_address';
-        $info = $this->model->where([ [ 'refund_id', '=', $refund_id ], ['site_id', '=', $this->site_id] ])->field($field)
+        $info = $this->model->where([ [ 'refund_id', '=', $refund_id ] ])->field($field)
             ->with(
                 [
                     'order_main' => function($query) {
@@ -77,7 +76,7 @@ class RefundService extends BaseAdminService
                         $query->field('refund_no, type, money, create_time, refund_time')->append([ 'type_name' ]);
                     },
                     'refund_log' => function($query) {
-                        $query->field('order_refund_no, content, main_type, create_time ,main_id, type')->order("create_time desc")->append([ 'main_name', 'type_name', 'main_type_name' ]);
+                        $query->field('order_refund_no, content, main_type, create_time ,main_id, type')->order("create_time desc, id desc")->append([ 'main_name', 'type_name', 'main_type_name' ]);
                     }
                 ])->append(['status_name', 'refund_type_name'])->findOrEmpty()->toArray();
 

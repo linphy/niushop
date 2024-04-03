@@ -4,18 +4,19 @@
 			:class="{ 'cart': config.cart.control && config.cart.event === 'cart', 'detail': !(config.cart.control && config.cart.event === 'cart') }"
 			v-if="tabsData.length">
 			<mescroll-body ref="mescrollRef" :down="{ use: false }" @init="mescrollInit" @up="getListFn">
-				<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0">
-					<input class="search-ipt text-sm" type="text" v-model="searchName" :placeholder="config.search.title">
+				<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
+					<input class="search-ipt pl-[20rpx] text-[24rpx]" :class="{'pr-[96rpx]':searchName,'pr-[60rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
 					<view class="flex items-center h-[70rpx] absolute right-[48rpx] top-[18rpx]  z-2">
-						<text class="iconfont iconxiazai17 text-[30rpx]" @click.stop="searchNameFn"></text>
+						<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
+						<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="iconfont iconxiazai17 text-[28rpx]"></text></view>
 					</view>
 				</view>
 				<!--  #ifdef  H5 -->
 				<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[106rpx]': config.search.control, 'pb-[98rpx]': config.cart.control && config.cart.event === 'cart' }">
-					<scroll-view :scroll-y="true" height="100%">
-						<view>
-							<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive }" v-for="(item, index) in tabsData" :key="item.site_id" @click="firstLevelClick(index, item)">
-								<view class="text-box">
+					<scroll-view :scroll-y="true" class="scroll-height">
+						<view class="bg-[#F4F6F8]">
+							<view class="tab-item truncate" :class="{ 'tab-item-active ': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
+								<view class="text-box truncate px-[24rpx]">
 									{{ item.category_name }}
 								</view>
 							</view>
@@ -24,11 +25,11 @@
 				</view>
 				<!--  #endif -->
 				<!--  #ifndef  H5 -->
-				<view class="tabs-box z-2 fixed left-0 bg-[#fff] pb-[env(safe-area-inset-bottom)] bottom-[100rpx] top-0" :class="{ 'top-[106rpx]': config.search.control, '!bottom-[198rpx]': config.cart.control && config.cart.event === 'cart' }">
-					<scroll-view :scroll-y="true" height="100%">
-						<view>
-							<view class="tab-item" :class="{ 'tab-item-active': index == tabActive }" v-for="(item, index) in tabsData" :key="item.site_id" @click="firstLevelClick(index, item)">
-								<view class="text-box">
+				<view class="tabs-box z-2 fixed left-0 bg-[#fff] pb-ios bottom-[100rpx] top-0" :class="{ 'top-[106rpx]': config.search.control, '!bottom-[198rpx]': config.cart.control && config.cart.event === 'cart' }">
+					<scroll-view :scroll-y="true" class="scroll-height">
+						<view class="bg-[#F4F6F8]">
+							<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
+								<view class="text-box px-[16rpx] truncate">
 									{{ item.category_name }}
 								</view>
 							</view>
@@ -42,37 +43,41 @@
 					<template v-if="!labelPopup">
 						<scroll-view :scroll-x="true" scroll-with-animation
 							:scroll-into-view="'id' + (subActive ? subActive - 1 : 0)"
-							class="flex-1 scroll-Y box-border px-[24rpx] bg-white">
-							<view class="flex items-center h-[48rpx]">
+							class="flex-1 h-[49rpx] scroll-Y box-border pr-[24rpx] bg-white">
+							<view class="flex items-center h-[48rpx]  box-border">
 								<text
-									class="flex-shrink-0 px-[24rpx] h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] box-solid rounded-[24rpx] box-border"
+									class="flex-shrink-0 px-[24rpx] h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] border-solid rounded-[24rpx] box-border"
 									:class="{ 'sub-tab-active text-color border-color': index === subActive, 'border-[#E2E2E2]': index != subActive, 'ml-[24rpx]': index }"
 									v-for="(item, index) in tabsData[tabActive]?.child_list"
 									:key="tabsData[tabActive].category_id" :id="'id' + index"
 									@click="subMenuClick(index, item)">{{ item.category_name }}</text>
 							</view>
 						</scroll-view>
-						<text class="iconfont iconjiantoushang text-[30rpx]" @click="labelPopup = true"></text>
+						<view class="iconfont iconxiangxiajiantou text-[26rpx] w-[30rpx] h-[30rpx] text-center transform " @click="labelPopup = true"></view>
 						<!-- @click="showAllTabs()" -->
 					</template>
 					<template v-else>
-						<view class="flex-1 h-[48rpx] text-[22rpx] text-[#E2E2E2] px-[24rpx] leading-[48rpx]">全部分类</view>
-						<text class="iconfont iconjiantoushang transform text-[30rpx] rotate-180" @click="labelPopup = false"></text>
+						<view class="flex-1 h-[48rpx] text-[22rpx] text-[#A5A6A6] pr-[24rpx] leading-[48rpx]">全部分类</view>
+						<text class="iconfont iconjiantoushang text-[26rpx]" @click="labelPopup = false"></text>
 					</template>
 
 				</view>
 				<view class="labelPopup" :class="{ 'active': config.search.control }">
 					<u-popup :show="labelPopup" mode="top" @close="labelPopup = false">
 						<view class="flex flex-wrap py-[24rpx]">
+							<!-- <text
+								class="flex-shrink-0 w-[160rpx] ml-[22rpx] mb-[24rpx] text-center h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] border-solid rounded-[24rpx] box-border"
+								:class="{ 'sub-tab-active text-color border-color': initAll.allActive === subActive, 'border-[#E2E2E2]': initAll.allActive != subActive }"
+								 @click="subMenuClick(initAll.allActive,initAll.data)">全部</text> -->
 							<text
-								class="flex-shrink-0 w-[160rpx] ml-[22rpx] mb-[24rpx] text-center h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] box-solid rounded-[24rpx] box-border"
+								class="flex-shrink-0 w-[160rpx] ml-[22rpx] mb-[24rpx] text-center h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] border-solid rounded-[24rpx] box-border"
 								:class="{ 'sub-tab-active text-color border-color': index === subActive, 'border-[#E2E2E2]': index != subActive }"
 								v-for="(item, index) in tabsData[tabActive]?.child_list"
 								:key="tabsData[tabActive].category_id" @click="subMenuClick(index, item)">{{ item.category_name }}</text>
 						</view>
 					</u-popup>
 				</view>
-				<view class="flex justify-center flex-wrap pl-[182rpx] pt-[20rpx]"
+				<view class="flex justify-center flex-wrap pl-[182rpx] pt-[20rpx] pb-[20rpx]"
 					:class="{ '!pt-[218rpx]': config.search.control && tabsData[tabActive]?.child_list && tabsData[tabActive]?.child_list.length, 'pt-[126rpx]': config.search.control && (!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length), 'pt-[112rpx]': tabsData[tabActive]?.child_list && tabsData[tabActive]?.child_list.length && !config.search.control }">
 					<template v-for="(item, index) in list" :key="item.goods_id">
 						<view
@@ -87,28 +92,33 @@
 								</u--image>
 							</view>
 							<view class="flex flex-1 flex-wrap">
-								<view class="w-[316rpx] max-h-[72rpx] text-[26rpx] font-500 leading-[36rpx] multi-hidden">
+								<view class="w-[316rpx] max-h-[80rpx] text-[28rpx] leading-[40rpx] multi-hidden">
 									{{ item.goods_name }}
 								</view>
 								<view class="w-[316rpx] flex self-end items-end justify-between">
 									<text class="text-[var(--price-text-color)] price-font">
-										<text class="text-[20rpx]">￥</text>
-										<text class="text-[28rpx] mr-[10rpx]">{{ item.goodsSku.price }}</text>
+										<text class="text-[26rpx] font-500">￥</text>
+										<text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[0] }}</text>
+										<text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[1] }}</text>
 									</text>
 
 									<view
 										v-if="item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
 										class="flex items-center">
 										<text class="text-[44rpx] text-color iconfont iconjianhao" @click.stop="reduceCart(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
-										<text class="text-[#333] fext-[23rpx] font-500 mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
+										<text class="text-[#333] text-[24rpx] mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
 										<text class="text-[44rpx] text-color iconfont iconjiahao2fill" @click.stop="addCartBtn(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
 									</view>
 									<template v-else>
-										<view v-if="config.cart.control && config.cart.style === 'style-1'" class=" h-[44rpx] relative">
-											<view :id="'itemCart' + index" class="text-[#fff] bg-color h-[44rpx] text-[28rpx] px-[10px] leading-[44rpx] rounded-[22rpx]" @click.stop="itemCart(item.goodsSku, 'itemCart' + index)">{{ config.cart.text }}</view>
+										<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative">
+											<view :id="'itemCart' + index"
+												class="text-[#fff] bg-color h-[44rpx] text-[24rpx] px-[10px] leading-[44rpx] rounded-[22rpx]"
+												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)">
+												{{ config.cart.text }}
+											</view>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-10rpx] top-[-4rpx] transform scale-75 rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 												{{ cartList['goods_' + item.goods_id].totalNum }}
 											</view>
 										</view>
@@ -118,7 +128,7 @@
 												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)"></text>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-10rpx] top-[-4rpx] transform scale-75 rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 												{{ cartList['goods_' + item.goods_id].totalNum }}
 											</view>
 										</view>
@@ -128,20 +138,19 @@
 												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)"></text>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-10rpx] top-[-4rpx] transform scale-75 rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 												{{ cartList['goods_' + item.goods_id].totalNum }}
 											</view>
 										</view>
-										<view v-if="config.cart.control && config.cart.style === 'style-4'"
-											class="w-[44rpx] h-[44rpx] relative">
+										<view v-if="config.cart.control && config.cart.style === 'style-4'" class="w-[44rpx] h-[44rpx] relative">
 											<view :id="'itemCart' + index"
 												class=" flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center"
 												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)">
-												<text class=" iconfont icongouwuche !text-[30rpx]"></text>
+												<text class="iconfont icongouwuche !text-[26rpx]"></text>
 											</view>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
-												:class="['absolute right-[-10rpx] top-[-4rpx] transform scale-75 rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
+												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
 												{{ cartList['goods_' + item.goods_id].totalNum }}
 											</view>
 										</view>
@@ -151,55 +160,63 @@
 						</view>
 
 					</template>
-					<mescroll-empty :option="{ 'icon': img('static/resource/images/empty.png') }" v-if="!list.length && !loading && listLoading"></mescroll-empty>
-
+					<view class="w-[536rpx] bg-[#fff] mx-[16rpx] rounded-[12rpx] flex items-center justify-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control),'child':tabsData[tabActive]?.child_list && tabsData[tabActive]?.child_list.length,'noChild':!tabsData[tabActive]?.child_list || !tabsData[tabActive]?.child_list.length}" v-if="!list.length && !loading && listLoading">
+						<mescroll-empty :option="{tip : '暂无商品'}"></mescroll-empty>
+					</view>
 				</view>
-
 				<add-cart-popup ref="cartRef" />
 			</mescroll-body>
 			<!--  #ifdef  H5 -->
 			<view v-if="config.cart.control && config.cart.event === 'cart'"
-				class="bg-[#fff] z-2 flex justify-between items-center fixed left-0 right-0 bottom-[50px] box-solid px-[24rpx] pt-[10rpx] pb-[18rpx]">
+				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[50px] box-solid px-[24rpx] py-[17rpx] mb-ios">
 				<view class="flex items-center">
-					<view class="w-[70rpx] h-[70rpx] mr-[27rpx] relative">
+					<view class="w-[66rpx] h-[66rpx] mr-[27rpx] relative">
 						<view id="animation-end"
-							class="w-[70rpx] h-[70rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[70rpx]"
+							class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[70rpx]"
 							@click.stop="toCart">
-							<text class="icongouwuche1 iconfont text-[#fff]"></text>
+							<text class="icongouwuche1 iconfont text-[#fff] text-[30rpx]"></text>
 						</view>
 						<view v-if="totalNum"
-							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[25rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
+							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
 							{{ totalNum > 99 ? "99+" : totalNum }}
 						</view>
 					</view>
 					<text class="text-[32rpx] font-500 text-[#333]">总计：</text>
-					<text class="text-[32rpx] font-500 text-[var(--price-text-color)] price-font">￥{{ totalMoney }}</text>
+					<text class="text-[var(--price-text-color)] price-font">
+						<text class="text-[26rpx] font-500">￥</text>
+						<text class="text-[36rpx] font-500">{{ parseFloat(totalMoney).toFixed(2).split('.')[0] }}</text>
+						<text class="text-[24rpx] font-500">.{{ parseFloat(totalMoney).toFixed(2).split('.')[1] }}</text>
+					</text>
 				</view>
 				<button
-					class="w-[180rpx] h-[70rpx] text-[30rpx] leading-[70rpx] text-[#fff] m-0 rounded-full bg-color remove-border"
+					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full bg-color remove-border"
 					shape="circle" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
 			<!--  #ifndef  H5 -->
 			<view v-if="config.cart.control && config.cart.event === 'cart'"
-				class="bg-[#fff] z-2 flex justify-between items-center fixed left-0 right-0 bottom-[100rpx] box-solid px-[24rpx] pt-[10rpx] pb-[18rpx] mb-[env(safe-area-inset-bottom)]">
+				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[100rpx] box-solid px-[24rpx] py-[17rpx] mb-ios">
 				<view class="flex items-center">
-					<view class="w-[70rpx] h-[70rpx] mr-[27rpx] relative">
+					<view class="w-[66rpx] h-[66rpx] mr-[27rpx] relative">
 						<view id="animation-end"
-							class="w-[70rpx] h-[70rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[70rpx]"
+							class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[66rpx]"
 							@click.stop="toCart">
-							<text class="icongouwuche1 iconfont text-[#fff]"></text>
+							<text class="icongouwuche1 iconfont text-[#fff] text-[30rpx]"></text>
 						</view>
 						<view v-if="totalNum"
-							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[25rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
+							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
 							{{ totalNum > 99 ? "99+" : totalNum }}
 						</view>
 					</view>
 					<text class="text-[32rpx] font-500 text-[#333]">总计：</text>
-					<text class="text-[32rpx] font-500 text-[var(--price-text-color)] price-font">￥{{ totalMoney }}</text>
+					<text class="text-[var(--price-text-color)] price-font">
+						<text class="text-[26rpx] font-500">￥</text>
+						<text class="text-[36rpx] font-500">{{ parseFloat(totalMoney).toFixed(2).split('.')[0] }}</text>
+						<text class="text-[24rpx] font-500">.{{ parseFloat(totalMoney).toFixed(2).split('.')[1] }}</text>
+					</text>
 				</view>
 				<button
-					class="w-[180rpx] h-[70rpx] text-[30rpx] leading-[70rpx] text-[#fff] m-0 rounded-full bg-color remove-border"
+					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full bg-color remove-border"
 					shape="circle" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
@@ -209,10 +226,10 @@
 			class="fixed z-999 flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center">
 			<text class=" iconfont icongouwuche !text-[30rpx]"></text>
 		</view>
-		<view class="flex justify-center w-[100%]" v-if="!tabsData.length && !loading">
-			<mescroll-empty :option="{ 'icon': img('static/resource/images/empty.png') }"></mescroll-empty>
+		<view class="flex justify-center items-center w-[100%] bg-[#fff]" v-if="!tabsData.length && !loading">
+			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
 		</view>
-		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" fontSize="16" color="#333"></u-loading-page>
+		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
 		<tabbar addon="shop"/>
 	</view>
 </template>
@@ -365,6 +382,10 @@ const animationAddCart = (row: any, id: any) => {
 /**
  * @description 获取分类数据
  * */
+const initAll = ref({
+	allActive : -1,
+	data: { category_name: "全部", category_id: '' }
+})
 const tabsData = ref<Array<Object>>([])
 const getCategoryData = () => {
 	loading.value = true;
@@ -425,7 +446,7 @@ const subMenuClick = (index: number, data: object) => {
 // 搜索名字
 const searchNameFn = () => {
 	// getMescroll().resetUpScroll();
-	redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
+	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
 }
 
 //点击商品购物车按钮
@@ -506,6 +527,11 @@ const settlement = () => {
 </script>
 
 <style lang="scss" scoped>
+.remove-border {
+	&::after {
+		border: none;
+	}
+}
 .border-color {
 	border-color: var(--primary-color) !important;
 }
@@ -522,7 +548,7 @@ const settlement = () => {
 	position: relative;
 	font-weight: bold;
 
-	&::after {
+	&::before {
 		content: "";
 		position: absolute;
 		bottom: 0;
@@ -538,7 +564,7 @@ const settlement = () => {
 	position: relative;
 	margin-right: 28rpx;
 
-	&::after {
+	&::before {
 		content: "";
 		position: absolute;
 		background-color: #999;
@@ -561,7 +587,9 @@ const settlement = () => {
 .text-color {
 	color: $u-primary;
 }
-
+.border-color {
+	border-color: $u-primary;
+}
 .bg-color {
 	background-color: $u-primary;
 }
@@ -575,7 +603,6 @@ const settlement = () => {
 .search-box .search-ipt {
 	height: 66rpx;
 	background-color: #F6F8F8;
-	padding-left: 20rpx;
 	border-radius: 33rpx;
 }
 
@@ -593,14 +620,12 @@ const settlement = () => {
 	height: 92rpx;
 	text-align: center;
 	line-height: 92rpx;
-
-
+	background-color: #fff;
 }
-
 .tabs-box .tab-item-active {
 	position: relative;
 	color: var(--primary-color);
-
+	background-color:#F4F6F8;
 	&::before {
 		display: inline-block;
 		position: absolute;
@@ -608,10 +633,9 @@ const settlement = () => {
 		top: 50%;
 		transform: translateY(-50%);
 		content: '';
-		width: 8rpx;
-		height: 34rpx;
+		width: 6rpx;
+		height: 48rpx;
 		background-color: var(--primary-color);
-		border-radius: 0rpx 5rpx 5rpx 0rpx;
 	}
 
 	&::after {
@@ -621,10 +645,9 @@ const settlement = () => {
 		top: 50%;
 		transform: translateY(-50%);
 		content: '';
-		width: 8rpx;
-		height: 34rpx;
+		width: 6rpx;
+		height: 48rpx;
 		background-color: var(--primary-color);
-		border-radius: 0rpx 5rpx 5rpx 0rpx;
 	}
 }
 
@@ -640,5 +663,84 @@ const settlement = () => {
 	top: 198rpx !important;
 }
 
+/*  #endif  */
+.scroll-height{
+	height: 100%;
+}
+/*  #ifdef  H5  */
+.cart{
+	.child.noData1{
+		height: calc(100vh - 146rpx - 92rpx - 100rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 92rpx - 100rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.child.noData2{
+		height: calc(100vh - 40rpx - 92rpx - 100rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 92rpx - 100rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.noChild.noData1{
+		height: calc(100vh - 146rpx - 100rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 100rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.noChild.noData2{
+		height: calc(100vh - 40rpx - 100rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 100rpx - 50px - env(safe-area-inset-bottom));
+	}
+}
+.detail{
+	.child.noData1{
+		height: calc(100vh - 146rpx - 92rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 92rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.child.noData2{
+		height: calc(100vh - 40rpx - 92rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 92rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.noChild.noData1{
+		height: calc(100vh - 146rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.noChild.noData2{
+		height: calc(100vh - 40rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 50px - env(safe-area-inset-bottom));
+	}
+}
+/*  #endif  */
+/*  #ifndef  H5  */
+.cart{
+	.child.noData1{
+		height: calc(100vh - 146rpx - 92rpx - 100rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 92rpx - 100rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.child.noData2{
+		height: calc(100vh - 40rpx - 92rpx - 100rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 92rpx - 100rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.noChild.noData1{
+		height: calc(100vh - 146rpx - 100rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 100rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.noChild.noData2{
+		height: calc(100vh - 40rpx - 100rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 100rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+}
+.detail{
+	.child.noData1{
+		height: calc(100vh - 146rpx - 92rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 92rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.child.noData2{
+		height: calc(100vh - 40rpx - 92rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 92rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.noChild.noData1{
+		height: calc(100vh - 146rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.noChild.noData2{
+		height: calc(100vh - 40rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+}
 /*  #endif  */
 </style>

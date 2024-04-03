@@ -55,5 +55,4 @@ class Config extends BaseAdminController
         return success((new ConfigService())->getConfig());
     }
 
-
 }

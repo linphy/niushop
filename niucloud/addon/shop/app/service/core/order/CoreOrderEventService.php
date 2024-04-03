@@ -12,7 +12,6 @@
 namespace addon\shop\app\service\core\order;
 
 use addon\shop\app\job\order_event\OrderCloseAfter;
-use addon\shop\app\job\order_event\OrderCreate;
 use addon\shop\app\job\order_event\OrderCreateAfter;
 use addon\shop\app\job\order_event\OrderDeliveryAfter;
 use addon\shop\app\job\order_event\OrderFinishAfter;

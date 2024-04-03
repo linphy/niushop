@@ -15,6 +15,13 @@ export function getGoodsCategoryTree() {
 }
 
 /**
+ * 获取商品分类列表
+ */
+export function getGoodsCategoryList(params: Record<string, any>) {
+    return request.get(`shop/goods/category/list`, params)
+}
+
+/**
  * 获取商品列表
  */
 export function getGoodsPages(params: Record<string, any>) {

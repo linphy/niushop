@@ -11,7 +11,7 @@
         <el-card class="box-card !border-none" shadow="never">
             <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('templateName')" prop="template_name">
-                    <el-input v-model="formData.template_name" clearable :placeholder="t('templateNamePlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.template_name" clearable :placeholder="t('templateNamePlaceholder')" class="input-width" maxlength="60" />
                 </el-form-item>
                 <el-form-item :label="t('feeTypeName')" prop="fee_type">
                     <el-radio-group v-model="formData.fee_type">
@@ -32,22 +32,22 @@
                         </el-table-column>
                         <el-table-column :label="feeLabel.first">
                             <template #default="{ $index }">
-                                <el-input v-model="feeData[$index].snum" />
+                                <el-input v-model="feeData[$index].snum"  maxlength="8"  @keyup="filterDigit($event)" @blur="feeData[$index].snum = $event.target.value"/>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('fee')">
                             <template #default="{ $index }">
-                                <el-input v-model="feeData[$index].sprice" />
+                                <el-input v-model="feeData[$index].sprice"  maxlength="8" @keyup="filterDigit($event)" @blur="feeData[$index].sprice = $event.target.value"/>
                             </template>
                         </el-table-column>
                         <el-table-column :label="feeLabel.continue">
                             <template #default="{ $index }">
-                                <el-input v-model="feeData[$index].xnum" />
+                                <el-input v-model="feeData[$index].xnum" maxlength="8" @keyup="filterDigit($event)" @blur="feeData[$index].xnum = $event.target.value"/>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('continueFee')">
                             <template #default="{ $index }">
-                                <el-input v-model="feeData[$index].xprice" />
+                                <el-input v-model="feeData[$index].xprice" @keyup="filterDigit($event)"  maxlength="8"  @blur="feeData[$index].xprice = $event.target.value"/>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('operation')" align="right" width="150">
@@ -75,12 +75,12 @@
                         </el-table-column>
                         <el-table-column :label="freeShippingLabel">
                             <template #default="{ $index }">
-                                <el-input v-model="freeShippingData[$index].free_shipping_num" />
+                                <el-input v-model="freeShippingData[$index].free_shipping_num" @keyup="filterDigit($event)"  maxlength="8" @blur="freeShippingData[$index].free_shipping_num = $event.target.value"/>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('freeShippingPrice')">
                             <template #default="{ $index }">
-                                <el-input v-model="freeShippingData[$index].free_shipping_price" />
+                                <el-input v-model="freeShippingData[$index].free_shipping_price"  @keyup="filterDigit($event)"  maxlength="8"  @blur="freeShippingData[$index].free_shipping_price = $event.target.value"/>
                             </template>
                         </el-table-column>
                         <el-table-column :label="t('operation')" align="right" width="150">
@@ -152,6 +152,7 @@ import { addShippingTemplate, editShippingTemplate, getShippingTemplateInfo } fr
 import { AnyObject } from '@/types/global'
 import { useRoute, useRouter } from 'vue-router'
 import { getAreatree } from '@/app/api/sys'
+import { filterNumber, filterDigit } from '@/utils/common'
 import Test from '@/utils/test'
 
 const showSelectAreaDialog = ref(false)

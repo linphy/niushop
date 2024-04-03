@@ -3,17 +3,19 @@
         class="diy-dialog-wrap" :destroy-on-close="true">
         <div v-loading="loading" class="max-h-[600px] overflow-y-auto">
 			<h3 class="panel-title">{{ t('deliveryInfo') }}</h3>
-			<div class="mb-[20px] text-[14px] flex justify-between">
-				<div>
-					<span>{{ t('devliveryTime') }}：</span><span>{{ packageData.create_time }}</span>
-				</div>
-				<div v-if="packageData.company">
-					<span class="ml-[60px]">{{ t('companyName') }}：</span><span>{{ packageData.company.company_name }}</span>
-				</div>
-				<div>
-					<span class="ml-[60px]">{{ t('logisticNo') }}：</span><span>{{ packageData.express_number }}</span>
-				</div>
-			</div>
+	        <div class="mb-[20px] text-[14px] flex justify-between">
+		        <div>
+			        <span>{{ t('devliveryTime') }}：</span><span>{{ packageData.create_time }}</span>
+		        </div>
+	        </div>
+	        <div class="mb-[20px] text-[14px] flex">
+		        <div v-if="packageData.company">
+			        <span>{{ t('companyName') }}：</span><span>{{ packageData.company.company_name }}</span>
+		        </div>
+		        <div>
+			        <span class="ml-[60px]">{{ t('logisticNo') }}：</span><span>{{ packageData.express_number }}</span>
+		        </div>
+	        </div>
 			<h3 class="panel-title">{{ t('goodsInfo') }}</h3>
 			<div class="mb-[20px]">
 				<el-table :data="packageData.order_goods" size="large">

@@ -2,7 +2,7 @@
     <u-popup :show="show" @close="show = false" mode="bottom" :round="10" :closeable="true">
         <view class="text-center p-[30rpx]">请选择优惠券</view>
         <view class="border-0 !border-b !border-[#eee] border-solid" v-if="!type">
-            <u-tabs :list="tabs" @click="switchTab" :current="current" itemStyle="width:50%;height:88rpx;box-sizing: border-box;"></u-tabs>
+            <u-tabs :list="tabs" @click="switchTab" :current="current" itemStyle="width:50%;height:88rpx;box-sizing: border-box;" lineColor="var(--primary-color)"></u-tabs>
         </view>
         <scroll-view scroll-y="true" class="h-[50vh]">
             <view class="p-[30rpx] pt-0 text-sm" v-show="current == 0">

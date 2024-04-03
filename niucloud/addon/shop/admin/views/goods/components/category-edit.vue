@@ -2,10 +2,10 @@
     <el-dialog v-model="showDialog" :title="title" width="480" class="diy-dialog-wrap" :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
             <el-form-item :label="t('categoryName')" prop="category_name">
-                <el-input v-model="formData.category_name" clearable :placeholder="t('categoryNamePlaceholder')" class="input-width" maxlength="10" show-word-limit />
+                <el-input v-model.trim="formData.category_name" clearable :placeholder="t('categoryNamePlaceholder')" class="input-width" maxlength="10" show-word-limit />
             </el-form-item>
             <el-form-item :label="t('pid')" prop="pid">
-                <el-select v-model="formData.pid" clearable :disabled="!!formData.child_count" placeholder="Select" class="input-width">
+                <el-select v-model="formData.pid" clearable :disabled="!!formData.child_count" :placeholder="t('pidPlaceholder')" class="input-width">
                     <el-option label="顶级分类" :value="0" />
                     <el-option v-for="(item) in optionList" :key="item.category_id" :label="item.category_name" :value="item.category_id" />
                 </el-select>
@@ -95,7 +95,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 loading.value = false
                 showDialog.value = false
                 emit('complete')
-            // eslint-disable-next-line n/handle-callback-err
             }).catch(err => {
                 loading.value = false
             })

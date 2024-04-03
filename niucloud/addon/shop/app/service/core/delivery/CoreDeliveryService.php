@@ -37,19 +37,18 @@ class CoreDeliveryService extends BaseCoreService
      * @return array
      */
 
-    public function setConfig(int $site_id, $key, $data)
+    public function setConfig($key, $data)
     {
-        $this->core_config_service->setConfig($site_id, $key, $data);
+        $this->core_config_service->setConfig($key, $data);
         return true;
     }
-
 
     /**
      * 物流
      */
-    public function getExpressConfig(int $site_id)
+    public function getExpressConfig()
     {
-        $data = ( new CoreConfigService() )->getConfigValue($site_id, 'SHOP_DELIVERY_CONFIG');
+        $data = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
         if (empty($data)) {
             $expressInfo = [
                 'name' => '物流配送',
@@ -66,9 +65,9 @@ class CoreDeliveryService extends BaseCoreService
     /**
      * 同城
      */
-    public function getLocalDeliveryConfig(int $site_id)
+    public function getLocalDeliveryConfig()
     {
-        $data = ( new CoreConfigService() )->getConfigValue($site_id, 'SHOP_DELIVERY_CONFIG');
+        $data = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
         if (empty($data)) {
             $localDeliveryInfo = [
                 'name' => '同城配送',
@@ -84,9 +83,9 @@ class CoreDeliveryService extends BaseCoreService
     /**
      * 门店
      */
-    public function getStoreConfig(int $site_id)
+    public function getStoreConfig()
     {
-        $data = ( new CoreConfigService() )->getConfigValue($site_id, 'SHOP_DELIVERY_CONFIG');
+        $data = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
         if (empty($data)) {
             $storeInfo = [
                 'name' => '门店配送',
@@ -104,9 +103,9 @@ class CoreDeliveryService extends BaseCoreService
      * 查询物流配置
      * @return array
      */
-    public function getDeliveryConfig(int $site_id)
+    public function getDeliveryConfig()
     {
-        $data = ( new CoreConfigService() )->getConfigValue($site_id,'SHOP_DELIVERY_CONFIG');
+        $data = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
         if (empty($data)) {
             $list = [
                 'express' => [
@@ -141,9 +140,9 @@ class CoreDeliveryService extends BaseCoreService
      * 查询物流配置
      * @return array
      */
-    public function getDeliveryList(int $site_id)
+    public function getDeliveryList()
     {
-        $deliver = ( new CoreConfigService() )->getConfigValue($site_id, 'SHOP_DELIVERY_CONFIG');
+        $deliver = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
         foreach ($deliver as $value) {
             $list[ $value[ 'key' ] ] = [
                 'name' => $value[ 'name' ],

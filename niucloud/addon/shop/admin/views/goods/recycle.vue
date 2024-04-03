@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -10,12 +9,10 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="goodsTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('goodsName')" prop="goods_name">
-                        <el-input v-model="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" maxlength="60" />
+                        <el-input v-model.trim="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" maxlength="60" />
                     </el-form-item>
                     <el-form-item :label="t('goodsCategory')" prop="goods_category">
-                        <el-cascader :props="goodsCategoryProps" v-model="goodsTable.searchParam.goods_category"
-                            :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable
-                            filterable @change="categoryHandleChange" />
+                        <el-cascader  v-model="goodsTable.searchParam.goods_category" :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable :props="{ value: 'value', label: 'label', emitPath:false }"  />
                     </el-form-item>
                     <el-form-item :label="t('goodsType')" prop="goods_type">
                         <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsTypePlaceholder')" clearable>
@@ -85,11 +82,11 @@
                     </el-table-column>
 
                 </el-table>
-                <div class="mt-[16px] flex">
-                    <div class="flex items-center flex-1">
+                <div class="mt-[16px] flex justify-end">
+                    <!-- <div class="flex items-center flex-1">
                         <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange" :indeterminate="isIndeterminate" />
                         <el-button @click="batchRecycle" size="small">{{ t('batchRecycle') }}</el-button>
-                    </div>
+                    </div> -->
 
                     <el-pagination v-model:current-page="goodsTable.page" v-model:page-size="goodsTable.limit"
                         layout="total, sizes, prev, pager, next, jumper" :total="goodsTable.total"
@@ -131,7 +128,9 @@ const goodsTable = reactive({
     searchParam: {
         goods_name: '',
         goods_category: [],
-        goods_type: ''
+        goods_type: '',
+        order: '',
+        sort: ''
     }
 })
 
@@ -139,9 +138,6 @@ const searchFormRef = ref()
 
 // 商品分类
 const goodsCategoryOptions: any = reactive([])
-const goodsCategoryProps = {
-    checkStrictly: true
-}
 
 // 商品类型
 const goodsType: any = reactive([])
@@ -213,7 +209,7 @@ const handleSelectionChange = (val: []) => {
         isIndeterminate.value = false
     }
 
-    if (multipleSelection.value.length == goodsTable.data.length) {
+    if (multipleSelection.value.length == goodsTable.data.length && goodsTable.data.length && multipleSelection.value.length) {
         toggleCheckbox.value = true
     }
 }
@@ -247,6 +243,7 @@ const batchRecycle = () => {
             goods_ids: goodsIds
         }).then(() => {
             loadGoodsList()
+            toggleCheckbox.value = false
             repeat.value = false
         }).catch(() => {
             repeat.value = false
@@ -297,8 +294,7 @@ const recycleEvent = (data: any) => {
                 loadGoodsList()
             }
             repeat.value = false
-        // eslint-disable-next-line n/handle-callback-err
-        }).catch((err: any) => {
+        }).catch(() => {
             repeat.value = false
         })
     })
@@ -310,6 +306,22 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
     loadGoodsList()
 }
+
+// 监听排序
+const sortChange = (event: any) => {
+    let sort = ''
+    if (event.order == 'ascending') {
+        sort = 'asc'
+    } else if (event.order == 'descending') {
+        sort = 'desc'
+    }
+    if (sort) {
+        goodsTable.searchParam.order = event.prop
+        goodsTable.searchParam.sort = sort
+    }
+    loadGoodsList()
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -321,5 +333,23 @@ const resetForm = (formEl: FormInstance | undefined) => {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+}
+</style>
+<style>
+.recyle .el-cascader-panel .el-radio{
+    width: 100% !important ;
+    height: 100% !important;
+    z-index: 10;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.recyle .el-cascader-panel .el-radio__input{
+    margin-left: 20px;
+}
+
+.recyle .el-cascader-panel .el-cascader-node__label {
+    margin-left: 12px;
 }
 </style>

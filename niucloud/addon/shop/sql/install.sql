@@ -2,7 +2,6 @@
 DROP TABLE IF EXISTS `{{prefix}}shop_address`;
 CREATE TABLE `{{prefix}}shop_address` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `contact_name` varchar(255) NOT NULL DEFAULT '' COMMENT '联系人',
   `mobile` varchar(50) NOT NULL DEFAULT '' COMMENT '手机号',
   `province_id` int(11) NOT NULL DEFAULT '0' COMMENT '省',
@@ -23,7 +22,6 @@ CREATE TABLE `{{prefix}}shop_address` (
 DROP TABLE IF EXISTS `{{prefix}}shop_cart`;
 CREATE TABLE `{{prefix}}shop_cart` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '购物车表ID',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `member_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '会员ID',
   `goods_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '商品ID',
   `sku_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'sku id',
@@ -45,7 +43,6 @@ CREATE TABLE `{{prefix}}shop_cart` (
 DROP TABLE IF EXISTS `{{prefix}}shop_coupon`;
 CREATE TABLE `{{prefix}}shop_coupon` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `title` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
   `start_time` int(11) NOT NULL DEFAULT '0' COMMENT '活动开启时间',
   `end_time` int(11) NOT NULL DEFAULT '0' COMMENT '活动结束时间',
@@ -73,7 +70,6 @@ CREATE TABLE `{{prefix}}shop_coupon` (
 DROP TABLE IF EXISTS `{{prefix}}shop_coupon_goods`;
 CREATE TABLE `{{prefix}}shop_coupon_goods` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `coupon_id` int(11) NOT NULL DEFAULT '0' COMMENT '优惠券模板id',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品id',
   `category_id` int(11) NOT NULL DEFAULT '0' COMMENT '分类id',
@@ -87,7 +83,6 @@ CREATE TABLE `{{prefix}}shop_coupon_goods` (
 DROP TABLE IF EXISTS `{{prefix}}shop_coupon_member`;
 CREATE TABLE `{{prefix}}shop_coupon_member` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '优惠券发放记录id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `coupon_id` int(11) NOT NULL DEFAULT '0' COMMENT '优惠券id',
   `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员id',
   `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '领取时间',
@@ -110,7 +105,6 @@ CREATE TABLE `{{prefix}}shop_coupon_member` (
 DROP TABLE IF EXISTS `{{prefix}}shop_delivery_company`;
 CREATE TABLE `{{prefix}}shop_delivery_company` (
   `company_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `company_name` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司名称',
   `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司logo',
   `url` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司网站',
@@ -124,7 +118,6 @@ CREATE TABLE `{{prefix}}shop_delivery_company` (
 DROP TABLE IF EXISTS `{{prefix}}shop_delivery_deliver`;
 CREATE TABLE `{{prefix}}shop_delivery_deliver` (
   `deliver_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '配送员id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `deliver_name` varchar(255) NOT NULL DEFAULT '' COMMENT '配送员名称',
   `deliver_mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '配送员手机号',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
@@ -137,7 +130,6 @@ CREATE TABLE `{{prefix}}shop_delivery_deliver` (
 DROP TABLE IF EXISTS `{{prefix}}shop_delivery_local_delivery`;
 CREATE TABLE `{{prefix}}shop_delivery_local_delivery` (
   `local_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `fee_type` varchar(30) NOT NULL DEFAULT '' COMMENT '费用类型',
   `base_dist` decimal(10,1) NOT NULL DEFAULT '0.0' COMMENT '多少km内',
   `base_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '配送费用',
@@ -156,7 +148,6 @@ CREATE TABLE `{{prefix}}shop_delivery_local_delivery` (
 DROP TABLE IF EXISTS `{{prefix}}shop_delivery_shipping_template`;
 CREATE TABLE `{{prefix}}shop_delivery_shipping_template` (
   `template_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `template_name` varchar(50) NOT NULL DEFAULT '' COMMENT '模板名称',
   `fee_type` varchar(20) NOT NULL DEFAULT '' COMMENT '运费计算方式1.重量2体积3按件',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
@@ -170,7 +161,6 @@ CREATE TABLE `{{prefix}}shop_delivery_shipping_template` (
 DROP TABLE IF EXISTS `{{prefix}}shop_delivery_shipping_template_item`;
 CREATE TABLE `{{prefix}}shop_delivery_shipping_template_item` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `template_id` int(11) NOT NULL DEFAULT '0' COMMENT '模板id',
   `city_id` int(11) NOT NULL DEFAULT '0' COMMENT '市id',
   `snum` int(11) NOT NULL DEFAULT '0' COMMENT '起步计算标准',
@@ -198,7 +188,6 @@ CREATE TABLE `{{prefix}}shop_delivery_shipping_template_item` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods`;
 CREATE TABLE `{{prefix}}shop_goods` (
   `goods_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `goods_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
   `goods_type` varchar(50) NOT NULL DEFAULT 'real' COMMENT '商品类型',
   `sub_title` varchar(255) NOT NULL DEFAULT '' COMMENT '副标题',
@@ -239,7 +228,6 @@ CREATE TABLE `{{prefix}}shop_goods` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_brand`;
 CREATE TABLE `{{prefix}}shop_goods_brand` (
   `brand_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '品牌ID',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `brand_name` varchar(100) NOT NULL DEFAULT '' COMMENT '品牌名称',
   `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '品牌logo',
   `desc` text NOT NULL COMMENT '品牌介绍',
@@ -254,7 +242,6 @@ CREATE TABLE `{{prefix}}shop_goods_brand` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_category`;
 CREATE TABLE `{{prefix}}shop_goods_category` (
   `category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品分类id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `category_name` varchar(255) NOT NULL DEFAULT '' COMMENT '分类名称',
   `image` varchar(255) NOT NULL DEFAULT '' COMMENT '分类图片',
   `level` int(11) NOT NULL DEFAULT '0' COMMENT '层级',
@@ -271,7 +258,6 @@ CREATE TABLE `{{prefix}}shop_goods_category` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_collect`;
 CREATE TABLE `{{prefix}}shop_goods_collect` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员id',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品id',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '收藏时间',
@@ -284,7 +270,6 @@ CREATE TABLE `{{prefix}}shop_goods_collect` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_evaluate`;
 CREATE TABLE `{{prefix}}shop_goods_evaluate` (
   `evaluate_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
   `order_goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单项ID',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品ID',
@@ -314,7 +299,6 @@ CREATE TABLE `{{prefix}}shop_goods_evaluate` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_label`;
 CREATE TABLE `{{prefix}}shop_goods_label` (
   `label_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '标签ID',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `label_name` varchar(255) NOT NULL DEFAULT '' COMMENT '标签名称',
   `memo` varchar(255) NOT NULL DEFAULT '' COMMENT '标签说明',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
@@ -327,7 +311,6 @@ CREATE TABLE `{{prefix}}shop_goods_label` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_service`;
 CREATE TABLE `{{prefix}}shop_goods_service` (
   `service_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `service_name` varchar(255) NOT NULL DEFAULT '' COMMENT '服务名称',
   `image` varchar(255) NOT NULL DEFAULT '' COMMENT '图片',
   `desc` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
@@ -340,7 +323,6 @@ CREATE TABLE `{{prefix}}shop_goods_service` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_sku`;
 CREATE TABLE `{{prefix}}shop_goods_sku` (
   `sku_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品sku_id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `sku_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku名称',
   `sku_image` varchar(2000) NOT NULL DEFAULT '' COMMENT 'sku主图',
   `sku_no` varchar(255) NOT NULL DEFAULT '' COMMENT '商品sku编码',
@@ -365,7 +347,6 @@ CREATE TABLE `{{prefix}}shop_goods_sku` (
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_spec`;
 CREATE TABLE `{{prefix}}shop_goods_spec` (
   `spec_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '规格id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联商品id',
   `spec_name` varchar(255) NOT NULL DEFAULT '' COMMENT '规格项名称',
   `spec_values` text COMMENT '规格值名称，多个逗号隔开',
@@ -376,7 +357,6 @@ CREATE TABLE `{{prefix}}shop_goods_spec` (
 DROP TABLE IF EXISTS `{{prefix}}shop_invoice`;
 CREATE TABLE `{{prefix}}shop_invoice` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员id',
   `trade_type` varchar(10) NOT NULL DEFAULT 'order' COMMENT '开票分类 order:订单',
   `trade_id` int(11) NOT NULL DEFAULT '0' COMMENT '业务id',
@@ -394,7 +374,7 @@ CREATE TABLE `{{prefix}}shop_invoice` (
   `money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '开票金额',
   `is_invoice` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否开票',
   `invoice_number` varchar(50) NOT NULL DEFAULT '' COMMENT '发票代码',
-  `invoice_voucher` varchar(1000) NOT NULL COMMENT '发票凭证',
+  `invoice_voucher` varchar(1000) NOT NULL DEFAULT '' COMMENT '发票凭证',
   `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '申请时间',
   `invoice_time` int(11) NOT NULL DEFAULT '0' COMMENT '开票时间',
@@ -406,7 +386,6 @@ CREATE TABLE `{{prefix}}shop_invoice` (
 DROP TABLE IF EXISTS `{{prefix}}shop_order`;
 CREATE TABLE `{{prefix}}shop_order` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_no` varchar(50) NOT NULL DEFAULT '' COMMENT '订单编号',
   `body` varchar(1000) NOT NULL DEFAULT '' COMMENT '订单内容',
   `order_type` varchar(55) NOT NULL DEFAULT '' COMMENT '订单类型',
@@ -431,13 +410,13 @@ CREATE TABLE `{{prefix}}shop_order` (
   `timeout` int(11) NOT NULL DEFAULT '0' COMMENT '通用业务超时时间记录',
   `delivery_type` varchar(255) NOT NULL DEFAULT '' COMMENT '配送方式',
   `take_store_id` int(11) NOT NULL DEFAULT '0' COMMENT '自提点',
-  `taker_name` varchar(50) NOT NULL DEFAULT '' COMMENT '收货人',
+  `taker_name` varchar(500) NOT NULL DEFAULT '' COMMENT '收货人',
   `taker_mobile` varchar(50) NOT NULL DEFAULT '' COMMENT '收货人手机号',
   `taker_province` int(11) NOT NULL DEFAULT '0' COMMENT '收货省',
   `taker_city` int(11) NOT NULL DEFAULT '0' COMMENT '收货市',
   `taker_district` int(11) NOT NULL DEFAULT '0' COMMENT '收货区县',
-  `taker_address` varchar(50) NOT NULL DEFAULT '' COMMENT '收货地址',
-  `taker_full_address` varchar(50) NOT NULL DEFAULT '' COMMENT '收货详细地址',
+  `taker_address` varchar(1000) NOT NULL DEFAULT '' COMMENT '收货地址',
+  `taker_full_address` varchar(1000) NOT NULL DEFAULT '' COMMENT '收货详细地址',
   `taker_longitude` varchar(50) NOT NULL DEFAULT '' COMMENT '收货地址经度',
   `taker_latitude` varchar(50) NOT NULL DEFAULT '' COMMENT '收货详细纬度',
   `taker_store_id` varchar(50) NOT NULL DEFAULT '' COMMENT '收货门店',
@@ -456,7 +435,6 @@ CREATE TABLE `{{prefix}}shop_order` (
 DROP TABLE IF EXISTS `{{prefix}}shop_order_delivery`;
 CREATE TABLE `{{prefix}}shop_order_delivery` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_id` int(11) NOT NULL DEFAULT '0',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '包裹名称',
   `delivery_type` varchar(50) NOT NULL DEFAULT '' COMMENT '配送方式',
@@ -474,7 +452,6 @@ CREATE TABLE `{{prefix}}shop_order_delivery` (
 DROP TABLE IF EXISTS `{{prefix}}shop_order_discount`;
 CREATE TABLE `{{prefix}}shop_order_discount` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
   `order_goods_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '参与的订单商品项',
   `type` varchar(255) NOT NULL DEFAULT '' COMMENT '类型 discount 优惠，gift 赠送',
@@ -492,7 +469,6 @@ CREATE TABLE `{{prefix}}shop_order_discount` (
 DROP TABLE IF EXISTS `{{prefix}}shop_order_discount_goods`;
 CREATE TABLE `{{prefix}}shop_order_discount_goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_discount_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单优惠id',
   `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
   `order_goods_id` varchar(255) NOT NULL DEFAULT '' COMMENT '参与的订单商品项',
@@ -506,7 +482,6 @@ CREATE TABLE `{{prefix}}shop_order_discount_goods` (
 DROP TABLE IF EXISTS `{{prefix}}shop_order_goods`;
 CREATE TABLE `{{prefix}}shop_order_goods` (
   `order_goods_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
   `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '购买会员id',
   `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品id',
@@ -548,7 +523,6 @@ CREATE TABLE `{{prefix}}shop_order_log` (
 DROP TABLE IF EXISTS `{{prefix}}shop_order_refund`;
 CREATE TABLE `{{prefix}}shop_order_refund` (
   `refund_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
   `order_goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单项id',
   `order_refund_no` varchar(255) NOT NULL DEFAULT '0' COMMENT '退款单号',
@@ -589,7 +563,6 @@ CREATE TABLE `{{prefix}}shop_order_refund_log` (
 DROP TABLE IF EXISTS `{{prefix}}shop_stat`;
 CREATE TABLE `{{prefix}}shop_stat` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `date` varchar(255) NOT NULL DEFAULT '' COMMENT '日期',
   `date_time` int(11) NOT NULL DEFAULT '0' COMMENT '时间戳',
   `order_num` int(11) NOT NULL DEFAULT '0' COMMENT '订单总数',
@@ -603,7 +576,6 @@ CREATE TABLE `{{prefix}}shop_stat` (
 DROP TABLE IF EXISTS `{{prefix}}shop_store`;
 CREATE TABLE `{{prefix}}shop_store` (
   `store_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_id` int NOT NULL DEFAULT 0 COMMENT '站点id',
   `store_name` varchar(255) NOT NULL DEFAULT '' COMMENT '门店名称',
   `store_desc` varchar(3000) NOT NULL DEFAULT '' COMMENT '简介',
   `store_logo` varchar(255) NOT NULL DEFAULT '' COMMENT '门店logo',

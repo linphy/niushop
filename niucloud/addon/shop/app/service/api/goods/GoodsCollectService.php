@@ -31,7 +31,7 @@ class GoodsCollectService extends BaseApiService
      */
     public function getMemberGoodsCollectList()
     {
-        $search_model = $this->model->where([ [ 'member_id', '=', $this->member_id ], [ 'site_id', '=', $this->site_id ] ])->with('goods')->order('id desc');
+        $search_model = $this->model->where([ [ 'member_id', '=', $this->member_id ] ])->with('goods')->order('id desc');
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -42,11 +42,9 @@ class GoodsCollectService extends BaseApiService
     public function addGoodsCollect($data)
     {
         $data[ 'member_id' ] = $this->member_id;
-        $data[ 'site_id' ] = $this->site_id;
         $info = $this->model->where([
             [ 'member_id', '=', $data[ 'member_id' ] ],
             [ 'goods_id', '=', $data[ 'goods_id' ] ],
-            [ 'site_id', '=', $this->site_id ]
         ])->findOrEmpty()->toArray();
 
         if (!empty($info)) {
@@ -64,7 +62,7 @@ class GoodsCollectService extends BaseApiService
      */
     public function cancelGoodsCollect($data)
     {
-        $res = $this->model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ], [ 'member_id', '=', $this->member_id ], [ 'site_id', '=', $this->site_id ] ])->delete();
+        $res = $this->model->where([ [ 'goods_id', '=', $data[ 'goods_id' ] ], [ 'member_id', '=', $this->member_id ] ])->delete();
         return $res;
     }
 }

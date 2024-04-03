@@ -49,7 +49,6 @@ class OrderService extends BaseAdminService
             $pay_where[] = ['pay.type', '=',  $where[ 'pay_type' ] ];
         }
         $search_model = $this->model
-            ->where([ ['order.site_id', '=', $this->site_id ] ])
             ->withSearch([ 'search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time' ], $where)
             ->field($field)
             ->withJoin([
@@ -84,7 +83,7 @@ class OrderService extends BaseAdminService
     public function getDetail(int $order_id)
     {
         $field = 'order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money';
-        $info = $this->model->where([ [ 'order_id', '=', $order_id ], ['site_id', '=', $this->site_id] ])->field($field)
+        $info = $this->model->where([ [ 'order_id', '=', $order_id ] ])->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
@@ -94,7 +93,7 @@ class OrderService extends BaseAdminService
                         $query->field('member_id, nickname, mobile, headimg');
                     },
                     'order_log' => function($query) {
-                        $query->field('order_id, content, main_type, create_time, main_id, type')->order("create_time desc")->append([ 'main_type_name', 'type_name', 'main_name' ]);
+                        $query->field('order_id, content, main_type, create_time, main_id, type')->order("create_time desc, id desc")->append([ 'main_type_name', 'type_name', 'main_name' ]);
                     }
                 ])->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
         $order_status_list = OrderDict::getStatus();
@@ -109,7 +108,7 @@ class OrderService extends BaseAdminService
         if ($info[ 'delivery_type' ] == DeliveryDict::EXPRESS) {
             $info[ 'order_delivery' ] = ( new OrderDelivery() )
                 ->where([ [ 'order_id', '=', $info[ 'order_id' ] ] ])
-                ->field('id, order_id, name, delivery_type, express_company_id, express_number, create_time')
+                ->field('id, order_id, name, delivery_type, sub_delivery_type,express_company_id, express_number, create_time')
                 ->select()->toArray();
         }
 
@@ -128,7 +127,7 @@ class OrderService extends BaseAdminService
      */
     public function shopRemark($data)
     {
-        $this->model->where([ [ 'order_id', '=', $data[ 'order_id' ] ], ['site_id', '=', $this->site_id ] ])->update([ 'shop_remark' => $data[ 'shop_remark' ] ]);
+        $this->model->where([ [ 'order_id', '=', $data[ 'order_id' ] ] ])->update([ 'shop_remark' => $data[ 'shop_remark' ] ]);
         return true;
     }
 
@@ -145,10 +144,10 @@ class OrderService extends BaseAdminService
             "refund_order" => 0, //退款中（订单项）
         ];
 
-        $data[ 'wait_pay_order' ] = $this->model->where([ ['site_id', '=', $this->site_id ],[ 'status', '=', OrderDict::WAIT_PAY ] ])->count();
-        $data[ 'wait_delivery_order' ] = $this->model->where([ ['site_id', '=', $this->site_id ],[ 'status', '=', OrderDict::WAIT_DELIVERY ] ])->count();
-        $data[ 'wait_take_order' ] = $this->model->where([ ['site_id', '=', $this->site_id ],[ 'status', '=', OrderDict::WAIT_TAKE ] ])->count();
-        $data[ 'refund_order' ] = ( new OrderGoods() )->where([ ['site_id', '=', $this->site_id ],[ 'status', '=', OrderGoodsDict::REFUNDING ] ])->count();
+        $data[ 'wait_pay_order' ] = $this->model->where([ [ 'status', '=', OrderDict::WAIT_PAY ] ])->count();
+        $data[ 'wait_delivery_order' ] = $this->model->where([ [ 'status', '=', OrderDict::WAIT_DELIVERY ] ])->count();
+        $data[ 'wait_take_order' ] = $this->model->where([ [ 'status', '=', OrderDict::WAIT_TAKE ] ])->count();
+        $data[ 'refund_order' ] = ( new OrderGoods() )->where([ [ 'status', '=', OrderGoodsDict::REFUNDING ] ])->count();
 
         return $data;
     }

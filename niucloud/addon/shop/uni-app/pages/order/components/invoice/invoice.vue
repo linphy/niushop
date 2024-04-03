@@ -1,10 +1,9 @@
 <template>
     <u-popup :show="show" @close="show = false" mode="bottom" :round="10" :closeable="true">
         <view class="text-center p-[30rpx]">请填写发票信息</view>
-        <scroll-view scroll-y="true" class="h-[50vh]">
+        <scroll-view scroll-y="true" class="max-h-[50vh]">
             <view class="p-[30rpx] pt-0 text-sm">
-                <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules"
-                    ref="formRef">
+                <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
                     <view class="mt-[10rpx]">
                         <u-form-item label="需要发票" :border-bottom="true">
                             <view class="flex">
@@ -35,25 +34,26 @@
                         <view class="mt-[10rpx]">
                             <u-form-item label="发票内容" prop="header_name" :border-bottom="true">
                                 <view class="flex">
-                                <view
-                                    class="rounded px-[30rpx] py-[10rpx] mr-[20rpx] border-1 !border-[#eee] border-solid text-sm"
-                                    :class="{'bg-primary text-white !border-primary': formData.name == item}"
-                                    @click="formData.name = item" v-for="item in config.invoice_content">{{ item }}</view>
+                                    <block v-for="item in config.invoice_content">
+                                        <view class="rounded px-[30rpx] py-[10rpx] mr-[20rpx] border-1 !border-[#eee] border-solid text-sm"
+                                            :class="{'bg-primary text-white !border-primary': formData.name == item}"
+                                            @click="formData.name = item">{{ item  }}</view>
+                                    </block>
                                 </view>
                             </u-form-item>
                         </view>
                         <view class="mt-[10rpx]">
                             <u-form-item label="发票抬头" prop="header_name" :border-bottom="true">
-                                <u-input v-model="formData.header_name" border="none" clearable placeholder="请输入发票抬头"></u-input>
+                                <u-input v-model.trim="formData.header_name" border="none" clearable placeholder="请输入发票抬头" ></u-input>
                             </u-form-item>
                         </view>
-                        <view v-show="formData.header_type == 2">
+                        <view v-if="formData.header_type == 2">
                             <view class="mt-[10rpx]">
                                 <u-form-item label="纳税人识别号" prop="tax_number" :border-bottom="true">
-                                    <u-input v-model="formData.tax_number" border="none" clearable placeholder="请输入纳税人识别号"></u-input>
+                                    <u-input v-model.trim="formData.tax_number" border="none" clearable placeholder="请输入纳税人识别号"></u-input>
                                 </u-form-item>
                             </view>
-                            <view class="py-[20rpx] flex items-end">
+                            <view class="py-[20rpx] flex items-baseline">
                                 <text class="text-[30rpx]">更多选填内容</text>
                                 <text class="text-xs text-gray-subtitle ml-[10rpx]">注册地址、电话、开户银行及账号</text>
                                 <view class="text-xs text-right flex-1" @click="optionalShow = !optionalShow">
@@ -126,6 +126,7 @@
         data.invoice_content.length && (formData.value.name = data.invoice_content[0])
     }).catch()
 
+
     const formRef = ref(null)
 
     const rules = computed(() => {
@@ -136,12 +137,22 @@
                 message: '请输入发票抬头',
                 trigger: ['blur', 'change'],
             },
-            'tax_number': {
+            'tax_number': [{
                 type: 'string',
                 required: need.value && formData.value.header_type == 2,
                 message: '请输入纳税人识别号',
                 trigger: ['blur', 'change'],
-            }
+            },
+            {
+                validator(rule, value, callback) {
+                    const limit =  /^[0-9a-zA-Z]+$/;
+                    if (!limit.test(value) && formData.header_type == 2){
+                        callback(new Error('请输入正确的纳税人识别号'))
+                    } else {
+                        callback()
+                    }
+                    }
+            }]
         }
     })
 

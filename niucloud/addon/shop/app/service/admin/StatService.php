@@ -28,7 +28,7 @@ class StatService extends BaseAdminService
      * @return array
      */
     public function getStat(string $start_date = '', string $end_date = '') {
-        return (new CoreStatService())->getStat($this->site_id, $start_date, $end_date);
+        return (new CoreStatService())->getStat($start_date, $end_date);
     }
 
     /**
@@ -38,7 +38,7 @@ class StatService extends BaseAdminService
      * @return array|null
      */
     public function getStatData(string $start_date, string $end_date) {
-        return (new CoreStatService())->getStatData($this->site_id, $start_date, $end_date);
+        return (new CoreStatService())->getStatData($start_date, $end_date);
     }
 
     /**

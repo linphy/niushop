@@ -17,6 +17,7 @@ use addon\shop\app\model\goods\GoodsSpec;
 use addon\shop\app\model\order\OrderGoods;
 use app\service\admin\addon\AddonService;
 use core\base\BaseAdminService;
+use core\exception\AdminException;
 use core\exception\CommonException;
 use think\facade\Db;
 
@@ -50,7 +51,7 @@ class VirtualGoodsService extends BaseAdminService
         if (!empty($params[ 'goods_id' ])) {
             // 查询商品信息，用于编辑
             $field = 'goods_name,sub_title,goods_type,goods_cover,goods_image,goods_desc,brand_id,goods_category,label_ids,service_ids,unit,stock,virtual_sale_num,status,sort,supplier_id';
-            $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ], ['site_id', '=', $this->site_id ] ])->findOrEmpty()->toArray();
+            $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_info)) {
 
                 // 商品品牌，处理数据类型
@@ -79,7 +80,7 @@ class VirtualGoodsService extends BaseAdminService
 
                 $sku_field = 'sku_id,sku_name,sku_image,sku_no,goods_id,sku_spec_format,price,market_price,cost_price,stock,is_default';
                 $sku_order = 'sku_id asc';
-                $goods_info[ 'sku_list' ] = $goods_sku_model->withSearch([ "goods_id" ], [ 'goods_id' => $params[ 'goods_id' ] ])->field($sku_field)->select()->order($sku_order)->toArray();
+                $goods_info[ 'sku_list' ] = $goods_sku_model->withSearch([ "goods_id" ], [ 'goods_id' => $params[ 'goods_id' ] ])->field($sku_field)->order($sku_order)->select()->toArray();
 
                 $goods_info[ 'spec_type' ] = 'single';
                 if (count($goods_info[ 'sku_list' ]) > 1) {
@@ -89,7 +90,7 @@ class VirtualGoodsService extends BaseAdminService
                     $goods_spec_model = new GoodsSpec();
                     $spec_field = 'spec_id,goods_id,spec_name,spec_values';
                     $spec_order = 'spec_id asc';
-                    $goods_info[ 'spec_list' ] = $goods_spec_model->withSearch([ "goods_id" ], [ 'goods_id' => $params[ 'goods_id' ] ])->field($spec_field)->select()->order($spec_order)->toArray();
+                    $goods_info[ 'spec_list' ] = $goods_spec_model->withSearch([ "goods_id" ], [ 'goods_id' => $params[ 'goods_id' ] ])->field($spec_field)->order($spec_order)->select()->toArray();
 
                 }
 
@@ -117,7 +118,6 @@ class VirtualGoodsService extends BaseAdminService
             if (!empty($data[ 'goods_image' ])) $data[ 'goods_cover' ] = explode(',', $data[ 'goods_image' ])[ 0 ];
 
             $goods_data = [
-                'site_id' => $this->site_id,
                 'goods_name' => $data[ 'goods_name' ],
                 'sub_title' => $data[ 'sub_title' ],
                 'goods_type' => $data[ 'goods_type' ],
@@ -141,7 +141,6 @@ class VirtualGoodsService extends BaseAdminService
             if ($data[ 'spec_type' ] == 'single') {
                 // 单规格
                 $sku_data = [
-                    'site_id' => $this->site_id,
                     'sku_name' => '',
                     'sku_image' => $data[ 'goods_cover' ],
                     'sku_no' => $data[ 'sku_no' ],
@@ -160,13 +159,13 @@ class VirtualGoodsService extends BaseAdminService
 
                 // 多规格数据
                 $sku_data = [];
+                $default_spec_count = 0;
                 foreach ($data[ 'goods_sku_data' ] as $k => $v) {
                     $sku_spec_format = [];
                     foreach ($v[ 'sku_spec' ] as $ck => $cv) {
                         $sku_spec_format[] = $cv[ 'spec_value_name' ];
                     }
                     $sku_data[] = [
-                        'site_id' => $this->site_id,
                         'sku_name' => $v[ 'spec_name' ],
                         'sku_image' => !empty($v[ 'sku_image' ]) ? $v[ 'sku_image' ] : $data[ 'goods_cover' ],
                         'sku_no' => $v[ 'sku_no' ],
@@ -179,7 +178,11 @@ class VirtualGoodsService extends BaseAdminService
                         'stock' => $v[ 'stock' ],
                         'is_default' => $v[ 'is_default' ]
                     ];
+                    if ($v[ 'is_default' ] == 1) $default_spec_count++;
                 }
+
+                if ($default_spec_count == 0) throw new AdminException('SHOP_GOODS_NOT_HAS_DEFAULT_SPEC');
+
                 $goods_sku_model->saveAll($sku_data);
 
                 // 商品规格值
@@ -243,12 +246,11 @@ class VirtualGoodsService extends BaseAdminService
                 'supplier_id' => $data[ 'supplier_id' ],
                 'update_time' => time()
             ];
-            $this->model->where([ [ 'goods_id', '=', $goods_id ], ['site_id', '=', $this->site_id ] ])->update($goods_data);
+            $this->model->where([ [ 'goods_id', '=', $goods_id ] ])->update($goods_data);
 
             if ($data[ 'spec_type' ] == 'single') {
                 // 单规格
                 $sku_data = [
-                    'site_id' => $this->site_id,
                     'sku_name' => '',
                     'sku_image' => $data[ 'goods_cover' ],
                     'sku_no' => $data[ 'sku_no' ],
@@ -261,7 +263,16 @@ class VirtualGoodsService extends BaseAdminService
                     'stock' => $data[ 'stock' ],
                     'is_default' => 1
                 ];
-                $goods_sku_model->where([ [ 'goods_id', '=', $goods_id ] ])->update($sku_data);
+
+                // 规格项发生变化，删除旧规格，添加新规格重新生成
+                $goods_sku_model->where([ [ 'goods_id', '=', $goods_id ] ])->delete();
+
+                // 防止存在遗留规格项，删除旧规格
+                $goods_spec_model->where([ [ 'goods_id', '=', $goods_id ] ])->delete();
+
+                // 新增规格
+                $goods_sku_model->create($sku_data);
+
             } elseif ($data[ 'spec_type' ] == 'multi') {
 
                 // 多规格数据
@@ -272,13 +283,13 @@ class VirtualGoodsService extends BaseAdminService
                     // 规格项没有变化，修改/新增规格数据
 
                     $sku_id_arr = [];
+                    $default_spec_count = 0;
                     foreach ($data[ 'goods_sku_data' ] as $k => $v) {
                         $sku_spec_format = [];
                         foreach ($v[ 'sku_spec' ] as $ck => $cv) {
                             $sku_spec_format[] = $cv[ 'spec_value_name' ];
                         }
                         $sku_data = [
-                            'site_id' => $this->site_id,
                             'sku_name' => $v[ 'spec_name' ],
                             'sku_image' => !empty($v[ 'sku_image' ]) ? $v[ 'sku_image' ] : $data[ 'goods_cover' ],
                             'sku_no' => $v[ 'sku_no' ],
@@ -301,8 +312,12 @@ class VirtualGoodsService extends BaseAdminService
                             $sku_model = $goods_sku_model->create($sku_data);
                             $sku_id_arr[] = $sku_model->sku_id;
                         }
+                        if ($v[ 'is_default' ] == 1) $default_spec_count++;
 
                     }
+
+                    //校验默认必须存在默认规格
+                    if ($default_spec_count == 0) throw new AdminException('SHOP_GOODS_NOT_HAS_DEFAULT_SPEC');
 
                     $spec_id_list = $goods_spec_model->withSearch([ "goods_id" ], [ 'goods_id' => $goods_id ])->field('spec_id')->select()->toArray();
                     $spec_id_list = array_column($spec_id_list, 'spec_id');
@@ -391,13 +406,13 @@ class VirtualGoodsService extends BaseAdminService
                     $goods_spec_model->where([ [ 'goods_id', '=', $goods_id ] ])->delete();
 
                     $sku_data = [];
+                    $default_spec_count = 0;
                     foreach ($data[ 'goods_sku_data' ] as $k => $v) {
                         $sku_spec_format = [];
                         foreach ($v[ 'sku_spec' ] as $ck => $cv) {
                             $sku_spec_format[] = $cv[ 'spec_value_name' ];
                         }
                         $sku_data[] = [
-                            'site_id' => $this->site_id,
                             'sku_name' => $v[ 'spec_name' ],
                             'sku_image' => !empty($v[ 'sku_image' ]) ? $v[ 'sku_image' ] : $data[ 'goods_cover' ],
                             'sku_no' => $v[ 'sku_no' ],
@@ -410,7 +425,12 @@ class VirtualGoodsService extends BaseAdminService
                             'stock' => $v[ 'stock' ],
                             'is_default' => $v[ 'is_default' ]
                         ];
+                        if ($v[ 'is_default' ] == 1) $default_spec_count++;
                     }
+
+                    //校验默认必须存在默认规格
+                    if ($default_spec_count == 0) throw new AdminException('SHOP_GOODS_NOT_HAS_DEFAULT_SPEC');
+
                     $goods_sku_model->saveAll($sku_data);
 
                     // 商品规格值

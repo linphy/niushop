@@ -1,53 +1,54 @@
 <template>
-	<view class="bg-[#f8f8f8] min-h-screen">
+	<view class="bg-[#F4F6F8] min-h-screen">
 		<view class="mescroll-box" v-if="tabsData.length">
-			<view v-if="config.search.control" class="search-box z-2 bg-[#fff] fixed top-0 left-0 right-0">
-				<input class="search-ipt text-sm" type="text" v-model="searchName" :placeholder="config.search.title">
-				<view class="flex items-center z-2 h-[70rpx] absolute right-[48rpx] top-[18rpx]">
-					<text class="iconfont iconxiazai17 text-[30rpx]" @click="searchNameFn"></text>
+			<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
+				<input class="search-ipt pl-[20rpx] text-[24rpx]" :class="{'pr-[96rpx]':searchName,'pr-[60rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
+				<view class="flex items-center h-[70rpx] absolute right-[48rpx] top-[18rpx]  z-2">
+					<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
+					<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="iconfont iconxiazai17 text-[28rpx]"></text></view>
 				</view>
 			</view>
 			<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[106rpx]': config.search.control }">
-				<scroll-view :scroll-y="true" height="100%">
-					<view>
-						<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive }" v-for="(item, index) in tabsData" :key="item.site_id" @click="firstLevelClick(index, item)">
-							<view class="text-box">
+				<scroll-view :scroll-y="true" class="scroll-height">
+					<view class="bg-[#F4F6F8]">
+						<view class="tab-item truncate" :class="{ 'tab-item-active': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index,'rounded-tr-[12rpx]':tabActive+1===index  }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
+							<view class="text-box px-[16rpx] truncate">
 								{{ item.category_name }}
 							</view>
 						</view>
 					</view>
 				</scroll-view>
 			</view>
-			<scroll-view :scroll-y="true">
-				<view class="flex flex-wrap pl-[182rpx] pb-[70rpx] pt-[20rpx]" :class="{ '!pt-[126rpx]': config.search.control }">
-
-					<template v-for="(item, index) in tabsData[tabActive]?.child_list" :key="item.category_id">
-						<view class="w-[160rpx] ml-[22rpx] mb-[24rpx]" @click="toLink(item.category_id)">
-							<u--image width="160rpx" height="160rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
-								<template #error>
-									<u-icon name="photo" color="#999" size="50"></u-icon>
-								</template>
-							</u--image>
-							<view class="text-[28rpx] text-center mt-[12rpx]">{{ item.category_name }}</view>
-						</view>
-					</template>
-					<view class="flex justify-center w-[100%]" v-if="!tabsData[tabActive]?.child_list && !loading">
-						<mescroll-empty :option="{ 'icon': img('static/resource/images/empty.png') }"></mescroll-empty>
+			<scroll-view class="h-[100vh]" :scroll-y="true">
+				<view class=" pl-[202rpx] scroll-ios pt-[20rpx] pr-[20rpx]" :class="{ '!pt-[126rpx]': config.search.control }">
+					<view class="bg-[#fff] grid grid-cols-3 gap-x-[50rpx] gap-y-[32rpx] py-[33rpx] px-[23rpx] rounded-[16rpx]" v-if="tabsData[tabActive]?.child_list && !loading">
+						<template v-for="(item, index) in tabsData[tabActive]?.child_list" :key="item.category_id">
+							<view class="" @click="toLink(item.category_id)">
+								<u--image class="rounded-[12rpx] overflow-hidden" width="129rpx" height="129rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
+									<template #error>
+										<u-icon name="photo" color="#999" size="50"></u-icon>
+									</template>
+								</u--image>
+								<view class="text-[24rpx] text-center mt-[12rpx] leading-[34rpx]">{{ item.category_name }}</view>
+							</view>
+						</template>
 					</view>
-
+					<view class="flex justify-center w-[100%] bg-[#fff] rounded-[16rpx] flex items-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!tabsData[tabActive]?.child_list && !loading">
+						<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
+					</view>
 				</view>
 			</scroll-view>
 		</view>
 		<tabbar addon="shop"/>
-		<view class="flex justify-center w-[100%]" v-if="!tabsData.length && !loading">
-			<mescroll-empty :option="{ 'icon': img('static/resource/images/empty.png') }"></mescroll-empty>
+		<view class="flex justify-center w-[100%] items-center justify-center h-[100vh] bg-[#fff]" v-if="!tabsData.length && !loading">
+			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
 		</view>
-		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" fontSize="16" color="#333"></u-loading-page>
+		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
 	</view>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { img, redirect } from '@/utils/common';
 import { getGoodsCategoryTree } from '@/addon/shop/api/goods';
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
@@ -116,7 +117,7 @@ const toLink = (curr_goods_category: string) => {
 // 搜索名字
 const searchNameFn = () => {
 	// getMescroll().resetUpScroll();
-	redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
+	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
 }
 </script>
 
@@ -137,7 +138,7 @@ const searchNameFn = () => {
 	position: relative;
 	font-weight: bold;
 
-	&::after {
+	&::before {
 		content: "";
 		position: absolute;
 		bottom: 0;
@@ -153,7 +154,7 @@ const searchNameFn = () => {
 	position: relative;
 	margin-right: 28rpx;
 
-	&::after {
+	&::before {
 		content: "";
 		position: absolute;
 		background-color: #999;
@@ -208,12 +209,13 @@ const searchNameFn = () => {
 	height: 92rpx;
 	text-align: center;
 	line-height: 92rpx;
+	background-color:#fff;
 }
 
 .tabs-box .tab-item-active {
 	position: relative;
 	color: var(--primary-color);
-
+	background-color:#F4F6F8;
 	&::before {
 		display: inline-block;
 		position: absolute;
@@ -221,10 +223,9 @@ const searchNameFn = () => {
 		top: 50%;
 		transform: translateY(-50%);
 		content: '';
-		width: 8rpx;
-		height: 34rpx;
+		width: 6rpx;
+		height: 48rpx;
 		background-color: var(--primary-color);
-		border-radius: 0rpx 5rpx 5rpx 0rpx;
 	}
 
 	&::after {
@@ -234,10 +235,9 @@ const searchNameFn = () => {
 		top: 50%;
 		transform: translateY(-50%);
 		content: '';
-		width: 8rpx;
-		height: 34rpx;
+		width: 6rpx;
+		height: 48rpx;
 		background-color: var(--primary-color);
-		border-radius: 0rpx 5rpx 5rpx 0rpx;
 	}
 }
 
@@ -264,4 +264,39 @@ $white-bj: #fff;
 :deep(.u-tabbar__placeholder) {
 	display: none !important;
 }
+/*  #ifdef  H5  */
+.scroll-ios{
+	padding-bottom: calc(50px + 20rpx + constant(safe-area-inset-bottom)) !important;
+	padding-bottom: calc(50px  + 20rpx  + env(safe-area-inset-bottom)) !important;
+}
+/*  #endif  */
+/*  #ifndef  H5  */
+.scroll-ios{
+	padding-bottom: calc(120rpx  + constant(safe-area-inset-bottom)) !important;
+	padding-bottom: calc(120rpx  + env(safe-area-inset-bottom)) !important;
+}
+/*  #endif  */
+.scroll-height{
+	height: 100%;
+}
+/*  #ifdef  H5  */
+	.noData1{
+		height: calc(100vh - 146rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 50px - env(safe-area-inset-bottom));
+	}
+	.noData2{
+		height: calc(100vh - 40rpx - 50px - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 50px - env(safe-area-inset-bottom));
+	}
+/*  #endif  */
+/*  #ifndef  H5  */
+	.noData1{
+		height: calc(100vh - 146rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 146rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+	.noData2{
+		height: calc(100vh - 40rpx - 100rpx - constant(safe-area-inset-bottom));
+		height: calc(100vh - 40rpx - 100rpx - env(safe-area-inset-bottom));
+	}
+/*  #endif  */
 </style>

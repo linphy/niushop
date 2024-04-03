@@ -6,8 +6,8 @@
             </div>
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="invoiceManagementTableData.searchParam" ref="searchFormRef">
-                    <el-form-item :label="t('headerName')" prop="header_type">
-                        <el-input v-model="invoiceManagementTableData.searchParam.header_name" :placeholder="t('headerNamePlaceholder')" clearable />
+                    <el-form-item :label="t('headerName')" prop="header_name">
+                        <el-input v-model.trim="invoiceManagementTableData.searchParam.header_name" :placeholder="t('headerNamePlaceholder')" clearable />
                     </el-form-item>
                     <el-form-item :label="t('createTime')" prop="create_time">
                         <el-date-picker v-model="invoiceManagementTableData.searchParam.create_time" type="datetimerange"
@@ -15,7 +15,7 @@
                             :end-placeholder="t('endDate')" />
                     </el-form-item>
                     <el-form-item :label="t('invoiceTime')" prop="invoice_time">
-                        <el-date-picker v-model="invoiceManagementTableData.searchParam.create_time" type="datetimerange"
+                        <el-date-picker v-model="invoiceManagementTableData.searchParam.invoice_time" type="datetimerange"
                             value-format="YYYY-MM-DD HH:mm:ss" :start-placeholder="t('startDate')"
                             :end-placeholder="t('endDate')" />
                     </el-form-item>

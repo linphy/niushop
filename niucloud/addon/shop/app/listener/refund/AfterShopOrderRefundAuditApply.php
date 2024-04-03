@@ -4,7 +4,6 @@ declare (strict_types = 1);
 namespace addon\shop\app\listener\refund;
 
 use addon\shop\app\dict\order\OrderRefundDict;
-use addon\shop\app\dict\order\OrderRefundLogDict;
 use addon\shop\app\service\core\refund\CoreRefundLogService;
 use addon\shop\app\service\core\refund\CoreRefundService;
 use app\service\core\notice\NoticeService;
@@ -36,11 +35,10 @@ class AfterShopOrderRefundAuditApply
         ]);
         //消息发送
         $message_key = $refund_data['status'] == OrderRefundDict::STORE_REFUSE_REFUND_GOODS_APPLY_WAIT_BUYER ? 'shop_refund_refuse' : 'shop_refund_agree';
-        (new NoticeService())->send($refund_data['site_id'], $message_key, ['order_refund_no' => $refund_data['order_refund_no'] ]);
+        (new NoticeService())->send($message_key, ['order_refund_no' => $refund_data['order_refund_no'] ]);
         if($refund_data['status'] == OrderRefundDict::STORE_AGREE_REFUND_WAIT_TRANSFER){
             if($refund_data['money'] > 0){
                 //订单到达待付款
-
                 (new CoreRefundService())->toTransfer($refund_data, $main_type, $main_id);
             }else{
                 (new CoreRefundService())->finish([
@@ -50,7 +48,6 @@ class AfterShopOrderRefundAuditApply
                 ]);
             }
         }
-
 
     }
 }

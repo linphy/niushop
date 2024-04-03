@@ -39,40 +39,47 @@ class CoreOrderCloseService extends BaseCoreService
      */
     public function close(array $data)
     {
-        $order_data = $this->model->where([
-            ['order_id', '=', $data['order_id']],
-            ['site_id', '=', $data['site_id']]
-        ])->findOrEmpty()->toArray();
-        if (empty($order_data)) throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在
-        if ($order_data['status'] == OrderDict::CLOSE) throw new CommonException('SHOP_ORDER_IS_CLOSED');
-        if($data['close_type'] != OrderDict::REFUND_CLOSE){
-            //关闭相关的支付
-            (new CorePayService())->closeByTrade($data['site_id'], OrderDict::TYPE, $order_data['order_id']);
-        }
+        try {
+            $order_data = $this->model->where([
+                ['order_id', '=', $data['order_id']]
+            ])->findOrEmpty()->toArray();
+            if (empty($order_data)) throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在
+            if ($order_data['status'] == OrderDict::CLOSE) throw new CommonException('SHOP_ORDER_IS_CLOSED');
+            if ($data['close_type'] != OrderDict::REFUND_CLOSE) {
+                //关闭相关的支付  todo  封装订单专用的关闭支付相关
+                try {
+                    (new CorePayService())->closeByTrade(OrderDict::TYPE, $order_data['order_id']);
+                } catch ( \Exception $e ) {
 
-        //关闭订单
-        $this->model->where([
-            [
-                ['order_id', '=', $order_data['order_id']]
-            ]
-        ])->update(
-            [
-                'status' => OrderDict::CLOSE,
-                'close_type' => $data['close_type'],
-                'close_remark' => $data['close_remark'] ?? '',
-                'is_enable_refund' => 0,
-                'timeout' => 0
-            ]
-        );
-        $data['order_data'] = $order_data;
+                }
+            }
+
+            //关闭订单
+            $this->model->where([
+                [
+                    ['order_id', '=', $order_data['order_id']]
+                ]
+            ])->update(
+                [
+                    'status' => OrderDict::CLOSE,
+                    'close_type' => $data['close_type'],
+                    'close_remark' => $data['close_remark'] ?? '',
+                    'is_enable_refund' => 0,
+                    'timeout' => 0
+                ]
+            );
+            $data['order_data'] = $order_data;
 //        //订单关闭后操作
 //        event('AfterShopOrderClose', $data);
 
-        //订单关闭操作
-        CoreOrderEventService::orderClose($data);
-        //订单关闭后操作
-        CoreOrderEventService::orderCloseAfter($data);
-        return true;
+            //订单关闭操作
+            CoreOrderEventService::orderClose($data);
+            //订单关闭后操作
+            CoreOrderEventService::orderCloseAfter($data);
+            return true;
+        } catch ( \Exception $e ) {
+            return false;
+        }
     }
 
     /**
@@ -81,21 +88,20 @@ class CoreOrderCloseService extends BaseCoreService
      * @return void
      * @throws \think\db\exception\DbException
      */
-    public function checkAllClose($data){
+    public function checkAllClose($data)
+    {
         $order_id = $data['order_id'];
-        $site_id = $data['site_id'];
         //检测一下订单下的订单项是否全部退款完毕
         $where = array(
             ['order_id', '=', $order_id],
             ['status', '<>', OrderGoodsDict::REFUND_FINISH]
         );
-        if((new OrderGoods())->where($where)->count() == 0){
+        if ((new OrderGoods())->where($where)->count() == 0) {
             $data = [];
             $data['main_type'] = OrderLogDict::SYSTEM;
             $data['main_id'] = 0;
             $data['close_type'] = OrderDict::REFUND_CLOSE;
             $data['order_id'] = $order_id;
-            $data['site_id'] = $site_id;
             $this->close($data);
         }
         return true;

@@ -28,7 +28,5 @@ class AfterShopOrderRefundApply
             'content' => ''
         ]);
         //消息发送
-
-
     }
 }

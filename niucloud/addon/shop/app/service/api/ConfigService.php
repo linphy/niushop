@@ -25,7 +25,7 @@ class ConfigService extends BaseApiService
      * @return array|mixed
      */
     public function getInvoiceConfig() {
-        $config = (new CoreConfigService())->getConfigValue($this->site_id, 'SHOP_INVOICE');
+        $config = (new CoreConfigService())->getConfigValue('SHOP_INVOICE');
         if (empty($config)) {
             $config = [
                 'is_invoice' => '2',
@@ -42,6 +42,6 @@ class ConfigService extends BaseApiService
      */
     public function getEvaluateConfig()
     {
-        return (new CoreOrderConfigService())->getEvaluateConfig($this->site_id);
+        return (new CoreOrderConfigService())->getEvaluateConfig();
     }
 }

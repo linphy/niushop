@@ -90,5 +90,4 @@ class Company extends BaseAdminController
         return success( 'DELETE_SUCCESS' );
     }
 
-
 }

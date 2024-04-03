@@ -12,7 +12,7 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="brandTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('brandName')" prop="brand_name">
-                        <el-input v-model="brandTable.searchParam.brand_name" :placeholder="t('brandNamePlaceholder')" />
+                        <el-input v-model.trim="brandTable.searchParam.brand_name" :placeholder="t('brandNamePlaceholder')" />
                     </el-form-item>
 
                     <el-form-item>

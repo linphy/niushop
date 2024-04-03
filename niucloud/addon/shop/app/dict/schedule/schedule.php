@@ -24,14 +24,25 @@ return [
         'function' => ''
     ],
     [
-    'key' => 'shop_order_finish',
-    'name' => '待收货订单自动完成',
-    'desc' => '',
-    'time' => [
-        'type' => 'min',
-        'min' => 1
+        'key' => 'shop_order_finish',
+        'name' => '待收货订单自动完成',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\order\OrderFinish',
+        'function' => ''
     ],
-    'class' => 'addon\shop\app\job\order\OrderFinish',
-    'function' => ''
-]
+    [
+        'key' => 'shop_coupon_member_expire',
+        'name' => '优惠券到期自动过期',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\CouponMemberExpire',
+        'function' => ''
+    ],
 ];

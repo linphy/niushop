@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -19,7 +18,7 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="storeTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('storeName')" prop="store_name">
-                        <el-input v-model="storeTable.searchParam.store_name" :placeholder="t('storeNamePlaceholder')" />
+                        <el-input v-model.trim="storeTable.searchParam.store_name" :placeholder="t('storeNamePlaceholder')" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadStoreList()">{{ t('search') }}</el-button>

@@ -20,7 +20,6 @@ class AfterShopOrderRefundFinish
 
     public function handle($data){
 
-
         $refund_data = $data['refund_data'];
 
         $order = (new Order())->where([['order_id', '=', $refund_data['order_id']]])->findOrEmpty();
@@ -28,17 +27,17 @@ class AfterShopOrderRefundFinish
             if($order['status'] == OrderDict::WAIT_DELIVERY) {
                 //校验一下订单项是否全部发货
                 (new CoreOrderDeliveryService())->checkFinish(
-                    ['order_id' => $refund_data['order_id'], 'site_id' => $order['site_id']]
+                    ['order_id' => $refund_data['order_id']]
                 );
             }
 
             //校验一下是否全部退款
             if($order['status'] != OrderDict::CLOSE) {
-                (new CoreOrderCloseService())->checkAllClose(['site_id' => $order['site_id'], 'order_id' => $refund_data['order_id']]);
+                (new CoreOrderCloseService())->checkAllClose(['order_id' => $refund_data['order_id']]);
             }
         }
         //商城统计
-        CoreStatService::addStat(['site_id' => $order['site_id'], 'refund_money' => $refund_data['money']]);
+        CoreStatService::addStat(['refund_money' => $refund_data['money']]);
 
         //日志
         $main_type = $data['main_type'] ?? OrderRefundLogDict::SYSTEM;
@@ -53,7 +52,5 @@ class AfterShopOrderRefundFinish
             'content' => ''
         ]);
         //消息发送
-
-
     }
 }

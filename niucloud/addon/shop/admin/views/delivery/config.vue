@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
 	<div class="main-container" v-loading="loading">
 		<div class="flex ml-[18px] justify-between items-center mt-[20px]">
@@ -12,7 +11,7 @@
 							<div class="flex items-center justify-between">
 								<div class="flex items-center">
 									<i class="iconfont icontuodong vues-rank mr-[5px]"></i>
-									<el-input v-focus v-if="index === activeIndex" v-model="inputValue"  class="w-[120px]"  @blur="inputBlur"/>
+									<el-input v-focus v-if="index === activeIndex" v-model="inputValue"  class="w-[120px]"  maxlength="10"  @blur="inputBlur"/>
 									<span v-else class="font-600 text-[14px]">{{ item.name }}</span>
 									<el-icon class="text-color ml-[10px] cursor-pointer" @click="edit(index)">
 										<EditPen/>
@@ -66,15 +65,14 @@ const getShopDeliveryListFn = () => {
     getShopDeliveryList().then(res => {
         tableData.value = res.data
         loading.value = false
-		nextTick(() => {
-        if(rowDrop) rowDrop()
-    })
+        nextTick(() => {
+            if(rowDrop) rowDrop()
+        })
     }).catch(() => {
         loading.value = false
     })
 }
 onMounted(() => {
-
     getShopDeliveryListFn()
 })
 const vFocus = {
@@ -88,7 +86,6 @@ const rowDrop = () => {
         handle: '.vues-rank',
         animation: 300,
         onEnd ({ newIndex, oldIndex }) {
-
             const currRow = tableData.value.splice(oldIndex, 1)[0]
             tableData.value.splice(newIndex, 0, currRow)
             toggleIndex.value += 1

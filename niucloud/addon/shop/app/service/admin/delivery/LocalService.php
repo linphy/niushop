@@ -29,10 +29,9 @@ class LocalService extends BaseAdminService
      */
     public function setLocal(array $data)
     {
-        ( new Local() )->where([ [ 'site_id', '=', $this->site_id ] ])->delete();
+        ( new Local() )->delete();
 
         $create_res = ( new Local() )->create([
-            'site_id' => $this->site_id,
             'center' => $data[ 'center' ],
             'fee_type' => $data[ 'fee_type' ],
             'base_dist' => $data[ 'base_dist' ],
@@ -54,6 +53,6 @@ class LocalService extends BaseAdminService
      */
     public function getLocal()
     {
-        return ( new Local() )->where([ [ 'site_id', '=', $this->site_id ] ])->findOrEmpty()->toArray();
+        return ( new Local() )->findOrEmpty()->toArray();
     }
 }

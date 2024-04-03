@@ -2,6 +2,13 @@ import request from '@/utils/request'
 
 /***************************************************** 订单列表 ****************************************************/
 /**
+ * 获取订单设置
+ */
+export function getShopOrderConfig() {
+    return request.get(`shop/order/config`)
+}
+
+/**
  * 获取订单状态列表
  */
 export function getShopOrderStatus() {

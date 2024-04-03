@@ -7,7 +7,6 @@ use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\dict\order\OrderRefundLogDict;
 use addon\shop\app\model\order\Order;
-use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderDeliveryService;
 use addon\shop\app\service\core\refund\CoreRefundLogService;
 
@@ -42,7 +41,6 @@ class AfterShopOrderRefundClose
             'content' => ''
         ]);
         //消息发送
-
 
     }
 }

@@ -17,9 +17,9 @@ use addon\shop\app\dict\goods\GoodsDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDiscountDict;
 use addon\shop\app\dict\order\OrderLogDict;
+use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderGoods;
-use addon\shop\app\service\core\CoreStatService;
 use addon\shop\app\service\core\coupon\CoreCouponMemberService;
 use addon\shop\app\service\core\delivery\CoreDeliveryService;
 use addon\shop\app\service\core\delivery\CoreExpressService;
@@ -37,7 +37,6 @@ use think\facade\Db;
 trait CoreOrderCreateTrait
 {
     public $member_id;//会员id
-    public $site_id; // 站点id
     public $param = [];//入参
     public $cart_ids = [];//购物车
     public $buyer = [];//买家信息
@@ -62,56 +61,69 @@ trait CoreOrderCreateTrait
 
     public function createOrder(array $data)
     {
-        $order_data = $data['order_data'];
-        $order_goods_data = $data['order_goods_data'];
+        $order_data = $data[ 'order_data' ];
+        $order_goods_data = $data[ 'order_goods_data' ];
         $order_no = create_no();
-        $order_data['order_no'] = $order_no;
-        $order_data['order_from'] = $this->param['order_from'];//来源渠道
-        $order_data['ip'] = request()->ip();
-        $main_type = $data['main_type'] ?? OrderLogDict::MEMBER;
-        $main_id = $data['main_id'] ?? $order_data['member_id'];
-        $site_id = $order_data['site_id'];
+        $order_data[ 'order_no' ] = $order_no;
+        $order_data[ 'order_from' ] = $this->param[ 'order_from' ];//来源渠道
+        $order_data[ 'ip' ] = request()->ip();
+        $main_type = $data[ 'main_type' ] ?? OrderLogDict::MEMBER;
+        $main_id = $data[ 'main_id' ] ?? $order_data[ 'member_id' ];
         //校验整理发票
         $this->invoice();
         Db::startTrans();
         try {
-            $order = (new Order())->create($order_data);
-            $this->order_id = $order['order_id'];
+            $order = ( new Order() )->create($order_data);
+            $this->order_id = $order[ 'order_id' ];
             //添加订单项目表
             $order_goods_model = new OrderGoods();
-            $order_goods_data = array_map(function ($value) {
-                $value['order_goods_money'] = $this->calculateOrderGoodsMoney($value);
+            $order_goods_data = array_map(function($value) {
+                $value[ 'order_goods_money' ] = $this->calculateOrderGoodsMoney($value);
                 return $value;
             }, $order_goods_data);
             $order_goods_model->insertAll($order_goods_data);
             //优惠项
             $this->useDiscount();
-
+            $order_data[ 'order_id' ] = $this->order_id;
+            //订单创建后事件
+            CoreOrderEventService::orderCreate([ 'order_id' => $this->order_id, 'order_data' => $order_data, 'order_goods_data' => $order_goods_data, 'cart_ids' => $this->cart_ids, 'basic' => get_object_vars($this), 'main_type' => $main_type, 'main_id' => $main_id, 'time' => time() ]);
             Db::commit();
             //删除订单缓存
             $this->delOrderCache($this->order_key);
-            $order_data['order_id'] = $this->order_id;
+
             //订单创建后事件
-            CoreOrderEventService::orderCreate(['site_id' => $site_id, 'order_id' => $this->order_id, 'order_data' => $order_data, 'order_goods_data' => $order_goods_data, 'cart_ids' => $this->cart_ids, 'basic' => get_object_vars($this), 'main_type' => $main_type, 'main_id' => $main_id, 'time' => time()]);
-            //订单创建后事件
-            CoreOrderEventService::orderCreateAfter(['site_id' => $site_id, 'order_id' => $this->order_id, 'order_data' => $order_data, 'order_goods_data' => $order_goods_data, 'cart_ids' => $this->cart_ids, 'basic' => get_object_vars($this), 'main_type' => $main_type, 'main_id' => $main_id, 'time' => time()]);
-//            event('AfterShopOrderCreate', ['site_id' => $site_id, 'order_id' => $this->order_id, 'order_data' => $order_data, 'order_goods_data' => $order_goods_data, 'cart_ids' => $this->cart_ids, 'basic' => get_object_vars($this), 'main_type' => $main_type, 'main_id' => $main_id, 'time' => time()]);
+            CoreOrderEventService::orderCreateAfter([ 'order_id' => $this->order_id, 'order_data' => $order_data, 'order_goods_data' => $order_goods_data, 'cart_ids' => $this->cart_ids, 'basic' => get_object_vars($this), 'main_type' => $main_type, 'main_id' => $main_id, 'time' => time() ]);
+//            event('AfterShopOrderCreate', ['order_id' => $this->order_id, 'order_data' => $order_data, 'order_goods_data' => $order_goods_data, 'cart_ids' => $this->cart_ids, 'basic' => get_object_vars($this), 'main_type' => $main_type, 'main_id' => $main_id, 'time' => time()]);
             //订单金额为0的话,要直接支付
-            if ($order_data['order_money'] == 0) {
-                (new CoreOrderPayService())->pay(['site_id' => $site_id, 'trade_id' => $this->order_id, 'main_type' => $main_type, 'main_id' => $main_id]);
+            if ($order_data[ 'order_money' ] == 0) {
+                ( new CoreOrderPayService() )->pay([ 'trade_id' => $this->order_id, 'main_type' => $main_type, 'main_id' => $main_id ]);
             }
 
             return [
-                'trade_type' => $order_data['order_type'],
+                'trade_type' => $order_data[ 'order_type' ],
                 'order_id' => $this->order_id
             ];
 
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             Db::rollback();
             throw new CommonException($e->getFile() . $e->getLine() . $e->getMessage());
         }
     }
-
+    /**
+     * 校验库存
+     * @param $order_goods_data
+     * @return void
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function checkStock($order_goods_data){
+        $order_goods_data_column = array_column($order_goods_data, 'num', 'sku_id');
+        $sku_list = (new GoodsSku())->where([['sku_id', 'in', array_column($order_goods_data, 'sku_id')]])->select();
+        foreach($sku_list as $v){
+            if($v['stock'] < $order_goods_data_column[$v['sku_id']]) throw new CommonException('商品库存不足');
+        }
+    }
     /**
      * 发票整理
      * @return void
@@ -119,23 +131,22 @@ trait CoreOrderCreateTrait
     public function invoice()
     {
         if ($this->config('invoice')) {
-            if (!empty($this->param['invoice'])) {
+            if (!empty($this->param[ 'invoice' ])) {
 //                $invoive_type  = $this->param['invoice']['type'] ?? '';
-                $this->invoice['type'] = $this->param['invoice']['type'] ?? '';
-                $this->invoice['name'] = $this->param['invoice']['name'] ?? '';
-                $this->invoice['header_type'] = $this->param['invoice']['header_type'] ?? '';
-                $this->invoice['header_name'] = $this->param['invoice']['header_name'] ?? '';
-                $this->invoice['tax_number'] = $this->param['invoice']['tax_number'] ?? '';
-                $this->invoice['mobile'] = $this->param['invoice']['mobile'] ?? '';
-                $this->invoice['email'] = $this->param['invoice']['email'] ?? '';
-                $this->invoice['telephone'] = $this->param['invoice']['telephone'] ?? '';
-                $this->invoice['address'] = $this->param['invoice']['address'] ?? '';
-                $this->invoice['bank_name'] = $this->param['invoice']['bank_name'] ?? '';
-                $this->invoice['bank_card_number'] = $this->param['invoice']['bank_card_number'] ?? '';
+                $this->invoice[ 'type' ] = $this->param[ 'invoice' ][ 'type' ] ?? '';
+                $this->invoice[ 'name' ] = $this->param[ 'invoice' ][ 'name' ] ?? '';
+                $this->invoice[ 'header_type' ] = $this->param[ 'invoice' ][ 'header_type' ] ?? '';
+                $this->invoice[ 'header_name' ] = $this->param[ 'invoice' ][ 'header_name' ] ?? '';
+                $this->invoice[ 'tax_number' ] = $this->param[ 'invoice' ][ 'tax_number' ] ?? '';
+                $this->invoice[ 'mobile' ] = $this->param[ 'invoice' ][ 'mobile' ] ?? '';
+                $this->invoice[ 'email' ] = $this->param[ 'invoice' ][ 'email' ] ?? '';
+                $this->invoice[ 'telephone' ] = $this->param[ 'invoice' ][ 'telephone' ] ?? '';
+                $this->invoice[ 'address' ] = $this->param[ 'invoice' ][ 'address' ] ?? '';
+                $this->invoice[ 'bank_name' ] = $this->param[ 'invoice' ][ 'bank_name' ] ?? '';
+                $this->invoice[ 'bank_card_number' ] = $this->param[ 'invoice' ][ 'bank_card_number' ] ?? '';
 //                $this->invoice['money'] = $this->param['invoice']['money'] ?? '';
             }
         }
-
 
     }
 
@@ -147,24 +158,22 @@ trait CoreOrderCreateTrait
     public function config($key)
     {
         //查询购物配置
-        $config = $this->config[$key] ?? [];
-        $site_id = $this->param['site_id'];
-        if (empty($this->config[$key])) {
+        $config = $this->config[ $key ] ?? [];
+        if (empty($this->config[ $key ])) {
             switch ($key) {
                 case 'order'://交易配置
-                    $config = (new CoreOrderConfigService())->orderClose($site_id) ?? [];
+                    $config = ( new CoreOrderConfigService() )->orderClose() ?? [];
                     break;
                 case 'point'://交易配置
-
                     break;
                 case 'delivery_type':
-                    $config = (new CoreDeliveryService())->getDeliveryConfig($site_id);
+                    $config = ( new CoreDeliveryService() )->getDeliveryConfig();
                     break;
                 case 'invoice':
-                    $config = (new CoreOrderConfigService())->invoice($site_id) ?? [];
+                    $config = ( new CoreOrderConfigService() )->invoice() ?? [];
                     break;
             }
-            $this->config[$key] = $config;
+            $this->config[ $key ] = $config;
         }
         return $config;
     }
@@ -176,8 +185,8 @@ trait CoreOrderCreateTrait
      */
     public function calculateOrderGoodsMoney($goods)
     {
-        $goods_money = $goods['goods_money'];
-        $discount_money = $goods['discount_money'] ?? 0;
+        $goods_money = $goods[ 'goods_money' ];
+        $discount_money = $goods[ 'discount_money' ] ?? 0;
         return $goods_money - $discount_money;
     }
 
@@ -194,9 +203,9 @@ trait CoreOrderCreateTrait
                 switch ($k) {
                     case 'coupon':
                         //使用优惠券
-                        (new CoreCouponMemberService())->use([
+                        ( new CoreCouponMemberService() )->use([
 //                            'member_id' => $this->member_id,
-                            'id' => $v['discount_type_id'],
+                            'id' => $v[ 'discount_type_id' ],
                             'trade_id' => $this->order_id
                         ]);
                         break;
@@ -206,12 +215,13 @@ trait CoreOrderCreateTrait
 //                    break;
                 }
                 $insert_discount_data[] = [
-                    'type' => $v['type'],
-                    'num' => $v['num'],
-                    'money' => $v['money'],
-                    'discount_type' => $v['discount_type'],
-                    'discount_type_id' => $v['discount_type_id'],
-                    'content' => $v['content'],
+                    'type' => $v[ 'type' ],
+                    'num' => $v[ 'num' ],
+                    'money' => $v[ 'money' ],
+                    'discount_type' => $v[ 'discount_type' ],
+                    'discount_type_id' => $v[ 'discount_type_id' ],
+                    'content' => $v[ 'content' ],
+                    'order_id' => $this->order_id
                 ];
 
             }
@@ -222,7 +232,6 @@ trait CoreOrderCreateTrait
     }
 
 
-
     /**
      * 获取参数
      * @param $key
@@ -231,7 +240,7 @@ trait CoreOrderCreateTrait
      */
     public function param($key, $default = '')
     {
-        return $this->param[$key] ?? $default;
+        return $this->param[ $key ] ?? $default;
     }
 
     /**
@@ -255,25 +264,23 @@ trait CoreOrderCreateTrait
     {
         //参数赋值
         $this->setParam($data);
-        $order_key = $this->param['order_key'] ?? '';
+        $order_key = $this->param[ 'order_key' ] ?? '';
         //获取订单数据的缓存
         $this->getOrderCache($order_key);
 
-        $coupon_list = (new CoreCouponMemberService())->getUseCouponListByMemberId($this->member_id);
+        $coupon_list = ( new CoreCouponMemberService() )->getUseCouponListByMemberId($this->member_id);
         //如果有优惠券
         if (!empty($coupon_list)) {
             foreach ($coupon_list as &$v) {
-                $type = (int)$v['type'];
-                $goods_data = $v['goods'];
-                $min_condition_money = $v['min_condition_money'];
+                $type = (int) $v[ 'type' ];
+                $goods_data = $v[ 'goods' ];
+                $min_condition_money = $v[ 'min_condition_money' ];
                 switch ($type) {
                     case CouponDict::ALL:
-                        $v['is_normal'] = true;
+                        $v[ 'is_normal' ] = true;
                         //匹配的商品
                         $match_goods_list = $this->goods_data;
-                        $match_goods_money = $this->basic['goods_money'];
-
-
+                        $match_goods_money = $this->basic[ 'goods_money' ];
                         break;
                     case CouponDict::CATEGORY:
                         $category_ids = array_column($goods_data, 'category_id');
@@ -281,10 +288,10 @@ trait CoreOrderCreateTrait
                         $match_goods_list = [];
                         $match_goods_money = 0;
                         foreach ($this->goods_data as $goods_v) {
-                            $item_goods_category = $goods_v['goods']['goods_category'];//商品分类数组
+                            $item_goods_category = $goods_v[ 'goods' ][ 'goods_category' ];//商品分类数组
                             if (!empty(array_intersect($category_ids, $item_goods_category))) {
                                 $match_goods_list[] = $goods_v;
-                                $match_goods_money += $goods_v['goods_money'];
+                                $match_goods_money += $goods_v[ 'goods_money' ];
                             }
                         }
                         break;
@@ -294,23 +301,23 @@ trait CoreOrderCreateTrait
                         $match_goods_list = [];
                         $match_goods_money = 0;
                         foreach ($this->goods_data as $goods_v) {
-                            if (in_array($goods_v['goods_id'], $goods_ids)) {
+                            if (in_array($goods_v[ 'goods_id' ], $goods_ids)) {
                                 $match_goods_list[] = $goods_v;
-                                $match_goods_money += $goods_v['goods_money'];
+                                $match_goods_money += $goods_v[ 'goods_money' ];
                             }
                         }
                         break;
                 }
 
                 if (empty($match_goods_list)) {
-                    $v['is_normal'] = false;
-                    $v['error'] = get_lang('SHOP_ORDER_COUPON_SUPPORT_GOODS');//没有支持可用的商品
+                    $v[ 'is_normal' ] = false;
+                    $v[ 'error' ] = get_lang('SHOP_ORDER_COUPON_SUPPORT_GOODS');//没有支持可用的商品
                 } else {
                     if ($match_goods_money < $min_condition_money) {
-                        $v['is_normal'] = false;
-                        $v['error'] = get_lang('SHOP_ORDER_COUPON_NOT_CONDITION');//没有达到商品最低使用条件
+                        $v[ 'is_normal' ] = false;
+                        $v[ 'error' ] = get_lang('SHOP_ORDER_COUPON_NOT_CONDITION');//没有达到商品最低使用条件
                     } else {
-                        $v['is_normal'] = true;
+                        $v[ 'is_normal' ] = true;
                     }
                 }
             }
@@ -326,7 +333,6 @@ trait CoreOrderCreateTrait
     public function setParam($param)
     {
         $this->param = $param;
-        $this->site_id = $param['site_id'];
         return true;
     }
 
@@ -350,21 +356,27 @@ trait CoreOrderCreateTrait
     public function calculateCoupon()
     {
 
-        $coupon_id = $this->param['discount']['coupon_id'] ?? 0;//使用优惠券id
+        $coupon_id = $this->param[ 'discount' ][ 'coupon_id' ] ?? 0;//使用优惠券id
 
         if ($coupon_id > 0) {
-            $coupon_data = (new CoreCouponMemberService())->getUseCouponById($coupon_id);
+            $coupon_data = ( new CoreCouponMemberService() )->getUseCouponById($coupon_id);
             if (empty($coupon_data)) throw new CommonException('SHOP_ORDER_COUPON_EXPIRE_OR_NOT_FOUND');//优惠券已使用或不存在
-            $type = (int)$coupon_data['type'];
-            $goods_data = $coupon_data['goods'];
-            $min_condition_money = $coupon_data['min_condition_money'];
+
+            $time = time();
+            if ($time > strtotime($coupon_data[ 'expire_time' ])) {
+                throw new CommonException('SHOP_ORDER_COUPON_EXPIRE');//优惠券已使用或不存在
+            }
+
+            $type = (int) $coupon_data[ 'type' ];
+            $goods_data = $coupon_data[ 'goods' ];
+            $min_condition_money = $coupon_data[ 'min_condition_money' ];
             $match_order_goods_money = 0;
             switch ($type) {
                 case CouponDict::ALL:
                     //匹配的商品
                     $match_goods_list = $this->goods_data;
-                    $match_goods_money = $this->basic['goods_money'];
-                    $match_order_goods_money = $this->basic['goods_money'] - $this->basic['discount_money'];
+                    $match_goods_money = $this->basic[ 'goods_money' ];
+                    $match_order_goods_money = $this->basic[ 'goods_money' ] - $this->basic[ 'discount_money' ];
                     break;
                 case CouponDict::CATEGORY:
                     $category_ids = array_column($goods_data, 'category_id');
@@ -372,10 +384,10 @@ trait CoreOrderCreateTrait
                     $match_goods_list = [];
                     $match_goods_money = 0;
                     foreach ($this->goods_data as $goods_v) {
-                        $item_goods_category = $goods_v['goods']['goods_category'];//商品分类数组
+                        $item_goods_category = $goods_v[ 'goods' ][ 'goods_category' ];//商品分类数组
                         if (!empty(array_intersect($category_ids, $item_goods_category))) {
                             $match_goods_list[] = $goods_v;
-                            $match_goods_money += $goods_v['goods_money'];
+                            $match_goods_money += $goods_v[ 'goods_money' ];
                             $match_order_goods_money += $this->calculateOrderGoodsMoney($goods_v);
                         }
                     }
@@ -386,9 +398,9 @@ trait CoreOrderCreateTrait
                     $match_goods_list = [];
                     $match_goods_money = 0;
                     foreach ($this->goods_data as $goods_v) {
-                        if (in_array($goods_v['goods_id'], $goods_ids)) {
+                        if (in_array($goods_v[ 'goods_id' ], $goods_ids)) {
                             $match_goods_list[] = $goods_v;
-                            $match_goods_money += $goods_v['goods_money'];
+                            $match_goods_money += $goods_v[ 'goods_money' ];
                             $match_order_goods_money += $this->calculateOrderGoodsMoney($goods_v);
                         }
                     }
@@ -402,7 +414,7 @@ trait CoreOrderCreateTrait
                 if ($match_goods_money < $min_condition_money) {
                     $this->setError(get_lang('SHOP_ORDER_COUPON_NOT_SUPPORT_MIN_MONEY'));//没有达到商品最低使用条件
                 } else {
-                    $coupon_money = $coupon_data['price'];
+                    $coupon_money = $coupon_data[ 'price' ];
                     if ($coupon_money > $match_order_goods_money) {
                         $coupon_money = $match_order_goods_money;
                     }
@@ -411,21 +423,21 @@ trait CoreOrderCreateTrait
                     //根据商品金额计算个订单项享受的优惠
                     foreach ($match_goods_list as $k => $v) {
                         $item_order_goods_money = $this->calculateOrderGoodsMoney($v);
-                        $item_sku_id = $v['sku_id'];
-                        if ($k == ($match_count + 1)) {
+                        $item_sku_id = $v[ 'sku_id' ];
+                        if ($k == ( $match_count + 1 )) {
                             $item_coupon_money = $surplus_money;
                         } else {
                             $item_coupon_money = $this->moneyFormat($item_order_goods_money / $match_order_goods_money * $coupon_money);
                         }
-                        $this->goods_data[$item_sku_id]['discount_money'] += $item_coupon_money;
+                        $this->goods_data[ $item_sku_id ][ 'discount_money' ] += $item_coupon_money;
 //                        $this->goods_data[$item_sku_id]['order_goods_money'] = $this->calculateOrderGoodsMoney($this->goods_data[$item_sku_id]);
 
                         $surplus_money -= $item_coupon_money;
                     }
                     //优惠累增
-                    $this->basic['discount_money'] += $coupon_money;
+                    $this->basic[ 'discount_money' ] += $coupon_money;
 //                    $discount_money = $this->basic['discount']['discount_money'];
-                    $this->discount['coupon'] = $this->discountFormat(
+                    $this->discount[ 'coupon' ] = $this->discountFormat(
                         array_column($match_goods_list, 'sku_id'),
                         OrderDiscountDict::DISCOUNT,
                         1,
@@ -433,7 +445,7 @@ trait CoreOrderCreateTrait
                         'coupon',
                         $coupon_id,
                         '',
-                        $coupon_data['title']
+                        $coupon_data[ 'title' ]
                     );
                 }
             }
@@ -441,7 +453,6 @@ trait CoreOrderCreateTrait
         }
 
     }
-
 
 
     /**
@@ -476,19 +487,19 @@ trait CoreOrderCreateTrait
     public function getPoint()
     {
 
-        $is_point = $this->param['discount']['is_point'] ?? 0;//是否使用积分
+        $is_point = $this->param[ 'discount' ][ 'is_point' ] ?? 0;//是否使用积分
         if ($is_point) {
             //todo  现在认为积分只能抵扣商品总额(单个商品不设置支持积分)
-            $goods_money = $this->basic['goods_money'];
-            $member_point = $this->buyer['point'];//会员积分
+            $goods_money = $this->basic[ 'goods_money' ];
+            $member_point = $this->buyer[ 'point' ];//会员积分
             $point_config = $this->config('config');
-            if ($point_config['status']) {//启用
-                $point_money = $member_point * $point_config['rate'];
+            if ($point_config[ 'status' ]) {//启用
+                $point_money = $member_point * $point_config[ 'rate' ];
                 $point_money = $point_money > $goods_money ? $goods_money : $point_money;
-                $point = round($point_money / $point_config['rate']);//todo 积分是否可以为小数
+                $point = round($point_money / $point_config[ 'rate' ]);//todo 积分是否可以为小数
 
-                $this->discount['point']['point'] = $point;
-                $this->discount['point']['point_money'] = $point_money;
+                $this->discount[ 'point' ][ 'point' ] = $point;
+                $this->discount[ 'point' ][ 'point_money' ] = $point_money;
             }
         }
 
@@ -497,7 +508,7 @@ trait CoreOrderCreateTrait
 
     public function usePoint($data)
     {
-        $member_account = $data['member_account'];
+        $member_account = $data[ 'member_account' ];
     }
 
     /**
@@ -526,18 +537,18 @@ trait CoreOrderCreateTrait
     public function getDelivery()
     {
         //先判断商品项中是否存在实物商品
-        $has_goods_types = $this->basic['has_goods_types'];
+        $has_goods_types = $this->basic[ 'has_goods_types' ];
         //存在实物商品查询物流信息
         if (in_array(GoodsDict::REAL, $has_goods_types)) {
             //todo 查询启用的配送方式
             $delivery_type_list = $this->config('delivery_type');
             foreach ($delivery_type_list as $k => $v) {
-                if ($v['status'] != 1) {
-                    unset($delivery_type_list[$k]);
+                if ($v[ 'status' ] != 1) {
+                    unset($delivery_type_list[ $k ]);
                 }
             }
 //            $delivery_type_list = array_column($delivery_type_list, null, 'key');
-            $this->delivery['delivery_type_list'] = $delivery_type_list;
+            $this->delivery[ 'delivery_type_list' ] = $delivery_type_list;
         }
         return true;
     }
@@ -550,19 +561,19 @@ trait CoreOrderCreateTrait
     public function calculateDelivery()
     {
         //配送参数
-        $delivery = $this->param['delivery'] ?? [];
-        $delivery_type = $delivery['delivery_type'] ?? '';//配送方式
-        $has_goods_types = $this->basic['has_goods_types'];
+        $delivery = $this->param[ 'delivery' ] ?? [];
+        $delivery_type = $delivery[ 'delivery_type' ] ?? '';//配送方式
+        $has_goods_types = $this->basic[ 'has_goods_types' ];
         //存在实物商品查询物流信息
         if (in_array(GoodsDict::REAL, $has_goods_types)) {
-            $delivery_type_list = $this->delivery['delivery_type_list'];
+            $delivery_type_list = $this->delivery[ 'delivery_type_list' ];
             if ($delivery_type) {
                 //校验是否合法
-                if (empty($delivery_type_list[$delivery_type])) throw new CommonException('SHOP_ORDER_PLEASE_SELECT_DELIVERY_TYPE');//配送方式非法
+                if (empty($delivery_type_list[ $delivery_type ])) throw new CommonException('SHOP_ORDER_PLEASE_SELECT_DELIVERY_TYPE');//配送方式非法
             } else {
                 //没有选择配送方式的话,默认选中第一个配送方式
                 $default_delivery = reset($delivery_type_list);
-                $delivery_type = $default_delivery ? $default_delivery['key'] : '';
+                $delivery_type = $default_delivery ? $default_delivery[ 'key' ] : '';
             }
         } else {
             //如果订单中只有虚拟商品
@@ -573,7 +584,7 @@ trait CoreOrderCreateTrait
         if (!$delivery_type) {
             $this->setError('SHOP_ORDER_PLEASE_SELECT_DELIVERY_TYPE');//没有选中配送方式....
         } else {
-            $this->delivery['delivery_type'] = $delivery_type;
+            $this->delivery[ 'delivery_type' ] = $delivery_type;
 
             //选中收货地址
             $this->selectTakeAddress();
@@ -589,7 +600,7 @@ trait CoreOrderCreateTrait
                     break;
             }
 
-            $this->basic['delivery_money'] = round($this->basic['delivery_money'] ?? 0);
+            $this->basic[ 'delivery_money' ] = round($this->basic[ 'delivery_money' ] ?? 0);
         }
 
         return true;
@@ -602,19 +613,19 @@ trait CoreOrderCreateTrait
     public function selectTakeAddress()
     {
         //定义收货地址
-        $has_goods_types = $this->basic['has_goods_types'];
+        $has_goods_types = $this->basic[ 'has_goods_types' ];
         if (in_array(GoodsDict::REAL, $has_goods_types)) {
-            if ($this->delivery['delivery_type'] == OrderDeliveryDict::STORE) {
-                if (!empty($this->param['delivery']['take_store_id'])) {
-                    $this->delivery['take_store'] = (new CoreStoreService())->getInfoById($this->param['delivery']['take_store_id']);
+            if ($this->delivery[ 'delivery_type' ] == OrderDeliveryDict::STORE) {
+                if (!empty($this->param[ 'delivery' ][ 'take_store_id' ])) {
+                    $this->delivery[ 'take_store' ] = ( new CoreStoreService() )->getInfoById($this->param[ 'delivery' ][ 'take_store_id' ]);
                 }
             } else {
                 //查询默认收货地址
-                if (!empty($this->param['delivery']['take_address_id'])) {
-                    $this->delivery['take_address'] = (new CoreMemberAddressService())->getMemberAddressById($this->param['delivery']['take_address_id'], $this->member_id);
+                if (!empty($this->param[ 'delivery' ][ 'take_address_id' ])) {
+                    $this->delivery[ 'take_address' ] = ( new CoreMemberAddressService() )->getMemberAddressById($this->param[ 'delivery' ][ 'take_address_id' ], $this->member_id);
                 } else {
-                    $type = $this->delivery['delivery_type'] != OrderDeliveryDict::LOCAL_DELIVERY ? 'address' : 'location_address';
-                    $this->delivery['take_address'] = (new CoreMemberAddressService())->getDefaultAddressByMemberId($this->member_id, $type);
+                    $type = $this->delivery[ 'delivery_type' ] != OrderDeliveryDict::LOCAL_DELIVERY ? 'address' : 'location_address';
+                    $this->delivery[ 'take_address' ] = ( new CoreMemberAddressService() )->getDefaultAddressByMemberId($this->member_id, $type);
                 }
             }
 
@@ -639,7 +650,7 @@ trait CoreOrderCreateTrait
     public function checkError()
     {
         $error = $this->getError();
-        if ($error) throw new CommonException($error[0]);
+        if ($error) throw new CommonException($error[ 0 ]);
     }
 
     /**
@@ -684,6 +695,7 @@ trait CoreOrderCreateTrait
         Cache::tag('order_cache')->set($order_key, $order_cache, 300);
         return $order_key;
     }
+
     /**
      * 获取订单缓存
      * @param $order_key
@@ -701,6 +713,7 @@ trait CoreOrderCreateTrait
 
         return true;
     }
+
     /**
      * 清除订单缓存
      * @param $order_key
@@ -711,6 +724,7 @@ trait CoreOrderCreateTrait
         Cache::delete($order_key);
         return true;
     }
+
     /**
      * 校验抵扣项是否可用
      * @return void
@@ -727,9 +741,21 @@ trait CoreOrderCreateTrait
      */
     public function rateFormat($rate)
     {
-        return floor(strval(($rate) * 100)) / 100;
+        return floor(strval(( $rate ) * 100)) / 100;
     }
 
+    /**
+     * 金额计算
+     * @return void
+     */
+    public function moneyCalculate(){
+        $args = func_get_args();
+        $money = 0;
+        foreach($args as $v){
+            $money += $v*100;
+        }
+        return $money/100;
+    }
     /**
      * 金额格式化
      * @param $money
@@ -737,6 +763,7 @@ trait CoreOrderCreateTrait
      */
     public function moneyFormat($money)
     {
-        return floor(strval(($money) * 100)) / 100;
+
+        return floor(strval(( $money ) * 100)) / 100;
     }
 }

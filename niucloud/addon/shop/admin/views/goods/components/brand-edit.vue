@@ -3,7 +3,7 @@
         :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('brandName')" prop="brand_name">
-                    <el-input v-model="formData.brand_name" clearable :placeholder="t('brandNamePlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.brand_name" clearable :placeholder="t('brandNamePlaceholder')" class="input-width"  @keyup="filterSpecial($event)"  maxlength="20" @blur="formData.brand_name = $event.target.value"/>
                 </el-form-item>
 
                 <el-form-item :label="t('logo')">
@@ -11,11 +11,11 @@
                 </el-form-item>
 
                 <el-form-item :label="t('desc')" >
-                    <el-input v-model="formData.desc" type="textarea" clearable :placeholder="t('descPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.desc" type="textarea" clearable :placeholder="t('descPlaceholder')" class="input-width" maxlength="200"/>
                 </el-form-item>
 
                 <el-form-item :label="t('sort')" >
-                    <el-input v-model="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)"/>
+                    <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" @blur="formData.sort = $event.target.value"/>
                 </el-form-item>
 
         </el-form>
@@ -85,7 +85,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 loading.value = false
                 showDialog.value = false
                 emit('complete')
-            // eslint-disable-next-line n/handle-callback-err
             }).catch(err => {
                 loading.value = false
             })
@@ -110,6 +109,10 @@ const setFormData = async (row: any = null) => {
         title.value = t('addBrand')
     }
     loading.value = false
+}
+const filterSpecial = (event:any) => {
+    event.target.value = event.target.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '')
+    event.target.value = event.target.value.replace(/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g, '')
 }
 
 defineExpose({

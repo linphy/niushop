@@ -70,9 +70,9 @@ class CoreStoreService extends BaseCoreService
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getStoreList($site_id, $latlng = [])
+    public function getStoreList($latlng = [])
     {
-        $list = $this->model->where([ ['site_id', '=', $site_id ] ])->field('store_id,store_name,store_logo,store_mobile,full_address,longitude,latitude,trade_time')->select()->toArray();
+        $list = $this->model->field('store_id,store_name,store_logo,store_mobile,full_address,longitude,latitude,trade_time')->select()->toArray();
         if (!empty($list) && !empty($latlng)) {
             $location = new Coordinate($latlng[ 'lat' ], $latlng[ 'lng' ]);
             $list = array_map(function($item) use ($location) {

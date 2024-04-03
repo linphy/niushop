@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -13,7 +12,7 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="serveTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('serviceName')" prop="service_name">
-                        <el-input v-model="serveTable.searchParam.service_name" :placeholder="t('serviceNamePlaceholder')" />
+                        <el-input v-model.trim="serveTable.searchParam.service_name" :placeholder="t('serviceNamePlaceholder')" />
                     </el-form-item>
 
                     <el-form-item>

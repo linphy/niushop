@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <!-- 添加优惠券按钮 -->
@@ -14,7 +13,7 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="tableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('title')" prop="title">
-                        <el-input v-model="tableData.searchParam.title" :placeholder="t('titlePlaceholder')" />
+                        <el-input v-model.trim="tableData.searchParam.title" :placeholder="t('titlePlaceholder')" />
                     </el-form-item>
 
                     <el-form-item>

@@ -5,7 +5,6 @@ namespace addon\shop\app\listener\refund;
 
 use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\dict\order\OrderRefundLogDict;
-use addon\shop\app\model\order\OrderRefundLog;
 use addon\shop\app\service\core\refund\CoreRefundLogService;
 
 /**
@@ -29,7 +28,5 @@ class AfterShopOrderRefundEdit
             'content' => ''
         ]);
         //消息发送
-
-
     }
 }

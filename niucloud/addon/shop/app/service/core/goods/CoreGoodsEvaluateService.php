@@ -34,7 +34,6 @@ class CoreGoodsEvaluateService extends BaseCoreService
     public function addEvaluate($data)
     {
         $data = [
-            'site_id' => $data['site_id'],
             'order_id' => $data[ 'order_id' ] ?? 0,
             'order_goods_id' => $data[ 'order_goods_id' ] ?? 0,
             'goods_id' => $data[ 'goods_id' ],

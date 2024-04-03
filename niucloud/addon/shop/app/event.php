@@ -5,8 +5,9 @@ return [
 
     ],
     'listen' => [
-        // 站点创建之后
-        'AddSiteAfter' => [ 'addon\shop\app\listener\AddSiteAfterListener' ],
+
+        //订单创建后
+        'ShopOrderCreate' => [ 'addon\shop\app\listener\order\ShopOrderCreate' ],
         //订单创建后
         'AfterShopOrderCreate' => [ 'addon\shop\app\listener\order\AfterShopOrderCreate' ],
         //订单支付后
@@ -20,7 +21,7 @@ return [
         /***************************************************** 退款 start *****************************************************/
         'AfterShopOrderRefundApply' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundApply' ],
         'AfterShopOrderRefundAuditApply' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundAuditApply' ],
-        'AfterShopOrderRefundAuditReturnGoods' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundAuditReturnGoods' ],
+        'AfterShopOrderRefundAuditRefundGoods' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundAuditRefundGoods' ],
         'AfterShopOrderRefundClose' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundClose' ],
         'AfterShopOrderRefundDelivery' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundDelivery' ],
         'AfterShopOrderRefundEdit' => [ 'addon\shop\app\listener\refund\AfterShopOrderRefundEdit' ],

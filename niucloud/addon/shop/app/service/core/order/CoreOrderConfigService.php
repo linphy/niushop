@@ -38,7 +38,6 @@ class CoreOrderConfigService extends BaseCoreService
      */
     public function setConfig($params)
     {
-        $site_id = $params['site_id'];
 
         $value['order_close'] = [
             'is_close' => $params['is_close'],
@@ -58,7 +57,7 @@ class CoreOrderConfigService extends BaseCoreService
             'evaluate_is_show' => $params['evaluate_is_show']
         ];
 
-        $this->core_config_service->setConfig($site_id, 'SHOP_ORDER_CONFIG', $value);
+        $this->core_config_service->setConfig('SHOP_ORDER_CONFIG', $value);
 
         $invoice = 'SHOP_INVOICE';
         $invoiceInfo = [
@@ -66,7 +65,7 @@ class CoreOrderConfigService extends BaseCoreService
             'invoice_type' => $params['invoice_type'],
             'invoice_content' => $params['invoice_content']
         ];
-        $this->core_config_service->setConfig($site_id, $invoice, $invoiceInfo);
+        $this->core_config_service->setConfig($invoice, $invoiceInfo);
 
         $evaluate = 'SHOP_GOODS_EVALUATE';
         $evaluateInfo = [
@@ -74,7 +73,7 @@ class CoreOrderConfigService extends BaseCoreService
             'evaluate_is_to_examine' => $params['evaluate_is_to_examine'],
             'evaluate_is_show' => $params['evaluate_is_show']
         ];
-        $this->core_config_service->setConfig($site_id, $evaluate, $evaluateInfo);
+        $this->core_config_service->setConfig($evaluate, $evaluateInfo);
 
         return true;
     }
@@ -82,9 +81,9 @@ class CoreOrderConfigService extends BaseCoreService
     /**
      * 自动取消订单
      */
-    public function orderClose(int $site_id)
+    public function orderClose()
     {
-        $data = (new CoreConfigService())->getConfigValue($site_id, 'SHOP_ORDER_CONFIG');
+        $data = (new CoreConfigService())->getConfigValue('SHOP_ORDER_CONFIG');
         if (empty($data)) {
             $closeOrderInfo = [
                 'is_close' => '',
@@ -101,13 +100,11 @@ class CoreOrderConfigService extends BaseCoreService
 
     /**
      * 获取交易配置
-     * @param int $id
      * @return array
      */
-    public function getConfig(int $site_id)
+    public function getConfig()
     {
-        $invoice = 'SHOP_INVOICE';
-        $data = (new CoreConfigService())->getConfigValue($site_id, 'SHOP_ORDER_CONFIG');
+        $data = (new CoreConfigService())->getConfigValue('SHOP_ORDER_CONFIG');
         if (empty($data)) {
             $data['close_order_info'] = [
                 'is_close' => true,
@@ -135,8 +132,9 @@ class CoreOrderConfigService extends BaseCoreService
                 'refund_length' => $data['order_refund']['refund_length'],
             ];
         }
+
         //发票
-        $data['invoice'] = (new CoreConfigService())->getConfigValue($site_id, $invoice);
+        $data['invoice'] = (new CoreConfigService())->getConfigValue('SHOP_INVOICE');
         if (empty($data['invoice'])) {
             $data['invoice'] = [
                 'is_invoice' => '2',
@@ -145,7 +143,7 @@ class CoreOrderConfigService extends BaseCoreService
             ];
         }
         //评价
-        $data['evaluate'] = (new CoreConfigService())->getConfigValue($site_id, $invoice);
+        $data['evaluate'] = (new CoreConfigService())->getConfigValue('SHOP_GOODS_EVALUATE');
         if (empty($data['evaluate'])) {
             $data['evaluate'] = [
                 'is_evaluate' => 1,
@@ -159,9 +157,9 @@ class CoreOrderConfigService extends BaseCoreService
     /**
      * 订单确认收货
      */
-    public function orderConfirm(int $site_id)
+    public function orderConfirm()
     {
-        $data = (new CoreConfigService())->getConfigValue($site_id, 'SHOP_ORDER_CONFIG');
+        $data = (new CoreConfigService())->getConfigValue('SHOP_ORDER_CONFIG');
         if (empty($data)) {
             $confirmOrderInfo = [
                 'is_finish' => '',
@@ -179,9 +177,9 @@ class CoreOrderConfigService extends BaseCoreService
     /**
      * 售后
      */
-    public function orderRefund(int $site_id)
+    public function orderRefund()
     {
-        $data = (new CoreConfigService())->getConfigValue($site_id, 'SHOP_ORDER_CONFIG');
+        $data = (new CoreConfigService())->getConfigValue('SHOP_ORDER_CONFIG');
         if (empty($data)) {
             $refundOrderInfo = [
                 'no_allow_refund' => '',
@@ -199,9 +197,9 @@ class CoreOrderConfigService extends BaseCoreService
     /**
      * 发票信息
      */
-    public function invoice(int $site_id)
+    public function invoice()
     {
-        $data = (new CoreConfigService())->getConfigValue($site_id, 'SHOP_INVOICE');
+        $data = (new CoreConfigService())->getConfigValue('SHOP_INVOICE');
         if (empty($data)) {
             $invoiceInfo = [
                 'is_invoice' => '',
@@ -222,9 +220,9 @@ class CoreOrderConfigService extends BaseCoreService
      * 获取评价设置
      * @return array|int[]|mixed
      */
-    public function getEvaluateConfig(int $site_id)
+    public function getEvaluateConfig()
     {
-        $config = (new CoreConfigService())->getConfigValue($site_id, 'SHOP_GOODS_EVALUATE');
+        $config = (new CoreConfigService())->getConfigValue('SHOP_GOODS_EVALUATE');
         if (empty($config)) {
             $config = [
                 'is_evaluate' => 1,

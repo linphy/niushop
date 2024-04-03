@@ -1,162 +1,188 @@
 <template>
-	<view class="bg-page h-screen overflow-hidden flex flex-col" v-if="!loading">
-		<view v-if="!info" class="flex-1 flex flex-col justify-center">
-			<u-empty mode="data" text="未登录">
-				<button shape="circle" class="!w-[200rpx] mt-[20rpx] text-[30rpx] leading-[70rpx] text-[#fff] rounded-full bg-color remove-border" @click="toLogin">去登录</button>
-			</u-empty>
-		</view>
-		<view v-else-if="!cartList.length" class="flex-1 flex flex-col justify-center">
-			<u-empty mode="car"></u-empty>
-			<button shape="circle" class="!w-[200rpx] mt-[20rpx] text-[30rpx] leading-[70rpx] text-[#fff] rounded-full bg-color remove-border" @click="redirect({ url: '/addon/shop/pages/goods/list' })">去逛逛</button>
-		</view>
-		<block v-else>
-			<view class="flex justify-between px-[32rpx] leading-[84rpx] font-500 text-[#666] text-[26rpx] bg-[#fff]">
-				<text>共{{ cartList.length }}件宝贝</text>
-				<text @click="isEdit = !isEdit">{{ isEdit ? '完成' : '编辑' }}</text>
-			</view>
-			<view class="flex-1 h-0">
-				<scroll-view class="scroll-height box-border" :scroll-y="true">
-					<view class="py-[20rpx] px-[24rpx]">
-						<u-swipe-action>
-							<view v-for="(item, index) in cartList" :class="['bg-[#fff] py-[30rpx] rounded-[18rpx] overflow-hidden', index ? 'mt-[20rpx]' : '']">
-								<u-swipe-action-item :options="cartOptions" @click="swipeClick($event,'cart')">
-									<view :class="['flex px-[24rpx]']">
-										<text
-											:class="['self-center iconfont text-color text-[37rpx] mr-[24rpx]', item.checked ? 'iconxuanze1' : 'iconcheckbox_nol']"
-											@click="item.checked = !item.checked">
-										</text>
-										<u--image width="168rpx" height="168rpx" @click="toDetail(item)" :src="img(item.goodsSku.sku_image_thumb_mid)" model="aspectFill">
-											<template #error>
-												<u-icon name="photo" color="#999" size="50"></u-icon>
-											</template>
-										</u--image>
-										<view class="flex flex-1 flex-wrap ml-[20rpx]">
-											<view class="w-[100%]">
-												<view class="w-[404rpx] multi-hidden text-[#333] text-[26rpx] leading-[36rpx] text-ellipsis">
-													{{ item.goods.goods_name }}
-												</view>
-												<view class="w-[404rpx] mt-[12rpx] truncate text-[#888] text-[24rpx] leading-[32rpx] font-500">
-													{{ item.goodsSku.sku_spec_format }}
-												</view>
-											</view>
-											<view class="flex justify-between items-end self-end w-[100%]">
-												<view class=" text-[var(--price-text-color)] leading-[40rpx] price-font">
-													<text class="text-[24rpx] font-500">￥</text>
-													<text class="text-[32rpx] mr-[10rpx] font-500">{{ item.goodsSku.sale_price }}</text>
-												</view>
-												<u-number-box v-model="item.num" :min="numLimit(item).min"
-													:max="numLimit(item).max" integer :step="1" input-width="68rpx"
-													input-height="52rpx" button-size="52rpx" disabledInput
-													@change="numChange($event, index)">
-													<template #minus>
-														<text
-															:class="{ 'text-[#c8c9cc]': item.num === numLimit(item).min, 'text-[var(--primary-color)]': item.num !== numLimit(item).min }"
-															class="text-[44rpx]  iconfont iconjianhao"></text>
-													</template>
-													<template #input>
-														<text class="text-[#333] fext-[23rpx] font-500 mx-[16rpx]">{{ item.num }}</text>
-													</template>
-													<template #plus>
-														<text
-															:class="{ 'text-[#c8c9cc]': item.num === numLimit(item).max, ' text-[var(--primary-color)]': item.num !== numLimit(item).max }"
-															class="text-[44rpx] text-[var(--primary-color)] iconfont iconjiahao2fill"></text>
-													</template>
-												</u-number-box>
-											</view>
-										</view>
-									</view>
-								</u-swipe-action-item>
-							</view>
-							<view v-for="(item, index) in invalidList" :class="['bg-[#fff] py-[30rpx] rounded-[18rpx] overflow-hidden mt-[20rpx]']">
-								<u-swipe-action-item :options="cartOptions" @click="swipeClick($event,'cart')">
-									<view :class="['flex px-[24rpx]']">
-										<text class="self-center iconfont text-[37rpx] mr-[24rpx] iconcheckbox_nol bg-[#f5f5f5] text-[#eee] rounded-[50%]"></text>
-										<view class="relative w-[168rpx] h-[168rpx]">
-											<u--image width="168rpx" height="168rpx" :src="img(item.goodsSku.sku_image_thumb_mid)" model="aspectFill">
-												<template #error>
-													<u-icon name="photo" color="#999" size="50"></u-icon>
-												</template>
-											</u--image>
-											<view class="absolute left-0 top-0  w-[168rpx] h-[168rpx]  leading-[168rpx] text-center " style="background-color: rgba(243,244,246,0.5);">
-												<text class="text-[#333] text-[24rpx] font-500">已失效</text>
-											</view>
-										</view>
-										<view class="flex flex-1 flex-wrap ml-[20rpx]">
-											<view class="w-[100%]">
-												<view class="w-[404rpx] multi-hidden text-[#333] text-[26rpx] leading-[36rpx] text-ellipsis">
-													{{ item.goods.goods_name }}
-												</view>
-												<view class="w-[404rpx] mt-[12rpx] truncate text-[#888] text-[24rpx] leading-[32rpx] font-500">
-													{{ item.goodsSku.sku_spec_format }}
-												</view>
-											</view>
-											<view class="flex justify-between items-end self-end w-[100%]">
-												<view class="text-[var(--price-text-color)] leading-[40rpx] price-font">
-													<text class="text-[24rpx] font-500">￥</text>
-													<text class="text-[32rpx] mr-[10rpx] font-500">{{ item.goodsSku.sale_price }}</text>
-												</view>
-											</view>
-										</view>
-									</view>
-								</u-swipe-action-item>
-							</view>
-						</u-swipe-action>
-					</view>
-				</scroll-view>
-			</view>
-		</block>
-	</view>
-	<!--  #ifdef  H5 -->
-	<view v-if="cartList.length"
-		class="flex h-[100rpx] items-center bg-[#fff] fixed left-0 right-0 bottom-[50px] box-solid mb-[env(safe-area-inset-bottom)]">
-		<view class="flex items-center px-[30rpx]" @click="selectAll">
-			<text class="iconfont text-color text-[34rpx] mr-[12rpx]" :class="cartList.length == checkedNum ? 'iconxuanze1' : 'iconcheckbox_nol'"></text>
-			<text class="font-500 text-[#676767] text-[25rpx]">全选</text>
-		</view>
-		<view class="flex-1 flex items-center justify-between" v-if="!isEdit">
-			<text class="whitespace-nowrap mr-[24rpx] text-[var(--price-text-color)] font-500  leading-[45rpx]">
-				<text class="text-[#333333] text-[32rpx]">合计：</text>
-				<text class="text-[24rpx] price-font">￥</text>
-				<text class="text-[34rpx] mr-[10rpx] price-font">{{ total }}</text>
-			</text>
-			<button
-				class="!w-[204rpx] !h-[80rpx] text-[#fff]  text-[30rpx] !leading-[80rpx] !text-[32rpx] mr-[30rpx] bg-color"
-				shape="circle" @click="settlement">结算</button>
-		</view>
-		<view class="flex-1 flex items-center justify-end" v-else>
-			<button
-				class="!w-[204rpx] !h-[80rpx] text-[#fff]  text-[30rpx] !leading-[80rpx] !text-[32rpx] mr-[30rpx]  bg-color"
-				shape="circle" @click="deleteCartFn">删除</button>
-		</view>
-	</view>
-	<!--  #endif -->
-	<!--  #ifndef  H5 -->
-	<view v-if="cartList.length" class="flex h-[100rpx] items-center bg-[#fff] fixed left-0 right-0 bottom-[100rpx] box-solid mb-[env(safe-area-inset-bottom)]">
-		<view class="flex items-center px-[30rpx]" @click="selectAll">
-			<text class="iconfont text-color text-[34rpx] mr-[12rpx]" :class="cartList.length == checkedNum ? 'iconxuanze1' : 'iconcheckbox_nol'"></text>
-			<text class="font-500 text-[#676767] text-[25rpx]">全选</text>
-		</view>
-		<view class="flex-1 flex items-center justify-between" v-if="!isEdit">
-			<text class="whitespace-nowrap mr-[24rpx] text-[var(--price-text-color)] font-500  leading-[45rpx]">
-				<text class="text-[#333333] text-[32rpx]">合计：</text>
-				<text class="text-[24rpx] price-font">￥</text>
-				<text class="text-[34rpx] mr-[10rpx] price-font">{{ total }}</text>
-			</text>
-			<button class="!w-[204rpx] !h-[80rpx] text-[#fff]  text-[30rpx] !leading-[80rpx] !text-[32rpx] mr-[30rpx] bg-color rounded-full" shape="circle" @click="settlement">结算</button>
-		</view>
-		<view class="flex-1 flex items-center justify-end" v-else>
-			<button class="!w-[204rpx] !h-[80rpx] text-[#fff]  text-[30rpx] !leading-[80rpx] !text-[32rpx] mr-[30rpx]  bg-color" shape="circle" @click="deleteCartFn">删除</button>
-		</view>
-	</view>
-	<!--  #endif -->
-	<u-loading-page :loading="optionLoading" loading-text="" bg-color="none" loadingColor="var(--primary-color)" iconSize="35"></u-loading-page>
-	<u-loading-page :loading="loading" loading-text="" bg-color="#f7f7f7" loadingColor="var(--primary-color)" iconSize="35"></u-loading-page>
-	<tabbar addon="shop"/>
+    <view :style="themeColor()">
+        <view class="bg-page h-screen overflow-hidden flex flex-col" v-if="!loading">
+            <view v-if="!info" class="flex-1 flex flex-col justify-center bg-[#fff]">
+                <image class="rounded-[8rpx] overflow-hidden mx-auto w-[390rpx] h-[222rpx]" :src="img('static/resource/images/system/login.png')" model="aspectFill" />
+                <view class="text-[#999] text-[26rpx] font-400 mt-[26rpx] text-center leading-[30rpx]">暂未登录</view>
+                <button shape="circle" class="!w-[200rpx] mt-[40rpx] text-[26rpx] leading-[70rpx] !text-[#fff] rounded-full bg-color" @click="toLogin">去登录</button>
+            </view>
+            <view v-else-if="!cartList.length&&!invalidList.length" class="flex-1 flex flex-col justify-center bg-[#fff]">
+                <image class="rounded-[8rpx] overflow-hidden mx-auto w-[390rpx] h-[222rpx]" :src="img('addon/shop/cart-empty.png')" model="aspectFill" />
+                <view class="text-[#999] text-[26rpx] font-400 mt-[26rpx] text-center leading-[30rpx]">赶紧去逛逛, 购买心仪的商品吧</view>
+                <button shape="circle" class="!w-[200rpx] mt-[40rpx] text-[26rpx] leading-[70rpx] !text-[#fff] rounded-full bg-color" @click="redirect({ url: '/addon/shop/pages/goods/list' })">去逛逛</button>
+            </view>
+            <block v-else>
+                
+                <view class="flex-1 h-0">
+                    <scroll-view class="scroll-height box-border" :scroll-y="true">
+                        <view class="py-[20rpx] px-[30rpx]">
+                            <view class="bg-[#fff] pb-[10rpx] box-border rounded-[16rpx]"  v-if="cartList.length">
+                                <view class="flex px-[20rpx] justify-between items-center h-[79rpx] box-border font-400 text-[#303133] text-[24rpx] mb-[10rpx] leading-[30rpx] border-0 border-b-[2rpx] border-solid border-[#f6f6f6]">
+                                    <text>共<text class="text-[var(--price-text-color)]">{{ cartList.length }}</text>件商品</text>
+                                    <text @click="isEdit = !isEdit" class="text-[#666] text-[26rpx]">{{ isEdit ? '完成' : '管理' }}</text>			
+                                </view>
+                                <u-swipe-action ref="swipeActive">
+                                    <block v-for="(item, index) in cartList">
+                                            <view v-if="item.goodsSku"  class="py-[20rpx] overflow-hidden w-full">
+                                                <u-swipe-action-item :options="cartOptions" @click="swipeClick(index,item)">
+                                                    <view class="flex px-[20rpx]">
+                                                        <text
+                                                            class="self-center iconfont text-color text-[34rpx] mr-[20rpx] w-[34rpx] h-[34rpx] rounded-[17rpx] overflow-hidden shrink-0"
+                                                            :class="{ 'iconxuanze1':item.checked,'bg-[#F5F5F5]':!item.checked}"
+                                                            @click="item.checked = !item.checked">
+                                                        </text>
+                                                        <u--image class="rounded-[8rpx] overflow-hidden" width="170rpx" height="170rpx" @click="toDetail(item)" :src="img(item.goodsSku.sku_image_thumb_mid||'')" model="aspectFill">
+                                                            <template #error>
+                                                                <u-icon name="photo" color="#999" size="50"></u-icon>
+                                                            </template>
+                                                        </u--image>
+                                                        <view class="flex flex-1 flex-wrap ml-[20rpx]">
+                                                            <view class="w-[100%]">
+                                                                <view class="w-[406rpx] text-[#333] text-[28rpx] max-h-[80rpx] leading-[40rpx] multi-hidden font-400">
+                                                                    {{ item.goods.goods_name }}
+                                                                </view>
+                                                                <view class="w-[406rpx] mt-[12rpx] truncate text-[#888] text-[24rpx] leading-[32rpx]">
+                                                                    {{ item.goodsSku.sku_spec_format }}
+                                                                </view>
+                                                            </view>
+                                                            <view class="flex justify-between items-end self-end w-[100%]">
+                                                                <view class="flex items-end text-[var(--price-text-color)] leading-[40rpx] price-font">
+                                                                    <text class="text-[var(--price-text-color)] price-font">
+                                                                        <text class="text-[26rpx] font-500">￥</text>
+                                                                        <text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[0] }}</text>
+                                                                        <text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[1] }}</text>
+                                                                    </text>
+                                                                </view>
+                                                                <u-number-box v-model="item.num" :min="numLimit(item).min"
+                                                                    :max="numLimit(item).max" integer :step="1" input-width="68rpx"
+                                                                    input-height="52rpx" button-size="52rpx" disabledInput
+                                                                    @change="numChange($event, index)">
+                                                                    <template #minus>
+                                                                        <text
+                                                                            :class="{ 'text-[#999]': item.num === numLimit(item).min, 'text-[#303133]': item.num !== numLimit(item).min }"
+                                                                            class="text-[34rpx] iconfont iconjian"></text>
+                                                                    </template>
+                                                                    <template #input>
+                                                                        <text class="text-[#303133] text-[24rpx] mx-[10rpx] min-w-[56rpx] h-[38rpx] leading-[40rpx] text-center border-[1rpx] border-solid border-[#ddd] rounded-[4rpx]">{{ item.num }}</text>
+                                                                    </template>
+                                                                    <template #plus>
+                                                                        <text
+                                                                            :class="{ 'text-[#999]': item.num === numLimit(item).max, ' text-[#303133]': item.num !== numLimit(item).max }"
+                                                                            class="text-[34rpx] iconfont iconjia"></text>
+                                                                    </template>
+                                                                </u-number-box>
+                                                            </view>
+                                                        </view>
+                                                    </view>
+                                                </u-swipe-action-item>
+                                            </view>
+                                    </block>
+                                
+                                </u-swipe-action>
+                        </view>
+                            <view class="bg-[#fff] pb-[10rpx] box-border rounded-[16rpx] mt-[20rpx]" v-if="invalidList.length">
+                                    <view class="flex px-[20rpx] justify-between items-center h-[79rpx] box-border font-400 text-[#303133] text-[24rpx] mb-[10rpx] leading-[30rpx] border-0 border-b-[2rpx] border-solid border-[#f6f6f6]">
+                                        <text>共<text class="text-[var(--price-text-color)]">{{ invalidList.length }}</text>件失效商品</text>
+                                        <text class="text-[#666] text-[26rpx]" @click="deleteInvalidList">清空</text>
+                                    
+                                    </view>
+                                    <view v-for="(item, index) in invalidList" class="py-[20rpx] overflow-hidden" >
+                                        <view class="flex px-[20rpx]">
+                                                    <text class="self-center iconfont iconxuanze1 text-[34rpx] mr-[20rpx] text-[#F5F5F5] rounded-[50%] overflow-hidden shrink-0"></text>
+                                                    <view class="relative w-[168rpx] h-[168rpx]">
+                                                        <u--image class="rounded-[8rpx] overflow-hidden" width="168rpx" height="168rpx" :src="img(item.goodsSku.sku_image_thumb_mid)" model="aspectFill">
+                                                            <template #error>
+                                                                <u-icon name="photo" color="#999" size="50"></u-icon>
+                                                            </template>
+                                                        </u--image>
+                                                        <view class="absolute left-0 top-0  w-[168rpx] h-[168rpx]  leading-[168rpx] text-center " style="background-color: rgba(0,0,0,0.3);">
+                                                            <text class="text-[#fff] text-[24rpx]">已失效</text>
+                                                        </view>
+                                                    </view>
+                                                    <view class="flex flex-1 flex-wrap ml-[20rpx]">
+                                                        <view class="w-[100%]">
+                                                            <view class="w-[406rpx] text-[#333] text-[28rpx] max-h-[80rpx] leading-[40rpx] font-400 multi-hidden">
+                                                                {{ item.goods.goods_name }}
+                                                            </view>
+                                                            <view class="w-[406rpx] mt-[12rpx] truncate text-[#888] text-[24rpx] leading-[32rpx]">
+                                                                {{ item.goodsSku.sku_spec_format }}
+                                                            </view>
+                                                        </view>
+                                                        <view class="flex  justify-between items-end self-end w-[100%]">
+                                                            <view class="flex items-end text-[var(--price-text-color)] leading-[40rpx] price-font">
+                                                                <text class="text-[var(--price-text-color)] price-font">
+                                                                    <text class="text-[26rpx] font-500">￥</text>
+                                                                    <text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[0] }}</text>
+                                                                    <text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[1] }}</text>
+                                                                </text>
+                                                            </view>
+                                                        </view>
+                                                    </view>
+                                        </view>
+                                    </view>
+                                </view>
+                        </view>
+                    </scroll-view>
+                </view>
+            </block>
+        </view>
+        
+        <!--  #ifdef  H5 -->
+        <view v-if="cartList.length"
+            class="flex h-[100rpx] items-center bg-[#fff] fixed left-0 right-0 bottom-[50px] box-solid mb-ios justify-between">
+            <view class="flex items-center pl-[30rpx]" @click="selectAll">
+                <text class="self-center iconfont text-color text-[34rpx] mr-[20rpx] w-[34rpx] h-[34rpx] rounded-[17rpx] overflow-hidden shrink-0" :class="cartList.length == checkedNum ? 'iconxuanze1' : 'bg-[#F5F5F5]'"></text>
+                <text class="font-400 text-[#303133] text-[26rpx]">全选</text>
+            </view>
+            <view class="flex items-center">
+                <view class="flex-1 flex items-center justify-between" v-if="!isEdit">
+                    <view class="flex items-center mr-[67rpx] text-[var(--price-text-color)] leading-[45rpx]">
+                        <view class="font-400 text-[#303133] text-[26rpx]">合计：</view>
+                        <text class="text-[var(--price-text-color)] price-font">
+                            <text class="text-[26rpx] font-500">￥</text>
+                            <text class="text-[36rpx] font-500">{{ parseFloat(total).toFixed(2).split('.')[0] }}</text>
+                            <text class="text-[24rpx] font-500">.{{ parseFloat(total).toFixed(2).split('.')[1] }}</text>
+                        </text>
+                    </view>
+                    <u-button  :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="settlement">结算</u-button>
+                </view>
+                <view class="flex-1 flex items-center justify-end" v-else>
+                    <u-button :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="deleteCartFn">删除</u-button>
+                </view>
+            </view>
+        </view>
+        <!--  #endif -->
+        <!--  #ifndef  H5 -->
+        <view v-if="cartList.length" class="flex h-[100rpx] items-center bg-[#fff] fixed left-0 right-0 bottom-[100rpx] box-solid mb-ios justify-between">
+            <view class="flex items-center pl-[30rpx]" @click="selectAll">
+                <text class="self-center iconfont text-color text-[30rpx] mr-[20rpx] w-[34rpx] h-[34rpx] rounded-[17rpx] overflow-hidden shrink-0" :class="{'iconxuanze1' :cartList.length == checkedNum, 'bg-[#F5F5F5]':cartList.length != checkedNum}"></text>
+                <text class="font-400 text-[#303133] text-[26rpx]">全选</text>
+            </view>
+            <view class="flex items-center">
+                <view class="flex-1 flex items-center justify-between" v-if="!isEdit">
+                    <view class="flex items-center mr-[67rpx] text-[var(--price-text-color)] leading-[45rpx]">
+                        <view class="font-400 text-[#303133] text-[26rpx]">合计：</view>
+                        <text class="text-[var(--price-text-color)] price-font">
+                            <text class="text-[26rpx] font-500">￥</text>
+                            <text class="text-[36rpx] font-500">{{ parseFloat(total).toFixed(2).split('.')[0] }}</text>
+                            <text class="text-[24rpx] font-500">.{{ parseFloat(total).toFixed(2).split('.')[1] }}</text>
+                        </text>
+                    </view>
+                    <u-button  :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="settlement">结算</u-button>
+                </view>
+                <view class="flex-1 flex items-center justify-end" v-else>
+                    <u-button :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="deleteCartFn">删除</u-button>
+                </view>
+            </view>
+        </view>
+        <!--  #endif -->
+        <u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
+        <tabbar addon="shop"/>
+    </view>
 </template>
 
-
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch,toRaw,nextTick } from 'vue'
 import useMemberStore from '@/stores/member'
 import { useLogin } from '@/hooks/useLogin'
 import { onShow } from '@dcloudio/uni-app'
@@ -173,40 +199,37 @@ const total = ref('0.00')
 const cartList = ref<object[]>([])
 const invalidList = ref<object[]>([]) //  失效商品：已下架、已删除
 const isEdit = ref(false)
-
+const querOne = ref(true)
 const cartStore = useCartStore();
 
 const getCartGoodsListFn = () => {
     getCartGoodsList({}).then(({data}) => {
-        cartList.value = []
-        invalidList.value = []
-
-        data.forEach(item => {
-            item.checked = false
-            if (item.status && item.goods.delete_time == 0) {
-                cartList.value.push(item)
-            } else {
+		cartList.value = []
+		invalidList.value = []
+		loading.value = false
+		data.forEach(item => {
+			item.checked = false
+			if (item.goods.status && item.goods.delete_time == 0) {
+				cartList.value.push(item)
+			}else{
                 invalidList.value.push(item)
-            }
-        })
-
-        loading.value = false
-    }).catch()
+			}
+		})
+		selectAll()
+		if(querOne.value) querOne.value = false
+    }).catch((err)=>{
+		if(err.code==401){
+			cartList.value = []
+        	invalidList.value = []
+			loading.value = false
+		}
+	})
 }
 
 onShow(() => {
-	if (info.value) {
 		getCartGoodsListFn()
 		cartStore.getList();
-	} else {
-		loading.value = false
-	}
-})
-
-watch(() => info.value, () => {
-	if (info.value) {
-		getCartGoodsListFn()
-	}
+	
 })
 
 const checkedNum = computed(() => {
@@ -220,7 +243,7 @@ const checkedNum = computed(() => {
 watch(() => cartList.value, () => {
 	let value = 0
 	cartList.value.forEach(item => {
-		if (item.checked) value += parseFloat(item.goodsSku.sale_price) * item.num
+		if (item.checked&&item.goodsSku) value += parseFloat(item.goodsSku.sale_price) * item.num
 	})
 	total.value = value.toFixed(2)
 }, { deep: true })
@@ -230,7 +253,7 @@ const toLogin = () => {
 }
 
 const toDetail = (data: any) => {
-    redirect({ url: '/addon/shop/pages/goods/detail', param: { goods_id: data.goods_id }, mode: 'navigateTo' })
+    redirect({ url: '/addon/shop/pages/goods/detail', param: { goods_id: data.goods_id } })
 }
 
 const numChange = (event, index) => {
@@ -264,19 +287,16 @@ const cartOptions = ref([
     }
 ])
 
-const swipeClick = (event: {}, type: string) => {
+const swipeActive = ref()
+const swipeClick = (index:any,item:any) => {
 	if (optionLoading.value) return
 	optionLoading.value = true
-
-    const index = event.index
-	const data = cartList.value[index]
-
-	cartStore.delete(data.id, () => {
-		type == 'cart' ? cartList.value.splice(index, 1) : invalidList.value.splice(index, 1)
+	cartStore.delete(item.id, () => {
+		cartList.value.splice(index, 1) 
+		nextTick(()=>{if(swipeActive.value)swipeActive.value.closeOther() })
 		optionLoading.value = false
 	})
 }
-
 /**
  * 全选
  */
@@ -332,10 +352,21 @@ const deleteCartFn = () => {
 		optionLoading.value = false
 	})
 }
+/**
+ * 清空无效商品
+ */
+const deleteInvalidList = ()=>{
+	if (optionLoading.value) return
+	optionLoading.value = true
+	const ids = invalidList.value.map((el)=>el.id)
+
+	cartStore.delete(ids, () => {
+		getCartGoodsListFn()
+		optionLoading.value = false
+	})
+	invalidList.value = []
+}
 </script>
-<style>
-@import '@/addon/shop/styles/common.scss';
-</style>
 <style lang="scss" scoped>
 :deep(uni-page) {
 	background: var(--page-bg-color);
@@ -363,17 +394,17 @@ uni-page-body {
 
 /*  #ifdef  H5  */
 .scroll-height {
-	height: calc(100vh - 184rpx - 50px - env(safe-area-inset-bottom));
-	height: calc(100vh - 184rpx - 50px - constant(safe-area-inset-bottom));
+	height: calc(100vh - 100rpx - 50px - constant(safe-area-inset-bottom));
+	height: calc(100vh - 100rpx - 50px - env(safe-area-inset-bottom));
+	
 }
 
 /*  #endif  */
 /*  #ifndef  H5  */
 .scroll-height {
-	height: calc(100vh - 284rpx - env(safe-area-inset-bottom));
-	height: calc(100vh - 284rpx - constant(safe-area-inset-bottom));
+	height: calc(100vh - 200rpx - constant(safe-area-inset-bottom));
+	height: calc(100vh - 200rpx - env(safe-area-inset-bottom));
 }
-
 /*  #endif  */
 
 .text-ellipsis{

@@ -1,4 +1,3 @@
-<!-- eslint-disable n/handle-callback-err -->
 <template>
     <div class="main-container">
         <div class="detail-head">
@@ -13,20 +12,20 @@
         <el-card class="box-card !border-none" shadow="never">
             <el-form :model="formData" label-width="140px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('storeName')" prop="store_name">
-                    <el-input v-model="formData.store_name" clearable :placeholder="t('storeNamePlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.store_name" clearable :placeholder="t('storeNamePlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('storeDesc')">
-                    <el-input v-model="formData.store_desc" type="textarea" rows="4" clearable :placeholder="t('storeDescPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.store_desc" type="textarea" rows="4" clearable :placeholder="t('storeDescPlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('storeLogo')">
                     <upload-image v-model="formData.store_logo" />
                 </el-form-item>
                 <el-form-item :label="t('storeMobile')" prop="store_mobile">
-                    <el-input v-model="formData.store_mobile" clearable :placeholder="t('storeMobilePlaceholder')" class="input-width" @keyup="filterNumber($event)" />
+                    <el-input v-model.trim="formData.store_mobile" clearable :placeholder="t('storeMobilePlaceholder')" class="input-width" @keyup="filterNumber($event)" @blur="formData.store_mobile = $event.target.value"/>
                 </el-form-item>
                 <el-form-item :label="t('tradeTime')" prop="trade_time">
                     <div>
-                        <el-input v-model="formData.trade_time" clearable :placeholder="t('tradeTimePlaceholder')" class="input-width" />
+                        <el-input v-model.trim="formData.trade_time" clearable :placeholder="t('tradeTimePlaceholder')" class="input-width" />
                         <p class="text-[12px] text-[#999]">{{ t('tradeTimeTips') }}</p>
                     </div>
                 </el-form-item>
@@ -47,7 +46,7 @@
                 <el-form-item :label="t('storeAddressDetail')" prop="address">
                     <div>
                         <div>
-                            <el-input v-model="formData.address" clearable :placeholder="t('storeAddressDetailPlaceholder')" class="input-width" />
+                            <el-input v-model.trim="formData.address" clearable :placeholder="t('storeAddressDetailPlaceholder')" class="input-width" />
                             <el-button class="ml-3" @click="searchOn">{{ t('search') }}</el-button>
                         </div>
                         <div class="mt-4">

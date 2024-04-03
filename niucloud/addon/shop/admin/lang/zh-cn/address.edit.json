@@ -14,6 +14,7 @@
 	"isDefaultRefund":"默认收货地址",
 	"contactNamePlaceholder":"请输入联系人",
 	"mobilePlaceholder":"请输入联系方式",
+	"mobileTips":"请输入正确的手机号",
 	"addressPlaceholder":"请输入详细地址",
 	"fullAddressPlaceholder":"请输入地址",
 	"latPlaceholder":"请输入纬度",

@@ -24,11 +24,11 @@
 				</el-form-item>
 
 				<el-form-item :label="t('contactName')" prop="contact_name">
-					<el-input v-model="formData.contact_name" clearable :placeholder="t('contactNamePlaceholder')" class="input-width"/>
+					<el-input v-model.trim="formData.contact_name" clearable :placeholder="t('contactNamePlaceholder')" class="input-width" maxlength="10" />
 				</el-form-item>
 
 				<el-form-item :label="t('mobile')" prop="mobile">
-					<el-input v-model="formData.mobile" clearable :placeholder="t('mobilePlaceholder')" class="input-width"/>
+					<el-input v-model.trim="formData.mobile" clearable :placeholder="t('mobilePlaceholder')" class="input-width"  @keyup="filterNumber($event)" @blur="formData.mobile = $event.target.value"/>
 				</el-form-item>
 
 				<el-form-item :label="t('fullAddress')" prop="address_area">
@@ -47,7 +47,7 @@
 				</el-form-item>
 
 				<el-form-item prop="address">
-					<el-input v-model="formData.address" clearable :placeholder="t('addressPlaceholder')"  class="input-width"/>
+					<el-input v-model.trim="formData.address" clearable :placeholder="t('addressPlaceholder')"  class="input-width"/>
 				</el-form-item>
 
 				<el-form-item>
@@ -72,7 +72,7 @@ import { getShopAddressInfo, addShopAddress, editShopAddress } from '@/addon/sho
 import { getMap, getAreaListByPid, getAreaByCode } from '@/app/api/sys'
 import { useRoute } from 'vue-router'
 import { createMarker, latLngToAddress, addressToLatLng } from '@/utils/qqmap'
-
+import { filterNumber } from '@/utils/common'
 const route = useRoute()
 const id: number = parseInt(route.query.id as string)
 const loading = ref(false)
@@ -224,7 +224,16 @@ const formRules = computed(() => {
             { required: true, message: t('contactNamePlaceholder'), trigger: 'blur' }
         ],
         mobile: [
-            { required: true, message: t('mobilePlaceholder'), trigger: 'blur' }
+            { required: true, message: t('mobilePlaceholder'), trigger: 'blur' },
+            {
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (value && !/^1[3-9]\d{9}$/.test(value)) {
+                        callback(new Error(t('mobileTips')))
+                    }
+                    callback()
+                }
+            }
         ],
         address_area: [
             {

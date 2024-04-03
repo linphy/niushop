@@ -96,7 +96,7 @@ class Category extends BaseAdminController
             [ "image", "" ],
             [ "pid", 0 ],
             [ "is_show", 0 ],
-            [ "sort", 0 ]
+            [ "sort", '' ]
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Category.edit');
         ( new CategoryService() )->edit($id, $data);

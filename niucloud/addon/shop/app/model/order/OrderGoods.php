@@ -60,7 +60,7 @@ class OrderGoods extends BaseModel
     public function getGoodsImageThumbBigAttr($value, $data)
     {
         if (!empty($data['goods_image'])) {
-            return get_thumb_images($data['site_id'], $data['goods_image'], FileDict::BIG);
+            return get_thumb_images($data['goods_image'], FileDict::BIG);
         }
         return '';
     }
@@ -75,7 +75,7 @@ class OrderGoods extends BaseModel
     public function getGoodsImageThumbMidAttr($value, $data)
     {
         if (!empty($data['goods_image'])) {
-            return get_thumb_images($data['site_id'], $data['goods_image'], FileDict::MID);
+            return get_thumb_images($data['goods_image'], FileDict::MID);
         }
         return '';
     }
@@ -90,7 +90,7 @@ class OrderGoods extends BaseModel
     public function getGoodsImageThumbSmallAttr($value, $data)
     {
         if (!empty($data['goods_image'])) {
-            return get_thumb_images($data['site_id'], $data['goods_image'], FileDict::SMALL);
+            return get_thumb_images($data['goods_image'], FileDict::SMALL);
         }
         return '';
     }

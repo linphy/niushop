@@ -85,16 +85,28 @@
                         <el-radio label="1">{{ t('isInvoiceOpen') }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item prop="invoice_content">
+                <el-form-item  class="invoice" >
                     <div class="flex">
                         <div>{{ t('invoiceContent') }}</div>
                         <div class="mx-[10px]">
-                            <div v-for="(item, index) in formData.invoice_content" :class="['w-[120px] relative', index ? 'mt-[15px]' : '']" :key="index">
-                                <el-input v-model="formData.invoice_content[index]" class="!w-[120px]" clearable />
-                                <el-icon v-if="index" color="rgba(0, 0, 0, 0.3)" class="!absolute right-[-6px] top-[-5px]" @click="clearInvoiceContent(index)">
-                                    <CircleCloseFilled />
-                                </el-icon>
-                            </div>
+                            <el-form-item :prop="`invoice_content[${index}]`" v-for="(item, index) in formData.invoice_content" :key="index" :rules="[{ validator: (rule:any, value:any, callback:Function) => {
+                                        if (formData.is_invoice === '1') {
+                                            if (value === ''){
+                                                return callback(t('invoicePlaceholder1'))
+                                            } else {
+                                                return callback()
+                                            }
+                                        } else {
+                                            return callback()
+                                        }
+                                    }, trigger: 'blur' }]">
+                                <div :class="['w-[120px] relative', index ? 'mt-[15px]' : '']" >
+                                    <el-input v-model.trim="formData.invoice_content[index]" class="!w-[120px]" clearable />
+                                    <el-icon v-if="index" color="rgba(0, 0, 0, 0.3)" class="!absolute right-[-6px] top-[-5px]" @click="clearInvoiceContent(index)">
+                                        <CircleCloseFilled />
+                                    </el-icon>
+                                </div>
+                            </el-form-item>
                         </div>
                         <el-button @click="insertInvoiceContent">{{ t('insert') }}</el-button>
                     </div>
@@ -177,17 +189,6 @@ const validRefundLength = (rule:any, value:any, callback:Function) => {
         return callback()
     }
 }
-const validInvoiceContent = (rule:any, value:any, callback:Function) => {
-    if (formData.value.is_invoice === '1') {
-        if (value.some((el:any) => el === '')) {
-            return callback(new Error(t('invoicePlaceholder1')))
-        } else {
-            return callback()
-        }
-    } else {
-        return callback()
-    }
-}
 const validInvoiceType = (rule:any, value:any, callback:Function) => {
     if (formData.value.is_invoice === '1') {
         if (!value.length) {
@@ -208,9 +209,6 @@ const rules = ref({
     ],
     refund_length: [
         { validator: validRefundLength, trigger: 'blur' }
-    ],
-    invoice_content: [
-        { validator: validInvoiceContent, trigger: 'blur' }
     ],
     invoice_type: [
         { validator: validInvoiceType, trigger: 'change' }
@@ -251,4 +249,5 @@ const onSave = async (formEl: any) => {
     })
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

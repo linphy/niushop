@@ -10,7 +10,7 @@
                 <upload-image v-model="formData.member_head" />
             </el-form-item>
             <el-form-item :label="t('memberName')" prop="member_name">
-                <el-input v-model="formData.member_name" clearable :placeholder="t('memberNamePlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.member_name" clearable :placeholder="t('memberNamePlaceholder')" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('createTime')" prop="create_time">
                 <div class="input-width">
@@ -25,10 +25,10 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item :label="t('scores')" prop="scores">
-                <el-rate clearable v-model="formData.scores" />
+                <el-rate  v-model="formData.scores" />
             </el-form-item>
             <el-form-item :label="t('content')" prop="content">
-                <el-input v-model="formData.content" type="textarea" rows="4" clearable :placeholder="t('contentPlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.content" type="textarea" rows="4" clearable :placeholder="t('contentPlaceholder')" class="input-width" />
             </el-form-item>
 
             <el-form-item :label="t('images')">
@@ -68,9 +68,10 @@ const initialFormData = {
     images: [],
     image_arr: '',
     is_anonymous: 1,
-    scores: 1,
+    scores: 5,
     create_time: ''
 }
+
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
 const formRef = ref<FormInstance>()
@@ -120,7 +121,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 loading.value = false
                 showDialog.value = false
                 emit('complete')
-            // eslint-disable-next-line n/handle-callback-err
             }).catch(err => {
                 loading.value = false
             })
@@ -134,7 +134,9 @@ const setFormData = async (row: any = null) => {
     Object.keys(formData).forEach((key: string) => {
         formData[key] = ''
     })
+    formData.is_anonymous = 1
     formData.goods_id = []
+    formData.scores = 5
     loading.value = false
 }
 

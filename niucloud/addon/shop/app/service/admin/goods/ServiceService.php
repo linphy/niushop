@@ -38,7 +38,7 @@ class ServiceService extends BaseAdminService
         $field = 'service_id,service_name,image,desc,create_time,update_time';
         $order = 'create_time desc';
 
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "service_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "service_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -52,7 +52,7 @@ class ServiceService extends BaseAdminService
     public function getList(array $where = [], $field = 'service_id,service_name,image,desc,create_time,update_time')
     {
         $order = "create_time desc";
-        return $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "service_name" ], $where)->field($field)->select()->order($order)->toArray();
+        return $this->model->withSearch([ "service_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -64,7 +64,7 @@ class ServiceService extends BaseAdminService
     {
         $field = 'service_id,service_name,image,desc,create_time,update_time';
 
-        $info = $this->model->field($field)->where([ [ 'service_id', '=', $id ],['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'service_id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -76,7 +76,6 @@ class ServiceService extends BaseAdminService
     public function add(array $data)
     {
         $data[ 'create_time' ] = time();
-        $data['site_id'] = $this->site_id;
         $res = $this->model->create($data);
         return $res->service_id;
     }
@@ -90,7 +89,7 @@ class ServiceService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $data[ 'update_time' ] = time();
-        $this->model->where([ [ 'service_id', '=', $id ], ['site_id', '=', $this->site_id] ])->update($data);
+        $this->model->where([ [ 'service_id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -101,7 +100,7 @@ class ServiceService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $model = $this->model->where([ [ 'service_id', '=', $id ], ['site_id', '=', $this->site_id] ])->find();
+        $model = $this->model->where([ [ 'service_id', '=', $id ] ])->find();
         $res = $model->delete();
         return $res;
     }

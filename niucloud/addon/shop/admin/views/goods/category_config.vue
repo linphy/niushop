@@ -27,7 +27,7 @@
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-[16px] pl-[15px]">{{ t('pageSettings') }}</h3>
                 <el-form-item :label="t('pageTitle')" prop="page_title">
-                    <el-input v-model="formData.page_title" clearable :placeholder="t('pageTitlePlaceholder')" class="input-width" maxlength="10" show-word-limit />
+                    <el-input v-model.trim="formData.page_title" clearable :placeholder="t('pageTitlePlaceholder')" class="input-width" maxlength="10" show-word-limit />
                 </el-form-item>
                 <el-form-item :label="t('searchControl')">
                     <el-radio-group class="mx-[10px]" v-model="formData.search.control">
@@ -36,7 +36,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="formData.search.control" :label="t('searchTitle')" prop="search.title">
-                    <el-input v-model="formData.search.title" clearable :placeholder="t('searchTitlePlaceholder')" class="input-width" maxlength="12" show-word-limit />
+                    <el-input v-model.trim="formData.search.title" clearable :placeholder="t('searchTitlePlaceholder')" class="input-width" maxlength="12" show-word-limit />
                 </el-form-item>
                 <template v-if="formData.level!=2||(formData.level===2&&formData.template != 'style-1')">
                     <!-- <el-form-item :label="t('sort')" prop="sort">
@@ -85,7 +85,7 @@
                             </div>
                         </el-form-item>
                         <el-form-item v-if="formData.cart.style === 'style-1'" prop="cart.text">
-                            <el-input v-model="formData.cart.text" clearable :placeholder="t('cartTextPlaceholder')" class="input-width" maxlength="3" show-word-limit />
+                            <el-input v-model.trim="formData.cart.text" clearable :placeholder="t('cartTextPlaceholder')" class="input-width" maxlength="3" show-word-limit />
                         </el-form-item>
                         <el-form-item :label="t('cartEvent')">
                             <el-radio-group class="mx-[10px]" v-model="formData.cart.event">

@@ -39,7 +39,6 @@ class OrderCreateService extends BaseApiService
     public function create(array $data)
     {
         $data['member_id'] = $this->member_id;
-        $data['site_id'] = $this->site_id;
         $data['order_from'] = $this->channel;
         $data['main_type'] = OrderLogDict::MEMBER;
         $data['main_id'] = $this->member_id;
@@ -55,7 +54,6 @@ class OrderCreateService extends BaseApiService
     {
         $data['member_id'] = $this->member_id;
         $data['order_from'] = $this->channel;
-        $data['site_id'] = $this->site_id;
         return (new CoreOrderCreateService())->calculate($data);
     }
 
@@ -78,7 +76,6 @@ class OrderCreateService extends BaseApiService
     public function getCoupon(array $data)
     {
         $data['member_id'] = $this->member_id;
-        $data['site_id'] = $this->site_id;
         return (new CoreOrderCreateService())->getCoupon($data);
     }
 
@@ -101,6 +98,6 @@ class OrderCreateService extends BaseApiService
      */
     public function getStore(array $data)
     {
-        return (new CoreStoreService())->getStoreList($this->site_id, $data);
+        return (new CoreStoreService())->getStoreList($data);
     }
 }

@@ -1,11 +1,14 @@
 <template>
-	<view>
+	<view :style="themeColor()">
 		<u-loading-page :loading="loading" loadingText="" bg-color="#f7f7f7"></u-loading-page>
 
 		<view v-show="!loading">
+			<!-- #ifdef MP-WEIXIN -->
+			<top-tabbar v-if="!isShowTopTabbar" :title="data.title" />
+			<!-- #endif -->
 
 			<!-- 自定义模板渲染 -->
-			<view class="diy-template-wrap bg-index" v-if="data.pageMode != 'fixed'" :style="{ backgroundColor: data.global.pageBgColor,minHeight: 'calc(100vh - 50px)',backgroundImage : data.global.bgUrl ? 'url(' +  img(data.global.bgUrl) + ')' : '' }">
+			<view class="diy-template-wrap bg-index" v-if="data.pageMode != 'fixed'" :style="pageStyle">
 
 				<diy-group :data="data" :pullDownRefreshCount="pullDownRefreshCount"></diy-group>
 
@@ -28,14 +31,15 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, computed } from 'vue';
-	import { onLoad, onShow, onPullDownRefresh } from '@dcloudio/uni-app';
+	import { ref, reactive, computed, watch } from 'vue';
+	import { onLoad, onShow, onPullDownRefresh, onPageScroll } from '@dcloudio/uni-app';
 	import { getDiyInfo } from '@/app/api/diy';
 	import useDiyStore from '@/app/stores/diy';
 	import { useShare } from '@/hooks/useShare'
 	import { img, redirect } from '@/utils/common';
     import diyGroup from '@/addon/components/diy/group/index.vue'
     import fixedGroup from '@/addon/components/fixed/group/index.vue'
+    import topTabbar from '@/components/top-tabbar/top-tabbar.vue'
 
 	const { setShare, onShareAppMessage, onShareTimeline } = useShare()
 	const loading = ref(true);
@@ -61,7 +65,8 @@
 			return diyData;
 		}
 	})
-
+	
+	let isShowTopTabbar = ref(false);
 	setShare();
 	onShareAppMessage()
 	onShareTimeline()
@@ -98,9 +103,13 @@
 					let sources = JSON.parse(data.value);
 					diyData.global = sources.global;
 					diyData.value = sources.value;
-					diyData.value.forEach((item, index) => {
+					diyData.value.forEach((item:any, index) => {
 						item.pageStyle = '';
-						if (item.pageBgColor) item.pageStyle += 'background-color:' + item.pageBgColor + ';';
+                        if(item.pageStartBgColor) {
+                            if (item.pageStartBgColor && item.pageEndBgColor) item.pageStyle += `background:linear-gradient(${item.pageGradientAngle},${item.pageStartBgColor},${item.pageEndBgColor});`;
+                            else item.pageStyle += 'background-color:' + item.pageStartBgColor + ';';
+                        }
+
 						if (item.margin) {
 							item.pageStyle += 'padding-top:' + item.margin.top * 2 + 'rpx' + ';';
 							item.pageStyle += 'padding-bottom:' + item.margin.bottom * 2 + 'rpx' + ';';
@@ -108,8 +117,12 @@
 							item.pageStyle += 'padding-left:' + item.margin.both * 2 + 'rpx' + ';';
 						}
 					});
+					// 控制自定义头部是否出现 | 微信小程序
+					isShowTopTabbar.value = diyData.value.some((item)=>{
+						return item && item.position && item.position == 'top_fixed'
+					})
 					uni.setNavigationBarTitle({
-						title: diyData.title
+						title: diyData.global.title
 					});
 					loading.value = false;
 
@@ -120,16 +133,45 @@
 
 	});
 
+    const pageStyle = computed(()=> {
+        var style = '';
+        if (data.value.global.pageStartBgColor && data.value.global.pageEndBgColor) style += `background:linear-gradient(${data.value.global.pageGradientAngle},${data.value.global.pageStartBgColor},${data.value.global.pageEndBgColor});`;
+        else style += 'background-color:' + data.value.global.pageStartBgColor + ';';
+
+        style += 'min-height:calc(100vh - 50px);';
+        if (data.value.global.bgUrl) {
+            style += `background-image:url('${img(data.value.global.bgUrl)}');`;
+        }
+
+        if (data.value.global.bgHeightScale) {
+            style += `background-size: 100% ${data.value.global.bgHeightScale}%;`;
+        }
+
+        return style;
+    });
+
 	// 监听下拉刷新事件
 	onPullDownRefresh(() => {
 		pullDownRefreshCount.value++;
 		uni.stopPullDownRefresh();
 	})
+
+    onPageScroll((e)=>{
+        diyStore.scrollTop = e.scrollTop;
+    })
 </script>
 <style lang="scss" scoped>
 	@import '@/styles/diy.scss';
-	@import '@/addon/shop/styles/common.scss';
 	:deep(.u-tabbar__placeholder) {
 		display: none !important;
+	}
+</style>
+<style lang="scss">
+	.diy-template-wrap {
+		::v-deep .diy-group {
+			> .draggable-element.top-fixed-diy {
+				display: none;
+			}
+		}
 	}
 </style>

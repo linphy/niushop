@@ -1,0 +1,10 @@
+{
+  "coupon": "优惠券",
+  "orderCenter":"订单中心",
+  "orderAll":"全部订单",
+  "obligation":"待付款",
+  "toBeShipped":"待发货",
+  "toBeReceived":"待收货",
+  "toBeEvaluated":"待评价",
+  "refund":"售后退款"
+}

@@ -51,5 +51,5 @@
 	  "payType": "支付类型",
 	  "orderInfo": "订单信息",
 	  "refundStatusName": "退款状态",
-	  "orderTradoNo": "交易号"
+	  "outTradeNo": "交易号"
 }

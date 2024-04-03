@@ -83,7 +83,6 @@ class Evaluate extends BaseAdminController
         return success((new EvaluateService())->getList($data['goods_id']));
     }
 
-
     /**
      * 评价信息
      * @param $id

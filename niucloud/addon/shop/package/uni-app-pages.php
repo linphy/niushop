@@ -6,13 +6,18 @@ return [
 				{
 					"path": "shop/pages/index",
 					"style": {
-						"navigationBarTitleText": "%shop.pages.index%",
-						"enablePullDownRefresh": true
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
+                        "navigationBarTitleText": "%shop.pages.index%"
 					}
 				},
 				{
 					"path": "shop/pages/coupon/list",
 					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
 						"navigationBarTitleText": "%shop.pages.coupon.list%"
 					}
 				},
@@ -50,8 +55,16 @@ return [
 				{
 					"path": "shop/pages/member/index",
 					"style": {
-						"navigationBarTitleText": "%shop.pages.member.index%",
-						"enablePullDownRefresh": true
+                        "navigationBarTitleText": "%shop.pages.member.index%",
+                        // #ifndef H5
+						"navigationStyle": "custom"
+						// #endif
+					}
+				},
+				{
+					"path": "shop/pages/goods/search",
+					"style": {
+						"navigationBarTitleText": "%shop.pages.goods.search%"
 					}
 				},
 				{
@@ -63,7 +76,8 @@ return [
 				{
 					"path": "shop/pages/goods/detail",
 					"style": {
-						"navigationBarTitleText": "%shop.pages.goods.detail%"
+						"navigationBarTitleText": "%shop.pages.goods.detail%",
+						"navigationStyle": "custom"
 					}
 				},
 				{
@@ -81,6 +95,9 @@ return [
 				{
 					"path": "shop/pages/order/detail",
 					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
 						"navigationBarTitleText": "%shop.pages.order.detail%"
 					},
 					"needLogin": true
@@ -133,7 +150,7 @@ return [
 						"navigationBarTitleText": "%shop.pages.refund.log%"
 					},
 					"needLogin": true
-				}
+				},
 				// PAGE_END
 EOT
 ];

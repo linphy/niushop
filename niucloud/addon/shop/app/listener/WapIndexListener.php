@@ -20,9 +20,6 @@ class WapIndexListener
 {
     public function handle()
     {
-        $site_addon = (new CoreSiteService())->getAddonKeysBySiteId(request()->siteId());
-        if (!in_array('shop', $site_addon)) return;
-
         return [
             [
                 'key' => 'shop',

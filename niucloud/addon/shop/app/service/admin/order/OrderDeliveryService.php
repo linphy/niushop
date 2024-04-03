@@ -38,7 +38,6 @@ class OrderDeliveryService extends BaseAdminService
     {
         $data[ 'main_type' ] = OrderLogDict::STORE;
         $data[ 'main_id' ] = $this->uid;
-        $data[ 'site_id'] = $this->site_id;
         ( new CoreOrderDeliveryService() )->delivery($data);
         return true;
     }
@@ -49,13 +48,13 @@ class OrderDeliveryService extends BaseAdminService
      */
     public function getDeliveryPackage($data)
     {
-        $field = 'id, order_id, site_id, name, delivery_type, sub_delivery_type, express_company_id, express_number, local_deliver_id, status, create_time';
-        $info = ( new OrderDelivery() )->where([ [ 'id', '=', $data[ 'id' ] ], [ 'site_id', '=', $this->site_id ] ])->with([
+        $field = 'id, order_id, name, delivery_type, sub_delivery_type, express_company_id, express_number, local_deliver_id, status, create_time';
+        $info = ( new OrderDelivery() )->where([ [ 'id', '=', $data[ 'id' ] ] ])->with([
             'company' => function($query) {
                 $query->field('company_id, company_name, express_no');
             },
             'order_goods' => function($query) {
-                $query->field('goods_name, site_id, sku_name, goods_image, delivery_id, num, price')->append([ 'goods_image_thumb_small' ]);
+                $query->field('goods_name, sku_name, goods_image, delivery_id, num, price')->append([ 'goods_image_thumb_small' ]);
             }
         ])->field($field)->findOrEmpty()->toArray();
         if (!empty($info) && $info['delivery_type'] == OrderDeliveryDict::EXPRESS && $info['sub_delivery_type'] != OrderDeliveryDict::NONE_EXPRESS) {

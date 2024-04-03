@@ -27,9 +27,6 @@ class BottomNavigationListener
     {
         $key = 'shop';
 
-        $site_addon = (new CoreSiteService())->getAddonKeysBySiteId(request()->siteId());
-        if (!in_array($key, $site_addon)) return;
-
         if (!empty($params) && $params[ 'key' ] != $key) return;
 
         $core_addon_service = new CoreAddonService();

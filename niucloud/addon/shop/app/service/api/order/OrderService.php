@@ -46,13 +46,13 @@ class OrderService extends BaseApiService
         $field = 'order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,create_time,pay_time,delivery_type,taker_name,taker_mobile,taker_full_address,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,pay_money,is_evaluate';
         $order = 'create_time desc';
         $search_model = $this->model
-            ->where([ ['site_id', '=', $this->site_id],[ 'member_id', '=', $this->member_id ] ])
+            ->where([ [ 'member_id', '=', $this->member_id ] ])
             ->withSearch([ 'order_no', 'status' ], $where)
             ->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('order_goods_id, site_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund')->append([ 'goods_image_thumb_small' ]);
                     }
                 ]
             )->order($order)->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ]);
@@ -70,12 +70,12 @@ class OrderService extends BaseApiService
      */
     public function getDetail(int $order_id)
     {
-        $field = 'order_id,site_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money,is_evaluate';
-        $info = $this->model->where([ ['site_id', '=', $this->site_id], [ 'order_id', '=', $order_id ], [ 'member_id', '=', $this->member_id ] ])->field($field)
+        $field = 'order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money,is_evaluate';
+        $info = $this->model->where([ [ 'order_id', '=', $order_id ], [ 'member_id', '=', $this->member_id ] ])->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('order_goods_id, site_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, discount_money, is_enable_refund, status, order_refund_no, delivery_status')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, discount_money, is_enable_refund, status, order_refund_no, delivery_status')->append([ 'goods_image_thumb_small' ]);
                     }
                 ]
             )->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
@@ -116,7 +116,6 @@ class OrderService extends BaseApiService
         $data[ 'main_id' ] = $this->member_id;
         $data[ 'close_type' ] = OrderDict::SHOP_CLOSE;
         $data[ 'order_id' ] = $order_id;
-        $data[ 'site_id' ] = $this->site_id;
         ( new CoreOrderCloseService() )->close($data);
         return true;
     }
@@ -133,7 +132,6 @@ class OrderService extends BaseApiService
         $data[ 'order_id' ] = $order_id;
         $data[ 'main_type' ] = OrderLogDict::MEMBER;
         $data[ 'main_id' ] = $this->member_id;
-        $data[ 'site_id' ] = $this->site_id;
         ( new CoreOrderFinishService() )->finish($data);
         return true;
     }
@@ -144,13 +142,13 @@ class OrderService extends BaseApiService
      */
     public function getDeliveryPackage($data)
     {
-        $field = 'id, order_id, site_id, name, delivery_type, sub_delivery_type, express_company_id, express_number, local_deliver_id, status, create_time';
-        $info = ( new OrderDelivery() )->where([ [ 'id', '=', $data[ 'id' ] ], ['site_id', '=', $this->site_id] ])->with([
+        $field = 'id, order_id, name, delivery_type, sub_delivery_type, express_company_id, express_number, local_deliver_id, status, create_time';
+        $info = ( new OrderDelivery() )->where([ [ 'id', '=', $data[ 'id' ] ] ])->with([
             'company' => function($query) {
                 $query->field('company_id, company_name, express_no');
             },
             'order_goods' => function($query) {
-                $query->field('goods_name, sku_name, site_id, goods_image, delivery_id, num, price')->append([ 'goods_image_thumb_small' ]);
+                $query->field('goods_name, sku_name, goods_image, delivery_id, num, price')->append([ 'goods_image_thumb_small' ]);
             }
         ])->field($field)->findOrEmpty()->toArray();
 

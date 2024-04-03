@@ -49,7 +49,7 @@ class CoreGoodsConfigService extends BaseCoreService
             'cart' => $params[ 'cart' ]
         ];
 
-        $this->core_config_service->setConfig($params['site_id'], 'GOODS_CATEGORY_CONFIG', $value);
+        $this->core_config_service->setConfig('GOODS_CATEGORY_CONFIG', $value);
         return true;
     }
 
@@ -57,9 +57,9 @@ class CoreGoodsConfigService extends BaseCoreService
      * 获取商品分类配置
      * @return array
      */
-    public function getGoodsCategoryConfig(int $site_id)
+    public function getGoodsCategoryConfig()
     {
-        $res = ( new CoreConfigService() )->getConfig($site_id, 'GOODS_CATEGORY_CONFIG');
+        $res = ( new CoreConfigService() )->getConfig('GOODS_CATEGORY_CONFIG');
         if (empty($res[ 'value' ])) {
             $data = [
                 "level" => 2, // 展示分类等级

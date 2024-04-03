@@ -37,7 +37,6 @@ class DeliverySearch extends BaseAdminController
         ]);
         (new DeliverySearchConfigService())->setConfig($data);
         return success('SUCCESS');
-
     }
 
     /**

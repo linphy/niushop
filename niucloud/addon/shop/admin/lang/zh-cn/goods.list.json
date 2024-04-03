@@ -14,13 +14,13 @@
   "startSaleNumTips": "最低销量输入错误",
   "endSaleNumPlaceholder": "最高销量",
   "endSaleNumTips": "最高销量输入错误",
-
+  "shopSaleNumTips":"最低销量不能大于最高销量",
   "skuPrice": "价格",
   "startPricePlaceholder": "最低价格",
   "startPriceTips": "最低价格输入错误",
   "endPricePlaceholder": "最高价格",
   "endPriceTips": "最高价格输入错误",
-
+  "shopPriceTips":"最低价格不能大于最高价格",
   "statusOn": "销售中",
   "statusOff": "仓库中",
   "statusAll": "全部商品",
@@ -39,6 +39,7 @@
   "addGoods": "添加商品",
   "statusActionOn": "上架",
   "statusActionOff": "下架",
+  "statusChangeTips":"确定要下架该商品吗？",
   "spreadGoods": "推广",
   "copyGoods": "复制",
 

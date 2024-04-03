@@ -11,14 +11,10 @@
 
 namespace addon\shop\app\service\admin\refund;
 
-use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\dict\order\OrderRefundLogDict;
-use addon\shop\app\model\order\OrderGoods;
 use addon\shop\app\model\order\OrderRefund;
-use addon\shop\app\service\core\refund\CoreRefundService;
 use addon\shop\app\service\core\refund\CoreRefundActionService;
 use core\base\BaseAdminService;
-use core\exception\AdminException;
 
 /**
  *  退款操作服务层
@@ -40,7 +36,6 @@ class RefundActionService extends BaseAdminService
     {
         $data[ 'main_type' ] = OrderRefundLogDict::STORE;
         $data[ 'main_id' ] = $this->uid;
-        $data[ 'site_id' ] = $this->site_id;
         (new CoreRefundActionService())->auditApply($data);
         return true;
     }
@@ -54,7 +49,6 @@ class RefundActionService extends BaseAdminService
     {
         $data[ 'main_type' ] = OrderRefundLogDict::STORE;
         $data[ 'main_id' ] = $this->uid;
-        $data[ 'site_id' ] = $this->site_id;
         (new CoreRefundActionService())->auditRefundGoods($data);
         return true;
     }

@@ -1,66 +1,67 @@
 <template>
 	<view @touchmove.prevent.stop>
-		<u-popup :show="goodsSkuPop" @close="closeFn" mode="bottom">
-			<view class="rounded-t-[20rpx] overflow-hidden bg-[#fff] p-[32rpx] relative">
-				<view class="absolute right-[37rpx]  iconfont iconguanbi text-[50rpx]" @click="closeFn"></view>
+		<u-popup class="popup-type" :show="goodsSkuPop" @close="closeFn" mode="bottom">
+			<view class="p-[32rpx] relative" v-if="goodsDetail.detail">
+				<view class="absolute right-[37rpx]  iconfont iconguanbi text-[36rpx]" @click="closeFn"></view>
 				<view class="flex mb-[58rpx]">
 
 					<view class="rounded-[8rpx] overflow-hidden">
-						<u--image width="204rpx" height="204rpx" :src="img(goodsDetail.detail.sku_image)" model="aspectFill">
+						<u--image width="180rpx" height="180rpx" :src="img(goodsDetail.detail.sku_image)" model="aspectFill">
 							<template #error>
 								<u-icon name="photo" color="#999" size="50"></u-icon>
 							</template>
 						</u--image>
 					</view>
-					<view class="flex flex-1 flex-col justify-between ml-[20rpx]">
+					<view class="flex flex-1 flex-col ml-[20rpx] py-[10rpx]">
 						<view class="w-[100%]">
-							<view class=" text-[var(--price-text-color)]">
-								<text class="text-[28rpx] font-bold">￥</text>
-								<text class="text-[42rpx] mr-[10rpx]  font-bold">{{goodsDetail.detail.sale_price}}</text>
+							<view class="text-[var(--price-text-color)] flex items-baseline">
+								<text class="text-[28rpx] font-bold price-font">￥</text>
+								<text class="text-[42rpx] font-bold price-font">{{parseFloat(goodsDetail.detail.sale_price).toFixed(2).split('.')[0]}}</text>
+								<text class="text-[28rpx] font-bold price-font">.{{parseFloat(goodsDetail.detail.sale_price).toFixed(2).split('.')[1]}}</text>
 							</view>
-							<view class="text-[24rpx] leading-[32rpx] text-[#666] mt-[12rpx]">库存{{goodsDetail.detail.stock}}{{ goodsDetail.goods.unit }}</view>
+							<view class="text-[24rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{goodsDetail.detail.stock}}{{ goodsDetail.goods.unit }}</view>
 						</view>
-						<view class="w-[100%]"  style="max-height: calc(204rpx - 98rpx); overflow: hidden;"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
+						<view class="w-[100%] mt-auto"  style="max-height: calc(204rpx - 98rpx); overflow: hidden;"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
 							<text class="text-[24rpx] leading-[30rpx] text-[#666]">已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
 						</view>
 					</view>
 				</view>
-				<scroll-view class="h-[500rpx]" scroll-y="true">
-					<view class="mb-[20rpx]" v-for="(item,index) in goodsDetail.goodsSpec" :key="index">
-						<view class="text-[26rpx] leading-[36rpx] mb-[30rpx]">{{item.spec_name}}</view>
+				<scroll-view class="h-[500rpx] mb-[30rpx]" scroll-y="true">
+					<view :class="{'mt-[36rpx]': 0 != index }" v-for="(item,index) in goodsDetail.goodsSpec" :key="index">
+						<view class="text-[26rpx] leading-[36rpx] mb-[24rpx]">{{item.spec_name}}</view>
 						<view class="flex flex-wrap">
-							<view
-							class="box-border  min-w-[96rpx] text-[24rpx] px-[15rpx] text-center h-[52rpx] leading-[52rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[8rpx] border-[#888]"
-							 :class="{'!border-[var(--primary-color)] text-[var(--primary-color)] bg-[var(--primary-color-light)]': subItem.selected}"
+							<view class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[56rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
+							 :class="{'!border-[var(--primary-color)] text-[var(--primary-color)] !bg-[var(--primary-color-light)]': subItem.selected}"
 							v-for="(subItem,subIndex) in item.values" :key="subIndex"
 							@click="change(subItem, index)">
 								{{subItem.name}}
 							</view>
 						</view>
 					</view>
-					<view class="flex justify-between">
-						<view class="text-[26rpx] leading-[36rpx] mb-[30rpx]">购买数量</view>
+					<view class="flex justify-between items-center mt-[30rpx]">
+						<view class="text-[26rpx]">购买数量</view>
 						<u-number-box :min="1" :max="goodsDetail.stock" integer :step="1" input-width="98rpx" v-model="buyNum" input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] iconfont iconjianhao text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								<text class="text-[44rpx] iconfont iconjian" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 							</template>
 							<template #input>
-								<text class="text-[#333] fext-[23rpx] font-500 mx-[16rpx]">{{ buyNum }}</text>
+								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] iconfont iconjiahao2fill text-[var(--primary-color)]" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
+								<text class="text-[44rpx] iconfont iconjia" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
 							</template>
 						</u-number-box>
 					</view>
 				</scroll-view>
-				<u-button class="!h-[80rpx] !text-[30rpx] !m-0 !mt-[30rpx]" type="primary" shape="circle" @click="confirm">确定</u-button>
+				<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="confirm">确定</button>
+				<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
 			</view>
 		</u-popup>
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, computed, watch, toRaw } from 'vue';
+	import { ref, reactive, computed, toRaw } from 'vue';
 	import { img, redirect } from '@/utils/common'
 	import useCartStore from '@/addon/shop/stores/cart'
 	import { useLogin } from '@/hooks/useLogin'
@@ -157,7 +158,8 @@
 			return false
 		}
 
-		if(openType.value == 'join_cart'){ // 加入购物车
+        // 加入购物车
+		if(openType.value == 'join_cart'){
 			let num = 0;
 			let cartId = "";
 
@@ -182,7 +184,8 @@
 				});
 			});
 
-		}else if(openType.value == 'buy_now'){ // 立即购买
+		}else if(openType.value == 'buy_now'){
+            // 立即购买
 			var data = {
 				sku_id: goodsDetail.value.sku_id,
 				num: buyNum.value
@@ -209,5 +212,11 @@
 </script>
 
 <style lang="scss" scoped>
-	@import '@/addon/shop/styles/common.scss';
+.popup-type {
+	:deep(.u-popup__content) {
+		border-top-left-radius: 16rpx;
+		border-top-right-radius: 16rpx;
+		overflow: hidden;
+	}
+}
 </style>

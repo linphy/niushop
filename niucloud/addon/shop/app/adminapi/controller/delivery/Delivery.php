@@ -56,7 +56,6 @@ class Delivery extends BaseAdminController
         return success(( new DeliveryService() )->getDeliveryConfigList());
     }
 
-
     /**
      * 获取配送员列表
      * @return \think\Response

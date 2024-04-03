@@ -32,7 +32,7 @@ const useCartStore = defineStore('cart', {
 				}
 				if (data) {
 					data.forEach(item => {
-						if (item.goods.status == 1 && item.goods.delete_time == 0) {
+						if (item.goods.status == 1 && item.goods.delete_time == 0&&item.goodsSku) {
 							let cart = {
 								id: item.id,
 								goods_id: item.goods_id,

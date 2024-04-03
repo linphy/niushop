@@ -2,10 +2,10 @@
 	<el-dialog v-model="showDialog" :title="formData.deliver_id ? t('updateDeliver') : t('addDeliveryPersonnel')"   width="480" class="diy-dialog-wrap" :destroy-on-close="true">
 		<el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 			<el-form-item :label="t('deliverName')" prop="deliver_name">
-				<el-input v-model="formData.deliver_name" clearable :placeholder="t('deliverNamePlaceholder')"  class="input-width"/>
+				<el-input v-model.trim="formData.deliver_name" clearable :placeholder="t('deliverNamePlaceholder')"  class="input-width" maxlength="10"/>
 			</el-form-item>
 			<el-form-item :label="t('deliverMobile')" prop="deliver_mobile">
-				<el-input v-model="formData.deliver_mobile" clearable :placeholder="t('deliverMobilePlaceholder')"  class="input-width"/>
+				<el-input v-model.trim="formData.deliver_mobile" clearable :placeholder="t('deliverMobilePlaceholder')"  class="input-width" @keyup="filterNumber($event)" @blur="formData.deliver_mobile = $event.target.value" />
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -22,7 +22,7 @@ import { ref, reactive, computed } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
 import { addShopDeliver, editShopDeliver, getShopDeliverInfo } from '@/addon/shop/api/delivery'
-
+import { filterNumber } from '@/utils/common'
 const showDialog = ref(false)
 const loading = ref(false)
 

@@ -94,10 +94,10 @@ class Goods extends BaseModel
     public function getDeliveryTypeListAttr($value, $data)
     {
         if (!empty($data[ 'delivery_type' ])) {
-            $deliver_list = ( new CoreDeliveryService() )->getDeliveryConfig($data['site_id']);
+            $deliver_list = ( new CoreDeliveryService() )->getDeliveryConfig();
             $res = [];
             foreach ($data[ 'delivery_type' ] as $k => $v) {
-                if (isset($deliver_list[ $v ])) {
+                if (isset($deliver_list[ $v ]) && $deliver_list[ $v ][ 'status' ] == 1) {
                     $res[ $v ] = $deliver_list[ $v ];
                 }
             }
@@ -112,7 +112,7 @@ class Goods extends BaseModel
     public function getGoodsCoverThumbSmallAttr($value, $data)
     {
         if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
-            return get_thumb_images($data['site_id'], $data[ 'goods_cover' ], FileDict::SMALL);
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::SMALL);
         }
         return [];
     }
@@ -123,7 +123,7 @@ class Goods extends BaseModel
     public function getGoodsCoverThumbMidAttr($value, $data)
     {
         if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
-            return get_thumb_images($data['site_id'], $data[ 'goods_cover' ], FileDict::MID);
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::MID);
         }
         return [];
     }
@@ -134,7 +134,7 @@ class Goods extends BaseModel
     public function getGoodsCoverThumbBigAttr($value, $data)
     {
         if (isset($data[ 'goods_cover' ]) && $data[ 'goods_cover' ] != '') {
-            return get_thumb_images($data['site_id'], $data[ 'goods_cover' ], FileDict::BIG);
+            return get_thumb_images($data[ 'goods_cover' ], FileDict::BIG);
         }
         return [];
     }
@@ -148,7 +148,7 @@ class Goods extends BaseModel
             $goods_image = explode(',', $data[ 'goods_image' ]);
             $img_arr = [];
             foreach ($goods_image as $k => $v) {
-                $img = get_thumb_images($data['site_id'], $v, FileDict::SMALL);
+                $img = get_thumb_images($v, FileDict::SMALL);
                 if (!empty($img)) {
                     $img_arr[] = $img;
                 }
@@ -167,7 +167,7 @@ class Goods extends BaseModel
             $goods_image = explode(',', $data[ 'goods_image' ]);
             $img_arr = [];
             foreach ($goods_image as $k => $v) {
-                $img = get_thumb_images($data['site_id'], $v, FileDict::MID);
+                $img = get_thumb_images($v, FileDict::MID);
                 if (!empty($img)) {
                     $img_arr[] = $img;
                 }
@@ -186,7 +186,7 @@ class Goods extends BaseModel
             $goods_image = explode(',', $data[ 'goods_image' ]);
             $img_arr = [];
             foreach ($goods_image as $k => $v) {
-                $img = get_thumb_images($data['site_id'], $v, FileDict::BIG);
+                $img = get_thumb_images($v, FileDict::BIG);
                 if (!empty($img)) {
                     $img_arr[] = $img;
                 }
@@ -202,8 +202,8 @@ class Goods extends BaseModel
     public function getGoodsCategoryAttr($value, $data)
     {
         if (!empty($value)) {
-            return array_map(function ($item){
-                return (int)$item;
+            return array_map(function($item) {
+                return (int) $item;
             }, $value);
         }
         return [];
@@ -280,11 +280,20 @@ class Goods extends BaseModel
             if (gettype($value) == 'array') {
                 $like_arr = [];
                 foreach ($value as $k => $v) {
-                    $like_arr[] = "%" . $v . "%";
+                    $like_arr[] = '[' . $v . ']';
+                    $like_arr[] = '[' . $v . ',%';
+                    $like_arr[] = '%,' . $v . ',%';
+                    $like_arr[] = '%,' . $v . ']';
                 }
                 $query->where("goods_category", "like", $like_arr, 'or');
             } else {
-                $query->where("goods_category", "like", '%' . $value . '%');
+                $like_arr = [
+                    '[' . $value . ']',
+                    '[' . $value . ',%',
+                    '%,' . $value . ',%',
+                    '%,' . $value . ']'
+                ];
+                $query->where("goods_category", "like", $like_arr, 'or');
             }
         }
     }
@@ -300,11 +309,20 @@ class Goods extends BaseModel
             if (gettype($value) == 'array') {
                 $like_arr = [];
                 foreach ($value as $k => $v) {
-                    $like_arr[] = "%" . $v . "%";
+                    $like_arr[] = '[' . $v . ']';
+                    $like_arr[] = '[' . $v . ',%';
+                    $like_arr[] = '%,' . $v . ',%';
+                    $like_arr[] = '%,' . $v . ']';
                 }
                 $query->where("label_ids", "like", $like_arr, 'or');
             } else {
-                $query->where("label_ids", "like", '%' . $value . '%');
+                $like_arr = [
+                    '[' . $value . ']',
+                    '[' . $value . ',%',
+                    '%,' . $value . ',%',
+                    '%,' . $value . ']'
+                ];
+                $query->where("label_ids", "like", $like_arr, 'or');
             }
         }
     }
@@ -320,11 +338,20 @@ class Goods extends BaseModel
             if (gettype($value) == 'array') {
                 $like_arr = [];
                 foreach ($value as $k => $v) {
-                    $like_arr[] = "%" . $v . "%";
+                    $like_arr[] = '[' . $v . ']';
+                    $like_arr[] = '[' . $v . ',%';
+                    $like_arr[] = '%,' . $v . ',%';
+                    $like_arr[] = '%,' . $v . ']';
                 }
                 $query->where("service_ids", "like", $like_arr, 'or');
             } else {
-                $query->where("service_ids", "like", '%' . $value . '%');
+                $like_arr = [
+                    '[' . $value . ']',
+                    '[' . $value . ',%',
+                    '%,' . $value . ',%',
+                    '%,' . $value . ']'
+                ];
+                $query->where("service_ids", "like", $like_arr, 'or');
             }
         }
     }

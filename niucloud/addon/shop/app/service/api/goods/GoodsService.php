@@ -38,11 +38,10 @@ class GoodsService extends BaseApiService
      */
     public function getPage(array $where = [])
     {
-        $field = 'site_id,goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num';
+        $field = 'goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num';
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
-            [ 'goods.site_id', '=', $this->site_id ],
             [ 'status', '=', 1 ]
         ];
 
@@ -110,25 +109,26 @@ class GoodsService extends BaseApiService
         $goods_sku_model = new GoodsSku();
 
         if (empty($sku_id) && !empty($goods_id)) {
-            $default_sku_info = $goods_sku_model->where([ [ 'goods_id', '=', $goods_id ], [ 'site_id', '=', $this->site_id ] ], 'sku_id')
+            // 查询默认规格项
+            $default_sku_info = $goods_sku_model->where([ [ 'goods_id', '=', $goods_id ], [ 'is_default', '=', 1 ] ], 'sku_id')
                 ->field('sku_id')->findOrEmpty()->toArray();
             if (!empty($default_sku_info)) {
                 $sku_id = $default_sku_info[ 'sku_id' ];
             }
         }
 
-        $field = 'sku_id, sku_name, sku_image, sku_no, goods_id, site_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, sale_num, is_default';
+        $field = 'sku_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, sale_num, is_default';
 
-        $info = $goods_sku_model->where([ [ 'sku_id', '=', $sku_id ], [ 'site_id', '=', $this->site_id ] ])
+        $info = $goods_sku_model->where([ [ 'sku_id', '=', $sku_id ] ])
             ->field($field)
             ->with([
                 'goods' => function($query) {
-                    $query->withField('goods_id, site_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, status,delivery_type')
+                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, goods_category, goods_image,goods_desc,brand_id,label_ids,service_ids, unit, stock, sale_num + virtual_sale_num as sale_num, status,delivery_type')
                         ->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_cover_thumb_big', 'delivery_type_list', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ]);
                 },
                 // 商品规格列表
                 'skuList' => function($query) {
-                    $query->field('sku_id, site_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, is_default');
+                    $query->field('sku_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, is_default');
                 },
                 // 商品规格项/规格值列表
                 'goodsSpec' => function($query) {
@@ -143,7 +143,6 @@ class GoodsService extends BaseApiService
                 // 商品服务
                 $goods_service_model = new Service();
                 $info[ 'service' ] = $goods_service_model->where([
-                    [ 'site_id', '=', $this->site_id ],
                     [ 'service_id', 'in', $info[ 'goods' ][ 'service_ids' ] ]
                 ])->field('service_id, service_name, image, desc')
                     ->select()->toArray();
@@ -152,7 +151,6 @@ class GoodsService extends BaseApiService
                 // 商品标签
                 $goods_label_model = new Label();
                 $info[ 'label_info' ] = $goods_label_model->where([
-                    [ 'site_id', '=', $this->site_id ],
                     [ 'label_id', 'in', $info[ 'goods' ][ 'label_ids' ] ]
                 ])->field('label_id, label_name, memo')
                     ->select()->toArray();
@@ -161,7 +159,6 @@ class GoodsService extends BaseApiService
                 // 商品品牌
                 $goods_brand_model = new Brand();
                 $info[ 'brand_info' ] = $goods_brand_model->where([
-                    [ 'site_id', '=', $this->site_id ],
                     [ 'brand_id', '=', $info[ 'goods' ][ 'brand_id' ] ]
                 ])->field('brand_id, brand_name, logo, desc')
                     ->findOrEmpty()->toArray();
@@ -169,7 +166,7 @@ class GoodsService extends BaseApiService
 
             if (!empty($this->member_id)) {
                 $goods_collect_model = new GoodsCollect();
-                $collect_info = $goods_collect_model->where([ [ 'site_id', '=', $this->site_id ],[ 'member_id', '=', $this->member_id ], [ 'goods_id', '=', $goods_id ] ])->findOrEmpty()->toArray();
+                $collect_info = $goods_collect_model->where([ [ 'member_id', '=', $this->member_id ], [ 'goods_id', '=', $goods_id ] ])->findOrEmpty()->toArray();
                 if (!empty($collect_info)) {
                     $info[ 'goods' ][ 'is_collect' ] = 1;
                 } else {
@@ -194,7 +191,7 @@ class GoodsService extends BaseApiService
 
         $goods_sku_model = new GoodsSku();
 
-        $info = $goods_sku_model->where([ [ 'site_id', '=', $this->site_id ],[ 'sku_id', '=', $sku_id ] ])
+        $info = $goods_sku_model->where([ [ 'sku_id', '=', $sku_id ] ])
             ->field($field)
             ->with([
                 // 商品主表
@@ -224,11 +221,10 @@ class GoodsService extends BaseApiService
      */
     public function getGoodsComponents(array $where = [])
     {
-        $field = 'goods_id,site_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num';
+        $field = 'goods_id,goods_name,sub_title,goods_category,goods_type,goods_cover,unit,status,sale_num + goods.virtual_sale_num as sale_num';
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
-            [ 'goodsSku.site_id', '=', $this->site_id ],
             [ 'status', '=', 1 ]
         ];
 

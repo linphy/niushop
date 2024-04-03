@@ -38,7 +38,6 @@ class ConfigService extends BaseAdminService
      */
     public function setConfig($params)
     {
-        $params['site_id'] = $this->site_id;
         return $this->order_config_service->setConfig($params);
     }
 
@@ -48,7 +47,7 @@ class ConfigService extends BaseAdminService
      */
     public function getConfig()
     {
-        return $this->order_config_service->getConfig($this->site_id);
+        return $this->order_config_service->getConfig();
     }
 
 }

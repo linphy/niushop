@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
 	<div class="main-container">
 		<div class="detail-head">
@@ -16,13 +15,13 @@
 				<!-- 优惠券信息： -->
 				<!-- 优惠券名称： -->
 				<el-form-item :label="t('title')" prop="title">
-					<el-input v-model="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
+					<el-input v-model.trim="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" :maxlength="20" />
 				</el-form-item>
 
 				<!-- 优惠券面额： -->
 				<el-form-item :label="t('price')" prop="price">
 					<el-input v-model="formData.price" clearable
-						:placeholder="t('pricePlaceholder')" class="input-width" maxlength="60" @keyup="filterDigit($event)">
+						:placeholder="t('pricePlaceholder')" class="input-width" maxlength="5" @keyup="filterDigit($event)">
 						<template #append>元</template>
 					</el-input>
 				</el-form-item>
@@ -31,18 +30,18 @@
 				<el-form-item :label="t('type')" prop="type">
 					<el-radio-group v-model="formData.type">
 						<el-radio :label="1">通用券</el-radio>
-						<el-radio :label="2" @click="categoryList">品类券</el-radio>
+						<el-radio :label="2">品类券</el-radio>
 						<el-radio :label="3">商品券</el-radio>
 					</el-radio-group>
 				</el-form-item>
 
-				<el-form-item v-show="formData.type == 2">
+				<el-form-item v-if="formData.type == 2" prop="goods_category_ids">
 					<div>
 						<el-cascader v-model="formData.goods_category_ids" :options="options" :props="props" placeholder="请选择商品分类" collapse-tags collapse-tags-tooltip clearable />
 					</div>
 				</el-form-item>
 
-				<el-form-item v-show="formData.type == 3">
+				<el-form-item v-if="formData.type == 3" prop="goods_ids">
 					<div>
 						<el-form-item>
 							<goods-select-popup ref="goodsSelectPopupRef" v-model="formData.goods_ids" :min="1" :max="99" />
@@ -58,7 +57,7 @@
 					</el-radio-group>
 				</el-form-item>
 
-				<el-form-item v-show="formData.threshold == 1">
+				<el-form-item v-if="formData.threshold == 1" prop="min_condition_money">
 					最低满
 					<div class="flex items-center" style="padding-left: 5px;">
 						<el-input v-model="formData.min_condition_money" @keyup="filterDigit($event)" clearable class="!w-[100px]" />
@@ -82,8 +81,8 @@
 					</div>
 				</el-form-item>
 
-				<el-form-item prop="valid_time" v-show="formData.valid_type == 2">
-					领劵后立即生效，使用时间截止至
+				<el-form-item prop="valid_time" v-if="formData.valid_type == 2">
+					领劵后立即生效，使用时间截止至 
 					<div class="w-[220px]" style="padding-left: 5px;">
 						<el-date-picker v-model="formData.valid_time" type="datetime" />
 					</div>
@@ -206,7 +205,7 @@ const formData = ref<FormDataType>({
     // status: 1,  //状态 1 正常 2 未开启 3 已无效
     min_condition_money: 1, // 商品最低多少金额可用优惠券
     length: 30, // 有效期时长(天)
-    goods_ids: [], // 关联商品id
+    goods_ids: [], // 关联商品id 
     goods_category_ids: [], // 关联商品分类id
     receive_type_time: 2,
     valid_type: 1, // 有效方式，1=时长，2=范围
@@ -225,6 +224,21 @@ const formRules = computed(() => {
         price: [
             { required: true, validator: priceRule, trigger: 'blur' }
         ],
+        goods_ids: [
+            { required: true, message: t('请选择商品'), trigger: 'blur' }
+        ],
+        goods_category_ids: [
+            { required: true, message: t('请选择商品分类'), trigger: 'blur' }
+        ],
+        min_condition_money: [
+            { required: true, validator: minConditionMoney, trigger: 'blur' }
+        ],
+        valid_time:[
+            { required: true, validator: validTime, trigger: 'blur' }
+        ],
+        receive_time:[
+            { required: true, validator: receiveTime, trigger: 'blur' }
+        ],
         remain_count: [
             { required: true, validator: remainCount, trigger: 'blur' }
         ],
@@ -233,15 +247,44 @@ const formRules = computed(() => {
         ]
     }
 })
+ 
+const receiveTime = (rule: any, value: any, callback: any) => {
+    if(formData.value.receive_type_time == 1 && formData.value.receive_type == 1){
+        if (!formData.value.receive_time[0] || timestampFn(formData.value.receive_time[0]) <= Date.now()) {
+            callback(new Error(t('领取开始时间不能小于等于当前时间')))
+        }
+        if (!formData.value.receive_time[1] || timestampFn(formData.value.receive_time[1]) <= timestampFn(formData.value.receive_time[0])) {
+            callback(new Error(t('领取结束时间不能小于等于领取开始时间')))
+        }
+    }
+    callback()
+}
+
+const validTime = (rule: any, value: any, callback: any) => {
+    if (formData.value.valid_type == 2 && formData.value.valid_time <= Date.now()) {
+        callback(new Error(t('有效期不能小于等于当前时间')))
+    }
+    callback()
+}
+
+const minConditionMoney = (rule: any, value: any, callback: any) => {
+    if (formData.value.threshold == 1 && formData.value.min_condition_money <= 0 ) {
+        callback(new Error(t('使用门槛最低不能小于0元')))
+    }
+    callback()
+}
 
 const remainCount = (rule: any, value: any, callback: any) => {
     if (formData.value.remain_count != '' && formData.value.remain_count > 100000) {
         callback(new Error(t('remainCountPlaceholder')))
     }
+    if (!formData.value.remain_count || formData.value.remain_count != '' && formData.value.remain_count < 1) {
+        callback(new Error(t('发放数量不能小于1张')))
+    }
     callback()
 }
 const priceRule = (rule: any, value: any, callback: any) => {
-    if (formData.value.price != '' && formData.value.price < 0.01) {
+    if (!formData.value.price || formData.value.price == '' || formData.value.price <= 0) {
         callback(new Error(t('pricePlaceholder')))
     }
     callback()
@@ -252,6 +295,12 @@ const limitCountRule = (rule: any, value: any, callback: any) => {
         callback(new Error(t('userLimitCountPlaceholder')))
     }
     callback()
+}
+
+// 时间格式转换时间戳
+const timestampFn = (data)=>{
+    var dateObject = new Date(data);
+    return dateObject.getTime();
 }
 
 // 发布数量
@@ -266,17 +315,25 @@ const categoryList = () => {
         options.value = res.data.goods_category_tree
     })
 }
+categoryList()
 const onSave = async (formEl: FormInstance | undefined) => {
     if (loading.value || !formEl) return
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
-            const data = formData.value
+            let data = JSON.parse(JSON.stringify(formData.value));
+            if(data.type == 1){
+                delete data.goods_category_ids;
+                delete data.goods_ids;
+            }else if(data.type == 2){
+                delete data.goods_ids;
+            }else if(data.type == 3){
+                delete data.goods_category_ids;
+            }
             const save = addCoupon
             save(data).then(res => {
                 loading.value = false
                 history.back()
-            // eslint-disable-next-line n/handle-callback-err
             }).catch(err => {
                 loading.value = false
             })

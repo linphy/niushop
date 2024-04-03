@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\service\admin\order;
 
+use addon\shop\app\dict\order\InvoiceDict;
 use addon\shop\app\model\order\Invoice;
 use core\base\BaseAdminService;
 use core\exception\CommonException;
@@ -31,13 +32,13 @@ class InvoiceService extends BaseAdminService
     public function getPage(array $where)
     {
         $order = 'id desc';
-        $search_model = $this->model->withSearch([ "is_invoice", "header_type", "header_name", "create_time", "invoice_time" ], $where)->where([ ['site_id', '=', $this->site_id],[ 'status', '=', 2 ] ])->append([ 'header_type_name', 'type_name' ])->field('*')->order($order);
+        $search_model = $this->model->withSearch([ "is_invoice", "header_type", "header_name", "create_time", "invoice_time" ], $where)->where([ [ 'status', '=', InvoiceDict::OPEN ] ])->append([ 'header_type_name', 'type_name' ])->field('*')->order($order);
         return $this->pageQuery($search_model);
     }
 
     public function getInfo(int $id)
     {
-        $detail = $this->model->where([ [ 'id', '=', $id ], ['site_id', '=', $this->site_id], [ 'status', '=', 2 ] ])->field('*')->append([ 'header_type_name', 'type_name' ])->findOrEmpty()->toArray();
+        $detail = $this->model->where([ [ 'id', '=', $id ], [ 'status', '=', InvoiceDict::OPEN  ] ])->field('*')->append([ 'header_type_name', 'type_name' ])->findOrEmpty()->toArray();
         return $detail;
     }
 
@@ -49,7 +50,7 @@ class InvoiceService extends BaseAdminService
      */
     public function invoicing(int $id, array $data)
     {
-        $invoice = $this->model->where([ [ 'id', '=', $id ], ['site_id', '=', $this->site_id], [ 'status', '=', 2 ] ])->findOrEmpty();
+        $invoice = $this->model->where([ [ 'id', '=', $id ], [ 'status', '=', 2 ] ])->findOrEmpty();
         if ($invoice->isEmpty()) throw new CommonException('INVOICE_NOT_EXIST');
         if ($invoice[ 'is_invoice' ]) throw new CommonException('INVOICED');
 

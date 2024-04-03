@@ -38,7 +38,7 @@ class CompanyService extends BaseAdminService
         $field = 'company_id,company_name,logo,url,express_no,create_time';
         $order = '';
 
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch(["company_name"], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch(["company_name"], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -52,7 +52,7 @@ class CompanyService extends BaseAdminService
     {
         $field = 'company_id,company_name,logo,url,express_no,create_time';
 
-        $info = $this->model->field($field)->where([['company_id', '=', $id], ['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([['company_id', '=', $id] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -63,11 +63,9 @@ class CompanyService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['site_id'] = $this->site_id;
         $data['create_time'] = time();
         $res = $this->model->create($data);
         return $res->company_id;
-
     }
 
     /**
@@ -79,7 +77,7 @@ class CompanyService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $data['update_time'] = time();
-        $this->model->where([['company_id', '=', $id], ['site_id', '=', $this->site_id] ])->update($data);
+        $this->model->where([['company_id', '=', $id] ])->update($data);
         return true;
     }
 
@@ -90,7 +88,7 @@ class CompanyService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $res = $this->model->where([['company_id', '=', $id], ['site_id', '=', $this->site_id] ])->delete();
+        $res = $this->model->where([['company_id', '=', $id] ])->delete();
         return $res;
     }
 

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -18,10 +17,10 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="tableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('deliverName')" prop="deliver_name">
-                        <el-input v-model="tableData.searchParam.deliver_name" :placeholder="t('deliverNamePlaceholder')" />
+                        <el-input v-model.trim="tableData.searchParam.deliver_name" :placeholder="t('deliverNamePlaceholder')"  />
                     </el-form-item>
                     <el-form-item :label="t('deliverMobile')" prop="deliver_mobile">
-                        <el-input v-model="tableData.searchParam.deliver_mobile" :placeholder="t('deliverMobilePlaceholder')" @keyup="filterNumber($event)" />
+                        <el-input v-model.trim="tableData.searchParam.deliver_mobile" :placeholder="t('deliverMobilePlaceholder')" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="getShopDeliveryFn()">{{ t('search') }}</el-button>
@@ -61,7 +60,7 @@ import deliveryPersonnelEdit from '@/addon/shop/views/delivery/components/delive
 import { getShopDelivery, deleteShopDeliver } from '@/addon/shop/api/delivery'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, FormInstance } from 'element-plus'
-import { filterNumber } from '@/utils/common'
+
 
 const route = useRoute()
 const router = useRouter()

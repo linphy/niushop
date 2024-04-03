@@ -78,7 +78,6 @@ class Coupon extends BaseAdminController
         return success('ADD_SUCCESS', ['id' => $id]);
     }
 
-
     /**
      * 商品优惠券编辑
      * @param $id  商品优惠券id

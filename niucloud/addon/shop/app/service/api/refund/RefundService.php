@@ -12,8 +12,6 @@
 namespace addon\shop\app\service\api\refund;
 
 use addon\shop\app\model\order\OrderRefund;
-use addon\shop\app\service\core\order\CoreRefundService;
-use addon\shop\app\service\core\order\OrderCloseService;
 use core\base\BaseApiService;
 
 /**
@@ -39,13 +37,13 @@ class RefundService extends BaseApiService
         $order = 'create_time desc';
 
         $search_model = $this->model
-            ->where([ ['site_id', '=', $this->site_id ], ['member_id', '=', $this->member_id ] ])
+            ->where([ ['member_id', '=', $this->member_id ] ])
             ->withSearch([ 'status' ], $where)
             ->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('order_goods_id, site_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money,discount_money, is_enable_refund, goods_type, order_goods_money, discount_money')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money,discount_money, is_enable_refund, goods_type, order_goods_money, discount_money')->append([ 'goods_image_thumb_small' ]);
                     },
                 ])->order($order)->append([ 'status_name', 'refund_type_name' ]);
         $list = $this->pageQuery($search_model);
@@ -60,13 +58,13 @@ class RefundService extends BaseApiService
     public function getDetail(string $order_refund_no)
     {
         $field = 'refund_id, order_id, order_goods_id, order_refund_no, refund_type, reason, member_id, apply_money, money, status, create_time, transfer_time, remark, voucher, source, timeout, refund_no, delivery, shop_reason, refund_address';
-        $info = $this->model->where([ [ 'order_refund_no', '=', $order_refund_no ], ['site_id', '=', $this->site_id ], ['member_id', '=', $this->member_id ] ])->field($field)
+        $info = $this->model->where([ [ 'order_refund_no', '=', $order_refund_no ], ['member_id', '=', $this->member_id ] ])->field($field)
             ->with([
                 'order_goods' => function($query) {
-                    $query->field('order_goods_id, site_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, order_goods_money, discount_money')->append([ 'goods_image_thumb_small' ]);
+                    $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, order_goods_money, discount_money')->append([ 'goods_image_thumb_small' ]);
                 },
                 'refund_log' => function($query) {
-                    $query->field('order_refund_no, content, main_type, create_time ,main_id')->order("create_time desc")->append([ 'main_type_name', 'type_name']);
+                    $query->field('order_refund_no, content, main_type, create_time ,main_id,type')->order("create_time desc, id desc")->append([ 'main_name','main_type_name', 'type_name']);
                 }
             ])->append(['status_name', 'refund_type_name'])->findOrEmpty()->toArray();
 

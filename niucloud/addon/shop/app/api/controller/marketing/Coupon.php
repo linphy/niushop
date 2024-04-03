@@ -25,7 +25,7 @@ class Coupon extends BaseApiController
     {
         $data = $this->request->params([
             [ 'goods_id', '' ],
-            [ 'category_ids', '' ],
+            [ 'category_id', '' ],
         ]);
         return success(( new CouponService() )->getPage($data));
     }
@@ -50,7 +50,7 @@ class Coupon extends BaseApiController
             [ 'type', 'receive' ],
             [ 'number', 1 ],
         ]);
-        ( new CouponService())->receive($data);
+        ( new CouponService() )->receive($data);
         return success('COUPON_RECEIVE_SUCCESS');
 
     }
@@ -62,9 +62,34 @@ class Coupon extends BaseApiController
     public function memberCouponlists()
     {
         $data = $this->request->params([
-            ['status','']
+            [ 'status', '' ]
         ]);
         return success(( new CouponService() )->getMemberPage($data));
+    }
+
+    /**
+     * 会员已领取优惠券数量（待使用）
+     * @return Response
+     */
+    public function memberCouponCount()
+    {
+        $data = $this->request->params([
+            [ 'status', '' ]
+        ]);
+        return success(data:( new CouponService() )->getMemberCount($data));
+    }
+
+    /**
+     * 获取优惠券列表供组件调用
+     * @return Response
+     */
+    public function components()
+    {
+        $data = $this->request->params([
+            [ 'num', 0 ],
+            [ 'coupon_ids', '' ]
+        ]);
+        return success(( new CouponService() )->getCouponComponents($data));
     }
 
 }

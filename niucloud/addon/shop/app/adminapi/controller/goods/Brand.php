@@ -98,5 +98,4 @@ class Brand extends BaseAdminController
         return success('DELETE_SUCCESS');
     }
 
-
 }

@@ -36,12 +36,10 @@ class CartService extends BaseApiService
     public function add($data)
     {
         $data[ 'member_id' ] = $this->member_id;
-        $data[ 'site_id' ] = $this->site_id;
         $info = $this->model->where([
             [ 'member_id', '=', $data[ 'member_id' ] ],
             [ 'goods_id', '=', $data[ 'goods_id' ] ],
             [ 'sku_id', '=', $data[ 'sku_id' ] ],
-            [ 'site_id', '=', $this->site_id ],
         ])->field('id,num')->findOrEmpty()->toArray();
 
         if (!empty($info)) {
@@ -66,11 +64,9 @@ class CartService extends BaseApiService
     public function edit($data)
     {
         $data[ 'member_id' ] = $this->member_id;
-        $data[ 'site_id' ] = $this->site_id;
         $info = $this->model->where([
             [ 'id', '=', $data[ 'id' ] ],
             [ 'member_id', '=', $data[ 'member_id' ] ],
-            [ 'site_id', '=', $data[ 'site_id' ] ],
         ])->field('sku_id')->findOrEmpty()->toArray();
 
         if (empty($info)) return false;
@@ -103,7 +99,7 @@ class CartService extends BaseApiService
      */
     public function del($data)
     {
-        $this->model->where([ [ 'member_id', '=', $this->member_id ], ['site_id', '=', $this->site_id], [ 'id', 'in', $data[ 'ids' ] ] ])->delete();
+        $this->model->where([ [ 'member_id', '=', $this->member_id ], [ 'id', 'in', $data[ 'ids' ] ] ])->delete();
         return true;
     }
 
@@ -113,7 +109,7 @@ class CartService extends BaseApiService
      */
     public function clear()
     {
-        $this->model->where([ [ 'member_id', '=', $this->member_id ], ['site_id', '=', $this->site_id] ])->delete();
+        $this->model->where([ [ 'member_id', '=', $this->member_id ] ])->delete();
         return true;
     }
 
@@ -125,18 +121,17 @@ class CartService extends BaseApiService
     public function getList($data)
     {
         $data[ 'member_id' ] = $this->member_id;
-        $field = 'id, member_id, goods_id, site_id, sku_id, num, market_type, market_type_id, status, invalid_remark';
+        $field = 'id, member_id, goods_id, sku_id, num, market_type, market_type_id, status, invalid_remark';
         $order = "create_time desc";
-        return $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "member_id" ], $data)->field($field)
+        return $this->model->withSearch([ "member_id" ], $data)->field($field)
             ->with([
                 'goodsSku' => function($query) {
-                    $query->withField('sku_id, site_id, sku_image, price, sale_price, stock');
+                    $query->withField('sku_id, sku_image, price, sale_price, stock');
                 },
                 'goods' => function($query) {
-                    $query->withField('goods_id, site_id, status,delete_time');
+                    $query->withField('goods_id, status,delete_time');
                 },
-            ])
-            ->select()->order($order)->toArray();
+            ])->order($order)->select()->toArray();
     }
 
     /**
@@ -149,20 +144,19 @@ class CartService extends BaseApiService
         $data[ 'member_id' ] = $this->member_id;
         $field = 'id, member_id, goods_id, sku_id, num, market_type, market_type_id, status, invalid_remark';
         $order = "create_time desc";
-        return $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "member_id" ], $data)->field($field)
+        return $this->model->withSearch([ "member_id" ], $data)->field($field)
             ->with([
                 'goods' => function($query) {
-                    $query->withField('goods_id, site_id, goods_name, goods_type, sub_title, goods_cover, unit, stock, sale_num + virtual_sale_num as sale_num, status,delete_time');
+                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, unit, stock, sale_num + virtual_sale_num as sale_num, status,delete_time');
                 },
                 'goodsSku' => function($query) {
-                    $query->withField('sku_id, site_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, is_default');
+                    $query->withField('sku_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, is_default');
                 },
                 // 商品规格项/规格值列表
                 'goodsSpec' => function($query) {
                     $query->field('spec_id, goods_id, spec_name, spec_values');
                 },
-            ])
-            ->select()->order($order)->toArray();
+            ])->order($order)->select()->toArray();
 
         return ( new CoreCartService() )->getGoodsList($data);
     }
@@ -175,8 +169,7 @@ class CartService extends BaseApiService
     public function getSum($data)
     {
         $condition = [
-            [ 'member_id', '=', $this->member_id ],
-            [ 'site_id', '=', $this->site_id ]
+            [ 'member_id', '=', $this->member_id ]
         ];
         if (!empty($data[ 'goods_id' ])) {
             $condition[] = [ 'goods_id', '=', $data[ 'goods_id' ] ];

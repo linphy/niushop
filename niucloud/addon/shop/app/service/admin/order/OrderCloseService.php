@@ -38,7 +38,6 @@ class OrderCloseService extends BaseAdminService
         $data[ 'main_id' ] = $this->uid;
         $data[ 'close_type' ] = OrderDict::SHOP_CLOSE;
         $data[ 'order_id' ] = $order_id;
-        $data[ 'site_id' ] = $this->site_id;
         ( new CoreOrderCloseService() )->close($data);
         return true;
     }

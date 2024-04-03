@@ -3,7 +3,6 @@
 namespace addon\shop;
 
 
-use app\service\admin\diy\DiyConfigService;
 use app\service\admin\diy\DiyService;
 
 /**
@@ -16,6 +15,23 @@ class Addon
      */
     public function install()
     {
+        $diy_service = new DiyService();
+
+        $diy_service->setDiyData([
+            'key' => 'DIY_INDEX',
+            'type' => 'index',
+            'addon' => 'shop',
+            'is_start' => 1
+        ]);
+
+        // 设置 个人中心 默认模板
+        $diy_service->setDiyData([
+            'key' => 'DIY_MEMBER_INDEX',
+            'type' => 'member_index',
+            'addon' => 'shop',
+            'is_start' => 1
+        ]);
+        return true;
     }
 
     /**

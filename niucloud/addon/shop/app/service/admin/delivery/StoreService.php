@@ -40,7 +40,7 @@ class StoreService extends BaseAdminService
         $field = 'store_id,store_name,store_desc,store_logo,store_mobile,province_id,city_id,district_id,address,full_address,longitude,latitude,trade_time,create_time,update_time';
         $order = 'create_time desc';
 
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "store_name", "create_time" ], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "store_name", "create_time" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -53,7 +53,7 @@ class StoreService extends BaseAdminService
     public function getInfo(int $id)
     {
         $field = 'store_id,store_name,store_desc,store_logo,store_mobile,province_id,city_id,district_id,address,full_address,longitude,latitude,trade_time,create_time,update_time';
-        $info = $this->model->field($field)->where([ [ 'store_id', '=', $id ], ['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'store_id', '=', $id ] ])->findOrEmpty()->toArray();
         $info[ 'province_name' ] = ( new AreaService() )->getAreaName($info[ 'province_id' ]);
         $info[ 'city_name' ] = ( new AreaService() )->getAreaName($info[ 'city_id' ]);
         $info[ 'district_name' ] = ( new AreaService() )->getAreaName($info[ 'district_id' ]);
@@ -67,7 +67,6 @@ class StoreService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data[ 'site_id' ] = $this->site_id;
         $data[ 'create_time' ] = time();
 
         $data[ 'province_id' ] = ( new AreaService() )->getAreaId($data[ 'province_name' ], 1);
@@ -94,7 +93,7 @@ class StoreService extends BaseAdminService
         $data[ 'district_id' ] = ( new AreaService() )->getAreaId($address[ 'district_name' ], 3);
         if ($data[ 'full_address' ] == '') $data[ 'full_address' ] = ( new CoreAreaService() )->getFullAddress($data[ 'province_id' ], $data[ 'city_id' ], $data[ 'district_id' ], $data[ 'address' ], '');
 
-        $this->model->where([ [ 'store_id', '=', $id ], ['site_id', '=', $this->site_id] ])->update($data);
+        $this->model->where([ [ 'store_id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -105,7 +104,7 @@ class StoreService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $res = $this->model->where([ [ 'store_id', '=', $id ], ['site_id', '=', $this->site_id] ])->delete();
+        $res = $this->model->where([ [ 'store_id', '=', $id ] ])->delete();
         return $res;
     }
 

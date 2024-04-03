@@ -37,6 +37,9 @@ Route::group('shop', function() {
     // 获取商品分类树结构
     Route::get('goods/category/tree', 'addon\shop\app\api\controller\goods\GoodsCategory@tree');
 
+    // 获取商品分类列表
+    Route::get('goods/category/list', 'addon\shop\app\api\controller\goods\GoodsCategory@lists');
+
     // 获取商品列表供组件调用
     Route::get('goods/components', 'addon\shop\app\api\controller\goods\Goods@components');
 
@@ -59,7 +62,11 @@ Route::group('shop', function() {
     /***************************************************** 优惠券 ****************************************************/
     // 获取优惠券列表
     Route::get('coupon', 'addon\shop\app\api\controller\marketing\Coupon@lists');
-    //详情
+
+    // 获取优惠券列表供组件调用
+    Route::get('coupon/components', 'addon\shop\app\api\controller\marketing\Coupon@components');
+
+    // 详情
     Route::get('coupon/:id', 'addon\shop\app\api\controller\marketing\Coupon@detail');
 
     Route::get('config/invoice', 'addon\shop\app\api\controller\Config@invoice');
@@ -103,6 +110,9 @@ Route::group('shop', function() {
     //订单状态
     Route::get('order/status', 'addon\shop\app\api\controller\order\Order@orderStatus');
 
+    // 订单设置
+    Route::get('order/config', 'addon\shop\app\api\controller\order\Order@getConfig');
+
     //创建订单
     Route::post('order_create/create', 'addon\shop\app\api\controller\order\OrderCreate@create');
     //计算
@@ -124,6 +134,8 @@ Route::group('shop', function() {
     Route::post('coupon', 'addon\shop\app\api\controller\marketing\Coupon@receive');
     //优惠券列表
     Route::get('member/coupon', 'addon\shop\app\api\controller\marketing\Coupon@memberCouponlists');
+    //优惠券数量
+    Route::get('member/coupon/count', 'addon\shop\app\api\controller\marketing\Coupon@memberCouponCount');
     //商品收藏列表
     Route::get('goods/collect','addon\shop\app\api\controller\goods\GoodsCollect@getMemberGoodsCollectList');
     //商品添加收藏

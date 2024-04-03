@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <div class="detail-head">
@@ -36,19 +35,19 @@
                 <el-form-item :label="t('feeSetting')" prop="distance" v-show="formData.fee_type == 'distance'">
                     <div class="flex">
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model.number="formData.base_dist" type="text" />
+                            <el-input v-model.number="formData.base_dist" type="text" @keyup="filterDigit($event)" />
                         </div>
                         {{ t('feeSettingTextOne') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.base_price" type="text" />
+                            <el-input v-model="formData.base_price" type="text" @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('feeSettingTextTwo') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model.number="formData.grad_dist" type="text" />
+                            <el-input v-model.number="formData.grad_dist" type="text" @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('feeSettingTextThree') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.grad_price" type="text" />
+                            <el-input v-model="formData.grad_price" type="text" @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('priceUnit') }}
                     </div>
@@ -57,15 +56,15 @@
                     <div class="flex">
                         {{ t('weightFeeTextOne') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.weight_start" type="text" />
+                            <el-input v-model="formData.weight_start" type="text"  @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('weightFeeTextTwo') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.weight_unit" type="text" />
+                            <el-input v-model="formData.weight_unit" type="text"  @keyup="filterDigit($event)"/>
                         </div>
                         {{ t('weightFeeTextThree') }}
                         <div class="w-[60px] mx-[5px]">
-                            <el-input v-model="formData.weight_price" type="text" />
+                            <el-input v-model="formData.weight_price" type="text"  @keyup="filterDigit($event)" />
                         </div>
                         {{ t('priceUnit') }}
                     </div>
@@ -80,17 +79,17 @@
                                     <el-form label-width="80px" :model="item" :rules="formRules" class="page-form" ref="areaFromRef">
                                         <div class="pb-[18px]">
                                             <el-form-item :label="t('areaName')" prop="area_name">
-                                                <el-input v-model="formData.area[index].area_name" type="text" />
+                                                <el-input v-model.trim="formData.area[index].area_name" type="text" />
                                             </el-form-item>
                                         </div>
                                         <div class="pb-[18px]">
                                             <el-form-item :label="t('startPrice')" prop="start_price">
-                                                <el-input v-model="formData.area[index].start_price" type="text" />
+                                                <el-input v-model="formData.area[index].start_price" type="text"  @keyup="filterDigit($event)" />
                                             </el-form-item>
                                         </div>
                                         <div class="pb-[10px]" v-show="formData.fee_type == 'region'">
                                             <el-form-item :label="t('deliveryPrice')" prop="delivery_price">
-                                                <el-input v-model="formData.area[index].delivery_price" type="text" />
+                                                <el-input v-model="formData.area[index].delivery_price" type="text"   @keyup="filterDigit($event)"/>
                                             </el-form-item>
                                         </div>
                                         <el-form-item :label="t('areaType')">
@@ -126,7 +125,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { t } from '@/lang'
 import { useRoute, useRouter } from 'vue-router'
 import { getMap } from '@/app/api/sys'
-import { guid } from '@/utils/common'
+import { guid, filterDigit } from '@/utils/common'
 import { createCircle, deleteGeometry, createPolygon, selectGeometry, createMarker } from '@/utils/qqmap'
 import { setLocal, getLocal } from '@/addon/shop/api/delivery'
 import { FormInstance } from 'element-plus'

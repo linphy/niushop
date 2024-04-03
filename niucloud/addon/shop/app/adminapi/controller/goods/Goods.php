@@ -114,7 +114,7 @@ class Goods extends BaseAdminController
             [ "delivery_template_id", 0 ],
 
             // 商品详情
-            [ "goods_desc", "" ],
+            [ "goods_desc", "" , false],
         ]);
 
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.add');
@@ -169,7 +169,7 @@ class Goods extends BaseAdminController
             [ "delivery_template_id", 0 ],
 
             // 商品详情
-            [ "goods_desc", "" ],
+            [ "goods_desc", "", false ],
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.edit');
         $res = ( new GoodsService() )->edit($id, $data);
@@ -260,6 +260,8 @@ class Goods extends BaseAdminController
             [ "goods_name", "" ],
             [ "goods_category", '' ],
             [ "goods_type", "" ],
+            [ 'order', '' ],
+            [ 'sort', '' ]
         ]);
         return success(( new GoodsService() )->getRecyclePage($data));
     }

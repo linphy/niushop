@@ -7,6 +7,7 @@
     "expireTime": "到期时间",
     "status":"当前状态",
     "useTime": "使用时间",
+    "validity":"使用有效期",
     "mobile": "手机号",
     "memberInfo": "会员信息",
     "memberInfoPlaceholder":"请输入会员昵称/手机号",

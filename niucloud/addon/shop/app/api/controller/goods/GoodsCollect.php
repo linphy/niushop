@@ -54,5 +54,4 @@ class GoodsCollect extends BaseApiController
         return success(( new GoodsCollectService() )->cancelGoodsCollect($data));
     }
 
-
 }

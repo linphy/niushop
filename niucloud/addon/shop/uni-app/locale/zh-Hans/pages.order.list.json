@@ -5,5 +5,6 @@
     "orderFinish": "确认收货",
     "topay": "支付",
     "orderDetail": "详情",
-	"evaluate": "评价"
+	"evaluate": "评价",
+    "orderListempty":"暂无订单"
 }

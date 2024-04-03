@@ -13,12 +13,10 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="goodsTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('goodsName')" prop="goods_name">
-                        <el-input v-model="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" maxlength="60" />
+                        <el-input v-model.trim="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" maxlength="60" />
                     </el-form-item>
                     <el-form-item :label="t('goodsCategory')" prop="goods_category">
-                        <el-cascader :props="goodsCategoryProps" v-model="goodsTable.searchParam.goods_category"
-                            :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable
-                            filterable />
+                        <el-cascader v-model="goodsTable.searchParam.goods_category" :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable :props="{ value: 'value', label: 'label', emitPath:false }"/>
                     </el-form-item>
                     <el-form-item :label="t('goodsType')" prop="goods_type">
                         <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsTypePlaceholder')" clearable>
@@ -38,16 +36,16 @@
                     </el-form-item>
                     <el-form-item :label="t('saleNum')" prop="sale_num">
                         <div class="region-input">
-                            <input type="text" :placeholder="t('startSaleNumPlaceholder')" maxlength="10" v-model="goodsTable.searchParam.start_sale_num">
+                            <input type="text" :placeholder="t('startSaleNumPlaceholder')" maxlength="10" v-model.trim="goodsTable.searchParam.start_sale_num" @keyup="filterDigit($event)">
                             <span class="separator">-</span>
-                            <input type="text" :placeholder="t('endSaleNumPlaceholder')" maxlength="10" v-model="goodsTable.searchParam.end_sale_num">
+                            <input type="text" :placeholder="t('endSaleNumPlaceholder')" maxlength="10" v-model.trim="goodsTable.searchParam.end_sale_num" @keyup="filterDigit($event)">
                         </div>
                     </el-form-item>
                     <el-form-item :label="t('skuPrice')" prop="sku_price">
                         <div class="region-input">
-                            <input type="text" :placeholder="t('startPricePlaceholder')" maxlength="10" v-model="goodsTable.searchParam.start_price">
+                            <input type="text" :placeholder="t('startPricePlaceholder')" maxlength="10" v-model.trim="goodsTable.searchParam.start_price" @keyup="filterDigit($event)">
                             <span class="separator">-</span>
-                            <input type="text" :placeholder="t('endPricePlaceholder')" maxlength="10" v-model="goodsTable.searchParam.end_price">
+                            <input type="text" :placeholder="t('endPricePlaceholder')" maxlength="10" v-model.trim="goodsTable.searchParam.end_price" @keyup="filterDigit($event)">
                         </div>
                     </el-form-item>
 
@@ -68,8 +66,8 @@
 
                 <div class="mb-[10px] flex items-center">
                     <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange" :indeterminate="isIndeterminate" />
-                    <el-button @click="batchGoodsStatus(1)" size="small">{{ t('batchOnGoods') }}</el-button>
-                    <el-button @click="batchGoodsStatus(0)" size="small">{{ t('batchOffGoods') }}</el-button>
+                    <el-button @click="batchGoodsStatus(1)" size="small" v-if="goodsTable.searchParam.status != '1'">{{ t('batchOnGoods') }}</el-button>
+                    <el-button @click="batchGoodsStatus(0)" size="small" v-if="goodsTable.searchParam.status != '0'">{{ t('batchOffGoods') }}</el-button>
                     <el-button @click="batchDeleteGoods" size="small">{{ t('batchDeleteGoods') }}</el-button>
                 </div>
 
@@ -152,13 +150,13 @@
                     </el-table-column>
 
                 </el-table>
-                <div class="mt-[16px] flex">
-                    <div class="flex items-center flex-1">
+                <div class="mt-[16px] flex justify-end">
+                    <!-- <div class="flex items-center flex-1">
                         <el-checkbox v-model="toggleCheckbox" size="large" class="px-[14px]" @change="toggleChange" :indeterminate="isIndeterminate" />
                         <el-button @click="batchGoodsStatus(1)" size="small">{{ t('batchOnGoods') }}</el-button>
                         <el-button @click="batchGoodsStatus(0)" size="small">{{ t('batchOffGoods') }}</el-button>
                         <el-button @click="batchDeleteGoods" size="small">{{ t('batchDeleteGoods') }}</el-button>
-                    </div>
+                    </div> -->
 
                     <el-pagination v-model:current-page="goodsTable.page" v-model:page-size="goodsTable.limit"
                         layout="total, sizes, prev, pager, next, jumper" :total="goodsTable.total"
@@ -183,7 +181,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { debounce, img } from '@/utils/common'
+import { debounce, img, filterDigit, filterNumber } from '@/utils/common'
 import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { cloneDeep } from 'lodash-es'
@@ -191,12 +189,11 @@ import goodsStockEditPopup from '@/addon/shop/views/goods/components/goods-stock
 import goodsPriceEditPopup from '@/addon/shop/views/goods/components/goods-price-edit-popup.vue'
 import goodsSpreadPopup from '@/addon/shop/views/goods/components/goods-spread-popup.vue'
 import { getGoodsPageList, getCategoryTree, getGoodsType, getBrandList, getLabelList, editGoodsSort, editGoodsStatus, copyGoods, deleteGoods } from '@/addon/shop/api/goods'
-
+const router = useRouter()
 const route = useRoute()
+
 const pageName = route.meta.title
 const repeat = ref(false)
-
-const router = useRouter()
 
 const goodsTable = reactive({
     page: 1,
@@ -232,9 +229,6 @@ const regExp = {
 
 // 商品分类
 const goodsCategoryOptions: any = reactive([])
-const goodsCategoryProps = {
-    checkStrictly: true
-}
 
 // 商品类型
 const goodsType: any = reactive([])
@@ -368,12 +362,29 @@ const sortChange = (event: any) => {
 
 // 修改商品上下架状态
 const statusChange = (row: any, value: any) => {
-    editGoodsStatus({
-        goods_ids: row.goods_id,
-        status: value
-    }).then((res) => {
-        loadGoodsList()
-    })
+    if (value) {
+        editGoodsStatus({
+            goods_ids: row.goods_id,
+            status: value
+        }).then((res) => {
+            loadGoodsList()
+        })
+    } else {
+        ElMessageBox.confirm(t('statusChangeTips'), t('warning'),
+            {
+                confirmButtonText: t('confirm'),
+                cancelButtonText: t('cancel'),
+                type: 'warning'
+            }
+        ).then(() => {
+            editGoodsStatus({
+                goods_ids: row.goods_id,
+                status: value
+            }).then((res) => {
+                loadGoodsList()
+            })
+        })
+    }
 }
 
 // 批量设置上下架
@@ -455,17 +466,24 @@ const sortInputListener = debounce((sort, row) => {
  * 获取商品列表
  */
 const loadGoodsList = (page: number = 1) => {
-    if (goodsTable.searchParam.start_sale_num && !regExp.number.test(goodsTable.searchParam.start_sale_num)) {
+    if (goodsTable.searchParam.start_sale_num && !regExp.digit.test(goodsTable.searchParam.start_sale_num)) {
         ElMessage({
             type: 'warning',
             message: `${t('startSaleNumTips')}`
         })
         return
     }
-    if (goodsTable.searchParam.end_sale_num && !regExp.number.test(goodsTable.searchParam.end_sale_num)) {
+    if (goodsTable.searchParam.end_sale_num && !regExp.digit.test(goodsTable.searchParam.end_sale_num)) {
         ElMessage({
             type: 'warning',
             message: `${t('endSaleNumTips')}`
+        })
+        return
+    }
+    if (Number(goodsTable.searchParam.start_sale_num) > Number(goodsTable.searchParam.end_sale_num) ) {
+        ElMessage({
+            type: 'warning',
+            message: `${t('shopSaleNumTips')}`
         })
         return
     }
@@ -483,7 +501,13 @@ const loadGoodsList = (page: number = 1) => {
         })
         return
     }
-
+    if (Number(goodsTable.searchParam.start_price) > Number(goodsTable.searchParam.end_price) ) {
+        ElMessage({
+            type: 'warning',
+            message: `${t('shopPriceTips')}`
+        })
+        return
+    }
     goodsTable.loading = true
     goodsTable.page = page
 
@@ -568,7 +592,6 @@ const copyEvent = (data: any) => {
                 loadGoodsList()
             }
             repeat.value = false
-        // eslint-disable-next-line n/handle-callback-err
         }).catch(err => {
             repeat.value = false
         })

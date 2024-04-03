@@ -48,7 +48,7 @@
 							<div class="input-width">{{ formData.order_main.member_remark }}</div>
 						</el-form-item>
 						<el-form-item :label="t('notes')">
-							<div class="input-width">{{ formData.order_main.shop_remark }}</div>
+							<div class="input-width line-feed">{{ formData.order_main.shop_remark }}</div>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -77,7 +77,7 @@
 						<el-form-item :label="t('refundVoucher')">
 							<div class="input-width flex" v-if="formData.voucher">
 								<div class="mr-3" v-for="(voucherItem, voucherIndex) in formData.voucher" :key="voucherIndex">
-									<el-image v-if="voucherItem" class="w-[70px] h-[70px]" :src="img(voucherItem)" fit="contain">
+									<el-image v-if="voucherItem" class="w-[70px] h-[70px]" :src="img(voucherItem)" fit="contain" :preview-src-list="[img(voucherItem)]">
 										<template #error>
 											<div class="image-slot">
 												<img class="w-[70px] h-[70px]" src="@/addon/shop/assets/goods_default.png" />
@@ -88,7 +88,25 @@
 							</div>
 						</el-form-item>
 						<el-form-item :label="t('refundRemark')">
-							<div class="input-width">{{ formData.remark }}</div>
+							<div class="input-width ">{{ formData.remark }}</div>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<h3 class="panel-title" v-if="formData.status == 4">买家退货信息</h3>
+				<el-row class="row-bg px-[30px] mb-[20px]" :gutter="20" v-if="formData.status == 4">
+					<el-col :span="8">
+						<el-form-item :label="t('expressCompany')">
+							<div class="input-width">{{ formData.delivery.express_company }}</div>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item :label="t('expressNumber')">
+							<div class="input-width">{{ formData.delivery.express_number }}</div>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item :label="t('expressRemark')">
+							<div class="input-width">{{ formData.delivery.remark }}</div>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -167,6 +185,7 @@
 				<el-empty :description="t('orderInfoEmpty')" />
 			</el-card>
 		</el-form>
+		<!-- 拒绝退款弹框 -->
 		<el-dialog v-model="refuseShowDialog" :title="t('orderRefundRefuse')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
 			<el-form :model="refuseFormData" label-width="90px" ref="refuseFormRef" :rules="refundFormRules" class="page-form">
 				<el-form-item :label="t('refuseReason')" prop="shop_reason">
@@ -180,16 +199,16 @@
 				</span>
 			</template>
 		</el-dialog>
-
+		<!-- 同意弹框 -->
 		<el-dialog v-model="agreeRefundDialog" :title="t('orderRefundAgree')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
 			<el-form :model="refuseFormData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 				<el-form-item :label="t('applyMoney')">
 					<span>￥{{ refuseFormData.apply_money }}</span>
 				</el-form-item>
-				<el-form-item :label="t('agreeMoney')">
+				<el-form-item :label="t('agreeMoney')" prop="money">
 					<el-input v-model="refuseFormData.money" clearable class="input-width" />
 				</el-form-item>
-				<el-form-item :label="t('refundDeliveryAddress')" v-if="refuseFormData.refund_type == 2">
+				<el-form-item :label="t('refundDeliveryAddress')" prop="refund_address_id" v-if="refuseFormData.refund_type == 2" >
 					<el-select v-model="refuseFormData.refund_address_id" clearable class="input-item">
 						<el-option v-for="(item, index) in refundAddress" :key="index" :label="item.full_address" :value="item.id"></el-option>
 					</el-select>
@@ -199,6 +218,20 @@
 				<span class="dialog-footer">
 					<el-button @click="agreeRefundDialog = false">{{ t('cancel') }}</el-button>
 					<el-button type="primary" :loading="loading" @click="agreeRefundEvent(formRef)">{{ t('confirm') }}</el-button>
+				</span>
+			</template>
+		</el-dialog>
+		<!-- 拒绝收货 -->
+		<el-dialog v-model="deliveryRefuseDialog" :title="t('orderRefundRefuse')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
+			<el-form :model="deliveryRefuseFormData" label-width="90px" ref="deliveryRefuseFormRef" :rules="deliveryRefundFormRules" class="page-form">
+				<el-form-item :label="t('refuseReason')" prop="shop_reason">
+					<el-input v-model="deliveryRefuseFormData.shop_reason" type="textarea" rows="4" clearable class="input-width" />
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="deliveryRefuseDialog = false">{{ t('cancel') }}</el-button>
+					<el-button type="primary" :loading="loading" @click="refundDeliveryFn(deliveryRefuseFormRef)">{{ t('confirm') }}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -255,9 +288,16 @@ const formRef = ref<FormInstance>()
 const refuseFormRef = ref<FormInstance>()
 // 表单验证规则
 const formRules = computed(() => {
-    return {}
+    return {
+        money: [
+            { required: true, message: t('moneyPlaceholder'), trigger: 'blur' }
+        ],
+        refund_address_id: [
+            { required: true, message: t('refundaddressPlaceholder'), trigger: 'blur' }
+        ]
+    }
 })
-
+// 拒绝退款
 const refundFormRules = computed(() => {
     return {
         shop_reason: [
@@ -279,7 +319,7 @@ const agreeEvent = () => {
     }
 }
 
-// 获取 退货地址
+// 获取退货地址
 const refundAddress = ref<any[]>([])
 const getRefundAddress = () => {
     getOrderRefundAddress().then((data) => {
@@ -293,20 +333,25 @@ const getRefundAddress = () => {
 }
 
 // 同意退款  提交
-const agreeRefundEvent = (data:any) => {
-    loading.value = true
-    auditRefund({
-        order_refund_no: formData.value.order_refund_no,
-        money: refuseFormData.money,
-        is_agree: 1,
-        refund_address_id: refuseFormData.refund_address_id
-    }).then(() => {
-        agreeRefundDialog.value = false
-        loading.value = false
-        setFormData(refundId)
-    }).catch(() => {
-        loading.value = false
-        agreeRefundDialog.value = false
+const agreeRefundEvent = async (formEl: FormInstance | undefined) => {
+    if (loading.value || !formEl) return
+    await formEl.validate(async (valid) => {
+        if (valid) {
+            loading.value = true
+            auditRefund({
+                order_refund_no: formData.value.order_refund_no,
+                money: refuseFormData.money,
+                is_agree: 1,
+                refund_address_id: refuseFormData.refund_address_id
+            }).then(() => {
+                agreeRefundDialog.value = false
+                loading.value = false
+                setFormData(refundId)
+            }).catch(() => {
+                loading.value = false
+                agreeRefundDialog.value = false
+            })
+        }
     })
 }
 
@@ -317,14 +362,13 @@ const refuseEvent = () => {
     refuseShowDialog.value = true
 }
 
-// 拒绝退款 拒绝收货 提交
+// 拒绝退款  提交
 const confirm = async (formEl: FormInstance | undefined) => {
     if (loading.value || !formEl) return
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
-            const save = formData.value.refund_type == 1 ? auditRefund : refundDelivery
-            save({
+            auditRefund({
                 order_refund_no: formData.value.order_refund_no,
                 is_agree: 0,
                 shop_reason: refuseFormData.shop_reason
@@ -359,10 +403,43 @@ const deliverEvent = () => {
 }
 
 // 收货拒绝弹出
+const deliveryRefuseDialog = ref<boolean>(false)
+const deliveryRefuseFormData = reactive<any>({
+    shop_reason: ''
+})
+const deliveryRefuseFormRef = ref<FormInstance>()
+const deliveryRefundFormRules = computed(() => {
+    return {
+        shop_reason: [
+            { required: true, message: t('shopReasonPlaceholder'), trigger: 'blur' }
+        ]
+    }
+})
+// 拒绝收货提交
+const refundDeliveryFn = async (formEl: FormInstance | undefined) => {
+    if (loading.value || !formEl) return
+    await formEl.validate(async (valid) => {
+        if (valid) {
+            loading.value = true
+            refundDelivery({
+                order_refund_no: formData.value.order_refund_no,
+                is_agree: 0,
+                shop_reason: deliveryRefuseFormData.shop_reason
+            }).then(res => {
+                setFormData(refundId)
+                loading.value = false
+                deliveryRefuseDialog.value = false
+            }).catch(() => {
+                loading.value = false
+                deliveryRefuseDialog.value = false
+            })
+        }
+    })
+}
 const deliveryRefuseEvent = () => {
     refuseFormData.type = 'refuse'
     refuseFormData.shop_reason = ''
-    refuseShowDialog.value = true
+    deliveryRefuseDialog.value = true
 }
 
 const transferEvent = () => {
@@ -375,4 +452,8 @@ const transferEvent = () => {
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.line-feed{
+        word-wrap:break-word;
+    }
+</style>

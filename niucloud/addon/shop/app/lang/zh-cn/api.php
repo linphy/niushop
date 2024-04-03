@@ -23,12 +23,16 @@ return [
     'MEMBER_ALREADY_COLLECT' => '已收藏，不可重复收藏',
 
     'SHOP_COUPON_IS_USED_OR_EXIST' => '优惠券不存在或已使用',
+    'SHOP_COUPON_VALID_END_TIME_NOT_ALLOW_LT_START_TIME' => '优惠券的有效期结束时间不能小于当前时间',
+
+    'SHOP_GOODS_NOT_HAS_DEFAULT_SPEC' => '商品缺少默认规格',
     /********************************************* 订单相关 start ****************************************************/
     'SHOP_ORDER_HAS_REFUNDING_NOT_ALLOW_FINISH' => '订单中存在退款,无法收货',
     'SHOP_ORDER_IS_PAY_FINISH' => '订单已支付',
     'SHOP_ORDER_IS_CLOSED' => '订单已关闭',
     'SHOP_ORDER_STATUS_NOT_SUPPORT_ACTION' => '当前的操作与订单状态不符',
     'SHOP_ORDER_COUPON_EXPIRE_OR_NOT_FOUND' => '优惠券已使用或已过期',
+    'SHOP_ORDER_COUPON_EXPIRE' => '当前优惠券已过期',
     'SHOP_ORDER_COUPON_NOT_SUPPORT_GOODS' => '当前优惠券在本单不可用',
     'SHOP_ORDER_COUPON_NOT_SUPPORT_MIN_MONEY' => '未达到当前优惠券的最低使用条件',
     'SHOP_ORDER_PLEASE_SELECT_DELIVERY_TYPE' => '请选择正确的配送方式',

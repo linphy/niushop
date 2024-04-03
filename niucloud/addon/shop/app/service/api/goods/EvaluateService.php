@@ -40,10 +40,9 @@ class EvaluateService extends BaseApiService
      */
     public function getPage(array $where = [])
     {
-        $field = 'evaluate_id,site_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping,update_time';
+        $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping,update_time';
         $order = 'topping desc,update_time desc,create_time desc';
-        $where['is_audit'] = EvaluateDict::AUDIT_ADOPT;
-        $search_model = $this->model->where([['goods_id', '=', $where['goods_id']], ['site_id', '=', $this->site_id]])->withSearch(["goods_id", "scores"], $where)->field($field)->order($order)->append(['image_small']);
+        $search_model = $this->model->where([['goods_id', '=', $where['goods_id']],['is_audit','=',EvaluateDict::AUDIT_ADOPT]])->withSearch(["goods_id", "scores"], $where)->field($field)->order($order)->append(['image_mid']);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -55,8 +54,8 @@ class EvaluateService extends BaseApiService
      */
     public function getInfo(int $id)
     {
-        $field = 'evaluate_id,order_id,site_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
-        $info = $this->model->field($field)->where([['evaluate_id', '=', $id], ['site_id', '=', $this->site_id]])->append(['image_mid', 'image_big'])->findOrEmpty()->toArray();
+        $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
+        $info = $this->model->field($field)->where([['evaluate_id', '=', $id]])->append(['image_mid', 'image_big'])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -71,12 +70,10 @@ class EvaluateService extends BaseApiService
         $member_info = (new Member())->where([['member_id', '=', $this->member_id]])->field('nickname, headimg')->findOrEmpty()->toArray();
         if(empty($member_info)) throw new CommonException();
 
-        $config = (new CoreOrderConfigService())->getEvaluateConfig($this->site_id);
-        if($config['evaluate_is_to_examine'] == 1)
+        $config = (new CoreOrderConfigService())->getEvaluateConfig();
 
         foreach ($data['evaluate_array'] as $key => $val){
             $params = $val;
-            $params['site_id'] = $this->site_id;
             $params['member_id'] = $this->member_id;
             $params['member_name'] = $member_info['nickname'];
             $params['member_head'] = $member_info['headimg'];
@@ -112,10 +109,10 @@ class EvaluateService extends BaseApiService
     public function getList($goods_id)
     {
         $data = [];
-        $field = 'evaluate_id,site_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping,update_time';
+        $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping,update_time';
         $order = 'topping desc,update_time desc,create_time desc';
-        $data['list'] = $this->model->field($field)->where([['goods_id', '=', $goods_id], ['site_id', '=', $this->site_id], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->limit(3)->order($order)->append(['image_small'])->select()->toArray();
-        $data['count'] = $this->model->where([['goods_id', '=', $goods_id], ['site_id', '=', $this->site_id], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->count();
+        $data['list'] = $this->model->field($field)->where([['goods_id', '=', $goods_id], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->limit(3)->order($order)->append(['image_mid'])->select()->toArray();
+        $data['count'] = $this->model->where([['goods_id', '=', $goods_id], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->count();
 
         return $data;
     }
@@ -126,10 +123,10 @@ class EvaluateService extends BaseApiService
      */
     public function getDetail($order_id)
     {
-        $field = 'evaluate_id,order_id,site_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
-        $list = $this->model->field($field)->where([['order_id', '=', $order_id], ['site_id', '=', $this->site_id]])->with([
+        $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
+        $list = $this->model->field($field)->where([['order_id', '=', $order_id]])->with([
             'order_goods' => function ($query){
-                $query->field('order_goods_id, site_id, goods_name, sku_name, goods_image, num, price')->append(['goods_image_thumb_mid']);
+                $query->field('order_goods_id, goods_name, sku_name, goods_image, num, price')->append(['goods_image_thumb_mid']);
             }
         ])->append(['image_mid', 'image_big'])->select()->toArray();
         return $list;

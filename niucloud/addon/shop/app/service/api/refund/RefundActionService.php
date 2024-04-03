@@ -12,7 +12,6 @@
 namespace addon\shop\app\service\api\refund;
 
 use addon\shop\app\dict\order\OrderDeliveryDict;
-use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderGoodsDict;
 use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\dict\order\OrderRefundLogDict;
@@ -60,7 +59,6 @@ class RefundActionService extends BaseApiService
         $reason = $data['reason'];
         $insert_data = array(
             'order_id' => $order_goods_info['order_id'],
-            'site_id' => $this->site_id,
             'order_goods_id' => $order_goods_id,
             'order_refund_no' => $order_refund_no,
             'refund_type' => $refund_type,
@@ -95,8 +93,7 @@ class RefundActionService extends BaseApiService
         //查询订单项信息
         $order_refund_info = $this->model->where([
             ['order_refund_no', '=', $order_refund_no],
-            ['member_id', '=', $this->member_id],
-            ['site_id', '=', $this->site_id]
+            ['member_id', '=', $this->member_id]
         ])->findOrEmpty();
         if ($order_refund_info->isEmpty()) throw new ApiException('SHOP_ORDER_IS_INVALID');//退款已失效
         if ($order_refund_info['status'] != OrderRefundDict::BUYER_APPLY_WAIT_STORE) throw new ApiException('SHOP_ORDER_IS_INVALID');//退款已失效(只有被拒绝的请求才可以修改退款)
@@ -125,7 +122,7 @@ class RefundActionService extends BaseApiService
         ];
         $order_refund_info->save($update_data);
         //订单申请退款后事件
-        event('AfterShopOrderRefundEdit', ['site_id' => $this->site_id, 'order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
+        event('AfterShopOrderRefundEdit', ['order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
         return true;
     }
 
@@ -153,8 +150,7 @@ class RefundActionService extends BaseApiService
         //查询订单项信息
         $order_refund_info = $this->model->where([
             ['order_refund_no', '=', $order_refund_no],
-            ['member_id', '=', $this->member_id],
-            ['site_id', '=', $this->site_id]
+            ['member_id', '=', $this->member_id]
         ])->findOrEmpty();
         if ($order_refund_info->isEmpty()) throw new ApiException('SHOP_ORDER_REFUND_IS_INVALID');//退款已失效
         if ($order_refund_info['status'] != OrderRefundDict::STORE_AGREE_REFUND_GOODS_APPLY_WAIT_BUYER) throw new ApiException('SHOP_ORDER_REFUND_STATUS_NOT_SUPPORT_ACTION');//退款已失效(只有被拒绝的请求才可以修改退货)
@@ -179,7 +175,7 @@ class RefundActionService extends BaseApiService
         ];
         $order_refund_info->save($update_data);
         //订单申请退款后事件
-        event('AfterShopOrderRefundDelivery', ['site_id' => $this->site_id, 'main_type' => OrderRefundLogDict::MEMBER, 'main_id' => $this->member_id, 'order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
+        event('AfterShopOrderRefundDelivery', ['main_type' => OrderRefundLogDict::MEMBER, 'main_id' => $this->member_id, 'order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
         return true;
     }
 
@@ -194,8 +190,7 @@ class RefundActionService extends BaseApiService
         //查询订单项信息
         $order_refund_info = $this->model->where([
             ['order_refund_no', '=', $order_refund_no],
-            ['member_id', '=', $this->member_id],
-            ['site_id', '=', $this->site_id]
+            ['member_id', '=', $this->member_id]
         ])->findOrEmpty();
         if ($order_refund_info->isEmpty()) throw new ApiException('SHOP_ORDER_REFUND_IS_INVALID');//退款已失效
         if ($order_refund_info['status'] != OrderRefundDict::STORE_REFUSE_TAKE_REFUND_GOODS_WAIT_BUYER) throw new ApiException('SHOP_ORDER_REFUND_STATUS_NOT_SUPPORT_ACTION');//退款已失效(只有被拒绝的请求才可以修改退款)
@@ -220,7 +215,7 @@ class RefundActionService extends BaseApiService
         ];
         $order_refund_info->save($update_data);
         //订单申请退款后事件
-        event('AfterShopOrderRefundEditDelivery', ['main_type' => OrderRefundLogDict::MEMBER, 'site_id' => $this->site_id, 'main_id' => $this->member_id, 'order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
+        event('AfterShopOrderRefundEditDelivery', ['main_type' => OrderRefundLogDict::MEMBER, 'main_id' => $this->member_id, 'order_refund_no' => $order_refund_no, 'refund_data' => array_merge($order_refund_info->toArray(), $update_data)]);
         return true;
     }
 

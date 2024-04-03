@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -257,7 +256,6 @@ const spreadEvent = (data: any) => {
             align-items: center;
 
             .el-table__expand-icon,
-            .el-table__indent,
             .el-table__placeholder {
                 order: 1;
             }

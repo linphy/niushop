@@ -1,19 +1,18 @@
-<!-- eslint-disable n/handle-callback-err -->
 <template>
 	<el-dialog v-model="showDialog" :title="formData.company_id ? t('updateCompany') : t('addCompany')" width="500px"   class="diy-dialog-wrap" :destroy-on-close="true">
 		<el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 			<el-form-item :label="t('companyName')" prop="company_name">
-				<el-input v-model="formData.company_name" clearable :placeholder="t('companyNamePlaceholder')"  class="input-width"/>
+				<el-input v-model.trim="formData.company_name" clearable :placeholder="t('companyNamePlaceholder')"  class="input-width"/>
 			</el-form-item>
 			<el-form-item :label="t('logo')">
 				<upload-image v-model="formData.logo"/>
 			</el-form-item>
 			<el-form-item :label="t('url')">
-				<el-input v-model="formData.url" clearable :placeholder="t('urlPlaceholder')" class="input-width"/>
+				<el-input v-model.trim="formData.url" clearable :placeholder="t('urlPlaceholder')" class="input-width"/>
 			</el-form-item>
 			<el-form-item :label="t('expressNo')">
 				<div>
-					<el-input v-model="formData.express_no" clearable :placeholder="t('expressNoPlaceholder')"  class="input-width"/>
+					<el-input v-model.trim="formData.express_no" clearable :placeholder="t('expressNoPlaceholder')"  class="input-width"/>
 					<p class="input-width text-[12px] text-[#999] mt-[5px] leading-[20px]">{{ t('expressNoTips') }}</p>
 				</div>
 

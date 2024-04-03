@@ -190,7 +190,7 @@ export function getShopDeliveryList() {
  * @returns
  */
 export function setShopDeliveryConfig(params: Record<string, any>) {
-    return request.put(`shop/delivery/setConfig`, params, {showSuccessMessage: true})
+    return request.put(`shop/delivery/setConfig`, params)
 }
 
 /**

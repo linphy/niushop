@@ -46,10 +46,10 @@ class CoreGoodsCategoryService extends BaseCoreService
      * 获取商品分类配置
      * @return array
      */
-    public function getGoodsCategoryConfig(int $site_id)
+    public function getGoodsCategoryConfig()
     {
         $goods_config_service = new CoreGoodsConfigService();
-        $res = $goods_config_service->getGoodsCategoryConfig($site_id);
+        $res = $goods_config_service->getGoodsCategoryConfig();
         return $res;
     }
 
@@ -60,7 +60,7 @@ class CoreGoodsCategoryService extends BaseCoreService
      * @param string $order
      * @return array
      */
-    public function getTree($condition = [], $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort', $order = 'sort desc')
+    public function getTree($condition = [], $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort', $order = 'sort desc, create_time desc')
     {
         $list = $this->model->where($condition)->field($field)->order($order)->select()->toArray();
         $list = list_to_tree($list, 'category_id', 'pid', 'child_list');

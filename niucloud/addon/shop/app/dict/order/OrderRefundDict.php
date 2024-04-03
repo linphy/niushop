@@ -142,7 +142,6 @@ class OrderRefundDict
             self::AGREE_AUDIT_REFUND_GOODS_ACTION => get_lang('dict_shop_order_refund_action.agree_audit_refund_goods'),
             self::REFUSE_AUDIT_REFUND_GOODS_ACTION => get_lang('dict_shop_order_refund_action.refuse_audit_refund_goods'),
             self::FINISH_ACTION => get_lang('dict_shop_order_refund_action.finish'),
-            self::CLOSE_ACTION => get_lang('dict_shop_order_refund_action.close'),
             self::ACTIVE_REFUND_ACTION => get_lang('dict_shop_order_refund_action.active_refund'),
         ];
         if (!$type) {

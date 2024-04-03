@@ -61,8 +61,16 @@ class CoreExpressService extends BaseCoreService
         $address =  $order->delivery['take_address'] ?? [];
 
         $field = 'snum,sprice,xnum,xprice,fee_type,fee_area_ids,no_delivery,no_delivery_area_ids,is_free_shipping,free_shipping_area_ids,free_shipping_price,free_shipping_num';
-        $template = (new ShippingTemplateItem())->where([ ['template_id', '=', $goods['goods']['delivery_template_id'] ], ['city_id', '=', $address['city_id'] ] ])->field($field)->findOrEmpty();
-        if ($template->isEmpty()) $template = (new ShippingTemplateItem())->where([ ['template_id', '=', $goods['goods']['delivery_template_id'] ], ['city_id', '=', 0 ] ])->field($field)->findOrEmpty();
+        $template = (new ShippingTemplateItem())->where([ ['template_id', '=', $goods['goods']['delivery_template_id'] ], ['city_id', '=', $address['city_id'] ] ])->field($field)->findOrEmpty()->toArray();
+        $nationwide = (new ShippingTemplateItem())->where([ ['template_id', '=', $goods['goods']['delivery_template_id'] ], ['city_id', '=', 0 ] ])->field($field)->findOrEmpty()->toArray();
+        if (empty($template)) {
+            $template = $nationwide;
+        } else {
+            if (empty($template['snum'])) $template['snum'] = $nationwide['snum'];
+            if (empty($template['sprice'])) $template['sprice'] = $nationwide['sprice'];
+            if (empty($template['xnum'])) $template['xnum'] = $nationwide['xnum'];
+            if (empty($template['xprice'])) $template['xprice'] = $nationwide['xprice'];
+        }
 
         switch ($template['fee_type']) {
             case ShippingTemplateDict::NUM:
@@ -84,7 +92,7 @@ class CoreExpressService extends BaseCoreService
         }
 
         // 判断收货地址是否包邮
-        if ($template['is_free_shipping'] && !empty($template['free_shipping_area_ids']) && ( $total > $template['free_shipping_num'] || $goods['good_money'] > $template['free_shipping_num'])) {
+        if ($template['is_free_shipping'] && !empty($template['free_shipping_area_ids']) && ( $total >= $template['free_shipping_num'] || $goods['goods_money'] >= $template['free_shipping_price'])) {
             $goods['is_free_shipping'] = 1;
             return true;
         }

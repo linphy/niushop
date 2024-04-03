@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
@@ -84,10 +83,14 @@
                         <el-table-column prop="status_name" :label="t('status')" />
                         <el-table-column :label="t('useTime')">
                             <template #default="{ row }">
-                                {{ row.use_time || '未使用' }}
+                                {{ row.use_time || '--' }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="expire_time" :label="t('expireTime')" />
+                        <el-table-column  :label="t('validity')" >
+                            <template #default="{ row }">
+                                {{ row.create_time }}至{{ row.expire_time }}
+                            </template>
+                        </el-table-column>
                         <el-table-column :label="t('operation')" fixed="right" align="right">
                             <template #default="{ row }">
                                 <el-button type="primary" v-if="row.use_time != 0" link @click="showOrder(row)">{{ t('showOrder') }}</el-button>

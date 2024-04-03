@@ -86,5 +86,9 @@
 	  "refundVoucher": "申请凭证",
 	  "refundRemark": "退款描述",
 	  "agreeMoney": "退款金额",
-	  "refundType": "退款方式"
+	  "refundType": "退款方式",
+	  "moneyPlaceholder":"请输入退款金额",
+	  "refundaddressPlaceholder":"请输入退货地址",
+	  "expressCompany":"物流公司",
+	  "expressRemark":"物流说明"
 }

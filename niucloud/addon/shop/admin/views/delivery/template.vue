@@ -19,7 +19,7 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="templateTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('templateName')" prop="template_name">
-                        <el-input v-model="templateTable.searchParam.template_name" :placeholder="t('templateNamePlaceholder')" />
+                        <el-input v-model.trim="templateTable.searchParam.template_name" :placeholder="t('templateNamePlaceholder')" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadTemplateList()">{{ t('search') }}</el-button>

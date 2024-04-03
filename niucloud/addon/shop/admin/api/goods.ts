@@ -390,7 +390,7 @@ export function editCategory(params: Record<string, any>) {
  * @returns
  */
 export function deleteCategory(category_id: number) {
-    return request.delete(`shop/goods/category/${category_id}`)
+    return request.delete(`shop/goods/category/${category_id}`,{showErrorMessage: true, showSuccessMessage: true})
 }
 
 /**

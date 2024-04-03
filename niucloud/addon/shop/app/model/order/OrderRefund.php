@@ -125,7 +125,7 @@ class OrderRefund extends BaseModel
     public function searchOrderRefundNoAttr($query, $value, $data)
     {
         if ($value) {
-            $query->where("order_refund_no", $value);
+            $query->where("order_refund_no", "like", "%$value%");
         }
     }
 

@@ -36,7 +36,6 @@ class ShippingTemplateService extends BaseAdminService
         try {
             $create_res = ( new ShippingTemplate() )->create([
                 'template_name' => $data[ 'template_name' ],
-                'site_id' => $this->site_id,
                 'fee_type' => $data[ 'fee_type' ],
                 'create_time' => time(),
                 'no_delivery' => $data[ 'no_delivery' ],
@@ -47,7 +46,6 @@ class ShippingTemplateService extends BaseAdminService
             foreach ($data[ 'area' ] as $item) {
                 $template_item[] = [
                     'template_id' => $create_res->template_id,
-                    'site_id' => $this->site_id,
                     'city_id' => $item[ 'city_id' ],
                     'fee_type' => $data[ 'fee_type' ],
                     'snum' => round(floatval($item[ 'snum' ] ?? 0), 2),
@@ -91,14 +89,13 @@ class ShippingTemplateService extends BaseAdminService
                 'update_time' => time(),
                 'no_delivery' => $data[ 'no_delivery' ],
                 'is_free_shipping' => $data[ 'is_free_shipping' ]
-            ], [ 'template_id' => $template_id, 'site_id' => $this->site_id ]);
+            ], [ 'template_id' => $template_id]);
 
-            ( new ShippingTemplateItem() )->where([ 'template_id' => $template_id, 'site_id' => $this->site_id ])->delete();
+            ( new ShippingTemplateItem() )->where([ 'template_id' => $template_id ])->delete();
             $template_item = [];
             foreach ($data[ 'area' ] as $item) {
                 $template_item[] = [
                     'template_id' => $template_id,
-                    'site_id' => $this->site_id,
                     'city_id' => $item[ 'city_id' ],
                     'fee_type' => $data[ 'fee_type' ],
                     'snum' => round(floatval($item[ 'snum' ] ?? 0), 2),
@@ -134,8 +131,8 @@ class ShippingTemplateService extends BaseAdminService
      */
     public function delete(int $template_id)
     {
-        ( new ShippingTemplate() )->where([ 'template_id' => $template_id, 'site_id' => $this->site_id ])->delete();
-        ( new ShippingTemplateItem() )->where([ 'template_id' => $template_id, 'site_id' => $this->site_id ])->delete();
+        ( new ShippingTemplate() )->where([ 'template_id' => $template_id ])->delete();
+        ( new ShippingTemplateItem() )->where([ 'template_id' => $template_id ])->delete();
         return true;
     }
 
@@ -147,7 +144,7 @@ class ShippingTemplateService extends BaseAdminService
     public function getPage(array $where)
     {
         $field = 'template_id, template_name, fee_type, create_time, no_delivery, is_free_shipping';
-        $search_model = ( new ShippingTemplate() )->where([ ['site_id', '=', $this->site_id] ])->withSearch([ 'template_name' ], $where)->field($field)->order('create_time desc')->append([ 'fee_type_name' ]);
+        $search_model = ( new ShippingTemplate() )->withSearch([ 'template_name' ], $where)->field($field)->order('create_time desc')->append([ 'fee_type_name' ]);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -161,7 +158,7 @@ class ShippingTemplateService extends BaseAdminService
     public function getList(array $where = [], $field = 'template_id, template_name, fee_type, create_time, no_delivery, is_free_shipping')
     {
         $order = "create_time desc";
-        return ( new ShippingTemplate() )->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "template_name" ], $where)->field($field)->select()->order($order)->toArray();
+        return ( new ShippingTemplate() )->withSearch([ "template_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -171,7 +168,7 @@ class ShippingTemplateService extends BaseAdminService
     public function getInfo(int $template_id)
     {
         $field = 'template_id, template_name, fee_type, create_time, no_delivery, is_free_shipping';
-        $detail = ( new ShippingTemplate() )->where([ [ 'template_id', '=', $template_id ], ['site_id', '=', $this->site_id] ])->field($field)->append([ 'fee_type_name' ])->findOrEmpty()->toArray();
+        $detail = ( new ShippingTemplate() )->where([ [ 'template_id', '=', $template_id ] ])->field($field)->append([ 'fee_type_name' ])->findOrEmpty()->toArray();
         if (!empty($detail)) {
             $detail[ 'fee_data' ] = ( new ShippingTemplateItem() )->where([ [ 'template_id', '=', $template_id ], [ 'fee_area_ids', '<>', '' ] ])->field('fee_area_ids as area_ids,fee_area_names,snum,sprice,xnum,xprice')->group('fee_area_ids')->select()->toArray();
             $detail[ 'no_delivery_data' ] = ( new ShippingTemplateItem() )->where([ [ 'template_id', '=', $template_id ], [ 'no_delivery_area_ids', '<>', '' ] ])->field('no_delivery_area_ids as area_ids,no_delivery_area_names')->group('no_delivery_area_ids')->select()->toArray();

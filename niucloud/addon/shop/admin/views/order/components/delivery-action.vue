@@ -13,7 +13,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="t('expressNumber')" v-if="formData.delivery_type == 'express'" prop="express_number">
-                    <el-input v-model="formData.express_number" clearable :placeholder="t('expressNumberPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="formData.express_number" clearable :placeholder="t('expressNumberPlaceholder')" class="input-width" maxlength="30" />
                 </el-form-item>
             </el-form>
             <el-table :data="goodsDataArr" size="large" @selection-change="handleSelectionChange">
@@ -103,7 +103,7 @@ const expressNumberPass = (rule: any, value: any, callback: any) => {
 }
 
 const selectable = (row:any, index:number) => {
-    if (row.status == 2) {
+    if (row.status == 2 || row.delivery_status == 'delivery_finish') {
         return false
     }
     return true
@@ -160,9 +160,10 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 loading.value = false
                 showDialog.value = false
                 emit('complete')
-            // eslint-disable-next-line n/handle-callback-err
+                initFormData();
             }).catch(err => {
                 loading.value = false
+                initFormData();
             })
         }
     })
@@ -198,6 +199,14 @@ const setFormData = async (row: any = null) => {
         }
     }
     loading.value = false
+}
+
+const initFormData = ()=> {
+    formData.order_id = 0;
+    formData.delivery_type = '';
+    formData.express_company_id = '';
+    formData.express_number = '';
+    formData.order_goods_ids = [];
 }
 
 defineExpose({

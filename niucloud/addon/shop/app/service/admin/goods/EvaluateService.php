@@ -38,7 +38,7 @@ class EvaluateService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $field = 'evaluate_id,site_id,order_id,order_goods_id,goods_id,member_id,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping';
+        $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping';
         $order = 'create_time desc';
 
         $goods_where = [];
@@ -48,7 +48,6 @@ class EvaluateService extends BaseAdminService
 
         $search_model = $this->model
             // ->withSearch(["goods_name"], $where)
-            ->where([ ['evaluate.site_id', '=', $this->site_id] ])
             ->field($field)
             ->withJoin([
                 'goods' => function(Query $query) use($goods_where){
@@ -73,9 +72,9 @@ class EvaluateService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'evaluate_id,site_id,order_id,order_goods_id,goods_id,member_id,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
+        $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
 
-        $info = $this->model->field($field)->where([['evaluate_id', '=', $id], ['site_id', '=', $this->site_id]])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([['evaluate_id', '=', $id]])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -87,7 +86,6 @@ class EvaluateService extends BaseAdminService
     public function add(array $data)
     {
         $data['is_audit'] = 2;
-        $data['site_id'] = $this->site_id;
         return (new CoreGoodsEvaluateService)->addEvaluate($data);
     }
 
@@ -98,7 +96,7 @@ class EvaluateService extends BaseAdminService
      */
     public function del(int $evaluate_id)
     {
-        $model = $this->model->where([['evaluate_id', '=', $evaluate_id], ['site_id', '=', $this->site_id]])->find();
+        $model = $this->model->where([['evaluate_id', '=', $evaluate_id]])->find();
         $res = $model->delete();
         return $res;
     }
@@ -110,7 +108,7 @@ class EvaluateService extends BaseAdminService
      */
     public function auditAdopt($evaluate_id)
     {
-        $this->model->where([['evaluate_id', '=', $evaluate_id], ['site_id', '=', $this->site_id]])->update(['is_audit' => EvaluateDict::AUDIT_ADOPT]);
+        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update(['is_audit' => EvaluateDict::AUDIT_ADOPT]);
         return true;
     }
 
@@ -121,7 +119,7 @@ class EvaluateService extends BaseAdminService
      */
     public function auditRefuse($evaluate_id)
     {
-        $this->model->where([['evaluate_id', '=', $evaluate_id], ['site_id', '=', $this->site_id]])->update(['is_audit' => EvaluateDict::AUDIT_REFUSE]);
+        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update(['is_audit' => EvaluateDict::AUDIT_REFUSE]);
         return true;
     }
 
@@ -133,7 +131,7 @@ class EvaluateService extends BaseAdminService
      */
     public function reply($evaluate_id, $data)
     {
-        $this->model->where([['evaluate_id', '=', $evaluate_id], ['site_id', '=', $this->site_id]])->update($data);
+        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update($data);
         return true;
     }
 
@@ -148,7 +146,7 @@ class EvaluateService extends BaseAdminService
             'topping' => 1,
             'update_time' => time()
         ];
-        $this->model->where([['evaluate_id', '=', $evaluate_id], ['site_id', '=', $this->site_id]])->update($data);
+        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update($data);
         return true;
     }
 
@@ -161,7 +159,7 @@ class EvaluateService extends BaseAdminService
             'topping' => 0,
             'update_time' => 0
         ];
-        $this->model->where([['evaluate_id', '=', $evaluate_id], ['site_id', '=', $this->site_id]])->update($data);
+        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update($data);
         return true;
     }
 }

@@ -87,6 +87,9 @@
   "stockNotZeroTips": "库存不能小于0",
 
   "specNameRequire": "规格项不能为空",
-  "specValueRequire": "规格值不能为空"
+  "specNameRepeat": "规格项不能重复",
+  "specValueRequire": "规格值不能为空",
+  "specValueNameRepeat": "规格值不能重复",
+  "lackDefaultSpec": "商品缺少默认规格"
 
 }

@@ -26,6 +26,13 @@ return [
                 'action' => ''
             ],
             [
+                'name' => 'SHOP_GOODS_SEARCH',
+                'title' => get_lang('dict_diy.shop_link_goods_search'),
+                'url' => '/addon/shop/pages/goods/search',
+                'is_share' => 1,
+                'action' => ''
+            ],
+            [
                 'name' => 'SHOP_GOODS_CART',
                 'title' => get_lang('dict_diy.shop_link_goods_cart'),
                 'url' => '/addon/shop/pages/goods/cart',

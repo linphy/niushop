@@ -3,13 +3,13 @@
         :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
             <el-form-item :label="t('serviceName')" prop="service_name">
-                <el-input v-model="formData.service_name" clearable :placeholder="t('serviceNamePlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.service_name" clearable :placeholder="t('serviceNamePlaceholder')" :maxlength="20" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('image')">
                 <upload-image v-model="formData.image" />
             </el-form-item>
             <el-form-item :label="t('desc')" >
-                <el-input v-model="formData.desc" type="textarea" rows="4" clearable :placeholder="t('descPlaceholder')" class="input-width"/>
+                <el-input v-model.trim="formData.desc" type="textarea" rows="4" clearable :placeholder="t('descPlaceholder')" class="input-width"/>
             </el-form-item>
         </el-form>
 

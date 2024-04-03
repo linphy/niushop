@@ -6,6 +6,7 @@ import request from '@/utils/request'
 export function getShopCouponList(params : Record<string, any>) {
 	return request.get(`shop/coupon`, params)
 }
+
 /**
  * 优惠券详情
  */
@@ -18,9 +19,25 @@ export function getShopCouponInfo(id:number) {
 export function getCoupon(params : Record<string, any>) {
 	return request.post(`shop/coupon`, params, {showSuccessMessage: true})
 }
+
 /**
  * 获取我的优惠券
  */
 export function getMyCouponList(params : Record<string, any>) {
 	return request.get(`shop/member/coupon`, params)
+}
+
+/**
+ * 获取优惠券列表供组件调用
+ */
+export function getShopCouponComponents(params : Record<string, any>) {
+	return request.get(`shop/coupon/components`, params)
+}
+
+/**
+ * 获取我的优惠券数量
+ * status 1：待使用，2：已使用，3：已过期，4：已失效
+ */
+export function getMyCouponCount(params : Record<string, any>) {
+	return request.get(`shop/member/coupon/count`, params)
 }

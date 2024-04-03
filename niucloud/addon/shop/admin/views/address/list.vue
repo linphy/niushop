@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
 	<div class="main-container">
 		<el-card class="box-card !border-none" shadow="never">

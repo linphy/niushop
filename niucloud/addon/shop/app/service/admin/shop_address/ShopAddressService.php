@@ -38,7 +38,7 @@ class ShopAddressService extends BaseAdminService
         $field = 'id,contact_name,mobile,province_id,city_id,district_id,address,full_address,lat,lng,is_delivery_address,is_refund_address,is_default_delivery,is_default_refund';
         $order = '';
 
-        $search_model = $this->model->where([ ['site_id', '=', $this->site_id] ])->withSearch([ "mobile", "full_address" ], $where)->field($field)->order($order);
+        $search_model = $this->model->withSearch([ "mobile", "full_address" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -52,7 +52,7 @@ class ShopAddressService extends BaseAdminService
     {
         $field = 'id,contact_name,mobile,province_id,city_id,district_id,address,full_address,lat,lng,is_delivery_address,is_refund_address,is_default_delivery,is_default_refund';
 
-        $info = $this->model->field($field)->where([ [ 'id', '=', $id ], ['site_id', '=', $this->site_id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -64,7 +64,6 @@ class ShopAddressService extends BaseAdminService
     public function add(array $param)
     {
         $data = [
-            'site_id' => $this->site_id,
             'contact_name' => $param[ 'contact_name' ],
             'mobile' => $param[ 'mobile' ],
             'province_id' => $param[ 'province_id' ],
@@ -111,7 +110,7 @@ class ShopAddressService extends BaseAdminService
         ];
         if ($data[ 'is_default_delivery' ]) $this->model->update([ 'is_default_delivery' => 0 ], [ [ 'is_default_delivery', '>', 0 ] ]);
         if ($data[ 'is_default_refund' ]) $this->model->update([ 'is_default_refund' => 0 ], [ [ 'is_default_refund', '>', 0 ] ]);
-        $this->model->where([ [ 'id', '=', $id ], ['site_id', '=', $this->site_id] ])->update($data);
+        $this->model->where([ [ 'id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -122,7 +121,7 @@ class ShopAddressService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $model = $this->model->where([ [ 'id', '=', $id ], ['site_id', '=', $this->site_id] ])->find();
+        $model = $this->model->where([ [ 'id', '=', $id ] ])->find();
         $res = $model->delete();
         return $res;
     }
@@ -136,14 +135,14 @@ class ShopAddressService extends BaseAdminService
      */
     public function getDefaultDeliveryAddress()
     {
-        $address =  $this->model->where([ [ 'is_delivery_address', '=', 1 ], [ 'is_default_delivery', '=', 1 ], ['site_id', '=', $this->site_id] ])->findOrEmpty();
+        $address =  $this->model->where([ [ 'is_delivery_address', '=', 1 ], [ 'is_default_delivery', '=', 1 ] ])->findOrEmpty();
         if (!$address->isEmpty()) return $address->toArray();
     }
 
     public function getList()
     {
         $field = 'id,contact_name,mobile,province_id,city_id,district_id,address,full_address,lat,lng,is_delivery_address,is_refund_address,is_default_delivery,is_default_refund';
-        $list = $this->model->where([['is_refund_address', '=', 1], ['site_id', '=', $this->site_id] ])->field($field)->select()->toArray();
+        $list = $this->model->where([['is_refund_address', '=', 1] ])->field($field)->select()->toArray();
         return $list;
     }
 }
