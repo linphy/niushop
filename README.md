@@ -36,7 +36,7 @@ niucloud-admin是一款快速开发通用管理后台框架，整体功能架构
 
 ### 界面截图  :point_right: 
 ![输入图片说明](https://media.niucloud.com/1712132244c781785a8822b281c8d03f10134c9f97_aliyun.png)
-![输入图片说明](https://media.niucloud.com/1711597084402f1f74c47080b20c7feb4166b2ab2a_aliyun.png)
+![输入图片说明](https://media.niucloud.com/17121362221b4f7f3c15be7077a4fb351a829f1b35_aliyun.png)
 
 
 
