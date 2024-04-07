@@ -59,7 +59,8 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 
 
 ### 操作指南
- [官网地址](https://www.niushop.com)
+ [NIUSHOP官网地址](https://www.niushop.com)
+ | [NIUCLOIUD官网地址](https://www.niucloud.com)
  | [服务市场](https://www.niucloud.com)
  | [使用手册](https://www.niucloud.com/doc)
  | [二开手册](https://www.niucloud.com/doc)
@@ -74,7 +75,7 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 - H5前端演示网址：[<a href='https://v6.site.niucloud.com/wap/addon/shop/pages/index' target="_blank"> 查看 </a>]       
 <a href='https://v6.site.niucloud.com/wap/addon/shop/pages/index' target="_blank">https://v6.site.niucloud.com/wap/addon/shop/pages/index 
 
-### 加入NIUCLOUD开发者生态，一起助力成就程序员创业梦想！！！
+### 加入开发者生态，一起助力成就程序员创业梦想！！！
 
 加入企业微信群技术交流，请扫描下面二维码 :point_down: 
 
@@ -82,6 +83,9 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 
 
 ### 产品LOGO
+
+![输入图片说明](https://media.niucloud.com/1712451847ed866d2b99770a80373955fd38af60b0_aliyun.png)
+
 ![输入图片说明](https://foruda.gitee.com/avatar/1682227978769691031/1342405_niushop_1682227978.png)
 
 ![输入图片说明](https://www.niucloud.com/_nuxt/login_logo.650a27e2.png)
