@@ -19,7 +19,7 @@ V6底层采用插件化模式设计，可以做到多种插件共存，组合使
 ![输入图片说明](https://www.niushop.com/app/web/view/public/img/product/b2cv6/addon-right.png)
 
 ### 首创强大的一键云安装，云编译，云发布,升级引擎
-给我一个支点，必能撬动地球。给我一把好刀，再给我一个目标。V6简单方便的一键云安装，云编译工具，让您小白也能变大师。
+给我一个支点，必能撬动地球。V6简单方便的一键云安装，云编译工具，让您小白也能变大师。
 V6内置在线升级功能，系统会全自动化帮您升级文件。产品的更新只需一键完成 。
 HBUILDER, VSCODE，微信小程序开发工具，打包，上传，发布！ V6强大的小程序一键傻瓜式发布系统，任何开发环境都不再需要搭建！鼠标一点完成小程序升级发布。
 ![输入图片说明](https://media.niucloud.com/171214000404e2574b6bfa3ff0a05fafbbb93ea23b_aliyun.mp4)
@@ -32,7 +32,7 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 请到官方网站了解更多 http://www.niucloud.com
 
 ### NIUSHOP V6 和 NIUCLOUD-ADMIN 的区别和关系怎样的？
-首先，NIUSHOP 产品系列是以商城系统（2016年立项研发，V1一直升级到V5版本， V6是完全从零研发的新产品）为主的独立的产品线。NIUCLOUD产品系列（从2022年底开始立项研发）是以NIUCLOUD-ADMIN框架（分单用户独立版、SAAS版）为根本，在此基础上发展各种应用插件，包括第三方开发者生态产品。主要以SAAS产品系列为主。而 NIUSHOP V6 是 使用  **NIUCLOUD-ADMIN**  框架（单用户独立版）设计的商城应用，以NIUSHOP品牌推广。一句话概括就是，单用户专业化系统以NIUSHOP品牌整体运营推广，SAAS版本插件和应用市场以及NIUCLOUD框架（单用户、SAAS）以NIUCLOUD品牌运营推广。NIUSHOP和NIUCLOUD都是牛之云科技有限公司投资研发运作。
+首先，NIUSHOP 产品系列是以商城系统（2016年立项研发，V1一直升级到V5版本， V6是完全从零研发的新产品）为主的独立的产品线。NIUCLOUD产品系列（从2022年底开始立项研发）是以NIUCLOUD-ADMIN框架（分单用户独立版、SAAS版）为根本，在此基础上发展各种应用插件，包括第三方开发者生态产品，主要以SAAS产品系列为主。而 NIUSHOP V6 是 使用  **NIUCLOUD-ADMIN**  框架单用户独立版设计的商城应用，以NIUSHOP品牌推广。一句话概括就是，单用户专业化系统以NIUSHOP品牌整体运营推广，SAAS版本插件和应用市场以及NIUCLOUD框架（单用户、SAAS）以NIUCLOUD品牌运营推广。NIUSHOP和NIUCLOUD都是牛之云科技有限公司投资研发运作。
 
 ### NIUCLOUD-ADMIN 技术特点 
 
