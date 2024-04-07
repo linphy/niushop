@@ -31,6 +31,9 @@ niucloud-admin是一款快速开发通用管理后台框架，整体功能架构
 
 请到官方网站了解更多 http://www.niucloud.com
 
+### NIUSHOP产品系列 和 NIUCLOUD-ADMIN 的区别和关系怎样的？
+首先，NIUSHOP 产品系列是以商城系统（2016年立项研发）为主的独立的产品线。NIUCLOUD产品系列（从2022年底开始立项研发）是以NIUCLOUD-ADMIN框架（分单用户独立版、SAAS版）为根本，在此基础上发展各种应用插件，包括第三方开发者生态产品。主要以SAAS产品系列为主。而 NIUSHOP V6 是 使用  **NIUCLOUD-ADMIN**  框架（单用户独立版）设计的商城应用。以NIUSHOP品牌推广。NIUSHOP和NIUCLOUD都是牛之云科技有限公司投资研发运作。
+
 ### NIUCLOUD-ADMIN 技术特点 
 
 - 支持composer快速安装扩展，支持 **redis** 缓存以及消息队列，支持多语言设计开发，采用严格的 **restful** 的api设计开发。
