@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -12,7 +12,6 @@
 namespace app\service\core\member;
 
 use app\model\member\Member;
-use app\model\site\Site;
 use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
 use think\db\exception\DataNotFoundException;

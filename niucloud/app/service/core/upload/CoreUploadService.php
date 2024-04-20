@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -29,16 +29,15 @@ class CoreUploadService extends CoreFileService
     /**
      * 图片上传
      * @param string $file
-
      * @param string $file_dir
      * @param int $cate_id
      * @return array
      * @throws Exception
      */
-    public function image(string $file, string $file_dir, int $cate_id = 0)
+    public function image(string $file, string $file_dir, int $cate_id = 0, string $storage_type = '')
     {
         //实例化上传引擎
-        $this->upload_driver = $this->driver();
+        $this->upload_driver = $this->driver($storage_type);
         //读取上传附件的信息用于后续得校验和数据写入
         $this->upload_driver->read($file);
         //生成缩略图....
@@ -47,7 +46,6 @@ class CoreUploadService extends CoreFileService
 
     /**
      * 上传
-
      * @param string $file_dir
      * @param string $type
      * @param int $cate_id
@@ -90,16 +88,15 @@ class CoreUploadService extends CoreFileService
     /**
      * 视频上传
      * @param string $file
-
      * @param string $file_dir
      * @param int $cate_id
      * @return array
      * @throws Exception
      */
-    public function video(string $file, string $file_dir, int $cate_id)
+    public function video(string $file, string $file_dir, int $cate_id, string $storage_type = '')
     {
         //实例化上传引擎
-        $this->upload_driver = $this->driver();
+        $this->upload_driver = $this->driver($storage_type);
         //读取上传附件的信息用于后续得校验和数据写入
         $this->upload_driver->read($file);
         return $this->after($file_dir, FileDict::VIDEO, $cate_id);
@@ -108,7 +105,6 @@ class CoreUploadService extends CoreFileService
     /**
      * 上传文件
      * @param string $file
-
      * @param string $type
      * @param string $file_dir
      * @param string $storage_type

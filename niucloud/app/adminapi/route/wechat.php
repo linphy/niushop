@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -35,16 +35,16 @@ Route::group('wechat', function () {
     //设置微信菜单
     Route::put('menu', 'wechat.Menu/edit');
     /***************************************************** 关键词回复 ****************************************************/
-    //关键词回复详情
-    Route::get('reply/keywords/lists', 'wechat.Reply/keyword');
     //关键词回复列表
     Route::get('reply/keywords', 'wechat.Reply/getKeywordLists');
+    //关键词回复详情
+    Route::get('reply/keywords/:id', 'wechat.Reply/keyword');
     //新增关键词回复
     Route::post('reply/keywords', 'wechat.Reply/addKeyword');
     //更新关键词回复
     Route::put('reply/keywords/:id', 'wechat.Reply/editKeyword');
     //删除关键词回复
-    Route::delete('reply/keywords/:id', 'wechat.Reply/deleteKeyword');
+    Route::delete('reply/keywords/:id', 'wechat.Reply/delKeyword');
     /***************************************************** 默认回复 ****************************************************/
     //默认回复
     Route::get('reply/default', 'wechat.Reply/default');
@@ -56,17 +56,21 @@ Route::group('wechat', function () {
     //更新关注回复
     Route::put('reply/subscribe', 'wechat.Reply/editSubscribe');
     /***************************************************** 图文素材回复 ****************************************************/
-    //图文素材列表
+    // 素材列表
     Route::get('media', 'wechat.Media/lists');
-    //新增图文素材
-    Route::post('media', 'wechat.Media/add');
-    //更新图文素材
-    Route::put('media/:id', 'wechat.Media/edit');
+    // 上传图片素材
+    Route::post('media/image', 'wechat.Media/image');
+    // 上传视频素材
+    Route::post('media/video', 'wechat.Media/video');
+
     /***************************************************** 消息模板 ****************************************************/
     //同步全部消息模板
     Route::put('template/sync', 'wechat.Template/sync');
 
     Route::get('template', 'wechat.Template/lists');
+
+    // 同步图文
+    Route::get('sync/news', 'wechat.Media/syncNews');
 
 })->middleware([
     AdminCheckToken::class,

@@ -157,7 +157,7 @@ class WebIndexGenerator extends BaseGenerator
         if($this->table['edit_type'] == 2){
             $route = '';
             if (!empty($this->table['parent_menu'])) {
-                $route = '/' .  (new CoreMenuService())->getRoutePathByMenuKey($this->table['parent_menu']);
+                $route = (new CoreMenuService())->getRoutePathByMenuKey($this->table['parent_menu']);
             }
             //打开新页面
             $content = "router.push('".$route."/".$this->moduleName."/". Str::lower($this->className) ."_edit')";
@@ -179,7 +179,7 @@ class WebIndexGenerator extends BaseGenerator
         if($this->table['edit_type'] == 2){
             $route = '';
             if (!empty($this->table['parent_menu'])) {
-                $route = '/' . (new CoreMenuService())->getRoutePathByMenuKey($this->table['parent_menu']);
+                $route = (new CoreMenuService())->getRoutePathByMenuKey($this->table['parent_menu']);
             }
             $content = "router.push('".$route."/".$this->moduleName."/". Str::lower($this->className) ."_edit?id='+data.".$this->getPk().")";
         }else{
@@ -583,12 +583,7 @@ class WebIndexGenerator extends BaseGenerator
             $with = Str::camel(substr($column['model'],$str+1));
             $content.= PHP_EOL.'const '. Str::camel($column['column_name']).'List = ref([])'.PHP_EOL;
             $content.= 'const set'.Str::studly($column['column_name']).'List = async () => {'.PHP_EOL.Str::camel($column['column_name']).'List.value = await (await getWith'.Str::studly($with).'List({})).data' .PHP_EOL.'}'
-                .PHP_EOL.'set'.Str::studly($column['column_name']).'List())';
-        }
-
-        if(!empty($content))
-        {
-            $content = substr($content, 0, -1);
+                .PHP_EOL.'set'.Str::studly($column['column_name']).'List()';
         }
         return $this->setBlankSpace($content, '    ');
 

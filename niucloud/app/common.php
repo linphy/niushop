@@ -174,12 +174,7 @@ function del_target_dir($path, $delDir)
         }
         closedir($handle);
         if ($delDir) {
-            try {
-                return rmdir($path);
-            } catch (\Exception $e) {
-                sleep(1);
-                return rmdir($path);
-            }
+            return rmdir($path);
         }
     } else {
         if (file_exists($path)) {
@@ -860,16 +855,45 @@ function file_copy(string $source_file, string $to_file) {
  * @param $size
  * @return string
  */
-function qrcode($url, $dir, $file_path, $channel = '', $size = 4){
-    $dir = $dir ?: 'upload/qrcode/';//二维码默认存储位置
+function qrcode($url, $page, $data, $dir, $channel = 'h5', $style = ['is_transparent' => true]){
+    $dir = $dir ?: 'upload' . '/'.'qrcode';//二维码默认存储位置
     if (! is_dir($dir) && ! mkdir($dir, 0777, true) && ! is_dir($dir)) {
         throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
     }
+    $file_path = md5($url.$page.serialize($data).serialize($style).$channel);
     $path = $dir . '/' . $file_path . '.png';
     if (file_exists($path)) {
-        unlink($path);
+        return $path;
     }
-    \core\util\QRcode::png($url, $path, QR_ECLEVEL_L, $size, 1);
+    $result = array_values(array_filter(event('GetQrcodeOfChannel', [
+        'filepath' => $path,
+        'url' => $url,
+        'page' => $page,
+        'data' => $data,
+        'channel' => $channel,
+    ])));
+    if(!empty($result[0])){
+        $path = $result[0];
+    }
+//    if(!empty($style)){
+//        $is_transparent = $style['is_transparent'] ?? false;//是否透明
+//        $color = $style['color'] ?? '#000';//颜色
+//        $bg_color = $style['bg_color'] ?? '#FFF';
+//        //将二维码背景变透明
+//        $resource = imagecreatefrompng($path);
+//        @unlink($path);
+//        if($is_transparent){
+//            $bgcolor = imagecolorallocate($resource, 255, 255, 255);
+//            imagefill($resource, 0, 0, $bgcolor);
+//            imagecolortransparent($resource, $bgcolor);
+//        }
+//        // 设置彩色二维码的颜色
+//        $color = imagecolorallocate($resource, 229, 39, 21); // 红色
+//        // 修改二维码的像素颜色
+//        imagesetpixel($resource, 10, 10, $color);
+//        imagepng($resource,$path);
+//    }
+
     return $path;
 }
 
@@ -880,17 +904,8 @@ function qrcode($url, $dir, $file_path, $channel = '', $size = 4){
  * @param bool $is_throw_exception
  * @return string|null
  */
-function poster( string|int $type, array $param = [], string $channel = '',bool $is_throw_exception = true){
+function poster(string|int $type, array $param = [], string $channel = '',bool $is_throw_exception = true){
     return (new \app\service\core\poster\CorePosterService())->get($type, $param, $channel, $is_throw_exception);
-}
-
-/**
- * 获取站点插件
- * @return array
- */
-function get_site_addons() : array {
-    $addons = Cache::get("local_install_addons");
-    return is_null($addons) ? [] : $addons;
 }
 
 /**
@@ -908,9 +923,14 @@ function is_url($string)
 }
 
 /**
- * 获取wap端域名
- * @return string
+ * 获取站点插件
+ * @return array
  */
+function get_site_addons() : array {
+    $addons = Cache::get("local_install_addons");
+    return is_null($addons) ? [] : $addons;
+}
+
 function get_wap_domain() {
     $wap_url = (new CoreSysConfigService())->getSceneDomain()['wap_url'];
     return $wap_url;

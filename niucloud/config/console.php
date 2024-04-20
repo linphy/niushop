@@ -2,10 +2,10 @@
 // +----------------------------------------------------------------------
 // | 控制台配置
 // +----------------------------------------------------------------------
-return [
+use core\dict\DictLoader;
+$data = [
     // 指令定义
     'commands' => [
-
         'addon:install' => 'app\command\Addon\Install',
         'addon:uninstall' => 'app\command\Addon\Uninstall',
         'menu:refresh' => 'app\command\Menu',
@@ -17,5 +17,9 @@ return [
         //计划任务 自定义命令
         'cron:run' => 'app\command\schedule\Run',
         'cron:schedule' => 'app\command\schedule\Schedule',
+
+        //wokrerman的启动停止和重启
+        'workerman' => 'app\command\workerman\Workerman',
     ],
 ];
+return (new DictLoader("Console"))->load($data);

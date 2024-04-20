@@ -55,7 +55,7 @@ class Alipay extends BasePay
         return $this->returnFormat(Pay::alipay()->web([
             'out_trade_no' => $params['out_trade_no'],
             'total_amount' => $params['money'],
-            'subject' => $params['boby'],
+            'subject' => $params['body'],
             '_method' => 'get',
         ]));
     }
@@ -67,13 +67,17 @@ class Alipay extends BasePay
      */
     public function wap(array $params)
     {
-        return $this->returnFormat(Pay::alipay()->h5([
+        $response = Pay::alipay()->h5([
             'out_trade_no' => $params['out_trade_no'],
             'total_amount' => $params['money'],
-            'subject' => $params['boby'],
+            'subject' => $params['body'],
             'quit_url' => $params['quit_url'] ?? '',//用户付款中途退出返回商户网站的地址, 一般是商品详情页或购物车页
             '_method' => 'get',
-        ]));
+        ]);
+
+        $redirects = $response->getHeader('Location');
+        $effective_url = end($redirects);
+        return ['url' => $effective_url];
     }
 
     /**
@@ -87,7 +91,7 @@ class Alipay extends BasePay
         return $this->returnFormat(Pay::alipay()->app([
             'out_trade_no' => $params['out_trade_no'],
             'total_amount' => $params['money'],
-            'subject' => $params['boby'],//用户付款中途退出返回商户网站的地址, 一般是商品详情页或购物车页
+            'subject' => $params['body'],//用户付款中途退出返回商户网站的地址, 一般是商品详情页或购物车页
         ]));
     }
 
@@ -101,7 +105,7 @@ class Alipay extends BasePay
         return Pay::alipay()->mini([
             'out_trade_no' => $params['out_trade_no'],
             'total_amount' => $params['money'],
-            'subject' => $params['boby'],
+            'subject' => $params['body'],
             'buyer_id' => $params['buyer_id'],//买家支付宝用户ID  注：交易的买家与卖家不能相同。
         ]);
     }
@@ -117,7 +121,7 @@ class Alipay extends BasePay
             'out_trade_no' => $params['out_trade_no'],
             'auth_code' => $params['auth_code'],//付授权码。 当面付场景传买家的付款码（25~30开头的长度为16~24位的数字，实际字符串长度以开发者获取的付款码长度为准）或者刷脸标识串（fp开头的35位字符串）。
             'total_amount' => $params['money'],
-            'subject' => $params['boby'],
+            'subject' => $params['body'],
         ]);
     }
 
@@ -131,7 +135,7 @@ class Alipay extends BasePay
         return Pay::alipay()->scan([
             'out_trade_no' => $params['out_trade_no'],
             'total_amount' => $params['money'],
-            'subject' => $params['boby'],
+            'subject' => $params['body'],
         ]);
     }
 

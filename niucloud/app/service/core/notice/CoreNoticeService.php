@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -36,8 +36,9 @@ class CoreNoticeService extends BaseCoreService
         $this->model = new SysNotice();
     }
 
-    public function getList() {
-        $list = $this->model->select()->toArray();
+    public function getList(array $keys = [])
+    {
+        $list = $this->model->where([ [ 'id', '>', 0 ] ])->select()->toArray();
         if (!empty($list)) {
             $list_key = array_column($list, 'key');
             $list = array_combine($list_key, $list);
@@ -68,7 +69,6 @@ class CoreNoticeService extends BaseCoreService
         return $notice;
     }
 
-
     /**
      * 获取当前站点消息
      * @param array $keys
@@ -79,7 +79,7 @@ class CoreNoticeService extends BaseCoreService
      */
     public function getAddonList(array $keys = [])
     {
-        $list = $this->model->select()->toArray();
+        $list = $this->model->where([ [ 'id', '>', 0 ] ])->select()->toArray();
         if (!empty($list)) {
             $list_key = array_column($list, 'key');
             $list = array_combine($list_key, $list);
@@ -132,7 +132,7 @@ class CoreNoticeService extends BaseCoreService
     public function getInfo(string $key)
     {
         if (!array_key_exists($key, NoticeDict::getNotice())) throw new NoticeException('NOTICE_TYPE_NOT_EXIST');
-        $info = $this->model->where([ [ 'key', '=', $key ] ])->findOrEmpty()->toArray();
+        $info = $this->model->where([ [ 'id', '>', 0 ], [ 'key', '=', $key ] ])->findOrEmpty()->toArray();
         if (!empty($info)) {
             $notice = array_merge(NoticeDict::getNotice($key), $info);
         } else {

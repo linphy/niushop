@@ -54,11 +54,16 @@ class CoreAddonDevelopBuildService extends BaseCoreService
         $this->web();
         $this->resource();
         $this->menu('admin');
-        $this->menu('site');
+
+        // 先拷贝
+        dir_copy($this->addon_path, runtime_path() . $addon . DIRECTORY_SEPARATOR . $addon);
 
         $zip_file = runtime_path() . $addon . '.zip';
         if (file_exists($zip_file)) unlink($zip_file);
-        (new CoreAddonDevelopDownloadService(''))->compressToZip($this->addon_path, $zip_file);
+
+        (new CoreAddonDevelopDownloadService(''))->compressToZip(runtime_path() . $addon, $zip_file);
+
+        del_target_dir(runtime_path() . $addon, true);
 
         return true;
     }

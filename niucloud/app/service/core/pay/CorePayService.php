@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -21,6 +21,7 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\facade\Db;
+use think\facade\Log;
 use think\Model;
 use Throwable;
 
@@ -209,7 +210,7 @@ class CorePayService extends BaseCoreService
             event('OfflinePayAfter', [
                 'trade_type' => $trade_type,
                 'trade_id' => $trade_id,
-                'out_trade_no' => $out_trade_no,
+                'out_trade_no' => $out_trade_no
             ]);
         } else {
             //将支付设置为支付中
@@ -220,10 +221,9 @@ class CorePayService extends BaseCoreService
                     'channel' => $channel
                 ]
             );
-            if(env('queue.state')){
+            if(env('queue.state', true) ){
                 PayReturnTo::dispatch(['out_trade_no' => $out_trade_no], secs: 15);
             }
-
         }
         return $pay_result;
     }
@@ -242,10 +242,12 @@ class CorePayService extends BaseCoreService
             $pay = $this->createByTrade($trade_type, $trade_id);
         }
         if ($pay['status'] == PayDict::STATUS_FINISH) throw new PayException('PAY_SUCCESS');
-        if ($pay['status'] == PayDict::STATUS_CANCLE) throw new PayException('PAY_IS_REMOVE');
-        if ($pay['status'] == PayDict::STATUS_ING) {
-            //尝试关闭原有的支付单据
-            $this->close($pay->out_trade_no);
+//        if ($pay['status'] == PayDict::STATUS_CANCLE) throw new PayException('PAY_IS_REMOVE');
+        if ($pay['status'] == PayDict::STATUS_ING || $pay['status'] == PayDict::STATUS_CANCLE) {
+            if($pay['status'] == PayDict::STATUS_ING ){
+                //尝试关闭原有的支付单据
+                $this->close($pay->out_trade_no);
+            }
             //创建新的支付单据
             $pay = $this->createByTrade($trade_type, $trade_id);
         }
@@ -494,14 +496,16 @@ class CorePayService extends BaseCoreService
         );
         //允许修改的值
         $allow_field = array('trade_no', 'voucher', 'status', 'pay_time', 'type', 'mch_id');
+
         // 启动事务
         Db::startTrans();
         try {
             $pay->allowField($allow_field)->save($data);
             $result = event('PaySuccess', ['out_trade_no' => $out_trade_no, 'trade_type' => $trade_type, 'trade_id' => $trade_id]);
-            if (!check_event_result($result)) {
-                return false;
-            }
+//            if (!check_event_result($result)) {
+//                Db::rollback();
+//                return false;
+//            }
             // 提交事务
             Db::commit();
             return true;

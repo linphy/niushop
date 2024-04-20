@@ -51,7 +51,7 @@ class Wechatpay extends BasePay
     {
         $result = $this->returnFormat(Pay::wechat()->mp([
             'out_trade_no' => $params['out_trade_no'],
-            'description' => $params['boby'],
+            'description' => $params['body'],
             'amount' => [
                 'total' => $params['money'],
             ],
@@ -75,7 +75,7 @@ class Wechatpay extends BasePay
     {
         $order = [
             'out_trade_no' => $params['out_trade_no'],
-            'description' => $params['boby'],
+            'description' => $params['body'],
             'amount' => [
                 'total' => $params['money'],
             ],
@@ -107,7 +107,7 @@ class Wechatpay extends BasePay
     {
         return $this->returnFormat(Pay::wechat()->app([
             'out_trade_no' => $params['out_trade_no'],
-            'description' => $params['boby'],
+            'description' => $params['body'],
             'amount' => [
                 'total' => $params['money'],
             ],
@@ -123,7 +123,7 @@ class Wechatpay extends BasePay
     {
         return $this->returnFormat(Pay::wechat()->mini([
             'out_trade_no' => $params['out_trade_no'],
-            'description' => $params['boby'],
+            'description' => $params['body'],
             'amount' => [
                 'total' => $params['money'],
                 'currency' => 'CNY',//一般是人民币
@@ -143,7 +143,7 @@ class Wechatpay extends BasePay
     {
         $order = [
             'out_trade_no' => $params['out_trade_no'],
-            'body' => $params['boby'],
+            'body' => $params['body'],
             'total_fee' => $params['money'],
             'spbill_create_ip' => request()->ip(),
             'auth_code' => $params["auth_code"],
@@ -161,7 +161,7 @@ class Wechatpay extends BasePay
     {
         return $this->returnFormat(Pay::wechat()->scan([
             'out_trade_no' => $params['out_trade_no'],
-            'description' => $params['boby'],
+            'description' => $params['body'],
             'amount' => [
                 'total' => $params['money'],
             ],

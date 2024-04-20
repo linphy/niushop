@@ -90,7 +90,7 @@ class AdminApiRouteGenerator extends BaseGenerator
         {
             $file = $dir.DIRECTORY_SEPARATOR.'niucloud'.DIRECTORY_SEPARATOR.'addon'.DIRECTORY_SEPARATOR.$this->addonName.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'adminapi'.DIRECTORY_SEPARATOR.'route'.DIRECTORY_SEPARATOR.'route.php';
         }else{
-            $file = $dir.DIRECTORY_SEPARATOR.'niucloud'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'adminapi'.DIRECTORY_SEPARATOR.'route'.DIRECTORY_SEPARATOR."$this->moduleName".'php';
+            $file = $dir.DIRECTORY_SEPARATOR.'niucloud'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'adminapi'.DIRECTORY_SEPARATOR.'route'.DIRECTORY_SEPARATOR."$this->moduleName".'.php';
         }
 
         if(file_exists($file))

@@ -24,6 +24,9 @@ Route::group('diy', function() {
     // 自定义页面分页列表
     Route::get('diy', 'diy.Diy/lists');
 
+    // 自定义页面分页列表，轮播搜索组件用
+    Route::get('carousel_search', 'diy.Diy/getPageByCarouselSearch');
+
     // 添加自定义页面
     Route::post('diy', 'diy.Diy/add');
 

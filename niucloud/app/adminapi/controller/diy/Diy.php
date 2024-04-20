@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -41,6 +41,17 @@ class Diy extends BaseAdminController
             [ 'addon_name', '' ]
         ]);
         return success(( new DiyService() )->getPage($data));
+    }
+
+    /**
+     * @notes 获取自定义页面分页列表，轮播搜索组件用
+     * @return Response
+     */
+    public function getPageByCarouselSearch()
+    {
+        $data = $this->request->params([
+        ]);
+        return success(( new DiyService() )->getPageByCarouselSearch($data));
     }
 
     /**

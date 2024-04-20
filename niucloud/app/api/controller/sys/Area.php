@@ -47,4 +47,17 @@ class Area extends BaseApiController
     public function areaByAreaCode(string $code) {
         return success((new AreaService())->getAreaByAreaCode($code));
     }
+
+    /**
+     * 通过经纬度查询地址
+     * @param int $level
+     * @return Response
+     */
+    public function getAddressByLatlng()
+    {
+        $data = $this->request->params([
+            ['latlng', '']
+        ]);
+        return success((new AreaService())->getAddressByLatlng($data));
+    }
 }

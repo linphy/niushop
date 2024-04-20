@@ -14,6 +14,30 @@
         color: #fff;
     }
     .install-content-procedure{border: none;}
+    .pop-link-wrap{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .pop-link-wrap .link-text{
+        font-size: 14px;
+    }
+    .pop-link-wrap .link-text:nth-child(2){
+        margin-top: 10px;
+        
+    }
+    .pop-link-wrap .link-text:nth-child(2) a{
+        color: var(--base-color);
+    }
+    
+    .pop-link-wrap button{
+        margin-top: 40px;
+        width: 250px;
+        height: 40px;
+        background: var(--base-color);
+        color: #fff !important;
+    }
 </style>
 {/block}
 {block name="main"}
@@ -38,19 +62,19 @@
     <div class="back">
         <p class="other-links-title">您现在可以访问：</p>
         <ul class="other-links-list">
-            <li class="other-links-item" onclick="window.open('{$root_url}/admin/login')">
+            <li class="other-links-item" onclick="visitFn('admin')">
                 <div  class="other-links-pic">
                     <img src="INSTALL_IMG/web.jpg" alt="">
                 </div>
                 <a href="javascript:void(0)" class="other-links-text" >网站后台</a>
             </li>
-            <li class="other-links-item" onclick="window.open('{$root_url}/web/')">
+            <li class="other-links-item" onclick="visitFn('web')">
                 <div  class="other-links-pic">
                     <img src="INSTALL_IMG/site_web.png" alt="">
                 </div>
                 <a href="javascript:void(0)" class="other-links-text" >网站电脑端</a>
             </li>
-            <li class="other-links-item" onclick="window.open('{$root_url}/wap/')">
+            <li class="other-links-item" onclick="visitFn('wap')">
                 <div  class="other-links-pic">
                     <img src="INSTALL_IMG/site_h5.png" alt="">
                 </div>
@@ -72,5 +96,32 @@
 {block name="script"}
 <script>
     ControlContent(4);
+    const visitFn = (type)=>{
+        layer.open({
+            type: 1, // page 层类型
+            area: ['400px', '230px'],
+            title: '提示',
+            shade: 0.6, // 遮罩透明度
+            shadeClose: true, // 点击遮罩区域，关闭弹层
+            anim: 0, // 0-6 的动画形式，-1 不开启
+            content: `
+                <div class="pop-link-wrap">
+                    <p class="link-text">首次运行，请配置伪静态，才能正常使用。</p>
+                    <p class="link-text">伪静态如何配置请<a href="https://www.kancloud.cn/niushop/niucloud-admin-app/3199831" class="other-links-text" target="_blank">参考手册</a></p>
+                    <button onclick="pageToLink('${type}')" class="layui-btn visit-btn layui-border">确定</button>
+                </div>
+            `
+        });
+    }
+
+    // 页面跳转
+    function pageToLink(type){
+        if(type == 'admin')
+            window.open('{$root_url}/admin/login')
+        else if(type == 'web')
+            window.open('{$root_url}/web/')
+        else if(type == 'wap')
+            window.open('{$root_url}/wap/')
+    }
 </script>
 {/block}

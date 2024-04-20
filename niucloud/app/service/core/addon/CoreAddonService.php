@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -12,9 +12,7 @@
 namespace app\service\core\addon;
 
 use app\dict\addon\AddonDict;
-use app\dict\sys\AppTypeDict;
 use app\model\addon\Addon;
-use app\service\admin\site\SiteGroupService;
 use app\service\admin\sys\MenuService;
 use app\service\core\niucloud\CoreModuleService;
 use think\db\exception\DbException;
@@ -117,7 +115,7 @@ class CoreAddonService extends CoreAddonBaseService
     public function getPage(array $where)
     {
         $field = 'id, title, key, desc, version, status, icon, create_time, install_time';
-        $search_model = $this->model->where([])->withSearch(['title'], $where)->field($field)->order('id desc');
+        $search_model = $this->model->withSearch(['title'], $where)->field($field)->order('id desc');
         return $this->pageQuery($search_model);
     }
 

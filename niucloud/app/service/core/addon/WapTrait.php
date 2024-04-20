@@ -313,6 +313,11 @@ trait WapTrait
             $page_begin = strtoupper($addon) . '_PAGE_BEGIN';
             $page_end = strtoupper($addon) . '_PAGE_END';
 
+            // 对0.2.0之前的版本做处理
+            $uniapp_pages[ 'pages' ] = preg_replace_callback('/(.*)(\\r\\n.*\/\/ PAGE_END.*)/s', function ($match){
+                return $match[1] . (substr($match[1], -1) == ',' ? '' : ',') .$match[2];
+            }, $uniapp_pages[ 'pages' ]);
+
             $uniapp_pages[ 'pages' ] = str_replace('PAGE_BEGIN', $page_begin, $uniapp_pages[ 'pages' ]);
             $uniapp_pages[ 'pages' ] = str_replace('PAGE_END', $page_end, $uniapp_pages[ 'pages' ]);
             $uniapp_pages[ 'pages' ] = str_replace('{{addon_name}}', $addon, $uniapp_pages[ 'pages' ]);
@@ -433,5 +438,35 @@ trait WapTrait
         foreach ($locale_data as $k => $v) {
             file_put_contents($v[ 'path' ], json_encode($v[ 'json' ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
         }
+    }
+
+    /**
+     * 合并manifest.json
+     * @param string $compile_path
+     * @param array $merge_data
+     * @return void
+     */
+    public function mergeManifestJson(string $compile_path, array $merge_data) {
+        $manifest_json = str_replace('/',  DIRECTORY_SEPARATOR, $compile_path . 'src/manifest.json');
+        $manifest_content = $this->jsonStringToArray(file_get_contents($manifest_json));
+
+        (new CoreAddonBaseService())->writeArrayToJsonFile(array_merge2($manifest_content, $merge_data), $manifest_json);
+    }
+
+    /**
+     * json 字符串解析成数组
+     * @param $string
+     * @return array
+     */
+    private function jsonStringToArray($string) {
+        $list = explode(PHP_EOL, $string);
+
+        $json_array = [];
+        foreach ($list as $index => $item) {
+            if (strpos($item, '/*') === false) {
+                $json_array[] = $item;
+            }
+        }
+        return json_decode(implode(PHP_EOL, $json_array), true);
     }
 }

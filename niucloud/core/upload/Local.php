@@ -56,9 +56,41 @@ class Local extends BaseUpload
             $content = @file_get_contents($url);
             if (!empty($content)) {
                 file_put_contents($key, $content);
-//                $fp = fopen($key, "w");
-//                fwrite($fp, $content);
-//                fclose($fp);
+
+
+                $image_info = getimagesize($key);
+                $image_type = $image_info[2];
+//                if($image_type == IMAGETYPE_JPEG){
+//                    // 保存图片为PNG格式
+//                    $image = imagecreatefromjpeg($key);
+//                }else if($image_type == IMAGETYPE_PNG){
+//                    // 保存图片为PNG格式
+//                    $image = imagecreatefrompng($key);
+//                }
+                if($image_type == IMAGETYPE_WEBP){
+                    // 保存图片为PNG格式
+                    $image = imagecreatefromwebp($key);
+                }
+                // 创建图片资源
+                // 检查图片是否创建成功
+                if (!empty($image)){
+
+                    // 图片类型常量定义：IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF
+                    if ($image_type == IMAGETYPE_WEBP) {
+                        $temp_arr = explode('.', $key);
+                        $ext = end($temp_arr);
+                        if($ext == 'jpg' || $ext == 'jpeg'){
+                            // 保存图片为PNG格式
+                            imagejpeg($image, $key);
+                        }else if($ext = 'png'){
+                            // 保存图片为PNG格式
+                            imagepng($image, $key);
+                        }
+                    }
+                    // 释放内存
+                    imagedestroy($image);
+                }
+
             } else {
                 throw new UploadFileException(203006);
             }

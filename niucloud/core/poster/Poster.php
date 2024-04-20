@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -45,8 +45,9 @@ class Poster extends BasePoster
         $bg_type = $poster_data['bg_type'];
         $editor = Grafika::createEditor();
         if($bg_type == 'url'){
+
             $editor->open($bg_image, $poster_data['bg_url']);
-            $editor->resizeFit($bg_image, $poster_data['w'], $poster_data['h']);
+            $editor->resizeFill($bg_image, $poster_data['w'], $poster_data['h']);
         }else{
             $bg_image = Grafika::createBlankImage($poster_data['w'],$poster_data['h']);
             //填充背景色
@@ -57,15 +58,23 @@ class Poster extends BasePoster
             switch($type){
                 case 'text':
                     $default_font = 'static'.DIRECTORY_SEPARATOR.'font'.DIRECTORY_SEPARATOR.'SourceHanSansCN-Regular.ttf';
-                    $editor->text($bg_image , $v['value'], $v['font_size'], $v['x'], $v['y'], new Color($v['font_color'], 0), $v['font'] ?: $default_font, $v['angle']);
+                    $editor->text($bg_image , $v['value'], $v['font_size'], $v['x'], $v['y'], new Color($v['font_color']), $v['font'] ?: $default_font, $v['angle']);
                     break;
                 case 'image':
                     $image_name = 'image'.$k;
+                    $$image_name = null;
                     if(is_file($v['value'])){
-                        $editor->open($image_name, $v['value']);
-                        $editor->resizeFit($image_name, $v['w'], $v['h']);
-                        $editor->blend( $bg_image, $image_name , 'normal', 1, 'top-left', $v['x'], $v['y']);
+                        $editor->open($$image_name, $v['value']);
+                        $editor->resizeFill($$image_name, $v['w'], $v['h']);
+                        $editor->blend( $bg_image, $$image_name , 'normal', 0, 'top-left', $v['x'], $v['y']);
                     }
+                    break;
+                case 'draw':
+                    $draw_name = 'draw'.$k;
+                    $$draw_name = Grafika::createDrawingObject($v['draw_type'], $v['points'], 1, NULL, new Color($v['bg_color']));
+                    // 在图像上绘制上面创建的绘制对象
+                    $editor->draw( $bg_image, $$draw_name );
+
                     break;
             }
         }

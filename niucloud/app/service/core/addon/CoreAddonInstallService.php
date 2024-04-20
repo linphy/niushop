@@ -11,11 +11,7 @@
 
 namespace app\service\core\addon;
 
-use app\dict\addon\AddonDict;
-use app\job\sys\AddonInstall;
-use app\model\site\Site;
 use app\service\admin\sys\MenuService;
-use app\service\admin\sys\SystemService;
 use app\service\core\menu\CoreMenuService;
 use app\service\core\schedule\CoreScheduleInstallService;
 use core\exception\AddonException;
@@ -25,7 +21,6 @@ use think\db\exception\DbException;
 use think\db\exception\PDOException;
 use think\facade\Cache;
 use think\facade\Db;
-use think\Response;
 
 /**
  * 安装服务层
@@ -525,6 +520,8 @@ class CoreAddonInstallService extends CoreAddonBaseService
      */
     public function uninstall()
     {
+        (new CoreAddonDevelopBuildService())->build($this->addon);
+
         //执行插件卸载方法
         $class = "addon\\" . $this->addon . "\\" . 'Addon';
         if (class_exists($class)) {
@@ -534,7 +531,6 @@ class CoreAddonInstallService extends CoreAddonBaseService
         $addon_info = $core_addon_service->getInfoByKey($this->addon);
         if (empty($addon_info)) throw new AddonException('NOT_UNINSTALL');
         if (!$this->uninstallSql()) throw new AddonException('ADDON_SQL_FAIL');
-        if (!$this->uninstallDir()) throw new AddonException('ADDON_DIR_FAIL');
 
         // 卸载菜单
         $this->uninstallMenu();

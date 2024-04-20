@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -11,6 +11,7 @@
 
 namespace app\model\wechat;
 
+use app\dict\sys\WechatMediaDict;
 use core\base\BaseModel;
 
 /**
@@ -33,5 +34,35 @@ class WechatMedia extends BaseModel
      */
     protected $name = 'wechat_media';
 
+    /**
+     * @param $value
+     * @param $data
+     * @return mixed
+     */
+    public function getTypeNameAttr($value, $data)
+    {
+        if (empty($data['type']))
+            return '';
+        $temp = WechatMediaDict::getTypeList()[$data['type']] ?? [];
+        return $temp['name'] ?? '';
+    }
 
+    /**
+     * @param $query
+     * @param $value
+     * @return void
+     */
+    public function searchTypeAttr($query, $value) {
+        if (!empty($value)) {
+            $query->where([['type', '=', $value]]);
+        }
+    }
+
+    public function getValueAttr($value, $data) {
+        if ($data['type'] == WechatMediaDict::NEWS) {
+            return json_decode($value, true);
+        } else {
+            return $value;
+        }
+    }
 }

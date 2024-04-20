@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
     'ADMIN_DIR_NOT_EXIST' => '未找到admin源码所在目录, <a style="text-decoration: underline;" href="https://www.kancloud.cn/niucloud/niucloud-admin-develop/3213544" target="blank">点击查看相关手册</a>',
     'WEB_DIR_NOT_EXIST' => '未找到web源码所在目录, <a style="text-decoration: underline;" href="https://www.kancloud.cn/niucloud/niucloud-admin-develop/3213544" target="blank">点击查看相关手册</a>',
     'UNIAPP_DIR_NOT_EXIST' => '未找到uni-app源码所在目录, <a style="text-decoration: underline;" href="https://www.kancloud.cn/niucloud/niucloud-admin-develop/3213544" target="blank">点击查看相关手册</a>',
-    'OPEN_BASEDIR_ERROR' => '请关闭防跨站攻击, 具体操作方法<a style="text-decoration: underline;" href="https://www.kancloud.cn/niucloud/niucloud-admin-develop/3213393" target="blank">点击查看相关手册</a>',
+    'OPEN_BASEDIR_ERROR' => '请关闭防跨站攻击, 具体操作方法<a style="text-decoration: underline;" href="https://www.kancloud.cn/niucloud/niucloud-admin-develop/3213542" target="blank">点击查看相关手册</a>',
     'ADDON_DOWNLOAD_VERSION_EMPTY' => '该插件还没有发布过版本',
     'ADDON_IS_NOT_EXIST' => '插件不存在',
     'ADDON_KEY_IS_EXIST' => '已存在相同插件标识的应用',
@@ -182,6 +182,7 @@ return [
     'WEAPP_EMPOWER_NOT_EXIST' => '微信小程序授信信息不存在',
     'WEAPP_EMPOWER_TEL_NOT_EXIST' => '微信小程序授信手机号不存在',
     'CURR_SITE_IS_NOT_OPEN_SSL' => '微信小程序请求域名只支持https请先配置ssl',
+    'WECHAT_MINI_PROGRAM_CODE_GENERATION_FAILED' => '微信小程序码生成失败',
 
     //站点相关
     'SITE_GROUP_IS_EXIST' => '当前套餐存在站点，请调整站点对应套餐后重试',

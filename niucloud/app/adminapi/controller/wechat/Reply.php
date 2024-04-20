@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -51,13 +51,13 @@ class Reply extends BaseAdminController
         $data = $this->request->params([
             ['name', ''],
             ['keyword', ''],
-            ['matching_type', ''],
-            ['content_type', ''],
+            ['matching_type', '', false],
+            ['reply_method', ''],
             ['content', ''],
-            ['status', 0],
             ['sort', ''],
         ]);
-        return success($wechat_reply_service->addKeyword($data));
+        $wechat_reply_service->addKeyword($data);
+        return success('ADD_SUCCESS');
     }
 
     /**
@@ -70,13 +70,13 @@ class Reply extends BaseAdminController
         $data = $this->request->params([
             ['name', ''],
             ['keyword', ''],
-            ['matching_type', ''],
-            ['content_type', ''],
+            ['matching_type', '', false],
+            ['reply_method', ''],
             ['content', ''],
-            ['status', 0],
             ['sort', ''],
         ]);
-        return success($wechat_reply_service->editKeyword($id, $data));
+        $wechat_reply_service->editKeyword($id, $data);
+        return success('EDIT_SUCCESS');
     }
 
     /**
@@ -86,7 +86,8 @@ class Reply extends BaseAdminController
     public function delKeyword($id)
     {
         $wechat_reply_service = new WechatReplyService();
-        return success($wechat_reply_service->delKeyword($id));
+        $wechat_reply_service->delKeyword($id);
+        return success('DELETE_FAIL');
     }
 
     /**
@@ -106,12 +107,11 @@ class Reply extends BaseAdminController
     public function editDefault()
     {
         $data = $this->request->params([
-            ['content_type', ''],
             ['content', ''],
-            ['status', 0],
         ]);
         $wechat_reply_service = new WechatReplyService();
-        return success($wechat_reply_service->editDefault($data));
+        $wechat_reply_service->editDefault($data);
+        return success('SET_SUCCESS');
     }
 
     /**
@@ -131,12 +131,11 @@ class Reply extends BaseAdminController
     public function editSubscribe()
     {
         $data = $this->request->params([
-            ['content_type', ''],
             ['content', ''],
-            ['status', 0],
         ]);
         $wechat_reply_service = new WechatReplyService();
-        return success($wechat_reply_service->editSubscribe($data));
+        $wechat_reply_service->editSubscribe($data);
+        return success('SET_SUCCESS');
     }
 
 

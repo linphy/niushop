@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -13,7 +13,6 @@ namespace app\service\core\wechat;
 
 use core\base\BaseCoreService;
 use EasyWeChat\Kernel\Exceptions\BadRequestException;
-use EasyWeChat\Kernel\Exceptions\HttpException;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
 use EasyWeChat\Kernel\Exceptions\RuntimeException;
@@ -21,11 +20,6 @@ use Overtrue\Socialite\Contracts\UserInterface;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
 
 /**
@@ -42,7 +36,6 @@ class CoreWechatServeService extends BaseCoreService
      * @param string $url
      * @param string $scopes
      * @return string
-     * @throws InvalidArgumentException
      */
     public function authorization(string $url = '', string $scopes = 'snsapi_base')
     {
@@ -54,7 +47,6 @@ class CoreWechatServeService extends BaseCoreService
      * 处理授权回调
      * @param string $code
      * @return UserInterface
-     * @throws InvalidArgumentException
      */
     public function userFromCode(string $code)
     {
@@ -83,8 +75,7 @@ class CoreWechatServeService extends BaseCoreService
      * @throws BadRequestException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws RuntimeException
-     * @throws Throwable
+     * @throws InvalidConfigException
      */
     public function serve()
     {
@@ -94,7 +85,6 @@ class CoreWechatServeService extends BaseCoreService
         $server->with(function($message, \Closure $next){
             // 你的自定义逻辑
             return (new CoreWechatMessageService)->message($message);
-//            return $next($message);
         });
         $response = $server->serve();
         return $response;
@@ -106,13 +96,13 @@ class CoreWechatServeService extends BaseCoreService
      * @param string $url
      * @return mixed[]
      * @throws InvalidArgumentException
-     * @throws TransportExceptionInterface
-     * @throws HttpException
+     * @throws \EasyWeChat\Kernel\Exceptions\HttpException
      * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function jssdkConfig(string $url = '')
     {
@@ -129,10 +119,10 @@ class CoreWechatServeService extends BaseCoreService
      * 生成临时二维码
      * @param string $key
      * @param int $expire_seconds
-     * @param array $params
+     * @param $params
      * @return \EasyWeChat\Kernel\HttpClient\Response|\Symfony\Contracts\HttpClient\ResponseInterface
      * @throws InvalidArgumentException
-     * @throws TransportExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function scan(string $key, int $expire_seconds = 6 * 24 * 3600, $params = []){
         $api = CoreWechatService::appApiClient();

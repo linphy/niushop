@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | Niucloud-admin 企业快速开发的saas管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -30,7 +30,6 @@ class Wechat extends BaseTemplate
     protected function initialize(array $config = [])
     {
         parent::initialize($config);
-
     }
 
     /**
@@ -49,9 +48,11 @@ class Wechat extends BaseTemplate
         $first = $data[ 'first' ];
         $remark = $data[ 'remark' ];
         $url = $data[ 'url' ];
-        $miniprogram = $data[ 'miniprogram' ];
-
-
+        $miniprogram = $data[ 'miniprogram' ] ?? [];
+        $temp_data = [];
+        foreach($template_data as $k => $v){
+            $temp_data[$k] = ['value' => $v];
+        }
 
         if (!empty($first)) $data[ 'first' ] = $first;
         if (!empty($remark)) $data[ 'remark' ] = $remark;
@@ -61,7 +62,7 @@ class Wechat extends BaseTemplate
             'template_id' => $template_id,
             'url' => $url,
             'miniprogram' => $miniprogram,
-            'data' => $data,
+            'data' => $temp_data,
         ];
         if(!empty($client_msg_id)){
             $param['client_msg_id'] = $client_msg_id;

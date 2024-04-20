@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -79,9 +79,13 @@ class UpgradeService extends BaseAdminService
         $web_dir = $this->root_path . 'web' . DIRECTORY_SEPARATOR;
         $wap_dir = $this->root_path . 'uni-app' . DIRECTORY_SEPARATOR;
 
-        if (!is_dir($admin_dir)) throw new CommonException('ADMIN_DIR_NOT_EXIST');
-        if (!is_dir($web_dir)) throw new CommonException('WEB_DIR_NOT_EXIST');
-        if (!is_dir($wap_dir)) throw new CommonException('UNIAPP_DIR_NOT_EXIST');
+        try {
+            if (!is_dir($admin_dir)) throw new CommonException('ADMIN_DIR_NOT_EXIST');
+            if (!is_dir($web_dir)) throw new CommonException('WEB_DIR_NOT_EXIST');
+            if (!is_dir($wap_dir)) throw new CommonException('UNIAPP_DIR_NOT_EXIST');
+        } catch (\Exception $e) {
+            throw new CommonException($e->getMessage());
+        }
 
         $data = [
             // 目录检测

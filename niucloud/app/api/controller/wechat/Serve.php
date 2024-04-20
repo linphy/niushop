@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -36,8 +36,10 @@ class Serve extends BaseController
      * @throws Throwable
      */
     public function serve(){
-
-        return (new WechatServeService())->serve();
+        $result = (new WechatServeService())->serve();
+        return response($result->getBody())->header([
+            'Content-Type' => 'text/plain;charset=utf-8'
+        ]);
     }
 
 

@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -118,7 +118,7 @@ class CoreWechatMessageService extends BaseCoreService
         }
         //如果配置了关注回复,返回关注消息
         $core_wechat_reply_service = new CoreWechatReplyService();
-        return $core_wechat_reply_service->reply(WechatDict::REPLY_SUBSCRIBE) ?? false;
+        return $core_wechat_reply_service->reply(WechatDict::REPLY_SUBSCRIBE, openid: $message['FromUserName']) ?? false;
     }
 
 
@@ -144,6 +144,6 @@ class CoreWechatMessageService extends BaseCoreService
     function text($message)
     {
         $core_wechat_reply_service = new CoreWechatReplyService();
-        return $core_wechat_reply_service->reply(WechatDict::REPLY_KEYWORD, $message['Content']) ?? false;
+        return $core_wechat_reply_service->reply(WechatDict::REPLY_KEYWORD, $message['Content'], openid: $message['FromUserName']) ?? false;
     }
 }

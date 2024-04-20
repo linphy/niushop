@@ -2,7 +2,6 @@
 
 namespace app;
 use app\dict\common\ChannelDict;
-use app\service\core\site\CoreSiteService;
 
 /**
  * Class Request
@@ -145,14 +144,6 @@ class Request extends \think\Request
      */
     public function getChannel(){
         return $this->header(system_name('channel_name'), ChannelDict::H5);
-    }
-
-    /**
-     * 获取默认站点
-     * @return int
-     */
-    public function defaultSiteId(){
-        return 0;
     }
 
     /**

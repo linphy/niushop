@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -13,21 +13,14 @@ namespace app\service\admin\addon;
 
 
 use app\dict\addon\AddonDict;
-use app\dict\sys\AppTypeDict;
 use app\model\addon\Addon;
-use app\service\admin\site\SiteGroupService;
-use app\service\admin\site\SiteService;
 use app\service\core\addon\CoreAddonCloudService;
 use app\service\core\addon\CoreAddonDownloadService;
 use app\service\core\addon\CoreAddonInstallService;
 use app\service\core\addon\CoreAddonService;
-use app\service\core\niucloud\CoreModuleService;
-use app\service\core\site\CoreSiteService;
 use core\base\BaseAdminService;
 use core\exception\CommonException;
-use Exception;
 use think\db\exception\DbException;
-use think\Response;
 
 
 /**

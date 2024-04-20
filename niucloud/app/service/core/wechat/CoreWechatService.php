@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -11,12 +11,9 @@
 
 namespace app\service\core\wechat;
 
-use app\dict\channel\ReplyDict;
 use core\base\BaseCoreService;
 use core\exception\WechatException;
-use EasyWeChat\Factory;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
-use EasyWeChat\Kernel\HttpClient\AccessTokenAwareClient;
 use EasyWeChat\OfficialAccount\Application;
 
 /**
@@ -70,7 +67,7 @@ class CoreWechatService extends BaseCoreService
 
     /**
      * 微信实例接口调用
-     * @return AccessTokenAwareClient
+     * @return \EasyWeChat\Kernel\HttpClient\AccessTokenAwareClient
      * @throws InvalidArgumentException
      */
     public static function appApiClient()
@@ -82,7 +79,7 @@ class CoreWechatService extends BaseCoreService
     /**
      * 回复文本消息
      * @param string $content 文本内容
-     * @return string[]
+     * @return
      */
     public static function text($content)
     {
@@ -95,7 +92,7 @@ class CoreWechatService extends BaseCoreService
     /**
      * 回复图片消息
      * @param string $media_id 媒体资源 ID
-     * @return void
+     * @return
      */
     public static function image($media_id)
     {
@@ -110,7 +107,7 @@ class CoreWechatService extends BaseCoreService
 
     /**
      * 回复声音消息
-     * @return void
+     * @return
      */
     public static function music()
     {

@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -51,6 +51,30 @@ class DiyService extends BaseAdminService
         $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
         $order = "update_time desc";
         $search_model = $this->model->withSearch([ "title", "type", 'mode', 'addon_name' ], $where)->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
+        return $this->pageQuery($search_model);
+    }
+
+    /**
+     * 获取自定义页面分页列表，轮播搜索组件用
+     * 查询微页面，数据排除存在轮播搜索组件的
+     * @param array $where
+     * @return array
+     */
+    public function getPageByCarouselSearch(array $where = [])
+    {
+        $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
+        $order = "update_time desc";
+        $search_model = $this->model->whereOr([
+            [
+                [ 'type', '=', 'DIY_PAGE' ],
+                [ 'value', 'not in', ['top_fixed','right_fixed','bottom_fixed','left_fixed','fixed'] ]
+            ],
+            [
+                [ 'type', '<>', 'DIY_PAGE' ],
+                [ 'is_default', '=', 0 ],
+                [ 'value', 'not in', ['top_fixed','right_fixed','bottom_fixed','left_fixed','fixed'] ]
+            ]
+        ])->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
         return $this->pageQuery($search_model);
     }
 
@@ -331,8 +355,18 @@ class DiyService extends BaseAdminService
 
             // 查询自定义页面
             if ($k == 'DIY_PAGE') {
-                $diy_service = new DiyService();
-                $list = $diy_service->getList([ 'type' => 'DIY_PAGE' ]);
+                $order = "update_time desc";
+                $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time';
+                $list = $this->model
+                    ->whereOr([
+                        [
+                            [ 'type', '=', 'DIY_PAGE' ],
+                        ],
+                        [
+                            [ 'type', '<>', 'DIY_PAGE' ],
+                            [ 'is_default', '=', 0 ]
+                        ]
+                    ])->field($field)->order($order)->select()->toArray();
                 foreach ($list as $ck => $cv) {
                     $link[ $k ][ 'child_list' ][] = [
                         'name' => $cv[ 'name' ],

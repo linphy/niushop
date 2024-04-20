@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -36,7 +36,7 @@ class CoreNoticeSmsLogService extends BaseCoreService
     {
         $field = 'id,mobile,sms_type,key,template_id,content,params,status,result,create_time,send_time,update_time';
         $order = 'create_time desc';
-        $search_model = $this->model->withSearch(['name', 'key', 'mobile', 'sms_type'], $where)->field($field)->order($order)->append(['name', 'sms_type_name', 'status_name']);
+        $search_model = $this->model->where([['id', '>', 0]])->withSearch(['name', 'key', 'mobile', 'sms_type', 'create_time'], $where)->field($field)->order($order)->append(['name', 'sms_type_name', 'status_name']);
         return $this->pageQuery($search_model);
     }
 

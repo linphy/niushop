@@ -114,14 +114,12 @@ class WebApiGenerator extends BaseGenerator
 
             $content = file_get_contents($file);
             $code_begin = 'USER_CODE_BEGIN -- '.$this->getTableName() . PHP_EOL;
-            $code_end = 'USER_CODE_END -- '.$this->getTableName(). PHP_EOL;
-
+            $code_end = 'USER_CODE_END -- '.$this->getTableName() . PHP_EOL;
             if(strpos($content,$code_begin) !== false && strpos($content,$code_end) !== false)
             {
                 // 清除相应对应代码块
                 $pattern = "/\/\/\s+{$code_begin}[\S\s]+{$code_end}?/";
                 $import = preg_replace($pattern, '', $content);
-
             }else{
                 $import = $content;
             }

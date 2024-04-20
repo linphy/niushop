@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -192,7 +192,7 @@ class LoginService extends BaseApiService
         $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);// 生成4位随机数，左侧补0
         (new NoticeService())->send('member_verify_code', ['code' => $code, 'mobile' => $mobile]);
         //将验证码存入缓存
-        $key = md5(uniqid(null, true));
+        $key = md5(uniqid('', true));
         $cache_tag_name = "mobile_key".$mobile.$type;
         $this->clearMobileCode($mobile, $type);
         Cache::tag($cache_tag_name)->set($key, [ 'mobile' => $mobile, 'code' => $code, 'type' => $type], 600);

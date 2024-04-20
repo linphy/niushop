@@ -12,7 +12,6 @@
 namespace app\model\generator;
 
 use app\model\addon\Addon;
-use app\model\applet\AppletVersion;
 use core\base\BaseModel;
 
 

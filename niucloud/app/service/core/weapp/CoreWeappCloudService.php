@@ -11,14 +11,12 @@
 
 namespace app\service\core\weapp;
 
-use app\dict\addon\AddonDict;
 use app\dict\sys\CloudDict;
 use app\model\addon\Addon;
 use app\model\weapp\WeappVersion;
 use app\service\core\addon\CoreAddonDevelopDownloadService;
 use app\service\core\addon\WapTrait;
 use app\service\core\niucloud\CoreCloudBaseService;
-use app\service\core\site\CoreSiteService;
 use core\exception\CommonException;
 use core\util\niucloud\CloudService;
 

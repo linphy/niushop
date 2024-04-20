@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -39,7 +39,7 @@ class CoreScanService extends BaseCoreService
      * @return array|string|string[]
      */
     public function scan(string $action, array $data, int $expire = null){
-        $key = str_replace('==','', md5(uniqid(null, true)));
+        $key = str_replace('==','', md5(uniqid('', true)));
         $cache_name = self::$cache_name.$key;
         $data['status'] = ScanDict::WAIT;
         $data['is_scan'] =  false;//是否被扫描

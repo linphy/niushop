@@ -100,6 +100,9 @@ return [
         'register_mobile' => '手机验证码注册',
         'account_point' => '积分',
         'account_balance' => '余额',
+        'account_balance_recharge_refund' => '充值订单退款',
+        'account_balance_recharge' => '余额充值',
+        'account_point_recharge_give' => '充值赠送',
         'account_money' => '可提现余额',
         'account_commission' => '佣金',
         'login_username' => '用户名密码登录',
@@ -333,5 +336,11 @@ return [
         'uploading' => '上传中',
         'upload_success' => '上传成功',
         'upload_fail' => '上传失败',
+    ],
+    'dict_wechat_media' => [
+        'type_image' => '图片',
+        'type_voice' => '语音',
+        'type_video' => '视频',
+        'type_news' => '图文',
     ]
 ];

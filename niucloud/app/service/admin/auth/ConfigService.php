@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
-// | 官方网址：https://www.niucloud-admin.com
+// | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
 // | niucloud团队 版权所有 开源版本可自由商用
 // +----------------------------------------------------------------------
@@ -39,7 +39,6 @@ class ConfigService extends BaseAdminService
         $info = (new CoreConfigService())->getConfig(ConfigKeyDict::ADMIN_LOGIN)['value'] ?? [];
         return [
             'is_captcha' => $info['is_captcha'] ?? 0,//是否启用验证码
-            'is_site_captcha' => $info['is_site_captcha'] ?? 0,//是否启用站点验证码
             'bg' => $info['bg'] ?? config('install.admin_login_bg'),//平台登录端 背景
             'site_bg' => $info['site_bg'] ?? '',//站点登录端  背景
         ];
@@ -54,7 +53,6 @@ class ConfigService extends BaseAdminService
     {
         $config = [
             'is_captcha' => $data['is_captcha'] ?? 0,//是否启用验证码
-            'is_site_captcha' => $data['is_site_captcha'] ?? 0,//是否启用站点验证码
             'bg' => $data['bg'] ?? '',//平台登录端 背景
             'site_bg' => $data['site_bg'] ?? '',//站点登录端  背景
         ];

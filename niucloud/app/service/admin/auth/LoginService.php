@@ -19,6 +19,7 @@ use app\service\core\sys\CoreConfigService;
 use core\base\BaseAdminService;
 use core\exception\AuthException;
 use core\util\TokenAuth;
+use Exception;
 use Throwable;
 
 /**
@@ -32,12 +33,14 @@ class LoginService extends BaseAdminService
     public function __construct()
     {
         parent::__construct();
+        $this->model = new SysUser();
     }
 
     /**
      * 用户登录
      * @param string $username
      * @param string $password
+     * @param string $app_type
      * @return array|bool
      */
     public function login(string $username, string $password)
@@ -50,7 +53,7 @@ class LoginService extends BaseAdminService
 
         $user_service = new UserService();
         $userinfo = $user_service->getUserInfoByUsername($username);
-        if (empty($userinfo)) return false;
+        if ($userinfo->isEmpty()) return false;
 
         if (!check_password($password, $userinfo->password)) return false;
         if (!$userinfo->status) {
@@ -72,7 +75,6 @@ class LoginService extends BaseAdminService
             'userinfo' => [
                 'uid' => $userinfo->uid,
                 'username' => $userinfo->username,
-                'head_img' => $userinfo->head_img,
             ]
         ];
 

@@ -77,6 +77,13 @@ $system_event = [
         //小程序包替换
         'AppletReplace' => [
             'app\listener\applet\WeappListener',//微信小程序
+        ],
+        //创建二维码
+        'GetQrcodeOfChannel' => [
+            //微信小程序码
+            'app\listener\qrcode\WechatQrcodeListener',
+            //微信小程序码
+            'app\listener\qrcode\WeappQrcodeListener'
         ]
     ],
     'subscribe' => [

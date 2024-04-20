@@ -89,7 +89,6 @@ class Menu extends BaseAdminController
             ['menu_short_name','']
         ]);
         $this->validate($data, 'app\validate\sys\Menu.edit');
-
         (new MenuService())->edit($menu_key, $data);
         return success('EDIT_SUCCESS');
     }
@@ -127,7 +126,7 @@ class Menu extends BaseAdminController
     public function refreshMenu()
     {
         (new InstallSystemService())->install();
-        return success('REFRESH_SUCCESS');
+        return success('SUCCESS');
     }
 
     /**
@@ -157,5 +156,4 @@ class Menu extends BaseAdminController
     public function getMenuByTypeDir($addon = 'system') {
         return success( (new MenuService())->getMenuByTypeDir($addon));
     }
-
 }

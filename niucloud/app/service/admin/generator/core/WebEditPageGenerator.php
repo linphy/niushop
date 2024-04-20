@@ -148,7 +148,6 @@ class WebEditPageGenerator extends BaseGenerator
         return $this->setBlankSpace($content, '    ');
     }
 
-
     /**
      * 获取表单内容
      * @return string
@@ -156,7 +155,6 @@ class WebEditPageGenerator extends BaseGenerator
     public function getFormView()
     {
         $content = '';
-
         foreach ($this->tableColumn as $column) {
             if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk']) {
                 continue;
@@ -168,39 +166,20 @@ class WebEditPageGenerator extends BaseGenerator
                 '{LCASE_COLUMN_NAME}',
                 '{PROP}',
                 '{DICT_TYPE}',
-                '{ITEM_LABEL}',
-                '{ITEM_VALUE}'
             ];
-            if(empty($column['dict_type']))
+            $new = [
+                $column['column_comment'],
+                $column['column_name'],
+                Str::camel($column['column_name']),
+                $column['is_required'] ? 'prop="'.$column['column_name'].'"' : '',
+                ''
+            ];
+            $vmName = $column['view_type'];
+
+            if($column['view_type'] == 'select' || $column['view_type'] == 'radio' || $column['view_type'] == 'checkbox')
             {
-
-                if($column['view_type'] == 'select' || $column['view_type'] == 'radio' || $column['view_type'] == 'checkbox')
-                {
-                    if(empty($column['model']))
-                    {
-                        $new = [
-                            $column['column_comment'],
-                            $column['column_name'],
-                            Str::camel($column['column_name']),
-                            $column['is_required'] ? 'prop="'.$column['column_name'].'"' : '',
-                            ''
-                        ];
-
-                        $vmName = $column['view_type'].'3';
-                    }else{
-                        $new = [
-                            $column['column_comment'],
-                            $column['column_name'],
-                            Str::camel($column['column_name']),
-                            $column['is_required'] ? 'prop="'.$column['column_name'].'"' : '',
-                            Str::camel($column['column_name']).'List',
-                            $column['label_key'],
-                            $column['value_key']
-                        ];
-                        $vmName = $column['view_type'];
-                    }
-
-                }else{
+                // 当字段选择了字典
+                if (!empty($column['dict_type'])) {
                     $new = [
                         $column['column_comment'],
                         $column['column_name'],
@@ -208,25 +187,22 @@ class WebEditPageGenerator extends BaseGenerator
                         $column['is_required'] ? 'prop="'.$column['column_name'].'"' : '',
                         $column['column_name'].'List',
                     ];
-                    $vmName = $column['view_type'];
-
-
-
+                    $vmName = $column['view_type'] . '2';
                 }
-            }else{
-                $new = [
-                    $column['column_comment'],
-                    $column['column_name'],
-                    Str::camel($column['column_name']),
-                    $column['is_required'] ? 'prop="'.$column['column_name'].'"' : '',
-                    $column['column_name'].'List',
-                    ''
-                ];
-                if(empty($column['model']))
-                {
-                    $vmName = $column['view_type'].'3';
-                }else{
-                    $vmName = $column['view_type'];
+                // 当字段选择了远程下拉
+                if (!empty($column['model'])) {
+                    $old[] = '{ITEM_LABEL}';
+                    $old[] = '{ITEM_VALUE}';
+                    $new = [
+                        $column['column_comment'],
+                        $column['column_name'],
+                        Str::camel($column['column_name']),
+                        $column['is_required'] ? 'prop="'.$column['column_name'].'"' : '',
+                        Str::camel($column['column_name']).'List',
+                        $column['label_key'],
+                        $column['value_key']
+                    ];
+                    $vmName = $column['view_type'] . '3';
                 }
             }
 
@@ -240,12 +216,10 @@ class WebEditPageGenerator extends BaseGenerator
                 $vmItemValue = 'item.value';
                 $intFieldValue = ['tinyint', 'smallint', 'mediumint', 'int', 'integer', 'bigint'];
                 if (in_array($column['column_type'], $intFieldValue)) {
-                    $vmItemValue = 'item.value';
+                    $vmItemValue = 'parseInt(item.value)';
                 }
                 $old[] = '{ITEM_VALUE}';
                 $new[] = $vmItemValue;
-//                $old[] = '{ITEM_VALUE}';
-//                $new[] = 'item.name';
             }
             // 数字框处理
             if ($column['view_type'] == 'number') {
@@ -254,31 +228,29 @@ class WebEditPageGenerator extends BaseGenerator
                     $validate = json_decode($column['validate_type'],true);
                     if($validate[0] == 'min')
                     {
-                        $rule = ':min = '."'".$validate[1][0]."'";
+                        $rule = ':min = "'.$validate[1][0].'"';
                     }
                     if($validate[0] == 'max')
                     {
-                        $rule = ':max = '."'".$validate[1][0]."'";
+                        $rule = ':max = "'.$validate[1][0].'"';
                     }
                     if($validate[0] == 'between')
                     {
-                        $rule = ':min = "'.$validate[1][0].'"'.' :max = "'.$validate[1][1].'"';
+                        $rule = ':min = "'.$validate[1][0].'"'.' max = "'.$validate[1][1].'"';
                     }
-                    $old[] = '{RULE}';
-                    $new[] = $rule;
                 }else{
-                    $old[] = '{RULE}';
-                    $new[] = '';
+                    $rule = '';
                 }
-
+                $old[] = '{RULE}';
+                $new[] = $rule;
             }
             $content .= $this->replaceFileText($old, $new, $vmPath) . PHP_EOL;
 
         }
-
         if (!empty($content)) {
             $content = substr($content, 0, -1);
         }
+
         return $this->setBlankSpace($content, '                ');
     }
 
@@ -335,7 +307,7 @@ class WebEditPageGenerator extends BaseGenerator
         $specDictType = ['input', 'textarea', 'editor'];
 
         foreach ($this->tableColumn as $column) {
-            if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk'] ) {
+            if (!$column['is_insert'] || !$column['is_update'] || $column['is_pk']) {
                 continue;
             }
 
@@ -548,12 +520,7 @@ class WebEditPageGenerator extends BaseGenerator
             $with = Str::camel(substr($column['model'],$str+1));
             $content.= PHP_EOL.'const '. Str::camel($column['column_name']).'List = ref([] as any[])'.PHP_EOL;
             $content.= 'const set'.Str::studly($column['column_name']).'List = async () => {'.PHP_EOL.Str::camel($column['column_name']).'List.value = await (await getWith'.Str::studly($with).'List({})).data' .PHP_EOL.'}'
-                .PHP_EOL.'set'.Str::studly($column['column_name']).'List())';
-        }
-
-        if(!empty($content))
-        {
-            $content = substr($content, 0, -1);
+                .PHP_EOL.'set'.Str::studly($column['column_name']).'List()';
         }
         return $this->setBlankSpace($content, '    ');
 
