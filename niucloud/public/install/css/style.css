@@ -410,7 +410,7 @@ input,button,select{
 }
 .install-content .other-links-pic img{
 	display: block;
-	max_width: 100%;
+	max-width: 100%;
 	max-height: 100%;
 }
 .install-content .other-links-text{
