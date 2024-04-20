@@ -1,6 +1,6 @@
 <template>
     <el-dialog v-model="showDialog" :title="t('adjustBalance')" width="550px" :destroy-on-close="true">
-        <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
+        <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading" @submit.enter.prevent>
 
             <el-form-item :label="t('currBalance')" >
                 <div class="input-width"> {{ formData.balance }} </div>
@@ -40,6 +40,7 @@ import { adjustBalance } from '@/app/api/member'
 
 const showDialog = ref(false)
 const loading = ref(true)
+const repeat = ref(false)
 
 /**
  * 表单数据
@@ -91,15 +92,21 @@ const confirm = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
+
+            if (repeat.value) return
+            repeat.value = true
+
             formData.account_data = Math.abs(parseFloat(formData.adjust)) * formData.adjust_type
             const data = formData
 
             adjustBalance(data).then(res => {
                 loading.value = false
+                repeat.value = false
                 showDialog.value = false
                 emit('complete')
             }).catch(() => {
                 loading.value = false
+                repeat.value = false
                 // showDialog.value = false
             })
         }

@@ -45,7 +45,6 @@
             </el-col>
         </el-row>
         <input type="hidden" v-model="comparisonToken">
-        <input type="hidden" v-model="comparisonSiteId">
 
         <el-dialog v-model="detectionLoginDialog" :title="t('layout.detectionLoginTip')" width="30%" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
             <span>{{ t('layout.detectionLoginContent') }}</span>

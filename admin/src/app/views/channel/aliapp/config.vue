@@ -13,8 +13,7 @@
                 <h3 class="panel-title !text-sm">{{ t('aliappSet') }}</h3>
 
                 <el-form-item :label="t('aliappName')">
-                    <el-input v-model="formData.name" :placeholder="t('aliappNamePlaceholder')" class="input-width"
-                        clearable />
+                    <el-input v-model="formData.name" :placeholder="t('aliappNamePlaceholder')" class="input-width" clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('aliappQrcode')">
@@ -28,13 +27,11 @@
                 <h3 class="panel-title !text-sm">{{ t('aliappDevelopInfo') }}</h3>
 
                 <el-form-item :label="t('aliappOriginal')">
-                    <el-input v-model="formData.private_key" :placeholder="t('aliappOriginalPlaceholder')"
-                        class="input-width" clearable />
+                    <el-input v-model="formData.private_key" :placeholder="t('aliappOriginalPlaceholder')" class="input-width" clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('aliappAppid')">
-                    <el-input v-model="formData.app_id" :placeholder="t('appidPlaceholder')" class="input-width"
-                        clearable />
+                    <el-input v-model="formData.app_id" :placeholder="t('appidPlaceholder')" class="input-width" clearable />
                 </el-form-item>
 
                 <el-form-item :label="t('countersignType')">
@@ -67,8 +64,7 @@
                 <h3 class="panel-title !text-sm">{{ t('theServerSetting') }}</h3>
 
                 <el-form-item label="AESKey">
-                    <el-input v-model="formData.aes_key" :placeholder="t('AESKeyPlaceholder')" class="input-width"
-                        show-word-limit clearable />
+                    <el-input v-model="formData.aes_key" :placeholder="t('AESKeyPlaceholder')" class="input-width" show-word-limit clearable />
                 </el-form-item>
             </el-card>
 

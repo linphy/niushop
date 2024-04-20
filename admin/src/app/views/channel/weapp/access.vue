@@ -20,15 +20,12 @@
                                 </el-icon>
                             </template>
                             <template #icon v-else-if="active == 1">
-                                <div
-                                    class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
+                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
                                     <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
                                 </div>
                             </template>
                             <template #icon v-else>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    1</div>
+                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">1</div>
                             </template>
                             <template #title>
                                 <p class="text-[14px] text-[#303133] font-[700]">
@@ -38,8 +35,7 @@
                             <template #description>
                                 <span class="text-[#999]">{{ t("weappAttest") }}</span>
                                 <div class="mt-[20px] mb-[40px] h-[32px]">
-                                    <el-button type="primary"
-                                        @click="linkEvent('https://mp.weixin.qq.com/')">{{ t("clickAccess") }}</el-button>
+                                    <el-button type="primary" @click="linkEvent('https://mp.weixin.qq.com/')">{{ t("clickAccess") }}</el-button>
                                 </div>
                             </template>
                         </el-step>
@@ -50,15 +46,12 @@
                                 </el-icon>
                             </template>
                             <template #icon v-else-if="active == 2">
-                                <div
-                                    class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
+                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
                                     <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
                                 </div>
                             </template>
                             <template #icon v-else>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    2</div>
+                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">2</div>
                             </template>
                             <template #title>
                                 <p class="text-[14px] text-[#303133] font-[700]">
@@ -68,8 +61,7 @@
                             <template #description>
                                 <span class="text-[#999]">{{ t("emplace") }}</span>
                                 <div class="mt-[20px] mb-[40px] h-[32px]">
-                                    <el-button type="primary" plain
-                                        @click="router.push('/channel/weapp/config')">{{ t("weappSettingBtn") }}</el-button>
+                                    <el-button type="primary" plain @click="router.push('/channel/weapp/config')">{{ t("weappSettingBtn") }}</el-button>
                                 </div>
                             </template>
                         </el-step>
@@ -80,15 +72,12 @@
                                 </el-icon>
                             </template>
                             <template #icon v-else-if="active == 3">
-                                <div
-                                    class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
+                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
                                     <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
                                 </div>
                             </template>
                             <template #icon v-else>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    3</div>
+                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">3</div>
                             </template>
                             <template #title>
                                 <p class="text-[14px] text-[#303133] font-[700]">
@@ -98,8 +87,7 @@
                             <template #description>
                                 <span class="text-[#999]">{{ t("releaseCourse") }}</span>
                                 <div class="mt-[20px] mb-[40px] h-[32px]">
-                                    <el-button type="primary" plain
-                                        @click="router.push('/channel/weapp/code')">{{ t("weappRelease") }}</el-button>
+                                    <el-button type="primary" plain @click="router.push('/channel/weapp/code')">{{ t("weappRelease") }}</el-button>
                                 </div>
                             </template>
                         </el-step>
@@ -110,15 +98,12 @@
                                 </el-icon>
                             </template>
                             <template #icon v-else-if="active == 4">
-                                <div
-                                    class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
+                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
                                     <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
                                 </div>
                             </template>
                             <template #icon v-else>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    4</div>
+                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">4</div>
                             </template>
                             <template #title>
                                 <p class="text-[14px] text-[#303133] font-[700]">

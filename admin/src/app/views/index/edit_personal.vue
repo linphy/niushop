@@ -76,9 +76,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
         }
     })
 }
-const returnFn = () => {
-    router.push('/user/center')
-}
 </script>
 
 <style lang="scss" scoped>

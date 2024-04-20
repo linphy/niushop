@@ -39,7 +39,7 @@ const useDiyStore = defineStore('diy', {
                 '#c7158577'
             ],
             components: [], // 组件集合
-            position: ['fixed', 'top_fixed','right_fixed','bottom_fixed','left_fixed'],
+            position: ['top_fixed','right_fixed','bottom_fixed','left_fixed','fixed'],
             global: {
                 title: "页面", // 页面标题
 
@@ -211,7 +211,14 @@ const useDiyStore = defineStore('diy', {
                 delete component.template;
             }
 
-            if (!this.checkComponentIsAdd(component)) return;
+            if (!this.checkComponentIsAdd(component)) {
+                // 组件最多只能添加n个
+                ElMessage({
+                    type: 'warning',
+                    message: `${component.componentTitle}${t('componentCanOnlyAdd')}${component.uses}${t('piece')}`,
+                });
+                return;
+            }
 
             // 置顶组件，只能在第一个位置中添加
             if(component.position && this.position.indexOf(component.position) != -1){

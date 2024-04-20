@@ -7,8 +7,6 @@
         <el-form :model="formData" label-width="150px" ref="ruleFormRef" class="page-form" v-loading="loading">
             <el-card class="box-card !border-none" shadow="never">
 
-                <h3 class="panel-title !text-sm">{{ t('admin') }}</h3>
-
                 <el-form-item :label="t('isCaptcha')" prop="formData.is_auth_register">
                     <el-switch v-model="formData.is_captcha"/>
                 </el-form-item>
@@ -16,20 +14,6 @@
                 <el-form-item :label="t('bgImg')">
                     <upload-image v-model="formData.bg" />
                     <div class="form-tip">{{t('adminBgImgTip')}}</div>
-                </el-form-item>
-
-            </el-card>
-
-            <el-card class="box-card !border-none mt-4" shadow="never">
-                <h3 class="panel-title !text-sm">{{ t('site') }}</h3>
-
-                <el-form-item :label="t('isCaptcha')" prop="formData.is_auth_register">
-                    <el-switch v-model="formData.is_site_captcha"/>
-                </el-form-item>
-
-                <el-form-item :label="t('bgImg')">
-                    <upload-image v-model="formData.site_bg" />
-                    <div class="form-tip">{{t('siteBgImgTip')}}</div>
                 </el-form-item>
 
             </el-card>
@@ -56,7 +40,6 @@ const loading = ref(true)
 const ruleFormRef = ref<FormInstance>()
 const formData = reactive<Record<string, number | string>>({
     is_captcha: 0,
-    is_site_captcha: 0,
     bg: '',
     site_bg: ''
 })
@@ -64,7 +47,7 @@ const formData = reactive<Record<string, number | string>>({
 const getFormData = async (id: number = 0) => {
     const data = await (await getConfigLogin()).data
     Object.keys(formData).forEach((key: string) => {
-        if (['is_captcha', 'is_site_captcha'].includes(key)) formData[key] = Boolean(Number(data[key]))
+        if (['is_captcha'].includes(key)) formData[key] = Boolean(Number(data[key]))
         else formData[key] = data[key]
     })
     loading.value = false
@@ -77,7 +60,7 @@ const onSave = async (formEl: FormInstance | undefined) => {
         if (valid) {
             const save = JSON.parse(JSON.stringify(formData))
             Object.keys(save).forEach((key) => {
-                if (['is_captcha', 'is_site_captcha'].includes(key)) save[key] = Number(save[key])
+                if (['is_captcha'].includes(key)) save[key] = Number(save[key])
             })
 
             setConfigLogin(save).then(() => {

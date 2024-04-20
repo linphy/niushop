@@ -1,7 +1,7 @@
 <template>
     <div class="main-container">
         <div class="detail-head">
-            <div class="left" @click="router.push({ path: '/member/refund' })">
+            <div class="left" @click="router.push({ path: '/finance/refund' })">
                 <span class="iconfont iconxiangzuojiantou !text-xs"></span>
                 <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
             </div>

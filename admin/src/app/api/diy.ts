@@ -10,6 +10,14 @@ import request from '@/utils/request'
 export function getDiyPageList(params: Record<string, any>) {
     return request.get(`diy/diy`, {params})
 }
+/**
+ * 获取自定义页面分页列表，轮播搜索组件用
+ * @param params
+ * @returns
+ */
+export function getDiyPageListByCarouselSearch(params: Record<string, any>) {
+    return request.get(`diy/carousel_search`, {params})
+}
 
 /**
  * 获取自定义页面列表

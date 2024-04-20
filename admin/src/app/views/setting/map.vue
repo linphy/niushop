@@ -4,7 +4,7 @@
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title">{{ t('mapSetting') }}</h3>
                 <el-form-item :label="t('mapKey')" prop="site_name">
-                    <el-input v-model="formData.key" class="input-width" clearable />
+                    <el-input v-model.trim="formData.key" class="input-width" clearable />
                     <span class="ml-2 cursor-pointer tutorial-btn" @click="tutorialFn">{{ t('clickTutorial') }}</span>
                     <span class="ml-2 cursor-pointer secret-btn" @click="secretlFn">{{ t('clickSecretKey') }}</span>
                 </el-form-item>

@@ -1,7 +1,7 @@
 <template>
     <div class="border border-color">
         <toolbar class="border-b border-color" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-        <wang-editor :style="{ height, 'overflow-y': 'hidden', width: '100%' }" :defaultConfig="editorConfig" :mode="mode" v-model="content" @onCreated="handleCreated" />
+        <wang-editor :style="{ height, 'overflow-y': 'hidden', width: '100%' }" :defaultConfig="editorConfig" :mode="mode" v-model="content" @onCreated="handleCreated" @onBlur="handleBlur" />
         <upload-attachment type="image" ref="imageRef" :limit="10" @confirm="imageSelect" />
         <upload-attachment type="video" ref="videoRef" @confirm="videoSelect" />
     </div>
@@ -31,7 +31,7 @@ const prop = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue','handleBlur'])
 
 const imageRef: Record<string, any> | null = ref(null)
 const videoRef: Record<string, any> | null = ref(null)
@@ -85,6 +85,10 @@ const videoSelect = (data: Record<string, any>) => {
 
 const handleCreated = (editor: IDomEditor) => {
     editorRef.value = editor
+}
+//编辑器 blur 时的回调函数。
+const handleBlur = (editor: IDomEditor)=>{
+    emit('handleBlur',editor)
 }
 
 /**

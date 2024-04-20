@@ -247,7 +247,7 @@ import { ElTable } from 'element-plus'
 import Sortable from 'sortablejs'
 import { range } from 'lodash-es'
 
-import { getDiyPageList } from '@/app/api/diy'
+import { getDiyPageListByCarouselSearch } from '@/app/api/diy'
 
 const diyStore = useDiyStore()
 diyStore.editComponent.ignore = ['componentBgColor','componentBgUrl','marginTop','marginBottom','topRounded','bottomRounded','pageBgColor','marginBoth'] // 忽略公共属性
@@ -394,7 +394,6 @@ const diyPageTable = reactive({
     loading: true,
     data: [],
     searchParam: {
-        type: 'DIY_PAGE' // todo 数据筛选，要考虑只能查询 微页面类型的数据
     }
 })
 const diyPageTableRef = ref<InstanceType<typeof ElTable>>()
@@ -406,7 +405,7 @@ const loadDiyPageList = (page: number = 1) => {
     diyPageTable.loading = true
     diyPageTable.page = page
 
-    getDiyPageList({
+    getDiyPageListByCarouselSearch({
         page: diyPageTable.page,
         limit: diyPageTable.limit,
         ...diyPageTable.searchParam
@@ -419,7 +418,7 @@ const loadDiyPageList = (page: number = 1) => {
         // 排除当前编辑的微页面以及存在 置顶组件的数据
         if (diyStore.id) {
             for (let i = 0; i < data.length; i++) {
-                if (data[i].id == diyStore.id || data[i].value.indexOf('top_fixed') != -1) {
+                if (data[i].id == diyStore.id) {
                     isExistCount++;
                 } else {
                     newData.push(data[i]);

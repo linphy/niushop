@@ -25,9 +25,7 @@
 							<span class="text-[14px] text-[#666]">{{ authinfo.company_name || '--' }}</span>
 						</div>
 						<div class="mt-[46px] ml-[40px] flex flex-wrap">
-							<span class="text-[14px] mr-[84px]">授权域名<em
-									class="ml-[12px] text-[12px]">{{ authinfo.site_address || '--'
-									}}</em></span>
+							<span class="text-[14px] mr-[84px]">授权域名<em class="ml-[12px] text-[12px]">{{ authinfo.site_address || '--' }}</em></span>
 							<span class="text-[14px] flex items-center">
 								<span>授权码</span>
 								<em class="ml-[12px] mr-[10px] text-[12px]">{{ authinfo.auth_code ? (isCheck
@@ -43,8 +41,7 @@
 						</div>
 					</div>
 					<div class="flex flex-1  flex-wrap justify-end relative">
-						<el-button class="w-[154px] !h-[48px] mt-[8px]" type="primary"
-							@click="authCodeApproveFn">授权码认证</el-button>
+						<el-button class="w-[154px] !h-[48px] mt-[8px]" type="primary" @click="authCodeApproveFn">授权码认证</el-button>
 						<el-popover ref="getAuthCodeDialog" placement="bottom-start" :width="478" trigger="click"
 							class="mt-[8px]">
 							<div class="px-[18px] py-[8px]">
@@ -52,8 +49,7 @@
 								</p>
 								<div class="flex justify-end mt-[36px]">
 									<el-button class="w-[182px] !h-[48px]" plain @click="market">去应用市场逛逛</el-button>
-									<el-button class="w-[100px] !h-[48px]" plain
-										@click="getAuthCodeDialog.hide()">关闭</el-button>
+									<el-button class="w-[100px] !h-[48px]" plain @click="getAuthCodeDialog.hide()">关闭</el-button>
 								</div>
 							</div>
 							<template #reference>
@@ -67,21 +63,18 @@
 						<el-form :model="formData" label-width="0" ref="formRef" :rules="formRules" class="page-form">
 							<el-card class="box-card !border-none" shadow="never">
 								<el-form-item prop="auth_code">
-									<el-input v-model="formData.auth_code" :placeholder="t('authCodePlaceholder')"
-										class="input-width" clearable size="large" />
+									<el-input v-model.trim="formData.auth_code" :placeholder="t('authCodePlaceholder')" class="input-width" clearable size="large" />
 								</el-form-item>
 
 								<div class="mt-[20px]">
 									<el-form-item prop="auth_secret">
-										<el-input v-model="formData.auth_secret" clearable
-											:placeholder="t('authSecretPlaceholder')" class="input-width" size="large" />
+										<el-input v-model.trim="formData.auth_secret" clearable :placeholder="t('authSecretPlaceholder')" class="input-width" size="large" />
 									</el-form-item>
 								</div>
 
 								<div class="mt-[20px]">
 									<el-button type="primary" class="w-full" size="large" :loading="saveLoading"
-										@click="save(formRef)">{{
-											t('confirm') }}</el-button>
+										@click="save(formRef)">{{ t('confirm') }}</el-button>
 								</div>
 								<div class="mt-[10px] text-right">
 									<el-button type="primary" link @click="market">{{ t('notHaveAuth') }}</el-button>

@@ -1,6 +1,10 @@
 <template>
 	<div class="main-container attachment-container">
+
 		<el-card class="box-card !border-none full-container" shadow="never">
+			<div class="flex justify-between items-center mb-[16px]">
+                <span class="text-page-title">{{pageName}}</span>
+            </div>
 			<el-tabs v-model="type">
 				<el-tab-pane :label="t(tab)" v-for="(tab, index) in attachmentType" :name="tab" :key="index">
 					<attachment scene="attachment" :type="tab" />
@@ -14,7 +18,10 @@
 import { ref } from 'vue'
 import { t } from '@/lang'
 import attachment from '@/components/upload-attachment/attachment.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
+const pageName = route.meta.title
 const attachmentType: string[] = ['image', 'video', 'icon']
 const type = ref(attachmentType[0])
 

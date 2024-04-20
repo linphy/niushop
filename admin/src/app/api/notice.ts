@@ -6,8 +6,8 @@ import request from '@/utils/request'
  * 消息列表
  * @returns
  */
-export function getNoticeList() {
-    return request.get('notice/notice')
+export function getNoticeList(params: any) {
+    return request.get('notice/notice', {params})
 }
 
 /**
@@ -77,5 +77,5 @@ export function editSms(params: Record<string, any>) {
  * @param params
  */
 export function getSmsLog(params: Record<string, any>) {
-    return request.get(`notice/sms/log`, params)
+    return request.get(`notice/sms/log`, { params })
 }

@@ -53,7 +53,7 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item :label="t('cashOutStatus')" prop="order_from">
+                    <el-form-item :label="t('cashOutStatus')" prop="status">
                         <el-select v-model="orderTableData.searchParam.status" clearable class="input-width">
                             <el-option :label="t('selectPlaceholder')" value="" />
                             <el-option :label="item" :value="key" v-for="(item, key) in cashOutStatusList" :key="key"/>

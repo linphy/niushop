@@ -3,7 +3,7 @@
         <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 
             <el-form-item :label="t('appId')" prop="config.app_id">
-                <el-input v-model="formData.config.app_id" :placeholder="t('appIdPlaceholder')" class="input-width" maxlength="32" show-word-limit clearable />
+                <el-input v-model.trim="formData.config.app_id" :placeholder="t('appIdPlaceholder')" class="input-width" maxlength="32" show-word-limit clearable />
                 <div class="form-tip">{{ t('appIdTips') }}</div>
             </el-form-item>
             <el-form-item :label="t('appSecretCert')" prop="config.app_secret_cert">
@@ -12,7 +12,7 @@
 
             <el-form-item :label="t('appPublicCertPath')" prop="config.app_public_cert_path">
                 <div class="input-width">
-                    <upload-file v-model="formData.config.app_public_cert_path" api="sys/document/aliyun" />
+                    <upload-file v-model.trim="formData.config.app_public_cert_path" api="sys/document/aliyun" />
                 </div>
             </el-form-item>
 

@@ -21,5 +21,5 @@
   "wechatAccessFlow": "接入流程",
   "customMenu": "自定义菜单",
   "wechatTemplate": "模板消息",
-  "id": "id"
+  "reply": "自动回复"
 }

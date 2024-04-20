@@ -71,5 +71,6 @@
 	"upgrade": "升级",
 	"newVersion": "最新版本",
 	"cloudBuild": "云编译",
-	"cloudBuildTips": "是否要进行云编译该操作可能会影响到正在访问的客户是否要继续操作？"
+	"cloudBuildTips": "是否要进行云编译该操作可能会影响到正在访问的客户是否要继续操作？",
+	"deleteAddonTips": "确定要删除该插件吗？"
 }

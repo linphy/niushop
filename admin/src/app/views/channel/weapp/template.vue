@@ -49,8 +49,7 @@
 
                     <el-table-column :label="t('operation')" fixed="right" align="right" width="200">
                         <template #default="{ row }">
-                            <el-button type="primary" link @click="infoSwitch(row)">{{ row.is_weapp == 1 ? t('close') :
-                                t('open') }}</el-button>
+                            <el-button type="primary" link @click="infoSwitch(row)">{{ row.is_weapp == 1 ? t('close') : t('open') }}</el-button>
                             <el-button type="primary" link @click="batchAcquisitionFn(row)">{{ t('regain') }}</el-button>
                         </template>
                     </el-table-column>

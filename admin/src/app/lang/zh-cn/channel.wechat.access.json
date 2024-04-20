@@ -15,5 +15,6 @@
 	"customMenu": "自定义菜单",
 	"wechatAccessBtn": "查看审核进度",
 	"clickAccess2":"扫描二维码进入微信公众号",
-	"wechatTemplate": "模板消息"
+	"wechatTemplate": "模板消息",
+	"reply": "自动回复"
 }

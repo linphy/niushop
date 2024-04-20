@@ -46,7 +46,7 @@ export function getModuleVersion() {
  * @returns
  */
 export function downloadVersion(params: Record<string, any>) {
-    return request.post(`addon/download/${params.addon}`, params, { showSuccessMessage: true })
+    return request.post(`addon/download/${params.addon}`, params, { timeout: 0, showSuccessMessage: true })
 }
 
 /**

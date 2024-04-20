@@ -90,21 +90,23 @@
                     <el-table-column :label="t('operation')" fixed="right" align="right" width="150">
                         <template #default="{ row }">
                             <el-button class="!text-[13px]" type="primary" link @click="getAddonDetialFn(row)">{{
-                                t('detail') }}</el-button>
+                                    t('detail') }}</el-button>
                             <el-button class="!text-[13px]" v-if="row.install_info && Object.keys(row.install_info)?.length && row.install_info.version != row.version"
                                        type="primary" link @click="upgradeAddonFn(row.key)">{{ t('upgrade') }}</el-button>
                             <el-button class="!text-[13px]"
-                                v-if="row.install_info && Object.keys(row.install_info)?.length && activeName != 'all'"
-                                type="primary" link @click="uninstallAddonFn(row.key)">{{ t('unload') }}</el-button>
-                            <el-button class="!text-[13px]"
-                                v-else-if="row.is_download && row.install_info <= 0 && activeName != 'all'" type="primary"
-                                link @click="installAddonFn(row.key)">{{ t('install') }}</el-button>
-                            <el-button class="!text-[13px]" v-else :loading="downloading == row.key"
-                                :disabled="downloading != ''" type="primary" link @click.stop="downEvent(row)">
-                                <span v-if="row.install_info && Object.keys(row.install_info)?.length">{{ t('unloadDown')
-                                }}</span>
-                                <span v-else-if="row.is_download && row.install_info <= 0">{{ t('installDown') }}</span>
-                                <span v-else>{{ t('down') }}</span>
+                                       v-if="row.install_info && Object.keys(row.install_info)?.length"
+                                       type="primary" link @click="uninstallAddonFn(row.key)">{{ t('unload') }}</el-button>
+                            <template v-if="row.is_download && Object.keys(row.install_info) <= 0">
+                                <el-button class="!text-[13px]"
+                                           type="primary"
+                                           link @click="installAddonFn(row.key)">{{ t('install') }}</el-button>
+                                <el-button class="!text-[13px]"
+                                           type="primary"
+                                           link @click="deleteAddonFn(row.key)">{{ t('delete') }}</el-button>
+                            </template>
+                            <el-button class="!text-[13px]" v-if="!row.is_download" :loading="downloading == row.key"
+                                       :disabled="downloading != ''" type="primary" link @click.stop="downEvent(row)">
+                                <span>{{ t('down') }}</span>
                             </el-button>
                         </template>
                     </el-table-column>
@@ -170,7 +172,7 @@
                     <template #description>
                         <p class="flex items-center">
                             <span>{{ t('buyDescriptionLeft') }}</span>
-                            <el-link type="primary" @click="goRouter" class="mx-[5px]">{{ t('link') }}</el-link>
+                            <el-link type="primary" @click="market" class="mx-[5px]">{{ t('link') }}</el-link>
                             <span>{{ t('descriptionRight') }}</span>
                         </p>
                     </template>
@@ -393,6 +395,7 @@
 import { ref, reactive, watch, h } from 'vue'
 import { t } from '@/lang'
 import { getAddonLocal, uninstallAddon, installAddon, preInstallCheck, cloudInstallAddon, getAddonInstalltask, getAddonCloudInstallLog, preUninstallCheck, cancelInstall } from '@/app/api/addon'
+import { deleteAddonDevelop } from '@/app/api/tools'
 import { downloadVersion, getAuthinfo, setAuthinfo } from '@/app/api/module'
 import { getInstallConfig } from '@/app/api/sys'
 import { ElMessage, ElMessageBox, ElNotification, FormInstance, FormRules } from 'element-plus'
@@ -692,7 +695,7 @@ const handleCloudInstall = () => {
 
 const authElMessageBox = () => {
     ElMessageBox.confirm(
-        `云安装需先绑定授权码，如果已有授权请先进行绑定，没有授权可到${installPhpConfig.value.website_name}官网购买云服务之后再进行操作`,
+        `云安装需先绑定授权码，如果已有授权请先进行绑定，没有授权可到${installPhpConfig.value.website_name}官网购买授权之后再进行操作`,
         t('warning'),
         {
             distinguishCancelAndClose: true,
@@ -909,6 +912,22 @@ const save = async (formEl: FormInstance | undefined) => {
                 })
         }
     })
+}
+
+const deleteAddonFn = (key: string) => {
+    ElMessageBox.confirm(
+        t('deleteAddonTips'),
+        t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        deleteAddonDevelop(key).then(() => {
+            localListFn()
+        })
+    }).catch(() => { })
 }
 </script>
 

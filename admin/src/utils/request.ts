@@ -2,6 +2,7 @@ import axios, { HttpStatusCode } from 'axios'
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from 'axios'
 import { getToken, isUrl } from './common';
 import { ElMessage } from 'element-plus'
+import type { MessageParams } from 'element-plus'
 import { t } from '@/lang'
 import useUserStore from '@/stores/modules/user'
 import storage from '@/utils/storage'
@@ -54,7 +55,7 @@ class Request {
 					const res = response.data
 					if (res.code != 1) {
 					    this.handleAuthError(res.code)
-					    if (res.code != 401 && response.config.showErrorMessage !== false) ElMessage({ message: res.msg, type: 'error', dangerouslyUseHTMLString: true, duration: 5000 })
+					    if (res.code != 401 && response.config.showErrorMessage !== false) this.showElMessage({ message: res.msg, type: 'error', dangerouslyUseHTMLString: true, duration: 5000 })
 					    return Promise.reject(new Error(res.msg || 'Error'))
 					} else {
 					    if (response.config.showSuccessMessage) ElMessage({ message: res.msg, type: 'success' })
@@ -167,7 +168,7 @@ class Request {
             const baseURL = isUrl(err.config.baseURL) ? err.config.baseURL : `${location.origin}${err.config.baseURL}`
             errMessage = baseURL + t('axios.baseUrlError')
         }
-        errMessage && ElMessage({ dangerouslyUseHTMLString: true, duration: 5000, message: errMessage, type: 'error' })
+        errMessage && this.showElMessage({ dangerouslyUseHTMLString: true, duration: 5000, message: errMessage, type: 'error' })
     }
 
     private handleAuthError(code: number) {
@@ -175,6 +176,18 @@ class Request {
             case 401:
                 useUserStore().logout()
                 break;
+        }
+    }
+
+    private messageCache = new Map();
+
+    private showElMessage(options: MessageParams) {
+        const cacheKey = options.message
+        const cachedMessage = this.messageCache.get(cacheKey);
+
+        if (!cachedMessage || Date.now() - cachedMessage.timestamp > 5000) { // 5秒内重复内容不再弹出，可自定义过期时间
+            this.messageCache.set(cacheKey, { timestamp: Date.now() });
+            ElMessage(options)
         }
     }
 }

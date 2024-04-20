@@ -7,6 +7,7 @@
             <el-tab-pane :label="t('wechatAccessFlow')" name="/channel/wechat" />
             <el-tab-pane :label="t('customMenu')" name="/channel/wechat/menu" />
             <el-tab-pane :label="t('wechatTemplate')" name="/channel/wechat/message" />
+            <el-tab-pane :label="t('reply')" name="/channel/wechat/reply" />
         </el-tabs>
         <div class="p-[20px]">
             <p class="text-[16px] mb-[20px]">{{ t("wechatInlet") }}</p>

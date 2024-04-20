@@ -12,12 +12,10 @@
 			<div class="mt-[20px]">
 				<div class="flex">
 					<div class="min-w-[60px]">
-						<span
-							class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">1</span>
+						<span class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">1</span>
 					</div>
 					<div>
-						<p class="flex items-center text-[14px]">{{ t('writingTipsOne1') }}<el-button link type="primary"
-								@click="linkEvent">{{ t("writingTipsOne2") }}</el-button>,{{ t('writingTipsOne3') }}</p>
+						<p class="flex items-center text-[14px]">{{ t('writingTipsOne1') }}<el-button link type="primary" @click="linkEvent">{{ t("writingTipsOne2") }}</el-button>,{{ t('writingTipsOne3') }}</p>
 						<div class="w-[100%] mt-[10px]">
 							<img class="w-[100%]" src="@/app/assets/images/setting/weapp_1.png" />
 						</div>
@@ -25,8 +23,7 @@
 				</div>
 				<div class="flex mt-[40px]">
 					<div class="min-w-[60px]">
-						<span
-							class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">2</span>
+						<span class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">2</span>
 					</div>
 					<div>
 						<p class="flex items-center text-[14px]">{{ t('writingTipsTwo1') }}</p>
@@ -37,12 +34,10 @@
 				</div>
 				<div class="flex mt-[40px]">
 					<div class="min-w-[60px]">
-						<span
-							class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">3</span>
+						<span class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">3</span>
 					</div>
 					<div>
-						<p class="flex items-center text-[14px]">{{ t('writingTipsThree1') }}<span class="text-primary">{{
-							t('writingTipsThree2') }}</span></p>
+						<p class="flex items-center text-[14px]">{{ t('writingTipsThree1') }}<span class="text-primary">{{ t('writingTipsThree2') }}</span></p>
 						<div class="w-[100%] mt-[10px]">
 							<img class="w-[100%]" src="@/app/assets/images/setting/weapp_3.png" />
 						</div>
@@ -50,8 +45,7 @@
 				</div>
 				<div class="flex mt-[40px]">
 					<div class="min-w-[60px]">
-						<span
-							class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">4</span>
+						<span class="flex justify-center items-center block w-[40px] h-[40px] border-[1px] border-primary rounded-[999px] text-primary">4</span>
 					</div>
 					<div>
 						<p class="flex items-center text-[14px]">{{ t('writingTipsFour1') }}<span class="text-primary">URL /

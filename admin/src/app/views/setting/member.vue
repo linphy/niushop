@@ -10,7 +10,7 @@
                 </el-form-item>
 
                 <el-form-item :label="t('length')" prop="length">
-                    <el-input v-model="formData.length" :placeholder="t('lengthPlaceholder')" class="input-width" clearable @keyup="filterNumber($event)" @change="getMemberNo(ruleFormRef)"/>
+                    <el-input v-model.trim="formData.length" :placeholder="t('lengthPlaceholder')" class="input-width" clearable @keyup="filterNumber($event)" @change="getMemberNo(ruleFormRef)" @blur="formData.length = $event.target.value"/>
                     <div class="form-tip">{{ t('lengthTips') }}</div>
                 </el-form-item>
 
@@ -53,7 +53,7 @@ const formRules = reactive<FormRules>({
         { validator: prefixVerify, trigger: 'blur' }
     ],
     length: [
-        { required: true, message: t('lengthPlaceholder'), trigger: 'blur' },
+        { required: true, message: t('lengthPlaceholder'), trigger: ['blur', 'change'] },
         {
             validator: (rule: any, value: any, callback: any) => {
                 if (parseInt(value) > 30 || parseInt(value) - formData.prefix.length < 4) {

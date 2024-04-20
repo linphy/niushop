@@ -7,6 +7,7 @@
             <el-tab-pane :label="t('wechatAccessFlow')" name="/channel/wechat" />
             <el-tab-pane :label="t('customMenu')" name="/channel/wechat/menu" />
             <el-tab-pane :label="t('wechatTemplate')" name="/channel/wechat/message" />
+            <el-tab-pane :label="t('reply')" name="/channel/wechat/reply" />
         </el-tabs>
         <div class="flex" v-loading="loading">
             <div class="preview-wrap w-[300px] h-[550px] mr-[16px] bg-overlay rounded-md flex flex-col justify-between border border-color">

@@ -6,22 +6,20 @@
                 <div class="input-width"> {{ formData.name }} </div>
             </el-form-item>
 
-            <el-form-item :label="t('messageType')">
-                <div v-if="formData.message_type == 'sms'">{{ t('sms') }}</div>
-                <div v-if="formData.message_type == 'wechat'">{{ t('wechat') }}</div>
-                <div v-if="formData.message_type == 'weapp'">{{ t('weapp') }}</div>
+            <el-form-item :label="t('smsType')">
+                <div class="input-width"> {{ formData.sms_type_name }} </div>
             </el-form-item>
 
-            <el-form-item :label="t('messageData')">
+            <!-- <el-form-item :label="t('messageData')">
                 <div class="input-width"> {{ formData.message_data }} </div>
-            </el-form-item>
+            </el-form-item> -->
 
-            <el-form-item :label="t('nickname')">
+            <!-- <el-form-item :label="t('nickname')">
                 <div class="input-width"> {{ formData.nickname }} </div>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item :label="t('receiver')">
-                <div class="input-width"> {{ formData.receiver }} </div>
+                <div class="input-width"> {{ formData.mobile }} </div>
             </el-form-item>
 
             <el-form-item :label="t('createTime')">
@@ -57,7 +55,8 @@ const initialFormData = {
     message_type: '',
     name: '',
     nickname: '',
-    receiver: ''
+    mobile: '',
+    sms_type_name: ''
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 

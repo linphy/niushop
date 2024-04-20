@@ -3,7 +3,6 @@
     "memberNumber":"会员数量",
     "memo":"备注",
     "sort":"排序",
-    "siteIdPlaceholder":"请输入站点id",
     "labelNamePlaceholder":"请输入标签名称",
     "memoPlaceholder":"请输入备注",
     "sortPlaceholder":"请输入排序",

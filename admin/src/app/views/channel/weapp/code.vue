@@ -8,7 +8,7 @@
             <el-tab-pane :label="t('subscribeMessage')" name="/channel/weapp/message" />
             <el-tab-pane :label="t('weappRelease')" name="/channel/weapp/code" />
         </el-tabs>
-        <el-card class="box-card !border-none" shadow="never">
+        <el-card class="box-card !border-none" shadow="never" v-loading="loading">
             <div class="mt-[50px]">
                 <el-button type="primary" @click="insert" :loading="uploading" :disabled="weappTableData.loading">{{ t('cloudRelease') }}</el-button>
                 <el-button @click="localInsert" :disabled="weappTableData.loading">{{ t('localRelease') }}</el-button>
@@ -75,6 +75,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
+import { getInstallConfig } from '@/app/api/sys'
 import { setWeappVersion, getWeappPreview, getWeappVersionList, getWeappUploadLog, getWeappConfig } from '@/app/api/weapp'
 import { t } from '@/lang'
 import { useRoute, useRouter } from 'vue-router'
@@ -85,8 +86,8 @@ import { AnyObject } from '@/types/global'
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
-// const activeNames = ref('1')
 const dialogVisible = ref(false)
+const loading = ref(true)
 const weappTableData:{
     page: number,
     limit: number,
@@ -106,6 +107,11 @@ const form = ref({
     path: '',
     content: ''
 })
+const installPhpConfig = ref(null)
+
+getInstallConfig().then(({ data }) => {
+    installPhpConfig.value = data
+}).catch()
 
 const authCode = ref('')
 getAuthinfo().then(res => {
@@ -113,7 +119,9 @@ getAuthinfo().then(res => {
         authCode.value = res.data.data.auth_code
         getWeappPreviewImage()
     }
+    loading.value = false
 }).catch(() => {
+    loading.value = false
 })
 
 const weappConfig = ref<{
@@ -223,18 +231,18 @@ const getWeappUploadLogFn = (key: string) => {
 
 const authElMessageBox = () => {
     ElMessageBox.confirm(
-        t('authTips'),
+        `上传代码需先绑定授权码，如果已有授权请先进行绑定，没有授权可到${installPhpConfig.value.website_name}官网购买授权之后再进行操作`,
         t('warning'),
         {
             distinguishCancelAndClose: true,
             confirmButtonText: t('toBind'),
-            cancelButtonText: t('toNiucloud')
+            cancelButtonText: `去${installPhpConfig.value.website_name}官网`
         }
     ).then(() => {
-        router.push({ path: '/app/authorize' })
+        router.push({ path: '/tools/authorize' })
     }).catch((action: string) => {
         if (action === 'cancel') {
-            window.open('https://www.niucloud.com/app')
+            window.open(installPhpConfig.value.website_url)
         }
     })
 }

@@ -13,7 +13,9 @@
 				</template>
 				<upload-attachment :limit="limit" type="video" @confirm="confirmSelect" v-else>
 					<div class="w-full h-full flex items-center justify-center flex-col">
-						<icon name="iconfont-icon24gf-playCircle" size="25px" color="var(--el-text-color-secondary)"/>
+                        <slot name="icon">
+                            <icon name="iconfont-icon24gf-playCircle" size="25px" color="var(--el-text-color-secondary)"/>
+                        </slot>
 					</div>
 				</upload-attachment>
 			</div>
@@ -31,7 +33,9 @@
 			<div class="rounded cursor-pointer relative bg-page video-wrap mr-[10px]" :style="style" v-if="videos.data.length < limit">
 				<upload-attachment :limit="limit" type="video" @confirm="confirmSelect">
 					<div class="w-full h-full flex items-center justify-center flex-col">
-						<icon name="iconfont-icon24gf-playCircle" size="25px" color="var(--el-text-color-secondary)"/>
+                        <slot name="icon">
+                            <icon name="iconfont-icon24gf-playCircle" size="25px" color="var(--el-text-color-secondary)"/>
+                        </slot>
 					</div>
 				</upload-attachment>
 			</div>

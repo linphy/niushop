@@ -9,8 +9,7 @@
 				<el-row class="flex">
 					<el-col :span="8" class="min-w-[100px]">
 						<div class="statistic-card">
-							<el-statistic
-								:value="accountStat.pay ? accountStat.pay.toFixed(2) : '0.00'"></el-statistic>
+							<el-statistic :value="accountStat.pay ? accountStat.pay.toFixed(2) : '0.00'"></el-statistic>
 							<div class="statistic-footer">
 								<div class="footer-item text-[14px] text-[#666]">
 									<span>{{ t('totalPay') }}</span>
@@ -20,8 +19,7 @@
 					</el-col>
 					<el-col :span="8" class="min-w-[100px]">
 						<div class="statistic-card">
-							<el-statistic
-								:value="accountStat.refund ? accountStat.refund.toFixed(2) : '0.00'"></el-statistic>
+							<el-statistic :value="accountStat.refund ? accountStat.refund.toFixed(2) : '0.00'"></el-statistic>
 							<div class="statistic-footer">
 								<div class="footer-item text-[14px] text-[#666]">
 									<span>{{ t('totalRefund') }}</span>
@@ -31,8 +29,7 @@
 					</el-col>
 					<el-col :span="8" class="min-w-[100px]">
 						<div class="statistic-card">
-							<el-statistic
-								:value="accountStat.transfer ? accountStat.transfer.toFixed(2) : '0.00'"></el-statistic>
+							<el-statistic :value="accountStat.transfer ? accountStat.transfer.toFixed(2) : '0.00'"></el-statistic>
 							<div class="statistic-footer">
 								<div class="footer-item text-[14px] text-[#666]">
 									<span>{{ t('totalTransfer') }}</span>
@@ -45,15 +42,13 @@
 			<el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
 				<el-form :inline="true" :model="siteAccountLogTable.searchParam" ref="searchFormRef">
 					<el-form-item :label="t('type')" class="items-center" prop="type">
-						<el-select v-model="siteAccountLogTable.searchParam.type" class="m-2"
-							:placeholder="t('accountType')">
+						<el-select v-model="siteAccountLogTable.searchParam.type" class="m-2" :placeholder="t('accountType')">
                             <el-option :label="t('all')" value="" />
 							<el-option v-for="(item, index) in accountType" :key="index" :label="item" :value="index" />
 						</el-select>
 					</el-form-item>
 					<el-form-item :label="t('tradeNo')" prop="trade_no">
-						<el-input v-model="siteAccountLogTable.searchParam.trade_no"
-							:placeholder="t('tradeNoPlaceholder')" />
+						<el-input v-model="siteAccountLogTable.searchParam.trade_no" :placeholder="t('tradeNoPlaceholder')" />
 					</el-form-item>
 					<el-form-item :label="t('createTime')" prop="create_time">
 						<el-date-picker v-model="siteAccountLogTable.searchParam.create_time" type="datetimerange"
@@ -100,9 +95,9 @@
 		<el-dialog v-model="showDialog" :title="t('accountDetail')" width="550px" :destroy-on-close="true">
 			<el-form :model="formData" label-width="110px" ref="formRef" class="page-form">
 
-				<el-form-item :label="t('tradeNo')">
-					<div class="input-width"> {{ formData.trade_no }} </div>
-				</el-form-item>
+<!--				<el-form-item :label="t('tradeNo')">-->
+<!--					<div class="input-width"> {{ formData.trade_no }} </div>-->
+<!--				</el-form-item>-->
 				<el-form-item :label="t('type')">
 					<div class="input-width"> {{ formData.type_name }} </div>
 				</el-form-item>
@@ -170,10 +165,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { t } from '@/lang'
 import { getAccountList, getAccountStat, getAccountType } from '@/app/api/pay'
-// import { img } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { useRoute } from 'vue-router'
 
@@ -187,7 +181,6 @@ const siteAccountLogTable = reactive({
     loading: true,
     data: [],
     searchParam: {
-        site_id: '',
         type: '',
         money: '',
         trade_no: '',
@@ -196,6 +189,11 @@ const siteAccountLogTable = reactive({
 })
 
 const searchFormRef = ref<FormInstance>()
+
+// 去空操作
+watch(() => siteAccountLogTable.searchParam.trade_no, (nval) => {
+    siteAccountLogTable.searchParam.trade_no = nval.trim();
+})
 
 /**
  * 获取站点账单记录列表

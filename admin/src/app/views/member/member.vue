@@ -99,12 +99,12 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column :label="t('operation')" align="right" fixed="right" width="180">
+                    <el-table-column :label="t('operation')" align="right" fixed="right" width="100">
                         <template #default="{ row }">
                             <div class="flex items-center">
                                 <el-button type="primary" link @click="detailEvent(row)">{{ t('detail') }}</el-button>
                                 <el-button type="primary" link @click="setMemberLable(row)">{{ t('setLable') }}</el-button>
-                                <el-button type="primary" link @click="deleteEvent(row)">{{ t('memberDelete') }}</el-button>
+<!--                                <el-button type="primary" link @click="deleteEvent(row)">{{ t('memberDelete') }}</el-button>-->
                             </div>
                         </template>
                     </el-table-column>

@@ -11,10 +11,10 @@
         <el-card class="box-card !border-none" shadow="never" v-loading="loading">
             <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('type')">
-                    <el-input v-model="formData.agreement_key_name" readonly class="input-width" />
+                    <el-input v-model.trim="formData.agreement_key_name" readonly class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('title')" prop="title">
-                    <el-input v-model="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" maxlength="20" />
+                    <el-input v-model.trim="formData.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" maxlength="20" />
                 </el-form-item>
                 <el-form-item :label="t('content')">
                     <editor v-model="formData.content" />

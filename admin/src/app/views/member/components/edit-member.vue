@@ -45,6 +45,8 @@ const title = ref('')
 const memberId = ref('')
 const showDialog = ref(false)
 const loading = ref(false)
+const repeat = ref(false)
+
 const sexSelectData = ref([
     {
         id: 0,
@@ -86,6 +88,10 @@ const emit = defineEmits(['complete'])
  */
 const confirm = async (formEl: FormInstance | undefined) => {
     loading.value = true
+
+    if (repeat.value) return
+    repeat.value = true
+
     const data = ref({
         member_id: memberId.value,
         field: type.value,
@@ -94,10 +100,12 @@ const confirm = async (formEl: FormInstance | undefined) => {
 
     editMemberDetail(data.value).then(res => {
         loading.value = false
+        repeat.value = false
         showDialog.value = false
         emit('complete')
     }).catch(() => {
         loading.value = false
+        repeat.value = false
         // showDialog.value = false
     })
 }

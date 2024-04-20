@@ -597,7 +597,17 @@ const viewTypeBtn = (row: any, index: number) => {
         validatorBtn(row, index)
     }
 }
-const completeViewType = (row: any) => {
+const completeViewType = (row: object) => {
+    if (row.select_type == 1) {
+        Object.assign(row, {
+            addon: "",
+            model: "",
+            value_key: "",
+            label_key: ""
+        })
+    } else {
+        row.dict_type = ''
+    }
     formData.table_column.splice(rowIndex.value, 1, row)
 }
 const back = () => {
