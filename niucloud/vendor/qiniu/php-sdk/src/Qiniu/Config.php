@@ -26,7 +26,8 @@ final class Config
     public $useCdnDomains;
     // Zone Cache
     private $regionCache;
-
+    
+    public $zone;
     // 构造函数
     public function __construct(Region $z = null)
     {
