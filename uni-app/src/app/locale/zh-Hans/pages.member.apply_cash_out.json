@@ -25,5 +25,6 @@
     "applyMoneyExceed": "提现金额超出可提现金额",
     "applyMoneyBelow": "提现金额小于最低提现金额",
     "replace": "更换",
+    "isOpenApply": "提现设置未开启",
     "toAdd": "去添加"
 }

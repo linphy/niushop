@@ -69,8 +69,8 @@
     }
 
     const handleClick = (data: AnyObject) => {
-        if (mode.value == 'get') redirect({ url: '/app/pages/member/account_edit', param: { id: data.account_id, type: accountType.value, mode: mode.value } })
-        else redirect({ url: '/app/pages/member/apply_cash_out', param: { account_id: data.account_id, type: accountType.value } })
+        if (mode.value == 'get') redirect({ url: '/app/pages/member/account_edit', param: { id: data.account_id, type: accountType.value, mode: mode.value }, mode: 'redirectTo' })
+        else redirect({ url: '/app/pages/member/apply_cash_out', param: { account_id: data.account_id, type: accountType.value }, mode: 'redirectTo'})
     }
 </script>
 

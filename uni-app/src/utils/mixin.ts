@@ -1,6 +1,7 @@
 import { currRoute } from './common'
 import { redirectInterceptor } from './interceptor'
 import useConfigStore from "@/stores/config";
+import useSystemStore from '@/stores/system'
 
 export default {
     install(vue) {
@@ -11,15 +12,25 @@ export default {
                 }
             },
             onLoad: (data: object) => {
+                const route = currRoute() ?? ''
+
                 this.query = data
+
+                useSystemStore().$patch((state) => {
+                    state.currRoute = route
+                })
             },
             onShow: () => {
                 const route = currRoute() ?? ''
 
-                    redirectInterceptor({
-                        path: route,
-                        query: this.query
-                    })
+                useSystemStore().$patch((state) => {
+                    state.currRoute = route
+                })
+
+                redirectInterceptor({
+                    path: route,
+                    query: this.query
+                })
             },
             methods:{
                 themeColor(){

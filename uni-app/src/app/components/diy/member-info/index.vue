@@ -1,9 +1,12 @@
 <template>
 	<view :style="warpCss">
 		<view class="pt-[34rpx] member-info">
-			<!-- #ifdef MP-WEIXIN --><view :style="navbarInnerStyle" class="flex items-center justify-center fixed left-0 right-0 z-10 top-0"></view>
-			<!-- 解决fixed定位后导航栏塌陷的问题 -->
-			<view :style="navbarInnerStyle"></view>
+			<!-- #ifdef MP-WEIXIN -->
+			<block v-if="diyComponent.addonType && diyComponent.addonType == 'shop'">
+				<view :style="navbarInnerStyle" class="flex items-center justify-center fixed left-0 right-0 z-10 top-0"></view>
+				<!-- 解决fixed定位后导航栏塌陷的问题 -->
+				<view :style="navbarInnerStyle"></view>
+			</block>
 			<!-- #endif -->
 			<view v-if="info" class="flex ml-[32rpx] mr-[52rpx]  items-center relative">
 				<!-- 唤起获取微信 -->

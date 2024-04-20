@@ -128,7 +128,7 @@
 
             save(formData).then((res) => {
                 if (mode.value == 'get') redirect({ url: '/app/pages/member/account', param: { type: formData.account_type, mode: mode.value } })
-                else redirect({ url: '/app/pages/member/apply_cash_out', param: { account_id: res.data, type: formData.account_type } })
+                else redirect({ url: '/app/pages/member/apply_cash_out', param: { account_id: res.data.id, type: formData.account_type } , mode: 'redirectTo'})
             }).catch(() => {
                 loading.value = false
             })

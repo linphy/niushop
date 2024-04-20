@@ -1,7 +1,6 @@
 <template>
-	<u-popup :show="show" :round="10" @close="handleClose" :closeable="true" bgColor="#fff" zIndex="10081"
-		:closeOnClickOverlay="false">
-		<view class="flex flex-col h-[75vh]" v-if="payInfo">
+	<u-popup :show="show" :round="10" @close="handleClose" :closeable="true" bgColor="#fff" zIndex="10081" :closeOnClickOverlay="false">
+		<view class="flex flex-col h-[75vh]" v-if="payInfo" @touchmove.prevent.stop>
 			<view class="head">
 				<view class="text-center py-[26rpx]">{{ t('pay.payTitle') }}</view>
 				<view class="flex items-end justify-center w-full text-xl font-bold py-[20rpx]">
@@ -16,8 +15,7 @@
 				</view>
 				<view class="mx-[30rpx] py-[10rpx] px-[30rpx] bg-white rounded-md bg-page">
                     <block v-if="payInfo.pay_type_list.length">
-                        <view class="pay-item py-[18rpx] flex items-center border-0 border-b border-solid border-[#eee]"
-                            v-for="(item, index) in payInfo.pay_type_list" :key="index" @click="type = item.key">
+                        <view class="pay-item py-[18rpx] flex items-center border-0 border-b border-solid border-[#eee]" v-for="(item, index) in payInfo.pay_type_list" :key="index" @click="type = item.key">
                             <u-image :src="img(item.icon)" width="50rpx" height="50rpx"></u-image>
                             <view class="flex-1 px-[20rpx] text-sm font-bold">{{ item.name }}</view>
                             <u-icon name="checkbox-mark" color="var(--primary-color)" v-if="item.key == type"></u-icon>
@@ -27,8 +25,7 @@
 				</view>
 			</scroll-view>
 			<view class="p-[30rpx]">
-				<u-button type="primary" :loading="loading" :text="t('pay.confirmPay')" shape="circle"
-					@click="confirmPay"></u-button>
+				<u-button type="primary" :loading="loading" :text="t('pay.confirmPay')" shape="circle" @click="confirmPay"></u-button>
 			</view>
 		</view>
 	</u-popup>

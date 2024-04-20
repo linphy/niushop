@@ -23,7 +23,7 @@
                     </view>
                     <view class="flex items-start mt-[30rpx]" v-if="!info && config.agreement_show">
                         <u-checkbox-group>
-                            <u-checkbox :checked="isAgree" shape="shape" size="14" @change="agreeChange" :customStyle="{'marginTop': '4rpx'}" />
+                            <u-checkbox activeColor="var(--primary-color)" :checked="isAgree" shape="shape" size="14" @change="agreeChange" :customStyle="{'marginTop': '4rpx'}" />
                         </u-checkbox-group>
                         <view class="text-xs text-gray-400 flex flex-wrap">
                             {{ t('agreeTips') }}
@@ -42,13 +42,18 @@
                     </view>
                     <!-- #ifdef MP-WEIXIN -->
                     <view class="mt-[30rpx]">
-                        <u-button type="primary" :plain="true" :text="t('weixinUserAuth')" open-type="getPhoneNumber" @getphonenumber="mobileAuth" v-if="info || (!info || !config.agreement_show || isAgree)"></u-button>
-                        <u-button type="primary" :plain="true" :text="t('weixinUserAuth')" v-else @click="agreeTips"></u-button>
+                        <u-button type="primary" :plain="true" :text="t('weixinUserAuth')"  @click="agreeTips" v-if="!info && config.agreement_show && !isAgree"></u-button>
+                        <u-button type="primary" :plain="true" :text="t('weixinUserAuth')" open-type="getPhoneNumber" @getphonenumber="mobileAuth" v-else></u-button>
                     </view>
                     <!-- #endif -->
                 </u-form>
             </view>
         </view>
+
+        <!-- #ifdef MP-WEIXIN -->
+        <!-- 小程序隐私协议 -->
+        <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+        <!-- #endif -->
     </view>
 </template>
 
@@ -170,6 +175,15 @@
                 uni.hideLoading()
             })
         }
+		
+		if(e.detail.errno == 104){
+		    let msg = '用户未授权隐私权限';
+		    uni.showToast({title: msg, icon: 'none'})
+		}
+		if(e.detail.errMsg == "getPhoneNumber:fail user deny"){
+		    let msg = '用户拒绝获取手机号码';
+		    uni.showToast({title: msg, icon: 'none'})
+		}
     }
 </script>
 

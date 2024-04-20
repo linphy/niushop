@@ -31,10 +31,18 @@ export const useShare = () => {
 
 	const setShare = async (options : any = {}) => {
 		let memberStore = useMemberStore();
+		let isWatch = uni.getStorageSync('isWatchShare');
 
-		watch(() => memberStore.info, () => {
-			setShare(options)
-		})
+		// 防重复监听
+		if(!isWatch) {
+			watch(() => memberStore.info, (newValue: any, oldValue: any) => {
+				// 如果会员发生变化，则请求分享接口
+				if (newValue && oldValue && newValue.member_id != oldValue.member_id) {
+					setShare(options)
+				}
+			})
+			uni.setStorageSync('isWatchShare', true);
+		}
 
 		// #ifdef H5
 		// 初始化sdk

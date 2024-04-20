@@ -21,6 +21,31 @@ export function getNeedLoginPages() {
 }
 
 /**
+ * 获取所有页面
+ */
+export function getAppPages() {
+    const pages = []
+    // 获取主包中需要登录的页面
+    pagesJson.pages.forEach(item => {
+        pages.push(`/${item.path}`)
+    })
+    return pages
+}
+
+export function getSubPackagesPages() {
+    const pages = []
+    // 获取分包中需要登录的页面
+    if (pagesJson.subPackages) {
+        pagesJson.subPackages.forEach(subPackages => {
+            subPackages.pages.forEach(item => {
+                pages.push(`/${subPackages.root}/${item.path}`)
+            })
+        })
+    }
+    return pages
+}
+
+/**
  * 获取tabbar
  */
 export function getTabbarPages() {

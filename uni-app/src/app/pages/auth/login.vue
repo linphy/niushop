@@ -162,6 +162,7 @@
 
             login(formData).then((res) => {
                 memberStore.setToken(res.data.token)
+				uni.removeStorageSync('pid');
                 useLogin().handleLoginBack()
             }).catch(() => {
                 loading.value = false

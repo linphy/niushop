@@ -1,46 +1,44 @@
 <template>
     <view class="diy-group" id="componentList">
-        <view v-for="(component, index) in data.value" :key="component.id"
-        @click="diyStore.changeCurrentIndex(index, component)"
-        :class="getComponentClass(index,component)" :style="component.pageStyle">
-            <template v-if="component.componentName == 'ActiveCube'">
-                <diy-active-cube :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-active-cube>
-            </template>
-            <template v-if="component.componentName == 'CarouselSearch'">
-                <diy-carousel-search :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-carousel-search>
-            </template>
-            <template v-if="component.componentName == 'FloatBtn'">
-                <diy-float-btn :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-float-btn>
-            </template>
+        <view v-for="(component, index) in data.value" :key="component.id" @click="diyStore.changeCurrentIndex(index, component)" :class="getComponentClass(index,component)" :style="component.pageStyle">
             <template v-if="component.componentName == 'GraphicNav'">
-                <diy-graphic-nav :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-graphic-nav>
+                <diy-graphic-nav :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-graphic-nav>
             </template>
             <template v-if="component.componentName == 'HorzBlank'">
-                <diy-horz-blank :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-horz-blank>
+                <diy-horz-blank :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-horz-blank>
             </template>
             <template v-if="component.componentName == 'HorzLine'">
-                <diy-horz-line :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-horz-line>
+                <diy-horz-line :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-horz-line>
             </template>
             <template v-if="component.componentName == 'HotArea'">
-                <diy-hot-area :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-hot-area>
+                <diy-hot-area :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-hot-area>
             </template>
             <template v-if="component.componentName == 'ImageAds'">
-                <diy-image-ads :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-image-ads>
+                <diy-image-ads :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-image-ads>
             </template>
             <template v-if="component.componentName == 'MemberInfo'">
-                <diy-member-info :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-member-info>
+                <diy-member-info :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-member-info>
             </template>
             <template v-if="component.componentName == 'Notice'">
-                <diy-notice :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-notice>
-            </template>
-            <template v-if="component.componentName == 'RichText'">
-                <diy-rich-text :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-rich-text>
+                <diy-notice :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-notice>
             </template>
             <template v-if="component.componentName == 'RubikCube'">
-                <diy-rubik-cube :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-rubik-cube>
+                <diy-rubik-cube :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-rubik-cube>
             </template>
             <template v-if="component.componentName == 'Text'">
-                <diy-text :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-text>
+                <diy-text :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-text>
+            </template>
+            <template v-if="component.componentName == 'RichText'">
+                <diy-rich-text :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"/>
+            </template>
+            <template v-if="component.componentName == 'ActiveCube'">
+                <diy-active-cube :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"/>
+            </template>
+			<template v-if="component.componentName == 'FloatBtn'">
+			    <diy-float-btn :component="component" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"/>
+			</template>
+            <template v-if="component.componentName == 'CarouselSearch'">
+                <diy-carousel-search :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"></diy-carousel-search>
             </template>
         </view>
         <template v-if="diyStore.mode == '' && data.global.bottomTabBarSwitch">
@@ -55,7 +53,6 @@
    import Sortable from 'sortablejs';
    import { range } from 'lodash-es';
    import useConfigStore from '@/stores/config'
-
    const props = defineProps(['data','pullDownRefreshCount']);
    const diyStore = useDiyStore();
 
@@ -74,33 +71,20 @@
    const positionFixed = ref(['fixed', 'top_fixed','right_fixed','bottom_fixed','left_fixed'])
 
    const getComponentClass = (index:any,component:any) => {
+       let obj: any = {
+           relative: true,
+           selected: diyStore.currentIndex == index,
+           decorate: diyStore.mode == 'decorate'
+       }
+       obj['top-fixed-' + diyStore.topFixedStatus] = true;
 
-      let obj: any = {
-
-         relative: true,
-
-         selected: diyStore.currentIndex == index,
-
-         decorate: diyStore.mode == 'decorate'
-
-      }
-
-      obj['top-fixed-' + diyStore.topFixedStatus] = true;
-
-      if (component.position && positionFixed.value.indexOf(component.position) != -1) {
-
-        //  找出置顶组件，设置禁止拖动
-
-        obj['ignore-draggable-element'] = true;
-
-      } else {
-
-        obj['draggable-element'] = true;
-
-      }
-
-      return obj;
-
+       if (component.position && positionFixed.value.indexOf(component.position) != -1) {
+           //  找出置顶组件，设置禁止拖动
+           obj['ignore-draggable-element'] = true;
+       } else {
+           obj['draggable-element'] = true;
+       }
+       return obj;
    }
 
    onMounted(() => {

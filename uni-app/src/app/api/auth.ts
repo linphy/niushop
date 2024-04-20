@@ -33,7 +33,9 @@ export function logout() {
  */
 export function usernameRegister(data : AnyObject) {
     let url = 'register'
-    data.pid && (url += `?pid=${data.pid}`)
+    if(uni.getStorageSync('pid')){
+        data.pid = uni.getStorageSync('pid');
+    }
     return request.post(url, data, { showErrorMessage: true })
 }
 
@@ -42,7 +44,9 @@ export function usernameRegister(data : AnyObject) {
  */
 export function mobileRegister(data : AnyObject) {
     let url = 'register/mobile'
-    data.pid && (url += `?pid=${data.pid}`)
+    if(uni.getStorageSync('pid')){
+        data.pid = uni.getStorageSync('pid');
+    }
     return request.post(url, data, { showErrorMessage: true })
 }
 
@@ -65,7 +69,9 @@ export function weappLogin(data : AnyObject) {
  */
 export function bind(data : AnyObject) {
     let url = 'bind'
-    data.pid && (url += `?pid=${data.pid}`)
+    if(uni.getStorageSync('pid')){
+        data.pid = uni.getStorageSync('pid');
+    }
     return request.post(url, data, { showErrorMessage: true })
 }
 

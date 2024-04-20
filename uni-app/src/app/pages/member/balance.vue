@@ -57,7 +57,6 @@
 	const memberStore = useMemberStore(),
         systemStore = useSystemStore()
 
-
 	const cashOutConfigObj = reactive({
 		is_auto_transfer: 0, // 是否自动转账
 		is_auto_verify: 0, // 是否自动审核

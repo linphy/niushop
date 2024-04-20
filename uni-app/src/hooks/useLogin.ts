@@ -53,6 +53,7 @@ export function useLogin() {
         // #ifdef MP-WEIXIN
         login = weappLogin
 		obj.code = code;
+		uni.getStorageSync('pid') && (Object.assign(obj, { pid: uni.getStorageSync('pid') }))
         // #endif
 
         // #ifdef H5

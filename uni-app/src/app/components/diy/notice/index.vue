@@ -42,12 +42,14 @@
             </view>
 
             <u-popup :show="noticeShow" @close="noticeShow = false"  mode="center" :round="5" :safeAreaInsetBottom="false">
-                <view class="py-[25rpx] text-sm leading-none border-0 border-solid border-b-[2rpx] border-[#eee] flex items-center justify-between">
-                    <text class="ml-[30rpx]">公告</text>
-                    <text class="mr-[20rpx] iconfont iconguanbi text-[35rpx]" @click="noticeShow = false"></text>
-                </view>
-                <scroll-view scroll-y="true" class="px-6 py-3 w-[480rpx] h-[500rpx] text-sm">{{ noticeContent }}</scroll-view>
-                <button @click="noticeShow = false" class="!mx-[30rpx] !mb-[40rpx] !w-auto !h-[70rpx] text-[24rpx] leading-[70rpx] rounded-full text-white !bg-[#ff4500] !text-[#fff]">我知道了</button>
+				<view @touchmove.prevent.stop>
+					<view class="py-[25rpx] text-sm leading-none border-0 border-solid border-b-[2rpx] border-[#eee] flex items-center justify-between">
+						<text class="ml-[30rpx]">公告</text>
+						<text class="mr-[20rpx] iconfont iconguanbi text-[35rpx]" @click="noticeShow = false"></text>
+					</view>
+					<scroll-view scroll-y="true" class="px-6 py-3 w-[480rpx] h-[500rpx] text-sm">{{ noticeContent }}</scroll-view>
+					<button @click="noticeShow = false" class="!mx-[30rpx] !mb-[40rpx] !w-auto !h-[70rpx] text-[24rpx] leading-[70rpx] rounded-full text-white !bg-[#ff4500] !text-[#fff]">我知道了</button>
+				</view>
             </u-popup>
 
         </view>

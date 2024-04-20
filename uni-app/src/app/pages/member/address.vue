@@ -20,7 +20,7 @@
                         </view>
                     </u-swipe-action-item>
                     <view v-if="!addressList.length" class="pt-[20vh]">
-                        <u-empty text="暂无收货地址" :icon="img('static/resource/images/system/empty.png')"/>
+                        <mescroll-empty :option="{tip : '暂无收货地址'}"></mescroll-empty>
                     </view>
                 </view>
                 <view class="p-[30rpx]" v-show="current == 1">
@@ -37,8 +37,8 @@
                             <text class="iconfont iconbianji shrink-0 text-[40rpx] p-[20rpx] pr-0" @click="editAddress(item.id)"></text>
                         </view>
                     </u-swipe-action-item>
-                    <view v-if="!locationAddressList.length" class="pt-[15vh]">
-                        <u-empty text="暂无收货地址" :icon="img('static/resource/images/system/empty.png')"/>
+                    <view v-if="!locationAddressList.length" class="pt-[20vh]">
+                        <mescroll-empty :option="{tip : '暂无收货地址'}"></mescroll-empty>
                     </view>
                 </view>
             </u-swipe-action>
@@ -57,6 +57,7 @@
     import { redirect, img, mobileHide } from '@/utils/common'
     import { getAddressList, deleteAddress } from '@/app/api/member'
     import { t } from '@/locale'
+    import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 
     const loading = ref(true)
     const current = ref(0)
@@ -93,12 +94,12 @@
 
     const addAddress = ()=> {
         const url = `/app/pages/member/${tabs.value[ current.value ].key}_edit`
-        redirect({ url, param: { type: tabs.value[ current.value ].key } })
+        redirect({ url, param: { type: tabs.value[ current.value ].key, source : source.value } })
     }
 
     const editAddress = (id: number)=> {
         const url = `/app/pages/member/${tabs.value[ current.value ].key}_edit`
-        redirect({ url, param: { id, type: tabs.value[ current.value ].key} })
+        redirect({ url, param: { id, type: tabs.value[ current.value ].key, source : source.value} })
     }
 
     const addressOptions = ref([
@@ -119,7 +120,7 @@
                 key: 'selectAddressCallback',
                 data: selectAddress,
                 success() {
-                    redirect({url: selectAddress.back,mode:'redirectTo' })
+                    redirect({url: selectAddress.back, mode: 'redirectTo'})
                 }
             })
         }
@@ -138,6 +139,7 @@
 <style lang="scss" scoped>
     :deep(.u-tabs__wrapper__nav__line) {
         bottom: 0;
+        background: var(--primary-color) !important;
     }
     .line-feed{
         word-wrap:break-word;

@@ -50,12 +50,21 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx59e6ba6050bbe7bc",
+        "appid" : "",
         "setting" : {
             "urlCheck" : false
         },
         "usingComponents" : true,
-        "requiredPrivateInfos" : [ "chooseLocation", "getLocation", "chooseAddress" ]
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "为了更好地为您提供服务"
+            },
+            "scope.writePhotosAlbum" : {
+                "desc" : "为了更好地为您提供服务"
+            }
+        },
+        "requiredPrivateInfos" : [ "chooseLocation", "getLocation", "chooseAddress" ],
+        "__usePrivacyCheck__" : true
     },
     "mp-alipay" : {
         "usingComponents" : true
@@ -71,16 +80,16 @@
     },
     "vueVersion" : "3",
     "h5" : {
-        "sdkConfigs" : {
-            "maps" : {
-                "qqmap" : {
-                    "key" : "6ZDBZ-CLSLX-66747-7MVM4-HLK47-XMBXU"
-                }
-            }
-        },
         "router" : {
             "mode" : "history",
             "base" : "/wap/"
+        },
+        "sdkConfigs": {
+            "maps": {
+                "qqmap": {
+                    "key": "IZQBZ-3UHEU-WTCVD-2464U-I5N4V-ZFFU3"
+                }
+            }
         }
     },
     "fallbackLocale" : "zh-Hans"

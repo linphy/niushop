@@ -4,8 +4,8 @@
 		<view class="diy-image-ads">
 			<view v-if="diyComponent.list.length == 1" class="leading-0 overflow-hidden" :style="swiperWarpCss">
 				<view @click="toRedirect(diyComponent.list[0].link)">
-					<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" :style="{height: imgHeight}" mode="heightFix" class="w-full" :show-menu-by-longpress="true"/>
-					<image v-else :src="img('static/resource/images/diy/figure.png')" :style="{height: imgHeight}" mode="heightFix" class="w-full" :show-menu-by-longpress="true"/>
+					<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" :style="{height: imgHeight}" mode="heightFix" class="!w-full" :show-menu-by-longpress="true"/>
+					<image v-else :src="img('static/resource/images/diy/figure.png')" :style="{height: imgHeight}" mode="heightFix" class="!w-full" :show-menu-by-longpress="true"/>
 				</view>
 			</view>
 

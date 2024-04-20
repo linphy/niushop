@@ -57,7 +57,7 @@
      * 切换语言
      */
     const switchLang = (lang) => {
-        language.loadLocaleMessages('/' + currRoute(), lang.value)
+        language.loadAllLocaleMessages('app', lang.value)
     }
 </script>
 

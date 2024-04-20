@@ -94,7 +94,7 @@ const goback=()=> {
 			delta: 1
 		});
 	}else{
-		redirect({ url: props.param.arrowLink })
+		redirect({ url: props.param.arrowLink, mode : 'redirectTo' })
 	}
 }
 </script>

@@ -23,22 +23,22 @@ const useMemberStore = defineStore('member', {
         },
         async getMemberInfo() {
             if (!this.token) return
-            await getMemberInfo()
-                .then((res : any) => {
-                    this.info = res.data
-                })
-                .catch(async () => {
-                    await this.logout()
-                })
+            await getMemberInfo().then((res: any) => {
+                this.info = res.data
+            }).catch(async () => {
+                await this.logout()
+            })
         },
         async logout(isRedirect : boolean = false) {
             if (!this.token) return
             this.token = ''
             this.info = null
             await logout().then(() => {
+				uni.removeStorageSync('pid');
                 removeToken()
                 isRedirect && redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             }).catch(() => {
+				uni.removeStorageSync('pid');
                 removeToken()
                 isRedirect && redirect({ url: '/app/pages/index/index', mode: 'switchTab' })
             })

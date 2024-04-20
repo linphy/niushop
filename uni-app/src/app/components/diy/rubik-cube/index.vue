@@ -209,6 +209,13 @@
                     }
                 }
             )
+        }else{
+            watch(
+                () => diyComponent.value,
+                (newValue, oldValue) => {
+                    refresh();
+                }
+            )
         }
 	});
 

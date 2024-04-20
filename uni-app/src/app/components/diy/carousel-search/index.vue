@@ -304,7 +304,13 @@
     })
 
     const getDiyInfoFn = (id:any) => {
-	    if(!id) return;
+	    if(!id){
+			diyPageData.pageMode = 'diy';
+			diyPageData.title = '';
+			diyPageData.global = {};
+			diyPageData.value = [];
+			return;
+		}
         getDiyInfo({
             id
         }).then((res : any) => {
@@ -611,15 +617,6 @@
 				&.active {
 					width: 36rpx;
 				}
-			}
-		}
-	}
-</style>
-<style lang="scss">
-	.child-diy-template-wrap{
-		::v-deep .diy-group {
-			>.draggable-element {
-				display: block !important;
 			}
 		}
 	}

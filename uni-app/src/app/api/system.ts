@@ -18,7 +18,7 @@ export function getWechatAuthCode(data : AnyObject) {
  * 同步微信信息
  */
 export function wechatSync(data : AnyObject) {
-    return request.post('wechat/sync', data)
+    return request.post('wechat/sync', data, { showErrorMessage: false })
 }
 
 /**
@@ -109,6 +109,14 @@ export function getAreaByCode(code: number | string) {
 }
 
 /**
+ * 通过经纬度查询地址
+ * @param params
+ */
+export function getAddressByLatlng(params : Record<string, any>) {
+    return request.get(`area/address_by_latlng`,params)
+}
+
+/**
  * 获取手机端首页列表
  */
 export function getWapIndexList(data : AnyObject) {
@@ -117,7 +125,7 @@ export function getWapIndexList(data : AnyObject) {
 
 /**
  * 获取海报
- * @returns 
+ * @returns
  */
 export function getPoster(params : Record<string, any>) {
     return request.get("poster", params)

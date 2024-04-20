@@ -5,7 +5,8 @@ import { redirect } from '@/utils/common'
 interface System {
 	site : AnyObject | null,
 	siteApps: string[],
-	siteAddons: string[]
+	siteAddons: string[],
+	currRoute: string
 }
 
 const useSystemStore = defineStore('system', {
@@ -13,7 +14,8 @@ const useSystemStore = defineStore('system', {
 		return {
 			site: null,
 			siteApps: [],
-			siteAddons: []
+			siteAddons: [],
+			currRoute: ''
 		}
 	},
 	actions: {

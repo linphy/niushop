@@ -13,6 +13,8 @@
 		// 添加初始化拦截器
 		launchInterceptor()
 
+        uni.removeStorageSync('isWatchShare')
+
 		// #ifdef H5
 		uni.getSystemInfoSync().platform == 'ios' && (uni.setStorageSync('initUrl', location.href))
 

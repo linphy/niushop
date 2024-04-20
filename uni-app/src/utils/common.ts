@@ -294,7 +294,46 @@ export function copy(value, callback) {
 		data: value,
 		success: () => {
 			typeof callback == 'function' && callback();
+		},
+		fail: (res)=>{
+			// 在隐私协议中没有声明chooseLocation:fail api作用域
+			if(res.errMsg && res.errno) {
+				if(res.errno == 104){
+				    let msg = '用户未授权隐私权限，设置剪贴板数据失败';
+				    uni.showToast({title: msg, icon: 'none'})
+				}else if(res.errno == 112){
+					let msg = '隐私协议中未声明，设置剪贴板数据失败';
+					uni.showToast({title: msg, icon: 'none'})
+				}else {
+					uni.showToast({title: res.errMsg, icon: 'none'})
+				}
+			}
 		}
 	});
 	// #endif
+}
+
+/**
+ * 处理onLoad传递的参数
+ * @param option
+ */
+export function handleOnloadParams(option:any) {
+	let params: any = {};
+
+	// 处理小程序扫码进入的场景值参数
+	if (option.scene) {
+		var sceneParams = decodeURIComponent(option.scene).split('&');
+		if (sceneParams.length) {
+			sceneParams.forEach(item => {
+				let arr = item.split('-');
+				params[arr[0]] = arr[1];
+				if(arr[0] == 'mid'){
+					uni.setStorageSync('pid', arr[1])
+				}
+			});
+		}
+	} else {
+		params = option;
+	}
+	return params;
 }

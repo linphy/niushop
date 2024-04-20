@@ -203,6 +203,7 @@
 
             register(formData).then((res: responseResult) => {
                 memberStore.setToken(res.data.token)
+				uni.removeStorageSync('pid');
                 useLogin().handleLoginBack()
             }).catch(() => {
                 loading.value = false

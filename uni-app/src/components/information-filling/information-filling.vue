@@ -8,23 +8,20 @@
 			<view class="mx-[30rpx]">
 				<view class="mt-[20rpx]">
 					<u-form-item :label="t('headimg')" prop="headimg" :border-bottom="true">
-						<button class="m-0 my-[10rpx] p-0 w-[140rpx] h-[140rpx]" open-type="chooseAvatar"
-							@chooseavatar="onChooseAvatar">
+						<button class="m-0 my-[10rpx] p-0 w-[140rpx] h-[140rpx]" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
 							<view class="w-full h-full flex items-center justify-center overflow-hidden">
-								<u-image :src="img(formData.headimg)" width="140rpx" v-if="formData.headimg"></u-image>
+								<u-image :src="img(formData.headimg)" width="140rpx" v-if="formData.headimg" mode="aspectFill"></u-image>
 								<u-icon name="plus" v-else></u-icon>
 							</view>
 						</button>
 					</u-form-item>
 					<u-form-item :label=" t('nickname')" prop="nickname" :border-bottom="true">
-						<input type="nickname" v-model="formData.nickname" :placeholder="t('nicknamePlaceholder')"
-							@blur="bindNickname">
+						<input type="nickname" v-model="formData.nickname" :placeholder="t('nicknamePlaceholder')" @blur="bindNickname">
 					</u-form-item>
 				</view>
 			</view>
 			<view class="p-[30rpx] mt-[20rpx]">
-				<u-button type="primary" :loading="loading" :text="t('confirm')" shape="circle"
-					@click="confirm"></u-button>
+				<u-button type="primary" :loading="loading" :text="t('confirm')" shape="circle" @click="confirm"></u-button>
 			</view>
 		</u-form>
 	</u-popup>

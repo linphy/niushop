@@ -1,5 +1,7 @@
 import i18n, { language } from "./i18n"
+import useSystemStore from '@/stores/system'
 import { currRoute } from '@/utils/common'
+
 const t = (message: string) => {
     const route = currRoute()
     const file = language.getFileKey(`/${route}`)

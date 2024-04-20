@@ -9,6 +9,7 @@ let i18n = createI18n({
     locale: uni.getLocale(),
     globalInjection: true, //是否全局注入
     silentFallbackWarn: true,
+    silentTranslationWarn: true,
     messages: {
         'zh-Hans': zhHans,
         en

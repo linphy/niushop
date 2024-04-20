@@ -30,7 +30,6 @@
 	import { onLoad, onShow, onPullDownRefresh, onPageScroll } from '@dcloudio/uni-app'
 	import { getDiyInfo } from '@/app/api/diy'
 	import useDiyStore from '@/app/stores/diy'
-	import useMemberStore from '@/stores/member'
 	import { img,redirect } from '@/utils/common';
     import diyGroup from '@/addon/components/diy/group/index.vue'
     import fixedGroup from '@/addon/components/fixed/group/index.vue'
@@ -108,7 +107,7 @@
 						return item && item.position && item.position == 'top_fixed'
 					})
 					uni.setNavigationBarTitle({
-						title: diyData.global.title
+						title: diyData.title
 					})
 				}else if (data.page) {
                     // 跳转到设置的个人中心
@@ -117,7 +116,6 @@
 				loading.value = false;
 			});
 		}
-		useMemberStore().getMemberInfo()
 	});
 
     const pageStyle = computed(()=>{
@@ -144,7 +142,8 @@
     })
 
     onPageScroll((e)=>{
-        diyStore.scrollTop = e.scrollTop;
+		if(e.scrollTop > 0)
+			diyStore.scrollTop = e.scrollTop;
     })
 </script>
 
@@ -158,5 +157,21 @@
 				display: none;
 			}
 		}
+		/* #ifdef MP */
+		.child-diy-template-wrap {
+			::v-deep .diy-group {
+				> .draggable-element.top-fixed-diy {
+					display: block !important;
+				}
+			}
+		}
+		/* #endif */
+		/* #ifdef H5 */ 
+		:deep(.child-diy-template-wrap) {
+			.diy-group .draggable-element.top-fixed-diy{
+				display: block;
+			}
+		}
+		/* #endif */
 	}
 </style>
