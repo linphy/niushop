@@ -7,7 +7,7 @@ CREATE TABLE `account_log` (
   `trade_no` varchar(255) NOT NULL DEFAULT '' COMMENT '对应类型交易单号',
   `create_time` varchar(255) NOT NULL DEFAULT '0' COMMENT '添加时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='站点账单记录';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='站点账单记录';
 
 DROP TABLE IF EXISTS `addon`;
 CREATE TABLE `addon` (
@@ -28,7 +28,7 @@ CREATE TABLE `addon` (
   `is_star` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否加星',
   `compile` varchar(2000) NOT NULL DEFAULT '' COMMENT '编译端口',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='插件表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='插件表';
 
 DROP TABLE IF EXISTS `addon_log`;
 CREATE TABLE `addon_log` (
@@ -39,7 +39,7 @@ CREATE TABLE `addon_log` (
   `to_version` varchar(20) NOT NULL DEFAULT '' COMMENT '升级后的版本号',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='插件日志表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='插件日志表';
 
 DROP TABLE IF EXISTS `applet_site_version`;
 CREATE TABLE `applet_site_version` (
@@ -49,7 +49,7 @@ CREATE TABLE `applet_site_version` (
   `action` varchar(20) NOT NULL DEFAULT '' COMMENT '操作方式 download 下载  upgrade 更新',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='站点小程序版本表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='站点小程序版本表';
 
 DROP TABLE IF EXISTS `applet_version`;
 CREATE TABLE `applet_version` (
@@ -67,7 +67,7 @@ CREATE TABLE `applet_version` (
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序版本表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='小程序版本表';
 
 DROP TABLE IF EXISTS `diy_page`;
 CREATE TABLE `diy_page` (
@@ -85,7 +85,7 @@ CREATE TABLE `diy_page` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自定义页面';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='自定义页面';
 
 DROP TABLE IF EXISTS `diy_route`;
 CREATE TABLE `diy_route` (
@@ -97,7 +97,7 @@ CREATE TABLE `diy_route` (
   `is_share` int(11) NOT NULL DEFAULT '0' COMMENT '是否支持分享',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自定义路由';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='自定义路由';
 
 DROP TABLE IF EXISTS `generate_column`;
 CREATE TABLE `generate_column` (
@@ -126,7 +126,7 @@ CREATE TABLE `generate_column` (
   `is_order` tinyint(4) DEFAULT '0' COMMENT '是否为排序字段 0-不是 1-是',
   `validate_type` varchar(255) DEFAULT '' COMMENT '验证类型',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='代码生成表字段信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='代码生成表字段信息表';
 
 DROP TABLE IF EXISTS `generate_table`;
 CREATE TABLE `generate_table` (
@@ -143,7 +143,7 @@ CREATE TABLE `generate_table` (
   `relations` text COMMENT '关联配置',
   `synchronous_number` int(11) NOT NULL DEFAULT '0' COMMENT '同步次数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='代码生成表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='代码生成表';
 
 DROP TABLE IF EXISTS `jobs`;
 CREATE TABLE `jobs` (
@@ -156,7 +156,7 @@ CREATE TABLE `jobs` (
   `create_time` int(10) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `queue` (`queue`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息队列任务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='消息队列任务表';
 
 DROP TABLE IF EXISTS `jobs_failed`;
 CREATE TABLE `jobs_failed` (
@@ -167,7 +167,7 @@ CREATE TABLE `jobs_failed` (
   `exception` longtext NOT NULL,
   `fail_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息队列任务失败记录表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='消息队列任务失败记录表';
 
 DROP TABLE IF EXISTS `member`;
 CREATE TABLE `member` (
@@ -228,7 +228,7 @@ CREATE TABLE `member` (
   KEY `weapp_openid` (`weapp_openid`),
   KEY `wx_openid` (`wx_openid`),
   KEY `wx_unionid` (`wx_unionid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员表';
 
 DROP TABLE IF EXISTS `member_account_log`;
 CREATE TABLE `member_account_log` (
@@ -246,7 +246,7 @@ CREATE TABLE `member_account_log` (
   KEY `create_time` (`create_time`),
   KEY `from_type` (`from_type`),
   KEY `member_id` (`member_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员账单表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员账单表';
 
 DROP TABLE IF EXISTS `member_address`;
 CREATE TABLE `member_address` (
@@ -266,7 +266,7 @@ CREATE TABLE `member_address` (
   `type` varchar(30) NOT NULL DEFAULT '' COMMENT '地址类型  address 普通地址  location_address 定位地址',
   PRIMARY KEY (`id`),
   KEY `IDX_member_address` (`member_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员收货地址';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员收货地址';
 
 DROP TABLE IF EXISTS `member_cash_out`;
 CREATE TABLE `member_cash_out` (
@@ -300,7 +300,7 @@ CREATE TABLE `member_cash_out` (
   KEY `member_withdraw_audit_time` (`audit_time`),
   KEY `member_withdraw_status` (`status`),
   KEY `member_withdraw_withdraw_no` (`cash_out_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员提现表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员提现表';
 
 DROP TABLE IF EXISTS `member_cash_out_account`;
 CREATE TABLE `member_cash_out_account` (
@@ -313,7 +313,7 @@ CREATE TABLE `member_cash_out_account` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   `account_no` varchar(255) NOT NULL DEFAULT '' COMMENT '提现账户',
   PRIMARY KEY (`account_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员提现账户';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员提现账户';
 
 DROP TABLE IF EXISTS `member_label`;
 CREATE TABLE `member_label` (
@@ -326,7 +326,7 @@ CREATE TABLE `member_label` (
   PRIMARY KEY (`label_id`),
   KEY `label_id` (`label_id`),
   KEY `sort` (`sort`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员标签';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员标签';
 
 DROP TABLE IF EXISTS `member_level`;
 CREATE TABLE `member_level` (
@@ -339,7 +339,7 @@ CREATE TABLE `member_level` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`level_id`),
   KEY `status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员等级';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员等级';
 
 DROP TABLE IF EXISTS `pay`;
 CREATE TABLE `pay` (
@@ -363,7 +363,7 @@ CREATE TABLE `pay` (
   `channel` varchar(50) NOT NULL DEFAULT '' COMMENT '支付渠道',
   `fail_reason` varchar(255) NOT NULL DEFAULT '' COMMENT '失败原因',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付记录表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='支付记录表';
 
 DROP TABLE IF EXISTS `pay_channel`;
 CREATE TABLE `pay_channel` (
@@ -376,7 +376,7 @@ CREATE TABLE `pay_channel` (
   `status` int(11) NOT NULL DEFAULT '0' COMMENT '是否启用',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道配置表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='支付渠道配置表';
 
 DROP TABLE IF EXISTS `pay_refund`;
 CREATE TABLE `pay_refund` (
@@ -400,7 +400,7 @@ CREATE TABLE `pay_refund` (
   `main_id` int(11) NOT NULL DEFAULT '0' COMMENT '操作人',
   `pay_refund_no` varchar(255) NOT NULL DEFAULT '' COMMENT '外部支付方式的退款单号',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付记录表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='支付记录表';
 
 DROP TABLE IF EXISTS `pay_transfer`;
 CREATE TABLE `pay_transfer` (
@@ -429,7 +429,7 @@ CREATE TABLE `pay_transfer` (
   KEY `member_withdraw_apply_time` (`create_time`),
   KEY `member_withdraw_audit_time` (`transfer_time`),
   KEY `member_withdraw_status` (`transfer_status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='转账表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='转账表';
 
 DROP TABLE IF EXISTS `sys_agreement`;
 CREATE TABLE `sys_agreement` (
@@ -441,7 +441,7 @@ CREATE TABLE `sys_agreement` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   PRIMARY KEY (`id`),
   KEY `agreement_key` (`agreement_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='协议表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='协议表';
 
 DROP TABLE IF EXISTS `sys_area`;
 CREATE TABLE `sys_area` (
@@ -4124,7 +4124,7 @@ CREATE TABLE `sys_attachment` (
   PRIMARY KEY (`att_id`),
   KEY `cate_id` (`cate_id`),
   KEY `create_time` (`create_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='附件管理表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='附件管理表';
 
 DROP TABLE IF EXISTS `sys_attachment_category`;
 CREATE TABLE `sys_attachment_category` (
@@ -4137,7 +4137,7 @@ CREATE TABLE `sys_attachment_category` (
   PRIMARY KEY (`id`),
   KEY `pid` (`pid`),
   KEY `sort` (`sort`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='附件分类表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='附件分类表';
 
 DROP TABLE IF EXISTS `sys_config`;
 CREATE TABLE `sys_config` (
@@ -4150,7 +4150,7 @@ CREATE TABLE `sys_config` (
   `addon` varchar(255) NOT NULL DEFAULT '' COMMENT '所属插件',
   PRIMARY KEY (`id`),
   KEY `config_key` (`config_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='系统配置表';
 
 DROP TABLE IF EXISTS `sys_cron_task`;
 CREATE TABLE `sys_cron_task` (
@@ -4171,7 +4171,7 @@ CREATE TABLE `sys_cron_task` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=' 系统任务';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT=' 系统任务';
 
 DROP TABLE IF EXISTS `sys_dict`;
 CREATE TABLE `sys_dict` (
@@ -4183,7 +4183,7 @@ CREATE TABLE `sys_dict` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据字典表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='数据字典表';
 
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu` (
@@ -4211,7 +4211,7 @@ CREATE TABLE `sys_menu` (
   KEY `is_show` (`is_show`),
   KEY `menu_key` (`menu_key`,`app_type`),
   KEY `parent_key` (`parent_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='菜单表';
 
 DROP TABLE IF EXISTS `sys_notice`;
 CREATE TABLE `sys_notice` (
@@ -4229,7 +4229,7 @@ CREATE TABLE `sys_notice` (
   `wechat_remark` varchar(255) NOT NULL DEFAULT '' COMMENT '微信说明',
   PRIMARY KEY (`id`),
   KEY `message_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知模型';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='通知模型';
 
 DROP TABLE IF EXISTS `sys_notice_log`;
 CREATE TABLE `sys_notice_log` (
@@ -4251,7 +4251,7 @@ CREATE TABLE `sys_notice_log` (
   KEY `member_id` (`member_id`),
   KEY `message_key` (`key`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知记录表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='通知记录表';
 
 DROP TABLE IF EXISTS `sys_notice_sms_log`;
 CREATE TABLE `sys_notice_sms_log` (
@@ -4269,7 +4269,7 @@ CREATE TABLE `sys_notice_sms_log` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='短信发送表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='短信发送表';
 
 DROP TABLE IF EXISTS `sys_poster`;
 CREATE TABLE `sys_poster` (
@@ -4283,7 +4283,7 @@ CREATE TABLE `sys_poster` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   `addon` varchar(255) NOT NULL DEFAULT '' COMMENT '所属插件',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='海报表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='海报表';
 
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role` (
@@ -4296,7 +4296,7 @@ CREATE TABLE `sys_role` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '最后修改时间',
   PRIMARY KEY (`role_id`),
   KEY `status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='角色表';
 
 DROP TABLE IF EXISTS `sys_schedule`;
 CREATE TABLE `sys_schedule` (
@@ -4313,7 +4313,7 @@ CREATE TABLE `sys_schedule` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统任务';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='系统任务';
 
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user` (
@@ -4356,7 +4356,7 @@ CREATE TABLE `sys_user_log` (
   PRIMARY KEY (`id`),
   KEY `create_time` (`create_time`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理员操作记录表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='管理员操作记录表';
 
 DROP TABLE IF EXISTS `sys_user_role`;
 CREATE TABLE `sys_user_role` (
@@ -4385,7 +4385,7 @@ CREATE TABLE `weapp_version` (
   `fail_reason` text,
   `task_key` varchar(20) NOT NULL DEFAULT '' COMMENT '上传任务key',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `wechat_fans`;
 CREATE TABLE `wechat_fans` (
@@ -4411,7 +4411,7 @@ CREATE TABLE `wechat_fans` (
   PRIMARY KEY (`fans_id`),
   KEY `openid` (`openid`),
   KEY `unionid` (`unionid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='微信粉丝列表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='微信粉丝列表';
 
 DROP TABLE IF EXISTS `wechat_media`;
 CREATE TABLE `wechat_media` (
@@ -4423,7 +4423,7 @@ CREATE TABLE `wechat_media` (
   `media_id` varchar(70) NOT NULL DEFAULT '0' COMMENT '微信端返回的素材id',
   PRIMARY KEY (`id`),
   KEY `type` (`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='微信素材表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='微信素材表';
 
 DROP TABLE IF EXISTS `wechat_reply`;
 CREATE TABLE `wechat_reply` (
@@ -4440,4 +4440,4 @@ CREATE TABLE `wechat_reply` (
   `reply_method` varchar(50) NOT NULL DEFAULT '' COMMENT '回复方式 all 全部 rand随机',
   PRIMARY KEY (`id`),
   KEY `keyword` (`keyword`,`reply_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公众号消息回调表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='公众号消息回调表';
