@@ -59,13 +59,20 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 
 ### 操作指南
  [NIUSHOP官网地址](https://www.niushop.com)
- | [NIUCLOIUD官网地址](https://www.niucloud.com)
+ | [NIUCLOUD官网地址](https://www.niucloud.com)
  | [服务市场](https://www.niucloud.com)
  | [使用手册](https://www.niucloud.com/doc)
  | [二开手册](https://www.niucloud.com/doc)
  | [开发视频](https://www.niucloud.com/doc)
  | [API接口手册](https://api.niucloud.com/apidoc.html?target_id=001)
  | [论坛地址](https://bbs.niucloud.com)
+
+### V6安装教程
+
+ -[安装指引说明](https://www.kancloud.cn/niushop/niushop_v6/3224842)
+ -[宝塔安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226724)
+ -[PHPStudy安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226728)
+
 
 ### 二次开发视频教程
 
