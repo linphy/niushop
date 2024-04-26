@@ -69,9 +69,9 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 
 ### V6安装教程
 
- -[安装指引说明](https://www.kancloud.cn/niushop/niushop_v6/3224842)
- -[宝塔安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226724)
- -[PHPStudy安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226728)
+ - [安装指引说明](https://www.kancloud.cn/niushop/niushop_v6/3224842)
+ - [宝塔安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226724)
+ - [PHPStudy安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226728)
 
 
 ### 二次开发视频教程
