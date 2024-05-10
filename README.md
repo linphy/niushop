@@ -1,7 +1,8 @@
 ![输入图片说明](https://media.niucloud.com/1712133019020249f332e83457a01a6799472e0495_aliyun.png)
 
 
- :fa-quote-left: 如果觉得不错，帮我们右上角点个 ⭐ Star，这将是对我们极大的鼓励与支持 :fa-quote-right: 
+ :fa-quote-left:  如果对您有帮助，您可以点右上角 ⭐“Star” 收藏一下 ，获取第一时间更新，谢谢！ :fa-quote-right: 
+
 
 ### NIUSHOP 开源商城 V6 技术选型
 NIUSHOP V6 使用  **NIUCLOUD-ADMIN**  底层框架设计， 国内首家唯一支持TP8框架 ，前端采用市面最流行的技术栈  **Vite+TypeScript+Vue3+ElementPlus** ，后端采用 **THINKPHP8、PHP8** 语言搭建。配合 **Workman** 高性能框架实现消息队列，计划任务处理。内置集成用户权限、代码生成器、表单设计、云存储、短信发送、素材中心、微信及公众号、支付、模版消息推送Api模块一系列开箱即用功能，这是一款快速可以开发企业级应用的软件系统。
@@ -55,17 +56,26 @@ NIUCLOUD-ADMIN是一款快速开发通用管理后台框架，整体功能架构
 ### 界面截图  :point_right: 
 ![输入图片说明](https://media.niucloud.com/1712132244c781785a8822b281c8d03f10134c9f97_aliyun.png)
 ![输入图片说明](https://media.niucloud.com/17121362221b4f7f3c15be7077a4fb351a829f1b35_aliyun.png)
+![输入图片说明](https://res.niushop.com/upload/1/evaluate_img/20240506/20240506092553171495875320580.png)
+![输入图片说明](https://res.niushop.com/upload/1/evaluate_img/20240506/20240506092640171495880060062.png)
 
 
 ### 操作指南
  [NIUSHOP官网地址](https://www.niushop.com)
- | [NIUCLOIUD官网地址](https://www.niucloud.com)
+ | [NIUCLOUD官网地址](https://www.niucloud.com)
  | [服务市场](https://www.niucloud.com)
  | [使用手册](https://www.niucloud.com/doc)
  | [二开手册](https://www.niucloud.com/doc)
  | [开发视频](https://www.niucloud.com/doc)
  | [API接口手册](https://api.niucloud.com/apidoc.html?target_id=001)
  | [论坛地址](https://bbs.niucloud.com)
+
+### V6安装教程
+
+ - [安装指引说明](https://www.kancloud.cn/niushop/niushop_v6/3224842)
+ - [宝塔安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226724)
+ - [PHPStudy安装部署V6](https://www.kancloud.cn/niushop/niushop_v6/3226728)
+
 
 ### 二次开发视频教程
 
