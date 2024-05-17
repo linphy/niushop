@@ -137,7 +137,7 @@ class CoreCloudBuildService extends BaseCoreService
                     'filename' => 'build.zip'
                 ]
             ],
-            'timeout' => 0
+            'timeout' => 300
         ]);
         if (isset($response['code']) && $response['code'] == 0) throw new CommonException($response['msg']);
 
@@ -201,7 +201,7 @@ class CoreCloudBuildService extends BaseCoreService
                     'filename' => 'build.zip'
                 ]
             ],
-            'timeout' => 0
+            'timeout' => 300
         ]);
         if (isset($response['code']) && $response['code'] == 0) throw new CommonException($response['msg']);
 
