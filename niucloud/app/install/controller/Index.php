@@ -11,7 +11,6 @@ use app\service\core\addon\CoreAddonService;
 use app\service\core\schedule\CoreScheduleInstallService;
 use Exception;
 use think\facade\Cache;
-use think\facade\Db;
 use think\facade\View;
 use think\Response;
 

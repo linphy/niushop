@@ -78,9 +78,10 @@ class WechatAuthService extends BaseApiService
             $nickname = $userinfo->getNickname();//对应微信的 nickname
             $avatar = $userinfo->getAvatar();//对应微信的 头像地址
         }
+        $unionid = $userinfo->getRaw()['unionid'] ?? '';
         if (empty($openid)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
         //todo 这儿还可能会获取用户昵称 头像  性别 ....用以更新会员信息
-        return [$avatar ?? '', $nickname ?? '', $openid];
+        return [$avatar ?? '', $nickname ?? '', $openid, $unionid];
         //todo  业务落地
     }
 
@@ -93,8 +94,8 @@ class WechatAuthService extends BaseApiService
      * @throws ModelNotFoundException
      */
     public function loginByCode(string $code){
-        [$avatar, $nickname, $openid] = $this->userFromCode($code);
-        return $this->login($openid, $nickname, $avatar);
+        [$avatar, $nickname, $openid, $unionid] = $this->userFromCode($code);
+        return $this->login($openid, $nickname, $avatar, $unionid);
     }
 
     /**
@@ -107,19 +108,25 @@ class WechatAuthService extends BaseApiService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function login(string $openid, string $nickname = '', string $avatar = '')
+    public function login(string $openid, string $nickname = '', string $avatar = '', string $unionid = '')
     {
 
         $member_service = new MemberService();
         $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
+        if ($member_info->isEmpty() && !empty($unionid)) {
+            $member_info = $member_service->findMemberInfo(['wx_unionid' => $unionid]);
+            if (!$member_info->isEmpty()) {
+                $member_info->wx_openid = $openid;
+            }
+        }
         if ($member_info->isEmpty()) {
             $config = (new MemberConfigService())->getLoginConfig();
             $is_bind_mobile = $config['is_bind_mobile'];
             $is_auth_register = $config['is_auth_register'];
             if ($is_bind_mobile == 0 && $is_auth_register == 1) {
-                return $this->register($openid, '', $nickname, $avatar);
+                return $this->register($openid, '', $nickname, $avatar, $unionid);
             } else {
-                return ['avatar' => $avatar, 'nickname' => $nickname, 'openid' => $openid];
+                return ['avatar' => $avatar, 'nickname' => $nickname, 'openid' => $openid, 'unionid' => $unionid];
             }
         } else {
             //可能会更新用户和粉丝表
@@ -158,17 +165,22 @@ class WechatAuthService extends BaseApiService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function register(string $openid, string $mobile = '', string $nickname = '', string $avatar = '')
+    public function register(string $openid, string $mobile = '', string $nickname = '', string $avatar = '', string $wx_unionid = '')
     {
         $member_service = new MemberService();
         $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
+        if (!empty($wx_unionid)) {
+            $member_info = $member_service->findMemberInfo(['wx_unionid' => $wx_unionid]);
+            if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
+        }
         $register_service = new RegisterService();
         return $register_service->register($mobile,
             [
                 'wx_openid' => $openid,
                 'nickname' => $nickname,
-                'headimg' => $avatar
+                'headimg' => $avatar,
+                'wx_unionid' => $wx_unionid
             ],
             MemberRegisterTypeDict::WECHAT
         );
@@ -195,9 +207,8 @@ class WechatAuthService extends BaseApiService
         $data = array(
             'channel' => $this->channel,
         );
-
         $key = (new  CoreScanService())->scan(ScanDict::WECHAT_LOGIN, $data, 300);
-        $url = $this->core_wechat_serve_service->scan($key, 300);
+        $url = $this->core_wechat_serve_service->scan($key, 300)['url'] ?? '';
         return [
             'url' => $url,
             'key' => $key

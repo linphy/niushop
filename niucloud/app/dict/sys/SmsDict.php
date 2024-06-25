@@ -38,7 +38,7 @@ class SmsDict
 
     public static function getType()
     {
-        return [
+        $system = [
             self::ALISMS => [
                 'name' => '阿里云短信',
                 //配置参数
@@ -46,7 +46,8 @@ class SmsDict
                     'sign' => '短信签名',
                     'app_key' => 'APP_KEY',
                     'secret_key' => 'SECRET_KEY'
-                ]
+                ],
+                'component' => '/src/app/views/setting/components/sms-ali.vue',
             ],
             self::TENCENTSMS => [
                 'name' => '腾讯云短信',
@@ -56,10 +57,12 @@ class SmsDict
                     'app_id' => 'APP_ID',
                     'secret_id' => 'SECRET_ID',
                     'secret_key' => 'SECRET_KEY'
-                ]
+                ],
+                'component' => '/src/app/views/setting/components/sms-tencent.vue',
             ],
-
         ];
+        $extend = event('SmsType');
+        return array_merge($system, ...$extend);
     }
 
     //支持的短信场景

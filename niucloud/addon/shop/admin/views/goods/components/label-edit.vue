@@ -5,12 +5,11 @@
                 <el-form-item :label="t('labelName')" prop="label_name">
                     <el-input v-model.trim="formData.label_name" clearable :placeholder="t('labelNamePlaceholder')" class="input-width" maxlength="20" />
                 </el-form-item>
-
                 <el-form-item :label="t('memo')" >
                     <el-input v-model.trim="formData.memo" type="textarea" clearable :placeholder="t('memoPlaceholder')" class="input-width" maxlength="200"/>
                 </el-form-item>
                 <el-form-item :label="t('sort')" >
-                    <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" @blur="formData.sort = $event.target.value"/>
+                    <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" maxlength="6" show-word-limit @blur="formData.sort = $event.target.value"/>
                 </el-form-item>
         </el-form>
 
@@ -43,7 +42,6 @@ const initialFormData = {
     label_name: '',
     memo: '',
     sort: ''
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 

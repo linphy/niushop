@@ -86,61 +86,8 @@ class Goods extends BaseAdminController
             [ 'supplier_id', 0 ],
             [ "status", 0 ],
             [ "sort", 0 ],
-
-            // 规格类型，single：单规格，multi：多规格
-            [ 'spec_type', '' ],
-
-            // 单规格数据
-            [ "price", 0 ],
-            [ "market_price", 0 ],
-            [ "cost_price", 0 ],
-            [ "price", 0 ],
-            [ "weight", 0 ],
-            [ "volume", 0 ],
-            [ "stock", 0 ],
-            [ "sku_no", '' ],
-            [ "unit", "件" ],
-            [ "virtual_sale_num", 0 ],
-
-            // 多规格数据
-            [ 'goods_spec_format', '' ],
-            [ 'goods_sku_data', '' ],
-
-            // 配送设置
-            [ "delivery_type", "" ],
-            [ "is_free_shipping", 0 ],
-            [ 'fee_type', '' ],
-            [ 'delivery_money', 0 ],
-            [ "delivery_template_id", 0 ],
-
-            // 商品详情
-            [ "goods_desc", "" , false],
-        ]);
-
-        $this->validate($data, 'addon\shop\app\validate\goods\Goods.add');
-        $id = ( new GoodsService() )->add($data);
-        return success('ADD_SUCCESS', [ 'id' => $id ]);
-    }
-
-    /**
-     * 商品编辑
-     * @param $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        $data = $this->request->params([
-            [ "goods_name", "" ],
-            [ "sub_title", "" ],
-            [ "goods_type", "" ],
-            [ "goods_image", "" ],
-            [ "goods_category", '' ],
-            [ "brand_id", 0 ],
-            [ "label_ids", "" ],
-            [ 'service_ids', '' ],
-            [ 'supplier_id', 0 ],
-            [ "status", 0 ],
-            [ "sort", 0 ],
+            [ 'attr_id', 0 ],
+            [ 'attr_format', '' ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],
@@ -170,6 +117,70 @@ class Goods extends BaseAdminController
 
             // 商品详情
             [ "goods_desc", "", false ],
+
+            [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
+            [ 'poster_id', 0 ] // 海报id
+        ]);
+
+        $this->validate($data, 'addon\shop\app\validate\goods\Goods.add');
+        $id = ( new GoodsService() )->add($data);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
+    }
+
+    /**
+     * 商品编辑
+     * @param $id
+     * @return \think\Response
+     */
+    public function edit($id)
+    {
+        $data = $this->request->params([
+            [ "goods_name", "" ],
+            [ "sub_title", "" ],
+            [ "goods_type", "" ],
+            [ "goods_image", "" ],
+            [ "goods_category", '' ],
+            [ "brand_id", 0 ],
+            [ "label_ids", "" ],
+            [ 'service_ids', '' ],
+            [ 'supplier_id', 0 ],
+            [ "status", 0 ],
+            [ "sort", 0 ],
+            [ 'attr_id', 0 ],
+            [ 'attr_format', '' ],
+
+            // 规格类型，single：单规格，multi：多规格
+            [ 'spec_type', '' ],
+
+            // 单规格数据
+            [ "price", 0 ],
+            [ "market_price", 0 ],
+            [ "cost_price", 0 ],
+            [ "price", 0 ],
+            [ "weight", 0 ],
+            [ "volume", 0 ],
+            [ "stock", 0 ],
+            [ "sku_no", '' ],
+            [ "unit", "件" ],
+            [ "virtual_sale_num", 0 ],
+
+            // 多规格数据
+            [ 'goods_spec_format', '' ],
+            [ 'goods_sku_data', '' ],
+
+            // 配送设置
+            [ "delivery_type", "" ],
+            [ "is_free_shipping", 0 ],
+            [ 'fee_type', '' ],
+            [ 'delivery_money', 0 ],
+            [ "delivery_template_id", 0 ],
+
+            // 商品详情
+            [ "goods_desc", "", false ],
+
+            [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
+
+            [ 'poster_id', 0 ] // 海报id
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.edit');
         $res = ( new GoodsService() )->edit($id, $data);
@@ -284,6 +295,23 @@ class Goods extends BaseAdminController
     }
 
     /**
+     * 商品选择分页列表(带sku)
+     * @return \think\Response
+     */
+    public function selectgoodssku()
+    {
+        $data = $this->request->params([
+            [ 'keyword', '' ], // 搜索关键词
+            [ "goods_category", "" ], // 商品分类
+            [ "goods_type", "" ], // 商品分类
+            [ 'goods_ids', '' ], // 已选商品id集合
+            [ 'verify_goods_ids', '' ] // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
+        ]);
+
+        return success(( new GoodsService() )->getSelectSku($data));
+    }
+
+    /**
      * 查询商品SKU规格列表
      * @return \think\Response
      */
@@ -311,7 +339,7 @@ class Goods extends BaseAdminController
     }
 
     /**
-     * 编辑商品规格列表库存
+     * 编辑商品规格列表价格
      * @return \think\Response
      */
     public function editGoodsListPrice()
@@ -322,6 +350,34 @@ class Goods extends BaseAdminController
         ]);
         ( new GoodsService() )->editGoodsListPrice($data);
         return success('EDIT_SUCCESS');
+    }
+
+    /**
+     * 编辑商品规格列表会员价格
+     * @return \think\Response
+     */
+    public function editGoodsListMemberPrice()
+    {
+        $data = $this->request->params([
+            [ 'goods_id', 0 ],
+            [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
+            [ 'sku_list', '' ]
+        ]);
+        ( new GoodsService() )->editGoodsListMemberPrice($data);
+        return success('EDIT_SUCCESS');
+    }
+
+    /**
+     * 查询商品参与营销活动的数量
+     * @return \think\Response
+     */
+    public function getActiveGoodsCount()
+    {
+        $data = $this->request->params([
+            [ 'goods_id', '' ]
+        ]);
+
+        return success(data: ( new GoodsService() )->getActiveGoodsCount($data[ 'goods_id' ]));
     }
 
 }

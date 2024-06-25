@@ -9,7 +9,9 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-return [
+use core\dict\DictLoader;
+
+$system = [
     //默认驱动
     'default' => 'wechatpay',
     //驱动
@@ -27,3 +29,5 @@ return [
         ]
     ]
 ];
+
+return (new DictLoader("Config"))->load(['data' => $system, 'name' => 'pay']);

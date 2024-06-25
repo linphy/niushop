@@ -46,7 +46,7 @@ class OrderRefundDict
     const APPLY = 1;//退货退款
     const ACTIVE_REFUND = 2;
     const APPLY_ACTION = 'apply';//申请退款
-    const EDIT_APPLY_ACTION = 'edit_apply';//主动退款
+    const EDIT_APPLY_ACTION = 'edit_apply';//修改退款
     const DELIVERY_ACTION = 'delivery';
     const EDIT_DELIVERY_ACTION = 'edit_delivery';
     const AGREE_AUDIT_APPLY_ACTION = 'agree_audit_apply';//买家申请退款
@@ -134,6 +134,7 @@ class OrderRefundDict
     {
         $data = [
             self::APPLY_ACTION => get_lang('dict_shop_order_refund_action.apply'),
+            self::EDIT_APPLY_ACTION  => get_lang('dict_shop_order_refund_action.edit_apply'),
             self::CLOSE_ACTION => get_lang('dict_shop_order_refund_action.close'),
             self::DELIVERY_ACTION => get_lang('dict_shop_order_refund_action.delivery'),
             self::EDIT_DELIVERY_ACTION => get_lang('dict_shop_order_refund_action.edit_delivery'),

@@ -1,4 +1,5 @@
 import TransformCoordinate from './transformCoordinate.js'
+import useConfigStore from "@/stores/config";
 
 function openMapByDefault(latitude, longitude, name) {
 	uni.openLocation({
@@ -7,7 +8,8 @@ function openMapByDefault(latitude, longitude, name) {
 		name: name,
 		fail: (e) => {
 			uni.showModal({
-				content: '打开地图失败，请稍后重试'
+				content: '打开地图失败，请稍后重试',
+				confirmColor: useConfigStore().themeColor['--primary-color'],
 			})
 		},
 	})
@@ -58,7 +60,8 @@ function openURL(url, identity) {
 	let newurl = encodeURI(url);
 	plus.runtime.openURL(newurl, function(res) {
 		uni.showModal({
-			content: res.message
+			content: res.message,
+			confirmColor: useConfigStore().themeColor['--primary-color'],
 		})
 	}, identity);
 }

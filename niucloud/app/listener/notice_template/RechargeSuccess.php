@@ -3,7 +3,7 @@
 namespace app\listener\notice_template;
 
 use app\service\core\member\CoreMemberService;
-use app\service\core\order\recharge\CoreRechargeOrderService;
+use addon\recharge\app\service\core\CoreRechargeOrderService;
 
 class RechargeSuccess extends BaseNoticeTemplate
 {

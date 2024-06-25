@@ -57,6 +57,8 @@ Route::group('pay', function () {
     Route::get('refund/type', 'pay.PayRefund/getRefundType');
     //退款转账
     Route::post('refund/transfer', 'pay.PayRefund/transfer');
+    // 获取全部支付方式
+    Route::get('type/all', 'pay.PayChannel/getPayTypeList');
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

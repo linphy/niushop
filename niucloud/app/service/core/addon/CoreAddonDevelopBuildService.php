@@ -92,19 +92,69 @@ class CoreAddonDevelopBuildService extends BaseCoreService
         $field = 'menu_name,menu_key,menu_short_name,parent_key,menu_type,icon,api_url,router_path,view_path,methods,sort,status,is_show';
         $menu = (new SysMenu())->where($where)->field($field)->order('sort', 'desc')->select()->toArray();
         if (!empty($menu)) {
-            $menu = (new MenuService())->menuToTree($menu, 'menu_key', 'parent_key', 'children');
+            $menu = $this->menuToTree($menu, 'menu_key', 'parent_key', 'children');
             (new SysMenu())->where($where)->update(['source' => MenuDict::SYSTEM]);
         }
 
         $addon_dict = $this->addon_path . 'app' . DIRECTORY_SEPARATOR . 'dict' . DIRECTORY_SEPARATOR . 'menu' . DIRECTORY_SEPARATOR . $app_type . '.php';
 
+        $delete = [];
+        if (file_exists($addon_dict)) {
+            $menus = include $addon_dict;
+            $delete = $menus['delete'] ?? [];
+        }
+
         $content = '<?php' . PHP_EOL;
         $content .= 'return [' . PHP_EOL;
         $content .= $this->arrayFormat($menu);
+        if (!empty($delete)) {
+            $delete = array_map(function ($item) {
+                return "'{$item}'";
+            }, $delete);
+            $content .=  "    'delete' => [". implode(',', $delete) ."]" . PHP_EOL;
+        }
         $content .= '];';
         file_put_contents($addon_dict, $content);
 
         return true;
+    }
+
+    /**
+     * 把返回的数据集转换成Tree(专属于)
+     * @param $list 要转换的数据集
+     * @param string $pk
+     * @param string $pid
+     * @param string $child
+     * @param int $root
+     * @return array
+     */
+    private function menuToTree($list, $pk = 'id', $pid = 'pid', $child = 'child', $root = '')
+    {
+        // 创建Tree
+        $tree = array();
+        if (is_array($list)) {
+            // 创建基于主键的数组引用
+            $refer = array();
+            foreach ($list as $key => $data) {
+                $refer[$data[$pk]] =& $list[$key];
+            }
+            foreach ($list as $key => $data) {
+                // 判断是否存在parent
+                $parent_id = $data[$pid];
+                if ($root == $parent_id) {
+                    $tree[] =& $list[$key];
+                } else {
+                    if (isset($refer[$parent_id])) {
+                        $parent =& $refer[$parent_id];
+                        $parent[$child][] =& $list[$key];
+                    } else {
+                        $tree[] =& $list[$key];
+                    }
+                }
+            }
+        }
+        return $tree;
+
     }
 
     private function arrayFormat($array, $level = 1) {

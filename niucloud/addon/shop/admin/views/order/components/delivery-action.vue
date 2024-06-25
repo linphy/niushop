@@ -1,6 +1,13 @@
 <template>
     <el-dialog v-model="showDialog" :title="t('delivery')" width="700px" class="diy-dialog-wrap" :destroy-on-close="true">
         <div v-loading="loading">
+
+            <el-alert type="warning" :closable="false" class="!mb-[10px]" v-if="isTradeManaged">
+                <template #default>
+                    <p>您已开通微信小程序发货信息管理服务，平台会将发货信息以消息的形式推送给购买的微信用户。</p>
+                    <p>注意：每个订单只能更新一次发货信息，请谨慎操作！</p>
+                </template>
+            </el-alert>
             <el-form :model="formData" label-width="100px" ref="formRef" :rules="formRules" class="page-form mb-[30px]">
                 <el-form-item :label="t('deliveryType')" prop="delivery_type">
                     <el-radio-group v-model="formData.delivery_type" @change="deliveryChange">
@@ -18,10 +25,17 @@
             </el-form>
             <el-table :data="goodsDataArr" size="large" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" :selectable="selectable" />
-                <el-table-column prop="goods_name" :label="t('goodsName')" min-width="200" />
+                <el-table-column prop="goods_name" :label="t('goodsName')" min-width="200" >
+                    <template #default="{ row }">
+                        <div class="flex items-center">
+                            <span>{{row.goods_name}}</span>
+                            <span class="text-[#999] px-[3px] text-[12px] ml-[4px]" v-if="row.sku_name">{{row.sku_name}}</span>
+                        </div>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="num" :label="t('num')" min-width="80" />
-                <el-table-column prop="status_name" :label="t('refundStatusName')" min-width="120" />
-                <el-table-column prop="delivery_status_name" :label="t('deliveryStatusName')" min-width="120" align="right" />
+                <el-table-column prop="status_name" :label="t('refundStatusName')" min-width="80" />
+                <el-table-column prop="delivery_status_name" :label="t('deliveryStatusName')" min-width="80" align="right" />
             </el-table>
         </div>
         <template #footer>
@@ -39,6 +53,7 @@ import { t } from '@/lang'
 import { FormInstance, ElMessage } from 'element-plus'
 import { getCompanyList } from '@/addon/shop/api/delivery'
 import { getOrderDeliveryType, orderDelivery } from '@/addon/shop/api/order'
+import { getIsTradeManaged } from '@/app/api/weapp'
 import { cloneDeep } from 'lodash-es'
 
 const showDialog = ref(false)
@@ -51,9 +66,14 @@ interface companyDataType{
 const companyData = ref<companyDataType[]>([])
 const isHasVirtual = ref(false)
 const deliveryType = ref([])
+const isTradeManaged = ref(false)
 
 getCompanyList({}).then((data) => {
     companyData.value = data.data.data
+})
+
+getIsTradeManaged().then(res=>{
+    isTradeManaged.value = res.data.is_trade_managed;
 })
 
 /**
@@ -113,20 +133,21 @@ interface goodsDataType{
 }
 const goodsDataArr = ref<goodsDataType[]>([])
 const deliveryChange = () => {
-    goodsDataArr.value = cloneDeep(goodsData.value)
+    let arr: any = []
     if (formData.delivery_type && formData.delivery_type == 'virtual') {
-        for (const k in goodsDataArr.value) {
-            if (goodsDataArr.value[k].goods_type != 'virtual') {
-                goodsDataArr.value.splice(k, 1)
+        goodsData.value.forEach((item: any, index) => {
+            if (item.goods_type == 'virtual') {
+                arr.push(item);
             }
-        }
+        })
     } else if (formData.delivery_type && formData.delivery_type != 'virtual') {
-        for (const k in goodsDataArr.value) {
-            if (goodsDataArr.value[k].goods_type == 'virtual') {
-                goodsDataArr.value.splice(k, 1)
+        goodsData.value.forEach((item: any, index) => {
+            if (item.goods_type != 'virtual') {
+                arr.push(item);
             }
-        }
+        })
     }
+    goodsDataArr.value = cloneDeep(arr)
 }
 
 const handleSelectionChange = (val:any) => {
@@ -163,6 +184,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 initFormData();
             }).catch(err => {
                 loading.value = false
+                showDialog.value = false
                 initFormData();
             })
         }
@@ -176,11 +198,11 @@ const setFormData = async (row: any = null) => {
         formData.delivery_type = ''
         goodsData.value = row.order_goods
         goodsDataArr.value = row.order_goods
+        isHasVirtual.value = false
         await getOrderDeliveryType({
             delivery_type: row.delivery_type
         }).then((data) => {
             deliveryType.value = data.data
-            // eslint-disable-next-line no-unreachable-loop
             for (const v in data.data) {
                 formData.delivery_type = v
                 break

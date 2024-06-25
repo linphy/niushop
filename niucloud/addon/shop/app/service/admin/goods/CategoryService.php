@@ -41,7 +41,7 @@ class CategoryService extends BaseAdminService
         $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort';
         $order = 'create_time desc';
 
-        $search_model = $this->model->withSearch([ "category_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'category_id', '>', 0 ] ])->withSearch([ "category_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -55,7 +55,7 @@ class CategoryService extends BaseAdminService
     public function getList(array $where = [], $field = 'category_id,category_name,image,level,pid,category_full_name,is_show,sort')
     {
         $order = 'sort desc,create_time desc';
-        return $this->model->withSearch([ "category_name", 'level' ], $where)->field($field)->order($order)->select()->toArray();
+        return $this->model->where([ [ 'category_id', '>', 0 ] ])->withSearch([ "category_name", 'level' ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -66,7 +66,7 @@ class CategoryService extends BaseAdminService
      */
     public function getTree()
     {
-        return ( new CoreGoodsCategoryService() )->getTree();
+        return ( new CoreGoodsCategoryService() )->getTree([ [ 'category_id', '>', 0 ] ]);
     }
 
     /**
@@ -94,9 +94,18 @@ class CategoryService extends BaseAdminService
     {
         $data[ 'category_full_name' ] = $data[ 'category_name' ];
         $data[ 'level' ] = 1;
-        $categoryInfo = $this->model->where([ [ 'category_name', '=', $data['category_name']] ])->findOrEmpty()->toArray();
-        if($categoryInfo)
-        {
+
+        $condition = [
+            [ 'category_name', '=', $data[ 'category_name' ] ]
+        ];
+        if ($data[ 'pid' ] > 0) {
+            $condition[] = [ 'pid', '=', $data[ 'pid' ] ];
+        } else {
+            $condition[] = [ 'level', '=', 1 ];
+        }
+
+        $categoryInfo = $this->model->where($condition)->findOrEmpty()->toArray();
+        if ($categoryInfo) {
             throw new AdminException('分类已存在，请检查');
         }
         if ($data[ 'pid' ] > 0) {
@@ -120,9 +129,8 @@ class CategoryService extends BaseAdminService
     public function edit(int $id, array $data)
     {
         $category_info = $this->getInfo($id);
-        if($category_info && $category_info['category_id'] != $id )
-        {
-            throw new AdminException('品牌已存在，请检查');
+        if ($category_info && $category_info[ 'category_id' ] != $id) {
+            throw new AdminException('分类已存在，请检查');
         }
         if ($category_info[ 'level' ] == 1 && $category_info[ 'pid' ] != $data[ 'pid' ] && $category_info[ 'child_count' ] > 0) {
             throw new CommonException('SHOP_GOODS_CATEGORY_EXIST_CHILD');
@@ -170,7 +178,7 @@ class CategoryService extends BaseAdminService
             $info = $this->model->field("category_id, category_name")->where([ [ 'category_id', '=', $val[ 'category_id' ] ] ])->findOrEmpty();
             if (!$info->isEmpty()) {
                 $data[ 'update_time' ] = time();
-                $this->model->where([ [ 'category_id', '=', $val[ 'category_id' ] ] ])->update([ 'sort' => $val[ 'sort' ] ]);
+                $this->model->where([ [ 'category_id', '=', $val[ 'category_id' ] ]])->update([ 'sort' => $val[ 'sort' ] ]);
             }
         }
         return true;
@@ -204,7 +212,7 @@ class CategoryService extends BaseAdminService
     public function getTreeComponents()
     {
         return ( new CoreGoodsCategoryService() )->getTree([
-            [ 'is_show', '=', 1 ]
+            [ 'is_show', '=', 1 ],
         ], 'category_id,category_name,image,level,pid');
     }
 

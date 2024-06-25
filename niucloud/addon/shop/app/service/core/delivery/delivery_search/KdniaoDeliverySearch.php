@@ -10,11 +10,7 @@
 // +----------------------------------------------------------------------
 namespace addon\shop\app\service\core\delivery\delivery_search;
 
-use addon\shop\app\service\core\delivery\delivery_search\BaseDeliverySearch;
 use addon\shop\app\service\core\delivery\delivery_search\sdk\Kdbird;
-use AlibabaCloud\Client\AlibabaCloud;
-use core\exception\NoticeException;
-use Exception;
 
 
 class KdniaoDeliverySearch extends BaseDeliverySearch

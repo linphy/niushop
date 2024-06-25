@@ -537,7 +537,7 @@ class WebEditPageGenerator extends BaseGenerator
             if (!empty($column['model'])) {
                 $str = strripos($column['model'],'\\');
                 $with = Str::camel(substr($column['model'],$str+1));
-                $content.= ' getWith'.Str::studly($with).'List,';
+                $content.= ', getWith'.Str::studly($with).'List';
             }
         }
         return $content;

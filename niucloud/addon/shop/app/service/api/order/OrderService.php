@@ -15,14 +15,21 @@ use addon\shop\app\dict\delivery\DeliveryDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
+use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\model\delivery\Store;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderDelivery;
+use addon\shop\app\model\order\OrderRefund;
 use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderFinishService;
 use addon\shop\app\service\core\order\CoreOrderService;
+use app\dict\common\ChannelDict;
+use app\dict\pay\PayDict;
 use app\model\pay\Pay;
+use app\service\admin\pay\PayChannelService;
+use app\service\api\weapp\WeappDeliveryService;
 use core\base\BaseApiService;
+use core\exception\ApiException;
 
 /**
  *  订单服务层
@@ -35,7 +42,6 @@ class OrderService extends BaseApiService
         $this->model = new Order();
     }
 
-
     /**
      * 分页列表
      * @param array $where
@@ -43,16 +49,16 @@ class OrderService extends BaseApiService
      */
     public function getPage(array $where)
     {
-        $field = 'order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,create_time,pay_time,delivery_type,taker_name,taker_mobile,taker_full_address,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,pay_money,is_evaluate';
+        $field = 'point,activity_type,order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,create_time,pay_time,delivery_type,taker_name,taker_mobile,taker_full_address,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,pay_money,is_evaluate';
         $order = 'create_time desc';
         $search_model = $this->model
             ->where([ [ 'member_id', '=', $this->member_id ] ])
-            ->withSearch([ 'order_no', 'status' ], $where)
+            ->withSearch([ 'order_no', 'status', 'activity_type' ], $where)
             ->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund')->append([ 'goods_image_thumb_small' ]);
                     }
                 ]
             )->order($order)->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ]);
@@ -60,6 +66,39 @@ class OrderService extends BaseApiService
         $list = $this->pageQuery($search_model, function($item, $key) use ($order_status_list) {
             $item[ 'order_status_data' ] = $order_status_list[ $item[ 'status' ] ] ?? [];
         });
+        foreach ($list[ 'data' ] as $k => $v) {
+            if ($v[ 'out_trade_no' ]) {
+                $list[ 'data' ][ $k ][ 'pay' ] = ( new Pay() )->where([ [ 'out_trade_no', '=', $v[ 'out_trade_no' ] ] ])
+                    ->field('type, pay_time')->append([ 'type_name' ])
+                    ->findOrEmpty()->toArray();
+            }
+        }
+
+        // 查询小程序是否已开通发货信息管理服务
+        try {
+            $list[ 'mch_id' ] = '';
+            $result_is_trade_managed = ( new WeappDeliveryService() )->getIsTradeManaged();
+            if ($result_is_trade_managed) {
+
+                $list[ 'is_trade_managed' ] = true;
+                $pay_service = new PayChannelService();
+                $pay_config = $pay_service->getInfo([
+                    'type' => PayDict::WECHATPAY,
+                    'channel' => ChannelDict::WEAPP
+                ]);
+
+                $mch_id = '';
+                if (!empty($pay_config)) {
+                    $mch_id = $pay_config[ 'config' ][ 'mch_id' ];
+                }
+
+                $list[ 'mch_id' ] = $mch_id;
+            } else {
+                $list[ 'is_trade_managed' ] = false;
+            }
+        } catch (\Exception $e) {
+            $list[ 'is_trade_managed' ] = false;
+        }
         return $list;
     }
 
@@ -70,12 +109,12 @@ class OrderService extends BaseApiService
      */
     public function getDetail(int $order_id)
     {
-        $field = 'order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money,is_evaluate';
+        $field = 'relate_id,activity_type,point,order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money,is_evaluate';
         $info = $this->model->where([ [ 'order_id', '=', $order_id ], [ 'member_id', '=', $this->member_id ] ])->field($field)
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, discount_money, is_enable_refund, status, order_refund_no, delivery_status')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, discount_money, is_enable_refund, status, order_refund_no, delivery_status, verify_count, verify_expire_time, is_verify, goods_type')->append([ 'goods_image_thumb_small' ]);
                     }
                 ]
             )->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
@@ -100,6 +139,33 @@ class OrderService extends BaseApiService
                     ->field('id, order_id, name, delivery_type, express_company_id, sub_delivery_type, express_number, create_time')
                     ->select()->toArray();
             }
+
+            // 查询小程序是否已开通发货信息管理服务
+            try {
+                $info[ 'mch_id' ] = '';
+                $result_is_trade_managed = ( new WeappDeliveryService() )->getIsTradeManaged();
+                if ($result_is_trade_managed) {
+                    $info[ 'is_trade_managed' ] = true;
+
+                    $pay_service = new PayChannelService();
+                    $pay_config = $pay_service->getInfo([
+                        'type' => PayDict::WECHATPAY,
+                        'channel' => ChannelDict::WEAPP
+                    ]);
+
+                    $mch_id = '';
+                    if (!empty($pay_config)) {
+                        $mch_id = $pay_config[ 'config' ][ 'mch_id' ];
+                    }
+
+                    $info[ 'mch_id' ] = $mch_id;
+                } else {
+                    $info[ 'is_trade_managed' ] = false;
+                }
+            } catch (\Exception $e) {
+                $info[ 'is_trade_managed' ] = false;
+            }
+
         }
         return $info;
     }
@@ -107,8 +173,8 @@ class OrderService extends BaseApiService
 
     /**
      * 订单关闭
-     * @param array $data
-     * @return void
+     * @param int $order_id
+     * @return true
      */
     public function close(int $order_id)
     {
@@ -123,8 +189,8 @@ class OrderService extends BaseApiService
 
     /**
      * 订单收货
-     * @param $order
-     * @return void
+     * @param $order_id
+     * @return true
      */
     public function finish($order_id)
     {
@@ -132,13 +198,21 @@ class OrderService extends BaseApiService
         $data[ 'order_id' ] = $order_id;
         $data[ 'main_type' ] = OrderLogDict::MEMBER;
         $data[ 'main_id' ] = $this->member_id;
+        //查询订单
+        $where = array (
+            [ 'order_id', '=', $order_id ],
+        );
+        $order = $this->model->where($where)->findOrEmpty()->toArray();
+        if (empty($order)) throw new ApiException('SHOP_ORDER_NOT_FOUND');//订单不存在
+        if ($order[ 'status' ] != OrderDict::WAIT_TAKE) throw new ApiException('SHOP_ONLY_WAIT_TAKE_CAN_BE_TAKE');//只有待收货的订单才可以收货
         ( new CoreOrderFinishService() )->finish($data);
         return true;
     }
 
     /**
      * 物流信息
-     * @param $id
+     * @param $data
+     * @return array|mixed
      */
     public function getDeliveryPackage($data)
     {
@@ -152,11 +226,52 @@ class OrderService extends BaseApiService
             }
         ])->field($field)->findOrEmpty()->toArray();
 
-        if (!empty($info) && $info['delivery_type'] == OrderDeliveryDict::EXPRESS && $info['sub_delivery_type'] != OrderDeliveryDict::NONE_EXPRESS) {
-            $info['mobile'] = $data['mobile'];
-            $info = (new CoreOrderService())->deliverySearch($info);
+        if (!empty($info) && $info[ 'delivery_type' ] == OrderDeliveryDict::EXPRESS && $info[ 'sub_delivery_type' ] != OrderDeliveryDict::NONE_EXPRESS) {
+            $info[ 'mobile' ] = $data[ 'mobile' ];
+            $info = ( new CoreOrderService() )->deliverySearch($info);
             return $info;
         }
         return $info;
+    }
+
+    public function num()
+    {
+
+        $data['wait_pay'] = $this->model->where([
+            [ 'member_id', '=', $this->member_id ],
+            [ 'status', '=', OrderDict::WAIT_PAY ],
+        ])->count() ?? 0;
+
+        $data['wait_shipping'] = $this->model->where([
+            [ 'member_id', '=', $this->member_id ],
+            [ 'status', '=', OrderDict::WAIT_DELIVERY ],
+        ])->count() ?? 0;
+
+        $data['wait_take'] = $this->model->where([
+            [ 'member_id', '=', $this->member_id ],
+            [ 'status', '=', OrderDict::WAIT_TAKE ],
+        ])->count() ?? 0;
+
+        $data['evaluate'] = $this->model->where([
+            [ 'member_id', '=', $this->member_id ],
+            [ 'status', '=', OrderDict::FINISH ],
+            [ 'is_evaluate', '=', 0 ],
+        ])->count() ?? 0;
+
+        $data['refund'] = (new OrderRefund())->where([
+            [ 'member_id', '=', $this->member_id ],
+            [ 'status', 'in', [
+                    OrderRefundDict::BUYER_APPLY_WAIT_STORE,
+                    OrderRefundDict::STORE_AGREE_REFUND_GOODS_APPLY_WAIT_BUYER,
+                    OrderRefundDict::STORE_REFUSE_REFUND_GOODS_APPLY_WAIT_BUYER,
+                    OrderRefundDict::BUYER_REFUND_GOODS_WAIT_STORE,
+                    OrderRefundDict::STORE_REFUSE_TAKE_REFUND_GOODS_WAIT_BUYER,
+                    OrderRefundDict::STORE_AGREE_REFUND_WAIT_TRANSFER,
+                    OrderRefundDict::STORE_REFUND_TRANSFERING,
+                ]
+            ],
+        ])->count() ?? 0;
+
+        return $data;
     }
 }

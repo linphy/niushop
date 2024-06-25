@@ -14,8 +14,10 @@ namespace addon\shop\app\service\core\order;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderGoodsDict;
 use addon\shop\app\dict\order\OrderLogDict;
+use addon\shop\app\dict\order\OrderRefundDict;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderGoods;
+use addon\shop\app\model\order\OrderRefund;
 use app\service\core\pay\CorePayService;
 use core\base\BaseCoreService;
 use core\exception\CommonException;
@@ -41,7 +43,7 @@ class CoreOrderCloseService extends BaseCoreService
     {
         try {
             $order_data = $this->model->where([
-                ['order_id', '=', $data['order_id']]
+                ['order_id', '=', $data['order_id']],
             ])->findOrEmpty()->toArray();
             if (empty($order_data)) throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在
             if ($order_data['status'] == OrderDict::CLOSE) throw new CommonException('SHOP_ORDER_IS_CLOSED');
@@ -98,11 +100,28 @@ class CoreOrderCloseService extends BaseCoreService
         );
         if ((new OrderGoods())->where($where)->count() == 0) {
             $data = [];
-            $data['main_type'] = OrderLogDict::SYSTEM;
-            $data['main_id'] = 0;
-            $data['close_type'] = OrderDict::REFUND_CLOSE;
-            $data['order_id'] = $order_id;
-            $this->close($data);
+//            $data['main_type'] = OrderLogDict::SYSTEM;
+//            $data['main_id'] = 0;
+//            $data['close_type'] = OrderDict::REFUND_CLOSE;
+//            $data['order_id'] = $order_id;
+//            $this->close($data);
+
+            //判断订单总额是否全部扣除
+            $order = (new Order())->where([['order_id', '=', $order_id]])->findOrEmpty();
+            $total_refund_money = (new OrderRefund())->where([['order_id', '=', $order_id], ['status', '=', OrderRefundDict::FINISH]])->sum('money');
+            if ($total_refund_money >= $order['order_money']) {
+                $data['main_type'] = OrderLogDict::SYSTEM;
+                $data['main_id'] = 0;
+                $data['close_type'] = OrderDict::REFUND_CLOSE;
+                $data['order_id'] = $order_id;
+                $this->close($data);
+            }else{//订单项全部关闭,但是订单总额为完全退款,订单直接完成
+                //调用订单直接完成
+                $data['main_type'] = OrderLogDict::SYSTEM;
+                $data['main_id'] = 0;
+                $data['order_id'] = $order_id;
+                (new CoreOrderFinishService())->finish($data);
+            }
         }
         return true;
     }

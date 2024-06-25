@@ -5,15 +5,15 @@
 			<h3 class="mb-[10px]">{{ t('selectStyle') }}</h3>
 			<div class="flex items-center mb-[18px] rounded overflow-hidden">
 				<span
-					class="iconfont icongudingzhanshi border-[1px] border-solid border-[#eee] cursor-pointer flex-1 flex items-center justify-center py-[5px]"
+					class="iconfont iconzuoyoutuwenpc border-[1px] border-solid border-[#eee] cursor-pointer flex-1 flex items-center justify-center py-[5px]"
 					:class="{ 'border-[var(--el-color-primary)] text-[var(--el-color-primary)]': diyStore.editComponent.style == 'style-1' }"
 					@click="diyStore.editComponent.style = 'style-1'"></span>
 				<span
-					class="iconfont icontuwendaohang3 border-[1px] border-solid border-[#eee] cursor-pointer flex-1 flex items-center justify-center py-[5px]"
+					class="iconfont iconshangxiatuwenpc border-[1px] border-solid border-[#eee] cursor-pointer flex-1 flex items-center justify-center py-[5px]"
 					:class="{ 'border-[var(--el-color-primary)] text-[var(--el-color-primary)]': diyStore.editComponent.style == 'style-2' }"
 					@click="diyStore.editComponent.style = 'style-2'"></span>
                 <span
-					class="iconfont iconshangpinliebiaohengxianghuadong border-[1px] border-solid border-[#eee] cursor-pointer flex-1 flex items-center justify-center py-[5px]"
+					class="iconfont iconliebiaopc border-[1px] border-solid border-[#eee] cursor-pointer flex-1 flex items-center justify-center py-[5px]"
 					:class="{ 'border-[var(--el-color-primary)] text-[var(--el-color-primary)]': diyStore.editComponent.style == 'style-3' }"
 					@click="diyStore.editComponent.style = 'style-3'"></span>
 			</div>
@@ -57,6 +57,7 @@
 			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 				<el-table :data="categoryTable.data" ref="categoryTableRef" size="large" v-loading="categoryTable.loading"
 					height="490px" @selection-change="handleSelectionChange" row-key="category_id"
+					:expand-row-keys="expand_category_ids"
 					:tree-props="{ hasChildren: 'hasChildren', children: 'child_list' }">
 					<template #empty>
 						<span>{{ !categoryTable.loading ? t('emptyData') : '' }}</span>
@@ -131,7 +132,7 @@ import { getCategoryTree } from '@/addon/shop/api/goods'
 import { t } from '@/lang'
 import { img } from '@/utils/common'
 import useDiyStore from '@/stores/modules/diy'
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted,nextTick } from 'vue'
 import { ElTable } from 'element-plus'
 import goodsSelectPopup from '@/addon/shop/views/goods/components/goods-select-popup.vue'
 
@@ -162,9 +163,6 @@ const categoryShowDialog = ref(false)
 const categoryTable = reactive({
     loading: true,
     data: [],
-    searchParam: {
-        category_name: ''
-    }
 })
 onMounted(() => {
     loadCategoryList()
@@ -174,13 +172,11 @@ const categoryTableRef = ref<InstanceType<typeof ElTable>>()
 /**
  * 获取商品分类列表
  */
-let currCategoryData: string | null = null
+let currCategoryData: any = null
 const loadCategoryList = () => {
     categoryTable.loading = true
 
-    getCategoryTree({
-        ...categoryTable.searchParam
-    }).then(res => {
+    getCategoryTree().then(res => {
         categoryTable.loading = false
         categoryTable.data = res.data
     }).catch(() => {
@@ -205,11 +201,27 @@ const saveCategoryId = () => {
 
 const categoryShowDialogOpen = () => {
     categoryShowDialog.value = true
-    if (currCategoryData) {
-        setTimeout(() => {
-			categoryTableRef.value!.toggleRowSelection(currCategoryData, true)
-        }, 200)
-    }
+	nextTick(()=>{
+		setRowSelection()
+	})
+}
+
+//分类数据选中回填,设置展开行
+const expand_category_ids = ref<Array<any>>([])
+const setRowSelection = ()=>{
+	expand_category_ids.value = []
+	categoryTable.data.forEach((el:any)=>{
+		if(diyStore.editComponent.goods_category == el.category_id){
+			categoryTableRef.value!.toggleRowSelection(el, true)
+		}else if(el.child_list&&el.child_list.length){
+			el.child_list.forEach((v:any)=>{
+				if(diyStore.editComponent.goods_category == v.category_id){
+					expand_category_ids.value.push(el.category_id.toString())
+					categoryTableRef.value!.toggleRowSelection(v, true)
+				}
+			})
+		}
+	})
 }
 
 defineExpose({})

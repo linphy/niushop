@@ -78,6 +78,7 @@ class AuthService extends BaseApiService
         if(empty($mobile)){
             $result = (new CoreWeappAuthService())->getUserPhoneNumber($mobile_code);
             if(empty($result)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
+            if ($result[ 'errcode' ] != 0) throw new ApiException($result[ 'errmsg' ]);
             $phone_info = $result['phone_info'];
             $mobile = $phone_info['purePhoneNumber'];
             if(empty($mobile)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');

@@ -1,5 +1,5 @@
 <template>
-    <view class="bg-[#f8f8f8] min-h-screen overflow-hidden" :style="themeColor()">
+    <view class="bg-[#f8f8f8] min-h-screen overflow-hidden" :style="themeColor()" v-if="memberStore.info">
         <view class="fixed left-0 top-0 right-0 z-10">
             <scroll-view scroll-x="true" class="scroll-Y box-border px-[24rpx] bg-white">
                 <view class="flex whitespace-nowrap justify-around">
@@ -26,11 +26,11 @@
                                     <text v-if="item.min_condition_money === '0.00'">无门槛</text>
                                     <text v-else>满{{ item.coupon_min_price }}元可用</text>
                                 </view>
-                                <view class="text-[20rpx] leading-[23rpx] mt-[4px] text-left flex items-center">
-                                    <text class="bg-[var(--primary-color)] text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
+                                <view class="text-[20rpx] leading-[23rpx] mt-[4rpx] text-left flex items-center">
+                                    <text class="bg-[var(--primary-color)] text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] text-center rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
                                     <text class="truncate max-w-[190rpx]">{{ item.title }}</text>
                                 </view>
-                                <view class="w-[100%] mt-[4px] mb-[11px] text-[20rpx] leading-[23rpx]">
+                                <view class="w-[100%] mt-[4rpx] mb-[11px] text-[20rpx] leading-[23rpx]">
                                     <text v-if="item.valid_type == 1">领取之日起{{ item.length || '' }}天内有效</text>
                                     <text v-else> 有效期至{{ item.expire_time ? item.expire_time.slice(0, 10) : '' }}</text>
                                 </view>
@@ -57,7 +57,7 @@
                                     <text v-else>满{{ item.coupon_min_price }}元可用</text>
                                 </view>
                                 <view class="text-[20rpx] leading-[23rpx] mt-[4px] text-left flex items-center">
-                                    <text class="bg-[var(--primary-color)] text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
+                                    <text class="bg-[var(--primary-color)] text-[#fff] text-[20rpx] text-center h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
                                     <text class="truncate max-w-[190rpx]">{{ item.title }}</text>
                                 </view>
                                 <view class="w-[100%] mt-[4px]  mb-[11px] text-[20rpx] leading-[23rpx]">
@@ -66,14 +66,14 @@
                             </view>
                         </view>
                         <view class="pr-[20rpx] pl-[30rpx]" v-if="couponStatus === 1">
-                            <u-button :customStyle="{width:'150rpx',height:'60rpx',color:'var(--primary-color)', fontSize:'24rpx',lineHeight:'60rpx', padding:'0',backgroundColor:'transparent',border:'2rpx solid var(--primary-color)'}"  shape="circle"  @click="toLink(item.coupon_id)">去使用</u-button>
+                            <u-button text="去使用" :customStyle="{width:'150rpx',height:'60rpx',color:'var(--primary-color)', fontSize:'24rpx',lineHeight:'60rpx', padding:'0',backgroundColor:'transparent',border:'2rpx solid var(--primary-color)'}"  shape="circle"  @click="toLink(item.coupon_id)"></u-button>
                         </view>
                         <view class="absolute top-0 right-[190rpx]  h-[10rpx] w-[20rpx] rounded-br-[20rpx] rounded-bl-[20rpx] bg-[#F6F6F6] "></view>
 						<view class="absolute bottom-0 right-[190rpx] h-[10rpx] w-[20rpx] rounded-tr-[20rpx] rounded-tl-[20rpx] bg-[#F6F6F6]"></view>
                     </view>
                 </template>
             </view>
-            <view class="my-[20rpx] mx-[24rpx] bg-[#fff] rounded-[20rpx] flex items-center justify-center" v-if="!list.length && loading">
+            <view class="noData my-[20rpx] mx-[24rpx] bg-[#fff] rounded-[20rpx] flex items-center justify-center" v-if="!list.length && loading">
                 <mescroll-empty :option="{'tip' : '暂无优惠券'}"></mescroll-empty>
             </view>
         </mescroll-body>
@@ -85,12 +85,14 @@
 import { ref } from 'vue'
 import { img, redirect } from '@/utils/common'
 import { getMyCouponList } from '@/addon/shop/api/coupon'
+import useMemberStore from '@/stores/member'
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue'
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js'
 import { onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import { t } from '@/locale'
 
+const memberStore = useMemberStore()
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom)
 const list = ref<Array<Object>>([]);
 const loading = ref<boolean>(false);
@@ -161,6 +163,11 @@ const toLink = (coupon_id:any) => {
 	background-repeat: no-repeat;
 	background-position: right top;
 	background-size: 27%;
+}
+
+.noData{
+    height: calc(100vh - 130rpx - constant(safe-area-inset-bottom));
+    height: calc(100vh - 130rpx - env(safe-area-inset-bottom));
 }
 
 </style>

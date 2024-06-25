@@ -20,7 +20,7 @@
             </div>
 
             <!-- 批量设置 -->
-            <div class="batch-operation-sku" v-if="goodsTable.data.length > 1">
+            <div class="batch-operation-sku" v-if="activeGoodsCount == 0 && goodsTable.data.length > 1">
                 <label>{{ t('batchOperationSku') }}</label>
                 <el-input v-model="batchOperation.value" clearable :placeholder="t('stock')" class="set-input" maxlength="20" :autofocus="true" />
                 <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
@@ -35,7 +35,7 @@
                 <el-table-column prop="price" :label="t('price')" min-width="120" />
                 <el-table-column prop="stock" :label="t('stock')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.stock" clearable placeholder="0" maxlength="10" />
+                        <el-input v-model="row.stock" clearable placeholder="0" maxlength="10" :disabled="activeGoodsCount > 0" />
                     </template>
                 </el-table-column>
 
@@ -56,13 +56,14 @@ import { t } from '@/lang'
 import { ref, reactive } from 'vue'
 import { img } from '@/utils/common'
 import { ElMessage } from 'element-plus'
-
 import {
+    getActiveGoodsCount,
     getGoodsSkuList,
     editGoodsListStock
 } from '@/addon/shop/api/goods'
 
 const goods: any = reactive({})
+const activeGoodsCount: any = ref(0)
 
 const showDialog = ref(false)
 
@@ -137,8 +138,17 @@ const loadGoodsList = () => {
 
 const show = (data: any) => {
     Object.assign(goods, data)
+    getActiveGoodsCountFn();
     loadGoodsList()
     showDialog.value = true
+}
+
+const getActiveGoodsCountFn = ()=>{
+    getActiveGoodsCount({
+        goods_id: goods.goods_id
+    }).then((res)=>{
+        activeGoodsCount.value = res.data;
+    })
 }
 
 // 正则表达式

@@ -145,7 +145,7 @@ class MemberCashOut extends BaseModel
     public function searchStatusAttr($query, $value, $data)
     {
         if ($value) {
-            $query->where('status', $value);
+            $query->where('member_cash_out.status', $value);
         }
     }
 

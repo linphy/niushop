@@ -33,12 +33,12 @@ class CoreWeappCloudService extends CoreCloudBaseService
 
     use WapTrait;
 
-     public function __construct()
-     {
-         parent::__construct();
-         $this->root_path = dirname(root_path()) . DIRECTORY_SEPARATOR;
-         $this->addon_path = root_path() . 'addon' . DIRECTORY_SEPARATOR;
-     }
+    public function __construct()
+    {
+        parent::__construct();
+        $this->root_path = dirname(root_path()) . DIRECTORY_SEPARATOR;
+        $this->addon_path = root_path() . 'addon' . DIRECTORY_SEPARATOR;
+    }
 
     /**
      * 上传小程序

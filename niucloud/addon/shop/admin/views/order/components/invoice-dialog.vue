@@ -3,13 +3,13 @@
         <div>
             <el-form :model="makeInvoice" ref="makeInvoiceFormRef" :rules="formRules" label-width="80px" label-position="left" >
                 <el-form-item :label="t('invoiceNumber')" prop="invoice_number">
-                    <el-input v-model="makeInvoice.invoice_number" minlength="150"/>
+                    <el-input v-model.trim="makeInvoice.invoice_number" maxlength="30"/>
                 </el-form-item>
                 <el-form-item :label="t('invoiceVoucher')" prop="invoice_voucher">
                     <upload-image v-model="makeInvoice.invoice_voucher" />
                 </el-form-item>
                 <el-form-item :label="t('remark')" prop="remark">
-                    <el-input v-model="makeInvoice.remark" type="textarea"/>
+                    <el-input v-model.trim="makeInvoice.remark" type="textarea" maxlength="200" show-word-limit />
                 </el-form-item>
             </el-form>
         </div>

@@ -53,20 +53,22 @@ class OrderDict
     // 没有退款
     const REFUND_FINISH = 3;
     // 部分退款
-const ORDER_CREATE_ACTION = 'order_create';
+    const ORDER_CREATE_ACTION = 'order_create';
     // 退款完成
-const ORDER_PAY_ACTION = 'order_pay';
+    const ORDER_PAY_ACTION = 'order_pay';
     // 退款失败
 //    const REFUND_FAIL = -1;
-const ORDER_CLOSE_ACTION = 'order_close';//订单创建
-const ORDER_DELIVERY_PART_ACTION = 'order_part_delivery';//订单支付
+    const ORDER_CLOSE_ACTION = 'order_close';//订单创建
+    const ORDER_DELIVERY_PART_ACTION = 'order_part_delivery';//订单支付
     const ORDER_DELIVERY_ACTION = 'order_delivery';//订单关闭
-const ORDER_FINISH_ACTION = 'order_finish';//订单部分发货
+    const ORDER_FINISH_ACTION = 'order_finish';//订单部分发货
     const ORDER_REMARK_ACTION = 'order_remark';//订单发货
+
+    const ORDER_EDIT_PRICE_ACTION = 'order_edit';//订单改价
     const ORDER_CLOSE_ALLOW_REFUND_ACTION = 'order_close_allow_refund';//订单完成
     const SHOP_CLOSE = 'shop_close';//订单商家备注
-const BUYER_CLOSE = 'buyer_close';//订单关闭允许售后
-const AUTO_CLOSE = 'auto_close';
+    const BUYER_CLOSE = 'buyer_close';//订单关闭允许售后
+    const AUTO_CLOSE = 'auto_close';
     const REFUND_CLOSE = 'refund_close';//商家主动关闭
 
     /**
@@ -144,7 +146,7 @@ const AUTO_CLOSE = 'auto_close';
         if ($status == '') {
             return $data;
         }
-        return $data[$status] ?? '';
+        return $data[ $status ] ?? '';
     }//自动关闭
 
     /**
@@ -163,11 +165,12 @@ const AUTO_CLOSE = 'auto_close';
             self::ORDER_FINISH_ACTION => get_lang('dict_shop_order_action.order_finish_action'),
             self::ORDER_REMARK_ACTION => get_lang('dict_shop_order_action.order_remark_action'),
             self::ORDER_CLOSE_ALLOW_REFUND_ACTION => get_lang('dict_shop_order_action.order_close_allow_refund'),
+            self::ORDER_EDIT_PRICE_ACTION => get_lang('dict_shop_order_action.order_edit_price_action'),
         ];
         if (!$type) {
             return $data;
         }
-        return $data[$type] ?? '';
+        return $data[ $type ] ?? '';
     }
 
     /**
@@ -186,6 +189,6 @@ const AUTO_CLOSE = 'auto_close';
         if (!$type) {
             return $data;
         }
-        return $data[$type] ?? '';
+        return $data[ $type ] ?? '';
     }
 }

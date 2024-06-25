@@ -15,6 +15,7 @@ use app\service\core\sys\CoreConfigService;
 use app\service\core\sys\CoreSysConfigService;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
+use app\service\core\channel\CoreH5Service;
 
 /**
  * 配置服务层
@@ -85,6 +86,7 @@ class ConfigService extends BaseAdminService
                 'business_hours' => '',
                 'front_end_name' => '',
                 'front_end_logo' => '',
+                'front_end_icon' => '',
                 'icon' => '',
             ];
         }
@@ -151,8 +153,11 @@ class ConfigService extends BaseAdminService
     public function setMap(array $value)
     {
         $data = [
-            'key' => $value['key'],
+            'key' => $value[ 'key' ],
+            'is_open' => $value[ 'is_open' ], // 是否开启定位
+            'valid_time' => $value[ 'valid_time' ] // 定位有效期/分钟，过期后将重新获取定位信息，0为不过期
         ];
+        ( new CoreH5Service() )->mapKeyChange($value[ 'key' ]);
         return $this->core_config_service->setConfig('MAPKEY', $data);
     }
 
@@ -161,15 +166,19 @@ class ConfigService extends BaseAdminService
      */
     public function getMap()
     {
-        $info = (new CoreConfigService())->getConfig('MAPKEY');
-        if(empty($info))
-        {
+        $info = ( new CoreConfigService() )->getConfig('MAPKEY');
+        if (empty($info)) {
             $info = [];
-            $info['value'] = [
+            $info[ 'value' ] = [
                 'key' => 'IZQBZ-3UHEU-WTCVD-2464U-I5N4V-ZFFU3',
+                'is_open' => 1, // 是否开启定位
+                'valid_time' => 5 // 定位有效期/分钟，过期后将重新获取定位信息，0为不过期
             ];
         }
-        return $info['value'];
+
+        $info[ 'value' ][ 'is_open' ] = $info[ 'value' ][ 'is_open' ] ?? 1;
+        $info[ 'value' ][ 'valid_time' ] = $info[ 'value' ][ 'valid_time' ] ?? 5;
+        return $info[ 'value' ];
     }
 
     /**
@@ -182,7 +191,7 @@ class ConfigService extends BaseAdminService
         if(empty($config))
         {
             $config['value'] = [
-              'view_path' => 'index/site_index'
+                'view_path' => 'index/site_index'
             ];
         }else{
             $result = event("SiteIndex");

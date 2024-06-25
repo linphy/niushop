@@ -23,7 +23,7 @@
             </el-card>
 
             <div class="mt-[10px]">
-                <el-table :data="brandTable.data" size="large" v-loading="brandTable.loading">
+                <el-table :data="brandTable.data" size="large" v-loading="brandTable.loading" @sort-change="sortChange">
                     <template #empty>
                         <span>{{ !brandTable.loading ? t('emptyData') : '' }}</span>
                     </template>
@@ -41,7 +41,11 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="sort" :label="t('sort')" min-width="120" />
+                    <el-table-column prop="sort" :label="t('sort')" min-width="120" sortable="custom">
+                        <template #default="{ row }">
+                            <el-input v-model="row.sort" class="!w-[100px]" maxlength="10" @input="sortInputListener($event, row)" />
+                        </template>
+                    </el-table-column>
 
                     <el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
                         <template #default="{ row }">
@@ -67,9 +71,9 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getBrandPageList, deleteBrand } from '@/addon/shop/api/goods'
-import { img } from '@/utils/common'
-import { ElMessageBox, FormInstance } from 'element-plus'
+import { getBrandPageList, deleteBrand, modifyBrandSort } from '@/addon/shop/api/goods'
+import { img, debounce } from '@/utils/common'
+import { ElMessageBox, FormInstance, ElMessage } from 'element-plus'
 import BrandEdit from '@/addon/shop/views/goods/components/brand-edit.vue'
 import { useRoute } from 'vue-router'
 
@@ -83,11 +87,28 @@ const brandTable = reactive({
     loading: true,
     data: [],
     searchParam: {
-        brand_name: ''
+        brand_name: '',
+        order: '',
+        sort: ''
     }
 })
 
 const searchFormRef = ref<FormInstance>()
+
+// 监听排序
+const sortChange = (event: any) => {
+    let sort = ''
+    if (event.order == 'ascending') {
+        sort = 'asc'
+    } else if (event.order == 'descending') {
+        sort = 'desc'
+    }
+    if (sort) {
+        brandTable.searchParam.order = event.prop
+        brandTable.searchParam.sort = sort
+    }
+    loadBrandList()
+}
 
 /**
  * 获取商品品牌列表
@@ -146,6 +167,21 @@ const deleteEvent = (id: number) => {
         })
     })
 }
+// 修改排序号
+const sortInputListener = debounce((sort, row) => {
+    if (isNaN(sort) || !/^\d{0,10}$/.test(sort)) {
+        ElMessage({
+            type: 'warning',
+            message: `${t('sortTips')}`
+        })
+        return
+    }
+    modifyBrandSort({
+        brand_id: row.brand_id,
+        sort
+    }).then((res) => {
+    })
+})
 
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return

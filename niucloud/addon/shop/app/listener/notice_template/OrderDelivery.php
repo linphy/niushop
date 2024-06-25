@@ -3,7 +3,6 @@ declare (strict_types = 1);
 
 namespace addon\shop\app\listener\notice_template;
 
-use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\service\core\order\CoreOrderService;
 use app\listener\notice_template\BaseNoticeTemplate;
 
@@ -18,15 +17,16 @@ class OrderDelivery extends BaseNoticeTemplate
     {
         if ($this->key == $params['key']) {
             $order = (new CoreOrderService())->getInfo($params['data']['order_id']);
-            if (!empty($order) && $order['status'] == OrderDict::WAIT_PAY) {
-                $wap_domain = !empty(env("system.wap_domain")) ? preg_replace('#/$#', '', env("system.wap_domain")) : request()->domain();
+            if (!empty($order)) {
+                $wap_domain = get_wap_domain();
                 return $this->toReturn(
                     [
-                        '__wechat_page' =>'/addon/shop/pages/order/detail?order_id=' . $order['order_id'],//模板消息链接
+                        '__wechat_page' => $wap_domain . '/addon/shop/pages/order/detail?order_id=' . $order['order_id'],//模板消息链接
                         '__weapp_page' => 'addon/shop/pages/order/detail?order_id=' . $order['order_id'],//小程序链接
-                        'body' => $order['body'],
+                        'body' => str_sub($order['body']),
                         'order_no' => $order['order_no'],
                         'delivery_time' => $order['delivery_time'],
+                        'order_money' => $order['order_money'],
                         'url' => $wap_domain . '/addon/shop/pages/order/detail?order_id=' . $order['order_id']
                     ],
                     [

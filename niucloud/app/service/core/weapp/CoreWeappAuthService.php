@@ -11,13 +11,10 @@
 
 namespace app\service\core\weapp;
 
+use app\service\core\wxoplatform\CoreOplatformService;
 use core\base\BaseCoreService;
 use EasyWeChat\Kernel\Exceptions\DecryptException;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
-use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
-use EasyWeChat\Kernel\Support\Collection;
-use GuzzleHttp\Exception\GuzzleException;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * 微信小程序服务提供
@@ -42,8 +39,13 @@ class CoreWeappAuthService extends BaseCoreService
      */
     public function session(?string $code)
     {
-        $utils = CoreWeappService::app()->getUtils();
-        return $utils->codeToSession($code);
+        $config = (new CoreWeappConfigService())->getWeappConfig();
+        if ($config['is_authorization']) {
+            return CoreOplatformService::codeToSession($code);
+        } else {
+            $utils = CoreWeappService::app()->getUtils();
+            return $utils->codeToSession($code);
+        }
     }
 
     /**

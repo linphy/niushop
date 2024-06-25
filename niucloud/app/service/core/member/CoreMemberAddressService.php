@@ -12,12 +12,7 @@
 namespace app\service\core\member;
 
 use app\model\member\MemberAddress;
-use app\model\member\MemberLabel;
 use core\base\BaseCoreService;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\facade\Cache;
 
 /**
  * 会员标签服务层
@@ -39,9 +34,19 @@ class CoreMemberAddressService extends BaseCoreService
      * @param int $member_id
      * @return array
      */
-   public function getDefaultAddressByMemberId(int $member_id, $type = 'address'){
-        $field = 'id,member_id,name,mobile,province_id,city_id,district_id,address,full_address,lng,lat,is_default,type';
-        return $this->model->where([['member_id', '=', $member_id], ['type', '=', $type] ])->field($field)->order('is_default desc')->findOrEmpty()->toArray();
+   public function getDefaultAddressByMemberId(int $member_id){
+        $field = 'id,member_id,name,mobile,province_id,city_id,district_id,address,full_address,lng,lat,is_default';
+        return $this->model->where([['member_id', '=', $member_id]])->field($field)->order('is_default desc')->findOrEmpty()->toArray();
+   }
+
+    /**
+     * 获取会员存在经纬度的地址
+     * @param int $member_id
+     * @return array
+     */
+   public function getLngLatAddressByMemberId(int $member_id){
+        $field = 'id,member_id,name,mobile,province_id,city_id,district_id,address,full_address,lng,lat,is_default';
+        return $this->model->where([['member_id', '=', $member_id], ['lng', '<>', ''], ['lat', '<>', '']])->field($field)->order('is_default desc, id desc')->findOrEmpty()->toArray();
    }
 
     /**
@@ -50,7 +55,7 @@ class CoreMemberAddressService extends BaseCoreService
      * @return array
      */
     public function getMemberAddressById(int $id, int $member_id){
-        $field = 'id,member_id,name,mobile,province_id,city_id,district_id,address,full_address,lng,lat,is_default,type';
+        $field = 'id,member_id,name,mobile,province_id,city_id,district_id,address,full_address,lng,lat,is_default';
         return $this->model->where([['id', '=', $id], ['member_id', '=', $member_id]])->field($field)->findOrEmpty()->toArray();
     }
 }

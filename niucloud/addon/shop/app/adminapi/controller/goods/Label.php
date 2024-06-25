@@ -29,7 +29,9 @@ class Label extends BaseAdminController
     public function pages()
     {
         $data = $this->request->params([
-            [ "label_name", "" ]
+            [ "label_name", "" ],
+            [ 'order', '' ],
+            [ 'sort', '' ]
         ]);
         return success(( new LabelService() )->getPage($data));
     }
@@ -99,6 +101,21 @@ class Label extends BaseAdminController
     {
         ( new LabelService() )->del($id);
         return success('DELETE_SUCCESS');
+    }
+
+
+    /**
+     * 修改排序
+     * @return \think\Response
+     */
+    public function modifySort()
+    {
+        $data = $this->request->params([
+            [ 'label_id', '' ],
+            [ 'sort', '' ],
+        ]);
+        ( new LabelService() )->modifySort($data);
+        return success('SUCCESS');
     }
 
 }

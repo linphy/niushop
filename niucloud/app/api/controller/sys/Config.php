@@ -56,4 +56,13 @@ class Config extends BaseApiController
         ]);
         return success(( new ConfigService() )->getWapIndexList($data));
     }
+
+    /**
+     * 获取地图配置
+     * @return Response
+     */
+    public function getMap()
+    {
+        return success(( new ConfigService() )->getMap());
+    }
 }

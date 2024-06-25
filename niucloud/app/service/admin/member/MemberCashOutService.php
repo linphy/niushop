@@ -41,8 +41,10 @@ class MemberCashOutService extends BaseAdminService
         {
             $member_where = [['member.member_no|member.nickname|member.mobile', '=', $where['keywords']]];
         }
-        $search_model = $this->model->withSearch(['member_id','status', 'join_create_time' => 'create_time', 'audit_time', 'transfer_time', 'transfer_type', 'cash_out_no'],$where)->with(['transfer'])->withJoin(
-            ["member" => ['nickname', 'headimg', 'mobile', 'member_id', 'member_no']])->where($member_where)->field($field)->order('create_time desc')->append(['status_name', 'transfer_status_name', 'transfer_type_name', 'account_type_name']);
+        $search_model = $this->model
+            ->withSearch(['member_id','status', 'join_create_time' => 'create_time', 'audit_time', 'transfer_time', 'transfer_type', 'cash_out_no'],$where)->with(['transfer'])
+            ->withJoin(["member" => ['member_id', 'member_no', 'username', 'mobile', 'nickname', 'headimg']])->where($member_where)->field($field)
+            ->order('create_time desc')->append(['status_name', 'transfer_status_name', 'transfer_type_name', 'account_type_name']);
         return $this->pageQuery($search_model);
     }
 

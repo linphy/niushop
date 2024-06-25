@@ -18,11 +18,10 @@ use core\sms\BaseSms;
  * @see PosterLoader
  * @package think\facade
  * @mixin BasePoster
- * @method  string|null createPoster(array $poster, string $dir, string $file_path) 创建海报
+ * @method  string|null createPoster( array $poster, string $dir, string $file_path ) 创建海报
  */
 class PosterLoader extends Loader
 {
-
 
     /**
      * 空间名
@@ -40,6 +39,5 @@ class PosterLoader extends Loader
     {
         return config('poster.default');
     }
-
 
 }

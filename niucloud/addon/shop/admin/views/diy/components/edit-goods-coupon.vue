@@ -38,7 +38,7 @@
 			<el-form label-width="90px" class="px-[10px]">
 
 				<el-form-item :label="t('couponTitle')">
-					<el-input v-model="diyStore.editComponent.couponTitle" clearable maxlength="10" show-word-limit/>
+					<el-input v-model="diyStore.editComponent.couponTitle" clearable maxlength="8" show-word-limit/>
 				</el-form-item>
 
 				<el-form-item :label="t('couponSubTitle')">
@@ -91,7 +91,7 @@
 import { t } from '@/lang'
 import useDiyStore from '@/stores/modules/diy'
 import { img } from '@/utils/common'
-import { ref, reactive, watch, onMounted, nextTick } from 'vue'
+import { ref, reactive } from 'vue'
 import Sortable from 'sortablejs'
 import { range } from 'lodash-es'
 import couponSelectPopup from '@/addon/shop/views/goods/components/coupon-select-popup.vue'

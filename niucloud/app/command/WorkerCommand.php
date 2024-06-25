@@ -11,11 +11,8 @@
 
 namespace app\command;
 
-use core\exception\CommonException;
-use core\job\Dispatch;
 use think\console\Input;
 use think\console\Output;
-use think\queue\Job;
 
 /**
  * worker 兼容think自定义指令

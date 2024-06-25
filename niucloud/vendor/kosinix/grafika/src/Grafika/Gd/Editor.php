@@ -660,7 +660,7 @@ final class Editor implements EditorInterface
             $resizeWidth  = $newHeight * $ratio;
         }
 
-        $this->_resize($image, $resizeWidth, $resizeHeight);
+        $this->_resize($image, round($resizeWidth, 2), round($resizeHeight, 2));
 
         return $this;
     }

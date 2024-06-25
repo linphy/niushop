@@ -70,9 +70,14 @@ const loadQrcode = () => {
     })
 }
 
-const show = (data: any) => {
+const show = (data: any,type='goods') => {
     Object.assign(goods, data)
-    page.value = `/addon/shop/pages/goods/detail?goods_id=${goods.goods_id}`
+    if(type=='goods'){
+        page.value = `/addon/shop/pages/goods/detail?goods_id=${goods.goods_id}`
+    }else{
+        page.value = `/addon/shop/pages/point/detail?id=${goods.id}`
+    }
+    
     loadQrcode()
     showDialog.value = true
 }

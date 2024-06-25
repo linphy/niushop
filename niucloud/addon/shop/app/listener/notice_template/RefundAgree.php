@@ -21,7 +21,9 @@ class RefundAgree extends BaseNoticeTemplate
                 return $this->toReturn(
                     [
                         'order_refund_no' => $refund['order_refund_no'],
-                        'apply_money' => $refund['apply_money']
+                        'order_no' => $refund['order_main']['order_no'],
+                        'refund_money' => $refund['apply_money'],
+                        'result' => '已通过申请'
                     ],
                     [
                         'member_id' => $refund['member_id']

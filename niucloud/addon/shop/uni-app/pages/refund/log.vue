@@ -8,7 +8,7 @@
             </view>
             <view class="pt-[140rpx]"></view>
             <view class="flex tab-bar items-center bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[120rpx] px-1 flex-wrap">
-                <u-button class="!text-sm" type="primary" shape="circle" @click="redirect({url: '/addon/shop/pages/refund/detail', param: { order_refund_no: orderRefundNo }})">返回详情</u-button>
+                <u-button class="!text-sm" text="返回详情" type="primary" shape="circle" @click="redirect({url: '/addon/shop/pages/refund/detail', param: { order_refund_no: orderRefundNo }})"></u-button>
             </view>
         </view>
 

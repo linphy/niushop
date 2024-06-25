@@ -86,9 +86,6 @@ const serveTable = reactive({
 
 const searchFormRef = ref<FormInstance>()
 
-// 选中数据
-// const selectData = ref<any[]>([])
-
 /**
  * 获取商品服务列表
  */
@@ -157,11 +154,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="scss" scoped>
 /* 多行超出隐藏 */
 .multi-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
 </style>

@@ -1,8 +1,7 @@
 <template>
 	<view @touchmove.prevent.stop>
 		<u-popup :show="goodsSkuPop" @close="closeFn" mode="bottom">
-			<view v-if="Object.keys(goodsDetail).length" class="rounded-t-[20rpx] overflow-hidden bg-[#fff] p-[32rpx] relative">
-				<view class="absolute right-[37rpx]  iconfont iconguanbi text-[50rpx]" @click="closeFn"></view>
+			<view v-if="Object.keys(goodsDetail).length"  @touchmove.prevent.stop class="rounded-t-[20rpx] overflow-hidden bg-[#fff] p-[32rpx] relative">
 				<view class="flex mb-[58rpx]">
 					<view class="rounded-[8rpx] overflow-hidden">
 						<u--image width="180rpx" height="180rpx" :src="img(detail.sku_image)" model="aspectFill">
@@ -15,9 +14,11 @@
 					<view class="flex flex-1 flex-col ml-[20rpx] py-[10rpx]">
 						<view class="w-[100%]">
 							<view class=" text-[var(--price-text-color)]  flex items-baseline">
-								<text class="text-[28rpx] font-bold price-font">￥</text>
-								<text class="text-[42rpx] font-bold price-font">{{ parseFloat(detail.sale_price).toFixed(2).split('.')[0] }}</text>
-								<text class="text-[28rpx] font-bold price-font">.{{ parseFloat(detail.sale_price).toFixed(2).split('.')[1] }}</text>
+								<text class="text-[28rpx] font-bold price-font mr-[4rpx]">￥</text>
+								<text class="text-[42rpx] font-bold price-font">{{ parseFloat(goodsPrice(detail)).toFixed(2).split('.')[0] }}</text>
+								<text class="text-[28rpx] font-bold price-font">.{{ parseFloat(goodsPrice(detail)).toFixed(2).split('.')[1] }}</text>
+								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType() == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
+								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType() == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
 							</view>
 							<view class="text-[24rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{ detail.stock }}{{ goodsDetail.goods.unit }}</view>
 						</view>
@@ -45,30 +46,30 @@
 							v-model="buyNum" :min="0" :max="detail.stock" integer :step="1" input-width="98rpx"
 							input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] iconfont iconjian" :class="{ '!text-[#c8c9cc]': buyNum === 0 }"></text>
+								<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 0 }"></text>
 							</template>
 							<template #input>
 								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] iconfont iconjia" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
+								<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
 							</template>
 						</u-number-box>
 						<u-number-box v-else v-model="buyNum" :min="1" :max="detail.stock" integer :step="1" input-width="98rpx" input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] iconfont iconjian" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 							</template>
 							<template #input>
 								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] iconfont iconjia" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
+								<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
 							</template>
 						</u-number-box>
 
 					</view>
 				</scroll-view>
-				<button v-if="goodsDetail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="save">确定</button>
+				<button v-if="detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="save">确定</button>
 				<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
 			</view>
 		</u-popup>
@@ -77,7 +78,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, toRaw } from 'vue';
-import { img, redirect } from '@/utils/common';
+import { img, redirect, getToken } from '@/utils/common';
 import { getGoodsSku } from '@/addon/shop/api/goods';
 import useCartStore from '@/addon/shop/stores/cart'
 
@@ -91,7 +92,7 @@ let currSpec = ref({
 	name: []
 })
 let info = ref({})//获取原始数据
-let detail = ref({})//展示数据
+let detail:any = ref({})//展示数据
 const buyNum = ref(1)
 
 const getGoodsSkuFn = (sku_id: any) => {
@@ -145,7 +146,6 @@ const goodsDetail = computed(() => {
 			})
 		})
 		getSkuId();
-		
 
 		// 当前详情内容
 		if (data.skuList && Object.keys(data.skuList).length) {
@@ -174,6 +174,7 @@ watch(
 )
 const change = (data, index) => {
 	currSpec.value.name[index] = data.name;
+	buyNum.value = 1
 	// getSkuId();
 }
 
@@ -197,13 +198,24 @@ const save = () => {
 			sku_id: detail.value.sku_id
 		});
 	} else {
+
+        let price = 0
+
+        if(goodsDetail.value.goods.is_discount){
+            price = detail.value.sale_price ? detail.value.sale_price : detail.value.price // 折扣价
+        }else if(goodsDetail.value.goods.member_discount && getToken()){
+            price = detail.value.member_price ? detail.value.member_price : detail.value.price // 会员价
+        }else{
+            price = detail.value.price
+        }
+
 		// 购物车添加数量
 		cartStore.increase({
 			id: detail.value.cart_id || '',
 			goods_id: detail.value.goods_id,
 			sku_id: detail.value.sku_id,
 			stock: detail.value.stock,
-			sale_price: detail.value.sale_price,
+			sale_price: price,
 			num: buyNum.value,
 		}, 0, () => {
 			uni.showToast({
@@ -214,6 +226,32 @@ const save = () => {
 	}
 	goodsSkuPop.value = false
 
+}
+
+// 商品价格
+let goodsPrice = (data:any) =>{
+	let price = "0.00";
+	if(goodsDetail.value.goods.is_discount){
+		price = data.sale_price ? data.sale_price : data.price // 折扣价
+	}else if(goodsDetail.value.goods.member_discount && getToken()){
+		price = data.member_price ? data.member_price : data.price // 会员价
+	}else{
+		price = data.price
+	}
+	return price;
+}
+
+// 价格类型 
+let priceType = () =>{
+	let type = "";
+	if(goodsDetail.value.goods.is_discount){
+		type = 'discount_price'// 折扣
+	}else if(goodsDetail.value.goods.member_discount && getToken()){
+		type = 'member_price' // 会员价
+	}else{ 
+		type = ""
+	}
+	return type;
 }
 
 defineExpose({

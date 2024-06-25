@@ -36,12 +36,13 @@ class StorageDict
 
     public static function getType()
     {
-        return [
+        $system = [
             self::LOCAL => [
                 'name' => '本地存储',
                 //配置参数
                 'params' => [
-                ]
+                ],
+                'component' => '/src/app/views/setting/components/storage-local.vue',
             ],
             self::QINIU => [
                 'name' => '七牛云存储',
@@ -52,7 +53,8 @@ class StorageDict
                     'access_key' => 'ACCESS_KEY',
                     'secret_key' => 'SECRET_KEY',
                     'domain' => '空间域名'
-                ]
+                ],
+                'component' => '/src/app/views/setting/components/storage-qiniu.vue',
             ],
 
             self::ALI => [
@@ -64,7 +66,8 @@ class StorageDict
                     'secret_key' => 'ACCESS_KEY_SECRET',
                     'endpoint' => 'Endpoint',
                     'domain' => '空间域名'
-                ]
+                ],
+                'component' => '/src/app/views/setting/components/storage-ali.vue',
             ],
 
             self::TENCENT => [
@@ -76,10 +79,13 @@ class StorageDict
                     'access_key' => 'SECRET_ID',
                     'secret_key' => 'SECRET_KEY',
                     'domain' => '空间域名'
-                ]
+                ],
+                'component' => '/src/app/views/setting/components/storage-tencent.vue',
             ],
 
         ];
+        $extend = event('StorageType');
+        return array_merge($system, ...$extend);
     }
 
 }

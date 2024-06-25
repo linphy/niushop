@@ -81,6 +81,7 @@ class CoreStorageService extends BaseCoreService
             $data['storage_type'] = $k;
             $data['is_use'] = $k == $config_type['default'] ? StorageDict::ON : StorageDict::OFF;
             $data['name'] = $v['name'];
+            $data['component'] = $v['component'];
             foreach ($v['params'] as $k_param => $v_param) {
                 $data['params'][$k_param] = [
                     'name' => $v_param,

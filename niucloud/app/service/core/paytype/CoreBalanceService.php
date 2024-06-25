@@ -39,29 +39,24 @@ class CoreBalanceService extends BaseCoreService
     }
 
 
-    public function pay($params){
-//        $password = $params['password'];
-//        if(empty($password)){
-//
-//        }
-        $out_trade_no = $params['out_trade_no'];//交易流水号
+    public function pay($params)
+    {
+        $out_trade_no = $params[ 'out_trade_no' ];//交易流水号
 
-        $pay = (new CorePayService())->findPayInfoByOutTradeNo($out_trade_no);
+        $pay = ( new CorePayService() )->findPayInfoByOutTradeNo($out_trade_no);
 
-        $main_id = $pay['main_id'];
-        $main_type = $pay['main_type'];
-        $money = $params['money'];
+        $main_id = $pay[ 'main_id' ];
+        $main_type = $pay[ 'main_type' ];
+        $money = $params[ 'money' ];
 
-        switch($main_type){
+        switch ($main_type) {
             case 'member':
 
                 //余额不足会抛出异常
-                (new CoreMemberAccountService())->addLog($main_id, MemberAccountTypeDict::BALANCE,
-                    -$money, 'order', MemberAccountChangeTypeDict::getType('order')['name'] ?? '', $out_trade_no);
+                ( new CoreMemberAccountService() )->addLog($main_id, MemberAccountTypeDict::BALANCE, -$money, 'order', MemberAccountChangeTypeDict::getType(MemberAccountTypeDict::BALANCE)[ 'order' ][ 'name' ] ?? '', $out_trade_no);
 
                 break;
             case 'user':
-
 
                 break;
         }
@@ -84,25 +79,24 @@ class CoreBalanceService extends BaseCoreService
      * @param array $params
      * @return array
      */
-    public function refund(array $params){
-        $out_trade_no = $params['out_trade_no'];
-        $money = $params['money'];
-        $refund_no = $params['refund_no'];
+    public function refund(array $params)
+    {
+        $out_trade_no = $params[ 'out_trade_no' ];
+        $money = $params[ 'money' ];
+        $refund_no = $params[ 'refund_no' ];
         $core_pay_service = new CorePayService();
         $pay = $core_pay_service->findPayInfoByOutTradeNo($out_trade_no);
 
-        $main_id = $pay['main_id'];
-        $main_type = $pay['main_type'];
+        $main_id = $pay[ 'main_id' ];
+        $main_type = $pay[ 'main_type' ];
 
-        switch($main_type){
+        switch ($main_type) {
             case 'member':
-                    //余额不足会抛出异常
-                    (new CoreMemberAccountService())->addLog($main_id, MemberAccountTypeDict::BALANCE,
-                        $money, 'order_refund', MemberAccountChangeTypeDict::getType('order_refund')['name'] ?? '', $refund_no);
+                //余额不足会抛出异常
+                ( new CoreMemberAccountService() )->addLog($main_id, MemberAccountTypeDict::BALANCE, $money, 'order_refund', MemberAccountChangeTypeDict::getType(MemberAccountTypeDict::BALANCE)[ 'order_refund' ][ 'name' ] ?? '', $refund_no);
 
                 break;
             case 'user':
-
 
                 break;
         }
@@ -120,9 +114,10 @@ class CoreBalanceService extends BaseCoreService
      * @param string|null $refund_no
      * @return Refund|array|mixed|Model
      */
-    public function getRefund(?string $out_trade_no, ?string $refund_no = '') {
-        return (new Refund())->where([
-            ['refund_no', '=', $refund_no],
+    public function getRefund(?string $out_trade_no, ?string $refund_no = '')
+    {
+        return ( new Refund() )->where([
+            [ 'refund_no', '=', $refund_no ],
         ])->findOrEmpty();
     }
 

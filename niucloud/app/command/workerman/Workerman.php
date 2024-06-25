@@ -24,7 +24,7 @@ class Workerman extends Command
     public function configure()
     {
         // 指令配置
-        $this->setName('cron:schedule')
+        $this->setName('workerman')
             ->addArgument('action', Argument::OPTIONAL, "start|stop|restart|reload|status|connections", 'start')
             ->addOption('mode', 'm', Option::VALUE_OPTIONAL, 'Run the workerman server in daemon mode.')
             ->setDescription('Workerman，高性能PHP应用容器');
@@ -61,7 +61,9 @@ class Workerman extends Command
             foreach ($task_list as $item) {
                 //获取定时任务时间字符串
                 new Crontab($this->getCrontab($item['time']), function () use ($core_schedule_service, $item, $output) {
-                    $core_schedule_service->execute($item, $output);
+                    if(!empty($item['class'])){
+                        $core_schedule_service->execute($item, $output);
+                    }
                 });
             }
             $output->writeln('['.date('Y-m-d H:i:s').']'." Schedule Started.");
@@ -85,6 +87,7 @@ class Workerman extends Command
                 'connect_timeout' => 10,
                 'max_attempts' => 3,
                 'retry_seconds' => 5,
+                'prefix' => md5(root_path())
             ];
             if(!empty(env('redis.redis_password'))){
                 $redis_option['auth'] = env('redis.redis_password');

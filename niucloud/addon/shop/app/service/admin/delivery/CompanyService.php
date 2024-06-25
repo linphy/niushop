@@ -38,7 +38,7 @@ class CompanyService extends BaseAdminService
         $field = 'company_id,company_name,logo,url,express_no,create_time';
         $order = '';
 
-        $search_model = $this->model->withSearch(["company_name"], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ ['company_id', '>', 0] ])->withSearch(["company_name"], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }

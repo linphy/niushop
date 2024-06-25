@@ -182,7 +182,6 @@ class CoreMemberCashOutService extends BaseCoreService
 
     /**
      * 申请提现
-
      * @param int $member_id
      * @param array $data
      * @return true

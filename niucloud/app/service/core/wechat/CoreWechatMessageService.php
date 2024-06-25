@@ -13,9 +13,7 @@ namespace app\service\core\wechat;
 
 use app\dict\channel\WechatDict;
 use app\service\core\scan\CoreScanService;
-use Closure;
 use core\base\BaseCoreService;
-
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;

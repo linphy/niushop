@@ -4,8 +4,56 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "01c2eef79da522ab157b1020e64fcd34",
+    "content-hash": "58d9753b0d3af0e968c66bbe65ae92ed",
     "packages": [
+        {
+            "name": "365taofang/huaweicloud-sdk-php-obs",
+            "version": "3.23.501",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/365taofang/huaweicloud-sdk-php-obs.git",
+                "reference": "85448144b10d26c1b4c15388a2ea11a76e41a1b5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/365taofang/huaweicloud-sdk-php-obs/zipball/85448144b10d26c1b4c15388a2ea11a76e41a1b5",
+                "reference": "85448144b10d26c1b4c15388a2ea11a76e41a1b5",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3.0 || ^7.0",
+                "guzzlehttp/psr7": "^1.4.2 || ^2.0",
+                "monolog/monolog": "^1.23.0 || ^2.0",
+                "php": ">=5.6.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Obs\\": "Obs/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "OBS PHP SDK",
+            "keywords": [
+                "OBS",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/365taofang/huaweicloud-sdk-php-obs/issues",
+                "source": "https://github.com/365taofang/huaweicloud-sdk-php-obs/tree/v3.23.501"
+            },
+            "time": "2023-09-15T00:55:23+00:00"
+        },
         {
             "name": "adbario/php-dot-notation",
             "version": "2.5.0",
@@ -1064,16 +1112,16 @@
         },
         {
             "name": "guzzlehttp/uri-template",
-            "version": "v1.0.3",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/uri-template.git",
-                "reference": "ecea8feef63bd4fef1f037ecb288386999ecc11c"
+                "reference": "61bf437fc2197f587f6857d3ff903a24f1731b5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/uri-template/zipball/ecea8feef63bd4fef1f037ecb288386999ecc11c",
-                "reference": "ecea8feef63bd4fef1f037ecb288386999ecc11c",
+                "url": "https://api.github.com/repos/guzzle/uri-template/zipball/61bf437fc2197f587f6857d3ff903a24f1731b5d",
+                "reference": "61bf437fc2197f587f6857d3ff903a24f1731b5d",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1084,20 +1132,14 @@
             },
             "require": {
                 "php": "^7.2.5 || ^8.0",
-                "symfony/polyfill-php80": "^1.24"
+                "symfony/polyfill-php80": "^1.17"
             },
             "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.8.2",
-                "phpunit/phpunit": "^8.5.36 || ^9.6.15",
+                "bamarni/composer-bin-plugin": "^1.8.1",
+                "phpunit/phpunit": "^8.5.19 || ^9.5.8",
                 "uri-template/tests": "1.0.0"
             },
             "type": "library",
-            "extra": {
-                "bamarni-bin": {
-                    "bin-links": true,
-                    "forward-command": false
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "GuzzleHttp\\UriTemplate\\": "src"
@@ -1136,7 +1178,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/uri-template/issues",
-                "source": "https://github.com/guzzle/uri-template/tree/v1.0.3"
+                "source": "https://github.com/guzzle/uri-template/tree/v1.0.2"
             },
             "funding": [
                 {
@@ -1152,7 +1194,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-03T19:50:20+00:00"
+            "time": "2023-08-27T10:19:19+00:00"
         },
         {
             "name": "hyperf/context",
@@ -5385,16 +5427,16 @@
         },
         {
             "name": "tencentcloud/common",
-            "version": "3.0.1109",
+            "version": "3.0.1105",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tencentcloud-sdk-php/common.git",
-                "reference": "bd0e07084131fa0b038d751163315ae919ba0a87"
+                "reference": "b49bbd36fe95463c6eb11ed015de63999a45ea2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tencentcloud-sdk-php/common/zipball/bd0e07084131fa0b038d751163315ae919ba0a87",
-                "reference": "bd0e07084131fa0b038d751163315ae919ba0a87",
+                "url": "https://api.github.com/repos/tencentcloud-sdk-php/common/zipball/b49bbd36fe95463c6eb11ed015de63999a45ea2d",
+                "reference": "b49bbd36fe95463c6eb11ed015de63999a45ea2d",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -5429,22 +5471,22 @@
             "homepage": "https://github.com/tencentcloud-sdk-php/common",
             "support": {
                 "issues": "https://github.com/tencentcloud-sdk-php/common/issues",
-                "source": "https://github.com/tencentcloud-sdk-php/common/tree/3.0.1109"
+                "source": "https://github.com/tencentcloud-sdk-php/common/tree/3.0.1105"
             },
-            "time": "2024-03-26T06:59:47+00:00"
+            "time": "2024-03-19T20:33:22+00:00"
         },
         {
             "name": "tencentcloud/sms",
-            "version": "3.0.1109",
+            "version": "3.0.1105",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tencentcloud-sdk-php/sms.git",
-                "reference": "3d91fed08401edab69392bb4c363c0a72717fbcc"
+                "reference": "decd581d9d4f0fb9645c193deae2cd625c936ab0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tencentcloud-sdk-php/sms/zipball/3d91fed08401edab69392bb4c363c0a72717fbcc",
-                "reference": "3d91fed08401edab69392bb4c363c0a72717fbcc",
+                "url": "https://api.github.com/repos/tencentcloud-sdk-php/sms/zipball/decd581d9d4f0fb9645c193deae2cd625c936ab0",
+                "reference": "decd581d9d4f0fb9645c193deae2cd625c936ab0",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -5454,7 +5496,7 @@
                 ]
             },
             "require": {
-                "tencentcloud/common": "3.0.1109"
+                "tencentcloud/common": "3.0.1105"
             },
             "type": "library",
             "autoload": {
@@ -5478,9 +5520,9 @@
             "homepage": "https://github.com/tencentcloud-sdk-php/sms",
             "support": {
                 "issues": "https://github.com/tencentcloud-sdk-php/sms/issues",
-                "source": "https://github.com/tencentcloud-sdk-php/sms/tree/3.0.1109"
+                "source": "https://github.com/tencentcloud-sdk-php/sms/tree/3.0.1105"
             },
-            "time": "2024-03-26T07:38:16+00:00"
+            "time": "2024-03-19T21:12:46+00:00"
         },
         {
             "name": "topthink/framework",

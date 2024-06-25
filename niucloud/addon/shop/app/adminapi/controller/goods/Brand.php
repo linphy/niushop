@@ -28,7 +28,9 @@ class Brand extends BaseAdminController
     */
     public function pages(){
         $data = $this->request->params([
-             ["brand_name",""]
+             [ "brand_name","" ],
+             [ 'order', '' ],
+             [ 'sort', '' ]
         ]);
         return success((new BrandService())->getPage($data));
     }
@@ -96,6 +98,20 @@ class Brand extends BaseAdminController
     public function del(int $id){
         (new BrandService())->del($id);
         return success('DELETE_SUCCESS');
+    }
+
+    /**
+     * 修改排序
+     * @return \think\Response
+     */
+    public function modifySort()
+    {
+        $data = $this->request->params([
+            [ 'brand_id', '' ],
+            [ 'sort', '' ],
+        ]);
+        ( new BrandService() )->modifySort($data);
+        return success('SUCCESS');
     }
 
 }

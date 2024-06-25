@@ -40,7 +40,6 @@ class ConfigService extends BaseAdminService
         return [
             'is_captcha' => $info['is_captcha'] ?? 0,//是否启用验证码
             'bg' => $info['bg'] ?? config('install.admin_login_bg'),//平台登录端 背景
-            'site_bg' => $info['site_bg'] ?? '',//站点登录端  背景
         ];
     }
 
@@ -54,7 +53,6 @@ class ConfigService extends BaseAdminService
         $config = [
             'is_captcha' => $data['is_captcha'] ?? 0,//是否启用验证码
             'bg' => $data['bg'] ?? '',//平台登录端 背景
-            'site_bg' => $data['site_bg'] ?? '',//站点登录端  背景
         ];
         (new CoreConfigService())->setConfig(ConfigKeyDict::ADMIN_LOGIN, $config);
         return true;

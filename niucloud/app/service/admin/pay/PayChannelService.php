@@ -46,7 +46,7 @@ class PayChannelService extends BaseAdminService
      */
     public function set(string $channel, string $type, array $data)
     {
-        $where = array(
+        $where = array (
             'type' => $type,
             'channel' => $channel
         );
@@ -56,12 +56,12 @@ class PayChannelService extends BaseAdminService
         }
         $pay_channel = $this->core_pay_channel_service->find($where);
         if ($pay_channel->isEmpty()) {
-            $data['channel'] = $channel;
-            $data['type'] = $type;
-            $data['config'] = $this->getConfigByPayType($data['config'], $type);
+            $data[ 'channel' ] = $channel;
+            $data[ 'type' ] = $type;
+            $data[ 'config' ] = $this->getConfigByPayType($data[ 'config' ], $type);
             $res = $this->model->create($data);
         } else {
-            $data['config'] = $this->getConfigByPayType($data['config'], $type);
+            $data[ 'config' ] = $this->getConfigByPayType($data[ 'config' ], $type);
             $pay_channel->save($data);
         }
         return true;
@@ -77,26 +77,28 @@ class PayChannelService extends BaseAdminService
     public function getChannelList()
     {
         $channel_list = PayChannelDict::getPayChannel();
-        $where = [];
+        $where = array (
+            ['id', '>', 0]
+        );
         $pay_channel_list_temp = $this->model->where($where)->field('type, channel, config, sort, status')->select()->toArray();
 
         $pay_channel_list = [];
         foreach ($pay_channel_list_temp as $v) {
-            $pay_channel_list[$v['channel']][$v['type']] = $v;
+            $pay_channel_list[ $v[ 'channel' ] ][ $v[ 'type' ] ] = $v;
         }
         foreach ($channel_list as $k => $v) {
-            $temp_item = $pay_channel_list[$k] ?? [];
-            foreach ($v['pay_type'] as $item_k => $item_v) {
-                $temp_v_item = $temp_item[$item_k] ?? ['status' => 0, 'config' => ['name' => ''], 'sort' => 0];
-                $item_v['config'] = $temp_v_item['config'];
-                $item_v['status'] = $temp_v_item['status'];
-                $item_v['sort'] = $temp_v_item['sort'];
-                $channel_list[$k]['pay_type'][$item_k] = $item_v;
+            $temp_item = $pay_channel_list[ $k ] ?? [];
+            foreach ($v[ 'pay_type' ] as $item_k => $item_v) {
+                $temp_v_item = $temp_item[ $item_k ] ?? [ 'status' => 0, 'config' => [ 'name' => '' ], 'sort' => 0 ];
+                $item_v[ 'config' ] = $temp_v_item[ 'config' ];
+                $item_v[ 'status' ] = $temp_v_item[ 'status' ];
+                $item_v[ 'sort' ] = $temp_v_item[ 'sort' ];
+                $channel_list[ $k ][ 'pay_type' ][ $item_k ] = $item_v;
             }
-            $temp_pay_type = array_values($channel_list[$k]['pay_type']);
+            $temp_pay_type = array_values($channel_list[ $k ][ 'pay_type' ]);
             $sort = array_column($temp_pay_type, 'sort');
             array_multisort($sort, SORT_ASC, $temp_pay_type);
-            $channel_list[$k]['pay_type'] = $temp_pay_type;
+            $channel_list[ $k ][ 'pay_type' ] = $temp_pay_type;
         }
         return $channel_list;
     }
@@ -111,7 +113,7 @@ class PayChannelService extends BaseAdminService
      */
     public function getListByChannel(string $channel)
     {
-        $where = array(
+        $where = array (
             'channel' => $channel
         );
         return $this->model->where($where)->field('type, channel, config, sort, status')->select()->toArray();
@@ -129,27 +131,27 @@ class PayChannelService extends BaseAdminService
         switch ($type) {
             case PayDict::WECHATPAY:
                 $config = [
-                    'mch_id' => $data['mch_id'] ?? '',//商户号
-                    'mch_secret_key' => $data['mch_secret_key'] ?? '',//商户秘钥  现在默认认为是v3版
-                    'mch_secret_cert' => $data['mch_secret_cert'] ?? '',//商户私钥 字符串或路径
-                    'mch_public_cert_path' => $data['mch_public_cert_path'] ?? '',//商户公钥证书路径
+                    'mch_id' => $data[ 'mch_id' ] ?? '',//商户号
+                    'mch_secret_key' => $data[ 'mch_secret_key' ] ?? '',//商户秘钥  现在默认认为是v3版
+                    'mch_secret_cert' => $data[ 'mch_secret_cert' ] ?? '',//商户私钥 字符串或路径
+                    'mch_public_cert_path' => $data[ 'mch_public_cert_path' ] ?? '',//商户公钥证书路径
                 ];
                 break;
             case PayDict::ALIPAY:
                 $config = [
-                    'app_id' => $data['app_id'] ?? '',// 必填-支付宝分配的 app_id
-                    'app_secret_cert' => $data['app_secret_cert'] ?? '',// 必填-应用私钥 字符串或路径
-                    'app_public_cert_path' => $data['app_public_cert_path'] ?? '',//必填-应用公钥证书 路径
-                    'alipay_public_cert_path' => $data['alipay_public_cert_path'] ?? '',//必填-支付宝公钥证书 路径
-                    'alipay_root_cert_path' => $data['alipay_root_cert_path'] ?? '',// 必填-支付宝根证书 路径
+                    'app_id' => $data[ 'app_id' ] ?? '',// 必填-支付宝分配的 app_id
+                    'app_secret_cert' => $data[ 'app_secret_cert' ] ?? '',// 必填-应用私钥 字符串或路径
+                    'app_public_cert_path' => $data[ 'app_public_cert_path' ] ?? '',//必填-应用公钥证书 路径
+                    'alipay_public_cert_path' => $data[ 'alipay_public_cert_path' ] ?? '',//必填-支付宝公钥证书 路径
+                    'alipay_root_cert_path' => $data[ 'alipay_root_cert_path' ] ?? '',// 必填-支付宝根证书 路径
                 ];
                 break;
             case PayDict::OFFLINEPAY:
                 $config = [
-                    'collection_name' => $data['collection_name'] ?? '',// 必填-收款账户名称
-                    'collection_bank' => $data['collection_bank'] ?? '',//必填-收款银行
-                    'collection_account' => $data['collection_account'] ?? '',//必填-收款账号
-                    'collection_desc' => $data['collection_desc'] ?? '',// 必填-转账说明
+                    'collection_name' => $data[ 'collection_name' ] ?? '',// 必填-收款账户名称
+                    'collection_bank' => $data[ 'collection_bank' ] ?? '',//必填-收款银行
+                    'collection_account' => $data[ 'collection_account' ] ?? '',//必填-收款账号
+                    'collection_desc' => $data[ 'collection_desc' ] ?? '',// 必填-转账说明
                 ];
                 break;
         }
@@ -163,8 +165,8 @@ class PayChannelService extends BaseAdminService
      */
     public function setTransfer($data)
     {
-        $wechatpay_config = $data['wechatpay_config'];
-        $alipay_config = $data['alipay_config'];
+        $wechatpay_config = $data[ 'wechatpay_config' ];
+        $alipay_config = $data[ 'alipay_config' ];
         $this->set('transfer', PayDict::WECHATPAY, [
             'config' => $wechatpay_config,
             'status' => 1,
@@ -176,18 +178,31 @@ class PayChannelService extends BaseAdminService
         return true;
     }
 
-    public function setAll($data){
-        foreach($data as $k => $v){
-            $temp_v = $v['pay_type'];
-            foreach($temp_v as $item_k => $item){
-                $this->set($k, $item['key'], [
-                    'config' => $item['config'] ?? [],
-                    'status' => $item['status'] ?? 0,
-                    'sort' => $item['sort'] ?? 0,
+    public function setAll($data)
+    {
+        foreach ($data as $k => $v) {
+            $temp_v = $v[ 'pay_type' ];
+            foreach ($temp_v as $item_k => $item) {
+                $this->set($k, $item[ 'key' ], [
+                    'config' => $item[ 'config' ] ?? [],
+                    'status' => $item[ 'status' ] ?? 0,
+                    'sort' => $item[ 'sort' ] ?? 0,
                 ]);
             }
         }
         return true;
+    }
+
+    /**
+     * 查询信息
+     * @param array $where
+     * @return mixed
+     */
+    public function getInfo($where = [])
+    {
+        $res = $this->model->where($where)->field('type, channel, config, sort, status')->findOrEmpty()->toArray();
+        return $res;
+
     }
 
 }

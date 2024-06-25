@@ -3,7 +3,7 @@
 return [
     'DIY_SHOP_INDEX' => [
         'shop_index_style1' => [ // 页面标识
-            "title" => "商城首页（风格一）", // 页面名称
+            "title" => "商城首页1", // 页面名称
             'cover' => 'addon/shop/diy/template/shop_index_one_cover.png', // 页面封面图
             'preview' => '', // 页面预览图
             'desc' => '', // 页面描述
@@ -20,12 +20,18 @@ return [
                     "imgWidth" => "",
                     "imgHeight" => "",
                     "topStatusBar" => [
-                        "bgColor" => "#ffffff",
-                        "isTransparent" => false,
-                        "isShow" => true,
-                        "style" => "style-1",
-                        "textColor" => "#333333",
-                        "textAlign" => "center"
+                        'isShow' => false,
+                        'bgColor' => "#ffffff",
+                        'isTransparent' => false,
+                        'style' => 'style-6',
+                        'styleName' => '风格6',
+                        'textColor' => "#333333",
+                        'textAlign' => 'center',
+                        'inputPlaceholder' => '请输入搜索关键词',
+                        'imgUrl' => '',
+                        'link' => [
+                            'name' => ""
+                        ]
                     ],
                     "bottomTabBarSwitch" => true,
                     "popWindow" => [
@@ -80,10 +86,10 @@ return [
                             "text" => "请输入搜索关键词",
                             "link" => [
                                 'name' => 'SHOP_GOODS_SEARCH',
+                                "parent" => "SHOP_LINK",
                                 'title' => '商品搜索',
                                 'url' => '/addon/shop/pages/goods/search',
-                                'is_share' => 1,
-                                'action' => ''
+                                'action' => '',
                             ],
                             'hotWord' => [
                                 "interval" => 3,
@@ -193,15 +199,6 @@ return [
                                     "link" => [
                                         "name" => ""
                                     ]
-                                ],
-                                [
-                                    "imageUrl" => "addon/shop/diy/index/style2/banner1.png",
-                                    "imgWidth" => 630,
-                                    "imgHeight" => 300,
-                                    "link" => [
-                                        "name" => ""
-                                    ],
-                                    "id" => "5yeoqr006ai0"
                                 ]
                             ]
                         ],
@@ -250,15 +247,15 @@ return [
                         ],
                         "list" => [
                             [
-                                "title" => "商品分类",
+                                "title" => "签到",
                                 "link" => [
-                                    "name" => "SHOP_GOODS_CATEGORY",
-                                    "parent" => "SHOP_LINK",
-                                    "title" => "商品分类",
-                                    "url" => "/addon/shop/pages/goods/category",
+                                    "name" => "MEMBER_MY_SIGN_IN",
+                                    "parent" => "MEMBER_LINK",
+                                    "title" => "我的签到",
+                                    "url" => "/app/pages/member/sign_in",
                                     "action" => ""
                                 ],
-                                "imageUrl" => "addon/shop/diy/index/style2/nav_goods_category.png",
+                                "imageUrl" => "addon/shop/diy/index/style2/nav_sign_in.png",
                                 "label" => [
                                     "control" => false,
                                     "text" => "热门",
@@ -267,8 +264,8 @@ return [
                                     "bgColorEnd" => "#FE3423"
                                 ],
                                 "id" => "1evjnc3zeb5s",
-                                "imgWidth" => 180,
-                                "imgHeight" => 180
+                                "imgWidth" => 135,
+                                "imgHeight" => 135
                             ],
                             [
                                 "title" => "分销管理",
@@ -277,7 +274,7 @@ return [
                                     "parent" => "SHOP_FENXIAO_LINK",
                                     "title" => "分销中心",
                                     "url" => "/addon/shop_fenxiao/pages/index",
-                                    "action" => "decorate"
+                                    "action" => ""
                                 ],
                                 "imageUrl" => "addon/shop/diy/index/style2/nav_fenxiao.png",
                                 "label" => [
@@ -290,6 +287,27 @@ return [
                                 "id" => "2ktzer8wrnc0",
                                 "imgWidth" => 180,
                                 "imgHeight" => 180
+                            ],
+                            [
+                                "title" => "分销专区",
+                                "link" => [
+                                    "name" => "SHOP_FENXIAO_ZONE",
+                                    "parent" => "SHOP_FENXIAO_LINK",
+                                    "title" => "分销专区",
+                                    "url" => "/addon/shop_fenxiao/pages/zone",
+                                    "action" => "decorate"
+                                ],
+                                "imageUrl" => "addon/shop/diy/index/style2/nav_fenxiao_zone.png",
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ],
+                                "id" => "4aixr8qu5ek0",
+                                "imgWidth" => 135,
+                                "imgHeight" => 135
                             ],
                             [
                                 "title" => "领券中心",
@@ -313,27 +331,6 @@ return [
                                 "imgHeight" => 180
                             ],
                             [
-                                "title" => "会员中心",
-                                "link" => [
-                                    "name" => "SHOP_MEMBER_INDEX",
-                                    "parent" => "SHOP_LINK",
-                                    "title" => "商城个人中心",
-                                    "url" => "/addon/shop/pages/member/index",
-                                    "action" => "decorate"
-                                ],
-                                "imageUrl" => "addon/shop/diy/index/style2/nav_member_index.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "id" => "4aixr8qu5ek0",
-                                "imgWidth" => 180,
-                                "imgHeight" => 180
-                            ],
-                            [
                                 "id" => "6iux9g1aojo0",
                                 "title" => "新闻资讯",
                                 "imageUrl" => "addon/shop/diy/index/style2/nav_news_info.png",
@@ -352,15 +349,15 @@ return [
                             ],
                             [
                                 "id" => "7jggy5euv3w0",
-                                "title" => "购物车",
-                                "imageUrl" => "addon/shop/diy/index/style2/nav_cart.png",
-                                "imgWidth" => 180,
-                                "imgHeight" => 180,
+                                "title" => "限时折扣",
+                                "imageUrl" => "addon/shop/diy/index/style2/nav_discount.png",
+                                "imgWidth" => 135,
+                                "imgHeight" => 135,
                                 "link" => [
-                                    "name" => "SHOP_GOODS_CART",
+                                    "name" => "SHOP_DISCOUNT_LIST",
                                     "parent" => "SHOP_LINK",
-                                    "title" => "购物车",
-                                    "url" => "/addon/shop/pages/goods/cart",
+                                    "title" => "限时折扣列表",
+                                    'url' => '/addon/shop/pages/discount/list',
                                     "action" => ""
                                 ],
                                 "label" => [
@@ -373,15 +370,15 @@ return [
                             ],
                             [
                                 "id" => "7bqpc6bjha80",
-                                "title" => "我的订单",
-                                "imageUrl" => "addon/shop/diy/index/style2/nav_my_order.png",
-                                "imgWidth" => 180,
-                                "imgHeight" => 180,
+                                "title" => "积分商城",
+                                "imageUrl" => "addon/shop/diy/index/style2/nav_point_index.png",
+                                "imgWidth" => 135,
+                                "imgHeight" => 135,
                                 "link" => [
-                                    "name" => "SHOP_ORDER_LIST",
+                                    "name" => "SHOP_POINT_INDEX",
                                     "parent" => "SHOP_LINK",
-                                    "title" => "订单列表",
-                                    "url" => "/addon/shop/pages/order/list",
+                                    "title" => "积分商城",
+                                    'url' => '/addon/shop/pages/point/index',
                                     "action" => ""
                                 ],
                                 "label" => [
@@ -465,8 +462,8 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 8,
-                        "bottomRounded" => 8,
+                        "topRounded" => 0,
+                        "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -1378,7 +1375,7 @@ return [
     ],
     'DIY_SHOP_MEMBER_INDEX' => [
         'shop_member_index_style1' => [
-            "title" => "商城个人中心（风格一）", // 页面名称
+            "title" => "商城个人中心1", // 页面名称
             'cover' => 'addon/shop/diy/template/member_index_cover.png', // 页面封面图
             'preview' => '', // 页面预览图
             'desc' => '个人中心', // 页面描述
@@ -1412,12 +1409,18 @@ return [
                         "componentGradientAngle" => "to bottom"
                     ],
                     "topStatusBar" => [
-                        "bgColor" => "#ffffff",
-                        "isTransparent" => false,
-                        "isShow" => true,
-                        "style" => "style-1",
-                        "textColor" => "#333333",
-                        "textAlign" => "center"
+                        'isShow' => true,
+                        'bgColor' => "#ffffff",
+                        'isTransparent' => false,
+                        'style' => 'style-1',
+                        'styleName' => '风格1',
+                        'textColor' => "#333333",
+                        'textAlign' => 'center',
+                        'inputPlaceholder' => '请输入搜索关键词',
+                        'imgUrl' => '',
+                        'link' => [
+                            'name' => ""
+                        ]
                     ],
                     "popWindow" => [
                         "imgUrl" => "",
@@ -1432,7 +1435,7 @@ return [
                     "pageStartBgColor" => "rgba(246, 246, 246, 1)",
                     "pageEndBgColor" => "",
                     "pageGradientAngle" => "to bottom",
-                    "bgHeightScale" => 100
+                    "bgHeightScale" => 0
                 ],
                 "value" => [
                     [
@@ -1444,7 +1447,7 @@ return [
                         "ignore" => [
                             "componentBgUrl"
                         ],
-                        "componentStartBgColor" => "",
+                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -1453,10 +1456,10 @@ return [
                         "bottomElementRounded" => 0,
                         "margin" => [
                             "top" => 0,
-                            "bottom" => 5,
+                            "bottom" => 0,
                             "both" => 0
                         ],
-                        "textColor" => "#FFFFFF",
+                        "textColor" => "#303133",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
                         "pageGradientAngle" => "to bottom",
@@ -1465,7 +1468,78 @@ return [
                         "componentGradientAngle" => "to bottom",
                         "style" => "style-1",
                         "styleName" => "风格1",
-                        "bgUrl" => "addon/shop/diy/member/style1/member_info_bg.png"
+                        "bgUrl" => ""
+                    ],
+                    [
+                        "path" => "edit-member-level",
+                        "uses" => 1,
+                        "id" => "533e6ynytmo0",
+                        "componentName" => "MemberLevel",
+                        "componentTitle" => "会员等级",
+                        "ignore" => [
+                            "componentBgColor",
+                            "componentBgUrl"
+                        ],
+                        "style" => "style-3",
+                        "styleName" => "风格3",
+                        "textColor" => "#303133",
+                        "componentStartBgColor" => "",
+                        "componentEndBgColor" => "",
+                        "topRounded" => 8,
+                        "bottomRounded" => 0,
+                        "elementBgColor" => "",
+                        "topElementRounded" => 0,
+                        "bottomElementRounded" => 0,
+                        "margin" => [
+                            "top" => -45,
+                            "bottom" => 10,
+                            "both" => 15
+                        ],
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentGradientAngle" => "to bottom"
+                    ],
+                    [
+                        "path" => "edit-shop-order-info",
+                        "uses" => 1,
+                        "id" => "2jmnqqhc8ri0",
+                        "componentName" => "ShopOrderInfo",
+                        "componentTitle" => "订单中心",
+                        "ignore" => [],
+                        "textColor" => "#303133",
+                        "fontSize" => 16,
+                        "fontWeight" => "normal",
+                        "text" => "订单中心",
+                        "more" => [
+                            "text" => "全部订单",
+                            "color" => "#999999",
+                        ],
+                        "item" => [
+                            "fontSize" => 12,
+                            "fontWeight" => "normal",
+                            "color" => "#303133"
+                        ],
+                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentEndBgColor" => "",
+                        "topRounded" => 8,
+                        "bottomRounded" => 8,
+                        "elementBgColor" => "",
+                        "topElementRounded" => 0,
+                        "bottomElementRounded" => 0,
+                        "margin" => [
+                            "top" => 0,
+                            "bottom" => 5,
+                            "both" => 15
+                        ],
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentGradientAngle" => "to bottom"
                     ],
                     [
                         "path" => "edit-image-ads",
@@ -1509,12 +1583,16 @@ return [
                         "imageHeight" => 90
                     ],
                     [
-                        "path" => "edit-text",
+                        "path" => "edit-horz-blank",
                         "uses" => 0,
-                        "id" => "68gnubbygqg0",
-                        "componentName" => "Text",
-                        "componentTitle" => "标题",
-                        "ignore" => [],
+                        "id" => "5itd5jmo3xk0",
+                        "componentName" => "HorzBlank",
+                        "componentTitle" => "辅助空白",
+                        "ignore" => [
+                            "pageBgColor",
+                            "componentBgUrl"
+                        ],
+                        "height" => 10,
                         "textColor" => "#303133",
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
@@ -1525,6 +1603,33 @@ return [
                         "bottomElementRounded" => 0,
                         "margin" => [
                             "top" => 5,
+                            "bottom" => 0,
+                            "both" => 15
+                        ],
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentGradientAngle" => "to bottom"
+                    ],
+                    [
+                        "path" => "edit-text",
+                        "uses" => 0,
+                        "id" => "68gnubbygqg0",
+                        "componentName" => "Text",
+                        "componentTitle" => "标题",
+                        "ignore" => [],
+                        "textColor" => "#303133",
+                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentEndBgColor" => "",
+                        "topRounded" => 0,
+                        "bottomRounded" => 0,
+                        "elementBgColor" => "",
+                        "topElementRounded" => 0,
+                        "bottomElementRounded" => 0,
+                        "margin" => [
+                            "top" => 0,
                             "bottom" => 0,
                             "both" => 15
                         ],
@@ -1605,6 +1710,27 @@ return [
                         ],
                         "list" => [
                             [
+                                "id" => "49kxbgr5lwue",
+                                "title" => "签到",
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_sign_in.png",
+                                "imgWidth" => 88,
+                                "imgHeight" => 88,
+                                "link" => [
+                                    "name" => "MEMBER_MY_SIGN_IN",
+                                    "parent" => "MEMBER_LINK",
+                                    "title" => "我的签到",
+                                    "url" => "/app/pages/member/sign_in",
+                                    "action" => ""
+                                ],
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ]
+                            ],
+                            [
                                 "title" => "我的余额",
                                 "link" => [
                                     "parent" => "MEMBER_LINK",
@@ -1626,11 +1752,15 @@ return [
                                 "imgHeight" => 88
                             ],
                             [
-                                "title" => "积分兑换",
+                                "title" => "地址管理",
                                 "link" => [
-                                    "name" => ""
+                                    "parent" => "MEMBER_LINK",
+                                    "name" => "MEMBER_ADDRESS",
+                                    "title" => "收货地址",
+                                    "url" => "/app/pages/member/address",
+                                    "action" => ""
                                 ],
-                                "imageUrl" => "addon/shop/diy/member/style1/nav_point_change.png",
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_address.png",
                                 "label" => [
                                     "control" => false,
                                     "text" => "热门",
@@ -1638,7 +1768,7 @@ return [
                                     "bgColorStart" => "#F83287",
                                     "bgColorEnd" => "#FE3423"
                                 ],
-                                "id" => "692put4jerg0",
+                                "id" => "hdk4145zk40",
                                 "imgWidth" => 88,
                                 "imgHeight" => 88
                             ],
@@ -1664,34 +1794,17 @@ return [
                                 "imgHeight" => 88
                             ],
                             [
-                                "title" => "地址管理",
-                                "link" => [
-                                    "parent" => "MEMBER_LINK",
-                                    "name" => "MEMBER_ADDRESS",
-                                    "title" => "收货地址",
-                                    "url" => "/app/pages/member/address",
-                                    "action" => ""
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/style1/nav_address.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "id" => "hdk4145zk40",
-                                "imgWidth" => 80,
-                                "imgHeight" => 88
-                            ],
-                            [
-                                "id" => "4o2q7yss59m0",
-                                "title" => "我的等级",
-                                "imageUrl" => "addon/shop/diy/member/style1/nav_my_level.png",
+                                "id" => "7dpefp0s9ew0",
+                                "title" => "分销中心",
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_promote.png",
                                 "imgWidth" => 88,
-                                "imgHeight" => 90,
+                                "imgHeight" => 88,
                                 "link" => [
-                                    "name" => ""
+                                    "name" => "SHOP_FENXIAO_INDEX",
+                                    "parent" => "SHOP_FENXIAO_LINK",
+                                    "title" => "分销中心",
+                                    "url" => "/addon/shop_fenxiao/pages/index",
+                                    "action" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -1702,13 +1815,55 @@ return [
                                 ]
                             ],
                             [
-                                "id" => "7dpefp0s9ew0",
-                                "title" => "我的推广",
-                                "imageUrl" => "addon/shop/diy/member/style1/nav_promote.png",
+                                "title" => "积分兑换",
+                                "link" => [
+                                    "name" => ""
+                                ],
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_point_change.png",
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ],
+                                "id" => "692put4jerg0",
+                                "imgWidth" => 88,
+                                "imgHeight" => 88
+                            ],
+                            [
+                                "id" => "78kxbgr4lipw",
+                                "title" => "核销台",
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_verify_index.png",
                                 "imgWidth" => 88,
                                 "imgHeight" => 88,
                                 "link" => [
-                                    "name" => ""
+                                    "name" => "MEMBER_MY_SIGN_IN",
+                                    "parent" => "MEMBER_VERIFY_INDEX",
+                                    "title" => "核销台",
+                                    'url' => '/app/pages/verify/index',
+                                    "action" => ""
+                                ],
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ]
+                            ],
+                            [
+                                "id" => "4o2q7yss59m0",
+                                "title" => "我的等级",
+                                "imageUrl" => "addon/shop/diy/member/style1/nav_my_level.png",
+                                "imgWidth" => 88,
+                                "imgHeight" => 88,
+                                "link" => [
+                                    "name" => "MEMBER_MY_LEVEL",
+                                    "parent" => "MEMBER_LINK",
+                                    "title" => "会员等级",
+                                    "url" => "/app/pages/member/level",
+                                    "action" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -1757,30 +1912,57 @@ return [
                 ]
             ]
         ],
-        'shop_member_index' => [
-            "title" => "商城个人中心（风格二）", // 页面名称
-            'cover' => 'addon/shop/diy/template/member_index_cover.png', // 页面封面图
+    ],
+    'DIY_SHOP_POINT_INDEX' => [
+        'shop_point_index_style1' => [
+            "title" => "积分商城",
+            'cover' => 'addon/shop/diy/template/shop_point_index_style1_cover.jpg', // 页面封面图
             'preview' => '', // 页面预览图
-            'desc' => '个人中心', // 页面描述
+            'desc' => '', // 页面描述
             'mode' => 'diy', // 页面模式：diy：自定义，fixed：固定
+            // 页面数据源
             'data' => [
                 "global" => [
-                    "title" => "个人中心",
-                    'pageStartBgColor' => 'rgba(246, 247, 252, 1)',
-                    'pageEndBgColor' => '',
-                    'pageGradientAngle' => 'to bottom',
                     "bgUrl" => "",
-                    'bgHeightScale' => 0,
                     "imgWidth" => "",
                     "imgHeight" => "",
+                    "title" => "积分商城",
+                    "pageStartBgColor" => "#F6F6F6",
+                    "pageEndBgColor" => "",
+                    "pageGradientAngle" => "to bottom",
+                    "bgHeightScale" => 0,
+                    "topStatusBar" => [
+                        'isShow' => false,
+                        'bgColor' => "#ffffff",
+                        'isTransparent' => false,
+                        'style' => 'style-6',
+                        'styleName' => '风格6',
+                        'textColor' => "#333333",
+                        'textAlign' => 'center',
+                        'inputPlaceholder' => '请输入搜索关键词',
+                        'imgUrl' => '',
+                        'link' => [
+                            'name' => ""
+                        ]
+                    ],
                     "bottomTabBarSwitch" => true,
+                    "popWindow" => [
+                        "imgUrl" => "",
+                        "imgWidth" => "",
+                        "imgHeight" => "",
+                        "count" => -1,
+                        "show" => 0,
+                        "link" => [
+                            "name" => ""
+                        ]
+                    ],
                     "template" => [
                         "textColor" => "#303133",
-                        'pageStartBgColor' => '',
-                        'pageEndBgColor' => '',
-                        'pageGradientAngle' => 'to bottom',
-                        'componentBgUrl' => '',
-                        'componentBgAlpha' => 2,
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
                         "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
@@ -1792,41 +1974,25 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 12
-                        ]
-                    ],
-                    "topStatusBar" => [
-                        "bgColor" => "#ffffff",
-                        "isTransparent" => false,
-                        "isShow" => true,
-                        "style" => "style-1",
-                        "textColor" => "#333333",
-                        "textAlign" => "center"
-                    ],
-                    "popWindow" => [
-                        "imgUrl" => "",
-                        "imgWidth" => "",
-                        "imgHeight" => "",
-                        "count" => -1,
-                        "show" => 0,
-                        "link" => [
-                            "name" => ""
+                            "both" => 0
                         ]
                     ]
                 ],
                 "value" => [
                     [
-                        "path" => "edit-member-info",
-                        "id" => "40w5ay4dep00",
-                        "componentName" => "MemberInfo",
-                        "componentTitle" => "会员信息",
-                        "uses" => 1,
+                        "id" => "d0ib6565eaw",
+                        "componentName" => "ShopExchangeInfo",
+                        "componentTitle" => "积分兑换",
+                        "path" => "edit-shop-exchange-info",
+                        "uses" => 0,
                         "ignore" => [],
-                        'pageStartBgColor' => '',
-                        'pageEndBgColor' => '',
-                        'pageGradientAngle' => 'to bottom',
-                        'componentBgUrl' => '',
-                        'componentBgAlpha' => 2,
+                        "bgUrl" => "addon/shop/diy/point/point_index_bg.jpg",
+                        "textColor" => "#303133",
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
                         "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
@@ -1840,24 +2006,126 @@ return [
                             "bottom" => 0,
                             "both" => 0
                         ],
-                        "textColor" => "#303133",
-                        "style" => "style-1",
-                        "styleName" => "风格1",
-                        "bgUrl" => "",
-                        "bgColorStart" => "",
-                        "bgColorEnd" => ""
                     ],
                     [
-                        "path" => "edit-horz-blank",
+                        "id" => "5lml3wp5tow0",
+                        "componentName" => "GraphicNav",
+                        "componentTitle" => "图文导航",
+                        "path" => "edit-graphic-nav",
                         "uses" => 0,
-                        "id" => "2da0xqyo8zms",
+                        "ignore" => [],
+                        "layout" => "horizontal",
+                        "mode" => "graphic",
+                        "showStyle" => "fixed",
+                        "rowCount" => 3,
+                        "pageCount" => 2,
+                        "carousel" => [
+                            "type" => "circle",
+                            "color" => "#FFFFFF"
+                        ],
+                        "imageSize" => 40,
+                        "aroundRadius" => 0,
+                        "font" => [
+                            "size" => 14,
+                            "weight" => "normal",
+                            "color" => "#303133"
+                        ],
+                        "list" => [
+                            [
+                                "title" => "我的积分",
+                                "link" => [
+                                    "parent" => "MEMBER_LINK",
+                                    "name" => "MEMBER_POINT",
+                                    "title" => "我的积分",
+                                    "url" => "/app/pages/member/point",
+                                    "action" => ""
+                                ],
+                                "imageUrl" => "addon/shop/diy/point/nav_point.png",
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ],
+                                "id" => "4fll6n7lge40",
+                                "imgWidth" => 140,
+                                "imgHeight" => 140
+                            ],
+                            [
+                                "title" => "我的兑换",
+                                "link" => [
+                                    "parent" => "SHOP_LINK",
+                                    "name" => "SHOP_POINT_ORDER_LIST",
+                                    "title" => "积分兑换记录",
+                                    "url" => "/addon/shop/pages/point/order_list",
+                                    "action" => ""
+                                ],
+                                "imageUrl" => "addon/shop/diy/point/nav_my_exchange.png",
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ],
+                                "id" => "4blja5zsv0m0",
+                                "imgWidth" => 140,
+                                "imgHeight" => 132
+                            ],
+                            [
+                                "title" => "每日签到",
+                                "link" => [
+                                    "name" => "MEMBER_MY_SIGN_IN",
+                                    "parent" => "MEMBER_LINK",
+                                    "title" => "我的签到",
+                                    "url" => "/app/pages/member/sign_in",
+                                    "action" => ""
+                                ],
+                                "imageUrl" => "addon/shop/diy/point/nav_sign_in.png",
+                                "label" => [
+                                    "control" => false,
+                                    "text" => "热门",
+                                    "textColor" => "#FFFFFF",
+                                    "bgColorStart" => "#F83287",
+                                    "bgColorEnd" => "#FE3423"
+                                ],
+                                "id" => "6v4fptrqano0",
+                                "imgWidth" => 134,
+                                "imgHeight" => 132
+                            ]
+                        ],
+                        "textColor" => "#303133",
+                        "pageStartBgColor" => null,
+                        "pageEndBgColor" => "rgba(255, 255, 255, 1)",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentGradientAngle" => "to bottom",
+                        "topRounded" => 8,
+                        "bottomRounded" => 8,
+                        "elementBgColor" => "",
+                        "topElementRounded" => 0,
+                        "bottomElementRounded" => 0,
+                        "margin" => [
+                            "top" => -40,
+                            "bottom" => 0,
+                            "both" => 15
+                        ]
+                    ],
+                    [
+                        "id" => "6c7y9m3c99o0",
                         "componentName" => "HorzBlank",
                         "componentTitle" => "辅助空白",
+                        "path" => "edit-horz-blank",
+                        "uses" => 0,
+                        "height" => 15,
                         "ignore" => [
                             "pageBgColor",
                             "componentBgUrl"
                         ],
-                        "height" => 10,
                         "textColor" => "#303133",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -1865,39 +2133,35 @@ return [
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "",
+                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 9,
+                        "topRounded" => 8,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
-                            "top" => 0,
+                            "top" => 10,
                             "bottom" => 0,
-                            "both" => 16
+                            "both" => 15
                         ]
                     ],
                     [
-                        "path" => "edit-text",
-                        "uses" => 0,
-                        "position" => "",
-                        "id" => "1puhgfus8www",
+                        "id" => "3h6ppt6s1jw0",
                         "componentName" => "Text",
                         "componentTitle" => "标题",
+                        "path" => "edit-text",
+                        "uses" => 0,
+                        "fontSize" => 16,
+                        "position" => "",
                         "ignore" => [],
                         "style" => "style-2",
                         "styleName" => "风格2",
-                        "text" => "我的订单",
+                        "text" => "热门推荐",
                         "link" => [
-                            "name" => "SHOP_ORDER_LIST",
-                            "parent" => "SHOP_LINK",
-                            "title" => "订单列表",
-                            "url" => "/addon/shop/pages/order/list",
-                            "action" => ""
+                            "name" => ""
                         ],
                         "textColor" => "#303133",
-                        "fontSize" => 16,
                         "fontWeight" => "normal",
                         "textAlign" => "center",
                         "subTitle" => [
@@ -1908,21 +2172,25 @@ return [
                             "fontWeight" => "normal"
                         ],
                         "more" => [
-                            "text" => "全部",
+                            "text" => "更多",
                             "control" => true,
                             "isShow" => true,
                             "link" => [
-                                "name" => ""
+                                "parent" => "SHOP_LINK",
+                                "name" => "SHOP_POINT_LIST",
+                                "title" => "积分商品列表",
+                                "url" => "/addon/shop/pages/point/list",
+                                "action" => ""
                             ],
                             "color" => "#999999"
                         ],
-                        'pageStartBgColor' => '',
-                        'pageEndBgColor' => '',
-                        'pageGradientAngle' => 'to bottom',
-                        'componentBgUrl' => '',
-                        'componentBgAlpha' => 2,
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "",
+                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -1932,162 +2200,20 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 16
+                            "both" => 15
                         ]
                     ],
                     [
-                        "path" => "edit-graphic-nav",
-                        "uses" => 0,
-                        "id" => "42bjn10l0ak0",
-                        "componentName" => "GraphicNav",
-                        "componentTitle" => "图文导航",
-                        "ignore" => [],
-                        "list" => [
-                            [
-                                "link" => [
-                                    "parent" => "DIY_LINK",
-                                    "title" => "待付款",
-                                    "url" => "/addon/shop/pages/order/list?status=1",
-                                    "name" => "DIY_LINK"
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_wait_pay_order.png",
-                                "imgWidth" => 40,
-                                "imgHeight" => 40,
-                                "id" => "ogkw2mqwvow",
-                                "title" => "待付款",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ]
-                            ],
-                            [
-                                "title" => "待发货",
-                                "link" => [
-                                    "parent" => "DIY_LINK",
-                                    "title" => "待发货",
-                                    "url" => "/addon/shop/pages/order/list?status=2",
-                                    "name" => "DIY_LINK"
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_wait_delivery_order.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "id" => "37hnqfvx5va0",
-                                "imgWidth" => 40,
-                                "imgHeight" => 40
-                            ],
-                            [
-                                "title" => "待收货",
-                                "link" => [
-                                    "parent" => "DIY_LINK",
-                                    "title" => "待收货",
-                                    "url" => "/addon/shop/pages/order/list?status=3",
-                                    "name" => "DIY_LINK"
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_wait_take_order.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "id" => "63n62guoiug0",
-                                "imgWidth" => 40,
-                                "imgHeight" => 40
-                            ],
-                            [
-                                "title" => "待评价",
-                                "link" => [
-                                    "name" => ""
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_wait_evaluate_order.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "id" => "4wblhzd14uw0",
-                                "imgWidth" => 40,
-                                "imgHeight" => 40
-                            ],
-                            [
-                                "id" => "fl2bqfimnuo",
-                                "title" => "售后退款",
-                                "imageUrl" => "addon/shop/diy/member/nav_refund_order.png",
-                                "imgWidth" => 40,
-                                "imgHeight" => 40,
-                                "link" => [
-                                    "parent" => "SHOP_LINK",
-                                    "title" => "退款列表",
-                                    "url" => "/addon/shop/pages/refund/list",
-                                    "name" => "SHOP_REFUND_LIST"
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ]
-                            ]
-                        ],
-                        "textColor" => "#303133",
-                        'pageStartBgColor' => '',
-                        'pageEndBgColor' => '',
-                        'pageGradientAngle' => 'to bottom',
-                        'componentBgUrl' => '',
-                        'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "",
-                        "componentGradientAngle" => "to bottom",
-                        "topRounded" => 0,
-                        "bottomRounded" => 9,
-                        "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
-                        "margin" => [
-                            "top" => 0,
-                            "bottom" => 12,
-                            "both" => 16
-                        ],
-                        "layout" => "horizontal",
-                        "mode" => "graphic",
-                        "showStyle" => "fixed",
-                        "rowCount" => 5,
-                        "pageCount" => 2,
-                        "carousel" => [
-                            "type" => "circle",
-                            "color" => "#FFFFFF"
-                        ],
-                        "imageSize" => 20,
-                        "aroundRadius" => 0,
-                        "font" => [
-                            "size" => 14,
-                            "weight" => "normal",
-                            "color" => "rgba(32, 15, 51, 1)"
-                        ]
-                    ],
-                    [
-                        "path" => "edit-horz-blank",
-                        "uses" => 0,
-                        "id" => "5fo173bx5840",
+                        "id" => "2jeafwoghdk0",
                         "componentName" => "HorzBlank",
                         "componentTitle" => "辅助空白",
+                        "path" => "edit-horz-blank",
+                        "uses" => 0,
+                        "height" => 15,
                         "ignore" => [
                             "pageBgColor",
                             "componentBgUrl"
                         ],
-                        "height" => 10,
                         "textColor" => "#303133",
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -2095,9 +2221,9 @@ return [
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "",
+                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 9,
+                        "topRounded" => 0,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
@@ -2105,246 +2231,56 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 16
+                            "both" => 15
                         ]
                     ],
                     [
-                        "path" => "edit-text",
+                        "id" => "76wf7oom00o0",
+                        "componentName" => "ShopExchangeGoods",
+                        "componentTitle" => "积分商品",
+                        "path" => "edit-shop-exchange-goods",
                         "uses" => 0,
-                        "position" => "",
-                        "id" => "629cgb1ygcw0",
-                        "componentName" => "Text",
-                        "componentTitle" => "标题",
                         "ignore" => [],
-                        "style" => "style-1",
-                        "styleName" => "风格1",
-                        "text" => "常用工具",
-                        "link" => [
-                            "name" => ""
-                        ],
-                        "textColor" => "#303133",
-                        "fontSize" => 16,
-                        "fontWeight" => "normal",
-                        "textAlign" => "left",
-                        "subTitle" => [
-                            "text" => "",
-                            "color" => "#999999",
-                            "fontSize" => 14,
-                            "control" => false,
+                        "style" => "style-2",
+                        "source" => "all",
+                        "num" => 10,
+                        "goods_category" => "",
+                        "goods_category_name" => "请选择",
+                        "goods_ids" => [],
+                        "sortWay" => "total_order_num",
+                        "goodsNameStyle" => [
+                            "color" => "#333",
+                            "control" => true,
                             "fontWeight" => "normal"
                         ],
-                        "more" => [
-                            "text" => "查看更多",
-                            "control" => false,
-                            "isShow" => false,
-                            "link" => [
-                                "name" => ""
-                            ],
-                            "color" => "#999999"
+                        "priceStyle" => [
+                            "mainColor" => "#FF4142",
+                            "mainControl" => true,
+                            "lineColor" => "#999CA7",
+                            "lineControl" => true
                         ],
-                        'pageStartBgColor' => '',
-                        'pageEndBgColor' => '',
-                        'pageGradientAngle' => 'to bottom',
-                        'componentBgUrl' => '',
-                        'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "",
-                        "componentGradientAngle" => "to bottom",
-                        "topRounded" => 0,
-                        "bottomRounded" => 0,
-                        "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
-                        "margin" => [
-                            "top" => 0,
-                            "bottom" => 0,
-                            "both" => 16
-                        ]
-                    ],
-                    [
-                        "path" => "edit-graphic-nav",
-                        "uses" => 0,
-                        "id" => "1swylyl5fvb4",
-                        "componentName" => "GraphicNav",
-                        "componentTitle" => "图文导航",
-                        "ignore" => [],
-                        "list" => [
-                            [
-                                "title" => "签到",
-                                "link" => [
-                                    "name" => ""
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_signin.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "imgWidth" => 58,
-                                "imgHeight" => 58
-                            ],
-                            [
-                                "title" => "个人资料",
-                                "link" => [
-                                    "parent" => "MEMBER_LINK",
-                                    "title" => "个人资料",
-                                    "url" => "/app/pages/member/personal",
-                                    "name" => "MEMBER_PERSONAL"
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_info.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "imgWidth" => 58,
-                                "imgHeight" => 58
-                            ],
-                            [
-                                "title" => "收货地址",
-                                "link" => [
-                                    "parent" => "MEMBER_LINK",
-                                    "title" => "收货地址",
-                                    "url" => "/app/pages/member/address",
-                                    "name" => "MEMBER_ADDRESS"
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_address.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "imgWidth" => 58,
-                                "imgHeight" => 58
-                            ],
-                            [
-                                "title" => "优惠券",
-                                "link" => [
-                                    "parent" => "SHOP_LINK",
-                                    "title" => "我的优惠券",
-                                    "url" => "/addon/shop/pages/member/my_coupon",
-                                    "name" => "SHOP_MY_COUPON"
-                                ],
-                                "imageUrl" => "addon/shop/diy/member/nav_coupon.png",
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ],
-                                "imgWidth" => 58,
-                                "imgHeight" => 58
-                            ],
-                            [
-                                "id" => "su0vf82y200",
-                                "title" => "我的拼单",
-                                "imageUrl" => "addon/shop/diy/member/nav_my_pintuan.png",
-                                "imgWidth" => 58,
-                                "imgHeight" => 58,
-                                "link" => [
-                                    "name" => ""
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ]
-                            ],
-                            [
-                                "id" => "2b0att2b3pq8",
-                                "title" => "我的礼物",
-                                "imageUrl" => "addon/shop/diy/member/nav_gift.png",
-                                "imgWidth" => 58,
-                                "imgHeight" => 58,
-                                "link" => [
-                                    "name" => ""
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ]
-                            ],
-                            [
-                                "id" => "z8x7ci5wik0",
-                                "title" => "我的足迹",
-                                "imageUrl" => "addon/shop/diy/member/nav_footmark.png",
-                                "imgWidth" => 58,
-                                "imgHeight" => 58,
-                                "link" => [
-                                    "name" => ""
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ]
-                            ],
-                            [
-                                "id" => "1sejr0g3h4zk",
-                                "title" => "积分兑换",
-                                "imageUrl" => "addon/shop/diy/member/nav_point_change.png",
-                                "imgWidth" => 58,
-                                "imgHeight" => 58,
-                                "link" => [
-                                    "name" => ""
-                                ],
-                                "label" => [
-                                    "control" => false,
-                                    "text" => "热门",
-                                    "textColor" => "#FFFFFF",
-                                    "bgColorStart" => "#F83287",
-                                    "bgColorEnd" => "#FE3423"
-                                ]
-                            ]
+                        "saleStyle" => [
+                            "color" => "#999999",
+                            "control" => true
                         ],
                         "textColor" => "#303133",
-                        'pageStartBgColor' => '',
-                        'pageEndBgColor' => '',
-                        'pageGradientAngle' => 'to bottom',
-                        'componentBgUrl' => '',
-                        'componentBgAlpha' => 2,
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
+                        "pageStartBgColor" => "",
+                        "pageEndBgColor" => "",
+                        "pageGradientAngle" => "to bottom",
+                        "componentBgUrl" => "",
+                        "componentBgAlpha" => 2,
+                        "componentStartBgColor" => "",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
-                        "bottomRounded" => 9,
+                        "bottomRounded" => 8,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 16
-                        ],
-                        "layout" => "horizontal",
-                        "mode" => "graphic",
-                        "showStyle" => "fixed",
-                        "rowCount" => 4,
-                        "pageCount" => 2,
-                        "carousel" => [
-                            "type" => "circle",
-                            "color" => "#FFFFFF"
-                        ],
-                        "imageSize" => 29,
-                        "aroundRadius" => 0,
-                        "font" => [
-                            "size" => 14,
-                            "weight" => "normal",
-                            "color" => "#303133"
+                            "both" => 15
                         ]
                     ]
                 ]

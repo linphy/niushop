@@ -11,13 +11,10 @@
 
 namespace addon\shop\app\api\controller\refund;
 
-use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderRefundDict;
-use addon\shop\app\service\api\order\OrderService;
 use addon\shop\app\service\api\refund\RefundActionService;
 use addon\shop\app\service\api\refund\RefundService;
 use core\base\BaseApiController;
-use tests\InfoTest;
 use think\Response;
 
 class Refund extends BaseApiController
@@ -36,7 +33,7 @@ class Refund extends BaseApiController
 
     /**
      * 订单详情
-     * @param int $id
+     * @param int $order_refund_no
      * @return Response
      */
     public function detail(string $order_refund_no)
@@ -143,4 +140,28 @@ class Refund extends BaseApiController
     {
         return success(OrderRefundDict::getRefundType());
     }
+
+    /**
+     * 获取可退款信息
+     * @return void
+     */
+    public function getRefundData(){
+        $data = $this->request->params([
+            ['order_goods_id', 0],
+        ]);
+        return success(data:(new RefundActionService())->getRefundData($data));
+    }
+
+    /**
+     * 退款编辑可退款信息
+     * @return Response
+     */
+    public function getRefundDataByOrderRefundNo(){
+        $data = $this->request->params([
+            ['order_refund_no', ''],
+        ]);
+        return success(data:(new RefundActionService())->getRefundDataByOrderRefundNo($data));
+    }
 }
+
+

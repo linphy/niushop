@@ -48,17 +48,17 @@ class Pay extends Validate
         'alipay_public_cert_path.requireIf' => 'validate_pay.alipay_public_cert_path_requireif',
         'alipay_root_cert_path.requireIf' => 'validate_pay.alipay_root_cert_path_requireif',
 
-        'mch_id.requireIf' => 'validate_pay.mch_id_requireif',
-        'mch_secret_key.requireIf' => 'validate_pay.mch_secret_key_requireif',
-        'mch_secret_cert.requireIf' => 'validate_pay.mch_secret_cert_requireif',
-        'mch_public_cert_path.requireIf' => 'validate_pay.mch_public_cert_path_requireif',
+//        'mch_id.requireIf' => 'validate_pay.mch_id_requireif',
+//        'mch_secret_key.requireIf' => 'validate_pay.mch_secret_key_requireif',
+//        'mch_secret_cert.requireIf' => 'validate_pay.mch_secret_cert_requireif',
+//        'mch_public_cert_path.requireIf' => 'validate_pay.mch_public_cert_path_requireif',
 
     ];
 
     protected $scene = [
         'set' => [
-            'app_id', 'app_secret_cert', 'app_public_cert_path', 'alipay_public_cert_path', 'alipay_root_cert_path',
-            'mch_id', 'mch_secret_key', 'mch_secret_cert', 'mch_public_cert_path',
+//            'app_id', 'app_secret_cert', 'app_public_cert_path', 'alipay_public_cert_path', 'alipay_root_cert_path',
+//            'mch_id', 'mch_secret_key', 'mch_secret_cert', 'mch_public_cert_path',
             'type',
         ],
     ];

@@ -14,7 +14,6 @@ use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderGoods;
-use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderLogService;
 use core\base\BaseJob;
 
@@ -30,22 +29,21 @@ class OrderCloseAllowRefund extends BaseJob
     public function doJob()
     {
         try {
-            $data = [];
             $main_type = OrderLogDict::SYSTEM;
             $main_id = 0;
-            $list = (new Order())->where([
-                ['status', '=', OrderDict::FINISH],
-                ['timeout', '<=', time()],
-                ['is_enable_refund', '=', 1]
+            $list = ( new Order() )->where([
+                [ 'status', '=', OrderDict::FINISH ],
+                [ 'timeout', '<=', time() ],
+                [ 'is_enable_refund', '=', 1 ]
             ])->select();
             if (!$list->isEmpty()) {
                 //订单设置
-                $list->update(['is_enable_refund' => 0, 'timeout' => 0]);
+                $list->update([ 'is_enable_refund' => 0, 'timeout' => 0 ]);
                 $order_ids = array_column($list->toArray(), 'order_id');
                 //订单项设置
-                (new OrderGoods())->where([
-                    ['order_id', 'in', $order_ids]
-                ])->update(['is_enable_refund' => 0]);
+                ( new OrderGoods() )->where([
+                    [ 'order_id', 'in', $order_ids ]
+                ])->update([ 'is_enable_refund' => 0 ]);
                 //写日志
                 $log_data = [];
                 $lot_template = [
@@ -53,17 +51,18 @@ class OrderCloseAllowRefund extends BaseJob
                     'main_type' => $main_type,//todo  可以是传入的
                     'main_id' => $main_id,
                     'type' => OrderDict::ORDER_CLOSE_ALLOW_REFUND_ACTION,
-                    'content' => ''
+                    'content' => '',
+                    'create_time' => time()
                 ];
                 foreach ($list as $v) {
-                    $lot_template['order_id'] = $v['order_id'];
+                    $lot_template[ 'order_id' ] = $v[ 'order_id' ];
                     $log_data[] = $lot_template;
                 }
-                (new CoreOrderLogService())->addAll($log_data);
+                ( new CoreOrderLogService() )->addAll($log_data);
             }
 
             return true;
-        } catch ( \Exception $e ) {
+        } catch (\Exception $e) {
             return false;
         }
     }

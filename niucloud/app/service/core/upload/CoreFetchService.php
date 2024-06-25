@@ -38,8 +38,8 @@ class CoreFetchService extends CoreFileService
     {
         if(empty($url)) throw new UploadFileException('OSS_FILE_URL_NOT_EXIST');
         $this->upload_driver = $this->driver($storage_type);
-        [$link, $ext] = explode('.', $url);
-        $ext = empty($ext) ? $ext : 'jpg';
+        [$ext, $link] = explode('.', strrev($url));
+        $ext = empty($ext) ? strrev($ext) : 'jpg';
         $file_path = $this->upload_driver->createFileName($link, $ext);
 
         $dir = $this->root_path .'/'.  $file_dir.'/'.$file_path;

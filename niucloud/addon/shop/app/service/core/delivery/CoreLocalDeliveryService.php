@@ -61,7 +61,7 @@ class CoreLocalDeliveryService extends BaseCoreService
     public function feeCalculate(&$order, float $goods_money, float $goods_weight)
     {
         $address = $order->delivery[ 'take_address' ] ?? [];
-        $local = ( new Local() )->field('fee_type,base_dist,base_price,grad_dist,grad_price,weight_start,weight_unit,weight_price,delivery_type,area,center')->findOrEmpty();
+        $local = ( new Local() )->where([ [ 'local_id', '>', 0 ] ])->field('fee_type,base_dist,base_price,grad_dist,grad_price,weight_start,weight_unit,weight_price,delivery_type,area,center')->findOrEmpty();
         if ($local->isEmpty()) {
             $order->error[] = get_lang('NOT_CONFIGURED_LOCAL_DELIVERY');
             return;

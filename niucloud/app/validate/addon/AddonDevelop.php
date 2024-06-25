@@ -12,6 +12,7 @@
 namespace app\validate\addon;
 
 use app\dict\addon\AddonDict;
+use think\facade\Route;
 use think\Validate;
 
 /**
@@ -22,13 +23,14 @@ class AddonDevelop extends Validate
 
 
     protected $rule = [
-        'key' => 'require|regex:/^[a-zA-Z][a-zA-Z0-9_]{0,19}$/',
+        'key' => 'require|regex:/^[a-zA-Z][a-zA-Z0-9_]{0,19}$/|keyBlacklist',
         'type' => 'require|checkType',
     ];
 
     protected $message = [
         'key.require' => 'validate_addon.key_require',
         'key.regex' => 'validate_addon.key_regex',
+        'key:in' => 'validate_addon.key_regex',
         'type.require' => 'validate_addon.type_require',
     ];
 
@@ -40,5 +42,9 @@ class AddonDevelop extends Validate
     protected function checkType($value, $rule, $data = [])
     {
         return (!empty($value) && isset(AddonDict::getType()[$value])) ? true : get_lang("validate_addon.not_exit_type");
+    }
+
+    public function keyBlacklist($value, $rule, $data = []) {
+        return in_array($value, AddonDict::ADDON_KEY_BLACK_LIST) ? get_lang("validate_addon.in_black_list") : true;
     }
 }

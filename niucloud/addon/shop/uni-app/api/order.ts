@@ -14,16 +14,25 @@ export function getShopOrderConfig() {
 export function getShopOrderStatus() {
     return request.get(`shop/order/status`)
 }
+
 /**
  * 获取订单列表
  */
 export function getShopOrder(params: Record<string, any>) {
     return request.get(`shop/order`, params)
 }
+
+/**
+ * 获取订单角标数据
+ */
+export function getShopOrderNum() {
+    return request.get(`shop/order/num`)
+}
+
 /**
  * 获取订单详情
  */
-export function getShopOrderDetail(order_id) {
+export function getShopOrderDetail(order_id: any) {
     return request.get(`shop/order/${order_id}`)
 }
 
@@ -68,6 +77,7 @@ export function orderCoupon(params: Record<string, any>) {
 export function getStoreList(params: Record<string, any>) {
     return request.get('shop/order_create/store', params)
 }
+
 /**
  * 查询物流信息
  */

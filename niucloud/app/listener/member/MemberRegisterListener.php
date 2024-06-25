@@ -11,6 +11,8 @@
 
 namespace app\listener\member;
 
+use app\service\core\member\CoreMemberService;
+
 /**
  * 会员注册成功事件
  * Class MemberRegister
@@ -24,6 +26,10 @@ class MemberRegisterListener
      */
     public function handle($member)
     {
+        // 注册发放成长值
+        CoreMemberService::sendGrowth($member['member_id'], 'member_register', ['from_type' => 'member_register']);
+        // 注册发放积分
+        CoreMemberService::sendPoint($member['member_id'], 'member_register', ['from_type' => 'member_register']);
         return;
     }
 }

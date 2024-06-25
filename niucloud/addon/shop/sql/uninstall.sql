@@ -21,6 +21,8 @@ DROP TABLE IF EXISTS `{{prefix}}shop_delivery_shipping_template_item`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_goods`;
 
+DROP TABLE IF EXISTS `{{prefix}}shop_goods_attr`;
+
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_brand`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_category`;
@@ -55,6 +57,14 @@ DROP TABLE IF EXISTS `{{prefix}}shop_order_refund`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_order_refund_log`;
 
+DROP TABLE IF EXISTS `{{prefix}}shop_point_exchange`;
+
+DROP TABLE IF EXISTS `{{prefix}}shop_point_exchange_order`;
+
 DROP TABLE IF EXISTS `{{prefix}}shop_stat`;
 
 DROP TABLE IF EXISTS `{{prefix}}shop_store`;
+
+DROP TABLE IF EXISTS `{{prefix}}shop_active`;
+
+DROP TABLE IF EXISTS `{{prefix}}shop_active_goods`;

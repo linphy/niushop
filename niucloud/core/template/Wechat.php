@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
 // | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
@@ -22,7 +22,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class Wechat extends BaseTemplate
 {
-
     /**
      * @param array $config
      * @return void

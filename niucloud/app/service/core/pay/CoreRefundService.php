@@ -74,15 +74,17 @@ class CoreRefundService extends BaseCoreService
         if($refund->isEmpty()) throw new PayException('REFUND_NOT_EXIST');
         $out_trade_no = $refund->out_trade_no;
         $money = $refund->money;
+        $pay = (new CorePayService())->findPayInfoByOutTradeNo($out_trade_no);
+        if($pay->isEmpty()) throw new PayException('ALIPAY_TRANSACTION_NO_NOT_EXIST');//单据不存在
         try{
             //存入退款方式
             $refund->save(['refund_type' => $refund_type]);
             if($refund_type == RefundDict::BACK){
                 //判断成功的话,可以直接调用退款成功
-                $pay_result = $this->pay_event->init($refund->channel, $refund->type)->refund($out_trade_no, $money, $money, $refund_no, $voucher);
+                $pay_result = $this->pay_event->init($refund->channel, $refund->type)->refund($out_trade_no, $money, $pay['money'], $refund_no, $voucher);
                 $this->refundNotify($out_trade_no, $refund->type, $pay_result);
             }else if($refund_type == RefundDict::OFFLINE){
-                $pay_result = $this->pay_event->init($refund->channel, PayDict::OFFLINEPAY)->refund($out_trade_no, $money, $money, $refund_no, $voucher);
+                $pay_result = $this->pay_event->init($refund->channel, PayDict::OFFLINEPAY)->refund($out_trade_no, $money, $pay['money'], $refund_no, $voucher);
                 $this->refundNotify($out_trade_no, $refund->type, $pay_result, $main_type, $main_id);
             }
 
@@ -104,7 +106,15 @@ class CoreRefundService extends BaseCoreService
     }
 
 
-
+    /**
+     * 退款通知
+     * @param $out_trade_no
+     * @param string $type
+     * @param array $params
+     * @param $main_type
+     * @param $main_id
+     * @return true
+     */
     public function refundNotify($out_trade_no, string $type, array $params = [], $main_type = '', $main_id = 0){
         $refund_no = $params['refund_no'];
 

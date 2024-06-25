@@ -26,6 +26,7 @@ use think\facade\Cache;
 class CoreMemberLabelService extends BaseCoreService
 {
     protected static $cache_tag_name = 'member_label_cache';
+
     public function __construct()
     {
         parent::__construct();
@@ -40,12 +41,13 @@ class CoreMemberLabelService extends BaseCoreService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getMemberLabelListByLabelIds(array $label_ids){
+    public function getMemberLabelListByLabelIds(array $label_ids)
+    {
         sort($label_ids);
         $cache_name = __METHOD__ . md5(implode("_", $label_ids));
         return cache_remember(
             $cache_name,
-            function () use ($label_ids) {
+            function() use ($label_ids) {
                 return array_keys_search($this->getAll(), $label_ids, 'label_id');
             },
             self::$cache_tag_name
@@ -54,20 +56,19 @@ class CoreMemberLabelService extends BaseCoreService
 
     /**
      * 获取全部会员标签
-
      * @return mixed
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getAll(){
-        $cache_name = __METHOD__ ;
+    public function getAll()
+    {
+        $cache_name = 'member_label_all';
         return cache_remember(
             $cache_name,
-            function () {
+            function() {
                 $field = 'label_id, label_name';
-                return $this->model->field($field)->select()->toArray();
-
+                return $this->model->where([ ['label_id', '>', 0] ])->field($field)->order('sort desc,create_time desc')->select()->toArray();
             },
             self::$cache_tag_name
         );
@@ -77,7 +78,8 @@ class CoreMemberLabelService extends BaseCoreService
      * 清理站点会员标签缓存
      * @return true
      */
-    public function clearCache(){
+    public function clearCache()
+    {
         Cache::tag(self::$cache_tag_name)->clear();
         return true;
     }

@@ -22,7 +22,7 @@
 				<el-form-item :label="t('sortWay')">
 					<el-radio-group v-model="diyStore.editComponent.sortWay">
 						<el-radio label="default">{{ t('default') }}</el-radio>
-						<el-radio label="sales">{{ t('sales') }}</el-radio>
+						<el-radio label="sale_num">{{ t('sales') }}</el-radio>
 						<el-radio label="price">{{ t('price') }}</el-radio>
 					</el-radio-group>
 				</el-form-item>
@@ -94,7 +94,7 @@
 							</el-form-item>
 
 							<div class="del absolute cursor-pointer z-[2] top-[-8px] right-[-8px]" v-show="diyStore.editComponent.list.length > 1" @click="diyStore.editComponent.list.splice(index,1)">
-								<icon name="element-CircleCloseFilled" color="#bbb" size="20px"/>
+								<icon name="element CircleCloseFilled" color="#bbb" size="20px"/>
 							</div>
 
 						</div>
@@ -139,6 +139,7 @@
 			<el-dialog v-model="categoryShowDialog" :title="t('goodsCategoryTitle')" width="1000px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
 				<el-table :data="categoryTable.data" ref="categoryTableRef" size="large" v-loading="categoryTable.loading"
 					height="490px" @selection-change="handleSelectionChange" row-key="category_id"
+					:expand-row-keys="expand_category_ids"
 					:tree-props="{ hasChildren: 'hasChildren', children: 'child_list' }">
 					<template #empty>
 						<span>{{ !categoryTable.loading ? t('emptyData') : '' }}</span>
@@ -320,10 +321,7 @@ const goodsBoxRef = ref()
 
 const categoryTable = reactive({
     loading: true,
-    data: [],
-    searchParam: {
-        category_name: ''
-    }
+    data: []
 })
 
 onMounted(() => {
@@ -354,20 +352,17 @@ const categoryTableRef = ref<InstanceType<typeof ElTable>>()
 /**
  * 获取商品分类列表
  */
-let currCategoryData: string | null = null
+let currCategoryData: any = null
 const loadCategoryTree = () => {
     categoryTable.loading = true
 
-    getCategoryTree({
-        ...categoryTable.searchParam
-    }).then(res => {
+    getCategoryTree().then(res => {
         categoryTable.loading = false
         categoryTable.data = res.data
     }).catch(() => {
         categoryTable.loading = false
     })
 }
-
 
 // 选择商品分类
 let selectIndex = 0; // 当前选择的下标
@@ -388,11 +383,28 @@ const saveCategoryId = () => {
 const categoryShowDialogOpen = (index: any) => {
     selectIndex = index;
     categoryShowDialog.value = true
-    if (currCategoryData) {
-        setTimeout(() => {
-            categoryTableRef.value!.toggleRowSelection(currCategoryData, true)
-        }, 200)
-    }
+
+	nextTick(()=>{
+		setRowSelection()
+	})
+}
+
+//分类数据选中回填,设置展开行
+const expand_category_ids = ref<Array<any>>([])
+const setRowSelection = ()=>{
+	expand_category_ids.value = []
+	categoryTable.data.forEach((el:any)=>{
+		if(diyStore.editComponent.list[selectIndex].goods_category == el.category_id){
+			categoryTableRef.value!.toggleRowSelection(el, true)
+		}else if(el.child_list&&el.child_list.length){
+			el.child_list.forEach((v:any)=>{
+				if(diyStore.editComponent.list[selectIndex].goods_category == v.category_id){
+					expand_category_ids.value.push(el.category_id.toString())
+					categoryTableRef.value!.toggleRowSelection(v, true)
+				}
+			})
+		}
+	})
 }
 
 const addItem = () => {

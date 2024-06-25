@@ -27,7 +27,7 @@ import { ref, reactive, computed, watch } from 'vue'
 import { t } from '@/lang'
 import { useDictionary } from '@/app/api/dict'
 import type { FormInstance } from 'element-plus'
-import { get{UCASE_NAME}Info,add{UCASE_NAME},edit{UCASE_NAME},{WITH_API_PATH} } from '@/{API_PATH}';
+import { get{UCASE_NAME}Info,add{UCASE_NAME},edit{UCASE_NAME}{WITH_API_PATH} } from '@/{API_PATH}';
 import { useRoute } from 'vue-router'
 
 const route = useRoute()

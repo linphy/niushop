@@ -20,17 +20,15 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="t('goodsSelectPopupGoodsName')" prop="keyword" class="form-item-wrap">
-                    <el-input v-model="goodsTable.searchParam.keyword"
-                        :placeholder="t('goodsSelectPopupGoodsNamePlaceholder')" maxlength="60" />
+                    <el-input v-model="goodsTable.searchParam.keyword" :placeholder="t('goodsSelectPopupGoodsNamePlaceholder')" maxlength="60" />
                 </el-form-item>
                 <el-form-item :label="t('goodsSelectPopupGoodsCategory')" prop="goods_category" class="form-item-wrap">
                     <el-cascader  v-model="goodsTable.searchParam.goods_category"
                         :options="goodsCategoryOptions" :placeholder="t('goodsSelectPopupGoodsCategoryPlaceholder')"
-                        clearable f:props="{ value: 'value', label: 'label', emitPath:false }" />
+                        clearable :props="{ value: 'value', label: 'label', emitPath:false }" />
                 </el-form-item>
                 <el-form-item :label="t('goodsSelectPopupGoodsType')" prop="goods_type" class="form-item-wrap">
-                    <el-select v-model="goodsTable.searchParam.goods_type"
-                        :placeholder="t('goodsSelectPopupGoodsTypePlaceholder')" clearable>
+                    <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsSelectPopupGoodsTypePlaceholder')" clearable>
                         <el-option v-for="item in goodsType" :key="item.type" :label="item.name" :value="item.type" />
                     </el-select>
                 </el-form-item>
@@ -122,7 +120,7 @@ const prop = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue','goodsSelect'])
 
 const goodsIds: any = computed({
     get () {
@@ -137,6 +135,9 @@ const showDialog = ref(false)
 
 // 已选商品列表
 const selectGoods: any = reactive({})
+
+// 已选商品列表id
+const selectGoodsId: any = reactive([])
 
 // 已选商品数量
 const selectGoodsNum: any = computed(() => {
@@ -230,22 +231,45 @@ const handleSelectChange = (selection: any, row: any) => {
         }
     }
     if (isSelected) {
+        selectGoodsId.push(row.goods_id)
         selectGoods['goods_' + row.goods_id] = row
     } else {
+        selectGoodsId.splice(selectGoodsId.indexOf(row.goods_id),1)
         // 未选中，删除当前商品
         delete selectGoods['goods_' + row.goods_id]
     }
+
+    // 当所选数量超出限制数量【prop.max】时，添加一个就会删除开头的第一个或多个，最终保证所选的数量小于等于prop.max
+    if(prop.max && prop.max > 0 && Object.keys(selectGoods).length > 0 && Object.keys(selectGoods).length > prop.max){
+        let len = Object.keys(selectGoods).length;
+        len = len - prop.max;
+
+        let goodsIdCopy = cloneDeep(selectGoodsId);
+        goodsIdCopy.forEach((item,index,arr) => {
+            if(index < len){
+                let indent = selectGoodsId.indexOf(item)
+                delete selectGoods['goods_'+selectGoodsId[indent]]
+                selectGoodsId.splice(indent,1) 
+            }
+        });
+        setGoodsSelected();
+    }
 }
+
 
 // 监听表格全选
 const handleSelectAllChange = (selection: any) => {
     if (selection.length) {
         selection.forEach((item: any) => {
             selectGoods['goods_' + item.goods_id] = item
+            if(selectGoodsId.indexOf(item.goods_id) == -1){
+                selectGoodsId.push(item.goods_id)
+            }
         })
     } else {
         // 未选中，删除当前页面的数据
         goodsTable.data.forEach((item: any) => {
+            selectGoodsId.splice(selectGoodsId.indexOf(item.goods_id),1)
             delete selectGoods['goods_' + item.goods_id]
         })
     }
@@ -310,6 +334,9 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 
 const show = () => {
+    for (let k in selectGoods) {
+        delete selectGoods[k];
+    }
     // 检测商品id集合是否存在，移除不存在的商品id，纠正数据准确性
     goodsTable.searchParam.verify_goods_ids = goodsIds.value;
     loadGoodsList(1, (verify_goods_ids: any) => {
@@ -364,8 +391,19 @@ const save = () => {
     }
 
     goodsIds.value.splice(0, goodsIds.value.length, ...ids)
-
+    emit('goodsSelect',selectGoods)
+    initSearchParam();
     showDialog.value = false
+}
+
+// 重置表单搜索
+const initSearchParam = ()=>{
+    goodsTable.searchParam.keyword = '';
+    goodsTable.searchParam.goods_category = [];
+    goodsTable.searchParam.select_type = 'all';
+    goodsTable.searchParam.goods_ids = '';
+    goodsTable.searchParam.verify_goods_ids = '';
+    goodsTable.searchParam.goods_type = '';
 }
 
 defineExpose({

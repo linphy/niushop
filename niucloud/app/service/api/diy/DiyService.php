@@ -52,7 +52,7 @@ class DiyService extends BaseApiService
             }
         }
 
-        if (!empty($start_up_page) && !empty($page_template) && !empty($start_up_page[ 'page' ]) && $start_up_page[ 'page' ] != $page_template[ 'page' ]) {
+        if (empty($params[ 'id' ]) && !empty($start_up_page) && !empty($page_template) && !empty($start_up_page[ 'page' ]) && $start_up_page[ 'page' ] != $page_template[ 'page' ]) {
             $info = $start_up_page;
             return $info;
         } else {

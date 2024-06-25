@@ -318,8 +318,8 @@ use app\adminapi\middleware\AdminLog;";
         foreach ($this->tableColumn as $column) {
             if (!empty($column['model'])) {
                 $str = strripos($column['model'],'\\');
-                $with = Str::camel(substr($column['model'],$str+1));
-                $content.= PHP_EOL.'    Route::get('."'".$with."'".','."'".$route_path.'get'.Str::studly($with).'All'."'".');'.PHP_EOL;
+                $with = Str::snake(substr($column['model'],$str+1)) . '_all';
+                $content.= PHP_EOL.'    Route::get('."'".$with."'".','."'".$route_path.'get'.Str::studly($with)."'".');'.PHP_EOL;
             }
         }
         return $content;

@@ -21,17 +21,17 @@ class Poster extends BaseApiController
 
     /**
      * 获取海报
-     * @return void|null
+     * @return \think\Response
      */
     public function poster()
     {
         $data = $this->request->params([
-            ['type', ''],//业务类型
-            ['param', []],//参数1
+            [ 'id', 0 ], // 海报id
+            [ 'type', '' ], // 海报类型
+            [ 'param', [] ], // 数据参数
         ]);
-        $data['channel'] = $this->request->getChannel();
+        $data[ 'channel' ] = $this->request->getChannel();
         return success(data: poster(...$data));
     }
-
 
 }

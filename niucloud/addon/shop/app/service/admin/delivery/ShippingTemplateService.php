@@ -13,6 +13,7 @@ namespace addon\shop\app\service\admin\delivery;
 
 use addon\shop\app\model\delivery\ShippingTemplate;
 use addon\shop\app\model\delivery\ShippingTemplateItem;
+use addon\shop\app\model\goods\Goods;
 use core\base\BaseAdminService;
 use core\exception\CommonException;
 use think\facade\Db;
@@ -77,7 +78,7 @@ class ShippingTemplateService extends BaseAdminService
     /**
      * 编辑运费模板
      * @param array $data
-     * @return mixed
+     * @return true
      */
     public function edit(int $template_id, array $data)
     {
@@ -89,7 +90,7 @@ class ShippingTemplateService extends BaseAdminService
                 'update_time' => time(),
                 'no_delivery' => $data[ 'no_delivery' ],
                 'is_free_shipping' => $data[ 'is_free_shipping' ]
-            ], [ 'template_id' => $template_id]);
+            ], [ 'template_id' => $template_id ]);
 
             ( new ShippingTemplateItem() )->where([ 'template_id' => $template_id ])->delete();
             $template_item = [];
@@ -131,6 +132,7 @@ class ShippingTemplateService extends BaseAdminService
      */
     public function delete(int $template_id)
     {
+        if ((new Goods())->where([ ['delivery_template_id', '=', $template_id]])->count()) throw new CommonException('SHIPPING_TEMPLATE_IN_USE');
         ( new ShippingTemplate() )->where([ 'template_id' => $template_id ])->delete();
         ( new ShippingTemplateItem() )->where([ 'template_id' => $template_id ])->delete();
         return true;
@@ -139,12 +141,12 @@ class ShippingTemplateService extends BaseAdminService
     /**
      * 查询运费模板列表
      * @param array $where
-     * @return mixed
+     * @return array
      */
     public function getPage(array $where)
     {
         $field = 'template_id, template_name, fee_type, create_time, no_delivery, is_free_shipping';
-        $search_model = ( new ShippingTemplate() )->withSearch([ 'template_name' ], $where)->field($field)->order('create_time desc')->append([ 'fee_type_name' ]);
+        $search_model = ( new ShippingTemplate() )->where([ ['template_id', '>', 0] ])->withSearch([ 'template_name' ], $where)->field($field)->order('create_time desc')->append([ 'fee_type_name' ]);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -158,12 +160,12 @@ class ShippingTemplateService extends BaseAdminService
     public function getList(array $where = [], $field = 'template_id, template_name, fee_type, create_time, no_delivery, is_free_shipping')
     {
         $order = "create_time desc";
-        return ( new ShippingTemplate() )->withSearch([ "template_name" ], $where)->field($field)->order($order)->select()->toArray();
+        return ( new ShippingTemplate() )->where([ ['template_id', '>', 0] ])->withSearch([ "template_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
      * 查询运费模板详情
-     * @return mixed
+     * @return array
      */
     public function getInfo(int $template_id)
     {

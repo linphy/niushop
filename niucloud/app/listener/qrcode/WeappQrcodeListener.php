@@ -13,8 +13,8 @@ class WeappQrcodeListener extends BaseNoticeTemplate
 
     public function handle(array $params)
     {
-        if ('weapp' == $params['channel']) {
-            return (new CoreWeappService())->qrcode($params['page'], $params['data'], $params['filepath']);
+        if ('weapp' == $params[ 'channel' ]) {
+            return ( new CoreWeappService() )->qrcode($params[ 'page' ], $params[ 'data' ], $params[ 'filepath' ]);
         }
     }
 

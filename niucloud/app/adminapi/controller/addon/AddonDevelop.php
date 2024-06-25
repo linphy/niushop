@@ -11,6 +11,7 @@
 
 namespace app\adminapi\controller\addon;
 
+use app\dict\addon\AddonDict;
 use app\service\admin\addon\AddonDevelopService;
 use app\service\admin\niucloud\AppService;
 use core\base\BaseAdminController;
@@ -123,4 +124,11 @@ class AddonDevelop extends BaseAdminController
         return success(data:(new AddonDevelopService())->download($key));
     }
 
+    /**
+     *
+     * @return Response
+     */
+    public function keyBlackList() {
+        return success(AddonDict::ADDON_KEY_BLACK_LIST);
+    }
 }

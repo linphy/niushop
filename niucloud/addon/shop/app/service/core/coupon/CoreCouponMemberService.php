@@ -12,6 +12,7 @@
 namespace addon\shop\app\service\core\coupon;
 
 use addon\shop\app\dict\coupon\CouponMemberDict;
+use addon\shop\app\model\coupon\Coupon;
 use addon\shop\app\model\coupon\CouponMember;
 use core\base\BaseCoreService;
 use core\exception\CommonException;
@@ -145,6 +146,68 @@ class CoreCouponMemberService extends BaseCoreService
                 'use_time' => time()
             ]
         );
+        return true;
+    }
+
+
+    /**
+     * 发放优惠券
+     * @param $member_id
+     * @param $coupon_id
+     * @param $num
+     * @return void
+     */
+    public function sendCoupon($member_id, $coupon_id, $num) {
+        $coupon = (new Coupon())->where([ [ 'id', '=', $coupon_id ] ])->findOrEmpty();
+        if ($coupon->isEmpty()) {
+            throw new CommonException('COUPON_NOT_EXIST');
+        }
+
+        // 剩余数量不足
+        if ($coupon[ 'remain_count' ] != '-1' && $coupon[ 'remain_count' ] < $num) {
+            throw new CommonException('COUPON_STOCK_INSUFFICIENT');
+        }
+
+        if (strtotime($coupon[ 'start_time' ]) > 0) {
+            $time = time();
+            if ($time < strtotime($coupon[ 'start_time' ])) {
+                throw new CommonException('COUPON_RECEIVE_NOT_TIME');//优惠券不在领取时间范围内
+            }
+            if ($time > strtotime($coupon[ 'end_time' ])) {
+                throw new CommonException('COUPON_RECEIVE_NOT_TIME');//优惠券不在领取时间范围内
+            }
+        }
+
+        if ($coupon[ 'valid_type' ] == 1) {
+            $expire_time = 86400 * $coupon[ 'length' ] + time();
+        } else {
+            $expire_time = $coupon[ 'valid_end_time' ];
+        }
+
+        $member_coupon_data = [];
+        for ($i = 0; $i < $num; $i++) {
+            $member_coupon_data[] = [
+                'coupon_id' => $coupon_id,
+                'member_id' => $member_id,
+                'create_time' => time(),
+                'expire_time' => $expire_time,
+                'receive_type' => 'send',
+                'type' => $coupon[ 'type' ],
+                'title' => $coupon[ 'title' ],
+                'price' => $coupon[ 'price' ],
+                'status' => CouponMemberDict::WAIT_USE,
+                'min_condition_money' => $coupon[ 'min_condition_money' ]
+            ];
+        }
+
+        $this->model->saveAll($member_coupon_data);
+
+        $coupon->receive_count += $num;
+        if ($coupon[ 'remain_count' ] != -1) {
+            $coupon->remain_count -= $num;
+        }
+        $coupon->save();
+
         return true;
     }
 

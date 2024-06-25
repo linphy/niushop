@@ -74,6 +74,34 @@ return [
                 'is_share' => 1,
                 'action' => ''
             ],
+            [
+                'name' => 'SHOP_POINT_INDEX',
+                'title' => get_lang('dict_diy.shop_link_point_index'),
+                'url' => '/addon/shop/pages/point/index',
+                'is_share' => 1,
+                'action' => ''
+            ],
+            [
+                'name' => 'SHOP_POINT_LIST',
+                'title' => get_lang('dict_diy.shop_link_point_list'),
+                'url' => '/addon/shop/pages/point/list',
+                'is_share' => 1,
+                'action' => ''
+            ],
+            [
+                'name' => 'SHOP_POINT_ORDER_LIST',
+                'title' => get_lang('dict_diy.shop_link_point_order_list'),
+                'url' => '/addon/shop/pages/point/order_list',
+                'is_share' => 1,
+                'action' => ''
+            ],
+            [
+                'name' => 'SHOP_DISCOUNT_LIST',
+                'title' => get_lang('dict_diy.shop_link_discount_list'),
+                'url' => '/addon/shop/pages/discount/list',
+                'is_share' => 1,
+                'action' => ''
+            ],
         ]
     ],
 ];

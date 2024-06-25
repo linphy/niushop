@@ -29,14 +29,9 @@ Route::group('auth', function () {
     //授权用户信息
     Route::get('get', 'auth.Auth/get');
     //授权用户信息
-    Route::put('modify/:field', 'auth.Auth/modify');
-    //授权用户信息
     Route::put('edit', 'auth.Auth/edit');
-    //授权站点信息
-    Route::get('site', 'auth.Auth/site');
-    //站点可以显示的菜单
-    Route::get('site/showmenu', 'auth.Auth/getShowMenuList');
-
+    //授权用户信息
+    Route::put('modify/:field', 'auth.Auth/modify');
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

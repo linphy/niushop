@@ -6,7 +6,7 @@ import request from '@/utils/request'
  * @returns
  */
 export function getGoodsPageList(params: Record<string, any>) {
-    return request.get(`shop/goods`, {params})
+    return request.get(`shop/goods`, { params })
 }
 
 /**
@@ -15,7 +15,7 @@ export function getGoodsPageList(params: Record<string, any>) {
  * @returns
  */
 export function getGoodsInfo(goods_id: number) {
-    return request.get(`shop/goods/${goods_id}`);
+    return request.get(`shop/goods/${ goods_id }`);
 }
 
 /**
@@ -24,7 +24,7 @@ export function getGoodsInfo(goods_id: number) {
  * @returns
  */
 export function addGoods(params: Record<string, any>) {
-    return request.post('shop/goods', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -32,7 +32,7 @@ export function addGoods(params: Record<string, any>) {
  * @param params
  */
 export function editGoods(params: Record<string, any>) {
-    return request.put(`shop/goods/${params.goods_id}`, params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.put(`shop/goods/${ params.goods_id }`, params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -40,7 +40,7 @@ export function editGoods(params: Record<string, any>) {
  * @param params
  */
 export function getGoodsInit(params: Record<string, any>) {
-    return request.get(`shop/goods/init`, {params});
+    return request.get(`shop/goods/init`, { params });
 }
 
 /**
@@ -49,7 +49,7 @@ export function getGoodsInit(params: Record<string, any>) {
  * @returns
  */
 export function addVirtualGoods(params: Record<string, any>) {
-    return request.post('shop/goods/virtual', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods/virtual', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -57,7 +57,7 @@ export function addVirtualGoods(params: Record<string, any>) {
  * @param params
  */
 export function editVirtualGoods(params: Record<string, any>) {
-    return request.put(`shop/goods/virtual/${params.goods_id}`, params, {
+    return request.put(`shop/goods/virtual/${ params.goods_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -68,7 +68,7 @@ export function editVirtualGoods(params: Record<string, any>) {
  * @param params
  */
 export function getVirtualGoodsInit(params: Record<string, any>) {
-    return request.get(`shop/goods/virtual/init`, {params});
+    return request.get(`shop/goods/virtual/init`, { params });
 }
 
 /**
@@ -77,7 +77,7 @@ export function getVirtualGoodsInit(params: Record<string, any>) {
  * @returns
  */
 export function deleteGoods(params: Record<string, any>) {
-    return request.put(`shop/goods/delete`, params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.put(`shop/goods/delete`, params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -86,7 +86,7 @@ export function deleteGoods(params: Record<string, any>) {
  * @returns
  */
 export function getRecycleGoodsPageList(params: Record<string, any>) {
-    return request.get(`shop/goods/recycle`, {params})
+    return request.get(`shop/goods/recycle`, { params })
 }
 
 /**
@@ -95,7 +95,7 @@ export function getRecycleGoodsPageList(params: Record<string, any>) {
  * @returns
  */
 export function recycleGoods(params: Record<string, any>) {
-    return request.put(`shop/goods/recycle`, params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.put(`shop/goods/recycle`, params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -103,7 +103,7 @@ export function recycleGoods(params: Record<string, any>) {
  * @param params
  */
 export function editGoodsSort(params: Record<string, any>) {
-    return request.put(`shop/goods/sort`, params, {showSuccessMessage: true})
+    return request.put(`shop/goods/sort`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -111,7 +111,7 @@ export function editGoodsSort(params: Record<string, any>) {
  * @param params
  */
 export function editGoodsStatus(params: Record<string, any>) {
-    return request.put(`shop/goods/status`, params, {showSuccessMessage: true})
+    return request.put(`shop/goods/status`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -119,7 +119,7 @@ export function editGoodsStatus(params: Record<string, any>) {
  * @param params
  */
 export function copyGoods(params: Record<string, any>) {
-    return request.put(`shop/goods/copy/${params.goods_id}`, params, {showSuccessMessage: true})
+    return request.put(`shop/goods/copy/${ params.goods_id }`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -128,7 +128,7 @@ export function copyGoods(params: Record<string, any>) {
  * @returns
  */
 export function getGoodsSelectPageList(params: Record<string, any>) {
-    return request.get(`shop/goods/select`, {params})
+    return request.get(`shop/goods/select`, { params })
 }
 
 /**
@@ -137,7 +137,24 @@ export function getGoodsSelectPageList(params: Record<string, any>) {
  * @returns
  */
 export function getGoodsSkuList(params: Record<string, any>) {
-    return request.get(`shop/goods/sku`, {params})
+    return request.get(`shop/goods/sku`, { params })
+}
+
+/**
+ * 获取商品SKU规格不分页列表
+ * @param params
+ * @returns
+ */
+export function getGoodsSkuNoPageList(params: Record<string, any>) {
+    return request.get(`shop/goods/selectgoodssku`, { params })
+}
+
+/** 查询商品参与营销活动的数量
+ * @param params
+ * @returns
+ */
+export function getActiveGoodsCount(params: Record<string, any>) {
+    return request.get(`shop/goods/active/count`, { params })
 }
 
 /**
@@ -146,7 +163,7 @@ export function getGoodsSkuList(params: Record<string, any>) {
  * @returns
  */
 export function editGoodsListStock(params: Record<string, any>) {
-    return request.put(`shop/goods/sku/stock`, params, {showSuccessMessage: true})
+    return request.put(`shop/goods/sku/stock`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -155,7 +172,16 @@ export function editGoodsListStock(params: Record<string, any>) {
  * @returns
  */
 export function editGoodsListPrice(params: Record<string, any>) {
-    return request.put(`shop/goods/sku/price`, params, {showSuccessMessage: true})
+    return request.put(`shop/goods/sku/price`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 编辑商品SKU规格会员价格
+ * @param params
+ * @returns
+ */
+export function editGoodsListMemberPrice(params: Record<string, any>) {
+    return request.put(`shop/goods/sku/member_price`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -172,7 +198,7 @@ export function getGoodsType() {
  * @returns
  */
 export function getLabelPageList(params: Record<string, any>) {
-    return request.get(`shop/goods/label`, {params})
+    return request.get(`shop/goods/label`, { params })
 }
 
 /**
@@ -181,7 +207,7 @@ export function getLabelPageList(params: Record<string, any>) {
  * @returns
  */
 export function getLabelList(params: Record<string, any>) {
-    return request.get(`shop/goods/label/list`, {params})
+    return request.get(`shop/goods/label/list`, { params })
 }
 
 /**
@@ -190,7 +216,7 @@ export function getLabelList(params: Record<string, any>) {
  * @returns
  */
 export function getLabelInfo(label_id: number) {
-    return request.get(`shop/goods/label/${label_id}`);
+    return request.get(`shop/goods/label/${ label_id }`);
 }
 
 /**
@@ -199,7 +225,7 @@ export function getLabelInfo(label_id: number) {
  * @returns
  */
 export function addLabel(params: Record<string, any>) {
-    return request.post('shop/goods/label', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods/label', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -208,7 +234,7 @@ export function addLabel(params: Record<string, any>) {
  * @returns
  */
 export function editLabel(params: Record<string, any>) {
-    return request.put(`shop/goods/label/${params.label_id}`, params, {
+    return request.put(`shop/goods/label/${ params.label_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -220,7 +246,15 @@ export function editLabel(params: Record<string, any>) {
  * @returns
  */
 export function deleteLabel(label_id: number) {
-    return request.delete(`shop/goods/label/${label_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/goods/label/${ label_id }`, { showErrorMessage: true, showSuccessMessage: true })
+}
+
+/**
+ * 修改商品标签排序号
+ * @param params
+ */
+export function modifyLabelSort(params: Record<string, any>) {
+    return request.put(`shop/goods/label/sort`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -229,7 +263,7 @@ export function deleteLabel(label_id: number) {
  * @returns
  */
 export function getBrandPageList(params: Record<string, any>) {
-    return request.get(`shop/goods/brand`, {params})
+    return request.get(`shop/goods/brand`, { params })
 }
 
 /**
@@ -238,7 +272,7 @@ export function getBrandPageList(params: Record<string, any>) {
  * @returns
  */
 export function getBrandList(params: Record<string, any>) {
-    return request.get(`shop/goods/brand/list`, {params})
+    return request.get(`shop/goods/brand/list`, { params })
 }
 
 /**
@@ -247,7 +281,7 @@ export function getBrandList(params: Record<string, any>) {
  * @returns
  */
 export function getBrandInfo(brand_id: number) {
-    return request.get(`shop/goods/brand/${brand_id}`);
+    return request.get(`shop/goods/brand/${ brand_id }`);
 }
 
 /**
@@ -256,7 +290,7 @@ export function getBrandInfo(brand_id: number) {
  * @returns
  */
 export function addBrand(params: Record<string, any>) {
-    return request.post('shop/goods/brand', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods/brand', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -265,10 +299,19 @@ export function addBrand(params: Record<string, any>) {
  * @returns
  */
 export function editBrand(params: Record<string, any>) {
-    return request.put(`shop/goods/brand/${params.brand_id}`, params, {
+    return request.put(`shop/goods/brand/${ params.brand_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
+}
+
+
+/**
+ * 修改商品品牌排序号
+ * @param params
+ */
+export function modifyBrandSort(params: Record<string, any>) {
+    return request.put(`shop/goods/brand/sort`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -277,7 +320,7 @@ export function editBrand(params: Record<string, any>) {
  * @returns
  */
 export function deleteBrand(brand_id: number) {
-    return request.delete(`shop/goods/brand/${brand_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/goods/brand/${ brand_id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -286,7 +329,7 @@ export function deleteBrand(brand_id: number) {
  * @returns
  */
 export function getServePageList(params: Record<string, any>) {
-    return request.get(`shop/goods/service`, {params})
+    return request.get(`shop/goods/service`, { params })
 }
 
 /**
@@ -295,7 +338,7 @@ export function getServePageList(params: Record<string, any>) {
  * @returns
  */
 export function getServeList(params: Record<string, any>) {
-    return request.get(`shop/goods/service/list`, {params})
+    return request.get(`shop/goods/service/list`, { params })
 }
 
 /**
@@ -304,7 +347,7 @@ export function getServeList(params: Record<string, any>) {
  * @returns
  */
 export function getServeInfo(service_id: number) {
-    return request.get(`shop/goods/service/${service_id}`);
+    return request.get(`shop/goods/service/${ service_id }`);
 }
 
 /**
@@ -313,7 +356,7 @@ export function getServeInfo(service_id: number) {
  * @returns
  */
 export function addServe(params: Record<string, any>) {
-    return request.post('shop/goods/service', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods/service', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -322,7 +365,7 @@ export function addServe(params: Record<string, any>) {
  * @returns
  */
 export function editServe(params: Record<string, any>) {
-    return request.put(`shop/goods/service/${params.service_id}`, params, {
+    return request.put(`shop/goods/service/${ params.service_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -334,7 +377,7 @@ export function editServe(params: Record<string, any>) {
  * @returns
  */
 export function deleteServe(service_id: number) {
-    return request.delete(`shop/goods/service/${service_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/goods/service/${ service_id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -351,7 +394,7 @@ export function getCategoryTree() {
  * @returns
  */
 export function getCategoryList(params: Record<string, any>) {
-    return request.get(`shop/goods/category`, {params})
+    return request.get(`shop/goods/category`, { params })
 }
 
 /**
@@ -360,7 +403,7 @@ export function getCategoryList(params: Record<string, any>) {
  * @returns
  */
 export function getCategoryInfo(category_id: number) {
-    return request.get(`shop/goods/category/${category_id}`);
+    return request.get(`shop/goods/category/${ category_id }`);
 }
 
 /**
@@ -369,7 +412,7 @@ export function getCategoryInfo(category_id: number) {
  * @returns
  */
 export function addCategory(params: Record<string, any>) {
-    return request.post('shop/goods/category', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods/category', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -378,7 +421,7 @@ export function addCategory(params: Record<string, any>) {
  * @returns
  */
 export function editCategory(params: Record<string, any>) {
-    return request.put(`shop/goods/category/${params.category_id}`, params, {
+    return request.put(`shop/goods/category/${ params.category_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -390,7 +433,7 @@ export function editCategory(params: Record<string, any>) {
  * @returns
  */
 export function deleteCategory(category_id: number) {
-    return request.delete(`shop/goods/category/${category_id}`,{showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/goods/category/${ category_id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -399,7 +442,7 @@ export function deleteCategory(category_id: number) {
  * @returns
  */
 export function updateCategory(params: Record<string, any>) {
-    return request.post(`shop/goods/category/update`, params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post(`shop/goods/category/update`, params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -408,7 +451,7 @@ export function updateCategory(params: Record<string, any>) {
  * @returns
  */
 export function setCategoryConfig(params: Record<string, any>) {
-    return request.post(`shop/goods/category/config`, params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post(`shop/goods/category/config`, params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -433,7 +476,7 @@ export function getCategoryTreeComponents() {
  * @returns
  */
 export function getSupplierList(params: Record<string, any>) {
-    return request.get(`shop_supplier/supplier/list`, {params})
+    return request.get(`shop_supplier/supplier/list`, { params })
 }
 
 /**
@@ -442,7 +485,7 @@ export function getSupplierList(params: Record<string, any>) {
  * @returns
  */
 export function getEvaluateList(params: Record<string, any>) {
-    return request.get(`shop/goods/evaluate`, {params})
+    return request.get(`shop/goods/evaluate`, { params })
 }
 
 /**
@@ -451,7 +494,7 @@ export function getEvaluateList(params: Record<string, any>) {
  * @returns
  */
 export function addEvaluate(params: Record<string, any>) {
-    return request.post('shop/goods/evaluate', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/goods/evaluate', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -460,7 +503,7 @@ export function addEvaluate(params: Record<string, any>) {
  * @returns
  */
 export function deleteEvaluate(evaluate_id: number) {
-    return request.delete(`shop/goods/evaluate/${evaluate_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/goods/evaluate/${ evaluate_id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -469,7 +512,10 @@ export function deleteEvaluate(evaluate_id: number) {
  * @returns
  */
 export function adoptEvaluate(evaluate_id: number) {
-    return request.put(`shop/goods/evaluate/adopt/${evaluate_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.put(`shop/goods/evaluate/adopt/${ evaluate_id }`, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
 }
 
 /**
@@ -478,7 +524,10 @@ export function adoptEvaluate(evaluate_id: number) {
  * @returns
  */
 export function refuseEvaluate(evaluate_id: number) {
-    return request.put(`shop/goods/evaluate/refuse/${evaluate_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.put(`shop/goods/evaluate/refuse/${ evaluate_id }`, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
 }
 
 /**
@@ -487,7 +536,7 @@ export function refuseEvaluate(evaluate_id: number) {
  * @returns
  */
 export function replyEvaluate(params: Record<string, any>) {
-    return request.put(`shop/goods/evaluate/reply/${params.evaluate_id}`, params, {
+    return request.put(`shop/goods/evaluate/reply/${ params.evaluate_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -499,7 +548,10 @@ export function replyEvaluate(params: Record<string, any>) {
  * @returns
  */
 export function toppingEvaluate(evaluate_id: number) {
-    return request.put(`shop/goods/evaluate/topping/${evaluate_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.put(`shop/goods/evaluate/topping/${ evaluate_id }`, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
 }
 
 /**
@@ -508,8 +560,89 @@ export function toppingEvaluate(evaluate_id: number) {
  * @returns
  */
 export function cancelToppingEvaluate(evaluate_id: number) {
-    return request.put(`shop/goods/evaluate/cancel_topping/${evaluate_id}`, {
+    return request.put(`shop/goods/evaluate/cancel_topping/${ evaluate_id }`, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
+}
+
+/**
+ * 获取商品参数分页列表
+ * @param params
+ * @returns
+ */
+export function getAttrPageList(params: Record<string, any>) {
+    return request.get(`shop/goods/attr`, { params })
+}
+
+/**
+ * 获取商品参数列表
+ * @param params
+ * @returns
+ */
+export function getAttrList(params: Record<string, any>) {
+    return request.get(`shop/goods/attr/list`, { params })
+}
+
+/**
+ * 获取商品参数详情
+ * @param attr_id 商品参数attr_id
+ * @returns
+ */
+export function getAttrInfo(attr_id: number) {
+    return request.get(`shop/goods/attr/${ attr_id }`);
+}
+
+/**
+ * 添加商品参数
+ * @param params
+ * @returns
+ */
+export function addAttr(params: Record<string, any>) {
+    return request.post('shop/goods/attr', params, { showErrorMessage: true, showSuccessMessage: true })
+}
+
+/**
+ * 编辑商品参数
+ * @param params
+ * @returns
+ */
+export function editAttr(params: Record<string, any>) {
+    return request.put(`shop/goods/attr/${ params.attr_id }`, params, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
+}
+
+/**
+ * 删除商品参数
+ * @param attr_id
+ * @returns
+ */
+export function deleteAttr(attr_id: number) {
+    return request.delete(`shop/goods/attr/${ attr_id }`, { showErrorMessage: true, showSuccessMessage: true })
+}
+
+/**
+ * 修改商品参数排序号
+ * @param params
+ */
+export function modifyAttrSort(params: Record<string, any>) {
+    return request.put(`shop/goods/attr/sort`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 修改商品参数名称
+ * @param params
+ */
+export function modifyAttrName(params: Record<string, any>) {
+    return request.put(`shop/goods/attr/attr_name`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 修改商品参数值
+ * @param params
+ */
+export function modifyAttrValue(params: Record<string, any>) {
+    return request.put(`shop/goods/attr/attr_value`, params, { showSuccessMessage: true })
 }

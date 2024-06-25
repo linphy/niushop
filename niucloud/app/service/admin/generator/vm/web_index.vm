@@ -49,7 +49,7 @@
 import { reactive, ref, watch } from 'vue'
 import { t } from '@/lang'
 import { useDictionary } from '@/app/api/dict'
-import { get{UCASE_NAME}List, delete{UCASE_NAME},{WITH_API_PATH} } from '@/{API_PATH}'
+import { get{UCASE_NAME}List, delete{UCASE_NAME}{WITH_API_PATH} } from '@/{API_PATH}'
 import { img } from '@/utils/common'
 import { ElMessageBox,FormInstance } from 'element-plus'
 {EDIT_PATH}

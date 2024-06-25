@@ -18,7 +18,6 @@ use app\dict\diy\TemplateDict;
 use app\model\addon\Addon;
 use app\model\diy\Diy;
 use app\service\admin\sys\SystemService;
-use app\service\core\addon\CoreAddonService;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
 use Exception;
@@ -48,9 +47,9 @@ class DiyService extends BaseAdminService
      */
     public function getPage(array $where = [])
     {
-        $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
+        $field = 'id,title,page_title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
         $order = "update_time desc";
-        $search_model = $this->model->withSearch([ "title", "type", 'mode', 'addon_name' ], $where)->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title", "type", 'mode', 'addon_name' ], $where)->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
         return $this->pageQuery($search_model);
     }
 
@@ -62,17 +61,18 @@ class DiyService extends BaseAdminService
      */
     public function getPageByCarouselSearch(array $where = [])
     {
-        $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
+        $where[] = [ 'id', '>', 0 ];
+        $field = 'id,title,page_title,name,template,type,mode,is_default,share,visit_count,create_time,update_time,value';
         $order = "update_time desc";
         $search_model = $this->model->whereOr([
             [
                 [ 'type', '=', 'DIY_PAGE' ],
-                [ 'value', 'not in', ['top_fixed','right_fixed','bottom_fixed','left_fixed','fixed'] ]
+                [ 'value', 'not in', [ 'top_fixed', 'right_fixed', 'bottom_fixed', 'left_fixed', 'fixed' ] ]
             ],
             [
                 [ 'type', '<>', 'DIY_PAGE' ],
                 [ 'is_default', '=', 0 ],
-                [ 'value', 'not in', ['top_fixed','right_fixed','bottom_fixed','left_fixed','fixed'] ]
+                [ 'value', 'not in', [ 'top_fixed', 'right_fixed', 'bottom_fixed', 'left_fixed', 'fixed' ] ]
             ]
         ])->field($field)->order($order)->append([ 'type_name', 'type_page', 'addon_name' ]);
         return $this->pageQuery($search_model);
@@ -87,7 +87,7 @@ class DiyService extends BaseAdminService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getList(array $where = [], $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time')
+    public function getList(array $where = [], $field = 'id,title,page_title,name,template,type,mode,is_default,share,visit_count,create_time,update_time')
     {
         $order = "update_time desc";
         return $this->model->withSearch([ "title", "type", 'mode' ], $where)->field($field)->order($order)->select()->toArray();
@@ -100,13 +100,13 @@ class DiyService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'id,title,name,template,type,mode,value,is_default,is_change,share,visit_count';
+        $field = 'id,title,page_title,name,template,type,mode,value,is_default,is_change,share,visit_count';
         return $this->model->field($field)->where([ [ 'id', '=', $id ] ])->findOrEmpty()->toArray();
     }
 
     public function getInfoByName(string $name)
     {
-        $field = 'id,title,name,template,type,mode,value,is_default,is_change,share,visit_count';
+        $field = 'id,title,page_title,name,template,type,mode,value,is_default,is_change,share,visit_count';
         return $this->model->field($field)->where([ [ 'name', '=', $name ], [ 'is_default', '=', 1 ] ])->findOrEmpty()->toArray();
     }
 
@@ -118,7 +118,7 @@ class DiyService extends BaseAdminService
      */
     public function getCount(array $where = [])
     {
-        return $this->model->withSearch([ 'type' ], $where)->count();
+        return $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ 'type' ], $where)->count();
     }
 
     /**
@@ -145,7 +145,7 @@ class DiyService extends BaseAdminService
     }
 
     /**
-     * 自定义页面编辑
+     * 编辑自定义页面
      * @param int $id
      * @param array $data
      * @return bool
@@ -236,19 +236,21 @@ class DiyService extends BaseAdminService
         }
 
         if (!empty($data)) {
-            // 编辑赋值
 
+            // 编辑赋值
             if (isset($template[ $data[ 'type' ] ])) {
                 $page = $template[ $data[ 'type' ] ];
                 $data[ 'type_name' ] = $page[ 'title' ];
                 $data[ 'page' ] = $page[ 'page' ];
             }
+
         } else {
 
             // 新页面赋值
-            $title = $params[ 'title' ] ? : '页面' . $time;
+            $page_title = $params[ 'title' ] ? : '页面' . $time; // 页面标题（用于前台展示）
             $type = $params[ 'type' ] ? : 'DIY_PAGE';
             $name = $type == 'DIY_PAGE' ? 'DIY_PAGE_RANDOM_' . $time : $type;
+            $title = $page_title;
             $type_name = '';
             $template_name = ''; // 页面模板名称
             $page_route = ''; // 页面路径
@@ -261,7 +263,7 @@ class DiyService extends BaseAdminService
                 $page = $template[ $params[ 'name' ] ];
                 $name = $params[ 'name' ];
                 $type = $params[ 'name' ];
-                $title = $page[ 'title' ];
+                $page_title = $page[ 'title' ];
                 $type_name = $page[ 'title' ];
                 $page_route = $page[ 'page' ];
 
@@ -286,9 +288,15 @@ class DiyService extends BaseAdminService
 
             }
 
+            // 页面标题（用于前台展示）
+            if ($type != 'DIY_PAGE') {
+                $title = $type_name;
+            }
+
             $data = [
                 'name' => $name,
-                'title' => $title,
+                'page_title' => $page_title, // 页面名称（用于后台展示）
+                'title' => $title, // 页面标题（用于前台展示）
                 'type' => $type,
                 'type_name' => $type_name,
                 'template' => $template_name,
@@ -303,8 +311,6 @@ class DiyService extends BaseAdminService
         $data[ 'component' ] = $this->getComponentList($data[ 'type' ]);
         $data[ 'domain_url' ] = ( new SystemService() )->getUrl();
 
-        // 查询已安装的有效的应用
-        $data[ 'addon_list' ] = ( new CoreAddonService() )->getInstallAddonList();
         return $data;
     }
 
@@ -356,7 +362,7 @@ class DiyService extends BaseAdminService
             // 查询自定义页面
             if ($k == 'DIY_PAGE') {
                 $order = "update_time desc";
-                $field = 'id,title,name,template,type,mode,is_default,share,visit_count,create_time,update_time';
+                $field = 'id,title,page_title,name,template,type,mode,is_default,share,visit_count,create_time,update_time';
                 $list = $this->model
                     ->whereOr([
                         [
@@ -370,7 +376,7 @@ class DiyService extends BaseAdminService
                 foreach ($list as $ck => $cv) {
                     $link[ $k ][ 'child_list' ][] = [
                         'name' => $cv[ 'name' ],
-                        'title' => $cv[ 'title' ],
+                        'title' => $cv[ 'page_title' ],
                         'url' => '/app/pages/index/diy?id=' . $cv[ 'id' ]
                     ];
                 }
@@ -471,8 +477,8 @@ class DiyService extends BaseAdminService
             'type' => $params[ 'type' ], // 页面类型标识
             'name' => '', // 链接标识
             'parent' => '', // 链接标识
-            'title' => $default_page_data[ 'title' ], // 模板名称
-            'cover' => $default_page_data[ 'cover' ], // 封面图
+            'title' => $default_page_data[ 'title' ] ?? '', // 模板名称
+            'cover' => $default_page_data[ 'cover' ] ?? '', // 封面图
             'url' => '', // 自定义页面链接，实时预览效果
             'page' => $template[ 'page' ], // 页面地址
             'action' => $template[ 'action' ] // 是否存在操作，decorate 表示支持装修
@@ -522,6 +528,8 @@ class DiyService extends BaseAdminService
         // 如果没有预览图，并且没有地址，则赋值默认页面地址
         if (empty($use_template[ 'cover' ]) && empty($use_template[ 'url' ])) {
             $use_template[ 'url' ] = $template[ 'page' ];
+        } elseif (empty($use_template[ 'url' ])) {
+            $use_template[ 'url' ] = $template[ 'page' ];
         }
 
         $template[ 'use_template' ] = $use_template;
@@ -567,7 +575,7 @@ class DiyService extends BaseAdminService
      */
     public function setDiyData($params)
     {
-        $app_count = (new Addon())->where([['type', '=', 'app']])->count();
+        $app_count = ( new Addon() )->where([ [ 'type', '=', 'app' ] ])->count();
 
         $is_start = 1; // 设置是否为启动页，0：是，1：否
 
@@ -599,6 +607,7 @@ class DiyService extends BaseAdminService
 
         if (!empty($addon_index_template)) {
             $this->add([
+                "page_title" => $addon_index_template[ 'title' ],
                 "title" => $addon_index_template[ 'title' ],
                 "name" => $addon_flag,
                 "type" => $addon_flag,
@@ -623,7 +632,7 @@ class DiyService extends BaseAdminService
 
             if ($is_start == 1) {
                 // 查询链接，设置启动页
-                $other_page = (new DiyRouteService())->getList([ 'url' => $addon_template_info[ 'page' ], 'addon' => $addon ]);
+                $other_page = ( new DiyRouteService() )->getList([ 'url' => $addon_template_info[ 'page' ], 'addon' => $addon ]);
                 if (!empty($other_page)) {
 
                     $this->changeTemplate([
@@ -638,5 +647,4 @@ class DiyService extends BaseAdminService
             }
         }
     }
-
 }

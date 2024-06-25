@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的saas管理平台
+// | Niucloud-admin 企业快速开发的多应用管理平台
 // +----------------------------------------------------------------------
 // | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
@@ -268,9 +268,9 @@ class CorePayEventService extends BaseCoreService
      * @return null
      * @throws Exception
      */
-    public function getTransfer(string $transfer_no)
+    public function getTransfer(string $transfer_no, $batch_id = '')
     {
-        return $this->app()->getTransfer($transfer_no);
+        return $this->app()->getTransfer($transfer_no, $batch_id);
     }
 
 

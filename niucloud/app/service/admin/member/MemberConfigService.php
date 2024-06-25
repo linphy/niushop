@@ -13,6 +13,7 @@ namespace app\service\admin\member;
 
 use app\model\sys\SysConfig;
 use app\service\core\member\CoreMemberConfigService;
+use app\service\core\member\CoreMemberService;
 use core\base\BaseAdminService;
 use think\Model;
 
@@ -70,5 +71,46 @@ class MemberConfigService extends BaseAdminService
      */
     public function setMemberConfig(array $data){
         return (new CoreMemberConfigService())->setMemberConfig($data);
+    }
+
+    /**
+     * 获取成长值规则配置
+     */
+    public function getGrowthRuleConfig(){
+        $config = (new CoreMemberConfigService())->getGrowthRuleConfig();
+        if (!empty($config)) {
+            $config = CoreMemberService::getGrowthRuleContent($config);
+        }
+        return $config;
+    }
+
+    /**
+     * 配置成长值规则
+     * @param array $data
+     * @return true
+     */
+    public function setGrowthRuleConfig(array $data){
+        return (new CoreMemberConfigService())->setGrowthRuleConfig($data);
+    }
+
+    /**
+     * 获取积分规则配置
+     */
+    public function getPointRuleConfig(){
+        $config = (new CoreMemberConfigService())->getPointRuleConfig();
+        if (!empty($config)) {
+            if (isset($config['grant']) && !empty($config['grant'])) $config['grant'] = CoreMemberService::getPointGrantRuleContent($config['grant']);
+            if (isset($config['consume']) && !empty($config['consume'])) $config['consume'] = CoreMemberService::getPointGrantRuleContent($config['consume']);
+        }
+        return $config;
+    }
+
+    /**
+     * 配置积分规则
+     * @param array $data
+     * @return true
+     */
+    public function setPointRuleConfig(array $data){
+        return (new CoreMemberConfigService())->setPointRuleConfig($data);
     }
 }

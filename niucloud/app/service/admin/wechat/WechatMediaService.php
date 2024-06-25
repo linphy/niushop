@@ -50,7 +50,7 @@ class WechatMediaService extends BaseAdminService
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function addImageMedia(array $data) {
-        $dir = $this->root_path.'/'.'image'.'/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path.'/image/'.date('Ym').'/'.date('d');
         $core_upload_service = new CoreUploadService();
         $upload_res = $core_upload_service->image($data['file'], $dir, storage_type: StorageDict::LOCAL);
 
@@ -68,12 +68,12 @@ class WechatMediaService extends BaseAdminService
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function addVideoMedia(array $data) {
-        $dir = $this->root_path.'/'.'video'.'/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path.'/video/'.date('Ym').'/'.date('d');
         $core_upload_service = new CoreUploadService();
-        $upload_res = $core_upload_service->video($data['file'], $dir, storage_type: StorageDict::LOCAL);
+        $upload_res = $core_upload_service->video($data['file'], $dir, 0, storage_type: StorageDict::LOCAL);
 
         $data = [
-            'type' => WechatMediaDict::IMAGE,
+            'type' => WechatMediaDict::VIDEO,
             'file_path' => $upload_res['url']
         ];
         return (new CoreWechatMediaService())->addMedia($data);

@@ -1,12 +1,16 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-[5px]">
                 <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" @click="addEvent">
                     {{ t('addCategory') }}
                 </el-button>
             </div>
+            <el-tabs class="demo-tabs" model-value="/shop/goods/category" @tab-change="handleClick">
+                <el-tab-pane :label="t('tabGoodsCategory')" name="/shop/goods/category" />
+                <el-tab-pane :label="t('tabGoodsCategoryConfig')" name="/shop/goods/category/config" />
+            </el-tabs>
             <div class="mt-[10px]">
                 <el-table :data="categoryTable.data" ref="tableRef" size="large" v-loading="categoryTable.loading" row-key="category_id" :tree-props="{ hasChildren: 'hasChildren', children: 'child_list' }">
                     <template #empty>
@@ -65,7 +69,7 @@ import { img } from '@/utils/common'
 import { ElMessageBox } from 'element-plus'
 import categoryEdit from '@/addon/shop/views/goods/components/category-edit.vue'
 import goodsCategorySpreadPopup from '@/addon/shop/views/goods/components/goods-category-spread-popup.vue'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import Sortable from 'sortablejs'
 import { useTemplateRefsList } from '@vueuse/core'
 import { cloneDeep } from 'lodash-es'
@@ -244,6 +248,12 @@ const goodsCategorySpreadPopupRef: any = ref(null)
 
 const spreadEvent = (data: any) => {
     goodsCategorySpreadPopupRef.value.show(data)
+}
+
+const router = useRouter()
+
+const handleClick = (path: string) => {
+    router.push({ path })
 }
 
 </script>

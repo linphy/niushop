@@ -368,6 +368,8 @@ class UpgradeService extends BaseAdminService
         dir_copy($code_dir . 'uni-app', $this->root_path . 'uni-app');
 
         $addon_list = (new CoreAddonService())->getInstallAddonList();
+        $depend_service = new CoreDependService();
+
         if (!empty($addon_list)) {
 
             foreach ($addon_list as $addon => $item) {
@@ -384,6 +386,21 @@ class UpgradeService extends BaseAdminService
 
                 // 编译 加载插件标题语言包
                 $this->compileLocale($this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR, $addon);
+
+                // 合并插件依赖
+                $addon_uniapp_package = str_replace('/', DIRECTORY_SEPARATOR, project_path() . "niucloud/addon/{$addon}/package/uni-app-package.json");
+
+                if (file_exists($addon_uniapp_package)) {
+                    $original = $depend_service->getNpmContent('uni-app');
+                    $new = $depend_service->jsonFileToArray($addon_uniapp_package);
+
+                    foreach ($new as $name => $value) {
+                        $original[$name] = isset($original[$name]) && is_array($original[$name]) ? array_merge($original[$name], $new[$name]) : $new[$name];
+                    }
+
+                    $uniapp_package = $this->root_path . 'uni-app' . DIRECTORY_SEPARATOR . 'package.json';
+                    $depend_service->writeArrayToJsonFile($original, $uniapp_package);
+                }
             }
         }
         return true;

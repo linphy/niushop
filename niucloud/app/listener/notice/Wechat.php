@@ -85,7 +85,7 @@ class Wechat
                     ( new CoreNoticeLogService() )->add($log_data);
                 } catch (NoticeException $e) {
                     $log_data[ 'result' ] = $e->getMessage();
-                    ( new CoreNoticeLogService() )->add( $log_data);
+                    ( new CoreNoticeLogService() )->add($log_data);
                     //这儿决定要不要抛出
                     if (!$template[ 'async' ]) {
                         throw new NoticeException($e->getMessage());

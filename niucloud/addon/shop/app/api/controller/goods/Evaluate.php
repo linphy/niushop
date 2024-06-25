@@ -11,8 +11,8 @@
 
 namespace addon\shop\app\api\controller\goods;
 
-use core\base\BaseAdminController;
 use addon\shop\app\service\api\goods\EvaluateService;
+use core\base\BaseApiController;
 
 
 /**
@@ -20,18 +20,19 @@ use addon\shop\app\service\api\goods\EvaluateService;
  * Class Evaluate
  * @package addon\shop\app\adminapi\controller\goods
  */
-class Evaluate extends BaseAdminController
+class Evaluate extends BaseApiController
 {
-   /**
-    * 获取商品评价列表
-    * @return \think\Response
-    */
-    public function pages(){
+    /**
+     * 获取商品评价列表
+     * @return \think\Response
+     */
+    public function pages()
+    {
         $data = $this->request->params([
-            ['goods_id', 0],
-            ['scores', []],
+            [ 'goods_id', 0 ],
+            [ 'scores', [] ],
         ]);
-        return success((new EvaluateService())->getPage($data));
+        return success(( new EvaluateService() )->getPage($data));
     }
 
     /**
@@ -39,20 +40,22 @@ class Evaluate extends BaseAdminController
      * @param int $id
      * @return \think\Response
      */
-    public function info(int $id){
-        return success((new EvaluateService())->getInfo($id));
+    public function info(int $id)
+    {
+        return success(( new EvaluateService() )->getInfo($id));
     }
 
     /**
      * 添加商品评价
      * @return \think\Response
      */
-    public function add(){
+    public function add()
+    {
         $data = $this->request->params([
-             ["evaluate_array", []],
+            [ "evaluate_array", [] ],
         ]);
-        (new EvaluateService())->add($data);
-        return success('ADD_SUCCESS');
+        ( new EvaluateService() )->add($data);
+        return success('SHOP_GOODS_EVALUATE_SUCCESS');
     }
 
     /**
@@ -63,9 +66,9 @@ class Evaluate extends BaseAdminController
     public function count()
     {
         $data = $this->request->params([
-            ['goods_id', 0],
+            [ 'goods_id', 0 ],
         ]);
-        return success((new EvaluateService())->getCount($data['goods_id']));
+        return success(( new EvaluateService() )->getCount($data[ 'goods_id' ]));
     }
 
     /**
@@ -78,9 +81,9 @@ class Evaluate extends BaseAdminController
     public function lists()
     {
         $data = $this->request->params([
-            ['goods_id', 0],
+            [ 'goods_id', 0 ],
         ]);
-        return success((new EvaluateService())->getList($data['goods_id']));
+        return success(( new EvaluateService() )->getList($data[ 'goods_id' ]));
     }
 
     /**

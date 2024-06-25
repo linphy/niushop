@@ -21,5 +21,7 @@
     "cartTextPlaceholder":"请输入购物车按钮文字",
     "cartEvent":"点击按钮",
     "detail": "跳转商品详情",
-    "cart": "加入购物车"
+    "cart": "加入购物车",
+    "tabGoodsCategory": "商品分类",
+    "tabGoodsCategoryConfig": "分类设置"
 }

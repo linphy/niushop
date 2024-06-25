@@ -12,9 +12,9 @@
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="evaluateTable.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('goodsName')" prop="goods_name">
-                        <el-input v-model.trim="evaluateTable.searchParam.goods_name"
-                            :placeholder="t('goodsNamePlaceholder')" class="input-width" maxlength="60" />
-                    </el-form-item> <el-form-item>
+                        <el-input v-model.trim="evaluateTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" class="input-width" maxlength="60" />
+                    </el-form-item>
+                    <el-form-item>
                         <el-button type="primary" @click="loadEvaluateList()">{{ t('search') }}</el-button>
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
                     </el-form-item>
@@ -50,9 +50,9 @@
                         <template #default="{ row }">
                             <div>
                                 <p class="text-[14px]">{{ row.content }}</p>
-                                <div class="flex flex-wrap mt-[10px]" v-if="row.image_small?.length > 0">
-                                    <div v-for="(imageItem, imageIndex) in row.image_small" :key="imageIndex" class="mr-4">
-                                        <el-image v-if="imageItem" class="w-[40px] h-[40px]" :src="img(imageItem)" fit="contain" :preview-src-list="row.previewList" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2">
+                                <div class="flex flex-wrap mt-[10px]" v-if="row.images?.length > 0">
+                                    <div v-for="(imageItem, imageIndex) in row.images" :key="imageIndex" class="mr-4">
+                                        <el-image v-if="imageItem" class="w-[40px] h-[40px]" :src="img(imageItem)" fit="contain" :preview-src-list="[img(imageItem)]" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2">
                                             <template #error>
                                                 <div class="image-slot">
                                                     <img class="w-[40px] h-[40px]" src="@/addon/shop/assets/goods_default.png" />
@@ -97,12 +97,11 @@
 
         <evaluate-add ref="editEvaluateDialog" @complete="loadEvaluateList" />
 
-        <el-dialog v-model="replyShowDialog" :title="t('explainFirst')" width="460px" class="diy-dialog-wrap"
-            :destroy-on-close="true">
+        <el-dialog v-model="replyShowDialog" :title="t('explainFirst')" width="460px" class="diy-dialog-wrap" :destroy-on-close="true">
             <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('explainFirst')" prop="explain_first">
                     <el-input v-model.trim="formData.explain_first" type="textarea" rows="4" clearable
-                        :placeholder="t('explainFirstPlaceholder')" class="input-width" />
+                        :placeholder="t('explainFirstPlaceholder')" class="input-width" maxlength="200" show-word-limit />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -140,9 +139,6 @@ const evaluateTable = reactive({
 
 const searchFormRef = ref<FormInstance>()
 
-// 选中数据
-// const selectData = ref<any[]>([])
-
 /**
  * 获取商品评价列表
  */
@@ -157,20 +153,18 @@ const loadEvaluateList = (page: number = 1) => {
     }).then(res => {
         evaluateTable.loading = false
         evaluateTable.data = res.data.data
+        evaluateTable.total = res.data.total
         evaluateTable.data.map((item: any)=> {
-            item.previewList = item.image_small.map((el:any)=> {
+            item.previewList = item.images.map((el:any)=> {
                 return img(el)
             })
             return item
         })
-        evaluateTable.total = res.data.total
     }).catch(() => {
         evaluateTable.loading = false
     })
 }
 loadEvaluateList()
-
-// const router = useRouter()
 
 const editEvaluateDialog: Record<string, any> | null = ref(null)
 /**

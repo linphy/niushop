@@ -167,7 +167,7 @@ class Diy extends BaseModel
     }
 
     /**
-     * 搜索器:自定义页面名称
+     * 搜索器:页面标题（用于前台展示），页面名称（用于后台展示）
      * @param $query
      * @param $value
      * @param $data
@@ -175,7 +175,7 @@ class Diy extends BaseModel
     public function searchTitleAttr($query, $value, $data)
     {
         if ($value) {
-            $query->where("title", 'like', '%' . $value . '%');
+            $query->where("title|page_title", 'like', '%' . $value . '%');
         }
     }
 

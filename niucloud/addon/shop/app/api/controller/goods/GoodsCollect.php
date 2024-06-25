@@ -12,7 +12,6 @@
 namespace addon\shop\app\api\controller\goods;
 
 
-
 use addon\shop\app\service\api\goods\GoodsCollectService;
 use core\base\BaseApiController;
 

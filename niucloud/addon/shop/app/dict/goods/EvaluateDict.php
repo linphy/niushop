@@ -13,6 +13,7 @@ namespace addon\shop\app\dict\goods;
 
 class EvaluateDict
 {
+    const AUDIT_NO = 0;
     const AUDIT = 1;
     const AUDIT_ADOPT = 2;
     const AUDIT_REFUSE = 3;
@@ -25,9 +26,10 @@ class EvaluateDict
     public static function getStatus($type = '')
     {
         $data = [
-            self::AUDIT => get_lang('dict_shop_goods_evalute.audit'),//待审核
-            self::AUDIT_ADOPT => get_lang('dict_shop_goods_evalute.audit_adopt'),//审核通过
-            self::AUDIT_REFUSE => get_lang('dict_shop_goods_evalute.audit_refuse'),//审核拒绝
+            self::AUDIT_NO => get_lang('dict_shop_goods_evalute.audit_no'), // 无需审核
+            self::AUDIT => get_lang('dict_shop_goods_evalute.audit'), // 待审核
+            self::AUDIT_ADOPT => get_lang('dict_shop_goods_evalute.audit_adopt'), // 审核通过
+            self::AUDIT_REFUSE => get_lang('dict_shop_goods_evalute.audit_refuse'), // 审核拒绝
         ];
         if (!$type) {
             return $data;

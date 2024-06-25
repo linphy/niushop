@@ -45,7 +45,9 @@ class MemberAccountService extends BaseAdminService
         if (!empty($where[ 'keywords' ])) {
             $member_where[] = [ "member.member_no|member.nickname|member.mobile", 'like', '%' . $where[ 'keywords' ] . '%' ];
         }
-        $search_model = $this->model->withSearch([ 'join_member_id' => 'member_id', 'account_type', 'from_type', 'join_create_time' => 'create_time' ], $where)->withJoin([ 'member' => ['nickname', 'headimg', 'mobile', 'member_id', 'member_no']
+        $search_model = $this->model->withSearch([ 'join_member_id' => 'member_id', 'account_type', 'from_type', 'join_create_time' => 'create_time' ], $where)
+            ->withJoin(
+                [ 'member' => ['member_id','member_no', 'username', 'mobile', 'nickname', 'headimg']
         ])->where($member_where)->field($field)->order('create_time desc')->append([ 'from_type_name', 'account_type_name' ]);
         return $this->pageQuery($search_model);
     }
@@ -113,7 +115,7 @@ class MemberAccountService extends BaseAdminService
      */
     public function getMemberAccountInfo(int $member_id)
     {
-        $field = 'point, point_get, balance, balance_get, growth, growth_get, money, money_get, commission, commission_get';
+        $field = 'point, point_get, balance, balance_get, growth, growth_get, money, money_get, commission, commission_get, commission_cash_outing';
         return ( new Member() )->where([ [ 'member_id', '=', $member_id ] ])->field($field)->findOrEmpty()->toArray();
     }
 

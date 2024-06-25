@@ -154,7 +154,7 @@ class SystemService extends BaseAdminService
 //            $timeout++;
 //            sleep(1);
 //        }
-        sleep(3);
+        sleep(5);
         if (file_exists($file)) {
             @unlink($file);
             return true;
@@ -176,16 +176,5 @@ class SystemService extends BaseAdminService
             }
         }
         return false;
-    }
-
-    /**
-     * 设置布局
-     * @param string $key
-     */
-    public function setLayout(string $key) {
-        $layouts = array_column(event('SiteLayout'), 'key');
-        if (!in_array($key, $layouts)) throw new CommonException('LAYOUT_NOT_EXIST');
-        (new CoreConfigService())->setConfig('SITE_LAYOUT', [ 'key' => $key ]);
-        return true;
     }
 }

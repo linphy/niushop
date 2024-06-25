@@ -1,35 +1,47 @@
 <template>
 	<view @touchmove.prevent.stop>
 		<u-popup :show="showpop" mode="bottom" :round="10" @close="close" :closeable="true" :safeAreaInsetBottom="true" @touchmove.prevent.stop>
-			<view class="h-[70vh] px-[24rpx] bg-page" v-if="Object.keys(showList).length">
+			<view class="h-[70vh] px-[24rpx] bg-page" @touchmove.prevent.stop v-if="Object.keys(showList).length">
 				<view class="text-center text-[32rpx] leading-8">{{t('detailedInformation')}}</view>
 				<view class="flex mt-[10rpx] menu" v-if="packageList.length > 1">
 					<u-tabs :list="packageList" @click="handleClick" :current="current" itemStyle="font-size:28rpx;" lineWidth="55" lineColor="#ff4500"></u-tabs>
 				</view>
 				<view class="text-[28rpx] mt-[35rpx] ">
 					<view class="flex justify-between mb-[20rpx]">
-						<text class="mr-[20rpx]">{{showList.company.company_name}}</text>
-						<view>
-							<text class="mr-[14rpx]">{{showList.express_number}}</text>
-							<text @click="copy(showList.express_number)">{{t('copy')}}</text>
-						</view>
+						<template v-if="showList.sub_delivery_type == 'none_express'">
+							<text class="mr-[20rpx]">无需物流</text>
+						</template>
+						<template v-else>
+							<text class="mr-[20rpx]">{{showList.company.company_name}}</text>
+							<view>
+								<text class="mr-[14rpx]">{{showList.express_number}}</text>
+								<text @click="copy(showList.express_number)">{{t('copy')}}</text>
+							</view>
+						</template>
 					</view>
 				</view>
-				<view class="parcel " style="height: 56vh;">
+				<view class="parcel" style="height: 56vh;" v-if="showList.sub_delivery_type == 'express'">
 					<view class="h-[40vh] flex items-center justify-center" v-if="showList.traces.success == false">
 						<view>
-							<text class="iconfont iconzanwuwuliuxinxi text-[180rpx] text-[#bfbfbf]"></text>
+							<text class="nc-iconfont nc-icon-daishouhuoV6xx text-[180rpx] text-[#bfbfbf]"></text>
 							<view class="text-[28rpx] text-[#bfbfbf] leading-8">暂无物流信息～～</view>
 						</view>
 					</view>
 					<scroll-view v-else scroll-y="true" style="height:56vh;padding: 20rpx;box-sizing: border-box;" class="bg-white rounded-md">
 						<u-steps current="0" dot direction="column" activeColor="var(--primary-color)">
 							<template v-for="(item,index) in showList.traces.list">
-								<u-steps-item :title="item.remark" :desc="item.datetime">
-								</u-steps-item>
+								<u-steps-item :title="item.remark" :desc="item.datetime"></u-steps-item>
 							</template>
 						</u-steps>
 					</scroll-view>
+				</view>
+				<view class="parcel" style="height: 56vh;" v-else-if="showList.sub_delivery_type == 'none_express'">
+					<view class="h-[40vh] flex items-center justify-center">
+						<view>
+							<text class="nc-iconfont nc-icon-daishouhuoV6xx text-[180rpx] text-[#bfbfbf]"></text>
+							<view class="text-[28rpx] text-[#bfbfbf] leading-8">无需物流～～</view>
+						</view>
+					</view>
 				</view>
 			</view>
 		</u-popup>

@@ -75,12 +75,13 @@
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#ff7f5b] bg-[#fff0e5] cursor-pointer" @click="setNotes">{{ t('notes') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="delivery" v-if="formData.status == 2">{{ t('delivery') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="close" v-if="formData.status == 1">{{ t('close') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="orderAdjustMoney" v-if="formData.status == 1">{{ t('editPrice') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="finish" v-if="formData.status == 3">{{ t('finish') }}</span>
 						<div class="flex" v-if="formData.order_delivery">
 							<template v-for="(item, index) in formData.order_delivery" :key="index">
 								<span v-if="item.delivery_type == 'express' && item.sub_delivery_type == 'express'"
-									class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#ff7f5b] bg-[#fff0e5] cursor-pointer"
-									@click="packageEvent(item.id, formData.taker_mobile)">{{ t('package') }}{{ index + 1 }}
+								      class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#ff7f5b] bg-[#fff0e5] cursor-pointer"
+								      @click="packageEvent(item.id, formData.taker_mobile)">{{ t('package') }}{{ index + 1 }}
 								</span>
 							</template>
 						</div>
@@ -110,14 +111,29 @@
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="price" :label="t('price')" min-width="50" align="left" />
+					<el-table-column :label="t('price')" min-width="50" align="left">
+						<template #default="{ row }">
+							<div class="flex flex-col">
+								<span v-if="formData.activity_type == 'exchange'">{{ row.extend.point }}{{ t('point') }}
+									<span v-if="parseFloat(row.price)">+￥{{ row.price }}</span>
+								</span>
+								<span v-else class="text-[13px]">￥{{ row.price }}</span>
+								<span class="text-[13px] mt-[5px]">{{ row.num }}{{ t('piece') }}</span>
+							</div>
+						</template>
+					</el-table-column>
 					<el-table-column prop="num" :label="t('num')" min-width="50" align="right" />
 				</el-table>
 				<div class="py-[12px] px-[16px] border-b border-color flex justify-end">
 					<div class="w-[310px] flex flex-col text-right">
 						<div class="flex mb-[10px]">
 							<div class="text-base flex-1">{{ t('goodsMoney') }}</div>
-							<div class="text-base flex-1 pl-[30px]">{{ formData.goods_money }}</div>
+							<div class="text-base flex-1 pl-[30px]">
+								<span v-if="formData.activity_type == 'exchange'" class="text-[14px]">{{ formData.point }}{{ t('point') }}
+									<span v-if="parseFloat(formData.goods_money)">+￥{{ formData.goods_money }}</span>
+								</span>
+								<span v-else class="text-[14px]">￥{{ formData.goods_money }}</span>
+							</div>
 						</div>
 						<div class="flex mb-[10px]">
 							<div class="text-base flex-1">{{ t('discountMoney') }}</div>
@@ -129,14 +145,19 @@
 						</div>
 						<div class="flex">
 							<div class="text-base flex-1">{{ t('orderMoney') }}</div>
-							<div class="text-base flex-1 pl-[30px] text-[red]">{{ formData.order_money }}</div>
+							<div class="text-base flex-1 pl-[30px] text-[red]">
+								<span v-if="formData.activity_type == 'exchange'" class="text-[14px]">{{ formData.point }}{{ t('point') }}
+									<span v-if="parseFloat(formData.order_money)">+￥{{ formData.order_money }}</span>
+								</span>
+								<span v-else class="text-[14px]">￥{{ formData.order_money }}</span>
+							</div>
 						</div>
 					</div>
 				</div>
 				<h3 class="mt-[50px] mb-[20px]" v-if="formData.order_log.length > 0">{{ t('operateLog') }}</h3>
 				<div class="mb-[100px]" style="min-height: 100px" v-if="formData.order_log.length > 0">
 					<div class="flex" v-for="(items, index) in formData.order_log" :key="index">
-						<div class="mr-[20px]">
+						<div class="mr-[20px] min-w-[71px]">
 							<div class="leading-[1] w-full text-[14px] w-[100px] flex justify-end">
 								{{ items.create_time && items.create_time.split(' ')[0] }}
 							</div>
@@ -164,12 +185,14 @@
 			</el-card>
 			<el-card class="box-card !border-none relative" shadow="never" v-if="!loading && !formData">
 				<el-empty :description="t('orderInfoEmpty')" />
-		</el-card>
-	</el-form>
-	<delivery-action ref="deliveryActionDialog" @complete="setFormData(orderId)"></delivery-action>
-	<order-notes ref="orderNotesDialog" @complete="setFormData(orderId)"></order-notes>
-	<delivery-package ref="packageDialog"></delivery-package>
-</div></template>
+			</el-card>
+		</el-form>
+		<adjust-money ref="orderAdjustMoneyActionDialog" @complete="setFormData(orderId)"/>
+		<delivery-action ref="deliveryActionDialog" @complete="setFormData(orderId)"></delivery-action>
+		<order-notes ref="orderNotesDialog" @complete="setFormData(orderId)"></order-notes>
+		<delivery-package ref="packageDialog"></delivery-package>
+	</div>
+</template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
@@ -178,6 +201,7 @@ import { getOrderDetail, orderClose, orderFinish } from '@/addon/shop/api/order'
 import DeliveryAction from '@/addon/shop/views/order/components/delivery-action.vue'
 import OrderNotes from '@/addon/shop/views/order/components/order-notes.vue'
 import deliveryPackage from '@/addon/shop/views/order/components/delivery-package.vue'
+import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { img } from '@/utils/common'
 import { ElMessageBox } from 'element-plus'
@@ -187,21 +211,19 @@ const router = useRouter()
 const pageName = route.meta.title
 const orderId: number = parseInt(route.query.order_id as string)
 const loading = ref(true)
-// const appType = getAppType()
 
 const formData: Record<string, any> | null = ref(null)
 
-const setFormData = async (orderId: number = 0) => {
+const setFormData = async(orderId: number = 0) => {
     loading.value = true
     formData.value = null
-    await getOrderDetail(orderId)
-        .then(({ data }) => {
-            formData.value = data
-        })
-        .catch(() => {
-        })
+    await getOrderDetail(orderId).then(({ data }) => {
+        formData.value = data
+    }).catch(() => {
+    })
     loading.value = false
 }
+
 if (orderId) setFormData(orderId)
 else loading.value = false
 
@@ -216,6 +238,13 @@ const close = () => {
             setFormData(orderId)
         })
     })
+}
+
+// 订单调整价格
+const orderAdjustMoneyActionDialog: Record<string, any> | null = ref(null)
+const orderAdjustMoney = () => {
+    orderAdjustMoneyActionDialog.value.setFormData(formData.value)
+    orderAdjustMoneyActionDialog.value.showDialog = true
 }
 
 const deliveryActionDialog: Record<string, any> | null = ref(null)
@@ -238,10 +267,10 @@ const setNotes = () => {
 // 订单完成
 const finish = () => {
     ElMessageBox.confirm(t('orderFinishTips'), t('warning'), {
-        confirmButtonText: t('confirm'),
-        cancelButtonText: t('cancel'),
-        type: 'warning'
-    }
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
     ).then(() => {
         orderFinish(orderId).then(() => {
             setFormData(orderId)
@@ -253,7 +282,7 @@ const packageDialog: Record<string, any> | null = ref(null)
 /**
  * 发货
  */
-const packageEvent = (id:number, mobile:number) => {
+const packageEvent = (id: number, mobile: number) => {
     packageDialog.value.setFormData(id, mobile)
     packageDialog.value.showDialog = true
 }
@@ -270,7 +299,8 @@ const packageEvent = (id:number, mobile:number) => {
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 }
-.line-feed{
-        word-wrap:break-word;
-    }
+
+.line-feed {
+	word-wrap: break-word;
+}
 </style>

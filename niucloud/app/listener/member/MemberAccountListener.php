@@ -12,6 +12,9 @@
 
 namespace app\listener\member;
 
+use app\dict\member\MemberAccountTypeDict;
+use app\service\core\member\CoreMemberLevelService;
+
 /**
  * 会员账户变化事件（积分，余额，零钱）
  * Class MemberAccount
@@ -25,6 +28,10 @@ class MemberAccountListener
      */
     public function handle(array $account_log)
     {
+        // 如果是会员成长值变更
+        if ($account_log['account_type'] == MemberAccountTypeDict::GROWTH) {
+            (new CoreMemberLevelService())->checkLevelUpgrade($account_log['member_id']);
+        }
         return;
     }
 }

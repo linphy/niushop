@@ -12,6 +12,7 @@
 namespace app\service\core\niucloud;
 
 use app\model\addon\Addon;
+use app\service\core\addon\CoreAddonBaseService;
 use app\service\core\addon\CoreAddonDevelopDownloadService;
 use app\service\core\addon\CoreAddonInstallService;
 use core\base\BaseCoreService;
@@ -119,8 +120,10 @@ class CoreCloudBuildService extends BaseCoreService
         // 拷贝web端文件
         $web_is_compile = (new Addon())->where([ ['compile', 'like', '%web%'] ])->field('id')->findOrEmpty();
         if ($web_is_compile->isEmpty()) {
-            dir_copy($this->root_path . 'web', $package_dir . 'web', exclude_dirs:['node_modules', '.output', '.nuxt', 'dist']);
+            dir_copy($this->root_path . 'web', $package_dir . 'web', exclude_dirs:['node_modules', '.output', '.nuxt']);
         }
+
+        $this->handleCustomPort($package_dir);
 
         $zip_file = $temp_dir . DIRECTORY_SEPARATOR . 'build.zip';
         (new CoreAddonDevelopDownloadService(''))->compressToZip($package_dir, $zip_file);
@@ -137,7 +140,7 @@ class CoreCloudBuildService extends BaseCoreService
                     'filename' => 'build.zip'
                 ]
             ],
-            'timeout' => 300
+            'timeout' => 300.0
         ]);
         if (isset($response['code']) && $response['code'] == 0) throw new CommonException($response['msg']);
 
@@ -148,6 +151,24 @@ class CoreCloudBuildService extends BaseCoreService
         Cache::set($this->cache_key, $this->build_task);
 
         return $this->build_task;
+    }
+
+    private function handleCustomPort(string $package_dir) {
+        $addons = get_site_addons();
+
+        foreach ($addons as $addon) {
+            $custom_port = (new CoreAddonBaseService())->getAddonConfig($addon)['port'] ?? [];
+            if (!empty($custom_port)) {
+                $addon_path = root_path() . 'addon' . DIRECTORY_SEPARATOR . $addon . DIRECTORY_SEPARATOR;
+                foreach ($custom_port as $port) {
+                    if (is_dir($addon_path . $port['name'])) {
+                        dir_copy($addon_path . $port['name'], $package_dir . $port['name']);
+                        $json_path = $package_dir . $port['name'] . DIRECTORY_SEPARATOR . 'info.json';
+                        file_put_contents($json_path, json_encode($port));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -182,6 +203,8 @@ class CoreCloudBuildService extends BaseCoreService
             dir_copy($this->root_path . 'web', $package_dir . 'web', exclude_dirs:['node_modules', '.output', '.nuxt']);
         }
 
+        $this->handleCustomPort($package_dir);
+
         $zip_file = $temp_dir . DIRECTORY_SEPARATOR . 'build.zip';
         (new CoreAddonDevelopDownloadService(''))->compressToZip($package_dir, $zip_file);
 
@@ -201,7 +224,7 @@ class CoreCloudBuildService extends BaseCoreService
                     'filename' => 'build.zip'
                 ]
             ],
-            'timeout' => 300
+            'timeout' => 300.0
         ]);
         if (isset($response['code']) && $response['code'] == 0) throw new CommonException($response['msg']);
 

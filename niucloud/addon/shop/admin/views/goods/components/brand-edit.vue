@@ -1,6 +1,5 @@
 <template>
-    <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap"
-        :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap" :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('brandName')" prop="brand_name">
                     <el-input v-model.trim="formData.brand_name" clearable :placeholder="t('brandNamePlaceholder')" class="input-width"  @keyup="filterSpecial($event)"  maxlength="20" @blur="formData.brand_name = $event.target.value"/>
@@ -15,7 +14,7 @@
                 </el-form-item>
 
                 <el-form-item :label="t('sort')" >
-                    <el-input v-model.trim="formData.sort" clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" @blur="formData.sort = $event.target.value"/>
+                    <el-input v-model.trim="formData.sort" maxlength="6" show-word-limit clearable :placeholder="t('sortPlaceholder')" class="input-width" @keyup="filterNumber($event)" @blur="formData.sort = $event.target.value"/>
                 </el-form-item>
 
         </el-form>
@@ -50,7 +49,6 @@ const initialFormData = {
     logo: '',
     desc: '',
     sort: ''
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
@@ -110,6 +108,7 @@ const setFormData = async (row: any = null) => {
     }
     loading.value = false
 }
+
 const filterSpecial = (event:any) => {
     event.target.value = event.target.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '')
     event.target.value = event.target.value.replace(/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g, '')

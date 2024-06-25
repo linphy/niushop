@@ -22,15 +22,16 @@ use addon\shop\app\service\admin\goods\EvaluateService;
  */
 class Evaluate extends BaseAdminController
 {
-   /**
-    * 获取商品评价列表
-    * @return \think\Response
-    */
-    public function lists(){
+    /**
+     * 获取商品评价列表
+     * @return \think\Response
+     */
+    public function lists()
+    {
         $data = $this->request->params([
-            ['goods_name', '']
+            [ 'goods_name', '' ]
         ]);
-        return success((new EvaluateService())->getPage($data));
+        return success(( new EvaluateService() )->getPage($data));
     }
 
     /**
@@ -38,29 +39,31 @@ class Evaluate extends BaseAdminController
      * @param int $id
      * @return \think\Response
      */
-    public function info(int $id){
-        return success((new EvaluateService())->getInfo($id));
+    public function info(int $id)
+    {
+        return success(( new EvaluateService() )->getInfo($id));
     }
 
     /**
      * 添加商品评价
      * @return \think\Response
      */
-    public function add(){
+    public function add()
+    {
         $data = $this->request->params([
-             ["goods_id",0],
-             ["member_head", ""],
-             ["member_name", ""],
-             ["content",""],
-             ["images",""],
-             ["is_anonymous",0],
-             ["scores",0],
-             ["is_show",0],
-             ["create_time", 0]
+            [ "goods_id", 0 ],
+            [ "member_head", "" ],
+            [ "member_name", "" ],
+            [ "content", "" ],
+            [ "images", "" ],
+            [ "is_anonymous", 0 ],
+            [ "scores", 0 ],
+            [ "is_show", 0 ],
+            [ "create_time", 0 ]
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Evaluate.add');
-        $id = (new EvaluateService())->add($data);
-        return success('ADD_SUCCESS', ['id' => $id]);
+        $id = ( new EvaluateService() )->add($data);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
     /**
@@ -68,8 +71,9 @@ class Evaluate extends BaseAdminController
      * @param $id  商品评价id
      * @return \think\Response
      */
-    public function del(int $id){
-        (new EvaluateService())->del($id);
+    public function del(int $id)
+    {
+        ( new EvaluateService() )->del($id);
         return success('DELETE_SUCCESS');
     }
 
@@ -80,9 +84,9 @@ class Evaluate extends BaseAdminController
     public function evaluateAudit($id)
     {
         $data = $this->request->params([
-            ["is_audit",0],
+            [ "is_audit", 0 ],
         ]);
-        (new EvaluateService())->audit($id, $data);
+        ( new EvaluateService() )->audit($id, $data);
 
         return success('SUCCESS');
     }
@@ -94,7 +98,7 @@ class Evaluate extends BaseAdminController
      */
     public function adopt($id)
     {
-        (new EvaluateService())->auditAdopt($id);
+        ( new EvaluateService() )->auditAdopt($id);
 
         return success('SUCCESS');
     }
@@ -106,7 +110,7 @@ class Evaluate extends BaseAdminController
      */
     public function refuse($id)
     {
-        (new EvaluateService())->auditRefuse($id);
+        ( new EvaluateService() )->auditRefuse($id);
 
         return success('SUCCESS');
     }
@@ -118,9 +122,9 @@ class Evaluate extends BaseAdminController
     public function evaluateReply($id)
     {
         $data = $this->request->params([
-            ["explain_first", ''],
+            [ "explain_first", '' ],
         ]);
-        (new EvaluateService())->reply($id, $data);
+        ( new EvaluateService() )->reply($id, $data);
 
         return success('SUCCESS');
     }
@@ -131,7 +135,7 @@ class Evaluate extends BaseAdminController
      */
     public function topping($id)
     {
-        (new EvaluateService())->topping($id);
+        ( new EvaluateService() )->topping($id);
 
         return success('SUCCESS');
     }
@@ -142,7 +146,7 @@ class Evaluate extends BaseAdminController
      */
     public function cancelTopping($id)
     {
-        (new EvaluateService())->cancelTopping($id);
+        ( new EvaluateService() )->cancelTopping($id);
 
         return success('SUCCESS');
     }

@@ -6,7 +6,6 @@ use app\dict\pay\OnlinePayDict;
 use app\dict\pay\RefundDict;
 use app\dict\pay\TransferDict;
 use core\exception\PayException;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use Yansongda\Pay\Exception\ContainerException;
@@ -162,15 +161,15 @@ class Alipay extends BasePay
             throw new PayException($result['sub_msg']);
         } else {
             $status = $result['status'];
-            $status_array = array(
+            $status_array = [
                 'SUCCESS' => TransferDict::SUCCESS,
                 'WAIT_PAY' => TransferDict::WAIT,
                 'CLOSED' => TransferDict::FAIL,
                 'FAIL' => TransferDict::FAIL
-            );
-            $res = array(
+            ];
+            $res = [
                 'status' => $status_array[$status],
-            );
+            ];
             if ($status == 'FAIL') {
                 $res['fail_reason'] = $result['fail_reason'];
             }

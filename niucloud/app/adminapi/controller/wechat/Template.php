@@ -31,7 +31,7 @@ class Template extends BaseAdminController
             ['keys', []]
         ]);
         $wechat_template_service = new WechatTemplateService();
-        return success($wechat_template_service->syncAll($data['keys']));
+        return success(data:$wechat_template_service->syncAll($data['keys']));
     }
 
     /**

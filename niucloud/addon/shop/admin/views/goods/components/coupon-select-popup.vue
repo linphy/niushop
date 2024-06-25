@@ -95,7 +95,7 @@ const prop = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue','couponSelect'])
 
 const couponIds: any = computed({
     get () {
@@ -282,7 +282,7 @@ const save = () => {
     }
 
     couponIds.value.splice(0, couponIds.value.length, ...ids)
-
+    emit('couponSelect',selectCoupon)
     showDialog.value = false
 }
 

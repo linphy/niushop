@@ -23,7 +23,6 @@ use Psr\Http\Message\ResponseInterface;
 class Weapp extends BaseTemplate
 {
 
-
     /**
      * @param array $config
      * @return void
@@ -65,7 +64,7 @@ class Weapp extends BaseTemplate
         return $api->postJson('wxaapi/newtmpl/addtemplate', [
             'tid' => $data['tid'],
             'kidList' => $data['kid_list'],
-            'kidList' => $data['scene_desc'],
+            'sceneDesc' => $data['scene_desc'],
         ]);
     }
 

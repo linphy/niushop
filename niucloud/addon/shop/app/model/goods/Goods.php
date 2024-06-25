@@ -12,9 +12,11 @@
 namespace addon\shop\app\model\goods;
 
 use addon\shop\app\dict\goods\GoodsDict;
+use addon\shop\app\model\active\ActiveGoods;
 use addon\shop\app\service\core\delivery\CoreDeliveryService;
 use app\dict\sys\FileDict;
 use core\base\BaseModel;
+use think\db\Query;
 use think\model\concern\SoftDelete;
 
 /**
@@ -201,12 +203,27 @@ class Goods extends BaseModel
      */
     public function getGoodsCategoryAttr($value, $data)
     {
+        if (!is_array($value)) {
+            $value = json_decode($value, true);
+        }
         if (!empty($value)) {
             return array_map(function($item) {
                 return (int) $item;
             }, $value);
         }
         return [];
+    }
+
+    public function getGoodsLabelNameAttr($value, $data)
+    {
+        if(isset($data['label_ids']) && !empty($data['label_ids'])){
+            $goods_label_model = new Label();
+            return $goods_label_model->where([
+                [ 'label_id', 'in', $data['label_ids'] ]
+            ])->field('label_id, label_name, memo')
+                ->select()->toArray();
+        }
+
     }
 
     /**
@@ -274,27 +291,15 @@ class Goods extends BaseModel
      * @param $value
      * @param $data
      */
-    public function searchGoodsCategoryAttr($query, $value, $data)
+    public function searchGoodsCategoryAttr(Query $query, $value, $data)
     {
         if ($value) {
-            if (gettype($value) == 'array') {
-                $like_arr = [];
-                foreach ($value as $k => $v) {
-                    $like_arr[] = '[' . $v . ']';
-                    $like_arr[] = '[' . $v . ',%';
-                    $like_arr[] = '%,' . $v . ',%';
-                    $like_arr[] = '%,' . $v . ']';
-                }
-                $query->where("goods_category", "like", $like_arr, 'or');
+            if (is_array($value)) {
+                $temp_where = array_map(function($item) { return '%"' . $item . '"%'; }, $value);
             } else {
-                $like_arr = [
-                    '[' . $value . ']',
-                    '[' . $value . ',%',
-                    '%,' . $value . ',%',
-                    '%,' . $value . ']'
-                ];
-                $query->where("goods_category", "like", $like_arr, 'or');
+                $temp_where = [ '%"' . $value . '"%' ];
             }
+            $query->where('goods_category', 'like', $temp_where, 'or');
         }
     }
 
@@ -306,24 +311,12 @@ class Goods extends BaseModel
     public function searchLabelIdsAttr($query, $value, $data)
     {
         if ($value) {
-            if (gettype($value) == 'array') {
-                $like_arr = [];
-                foreach ($value as $k => $v) {
-                    $like_arr[] = '[' . $v . ']';
-                    $like_arr[] = '[' . $v . ',%';
-                    $like_arr[] = '%,' . $v . ',%';
-                    $like_arr[] = '%,' . $v . ']';
-                }
-                $query->where("label_ids", "like", $like_arr, 'or');
+            if (is_array($value)) {
+                $temp_where = array_map(function($item) { return '%"' . $item . '"%'; }, $value);
             } else {
-                $like_arr = [
-                    '[' . $value . ']',
-                    '[' . $value . ',%',
-                    '%,' . $value . ',%',
-                    '%,' . $value . ']'
-                ];
-                $query->where("label_ids", "like", $like_arr, 'or');
+                $temp_where = [ '%"' . $value . '"%' ];
             }
+            $query->where('label_ids', 'like', $temp_where, 'or');
         }
     }
 
@@ -335,24 +328,12 @@ class Goods extends BaseModel
     public function searchServiceIdsAttr($query, $value, $data)
     {
         if ($value) {
-            if (gettype($value) == 'array') {
-                $like_arr = [];
-                foreach ($value as $k => $v) {
-                    $like_arr[] = '[' . $v . ']';
-                    $like_arr[] = '[' . $v . ',%';
-                    $like_arr[] = '%,' . $v . ',%';
-                    $like_arr[] = '%,' . $v . ']';
-                }
-                $query->where("service_ids", "like", $like_arr, 'or');
+            if (is_array($value)) {
+                $temp_where = array_map(function($item) { return '%"' . $item . '"%'; }, $value);
             } else {
-                $like_arr = [
-                    '[' . $value . ']',
-                    '[' . $value . ',%',
-                    '%,' . $value . ',%',
-                    '%,' . $value . ']'
-                ];
-                $query->where("service_ids", "like", $like_arr, 'or');
+                $temp_where = [ '%"' . $value . '"%' ];
             }
+            $query->where('service_ids', 'like', $temp_where, 'or');
         }
     }
 
@@ -429,6 +410,15 @@ class Goods extends BaseModel
     }
 
     /**
+     * 关联活动
+     * @return \think\model\relation\HasOne
+     */
+    public function activeGoods()
+    {
+        return $this->hasOne(ActiveGoods::class, 'goods_id', 'goods_id');
+    }
+
+    /**
      * 关联商品规格列表
      * @return \think\model\relation\HasMany
      */
@@ -447,7 +437,7 @@ class Goods extends BaseModel
     }
 
     /**
-     * 关联默认商品规格
+     * 关联商品品牌
      * @return \think\model\relation\HasOne
      */
     public function brand()
@@ -455,6 +445,17 @@ class Goods extends BaseModel
         return $this->hasOne(Brand::class, 'brand_id', 'brand_id')
             ->joinType('left')
             ->withField('brand_id, brand_name, logo, desc');
+    }
+
+    /**
+     * 关联商品参数
+     * @return \think\model\relation\HasOne
+     */
+    public function attr()
+    {
+        return $this->hasOne(Attr::class, 'attr_id', 'attr_id')
+            ->joinType('left')
+            ->withField('attr_id, attr_name, attr_value_format, sort');
     }
 
 }

@@ -311,7 +311,7 @@ class ServiceGenerator extends BaseGenerator
         foreach ($this->tableColumn as $column) {
             if (!empty($column['model'])) {
                 $str = strripos($column['model'],'\\');
-                $with[] = Str::camel(substr($column['model'],$str+1));
+                $with[] = "'" . Str::camel(substr($column['model'],$str+1)) . "'";
             }
             if (!$column['is_search']) {
                 continue;
@@ -320,13 +320,14 @@ class ServiceGenerator extends BaseGenerator
 
         }
         $search_field = implode(',', $search_field);
+
         if(empty($with))
         {
             $content.= '$this->model->withSearch(['.$search_field.'], $where)->field('.'$field'.')->order('.'$order'.');';
 
         }else{
             $with = implode(',', $with);
-            $content.= '$this->model->withSearch(['.$search_field.'], $where)->with('."'$with'".')->field('.'$field'.')->order('.'$order'.');';
+            $content.= '$this->model->withSearch(['.$search_field.'], $where)->with(['.$with.'])->field('.'$field'.')->order('.'$order'.');';
         }
 
         return $content;
@@ -347,7 +348,7 @@ class ServiceGenerator extends BaseGenerator
             foreach ($this->tableColumn as $column) {
                 if (!empty($column['model'])) {
                     $str = strripos($column['model'],'\\');
-                    $with[] = Str::camel(substr($column['model'],$str+1));
+                    $with[] = "'" . Str::camel(substr($column['model'],$str+1)) . "'";
                 }
                 if ($column['is_pk']) {
                     $pk = $column['column_name'];}
@@ -365,7 +366,7 @@ class ServiceGenerator extends BaseGenerator
             $content.= '$this->model->field($field)->where([['."'$pk'".', "=", $id]])->findOrEmpty()->toArray();';
         }else{
             $with = implode(',', $with);
-            $content.= '$this->model->field($field)->where([['."'$pk'".', "=", $id]])->with('."'$with'".')->findOrEmpty()->toArray();';
+            $content.= '$this->model->field($field)->where([['."'$pk'".', "=", $id]])->with(['.$with.'])->findOrEmpty()->toArray();';
         }
         if(!empty($col))
         {

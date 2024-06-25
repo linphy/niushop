@@ -84,6 +84,41 @@ class CoreMemberConfigService extends BaseCoreService
         return true;
     }
 
+    /**
+     * 获取成长值规则配置
+     * @return array
+     */
+    public function getGrowthRuleConfig(){
+        return (new CoreConfigService())->getConfigValue('GROWTH_RULE');
+    }
+
+    /**
+     * 配置成长值规则
+     * @param array $data
+     * @return true
+     */
+    public function setGrowthRuleConfig(array $data){
+        (new CoreConfigService())->setConfig('GROWTH_RULE', $data);
+        return true;
+    }
+
+    /**
+     * 获取积分规则配置
+     * @return array
+     */
+    public function getPointRuleConfig(){
+        return (new CoreConfigService())->getConfigValue('POINT_RULE');
+    }
+
+    /**
+     * 配置积分规则
+     * @param array $data
+     * @return true
+     */
+    public function setPointRuleConfig(array $data){
+        (new CoreConfigService())->setConfig('POINT_RULE', $data);
+        return true;
+    }
 
     /**
      * 获取会员提现设置

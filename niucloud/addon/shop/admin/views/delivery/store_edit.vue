@@ -74,6 +74,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getAreaListByPid, getAreatree, getAddressInfo, getContraryAddress, getMap } from '@/app/api/sys'
 import { AnyObject } from '@/types/global'
 import { filterNumber } from '@/utils/common'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
@@ -100,7 +101,6 @@ const initialFormData = {
     longitude: '',
     latitude: '',
     trade_time: ''
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
@@ -298,14 +298,21 @@ const checkAddressInfo = (lat:string, lng:string, type:number) => {
     getContraryAddress({
         location: lat + ',' + lng
     }).then(res => {
-        formData.province_name = res.data.result.address_component.province
-        formData.city_name = res.data.result.address_component.city
-        formData.district_name = res.data.result.address_component.district
-        if (type == 1) {
-            formData.address = res.data.result.formatted_addresses.recommend
-            formData.full_address = formData.province_name + formData.city_name + formData.district_name + formData.address
-            formData.latitude = lat
-            formData.longitude = lng
+        if(res.data.result) {
+            formData.province_name = res.data.result.address_component.province
+            formData.city_name = res.data.result.address_component.city
+            formData.district_name = res.data.result.address_component.district
+            if (type == 1) {
+                formData.address = res.data.result.formatted_addresses.recommend
+                formData.full_address = formData.province_name + formData.city_name + formData.district_name + formData.address
+                formData.latitude = lat
+                formData.longitude = lng
+            }
+        }else{
+            ElMessage({
+                type: 'warning',
+                message: res.data.message
+            })
         }
     })
 }

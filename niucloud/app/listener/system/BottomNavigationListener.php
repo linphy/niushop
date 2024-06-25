@@ -25,7 +25,7 @@ class BottomNavigationListener
     {
         $key = 'app';
 
-        if (!empty($params) && $params[ 'key' ] != $key) return;
+        if (!empty($params) && !empty($params[ 'key' ]) && $params[ 'key' ] != $key) return;
 
         $addon_info = [
             'title' => '系统',

@@ -14,7 +14,7 @@ namespace app\dict\pay;
 class TransferDict
 {
 
-    public const WECHAT = 'wechat';//微信支付
+    public const WECHAT = 'wechatpay';//微信支付
 
     public const ALIPAY = 'alipay';//支付宝支付
 

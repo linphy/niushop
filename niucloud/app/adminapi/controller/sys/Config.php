@@ -50,6 +50,7 @@ class Config extends BaseAdminController
             ["logo", ""],
             ["front_end_name", ""],
             ["front_end_logo", ""],
+            ["front_end_icon", ""],
             ["icon", ""]
         ]);
         (new ConfigService())->setWebSite($data);
@@ -117,6 +118,8 @@ class Config extends BaseAdminController
     {
         $data = $this->request->params([
             ['key', ''],
+            [ 'is_open', 0 ], // 是否开启定位
+            [ 'valid_time', 0 ] // 定位有效期/分钟，过期后将重新获取定位信息，0为不过期
         ]);
         (new ConfigService())->setMap($data);
         return success();

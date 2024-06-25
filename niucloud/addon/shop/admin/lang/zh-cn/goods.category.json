@@ -20,5 +20,7 @@
       "goodsCategorySpreadTitle": "商品分类推广",
       "spreadLink": "推广链接",
       "copy": "复制",
-      "downloadQrcode": "下载二维码"
+      "downloadQrcode": "下载二维码",
+      "tabGoodsCategory": "商品分类",
+      "tabGoodsCategoryConfig": "分类设置"
 }

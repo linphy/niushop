@@ -112,22 +112,25 @@ class CoreScheduleService extends BaseCoreService
     {
         $content = '';
         $type = $data['type'] ?? '';
+        $hour = $data['hour'] ?? 0;
+        $min = $data['min'] ?? 0;
+        $day = $data['day'] ?? 0;
         switch ($type) {
             case 'min':// 每隔几分
                 $content = '每隔'.$data['min'].'分钟执行一次';
                 break;
             case 'hour':// 每隔几时第几分钟执行
-                $content = '每隔'.$data['hour'].'小时的'.$data['min'].'分执行一次';
+                $content = '每隔'.$hour.'小时的'.$min.'分执行一次';
                 break;
             case 'day':// 每隔几日几时几分几秒执行
-                $content = '每隔'.$data['day'].'天的'.$data['hour'].'时'.$data['min'].'分执行一次';
+                $content = '每隔'.$day.'天的'.$hour.'时'.$min.'分执行一次';
                 break;
             case 'week':// 每周一次,周几具体时间执行
                 $week_day = DateDict::getWeek()[$data['week']] ?? '';
-                $content = '每周的'.$week_day.'的'.$data['hour'].'时'.$data['min'].'分执行一次';
+                $content = '每周的'.$week_day.'的'.$hour.'时'.$min.'分执行一次';
                 break;
             case 'month':// 每月一次,某日具体时间执行
-                $content = '每月的'.$data['day'].'号的'.$data['hour'].'时'.$data['min'].'分执行一次';
+                $content = '每月的'.$day.'号的'.$hour.'时'.$min.'分执行一次';
                 break;
         }
         return $content;
@@ -199,7 +202,7 @@ class CoreScheduleService extends BaseCoreService
      * @param array $schedule
      * @return true
      */
-    public function execute(array $schedule, $output = null, $time = 0){
+    public function execute(array $schedule, $output){
         $class = !empty($schedule['class']) ? $schedule['class'] : 'app\\job\\schedule\\'.Str::studly($schedule['key']);
         $name = !empty($schedule['name']) ? $schedule['name'] : '未命名任务';
         $function = !empty($schedule['function']) ? $schedule['function'] : 'doJob';
@@ -218,77 +221,8 @@ class CoreScheduleService extends BaseCoreService
             $schedule->save([
                 'last_time' => time(),
                 'count' => $schedule['count'] + 1,
-                'next_time' => $this->getNextTime($schedule['time'], $time)
             ]);
         }
         return true;
-    }
-
-    /**
-     * 获取任务下一次执行时间
-     * @param $schedule
-     * @param $time
-     * @return void
-     */
-    public function getNextTime($data, $time = 0){
-        $time = $time?:time();
-        $execute_time = 0;
-        $sec = $data['sec'] ?? '0';
-        $min = $data['min'] ?? '0';
-        $hour = $data['hour'] ?? '0';
-        $day = $data['day'] ?? '0';
-        $week = $data['week'] ?? '0';
-        $type = $data['type'] ?? '';
-
-        switch ($type) {
-            case 'sec':// 每隔几秒
-                $execute_time = $time + $sec;
-                break;
-            case 'min':// 每隔几分
-                $execute_time = $time + ($min * 60);
-                break;
-            case 'hour':// 每隔几时第几分钟执行
-                $execute_time = strtotime(date('Y-m-d H:'.$min.':00', $time + ($hour * 3600)));
-                break;
-            case 'day':// 每隔几日第几小时第几分钟执行
-                $execute_time = date('Y-m-d '.$hour . ':' . $min . ':' . $sec, $time + ($day * 86400));
-                if ($time >= $execute_time) {
-                    $execute_time += 86400;
-                }
-                break;
-            case 'week':// 每周一次,周几具体时间执行(大于当前时间需要计算差值)
-                $now_week_day = strtotime(date('Y-m-d 00:00:00', $time));
-                $now_week = date('w', $time);
-                if ($now_week > $week) {
-                    $execute_time = $now_week_day + ((7 + $now_week_day - $week) * 86400) + ($hour * 3600) + ($min * 60) + $sec;
-                } else if ($now_week == $week) {
-                    $execute_time = $now_week_day + ($hour * 3600) + ($min * 60) + $sec;
-                    if ($time >= $execute_time) {
-                        $execute_time += 7 * 86400;
-                    }
-                } else {
-                    $execute_time = $now_week_day + (($week - $now_week) * 86400) + ($hour * 3600) + ($min * 60) + $sec;
-                }
-                break;
-            case 'month':// 每月一次,某日具体时间执行
-                $now_day = date('d', $time);
-                $now_day_time = strtotime(date('Y-m-d 00:00:00', $time));
-                $month_last_day = date('t', $time);
-                if ($now_day > $day) {
-                    $execute_time = $now_day_time + (($month_last_day - $now_day + $day) * 86400) + ($hour * 3600) + ($min * 60) + $sec;
-                } elseif ($now_day == $day) {
-                    $execute_time = $now_day_time + ($hour * 3600) + ($min * 60) + $sec;
-                    if ($time >= $execute_time) {
-                        $execute_time += (($month_last_day - $now_day + $day) * 86400) + ($hour * 3600) + ($min * 60) + $sec;
-                    }
-                } else {
-                    $execute_time = $now_day_time + (($day - $now_day) * 86400) + ($hour * 3600) + ($min * 60) + $sec;
-                }
-                break;
-            default:
-                $execute_time = 0;
-                break;
-        }
-        return $execute_time;
     }
 }

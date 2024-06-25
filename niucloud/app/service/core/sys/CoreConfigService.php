@@ -35,7 +35,7 @@ class CoreConfigService extends BaseCoreService
     public function getConfig(string $key)
     {
         $where = array(
-            ['config_key', '=', $key]
+            ['config_key', '=', $key],
         );
         return $this->model->where($where)->field('id,config_key,value,status,create_time,update_time')->findOrEmpty()->toArray();
     }
@@ -49,7 +49,7 @@ class CoreConfigService extends BaseCoreService
     public function setConfig(string $key, array $value)
     {
         $where = array(
-            ['config_key', '=', $key]
+            ['config_key', '=', $key],
         );
         $data = array(
             'config_key' => $key,

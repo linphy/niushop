@@ -1,29 +1,28 @@
 <template>
 	<view class="min-h-screen">
-		<view class="mescroll-box bg-[#F4F6F8]"
-			:class="{ 'cart': config.cart.control && config.cart.event === 'cart', 'detail': !(config.cart.control && config.cart.event === 'cart') }"
-			v-if="tabsData.length">
+		<view class="mescroll-box bg-[#F4F6F8]" :class="{ 'cart': config.cart.control && config.cart.event === 'cart', 'detail': !(config.cart.control && config.cart.event === 'cart') }" v-if="tabsData.length">
 			<mescroll-body ref="mescrollRef" :down="{ use: false }" @init="mescrollInit" @up="getListFn">
 				<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
 					<input class="search-ipt pl-[20rpx] text-[24rpx]" :class="{'pr-[96rpx]':searchName,'pr-[60rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
 					<view class="flex items-center h-[70rpx] absolute right-[48rpx] top-[18rpx]  z-2">
 						<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
-						<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="iconfont iconxiazai17 text-[28rpx]"></text></view>
+						<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx]"></text></view>
 					</view>
 				</view>
+
 				<!--  #ifdef  H5 -->
 				<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[106rpx]': config.search.control, 'pb-[98rpx]': config.cart.control && config.cart.event === 'cart' }">
 					<scroll-view :scroll-y="true" class="scroll-height">
 						<view class="bg-[#F4F6F8]">
-							<view class="tab-item truncate" :class="{ 'tab-item-active ': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
-								<view class="text-box truncate px-[24rpx]">
-									{{ item.category_name }}
-								</view>
+							<view class="tab-item truncate"
+							      :class="{ 'tab-item-active ': index == tabActive,'rounded-br-[12rpx]':tabActive-1===index && (!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length),'rounded-tr-[12rpx]':tabActive+1===index&&(!tabsData[tabActive].child_list || !tabsData[tabActive].child_list.length) }" v-for="(item, index) in tabsData" :key="index" @click="firstLevelClick(index, item)">
+								<view class="text-box truncate px-[24rpx]">{{ item.category_name }}</view>
 							</view>
 						</view>
 					</scroll-view>
 				</view>
 				<!--  #endif -->
+
 				<!--  #ifndef  H5 -->
 				<view class="tabs-box z-2 fixed left-0 bg-[#fff] pb-ios bottom-[100rpx] top-0" :class="{ 'top-[106rpx]': config.search.control, '!bottom-[198rpx]': config.cart.control && config.cart.event === 'cart' }">
 					<scroll-view :scroll-y="true" class="scroll-height">
@@ -46,25 +45,24 @@
 							class="flex-1 h-[49rpx] scroll-Y box-border pr-[24rpx] bg-white">
 							<view class="flex items-center h-[48rpx]  box-border">
 								<text
-									class="flex-shrink-0 px-[24rpx] h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] border-solid rounded-[24rpx] box-border"
-									:class="{ 'sub-tab-active text-color border-color': index === subActive, 'border-[#E2E2E2]': index != subActive, 'ml-[24rpx]': index }"
+									class="flex-shrink-0 ml-[24rpx] px-[24rpx] h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] border-solid rounded-[24rpx] box-border"
+									:class="{ 'sub-tab-active text-color border-color': index === subActive, 'border-[#E2E2E2]': index != subActive }"
 									v-for="(item, index) in tabsData[tabActive]?.child_list"
 									:key="tabsData[tabActive].category_id" :id="'id' + index"
 									@click="subMenuClick(index, item)">{{ item.category_name }}</text>
 							</view>
 						</scroll-view>
-						<view class="iconfont iconxiangxiajiantou text-[26rpx] w-[30rpx] h-[30rpx] text-center transform " @click="labelPopup = true"></view>
-						<!-- @click="showAllTabs()" -->
+						<view class="nc-iconfont nc-icon-xiaV6xx text-[30rpx] w-[30rpx] h-[30rpx] text-center transform " @click="labelPopup = true"></view>
 					</template>
 					<template v-else>
 						<view class="flex-1 h-[48rpx] text-[22rpx] text-[#A5A6A6] pr-[24rpx] leading-[48rpx]">全部分类</view>
-						<text class="iconfont iconjiantoushang text-[26rpx]" @click="labelPopup = false"></text>
+						<text class="nc-iconfont nc-icon-shangV6xx-1 text-[30rpx]" @click="labelPopup = false"></text>
 					</template>
 
 				</view>
 				<view class="labelPopup" :class="{ 'active': config.search.control }">
 					<u-popup :show="labelPopup" mode="top" @close="labelPopup = false">
-						<view class="flex flex-wrap py-[24rpx]">
+						<view class="flex flex-wrap py-[24rpx]" @touchmove.prevent.stop>
 							<!-- <text
 								class="flex-shrink-0 w-[160rpx] ml-[22rpx] mb-[24rpx] text-center h-[48rpx] text-[22rpx] leading-[48rpx] border-[2rpx] border-solid rounded-[24rpx] box-border"
 								:class="{ 'sub-tab-active text-color border-color': initAll.allActive === subActive, 'border-[#E2E2E2]': initAll.allActive != subActive }"
@@ -83,9 +81,8 @@
 						<view
 							class="w-[536rpx] box-border bg-white w-full flex mx-[16rpx] px-[24rpx] py-[20rpx] rounded-[12rpx]"
 							:class="{ 'mt-[16rpx]': index }" @click.stop="toLink(item.goods_id)">
-							<view class="overflow-hidden mr-[8rpx] rounded-md">
-								<u--image width="168rpx" height="168rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')"
-									model="aspectFill">
+							<view class="mr-[8rpx]">
+								<u--image width="168rpx" height="168rpx" radius="12rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
 									<template #error>
 										<u-icon name="photo" color="#999" size="50"></u-icon>
 									</template>
@@ -96,24 +93,28 @@
 									{{ item.goods_name }}
 								</view>
 								<view class="w-[316rpx] flex self-end items-end justify-between">
-									<text class="text-[var(--price-text-color)] price-font">
+									<view class="text-[var(--price-text-color)] price-font">
 										<text class="text-[26rpx] font-500">￥</text>
-										<text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[0] }}</text>
-										<text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.price).toFixed(2).split('.')[1] }}</text>
-									</text>
+										<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
+										<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
+										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
+										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+									</view>
 
 									<view
-										v-if="item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
+										v-if="(item.goods_type == 'real' || (item.goods_type == 'virtual' && item.virtual_receive_type != 'verify')) &&
+										item.goodsSku.sku_spec_format === '' && cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id] && config.cart.control && config.cart.event === 'cart'"
+										
 										class="flex items-center">
-										<text class="text-[44rpx] text-color iconfont iconjianhao" @click.stop="reduceCart(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
+										<text class="text-[44rpx] text-color nc-iconfont nc-icon-jianshaoV6xx" @click.stop="reduceCart(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
 										<text class="text-[#333] text-[24rpx] mx-[16rpx]">{{ cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id].num }}</text>
-										<text class="text-[44rpx] text-color iconfont iconjiahao2fill" @click.stop="addCartBtn(cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id])"></text>
+										<text class="text-[44rpx] text-color iconfont iconjiahao2fill" :id="'itemCart' + index" @click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id], 'itemCart' + index)"></text>
 									</view>
 									<template v-else>
-										<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative">
+										<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative  pl-[20rpx]">
 											<view :id="'itemCart' + index"
 												class="text-[#fff] bg-color h-[44rpx] text-[24rpx] px-[10px] leading-[44rpx] rounded-[22rpx]"
-												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)">
+												@click.stop="itemCart(item, 'itemCart' + index)">
 												{{ config.cart.text }}
 											</view>
 											<view
@@ -124,8 +125,8 @@
 										</view>
 										<view v-if="config.cart.control && config.cart.style === 'style-2'" class="w-[44rpx] h-[44rpx] relative">
 											<text :id="'itemCart' + index"
-												class="text-color iconfont iconjiahao1 text-[44rpx]"
-												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)"></text>
+												class="text-color nc-iconfont nc-icon-tianjiaV6xx text-[44rpx]"
+												@click.stop="itemCart(item, 'itemCart' + index)"></text>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
 												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
@@ -134,8 +135,8 @@
 										</view>
 										<view v-if="config.cart.control && config.cart.style === 'style-3'" class="w-[44rpx] h-[44rpx] relative">
 											<text :id="'itemCart' + index"
-												class="text-color iconfont icongouwuche !text-[44rpx]"
-												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)"></text>
+												class="text-color nc-iconfont nc-icon-gouwucheV6xx-2 !text-[44rpx]"
+												@click.stop="itemCart(item, 'itemCart' + index)"></text>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
 												:class="['absolute right-[-16rpx] top-[-16rpx] rounded-[30rpx] h-[30rpx] min-w-[30rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border box-border border-[2rpx] border-solid border-[#fff]', cartList['goods_' + item.goods_id].totalNum > 9 ? 'px-[10rpx]' : '']">
@@ -145,8 +146,8 @@
 										<view v-if="config.cart.control && config.cart.style === 'style-4'" class="w-[44rpx] h-[44rpx] relative">
 											<view :id="'itemCart' + index"
 												class=" flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center"
-												@click.stop="itemCart(item.goodsSku, 'itemCart' + index)">
-												<text class="iconfont icongouwuche !text-[26rpx]"></text>
+												@click.stop="itemCart(item, 'itemCart' + index)">
+												<text class="nc-iconfont nc-icon-gouwucheV6xx-2 !text-[26rpx]"></text>
 											</view>
 											<view
 												v-if="cartList['goods_' + item.goods_id] && cartList['goods_' + item.goods_id].totalNum"
@@ -167,14 +168,11 @@
 				<add-cart-popup ref="cartRef" />
 			</mescroll-body>
 			<!--  #ifdef  H5 -->
-			<view v-if="config.cart.control && config.cart.event === 'cart'"
-				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[50px] box-solid px-[24rpx] py-[17rpx] mb-ios">
+			<view v-if="config.cart.control && config.cart.event === 'cart'" class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[50px] box-solid px-[24rpx] py-[17rpx] mb-ios">
 				<view class="flex items-center">
 					<view class="w-[66rpx] h-[66rpx] mr-[27rpx] relative">
-						<view id="animation-end"
-							class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[70rpx]"
-							@click.stop="toCart">
-							<text class="icongouwuche1 iconfont text-[#fff] text-[30rpx]"></text>
+						<view id="animation-end" class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[70rpx]" @click.stop="toCart">
+							<text class="nc-iconfont nc-icon-gouwucheV6mm1 text-[#fff] text-[32rpx]"></text>
 						</view>
 						<view v-if="totalNum"
 							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
@@ -198,10 +196,8 @@
 				class="bg-[#fff] z-10 flex justify-between items-center fixed left-0 right-0 bottom-[100rpx] box-solid px-[24rpx] py-[17rpx] mb-ios">
 				<view class="flex items-center">
 					<view class="w-[66rpx] h-[66rpx] mr-[27rpx] relative">
-						<view id="animation-end"
-							class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[66rpx]"
-							@click.stop="toCart">
-							<text class="icongouwuche1 iconfont text-[#fff] text-[30rpx]"></text>
+						<view id="animation-end" class="w-[66rpx] h-[66rpx] rounded-[35rpx] bg-[var(--primary-color)] text-center leading-[66rpx]" @click.stop="toCart">
+							<text class="nc-iconfont nc-icon-gouwucheV6mm1 text-[#fff] text-[32rpx]"></text>
 						</view>
 						<view v-if="totalNum"
 							:class="['absolute left-[50rpx] top-[-10rpx] rounded-[28rpx] h-[28rpx] min-w-[28rpx] text-center leading-[30rpx] bg-[#FF4646] text-[#fff] text-[20rpx] font-500 box-border', totalNum > 9 ? 'px-[10rpx]' : '']">
@@ -215,29 +211,27 @@
 						<text class="text-[24rpx] font-500">.{{ parseFloat(totalMoney).toFixed(2).split('.')[1] }}</text>
 					</text>
 				</view>
-				<button
-					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full bg-color remove-border"
-					shape="circle" @click="settlement">去结算</button>
+				<button class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full bg-color remove-border" shape="circle" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
 		</view>
 
 		<view v-show="animationElStatus" :style="animationElStatus"
 			class="fixed z-999 flex items-center justify-center text-[#fff] bg-color h-[44rpx] w-[44rpx] rounded-[22rpx] text-center">
-			<text class=" iconfont icongouwuche !text-[30rpx]"></text>
+			<text class=" nc-iconfont nc-icon-gouwucheV6xx-2 !text-[30rpx]"></text>
 		</view>
 		<view class="flex justify-center items-center w-[100%] bg-[#fff]" v-if="!tabsData.length && !loading">
 			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
 		</view>
 		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
-		<tabbar addon="shop"/>
+		<tabbar />
 	</view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, toRaw, computed, getCurrentInstance } from 'vue';
+import { ref, onMounted, computed, getCurrentInstance } from 'vue';
 import { t } from '@/locale';
-import { img, redirect } from '@/utils/common';
+import { img, redirect, getToken } from '@/utils/common';
 import { getGoodsCategoryTree, getGoodsPages } from '@/addon/shop/api/goods';
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue';
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
@@ -247,6 +241,7 @@ import { onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 import { useLogin } from '@/hooks/useLogin'
 import useMemberStore from '@/stores/member'
 import useCartStore from '@/addon/shop/stores/cart'
+import { cloneDeep } from 'lodash-es'
 
 const instance = getCurrentInstance(); // 获取组件实例
 const cartStore = useCartStore();
@@ -294,7 +289,6 @@ interface mescrollStructure {
 	[propName: string]: any
 }
 const getListFn = (mescroll: mescrollStructure) => {
-	// loading.value = true;
 	listLoading.value = false
 	getGoodsPages({
 		page: mescroll.num,
@@ -307,7 +301,7 @@ const getListFn = (mescroll: mescrollStructure) => {
 		end_price: '', // 价格结束区间
 		order: 'price', // 排序方式（综合：空，销量：sale_num，价格：price）
 		sort: 'desc' // 升序：asc，降序：desc
-	}).then((res: acceptingDataStructure) => {
+	}).then((res: any) => {
 		let newArr = res.data.data
 		//设置列表数据
 		if (mescroll.num == 1) {
@@ -323,6 +317,7 @@ const getListFn = (mescroll: mescrollStructure) => {
 		mescroll.endErr(); // 请求失败, 结束加载
 	})
 }
+
 const toLink = (goods_id: string) => {
 	redirect({ url: '/addon/shop/pages/goods/detail', param: { goods_id } })
 }
@@ -330,54 +325,71 @@ const toLink = (goods_id: string) => {
 onMounted(() => {
 	getCategoryData()
 })
+
 //设置购物车动画
 const animationElStatus = ref('')
+const animationAddRepeatFlag = ref<Boolean>(false)
+const cartRepeatFlag = ref<Boolean>(false)
 const animationAddCart = (row: any, id: any) => {
+	if(animationAddRepeatFlag.value||cartRepeatFlag.value) return false
+	animationAddRepeatFlag.value = true
+	cartRepeatFlag.value = true
+
+	let obj:any = {
+        goods_id: row.goodsSku.goods_id,
+        sku_id: row.goodsSku.sku_id,
+        sale_price: goodsPrice(row),
+        stock: row.goodsSku.stock
+	};
+	if(row.id){
+		obj.num = row.num;
+		obj.id = row.id;
+	}
+	cartStore.increase(obj, 1, () => {
+		cartRepeatFlag.value = false
+	});
 	// #ifdef  MP-WEIXIN
-	uni.createSelectorQuery().in(instance).select('#animation-end').boundingClientRect((res) => {
-		uni.createSelectorQuery().in(instance).select('#' + id).boundingClientRect((position) => {
-			animationElStatus.value = `top: ${position.top}px; left: ${position.left}px;`
-			setTimeout(() => {
-				animationElStatus.value = `top: ${res.top}px; left: ${res.left}px; transition: all 1s; transform: rotate(-720deg);`
-			}, 20);
+		setTimeout(() => {
+			uni.createSelectorQuery().in(instance).select('#animation-end').boundingClientRect((res:any) => {
+				uni.createSelectorQuery().in(instance).select('#' + id).boundingClientRect((position:any) => {
+					animationElStatus.value = `top: ${position.top}px; left: ${position.left}px;`
+					setTimeout(() => {
+						animationElStatus.value = `top: ${res.top+res.height/2-position.height/2}px; left: ${res.left+res.width/2-position.width/2}px; transition: all 0.8s; transform: rotate(-720deg);`
+					}, 20);
 
-			setTimeout(() => {
-				animationElStatus.value = ''
-				cartStore.increase({
-					goods_id: row.goods_id,
-					sku_id: row.sku_id,
-					sale_price: row.sale_price,
-					stock: row.stock
-				});
-			}, 1020);
+					setTimeout(() => {
+						animationElStatus.value = ''
+						animationAddRepeatFlag.value = false
+					}, 1020);
 
-		}).exec()
+				}).exec()
 
-	}).exec()
+			}).exec()
+		},100)
 	// #endif
 	// #ifdef  H5
-	const animationEnd = window.document.getElementById('animation-end');
-	const animationEndLeft = animationEnd.getBoundingClientRect().left;
-	const animationEndTop = animationEnd.getBoundingClientRect().top;
-	const itemCart = window.document.getElementById(id);
-	const itemCartLeft = itemCart.getBoundingClientRect().left;
-	const itemCartTop = itemCart.getBoundingClientRect().top;
-	animationElStatus.value = `top: ${itemCartTop}px; left: ${itemCartLeft}px;`
-	setTimeout(() => {
-		animationElStatus.value = `top: ${animationEndTop}px; left: ${animationEndLeft}px; transition: all 1s; transform: rotate(-720deg);`
-	}, 20);
+		setTimeout(() => {
+			const animationEnd:any = window.document.getElementById('animation-end');
+			const animationEndLeft = animationEnd.getBoundingClientRect().left;
+			const animationEndTop = animationEnd.getBoundingClientRect().top;
+			
+			const itemCart:any = window.document.getElementById(id);
+			const itemCartLift = itemCart.getBoundingClientRect().left;
+			const itemCartTop = itemCart.getBoundingClientRect().top;
+			animationElStatus.value = `top: ${itemCartTop}px; left: ${itemCartLift}px;`
 
-	setTimeout(() => {
-		animationElStatus.value = ''
-		cartStore.increase({
-			goods_id: row.goods_id,
-			sku_id: row.sku_id,
-			sale_price: row.sale_price,
-			stock: row.stock
-		});
-	}, 1020);
+			setTimeout(() => {
+				animationElStatus.value = `top: ${animationEndTop+animationEnd.offsetHeight/2-itemCart.offsetHeight/2}px; left: ${animationEndLeft+animationEnd.offsetWidth/2-itemCart.offsetHeight/2}px; transition: all 0.8s; transform: rotate(-720deg);`
+			}, 20);
+			setTimeout(() => {
+				animationElStatus.value = ''
+				animationAddRepeatFlag.value = false
+			}, 1020);
+			
+		}, 100);
 	// #endif
 }
+
 //获取购物车数据
 /**
  * @description 获取分类数据
@@ -386,11 +398,20 @@ const initAll = ref({
 	allActive : -1,
 	data: { category_name: "全部", category_id: '' }
 })
-const tabsData = ref<Array<Object>>([])
+const tabsData:any = ref<Array<Object>>([])
 const getCategoryData = () => {
 	loading.value = true;
 	getGoodsCategoryTree().then((res: any) => {
 		tabsData.value = res.data;
+		for (let i = 0; i < tabsData.value.length; i++) {
+			if(tabsData.value[i].child_list){
+				let obj = {
+					category_name: "全部",
+					category_id: tabsData.value[i].category_id
+				};
+				tabsData.value[i].child_list.unshift(obj)
+			}
+		}
         if (categoryId) {
             for (let i = 0; i < tabsData.value.length; i++) {
                 if (tabsData.value[i].category_id == categoryId) {
@@ -422,12 +443,13 @@ const tabActive = ref<number>(0)
 const subActive = ref<number>(0)
 
 // 一级菜单点击事件
-const firstLevelClick = (index: number, data: Object) => {
+const firstLevelClick = (index: number, data: any) => {
 	tabActive.value = index;
 	if (data.child_list && data.child_list.length) {
 		subMenuClick(0, data.child_list[0]);
 	} else {
         categoryId = data.category_id;
+		list.value = [];
 		getMescroll().resetUpScroll();
 	}
 }
@@ -435,11 +457,13 @@ const firstLevelClick = (index: number, data: Object) => {
 /**
  * @description 二级菜单点击事件
  * @param {number} index
+ * @param {Object} data
  * */
-const subMenuClick = (index: number, data: object) => {
+const subMenuClick = (index: number, data: any) => {
 	subActive.value = index;
     categoryId = data.category_id;
 	labelPopup.value = false
+	list.value = [];
 	getMescroll().resetUpScroll();
 }
 
@@ -452,40 +476,49 @@ const searchNameFn = () => {
 //点击商品购物车按钮
 let cartRef = ref()
 const itemCart = (row: any, id: any) => {
-	if (config.cart.event !== 'cart') {
-		return toLink(row.goods_id)
-	}
-	if (!userInfo.value) {
-		useLogin().setLoginBack({ url: '/addon/shop/pages/goods/category' })
-		return false
-	}
-	if (row.sku_spec_format) {
-		cartRef.value.open(row.sku_id)
-	} else {
-		//单规格添加购物车
-		animationAddCart(row, id)
+    // 虚拟商品，并且需要核销，禁止加入购物车
+    if (row.goods_type == 'virtual' && row.virtual_receive_type == 'verify') {
+        return toLink(row.goodsSku.goods_id)
+    }
 
-	}
+    if (config.cart.event !== 'cart') {
+        return toLink(row.goods_id)
+    }
+
+    if (!userInfo.value) {
+        useLogin().setLoginBack({url: '/addon/shop/pages/goods/category'})
+        return false
+    }
+
+    if (row.goodsSku.sku_spec_format) {
+        cartRef.value.open(row.goodsSku.sku_id)
+    } else {
+        //单规格添加购物车
+		if (parseInt(row.goodsSku.num||0) >= parseInt(row.goodsSku.stock)) {
+		    uni.showToast({ title: '商品库存不足', icon: 'none' })
+		    return;
+		}
+        animationAddCart(row, id)
+    }
 }
 
-//点击购物车加号
-const addCartBtn = (row: any) => {
+//点击购物车加号 添加数量
+const addCartBtn = (item: any, row: any, id: string) => {
+    if (parseInt(row.num) >= parseInt(row.stock)) {
+        uni.showToast({ title: '商品库存不足', icon: 'none' })
+        return;
+    }
 
-	// 购物车添加数量
-	cartStore.increase({
-		id: row.id,
-		goods_id: row.goods_id,
-		sku_id: row.sku_id,
-		stock: row.stock,
-		sale_price: row.sale_price,
-		num: row.num
-	});
-
+    let obj = cloneDeep(item)
+    obj.num = row.num;
+    obj.id = row.id;
+    animationAddCart(obj, id)
 }
 
 //点击购物车减号
 const reduceCart = (row: any) => {
-
+	if(cartRepeatFlag.value) return false
+	cartRepeatFlag.value = true
 	cartStore.reduce({
 		id: row.id,
 		goods_id: row.goods_id,
@@ -493,7 +526,10 @@ const reduceCart = (row: any) => {
 		stock: row.stock,
 		sale_price: row.sale_price,
 		num: row.num
-	});
+	}, 1, () => {
+		cartRepeatFlag.value = false
+	})
+	
 }
 
 //进入购物车
@@ -504,25 +540,51 @@ const toCart = () => {
  * 结算
  */
 const settlement = () => {
-	if (!totalNum.value) {
-		uni.showToast({ title: '还没有选择商品', icon: 'none' })
-		return
+    if (!totalNum.value) {
+        uni.showToast({ title: '还没有选择商品', icon: 'none' })
+        return
+    }
+    const ids: any = []
+    Object.values(cartList.value).forEach(item => {
+        Object.keys(item).forEach(v => {
+            if (v != 'totalNum' && v != 'totalMoney') ids.push(item[v].id)
+        })
+    })
+    uni.setStorage({
+        key: 'orderCreateData',
+        data: {
+            cart_ids: ids
+        },
+        success() {
+            redirect({ url: '/addon/shop/pages/order/payment' })
+        }
+    })
+}
+
+// 价格类型 
+let priceType = (data:any) =>{
+	let type = "";
+	if(data.is_discount){
+		type = 'discount_price'// 折扣
+	}else if(data.member_discount && getToken()){
+		type = 'member_price' // 会员价
+	}else{ 
+		type = ""
 	}
-	const ids = []
-	Object.values(cartList.value).forEach(item => {
-		Object.keys(item).forEach(v => {
-			if (v != 'totalNum' && v != 'totalMoney') ids.push(item[v].id)
-		})
-	})
-	uni.setStorage({
-		key: 'orderCreateData',
-		data: {
-			cart_ids: ids
-		},
-		success() {
-			redirect({ url: '/addon/shop/pages/order/payment' })
-		}
-	})
+	return type;
+}
+
+// 商品价格
+let goodsPrice = (data:any) => {
+    let price = "0.00";
+    if (data.is_discount) {
+        price = data.goodsSku.sale_price ? data.goodsSku.sale_price : data.goodsSku.price // 折扣价
+    } else if (data.member_discount && getToken()) {
+        price = data.goodsSku.member_price ? data.goodsSku.member_price : data.goodsSku.price // 会员价
+    } else {
+        price = data.goodsSku.price
+    }
+    return price;
 }
 </script>
 

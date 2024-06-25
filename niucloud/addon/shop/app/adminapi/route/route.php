@@ -59,8 +59,11 @@ Route::group('shop', function() {
     //运费模版 删除
     Route::delete('shipping/template/:template_id', 'addon\shop\app\adminapi\controller\delivery\ShippingTemplate@del');
 
-    //自提门店列表
+    //自提门店列表（分页）
     Route::get('delivery/store', 'addon\shop\app\adminapi\controller\delivery\Store@lists');
+
+    //自提门店列表（不分页）
+    Route::get('delivery/store/list', 'addon\shop\app\adminapi\controller\delivery\Store@getList');
 
     //自提门店详情
     Route::get('delivery/store/:id', 'addon\shop\app\adminapi\controller\delivery\Store@info');
@@ -143,6 +146,9 @@ Route::group('shop', function() {
     // 获取商品选择分页列表
     Route::get('goods/select', 'addon\shop\app\adminapi\controller\goods\Goods@select');
 
+    // 获取商品选择分页列表带sku
+    Route::get('goods/selectgoodssku', 'addon\shop\app\adminapi\controller\goods\Goods@selectgoodssku');
+
     // 获取商品SKU规格列表
     Route::get('goods/sku', 'addon\shop\app\adminapi\controller\goods\Goods@sku');
 
@@ -151,6 +157,12 @@ Route::group('shop', function() {
 
     // 编辑商品规格列表价格
     Route::put('goods/sku/price', 'addon\shop\app\adminapi\controller\goods\Goods@editGoodsListPrice');
+
+    // 编辑商品规格列表会员价格
+    Route::put('goods/sku/member_price', 'addon\shop\app\adminapi\controller\goods\Goods@editGoodsListMemberPrice');
+
+    // 获取商品SKU规格列表
+    Route::get('goods/active/count', 'addon\shop\app\adminapi\controller\goods\Goods@getActiveGoodsCount');
 
     // 获取商品类型
     Route::get('goods/type', 'addon\shop\app\adminapi\controller\goods\Goods@type');
@@ -173,6 +185,9 @@ Route::group('shop', function() {
     //删除商品标签
     Route::delete('goods/label/:id', 'addon\shop\app\adminapi\controller\goods\Label@del');
 
+    // 修改商品标签排序号
+    Route::put('goods/label/sort', 'addon\shop\app\adminapi\controller\goods\Label@modifySort');
+
     //商品品牌分页列表
     Route::get('goods/brand', 'addon\shop\app\adminapi\controller\goods\Brand@pages');
 
@@ -190,6 +205,9 @@ Route::group('shop', function() {
 
     //删除商品品牌
     Route::delete('goods/brand/:id', 'addon\shop\app\adminapi\controller\goods\Brand@del');
+
+    // 修改商品品牌排序号
+    Route::put('goods/brand/sort', 'addon\shop\app\adminapi\controller\goods\Brand@modifySort');
 
     //商品服务分页列表
     Route::get('goods/service', 'addon\shop\app\adminapi\controller\goods\Service@pages');
@@ -238,6 +256,33 @@ Route::group('shop', function() {
     // 获取商品分类树结构供弹框调用
     Route::get('goods/category/components', 'addon\shop\app\adminapi\controller\goods\Category@components');
 
+    // 商品参数分页列表
+    Route::get('goods/attr', 'addon\shop\app\adminapi\controller\goods\Attr@pages');
+
+    // 商品参数列表
+    Route::get('goods/attr/list', 'addon\shop\app\adminapi\controller\goods\Attr@lists');
+
+    // 商品参数详情
+    Route::get('goods/attr/:id', 'addon\shop\app\adminapi\controller\goods\Attr@info');
+
+    // 添加商品参数
+    Route::post('goods/attr', 'addon\shop\app\adminapi\controller\goods\Attr@add');
+
+    // 编辑商品参数
+    Route::put('goods/attr/:id', 'addon\shop\app\adminapi\controller\goods\Attr@edit');
+
+    // 删除商品参数
+    Route::delete('goods/attr/:id', 'addon\shop\app\adminapi\controller\goods\Attr@del');
+
+    // 修改商品参数排序号
+    Route::put('goods/attr/sort', 'addon\shop\app\adminapi\controller\goods\Attr@modifySort');
+
+    // 修改商品参数名称
+    Route::put('goods/attr/attr_name', 'addon\shop\app\adminapi\controller\goods\Attr@modifyAttrName');
+
+    // 修改商品参数值
+    Route::put('goods/attr/attr_value', 'addon\shop\app\adminapi\controller\goods\Attr@modifyAttrValueFormat');
+
     /************************************************** 订单相关接口 *****************************************************/
     //交易配置
     Route::post('order/config', 'addon\shop\app\adminapi\controller\order\Config@setConfig');
@@ -253,6 +298,13 @@ Route::group('shop', function() {
     Route::get('order/status', 'addon\shop\app\adminapi\controller\order\Order@getOrderStatus');
     //订单关闭
     Route::put('order/close/:id', 'addon\shop\app\adminapi\controller\order\Order@orderClose');
+    //订单改价
+    Route::put('order/edit_price', 'addon\shop\app\adminapi\controller\order\Order@editPrice');
+    //订单配送修改
+    Route::put('order/edit_delivery', 'addon\shop\app\adminapi\controller\order\Order@editDelivery');
+    //订单配送修改信息
+    Route::get('order/edit_delivery', 'addon\shop\app\adminapi\controller\order\Order@editDeliveryData');
+
     //订单发货
     Route::put('order/delivery', 'addon\shop\app\adminapi\controller\order\Order@orderDelivery');
     //订单项发货
@@ -270,6 +322,7 @@ Route::group('shop', function() {
     //获取 订单来源
     Route::get('order/from', 'addon\shop\app\adminapi\controller\order\Order@getOrderFrom');
 
+
     //订单维权 列表
     Route::get('order/refund', 'addon\shop\app\adminapi\controller\refund\Refund@lists');
     //订单维权 详情
@@ -281,6 +334,7 @@ Route::group('shop', function() {
 
     //营销中心
     Route::get('marketing', 'addon\shop\app\adminapi\controller\marketing\Index@index');
+
     /************************************************** 优惠券相关接口 *****************************************************/
     //优惠券列表
     Route::get('goods/coupon', 'addon\shop\app\adminapi\controller\marketing\Coupon@lists');
@@ -296,8 +350,12 @@ Route::group('shop', function() {
     Route::put('goods/coupon/edit/:id', 'addon\shop\app\adminapi\controller\marketing\Coupon@edit');
     //优惠券设置状态
     Route::put('goods/coupon/setstatus/:status', 'addon\shop\app\adminapi\controller\marketing\Coupon@setCouponStatus');
+    //优惠券失效
+    Route::put('goods/coupon/invalid/:id', 'addon\shop\app\adminapi\controller\marketing\Coupon@couponInvalid');
     //删除优惠券
     Route::delete('goods/coupon/:id', 'addon\shop\app\adminapi\controller\marketing\Coupon@del');
+    // 查询选中的优惠券
+    Route::get('goods/coupon/selected', 'addon\shop\app\adminapi\controller\marketing\Coupon@getSelectedLists');
     //商家地址库列表
     Route::get('shop_address', 'addon\shop\app\adminapi\controller\shop_address\ShopAddress@lists');
     //商家地址库详情
@@ -343,6 +401,55 @@ Route::group('shop', function() {
     Route::get('invoice/:id', 'addon\shop\app\adminapi\controller\order\Invoice@info');
     // 开票
     Route::put('invoice/:id', 'addon\shop\app\adminapi\controller\order\Invoice@invoicing');
+
+    /************************************************** 限时折扣 *****************************************************/
+    //限时折扣列表
+    Route::get('active/discount', 'addon\shop\app\adminapi\controller\marketing\Discount@lists');
+    //添加
+    Route::post('active/discount', 'addon\shop\app\adminapi\controller\marketing\Discount@add');
+    //编辑
+    Route::put('active/discount/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@edit');
+    //删除
+    Route::delete('active/discount/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@del');
+    //关闭
+    Route::put('active/discount/close/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@close');
+    //详情
+    Route::get('active/discount/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@detail');
+    //状态
+    Route::get('active/status', 'addon\shop\app\adminapi\controller\marketing\Discount@status');
+    //参与订单
+    Route::get('active/discount/order/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@order');
+    //参与会员
+    Route::get('active/discount/member/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@member');
+    //参与商品
+    Route::get('active/discount/goods/:active_id', 'addon\shop\app\adminapi\controller\marketing\Discount@goods');
+    //获取配置
+    Route::get('active/discount/config', 'addon\shop\app\adminapi\controller\marketing\Discount@banner');
+    //设置配置
+    Route::put('active/discount/config', 'addon\shop\app\adminapi\controller\marketing\Discount@setBanner');
+
+
+    /************************************************** 积分商城 *****************************************************/
+    //积分商城列表
+    Route::get('active/exchange', 'addon\shop\app\adminapi\controller\marketing\Exchange@lists');
+    //商品类型
+    Route::get('active/exchange/type', 'addon\shop\app\adminapi\controller\marketing\Exchange@type');
+    //商品类型
+    Route::get('active/exchange/status', 'addon\shop\app\adminapi\controller\marketing\Exchange@status');
+    //添加积分商城
+    Route::post('active/exchange', 'addon\shop\app\adminapi\controller\marketing\Exchange@add');
+    //积分商城详情
+    Route::get('active/exchange/:id', 'addon\shop\app\adminapi\controller\marketing\Exchange@detail');
+    //编辑积分商城
+    Route::put('active/exchange/:id', 'addon\shop\app\adminapi\controller\marketing\Exchange@edit');
+    //修改积分商城上下架状态
+    Route::put('active/exchange/status/:id', 'addon\shop\app\adminapi\controller\marketing\Exchange@editStatus');
+    //删除
+    Route::delete('active/exchange/:id', 'addon\shop\app\adminapi\controller\marketing\Exchange@del');
+    //修改排序号
+    Route::put('active/exchange/sort/:id', 'addon\shop\app\adminapi\controller\marketing\Exchange@modifySort');
+
+
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

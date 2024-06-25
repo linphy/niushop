@@ -34,6 +34,12 @@ class AddonDict
     // 执行失败
     const INSTALL_FAIL = 'fail';
 
+    // 插件关键字黑名单
+    const ADDON_KEY_BLACK_LIST = [
+        'addon', 'aliapp', 'app', 'applet', 'auht', 'channel', 'dict', 'diy', 'generator', 'home', 'member', 'niucloud',
+        'notice', 'pay', 'site', 'sys', 'upload', 'home', 'user', 'weapp', 'wechat'
+    ];
+
     /**
      * 插件操作方式
      * @return array

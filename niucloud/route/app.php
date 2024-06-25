@@ -24,10 +24,6 @@ Route::rule('/', function () {
 Route::rule('admin', function () {
     return view(app()->getRootPath() . 'public/admin/index.html');
 })->pattern(['any' => '\w+']);
-// 站点端
-Route::rule('site', function () {
-    return view(app()->getRootPath() . 'public/admin/index.html');
-})->pattern(['any' => '\w+']);
 // 站点管理端
 Route::rule('home', function () {
     return view(app()->getRootPath() . 'public/admin/index.html');
@@ -36,7 +32,6 @@ Route::rule('home', function () {
 Route::rule('decorate/:any', function () {
     return view(app()->getRootPath() . 'public/admin/index.html');
 })->pattern(['any' => '\w+']);
-
 //用于公众号授权证书
 Route::any('MP_verify_<name>.txt',  function ($name) {
     header('Content-Type:text/plain; charset=utf-8');
@@ -46,7 +41,6 @@ Route::any('wap/<id>/MP_verify_<name>.txt',  function ($name) {
     header('Content-Type:text/plain; charset=utf-8');
     echo $name;exit();
 });
-
 // 手机端
 Route::rule('wap', function () {
     return view(app()->getRootPath() . 'public/wap/index.html');
@@ -55,3 +49,13 @@ Route::rule('wap', function () {
 Route::rule('web', function () {
     return view(app()->getRootPath() . 'public/web/index.html');
 })->pattern(['any' => '\w+']);
+
+// 加载插件的route
+$addon_dir = root_path() . 'addon';
+$addons = array_diff(scandir($addon_dir), ['.', '..']);
+foreach ($addons as $addon) {
+    $route = $addon_dir . DIRECTORY_SEPARATOR . $addon . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'route.php';
+    if (file_exists($route)) {
+        include $route;
+    }
+}

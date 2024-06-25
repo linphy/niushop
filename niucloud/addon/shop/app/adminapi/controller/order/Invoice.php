@@ -51,4 +51,5 @@ class Invoice extends BaseAdminController
         ]);
         return success('SUCCESS', data:(new InvoiceService())->invoicing($id, $data));
     }
+
 }

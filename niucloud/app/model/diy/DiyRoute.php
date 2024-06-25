@@ -56,7 +56,7 @@ class DiyRoute extends BaseModel
     public function searchTitleAttr($query, $value, $data)
     {
         if ($value) {
-            $query->where("title", 'like','%'.$value.'%');
+            $query->where("title", 'like', '%' . $value . '%');
         }
     }
 

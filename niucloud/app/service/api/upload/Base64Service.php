@@ -33,7 +33,7 @@ class Base64Service extends BaseApiService
      */
     public function image(string $content){
 
-        $dir = $this->root_path.'/'.'image'.'/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path.'/image/'.date('Ym').'/'.date('d');
         $core_base64_service = new CoreBase64Service();
         return $core_base64_service->image($content, $dir);
     }

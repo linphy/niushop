@@ -13,6 +13,7 @@ namespace app\service\core\channel;
 
 use app\dict\sys\ConfigKeyDict;
 use app\model\sys\SysAttachment;
+use app\service\core\addon\WapTrait;
 use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
 
@@ -23,6 +24,8 @@ use core\base\BaseCoreService;
  */
 class CoreH5Service extends BaseCoreService
 {
+    use WapTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -45,5 +48,25 @@ class CoreH5Service extends BaseCoreService
             ];
         }
         return $info;
+    }
+
+    /**
+     * 地图key改变后变更 manifest.json
+     * @param string $map_key
+     * @return void
+     */
+    public function mapKeyChange(string $map_key) {
+        $compile_path = project_path(). 'uni-app' . DIRECTORY_SEPARATOR;
+        $this->mergeManifestJson($compile_path, [
+            "h5" => [
+                "sdkConfigs" => [
+                    "maps" => [
+                        "qqmap" => [
+                            "key" => $map_key
+                        ]
+                    ]
+                ]
+            ]
+        ]);
     }
 }

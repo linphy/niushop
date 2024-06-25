@@ -61,7 +61,6 @@ import { getShopDelivery, deleteShopDeliver } from '@/addon/shop/api/delivery'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, FormInstance } from 'element-plus'
 
-
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title

@@ -95,6 +95,21 @@ class Account extends BaseAdminController
     }
 
     /**
+     * 查询成长值
+     * @return Response
+     */
+    public function growth() {
+        $data = $this->request->params([
+            ['member_id', ''],
+            ['from_type', ''],
+            ['create_time', []],
+            ['keywords', ''],
+        ]);
+        $data['account_type'] = 'growth';
+        return success((new MemberAccountService())->getPage($data));
+    }
+
+    /**
      * 积分账户调整
      */
     public function adjustPoint()

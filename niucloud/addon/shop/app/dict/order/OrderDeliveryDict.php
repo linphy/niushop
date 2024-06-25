@@ -31,10 +31,6 @@ class OrderDeliveryDict
     //虚拟发货
     const VIRTUAL = 'virtual';
 
-    const WAIT_DELIVERY = 'wait_delivery';
-    const DELIVERYING = 'delivery';
-    const DELIVERY_FINISH = 'delivery_finish';
-    const TAKED = 'taked';
 
     /**
      * 获取配送方式(用于订单)
@@ -81,6 +77,12 @@ class OrderDeliveryDict
         return $data[$type] ?? '';
     }
 
+    const WAIT_DELIVERY = 'wait_delivery';
+    const DELIVERYING = 'delivery';
+    const DELIVERY_FINISH = 'delivery_finish';
+    const TAKED = 'taked';
+
+    const EXPIRE = 'expire';//失效
     /**
      * 配送状态(订单项)
      * @param string $status

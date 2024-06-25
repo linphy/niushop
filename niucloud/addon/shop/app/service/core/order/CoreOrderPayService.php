@@ -11,8 +11,11 @@
 
 namespace addon\shop\app\service\core\order;
 
+use addon\shop\app\dict\goods\GoodsDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
+use addon\shop\app\dict\order\OrderLogDict;
+use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderGoods;
 use core\base\BaseCoreService;
@@ -32,7 +35,7 @@ class CoreOrderPayService extends BaseCoreService
 
     /**
      * 订单已支付操作
-     * @param $order_id
+     * @param array $data
      * @return void
      */
     public function pay(array $data)
@@ -83,16 +86,25 @@ class CoreOrderPayService extends BaseCoreService
     public function orderGoodsPay($data)
     {
         $order_id = $data['order_id'];
-        $update_data = array(
+        $update_data = [
             'delivery_status' => OrderDeliveryDict::WAIT_DELIVERY,
             'is_enable_refund' => 1
-        );
-        $where = array(
+        ];
+        $where = [
             ['order_id', '=', $order_id]
-        );
+        ];
         (new OrderGoods())->where($where)->update($update_data);
         return true;
     }
 
 
+    /**
+     * to待配送状态
+     * @param $data
+     * @return void
+     */
+    public function toDelivery($data){
+        //todo 根据订单项类判断各个商品的配送操作
+
+    }
 }

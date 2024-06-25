@@ -72,7 +72,8 @@ CREATE TABLE `applet_version` (
 DROP TABLE IF EXISTS `diy_page`;
 CREATE TABLE `diy_page` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '页面名称',
+  `page_title` varchar(255) NOT NULL DEFAULT '' COMMENT '页面名称（用于后台展示）',
+  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '页面标题（用于前台展示）',
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '页面标识',
   `type` varchar(255) NOT NULL DEFAULT '' COMMENT '页面模板',
   `template` varchar(255) NOT NULL DEFAULT '' COMMENT '模板名称',
@@ -263,7 +264,6 @@ CREATE TABLE `member_address` (
   `lng` varchar(255) NOT NULL DEFAULT '' COMMENT '经度',
   `lat` varchar(255) NOT NULL DEFAULT '' COMMENT '纬度',
   `is_default` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否是默认地址',
-  `type` varchar(30) NOT NULL DEFAULT '' COMMENT '地址类型  address 普通地址  location_address 定位地址',
   PRIMARY KEY (`id`),
   KEY `IDX_member_address` (`member_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员收货地址';
@@ -332,14 +332,30 @@ DROP TABLE IF EXISTS `member_level`;
 CREATE TABLE `member_level` (
   `level_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '会员等级',
   `level_name` varchar(50) NOT NULL DEFAULT '' COMMENT '等级名称',
-  `growth` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '所需成长值',
+  `growth` int(11) NOT NULL DEFAULT '0' COMMENT '所需成长值',
   `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态 0已禁用1已启用',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '添加时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `level_benefits` text COMMENT '等级权益',
+  `level_gifts` text COMMENT '等级礼包',
   PRIMARY KEY (`level_id`),
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员等级';
+
+DROP TABLE IF EXISTS `member_sign`;
+CREATE TABLE `member_sign` (
+  `sign_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员id',
+  `days` int(11) NOT NULL DEFAULT '0' COMMENT '连续签到天数',
+  `day_award` varchar(255) NOT NULL DEFAULT '' COMMENT '日签奖励',
+  `continue_award` varchar(255) NOT NULL DEFAULT '' COMMENT '连签奖励',
+  `continue_tag` varchar(30) NOT NULL DEFAULT '' COMMENT '连签奖励标识',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '签到时间',
+  `start_time` int(11) NOT NULL DEFAULT '0' COMMENT '签到周期开始时间',
+  `is_sign` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否签到（0未签到 1已签到）',
+  PRIMARY KEY (`sign_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会员签到表' ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `pay`;
 CREATE TABLE `pay` (
@@ -430,6 +446,44 @@ CREATE TABLE `pay_transfer` (
   KEY `member_withdraw_audit_time` (`transfer_time`),
   KEY `member_withdraw_status` (`transfer_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='转账表';
+
+DROP TABLE IF EXISTS `stat_hour`;
+CREATE TABLE `stat_hour` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `addon` varchar(255) NOT NULL DEFAULT '' COMMENT '插件',
+  `field` varchar(255) NOT NULL DEFAULT '' COMMENT '统计字段',
+  `field_total` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '总计',
+  `year` int(11) NOT NULL DEFAULT '0' COMMENT '年',
+  `month` int(11) NOT NULL DEFAULT '0' COMMENT '月',
+  `day` int(11) NOT NULL DEFAULT '0' COMMENT '天',
+  `start_time` int(11) NOT NULL DEFAULT '0' COMMENT '当日开始时间戳',
+  `last_time` int(11) NOT NULL DEFAULT '0' COMMENT '最后执行时间',
+  `hour_0` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_1` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_2` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_3` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_4` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_5` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_6` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_7` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_8` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_9` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_10` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_11` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_12` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_13` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_14` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_15` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_16` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_17` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_18` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_19` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_20` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_21` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_22` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `hour_23` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='小时统计表' ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sys_agreement`;
 CREATE TABLE `sys_agreement` (
@@ -4186,6 +4240,43 @@ CREATE TABLE `sys_dict` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='数据字典表';
 
+DROP TABLE IF EXISTS `sys_export`;
+CREATE TABLE `sys_export` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `export_key` varchar(255) NOT NULL DEFAULT '' COMMENT '主题关键字',
+  `export_num` int(11) NOT NULL DEFAULT '0' COMMENT '导出数据数量',
+  `file_path` varchar(255) NOT NULL DEFAULT '' COMMENT '文件存储路径',
+  `file_size` varchar(255) NOT NULL DEFAULT '' COMMENT '文件大小',
+  `export_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '导出状态',
+  `fail_reason` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '失败原因',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '导出时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='导出报表' ROW_FORMAT=DYNAMIC;
+
+DROP TABLE IF EXISTS `verifier`;
+CREATE TABLE `verifier` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员id',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '添加时间',
+  `verify_type` varchar(255) NOT NULL DEFAULT '' COMMENT '核销类型',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='核销员表' ROW_FORMAT=DYNAMIC;
+
+DROP TABLE IF EXISTS `verify`;
+CREATE TABLE `verify` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL DEFAULT '' COMMENT '核销码',
+  `data` varchar(255) NOT NULL DEFAULT '' COMMENT '核销参数',
+  `type` varchar(30) NOT NULL DEFAULT '' COMMENT '核销类型',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '核销时间',
+  `verifier_member_id` int(11) NOT NULL DEFAULT '0' COMMENT '核销会员id',
+  `value` varchar(1000) NOT NULL DEFAULT '' COMMENT '核销内容',
+  `body` varchar(500) NOT NULL DEFAULT '' COMMENT '描述',
+  `relate_tag` varchar(255) NOT NULL DEFAULT '' COMMENT '业务标识',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='核销记录' ROW_FORMAT=DYNAMIC;
+
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
@@ -4280,9 +4371,10 @@ CREATE TABLE `sys_poster` (
   `channel` varchar(255) NOT NULL DEFAULT '' COMMENT '海报支持渠道',
   `value` text COMMENT '配置值json',
   `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否启用 1启用 2不启用',
+  `addon` varchar(255) NOT NULL DEFAULT '' COMMENT '所属插件',
+  `is_default` int(11) NOT NULL DEFAULT '0' COMMENT '是否默认海报，1：是，0：否',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
-  `addon` varchar(255) NOT NULL DEFAULT '' COMMENT '所属插件',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='海报表';
 

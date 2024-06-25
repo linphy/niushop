@@ -69,7 +69,7 @@ class CoreAttachmentService extends BaseCoreService
      * @throws ModelNotFoundException
      */
     public function getList(?array $data = []){
-        $where = [];
+        $where = array();
         $att_ids = $data['att_ids'] ?? [];
         if(!empty($att_ids)){
             $where[] = ['att_id', 'in', $att_ids];

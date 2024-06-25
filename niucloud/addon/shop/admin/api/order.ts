@@ -13,7 +13,7 @@ export function getConfig() {
  * @returns
  */
 export function setConfig(param: any) {
-    return request.post('shop/order/config', param, {showSuccessMessage: true})
+    return request.post('shop/order/config', param, { showSuccessMessage: true })
 }
 
 /**
@@ -21,7 +21,7 @@ export function setConfig(param: any) {
  * @returns
  */
 export function getOrderList(params: Record<string, any>) {
-    return request.get('shop/order/list', {params})
+    return request.get('shop/order/list', { params })
 }
 
 /**
@@ -29,7 +29,7 @@ export function getOrderList(params: Record<string, any>) {
  * @returns
  */
 export function getOrderDetail(order_id: number) {
-    return request.get(`shop/order/detail/${order_id}`)
+    return request.get(`shop/order/detail/${ order_id }`)
 }
 
 /**
@@ -53,7 +53,7 @@ export function getOrderType() {
  * @return
  */
 export function orderClose(order_id: number) {
-    return request.put(`shop/order/close/${order_id}`)
+    return request.put(`shop/order/close/${ order_id }`)
 }
 
 /**
@@ -61,7 +61,7 @@ export function orderClose(order_id: number) {
  * @return
  */
 export function getOrderDeliveryType(params: Record<string, any>) {
-    return request.get(`shop/order/delivery_type`, {params})
+    return request.get(`shop/order/delivery_type`, { params })
 }
 
 /**
@@ -85,7 +85,7 @@ export function setShopRemark(params: Record<string, any>) {
  * @return
  */
 export function orderFinish(order_id: number) {
-    return request.put(`shop/order/finish/${order_id}`)
+    return request.put(`shop/order/finish/${ order_id }`)
 }
 
 /**
@@ -93,7 +93,7 @@ export function orderFinish(order_id: number) {
  * @return
  */
 export function deliveryPackage(params: Record<string, any>) {
-    return request.get(`shop/order/delivery/package`, {params})
+    return request.get(`shop/order/delivery/package`, { params })
 }
 
 /**
@@ -101,15 +101,15 @@ export function deliveryPackage(params: Record<string, any>) {
  * @param {Record<string, any>} params
  * @return
  */
-export function orderRefuund(params: Record<string, any>) {
-    return request.get(`shop/order/refund`, {params})
+export function orderRefund(params: Record<string, any>) {
+    return request.get(`shop/order/refund`, { params })
 }
 
 /**
  * 退款维权详情
  */
-export function orderRefuundDetail(refund_id: number) {
-    return request.get(`shop/order/refund/${refund_id}`)
+export function orderRefundDetail(refund_id: number) {
+    return request.get(`shop/order/refund/${ refund_id }`)
 }
 
 /**
@@ -117,7 +117,7 @@ export function orderRefuundDetail(refund_id: number) {
  * @return
  */
 export function auditRefund(params: Record<string, any>) {
-    return request.put(`shop/order/refund/audit/${params.order_refund_no}`, params)
+    return request.put(`shop/order/refund/audit/${ params.order_refund_no }`, params)
 }
 
 /**
@@ -125,28 +125,28 @@ export function auditRefund(params: Record<string, any>) {
  * @return
  */
 export function refundDelivery(params: Record<string, any>) {
-    return request.put(`shop/order/refund/delivery/${params.order_refund_no}`, params)
+    return request.put(`shop/order/refund/delivery/${ params.order_refund_no }`, params)
 }
 
 /**
  * 获取发票列表
  */
 export function getInvoiceList(params: Record<string, any>) {
-    return request.get(`shop/invoice`, {params})
+    return request.get(`shop/invoice`, { params })
 }
 
 /**
  * 获取发票列表
  */
 export function getInvoiceDetail(id: number) {
-    return request.get(`shop/invoice/${id}`)
+    return request.get(`shop/invoice/${ id }`)
 }
 
 /**
  * 开具发票
  */
 export function setInvoice(id: number, params: Record<string, any>) {
-    return request.put(`shop/invoice/${id}`, params,{showSuccessMessage: true})
+    return request.put(`shop/invoice/${ id }`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -161,4 +161,35 @@ export function getOrderPayType() {
  */
 export function getOrderFrom() {
     return request.get(`shop/order/from`)
+}
+
+/**
+ * 订单调价
+ * @return
+ */
+export function orderEditPrice(params: Record<string, any>) {
+    return request.put(`shop/order/edit_price`, params, { showSuccessMessage: true })
+}
+
+/**
+ * 获取订单地址信息
+ * @return
+ */
+export function getOrderEditAddress(params: Record<string, any>) {
+    return request.get(`shop/order/edit_delivery`, { params })
+}
+/**
+ * 获取自提点列表
+ * @return
+ */
+export function getDeliveryList() {
+    return request.get(`shop/delivery/store/list`)
+}
+
+/**
+ * 修改地址
+ * @return
+ */
+export function orderEditAddress(params: Record<string, any>) {
+    return request.put(`shop/order/edit_delivery`, params)
 }

@@ -38,7 +38,7 @@ class ServiceService extends BaseAdminService
         $field = 'service_id,service_name,image,desc,create_time,update_time';
         $order = 'create_time desc';
 
-        $search_model = $this->model->withSearch([ "service_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'service_id', '>', 0 ] ])->withSearch([ "service_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -52,7 +52,7 @@ class ServiceService extends BaseAdminService
     public function getList(array $where = [], $field = 'service_id,service_name,image,desc,create_time,update_time')
     {
         $order = "create_time desc";
-        return $this->model->withSearch([ "service_name" ], $where)->field($field)->order($order)->select()->toArray();
+        return $this->model->where([ [ 'service_id', '>', 0 ] ])->withSearch([ "service_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**

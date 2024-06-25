@@ -39,6 +39,8 @@ Route::group('member', function () {
     Route::get('account/point', 'member.Account/point');
     //会员余额流水
     Route::get('account/balance', 'member.Account/balance');
+    //会员余额流水(新)
+    Route::get('account/balance_list', 'member.Account/balanceList');
     //会员零钱流水
     Route::get('account/money', 'member.Account/money');
     //会员零钱流水
@@ -47,8 +49,11 @@ Route::group('member', function () {
     Route::get('account/commission', 'member.Account/commission');
     //账户来源
     Route::get('account/fromtype/:account_type', 'member.Account/getFromType');
+    //积分数量
+    Route::get('account/pointcount', 'member.Account/pointCount');
+
     /***************************************************** 会员提现 ****************************************************/
-    Route::get('account/point', 'member.Account/point');
+
     //会员提现列表
     Route::get('cash_out', 'member.MemberCashOut/lists');
     //会员提现详情
@@ -86,6 +91,20 @@ Route::group('member', function () {
     //删除会员收货地址
     Route::delete('address/:id', 'member.Address/del');
 
+    /***************************************************** 会员签到 **************************************************/
+    //会员签到记录
+    Route::get('sign', 'member.MemberSign/lists');
+    //会员签到详情
+    Route::get('sign/:sign_id', 'member.MemberSign/info');
+    //会员签到
+    Route::post('sign', 'member.MemberSign/sign');
+    //获取月签到数据
+    Route::get('sign/info/:year/:month', 'member.MemberSign/signInfo');
+    //获取月签到数据
+    Route::get('sign/award/:year/:month/:day', 'member.MemberSign/getDayAward');
+    //获取签到设置
+    Route::get('sign/config', 'member.MemberSign/signConfig');
+
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class, true)
     ->middleware(ApiLog::class);
@@ -96,6 +115,9 @@ Route::group('member', function () {
     /***************************************************** 会员管理 ****************************************************/
     //会员日志
     Route::post('log', 'member.Member/log');
+
+    /***************************************************** 会员等级 **************************************************/
+    Route::get('level', 'member.Level/lists');
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)
     ->middleware(ApiLog::class);

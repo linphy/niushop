@@ -57,36 +57,7 @@ class RoleService extends BaseAdminService
      * @return array
      */
     public function getInfo(int $role_id){
-        $info = $this->model->append(['status_name'])->findOrEmpty($role_id)->toArray();
-        if(!empty($info)){
-            $list = [];
-            $addon_keys = $info['addon_keys'];
-            $addon_keys[] = 'system';
-            $rules = $info['rules'];
-            $menus_list = (new SysMenu())->where([['menu_key', 'in', $rules]])->select()->toArray();
-
-            foreach($menus_list as $key => $v){
-                $addon = $v['addon'] ?: 'system';
-                if(in_array($addon, $addon_keys))
-                {
-                    $list[$addon][$key] = $v['menu_key'];
-                }
-            }
-
-            $role_rules['system'] = $list['system'];
-
-            unset($list['system']);
-            foreach ($addon_keys as $value)
-            {
-                if(isset($list[$value]))
-                {
-                    $list[$value] = array_values($list[$value]);
-                }
-            }
-            $role_rules['addon'] = $list;
-            $info['rules'] = $role_rules;
-        }
-        return $info;
+        return $this->model->append(['status_name'])->findOrEmpty($role_id)->toArray();
     }
 
     /**
@@ -111,23 +82,6 @@ class RoleService extends BaseAdminService
      */
     public function add(array $data){
         $data['create_time'] = time();
-        $rules = $data['rules'];
-        if(!isset($rules['addon']))
-        {
-            $addon = [];
-        }else{
-            $addon = $rules['addon'];
-        }
-        $add_list = [];
-        $addon_rules = [];
-        foreach ($addon as $key => $value)
-        {
-            $add_list[] = $key;
-            $addon_rules[] = $value;
-        }
-        $addon_rules = array_reduce($addon_rules,'array_merge',[]);
-        $data['rules'] = array_merge($rules['system'],$addon_rules);
-        $data['addon_keys'] = $add_list;
         $this->model->save($data);
         Cache::tag(self::$cache_tag_name)->clear();
         return true;
@@ -143,23 +97,6 @@ class RoleService extends BaseAdminService
         $where = array(
             ['role_id', '=', $role_id],
         );
-        $rules = $data['rules'];
-        if(!isset($rules['addon']))
-        {
-            $addon = [];
-        }else{
-            $addon = $rules['addon'];
-        }
-        $add_list = [];
-        $addon_rules = [];
-        foreach ($addon as $key => $value)
-        {
-            $add_list[] = $key;
-            $addon_rules[] = $value;
-        }
-        $addon_rules = array_reduce($addon_rules,'array_merge',[]);
-        $data['rules'] = array_merge($rules['system'],$addon_rules);
-        $data['addon_keys'] = $add_list;
         $data['update_time'] = time();
         $this->model->update($data, $where);
         Cache::tag(self::$cache_tag_name)->clear();

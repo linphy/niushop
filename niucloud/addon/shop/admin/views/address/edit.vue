@@ -34,7 +34,7 @@
 				<el-form-item :label="t('fullAddress')" prop="address_area">
 					<el-select v-model="formData.province_id" value-key="id" clearable class="w-[200px]"  ref="provinceRef">
 						<el-option :label="t('provincePlaceholder')" :value="0"/>
-						<el-option v-for="(item, index) in areaList.province " :key="index" :label="item.name"  :value="item.id"/>
+						<el-option v-for="(item, index) in areaList.province" :key="index" :label="item.name"  :value="item.id"/>
 					</el-select>
 					<el-select v-model="formData.city_id" value-key="id" clearable class="w-[200px] ml-3" ref="cityRef">
 						<el-option :label="t('cityPlaceholder')" :value="0"/>
@@ -72,7 +72,8 @@ import { getShopAddressInfo, addShopAddress, editShopAddress } from '@/addon/sho
 import { getMap, getAreaListByPid, getAreaByCode } from '@/app/api/sys'
 import { useRoute } from 'vue-router'
 import { createMarker, latLngToAddress, addressToLatLng } from '@/utils/qqmap'
-import { filterNumber } from '@/utils/common'
+import { filterNumber, debounce } from '@/utils/common'
+
 const route = useRoute()
 const id: number = parseInt(route.query.id as string)
 const loading = ref(false)
@@ -156,7 +157,7 @@ const storeArea = reactive({
 
 const latLngChange = (lat: number, lng: number) => {
     latLngToAddress({ mapKey, lat, lng }).then(({ message, result }) => {
-        if (message == 'query ok') {
+        if (message == 'query ok' || message == 'Success') {
             formData.lat = result.location.lat
             formData.lng = result.location.lng
             formData.address = result.formatted_addresses.recommend
@@ -166,6 +167,8 @@ const latLngChange = (lat: number, lng: number) => {
                 storeArea.city_id = data.city ? data.city.id : 0
                 storeArea.district_id = data.district ? data.district.id : 0
             })
+        } else {
+            console.error(message, result)
         }
     }).catch(err => {
         console.log(err)
@@ -323,30 +326,34 @@ watch(() => formData.district_id, (nval) => {
     }
 })
 
-const areaChange = () => {
+const areaChange = debounce(() => {
     setTimeout(() => {
         const address = [
-            formData.province_id ? provinceRef.value.selectedLabel : '',
-            formData.city_id ? cityRef.value.selectedLabel : '',
-            formData.district_id ? districtRef.value.selectedLabel : ''
+            formData.province_id ? provinceRef.value.states.selectedLabel : '',
+            formData.city_id ? cityRef.value.states.selectedLabel : '',
+            formData.district_id ? districtRef.value.states.selectedLabel : ''
         ]
 
         addressToLatLng({ mapKey, address: address.join('') }).then(({ message, result }) => {
-            if (message == 'query ok') {
+            if (message == 'Success' || message == 'query ok') {
                 const latLng = new (window as any).TMap.LatLng(result.location.lat, result.location.lng)
                 map.setCenter(latLng)
                 marker.updateGeometries({
                     id: 'center',
                     position: latLng
                 })
+                formData.lat = result.location.lat
+                formData.lng = result.location.lng
+            } else {
+                console.error(message, result)
             }
         })
     }, 500)
-}
+}, 500)
 
 /**
-     * 地图点选获取市
-     */
+ * 地图点选获取市
+ */
 watch(() => storeArea.province_id, (nval) => {
     if (nval) {
         getAreaListByPid(storeArea.province_id).then(res => {
@@ -387,9 +394,9 @@ const onSave = async (formEl: FormInstance | undefined) => {
 
             const data = formData
             const address = [
-                data.province_id ? provinceRef.value.selectedLabel : '',
-                data.city_id ? cityRef.value.selectedLabel : '',
-                data.district_id ? districtRef.value.selectedLabel : '',
+                data.province_id ? provinceRef.value.states.selectedLabel : '',
+                data.city_id ? cityRef.value.states.selectedLabel : '',
+                data.district_id ? districtRef.value.states.selectedLabel : '',
                 data.address
             ]
             data.full_address = address.join('')

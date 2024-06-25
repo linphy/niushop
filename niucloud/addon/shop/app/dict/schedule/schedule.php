@@ -45,4 +45,27 @@ return [
         'class' => 'addon\shop\app\job\marketing\CouponMemberExpire',
         'function' => ''
     ],
+
+    [
+        'key' => 'shop_active_start',
+        'name' => '营销活动自动开启',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\ActiveStart',
+        'function' => ''
+    ],
+    [
+        'key' => 'shop_active_end',
+        'name' => '营销活动自动结束',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\ActiveEnd',
+        'function' => ''
+    ],
 ];

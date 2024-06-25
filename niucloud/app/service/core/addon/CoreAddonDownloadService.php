@@ -43,6 +43,7 @@ class CoreAddonDownloadService extends CoreAddonBaseService
      */
     public function download($app_key, $version)
     {
+        if (!extension_loaded('zip')) throw new AddonException('ZIP_ARCHIVE_NOT_INSTALL');
         $app_path = $this->addon_path . $app_key . DIRECTORY_SEPARATOR;
         //先判断当前的应用在本地是否存在
 //        if(is_dir($app_path)) throw new NiucloudException();

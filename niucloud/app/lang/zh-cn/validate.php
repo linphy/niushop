@@ -87,7 +87,10 @@ return [
         'cash_out_is_auto_transfer_in' => '是否启用转账必须是0或1',
         'status_require' => '会员状态必须填写',
         'not_exit_status' => '不存在的会员状态',
-        'username_cannot_pure_number' => '账号不能是纯数字'
+        'username_cannot_pure_number' => '账号不能是纯数字',
+        'level_name_require' => '等级名称必须填写',
+        'level_growth_require' => '等级成长值必须填写',
+        'level_growth_integer' => '成长值只能为整数'
     ],
     'validate_member_config' => [
         'length_number' => '会员编码必须是整数',
@@ -187,5 +190,6 @@ return [
         'type_require' => '请选择插件类型',
         'not_exit_type' => '无效的插件类型',
         'key_regex' => '插件标识格式有误',
+        'in_black_list' => '插件标识不能定义成黑名单中的值'
     ]
 ];

@@ -11,11 +11,8 @@
 
 namespace app\service\admin\weapp;
 
-use app\dict\sys\FileDict;
 use app\service\core\weapp\CoreWeappCloudService;
 use core\base\BaseAdminService;
-use app\dict\sys\StorageDict;
-use app\service\core\upload\CoreUploadService;
 use app\model\weapp\WeappVersion;
 use core\exception\CommonException;
 
@@ -39,7 +36,7 @@ class WeappVersionService extends BaseAdminService
         $uploading = $this->model->where([ ['status', '=', 0] ])->field('id')->findOrEmpty();
         if (!$uploading->isEmpty()) throw new CommonException('WEAPP_UPLOADING');
 
-        $version_no = $this->model->order('version_no desc')->field('version_no')->findOrEmpty()->toArray()['version_no'] ?? 0;
+        $version_no = $this->model->where([ ['id', '>', 0] ])->order('version_no desc')->field('version_no')->findOrEmpty()->toArray()['version_no'] ?? 0;
         $version_no += 1;
         $version = "1.0.{$version_no}";
 
@@ -74,7 +71,8 @@ class WeappVersionService extends BaseAdminService
     public function getPage(array $where = [])
     {
         $field = 'id, version, version_no, desc, create_time, status, fail_reason, task_key';
-        $order = 'version_no desc';
+        $order = 'create_time desc';
+        $where[] = ['id', '>', 0];
         $search_model = $this->model->where($where)->field($field)->order($order)->append(['status_name']);
         return $this->pageQuery($search_model);
     }

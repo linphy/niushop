@@ -272,6 +272,11 @@ class DbBackup
         }
     }
 
+    public function setSqlMode() {
+        Db::query("SET sql_mode = '';");
+        return true;
+    }
+
     /**
      * 导入表
      *

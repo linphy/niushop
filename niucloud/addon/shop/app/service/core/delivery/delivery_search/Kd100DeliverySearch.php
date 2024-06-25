@@ -11,9 +11,6 @@
 namespace core\sms;
 
 use addon\shop\app\service\core\delivery\delivery_search\BaseDeliverySearch;
-use AlibabaCloud\Client\AlibabaCloud;
-use core\exception\NoticeException;
-use Exception;
 
 
 class Kd100DeliverySearch extends BaseDeliverySearch

@@ -7,7 +7,7 @@
 </template>
 <script setup lang="ts">
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import categoryTemplateTwoOne from '@/addon/shop/pages/goods/components/category-template-two-one.vue';
 import categoryTemplateOneOne from '@/addon/shop/pages/goods/components/category-template-one-one.vue';
 import categoryTemplateTwoTwo from '@/addon/shop/pages/goods/components/category-template-two-two.vue';
@@ -21,6 +21,9 @@ const categoryId = ref(0)
 const getGoodsCategoryConfigFn = () => {
 	getGoodsCategoryConfig().then(res => {
 		config.value = res.data
+        uni.setNavigationBarTitle({
+            title: config.value.page_title
+        });
 	})
 }
 
@@ -52,13 +55,11 @@ onShow(() => {
 .category .detail .mescroll-body {
 	padding-bottom: calc(100rpx + constant(safe-area-inset-bottom)) !important;
 	padding-bottom: calc(100rpx + env(safe-area-inset-bottom)) !important;
-	
 }
 
 .category .cart .mescroll-body {
 	padding-bottom: calc(200rpx + constant(safe-area-inset-bottom)) !important;
 	padding-bottom: calc(200rpx + env(safe-area-inset-bottom)) !important;
-	
 }
 /*  #endif  */
 .category .labelPopup :deep(.u-transition) {

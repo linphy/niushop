@@ -38,7 +38,7 @@ class DeliverService extends BaseAdminService
         $field = 'deliver_id,deliver_name,deliver_mobile';
         $order = 'deliver_id desc';
 
-        $search_model = $this->model->withSearch(["deliver_name", "deliver_mobile"], $where)->field($field)->order($order);
+        $search_model = $this->model->where([['deliver_id', '>', 0] ])->withSearch(["deliver_name", "deliver_mobile"], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -51,7 +51,7 @@ class DeliverService extends BaseAdminService
     public function getInfo(int $id)
     {
         $field = 'deliver_id,deliver_name,deliver_mobile';
-        $info = $this->model->field($field)->where([['deliver_id', '=', $id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([['deliver_id', '=', $id]])->findOrEmpty()->toArray();
         return $info;
     }
 

@@ -1,40 +1,44 @@
 <template>
     <u-popup :show="show" @close="show = false" mode="bottom" :round="10" :closeable="true">
-        <view class="text-center p-[30rpx]">请选择自提点</view>
-        <scroll-view scroll-y="true" class="h-[50vh]">
-            <view class="p-[30rpx] pt-0 text-sm">
-                <view class="mt-[30rpx] p-[30rpx] border-1 !border-[#eee] border-solid rounded-[20rpx]"
-                    :class="{'!border-primary bg-primary-light': store && store.store_id == item.store_id}"
-                    v-for="item in storeList"
-                    @click="selectStore(item)">
-                    <view class="font-bold flex">
-                        <view class="flex-1 w-0">
-                            <text>{{ item.store_name }}</text>
-                            <text class="text-[26rpx] ml-[20rpx]">{{ item.store_mobile }}</text>
-                        </view>
-                        <view v-if="item.distance">
-                            <text class="text-red text-xs font-normal">{{ distanceFormat(item.distance) }}</text>
-                        </view>
-                    </view>
-                    <view class="mt-[16rpx] text-[26rpx]">{{ item.full_address }}</view>
-                    <view class="mt-[16rpx] text-[26rpx]">营业时间：{{ item.trade_time }}</view>
-                </view>
-            </view>
-            <view class="h-[50vh] flex items-center flex-col justify-center" v-if="loading">
-                <u-loading-icon :vertical="true" ></u-loading-icon>
-            </view>
-            <view class="h-[50vh] flex items-center flex-col justify-center" v-if="!loading && !storeList.length">
-                <u-empty text="没有可选择的自提点" :icon="img('static/resource/images/empty.png')"/>
-            </view>
-        </scroll-view>
-        <view class="p-[30rpx]">
-            <u-button type="primary" shape="circle" @click="confirm">确认</u-button>
-        </view>
+        <view @touchmove.prevent.stop>
+			<view class="text-center p-[30rpx]">请选择自提点</view>
+			<scroll-view scroll-y="true" class="h-[50vh]">
+				<view class="p-[30rpx] pt-0 text-sm">
+					<view class="mt-[30rpx] p-[30rpx] border-1 !border-[#eee] border-solid rounded-[20rpx]" :class="{'!border-primary bg-primary-light': store && store.store_id == item.store_id}" v-for="item in storeList" @click="selectStore(item)">
+						<view class="font-bold flex">
+							<view class="flex-1 w-0">
+								<text>{{ item.store_name }}</text>
+								<text class="text-[26rpx] ml-[20rpx]">{{ item.store_mobile }}</text>
+							</view>
+							<view v-if="item.distance">
+								<text class="text-red text-xs font-normal">{{ distanceFormat(item.distance) }}</text>
+							</view>
+						</view>
+						<view class="mt-[16rpx] text-[26rpx]">{{ item.full_address }}</view>
+						<view class="mt-[16rpx] text-[26rpx]">营业时间：{{ item.trade_time }}</view>
+					</view>
+				</view>
+				<view class="h-[50vh] flex items-center flex-col justify-center" v-if="loading">
+					<u-loading-icon :vertical="true"></u-loading-icon>
+				</view>
+				<view class="h-[50vh] flex items-center flex-col justify-center" v-if="!loading && !storeList.length">
+					<u-empty text="没有可选择的自提点" :icon="img('static/resource/images/empty.png')"/>
+				</view>
+			</scroll-view>
+			<view class="p-[30rpx]">
+				<u-button type="primary" text="确认" shape="circle" @click="confirm"></u-button>
+			</view>
+		</view>
     </u-popup>
+
+	<!-- #ifdef MP-WEIXIN -->
+	<!-- 小程序隐私协议 -->
+	<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+	<!-- #endif -->
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue'
+    import { ref,reactive } from 'vue'
     import { getStoreList } from '@/addon/shop/api/order'
     import { img } from '@/utils/common'
 
@@ -44,25 +48,44 @@
     const storeList = ref<object[]>([])
     const store = ref<null | object>(null)
 
+    const latlng = reactive({
+        lat:0,
+        lng:0
+    })
+
     const open = ()=> {
         if (!loaded.value) {
             loaded.value = true
 
-            const latlng = {}
             uni.getLocation({
-            	success: (res) => {
+                type: 'gcj02',
+                success: (res) => {
                     latlng.lat = res.latitude
                     latlng.lng = res.longitude
-            	}
+                },
+                fail: (res) => {
+                    if(res.errMsg && res.errno) {
+                        if(res.errno == 104){
+                            let msg = '用户未授权隐私权限，获取位置失败';
+                            uni.showToast({title: msg, icon: 'none'})
+                        }else if(res.errno == 112){
+                            let msg = '隐私协议中未声明，获取位置失败';
+                            uni.showToast({title: msg, icon: 'none'})
+                        }else if(res.errMsg == "getLocation:fail auth deny"){
+                            let msg = '用户未授权获取位置的权限';
+                            uni.showToast({title: msg, icon: 'none'})
+                        }else {
+                            uni.showToast({title: res.errMsg, icon: 'none'})
+                        }
+                    }
+                }
             });
 
             setTimeout(() => {
-                getStoreList({ latlng })
-                .then(({ data }) => {
+                getStoreList({latlng}).then(({data}) => {
                     storeList.value = data
                     loading.value = false
-                })
-                .catch(() => {
+                }).catch(() => {
                     loading.value = false
                 })
             }, 1500)

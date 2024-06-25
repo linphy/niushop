@@ -6,54 +6,54 @@
 				<scroll-view scroll-x="true" class="coupon-list" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style1_bg2.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
 					<view class="coupon-class">
 						<block v-if="couponList.length > 1">
-						<view v-for="(item,index) in couponList" :key="index" class="box-border pt-[14rpx] inline-flex flex-col items-center relative z-10 w-[150rpx] h-[130rpx]" :class="{'mr-[20rpx]': index != couponList.length-1}" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/coupon_item_bg.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
-							<view class="flex items-baseline price-font text-[var(--price-text-color)]">
-								<text class="text-[24rpx]">￥</text>
-								<text class="text-[38rpx] font-bold">{{ parseFloat(item.price) }}</text>
-							</view>
-							<view class="text-[#303133] text-[20rpx] mt-[12rpx]">{{ item.min_condition_money == '0.00' ? '无门槛' : ('满'+parseFloat(item.min_condition_money)+'元可用') }}</view>
-							<view class="mt-[auto] rounded-b-[12rpx] text-[#f2333c] text-[20rpx] w-[100%] h-[36rpx] flex items-center justify-center bg-[#fff5f2]">{{item.type_name}}</view>
-						</view>
-					</block>
-					<block v-else>
-						<view v-for="(item,index) in couponList" :key="index" class="box-border pt-[14rpx] pl-[44rpx] pr-[44rpx] inline-flex items-center justify-between relative z-10 w-[100%] h-[130rpx]" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style1_bg4.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
-							<view class="flex price-font text-[var(--price-text-color)] items-baseline">
-								<text class="text-[36rpx] mt-[16rpx] mr-[4rpx]">￥</text>
-								<text class="text-[85rpx] font-bold max-w-[170rpx] truncate">{{parseFloat(item.price)}}</text>
-							</view>
-							<view class="border-0 border-dashed border-r-[2rpx] border-[#FF323C] absolute left-[40%] top-[46rpx] bottom-0 w-[2rpx]"></view>
-							<view class="w-[270rpx]">
-								<view class="flex items-center mt-[auto]">
-									<text class="rounded-[4rpx] bg-[#fff3f0] text-[#f2333c] border-[2rpx] border-solid border-[#f2333c] text-[22rpx] px-[6rpx] pb-[4rpx] pt-[6rpx] flex items-center justify-center">{{item.type_name}}</text>
-									<text class="ml-[4rpx] text-[#f2333c] max-w-[184rpx] truncate">{{item.title}}</text>
+							<view v-for="(item,index) in couponList" :key="index" class="box-border pt-[14rpx] inline-flex flex-col items-center relative w-[150rpx] h-[130rpx]" :class="{'mr-[20rpx]': index != couponList.length-1}" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/coupon_item_bg.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
+								<view class="truncate w-full flex items-baseline justify-center price-font text-[var(--price-text-color)]">
+									<text class="text-[26rpx] font-500">￥</text>
+									<text class="text-[36rpx] truncate font-500">{{ parseFloat(item.price) }}</text>
 								</view>
-								<view class="text-[#f2333c] text-[32rpx] font-bold mt-[10rpx] w-[270rpx] truncate">{{item.min_condition_money == '0.00' ? '无门槛' : ('消费满'+parseFloat(item.min_condition_money)+'元可用') }}</view>
+								<view class="text-[#303133] text-[20rpx] mt-[12rpx]">{{ item.min_condition_money == '0.00' ? '无门槛' : ('满'+parseFloat(item.min_condition_money)+'元可用') }}</view>
+								<view class="mt-[auto] rounded-b-[12rpx] text-[#f2333c] text-[20rpx] w-[100%] h-[36rpx] flex items-center justify-center bg-[#fff5f2]">{{item.type_name}}</view>
 							</view>
-						</view>
-					</block>
+						</block>
+						<block v-else>
+							<view v-for="(item,index) in couponList" :key="index" class="box-border pt-[14rpx] pl-[44rpx] pr-[44rpx] inline-flex items-center justify-between relative w-[100%] h-[130rpx]" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style1_bg4.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
+								<view class="flex price-font text-[var(--price-text-color)] items-baseline">
+									<text class="text-[36rpx] mt-[16rpx] mr-[4rpx]">￥</text>
+									<text class="text-[85rpx] font-bold max-w-[170rpx] truncate">{{parseFloat(item.price)}}</text>
+								</view>
+								<view class="border-0 border-dashed border-r-[2rpx] border-[#FF323C] absolute left-[40%] top-[46rpx] bottom-0 w-[2rpx]"></view>
+								<view class="w-[270rpx]">
+									<view class="flex items-center mt-[auto]">
+										<text class="rounded-[4rpx] bg-[#fff3f0] text-[#f2333c] border-[2rpx] border-solid border-[#f2333c] text-[22rpx] px-[6rpx] pb-[4rpx] pt-[6rpx] flex items-center justify-center whitespace-nowrap">{{item.type_name}}</text>
+										<text class="ml-[4rpx] text-[#f2333c] max-w-[184rpx] truncate">{{item.title}}</text>
+									</view>
+									<view class="text-[#f2333c] text-[32rpx] font-bold mt-[10rpx] w-[270rpx] truncate">{{item.min_condition_money == '0.00' ? '无门槛' : ('消费满'+parseFloat(item.min_condition_money)+'元可用') }}</view>
+								</view>
+							</view>
+						</block>
 					</view>
 				</scroll-view>
-				<view class="w-[100%] h-[130rpx] pt-[24rpx] px-[26rpx] box-border flex items-center justify-between z-10 absolute left-0 right-0 bottom-0" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style1_bg.png') + ')','background-size':'100% 130rpx','background-repeat':'no-repeat'}">
+				<view class="w-[100%] h-[130rpx] pt-[24rpx] px-[26rpx] box-border flex items-center justify-between absolute left-0 right-0 bottom-0" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style1_bg.png') + ')','background-size':'100% 130rpx','background-repeat':'no-repeat'}">
 					<view class="flex flex-col">
 						<text class="text-[32rpx] text-[#fff] font-bold">{{ diyComponent.couponTitle }}</text>
 						<text class="text-[22rpx] text-[#fff] mt-[10rpx]">{{ diyComponent.couponSubTitle }}</text>
 					</view>
-					<text v-if="diyComponent.btnText" @click="toLink('/addon/shop/pages/coupon/list')" class="bg-[#fff] flex items-center justify-center text-[#FF4142] text-[24rpx] min-w-[100rpx] px-[24rpx] box-border h-[48rpx] coupon-buy-btn">{{diyComponent.btnText}}</text>
+					<text v-if="diyComponent.btnText" @click="toLink('/addon/shop/pages/coupon/list')" class="bg-[#fff] flex leading-[52rpx] justify-center text-[#FF4142] text-[24rpx] min-w-[100rpx] px-[24rpx] box-border h-[48rpx] coupon-buy-btn">{{diyComponent.btnText}}</text>
 				</view>
 			</view>
 
 			<view v-else-if="diyComponent.style == 'style-2'" class="coupon-wrap style-2 relative">
 				<scroll-view scroll-x="true" class="coupon-list">
-					<view v-for="(item,index) in couponList" :key="index" class="box-border pt-[14rpx] inline-flex flex-col items-center relative z-10 w-[140rpx] h-[130rpx] rounded-[10rpx]" :class="{'mr-[20rpx]': index != couponList.length-1, 'mr-[290rpx]': index == couponList.length-1}" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/coupon_item_bg.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
-						<view class="flex items-baseline price-font text-[var(--price-text-color)]">
+					<view v-for="(item,index) in couponList" :key="index" class="box-border pt-[14rpx] inline-flex flex-col items-center relative w-[140rpx] h-[130rpx] rounded-[10rpx]" :class="{'mr-[20rpx]': index != couponList.length-1, 'mr-[290rpx]': index == couponList.length-1}" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/coupon_item_bg.png') + ')','background-size':'100%','background-repeat':'no-repeat'}">
+						<view class="flex items-baseline justify-center w-full truncate price-font text-[var(--price-text-color)]">
 							<text class="text-[24rpx]">￥</text>
-							<text class="text-[38rpx] font-bold">{{parseFloat(item.price)}}</text>
+							<text class="text-[38rpx] font-bold truncate">{{parseFloat(item.price)}}</text>
 						</view>
-						<view class="text-[#303133] text-[20rpx] mt-[12rpx]">{{item.min_condition_money == '0.00' ? '无门槛' : ('满'+parseFloat(item.min_condition_money)+'元可用') }}</view>
+						<view class="text-[#303133] text-[20rpx] truncate max-w-[120rpx] mt-[12rpx]">{{item.min_condition_money == '0.00' ? '无门槛' : ('满'+parseFloat(item.min_condition_money)+'元可用') }}</view>
 						<view class="mt-[auto] rounded-b-[12rpx] text-[#f2333c] text-[20rpx] w-[100%] h-[36rpx] flex items-center justify-center bg-[#fff5f2]">{{item.type_name}}</view>
 					</view>
 				</scroll-view>
-				<view class="w-[290rpx] h-[170rpx] py-[20rpx] pl-[30rpx] box-border flex flex-col items-center justify-between z-10 absolute right-0 bottom-0" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style2_bg.png') + ')','background-size':'290rpx 170rpx','background-repeat':'no-repeat'}">
+				<view class="w-[290rpx] h-[170rpx] py-[20rpx] pl-[30rpx] box-border flex flex-col items-center justify-between absolute right-0 bottom-0" :style="{'background-image':'url(' + img('addon/shop/diy/goods_coupon/style2_bg.png') + ')','background-size':'290rpx 170rpx','background-repeat':'no-repeat'}">
 					<text class="text-[32rpx] text-[#fff] font-bold">{{ diyComponent.couponTitle }}</text>
 					<text class="text-[22rpx] text-[#fff] mt-[14rpx]">{{ diyComponent.couponSubTitle }}</text>
 					<text v-if="diyComponent.btnText" @click="toLink('/addon/shop/pages/coupon/list')" class="bg-[#fff] text-[#FF4142] text-[24rpx] min-w-[100rpx] px-[24rpx] box-border h-[48rpx] leading-[52rpx] text-center coupon-buy-btn mt-auto">{{diyComponent.btnText}}</text>

@@ -253,20 +253,14 @@ class WebApiGenerator extends BaseGenerator
         foreach ($this->tableColumn as $column) {
             if (!empty($column['model'])) {
                 $str = strripos($column['model'],'\\');
-                $with[] = Str::camel(substr($column['model'],$str+1));
+                $with[] = Str::snake(substr($column['model'],$str+1));
             }
         }
         if(!empty($with))
         {
-//            $str = strripos($column['model'],'\\');
-//            $with = Str::camel(substr($column['model'],$str+1));
-//            $content.= ' get'.Str::studly($with).'List,';
-//            export function getCompanyList(params: Record<string, any>) {
-//            return request.get(`shop/delivery/company`, {params})
-//            } $with = Str::camel(substr($column['model'],$str+1));
             foreach ($with as $value)
             {
-                $content.= 'export function getWith'.Str::studly($value).'List(params: Record<string,any>){'.PHP_EOL."    return request.get('".$moduleName.'/'.$value."', {params})".PHP_EOL.'}';
+                $content.= 'export function getWith'.Str::studly($value).'List(params: Record<string,any>){'.PHP_EOL."    return request.get('".$moduleName.'/'.$value."_all', {params})".PHP_EOL.'}';
             }
         }
         return $content;

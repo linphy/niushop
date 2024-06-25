@@ -32,6 +32,8 @@ Route::group('member', function () {
     Route::get('memberno', 'member.Member/getMemberNo');
     //会员添加
     Route::put('member/:member_id', 'member.Member/edit');//会员添加
+    //会员导出
+    Route::get('member/export', 'member.Member/export');
 
     Route::put('member/modify/:member_id/:field', 'member.Member/modify');
     //会员注册方式
@@ -66,6 +68,8 @@ Route::group('member', function () {
     Route::get('account/balance', 'member.Account/balance');
     //会员可提现余额流水
     Route::get('account/money', 'member.Account/money');
+    //会员成长值流水
+    Route::get('account/growth', 'member.Account/growth');
     //会员佣金流水
     Route::get('account/commission', 'member.Account/commission');
     //会员佣金统计
@@ -76,8 +80,6 @@ Route::group('member', function () {
     Route::post('account/point', 'member.Account/adjustPoint');
     //会员余额调整
     Route::post('account/balance', 'member.Account/adjustBalance');
-    //会员零钱调整
-    Route::post('account/money', 'member.Account/adjustMoney');
     //会员账户类型变动方式
     Route::get('account/change_type/:account_type', 'member.Account/changeType');
     //会员账户类型变动方式
@@ -91,6 +93,14 @@ Route::group('member', function () {
     Route::get('config/cash_out', 'member.Config/getCashOutConfig');
     //更新提现设置
     Route::post('config/cash_out', 'member.Config/setCashOutConfig');
+    //获取成长值规则设置
+    Route::get('config/growth_rule', 'member.Config/getGrowthRuleConfig');
+    //设置成长值规则
+    Route::post('config/growth_rule', 'member.Config/setGrowthRuleConfig');
+    //获取积分规则设置
+    Route::get('config/point_rule', 'member.Config/getPointRuleConfig');
+    //设置积分规则
+    Route::post('config/point_rule', 'member.Config/setPointRuleConfig');
     /***************************************************** 会员体现**************************************************/
     //会员提现列表
     Route::get('cash_out', 'member.CashOut/lists');
@@ -110,6 +120,40 @@ Route::group('member', function () {
     Route::get('config/member', 'member.Config/getMemberConfig');
     //更新注册与登录设置
     Route::post('config/member', 'member.Config/setMemberConfig');
+    // 获取会员权益字典
+    Route::get('dict/benefits', 'member.Member/getMemberBenefitsDict');
+    // 获取会员礼包字典
+    Route::get('dict/gift', 'member.Member/getMemberGiftDict');
+    // 获取成长值规则字典
+    Route::get('dict/growth_rule', 'member.Member/getGrowthRuleDict');
+    // 获取积分规则字典
+    Route::get('dict/point_rule', 'member.Member/getPointRuleDict');
+    /***************************************************** 会员等级 ****************************************************/
+    //会员等级分页列表
+    Route::get('level', 'member.MemberLevel/pages');
+    //会员等级列表
+    Route::get('level/list', 'member.MemberLevel/lists');
+    //会员等级详情
+    Route::get('level/:id', 'member.MemberLevel/info');
+    //会员等级添加
+    Route::post('level', 'member.MemberLevel/add');
+    //会员等级编辑
+    Route::put('level/:id', 'member.MemberLevel/edit');
+    //会员等级删除
+    Route::delete('level/:id', 'member.MemberLevel/del');
+    //全部会员等级
+    Route::get('level/all', 'member.MemberLevel/getAll');
+    // 获取会员权益内容
+    Route::get('benefits/content', 'member.Member/getMemberBenefitsContent');
+    // 获取会员礼包内容
+    Route::get('gifts/content', 'member.Member/getMemberGiftsContent');
+    /***************************************************** 会员签到 ****************************************************/
+    //签到设置
+    Route::put('sign/config', 'member.MemberSign/setSign');
+    //签到设置
+    Route::get('sign/config', 'member.MemberSign/getSign');
+    //签到记录
+    Route::get('sign', 'member.MemberSign/lists');
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

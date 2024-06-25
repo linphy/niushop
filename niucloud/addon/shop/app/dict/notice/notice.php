@@ -1,20 +1,5 @@
 <?php
 return [
-    'shop_order_pay_remind' => [
-        'addon' => 'shop',
-        'key' => 'shop_order_pay_remind',
-        'receiver_type' => 1,
-        'name' => '订单催付通知',
-        'title' => '买家下单30分钟未付款时进行提醒',
-        'async' => true,
-        'variable' => [
-            'order_money' => '订单总额',
-            'timeout' => '支付时间',
-            'body' => '订单内容',
-            'order_no' => '订单号',
-            'url' => '订单链接'
-        ],
-    ],
     'shop_order_pay' => [
         'addon' => 'shop',
         'key' => 'shop_order_pay',
@@ -25,8 +10,9 @@ return [
         'variable' => [
             'order_money' => '订单总额',
             'pay_time' => '支付时间',
+            'create_time' => '支付时间',
             'body' => '订单内容',
-            'order_no' => '订单号',
+            'order_no' => '订单编号',
             'url' => '订单链接'
         ],
     ],
@@ -39,8 +25,9 @@ return [
         'async' => true,
         'variable' => [
             'delivery_time' => '发货时间',
+            'order_money' => '订单总额',
             'body' => '订单内容',
-            'order_no' => '订单号',
+            'order_no' => '订单编号',
             'url' => '订单链接'
         ],
     ],
@@ -52,8 +39,8 @@ return [
         'title' => '商家同意买家退款申请后发送',
         'async' => true,
         'variable' => [
-            'order_refund_no' => '退款单号',
-            'apply_money' => '退款金额'
+            'order_no' => '订单编号',
+            'refund_money' => '退款金额',
         ],
     ],
     'shop_refund_refuse' => [
@@ -64,8 +51,8 @@ return [
         'title' => '商家拒绝买家退款申请后发送',
         'async' => true,
         'variable' => [
-            'order_refund_no' => '退款单号',
-            'apply_money' => '退款金额'
+            'order_no' => '订单编号',
+            'refund_money' => '退款金额',
         ]
     ]
 ];

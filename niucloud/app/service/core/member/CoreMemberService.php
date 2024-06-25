@@ -11,12 +11,15 @@
 
 namespace app\service\core\member;
 
+use app\dict\member\MemberAccountTypeDict;
 use app\model\member\Member;
 use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
+use core\dict\DictLoader;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\facade\Log;
 use think\Model;
 
 /**
@@ -45,6 +48,7 @@ class CoreMemberService extends BaseCoreService
             'nickname' => 'nickname',
             'headimg' => 'headimg',
             'member_label' => 'member_label',
+            'member_level' => 'member_level',
             'birthday' => 'birthday',
             'sex' => 'sex',
         };
@@ -99,7 +103,6 @@ class CoreMemberService extends BaseCoreService
 
     /**
      * 生成会员编码
-
      * @return string
      * @throws DataNotFoundException
      * @throws DbException
@@ -156,5 +159,222 @@ class CoreMemberService extends BaseCoreService
 
     public function getMemberNoConfig() {
         return round((new CoreConfigService())->getConfigValue('MEMBER_NO')['no'] ?? 0);
+    }
+
+    /**
+     * 发放成长值
+     * @param int $member_id
+     * @param string $key
+     * @param array $param
+     * @return void
+     */
+    public static function sendGrowth(int $member_id, string $key, array $param = []) {
+        $config = (new CoreMemberConfigService())->getGrowthRuleConfig();
+        if (!isset($config[$key]) || empty($config[$key]) || !$config[$key]['is_use']) return true;
+
+        $config = $config[$key];
+
+        $dict = (new DictLoader("GrowthRule"))->load();
+        if (!isset($dict[$key])) return true;
+        $dict = $dict[$key];
+
+        $growth = $config['growth'] ?? 0;
+        if (isset($dict['calculate']) && !empty($dict['calculate'])) {
+            $calculate = $dict['calculate'];
+            if ($calculate instanceof \Closure) {
+                $growth = $calculate($config, $param);
+            } else if (class_exists($calculate)) {
+                $growth = (new $calculate())->handle($config, $param);
+            }
+        }
+
+        if ($growth <= 0) return true;
+
+        (new CoreMemberAccountService())->addLog($member_id, MemberAccountTypeDict::GROWTH, $growth, $param['from_type'] ?? '', $param['momo'] ?? $dict['desc'], $param['related_id'] ?? 0);
+        return true;
+    }
+
+    /**
+     * 发放积分
+     * @param int $member_id
+     * @param string $key
+     * @param array $param
+     * @return true
+     */
+    public static function sendPoint(int $member_id, string $key, array $param = []) {
+        $config = (new CoreMemberConfigService())->getPointRuleConfig()['grant'] ?? [];
+        if (!isset($config[$key]) || empty($config[$key]) || !$config[$key]['is_use']) return true;
+
+        $config = $config[$key];
+
+        $dict = (new DictLoader("PointRule"))->load()['grant'] ?? [];
+        if (!isset($dict[$key])) return true;
+        $dict = $dict[$key];
+
+        $point = $config['point'] ?? 0;
+        if (isset($dict['calculate']) && !empty($dict['calculate'])) {
+            $calculate = $dict['calculate'];
+            if ($calculate instanceof \Closure) {
+                $point = $calculate($config, $param);
+            } else if (class_exists($calculate)) {
+                $point = (new $calculate())->handle($config, $param);
+            }
+        }
+
+        if ($point <= 0) return true;
+
+        (new CoreMemberAccountService())->addLog($member_id, MemberAccountTypeDict::POINT, $point, $param['from_type'] ?? '', $param['momo'] ?? $dict['desc'], $param['related_id'] ?? 0);
+        return true;
+    }
+
+    /**
+     * 会员礼包发放
+     * @param $member_id
+     * @param $gifts
+     * @return void
+     */
+    public function memberGiftGrant($member_id, $gifts = [], $param = []) {
+        try {
+            $dict = (new DictLoader("MemberGift"))->load();
+
+            foreach ($gifts as $key => $item) {
+                if (!$item['is_use'] || !isset($dict[$key]) || !isset($dict[$key]['grant']) || empty($dict[$key]['grant'])) continue;
+
+                $grant = $dict[$key]['grant'];
+                if ($grant instanceof \Closure) {
+                    $grant($member_id, $item, $param);
+                } else if (class_exists($grant)) {
+                    (new $grant())->handle($member_id, $item, $param);
+                }
+            }
+            return true;
+        } catch (\Exception $e) {
+            Log::write('会员礼包发放失败，错误原因：'. $e->getMessage().$e->getFile().$e->getLine());
+            Log::write('参数：'. json_encode([
+                'member_id' => $member_id,
+                'gifts' => $gifts,
+                'param' => $param
+            ]));
+        }
+    }
+
+    /**
+     * 获取礼包内容
+     * @param $gifts
+     * @return void
+     */
+    public static function getGiftContent(array $gifts, $scene = 'admin') {
+        $dict = (new DictLoader("MemberGift"))->load();
+
+        foreach ($gifts as $k => $item) {
+            $gifts[$k]['content'] = null;
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+                continue;
+            } else {
+                $content = $dict[$k]['content'][$scene];
+                if ($content instanceof \Closure) {
+                    $gifts[$k]['content'] = $content($item);
+                } else if (class_exists($content)) {
+                    $gifts[$k]['content'] = (new $content())->handle($item);
+                }
+            }
+        }
+        return $gifts;
+    }
+
+    /**
+     * 获取权益内容
+     * @param $gifts
+     * @return void
+     */
+    public static function getBenefitsContent(array $benefits, $scene = 'admin') {
+        $dict = (new DictLoader("MemberBenefits"))->load();
+
+        foreach ($benefits as $k => $item) {
+            $benefits[$k]['content'] = null;
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+                continue;
+            } else {
+                $content = $dict[$k]['content'][$scene];
+                if ($content instanceof \Closure) {
+                    $benefits[$k]['content'] = $content($item);
+                } else if (class_exists($content)) {
+                    $benefits[$k]['content'] = (new $content())->handle($item);
+                }
+            }
+        }
+        return $benefits;
+    }
+
+    /**
+     * 获取成长值规则内容
+     * @param $gifts
+     * @return void
+     */
+    public static function getGrowthRuleContent(array $config, $scene = 'admin') {
+        $dict = (new DictLoader("GrowthRule"))->load();
+
+        foreach ($config as $k => $item) {
+            $config[$k]['content'] = null;
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+                continue;
+            } else {
+                $content = $dict[$k]['content'][$scene];
+                if ($content instanceof \Closure) {
+                    $config[$k]['content'] = $content($item);
+                } else if (class_exists($content)) {
+                    $config[$k]['content'] = (new $content())->handle($item);
+                }
+            }
+        }
+        return $config;
+    }
+
+    /**
+     * 获取积分发放规则内容
+     * @param $gifts
+     * @return void
+     */
+    public static function getPointGrantRuleContent(array $config, $scene = 'admin') {
+        $dict = (new DictLoader("PointRule"))->load()['grant'];
+
+        foreach ($config as $k => $item) {
+            $config[$k]['content'] = null;
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+                continue;
+            } else {
+                $content = $dict[$k]['content'][$scene];
+                if ($content instanceof \Closure) {
+                    $config[$k]['content'] = $content($item);
+                } else if (class_exists($content)) {
+                    $config[$k]['content'] = (new $content())->handle($item);
+                }
+            }
+        }
+        return $config;
+    }
+
+    /**
+     * 获取积分消费规则内容
+     * @param $gifts
+     * @return void
+     */
+    public static function getPointConsumeRuleContent(array $config, $scene = 'admin') {
+        $dict = (new DictLoader("PointRule"))->load()['consume'];
+
+        foreach ($config as $k => $item) {
+            $config[$k]['content'] = null;
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+                continue;
+            } else {
+                $content = $dict[$k]['content'][$scene];
+                if ($content instanceof \Closure) {
+                    $config[$k]['content'] = $content($item);
+                } else if (class_exists($content)) {
+                    $config[$k]['content'] = (new $content())->handle($item);
+                }
+            }
+        }
+        return $config;
     }
 }

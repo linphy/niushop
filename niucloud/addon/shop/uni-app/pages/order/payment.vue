@@ -1,7 +1,7 @@
 <template>
     <view :style="themeColor()">
-        <scroll-view scroll-y="true" class="bg-[#f6f6f6] h-screen" v-if="orderData">
-            <view class="pt-[40rpx] pb-[20rpx] px-[24rpx]">
+        <view class="bg-[#f6f6f6] min-h-[100vh]" v-if="orderData">
+            <view class="pt-[40rpx] px-[24rpx] payment-bottom">
                 <!-- 配送方式 -->
                 <view class="mb-[20rpx] rounded-[16rpx] bg-white" v-if="orderData.basic.has_goods_types.includes('real') && delivery_type_list.length">
                     <view class="rounded-tl-[16rpx] rounded-tr-[16rpx] head-tab flex items-center w-full bg-[#efefef]" v-if="delivery_type_list.length > 1">
@@ -11,21 +11,20 @@
                             </view>
                             <image v-if="index === activeIndex && delivery_type_list.length == 3" class="tab-image absolute bottom-[-2rpx] h-[94rpx] w-[240rpx]" :src="img(`addon/shop/payment/tab_${index}.png`)" mode="aspectFit"></image>
                             <image v-else-if="index === activeIndex && delivery_type_list.length == 2" class="tab-img absolute  bottom-[-2rpx]  h-[95rpx] w-[354rpx]" :src="img(`addon/shop/payment/tabstyle_${index}.png`)" mode="aspectFit"></image>
-                        
+
                         </view>
                     </view>
-                    <view class="min-h-[90rpx] flex items-center px-[30rpx]">
+                    <view class="min-h-[140rpx] flex items-center px-[30rpx]">
                         <!-- 收货地址 -->
-                        <view class="w-full" v-if="['express', 'local_delivery'].includes(createData.delivery.delivery_type)"
-                            @click="toSelectAddress">
+                        <view class="w-full" v-if="['express', 'local_delivery'].includes(createData.delivery.delivery_type)" @click="toSelectAddress">
                             <view v-if="!$u.test.isEmpty(orderData.delivery.take_address)" class="py-[30rpx]">
                                 <view class="flex items-center">
                                     <image class="w-[60rpx] h-[60rpx] mr-[20rpx] flex-shrink-0" :src="img('addon/shop/payment/position_01.png')" mode="aspectFit"></image>
-                                    <view class="flex flex-col">
-                                        <text class="text-[22rpx] text-[#999]">{{orderData.delivery.take_address.full_address.split(orderData.delivery.take_address.address)[0]}}</text>
-                                        <text class="text-[32rpx] text-[#303133] mt-[10rpx]">{{orderData.delivery.take_address.address}}</text>
+                                    <view class="flex flex-col overflow-hidden">
+                                        <text class="text-[22rpx] text-[#999] truncate max-w-[536rpx]">{{orderData.delivery.take_address.full_address.split(orderData.delivery.take_address.address)[0]}}</text>
+                                        <text class="text-[32rpx] text-[#303133] mt-[10rpx] truncate max-w-[536rpx]">{{orderData.delivery.take_address.address}}</text>
                                     </view>
-                                    <text class="ml-auto iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
+                                    <text class="ml-auto nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999]"></text>
                                 </view>
                                 <view class="flex items-center text-[24rpx] text-[#666] mt-[18rpx]">
                                     <text class="mr-[16rpx]">{{ orderData.delivery.take_address.name }}</text>
@@ -35,7 +34,7 @@
                             <view v-else class="flex items-center">
                                 <image class="w-[26rpx] h-[30rpx] mr-[10rpx]" :src="img('addon/shop/payment/position_02.png')" mode="aspectFit"></image>
                                 <text class="text-[26rpx]">添加收货地址</text>
-                                <text class="iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle ml-auto"></text>
+                                <text class="nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999] ml-auto"></text>
                             </view>
                         </view>
 
@@ -47,7 +46,7 @@
                                         <view class="text-[32rpx] text-[#303133] mb-[16rpx]">{{ orderData.delivery.take_store.store_name }}</view>
                                         <view class="text-[22rpx] text-[#666]">{{ orderData.delivery.take_store.full_address }}</view>
                                     </view>
-                                    <text class="ml-auto iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
+                                    <text class="ml-auto nc-iconfont nc-icon-youV6xx text-[26rpx] text-gray-subtitle"></text>
                                 </view>
                                 <view class="text-[22rpx] text-[#666] mb-[12rpx]">手机号：{{ orderData.delivery.take_store.store_mobile }}</view>
                                 <view class="text-[22rpx] text-[#666]">营业时间：{{ orderData.delivery.take_store.trade_time }}</view>
@@ -55,7 +54,7 @@
                             <view v-else class="flex items-center w-full">
                                 <image class="w-[26rpx] h-[30rpx] mr-[10rpx]" :src="img('addon/shop/payment/position_02.png')" mode="aspectFit"></image>
                                 <text class="text-[26rpx]">请选择自提点</text>
-                                <text class="ml-auto iconfont iconxiangyoujiantou text-[26rpx] text-gray-subtitle"></text>
+                                <text class="ml-auto nc-iconfont nc-icon-youV6xx text-[26rpx] text-gray-subtitle"></text>
                             </view>
                         </view>
                     </view>
@@ -67,7 +66,7 @@
                 <view class="mb-[20rpx] p-[30rpx] rounded-[16rpx] bg-white">
                     <view class="mb-[30rpx]">
                         <view class="flex" v-for="(item, key, index) in orderData.goods_data" :key="index" :class="{'pb-[40rpx]': (index + 1) != Object.keys(orderData.goods_data).length}">
-                            <u--image class="rounded-[10rpx] overflow-hidden" width="170rpx" height="170rpx" :src="img(item.sku_image)" model="aspectFill">
+                            <u--image class="overflow-hidden" width="170rpx" height="170rpx" radius="10rpx" :src="img(item.sku_image)" model="aspectFill">
                                 <template #error>
                                     <u-icon name="photo" color="#999" size="50"></u-icon>
                                 </template>
@@ -81,7 +80,9 @@
                                         <text class="truncate bg-[#F2F2F2] px-[18rpx] py-[2rpx] rounded-[20rpx] text-[22rpx] text-[#666] leading-[28rpx] ">{{ item.sku_name }}</text>
                                     </view>
                                 </view>
-                                <u-alert type="error" description="该商品不支持当前所选配送方式" class="leading-[32rpx] !inline-block" v-if="item.not_support_delivery" fontSize="12"></u-alert>
+                                <view class="alert-wrap mt-[6rpx]">
+                                    <u-alert type="error" description="该商品不支持当前所选配送方式" class="leading-[32rpx] !inline-block" v-if="item.not_support_delivery" fontSize="12"></u-alert>
+                                </view>
                                 <view class="flex justify-between items-center">
                                     <view class="text-[var(--price-text-color)] flex items-baseline  price-font">
                                         <text class="text-[26rpx] font-500">￥</text>
@@ -96,14 +97,14 @@
                             </view>
                         </view>
                     </view>
-                    
+
                     <!-- 买家留言 -->
                     <view class="bg-white flex items-center leading-[30rpx]">
                         <view class="text-[26rpx] font-400 w-[150rpx] text-[#303133]">买家留言</view>
                         <view class="flex-1 text-[#303133]">
                             <input type="text" v-model="createData.member_remark" class="text-right text-[26rpx]" maxlength="50" placeholder="请输入留言信息给卖家" placeholder-class="text-[#999]">
                         </view>
-                        <text class="iconfont iconxiangyoujiantou text-[26rpx] text-[#666]"></text>
+                        <text class="nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999]"></text>
                     </view>
                     <!-- 发票 -->
                     <view class="flex items-center text-[#303133] leading-[30rpx] mt-[30rpx]" @click="invoiceRef.open()" v-if="invoiceRef && invoiceRef.invoiceOpen">
@@ -111,16 +112,14 @@
                         <view class="flex-1 w-0 text-right truncate">
                             <text class="text-[26rpx]">{{ createData.invoice.header_name || '不需要发票' }}</text>
                         </view>
-                        <text class="iconfont iconxiangyoujiantou text-[26rpx] text-[#666]"></text>
+                        <text class="nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999]"></text>
                     </view>
-                    
-                    
-                </view>
-                
 
-                <view class="rounded-[16rpx] bg-white mb-[20rpx] overflow-hidden" v-if="invoiceRef && invoiceRef.invoiceOpen || couponList.length">
+                </view>
+
+                <view class="rounded-[16rpx] bg-white mb-[20rpx] overflow-hidden" v-if="invoiceRef && invoiceRef.invoiceOpen && couponList.length">
                     <!-- 优惠券 -->
-                    <view class="p-[30rpx] flex items-center leading-[30rpx]" @click="couponRef.open()" v-if="couponList.length">
+                    <view class="p-[30rpx] flex items-center leading-[30rpx]" @click="couponRef.open(createData.discount.coupon_id)" v-if="couponList.length">
                         <view class="text-[26rpx] w-[150rpx] text-[#303133] flex-shrink-0">优惠券</view>
                         <view class="flex-1 flex justify-end truncate">
                             <text v-if="orderData.discount && orderData.discount.coupon" class="text-[var(--primary-color)] font-500 text-[26rpx] truncate ">
@@ -128,12 +127,12 @@
                             </text>
                             <text class="text-[26rpx] text-gray-subtitle" v-else>请选择优惠券</text>
                         </view>
-                        <text class="iconfont iconxiangyoujiantou text-[26rpx] text-[#666]"></text>
+                        <text class="nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999]"></text>
                     </view>
                 </view>
 
                 <view class="p-[30rpx] rounded-[16rpx] bg-white">
-                    <view class="text-[32rpx] font-500 text-[#303133] leading-[38rpx] mb-[24rpx]">价格明细</view>
+                    <view class="text-[28rpx] font-500 text-[#303133] leading-[38rpx] mb-[24rpx]">价格明细</view>
                     <view class="flex items-center mb-[25rpx] text-[#303133]">
                         <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">商品金额</view>
                         <view class="flex-1 w-0 text-right  price-font">
@@ -160,7 +159,7 @@
                     </view>
                 </view>
             </view>
-            <u-tabbar :fixed="true" :placeholder="true" :safeAreaInsetBottom="true">
+            <u-tabbar :fixed="true" :placeholder="true" :safeAreaInsetBottom="true" zIndex="10">
                 <view class="flex-1 flex items-center justify-between">
                     <view class="whitespace-nowrap px-[30rpx]">
                         <text class="text-[28rpx] text-[#303133] leading-[32rpx]">合计：</text>
@@ -168,7 +167,7 @@
                         <text class="text-[40rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[0] }}</text>
                         <text class="text-[24rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">.{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[1] }}</text>
                     </view>
-                    <u-button :customStyle="{width:'180rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="create">提交订单</u-button>
+                    <u-button text="提交订单" :customStyle="{width:'180rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="create"></u-button>
                 </view>
             </u-tabbar>
 
@@ -178,9 +177,10 @@
             <select-store ref="storeRef" @confirm="confirmSelectStore" />
             <!-- 发票 -->
             <invoice ref="invoiceRef" @confirm="confirmInvoice" />
-
+			<!-- 地址 -->
+			<address-list ref="addressRef" @confirm="confirmAddress" />
             <pay ref="payRef" @close="payClose" />
-        </scroll-view>
+        </view>
     </view>
 </template>
 
@@ -190,8 +190,9 @@ import { orderCreateCalculate, orderCreate } from '@/addon/shop/api/order'
 import { redirect, img, moneyFormat, mobileHide } from '@/utils/common'
 import selectCoupon from './components/select-coupon/select-coupon'
 import selectStore from './components/select-store/select-store'
+import addressList from './components/address-list/address-list'
 import invoice from './components/invoice/invoice'
-
+import { useSubscribeMessage } from '@/hooks/useSubscribeMessage'
 const createData = ref({
     order_key: '',
     member_remark: '',
@@ -206,6 +207,7 @@ const orderData = ref(null)
 const couponRef = ref()
 const storeRef = ref()
 const payRef = ref()
+const addressRef = ref()
 const invoiceRef = ref()
 const createLoading = ref(false)
 const activeIndex = ref(0)//配送方式激活
@@ -220,6 +222,7 @@ if (selectAddress) {
     createData.value.delivery.take_address_id = selectAddress.address_id
     uni.removeStorage({ key: 'selectAddressCallback' })
 }
+
 // 切换配送方式
 const switchDeliveryType = (type: string, index: number) => {
     if (createData.value.delivery.delivery_type != type) {
@@ -239,8 +242,10 @@ const calculate = () => {
         .then(({ data }) => {
             orderData.value = data
             createData.value.order_key = data.order_key
-            delivery_type_list.value = Object.values(orderData.value.delivery.delivery_type_list)
-			
+            if(orderData.value.delivery.delivery_type_list) {
+                delivery_type_list.value = Object.values(orderData.value.delivery.delivery_type_list)
+            }
+
             if (selectAddress) activeIndex.value = delivery_type_list.value.findIndex(el => el.key === orderData.value.delivery.delivery_type)
             !createData.value.delivery.delivery_type && data.delivery.delivery_type && (createData.value.delivery.delivery_type = data.delivery.delivery_type)
         })
@@ -259,6 +264,7 @@ watch(
 					switchDeliveryType(item.key, index)
 				}
 			})
+			uni.removeStorage({ key: 'distributionType' })
 		}
 	}
 )
@@ -271,18 +277,18 @@ const create = () => {
     if (!verify() || createLoading.value) return
     createLoading.value = true
 
-    orderCreate(createData.value)
-        .then(({ data }) => {
-            orderId = data.order_id
-            if (orderData.value.basic.order_money == 0) {
-                redirect({ url: '/addon/shop/pages/order/detail', param: { order_id: orderId }, mode: 'redirectTo' })
-            } else {
-                payRef.value?.open(data.trade_type, data.order_id, `/addon/shop/pages/order/detail?order_id=${data.order_id}`)
-            }
-        })
-        .catch(() => {
-            createLoading.value = false
-        })
+    useSubscribeMessage().request('shop_order_pay,shop_order_delivery')
+
+    orderCreate(createData.value).then(({ data }) => {
+        orderId = data.order_id
+        if (orderData.value.basic.order_money == 0) {
+            redirect({ url: '/addon/shop/pages/order/detail', param: { order_id: orderId }, mode: 'redirectTo' })
+        } else {
+            payRef.value?.open(data.trade_type, data.order_id, `/addon/shop/pages/order/detail?order_id=${ data.order_id }`)
+        }
+    }).catch(() => {
+        createLoading.value = false
+    })
 }
 
 /**
@@ -318,16 +324,11 @@ const payClose = () => {
  * 选择地址
  */
 const toSelectAddress = () => {
-    uni.setStorage({
-        key: 'selectAddressCallback',
-        data: {
-            back: '/addon/shop/pages/order/payment',
-            delivery: createData.value.delivery.delivery_type
-        },
-        success() {
-            redirect({ url: '/app/pages/member/address', param: { source: 'shop_order_payment',type: createData.value.delivery.delivery_type == 'local_delivery' ? 'location_address' : 'address' } })
-        }
-    })
+	let data = {};
+	data.delivery = createData.value.delivery.delivery_type;
+	data.type = createData.value.delivery.delivery_type == 'local_delivery' ? 'location_address' : 'address';
+	data.id = orderData.value.delivery.take_address.id;
+	addressRef.value.open(data);
 }
 
 const couponList = computed(() => {
@@ -346,13 +347,19 @@ const confirmSelectCoupon = (coupon: any) => {
  * 选择自提点
  */
 const confirmSelectStore = (store: any) => {
-
     createData.value.delivery.take_store_id = ((store && store.store_id) ? store.store_id: 0)
     calculate()
 }
 
 const confirmInvoice = (invoice: object) => {
     createData.value.invoice = invoice
+}
+
+const confirmAddress = (data:object) => {
+	createData.value.order_key = ''
+	createData.value.delivery.delivery_type = data.delivery
+	createData.value.delivery.take_address_id = data.address_id
+	calculate();
 }
 </script>
 
@@ -393,8 +400,14 @@ const confirmInvoice = (invoice: object) => {
 }
 
 :deep(.u-alert) {
-    padding: 6rpx 16rpx;
-    display: inline-block;
+    padding: 6rpx 16rpx !important;
+    display: inline-block !important;
+}
+.alert-wrap{
+    display: inline-block !important;
+    :deep(.u-fade-enter-active){
+        display: inline-block !important;
+    }
 }
 
 .text-ellipsis {
@@ -408,5 +421,9 @@ const confirmInvoice = (invoice: object) => {
 }
 .bg-color{
     background: linear-gradient( 94deg, var(--primary-help-color) 0%, var(--primary-color) 69%),var(--primary-color) ;
+}
+.payment-bottom{
+	padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+	padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
 }
 </style>

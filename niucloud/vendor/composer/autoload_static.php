@@ -126,6 +126,7 @@ class ComposerStaticInitf082efa3600aae2b847c3e8b4e641a4e
         'O' => 
         array (
             'Overtrue\\Socialite\\' => 19,
+            'Obs\\' => 4,
             'OSS\\' => 4,
         ),
         'N' => 
@@ -410,6 +411,10 @@ class ComposerStaticInitf082efa3600aae2b847c3e8b4e641a4e
         'Overtrue\\Socialite\\' => 
         array (
             0 => __DIR__ . '/..' . '/overtrue/socialite/src',
+        ),
+        'Obs\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/365taofang/huaweicloud-sdk-php-obs/Obs',
         ),
         'OSS\\' => 
         array (

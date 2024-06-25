@@ -12,6 +12,7 @@
 namespace addon\shop\app\service\api\cart;
 
 use addon\shop\app\model\cart\Cart;
+use addon\shop\app\service\api\goods\GoodsService;
 use addon\shop\app\service\core\cart\CoreCartService;
 use core\base\BaseApiService;
 
@@ -120,18 +121,26 @@ class CartService extends BaseApiService
      */
     public function getList($data)
     {
-        $data[ 'member_id' ] = $this->member_id;
         $field = 'id, member_id, goods_id, sku_id, num, market_type, market_type_id, status, invalid_remark';
         $order = "create_time desc";
-        return $this->model->withSearch([ "member_id" ], $data)->field($field)
+        $list = $this->model->where([ [ 'member_id', '=', $this->member_id ] ])->field($field)
             ->with([
                 'goodsSku' => function($query) {
-                    $query->withField('sku_id, sku_image, price, sale_price, stock');
+                    $query->withField('sku_id, sku_image, price, sale_price, stock,member_price');
                 },
                 'goods' => function($query) {
-                    $query->withField('goods_id, status,delete_time');
+                    $query->withField('goods_id, status,delete_time,member_discount,is_discount');
                 },
             ])->order($order)->select()->toArray();
+
+        $goods_service = new GoodsService();
+        $member_info = $goods_service->getMemberInfo();
+        foreach ($list as $k => &$v) {
+            if (!empty($v[ 'goodsSku' ])) {
+                $v[ 'goodsSku' ][ 'member_price' ] = $goods_service->getMemberPrice($member_info, $v[ 'goods' ][ 'member_discount' ], $v[ 'goodsSku' ][ 'member_price' ], $v[ 'goodsSku' ][ 'price' ]);
+            }
+        }
+        return $list;
     }
 
     /**
@@ -141,16 +150,15 @@ class CartService extends BaseApiService
      */
     public function getGoodsList($data)
     {
-        $data[ 'member_id' ] = $this->member_id;
         $field = 'id, member_id, goods_id, sku_id, num, market_type, market_type_id, status, invalid_remark';
         $order = "create_time desc";
-        return $this->model->withSearch([ "member_id" ], $data)->field($field)
+        $list = $this->model->where([ [ 'member_id', '=', $this->member_id ] ])->field($field)
             ->with([
                 'goods' => function($query) {
-                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, unit, stock, sale_num + virtual_sale_num as sale_num, status,delete_time');
+                    $query->withField('goods_id, goods_name, goods_type, sub_title, goods_cover, unit, stock, sale_num + virtual_sale_num as sale_num, status,delete_time,member_discount,is_discount');
                 },
                 'goodsSku' => function($query) {
-                    $query->withField('sku_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, is_default');
+                    $query->withField('sku_id, sku_name, sku_image, sku_no, goods_id, sku_spec_format, price, market_price, sale_price, stock, weight, volume, is_default,member_price');
                 },
                 // 商品规格项/规格值列表
                 'goodsSpec' => function($query) {
@@ -158,7 +166,14 @@ class CartService extends BaseApiService
                 },
             ])->order($order)->select()->toArray();
 
-        return ( new CoreCartService() )->getGoodsList($data);
+        $goods_service = new GoodsService();
+        $member_info = $goods_service->getMemberInfo();
+        foreach ($list as $k => &$v) {
+            if (!empty($v[ 'goodsSku' ])) {
+                $v[ 'goodsSku' ][ 'member_price' ] = $goods_service->getMemberPrice($member_info, $v[ 'goods' ][ 'member_discount' ], $v[ 'goodsSku' ][ 'member_price' ], $v[ 'goodsSku' ][ 'price' ]);
+            }
+        }
+        return $list;
     }
 
     /**
@@ -169,7 +184,7 @@ class CartService extends BaseApiService
     public function getSum($data)
     {
         $condition = [
-            [ 'member_id', '=', $this->member_id ]
+            [ 'member_id', '=', $this->member_id ],
         ];
         if (!empty($data[ 'goods_id' ])) {
             $condition[] = [ 'goods_id', '=', $data[ 'goods_id' ] ];

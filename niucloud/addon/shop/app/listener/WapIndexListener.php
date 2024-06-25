@@ -11,8 +11,6 @@
 
 namespace addon\shop\app\listener;
 
-use app\service\core\site\CoreSiteService;
-
 /**
  * 手机端首页加载事件
  */

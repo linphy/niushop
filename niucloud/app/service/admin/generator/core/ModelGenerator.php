@@ -308,16 +308,17 @@ class ModelGenerator extends BaseGenerator
      */
     public function getSoftDeleteFunction()
     {
-        $data = [];
+        $data = [
+            'softDelete' => '',
+            'deleteColumn' => '',
+            'deleteColumnValue' => '',
+        ];
         foreach ($this->tableColumn as $column) {
-            if ($column['is_delete'] == 0) {
-                $data['softDelete'] = '';
-                $data['deleteColumn'] = '';
-                $data['deleteColumnValue'] = '';
-            }else{
+            if ($column['is_delete']) {
                 $data['softDelete'] = ' use SoftDelete;';
                 $data['deleteColumn'] = '/**'.PHP_EOL.'    * 定义软删除标记字段.'.PHP_EOL.'    * @var string'.PHP_EOL.'    */'.PHP_EOL.'    protected $deleteTime = '."'".$column['column_name']."';";
                 $data['deleteColumnValue'] = '/**'.PHP_EOL.'    * 定义软删除字段的默认值.'.PHP_EOL.'    * @var int'.PHP_EOL.'    */'.PHP_EOL.'    protected $defaultSoftDelete = 0;';
+                break;
             }
         }
         return $data;

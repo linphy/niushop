@@ -44,7 +44,7 @@ class Store extends BaseModel
     public function searchStoreNameAttr($query, $value, $data)
     {
         if ($value) {
-            $query->where("store_name", $value);
+            $query->where("store_name", "like", "%" . $value . "%");
         }
     }
 

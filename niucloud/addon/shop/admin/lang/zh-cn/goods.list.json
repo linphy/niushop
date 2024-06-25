@@ -64,10 +64,20 @@
   "marketPriceTips": "划线价格式输入错误",
   "marketPriceNotZeroTips": "划线价不能小于0",
 
+  "market_price": "划线价",
+  "market_pricePlaceholder": "请输入划线价",
+  "market_priceTips": "划线价格式输入错误",
+  "market_priceNotZeroTips": "划线价不能小于0",
+
   "costPrice": "成本价",
   "costPricePlaceholder": "请输入成本价",
   "costPriceTips": "成本价格式输入错误",
   "costPriceNotZeroTips": "成本价不能小于0",
+
+  "cost_price": "成本价",
+  "cost_pricePlaceholder": "请输入成本价",
+  "cost_priceTips": "成本价格式输入错误",
+  "cost_priceNotZeroTips": "成本价不能小于0",
 
   "stockPlaceholder": "请输入库存",
   "stockTips": "库存格式输入错误",
@@ -76,5 +86,26 @@
   "goodsSpreadTitle": "商品推广",
   "spreadLink": "推广链接",
   "copy": "复制",
-  "downloadQrcode": "下载二维码"
+  "downloadQrcode": "下载二维码",
+
+  "memberPrice": "会员价",
+  "editMemberPricePopupTitle": "编辑会员价",
+  "memberDiscount": "会员价优惠方式",
+  "discount": "会员折扣",
+  "fixedPrice": "指定会员价",
+  "nonparticipation": "不参与",
+  "goodsSku": "商品规格",
+  "memberEnjoyDiscount": "会员享受折扣",
+  "discountUnit": "折",
+  "yuanUnit": "元",
+  "editMemberPrice": "修改会员价",
+  "memberLevel": "会员等级",
+  "memberPricePlaceholder": "请输入会员价",
+  "discountHint": "会员折扣说明：按照默认会员等级折扣优惠",
+  "fixedPriceHint": "会员价说明：指定优惠价格，商品未参与活动时，按照会员价优惠，若商品参与活动，则以活动价为准"
+  
+  
+  
+  
+  
 }

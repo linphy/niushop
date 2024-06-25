@@ -177,6 +177,7 @@ class CoreMenuService extends BaseCoreService
      */
     public function getRoutePathByMenuKey($menu_key, $paths = []) {
         $menu = $this->model->where([ ['menu_key', '=', $menu_key], ['app_type', '=', 'admin'] ])->field('parent_key,router_path')->find();
+        if (empty($menu)) return '';
         array_unshift($paths, $menu['router_path']);
         if (!empty($menu['parent_key'])) {
             return $this->getRoutePathByMenuKey($menu['parent_key'], $paths);

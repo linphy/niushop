@@ -15,6 +15,7 @@ use app\dict\member\MemberAccountChangeTypeDict;
 use app\dict\member\MemberAccountTypeDict;
 use app\service\api\member\MemberAccountService;
 use core\base\BaseApiController;
+use core\exception\AdminException;
 use think\db\exception\DbException;
 use think\Response;
 
@@ -52,6 +53,18 @@ class Account extends BaseApiController
     }
 
     /**
+     * 余额流水(新)
+     * @return Response
+     */
+    public function balanceList(): Response
+    {
+        $data = $this->request->params([
+            ['from_type', '']
+        ]);
+        return success((new MemberAccountService())->getPages($data));
+    }
+
+    /**
      * 零钱流水
      * @return Response
      */
@@ -85,7 +98,9 @@ class Account extends BaseApiController
     public function commission(): Response
     {
         $data = $this->request->params([
-            ['from_type', '']
+            ['from_type', ''],
+            ['account_data_gt', ''],
+            ['account_data_lt', ''],
         ]);
         $data['account_type'] = MemberAccountTypeDict::COMMISSION;
         return success((new MemberAccountService())->getPage($data));
@@ -98,8 +113,13 @@ class Account extends BaseApiController
      */
     public function getFromType($account_type): Response
     {
-
+        if (!array_key_exists($account_type, MemberAccountTypeDict::getType())) throw new AdminException('MEMBER_TYPE_NOT_EXIST');
         return success(MemberAccountChangeTypeDict::getType($account_type));
+    }
+
+    public function pointCount()
+    {
+        return success((new MemberAccountService())->getPointCount());
     }
 
 }

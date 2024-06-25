@@ -12,8 +12,10 @@
 namespace addon\shop\app\model\order;
 
 use addon\shop\app\dict\order\InvoiceDict;
+use app\model\member\Member;
 use core\base\BaseModel;
 use think\db\Query;
+use think\model\relation\HasOne;
 
 /**
  * 发票模型
@@ -126,5 +128,34 @@ class Invoice extends BaseModel
     public function getTypeNameAttr($value, $data)
     {
         return InvoiceDict::getType()[ $data[ 'type' ] ] ?? '';
+    }
+
+    /**
+     * 获取开票状态
+     * @param $value
+     * @param $data
+     * @return mixed|string
+     */
+    public function getIsInvoiceNameAttr($value, $data)
+    {
+        return InvoiceDict::getIsInvoice()[ $data[ 'is_invoice' ] ] ?? '';
+    }
+
+    /**
+     * 开票会员
+     * @return HasOne
+     */
+    public function member()
+    {
+        return $this->hasOne(Member::class, 'member_id', 'member_id');
+    }
+
+    /**
+     * 开票订单
+     * @return HasOne
+     */
+    public function shopOrder()
+    {
+        return $this->hasOne(Order::class, 'order_id', 'trade_id');
     }
 }

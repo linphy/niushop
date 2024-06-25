@@ -22,7 +22,7 @@ use core\poster\PosterLoader;
 use Throwable;
 
 /**
- * 图片处理层
+ * 自定义海报处理层
  */
 class CorePosterService extends BaseCoreService
 {
@@ -35,100 +35,120 @@ class CorePosterService extends BaseCoreService
      */
     public function add($addon, $data)
     {
-        $data['addon'] = $addon;
-        (new Poster())->create($data);
+        $data[ 'addon' ] = $addon;
+        ( new Poster() )->create($data);
         return true;
     }
 
+    /**
+     * 删除自定义海报
+     * @param $condition
+     * @return bool
+     */
+    public function del($condition)
+    {
+        return ( new Poster() )->where($condition)->delete();
+    }
 
     /**
      * 海报类型
-     * @return void
+     * @param string $type
+     * @return array
      */
-    public function getType()
+    public function getType($type = '')
     {
-        return PosterDict::getType();
+        return PosterDict::getType($type);
     }
 
     /**
-     *海报变量
+     * 海报模板
      * @param $addon
+     * @param $type
      * @return array|null
      */
-    public function getVars($addon)
-    {
-        $addon_load = new DictLoader('Poster');
-        return $addon_load->loadVars([
-            'addon' => $addon
-        ]);
-    }
-
-    /**
-     *海报模板
-     * @param $addon
-     * @return array|null
-     */
-    public function getTemplateList($addon = '')
+    public function getTemplateList($addon = '', $type = '')
     {
         $addon_load = new DictLoader('Poster');
         return $addon_load->load([
-            'addon' => $addon
+            'addon' => $addon,
+            'type' => $type
         ]);
     }
 
     /**
      * 实例化模板引擎
-     * @param $poster_type
-     * @return \core\upload\UploadLoader|void
+     * @param string $poster_type
+     * @return PosterLoader
      */
     public function driver($poster_type = 'poster')
     {
-
-        //查询启用的上传方式
         return new PosterLoader($poster_type, []);
     }
 
     /**
      * 获取海报
+     * @param string|int $id 海报id
      * @param string|int $type 模板类型
      * @param array $param
+     * @param string $channel
      * @param bool $is_throw_exception
      * @return string|void
      */
-    public function get(string|int $type, array $param = [], string $channel = '', bool $is_throw_exception = true)
+    public function get($id, $type, array $param = [], $channel = '', $is_throw_exception = true)
     {
-        //先查询模板,如果不存在就抛出异常
-        $poster = (new Poster())->where([['type', '=', $type], ['status', '=', PosterDict::ON]])->findOrEmpty();
+        $condition = [
+            [ 'type', '=', $type ],
+            [ 'status', '=', PosterDict::ON ],
+        ];
+        if (!empty($id)) {
+            // 查询指定海报
+            $condition[] = [ 'id', '=', $id ];
+        } else {
+            // 查询默认海报
+            $condition[] = [ 'is_default', '=', 1 ];
+        }
+        $poster = ( new Poster() )->where($condition)->findOrEmpty();
+
         try {
-            if ($poster->isEmpty()){
-                //临时plain
-                $template = array_column($this->getTemplateList(), null, 'type');
-                $poster = $template[$type] ?? [];
-            }else{
+
+            if ($poster->isEmpty()) {
+                // 查询指定类型的海报模板
+                $template = $this->getTemplateList('', $type);
+                if (!empty($template)) {
+                    $poster = $template[ 0 ][ 'data' ];
+                }
+            } else {
                 $poster = $poster->toArray();
-                $poster = $poster['value'];
+                $poster = $poster[ 'value' ];
             }
-            if(empty($poster)) throw new CommonException('海报模板不存在');
 
+            if (empty($poster)) throw new CommonException('海报模板不存在');
 
-            //各类型没模板整理模板数据
-            $poster_data = array_values(array_filter(event('GetPosterData', [
+            $poster_data = [];
+            $poster_data_arr = array_values(array_filter(event('GetPosterData', [
                 'type' => $type,
                 'param' => $param,
                 'channel' => $channel
-            ])))[0] ?? [];
-            $dir = 'upload/poster/';
+            ])));
+
+            // 合并模版数据
+            foreach ($poster_data_arr as $k => $v) {
+                $poster_data = array_merge($poster_data, $v);
+            }
+
+            $dir = 'upload/poster';
             $temp1 = md5(json_encode($poster));
             $temp2 = md5(json_encode($poster_data));
-            $file_path = 'poster' . $temp1 . '_' . $temp2 . '.png';
-            $path = $dir . '/'. $file_path;
+            $file_path = 'poster' . $temp1 . '_' . $temp2 .'_'.$channel. '.png';
+            $path = $dir . '/' . $file_path;
+
             //判断当前海报是否存在,存在直接返回地址,不存在的话则创建
             if (is_file($path)) {
                 return $path;
             } else {
                 return $this->create($poster, $poster_data, $dir, $file_path, $channel);
             }
-        } catch ( Throwable $e ) {
+        } catch (Throwable $e) {
             if ($is_throw_exception) {
                 throw new CommonException($e->getMessage() . $e->getFile() . $e->getLine());
             } else {
@@ -140,74 +160,46 @@ class CorePosterService extends BaseCoreService
 
     /**
      * 生成海报
-     * @param $poster
-     * @param $data 填充数据(存在映射关系)
-     * @param $dir
-     * @param $file_path
-     * @param $channel
-     * @return void
+     * @param array $poster
+     * @param array $data 填充数据(存在映射关系)
+     * @param string $dir
+     * @param string $file_path
+     * @param string $channel
+     * @return string|null
      */
     public function create(array $poster, array $data, string $dir, string $file_path, string $channel = '')
     {
         //将模版中的部分待填充值替换
         $core_upload_service = new CoreFetchService();
-        if ($poster['bg_type'] == 'url') {
-            if (str_contains($poster['bg_url'], 'http://') || str_contains($poster['bg_url'], 'https://')) {
+        if ($poster[ 'global' ][ 'bgType' ] == 'url') {
+            if (!empty($poster[ 'global' ][ 'bgUrl' ]) && str_contains($poster[ 'global' ][ 'bgUrl' ], 'http://') || str_contains($poster[ 'global' ][ 'bgUrl' ], 'https://')) {
                 //判断是否是是远程图片,远程图片需要本地化
-                $temp_dir = 'file/' . 'image' . '/' . date('Ym') . '/' . date('d');
+                $temp_dir = 'file/image/' . date('Ym') . '/' . date('d');
                 try {
-                    $poster['bg_url'] = $core_upload_service->image($poster['bg_url'], $temp_dir, FileDict::LOCAL)['url'] ?? '';
-                } catch ( \Exception $e ) {
+                    $poster[ 'global' ][ 'bgUrl' ] = $core_upload_service->image($poster[ 'global' ][ 'bgUrl' ], $temp_dir, FileDict::LOCAL)[ 'url' ] ?? '';
+                } catch (\Exception $e) {
 
                 }
             }
         }
 
-        foreach ($poster['items'] as &$v) {
+        foreach ($poster[ 'value' ] as &$v) {
             foreach ($data as $data_k => $data_v) {
-                if ($data_k == $v['relate']) {
-                    $v['value'] = $data_v;
-                    //如果类型是二维码的话就根据生成渠道生成对应的二维码
-                    if ($v['type'] == 'qrcode') {
-                        $v['type'] = 'image';
-                        //将二维码类型转化为图片类型,并且将二维码链接转化为图片路径
-
-                        $v['value'] = qrcode($data_v['url'], $data_v['page'], $data_v['data'], '', $channel);
-                    } else if ($v['type'] == 'image') {//校验图片文件是否是远程文件
-                        if (str_contains($v['value'], 'http://') || str_contains($v['value'], 'https://')) {
+                if ($data_k == $v[ 'relate' ]) {
+                    $v[ 'value' ] = $data_v; // 赋值
+                    // 如果类型是二维码的话就根据渠道生成对应的二维码
+                    if ($v[ 'type' ] == 'qrcode') {
+                        $v[ 'type' ] = 'image';
+                        // 将二维码类型转化为图片类型,并且将二维码链接转化为图片路径
+                        $v[ 'value' ] = qrcode($data_v[ 'url' ], $data_v[ 'page' ], $data_v[ 'data' ], '', $channel);
+                    } else if ($v[ 'type' ] == 'image') {//校验图片文件是否是远程文件
+                        if (str_contains($v[ 'value' ], 'http://') || str_contains($v[ 'value' ], 'https://')) {
                             //判断是否是是远程图片,远程图片需要本地化
-                            $temp_dir = 'file/' . 'image' . '/' . date('Ym') . '/' . date('d');
+                            $temp_dir = 'file/image/' . date('Ym') . '/' . date('d');
                             try {
-                                $v['value'] = $core_upload_service->image($v['value'], $temp_dir, FileDict::LOCAL)['url'] ?? '';
-                            } catch ( \Exception $e ) {
-                                $v['value'] = '';
-                            }
-                        }else{
-                            $temp_img = $v['value'];
-                            $image_info = getimagesize($temp_img);
-                            $image_type = $image_info[2];
-                            if($image_type == IMAGETYPE_WEBP){
-                                // 保存图片为PNG格式
-                                $image = imagecreatefromwebp($temp_img);
-                            }
-                            // 创建图片资源
-                            // 检查图片是否创建成功
-                            if (!empty($image)){
-
-                                // 图片类型常量定义：IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF
-                                if ($image_type == IMAGETYPE_WEBP) {
-                                    $temp_arr = explode('.', $temp_img);
-                                    $ext = end($temp_arr);
-                                    if($ext == 'jpg' || $ext == 'jpeg'){
-                                        // 保存图片为PNG格式
-                                        imagejpeg($image, $temp_img);
-                                    }else if($ext = 'png'){
-                                        // 保存图片为PNG格式
-                                        imagepng($image, $temp_img);
-                                    }
-                                }
-                                // 释放内存
-                                imagedestroy($image);
+                                $v[ 'value' ] = $core_upload_service->image($v[ 'value' ], $temp_dir, FileDict::LOCAL)[ 'url' ] ?? '';
+                            } catch (\Exception $e) {
+                                $v[ 'value' ] = '';
                             }
                         }
 
@@ -215,12 +207,13 @@ class CorePosterService extends BaseCoreService
                 }
             }
         }
+
         if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
+
         //将填充后的数据赋值
         return $this->driver('poster')->createPoster($poster, $dir, $file_path);
     }
-
 
 }

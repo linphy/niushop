@@ -15,10 +15,9 @@ use addon\shop\app\service\admin\marketing\MarketingService;
 use core\base\BaseAdminController;
 
 
-
 /**
  * 营销中心控制器
- * Class GoodsSpec
+ * Class Index
  * @package addon\shop\app\adminapi\controller\marketing
  */
 class Index extends BaseAdminController

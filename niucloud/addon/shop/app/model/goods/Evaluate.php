@@ -51,7 +51,8 @@ class Evaluate extends BaseModel
             ->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
     }
 
-    public function orderGoods(){
+    public function orderGoods()
+    {
         return $this->hasOne(OrderGoods::class, 'order_goods_id', 'order_goods_id');
     }
 
@@ -63,9 +64,7 @@ class Evaluate extends BaseModel
      */
     public function getAuditNameAttr($value, $data)
     {
-        if (!empty($data[ 'is_audit' ])) {
-            return EvaluateDict::getStatus()[ $data[ 'is_audit' ] ] ?? '';
-        }
+        return EvaluateDict::getStatus()[ $data[ 'is_audit' ] ] ?? '';
     }
 
     /**
@@ -78,11 +77,11 @@ class Evaluate extends BaseModel
     public function getImageSmallAttr($value, $data)
     {
         if (!empty($data[ 'images' ])) {
-            $samll_arr = [];
+            $small_arr = [];
             foreach ($data[ 'images' ] as $k => $v) {
-                $samll_arr[] = get_thumb_images($v, FileDict::SMALL);
+                $small_arr[] = get_thumb_images($v, FileDict::SMALL);
             }
-            return $samll_arr;
+            return $small_arr;
         }
         return [];
     }
@@ -97,11 +96,11 @@ class Evaluate extends BaseModel
     public function getImageBigAttr($value, $data)
     {
         if (!empty($data[ 'images' ])) {
-            $samll_arr = [];
+            $small_arr = [];
             foreach ($data[ 'images' ] as $k => $v) {
-                $samll_arr[] = get_thumb_images($v, FileDict::BIG);
+                $small_arr[] = get_thumb_images($v, FileDict::BIG);
             }
-            return $samll_arr;
+            return $small_arr;
         }
         return [];
     }
@@ -116,11 +115,11 @@ class Evaluate extends BaseModel
     public function getImageMidAttr($value, $data)
     {
         if (!empty($data[ 'images' ])) {
-            $samll_arr = [];
+            $small_arr = [];
             foreach ($data[ 'images' ] as $k => $v) {
-                $samll_arr[] = get_thumb_images($v, FileDict::MID);
+                $small_arr[] = get_thumb_images($v, FileDict::MID);
             }
-            return $samll_arr;
+            return $small_arr;
         }
         return [];
     }
@@ -138,8 +137,16 @@ class Evaluate extends BaseModel
         }
     }
 
-    public function getMemberNameAttr($value, $data) {
-        if (isset($data['is_anonymous']) && $data['is_anonymous'] == 1) {
+    public function searchGoodsIdAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("goods_id", "=", $value);
+        }
+    }
+
+    public function getMemberNameAttr($value, $data)
+    {
+        if (isset($data[ 'is_anonymous' ]) && $data[ 'is_anonymous' ] == 1) {
             return '匿名买家';
         }
         return $value;

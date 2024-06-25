@@ -15,8 +15,8 @@
                     <view class=" py-[20rpx] px-[24rpx] bg-[#fff] mb-[20rpx] rounded-[12rpx]">
                         <view class="flex items-center  justify-between">
                             <view class="flex items-center">
-                                <u-avatar class="mr-[10rpx]" :src="img(item.member_head)" :size="'50rpx'" leftIcon="none"></u-avatar>
-                                <text class="text-[28rpx]">{{ item.member_name }}</text>
+                                <u-avatar :src="img(item.member_head)" :size="'50rpx'" leftIcon="none"></u-avatar>
+                                <text class="text-[28rpx] ml-[10rpx]">{{ item.member_name }}</text>
                             </view>
                             <text class="text--[26rpx] text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : '' }}</text>
                         </view>
@@ -25,7 +25,7 @@
                             <u-rate :count="5" v-model="item.scores" active-color="var(--primary-color)" :size="'32rpx'" readonly></u-rate>
                             <text class="ml-[20rpx] text-[28rpx] text-[#888]">{{ item.scores === 1 ? '差评' : item.scores === 2 || item.scores === 3 ? '中评' : '好评' }}</text>
                         </view>
-                        <view class="text-[26rpx] text-[#666] my-[20rpx] overflow-clip">{{ item.content }}</view>
+                        <view class="text-[26rpx] break-all leading-[1.2] text-[#666] my-[20rpx] overflow-clip">{{ item.content }}</view>
                         <template v-if="item.image_mid.length === 1">
                             <u--image class="rounded-[8rpx] overflow-hidden mt-[10rpx]" width="420rpx" height="420rpx" :src="img(item.image_mid[0])" model="aspectFill" @click="imgListPreview(item.images[0])">
                                 <template #error>
@@ -104,7 +104,7 @@
                                 </u--image>
                             </view>
                         </template>
-                        <view v-if="item.explain_first !=''" class="text-[26rpx]  !text-[#666] mt-[20rpx] pt-[20rpx] border-0 border-t-[2rpx] border-solid border-[#ebebec] w-[100%] overflow-clip leading-[1.2]">
+                        <view v-if="item.explain_first !=''" class="text-[26rpx]  !text-[#666] mt-[20rpx] pt-[20rpx] border-0 border-t-[2rpx] border-solid border-[#ebebec] w-[100%] overflow-clip leading-[1.2]  break-all">
                             <text class=" text-[var(--primary-color)]">商家回复：</text>{{ item.explain_first }}
                         </view>
                     </view>
@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { img } from '@/utils/common'
 import { getEvaluateList } from '@/addon/shop/api/evaluate'
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
@@ -186,6 +186,13 @@ const imgListPreview = (item:any) => {
         urls: urlList
     })
 }
+
+//关闭预览图片
+onUnload(()=>{
+	// #ifdef  H5 || APP
+	uni.closePreviewImage()
+	// #endif
+})
 </script>
 
 <style lang="scss" scoped>

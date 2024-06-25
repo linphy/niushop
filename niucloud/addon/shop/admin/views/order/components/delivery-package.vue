@@ -1,6 +1,5 @@
 <template>
-    <el-dialog v-model="showDialog" :title="t('packageInfo')" width="700px"
-        class="diy-dialog-wrap" :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="t('packageInfo')" width="700px" class="diy-dialog-wrap" :destroy-on-close="true">
         <div v-loading="loading" class="max-h-[600px] overflow-y-auto">
 			<h3 class="panel-title">{{ t('deliveryInfo') }}</h3>
 	        <div class="mb-[20px] text-[14px] flex justify-between">

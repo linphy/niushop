@@ -25,7 +25,7 @@
     "insert":"添加",
     "paperInvoice":"纸质发票",
     "electronicInvoice":"电子发票",
-    "invoicePlaceholder1":"所有发票内容不能为空",
+    "invoicePlaceholder":"所有发票内容不能为空",
     "invoiceType":"发票类型",
     "invoiceTypePlaceholder":"请至少选择一个发票类型",
 	"evaluate": "评价设置",

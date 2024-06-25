@@ -30,6 +30,7 @@ class MemberAccountTypeDict
     //会员佣金
     public const COMMISSION = 'commission';
 
+    public const GROWTH = 'growth';
 
     public static function getType($type = '')
     {
@@ -38,6 +39,7 @@ class MemberAccountTypeDict
             self::BALANCE => get_lang('dict_member.account_balance'),
             self::MONEY => get_lang('dict_member.account_money'),
             self::COMMISSION => get_lang('dict_member.account_commission'),
+            self::GROWTH => get_lang('dict_member.account_growth'),
         ];
         if (empty($type)) {
             return $data;

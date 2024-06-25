@@ -11,6 +11,7 @@
 
 namespace addon\shop\app\service\admin\marketing;
 
+use addon\shop\app\dict\coupon\CouponDict;
 use addon\shop\app\model\coupon\Coupon;
 use addon\shop\app\model\coupon\CouponGoods;
 use addon\shop\app\model\coupon\CouponMember;
@@ -68,7 +69,7 @@ class CouponService extends BaseAdminService
     {
         $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
         $order = 'id desc';
-        $search_model = $this->model->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         foreach ($list[ 'data' ] as $k => &$v) {
             if ($v[ 'remain_count' ] != '-1') {
@@ -81,6 +82,22 @@ class CouponService extends BaseAdminService
             $v[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $v[ 'id' ] ], [ 'use_time', '>', 1 ] ])->count();
         }
         return $list;
+    }
+
+    /**
+     * 查询选中的优惠券
+     * @param string $coupon_ids
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getSelectedList(string $coupon_ids = '')
+    {
+        if (empty($coupon_ids)) return [];
+        $field = 'id,title,price,type,receive_type,start_time,end_time,remain_count,receive_count,status,limit_count,min_condition_money,receive_status,valid_type,length,valid_end_time';
+        $order = 'id desc';
+        return $this->model->where([ [ 'id', 'in', $coupon_ids ] ])->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -155,6 +172,10 @@ class CouponService extends BaseAdminService
                 if (!empty($data[ 'receive_time' ])) {
                     $data[ 'start_time' ] = strtotime($data[ 'receive_time' ][ 0 ]);
                     $data[ 'end_time' ] = strtotime($data[ 'receive_time' ][ 1 ]);
+                    $now_time = strtotime(date('Y-m-d', time()));
+                    if ($data[ 'start_time' ] > $now_time) {
+//                        $data[ 'status' ] = 0; // 活动未开始
+                    }
                 } else {
                     $data[ 'start_time' ] = '';
                     $data[ 'end_time' ] = '';
@@ -196,22 +217,14 @@ class CouponService extends BaseAdminService
                 }
             }
             if (!empty($data[ 'goods_category_ids' ])) {
-
-                $data[ 'goods_category_ids' ] = array_count_values(call_user_func_array('array_merge', $data[ 'goods_category_ids' ]));
-                foreach ($data[ 'goods_category_ids' ] as $k => $v) {
-                    if ($v != 1) {
-                        unset($data[ 'goods_category_ids' ][ $k ]);
-                    }
-                }
-                $data[ 'goods_category_ids' ] = array_keys($data[ 'goods_category_ids' ]);
                 Db::startTrans();
                 try {
                     $res = $this->model->create($data);
                     $coupon_goods = [];
-                    foreach ($data[ 'goods_category_ids' ] as $value) {
+                    foreach ($data[ 'goods_category_ids' ] as $category) {
                         $coupon_goods[] = [
                             'coupon_id' => $res->id,
-                            'category_id' => $value,
+                            'category_id' => $category[ count($category) - 1 ],
                         ];
                     }
 
@@ -237,11 +250,7 @@ class CouponService extends BaseAdminService
      */
     public function edit(int $id, array $data)
     {
-        $coupon_member_model = new CouponMember();
-        $coupon_member = $coupon_member_model->where([ [ 'coupon_id', '=', $id ] ])->findOrEmpty();
-        if (!$coupon_member->isEmpty()) {
-            throw new AdminException('该优惠券已被用户领取无法修改');
-        }
+
         if ($data[ 'threshold' ] == 2) {
             $data[ 'min_condition_money' ] = 0;
         }
@@ -257,6 +266,10 @@ class CouponService extends BaseAdminService
                 if (!empty($data[ 'receive_time' ])) {
                     $data[ 'start_time' ] = strtotime($data[ 'receive_time' ][ 0 ]);
                     $data[ 'end_time' ] = strtotime($data[ 'receive_time' ][ 1 ]);
+                    $now_time = strtotime(date('Y-m-d', time()));
+                    if ($data[ 'start_time' ] > $now_time) {
+//                        $data[ 'status' ] = 0; // 活动未开始
+                    }
                 } else {
                     $data[ 'start_time' ] = '';
                     $data[ 'end_time' ] = '';
@@ -285,6 +298,7 @@ class CouponService extends BaseAdminService
         unset($data[ 'receive_time' ]);
         unset($data[ 'valid_time' ]);
         unset($data[ 'receive_type_time' ]);
+        unset($data[ 'type' ]);
 
         $coupon_goods_model = new CouponGoods();
         if (!empty($data[ 'goods_ids' ])) {
@@ -310,22 +324,14 @@ class CouponService extends BaseAdminService
                 throw new CommonException($e->getMessage());
             }
         } else if (!empty($data[ 'goods_category_ids' ])) {
-            $data[ 'goods_category_ids' ] = array_count_values(call_user_func_array('array_merge', $data[ 'goods_category_ids' ]));
-            foreach ($data[ 'goods_category_ids' ] as $k => $v) {
-                if ($v != 1) {
-                    unset($data[ 'goods_category_ids' ][ $k ]);
-                }
-            }
-            $data[ 'goods_category_ids' ] = array_keys($data[ 'goods_category_ids' ]);
             Db::startTrans();
             try {
-
                 $coupon_goods = [];
                 $coupon_goods_model->where([ [ 'coupon_id', '=', $id ] ])->delete();
-                foreach ($data[ 'goods_category_ids' ] as $value) {
+                foreach ($data[ 'goods_category_ids' ] as $category) {
                     $coupon_goods[] = [
                         'coupon_id' => $id,
-                        'category_id' => $value,
+                        'category_id' => $category[ count($category) - 1 ],
                     ];
                 }
                 $coupon_goods_model->saveAll($coupon_goods);
@@ -362,7 +368,8 @@ class CouponService extends BaseAdminService
     public function del(int $id)
     {
         $coupon_member_model = new CouponMember();
-        $coupon_member_info = $coupon_member_model->where([ [ 'coupon_id', '=', $id ] ])->find();
+        // 检测是否存在未使用的优惠券
+        $coupon_member_info = $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', 1 ] ])->find();
         if ($coupon_member_info) {
             throw new AdminException('该优惠券已被用户领取无法删除');
         }
@@ -398,8 +405,23 @@ class CouponService extends BaseAdminService
      */
     public function setStatus($id, $status)
     {
-        $data = array (
+        $data = array(
             'receive_status' => $status
+        );
+        $this->model->where([ [ 'id', '=', $id ] ])->update($data);
+        return true;
+    }
+
+    /**
+     * 优惠券失效
+     * @param $id
+     * @param $status
+     * @return true
+     */
+    public function couponInvalid($id)
+    {
+        $data = array(
+            'status' => CouponDict::INVALID
         );
         $this->model->where([ [ 'id', '=', $id ] ])->update($data);
         return true;

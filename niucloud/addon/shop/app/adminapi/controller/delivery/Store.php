@@ -105,5 +105,14 @@ class Store extends BaseAdminController
         return success('DELETE_SUCCESS');
     }
 
+    public function getList()
+    {
+        $data = $this->request->params([
+            ["store_name",""],
+            ["create_time",["",""]]
+        ]);
+        return success((new StoreService())->getList($data));
+    }
+
 
 }

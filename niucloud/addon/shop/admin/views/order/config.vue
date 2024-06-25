@@ -85,14 +85,14 @@
                         <el-radio label="1">{{ t('isInvoiceOpen') }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item  class="invoice" >
+                <el-form-item class="invoice">
                     <div class="flex">
                         <div>{{ t('invoiceContent') }}</div>
                         <div class="mx-[10px]">
                             <el-form-item :prop="`invoice_content[${index}]`" v-for="(item, index) in formData.invoice_content" :key="index" :rules="[{ validator: (rule:any, value:any, callback:Function) => {
                                         if (formData.is_invoice === '1') {
                                             if (value === ''){
-                                                return callback(t('invoicePlaceholder1'))
+                                                return callback(t('invoicePlaceholder'))
                                             } else {
                                                 return callback()
                                             }

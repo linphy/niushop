@@ -149,8 +149,6 @@ class Coupon extends BaseModel
      */
     public function getStatusNameAttr($value, $data)
     {
-        if (empty($data['status']))
-            return '';
         return CouponDict::getStatus()[$data['status']] ?? '';
     }
 

@@ -27,10 +27,9 @@ class MemberLabel extends BaseAdminController
     public function lists()
     {
         $data = $this->request->params([
-
-            ['label_name', ''],
+            [ 'label_name', '' ],
         ]);
-        return success((new MemberLabelService())->getPage($data));
+        return success(( new MemberLabelService() )->getPage($data));
     }
 
     /**
@@ -40,7 +39,7 @@ class MemberLabel extends BaseAdminController
      */
     public function info(int $id)
     {
-        return success((new MemberLabelService())->getInfo($id));
+        return success(( new MemberLabelService() )->getInfo($id));
     }
 
     /**
@@ -51,27 +50,27 @@ class MemberLabel extends BaseAdminController
     {
         $data = $this->request->params([
 
-            ['label_name', ''],
-            ['memo', ''],
-            ['sort', 0],
+            [ 'label_name', '' ],
+            [ 'memo', '' ],
+            [ 'sort', 0 ],
         ]);
         $this->validate($data, 'app\validate\member\MemberLabel.add');
-        $id = (new MemberLabelService())->add($data);
-        return success('ADD_SUCCESS', ['label_id' => $id]);
+        $id = ( new MemberLabelService() )->add($data);
+        return success('ADD_SUCCESS', [ 'label_id' => $id ]);
     }
 
     /**
-     * 菜单或接口更新
+     * 编辑会员标签
      */
     public function edit($id)
     {
         $data = $this->request->params([
-            ['label_name', ''],
-            ['memo', ''],
-            ['sort', 0],
+            [ 'label_name', '' ],
+            [ 'memo', '' ],
+            [ 'sort', 0 ],
         ]);
         $this->validate($data, 'app\validate\member\MemberLabel.edit');
-        (new MemberLabelService())->edit($id, $data);
+        ( new MemberLabelService() )->edit($id, $data);
         return success('EDIT_SUCCESS');
     }
 
@@ -82,8 +81,7 @@ class MemberLabel extends BaseAdminController
      */
     public function del(int $id)
     {
-
-        (new MemberLabelService())->del($id);
+        ( new MemberLabelService() )->del($id);
         return success('DELETE_SUCCESS');
     }
 
@@ -96,7 +94,7 @@ class MemberLabel extends BaseAdminController
      */
     public function getAll()
     {
-        return success((new MemberLabelService())->getAll());
+        return success(( new MemberLabelService() )->getAll());
     }
 
 }

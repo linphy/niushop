@@ -34,7 +34,7 @@ class DiyRoute extends BaseAdminController
             [ 'url', '' ], // 路由地址，格式：/app/pages/index/index
             [ 'addon_name', '' ] // 插件标识
         ]);
-        return success((new DiyRouteService())->getList($data));
+        return success(( new DiyRouteService() )->getList($data));
     }
 
     /**
@@ -44,7 +44,7 @@ class DiyRoute extends BaseAdminController
      */
     public function info(int $id)
     {
-        return success((new DiyRouteService())->getInfo($id));
+        return success(( new DiyRouteService() )->getInfo($id));
     }
 
     /**
@@ -54,7 +54,7 @@ class DiyRoute extends BaseAdminController
      */
     public function getInfoByName(string $name)
     {
-        return success((new DiyRouteService())->getInfoByName($name));
+        return success(( new DiyRouteService() )->getInfoByName($name));
     }
 
     /**
@@ -71,7 +71,7 @@ class DiyRoute extends BaseAdminController
             [ "is_share", "" ]
         ]);
         $this->validate($data, 'app\validate\diy\DiyRoute.add');
-        $id = (new DiyRouteService())->add($data);
+        $id = ( new DiyRouteService() )->add($data);
         return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
@@ -90,7 +90,7 @@ class DiyRoute extends BaseAdminController
             [ "is_share", "" ]
         ]);
         $this->validate($data, 'app\validate\diy\DiyRoute.edit');
-        (new DiyRouteService())->edit($id, $data);
+        ( new DiyRouteService() )->edit($id, $data);
         return success('MODIFY_SUCCESS');
     }
 
@@ -101,7 +101,7 @@ class DiyRoute extends BaseAdminController
      */
     public function del(int $id)
     {
-        (new DiyRouteService())->del($id);
+        ( new DiyRouteService() )->del($id);
         return success('DELETE_SUCCESS');
     }
 
@@ -118,7 +118,7 @@ class DiyRoute extends BaseAdminController
             [ 'is_share', 0 ],
             [ 'sort', 0 ]
         ]);
-        (new DiyRouteService())->modifyShare($data);
+        ( new DiyRouteService() )->modifyShare($data);
         return success('MODIFY_SUCCESS');
     }
 
@@ -129,7 +129,7 @@ class DiyRoute extends BaseAdminController
      */
     public function getApps()
     {
-        return success((new DiyRouteService())->getApps());
+        return success(( new DiyRouteService() )->getApps());
     }
 
 }

@@ -11,7 +11,7 @@ $system_event = [
         /**
          * 系统事件
          */
-        'AppInit' => ['app\listener\system\AppInitListener'],
+        'AppInit' => [ 'app\listener\system\AppInitListener' ],
         'HttpRun' => [],
         'HttpEnd' => [],
         'LogLevel' => [],
@@ -20,26 +20,26 @@ $system_event = [
          * 会员相关事件
          */
         //会员注册事件
-        'MemberRegister' => ['app\listener\member\MemberRegisterListener'],
+        'MemberRegister' => [ 'app\listener\member\MemberRegisterListener' ],
         //会员登录事件
-        'MemberLogin' => ['app\listener\member\MemberLoginListener'],
+        'MemberLogin' => [ 'app\listener\member\MemberLoginListener' ],
         //会员账户变化事件
-        'MemberAccount' => ['app\listener\member\MemberAccountListener'],
+        'MemberAccount' => [ 'app\listener\member\MemberAccountListener' ],
         //扫码事件
-        'Scan' => ['app\listener\scan\ScanListener'],
+        'Scan' => [ 'app\listener\scan\ScanListener' ],
         /**
          * 支付相关事件
          */
-        'PayCreate' => ['app\listener\pay\PayCreateListener'],
+        'PayCreate' => [ 'app\listener\pay\PayCreateListener' ],
         //支付成功
-        'PaySuccess' => ['app\listener\pay\PaySuccessListener'],
+        'PaySuccess' => [ 'app\listener\pay\PaySuccessListener' ],
         //退款成功
-        'RefundSuccess' => ['app\listener\pay\RefundSuccessListener'],
+        'RefundSuccess' => [ 'app\listener\pay\RefundSuccessListener' ],
         //转账成功
-        'TransferSuccess' => ['app\listener\pay\TransferSuccessListener'],
+        'TransferSuccess' => [ 'app\listener\pay\TransferSuccessListener' ],
         // 任务失败统一回调,有四种定义方式
         'queue_failed' => [
-            ['app\listener\job\QueueFailedLoggerListener', 'report'],
+            [ 'app\listener\job\QueueFailedLoggerListener', 'report' ],
         ],
         //系统应用管理加载
         'AppManage' => [
@@ -80,13 +80,30 @@ $system_event = [
         ],
         //创建二维码
         'GetQrcodeOfChannel' => [
-            //微信小程序码
+            // 微信公众号二维码
             'app\listener\qrcode\WechatQrcodeListener',
-            //微信小程序码
+            // 微信小程序二维码
             'app\listener\qrcode\WeappQrcodeListener'
-        ]
+        ],
+        //导出数据类型
+        'ExportDataType' => [
+            //会员导出
+            'app\listener\member\MemberExportTypeListener',
+        ],
+        //导出数据源
+        'ExportData' => [
+            //会员导出
+            'app\listener\member\MemberExportDataListener',
+        ],
+        //统计执行
+        'StatExecute' => [],
+        //统计字段获取
+        'StatField' => [],
+
+        // 获取海报数据
+        'GetPosterData' => ['app\listener\system\Poster'],
     ],
     'subscribe' => [
     ],
 ];
-return (new DictLoader("Event"))->load($system_event);
+return ( new DictLoader("Event") )->load($system_event);

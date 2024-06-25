@@ -5,7 +5,7 @@
 				<input class="search-ipt pl-[20rpx] text-[24rpx]" :class="{'pr-[96rpx]':searchName,'pr-[60rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
 				<view class="flex items-center h-[70rpx] absolute right-[48rpx] top-[18rpx]  z-2">
 					<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
-					<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="iconfont iconxiazai17 text-[28rpx]"></text></view>
+					<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx]"></text></view>
 				</view>
 			</view>
 			<view class="tabs-box z-2 fixed left-0 bg-[#fff] bottom-[50px] top-0" :class="{ '!top-[106rpx]': config.search.control }">
@@ -24,7 +24,7 @@
 					<view class="bg-[#fff] grid grid-cols-3 gap-x-[50rpx] gap-y-[32rpx] py-[33rpx] px-[23rpx] rounded-[16rpx]" v-if="tabsData[tabActive]?.child_list && !loading">
 						<template v-for="(item, index) in tabsData[tabActive]?.child_list" :key="item.category_id">
 							<view class="" @click="toLink(item.category_id)">
-								<u--image class="rounded-[12rpx] overflow-hidden" width="129rpx" height="129rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
+								<u--image  radius="12rpx" width="129rpx" height="129rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
 									<template #error>
 										<u-icon name="photo" color="#999" size="50"></u-icon>
 									</template>
@@ -39,7 +39,7 @@
 				</view>
 			</scroll-view>
 		</view>
-		<tabbar addon="shop"/>
+		<tabbar />
 		<view class="flex justify-center w-[100%] items-center justify-center h-[100vh] bg-[#fff]" v-if="!tabsData.length && !loading">
 			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
 		</view>

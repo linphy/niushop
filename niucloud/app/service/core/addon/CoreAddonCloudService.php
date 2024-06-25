@@ -78,7 +78,7 @@ class CoreAddonCloudService extends CoreCloudBaseService
                         'filename' => 'build.zip'
                     ]
                 ],
-                'timeout' => 50.0
+                'timeout' => 300.0
             ]);
             if (isset($response['code']) && $response['code'] == 0) throw new CommonException($response['msg']);
 

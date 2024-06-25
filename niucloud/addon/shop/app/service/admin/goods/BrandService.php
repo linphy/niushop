@@ -37,9 +37,12 @@ class BrandService extends BaseAdminService
     public function getPage(array $where = [])
     {
         $field = 'brand_id,brand_name,logo,desc,sort,create_time';
-        $order = 'sort asc';
+        $order = 'brand_id desc';
+        if (!empty($where[ 'order' ])) {
+            $order = $where[ 'order' ] . ' ' . $where[ 'sort' ];
+        }
 
-        $search_model = $this->model->withSearch([ "brand_name" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([['brand_id', '>', 0]])->withSearch([ "brand_name" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -53,7 +56,7 @@ class BrandService extends BaseAdminService
     public function getList(array $where = [], $field = 'brand_id,brand_name,logo,desc,sort,create_time')
     {
         $order = 'sort asc';
-        return $this->model->withSearch([ "brand_name" ], $where)->field($field)->order($order)->select()->toArray();
+        return $this->model->where([['brand_id', '>', 0]])->withSearch([ "brand_name" ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -115,5 +118,18 @@ class BrandService extends BaseAdminService
         $res = $model->delete();
         return $res;
     }
+
+    /**
+     * 修改排序
+     * @param $data
+     * @return Brand
+     */
+    public function modifySort($data)
+    {
+        return $this->model->where([
+            [ 'brand_id', '=', $data[ 'brand_id' ] ],
+        ])->update([ 'sort' => $data[ 'sort' ] ]);
+    }
+
 
 }

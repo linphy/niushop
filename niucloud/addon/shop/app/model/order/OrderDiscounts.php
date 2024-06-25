@@ -36,5 +36,12 @@ class OrderDiscounts extends BaseModel
 
     ];
 
+    /**
+     * @return OrderDiscounts|\think\model\relation\HasOne
+     */
+    public function shopOrder()
+    {
+        return $this->hasOne(Order::class, 'order_id', 'order_id');
+    }
 
 }

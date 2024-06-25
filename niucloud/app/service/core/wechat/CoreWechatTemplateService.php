@@ -15,10 +15,8 @@ use core\base\BaseCoreService;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
 use EasyWeChat\Kernel\Support\Collection;
-use EasyWeChat\OfficialAccount\TemplateMessage\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * easywechat主体提供
@@ -40,7 +38,8 @@ class CoreWechatTemplateService extends BaseCoreService
      * @param string $miniprogram
      * @return array|Collection|object|ResponseInterface|string
      * @throws InvalidArgumentException
-     * @throws TransportExceptionInterface
+     * @throws InvalidConfigException
+     * @throws GuzzleException
      */
     public function send(string $open_id, string $wechat_template_id, array $data, string $first, string $remark, string $url = '', $miniprogram = '')
     {
@@ -64,8 +63,8 @@ class CoreWechatTemplateService extends BaseCoreService
      * 删除
      * @param string $templateId
      * @return array|Collection|object|ResponseInterface|string
-     * @throws InvalidArgumentException
-     * @throws TransportExceptionInterface
+     * @throws GuzzleException
+     * @throws InvalidConfigException
      */
     public function deletePrivateTemplate(string $templateId)
     {
@@ -81,8 +80,8 @@ class CoreWechatTemplateService extends BaseCoreService
      * @param string $shortId
      * @param string $keyword_name_list
      * @return array|Collection|object|ResponseInterface|string
-     * @throws InvalidArgumentException
-     * @throws TransportExceptionInterface
+     * @throws GuzzleException
+     * @throws InvalidConfigException
      */
     public function addTemplate(string $shortId, string $keyword_name_list)
     {

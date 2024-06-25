@@ -74,7 +74,7 @@ class CoreSmsService extends BaseCoreService
         if(empty($params)) return [];
         $temp_array = [];
         foreach($params as $k => $v){
-            $index = strpos($content, '${' . $k . '}');
+            $index = strpos($content, '{' . $k . '}');
             if($index !== false){
                 $temp_array[$index] = $v;
             }

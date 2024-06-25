@@ -15,10 +15,9 @@ use addon\shop\app\service\admin\marketing\CouponService;
 use core\base\BaseAdminController;
 
 
-
 /**
  * 商品优惠券控制器
- * Class GoodsSpec
+ * Class Coupon
  * @package addon\shop\app\adminapi\controller\marketing
  */
 class Coupon extends BaseAdminController
@@ -34,12 +33,13 @@ class Coupon extends BaseAdminController
      * 获取商品优惠券列表
      * @return \think\Response
      */
-    public function lists(){
+    public function lists()
+    {
         $data = $this->request->params([
-            ["title",""],
-            ["status",""],
+            [ "title", "" ],
+            [ "status", "" ],
         ]);
-        return success((new CouponService())->getPage($data));
+        return success(( new CouponService() )->getPage($data));
     }
 
     /**
@@ -47,35 +47,37 @@ class Coupon extends BaseAdminController
      * @param int $id
      * @return \think\Response
      */
-    public function info(int $id){
-        return success((new CouponService())->getInfo($id));
+    public function info(int $id)
+    {
+        return success(( new CouponService() )->getInfo($id));
     }
 
     /**
      * 添加商品优惠券
      * @return \think\Response
      */
-    public function add(){
+    public function add()
+    {
         $data = $this->request->params([
-            ["title",''],
-            ["receive_time",""],
-            ["remain_count",0],
-            ["limit",''],
-            ["limit_count",''],
-            ["price",1],
-            ["min_condition_money",''],
-            ["type",1],
-            ["receive_type",''],
-            ["valid_type",''],
-            ["length",''],
-            ["valid_time",''],
-            ["goods_ids",[]],
-            ["goods_category_ids",""],
-            ['receive_type_time',''],
-            ['threshold','']
+            [ "title", '' ],
+            [ "receive_time", "" ],
+            [ "remain_count", 0 ],
+            [ "limit", '' ],
+            [ "limit_count", '' ],
+            [ "price", 1 ],
+            [ "min_condition_money", '' ],
+            [ "type", 1 ],
+            [ "receive_type", '' ],
+            [ "valid_type", '' ],
+            [ "length", '' ],
+            [ "valid_time", '' ],
+            [ "goods_ids", [] ],
+            [ "goods_category_ids", "" ],
+            [ 'receive_type_time', '' ],
+            [ 'threshold', '' ]
         ]);
-        $id = (new CouponService())->add($data);
-        return success('ADD_SUCCESS', ['id' => $id]);
+        $id = ( new CouponService() )->add($data);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
     /**
@@ -83,26 +85,27 @@ class Coupon extends BaseAdminController
      * @param $id  商品优惠券id
      * @return \think\Response
      */
-    public function edit($id){
+    public function edit($id)
+    {
         $data = $this->request->params([
-            ["title",''],
-            ["receive_time",""],
-            ["remain_count",0],
-            ["limit",''],
-            ["limit_count",''],
-            ["price",1],
-            ["min_condition_money",''],
-            ["type",1],
-            ["receive_type",''],
-            ["valid_type",''],
-            ["length",''],
-            ["valid_time",''],
-            ["goods_ids",[]],
-            ["goods_category_ids",""],
-            ['receive_type_time',''],
-            ['threshold','']
+            [ "title", '' ],
+            [ "receive_time", "" ],
+            [ "remain_count", 0 ],
+            [ "limit", '' ],
+            [ "limit_count", '' ],
+            [ "price", 1 ],
+            [ "min_condition_money", '' ],
+            [ "type", 1 ],
+            [ "receive_type", '' ],
+            [ "valid_type", '' ],
+            [ "length", '' ],
+            [ "valid_time", '' ],
+            [ "goods_ids", [] ],
+            [ "goods_category_ids", "" ],
+            [ 'receive_type_time', '' ],
+            [ 'threshold', '' ]
         ]);
-        (new CouponService())->edit($id, $data);
+        ( new CouponService() )->edit($id, $data);
         return success('EDIT_SUCCESS');
     }
 
@@ -111,8 +114,9 @@ class Coupon extends BaseAdminController
      * @param $id  商品优惠券id
      * @return \think\Response
      */
-    public function del(int $id){
-        (new CouponService())->del($id);
+    public function del(int $id)
+    {
+        ( new CouponService() )->del($id);
         return success('DELETE_SUCCESS');
     }
 
@@ -122,10 +126,10 @@ class Coupon extends BaseAdminController
     public function getMemberCoupon()
     {
         $data = $this->request->params([
-            ['id',''],
-            ['keywords','']
+            [ 'id', '' ],
+            [ 'keywords', '' ]
         ]);
-        return success((new CouponService())->getMemberCoupon($data));
+        return success(( new CouponService() )->getMemberCoupon($data));
     }
 
     /**
@@ -134,10 +138,27 @@ class Coupon extends BaseAdminController
     public function setCouponStatus($status)
     {
         $data = $this->request->params([
-            ['id', ''],
+            [ 'id', '' ],
         ]);
-        (new CouponService())->setStatus($data['id'], $status);
+        ( new CouponService() )->setStatus($data[ 'id' ], $status);
         return success('EDIT_SUCCESS');
+    }
+
+    public function getSelectedLists()
+    {
+        $data = $this->request->params([
+            [ "coupon_id", '' ],
+        ]);
+        return success(( new CouponService() )->getSelectedList($data[ 'coupon_id' ]));
+    }
+
+    /**
+     * 优惠券关闭
+     */
+    public function couponInvalid($id)
+    {
+        ( new CouponService() )->couponInvalid($id);
+        return success('SUCCESS');
     }
 
 }

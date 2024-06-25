@@ -11,6 +11,7 @@
 
 namespace app\model\sys;
 
+use app\dict\sys\PosterDict;
 use core\base\BaseModel;
 
 /**
@@ -34,11 +35,52 @@ class Poster extends BaseModel
     protected $name = 'sys_poster';
 
     // 设置json类型字段
-    protected $json = ['value'];
+    protected $json = [ 'value' ];
 
     //设置只读字段
-    protected $readonly = ['type'];
+    protected $readonly = [ 'type' ];
 
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
+
+
+    /**
+     * 状态字段转化
+     * @param $value
+     * @param $data
+     * @return mixed
+     */
+    public function getTypeNameAttr($value, $data)
+    {
+        if (!empty($data[ 'type' ])) {
+            return PosterDict::getType($data[ 'type' ])[ 'name' ] ?? '';
+        }
+        return '';
+    }
+
+    /**
+     * 搜索器:海报名称
+     * @param $query
+     * @param $value
+     * @param $data
+     */
+    public function searchNameAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("name", 'like', '%' . $value . '%');
+        }
+    }
+
+    /**
+     * 搜索器:海报类型
+     * @param $query
+     * @param $value
+     * @param $data
+     */
+    public function searchTypeAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("type", '=', $value);
+        }
+    }
 }

@@ -35,7 +35,7 @@ class CoreUploadConfigService extends BaseCoreService
         if (empty($info)) {
             $info = [
                 'image_ext' => [
-                    'jpg', 'png', 'gif', 'jpeg', 'webp'
+                    'jpg', 'png', 'gif', 'jpeg' // todo 暂不支持webp格式
                 ],//图片上传文件后缀
                 'video_ext' => [
                     'wmv', 'avi', 'mpg', 'mpeg', '3gp', 'mov', 'mp4', 'flv', 'f4v', 'rmvb', 'mkv'

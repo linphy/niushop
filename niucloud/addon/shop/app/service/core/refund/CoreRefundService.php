@@ -45,7 +45,7 @@ class CoreRefundService extends BaseCoreService
         $where = array(
             ['order_refund_no', '=', $order_refund_no]
         );
-        return $this->model->where($where)->findOrEmpty()->toArray();
+        return $this->model->where($where)->with(['order_main'])->findOrEmpty()->toArray();
     }
     /**
      * 退款转账完成

@@ -18,7 +18,7 @@ use think\db\Query;
 /**
  * 账单记录
  * Class AccountLog
- * @package app\model\site
+ * @package app\model\pay
  */
 class AccountLog extends BaseModel
 {

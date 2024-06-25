@@ -24,7 +24,19 @@ return [
 				{
 					"path": "shop/pages/coupon/detail",
 					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
 						"navigationBarTitleText": "%shop.pages.coupon.detail%"
+					}
+				},
+				{
+					"path": "shop/pages/discount/list",
+					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "%shop.pages.discount.list%"
 					}
 				},
 				{
@@ -55,10 +67,10 @@ return [
 				{
 					"path": "shop/pages/member/index",
 					"style": {
-                        "navigationBarTitleText": "%shop.pages.member.index%",
-                        // #ifndef H5
-						"navigationStyle": "custom"
+						// #ifndef H5
+						"navigationStyle": "custom",
 						// #endif
+                        "navigationBarTitleText": "%shop.pages.member.index%"
 					}
 				},
 				{
@@ -150,6 +162,40 @@ return [
 						"navigationBarTitleText": "%shop.pages.refund.log%"
 					},
 					"needLogin": true
+				},
+				{
+					"path": "shop/pages/point/index",
+					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
+						"navigationBarTitleText": "%shop.pages.point.index%"
+					}
+				},
+				{
+					"path": "shop/pages/point/list",
+					"style": {
+						"navigationBarTitleText": "%shop.pages.point.list%"
+					}
+				},
+				{
+					"path": "shop/pages/point/detail",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "%shop.pages.point.detail%"
+					}
+				},
+				{
+					"path": "shop/pages/point/payment",
+					"style": {
+						"navigationBarTitleText": "%shop.pages.point.payment%"
+					}
+				},
+				{
+					"path": "shop/pages/point/order_list",
+					"style": {
+						"navigationBarTitleText": "%shop.pages.point.order_list%"
+					}
 				},
 				// PAGE_END
 EOT

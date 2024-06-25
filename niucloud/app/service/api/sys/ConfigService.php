@@ -29,7 +29,6 @@ class ConfigService extends BaseApiService
     public function __construct()
     {
         parent::__construct();
-
     }
 
     /**
@@ -84,4 +83,9 @@ class ConfigService extends BaseApiService
         $info['site_addons'] = (new CoreAddonService())->getInstallAddonList();
         return $info;
     }
+
+    public function getMap(){
+        return (new CoreSysConfigService())->getMap();
+    }
+
 }

@@ -52,6 +52,8 @@ class VirtualGoods extends BaseAdminController
             [ 'supplier_id', 0 ],
             [ "status", 0 ],
             [ "sort", 0 ],
+            [ 'attr_id', 0 ],
+            [ 'attr_format', '' ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],
@@ -70,8 +72,17 @@ class VirtualGoods extends BaseAdminController
             [ 'goods_spec_format', '' ],
             [ 'goods_sku_data', '' ],
 
+            // 收发货设置
+            [ 'virtual_auto_delivery', 0 ], // 虚拟商品是否自动发货
+            [ 'virtual_receive_type', 'artificial' ], // 虚拟商品收货方式，auto：自动收货，artificial：买家确认收货，verify：到店核销
+            [ 'virtual_verify_type', 0 ], // 虚拟商品核销有效期类型，0：不限，1：购买后几日有效，2：指定过期日期
+            [ 'virtual_indate', 0 ], // 虚拟到期时间
+
             // 商品详情
             [ "goods_desc", "" ],
+
+            [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
+            [ 'poster_id', 0 ] // 海报id
         ]);
 
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.add');
@@ -98,6 +109,8 @@ class VirtualGoods extends BaseAdminController
             [ 'supplier_id', 0 ],
             [ "status", 0 ],
             [ "sort", 0 ],
+            [ 'attr_id', 0 ],
+            [ 'attr_format', '' ],
 
             // 规格类型，single：单规格，multi：多规格
             [ 'spec_type', '' ],
@@ -116,8 +129,17 @@ class VirtualGoods extends BaseAdminController
             [ 'goods_spec_format', '' ],
             [ 'goods_sku_data', '' ],
 
+            // 收发货设置
+            [ 'virtual_auto_delivery', 0 ], // 虚拟商品是否自动发货
+            [ 'virtual_receive_type', 'artificial' ], // 虚拟商品收货方式，auto：自动收货，artificial：买家确认收货，verify：到店核销
+            [ 'virtual_verify_type', 0 ], // 虚拟商品核销有效期类型，0：不限，1：购买后几日有效，2：指定过期日期
+            [ 'virtual_indate', 0 ], // 虚拟到期时间
+
             // 商品详情
             [ "goods_desc", "" ],
+
+            [ 'member_discount', '' ], // 会员等级折扣，不参与：空，会员折扣：discount，指定会员价：fixed_price
+            [ 'poster_id', 0 ] // 海报id
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Goods.edit');
         $res = ( new VirtualGoodsService() )->edit($id, $data);

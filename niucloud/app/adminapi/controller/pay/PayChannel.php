@@ -93,4 +93,12 @@ class PayChannel extends BaseAdminController
         (new PayChannelService())->setAll($data['config']);
         return success('SET_SUCCESS');
     }
+
+    /**
+     * 获取全部支付方式
+     * @return Response
+     */
+    public function getPayTypeList() {
+        return success(data:PayDict::getPayType());
+    }
 }

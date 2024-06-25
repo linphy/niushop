@@ -445,7 +445,7 @@ class MenuSqlGenerator extends BaseGenerator
         ];
         $menu_model = new SysMenu();
 
-        (new SysMenu())->where([['app_type', '=', 'admin'],['menu_key','in', array_column($data, 'menu_key') ]])->select()->delete();
+        Db::name("sys_menu")->where([['app_type', '=', 'admin'],['menu_key','in', array_column($data, 'menu_key') ]])->delete();
 
         (new $menu_model())->saveAll($data);
         $cache_tag_name = 'menu_cache';

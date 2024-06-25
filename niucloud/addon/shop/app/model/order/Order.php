@@ -110,6 +110,24 @@ class Order extends BaseModel
     }
 
     /**
+     * 优惠表
+     * @return HasOne
+     */
+    public function shopOrderDiscount()
+    {
+        return $this->hasOne(OrderDiscounts::class, 'order_id', 'order_id');
+    }
+
+    /**
+     * 发票
+     * @return HasOne
+     */
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class, 'id', 'invoice_id');
+    }
+
+    /**
      * 来源渠道
      * @param $value
      * @param $data
@@ -185,6 +203,20 @@ class Order extends BaseModel
         }
     }
 
+
+    /**
+     * 搜索器:营销类型
+     * @param $value
+     * @param $data
+     */
+    public function searchActivityTypeAttr($query, $value, $data)
+    {
+        if ($value) {
+            $query->where("activity_type", $value);
+        }
+    }
+
+
     /**
      * 连表搜索器
      * @param $query
@@ -197,6 +229,7 @@ class Order extends BaseModel
             $query->where("order.status", $data['status']);
         }
     }
+
     /**
      * 支付时间搜索器
      * @param Query $query
@@ -264,8 +297,8 @@ class Order extends BaseModel
     {
         if ($value && $data['search_name']) {
             $search_name = $data['search_name'];
-            if($value == 'order_no') $query->where("order_no", "like", "%$search_name%");
-            if($value == 'out_trade_no') $query->where("order.out_trade_no", "like", "%$search_name%");
+            if ($value == 'order_no') $query->where("order_no", "like", "%$search_name%");
+            if ($value == 'out_trade_no') $query->where("order.out_trade_no", "like", "%$search_name%");
         }
     }
 

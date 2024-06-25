@@ -3,10 +3,16 @@ declare (strict_types=1);
 
 namespace addon\shop\app\listener\order;
 
+use addon\shop\app\dict\goods\GoodsDict;
+use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
+use addon\shop\app\model\goods\Goods;
+use addon\shop\app\model\order\OrderGoods;
+use addon\shop\app\service\admin\marketing\DiscountService;
 use addon\shop\app\service\core\CoreStatService;
 use addon\shop\app\service\core\order\CoreInvoiceService;
+use addon\shop\app\service\core\order\CoreOrderDeliveryService;
 use addon\shop\app\service\core\order\CoreOrderLogService;
 use app\service\core\notice\NoticeService;
 use think\facade\Log;
@@ -34,9 +40,41 @@ class AfterShopOrderPay
                 'type' => OrderDict::ORDER_PAY_ACTION,
                 'content' => ''
             ]);
+            //虚拟商品自动发货
+            $order_goods_list = (new OrderGoods())->where(['order_id' => $data['order_id']])->select();
+            if(!empty($order_goods_list)){
+                $goods_column = (new Goods())->where([['goods_id', 'in', array_column($order_goods_list->toArray(), 'goods_id')]])->column('*', 'goods_id');
+                $virtual_order_goods_ids = [];
+                foreach($order_goods_list as $v){
+                    //根据商品配置判断下一步配送操作
+                    $temp_goods_type = $v['goods_type'];
+                    //读取虚拟商品配置
+                    if($temp_goods_type == GoodsDict::VIRTUAL){
+                        $temp_goods = $goods_column[$v['goods_id']] ?? [];
+                        if(empty($temp_goods)) continue;
+                        //是否自动发货
+                        if($temp_goods['virtual_auto_delivery'] == 1){
+                            //调用订单项发货
+                            $virtual_order_goods_ids[] = $v['order_goods_id'];
+                        }
+                    }
+                }
+                if($virtual_order_goods_ids){
+                    $delivery_data = [];
+                    $delivery_data[ 'main_type' ] = OrderLogDict::SYSTEM;
+                    $delivery_data[ 'main_id' ] = 0;
+                    $delivery_data[ 'order_id'] = $order_data['order_id'];
+                    $delivery_data['delivery_type'] = OrderDeliveryDict::VIRTUAL;
+                    $delivery_data[ 'order_goods_ids'] = $virtual_order_goods_ids;
+                    ( new CoreOrderDeliveryService() )->delivery($delivery_data);
+                }
 
+            }
             //消息发送
             (new NoticeService())->send('shop_order_pay', ['order_id' => $order_data['order_id']]);
+
+            (new DiscountService())->orderPayAfter($order_data);
+
         } catch ( \Exception $e ) {
             Log::write('订单AfterShopOrderPay失败' . $e->getMessage() . $e->getFile() . $e->getLine());
         }

@@ -23,6 +23,7 @@ import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
 import { addShopDeliver, editShopDeliver, getShopDeliverInfo } from '@/addon/shop/api/delivery'
 import { filterNumber } from '@/utils/common'
+
 const showDialog = ref(false)
 const loading = ref(false)
 
@@ -33,7 +34,6 @@ const initialFormData = {
     deliver_id: '',
     deliver_name: '',
     deliver_mobile: ''
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
@@ -49,7 +49,7 @@ const formRules = computed(() => {
             { required: true, message: t('deliverMobilePlaceholder'), trigger: 'blur' },
             { min: 11, max: 11, message: '请输入11位手机号码', trigger: 'blur' },
             {
-                pattern: /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/,
+                pattern :/^1[23456789]\d{9}$/,
                 message: '请输入正确的手机号码',
                 trigger: 'blur'
             }

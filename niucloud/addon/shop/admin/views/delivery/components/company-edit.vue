@@ -15,7 +15,6 @@
 					<el-input v-model.trim="formData.express_no" clearable :placeholder="t('expressNoPlaceholder')"  class="input-width"/>
 					<p class="input-width text-[12px] text-[#999] mt-[5px] leading-[20px]">{{ t('expressNoTips') }}</p>
 				</div>
-
 			</el-form-item>
 
 		</el-form>

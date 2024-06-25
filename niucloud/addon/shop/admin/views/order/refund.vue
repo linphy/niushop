@@ -9,7 +9,8 @@
 			<el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
 				<el-form :inline="true" :model="orderTable.searchParam" ref="searchFormRef">
 					<el-form-item :label="t('orderRefundNo')" prop="order_refund_no">
-						<el-input v-model.trim="orderTable.searchParam.order_refund_no" :placeholder="t('orderRefundNoPlaceholder')" @keyup="filterNumber($event)" maxlength="30" />
+						<el-input v-model.trim="orderTable.searchParam.order_refund_no"
+							:placeholder="t('orderRefundNoPlaceholder')" @keyup="filterNumber($event)" maxlength="30" />
 					</el-form-item>
 					<el-form-item :label="t('createTime')" prop="create_time">
 						<el-date-picker v-model="orderTable.searchParam.create_time" type="datetimerange"
@@ -19,6 +20,7 @@
 					<el-form-item>
 						<el-button type="primary" @click="loadOrderList()">{{ t('search') }}</el-button>
 						<el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
+						<el-button type="primary" @click="exportEvent">{{ t('export') }}</el-button>
 					</el-form-item>
 				</el-form>
 			</el-card>
@@ -64,6 +66,7 @@
 												</div>
 												<div class="flex">
 													<p class="multi-hidden">{{ row.goods_name }}</p>
+													<span class="text-[12px] text-[#999]">{{ row.sku_name }}</span>
 												</div>
 											</div>
 										</template>
@@ -131,13 +134,14 @@
 		</el-card>
 		<delivery-action ref="deliveryActionDialog" @complete="loadOrderList"></delivery-action>
 		<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
+		<export-sure ref="exportSureDialog" :show="flag" type="shop_order_refund" :searchParam="orderTable.searchParam" @close="handleClose" />
 	</div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { orderRefuund } from '@/addon/shop/api/order'
+import { orderRefund } from '@/addon/shop/api/order'
 import { img, filterNumber } from '@/utils/common'
 import type { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
@@ -147,106 +151,110 @@ const router = useRouter()
 const pageName = route.meta.title
 const activeName = ref('')
 
-const setFormData = async () => {
-    // statusData.value = await (await getOrderStatus()).data
-}
-setFormData()
-
 const multipleTable: Record<string, any> | null = ref(null)
 const isSelectAll = ref(false)
 const selectAllCheck = () => {
-    if (isSelectAll.value == false) {
-        isSelectAll.value = true
-        for (const i in orderTable.data) {
-            for (const j in orderTable.data[i].order_goods) {
-                multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
-            }
-        }
-    } else {
-        isSelectAll.value = false
-        for (const v in orderTable.data) {
-            for (const k in orderTable.data[v].order_goods) {
-                multipleTable.value[v].clearSelection()
-            }
-        }
-    }
+	if (isSelectAll.value == false) {
+		isSelectAll.value = true
+		for (const i in orderTable.data) {
+			for (const j in orderTable.data[i].order_goods) {
+				multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
+			}
+		}
+	} else {
+		isSelectAll.value = false
+		for (const v in orderTable.data) {
+			for (const k in orderTable.data[v].order_goods) {
+				multipleTable.value[v].clearSelection()
+			}
+		}
+	}
 }
 interface orderTableType {
-    page: number
-    limit: number
-    total: number
-    loading: boolean
-    data: any[]
-    searchParam: {
-        order_refund_no: string
-        create_time: string[]
-        status: string
-    }
+	page: number
+	limit: number
+	total: number
+	loading: boolean
+	data: any[]
+	searchParam: {
+		order_refund_no: string
+		create_time: string[]
+		status: string
+	}
 }
 const orderTable = reactive<orderTableType>({
-    page: 1,
-    limit: 10,
-    total: 0,
-    loading: true,
-    data: [],
-    searchParam: {
-        order_refund_no: '',
-        create_time: [],
-        status: ''
-    }
+	page: 1,
+	limit: 10,
+	total: 0,
+	loading: true,
+	data: [],
+	searchParam: {
+		order_refund_no: '',
+		create_time: [],
+		status: ''
+	}
 })
 
 const searchFormRef = ref<FormInstance>()
-
-// 选中数据
-// const selectData = ref<any[]>([])
 
 /**
  * 获取订单列表
  */
 const loadOrderList = (page: number = 1) => {
-    orderTable.loading = true
-    orderTable.page = page
+	orderTable.loading = true
+	orderTable.page = page
 
-    orderRefuund({
-        page: orderTable.page,
-        limit: orderTable.limit,
-        ...orderTable.searchParam
-    }).then(res => {
-        orderTable.loading = false
-        orderTable.data = res.data.data.map((el:any) => {
-            el.order_goods = [el.order_goods]
-            return el
-        })
-        orderTable.total = res.data.total
-    }).catch(() => {
-        orderTable.loading = false
-    })
+	orderRefund({
+		page: orderTable.page,
+		limit: orderTable.limit,
+		...orderTable.searchParam
+	}).then(res => {
+		orderTable.loading = false
+		orderTable.data = res.data.data.map((el: any) => {
+			el.order_goods = [el.order_goods]
+			return el
+		})
+		orderTable.total = res.data.total
+	}).catch(() => {
+		orderTable.loading = false
+	})
 }
 loadOrderList()
 
 const handleClick = (event: string) => {
-    orderTable.searchParam.status = event
-    loadOrderList()
+	orderTable.searchParam.status = event
+	loadOrderList()
+}
+
+/**
+ * 订单导出
+ */
+const exportSureDialog = ref(null)
+const flag = ref(false)
+const handleClose = (val) => {
+	flag.value = val
+}
+const exportEvent = (data: any) => {
+	flag.value = true
 }
 
 // 订单详情
 const detailEvent = (data: any) => {
-    router.push('/shop/order/refund/detail?refund_id=' + data.refund_id)
+	router.push('/shop/order/refund/detail?refund_id=' + data.refund_id)
 }
 
 const memberEvent = (id: number) => {
-    const routeUrl = router.resolve({
-        path: '/member/detail',
-        query: { id }
-    })
+	const routeUrl = router.resolve({
+		path: '/member/detail',
+		query: { id }
+	})
     window.open(routeUrl.href, '_blank')
 }
 
 const resetForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.resetFields()
-    loadOrderList()
+	if (!formEl) return
+	formEl.resetFields()
+	loadOrderList()
 }
 </script>
 

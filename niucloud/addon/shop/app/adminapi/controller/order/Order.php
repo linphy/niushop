@@ -38,6 +38,7 @@ class Order extends BaseAdminController
             ['order_from', ''],
             ['create_time', []],
             ['pay_time', []],
+            ['activity_type', ''],
         ]);
         return success((new OrderService())->getPage($data));
     }
@@ -90,6 +91,7 @@ class Order extends BaseAdminController
         (new OrderFinishService())->finish($id);
         return success();
     }
+
     /**
      * 订单发货
      * @param $id
@@ -138,12 +140,13 @@ class Order extends BaseAdminController
      * 订单包裹
      * @return Response
      */
-    public function getOrderPackage(){
+    public function getOrderPackage()
+    {
         $data = $this->request->params([
-            [ 'id', '' ],
-            [ 'mobile', '' ],
+            ['id', ''],
+            ['mobile', ''],
         ]);
-        return success(( new OrderDeliveryService() )->getDeliveryPackage($data));
+        return success(data: (new OrderDeliveryService())->getDeliveryPackage($data));
     }
 
     /**
@@ -161,5 +164,66 @@ class Order extends BaseAdminController
     public function getOrderFrom()
     {
         return success(ChannelDict::getType());
+    }
+
+
+    /**
+     * 订单改价
+     * @return void
+     */
+    public function editPrice()
+    {
+        $data = $this->request->params([
+            ['order_id', 0],
+            ['delivery_money', 0],
+            ['order_goods_data', []],
+        ]);
+        return success(data: (new OrderService())->editPrice($data));
+    }
+
+    /**
+     * 订单配送信息修改
+     */
+    public function editDelivery()
+    {
+        $data = $this->request->params([
+            ['order_id', 0],
+            ['delivery_type', ''],
+            ['take_store_id', 0],
+            ['taker_name', ''],
+            ['taker_mobile', ''],
+            ['taker_province', 0],
+            ['taker_city', 0],
+            ['taker_district', 0],
+            ['taker_address', ''],
+            ['taker_full_address', ''],
+            ['taker_longitude', ''],
+            ['taker_latitude', ''],
+            ['taker_store_id', 0],
+        ]);
+        return success("SUCCESS", (new OrderService())->editDelivery($data));
+    }
+
+    /**
+     * 订单修改配送信息数据获取
+     */
+    public function editDeliveryData()
+    {
+        $data = $this->request->params([
+            ['order_id', 0],
+            ['delivery_type', ''],
+            ['take_store_id', 0],
+            ['taker_name', ''],
+            ['taker_mobile', ''],
+            ['taker_province', 0],
+            ['taker_city', 0],
+            ['taker_district', 0],
+            ['taker_address', ''],
+            ['taker_full_address', ''],
+            ['taker_longitude', ''],
+            ['taker_latitude', ''],
+            ['taker_store_id', 0],
+        ]);
+        return success(data: (new OrderService())->getEditDeliveryData($data));
     }
 }

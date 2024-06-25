@@ -34,15 +34,23 @@ class InvoiceDict
     ];
 
     const TYPE = 'shop';
-    const COMMON = '1';
 
     //普票
-    const SPECIAL = '2';
+    const COMMON = '1';
     //专票
-const WAIT_OPEN = 1;
-const OPEN = 2;
+    const SPECIAL = '2';
 
-        /**
+    //未生效
+    const WAIT_OPEN = 1;
+    //已生效
+    const OPEN = 2;
+
+    //未开票
+    const WAIT_INVOICE = 0;
+    //已开票
+    const INVOICED = 1;
+
+    /**
      * 发票抬头类型
      * @return array
      */
@@ -52,7 +60,7 @@ const OPEN = 2;
             self::COMPANY => get_lang('dict_shop_invoice.header_type_company'),
             self::PERSON => get_lang('dict_shop_invoice.header_type_person'),
         ];
-    }//待开启
+    }
 
     public static function getType()
     {
@@ -60,13 +68,21 @@ const OPEN = 2;
             self::COMMON => get_lang('dict_shop_invoice.common'),
             self::SPECIAL => get_lang('dict_shop_invoice.sprcial'),
         ];
-    }//已开票
+    }
 
     public static function getStatus()
     {
         return [
-            self::WAIT_OPEN => get_lang('dict_shop_invoice_status.wait_open'),
-            self::OPEN => get_lang('dict_shop_invoice_status.open'),
+            self::WAIT_OPEN => get_lang('dict_shop_invoice.wait_open'),
+            self::OPEN => get_lang('dict_shop_invoice.open'),
+        ];
+    }
+
+    public static function getIsInvoice()
+    {
+        return [
+            self::WAIT_INVOICE => get_lang('dict_shop_invoice.wait_invoice'),
+            self::INVOICED => get_lang('dict_shop_invoice.invoiced'),
         ];
     }
 

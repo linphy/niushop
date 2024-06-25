@@ -51,6 +51,7 @@ class Queue extends Command
                 'connect_timeout' => 10,
                 'max_attempts' => 3,
                 'retry_seconds' => 5,
+                'prefix' => md5(root_path())
             ];
             if(!empty(env('redis.redis_password'))){
                 $redis_option['auth'] = env('redis.redis_password');

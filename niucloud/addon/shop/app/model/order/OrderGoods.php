@@ -11,8 +11,10 @@
 
 namespace addon\shop\app\model\order;
 
+use addon\shop\app\dict\goods\GoodsDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderGoodsDict;
+use addon\shop\app\model\goods\Goods;
 use app\dict\sys\FileDict;
 use core\base\BaseModel;
 use Exception;
@@ -38,8 +40,33 @@ class OrderGoods extends BaseModel
 
     //类型
     protected $type = [
-
+        'verify_expire_time' => 'timestamp',
     ];
+
+
+    // 设置json类型字段
+    protected $json = ['extend'];
+
+    // 设置JSON数据返回数组
+    protected $jsonAssoc = true;
+
+    /**
+     * 包裹
+     * @return HasOne
+     */
+    public function orderDelivery()
+    {
+        return $this->hasOne(OrderDelivery::class, 'id', 'delivery_id');
+    }
+
+    /**
+     * 商品
+     * @return HasOne
+     */
+    public function goods()
+    {
+        return $this->hasOne(Goods::class, 'goods_id', 'goods_id');
+    }
 
     /**
      * 订单主表
@@ -113,6 +140,17 @@ class OrderGoods extends BaseModel
     {
         if (!empty($data['status'])) {
             return OrderGoodsDict::getRefundStatus($data['status']);
+        }
+        return '';
+    }
+
+    /**
+     * 转化订单项商品类型
+     */
+    public function getGoodsTypeNameAttr($value, $data)
+    {
+        if (!empty($data['goods_type'])) {
+            return GoodsDict::getType($data['goods_type'])['name'];
         }
         return '';
     }

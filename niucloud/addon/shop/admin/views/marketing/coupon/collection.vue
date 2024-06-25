@@ -1,19 +1,13 @@
 <template>
     <div class="main-container">
-        <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center">
-                <div class="detail-head !m-0">
-                    <div class="left" @click="router.push('/shop/marketing/coupon/list')">
-                        <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                        <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-                    </div>
-                    <span class="adorn">|</span>
-                    <span class="right"> {{ t('collectionCoupon') }}</span>
-                </div>
-            </div>
-            <div class="mt-[10px]">
 
-                <el-card class="box-card !border-none base-bg !px-[35px]" shadow="never">
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never">
+            <div>
+                <el-card class="box-card !border-none !px-[35px]" shadow="never">
                     <el-row class="flex">
                         <el-col :span="8" class="min-w-[100px]">
                             <div class="statistic-card">
@@ -45,13 +39,11 @@
                                 </div>
                             </div>
                         </el-col>
-
                     </el-row>
                 </el-card>
-
             </div>
-            <div>
 
+            <div>
                 <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                     <el-form :inline="true" :model="tableData.searchParam" ref="searchFormRef">
                         <el-form-item :label="t('memberInfo')" prop="keywords">
@@ -63,11 +55,13 @@
                         </el-form-item>
                     </el-form>
                 </el-card>
+
                 <div class="mt-[10px]">
                     <el-table :data="tableData.data" ref="tableRef" size="large" v-loading="tableData.loading">
                         <template #empty>
                             <span>{{ !tableData.loading ? t('emptyData') : '' }}</span>
                         </template>
+
                         <el-table-column prop="title" :label="t('title')" />
                         <el-table-column :label="t('userName')">
                             <template #default="{ row }">
@@ -104,20 +98,22 @@
                     </div>
                 </div>
             </div>
-
         </el-card>
     </div>
 </template>
+
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { getCouponRecords, getCouponInfo } from '@/addon/shop/api/marketing'
 import { useRoute, useRouter } from 'vue-router'
 import { FormInstance } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
-// const pageName = route.meta.title
+const pageName = route.meta.title
+
 const couponId: number = parseInt(route.query.id)
 const loading = ref(false)
 const tableData = reactive({
@@ -171,4 +167,5 @@ const resetForm = (formEl: FormInstance | undefined) => {
     couponCollection()
 }
 </script>
+
 <style lang="scss" scoped></style>

@@ -1,68 +1,76 @@
 <template>
 	<view @touchmove.prevent.stop>
-		<u-popup class="popup-type" :show="goodsSkuPop" @close="closeFn" mode="bottom">
-			<view class="p-[32rpx] relative" v-if="goodsDetail.detail">
-				<view class="absolute right-[37rpx]  iconfont iconguanbi text-[36rpx]" @click="closeFn"></view>
-				<view class="flex mb-[58rpx]">
+		<u-overlay :show="goodsSkuPop" @click="closeFn" zIndex="490">
+			<u-popup class="popup-type" :show="goodsSkuPop" @close="closeFn" mode="bottom" :overlay="false" zIndex="500">
+				<view class="p-[32rpx] relative" v-if="goodsDetail.detail" @touchmove.prevent.stop>
+					<view class="flex mb-[58rpx]">
 
-					<view class="rounded-[8rpx] overflow-hidden">
-						<u--image width="180rpx" height="180rpx" :src="img(goodsDetail.detail.sku_image)" model="aspectFill">
-							<template #error>
-								<u-icon name="photo" color="#999" size="50"></u-icon>
-							</template>
-						</u--image>
-					</view>
-					<view class="flex flex-1 flex-col ml-[20rpx] py-[10rpx]">
-						<view class="w-[100%]">
-							<view class="text-[var(--price-text-color)] flex items-baseline">
-								<text class="text-[28rpx] font-bold price-font">￥</text>
-								<text class="text-[42rpx] font-bold price-font">{{parseFloat(goodsDetail.detail.sale_price).toFixed(2).split('.')[0]}}</text>
-								<text class="text-[28rpx] font-bold price-font">.{{parseFloat(goodsDetail.detail.sale_price).toFixed(2).split('.')[1]}}</text>
+						<view class="rounded-[8rpx] overflow-hidden">
+							<u--image width="180rpx" height="180rpx" :src="img(goodsDetail.detail.sku_image)" @click="imgListPreview(goodsDetail.detail.sku_image)" model="aspectFill">
+								<template #error>
+									<u-icon name="photo" color="#999" size="50"></u-icon>
+								</template>
+							</u--image>
+						</view>
+						<view class="flex flex-1 flex-col ml-[20rpx] py-[10rpx]">
+							<view class="w-[100%]">
+								<view class="text-[var(--price-text-color)] flex items-baseline">
+									<text class="text-[28rpx] font-bold price-font">￥</text>
+									<text class="text-[48rpx] price-font">{{ parseFloat(goodsPrice).toFixed(2).split('.')[0] }}</text>
+									<text class="text-[32rpx] mr-[6rpx] price-font">.{{ parseFloat(goodsPrice).toFixed(2).split('.')[1] }}</text>
+								</view>
+								<view class="text-[24rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{goodsDetail.detail.stock}}{{ goodsDetail.goods.unit }}</view>
 							</view>
-							<view class="text-[24rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{goodsDetail.detail.stock}}{{ goodsDetail.goods.unit }}</view>
-						</view>
-						<view class="w-[100%] mt-auto"  style="max-height: calc(204rpx - 98rpx); overflow: hidden;"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
-							<text class="text-[24rpx] leading-[30rpx] text-[#666]">已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
+							<view class="w-[100%] mt-auto"  style="max-height: calc(204rpx - 98rpx); overflow: hidden; box-sizing:border-box"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
+								<text class="text-[24rpx] leading-[30rpx] text-[#666] flex items-center h-[60rpx] mt-[10rpx]">已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
+							</view>
+	<!-- 						<view v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
+								<text>已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
+							</view> -->
 						</view>
 					</view>
+					<scroll-view class="h-[500rpx] mb-[30rpx]" scroll-y="true">
+						<view :class="{'mt-[36rpx]': 0 != index }" v-for="(item,index) in goodsDetail.goodsSpec" :key="index">
+							<view class="text-[26rpx] leading-[36rpx] mb-[24rpx]">{{item.spec_name}}</view>
+							<view class="flex flex-wrap">
+								<view class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[56rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
+								 :class="{'!border-[var(--primary-color)] text-[var(--primary-color)] !bg-[var(--primary-color-light)]': subItem.selected}"
+								v-for="(subItem,subIndex) in item.values" :key="subIndex"
+								@click="change(subItem, index)">
+									{{subItem.name}}
+								</view>
+							</view>
+						</view>
+						<view class="flex justify-between items-center mt-[30rpx]">
+							<view class="text-[26rpx]">购买数量</view>
+							<u-number-box :min="1" :max="goodsDetail.stock" integer :step="1" input-width="98rpx" v-model="buyNum" input-height="54rpx">
+								<template #minus>
+									<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								</template>
+								<template #input>
+									<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
+								</template>
+								<template #plus>
+									<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
+								</template>
+							</u-number-box>
+						</view>
+					</scroll-view>
+					<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="confirm">确定</button>
+					<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
 				</view>
-				<scroll-view class="h-[500rpx] mb-[30rpx]" scroll-y="true">
-					<view :class="{'mt-[36rpx]': 0 != index }" v-for="(item,index) in goodsDetail.goodsSpec" :key="index">
-						<view class="text-[26rpx] leading-[36rpx] mb-[24rpx]">{{item.spec_name}}</view>
-						<view class="flex flex-wrap">
-							<view class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[56rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
-							 :class="{'!border-[var(--primary-color)] text-[var(--primary-color)] !bg-[var(--primary-color-light)]': subItem.selected}"
-							v-for="(subItem,subIndex) in item.values" :key="subIndex"
-							@click="change(subItem, index)">
-								{{subItem.name}}
-							</view>
-						</view>
-					</view>
-					<view class="flex justify-between items-center mt-[30rpx]">
-						<view class="text-[26rpx]">购买数量</view>
-						<u-number-box :min="1" :max="goodsDetail.stock" integer :step="1" input-width="98rpx" v-model="buyNum" input-height="54rpx">
-							<template #minus>
-								<text class="text-[44rpx] iconfont iconjian" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
-							</template>
-							<template #input>
-								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
-							</template>
-							<template #plus>
-								<text class="text-[44rpx] iconfont iconjia" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
-							</template>
-						</u-number-box>
-					</view>
-				</scroll-view>
-				<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="confirm">确定</button>
-				<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
-			</view>
-		</u-popup>
+			</u-popup>
+		</u-overlay>
+		<!-- #ifdef MP-WEIXIN -->
+		<!-- 小程序隐私协议 -->
+		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<!-- #endif -->
 	</view>
 </template>
 
 <script setup lang="ts">
 	import { ref, reactive, computed, toRaw } from 'vue';
-	import { img, redirect } from '@/utils/common'
+	import { img, redirect, getToken } from '@/utils/common'
 	import useCartStore from '@/addon/shop/stores/cart'
 	import { useLogin } from '@/hooks/useLogin'
 	import useMemberStore from '@/stores/member'
@@ -76,6 +84,19 @@
 	})
 	let openType = ref("");
 	let buyNum = ref(1)
+	
+	// 商品价格
+	let goodsPrice = computed(() =>{
+		let price = "0.00";
+		if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount){
+			price = goodsDetail.value.sale_price // 折扣价
+		}else if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken()){
+			price = goodsDetail.value.member_price // 会员价
+		}else{
+			price = goodsDetail.value.price
+		}
+		return price;
+	})
 
 	// 会员信息
 	const memberStore = useMemberStore()
@@ -137,6 +158,7 @@
 
 	const change = (data, index)=>{
 		currSpec.value.name[index] = data.name;
+		buyNum.value = 1
 		getSkuId();
 	}
 
@@ -169,7 +191,6 @@
 			}
 
 			num += buyNum.value;
-
 			cartStore.increase({
 				id: cartId||'',
 				goods_id: goodsDetail.value.goods_id,
@@ -206,17 +227,20 @@
 
 		closeFn();
 	}
+	//预览图片
+	const imgListPreview = (item) => {
+		if (item === '') return false
+		var urlList = []
+		urlList.push(img(item))  //push中的参数为 :src="item.img_url" 中的图片地址
+		uni.previewImage({
+			indicator: "number",
+			loop: true,
+			urls: urlList
+		})
+	}
 	defineExpose({
 		open
 	})
 </script>
 
-<style lang="scss" scoped>
-.popup-type {
-	:deep(.u-popup__content) {
-		border-top-left-radius: 16rpx;
-		border-top-right-radius: 16rpx;
-		overflow: hidden;
-	}
-}
-</style>
+<style lang="scss" scoped></style>

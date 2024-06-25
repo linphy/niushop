@@ -177,28 +177,28 @@ class Wechatpay extends BasePay
     {
         //这儿的批次信息可能是这儿生成的,但依然需要记录
         $order = [
-            'out_batch_no' => time() . '',//
+            'out_batch_no' => $params['transfer_no'] . '',//
             'batch_name' => $params['remark'],
             'batch_remark' => $params['remark'],
         ];
         $transfer_list = $params['transfer_list'];
         //单笔转账
         if (empty($transfer_list)) {
-            $transfer_list = array(
+            $transfer_list = [
                 [
                     'transfer_no' => $params['transfer_no'] . '1',
                     'money' => (int)$params['money'],
                     'remark' => $params['remark'],
                     'openid' => $params['to_no']
                 ]
-            );
+            ];
         }
         $total_amount = 0;
         $total_num = 0;
 
-        foreach ($transfer_list as $v) {
+        foreach ($transfer_list as $k => $v) {
             $item_transfer = [
-                'out_detail_no' => time() . '1',
+                'out_detail_no' => $params['transfer_no'] . $k,
                 'transfer_amount' => (int)$v['money'],
                 'transfer_remark' => $v['remark'],
                 'openid' => $v['openid'],
@@ -225,7 +225,7 @@ class Wechatpay extends BasePay
             }
             throw new PayException($result['message']);
         }
-        return ['batch_id' => $result['batch_id'], 'out_batch_no' => $result['out_batch_no']];
+        return ['batch_id' => $result['batch_id'], 'out_batch_no' => $result['out_batch_no'], 'status' => TransferDict::SUCCESS];
     }
 
     /**
@@ -238,10 +238,15 @@ class Wechatpay extends BasePay
      */
     public function close(string $out_trade_no)
     {
-        $result = Pay::wechat()->close([
-            'out_trade_no' => $out_trade_no,
-        ]);
-        return $this->returnFormat($result);
+        try {
+            $result = Pay::wechat()->close([
+                'out_trade_no' => $out_trade_no,
+            ]);
+            return $this->returnFormat($result);
+        }catch(Throwable $e){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -384,7 +389,8 @@ class Wechatpay extends BasePay
         $order = [
             '_action' => 'refund',
             'transaction_id' => $out_trade_no,
-            'out_refund_no' => $refund_no
+            'out_refund_no' => $refund_no,
+            ''
         ];
         $result = Pay::wechat()->query($order);
         if (empty($result))

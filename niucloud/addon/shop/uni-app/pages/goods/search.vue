@@ -4,7 +4,7 @@
 			<view class="search-box">
 				<input class="uni-input text-[24rpx]" maxlength="50" v-model="inputValue" confirm-type="search" focus @confirm="search()" placeholder="搜索商品" />
 				<u-icon v-if="inputValue" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="inputValue=''"></u-icon>
-				<text class="iconfont iconxiazai17" @click="search()"></text>
+				<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 !text-[26rpx]" @click="search()"></text>
 			</view>
 		</view>
 
@@ -14,7 +14,7 @@
 				<view class="history-box">
 					<view class="history-top">
 						<view class="title">历史搜索</view>
-						<view class="icon iconfont iconicon7" @click="deleteHistoryList"></view>
+						<view class="icon nc-iconfont nc-icon-shanchu-yuangaizhiV6xx text-[28rpx] text-[#999]" @click="deleteHistoryList"></view>
 					</view>
 					<view class="history-bottom " id="history-list" :style="{ maxHeight: !isAllHistory ? '100%' : '168rpx' }">
 						<view class="history-li" v-for="(item, index) in historyList" :key="index" @click="otherSearch(item)">
@@ -22,7 +22,7 @@
 						</view>
 						<view class="history-li history_more" v-if="isAllHistory" @click="isAllHistory = false">
 							<view>
-								<text class="text-xs iconfont iconxialajiantouxiao"></text>
+								<text class="text-[30rpx] nc-iconfont nc-icon-xiaV6xx"></text>
 							</view>
 						</view>
 					</view>
@@ -36,6 +36,7 @@
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref, nextTick } from 'vue';
 import { redirect } from '@/utils/common';
+import useConfigStore from "@/stores/config";
 
 const inputValue = ref('') //搜索框的值
 const historyList = ref([]) //历史搜索记录
@@ -62,6 +63,7 @@ const deleteHistoryList =()=> {
     uni.showModal({
         title: '提示',
         content: '确认删除全部历史记录？',
+        confirmColor: useConfigStore().themeColor['--primary-color'],
         success: res => {
             if (res.confirm) {
                 uni.setStorageSync('goodsSearchHistory', []);

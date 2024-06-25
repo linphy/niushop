@@ -93,6 +93,27 @@ class LinkDict
                         'url' => '/app/pages/member/address',
                         'is_share' => 1,
                         'action' => ''
+                    ],
+                    [
+                        'name' => 'MEMBER_MY_LEVEL',
+                        'title' => get_lang('dict_diy.member_my_level'),
+                        'url' => '/app/pages/member/level',
+                        'is_share' => 1,
+                        'action' => ''
+                    ],
+                    [
+                        'name' => 'MEMBER_MY_SIGN_IN',
+                        'title' => get_lang('dict_diy.member_my_sign_in'),
+                        'url' => '/app/pages/member/sign_in',
+                        'is_share' => 1,
+                        'action' => ''
+                    ],
+                    [
+                        'name' => 'MEMBER_VERIFY_INDEX',
+                        'title' => get_lang('dict_diy.member_verify_index'),
+                        'url' => '/app/pages/verify/index',
+                        'is_share' => 1,
+                        'action' => ''
                     ]
                 ]
             ],
@@ -106,6 +127,22 @@ class LinkDict
             ],
             'DIY_LINK' => [
                 'title' => get_lang('dict_diy.diy_link'),
+                'addon_info' => [
+                    'title' => '系统',
+                    'key' => 'app'
+                ],
+                'child_list' => []
+            ],
+            'DIY_JUMP_OTHER_APPLET' => [
+                'title' => get_lang('dict_diy.diy_jump_other_applet'),
+                'addon_info' => [
+                    'title' => '系统',
+                    'key' => 'app'
+                ],
+                'child_list' => []
+            ],
+            'DIY_MAKE_PHONE_CALL' => [
+                'title' => get_lang('dict_diy.diy_make_phone_call'),
                 'addon_info' => [
                     'title' => '系统',
                     'key' => 'app'

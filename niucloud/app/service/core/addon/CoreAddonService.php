@@ -213,7 +213,13 @@ class CoreAddonService extends CoreAddonBaseService
      * @return array
      */
     public function getInstallAddonList(){
-        return $this->model->where([['status', '=', AddonDict::ON]])->append(['status_name'])->column('title, icon, key, desc, status, type, support_app', 'key');
+        $addon_list = $this->model->where([['status', '=', AddonDict::ON]])->append(['status_name'])->column('title, icon, key, desc, status, type, support_app', 'key');
+        if (!empty($addon_list)) {
+            foreach ($addon_list as &$data) {
+                $data['icon'] = is_file($data['icon']) ? image_to_base64($data['icon']) : '';
+            }
+        }
+        return $addon_list;
     }
 
     public function getAddonMemuList()
@@ -225,7 +231,6 @@ class CoreAddonService extends CoreAddonBaseService
         }
         return $addonList;
     }
-
 
     /**
      * 开发者插件

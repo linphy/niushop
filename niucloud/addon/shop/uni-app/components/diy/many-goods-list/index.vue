@@ -3,7 +3,6 @@
 		<scroll-view scroll-x="true" class="many-goods-list-head" :class="diyComponent.headStyle" :scroll-into-view="'a' + cateIndex" :style="warpCss">
 			<template v-if="diyComponent.headStyle == 'style-3'">
 				<template v-if="diyComponent.source == 'custom'">
-
 					<view v-for="(item,index) in diyComponent.list" :key="index" :class="['flex-col inline-flex items-center justify-center', { 'pr-[40rpx]': (index != diyComponent.list.length-1) }]" @click="changeCateIndex(item,index)">
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': index == cateIndex }]" v-if="item.imageUrl" :src="img(item.imageUrl)" mode="aspectFit"/>
 						<image :style="{ borderRadius : (diyComponent.aroundRadius * 2) + 'rpx' }" :class="['w-[90rpx] h-[90rpx] overflow-hidden border-[2rpx] border-solid border-transparent', {'border-[var(--primary-color)]': index == cateIndex }]" v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" />
@@ -30,7 +29,7 @@
 					</view>
 					<view v-if="diyComponent.headStyle == 'style-2'" class="cate">
 						<view class="name">{{ item.title }}</view>
-						<text class="iconfont iconVector !text-[10rpx] text-[var(--primary-color)] transform scale-70 font-700" v-if="index == cateIndex"></text>
+						<text class="nc-iconfont nc-icon-xiaolian-2 !text-[40rpx] text-[var(--primary-color)] transform" v-if="index == cateIndex"></text>
 					</view>
 				</view>
 			</template>
@@ -46,7 +45,6 @@
 	import { ref, computed, watch, onMounted } from 'vue';
 	import { redirect, img } from '@/utils/common';
 	import useDiyStore from '@/app/stores/diy';
-
     import diyGoodsList from '@/addon/shop/components/diy/goods-list/index.vue';
     import { getGoodsCategoryList } from '@/addon/shop/api/goods';
 
@@ -267,18 +265,18 @@
 					position: relative;
 				}
 				.name{
-					font-size: 32rpx;
-					color: #303133;
+					font-size: 30rpx;
+					color: #888;
 					line-height: 32rpx;
 				}
 				&.active {
 					.name{
-						color: var(--primary-color);
+						color:var(--primary-color);
 						font-weight: bold;
 					}
-					.iconfont{
+					.nc-iconfont{
 						position: absolute;
-						bottom: -20rpx;
+						bottom: -35rpx;
 					}
 				}
 			}

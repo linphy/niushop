@@ -12,7 +12,6 @@
 namespace addon\shop\app\listener;
 
 use app\service\core\addon\CoreAddonService;
-use app\service\core\site\CoreSiteService;
 
 /**
  * 底部导航
@@ -27,7 +26,7 @@ class BottomNavigationListener
     {
         $key = 'shop';
 
-        if (!empty($params) && $params[ 'key' ] != $key) return;
+        if (!empty($params) && !empty($params[ 'key' ]) && $params[ 'key' ] != $key) return;
 
         $core_addon_service = new CoreAddonService();
         $addon_info = $core_addon_service->getAddonConfig($key);

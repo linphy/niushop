@@ -1,8 +1,6 @@
 <template>
-    <el-dialog v-model="showDialog" :title="formData.evaluate_id ? t('updateEvaluate') : t('addEvaluate')" width="700px"
-        class="diy-dialog-wrap" :destroy-on-close="true">
-        <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form"
-            v-loading="loading">
+    <el-dialog v-model="showDialog" :title="formData.evaluate_id ? t('updateEvaluate') : t('addEvaluate')" width="700px" class="diy-dialog-wrap" :destroy-on-close="true">
+        <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
             <el-form-item :label="t('goodsInfo')" prop="goods_id">
                 <goods-select-popup ref="goodsSelectPopupRef" v-model="formData.goods_id" :min="1" :max="1" />
             </el-form-item>

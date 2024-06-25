@@ -70,7 +70,8 @@ Route::group(function () {
     Route::post('addon_develop/build/:key', 'addon.AddonDevelop/build');
     //下载插件
     Route::post('addon_develop/download/:key', 'addon.AddonDevelop/download');
-
+    //插件标识黑名单
+    Route::get('addon_develop/key/blacklist', 'addon.AddonDevelop/keyBlackList');
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

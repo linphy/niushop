@@ -37,7 +37,7 @@ class CoreStatService extends BaseCoreService
         // 添加天统计
         $stat_data = [
             'date' => date('Y-m-d', time()),
-            'date_time' => strtotime(date('Y-m-d', time()))
+            'date_time' => strtotime(date('Y-m-d', time())),
         ];
         $stat = (new ShopStat())->where($stat_data)->findOrEmpty();
         if ($stat->isEmpty()) {
@@ -62,7 +62,7 @@ class CoreStatService extends BaseCoreService
         $end_date = strtotime($end_date);
 
         $field = implode(',', array_merge(self::STAT_FIELD, ['date']));
-        $stat_data = (new ShopStat())->where([  ['date_time', '>=', $start_date], ['date_time', '<=', $end_date] ])->field($field)->select()->toArray();
+        $stat_data = (new ShopStat())->where([ ['date_time', '>=', $start_date], ['date_time', '<=', $end_date] ])->field($field)->select()->toArray();
         $stat_data = !empty($stat_data) ? array_column($stat_data, null, 'date') : [];
 
         $data = [];

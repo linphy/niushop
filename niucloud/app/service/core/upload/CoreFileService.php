@@ -29,6 +29,8 @@ class CoreFileService extends BaseCoreService
 
     protected $validate = [];
 
+    protected $rename = '';
+
     public function __construct(protected $is_attachment = false)
     {
         parent::__construct();

@@ -22,6 +22,7 @@
                     <el-form-item>
                         <el-button type="primary" @click="loadInvoiceList()">{{ t('search') }}</el-button>
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
+                        <el-button type="primary" @click="exportEvent">{{ t('export') }}</el-button>
                     </el-form-item>
                 </el-form>
             </el-card>
@@ -73,10 +74,13 @@
                 </div>
                 <invoice-detail ref="invoiceDetailDialog" @complete="loadInvoiceList()" />
                 <invoice-dialog ref="invoiceListDialog" @complete="loadInvoiceList()" />
+                <export-sure ref="exportSureDialog" :show="flag" type="shop_invoice"
+                    :searchParam="invoiceManagementTableData.searchParam" @close="handleClose" />
             </div>
         </el-card>
 
-</div></template>
+    </div>
+</template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
@@ -116,7 +120,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 const activeName = ref('')
 
-const handleClick = (event:any) => {
+const handleClick = (event: any) => {
     invoiceManagementTableData.searchParam.is_invoice = event
     loadInvoiceList()
 }
@@ -168,6 +172,18 @@ const checkOrder = (data: any) => {
         })
         window.open(routeUrl.href, '_blank')
     }
+}
+
+/**
+ * 发票记录导出
+ */
+const exportSureDialog = ref(null)
+const flag = ref(false)
+const handleClose = (val) => {
+    flag.value = val
+}
+const exportEvent = (data: any) => {
+    flag.value = true
 }
 
 </script>

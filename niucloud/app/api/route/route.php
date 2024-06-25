@@ -23,6 +23,12 @@ Route::any('wechat/serve', 'wechat.Serve/serve')
     ->middleware(ApiCheckToken::class)
     ->middleware(ApiLog::class);
 
+// 微信小程序消息推送
+Route::any('weapp/serve', 'weapp.Serve/serve')
+    ->middleware(ApiChannel::class)
+    ->middleware(ApiCheckToken::class)
+    ->middleware(ApiLog::class);
+
 Route::group(function() {
     Route::post('niucloud/notify', function(){
         return (new CoreNotifyService())->notify();
@@ -36,6 +42,10 @@ Route::group(function() {
 Route::group(function() {
     //获取授权地址
     Route::get('wechat/codeurl', 'wechat.Wechat/getCodeUrl');
+    //获取授权信息
+    Route::get('wechat/user', 'wechat.Wechat/getWechatUser');
+    //公众号通过授权信息登录
+    Route::post('wechat/userlogin', 'wechat.Wechat/wechatLogin');
 
     //公众号通过code登录
     Route::post('wechat/login', 'wechat.Wechat/login');
@@ -51,6 +61,13 @@ Route::group(function() {
     Route::post('weapp/register', 'weapp.Weapp/register');
     // 获取小程序订阅消息模板id
     Route::get('weapp/subscribemsg', 'weapp.Weapp/subscribeMessage');
+
+    // 查询小程序是否已开通发货信息管理服务
+    Route::get('weapp/getIsTradeManaged', 'weapp.Weapp/getIsTradeManaged');
+
+    // 通过外部交易号获取消息跳转路径
+    Route::get('weapp/getMsgJumpPath', 'weapp.Weapp/getMsgJumpPath');
+
     //登录
     Route::get('login', 'login.Login/login');
     //第三方绑定
@@ -86,6 +103,9 @@ Route::group(function() {
     // 获取手机端首页列表
     Route::get('wap_index', 'sys.Config/getWapIndexList');
 
+    // 获取地图设置
+    Route::get('map', 'sys.Config/getMap');
+
     /***************************************************** 地区管理 ****************************************************/
     //通过pid获取列表
     Route::get('area/list_by_pid/:pid', 'sys.Area/listByPid');
@@ -100,6 +120,27 @@ Route::group(function() {
     /***************************************************** 海报管理 ****************************************************/
     //获取海报
     Route::get('poster', 'poster.Poster/poster');
+
+    /***************************************************** 核销管理 ****************************************************/
+    //根据业务获取核销码
+    Route::get('verify', 'sys.Verify/getVerifyCode');
+    //校验当前会员是否是核销员
+    Route::get('check_verifier', 'sys.Verify/checkVerifier');
+    //核销记录
+    Route::get('verify_records', 'sys.Verify/records');
+    //核销详情
+    Route::get('verify_detail/:code', 'sys.Verify/detail');
+    //通过code码获取核销信息
+    Route::get('get_verify_by_code/:code', 'sys.Verify/getInfoByCode');
+    //核销操作
+    Route::post('verify/:code', 'sys.Verify/verify');
+
+    /***************************************************** 会员管理 ****************************************************/
+    /***************************************************** 任务管理 ****************************************************/
+    // 获取成长值任务
+    Route::get('task/growth', 'sys.Task/growth');
+    // 获取积分任务
+    Route::get('task/point', 'sys.Task/point');
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)
     ->middleware(ApiLog::class);

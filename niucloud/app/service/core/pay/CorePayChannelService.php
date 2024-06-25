@@ -54,7 +54,7 @@ class CorePayChannelService extends BaseCoreService
      * @throws ModelNotFoundException
      */
     public function getAllowPayTypeByChannel(string $channel, string $trade_type = ''){
-        $channel_pay_list = $this->model->where([ ['channel', '=', $channel], ['status', '=', 1]])->field('type,config')->order('sort asc')->select()->toArray();
+        $channel_pay_list = $this->model->where([['channel', '=', $channel], ['status', '=', 1]])->field('type,config')->order('sort asc')->select()->toArray();
 
         if(!empty($channel_pay_list)){
             $temp_channel_pay_list = array_column($channel_pay_list, 'type');

@@ -42,7 +42,8 @@ class Template extends BaseAdminController
             ['keys', []]
         ]);
         $weapp_template_service = new WeappTemplateService();
-        return success($weapp_template_service->syncAll($data['keys']));
+        $weapp_template_service->syncAll($data['keys']);
+        return success('SUCCESS');
     }
 
 }

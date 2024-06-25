@@ -105,12 +105,18 @@ return [
         'account_point_recharge_give' => '充值赠送',
         'account_money' => '可提现余额',
         'account_commission' => '佣金',
+        'account_growth' => '成长值',
         'login_username' => '用户名密码登录',
         'login_mobile' => '手机验证码登录',
         'login_wechat' => '微信公众号授权登录',
         'login_weapp' => '微信小程序授权登录',
         'account_point_adjust' => '账户调整',
+        'account_point_member_register' => '会员注册',
+        'account_point_level_upgrade' => '升级礼包',
+        'account_point_day_sign_award' => '日签奖励',
+        'account_point_continue_sign_award' => '连签奖励',
         'account_balance_adjust' => '账户调整',
+        'account_balance_member_register' => '会员注册',
         'account_money_award' => '活动奖励',
         'account_money_cash_out' => '账户提现',
         'account_money_adjust' => '账户调整',
@@ -121,6 +127,9 @@ return [
 
         'account_balance_order' => '订单消费',
         'account_balance_order_refund' => '订单退款',
+        'account_balance_level_upgrade' => '升级礼包',
+        'account_balance_day_sign_award' => '日签奖励',
+        'account_balance_continue_sign_award' => '连签奖励',
     ],
     'dict_order' => [
 
@@ -220,9 +229,18 @@ return [
         'member_my_commission' => '我的佣金',
         'member_my_personal' => '个人资料',
         'member_my_address' => '收货地址',
+        'member_my_level' => '会员等级',
+        'member_my_sign_in' => '我的签到',
+        'member_verify_index' => '核销台',
 
         'diy_page' => '自定义页面',
-        'diy_link' => '自定义链接'
+        'diy_link' => '自定义链接',
+        'diy_jump_other_applet' => '小程序跳转',
+        'diy_make_phone_call' => '拨打电话'
+    ],
+    // 自定义海报
+    'dict_diy_poster'=>[
+        'component_type_basic' => '基础组件',
     ],
     //短信相关
     'dict_sms' => [
@@ -233,12 +251,11 @@ return [
     //渠道
     'dict_channel' => [
         //渠道端口
-        'channel_wechat' => '公众号',
-        'channel_weapp' => '微信小程序',
+        'channel_pc' => 'PC',
         'channel_h5' => 'H5',
-        'channel_pc' => '电脑端',
         'channel_app' => 'APP',
-
+        'channel_wechat' => '微信公众号',
+        'channel_weapp' => '微信小程序',
     ],
     //会员提现
     'dict_member_cash_out' => [
@@ -336,11 +353,30 @@ return [
         'uploading' => '上传中',
         'upload_success' => '上传成功',
         'upload_fail' => '上传失败',
+        'auditing' => '审核中',
+        'audit_success' => '审核通过',
+        'audit_fail' => '审核失败'
     ],
     'dict_wechat_media' => [
         'type_image' => '图片',
         'type_voice' => '语音',
         'type_video' => '视频',
         'type_news' => '图文',
-    ]
+    ],
+    //导出状态
+    'dict_export' => [
+        'status_exporting' => '导出中',
+        'status_success' => '导出成功',
+        'status_fail' => '导出失败',
+    ],
+    //签到类型
+    'dict_member_sign_award' => [
+        'type_day' => '日签',
+        'type_continue' => '连签'
+    ],
+    //签到状态
+    'dict_member_sign' => [
+        'status_not_sign' => '未签到',
+        'status_signed' => '已签到'
+    ],
 ];

@@ -48,7 +48,7 @@ class CoreDeliveryService extends BaseCoreService
      */
     public function getExpressConfig()
     {
-        $data = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
+        $data = ( new CoreConfigService() )->getConfigValue( 'SHOP_DELIVERY_CONFIG');
         if (empty($data)) {
             $expressInfo = [
                 'name' => '物流配送',
@@ -85,7 +85,7 @@ class CoreDeliveryService extends BaseCoreService
      */
     public function getStoreConfig()
     {
-        $data = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
+        $data = ( new CoreConfigService() )->getConfigValue( 'SHOP_DELIVERY_CONFIG');
         if (empty($data)) {
             $storeInfo = [
                 'name' => '门店配送',
@@ -142,7 +142,7 @@ class CoreDeliveryService extends BaseCoreService
      */
     public function getDeliveryList()
     {
-        $deliver = ( new CoreConfigService() )->getConfigValue('SHOP_DELIVERY_CONFIG');
+        $deliver = ( new CoreConfigService() )->getConfigValue( 'SHOP_DELIVERY_CONFIG');
         foreach ($deliver as $value) {
             $list[ $value[ 'key' ] ] = [
                 'name' => $value[ 'name' ],

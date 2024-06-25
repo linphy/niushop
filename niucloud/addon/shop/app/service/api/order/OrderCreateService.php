@@ -48,7 +48,7 @@ class OrderCreateService extends BaseApiService
     /**
      * 计算
      * @param array $data
-     * @return void
+     * @return void|null
      */
     public function calculate(array $data)
     {
@@ -71,7 +71,7 @@ class OrderCreateService extends BaseApiService
     /**
      * 获取优惠券列表
      * @param array $data
-     * @return void
+     * @return void|null
      */
     public function getCoupon(array $data)
     {

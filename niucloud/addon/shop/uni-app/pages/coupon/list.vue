@@ -4,7 +4,7 @@
 			<!-- #ifndef H5 -->
 			<view :style="{height: headStyle, backgroundImage: 'url(' + img('addon/shop/coupon/coupn_uniapp.png') + ')',backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat'}">
 				<!-- #ifdef MP-WEIXIN -->
-				<top-tabbar  :title="title" :param="param" class="top-header"/>
+				<top-tabbar :data="param" titleColor="#fff" class="top-header"/>
 				<!-- #endif -->
 				<view class="px-[38rpx] pt-[98rpx]">
 					<view class="font-bold text-[36rpx] text-[#fff] leading-[42rpx]">领劵中心</view>
@@ -22,17 +22,17 @@
 			<!-- #endif -->
 		</view>
 		<view class="-mt-[74rpx] bg-[#F6F6F6] rounded-tl-[26rpx] rounded-tr-[26rpx]">
-			<mescroll-body ref="mescrollRef"  @init="mescrollInit" @down="downCallback" @up="getShopCouponListFn">
+			<mescroll-body ref="mescrollRef"  @init="mescrollInit" :down="{ use: false }" @up="getShopCouponListFn">
 				<view class="py-[30rpx] px-[30rpx]">
 					<template v-for="(item, index) in list">
 						<view v-if="item.btnType === 'collected'"
-							class="flex items-center relative w-[100%] rounded-[20rpx] overflow-hidden bg-[#fff]  py-[10rpx] background-size"
+							class="flex items-center relative w-[100%] rounded-[20rpx] overflow-hidden bg-[#fff] py-[22rpx] background-size"
 							:class="{'mt-[20rpx]':index}" :style="{ backgroundImage: 'url(' + img('addon/shop/coupon/coupn_loot.png') + ')'}" @click="toDetail(item.id)" >
 							<view class="box-border flex-1 border-0 border-r-[1px] border-[#FFDCDC] border-dashed flex items-center">
 								<view class="pl-[40rpx] w-[200rpx] box-border">
-									<view class="price-font flex items-center text-[var(--primary-color)]">
-										<text class="text-[38rpx] leading-[45rpx] text-center font-500">￥</text>
-										<text class="text-[56rpx] font-semibold text-left leading-[70rpx] truncate">{{ item.coupon_price }}</text>
+									<view class="price-font flex items-baseline text-[var(--primary-color)]">
+										<text class="text-[36rpx] mr-[4rpx] leading-[45rpx] text-center font-500">￥</text>
+										<text class="text-[54rpx] font-semibold text-left leading-[70rpx] truncate">{{ item.coupon_price }}</text>
 									</view>
 								</view>
 								<view class="flex-1 box-border ml-[10rpx]">
@@ -41,28 +41,27 @@
 										<text v-else>满{{ item.coupon_min_price }}元可用</text>
 									</view>
 									<view class="text-[20rpx] leading-[23rpx] mt-[4px] text-left flex items-center">
-										<text class="bg-[var(--primary-color)] text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
-										<text class="truncate max-w-[190rpx]">{{ item.title }}</text>
+										<text class="bg-[var(--primary-color)] whitespace-nowrap text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
+										<text class="truncate max-w-[190rpx] leading-[1.3]">{{ item.title }}</text>
 									</view>
-									<view
-										class="w-[100%] mt-[4px]  mb-[11px] text-[20rpx] leading-[23rpx]">
+									<view class="w-[100%] mt-[4px] text-[20rpx] leading-[23rpx]">
 										<text v-if="item.valid_type == 1">领取之日起{{ item.length || '' }}天内有效</text>
 										<text v-else> 有效期至{{ item.valid_end_time ? item.valid_end_time.slice(0, 10) : '' }}</text>
 									</view>
 								</view>
 							</view>
 							<view class="pr-[20rpx] pl-[30rpx]">
-								<u-button  :customStyle="{width:'150rpx',height:'60rpx',color:'#fff', fontSize:'24rpx',lineHeight:'60rpx', padding:'0',backgroundColor:'var(--primary-color)', opacity :'0.6',border:'none'}"  shape="circle"  disabled>已领完</u-button>
+								<u-button text="已领完"  :customStyle="{width:'150rpx',height:'60rpx',color:'#fff', fontSize:'24rpx',lineHeight:'60rpx', padding:'0',backgroundColor:'var(--primary-color)', opacity :'0.6',border:'none'}"  shape="circle"  disabled></u-button>
 							</view>
 							<view class="absolute top-0 right-[190rpx]  h-[10rpx] w-[20rpx] rounded-br-[20rpx] rounded-bl-[20rpx] bg-[#F6F6F6] "></view>
 							<view class="absolute bottom-0 right-[190rpx] h-[10rpx] w-[20rpx] rounded-tr-[20rpx] rounded-tl-[20rpx] bg-[#F6F6F6]"></view>
 						</view>
-						<view v-else class ="flex items-center relative w-[100%] rounded-[20rpx] overflow-hidden bg-[#fff] py-[10rpx] background-size"
+						<view v-else class ="flex items-center relative w-[100%] rounded-[20rpx] overflow-hidden bg-[#fff] py-[22rpx] background-size"
 							:class="{'mt-[20rpx]':index}" @click="toDetail(item.id)" :style="{ backgroundImage: item.btnType === 'using' ? ('url(' + img('addon/shop/coupon/coupn_bg.png') + ')') : 'none' }">
 							<view class="relative box-border flex-1 border-0 border-r-[1px] border-[#FFDCDC] border-dashed flex items-center">
 								<view class="pl-[40rpx] w-[200rpx] box-border">
-									<view class="price-font flex items-center text-[var(--primary-color)]">
-										<text class="text-[38rpx] leading-[45rpx] text-center font-500">￥</text>
+									<view class="price-font flex items-baseline text-[var(--primary-color)]">
+										<text class="text-[38rpx] mr-[4rpx] leading-[45rpx] text-center font-500">￥</text>
 										<text class="text-[56rpx] font-semibold text-left leading-[70rpx] truncate">{{ item.coupon_price }}</text>
 									</view>
 								</view>
@@ -72,20 +71,20 @@
 										<text v-else>满{{ item.coupon_min_price }}元可用</text>
 									</view>
 									<view class="text-[20rpx] leading-[23rpx] mt-[4px] text-left flex items-center">
-										<text class="bg-[var(--primary-color)] text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
-										<text class="truncate max-w-[190rpx]">{{ item.title }}</text>
+										<text class="bg-[var(--primary-color)] whitespace-nowrap text-[#fff] text-[20rpx] h-[28rpx] leading-[28rpx] px-[10rpx] rounded-[16rpx] mr-[6rpx] shrink-0">{{ item.type_name }}</text>
+										<text class="truncate max-w-[190rpx] leading-[1.3]">{{ item.title }}</text>
 									</view>
-									<view class="w-[100%] mt-[4px] mb-[11px] text-[20rpx] leading-[23rpx]">
+									<view class="w-[100%] mt-[4px] text-[20rpx] leading-[23rpx]">
 										<text v-if="item.valid_type == 1">领取之日起<text>{{ item.length || '' }}</text>天内有效</text>
 										<text v-else> 有效期至<text>{{ item.valid_end_time ? item.valid_end_time.slice(0, 10) : '' }}</text></text>
 									</view>
 								</view>
 							</view>
 							<view v-if="item.btnType === 'collecting'" @click.stop="collecting(item.id, index)" class="pr-[20rpx] pl-[30rpx]">
-								<u-button :customStyle="{width:'150rpx',height:'60rpx',color:'#fff', fontSize:'24rpx',lineHeight:'60rpx', padding:'0', backgroundColor:'var(--primary-color)',border:'none'}"  shape="circle">立即领取</u-button>
+								<u-button text="立即领取" :customStyle="{width:'150rpx',height:'60rpx',color:'#fff', fontSize:'24rpx',lineHeight:'60rpx', padding:'0', backgroundColor:'var(--primary-color)',border:'none'}"  shape="circle"></u-button>
 							</view>
 							<view v-if="item.btnType === 'using'" @click.stop="toLink(item.id)" class="pr-[20rpx] pl-[30rpx]">
-								<u-button :customStyle="{width:'150rpx',height:'60rpx',color:'var(--primary-color)', fontSize:'24rpx',lineHeight:'60rpx', padding:'0',backgroundColor:'transparent',border:'2rpx solid var(--primary-color)'}"  shape="circle" >去使用</u-button>
+								<u-button text="去使用" :customStyle="{width:'150rpx',height:'60rpx',color:'var(--primary-color)', fontSize:'24rpx',lineHeight:'60rpx', padding:'0',backgroundColor:'transparent',border:'2rpx solid var(--primary-color)'}"  shape="circle" ></u-button>
 							</view>
 
 							<view class="absolute top-0 right-[190rpx]  h-[10rpx] w-[20rpx] rounded-br-[20rpx] rounded-bl-[20rpx] bg-[#F6F6F6] "></view>
@@ -120,17 +119,18 @@ let menuButtonInfo = {};
 // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
 menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 // #endif
-let title = ref('优惠券列表')
 let param = ref({
-	arrowLink:'/addon/shop/pages/index',
-	isShowArrow:true,
-	tabbarBg:'transparent',
-	arrowColor:'#fff',
-	titleColor:'#fff'
+	title:'优惠券列表',
+	topStatusBar: {
+		style: 'style-1',
+        isTransparent: true,
+		bgColor: 'transparent',
+        rollBgColor: '#fff',
+		textColor: '#fff'
+	}
 })
 const headStyle = computed(() => {
-	let style = ''
-	style = (Number(menuButtonInfo.height) * 2 + menuButtonInfo.top * 2 +  368) + 'rpx;'
+	let style = (Number(menuButtonInfo.height) * 2 + menuButtonInfo.top * 2 +  368) + 'rpx;'
 	return style
 })
 
@@ -176,8 +176,7 @@ const getShopCouponListFn = (mescroll) => {
 		let newArr = (res.data.data as Array<Object>).map((el: any) => {
 			if (el.sum_count != -1 && el.receive_count === el.sum_count) {
 				el.btnType = 'collected'//已领完
-			}
-			if (!userInfo.value) {
+			}else if (!userInfo.value) {
 				el.btnType = 'collecting'//领用
 			} else {
 				if (el.is_receive && el.limit_count === el.member_receive_count) {
@@ -206,13 +205,20 @@ const collecting = (coupon_id: any, index: number) => {
 		return false
 	}
 	getCoupon({ coupon_id, number: 1,type:'receive'  }).then(res => {
-		list.value[index].btnType = 'using'
+		if(res.code > 0){
+			list.value[index].member_receive_count += 1
+			list.value[index].receive_count += 1
+			if(list.value[index].member_receive_count == list.value[index].limit_count
+			|| (list.value[index].sum_count != -1 && list.value[index].receive_count === list.value[index].sum_count)
+			){
+				list.value[index].btnType = 'using'
+			}
+		}
+		
 	})
 }
 const toDetail = (id: any) => {
-	// #ifdef H5
 	redirect({ url: '/addon/shop/pages/coupon/detail', param: { coupon_id: id } })
-	// #endif
 }
 const toLink = (id: any) => {
 	redirect({ url: '/addon/shop/pages/goods/list', param: { coupon_id: id } })

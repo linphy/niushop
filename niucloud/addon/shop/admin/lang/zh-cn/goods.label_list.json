@@ -9,5 +9,6 @@
       "sortPlaceholder":"请输入排序",
       "addLabel":"添加商品标签",
       "updateLabel":"编辑商品标签",
+      "sortTips":"排序号格式输入错误",
       "labelDeleteTips":"确定要删除该数据吗？"
 }

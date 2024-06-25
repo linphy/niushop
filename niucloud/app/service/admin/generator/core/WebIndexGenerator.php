@@ -52,9 +52,7 @@ class WebIndexGenerator extends BaseGenerator
             '{API_PATH}',
             '{DICT_LIST}',
             '{WITH_API_PATH}',
-            '{MODEL_DATA}',
-            '{EDIT_WITH_API_PATH}'
-
+            '{MODEL_DATA}'
         ];
 
         $new = [
@@ -77,8 +75,7 @@ class WebIndexGenerator extends BaseGenerator
 //            $this->getDictDataContent(),
             $this->getDictList(),
             $this->getWithApiPath(),
-            $this->getModelData(),
-            $this->getEditWithApiPath(),
+            $this->getModelData()
 
         ];
 
@@ -153,14 +150,10 @@ class WebIndexGenerator extends BaseGenerator
      */
     public function getAddEvent()
     {
-        $class_name = $this->className ? '/'.Str::lower($this->className) : '';
         if($this->table['edit_type'] == 2){
-            $route = '';
-            if (!empty($this->table['parent_menu'])) {
-                $route = (new CoreMenuService())->getRoutePathByMenuKey($this->table['parent_menu']);
-            }
+            $route = '/' . $this->moduleName.'/'.($this->className ? Str::lower($this->className) . '_edit' : 'edit');
             //打开新页面
-            $content = "router.push('".$route."/".$this->moduleName."/". Str::lower($this->className) ."_edit')";
+            $content = "router.push('".$route."')";
         }else{
             $content = 'edit'.$this->getUCaseClassName().'Dialog.value.setFormData()'.PHP_EOL.'edit'.$this->getUCaseClassName().'Dialog.value.showDialog = true';
         }
@@ -175,13 +168,9 @@ class WebIndexGenerator extends BaseGenerator
      */
     public function getEditEvent()
     {
-        $class_name = $this->className ? '/'.Str::lower($this->className) : '';
         if($this->table['edit_type'] == 2){
-            $route = '';
-            if (!empty($this->table['parent_menu'])) {
-                $route = (new CoreMenuService())->getRoutePathByMenuKey($this->table['parent_menu']);
-            }
-            $content = "router.push('".$route."/".$this->moduleName."/". Str::lower($this->className) ."_edit?id='+data.".$this->getPk().")";
+            $route = '/' . $this->moduleName.'/'.($this->className ? Str::lower($this->className) . '_edit' : 'edit') . "?id='+data.".$this->getPk();
+            $content = "router.push('".$route.")";
         }else{
             $content = 'edit'.$this->getUCaseClassName().'Dialog.value.setFormData(data)'.PHP_EOL.'edit'.$this->getUCaseClassName().'Dialog.value.showDialog = true';
         }
@@ -560,7 +549,7 @@ class WebIndexGenerator extends BaseGenerator
             if (!empty($column['model'])) {
                 $str = strripos($column['model'],'\\');
                 $with = Str::camel(substr($column['model'],$str+1));
-                $content.= ' getWith'.Str::studly($with).'List,';
+                $content.= ', getWith'.Str::studly($with).'List';
             }
         }
         return $content;
@@ -589,20 +578,4 @@ class WebIndexGenerator extends BaseGenerator
 
     }
 
-    /**
-     * 编辑远程下拉方法
-     * @return void
-     */
-    public function getEditWithApiPath()
-    {
-        $content = '';
-        foreach ($this->tableColumn as $column) {
-            if (!empty($column['model'])) {
-                $str = strripos($column['model'],'\\');
-                $with = Str::camel(substr($column['model'],$str+1));
-                $content.= ' getWith'.Str::studly($with).'List,';
-            }
-        }
-        return $content;
-    }
 }

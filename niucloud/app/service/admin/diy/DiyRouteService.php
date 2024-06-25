@@ -58,7 +58,7 @@ class DiyRouteService extends BaseAdminService
                             $is_add = false;
                         }
 
-                        if (!empty($where[ 'addon_name' ]) && $where[ 'addon_name' ] != $v[ 'addon_info' ][ 'key' ]) {
+                        if (!empty($v[ 'addon_info' ]) && !empty($where[ 'addon_name' ]) && $where[ 'addon_name' ] != $v[ 'addon_info' ][ 'key' ]) {
                             $is_add = false;
                         }
 
@@ -93,7 +93,7 @@ class DiyRouteService extends BaseAdminService
         $field = 'id,title,name,page,share,is_share,sort';
         $order = '';
 
-        $search_model = $this->model->withSearch([ "title" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title" ], $where)->field($field)->order($order);
         return $this->pageQuery($search_model);
     }
 

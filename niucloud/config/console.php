@@ -15,7 +15,6 @@ $data = [
         'queue:listen' => 'app\command\queue\Queue',
 
         //计划任务 自定义命令
-        'cron:run' => 'app\command\schedule\Run',
         'cron:schedule' => 'app\command\schedule\Schedule',
 
         //wokrerman的启动停止和重启

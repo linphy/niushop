@@ -38,16 +38,26 @@ class CoreExpressService extends BaseCoreService
             return;
         }
 
+        // 判断会员等级是否有包邮的权益
+        if (isset($order->buyer['member_level']['level_benefits']) && isset($order->buyer['member_level']['level_benefits']['shop_free_shipping'])) {
+            if ($order->buyer['member_level']['level_benefits']['shop_free_shipping']['is_use']) {
+                $order->basic['delivery_money'] = 0;
+                return;
+            }
+        }
+
         foreach ($order->goods_data as $k => &$v) {
             $goods_type = $v['goods']['goods_type'];
-            if ($goods_type == GoodsDict::REAL && $v['goods']['is_free_shipping'] == 0) {
+            if ($goods_type == GoodsDict::REAL) {
                 if (in_array(OrderDeliveryDict::EXPRESS, $v['goods']['delivery_type'])) {
-                    if ($v['goods']['fee_type'] == 'template') {
-                        (new self())->feeCalculate($order, $v);
-                    } else {
-                        $v['delivery_money'] = $v['goods']['delivery_money'] * $v['num'];
+                    if ($v['goods']['is_free_shipping'] == 0) {
+                        if ($v['goods']['fee_type'] == 'template') {
+                            (new self())->feeCalculate($order, $v);
+                        } else {
+                            $v['delivery_money'] = $v['goods']['delivery_money'] * $v['num'];
+                        }
+                        $delivery_money += $v['delivery_money'] ?? 0;
                     }
-                    $delivery_money += $v['delivery_money'] ?? 0;
                 } else {
                     $v['not_support_delivery'] = 1;
                     $order->error[] = get_lang('NOT_SUPPORT_DELIVERY_TYPE');

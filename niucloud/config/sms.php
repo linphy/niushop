@@ -9,7 +9,9 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-return [
+use core\dict\DictLoader;
+
+$system = [
     //默认驱动
     'default' => 'aliyun',
     //驱动厂商列表及参数-短信
@@ -30,3 +32,5 @@ return [
         ]
     ]
 ];
+
+return (new DictLoader("Config"))->load(['data' => $system, 'name' => 'sms']);

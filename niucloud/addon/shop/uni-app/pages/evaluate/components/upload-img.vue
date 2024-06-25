@@ -6,18 +6,23 @@
                     <u-icon name="photo" color="#999" size="50"></u-icon>
                 </template>
             </u--image>
-            <text class="iconguanbi iconfont absolute top-0 right-[5rpx] text-[#fff] bg-[#888] rounded-bl-[16rpx]" @click.stop="deleteImg(index)"></text>
+            <text class="nc-iconfont nc-icon-guanbiV6xx absolute top-0 right-[5rpx] text-[#fff] bg-[#888] rounded-bl-[16rpx]" @click.stop="deleteImg(index)"></text>
         </view>
-        <view class="w-[204rpx] h-[204rpx]">
+        <view class="w-[204rpx] h-[204rpx]" v-show="value.length < maxCount">
             <u-upload @afterRead="afterRead" :maxCount="maxCount" :multiple="prop.multiple">
                 <view class="flex items-center justify-center w-[204rpx] h-[204rpx] border-[2rpx] border-dashed border-[#ebebec] text-center text-[#888]">
                     <view>
-                        <view class="iconfont iconzhaoxiangji text-[50rpx]"></view>
+                        <view class="nc-iconfont nc-icon-xiangjiV6xx text-[50rpx]"></view>
                         <view class=" text-[24rpx] mt-[10rpx]">{{ value.length }}/{{ maxCount }}</view>
                     </view>
                 </view>
             </u-upload>
         </view>
+
+        <!-- #ifdef MP-WEIXIN -->
+        <!-- 小程序隐私协议 -->
+        <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+        <!-- #endif -->
     </view>
 </template>
 <script lang="ts" setup>
@@ -31,7 +36,7 @@ const prop = defineProps({
     },
     maxCount: {
         type: Number,
-        default: 6
+        default: 9
     },
     multiple: {
         type: Boolean,

@@ -51,13 +51,13 @@ class CouponDict
 
 
     //未开始
-    const WAIT_START = 1;
+    const WAIT_START = 0;
     //进行中
-    const NORMAL = 2;
+    const NORMAL = 1;
     //已过期
-    const EXPIRE = 3;
+    const EXPIRE = 2;
     //已失效
-    const INVALID = 4;
+    const INVALID = 3;
     /**
      * 优惠券活动状态
      * @param $status

@@ -36,17 +36,18 @@ class OrderCreate extends BaseApiController
      * 计算
      * @return Response
      */
-    public function calculate(){
+    public function calculate()
+    {
         $data = $this->request->params([
-            ['order_key', []],
-            ['cart_ids', []],
-            ['sku_data', []],
-            ['delivery', []],
+            [ 'order_key', [] ],
+            [ 'cart_ids', [] ],
+            [ 'sku_data', [] ],
+            [ 'delivery', [] ],
 //            ['member_remark', ''],//买家留言
-            ['discount', []],//优惠
+            [ 'discount', [] ],//优惠
 //            ['invoice', []],//发票
         ]);
-        return success('SUCCESS', (new OrderCreateService())->calculate($data));
+        return success('SUCCESS', ( new OrderCreateService() )->calculate($data));
     }
 
     /**
@@ -56,34 +57,39 @@ class OrderCreate extends BaseApiController
     public function create()
     {
         $data = $this->request->params([
-            ['order_key', []],
-            ['member_remark', ''],//买家留言
+            [ 'order_key', [] ],
+            [ 'member_remark', '' ],//买家留言
 //            ['delivery', []],//配送参数
 //            ['discount', []],//优惠
-            ['invoice', []],//发票
+            [ 'invoice', [] ],//发票
         ]);
-        return success('SUCCESS', (new OrderCreateService())->create($data));
+        return success('SUCCESS', ( new OrderCreateService() )->create($data));
     }
 
     /**
      * 查询优惠券
      * @return Response
      */
-    public function getCoupon(){
+    public function getCoupon()
+    {
         $data = $this->request->params([
-            ['order_key', []],
+            [ 'order_key', [] ],
         ]);
-        return success('SUCCESS', (new OrderCreateService())->getCoupon($data));
+        return success('SUCCESS', ( new OrderCreateService() )->getCoupon($data));
     }
 
     /**
      * 获取自提点
-     * @return void
+     * @return Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getStore() {
+    public function getStore()
+    {
         $data = $this->request->params([
-            ['latlng', []],
+            [ 'latlng', [] ],
         ]);
-        return success('SUCCESS', (new OrderCreateService())->getStore($data['latlng']));
+        return success('SUCCESS', ( new OrderCreateService() )->getStore($data[ 'latlng' ]));
     }
 }

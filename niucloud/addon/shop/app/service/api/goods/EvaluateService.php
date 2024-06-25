@@ -42,7 +42,7 @@ class EvaluateService extends BaseApiService
     {
         $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping,update_time';
         $order = 'topping desc,update_time desc,create_time desc';
-        $search_model = $this->model->where([['goods_id', '=', $where['goods_id']],['is_audit','=',EvaluateDict::AUDIT_ADOPT]])->withSearch(["goods_id", "scores"], $where)->field($field)->order($order)->append(['image_mid']);
+        $search_model = $this->model->where([ [ 'is_audit', 'in', [ EvaluateDict::AUDIT_NO, EvaluateDict::AUDIT_ADOPT ] ] ])->withSearch([ "goods_id", "scores" ], $where)->field($field)->order($order)->append([ 'image_mid' ]);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -55,7 +55,7 @@ class EvaluateService extends BaseApiService
     public function getInfo(int $id)
     {
         $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
-        $info = $this->model->field($field)->where([['evaluate_id', '=', $id]])->append(['image_mid', 'image_big'])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'evaluate_id', '=', $id ] ])->append([ 'image_mid', 'image_big' ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -67,18 +67,18 @@ class EvaluateService extends BaseApiService
     public function add(array $data)
     {
 
-        $member_info = (new Member())->where([['member_id', '=', $this->member_id]])->field('nickname, headimg')->findOrEmpty()->toArray();
-        if(empty($member_info)) throw new CommonException();
+        $member_info = ( new Member() )->where([ [ 'member_id', '=', $this->member_id ] ])->field('nickname, headimg')->findOrEmpty()->toArray();
+        if (empty($member_info)) throw new CommonException();
 
-        $config = (new CoreOrderConfigService())->getEvaluateConfig();
+        $config = ( new CoreOrderConfigService() )->getEvaluateConfig();
 
-        foreach ($data['evaluate_array'] as $key => $val){
+        foreach ($data[ 'evaluate_array' ] as $key => $val) {
             $params = $val;
-            $params['member_id'] = $this->member_id;
-            $params['member_name'] = $member_info['nickname'];
-            $params['member_head'] = $member_info['headimg'];
-            $params['is_audit'] = $config['evaluate_is_to_examine'] == 1 ? 1 : 0;
-            (new CoreGoodsEvaluateService)->addEvaluate($params);
+            $params[ 'member_id' ] = $this->member_id;
+            $params[ 'member_name' ] = $member_info[ 'nickname' ];
+            $params[ 'member_head' ] = $member_info[ 'headimg' ];
+            $params[ 'is_audit' ] = $config[ 'evaluate_is_to_examine' ] == 1 ? 1 : 0;
+            ( new CoreGoodsEvaluateService )->addEvaluate($params);
         }
 
         return true;
@@ -92,9 +92,9 @@ class EvaluateService extends BaseApiService
      */
     public function getCount($goods_id)
     {
-        $data['good_evaluate'] = $this->model->where([['goods_id', '=', $goods_id], ['scores', 'in', [4, 5]], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->count();
-        $data['centre_evaluate'] = $this->model->where([['goods_id', '=', $goods_id], ['scores', 'in', [2, 3]], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->count();
-        $data['wanting_centre_evaluate'] = $this->model->where([['goods_id', '=', $goods_id], ['scores', 'in', [1]], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->count();
+        $data[ 'good_evaluate' ] = $this->model->where([ [ 'goods_id', '=', $goods_id ], [ 'scores', 'in', [ 4, 5 ] ], [ 'is_audit', 'in', [ EvaluateDict::AUDIT_NO, EvaluateDict::AUDIT_ADOPT ] ] ])->count();
+        $data[ 'centre_evaluate' ] = $this->model->where([ [ 'goods_id', '=', $goods_id ], [ 'scores', 'in', [ 2, 3 ] ], [ 'is_audit', 'in', [ EvaluateDict::AUDIT_NO, EvaluateDict::AUDIT_ADOPT ] ] ])->count();
+        $data[ 'wanting_centre_evaluate' ] = $this->model->where([ [ 'goods_id', '=', $goods_id ], [ 'scores', 'in', [ 1 ] ], [ 'is_audit', 'in', [ EvaluateDict::AUDIT_NO, EvaluateDict::AUDIT_ADOPT ] ] ])->count();
         return $data;
     }
 
@@ -111,8 +111,8 @@ class EvaluateService extends BaseApiService
         $data = [];
         $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time,topping,update_time';
         $order = 'topping desc,update_time desc,create_time desc';
-        $data['list'] = $this->model->field($field)->where([['goods_id', '=', $goods_id], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->limit(3)->order($order)->append(['image_mid'])->select()->toArray();
-        $data['count'] = $this->model->where([['goods_id', '=', $goods_id], ['is_audit', '=', EvaluateDict::AUDIT_ADOPT]])->count();
+        $data[ 'list' ] = $this->model->field($field)->where([ [ 'goods_id', '=', $goods_id ], [ 'is_audit', 'in', [ EvaluateDict::AUDIT_NO, EvaluateDict::AUDIT_ADOPT ] ] ])->limit(3)->order($order)->append([ 'image_mid' ])->select()->toArray();
+        $data[ 'count' ] = $this->model->where([ [ 'goods_id', '=', $goods_id ], [ 'is_audit', 'in', [ EvaluateDict::AUDIT_NO, EvaluateDict::AUDIT_ADOPT ] ] ])->count();
 
         return $data;
     }
@@ -124,11 +124,11 @@ class EvaluateService extends BaseApiService
     public function getDetail($order_id)
     {
         $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,member_name,member_head,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
-        $list = $this->model->field($field)->where([['order_id', '=', $order_id]])->with([
-            'order_goods' => function ($query){
-                $query->field('order_goods_id, goods_name, sku_name, goods_image, num, price')->append(['goods_image_thumb_mid']);
+        $list = $this->model->field($field)->where([ [ 'order_id', '=', $order_id ] ])->with([
+            'order_goods' => function($query) {
+                $query->field('order_goods_id, goods_name, sku_name, goods_image, num, price')->append([ 'goods_image_thumb_mid' ]);
             }
-        ])->append(['image_mid', 'image_big'])->select()->toArray();
+        ])->append([ 'image_mid', 'image_big' ])->select()->toArray();
         return $list;
     }
 }

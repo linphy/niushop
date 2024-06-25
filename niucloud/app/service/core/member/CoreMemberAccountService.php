@@ -76,7 +76,7 @@ class CoreMemberAccountService extends BaseCoreService
                 $account_type => $account_new_data,
                 $account_type."_get" => $account_type_get
             ];
-            event("memberAccount", $data);
+            event("MemberAccount", $data);
             Db::commit();
             return $res->id;
         } catch ( Exception $e) {

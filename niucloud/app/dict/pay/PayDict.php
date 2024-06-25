@@ -57,32 +57,24 @@ class PayDict
                 'name' => get_lang('dict_pay.type_wechatpay'),
                 'key' => self::WECHATPAY,
                 'icon' => self::WECHATPAY_ICON,
+                'setting_component' => '/src/app/views/setting/components/pay-wechatpay.vue'
             ],//微信支付
             self::ALIPAY => [
                 'name' => get_lang('dict_pay.type_alipay'),
                 'key' => self::ALIPAY,
                 'icon' => self::ALIPAY_ICON,
+                'setting_component' => '/src/app/views/setting/components/pay-alipay.vue'
             ],//支付宝支付
-//            self::UNIPAY => [
-//                'name' => get_lang('dict_pay.type_unipay'),
-//                'key' => self::UNIPAY,
-//                'icon' => self::UNIPAY_ICON
-//            ],//银联支付
-//            self::OFFLINEPAY => [
-//                'name' => get_lang('dict_pay.type_offline'),
-//                'key' => self::OFFLINEPAY,
-//                'icon' => self::OFFLINEPAY_ICON
-//            ],//线下支付
             self::BALANCEPAY => [
                 'name' => get_lang('dict_pay.type_balancepay'),
                 'key' => self::BALANCEPAY,
                 'icon' => self::BALANCEPAY_ICON,
+                'setting_component' => ''
             ],//微信支付
-//            self::ALIPAY => get_lang('dict_pay.type_alipay'),//支付宝支付
-//            self::UNIPAY => get_lang('dict_pay.type_unipay'),//银联
-//            self::OFFLINEPAY => get_lang('dict_pay.type_offline'),//线下支付
-//            self::BALANCEPAY => get_lang('dict_pay.type_balancepay'),//余额支付
         ];
+
+        $list = array_merge($list, ...event('PayType'));
+
         if (!empty($types)) {
             foreach ($list as $k => $v) {
                 if (!in_array($k, $types)) {

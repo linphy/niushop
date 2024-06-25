@@ -39,6 +39,7 @@
 					<el-form-item>
 						<el-button type="primary" @click="loadOrderList()">{{ t('search') }}</el-button>
 						<el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
+						<el-button type="primary" @click="exportSelectEvent">{{ t('export') }}</el-button>
 					</el-form-item>
 				</el-form>
 			</el-card>
@@ -99,7 +100,10 @@
 									<el-table-column min-width="120">
 										<template #default="{ row }">
 											<div class="flex flex-col">
-												<span class="text-[13px]">￥{{ row.goods_money }}</span>
+												<span v-if="item.activity_type == 'exchange'">{{ row.extend.point }}{{ t('point') }}
+													<span v-if="parseFloat(row.price)">+￥{{ row.price }}</span>
+												</span>
+												<span v-else class="text-[13px]">￥{{ row.price }}</span>
 												<span class="text-[13px] mt-[5px]">{{ row.num }}{{ t('piece') }}</span>
 											</div>
 										</template>
@@ -113,7 +117,10 @@
 									</el-table-column>
 									<el-table-column min-width="120" class-name="border-0 border-l-[1px] border-solid border-[var(--el-table-border-color)]">
 										<template #default>
-											<span class="text-[14px]">￥{{ item.order_money }}</span>
+											<span v-if="item.activity_type == 'exchange'" class="text-[14px]">{{ item.point }}{{ t('point') }}
+												<span v-if="parseFloat(item.order_money)">+￥{{ item.order_money }}</span>
+											</span>
+											<span v-else class="text-[14px]">￥{{ item.order_money }}</span>
 										</template>
 									</el-table-column>
 									<el-table-column min-width="120">
@@ -137,9 +144,11 @@
 									</el-table-column>
 									<el-table-column align="right" min-width="120">
 										<template #default>
-											<el-button type="primary" link @click="close(item)" v-if="item.status == 1">{{ t('orderClose') }}</el-button>
-											<!-- <el-button type="primary" link>{{ t('editPrice') }}</el-button> -->
-											<!-- <el-button type="primary" link>{{ t('editAddress') }}</el-button> -->
+											<template v-if="item.status == 1">
+												<el-button type="primary" link @click="close(item)">{{ t('orderClose') }}</el-button>
+												<el-button type="primary" link @click="orderAdjustMoney(item)">{{ t('editPrice') }}</el-button>
+												<el-button type="primary" v-if="item.delivery_type != 'virtual'" link @click="orderEditAddressFn(item)">{{ t('editAddress') }}</el-button>
+											</template>
 											<el-button type="primary" link @click="delivery(item)" v-if="item.status == 2">{{ t('sendOutGoods') }}</el-button>
 											<el-button type="primary" link @click="finish(item)" v-if="item.status == 3">{{ t('confirmTakeDelivery') }}</el-button>
 										</template>
@@ -151,27 +160,34 @@
 								</div>
 							</div>
 						</template>
-					<el-empty v-else :image-size="1" :description="t('emptyData')" />
+						<el-empty v-else :image-size="1" :description="t('emptyData')" />
+					</div>
+				</div>
+				<div class="mt-[16px] flex justify-end">
+					<el-pagination v-model:current-page="orderTable.page" v-model:page-size="orderTable.limit"
+						layout="total, sizes, prev, pager, next, jumper" :total="orderTable.total"
+						@size-change="loadOrderList()" @current-change="loadOrderList" />
 				</div>
 			</div>
-			<div class="mt-[16px] flex justify-end">
-				<el-pagination v-model:current-page="orderTable.page" v-model:page-size="orderTable.limit"
-					layout="total, sizes, prev, pager, next, jumper" :total="orderTable.total"
-					@size-change="loadOrderList()" @current-change="loadOrderList" />
-			</div>
-		</div>
 		</el-card>
+		<adjust-money ref="orderAdjustMoneyActionDialog" @complete="loadOrderList"/>
 		<delivery-action ref="deliveryActionDialog" @complete="loadOrderList"></delivery-action>
 		<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
+		<order-export-select ref="selectExportDialog" @complete="exportEvent" />
+		<export-sure ref="exportSureDialog" :show="flag" :type="export_type" :searchParam="orderTable.searchParam" @close="handleClose" />
+        <order-edit-address ref="orderEditAddressDialog" @complete="loadOrderList"/>
 	</div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getOrderList, getOrderStatus, orderClose, orderFinish, getOrderPayType, getOrderFrom } from '@/addon/shop/api/order'
+import { getOrderList, getOrderStatus, orderClose, orderFinish, getOrderPayType, getOrderFrom, getOrderEditAddress } from '@/addon/shop/api/order'
 import DeliveryAction from '@/addon/shop/views/order/components/delivery-action.vue'
 import OrderNotes from '@/addon/shop/views/order/components/order-notes.vue'
+import OrderExportSelect from '@/addon/shop/views/order/components/order-export-select.vue'
+import orderEditAddress from '@/addon/shop/views/order/components/order-edit-address.vue'
+import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
 import { img } from '@/utils/common'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
@@ -185,54 +201,54 @@ const statusData = ref([])
 const payTypeData = ref<any[]>([])
 const orderFromData = ref([])
 const setFormData = async () => {
-    statusData.value = await (await getOrderStatus()).data
-    payTypeData.value = await (await getOrderPayType()).data
-    orderFromData.value = await (await getOrderFrom()).data
+	statusData.value = await (await getOrderStatus()).data
+	payTypeData.value = await (await getOrderPayType()).data
+	orderFromData.value = await (await getOrderFrom()).data
 }
 setFormData()
 
 const multipleTable: Record<string, any> | null = ref(null)
 const isSelectAll = ref(false)
 const selectAllCheck = () => {
-    if (isSelectAll.value == false) {
-        isSelectAll.value = true
-        for (const i in orderTable.data) {
-            for (const j in orderTable.data[i].order_goods) {
-                multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
-            }
-        }
-    } else {
-        isSelectAll.value = false
-        for (const v in orderTable.data) {
-            for (const k in orderTable.data[v].order_goods) {
-                multipleTable.value[v].clearSelection()
-            }
-        }
-    }
+	if (isSelectAll.value == false) {
+		isSelectAll.value = true
+		for (const i in orderTable.data) {
+			for (const j in orderTable.data[i].order_goods) {
+				multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
+			}
+		}
+	} else {
+		isSelectAll.value = false
+		for (const v in orderTable.data) {
+			for (const k in orderTable.data[v].order_goods) {
+				multipleTable.value[v].clearSelection()
+			}
+		}
+	}
 }
 interface OrderTable {
-    page: number
-    limit: number
-    total: number
-    loading: boolean
-    data: any[]
-    searchParam: any
+	page: number
+	limit: number
+	total: number
+	loading: boolean
+	data: any[]
+	searchParam: any
 }
 const orderTable = reactive<OrderTable>({
-    page: 1,
-    limit: 10,
-    total: 0,
-    loading: true,
-    data: [],
-    searchParam: {
-        search_type: 'order_no',
-        search_name: '',
-        pay_type: '',
-        order_from: '',
-        status: '',
-        create_time: [],
-        pay_time: []
-    }
+	page: 1,
+	limit: 10,
+	total: 0,
+	loading: true,
+	data: [],
+	searchParam: {
+		search_type: 'order_no',
+		search_name: '',
+		pay_type: '',
+		order_from: '',
+		status: '',
+		create_time: [],
+		pay_time: []
+	}
 })
 
 const searchFormRef = ref<FormInstance>()
@@ -241,84 +257,114 @@ const searchFormRef = ref<FormInstance>()
  * 获取订单列表
  */
 const loadOrderList = (page: number = 1) => {
-    orderTable.loading = true
-    orderTable.page = page
+	orderTable.loading = true
+	orderTable.page = page
 
-    getOrderList({
-        page: orderTable.page,
-        limit: orderTable.limit,
-        ...orderTable.searchParam
-    }).then(res => {
-        orderTable.loading = false
-        orderTable.data = res.data.data.map((el:any) => {
-            el.order_goods.forEach((v:any) => {
-                v.rowNum = el.order_goods.length
-            })
-            return el
-        })
-        orderTable.total = res.data.total
-    }).catch(() => {
-        orderTable.loading = false
-    })
+	getOrderList({
+		page: orderTable.page,
+		limit: orderTable.limit,
+		...orderTable.searchParam
+	}).then(res => {
+		orderTable.loading = false
+		orderTable.data = res.data.data.map((el: any) => {
+			el.order_goods.forEach((v: any) => {
+				v.rowNum = el.order_goods.length
+			})
+			return el
+		})
+		orderTable.total = res.data.total
+	}).catch(() => {
+		orderTable.loading = false
+	})
 }
 loadOrderList()
 
-const handleClick = (event:any) => {
-    orderTable.searchParam.status = event
-    loadOrderList()
+const handleClick = (event: any) => {
+	orderTable.searchParam.status = event
+	loadOrderList()
 }
 
 // 合并表格行
 const arraySpanMethod = ({
-    row,
-    column,
-    rowIndex,
-    columnIndex
+	row,
+	column,
+	rowIndex,
+	columnIndex
 }) => {
-    if (rowIndex === 0) {
-        if (columnIndex === 0) {
-            return [row.rowNum, 1]
-        } else if (columnIndex > 3) {
-            return [row.rowNum, 1]
-        } else {
-            return [1, 1]
-        }
-    } else {
-        if (columnIndex === 0) {
-            return [0, 0]
-        } else if (columnIndex > 3) {
-            return [0, 0]
-        } else {
-            return [1, 1]
-        }
-    }
+	if (rowIndex === 0) {
+		if (columnIndex === 0) {
+			return [row.rowNum, 1]
+		} else if (columnIndex > 3) {
+			return [row.rowNum, 1]
+		} else {
+			return [1, 1]
+		}
+	} else {
+		if (columnIndex === 0) {
+			return [0, 0]
+		} else if (columnIndex > 3) {
+			return [0, 0]
+		} else {
+			return [1, 1]
+		}
+	}
+}
+
+/**
+ * 订单导出
+ */
+const exportSureDialog = ref(null)
+const export_type = ref('')
+const flag = ref(false)
+const handleClose = (val) => {
+	flag.value = val
+}
+const exportEvent = (data: any) => {
+	export_type.value = data
+	flag.value = true
+}
+
+const selectExportDialog: Record<string, any> | null = ref(null)
+
+/**
+ * 订单导出类型选择
+ */
+const exportSelectEvent = () => {
+	selectExportDialog.value.showDialog = true
 }
 
 // 订单详情
 const detailEvent = (data: any) => {
-    router.push('/shop/order/detail?order_id=' + data.order_id)
+	router.push('/shop/order/detail?order_id=' + data.order_id)
 }
 
 const memberEvent = (id: number) => {
-    const routeUrl = router.resolve({
-        path: '/member/detail',
-        query: { id }
-    })
-    window.open(routeUrl.href, '_blank')
+	const routeUrl = router.resolve({
+		path: '/member/detail',
+		query: { id }
+	})
+	window.open(routeUrl.href, '_blank')
 }
 
 const close = (data: any) => {
-    ElMessageBox.confirm(t('orderCloseTips'), t('warning'),
-        {
-            confirmButtonText: t('confirm'),
-            cancelButtonText: t('cancel'),
-            type: 'warning'
-        }
-    ).then(() => {
-        orderClose(data.order_id).then(() => {
-            loadOrderList()
-        })
-    })
+	ElMessageBox.confirm(t('orderCloseTips'), t('warning'),
+		{
+			confirmButtonText: t('confirm'),
+			cancelButtonText: t('cancel'),
+			type: 'warning'
+		}
+	).then(() => {
+		orderClose(data.order_id).then(() => {
+			loadOrderList()
+		})
+	})
+}
+
+// 订单调整价格
+const orderAdjustMoneyActionDialog: Record<string, any> | null = ref(null)
+const orderAdjustMoney = (data: any) => {
+    orderAdjustMoneyActionDialog.value.setFormData(data)
+    orderAdjustMoneyActionDialog.value.showDialog = true
 }
 
 const deliveryActionDialog: Record<string, any> | null = ref(null)
@@ -326,8 +372,8 @@ const deliveryActionDialog: Record<string, any> | null = ref(null)
  * 发货
  */
 const delivery = (data: any) => {
-    deliveryActionDialog.value.setFormData(data)
-    deliveryActionDialog.value.showDialog = true
+	deliveryActionDialog.value.setFormData(data)
+	deliveryActionDialog.value.showDialog = true
 }
 
 const orderNotesDialog: Record<string, any> | null = ref(null)
@@ -335,28 +381,37 @@ const orderNotesDialog: Record<string, any> | null = ref(null)
  * 设置备注
  */
 const setNotes = (data: any) => {
-    orderNotesDialog.value.setFormData(data)
-    orderNotesDialog.value.showDialog = true
+	orderNotesDialog.value.setFormData(data)
+	orderNotesDialog.value.showDialog = true
 }
 // 订单完成
 const finish = (data: any) => {
-    ElMessageBox.confirm(t('orderFinishTips'), t('warning'),
-        {
-            confirmButtonText: t('confirm'),
-            cancelButtonText: t('cancel'),
-            type: 'warning'
-        }
-    ).then(() => {
-        orderFinish(data.order_id).then(() => {
-            loadOrderList()
-        })
-    })
+	ElMessageBox.confirm(t('orderFinishTips'), t('warning'),
+		{
+			confirmButtonText: t('confirm'),
+			cancelButtonText: t('cancel'),
+			type: 'warning'
+		}
+	).then(() => {
+		orderFinish(data.order_id).then(() => {
+			loadOrderList()
+		})
+	})
 }
 
 const resetForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.resetFields()
-    loadOrderList()
+	if (!formEl) return
+	formEl.resetFields()
+	loadOrderList()
+}
+
+/**
+ * 修改地址
+ */
+const orderEditAddressDialog :Record<string, any> | null = ref(null)
+const orderEditAddressFn = async (data:any) =>{
+	orderEditAddressDialog.value.showDialog = true
+	orderEditAddressDialog.value.setFormData(data)
 }
 </script>
 
@@ -364,6 +419,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 .table-top :deep(.el-table__body-wrapper) {
 	display: none;
 }
+
 .input-item {
 	width: 150px !important;
 }
@@ -371,13 +427,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
 :deep(.el-table) {
 	--el-table-row-hover-bg-color: var(--el-transfer-border-color);
 }
+
 /* 多行超出隐藏 */
 .multi-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
+	word-break: break-all;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
 </style>

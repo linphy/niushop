@@ -23,13 +23,17 @@
             </el-card>
 
             <div class="mt-[10px]">
-                <el-table :data="labelTable.data" size="large" v-loading="labelTable.loading">
+                <el-table :data="labelTable.data" size="large" v-loading="labelTable.loading" @sort-change="sortChange">
                     <template #empty>
                         <span>{{ !labelTable.loading ? t('emptyData') : '' }}</span>
                     </template>
                     <el-table-column prop="label_name" :label="t('labelName')" min-width="120" />
                     <el-table-column prop="memo" :label="t('memo')" min-width="200" />
-                    <el-table-column prop="sort" :label="t('sort')" min-width="120" />
+                    <el-table-column prop="sort" :label="t('sort')" min-width="120" sortable="custom">
+                        <template #default="{ row }">
+                            <el-input v-model="row.sort" class="!w-[100px]" maxlength="10" @input="sortInputListener($event, row)" />
+                        </template>
+                    </el-table-column>
 
                     <el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
                        <template #default="{ row }">
@@ -54,10 +58,11 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getLabelPageList, deleteLabel } from '@/addon/shop/api/goods'
-import { ElMessageBox, FormInstance } from 'element-plus'
+import { getLabelPageList, deleteLabel, modifyLabelSort } from '@/addon/shop/api/goods'
+import { ElMessageBox, FormInstance, ElMessage } from 'element-plus'
 import LabelEdit from '@/addon/shop/views/goods/components/label-edit.vue'
 import { useRoute } from 'vue-router'
+import { debounce } from '@/utils/common'
 
 const route = useRoute()
 const pageName = route.meta.title
@@ -69,14 +74,28 @@ const labelTable = reactive({
     loading: true,
     data: [],
     searchParam: {
-        label_name: ''
+        label_name: '',
+        order: '',
+        sort: ''
     }
 })
 
 const searchFormRef = ref<FormInstance>()
 
-// 选中数据
-// const selectData = ref<any[]>([])
+// 监听排序
+const sortChange = (event: any) => {
+    let sort = ''
+    if (event.order == 'ascending') {
+        sort = 'asc'
+    } else if (event.order == 'descending') {
+        sort = 'desc'
+    }
+    if (sort) {
+        labelTable.searchParam.order = event.prop
+        labelTable.searchParam.sort = sort
+    }
+    loadLabelList()
+}
 
 /**
  * 获取商品标签列表
@@ -136,6 +155,22 @@ const deleteEvent = (id: number) => {
     })
 }
 
+// 修改排序号
+const sortInputListener = debounce((sort, row) => {
+    if (isNaN(sort) || !/^\d{0,10}$/.test(sort)) {
+        ElMessage({
+            type: 'warning',
+            message: `${t('sortTips')}`
+        })
+        return
+    }
+    modifyLabelSort({
+        label_id: row.label_id,
+        sort
+    }).then((res) => {
+    })
+})
+
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
@@ -146,11 +181,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
 <style lang="scss" scoped>
 /* 多行超出隐藏 */
 .multi-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
 </style>

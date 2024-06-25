@@ -38,11 +38,18 @@ class CoreWechatMediaService extends BaseCoreService
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function addMedia(array $data) {
-        $options = Form::create(
-            [
-                'media' => File::fromPath($data['file_path']),
-            ]
-        )->toArray();
+        $field = [
+            'media' => File::fromPath($data['file_path'])
+        ];
+        if ($data['type'] == WechatMediaDict::VIDEO) {
+            $field['json'] = [
+                'description' => [
+                    'title' => time(),
+                    'introduction' => time()
+                ]
+            ];
+        }
+        $options = Form::create($field)->toArray();
         $add_res =  CoreWechatService::appApiClient()->post("/cgi-bin/material/add_material?type={$data['type']}", $options);
         if (isset($add_res['errcode']) && $add_res['errcode'] != 0) throw new CommonException($add_res['errmsg']);
 

@@ -99,8 +99,7 @@
                                             </el-radio-group>
                                         </el-form-item>
                                     </el-form>
-                                    <el-button type="primary" link class="absolute z-1 top-[10px] right-[10px]"
-                                        @click.stop="deleteArea(index)">{{ t('delete') }}</el-button>
+                                    <el-button type="primary" link class="absolute z-1 top-[10px] right-[10px]" @click.stop="deleteArea(index)">{{ t('delete') }}</el-button>
                                 </div>
                                 <div class="p-[10px] text-center">
                                     <el-button type="default" plain @click="addArea">{{ t('addDeliveryArea') }}</el-button>

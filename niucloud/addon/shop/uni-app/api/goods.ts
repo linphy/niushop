@@ -38,28 +38,28 @@ export function getGoodsDetail(params: Record<string, any>) {
 /**
  * 获取商品规格
  */
-export function getGoodsSku(sku_id) {
+export function getGoodsSku(sku_id: any) {
     return request.get(`shop/goods/sku/${sku_id}`)
 }
 
 /**
  *  收藏
  */
-export function collect(goods_id) {
+export function collect(goods_id: any) {
     return request.post(`shop/goods/collect/${goods_id}`)
 }
 
 /**
  *  取消收藏
  */
-export function cancelCollect(goods_id) {
+export function cancelCollect(goods_id: any) {
     return request.delete(`shop/goods/collect/${goods_id}`)
 }
 
 /**
  * 获取评价
  */
-export function getEvaluateList(goods_id) {
+export function getEvaluateList(goods_id: any) {
     return request.get(`shop/goods/evaluate/list`, {goods_id})
 }
 

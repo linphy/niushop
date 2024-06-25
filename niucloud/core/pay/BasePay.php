@@ -2,7 +2,6 @@
 
 namespace core\pay;
 
-use core\exception\PayException;
 use core\loader\Storage;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\MessageInterface;

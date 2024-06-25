@@ -172,7 +172,7 @@ class CoreNoticeService extends BaseCoreService
             $wechat = $notice_template[ 'wechat' ] ?? [];
             $this->model->create(array_merge([
                 'key' => $key,
-                'sms_content' => $notice_template[ 'sms_default_content' ] ?? '',
+                'sms_content' => $notice_template['sms'][ 'content' ] ?? '',
                 'wechat_first' => $data[ 'wechat_first' ] ?? ( $wechat[ 'first' ] ?? '' ),
                 'wechat_remark' => $data[ 'wechat_remark' ] ?? ( $wechat[ 'remark' ] ?? '' ),
             ], $data));

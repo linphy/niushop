@@ -75,6 +75,7 @@ class LoginService extends BaseAdminService
             'userinfo' => [
                 'uid' => $userinfo->uid,
                 'username' => $userinfo->username,
+                'head_img' => $userinfo->head_img
             ]
         ];
 

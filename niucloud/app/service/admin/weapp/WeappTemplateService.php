@@ -37,12 +37,17 @@ class WeappTemplateService extends BaseAdminService
     public function getList()
     {
         $core_notice_service = new CoreNoticeService();
-        $list = $core_notice_service->getList();
-        $template = [];
-        foreach ($list as $k => $v){
-            if(in_array(NoticeTypeDict::WEAPP, $v['support_type'])) $template[] = $v;
+        $addon_list = $core_notice_service->getAddonList();
+
+        foreach ($addon_list as &$addon) {
+            foreach ($addon['notice'] as $k => $v) {
+                if (!in_array(NoticeTypeDict::WEAPP, $v[ 'support_type' ])) {
+                    unset($addon['notice'][$k]);
+                }
+            }
+            $addon['notice'] = array_values($addon['notice']);
         }
-        return $template;
+        return $addon_list;
     }
 
     /**
@@ -82,10 +87,10 @@ class WeappTemplateService extends BaseAdminService
 
         $kid_list = $weapp['kid_list'] ?? [];
         $scene_desc = $weapp['scene_desc'] ?? '';
-//        $res = (new CoreWeappTemplateService())->addTemplate( $tid, $kid_list, $scene_desc);
+//        $res = (new CoreWeappTemplateService())->addTemplate($tid, $kid_list, $scene_desc);
         $res = $template_loader->addTemplate(['tid' => $tid, 'kid_list' => $kid_list, 'scene_desc' => $scene_desc ]);
         $notice_service = new NoticeService();
-        if (isset($res[ 'errcode' ]) && $res[ 'errcode' ] == 0) {
+        if (isset($res[ 'errcode' ]) && in_array($res[ 'errcode' ], [0, 200022])) {
             //修改
             $notice_service->modify($key, 'weapp_template_id', $res[ 'priTmplId' ]);
         } else {

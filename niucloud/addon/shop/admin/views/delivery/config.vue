@@ -75,9 +75,6 @@ const getShopDeliveryListFn = () => {
 onMounted(() => {
     getShopDeliveryListFn()
 })
-const vFocus = {
-    mounted: (el:any) => el.querySelector('input').focus()
-}
 // 拖拽排序
 const toggleIndex = ref(0)
 const tableRef = ref()

@@ -12,7 +12,7 @@
                         <el-input v-model.trim="goodsTable.searchParam.goods_name" :placeholder="t('goodsNamePlaceholder')" maxlength="60" />
                     </el-form-item>
                     <el-form-item :label="t('goodsCategory')" prop="goods_category">
-                        <el-cascader  v-model="goodsTable.searchParam.goods_category" :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable :props="{ value: 'value', label: 'label', emitPath:false }"  />
+                        <el-cascader v-model="goodsTable.searchParam.goods_category" :options="goodsCategoryOptions" :placeholder="t('goodsCategoryPlaceholder')" clearable :props="{ value: 'value', label: 'label', emitPath:false }"  />
                     </el-form-item>
                     <el-form-item :label="t('goodsType')" prop="goods_type">
                         <el-select v-model="goodsTable.searchParam.goods_type" :placeholder="t('goodsTypePlaceholder')" clearable>
@@ -116,8 +116,6 @@ import {
 const route = useRoute()
 const pageName = route.meta.title
 const repeat = ref(false)
-
-// const router = useRouter()
 
 const goodsTable = reactive({
     page: 1,

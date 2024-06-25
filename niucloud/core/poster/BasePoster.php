@@ -38,7 +38,4 @@ abstract class BasePoster extends Storage
      */
     abstract public function createPoster(array $poster, string $dir, string $file_path);
 
-
-
-
 }

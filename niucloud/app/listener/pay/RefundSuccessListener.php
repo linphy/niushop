@@ -11,7 +11,8 @@
 
 namespace app\listener\pay;
 
-use app\service\core\order\recharge\CoreRechargeRefundService;
+use addon\recharge\app\service\core\CoreRechargeRefundService;
+use app\service\core\pay\CoreAccountService;
 
 /**
  * 退款成功事件
@@ -20,6 +21,8 @@ class RefundSuccessListener
 {
     public function handle(array $refund_info)
     {
+        //添加账单记录
+        (new CoreAccountService())->addRefundLog($refund_info['refund_no']);
         //交易单据处理
         $trade_type = $refund_info['trade_type'] ?? '';
         if ($trade_type == 'recharge') {

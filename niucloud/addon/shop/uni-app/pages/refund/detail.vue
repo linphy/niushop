@@ -41,7 +41,7 @@
                         <view>{{t('refundType')}}</view>
                         <view>{{ detail.refund_type_name }}</view>
                     </view>
-                    <view class="flex justify-between text-[28rpx] leading-[32rpx]  mt-[30rpx]">
+                    <view class="flex justify-between text-[28rpx] leading-[32rpx] mt-[30rpx]">
                         <view>{{t('refundCause')}}</view>
                         <view class="w-[400rpx] multi-hidden text-right">{{ detail.reason || '--' }}</view>
                     </view>
@@ -55,7 +55,11 @@
                     </view>
                     <view class="flex justify-between text-[28rpx] leading-[32rpx] mt-[30rpx]">
                         <view>{{t('createExplain')}}</view>
-                        <view class="flex-1 ml-[20rpx] flex justify-end">{{ detail.remark }}</view>
+                        <view class="flex-1 ml-[20rpx] flex justify-end break-all">{{ detail.remark }}</view>
+                    </view>
+                    <view class="flex justify-between text-[28rpx] leading-[32rpx]  mt-[30rpx]">
+                        <view>{{t('reasonRefusal')}}</view>
+                        <view class="w-[400rpx] text-right">{{ detail.shop_reason || '--' }}</view>
                     </view>
                 </view>
 
@@ -64,7 +68,7 @@
                         <view>{{t('record')}}</view>
                         <view class="flex items-center" @click="redirect({url: '/addon/shop/pages/refund/log', param: { order_refund_no: orderRefundNo }})">
                             <text>{{t('check')}}</text>
-                            <text class="iconfont iconxiangyoujiantou text-xs"></text>
+                            <text class="nc-iconfont nc-icon-youV6xx text-[30rpx] text-[#999]"></text>
                         </view>
                     </view>
                 </view>
@@ -75,7 +79,10 @@
                         <!-- <text class="text-xs mt-1">{{t('index')}}</text> -->
                     </view>
                     <view class="flex justify-end mr-[30rpx]">
-                        <view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#303133]" @click="cancelRefundFn(detail)" v-if="['6','7','8','-1'].indexOf(detail.status) == -1">{{t('refundApply')}}</view>
+                        <view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#303133]" @click="refundBtnFn('cancel')" v-if="['6','7','8','-1'].indexOf(detail.status) == -1">{{t('refundApply')}}</view>
+                        <view v-if="['3'].indexOf(detail.status) != -1" class="text-[24rpx] text-[#303133] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]" @click.stop="refundBtnFn('edit')" >编辑退款信息</view>
+                        <view v-if="['2'].indexOf(detail.status) != -1" class=" text-[24rpx] text-[#303133] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]" @click.stop="refundBtnFn('logistics')">填写发货物流</view>
+                        <view v-if="['5'].indexOf(detail.status) != -1" class="text-[24rpx] text-[#303133] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]" @click.stop="refundBtnFn('editLogistics')">编辑发货物流</view>
                     </view>
                 </view>
             </view>
@@ -116,7 +123,7 @@
                     </view>
                     <view class="flex justify-between text-[28rpx] leading-[32rpx] mt-[30rpx]">
                         <view>退货地址</view>
-                        <view class="w-[460rpx] text-sm" v-if="detail.refund_address">{{ detail.refund_address.full_address || '--' }}</view>
+                        <view class="w-[460rpx] text-sm text-right" v-if="detail.refund_address">{{ detail.refund_address.full_address || '--' }}</view>
                     </view>
                 </view>
                 <view class="bg-[#fff] mx-[30rpx] p-[20rpx] rounded-[16rpx] mt-[20rpx]">
@@ -133,14 +140,19 @@
                     </u--form>
                 </view>
                 <view class="mx-[30rpx]">
-                    <u-button class="mt-[20rpx]" type="primary" shape="circle" @click="deliverySave">提交</u-button>
+                    <u-button class="mt-[20rpx]" text="提交" type="primary" shape="circle" @click="deliverySave"></u-button>
                 </view>
             </view>
             <logistics-tracking ref="materialRef"></logistics-tracking>
-            <u-modal :show="cancelRefundshow" :content="t('cancelRefundContent')" :showCancelButton="true" :closeOnClickOverlay="true" @cancel="refundCancel" @confirm="refundConfirm"></u-modal>
+            <u-modal :show="cancelRefundShow" confirmColor="var(--primary-color)" :content="t('cancelRefundContent')" :showCancelButton="true" :closeOnClickOverlay="true" @cancel="refundCancel" @confirm="refundConfirm"></u-modal>
         </view>
 
         <u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
+
+        <!-- #ifdef MP-WEIXIN -->
+        <!-- 小程序隐私协议 -->
+        <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+        <!-- #endif -->
     </view>
 </template>
 
@@ -213,27 +225,6 @@ const goodsEvent = (id: number) => {
 	})
 }
 
-// 撤销维权
-let cancelRefundshow = ref(false);
-let currRefundOn = "";
-const cancelRefundFn = (data) => {
-	currRefundOn = data.order_refund_no;
-	cancelRefundshow.value = true;
-}
-
-const refundConfirm = ()=>{
-	closeRefund(currRefundOn).then((res) => {
-		cancelRefundshow.value = false;
-		refundDetailFn(orderRefundNo.value);
-	}).catch(() => {
-		cancelRefundshow.value = false;
-	})
-}
-
-const refundCancel = ()=>{
-	cancelRefundshow.value = false;
-}
-
 // 提交物流信息
 let deliveryForm = ref()
 const deliverySave = ()=>{
@@ -247,6 +238,36 @@ const deliverySave = ()=>{
 		}).catch(() => {
 		})
 	})
+}
+
+const refundBtnFn = (type:any) => {
+    if(type == 'cancel'){
+        currRefundOn = detail.value.order_refund_no;
+        cancelRefundShow.value = true;
+    }else if(type == 'edit'){
+        redirect({ url: '/addon/shop/pages/refund/edit_apply', param: { order_refund_no : detail.value.order_refund_no } })
+    }else if(type == 'logistics'){
+        redirect({ url: '/addon/shop/pages/refund/detail', param: { order_refund_no : detail.value.order_refund_no, type: 'logistics' } })
+    }else if(type == 'editLogistics'){
+        redirect({ url: '/addon/shop/pages/refund/detail', param: { order_refund_no : detail.value.order_refund_no, type: 'logistics', is_edit_delivery: true } })
+    }
+}
+
+// 撤销维权
+let cancelRefundShow = ref(false);
+let currRefundOn = "";
+
+const refundConfirm = ()=>{
+    closeRefund(currRefundOn).then((res) => {
+        cancelRefundShow.value = false;
+        refundDetailFn(orderRefundNo.value);
+    }).catch(() => {
+        cancelRefundShow.value = false;
+    })
+}
+
+const refundCancel = ()=>{
+    cancelRefundShow.value = false;
 }
 
 </script>

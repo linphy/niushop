@@ -27,6 +27,7 @@ class CoreDiyConfigService extends BaseCoreService
     public function getBottomList($params = [])
     {
         $list = array_values(array_filter(event('BottomNavigation', $params)));
+
         $app_bottom_nav_config = [];
         foreach ($list as $k => &$v) {
 
@@ -53,7 +54,7 @@ class CoreDiyConfigService extends BaseCoreService
         $default_config = $this->getBottomList([ 'key' => $key ])[ 0 ] ?? [];
 
         $config_key = ConfigKeyDict::DIY_BOTTOM . '_' . $key;
-        $info = (new CoreConfigService())->getConfig($config_key)[ 'value' ] ?? [];
+        $info = ( new CoreConfigService() )->getConfig($config_key)[ 'value' ] ?? [];
 
         if (!empty($default_config)) {
             if (!empty($info)) {
@@ -77,7 +78,7 @@ class CoreDiyConfigService extends BaseCoreService
      */
     public function setBottomConfig(array $data, string $key = 'app')
     {
-        return (new CoreConfigService())->setConfig(ConfigKeyDict::DIY_BOTTOM . '_' . $key, $data);
+        return ( new CoreConfigService() )->setConfig(ConfigKeyDict::DIY_BOTTOM . '_' . $key, $data);
     }
 
     /**
@@ -87,7 +88,7 @@ class CoreDiyConfigService extends BaseCoreService
      */
     public function setStartUpPageConfig(array $data)
     {
-        return (new CoreConfigService())->setConfig('START_UP_PAGE_' . strtoupper($data[ 'type' ]), $data);
+        return ( new CoreConfigService() )->setConfig('START_UP_PAGE_' . strtoupper($data[ 'type' ]), $data);
     }
 
     /**
@@ -97,7 +98,7 @@ class CoreDiyConfigService extends BaseCoreService
      */
     public function getStartUpPageConfig(string $type)
     {
-        $info = (new CoreConfigService())->getConfig('START_UP_PAGE_' . strtoupper($type))[ 'value' ] ?? [];
+        $info = ( new CoreConfigService() )->getConfig('START_UP_PAGE_' . strtoupper($type))[ 'value' ] ?? [];
         if (!empty($info)) {
             $info[ 'name' ] = isset($info[ 'name' ]) ? $info[ 'name' ] : '';
         }

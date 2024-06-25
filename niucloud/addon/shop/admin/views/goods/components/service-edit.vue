@@ -1,15 +1,14 @@
 <template>
-    <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap"
-        :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap" :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
             <el-form-item :label="t('serviceName')" prop="service_name">
-                <el-input v-model.trim="formData.service_name" clearable :placeholder="t('serviceNamePlaceholder')" :maxlength="20" class="input-width" />
+                <el-input v-model.trim="formData.service_name" show-word-limit clearable :placeholder="t('serviceNamePlaceholder')" :maxlength="20" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('image')">
                 <upload-image v-model="formData.image" />
             </el-form-item>
             <el-form-item :label="t('desc')" >
-                <el-input v-model.trim="formData.desc" type="textarea" rows="4" clearable :placeholder="t('descPlaceholder')" class="input-width"/>
+                <el-input v-model.trim="formData.desc" type="textarea" rows="5" show-word-limit clearable :placeholder="t('descPlaceholder')" :maxlength="200" class="input-width"/>
             </el-form-item>
         </el-form>
 
@@ -82,7 +81,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
 }
 
 // 获取字典数据
-
 const setFormData = async (row: any = null) => {
     Object.assign(formData, initialFormData)
     loading.value = true

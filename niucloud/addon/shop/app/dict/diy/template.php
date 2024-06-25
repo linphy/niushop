@@ -13,4 +13,10 @@ return [
         'action' => 'decorate',
         'type' => 'member_index'
     ],
+    'DIY_SHOP_POINT_INDEX' => [
+        'title' => get_lang('dict_diy.page_shop_point_index'),
+        'page' => '/addon/shop/pages/point/index',
+        'action' => 'decorate',
+        'type' => ''
+    ],
 ];

@@ -14,6 +14,7 @@ namespace addon\shop\app\service\core\order;
 use addon\shop\app\job\order_event\OrderCloseAfter;
 use addon\shop\app\job\order_event\OrderCreateAfter;
 use addon\shop\app\job\order_event\OrderDeliveryAfter;
+use addon\shop\app\job\order_event\OrderEditPriceAfter;
 use addon\shop\app\job\order_event\OrderFinishAfter;
 use addon\shop\app\job\order_event\OrderPayAfter;
 use addon\shop\app\model\order\Order;
@@ -129,6 +130,26 @@ class CoreOrderEventService extends BaseCoreService
      */
     public static function orderFinishAfter($data){
         OrderFinishAfter::dispatch(['data' => $data]);
+        return true;
+    }
+
+    /**
+     * 订单改价
+     * @param $data
+     * @return true
+     */
+    public static function orderEditPrice($data){
+        event('ShopOrderEditPrice', $data);
+        return true;
+    }
+
+    /**
+     * 订单改价后事件
+     * @param $data
+     * @return true
+     */
+    public static function orderEditPriceAfter($data){
+        OrderEditPriceAfter::dispatch(['data' => $data]);
         return true;
     }
 }

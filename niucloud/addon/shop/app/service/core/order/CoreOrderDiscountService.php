@@ -29,7 +29,7 @@ class CoreOrderDiscountService extends BaseCoreService
 
     /**
      * 订单优惠
-     * @param $data
+     * @param array $data
      * @return true
      */
     public function addAll(array $data)

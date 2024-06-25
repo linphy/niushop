@@ -19,7 +19,7 @@
 							</view>
 							<view class="flex box-border mt-[30rpx]" v-for="(subitem, index) in item.order_goods" :key="index">
 								<view class="w-[150rpx] h-[150rpx]">
-									<u--image class="rounded-[10rpx] overflow-hidden" width="150rpx" height="150rpx" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" model="aspectFill">
+									<u--image class="rounded-[10rpx] overflow-hidden" radius="10rpx" width="150rpx" height="150rpx" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" model="aspectFill">
 										<template #error>
 											<u-icon name="photo" color="#999" size="50"></u-icon>
 										</template>
@@ -34,9 +34,20 @@
 									</view>
 									<view class="flex justify-between items-center text-[#303133]">
 										<view class="text-right leading-[28rpx] price-font">
-											<text class="text-[24rpx]">￥</text>
-											<text class="text-[32rpx] font-500">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
-											<text class="text-[22rpx] font-500">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
+											<block v-if="item.activity_type == 'exchange'">
+												<text>{{ subitem.extend.point }}{{ t('point') }}</text>
+												<block v-if="parseFloat(subitem.price)">
+													<text class="text-[28rpx]">+</text>
+													<text class="text-[24rpx]">￥</text>
+													<text class="text-[32rpx] font-500">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
+													<text class="text-[22rpx] font-500">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
+												</block>
+											</block>
+											<block v-else>
+												<text class="text-[24rpx]">￥</text>
+												<text class="text-[32rpx] font-500">{{parseFloat(subitem.price).toFixed(2).split('.')[0] }}</text>
+												<text class="text-[22rpx] font-500">.{{parseFloat(subitem.price).toFixed(2).split('.')[1] }}</text>
+											</block>
 										</view>
 										<text class="text-right text-[26rpx]">x{{ subitem.num }}</text>
 									</view>
@@ -48,9 +59,20 @@
 							<view class="flex items-center">
 								<view class="text-[#999] text-[22rpx] mr-[4rpx]">{{ t('actualPayment') }}：</view>
 								<view class="text-[var(--price-text-color)] price-font">
-									<text class="text-[26rpx]">￥</text>
-									<text class="text-[36rpx] font-500">{{ parseFloat(item.order_money).toFixed(2).split('.')[0]  }}</text>
-									<text class="text-[24rpx] font-500">.{{ parseFloat(item.order_money).toFixed(2).split('.')[1]  }}</text>
+									<block v-if="item.activity_type == 'exchange'">
+										<text>{{ item.point }}{{ t('point') }}</text>
+										<block v-if="parseFloat(item.order_money)">
+											<text class="text-[28rpx]">+</text>
+											<text class="text-[26rpx]">￥</text>
+											<text class="text-[36rpx] font-500">{{ parseFloat(item.order_money).toFixed(2).split('.')[0]  }}</text>
+											<text class="text-[24rpx] font-500">.{{ parseFloat(item.order_money).toFixed(2).split('.')[1]  }}</text>
+										</block>
+									</block>
+									<block v-else>
+										<text class="text-[26rpx]">￥</text>
+										<text class="text-[36rpx] font-500">{{ parseFloat(item.order_money).toFixed(2).split('.')[0]  }}</text>
+										<text class="text-[24rpx] font-500">.{{ parseFloat(item.order_money).toFixed(2).split('.')[1]  }}</text>
+									</block>
 								</view>
 							</view>
 						</view>
@@ -67,7 +89,7 @@
 								<view
 									class="inline-block text-[24rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]  text-[#303133] box-border"
 									v-if="item.status == 5 && evaluateConfig.is_evaluate == 1"
-									@click.stop="orderBtnFn(item, 'evaluate')">{{ t('evaluate') }}</view>
+									@click.stop="orderBtnFn(item, 'evaluate')">{{ item.is_evaluate == 1 ? t('selectedEvaluate') : t('evaluate') }}</view>
 						</view>
 					</view>
 				</template>
@@ -90,6 +112,7 @@ import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
+import useConfigStore from "@/stores/config";
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 let list = ref<Array<Object>>([]);
@@ -98,6 +121,9 @@ let statusLoading = ref<boolean>(false);
 let orderState = ref('')
 let orderStateList = ref([]);
 const evaluateConfig = ref("")
+
+let mch_id = ref('')
+let isTradeManaged = ref(false)
 
 onLoad((option) => {
 	orderState.value = option.status || "";
@@ -127,6 +153,9 @@ const getShopOrderFn = (mescroll) => {
 		}
 		list.value = list.value.concat(newArr);
 		mescroll.endSuccess(newArr.length);
+		
+        mch_id.value = res.data.mch_id;
+        isTradeManaged.value = res.data.is_trade_managed;
 		loading.value = true;
 	}).catch(() => {
 		loading.value = true;
@@ -183,6 +212,7 @@ const close = (item: any) => {
 	uni.showModal({
 		title: '提示',
 		content: '您确定要关闭该订单吗？',
+        confirmColor: useConfigStore().themeColor['--primary-color'],
 		success: res => {
 			if (res.confirm) {
 				orderClose(item.order_id).then((data) => {
@@ -195,9 +225,12 @@ const close = (item: any) => {
 
 //订单完成
 const finish = (item: any) => {
+    // 如果不在微信小程序中
+    // #ifndef MP-WEIXIN
 	uni.showModal({
 		title: '提示',
 		content: '您确定物品已收到吗？',
+        confirmColor: useConfigStore().themeColor['--primary-color'],
 		success: res => {
 			if (res.confirm) {
 				orderFinish(item.order_id).then((data) => {
@@ -206,6 +239,41 @@ const finish = (item: any) => {
 			}
 		}
 	})
+    // #endif
+
+    // #ifdef MP-WEIXIN
+    // 检测微信小程序是否已开通发货信息管理服务
+    if (item.pay.type == 'wechatpay' && isTradeManaged.value && wx.openBusinessView) {
+        wx.openBusinessView({
+            businessType: 'weappOrderConfirm',
+            extraData: {
+                merchant_id: mch_id.value,
+                merchant_trade_no: item.out_trade_no
+            },
+            success: (res:any) => {
+                orderFinish(item.order_id).then((data) => {
+                    getMescroll().resetUpScroll();
+                })
+            },
+            fail: (res:any) => {
+                console.log('小程序确认收货组件打开失败 fail', res);
+            }
+        })
+    }else{
+        uni.showModal({
+            title: '提示',
+            content: '您确定物品已收到吗？',
+            confirmColor: useConfigStore().themeColor['--primary-color'],
+            success: res => {
+                if (res.confirm) {
+                    orderFinish(item.order_id).then((data) => {
+                        getMescroll().resetUpScroll();
+                    })
+                }
+            }
+        })
+    }
+    // #endif
 }
 </script>
 <style>

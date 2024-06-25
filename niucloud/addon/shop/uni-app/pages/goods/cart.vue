@@ -19,7 +19,7 @@
                             <view class="bg-[#fff] pb-[10rpx] box-border rounded-[16rpx]"  v-if="cartList.length">
                                 <view class="flex px-[20rpx] justify-between items-center h-[79rpx] box-border font-400 text-[#303133] text-[24rpx] mb-[10rpx] leading-[30rpx] border-0 border-b-[2rpx] border-solid border-[#f6f6f6]">
                                     <text>共<text class="text-[var(--price-text-color)]">{{ cartList.length }}</text>件商品</text>
-                                    <text @click="isEdit = !isEdit" class="text-[#666] text-[26rpx]">{{ isEdit ? '完成' : '管理' }}</text>			
+                                    <text @click="isEdit = !isEdit" class="text-[#666] text-[26rpx]">{{ isEdit ? '完成' : '管理' }}</text>
                                 </view>
                                 <u-swipe-action ref="swipeActive">
                                     <block v-for="(item, index) in cartList">
@@ -47,11 +47,13 @@
                                                             </view>
                                                             <view class="flex justify-between items-end self-end w-[100%]">
                                                                 <view class="flex items-end text-[var(--price-text-color)] leading-[40rpx] price-font">
-                                                                    <text class="text-[var(--price-text-color)] price-font">
+                                                                    <view class="text-[var(--price-text-color)] price-font">
                                                                         <text class="text-[26rpx] font-500">￥</text>
-                                                                        <text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[0] }}</text>
-                                                                        <text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[1] }}</text>
-                                                                    </text>
+																		<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
+																		<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
+																		<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
+																		<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+                                                                    </view>
                                                                 </view>
                                                                 <u-number-box v-model="item.num" :min="numLimit(item).min"
                                                                     :max="numLimit(item).max" integer :step="1" input-width="68rpx"
@@ -60,7 +62,7 @@
                                                                     <template #minus>
                                                                         <text
                                                                             :class="{ 'text-[#999]': item.num === numLimit(item).min, 'text-[#303133]': item.num !== numLimit(item).min }"
-                                                                            class="text-[34rpx] iconfont iconjian"></text>
+                                                                            class="text-[34rpx] nc-iconfont nc-icon-jianV6xx"></text>
                                                                     </template>
                                                                     <template #input>
                                                                         <text class="text-[#303133] text-[24rpx] mx-[10rpx] min-w-[56rpx] h-[38rpx] leading-[40rpx] text-center border-[1rpx] border-solid border-[#ddd] rounded-[4rpx]">{{ item.num }}</text>
@@ -68,7 +70,7 @@
                                                                     <template #plus>
                                                                         <text
                                                                             :class="{ 'text-[#999]': item.num === numLimit(item).max, ' text-[#303133]': item.num !== numLimit(item).max }"
-                                                                            class="text-[34rpx] iconfont iconjia"></text>
+                                                                            class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx"></text>
                                                                     </template>
                                                                 </u-number-box>
                                                             </view>
@@ -95,9 +97,12 @@
                                                                 <u-icon name="photo" color="#999" size="50"></u-icon>
                                                             </template>
                                                         </u--image>
-                                                        <view class="absolute left-0 top-0  w-[168rpx] h-[168rpx]  leading-[168rpx] text-center " style="background-color: rgba(0,0,0,0.3);">
-                                                            <text class="text-[#fff] text-[24rpx]">已失效</text>
+                                                        <view v-if="item.goodsSku.stock == 0 " class="absolute left-0 top-0  w-[168rpx] h-[168rpx]  leading-[168rpx] text-center " style="background-color: rgba(0,0,0,0.3);">
+                                                            <text class="text-[#fff] text-[24rpx]">已售罄</text>
                                                         </view>
+														<view v-if="item.goodsSku.stock != 0 " class="absolute left-0 top-0  w-[168rpx] h-[168rpx]  leading-[168rpx] text-center " style="background-color: rgba(0,0,0,0.3);">
+														    <text class="text-[#fff] text-[24rpx]">已失效</text>
+														</view>
                                                     </view>
                                                     <view class="flex flex-1 flex-wrap ml-[20rpx]">
                                                         <view class="w-[100%]">
@@ -110,11 +115,13 @@
                                                         </view>
                                                         <view class="flex  justify-between items-end self-end w-[100%]">
                                                             <view class="flex items-end text-[var(--price-text-color)] leading-[40rpx] price-font">
-                                                                <text class="text-[var(--price-text-color)] price-font">
+                                                                <view class="text-[var(--price-text-color)] price-font">
                                                                     <text class="text-[26rpx] font-500">￥</text>
-                                                                    <text class="text-[36rpx] font-500">{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[0] }}</text>
-                                                                    <text class="text-[24rpx] font-500">.{{ parseFloat(item.goodsSku.sale_price).toFixed(2).split('.')[1] }}</text>
-                                                                </text>
+																	<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
+																	<text class="text-[24rpx] font-500">.{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[1] }}</text>
+																	<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
+																	<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+                                                                </view>
                                                             </view>
                                                         </view>
                                                     </view>
@@ -144,10 +151,10 @@
                             <text class="text-[24rpx] font-500">.{{ parseFloat(total).toFixed(2).split('.')[1] }}</text>
                         </text>
                     </view>
-                    <u-button  :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="settlement">结算</u-button>
+                    <u-button  text="结算" :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="settlement"></u-button>
                 </view>
                 <view class="flex-1 flex items-center justify-end" v-else>
-                    <u-button :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="deleteCartFn">删除</u-button>
+                    <u-button text="删除" :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="deleteCartFn"></u-button>
                 </view>
             </view>
         </view>
@@ -168,25 +175,25 @@
                             <text class="text-[24rpx] font-500">.{{ parseFloat(total).toFixed(2).split('.')[1] }}</text>
                         </text>
                     </view>
-                    <u-button  :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="settlement">结算</u-button>
+                    <u-button text="结算" :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="settlement"></u-button>
                 </view>
                 <view class="flex-1 flex items-center justify-end" v-else>
-                    <u-button :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="deleteCartFn">删除</u-button>
+                    <u-button text="删除" :customStyle="{width:'160rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="deleteCartFn"></u-button>
                 </view>
             </view>
         </view>
         <!--  #endif -->
         <u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
-        <tabbar addon="shop"/>
+        <tabbar />
     </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch,toRaw,nextTick } from 'vue'
+import { ref, computed, watch,nextTick } from 'vue'
 import useMemberStore from '@/stores/member'
 import { useLogin } from '@/hooks/useLogin'
 import { onShow } from '@dcloudio/uni-app'
-import { img, redirect } from '@/utils/common'
+import { img, redirect, getToken } from '@/utils/common'
 import useCartStore from '@/addon/shop/stores/cart'
 import { getCartGoodsList } from '@/addon/shop/api/cart'
 import {t} from "@/locale";
@@ -208,12 +215,20 @@ const getCartGoodsListFn = () => {
 		invalidList.value = []
 		loading.value = false
 		data.forEach(item => {
-			item.checked = false
-			if (item.goods.status && item.goods.delete_time == 0) {
-				cartList.value.push(item)
-			}else{
-                invalidList.value.push(item)
-			}
+            item.checked = false
+            if(item.goodsSku) {
+                if (item.goods.status && item.goods.delete_time == 0) {
+                    if (item.goodsSku.stock) {
+                        if (item.num > item.goodsSku.stock) item.num = item.goodsSku.stock;
+                        cartList.value.push(item)
+                    } else {
+                        // 库存为0 时，移动到售罄商品
+                        invalidList.value.push(item)
+                    }
+                } else {
+                    invalidList.value.push(item)
+                }
+            }
 		})
 		selectAll()
 		if(querOne.value) querOne.value = false
@@ -225,11 +240,9 @@ const getCartGoodsListFn = () => {
 		}
 	})
 }
-
 onShow(() => {
-		getCartGoodsListFn()
-		cartStore.getList();
-	
+    getCartGoodsListFn()
+    cartStore.getList();
 })
 
 const checkedNum = computed(() => {
@@ -241,11 +254,22 @@ const checkedNum = computed(() => {
 })
 
 watch(() => cartList.value, () => {
-	let value = 0
-	cartList.value.forEach(item => {
-		if (item.checked&&item.goodsSku) value += parseFloat(item.goodsSku.sale_price) * item.num
-	})
-	total.value = value.toFixed(2)
+    let value = 0
+    cartList.value.forEach((item:any) => {
+        if (item.checked && item.goodsSku) {
+            let price: any = 0;
+            if (item.goods.is_discount) {
+                price = item.goodsSku.sale_price // 折扣价
+            } else if (item.goods.member_discount && getToken()) {
+                price = item.goodsSku.member_price // 会员价
+            } else {
+                price = item.goodsSku.price
+            }
+
+            value += parseFloat(price) * item.num
+        }
+    })
+    total.value = value.toFixed(2)
 }, { deep: true })
 
 const toLogin = () => {
@@ -366,6 +390,31 @@ const deleteInvalidList = ()=>{
 	})
 	invalidList.value = []
 }
+
+// 价格类型 
+let priceType = (data:any) =>{
+	let type = "";
+	if(data.goods.is_discount){
+		type = 'discount_price'// 折扣
+	}else if(data.goods.member_discount && getToken()){
+		type = 'member_price' // 会员价
+	}else{ 
+		type = ""
+	}
+	return type;
+}
+// 商品价格
+let goodsPrice = (data:any) =>{
+	let price = "0.00";
+	if(data.goods.is_discount){
+		price = data.goodsSku.sale_price?data.goodsSku.sale_price:data.goodsSku.price // 折扣价
+	}else if(data.goods.member_discount && getToken()){
+		price = data.goodsSku.member_price?data.goodsSku.member_price:data.goodsSku.price // 会员价
+	}else{
+		price = data.goodsSku.price
+	}
+	return price;
+}
 </script>
 <style lang="scss" scoped>
 :deep(uni-page) {
@@ -396,7 +445,6 @@ uni-page-body {
 .scroll-height {
 	height: calc(100vh - 100rpx - 50px - constant(safe-area-inset-bottom));
 	height: calc(100vh - 100rpx - 50px - env(safe-area-inset-bottom));
-	
 }
 
 /*  #endif  */
@@ -412,5 +460,11 @@ uni-page-body {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+}
+:deep(.u-swipe-action-item__right__button__wrapper){
+    padding:0 10rpx !important;
+}
+:deep(.u-swipe-action-item__right__button__wrapper__text){
+    font-size:24rpx !important;
 }
 </style>

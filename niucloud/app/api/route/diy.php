@@ -24,6 +24,8 @@ Route::group('diy', function() {
 
     Route::get('tabbar', 'diy.Diy/tabbar');
 
+    Route::get('tabbar/list', 'diy.Diy/tabbarList');
+
     Route::get('share', 'diy.Diy/share');
 
 })->middleware(ApiLog::class)

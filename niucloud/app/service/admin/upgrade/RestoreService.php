@@ -49,6 +49,7 @@ class RestoreService extends UpgradeService
             ]);
             $file_list = $db->fileList();
             if (!empty($file_list)) {
+                $db->setSqlMode();
                 foreach ($file_list as $file) {
                     $db->setFile($file)->import(0, $file['time']);
                 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="main-container w-full bg-white" v-loading="loading">
+    <div class="main-container w-full " v-loading="loading">
 
         <div v-for="(item, index) in detail.appList" :key="index">
 

@@ -13,7 +13,6 @@ class Request extends \think\Request
     //认证信息
     protected static $auth_info = [];
 
-
     /**
      * 获取请求参数
      * @param array $params
@@ -56,7 +55,7 @@ class Request extends \think\Request
         if (!$param || !$filter || !is_string($param)) return $param;
         // 把数据过滤
         $filter_rule = [
-            "/<(\\/?)(script|i?frame|style|html|body|title|link|meta|object|\\?|\\%)([^>]*?)>/isU",
+            "/<(\\/?)(script|i?frame|style|html|body|title|link|metaf|alert|font|object|\\?|\\%)([^>]*?)>/isU",
             "/(<[^>]*)on[a-zA-Z]+\s*=([^>]*>)/isU",
             "/select|join|where|drop|like|modify|rename|insert|update|table|database|alter|truncate|\'|\/\*|\.\.\/|\.\/|union|into|load_file|outfile/is"
         ];
@@ -89,7 +88,6 @@ class Request extends \think\Request
             return static::$auth_info['member_id'] ?? 0;
         }
     }
-
 
     /**
      * 用户账号

@@ -13,10 +13,8 @@ namespace app\service\admin\addon;
 
 
 use app\service\core\addon\CoreAddonDevelopBuildService;
-use app\service\core\addon\CoreAddonDevelopDownloadService;
 use app\service\core\addon\CoreAddonDevelopService;
 use app\service\core\addon\CoreAddonService;
-use app\service\core\niucloud\CoreAppService;
 use app\service\core\niucloud\CoreModuleService;
 use core\base\BaseAdminService;
 

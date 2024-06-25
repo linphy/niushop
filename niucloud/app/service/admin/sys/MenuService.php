@@ -14,7 +14,9 @@ namespace app\service\admin\sys;
 use app\dict\sys\MenuDict;
 use app\dict\sys\MenuTypeDict;
 use app\model\sys\SysMenu;
+use app\service\admin\addon\AddonService;
 use core\base\BaseAdminService;
+use core\dict\DictLoader;
 use core\exception\AdminException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -107,33 +109,10 @@ class MenuService extends BaseAdminService
     public function del(string $menu_key){
         //查询是否有下级菜单或按钮
         $menu = $this->find($menu_key);
-        if ($menu->isEmpty())
-            throw new AdminException('MENU_NOT_EXIST');
+        if((new SysMenu())->where([['parent_key', '=', $menu_key]])->count() > 0)
+            throw new AdminException('MENU_NOT_ALLOW_DELETE');
 
-        if($menu['addon'] != '')
-        {
-            $where[] = ['addon','=',$menu['addon']];
-            $count = (new SysMenu())->where([['addon','=',$menu['addon']]])->group('parent_key')->count();
-        }else{
-            $count = (new SysMenu())->where([['addon','=','']])->group('parent_key')->count();
-        }
-        if($count == 0)
-        {
-            $menu_where[] = ['menu_key','=',$menu_key];
-        }else{
-            for ($i = 0; $i<= $count; $i++)
-            {
-                $key[$i] = [$menu_key];
-
-                $where[] = ['parent_key','in',$key[$i]];
-                $chilren[$i] = (new SysMenu())->where($where)->field('menu_key')->select()->toArray();
-                $chilren_key[$i] = array_column($chilren[$i],'menu_key');
-                $key = array_merge($key[$i],$chilren_key[$i]);
-                $key = array_unique($key);
-            }
-            $menu_where[] = ['menu_key','in',$key];
-        }
-        $res = (new SysMenu())->where($menu_where)->delete();
+        $res = $menu->delete();
         Cache::tag(self::$cache_tag_name)->clear();
         return  $res;
     }
@@ -147,18 +126,45 @@ class MenuService extends BaseAdminService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getMenuListByMenuKeys(array $menu_keys, int $is_tree = 0, string $addon = 'all')
+    public function getMenuListByMenuKeys(array $menu_keys, int $is_tree = 0, $addon = 'all', $is_button = 1)
     {
         sort($menu_keys);
-        $cache_name = 'menu' . md5(implode('_', $menu_keys)) . $is_tree.'_' .$addon;
+        $cache_name = 'menu' . md5(implode("_", $menu_keys)) . $is_tree.$addon;
         $menu_list = cache_remember(
             $cache_name,
             function () use ($menu_keys, $is_tree, $addon) {
                 $where = [
                     ['menu_key', 'in', $menu_keys],
                 ];
+                $addons = get_site_addons();
+                $addons[] = '';
+
+                $delete_menu_addon = [];
+                $addon_loader = new DictLoader("Menu");
+
                 if($addon != 'all'){
                     $where[] = ['addon', '=', $addon];
+
+                    $delete_menu = $addon_loader->load(["addon" => $addon, "app_type" => 'admin'])['delete'] ?? [];
+                    if (!empty($delete_menu) && is_array($delete_menu)) $delete_menu_addon[] = $delete_menu;
+                } else {
+                    $where[] = ['addon', 'in', $addons];
+
+                    foreach ($addons as $addon) {
+                        $delete_menu = $addon_loader->load(["addon" => $addon, "app_type" => 'admin'])['delete'] ?? [];
+                        if (!empty($delete_menu) && is_array($delete_menu)) $delete_menu_addon[] = $delete_menu;
+                    }
+                }
+
+                // 排除插件中delete的菜单
+                if (!empty($delete_menu_addon)) {
+                    $delete_intersect = array_intersect(...$delete_menu_addon);
+                    if (!empty($delete_intersect)) {
+                        $where[] = ['menu_key', 'not in', $delete_intersect];
+                    }
+                }
+                if(!empty($app_type)){
+                    $where[] = ['app_type', '=', $app_type];
                 }
                 return (new SysMenu())->where($where)->order('sort', 'desc')->select()->toArray();
             },
@@ -166,8 +172,8 @@ class MenuService extends BaseAdminService
         );
         foreach ($menu_list as &$v)
         {
-            $lang_menu_key = 'dict_menu_admin' . '.'. $v['menu_key'];
-            $lang_menu_name = get_lang($lang_menu_key);
+            $lang_menu_key = "dict_menu_". $v['app_type']. '.'. $v['menu_key'];
+            $lang_menu_name = get_lang("dict_menu_". $v['app_type']. '.'. $v['menu_key']);
             //语言已定义
             if($lang_menu_key != $lang_menu_name)
             {
@@ -175,31 +181,35 @@ class MenuService extends BaseAdminService
             }
         }
 
-        return $is_tree ? $this->menuToTree($menu_list, 'menu_key', 'parent_key', 'children', 'auth', '', 1) : $menu_list;
+        return $is_tree ? $this->menuToTree($menu_list, 'menu_key', 'parent_key', 'children', 'auth', '', $is_button) : $menu_list;
 
     }
 
     /**
      * 获取所有接口菜单
      */
-    public function getAllMenuList($status = 'all', $is_tree = 0, string $addon = 'all', $is_button = 0)
+    public function getAllMenuList($status = 'all', $is_tree = 0, $is_button = 0)
     {
-        $cache_name = 'menu_api_' .$status . '_' . $is_tree .'_' .$addon. '_' . $is_button;
+        $cache_name = 'menu_api_' .$status . '_' . $is_tree .'_' . $is_button;
         $menu_list = cache_remember(
             $cache_name,
-            function () use ($status, $is_tree, $addon, $is_button) {
-                if($is_button == 0)
-                {
-                    $where = [
-                        ['menu_type', 'in', [0,1]]
-                    ];
-                }
-                //查询应用
-                if ($addon != 'all') {
-                    $where[] = ['addon', '=', $addon];
-                }
+            function () use ($status, $is_tree, $is_button) {
+                $where = [];
                 if ($status != 'all') {
                     $where[] = ['status', '=', $status];
+                }
+                // 排除菜单
+                $delete_menu_addon = [];
+                $addon_loader = new DictLoader("Menu");
+                foreach (get_site_addons() as $addon) {
+                    $delete_menu = $addon_loader->load(["addon" => $addon, "app_type" => 'admin'])['delete'] ?? [];
+                    if (!empty($delete_menu) && is_array($delete_menu)) $delete_menu_addon[] = $delete_menu;
+                }
+                if (!empty($delete_menu_addon)) {
+                    $delete_intersect = array_intersect(...$delete_menu_addon);
+                    if (!empty($delete_intersect)) {
+                        $where[] = ['menu_key', 'not in', $delete_intersect];
+                    }
                 }
                 return (new SysMenu())->where($where)->order('sort desc')->select()->toArray();
             },

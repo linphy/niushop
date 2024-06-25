@@ -15,6 +15,7 @@ use app\dict\member\MemberDict;
 use app\dict\member\MemberRegisterChannelDict;
 use app\dict\member\MemberRegisterTypeDict;
 use app\service\admin\member\MemberService;
+use app\service\core\sys\CoreExportService;
 use core\base\BaseAdminController;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -35,6 +36,7 @@ class Member extends BaseAdminController
             ['register_channel', ''],
             ['create_time', []],
             ['member_label', 0],
+            ['member_level', 0],
         ]);
         return success((new MemberService())->getPage($data));
     }
@@ -115,6 +117,23 @@ class Member extends BaseAdminController
     }
 
     /**
+     * 导出会员列表
+     * @return Response
+     */
+    public function export()
+    {
+        $data = $this->request->params([
+            ['keyword', ''],
+            ['register_type', ''],
+            ['register_channel', ''],
+            ['create_time', []],
+            ['member_label', 0],
+        ]);
+        (new MemberService())->exportMember($data);
+        return success('SUCCESS');
+    }
+
+    /**
      * 会员使用场景
      * @return Response
      */
@@ -182,5 +201,57 @@ class Member extends BaseAdminController
         return success('SUCCESS', $member_no);
     }
 
+    /**
+     * 获取会员权益字典
+     * @return mixed
+     */
+    public function getMemberBenefitsDict() {
+        return success((new MemberService())->getMemberBenefitsDict());
+    }
 
+    /**
+     * 获取会员礼包字典
+     * @return array|null
+     */
+    public function getMemberGiftDict() {
+        return success((new MemberService())->getMemberGiftDict());
+    }
+
+    /**
+     * 获取成长值规则字典
+     * @return array|null
+     */
+    public function getGrowthRuleDict() {
+        return success((new MemberService())->getGrowthRuleDict());
+    }
+
+    /**
+     * 获取积分规则字典
+     * @return array|null
+     */
+    public function getPointRuleDict() {
+        return success((new MemberService())->getPointRuleDict());
+    }
+
+    /**
+     * 获取会员权益内容
+     * @return Response
+     */
+    public function getMemberBenefitsContent() {
+        $data = $this->request->params([
+            [ 'benefits', [] ],
+        ]);
+        return success((new MemberService())->getMemberBenefitsContent($data['benefits']));
+    }
+
+    /**
+     * 获取会员礼包内容
+     * @return Response
+     */
+    public function getMemberGiftsContent() {
+        $data = $this->request->params([
+            [ 'gifts', [] ],
+        ]);
+        return success((new MemberService())->getMemberGiftsContent($data['gifts']));
+    }
 }

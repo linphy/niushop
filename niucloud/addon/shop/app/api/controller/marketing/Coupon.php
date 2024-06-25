@@ -92,4 +92,14 @@ class Coupon extends BaseApiController
         return success(( new CouponService() )->getCouponComponents($data));
     }
 
+    /**
+     * 获取优惠券二维码
+     * @param int $id
+     * @return Response
+     */
+    public function qrcode(int $id)
+    {
+        return success(data:( new CouponService() )->getQrcode($id));
+    }
+
 }

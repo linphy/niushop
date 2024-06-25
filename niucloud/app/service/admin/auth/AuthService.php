@@ -13,7 +13,6 @@ namespace app\service\admin\auth;
 
 use app\Request;
 use app\service\admin\addon\AddonService;
-use app\service\admin\site\SiteUserService;
 use app\service\admin\sys\MenuService;
 use app\service\admin\sys\RoleService;
 use app\service\admin\user\UserService;
@@ -81,19 +80,19 @@ class AuthService extends BaseAdminService
      * 当前授权用户菜单权限
      * @return array
      */
-    public function getAuthMenuList(int $is_tree = 0, string $addon = 'all'){
+    public function getAuthMenuList($status = 'all', int $is_tree = 0, int $is_button = 1){
         $user_info = ( new UserService())->getUserCache($this->uid);
         if(empty($user_info))
             return [];
         $is_admin = $user_info['is_admin'];//是否是超级管理员组
         $menu_service = new MenuService();
-        if($is_admin){//查询全部启用的权限
-            return (new MenuService())->getAllMenuList($is_tree, 1, $addon);
-        }else{
+        if ($is_admin) {//查询全部启用的权限
+            return (new MenuService())->getAllMenuList($status, $is_tree, $is_button);
+        } else {
             $user_role_ids = $user_info['role_ids'];
             $role_service = new RoleService();
             $menu_keys = $role_service->getMenuKeysByRoleIds($user_role_ids ?? []);
-            return $menu_service->getMenuListByMenuKeys($menu_keys, $is_tree, $addon);
+            return $menu_service->getMenuListByMenuKeys($menu_keys, $is_tree, is_button:$is_button);
         }
     }
 
@@ -102,16 +101,6 @@ class AuthService extends BaseAdminService
      */
     public function getAuthInfo(){
         return ( new UserService())->getUserCache($this->uid);
-    }
-
-    /**
-     * 修改用户权限
-     * @param string $field
-     * @param $data
-     * @return bool
-     */
-    public function modifyAuth(string $field, $data){
-        return (new SiteUserService())->modify($this->uid, $field, $data);
     }
 
     /**

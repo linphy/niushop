@@ -20,7 +20,7 @@ use Exception;
 /**
  * 操作日志
  * Class UserLogService
- * @package app\service\admin\site
+ * @package app\service\admin\user
  */
 class UserLogService extends BaseAdminService
 {

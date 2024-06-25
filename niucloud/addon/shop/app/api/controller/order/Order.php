@@ -28,6 +28,7 @@ class Order extends BaseApiController
         $data = $this->request->params([
             [ 'order_no', '' ],
             [ 'status', '' ],
+            [ 'activity_type', '' ],
         ]);
         return success(( new OrderService() )->getPage($data));
     }
@@ -58,7 +59,7 @@ class Order extends BaseApiController
      */
     public function orderClose($id)
     {
-        return success(( new OrderService() )->close($id));
+        return success(data:( new OrderService() )->close($id));
     }
 
     /**
@@ -68,7 +69,7 @@ class Order extends BaseApiController
      */
     public function orderFinish($id)
     {
-        return success(( new OrderService() )->finish($id));
+        return success(data:( new OrderService() )->finish($id));
     }
 
     public function getPackage()
@@ -78,6 +79,11 @@ class Order extends BaseApiController
             [ 'mobile', '' ],
         ]);
         return success(( new OrderService() )->getDeliveryPackage($data));
+    }
+
+    public function getNum()
+    {
+        return success(( new OrderService() )->num());
     }
 
     /**

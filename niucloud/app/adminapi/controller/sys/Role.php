@@ -93,4 +93,17 @@ class Role extends BaseAdminController
         return success('DELETE_SUCCESS');
     }
 
+    /**
+     * 设置角色状态
+     * @param $role_id
+     * @return Response
+     */
+    public function setStatus($role_id)
+    {
+        $data = $this->request->params([
+            ['status', RoleStatusDict::ON],
+        ]);
+        (new RoleService())->setStatus($role_id, $data['status']);
+        return success('DELETE_SUCCESS');
+    }
 }

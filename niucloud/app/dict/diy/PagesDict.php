@@ -150,12 +150,18 @@ class PagesDict
                                 ]
                             ],
                             'topStatusBar' => [
+                                'isShow' => true,
                                 'bgColor' => "#ffffff",
                                 'isTransparent' => false,
-                                'isShow' => true,
                                 'style' => 'style-1',
+                                'styleName' => '风格1',
                                 'textColor' => "#333333",
                                 'textAlign' => 'center',
+                                'inputPlaceholder' => '请输入搜索关键词',
+                                'imgUrl' => '',
+                                'link' => [
+                                    'name' => ""
+                                ]
                             ],
                             'popWindow' => [
                                 'imgUrl' => "",
@@ -176,15 +182,15 @@ class PagesDict
             ],
             'DIY_MEMBER_INDEX' => [
                 'default_member_index_one' => [
-                    "title" => "个人中心（风格一）", // 页面名称
+                    "title" => "默认个人中心1", // 页面名称
                     'cover' => 'static/resource/images/diy/template/default_member_index_one_cover.png', // 页面封面图
                     'preview' => '', // 页面预览图
-                    'desc' => '官方推出个人中心（风格一）', // 页面描述
+                    'desc' => '官方推出默认个人中心1', // 页面描述
                     'mode' => 'diy',
                     // 页面数据源
                     "data" => [
                         "global" => [
-                            "title" => "个人中心（风格一）",
+                            "title" => "个人中心",
                             'pageStartBgColor' => '#F8F8F8',
                             'pageEndBgColor' => '',
                             'pageGradientAngle' => 'to bottom',
@@ -215,12 +221,18 @@ class PagesDict
                                 ]
                             ],
                             'topStatusBar' => [
+                                'isShow' => true,
                                 'bgColor' => "#ffffff",
                                 'isTransparent' => false,
-                                'isShow' => true,
                                 'style' => 'style-1',
+                                'styleName' => '风格1',
                                 'textColor' => "#333333",
                                 'textAlign' => 'center',
+                                'inputPlaceholder' => '请输入搜索关键词',
+                                'imgUrl' => '',
+                                'link' => [
+                                    'name' => ""
+                                ]
                             ],
                             'popWindow' => [
                                 'imgUrl' => "",
@@ -488,7 +500,7 @@ class PagesDict
                                     "color" => "#FFFFFF"
                                 ],
                                 "imageSize" => 25,
-                                "aroundRadius" => 25,
+                                "aroundRadius" => 0,
                                 "font" => [
                                     "size" => 13,
                                     "weight" => "normal",
@@ -613,15 +625,15 @@ class PagesDict
                     ]
                 ],
                 'default_member_index_two' => [
-                    "title" => "个人中心（风格二）", // 页面名称
+                    "title" => "默认个人中心2", // 页面名称
                     'cover' => 'static/resource/images/diy/template/default_member_index_two_cover.png', // 页面封面图
                     'preview' => '', // 页面预览图
-                    'desc' => '官方推出个人中心（风格二）', // 页面描述
+                    'desc' => '官方推出默认个人中心2', // 页面描述
                     'mode' => 'diy',
                     // 页面数据源
                     "data" => [
                         "global" => [
-                            "title" => "个人中心（风格二）",
+                            "title" => "个人中心",
                             'pageStartBgColor' => '#F8F8F8',
                             'pageEndBgColor' => '',
                             'pageGradientAngle' => 'to bottom',
@@ -652,12 +664,18 @@ class PagesDict
                                 ]
                             ],
                             'topStatusBar' => [
+                                'isShow' => true,
                                 'bgColor' => "#ffffff",
                                 'isTransparent' => false,
-                                'isShow' => true,
                                 'style' => 'style-1',
+                                'styleName' => '风格1',
                                 'textColor' => "#333333",
                                 'textAlign' => 'center',
+                                'inputPlaceholder' => '请输入搜索关键词',
+                                'imgUrl' => '',
+                                'link' => [
+                                    'name' => ""
+                                ]
                             ],
                             'popWindow' => [
                                 'imgUrl' => "",
@@ -925,7 +943,7 @@ class PagesDict
                                     "color" => "#FFFFFF"
                                 ],
                                 "imageSize" => 25,
-                                "aroundRadius" => 25,
+                                "aroundRadius" => 0,
                                 "font" => [
                                     "size" => 13,
                                     "weight" => "normal",

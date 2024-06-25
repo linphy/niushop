@@ -169,7 +169,6 @@ class AddonService extends BaseAdminService
         return (new CoreAddonService())->getInstallAddonList();
     }
 
-
     /**
      * 应用key缓存
      * @param $keys

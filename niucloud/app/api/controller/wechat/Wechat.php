@@ -37,7 +37,33 @@ class Wechat extends BaseController
     }
 
     /**
-     * 授权登录
+     * code获取微信信息
+     * @return Response
+     */
+    public function getWechatUser(){
+        $data = $this->request->params([
+            ['code', ''],
+        ]);
+        $wechat_auth_service = new WechatAuthService();
+        $data = $wechat_auth_service->userFromCode($data['code']);
+        return success(['data'=> json_encode($data)]);
+    }
+
+    /**
+     * 授权信息登录
+     * @return Response
+     */
+    public function wechatLogin(){
+        $data = $this->request->params([
+            ['data', ''],
+        ]);
+        $wechat_auth_service = new WechatAuthService();
+        [$avatar, $nickname, $openid, $unionid] = json_decode($data['data'], true);
+        return success($wechat_auth_service->login($openid, $nickname, $avatar, $unionid));
+    }
+
+    /**
+     * 授权code登录
      * @return Response
      * @throws DataNotFoundException
      * @throws DbException
@@ -58,6 +84,7 @@ class Wechat extends BaseController
     public function register(){
         $data = $this->request->params([
             ['openid', ''],
+            ['unionid', ''],
             ['mobile', ''],
         ]);
         //参数验证
@@ -65,7 +92,7 @@ class Wechat extends BaseController
             'mobile' => 'mobile'
         ]);
         $wechat_auth_service = new WechatAuthService();
-        return success($wechat_auth_service->register($data['openid'], $data['mobile']));
+        return success($wechat_auth_service->register($data['openid'], $data['mobile'], wx_unionid: $data['unionid']));
     }
 
     /**

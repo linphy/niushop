@@ -41,7 +41,7 @@ class CoreAreaService extends BaseCoreService
      */
     public function getInfo($id)
     {
-        return $this->model->where('id', $id)->field('id, pid, name, shortname, longitude, latitude, level, sort, status')->findOrEmpty()->toArray();
+        return $this->model->where('id', $id)->field('id, pid, name, shortname, longitude, latitude, level, sort, status')->find()->toArray();
     }
 
     /**

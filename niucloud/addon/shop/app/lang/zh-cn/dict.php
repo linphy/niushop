@@ -59,6 +59,7 @@ return [
         'system' => '系统'
     ],
     'dict_shop_goods_evalute' => [
+        'audit_no' => '无需审核',
         'audit' => '待审核',
         'audit_adopt' => '审核通过',
         'audit_refuse' => '审核拒绝'
@@ -71,12 +72,17 @@ return [
         'order_finish_action' => '订单完成',
         'order_remark_action' => '订单商家备注',
         'order_close_allow_refund' => '订单自动关闭售后',
+        'order_edit_price_action' => '订单改价',
     ],
     'dict_shop_invoice' => [
         'header_type_company' => '企业',
         'header_type_person' => '个人',
         'common' => '普票',
-        'sprcial' => '专票'
+        'sprcial' => '专票',
+        'wait_open' => '未生效',
+        'open' => '已生效',
+        'wait_invoice' => '待开票',
+        'invoiced' => '已开票',
     ],
     'dict_shop_order_refund_status' => [
         'buyer_apply_wait_store' => '买家申请售后',
@@ -93,6 +99,7 @@ return [
         'shop_component_type_basic' => '商城组件',
         'page_shop_index' => '商城首页',
         'page_shop_member_index' => '商城个人中心',
+        'page_shop_point_index' => '积分商城',
 
         'shop_title' => '商城',
         'shop_link' => '商城',
@@ -105,7 +112,14 @@ return [
         'shop_link_coupon_list' => '优惠券列表',
         'shop_link_my_coupon' => '我的优惠券',
         'shop_link_order_list' => '订单列表',
-        'shop_link_order_refund_list' => '退款列表'
+        'shop_link_order_refund_list' => '退款列表',
+        'shop_link_point_index' => '积分商城',
+        'shop_link_point_list' => '积分商品列表',
+        'shop_link_point_order_list' => '积分兑换记录',
+        'shop_link_discount_list' => '限时折扣列表'
+    ],
+    'dict_diy_poster' => [
+        'shop_goods_component_type_basic' => '商品组件',
     ],
     'dict_shop_delivery_status' => [
         'wait_delivery' => '待发货',
@@ -143,5 +157,41 @@ return [
         'normal' => '正常',
         'refunding' => '退款中',
         'refund_finish' => '退款完成'
-    ]
+    ],
+
+    'dict_shop_active_status' => [
+        'not_active' => '未开始',
+        'active' => '进行中',
+        'end' => '已结束',
+        'close' => '已关闭'
+    ],
+    'dict_shop_active_class' => [
+        'discount' => '限时折扣',
+        'exchange' => '积分商城',
+    ],
+    'dict_shop_active_type' => [
+        'shop' => '店铺活动',
+        'goods' => '商品活动',
+        'member' => '会员活动',
+    ],
+    'dict_shop_active_goods_type' => [
+        'single' => '单品',
+        'independent' => '独立商品',
+        'shop' => '店铺整体商品',
+    ],
+
+
+    'dict_shop_point_exchange_type' => [
+        'goods' => '商品',
+        'coupon' => '优惠卷',
+        'balance' => '余额',
+    ],
+
+    'dict_member' => [
+        'account_point_exchange_close' => '兑换订单关闭',
+        'account_point_exchange_order' => '兑换订单消费',
+        'account_point_exchange_refund' => '兑换订单维权',
+        'account_point_consume_reward' => '下单奖励'
+    ],
+
 ];

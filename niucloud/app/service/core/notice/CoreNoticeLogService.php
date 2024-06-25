@@ -47,6 +47,6 @@ class CoreNoticeLogService extends BaseCoreService
 
     public function getInfo(int $id){
         $field = 'id, key, notice_type, uid, member_id, nickname, receiver, is_click, is_visit, visit_time, create_time, params, content';
-        return $this->model->where([ ['id', '=', $id]])->field($field)->append(['name', 'notice_type_name'])->findOrEmpty()->toArray();
+        return $this->model->where([['id', '=', $id]])->field($field)->append(['name', 'notice_type_name'])->findOrEmpty()->toArray();
     }
 }

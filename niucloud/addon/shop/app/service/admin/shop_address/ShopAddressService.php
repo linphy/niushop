@@ -38,7 +38,7 @@ class ShopAddressService extends BaseAdminService
         $field = 'id,contact_name,mobile,province_id,city_id,district_id,address,full_address,lat,lng,is_delivery_address,is_refund_address,is_default_delivery,is_default_refund';
         $order = '';
 
-        $search_model = $this->model->withSearch([ "mobile", "full_address" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ ['id', '>', 0] ])->withSearch([ "mobile", "full_address" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }

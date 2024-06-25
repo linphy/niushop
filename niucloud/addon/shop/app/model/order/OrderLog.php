@@ -38,7 +38,7 @@ class OrderLog extends BaseModel
 
     //类型
     protected $type = [
-
+//        'create_time' => 'timestamp'
     ];
 
     /**
@@ -49,9 +49,9 @@ class OrderLog extends BaseModel
      */
     public function getMainTypeNameAttr($value, $data)
     {
-        if (empty($data['main_type']))
+        if (empty($data[ 'main_type' ]))
             return '';
-        return OrderLogDict::getMainType() [$data['main_type']] ?? '';
+        return OrderLogDict::getMainType() [ $data[ 'main_type' ] ] ?? '';
     }
 
     /**
@@ -62,9 +62,9 @@ class OrderLog extends BaseModel
      */
     public function getTypeNameAttr($value, $data)
     {
-        if (empty($data['type']))
+        if (empty($data[ 'type' ]))
             return '';
-        return OrderDict::getActionType() [$data['type']] ?? '';
+        return OrderDict::getActionType() [ $data[ 'type' ] ] ?? '';
     }
 
     /**
@@ -75,9 +75,9 @@ class OrderLog extends BaseModel
     public function getMainNameAttr($value, $data)
     {
         $main_name = '';
-        if (!empty($data['main_type']) && !empty($data['main_id'])) {
-            if ($data['main_type'] == OrderLogDict::MEMBER) $main_name = (Member::find(['member_id' => $data['main_id']]))->nickname;
-            if ($data['main_type'] == OrderLogDict::STORE) $main_name = (SysUser::find(['uid' => $data['main_id']]))->username;
+        if (!empty($data[ 'main_type' ]) && !empty($data[ 'main_id' ])) {
+            if ($data[ 'main_type' ] == OrderLogDict::MEMBER) $main_name = ( Member::find([ 'member_id' => $data[ 'main_id' ] ]) )->nickname;
+            if ($data[ 'main_type' ] == OrderLogDict::STORE) $main_name = ( SysUser::find([ 'uid' => $data[ 'main_id' ] ]) )->username;
         }
         return $main_name;
     }

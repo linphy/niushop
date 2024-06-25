@@ -54,6 +54,7 @@ class SmsService extends BaseAdminService
                     'value' => $config_type[$k][$k_param] ?? ''
                 ];
             }
+            $data['component'] = $v['component'] ?? '';
             $list[] = $data;
         }
         return $list;

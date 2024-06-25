@@ -11,9 +11,7 @@
 					<span class="adorn">|</span>
 					<span class="right">{{ pageName }}</span>
 				</div>
-				<el-button type="primary" @click="addEvent">
-					{{ t('addCompany') }}
-				</el-button>
+				<el-button type="primary" @click="addEvent">{{ t('addCompany') }}</el-button>
 			</div>
 
 			<el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">

@@ -138,14 +138,13 @@ class Queue
      */
     public function send($queue, $data, $delay = 0)
     {
-//        $redis = Cache::store('redis')->handler();
-        $queue_waiting = '{redis-queue}-waiting'; //1.0.5版本之前为redis-queue-waiting
-        $queue_delay = '{redis-queue}-delayed';//1.0.5版本之前为redis-queue-delayed
+        $pre_queue = md5(root_path()); //1.0.5版本之前为redis-queue
+        $queue_waiting = $pre_queue.'{redis-queue}-waiting'; //1.0.5版本之前为redis-queue-waiting
+        $queue_delay = $pre_queue.'{redis-queue}-delayed';//1.0.5版本之前为redis-queue-delayed
         $now = time();
         if (extension_loaded('redis')) {
             try {
                 $redis = new \Redis();
-
                 $redis->connect(env('redis.redis_hostname'), env('redis.port'), 8);
                 if (env('redis.redis_password', '')) {
                     $redis->auth(env('redis.redis_password', ''));
@@ -168,7 +167,7 @@ class Queue
                 ]);
                 if ($delay) {
                     if(!$redis->zAdd($queue_delay, ($now + $delay), $package_str)){
-                        $res = $redis->zAdd($queue_delay, ($now + $delay), $package_str);
+                        $redis->zAdd($queue_delay, ($now + $delay), $package_str);
                     }
                     return true;
                 }

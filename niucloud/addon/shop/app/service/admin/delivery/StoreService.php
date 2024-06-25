@@ -40,7 +40,7 @@ class StoreService extends BaseAdminService
         $field = 'store_id,store_name,store_desc,store_logo,store_mobile,province_id,city_id,district_id,address,full_address,longitude,latitude,trade_time,create_time,update_time';
         $order = 'create_time desc';
 
-        $search_model = $this->model->withSearch([ "store_name", "create_time" ], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ ['store_id', '>', 0] ])->withSearch([ "store_name", "create_time" ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -106,6 +106,20 @@ class StoreService extends BaseAdminService
     {
         $res = $this->model->where([ [ 'store_id', '=', $id ] ])->delete();
         return $res;
+    }
+
+    /**
+     * 获取自提门店列表
+     * @param array $where
+     * @return array
+     */
+    public function getList(array $where = [])
+    {
+        $field = 'store_id,store_name,store_desc,store_logo,store_mobile,province_id,city_id,district_id,address,full_address,longitude,latitude,trade_time,create_time,update_time';
+        $order = 'create_time desc';
+
+        $list = $this->model->where([ ['store_id', '>', 0] ])->withSearch([ "store_name", "create_time" ], $where)->field($field)->order($order)->select()->toArray();
+        return $list;
     }
 
 }

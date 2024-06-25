@@ -13,7 +13,6 @@ namespace addon\shop\app\job\order;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderLogDict;
 use addon\shop\app\model\order\Order;
-use addon\shop\app\service\core\order\CoreOrderCloseService;
 use addon\shop\app\service\core\order\CoreOrderFinishService;
 use core\base\BaseJob;
 
@@ -34,7 +33,8 @@ class OrderFinish extends BaseJob
             $data['main_id'] = 0;
             $list = (new Order())->where([
                 ['status', '=', OrderDict::WAIT_TAKE],
-                ['timeout', '<=', time()]
+                ['timeout', '<=', time()],
+                ['timeout', '>', 0]
             ])->select();
             if(!$list->isEmpty()){
                 foreach($list as $v){

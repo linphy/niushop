@@ -5,7 +5,7 @@
 			<image :src="img('addon/shop/diy/search_01.png')" class="w-[40rpx] h-[40rpx]" mode="widthFix" @click="toLink('/addon/shop/pages/goods/category')"></image>
 			<view class="flex-1 ml-[24rpx] rounded-[32rpx] flex items-center bg-[#F7F8FD] opacity-90 py-[10rpx] pl-[38rpx] pr-[32rpx] justify-between" @click="toLink('/addon/shop/pages/goods/search')">
 				<text class="text-[#6D7278] text-[26rpx]">{{ diyComponent.text }}</text>
-				<text class="iconfont iconxiazai17"></text>
+				<text class="nc-iconfont nc-icon-sousuo-duanV6xx1"></text>
 			</view>
 		</view>
 	</view>

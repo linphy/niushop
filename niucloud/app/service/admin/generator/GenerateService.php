@@ -390,7 +390,7 @@ class GenerateService extends BaseAdminService
         {
             try {
                 $id = $params['id'];
-                $table_info = (new GenerateTable())->where([ ['id', '=', $id] ])->field('*')->findOrEmpty()->toArray();
+                $table_info = (new GenerateTable())->where([ ['id', '=', $id] ])->field('*')->find()->toArray();
                 $table_info['fields'] = (new GenerateColumn())->where([ ['table_id', '=', $id] ])->field('*')->select()->toArray();
 
                 $generator = new Generate();
@@ -418,7 +418,7 @@ class GenerateService extends BaseAdminService
         }else if($params['generate_type'] == 3){
             try {
                 $id = $params['id'];
-                $table_info = (new GenerateTable())->where([ ['id', '=', $id] ])->field('*')->findOrEmpty()->toArray();
+                $table_info = (new GenerateTable())->where([ ['id', '=', $id] ])->field('*')->find()->toArray();
                 $table_info['fields'] = (new GenerateColumn())->where([ ['table_id', '=', $id] ])->field('*')->select()->toArray();
                 $synchronous_number = $table_info['synchronous_number'] +1;
                 (new GenerateTable())->where([ ['id', '=', $id] ])->save(['synchronous_number' => $synchronous_number]);
@@ -450,7 +450,7 @@ class GenerateService extends BaseAdminService
     {
         try {
             $id = $params['id'];
-            $table_info = (new GenerateTable())->where([ ['id', '=', $id] ])->field('*')->findOrEmpty()->toArray();
+            $table_info = (new GenerateTable())->where([ ['id', '=', $id] ])->field('*')->find()->toArray();
             $table_info['fields'] = (new GenerateColumn())->where([ ['table_id', '=', $id] ])->field('*')->select()->toArray();
 
             $generateService = app()->make(Generate::class);

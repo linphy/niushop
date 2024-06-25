@@ -25,9 +25,11 @@ class Auth extends BaseAdminController
     public function authMenuList()
     {
         $data = $this->request->params([
-            ['addon', 'all'],
+            ['status', 1],
+            ['is_tree', 1],
+            ['is_button', 1]
         ]);
-        return success((new AuthService())->getAuthMenuList(1, $data['addon']));
+        return success((new AuthService())->getAuthMenuList($data['status'], $data['is_tree'], $data['is_button']));
     }
 
     /**
@@ -53,7 +55,6 @@ class Auth extends BaseAdminController
         return success((new AuthService())->getAuthInfo());
     }
 
-
     /**
      * 修改登录用户信息
      * @param $field
@@ -69,7 +70,6 @@ class Auth extends BaseAdminController
         (new AuthService())->modifyAuth($field, $data['value']);
         return success('MODIFY_SUCCESS');
     }
-
 
     /**
      * 更新用户

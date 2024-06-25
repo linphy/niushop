@@ -92,14 +92,20 @@ class WeappAuthService extends BaseApiService
 
         $member_service = new MemberService();
         $member_info = $member_service->findMemberInfo(['weapp_openid' => $openid]);
+        if ($member_info->isEmpty() && !empty($unionid)) {
+            $member_info = $member_service->findMemberInfo(['wx_unionid' => $unionid]);
+            if (!$member_info->isEmpty()) {
+                $member_info->weapp_openid = $openid;
+            }
+        }
         if($member_info->isEmpty()){
             $config = (new MemberConfigService())->getLoginConfig();
             $is_bind_mobile = $config['is_bind_mobile'];
             $is_auth_register = $config['is_auth_register'];
             if($is_bind_mobile == 0 && $is_auth_register == 1){
-                return $this->register($openid);
+                return $this->register($openid, wx_unionid: $unionid);
             }else{
-                return ['openid' => $openid];
+                return ['openid' => $openid, 'unionid' => $unionid];
             }
         }else{
             //可能会更新用户和粉丝表
@@ -122,7 +128,7 @@ class WeappAuthService extends BaseApiService
      * @throws InvalidConfigException
      * @throws ModelNotFoundException
      */
-    public function register(string $openid, string $mobile = '', string $mobile_code = ''){
+    public function register(string $openid, string $mobile = '', string $mobile_code = '', string $wx_unionid = ''){
 
         if(empty($openid)) throw new AuthException('AUTH_LOGIN_TAG_NOT_EXIST');
         //todo openid可能还需要合法性验证
@@ -142,12 +148,18 @@ class WeappAuthService extends BaseApiService
         }
         $member_service = new MemberService();
         $member_info = $member_service->findMemberInfo(['weapp_openid' => $openid]);
-
         if(!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
+
+        if (!empty($wx_unionid)) {
+            $member_info = $member_service->findMemberInfo(['wx_unionid' => $wx_unionid]);
+            if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
+        }
+
         $register_service = new RegisterService();
         return $register_service->register($mobile ?? '',
             [
-                'weapp_openid' => $openid
+                'weapp_openid' => $openid,
+                'wx_unionid' => $wx_unionid
             ],
             MemberRegisterTypeDict::WEAPP,
             $is_verify_mobile ?? false

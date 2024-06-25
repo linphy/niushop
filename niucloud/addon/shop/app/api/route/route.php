@@ -18,7 +18,7 @@ use think\facade\Route;
 /**
  * 商城系统
  */
-Route::group('shop', function() {
+Route::group('shop', function () {
 
     /***************************************************** 商品 ****************************************************/
 
@@ -69,14 +69,40 @@ Route::group('shop', function() {
     // 详情
     Route::get('coupon/:id', 'addon\shop\app\api\controller\marketing\Coupon@detail');
 
+    // 优惠券二维码
+    Route::get('coupon/qrcode/:id', 'addon\shop\app\api\controller\marketing\Coupon@qrcode');
+
     Route::get('config/invoice', 'addon\shop\app\api\controller\Config@invoice');
+
+    /***************************************************** 限时折扣 ****************************************************/
+    //轮播图配置
+    Route::get('discount/config', 'addon\shop\app\api\controller\marketing\Discount@config');
+    // 限时折扣商品列表
+    Route::get('discount/goods', 'addon\shop\app\api\controller\marketing\Discount@goods');
+    // 限时折扣列表
+    Route::get('discount', 'addon\shop\app\api\controller\marketing\Discount@lists');
+
+    /*****************************************************  积分商城 ****************************************************/
+    //积分商城列表
+    Route::get('exchange', 'addon\shop\app\api\controller\exchange\Exchange@lists');
+    //积分商城商品详情
+    Route::get('exchange/goods/:id', 'addon\shop\app\api\controller\exchange\Exchange@detail');
+    //获取商品列表供组件调用
+    Route::get('exchange/components', 'addon\shop\app\api\controller\exchange\Exchange@components');
+    //获取用户当前积分数供组件调用
+    Route::get('exchange/point', 'addon\shop\app\api\controller\exchange\Exchange@getPointInfo');
+    //积分商城订单计算
+    Route::get('exchange_order/calculate', 'addon\shop\app\api\controller\exchange\OrderCreate@calculate');
+    //积分商城订单创建
+    Route::post('exchange_order/create', 'addon\shop\app\api\controller\exchange\OrderCreate@create');
+
 
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)//false表示不验证登录
     ->middleware(ApiLog::class);
 
 
-Route::group('shop', function() {
+Route::group('shop', function () {
 
     /***************************************************** 购物车 ****************************************************/
 
@@ -103,6 +129,9 @@ Route::group('shop', function() {
     /***************************************************** 订单 ****************************************************/
     //列表
     Route::get('order', 'addon\shop\app\api\controller\order\Order@lists');
+
+    //数量
+    Route::get('order/num', 'addon\shop\app\api\controller\order\Order@getNum');
 
     //详情
     Route::get('order/:order_id', 'addon\shop\app\api\controller\order\Order@detail');
@@ -137,16 +166,22 @@ Route::group('shop', function() {
     //优惠券数量
     Route::get('member/coupon/count', 'addon\shop\app\api\controller\marketing\Coupon@memberCouponCount');
     //商品收藏列表
-    Route::get('goods/collect','addon\shop\app\api\controller\goods\GoodsCollect@getMemberGoodsCollectList');
+    Route::get('goods/collect', 'addon\shop\app\api\controller\goods\GoodsCollect@getMemberGoodsCollectList');
     //商品添加收藏
-    Route::post('goods/collect/:goods_id','addon\shop\app\api\controller\goods\GoodsCollect@addGoodsCollect');
+    Route::post('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@addGoodsCollect');
     //商品取消收藏
-    Route::delete('goods/collect/:goods_id','addon\shop\app\api\controller\goods\GoodsCollect@cancelGoodsCollect');
+    Route::delete('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@cancelGoodsCollect');
 
     //订单维权 列表
     Route::get('order/refund', 'addon\shop\app\api\controller\refund\Refund@lists');
     //订单维权 详
     Route::get('order/refund/:order_refund_no', 'addon\shop\app\api\controller\refund\Refund@detail');
+
+    // 查询订单项可退款信息
+    Route::get('refund/refund_data', 'addon\shop\app\api\controller\refund\Refund@getRefundData');
+    // 查询订单项退款信息
+    Route::get('refund/refund_data_by_no', 'addon\shop\app\api\controller\refund\Refund@getRefundDataByOrderRefundNo');
+
     // 申请维权
     Route::post('refund/apply', 'addon\shop\app\api\controller\refund\Refund@apply');
     // 修改退款申请

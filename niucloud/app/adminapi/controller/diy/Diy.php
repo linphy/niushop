@@ -49,8 +49,7 @@ class Diy extends BaseAdminController
      */
     public function getPageByCarouselSearch()
     {
-        $data = $this->request->params([
-        ]);
+        $data = $this->request->params([]);
         return success(( new DiyService() )->getPageByCarouselSearch($data));
     }
 
@@ -88,6 +87,7 @@ class Diy extends BaseAdminController
     public function add()
     {
         $data = $this->request->params([
+            [ "page_title", "" ],
             [ "title", "" ],
             [ "name", "" ],
             [ "type", "" ],
@@ -111,8 +111,11 @@ class Diy extends BaseAdminController
     public function edit($id)
     {
         $data = $this->request->params([
+            [ "page_title", "" ],
             [ "title", "" ],
             [ "name", "" ],
+            [ 'template', '' ],
+            [ 'mode', 'diy' ], // 页面展示模式，diy：自定义，fixed：固定
             [ "value", "", false ],
             [ 'is_change', '' ]
         ]);

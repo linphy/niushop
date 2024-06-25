@@ -1,9 +1,12 @@
-
 <template>
-    <div class="main-container pt-[20px]" v-loading="loading">
-        <div class="flex ml-[18px] justify-between items-center">
+    <div class="main-container pt-[20px] bg-[#fff]" v-loading="loading">
+        <div class="flex ml-[18px] justify-between items-center mb-[5px]">
             <span class="text-page-title">{{ pageName }}</span>
         </div>
+        <el-tabs class="demo-tabs mx-[18px]" model-value="/shop/goods/category/config" @tab-change="handleClick">
+            <el-tab-pane :label="t('tabGoodsCategory')" name="/shop/goods/category" />
+            <el-tab-pane :label="t('tabGoodsCategoryConfig')" name="/shop/goods/category/config" />
+        </el-tabs>
         <el-form v-if="Object.keys(formData).length" :model="formData" label-width="170" ref="formRef" :rules="rules" class="page-form">
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-[16px] pl-[15px]">{{ t('categoryTemplate') }}</h3>
@@ -76,8 +79,7 @@
                                 <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-3' ? '!border-[1px]' : '']" @click="carStyleClick(3)">
                                     <span class="text-color iconfont icongouwuche !text-[30px]"></span>
                                 </div>
-                                <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-4' ? '!border-[1px]' : '']"
-                                    @click="carStyleClick(4)">
+                                <div :class="['flex items-center justify-center w-[65px] h-[65px] border-0 border-color rounded-[4px] border-solid box-border cursor-pointer mr-[15px]', formData.cart.style === 'style-4' ? '!border-[1px]' : '']" @click="carStyleClick(4)">
                                     <div class="text-[#fff] bg-color h-[30px] w-[30px] leading-[30px] rounded-[30px] text-center">
                                         <span class=" iconfont icongouwuche !text-[20px]"></span>
                                     </div>
@@ -110,7 +112,7 @@ import { reactive, ref, computed } from 'vue'
 import { t } from '@/lang'
 import { getCategoryConfig, setCategoryConfig } from '@/addon/shop/api/goods'
 import { img } from '@/utils/common'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 
 const route = useRoute()
 const pageName = route.meta.title
@@ -207,6 +209,12 @@ const onSave = async (formEl: any) => {
             })
         }
     })
+}
+
+const router = useRouter()
+
+const handleClick = (path: string) => {
+    router.push({ path })
 }
 </script>
 

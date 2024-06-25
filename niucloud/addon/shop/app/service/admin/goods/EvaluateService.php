@@ -42,23 +42,23 @@ class EvaluateService extends BaseAdminService
         $order = 'create_time desc';
 
         $goods_where = [];
-        if($where[ 'goods_name' ]){
-            $goods_where[] = ['goods.goods_name', 'like', '%' . $where[ 'goods_name' ] . '%'  ];
+        if ($where[ 'goods_name' ]) {
+            $goods_where[] = [ 'goods.goods_name', 'like', '%' . $where[ 'goods_name' ] . '%' ];
         }
 
         $search_model = $this->model
             // ->withSearch(["goods_name"], $where)
             ->field($field)
             ->withJoin([
-                'goods' => function(Query $query) use($goods_where){
+                'goods' => function(Query $query) use ($goods_where) {
                     $query->where($goods_where);
                 },
             ])
-            ->order($order)->append(['audit_name', 'image_small']);
-        $list = $this->pageQuery($search_model, function ($item, $key){
-            $item_goods = $item['goods'];
-            if(!empty($item_goods)){
-                $item_goods->append(['goods_cover_thumb_small','goods_cover_thumb_mid']);
+            ->order($order)->append([ 'audit_name', 'image_small', 'image_mid' ]);
+        $list = $this->pageQuery($search_model, function($item, $key) {
+            $item_goods = $item[ 'goods' ];
+            if (!empty($item_goods)) {
+                $item_goods->append([ 'goods_cover_thumb_small', 'goods_cover_thumb_mid' ]);
             }
 
         });
@@ -74,7 +74,7 @@ class EvaluateService extends BaseAdminService
     {
         $field = 'evaluate_id,order_id,order_goods_id,goods_id,member_id,content,images,is_anonymous,scores,is_audit,explain_first,create_time';
 
-        $info = $this->model->field($field)->where([['evaluate_id', '=', $id]])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'evaluate_id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -85,8 +85,8 @@ class EvaluateService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['is_audit'] = 2;
-        return (new CoreGoodsEvaluateService)->addEvaluate($data);
+        $data[ 'is_audit' ] = 2;
+        return ( new CoreGoodsEvaluateService )->addEvaluate($data);
     }
 
     /**
@@ -96,7 +96,7 @@ class EvaluateService extends BaseAdminService
      */
     public function del(int $evaluate_id)
     {
-        $model = $this->model->where([['evaluate_id', '=', $evaluate_id]])->find();
+        $model = $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->find();
         $res = $model->delete();
         return $res;
     }
@@ -108,7 +108,7 @@ class EvaluateService extends BaseAdminService
      */
     public function auditAdopt($evaluate_id)
     {
-        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update(['is_audit' => EvaluateDict::AUDIT_ADOPT]);
+        $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update([ 'is_audit' => EvaluateDict::AUDIT_ADOPT ]);
         return true;
     }
 
@@ -119,7 +119,7 @@ class EvaluateService extends BaseAdminService
      */
     public function auditRefuse($evaluate_id)
     {
-        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update(['is_audit' => EvaluateDict::AUDIT_REFUSE]);
+        $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update([ 'is_audit' => EvaluateDict::AUDIT_REFUSE ]);
         return true;
     }
 
@@ -131,7 +131,7 @@ class EvaluateService extends BaseAdminService
      */
     public function reply($evaluate_id, $data)
     {
-        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update($data);
+        $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update($data);
         return true;
     }
 
@@ -146,7 +146,7 @@ class EvaluateService extends BaseAdminService
             'topping' => 1,
             'update_time' => time()
         ];
-        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update($data);
+        $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update($data);
         return true;
     }
 
@@ -159,7 +159,7 @@ class EvaluateService extends BaseAdminService
             'topping' => 0,
             'update_time' => 0
         ];
-        $this->model->where([['evaluate_id', '=', $evaluate_id]])->update($data);
+        $this->model->where([ [ 'evaluate_id', '=', $evaluate_id ] ])->update($data);
         return true;
     }
 }

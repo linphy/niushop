@@ -43,7 +43,7 @@ class AfterShopOrderCreate
                     'sku_id' => $v['sku_id']
                 ]);
             }
-            Db::commit();
+//            Db::commit();
 //        } catch (\Exception $e) {
 //            Db::rollback();
 //            throw new CommonException($e->getMessage());

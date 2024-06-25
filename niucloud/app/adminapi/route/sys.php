@@ -18,7 +18,7 @@ use think\facade\Route;
 /**
  * 路由
  */
-Route::group('sys', function () {
+Route::group('sys', function() {
     /***************************************************** 系统整体信息 *************************************************/
     //系统信息
     Route::get('info', 'sys.System/info');
@@ -36,6 +36,8 @@ Route::group('sys', function () {
     Route::put('role/:role_id', 'sys.Role/edit');
     //删除用户组
     Route::delete('role/:role_id', 'sys.Role/del');
+    //设置用户组状态
+    Route::put('role/status/:role_id', 'sys.Role/setStatus');
     /***************************************************** 菜单 ****************************************************/
     //菜单新增
     Route::post('menu', 'sys.Menu/add');
@@ -45,15 +47,25 @@ Route::group('sys', function () {
     Route::get('menu', 'sys.Menu/lists');
     //删除单个菜单
     Route::delete('menu/:menu_key', 'sys.Menu/del');
+    // 获取菜单信息
+    Route::get('menu/info/:menu_key', 'sys.Menu/info');
+    // 初始化菜单
+    Route::post('menu/refresh', 'sys.Menu/refreshMenu');
     //菜单类型
     Route::get('menutype', 'sys.Menu/getMenuType');
     //授权用户菜单
     Route::get('authmenu', 'sys.Auth/authMenuList');
     // 获取菜单信息
-    Route::get('menu/info/:menu_key', 'sys.Menu/info');
+    Route::get('menu/:app_type/info/:menu_key', 'sys.Menu/info');
+    // 初始化菜单
+    Route::post('menu/refresh', 'sys.Menu/refreshMenu');
 
     Route::get('menu/mothod', 'sys.Menu/getMethodType');
+
     Route::get('menu/system_menu', 'sys.Menu/getSystem');
+
+    Route::get('menu/addon_menu/all', 'sys.Menu/getAllAddonMenu');
+
     Route::get('menu/addon_menu/:app_key', 'sys.Menu/getAddonMenu');
 
     Route::get('menu/dir/:addon', 'sys.Menu/getMenuByTypeDir');
@@ -197,13 +209,67 @@ Route::group('sys', function () {
 
     /***************************************************** 清理缓存-刷新菜单 ****************************************************/
     Route::post('schema/clear', 'sys.System/schemaCache');
-    /***************************************************** 刷新菜单 ****************************************************/
-    // 刷新菜单
-    Route::post('menu/refresh', 'sys.Menu/refreshMenu');
 
     /***************************************************** 公共字典数据 ****************************************************/
     Route::get('date/month', 'sys.Common/getMonth');
     Route::get('date/week', 'sys.Common/getWeek');
+    /***************************************************** 获取导出数据 ****************************************************/
+    //报表导出列表
+    Route::get('export', 'sys.Export/lists');
+    //报表导出状态列表
+    Route::get('export/status', 'sys.Export/getExportStatus');
+    //报表导出类型
+    Route::get('export/type', 'sys.Export/getExportDataType');
+    //报表导出数据检查
+    Route::get('export/check/:type', 'sys.Export/check');
+    //报表导出
+    Route::get('export/:type', 'sys.Export/export');
+    //报表删除
+    Route::delete('export/:id', 'sys.Export/del');
+
+    /***************************************************** 自定义海报管理 ****************************************************/
+
+    // 自定义海报分页列表
+    Route::get('poster', 'sys.Poster/pages');
+
+    // 自定义海报列表
+    Route::get('poster/list', 'sys.Poster/lists');
+
+    // 自定义海报信息
+    Route::get('poster/:id', 'sys.Poster/info');
+
+    // 添加自定义海报
+    Route::post('poster', 'sys.Poster/add');
+
+    // 编辑自定义海报
+    Route::put('poster/:id', 'sys.Poster/edit');
+
+    // 删除自定义海报
+    Route::delete('poster/:id', 'sys.Poster/del');
+
+    // 修改自定义海报状态
+    Route::put('poster/status', 'sys.Poster/modifyStatus');
+
+    // 将自定义海报修改为默认海报
+    Route::put('poster/default', 'sys.Poster/modifyDefault');
+
+    // 自定义海报类型
+    Route::get('poster/type', 'sys.Poster/type');
+
+    // 自定义海报模板
+    Route::get('poster/template', 'sys.Poster/template');
+
+    // 自定义海报初始化数据
+    Route::get('poster/init', 'sys.Poster/init');
+
+    // 自定义海报预览
+    Route::get('poster/preview', 'sys.Poster/preview');
+
+    /***************************************************** 百度编辑器 ****************************************************/
+    // 获取百度编辑器配置
+    Route::get('ueditor', 'sys.Ueditor/getConfig');
+    // 百度编辑器文件上传
+    Route::post('ueditor', 'sys.Ueditor/upload');
 
     /***************************************************** 获取布局 ****************************************************/
     Route::get('layout', 'sys.System/layout');
@@ -215,7 +281,7 @@ Route::group('sys', function () {
 ]);
 
 //系统环境（不效验登录状态）
-Route::group('sys', function () {
+Route::group('sys', function() {
     Route::get('web/website', 'sys.Config/getWebsite');
     // 获取版权信息
     Route::get('web/copyright', 'sys.Config/getCopyright');

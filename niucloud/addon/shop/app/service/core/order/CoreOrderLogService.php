@@ -32,7 +32,7 @@ class CoreOrderLogService extends BaseCoreService
 
     /**
      * 订单日志
-     * @param $data
+     * @param array $data
      * @return true
      */
     public function add(array $data)
@@ -62,27 +62,27 @@ class CoreOrderLogService extends BaseCoreService
         $member_ids = [];
         $uids = [];
         foreach ($data as $v) {
-            $main_type = $v['main_type'];
-            $main_id = $v['main_id'];
+            $main_type = $v[ 'main_type' ];
+            $main_id = $v[ 'main_id' ];
             if ($main_type == OrderLogDict::MEMBER) {
                 $member_ids[] = $main_id;
             } elseif ($main_type == OrderLogDict::STORE) {
                 $uids[] = $main_id;
             }
         }
-        $member_names = !empty($member_ids) ? (new  Member())->where([['member_id', 'in', $member_ids]])->column('nickname', 'member_id') : [];
-        $user_names = !empty($uids) ? (new  SysUser())->where([['uid', 'in', $uids]])->column('username', 'uid') : [];
-        return array_map(function ($value) use ($member_names, $user_names) {
-            $main_type = $value['main_type'];
-            $main_id = $value['main_id'];
+        $member_names = !empty($member_ids) ? ( new  Member() )->where([ [ 'member_id', 'in', $member_ids ] ])->column('nickname', 'member_id') : [];
+        $user_names = !empty($uids) ? ( new  SysUser() )->where([ [ 'uid', 'in', $uids ] ])->column('username', 'uid') : [];
+        return array_map(function($value) use ($member_names, $user_names) {
+            $main_type = $value[ 'main_type' ];
+            $main_id = $value[ 'main_id' ];
             if ($main_type == OrderLogDict::MEMBER) {
-                $main_name = $member_names[$main_id];
+                $main_name = $member_names[ $main_id ];
             } elseif ($main_type == OrderLogDict::STORE) {
-                $main_name = $user_names[$main_id];
+                $main_name = $user_names[ $main_id ];
             } else {
                 $main_name = '';
             }
-            $value['main_name'] = $main_name;
+            $value[ 'main_name' ] = $main_name;
             return $value;
         }, $data);
     }

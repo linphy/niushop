@@ -29,9 +29,9 @@
                     <el-button @click="clearBatch">{{ t('cancel') }}</el-button>
                 </div>
                 <div v-else>
-                    <el-button type="primary" link @click="setBatchField('price')">{{ t('price') }}</el-button>
-                    <el-button type="primary" link @click="setBatchField('marketPrice')">{{ t('marketPrice') }}</el-button>
-                    <el-button type="primary" link @click="setBatchField('costPrice')">{{ t('costPrice') }}</el-button>
+                    <el-button type="primary" link @click="setBatchField('price')" v-if="activeGoodsCount == 0">{{ t('price') }}</el-button>
+                    <el-button type="primary" link @click="setBatchField('market_price')">{{ t('marketPrice') }}</el-button>
+                    <el-button type="primary" link @click="setBatchField('cost_price')">{{ t('costPrice') }}</el-button>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
                 <el-table-column prop="sku_name" :label="t('skuName')" min-width="120" v-if="goodsTable.data.length > 1" />
                 <el-table-column prop="price" :label="t('price')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.price" clearable placeholder="0.00" maxlength="10" />
+                        <el-input v-model="row.price" clearable placeholder="0.00" maxlength="8" :disabled="activeGoodsCount > 0" />
                     </template>
                 </el-table-column>
 
@@ -78,11 +78,13 @@ import { img } from '@/utils/common'
 import { ElMessage } from 'element-plus'
 
 import {
+    getActiveGoodsCount,
     getGoodsSkuList,
     editGoodsListPrice
 } from '@/addon/shop/api/goods'
 
 const goods: any = reactive({})
+const activeGoodsCount: any = ref(0)
 
 const showDialog = ref(false)
 
@@ -158,8 +160,17 @@ const loadGoodsList = () => {
 
 const show = (data: any) => {
     Object.assign(goods, data)
+    getActiveGoodsCountFn();
     loadGoodsList()
     showDialog.value = true
+}
+
+const getActiveGoodsCountFn = ()=>{
+    getActiveGoodsCount({
+        goods_id: goods.goods_id
+    }).then((res)=>{
+        activeGoodsCount.value = res.data;
+    })
 }
 
 // 正则表达式

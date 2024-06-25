@@ -152,7 +152,7 @@ import { addShippingTemplate, editShippingTemplate, getShippingTemplateInfo } fr
 import { AnyObject } from '@/types/global'
 import { useRoute, useRouter } from 'vue-router'
 import { getAreatree } from '@/app/api/sys'
-import { filterNumber, filterDigit } from '@/utils/common'
+import { filterDigit } from '@/utils/common'
 import Test from '@/utils/test'
 
 const showSelectAreaDialog = ref(false)
@@ -195,11 +195,9 @@ if (route.query.id) {
     })
 }
 
-getAreatree(2)
-    .then(res => {
-        areaTree.value = res.data
-    })
-    .catch()
+getAreatree(2).then(res => {
+    areaTree.value = res.data
+}).catch()
 
 // 表单验证规则
 const formRules = computed(() => {

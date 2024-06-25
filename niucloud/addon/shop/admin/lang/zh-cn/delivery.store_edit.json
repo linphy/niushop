@@ -11,7 +11,7 @@
       "longitude":"经度",
       "latitude":"纬度",
       "tradeTime":"营业时间",
-      "createTime":"添加时间",
+      "createTime":"下单时间",
       "updateTime":"更新时间",
       "storeNamePlaceholder":"请输入自提点名称",
       "storeDescPlaceholder":"请输入简介",

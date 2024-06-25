@@ -29,7 +29,7 @@ class LocalService extends BaseAdminService
      */
     public function setLocal(array $data)
     {
-        ( new Local() )->delete();
+        ( new Local() )->where([ [ 'local_id', '>', 0 ] ])->delete();
 
         $create_res = ( new Local() )->create([
             'center' => $data[ 'center' ],
@@ -49,10 +49,10 @@ class LocalService extends BaseAdminService
 
     /**
      * 获取同城配送设置
-     * @return void
+     * @return array
      */
     public function getLocal()
     {
-        return ( new Local() )->findOrEmpty()->toArray();
+        return ( new Local() )->where([ [ 'local_id', '>', 0 ] ])->findOrEmpty()->toArray();
     }
 }

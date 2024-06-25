@@ -41,7 +41,7 @@ class MemberLabelService extends BaseAdminService
     public function getPage(array $where = [], string $order = 'sort desc,create_time desc')
     {
         $field = 'label_id, label_name, memo, sort, create_time, update_time';
-        $search_model = $this->model->withSearch([ 'label_name' ], $where)->field($field)->append([ "member_num" ])->order($order);
+        $search_model = $this->model->where([ [ 'label_id', '>', 0 ] ])->withSearch([ 'label_name' ], $where)->field($field)->append([ "member_num" ])->order($order);
         return $this->pageQuery($search_model);
     }
 

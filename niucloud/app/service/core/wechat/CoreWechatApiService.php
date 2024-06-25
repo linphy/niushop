@@ -12,7 +12,6 @@
 namespace app\service\core\wechat;
 
 use core\base\BaseCoreService;
-use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -54,7 +53,7 @@ class CoreWechatApiService extends BaseCoreService
             ]
         );
     }
-    
+
     /**
      * 用户列表(可以再外部设计一个递归查询全部的函数)  返回的是 openid
      */

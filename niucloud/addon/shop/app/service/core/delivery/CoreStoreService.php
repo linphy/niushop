@@ -72,11 +72,11 @@ class CoreStoreService extends BaseCoreService
      */
     public function getStoreList($latlng = [])
     {
-        $list = $this->model->field('store_id,store_name,store_logo,store_mobile,full_address,longitude,latitude,trade_time')->select()->toArray();
-        if (!empty($list) && !empty($latlng)) {
+        $list = $this->model->where([ [ 'store_id', '>', 0 ] ])->field('store_id,store_name,store_logo,store_mobile,full_address,longitude,latitude,trade_time')->select()->toArray();
+        if (!empty($list) && !empty($latlng) && !empty($latlng[ 'lat' ]) && !empty($latlng[ 'lng' ])) {
             $location = new Coordinate($latlng[ 'lat' ], $latlng[ 'lng' ]);
             $list = array_map(function($item) use ($location) {
-                $item[ 'distance' ] = ( new Vincenty() )->getDistance($location, new Coordinate($item[ 'latitude' ], $item[ 'longitude' ]));
+                $item[ 'distance' ] = ( new Vincenty() )->getDistance($location, new Coordinate((float) $item[ 'latitude' ], (float) $item[ 'longitude' ]));
                 return $item;
             }, $list);
             array_multisort(array_column($list, 'distance'), SORT_ASC, $list);

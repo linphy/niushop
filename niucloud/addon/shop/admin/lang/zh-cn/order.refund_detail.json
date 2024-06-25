@@ -90,5 +90,6 @@
 	  "moneyPlaceholder":"请输入退款金额",
 	  "refundaddressPlaceholder":"请输入退货地址",
 	  "expressCompany":"物流公司",
-	  "expressRemark":"物流说明"
+	  "expressRemark":"物流说明",
+	"orderInfoEmpty":"暂无数据"
 }

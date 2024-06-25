@@ -25,7 +25,7 @@ class OrderRefundLogDict
 
     /**
      * 获取操作人类型
-     * @param string $status
+     * @param string $type
      * @return array|array[]|string
      */
     public static function getMainType(string $type = '')

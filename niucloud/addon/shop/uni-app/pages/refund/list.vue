@@ -66,7 +66,7 @@
 			</view>
 			
 		</mescroll-body>
-		<u-modal :show="cancelRefundshow" :content="t('cancelRefundContent')" :showCancelButton="true" :closeOnClickOverlay="true" @cancel="refundCancel" @confirm="refundConfirm"></u-modal>
+		<u-modal :show="cancelRefundShow" confirmColor="var(--primary-color)" :content="t('cancelRefundContent')" :showCancelButton="true" :closeOnClickOverlay="true" @cancel="refundCancel" @confirm="refundConfirm"></u-modal>
 	</view>
 </template>
 
@@ -83,7 +83,7 @@
 	const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 	let list = ref<Array<Object>>([]);
 	let loading = ref<boolean>(false);
-	let cancelRefundshow = ref(false);
+	let cancelRefundShow = ref(false);
 
 	const getRefundListFn = (mescroll) => {
 		loading.value = false;
@@ -115,7 +115,7 @@
 	const refundBtnFn = (data, type) => {
 		if(type == 'cancel'){
 			currRefundOn = data.order_refund_no;
-			cancelRefundshow.value = true;
+			cancelRefundShow.value = true;
 		}else if(type == 'edit'){
 			redirect({ url: '/addon/shop/pages/refund/edit_apply', param: { order_refund_no : data.order_refund_no } })
 		}else if(type == 'logistics'){
@@ -127,15 +127,15 @@
 
 	const refundConfirm = ()=>{
 		closeRefund(currRefundOn).then((res) => {
-			cancelRefundshow.value = false;
+			cancelRefundShow.value = false;
 			getMescroll().resetUpScroll();
 		}).catch(() => {
-			cancelRefundshow.value = false;
+			cancelRefundShow.value = false;
 		})
 	}
 
 	const refundCancel = ()=>{
-		cancelRefundshow.value = false;
+		cancelRefundShow.value = false;
 	}
 
 </script>

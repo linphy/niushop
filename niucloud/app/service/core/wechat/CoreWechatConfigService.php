@@ -41,6 +41,7 @@ class CoreWechatConfigService extends BaseCoreService
             'token'             => $info['token'] ?? '',
             'encoding_aes_key'  => $info['encoding_aes_key'] ?? '',
             'encryption_type'   => $info['encryption_type'] ?? 'not_encrypt',//加解密模式   not_encrypt 明文   compatible 兼容  safe 安全
+            'is_authorization'  => $info['is_authorization'] ?? 0
         ];
     }
 
@@ -50,6 +51,7 @@ class CoreWechatConfigService extends BaseCoreService
      * @return SysConfig|bool|Model
      */
     public function setWechatConfig(array $data){
+        $old = $this->getWechatConfig();
         $config = [
             'wechat_name' => $data['wechat_name'] ?? '',//公众号名称
             'wechat_original' => $data['wechat_original'] ?? '',//原始ID
@@ -59,6 +61,7 @@ class CoreWechatConfigService extends BaseCoreService
             'token'             => $data['token'] ?? '',
             'encoding_aes_key'  => $data['encoding_aes_key'] ?? '',
             'encryption_type'   => $data['encryption_type'] ?? '',
+            'is_authorization'  => $data['is_authorization'] ?? $old['is_authorization']
         ];
         return (new CoreConfigService())->setConfig(ConfigKeyDict::WECHAT, $config);
     }
@@ -69,12 +72,7 @@ class CoreWechatConfigService extends BaseCoreService
      * @return array
      */
     public function getWechatStaticInfo(){
-//        $domain = request()->domain();
         $wap_domain = (new CoreSysConfigService())->getSceneDomain()['wap_url'] ?? '';
-        $wap_domain_array = explode('/', $wap_domain);
-//        if(count($wap_domain_array) > 2){
-//            $wap_domain = $wap_domain_array[0].'/'.$wap_domain_array[1].'/'.$wap_domain_array[2];
-//        }
         return [
             'serve_url' => (string)url('/api/wechat/serve', [],'',true),
             'business_domain'   => $wap_domain,
