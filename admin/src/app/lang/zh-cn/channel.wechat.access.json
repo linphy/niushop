@@ -7,7 +7,7 @@
 	"clickAccess": "点击接入",
 	"wechatSetting": "微信公众号配置",
 	"wechatSetting1": "微信公众号认证之后配置微信公众号连接，具体查看配置与发布教程",
-	"settingInfo": "点击配置",
+	"settingInfo": "点击配置微信公众号",
 	"wechatAccess": "微信公众号发布",
 	"releaseCourse": "发布教程",
 	"completeAccess": "完成接入",
@@ -16,5 +16,9 @@
 	"wechatAccessBtn": "查看审核进度",
 	"clickAccess2":"扫描二维码进入微信公众号",
 	"wechatTemplate": "模板消息",
-	"reply": "自动回复"
+	"reply": "自动回复",
+	"authWechat": "授权绑定微信公众号",
+	"clickSetting": "点击配置微信公众号",
+	"seeConfig": "查看配置",
+	"refreshAuth": "重新授权"
 }

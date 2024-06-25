@@ -13,6 +13,7 @@ const useDiyStore = defineStore('diy', {
             currentComponent: 'edit-page', // 当前正在编辑的组件名称
             pageMode: 'diy',
             editTab: 'content',// 编辑页面
+            pageTitle: '', // 页面名称（用于后台展示）
             name: '', // 页面标识
             type: '', // 页面模板
             typeName: '',  // 页面模板名称
@@ -41,7 +42,7 @@ const useDiyStore = defineStore('diy', {
             components: [], // 组件集合
             position: ['top_fixed','right_fixed','bottom_fixed','left_fixed','fixed'],
             global: {
-                title: "页面", // 页面标题
+                title: "页面", // 页面标题（用于前台展示）
 
                 pageStartBgColor: "", // 页面背景颜色（开始）
                 pageEndBgColor: "", // 页面背景颜色（结束）
@@ -51,14 +52,20 @@ const useDiyStore = defineStore('diy', {
                 imgWidth: '',  // 页面背景图片宽度
                 imgHeight: '', // 页面背景图片高度
 
-                // 顶部状态栏
+                // 顶部导航栏
                 topStatusBar: {
+                    isShow: true, // 是否显示
                     bgColor: "#ffffff", // 背景颜色
                     isTransparent: false, // 是否透明
-                    isShow: true, // 是否显示
-                    style: 'style-1', // 风格样式
+                    style: 'style-1', // 导航栏风格样式（style-1：文字，style-2：图片+文字，style-3：图片+搜索，style-4：定位）
+                    styleName: '风格1', 
                     textColor: "#333333", // 文字颜色
                     textAlign: 'center', // 文字对齐方式
+                    inputPlaceholder : '请输入搜索关键词',
+                    imgUrl:'', // 图片
+                    link: { // 跳转链接
+                        name: ""
+                    }
                 },
 
                 bottomTabBarSwitch: true, // 底部导航开关
@@ -129,14 +136,20 @@ const useDiyStore = defineStore('diy', {
                 imgWidth: '',  // 页面背景图片宽度
                 imgHeight: '', // 页面背景图片高度
 
-                // 顶部状态栏
+                // 顶部导航栏
                 topStatusBar: {
+                    isShow: true, // 是否显示
                     bgColor: "#ffffff", // 背景颜色
                     isTransparent: false, // 是否透明
-                    isShow: true, // 是否显示
-                    style: 'style-1', // 风格样式
+                    style: 'style-1', // 导航栏风格样式（style-1：文字，style-2：图片+文字，style-3：图片+搜索，style-4：定位）
+                    styleName: '风格1',
                     textColor: "#333333", // 文字颜色
                     textAlign: 'center', // 文字对齐方式
+                    inputPlaceholder : '请输入搜索关键词',
+                    imgUrl:'', // 图片
+                    link: { // 跳转链接
+                        name: ""
+                    }
                 },
 
                 bottomTabBarSwitch: true, // 底部导航开关
@@ -206,7 +219,7 @@ const useDiyStore = defineStore('diy', {
             Object.assign(component, template);
 
             if(component.template){
-                // 按照组件初始的属性加载覆盖
+                // 按照组件初始的属性覆盖默认值
                 Object.assign(component, component.template);
                 delete component.template;
             }
@@ -323,7 +336,7 @@ const useDiyStore = defineStore('diy', {
         },
         // 下移组件
         moveDownComponent() {
-            if ((this.currentIndex + 1) >= this.value.length) return; // 最后一个不能下移
+            if (this.currentIndex < -1 || (this.currentIndex + 1) >= this.value.length) return; // 最后一个不能下移
 
             var nextIndex = this.currentIndex + 1;
 
@@ -418,14 +431,23 @@ const useDiyStore = defineStore('diy', {
         },
         // 组件验证
         verify() {
-            if (this.global.title === "") {
+            if (this.pageTitle === "") {
                 ElMessage({
-                    message: t('pageNamePlaceholder'),
+                    message: t('diyPageTitlePlaceholder'),
                     type: 'warning'
                 })
                 this.changeCurrentIndex(-99);
                 return false;
             }
+
+            // if (this.global.title === "") {
+            //     ElMessage({
+            //         message: t('diyTitlePlaceholder'),
+            //         type: 'warning'
+            //     })
+            //     this.changeCurrentIndex(-99);
+            //     return false;
+            // }
 
             for (var i = 0; i < this.value.length; i++) {
                 try {

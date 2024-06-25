@@ -1,17 +1,14 @@
 <template>
     <el-dialog v-model="showDialog" :title="t('updateWechat')" width="500px" :destroy-on-close="true">
-        <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form"
-            v-loading="loading">
+        <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 
             <el-form-item :label="t('mchId')" prop="config.mch_id">
-                <el-input v-model.trim="formData.config.mch_id" :placeholder="t('mchIdPlaceholder')" class="input-width"
-                    maxlength="32" show-word-limit clearable />
+                <el-input v-model.trim="formData.config.mch_id" :placeholder="t('mchIdPlaceholder')" class="input-width" maxlength="32" show-word-limit clearable />
                 <div class="form-tip">{{ t('mchIdTips') }}</div>
             </el-form-item>
 
             <el-form-item :label="t('mchSecretKey')" prop="config.mch_secret_key">
-                <el-input v-model.trim="formData.config.mch_secret_key" :placeholder="t('mchSecretKeyPlaceholder')"
-                    class="input-width" maxlength="32" show-word-limit clearable />
+                <el-input v-model.trim="formData.config.mch_secret_key" :placeholder="t('mchSecretKeyPlaceholder')" class="input-width" maxlength="32" show-word-limit clearable />
                 <div class="form-tip">{{ t('mchSecretKeyTips') }}</div>
             </el-form-item>
 
@@ -44,7 +41,7 @@
 import { ref, reactive, computed } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
-// import { setPatConfig } from '@/app/api/sys'
+import Test from '@/utils/test'
 
 const showDialog = ref(false)
 const loading = ref(true)
@@ -115,9 +112,16 @@ const setFormData = async (data: any = null) => {
     loading.value = false
 }
 
+const enableVerify = () => {
+    let verify = true
+    if (Test.empty(formData.config.mch_id) || Test.empty(formData.config.mch_secret_key) || Test.empty(formData.config.mch_secret_cert) || Test.empty(formData.config.mch_public_cert_path)) verify = false
+    return verify
+}
+
 defineExpose({
     showDialog,
-    setFormData
+    setFormData,
+    enableVerify
 })
 </script>
 

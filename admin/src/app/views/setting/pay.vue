@@ -1,86 +1,92 @@
 <template>
+    <!--支付设置-->
     <div class="main-container" v-loading="payLoading">
+
         <el-card class="box-card !border-none" shadow="never">
-            <!-- 设置支付配置 -->
             <div class="flex justify-between items-center" v-if="!payLoading">
                 <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" @click="isEdit = true" ref="setConfigBtn">{{ t('setConfig') }}</el-button>
             </div>
-            <el-card class="box-card box-pay-card !border-none mt-[20px]" shadow="never"
-                v-for="(payItems, payKey) in payConfigData" :key="payKey">
-                <div class="flex mb-3">
-                    <span class="text-base">{{ payItems.name }}</span>
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never" v-for="(payItems, payKey) in payConfigData" :key="payKey">
+            <h3 class="panel-title !text-sm">{{ payItems.name }}</h3>
+
+            <div>
+                <div class="flex items-center justify-between p-[10px] table-item-border bg">
+                    <span class="text-base w-[150px]">{{ t('payType') }}</span>
+                    <span class="text-base w-[110px] text-center">{{ t('onState') }}</span>
+                    <span class="text-base w-[80px] text-center" v-if="isEdit">{{ t('templateName') }}</span>
                 </div>
-                <div class="pay-table">
-                    <div
-                        class="flex items-center pay-table-head table-bg table-item-pd table-item-border justify-between table-bg">
-                        <span class="text-base text-[#999] w-[150px]">{{ t('payType') }}</span>
-                        <!-- <span class="text-base font-bold text-[#999] w-[110px]">{{t('settingDefaultPay')}}</span> -->
-                        <span class="text-base text-[#999] w-[110px] text-center">{{ t('onState') }}</span>
-                        <span class="text-base text-[#999] w-[80px] text-center" v-if="isEdit">{{ t('templateName') }}</span>
-                    </div>
-                    <div ref="fieldBoxRefs" :data-key="payKey">
-                        <div v-for="(childrenItem, childrenIndex) in payItems.pay_type" :key="childrenItem.redio_key"
-                            class="flex table-item-border table-item-pd justify-between" :id="payKey + '_' + childrenIndex">
-                            <div class="table-item-flex w-[150px]">
-                                <span v-if="isEdit" class="iconfont icontuodong mr-2 handle cursor-pointer"></span>
-                                <div class="flex items-center select-none">
-                                    <div class="mr-[15px] w-[30px] h-[30px]"><img class="w-[30px]"
-                                            :src="img(childrenItem.icon)" /></div>
-                                    <span class="text-base text-[#666]">{{ childrenItem.name }}</span>
+
+                <div ref="fieldBoxRefs" :data-key="payKey">
+                    <div class="flex items-center justify-between p-[10px] table-item-border" v-for="(childrenItem, childrenIndex) in payItems.pay_type" :key="childrenItem.redio_key" :id="payKey + '_' + childrenIndex">
+                        <div class="flex w-[150px]">
+                            <span v-if="isEdit" class="iconfont icontuodong mr-2 handle cursor-pointer"></span>
+                            <div class="flex items-center select-none">
+                                <div class="mr-[15px] w-[30px] h-[30px]">
+                                    <img class="w-[30px]" :src="img(childrenItem.icon)" />
                                 </div>
+                                <span class="text-base text-[#666]">{{ childrenItem.name }}</span>
                             </div>
-                            <!-- <div class="table-item-flex w-[110px] select-none">
-                                <el-radio v-model="payItems.default_pay_type" :label="childrenItem.redio_key" size="large" @change="settingDefault(childrenItem,payKey)">{{ t('settingDefault') }}</el-radio>
-                            </div> -->
-                            <div class="table-item-flex w-[110px] justify-center select-none">
-                                <el-switch v-if="isEdit" v-model="childrenItem.status" :active-text="t('isEnable')"
-                                    @change="enablePaymentMode(childrenItem)" />
-                                <div v-else>
-                                    <el-tag v-if="childrenItem.status" class="ml-2" type="success">{{ t('open') }}</el-tag>
-                                    <el-tag v-else class="ml-2" type="info">{{ t('notOpen') }}</el-tag>
-                                </div>
+                        </div>
+                        <div class="flex items-center justify-center w-[110px] select-none">
+                            <el-switch v-if="isEdit" v-model="childrenItem.status" :active-text="t('isEnable')" @change="enablePaymentMode(childrenItem)" />
+                            <div v-else>
+                                <el-tag v-if="childrenItem.status" class="ml-2" type="success">{{ t('open') }}</el-tag>
+                                <el-tag v-else class="ml-2" type="info">{{ t('notOpen') }}</el-tag>
                             </div>
-                            <div class="table-item-flex w-[80px]  justify-center select-none" v-if="isEdit">
-                                <button @click="configPayFn(childrenItem)" class="text-base"
-                                    v-if="childrenItem.key != 'balancepay'">{{ t('clickConfigure')
-                                    }}</button>
-                                <button v-else>--</button>
-                            </div>
+                        </div>
+                        <div class="flex items-center justify-center w-[80px] select-none" v-if="isEdit">
+                            <button class="text-base" @click="configPayFn(childrenItem)" v-if="childrenItem.setting_component">{{ t('clickConfigure') }}</button>
+                            <button v-else>--</button>
                         </div>
                     </div>
                 </div>
-            </el-card>
-            <div class="fixed-footer-wrap" v-if="isEdit">
-                <div class="fixed-footer">
-                    <el-button type="primary" :loading="loading" @click="cancelFn">{{ t('cancel') }}</el-button>
-                    <el-button type="primary" :loading="loading" @click="saveFn(formRef)">{{ t('save') }}</el-button>
-                </div>
             </div>
-            <wechatpay ref="wechatpayDialog" @complete="setConfigInfo" />
-            <alipay ref="alipayDialog" @complete="setConfigInfo" />
-            <offlinepay ref="offlinepayDialog" @complete="setConfigInfo" />
         </el-card>
+
+        <div class="fixed-footer-wrap" v-if="isEdit">
+            <div class="fixed-footer">
+                <el-button type="primary" :loading="loading" @click="cancelFn">{{ t('cancel') }}</el-button>
+                <el-button type="primary" :loading="loading" @click="saveFn(formRef)">{{ t('save') }}</el-button>
+            </div>
+        </div>
+
+        <template v-for="(item, index) in payTypeList">
+            <component :is="item.setting_component" :ref="(el) => setPayTypeRefs(el, item.key)" v-if="item.setting_component" @complete="setConfigInfo"/>
+        </template>
+
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, defineAsyncComponent } from 'vue'
 import { t } from '@/lang'
 import { getPayConfigList, setPatConfig } from '@/app/api/sys'
-import Wechatpay from '@/app/views/setting/components/pay-wechatpay.vue'
-import Alipay from '@/app/views/setting/components/pay-alipay.vue'
-import Offlinepay from '@/app/views/setting/components/pay-offlinepay.vue'
+import { getAllPayType } from '@/app/api/pay'
 import { img } from '@/utils/common'
 import { ElMessage } from 'element-plus'
 import Sortable, { SortableEvent } from 'sortablejs'
 import { useRoute } from 'vue-router'
+
 const route = useRoute()
 const pageName = route.meta.title
 
-const wechatpayDialog: Record<string, any> | null = ref(null)
-const alipayDialog: Record<string, any> | null = ref(null)
-const offlinepayDialog: Record<string, any> | null = ref(null)
+const payTypeList = ref([])
+const payTypeRefs = ref({})
+const modules: any = import.meta.glob('@/**/*.vue')
+
+getAllPayType().then(({ data }) => {
+    Object.keys(data).forEach((key: string) => {
+        data[key].setting_component && (data[key].setting_component = defineAsyncComponent(modules[data[key].setting_component]))
+    })
+    payTypeList.value = data
+})
+
+const setPayTypeRefs = (el: any, index: string) => {
+    payTypeRefs.value[index] = (el)
+}
 
 const payLoading = ref(true)
 
@@ -135,16 +141,21 @@ const setConfigInfo = (data:any) => {
 
 // 初始化配置信息
 const configPayFn = (data:any) => {
-    eval(data.key + 'Dialog.value.setFormData(data)')
-    eval(data.key + 'Dialog.value.showDialog = true;')
+    payTypeRefs.value[data.key].setFormData(data)
+    payTypeRefs.value[data.key].showDialog = true
 }
 
 // 开启支付方式
-const enablePaymentMode = (res) => {
-    if (res.key == 'wechatpay' && !res?.config?.mch_secret_cert || res.key == 'alipay' && !res?.config?.alipay_root_cert_path) {
-        res.status = false
-        ElMessage(t('configurePaymentMethod'))
-        return false
+const enablePaymentMode = async (data: object) => {
+    if (payTypeRefs.value[data.key] && typeof payTypeRefs.value[data.key].enableVerify == 'function') {
+        payTypeRefs.value[data.key].setFormData(data)
+
+        const verify = payTypeRefs.value[data.key].enableVerify()
+        if (!verify) {
+            data.status = false
+            ElMessage(t('configurePaymentMethod'))
+            return false
+        }
     }
 }
 
@@ -206,28 +217,7 @@ const cancelFn = () => {
 </script>
 
 <style lang="scss" scoped>
-.table-item-pd {
-    @apply py-[10px] px-[11px];
-}
-
-.table-item-border {
-    @apply border-b border-[#ebeef5];
-}
-
-.table-item-flex {
-    display: flex;
-    align-items: center;
-}
-
-:deep(.box-pay-card) .el-card__body {
-    padding: 0;
-}
-
-.table-bg {
-    background: #f5f7f9;
-}
-
-html.dark .table-bg {
-    background: #141414;
-}
+    .table-item-border {
+        @apply border-b border-[var(--el-border-color)];
+    }
 </style>

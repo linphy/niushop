@@ -1,10 +1,13 @@
 <template>
+    <!--积分明细-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center mb-[5px]">
+
+            <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
             </div>
-            <el-card class="box-card !border-none base-bg !px-[35px]" shadow="never">
+
+            <el-card class="box-card !border-none !px-[35px]" shadow="never">
                 <el-row class="flex">
                     <el-col :span="12" class="min-w-[100px]">
                         <div class="statistic-card">
@@ -26,9 +29,9 @@
                             </div>
                         </div>
                     </el-col>
-
                 </el-row>
             </el-card>
+
             <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="memberAccountLogTableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('memberInfo')" prop="keywords">
@@ -108,7 +111,9 @@
                 </div>
             </div>
         </el-card>
+
         <point-info ref="pointDialog" @complete="loadMemberAccountLogList" />
+
     </div>
 </template>
 
@@ -122,8 +127,9 @@ import pointInfo from '@/app/views/member/components/member-point-info.vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
-const member_id: number = parseInt(route.query.id || 0)
 const pageName = route.meta.title
+
+const member_id: number = parseInt(route.query.id || 0)
 
 const memberAccountLogTableData = reactive({
     page: 1,
@@ -210,7 +216,6 @@ const router = useRouter()
 const toMember = (member_id: number) => {
     router.push(`/member/detail?id=${member_id}`)
 }
-
 </script>
 
 <style lang="scss" scoped></style>

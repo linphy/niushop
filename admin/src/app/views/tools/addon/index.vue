@@ -1,28 +1,18 @@
 <template>
+    <!--插件开发-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center mb-[10px]">
+
+            <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
             </div>
-            <el-tabs v-model="activeName" class="demo-tabs">
+
+            <el-tabs v-model="activeName" class="mt-[20px]">
                 <el-tab-pane :label="t('developmentProcess')" name="developmentProcess">
-                    <el-steps direction="vertical">
+                    <el-steps :active="5" direction="vertical">
                         <el-step>
-                            <template #icon v-if="active > 1">
-                                <el-icon size="25px" class="text-color">
-                                    <CircleCheckFilled />
-                                </el-icon>
-                            </template>
-                            <template #icon v-else-if="active == 1">
-                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
-                                    <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
-                                </div>
-                            </template>
-                            <template #icon v-else>
-                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">1</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step1") }}
                                 </p>
                             </template>
@@ -33,22 +23,10 @@
                                 </div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon v-if="active > 2">
-                                <el-icon size="25px">
-                                    <CircleCheckFilled />
-                                </el-icon>
-                            </template>
-                            <template #icon v-else-if="active == 2">
-                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
-                                    <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
-                                </div>
-                            </template>
-                            <template #icon v-else>
-                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">2</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step2") }}
                                 </p>
                             </template>
@@ -59,22 +37,10 @@
                                 </div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon v-if="active > 3">
-                                <el-icon size="25px">
-                                    <CircleCheckFilled />
-                                </el-icon>
-                            </template>
-                            <template #icon v-else-if="active == 3">
-                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
-                                    <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
-                                </div>
-                            </template>
-                            <template #icon v-else>
-                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">3</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step3") }}
                                 </p>
                             </template>
@@ -85,22 +51,10 @@
                                 </div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon v-if="active > 4">
-                                <el-icon size="25px">
-                                    <CircleCheckFilled />
-                                </el-icon>
-                            </template>
-                            <template #icon v-else-if="active == 4">
-                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
-                                    <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
-                                </div>
-                            </template>
-                            <template #icon v-else>
-                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">4</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step4") }}
                                 </p>
                             </template>
@@ -111,36 +65,25 @@
                                 </div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon v-if="active > 5">
-                                <el-icon size="25px">
-                                    <CircleCheckFilled />
-                                </el-icon>
-                            </template>
-                            <template #icon v-else-if="active == 5">
-                                <div class="w-[24px] h-[24px] box-border rounded-full bg-color1 flex items-center justify-center">
-                                    <div class="h-[12px] w-[12px] bg-color rounded-full"></div>
-                                </div>
-                            </template>
-                            <template #icon v-else>
-                                <div class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">5</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step5") }}
                                 </p>
                             </template>
                             <template #description>
                                 <span class="text-[#999]">{{ t("describe5") }}</span>
                                 <div class="mt-[20px] mb-[40px] h-[32px]">
-                                    <el-button type="primary" plain
-                                        @click="linkEvent('https://www.niucloud.com/app')">{{t("btn5") }}</el-button>
+                                    <el-button type="primary" plain @click="linkEvent('https://www.niucloud.com/app')">{{t("btn5") }}</el-button>
                                 </div>
                             </template>
                         </el-step>
                     </el-steps>
                 </el-tab-pane>
+
                 <el-tab-pane :label="t('pluginList')" name="pluginList">
+
                     <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                         <div class="flex justify-between">
                             <el-form :inline="true" :model="params" ref="searchFormRef">
@@ -153,12 +96,13 @@
                                 </el-form-item>
                             </el-form>
                         </div>
-
                     </el-card>
+
                     <el-table :data="data" size="large" v-loading="loading" class="pt-[5px]">
                         <template #empty>
                             <span>{{ t('emptyData') }}</span>
                         </template>
+
                         <el-table-column :label="t('title')" align="left" min-width="320">
                             <template #default="{ row }">
                                 <div class="flex items-center justify-between">
@@ -178,7 +122,7 @@
                         <el-table-column prop="type_name" :label="t('type')" align="center" min-width="200" />
                         <el-table-column prop="author" :label="t('author')" align="center" min-width="200" />
                         <el-table-column prop="version" :label="t('version')" align="center" min-width="200" />
-                        <el-table-column :label="t('stutas')" align="center" min-width="200">
+                        <el-table-column :label="t('status')" align="center" min-width="200">
                             <template #default="{ row }">
                                 {{ Object.keys(row.install_info).length ? '已安装' : '未安装' }}
                             </template>
@@ -197,6 +141,7 @@
         </el-card>
     </div>
 </template>
+
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onMounted } from 'vue'
 import { t } from '@/lang'
@@ -285,31 +230,5 @@ const deleteEvent = (key: any) => {
     })
 }
 </script>
-<style lang="scss" scoped>
-.border-color {
-    border-color: var(--el-color-primary);
-}
 
-.bg-color {
-    background-color: var(--el-color-primary);
-}
-
-.text-color {
-    color: var(--el-color-primary);
-}
-
-.bg-color1 {
-    background-color: var(--el-color-info-light-8);
-}
-
-:deep(.el-step.is-vertical .el-step__icon.is-icon) {
-    padding: 8px 0;
-    height: 40px;
-    background-color: #fff;
-}
-
-:deep(.el-step__title) {
-    height: 40px;
-    line-height: 40px !important;
-}
-</style>
+<style lang="scss" scoped></style>

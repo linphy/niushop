@@ -1,6 +1,7 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" class="w-[100px]" @click="dialogVisible = true">{{ t('addDiyPage') }}</el-button>
@@ -12,7 +13,7 @@
                         <el-input v-model="diyPageTableData.searchParam.title" :placeholder="t('titlePlaceholder')" />
                     </el-form-item>
                     <el-form-item :label="t('forAddon')" prop="addon_name">
-                        <el-select v-model="diyPageTableData.searchParam.addon_name" :placeholder="t('pageTypePlaceholder')" @change="handleSelectAddonChange">
+                        <el-select v-model="diyPageTableData.searchParam.addon_name" :placeholder="t('forAddonPlaceholder')" @change="handleSelectAddonChange">
                             <el-option :label="t('all')" value="" />
                             <el-option v-for="(item, key) in apps" :label="item.title" :value="key" :key="key"/>
                         </el-select>
@@ -31,12 +32,11 @@
             </el-card>
 
             <el-table :data="diyPageTableData.data" size="large" v-loading="diyPageTableData.loading">
-
                 <template #empty>
                     <span>{{ !diyPageTableData.loading ? t('emptyData') : '' }}</span>
                 </template>
 
-                <el-table-column prop="title" :label="t('title')" min-width="120" />
+                <el-table-column prop="page_title" :label="t('title')" min-width="120" />
                 <el-table-column prop="addon_name" :label="t('forAddon')" min-width="80" />
                 <el-table-column prop="type_name" :label="t('typeName')" min-width="80" />
                 <el-table-column :label="t('status')" min-width="80">
@@ -129,11 +129,11 @@ import { t } from '@/lang'
 import { getApps,getDiyPageList, deleteDiyPage, getDiyTemplate, editDiyPageShare, setUseDiyPage } from '@/app/api/diy'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
-import { getUrl } from '@/app/api/sys'
 
-const router = useRouter()
 const route = useRoute()
+const router = useRouter()
 const pageName = route.meta.title
+
 const pageType: any = reactive({}) // 页面类型
 
 // 添加自定义页面
@@ -161,23 +161,18 @@ const addEvent = async (formEl: FormInstance | undefined) => {
 
     await formEl.validate(async (valid) => {
         if (valid) {
-            dialogVisible.value = false
             const query = { type: formData.type, title: formData.title }
             const url = router.resolve({
                 path: '/decorate/edit',
                 query
             })
             window.open(url.href)
+            dialogVisible.value = false
+            formData.title = ''
+            formData.type = ''
         }
     })
 }
-
-const wapDomain = ref('')
-const getDomain = async () => {
-    wapDomain.value = (await getUrl()).data.wap_url
-}
-
-getDomain()
 
 // 获取自定义页面类型
 const loadDiyTemplate = (addon = '')=> {
@@ -350,5 +345,4 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

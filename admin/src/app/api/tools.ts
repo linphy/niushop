@@ -34,6 +34,14 @@ export function getAddonDevelopCheck(key: any) {
 }
 
 /**
+ * 获取插件key黑名单
+ * @returns
+ */
+export function getAddonKeyBlackList() {
+    return request.get('addon_develop/key/blacklist')
+}
+
+/**
  * 添加插件
  * @param key
  * @param params

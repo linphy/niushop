@@ -1,5 +1,5 @@
 {
-    "siteTitle": "NIUSHOP V6",
+    "siteTitle": "NIUCLOUD-ADMIN",
     "siteDesc": "基于thinkphp6+elementplus+typescript等技术的多端saas通用管理框架，采用restful的api接口设计，前后端完全分离，同时支持多语言开发。",
     "logging": "登录中",
     "platform": "管理端",

@@ -1,6 +1,7 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{pageName}}</span>
             </div>
@@ -11,7 +12,7 @@
                         <el-input v-model="diyRouteTableData.searchParam.title" :placeholder="t('titlePlaceholder')" />
                     </el-form-item>
                     <el-form-item :label="t('forAddon')" prop="addon_name">
-                        <el-select v-model="diyRouteTableData.searchParam.addon_name" :placeholder="t('pageTypePlaceholder')">
+                        <el-select v-model="diyRouteTableData.searchParam.addon_name" :placeholder="t('forAddonPlaceholder')">
                             <el-option :label="t('all')" value="" />
                             <el-option v-for="(item, key) in apps" :label="item.title" :value="key" :key="key"/>
                         </el-select>
@@ -27,6 +28,7 @@
                 <template #empty>
                     <span>{{ !diyRouteTableData.loading ? t('emptyData') : '' }}</span>
                 </template>
+
                 <el-table-column prop="title" :label="t('title')" min-width="70" />
                 <el-table-column prop="addon_title" :label="t('forAddon')" min-width="70">
                     <template #default="{ row }">
@@ -98,10 +100,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { useClipboard } from '@vueuse/core'
 import { getUrl } from '@/app/api/sys'
 
-const pageTemplate: any = reactive({})
-const router = useRouter()
 const route = useRoute()
+const router = useRouter()
 const pageName = route.meta.title
+
+const pageTemplate: any = reactive({})
 
 const formRef = ref<FormInstance>()
 const dialogVisible = ref(false)
@@ -127,7 +130,7 @@ getDomain()
 
 const apps: any = reactive({}) // 应用插件列表
 
-getDiyRouteAppList({}).then(res=>{
+getDiyRouteAppList().then(res=>{
     if(res.data){
         for (const key in res.data) {
             apps[key] = res.data[key];

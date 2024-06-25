@@ -1,25 +1,21 @@
 <template>
-    <el-dialog v-model="showDialog" :title="formData.id ? t('updateDict') : t('addDict')" width="480" class="diy-dialog-wrap"
-        :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="formData.id ? t('updateDict') : t('addDict')" width="480" class="diy-dialog-wrap" :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
-                <el-form-item :label="t('name')" prop="name">
-                    <el-input v-model="formData.name" clearable :placeholder="t('namePlaceholder')" class="input-width" />
-                </el-form-item>
-                <el-form-item :label="t('key')" prop="key">
-                    <el-input v-model="formData.key" clearable :placeholder="t('keyPlaceholder')" class="input-width" />
-                </el-form-item>
-                <el-form-item :label="t('memo')">
-                    <el-input v-model="formData.memo" type="textarea" clearable :placeholder="t('memoPlaceholder')" class="input-width" />
-                </el-form-item>
-
+            <el-form-item :label="t('name')" prop="name">
+                <el-input v-model="formData.name" clearable :placeholder="t('namePlaceholder')" class="input-width" />
+            </el-form-item>
+            <el-form-item :label="t('key')" prop="key">
+                <el-input v-model="formData.key" clearable :placeholder="t('keyPlaceholder')" class="input-width" />
+            </el-form-item>
+            <el-form-item :label="t('memo')">
+                <el-input v-model="formData.memo" type="textarea" clearable :placeholder="t('memoPlaceholder')" class="input-width" />
+            </el-form-item>
         </el-form>
 
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
             </span>
         </template>
     </el-dialog>
@@ -42,7 +38,6 @@ const initialFormData = {
     name: '',
     key: '',
     memo: ''
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 

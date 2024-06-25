@@ -35,7 +35,7 @@ const style = reactive({
 })
 
 const load = () => {
-    const arr = props.name.split(/-(.*)/)
+    const arr = props.name.split(' ')
     type.value = arr[0]
     name.value = arr[1]
 }

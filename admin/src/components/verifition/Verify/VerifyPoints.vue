@@ -1,6 +1,5 @@
 <template>
-    <div style="position: relative"
-        >
+    <div style="position: relative">
         <div class="verify-img-out">
             <div class="verify-img-panel" :style="{'width': setSize.imgWidth,
                                                    'height': setSize.imgHeight,
@@ -45,13 +44,14 @@
 </template>
 <script type="text/babel">
 /**
-     * VerifyPoints
-     * @description 点选
-     * */
+ * VerifyPoints
+ * @description 点选
+ * */
 import { resetSize } from './../utils/util'
 import { aesEncrypt } from './../utils/ase'
 import { reqGet, reqCheck } from './../api/index'
 import { onMounted, reactive, ref, nextTick, toRefs, getCurrentInstance } from 'vue'
+
 export default {
     name: 'VerifyPoints',
     props: {

@@ -1,14 +1,11 @@
 <template>
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="router.push({ path: '/setting/agreement' })">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{t('returnToPreviousPage')}}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
-        <el-card class="box-card !border-none" shadow="never" v-loading="loading">
+
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never" v-loading="loading">
             <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('type')">
                     <el-input v-model.trim="formData.agreement_key_name" readonly class="input-width" />
@@ -21,6 +18,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
+
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
                 <el-button type="primary" @click="onSave(formRef)">{{ t('save') }}</el-button>
@@ -34,12 +32,11 @@
 import { ref, reactive, computed } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { getAgreementInfo, editAgreement } from '@/app/api/sys'
 import { useRoute, useRouter } from 'vue-router'
 import useTabbarStore from '@/stores/modules/tabbar'
-// import useAppStore from '@/stores/modules/app'
 
-// const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const agreement_key: string = route.query.key || ''

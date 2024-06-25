@@ -1,10 +1,12 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
            <div class="flex justify-between items-center">
                 <span class="text-page-title">{{pageName}}</span>
             </div>
-            <div class="mt-[16px]">
+
+            <div class="mt-[20px]">
                 <el-table :data="storageTableData.data" size="large" v-loading="loading">
 
                     <template #empty>
@@ -21,52 +23,47 @@
                     </el-table-column>
 
                     <el-table-column :label="t('operation')" align="right" fixed="right" width="100">
-                       <template #default="{ row }">
-                           <el-button type="primary" link @click="editEvent(row)">{{ t('config') }}</el-button>
+                       <template #default="{ row, $index }">
+                           <el-button type="primary" link @click="editEvent(row, $index)">{{ t('config') }}</el-button>
                        </template>
                     </el-table-column>
 
                 </el-table>
             </div>
 
-            <storage-local ref="localDialog" @complete="loadStorageList()" />
-            <storage-qiniu ref="qiniuDialog" @complete="loadStorageList()" />
-            <storage-ali ref="aliyunDialog" @complete="loadStorageList()" />
-            <storage-tencent ref="tencentDialog" @complete="loadStorageList()" />
+            <template v-for="(item, index) in storageTableData.data">
+                <component :is="item.component" :ref="(el) => setStorageTypeRefs(el, index)" v-if="item.component" @complete="loadStorageList()"/>
+            </template>
         </el-card>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { getStorageList } from '@/app/api/sys'
-import storageLocal from '@/app/views/setting/components/storage-local.vue'
-import storageQiniu from '@/app/views/setting/components/storage-qiniu.vue'
-import storageAli from '@/app/views/setting/components/storage-ali.vue'
-import storageTencent from '@/app/views/setting/components/storage-tencent.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const pageName = route.meta.title
-
-const localDialog: Record<string, any> | null = ref(null)
-const qiniuDialog: Record<string, any> | null = ref(null)
-const aliyunDialog: Record<string, any> | null = ref(null)
-const tencentDialog: Record<string, any> | null = ref(null)
+const storageTypeRefs = ref([])
 
 const storageTableData = reactive({
     data: []
 })
 const loading = ref(true)
 
+const modules: any = import.meta.glob('@/**/*.vue')
 /**
  * 获取配置信息
  */
 const loadStorageList = () => {
     loading.value = true
-    getStorageList().then(res => {
-        storageTableData.data = res.data
+    getStorageList().then(({ data }) => {
+        Object.keys(data).forEach((key: string) => {
+            data[key].component && (data[key].component = defineAsyncComponent(modules[data[key].component]))
+        })
+        storageTableData.data = data
         loading.value = false
     }).catch(() => {
         loading.value = false
@@ -75,9 +72,13 @@ const loadStorageList = () => {
 
 loadStorageList()
 
-const editEvent = (data: any) => {
-    eval(data.storage_type + 'Dialog.value.setFormData(data)');
-    eval(data.storage_type + 'Dialog.value.showDialog = true;');
+const setStorageTypeRefs = (el, index) => {
+    storageTypeRefs.value[index] = (el)
+}
+
+const editEvent = (data: any, index: number) => {
+    storageTypeRefs.value[index].setFormData(data)
+    storageTypeRefs.value[index].showDialog = true
 }
 
 </script>

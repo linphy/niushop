@@ -1,14 +1,11 @@
 <template>
-    <div class="main-container mb-80" v-loading="loading">
-        <div class="detail-head !mb-[10px]">
-            <div class="left" @click="router.push({ path: '/tools/addon' })">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
-        <el-card class="box-card !border-none" shadow="never">
+    <div class="main-container" v-loading="loading">
+
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never">
             <el-form :model="form" label-width="90px" ref="formRef" :rules="rules" class="page-form">
                 <el-form-item :label="t('title')" prop="title">
                     <el-input v-model="form.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" />
@@ -18,45 +15,39 @@
                         <upload-image v-model="form.icon" />
                         <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('iconPlaceholder1') }}</p>
                     </div>
-
                 </el-form-item>
                 <el-form-item :label="t('key')" prop="key">
                     <div>
-                        <el-input v-model="form.key" clearable :disabled="route.query.key"
-                            :placeholder="t('keyPlaceholder')" class="input-width mr-[15px]" />
-                        <el-button v-if="!route.query.key" type="primary" :disabled="form.key == ''"
-                            @click="getAddonDevelopCheckFn(form.key)">官方市场标识检测</el-button>
+                        <el-input v-model="form.key" clearable :disabled="route.query.key" :placeholder="t('keyPlaceholder')" class="input-width mr-[15px]" />
+                        <el-button v-if="!route.query.key" type="primary" :disabled="form.key == ''" @click="getAddonDevelopCheckFn(form.key)">官方市场标识检测</el-button>
                         <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('keyPlaceholder1') }}</p>
                         <p class="text-[12px] text-[#a9a9a9] leading-normal">{{ t('keyPlaceholder2') }}</p>
+                        <p v-if="keyBlackList.length" class="text-[12px] text-[#a9a9a9] leading-normal">
+                            插件标识不能定义成黑名单中的值，插件标识黑名单：{{ keyBlackList.join('，') }}
+                        </p>
                     </div>
-
                 </el-form-item>
                 <el-form-item :label="t('desc')" prop="desc">
-                    <el-input type="textarea" v-model="form.desc" clearable :placeholder="t('descPlaceholder')"
-                        class="input-width" />
+                    <el-input type="textarea" v-model="form.desc" clearable :placeholder="t('descPlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('author')" prop="author">
                     <el-input v-model="form.author" clearable :placeholder="t('authorPlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('version')" prop="version">
                     <div>
-                        <el-input v-model="form.version" clearable :placeholder="t('versionPlaceholder')"
-                            class="input-width" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
+                        <el-input v-model="form.version" clearable :placeholder="t('versionPlaceholder')" class="input-width" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
                         <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('versionPlaceholder1') }}</p>
                     </div>
-
                 </el-form-item>
                 <el-form-item :label="t('cover')" prop="cover">
                     <div>
                         <upload-image v-model="form.cover" />
                         <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('coverPlaceholder1') }}</p>
                     </div>
-
                 </el-form-item>
                 <el-form-item :label="t('type')" prop="type">
                     <div>
-                        <el-select v-model="form.type" :placeholder="t('typePlaceholder')" class="input-width" clearable
-                            @change="typeChange">
+                        <el-select v-model="form.type" :placeholder="t('typePlaceholder')" class="input-width" clearable @change="typeChange">
                             <el-option v-for="(item, key) in options" :key="key" :label="item" :value="key" />
                         </el-select>
                         <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('typePlaceholder1') }}</p>
@@ -74,8 +65,7 @@
                     </el-form-item>
                     <el-form-item :label="t('supportApp')" prop="support_app" v-if="form.support_type!=1">
                         <el-select v-model="form.support_app" :placeholder="t('supportAppPlaceholder')" class="input-width">
-                            <el-option v-for="(item, index) in AppLst" :label="item.title" :value="item.key"
-                                :key="index" />
+                            <el-option v-for="(item, index) in AppLst" :label="item.title" :value="item.key" :key="index" />
                         </el-select>
                     </el-form-item>
                 </template>
@@ -85,6 +75,7 @@
                 </el-form-item> -->
             </el-form>
         </el-card>
+
         <div class="fixed-footer-wrap" v-if="!loading">
             <div class="fixed-footer">
                 <el-button type="primary" @click="onSave(formRef)">{{ t('GeneratePlugins') }}</el-button>
@@ -93,12 +84,14 @@
         </div>
     </div>
 </template>
+
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { t } from '@/lang'
-import { getAddontype, addAddonDevelop, editAddonDevelop, getAddonDevelopInfo, getAddonDevelopCheck } from '@/app/api/tools'
+import { getAddontype, addAddonDevelop, editAddonDevelop, getAddonDevelopInfo, getAddonDevelopCheck, getAddonKeyBlackList } from '@/app/api/tools'
 import { getAddonList } from '@/app/api/sys'
 import { ElMessageBox, ElMessage, FormInstance } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -119,6 +112,7 @@ const form = ref({
 const options = ref([])
 const loading = ref(false)
 const formRef = ref()
+const keyBlackList = ref([])
 const validKey = (rule:any, value:any, callback:any) => {
     if (value !== '') {
         const reg = /^[a-zA-Z][a-zA-Z0-9_]*$/
@@ -131,6 +125,7 @@ const validKey = (rule:any, value:any, callback:any) => {
         return callback(new Error(t('keyPlaceholder')))
     }
 }
+
 const validVersion = (rule:any, value:any, callback:any) => {
     if (value !== '') {
         const reg = /^([0-9]\d|[0-9])(\.([0-9]){1}){2}$/
@@ -143,6 +138,7 @@ const validVersion = (rule:any, value:any, callback:any) => {
         return callback(new Error(t('versionPlaceholder')))
     }
 }
+
 const rules = ref({
     title: [
         { required: true, message: t('titlePlaceholder'), trigger: 'blur' }
@@ -169,14 +165,17 @@ const rules = ref({
         { required: true, message: t('typePlaceholder'), trigger: 'change' }
     ]
 })
+
 onMounted(async () => {
     const res = await getAddontype()
     options.value = res.data
     if (route.query.key) getAddonDevelopInfoFn(route.query.key)
 })
+
 const typeChange = () => {
     form.value.support_app = ''
 }
+
 // 详情查询
 const getAddonDevelopInfoFn = (key: any) => {
     loading.value = true
@@ -187,6 +186,7 @@ const getAddonDevelopInfoFn = (key: any) => {
         loading.value = false
     })
 }
+
 // 获取app列表
 const AppLst = ref<Array<any>>([])
 const getAddonListFn = async () => {
@@ -232,4 +232,8 @@ const onSave = async (formEl: FormInstance | undefined) => {
         }
     })
 }
+
+getAddonKeyBlackList().then(({ data }) => {
+    keyBlackList.value = data
+})
 </script>

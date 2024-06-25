@@ -1,15 +1,12 @@
 <template>
+    <!--支付详情-->
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="router.push({ path: '/finance/pay/offlinepay' })">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
 
-        <el-card class="box-card !border-none" shadow="never" v-loading="loading">
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never" v-loading="loading">
             <el-form :model="formData" label-width="150px" ref="formRef" class="page-form mt-[10px]" v-if="!loading">
                 <el-form-item :label="t('outTradeNo')">
                     <div class="input-width">{{ formData.out_trade_no }}</div>
@@ -53,8 +50,7 @@
             </el-form>
         </el-card>
     </div>
-    <el-image-viewer :url-list="previewImageList" v-if="imageViewerShow" @close="imageViewerShow = false" :initial-index="0"
-        :zoom-rate="1" />
+    <el-image-viewer :url-list="previewImageList" v-if="imageViewerShow" @close="imageViewerShow = false" :initial-index="0" :zoom-rate="1" />
 </template>
 
 <script lang="ts" setup>
@@ -64,6 +60,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getPayDetail, payAuditPass, payAuditRefuse } from '@/app/api/sys'
 import { img } from '@/utils/common'
 import { ElMessageBox } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -114,11 +111,9 @@ const refuseEvent = () => {
         inputPattern: /\S/,
         inputType: 'textarea'
     }).then(({ value }) => {
-        payAuditRefuse({ out_trade_no: formData.value.out_trade_no, reason: value })
-            .then(() => {
-                setFormData()
-            })
-            .catch()
+        payAuditRefuse({ out_trade_no: formData.value.out_trade_no, reason: value }).then(() => {
+            setFormData()
+        }).catch()
     }).catch(() => {
 
     })

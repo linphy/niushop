@@ -171,12 +171,12 @@ export const createMarker = (map: any) => {
  * @param params
  */
 export const latLngToAddress = (params: any) => {
-    return jsonp(`https://apis.map.qq.com/ws/geocoder/v1/?key=${params.mapKey}&location=${params.lat},${params.lng}&output=jsonp&callback=callback`, { callbackName: 'callback' })
+    return jsonp(`https://apis.map.qq.com/ws/geocoder/v1/?key=${params.mapKey}&location=${params.lat},${params.lng}&output=jsonp&callback=latLngToAddress`, { callbackName: 'latLngToAddress' })
 }
 
 /**
  * 地址解析
  */
 export const addressToLatLng = (params: any) => {
-    return jsonp(`https://apis.map.qq.com/ws/geocoder/v1/?key=${params.mapKey}&address=${params.address}&output=jsonp&callback=callback`, { callbackName: 'callback' })
+    return jsonp(`https://apis.map.qq.com/ws/geocoder/v1/?key=${params.mapKey}&address=${params.address}&output=jsonp&callback=addressToLatLng`, { callbackName: 'addressToLatLng' })
 }

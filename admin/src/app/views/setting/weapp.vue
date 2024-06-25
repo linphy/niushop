@@ -1,13 +1,14 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
                 <el-button type="primary" @click="showEvent">{{ t('addVersion') }}</el-button>
             </div>
-            <div class="mt-[10px]">
-                <el-table :data="weappTableData.data" size="large" v-loading="weappTableData.loading">
 
+            <div class="mt-[20px]">
+                <el-table :data="weappTableData.data" size="large" v-loading="weappTableData.loading">
                     <template #empty>
                         <span>{{ !weappTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
@@ -28,12 +29,12 @@
                         @size-change="loadWeappTemplateList()" @current-change="loadWeappTemplateList" />
                 </div>
             </div>
-
         </el-card>
+
         <cron-info ref="cronDialog" @complete="weappTableData" />
+
         <el-dialog v-model="showDialog" :title="t('editVersion')" width="550px" :destroy-on-close="true">
-            <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form"
-                v-loading="loading">
+            <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('version')" prop="version">
                     <el-input v-model="formData.version" :placeholder="t('versionPlaceholder')" class="input-width" />
                 </el-form-item>
@@ -57,12 +58,7 @@
 <script lang="ts" setup>
 import { reactive, ref, computed } from 'vue'
 import { t } from '@/lang'
-import {
-    getVersionList,
-    addVersion,
-    editVersion,
-    deleteVersion
-} from '@/app/api/weapp'
+import { getVersionList, addVersion, editVersion, deleteVersion } from '@/app/api/weapp'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { useRoute } from 'vue-router'
 import CronInfo from '@/app/views/setting/components/cron-info.vue'
@@ -84,7 +80,7 @@ const weappTableData = reactive({
 })
 
 /**
- * 获取任务列表
+ * 获取版本列表
  */
 const loadWeappTemplateList = (page: number = 1) => {
     weappTableData.loading = true
@@ -195,8 +191,4 @@ const infoEvent = (data: any) => {
 
 </script>
 
-<style lang="scss" scoped>
-.el-input-number.is-controls-right .el-input-number__increase {
-    left: 20px !important
-}
-</style>
+<style lang="scss" scoped></style>

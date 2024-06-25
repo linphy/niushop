@@ -69,8 +69,6 @@ const formRules = computed(() => {
     }
 })
 
-// const emit = defineEmits(['complete'])
-
 const setFormData = async (row: any = null) => {
     loading.value = true
     Object.assign(formData, initialFormData)

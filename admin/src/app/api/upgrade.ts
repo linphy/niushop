@@ -11,7 +11,6 @@ export function getUpgradeContent(addon: string = '') {
 
 /**
  * 获取升级任务
- * @param addon
  */
 export function getUpgradeTask() {
     return request.get('upgrade/task')
@@ -29,7 +28,7 @@ export function upgradeAddon(addon: string = '') {
  * 执行升级
  */
 export function executeUpgrade() {
-    return request.post('upgrade/execute', {}, { timeout: 0 })
+    return request.post('upgrade/execute', {})
 }
 
 /**

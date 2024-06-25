@@ -1,9 +1,13 @@
 <template>
     <div class="main-container">
-        <el-card class="box-card !border-none" shadow="never" v-loading="loading">
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never" v-loading="loading">
             <div class="flex">
                 <div class="w-[360px] h-[400px] absolute mr-[30px] border-[1px] border-gray-300">
-                    <div class="flex items-center justify-between absolute h-[60px] left-[0px] right-[0px] bottom-[0px] bg-white border-[1px] border-primary" :style="{ 'backgroundColor': diyBottomData.value.backgroundColor }">
+                    <div class="flex items-center justify-between absolute h-[60px] left-[0px] right-[0px] bottom-[0px] border-[1px] border-primary" :style="{ 'backgroundColor': diyBottomData.value.backgroundColor }">
                         <div class="flex flex-1 flex-col items-center justify-center" v-for="(item, index) in diyBottomData.value.list" :key="'b' + index">
                             <el-image class="w-[22px] h-[22px] mb-[5px] leading-1" :src="img(item.iconPath)" :fit="contain"  v-if="['1', '2'].includes(diyBottomData.value.type.toString())">
                                 <template #error>
@@ -41,10 +45,10 @@
                                             </div>
                                         </el-form-item>
                                         <el-form-item :label="t('navTitleOne')">
-                                            <el-input class="w-[215px]" v-model="item.text" :placeholder="t('titleContent')" maxlength="5" show-word-limit />
+                                            <el-input class="!w-[215px]" v-model="item.text" :placeholder="t('titleContent')" maxlength="5" show-word-limit />
                                         </el-form-item>
                                         <el-form-item :label="t('navLinkOne')">
-                                            <diy-link v-model="item.link"></diy-link>
+                                            <diy-link v-model="item.link"/>
                                         </el-form-item>
                                         <el-icon class="close-icon cursor-pointer -top-[11px] -right-[8px]" @click="deleteNav(index)">
                                             <CircleCloseFilled />
@@ -103,16 +107,18 @@ import { ref, reactive, onMounted, nextTick } from 'vue'
 import { t } from '@/lang'
 import { img } from '@/utils/common'
 import type { FormInstance, ElNotification } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { getDiyBottomConfig, setDiyBottomConfig } from '@/app/api/diy'
 import Sortable from 'sortablejs'
 import { range } from 'lodash-es'
 import { useRoute,useRouter } from 'vue-router'
 
-const activeName = ref<string>('navPicture')
-const loading = ref<boolean>(false)
 const route = useRoute()
 const router = useRouter()
+const pageName = route.meta.title
 
+const activeName = ref<string>('navPicture')
+const loading = ref<boolean>(false)
 route.query.key = route.query.key || '';
 
 // 底部导航数据

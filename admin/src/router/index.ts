@@ -48,13 +48,9 @@ router.beforeEach(async (to, from, next) => {
 
     const userStore = useUserStore()
     const systemStore = useSystemStore()
-    const siteInfo = userStore.siteInfo
 
     let title: string = to.meta.title ?? ''
 
-    if (siteInfo) {
-        title += '-' + siteInfo.site_name
-    }
 
     // 设置网站标题
     setWindowTitle(title)

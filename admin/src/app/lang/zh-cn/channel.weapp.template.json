@@ -17,6 +17,6 @@
     "weappAccessFlow": "接入流程",
     "subscribeMessage": "订阅消息",
     "weappRelease": "版本管理",
-    "batchAcquisition": "一键获取"
-
+    "batchAcquisition": "一键获取",
+    "addon": "所属应用"
 }

@@ -21,10 +21,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item prop="local_key" :label="t('localKey')">
-                <el-select class="input-width" :placeholder="t('localKeyPlaceholder')"
-                    v-model="formData.local_key">
-                    <el-option :label="`${item.name}:${item.comment}`" :value="item.name"
-                        v-for="(item, index) in localKeyList " :key="index" />
+                <el-select class="input-width" :placeholder="t('localKeyPlaceholder')" v-model="formData.local_key">
+                    <el-option :label="`${item.name}:${item.comment}`" :value="item.name" v-for="(item, index) in localKeyList" :key="index" />
                 </el-select>
             </el-form-item>
             <el-form-item :label="t('foreignKey')" prop="foreign_key">
@@ -48,7 +46,6 @@ import { getGeneratorAllModel, getGeneratorTableColumn, getAddonDevelop } from '
 import { cloneDeep } from 'lodash-es'
 
 const showDialog = ref(false)
-// const loading = ref(false)
 const title = ref('')
 const prop = defineProps({
     table_name: {

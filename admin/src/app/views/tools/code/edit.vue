@@ -1,14 +1,11 @@
 <template>
-    <div class="main-container mb-80" v-loading="loading">
-        <div class="detail-head !mb-[10px]">
-            <div class="left" @click="router.push({ path: '/tools/code' })">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
-        <el-card class="box-card !border-none" shadow="never">
+    <div class="main-container" v-loading="loading">
+
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none" shadow="never">
             <el-tabs v-model="activeName" class="demo-tabs">
                 <el-tab-pane :label="t('basicSettings')" name="basicSettings">
                     <el-form :model="formData" label-width="70px" class="page-form">
@@ -19,11 +16,8 @@
                             <el-input v-model="formData.table_content" clearable :placeholder="t('tableContentPlaceholder')" class="input-width" maxlength="64" />
                         </el-form-item>
                         <el-form-item :label="t('addon')">
-                            <el-select class="input-width" :placeholder="t('addonPlaceholder1')"
-                                v-model="formData.addon_name" filterable remote clearable :remote-method="getAddonDevelopFn"
-                                @change="addonChange">
-                                <el-option :label="item.title" :value="item.key" v-for="item in addonList"
-                                    :key="item.key" />
+                            <el-select class="input-width" :placeholder="t('addonPlaceholder1')" v-model="formData.addon_name" filterable remote clearable :remote-method="getAddonDevelopFn" @change="addonChange">
+                                <el-option :label="item.title" :value="item.key" v-for="item in addonList" :key="item.key" />
                             </el-select>
                         </el-form-item>
                         <el-form-item :label="t('moduleName')">
@@ -249,9 +243,11 @@
             </el-tabs>
         </el-card>
     </div>
+
     <edit-associated ref="editDialog" :table_name="formData.table_name" @complete="complete" />
     <edit-view-type ref="editViewTypeRef" @complete="completeViewType" />
     <edit-verify ref="editVerifyRef" @complete="completeVerify" />
+
     <div class="fixed-footer-wrap">
         <div class="fixed-footer">
             <el-button type="primary" @click="onSave(1)">{{ t('save') }}</el-button>
@@ -267,6 +263,7 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { t } from '@/lang'
 import { img } from '@/utils/common'
 import { FormInstance, ElMessageBox, ElMessage } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import editAssociated from '@/app/views/tools/code/components/edit-associated.vue'
 import editViewType from '@/app/views/tools/code/components/edit-view-type.vue'
 import editVerify from '@/app/views/tools/code/components/edit-verify.vue'
@@ -537,18 +534,17 @@ const generatorCheckFileFn = (() => {
     generatorCheckFile({ id: formData.id }).then(res => {
         loading.value = false
         ElMessageBox.confirm(
-            res.msg != '2' ? t('saveAndSyncText') : t('saveAndSyncText1'),
-            t('warning'),
-            {
-                confirmButtonText: t('confirm'),
-                cancelButtonText: t('cancel')
-            }
-        )
-            .then(() => {
-                loading.value = true
-                generateCreateFn(3)
-            })
-            .catch(() => { })
+                res.msg != '2' ? t('saveAndSyncText') : t('saveAndSyncText1'),
+                t('warning'),
+                {
+                    confirmButtonText: t('confirm'),
+                    cancelButtonText: t('cancel')
+                }
+        ).then(() => {
+            loading.value = true
+            generateCreateFn(3)
+        }).catch(() => {
+        })
     }).catch(() => {
         loading.value = false
     })
@@ -575,10 +571,10 @@ const generateCreateFn = (generate_type: any) => {
 const rowIndex = ref(0)
 const editVerifyRef = ref(null)
 const editViewTypeRef = ref(null)
+
 /**
  * 打开最大最小值设置
  */
-
 const validatorBtn = (row: any, index: number) => {
     if (['max', 'min', 'between'].includes(row.validate_type) || row.view_type === 'number') {
         rowIndex.value = index

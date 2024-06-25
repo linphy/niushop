@@ -1,75 +1,64 @@
 <template>
-    <div class="main-container p-5">
-        <div class="flex justify-between items-center mb-[20px]">
-            <span class="text-page-title">{{ pageName }}</span>
-        </div>
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-change="handleClick">
-            <el-tab-pane :label="t('wechatAccessFlow')" name="/channel/wechat" />
-            <el-tab-pane :label="t('customMenu')" name="/channel/wechat/menu" />
-            <el-tab-pane :label="t('wechatTemplate')" name="/channel/wechat/message" />
-            <el-tab-pane :label="t('reply')" name="/channel/wechat/reply" />
-        </el-tabs>
-        <el-card class="box-card !border-none" shadow="never">
+    <!--模板消息-->
+    <div class="main-container">
+        <el-card class="card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
-                <el-button type="primary" class="w-[100px]" @click="batchAcquisitionFn">{{ t('batchAcquisition')
-                }}</el-button>
+                <el-button type="primary" class="w-[100px]" @click="batchAcquisitionFn()">{{ t('batchAcquisition') }}</el-button>
             </div>
-            <el-alert class="warm-prompt !my-[20px]" type="info">
-                <template #default>
-                    <div class="flex">
-                        <el-icon class="mr-2 mt-[2px]" size="18">
-                            <Warning />
-                        </el-icon>
-                        <div>
-                            <p class="text-base">{{ t('operationTip') }}</p>
-                            <p class="text-base">1、{{ t('operationTipOne') }}</p>
-                            <p class="text-base">2、{{ t('operationTipTwo') }}</p>
-                            <p class="text-base">3、{{ t('operationTipThree') }}</p>
-                            <p class="text-base">4、{{ t('operationTipFour') }}</p>
-                        </div>
-                    </div>
+
+            <el-tabs v-model="activeName" class="my-[20px]" @tab-change="handleClick">
+                <el-tab-pane :label="t('wechatAccessFlow')" name="/channel/wechat" />
+                <el-tab-pane :label="t('customMenu')" name="/channel/wechat/menu" />
+                <el-tab-pane :label="t('wechatTemplate')" name="/channel/wechat/message" />
+                <el-tab-pane :label="t('reply')" name="/channel/wechat/reply" />
+            </el-tabs>
+
+            <el-table :data="cronTableData.data" :span-method="templateSpan" size="large" v-loading="cronTableData.loading">
+                <template #empty>
+                    <span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
                 </template>
-            </el-alert>
-            <div class="mt-[10px]">
-                <el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading">
-                    <template #empty>
-                        <span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
+
+                <el-table-column prop="addon_name" :label="t('addon')" min-width="120" />
+                <el-table-column prop="name" :show-overflow-tooltip="true" :label="t('name')" min-width="150" >
+                    <template #default="{ row }">
+                        <div class="flex items-center">
+                            <span class="mr-[5px]">{{row.name }}</span>
+                            <el-tooltip :content="row.wechat.tips" v-if="row.wechat.tips" placement="top">
+                                <icon name="element WarningFilled" />
+                            </el-tooltip>
+                        </div>
                     </template>
+                </el-table-column>
 
-                    <el-table-column prop="name" :show-overflow-tooltip="true" :label="t('name')" min-width="150" />
+                <el-table-column :label="t('messageType')" min-width="100" align="center">
+                    <template #default="{ row }">
+                        <span>{{ row.message_type == 1 ? t('buyerNews') : t('sellerMessage') }}</span>
+                    </template>
+                </el-table-column>
 
-                    <el-table-column :label="t('messageType')" min-width="100" align="center">
-                        <template #default="{ row }">
-                            <span>{{ row.message_type == 1 ? t('buyerNews') : t('sellerMessage') }}</span>
-                        </template>
-                    </el-table-column>
+                <el-table-column :label="t('isStart')" min-width="100" align="center">
+                    <template #default="{ row }">
+                        {{ row.is_wechat == 1 ? t('startUsing') : t('statusDeactivate') }}
+                    </template>
+                </el-table-column>
 
-                    <el-table-column :label="t('isStart')" min-width="100" align="center">
-                        <template #default="{ row }">
-                            {{ row.is_wechat == 1 ? t('startUsing') : t('statusDeactivate') }}
-                        </template>
-                    </el-table-column>
+                <el-table-column :label="t('response')" min-width="180">
+                    <template #default="{ row }">
+                        <div v-for="(item, index) in row.wechat.content" :key="'a' + index" class="text-left">{{ item.join("：") }}</div>
+                    </template>
+                </el-table-column>
 
-                    <el-table-column :label="t('response')" min-width="180">
-                        <template #default="{ row }">
-                            <div v-for="(item, index) in row.wechat.content" :key="'a' + index" class="text-left">
-                                {{ item.join("：") }}</div>
-                        </template>
-                    </el-table-column>
+                <el-table-column prop="wechat_template_id" :label="t('serialNumber')" min-width="140" />
 
-                    <el-table-column prop="wechat_template_id" :label="t('serialNumber')" min-width="140" />
-
-                    <el-table-column :label="t('operation')" fixed="right" align="right" width="200">
-                        <template #default="{ row }">
-                            <el-button type="primary" link @click="infoSwitch(row)">{{ row.is_wechat == 1 ? t('close') :
-                                t('open') }}</el-button>
-                            <el-button type="primary" link @click="batchAcquisitionFn(row)">{{ t('regain') }}</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>
-
+                <el-table-column :label="t('operation')" fixed="right" align="right" width="200">
+                    <template #default="{ row }">
+                        <el-button type="primary" link @click="infoSwitch(row)">{{ row.is_wechat == 1 ? t('close') : t('open') }}</el-button>
+                        <el-button type="primary" link @click="batchAcquisitionFn(row)">{{ t('regain') }}</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
         </el-card>
     </div>
 </template>
@@ -102,12 +91,43 @@ const loadCronList = (page: number = 1) => {
 
     getTemplateList().then(res => {
         cronTableData.loading = false
-        cronTableData.data = res.data
-    }).catch(() => {
+        let data = []
+        res.data.forEach(item => {
+            if (item.notice.length) {
+                const addons = []
+                Object.keys(item.notice).forEach((key, index) => {
+                    const notice = item.notice[key]
+                    notice.addon_name = item.title
+                    addons.push(notice)
+                })
+                if (addons.length) {
+                    addons[0].rowspan = addons.length
+                    data = data.concat(addons)
+                }
+            }
+        })
+        cronTableData.data = data
+    }).catch((e) => {
         cronTableData.loading = false
     })
 }
 loadCronList()
+
+const templateSpan = (row : any) => {
+    if (row.columnIndex === 0) {
+        if (row.row.rowspan) {
+            return {
+                rowspan: row.row.rowspan,
+                colspan: 1
+            }
+        } else {
+            return {
+                rowspan: 0,
+                colspan: 0
+            }
+        }
+    }
+}
 
 /**
  * 批量获取

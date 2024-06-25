@@ -42,7 +42,6 @@ const initialFormData = {
     label_name: '',
     memo: '',
     sort: 0
-
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 

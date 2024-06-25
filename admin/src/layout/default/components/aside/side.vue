@@ -1,15 +1,20 @@
 <template>
     <el-container class="w-[200px] h-screen layout-aside flex flex-col">
         <el-header class="logo-wrap flex items-center justify-center h-[64px]">
-            <template v-if="webSite">
-                <img class="max-h-[40px] max-w-[70%]" v-if="webSite.logo" :src="img(webSite.logo)" alt="">
-                <img class="max-h-[40px] max-w-[70%]" src="@/app/assets/images/login_logo.png" alt="" v-else>
-            </template>
+            <div class="logo flex items-center justify-center m-auto w-full h-[64px]" v-if="!systemStore.menuIsCollapse">
+                <template v-if="webSite">
+                    <img class="max-h-[40px] max-w-[70%]" v-if="webSite.logo" :src="img(webSite.logo)" alt="">
+                    <img class="max-h-[40px] max-w-[70%]" src="@/app/assets/images/login_logo.png" alt="" v-else>
+                </template>
+            </div>
+            <div class="logo flex items-center justify-center h-[64px]" v-else>
+                <i class="text-3xl iconfont iconyunkongjian"></i>
+            </div>
         </el-header>
         <el-main class="menu-wrap">
             <el-scrollbar>
-                <el-menu :default-active="route.name" :router="true" class="aside-menu h-full" unique-opened="true" :collapse="systemStore.menuIsCollapse" >
-                    <menu-item v-for="(route, index) in menuData" :routes="route" :route-path="route.path" :key="index" />
+                <el-menu :default-active="route.name" :router="true" class="aside-menu h-full" :unique-opened="true" :collapse="systemStore.menuIsCollapse" >
+                    <menu-item v-for="(route, index) in menuData" :routes="route" :key="index" />
                 </el-menu>
                 <div class="h-[48px]"></div>
             </el-scrollbar>
@@ -30,10 +35,9 @@ import { getWebConfig } from "@/app/api/sys"
 const systemStore = useSystemStore()
 const userStore = useUserStore()
 const route = useRoute()
+const webSite = ref(null)
 const routers = userStore.routers
 const addonIndexRoute = userStore.addonIndexRoute
-const webSite = ref(null)
-
 const menuData = ref<Record<string, any>[]>([])
 const addonRouters: Record<string, any> = {}
 
@@ -69,20 +73,10 @@ routers.forEach(item => {
 if (systemStore?.apps.length > 1) {
     const routers:Record<string, any>[] = []
     systemStore?.apps.forEach((item: Record<string, any>) => {
-        const data = {
-            path: addonRouters[item.key] ? addonRouters[item.key].path : '',
-            meta: {
-                icon: addonRouters[item.key]?.meta.icon || 'element-Setting',
-                addon: item.key,
-                title: item.title,
-                app: item.app,
-                show: true
-            },
-            original_name: item.key,
-            name: addonIndexRoute[item.key]
+        if (addonRouters[item.key]) {
+            addonRouters[item.key].name = addonIndexRoute[item.key]
+            routers.push(addonRouters[item.key])
         }
-        if (addonRouters[item.key] && addonRouters[item.key].children) data.children = addonRouters[item.key].children
-        routers.push(data)
     })
     menuData.value.unshift(...routers)
 }
@@ -100,7 +94,6 @@ if (systemStore?.apps.length > 1) {
         }
 
         .el-sub-menu .el-menu-item {
-            --el-menu-sub-item-height: 40px;
             --el-menu-sub-item-height: 40px;
         }
     }

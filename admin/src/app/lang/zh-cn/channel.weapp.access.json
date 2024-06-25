@@ -19,5 +19,9 @@
 	"wechatSet": "小程序配置",
 	"subscribeMessage": "订阅消息",
 	"weappRelease": "版本管理",
-	"alert":"您正在体验通用版小程序，不发布你将不可用"
+	"alert":"您正在体验通用版小程序，不发布你将不可用",
+	"authWeapp": "授权绑定微信小程序",
+	"clickSetting": "点击配置微信小程序",
+	"seeConfig": "查看配置",
+	"refreshAuth": "重新授权"
 }

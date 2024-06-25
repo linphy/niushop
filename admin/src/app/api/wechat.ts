@@ -124,7 +124,6 @@ export function setSubscribeReply(params: Record<string, any>) {
     return request.put('wechat/reply/subscribe', params, { showSuccessMessage: true })
 }
 
-
 /**
  * 查询素材列表
  */

@@ -1,15 +1,17 @@
 <template>
+    <!--会员余额-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center mb-[5px]">
+
+            <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
             </div>
-            <el-card class="box-card !border-none base-bg !px-[35px]" shadow="never">
+
+            <el-card class="box-card !border-none !px-[35px]" shadow="never">
                 <el-row class="flex">
                     <el-col :span="8" class="min-w-[100px]">
                         <div class="statistic-card">
-                            <el-statistic
-                                :value="balanceStatistics.money && balanceStatistics.balance ? (Number.parseFloat(balanceStatistics.money) + Number.parseFloat(balanceStatistics.balance)).toFixed(2) : '0.00'"></el-statistic>
+                            <el-statistic :value="balanceStatistics.money && balanceStatistics.balance ? (Number.parseFloat(balanceStatistics.money) + Number.parseFloat(balanceStatistics.balance)).toFixed(2) : '0.00'"></el-statistic>
                             <div class="statistic-footer">
                                 <div class="footer-item text-[14px] text-[#666]">
                                     <span>{{ t('totalAllBalance') }}</span>
@@ -39,6 +41,7 @@
                     </el-col>
                 </el-row>
             </el-card>
+
             <el-card class="box-card !border-none mb-[10px] table-search-wrap" shadow="never">
                 <el-form :inline="true" :model="memberAccountLogTableData.searchParam" ref="searchFormRef">
 
@@ -69,7 +72,6 @@
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
                     </el-form-item>
                 </el-form>
-
             </el-card>
 
             <div class="mt-[10px]">
@@ -126,7 +128,9 @@
                 </div>
             </div>
         </el-card>
+
         <balance-info ref="balanceDialog" @complete="loadMemberAccountLogList" />
+
     </div>
 </template>
 
@@ -147,8 +151,9 @@ import balanceInfo from '@/app/views/member/components/member-balance-info.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
-const member_id: number = parseInt(route.query.id || 0)
 const pageName = route.meta.title
+
+const member_id: number = parseInt(route.query.id || 0)
 
 const memberAccountLogTableData = reactive({
     page: 1,

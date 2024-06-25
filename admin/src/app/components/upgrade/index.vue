@@ -18,7 +18,7 @@
                 <el-scrollbar class="flex-1 h-0 mt-[20px]">
                     <div class="mt-[20px]" v-for="(item, index) in upgradeContent.version_list" :key="index">
                         <div class="font-bold text-lg">{{ item.version_no }}</div>
-                        <div class="mt-[5px]">{{ item.release_time }}</div>
+                        <div class="mt-[5px]" v-if="item.release_time">{{ item.release_time }}</div>
                         <div class="mt-[10px] p-[10px] rounded bg-[#f4f4f5] whitespace-pre" v-if="item.upgrade_log" v-html="item.upgrade_log"></div>
                     </div>
                 </el-scrollbar>
@@ -45,8 +45,7 @@
                                     <span>{{ t('status') }}</span>
                                 </el-col>
                             </el-row>
-                            <el-row class="pb-[10px] items pl-[15px]"
-                                    v-for="item in upgradeCheck.dir.is_readable">
+                            <el-row class="pb-[10px] items pl-[15px]" v-for="item in upgradeCheck.dir.is_readable">
                                 <el-col :span="12">
                                     <span>{{ item.dir }}</span>
                                 </el-col>
@@ -56,14 +55,13 @@
                                 <el-col :span="6">
                                     <span v-if="item.status"><el-icon color="green"><Select /></el-icon></span>
                                     <span v-else>
-                                            <el-icon color="red">
-                                                <CloseBold />
-                                            </el-icon>
-                                        </span>
+                                        <el-icon color="red">
+                                            <CloseBold />
+                                        </el-icon>
+                                    </span>
                                 </el-col>
                             </el-row>
-                            <el-row class="pb-[10px] items pl-[15px]"
-                                    v-for="item in upgradeCheck.dir.is_write">
+                            <el-row class="pb-[10px] items pl-[15px]" v-for="item in upgradeCheck.dir.is_write">
                                 <el-col :span="12">
                                     <span>{{ item.dir }}</span>
                                 </el-col>
@@ -73,10 +71,10 @@
                                 <el-col :span="6">
                                     <span v-if="item.status"><el-icon color="green"><Select /></el-icon></span>
                                     <span v-else>
-                                            <el-icon color="red">
-                                                <CloseBold />
-                                            </el-icon>
-                                        </span>
+                                        <el-icon color="red">
+                                            <CloseBold />
+                                        </el-icon>
+                                    </span>
                                 </el-col>
                             </el-row>
                         </div>
@@ -84,8 +82,7 @@
                 </el-scrollbar>
             </div>
             <div class="h-[60vh]" v-show="upgradeTask">
-                <terminal ref="terminalRef" :context="upgradeTask ? upgradeTask.upgrade.app_key : ''" :init-log="null" :show-header="false"
-                          :show-log-time="true" @exec-cmd="onExecCmd"/>
+                <terminal ref="terminalRef" :context="upgradeTask ? upgradeTask.upgrade.app_key : ''" :init-log="null" :show-header="false" :show-log-time="true" @exec-cmd="onExecCmd"/>
             </div>
         </div>
 
@@ -103,18 +100,30 @@
         </div>
     </el-dialog>
 
+    <el-dialog v-model="upgradeTipsShowDialog" :title="t('warning')" width="500px" draggable>
+        <span v-html="t('upgrade.upgradeTips')"></span>
+        <template #footer>
+            <div class="flex justify-end">
+                <el-button @click="upgradeTipsConfirm(true)" type="primary">{{ t('upgrade.knownToKnow') }}</el-button>
+                <el-button @click="upgradeTipsConfirm()" type="primary" plain>{{ t('upgrade.upgradeButton') }}</el-button>
+                <el-button @click="upgradeTipsShowDialog = false">{{ t('cancel') }}</el-button>
+            </div>
+        </template>
+    </el-dialog>
+
     <cloud-build ref="cloudBuildRef" />
 </template>
 
 <script lang="ts" setup>
-import {ref, h, watch} from 'vue'
+import { ref, h, watch } from 'vue'
 import { t } from '@/lang'
 import { getUpgradeContent, getUpgradeTask, upgradeAddon, executeUpgrade, preUpgradeCheck, clearUpgradeTask } from '@/app/api/upgrade'
 import { Terminal, TerminalFlash } from 'vue-web-terminal'
 import 'vue-web-terminal/lib/theme/dark.css'
-import { AnyObject } from "@/types/global"
+import { AnyObject } from '@/types/global'
 import CloudBuild from '@/app/components/cloud-build/index.vue'
-import { ElNotification, ElMessage, ElMessageBox } from "element-plus"
+import { ElNotification, ElMessage, ElMessageBox } from 'element-plus'
+import Storage from '@/utils/storage'
 
 const showDialog = ref<boolean>(false)
 const upgradeContent = ref<null | AnyObject>(null)
@@ -125,6 +134,7 @@ const uploading = ref(false)
 const terminalRef = ref(null)
 const emits = defineEmits(['complete'])
 const cloudBuildRef = ref(null)
+const upgradeTipsShowDialog = ref<boolean>(false)
 
 let upgradeLog = []
 /**
@@ -229,16 +239,20 @@ const open = (addonKey: string = '') => {
     if (upgradeTask.value) {
         ElMessage({ message: '已有正在执行中的升级任务', type: 'error' })
         showDialog.value = true
-        return
+    } else {
+        getUpgradeContent(addonKey).then(({ data }) => {
+            upgradeContent.value = data
+            if (!data.version_list.length) {
+                ElMessage({ message: '已经是最新版本了', type: 'error' })
+                return
+            }
+            if (Storage.get('upgradeTipsLock')) {
+                showDialog.value = true
+            } else {
+                upgradeTipsShowDialog.value = true
+            }
+        }).catch()
     }
-    getUpgradeContent(addonKey).then(({ data }) => {
-        upgradeContent.value = data
-        if (!data.version_list.length) {
-            ElMessage({ message: '已经是最新版本了', type: 'error' })
-            return
-        }
-        showDialog.value = true
-    }).catch()
 }
 
 /**
@@ -307,6 +321,12 @@ const clearUpgradeTaskFn = () => {
 const handleCloudBuild = () => {
     showDialog.value = false
     cloudBuildRef.value?.open()
+}
+
+const upgradeTipsConfirm = (isLock: boolean = false) => {
+    isLock && Storage.set({ key: 'upgradeTipsLock', data: isLock })
+    upgradeTipsShowDialog.value = false
+    !isLock && (showDialog.value = true)
 }
 
 defineExpose({

@@ -36,7 +36,7 @@
                                 <el-form-item :label="t('hotArea') + (index + 1)">
                                     <div class="flex items-center">
                                         <diy-link v-model="item.link" />
-                                        <icon class="del cursor-pointer mx-[10px]" name="element-CircleCloseFilled" color="#bbb" size="20px" @click="dragBoxArr.splice(index, 1)" />
+                                        <icon class="del cursor-pointer mx-[10px]" name="element CircleCloseFilled" color="#bbb" size="20px" @click="dragBoxArr.splice(index, 1)" />
                                     </div>
                                 </el-form-item>
                             </div>
@@ -60,7 +60,7 @@
 import { t } from '@/lang'
 import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { img } from '@/utils/common'
+import { img,deepClone } from '@/utils/common'
 
 const prop = defineProps({
     modelValue: {
@@ -585,7 +585,8 @@ const save = () => {
         item.unit = '%'
     })
 
-    value.value.heatMapData = dragBoxArr
+    value.value.heatMapData = deepClone(dragBoxArr)
+
     showDialog.value = false
 }
 

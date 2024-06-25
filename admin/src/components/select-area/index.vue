@@ -19,7 +19,6 @@
 import { reactive, onBeforeMount, watch } from 'vue'
 import { getAreaListByPid } from '@/app/api/sys'
 import { t } from '@/lang'
-// import { da } from 'element-plus/es/locale'
 
 // 定义数据类型
 export interface areaType {

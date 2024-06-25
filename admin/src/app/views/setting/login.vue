@@ -1,13 +1,11 @@
 <template>
     <div class="main-container">
-        <div class="flex ml-[18px] justify-between items-center mt-[20px]">
-            <span class="text-page-title">{{pageName}}</span>
-        </div>
-        <el-form :model="formData" label-width="150px" ref="ruleFormRef" class="page-form" v-loading="loading">
+
+        <el-form class="page-form" :model="formData" :rules="formRules"  label-width="150px" ref="ruleFormRef" v-loading="loading">
             <el-card class="box-card !border-none" shadow="never">
                 <h3 class="panel-title !text-sm">{{ t('commonSetting') }}</h3>
 
-                <el-form-item :label="t('logonMode')">
+                <el-form-item :label="t('logonMode')" prop="type">
                     <el-checkbox v-model="formData.is_username" :label="t('isUsername')" @change="switchChange($event, 'is_username')" />
                     <div class="form-tip">{{ t('isUsernameTip') }}</div>
                     <el-checkbox v-model="formData.is_mobile" :label="t('isMobile')" @change="switchChange($event, 'is_mobile')" />
@@ -23,7 +21,9 @@
                     <el-switch v-model="formData.agreement_show" @change="switchChange($event, 'agreement_show')" />
                     <div class="form-tip">{{ t('agreementTips') }}</div>
                 </el-form-item>
+            </el-card>
 
+            <el-card class="box-card mt-[15px] !border-none" shadow="never">
                 <h3 class="panel-title !text-sm">{{ t('tripartiteSetting') }}</h3>
 
                 <el-form-item :label="t('isAuthRegister')" prop="formData.is_auth_register">
@@ -32,6 +32,7 @@
                 </el-form-item>
             </el-card>
         </el-form>
+
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
                 <el-button type="primary" @click="onSave(ruleFormRef)">{{ t('save') }}</el-button>
@@ -41,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { t } from '@/lang'
 import { getLoginConfig, setLoginConfig } from '@/app/api/member'
 import { FormInstance } from 'element-plus'
@@ -58,6 +59,24 @@ const formData = reactive<Record<string, number | boolean>>({
     is_auth_register: 0,
     is_bind_mobile: 0,
     agreement_show: 0
+})
+
+const formRules = computed(() => {
+    return {
+        type: [
+            {
+                required: true,
+                trigger: 'change',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (!formData.is_mobile && !formData.is_username) {
+                        callback(new Error(t('mobileOrUsernameNoEmpty')))
+                    } else {
+                        callback()
+                    }
+                }
+            }
+        ]
+    }
 })
 
 const setFormData = async (id: number = 0) => {
@@ -92,9 +111,4 @@ const onSave = async (formEl: FormInstance | undefined) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.el-form .form-tip {
-    line-height: 1.5;
-    margin-top: 5px;
-}
-</style>
+<style lang="scss" scoped></style>

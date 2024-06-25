@@ -17,7 +17,7 @@
                             <el-input v-model="form.username" :placeholder="t('userPlaceholder')"
                                       @keyup.enter="handleLogin(formRef)" class="h-[40px] input-with-select">
                                 <template #prepend>
-                                    <icon name="element-User" />
+                                    <icon name="element User" />
                                 </template>
                             </el-input>
                         </el-form-item>
@@ -27,7 +27,7 @@
                                       @keyup.enter="handleLogin(formRef)" :show-password="true"
                                       class="h-[40px] input-with-select">
                                 <template #prepend>
-                                    <icon name="element-Lock" />
+                                    <icon name="element Lock" />
                                 </template>
                             </el-input>
                         </el-form-item>

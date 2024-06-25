@@ -1,52 +1,42 @@
 <template>
     <div class="main-container">
-        <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center">
-                <span class="text-page-title">{{pageName}}</span>
-            </div>
-            <el-form :model="formData" label-width="150px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
-                <el-card class="box-card !border-none" shadow="never">
-                    <h3 class="panel-title !text-sm">{{ t('copyrightEdit') }}</h3>
-                    <el-form-item :label="t('logo')">
-                        <upload-image v-model="formData.logo" />
-                    </el-form-item>
 
-                    <el-form-item :label="t('companyName')" prop="company_name">
-                        <el-input v-model="formData.company_name" :placeholder="t('companyNamePlaceholder')" class="input-width" clearable maxlength="30"/>
-                    </el-form-item>
+        <el-form class="page-form" :model="formData" label-width="150px" ref="formRef" :rules="formRules" v-loading="loading">
+            <el-card class="box-card !border-none" shadow="never">
+                <h3 class="panel-title !text-sm">{{ t('copyrightEdit') }}</h3>
 
-                    <el-form-item :label="t('copyrightLink')" >
-                        <el-input v-model="formData.copyright_link" :placeholder="t('copyrightLinkPlaceholder')" class="input-width" clearable />
-                    </el-form-item>
+                <el-form-item :label="t('logo')">
+                    <upload-image v-model="formData.logo" />
+                </el-form-item>
+                <el-form-item :label="t('companyName')" prop="company_name">
+                    <el-input v-model="formData.company_name" :placeholder="t('companyNamePlaceholder')" class="input-width" clearable maxlength="30"/>
+                </el-form-item>
+                <el-form-item :label="t('copyrightLink')" >
+                    <el-input v-model="formData.copyright_link" :placeholder="t('copyrightLinkPlaceholder')" class="input-width" clearable />
+                </el-form-item>
+                <el-form-item :label="t('copyrightDesc')" >
+                    <el-input v-model="formData.copyright_desc" type="textarea" rows="4" clearable :placeholder="t('copyrightDescPlaceholder')" class="input-width" maxlength="150" />
+                </el-form-item>
+            </el-card>
 
-                    <el-form-item :label="t('copyrightDesc')" >
-                        <el-input v-model="formData.copyright_desc" type="textarea" rows="4" clearable :placeholder="t('copyrightDescPlaceholder')" class="input-width" maxlength="150" />
-                    </el-form-item>
+            <el-card class="box-card mt-[15px] !border-none" shadow="never">
+                <h3 class="panel-title !text-sm">{{ t('putOnRecordEdit') }}</h3>
 
-                </el-card>
+                <el-form-item :label="t('icp')" prop="icp">
+                    <el-input v-model="formData.icp" :placeholder="t('icpPlaceholder')" class="input-width" clearable maxlength="20"/>
+                </el-form-item>
+                <el-form-item :label="t('govRecord')" >
+                    <el-input v-model="formData.gov_record" :placeholder="t('govRecordPlaceholder')" class="input-width" clearable maxlength="50"/>
+                </el-form-item>
+                <el-form-item :label="t('govUrl')" >
+                    <el-input v-model="formData.gov_url" :placeholder="t('govUrlPlaceholder')" class="input-width" clearable />
+                </el-form-item>
+                <el-form-item :label="t('marketSupervisionUrl')" >
+                    <el-input v-model="formData.market_supervision_url" rows="4" clearable :placeholder="t('marketSupervisionUrlPlaceholder')" class="input-width" />
+                </el-form-item>
+            </el-card>
+        </el-form>
 
-                <el-card class="box-card !border-none mt-[16px]" shadow="never">
-                    <h3 class="panel-title !text-sm">{{ t('putOnRecordEdit') }}</h3>
-
-                    <el-form-item :label="t('icp')" prop="icp">
-                        <el-input v-model="formData.icp" :placeholder="t('icpPlaceholder')" class="input-width" clearable maxlength="20"/>
-                    </el-form-item>
-
-                    <el-form-item :label="t('govRecord')" >
-                        <el-input v-model="formData.gov_record" :placeholder="t('govRecordPlaceholder')" class="input-width" clearable maxlength="50"/>
-                    </el-form-item>
-
-                    <el-form-item :label="t('govUrl')" >
-                        <el-input v-model="formData.gov_url" :placeholder="t('govUrlPlaceholder')" class="input-width" clearable />
-                    </el-form-item>
-
-                    <el-form-item :label="t('marketSupervisionUrl')" >
-                        <el-input v-model="formData.market_supervision_url" rows="4" clearable :placeholder="t('marketSupervisionUrlPlaceholder')" class="input-width" />
-                    </el-form-item>
-
-                </el-card>
-            </el-form>
-        </el-card>
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
                 <el-button type="primary" :loading="loading" @click="save(formRef)">{{ t('save') }}</el-button>

@@ -10,7 +10,7 @@
 				</el-form-item>
 				<ul class="selected-template-list">
 					<li v-for="(item,i) in templateList" :key="i" :class="[(item.className == diyStore.editComponent.mode) ?  'selected' : '' ]" @click="changeTemplateList(i)">
-						<icon :name="'iconfont-' + item.src" size="16px"/>
+						<icon :name="'iconfont ' + item.src" size="16px"/>
 					</li>
 				</ul>
 			</el-form>
@@ -96,7 +96,7 @@ diyStore.editComponent.verify = (index: number) => {
 const templateList = ref([
     {
         name: '1行2个',
-        src: 'iconyihangliangge',
+        src: 'iconyihang2gepc1',
         className: 'row1-of2',
         dimensionScale: [
             {
@@ -114,7 +114,7 @@ const templateList = ref([
     },
     {
         name: '1行3个',
-        src: 'iconyihangsange',
+        src: 'iconyihang3gepc',
         className: 'row1-of3',
         dimensionScale: [
             {
@@ -137,7 +137,7 @@ const templateList = ref([
     },
     {
         name: '1行4个',
-        src: 'iconyihangsige',
+        src: 'iconyihang4gepc',
         className: 'row1-of4',
         dimensionScale: [
             {
@@ -165,7 +165,7 @@ const templateList = ref([
     },
     {
         name: '2左2右',
-        src: 'iconmofang-liangzuoliangyou',
+        src: 'iconliangzuoliangyoupc',
         className: 'row2-lt-of2-rt',
         dimensionScale: [
             {
@@ -193,7 +193,7 @@ const templateList = ref([
     },
     {
         name: '1左2右',
-        src: 'iconmofang-yizuoliangyou',
+        src: 'iconyizuoliangyoupc',
         className: 'row1-lt-of2-rt',
         dimensionScale: [
             {
@@ -216,7 +216,7 @@ const templateList = ref([
     },
     {
         name: '1上2下',
-        src: 'iconmofang-yishangliangxia',
+        src: 'iconyishangliangxiapc',
         className: 'row1-tp-of2-bm',
         dimensionScale: [
             {
@@ -239,7 +239,7 @@ const templateList = ref([
     },
     {
         name: '1左3右',
-        src: 'iconxuanzemoban-yizuosanyou',
+        src: 'iconyizuosanyoupc',
         className: 'row1-lt-of1-tp-of2-bm',
         dimensionScale: [
             {

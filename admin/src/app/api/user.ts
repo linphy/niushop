@@ -6,8 +6,8 @@ import request from '@/utils/request'
 
 /**
  * 获取用户列表
- * @param params 
- * @returns 
+ * @param params
+ * @returns
  */
 export function getUserList(params: Record<string, any>) {
     return request.get(`user`, { params })
@@ -16,7 +16,7 @@ export function getUserList(params: Record<string, any>) {
 /**
  * 获取用户详情
  * @param uid 用户uid
- * @returns 
+ * @returns
  */
 export function getUserInfo(uid: number) {
     return request.get(`user/${uid}`);
@@ -24,8 +24,8 @@ export function getUserInfo(uid: number) {
 
 /**
  * 添加用户
- * @param params 
- * @returns 
+ * @param params
+ * @returns
  */
 export function addUser(params: Record<string, any>) {
     return request.post('user', params, { showSuccessMessage: true })
@@ -40,14 +40,14 @@ export function editUser(params: Record<string, any>) {
 }
 
 /**
- * 锁定用户 
+ * 锁定用户
  */
 export function lockUser(uid: number) {
     return request.put(`user/lock/${uid}`, {}, { showSuccessMessage: true })
 }
 
 /**
- * 解除用户锁定 
+ * 解除用户锁定
  */
 export function unlockUser(uid: number) {
     return request.put(`user/unlock/${uid}`, {}, { showSuccessMessage: true })

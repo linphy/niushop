@@ -28,9 +28,9 @@
 </template>
 <script type="text/babel">
 /**
-     * Verify 验证码组件
-     * @description 分发验证码使用
-     * */
+ * Verify 验证码组件
+ * @description 分发验证码使用
+ * */
 import VerifySlide from './Verify/VerifySlide.vue'
 import VerifyPoints from './Verify/VerifyPoints.vue'
 import { computed, ref, toRefs, watchEffect } from 'vue'
@@ -93,9 +93,9 @@ export default {
             }
         })
         /**
-             * refresh
-             * @description 刷新
-             * */
+         * refresh
+         * @description 刷新
+         * */
         const refresh = () => {
             if (instance.value.refresh) {
                 instance.value.refresh()

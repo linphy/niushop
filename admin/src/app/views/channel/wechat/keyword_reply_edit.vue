@@ -1,15 +1,12 @@
 <template>
+    <!--关键字回复添加/编辑-->
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="router.push({ path: '/channel/wechat/reply' })">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
 
-        <el-form :model="formData" label-width="150px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-form class="page-form mt-[15px]" :model="formData" label-width="150px" ref="formRef" :rules="formRules" v-loading="loading">
             <el-card class="box-card !border-none" shadow="never">
 
                 <el-form-item :label="t('ruleName')" prop="name">
@@ -46,7 +43,7 @@
                             <div class="w-[300px] bg-page p-[10px] mr-[10px] mb-[10px] rounded" v-if="item.msgtype == 'miniprogrampage'">
                                 小程序卡片【{{ item.miniprogrampage.appid }}】
                             </div>
-                            <icon name="element-Delete" class="cursor-pointer" @click="removeContent(index)"/>
+                            <icon name="element Delete" class="cursor-pointer" @click="removeContent(index)"/>
                         </div>
                         <div class="mt-[10px]">
                             <el-button type="primary" @click="showDialog = true">{{ t('addReplyContent') }}</el-button>
@@ -68,19 +65,18 @@
                 <el-button type="primary" :loading="loading" @click="save(formRef)">{{ t('save') }}</el-button>
             </div>
         </div>
+
+        <el-dialog v-model="showDialog" :title="t('addReplyContent')" width="60%" :destroy-on-close="true">
+            <reply-form v-model="replyContent" ref="ReplyRef"/>
+
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
+                    <el-button type="primary" @click="addReplyContent">{{ t('confirm') }}</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
-
-    <el-dialog v-model="showDialog" :title="t('addReplyContent')" width="60%"
-       :destroy-on-close="true">
-        <reply-form v-model="replyContent" ref="ReplyRef"/>
-
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" @click="addReplyContent">{{ t('confirm') }}</el-button>
-            </span>
-        </template>
-    </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -88,6 +84,7 @@ import { reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { getKeywordsReplyInfo, editKeywordsReply, addKeywordsReply } from '@/app/api/wechat'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import ReplyForm from '@/app/views/channel/wechat/components/reply-form.vue'
 import NewsCard from '@/app/views/channel/wechat/components/news-card.vue'

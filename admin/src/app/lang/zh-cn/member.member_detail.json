@@ -21,8 +21,8 @@
     "sexPlaceholder": "请选择性别",
     "headimg": "会员头像",
     "wxUnionid": "微信unionid",
-    "weappOpenid": "微信公众号openid",
-    "wxOpenid": "微信小程序openid",
+    "weappOpenid": "微信小程序openid",
+    "wxOpenid": "微信公众号openid",
     "memberLabel": "会员标签",
     "memberLabelPlaceholder": "请选择会员标签",
     "nickNamePlaceholder": "请输入会员名称",
@@ -47,5 +47,9 @@
     "money":"可提现余额",
     "adjustPoint":"调整积分",
     "commission":"佣金",
-    "memberNull":"未读取到会员详情信息"
+    "memberNull":"未读取到会员详情信息",
+    "memberLevel": "会员等级",
+    "memberLevelUpdate": "修改等级至",
+    "memberLevelUpdateTips": "该操作只会修改会员等级不会发放等级礼包",
+    "memberLevelPlaceholder": "请选择会员等级"
 }

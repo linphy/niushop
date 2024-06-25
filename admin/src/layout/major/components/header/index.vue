@@ -10,7 +10,7 @@
                     </div> -->
                     <!-- 刷新当前页 -->
                     <div class="navbar-item flex items-center h-full cursor-pointer" @click="refreshRouter">
-                        <icon name="element-Refresh" />
+                        <icon name="element Refresh" />
                     </div>
                     <!-- 面包屑导航 -->
                     <div class="flex items-center h-full pl-[10px] hidden-xs-only">

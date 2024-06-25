@@ -1,8 +1,7 @@
 <template>
-    <el-dialog v-model="showDialog" :title="t('cloudbuild.title')" width="850px" :close-on-click-modal="false"
-               :close-on-press-escape="false" :before-close="dialogClose">
+    <el-dialog v-model="showDialog" :title="t('cloudbuild.title')" width="850px" :close-on-click-modal="false" :close-on-press-escape="false" :before-close="dialogClose">
 
-        <div v-show="active == 'build'" class="h-[60vh]" v-loading="loading">
+        <div v-if="active == 'build'" class="h-[60vh]" v-loading="loading">
             <div class="h-[60vh] flex flex-col" v-if="cloudBuildCheck && !cloudBuildTask">
                 <el-scrollbar>
                     <div class="bg-[#fff] my-3" v-if="cloudBuildCheck.dir">
@@ -19,8 +18,7 @@
                                     <span>{{ t('status') }}</span>
                                 </el-col>
                             </el-row>
-                            <el-row class="pb-[10px] items pl-[15px]"
-                                    v-for="item in cloudBuildCheck.dir.is_readable">
+                            <el-row class="pb-[10px] items pl-[15px]" v-for="item in cloudBuildCheck.dir.is_readable">
                                 <el-col :span="12">
                                     <span>{{ item.dir }}</span>
                                 </el-col>
@@ -36,8 +34,7 @@
                                         </span>
                                 </el-col>
                             </el-row>
-                            <el-row class="pb-[10px] items pl-[15px]"
-                                    v-for="item in cloudBuildCheck.dir.is_write">
+                            <el-row class="pb-[10px] items pl-[15px]" v-for="item in cloudBuildCheck.dir.is_write">
                                 <el-col :span="12">
                                     <span>{{ item.dir }}</span>
                                 </el-col>
@@ -47,10 +44,10 @@
                                 <el-col :span="6">
                                     <span v-if="item.status"><el-icon color="green"><Select /></el-icon></span>
                                     <span v-else>
-                                            <el-icon color="red">
-                                                <CloseBold />
-                                            </el-icon>
-                                        </span>
+                                        <el-icon color="red">
+                                            <CloseBold />
+                                        </el-icon>
+                                    </span>
                                 </el-col>
                             </el-row>
                         </div>
@@ -58,12 +55,11 @@
                 </el-scrollbar>
             </div>
             <div class="h-[60vh]" v-show="cloudBuildTask">
-                <terminal ref="terminalRef" context="" :init-log="null" :show-header="false"
-                          :show-log-time="true" @exec-cmd="onExecCmd"/>
+                <terminal ref="terminalRef" context="" :init-log="null" :show-header="false" :show-log-time="true" @exec-cmd="onExecCmd"/>
             </div>
         </div>
 
-        <div v-show="active == 'complete'">
+        <div v-if="active == 'complete'">
             <div class="h-[60vh] flex flex-col">
                 <div class="flex-1 h-0">
                     <el-result icon="success" :title="t('cloudbuild.cloudbuildSuccess')"></el-result>
@@ -81,7 +77,6 @@ import { Terminal, TerminalFlash } from 'vue-web-terminal'
 import 'vue-web-terminal/lib/theme/dark.css'
 import { AnyObject } from "@/types/global"
 import { ElNotification, ElMessageBox } from "element-plus"
-import {preUpgradeCheck} from "@/app/api/upgrade";
 
 const showDialog = ref<boolean>(false)
 const cloudBuildTask = ref<null | AnyObject>(null)
@@ -120,7 +115,7 @@ const getCloudBuildLogFn = () => {
             return
         }
 
-        const data = res.data.data ?? []
+        const data = res.data.data ?? [];
         let error = ''
 
         if (data[0] && data[0].length && showDialog.value) {
@@ -174,11 +169,11 @@ const elNotificationClick = () => {
 }
 
 const open = async () => {
-    showDialog.value = true
     loading.value = true
     active.value = 'build'
 
     if (cloudBuildTask.value) {
+        showDialog.value = true
         loading.value = false
         getCloudBuildLogFn()
         return
@@ -189,9 +184,11 @@ const open = async () => {
             cloudBuild().then(({ data }) => {
                 loading.value = false
                 cloudBuildTask.value = data
+                showDialog.value = true
                 getCloudBuildLogFn()
             }).catch(() => {
                 showDialog.value = false
+                loading.value = false
             })
         } else {
             loading.value = false
@@ -205,7 +202,7 @@ const open = async () => {
 /**
  * 升级进度动画
  */
-let flashInterval = null
+let flashInterval: null | number = null
 const terminalFlash = new TerminalFlash()
 const onExecCmd = (key, command, success, failed, name) => {
     if (command == '开始编译') {
@@ -230,7 +227,7 @@ const makeIterator = (array: string[]) => {
 }
 
 const dialogClose = (done: () => {}) => {
-    if (active.value == 'cloudbuild' && cloudBuildTask.value) {
+    if (active.value == 'build' && cloudBuildTask.value) {
         ElMessageBox.confirm(
             t('cloudbuild.showDialogCloseTips'),
             t('warning'),
@@ -240,6 +237,7 @@ const dialogClose = (done: () => {}) => {
                 type: 'warning'
             }
         ).then(() => {
+            terminalRef.value.execute('clear')
             done()
         }).catch(() => { })
     } else {
@@ -249,6 +247,7 @@ const dialogClose = (done: () => {}) => {
 
 watch(() => showDialog.value, () => {
     if (!showDialog.value) {
+        cloudBuildTask.value = null
         active.value = 'build'
         cloudBuildLog = []
         flashInterval && clearInterval(flashInterval)
@@ -258,7 +257,8 @@ watch(() => showDialog.value, () => {
 
 defineExpose({
     open,
-    cloudBuildTask
+    cloudBuildTask,
+    loading
 })
 </script>
 

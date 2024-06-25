@@ -1,10 +1,13 @@
 <template>
+    <!--会员提现-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center mb-[5px]">
+
+            <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
             </div>
-            <el-card class="box-card !border-none base-bg !px-[35px]" shadow="never">
+
+            <el-card class="box-card !border-none !px-[35px]" shadow="never">
                 <el-row class="flex">
                     <el-col :span="12">
                         <div class="statistic-card">
@@ -141,7 +144,6 @@
                         @size-change="loadOrderList()" @current-change="loadOrderList" />
                 </div>
             </div>
-
         </el-card>
 
         <!-- 详情 -->
@@ -169,6 +171,7 @@
                     <div class="input-width"> {{ cashOutInfo.status_name }} </div>
                 </el-form-item>
             </el-form>
+
             <template #footer>
                 <span class="dialog-footer">
                     <el-button type="primary" @click="cashOutShowDialog = false">{{ t('confirm') }}</el-button>
@@ -356,7 +359,6 @@ const transferFn = (data:any) => {
  * 详情
  * @param data
  */
-
 const cashOutShowDialog = ref(false)
 const cashOutInfo = ref({
     nickname: '',
@@ -394,7 +396,6 @@ const cashOutAuditFn = (data:any) => {
 
 /**
  *  拒绝审核
- * @param data
  */
 const confirm = () => {
     auditShowDialog.value = false

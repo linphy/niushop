@@ -23,7 +23,7 @@
                 {{ data.value.news_item[0].title }}
             </div>
             <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60 cursor-pointer" @click="data = null" v-show="hover && props.mode == 'select'">
-                <icon name="element-Delete" color="#fff" size="40px" />
+                <icon name="element Delete" color="#fff" size="40px" />
             </div>
         </div>
     </div>

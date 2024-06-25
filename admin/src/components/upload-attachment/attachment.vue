@@ -4,8 +4,7 @@
         <!-- 分组 -->
         <div class="group-wrap w-[180px] p-[15px] h-full border-r border-color flex flex-col">
 
-            <el-input v-model="categoryParam.name" class="m-0" :placeholder="t('upload.attachmentCategoryPlaceholder')"
-                clearable prefix-icon="Search" @input="getAttachmentCategoryList()" />
+            <el-input v-model="categoryParam.name" class="m-0" :placeholder="t('upload.attachmentCategoryPlaceholder')" clearable prefix-icon="Search" @input="getAttachmentCategoryList()" />
             <div class="group-list flex-1 my-[10px] h-0">
                 <el-scrollbar>
                     <div class="group-item p-[10px] leading-none text-xs rounded cursor-pointer" :class="{ active: attachmentParam.cate_id == 0 }" @click="attachmentParam.cate_id = 0">
@@ -14,12 +13,11 @@
                     <div class="group-item px-[10px] text-xs rounded cursor-pointer flex"
                         v-for="(item, index) in attachmentCategory.data" :key="index"
                         :class="{ active: attachmentParam.cate_id == item.id }">
-                        <div class="flex-1 leading-none truncate py-[10px]" @click="attachmentParam.cate_id = item.id">
-                            {{ item.name }}</div>
+                        <div class="flex-1 leading-none truncate py-[10px]" @click="attachmentParam.cate_id = item.id">{{ item.name }}</div>
                         <div class="leading-none operate py-[10px]" v-if="scene == 'attachment' && prop.type != 'icon'">
                             <!-- 图片操作 -->
                             <el-dropdown :hide-on-click="false" v-if="scene == 'attachment'">
-                                <icon name="element-MoreFilled" class="cursor-pointer ml-[10px]" size="14px" />
+                                <icon name="element MoreFilled" class="cursor-pointer ml-[10px]" size="14px" />
                                 {{ item.name }}
                                 <template #dropdown>
                                     <el-dropdown-menu>
@@ -59,9 +57,7 @@
                     </div>
                 </el-col>
                 <el-col :span="14" class="text-right">
-                    <el-input v-model="attachmentParam.real_name" class="m-0 w-[200px]" clearable
-                        :placeholder="t('upload.placeholder' + type + 'Name')" prefix-icon="Search"
-                        @input="getAttachmentList()" />
+                    <el-input v-model="attachmentParam.real_name" class="m-0 !w-[200px]" clearable :placeholder="t('upload.placeholder' + type + 'Name')" prefix-icon="Search" @input="getAttachmentList()" />
                 </el-col>
             </el-row>
             <div class="flex-1 my-[15px] h-0" v-loading="attachment.loading">
@@ -73,9 +69,9 @@
 
                                 <el-image :src="img(item.url)" fit="contain" v-if="type == 'image'"/>
                                 <video :src="img(item.url)" v-else-if="type == 'video'"/>
-                                <icon :name="item.url" size="40px" v-else-if="type == 'icon'"/>
+                                <icon :name="item.url" size="24px" v-else-if="type == 'icon'"/>
                                 <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60" v-show="selectedFile[item.att_id]">
-                                    <icon name="element-Select" color="#fff" size="40px" />
+                                    <icon name="element Select" color="#fff" size="40px" />
                                     <div class="file-box-active absolute z-[1] bottom-0 right-0 w-full h-full">
                                         <span class="absolute bottom-[2px] right-[2px] text-white z-[2] leading-none">{{ getFileIndex(item.att_id) }}</span>
                                     </div>
@@ -90,7 +86,7 @@
                                 </el-tooltip>
                                 <!-- 图片操作 -->
                                 <el-dropdown :hide-on-click="false" v-if="scene == 'attachment'" class="attachment-action hidden ">
-                                    <icon name="element-MoreFilled" class="cursor-pointer ml-[8px]" size="14px" />
+                                    <icon name="element MoreFilled" class="cursor-pointer ml-[8px]" size="14px" />
                                     <template #dropdown>
                                         <el-dropdown-menu>
                                             <el-dropdown-item class="text-center" @click="previewImage(index)" v-if="item.att_type == 'image'">
@@ -118,7 +114,7 @@
                             <div class="attachment-wrap w-full rounded cursor-pointer overflow-hidden relative flex items-center justify-center h-[120px]">
                                 <el-image :src="img(item.url)" fit="contain" v-if="type == 'image'" :preview-src-list="item.image_list"/>
                                 <video :src="img(item.url)" v-else-if="type == 'video'"></video>
-                                <icon :name="item.url" size="40px" v-else-if="type == 'icon'"></icon>
+                                <icon :name="item.url" size="24px" v-else-if="type == 'icon'"></icon>
                             </div>
                             <div class="flex items-center">
                                 <el-tooltip placement="top">
@@ -128,10 +124,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center" v-else>
-                        <el-empty v-if="!attachment.loading"
-                            :description="type == 'icon' ? t('upload.iconEmpty') : t('upload.attachmentEmpty')"
-                            :image-size="100" />
+                    <div class="flex absolute top-0 left-0 right-0 bottom-0 items-center justify-center" v-else>
+                        <div class="flex flex-col items-center" v-if="!attachment.loading">
+                            <img src="@/app/assets/images/no_attachment.png" class="max-w-[130px] max-h-[130px] mb-[15px]">
+                            <span class="text-[var(--el-text-color-secondary)] text-[14px]">{{type == 'icon' ? t('upload.iconEmpty') : t('upload.attachmentEmpty')}}</span>
+                        </div>
                     </div>
                 </el-scrollbar>
             </div>
@@ -143,7 +140,7 @@
                         <el-button :disabled="batchOperateDisabled" @click="moveAttachmentEvent()">{{ t('upload.move') }}</el-button>
                     </div>
                 </el-col>
-                <el-col :span="scene == 'attachment' ? 16 : 24">
+                <el-col :span="24">
                     <div class="flex h-full justify-end items-center">
                         <el-pagination v-model:current-page="attachment.page" :small="true"
                             v-model:page-size="attachment.limit" :page-sizes="[10, 20, 30, 40, 60]"
@@ -436,7 +433,6 @@ const selectFile = (data: any) => {
         selectedFile[data.att_id] = toRaw(data)
         selectedFileIndex.push(data.att_id);
     }
-
 }
 
 // 获取当前选中文件的下标
@@ -531,7 +527,8 @@ const previewVideo = (index: number) => {
 }
 
 defineExpose({
-    selectedFile
+    selectedFile,
+    selectedFileIndex
 })
 </script>
 

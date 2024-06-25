@@ -101,12 +101,12 @@
                             </el-form-item>
                             <el-form-item :label="t('activeCubeSubTitleBgColor')">
                                 <el-color-picker v-model="item.subTitle.startColor" show-alpha :predefine="diyStore.predefineColors" />
-                                <icon name="iconfont-iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+                                <icon name="iconfont iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
                                 <el-color-picker v-model="item.subTitle.endColor" show-alpha :predefine="diyStore.predefineColors"/>
                             </el-form-item>
                             <el-form-item :label="t('activeListFrameColor')">
                                 <el-color-picker v-model="item.listFrame.startColor" show-alpha :predefine="diyStore.predefineColors" />
-                                <icon name="iconfont-iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+                                <icon name="iconfont iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
                                 <el-color-picker v-model="item.listFrame.endColor" show-alpha :predefine="diyStore.predefineColors"/>
                             </el-form-item>
                         </div>
@@ -118,7 +118,7 @@
 
                             <el-form-item :label="t('activeCubeButtonColor')">
                                 <el-color-picker v-model="item.moreTitle.startColor" show-alpha :predefine="diyStore.predefineColors" />
-                                <icon name="iconfont-iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+                                <icon name="iconfont iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
                                 <el-color-picker v-model="item.moreTitle.endColor" show-alpha :predefine="diyStore.predefineColors"/>
                             </el-form-item>
                         </div>
@@ -128,7 +128,7 @@
 						</el-form-item>
 
 						<div class="del absolute cursor-pointer z-[2] top-[-8px] right-[-8px]" v-show="diyStore.editComponent.list.length > 1" @click="diyStore.editComponent.list.splice(index,1)">
-							<icon name="element-CircleCloseFilled" color="#bbb" size="20px"/>
+							<icon name="element CircleCloseFilled" color="#bbb" size="20px"/>
 						</div>
 					</div>
 				</div>
@@ -160,7 +160,7 @@
 					</el-form-item>
 				<el-form-item :label="t('subTextBgColor')">
 					<el-color-picker v-model="diyStore.editComponent.subTitle.startColor" show-alpha :predefine="diyStore.predefineColors"/>
-					<icon name="iconfont-iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
+					<icon name="iconfont iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
 					<el-color-picker v-model="diyStore.editComponent.subTitle.endColor" show-alpha :predefine="diyStore.predefineColors"/>
 				</el-form-item>
 			</el-form>

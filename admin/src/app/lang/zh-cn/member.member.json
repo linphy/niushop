@@ -42,12 +42,14 @@
     "doubleCipherHint": "输入的两次密码不一致",
     "memberNoHint":"会员编号只能输入字母和数字",
     "mobileHint": "请输入正确的手机号!",
-    "lable": "标签",
-    "setLable": "标签",
+    "memberLabelTag": "标签",
+    "setLabel": "标签",
     "notAvailable": "暂无",
     "memberLabelPlaceholder": "请选择会员标签",
     "memberInfo":"会员信息",
     "memberInfoPlaceholder":"请输入会员编号/昵称/手机号",
 	"lock": "锁定",
-	"normal": "正常"
+	"normal": "正常",
+    "memberLevel": "会员等级",
+    "memberLevelPlaceholder": "请选择会员等级"
 }

@@ -1,36 +1,29 @@
 <template>
-    <div class="main-container bg-[#fff] rounded-[4px]" v-loading="noticeTableData.loading">
-        <div class="flex ml-[18px] justify-between items-center pt-[20px]">
-            <span class="text-page-title">{{ pageName }}</span>
-        </div>
+    <!--消息模板-->
+    <div class="main-container" v-loading="noticeTableData.loading">
         <el-card class="box-card !border-none" shadow="never">
-            <h3 class="panel-title !text-base">{{ t('buyerNotice') }}</h3>
-            <div class="flex flex-row flex-wrap m-[-4px]">
+            <h3 class="panel-title !text-sm">{{ t('buyerNotice') }}</h3>
+
+            <div class="flex flex-row flex-wrap">
                 <el-table :data="noticeTableData.buyer" size="large" :span-method="buyerSpan">
                     <el-table-column prop="addon_name" :label="t('addon')" min-width="120" />
                     <el-table-column prop="name" :label="t('noticeType')" min-width="120" />
                     <el-table-column :label="t('operation')" align="right" fixed="right" min-width="300">
                         <template #default="{ row }">
                             <div class="flex">
-                                <div class="text-sm mr-1 flex items-center cursor-pointer"
-                                     v-if="row.support_type.indexOf('sms') != -1"
-                                     @click="setNotice(row, 'sms')">
+                                <div class="text-sm mr-1 flex items-center cursor-pointer" v-if="row.support_type.indexOf('sms') != -1" @click="setNotice(row, 'sms')">
                                     <el-icon class="text-[15px] mr-[3px]" :class="row.is_sms ? 'open' : ''">
                                         <SuccessFilled />
                                     </el-icon>
                                     <span class="ml-0.5">{{ t('sms') }}</span>
                                 </div>
-                                <div class="text-sm  flex items-center cursor-pointer ml-[20px]"
-                                     v-if="row.support_type.indexOf('wechat') != -1"
-                                     @click="setNotice(row, 'wechat')">
+                                <div class="text-sm  flex items-center cursor-pointer ml-[20px]" v-if="row.support_type.indexOf('wechat') != -1" @click="setNotice(row, 'wechat')">
                                     <el-icon class="text-[15px] mr-[3px]" :class="row.is_wechat ? 'open' : ''">
                                         <SuccessFilled />
                                     </el-icon>
                                     <span class="ml-0.5">{{ t('wechat') }}</span>
                                 </div>
-                                <div class="text-sm  flex items-center cursor-pointer ml-[20px]"
-                                     v-if="row.support_type.indexOf('weapp') != -1"
-                                     @click="setNotice(row, 'weapp')">
+                                <div class="text-sm  flex items-center cursor-pointer ml-[20px]" v-if="row.support_type.indexOf('weapp') != -1" @click="setNotice(row, 'weapp')">
                                     <el-icon class="text-[15px] mr-[3px]" :class="row.is_weapp ? 'open' : ''">
                                         <SuccessFilled />
                                     </el-icon>
@@ -43,9 +36,10 @@
             </div>
         </el-card>
 
-        <el-card class="box-card !border-none mt-[16px]" shadow="never">
-            <h3 class="panel-title !text-base">{{ t('sellerNotice') }}</h3>
-            <div class="flex flex-row flex-wrap m-[-4px]">
+        <el-card class="box-card mt-[15px] !border-none" shadow="never">
+            <h3 class="panel-title !text-sm">{{ t('sellerNotice') }}</h3>
+
+            <div class="flex flex-row flex-wrap">
                 <el-table :data="noticeTableData.seller" size="large" :span-method="buyerSpan">
                     <el-table-column prop="addon_name" :label="t('addon')" min-width="120" />
                     <el-table-column prop="name" :label="t('noticeType')" min-width="120" />
@@ -97,8 +91,8 @@ import { getNoticeList } from '@/app/api/notice'
 import Sms from '@/app/views/setting/components/notice-sms.vue'
 import Wechat from '@/app/views/setting/components/notice-wechat.vue'
 import Weapp from '@/app/views/setting/components/notice-weapp.vue'
-
 import { useRoute } from 'vue-router'
+
 const route = useRoute()
 const pageName = route.meta.title
 
@@ -173,13 +167,13 @@ const setNotice = (data : any, type : string) => {
 </script>
 
 <style lang="scss" scoped>
-.open {
-    color: var(--el-color-primary);
-}
-
-.notice-type {
-    >div:nth-last-child(1):first-child {
-        width: 100%;
+    .open {
+        color: var(--el-color-primary);
     }
-}
+
+    .notice-type {
+        >div:nth-last-child(1):first-child {
+            width: 100%;
+        }
+    }
 </style>

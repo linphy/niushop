@@ -1,9 +1,12 @@
 <template>
+    <!--短信设置-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
-                <span class="text-page-title">{{pageName}}</span>
+                <span class="text-page-title">{{ pageName }}</span>
             </div>
+
             <div class="mt-[20px]">
                 <el-table :data="smsTableData.data" size="large" v-loading="smsTableData.loading">
                     <template #empty>
@@ -18,58 +21,62 @@
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('operation')" align="right" fixed="right" width="100">
-                       <template #default="{ row }">
-                           <el-button type="primary" link @click="editEvent(row)">{{ t('config') }}</el-button>
+                       <template #default="{ row, $index }">
+                           <el-button type="primary" link @click="editEvent(row, $index)">{{ t('config') }}</el-button>
                        </template>
                     </el-table-column>
 
                 </el-table>
             </div>
 
-            <ali ref="aliyunDialog" @complete="loadSmsList()" />
-            <tencent ref="tencentDialog" @complete="loadSmsList()" />
+            <template v-for="(item, index) in smsTableData.data">
+                <component :is="item.component" :ref="(el) => setSmsTypeRefs(el, index)" v-if="item.component" @complete="loadSmsList()"/>
+            </template>
         </el-card>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import { t } from '@/lang'
 import { getSmsList } from '@/app/api/notice'
-import Ali from '@/app/views/setting/components/sms-ali.vue'
-import Tencent from '@/app/views/setting/components/sms-tencent.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const pageName = route.meta.title
-
-const aliyunDialog: Record<string, any> | null = ref(null)
-const tencentDialog: Record<string, any> | null = ref(null)
+const smsTypeRefs = ref([])
 
 const smsTableData = reactive({
     loading: true,
     data: []
 })
 
+const modules: any = import.meta.glob('@/**/*.vue')
 /**
  * 获取配置信息
  */
 const loadSmsList = () => {
     smsTableData.loading = true
-    getSmsList().then(res => {
-        smsTableData.data = res.data
+    getSmsList().then(({ data }) => {
+        Object.keys(data).forEach((key: string) => {
+            data[key].component && (data[key].component = defineAsyncComponent(modules[data[key].component]))
+        })
+        smsTableData.data = data
         smsTableData.loading = false
     }).catch(() => {
         smsTableData.loading = false
     })
 }
 
-loadSmsList()
-const editEvent = (data: any) => {
-    eval(data.sms_type + 'Dialog.value.setFormData(data)')
-    eval(data.sms_type + 'Dialog.value.showDialog = true;')
+const setSmsTypeRefs = (el, index) => {
+    smsTypeRefs.value[index] = (el)
 }
 
+loadSmsList()
+const editEvent = (data: any, index: number) => {
+    smsTypeRefs.value[index].setFormData(data)
+    smsTypeRefs.value[index].showDialog = true
+}
 </script>
 
 <style lang="scss" scoped></style>

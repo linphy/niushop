@@ -5,48 +5,75 @@
     --el-header-height: 64px !important;
 }
 
-.el-table {
-    --el-table-header-bg-color: #F5F7F9!important;
-    --el-table-header-text-color:#333!important;
+/** 卡片面板 **/
+.el-card {
+    border-radius: 0 !important;
 }
 
-.dark {
-    .el-table {
-        --el-table-header-text-color: var(--el-text-color-secondary)!important;
+/** 表格 **/
+.el-table {
+    --el-table-header-bg-color: #f5f7f9 !important;
+    --el-table-header-text-color: #333333 !important;
+
+    thead,
+    thead th {
+        font-weight: normal !important;
+    }
+
+    // 修改表格中上传图片样式冲突的问题
+    .el-table__cell {
+        position: inherit !important;
     }
 }
 
-.el-table thead, .el-table thead th {
-    font-weight: normal !important;
+/** 文本框 **/
+.el-input__wrapper, .el-input-group__append, .el-textarea__inner {
+    border-radius: 0 !important;
 }
 
+.el-textarea__inner {
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        background-color: rgb(192, 196, 204);
+        opacity: .3;
+    }
+
+    &::-webkit-scrollbar-track {
+       background-color: transparent ;
+    }
+}
+
+/** 按钮 **/
 .el-button {
     background-color: var(--el-button-bg-color, var(--el-color-white));
 }
 
-.el-dialog {
-    max-width: calc(100vw - 50px);
+.el-button:not(.is-round) {
+    border-radius: 2px !important;
+}
+.el-slider {
+    --el-slider-button-size: 15px !important;
 }
 
-.el-date-editor--daterange, .el-date-editor--timerange, .el-date-editor.el-input, .el-date-editor .el-input__wrapper {
-    --el-date-editor-width: 100%!important;
-    width: 100%;
+/** 下拉框 **/
+.el-select__wrapper {
+    border-radius: 0 !important;
 }
 
-
-.el-textarea__inner::-webkit-scrollbar {
-    width: 6px ;
-    height: 6px ;
+.el-form-item {
+    & > .el-input, .el-cascader, .el-select, .el-date-editor, .el-autocomplete {
+        width: 214px;
+    }
 }
 
-.el-textarea__inner::-webkit-scrollbar-thumb {
-    border-radius: 3px ;
-    -moz-border-radius: 3px ;
-    -webkit-border-radius: 3px ;
-    background-color: #909399;
-    opacity: .3;
-}
-
-.el-textarea__inner::-webkit-scrollbar-track {
-   background-color: transparent ;
+.el-dropdown .el-tooltip__trigger {
+    outline: none!important;
 }

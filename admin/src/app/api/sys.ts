@@ -25,7 +25,7 @@ export function getUrl() {
  * @returns
  */
 export function getRoleList(params: Record<string, any>) {
-    return request.get('sys/role', {params})
+    return request.get('sys/role', { params })
 }
 
 /**
@@ -42,7 +42,7 @@ export function getRoleInfo(roleId: number) {
  * @returns
  */
 export function addRole(params: Record<string, any>) {
-    return request.post(`sys/role`, params, {showSuccessMessage: true})
+    return request.post(`sys/role`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -50,7 +50,7 @@ export function addRole(params: Record<string, any>) {
  * @param params
  */
 export function editRole(params: Record<string, any>) {
-    return request.put(`sys/role/${params.role_id}`, params, {showSuccessMessage: true})
+    return request.put(`sys/role/${params.role_id}`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -58,15 +58,15 @@ export function editRole(params: Record<string, any>) {
  * @param roleId
  */
 export function deleteRole(roleId: number) {
-    return request.delete(`sys/role/${roleId}`, {showSuccessMessage: true})
+    return request.delete(`sys/role/${roleId}`, { showSuccessMessage: true })
 }
 
 /**
- * 修改用户组状态
+ * 编辑用户组
  * @param params
  */
-export function edstatus(params: Record<string, any>) {
-    return request.put(`sys/role/status/${params.role_id}/${params.status}`, {showSuccessMessage: true})
+export function setRoleStatus(params: Record<string, any>) {
+    return request.put(`sys/role/status/${params.role_id}`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -75,22 +75,6 @@ export function edstatus(params: Record<string, any>) {
  */
 export function allRole() {
     return request.get('sys/role/all')
-}
-
-/**
- * 获取全部权限
- * @returns
- */
-export function getSystem(params: Record<string, any> = {}) {
-    return request.get(`sys/menu/system_menu`, { params })
-}
-
-/**
- * 应用权限详情列表
- * @param key
- */
-export function getaddonMenu(key: any) {
-    return request.get(`sys/menu/addon_menu/${key}`)
 }
 
 /***************************************************** 全部菜单 ****************************************************/
@@ -117,7 +101,7 @@ export function getMenuInfo(menu_key: string) {
  * @returns
  */
 export function addMenu(params: Record<string, any>) {
-    return request.post('sys/menu', params, {showSuccessMessage: true})
+    return request.post('sys/menu', params, { showSuccessMessage: true })
 }
 
 /**
@@ -125,7 +109,7 @@ export function addMenu(params: Record<string, any>) {
  * @param params
  */
 export function editMenu(params: Record<string, any>) {
-    return request.put(`sys/menu/${params.menu_key}`, params, {showSuccessMessage: true})
+    return request.put(`sys/menu/${params.menu_key}`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -133,15 +117,23 @@ export function editMenu(params: Record<string, any>) {
  * @param menu_key
  */
 export function deleteMenu(menu_key: string) {
-    return request.delete(`sys/menu/${menu_key}`, {showSuccessMessage: true})
+    return request.delete(`sys/menu/${menu_key}`, { showSuccessMessage: true })
 }
 
 /**
  * 获取系统菜单
  *
  */
-export function getSystemMenu() {
-    return request.get(`sys/menu/system_menu`)
+export function getSystemMenu(params: Record<string, any> = {}) {
+    return request.get(`sys/menu/system_menu`, { params })
+}
+
+/**
+ * 获取应用菜单
+ *
+ */
+export function getAllAddonMenu() {
+    return request.get(`sys/menu/addon_menu/all`)
 }
 
 /**
@@ -160,7 +152,6 @@ export function getMenuByTypeDir(key: any = 'system') {
     return request.get(`sys/menu/dir/${key}`)
 }
 
-
 /***************************************************** 设置 ****************************************************/
 
 /**
@@ -172,7 +163,7 @@ export function getWebsite() {
 }
 
 /**
- * 获取网站设置
+ * 获取网站设置 （未登录状态调用）
  * @returns
  */
 export function getWebConfig() {
@@ -284,20 +275,6 @@ export function moveAttachment(params: Record<string, any>) {
 }
 
 /**
- * 获取快捷菜单
- */
-export function getShortcutMenu() {
-    return request.get(`sys/config/shortcut_menu`)
-}
-
-/**
- * 添加快捷菜单
- */
-export function setShortcutMenu(params: Record<string, any>) {
-    return request.put(`sys/config/shortcut_menu`, params, { showSuccessMessage: true })
-}
-
-/**
  * 获取图标库分类列表
  * @param params
  * @returns
@@ -317,7 +294,6 @@ export function getIconList(params: Record<string, any>) {
 
 /**
  * 获取evn
- * @param params
  * @returns
  */
 export function getEnv() {
@@ -420,7 +396,7 @@ export function getPayList() {
  * 获取打款设置配置
  * @param channel
  */
-export function getTransferInfo(channel) {
+export function getTransferInfo(channel: string) {
     return request.get(`pay/channel/lists/${channel}`)
 }
 
@@ -631,22 +607,6 @@ export function setIndexList(params: Record<string, any>) {
 }
 
 /**
- * 获取布局
- * @returns
- */
-export function getLayouts() {
-    return request.get('sys/layout')
-}
-
-/**
- * 设置布局
- * @returns
- */
-export function setLayout(key: string) {
-    return request.put('sys/layout', { key }, { showSuccessMessage: true })
-}
-
-/**
  * 获取支付待审核记录
  */
 export function getPayAuditList(params: Record<string, any>) {
@@ -707,9 +667,70 @@ export function setDeveloperToken(params: Record<string, any>) {
     return request.put(`sys/config/developer_token`, params, { showSuccessMessage: true })
 }
 
+
+/**
+ * 获取布局设置
+ * @returns
+ */
+export function getWebsiteLayout() {
+    return request.get('sys/web/layout')
+}
+
+/***************************************************** 报表导出 ****************************************************/
+
+/**
+ * 获取报表导出列表
+ * @returns
+ */
+export function getExportList(params: Record<string, any>) {
+    return request.get(`sys/export`, { params })
+}
+
+/**
+ * 获取报表导出状态列表
+ * @returns
+ */
+export function getExportStatusList() {
+    return request.get('sys/export/status')
+}
+
+/**
+ * 获取报表导出类型
+ * @returns
+ */
+export function getExportKeyList() {
+    return request.get('sys/export/type')
+}
+
+/**
+ * 报表导出
+ * @returns
+ */
+export function exportData(type: string, params: Record<string, any>) {
+    return request.get(`sys/export/${type}`, { params })
+}
+
+/**
+ * 报表导出数据检查
+ * @returns
+ */
+export function exportDataCheck(type: string, params: Record<string, any>) {
+    return request.get(`sys/export/check/${type}`, { params })
+}
+
+/**
+ * 报表删除
+ * @param id
+ */
+export function deleteExport(id: number) {
+    return request.delete(`sys/export/${id}`, { showSuccessMessage: true })
+}
+
 /**
  * 获取install.php配置
+ * @returns
  */
 export function getInstallConfig() {
     return request.get('sys/install/config')
 }
+

@@ -1,20 +1,16 @@
 <template>
-    <div class="border border-color">
-        <toolbar class="border-b border-color" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-        <wang-editor :style="{ height, 'overflow-y': 'hidden', width: '100%' }" :defaultConfig="editorConfig" :mode="mode" v-model="content" @onCreated="handleCreated" @onBlur="handleBlur" />
-        <upload-attachment type="image" ref="imageRef" :limit="10" @confirm="imageSelect" />
-        <upload-attachment type="video" ref="videoRef" @confirm="videoSelect" />
-    </div>
+    <upload-attachment type="image" ref="imageRef" :limit="10" @confirm="imageSelect" />
+    <upload-attachment type="video" ref="videoRef" @confirm="videoSelect" />
+    <vue-ueditor-wrap v-model="content" :config="editorConfig"  :editorDependencies="['ueditor.config.js','ueditor.all.js']" ref="editorRef"></vue-ueditor-wrap>
 </template>
 
 <script lang="ts" setup>
-import { shallowRef, computed, onBeforeUnmount, ref } from 'vue'
-import '@wangeditor/editor/dist/css/style.css'
-import { IToolbarConfig, IEditorConfig, IDomEditor } from '@wangeditor/editor'
-import { Editor as WangEditor, Toolbar } from '@wangeditor/editor-for-vue'
-import { img } from '@/utils/common'
+import { computed, ref } from 'vue'
+import { getToken, img } from '@/utils/common'
+import { VueUeditorWrap } from 'vue-ueditor-wrap'
+import storage from '@/utils/storage'
 
-const editorRef = shallowRef()
+const editorRef = ref()
 
 const prop = defineProps({
     modelValue: {
@@ -26,12 +22,12 @@ const prop = defineProps({
         default: 'simple'
     },
     height: {
-        type: String,
-        default: '300px'
+        type: Number,
+        default: 600
     }
 })
 
-const emit = defineEmits(['update:modelValue','handleBlur'])
+const emit = defineEmits(['update:modelValue', 'handleBlur'])
 
 const imageRef: Record<string, any> | null = ref(null)
 const videoRef: Record<string, any> | null = ref(null)
@@ -45,60 +41,45 @@ const content = computed({
     }
 })
 
-// 工具栏配置
-const toolbarConfig: Partial<IToolbarConfig> = {
-    excludeKeys: ['group-image', 'insertVideo', 'insertLink'],
-    insertKeys: {
-        index: 16,
-        keys: ['uploadImage', 'uploadVideo']
-    }
-}
+let editorEl = null
 
-// 编辑器配置
-type InsertFnType = (url: string) => void
-let insertFn: InsertFnType = (url: string) => { }
+const serverHeaders = {}
+serverHeaders[import.meta.env.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken()
+const baseUrl = import.meta.env.VITE_APP_BASE_URL.substr(-1) == '/' ? import.meta.env.VITE_APP_BASE_URL : `${import.meta.env.VITE_APP_BASE_URL}/`
 
-const editorConfig: Partial<IEditorConfig> = {
-    MENU_CONF: {
-        uploadImage: {
-            customBrowseAndUpload (insert: InsertFnType) {
+const editorConfig = ref({
+    debug: false,
+    UEDITOR_HOME_URL: import.meta.env.MODE == 'development' ? '/public/ueditor/' : '/admin/ueditor/',
+    serverUrl: `${baseUrl}sys/ueditor`,
+    serverHeaders,
+    // 编辑器不自动被内容撑高
+    autoHeightEnabled: false,
+    // 初始容器高度
+    initialFrameHeight: prop.height,
+    // 初始容器宽度
+    initialFrameWidth: '100%',
+    toolbarCallback: function(cmd, editor) {
+        editorEl = editor
+        switch (cmd) {
+            case 'insertimage':
                 imageRef.value.showDialog = true
-                insertFn = insert
-            }
-        },
-        uploadVideo: {
-            customBrowseAndUpload (insert: InsertFnType) {
+                return true
+            case 'insertvideo':
                 videoRef.value.showDialog = true
-                insertFn = insert
-            }
+                return true
         }
     }
-}
+})
 
 const imageSelect = (data: Record<string, any>) => {
-    data.forEach((item: any) => { insertFn(img(item.url)) })
+    data.forEach((item: any) => {
+        editorEl?.execCommand('insertHtml', `<img src="${img(item.url)}">`)
+    })
 }
 
 const videoSelect = (data: Record<string, any>) => {
-    insertFn(img(data.url))
+    editorEl?.execCommand('insertHtml', `<video src="${img(data.url)}">`)
 }
-
-const handleCreated = (editor: IDomEditor) => {
-    editorRef.value = editor
-}
-//编辑器 blur 时的回调函数。
-const handleBlur = (editor: IDomEditor)=>{
-    emit('handleBlur',editor)
-}
-
-/**
- * 组件销毁时，也及时销毁编辑器
- */
-onBeforeUnmount(() => {
-    const editor = editorRef.value
-    if (editor == null) return
-    editor.destroy()
-})
 </script>
 
 <style lang="scss" scoped></style>

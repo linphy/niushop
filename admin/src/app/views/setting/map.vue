@@ -1,26 +1,39 @@
 <template>
     <div class="main-container">
-        <el-form :model="formData" label-width="150px" ref="formRef" class="page-form" v-loading="loading">
-            <el-card class="box-card !border-none" shadow="never">
-                <h3 class="panel-title">{{ t('mapSetting') }}</h3>
-                <el-form-item :label="t('mapKey')" prop="site_name">
+        <el-card class="box-card !border-none" shadow="never">
+
+            <div class="flex justify-between items-center">
+                <span class="text-page-title">{{ t('mapSetting') }}</span>
+            </div>
+
+            <el-form class="page-form mt-[20px]" :model="formData" :rules="formRules" label-width="150px" ref="formRef" v-loading="loading">
+                <el-form-item :label="t('mapKey')" prop="key">
                     <el-input v-model.trim="formData.key" class="input-width" clearable />
                     <span class="ml-2 cursor-pointer tutorial-btn" @click="tutorialFn">{{ t('clickTutorial') }}</span>
-                    <span class="ml-2 cursor-pointer secret-btn" @click="secretlFn">{{ t('clickSecretKey') }}</span>
+                    <span class="ml-2 cursor-pointer secret-btn" @click="secretFn">{{ t('clickSecretKey') }}</span>
                 </el-form-item>
-            </el-card>
-        </el-form>
+                <el-form-item :label="t('isOpen')" prop="is_open">
+                    <el-switch v-model="formData.is_open" :active-value="1" :inactive-value="0" />
+                </el-form-item>
+                <el-form-item :label="t('validTime')" prop="valid_time">
+                    <el-input v-model.trim="formData.valid_time" class="!w-[120px]" />
+                    <span class="ml-[10px]">{{ t('minutes') }}</span>
+                </el-form-item>
+                <div class="ml-[150px] text-sm text-gray-400">{{ t('validTimeTips') }}</div>
+            </el-form>
+        </el-card>
 
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
                 <el-button type="primary" :loading="loading" @click="save(formRef)">{{ t('save') }}</el-button>
             </div>
         </div>
+
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref,computed } from 'vue'
 import { t } from '@/lang'
 import { setMap, getMap } from '@/app/api/sys'
 import { FormInstance } from 'element-plus'
@@ -28,8 +41,33 @@ import { FormInstance } from 'element-plus'
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const formData = reactive<Record<string, string>>({
-    key: ''
+    key: '',
+    is_open: 1,
+    valid_time: 0
 })
+
+const formRules = computed(() => {
+    return {
+        valid_time: [
+            {
+                required: true,
+                trigger: 'blur',
+                validator: (rule: any, value: any, callback: any) => {
+                    if (value === '') {
+                        callback(new Error(t('validTimePlaceholder')))
+                    } else if (isNaN(value) || !/^\d{0,10}$/.test(value)) {
+                        callback(new Error(t('validTimeFormatTips')))
+                    } else if (value < 0) {
+                        callback(new Error(t('validTimeNotZeroTips')))
+                    } else {
+                        callback()
+                    }
+                }
+            }
+        ],
+    }
+});
+
 const setFormData = async () => {
     const service_data = await (await getMap()).data
     formData.key = service_data.key
@@ -41,10 +79,17 @@ setFormData()
  */
 const save = async (formEl: FormInstance | undefined) => {
     if (loading.value || !formEl) return
-    setMap(formData).then(() => {
-        loading.value = false
-    }).catch(() => {
-        loading.value = false
+
+    await formEl.validate(async (valid) => {
+        if (valid) {
+            loading.value = true
+
+            setMap(formData).then(() => {
+                loading.value = false
+            }).catch(() => {
+                loading.value = false
+            })
+        }
     })
 }
 
@@ -58,18 +103,17 @@ const tutorialFn = () => {
 /**
  * 点击访问腾讯地图
  */
-const secretlFn = () => {
+const secretFn = () => {
     window.open('https://lbs.qq.com/dev/console/key/manage')
 }
-
 </script>
+
 <style lang="scss" scoped>
-.tutorial-btn{
-    color:var(--el-color-primary);
-}
+    .tutorial-btn {
+        color:var(--el-color-primary);
+    }
 
-.secret-btn{
-    color:var(--el-color-primary);
-}
-
+    .secret-btn {
+        color:var(--el-color-primary);
+    }
 </style>

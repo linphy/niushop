@@ -19,7 +19,7 @@
 						</el-form-item>
 
 						<div class="del absolute cursor-pointer z-[2] top-[-8px] right-[-8px]" v-show="diyStore.editComponent.list.length > 1" @click="diyStore.editComponent.list.splice(index,1)">
-							<icon name="element-CircleCloseFilled" color="#bbb" size="20px"/>
+							<icon name="element CircleCloseFilled" color="#bbb" size="20px"/>
 						</div>
 
 						<el-form-item :label="t('link')">

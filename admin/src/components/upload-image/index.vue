@@ -1,40 +1,42 @@
 <template>
     <div class="flex flex-wrap">
         <template v-if="limit == 1">
-            <div class="rounded cursor-pointer overflow-hidden relative border border-solid border-color image-wrap mr-[10px]" :style="style">
+            <div class="rounded cursor-pointer overflow-hidden relative border border-solid border-color image-wrap mr-[10px]" :class="{'rounded-full': type=='avatar'}" :style="style">
                 <div class="w-full h-full relative" v-if="images.data.length">
                     <div class="w-full h-full flex items-center justify-center">
-                        <el-image :src="img(images.data[0])" fit="contain"></el-image>
+                        <el-image :src="images.data[0].indexOf('data:image') != -1 ? images.data[0] : img(images.data[0])" :fit=" type=='avatar'?'none':'contain'"></el-image>
                     </div>
                     <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60 operation">
-                        <icon name="element-ZoomIn" color="#fff" size="18px" class="mr-[10px]" @click="previewImage()" />
-                        <icon name="element-Delete" color="#fff" size="18px" @click="removeImage" />
+                        <icon name="element ZoomIn" color="#fff" size="18px" class="mr-[10px]" @click="previewImage()" />
+                        <icon name="element Delete" color="#fff" size="18px" @click="removeImage" />
                     </div>
                 </div>
                 <upload-attachment :limit="limit" @confirm="confirmSelect" v-else>
                     <div class="w-full h-full flex items-center justify-center flex-col content-wrap">
-                        <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                        <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                         <div class="leading-none text-xs mt-[10px] text-secondary">{{ imageText || t('upload.root') }}</div>
                     </div>
                 </upload-attachment>
             </div>
         </template>
         <template v-else>
-            <div class="rounded cursor-pointer overflow-hidden relative border border-solid border-color image-wrap mr-[10px]" :style="style" v-for="(item, index) in images.data" :key="index">
-                <div class="w-full h-full relative">
-                    <div class="w-full h-full flex items-center justify-center">
-                        <el-image :src="img(item)" fit="contain"></el-image>
-                    </div>
-                    <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60 operation">
-                        <icon name="element-ZoomIn" color="#fff" size="18px" class="mr-[10px]" @click="previewImage(index)" />
-                        <icon name="element-Delete" color="#fff" size="18px" @click="removeImage(index)" />
+            <div class="flex flex-wrap" ref="imgListRef">
+                <div class="rounded cursor-pointer overflow-hidden relative border border-solid border-color image-wrap mr-[10px]" :style="style" v-for="(item, index) in images.data" :key="item">
+                    <div class="w-full h-full relative">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <el-image :src="img(item)" fit="contain"></el-image>
+                        </div>
+                        <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60 operation">
+                            <icon name="element ZoomIn" color="#fff" size="18px" class="mr-[10px]" @click="previewImage(index)" />
+                            <icon name="element Delete" color="#fff" size="18px" @click="removeImage(index)" />
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="rounded cursor-pointer overflow-hidden relative border border-dashed border-color" :style="style" v-if="images.data.length < limit">
                 <upload-attachment :limit="limit" @confirm="confirmSelect">
                     <div class="w-full h-full flex items-center justify-center flex-col content-wrap">
-                        <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                        <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                         <div class="leading-none text-xs mt-[10px] text-secondary">{{ imageText || t('upload.root') }}</div>
                     </div>
                 </upload-attachment>
@@ -46,11 +48,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, watch, toRaw } from 'vue'
+import { computed, reactive, watch, onMounted, toRaw, nextTick, ref } from 'vue'
 import { img } from '@/utils/common'
+import Sortable from 'sortablejs'
 import { t } from '@/lang'
 
 const prop = defineProps({
+    type: {
+        type: String,
+        default: 'image'
+    },
     modelValue: {
         type: String,
         default: ''
@@ -91,13 +98,19 @@ let previewImageList: string[] = reactive([])
 
 const setValue = () => {
     value.value = toRaw(images.data).toString()
-    previewImageList = toRaw(images.data).map((url: string) => { return img(url) })
+    previewImageList = toRaw(images.data).map((url: string) => { return url.indexOf('data:image') != -1 ? url : img(url) })
 }
 
 watch(() => value.value, () => {
-    images.data = [
-        ...value.value.split(',').filter((item: string) => { return item })
-    ]
+    if(value.value.indexOf('data:image') != -1){
+        images.data = [value.value]
+    }else {
+        images.data = [
+            ...value.value.split(',').filter((item: string) => {
+                return item
+            })
+        ]
+    }
     setValue()
 }, { immediate: true })
 
@@ -118,6 +131,9 @@ const confirmSelect = (data: Record<string, any>) => {
     } else {
         data.forEach((item: any) => {
             if (images.data.length < prop.limit) images.data.push(item.url)
+        })
+        nextTick(() => {
+            rowDrop()
         })
     }
     setValue()
@@ -144,6 +160,32 @@ const previewImage = (index: number = 0) => {
     imageViewer.show = true
     imageViewer.index = index
 }
+
+/**
+ * 拖拽
+ */
+const imgListRef:any = ref(null)
+onMounted(()=>{
+    nextTick(() => {
+        rowDrop()
+    })
+})
+const activeRows = ref<any[]>([])
+// 拖拽排序
+const rowDrop = () => {
+    if (prop.limit == 1) return;
+    Sortable.create(imgListRef.value, {
+        group: 'image-wrap',
+        animation: 300,
+        onEnd: event => {
+            const temp = images.data[event.oldIndex!]
+            images.data.splice(event.oldIndex!, 1)
+            images.data.splice(event.newIndex!, 0, temp)
+            setValue()
+        }
+    })
+}
+
 </script>
 
 <style lang="scss" scoped>

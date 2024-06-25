@@ -4,8 +4,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <div class="font-[600] text-[26px] text-[#222] leading-[37px]">{{ t('app') }}</div>
-                    <div class="font-[500] text-[14px] text-[#222] leading-[20px] mt-[12px]">{{ t('versionInfo') }}&nbsp;{{
-                        t('currentVersion') }}</div>
+                    <div class="font-[500] text-[14px] text-[#222] leading-[20px] mt-[12px]">{{ t('versionInfo') }}&nbsp;{{ t('currentVersion') }}</div>
                 </div>
                 <el-button @click="toAppStore" class="px-[15px]">
                     <div class="mr-[9px] text-[#3F3F3F] iconfont iconxiazai01"></div>
@@ -19,8 +18,7 @@
                             <el-image class="w-[44px] h-[44px]  rounded-[8px]" :src="img(item.icon)" fit="contain">
                                 <template #error>
                                     <div class="image-slot">
-                                        <img class="w-[40px] h-[40px] rounded-[8px]"
-                                            src="@/app/assets/images/app_store/app_store_default.png" />
+                                        <img class="w-[40px] h-[40px] rounded-[8px]" src="@/app/assets/images/app_store/app_store_default.png" />
                                     </div>
                                 </template>
                             </el-image>

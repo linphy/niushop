@@ -148,10 +148,4 @@ defineExpose({})
 
 </script>
 
-<style lang="scss">
-.horz-blank-slider {
-	.el-slider__input {
-		width: 100px;
-	}
-}</style>
 <style lang="scss" scoped></style>

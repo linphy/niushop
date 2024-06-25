@@ -123,3 +123,11 @@ export function editVersion(params: Record<string, any>) {
 export function deleteVersion(id: string) {
     return request.delete(`applet/version/${id}`)
 }
+
+/**
+ * 查询小程序是否已开通发货信息管理服务
+ * @returns
+ */
+export function getIsTradeManaged() {
+    return request.get('weapp/delivery/getIsTradeManaged')
+}

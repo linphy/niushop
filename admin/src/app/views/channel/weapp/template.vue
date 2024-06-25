@@ -1,36 +1,37 @@
 <template>
-    <div class="main-container p-5">
-        <div class="flex justify-between items-center mb-[20px]">
-            <span class="text-page-title">{{ pageName }}</span>
-        </div>
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-change="handleClick">
-            <el-tab-pane :label="t('weappAccessFlow')" name="/channel/weapp" />
-            <el-tab-pane :label="t('subscribeMessage')" name="/channel/weapp/message" />
-            <el-tab-pane :label="t('weappRelease')" name="/channel/weapp/code" />
-        </el-tabs>
-        <el-card class="box-card !border-none" shadow="never">
-            <el-alert class="warm-prompt !my-[20px]" type="info">
-                <template #default>
-                    <div class="flex">
-                        <el-icon class="mr-2 mt-[2px]" size="18">
-                            <Warning />
-                        </el-icon>
-                        <div>
-                            <p class="text-base">{{ t('operationTip') }} 1、{{ t('operationTipOne') }}</p>
-                            <p class="text-base">2、{{ t('operationTipTwo') }}</p>
-                        </div>
-                    </div>
-                </template>
-            </el-alert>
+    <!--订阅消息-->
+    <div class="main-container">
+        <el-card class="card !border-none" shadow="never">
 
-            <div>
-                <el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading">
+            <div class="flex justify-between items-center">
+                <span class="text-page-title">{{ pageName }}</span>
+            </div>
 
+            <el-tabs v-model="activeName" class="my-[20px]" @tab-change="handleClick">
+                <el-tab-pane :label="t('weappAccessFlow')" name="/channel/weapp" />
+                <el-tab-pane :label="t('subscribeMessage')" name="/channel/weapp/message" />
+                <el-tab-pane :label="t('weappRelease')" name="/channel/weapp/code" />
+            </el-tabs>
+
+            <el-alert :title="t('operationTipTwo')" type="info" show-icon />
+
+            <div class="mt-[20px]">
+                <el-table :data="cronTableData.data" :span-method="templateSpan" size="large" v-loading="cronTableData.loading">
                     <template #empty>
                         <span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
 
-                    <el-table-column prop="name" :show-overflow-tooltip="true" :label="t('name')" min-width="150" />
+                    <el-table-column prop="addon_name" :label="t('addon')" min-width="120" />
+                    <el-table-column prop="name" :show-overflow-tooltip="true" :label="t('name')" min-width="150" >
+                        <template #default="{ row }">
+                            <div class="flex items-center">
+                                <span class="mr-[5px]">{{row.name }}</span>
+                                <el-tooltip :content="row.weapp.tips" v-if="row.weapp.tips" placement="top">
+                                    <icon name="element WarningFilled" />
+                                </el-tooltip>
+                            </div>
+                        </template>
+                    </el-table-column>
 
                     <el-table-column :label="t('response')" min-width="180">
                         <template #default="{ row }">
@@ -89,12 +90,43 @@ const loadCronList = (page: number = 1) => {
 
     getTemplateList().then(res => {
         cronTableData.loading = false
-        cronTableData.data = res.data
+        let data = []
+        res.data.forEach(item => {
+            if (item.notice.length) {
+                const addons = []
+                Object.keys(item.notice).forEach((key, index) => {
+                    const notice = item.notice[key]
+                    notice.addon_name = item.title
+                    addons.push(notice)
+                })
+                if (addons.length) {
+                    addons[0].rowspan = addons.length
+                    data = data.concat(addons)
+                }
+            }
+        })
+        cronTableData.data = data
     }).catch(() => {
         cronTableData.loading = false
     })
 }
 loadCronList()
+
+const templateSpan = (row : any) => {
+    if (row.columnIndex === 0) {
+        if (row.row.rowspan) {
+            return {
+                rowspan: row.row.rowspan,
+                colspan: 1
+            }
+        } else {
+            return {
+                rowspan: 0,
+                colspan: 0
+            }
+        }
+    }
+}
 
 /**
  * 批量获取
@@ -136,32 +168,4 @@ const infoSwitch = (res:any) => {
 
 </script>
 
-<style lang="scss" scoped>
-:deep(.el-tabs__item:hover) {
-    border-bottom: 2px solid var(--el-color-primary);
-}
-
-:deep(.el-tabs__item) {
-    padding: 0;
-}
-
-:deep(.el-tabs__item+.el-tabs__item) {
-    margin-right: 20px;
-    margin-left: 20px;
-    // border-bottom: 2px solid var(--el-color-primary);
-}
-
-:deep(.el-tabs--top) {
-    .el-tabs__active-bar {
-        display: none;
-    }
-
-    .el-tabs__item.is-active {
-        border-bottom: 2px solid var(--el-color-primary);
-    }
-
-    .el-tabs__item.is-top:nth-child(2) {
-        margin-right: 20px;
-    }
-
-}</style>
+<style lang="scss" scoped></style>

@@ -1,10 +1,13 @@
 <template>
+    <!--H5端-->
     <div class="main-container">
-        <div class="flex ml-[18px] justify-between items-center mt-[20px]">
-			<span class="text-page-title">{{pageName}}</span>
-		</div>
-        <el-form :model="formData" label-width="150px" ref="formRef" class="page-form" v-loading="loading">
-            <el-card class="box-card !border-none" shadow="never">
+        <el-card class="box-card !border-none" shadow="never">
+
+            <div class="flex justify-between items-center">
+                <span class="text-page-title">{{ pageName }}</span>
+            </div>
+
+            <el-form class="page-form mt-[20px]" :model="formData" label-width="150px" ref="formRef">
                 <el-form-item :label="t('isOpen')">
                     <el-switch v-model="formData.is_open"/>
                 </el-form-item>
@@ -16,9 +19,8 @@
                     </el-input>
                     <span class="ml-2 cursor-pointer visit-btn" @click="visitFn">{{t('clickVisit')}}</span>
                 </el-form-item>
-
-            </el-card>
-        </el-form>
+            </el-form>
+        </el-card>
 
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
@@ -116,7 +118,7 @@ const save = async (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-.visit-btn{
-    color:var(--el-color-primary);
-}
+    .visit-btn{
+        color:var(--el-color-primary);
+    }
 </style>

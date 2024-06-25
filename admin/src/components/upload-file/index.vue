@@ -52,6 +52,7 @@ const upload: Record<string, any> = {
     }
 }
 upload.headers[import.meta.env.VITE_REQUEST_HEADER_TOKEN_KEY] = getToken()
+
 </script>
 
 <style lang="scss">

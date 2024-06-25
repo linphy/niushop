@@ -1,9 +1,11 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
            <div class="flex justify-between items-center">
-                <span class="text-page-title">{{pageName}}</span>
+                <span class="text-page-title">{{ pageName }}</span>
             </div>
+
             <div class="mt-[20px]">
                 <el-table :data="agreementTableData.data" size="large" v-loading="agreementTableData.loading">
 

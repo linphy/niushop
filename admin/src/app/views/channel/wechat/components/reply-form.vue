@@ -1,29 +1,24 @@
 <template>
     <div class="border border-br-light rounded">
         <div class="py-[10px] px-[30px] flex text-sm border-0 border-b border-br-light text-tx-regular">
-            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'text'}"
-                 @click="switchMsgType('text')">
-                <icon name="iconfont-iconxingzhuang-wenzi" size="18" class="mr-[5px]"/>
+            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'text'}" @click="switchMsgType('text')">
+                <icon name="iconfont iconxingzhuang-wenzi" size="18" class="mr-[5px]"/>
                 文本
             </div>
-            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'image'}"
-                 @click="switchMsgType('image')">
-                <icon name="iconfont-icontupian" size="18px" class="mr-[5px]"/>
+            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'image'}" @click="switchMsgType('image')">
+                <icon name="iconfont icontupian" size="18px" class="mr-[5px]"/>
                 图片
             </div>
-            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'video'}"
-                 @click="switchMsgType('video')">
-                <icon name="iconfont-iconshipin1" size="18" class="mr-[5px]"/>
+            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'video'}" @click="switchMsgType('video')">
+                <icon name="iconfont iconshipin1" size="18" class="mr-[5px]"/>
                 视频
             </div>
-            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'mpnewsarticle'}"
-                 @click="switchMsgType('mpnewsarticle')">
-                <icon name="iconfont-icontuwendaohang2" size="13px" class="mr-[5px]"/>
+            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'mpnewsarticle'}" @click="switchMsgType('mpnewsarticle')">
+                <icon name="iconfont icontuwendaohang2" size="13px" class="mr-[5px]"/>
                 图文
             </div>
-            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'miniprogrampage'}"
-                 @click="switchMsgType('miniprogrampage')">
-                <icon name="iconfont-iconxiaochengxu" size="14px" class="mr-[5px]"/>
+            <div class="pr-[25px] cursor-pointer flex items-center" :class="{'text-primary': formData.msgtype == 'miniprogrampage'}" @click="switchMsgType('miniprogrampage')">
+                <icon name="iconfont iconxiaochengxu" size="14px" class="mr-[5px]"/>
                 小程序卡片
             </div>
         </div>
@@ -43,7 +38,7 @@
                     <div class="flex flex-1 h-full border border-br-light cursor-pointer select-media">
                         <select-wechat-media type="image" @success="setImageMedia">
                             <div class="flex items-center justify-center flex-col">
-                                <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                                <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                                 <div class="leading-none text-xs mt-[10px] text-secondary">从素材库选择</div>
                             </div>
                         </select-wechat-media>
@@ -51,7 +46,7 @@
                     <div class="flex flex-1 h-full ml-[20px] border border-br-light cursor-pointer">
                         <upload-media type="image" class="w-full h-full flex items-center justify-center" @success="setImageMedia">
                             <div class="flex items-center justify-center flex-col">
-                                <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                                <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                                 <div class="leading-none text-xs mt-[10px] text-secondary">上传图片</div>
                             </div>
                         </upload-media>
@@ -66,7 +61,7 @@
                     <div class="flex flex-1 h-full border border-br-light cursor-pointer select-media">
                         <select-wechat-media type="video" @success="setVideoMedia">
                             <div class="flex items-center justify-center flex-col">
-                                <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                                <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                                 <div class="leading-none text-xs mt-[10px] text-secondary">从素材库选择</div>
                             </div>
                         </select-wechat-media>
@@ -74,7 +69,7 @@
                     <div class="flex flex-1 h-full ml-[20px] border border-br-light cursor-pointer">
                         <upload-media type="video" class="w-full h-full flex items-center justify-center" @success="setVideoMedia">
                             <div class="flex items-center justify-center flex-col">
-                                <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                                <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                                 <div class="leading-none text-xs mt-[10px] text-secondary">上传视频</div>
                             </div>
                         </upload-media>
@@ -89,7 +84,7 @@
                     <div class="flex flex-1 h-full border border-br-light cursor-pointer select-media">
                         <select-wechat-media type="news" @success="setNewsMedia">
                             <div class="flex items-center justify-center flex-col">
-                                <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                                <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                                 <div class="leading-none text-xs mt-[10px] text-secondary">从素材库选择</div>
                             </div>
                         </select-wechat-media>
@@ -113,7 +108,7 @@
                         <select-wechat-media type="image" @success="setWeappImageMedia" v-else>
                             <div class="rounded cursor-pointer overflow-hidden relative border border-solid border-color image-wrap mr-[10px] w-[100px] h-[100px]">
                                 <div class="w-full h-full flex items-center justify-center flex-col content-wrap">
-                                    <icon name="element-Plus" size="20px" color="var(--el-text-color-secondary)" />
+                                    <icon name="element Plus" size="20px" color="var(--el-text-color-secondary)" />
                                     <div class="leading-none text-xs mt-[10px] text-secondary">{{ t('upload.root') }}</div>
                                 </div>
                             </div>

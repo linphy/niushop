@@ -2,6 +2,7 @@
   "title": "页面名称",
   "typeName": "页面类型",
   "forAddon": "所属应用",
+  "forAddonPlaceholder": "请选择所属应用",
   "addPageTips": "创建新页面",
   "pageTypePlaceholder": "请选择页面类型",
   "nameMax": "名称不能超过12个字符",

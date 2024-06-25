@@ -33,7 +33,6 @@ export function getModule() {
 
 /**
  * 获取插件版本
- * @param params
  * @returns
  */
 export function getModuleVersion() {
@@ -46,12 +45,11 @@ export function getModuleVersion() {
  * @returns
  */
 export function downloadVersion(params: Record<string, any>) {
-    return request.post(`addon/download/${params.addon}`, params, { timeout: 0, showSuccessMessage: true })
+    return request.post(`addon/download/${params.addon}`, params, { showSuccessMessage: true })
 }
 
 /**
  * 获取框架最新版本
- * @param params
  * @returns
  */
 export function getFrameworkNewVersion() {

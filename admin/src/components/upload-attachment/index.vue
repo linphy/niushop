@@ -17,6 +17,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { deepClone } from '@/utils/common'
 import { t } from '@/lang'
 import attachment from './attachment.vue'
 
@@ -46,8 +47,20 @@ const emit = defineEmits(['confirm'])
  */
 const confirm = () => {
     showDialog.value = false
-    const files = Object.values(attachmentRef?.value.selectedFile)
-    emit('confirm', prop.limit == 1 ? files[0] ?? null : files)
+
+    let filesObj = attachmentRef?.value.selectedFile || {};
+    let filesIndexObj = attachmentRef?.value.selectedFileIndex || {};
+    // 整理图片顺序
+    let arr = [];
+    Object.values(filesIndexObj).forEach((item,index)=>{
+        for(let key in filesObj){
+            if(item == key){
+                arr.push(deepClone(filesObj[key]))
+            }
+        }
+    })
+    
+    emit('confirm', prop.limit == 1 ? arr[0] ?? null : arr)
 }
 
 defineExpose({

@@ -1,7 +1,7 @@
 <template>
     <div class="main-container w-[375px] mx-auto mt-[20px] mb-[40px] relative">
 
-        <div class="flex full-container">
+        <div class="flex full-container h-[800px]">
             <iframe v-show="loadingIframe" class="w-[375px]" :src="wapPreview" frameborder="0" id="previewIframe"></iframe>
             <div v-show="loadingDev" class="w-[375px] border border-slate-100 bg-body pt-[20px] px-[20px]">
                 <div class="font-bold text-xl mb-[40px]">{{ t('developTitle') }}</div>
@@ -245,7 +245,11 @@ watch(copied, () => {
 body {
     background: #edf0f3;
 }
-
+.main-container{
+    overflow: inherit !important;
+    border-radius: inherit;
+    background: inherit;
+}
 .copy {
     background: var(--el-color-primary) !important;
     color: var(--el-color-white) !important;

@@ -1,9 +1,9 @@
 <template>
     <el-dialog v-model="showDialog" :title="popTitle" width="500px" :destroy-on-close="true">
-        <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form"
-            v-loading="loading">
+        <el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
+
             <el-form-item :label="t('accountNumber')" prop="username">
-                <el-input v-model="formData.username" :placeholder="t('accountNumberPlaceholder')" clearable :disabled="formData.uid" class="input-width" maxlength="10" show-word-limit />
+                <el-input v-model.trim="formData.username" :placeholder="t('accountNumberPlaceholder')" clearable :disabled="formData.uid" class="input-width" maxlength="10" show-word-limit />
             </el-form-item>
 
             <el-form-item :label="t('headImg')">
@@ -11,21 +11,22 @@
             </el-form-item>
 
             <el-form-item :label="t('userRealName')" prop="real_name">
-                <el-input v-model="formData.real_name" :placeholder="t('userRealNamePlaceholder')" clearable class="input-width" maxlength="10" show-word-limit />
+                <el-input v-model.trim="formData.real_name" :placeholder="t('userRealNamePlaceholder')" :readonly="real_name_input" @click="real_name_input = false" @blur="real_name_input = true" clearable class="input-width" maxlength="10" show-word-limit />
             </el-form-item>
+            <div v-if="!formData.uid">
+                <el-form-item :label="t('password')" prop="password">
+                    <el-input v-model.trim="formData.password" :placeholder="t('passwordPlaceholder')" :readonly="password_input" @click="password_input = false" @blur="password_input = true" type="password" :show-password="true" clearable class="input-width" />
+                </el-form-item>
 
-            <el-form-item :label="t('userRoleName')" prop="role_ids" v-if="!formData.is_admin">
+                <el-form-item :label="t('confirmPassword')" prop="confirm_password">
+                    <el-input v-model.trim="formData.confirm_password" :placeholder="t('confirmPasswordPlaceholder')" :readonly="confirm_password_input" @click="confirm_password_input = false" @blur="confirm_password_input = true" type="password" :show-password="true" clearable class="input-width" />
+                </el-form-item>
+            </div>
+
+            <el-form-item :label="t('userRoleName')" prop="role_ids" v-if="!formData.userrole.is_admin">
                 <el-select v-model="formData.role_ids" :placeholder="t('userRolePlaceholder')" class="input-width" multiple collapse-tags collapse-tags-tooltip>
                     <el-option :label="item.role_name" :value="item.role_id" v-for="(item, index) in roles" :key="index" />
                 </el-select>
-            </el-form-item>
-
-            <el-form-item :label="t('password')" prop="password">
-                <el-input v-model="formData.password" :placeholder="t('passwordPlaceholder')" type="password" :show-password="true" clearable class="input-width" />
-            </el-form-item>
-
-            <el-form-item :label="t('confirmPassword')" prop="confirm_password">
-                <el-input v-model="formData.confirm_password" :placeholder="t('confirmPasswordPlaceholder')" type="password" :show-password="true" clearable class="input-width" />
             </el-form-item>
 
             <el-form-item :label="t('status')">
@@ -46,11 +47,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, toRaw } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
-import { addUser, editUser, getUserInfo } from '@/app/api/user'
+import { getUserInfo, addUser, editUser } from '@/app/api/user'
 import { allRole } from '@/app/api/sys'
+import { img, deepClone } from '@/utils/common'
+import { AnyObject } from '@/types/global'
+
+const userList = ref<AnyObject>([])
+const uid = ref<number | string>('')
+
+const real_name_input = ref(true)
+const password_input = ref(true)
+const confirm_password_input = ref(true)
 
 const showDialog = ref(false)
 const loading = ref(false)
@@ -77,6 +87,15 @@ const formRef = ref<FormInstance>()
 // 表单验证规则
 const formRules = computed(() => {
     return {
+        uid: [
+            {
+                validator: (rule: any, value: string, callback: any) => {
+                    if (!formData.uid && uid.value === '') callback(new Error(t('managerPlaceholder')))
+                    else callback()
+                },
+                trigger: 'blur'
+            }
+        ],
         username: [
             { required: formData.uid == 0, message: t('accountNumberPlaceholder'), trigger: 'blur' }
         ],
@@ -108,7 +127,7 @@ const emit = defineEmits(['complete'])
 const roles = ref<Record<string, any>>([])
 allRole().then(res => {
     roles.value = res.data
-    roles.value.forEach(element => {
+    roles.value.forEach((element:any) => {
         element.role_id = element.role_id.toString()
     })
 })
@@ -125,7 +144,8 @@ const confirm = async (formEl: FormInstance | undefined) => {
         if (valid) {
             loading.value = true
 
-            const data = formData
+            const data = deepClone(toRaw(formData))
+            if (!formData.uid && typeof uid.value == 'number') data.uid = uid.value
 
             save(data).then(res => {
                 loading.value = false
@@ -133,7 +153,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
                 emit('complete')
             }).catch(() => {
                 loading.value = false
-                // showDialog.value = false
             })
         }
     })
@@ -141,6 +160,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
 
 const setFormData = async (row: any = null) => {
     loading.value = true
+    uid.value = ''
     Object.assign(formData, initialFormData)
     popTitle = t('addUser')
 

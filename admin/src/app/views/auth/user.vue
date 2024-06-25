@@ -1,45 +1,52 @@
 <template>
+    <!--管理员-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
-                <el-button type="primary" class="w-[100px]" @click="addEvent">{{ t('addUser') }}</el-button>
             </div>
 
-            <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
+            <div class="flex justify-between items-center mt-[20px]">
                 <el-form :inline="true" :model="userTableData.searchParam" ref="searchFormRef">
                     <el-form-item :label="t('accountNumber')" prop="seach">
-                        <el-input v-model="userTableData.searchParam.seach" class="w-[240px]" :placeholder="t('accountNumberPlaceholder')" />
+                        <el-input v-model="userTableData.searchParam.seach" class="input-width" :placeholder="t('accountNumberPlaceholder')" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadUserList()">{{ t('search') }}</el-button>
                         <el-button @click="resetForm(searchFormRef)">{{ t('reset') }}</el-button>
                     </el-form-item>
                 </el-form>
-            </el-card>
+                <el-button type="primary" class="w-[100px] self-start" @click="addEvent">{{ t('addUser') }}</el-button>
+            </div>
 
             <div>
                 <el-table :data="userTableData.data" size="large" v-loading="userTableData.loading">
                     <template #empty>
                         <span>{{ !userTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
+
                     <el-table-column :label="t('headImg')" width="100" align="left">
                         <template #default="{ row }">
-                            <el-avatar v-if="row.head_img" :src="img(row.head_img)" />
-                            <el-avatar v-else>
-                                <img src="@/app/assets/images/member_head.png" />
-                            </el-avatar>
+                            <div class="w-[35px] h-[35px] flex items-center justify-center">
+                                <img v-if="row.head_img" :src="img(row.head_img)" class="w-[35px] rounded-full" />
+                                <img v-else src="@/app/assets/images/member_head.png" class="w-[35px] rounded-full" />
+                            </div>
                         </template>
                     </el-table-column>
                     <el-table-column prop="username" :label="t('accountNumber')" min-width="120" show-overflow-tooltip />
-                    <el-table-column prop="real_name" :label="t('userRealName')" min-width="120" show-overflow-tooltip />
+                    <el-table-column prop="real_name" :label="t('userRealName')" min-width="120" show-overflow-tooltip>
+                        <template #default="{ row }">
+                            <span>{{ row.real_name ? row.real_name :'--' }}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column :label="t('userRoleName')" min-width="120" show-overflow-tooltip>
                         <template #default="{ row }">
                             <span v-if="row.is_admin">{{ t('administrator') }}</span>
-                            <span v-else>{{ row.role_data.join(' | ') }}</span>
+                            <span v-else-if="row.role_data.length">{{ row.role_data.join(' | ') }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('status')" min-width="120" align="center">
+                    <el-table-column :label="t('status')" min-width="90" align="center">
                         <template #default="{ row }">
                             <el-tag class="ml-2" type="success" v-if="row.status == 1">{{ t('statusUnlock') }}</el-tag>
                             <el-tag class="ml-2" type="error" v-if="row.status == 0">{{ t('statusLock') }}</el-tag>
@@ -55,11 +62,11 @@
                             {{ row.last_ip || '' }}
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('operation')" fixed="right"  align="right" width="160">
+                    <el-table-column :label="t('operation')" align="right" fixed="right" width="160">
                         <template #default="{ row }">
                             <div v-if="row.is_admin != 1">
                                 <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-                                <el-button type="primary" link @click="lockEvent(row.uid)" v-if="row.status == 1">{{ t('lock') }}</el-button>
+                                <el-button type="primary" link @click="lockEvent(row.uid)" v-if="row.status">{{ t('lock') }}</el-button>
                                 <el-button type="primary" link @click="unlockEvent(row.uid)" v-else>{{ t('unlock') }}</el-button>
                             </div>
                             <div v-else>
@@ -93,7 +100,6 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const pageName = route.meta.title
-
 const userTableData = reactive({
     page: 1,
     limit: 10,
@@ -101,7 +107,8 @@ const userTableData = reactive({
     loading: true,
     data: [],
     searchParam: {
-        seach: ''
+        seach: '',
+        user_type: ''
     }
 })
 
@@ -124,7 +131,8 @@ const loadUserList = (page: number = 1) => {
     getUserList({
         page: userTableData.page,
         limit: userTableData.limit,
-        username: userTableData.searchParam.seach
+        username: userTableData.searchParam.seach,
+        user_type: userTableData.searchParam.user_type
     }).then(res => {
         userTableData.loading = false
         userTableData.data = res.data.data
@@ -157,7 +165,7 @@ const editEvent = (data: any) => {
 /**
  * 锁定用户
  */
-const lockEvent = (uid: number) => {
+const lockEvent = (id: number) => {
     ElMessageBox.confirm(t('userLockTips'), t('warning'),
         {
             confirmButtonText: t('confirm'),
@@ -165,7 +173,7 @@ const lockEvent = (uid: number) => {
             type: 'warning'
         }
     ).then(() => {
-        lockUser(uid).then(() => {
+        lockUser(id).then(() => {
             loadUserList()
         }).catch(() => {
         })
@@ -175,7 +183,7 @@ const lockEvent = (uid: number) => {
 /**
  * 解锁用户
  */
-const unlockEvent = (uid: number) => {
+const unlockEvent = (id: number) => {
     ElMessageBox.confirm(t('userUnlockTips'), t('warning'),
         {
             confirmButtonText: t('confirm'),
@@ -183,7 +191,7 @@ const unlockEvent = (uid: number) => {
             type: 'warning'
         }
     ).then(() => {
-        unlockUser(uid).then(() => {
+        unlockUser(id).then(() => {
             loadUserList()
         }).catch(() => {
         })

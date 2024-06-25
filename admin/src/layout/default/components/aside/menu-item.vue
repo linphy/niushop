@@ -8,59 +8,34 @@
                 <span class="ml-[10px]">{{ meta.title }}</span>
             </template>
             <menu-item v-for="(route, index) in routes.children" :routes="route" :key="index" :level="props.level + 1" />
-        </el-sub-menu>
-        <template v-else>
             <template v-if="routes.name == 'addon_list'">
                 <template v-if="addonsMenus">
-                    <el-sub-menu :index="String(routes.name)">
-                        <template #title>
-                            <div class="w-[16px] h-[16px] relative flex items-center" v-if="props.level == 1">
-                                <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
-                            </div>
-                            <span class="ml-[10px]">{{ meta.title }}</span>
-                        </template>
-                        <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })">
-                            <template #title>
-                                <span class="ml-[10px]">{{ meta.title }}</span>
-                            </template>
-                        </el-menu-item>
-                        <menu-item :routes="addonsMenus" :key="index" :level="props.level + 1"/>
-                    </el-sub-menu>
-                </template>
-                <template v-else>
-                    <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })">
-                        <template #title>
-                            <div class="w-[16px] h-[16px] relative flex items-center" v-if="props.level == 1">
-                                <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
-                            </div>
-                            <span class="ml-[10px]">{{ meta.title }}</span>
-                        </template>
-                    </el-menu-item>
+                    <menu-item :routes="addonsMenus" :key="index" :level="props.level + 1"/>
                 </template>
             </template>
-            <template v-else>
-                <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })" v-if="meta.addon && meta.parent_route && meta.parent_route.addon == ''">
-                    <template #title>
-                        <el-tooltip placement="right" effect="light">
-                            <template #content>
-                                该功能仅限{{ addons[meta.addon].title }}使用
-                            </template>
-                            <div class="w-[16px] h-[16px] relative flex items-center" v-if="props.level == 1">
-                                <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
-                            </div>
-                            <span class="ml-[10px]">{{ meta.title }}</span>
-                        </el-tooltip>
-                    </template>
-                </el-menu-item>
-                <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })" v-else>
-                    <template #title>
+        </el-sub-menu>
+        <template v-else>
+            <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })" v-if="meta.addon && meta.parent_route && meta.parent_route.addon == ''">
+                <template #title>
+                    <el-tooltip placement="right" effect="light">
+                        <template #content>
+                            该功能仅限{{ addons[meta.addon].title }}使用
+                        </template>
                         <div class="w-[16px] h-[16px] relative flex items-center" v-if="props.level == 1">
                             <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
                         </div>
                         <span class="ml-[10px]">{{ meta.title }}</span>
-                    </template>
-                </el-menu-item>
-            </template>
+                    </el-tooltip>
+                </template>
+            </el-menu-item>
+            <el-menu-item :index="String(routes.name)" @click="router.push({ name: routes.name })" v-else>
+                <template #title>
+                    <div class="w-[16px] h-[16px] relative flex items-center" v-if="props.level == 1">
+                        <icon v-if="meta.icon" :name="meta.icon" class="absolute !w-auto" />
+                    </div>
+                    <span class="ml-[10px]">{{ meta.title }}</span>
+                </template>
+            </el-menu-item>
         </template>
         <div v-if="routes.is_border" class="!border-0 !border-t-[1px] border-solid mx-[25px] bg-[#f7f7f7] my-[5px]"></div>
     </template>
@@ -77,6 +52,7 @@ import useUserStore from '@/stores/modules/user'
 
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 const routers = useUserStore().routers
 const props = defineProps({
     routes: {

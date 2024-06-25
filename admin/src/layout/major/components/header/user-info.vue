@@ -2,9 +2,9 @@
     <div>
         <el-dropdown @command="clickEvent" :tabindex="1">
             <div class="userinfo flex h-full items-center">
-                <el-avatar :size="25" :icon="UserFilled" />
+                <el-avatar :size="25" :icon="UserFilled" :src="userStore.userInfo.head_img ? img(userStore.userInfo.head_img) : ''"/>
                 <div class="user-name pl-[8px]">{{ userStore.userInfo.username }}</div>
-                <icon name="element-ArrowDown" class="ml-[5px]" />
+                <icon name="element ArrowDown" class="ml-[5px]" />
             </div>
             <template #dropdown>
                 <el-dropdown-menu>

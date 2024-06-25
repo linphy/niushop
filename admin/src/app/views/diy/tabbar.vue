@@ -1,12 +1,12 @@
 <template>
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
             </div>
 
             <el-table class="mt-[20px]" :data="bottomNavTableData.data" size="large" v-loading="bottomNavTableData.loading">
-
                 <template #empty>
                     <span>{{ !bottomNavTableData.loading ? t('emptyData') : '' }}</span>
                 </template>
@@ -24,8 +24,8 @@
                         <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
                     </template>
                 </el-table-column>
-
             </el-table>
+
             <div class="mt-[16px] flex justify-end">
                 <el-pagination v-model:current-page="bottomNavTableData.page" v-model:page-size="bottomNavTableData.limit"
                                layout="total, sizes, prev, pager, next, jumper" :total="bottomNavTableData.total"
@@ -43,8 +43,8 @@
     import { getDiyBottomList } from '@/app/api/diy'
     import { useRoute, useRouter } from 'vue-router'
 
-    const router = useRouter()
     const route = useRoute()
+    const router = useRouter()
     const pageName = route.meta.title
 
     const bottomNavTableData: any = reactive({
@@ -86,5 +86,4 @@
 
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

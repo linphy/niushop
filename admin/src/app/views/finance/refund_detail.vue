@@ -1,18 +1,17 @@
 <template>
+    <!--退款详情-->
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="router.push({ path: '/finance/refund' })">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
-        <el-card class="box-card !border-none relative" shadow="never" v-if="formData">
-            <div class="flex px-[20px] py-[20px] justify-between">
+
+        <el-card class="card !border-none" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="$router.back()" />
+        </el-card>
+
+        <el-card class="box-card mt-[15px] !border-none relative" shadow="never" v-if="formData">
+            <div class="flex mt-[5px] mb-[20px] justify-between">
                 <span>{{ t('refundMoney') }}：<span>￥{{ formData.money }}</span></span>
                 <span>{{ t('refundNo') }}：<span>{{ formData.refund_no }}</span></span>
             </div>
+
             <el-table :data="refundList" size="large">
                 <el-table-column prop="out_trade_no" :label="t('outTradeNo')" min-width="200" />
                 <el-table-column prop="create_time" :label="t('createTime')" min-width="160" />
@@ -25,36 +24,31 @@
                 <el-table-column prop="status_name" :label="t('statusName')" min-width="120" />
                 <el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
                     <template #default="{ row }">
-                        <el-button type="primary" link @click="transferEvent(row)" v-if="row.status == 'wait'">{{
-                            t('transfer') }}</el-button>
+                        <el-button type="primary" link @click="transferEvent(row)" v-if="row.status == 'wait'">{{ t('transfer') }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-card>
 
         <el-dialog v-model="transferDialog" :title="title" width="500px" class="diy-dialog-wrap" :destroy-on-close="true">
-            <el-form :model="transfeFormData" label-width="120px" ref="formRef" :rules="formRules" class="page-form"
-                v-loading="loading">
+            <el-form :model="transferFormData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('transferType')">
-                    <el-radio-group v-model="transfeFormData.refund_type">
-                        <el-radio :label="item.value" v-for="(item, index) in refundTypeData" :key="index">{{ item.name
-                        }}</el-radio>
+                    <el-radio-group v-model="transferFormData.refund_type">
+                        <el-radio :label="item.value" v-for="(item, index) in refundTypeData" :key="index">{{ item.name }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="t('refundMoney')">
-                    <span>{{ transfeFormData.refund_money }}</span>
+                    <span>{{ transferFormData.refund_money }}</span>
                 </el-form-item>
-                <el-form-item :label="t('voucher')" v-if="transfeFormData.refund_type == 'offline'">
-                    <upload-image v-model="transfeFormData.voucher" />
+                <el-form-item :label="t('voucher')" v-if="transferFormData.refund_type == 'offline'">
+                    <upload-image v-model="transferFormData.voucher" />
                 </el-form-item>
             </el-form>
 
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="transferDialog = false">{{ t('cancel') }}</el-button>
-                    <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{
-                        t('confirm')
-                    }}</el-button>
+                    <el-button type="primary" :loading="loading" @click="confirm(formRef)">{{ t('confirm') }}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -67,10 +61,12 @@ import { t } from '@/lang'
 import { getPayRefundInfo, getRefundType, getRefundTransfer } from '@/app/api/pay'
 import { useRoute, useRouter } from 'vue-router'
 import { FormInstance } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
+
 const refundNo: string = route.query.refund_no
 const loading = ref(true)
 
@@ -104,8 +100,8 @@ getRefundType().then((data) => {
 const transferDialog = ref(false)
 const transferEvent = (data:any) => {
     transferDialog.value = true
-    transfeFormData.refund_no = data.refund_no
-    transfeFormData.refund_money = data.money
+    transferFormData.refund_no = data.refund_no
+    transferFormData.refund_money = data.money
 }
 
 const initialFormData = {
@@ -114,7 +110,7 @@ const initialFormData = {
     voucher: '',
     refund_money: 0.00
 }
-const transfeFormData: Record<string, any> = reactive({ ...initialFormData })
+const transferFormData: Record<string, any> = reactive({ ...initialFormData })
 
 const formRef = ref<FormInstance>()
 
@@ -134,7 +130,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
-            const data = transfeFormData
+            const data = transferFormData
             getRefundTransfer(data).then(res => {
                 loading.value = false
                 transferDialog.value = false
@@ -147,15 +143,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
         }
     })
 }
-
-// const transferEvent = () => {
-//     const routeUrl = router.resolve({
-// 	    path: '/member/refund',
-// 	    query: { refund_id: formData.value.refund_id }
-//     })
-//     window.open(routeUrl.href, '_blank')
-// }
-
 </script>
 
 <style lang="scss" scoped></style>

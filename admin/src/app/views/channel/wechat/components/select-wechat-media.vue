@@ -2,8 +2,7 @@
     <div @click="openDialog">
         <slot></slot>
     </div>
-    <el-dialog v-model="showDialog" :title="t('upload.select' + type)" width="60%" class="attachment-dialog"
-        :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="t('upload.select' + type)" width="60%" class="attachment-dialog" :destroy-on-close="true">
         <div class="flex border-t border-b main-wrap border-color w-full h-[40vh]">
             <!-- 素材 -->
             <div class="attachment-list-wrap flex flex-col p-[15px] flex-1 overflow-hidden">
@@ -24,15 +23,13 @@
                         <!-- 素材管理 -->
                         <div v-if="attachment.data.length">
                             <div class="flex flex-wrap" v-if="prop.type != 'news'">
-                                <div class="attachment-item mr-[10px] w-[120px]" v-for="(item, index) in attachment.data"
-                                     :key="index" @click="selectedFile = item">
+                                <div class="attachment-item mr-[10px] mb-[10px] w-[120px]" v-for="(item, index) in attachment.data" :key="index" @click="selectedFile = item">
                                     <div
                                         class="attachment-wrap w-full rounded cursor-pointer overflow-hidden relative flex items-center justify-center h-[120px]">
-                                        <el-image :src="img(item.value)" fit="contain" v-if="type == 'image'"
-                                                  :preview-src-list="item.image_list" />
+                                        <el-image :src="img(item.value)" fit="contain" v-if="type == 'image'" :preview-src-list="item.image_list" />
                                         <video :src="img(item.value)" v-else-if="type == 'video'"></video>
                                         <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60" v-show="selectedFile.id == item.id">
-                                            <icon name="element-Select" color="#fff" size="40px" />
+                                            <icon name="element Select" color="#fff" size="40px" />
                                         </div>
                                     </div>
                                 </div>
@@ -64,16 +61,14 @@
                                             {{ item.value.news_item[0].title }}
                                         </div>
                                         <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60" v-show="selectedFile.id == item.id">
-                                            <icon name="element-Select" color="#fff" size="40px" />
+                                            <icon name="element Select" color="#fff" size="40px" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex items-center justify-center" v-else>
-                            <el-empty v-if="!attachment.loading"
-                                :description="t('upload.mediaEmpty')"
-                                :image-size="100" />
+                            <el-empty v-if="!attachment.loading" :description="t('upload.mediaEmpty')" :image-size="100" />
                         </div>
                     </el-scrollbar>
                 </div>
@@ -198,8 +193,7 @@
                     heights[i] = item.clientHeight + 10
                 } else {
                     let minHeight = Math.min(...heights) //  找到第一列的最小高度
-                    let minIndex = heights.findIndex(item => item ===
-                        minHeight) // 找到最小高度的索引
+                    let minIndex = heights.findIndex(item => item === minHeight) // 找到最小高度的索引
                     let position = {}
                     position.top = minHeight + 10 + "px"
                     position.left = positions[minIndex].left

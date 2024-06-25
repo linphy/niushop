@@ -42,9 +42,9 @@
 </template>
 <script type="text/babel">
 /**
-     * VerifySlide
-     * @description 滑块
-     * */
+ * VerifySlide
+ * @description 滑块
+ * */
 import { aesEncrypt } from './../utils/ase'
 import { resetSize } from './../utils/util'
 import { reqGet, reqCheck } from './../api/index'

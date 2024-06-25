@@ -1,9 +1,10 @@
 <template>
+    <!--会员退款-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
 
             <div class="flex justify-between items-center">
-                <span class="text-page-title">{{pageName}}</span>
+                <span class="text-page-title">{{ pageName }}</span>
             </div>
 
             <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
@@ -30,17 +31,17 @@
                         <span>{{ !payRefundTable.loading ? t('emptyData') : '' }}</span>
                     </template>
                     <el-table-column prop="refund_no" :label="t('refundNo')" min-width="200" />
-					<el-table-column prop="money" :label="t('refundMoney')" min-width="120" />
+                    <el-table-column prop="money" :label="t('refundMoney')" min-width="120" />
                     <el-table-column prop="type_name" :label="t('payType')" min-width="120" />
                     <el-table-column prop="status_name" :label="t('status')" min-width="120" />
-					<el-table-column prop="create_time" :label="t('createTime')" min-width="160" />
+                    <el-table-column prop="create_time" :label="t('createTime')" min-width="160" />
                     <el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
                        <template #default="{ row }">
                            <el-button type="primary" link @click="infoEvent(row)">{{ t('info') }}</el-button>
                        </template>
                     </el-table-column>
-
                 </el-table>
+
                 <div class="mt-[16px] flex justify-end">
                     <el-pagination v-model:current-page="payRefundTable.page" v-model:page-size="payRefundTable.limit"
                         layout="total, sizes, prev, pager, next, jumper" :total="payRefundTable.total"
@@ -57,6 +58,7 @@ import { t } from '@/lang'
 import { getPayRefundPages } from '@/app/api/pay'
 import { useRouter, useRoute } from 'vue-router'
 import type { FormInstance } from 'element-plus'
+
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
@@ -74,9 +76,6 @@ const payRefundTable = reactive({
 })
 
 const searchFormRef = ref<FormInstance>()
-
-// 选中数据
-// const selectData = ref<any[]>([])
 
 /**
  * 获取商品标签列表
@@ -110,14 +109,4 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 </script>
 
-<style lang="scss" scoped>
-/* 多行超出隐藏 */
-.multi-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
-</style>
+<style lang="scss" scoped></style>

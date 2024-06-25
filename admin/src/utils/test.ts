@@ -82,6 +82,14 @@ const test = {
         return /^[1-9]\d*(,\d{3})*(\.\d{1,2})?$|^0\.\d{1,2}$/.test(value)
     },
     /**
+     * 验证小数
+     */
+    decimal(value: string, digit: number) {
+        const regexPattern = `^\\d+(?:\\.\\d{1,${digit}})?$`
+        // 金额，只允许保留两位小数
+        return new RegExp(regexPattern).test(value)
+    },
+    /**
      * 中文
      */
     chinese(value: string) {
@@ -209,7 +217,7 @@ const test = {
      */
     image(value: string) {
         const newValue = value.split('?')[0]
-        const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg)/i
+        const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|jfif|bmp|dpg)/i // todo 暂不支持webp格式
         return IMAGE_REGEXP.test(newValue)
     },
     /**

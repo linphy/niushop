@@ -3,7 +3,7 @@
 	<div class="content-wrap" v-show="diyStore.editTab == 'content'">
 		<div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t('richTextContentSet') }}</h3>
-			<editor v-model="diyStore.editComponent.html" height="600px" class="editor-width" />
+			<editor v-model="diyStore.editComponent.html" :height="600" class="editor-width" />
 		</div>
 	</div>
 

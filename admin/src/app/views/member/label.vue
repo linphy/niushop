@@ -1,6 +1,8 @@
 <template>
+    <!--会员标签-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
+
             <div class="flex justify-between items-center">
                 <span class="text-page-title">{{pageName}}</span>
                 <el-button type="primary" @click="addEvent">{{ t('addMemberLabel') }}</el-button>

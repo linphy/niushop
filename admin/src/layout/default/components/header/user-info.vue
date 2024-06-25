@@ -2,17 +2,19 @@
     <div>
         <el-dropdown @command="clickEvent" :tabindex="1">
             <div class="userinfo flex h-full items-center">
-                <el-avatar :size="25" :icon="UserFilled" />
+                <el-avatar :size="25" :icon="UserFilled" :src="userStore.userInfo.head_img ? img(userStore.userInfo.head_img) : ''"/>
                 <div class="user-name pl-[8px]">{{ userStore.userInfo.username }}</div>
-                <icon name="element-ArrowDown" class="ml-[5px]" />
+                <icon name="element ArrowDown" class="ml-[5px]" />
             </div>
             <template #dropdown>
                 <el-dropdown-menu>
-                    <el-dropdown-item @click="toLink('/user/center')">
-                        <div class="flex items-center leading-[1] py-[5px]">
-                            <span class="iconfont iconshezhi1 ml-[4px] !text-[14px] mr-[10px]"></span>
-                            <span class="text-[14px]">账号设置</span>
-                        </div>
+                    <el-dropdown-item @click="getUserInfoFn">
+                        <!-- <router-link to="/user/center"> -->
+                            <div class="flex items-center leading-[1] py-[5px]">
+                                <span class="iconfont iconshezhi1 ml-[4px] !text-[14px] mr-[10px]"></span>
+                                <span class="text-[14px]">账号设置</span>
+                            </div>
+                        <!-- </router-link> -->
                     </el-dropdown-item>
                     <el-dropdown-item @click="changePasswordDialog=true">
                         <div class="flex items-center leading-[1] py-[5px]">
@@ -20,17 +22,16 @@
                             <span class="text-[14px]">修改密码</span>
                         </div>
                     </el-dropdown-item>
-                    <el-dropdown-item command="logout">
-                        <div class="flex items-center leading-[1] py-[2px]">
-                            <span class="iconfont icontuichudenglu !text-[21px] mr-[8px]"></span>
+                    <el-dropdown-item @click="logout">
+                        <div class="flex items-center leading-[1] py-[5px]">
+                            <span class="iconfont icontuichudenglu ml-[4px] !text-[14px] mr-[10px]"></span>
                             <span class="text-[14px]">退出登录</span>
                         </div>
                     </el-dropdown-item>
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
-
-        <el-dialog v-model="changePasswordDialog" width="450px" title="修改密码" :before-close="handleClose">
+        <el-dialog v-model="changePasswordDialog" width="450px" title="修改密码">
             <div>
                 <el-form :model="saveInfo" label-width="90px" ref="formRef" :rules="formRules" class="page-form">
                     <el-form-item :label="t('originalPassword')" prop="original_password">
@@ -52,21 +53,23 @@
                 </span>
             </template>
         </el-dialog>
+        <user-info-edit ref="userInfoEditRef" />
     </div>
 </template>
 
 <script lang="ts" setup>
 import { UserFilled } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type { FormInstance, FormRules, ElNotification } from 'element-plus'
 import useUserStore from '@/stores/modules/user'
 import { setUserInfo } from '@/app/api/personal'
 import { t } from '@/lang'
+import userInfoEdit from '@/app/components/user-info-edit/index.vue'
+import { img } from "@/utils/common";
 
 const userStore = useUserStore()
 const router = useRouter()
-
 const clickEvent = (command: string) => {
     switch (command) {
         case 'logout':
@@ -75,54 +78,60 @@ const clickEvent = (command: string) => {
     }
 }
 
+const logout = () => {
+    userStore.logout();
+}
 const toLink = (link) => {
     router.push(link)
 }
-
+const userInfoEditRef = ref(null)
+const getUserInfoFn = ()=>{
+    userInfoEditRef.value?.open()
+}
 // 修改密码 --- start
-const changePasswordDialog = ref(false)
-const formRef = ref<FormInstance>()
+let changePasswordDialog = ref(false)
+const formRef = ref<FormInstance>();
 // 提交信息
-const saveInfo = reactive({
+let saveInfo = reactive({
     original_password: '',
     password: '',
     password_copy: ''
-})
+});
 // 表单验证规则
 const formRules = reactive<FormRules>({
-    original_password: [
-        { required: true, message: t('originalPasswordPlaceholder'), trigger: 'blur' }
-    ],
-    password: [
-        { required: true, message: t('passwordPlaceholder'), trigger: 'blur' }
-    ],
-    password_copy: [
-        { required: true, message: t('passwordPlaceholder'), trigger: 'blur' }
-    ]
-})
+  original_password: [
+    { required: true, message: t("originalPasswordPlaceholder"), trigger: "blur" },
+  ],
+  password: [
+    { required: true, message: t("passwordPlaceholder"), trigger: "blur" },
+  ],
+  password_copy: [
+    { required: true, message: t("passwordPlaceholder"), trigger: "blur" },
+  ]
+});
 const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            let msg = ''
-            if (saveInfo.password && !saveInfo.original_password) msg = t('originalPasswordHint')
-            if (saveInfo.password && saveInfo.original_password && !saveInfo.password_copy) msg = t('newPasswordHint')
-            if (saveInfo.password && saveInfo.original_password && saveInfo.password_copy && saveInfo.password != saveInfo.password_copy) msg = t('doubleCipherHint')
+            let msg = "";
+            if (saveInfo.password && !saveInfo.original_password) msg = t('originalPasswordHint');
+            if (saveInfo.password && saveInfo.original_password && !saveInfo.password_copy) msg = t('newPasswordHint');
+            if (saveInfo.password && saveInfo.original_password && saveInfo.password_copy && saveInfo.password != saveInfo.password_copy) msg = t('doubleCipherHint');
             if (msg) {
                 ElNotification({
                     type: 'error',
-                    message: msg
+                    message: msg,
                 })
-                return
+                return;
             }
 
             setUserInfo(saveInfo).then((res: any) => {
-                changePasswordDialog.value = false
+                changePasswordDialog.value = false;
             })
         } else {
             return false
         }
-    })
+    });
 }
 // 修改密码 --- end
 </script>

@@ -27,18 +27,14 @@
             </el-form-item>
 
              <el-form-item prop="value_key" :label="t('remotePullDownValue')" v-if="formData.select_type == 2">
-                <el-select class="input-width" :placeholder="t('remotePullDownValuePlaceholder')"
-                    v-model="formData.value_key">
-                    <el-option :label="`${item.name}:${item.comment}`" :value="item.name"
-                        v-for="(item, index) in keyList " :key="index" />
+                <el-select class="input-width" :placeholder="t('remotePullDownValuePlaceholder')" v-model="formData.value_key">
+                    <el-option :label="`${item.name}:${item.comment}`" :value="item.name" v-for="(item, index) in keyList" :key="index" />
                 </el-select>
             </el-form-item>
 
             <el-form-item prop="label_key" :label="t('remotePullDownLabel')" v-if="formData.select_type == 2">
-                <el-select class="input-width" :placeholder="t('remotePullDownLabelPlaceholder')"
-                    v-model="formData.label_key">
-                    <el-option :label="`${item.name}:${item.comment}`" :value="item.name"
-                        v-for="(item, index) in keyList " :key="index" />
+                <el-select class="input-width" :placeholder="t('remotePullDownLabelPlaceholder')" v-model="formData.label_key">
+                    <el-option :label="`${item.name}:${item.comment}`" :value="item.name" v-for="(item, index) in keyList" :key="index" />
                 </el-select>
             </el-form-item>
         </el-form>
@@ -58,6 +54,7 @@ import { getDictAll } from '@/app/api/dict'
 import type { FormInstance } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { getGeneratorAllModel, getGeneratorTableColumn,getAddonDevelop,getGeneratorModelTableColumn } from '@/app/api/tools'
+
 const showDialog = ref(false)
 const title = ref('')
 /**
@@ -85,8 +82,6 @@ const getGeneratorAllModelFn = (params:any) => {
         modelList.value = res.data
     })
 }
-
-
 
 //获取插件列表
 const addonLst = ref<Array<any>>([])
@@ -123,7 +118,6 @@ const formRules = computed(() => {
         dict_type: [
             {
             validator: (rule: any, value: any, callback: any) => {
-                console.log(formData.value.select_type)
                 if (formData.value.select_type == 1 && formData.value.dict_type == '') {
                     callback(new Error(t('dictTypePlaceholder')))
                 }else{
@@ -148,7 +142,6 @@ const formRules = computed(() => {
         model: [
             {
                 validator: (rule: any, value: any, callback: any) => {
-                    console.log(formData.value.model);
                     if (formData.value.select_type == 2 && formData.value.model == '') {
                         callback(new Error(t('associatedModelPlaceholder')))
                     }else{

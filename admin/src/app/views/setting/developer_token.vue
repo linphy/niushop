@@ -1,8 +1,9 @@
 <template>
     <div class="main-container">
-        <el-form :model="formData" label-width="0" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
-            <el-card class="box-card !border-none" shadow="never">
+        <el-card class="box-card !border-none" shadow="never">
+            <el-form class="page-form" :model="formData" label-width="0" ref="formRef" :rules="formRules" v-loading="loading">
                 <h3 class="panel-title !text-sm">{{ t('developerTokenEdit') }}</h3>
+
                 <el-form-item label="" prop="token">
                     <div>
                         <el-input v-model="formData.token" :placeholder="t('tokenPlaceholder')" class="input-width" clearable maxlength="30"/>
@@ -12,8 +13,8 @@
                 <el-form-item label="">
                     <el-button type="primary" :loading="loading" @click="save(formRef)">{{ t('save') }}</el-button>
                 </el-form-item>
-            </el-card>
-        </el-form>
+            </el-form>
+        </el-card>
     </div>
 </template>
 

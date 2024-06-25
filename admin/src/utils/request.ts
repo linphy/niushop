@@ -27,7 +27,7 @@ class Request {
     constructor() {
         this.instance = axios.create({
             baseURL: import.meta.env.VITE_APP_BASE_URL.substr(-1) == '/' ? import.meta.env.VITE_APP_BASE_URL : `${import.meta.env.VITE_APP_BASE_URL}/`,
-            timeout: 30000,
+            timeout: 0,
             headers: {
                 'Content-Type': 'application/json',
                 'lang': storage.get('lang') ?? 'zh-cn'

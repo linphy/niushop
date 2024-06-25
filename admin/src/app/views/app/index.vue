@@ -10,7 +10,7 @@
                         class="relative app-item cursor-pointer px-4 mr-4 mt-[20px] bg-[#f7f7f7] border-[1px] hover:border-primary">
                         <div @click="toLink(item.key)" class="flex py-5 items-center">
                             <div class="flex justify-center items-center">
-                                <el-image class="w-[40px] h-[40px]" :src="img(item.icon)" fit="contain">
+                                <el-image class="w-[40px] h-[40px]" :src="item.icon" fit="contain">
                                     <template #error>
                                         <div class="image-slot">
                                             <img class="w-[50px] h-[50px]"

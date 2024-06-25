@@ -21,42 +21,34 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" @click="confirm()">{{
-                    t('confirm')
-                }}</el-button>
+                <el-button type="primary" @click="confirm()">{{ t('confirm') }}</el-button>
             </span>
         </template>
-        <el-dialog v-model="dialogVisible" :title="type != 'edit' ? t('addDictData') : t('editDictData')" width="480"
-            class="diy-dialog-wrap" :destroy-on-close="true">
+        <el-dialog v-model="dialogVisible" :title="type != 'edit' ? t('addDictData') : t('editDictData')" width="480" class="diy-dialog-wrap" :destroy-on-close="true">
             <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('name')">
                     <el-input v-model="name" disabled class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('dataName')" prop="name">
-                    <el-input v-model="formData.name" clearable :placeholder="t('dataNamePlaceholder')"
-                        class="input-width" />
+                    <el-input v-model="formData.name" clearable :placeholder="t('dataNamePlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('dataValue')" prop="value">
-                    <el-input v-model="formData.value" clearable :placeholder="t('dataValuePlaceholder')"
-                        class="input-width" />
+                    <el-input v-model="formData.value" clearable :placeholder="t('dataValuePlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('sort')" prop="sort">
                     <div>
-                    <el-input-number v-model="formData.sort" ::step="1" step-strictly :value-on-clear="0" :min="0" class="input-width" />
-                    <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('sortPlaceholder') }}</p>
-                </div>
+                        <el-input-number v-model="formData.sort" ::step="1" step-strictly :value-on-clear="0" :min="0" class="input-width" />
+                        <p class="text-[12px] text-[#a9a9a9] leading-normal mt-[5px]">{{ t('sortPlaceholder') }}</p>
+                    </div>
                 </el-form-item>
                 <el-form-item :label="t('memo')">
-                    <el-input v-model="formData.memo" type="textarea" clearable :placeholder="t('momePlaceholder')"
-                        class="input-width" />
+                    <el-input v-model="formData.memo" type="textarea" clearable :placeholder="t('momePlaceholder')" class="input-width" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogVisible = false">{{ t('cancel') }}</el-button>
-                    <el-button type="primary" @click="submit(formRef)">{{
-                        t('confirm')
-                    }}</el-button>
+                    <el-button type="primary" @click="submit(formRef)">{{ t('confirm') }}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -94,11 +86,9 @@ const formRules = computed(() => {
     return {
         name: [
             { required: true, message: t('dataNamePlaceholder'), trigger: 'blur' }
-
         ],
         value: [
             { required: true, message: t('dataValuePlaceholder'), trigger: 'blur' }
-
         ]
     }
 })
@@ -107,10 +97,10 @@ const addEvent = () => {
     formData.value = cloneDeep(initialFormData)
     dialogVisible.value = true
 }
-const tabelIndex = ref(0)
+const tableIndex = ref(0)
 const editEvent = (row: any, index: number) => {
     type.value = 'edit'
-    tabelIndex.value = index
+    tableIndex.value = index
     formData.value = cloneDeep(initialFormData)
     formData.value = Object.assign(formData.value, cloneDeep(row))
     dialogVisible.value = true
@@ -125,7 +115,7 @@ const submit = async (formEl: FormInstance | undefined) => {
             if (type.value != 'edit') {
                 tableDate.value.push(cloneDeep(formData.value))
             } else {
-                tableDate.value.splice(tabelIndex.value, 1, cloneDeep(formData.value))
+                tableDate.value.splice(tableIndex.value, 1, cloneDeep(formData.value))
             }
             tableDate.value.sort(function (a, b) { return b.sort - a.sort })
             dialogVisible.value = false
@@ -142,7 +132,6 @@ const deleteEvent = (index: number) => {
 }
 /**
  * 确认
- * @param formEl
  */
 const confirm = async () => {
     loading.value = true

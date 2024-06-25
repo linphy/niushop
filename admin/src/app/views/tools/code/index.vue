@@ -1,39 +1,32 @@
 <template>
+    <!--代码生成-->
     <div class="main-container">
         <el-card class="box-card !border-none" shadow="never">
-            <div class="flex justify-between items-center mb-[10px]">
+
+            <div class="flex justify-between items-center">
                 <span class="text-page-title">{{ pageName }}</span>
             </div>
-            <el-tabs v-model="activeName" class="demo-tabs">
+
+            <el-tabs v-model="activeName" class="mt-[20px]">
                 <el-tab-pane :label="t('codeGeneration')" name="codeGeneration">
-                    <el-steps direction="vertical">
+                    <el-steps :active="5" direction="vertical">
                         <el-step>
-                            <template #icon>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    1</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step1") }}
                                 </p>
                             </template>
                             <template #description>
                                 <span class="text-[#999]">{{ t("describe1") }}</span>
                                 <div class="mt-[20px] mb-[40px] h-[32px]">
-                                    <el-button type="primary" class="w-[100px]" @click="addEvent">{{ t('btn1')
-                                    }}</el-button>
+                                    <el-button type="primary" class="w-[100px]" @click="addEvent">{{ t('btn1') }}</el-button>
                                 </div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    2</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step2") }}
                                 </p>
                             </template>
@@ -42,14 +35,10 @@
                                 <div class="mt-[20px] mb-[40px] h-[32px]"></div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    3</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step3") }}
                                 </p>
                             </template>
@@ -58,14 +47,10 @@
                                 <div class="mt-[20px] mb-[40px] h-[32px]"></div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    4</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step4") }}
                                 </p>
                             </template>
@@ -74,22 +59,16 @@
                                 <div class="mt-[20px] mb-[40px] h-[32px]"></div>
                             </template>
                         </el-step>
+
                         <el-step>
-                            <template #icon>
-                                <div
-                                    class="w-[24px] h-[24px] text-[#fff] bg-[#778aa3] text-center leading-[24px] rounded-full">
-                                    5</div>
-                            </template>
                             <template #title>
-                                <p class="text-[14px] text-[#303133] font-[700]">
+                                <p class="text-[14px] font-[700]">
                                     {{ t("step5") }}
                                 </p>
                             </template>
                             <template #description>
                                 <span class="text-[#999]">{{ t("describe5") }}</span>
-                                <div class="mt-[20px] mb-[40px] h-[32px]">
-
-                                </div>
+                                <div class="mt-[20px] mb-[40px] h-[32px]"></div>
                             </template>
                         </el-step>
                     </el-steps>
@@ -101,14 +80,12 @@
                                 <el-select v-model="codeTableData.searchParam.addon_name" placeholder="Select" filterable remote clearable :remote-method="getAddonDevelopFn">
                                     <el-option label="全部" value="" />
                                     <el-option label="系统" value="2" />
-                                    <el-option :label="item.title" :value="item.key" v-for="item in addonList"
-                                            :key="item.key" />
+                                    <el-option :label="item.title" :value="item.key" v-for="item in addonList" :key="item.key" />
                                 </el-select>
                             </el-form-item>
 
                             <el-form-item :label="t('tableName')" prop="table_name">
-                                <el-input v-model="codeTableData.searchParam.table_name"
-                                    :placeholder="t('tableNamePlaceholder')" />
+                                <el-input v-model="codeTableData.searchParam.table_name" :placeholder="t('tableNamePlaceholder')" />
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="loadGenerateTableList()">{{ t('search') }}</el-button>
@@ -123,12 +100,9 @@
                                 <span>{{ !codeTableData.loading ? t('emptyData') : '' }}</span>
                             </template>
 
-                            <el-table-column prop="table_name" :show-overflow-tooltip="true" :label="t('tableName')"
-                                min-width="120" />
-                            <el-table-column prop="title" :show-overflow-tooltip="true" :label="t('addonName')"
-                                min-width="120" />
-                            <el-table-column prop="table_content" :show-overflow-tooltip="true" :label="t('tableContent')"
-                                min-width="120" />
+                            <el-table-column prop="table_name" :show-overflow-tooltip="true" :label="t('tableName')" min-width="120" />
+                            <el-table-column prop="title" :show-overflow-tooltip="true" :label="t('addonName')" min-width="120" />
+                            <el-table-column prop="table_content" :show-overflow-tooltip="true" :label="t('tableContent')" min-width="120" />
 
                             <el-table-column prop="edit_type" :label="t('editType')" min-width="150" align="center">
                                 <template #default="{ row }">
@@ -145,14 +119,10 @@
                             <el-table-column :label="t('operation')" fixed="right" align="right" width="330">
                                 <template #default="{ row }">
                                     <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-                                    <el-button type="primary" link @click="generatePreviewFn(row.id)">{{ t('preview')
-                                    }}</el-button>
-                                    <el-button type="primary" link @click="generatorCheckFileFn(row.id)">{{ t('saveAndSync')
-                                    }}</el-button>
-                                    <el-button type="primary" link @click="generateCreateFn(row.id, 2)">{{ t('download')
-                                    }}</el-button>
-                                    <el-button type="primary" link @click="deleteEvent(row.id)">{{ t('delete')
-                                    }}</el-button>
+                                    <el-button type="primary" link @click="generatePreviewFn(row.id)">{{ t('preview') }}</el-button>
+                                    <el-button type="primary" link @click="generatorCheckFileFn(row.id)">{{ t('saveAndSync') }}</el-button>
+                                    <el-button type="primary" link @click="generateCreateFn(row.id, 2)">{{ t('download') }}</el-button>
+                                    <el-button type="primary" link @click="deleteEvent(row.id)">{{ t('delete') }}</el-button>
                                 </template>
                             </el-table-column>
 
@@ -165,7 +135,9 @@
                     </div>
                 </el-tab-pane>
             </el-tabs>
+
             <add-table ref="addCodeDialog" />
+
             <el-dialog v-model="dialogVisible" class="dialog-visible" width="70%" title="代码预览">
                 <div class="flex h-[50vh]" v-loading="codeLoading">
                     <el-scrollbar class="h-[100%] w-[270px]">
@@ -409,46 +381,4 @@ const listToTree = (arr:any) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.border-color {
-    border-color: var(--el-color-primary);
-}
-
-.bg-color {
-    background-color: var(--el-color-primary);
-}
-
-.text-color {
-    color: var(--el-color-primary);
-}
-
-.bg-color1 {
-    background-color: var(--el-color-info-light-8);
-}
-
-:deep(.el-step.is-vertical .el-step__icon.is-icon) {
-    padding: 8px 0;
-    height: 40px;
-    background-color: #fff;
-}
-
-:deep(.el-step__title) {
-    height: 40px;
-    line-height: 40px !important;
-}
-
-// :deep(.el-tabs__nav-wrap.is-scrollable.is-top){
-//     height: 40px;
-// }
-.codeList :deep(.el-tabs__nav.is-top) {
-    height: 44px;
-    display: flex;
-    justify-content: center;
-}
-
-:deep(.dialog-visible .el-scrollbar__view), :deep(.dialog-visible .el-scrollbar__view .hljs.ruby){
-    height: 100%;
-}
-</style>
-<style>
-</style>
+<style lang="scss" scoped></style>

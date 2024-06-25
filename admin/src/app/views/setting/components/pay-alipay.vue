@@ -43,8 +43,7 @@
 import { ref, reactive, computed } from 'vue'
 import { t } from '@/lang'
 import type { FormInstance } from 'element-plus'
-// import { setPatConfig } from '@/app/api/sys'
-// import { number } from 'echarts'
+import Test from '@/utils/test'
 
 const showDialog = ref(false)
 const loading = ref(true)
@@ -119,9 +118,16 @@ const setFormData = async (data: any = null) => {
     loading.value = false
 }
 
+const enableVerify = () => {
+    let verify = true
+    if (Test.empty(formData.config.app_id) || Test.empty(formData.config.app_secret_cert) || Test.empty(formData.config.app_public_cert_path) || Test.empty(formData.config.alipay_public_cert_path) || Test.empty(formData.config.alipay_root_cert_path)) verify = false
+    return verify
+}
+
 defineExpose({
     showDialog,
-    setFormData
+    setFormData,
+    enableVerify
 })
 </script>
 

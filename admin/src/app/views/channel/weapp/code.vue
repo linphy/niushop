@@ -1,24 +1,29 @@
 <template>
-    <div class="main-container min-h-[300px] p-5">
-        <div class="flex justify-between items-center mb-[20px]">
-            <span class="text-page-title">{{ pageName }}</span>
-        </div>
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-change="handleClick">
-            <el-tab-pane :label="t('weappAccessFlow')" name="/channel/weapp" />
-            <el-tab-pane :label="t('subscribeMessage')" name="/channel/weapp/message" />
-            <el-tab-pane :label="t('weappRelease')" name="/channel/weapp/code" />
-        </el-tabs>
-        <el-card class="box-card !border-none" shadow="never" v-loading="loading">
-            <div class="mt-[50px]">
-                <el-button type="primary" @click="insert" :loading="uploading" :disabled="weappTableData.loading">{{ t('cloudRelease') }}</el-button>
-                <el-button @click="localInsert" :disabled="weappTableData.loading">{{ t('localRelease') }}</el-button>
+    <!--小程序发布-->
+    <div class="main-container">
+        <el-card class="card !border-none" shadow="never">
+
+            <div class="flex justify-between items-center">
+                <span class="text-page-title">{{ pageName }}</span>
             </div>
+
+            <el-tabs v-model="activeName" class="my-[20px]" @tab-change="handleClick">
+                <el-tab-pane :label="t('weappAccessFlow')" name="/channel/weapp" />
+                <el-tab-pane :label="t('subscribeMessage')" name="/channel/weapp/message" />
+                <el-tab-pane :label="t('weappRelease')" name="/channel/weapp/code" />
+            </el-tabs>
+
+            <div class="mt-[20px]" v-if="!weappConfig.is_authorization">
+                <el-button type="primary" @click="insert" :loading="uploading" :disabled="loading">{{ t('cloudRelease') }}</el-button>
+                <el-button @click="localInsert" :disabled="loading">{{ t('localRelease') }}</el-button>
+            </div>
+
             <el-table class="mt-[15px]" :data="weappTableData.data" v-loading="weappTableData.loading" size="default">
                 <template #empty>
                     <span>{{ t('emptyData') }}</span>
                 </template>
+
                 <el-table-column prop="version" :label="t('code')" align="left" />
-                <!-- <el-table-column prop="desc" :label="t('content')" align="left" /> -->
                 <el-table-column prop="status_name" :label="t('status')" align="left">
                     <template #default="{ row }">
                         <div>{{ row.status_name }}</div>
@@ -27,27 +32,28 @@
                 <el-table-column prop="create_time" :label="t('createTime')" align="center" />
                 <el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
                     <template #default="{ row, $index }">
-                        <template v-if="previewContent && $index == 0 && row.status == 1 && weappTableData.page == 1">
+                        <template v-if="previewContent && $index == 0 && (row.status == 1 || row.status == 2) && weappTableData.page == 1">
                             <el-tooltip :content="previewContent" raw-content effect="light">
                                 <el-button type="primary" link>{{ t('preview') }}</el-button>
                             </el-tooltip>
                         </template>
-                        <el-button type="primary" link v-if="row.status == -1" @click="handleFailReason(row)">
+                        <el-button type="primary" link v-if="row.status == -1 || row.status == -2" @click="handleFailReason(row)">
                             {{ t('failReason') }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
+
             <div class="mt-[16px] flex justify-end">
                 <el-pagination v-model:current-page="weappTableData.page" v-model:page-size="weappTableData.limit"
                     layout="total, sizes, prev, pager, next, jumper" :total="weappTableData.total"
-                    @size-change="getWeappVersionListFn" @current-change="getWeappVersionListFn" />
+                    @size-change="getWeappVersionListFn()" @current-change="getWeappVersionListFn" />
             </div>
         </el-card>
+
         <el-dialog v-model="dialogVisible" :title="t('codeDownTwoDesc')" width="30%" :before-close="handleClose">
             <el-form ref="ruleFormRef" :model="form" label-width="120px">
                 <el-form-item prop="code" :label="t('code')">
-                    <el-input v-model="form.code" :placeholder="t('codePlaceholder')"
-                        onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
+                    <el-input v-model="form.code" :placeholder="t('codePlaceholder')" onkeyup="this.value = this.value.replace(/[^\d\.]/g,'');" />
                 </el-form-item>
                 <el-form-item prop="path" :label="t('path')">
                     <upload-file v-model="form.path" :api="'weapp/upload'" :accept="'.zip'" />
@@ -65,10 +71,21 @@
                 </span>
             </template>
         </el-dialog>
+
         <el-dialog v-model="failReasonDialogVisible" :title="t('failReason')" width="60%">
             <el-scrollbar class="h-[60vh] w-full whitespace-pre p-[20px]">
                 {{ failReason }}
             </el-scrollbar>
+        </el-dialog>
+
+        <el-dialog v-model="uploadSuccessShowDialog" :title="t('warning')" width="500px" draggable>
+            <span v-html="t('uploadSuccessTips')"></span>
+            <template #footer>
+                <div class="flex justify-end">
+                    <el-button @click="knownToKnow" type="primary">{{ t('knownToKnow') }}</el-button>
+                    <el-button @click="uploadSuccessShowDialog = false" type="primary" plain>{{ t('confirm') }}</el-button>
+                </div>
+            </template>
         </el-dialog>
     </div>
 </template>
@@ -80,8 +97,10 @@ import { setWeappVersion, getWeappPreview, getWeappVersionList, getWeappUploadLo
 import { t } from '@/lang'
 import { useRoute, useRouter } from 'vue-router'
 import { getAuthinfo } from '@/app/api/module'
+import { getAppType } from '@/utils/common'
 import { ElMessageBox } from 'element-plus'
 import { AnyObject } from '@/types/global'
+import Storage from '@/utils/storage'
 
 const route = useRoute()
 const router = useRouter()
@@ -108,12 +127,13 @@ const form = ref({
     content: ''
 })
 const installPhpConfig = ref(null)
+const uploadSuccessShowDialog = ref(false)
+const authCode = ref('')
 
 getInstallConfig().then(({ data }) => {
     installPhpConfig.value = data
 }).catch()
 
-const authCode = ref('')
 getAuthinfo().then(res => {
     if (res.data.data && res.data.data.auth_code) {
         authCode.value = res.data.data.auth_code
@@ -126,10 +146,12 @@ getAuthinfo().then(res => {
 
 const weappConfig = ref<{
     app_id:string,
-    app_secret:string
+    app_secret:string,
+    is_authorization: number
 }>({
     app_id: '',
-    app_secret: ''
+    app_secret: '',
+    is_authorization: 0
 })
 getWeappConfig().then(res => {
     weappConfig.value = res.data
@@ -201,11 +223,9 @@ const localInsert = () => {
 const previewContent = ref('')
 const getWeappPreviewImage = () => {
     if (!authCode.value) return
-    getWeappPreview()
-        .then(res => {
-            if (res.data) previewContent.value = `<img src="${res.data}" class="w-[150px]">`
-        })
-        .catch()
+    getWeappPreview().then(res => {
+        if (res.data) previewContent.value = `<img src="${ res.data }" class="w-[150px]">`
+    }).catch()
 }
 
 const getWeappUploadLogFn = (key: string) => {
@@ -220,6 +240,7 @@ const getWeappUploadLogFn = (key: string) => {
             if (last.code == 1 && last.percent == 100) {
                 getWeappVersionListFn()
                 getWeappPreviewImage()
+                !Storage.get('weappUploadTipsLock') && (uploadSuccessShowDialog.value = true)
                 return
             }
             setTimeout(() => {
@@ -267,43 +288,11 @@ const handleFailReason = (data: any) => {
     failReason.value = data.fail_reason
     failReasonDialogVisible.value = true
 }
+
+const knownToKnow = () => {
+    Storage.set({ key: 'weappUploadTipsLock', data: true })
+    uploadSuccessShowDialog.value = false
+}
 </script>
 
-<style lang="scss" scoped>
-.el-collapse {
-    border: 0px !important
-}
-
-.el-collapse-item .el-collapse-item__wrap {
-    border: 0px !important
-}
-
-:deep(.el-tabs__item:hover) {
-    border-bottom: 2px solid var(--el-color-primary);
-}
-
-:deep(.el-tabs__item) {
-    padding: 0;
-}
-
-:deep(.el-tabs__item+.el-tabs__item) {
-    margin-right: 20px;
-    margin-left: 20px;
-    // border-bottom: 2px solid var(--el-color-primary);
-}
-
-:deep(.el-tabs--top) {
-    .el-tabs__active-bar {
-        display: none;
-    }
-
-    .el-tabs__item.is-active {
-        border-bottom: 2px solid var(--el-color-primary);
-    }
-
-    .el-tabs__item.is-top:nth-child(2) {
-        margin-right: 20px;
-    }
-
-}
-</style>
+<style lang="scss" scoped></style>

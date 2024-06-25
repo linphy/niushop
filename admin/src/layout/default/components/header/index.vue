@@ -4,16 +4,16 @@
             <el-col :span="12">
                 <div class="left-panel h-full flex items-center">
                     <!-- 左侧菜单折叠 -->
-                    <!-- <div class="navbar-item flex items-center h-full cursor-pointer" @click="toggleMenuCollapse">
-                        <icon name="element-Expand" v-if="systemStore.menuIsCollapse" />
-                        <icon name="element-Fold" v-else />
-                    </div> -->
+                    <div class="hidden-sm-and-up navbar-item flex items-center h-full cursor-pointer" @click="toggleMenuCollapse">
+                        <icon name="element Expand" v-if="systemStore.menuIsCollapse" />
+                        <icon name="element Fold" v-else />
+                    </div>
                     <!-- 刷新当前页 -->
                     <div class="navbar-item flex items-center h-full cursor-pointer" @click="refreshRouter">
-                        <icon name="element-Refresh" />
+                        <icon name="element Refresh" />
                     </div>
                     <!-- 面包屑导航 -->
-                    <div class="flex items-center h-full pl-[10px] hidden-xs-only">
+                    <div class="flex items-center h-full pl-[10px]">
                         <el-breadcrumb separator="/">
                             <el-breadcrumb-item v-for="(route, index) in breadcrumb" :key="index">{{route.meta.title }}</el-breadcrumb-item>
                         </el-breadcrumb>
@@ -22,7 +22,7 @@
             </el-col>
             <el-col :span="12">
                 <div class="right-panel h-full flex items-center justify-end">
-                    <!-- 预览-->
+                    <!-- 预览 只有站点时展示-->
                     <i class="iconfont iconicon_huojian1 cursor-pointer px-[8px]" :title="t('visitWap')" @click="toPreview"></i>
                     <!-- 切换语言 -->
                     <div class="navbar-item flex items-center h-full cursor-pointer">
@@ -30,8 +30,8 @@
                     </div>
                     <!-- 切换全屏 -->
                     <!-- <div class="navbar-item flex items-center h-full cursor-pointer" @click="toggleFullscreen">
-                        <icon name="iconfont-icontuichuquanping" v-if="isFullscreen" />
-                        <icon name="iconfont-iconquanping" v-else />
+                        <icon name="iconfont icontuichuquanping" v-if="isFullscreen" />
+                        <icon name="iconfont iconquanping" v-else />
                     </div> -->
                     <!-- 布局设置 -->
                     <div class="navbar-item flex items-center h-full cursor-pointer">
@@ -60,8 +60,8 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted } from 'vue'
 import layoutSetting from './layout-setting.vue'
-import switchLang from './switch-lang.vue'
 import userInfo from './user-info.vue'
+import switchLang from './switch-lang.vue'
 import { useFullscreen } from '@vueuse/core'
 import useSystemStore from '@/stores/modules/system'
 import useAppStore from '@/stores/modules/app'
@@ -69,7 +69,6 @@ import { useRoute,useRouter } from 'vue-router'
 import { t } from '@/lang'
 import storage from '@/utils/storage'
 
-const appType = storage.get('app_type')
 const { toggle: toggleFullscreen } = useFullscreen()
 const systemStore = useSystemStore()
 const appStore = useAppStore()
@@ -86,11 +85,11 @@ const detectionLoginDialog = ref(false)
 const comparisonToken = ref('')
 if (storage.get('comparisonTokenStorage')) {
     comparisonToken.value = storage.get('comparisonTokenStorage')
+    // storage.remove(['comparisonTokenStorage']);
 }
-
 // 监听标签页面切换
 document.addEventListener('visibilitychange', e => {
-    if (document.visibilityState === 'visible' && comparisonToken.value != storage.get('token')) {
+    if (document.visibilityState === 'visible' && (comparisonToken.value != storage.get('token'))) {
         detectionLoginDialog.value = true
     }
 })
@@ -109,6 +108,26 @@ onMounted(() => {
         })()
     }
 })
+
+// watch(screenWidth, () => {
+//     if (screenWidth.value < 992) {
+//         if (!systemStore.menuIsCollapse) systemStore.toggleMenuCollapse(true)
+//     } else {
+//         if (systemStore.menuIsCollapse) systemStore.toggleMenuCollapse(false)
+//     }
+// })
+
+// 菜单栏展开折叠
+const toggleMenuCollapse = () => {
+    systemStore.$patch((state) => {
+        if (screenWidth.value < 768) {
+            state.menuDrawer = true
+            state.menuIsCollapse = false
+        } else {
+            systemStore.toggleMenuCollapse(!systemStore.menuIsCollapse)
+        }
+    })
+}
 
 // 刷新路由
 const refreshRouter = () => {

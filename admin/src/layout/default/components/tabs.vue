@@ -1,7 +1,6 @@
 <template>
     <div class="tab-wrap w-full px-[16px]">
-        <el-tabs :closable="tabbarStore.tabLength > 1" :model-value="route.path" @tab-click="tabClick"
-            @tab-remove="removeTab">
+        <el-tabs :closable="tabbarStore.tabLength > 1" :model-value="route.path" @tab-click="tabClick" @tab-remove="removeTab">
             <el-tab-pane v-for="(tab, key, index) in tabbarStore.tabs" :name="tab.path" :key="index">
                 <template #label>
                     <el-dropdown trigger="contextmenu" placement="bottom-start">

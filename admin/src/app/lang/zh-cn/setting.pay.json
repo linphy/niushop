@@ -43,7 +43,7 @@
 	"defaultTamplate": "请选择模板",
     "isEnable": "是否启用",
     "onState": "开启状态",
-    "configurePaymentMethod": "请先配置值该支付方式",
+    "configurePaymentMethod": "请先配置该支付方式",
     "enablePaymentMode": "请先开启该支付方式",
     "clickConfigure": "点击配置",
     "setConfig": "设置支付配置",

@@ -1,44 +1,51 @@
 <template>
+    <!--提现设置-->
     <div class="main-container">
-        <div class="flex ml-[18px] justify-between items-center mt-[20px]">
-			<span class="text-page-title">{{pageName}}</span>
-		</div>
-        <el-form :model="formData" label-width="150px" ref="ruleFormRef" :rules="rules" class="page-form" v-loading="loading">
-            <el-card class="box-card !border-none" shadow="never">
+        <el-card class="box-card !border-none" shadow="never">
 
-                <el-form-item :label="t('isOpen')">
-                    <el-switch v-model="formData.is_open" />
-                </el-form-item>
+            <div class="flex justify-between items-center">
+                <span class="text-page-title">{{ pageName }}</span>
+            </div>
 
-                <el-form-item :label="t('cashWithdrawalAmount')" v-if="formData.is_open" prop="min">
-                    <el-input v-model="formData.min" @keyup="filterDigit($event)" class="input-width" :placeholder="t('cashWithdrawalAmountPlaceholder')" />
-                </el-form-item>
+            <el-form class="page-form mt-[20px]" :model="formData" label-width="150px" ref="ruleFormRef" :rules="rules" v-loading="loading">
+                <el-card class="box-card !border-none" shadow="never">
 
-                <el-form-item :label="t('commissionRatio')" v-if="formData.is_open" prop="rate">
-                    <el-input v-model="formData.rate" @keyup="filterDigit($event)" class="input-width" :placeholder="t('commissionRatioPlaceholder')" />
-                    <span class="ml-2">%</span>
-                </el-form-item>
-                <el-form-item :label="t('audit')" v-if="formData.is_open"  class="items-center">
-                    <el-radio-group v-model="formData.is_auto_verify">
-                        <el-radio label="0" size="large">{{t('manualAudit')}}</el-radio>
-                        <el-radio label="1" size="large">{{t('automaticAudit')}}</el-radio>
-                    </el-radio-group>
-                </el-form-item>
+                    <el-form-item :label="t('isOpen')">
+                        <el-switch v-model="formData.is_open" />
+                    </el-form-item>
 
-                <el-form-item :label="t('transfer')" v-if="formData.is_open" class="items-center">
-                    <el-radio-group v-model="formData.is_auto_transfer">
-                        <el-radio label="0" size="large">{{t('manualTransfer')}}</el-radio>
-                        <el-radio label="1" size="large">{{t('automatedTransit')}}</el-radio>
-                    </el-radio-group>
-                </el-form-item>
+                    <el-form-item :label="t('cashWithdrawalAmount')" v-if="formData.is_open" prop="min">
+                        <el-input v-model="formData.min" @keyup="filterDigit($event)" class="input-width" :placeholder="t('cashWithdrawalAmountPlaceholder')" />
+                    </el-form-item>
 
-                <el-form-item :label="t('transferMode')" v-if="formData.is_open" class="items-center">
-                    <el-checkbox-group v-model="formData.transfer_type" size="large">
-                        <el-checkbox :label="item.key"  v-for="(item,index) in Transfertype" :key="'a'+index">{{item.name}}</el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-            </el-card>
-        </el-form>
+                    <el-form-item :label="t('commissionRatio')" v-if="formData.is_open" prop="rate">
+                        <el-input v-model="formData.rate" @keyup="filterDigit($event)" class="input-width" :placeholder="t('commissionRatioPlaceholder')" />
+                        <span class="ml-2">%</span>
+                    </el-form-item>
+
+                    <el-form-item :label="t('audit')" v-if="formData.is_open"  class="items-center">
+                        <el-radio-group v-model="formData.is_auto_verify">
+                            <el-radio label="0" size="large">{{t('manualAudit')}}</el-radio>
+                            <el-radio label="1" size="large">{{t('automaticAudit')}}</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+
+                    <el-form-item :label="t('transfer')" v-if="formData.is_open" class="items-center">
+                        <el-radio-group v-model="formData.is_auto_transfer">
+                            <el-radio label="0" size="large">{{t('manualTransfer')}}</el-radio>
+                            <el-radio label="1" size="large">{{t('automatedTransit')}}</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+
+                    <el-form-item :label="t('transferMode')" v-if="formData.is_open" class="items-center">
+                        <el-checkbox-group v-model="formData.transfer_type" size="large">
+                            <el-checkbox :label="item.key"  v-for="(item,index) in Transfertype" :key="'a'+index">{{item.name}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-card>
+            </el-form>
+        </el-card>
+
         <div class="fixed-footer-wrap">
             <div class="fixed-footer">
                 <el-button type="primary" @click="onSave(ruleFormRef)">{{ t('save') }}</el-button>

@@ -1,102 +1,101 @@
 <template>
-	<div class="main-container">
-		<el-card class="box-card !border-none" shadow="never">
-			<div class="flex justify-between items-center mb-[20px]">
-				<span class="text-page-title">{{ pageName }}</span>
-				<el-button type="primary" @click="showEvent">{{ t('addCron') }}</el-button>
-			</div>
-			<el-alert class="warm-prompt " type="info">
-				<template #default>
-					<div class="flex items-center">
-						<div>
-							<p>
-								{{ t('cronTipsOne') }}
-							</p>
-							<p class="mt-2">
-								{{ t('cronTipsTwo') }}
-							</p>
-						</div>
-					</div>
-				</template>
-			</el-alert>
-			<div class="mt-[20px]">
-				<el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading">
+    <div class="main-container">
+        <el-card class="box-card !border-none" shadow="never">
 
-					<template #empty>
-						<span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
-					</template>
+            <div class="flex justify-between items-center mb-[20px]">
+                <span class="text-page-title">{{ pageName }}</span>
+                <el-button type="primary" @click="showEvent">{{ t('addCron') }}</el-button>
+            </div>
 
-					<el-table-column prop="name" :label="t('title')" min-width="150" />
-					<el-table-column prop="key" :label="t('key')" min-width="150" />
-					<el-table-column :label="t('crondType')" min-width="150">
-						<template #default="{ row }">
-							{{ row.crontab_content }}
-						</template>
-					</el-table-column>
-					<el-table-column prop="status_name" :label="t('openStatus')" min-width="100" />
-					<el-table-column :label="t('operation')" align="right" fixed="right" width="130">
-						<template #default="{ row }">
-							<el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-							<el-button type="primary" link @click="deleteEvent(row.id)">{{ t('delete') }}</el-button>
-						</template>
-					</el-table-column>
-				</el-table>
-				<div class="mt-[16px] flex justify-end">
-					<el-pagination v-model:current-page="cronTableData.page" v-model:page-size="cronTableData.limit"
-						layout="total, sizes, prev, pager, next, jumper" :total="cronTableData.total"
-						@size-change="loadCronList()" @current-change="loadCronList" />
-				</div>
-			</div>
+            <el-alert type="info">
+                <template #default>
+                    <div class="flex items-center">
+                        <div>
+                            <p>
+                                {{ t('cronTipsOne') }}
+                            </p>
+                            <p class="mt-2">
+                                {{ t('cronTipsTwo') }}
+                            </p>
+                        </div>
+                    </div>
+                </template>
+            </el-alert>
 
-		</el-card>
-		<cron-info ref="cronDialog" @complete="loadCronList" />
-		<el-dialog v-model="showDialog" :title="t('editCron')" width="750px" :destroy-on-close="true">
-			<el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form"
-				v-loading="loading">
-				<el-form-item :label="t('cronTemplate')" class="items-center" prop="key">
-					<el-select v-model="formData.key">
-						<el-option v-for="item in templateList" :key="item.key" :label="item.name" :value="item.key" />
-					</el-select>
-				</el-form-item>
-				<el-form-item :label="t('cronTime')" prop="timeDate">
-					<el-select v-model="formData.time.type" class="w-[150px]">
-						<el-option v-for="(item, index) in date_type" :key="index" :label="item" :value="index" />
-					</el-select>
-					<div class="flex">
-						<el-select v-model="formData.time.week" class="ml-2 w-[120px]" v-if="formData.time.type == 'week'">
-							<el-option v-for="(item, index) in week_list" :key="index" :label="item" :value="index" />
-						</el-select>
-						<el-input v-model="formData.time.day" class="ml-2 w-[120px]"
-							v-if="['month', 'day'].indexOf(formData.time.type) != -1">
-							<template #append>{{ t('day') }}</template>
-						</el-input>
-						<el-input v-model="formData.time.hour" class="ml-2 w-[120px]"
-							v-if="['month', 'day', 'hour', 'week'].indexOf(formData.time.type) != -1">
-							<template #append>{{ t('hour') }}</template>
-						</el-input>
-						<el-input v-model="formData.time.min" class="ml-2 w-[120px]"
-							v-if="['month', 'day', 'hour', 'week', 'min'].indexOf(formData.time.type) != -1">
-							<template #append>{{ t('min') }}</template>
-						</el-input>
-					</div>
-				</el-form-item>
-				<el-form-item :label="t('isopen')">
-					<div class="input-width flex items-center text-sm">
-						<el-radio-group v-model="formData.status">
-							<el-radio :label="1">{{ t('yes') }}</el-radio>
-							<el-radio :label="2">{{ t('no') }}</el-radio>
-						</el-radio-group>
-					</div>
-				</el-form-item>
-			</el-form>
+            <div class="mt-[20px]">
+                <el-table :data="cronTableData.data" size="large" v-loading="cronTableData.loading">
+                    <template #empty>
+                        <span>{{ !cronTableData.loading ? t('emptyData') : '' }}</span>
+                    </template>
 
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button type="primary" @click="addEvent(formRef)">{{ t('confirm') }}</el-button>
-				</span>
-			</template>
-		</el-dialog>
-	</div>
+                    <el-table-column prop="name" :label="t('title')" min-width="150" />
+                    <el-table-column prop="key" :label="t('key')" min-width="150" />
+                    <el-table-column :label="t('crondType')" min-width="150">
+                        <template #default="{ row }">
+                            {{ row.crontab_content }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="status_name" :label="t('openStatus')" min-width="100" />
+                    <el-table-column :label="t('operation')" align="right" fixed="right" width="130">
+                        <template #default="{ row }">
+                            <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
+                            <el-button type="primary" link @click="deleteEvent(row.id)">{{ t('delete') }}</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="mt-[16px] flex justify-end">
+                    <el-pagination v-model:current-page="cronTableData.page" v-model:page-size="cronTableData.limit"
+                        layout="total, sizes, prev, pager, next, jumper" :total="cronTableData.total"
+                        @size-change="loadCronList()" @current-change="loadCronList" />
+                </div>
+            </div>
+        </el-card>
+
+        <cron-info ref="cronDialog" @complete="loadCronList" />
+
+        <el-dialog v-model="showDialog" :title="t('editCron')" width="750px" :destroy-on-close="true">
+            <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
+                <el-form-item :label="t('cronTemplate')" class="items-center" prop="key">
+                    <el-select v-model="formData.key">
+                        <el-option v-for="item in templateList" :key="item.key" :label="item.name" :value="item.key" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item :label="t('cronTime')" prop="timeDate">
+                    <el-select v-model="formData.time.type" class="w-[150px]">
+                        <el-option v-for="(item, index) in date_type" :key="index" :label="item" :value="index" />
+                    </el-select>
+                    <div class="flex">
+                        <el-select v-model="formData.time.week" class="ml-2 w-[120px]" v-if="formData.time.type == 'week'">
+                            <el-option v-for="(item, index) in week_list" :key="index" :label="item" :value="index" />
+                        </el-select>
+                        <el-input v-model="formData.time.day" class="ml-2 w-[120px]" v-if="['month', 'day'].indexOf(formData.time.type) != -1">
+                            <template #append>{{ t('day') }}</template>
+                        </el-input>
+                        <el-input v-model="formData.time.hour" class="ml-2 w-[120px]" v-if="['month', 'day', 'hour', 'week'].indexOf(formData.time.type) != -1">
+                            <template #append>{{ t('hour') }}</template>
+                        </el-input>
+                        <el-input v-model="formData.time.min" class="ml-2 w-[120px]" v-if="['month', 'day', 'hour', 'week', 'min'].indexOf(formData.time.type) != -1">
+                            <template #append>{{ t('min') }}</template>
+                        </el-input>
+                    </div>
+                </el-form-item>
+                <el-form-item :label="t('isopen')">
+                    <div class="input-width flex items-center text-sm">
+                        <el-radio-group v-model="formData.status">
+                            <el-radio :label="1">{{ t('yes') }}</el-radio>
+                            <el-radio :label="2">{{ t('no') }}</el-radio>
+                        </el-radio-group>
+                    </div>
+                </el-form-item>
+            </el-form>
+
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="addEvent(formRef)">{{ t('confirm') }}</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -277,8 +276,4 @@ const infoEvent = (data: any) => {
 
 </script>
 
-<style lang="scss" scoped>
-.el-input-number.is-controls-right .el-input-number__increase {
-	left: 20px !important
-}
-</style>
+<style lang="scss" scoped></style>

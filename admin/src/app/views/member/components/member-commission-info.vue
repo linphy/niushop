@@ -1,12 +1,10 @@
 <template>
     <el-dialog v-model="showDialog" :title="t('moneyInfo')" width="550px" :destroy-on-close="true">
-        <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form"
-            v-loading="loading">
+        <el-form :model="formData" label-width="110px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
 
             <el-form-item :label="t('headimg')">
                 <div class="flex items-center">
-                    <img class="w-[50px] h-[50px] mr-[10px]" v-if="formData.member.headimg"
-                        :src="img(formData.member.headimg)" alt="">
+                    <img class="w-[50px] h-[50px] mr-[10px]" v-if="formData.member.headimg" :src="img(formData.member.headimg)" alt="">
                     <img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
                 </div>
             </el-form-item>
@@ -88,8 +86,6 @@ const formRules = computed(() => {
 
     }
 })
-
-// const emit = defineEmits(['complete'])
 
 const setFormData = async (row: any = null) => {
     loading.value = true

@@ -48,7 +48,7 @@ export function getPayRefundPages(params: Record<string, any>) {
 
 /**
  * 获取退款详情
- * @param id
+ * @param refund_no
  */
 export function getPayRefundInfo(refund_no: string) {
     return request.get(`pay/refund/${refund_no}`)
@@ -56,7 +56,6 @@ export function getPayRefundInfo(refund_no: string) {
 
 /**
  * 退款方式
- * @param id
  */
 export function getRefundType() {
     return request.get(`pay/refund/type`)
@@ -64,8 +63,15 @@ export function getRefundType() {
 
 /**
  * 退款转账
- * @param id
+ * @param params
  */
 export function getRefundTransfer(params: Record<string, any>) {
     return request.post(`pay/refund/transfer`, params, {showSuccessMessage: true})
+}
+
+/**
+ * 全部支付方式
+ */
+export function getAllPayType() {
+    return request.get(`pay/type/all`)
 }

@@ -78,7 +78,6 @@ const formRules = computed(() => {
         domain: [
             { required: true, message: t('domainPlaceholder'), trigger: 'blur' }
         ]
-
     }
 })
 

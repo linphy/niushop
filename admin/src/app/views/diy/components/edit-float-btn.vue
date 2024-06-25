@@ -9,7 +9,7 @@
 					<span>{{ selectTemplate.name }}</span>
                     <ul class="ml-[10px] flex items-center">
                         <li v-for="(item,i) in templateList" :key="i" :class="['w-[50px] h-[32px] flex items-center justify-center border-solid  border-[1px] border-[#eee] cursor-pointer', {'border-r-transparent': templateList.length != (i+1)}, (item.className == diyStore.editComponent.bottomPosition) ?  '!border-[var(--el-color-primary)]' : '' ]" @click="changeTemplateList(item)">
-                            <span :class="['iconfont', item.src]"></span>
+                            <span :class="['iconfont !text-[20px]', item.src]"></span>
                         </li>
                     </ul>
 				</el-form-item>
@@ -36,7 +36,7 @@
 						</el-form-item>
 
 						<div class="del absolute cursor-pointer z-[2] top-[-8px] right-[-8px]" v-show="diyStore.editComponent.list.length > 1" @click="diyStore.editComponent.list.splice(index,1)">
-							<icon name="element-CircleCloseFilled" color="#bbb" size="20px"/>
+							<icon name="element CircleCloseFilled" color="#bbb" size="20px"/>
 						</div>
 
 						<el-form-item :label="t('link')">
@@ -85,22 +85,22 @@ diyStore.editComponent.verify = (index: number) => {
 const templateList = ref([
     {
         name: '左上',
-        src: 'iconzuoshangjiao',
+        src: 'iconzuoshangpc',
         className: 'upperLeft'
     },
     {
         name: '右上',
-        src: 'iconyoushangjiao',
+        src: 'iconyoushangpc',
         className: 'upperRight'
     },
     {
         name: '左下',
-        src: 'iconzuoxiajiao',
+        src: 'iconzuoxiapc',
         className: 'lowerLeft'
     },
     {
         name: '右下',
-        src: 'iconyouxiajiao',
+        src: 'iconyouxiapc',
         className: 'lowerRight'
     }
 ])

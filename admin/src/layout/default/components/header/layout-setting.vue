@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <icon name="element-Setting" @click="drawer = true" />
+        <icon name="element Setting" @click="drawer = true" />
 
         <el-drawer v-model="drawer" :title="t('layout.layoutSetting')" size="300px">
             <el-scrollbar>

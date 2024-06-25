@@ -2,15 +2,13 @@ import request from '@/utils/request'
 
 /**
  * 云编译
- * @param addon
  */
 export function cloudBuild() {
-    return request.post('niucloud/build', {}, { timeout: 0 })
+    return request.post('niucloud/build', {})
 }
 
 /**
  * 获取云编译任务
- * @param addon
  */
 export function getCloudBuildTask() {
     return request.get('niucloud/build')

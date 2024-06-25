@@ -1,67 +1,67 @@
 <template>
-    <div class="flex flex-wrap mt-[20px] min-w-[1200px]" v-if="page.use_template">
-        <div class="page-item relative bg-no-repeat ml-[20px] mr-[40px] bg-[#f7f7f7] w-[340px] pt-[90px] pb-[20px]">
-            <p class="absolute top-[54px] left-[50%] translate-x-[-50%] text-[14px] truncate w-[130px] text-center">{{ page.use_template.title }}</p>
+    <div class="main-container">
+        <el-card class="box-card !border-none" shadow="never">
 
-            <div v-show="page.use_template.url" class="w-[320px] h-[550px] mx-auto">
-                <iframe :id="'previewIframe_' + type" v-show="page.loadingIframe" class="w-[320px] h-[550px] mx-auto" :src="page.use_template.wapPreview" frameborder="0"></iframe>
-                <div v-show="page.loadingDev" class="w-[320px] h-[550px] mx-auto bg-body pt-[20px] px-[20px]">
-                    <div class="font-bold text-xl mb-[40px]">{{ t('developTitle') }}</div>
-                    <div class="mb-[20px] flex flex-col">
-                        <text class="mb-[10px]">{{ t('wapDomain') }}</text>
-                        <el-input v-model="wapDomain" :placeholder="t('wapDomainPlaceholder')" clearable />
+            <div class="flex flex-wrap min-w-[1200px]" v-if="page.use_template">
+                <div class="page-item relative w-[340px] mr-[40px] pt-[90px] pb-[20px] bg-[#f7f7f7] bg-no-repeat">
+                    <p class="absolute top-[54px] left-[50%] translate-x-[-50%] w-[130px] text-[14px] truncate text-center">{{ page.use_template.title }}</p>
+
+                    <div v-show="page.use_template.url" class="w-[320px] h-[550px] mx-auto">
+                        <iframe :id="'previewIframe_' + type" v-show="page.loadingIframe" class="w-[320px] h-[550px] mx-auto" :src="page.use_template.wapPreview" frameborder="0"></iframe>
+                        <div v-show="page.loadingDev" class="w-[320px] h-[550px] mx-auto bg-body pt-[20px] px-[20px]">
+                            <div class="font-bold text-xl mb-[40px]">{{ t('developTitle') }}</div>
+                            <div class="mb-[20px] flex flex-col">
+                                <text class="mb-[10px]">{{ t('wapDomain') }}</text>
+                                <el-input v-model="wapDomain" :placeholder="t('wapDomainPlaceholder')" clearable />
+                            </div>
+                            <div class="flex">
+                                <el-button type="primary" @click="saveDomain()">{{ t('confirm') }}</el-button>
+                                <el-button type="primary" @click="settingTips()" plain>{{ t('settingTips') }}</el-button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex">
-                        <el-button type="primary" @click="saveDomain()">{{ t('confirm') }}</el-button>
-                        <el-button type="primary" @click="settingTips()" plain>{{ t('settingTips') }}</el-button>
+
+                    <div v-show="!page.use_template.wapPreview" class="overflow-hidden w-[320px] h-[550px] mx-auto">
+                        <img class="max-w-full" v-if="page.use_template.cover" :src="img(page.use_template.cover)" />
+                    </div>
+
+                    <div class="popup-wrap absolute inset-x-0 inset-y-0 select-none" :class="{ 'disabled': page.isDisabledPop }"></div>
+
+                </div>
+
+                <div class="w-[700px]">
+                    <div class="flex flex-wrap">
+                        <diy-link v-model="link" :ignore="['DIY_LINK']" @success="changePage">
+                            <el-button type="primary">{{ t('changePage') }}</el-button>
+                        </diy-link>
+                        <el-button type="primary" @click="toDecorate()" v-show="page.use_template.action == 'decorate'" class="ml-[12px]">{{ t('decorate') }}</el-button>
+                    </div>
+
+                    <div class="info-wrap">
+                        <div class="mt-[20px] p-[20px] flex items-center justify-between bg">
+                            <div>
+                                <div class="font-bold">{{ t('H5') }}</div>
+                                <el-form label-width="40px" class="mt-[5px]">
+                                    <el-form-item :label="t('link')" class="mb-[5px]">
+                                        <el-input readonly :value="page.shareUrl" class="!w-[390px]">
+                                            <template #append>
+                                                <el-button @click="copyEvent(page.shareUrl)" class="bg-primary copy">{{ t('copy') }}</el-button>
+                                            </template>
+                                        </el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <div class="text-[#999] text-base">{{ t('scanQRCodeOnRight') }}</div>
+                            </div>
+                            <div class="text-center">
+                                <el-image class="w-[100px] h-[100px] mb-[5px]" :src="wapImage" />
+                                <div @click="toPreview()" class="text-primary text-base cursor-pointer">{{ t('preview') }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div v-show="!page.use_template.wapPreview" class="overflow-hidden w-[320px] h-[550px] mx-auto">
-                <img class="max-w-full" v-if="page.use_template.cover" :src="img(page.use_template.cover)" />
-            </div>
-
-            <div class="popup-wrap absolute inset-x-0 inset-y-0 select-none" :class="{ 'disabled': page.isDisabledPop }"></div>
-
-        </div>
-
-        <div class="w-[700px]">
-            <div class="flex flex-wrap">
-                <diy-link v-model="link" :ignore="['DIY_LINK']" @success="changePage">
-                    <el-button type="primary">{{ t('changePage') }}</el-button>
-                </diy-link>
-                <el-button type="primary" @click="toDecorate()" v-show="page.use_template.action == 'decorate'" class="ml-[12px]">{{ t('decorate') }}</el-button>
-            </div>
-
-            <div class="info-wrap">
-
-                <div class="mt-[20px] bg-[#F7F8FA] p-[20px] flex items-center justify-between">
-                    <div>
-                        <div class="font-bold">{{ t('H5') }}</div>
-						<el-form label-width="40px" class="mt-[5px]">
-							<el-form-item :label="t('link')" class="mb-[5px]">
-								<el-input readonly :value="page.shareUrl" class="!w-[390px]">
-									<template #append>
-										<el-button @click="copyEvent(page.shareUrl)" class="bg-primary copy">{{ t('copy') }}</el-button>
-									</template>
-								</el-input>
-							</el-form-item>
-						</el-form>
-                        <div class="text-[#999] text-base">{{ t('scanQRCodeOnRight') }}</div>
-                    </div>
-                    <div class="text-center">
-                        <el-image class="w-[100px] h-[100px] mb-[5px]" :src="wapImage" />
-                        <div @click="toPreview()" class="text-primary text-base cursor-pointer">{{ t('preview') }}</div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
+        </el-card>
     </div>
-
 </template>
 
 <script lang="ts" setup>
@@ -327,19 +327,19 @@ watch(copied, () => {
 </script>
 
 <style lang="scss" scoped>
-.page-item {
-    background-image: url(@/app/assets/images/iphone_bg.png);
-    background-color: var(--el-bg-color);
-    background-size: 100%;
+    .page-item {
+        background-image: url(@/app/assets/images/iphone_bg.png);
+        background-color: var(--el-bg-color);
+        background-size: 100%;
 
-    .popup-wrap {
-        display: none;
-    }
+        .popup-wrap {
+            display: none;
+        }
 
-    &:hover {
-        .popup-wrap:not(.disabled) {
-            display: block !important;
+        &:hover {
+            .popup-wrap:not(.disabled) {
+                display: block !important;
+            }
         }
     }
-}
 </style>

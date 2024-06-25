@@ -36,8 +36,7 @@
                 <template #empty>
                     <span>{{ !payListTable.loading ? t('emptyData') : '' }}</span>
                 </template>
-                <el-table-column prop="out_trade_no" :label="t('outTradeNo')" min-width="230"
-                    :show-overflow-tooltip="true" />
+                <el-table-column prop="out_trade_no" :label="t('outTradeNo')" min-width="230" :show-overflow-tooltip="true" />
                 <el-table-column prop="body" :label="t('body')" min-width="150" :show-overflow-tooltip="true" />
                 <el-table-column prop="money" :label="t('money')" min-width="120" align="right" />
                 <el-table-column :label="t('createTime')" min-width="150" align="center" :show-overflow-tooltip="true">

@@ -66,10 +66,9 @@ const loadTableList = () => {
 }
 loadTableList()
 
-// const emit = defineEmits(['complete'])
 /**
  * 确认
- * @param formEl
+ * @param row
  */
 const confirm = (row: any) => {
     const name: string = row.Name
