@@ -1,7 +1,7 @@
 <template>
 	<view :style="warpCss">
 		<view :class="['float-btn flex flex-col z-1000 items-center px-[24rpx] fixed', diyComponent.bottomPosition, diyStore.mode == 'decorate' ? 'float-btn-border' : '']" :style="floatBtnWrapCss">
-			<view v-for="(item,index) in diyComponent.list" :key="index" @click="toRedirect(item.link)" :class="{'flex items-center justify-center' : true, 'mb-[20rpx]': diyComponent.list.length != index+1 }" :style="floatBtnItemCss">
+			<view v-for="(item,index) in diyComponent.list" :key="index" @click="diyStore.toRedirect(item.link)" :class="{'flex items-center justify-center' : true, 'mb-[20rpx]': diyComponent.list.length != index+1 }" :style="floatBtnItemCss">
 				<image v-if="item && item.imageUrl" :style="floatBtnItemCss" :src="img(item.imageUrl)" mode="aspectFit"></image>
 				<image v-else :src="img('static/resource/images/diy/figure.png')" mode="aspectFit" :style="floatBtnItemCss"/>
 			</view>
@@ -13,8 +13,7 @@
 	// 浮动按钮组件
 	import { computed, watch } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
-	import { img,redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
-    import { useLogin } from '@/hooks/useLogin';
+	import { img } from '@/utils/common';
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
@@ -67,19 +66,6 @@
 			// 处理下拉刷新业务
 		}
 	)
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
-    }
 </script>
 
 <style lang="scss" scoped>

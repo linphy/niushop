@@ -1,32 +1,11 @@
 <template>
     <view v-if="!loading" :style="themeColor()">
-        <view class="border-0 !border-b !border-[#eee] border-solid fixed top-0 left-0 right-0 z-99 bg-[#fff]" v-if="!source">
-            <u-tabs :list="tabs" @click="switchTab" :current="current" itemStyle="width:50%;height:88rpx;box-sizing: border-box;"></u-tabs>
-        </view>
-        <scroll-view scroll-y="true" :class="{ 'pt-[88rpx]' : !source }" >
+        <scroll-view scroll-y="true">
             <u-swipe-action>
-                <view class="p-[30rpx]" v-show="current == 0">
-                    <u-swipe-action-item :options="addressOptions" @click="swipeClick" v-for="item in addressList">
+                <view class="p-[30rpx]">
+                    <u-swipe-action-item :options="addressOptions" @click="swipeClick(key)" v-for="(item, key) in addressList">
                         <view class="border-0 !border-b !border-[#f5f5f5] border-solid pb-[30rpx] flex items-center">
                             <view class="flex-1 line-feed" @click="selectAddress(item)">
-                                <view class="font-bold my-[10rpx] text-sm line-feed">{{ item.full_address }}</view>
-                                <view class="text-sm flex items-center">
-                                    <view>{{ item.name }}</view>
-                                    <text class="text-[26rpx] text-gray-subtitle">{{ mobileHide(item.mobile) }}</text>
-                                    <view class="bg-primary text-white text-xs px-[10rpx] leading-none flex items-center h-[32rpx] ml-[10rpx] rounded  min-w-[50rpx]" v-if="item.is_default == 1">{{ t('default') }}</view>
-                                </view>
-                            </view>
-                            <text class="iconfont iconbianji shrink-0 text-[40rpx] p-[20rpx] pr-0" @click="editAddress(item.id)"></text>
-                        </view>
-                    </u-swipe-action-item>
-                    <view v-if="!addressList.length" class="pt-[20vh]">
-                        <mescroll-empty :option="{tip : '暂无收货地址'}"></mescroll-empty>
-                    </view>
-                </view>
-                <view class="p-[30rpx]" v-show="current == 1">
-                    <u-swipe-action-item :options="addressOptions" @click="swipeClick" v-for="item in locationAddressList">
-                        <view class="border-0 !border-b !border-[#f5f5f5] border-solid pb-[30rpx] flex items-center">
-                            <view class="flex-1" @click="selectAddress(item)">
                                 <view class="font-bold my-[10rpx] text-sm line-feed">{{ item.full_address }}</view>
                                 <view class="text-sm flex items-center">
                                     <view>{{ item.name }}</view>
@@ -34,10 +13,10 @@
                                     <view class="bg-primary text-white text-xs px-[10rpx] leading-none flex items-center h-[32rpx] ml-[10rpx] rounded min-w-[50rpx]" v-if="item.is_default == 1">{{ t('default') }}</view>
                                 </view>
                             </view>
-                            <text class="iconfont iconbianji shrink-0 text-[40rpx] p-[20rpx] pr-0" @click="editAddress(item.id)"></text>
+                            <text class="nc-iconfont nc-icon-xiugaiV6xx shrink-0 text-[32rpx] p-[20rpx] pr-0" @click="editAddress(item.id)"></text>
                         </view>
                     </u-swipe-action-item>
-                    <view v-if="!locationAddressList.length" class="pt-[20vh]">
+                    <view v-if="!addressList.length" class="pt-[20vh]">
                         <mescroll-empty :option="{tip : '暂无收货地址'}"></mescroll-empty>
                     </view>
                 </view>
@@ -61,10 +40,6 @@
 
     const loading = ref(true)
     const current = ref(0)
-    const tabs = ref([
-        { name: '快递地址', key: 'address' },
-        { name: '同城配送地址', key: 'location_address' }
-    ])
     const addressList = ref<object[]>([])
     const locationAddressList = ref<object[]>([])
     const type = ref('')
@@ -74,6 +49,8 @@
         type.value = data.type || ''
         source.value = data.source || ''
         if (data.type) current.value = data.type == 'address' ? 0 : 1
+		// 清空缓存，防止受待支付界面影响
+		if(uni.getStorageSync('selectAddressCallback')){uni.removeStorage({ key: 'selectAddressCallback' })}
     })
 
     getAddressList({}).then(({ data }) => {
@@ -81,25 +58,24 @@
         data.forEach(item => {
             item.type == 'address' ? address.push(item) : locationAddress.push(item)
         })
-        addressList.value = address
-        locationAddressList.value = locationAddress
+		if(!source.value){ //地址管理使用
+			addressList.value = data;
+		}else{ // 区分同城配送地址和快递地址
+			addressList.value = current.value == 0 ? address : locationAddress;
+		}
         loading.value = false
     }).catch(() => {
         loading.value = false
     })
 
-    const switchTab = (event)=> {
-        current.value = event.index
-    }
-
     const addAddress = ()=> {
-        const url = `/app/pages/member/${tabs.value[ current.value ].key}_edit`
-        redirect({ url, param: { type: tabs.value[ current.value ].key, source : source.value } })
+        const url = `/app/pages/member/address_edit`
+        redirect({ url, param: { source : source.value } })
     }
 
     const editAddress = (id: number)=> {
-        const url = `/app/pages/member/${tabs.value[ current.value ].key}_edit`
-        redirect({ url, param: { id, type: tabs.value[ current.value ].key, source : source.value} })
+        const url = `/app/pages/member/address_edit`
+        redirect({ url, param: { id, source : source.value} })
     }
 
     const addressOptions = ref([
@@ -126,14 +102,15 @@
         }
     }
 
-    const swipeClick = (event: any) => {
+    const swipeClick = (index: any) => {
         const list = current.value ? locationAddressList : addressList
-        const data = list.value[event.index]
+        const data = list.value[index]
 
         deleteAddress(data.id).then(() => {
-            list.value.splice(event.index, 1)
+            list.value.splice(index, 1)
         }).catch()
     }
+	
 </script>
 
 <style lang="scss" scoped>

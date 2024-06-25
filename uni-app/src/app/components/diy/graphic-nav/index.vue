@@ -5,7 +5,7 @@
 			<view v-if="diyComponent.layout == 'vertical'" class="graphic-nav">
 				<view class="graphic-nav-item" v-for="(item, index) in diyComponent.list" :key="item.id">
 
-					<view @click="toRedirect(item.link)" :class="['flex items-center justify-between py-3 px-4', index == 0 ? 'border-t-0':'border-t']">
+					<view @click="diyStore.toRedirect(item.link)" :class="['flex items-center justify-between py-3 px-4', index == 0 ? 'border-t-0':'border-t']">
 
 						<view class="graphic-img relative flex items-center w-10 h-10 mr-[20rpx]"
 							v-if="diyComponent.mode != 'text'"
@@ -42,7 +42,7 @@
 
 						<view class="graphic-nav-item" :class="[diyComponent.mode]" :key="item.id" v-if="swiperCondition(index,numItem)" :style="{ width: 100 / diyComponent.rowCount + '%' }">
 
-							<view @click="toRedirect(item.link)" class="flex flex-col items-center box-border py-2">
+							<view @click="diyStore.toRedirect(item.link)" class="flex flex-col items-center box-border py-2">
 
 								<view class="graphic-img relative flex items-center justify-center w-10 h-10"
 									v-if="diyComponent.mode != 'text'"
@@ -82,7 +82,7 @@
 						v-for="(item, index) in diyComponent.list" :key="item.id"
 						:style="{ width: 100 / diyComponent.rowCount + '%' }">
 
-						<view @click="toRedirect(item.link)" class="flex flex-col items-center box-border py-2">
+						<view @click="diyStore.toRedirect(item.link)" class="flex flex-col items-center box-border py-2">
 							<view class="graphic-img relative flex items-center justify-center w-10 h-10"
 								v-if="diyComponent.mode != 'text'"
 								:style="{ width: diyComponent.imageSize * 2 + 'rpx', height: diyComponent.imageSize * 2 + 'rpx' }">
@@ -119,9 +119,8 @@
 <script lang="ts" setup>
 	// 图文导航
     import { ref,computed, watch, onMounted, nextTick,getCurrentInstance } from 'vue';
-    import { img,redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
+    import { img } from '@/utils/common';
 	import useDiyStore from '@/app/stores/diy';
-    import { useLogin } from '@/hooks/useLogin';
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
@@ -240,19 +239,6 @@
             }).exec();
         })
 	}
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
-    }
 </script>
 
 <style>

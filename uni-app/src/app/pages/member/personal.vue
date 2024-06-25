@@ -21,8 +21,8 @@
                 <u-cell :title="t('sex')" :is-link="true" :value="info.sex_name || t('unknown')" @click="sexSheetShow = true"></u-cell>
                 <u-cell :title="t('mobile')">
                     <template #value>
-                        <view v-if="info.mobile">{{ mobileConceal(info.mobile) }}</view>
-                        <view @click="redirect({ url: '/app/pages/auth/bind' })">
+                        <view v-if="info.mobile" class="mr-[10rpx]">{{ mobileConceal(info.mobile) }}</view>
+                        <view v-else @click="redirect({ url: '/app/pages/auth/bind' })">
                             <u-button type="primary" :plain="true" :text="t('bindMobile')" shape="circle" size="mini"></u-button>
                         </view>
                     </template>
@@ -48,9 +48,10 @@
             :safeAreaInsetBottom="true"
             @close="sexSheetShow = false" @select="updateSex"></u-action-sheet>
 
-        <u-datetime-picker :show="birthdayPicker" mode="date" :confirm-text="t('confirm')"
+        <u-datetime-picker v-model="info.birthday" :show="birthdayPicker" mode="date" :confirm-text="t('confirm')"
             :maxDate="new Date().valueOf()" :minDate="0"
             :cancel-text="t('cancel')" @cancel="birthdayPicker = false" @confirm="updateBirthday"></u-datetime-picker>
+
     </view>
 </template>
 
@@ -150,7 +151,7 @@
             field: 'birthday',
             value: uni.$u.date(e.value, 'yyyy-mm-dd')
         }).then(() => {
-            memberStore.info.birthday = uni.$u.date(e.value||e.value+1, 'yyyy-mm-dd')
+            memberStore.info.birthday = uni.$u.date(e.value || e.value + 1, 'yyyy-mm-dd')
             birthdayPicker.value = false
         })
     }

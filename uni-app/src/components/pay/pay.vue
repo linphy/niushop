@@ -11,7 +11,7 @@
 			<scroll-view scroll-y="true" class="flex-1 pt-[20rpx]">
 				<view class="flex text-sm px-[30rpx] py-[20rpx]">
 					<view class="text-gray-500">{{ t('pay.orderInfo') }}</view>
-					<view class="text-right flex-1 pl-[30rpx] truncate">{{ payInfo.body }}</view>
+					<view class="text-right flex-1 pl-[30rpx] using-hidden">{{ payInfo.body }}</view>
 				</view>
 				<view class="mx-[30rpx] py-[10rpx] px-[30rpx] bg-white rounded-md bg-page">
                     <block v-if="payInfo.pay_type_list.length">
@@ -62,7 +62,8 @@
 		pay({
 			trade_type: payInfo.value?.trade_type,
             trade_id: payInfo.value?.trade_id,
-			type: type.value
+			type: type.value,
+            openid: uni.getStorageSync('openid') || ''
 		}).then(res => {
 			switch (type.value) {
 				case 'wechatpay':
@@ -108,6 +109,16 @@
 					// #endif
 					break;
 				default:
+                    if (res.data.url) {
+                        redirect({
+                            url: res.data.url,
+                            param: res.data.param || {},
+                            mode: 'redirectTo',
+                            success() {
+                            }
+                        })
+                        return
+                    }
                     toPayResult()
 			}
 		}).catch(() => {
@@ -134,8 +145,10 @@
 			})
 		}
 	})
-
+	const repeat = ref(false)
 	const open = (tradeType : string, tradeId : number, payReturn: string = '') => {
+		if (repeat.value) return
+		repeat.value = true
         // 设置支付后跳转页面
         uni.setStorageSync('payReturn', encodeURIComponent(payReturn))
 
@@ -152,11 +165,14 @@
                     toPayResult()
 					return
 				}
-
 				type.value = data.pay_type_list[0] ? data.pay_type_list[0].key : ''
 				show.value = true
+				repeat.value = false
+
 			})
-			.catch(() => { })
+			.catch(() => {
+				repeat.value = false
+			})
 	}
 
     const toPayResult = ()=> {

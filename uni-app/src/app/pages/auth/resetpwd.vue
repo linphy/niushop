@@ -12,12 +12,12 @@
                 <u-form labelPosition="left" :model="formData" errorType='toast' :rules="rules" ref="formRef">
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="mobile" :border-bottom="true">
-                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
+                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                         </u-form-item>
                     </view>
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="code" :border-bottom="true">
-                            <u-input v-model="formData.mobile_code" border="none" type="password" clearable :placeholder="t('codePlaceholder')">
+                            <u-input v-model="formData.mobile_code" border="none" clearable :placeholder="t('codePlaceholder')" class="!bg-transparent" :disabled="real_name_input">
                                 <template #suffix>
                                     <sms-code :mobile="formData.mobile" type="find_pass" v-model="formData.mobile_key"></sms-code>
                                 </template>
@@ -26,17 +26,16 @@
                     </view>
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="password" :border-bottom="true">
-                            <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')"/>
+                            <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                         </u-form-item>
                     </view>
                     <view class="mt-[30rpx]">
                         <u-form-item label="" prop="confirm_password" :border-bottom="true">
-                            <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')"/>
+                            <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                         </u-form-item>
                     </view>
                     <view class="mt-[80rpx]">
-                        <u-button type="primary" :loading="loading" :loadingText="t('confirm')" @click="handleConfirm">
-                            {{ t('confirm') }}
+                        <u-button type="primary" :text="t('confirm')" :loading="loading" :loadingText="t('confirm')" @click="handleConfirm">
                         </u-button>
                     </view>
                 </u-form>
@@ -46,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive } from 'vue'
+    import { ref, reactive, onMounted } from 'vue'
     import { t } from '@/locale'
     import { resetPassword } from '@/app/api/system'
     import { redirect } from '@/utils/common'
@@ -59,6 +58,14 @@
         confirm_password: ''
     })
 
+	let real_name_input = ref(true);
+	onMounted(() => {
+		// 防止浏览器自动填充
+		setTimeout(()=>{
+			real_name_input.value = false;
+		},800)
+	});
+	
     const loading = ref(false)
     const formRef = ref(null)
 
@@ -121,4 +128,8 @@
     }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+	.u-input{
+		background-color: transparent !important;
+	}
+</style>

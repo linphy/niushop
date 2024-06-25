@@ -1,5 +1,5 @@
 <template>
-    <view class="w-screen h-screen flex flex-col" :style="themeColor()">
+    <view class="w-screen h-screen flex flex-col" :style="themeColor()" v-show="type">
         <view class="flex-1">
             <!-- #ifdef H5 -->
             <view class="h-[100rpx]"></view>
@@ -18,29 +18,29 @@
                     <view v-show="type == 'username'">
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="username" :border-bottom="true">
-                                <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')"/>
+                                <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                             </u-form-item>
                         </view>
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="password" :border-bottom="true">
-                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')"/>
+                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                             </u-form-item>
                         </view>
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="confirm_password" :border-bottom="true">
-                                <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')"/>
+                                <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                             </u-form-item>
                         </view>
                     </view>
                     <view v-show="type == 'mobile' || configStore.login.is_bind_mobile">
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="mobile" :border-bottom="true">
-                                <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
+                                <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                             </u-form-item>
                         </view>
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="code" :border-bottom="true">
-                                <u-input v-model="formData.mobile_code" border="none" type="password" clearable :placeholder="t('codePlaceholder')">
+                                <u-input v-model="formData.mobile_code" border="none" clearable :placeholder="t('codePlaceholder')" class="!bg-transparent" :disabled="real_name_input">
                                     <template #suffix>
                                         <sms-code :mobile="formData.mobile" type="register" v-model="formData.mobile_key"></sms-code>
                                     </template>
@@ -51,9 +51,9 @@
                     <view v-show="type == 'username'">
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="captcha_code" :border-bottom="true">
-                                <u-input v-model="formData.captcha_code" border="none" clearable :placeholder="t('captchaPlaceholder')">
+                                <u-input v-model="formData.captcha_code" border="none" clearable :placeholder="t('captchaPlaceholder')" class="!bg-transparent" :disabled="real_name_input">
                                     <template #suffix>
-                                        <image :src="captcha.image.value" class="h-[48rpx] ml-[20rpx]" mode="heightFix" @click="captcha.refresh()"></image>
+                                        <image :src="captcha.image.value" class="h-[48rpx] w-[60rpx] ml-[20rpx]" mode="heightFix" @click="captcha.refresh()"></image>
                                     </template>
                                 </u-input>
                             </u-form-item>
@@ -63,15 +63,14 @@
                         <view @click="redirect({ url: '/app/pages/auth/login' })">{{ t('haveAccount') }}，<text class="text-primary">{{ t('toLogin') }}</text></view>
                     </view>
                     <view class="mt-[80rpx]">
-                        <u-button type="primary" :loading="loading" :loadingText="t('registering')" @click="handleregister">
-                            {{ t('register') }}
+                        <u-button type="primary" :text="t('register')" :loading="loading" :loadingText="t('registering')" @click="handleRegister">
                         </u-button>
                     </view>
                 </u-form>
             </view>
         </view>
         <view class="text-xs py-[50rpx] flex justify-center w-full" v-if="configStore.login.agreement_show">
-            <text class="iconfont text-[var(--primary-color)] text-[34rpx] mr-[12rpx]" :class="isAgree ? 'iconxuanze1' : 'iconcheckbox_nol'" @click="isAgree = !isAgree"></text>
+            <text class="iconfont text-[var(--primary-color)] text-[34rpx] mr-[12rpx]" :class="isAgree ? 'iconxuanze1' : 'nc-iconfont nc-icon-yuanquanV6xx'" @click="isAgree = !isAgree"></text>
             {{ t('registerAgreeTips') }}
             <view @click="redirect({ url: '/app/pages/auth/agreement?key=service' })">
                 <text class="text-primary">{{ t('userAgreement') }}</text>
@@ -85,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive, computed } from 'vue'
+    import { ref, reactive, computed, onMounted } from 'vue'
     import { usernameRegister, mobileRegister } from '@/app/api/auth'
     import useMemberStore from '@/stores/member'
     import useConfigStore from '@/stores/config'
@@ -105,8 +104,19 @@
         captcha_code: ''
     })
 
-    uni.getStorageSync('openid') && (Object.assign(formData, { openid: uni.getStorageSync('openid') }))
-    uni.getStorageSync('pid') && (Object.assign(formData, { pid: uni.getStorageSync('pid') }))
+	let real_name_input = ref(true);
+	onMounted(() => {
+		// 防止浏览器自动填充
+		setTimeout(()=>{
+			real_name_input.value = false;
+		},800)
+	});
+
+    if (!uni.getStorageSync('autoLoginLock')) {
+        uni.getStorageSync('openid') && (Object.assign(formData, {openid: uni.getStorageSync('openid')}))
+        uni.getStorageSync('pid') && (Object.assign(formData, {pid: uni.getStorageSync('pid')}))
+    }
+    uni.getStorageSync('unionid') && (Object.assign(formData, { unionid: uni.getStorageSync('unionid') }))
 
     const captcha = useCaptcha(formData)
     captcha.refresh()
@@ -190,7 +200,7 @@
 
     const formRef = ref(null)
 
-    const handleregister = () => {
+    const handleRegister = () => {
         formRef.value.validate().then(() => {
             if (configStore.login.agreement_show && !isAgree.value) {
                 uni.showToast({ title: t('isAgreeTips'), icon: 'none' });
@@ -203,7 +213,6 @@
 
             register(formData).then((res: responseResult) => {
                 memberStore.setToken(res.data.token)
-				uni.removeStorageSync('pid');
                 useLogin().handleLoginBack()
             }).catch(() => {
                 loading.value = false
@@ -213,4 +222,8 @@
     }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+	.u-input{
+		background-color: transparent !important;
+	}
+</style>

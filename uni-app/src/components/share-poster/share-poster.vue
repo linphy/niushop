@@ -57,6 +57,10 @@ import { img, copy } from '@/utils/common';
 import { getPoster } from '@/app/api/system'
 
 const props = defineProps({
+    posterId: {
+        type: String || Number,
+        default: 0
+    },
     posterType: {
         type: String,
         default: ''
@@ -80,10 +84,11 @@ let sharePopupShow = ref(false);
 // 复制
 const copyUrl = () => {
 	let data = ''
-	if(props.copyUrl)
-		data = location.origin +  props.copyUrl + props.copyUrlParam;
-	else
-		data = location.origin +  location.pathname + props.copyUrlParam;
+	if(props.copyUrl) {
+        data = location.origin + props.copyUrl + props.copyUrlParam;
+    }else {
+        data = location.origin + location.pathname + props.copyUrlParam;
+    }
 	copy(data, () => {
 		sharePopupShow.value = false;
 	});
@@ -103,9 +108,10 @@ const goodsPosterShowFn = () => {
 	isPosterAnimation.value = true;
 	isPosterImg.value = false;
 	let obj = {
-		type: props.posterType,
-		param: props.posterParam
-	}
+        id: props.posterId,
+        type: props.posterType,
+        param: props.posterParam
+    }
 	let startTime = Date.parse(new Date());
 	getPoster(obj).then((res:any) => {
 		poster.value = res.data && img(res.data) || '';
@@ -175,7 +181,6 @@ const saveGoodsPoster = () => {
 }
 // #endif
 
-
 let shareTop = ref(0)
 /************ 获取微信头部-start ****************/
 // 获取系统状态栏的高度
@@ -193,11 +198,9 @@ const sharePopuClose = ()=>{
 	isPosterImg.value = false;
 } 
 
-
 defineExpose({
     openShare
 })
-	
 </script>
 <style lang="scss" scoped>
 .share-popup {

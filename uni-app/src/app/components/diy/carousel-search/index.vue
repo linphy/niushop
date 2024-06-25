@@ -8,13 +8,13 @@
 			</view>
 			
 			<view class="fixed-wrap" :class="[ diyStore.mode != 'decorate' ? diyComponent.positionWay : '' ]" :style="fixedStyle">
-				<view class="diy-search-wrap relative z-10" @click="toRedirect(diyComponent.search.link)" :style="navbarInnerStyle">
+				<view class="diy-search-wrap relative z-10" @click="diyStore.toRedirect(diyComponent.search.link)" :style="navbarInnerStyle">
 					<view class="img-wrap" v-if="diyComponent.search.logo">
 						<image :src="img(diyComponent.search.logo)" mode="aspectFit"/>
 					</view>
 					<view class="search-content">
 						<input type="text" class="uni-input" placeholder-style="color:#fff" placeholder-class="!text-[#fff] text-[24rpx] leading-[68rpx]" :placeholder="isShowSearchPlaceholder ? diyComponent.search.text : ''" disabled="true"/>
-						<text class="iconfont iconxiazai17"></text>
+						<text class="nc-iconfont nc-icon-sousuo-duanV6xx1"></text>
 
 						<swiper class="swiper-wrap" :interval="diyComponent.search.hotWord.interval * 1000" autoplay="true" vertical="true" circular="true" v-if="!isShowSearchPlaceholder">
 							<swiper-item class="swiper-item" v-for="(item) in diyComponent.search.hotWord.list" :key="item.id">
@@ -24,7 +24,7 @@
 					</view>
 
 				</view>
-			
+
 				<view class="tab-list-wrap relative z-10" v-if="diyComponent.tab.control">
 					<scroll-view scroll-x="true" class="scroll-wrap" :scroll-into-view="'a' + currTabIndex">
 						<view @click="changeData({ source : 'home' },-1)" class="scroll-item" :class="[{ active: currTabIndex == -1 }]">
@@ -36,7 +36,7 @@
 							<view class="line" :style="{'background-color': getTabColor(index == currTabIndex)}" v-if="index == currTabIndex"></view>
 						</view>
 					</scroll-view>
-					<view v-if="diyComponent.tab.list.length" class="absolute tab-btn iconfont iconliebiaoxingshi" @click="tabAllPopup = true"></view>
+					<view v-if="diyComponent.tab.list.length" class="absolute tab-btn nc-iconfont nc-icon-yingyongliebiaoV6xx" @click="tabAllPopup = true"></view>
 				</view>
                 
 				<view class="bg-img" v-if="fixedStyleBg">
@@ -58,11 +58,11 @@
 						'swiper-right': diyComponent.swiper.indicatorAlign == 'right',
 						'ns-indicator-dots': diyComponent.swiper.indicatorStyle == 'style-2'
 					}"
-					:previous-margin="swiperStyle2 ? 0 : '60rpx'" :next-margin="swiperStyle2 ? 0 : '60rpx'"
+					:previous-margin="swiperStyle2 ? 0 : '36rpx'" :next-margin="swiperStyle2 ? 0 : '36rpx'"
 				    :interval="diyComponent.swiper.interval * 1000" :indicator-dots="isShowDots"
 				    :indicator-color="diyComponent.swiper.indicatorColor" :indicator-active-color="diyComponent.swiper.indicatorActiveColor">
 					<swiper-item class="swiper-item" v-for="(item,index) in diyComponent.swiper.list" :key="item.id" :style="swiperWarpCss">
-						<view @click="toRedirect(item.link)">
+						<view @click="diyStore.toRedirect(item.link)">
 							<view class="item" :style="{height: imgHeight}">
 								<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="scaleToFill" :style="swiperWarpCss" :class="['w-full h-full',{'swiper-animation': swiperIndex != index}]" :show-menu-by-longpress="true"/>
 								<image v-else :src="img('static/resource/images/diy/figure.png')" :style="swiperWarpCss" mode="scaleToFill" :class="['w-full h-full',{'swiper-animation': swiperIndex != index}]" :show-menu-by-longpress="true"/>
@@ -83,8 +83,8 @@
 			</view>
 			
 			<!-- 分类展开 -->
-			<u-popup :show="tabAllPopup" mode="top" @close="tabAllPopup = false">
-				<view class="text-sm px-[30rpx] mt-3" :style="{'padding-top':(menuButtonInfo.top+'px')}">全部分类</view>
+			<u-popup :safeAreaInsetTop="true" :show="tabAllPopup" mode="top" @close="tabAllPopup = false">
+				<view class="text-sm px-[30rpx] pt-3" :style="{'padding-top':(menuButtonInfo.top+'px')}">全部分类</view>
 				<view class="flex flex-wrap pl-[30rpx] pt-[30rpx]">
 					<view @click="changeData({ source : 'home' },-1)" :class="['px-[26rpx] border-[2rpx] border-solid border-transparent h-[60rpx] mr-[30rpx] mb-[30rpx] flex items-center justify-center bg-[#F4F4F4] rounded-[8rpx] text-xs', { 'tab-select-popup': currTabIndex == -1 }]">
 						首页
@@ -112,14 +112,14 @@
 <script setup lang="ts">
 	// 轮播搜索
 	import { ref, reactive, computed, watch, onMounted, nextTick, getCurrentInstance } from 'vue';
-	import { img, redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
+	import { img } from '@/utils/common';
 	import useDiyStore from '@/app/stores/diy';
     import diyGroup from '@/addon/components/diy/group/index.vue'
     import { getDiyInfo } from '@/app/api/diy';
-    import { useLogin } from '@/hooks/useLogin';
-	
+
 	const instance = getCurrentInstance();
-	const props = defineProps(['component', 'index', 'pullDownRefreshCount', 'global']);
+	const props = defineProps(['component', 'index', 'pullDownRefreshCount', 'global','scrollTop']);
+	
 	const diyStore = useDiyStore();
 
 	const diyComponent = computed(() => {
@@ -154,10 +154,12 @@
 
     const setModuleLocation = ()=> {
         nextTick(() => {
-            const query = uni.createSelectorQuery().in(instance);
-            query.select('.fixed-wrap').boundingClientRect(data => {
-                moduleHeight.value = (data.height || 0) + 'px';
-            }).exec();
+			setTimeout(()=>{
+				const query = uni.createSelectorQuery().in(instance);
+				query.select('.fixed-wrap').boundingClientRect((data:any) => {
+					moduleHeight.value = (data.height || 0) + 'px';
+				}).exec();
+			})
         })
     }
 
@@ -165,9 +167,21 @@
 	const fixedStyle = computed(()=>{
         if (diyStore.mode == 'decorate') return '';
         var style = '';
+        // #ifdef H5
+        if(props.global.topStatusBar.isShow && props.global.topStatusBar.style == 'style-4') {
+            style += 'top:' + diyStore.topTabarHeight + 'px;';
+        }
+        // #endif
         if(diyComponent.value.positionWay == 'fixed') {
+            // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
+			menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+			if(props.global.topStatusBar.isShow) {
+				style += 'top:' + diyStore.topTabarHeight + 'px;';
+			}
+            // #endif
+			
 			fixedStyleBg.value = false;
-            if (diyStore.scrollTop > 20) {
+            if (props.scrollTop) {
 				let str = diyComponent.value.fixedBgColor;
 				let arr = str.split(',');
 				let num = diyComponent.value.fixedBgColor ? parseInt(arr[arr.length-1]) : 0;
@@ -186,12 +200,12 @@
 	    let color = '';
         if(flag){
             color = diyComponent.value.tab.selectColor;
-            if(diyComponent.value.positionWay == 'fixed' && diyStore.scrollTop > 20) {
+            if(diyComponent.value.positionWay == 'fixed' && props.scrollTop) {
                 color = diyComponent.value.tab.fixedSelectColor;
             }
         }else{
             color = diyComponent.value.tab.noColor;
-            if(diyComponent.value.positionWay == 'fixed' && diyStore.scrollTop > 20) {
+            if(diyComponent.value.positionWay == 'fixed' && props.scrollTop) {
                 color = diyComponent.value.tab.fixedNoColor;
             }
         }
@@ -215,9 +229,14 @@
 	const bgImgBoxStyle = computed(()=>{
 		var style = '';
 		let str = props.global.pageStartBgColor ? props.global.pageStartBgColor : 'rgba(255,255,255,1)';
-		let arr = str.split('(')[1].split(')')[0].split(',');
-		if(diyComponent.value.bgGradient == true)
-			style += `background: linear-gradient(rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0) 65%, rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0.6) 70%, rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0.85) 80%, rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0.95) 90%,  rgb(${arr[0]}, ${arr[1]}, ${arr[2]}, 1) 100%);`;
+		if(str.indexOf('(') > -1) {
+            let arr = str.split('(')[1].split(')')[0].split(',');
+            if (diyComponent.value.bgGradient == true) {
+                style += `background: linear-gradient(rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0) 65%, rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0.6) 70%, rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0.85) 80%, rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, 0.95) 90%,  rgb(${arr[0]}, ${arr[1]}, ${arr[2]}, 1) 100%);`;
+            }
+        }else{
+            style += `background: (${str});`;
+		}
 		return style;
 	});
 
@@ -227,7 +246,6 @@
 		style = diyComponent.value.swiper.swiperStyle == 'style-2' ? true : false;
 		return style;
 	})
-	
 
     const imgHeight = computed(() => {
         return (diyComponent.value.swiper.imageHeight * 2) + 'rpx';
@@ -270,6 +288,10 @@
         }
     }
 
+    let tabAllPopup = ref(false);
+    let menuButtonInfo:any = {};
+    let navbarInnerStyle = ref('')
+
     onMounted(() => {
         refresh();
         // 装修模式下刷新
@@ -283,6 +305,23 @@
                 }
             )
         }
+
+        // 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
+        // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
+	    if(diyComponent.value.positionWay == 'fixed') {
+            menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+            // 导航栏内部盒子的样式
+            // 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
+            // 如果是各家小程序，导航栏内部的宽度需要减少右边胶囊的宽度
+			if(props.global.topStatusBar.isShow == false) {
+				let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width * 2 + 'rpx' : '70rpx';
+				navbarInnerStyle.value += 'padding-right:calc(' + rightButtonWidth + ' + 30rpx);';
+				navbarInnerStyle.value += 'padding-top:' + menuButtonInfo.top + 'px;';
+			}
+			
+        }
+        // #endif
+
     });
 	
 	const refresh = ()=> {
@@ -299,7 +338,7 @@
     const diyPageData = reactive({
         pageMode: 'diy',
         title: '',
-        global: {},
+        global: <any>{},
         value: []
     })
 
@@ -321,6 +360,7 @@
 
                 let sources = JSON.parse(data.value);
                 diyPageData.global = sources.global;
+				diyPageData.global.topStatusBar.isShow = false; // 子页面不需要展示顶部导航栏
                 diyPageData.global.bottomTabBarSwitch = false; // 子页面不需要展示底部导航
                 diyPageData.value = sources.value;
 
@@ -332,7 +372,9 @@
                     }
 
                     if (item.margin) {
-                        item.pageStyle += 'padding-top:' + item.margin.top * 2 + 'rpx' + ';';
+                        if (item.margin.top > 0) {
+                            item.pageStyle += 'padding-top:' + item.margin.top * 2 + 'rpx' + ';';
+                        }
                         item.pageStyle += 'padding-bottom:' + item.margin.bottom * 2 + 'rpx' + ';';
                         item.pageStyle += 'padding-right:' + item.margin.both * 2 + 'rpx' + ';';
                         item.pageStyle += 'padding-left:' + item.margin.both * 2 + 'rpx' + ';';
@@ -344,36 +386,6 @@
             }
         });
     }
-	let tabAllPopup = ref(false);
-	
-	
-	let menuButtonInfo = {};
-	let navbarInnerStyle = ref('')
-	// 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
-	// #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
-	menuButtonInfo = uni.getMenuButtonBoundingClientRect();
-	
-	// 导航栏内部盒子的样式
-	// 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
-	// style += 'height:' + this.navbarHeight + 'px;';
-	// // 如果是各家小程序，导航栏内部的宽度需要减少右边胶囊的宽度
-	let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width * 2 + 'rpx' : '70rpx';
-	navbarInnerStyle.value += 'padding-right:calc(' + rightButtonWidth + ' + 30rpx);';
-	navbarInnerStyle.value += 'padding-top:' + menuButtonInfo.top + 'px;';
-	// #endif
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
-    }
 	
 	// 轮播指示器
 	let isShowDots = ref(true)
@@ -384,6 +396,11 @@
 	// #ifdef MP-WEIXIN
 	isShowDots.value = false;
 	// #endif
+	
+	// 表示轮播搜素组件,需要判断滚动超出20时,需要做相对应反应
+	defineExpose({
+	    scrollValue: 20
+	})
 
 </script>
 
@@ -409,7 +426,7 @@
 				top: 0;
 				right: 0;
 				bottom: 0;
-				left: 0;	
+				left: 0;
 			}
 		}
 	}
@@ -521,7 +538,7 @@
 			}
 		}
 		.tab-btn{
-			font-size: 32rpx;
+			font-size: 34rpx;
 			/* #ifdef H5 */ 
 			top: 22rpx;
 			right: 20rpx;
@@ -530,9 +547,9 @@
 			&::after{
 				content: "";
 				position: absolute;
-				top: 2rpx;
-				bottom: 0;
-				left: -16rpx;
+				top: 6rpx;
+				bottom: -2rpx;
+				left: -14rpx;
 				width: 4rpx;
 				background: linear-gradient( 180deg, #FFFFFF 16%, rgba(255,255,255,0) 92%);
 			}
@@ -574,6 +591,10 @@
 		left: 80rpx;
 		transform: translate(0);
 	}
+	.swiper :deep(.uni-swiper-dot) {
+		width: 12rpx;
+		height: 12rpx;
+	}
 	.swiper.ns-indicator-dots :deep(.uni-swiper-dot) {
 		width: 18rpx;
 		height: 6rpx;
@@ -602,9 +623,9 @@
 	
 		.swiper-dot {
 			background-color: #b2b2b2;
-			width: 15rpx;
+			width: 12rpx;
 			border-radius: 50%;
-			height: 15rpx;
+			height: 12rpx;
 			margin: 8rpx;
 		}
 	

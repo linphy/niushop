@@ -1,25 +1,20 @@
-import { img, isWeixinBrowser, currRoute, currShareRoute, getToken } from '@/utils/common'
+import { img, isWeixinBrowser, currRoute, currShareRoute } from '@/utils/common'
 import { onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { getShareInfo } from '@/app/api/diy';
-import useMemberStore from '@/stores/member'
-import { watch } from 'vue'
 
 // #ifdef H5
 import wechat from '@/utils/wechat'
 // #endif
 
 export const useShare = () => {
-	var wechatOptions : WeixinJsSdk.OnMenuShareAppMessageOptions = {
-		title: '',
-		link: ''
-	};
+	var wechatOptions: any = {};
 
-	var weappOptions = {};
+	var weappOptions:any = {};
 
-	// #ifdef H5
-	const wechatInit = async () => {
+	const wechatInit = () => {
 		if (!isWeixinBrowser()) return;
-		await wechat.init();
+		// 初始化sdk
+		wechat.init();
 	}
 
 	// 微信公众号分享
@@ -27,92 +22,101 @@ export const useShare = () => {
 		if (!isWeixinBrowser()) return;
 		wechat.share(wechatOptions);
 	}
-	// #endif
 
-	const setShare = async (options : any = {}) => {
-		let memberStore = useMemberStore();
-		let isWatch = uni.getStorageSync('isWatchShare');
-
-		// 防重复监听
-		if(!isWatch) {
-			watch(() => memberStore.info, (newValue: any, oldValue: any) => {
-				// 如果会员发生变化，则请求分享接口
-				if (newValue && oldValue && newValue.member_id != oldValue.member_id) {
-					setShare(options)
-				}
-			})
-			uni.setStorageSync('isWatchShare', true);
+	const getQuery = ()=>{
+		let query:any = currShareRoute().params;
+		let wap_member_id = uni.getStorageSync('wap_member_id');
+		if (wap_member_id) {
+			query.mid = wap_member_id;
 		}
 
+		let queryStr = [];
+		for (let key in query) {
+			queryStr.push(key + '=' + query[key]);
+		}
+
+		return queryStr
+
+	}
+
+	const setShare = (options : any = {}) => {
+		if(currRoute() == '' || currRoute().indexOf('app/pages/index/close') != -1 || currRoute().indexOf('app/pages/index/nosite') != -1) return;
+
+		let queryStr = getQuery();
+
 		// #ifdef H5
-		// 初始化sdk
-		await wechatInit();
+
+		let h5Link = location.origin + location.pathname + (queryStr.length > 0 ? '?' + queryStr.join('&') : '');
+
+		wechatOptions = {
+			link: h5Link
+		}
+
+		// #endif
+
+		// #ifdef MP-WEIXIN
+		weappOptions = {
+			path: '/' + currRoute() + (queryStr.length > 0 ? '?' + queryStr.join('&') : ''),
+			query: queryStr.join('&'),
+		}
 		// #endif
 
 		if (options && options.wechat && options.weapp) {
-			let query = currShareRoute().params;
-
-			if (memberStore.info) {
-				query.mid = memberStore.info.member_id;
-			}
-
-			let str = [];
-			for (let key in query) {
-				str.push(key + '=' + query[key]);
-			}
 
 			// #ifdef H5
-			let link = location.origin + location.pathname + (str.length > 0 ? '?' + str.join('&') : '');
-			wechatOptions = {
-				title: options.wechat.title || '',
-				link: options.wechat.link || link,
-				desc: options.wechat.desc || '',
-				imgUrl: options.wechat.url ? img(options.wechat.url) : ''
-			}
+			wechatOptions.title = options.wechat.title || ''
+			wechatOptions.link = options.wechat.link || h5Link
+			wechatOptions.desc = options.wechat.desc || ''
+			wechatOptions.imgUrl = options.wechat.url ? img(options.wechat.url) : ''
 			wechatShare()
 			// #endif
 
-			weappOptions = {
-				title: options.weapp.title || '',
-				query: options.weapp.path || '/' + currRoute() + (str.length > 0 ? '?' + str.join('&') : ''),
-				imageUrl: options.weapp.url ? img(options.weapp.url) : ''
-			}
+			// #ifdef MP-WEIXIN
+			weappOptions.title = options.weapp.title || ''
+			weappOptions.query = options.weapp.path || queryStr.join('&')
+			weappOptions.imageUrl = options.weapp.url ? img(options.weapp.url) : ''
+			// #endif
+
 		} else {
-			getShareInfo({ route: '/' + currRoute(), params: JSON.stringify(currShareRoute().params) }).then((res : any) => {
+			getShareInfo({
+				route: '/' + currRoute(),
+				params: JSON.stringify(currShareRoute().params)
+			}).then((res: any) => {
 				let data = res.data;
 
 				// #ifdef H5
 				let wechat = data.wechat;
 				if (wechat) {
-					let link = location.origin + location.pathname + (data.query ? '?' + data.query : '');
-					wechatOptions = {
-						link: link,
-						title: wechat.title,
-						desc: wechat.desc,
-						imgUrl: wechat.url ? img(wechat.url) : ''
-					}
+					wechatOptions.title = wechat.title
+					wechatOptions.desc = wechat.desc
+					wechatOptions.imgUrl = wechat.url ? img(wechat.url) : ''
+				}else{
+					wechatOptions.title = document.title;
+					wechatOptions.desc = ''
 				}
 				wechatShare()
 				// #endif
 
+				// #ifdef MP-WEIXIN
 				let weapp = data.weapp;
 				if (weapp) {
-					weappOptions = {
-						query: data.url,
-						title: weapp.title,
-						imageUrl: weapp.url ? img(weapp.url) : ''
-					}
+					weappOptions.title = weapp.title
+					weappOptions.imageUrl = weapp.url ? img(weapp.url) : ''
 				}
+				// #endif
+
 			})
 		}
-
+		uni.setStorageSync('weappOptions', weappOptions)
 	}
 
 	// 小程序分享，分享给好友
 	const shareApp = (options = {}) => {
 		onShareAppMessage(() => {
+			let config:any= uni.getStorageSync('weappOptions')
+			if(!config) config = {}
 			return {
-				...weappOptions,
+				...config,
 				...options
 			}
 		})
@@ -122,14 +126,17 @@ export const useShare = () => {
 	// 小程序分享，分享到朋友圈
 	const shareTime = (options = {}) => {
 		onShareTimeline(() => {
+			let config:any= uni.getStorageSync('weappOptions')
+			if(!config) config = {}
 			return {
-				...weappOptions,
+				...config,
 				...options
 			}
 		})
 	}
 
 	return {
+		wechatInit:wechatInit,
 		setShare: setShare,
 		onShareAppMessage: shareApp,
 		onShareTimeline: shareTime,

@@ -2,6 +2,7 @@ import { currRoute } from './common'
 import { redirectInterceptor } from './interceptor'
 import useConfigStore from "@/stores/config";
 import useSystemStore from '@/stores/system'
+import {useShare} from '@/hooks/useShare'
 
 export default {
     install(vue) {
@@ -31,6 +32,12 @@ export default {
                     path: route,
                     query: this.query
                 })
+            },
+            onShareAppMessage(){
+                useShare().onShareAppMessage()
+            },
+            onShareTimeline(){
+                useShare().onShareTimeline()
             },
             methods:{
                 themeColor(){

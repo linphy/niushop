@@ -6,7 +6,7 @@
 
 			<template v-if="diyStore.mode != 'decorate'">
 				<!-- 热区功能 -->
-				<view @click="toRedirect(mapItem.link)" class="absolute" v-for="(mapItem, mapIndex) in diyComponent.heatMapData"
+				<view @click="diyStore.toRedirect(mapItem.link)" class="absolute" v-for="(mapItem, mapIndex) in diyComponent.heatMapData"
 					:key="mapIndex" :style="{
 					width: mapItem.width + '%',
 					height: mapItem.height + '%',
@@ -23,8 +23,7 @@
 	// 热区
 	import { computed, watch, onMounted } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
-    import { img,redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
-    import { useLogin } from '@/hooks/useLogin';
+    import { img } from '@/utils/common';
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
@@ -86,19 +85,6 @@
 			// 处理下拉刷新业务
 		}
 	)
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
-    }
 </script>
 
 <style lang="scss">

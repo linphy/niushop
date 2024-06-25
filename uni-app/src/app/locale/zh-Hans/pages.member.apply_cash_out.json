@@ -1,5 +1,5 @@
 {
-	"cashOut": "提现",
+	"cashOutNow": "立即提现",
 	"balanceDetail": "余额明细",
 	"cashOutTo": "提现到",
 	"cashOutTypePlaceholder": "请选择提现方式",
@@ -26,5 +26,5 @@
     "applyMoneyBelow": "提现金额小于最低提现金额",
     "replace": "更换",
     "isOpenApply": "提现设置未开启",
-    "toAdd": "去添加"
+    "toAdd": "添加"
 }

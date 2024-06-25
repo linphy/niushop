@@ -1,7 +1,6 @@
 <template>
-    <view class="w-full h-screen bg-page setting-wrap" :style="themeColor()">
-        <view class="h-[30rpx]"></view>
-        <view class="m-[30rpx] bg-white rounded-md overflow-hidden px-[20rpx] py-[10rpx]">
+    <view class="w-full h-screen box-border pt-[30rpx] bg-page setting-wrap" :style="themeColor()">
+        <view class="m-[30rpx] mt-0 bg-white rounded-md overflow-hidden px-[20rpx] py-[10rpx]">
             <u-cell-group :border="false">
                 <u-cell :title="t('personalSettings')" :is-link="true" url="/app/pages/member/personal"></u-cell>
                 <u-cell :title="t('switchLang')" :is-link="true" :value="lang" @click="langSheetShow = true"></u-cell>
@@ -14,13 +13,12 @@
                 <u-cell :title="t('privacyAgreement')" :is-link="true" url="/app/pages/auth/agreement?key=privacy"></u-cell>
             </u-cell-group>
         </view>
-        <!-- #ifdef H5 -->
-        <view class="m-[30rpx] bg-white rounded-md overflow-hidden px-[20rpx]" v-if="!isWeixinBrowser()">
+
+        <view class="m-[30rpx] bg-white rounded-md overflow-hidden px-[20rpx]">
             <u-cell-group :border="false">
-                <u-cell :title="t('logout')" class="text-center" @click="memberStore.logout(true)"></u-cell>
+                <view class="text-center py-[20rpx] text-sm" @click="memberStore.logout(true)">{{ t('logout') }}</view>
             </u-cell-group>
         </view>
-        <!-- #endif -->
 
         <u-action-sheet :actions="langList" :show="langSheetShow" :closeOnClickOverlay="true"
             :safeAreaInsetBottom="true"

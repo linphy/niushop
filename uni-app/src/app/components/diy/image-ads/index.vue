@@ -3,7 +3,7 @@
 		<view :style="maskLayer"></view>
 		<view class="diy-image-ads">
 			<view v-if="diyComponent.list.length == 1" class="leading-0 overflow-hidden" :style="swiperWarpCss">
-				<view @click="toRedirect(diyComponent.list[0].link)">
+				<view @click="diyStore.toRedirect(diyComponent.list[0].link)">
 					<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" :style="{height: imgHeight}" mode="heightFix" class="!w-full" :show-menu-by-longpress="true"/>
 					<image v-else :src="img('static/resource/images/diy/figure.png')" :style="{height: imgHeight}" mode="heightFix" class="!w-full" :show-menu-by-longpress="true"/>
 				</view>
@@ -11,7 +11,7 @@
 
 			<swiper v-else class="swiper" :style="{ height: imgHeight }" autoplay="true" circular="true" @change="swiperChange">
 				<swiper-item class="swiper-item" v-for="(item) in diyComponent.list" :key="item.id" :style="swiperWarpCss">
-					<view @click="toRedirect(item.link)">
+					<view @click="diyStore.toRedirect(item.link)">
 						<view class="item" :style="{height: imgHeight}">
 							<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="scaleToFill" class="w-full h-full" :show-menu-by-longpress="true"/>
 							<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" class="w-full h-full" :show-menu-by-longpress="true"/>
@@ -27,8 +27,7 @@
 	// 图片广告
     import { ref,computed, watch, onMounted, nextTick,getCurrentInstance } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
-    import { img,redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
-    import { useLogin } from '@/hooks/useLogin';
+    import { img } from '@/utils/common';
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
@@ -135,19 +134,6 @@
             }).exec();
         })
 	}
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
-    }
 </script>
 
 <style lang="scss" scoped>

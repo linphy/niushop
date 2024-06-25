@@ -1,9 +1,7 @@
 import { getTabbarPages } from './pages'
 import useDiyStore from '@/app/stores/diy'
 import useMemberStore from '@/stores/member'
-import pagesZh from '@/locale/zh-Hans.json'
-import pagesEn from '@/locale/en.json'
-import { onReady } from '@dcloudio/uni-app'
+import useSystemStore from '@/stores/system'
 
 /**
 * 跳转页面
@@ -59,17 +57,15 @@ export const redirect = (redirect : redirectOptions) => {
 * 自定义跳转链接
 * @param {Object} link
 */
-export const diyRedirect = (link : any) => {
+export const diyRedirect = (link: any) => {
 	const diyStore = useDiyStore();
 	// 装修模式禁止跳转
 	if (diyStore.mode == 'decorate') return;
 
 	if (link == null || Object.keys(link).length == 1) return;
 
-	if (!link.url) return;
-
 	// 外部链接
-	if (link.url.indexOf('http') != -1 || link.url.indexOf('http') != -1) {
+	if (link.url && (link.url.indexOf('https') != -1 || link.url.indexOf('http') != -1)) {
 
 		// #ifdef H5
 		window.location.href = link.url;
@@ -81,6 +77,24 @@ export const diyRedirect = (link : any) => {
 			param: { src: encodeURIComponent(link.url) }
 		});
 		// #endif
+	} else if (link.appid) {
+		// 跳转其他小程序
+
+		// #ifdef MP
+		uni.navigateToMiniProgram({
+			appId: link.appid,
+			path: link.page
+		})
+		// #endif
+	} else if (link.name == 'DIY_MAKE_PHONE_CALL' && link.mobile) {
+		// 拨打电话
+
+		uni.makePhoneCall({
+			phoneNumber: link.mobile,
+			success: (res) => {},
+			fail: (res) => {}
+		});
+
 	} else {
 		redirect({ url: link.url });
 	}
@@ -98,6 +112,12 @@ export const currRoute = () => {
 // 获取分享路由
 export const currShareRoute = () => {
 	const pages = getCurrentPages()
+	if (pages.length == 0) {
+		return {
+			path: '/',
+			params: {}
+		}
+	}
 	let currentRoute = pages[pages.length - 1].route //获取当前页面路由
 
 	// #ifdef H5
@@ -267,7 +287,7 @@ export function timeStampTurnTime(timeStamp, type = "") {
 
 /**
  * 复制
- * @param {Object} message
+ * @param {Object} value
  * @param {Object} callback
  */
 export function copy(value, callback) {
@@ -337,3 +357,88 @@ export function handleOnloadParams(option:any) {
 	}
 	return params;
 }
+
+/**
+ * 获取定位信息
+ */
+export function getLocation(param = {}) {
+	uni.getLocation({
+		type: param.type ?? 'gcj02',
+		success: res => {
+		const systemStore = useSystemStore()
+		systemStore.setLocation(res);
+			typeof param.success == 'function' && param.success(res);
+		},
+		fail: res => {
+			typeof param.fail == 'function' && param.fail(res);
+		},
+		complete: res => {
+			typeof param.complete == 'function' && param.complete(res);
+		}
+	});
+}
+
+/**
+ * 定位信息（缓存）
+ */
+export function locationStorage () {
+	let data = uni.getStorageSync('location');
+	let mapConfig = uni.getStorageSync('mapConfig');
+	if (data) {
+		var date = new Date();
+		if (mapConfig.valid_time > 0) {
+			data.is_expired = (date.getTime() / 1000) > data.valid_time; // 是否过期
+		} else {
+			data.is_expired = false;
+		}
+	}
+	return data;
+}
+
+/**
+ * @description 深度克隆
+ * @param {object} obj 需要深度克隆的对象
+ * @returns {*} 克隆后的对象或者原值（不是对象）
+ */
+export function deepClone(obj: object) {
+    // 对常见的“非”值，直接返回原来值
+    if ([null, undefined, NaN, false].includes(obj)) return obj
+    if (typeof obj !== 'object' && typeof obj !== 'function') {
+        // 原始类型直接返回
+        return obj
+    }
+    const o = isArray(obj) ? [] : {}
+    for (const i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            o[i] = typeof obj[i] === 'object' ? deepClone(obj[i]) : obj[i]
+        }
+    }
+    return o
+}
+
+/**
+ * 防抖函数
+ * @param fn
+ * @param delay
+ * @returns
+ */
+export function debounce(fn: (args?: any) => any, delay: number = 300) {
+    let timer: null | number = null
+    return function (...args) {
+        if (timer != null) {
+            clearTimeout(timer)
+            timer = null
+        }
+        timer = setTimeout(() => {
+            fn.call(this, ...args)
+        }, delay);
+    }
+}
+
+const isArray = (value: any) => {
+    if (typeof Array.isArray === 'function') {
+        return Array.isArray(value)
+    }
+    return Object.prototype.toString.call(value) === '[object Array]'
+}
+

@@ -3,7 +3,7 @@
 		<view :style="maskLayer"></view>
 		<view class="diy-text relative">
 			<view v-if="diyComponent.style == 'style-1'" class=" px-[20rpx]">
-				<view @click="toRedirect(diyComponent.link)">
+				<view @click="diyStore.toRedirect(diyComponent.link)">
 					<view :style="{
 							fontSize: diyComponent.fontSize * 2 + 'rpx',
 							color: diyComponent.textColor,
@@ -15,7 +15,7 @@
 				</view>
 			</view>
 			<view v-if="diyComponent.style == 'style-2'" class=" px-[20rpx] flex items-center">
-				<view @click="toRedirect(diyComponent.link)">
+				<view @click="diyStore.toRedirect(diyComponent.link)">
 					<view class="max-w-[200rpx] truncate" :style="{
 							fontSize: diyComponent.fontSize * 2 + 'rpx',
 							color: diyComponent.textColor,
@@ -26,9 +26,9 @@
 				</view>
 				<text class="ml-[16rpx] max-w-[300rpx] truncate" :style="{ color: diyComponent.subTitle.color, fontSize: diyComponent.subTitle.fontSize * 2 + 'rpx', }">{{ diyComponent.subTitle.text }}</text>
 				<view class="ml-auto text-right " v-if="diyComponent.more.isShow" :style="{ color: diyComponent.more.color }">
-					<view @click="toRedirect(diyComponent.more.link)" class="flex items-center">
-						<text class="max-w-[200rpx] truncate text-[24rpx] mr-[8rpx]">{{ diyComponent.more.text }}</text>
-						<u-icon name="arrow-right" size="12" :style="{ color: diyComponent.more.color }"></u-icon>
+					<view @click="diyStore.toRedirect(diyComponent.more.link)" class="flex items-center">
+						<text class="max-w-[200rpx] truncate text-[24rpx]">{{ diyComponent.more.text }}</text>
+						<text class="nc-iconfont nc-icon-youV6xx text-[26rpx]" :style="{ color: diyComponent.more.color }"></text>
 					</view>
 				</view>
 			</view>
@@ -40,8 +40,7 @@
 	// 标题
 	import { ref, computed, watch,onMounted,nextTick,getCurrentInstance } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
-    import { img,redirect,diyRedirect, currRoute, getToken } from '@/utils/common';
-    import { useLogin } from '@/hooks/useLogin';
+    import { img } from '@/utils/common';
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 	const diyStore = useDiyStore();
@@ -123,19 +122,6 @@
                 height.value = data.height;
             }).exec();
         })
-    }
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
     }
 </script>
 

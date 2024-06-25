@@ -78,8 +78,30 @@ button[type='primary'],uni-button[type='primary']{
 	touch-action: none;
 }
 
-
 // 去掉uveiew 点击时变灰【针对于微信小程序处理，官方提供的方法，在小程序中不起作用】
 .u-button.u-button--active:before{
 	opacity: 0 !important;
 }
+
+/****************** 弹窗-start *********************/
+// 弹窗圆角[从下往上弹窗]
+.u-popup[type="bottom"] .u-popup__content, .u-popup .u-slide-up-enter-to .u-popup__content{
+	border-top-left-radius: 16rpx;
+	border-top-right-radius: 16rpx;
+	overflow: hidden;
+}
+// 防止覆盖住图片放大
+.u-popup :deep(.u-transition){
+	z-index: 999 !important;
+}
+/****************** 弹窗-end *********************/
+
+/****************** u-cell-start *********************/
+.u-cell-group .u-cell__body__content{
+	line-height: 1;
+}
+.u-cell-group .u-cell__right-icon-wrap .uicon-arrow-right{
+	font-size: 28rpx !important;
+	color: #999;
+}
+/****************** u-cell-end *********************/

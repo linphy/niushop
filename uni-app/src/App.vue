@@ -1,22 +1,20 @@
 <script setup lang="ts">
-	import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
-	import manifest from '@/manifest.json'
-	import { launchInterceptor } from '@/utils/interceptor'
-	import { getToken, isWeixinBrowser } from '@/utils/common'
-	import useMemberStore from '@/stores/member'
-	import useConfigStore from '@/stores/config'
-	import useSystemStore from '@/stores/system'
-	import { useLogin } from '@/hooks/useLogin'
+    import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
+    import { launchInterceptor } from '@/utils/interceptor'
+    import { getToken, isWeixinBrowser } from '@/utils/common'
+    import useMemberStore from '@/stores/member'
+    import useConfigStore from '@/stores/config'
+    import useSystemStore from '@/stores/system'
+    import { useLogin } from '@/hooks/useLogin'
+    import { useShare } from '@/hooks/useShare'
 
-	onLaunch(async (data) => {
+    onLaunch(async(data) => {
 
-		// 添加初始化拦截器
-		launchInterceptor()
+        // 添加初始化拦截器
+        launchInterceptor()
 
-        uni.removeStorageSync('isWatchShare')
-
-		// #ifdef H5
-		uni.getSystemInfoSync().platform == 'ios' && (uni.setStorageSync('initUrl', location.href))
+        // #ifdef H5
+        uni.getSystemInfoSync().platform == 'ios' && (uni.setStorageSync('initUrl', location.href))
 
         // 传输给后台数据
         window.parent.postMessage(JSON.stringify({
@@ -28,11 +26,11 @@
         window.addEventListener('message', event => {
             try {
                 let data = {
-                    type :''
+                    type: ''
                 };
-                if(typeof event.data == 'string') {
+                if (typeof event.data == 'string') {
                     data = JSON.parse(event.data)
-                }else if(typeof event.data == 'object') {
+                } else if (typeof event.data == 'object') {
                     data = event.data
                 }
                 if (data.type && data.type == 'appOnReady') {
@@ -46,45 +44,65 @@
             }
         }, false);
 
-		// #endif
+        const { wechatInit } = useShare()
+        wechatInit()
+        // #endif
 
-		const configStore = useConfigStore()
-		await configStore.getLoginConfig()
+        const configStore = useConfigStore()
+        await configStore.getTabbarConfig()
+        await configStore.getLoginConfig()
 
-		useSystemStore().getSiteInfoFn()
+        useSystemStore().getMapFn()
+        useSystemStore().getSiteInfoFn()
+		useMemberStore().getMemberLevel()
+        try {
+            // 隐藏tabbar
+            uni.hideTabBar()
+        } catch (e) {
 
-		// 隐藏tabbar
-		uni.hideTabBar()
+        }
 
-		// 判断是否已登录
-		if (getToken()) {
-			const memberStore = useMemberStore()
-			await memberStore.setToken(getToken())
-		}
+        // 判断是否已登录
+        if (getToken()) {
+            const memberStore = useMemberStore()
+            await memberStore.setToken(getToken())
 
-		if (!getToken()) {
-			const login = useLogin()
-			// 三方平台自动登录
-			// #ifdef MP
-			login.getAuthCode()
-			// #endif
-			// #ifdef H5
-			if (isWeixinBrowser()) {
-				data.query.code ? login.authLogin(data.query.code) : login.getAuthCode('snsapi_userinfo')
-			}
-			// #endif
-		}
-	})
+            setTimeout(() => {
+                if (!uni.getStorageSync('openid')) {
+                    const memberInfo = useMemberStore().info
+                    // #ifdef MP-WEIXIN
+                    memberInfo && memberInfo.weapp_openid && uni.setStorageSync('openid', memberInfo.weapp_openid)
+                    // #endif
+                    // #ifdef H5
+                    isWeixinBrowser() && memberInfo && memberInfo.wx_openid && uni.setStorageSync('openid', memberInfo.wx_openid)
+                    // #endif
+                }
+            }, 1000)
+        }
 
-	onShow(() => {
-	})
+        if (!getToken()) {
+            const login = useLogin()
+            // 第三方平台自动登录
+            // #ifdef MP
+            login.getAuthCode()
+            // #endif
+            // #ifdef H5
+            if (isWeixinBrowser()) {
+                data.query.code ? login.authLogin(data.query.code) : login.getAuthCode('snsapi_userinfo')
+            }
+            // #endif
+        }
+    })
 
-	onHide(() => {
-	})
+    onShow(() => {
+    })
+
+    onHide(() => {
+    })
 </script>
 
 <style>
-    uni-page-head {
-        display: none!important;
-    }
+	uni-page-head {
+		display: none !important;
+	}
 </style>

@@ -17,6 +17,12 @@ export function getPointList(data : AnyObject) {
 export function getBalanceList(data : AnyObject) {
 	return request.get('member/account/balance', data)
 }
+/**
+ * 获取余额流水,条件获取
+ */
+export function getBalanceListAll(data : AnyObject) {
+	return request.get('member/account/balance_list', data)
+}
 
 /**
  * 获取可提现余额流水
@@ -117,10 +123,23 @@ export function deleteCashoutAccount(accountId: number) {
 }
 
 /**
+ * 佣金账户流水
+ */
+export function getMemberCommission(data : AnyObject) {
+	return request.get(`member/account/commission`,data)
+}
+/**
  * 佣金列表
  */
 export function getCommissionList(data : AnyObject) {
 	return request.get(`member/account/commission`, data)
+}
+
+/**
+ * 获取账号变动类型
+ */
+export function getAccountType(params: Record<string, any>) {
+	return request.get(`member/account/fromtype/${params.account_type}`)
 }
 
 /**
@@ -129,7 +148,7 @@ export function getCommissionList(data : AnyObject) {
  * @returns
  */
 export function getAddressList(params: Record<string, any>) {
-	return request.get(`member/address`, {params})
+	return request.get(`member/address`, params)
 }
 
 /**
@@ -166,4 +185,60 @@ export function editAddress(params: Record<string, any>) {
  */
 export function deleteAddress(id: number) {
 	return request.delete(`member/address/${id}`, { showErrorMessage: true, showSuccessMessage: true })
+}
+
+/**
+ * 获取会员等级
+ */
+export function getMemberLevel() {
+	return request.get(`member/level`);
+}
+
+/**
+ * 获取成长值任务
+ */
+export function getTaskGrowth() {
+	return request.get(`task/growth`);
+}
+
+/**
+ * 获取签到日期
+ */
+export function getSignInfo(data : AnyObject) {
+	return request.get(`member/sign/info/${data.year}/${data.month}`, {})
+}
+
+/**
+ * 获取日签到奖励
+ */
+export function getDayPack(data : AnyObject) {
+	return request.get(`member/sign/award/${data.year}/${data.month}/${data.day}`)
+}
+/**
+ * 获取签到设置
+ */
+export function getSignConfig() {
+	return request.get(`member/sign/config`)
+}
+
+/**
+ * 点击签到
+ * @returns
+ */
+export function setSign() {
+	return request.post('member/sign')
+}
+
+/**
+ * 获取个人积分
+ */
+export function getMemberAccountPointcount() {
+	return request.get(`member/account/pointcount`)
+}
+
+/**
+ * 获取积分任务
+ */
+export function getTaskPoint() {
+	return request.get(`task/point`)
 }

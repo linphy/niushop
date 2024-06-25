@@ -1,75 +1,70 @@
 <template>
     <view :style="themeColor()">
 		<scroll-view scroll-y="true" class="w-screen h-screen bg-page" v-if="!pageLoading && config.is_open == 1">
-			<view>
-				<view class="p-[30rpx] bg-white">
-					<view>{{t('cashOutMoneyTip')}}</view>
-					<view class="flex py-[20rpx] items-baseline border-0 border-b-[2rpx] border-solid border-gray-200">
-						<text class="text-[60rpx] ">{{ t('currency') }}</text>
-						<input type="digit" class="h-[70rpx] leading-[70rpx] pl-[10rpx] flex-1 font-bold text-[60rpx]" v-model="applyData.apply_money" maxlength="7" />
+			<view class="px-[30rpx] pt-[20rpx]">
+				<view class="p-[20rpx] bg-white rounded-[16rpx]">
+					<view class="font-500 text-[32rpx] text-[#333] leading-[44rpx]">{{t('cashOutMoneyTip')}}</view>
+					<view class="flex pt-[30rpx] pb-[8rpx] items-center border-0 border-b-[2rpx] border-solid border-gray-200">
+						<text class="text-[54rpx] font-bold leading-[76rpx] ">{{ t('currency') }}</text>
+						<input type="digit" class="h-[76rpx] leading-[76rpx] pl-[10rpx] flex-1 font-bold text-[54rpx] bg-[#fff]" v-model="applyData.apply_money" maxlength="7" :placeholder="applyData.apply_money?'':(t('minWithdrawal') + t('currency') + moneyFormat(config.min))" placeholder-class="apply-price"  :adjust-position="false"/>
 						<image @click="clearMoney" v-if="applyData.apply_money"
 							:src="img('static/resource/images/member/apply_withdrawal/close.png')" class="w-[40rpx] h-[40rpx]"
 							mode="widthFix" />
 					</view>
-					<view class="pt-[20rpx]">
-						<text class="text-gray-400 text-[28rpx]">{{t('money')}}：{{ t('currency') }}{{ moneyFormat(cashOutMoney) }}</text>
-						<text class="pl-[10rpx] text-[28rpx] text-primary" @click="allMoney">{{t('allTx')}}</text>
-					</view>
-					<view>
-						<text class="text-[24rpx] text-gray-400">{{t('minWithdrawal')}}{{ t('currency') }}{{ moneyFormat(config.min) }}</text>
-						<text class="text-[24rpx] text-gray-400">，{{t('commissionTo')}}{{ config.rate + '%' }}</text>
+					<view class="pt-[18rpx] flex items-center justify-between mb-[20rpx]">
+						<view class="text-[26rpx] text-[#666] leading-[36rpx]">
+                            <text>{{t('money')}}：{{ t('currency') }}{{ moneyFormat(cashOutMoney) }}</text>
+                            <text>，{{t('commissionTo')}}{{ config.rate + '%' }}</text>
+                        </view>
+						<view class="text-[26rpx] text-primary leading-[36rpx]" @click="allMoney">{{t('allTx')}}</view>
 					</view>
 				</view>
 
-				<view class="px-[30rpx] bg-white mt-[30rpx]">
+				<view class="px-[20rpx] pt-[20rpx] pb-[30rpx] bg-white mt-[20rpx] rounded-[16rpx]">
+                    <view class="font-500 text-[32rpx] text-[#333] leading-[44rpx] mb-[20rpx]">到账方式</view>
 					<!-- 提现到微信 -->
-					<view class="py-[30rpx] flex" v-if="config.transfer_type.includes('wechat') && memberStore.info && (memberStore.info.wx_openid || memberStore.info.weapp_openid)">
-						<view><text class="iconfont iconweixin1 text-[#43c93e] text-[70rpx]"></text></view>
+					<view class="p-[20rpx] mb-[20rpx] flex items-center rounded-[16rpx] border-[2rpx] border-solid border-[#eee]" v-if="config.transfer_type.includes('wechatpay') && memberStore.info && (memberStore.info.wx_openid || memberStore.info.weapp_openid)"  @click="applyData.transfer_type = 'wechatpay'" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'wechatpay'}">
+						<view>
+                            <image class="h-[60rpx] w-[60rpx]" :src="img('static/resource/images/member/apply_withdrawal/wechat.png')" mode="widthFix" />
+                        </view>
 						<view class="flex-1 px-[20rpx]">
-							<view>{{ t('cashOutToWechat') }}</view>
-							<view class="text-[#bbb] text-[26rpx] mt-[16rpx]">{{ t('cashOutToWechatTips') }}</view>
-						</view>
-						<view class="flex items-center" @click="applyData.transfer_type = 'wechat'">
-							<text class="iconfont iconduigou text-[40rpx] text-primary" v-if="applyData.transfer_type == 'wechat'"></text>
-							<text class="iconfont iconcheckbox_nol text-[40rpx] text-[#bbb]" v-else></text>
+							<view class="text-[28rpx] text-[#333] leading-[40rpx] mb-[6rpx]">{{ t('cashOutToWechat') }}</view>
+							<view class="text-[#999] text-[24rpx] leading-[34rpx]">{{ t('cashOutToWechatTips') }}</view>
 						</view>
 					</view>
 
 					<!-- 提现到支付宝 -->
-					<view class="py-[30rpx] flex" v-if="config.transfer_type.includes('alipay')">
-						<view><text class="iconfont iconzhifubaoxuanzhong text-[#188dfb] text-[70rpx]"></text></view>
-						<view class="flex-1 px-[20rpx]">
-							<view>{{ t('cashOutToAlipay') }}</view>
-							<view class="text-[#bbb] text-[26rpx] mt-[16rpx]">
-								<view v-if="alipayAccountInfo">
-									{{ t('cashOutTo') }}{{ t('alipayAccountNo') }}{{ alipayAccountInfo.account_no }} <text class="text-black" @click="redirect({ url: '/app/pages/member/account', param: { type: 'alipay', mode: 'select' } , mode: 'redirectTo'})">{{ t('replace') }}</text>
+					<view class="p-[20rpx] mb-[20rpx] flex items-center rounded-[16rpx] border-[2rpx] border-solid border-[#eee]"  v-if="config.transfer_type.includes('alipay')" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'alipay' && alipayAccountInfo}" >
+						<view  @click="transferAlipay" >
+                            <image class="h-[60rpx] w-[60rpx] align-middle" :src="img('static/resource/images/member/apply_withdrawal/alipay-icon.png')" mode="widthFix" />
+                        </view>
+						<view class="flex-1 px-[22rpx]"  @click="transferAlipay" >
+							<view class="text-[28rpx] text-[#333] leading-[40rpx] mb-[6rpx]">{{ t('cashOutToAlipay') }}</view>
+							<view class="text-[#999] text-[24rpx] leading-[34rpx]">
+								<view  v-if="alipayAccountInfo" class="truncate max-w-[440rpx]">
+                                    <text>{{ t('cashOutTo') }}{{ t('alipayAccountNo') }}</text>
+                                    <text class="text-[#333]">{{ alipayAccountInfo.account_no }}</text> 
 								</view>
-								<view v-else>
-									{{ t('cashOutToAlipayTips') }}
-								</view>
+								<view v-else>{{ t('cashOutToAlipayTips') }}</view>
 							</view>
 						</view>
 						<view class="flex items-center">
-							<u-button :plain="true" type="primary" shape="circle" :custom-style="{height: '56rpx'}" v-if="!alipayAccountInfo" @click="redirect({ url: '/app/pages/member/account', param: { type: 'alipay', mode: 'select' } , mode: 'redirectTo'})">{{ t('toAdd') }}</u-button>
-							<view v-else @click="applyData.transfer_type = 'alipay'">
-								<text class="iconfont iconduigou text-[40rpx] text-primary" v-if="applyData.transfer_type == 'alipay'"></text>
-								<text class="iconfont iconcheckbox_nol text-[40rpx] text-[#bbb]" v-else></text>
-							</view>
+							<u-button :plain="true" :text="t('toAdd')" type="primary" shape="circle" :custom-style="{height: '54rpx'}" v-if="!alipayAccountInfo && !alipayLoading" @click="redirect({ url: '/app/pages/member/account', param: { type: 'alipay', mode: 'select' } , mode: 'redirectTo'})"></u-button>
+                            <text  v-else class="nc-iconfont nc-icon-youV6xx text-[40rpx] text-[#999] p-[10rpx]" @click.stop="redirect({ url: '/app/pages/member/account', param: { type: 'alipay', mode: 'select' } , mode: 'redirectTo'})"></text>
 						</view>
 					</view>
 
 					<!-- 提现到银行卡 -->
-					<view class="py-[30rpx] flex" v-if="config.transfer_type.includes('bank')">
-						<view class="w-[70rpx] flex justify-center">
-							<image
-								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAACnVJREFUeF7tWXtQVNcZ/91FQQZZdhcXfKCCqFXQuKBV0YSHqWJ9AbU+qkZQG+uEyu66i0maB5jEaSetBdvG1vrCRhM1bQS1SUw6gn0kJhkDpqLNQ10jLApEHmrCuuyeznfWRZZd3L03/MOw38zOPfee8517vt/5fY9zV0AfF6GP2w8/AH4G9HEE/C7QxwngD4J+F/C7QB9HwO8CfZwA/iwgyQWuQznBBmGxAKGdwd4u41e0070Ndhtd7z2zUT+DYKN7GWzt14PDAtZOXfIjgLULYNaziuGfQ0A73QPMxtt2wdGG0H6vzwaB2kI7omyjoMZkMFgRav8MTGZFP+Eu7PZ23gaz8nGMWRHArGABVtht7QiQfY08Q2VXxosGwAzlVkDQAggR6z7bx87EjrEzcKtfkFhVIBjAcAYMZeJ1uYbwDWR4BnmG4s4TiALAjPBfAuwpKSvYFTsVBRPnSFF16ExigFKq8R2vvQmdMVwSAGYoVwHCq1IsqA4bjIXJOWgL6CdFHYhljt3vCWEsDfr8CudUPjOgFqpDArBMyhp2x07F899l96fbgQFS3uxBp/l2AAoL7aIBMEN1GUCMlGXkTsnE0agJUlSBgQCmdKxX2hz3tf4NnfER0S5QA4VGBplbBPV1NTNm58IUovR1uOu4IQC+10MACMJWaA3PigbADOV6QNgpxYKL8gg8Omu9FFWHzlg7MFS6uoumTJaOvE3vSgBAtRvAOinLeH2kBoaEBVJUHTqT7UCodHUXzf7BocjNvS0agFqoPhWAiQMy56HfpAmwXb2Gb0te5/MEps5EYMpMWMrehrXqv24r3ayZhwPRiZIsSNVEISV9mItuVUMDyi5/KX4+AR9Ba5zWVdFrFriOsBg7AigAYlBlBfprJuLb/YfQnJPL5wqvOMYBaExI9QjA7LSfgtKgFCktWIQMTSzONTZAERSEkaFyPs2a995ByYVqcVMK7DfQ5ueLBsAM5QpAOEiKQ9jXXL8p6zG0lb7F2/SMtbTiusI9QZiD5ZiSniduoZ1GN732BBTBQYjZtwum1lZUrVyNSYPU2PLhByg88764ee1sETblH5cAgIpKRy1RPbz8GNe/oRwFe3MLZwOxoq3sbTRlruJ9MkUY7yM5NiwOh9bkISU+CvvLL8BU39rtohUhjvKYrjROE6NG5W9X4eqtVkTv3cUZULliNaLlciS89iqqGurFAWBlkcjPd1Py6gJ1UL3PgKQQ3QbIi7bCeu48GjUp/OXOZ636Z/g99dtMXyEgegQH4bllzyJi41pER8iR87uT3Kh9G9P5ffMdC9Kee4MbfPSpRR3G03Plqh3QLUxE0doUvvOll75AZuwYbvz+i9WoqLmGouQ0mFpb0GyxICYsDJnHy3B0QQYHjNhB7e1VnziYwnAOeqPGE2IPBOAmlGFtEIj3AYqSVxCcvdzF/5WlBzAg44fc/wkM6r+95WUMLNjM3/WDec9gd8mT3GAy6srOdWj5xgLdngpu9PYTlRyIgmXTeTtzWixGquUQsopQYkhH9sNx3CACodnShtJLX/J2+eKlHAiS7PHxvE0xgZ6frq0BY4yDojn4Fw4QGH4PvdGjLz4QgBoo58sgnKAXOYPdne070ar7Bad6ZNNlnhHqozUdAbJOCOdxof1qDZKKTuHj4tU4XV2DklMXsG/jHGw5fIZT3NlOnRDFXSTmZ3tQ/uISKAcGQbFyB67sWYdolTvdSxdmIGPUaO4GmbGjUTAtCfp/VqC48iyY1tCxyS6BUmDLoM0/IpoBZihfAgTOb+duE7UtpW/x9EdUp4B4t+I/HAxyDwKHYsWVwyfwQn1gh6E0B+10yalqaGIiEBMph0Z/gPu5IIC3iSEEFrkLZ4vFAsWf/uCy7oofL0PKsChknSjjbtA5JjgBIBak/vXwfT1mjYH+aZMEAFRUNc0mRTI2tPBJbjiJteo87hT/kRtPwVBevJW3qRYgd3jzZCU+mzQFtMOFhz5A1ZUGlD69iO922UeX+DOif8VLS1D64SUOTPG6VM4UU30LCh9PQtXNeuhOl7usOycuHsXJaWi+a+FpsTNIzizhGiSFi9AZ4rqLmA90ATNUzQDCxIVbx+iVST9BeWSsFFWAEkKSuPqfmHBlzeM8HuS8+06n9wo7oTNsEA3ADaiSbIDIZHv/NXHzDGgOpM84EkTNgHhx53+K+mlRwxG9b5cj8DmFCWugN5SIBqAOKiMDfi1h+ahSDMG81O6PDuTflBmKj3+Cc6ZGnh61CxK4K1AmcAr5OUX+pg0/548o7WnUES5LIrpTcVQyZ67nAokFxEGvvygaADNUbwLIkgJAd5+/KOdTpKcASDGBhHyegiOlx+LjlRipDkXO3Hgog4N4AKRIT7vrzP/7Zs/l+Z0kZ3w8qhod8xA4rtTnjy9DZ3ygH3YbA8xQ1QBwPYn4iMb6qYtxYuh4t9G061QIVZy/1tF3ztTAawK6UlAk4ZXjPV8uTkmDVpPIix+qBokBlPYyRrna1XLXwoshF2HYD70x50HL9giAGeHjANYtbbzh8P30jagNdo+dBEBJXrpLaUysIPoTIwgAhTwImhFqpP3tCDeaAhulSdpd2n2HoaWIlofxe2cf+b2H8jgXOuMO0QDUQrVOAOgbgGgxhagwY/YTHvVyZsVzY8nnnf5P91T8EP0zpsZi/6fVyJgWy098ZGTlisc4EFQBUgokZjhPhalRw3nAI8OJFW4ACJgCrfGsaADqoNrLgDWirQdwZMRD0CU6avuu4qzvie4U8JwVYeeS2NTUihabhZexuoTJKEpO5UYTGFQAUdAjV6C4QFdnGUzGu0R/oBY6Y5Q3G7pxAdX/6EucN2VP/fma+TgYneBRlYoiCoL6vac5A4gRVBJn/eoYrw4pGAovb+N1ABlHtT35PFV1hdNn8DYdjQkYnSaRF0NNbW0cFA/yBnTGpd5scAPgOgZG2BF4w5tid/2pj27A56GDPHYXLk/iRtLOUzVI/p+d5ijSiBWTotW8Tf5PhQ35eFchV6A+chFyAToMdfOBxAidcZs3O9wAMCM8C2CUAkVLc/9gxM2/fyDpOgEZTP5PQiBQ0HPeUxDUJKqBkYz7fGdxRn9KdeQKTr93PvdAf8BuT8amzf/yZoQHAFSE2iZvip763xs8FtnTvbKu+6nHMGCYuArQ82RCA4beisLSwrve7HADoBaqMwLg9vHQ20TUvzV+Fl4ZM8OXoZ7H9NQXYIa/Q2/06VO0CwAM6FcHlVWqBRmPZOPj8OHS1GUAksUdgLp9kSA8D63hRV8W4gLANShSAyBzPX/6Msu9MUMzXf50EaFJHwMZoOkJ+vPXzoXOeNKXBXRlQGCd4wgs6Ri3Kmk5TkWO9uW97mOIAQ/bAbp+N9kGndHo6xSegqDkf4G2jUsG/STLODsg7S8EQIAZEP4MrWGLmPd7LIS+AIIGQJEkZqLOYwseSudfYL8KCav/R+QYs6h51BiMMAxGsKwRKjsdyHyTTv/5+6bgGOX1s7iYyXrjWD8AvXHXenLNfgb0JJq9cS4/A3rjrvXkmv0M6Ek0e+Ncfgb0xl3ryTX7GdCTaPbGufo8A/4PpckqfWjPHTQAAAAASUVORK5CYII="
-								mode="widthFix" class="w-[60rpx]"></image>
+					<view class="p-[20rpx] flex items-center rounded-[16rpx] border-[2rpx] border-solid border-[#eee]" v-if="config.transfer_type.includes('bank')" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'bank' && bankAccountInfo}">
+						<view @click="transferBank" >
+                            <image class="h-[42rpx] w-[60rpx] align-middle" :src="img('static/resource/images/member/apply_withdrawal/bank-icon.png')" mode="widthFix" />
 						</view>
-						<view class="flex-1 px-[20rpx]">
-							<view>{{ t('cashOutToBank') }}</view>
-							<view class="text-[#bbb] text-[26rpx] mt-[16rpx]">
-								<view v-if="bankAccountInfo">
-									{{ t('cashOutTo') }}{{ bankAccountInfo.bank_name }}{{ t('debitCard') }}{{ bankAccountInfo.account_no.substring(bankAccountInfo.account_no.length - 4) }} <text class="text-black" @click="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })">{{ t('replace') }}</text>
+						<view class="flex-1 px-[20rpx]" @click="transferBank" >
+							<view class="text-[28rpx] text-[#333] leading-[40rpx] mb-[6rpx]">{{ t('cashOutToBank') }}</view>
+							<view class="text-[#999] text-[24rpx] leading-[34rpx]">
+								<view v-if="bankAccountInfo" class="truncate max-w-[440rpx]">
+                                    <text>{{ t('cashOutTo') }}{{ bankAccountInfo.bank_name }}{{ t('debitCard') }}</text>
+									<text class="text-[#333]">{{ bankAccountInfo.account_no.substring(bankAccountInfo.account_no.length - 4) }} </text>
 								</view>
 								<view v-else>
 									{{ t('cashOutToBankTips') }}
@@ -77,22 +72,16 @@
 							</view>
 						</view>
 						<view class="flex items-center">
-							<u-button :plain="true" type="primary" shape="circle" :custom-style="{height: '56rpx'}" v-if="!bankAccountInfo" @click="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })">{{ t('toAdd') }}</u-button>
-							<view v-else @click="applyData.transfer_type = 'bank'">
-								<text class="iconfont iconduigou text-[40rpx] text-primary" v-if="applyData.transfer_type == 'bank'"></text>
-								<text class="iconfont iconcheckbox_nol text-[40rpx] text-[#bbb]" v-else></text>
-							</view>
+							<u-button :plain="true" :text="t('toAdd')" type="primary" shape="circle" :custom-style="{height: '56rpx'}" v-if="!bankAccountInfo && !bankLoading" @click="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })"></u-button>
+							<text  v-else class="nc-iconfont nc-icon-youV6xx text-[40rpx] text-[#999] p-[10rpx]" @click.stop="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })"></text>
 						</view>
 					</view>
 				</view>
-
-				<view class="px-[32rpx]">
-					<u-button type="primary" shape="circle" :text="t('cashOut')" class="mt-[60rpx] mb-[40rpx]"
-						:disabled="applyData.apply_money == '' || applyData.apply_money == 0" :loading="loading"
-						@click="cashOut"></u-button>
+				<view class="mt-[100rpx]">
+					<u-button type="primary" shape="circle" :text="t('cashOutNow')" class="mb-[40rpx]" :disabled="applyData.apply_money == '' || applyData.apply_money == 0" :loading="loading" @click="cashOut" :customStyle="{background: 'linear-gradient( 94deg, #FB7939 0%, #FE120E 99%), #EF000C',fontSize:'32rpx'}"></u-button>
 				</view>
 
-				<view class="mt-[40rpx] text-center text-sm" @click="redirect({ url: '/app/pages/member/cash_out'})">
+				<view class="mt-[40rpx] text-center text-[26rpx] text-primary" @click.stop="redirect({ url: '/app/pages/member/cash_out'})">
 					{{t('cashOutList')}}
 				</view>
 			</view>
@@ -107,7 +96,7 @@
 <script lang="ts" setup>
     import { ref, reactive, watch, computed } from 'vue'
     import { t } from '@/locale'
-    import { moneyFormat, redirect, getToken ,img } from '@/utils/common'
+    import { moneyFormat, redirect, getToken ,img, deepClone } from '@/utils/common'
     import useMemberStore from '@/stores/member'
     import { cashOutConfig, cashOutApply, getFirstCashoutAccountInfo, getCashoutAccountInfo } from '@/app/api/member'
     import { onLoad } from '@dcloudio/uni-app'
@@ -129,15 +118,14 @@
         return memberStore.info ? memberStore.info[ applyData.account_type ] : 0
     })
 
-
     watch(() => applyData.transfer_type, (nval) => {
         switch (nval) {
             case 'bank':
                 applyData.account_id = bankAccountInfo.value ? bankAccountInfo.value.account_id : 0
-            break;
+                break;
             case 'alipay':
                 applyData.account_id = alipayAccountInfo.value ? alipayAccountInfo.value.account_id : 0
-            break;
+                break;
             default:
                 applyData.account_id = 0
         }
@@ -156,6 +144,7 @@
 
     onLoad(async (data) => {
         query = data
+
         uni.getStorageSync('cashOutAccountType') && (applyData.account_type = uni.getStorageSync('cashOutAccountType'))
 		
 		if(getToken()){
@@ -175,20 +164,23 @@
 
         // 提现配置
         await cashOutConfig().then((res : any) => {
-            for (let key in res.data) {
-                config[key] = res.data[key];
+            for (let key in deepClone(res.data)) {
+            	config[key] = deepClone(res.data[key]);
             }
-            if (config.transfer_type.includes('wechat') && memberStore.info && (!memberStore.info.wx_openid && !memberStore.info.weapp_openid)) config.transfer_type.splice(0, 1)
+            if (config.transfer_type.includes('wechatpay') && memberStore.info && (!memberStore.info.wx_openid && !memberStore.info.weapp_openid))  config.transfer_type.splice(config.transfer_type.indexOf('wechatpay'),1)
             config.transfer_type.includes('bank') && getBankAccountInfo()
             config.transfer_type.includes('alipay') && getAlipayAccountInfo()
             applyData.transfer_type = config.transfer_type[0]
+			if(query.type){
+                applyData.transfer_type = query.type
+            }
             pageLoading.value = false
         })
     })
 
     //全部提现
     const allMoney = () => {
-        applyData.apply_money = moneyFormat(cashOutMoney)
+        if(parseFloat(cashOutMoney.value)) applyData.apply_money = moneyFormat(cashOutMoney.value)
     }
 
     // 清空提现金额
@@ -223,8 +215,9 @@
     /**
      * 获取支付宝提现账号信息
      */
-    const alipayAccountInfo = ref(null)
-    const getAlipayAccountInfo = () => {
+     const alipayLoading = ref(false)
+    const alipayAccountInfo:any = ref(null)
+    const getAlipayAccountInfo =  () => {
         const data = { account_type: 'alipay', account_id: 0 }
         let request = getFirstCashoutAccountInfo
 
@@ -232,15 +225,23 @@
             request = getCashoutAccountInfo
             data.account_id = query.account_id
         }
-
+        alipayLoading.value = true
         request(data).then(res => {
-            if (res.data && res.data.account_id) alipayAccountInfo.value = res.data
+            if (res.data && res.data.account_id) {
+                alipayAccountInfo.value = res.data
+                // 初始化赋值
+                if(applyData.transfer_type == 'alipay' && !applyData.account_id){
+                    applyData.account_id = alipayAccountInfo.value.account_id;
+                }
+            }
+            alipayLoading.value = false
         })
     }
 
     /**
      * 获取银行卡提现账号信息
      */
+    const bankLoading = ref(false)
     const bankAccountInfo = ref(null)
     const getBankAccountInfo = () => {
         const data = { account_type: 'bank', account_id: 0 }
@@ -250,8 +251,16 @@
             request = getCashoutAccountInfo
             data.account_id = query.account_id
         }
+        bankLoading.value = true
         request(data).then(res => {
-            if (res.data && res.data.account_id) bankAccountInfo.value = res.data
+            if (res.data && res.data.account_id) {
+                bankAccountInfo.value = res.data
+	            // 初始化赋值
+                if(applyData.transfer_type == 'bank' && !applyData.account_id){
+                    applyData.account_id = bankAccountInfo.value.account_id;
+                }
+            }
+            bankLoading.value = false
         })
     }
 
@@ -263,17 +272,38 @@
             if (loading.value) return
             loading.value = true
 
-            cashOutApply(applyData)
-                .then(res => {
-                    loading.value = false
-                    redirect({ url: '/app/pages/member/cash_out' })
-                })
-                .catch(() => {
-                    loading.value = false
-                })
+            cashOutApply(applyData).then(res => {
+                loading.value = false
+                redirect({ url: '/app/pages/member/cash_out' })
+            }).catch(() => {
+                loading.value = false
+            })
         }
+    }
+
+    // 选中提现到支付宝
+    const transferAlipay = () => {
+        if(!alipayAccountInfo.value){
+            uni.showToast({ title: t('cashOutToAlipayTips'), icon: 'none' })
+            return false
+        }
+        applyData.transfer_type = 'alipay'
+    }
+    // 选中提现到银行卡
+    const transferBank = () => {
+        if(!bankAccountInfo.value){
+            uni.showToast({ title: t('cashOutToBankTips'), icon: 'none' })
+            return false
+        }
+        applyData.transfer_type = 'bank'
     }
 </script>
 
 <style lang="scss" scoped>
+:deep(.apply-price){
+    color:#999;
+    font-size: 26rpx;
+    font-weight: normal;
+    line-height: 76rpx;
+}
 </style>

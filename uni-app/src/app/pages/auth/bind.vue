@@ -10,11 +10,11 @@
             <view class="px-[60rpx]">
                 <u-form labelPosition="left" :model="formData" errorType='toast' :rules="rules" ref="formRef">
                     <u-form-item label="" prop="mobile" :border-bottom="true">
-                        <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
+                        <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
                     </u-form-item>
                     <view class="mt-[40rpx]">
                         <u-form-item label="" prop="mobile_code" :border-bottom="true">
-                            <u-input v-model="formData.mobile_code" border="none" type="password" clearable :placeholder="t('codePlaceholder')">
+                            <u-input v-model="formData.mobile_code" border="none" clearable :placeholder="t('codePlaceholder')" class="!bg-transparent" :disabled="real_name_input">
                                 <template #suffix>
                                     <sms-code :mobile="formData.mobile" type="bind_mobile" v-model="formData.mobile_key"></sms-code>
                                 </template>
@@ -36,9 +36,7 @@
                         </view>
                     </view>
                     <view class="mt-[60rpx]">
-                        <u-button type="primary" :loading="loading" :loadingText="t('binding')" @click="handleBind">
-                            {{ t('bind') }}
-                        </u-button>
+                        <u-button type="primary" :text="t('bind')" :loading="loading" :loadingText="t('binding')" @click="handleBind"></u-button>
                     </view>
                     <!-- #ifdef MP-WEIXIN -->
                     <view class="mt-[30rpx]">
@@ -58,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive, computed } from 'vue'
+    import { ref, reactive, computed, onMounted } from 'vue'
     import { t } from '@/locale'
     import { bind } from '@/app/api/auth'
     import { bindMobile } from '@/app/api/member'
@@ -83,13 +81,21 @@
         mobile_key: ''
     })
 
+	let real_name_input = ref(true);
+	onMounted(() => {
+		// 防止浏览器自动填充
+		setTimeout(()=>{
+			real_name_input.value = false;
+		},800)
+	});
+
     uni.getStorageSync('openid') && (Object.assign(formData, { openid: uni.getStorageSync('openid') }))
     uni.getStorageSync('pid') && (Object.assign(formData, { pid: uni.getStorageSync('pid') }))
+    uni.getStorageSync('unionid') && (Object.assign(formData, { unionid: uni.getStorageSync('unionid') }))
 
     const rules = {
         'mobile': [
             {
-
                 type: 'string',
                 required: true,
                 message: t('mobilePlaceholder'),
@@ -147,10 +153,12 @@
         })
     }
 
-
     const mobileAuth = (e) => {
         if (!isAgree.value && !info.value && config.value.agreement_show) {
-            uni.showToast({ title: `${t('pleaceAgree')}《${t('userAgreement')}》《${t('privacyAgreement')}》`, icon: 'none' })
+            uni.showToast({
+                title: `${ t('pleaceAgree') }《${ t('userAgreement') }》《${ t('privacyAgreement') }》`,
+                icon: 'none'
+            })
             return
         }
 
@@ -171,20 +179,27 @@
                     memberStore.setToken(res.data.token)
                     useLogin().handleLoginBack()
                 }
-            }).catch(() => {
-                uni.hideLoading()
+            }).catch((res) => {
+                setTimeout(() => {
+                    uni.hideLoading()
+                }, 2000);
             })
         }
-		
-		if(e.detail.errno == 104){
-		    let msg = '用户未授权隐私权限';
-		    uni.showToast({title: msg, icon: 'none'})
-		}
-		if(e.detail.errMsg == "getPhoneNumber:fail user deny"){
-		    let msg = '用户拒绝获取手机号码';
-		    uni.showToast({title: msg, icon: 'none'})
-		}
+
+        if (e.detail.errno == 104) {
+            let msg = '用户未授权隐私权限';
+            uni.showToast({ title: msg, icon: 'none' })
+        }
+        if (e.detail.errMsg == "getPhoneNumber:fail user deny") {
+            let msg = '用户拒绝获取手机号码';
+            uni.showToast({ title: msg, icon: 'none' })
+        }
     }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+	.u-input{
+		background-color: transparent !important;
+	}
+</style>
+

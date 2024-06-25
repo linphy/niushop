@@ -45,26 +45,25 @@
      * 获取支付信息
      */
     const getPayInfo = () => {
-        getPayInfoApi(tradeType, tradeId)
-            .then((res : responseResult) => {
-                if (!uni.$u.test.isEmpty(res.data)) {
-                    if (res.data.status == 1 && requestNum < 5) {
-                        loading.value = true
-                        requestNum++
-                        setTimeout(() => {
-                            getPayInfo()
-                        }, 1000)
-                        return
-                    }
-                    payInfo.value = res.data
-                    loading.value = false
-                    uni.setNavigationBarTitle({
-                        title: payInfo.value.status == 2 ? t('pay.paySuccess') : t('pay.payFail')
-                    })
+        getPayInfoApi(tradeType, tradeId).then((res: responseResult) => {
+            if (!uni.$u.test.isEmpty(res.data)) {
+                if (res.data.status == 1 && requestNum < 5) {
+                    loading.value = true
+                    requestNum++
+                    setTimeout(() => {
+                        getPayInfo()
+                    }, 1000)
+                    return
                 }
-            }).catch(() => {
+                payInfo.value = res.data
+                loading.value = false
+                uni.setNavigationBarTitle({
+                    title: payInfo.value.status == 2 ? t('pay.paySuccess') : t('pay.payFail')
+                })
+            }
+        }).catch(() => {
 
-            })
+        })
     }
 
     const complete = () => {

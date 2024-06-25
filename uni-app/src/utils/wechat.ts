@@ -22,7 +22,7 @@ class Wechat {
 				timestamp: data.timestamp, // 必填，生成签名的时间戳
 				nonceStr: data.nonceStr, // 必填，生成签名的随机串
 				signature: data.signature,// 必填，签名
-				jsApiList: ['chooseWXPay', 'updateAppMessageShareData', 'updateTimelineShareData'] // 必填，需要使用的JS接口列表
+				jsApiList: ['chooseWXPay', 'updateAppMessageShareData', 'updateTimelineShareData', 'scanQRCode'] // 必填，需要使用的JS接口列表
 			});
 		})
 	}
@@ -45,6 +45,22 @@ class Wechat {
 			wx.updateAppMessageShareData(options)
 			// 分享到朋友圈
 			wx.updateTimelineShareData(options)
+		})
+	}
+	
+	/**
+	 * 扫一扫
+	 * @param {Object} callback
+	 */
+	public scanQRCode(callback:AnyFunction){
+		wx.ready(()=> {
+			wx.scanQRCode({
+				needResult: 1,
+				scanType: ["qrCode"],
+				success: function (res) {
+					typeof callback == 'function' && callback(res);
+				}
+			});
 		})
 	}
 }

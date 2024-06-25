@@ -51,6 +51,20 @@ export function mobileRegister(data : AnyObject) {
 }
 
 /**
+ * 微信公众号授权信息
+ */
+export function wechatUser(data : AnyObject) {
+    return request.get('wechat/user', data, { showErrorMessage: false })
+}
+
+/**
+ * 微信公众号授权信息登录（openid）
+ */
+export function wechatUserLogin(data : AnyObject) {
+    return request.post('wechat/userlogin', data, { showErrorMessage: true })
+}
+
+/**
  * 微信公众号授权登录
  */
 export function wechatLogin(data : AnyObject) {
@@ -58,7 +72,7 @@ export function wechatLogin(data : AnyObject) {
 }
 
 /**
- * 微信公众号授权登录
+ * 微信小程序授权登录
  */
 export function weappLogin(data : AnyObject) {
     return request.post('weapp/login', data, { showErrorMessage: false })

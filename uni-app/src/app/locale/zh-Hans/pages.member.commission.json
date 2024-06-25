@@ -1,8 +1,9 @@
 {
     "recharge": "充值",
 	"cashOut":"提现",
+    "transferMoney":"提现",
     "commissionDetail": "佣金明细",
-	"accountCommission":"账户佣金（元）",
+	"accountCommission":"当前佣金（元）",
 	"commission":"累计佣金（元）",
 	"money":"提现中佣金（元）",
     "availableCommission": "可用佣金",

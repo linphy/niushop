@@ -9,32 +9,29 @@
             </view>
             <view class="px-[60rpx] text-sm flex mb-[50rpx] font-bold leading-none" v-if="loginType.length > 1">
                 <block v-for="(item, index) in loginType">
-                    <view :class="{'text-gray-300' : item.type != type}" @click="type = item.type">{{ item.title }}
-                    </view>
-                    <view class="mx-[30rpx] border-solid border-0 border-r-[2px] border-gray-300" v-show="index == 0">
-                    </view>
+                    <view :class="{'text-gray-300' : item.type != type}" @click="type = item.type">{{ item.title }}</view>
+                    <view class="mx-[30rpx] border-solid border-0 border-r-[2px] border-gray-300" v-show="index == 0"></view>
                 </block>
             </view>
             <view class="px-[60rpx]">
                 <u-form labelPosition="left" :model="formData" errorType='toast' :rules="rules" ref="formRef">
                     <view v-show="type == 'username'">
                         <u-form-item label="" prop="username" :border-bottom="true">
-                            <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')"/>
+                            <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')" autocomplete="off" class="!bg-transparent" :disabled="real_name_input"/>
                         </u-form-item>
                         <view class="mt-[40rpx]">
                             <u-form-item label="" prop="password" :border-bottom="true">
-                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')"/>
+                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')" autocomplete="new-password" class="!bg-transparent" :disabled="real_name_input"/>
                             </u-form-item>
                         </view>
                     </view>
                     <view v-show="type == 'mobile'">
                         <u-form-item label="" prop="mobile" :border-bottom="true">
-                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
+                            <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"  autocomplete="off" class="!bg-transparent" :disabled="real_name_input"/>
                         </u-form-item>
                         <view class="mt-[40rpx]">
                             <u-form-item label="" prop="mobile_code" :border-bottom="true">
-                                <u-input v-model="formData.mobile_code" border="none" type="password" clearable
-                                    :placeholder="t('codePlaceholder')">
+                                <u-input v-model="formData.mobile_code" border="none" clearable class="!bg-transparent" :disabled="real_name_input" :placeholder="t('codePlaceholder')">
                                     <template #suffix>
                                         <sms-code :mobile="formData.mobile" type="login" v-model="formData.mobile_key"></sms-code>
                                     </template>
@@ -49,15 +46,14 @@
                         <view @click="redirect({ url: '/app/pages/auth/resetpwd' })">{{ t('resetpwd') }}</view>
                     </view>
                     <view class="mt-[80rpx]">
-                        <u-button type="primary" :loading="loading" :loadingText="t('logining')" @click="handleLogin">
-                            {{ t('login') }}
+                        <u-button type="primary" :text="t('login')" :loading="loading" :loadingText="t('logining')" @click="handleLogin">
                         </u-button>
                     </view>
                 </u-form>
             </view>
         </view>
         <view class="text-xs py-[50rpx] flex justify-center w-full" v-if="configStore.login.agreement_show">
-            <text class="iconfont text-[var(--primary-color)] text-[34rpx] mr-[12rpx]" :class="isAgree ? 'iconxuanze1' : 'iconcheckbox_nol'" @click="isAgree = !isAgree"></text>
+            <text class="iconfont text-[var(--primary-color)] text-[34rpx] mr-[12rpx]" :class="isAgree ? 'iconxuanze1' : 'nc-iconfont nc-icon-yuanquanV6xx'" @click="isAgree = !isAgree"></text>
             {{ t('agreeTips') }}
             <view @click="redirect({ url: '/app/pages/auth/agreement?key=service' })">
                 <text class="text-primary">{{ t('userAgreement') }}</text>
@@ -71,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive, computed } from 'vue'
+    import { ref, reactive, computed, onMounted } from 'vue'
     import { usernameLogin, mobileLogin } from '@/app/api/auth'
     import useMemberStore from '@/stores/member'
     import useConfigStore from '@/stores/config'
@@ -87,7 +83,18 @@
         mobile_key: ''
     })
 
-    uni.getStorageSync('openid') && (Object.assign(formData, { openid: uni.getStorageSync('openid') }))
+	let real_name_input = ref(true);
+	onMounted(() => {
+		// 防止浏览器自动填充
+		setTimeout(()=>{
+			real_name_input.value = false;
+		},800)
+	});
+
+    if (!uni.getStorageSync('autoLoginLock')) {
+        uni.getStorageSync('openid') && (Object.assign(formData, { openid: uni.getStorageSync('openid') }))
+        uni.getStorageSync('unionid') && (Object.assign(formData, { unionid: uni.getStorageSync('unionid') }))
+    }
     uni.getStorageSync('pid') && (Object.assign(formData, { pid: uni.getStorageSync('pid') }))
 
     const memberStore = useMemberStore()
@@ -162,7 +169,6 @@
 
             login(formData).then((res) => {
                 memberStore.setToken(res.data.token)
-				uni.removeStorageSync('pid');
                 useLogin().handleLoginBack()
             }).catch(() => {
                 loading.value = false
@@ -171,4 +177,8 @@
     }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+	.u-input{
+		background-color: transparent !important;
+	}
+</style>

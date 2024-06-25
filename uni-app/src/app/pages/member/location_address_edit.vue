@@ -239,7 +239,6 @@
         var urlencode = formData.value;
         uni.setStorageSync('addressInfo', urlencode);
         let backurl = location.origin +  location.pathname + '?type=' + type.value + '&source=' + source.value;
-        console.log('backurl',backurl)
         window.location.href = 'https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=' + encodeURIComponent(backurl) + '&key=' + manifestJson.h5.sdkConfigs.maps.qqmap.key + '&referer=myapp';
         // #endif
     }

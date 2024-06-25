@@ -11,17 +11,17 @@
                         <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('bankRealname')" prop="realname" :border-bottom="true">
-                                    <u-input v-model.trim="formData.realname" border="none" clearable :placeholder="t('bankRealnamePlaceholder')"/>
+                                    <u-input v-model.trim="formData.realname" maxlength="30" border="none" clearable :placeholder="t('bankRealnamePlaceholder')"/>
                                 </u-form-item>
                             </view>
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('bankName')" prop="bank_name" :border-bottom="true">
-                                    <u-input v-model.trim="formData.bank_name" border="none" clearable :placeholder="t('bankNamePlaceholder')"/>
+                                    <u-input v-model.trim="formData.bank_name" maxlength="30" border="none" clearable :placeholder="t('bankNamePlaceholder')"/>
                                 </u-form-item>
                             </view>
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('bankAccountNo')" prop="account_no" :border-bottom="true">
-                                    <u-input v-model.trim="formData.account_no" border="none" clearable :placeholder="t('bankAccountNoPlaceholder')"/>
+                                    <u-input v-model.trim="formData.account_no" maxlength="30" border="none" clearable :placeholder="t('bankAccountNoPlaceholder')"/>
                                 </u-form-item>
                             </view>
                         </u-form>
@@ -36,12 +36,12 @@
                         <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('alipayRealname')" prop="realname" :border-bottom="true">
-                                    <u-input v-model.trim="formData.realname" border="none" clearable :placeholder="t('alipayRealnamePlaceholder')"/>
+                                    <u-input v-model.trim="formData.realname" maxlength="30" border="none" clearable :placeholder="t('alipayRealnamePlaceholder')"/>
                                 </u-form-item>
                             </view>
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('alipayAccountNo')" prop="account_no" :border-bottom="true">
-                                    <u-input v-model.trim="formData.account_no" border="none" clearable :placeholder="t('alipayAccountNoPlaceholder')"/>
+                                    <u-input v-model.trim="formData.account_no" border="none" maxlength="30" clearable :placeholder="t('alipayAccountNoPlaceholder')"/>
                                 </u-form-item>
                             </view>
                         </u-form>
@@ -50,9 +50,6 @@
 
                 <view class="mt-[100rpx]">
                     <u-button :text="t('save')" type="primary" shape="circle" :loading="loading" @click="handleSave"></u-button>
-                    <view class="mt-[30rpx]" v-if="formData.account_id">
-                        <u-button :text="t('delete')" type="primary" shape="circle" :plain="true" :loading="loading" @click="deleteConfirm = true"></u-button>
-                    </view>
                 </view>
             </view>
         </scroll-view>
@@ -128,7 +125,7 @@
 
             save(formData).then((res) => {
                 if (mode.value == 'get') redirect({ url: '/app/pages/member/account', param: { type: formData.account_type, mode: mode.value } })
-                else redirect({ url: '/app/pages/member/apply_cash_out', param: { account_id: res.data.id, type: formData.account_type } , mode: 'redirectTo'})
+                else redirect({ url: '/app/pages/member/apply_cash_out', param: { account_id: formData.account_id ? formData.account_id : res.data.id, type: formData.account_type } , mode: 'redirectTo'})
             }).catch(() => {
                 loading.value = false
             })

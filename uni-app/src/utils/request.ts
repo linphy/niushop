@@ -1,6 +1,6 @@
 import useMemberStore from '@/stores/member'
 import { t } from '@/locale'
-import {getToken, getAppChannel, redirect} from './common'
+import { getToken, getAppChannel, redirect, currRoute } from './common'
 import qs from 'qs'
 
 interface RequestConfig {
@@ -147,7 +147,12 @@ class Request {
 				useMemberStore().logout()
 				break;
 			case 402:
+				if(currRoute().indexOf('app/pages/index/close') != -1) return;
 				redirect({url: '/app/pages/index/close', mode: 'reLaunch'})
+				break;
+			case 403:
+				if(currRoute().indexOf('app/pages/index/nosite') != -1) return;
+				redirect({url: '/app/pages/index/nosite', mode: 'reLaunch'})
 				break;
 		}
 	}

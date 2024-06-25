@@ -12,7 +12,7 @@
 					{{ item.status_name }}
 				</view>
 			</view>
-			<mescroll-empty v-if="!cashOutList.length && loading" :option="{tip : (account_type == 'commission' ? t('commissemptyTip') : t('emptyTip') )}"></mescroll-empty>
+			<mescroll-empty v-if="!cashOutList.length && loading" :option="{tip : t('emptyTip')}"></mescroll-empty>
 		</mescroll-body>
 	</view>
 </template>

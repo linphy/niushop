@@ -1,5 +1,5 @@
 import { redirect, isWeixinBrowser, urlDeconstruction } from '@/utils/common'
-import { weappLogin, wechatLogin } from '@/app/api/auth'
+import { weappLogin, wechatLogin, wechatUser, wechatUserLogin } from '@/app/api/auth'
 import { getWechatAuthCode } from '@/app/api/system'
 import useMemberStore from '@/stores/member'
 import useConfigStore from '@/stores/config'
@@ -13,14 +13,14 @@ export function useLogin() {
         setTimeout(() => {
             const config = useConfigStore()
             // #ifdef MP-WEIXIN
-            if (uni.getStorageSync('openid') && config.login.is_bind_mobile) {
+            if (!uni.getStorageSync('autoLoginLock') && uni.getStorageSync('openid') && config.login.is_bind_mobile) {
                 redirect({ url: '/app/pages/auth/bind', mode: 'redirectTo' })
                 return
             }
             // #endif
 
             // #ifdef H5
-            if (isWeixinBrowser() && uni.getStorageSync('openid') && config.login.is_bind_mobile) {
+            if (!uni.getStorageSync('autoLoginLock') && isWeixinBrowser() && uni.getStorageSync('openid') && config.login.is_bind_mobile) {
                 redirect({ url: '/app/pages/auth/bind', mode: 'redirectTo' })
                 return
             }
@@ -33,6 +33,7 @@ export function useLogin() {
      * 执行登录后跳转
      */
     const handleLoginBack = () => {
+        uni.removeStorageSync('autoLoginLock')
         uni.getStorage({
             key: 'loginBack',
             success: (data : AnyObject) => {
@@ -48,27 +49,45 @@ export function useLogin() {
      * 授权登录
      */
     const authLogin = (code : string | null) => {
-        let login = null
 		let obj = {};
-        // #ifdef MP-WEIXIN
-        login = weappLogin
+        
+		// #ifdef MP-WEIXIN
 		obj.code = code;
 		uni.getStorageSync('pid') && (Object.assign(obj, { pid: uni.getStorageSync('pid') }))
+		weappLogin(obj).then((res : AnyObject) => {
+		    if (res.data.token) {
+		        useMemberStore().setToken(res.data.token)
+		        setTimeout(() => {
+		            const memberInfo = useMemberStore().info
+		            memberInfo && memberInfo.weapp_openid && uni.setStorageSync('openid', memberInfo.weapp_openid)
+		        }, 1000)
+		    } else {
+		        uni.setStorageSync('openid', res.data.openid)
+		        uni.setStorageSync('unionid', res.data.unionid)
+		    }
+		})
         // #endif
 
         // #ifdef H5
-        login = wechatLogin
 		obj.code = code;
 		uni.getStorageSync('pid') && (Object.assign(obj, { pid: uni.getStorageSync('pid') }))
+		wechatUser(obj).then((user_res : AnyObject) => {
+			if(user_res.data){
+				wechatUserLogin(user_res.data).then((res : AnyObject) => {
+					if (res.data.token) {
+						useMemberStore().setToken(res.data.token)
+						setTimeout(() => {
+							const memberInfo = useMemberStore().info
+							memberInfo && memberInfo.wx_openid && uni.setStorageSync('openid', memberInfo.wx_openid)
+						}, 1000)
+					} else {
+						uni.setStorageSync('openid', res.data.openid)
+						uni.setStorageSync('unionid', res.data.unionid)
+					}
+				})
+			}
+		})
         // #endif
-
-        login(obj).then((res : AnyObject) => {
-            if (res.data.token) {
-                useMemberStore().setToken(res.data.token)
-            } else {
-                uni.setStorageSync('openid', res.data.openid)
-            }
-        })
     }
 
     /**
@@ -92,7 +111,7 @@ export function useLogin() {
         let query = urlDeconstruction(location.href).query
         query.code && (delete query.code)
         Object.keys(query).length && (url += uni.$u.queryParams(query))
-        
+
         getWechatAuthCode({
             url,
             scopes

@@ -19,6 +19,7 @@
 
 <script setup lang="ts">
     import { ref, onMounted } from 'vue'
+    import useConfigStore from "@/stores/config";
 
     const agree = ref(false)
     const showPop = ref(false)
@@ -105,6 +106,7 @@
         //退出小程序
         uni.showModal({
             content: '未同意隐私协议，无法使用相关功能',
+            confirmColor: useConfigStore().themeColor['--primary-color'],
             success: () => {
                 emits('disagree')
             }

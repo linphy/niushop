@@ -10,7 +10,7 @@
 					<u-form-item :label="t('headimg')" prop="headimg" :border-bottom="true">
 						<button class="m-0 my-[10rpx] p-0 w-[140rpx] h-[140rpx]" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
 							<view class="w-full h-full flex items-center justify-center overflow-hidden">
-								<u-image :src="img(formData.headimg)" width="140rpx" v-if="formData.headimg" mode="aspectFill"></u-image>
+								<u-image :src="img(formData.headimg)" width="140rpx" height="140rpx" v-if="formData.headimg" mode="aspectFill"></u-image>
 								<u-icon name="plus" v-else></u-icon>
 							</view>
 						</button>
@@ -86,32 +86,28 @@
 	const formRef = ref(null)
 
 	const confirm = async () => {
-		formRef.value.validate().then(async () => {
-			if (loading.value) return
-			loading.value = true
+        formRef.value.validate().then(async() => {
+            if (loading.value) return
+            loading.value = true
 
-			// 修改头像
-			await modifyMember({ field: 'headimg', value: formData.headimg })
-				.then(() => {
-					memberStore.info.headimg = formData.headimg
-				})
-				.catch(() => {
-					loading.value = false
-				})
-			if (!loading.value) return
+            // 修改头像
+            await modifyMember({ field: 'headimg', value: formData.headimg }).then(() => {
+                memberStore.info.headimg = formData.headimg
+            }).catch(() => {
+                loading.value = false
+            })
+            if (!loading.value) return
 
-			// 修改昵称
-			modifyMember({ field: 'nickname', value: formData.nickname })
-				.then(() => {
-					memberStore.info.nickname = formData.nickname
-					loading.value = false
-					show.value = false
-				})
-				.catch(() => {
-					loading.value = false
-				})
-		})
-	}
+            // 修改昵称
+            modifyMember({ field: 'nickname', value: formData.nickname }).then(() => {
+                memberStore.info.nickname = formData.nickname
+                loading.value = false
+                show.value = false
+            }).catch(() => {
+                loading.value = false
+            })
+        })
+    }
 
 	defineExpose({
 		show

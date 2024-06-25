@@ -6,7 +6,7 @@
 			<!-- 1左2右 -->
 			<template v-if="diyComponent.mode == 'row1-lt-of2-rt'">
 				<view class="template-left">
-					<view @click="toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
+					<view @click="diyStore.toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
 						:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[0].imgWidth, height: diyComponent.list[0].imgHeight + 'px' }">
 						<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
 						<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
@@ -16,7 +16,7 @@
 				<view class="template-right">
 					<template v-for="(item, index) in diyComponent.list" :key="index">
 						<template v-if="index > 0">
-							<view @click="toRedirect(item.link)" :class="['item', diyComponent.mode]"
+							<view @click="diyStore.toRedirect(item.link)" :class="['item', diyComponent.mode]"
 								:style="{ marginBottom: diyComponent.imageGap * 2 + 'rpx', width: item.imgWidth, height: item.imgHeight + 'px' }">
 								<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
 								<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
@@ -29,7 +29,7 @@
 			<!-- 1左3右 -->
 			<template v-else-if="diyComponent.mode == 'row1-lt-of1-tp-of2-bm'">
 				<view class="template-left">
-					<view @click="toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
+					<view @click="diyStore.toRedirect(diyComponent.list[0].link)" :class="['item', diyComponent.mode]"
 						:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[0].imgWidth, height: diyComponent.list[0].imgHeight + 'px' }">
 						<image v-if="diyComponent.list[0].imageUrl" :src="img(diyComponent.list[0].imageUrl)" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
 						<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[0].pageItemStyle" :show-menu-by-longpress="true"/>
@@ -37,7 +37,7 @@
 				</view>
 
 				<view class="template-right">
-					<view @click="toRedirect(diyComponent.list[1].link)" :class="['item', diyComponent.mode]"
+					<view @click="diyStore.toRedirect(diyComponent.list[1].link)" :class="['item', diyComponent.mode]"
 						:style="{ marginBottom: diyComponent.imageGap * 2 + 'rpx', width: diyComponent.list[1].imgWidth, height: diyComponent.list[1].imgHeight + 'px' }">
 						<image v-if="diyComponent.list[1].imageUrl" :src="img(diyComponent.list[1].imageUrl)" mode="scaleToFill" :style="diyComponent.list[1].pageItemStyle" :show-menu-by-longpress="true"/>
 						<image v-else :src="img('static/resource/images/diy/figure.png')" mode="scaleToFill" :style="diyComponent.list[1].pageItemStyle" :show-menu-by-longpress="true"/>
@@ -45,7 +45,7 @@
 					<view class="template-bottom">
 						<template v-for="(item, index) in diyComponent.list" :key="index">
 							<template v-if="index > 1">
-								<view @click="toRedirect(item.link)" :class="['item', diyComponent.mode]" :style="{
+								<view @click="diyStore.toRedirect(item.link)" :class="['item', diyComponent.mode]" :style="{
 											marginRight: diyComponent.imageGap * 2 + 'rpx',
 											width: item.imgWidth,
 											height: item.imgHeight + 'px'
@@ -61,7 +61,7 @@
 
 			<template v-else>
 				<view :class="['item', diyComponent.mode]" v-for="(item, index) in diyComponent.list" :key="index"
-	                @click="toRedirect(item.link)"
+	                @click="diyStore.toRedirect(item.link)"
 					:style="{ marginRight: diyComponent.imageGap * 2 + 'rpx', marginBottom: diyComponent.imageGap * 2 + 'rpx', width: item.widthStyle, height: item.imgHeight + 'px' }">
 					<image v-if="item.imageUrl" :src="img(item.imageUrl)" :mode="'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
 					<image v-else :src="img('static/resource/images/diy/figure.png')" :mode="'scaleToFill'" :style="item.pageItemStyle" :show-menu-by-longpress="true"/>
@@ -76,8 +76,7 @@
 	// 魔方
 	import { ref,onMounted, computed, watch,nextTick,getCurrentInstance } from 'vue';
 	import useDiyStore from '@/app/stores/diy';
-	import { img, redirect, diyRedirect, currRoute, getToken } from '@/utils/common';
-    import { useLogin } from '@/hooks/useLogin';
+	import { img } from '@/utils/common';
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount']);
 
@@ -141,7 +140,7 @@
 		if (diyComponent.value.elementAngle == 'right') {
 			return obj;
 		}
-		var defaultData = {
+		var defaultData:any = {
 			'row1-lt-of2-rt': [
 				['border-top-right-radius', 'border-bottom-right-radius'],
 				['border-top-left-radius', 'border-bottom-left-radius', 'border-bottom-right-radius'],
@@ -242,7 +241,7 @@
 	}
 
 	const handleData = () => {
-		var singleRow = {
+		var singleRow:any = {
 			'row1-of2': {
 				ratio: 2,
 				width: 'calc((100% - ' + upx2px(diyComponent.value.imageGap * 2) + 'px) / 2)'
@@ -281,7 +280,7 @@
 	 * 比例：原图高/原图宽，示例：322/690=0.46
 	 * 高度：宽度*比例，示例：187.5*0.46=86.25
 	 */
-	const calcSingleRow = (params) => {
+	const calcSingleRow = (params:any) => {
 		uni.getSystemInfo({
 			success: res => {
 				let maxHeight = 0;
@@ -435,19 +434,6 @@
 			}
 		});
 	}
-
-    const toRedirect = (data: {}) => {
-        if (Object.keys(data).length) {
-            if (!data.url) return;
-            if (currRoute() == 'app/pages/member/index' && !getToken()) {
-                useLogin().setLoginBack({ url: data.url })
-                return;
-            }
-            diyRedirect(data);
-        } else {
-            redirect(data)
-        }
-    }
 </script>
 
 <style lang="scss">
