@@ -58,7 +58,7 @@ class Addon
         ]);
 
         // 创建 积分商城 微页面
-        $addon_flag = [ 'DIY_SHOP_POINT_INDEX' ];
+        $addon_flag = 'DIY_SHOP_POINT_INDEX';
         $addon_index_template = $diy_service->getFirstPageData($addon_flag, 'shop');
         $diy_service->add([
             'page_title' => $addon_index_template[ 'title' ],
