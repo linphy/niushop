@@ -189,7 +189,10 @@ class GenerateService extends BaseAdminService
             $table_info = $tables[0] ?? [];
             if(empty($table_info)) throw new AdminException('DATA_NOT_EXIST');
 
-            $table_name = str_replace($tablePrefix, '', $table_info['Name']);
+//            $table_name = str_replace($tablePrefix, '', $table_info['Name']);
+            // 防止表前缀与数据库表名重复，造成多次替换
+            $table_name = substr_replace($table_info['Name'], '', 0, strlen($tablePrefix));
+
             $fields = Db::name($table_name)->getFields();
 
             $add_table_data = [
