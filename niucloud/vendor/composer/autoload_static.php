@@ -147,6 +147,10 @@ class ComposerStaticInitf082efa3600aae2b847c3e8b4e641a4e
             'League\\Flysystem\\' => 17,
             'Laravel\\SerializableClosure\\' => 28,
         ),
+        'K' => 
+        array (
+            'Kkokk\\Poster\\' => 13,
+        ),
         'J' => 
         array (
             'JmesPath\\' => 9,
@@ -455,6 +459,10 @@ class ComposerStaticInitf082efa3600aae2b847c3e8b4e641a4e
         'Laravel\\SerializableClosure\\' => 
         array (
             0 => __DIR__ . '/..' . '/laravel/serializable-closure/src',
+        ),
+        'Kkokk\\Poster\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kkokk/poster/src',
         ),
         'JmesPath\\' => 
         array (
