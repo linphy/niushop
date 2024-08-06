@@ -16,7 +16,7 @@
                
             <el-form-item :label="t('addons')" prop="addon" v-if="formData.select_type == 2">
                 <el-select v-model="formData.addon" :placeholder="t('addonsPlaceholder')" class="input-width" @change="addonChange">
-                    <el-option v-for="(item, index) in addonLst" :label="item.title" :value="item.key" :key="index" />
+                    <el-option v-for="(item, index) in addonList" :label="item.title" :value="item.key" :key="index" />
                 </el-select>
             </el-form-item>
 
@@ -53,7 +53,7 @@ import { t } from '@/lang'
 import { getDictAll } from '@/app/api/dict'
 import type { FormInstance } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { getGeneratorAllModel, getGeneratorTableColumn,getAddonDevelop,getGeneratorModelTableColumn } from '@/app/api/tools'
+import { getGeneratorAllModel, getAddonDevelop,getGeneratorModelTableColumn } from '@/app/api/tools'
 
 const showDialog = ref(false)
 const title = ref('')
@@ -84,11 +84,11 @@ const getGeneratorAllModelFn = (params:any) => {
 }
 
 //获取插件列表
-const addonLst = ref<Array<any>>([])
+const addonList = ref<Array<any>>([])
 const getAddonDevelopFn = async () => {
     let { data } = await getAddonDevelop({})
-    addonLst.value = [{ title: "系统", key: "system" }]
-    addonLst.value.push(...data)
+    addonList.value = [{ title: "系统", key: "system" }]
+    addonList.value.push(...data)
     getGeneratorAllModelFn({addon:'system'})
 }
 getAddonDevelopFn()

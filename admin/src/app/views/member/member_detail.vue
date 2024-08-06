@@ -13,7 +13,7 @@
                         <span class="text-[14px] min-w-[110px] text-right mr-[20px]">{{ t('headimg') }}</span>
                         <span class="flex items-end text-[14px]">
                             <img class="w-[50px] h-[50px] inline-block" v-if="formData.headimg" :src="img(formData.headimg)" alt="">
-                            <img class="w-[50px] h-[50px] inline-block" v-else src="@/app/assets/images/default_headimg.png" alt="">
+                            <img class="w-[50px] h-[50px] inline-block rounded-full" v-else src="@/app/assets/images/member_head.png" alt="">
                             <el-icon @click="editMemberInfo('headimg')" class="-bottom-[2px] -right-[4px] cursor-pointer">
                                 <EditPen color="#273CE2" />
                             </el-icon>

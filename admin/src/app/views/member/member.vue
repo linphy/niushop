@@ -57,7 +57,7 @@
                         <template #default="{ row }">
                             <div class="flex items-center">
                                 <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.headimg" :src="img(row.headimg)" alt="">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px] rounded-full" v-else src="@/app/assets/images/member_head.png" alt="">
                                 <div class="flex flex flex-col">
                                     <span>{{ row.nickname || '' }}</span>
                                 </div>
@@ -204,19 +204,6 @@ loadMemberList()
 const router = useRouter()
 const addMemberDialog: Record<string, any> | null = ref(null)
 const editMemberDialog: Record<string, any> | null = ref(null)
-
-/**
- * 获取标签
- */
-function memberLablel(res: any) {
-    let data
-    if (!res.member_label_array) return ''
-    data = res.member_label_array.map((item: any) => {
-        return item.label_name
-    })
-    data = data.toString()
-    return data
-}
 
 /**
  * 设置标签

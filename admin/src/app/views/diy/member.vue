@@ -89,7 +89,7 @@ import { t } from '@/lang'
 import { img } from '@/utils/common'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { getDecoratePage, changeTemplate, getDiyTemplate } from '@/app/api/diy'
+import { getDecoratePage, changeTemplate,getDiyTemplate } from '@/app/api/diy'
 import storage from '@/utils/storage'
 import QRCode from 'qrcode'
 import { useClipboard } from '@vueuse/core'
@@ -100,7 +100,7 @@ const siteApps = computed(() => {
     return systemStore?.apps
 })
 
-const type: any = ref('DIY_MEMBER_INDEX')
+const type: any = ref('DIY_MEMBER_INDEX');
 const page: any = reactive({})
 const router = useRouter()
 const wapDomain = ref('')

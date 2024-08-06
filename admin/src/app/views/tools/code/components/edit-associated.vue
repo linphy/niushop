@@ -8,11 +8,11 @@
                 </el-select>
             </el-form-item>
             <el-form-item :label="t('associatedName')" prop="name">
-                <el-input v-model="formData.name" :placeholder="t('associatedNamePlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.name" :placeholder="t('associatedNamePlaceholder')" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('addons')" prop="addon">
                 <el-select v-model="formData.addon" :placeholder="t('addonsPlaceholder')" class="input-width" @change="addonChange">
-                    <el-option v-for="(item, index) in addonLst" :label="item.title" :value="item.key" :key="index" />
+                    <el-option v-for="(item, index) in addonList" :label="item.title" :value="item.key" :key="index" />
                 </el-select>
             </el-form-item>
             <el-form-item :label="t('associatedModel')" prop="model">
@@ -26,7 +26,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item :label="t('foreignKey')" prop="foreign_key">
-                <el-input v-model="formData.foreign_key" :placeholder="t('foreignKeyPlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.foreign_key" :placeholder="t('foreignKeyPlaceholder')" class="input-width" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -112,11 +112,11 @@ const getGeneratorTableColumnFn = (key: any) => {
     })
 }
 // 获取插件列表
-const addonLst = ref<Array<any>>([])
+const addonList = ref<Array<any>>([])
 const getAddonDevelopFn = async () => {
     const { data } = await getAddonDevelop({})
-    addonLst.value = [{ title: '系统', key: 'system' }]
-    addonLst.value.push(...data)
+    addonList.value = [{ title: '系统', key: 'system' }]
+    addonList.value.push(...data)
     getGeneratorAllModelFn({ addon: 'system' })
 }
 getAddonDevelopFn()

@@ -16,7 +16,7 @@
                 </el-input>
             </slot>
         </div>
-        <el-dialog v-model="showDialog" :title="t('selectLinkTips')" width="40%" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-dialog v-model="showDialog" :title="t('selectLinkTips')" width="40%" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false" @close="cancel">
 
             <div class="flex items-start">
                 <el-scrollbar class="w-[140px] border-r h-[350px]">
@@ -44,7 +44,7 @@
                                 <div class="text-sm text-gray-400 select-text">路径必须以“/”开头，例：/app/pages/index/index</div>
                             </el-form-item>
                             <el-form-item label=" ">
-                                <div class="text-sm text-gray-400 select-text">跳转外部链接“/”开头，例：https://baidu.com</div>
+                                <div class="text-sm text-gray-400 select-text">跳转外部链接“http”或“https”开头，例：https://baidu.com</div>
                             </el-form-item>
                         </template>
                         <template v-if="parentLinkName == 'DIY_JUMP_OTHER_APPLET'">
@@ -88,7 +88,7 @@
 
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="showDialog = false">{{ t('cancel') }}</el-button>
+                    <el-button @click="cancel">{{ t('cancel') }}</el-button>
                     <el-button type="primary" @click="save">{{ t('confirm') }}</el-button>
                 </span>
             </template>
@@ -114,7 +114,7 @@ const prop = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'confirm','success'])
 
 const value: any = computed({
     get () {
@@ -127,6 +127,8 @@ const value: any = computed({
 
 const showDialog = ref(false)
 
+const isDrag = ref(false)
+
 const link: any = ref([])
 
 const parentLinkName = ref('')
@@ -136,19 +138,20 @@ const childList: any = ref([])
 const selectLink: any = ref([])
 
 const show = () => {
-    getLinkFn(()=>{
-
+    getLinkFn(() => {
         // 每次打开时赋值
         if (value.value.name != '') {
             selectLink.value = cloneDeep(value.value)
             parentLinkName.value = selectLink.value.parent
-            for (let key in link.value){
-                if(link.value[key].name == parentLinkName.value){
-                    changeParentLink(link.value[key]);
+            for (let key in link.value) {
+                if (link.value[key].name == parentLinkName.value) {
+                    changeParentLink(link.value[key])
                 }
             }
         }
         showDialog.value = true
+        isDrag.value = true
+        emit('confirm', isDrag.value)
     })
 }
 
@@ -165,6 +168,7 @@ const getLinkFn = (callback:any=null)=> {
                 }
             }
         }
+        console.log('link',link.value)
 
         childList.value = Object.values(link.value)[0].child_list
         if (value.value.name != '') {
@@ -287,10 +291,16 @@ const save = () => {
 
     value.value = cloneDeep(selectLink.value)
     showDialog.value = false
-
+    isDrag.value = false
+    emit('confirm', isDrag.value)
     emit('success')
 }
 
+const cancel = () => {
+    showDialog.value = false
+    isDrag.value = false
+    emit('confirm', isDrag.value)
+}
 defineExpose({
     showDialog
 })

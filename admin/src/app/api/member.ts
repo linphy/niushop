@@ -434,15 +434,6 @@ export function getMemberLevelPageList(params: Record<string, any>) {
 }
 
 /**
- * 获取会员等级列表
- * @param params
- * @returns
- */
-export function getMemberLevelList(params: Record<string, any>) {
-    return request.get(`member/level/list`, { params })
-}
-
-/**
  * 获取会员等级详情
  * @param level_id 会员等级level_id
  * @returns

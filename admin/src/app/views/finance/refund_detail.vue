@@ -67,7 +67,7 @@ const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
 
-const refundNo: string = route.query.refund_no
+const refundNo: any = route.query.refund_no
 const loading = ref(true)
 
 const refundList = ref([])
@@ -76,15 +76,10 @@ const formData: Record<string, any> | null = ref(null)
 const setFormData = async (refundNo: string = '') => {
     loading.value = true
     formData.value = null
-    await getPayRefundInfo(refundNo)
-        .then(({ data }) => {
-            formData.value = data
-            refundList.value.push(data)
-        })
-
-        .catch(() => {
-
-        })
+    await getPayRefundInfo(refundNo).then(({ data }) => {
+        formData.value = data
+        refundList.value.push(data)
+    })
     loading.value = false
 }
 if (refundNo) setFormData(refundNo)

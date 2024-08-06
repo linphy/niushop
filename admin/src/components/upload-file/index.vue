@@ -41,7 +41,7 @@ const upload: Record<string, any> = {
     action: `${import.meta.env.VITE_APP_BASE_URL}/${prop.api}`,
     showFileList: false,
     headers: {},
-    accept: '.doc,.docx,.xml,.txt,.pem,.zip,.rar,.7z,.crt,.key',
+    accept: '.doc,.docx,.xml,.txt,.pem,.zip,.rar,.7z,.crt,.key,.xls,.xlsx',
     onSuccess: (response: any, uploadFile: UploadFile) => {
         if (response.code != undefined && response.code != 1) {
             ElMessage({ message: response.msg, type: 'error' })

@@ -16,7 +16,6 @@ export function useElementIcon(app: App): void {
 
 /**
  * 设置主题色
- * @param color
  */
 export function setThemeColor(color: string, mode: string = 'light'): void {
     useCssVar('--el-color-primary', null).value = color
@@ -244,7 +243,6 @@ export function moneyFormat(money : string) : string {
 
 /**
  * 时间戳转日期格式
- * @param {Object} timeStamp
  */
 export function timeStampTurnTime(timeStamp, type = "") {
 	if (timeStamp != undefined && timeStamp != "" && timeStamp > 0) {
@@ -276,14 +274,19 @@ export function timeStampTurnTime(timeStamp, type = "") {
 }
 
 /**
- * 过滤小数点
+ * 过滤小数点(保留两位)
  * @param event
  */
 export function filterDigit(event:any){
     event.target.value = event.target.value.replace(/[^\d\.]/g,'');
     event.target.value = event.target.value.replace(/^\./g,'');
     event.target.value = event.target.value.replace(/\.{2,}/g,'.');
-    event.target.value = event.target.value.replace('.','$#$').replace(/\./g,'').replace('$#$','.');
+    // 限制最多两位小数
+    const decimalParts = event.target.value.split('.');
+    if (decimalParts.length > 1 && decimalParts[1].length > 2) {
+        // 如果有小数部分且超过两位，则截取前两位
+        event.target.value = `${decimalParts[0]}.${decimalParts[1].slice(0, 2)}`;
+    }
 }
 
 /**
@@ -293,6 +296,7 @@ export function filterDigit(event:any){
 export function filterNumber(event:any){
     event.target.value = event.target.value.replace(/[^\d]/g,'');
 }
+
 /**
  * 过滤特殊字符
   * @param event

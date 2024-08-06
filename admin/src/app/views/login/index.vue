@@ -33,8 +33,7 @@
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button type="primary" class="mt-[30px] h-[40px] w-full" @click="handleLogin(formRef)"
-                                       :loading="loading">{{ loading ? t('logging') : t('login') }}</el-button>
+                            <el-button type="primary" class="mt-[30px] h-[40px] w-full" @click="handleLogin(formRef)" :loading="loading">{{ loading ? t('logging') : t('login') }}</el-button>
                         </el-form-item>
 
                     </el-form>
@@ -110,7 +109,7 @@ const form = reactive({
 
 // 获取登录配置信息
 const loginConfig = ref({})
-const getLoginConfigFn = async (id: number = 0) => {
+const getLoginConfigFn = async () => {
   imgLoading.value = true
   const data = await (await getLoginConfig()).data
   loginConfig.value = data

@@ -9,6 +9,7 @@ import { useElementIcon } from './utils/common'
 import 'highlight.js/styles/stackoverflow-light.css';
 import hljs from 'highlight.js/lib/common'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
+import VueUeditorWrap from 'vue-ueditor-wrap'
 
 window.hl = hljs
 
@@ -19,6 +20,7 @@ async function run() {
     app.use(roter)
     app.use(ElementPlus)
     app.use(hljsVuePlugin)
+    app.use(VueUeditorWrap)
     useElementIcon(app)
     app.mount('#app')
 }

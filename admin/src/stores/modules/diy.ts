@@ -55,11 +55,12 @@ const useDiyStore = defineStore('diy', {
                 // 顶部导航栏
                 topStatusBar: {
                     isShow: true, // 是否显示
-                    bgColor: "#ffffff", // 背景颜色
-                    isTransparent: false, // 是否透明
+                    bgColor: "#ffffff", // 头部背景颜色
+                    rollBgColor: "#ffffff", // 滚动时，头部背景颜色
                     style: 'style-1', // 导航栏风格样式（style-1：文字，style-2：图片+文字，style-3：图片+搜索，style-4：定位）
                     styleName: '风格1', 
                     textColor: "#333333", // 文字颜色
+                    rollTextColor: "#333333", // 滚动时，头部文字颜色
                     textAlign: 'center', // 文字对齐方式
                     inputPlaceholder : '请输入搜索关键词',
                     imgUrl:'', // 图片
@@ -139,11 +140,12 @@ const useDiyStore = defineStore('diy', {
                 // 顶部导航栏
                 topStatusBar: {
                     isShow: true, // 是否显示
-                    bgColor: "#ffffff", // 背景颜色
-                    isTransparent: false, // 是否透明
+                    bgColor: "#ffffff", // 头部背景颜色
+                    rollBgColor: "#ffffff", // 滚动时，头部背景颜色
                     style: 'style-1', // 导航栏风格样式（style-1：文字，style-2：图片+文字，style-3：图片+搜索，style-4：定位）
-                    styleName: '风格1',
+                    styleName: '风格1', 
                     textColor: "#333333", // 文字颜色
+                    rollTextColor: "#333333", // 滚动时，头部文字颜色
                     textAlign: 'center', // 文字对齐方式
                     inputPlaceholder : '请输入搜索关键词',
                     imgUrl:'', // 图片
@@ -312,13 +314,13 @@ const useDiyStore = defineStore('diy', {
         },
         // 上移组件
         moveUpComponent() {
-            if ((this.currentIndex - 1) < 0) return; // 从0开始
-
             var temp = cloneDeep(this.value[this.currentIndex]); // 当前选中组件
-            temp.id = this.generateRandom(); // 更新id，刷新组件数据
-
             let prevIndex = this.currentIndex - 1;
             var temp2 = cloneDeep(this.value[prevIndex]); // 上个组件
+            
+            if ((this.currentIndex - 1) < 0 || temp2.position && this.position.indexOf(temp2.position) != -1) return; // 从0开始
+
+            temp.id = this.generateRandom(); // 更新id，刷新组件数据
             temp2.id = this.generateRandom(); // 更新id，刷新组件数据
 
             if(temp.position && this.position.indexOf(temp.position) != -1){

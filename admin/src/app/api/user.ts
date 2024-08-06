@@ -19,7 +19,7 @@ export function getUserList(params: Record<string, any>) {
  * @returns
  */
 export function getUserInfo(uid: number) {
-    return request.get(`user/${uid}`);
+    return request.get(`user/${ uid }`);
 }
 
 /**
@@ -32,25 +32,34 @@ export function addUser(params: Record<string, any>) {
 }
 
 /**
+ * 获取所有用户列表
+ * @param params
+ * @returns
+ */
+export function getAllUserList(params: Record<string, any>) {
+    return request.get(`user/user_all`, { params })
+}
+
+/**
  * 更新用户
  * @param params
  */
 export function editUser(params: Record<string, any>) {
-    return request.put(`user/${params.uid}`, params, { showSuccessMessage: true })
+    return request.put(`user/${ params.uid }`, params, { showSuccessMessage: true })
 }
 
 /**
  * 锁定用户
  */
 export function lockUser(uid: number) {
-    return request.put(`user/lock/${uid}`, {}, { showSuccessMessage: true })
+    return request.put(`user/lock/${ uid }`, {}, { showSuccessMessage: true })
 }
 
 /**
  * 解除用户锁定
  */
 export function unlockUser(uid: number) {
-    return request.put(`user/unlock/${uid}`, {}, { showSuccessMessage: true })
+    return request.put(`user/unlock/${ uid }`, {}, { showSuccessMessage: true })
 }
 
 /***************************************************** 操作日志 **************************************************/
@@ -69,5 +78,5 @@ export function getLogList(params: Record<string, any>) {
  * @param id
  */
 export function getLogInfo(id: number) {
-    return request.get(`user/userlog/${id}`)
+    return request.get(`user/userlog/${ id }`)
 }

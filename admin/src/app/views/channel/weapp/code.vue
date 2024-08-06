@@ -74,7 +74,7 @@
 
         <el-dialog v-model="failReasonDialogVisible" :title="t('failReason')" width="60%">
             <el-scrollbar class="h-[60vh] w-full whitespace-pre p-[20px]">
-                {{ failReason }}
+                <div v-html="failReason"></div>
             </el-scrollbar>
         </el-dialog>
 
@@ -96,7 +96,7 @@ import { getInstallConfig } from '@/app/api/sys'
 import { setWeappVersion, getWeappPreview, getWeappVersionList, getWeappUploadLog, getWeappConfig } from '@/app/api/weapp'
 import { t } from '@/lang'
 import { useRoute, useRouter } from 'vue-router'
-import { getAuthinfo } from '@/app/api/module'
+import { getAuthInfo } from '@/app/api/module'
 import { getAppType } from '@/utils/common'
 import { ElMessageBox } from 'element-plus'
 import { AnyObject } from '@/types/global'
@@ -134,7 +134,7 @@ getInstallConfig().then(({ data }) => {
     installPhpConfig.value = data
 }).catch()
 
-getAuthinfo().then(res => {
+getAuthInfo().then(res => {
     if (res.data.data && res.data.data.auth_code) {
         authCode.value = res.data.data.auth_code
         getWeappPreviewImage()

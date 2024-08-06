@@ -87,7 +87,7 @@
                         <template #default="{ row }">
                             <el-button class="!text-[13px]" v-if="row.install_info && Object.keys(row.install_info)?.length && row.install_info.version != row.version" type="primary" link @click="upgradeAddonFn(row.key)">{{ t('upgrade') }}</el-button>
                             <el-button class="!text-[13px]" v-if="row.install_info && Object.keys(row.install_info)?.length" type="primary" link @click="uninstallAddonFn(row.key)">{{ t('unload') }}</el-button>
-                            <template v-if="row.is_download && Object.keys(row.install_info) <= 0">
+                            <template v-if="row.is_download && (!row.install_info || !Object.keys(row.install_info).length)">
                                 <el-button class="!text-[13px]" type="primary" link @click="installAddonFn(row.key)">{{ t('install') }}</el-button>
                                 <el-button class="!text-[13px]" type="primary" link @click="deleteAddonFn(row.key)">{{ t('delete') }}</el-button>
                             </template>
@@ -145,8 +145,7 @@
                                     您在官方应用市场购买任意一款应用，即可获得授权码。输入正确授权码认证通过后，即可支持在线升级和其它相关服务</p>
                                 <div class="flex justify-end mt-[36px]">
                                     <el-button class="w-[182px] !h-[48px]" plain @click="market">去应用市场逛逛</el-button>
-                                    <el-button class="w-[100px] !h-[48px]" plain
-                                        @click="getAuthCodeDialog.hide()">关闭</el-button>
+                                    <el-button class="w-[100px] !h-[48px]" plain @click="getAuthCodeDialog.hide()">关闭</el-button>
                                 </div>
                             </div>
                             <template #reference>
@@ -377,7 +376,7 @@ import { t } from '@/lang'
 import { getAddonLocal, uninstallAddon, installAddon, preInstallCheck, cloudInstallAddon, getAddonInstalltask, getAddonCloudInstallLog, preUninstallCheck, cancelInstall } from '@/app/api/addon'
 import { deleteAddonDevelop } from '@/app/api/tools'
 import { getInstallConfig } from '@/app/api/sys'
-import { downloadVersion, getAuthinfo, setAuthinfo } from '@/app/api/module'
+import { downloadVersion, getAuthInfo, setAuthInfo } from '@/app/api/module'
 import { ElMessage, ElMessageBox, ElNotification, FormInstance, FormRules } from 'element-plus'
 import 'vue-web-terminal/lib/theme/dark.css'
 import { Terminal, TerminalFlash } from 'vue-web-terminal'
@@ -438,7 +437,7 @@ const downEvent = (param: Record<string, any>, isDown = false) => {
 }
 
 const authCode = ref('')
-getAuthinfo().then(res => {
+getAuthInfo().then(res => {
     if (res.data.data && res.data.data.auth_code) {
         authCode.value = res.data.data.auth_code
     }
@@ -837,7 +836,7 @@ const saveLoading = ref(false)
 const authLoading = ref(true)
 const checkAppMange = () => {
     authLoading.value = true
-    getAuthinfo()
+    getAuthInfo()
         .then((res) => {
             authLoading.value = false
             if (res.data.data && res.data.data.length != 0) {
@@ -877,7 +876,7 @@ const save = async (formEl: FormInstance | undefined) => {
         if (valid) {
             saveLoading.value = true
 
-            setAuthinfo(formData)
+            setAuthInfo(formData)
                 .then(() => {
                     saveLoading.value = false
                     setTimeout(() => {

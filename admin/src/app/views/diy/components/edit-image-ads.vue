@@ -124,7 +124,7 @@ const handleHeight = (isCalcHeight:boolean = false)=> {
 }
 
 const blurImageHeight = () => {
-    diyStore.editComponent.imageHeight = parseInt(diyStore.editComponent.imageHeight)
+    diyStore.editComponent.imageHeight = diyStore.editComponent.imageHeight ? parseInt(diyStore.editComponent.imageHeight) : 0
 }
 
 const imageBoxRef = ref()

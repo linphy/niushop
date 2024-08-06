@@ -132,7 +132,7 @@ import { reactive, ref, watch, computed } from 'vue'
 import { t } from '@/lang'
 import { getWeappConfig, setWeappConfig } from '@/app/api/weapp'
 import { useClipboard } from '@vueuse/core'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { ElMessage, FormInstance } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 

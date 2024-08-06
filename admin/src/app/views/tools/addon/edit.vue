@@ -8,7 +8,7 @@
         <el-card class="box-card mt-[15px] !border-none" shadow="never">
             <el-form :model="form" label-width="90px" ref="formRef" :rules="rules" class="page-form">
                 <el-form-item :label="t('title')" prop="title">
-                    <el-input v-model="form.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" />
+                    <el-input v-model.trim="form.title" clearable :placeholder="t('titlePlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('icon')" prop="icon">
                     <div>
@@ -31,7 +31,7 @@
                     <el-input type="textarea" v-model="form.desc" clearable :placeholder="t('descPlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('author')" prop="author">
-                    <el-input v-model="form.author" clearable :placeholder="t('authorPlaceholder')" class="input-width" />
+                    <el-input v-model.trim="form.author" clearable :placeholder="t('authorPlaceholder')" class="input-width" />
                 </el-form-item>
                 <el-form-item :label="t('version')" prop="version">
                     <div>
@@ -132,7 +132,7 @@ const validVersion = (rule:any, value:any, callback:any) => {
         if (!reg.test(value)) {
             return callback(new Error(t('versionPlaceholderErr')))
         } else {
-            return callback() // *验证成功的地方必须callback()
+            return callback() // 验证成功的地方必须callback()
         }
     } else {
         return callback(new Error(t('versionPlaceholder')))
@@ -190,7 +190,7 @@ const getAddonDevelopInfoFn = (key: any) => {
 // 获取app列表
 const AppLst = ref<Array<any>>([])
 const getAddonListFn = async () => {
-    const { data } = await getAddonList({})
+    const { data } = await getAddonList()
     AppLst.value = data
 }
 getAddonListFn()

@@ -81,7 +81,7 @@ const route = useRoute()
 const pageName = route.meta.title
 
 const systemService = ref({})
-let loading = ref(true);
+const loading = ref(true);
 const getSystemService = () => {
     getSystem().then(res => {
         systemService.value = res.data

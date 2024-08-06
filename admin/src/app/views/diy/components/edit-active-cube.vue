@@ -242,6 +242,8 @@ diyStore.editComponent.list.forEach((item: any) => {
 const showTitleDialog = ref(false)
 
 const showTitleStyle = () => {
+	selectTitleStyle.title = diyStore.editComponent.titleStyle.title;
+	selectTitleStyle.value = diyStore.editComponent.titleStyle.value;
     showTitleDialog.value = true
 }
 

@@ -31,7 +31,7 @@
                         <el-tabs v-model="activeName" class="demo-tabs mt-[15px]">
                             <el-tab-pane :label="t('navImage')" name="navPicture">
                                 <div ref="navItemRef">
-                                    <div v-for="(item,index) in diyBottomData.value.list" :key="'a'+index" :data-id="index"  class="item-wrap border-2 border-dashed pt-[18px] m-[10px] mb-[15px] relative list-item">
+                                    <div v-for="(item,index) in diyBottomData.value.list" :key="'a'+index" :data-id="index"  class="item-wrap border-2 border-dashed pt-[18px] m-[10px] mb-[15px] relative list-item" :class="{ 'not-sort': useDrag }">
                                         <el-form-item :label="t('navIconOne')">
                                             <div class="flex align-center">
                                                 <div class="flex flex-col justify-center items-center">
@@ -48,7 +48,7 @@
                                             <el-input class="!w-[215px]" v-model="item.text" :placeholder="t('titleContent')" maxlength="5" show-word-limit />
                                         </el-form-item>
                                         <el-form-item :label="t('navLinkOne')">
-                                            <diy-link v-model="item.link"/>
+                                            <diy-link v-model="item.link" @confirm="diyLinkFn" />
                                         </el-form-item>
                                         <el-icon class="close-icon cursor-pointer -top-[11px] -right-[8px]" @click="deleteNav(index)">
                                             <CircleCloseFilled />
@@ -238,6 +238,7 @@ onMounted(() => {
     const sortable = Sortable.create(navItemRef.value, {
         group: 'item-wrap',
         animation: 200,
+        filter: '.not-sort', // 过滤.not-sort的元素
         onEnd: event => {
             const temp = diyBottomData.value.list[event.oldIndex!]
             diyBottomData.value.list.splice(event.oldIndex!, 1)
@@ -253,6 +254,10 @@ onMounted(() => {
     })
 })
 
+const useDrag = ref(false)
+const diyLinkFn = (val) => {
+    useDrag.value = val
+}
 </script>
 <style lang="scss" scoped>
 .close-icon {

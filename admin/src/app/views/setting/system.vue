@@ -33,6 +33,9 @@
                 <el-form-item :label="t('frontEndName')">
                     <el-input v-model="formData.front_end_name" :placeholder="t('frontEndNamePlaceholder')" class="input-width" clearable maxlength="20" show-word-limit />
                 </el-form-item>
+                <el-form-item :label="t('phone')">
+                    <el-input v-model="formData.phone" :placeholder="t('phonePlaceholder')" class="input-width" clearable maxlength="20" show-word-limit />
+                </el-form-item>
                 <el-form-item :label="t('logo')">
                     <upload-image v-model="formData.front_end_logo" />
                 </el-form-item>
@@ -101,7 +104,7 @@ const formData = reactive<Record<string, string>>({
     tel: ''
 })
 
-const setFormData = async (id: number = 0) => {
+const setFormData = async () => {
     const data = await (await getWebsite()).data
     Object.keys(formData).forEach((key: string) => {
         if (data[key] != undefined) formData[key] = data[key]

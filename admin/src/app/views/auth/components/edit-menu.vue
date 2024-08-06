@@ -2,10 +2,10 @@
     <el-dialog v-model="showDialog" :title="popTitle" width="500px" :destroy-on-close="true">
         <el-form :model="formData" label-width="90px" class="page-form" ref="formRef" :rules="formRules" v-loading="loading">
             <el-form-item :label="t('menuName')" prop="menu_name">
-                <el-input v-model="formData.menu_name" :placeholder="t('menuNamePlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.menu_name" maxlength="10" show-word-limit :placeholder="t('menuNamePlaceholder')" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('menuKey')" prop="menu_key" v-if="!formData.id">
-                <el-input v-model="formData.menu_key" :placeholder="t('menuKeyPlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.menu_key" maxlength="50" show-word-limit :placeholder="t('menuKeyPlaceholder')" class="input-width" />
             </el-form-item>
 
             <el-form-item :label="t('menuType')">
@@ -17,8 +17,8 @@
             </el-form-item>
 
             <el-form-item :label="t('addon')" prop="addon">
-                <el-select v-model="formData.addon" placeholder="Select" class="input-width" @change="addonChange">
-                    <el-option v-for="(item, index) in addonLst" :label="item.title" :value="item.key" :key="index" />
+                <el-select v-model="formData.addon" :placeholder="t('addon')" class="input-width" @change="addonChange">
+                    <el-option v-for="(item, index) in addonList" :label="item.title" :value="item.key" :key="index" />
                 </el-select>
             </el-form-item>
 
@@ -77,7 +77,7 @@
             </el-form-item>
 
             <el-form-item :label="t('sort')">
-                <el-input-number v-model="formData.sort" :min="0" />
+                <el-input-number v-model="formData.sort" :min="0" max="99999999" />
             </el-form-item>
         </el-form>
 
@@ -118,13 +118,12 @@ const initialFormData = {
     status: 1,
     is_show: 1,
     menu_key: '',
-    app_type: '',
     addon: '',
     menu_short_name: ''
 }
 const formData: Record<string, any> = reactive({ ...initialFormData })
 
-const addonLst = ref<Array<any>>([])
+const addonList = ref<Array<any>>([])
 const sysMenuList = ref<Array<any>>([])
 const addonMenuList = ref<Array<any>>([])
 const formRef = ref<FormInstance>()
@@ -167,8 +166,8 @@ const formRules = computed(() => {
 // 获取插件列表
 const getAddonDevelopFn = async () => {
     const { data } = await getAddonDevelop({})
-    addonLst.value = [{ title: '系统', key: '' }]
-    addonLst.value.push(...data)
+    addonList.value = [{ title: '系统', key: '' }]
+    addonList.value.push(...data)
 }
 
 // 获取系统菜单列表

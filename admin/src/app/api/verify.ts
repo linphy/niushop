@@ -34,7 +34,6 @@ export function getVerifierList(params: Record<string, any>) {
 
 /**
  * 获取核销员列表
- * @param params
  * @returns
  */
 export function getVerifierSelect() {

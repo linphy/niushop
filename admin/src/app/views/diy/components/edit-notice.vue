@@ -18,7 +18,7 @@
 					<div :class="['mr-[10px] rounded cursor-pointer w-[100px]', {'border-[1px] border-solid border-[var(--el-color-primary)]': diyStore.editComponent.systemUrl == 'style_2' && diyStore.editComponent.imgType == 'system'}]">
 						<img src="@/app/assets/images/diy/notice/style_2.png" class="px-[10px] py-[5px]" @click="changeStyle('style_2')"/>
 					</div>
-					<div @click="diyStore.editComponent.imgType = 'diy'" :class="['mr-[10px] rounded cursor-pointer diy-upload-img', {'border-[1px] border-solid border-[var(--el-color-primary)]': (diyStore.editComponent.imageUrl && diyStore.editComponent.imgType == 'diy') }]">
+					<div @click.stop="diyStore.editComponent.imgType = 'diy'" :class="['mr-[10px] rounded cursor-pointer diy-upload-img', {'border-[1px] border-solid border-[var(--el-color-primary)]': (diyStore.editComponent.imageUrl && diyStore.editComponent.imgType == 'diy') }]">
 						<upload-image v-model="diyStore.editComponent.imageUrl" :limit="1"/>
 					</div>
 				</div>
@@ -105,7 +105,6 @@ import useDiyStore from '@/stores/modules/diy'
 import { ref, watch, onMounted, nextTick } from 'vue'
 import { range } from 'lodash-es'
 import Sortable from 'sortablejs'
-
 const diyStore = useDiyStore()
 diyStore.editComponent.ignore = [] // 忽略公共属性
 
@@ -148,7 +147,7 @@ watch(
 	    if(newValue){
             diyStore.editComponent.imgType = 'diy';
 	    }else{
-            diyStore.editComponent.imgType = 'system';
+			changeStyle('style_1');
 	    }
     }
 )
@@ -204,9 +203,7 @@ defineExpose({})
 					display: none;
 				}
 			}
-			.operation{
-				display: none !important;
-			}
+			
 		}
 	}
 </style>

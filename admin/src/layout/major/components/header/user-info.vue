@@ -2,7 +2,7 @@
     <div>
         <el-dropdown @command="clickEvent" :tabindex="1">
             <div class="userinfo flex h-full items-center">
-                <el-avatar :size="25" :icon="UserFilled" :src="userStore.userInfo.head_img ? img(userStore.userInfo.head_img) : ''"/>
+                <el-avatar v-if="userStore.userInfo.head_img" :size="25" :icon="UserFilled" :src="img(userStore.userInfo.head_img)"/>
                 <div class="user-name pl-[8px]">{{ userStore.userInfo.username }}</div>
                 <icon name="element ArrowDown" class="ml-[5px]" />
             </div>
@@ -63,6 +63,7 @@ import type { FormInstance, FormRules, ElNotification } from 'element-plus'
 import useUserStore from '@/stores/modules/user'
 import { setUserInfo } from '@/app/api/personal'
 import { t } from '@/lang'
+import { img } from "@/utils/common";
 
 const userStore = useUserStore()
 const router = useRouter()

@@ -1,4 +1,3 @@
-import { toRaw } from 'vue'
 import { RouteRecordRaw, RouterView } from 'vue-router'
 import Default from '@/layout/index.vue'
 import Decorate from '@/layout/decorate/index.vue'
@@ -79,12 +78,12 @@ interface Route {
 
 /**
  * 创建路由
- * @param data
- * @returns
+ * @param route
+ * @param parentRoute
  */
 const createRoute = function (route: Route, parentRoute: RouteRecordRaw | null = null): RouteRecordRaw {
     const record: RouteRecordRaw = {
-        path: `/${route.app_type}/${route.router_path}`,
+        path: `/${ route.app_type }/${ route.router_path }`,
         name: route.menu_key,
         meta: {
             title: route.menu_name,
@@ -101,7 +100,7 @@ const createRoute = function (route: Route, parentRoute: RouteRecordRaw | null =
     if (route.menu_type == 0) {
         record.component = RouterView
     } else {
-        record.component = route.addon ? addonModules[`/src/addon/${route.addon}/views/${route.view_path}.vue`] : modules[`/src/app/views/${route.view_path}.vue`]
+        record.component = route.addon ? addonModules[`/src/addon/${ route.addon }/views/${ route.view_path }.vue`] : modules[`/src/app/views/${ route.view_path }.vue`]
     }
     return record
 }
@@ -109,7 +108,7 @@ const createRoute = function (route: Route, parentRoute: RouteRecordRaw | null =
 /**
  * 格式化路由
  * @param routes
- * @returns
+ * @param parentRoute
  */
 export function formatRouters(routes: Route[], parentRoute: RouteRecordRaw | null = null) {
     return routes.map((route) => {

@@ -13,35 +13,41 @@
         <div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t('statusBarContent') }}</h3>
             <el-form label-width="80px" class="px-[10px]">
-				<el-form-item :label="t('diyTitle')">
-					<el-input v-model.trim="diyStore.global.title" :placeholder="t('diyTitlePlaceholder')" clearable maxlength="12" show-word-limit/>
-					<div class="text-sm text-gray-400">{{ t('titleTips') }}</div>
+                <el-form-item :label="t('topStatusBarNav')" class="display-block">
+					<el-switch v-model="diyStore.global.topStatusBar.isShow"/>
+					<div class="text-sm text-gray-400">{{ t('statusBarSwitchTips') }}</div>
 				</el-form-item>
-                <el-form-item :label="t('selectStyle')" class="display-block">
-	                <div class="flex">
-						<span class="text-primary flex-1 cursor-pointer" @click="showStyle">{{diyStore.global.topStatusBar.styleName}}</span>
-						<el-icon>
-							<ArrowRight />
-						</el-icon>
-	                </div>
-	                <div class="text-sm text-gray-400 leading-[1.5]">{{ t('styleShowTips') }}</div>
-				</el-form-item>
-				<el-form-item :label="t('topStatusBarImg')" v-if="['style-2','style-3'].indexOf(diyStore.global.topStatusBar.style) > -1">
-					<upload-image v-model="diyStore.global.topStatusBar.imgUrl" :limit="1" />
-                    <div class="text-sm text-gray-400 mt-[10px]">{{ t('topStatusBarImgTips') }}</div>
-				</el-form-item>
-                <el-form-item :label="t('topStatusBarSearchName')" v-if="'style-3' == diyStore.global.topStatusBar.style">
-					<el-input v-model.trim="diyStore.global.topStatusBar.inputPlaceholder" :placeholder="t('topStatusBarSearchNamePlaceholder')" clearable maxlength="12" show-word-limit/>
-				</el-form-item>
-                <el-form-item :label="t('textAlign')" v-show="diyStore.global.topStatusBar.style == 'style-1'">
-					<el-radio-group v-model="diyStore.global.topStatusBar.textAlign">
-						<el-radio :label="'left'">{{ t('textAlignLeft') }}</el-radio>
-						<el-radio :label="'center'">{{ t('textAlignCenter') }}</el-radio>
-					</el-radio-group>
-				</el-form-item>
-				<el-form-item :label="t('link')" v-if="['style-2','style-3'].indexOf(diyStore.global.topStatusBar.style) > -1">
-					<diy-link v-model="diyStore.global.topStatusBar.link" />
-				</el-form-item>
+                <template v-if="diyStore.global.topStatusBar.isShow">
+                    <el-form-item :label="t('diyTitle')">
+                        <el-input v-model.trim="diyStore.global.title" :placeholder="t('diyTitlePlaceholder')" clearable maxlength="12" show-word-limit/>
+                        <div class="text-sm text-gray-400">{{ t('titleTips') }}</div>
+                    </el-form-item>
+                    <el-form-item :label="t('selectStyle')" class="display-block">
+                        <div class="flex">
+                            <span class="text-primary flex-1 cursor-pointer" @click="showStyle">{{diyStore.global.topStatusBar.styleName}}</span>
+                            <el-icon>
+                                <ArrowRight />
+                            </el-icon>
+                        </div>
+                        <div class="text-sm text-gray-400 leading-[1.5]">{{ t('styleShowTips') }}</div>
+                    </el-form-item>
+                    <el-form-item :label="t('topStatusBarImg')" v-if="['style-2','style-3'].indexOf(diyStore.global.topStatusBar.style) > -1">
+                        <upload-image v-model="diyStore.global.topStatusBar.imgUrl" :limit="1" />
+                        <div class="text-sm text-gray-400 mt-[10px]">{{ t('topStatusBarImgTips') }}</div>
+                    </el-form-item>
+                    <el-form-item :label="t('topStatusBarSearchName')" v-if="'style-3' == diyStore.global.topStatusBar.style">
+                        <el-input v-model.trim="diyStore.global.topStatusBar.inputPlaceholder" :placeholder="t('topStatusBarSearchNamePlaceholder')" clearable maxlength="12" show-word-limit/>
+                    </el-form-item>
+                    <el-form-item :label="t('textAlign')" v-show="diyStore.global.topStatusBar.style == 'style-1'">
+                        <el-radio-group v-model="diyStore.global.topStatusBar.textAlign">
+                            <el-radio :label="'left'">{{ t('textAlignLeft') }}</el-radio>
+                            <el-radio :label="'center'">{{ t('textAlignCenter') }}</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item :label="t('link')" v-if="['style-2','style-3'].indexOf(diyStore.global.topStatusBar.style) > -1">
+                        <diy-link v-model="diyStore.global.topStatusBar.link" />
+                    </el-form-item>
+                </template>
 			</el-form>
 		</div>
         <div class="edit-attr-item-wrap">
@@ -69,12 +75,6 @@
                 <div class="flex items-center justify-center overflow-hidden w-[32%] h-[100px]  mr-[2%] cursor-pointer border bg-gray-50" :class="{ 'border-primary': selectStyle == 'style-4' }" @click="selectStyle = 'style-4'">
                     <img class="max-w-[100%] max-h-[100%]" src="@/app/assets/images/diy/head/nav_style4.jpg" />
                 </div>
-                <div class="flex items-center justify-center overflow-hidden w-[32%] h-[100px]  mr-[2%] cursor-pointer border bg-gray-50" :class="{ 'border-primary': selectStyle == 'style-5' }" @click="selectStyle = 'style-5'">
-                    <img class="max-w-[100%] max-h-[100%]" src="@/app/assets/images/diy/head/nav_style5.png" />
-                </div>
-                <div class="flex items-center justify-center overflow-hidden w-[32%] h-[100px] cursor-pointer border bg-gray-50" :class="{ 'border-primary': selectStyle == 'style-6' }" @click="selectStyle = 'style-6'">
-                    <img class="max-w-[100%] max-h-[100%]" src="@/app/assets/images/diy/head/nav_style6.jpg" />
-                </div>
             </div>
 
             <template #footer>
@@ -91,7 +91,7 @@
 	<div class="style-wrap" v-show="diyStore.editTab == 'style'">
 		<div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t('pageStyle') }}</h3>
-			<el-form label-width="80px" class="px-[10px]">
+			<el-form label-width="115px" class="px-[10px]">
 				<el-form-item :label="t('pageBgColor')">
 					<el-color-picker v-model="diyStore.editComponent.pageStartBgColor" show-alpha :predefine="diyStore.predefineColors" />
 					<icon name="iconfont iconmap-connect" size="20px" class="block !text-gray-400 mx-[5px]"/>
@@ -114,19 +114,24 @@
 		</div>
         <div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t('statusBarStyle') }}</h3>
-			<el-form label-width="80px" class="px-[10px]">
-				<el-form-item :label="t('topStatusBarBgColor')" class="display-block" v-if="selectStyle == 'style-5'">
+			<el-form label-width="115px" class="px-[10px]">
+                <el-form-item :label="t('topStatusBarBgColor')" class="display-block">
 					<el-color-picker v-model="diyStore.global.topStatusBar.bgColor" show-alpha />
-	                <div class="text-sm text-gray-400 leading-[1.5]">{{ t('topStatusBarBgColorTips') }}</div>
+				</el-form-item>
+				<el-form-item :label="t('rollTopStatusBarBgColor')" class="display-block">
+					<el-color-picker v-model="diyStore.global.topStatusBar.rollBgColor" show-alpha />
 				</el-form-item>
 				<el-form-item :label="t('topStatusBarTextColor')" class="display-block">
 					<el-color-picker v-model="diyStore.global.topStatusBar.textColor" show-alpha />
+				</el-form-item>
+				<el-form-item :label="t('rollTopStatusBarTextColor')" class="display-block">
+					<el-color-picker v-model="diyStore.global.topStatusBar.rollTextColor" show-alpha />
 				</el-form-item>
 			</el-form>
 		</div>
 		<div class="edit-attr-item-wrap">
 			<h3 class="mb-[10px]">{{ t('marginSet') }}</h3>
-			<el-form label-width="80px" class="px-[10px]">
+			<el-form label-width="115px" class="px-[10px]">
 				<el-form-item :label="t('marginBoth')">
 					<el-slider v-model="diyStore.global.template.margin.both" show-input size="small" @input="inputBoth" class="ml-[10px] horz-blank-slider"/>
 				</el-form-item>
@@ -167,6 +172,7 @@ const inputBoth = (value:any)=>{
     })
 
 }
+
 watch(
     () => diyStore.global,
     (newValue, oldValue) => {
@@ -176,14 +182,11 @@ watch(
 
 const showDialog = ref(false)
 const showStyle = () => {
-    selectStyle.value = diyStore.global.topStatusBar.style
     showDialog.value = true
 }
 
 const selectStyle = ref("style-1")
 const changeStyle = () => {
-    diyStore.global.topStatusBar.isShow = true;
-    diyStore.global.topStatusBar.isTransparent = false;
      switch (selectStyle.value) {
         case 'style-1':
             diyStore.global.topStatusBar.styleName = '风格1'
@@ -196,14 +199,6 @@ const changeStyle = () => {
             break
         case 'style-4':
             diyStore.global.topStatusBar.styleName = '风格4'
-            break
-        case 'style-5':
-            diyStore.global.topStatusBar.isTransparent = true;
-            diyStore.global.topStatusBar.styleName = '风格5'
-            break
-        case 'style-6':
-            diyStore.global.topStatusBar.isShow = false;
-            diyStore.global.topStatusBar.styleName = '风格6'
             break
     }
     diyStore.global.topStatusBar.style = selectStyle.value

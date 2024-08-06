@@ -89,7 +89,7 @@
                         <template #default="{ row }">
                             <div class="flex items-center cursor-pointer " @click="toMember(row.member.member_id)">
                                 <img class="w-[50px] h-[50px] mr-[10px]" v-if="row.member.headimg" :src="img(row.member.headimg)" alt="">
-                                <img class="w-[50px] h-[50px] mr-[10px]" v-else src="@/app/assets/images/default_headimg.png" alt="">
+                                <img class="w-[50px] h-[50px] mr-[10px] rounded-full" v-else src="@/app/assets/images/member_head.png" alt="">
                                 <div class="flex flex flex-col">
                                     <span>{{ row.member.nickname || '' }}</span>
                                     <span>{{ row.member.mobile || '' }}</span>
@@ -99,7 +99,7 @@
                     </el-table-column>
                     <el-table-column :label="t('cashOutMethod')" align="center" min-width="140">
                         <template #default="{ row }">
-                            {{ Transfertype[row.transfer_type].name }}
+                            {{ row.transfer_type_name }}
                         </template>
                     </el-table-column>
 
@@ -183,7 +183,7 @@
         <el-dialog v-model="auditShowDialog" :title="t('rejectionAudit')" width="500px" :destroy-on-close="true">
             <el-form :model="auditFailure" label-width="90px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('reasonsRefusal')" prop="label_name">
-                    <el-input v-model="auditFailure.refuse_reason" clearable :placeholder="t('reasonsRefusalPlaceholder')" class="input-width" type="textarea" />
+                    <el-input v-model="auditFailure.refuse_reason" clearable maxlength="200" :show-word-limit="true" :placeholder="t('reasonsRefusalPlaceholder')" :rows="4" class="input-width" type="textarea" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -334,10 +334,9 @@ const fnProcessing = (type: string, data: any) => {
         }
     } else if (type == 'transferFn') {
         obj.id = data.id
-        ElMessageBox.confirm(`${t('isTransfer')}`, `${t('transfer')}`)
-            .then(() => {
-                transferFn(obj)
-            })
+        ElMessageBox.confirm(`${ t('isTransfer') }`, `${ t('transfer') }`).then(() => {
+            transferFn(obj)
+        })
     } else {
         detailFn(data.id)
     }
@@ -349,7 +348,9 @@ const fnProcessing = (type: string, data: any) => {
  */
 const transferFn = (data:any) => {
     memberTransfer({ ...data }).then(res => {
+        auditFailure.value = { refuse_reason: '', id: 0, action: 0 }
         loadOrderList()
+
     }).catch(() => {
         loadOrderList()
     })
@@ -389,6 +390,7 @@ const cashOutAuditFn = (data:any) => {
         ...data
     }).then(res => {
         loadOrderList()
+
     }).catch(() => {
         loadOrderList()
     })

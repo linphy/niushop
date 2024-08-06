@@ -49,7 +49,6 @@ export function getTemplateList() {
     return request.get('wechat/template')
 }
 
-
 /**
  * 获取同步
  * @param params
@@ -130,7 +129,6 @@ export function setSubscribeReply(params: Record<string, any>) {
 export function getMediaList(params: Record<string, any>) {
     return request.get('wechat/media', { params })
 }
-
 
 /**
  * 同步素材库

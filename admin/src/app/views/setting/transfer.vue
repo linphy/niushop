@@ -78,7 +78,6 @@
 import { reactive, ref, computed } from 'vue'
 import { t } from '@/lang'
 import { getTransferInfo, setTransferInfo } from '@/app/api/sys'
-// import { useClipboard } from '@vueuse/core'
 import { FormInstance } from 'element-plus'
 import { useRoute } from 'vue-router'
 

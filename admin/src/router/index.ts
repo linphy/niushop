@@ -6,7 +6,6 @@ import { language } from '@/lang'
 import useSystemStore from '@/stores/modules/system'
 import useUserStore from '@/stores/modules/user'
 import { setWindowTitle, getAppType, urlToRouteRaw } from '@/utils/common'
-import storage from '@/utils/storage'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,7 +75,7 @@ router.beforeEach(async (to, from, next) => {
                 if (!systemStore.apps.length) {
                     await systemStore.getInstallAddons()
                 }
-                await userStore.getAuthMenus()
+                await userStore.getAuthMenusFn()
 
                 // 设置首页路由
                 let firstRoute: symbol | string | undefined = findFirstValidRoute(userStore.routers)

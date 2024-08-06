@@ -9,8 +9,8 @@
 
             <div class="flex justify-between items-center mt-[20px]">
                 <el-form :inline="true" :model="userTableData.searchParam" ref="searchFormRef">
-                    <el-form-item :label="t('accountNumber')" prop="seach">
-                        <el-input v-model="userTableData.searchParam.seach" class="input-width" :placeholder="t('accountNumberPlaceholder')" />
+                    <el-form-item :label="t('accountNumber')" prop="search">
+                        <el-input v-model="userTableData.searchParam.search" class="input-width" :placeholder="t('accountNumberPlaceholder')" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadUserList()">{{ t('search') }}</el-button>
@@ -107,7 +107,7 @@ const userTableData = reactive({
     loading: true,
     data: [],
     searchParam: {
-        seach: '',
+        search: '',
         user_type: ''
     }
 })
@@ -131,7 +131,7 @@ const loadUserList = (page: number = 1) => {
     getUserList({
         page: userTableData.page,
         limit: userTableData.limit,
-        username: userTableData.searchParam.seach,
+        username: userTableData.searchParam.search,
         user_type: userTableData.searchParam.user_type
     }).then(res => {
         userTableData.loading = false

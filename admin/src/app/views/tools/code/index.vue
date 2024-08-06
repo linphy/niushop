@@ -77,7 +77,7 @@
                     <el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
                         <el-form :inline="true" :model="codeTableData.searchParam" ref="searchFormRef">
                              <el-form-item :label="t('addonName')" prop="addon_name">
-                                <el-select v-model="codeTableData.searchParam.addon_name" placeholder="Select" filterable remote clearable :remote-method="getAddonDevelopFn">
+                                <el-select v-model="codeTableData.searchParam.addon_name" placeholder="全部" filterable remote clearable :remote-method="getAddonDevelopFn">
                                     <el-option label="全部" value="" />
                                     <el-option label="系统" value="2" />
                                     <el-option :label="item.title" :value="item.key" v-for="item in addonList" :key="item.key" />
@@ -281,20 +281,19 @@ const editEvent = (data: any) => {
  * 同步校验
  */
 const generatorCheckFileFn = ((id: any) => {
-    generatorCheckFile({ id }).then((res:any) => {
+    generatorCheckFile({ id }).then((res: any) => {
         codeTableData.loading = false
         ElMessageBox.confirm(
-            res.msg != '2' ? t('saveAndSyncText') : t('saveAndSyncText1'),
-            t('warning'),
-            {
-                confirmButtonText: t('confirm'),
-                cancelButtonText: t('cancel')
-            }
-        )
-            .then(() => {
-                generateCreateFn(id, 3)
-            })
-            .catch(() => { })
+                res.msg != '2' ? t('saveAndSyncText') : t('saveAndSyncText1'),
+                t('warning'),
+                {
+                    confirmButtonText: t('confirm'),
+                    cancelButtonText: t('cancel')
+                }
+        ).then(() => {
+            generateCreateFn(id, 3)
+        }).catch(() => {
+        })
     }).catch(() => {
         codeTableData.loading = false
     })

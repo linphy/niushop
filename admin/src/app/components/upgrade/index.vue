@@ -1,6 +1,5 @@
 <template>
-    <el-dialog v-model="showDialog" :title="t('upgrade.title')" width="850px" :close-on-click-modal="false"
-               :close-on-press-escape="false" :before-close="dialogClose">
+    <el-dialog v-model="showDialog" :title="t('upgrade.title')" width="850px" :close-on-click-modal="false" :close-on-press-escape="false" :before-close="dialogClose">
 
         <div v-show="active == 'content'">
 
@@ -117,6 +116,8 @@
 <script lang="ts" setup>
 import { ref, h, watch } from 'vue'
 import { t } from '@/lang'
+import { getVersions } from '@/app/api/auth'
+import { getFrameworkVersionList } from '@/app/api/module'
 import { getUpgradeContent, getUpgradeTask, upgradeAddon, executeUpgrade, preUpgradeCheck, clearUpgradeTask } from '@/app/api/upgrade'
 import { Terminal, TerminalFlash } from 'vue-web-terminal'
 import 'vue-web-terminal/lib/theme/dark.css'
@@ -209,6 +210,14 @@ const elNotificationClick = () => {
     notificationEl && notificationEl.close()
 }
 
+const versions = ref('')
+const getVersionsInfo = () => {
+    getVersions().then(res => {
+        versions.value = res.data.version.version
+    })
+}
+getVersionsInfo()
+
 /**
  * 执行升级
  */
@@ -218,19 +227,17 @@ const handleUpgrade = async () => {
 
     const appKey = upgradeContent.value?.app.app_key != 'niucloud-admin' ? upgradeContent.value?.app.app_key : ''
 
-    await preUpgradeCheck(appKey)
-        .then(async ({ data }) => {
-            if (data.is_pass) {
-                await upgradeAddon(appKey).then(() => {
-                    getUpgradeTaskFn()
-                }).catch(() => {
-                    uploading.value = false
-                })
-            } else {
-                upgradeCheck.value = data
-            }
-        })
-        .catch()
+    await preUpgradeCheck(appKey).then(async({ data }) => {
+        if (data.is_pass) {
+            await upgradeAddon(appKey).then(() => {
+                getUpgradeTaskFn()
+            }).catch(() => {
+                uploading.value = false
+            })
+        } else {
+            upgradeCheck.value = data
+        }
+    }).catch()
 
     if (uploading.value) active.value = 'upgrade'
 }
@@ -240,18 +247,26 @@ const open = (addonKey: string = '') => {
         ElMessage({ message: '已有正在执行中的升级任务', type: 'error' })
         showDialog.value = true
     } else {
-        getUpgradeContent(addonKey).then(({ data }) => {
-            upgradeContent.value = data
-            if (!data.version_list.length) {
-                ElMessage({ message: '已经是最新版本了', type: 'error' })
+        getFrameworkVersionList().then(({ data }) => {
+            const newVersion = data.length ? data[0] : null
+            if (addonKey && newVersion && newVersion.version_no !== versions.value) {
+                ElMessage({ message: '存在新版本框架，请先升级框架', type: 'error' })
                 return
-            }
-            if (Storage.get('upgradeTipsLock')) {
-                showDialog.value = true
             } else {
-                upgradeTipsShowDialog.value = true
+                getUpgradeContent(addonKey).then(({ data }) => {
+                    upgradeContent.value = data
+                    if (!data.version_list.length) {
+                        ElMessage({ message: '已经是最新版本了', type: 'error' })
+                        return
+                    }
+                    if (Storage.get('upgradeTipsLock')) {
+                        showDialog.value = true
+                    } else {
+                        upgradeTipsShowDialog.value = true
+                    }
+                }).catch()
             }
-        }).catch()
+        })
     }
 }
 

@@ -55,7 +55,6 @@ import { allRole } from '@/app/api/sys'
 import { img, deepClone } from '@/utils/common'
 import { AnyObject } from '@/types/global'
 
-const userList = ref<AnyObject>([])
 const uid = ref<number | string>('')
 
 const real_name_input = ref(true)

@@ -230,8 +230,6 @@ const test = {
     },
     /**
      * 是否为正则对象
-     * @param {Object}
-     * @return {Boolean}
      */
     regExp(o) {
         return o && Object.prototype.toString.call(o) === '[object RegExp]'

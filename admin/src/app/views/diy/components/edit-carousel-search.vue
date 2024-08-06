@@ -31,7 +31,10 @@
 					<upload-image v-model="diyStore.editComponent.search.logo" :limit="1" />
 				</el-form-item>
 				<el-form-item :label="t('carouselSearchText')">
-					<el-input v-model.trim="diyStore.editComponent.search.text" :placeholder="t('carouselSearchPlaceholder')" clearable maxlength="20" show-word-limit />
+					<div>
+                        <el-input v-model.trim="diyStore.editComponent.search.text" :placeholder="t('carouselSearchPlaceholder')" clearable maxlength="20" show-word-limit />
+                        <p class="text-sm text-gray-400 mt-[10px] leading-[1.5]">{{t('carouselSearchTextTips')}}</p>
+                    </div>
 				</el-form-item>
 				<el-form-item :label="t('link')">
 					<diy-link v-model="diyStore.editComponent.search.link"/>

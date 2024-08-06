@@ -60,7 +60,7 @@ export function editDiyPage(params: Record<string, any>) {
  * @param params
  */
 export function setUseDiyPage(params: Record<string, any>) {
-	return request.put(`diy/use`, params, {showSuccessMessage: true})
+	return request.put(`diy/use/${params.id}`, params, {showSuccessMessage: true})
 }
 
 /**

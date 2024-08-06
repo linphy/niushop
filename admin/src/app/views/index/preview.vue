@@ -22,8 +22,7 @@
                         <el-form-item :label="t('link')" v-show="wapPreview">
                             <el-input readonly :value="wapPreview">
                                 <template #append>
-                                    <el-button @click="copyEvent(wapPreview)" class="bg-primary copy">{{ t('copy') }}
-                                    </el-button>
+                                    <el-button @click="copyEvent(wapPreview)" class="bg-primary copy">{{ t('copy') }}</el-button>
                                 </template>
                             </el-input>
                         </el-form-item>

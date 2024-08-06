@@ -4,11 +4,11 @@
             <div class="rounded cursor-pointer overflow-hidden relative border border-solid border-color image-wrap mr-[10px]" :class="{'rounded-full': type=='avatar'}" :style="style">
                 <div class="w-full h-full relative" v-if="images.data.length">
                     <div class="w-full h-full flex items-center justify-center">
-                        <el-image :src="images.data[0].indexOf('data:image') != -1 ? images.data[0] : img(images.data[0])" :fit=" type=='avatar'?'none':'contain'"></el-image>
+                        <el-image class="w-full h-full" :src="images.data[0].indexOf('data:image') != -1 ? images.data[0] : img(images.data[0])" :fit="imageFit"></el-image>
                     </div>
                     <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60 operation">
                         <icon name="element ZoomIn" color="#fff" size="18px" class="mr-[10px]" @click="previewImage()" />
-                        <icon name="element Delete" color="#fff" size="18px" @click="removeImage" />
+                        <icon name="element Delete" color="#fff" size="18px" @click.stop="removeImage" />
                     </div>
                 </div>
                 <upload-attachment :limit="limit" @confirm="confirmSelect" v-else>
@@ -57,6 +57,10 @@ const prop = defineProps({
     type: {
         type: String,
         default: 'image'
+    },
+    imageFit : {
+        type: String,
+        default: 'contain'
     },
     modelValue: {
         type: String,
@@ -119,7 +123,7 @@ const style = computed(() => {
         width: prop.width,
         height: prop.height
     }
-})
+}) 
 
 /**
  * 选择图片
@@ -137,7 +141,10 @@ const confirmSelect = (data: Record<string, any>) => {
         })
     }
     setValue()
-    emit('change', value.value)
+     
+    nextTick(() => {
+        emit('change', value.value)
+    })
 }
 
 /**
@@ -170,7 +177,9 @@ onMounted(()=>{
         rowDrop()
     })
 })
+
 const activeRows = ref<any[]>([])
+
 // 拖拽排序
 const rowDrop = () => {
     if (prop.limit == 1) return;

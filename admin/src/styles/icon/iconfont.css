@@ -1,8 +1,8 @@
 @font-face {
     font-family: "iconfont"; /* Project id 3883393 */
-    src: url('//at.alicdn.com/t/c/font_3883393_j1lel8pwx7r.woff2?t=1718420877544') format('woff2'),
-         url('//at.alicdn.com/t/c/font_3883393_j1lel8pwx7r.woff?t=1718420877544') format('woff'),
-         url('//at.alicdn.com/t/c/font_3883393_j1lel8pwx7r.ttf?t=1718420877544') format('truetype');
+    src: url('//at.alicdn.com/t/c/font_3883393_go2pmb0sgk8.woff2?t=1720506563694') format('woff2'),
+         url('//at.alicdn.com/t/c/font_3883393_go2pmb0sgk8.woff?t=1720506563694') format('woff'),
+         url('//at.alicdn.com/t/c/font_3883393_go2pmb0sgk8.ttf?t=1720506563694') format('truetype');
   }
   
   .iconfont {
@@ -11,6 +11,74 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .icondiduiqi1:before {
+    content: "\e7b0";
+  }
+  
+  .icondingduiqi1:before {
+    content: "\e827";
+  }
+  
+  .iconchuizhijuzhong1:before {
+    content: "\e828";
+  }
+  
+  .iconzuoduiqi1:before {
+    content: "\e829";
+  }
+  
+  .iconshuipingjuzhong1:before {
+    content: "\e82a";
+  }
+  
+  .iconyouduiqi1:before {
+    content: "\e82b";
+  }
+  
+  .iconxiaochengxu2:before {
+    content: "\e63d";
+  }
+  
+  .icondingdan1:before {
+    content: "\e7b1";
+  }
+  
+  .iconqiandaoguanli:before {
+    content: "\e7b2";
+  }
+  
+  .iconqiandaojilu:before {
+    content: "\e7b3";
+  }
+  
+  .iconshangpincanshu:before {
+    content: "\e820";
+  }
+  
+  .iconpingtaiyouhuiquan:before {
+    content: "\e821";
+  }
+  
+  .iconshangpin:before {
+    content: "\e822";
+  }
+  
+  .iconyingxiao1:before {
+    content: "\e823";
+  }
+  
+  .iconqiandaoshezhi:before {
+    content: "\e824";
+  }
+  
+  .icondianpuyouhuiquan:before {
+    content: "\e825";
+  }
+  
+  .iconshangpinpinpai1:before {
+    content: "\e826";
   }
   
   .iconmofangpc:before {
@@ -2037,12 +2105,12 @@
     content: "\e659";
   }
   
-  .icon31daifahuo:before {
-    content: "\e634";
+  .icondaifahuo1:before {
+    content: "\e899";
   }
   
-  .icon31daifukuan:before {
-    content: "\e637";
+  .icondaifukuan1:before {
+    content: "\e898";
   }
   
   .icon31dianhua:before {
@@ -2154,7 +2222,7 @@
   }
   
   .iconwenhao:before {
-    content: "\e72d";
+    content: "\e890";
   }
   
   .iconmofang-liangzuoliangyou:before {

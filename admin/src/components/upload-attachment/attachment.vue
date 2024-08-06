@@ -390,7 +390,10 @@ watch(selectAll, () => {
     if (selectAll.value) {
         const keys = Object.keys(toRaw(selectedFile))
         attachment.data.forEach((item: Record<string, any>) => {
-            if (!keys.includes(item.att_id)) selectedFile[item.att_id] = toRaw(item)
+            if (!keys.includes(item.att_id)) {
+                selectedFile[item.att_id] = toRaw(item)
+                selectedFileIndex.push(item.att_id)
+            }
         })
     } else {
         clearSelected()
@@ -405,6 +408,7 @@ const clearSelected = () => {
     if (keys.length) {
         keys.forEach((key) => {
             delete selectedFile[key]
+            selectedFileIndex.splice(selectedFileIndex.indexOf(key), 1)
         })
         selectAll.value = false
     }

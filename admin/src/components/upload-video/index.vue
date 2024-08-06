@@ -87,6 +87,10 @@ const videos: Record<string, any> = reactive({
     data: []
 })
 
+const setValue = () => {
+	value.value = toRaw(videos.data).toString()
+}
+
 watch(() => value.value, () => {
     videos.data = [
         ...value.value.split(',').filter((item: string) => {
@@ -94,7 +98,7 @@ watch(() => value.value, () => {
         })
     ]
     setValue()
-})
+}, { immediate: true })
 
 const style = computed(() => {
     return {
@@ -104,8 +108,8 @@ const style = computed(() => {
 })
 
 /**
-     * 选择视频
-     */
+ * 选择视频
+ */
 const confirmSelect = (data: Record<string, any>) => {
     if (prop.limit == 1) {
         videos.data.splice(0, 1)
@@ -125,10 +129,6 @@ const confirmSelect = (data: Record<string, any>) => {
 const removeVideo = (index: number = 0) => {
     videos.data.splice(index, 1)
     setValue()
-}
-
-const setValue = () => {
-    value.value = toRaw(videos.data).toString()
 }
 
 /**

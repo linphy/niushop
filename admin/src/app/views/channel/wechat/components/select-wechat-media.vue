@@ -24,8 +24,7 @@
                         <div v-if="attachment.data.length">
                             <div class="flex flex-wrap" v-if="prop.type != 'news'">
                                 <div class="attachment-item mr-[10px] mb-[10px] w-[120px]" v-for="(item, index) in attachment.data" :key="index" @click="selectedFile = item">
-                                    <div
-                                        class="attachment-wrap w-full rounded cursor-pointer overflow-hidden relative flex items-center justify-center h-[120px]">
+                                    <div class="attachment-wrap w-full rounded cursor-pointer overflow-hidden relative flex items-center justify-center h-[120px]">
                                         <el-image :src="img(item.value)" fit="contain" v-if="type == 'image'" :preview-src-list="item.image_list" />
                                         <video :src="img(item.value)" v-else-if="type == 'video'"></video>
                                         <div class="absolute z-[1] flex items-center justify-center w-full h-full inset-0 bg-black bg-opacity-60" v-show="selectedFile.id == item.id">

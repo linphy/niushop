@@ -20,16 +20,6 @@ export function getNoticeInfo(key: string) {
 }
 
 /**
- * 消息发送记录
- * @param params
- * @returns
- */
-export function getNoticeLog(params: any) {
-    return request.get(`notice/log`, {params})
-}
-
-
-/**
  * 消息启动与关闭
  * @param params
  * @returns

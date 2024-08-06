@@ -42,17 +42,15 @@ const useSystemStore = defineStore('system', {
          * 获取已安装的插件和应用
          */
         async getInstallAddons() {
-            await getInstalledAddonList()
-                .then(({ data }) => {
-                    const apps = [], addons = []
-                    Object.keys(data).forEach(key => {
-                        const item = data[key]
-                        item.type == 'app' ? apps.push(item) : addons.push(item)
-                    })
-                    this.addons = addons
-                    this.apps = apps
+            await getInstalledAddonList().then(({ data }) => {
+                const apps = [], addons = []
+                Object.keys(data).forEach(key => {
+                    const item = data[key]
+                    item.type == 'app' ? apps.push(item) : addons.push(item)
                 })
-                .catch()
+                this.addons = addons
+                this.apps = apps
+            }).catch()
         }
     }
 })
