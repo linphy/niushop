@@ -1,13 +1,9 @@
 <template>
 	<div class="main-container">
-		<div class="detail-head">
-			<div class="left" @click="router.push({ path: '/shop/order/refund' })">
-				<span class="iconfont iconxiangzuojiantou !text-xs"></span>
-				<span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-			</div>
-			<span class="adorn">|</span>
-			<span class="right">{{ pageName }}</span>
-		</div>
+        <el-card class="card !border-none mb-[15px]" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="router.push({ path: '/shop/order/refund' })" />
+        </el-card>
+        
 		<el-form :model="formData" label-width="100px" class="page-form" v-loading="loading" label-position="left">
 			<el-card class="box-card !border-none relative" shadow="never" v-if="formData">
 				<h3 class="panel-title">{{ t('orderInfo') }}</h3>

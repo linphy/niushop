@@ -2,7 +2,7 @@
     <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap" :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('brandName')" prop="brand_name">
-                    <el-input v-model.trim="formData.brand_name" clearable :placeholder="t('brandNamePlaceholder')" class="input-width"  @keyup="filterSpecial($event)"  maxlength="20" @blur="formData.brand_name = $event.target.value"/>
+                    <el-input v-model.trim="formData.brand_name" clearable :placeholder="t('brandNamePlaceholder')" class="input-width" maxlength="20" @blur="formData.brand_name = $event.target.value"/>
                 </el-form-item>
 
                 <el-form-item :label="t('logo')">

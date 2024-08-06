@@ -1,13 +1,9 @@
 <template>
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="back">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
+        <el-card class="card !border-none mb-[15px]" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back" />
+        </el-card>
+        
         <el-card class="box-card !border-none" shadow="never">
             <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('templateName')" prop="template_name">
@@ -103,8 +99,7 @@
                         <el-table-column :label="t('noDelivery')">
                             <template #default="{ row, $index }">
                                 <div class="area-input">
-                                    <el-input v-model="row.no_delivery_area_names" readonly
-                                        @click="selectArea('no_delivery', $index)" :placeholder="t('areaPlaceholder')" />
+                                    <el-input v-model="row.no_delivery_area_names" readonly @click="selectArea('no_delivery', $index)" :placeholder="t('areaPlaceholder')" />
                                 </div>
                             </template>
                         </el-table-column>
@@ -435,8 +430,8 @@ const onSave = async (formEl: FormInstance | undefined) => {
                 template_id: formData.template_id,
                 template_name: formData.template_name,
                 fee_type: formData.fee_type,
-                no_delivery: noDeliveryData.value.length ? 1 : 0,
-                is_free_shipping: freeShippingData.value.length ? 1 : 0
+                no_delivery: formData.no_delivery,
+                is_free_shipping: formData.is_free_shipping
             }
             const area: AnyObject = {}
 

@@ -1,7 +1,7 @@
 <template>
     <view :style="themeColor()">
         <scroll-view scroll-y="true" class="bg-[#f6f6f6] h-screen" v-if="orderData">
-            <view class="pt-[40rpx] px-[24rpx] payment-bottom">
+            <view class="pt-[30rpx] sidebar-marign payment-bottom">
                 <!-- 配送方式 -->
                 <view class="mb-[20rpx] rounded-[16rpx] bg-white" v-if="orderData.basic.has_goods_types.includes('real') && delivery_type_list.length">
                     <view class="rounded-tl-[16rpx] rounded-tr-[16rpx] head-tab flex items-center w-full bg-[#efefef]" v-if="delivery_type_list.length > 1">
@@ -21,11 +21,11 @@
                                     <image class="w-[60rpx] h-[60rpx] mr-[20rpx] flex-shrink-0" :src="img('addon/shop/payment/position_01.png')" mode="aspectFit"></image>
                                     <view class="flex flex-col">
                                         <text class="text-[22rpx] text-[#999] truncate max-w-[536rpx]">{{orderData.delivery.take_address.full_address.split(orderData.delivery.take_address.address)[0]}}</text>
-                                        <text class="text-[32rpx] text-[#303133] mt-[10rpx] truncate max-w-[536rpx]">{{orderData.delivery.take_address.address}}</text>
+                                        <text class="text-[32rpx] text-[#303133] mt-[16rpx] truncate max-w-[536rpx]">{{orderData.delivery.take_address.address}}</text>
                                     </view>
                                     <text class="ml-auto nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999]"></text>
                                 </view>
-                                <view class="flex items-center text-[24rpx] text-[#666] mt-[18rpx]">
+                                <view class="flex items-center text-[24rpx] text-[#666] mt-[20rpx]">
                                     <text class="mr-[16rpx]">{{ orderData.delivery.take_address.name }}</text>
                                     <text>{{ mobileHide(orderData.delivery.take_address.mobile) }}</text>
                                 </view>
@@ -67,7 +67,7 @@
                         <view class="flex" v-for="(item, key, index) in orderData.goods_data" :key="index" :class="{'pb-[40rpx]': (index + 1) != Object.keys(orderData.goods_data).length}">
                             <u--image class="rounded-[10rpx] overflow-hidden" width="170rpx" height="170rpx" :src="img(item.sku_image.split(',')[0])" model="aspectFill">
                                 <template #error>
-                                    <u-icon name="photo" color="#999" size="50"></u-icon>
+									<image class="w-[170rpx] h-[170rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"/>
                                 </template>
                             </u--image>
                             <view class="flex flex-1 w-0 flex-col justify-between ml-[16rpx]">
@@ -84,12 +84,12 @@
                                 </view>
                                 <view class="flex justify-between items-center">
                                     <view class="text-[var(--price-text-color)] flex items-baseline  price-font">
-										<text>{{item.exchange_info.point}}积分</text>
+										<text class="text-[32rpx]">{{item.exchange_info.point}}积分</text>
 										<block v-if="parseFloat(item.price)">
 											<text class="mx-[4rpx]">+</text>
-											<text class="text-[26rpx] font-500">￥</text>
-											<text class="text-[36rpx] font-500">{{ parseFloat(item.price).toFixed(2).split('.')[0] }}</text>
-											<text class="text-[24rpx] font-500">.{{ parseFloat(item.price).toFixed(2).split('.')[1] }}</text>
+											<text class="text-[32rpx] font-500">￥</text>
+											<text class="text-[32rpx] font-500">{{ parseFloat(item.price).toFixed(2).split('.')[0] }}</text>
+											<text class="text-[32rpx] font-500">.{{ parseFloat(item.price).toFixed(2).split('.')[1] }}</text>
 										</block>
                                     </view>
                                     <view class="font-400 text-[28rpx] text-[#303133]">
@@ -111,7 +111,7 @@
                     </view>
                     <!-- 发票 -->
                     <view class="flex items-center text-[#303133] leading-[30rpx] mt-[30rpx]" @click="invoiceRef.open()" v-if="invoiceRef && invoiceRef.invoiceOpen">
-                        <view class="text-[26rpx] font-500 w-[150rpx]">发票信息</view>
+                        <view class="text-[26rpx] w-[150rpx] text-[#303133] font-400">发票信息</view>
                         <view class="flex-1 w-0 text-right truncate">
                             <text class="text-[26rpx]">{{ createData.invoice.header_name || '不需要发票' }}</text>
                         </view>
@@ -121,33 +121,33 @@
                 </view>
 
                 <view class="p-[30rpx] rounded-[16rpx] bg-white">
-                    <view class="text-[32rpx] font-500 text-[#303133] leading-[38rpx] mb-[24rpx]">价格明细</view>
-                    <view class="flex items-center mb-[25rpx] text-[#303133]">
-                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">商品金额</view>
+                    <view class="text-[32rpx] font-500 text-[#303133] leading-[38rpx]">价格明细</view>
+                    <view class="flex items-center mt-[25rpx] text-[#303133]">
+                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx] text-[#303133] font-400">商品金额</view>
                         <view class="flex-1 w-0 text-right  price-font">
-							<text class="text-[28rpx]">{{ orderData.basic.point_sum }}积分</text>
+							<text class="text-[32rpx]">{{ orderData.basic.point_sum }}积分</text>
 							<block v-if="orderData.basic && parseFloat(orderData.basic.goods_money)">
 								<text class="text-[28rpx] mx-[4rpx]">+</text>
-								<text class="text-[24rpx]">￥</text>
+								<text class="text-[32rpx]">￥</text>
 								<text class="text-[32rpx]">{{ parseFloat(orderData.basic.goods_money).toFixed(2).split('.')[0] }}</text>
-								<text class="text-[22rpx]">.{{ parseFloat(orderData.basic.goods_money).toFixed(2).split('.')[1] }}</text>
+								<text class="text-[32rpx]">.{{ parseFloat(orderData.basic.goods_money).toFixed(2).split('.')[1] }}</text>
 							</block>
                         </view>
                     </view>
-                    <view class="flex items-center mb-[25rpx]" v-if="orderData.basic.delivery_money">
-                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">运费</view>
+                    <view class="flex items-center mt-[25rpx]" v-if="orderData.basic.delivery_money">
+                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx] text-[#303133] font-400">配送费用</view>
                         <view class="flex-1 w-0 text-right price-font text-[26rpx]">
-                            <text class="text-[22rpx]">￥</text>
+                            <text class="text-[26rpx]">￥</text>
                             <text class="text-[26rpx]">{{ parseFloat(orderData.basic.delivery_money).toFixed(2).split('.')[0] }}</text>
-                            <text class="text-[20rpx]">.{{ parseFloat(orderData.basic.delivery_money).toFixed(2).split('.')[1] }}</text>
+                            <text class="text-[26rpx]">.{{ parseFloat(orderData.basic.delivery_money).toFixed(2).split('.')[1] }}</text>
                         </view>
                     </view>
-                    <view class="flex items-center  text-[#303133]" v-if="orderData.basic.discount_money">
-                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">优惠金额</view>
+                    <view class="flex items-center mt-[25rpx] text-[#303133]" v-if="orderData.basic.discount_money">
+                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx] text-[#303133] font-400">优惠金额</view>
                         <view class="flex-1 w-0 text-right text-[var(--price-text-color)] price-font ">
-                            <text class="text-[22rpx]">-￥</text>
+                            <text class="text-[26rpx]">-￥</text>
                             <text class="text-[26rpx]">{{ parseFloat(orderData.basic.discount_money).toFixed(2).split('.')[0] }}</text>
-                            <text class="text-[20rpx]">.{{ parseFloat(orderData.basic.discount_money).toFixed(2).split('.')[1] }}</text>
+                            <text class="text-[26rpx]">.{{ parseFloat(orderData.basic.discount_money).toFixed(2).split('.')[1] }}</text>
                         </view>
                     </view>
                 </view>
@@ -156,15 +156,15 @@
                 <view class="flex-1 flex items-center justify-between">
                     <view class="whitespace-nowrap px-[30rpx]">
                         <text class="text-[28rpx] text-[#303133] leading-[32rpx]">合计：</text>
-						<text class="text-[28rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">{{ orderData.basic.point_sum }}积分</text>
+						<text class="text-[32rpx]  font-500  text-[var(--price-text-color)] price-font leading-[32rpx]">{{ orderData.basic.point_sum }}积分</text>
 						<block v-if="orderData.basic && parseFloat(orderData.basic.goods_money)">
 							<text class="text-[28rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx] mx-[4rpx]">+</text>
-							<text class="text-[26rpx] font-500 text-[var(--price-text-color)] price-font leading-[30rpx]">￥</text>
-							<text class="text-[40rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[0] }}</text>
-							<text class="text-[24rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">.{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[1] }}</text>
+							<text class="text-[32rpx] font-500 text-[var(--price-text-color)] price-font leading-[31rpx]">￥</text>
+							<text class="text-[32rpx] font-500 text-[var(--price-text-color)] price-font leading-[32rpx]">{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[0] }}</text>
+							<text class="text-[32rpx] font-500 text-[var(--price-text-color)] price-font leading-[32rpx]">.{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[1] }}</text>
 						</block>
                     </view>
-                    <u-button text="提交订单" :customStyle="{width:'180rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="create"></u-button>
+                    <button class="primary-btn-bg !border-[0] rounded-[33rpx] text-[#fff] w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] m-0 mr-[30rpx]" hover-class="none" @click="create">提交订单</button>
                 </view>
             </u-tabbar>
             <!-- 选择自提点 -->
@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { orderCreateCalculate, orderCreate } from '@/addon/shop/api/point'
 import { redirect, img, moneyFormat, mobileHide } from '@/utils/common'
 import selectStore from './../order/components/select-store/select-store'
@@ -216,6 +216,7 @@ if (selectAddress) {
     createData.value.delivery.take_address_id = selectAddress.address_id
     uni.removeStorage({ key: 'selectAddressCallback' })
 }
+
 // 切换配送方式
 const switchDeliveryType = (type: string, index: number) => {
     if (createData.value.delivery.delivery_type != type) {
@@ -326,7 +327,6 @@ const toSelectAddress = () => {
  * 选择自提点
  */
 const confirmSelectStore = (store: any) => {
-
     createData.value.delivery.take_store_id = ((store && store.store_id) ? store.store_id: 0)
     calculate()
 }
@@ -398,9 +398,6 @@ const confirmAddress = (data:object) => {
 }
 .line-normal{
     line-height: normal;
-}
-.bg-color{
-    background: linear-gradient( 94deg, var(--primary-help-color) 0%, var(--primary-color) 69%),var(--primary-color) ;
 }
 .payment-bottom{
 	padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));

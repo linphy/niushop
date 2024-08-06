@@ -25,8 +25,8 @@ class ShopStatJob extends BaseJob
      */
     public function doJob($key, $addon)
     {
-         if(method_exists($this,$key)) $this->$key($addon);
-         return true;
+        if (method_exists($this, $key)) $this->$key($addon);
+        return true;
     }
 
     /**
@@ -38,20 +38,20 @@ class ShopStatJob extends BaseJob
     {
 //        ['addon' =>, 'date' => ['year' => , 'month'=> , 'day' => , 'hour' => ], 'data' => ['shop_order_money' => 12, 'member' => 12]]
         $orderModel = new Order();
-        $order_money = $orderModel->where( [ ['status', '>', 0]] )->sum('order_money');
+        $order_money = $orderModel->where([ [ 'status', '>', 0 ] ])->sum('order_money');
         $param = [
             'addon' => $addon,
-            'date'  => [
-                'year'  => date('Y'),
+            'date' => [
+                'year' => date('Y'),
                 'month' => date('m'),
-                'day'   => date('d'),
-                'hour'  => date('H'),
+                'day' => date('d'),
+                'hour' => date('H'),
             ],
-            'data'  => [
+            'data' => [
                 'order_money' => $order_money
             ]
         ];
-        (new CoreStatService())->add($param);
+        ( new CoreStatService() )->add($param);
 
     }
 
@@ -63,7 +63,5 @@ class ShopStatJob extends BaseJob
     {
 
     }
-
-
 
 }

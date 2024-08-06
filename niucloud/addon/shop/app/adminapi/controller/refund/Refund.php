@@ -37,7 +37,7 @@ class Refund extends BaseAdminController
      * @param string $order_refund_no
      * @return Response
      */
-    public function detail(string|int $id)
+    public function detail($id)
     {
         return success(( new RefundService() )->getDetail($id));
     }
@@ -46,16 +46,16 @@ class Refund extends BaseAdminController
      * 审核退款
      * @return Response
      */
-    public function auditApply(string|int $order_refund_no)
+    public function auditApply($order_refund_no)
     {
         $data = $this->request->params([
             [ 'shop_reason', '' ],
-            [ 'is_agree', ''],
-            [ 'money', 0],
-            [ 'refund_address_id', 0]
+            [ 'is_agree', '' ],
+            [ 'money', 0 ],
+            [ 'refund_address_id', 0 ]
         ]);
-        $data['order_refund_no'] = $order_refund_no;
-        (new RefundActionService())->auditApply($data);
+        $data[ 'order_refund_no' ] = $order_refund_no;
+        ( new RefundActionService() )->auditApply($data);
         return success();
     }
 
@@ -63,14 +63,14 @@ class Refund extends BaseAdminController
      * 确认收货
      * @return Response
      */
-    public function auditRefundGoods(string|int $order_refund_no)
+    public function auditRefundGoods($order_refund_no)
     {
         $data = $this->request->params([
             [ 'shop_reason', '' ],
-            [ 'is_agree', '']
+            [ 'is_agree', '' ]
         ]);
-        $data['order_refund_no'] = $order_refund_no;
-        (new RefundActionService())->auditRefundGoods($data);
+        $data[ 'order_refund_no' ] = $order_refund_no;
+        ( new RefundActionService() )->auditRefundGoods($data);
         return success();
     }
 

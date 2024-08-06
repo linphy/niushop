@@ -56,7 +56,7 @@ class CoreOrderDeliveryService extends BaseCoreService
         $order_id = $data[ 'order_id' ];
         $order_goods_ids = $data[ 'order_goods_ids' ];//订单项id
         //查询订单
-        $where = array (
+        $where = array(
             [ 'order_id', '=', $order_id ],
         );
         $order = $this->model->where($where)->findOrEmpty();
@@ -89,7 +89,7 @@ class CoreOrderDeliveryService extends BaseCoreService
                 $has_goods_type_array[] = $v[ 'goods_type' ];
             }
         }
-        if (count($has_goods_type_array) != 1) throw new CommonException('SHOP_ORDER_DELIVERY_ALLOW_ONE_GOODSTYPE');//一次发货只能发送一种商品类型的订单项
+        if (count($has_goods_type_array) != 1) throw new CommonException('SHOP_ORDER_DELIVERY_ALLOW_ONE_GOODS_TYPE');//一次发货只能发送一种商品类型的订单项
         $goods_type = $has_goods_type_array[ 0 ];
 
         $delivery_param = [
@@ -145,13 +145,11 @@ class CoreOrderDeliveryService extends BaseCoreService
         ];
         $delivery_id = $this->package($insert_data);
 
-
         //todo 甚至可自动收货
         $order_goods_data->update([
             'delivery_status' => OrderDeliveryDict::DELIVERY_FINISH,
             'delivery_id' => $delivery_id
         ]);
-
 
         //todo  实际调用虚拟配送的操作(类似生成核销码.....)
         $goods_ids = array_column($order_goods_data->toArray(), 'goods_id');
@@ -182,15 +180,7 @@ class CoreOrderDeliveryService extends BaseCoreService
                 ]);
             }
         }
-        //日志
-//        (new CoreOrderLogService())->add([
-//            'order_id' => $order_data['order_id'],
-//            'status' => $order_data['status'],
-//            'main_type' => $param['main_type'],
-//            'main_id' => $param['main_id'],
-//            'type' => OrderDict::ORDER_DELIVERY_PART_ACTION,
-//            'content' => ''
-//        ]);
+
         return true;
     }
 
@@ -217,7 +207,7 @@ class CoreOrderDeliveryService extends BaseCoreService
         $param = $data[ 'param' ];
         $delivery_type = $param[ 'delivery_type' ];
         $order_goods_ids = $param[ 'order_goods_ids' ];//订单项id
-        $insert_data = array (
+        $insert_data = array(
             'order_id' => $order_data[ 'order_id' ],
             'delivery_type' => $order_data[ 'delivery_type' ],
             'sub_delivery_type' => $delivery_type,
@@ -230,19 +220,6 @@ class CoreOrderDeliveryService extends BaseCoreService
             'delivery_status' => OrderDeliveryDict::DELIVERY_FINISH,
             'delivery_id' => $delivery_id
         ]);
-        //日志
-//        $order_goods_column = [];
-//        foreach($order_goods_data->toArray() as $v){
-//            $order_goods_column = $v['goods_name'] . $v['sku_name'];
-//        }
-//        (new CoreOrderLogService())->add([
-//            'order_id' => $order_data['order_id'],
-//            'status' => $order_data['status'],
-//            'main_type' => $param['main_type'],
-//            'main_id' => $param['main_id'],
-//            'type' => OrderDict::ORDER_DELIVERY_PART_ACTION,
-//            'content' => implode(';', $order_goods_column)
-//        ]);
         return true;
     }
 
@@ -257,7 +234,7 @@ class CoreOrderDeliveryService extends BaseCoreService
         $order_goods_data = $data[ 'order_goods_data' ];
         $param = $data[ 'param' ];
         $delivery_type = $param[ 'delivery_type' ];
-        $insert_data = array (
+        $insert_data = array(
             'order_id' => $order_data[ 'order_id' ],
             'delivery_type' => $order_data[ 'delivery_type' ],
             'sub_delivery_type' => $delivery_type,
@@ -269,19 +246,6 @@ class CoreOrderDeliveryService extends BaseCoreService
             'delivery_status' => OrderDeliveryDict::DELIVERY_FINISH,
             'delivery_id' => $delivery_id
         ]);
-//        $order_goods_column = [];
-//        foreach($order_goods_data->toArray() as $v){
-//            $order_goods_column = $v['goods_name'] . $v['sku_name'];
-//        }
-        //日志
-//        (new CoreOrderLogService())->add([
-//            'order_id' => $order_data['order_id'],
-//            'status' => $order_data['status'],
-//            'main_type' => $param['main_type'],
-//            'main_id' => $param['main_id'],
-//            'type' => OrderDict::ORDER_DELIVERY_PART_ACTION,
-//            'content' => implode(';', $order_goods_column)
-//        ]);
         return true;
     }
 
@@ -296,7 +260,7 @@ class CoreOrderDeliveryService extends BaseCoreService
         $order_goods_data = $data[ 'order_goods_data' ];
         $param = $data[ 'param' ];
         $delivery_type = $param[ 'delivery_type' ];
-        $insert_data = array (
+        $insert_data = array(
             'order_id' => $order_data[ 'order_id' ],
             'delivery_type' => $order_data[ 'delivery_type' ],
             'sub_delivery_type' => $delivery_type,
@@ -307,20 +271,6 @@ class CoreOrderDeliveryService extends BaseCoreService
             'delivery_status' => OrderDeliveryDict::DELIVERY_FINISH,
             'delivery_id' => $delivery_id
         ]);
-
-//        $order_goods_column = [];
-//        foreach($order_goods_data->toArray() as $v){
-//            $order_goods_column = $v['goods_name'] . $v['sku_name'];
-//        }
-        //日志
-//        (new CoreOrderLogService())->add([
-//            'order_id' => $order_data['order_id'],
-//            'status' => $order_data['status'],
-//            'main_type' => $param['main_type'],
-//            'main_id' => $param['main_id'],
-//            'type' => OrderDict::ORDER_DELIVERY_PART_ACTION,
-//            'content' => implode(';', $order_goods_column)
-//        ]);
         return true;
     }
 
@@ -333,7 +283,7 @@ class CoreOrderDeliveryService extends BaseCoreService
     {
         $order_id = $data[ 'order_id' ];
         //校验订单下的有效的订单项是否全部发货完毕
-        $where = array (
+        $where = array(
             [
                 'delivery_status', '=', OrderDeliveryDict::WAIT_DELIVERY
             ],
@@ -361,23 +311,18 @@ class CoreOrderDeliveryService extends BaseCoreService
     {
         $order_id = $data[ 'order_id' ];
         //查询订单
-        $where = array (
+        $where = array(
             [ 'order_id', '=', $order_id ],
             [ 'status', '=', OrderDict::WAIT_DELIVERY ]
         );
         $order = $this->model->where($where)->findOrEmpty();
         if ($order->isEmpty()) throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在
 
-        $order_data = array (
+        $order_data = array(
             'delivery_time' => time(),
             'status' => OrderDict::WAIT_TAKE,
             'timeout' => 0
         );
-//        $this->model->where([
-//            ['order_id', '=', $order_id],
-//            ['status', '=', OrderDict::WAIT_DELIVERY]
-//
-//        ])->update($order_data);
         $order->save($order_data);
         //订单发货后操作
         $data[ 'order_data' ] = $order->toArray();
@@ -413,7 +358,7 @@ class CoreOrderDeliveryService extends BaseCoreService
         $order_id = $params[ 'order_id' ];
 
         //查询订单
-        $where = array (
+        $where = array(
             [ 'order_id', '=', $order_id ],
         );
         $order_data = $this->model->where($where)->findOrEmpty();
@@ -437,7 +382,7 @@ class CoreOrderDeliveryService extends BaseCoreService
         }
 
         $pay_model = new Pay();
-        $where = array (
+        $where = array(
             [ 'out_trade_no', '=', $order_data[ 'out_trade_no' ] ]
         );
         $pay_info = $pay_model->where($where)->field('id,type')->findOrEmpty()->toArray();
@@ -461,7 +406,8 @@ class CoreOrderDeliveryService extends BaseCoreService
         }
 
         // 设置消息跳转路径设置接口
-        $result_jump_path = $weapp_delivery_service->setMsgJumpPath();
+        $result_jump_path = $weapp_delivery_service->setMsgJumpPath('shop_order');
+
         if ($result_jump_path[ 'errcode' ] != 0) {
             return '设置消息跳转路径设置接口，报错：' . $result_jump_path[ "errmsg" ];
         }
@@ -599,7 +545,7 @@ class CoreOrderDeliveryService extends BaseCoreService
             'delivery_mode' => $delivery_mode, // 发货模式，发货模式枚举值：1、UNIFIED_DELIVERY（统一发货）2、SPLIT_DELIVERY（分拆发货） 示例值: UNIFIED_DELIVERY
             // 同城配送没有物流信息，只能传一个订单
             'shipping_list' => $delivery_mode == 1 ? [ $first_shipping_info ] : $shipping_list, // 物流信息列表，发货物流单列表，支持统一发货（单个物流单）和分拆发货（多个物流单）两种模式，多重性: [1, 10]
-            'openid' => $member_info[ 'weapp_openid' ], // 用户标识，用户在小程序appid下的唯一标识。 下单前需获取到用户的Openid 示例值: oUpF8uMuAJO_M2pxb1Q9zNjWeS6o 字符字节限制: [1, 128]
+            'weapp_openid' => $member_info[ 'weapp_openid' ], // 用户标识，用户在小程序appid下的唯一标识。 下单前需获取到用户的Openid 示例值: oUpF8uMuAJO_M2pxb1Q9zNjWeS6o 字符字节限制: [1, 128]
             'is_all_delivered' => $is_all_delivered
         ];
 

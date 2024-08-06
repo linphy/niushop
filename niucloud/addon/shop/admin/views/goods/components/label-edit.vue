@@ -1,6 +1,5 @@
 <template>
-    <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap"
-        :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="title" width="500px" class="diy-dialog-wrap" :destroy-on-close="true">
         <el-form :model="formData" label-width="120px" ref="formRef" :rules="formRules" class="page-form" v-loading="loading">
                 <el-form-item :label="t('labelName')" prop="label_name">
                     <el-input v-model.trim="formData.label_name" clearable :placeholder="t('labelNamePlaceholder')" class="input-width" maxlength="20" />

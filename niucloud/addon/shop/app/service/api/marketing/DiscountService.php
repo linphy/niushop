@@ -96,51 +96,50 @@ class DiscountService extends BaseAdminService
             $order = 'sort desc,create_time desc';
         }
 
-        $search_model = (new Goods())
+        $search_model = ( new Goods() )
             ->withSearch([ "brand_id", "goods_category", "label_ids", 'service_ids' ], $where)
             ->field($field)
-            ->with(['skuList'])
-            ->withJoin([ 'activeGoods' => function ($query) use ($where) {
-                $active_where = [ ['active_goods_status', 'in', [ActiveDict::ACTIVE, ActiveDict::NOT_ACTIVE]], ['active_class', '=', ActiveDict::DISCOUNT] ];
-                if($where['active_id']) $active_where[] = ['active_id', '=', $where['active_id']];
+            ->with([ 'skuList' ])
+            ->withJoin([ 'activeGoods' => function($query) use ($where) {
+                $active_where = [ [ 'active_goods_status', 'in', [ ActiveDict::ACTIVE, ActiveDict::NOT_ACTIVE ] ], [ 'active_class', '=', ActiveDict::DISCOUNT ] ];
+                if ($where[ 'active_id' ]) $active_where[] = [ 'active_id', '=', $where[ 'active_id' ] ];
                 $query->where($active_where);
-            }])
+            } ])
             ->where($sku_where)->order($order)->append([ 'goods_type_name', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_label_name', 'activeGoods.active_goods_status_name' ]);
         $list = $this->pageQuery($search_model);
 
-        foreach ($list['data'] as $key => $item){
-            $active_goods_value = json_decode($item['activeGoods']['active_goods_value'], true);
+        foreach ($list[ 'data' ] as $key => $item) {
+            $active_goods_value = json_decode($item[ 'activeGoods' ][ 'active_goods_value' ], true);
             $active_goods_value = array_column($active_goods_value, null, 'sku_id');
-            $sku_list = $item['skuList'] ?? [];
+            $sku_list = $item[ 'skuList' ] ?? [];
             $sku_list = array_column($sku_list, null, 'sku_id');
-            foreach ($active_goods_value as $k => $v){
-                if(!empty($v['is_enabled'])){
-                    $goods_sku = $sku_list[$v['sku_id']] ?? [];
-                    $discount_price = $v['discount_price'] ?? $goods_sku['price'];
+            foreach ($active_goods_value as $k => $v) {
+                if (!empty($v[ 'is_enabled' ])) {
+                    $goods_sku = $sku_list[ $v[ 'sku_id' ] ] ?? [];
+                    $discount_price = $v[ 'discount_price' ] ?? $goods_sku[ 'price' ];
 
-                    if((!empty($item['goodsSku']) && $item['goodsSku']['active_discount_price'] > $discount_price) || empty($item['goodsSku'])){
-                        $item['goodsSku'] = $goods_sku;
-                        $item['goodsSku']['active_discount_type'] = $v['discount_type'] ?? '';
-                        $item['goodsSku']['active_discount_rate'] = $v['discount_rate'] ?? '10';
-                        $item['goodsSku']['active_specify_price'] = $v['specify_price'] ?? 0;
-                        $item['goodsSku']['active_discount_price'] = $discount_price;
-                        $item['goodsSku']['active_reduce_money'] = $v['reduce_money'] ?? 0;
+                    if (( !empty($item[ 'goodsSku' ]) && $item[ 'goodsSku' ][ 'active_discount_price' ] > $discount_price ) || empty($item[ 'goodsSku' ])) {
+                        $item[ 'goodsSku' ] = $goods_sku;
+                        $item[ 'goodsSku' ][ 'active_discount_type' ] = $v[ 'discount_type' ] ?? '';
+                        $item[ 'goodsSku' ][ 'active_discount_rate' ] = $v[ 'discount_rate' ] ?? '10';
+                        $item[ 'goodsSku' ][ 'active_specify_price' ] = $v[ 'specify_price' ] ?? 0;
+                        $item[ 'goodsSku' ][ 'active_discount_price' ] = $discount_price;
+                        $item[ 'goodsSku' ][ 'active_reduce_money' ] = $v[ 'reduce_money' ] ?? 0;
                     }
                 }
             }
-            if(empty($item['goodsSku'])){
-                $item['goodsSku'] = $item['skuList'][0] ?? [];
+            if (empty($item[ 'goodsSku' ])) {
+                $item[ 'goodsSku' ] = $item[ 'skuList' ][ 0 ] ?? [];
 
-                $item['goodsSku']['active_discount_type'] = 'discount';
-                $item['goodsSku']['active_discount_rate'] = '10';
-                $item['goodsSku']['active_specify_price'] = $item['goodsSku']['price'] ?? '0';
-                $item['goodsSku']['active_discount_price'] = $item['goodsSku']['price'] ?? '0';
-                $item['goodsSku']['active_reduce_money'] =  0;
+                $item[ 'goodsSku' ][ 'active_discount_type' ] = 'discount';
+                $item[ 'goodsSku' ][ 'active_discount_rate' ] = '10';
+                $item[ 'goodsSku' ][ 'active_specify_price' ] = $item[ 'goodsSku' ][ 'price' ] ?? '0';
+                $item[ 'goodsSku' ][ 'active_discount_price' ] = $item[ 'goodsSku' ][ 'price' ] ?? '0';
+                $item[ 'goodsSku' ][ 'active_reduce_money' ] = 0;
 
             }
-            $list['data'][$key] = $item;
+            $list[ 'data' ][ $key ] = $item;
         }
-
 
         return $list;
     }
@@ -149,16 +148,15 @@ class DiscountService extends BaseAdminService
     {
         $field = 'active_id,active_name,active_desc,active_type,active_goods_type,active_goods_info,active_class,active_class_category,relate_member,active_value,start_time,end_time,active_status,create_time,update_time,active_order_money,active_order_num,active_member_num,active_success_num';
 
-        $order = Db::raw('FIELD(active_status, "'.ActiveDict::ACTIVE.'","'.ActiveDict::NOT_ACTIVE.'"), start_time asc');
+        $order = Db::raw('FIELD(active_status, "' . ActiveDict::ACTIVE . '","' . ActiveDict::NOT_ACTIVE . '"), start_time asc');
 
         $list = $this->model->where([
             [ 'active_class', '=', ActiveDict::DISCOUNT ],
-            ['active_status', 'in', [ActiveDict::ACTIVE,ActiveDict::NOT_ACTIVE]],
-        ])->withSearch([ "active_name" ], $where)->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->field($field)->limit($where['limit'])->order($order)->select()->toArray();
+            [ 'active_status', 'in', [ ActiveDict::ACTIVE, ActiveDict::NOT_ACTIVE ] ],
+        ])->withSearch([ "active_name" ], $where)->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->field($field)->limit($where[ 'limit' ])->order($order)->select()->toArray();
 
         return $list;
 
     }
-
 
 }

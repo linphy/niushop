@@ -12,7 +12,6 @@
 namespace addon\shop\app\listener\pay;
 
 
-
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\service\core\refund\CoreRefundService;
 
@@ -23,11 +22,11 @@ class RefundSuccessListener
 {
     public function handle(array $params)
     {
-        if($params['trade_type'] == OrderDict::TYPE){
+        if ($params[ 'trade_type' ] == OrderDict::TYPE) {
 
-            (new CoreRefundService())->transferSuccess([
-                'refund_no' => $params['refund_no'],
-                'order_refund_no' => $params['trade_id'],
+            ( new CoreRefundService() )->transferSuccess([
+                'refund_no' => $params[ 'refund_no' ],
+                'order_refund_no' => $params[ 'trade_id' ],
             ]);
             return true;
         }

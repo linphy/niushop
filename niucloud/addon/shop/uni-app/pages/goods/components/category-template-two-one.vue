@@ -2,8 +2,8 @@
 	<view class="bg-[#F4F6F8] min-h-screen">
 		<view class="mescroll-box" v-if="tabsData.length">
 			<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
-				<input class="search-ipt pl-[20rpx] text-[24rpx]" :class="{'pr-[96rpx]':searchName,'pr-[60rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
-				<view class="flex items-center h-[70rpx] absolute right-[48rpx] top-[18rpx]  z-2">
+				<input class="search-ipt pl-[32rpx] text-[24rpx]" :class="{'pr-[106rpx]':searchName,'pr-[32rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
+				<view class="flex items-center h-[70rpx] absolute right-[56rpx] top-[18rpx]  z-2">
 					<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
 					<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx]"></text></view>
 				</view>
@@ -26,21 +26,21 @@
 							<view class="" @click="toLink(item.category_id)">
 								<u--image  radius="12rpx" width="129rpx" height="129rpx" :src="img(item.image ? item.image : '')" model="aspectFill">
 									<template #error>
-										<u-icon name="photo" color="#999" size="50"></u-icon>
+										<image class="rounded-[12rpx] overflow-hidden w-[129rpx] h-[129rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 									</template>
 								</u--image>
 								<view class="text-[24rpx] text-center mt-[12rpx] leading-[34rpx]">{{ item.category_name }}</view>
 							</view>
 						</template>
 					</view>
-					<view class="flex justify-center w-[100%] bg-[#fff] rounded-[16rpx] flex items-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!tabsData[tabActive]?.child_list && !loading">
+					<view class="flex justify-center w-[100%] rounded-[16rpx] flex items-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!tabsData[tabActive]?.child_list && !loading">
 						<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
 					</view>
 				</view>
 			</scroll-view>
 		</view>
 		<tabbar />
-		<view class="flex justify-center w-[100%] items-center justify-center h-[100vh] bg-[#fff]" v-if="!tabsData.length && !loading">
+		<view class="flex justify-center w-[100%] items-center justify-center h-[100vh]" v-if="!tabsData.length && !loading">
 			<mescroll-empty :option="{tip : '暂无商品分类'}"></mescroll-empty>
 		</view>
 		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
@@ -68,12 +68,13 @@ const prop = defineProps({
 })
 let config = prop.config
 let categoryId = prop.categoryId;
-let searchName = ref("");
-let loading = ref<boolean>(true);
+const searchName = ref("");
+const loading = ref<boolean>(true);
 
 onMounted(() => {
 	getCategoryData()
 })
+
 /**
  * @description 获取分类数据
  * */
@@ -170,10 +171,6 @@ const searchNameFn = () => {
 	transform: rotate(180deg);
 }
 
-.font-scale {
-	transform: scale(0.75);
-}
-
 .text-color {
 	color: $u-primary;
 }
@@ -182,21 +179,19 @@ const searchNameFn = () => {
 	background-color: $u-primary;
 }
 
-// search input
 .search-box {
 	// position: relative;
 	padding: 20rpx 24rpx;
 }
 
 .search-box .search-ipt {
-	height: 66rpx;
+	height: 64rpx;
 	background-color: #F6F8F8;
 	padding-left: 20rpx;
 	border-radius: 33rpx;
 }
 
 .search-box .search-ipt .input-placeholder {
-	padding-left: 10rpx;
 	color: #A5A6A6;
 }
 

@@ -108,7 +108,11 @@ CREATE TABLE `{{prefix}}shop_delivery_company` (
   `company_name` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司名称',
   `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司logo',
   `url` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司网站',
-  `express_no` varchar(255) NOT NULL DEFAULT '' COMMENT '物流公司编号',
+  `express_no` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '物流公司编号(用于物流跟踪)',
+  `express_no_electronic_sheet` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '物流公司编号(用于电子面单)',
+  `electronic_sheet_switch` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否支持电子面单（0：不支持，1：支持）',
+  `print_style` VARCHAR(2000) NOT NULL DEFAULT '' COMMENT '电子面单打印模板样式，json字符串',
+  `exp_type` VARCHAR(2000) NOT NULL DEFAULT '' COMMENT '物流公司业务类型，json字符串',
   `create_time` int(11) NOT NULL DEFAULT '0',
   `update_time` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`company_id`)
@@ -125,6 +129,28 @@ CREATE TABLE `{{prefix}}shop_delivery_deliver` (
   `store_id` int(11) NOT NULL DEFAULT '0' COMMENT '门店id',
   PRIMARY KEY (`deliver_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='配送员表';
+
+
+DROP TABLE IF EXISTS `{{prefix}}shop_delivery_electronic_sheet`;
+CREATE TABLE `{{prefix}}shop_delivery_electronic_sheet` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `template_name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '模板名称',
+  `express_company_id` INT(11) NOT NULL DEFAULT 0 COMMENT '物流公司id',
+  `customer_name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '电子面单客户账号（CustomerName）',
+  `customer_pwd` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '电子面单密码（CustomerPwd）',
+  `send_site` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'SendSite',
+  `send_staff` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'SendStaff',
+  `month_code` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'MonthCode',
+  `pay_type` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '邮费支付方式（1：现付，2：到付，3：月结）',
+  `is_notice` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '快递员上门揽件（0：否，1：是）',
+  `status` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '状态（1：开启，0：关闭）',
+  `exp_type` INT(11) NOT NULL DEFAULT 0 COMMENT '物流公司业务类型',
+  `print_style` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '电子面单打印模板样式',
+  `is_default` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否默认（1：是，0：否）',
+  `create_time` INT(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` INT(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='电子面单';
 
 
 DROP TABLE IF EXISTS `{{prefix}}shop_delivery_local_delivery`;
@@ -233,6 +259,7 @@ CREATE TABLE `{{prefix}}shop_goods` (
   KEY `IDX_ns_goods_goods_class` (`goods_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品表';
 
+
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_attr`;
 CREATE TABLE `{{prefix}}shop_goods_attr` (
   `attr_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品参数id',
@@ -241,6 +268,7 @@ CREATE TABLE `{{prefix}}shop_goods_attr` (
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '参数排序号',
   PRIMARY KEY (`attr_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='商品参数表';
+
 
 DROP TABLE IF EXISTS `{{prefix}}shop_goods_brand`;
 CREATE TABLE `{{prefix}}shop_goods_brand` (
@@ -374,7 +402,7 @@ CREATE TABLE `{{prefix}}shop_goods_spec` (
 
 DROP TABLE IF EXISTS `{{prefix}}shop_invoice`;
 CREATE TABLE `{{prefix}}shop_invoice` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '发票id',
   `member_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员id',
   `trade_type` varchar(10) NOT NULL DEFAULT 'order' COMMENT '开票分类 order:订单',
   `trade_id` int(11) NOT NULL DEFAULT '0' COMMENT '业务id',
@@ -451,6 +479,25 @@ CREATE TABLE `{{prefix}}shop_order` (
   `activity_type` varchar(255) NOT NULL DEFAULT '' COMMENT '营销类型',
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单表';
+
+
+DROP TABLE IF EXISTS `{{prefix}}shop_order_batch_delivery`;
+CREATE TABLE `{{prefix}}shop_order_batch_delivery` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `main_id` INT(11) NOT NULL DEFAULT 0 COMMENT '操作人id',
+  `status` INT(11) NOT NULL DEFAULT 1 COMMENT '状态 进行中  已完成  已失败',
+  `type` VARCHAR(255) NOT NULL DEFAULT '操作类型 批量发货  批量打单 ....' COMMENT '操作类型',
+  `total_num` INT(11) NOT NULL DEFAULT 0 COMMENT '总发货单数',
+  `success_num` INT(11) NOT NULL DEFAULT 0 COMMENT '成功发货单数',
+  `fail_num` INT(11) NOT NULL DEFAULT 0 COMMENT '失败发货单数',
+  `data` VARCHAR(2000) NOT NULL DEFAULT '' COMMENT '导入文件的路径',
+  `output` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '对外输出记录',
+  `fail_output` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '失败记录',
+  `fail_remark` VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '失败原因',
+  `create_time` INT(11) NOT NULL COMMENT '创建时间',
+  `update_time` INT(11) NOT NULL DEFAULT 0 COMMENT '操作时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单批量发货表';
 
 
 DROP TABLE IF EXISTS `{{prefix}}shop_order_delivery`;
@@ -571,6 +618,7 @@ CREATE TABLE `{{prefix}}shop_order_refund` (
   PRIMARY KEY (`refund_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单退款表';
 
+
 DROP TABLE IF EXISTS `{{prefix}}shop_order_refund_log`;
 CREATE TABLE `{{prefix}}shop_order_refund_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -584,6 +632,7 @@ CREATE TABLE `{{prefix}}shop_order_refund_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='订单退款日志表';
 
+
 DROP TABLE IF EXISTS `{{prefix}}shop_point_exchange`;
 CREATE TABLE `{{prefix}}shop_point_exchange` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '兑换活动主键id',
@@ -592,7 +641,7 @@ CREATE TABLE `{{prefix}}shop_point_exchange` (
   `title` varchar(255) NOT NULL COMMENT '副标题',
   `image` text COMMENT '图片',
   `status` int(11) NOT NULL DEFAULT '0' COMMENT '兑换状态 0 下架  1上架  -1 删除',
-  `product_detail` text COMMENT '兑换产品信息',
+  `product_detail` TEXT DEFAULT NULL COMMENT '兑换产品信息',
   `point` int(11) NOT NULL DEFAULT '0' COMMENT '兑换所需积分',
   `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '兑换所需金额',
   `limit_num` int(11) NOT NULL DEFAULT '0' COMMENT '限制数量',
@@ -608,6 +657,7 @@ CREATE TABLE `{{prefix}}shop_point_exchange` (
   `total_exchange_num` int(11) NOT NULL DEFAULT '0' COMMENT '兑换数量',
   PRIMARY KEY (`id`,`total_price_num`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='积分兑换表';
+
 
 DROP TABLE IF EXISTS `{{prefix}}shop_point_exchange_order`;
 CREATE TABLE `{{prefix}}shop_point_exchange_order` (
@@ -634,6 +684,7 @@ CREATE TABLE `{{prefix}}shop_point_exchange_order` (
   `order_money` decimal(10,2) NOT NULL COMMENT '订单金额',
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='积分兑换订单表';
+
 
 DROP TABLE IF EXISTS `{{prefix}}shop_stat`;
 CREATE TABLE `{{prefix}}shop_stat` (
@@ -668,6 +719,7 @@ CREATE TABLE `{{prefix}}shop_store` (
   PRIMARY KEY (`store_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='自提门店表';
 
+
 DROP TABLE IF EXISTS `{{prefix}}shop_active`;
 CREATE TABLE `{{prefix}}shop_active` (
   `active_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '活动id',
@@ -691,6 +743,7 @@ CREATE TABLE `{{prefix}}shop_active` (
   `active_success_num` int(11) NOT NULL DEFAULT '0' COMMENT '活动成功参与会员数',
   PRIMARY KEY (`active_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='店铺营销活动表（整体活动）';
+
 
 DROP TABLE IF EXISTS `{{prefix}}shop_active_goods`;
 CREATE TABLE `{{prefix}}shop_active_goods` (

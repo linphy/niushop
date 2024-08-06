@@ -1,5 +1,5 @@
 <template>
-    <u-popup :show="show" @close="show = false" mode="bottom" :round="10" :closeable="true" :safeAreaInsetBottom="true" :customStyle="{maxHeight:'50vh'}">
+    <u-popup :show="show" @close="show = false" mode="bottom" :round="10" :closeable="true" :safeAreaInsetBottom="true" :customStyle="{maxHeight:'58vh'}">
         <view @touchmove.prevent.stop>
 			<view class="text-center p-[30rpx] box-border h-[111rpx]">请填写发票信息</view>
 			<scroll-view :scroll-y="true"  class="max-h-[calc(50vh-211rpx)]">
@@ -51,7 +51,7 @@
 							<view v-if="formData.header_type == 2">
 								<view class="mt-[10rpx]">
 									<u-form-item label="纳税人识别号" prop="tax_number" :border-bottom="true">
-										<u-input v-model.trim="formData.tax_number" border="none" clearable placeholder="请输入纳税人识别号"></u-input>
+										<u-input v-model.trim="formData.tax_number" border="none" clearable placeholder="请输入纳税人识别号" @change="inputChange"></u-input>
 									</u-form-item>
 								</view>
 								<view class="py-[20rpx] flex items-baseline">
@@ -90,14 +90,14 @@
 				</view>
 			</scroll-view>
 			<view class="p-[30rpx]">
-				<u-button type="primary" text="确认" shape="circle" @click="confirm"></u-button>
+                <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="confirm">确认</button>
 			</view>
 		</view>
     </u-popup>
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue'
+    import { ref, computed,nextTick } from 'vue'
     import { getInvoiceConfig } from '@/addon/shop/api/config'
 
     const show = ref(false)
@@ -128,6 +128,12 @@
         data.invoice_content.length && (formData.value.name = data.invoice_content[0])
     }).catch()
 
+	const inputChange = (e) =>{
+		nextTick(()=>{
+			formData.value.tax_number = e.replace(/[^0-9a-zA-Z]/g,'')
+		})
+	}
+
     const formRef = ref(null)
 
     const rules = computed(() => {
@@ -143,16 +149,15 @@
                 required: need.value && formData.value.header_type == 2,
                 message: '请输入纳税人识别号',
                 trigger: ['blur', 'change'],
-            },
-            {
+            }, {
                 validator(rule, value, callback) {
-                    const limit =  /^[0-9a-zA-Z]+$/;
-                    if (!limit.test(value) && formData.header_type == 2){
+                    const limit = /^[0-9a-zA-Z]+$/;
+                    if (!limit.test(value) && formData.header_type == 2) {
                         callback(new Error('请输入正确的纳税人识别号'))
                     } else {
                         callback()
                     }
-                    }
+                }
             }]
         }
     })
@@ -178,5 +183,4 @@
 </script>
 
 <style lang="scss" scoped>
-
 </style>

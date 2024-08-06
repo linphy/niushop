@@ -1,26 +1,24 @@
 <template>
-    <div>
-        <el-dialog v-model="showDialog" :title="t('goodsCategorySpreadTitle')" width="500px" :destroy-on-close="true">
+    <el-dialog v-model="showDialog" :title="t('goodsCategorySpreadTitle')" width="500px" :destroy-on-close="true">
 
-            <div class="promote-flex flex">
-                <div class="promote-img flex justify-center items-center bg-[#f8f8f8] w-[150px] h-[150px]">
-                    <el-image :src="wapImage" />
-                </div>
-
-                <div class="px-[20px] flex-1">
-                    <div class="mb-[10px]">{{ t('spreadLink') }}</div>
-                    <el-input class="mb-[10px]" readonly :value="wapPreview">
-                        <template #append>
-                            <el-button @click="copyEvent(wapPreview)">{{ t('copy') }}</el-button>
-                        </template>
-                    </el-input>
-                    <a class="text-primary" :href="wapImage" download>{{ t('downloadQrcode') }}</a>
-                </div>
-
+        <div class="promote-flex flex">
+            <div class="promote-img flex justify-center items-center bg-[#f8f8f8] w-[150px] h-[150px]">
+                <el-image :src="wapImage" />
             </div>
 
-        </el-dialog>
-    </div>
+            <div class="px-[20px] flex-1">
+                <div class="mb-[10px]">{{ t('spreadLink') }}</div>
+                <el-input class="mb-[10px]" readonly :value="wapPreview">
+                    <template #append>
+                        <el-button @click="copyEvent(wapPreview)">{{ t('copy') }}</el-button>
+                    </template>
+                </el-input>
+                <a class="text-primary" :href="wapImage" download>{{ t('downloadQrcode') }}</a>
+            </div>
+
+        </div>
+
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -34,9 +32,7 @@ import { useClipboard } from '@vueuse/core'
 import { getUrl } from '@/app/api/sys'
 
 const goods: any = reactive({})
-
 const showDialog = ref(false)
-
 const wapUrl = ref('')
 const wapDomain = ref('')
 const wapImage = ref('')

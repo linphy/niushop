@@ -42,9 +42,9 @@ const useCartStore = defineStore('cart', {
                                 sale_price: item.goodsSku.price
                             };
 
-                            if (item.goods.is_discount) {
+                            if (item.goods.is_discount && item.goodsSku.sale_price != item.goodsSku.price) {
                                 cart.sale_price = item.goodsSku.sale_price ? item.goodsSku.sale_price : item.goodsSku.price // 折扣价
-                            } else if (item.goods.member_discount && getToken()) {
+                            } else if (item.goods.member_discount && getToken() && item.goodsSku.member_price != item.goodsSku.price) {
                                 cart.sale_price = item.goodsSku.member_price ? item.goodsSku.member_price : item.goodsSku.price // 会员价
                             }
 

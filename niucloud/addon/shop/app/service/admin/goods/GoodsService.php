@@ -58,6 +58,16 @@ class GoodsService extends BaseAdminService
             $goods_info = $this->model->field($field)->where([ [ 'goods_id', '=', $params[ 'goods_id' ] ] ])->findOrEmpty()->toArray();
             if (!empty($goods_info)) {
 
+                if (!empty($goods_info[ 'goods_category' ])) {
+                    $category_service = new CategoryService();
+                    foreach ($goods_info[ 'goods_category' ] as $k => $v) {
+                        $category = $category_service->getInfo($v);
+                        if (empty($category)) {
+                            unset($goods_info[ 'goods_category' ][ $k ]);
+                        }
+                    }
+                }
+
                 // 商品品牌，处理数据类型
                 if (empty($goods_info[ 'brand_id' ])) {
                     $goods_info[ 'brand_id' ] = '';
@@ -226,6 +236,7 @@ class GoodsService extends BaseAdminService
             ];
             $res = $this->model->create($goods_data);
 
+            $sku_data = [];
             if ($data[ 'spec_type' ] == 'single') {
                 // 单规格
                 $sku_data = [
@@ -248,7 +259,6 @@ class GoodsService extends BaseAdminService
             } elseif ($data[ 'spec_type' ] == 'multi') {
 
                 // 多规格数据
-                $sku_data = [];
                 $default_spec_count = 0;
                 foreach ($data[ 'goods_sku_data' ] as $k => $v) {
                     $sku_spec_format = [];
@@ -324,6 +334,14 @@ class GoodsService extends BaseAdminService
             $goods_spec_model = new GoodsSpec();
             $order_goods_model = new OrderGoods();
 
+            // 查询商品参与营销活动的数量
+            $active_goods_count = $this->getActiveGoodsCount($goods_id);
+            if ($data[ 'status' ] == 0) {
+                if ($active_goods_count > 0) {
+                    throw new AdminException('SHOP_GOODS_PARTICIPATE_IN_ACTIVE_DISABLED_EDIT');
+                }
+            }
+
             // 商品封面
             if (!empty($data[ 'goods_image' ])) $data[ 'goods_cover' ] = explode(',', $data[ 'goods_image' ])[ 0 ];
 
@@ -358,9 +376,7 @@ class GoodsService extends BaseAdminService
 
             $this->model->where([ [ 'goods_id', '=', $goods_id ] ])->update($goods_data);
 
-            // 查询商品参与营销活动的数量
-            $active_goods_count = $this->getActiveGoodsCount($goods_id);
-
+            $sku_data = [];
             if ($data[ 'spec_type' ] == 'single') {
                 // 单规格
                 $sku_data = [
@@ -398,6 +414,9 @@ class GoodsService extends BaseAdminService
                 } else {
 
                     $goods_sku_model->where([ [ 'goods_id', '=', $goods_id ] ])->update($sku_data);
+
+                    // 防止存在遗留规格项，删除旧规格
+                    $goods_spec_model->where([ [ 'goods_id', '=', $goods_id ] ])->delete();
                 }
 
             } elseif ($data[ 'spec_type' ] == 'multi') {
@@ -542,7 +561,6 @@ class GoodsService extends BaseAdminService
                     $goods_sku_model->where([ [ 'goods_id', '=', $goods_id ] ])->delete();
                     $goods_spec_model->where([ [ 'goods_id', '=', $goods_id ] ])->delete();
 
-                    $sku_data = [];
                     $default_spec_count = 0;
                     foreach ($data[ 'goods_sku_data' ] as $k => $v) {
                         $sku_spec_format = [];
@@ -775,14 +793,16 @@ class GoodsService extends BaseAdminService
 
         $sku_where = [
             [ 'goodsSku.is_default', '=', 1 ],
-            [ 'status', '=', 1 ],
-            [ 'goods.stock', '>', 0 ]
+            [ 'status', '=', 1 ]
         ];
 
         if (!empty($where[ 'keyword' ])) {
             $sku_where[] = [ 'goods_name|sub_title', 'like', '%' . $where[ 'keyword' ] . '%' ];
         }
 
+        if (empty($where[ 'goods_ids' ])) {
+            $sku_where[] = [ 'goods.stock', '>', 0 ];
+        }
         if (!empty($where[ 'goods_ids' ])) {
             $sku_where[] = [ 'goods.goods_id', 'in', $where[ 'goods_ids' ] ];
         }
@@ -884,7 +904,7 @@ class GoodsService extends BaseAdminService
         ];
 
         $data[ 'sale_goods_num' ] = $this->model->where([ [ 'status', '=', 1 ] ])->count();
-        $data[ 'warehouse_goods_num' ] = $this->model->where([ [ 'status', '=', 0 ]])->count();
+        $data[ 'warehouse_goods_num' ] = $this->model->where([ [ 'status', '=', 0 ] ])->count();
         return $data;
     }
 

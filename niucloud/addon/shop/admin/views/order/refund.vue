@@ -9,8 +9,7 @@
 			<el-card class="box-card !border-none my-[10px] table-search-wrap" shadow="never">
 				<el-form :inline="true" :model="orderTable.searchParam" ref="searchFormRef">
 					<el-form-item :label="t('orderRefundNo')" prop="order_refund_no">
-						<el-input v-model.trim="orderTable.searchParam.order_refund_no"
-							:placeholder="t('orderRefundNoPlaceholder')" @keyup="filterNumber($event)" maxlength="30" />
+						<el-input v-model.trim="orderTable.searchParam.order_refund_no" :placeholder="t('orderRefundNoPlaceholder')" @keyup="filterNumber($event)" maxlength="30" />
 					</el-form-item>
 					<el-form-item :label="t('createTime')" prop="create_time">
 						<el-date-picker v-model="orderTable.searchParam.create_time" type="datetimerange"
@@ -64,9 +63,9 @@
 													<img class="w-[50px] h-[50px]" v-if="row.goods_image_thumb_small" :src="img(row.goods_image_thumb_small)" alt="">
 													<img class="w-[50px] h-[50px]" v-else src="" alt="">
 												</div>
-												<div class="flex">
+												<div class="flex  flex-col">
 													<p class="multi-hidden">{{ row.goods_name }}</p>
-													<span class="text-[12px] text-[#999]">{{ row.sku_name }}</span>
+													<span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
 												</div>
 											</div>
 										</template>

@@ -85,7 +85,6 @@ class Label extends BaseAdminController
             [ "label_name", "" ],
             [ "memo", "" ],
             [ "sort", 0 ],
-
         ]);
         $this->validate($data, 'addon\shop\app\validate\goods\Label.edit');
         ( new LabelService() )->edit($id, $data);
@@ -102,7 +101,6 @@ class Label extends BaseAdminController
         ( new LabelService() )->del($id);
         return success('DELETE_SUCCESS');
     }
-
 
     /**
      * 修改排序

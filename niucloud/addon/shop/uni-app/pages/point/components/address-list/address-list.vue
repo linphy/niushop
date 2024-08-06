@@ -18,7 +18,7 @@
 			</scroll-view>
 			
 			<view class="p-[30rpx] pt-[40rpx]">
-				<u-button type="primary" :text="t('addAddress')" shape="circle" @click="addAddress"></u-button>
+                <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="addAddress">{{t('addAddress')}}</button>
 			</view>
 		</view>
     </u-popup>
@@ -33,8 +33,8 @@
     const show = ref(false)
 	const loading = ref(false)
 	const currAddressId = ref('') // 选中的索引
-	let propData = ref({})
-	let addressList = ref([])
+	const propData = ref({})
+	const addressList = ref([])
 	
 	const emits = defineEmits(['confirm'])
 	
@@ -56,7 +56,7 @@
 			// 参数二，表示是否直接跳转到地图界面, 1跳转到地图界面，2表示不跳
 			editAddress(data,1);
 		}else{
-			let obj = {}
+			let obj:any = {}
 			obj.address_id = addressList.value[index].id
 			obj.delivery = propData.value.delivery
 			emits('confirm', obj)

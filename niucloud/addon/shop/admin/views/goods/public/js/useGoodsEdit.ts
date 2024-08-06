@@ -1303,7 +1303,7 @@ export function useGoodsEdit(params: any = {}) {
 
     let attrLoad = false;
     const attrTableData: any = reactive([])
-    let editCallFn = ref(false) //用于编辑时，只调用一次的变量标识
+    const editCallFn = ref(false) //用于编辑时，只调用一次的变量标识
 
     const attrChange = (attr_id: any = 0) => {
         if (attrLoad || !attr_id) return false; // !attr_id 防止多次进入

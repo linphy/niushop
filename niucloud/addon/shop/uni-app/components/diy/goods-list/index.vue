@@ -7,7 +7,7 @@
 					<view class="bg-white w-full flex p-[20rpx] mx-[20rpx] rounded-[8rpx] overflow-hidden" :class="{ 'mt-[20rpx]': index > -10,'mb-[20rpx]': (index+1) == goodsList.length }" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 						<u--image radius="10rpx" width="190rpx" height="190rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 							<template #error>
-								<u-icon name="photo" color="#999" size="50"></u-icon>
+								<image class="w-[190rpx] h-[190rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 							</template>
 						</u--image>
 						<view class="flex-1 flex flex-col ml-[20rpx] py-[6rpx]">
@@ -29,7 +29,7 @@
 					<view class="flex flex-col bg-[#fff] box-border rounded-[12rpx] overflow-hidden" :class="{'mt-[24rpx]': index > 1}" :style="itemCss" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 						<u--image :width="style2Width" :height="style2Width" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 							<template #error>
-								<u-icon name="photo" color="#999" size="50"></u-icon>
+								<image :style="{'width': style2Width,'height': style2Width}" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 							</template>
 						</u--image>
 						<view class="px-[16rpx] flex-1 pt-[16rpx] pb-[20rpx] flex flex-col justify-between">
@@ -49,16 +49,16 @@
 				</block>
 				<block v-if="diyComponent.style == 'style-3'">
 					<view :style="style3Css">
-						<scroll-view :id="'warpStyle3-'+diyComponent.id" class="whitespace-nowrap" :scroll-x="true">
+						<scroll-view :id="'warpStyle3-'+diyComponent.id" class="whitespace-nowrap h-[284rpx]" :scroll-x="true">
 							<view :id="'item'+index+diyComponent.id" class="w-[214rpx] rounded-[10rpx] inline-block bg-[#fff] box-border overflow-hidden" :class="{'!mr-[0rpx]' : index == (goodsList.length-1)}" :style="itemCss+itemStyle3" v-for="(item,index) in goodsList" :key="item.goods_id" @click="toLink(item)">
 								<u--image width="214rpx" height="160rpx" :src="img(item.goods_cover_thumb_mid || '')" model="aspectFill">
 									<template #error>
-										<u-icon name="photo" color="#999" size="50"></u-icon>
+										<image class="w-[214rpx] h-[160rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 									</template>
 								</u--image>
 								<view class="px-[10rpx] pt-[16rpx] pb-[10rpx]">
 									<view class="text-[26rpx] text-[#303133] truncate" :style="{ color : diyComponent.goodsNameStyle.color, fontWeight : diyComponent.goodsNameStyle.fontWeight }">{{item.goods_name}}</view>
-									<view class="text-[var(--price-text-color)] mt-[10rpx] flex-wrap font-bold price-font flex items-baseline" :style="{ color : diyComponent.priceStyle.mainColor }">
+									<view class="text-[var(--price-text-color)] py-[10rpx] flex-wrap font-bold price-font flex items-baseline leading-[1]" :style="{ color : diyComponent.priceStyle.mainColor }">
 										<view class="truncate">
 											<text class="text-[26rpx] font-500">￥</text>
 											<text class="text-[36rpx] font-500">{{ parseFloat(goodsPrice(item)).toFixed(2).split('.')[0] }}</text>
@@ -167,10 +167,11 @@
 	const style3Css = computed(() => {
         var style = '';
         style += 'padding:0 20rpx;';
-        if (diyComponent.value.margin && diyComponent.value.margin.both){style += 'width: calc( 100vw - ' + ((diyComponent.value.margin.both * 4) + 40) + 'rpx);'}
-		else{style += 'box-sizing: border-box;';}
+        if (diyComponent.value.margin && diyComponent.value.margin.both){style += 'width: calc(100vw - ' + ((diyComponent.value.margin.both * 4) + 40) + 'rpx);'}
+		else{style += 'box-sizing: border-box; width: 100vw;';}
         return style;
     })
+
 	//商品样式三
 	const itemStyle3 = ref('');
 	const setItemStyle3 = ()=>{
@@ -179,12 +180,13 @@
 				uni.createSelectorQuery().in(instance).select('#item0'+diyComponent.value.id).boundingClientRect((data:any) => {
 					itemStyle3.value = `margin-right:${(res.width - data.width*3)/2}px;`
 				}).exec()
-			}).exec()	
+			}).exec()
 		// #endif
 		// #ifdef  H5
 			itemStyle3.value= 'margin-right:14rpx;'
 		// #endif
 	}
+
 	watch(
 		() => props.pullDownRefreshCount,
 		(newValue, oldValue) => {
@@ -305,41 +307,35 @@
 		
 	}
 
-	const toLink = (data) => {
+	const toLink = (data: any) => {
 		redirect({ url: '/addon/shop/pages/goods/detail', param: { goods_id: data.goods_id } })
-	}
-
-	// rpx转px
-	const rpxUpPx = (res) => {
-		const screenWidth = uni.getSystemInfoSync().windowWidth;
-		var data = (screenWidth * parseInt(res)) / 750;
-		return Math.floor(data);
 	}
 	
 	// 价格类型 
-	let priceType = (data:any) =>{
+	const priceType = (data:any) =>{
 		let type = "";
-		if(data.is_discount){
+		if(data.is_discount && data.goodsSku.sale_price != data.goodsSku.price){
 			type = 'discount_price'// 折扣
-		}else if(data.member_discount && getToken()){
+		}else if(data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
 			type = 'member_price' // 会员价
 		}else{ 
 			type = ""
 		}
 		return type;
 	}
+
 	// 商品价格
-	let goodsPrice = (data:any) =>{
-		let price = "0.00";
-		if(data.is_discount){
-			price = data.goodsSku.sale_price?data.goodsSku.sale_price:data.goodsSku.price // 折扣价
-		}else if(data.member_discount && getToken()){
-			price = data.goodsSku.member_price?data.goodsSku.member_price:data.goodsSku.price // 会员价
-		}else{
-			price = data.goodsSku.price
-		}
-		return price;
-	}
+	const goodsPrice = (data:any) => {
+        let price = "0.00";
+        if (data.is_discount && data.goodsSku.sale_price != data.goodsSku.price) {
+            price = data.goodsSku.sale_price ? data.goodsSku.sale_price : data.goodsSku.price // 折扣价
+        } else if (data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
+            price = data.goodsSku.member_price ? data.goodsSku.member_price : data.goodsSku.price // 会员价
+        } else {
+            price = data.goodsSku.price
+        }
+        return price;
+    }
 	
 </script>
 

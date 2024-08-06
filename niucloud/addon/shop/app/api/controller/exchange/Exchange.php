@@ -74,5 +74,4 @@ class Exchange extends BaseApiController
         return success((new ExchangeService())->getPointInfo());
     }
 
-
 }

@@ -241,9 +241,9 @@
                     <el-input v-model="formData.limit_num" clearable :placeholder="t('limitPlaceholder')" class="input-width" />
                 </el-form-item>
                 <!-- 兑换价 -->
-                <el-form-item :label="t('money')" required>
-                    <div class="flex justify-center">
-                                        <el-form-item prop="point" :rules="[{
+	            <el-form-item :label="t('money')" required>
+		            <div class="flex justify-center">
+			            <el-form-item prop="point" :rules="[{
                                             trigger: 'blur',
                                             validator: (rule: any, value: any, callback: any) => {
                                                     if (value.length == 0) {
@@ -261,15 +261,15 @@
                                                     }
                                             }
                                             }]" class="sku-form-item-wrap">
-                                            <!-- @blur="inputBlur(row,'reduce',$index)" -->
-                                            <el-input v-model.trim="formData.point" class="!w-[200px]"  clearable placeholder="0" maxlength="8" >
-                                                <template #append>
-                                                    <span>{{t('integralUnit')}}</span>
-                                                </template>
-                                            </el-input>
-                                        </el-form-item>
-                                        <span class="mx-[20px]">+</span>
-                                        <el-form-item prop="price" :rules="[{
+				            <!-- @blur="inputBlur(row,'reduce',$index)" -->
+				            <el-input v-model.trim="formData.point" class="!w-[200px]" clearable placeholder="0" maxlength="8">
+					            <template #append>
+						            <span>{{t('integralUnit')}}</span>
+					            </template>
+				            </el-input>
+			            </el-form-item>
+			            <span class="mx-[20px]">+</span>
+			            <el-form-item prop="price" :rules="[{
                                             trigger: 'blur',
                                             validator: (rule: any, value: any, callback: any) => {
                                                     if(value.length){
@@ -285,15 +285,15 @@
                                                     }
                                             }
                                             }]" class="sku-form-item-wrap">
-                                            <!-- @blur="inputBlur(row,'reduce',$index)" -->
-                                            <el-input v-model.trim="formData.price" class="!w-[200px]"  clearable placeholder="0.00" maxlength="8" >
-                                                <template #append>
-                                                    <span>{{t('prickUnit')}}</span>
-                                                </template>
-                                            </el-input>
-                                        </el-form-item>
-                                    </div>
-                </el-form-item>
+				            <!-- @blur="inputBlur(row,'reduce',$index)" -->
+				            <el-input v-model.trim="formData.price" class="!w-[200px]" clearable placeholder="0.00" maxlength="8">
+					            <template #append>
+						            <span>{{t('prickUnit')}}</span>
+					            </template>
+				            </el-input>
+			            </el-form-item>
+		            </div>
+	            </el-form-item>
             </el-card>
 
             <el-card class="box-card !border-none" shadow="never" v-if="formData.type=='balance'">

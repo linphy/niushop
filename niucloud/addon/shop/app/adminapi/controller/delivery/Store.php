@@ -22,16 +22,17 @@ use addon\shop\app\service\admin\delivery\StoreService;
  */
 class Store extends BaseAdminController
 {
-   /**
-    * 获取自提门店列表
-    * @return \think\Response
-    */
-    public function lists(){
+    /**
+     * 获取自提门店列表
+     * @return \think\Response
+     */
+    public function lists()
+    {
         $data = $this->request->params([
-             ["store_name",""],
-             ["create_time",["",""]]
+            [ "store_name", "" ],
+            [ "create_time", [ "", "" ] ]
         ]);
-        return success((new StoreService())->getPage($data));
+        return success(( new StoreService() )->getPage($data));
     }
 
     /**
@@ -39,33 +40,34 @@ class Store extends BaseAdminController
      * @param int $id
      * @return \think\Response
      */
-    public function info(int $id){
-        return success((new StoreService())->getInfo($id));
+    public function info(int $id)
+    {
+        return success(( new StoreService() )->getInfo($id));
     }
 
     /**
      * 添加自提门店
      * @return \think\Response
      */
-    public function add(){
+    public function add()
+    {
         $data = $this->request->params([
-             ["store_name",""],
-             ["store_desc",""],
-             ["store_logo",""],
-             ["store_mobile",0],
-             ["province_name",""],
-             ["city_name",""],
-             ["district_name",""],
-             ["address",""],
-             ["full_address",""],
-             ["longitude",""],
-             ["latitude",""],
-             ["trade_time",""],
-
+            [ "store_name", "" ],
+            [ "store_desc", "" ],
+            [ "store_logo", "" ],
+            [ "store_mobile", 0 ],
+            [ "province_name", "" ],
+            [ "city_name", "" ],
+            [ "district_name", "" ],
+            [ "address", "" ],
+            [ "full_address", "" ],
+            [ "longitude", "" ],
+            [ "latitude", "" ],
+            [ "trade_time", "" ],
         ]);
         $this->validate($data, 'addon\shop\app\validate\delivery\Store.add');
-        $id = (new StoreService())->add($data);
-        return success('ADD_SUCCESS', ['id' => $id]);
+        $id = ( new StoreService() )->add($data);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
     /**
@@ -73,25 +75,26 @@ class Store extends BaseAdminController
      * @param $id  自提门店id
      * @return \think\Response
      */
-    public function edit($id){
+    public function edit($id)
+    {
         $data = $this->request->params([
-             ["store_name",""],
-             ["store_desc",""],
-             ["store_logo",""],
-             ["store_mobile",0],
-             ["address",""],
-             ["full_address",""],
-             ["longitude",""],
-             ["latitude",""],
-             ["trade_time",""]
+            [ "store_name", "" ],
+            [ "store_desc", "" ],
+            [ "store_logo", "" ],
+            [ "store_mobile", 0 ],
+            [ "address", "" ],
+            [ "full_address", "" ],
+            [ "longitude", "" ],
+            [ "latitude", "" ],
+            [ "trade_time", "" ]
         ]);
         $address = $this->request->params([
-            ["province_name",""],
-            ["city_name",""],
-            ["district_name",""],
+            [ "province_name", "" ],
+            [ "city_name", "" ],
+            [ "district_name", "" ],
         ]);
         $this->validate($data, 'addon\shop\app\validate\delivery\Store.edit');
-        (new StoreService())->edit($id, $data, $address);
+        ( new StoreService() )->edit($id, $data, $address);
         return success('EDIT_SUCCESS');
     }
 
@@ -100,19 +103,19 @@ class Store extends BaseAdminController
      * @param $id  自提门店id
      * @return \think\Response
      */
-    public function del(int $id){
-        (new StoreService())->del($id);
+    public function del(int $id)
+    {
+        ( new StoreService() )->del($id);
         return success('DELETE_SUCCESS');
     }
 
     public function getList()
     {
         $data = $this->request->params([
-            ["store_name",""],
-            ["create_time",["",""]]
+            [ "store_name", "" ],
+            [ "create_time", [ "", "" ] ]
         ]);
-        return success((new StoreService())->getList($data));
+        return success(( new StoreService() )->getList($data));
     }
-
 
 }

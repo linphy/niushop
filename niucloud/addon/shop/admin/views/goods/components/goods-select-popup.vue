@@ -162,8 +162,6 @@ const goodsTable = reactive({
 
 const searchFormRef = ref()
 
-// 条件筛选查询
-
 // 查询全部/已选商品
 const handleSelectTypeChange = (value: any) => {
     loadGoodsList()
@@ -255,7 +253,6 @@ const handleSelectChange = (selection: any, row: any) => {
         setGoodsSelected();
     }
 }
-
 
 // 监听表格全选
 const handleSelectAllChange = (selection: any) => {

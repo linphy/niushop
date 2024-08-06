@@ -6,11 +6,11 @@
                 <div class="flex w-full justify-between flex-wrap">
                     <div class="w-[32%] border-[#eee] border-solid border-[1px] h-[90px] p-[15px] cursor-pointer" v-for="(item, index) in boxes.slice(0, 3)"  @click="selectBox(item)" :class="{ 'border-[#105CFB]': currentIndex == item.id,'text-[#105CFB]': currentIndex == item.id }">
                         <div class="flex items-center">
-                                <div class="text-[14px]">预计收入</div>
-                                <div class="ml-[5px] text-[14px]">(元)</div>
-                                <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
-                                  <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
-                                </el-tooltip>
+                            <div class="text-[14px]">预计收入</div>
+                            <div class="ml-[5px] text-[14px]">(元)</div>
+                            <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
+                              <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
+                            </el-tooltip>
                         </div>
                         <div class="text-[25px] font-bold">0.00</div>
                     </div>
@@ -30,11 +30,11 @@
                 <div class="flex w-full justify-between flex-wrap">
                     <div class="w-[32%] border-[#eee] border-solid border-[1px] h-[90px] p-[15px] cursor-pointer" v-for="(item, index) in boxes.slice(0, 3)"  @click="selectBox(item)" :class="{ 'border-[#105CFB]': currentIndex == item.id,'text-[#105CFB]': currentIndex == item.id }">
                         <div class="flex items-center">
-                                <div class="text-[14px]">预计收入</div>
-                                <div class="ml-[5px] text-[14px]">(元)</div>
-                                <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
-                                  <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
-                                </el-tooltip>
+                            <div class="text-[14px]">预计收入</div>
+                            <div class="ml-[5px] text-[14px]">(元)</div>
+                            <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
+                              <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
+                            </el-tooltip>
                         </div>
                         <div class="text-[25px] font-bold">0.00</div>
                     </div>
@@ -54,11 +54,11 @@
                 <div class="flex w-full justify-between flex-wrap">
                     <div class="w-[32%] border-[#eee] border-solid border-[1px] h-[90px] p-[15px] cursor-pointer" v-for="(item, index) in boxes.slice(0, 3)"  @click="selectBox(item)" :class="{ 'border-[#105CFB]': currentIndex == item.id,'text-[#105CFB]': currentIndex == item.id }">
                         <div class="flex items-center">
-                                <div class="text-[14px]">预计收入</div>
-                                <div class="ml-[5px] text-[14px]">(元)</div>
-                                <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
-                                  <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
-                                </el-tooltip>
+                            <div class="text-[14px]">预计收入</div>
+                            <div class="ml-[5px] text-[14px]">(元)</div>
+                            <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
+                              <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
+                            </el-tooltip>
                         </div>
                         <div class="text-[25px] font-bold">0.00</div>
                     </div>
@@ -77,11 +77,11 @@
                 <div class="flex w-full justify-between flex-wrap">
                     <div class="w-[32%] border-[#eee] border-solid border-[1px] h-[90px] p-[15px] cursor-pointer" v-for="(item, index) in boxes.slice(0, 3)"  @click="selectBox(item)" :class="{ 'border-[#105CFB]': currentIndex == item.id,'text-[#105CFB]': currentIndex == item.id }">
                         <div class="flex items-center">
-                                <div class="text-[14px]">预计收入</div>
-                                <div class="ml-[5px] text-[14px]">(元)</div>
-                                <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
-                                  <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
-                                </el-tooltip>
+                            <div class="text-[14px]">预计收入</div>
+                            <div class="ml-[5px] text-[14px]">(元)</div>
+                            <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
+                              <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
+                            </el-tooltip>
                         </div>
                         <div class="text-[25px] font-bold">0.00</div>
                     </div>
@@ -115,11 +115,11 @@
                 <div class="flex w-full justify-between flex-wrap" >
                     <div class="w-[32%] border-[#eee] border-solid border-[1px] h-[90px] p-[15px] cursor-pointer" v-for="(item, index) in boxes.slice(0, 3)"  @click="selectBox(item)" :class="{ 'border-[#105CFB]': currentIndex == item.id,'text-[#105CFB]': currentIndex == item.id }">
                         <div class="flex items-center">
-                                <div class="text-[14px]">预计收入</div>
-                                <div class="ml-[5px] text-[14px]">(元)</div>
-                                <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
-                                  <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
-                                </el-tooltip>
+                            <div class="text-[14px]">预计收入</div>
+                            <div class="ml-[5px] text-[14px]">(元)</div>
+                            <el-tooltip class="box-item" effect="light" content="统计时间内，店铺收入金额减去支出的金额" placement="top-start">
+                              <div class="nc-iconfont nc-icon-bangzhuV6xx wenHao text-[#666] ml-[12px]"></div>
+                            </el-tooltip>
                         </div>
                         <div class="text-[25px] font-bold">0.00</div>
                     </div>
@@ -195,7 +195,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted, nextTick, watch } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
 import type { TabsPaneContext} from 'element-plus'
 import * as echarts from 'echarts'
 
@@ -291,6 +291,7 @@ onMounted(() => {
 }
 .tab-index :deep(.el-tabs__item){
     line-height: 34px;
+    height: 34px !important;
 }
 .tab-index :deep(.el-tabs__nav){
     border: 1px solid #D2D2D2;

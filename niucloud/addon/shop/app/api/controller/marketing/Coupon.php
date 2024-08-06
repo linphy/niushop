@@ -26,6 +26,9 @@ class Coupon extends BaseApiController
         $data = $this->request->params([
             [ 'goods_id', '' ],
             [ 'category_id', '' ],
+            [ 'type', '' ], // 优惠券类型
+            [ 'order', '' ], // 排序方式（综合：空，最新：create_time，价格：price）
+            [ 'sort', 'desc' ], // 升序：asc，降序：desc
         ]);
         return success(( new CouponService() )->getPage($data));
     }
@@ -62,9 +65,19 @@ class Coupon extends BaseApiController
     public function memberCouponlists()
     {
         $data = $this->request->params([
-            [ 'status', '' ]
+            [ 'status', '' ],
+            [ 'type', 'all' ]
         ]);
         return success(( new CouponService() )->getMemberPage($data));
+    }
+
+    /**
+     * 会员优惠券按状态查询数量
+     * @return Response
+     */
+    public function memberCouponStatusCount()
+    {
+        return success(data:( new CouponService() )->getCouponCountByStatus());
     }
 
     /**
@@ -100,6 +113,15 @@ class Coupon extends BaseApiController
     public function qrcode(int $id)
     {
         return success(data:( new CouponService() )->getQrcode($id));
+    }
+
+    /**
+     * 获取优惠券类型
+     * @return Response
+     */
+    public function getCouponType()
+    {
+        return success(( new CouponService() )->getCouponType());
     }
 
 }

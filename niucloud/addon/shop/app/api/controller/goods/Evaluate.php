@@ -89,7 +89,6 @@ class Evaluate extends BaseApiController
     /**
      * 评价信息
      * @param $id
-     * @return Response
      */
     public function getEvaluate($id)
     {

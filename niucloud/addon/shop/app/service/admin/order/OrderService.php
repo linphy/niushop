@@ -16,6 +16,7 @@ use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
 use addon\shop\app\dict\order\OrderGoodsDict;
 use addon\shop\app\dict\order\OrderLogDict;
+use addon\shop\app\model\delivery\Local;
 use addon\shop\app\model\delivery\Store;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderDelivery;
@@ -24,11 +25,12 @@ use addon\shop\app\service\admin\delivery\DeliveryService;
 use addon\shop\app\service\core\order\CoreOrderEventService;
 use addon\shop\app\service\core\order\CoreOrderPayService;
 use app\model\pay\Pay;
-use app\service\admin\sys\ExportService;
 use app\service\core\pay\CorePayService;
 use core\base\BaseAdminService;
 use core\exception\AdminException;
-use core\exception\CommonException;
+use Location\Coordinate;
+use Location\Distance\Vincenty;
+use Location\Polygon;
 use think\db\exception\DbException;
 use think\db\Query;
 use think\facade\Db;
@@ -55,31 +57,29 @@ class OrderService extends BaseAdminService
         $order = 'create_time desc';
 
         $pay_where = [];
-        if ($where['pay_type']) {
-            $pay_where[] = ['pay.type', '=', $where['pay_type']];
+        if ($where[ 'pay_type' ]) {
+            $pay_where[] = [ 'pay.type', '=', $where[ 'pay_type' ] ];
         }
         $search_model = $this->model
-            ->withSearch(['search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time', 'activity_type'], $where)
+            ->withSearch([ 'search_type', 'order_from', 'join_status', 'create_time', 'join_pay_time', 'activity_type', 'keyword' ], $where)
             ->field($field)
             ->withJoin([
-                'pay' => function (Query $query) use ($pay_where) {
+                'pay' => function(Query $query) use ($pay_where) {
                     $query->where($pay_where);
                 },
+                'member'
             ], 'left')
             ->with([
-                'order_goods' => function ($query) {
-                    $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money')->append(['delivery_status_name', 'status_name', 'goods_image_thumb_small']);
-                },
-                'member' => function ($query) {
-                    $query->field('member_id, nickname, mobile, headimg');
+                'order_goods' => function($query) {
+                    $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id')->append([ 'delivery_status_name', 'status_name', 'goods_image_thumb_small' ]);
                 }
-            ])->order($order)->append(['order_from_name', 'order_type_name', 'status_name', 'delivery_type_name']);
+            ])->order($order)->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ]);
         $order_status_list = OrderDict::getStatus();
-        $list = $this->pageQuery($search_model, function ($item, $key) use ($order_status_list) {
-            $item['order_status_data'] = $order_status_list[$item['status']] ?? [];
-            $item_pay = $item['pay'];
+        $list = $this->pageQuery($search_model, function($item, $key) use ($order_status_list) {
+            $item[ 'order_status_data' ] = $order_status_list[ $item[ 'status' ] ] ?? [];
+            $item_pay = $item[ 'pay' ];
             if (!empty($item_pay)) {
-                $item_pay->append(['type_name']);
+                $item_pay->append([ 'type_name' ]);
             }
         });
         return $list;
@@ -93,38 +93,38 @@ class OrderService extends BaseAdminService
     public function getDetail(int $order_id)
     {
         $field = 'activity_type,point,order_id,order_no,order_type,order_from,out_trade_no,status,member_id,ip,goods_money,delivery_money,order_money,invoice_id,create_time,pay_time,delivery_time,take_time,finish_time,close_time,delivery_type,taker_name,taker_mobile,taker_province,taker_city,taker_district,taker_address,taker_full_address,taker_longitude,taker_latitude,take_store_id,is_enable_refund,member_remark,shop_remark,close_remark,discount_money';
-        $info = $this->model->where([['order_id', '=', $order_id]])->field($field)
+        $info = $this->model->where([ [ 'order_id', '=', $order_id ] ])->field($field)
             ->with(
                 [
-                    'order_goods' => function ($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money')->append(['delivery_status_name','status_name']);
+                    'order_goods' => function($query) {
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, goods_type, delivery_status, status,discount_money,delivery_id')->append([ 'delivery_status_name', 'status_name' ]);
                     },
-                    'member' => function ($query) {
+                    'member' => function($query) {
                         $query->field('member_id, nickname, mobile, headimg');
                     },
-                    'order_log' => function ($query) {
-                        $query->field('order_id, content, main_type, create_time, main_id, type')->order("create_time desc, id desc")->append(['main_type_name', 'type_name', 'main_name']);
+                    'order_log' => function($query) {
+                        $query->field('order_id, content, main_type, create_time, main_id, type')->order("create_time desc, id desc")->append([ 'main_type_name', 'type_name', 'main_name' ]);
                     }
-                ])->append(['order_from_name', 'order_type_name', 'status_name', 'delivery_type_name'])->findOrEmpty()->toArray();
+                ])->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ])->findOrEmpty()->toArray();
         $order_status_list = OrderDict::getStatus();
-        if (!empty($info)) $info['order_status_data'] = $order_status_list[$info['status']] ?? [];
+        if (!empty($info)) $info[ 'order_status_data' ] = $order_status_list[ $info[ 'status' ] ] ?? [];
 
-        if ($info['delivery_type'] == DeliveryDict::STORE) {
-            $info['store'] = (new Store())->where([['store_id', '=', $info['take_store_id']]])
+        if ($info[ 'delivery_type' ] == DeliveryDict::STORE) {
+            $info[ 'store' ] = ( new Store() )->where([ [ 'store_id', '=', $info[ 'take_store_id' ] ] ])
                 ->field('store_id, store_name, full_address, store_mobile, trade_time')
                 ->findOrEmpty()->toArray();
         }
 
-        if ($info['delivery_type'] == DeliveryDict::EXPRESS) {
-            $info['order_delivery'] = (new OrderDelivery())
-                ->where([['order_id', '=', $info['order_id']]])
+        if ($info[ 'delivery_type' ] == DeliveryDict::EXPRESS) {
+            $info[ 'order_delivery' ] = ( new OrderDelivery() )
+                ->where([ [ 'order_id', '=', $info[ 'order_id' ] ] ])
                 ->field('id, order_id, name, delivery_type, sub_delivery_type,express_company_id, express_number, create_time')
                 ->select()->toArray();
         }
 
-        if ($info['out_trade_no']) {
-            $info['pay'] = (new Pay())->where([['out_trade_no', '=', $info['out_trade_no']]])
-                ->field('out_trade_no, type, pay_time')->append(['type_name'])->findOrEmpty()->toArray();
+        if ($info[ 'out_trade_no' ]) {
+            $info[ 'pay' ] = ( new Pay() )->where([ [ 'out_trade_no', '=', $info[ 'out_trade_no' ] ] ])
+                ->field('out_trade_no, type, pay_time')->append([ 'type_name' ])->findOrEmpty()->toArray();
         }
 
         return $info;
@@ -137,7 +137,7 @@ class OrderService extends BaseAdminService
      */
     public function shopRemark($data)
     {
-        $this->model->where([['order_id', '=', $data['order_id']]])->update(['shop_remark' => $data['shop_remark']]);
+        $this->model->where([ [ 'order_id', '=', $data[ 'order_id' ] ] ])->update([ 'shop_remark' => $data[ 'shop_remark' ] ]);
         return true;
     }
 
@@ -154,10 +154,10 @@ class OrderService extends BaseAdminService
             "refund_order" => 0, //退款中（订单项）
         ];
 
-        $data['wait_pay_order'] = $this->model->where([ ['status', '=', OrderDict::WAIT_PAY]])->count();
-        $data['wait_delivery_order'] = $this->model->where([ ['status', '=', OrderDict::WAIT_DELIVERY]])->count();
-        $data['wait_take_order'] = $this->model->where([ ['status', '=', OrderDict::WAIT_TAKE]])->count();
-        $data['refund_order'] = (new OrderGoods())->where([ ['status', '=', OrderGoodsDict::REFUNDING]])->count();
+        $data[ 'wait_pay_order' ] = $this->model->where([ [ 'status', '=', OrderDict::WAIT_PAY ] ])->count();
+        $data[ 'wait_delivery_order' ] = $this->model->where([ [ 'status', '=', OrderDict::WAIT_DELIVERY ] ])->count();
+        $data[ 'wait_take_order' ] = $this->model->where([ [ 'status', '=', OrderDict::WAIT_TAKE ] ])->count();
+        $data[ 'refund_order' ] = ( new OrderGoods() )->where([ [ 'status', '=', OrderGoodsDict::REFUNDING ] ])->count();
 
         return $data;
     }
@@ -169,40 +169,42 @@ class OrderService extends BaseAdminService
      */
     public function editPrice($data)
     {
-        $order_id = $data['order_id'];
-        $order = $this->model->where([['order_id', '=', $order_id]])->findOrEmpty();
+        $order_id = $data[ 'order_id' ];
+        $order = $this->model->where([ [ 'order_id', '=', $order_id ] ])->findOrEmpty();
         if ($order->isEmpty()) throw new AdminException('SHOP_ORDER_NOT_FOUND');
-        if ($order['status'] != OrderDict::WAIT_PAY) throw new AdminException('SHOP_ONLY_PENDING_ORDERS_CAN_BE_REPRICED');
+        if ($order[ 'status' ] != OrderDict::WAIT_PAY) throw new AdminException('SHOP_ONLY_PENDING_ORDERS_CAN_BE_REPRICED');
 
         //关闭相关的支付  todo  封装订单专用的关闭支付相关
         try {
-            (new CorePayService())->closeByTrade(OrderDict::TYPE, $order_id);
-        } catch ( \Exception $e ) {
+            ( new CorePayService() )->closeByTrade(OrderDict::TYPE, $order_id);
+        } catch (\Exception $e) {
             throw new AdminException($e->getMessage());
         }
 
-        $delivery_money = $data['delivery_money'];
+        $delivery_money = $data[ 'delivery_money' ];
         if ($delivery_money < 0) throw new AdminException('SHOP_THE_SHIPPING_FEE_CANNOT_BE_LESS_THAN_0');
-        $order_goods_data = $data['order_goods_data'];//['order_goods_id' => ['money' => 10]]
+        $order_goods_data = $data[ 'order_goods_data' ];//['order_goods_id' => ['money' => 10]]
         $order_goods_model = new OrderGoods();
-        $order_goods_list = $order_goods_model->where([['order_id', '=', $order_id]])->select();
+        $order_goods_list = $order_goods_model->where([ [ 'order_id', '=', $order_id ] ])->select();
         $goods_money = 0;
         Db::startTrans();
         try {
-            foreach ($order_goods_list as $item) {
-                $item_order_goods_id = $item['order_goods_id'];
-                $temp_goods_data = $order_goods_data[$item_order_goods_id] ?? [];
+            foreach ($order_goods_list as $key => $item) {
+                $item_order_goods_id = $item[ 'order_goods_id' ];
+                $temp_goods_data = $order_goods_data[ $item_order_goods_id ] ?? [];
 
                 if (!empty($temp_goods_data)) {
-                    $item_money = $temp_goods_data['money'] ?? 0;
+                    $item_money = $temp_goods_data[ 'money' ] ?? 0;
                     if ($item_money != 0) {
-                        $item_order_goods_money = $item['order_goods_money'];//订单项总额
+                        $item_order_goods_money = $item[ 'order_goods_money' ];//订单项总额
                         $item_new_order_goods_money = round($item_order_goods_money + $item_money, 2);//
                         if ($item_new_order_goods_money < 0) {
                             throw new AdminException('SHOP_THE_LINE_ITEM_SUBTOTAL_CAN_T_BE_LESS_THAN_0');
                         }
-                        $item_new_goods_money = $item_new_order_goods_money + $item['discount_money'];
-                        $item_new_price = floor($item_new_goods_money / $item['num'] * 100) / 100;
+                        $item_new_goods_money = $item_new_order_goods_money + $item[ 'discount_money' ];
+                        $item_new_price = floor($item_new_goods_money / $item[ 'num' ] * 100) / 100;
+
+                        $order_goods_list[ $key ][ 'old_goods_money' ] = $item[ 'goods_money' ];
 
                         $item->save([
                             'price' => $item_new_price,
@@ -213,12 +215,15 @@ class OrderService extends BaseAdminService
                         continue;
                     }
                 }
-                $goods_money += $item['goods_money'];
+                $goods_money += $item[ 'goods_money' ];
             }
-            $order_money = round($goods_money + $delivery_money - $order['discount_money'], 2);
-            if($order_money < 0){
+            $order_money = round($goods_money + $delivery_money - $order[ 'discount_money' ], 2);
+            if ($order_money < 0) {
                 $order_money = 0;
             }
+
+            $order[ 'old_delivery_money' ] = $order[ 'delivery_money' ];
+
             $order->save([
                 'goods_money' => $goods_money,
                 'delivery_money' => $delivery_money,
@@ -227,6 +232,7 @@ class OrderService extends BaseAdminService
 
             $order_param = [
                 'order_data' => $order->toArray(),
+                'order_goods_data' => $order_goods_list->toArray(),
                 'main_id' => $this->uid,
                 'main_type' => OrderLogDict::SYSTEM
             ];
@@ -234,12 +240,12 @@ class OrderService extends BaseAdminService
             CoreOrderEventService::orderEditPrice($order_param);
             //订单改价后操作
             CoreOrderEventService::orderEditPriceAfter($order_param);
-            if($order_money == 0){
-                (new CoreOrderPayService())->pay(['trade_id' => $order_id, 'main_type' => OrderLogDict::SYSTEM, 'main_id' => $this->uid]);
+            if ($order_money == 0) {
+                ( new CoreOrderPayService() )->pay([ 'trade_id' => $order_id, 'main_type' => OrderLogDict::SYSTEM, 'main_id' => $this->uid ]);
             }
             Db::commit();
             return true;
-        } catch ( \Exception $e ) {
+        } catch (\Exception $e) {
             Db::rollback();
             throw new AdminException($e->getMessage());
         }
@@ -252,11 +258,11 @@ class OrderService extends BaseAdminService
     public function editDelivery($data)
     {
         $data = $this->getEditDeliveryData($data);
-        if($data['error_code'] < 0){
-            throw new AdminException($data['error_msg'] ?? '');
+        if ($data[ 'error_code' ] < 0) {
+            throw new AdminException($data[ 'error_msg' ] ?? '');
         }
-        $delivery_data = $data['delivery_data'];
-        $this->model->where([['order_id', '=', $data['order_id']]])->update($delivery_data);
+        $delivery_data = $data[ 'delivery_data' ];
+        $this->model->where([ [ 'order_id', '=', $data[ 'order_id' ] ] ])->update($delivery_data);
         return true;
     }
 
@@ -266,82 +272,127 @@ class OrderService extends BaseAdminService
      */
     public function getEditDeliveryData($data)
     {
-        $delivery_type = $data['delivery_type'];
-        $order_id = $data['order_id'];
-        $order = $this->model->where([['order_id', '=', $order_id]])->findOrEmpty()->toArray();
+        $delivery_type = $data[ 'delivery_type' ];
+        $order_id = $data[ 'order_id' ];
+        $order = $this->model->where([ [ 'order_id', '=', $order_id ] ])->findOrEmpty()->toArray();
         $delivery_list = ( new DeliveryService() )->getDeliveryList();
         if (empty($order)) throw new AdminException('SHOP_ORDER_NOT_FOUND');
-        if ($order['status'] != OrderDict::WAIT_PAY) throw new AdminException('SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER');
-        if ($order['delivery_type'] == OrderDeliveryDict::VIRTUAL)  throw new AdminException('SHOP_VIRTUAL_ORDERS_EDIT_TAKER');
-        $order['delivery_data']= $data;
+        if ($order[ 'status' ] != OrderDict::WAIT_PAY) throw new AdminException('SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER');
+        if ($order[ 'delivery_type' ] == OrderDeliveryDict::VIRTUAL) throw new AdminException('SHOP_VIRTUAL_ORDERS_EDIT_TAKER');
+        $order[ 'delivery_data' ] = $data;
 
-        $order['order_goods'] = (new OrderGoods())->where([ ['goods_type', '=', 'real'], ['order_id', '=', $order_id ]])->with(['goods'])->select()->toArray();
-        $order['error_code'] = 1;
-        $order['error_msg'] = '';
-        if(empty($delivery_type) || !isset($delivery_list[$delivery_type])){
-            $order['error_code'] = -1;
-            $order['error_msg'] = get_lang('NOT_SUPPORT_DELIVERY_TYPE');
+        $order[ 'order_goods' ] = ( new OrderGoods() )->where([ [ 'goods_type', '=', 'real' ], [ 'order_id', '=', $order_id ] ])->with([ 'goods' ])->select()->toArray();
+        $order[ 'error_code' ] = 1;
+        $order[ 'error_msg' ] = '';
+        if (empty($delivery_type) || !isset($delivery_list[ $delivery_type ])) {
+            $order[ 'error_code' ] = -1;
+            $order[ 'error_msg' ] = get_lang('NOT_SUPPORT_DELIVERY_TYPE');
             return $order;
-        }else if(!empty($delivery_type) && $delivery_list[$delivery_type]['status'] > 1){
-            $order['error_code'] = -1;
-            $order['error_msg'] = get_lang('DELIVERY_TYPE_NOT_OPEN');
+        } else if (!empty($delivery_type) && $delivery_list[ $delivery_type ][ 'status' ] > 1) {
+            $order[ 'error_code' ] = -1;
+            $order[ 'error_msg' ] = get_lang('DELIVERY_TYPE_NOT_OPEN');
             return $order;
         }
 
         $goods_name = '';
-        foreach ($order['order_goods'] as $k => &$v){
-            if(!in_array($delivery_type, $v['goods']['delivery_type'])){
-                $v['error_code'] = -1;
-                $v['error_msg'] = get_lang('GOODS_NOT_DELIVERY_TYPE');
-                $order['error_code'] = -1;
-                $goods_name .= $v['goods_name'].',';
+        foreach ($order[ 'order_goods' ] as $k => &$v) {
+            if (!in_array($delivery_type, $v[ 'goods' ][ 'delivery_type' ])) {
+                $v[ 'error_code' ] = -1;
+                $v[ 'error_msg' ] = get_lang('GOODS_NOT_DELIVERY_TYPE');
+                $order[ 'error_code' ] = -1;
+                $goods_name .= $v[ 'goods_name' ] . ',';
             }
         }
 
-        if($order['error_code'] < 0){
+        if ($order[ 'error_code' ] < 0) {
             $goods_name = trim($goods_name, ',');
-            if($goods_name) $order['error_msg'] = $goods_name.'-'.get_lang('GOODS_NOT_DELIVERY_TYPE');
+            if ($goods_name) $order[ 'error_msg' ] = $goods_name . '-' . get_lang('GOODS_NOT_DELIVERY_TYPE');
             return $order;
         }
 
-        switch ($delivery_type){
+        switch ($delivery_type) {
             case OrderDeliveryDict::EXPRESS:
-                if(empty($data['taker_name'])
-                || empty($data['taker_mobile'])
-                || empty($data['taker_province'])
-                || empty($data['taker_city'])
-                || empty($data['taker_district'])
-                || empty($data['taker_address'])
-                || empty($data['taker_full_address'])
-                ){
-                    $order['error_code'] = -1;
-                    $order['error_msg'] = get_lang('EXPRESS_FIELD_EMPTY');
+                if (empty($data[ 'taker_name' ])
+                    || empty($data[ 'taker_mobile' ])
+                    || empty($data[ 'taker_province' ])
+                    || empty($data[ 'taker_city' ])
+                    || empty($data[ 'taker_district' ])
+                    || empty($data[ 'taker_address' ])
+                    || empty($data[ 'taker_full_address' ])
+                ) {
+                    $order[ 'error_code' ] = -1;
+                    $order[ 'error_msg' ] = get_lang('EXPRESS_FIELD_EMPTY');
                 }
                 break;
             case OrderDeliveryDict::LOCAL_DELIVERY:
-                if(empty($data['taker_name'])
-                    || empty($data['taker_mobile'])
-                    || empty($data['taker_province'])
-                    || empty($data['taker_city'])
-                    || empty($data['taker_district'])
-                    || empty($data['taker_address'])
-                    || empty($data['taker_full_address'])
-                    || empty($data['taker_longitude'])
-                    || empty($data['taker_latitude'])
-                ){
-                    $order['error_code'] = -1;
-                    $order['error_msg'] = get_lang('EXPRESS_FIELD_EMPTY');
+                if (empty($data[ 'taker_name' ])
+                    || empty($data[ 'taker_mobile' ])
+                    || empty($data[ 'taker_province' ])
+                    || empty($data[ 'taker_city' ])
+                    || empty($data[ 'taker_district' ])
+                    || empty($data[ 'taker_address' ])
+                    || empty($data[ 'taker_full_address' ])
+                    || empty($data[ 'taker_longitude' ])
+                    || empty($data[ 'taker_latitude' ])
+                ) {
+                    $order[ 'error_code' ] = -1;
+                    $order[ 'error_msg' ] = get_lang('EXPRESS_FIELD_EMPTY');
+                } else {
+                    $order = $this->checkLocationInArea($order, $data);
                 }
                 break;
             case OrderDeliveryDict::STORE:
-                if(empty($data['take_store_id'])){
-                    $order['error_code'] = -1;
-                    $order['error_msg'] = get_lang('EXPRESS_FIELD_EMPTY');
+                if (empty($data[ 'take_store_id' ])) {
+                    $order[ 'error_code' ] = -1;
+                    $order[ 'error_msg' ] = get_lang('EXPRESS_FIELD_EMPTY');
                 }
                 break;
         }
 
+        return $order;
+    }
 
+    /**
+     * 检查收货地址是否在配送区域
+     * @param $order
+     * @param $data
+     * @return mixed
+     */
+    public function checkLocationInArea($order, $data)
+    {
+        $local = ( new Local() )->where([ [ 'local_id', '>', 0 ] ])->field('fee_type,base_dist,base_price,grad_dist,grad_price,weight_start,weight_unit,weight_price,delivery_type,area,center')->findOrEmpty();
+        if ($local->isEmpty()) {
+            $order[ 'error_code' ] = -1;
+            $order[ 'error_msg' ] = get_lang('NOT_CONFIGURED_LOCAL_DELIVERY');
+        }
+        // 收货地址
+        $address_point = new Coordinate($data[ 'taker_latitude' ], $data[ 'taker_longitude' ]);
+
+        // 判断所在区域
+        $located_in_area = null;
+        foreach ($local[ 'area' ] as $area) {
+            if ($area[ 'area_type' ] == 'radius') {
+                $center = new Coordinate($area[ 'area_json' ][ 'center' ][ 'lat' ], $area[ 'area_json' ][ 'center' ][ 'lng' ]);
+                $distance = ( new Vincenty() )->getDistance($address_point, $center);
+                if ($distance <= $area[ 'area_json' ][ 'radius' ]) {
+                    $located_in_area = $area;
+                    break;
+                }
+            } else {
+                $geofence = new Polygon();
+                $geofence->addPoints(array_map(function($latlng) {
+                    return new Coordinate($latlng[ 'lat' ], $latlng[ 'lng' ]);
+                }, $area[ 'area_json' ][ 'paths' ]));
+                if ($geofence->contains($address_point)) {
+                    $located_in_area = $area;
+                    break;
+                }
+            }
+        }
+        if (!$located_in_area) {
+            $order[ 'error_code' ] = -1;
+            $order[ 'error_msg' ] = get_lang('NOT_SUPPORT_DELIVERY_ADDRESS');
+        }
         return $order;
     }
 }

@@ -2,12 +2,21 @@ import request from '@/utils/request'
 
 /*********************************  物流公司  ***************************************/
 /**
+ * 获取物流公司分页列表
+ * @param params
+ * @returns
+ */
+export function getCompanyPageList(params: Record<string, any>) {
+    return request.get(`shop/delivery/company`, { params })
+}
+
+/**
  * 获取物流公司列表
  * @param params
  * @returns
  */
 export function getCompanyList(params: Record<string, any>) {
-    return request.get(`shop/delivery/company`, {params})
+    return request.get(`shop/delivery/company/list`, { params })
 }
 
 /**
@@ -16,7 +25,7 @@ export function getCompanyList(params: Record<string, any>) {
  * @returns
  */
 export function getCompanyInfo(company_id: number) {
-    return request.get(`shop/delivery/company/${company_id}`);
+    return request.get(`shop/delivery/company/${ company_id }`);
 }
 
 /**
@@ -25,7 +34,7 @@ export function getCompanyInfo(company_id: number) {
  * @returns
  */
 export function addCompany(params: Record<string, any>) {
-    return request.post('shop/delivery/company', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/delivery/company', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -34,7 +43,7 @@ export function addCompany(params: Record<string, any>) {
  * @returns
  */
 export function editCompany(params: Record<string, any>) {
-    return request.put(`shop/delivery/company/${params.company_id}`, params, {
+    return request.put(`shop/delivery/company/${ params.company_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -46,7 +55,7 @@ export function editCompany(params: Record<string, any>) {
  * @returns
  */
 export function deleteCompany(company_id: number) {
-    return request.delete(`shop/delivery/company/${company_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/delivery/company/${ company_id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 
@@ -57,7 +66,7 @@ export function deleteCompany(company_id: number) {
  * @returns
  */
 export function getShippingTemplatePageList(params: Record<string, any>) {
-    return request.get(`shop/shipping/template`, {params})
+    return request.get(`shop/shipping/template`, { params })
 }
 
 /**
@@ -66,7 +75,7 @@ export function getShippingTemplatePageList(params: Record<string, any>) {
  * @returns
  */
 export function getShippingTemplateList(params: Record<string, any>) {
-    return request.get(`shop/shipping/template/list`, {params})
+    return request.get(`shop/shipping/template/list`, { params })
 }
 
 /**
@@ -75,7 +84,7 @@ export function getShippingTemplateList(params: Record<string, any>) {
  * @returns
  */
 export function getShippingTemplateInfo(template_id: number) {
-    return request.get(`shop/shipping/template/${template_id}`);
+    return request.get(`shop/shipping/template/${ template_id }`);
 }
 
 /**
@@ -84,7 +93,7 @@ export function getShippingTemplateInfo(template_id: number) {
  * @returns
  */
 export function addShippingTemplate(params: Record<string, any>) {
-    return request.post('shop/shipping/template', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/shipping/template', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -93,7 +102,7 @@ export function addShippingTemplate(params: Record<string, any>) {
  * @returns
  */
 export function editShippingTemplate(params: Record<string, any>) {
-    return request.put(`shop/shipping/template/${params.template_id}`, params, {
+    return request.put(`shop/shipping/template/${ params.template_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -105,7 +114,10 @@ export function editShippingTemplate(params: Record<string, any>) {
  * @returns
  */
 export function deleteShippingTemplate(template_id: number) {
-    return request.delete(`shop/shipping/template/${template_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/shipping/template/${ template_id }`, {
+        showErrorMessage: true,
+        showSuccessMessage: true
+    })
 }
 
 
@@ -116,7 +128,7 @@ export function deleteShippingTemplate(template_id: number) {
  * @returns
  */
 export function getStoreList(params: Record<string, any>) {
-    return request.get(`shop/delivery/store`, {params})
+    return request.get(`shop/delivery/store`, { params })
 }
 
 /**
@@ -125,7 +137,7 @@ export function getStoreList(params: Record<string, any>) {
  * @returns
  */
 export function getStoreInfo(store_id: number) {
-    return request.get(`shop/delivery/store/${store_id}`);
+    return request.get(`shop/delivery/store/${ store_id }`);
 }
 
 /**
@@ -134,7 +146,7 @@ export function getStoreInfo(store_id: number) {
  * @returns
  */
 export function addStore(params: Record<string, any>) {
-    return request.post('shop/delivery/store', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/delivery/store', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -143,7 +155,7 @@ export function addStore(params: Record<string, any>) {
  * @returns
  */
 export function editStore(params: Record<string, any>) {
-    return request.put(`shop/delivery/store/${params.store_id}`, params, {
+    return request.put(`shop/delivery/store/${ params.store_id }`, params, {
         showErrorMessage: true,
         showSuccessMessage: true
     })
@@ -155,7 +167,7 @@ export function editStore(params: Record<string, any>) {
  * @returns
  */
 export function deleteStore(store_id: number) {
-    return request.delete(`shop/delivery/store/${store_id}`, {showErrorMessage: true, showSuccessMessage: true})
+    return request.delete(`shop/delivery/store/${ store_id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /*********************************  物流查询  ***************************************/
@@ -165,7 +177,7 @@ export function deleteStore(store_id: number) {
  * @returns
  */
 export function setDeliverySearch(params: Record<string, any>) {
-    return request.post('shop/delivery/search', params, {showErrorMessage: true, showSuccessMessage: true})
+    return request.post('shop/delivery/search', params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -199,7 +211,7 @@ export function setShopDeliveryConfig(params: Record<string, any>) {
  * @returns
  */
 export function getShopDelivery(params: Record<string, any>) {
-    return request.get('shop/delivery/staff', {params})
+    return request.get('shop/delivery/staff', { params })
 }
 
 /**
@@ -208,7 +220,7 @@ export function getShopDelivery(params: Record<string, any>) {
  * @returns
  */
 export function getShopDeliverInfo(staff_id: number) {
-    return request.get(`shop/delivery/staff/${staff_id}`);
+    return request.get(`shop/delivery/staff/${ staff_id }`);
 }
 
 /**
@@ -217,7 +229,7 @@ export function getShopDeliverInfo(staff_id: number) {
  * @returns
  */
 export function addShopDeliver(params: Record<string, any>) {
-    return request.post('shop/delivery/staff', params, {showSuccessMessage: true})
+    return request.post('shop/delivery/staff', params, { showSuccessMessage: true })
 }
 
 /**
@@ -226,7 +238,7 @@ export function addShopDeliver(params: Record<string, any>) {
  * @returns
  */
 export function editShopDeliver(params: Record<string, any>) {
-    return request.put(`shop/delivery/staff/${params.deliver_id}`, params, {showSuccessMessage: true})
+    return request.put(`shop/delivery/staff/${ params.deliver_id }`, params, { showSuccessMessage: true })
 }
 
 /**
@@ -235,7 +247,7 @@ export function editShopDeliver(params: Record<string, any>) {
  * @returns
  */
 export function deleteShopDeliver(staff_id: number) {
-    return request.delete(`shop/delivery/staff/${staff_id}`)
+    return request.delete(`shop/delivery/staff/${ staff_id }`)
 }
 
 /**
@@ -252,5 +264,5 @@ export function getLocal() {
  * @returns
  */
 export function setLocal(params: Record<string, any>) {
-    return request.put('shop/local', params, {showSuccessMessage: true})
+    return request.put('shop/local', params, { showSuccessMessage: true })
 }

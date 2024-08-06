@@ -12,6 +12,7 @@
 namespace addon\shop\app\service\admin\marketing;
 
 use addon\shop\app\dict\coupon\CouponDict;
+use addon\shop\app\dict\coupon\CouponMemberDict;
 use addon\shop\app\model\coupon\Coupon;
 use addon\shop\app\model\coupon\CouponGoods;
 use addon\shop\app\model\coupon\CouponMember;
@@ -23,8 +24,8 @@ use think\facade\Db;
 
 /**
  * 优惠券服务层
- * Class StoreService
- * @package addon\shop\app\service\admin\delivery
+ * Class CouponService
+ * @package addon\shop\app\service\admin\marketing
  */
 class CouponService extends BaseAdminService
 {
@@ -64,6 +65,7 @@ class CouponService extends BaseAdminService
      * 获取优惠券列表
      * @param array $where
      * @return array
+     * @throws \think\db\exception\DbException
      */
     public function getPage(array $where = [])
     {
@@ -71,6 +73,7 @@ class CouponService extends BaseAdminService
         $order = 'id desc';
         $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "title", "status" ], $where)->append([ 'type_name', 'receive_type_name', 'status_name' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
+        $coupon_member_model = new CouponMember();
         foreach ($list[ 'data' ] as $k => &$v) {
             if ($v[ 'remain_count' ] != '-1') {
                 $v[ 'sum_count' ] = $v[ 'remain_count' ] + $v[ 'receive_count' ];
@@ -78,7 +81,6 @@ class CouponService extends BaseAdminService
                 $v[ 'sum_count' ] = '-1';
             }
             //查询已使用数量
-            $coupon_member_model = new CouponMember();
             $v[ 'receive_use_count' ] = $coupon_member_model->where([ [ 'coupon_id', '=', $v[ 'id' ] ], [ 'use_time', '>', 1 ] ])->count();
         }
         return $list;
@@ -174,7 +176,7 @@ class CouponService extends BaseAdminService
                     $data[ 'end_time' ] = strtotime($data[ 'receive_time' ][ 1 ]);
                     $now_time = strtotime(date('Y-m-d', time()));
                     if ($data[ 'start_time' ] > $now_time) {
-//                        $data[ 'status' ] = 0; // 活动未开始
+                        $data[ 'status' ] = 0; // 活动未开始
                     }
                 } else {
                     $data[ 'start_time' ] = '';
@@ -268,7 +270,7 @@ class CouponService extends BaseAdminService
                     $data[ 'end_time' ] = strtotime($data[ 'receive_time' ][ 1 ]);
                     $now_time = strtotime(date('Y-m-d', time()));
                     if ($data[ 'start_time' ] > $now_time) {
-//                        $data[ 'status' ] = 0; // 活动未开始
+                        $data[ 'status' ] = 0; // 活动未开始
                     }
                 } else {
                     $data[ 'start_time' ] = '';
@@ -367,14 +369,18 @@ class CouponService extends BaseAdminService
      */
     public function del(int $id)
     {
+        $coupon = $this->getInfo($id);
+        if (empty($coupon)) throw new AdminException('COUPON_NOT_EXIST');
         $coupon_member_model = new CouponMember();
-        // 检测是否存在未使用的优惠券
-        $coupon_member_info = $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', 1 ] ])->find();
-        if ($coupon_member_info) {
-            throw new AdminException('该优惠券已被用户领取无法删除');
+        if ($coupon[ 'status' ] == CouponDict::NORMAL) {
+            // 检测是否存在未使用的优惠券
+            $coupon_member_info = $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', 1 ] ])->find();
+            if ($coupon_member_info) {
+                throw new AdminException('该优惠券已被用户领取无法删除');
+            }
         }
-
         $res = $this->model->where([ [ 'id', '=', $id ] ])->delete();
+        if ($res) $coupon_member_model->where([ [ 'coupon_id', '=', $id ], [ 'status', '=', CouponMemberDict::WAIT_USE ] ])->update([ 'status' => CouponMemberDict::INVALID ]);
         return $res;
     }
 
@@ -387,8 +393,8 @@ class CouponService extends BaseAdminService
     {
         $coupon_member_model = new CouponMember();
         $member_where = [];
-        if (!empty($data[ 'keywords' ])) {
-            $member_where = [ [ 'member.nickname|member.mobile', 'like', '%' . $data[ 'keywords' ] . '%' ] ];
+        if (isset($data[ 'keywords' ]) && $data[ 'keywords' ] != '') {
+            $member_where = [ [ 'member.nickname|member.mobile', 'like', '%' . $this->model->handelSpecialCharacter($data[ 'keywords' ]) . '%' ] ];
         }
         $memberList = $coupon_member_model->where([ [ 'coupon_id', '=', $data[ 'id' ] ] ])->withJoin([
             'member' => [ 'member_id', 'member_no', 'username', 'mobile', 'nickname' ],

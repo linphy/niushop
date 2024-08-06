@@ -159,6 +159,7 @@ import type { FormInstance } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { filterNumber, filterDigit } from '@/utils/common'
 import goodsSelectPopup from '@/addon/shop/views/goods/components/goods-select-popup.vue'
+import { cloneDeep } from 'lodash-es'
 
 const route = useRoute()
 const router = useRouter()
@@ -262,6 +263,10 @@ const validTime = (rule: any, value: any, callback: any) => {
     if (formData.value.valid_type == 2 && formData.value.valid_time <= Date.now()) {
         callback(new Error(t('有效期不能小于等于当前时间')))
     }
+    console.log('formData.value',formData.value)
+    if (formData.value.valid_type == 2 && formData.value.receive_type == 1 && timestampFn(formData.value.valid_time) <= timestampFn(formData.value.receive_time[1])) {
+        callback(new Error(t('有效期不能小于等于领取结束时间')))
+    }
     callback()
 }
 
@@ -292,6 +297,10 @@ const limitCountRule = (rule: any, value: any, callback: any) => {
     if (formData.value.limit_count != '' && formData.value.limit_count < 1) {
         callback(new Error(t('userLimitCountPlaceholder')))
     }
+    if(formData.value.limit == 1 && formData.value.limit_count > formData.value.remain_count){
+        callback(new Error(t('限领张数不能大于发放数量')))
+    }
+     
     callback()
 }
 
@@ -315,7 +324,7 @@ const onSave = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid) => {
         if (valid) {
             loading.value = true
-            let data = JSON.parse(JSON.stringify(formData.value));
+            let data = cloneDeep(formData.value);
             if(data.type == 1){
                 delete data.goods_category_ids;
                 delete data.goods_ids;

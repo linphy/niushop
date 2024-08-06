@@ -56,7 +56,8 @@ class VerifyCreateListener
                 'data' => [
                     'list' => [
                         [
-                            'name' => $order_goods_info['goods_name'].$order_goods_info['sku_name'],
+                            'name' => $order_goods_info['goods_name'],
+                            'sub_name' => $order_goods_info['sku_name'],
                             'cover' => $order_goods_info['goods_image'],
                             'num' => $order_goods_info['num'],
                         ]

@@ -7,8 +7,8 @@
                 <view class="text-sm">{{item.type_name || '--'}}</view>
             </view>
             <view class="pt-[140rpx]"></view>
-            <view class="flex tab-bar items-center bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[120rpx] px-1 flex-wrap">
-                <u-button class="!text-sm" text="返回详情" type="primary" shape="circle" @click="redirect({url: '/addon/shop/pages/refund/detail', param: { order_refund_no: orderRefundNo }})"></u-button>
+            <view class="tab-bar bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[120rpx] px-1 flex items-center">
+                <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx] mx-0 flex-1" @click="redirect({url: '/addon/shop/pages/refund/detail', param: { order_refund_no: orderRefundNo }})">返回详情</button>
             </view>
         </view>
 
@@ -23,11 +23,11 @@ import { t } from '@/locale'
 import { img, redirect } from '@/utils/common';
 import { getRefundDetail } from '@/addon/shop/api/refund';
 
-let detail = ref<Object>({});
-let loading = ref<boolean>(true);
-let orderRefundNo = ref('')
+const detail = ref<Object>({});
+const loading = ref<boolean>(true);
+const orderRefundNo = ref('')
 
-onLoad((option) => {
+onLoad((option: any) => {
 	orderRefundNo.value = option.order_refund_no;
 	refundDetailFn(option.order_refund_no);
 });
@@ -42,3 +42,9 @@ const refundDetailFn = (refundNo) => {
 	})
 }
 </script>
+<style lang="scss" scoped>
+.tab-bar {
+	padding-bottom: calc(constant(safe-area-inset-bottom));
+	padding-bottom: calc(env(safe-area-inset-bottom));
+}
+</style>

@@ -8,6 +8,7 @@ return [
     'SHOP_ONLY_WAIT_PAY_CAN_BE_PAY' => '只有待支付的订单可以支付',
     'SHOP_GOODS_CATEGORY_NOT_EXIST' => '分类不存在',
     'SHOP_GOODS_CATEGORY_EXIST_CHILD' => '当前分类存在下级，不可修改为该上级',
+    'SHOP_GOODS_CATEGORY_EXIST_GOODS' => '当前分类下存在商品，不可删除',
     'SHOP_GOODS_NOT_EXIST' => '商品不存在',
     'NOT_SUPPORT_DELIVERY_TYPE' => '不支持选择的配送方式',
     'NOT_SUPPORT_DELIVERY_ADDRESS' => '所选的收货地址不支持配送',
@@ -35,6 +36,7 @@ return [
     'SHOP_THE_LINE_ITEM_SUBTOTAL_CAN_T_BE_LESS_THAN_0' => '订单项小计总额不能小于0',
     'SHOP_THE_SHIPPING_FEE_CANNOT_BE_LESS_THAN_0' => '运费不能小于0',
     'SHOP_ONLY_PENDING_ORDERS_CAN_BE_REPRICED' => '只有待支付的订单可以改价',
+    'SHOP_THE_AVAILABLE_SHIPPING_RATES_AREN_T_CONFIGURED' => '未配置可用的运费模板',
 
     'SHOP_ONLY_PENDING_ORDERS_EDIT_TAKER' => '只有待支付的订单可以修改配送地址',
     'SHOP_VIRTUAL_ORDERS_EDIT_TAKER' => '虚拟商品订单不可以修改配送地址',
@@ -57,14 +59,20 @@ return [
     'SHOP_ORDER_PLEASE_SELECT_DELIVERY_EMPTY_LNG_LAT' => '所选同城配送没有设置地图定位',
     'SHOP_ORDER_CARTS_EXPIRE' => '购物车数据已过期',
     'SHOP_ORDER_BUYER_NOT_FOUND' => '找不到买家',
+    'SHOP_ORDER_BUYER_LOCKED' => '该会员已被锁定，请联系商家',
     'SHOP_ORDER_DELIVERY_NOT_ALLOW_REFUND_OR_DELIVERY_FINISH' => '存在退款或已发货的商品不能发货',
-    'SHOP_ORDER_DELIVERY_ALLOW_ONE_GOODSTYPE' => '一次发货只能存在一种商品类型的订单项',
+    'SHOP_ORDER_DELIVERY_ALLOW_ONE_GOODS_TYPE' => '一次发货只能存在一种商品类型的订单项',
     'SHOP_ORDER_DELIVERY_VIRTUAL_ALLOW_VIRTUAL_DELIVERY' => '虚拟商品只支持虚拟发货',
     'SHOP_ORDER_DELIVERY_TYPE_NOT_ORDER_DELIVERY_TYPE' => '发货方式需要与订单的配送方式相匹配',
     'SHOP_ORDER_COUPON_SUPPORT_GOODS' => '没有适用的商品',
     'SHOP_ORDER_COUPON_NOT_CONDITION' => '未达到最低可使用金额',
     'SHOP_ORDER_DELIVERY_SUCCESS' => '发货成功',
     'NOT_CONFIGURED_LOCAL_DELIVERY' => '商家未配置同城配送',
+
+    'SHOP_ELECTRONIC_SHEET_API_EMPTY' => '未配置电子面单接口',
+    'SHOP_ELECTRONIC_SHEET_TEMPLATE_FOUND' => '电子面单模板不存在',
+
+    'SHOP_ADDRESS_DEFAULT_EMPTY' => '商家未设置默认地址',
 
     'SHOP_ORDER_GOODS_INSUFFICIENT' => '商品库存不足',
     'SHIPPING_TEMPLATE_IN_USE' => '运费模板有商品正在使用中不能删除',
@@ -125,6 +133,7 @@ return [
 
     /*********************************************  订单业务 *****************************************************/
     'SHOP_ORDER_EXCHANGE_EXCEEDING_LIMIT' => '此积分商品超出单次限购数量',
+    'SHOP_ORDER_EXCHANGE_INSUFFICIENT_EXCHANGE_QUANTITY' => '此积分商品可兑换数量不足',
     'SHOP_ORDER_EXCHANGE_POINT_INSUFFICIENT' => '账户积分不足',
 
     /*********************************************   积分商城end ****************************************************/

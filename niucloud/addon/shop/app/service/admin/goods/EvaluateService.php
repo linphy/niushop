@@ -42,8 +42,8 @@ class EvaluateService extends BaseAdminService
         $order = 'create_time desc';
 
         $goods_where = [];
-        if ($where[ 'goods_name' ]) {
-            $goods_where[] = [ 'goods.goods_name', 'like', '%' . $where[ 'goods_name' ] . '%' ];
+        if (isset($where[ 'goods_name' ]) && $where[ 'goods_name' ] != '') {
+            $goods_where[] = [ 'goods.goods_name', 'like', '%' . $this->model->handelSpecialCharacter($where[ 'goods_name' ]) . '%' ];
         }
 
         $search_model = $this->model
@@ -85,7 +85,7 @@ class EvaluateService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data[ 'is_audit' ] = 2;
+        $data[ 'is_audit' ] = EvaluateDict::AUDIT_NO;
         return ( new CoreGoodsEvaluateService )->addEvaluate($data);
     }
 

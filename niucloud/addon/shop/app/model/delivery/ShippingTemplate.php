@@ -35,7 +35,7 @@ class ShippingTemplate extends BaseModel
 
     public function searchTemplateNameAttr($query, $value, $data)
     {
-        if (!empty($value)) {
+        if ($value != '') {
             $query->where([ [ 'template_name', 'like', "%$value%" ] ]);
         }
     }

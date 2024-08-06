@@ -29,18 +29,31 @@ class CompanyService extends BaseAdminService
     }
 
     /**
-     * 获取物流公司列表
+     * 获取物流公司分页列表
      * @param array $where
      * @return array
      */
     public function getPage(array $where = [])
     {
-        $field = 'company_id,company_name,logo,url,express_no,create_time';
-        $order = '';
+        $field = 'company_id,company_name,logo,url,express_no,express_no_electronic_sheet,electronic_sheet_switch,print_style,exp_type,create_time';
+        $order = 'create_time desc';
 
-        $search_model = $this->model->where([ ['company_id', '>', 0] ])->withSearch(["company_name"], $where)->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'company_id', '>', 0 ] ])->withSearch([ "company_name", 'electronic_sheet_switch' ], $where)->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
+    }
+
+    /**
+     * 获取物流公司列表
+     * @param array $where
+     * @param string $field
+     * @return array
+     */
+    public function getList(array $where = [], $field = 'company_id,company_name,logo,url,express_no,express_no_electronic_sheet,electronic_sheet_switch,print_style,exp_type,create_time')
+    {
+        $order = 'create_time desc';
+
+        return $this->model->where([ [ 'company_id', '>', 0 ] ])->withSearch([ "company_name", 'electronic_sheet_switch' ], $where)->field($field)->order($order)->select()->toArray();
     }
 
     /**
@@ -50,9 +63,9 @@ class CompanyService extends BaseAdminService
      */
     public function getInfo(int $id)
     {
-        $field = 'company_id,company_name,logo,url,express_no,create_time';
+        $field = 'company_id,company_name,logo,url,express_no,express_no_electronic_sheet,electronic_sheet_switch,print_style,exp_type,create_time';
 
-        $info = $this->model->field($field)->where([['company_id', '=', $id] ])->findOrEmpty()->toArray();
+        $info = $this->model->field($field)->where([ [ 'company_id', '=', $id ] ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -63,7 +76,7 @@ class CompanyService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $data['create_time'] = time();
+        $data[ 'create_time' ] = time();
         $res = $this->model->create($data);
         return $res->company_id;
     }
@@ -76,8 +89,8 @@ class CompanyService extends BaseAdminService
      */
     public function edit(int $id, array $data)
     {
-        $data['update_time'] = time();
-        $this->model->where([['company_id', '=', $id] ])->update($data);
+        $data[ 'update_time' ] = time();
+        $this->model->where([ [ 'company_id', '=', $id ] ])->update($data);
         return true;
     }
 
@@ -88,7 +101,7 @@ class CompanyService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $res = $this->model->where([['company_id', '=', $id] ])->delete();
+        $res = $this->model->where([ [ 'company_id', '=', $id ] ])->delete();
         return $res;
     }
 

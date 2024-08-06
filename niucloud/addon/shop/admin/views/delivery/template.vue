@@ -44,7 +44,7 @@
                     <el-table-column :label="t('operation')" fixed="right" min-width="120" align="right">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-                            <el-button type="danger" link @click="deleteEvent(row.template_id)">{{ t('delete') }}</el-button>
+                            <el-button type="primary" link @click="deleteEvent(row.template_id)">{{ t('delete') }}</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -144,13 +144,4 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-/* 多行超出隐藏 */
-.multi-hidden {
-    word-break: break-all;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
 </style>

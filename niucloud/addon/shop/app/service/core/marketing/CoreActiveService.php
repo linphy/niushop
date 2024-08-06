@@ -19,9 +19,7 @@ use addon\shop\app\model\active\ActiveGoods;
 use core\base\BaseCoreService;
 use core\exception\AdminException;
 use core\exception\CommonException;
-use think\db\Query;
 use think\facade\Db;
-use think\facade\Log;
 
 /**
  * 活动
@@ -220,6 +218,5 @@ class CoreActiveService extends BaseCoreService
         ActiveEndAfter::dispatch(['active_id' => $active_id]);
         return true;
     }
-
 
 }

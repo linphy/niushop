@@ -31,7 +31,7 @@
                     <el-table-column prop="memo" :label="t('memo')" min-width="200" />
                     <el-table-column prop="sort" :label="t('sort')" min-width="120" sortable="custom">
                         <template #default="{ row }">
-                            <el-input v-model="row.sort" class="!w-[100px]" maxlength="10" @input="sortInputListener($event, row)" />
+                            <el-input v-model="row.sort" class="!w-[100px]" maxlength="8" @blur="sortInputListener(row.sort, row)" />
                         </template>
                     </el-table-column>
 
@@ -157,12 +157,15 @@ const deleteEvent = (id: number) => {
 
 // 修改排序号
 const sortInputListener = debounce((sort, row) => {
-    if (isNaN(sort) || !/^\d{0,10}$/.test(sort)) {
+    if (isNaN(sort) || !/^\d{0,8}$/.test(sort)) {
         ElMessage({
             type: 'warning',
-            message: `${t('sortTips')}`
+            message: `${ t('sortTips') }`
         })
         return
+    }
+    if (sort > 99999999) {
+        row.sort = 99999999
     }
     modifyLabelSort({
         label_id: row.label_id,
@@ -179,13 +182,4 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-/* 多行超出隐藏 */
-.multi-hidden {
-    word-break: break-all;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
 </style>

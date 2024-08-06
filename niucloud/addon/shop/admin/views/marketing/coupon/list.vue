@@ -48,7 +48,7 @@
 
                     <el-table-column  :label="t('sumCount')" min-width="160">
                         <template #default="{ row }">
-                            <span v-if="row.sum_count != '-1'">{{ row.remain_count || '' }} / {{ row.sum_count || '' }}</span>
+                            <span v-if="row.receive_type == 1 && row.sum_count != '-1'">{{ row.remain_count || '' }} / {{ row.sum_count || '' }}</span>
                             <span v-else>不限量</span>
                         </template>
                     </el-table-column>
@@ -65,8 +65,11 @@
                     </el-table-column>
                     <el-table-column  :label="t('validType')" min-width="210">
                         <template #default="{ row }">
-                            <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
-                            <span v-else> 使用截止时间至{{ row.valid_end_time || ''}} </span>
+                            <template v-if="row.receive_type == 1">
+                                <span v-if="row.valid_type == 1">  领取之日起{{ row.length || '' }} 天内有效</span>
+                                <span v-else> 使用截止时间至{{ row.valid_end_time || ''}} </span>
+                            </template>
+                            <span v-else>--</span>
                         </template>
                     </el-table-column>
                     <el-table-column  :label="t('receiveTypeTime')" min-width="210">
@@ -107,7 +110,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCouponList, deleteCoupon, colseCoupon } from '@/addon/shop/api/marketing'
+import { getCouponList, deleteCoupon, closeCoupon } from '@/addon/shop/api/marketing'
 import { ElMessageBox, FormInstance } from 'element-plus'
 import { t } from '@/lang'
 import couponSpreadPopup from '@/addon/shop/views/marketing/coupon/components/coupon-spread-popup.vue'
@@ -195,7 +198,7 @@ const closeEvent = (data: any) => {
             type: 'warning'
         }
     ).then(() => {
-        colseCoupon(data.id).then(() => {
+        closeCoupon(data.id).then(() => {
             loadCouponList()
         }).catch(() => {
         })

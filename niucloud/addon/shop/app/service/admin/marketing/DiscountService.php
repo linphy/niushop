@@ -31,8 +31,8 @@ use think\facade\Log;
 
 /**
  * 限时折扣服务层
- * Class StoreService
- * @package addon\shop\app\service\admin\delivery
+ * Class DiscountService
+ * @package addon\shop\app\service\admin\marketing
  */
 class DiscountService extends BaseAdminService
 {
@@ -51,7 +51,7 @@ class DiscountService extends BaseAdminService
     {
         $field = 'active_id,active_name,active_desc,active_type,active_goods_type,active_goods_info,active_class,active_class_category,relate_member,active_value,start_time,end_time,active_status,create_time,update_time,active_order_money,active_order_num,active_member_num,active_success_num';
         $order = 'active_id desc';
-        $search_model = $this->model->where([ ['active_class', '=', ActiveDict::DISCOUNT] ])->withSearch([ "active_name", "active_status" ], $where)->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'active_class', '=', ActiveDict::DISCOUNT ] ])->withSearch([ "active_name", "active_status" ], $where)->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -63,7 +63,7 @@ class DiscountService extends BaseAdminService
      */
     public function getInfo(int $active_id)
     {
-        $info = $this->model->where([ [ 'active_id', '=', $active_id ], ['active_class', '=', ActiveDict::DISCOUNT] ])->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->findOrEmpty()->toArray();
+        $info = $this->model->where([ [ 'active_id', '=', $active_id ], [ 'active_class', '=', ActiveDict::DISCOUNT ] ])->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -74,7 +74,7 @@ class DiscountService extends BaseAdminService
      */
     public function getDetail(int $active_id)
     {
-        $info = $this->model->where([ [ 'active_id', '=', $active_id ], ['active_class', '=', ActiveDict::DISCOUNT] ])->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->findOrEmpty()->toArray();
+        $info = $this->model->where([ [ 'active_id', '=', $active_id ], [ 'active_class', '=', ActiveDict::DISCOUNT ] ])->append([ 'active_type_name', 'active_goods_type_name', 'active_status_name' ])->findOrEmpty()->toArray();
         $active_goods = ( new ActiveGoods() )->where([ [ 'active_id', '=', $active_id ] ])->select()->toArray();
         $info[ 'active_goods' ] = $active_goods;
         return $info;
@@ -101,15 +101,21 @@ class DiscountService extends BaseAdminService
         ];
 
         $goods_where = [
-            [ 'active.active_status', 'in', [ ActiveDict::NOT_ACTIVE, ActiveDict::ACTIVE ] ],
+            [ 'active.active_status', 'in', [ ActiveDict::NOT_ACTIVE, ActiveDict::ACTIVE ] ]
+        ];
+        $goods_where_or = [
             [ 'active.start_time|active.end_time', 'between', [ $data[ 'start_time' ], $data[ 'end_time' ] ] ],
+            [ [ 'active.start_time', '<=', $data[ 'start_time' ] ], [ 'active.end_time', '>=', $data[ 'end_time' ] ] ],
+            [ [ 'active.start_time', '>=', $data[ 'start_time' ] ], [ 'active.end_time', '<=', $data[ 'end_time' ] ] ],
         ];
 
-        $active_gooods_model = new ActiveGoods();
-        $count = $active_gooods_model->where($check_condition)
+        $active_goods_model = new ActiveGoods();
+        $count = $active_goods_model->where($check_condition)
             ->withJoin([
-                'active' => function(Query $query) use ($goods_where) {
-                    $query->where($goods_where);
+                'active' => function(Query $query) use ($goods_where, $goods_where_or) {
+                    $query->where($goods_where)->where(function($query) use ($goods_where_or) {
+                        $query->whereOr($goods_where_or);
+                    });
                 },
             ], 'inner')
             ->count();
@@ -136,8 +142,6 @@ class DiscountService extends BaseAdminService
             $data[ 'active_type' ] = ActiveDict::GOODS;
             $data[ 'active_goods_type' ] = ActiveDict::GOODS_SINGLE;
             $data[ 'active_class' ] = ActiveDict::DISCOUNT;
-
-
 
             $active_id = ( new CoreActiveService() )->add($data);
             return $active_id;
@@ -168,22 +172,28 @@ class DiscountService extends BaseAdminService
         ];
 
         $goods_where = [
-            [ 'active.active_status', 'in', [ ActiveDict::NOT_ACTIVE, ActiveDict::ACTIVE ] ],
+            [ 'active.active_status', 'in', [ ActiveDict::NOT_ACTIVE, ActiveDict::ACTIVE ] ]
+        ];
+        $goods_where_or = [
             [ 'active.start_time|active.end_time', 'between', [ $data[ 'start_time' ], $data[ 'end_time' ] ] ],
+            [ [ 'active.start_time', '<=', $data[ 'start_time' ] ], [ 'active.end_time', '>=', $data[ 'end_time' ] ] ],
+            [ [ 'active.start_time', '>=', $data[ 'start_time' ] ], [ 'active.end_time', '<=', $data[ 'end_time' ] ] ],
         ];
 
-        $active_gooods_model = new ActiveGoods();
-        $count = $active_gooods_model->where($check_condition)
+        $active_goods_model = new ActiveGoods();
+        $count = $active_goods_model->where($check_condition)
             ->withJoin([
-                'active' => function(Query $query) use ($goods_where) {
-                    $query->where($goods_where);
+                'active' => function(Query $query) use ($goods_where, $goods_where_or) {
+                    $query->where($goods_where)->where(function($query) use ($goods_where_or) {
+                        $query->whereOr($goods_where_or);
+                    });
                 },
             ], 'inner')
             ->count();
 
         if ($count > 0) throw new AdminException('ACTIVE_GOODS_NOT_REPEAR');
 
-        $this->model->where([ ['active_id', '=', $active_id] ])->update(['active_status' => ActiveDict::NOT_ACTIVE ]);
+        $this->model->where([ [ 'active_id', '=', $active_id ] ])->update([ 'active_status' => ActiveDict::NOT_ACTIVE ]);
         $this->cancelGoodsDiscount($active_id);
 
         try {
@@ -207,7 +217,6 @@ class DiscountService extends BaseAdminService
             $data[ 'active_goods_type' ] = ActiveDict::GOODS_SINGLE;
             $data[ 'active_class' ] = ActiveDict::DISCOUNT;
 
-
             ( new CoreActiveService() )->edit($active_id, $data);
 
             return $active_id;
@@ -227,15 +236,15 @@ class DiscountService extends BaseAdminService
         foreach ($goods_list as $k => $v) {
             if (empty($v[ 'sku_list' ])) throw new AdminException('ACTIVE_GOODS_SKU_NOT_EMPTY');
             foreach ($v[ 'sku_list' ] as $key => $value) {
-                if(!isset($value[ 'is_enabled' ])) throw new AdminException('ACTIVE_IS_ENABLED_NOT_EMPTY');
+                if (!isset($value[ 'is_enabled' ])) throw new AdminException('ACTIVE_IS_ENABLED_NOT_EMPTY');
 
-                if($value[ 'is_enabled' ]) {
-                    if (empty($value['discount_type'])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_TYPE_NOT_EMPTY');
-                    if (!in_array($value['discount_type'], ['discount', 'reduce', 'specify'])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_TYPE_ERROR');
-                    if (empty($value['discount_price'])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_PRICE_NOT_EMPTY');
-                    if (empty($value['specify_price'])) throw new AdminException('ACTIVE_GOODS_SPECIFY_PRICE_NOT_EMPTY');
-                    if (empty($value['discount_rate'])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_RATE_NOT_EMPTY');
-                    if (empty($value['reduce_money'])) throw new AdminException('ACTIVE_GOODS_REDUCE_MONEY_NOT_EMPTY');
+                if ($value[ 'is_enabled' ]) {
+                    if (empty($value[ 'discount_type' ])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_TYPE_NOT_EMPTY');
+                    if (!in_array($value[ 'discount_type' ], [ 'discount', 'reduce', 'specify' ])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_TYPE_ERROR');
+                    if (empty($value[ 'discount_price' ])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_PRICE_NOT_EMPTY');
+                    if (empty($value[ 'specify_price' ])) throw new AdminException('ACTIVE_GOODS_SPECIFY_PRICE_NOT_EMPTY');
+                    if (empty($value[ 'discount_rate' ])) throw new AdminException('ACTIVE_GOODS_DISCOUNT_RATE_NOT_EMPTY');
+                    if (empty($value[ 'reduce_money' ])) throw new AdminException('ACTIVE_GOODS_REDUCE_MONEY_NOT_EMPTY');
                 }
             }
         }
@@ -261,7 +270,7 @@ class DiscountService extends BaseAdminService
     {
         $info = $this->model->where([ [ 'active_id', '=', $active_id ] ])->findOrEmpty()->toArray();
         Log::write('setGoodsDiscount:' . json_encode($info));
-        if(empty($info)) return true;
+        if (empty($info)) return true;
         if ($info[ 'active_status' ] != ActiveDict::ACTIVE) return true;
         $active_goods_model = new ActiveGoods();
         $shop_goods_model = new Goods();
@@ -294,7 +303,7 @@ class DiscountService extends BaseAdminService
     {
         $info = $this->model->where([ [ 'active_id', '=', $active_id ] ])->findOrEmpty()->toArray();
         Log::write('cancelGoodsDiscount:' . json_encode($info));
-        if(empty($info)) return true;
+        if (empty($info)) return true;
         if ($info[ 'active_status' ] == ActiveDict::ACTIVE) return true;
 
         $active_goods_model = new ActiveGoods();
@@ -405,29 +414,29 @@ class DiscountService extends BaseAdminService
 
         });
 
-        if(!empty($list['data'])){
-            $member_ids = array_column($list['data'], 'member_id');
+        if (!empty($list[ 'data' ])) {
+            $member_ids = array_column($list[ 'data' ], 'member_id');
             $data_list = ( new Order() )
-                ->where([ ['order.member_id', 'in', $member_ids], [ 'order.pay_time', '>', 0 ] ])
+                ->where([ [ 'order.member_id', 'in', $member_ids ], [ 'order.pay_time', '>', 0 ] ])
                 ->withJoin([ 'shopOrderDiscount' => function($query) use ($active_id) {
                     $query->where([ [ 'discount_type', '=', ActiveDict::DISCOUNT ], [ 'discount_type_id', '=', $active_id ] ]);
                 } ], 'left')
-                ->with(['orderGoods'])
+                ->with([ 'orderGoods' ])
                 ->select()->toArray();
 
-            foreach ($list['data'] as $key => $item){
-                $item['active_order_money'] = 0;
-                foreach ($data_list as $k => $v){
-                    if($item['member_id']== $v['member_id']){
-                        foreach ($v['orderGoods'] as $order_goods){
-                            if(in_array($order_goods['goods_id'], $active_goods_ids)){
-                                $item['active_order_money'] += $order_goods['order_goods_money'];
+            foreach ($list[ 'data' ] as $key => $item) {
+                $item[ 'active_order_money' ] = 0;
+                foreach ($data_list as $k => $v) {
+                    if ($item[ 'member_id' ] == $v[ 'member_id' ]) {
+                        foreach ($v[ 'orderGoods' ] as $order_goods) {
+                            if (in_array($order_goods[ 'goods_id' ], $active_goods_ids)) {
+                                $item[ 'active_order_money' ] += $order_goods[ 'order_goods_money' ];
                             }
                         }
                     }
 
                 }
-                $list['data'][$key] = $item;
+                $list[ 'data' ][ $key ] = $item;
             }
         }
 
@@ -443,8 +452,8 @@ class DiscountService extends BaseAdminService
      */
     public function goods(int $active_id, $where)
     {
-        $active_gooods_model = new ActiveGoods();
-        $search_model = $active_gooods_model
+        $active_goods_model = new ActiveGoods();
+        $search_model = $active_goods_model
             ->where([ [ 'active_goods.active_id', '=', $active_id ] ])
             ->field('active_goods_id,active_id,goods_id,active_goods_type,active_class,active_goods_label,active_goods_category,active_goods_value,active_goods_status,active_goods_point,active_goods_price,active_goods_stock,active_goods_order_money,active_goods_order_num,active_goods_member_num,active_goods_success_num')
             ->withJoin([ 'goods' => function($query) use ($where) {
@@ -547,7 +556,6 @@ class DiscountService extends BaseAdminService
             }
             $active_goods_model->where([ [ 'active_goods_id', '=', $v[ 'active_goods_id' ] ] ])->update($save_data);
         }
-
 
         $active_member_num = $active_info[ 'active_member_num' ];
         if ($count < 2) $active_member_num += 1;

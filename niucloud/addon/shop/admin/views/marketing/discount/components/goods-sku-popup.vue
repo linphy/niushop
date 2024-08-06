@@ -510,10 +510,6 @@
 		appearance: textfield;
 	}
 
-	.page-height {
-		min-height: calc(100vh - 180px);
-	}
-
 	.sku-form-item-wrap :deep(.el-form-item__content) {
 		margin-left: 0 !important;
 	}

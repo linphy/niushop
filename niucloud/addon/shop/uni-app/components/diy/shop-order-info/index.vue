@@ -153,8 +153,8 @@
 			orderInfo.value = res.data
 		})
 	}
-	const toList = (status) => {
-		redirect({ url: '/addon/shop/pages/order/list', param: { status: status } })
+	const toList = (status:any) => {
+		redirect({ url: '/addon/shop/pages/order/list', param: { status } })
 	}
 </script>
 

@@ -152,6 +152,9 @@ return [
 				{
 					"path": "shop/pages/refund/detail",
 					"style": {
+						// #ifndef H5
+						"navigationStyle": "custom",
+						// #endif
 						"navigationBarTitleText": "%shop.pages.refund.detail%"
 					},
 					"needLogin": true

@@ -40,7 +40,7 @@ class Category extends BaseModel
      */
     public function searchCategoryNameAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("category_name", "like", "%" . $value . "%");
         }
     }

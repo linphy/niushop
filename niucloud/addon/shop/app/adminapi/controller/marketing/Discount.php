@@ -88,7 +88,7 @@ class Discount extends BaseAdminController
 
     /**
      * 获取活动状态
-     * @return Response
+     * @return \think\Response
      */
     public function status()
     {

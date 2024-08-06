@@ -393,6 +393,7 @@ class GoodsService extends BaseApiService
 
         foreach ($sku_list as $k => &$v) {
 
+            $v[ 'member_price' ] = $v[ 'price' ];
             if ($is_default) {
                 $v[ 'member_price' ] = $v[ 'price' ];
             } else {

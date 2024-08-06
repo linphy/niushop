@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="ml-[20px]">
-                    <h3 class="panel-title !text-sm" data-v-f52cd396="">{{t('headTitle')}}</h3>
+                    <h3 class="panel-title !text-sm">{{t('headTitle')}}</h3>
 
                     <el-form class="page-form" :model="formData" label-width="120px" ref="formRef">
                         <div v-for="(item,index) in formData.list" class="border-[1px] border-[var(--el-border-color)] border-dashed w-[500px] pt-[15px] mb-[15px] relative item" :key="index">

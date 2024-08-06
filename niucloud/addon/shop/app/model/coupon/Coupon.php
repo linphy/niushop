@@ -97,8 +97,8 @@ class Coupon extends BaseModel
      */
     public function searchTitleAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("title", 'like', '%'.$value.'%');
+        if ($value != '') {
+            $query->where("title", 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

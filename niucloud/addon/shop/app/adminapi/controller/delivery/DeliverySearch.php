@@ -26,16 +26,17 @@ class DeliverySearch extends BaseAdminController
      * 设置配置
      * @return \think\Response
      */
-    public function setConfig(){
+    public function setConfig()
+    {
         $data = $this->request->params([
-            ["interface_type",1],
-            ["kdniao_id",""],
-            ["kdniao_app_key",""],
-            ["kdniao_is_pay",1],
-            ["kd100_app_key",""],
-            ["kd100_customer",""],
+            [ "interface_type", 1 ],
+            [ "kdniao_id", "" ],
+            [ "kdniao_app_key", "" ],
+            [ "kdniao_is_pay", 1 ],
+            [ "kd100_app_key", "" ],
+            [ "kd100_customer", "" ],
         ]);
-        (new DeliverySearchConfigService())->setConfig($data);
+        ( new DeliverySearchConfigService() )->setConfig($data);
         return success('SUCCESS');
     }
 
@@ -45,6 +46,6 @@ class DeliverySearch extends BaseAdminController
      */
     public function getConfig()
     {
-        return success((new DeliverySearchConfigService())->getConfig());
+        return success(( new DeliverySearchConfigService() )->getConfig());
     }
 }

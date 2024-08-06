@@ -43,7 +43,7 @@ class Deliver extends BaseModel
      */
     public function searchDeliverNameAttr($query, $value)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("deliver_name", 'like', '%' . $value . '%');
         }
     }
@@ -55,7 +55,7 @@ class Deliver extends BaseModel
      */
     public function searchDeliverMobileAttr($query, $value)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("deliver_mobile", 'like', '%' . $value . '%');
 
         }

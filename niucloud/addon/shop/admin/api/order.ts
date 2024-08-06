@@ -89,11 +89,19 @@ export function orderFinish(order_id: number) {
 }
 
 /**
- * 物流包裹信息
+ * 物流包裹信息（物流跟踪）
  * @return
  */
 export function deliveryPackage(params: Record<string, any>) {
     return request.get(`shop/order/delivery/package`, { params })
+}
+
+/**
+ * 物流包裹列表
+ * @return
+ */
+export function deliveryPackageList(params: Record<string, any>) {
+    return request.get(`shop/order/delivery/package/list`, { params })
 }
 
 /**
@@ -178,6 +186,7 @@ export function orderEditPrice(params: Record<string, any>) {
 export function getOrderEditAddress(params: Record<string, any>) {
     return request.get(`shop/order/edit_delivery`, { params })
 }
+
 /**
  * 获取自提点列表
  * @return
@@ -193,3 +202,36 @@ export function getDeliveryList() {
 export function orderEditAddress(params: Record<string, any>) {
     return request.put(`shop/order/edit_delivery`, params)
 }
+
+/**
+ * 批量发货列表
+ * @return
+ */
+export function getOrderBatchDeliveryList(params: Record<string, any>) {
+    return request.get(`shop/order_batch_delivery`, { params })
+}
+
+/**
+ * 批量发货导入
+ * @return
+ */
+export function addBatchOrderDelivery(params: Record<string, any>) {
+    return request.put(`shop/order_batch_delivery/add_batch_order_delivery`, params)
+}
+
+/**
+ * 获取批量发货状态
+ * @return
+ */
+export function getOrderBatchDeliveryState() {
+    return request.get(`shop/order_batch_delivery/get_status`)
+}
+
+/**
+ * 获取批量发货操作类型
+ * @return
+ */
+export function getOrderBatchDeliveryType() {
+    return request.get(`shop/order_batch_delivery/get_type`)
+}
+

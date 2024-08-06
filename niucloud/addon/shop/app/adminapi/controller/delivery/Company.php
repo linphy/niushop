@@ -26,12 +26,26 @@ class Company extends BaseAdminController
      * 获取物流公司列表
      * @return \think\Response
      */
+    public function pages()
+    {
+        $data = $this->request->params([
+            [ "company_name", "" ],
+            [ 'electronic_sheet_switch', '' ]
+        ]);
+        return success(( new CompanyService() )->getPage($data));
+    }
+
+    /**
+     * 获取物流公司列表
+     * @return \think\Response
+     */
     public function lists()
     {
-        $data = $this->request->params( [
+        $data = $this->request->params([
             [ "company_name", "" ],
-        ] );
-        return success( ( new CompanyService() )->getPage( $data ) );
+            [ 'electronic_sheet_switch', '' ]
+        ]);
+        return success(( new CompanyService() )->getList($data));
     }
 
     /**
@@ -41,7 +55,7 @@ class Company extends BaseAdminController
      */
     public function info(int $id)
     {
-        return success( ( new CompanyService() )->getInfo( $id ) );
+        return success(( new CompanyService() )->getInfo($id));
     }
 
     /**
@@ -50,44 +64,52 @@ class Company extends BaseAdminController
      */
     public function add()
     {
-        $data = $this->request->params( [
+        $data = $this->request->params([
             [ "company_name", "" ],
             [ "logo", "" ],
             [ "url", "" ],
-            [ "express_no", "" ],
-        ] );
-        $this->validate( $data, 'addon\shop\app\validate\delivery\Company.add' );
-        $id = ( new CompanyService() )->add( $data );
-        return success( 'ADD_SUCCESS', [ 'id' => $id ] );
+            [ "express_no", "" ], // 物流公司编号(用于物流跟踪)
+            [ 'express_no_electronic_sheet', '' ], // 物流公司编号(用于电子面单)
+            [ 'electronic_sheet_switch', 0 ], // 是否支持电子面单（0：不支持，1：支持）
+            [ 'print_style', '' ], // 电子面单打印模板样式，template_size为空表示默认，json字符串，格式：[{"template_name":"二联150 100*150","template_size":""},{"template_name":"二联180 100*180","template_size":"180"}]
+            [ 'exp_type', '' ] // 物流公司业务类型，json字符串，格式：[{"value":1,"text":"特快专递"},{"value":8,"text":"代收到付"},{"value":9,"text":"快递包裹"}]
+        ]);
+        $this->validate($data, 'addon\shop\app\validate\delivery\Company.add');
+        $id = ( new CompanyService() )->add($data);
+        return success('ADD_SUCCESS', [ 'id' => $id ]);
     }
 
     /**
      * 物流公司编辑
-     * @param $id  物流公司id
+     * @param int $id 物流公司id
      * @return \think\Response
      */
     public function edit($id)
     {
-        $data = $this->request->params( [
+        $data = $this->request->params([
             [ "company_name", "" ],
             [ "logo", "" ],
             [ "url", "" ],
-            [ "express_no", "" ],
-        ] );
-        $this->validate( $data, 'addon\shop\app\validate\delivery\Company.edit' );
-        ( new CompanyService() )->edit( $id, $data );
-        return success( 'EDIT_SUCCESS' );
+            [ "express_no", "" ], // 物流公司编号(用于物流跟踪)
+            [ 'express_no_electronic_sheet', '' ], // 物流公司编号(用于电子面单)
+            [ 'electronic_sheet_switch', 0 ], // 是否支持电子面单（0：不支持，1：支持）
+            [ 'print_style', '' ], // 电子面单打印模板样式，template_size为空表示默认，json字符串，格式：[{"template_name":"二联150 100*150","template_size":""},{"template_name":"二联180 100*180","template_size":"180"}]
+            [ 'exp_type', '' ] // 物流公司业务类型，json字符串，格式：[{"value":1,"text":"特快专递"},{"value":8,"text":"代收到付"},{"value":9,"text":"快递包裹"}]
+        ]);
+        $this->validate($data, 'addon\shop\app\validate\delivery\Company.edit');
+        ( new CompanyService() )->edit($id, $data);
+        return success('EDIT_SUCCESS');
     }
 
     /**
      * 物流公司删除
-     * @param $id  物流公司id
+     * @param int $id 物流公司id
      * @return \think\Response
      */
     public function del(int $id)
     {
-        ( new CompanyService() )->del( $id );
-        return success( 'DELETE_SUCCESS' );
+        ( new CompanyService() )->del($id);
+        return success('DELETE_SUCCESS');
     }
 
 }

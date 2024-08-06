@@ -13,7 +13,6 @@ namespace addon\shop\app\service\core\pointexchange;
 
 use addon\shop\app\model\exchange\Exchange;
 use core\base\BaseCoreService;
-use think\Model;
 
 
 /**
@@ -21,7 +20,6 @@ use think\Model;
  */
 class CorePointexChangeService extends BaseCoreService
 {
-
 
     public function __construct()
     {
@@ -40,6 +38,5 @@ class CorePointexChangeService extends BaseCoreService
         $info = $this->model->withSearch(['names', 'status', 'create_time', 'product_detail', 'sku_id', 'goods_id'], $where)->append(['type_name'])->field($field)->findOrEmpty()->toArray();
         return $info;
     }
-
 
 }

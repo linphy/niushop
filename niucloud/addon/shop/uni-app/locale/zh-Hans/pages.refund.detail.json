@@ -3,6 +3,7 @@
 	"fastRefundSuccessful":"极速退款成功",
 	"refundInfo":"由于你的信誉良好,已享受极速退款服务,退款即刻到账",
 	"refundType": "退款方式",
+	"refundMoney": "退款金额",
 	"refundCause": "退款原因",
 	"reasonRefusal": "拒绝原因",
 	"refundNo": "退款编号",

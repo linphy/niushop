@@ -24,12 +24,13 @@ class CartDict
      * @param $status
      * @return array|mixed|string
      */
-    public static function getStatus($status = ''){
+    public static function getStatus($status = '')
+    {
         $list = [
             self::NORMAL => get_lang('dict_shop_cart.normal'),
             self::INVALID => get_lang('dict_shop_cart.invalid'),
         ];
         if ($status == '') return $list;
-        return $list[$status] ?? '';
+        return $list[ $status ] ?? '';
     }
 }

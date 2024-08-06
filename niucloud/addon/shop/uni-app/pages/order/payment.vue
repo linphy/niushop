@@ -1,7 +1,7 @@
 <template>
     <view :style="themeColor()">
         <view class="bg-[#f6f6f6] min-h-[100vh]" v-if="orderData">
-            <view class="pt-[40rpx] px-[24rpx] payment-bottom">
+			<view class="pt-[30rpx] sidebar-marign payment-bottom">
                 <!-- 配送方式 -->
                 <view class="mb-[20rpx] rounded-[16rpx] bg-white" v-if="orderData.basic.has_goods_types.includes('real') && delivery_type_list.length">
                     <view class="rounded-tl-[16rpx] rounded-tr-[16rpx] head-tab flex items-center w-full bg-[#efefef]" v-if="delivery_type_list.length > 1">
@@ -11,7 +11,6 @@
                             </view>
                             <image v-if="index === activeIndex && delivery_type_list.length == 3" class="tab-image absolute bottom-[-2rpx] h-[94rpx] w-[240rpx]" :src="img(`addon/shop/payment/tab_${index}.png`)" mode="aspectFit"></image>
                             <image v-else-if="index === activeIndex && delivery_type_list.length == 2" class="tab-img absolute  bottom-[-2rpx]  h-[95rpx] w-[354rpx]" :src="img(`addon/shop/payment/tabstyle_${index}.png`)" mode="aspectFit"></image>
-
                         </view>
                     </view>
                     <view class="min-h-[140rpx] flex items-center px-[30rpx]">
@@ -22,11 +21,11 @@
                                     <image class="w-[60rpx] h-[60rpx] mr-[20rpx] flex-shrink-0" :src="img('addon/shop/payment/position_01.png')" mode="aspectFit"></image>
                                     <view class="flex flex-col overflow-hidden">
                                         <text class="text-[22rpx] text-[#999] truncate max-w-[536rpx]">{{orderData.delivery.take_address.full_address.split(orderData.delivery.take_address.address)[0]}}</text>
-                                        <text class="text-[32rpx] text-[#303133] mt-[10rpx] truncate max-w-[536rpx]">{{orderData.delivery.take_address.address}}</text>
+                                        <text class="text-[32rpx] text-[#303133] mt-[16rpx] truncate max-w-[536rpx]">{{orderData.delivery.take_address.address}}</text>
                                     </view>
                                     <text class="ml-auto nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#999]"></text>
                                 </view>
-                                <view class="flex items-center text-[24rpx] text-[#666] mt-[18rpx]">
+                                <view class="flex items-center text-[24rpx] text-[#666] mt-[20rpx]">
                                     <text class="mr-[16rpx]">{{ orderData.delivery.take_address.name }}</text>
                                     <text>{{ mobileHide(orderData.delivery.take_address.mobile) }}</text>
                                 </view>
@@ -68,7 +67,7 @@
                         <view class="flex" v-for="(item, key, index) in orderData.goods_data" :key="index" :class="{'pb-[40rpx]': (index + 1) != Object.keys(orderData.goods_data).length}">
                             <u--image class="overflow-hidden" width="170rpx" height="170rpx" radius="10rpx" :src="img(item.sku_image)" model="aspectFill">
                                 <template #error>
-                                    <u-icon name="photo" color="#999" size="50"></u-icon>
+									<image class="w-[170rpx] h-[170rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
                                 </template>
                             </u--image>
                             <view class="flex flex-1 w-0 flex-col justify-between ml-[16rpx]">
@@ -108,7 +107,7 @@
                     </view>
                     <!-- 发票 -->
                     <view class="flex items-center text-[#303133] leading-[30rpx] mt-[30rpx]" @click="invoiceRef.open()" v-if="invoiceRef && invoiceRef.invoiceOpen">
-                        <view class="text-[26rpx] font-500 w-[150rpx]">发票信息</view>
+                        <view class="text-[26rpx] font-400 w-[150rpx] text-[#303133]">发票信息</view>
                         <view class="flex-1 w-0 text-right truncate">
                             <text class="text-[26rpx]">{{ createData.invoice.header_name || '不需要发票' }}</text>
                         </view>
@@ -117,7 +116,7 @@
 
                 </view>
 
-                <view class="rounded-[16rpx] bg-white mb-[20rpx] overflow-hidden" v-if="invoiceRef && invoiceRef.invoiceOpen && couponList.length">
+                <view class="rounded-[16rpx] bg-white mb-[20rpx] overflow-hidden" v-if="couponRef && couponList.length">
                     <!-- 优惠券 -->
                     <view class="p-[30rpx] flex items-center leading-[30rpx]" @click="couponRef.open(createData.discount.coupon_id)" v-if="couponList.length">
                         <view class="text-[26rpx] w-[150rpx] text-[#303133] flex-shrink-0">优惠券</view>
@@ -132,29 +131,29 @@
                 </view>
 
                 <view class="p-[30rpx] rounded-[16rpx] bg-white">
-                    <view class="text-[28rpx] font-500 text-[#303133] leading-[38rpx] mb-[24rpx]">价格明细</view>
-                    <view class="flex items-center mb-[25rpx] text-[#303133]">
-                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">商品金额</view>
+                    <view class="text-[32rpx] font-500 text-[#303133] leading-[38rpx]">价格明细</view>
+                    <view class="flex items-center mt-[25rpx] text-[#303133]">
+                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx] text-[#303133] font-400">商品金额</view>
                         <view class="flex-1 w-0 text-right  price-font">
-                            <text class="text-[24rpx]">￥</text>
+                            <text class="text-[32rpx]">￥</text>
                             <text class="text-[32rpx]">{{ parseFloat(orderData.basic.goods_money).toFixed(2).split('.')[0] }}</text>
-                            <text class="text-[22rpx]">.{{ parseFloat(orderData.basic.goods_money).toFixed(2).split('.')[1] }}</text>
+                            <text class="text-[32rpx]">.{{ parseFloat(orderData.basic.goods_money).toFixed(2).split('.')[1] }}</text>
                         </view>
                     </view>
-                    <view class="flex items-center mb-[25rpx]" v-if="orderData.basic.delivery_money">
-                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">运费</view>
+                    <view class="flex items-center mt-[25rpx]" v-if="orderData.basic.delivery_money">
+                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx] text-[#303133] font-400">配送费用</view>
                         <view class="flex-1 w-0 text-right price-font text-[26rpx]">
-                            <text class="text-[22rpx]">￥</text>
+                            <text class="text-[26rpx]">￥</text>
                             <text class="text-[26rpx]">{{ parseFloat(orderData.basic.delivery_money).toFixed(2).split('.')[0] }}</text>
-                            <text class="text-[20rpx]">.{{ parseFloat(orderData.basic.delivery_money).toFixed(2).split('.')[1] }}</text>
+                            <text class="text-[26rpx]">.{{ parseFloat(orderData.basic.delivery_money).toFixed(2).split('.')[1] }}</text>
                         </view>
                     </view>
-                    <view class="flex items-center  text-[#303133]" v-if="orderData.basic.discount_money">
-                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx]">优惠金额</view>
+                    <view class="flex items-center  mt-[25rpx] text-[#303133]" v-if="orderData.basic.discount_money">
+                        <view class="text-[26rpx] w-[150rpx] leading-[30rpx] text-[#303133] font-400">优惠金额</view>
                         <view class="flex-1 w-0 text-right text-[var(--price-text-color)] price-font ">
-                            <text class="text-[22rpx]">-￥</text>
+                            <text class="text-[26rpx]">-￥</text>
                             <text class="text-[26rpx]">{{ parseFloat(orderData.basic.discount_money).toFixed(2).split('.')[0] }}</text>
-                            <text class="text-[20rpx]">.{{ parseFloat(orderData.basic.discount_money).toFixed(2).split('.')[1] }}</text>
+                            <text class="text-[26rpx]">.{{ parseFloat(orderData.basic.discount_money).toFixed(2).split('.')[1] }}</text>
                         </view>
                     </view>
                 </view>
@@ -167,7 +166,7 @@
                         <text class="text-[40rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[0] }}</text>
                         <text class="text-[24rpx]  font-500  text-[var(--price-text-color)] price-font leading-[46rpx]">.{{ parseFloat(orderData.basic.order_money).toFixed(2).split('.')[1] }}</text>
                     </view>
-                    <u-button text="提交订单" :customStyle="{width:'180rpx',height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',marginRight:'30rpx',background: 'linear-gradient( 94deg,  var(--primary-help-color) 0%, var(--price-text-color) 69%), var(--price-text-color)'}" shape="circle" @click="create"></u-button>
+                    <button class="primary-btn-bg !border-[0] rounded-[33rpx] text-[#fff] w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] m-0 mr-[30rpx]" hover-class="none" @click="create">提交订单</button>
                 </view>
             </u-tabbar>
 
@@ -193,6 +192,7 @@ import selectStore from './components/select-store/select-store'
 import addressList from './components/address-list/address-list'
 import invoice from './components/invoice/invoice'
 import { useSubscribeMessage } from '@/hooks/useSubscribeMessage'
+
 const createData = ref({
     order_key: '',
     member_remark: '',
@@ -238,19 +238,19 @@ const switchDeliveryType = (type: string, index: number) => {
  * 订单计算
  */
 const calculate = () => {
-    orderCreateCalculate(createData.value)
-        .then(({ data }) => {
-            orderData.value = data
-            createData.value.order_key = data.order_key
-            if(orderData.value.delivery.delivery_type_list) {
-                delivery_type_list.value = Object.values(orderData.value.delivery.delivery_type_list)
-            }
+    orderCreateCalculate(createData.value).then(({ data }) => {
+        orderData.value = data
+        createData.value.order_key = data.order_key
+        if (orderData.value.delivery.delivery_type_list) {
+            delivery_type_list.value = Object.values(orderData.value.delivery.delivery_type_list)
+        }
 
-            if (selectAddress) activeIndex.value = delivery_type_list.value.findIndex(el => el.key === orderData.value.delivery.delivery_type)
-            !createData.value.delivery.delivery_type && data.delivery.delivery_type && (createData.value.delivery.delivery_type = data.delivery.delivery_type)
-        })
-        .catch()
+        if (selectAddress) activeIndex.value = delivery_type_list.value.findIndex(el => el.key === orderData.value.delivery.delivery_type)
+        !createData.value.delivery.delivery_type && data.delivery.delivery_type && (createData.value.delivery.delivery_type = data.delivery.delivery_type)
+
+    }).catch()
 }
+
 calculate()
 
 // 改变配送方式

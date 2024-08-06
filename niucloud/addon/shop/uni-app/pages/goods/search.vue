@@ -4,7 +4,7 @@
 			<view class="search-box">
 				<input class="uni-input text-[24rpx]" maxlength="50" v-model="inputValue" confirm-type="search" focus @confirm="search()" placeholder="搜索商品" />
 				<u-icon v-if="inputValue" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="inputValue=''"></u-icon>
-				<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 !text-[26rpx]" @click="search()"></text>
+				<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 !text-[32rpx]" @click="search()"></text>
 			</view>
 		</view>
 
@@ -140,7 +140,7 @@ const getHistoryHeight =()=> {
 		input {
 			font-size: 24rpx;
 			height: 100%;
-			padding: 0 25rpx 0 30rpx;
+			padding: 0 25rpx 0 32rpx;
 			width: calc(100% - 120rpx);
 			
 		}
@@ -150,7 +150,7 @@ const getHistoryHeight =()=> {
 		text {
 			font-size: 32rpx;
 			color: #909399;
-			padding-right: 15rpx;
+			padding-right: 32rpx;
 			padding-left: 10rpx;
 			text-align: center;
 		}

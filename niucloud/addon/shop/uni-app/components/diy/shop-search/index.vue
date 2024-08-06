@@ -98,9 +98,9 @@
         })
     }
 
-	const toLink = (url)=>{
+	const toLink = (url: any)=>{
 		if (diyStore.mode == 'decorate') return false;
-		redirect({ url: url})
+		redirect({ url })
 	}
 
 </script>

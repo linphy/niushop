@@ -16,6 +16,7 @@ use addon\shop\app\dict\order\OrderGoodsDict;
 use addon\shop\app\model\cart\Cart;
 use addon\shop\app\model\goods\GoodsSku;
 use addon\shop\app\model\order\Order;
+use app\dict\member\MemberDict;
 use app\model\member\MemberLevel;
 use app\service\core\member\CoreMemberService;
 use core\base\BaseCoreService;
@@ -47,6 +48,12 @@ class CoreOrderCreateService extends BaseCoreService
     {
         //参数赋值
         $this->setParam($data);
+
+        $member_info = ( new CoreMemberService() )->getInfoByMemberId($data[ 'member_id' ], 'status');
+
+        if (empty($member_info)) throw new CommonException('SHOP_ORDER_BUYER_NOT_FOUND');//无效的账号
+        if ($member_info[ 'status' ] == MemberDict::OFF) throw new CommonException('SHOP_ORDER_BUYER_LOCKED');//账号被锁定
+
         $order_key = $this->param[ 'order_key' ] ?? '';
         //获取订单缓存缓存
         $this->getOrderCache($order_key);
@@ -105,7 +112,7 @@ class CoreOrderCreateService extends BaseCoreService
                 'status' => OrderGoodsDict::NORMAL,
             ];
         }
-        $create_order_data = array (
+        $create_order_data = array(
             'order_data' => $order_data,
             'order_goods_data' => $order_goods_data,
         );
@@ -215,8 +222,8 @@ class CoreOrderCreateService extends BaseCoreService
             if (empty($sku_data)) throw new CommonException('SHOP_ORDER_CARTS_EXPIRE');//无效的数据
         }
         $sku_ids = array_column($sku_data, 'sku_id');
-        $sku_condition = array (
-            [ 'sku_id', 'in', $sku_ids ],
+        $sku_condition = array(
+            [ 'sku_id', 'in', $sku_ids ]
         );
         $sku_list = ( new  GoodsSku() )->where($sku_condition)->with([ 'goods' ])->field('sku_id, sku_name, sku_image, goods_id, price, stock, weight, volume,sku_id, sku_spec_format,member_price, sale_price')->select()->toArray();
         $sku_list = array_column($sku_list, null, 'sku_id');

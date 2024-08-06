@@ -52,8 +52,8 @@ class Service extends BaseModel
      */
     public function searchServiceNameAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("service_name", "like", "%" . $value . "%");
+        if ($value != '') {
+            $query->where("service_name", "like", "%" . $this->handelSpecialCharacter($value) . "%");
         }
     }
 

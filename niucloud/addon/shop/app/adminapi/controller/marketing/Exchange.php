@@ -37,7 +37,7 @@ class Exchange extends BaseAdminController
 
     /**
      * 获取活动商品类型
-     * @return Response
+     * @return \think\Response
      */
     public function type()
     {
@@ -46,7 +46,6 @@ class Exchange extends BaseAdminController
 
     /**
      * 获取积分商城状态
-     * @return Response
      */
     public function status()
     {

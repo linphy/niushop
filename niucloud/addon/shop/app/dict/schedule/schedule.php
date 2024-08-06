@@ -45,7 +45,28 @@ return [
         'class' => 'addon\shop\app\job\marketing\CouponMemberExpire',
         'function' => ''
     ],
-
+    [
+        'key' => 'shop_coupon_start',
+        'name' => '优惠券限时自动开启',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\CouponStart',
+        'function' => ''
+    ],
+    [
+        'key' => 'shop_coupon_end',
+        'name' => '优惠券限时自动结束',
+        'desc' => '',
+        'time' => [
+            'type' => 'min',
+            'min' => 1
+        ],
+        'class' => 'addon\shop\app\job\marketing\CouponEnd',
+        'function' => ''
+    ],
     [
         'key' => 'shop_active_start',
         'name' => '营销活动自动开启',

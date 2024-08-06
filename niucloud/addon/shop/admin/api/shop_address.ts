@@ -15,7 +15,7 @@ export function getShopAddressList(params: Record<string, any>) {
  * @returns
  */
 export function getShopAddressInfo(id: number) {
-    return request.get(`shop/shop_address/${id}`);
+    return request.get(`shop/shop_address/${ id }`);
 }
 
 /**
@@ -33,7 +33,7 @@ export function addShopAddress(params: Record<string, any>) {
  * @returns
  */
 export function editShopAddress(params: Record<string, any>) {
-    return request.put(`shop/shop_address/${params.id}`, params, { showErrorMessage: true, showSuccessMessage: true })
+    return request.put(`shop/shop_address/${ params.id }`, params, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**
@@ -42,7 +42,7 @@ export function editShopAddress(params: Record<string, any>) {
  * @returns
  */
 export function deleteShopAddress(id: number) {
-    return request.delete(`shop/shop_address/${id}`, { showErrorMessage: true, showSuccessMessage: true })
+    return request.delete(`shop/shop_address/${ id }`, { showErrorMessage: true, showSuccessMessage: true })
 }
 
 /**

@@ -7,7 +7,7 @@
                         <view class="flex py-[30rpx] border-0 !border-b !border-[#f5f5f5] border-solid">
                             <u--image width="120rpx" height="120rpx" :src="img(orderDetail.sku_image)" model="aspectFill">
                                 <template #error>
-                                    <u-icon name="photo" color="#999" size="50"></u-icon>
+                                    <image class="w-[120rpx] h-[120rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
                                 </template>
                             </u--image>
                             <view class="flex flex-1 w-0 flex-col justify-between ml-[20rpx]">
@@ -83,7 +83,7 @@
                         </view>
                     </view>
                     <view class="mt-[40rpx] m-[24rpx]">
-                        <u-button type="primary" shape="circle" text="提交" @click="save" :loading="operateLoading"></u-button>
+                        <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="save" :loading="operateLoading">提交</button>
                     </view>
 
                     <!-- 退款原因 -->
@@ -98,7 +98,7 @@
                                     <u-radio activeColor="var(--primary-color)" :customStyle="{marginBottom: '8px'}" v-for="(item, index) in reason" :key="index" :label="item" :name="item"></u-radio>
                                 </u-radio-group>
                             </scroll-view>
-                            <u-button type="primary" text="确定" class="mt-[40rpx]" shape="circle" @click="refundCausePopupFn"></u-button>
+                            <button class="mt-[40rpx] bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="refundCausePopupFn">确定</button>
                         </view>
                     </u-popup>
                 </scroll-view>
@@ -119,7 +119,7 @@
 	const orderDetail = ref({})
     const orderGoodsId = ref(0)
     const step = ref(0)
-	let refundCausePopup = ref(false)
+	const refundCausePopup = ref(false)
     const formData = ref({
         order_id: detail.value?.order_id,
         order_goods_id: orderGoodsId.value,
@@ -130,16 +130,16 @@
         remark: '',
         voucher: []
     })
-    let refundMoney = ref<any>({})
+    const refundMoney = ref<any>({})
     const reason = ref<string[]>([])
     const currReasonName = ref('')
 
 	getRefundReason().then(({ data }) => {
 	    reason.value = data
 		if(reason.value && reason.value.length) currReasonName.value = reason.value[0];
-	}).catch()
+	})
 
-    onLoad((option) => {
+    onLoad((option: any) => {
         orderGoodsId.value = option.order_goods_id || 0
 		getRefundDetail(option.order_refund_no).then(({ data }) => {
 		    detail.value = data
@@ -153,20 +153,19 @@
 			formData.value.reason = data.reason;
 			currReasonName.value = data.reason;
 			formData.value.voucher = data.voucher;
-		}).catch()
+		})
         getRefundMoneyAgain({order_refund_no: option.order_refund_no}).then(res =>{
             refundMoney.value = res.data
             formData.value.apply_money = moneyFormat(refundMoney.value.refund_money)
         })
     })
 
-
     const inputWidth = computed((value) => {
         return function (value) {
             if (value == '' || value == 0) {
-                return '60rpx';
+                return '70rpx';
             } else {
-                return String(value).length * 17 + 'rpx';
+                return String(value).length * 18 + 'rpx';
             }
         };
     })
@@ -202,21 +201,23 @@
 
     const operateLoading = ref(false)
     const save = ()=> {
-		if(!formData.value.reason){
-			uni.showToast({
-				title: '请选择退款原因',
-				icon: 'none'
-			});
-			return false;
-		}
-        if((Number(formData.value.apply_money).toFixed(2)) < 0 ){
+        if (!formData.value.reason) {
+            uni.showToast({
+                title: '请选择退款原因',
+                icon: 'none'
+            });
+            return false;
+        }
+
+        if ((Number(formData.value.apply_money).toFixed(2)) < 0) {
             uni.showToast({
                 title: '退款金额不能为0,保留两位小数',
                 icon: 'none'
             });
             return false;
-		}
-        if(Number(formData.value.apply_money)>Number(refundMoney.value.refund_money)) {
+        }
+
+        if (Number(formData.value.apply_money) > Number(refundMoney.value.refund_money)) {
             uni.showToast({
                 title: '退款金额不能大于可退款总额',
                 icon: 'none'
@@ -224,12 +225,12 @@
             return false;
         }
 
-		if (operateLoading.value) return
-		operateLoading.value = true
+        if (operateLoading.value) return
+        operateLoading.value = true
 
         editRefund(formData.value).then((res) => {
             operateLoading.value = false
-            setTimeout(()=> {
+            setTimeout(() => {
                 redirect({ url: '/addon/shop/pages/order/detail', param: { order_id: formData.value.order_id } })
             }, 1000)
         }).catch(() => {

@@ -8,7 +8,7 @@
 			</view>
 
 			<view class="swiper-box">
-				<u-swiper :list="goodsDetail.goods.goods_image" :indicator="goodsDetail.goods.goods_image.length" :indicatorStyle="{'bottom': '50rpx',}" :autoplay="true" height="100vw" @click="swiperClick"></u-swiper>
+				<u-swiper :list="goodsDetail.goods.goods_image" :indicator="goodsDetail.goods.goods_image.length" :indicatorStyle="{'bottom': '50rpx'}" :autoplay="true" height="100vw" @click="swiperClick"></u-swiper>
 			</view>
 			<view v-if="priceType == 'discount_price'" class="-mt-[26rpx] relative flex items-center justify-between !bg-cover box-border pb-[26rpx] h-[136rpx] px-[30rpx]" :style="{ background: 'url(' + img('addon/shop/detail/discount_price_bg.png') + ') no-repeat'}">
 				<view class="flex text-[#fff]">
@@ -59,7 +59,7 @@
 					</view>
 				</view>
 
-				<view class="mt-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx] py-[16rpx]" v-if="isGoodsPropertyTemp">
+				<view class="mt-[20rpx] bg-white sidebar-marign rounded-[16rpx] px-[20rpx] py-[16rpx]" v-if="isGoodsPropertyTemp">
 					<view @click="servicesDataShow = !servicesDataShow" v-if="goodsDetail.service && goodsDetail.service.length" class="flex items-center h-[64rpx]">
 						<text class="text-[#666] text-[26rpx] leading-[30rpx] font-400 shrink-0">服务</text>
 						<view class="text-[#343434] text-[26rpx] leading-[30rpx] font-400 truncate ml-auto">
@@ -75,7 +75,7 @@
 						<text class="nc-iconfont nc-icon-youV6xx text-[26rpx] text-[#666]"></text>
 					</view>
 					<view class="flex items-center h-[64rpx]" @click="distributionDataOpen"
-						v-if="goodsDetail.goods.goods_type == 'real'&&goodsDetail.delivery_type_list&&goodsDetail.delivery_type_list.length" >
+						v-if="goodsDetail.goods.goods_type == 'real'&&goodsDetail.delivery_type_list&&goodsDetail.delivery_type_list.length">
 						<text class="text-[#666] text-[26rpx] leading-[30rpx] font-400 shrink-0">配送</text>
 						<view class="ml-auto flex items-center text-[#343434] text-[26rpx] leading-[30rpx] font-400">
 							{{goodsDetail.delivery_type_list[selectDeliveryType]}}
@@ -96,7 +96,7 @@
 
 				</view>
 
-				<view class="mt-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx]">
+				<view class="mt-[20rpx] bg-white sidebar-marign rounded-[16rpx] px-[20rpx]">
 					<view class="flex items-center justify-between h-[80rpx]">
 						<text class="text-[28rpx] text-[#303133] font-bold">宝贝评价({{ evaluate.count }})</text>
 						<view v-if="evaluate.count" class="h-[80rpx] flex items-center" @click="toLink(goodsDetail.goods_id)">
@@ -108,7 +108,7 @@
 					<view>
 						<view class="pb-[20rpx]" v-for="(item, index) in evaluate.list" :key="index">
 							<view class="flex items-center w-full">
-								<u-avatar :src="img(item.member_head)" :size="'30rpx'" leftIcon="none"></u-avatar>
+								<u-avatar :default-url="img('static/resource/images/default_headimg.png')" :src="img(item.member_head)" :size="'30rpx'" leftIcon="none"></u-avatar>
 								<text class="ml-[10rpx] text-[22rpx] text-[#999]">{{ item.member_name }}</text>
 							</view>
 							<view class="flex justify-between w-full mt-[10rpx]">
@@ -125,7 +125,7 @@
 					</view>
 				</view>
 
-				<view class="my-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx] pb-[20rpx]" v-if="goodsDetail.goods && goodsDetail.goods.attr_format && Object.keys(goodsDetail.goods.attr_format).length">
+				<view class="my-[20rpx] bg-white sidebar-marign rounded-[16rpx] px-[20rpx] pb-[20rpx]" v-if="goodsDetail.goods && goodsDetail.goods.attr_format && Object.keys(goodsDetail.goods.attr_format).length">
 					<view class="text-[28rpx] h-[80rpx] leading-[80rpx] font-bold">商品属性</view>
 					<view class="border-[2rpx] border-solid border-[#f1f1f1] border-b-0">
 						<block v-for="(item,index) in goodsDetail.goods.attr_format" :key="index">
@@ -141,7 +141,7 @@
 					</view>
 				</view>
 
-				<view class="my-[20rpx] bg-white mx-[20rpx] rounded-[16rpx] px-[20rpx] pd-[10px]">
+				<view class="my-[20rpx] bg-white sidebar-marign rounded-[16rpx] px-[20rpx] pb-[20rpx]">
 					<view class="text-[28rpx] h-[80rpx] leading-[80rpx] font-bold">商品详情</view>
 					<view class="u-content">
 						<u-parse :content="goodsDetail.goods.goods_desc" :tagStyle="{img: 'vertical-align: top;',p:'overflow: hidden;word-break:break-word;' }"></u-parse>
@@ -159,10 +159,27 @@
 							<view class="nc-iconfont nc-icon-fenxiangV6xx text-[36rpx]"></view>
 							<text class="text-[20rpx] mt-[10rpx]">分享</text>
 						</view>
-						<view class="flex flex-col justify-center items-center"  @click="collectFn">
+
+						<!-- #ifdef H5 -->
+						<view class="flex flex-col justify-center items-center" @click="collectFn">
 							<text class="nc-iconfont text-[36rpx]" :class="{'text-[#ff0000] nc-icon-xihuanV6mm': isCollect, 'text-[#303133] nc-icon-guanzhuV6xx' : !isCollect}"></text>
 							<text class="text-[20rpx] mt-[10rpx]">收藏</text>
 						</view>
+						<!-- #endif -->
+
+						<!-- #ifdef MP-WEIXIN -->
+						<view>
+							<nc-contact
+									:send-message-title="sendMessageTitle"
+									:send-message-path="sendMessagePath"
+									:send-message-img="sendMessageImg">
+								<view class="flex flex-col justify-center items-center">
+									<text class="nc-iconfont nc-icon-kefuV6xx-1 text-[36rpx]"></text>
+									<text class="text-[20rpx] mt-[10rpx]">客服</text>
+								</view>
+							</nc-contact>
+						</view>
+						<!-- #endif -->
 					</view>
 					<view class="flex" v-if="goodsDetail.goods.status == 1">
 						<button
@@ -173,7 +190,7 @@
 						<button
 							v-if="isShowSingleSku"
 							:style="{ width : (goodsDetail.goods.goods_type == 'real' || (goodsDetail.goods.goods_type == 'virtual' && goodsDetail.goods.virtual_receive_type != 'verify')) ?  '200rpx' : '420rpx' + '!important'  }"
-							class="!h-[72rpx] text-[26rpx] !text-[#fff] !bg-[#FF4646] !m-0 leading-[72rpx] rounded-full remove-border"
+							class="!h-[72rpx] text-[26rpx] !text-[#fff] primary-btn-bg !m-0 leading-[72rpx] rounded-full remove-border"
 							@click="buyFn('buy_now')">立即购买</button>
 						<button
 							v-else
@@ -275,29 +292,30 @@
 
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		<!-- #endif -->
+		<!-- 强制绑定手机号 -->
+		<bind-mobile ref="bindMobileRef" /> 
 	</view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, getCurrentInstance, nextTick } from 'vue';
-import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
+import { onLoad, onShow, onUnload,onPageScroll } from '@dcloudio/uni-app'
 import { img, redirect,handleOnloadParams, getToken, deepClone } from '@/utils/common';
 import { t } from '@/locale';
 import { getGoodsDetail, collect, cancelCollect, getEvaluateList } from '@/addon/shop/api/goods';
 import { getShopCouponList, getCoupon } from '@/addon/shop/api/coupon';
 import nsGoodsSku from '@/addon/shop/components/ns-goods-sku/ns-goods-sku.vue';
+import bindMobile from '@/components/bind-mobile/bind-mobile.vue';
 import useCartStore from '@/addon/shop/stores/cart'
 import { useLogin } from '@/hooks/useLogin'
 import useMemberStore from '@/stores/member'
 import { useShare }from '@/hooks/useShare'
-import { onPageScroll } from '@dcloudio/uni-app';
 import sharePoster from '@/components/share-poster/share-poster.vue'
 
 // 分享
 const{setShare} = useShare()
-
 
 // 会员信息
 const memberStore = useMemberStore()
@@ -305,18 +323,23 @@ const userInfo = computed(() => memberStore.info)
 
 // 购物车数量
 const cartStore = useCartStore();
-let cartTotalNum = computed(() => cartStore.totalNum)
+const cartTotalNum = computed(() => cartStore.totalNum)
 
-let goodsSkuRef = ref(null);
-let goodsDetail = ref({});
+const goodsSkuRef = ref(null);
+const goodsDetail = ref({});
 
-let isAttrFormatShow = ref(false); //控制属性是否展开
+const isAttrFormatShow = ref(false); //控制属性是否展开
 
-let loading = ref<boolean>(false);
-let servicesDataShow = ref<boolean>(false)
-let distributionDataShow =  ref<boolean>(false) //配送
-let couponListShow = ref<boolean>(false) //优惠券
-let discountTime = ref(0)
+const loading = ref<boolean>(false);
+const servicesDataShow = ref<boolean>(false)
+const distributionDataShow =  ref<boolean>(false) //配送
+const couponListShow = ref<boolean>(false) //优惠券
+const discountTime = ref(0)
+
+const sendMessageTitle = ref('')
+const sendMessagePath = ref('')
+const sendMessageImg = ref('')
+
 onLoad((option) => {
 
     // #ifdef MP-WEIXIN
@@ -354,7 +377,11 @@ onLoad((option) => {
 				}
 			})
 		}
-		
+
+        sendMessageTitle.value = goodsDetail.value.goods.goods_name
+        sendMessagePath.value = '/addon/shop/pages/goods/detail?sku_id=' + goodsDetail.value.sku_id;
+        sendMessageImg.value = img(goodsDetail.value.goods.goods_cover_thumb_mid)
+
 		// 分享 - start
 		let share = {
 			title: goodsDetail.value.goods.goods_name,
@@ -454,14 +481,21 @@ const buyFn = (type) => {
 	goodsSkuRef.value.open(type)
 }
 
+//强制绑定手机号
+const bindMobileRef = ref(null)
 // 收藏
-let isCollect = ref(0);
+const isCollect = ref(0);
 const collectFn = () => {
 	// 检测是否登录
 	if (!userInfo.value) {
 		useLogin().setLoginBack({ url: '/addon/shop/pages/goods/detail', param: { sku_id: goodsDetail.value.sku_id } })
 		return false
 	}
+	// 绑定手机号
+	if(uni.getStorageSync('isbindmobile')){
+        bindMobileRef.value.open()
+        return false
+    }
 	let api = isCollect.value ? cancelCollect(goodsDetail.value.goods_id) : collect(goodsDetail.value.goods_id);
 	api.then(res => {
 		isCollect.value = !isCollect.value;
@@ -480,7 +514,7 @@ const collectFn = () => {
 }
 
 // 优惠券
-let couponList = ref([]);
+const couponList = ref([]);
 const getShopCouponListFn = () => {
 	getShopCouponList({
 		category_id: goodsDetail.value.goods.goods_category || '',
@@ -511,6 +545,11 @@ const getCouponFn = (data, index) => {
 		useLogin().setLoginBack({ url: '/addon/shop/pages/goods/detail', param: { sku_id: goodsDetail.value.sku_id } })
 		return false
 	}
+	// 绑定手机号
+	if(uni.getStorageSync('isbindmobile')){
+        bindMobileRef.value.open()
+        return false
+    }
 	getCoupon({
 		coupon_id: data.id || '',
 		number: 1,
@@ -567,9 +606,10 @@ const goback=()=> {
 			delta: 1
 		});
 	}else{
-		uni.navigateTo({
-			url: '/addon/shop/pages/index'
-		})
+        redirect({
+			url: '/addon/shop/pages/index',
+            mode: 'reLaunch'
+		});
 	}
 }
 
@@ -663,7 +703,7 @@ const instance = getCurrentInstance();
 let swiperHeight = 0
 let detailHead = 0
 
-let detailHeadBgChange = ref(false)
+const detailHeadBgChange = ref(false)
 onPageScroll((e)=> {
     if (swiperHeight == 0 || detailHead == 0) return;
     let height = swiperHeight - detailHead - 20;
@@ -680,8 +720,8 @@ const swiperClick = (index)=>{
 }
 
 /************* 分享海报-start **************/
-let sharePosterRef = ref(null);
-let copyUrlParam = ref('');
+const sharePosterRef = ref(null);
+const copyUrlParam = ref('');
 let posterParam = {};
 
 // 分享海报链接
@@ -698,24 +738,24 @@ const openShareFn = ()=>{
 /************* 分享海报-end **************/
 
 // 价格类型
-let priceType = ref('') //''=>原价，discount_price=>折扣价，member_price=>会员价
+const priceType = ref('') //''=>原价，discount_price=>折扣价，member_price=>会员价
 
 // 商品价格
-let goodsPrice = computed(() =>{
-	let price = "0.00";
-	if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount){
-		// 折扣价
-		price = goodsDetail.value.sale_price ? goodsDetail.value.sale_price : goodsDetail.value.price;
-		priceType.value = 'discount_price'
-	}else if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken()){
-		// 会员价
-		price = goodsDetail.value.member_price ? goodsDetail.value.member_price : goodsDetail.value.price;
-		priceType.value = 'member_price'
-	}else{
-		price = goodsDetail.value.price
-		priceType.value = ''
-	}
-	return price;
+const goodsPrice = computed(() => {
+    let price = "0.00";
+    if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount && goodsDetail.value.sale_price != goodsDetail.value.price) {
+        // 折扣价
+        price = goodsDetail.value.sale_price ? goodsDetail.value.sale_price : goodsDetail.value.price;
+        priceType.value = 'discount_price'
+    } else if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken() && goodsDetail.value.member_price != goodsDetail.value.price) {
+        // 会员价
+        price = goodsDetail.value.member_price ? goodsDetail.value.member_price : goodsDetail.value.price;
+        priceType.value = 'member_price'
+    } else {
+        price = goodsDetail.value.price
+        priceType.value = ''
+    }
+    return price;
 })
 
 // 关闭预览图片

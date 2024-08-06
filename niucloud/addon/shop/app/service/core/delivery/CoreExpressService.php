@@ -75,6 +75,10 @@ class CoreExpressService extends BaseCoreService
         $nationwide = (new ShippingTemplateItem())->where([ ['template_id', '=', $goods['goods']['delivery_template_id'] ], ['city_id', '=', 0 ] ])->field($field)->findOrEmpty()->toArray();
         if (empty($template)) {
             $template = $nationwide;
+            if(empty($nationwide)){
+                $order->error[] = get_lang('SHOP_THE_AVAILABLE_SHIPPING_RATES_AREN_T_CONFIGURED');
+                return true;
+            }
         } else {
             if (empty($template['snum'])) $template['snum'] = $nationwide['snum'];
             if (empty($template['sprice'])) $template['sprice'] = $nationwide['sprice'];

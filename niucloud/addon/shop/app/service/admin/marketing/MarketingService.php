@@ -17,8 +17,8 @@ use core\base\BaseAdminService;
 
 /**
  * 优惠券服务层
- * Class StoreService
- * @package addon\shop\app\service\admin\delivery
+ * Class MarketingService
+ * @package addon\shop\app\service\admin\marketing
  */
 class MarketingService extends BaseAdminService
 {
@@ -60,7 +60,7 @@ class MarketingService extends BaseAdminService
     //去重
     function arrayUniqueness($arr, $key)
     {
-        $res = array ();
+        $res = array();
         foreach ($arr as $value) {
             //查看有没有重复项
             if (isset($res[ $value[ $key ] ])) {

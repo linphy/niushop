@@ -100,7 +100,6 @@ class Active extends BaseModel
         return ActiveDict::getGoodsType()[$data['active_goods_type']] ?? '';
     }
 
-
     /**
      * 活动类别
      * @param $value
@@ -123,8 +122,8 @@ class Active extends BaseModel
      */
     public function searchActiveNameAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("active_name", 'like', '%'.$value.'%');
+        if ($value != '') {
+            $query->where("active_name", 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

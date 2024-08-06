@@ -8,7 +8,7 @@
 					<view class="rounded-[8rpx] overflow-hidden">
 						<u--image width="180rpx" height="180rpx" :src="img(goodsDetail.detail.sku_image)" @click="imgListPreview(goodsDetail.detail.sku_image)" model="aspectFill">
 							<template #error>
-								<u-icon name="photo" color="#999" size="50"></u-icon>
+								<image class="w-[180rpx] h-[180rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 							</template>
 						</u--image>
 					</view>
@@ -52,59 +52,62 @@
 						<view class="text-[26rpx]">购买数量</view>
 						<u-number-box :min="1" :max="parseInt(goodsDetail.detail.limit_num)<goodsDetail.stock?parseInt(goodsDetail.detail.limit_num):goodsDetail.stock" integer :step="1" input-width="98rpx" v-model="buyNum" input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 							</template>
 							<template #input>
-								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
+								<text class="text-[#303133] text-[24rpx] mx-[10rpx] min-w-[56rpx] h-[38rpx] leading-[40rpx] text-center border-[1rpx] border-solid border-[#ddd] rounded-[4rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock || buyNum ==parseInt(goodsDetail.detail.limit_num)}"></text>
+								<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock || buyNum ==parseInt(goodsDetail.detail.limit_num)}"></text>
 							</template>
 						</u-number-box>
 					</view>
 				</scroll-view>
-				<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="confirm">确定</button>
+				<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] primary-btn-bg leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="confirm">确定</button>
 				<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
 			</view>
 		</u-popup>
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		<!-- #endif -->
+		<!-- 强制绑定手机号 -->
+		<bind-mobile ref="bindMobileRef" /> 
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, computed, toRaw } from 'vue';
+	import { ref, reactive, computed } from 'vue';
 	import { img, redirect, getToken } from '@/utils/common'
+	import bindMobile from '@/components/bind-mobile/bind-mobile.vue';
 	import { useLogin } from '@/hooks/useLogin'
 	import useMemberStore from '@/stores/member'
 	import { t } from '@/locale';
 
 	const props = defineProps(['goodsDetail']);
-	let goodsSkuPop = ref(false);
-	let callback:any = ref(null);
-	let currSpec = ref({
+	const goodsSkuPop = ref(false);
+	const callback:any = ref(null);
+	const currSpec = ref({
 		skuId: "",
 		name: []
 	})
-	let openType = ref("");
-	let buyNum = ref(1)
+	const openType = ref("");
+	const buyNum = ref(1)
 	
 	// 商品价格
-	let goodsPrice = computed(() =>{
-		let price = "0.00";
-		if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount){
-			// 折扣价
-			price = goodsDetail.value.sale_price ? goodsDetail.value.sale_price : goodsDetail.value.price;
-		}else if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken()){
-			// 会员价
-			price = goodsDetail.value.member_price ? goodsDetail.value.member_price : goodsDetail.value.price;
-		}else{
-			price = goodsDetail.value.price
-		}
-		return price;
-	})
+	const goodsPrice = computed(() => {
+        let price = "0.00";
+        if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount && goodsDetail.value.sale_price != goodsDetail.value.price) {
+            // 折扣价
+            price = goodsDetail.value.sale_price ? goodsDetail.value.sale_price : goodsDetail.value.price;
+        } else if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken() && goodsDetail.value.member_price != goodsDetail.value.price) {
+            // 会员价
+            price = goodsDetail.value.member_price ? goodsDetail.value.member_price : goodsDetail.value.price;
+        } else {
+            price = goodsDetail.value.price
+        }
+        return price;
+    })
 
 	// 会员信息
 	const memberStore = useMemberStore()
@@ -174,14 +177,19 @@
 			}
 		})
 	}
-	//提交
+	//强制绑定手机号
+	const bindMobileRef = ref(null)	//提交
 	const confirm = ()=> {
         // 检测是否登录
         if (!userInfo.value) {
             useLogin().setLoginBack({url: '/addon/shop/pages/point/detail', param: {id: goodsDetail.value.exchange_id}})
             return false
         }
-
+		// 绑定手机号
+		if(uni.getStorageSync('isbindmobile')){
+			bindMobileRef.value.open()
+			return false
+		}
         // 立即购买
         var data = {
             sku_id: goodsDetail.value.sku_id,
@@ -232,4 +240,9 @@
 .u-popup :deep(.u-transition){
 	z-index: 999 !important;
 }
+::v-deep .u-number-box .u-number-box__slot{
+	display: flex;
+	align-items: center;
+}
 </style>
+

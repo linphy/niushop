@@ -24,7 +24,6 @@ use core\base\BaseAdminService;
 use think\db\Query;
 use think\facade\Db;
 use addon\shop\app\model\active\ActiveGoods;
-use think\Model;
 
 
 /**
@@ -40,9 +39,8 @@ class ExchangeService extends BaseAdminService
         $this->model = new Exchange();
     }
 
-
     /**
-     * 获取积分商城列表   ok
+     * 获取积分商城列表
      * @param array $where
      * @return array
      */
@@ -50,52 +48,49 @@ class ExchangeService extends BaseAdminService
     {
         $field = 'total_exchange_num,stock,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
         $order = 'id desc';
-        $search_model = $this->model->where([['id', '>', 0]])->withSearch(['names', 'status', 'create_time'], $where)->append(['type_name', 'status_name','goods_cover_thumb_big','goods_cover_thumb_small'])->field($field)->order($order);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ 'names', 'status', 'create_time' ], $where)->append([ 'type_name', 'status_name', 'goods_cover_thumb_big', 'goods_cover_thumb_small' ])->field($field)->order($order);
         $list = $this->pageQuery($search_model);
         return $list;
     }
 
-
     /**
      * 获取积分商城详情
-     * @param int $active_id
+     * @param int $id
      * @return array
      */
     public function getDetail(int $id)
     {
         $field = 'stock,total_exchange_num,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
-        $info = $this->model->where([['id', '=', $id]])->append(['type_name'])->field($field)->findOrEmpty()->toArray();
-        switch ($info['type']) {
+        $info = $this->model->where([ [ 'id', '=', $id ] ])->append([ 'type_name' ])->field($field)->findOrEmpty()->toArray();
+        switch ($info[ 'type' ]) {
             case ExchangeDict::GOODS:
-                $info['goods_list'] = (new GoodsSku())->where([ ['goods_id', '=', $info['product_detail'][0]['goods_id']]])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
-                $info['goods_info'] = (new Goods())->where([['goods_id', '=', $info['product_detail'][0]['goods_id']]])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();;
-                $info['goods_info']['spec_type'] = empty($info['goods_list'][0]['sku_spec_format']) ? 'single' : 'multi';
-                $info['goods_info']['goods_price'] = $info['goods_list'][0]['goods_price'];
-                foreach ($info['goods_list'] as &$item) {
-                    $product_detail_key = array_search($item['sku_id'], array_column($info['product_detail'], 'sku_id'));
+                $info[ 'goods_list' ] = ( new GoodsSku() )->where([ [ 'goods_id', '=', $info[ 'product_detail' ][ 0 ][ 'goods_id' ] ] ])->field('sku_spec_format,sku_id,sku_name,sku_image,sku_no,price as goods_price,stock as goods_stock')->select()->toArray();
+                $info[ 'goods_info' ] = ( new Goods() )->where([ [ 'goods_id', '=', $info[ 'product_detail' ][ 0 ][ 'goods_id' ] ] ])->field('goods_id,goods_name,goods_image,goods_cover')->findOrEmpty()->toArray();
+                $info[ 'goods_info' ][ 'spec_type' ] = empty($info[ 'goods_list' ][ 0 ][ 'sku_spec_format' ]) ? 'single' : 'multi';
+                $info[ 'goods_info' ][ 'goods_price' ] = $info[ 'goods_list' ][ 0 ][ 'goods_price' ];
+                foreach ($info[ 'goods_list' ] as &$item) {
+                    $product_detail_key = array_search($item[ 'sku_id' ], array_column($info[ 'product_detail' ], 'sku_id'));
                     if ($product_detail_key !== false) {
-                        $item['is_enabled'] = 1;
-                        $item = array_merge($item, $info['product_detail'][$product_detail_key]);
+                        $item[ 'is_enabled' ] = 1;
+                        $item = array_merge($item, $info[ 'product_detail' ][ $product_detail_key ]);
                     } else {
-                        $item['is_enabled'] = 0;
+                        $item[ 'is_enabled' ] = 0;
                     }
                 }
                 break;
-            default:
         }
         return $info;
     }
 
-
     /**
      * 获取积分商城详情
-     * @param int $active_id
-     * @return array
+     * @param $where
+     * @return mixed
      */
     public function getInfo($where)
     {
         $field = 'stock,total_exchange_num,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
-        $info = $this->model->withSearch(['ids', 'names', 'status', 'create_time', 'product_detail', 'sku_id', 'goods_id'], $where)->append(['type_name'])->field($field)->findOrEmpty()->toArray();
+        $info = $this->model->withSearch([ 'ids', 'names', 'status', 'create_time', 'product_detail', 'sku_id', 'goods_id' ], $where)->append([ 'type_name' ])->field($field)->findOrEmpty()->toArray();
         return $info;
     }
 
@@ -106,18 +101,17 @@ class ExchangeService extends BaseAdminService
      */
     public function add(array $data)
     {
-        $product_detail = json_decode($data['product_detail'], true);
+        $product_detail = json_decode($data[ 'product_detail' ], true);
         $this->verifyData($data);
         $check_condition = [
-            ['active_goods.active_class', '=', ActiveDict::EXCHANGE],
-            ['active_goods.goods_id', 'in', $product_detail[0]['goods_id']],
+            [ 'active_goods.active_class', '=', ActiveDict::EXCHANGE ],
+            [ 'active_goods.goods_id', 'in', $product_detail[ 0 ][ 'goods_id' ] ],
         ];
-        $goods_where = [
-        ];
-        $active_gooods_model = new ActiveGoods();
-        $count = $active_gooods_model->where($check_condition)
+        $goods_where = [];
+        $active_goods_model = new ActiveGoods();
+        $count = $active_goods_model->where($check_condition)
             ->withJoin([
-                'active' => function (Query $query) use ($goods_where) {
+                'active' => function(Query $query) use ($goods_where) {
                     $query->where($goods_where);
                 },
             ], 'inner')
@@ -126,41 +120,41 @@ class ExchangeService extends BaseAdminService
         Db::startTrans();
         try {
             $create_data = [
-                'names' => $data['names'] ?? '',
-                'type' => $data['type'] ?? '',
-                'title' => $data['title'] ?? '',
-                'image' => $data['image'] ?? '',
-                'product_detail' => $data['product_detail'] ?? '',
-                'point' => $data['point'] ?? 0,
-                'price' => $data['price'] ?? 0,
-                'stock' => $data['stock'] ?? 0,
-                'limit_num' => $data['limit_num'] ?? '',
-                'content' => $data['content'] ?? '',
+                'names' => $data[ 'names' ] ?? '',
+                'type' => $data[ 'type' ] ?? '',
+                'title' => $data[ 'title' ] ?? '',
+                'image' => $data[ 'image' ] ?? '',
+                'product_detail' => $data[ 'product_detail' ] ?? '',
+                'point' => $data[ 'point' ] ?? 0,
+                'price' => $data[ 'price' ] ?? 0,
+                'stock' => $data[ 'stock' ] ?? 0,
+                'limit_num' => $data[ 'limit_num' ] ?? '',
+                'content' => $data[ 'content' ] ?? '',
                 'create_time' => time(),
                 'update_time' => time(),
                 'status' => ExchangeDict::UP,
             ];
             $res = $this->model->create($create_data);
             $active_goods[] = [
-                'goods_id' => $product_detail[0]['goods_id'],
+                'goods_id' => $product_detail[ 0 ][ 'goods_id' ],
                 'active_goods_type' => ActiveDict::GOODS_SINGLE,
                 'active_class' => ActiveDict::EXCHANGE,
                 'active_goods_value' => json_encode($product_detail),
                 'active_goods_status' => ActiveDict::ACTIVE,
-                'active_goods_price' => $create_data['price'],
-                'active_goods_point' => $create_data['point'],
+                'active_goods_price' => $create_data[ 'price' ],
+                'active_goods_point' => $create_data[ 'point' ],
             ];
-            $data['active_goods'] = $product_detail;
-            $data['active_status'] = ActiveDict::ACTIVE;
-            $data['active_type'] = ActiveDict::GOODS;
-            $data['active_goods_type'] = ActiveDict::GOODS_SINGLE;
-            $data['active_class'] = ActiveDict::EXCHANGE;
-            $data['active_name'] = $create_data['names'] ?? '';
-            $data['active_desc'] = $create_data['content'] ?? '';
-            $data['start_time'] = time();
-            $data['end_time'] = 0;
-            $data['active_goods'] = $active_goods;
-            $active_id = (new CoreActiveService())->add($data);
+            $data[ 'active_goods' ] = $product_detail;
+            $data[ 'active_status' ] = ActiveDict::ACTIVE;
+            $data[ 'active_type' ] = ActiveDict::GOODS;
+            $data[ 'active_goods_type' ] = ActiveDict::GOODS_SINGLE;
+            $data[ 'active_class' ] = ActiveDict::EXCHANGE;
+            $data[ 'active_name' ] = $create_data[ 'names' ] ?? '';
+            $data[ 'active_desc' ] = $create_data[ 'content' ] ?? '';
+            $data[ 'start_time' ] = time();
+            $data[ 'end_time' ] = 0;
+            $data[ 'active_goods' ] = $active_goods;
+            $active_id = ( new CoreActiveService() )->add($data);
             Db::commit();
             return $res->id;
         } catch (\Exception $e) {
@@ -178,22 +172,22 @@ class ExchangeService extends BaseAdminService
      */
     public function verifyData(&$data)
     {
-        if (empty(ExchangeDict::getType($data['type']))) throw new AdminException('EXCHANGE_GOODS_CONFIRM_TYPE');
-        $product_detail = json_decode($data['product_detail'], true);
-        if ($data['type'] == 'goods') {
+        if (empty(ExchangeDict::getType($data[ 'type' ]))) throw new AdminException('EXCHANGE_GOODS_CONFIRM_TYPE');
+        $product_detail = json_decode($data[ 'product_detail' ], true);
+        if ($data[ 'type' ] == 'goods') {
             if (empty($product_detail)) throw new AdminException('EXCHANGE_GOODS_NOT_EMPTY');
-            $data['stock'] = 0;
+            $data[ 'stock' ] = 0;
             foreach ($product_detail as &$item) {
-                if ($item['point'] <= 0) throw new AdminException('EXCHANGE_GOODS_POINT_GREATER_THAN_ZERO');
-                if ($item['stock'] < 0) throw new AdminException('EXCHANGE_GOODS_STOCK_GREATER_THAN_ZERO');
-                if(empty($item['price']))  $item['price']=0;
-                $data['stock'] += $item['stock'];
+                if ($item[ 'point' ] <= 0) throw new AdminException('EXCHANGE_GOODS_POINT_GREATER_THAN_ZERO');
+                if ($item[ 'stock' ] < 0) throw new AdminException('EXCHANGE_GOODS_STOCK_GREATER_THAN_ZERO');
+                if (empty($item[ 'price' ])) $item[ 'price' ] = 0;
+                $data[ 'stock' ] += $item[ 'stock' ];
             }
             array_multisort(array_column($product_detail, "point"), SORT_ASC, $product_detail);
-            $data['point'] = $product_detail[0]['point'];
-            $data['price'] = $product_detail[0]['price'];
-            $data['limit_num'] = $product_detail[0]['limit_num'];
-            $data['product_detail'] = json_encode($product_detail);
+            $data[ 'point' ] = $product_detail[ 0 ][ 'point' ];
+            $data[ 'price' ] = $product_detail[ 0 ][ 'price' ];
+            $data[ 'limit_num' ] = $product_detail[ 0 ][ 'limit_num' ];
+            $data[ 'product_detail' ] = json_encode($product_detail);
         }
     }
 
@@ -205,26 +199,26 @@ class ExchangeService extends BaseAdminService
      */
     public function edit(int $id, array $data)
     {
-        $info = $this->model->where([ ['id', '=', $id]])->findOrEmpty();
+        $info = $this->model->where([ [ 'id', '=', $id ] ])->findOrEmpty();
         if ($info->isEmpty()) throw new AdminException('EXCHANGE_DETA_NOT_FOUND');
-        $product_detail = json_decode($data['product_detail'], true);
+//        $product_detail = json_decode($data[ 'product_detail' ], true);
         $this->verifyData($data);
         Db::startTrans();
         try {
             $save_data = [
-                'names' => $data['names'] ?? '',
-                'type' => $data['type'] ?? '',
-                'title' => $data['title'] ?? '',
-                'image' => $data['image'] ?? '',
-                'product_detail' => $data['product_detail'] ?? '',
-                'point' => $data['point'] ?? 0,
-                'price' => $data['price'] ?? 0,
-                'stock' => $data['stock'] ?? 0,
-                'limit_num' => $data['limit_num'] ?? '',
-                'content' => $data['content'] ?? '',
+                'names' => $data[ 'names' ] ?? '',
+                'type' => $data[ 'type' ] ?? '',
+                'title' => $data[ 'title' ] ?? '',
+                'image' => $data[ 'image' ] ?? '',
+                'product_detail' => $data[ 'product_detail' ] ?? '',
+                'point' => $data[ 'point' ] ?? 0,
+                'price' => $data[ 'price' ] ?? 0,
+                'stock' => $data[ 'stock' ] ?? 0,
+                'limit_num' => $data[ 'limit_num' ] ?? '',
+                'content' => $data[ 'content' ] ?? '',
                 'update_time' => time(),
             ];
-            $this->model->where([['id', '=', $id]])->update($save_data);
+            $this->model->where([ [ 'id', '=', $id ] ])->update($save_data);
             Db::commit();
             return true;
         } catch (\Exception $e) {
@@ -240,13 +234,13 @@ class ExchangeService extends BaseAdminService
      */
     public function editStatus($data, $id)
     {
-        if ($data['status'] == 1) {
-            $data_info = $this->getInfo(['ids' => $id]);
+        if ($data[ 'status' ] == 1) {
+            $data_info = $this->getInfo([ 'ids' => $id ]);
             if (!empty($data_info))
-                $goods_info = (new Goods())->where([['goods_id', '=', $data_info['product_detail'][0]['goods_id']]])->field('status')->findOrEmpty()->toArray();;
-            if ($goods_info['status'] == 0) throw new AdminException('SHOP_GOODS_DELISTED');
+                $goods_info = ( new Goods() )->where([ [ 'goods_id', '=', $data_info[ 'product_detail' ][ 0 ][ 'goods_id' ] ] ])->field('status')->findOrEmpty()->toArray();
+            if ($goods_info[ 'status' ] == 0) throw new AdminException('SHOP_GOODS_DELISTED');
         }
-        return $this->model->where([['id', '=', $id]])->update(['status' => $data['status']]);
+        return $this->model->where([ [ 'id', '=', $id ] ])->update([ 'status' => $data[ 'status' ] ]);
     }
 
 
@@ -257,7 +251,7 @@ class ExchangeService extends BaseAdminService
      */
     public function modifySort($data, $id = 0)
     {
-        return $this->model->where([['id', '=', $id]])->update(['sort' => $data['sort']]);
+        return $this->model->where([ [ 'id', '=', $id ] ])->update([ 'sort' => $data[ 'sort' ] ]);
     }
 
 
@@ -268,16 +262,16 @@ class ExchangeService extends BaseAdminService
      */
     public function del(int $id)
     {
-        $info = $this->model->where([ ['id', '=', $id]])->findOrEmpty();
+        $info = $this->model->where([ [ 'id', '=', $id ] ])->findOrEmpty();
         if ($info->isEmpty()) throw new AdminException('EXCHANGE_DETA_NOT_FOUND');
         Db::startTrans();
         try {
-            $active_info = (new ActiveGoods())->where([
-                ['goods_id', 'in', $info['product_detail'][0]['goods_id']],
-                ['active_class', '=', ActiveDict::EXCHANGE],
-            ])->field('active_id')->findOrEmpty()->toArray();;
-            if (!empty($active_info)) (new CoreActiveService())->del($active_info['active_id'], 1);
-            $this->model->where([['id', '=', $id]])->delete();
+            $active_info = ( new ActiveGoods() )->where([
+                [ 'goods_id', 'in', $info[ 'product_detail' ][ 0 ][ 'goods_id' ] ],
+                [ 'active_class', '=', ActiveDict::EXCHANGE ],
+            ])->field('active_id')->findOrEmpty()->toArray();
+            if (!empty($active_info)) ( new CoreActiveService() )->del($active_info[ 'active_id' ], 1);
+            $this->model->where([ [ 'id', '=', $id ] ])->delete();
             Db::commit();
             return true;
         } catch (\Exception $e) {
@@ -287,26 +281,27 @@ class ExchangeService extends BaseAdminService
 
     }
 
-
     /**
      * 商品编辑业务
-     * @param int $active_id
+     * @param $exchange_goods_info
+     * @param string $status
+     * @param array $sku_list
      * @return bool
      */
     public function afterGoodsEdit($exchange_goods_info, $status = '', $sku_list = [])
     {
         Db::startTrans();
         try {
-            if ($status != '' && $status == '0') $save_data['status'] = $status;
+            if ($status != '' && $status == '0') $save_data[ 'status' ] = $status;
             if (!empty($sku_list)) {
-                foreach ($exchange_goods_info['product_detail'] as &$item) {
-                    $item['stock'] = $item['stock'] > $sku_list[$item['sku_id']]['stock'] ? $sku_list[$item['sku_id']]['stock'] : $item['stock'];
+                foreach ($exchange_goods_info[ 'product_detail' ] as &$item) {
+                    $item[ 'stock' ] = $item[ 'stock' ] > $sku_list[ $item[ 'sku_id' ] ][ 'stock' ] ? $sku_list[ $item[ 'sku_id' ] ][ 'stock' ] : $item[ 'stock' ];
                 }
-                $save_data['type'] = $exchange_goods_info['type'];
-                $save_data['product_detail'] = json_encode($exchange_goods_info['product_detail']);
+                $save_data[ 'type' ] = $exchange_goods_info[ 'type' ];
+                $save_data[ 'product_detail' ] = json_encode($exchange_goods_info[ 'product_detail' ]);
                 $this->verifyData($save_data);
             }
-            if (isset($save_data)) $this->model->where([['id', '=', $exchange_goods_info['id']]])->update($save_data);
+            if (isset($save_data)) $this->model->where([ [ 'id', '=', $exchange_goods_info[ 'id' ] ] ])->update($save_data);
             Db::commit();
             return true;
         } catch (\Exception $e) {

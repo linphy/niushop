@@ -18,7 +18,7 @@ use think\Model;
 
 /**
  * 物流查询接口配置服务层
- * Class Company
+ * Class DeliverySearchConfigService
  * @package addon\shop\app\service\admin\delivery
  */
 class DeliverySearchConfigService extends BaseAdminService
@@ -30,15 +30,15 @@ class DeliverySearchConfigService extends BaseAdminService
      */
     public function setConfig($data)
     {
-        return (new CoreConfigService())->setDeliverySearchConfig($data);
+        return ( new CoreConfigService() )->setDeliverySearchConfig($data);
     }
 
     /**
-     * 获取网站信息
+     * 获取物流跟踪查询配置
      * @return array
      */
     public function getConfig()
     {
-        return $info = (new CoreConfigService())->getDeliverySearchConfig();
+        return $info = ( new CoreConfigService() )->getDeliverySearchConfig();
     }
 }

@@ -40,7 +40,7 @@ class ExchangeDict
             self::BALANCE => get_lang('dict_shop_point_exchange_type.balance'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
 
 
@@ -55,7 +55,7 @@ class ExchangeDict
             self::DELETE => "已删除"
         ];
         if ($status == '') return $list;
-        return $list[$status] ?? '';
+        return $list[ $status ] ?? '';
     }
 
 
@@ -70,7 +70,7 @@ class ExchangeDict
             self::DISCOUNT => get_lang('dict_shop_active_class.exchange'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
 
 

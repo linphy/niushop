@@ -4,31 +4,30 @@
             <view v-if="!loading" class="pb-20rpx">
                 <view v-if="detail.status_name" class="pl-[40rpx] pr-[50rpx] bg-linear pb-[100rpx]">
                     <!-- #ifdef MP-WEIXIN -->
-                    <top-tabbar :data="topTabbarData" title-color="#fff" />
+                    <top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()" />
                     <!-- #endif -->
                     <view class="flex justify-between items-center pt-[40rpx]">
 						<view class="text-[#fff] text-[36rpx] font-500 leading-[42rpx]">{{ detail.status_name.name }}</view>
-						<image v-if="detail.status == 1" class="w-[150rpx] h-[120rpx]" :src="img('addon/shop/detail/payment.png')" mode="aspectFit" />
-						<image v-if="detail.status == 2" class="w-[160rpx] h-[140rpx]" :src="img('addon/shop/detail/deliver_goods.png')" mode="aspectFit" />
-						<image v-if="detail.status == 3" class="w-[160rpx] h-[120rpx]" :src="img('addon/shop/detail/receive.png')" mode="aspectFit" />
-						<image v-if="detail.status == 5" class="w-[150rpx] h-[120rpx]" :src="img('addon/shop/detail/complete.png')" mode="aspectFit" />
-						<image v-if="detail.status == -1" class="w-[160rpx] h-[120rpx]" :src="img('addon/shop/detail/close.png')" mode="aspectFit" />
+						<image v-if="detail.status == 1" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/payment.png')" mode="aspectFit" />
+						<image v-if="detail.status == 2" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/deliver_goods.png')" mode="aspectFit" />
+						<image v-if="detail.status == 3" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/receive.png')" mode="aspectFit" />
+						<image v-if="detail.status == 5" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/complete.png')" mode="aspectFit" />
+						<image v-if="detail.status == -1" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/close.png')" mode="aspectFit" />
                     </view>
                 </view>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[-86rpx] rounded-[16rpx]" v-if="detail.delivery_type != 'virtual'">
+                <view class="bg-[#fff] sidebar-marign p-[30rpx] mt-[-86rpx] rounded-[16rpx]" v-if="detail.delivery_type != 'virtual'">
                     <view v-if="detail.delivery_type == 'express'">
                         <view class="text-[#303133]">
-								<view class="flex">
-									<text class="nc-iconfont nc-icon-dizhiguanliV6xx text-[32rpx] mb-[2rpx] mr-[4rpx]"></text>
-									<view class="text-[32rpx] font-500 leading-[38rpx] overflow-hidden">{{detail.taker_address}}</view>
-								</view>
-                                <view class="text-[22rpx] leading-[26rpx]">{{detail.taker_full_address.split(detail.taker_address)[0]}}</view>
-                            <view class="mt-[6rpx] text-[24rpx] leading-[28rpx] ">
+							<view class="flex items-center">
+								<text class="nc-iconfont nc-icon-dizhiguanliV6xx text-[30rpx] mr-[6rpx]"></text>
+								<view class="text-[30rpx] font-500 leading-[38rpx] overflow-hidden">{{detail.taker_address}}</view>
+							</view>
+							<view class="mt-[12rpx] text-[22rpx] leading-[26rpx]">{{detail.taker_full_address.split(detail.taker_address)[0]}}</view>
+                            <view class="mt-[16rpx] text-[24rpx] leading-[28rpx] ">
                                 <text>{{ detail.taker_name }}</text>
                                 <text class="ml-[15rpx]">{{ detail.taker_mobile }}</text>
                             </view>
                         </view>
-                        
                     </view>
                     <view v-if="detail.delivery_type == 'store'">
                         <view class="flex">
@@ -57,16 +56,16 @@
                         </view>
                     </view>
                 </view>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] rounded-[16rpx]" :style="detail.delivery_type == 'virtual' ? 'margin-top: -70rpx' : 'margin-top: 20rpx'">
-                    <view class="order-goods-item flex justify-between flex-wrap mt-[30rpx]"
-                        v-for="(goodsItem, goodsIndex) in detail.order_goods" :key="goodsIndex">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] rounded-[16rpx]" :style="detail.delivery_type == 'virtual' ? 'margin-top: -70rpx' : 'margin-top: 20rpx'">
+                    <view class="order-goods-item flex justify-between flex-wrap mt-[30rpx]" v-for="(goodsItem, goodsIndex) in detail.order_goods" :key="goodsIndex">
                         <view class="w-[150rpx] h-[150rpx] flex-2" @click="goodsEvent(goodsItem.goods_id)">
                             <u--image class="overflow-hidden" radius="10rpx" width="150rpx" height="150rpx" :src="img(goodsItem.goods_image_thumb_small ? goodsItem.goods_image_thumb_small : '')" model="aspectFill">
                                 <template #error>
-                                    <u-icon name="photo" color="#999" size="50"></u-icon>
+									<image class="w-[150rpx] h-[150rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
                                 </template>
                             </u--image>
                         </view>
+						
                         <view class="ml-[20rpx] flex flex-1 flex-col justify-between">
                             <view>
                                 <text class="text-[28rpx] text-item leading-[40rpx]">{{ goodsItem.goods_name }}</text>
@@ -79,9 +78,9 @@
 									<text v-if="goodsItem.extend && parseFloat(goodsItem.extend.point) > 0" class="text-[32rpx]">{{goodsItem.extend.point}}积分</text>
 									<text v-if="parseFloat(goodsItem.price) && goodsItem.extend && parseFloat(goodsItem.extend.point) > 0" class="mx-[4rpx] text-[32rpx]">+</text>
 									<block v-if="parseFloat(goodsItem.price)">
-										<text class="text-[24rpx]">￥</text>
+										<text class="text-[32rpx]">￥</text>
 										<text class="text-[32rpx] font-500">{{ parseFloat(goodsItem.price).toFixed(2).split('.')[0] }}</text>
-										<text class="text-[22rpx] font-500">.{{ parseFloat(goodsItem.price).toFixed(2).split('.')[1] }}</text>
+										<text class="text-[32rpx] font-500">.{{ parseFloat(goodsItem.price).toFixed(2).split('.')[1] }}</text>
 									</block>
                                 </view>
                                 <text class="text-right text-[26rpx]">x{{ goodsItem.num }}</text>
@@ -97,7 +96,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[20rpx] rounded-[16rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] mt-[20rpx] rounded-[16rpx]">
                     <view class="flex justify-between text-[28rpx] leading-[32rpx]">
                         <view>{{ t('orderNo') }}</view>
                         <view class="flex items-center">
@@ -129,7 +128,7 @@
                 </view>
 				<!-- 核销码 -->
 				<block v-if="isShowVerify">
-					<view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[20rpx] rounded-[16rpx]" v-if="verifyInfo && verifyInfo.length">
+					<view class="bg-[#fff] sidebar-marign p-[20rpx] mt-[20rpx] rounded-[16rpx]" v-if="verifyInfo && verifyInfo.length">
 						<swiper class="h-[450rpx]" circular indicator-dots="true" v-if="verifyInfo.length > 1">
 							<swiper-item v-for="(item,index) in verifyInfo" :key="index">
 								<view class="flex flex-col items-center justify-center">
@@ -154,7 +153,7 @@
 						</block>
 						
 					</view>
-					<view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[20rpx] rounded-[16rpx]">
+					<view class="bg-[#fff] sidebar-marign p-[20rpx] mt-[20rpx] rounded-[16rpx]">
 						<view class="pb-[20rpx] pt-[10rpx] border-0 border-b-[2rpx] border-dashed border-[#e5e5e5]">核销信息</view>
 						<view class="flex mt-[30rpx] justify-between leading-[32rpx]">
 							<view class="text-[28rpx]">核销次数</view>
@@ -170,16 +169,16 @@
 						</view>
 					</view>
 				</block>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[20rpx] rounded-[16rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] mt-[20rpx] rounded-[16rpx]">
                     <view class="flex justify-between leading-[32rpx]">
                         <view class="text-[28rpx]">{{ t('goodsMoney') }}</view>
                         <view class="price-font font-500">
 							<text v-if="parseFloat(detail.point) > 0" class="text-[28rpx]">{{detail.point}}积分</text>
 							<text v-if="parseFloat(detail.point) > 0 && parseFloat(detail.goods_money)" class="mx-[4rpx] text-[28rpx]">+</text>
 							<block v-if="parseFloat(detail.goods_money) || !parseFloat(detail.point)">
-								<text class="text-[24rpx]">￥</text>
+								<text class="text-[28rpx]">￥</text>
 								<text class="text-[28rpx]">{{ parseFloat(detail.goods_money).toFixed(2).split('.')[0] }}</text>
-								<text class="text-[22rpx]">.{{ parseFloat(detail.goods_money).toFixed(2).split('.')[1] }}</text>
+								<text class="text-[28rpx]">.{{ parseFloat(detail.goods_money).toFixed(2).split('.')[1] }}</text>
 							</block>
                         </view>
                     </view>
@@ -205,23 +204,41 @@
 							<text v-if="parseFloat(detail.point) > 0" class="text-[28rpx]">{{detail.point}}积分</text>
 							<text v-if="parseFloat(detail.point) > 0 && parseFloat(detail.order_money)" class="mx-[4rpx] text-[28rpx]">+</text>
 							<block v-if="parseFloat(detail.order_money) || !parseFloat(detail.point)">
-								<text class="text-[24rpx]">￥</text>
+								<text class="text-[28rpx]">￥</text>
 								<text class="text-[28rpx]">{{ parseFloat(detail.order_money).toFixed(2).split('.')[0] }}</text>
-								<text class="text-[22rpx]">.{{ parseFloat(detail.order_money).toFixed(2).split('.')[1] }}</text>
+								<text class="text-[28rpx]">.{{ parseFloat(detail.order_money).toFixed(2).split('.')[1] }}</text>
 							</block>
                         </view>
                     </view>
                 </view>
 
-                <view class="flex z-2 justify-end items-center bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[100rpx] px-1 flex-wrap  pb-ios">
-					<view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] !text-[#666]" @click="orderBtnFn('index')">{{ t('index') }}</view>
+                <view class="flex z-2 justify-between items-center bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[100rpx] px-1 flex-wrap  pb-ios">
+					<view class="flex">
+						<view class="flex w-[70rpx] mr-[20rpx] flex-col justify-center items-center" @click="orderBtnFn('index')">
+						    <view class="nc-iconfont nc-icon-shouyeV6xx text-[36rpx]"></view>
+						    <text class="text-[20rpx] mt-[10rpx]">{{t('index')}}</text>
+						</view>
+						<!-- #ifdef MP-WEIXIN -->
+						<view>
+							<nc-contact
+									:send-message-title="sendMessageTitle"
+									:send-message-path="sendMessagePath"
+									:send-message-img="sendMessageImg">
+								<view class="flex flex-col justify-center items-center">
+									<text class="nc-iconfont nc-icon-kefuV6xx-1 text-[36rpx]"></text>
+									<text class="text-[20rpx] mt-[10rpx]">客服</text>
+								</view>
+							</nc-contact>
+						</view>
+						<!-- #endif -->
+					</view>
                     <view class="flex justify-end mr-[30rpx]">
-                        <view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#666]" v-if="showLogistics(detail)" @click="orderBtnFn('logistics')">
+                        <view class="text-[26rpx] leading-[58rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#666]" v-if="showLogistics(detail)" @click="orderBtnFn('logistics')">
                             {{ t('logisticsTracking') }}
                         </view>
-                        <view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#666]" v-if="detail.status == 1" @click="orderBtnFn('close')">{{ t('orderClose') }}</view>
-                        <view class=" text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid text-[#fff] bg-primary border-primary rounded-full ml-[20rpx]" @click="orderBtnFn('pay')" v-if="detail.status == 1">{{ t('topay') }}</view>
-                        <view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid text-[#fff] bg-primary border-primary rounded-full ml-[20rpx]" v-if="detail.status == 3" @click="orderBtnFn('finish')" >{{ t('orderFinish') }}</view>
+                        <view class="text-[26rpx] leading-[58rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#666]" v-if="detail.status == 1" @click="orderBtnFn('close')">{{ t('orderClose') }}</view>
+                        <view class="text-[26rpx] leading-[58rpx] px-[23rpx] text-[#fff] primary-btn-bg rounded-full ml-[20rpx]" @click="orderBtnFn('pay')" v-if="detail.status == 1">{{ t('topay') }}</view>
+                        <view class="text-[26rpx] leading-[58rpx] px-[23rpx] text-[#fff] primary-btn-bg rounded-full ml-[20rpx]" v-if="detail.status == 3" @click="orderBtnFn('finish')" >{{ t('orderFinish') }}</view>
                         <block v-if="detail.status == 5">
                             <view v-if="detail.is_evaluate == 1 || (detail.is_evaluate != 1 && evaluateConfig.is_evaluate == 1)"
                                 class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] !text-[#666]"
@@ -239,7 +256,7 @@
 
         <!-- #ifdef MP-WEIXIN -->
         <!-- 小程序隐私协议 -->
-        <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+        <wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
         <!-- #endif -->
     </view>
 </template>
@@ -254,24 +271,23 @@ import { getEvaluateConfig } from '@/addon/shop/api/shop';
 import { getVerifyCode } from '@/app/api/verify';
 import logisticsTracking from '@/addon/shop/pages/order/components/logistics-tracking/logistics-tracking.vue'
 import useConfigStore from "@/stores/config";
+import { topTabar } from '@/utils/topTabbar'
 
-// 自定义头部导航 =》 没有标题且背景是透明色
-let topTabbarData = ref({
-	title: '订单详情',
-	topStatusBar: {
-		style: 'style-1',
-		bgColor: 'transparent',
-        isTransparent: true,
-		textColor: '#fff'
-	}
-})
+/********* 自定义头部 - start ***********/
+const topTabarObj = topTabar()
+let topTabbarData = topTabarObj.setTopTabbarParam({title:'订单详情'})
+/********* 自定义头部 - end ***********/
 
-let detail = ref<Object>({});
-let loading = ref<boolean>(true);
-let type = ref('')
-let orderId = ref('')
-let orderStepsShow = ref(false)
-let evaluateConfig = ref<Object>({});
+const detail = ref<Object>({});
+const loading = ref<boolean>(true);
+const type = ref('')
+const orderId = ref('')
+const orderStepsShow = ref(false)
+const evaluateConfig = ref<Object>({});
+
+const sendMessageTitle = ref('')
+const sendMessagePath = ref('')
+const sendMessageImg = ref('')
 
 onLoad((option) => {
 	orderId.value = option.order_id;
@@ -291,6 +307,9 @@ const orderDetailFn = (id) => {
 			obj.order_goods_id = res.data.order_goods[0].order_goods_id
 			getVerifyCodeFn(obj);
 		}
+
+        sendMessageTitle.value = detail.value.order_goods[0].goods_name
+		sendMessageImg.value = img(detail.value.order_goods[0].goods_image_thumb_small || '')
 
 		loading.value = false;
 	}).catch(() => {
@@ -334,7 +353,7 @@ const finish = (item: any) => {
 
     // #ifdef MP-WEIXIN
     // 检测微信小程序是否已开通发货信息管理服务
-    if (item.pay.type == 'wechatpay' && item.is_trade_managed && wx.openBusinessView) {
+    if (item.pay && item.pay.type == 'wechatpay' && item.is_trade_managed && wx.openBusinessView) {
         wx.openBusinessView({
             businessType: 'weappOrderConfirm',
             extraData: {
@@ -406,14 +425,14 @@ const orderBtnFn = (type = '') => {
 				id: detail.value.order_delivery[0].id,
 				mobile: detail.value.taker_mobile
 			}
-			let list = ref([])
+			let list:any = []
 			detail.value.order_delivery.forEach((item: any, index: number) => {
                 item.name = `包裹${index + 1}`
-                list.value.push(item)
+                list.push(item)
 			})
 
 			materialRef.value.open(params);
-			materialRef.value.packageList = list.value
+			materialRef.value.packageList = list
 		}
 	} else if (type == 'evaluate') {
 		if (!detail.value.is_evaluate) {
@@ -484,7 +503,7 @@ const showLogistics = (data: any) => {
 }
 
 /************ 虚拟商品核销-start ***************/ 
-let verifyGoodsData = ref({}) //虚拟商品
+const verifyGoodsData = ref({}) //虚拟商品
 const isShowVerify = computed(() => {
 	let bool =  false;
 	if(detail.value.order_goods.length == 1){
@@ -495,7 +514,7 @@ const isShowVerify = computed(() => {
 	}
 	return bool
 })
-let verifyInfo = ref([])
+const verifyInfo = ref([])
 const getVerifyCodeFn = (data:any) => {
 	verifyInfo.value = [];
 	
@@ -529,10 +548,6 @@ const getVerifyCodeFn = (data:any) => {
 
 .bg-linear {
 	background: linear-gradient( 94deg, #E73835 15%, #FE8448 87%);
-}
-
-.font-scale {
-	transform: scale(0.9);
 }
 
 .triangle {

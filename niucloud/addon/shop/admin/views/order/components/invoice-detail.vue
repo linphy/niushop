@@ -66,7 +66,8 @@ const logData = ref<LogDataType>({})
 const getInvoiceDetailList = async () => {
     logData.value = await (await getInvoiceDetail(id)).data
     loading.value = false
-    if(logData.value.invoice_voucher) {
+    previewImageList.splice(0, previewImageList.length);
+    if (logData.value.invoice_voucher) {
         previewImageList.push(img(logData.value.invoice_voucher))
     }
 }
@@ -80,7 +81,7 @@ const setFormData = async (row: any = null) => {
     }
 }
 
-let previewImageList: string[] = reactive([])
+const previewImageList: string[] = reactive([])
 
 /**
  * 查看图片

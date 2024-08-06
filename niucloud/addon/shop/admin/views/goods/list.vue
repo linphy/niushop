@@ -125,7 +125,7 @@
                     </el-table-column>
                     <el-table-column prop="sort" :label="t('sort')" min-width="120" sortable="custom">
                         <template #default="{ row }">
-                            <el-input v-model="row.sort" class="w-[70px]" maxlength="10" @input="sortInputListener($event, row)" />
+                            <el-input v-model="row.sort" class="w-[70px]" maxlength="8" @blur="sortInputListener(row.sort, row)" />
                         </template>
                     </el-table-column>
 
@@ -195,7 +195,6 @@ import { getMemberLevelAll } from '@/app/api/member'
 
 const router = useRouter()
 const route = useRoute()
-
 const pageName = route.meta.title
 const repeat = ref(false)
 
@@ -215,7 +214,7 @@ const goodsTable = reactive({
         end_sale_num: '',
         start_price: '',
         end_price: '',
-        status: '1',
+        status: route.query.status || '1',
         order: '',
         sort: ''
     }
@@ -455,6 +454,9 @@ const sortInputListener = debounce((sort, row) => {
             message: `${t('sortTips')}`
         })
         return
+    }
+    if(sort>99999999){
+        row.sort = 99999999
     }
     editGoodsSort({
         goods_id: row.goods_id,

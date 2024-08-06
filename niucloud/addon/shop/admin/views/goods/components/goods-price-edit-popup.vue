@@ -24,7 +24,7 @@
                 <label>{{ t('batchOperationSku') }}</label>
 
                 <div v-if="batchOperation.field">
-                    <el-input v-model="batchOperation.value" clearable :placeholder="t(batchOperation.field)" class="set-input" maxlength="20" :autofocus="true" />
+                    <el-input v-model="batchOperation.value" clearable :placeholder="t(batchOperation.field)" class="set-input" maxlength="10" :autofocus="true" />
                     <el-button type="primary" @click="saveBatch">{{ t('confirm') }}</el-button>
                     <el-button @click="clearBatch">{{ t('cancel') }}</el-button>
                 </div>
@@ -49,13 +49,13 @@
 
                 <el-table-column prop="market_price" :label="t('marketPrice')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.market_price" clearable placeholder="0.00" maxlength="10" />
+                        <el-input v-model="row.market_price" clearable placeholder="0.00" maxlength="8" />
                     </template>
                 </el-table-column>
 
                 <el-table-column prop="cost_price" :label="t('costPrice')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.cost_price" clearable placeholder="0.00" maxlength="10" />
+                        <el-input v-model="row.cost_price" clearable placeholder="0.00" maxlength="8" />
                     </template>
                 </el-table-column>
 

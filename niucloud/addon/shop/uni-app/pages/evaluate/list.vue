@@ -9,13 +9,13 @@
             </scroll-view>
         </view>
 
-        <mescroll-body ref="mescrollRef" top="90rpx" @init="mescrollInit" @down="downCallback" @up="getEvaluateListFn">
+        <mescroll-body ref="mescrollRef" top="90rpx" @init="mescrollInit" :down="{ use: false }" @up="getEvaluateListFn">
             <view class="py-[20rpx] px-[24rpx]">
                 <template v-for="(item, index) in list">
                     <view class=" py-[20rpx] px-[24rpx] bg-[#fff] mb-[20rpx] rounded-[12rpx]">
                         <view class="flex items-center  justify-between">
                             <view class="flex items-center">
-                                <u-avatar :src="img(item.member_head)" :size="'50rpx'" leftIcon="none"></u-avatar>
+                                <u-avatar :src="img(item.member_head)" :default-url="img('static/resource/images/default_headimg.png')" :size="'50rpx'" leftIcon="none"></u-avatar>
                                 <text class="text-[28rpx] ml-[10rpx]">{{ item.member_name }}</text>
                             </view>
                             <text class="text--[26rpx] text-[#737373]">{{ item.create_time ? item.create_time.slice(0, 10) : '' }}</text>
@@ -121,13 +121,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { img } from '@/utils/common'
 import { getEvaluateList } from '@/addon/shop/api/evaluate'
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue'
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js'
-import { onPageScroll, onReachBottom } from '@dcloudio/uni-app'
+import { onLoad, onUnload,onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom)
 const list = ref<Array<Object>>([]);
@@ -144,6 +143,7 @@ const goodsId = ref('')
 onLoad((option) => {
     goodsId.value = option.goods_id || ''
 })
+
 const statusClickFn = (status: any, value: any) => {
     evaluateStatus.value = status;
     evaluateValue.value = value

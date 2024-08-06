@@ -25,7 +25,6 @@ class RefundService extends BaseApiService
         $this->model = new OrderRefund();
     }
 
-
     /**
      * 分页列表
      * @param array $where

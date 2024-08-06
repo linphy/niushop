@@ -40,8 +40,8 @@ class Brand extends BaseModel
      */
     public function searchBrandNameAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("brand_name", "like", "%" . $value . "%");
+        if ($value != '') {
+            $query->where("brand_name", "like", "%" . $this->handelSpecialCharacter($value) . "%");
         }
     }
 

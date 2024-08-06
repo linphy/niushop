@@ -13,12 +13,12 @@ return [
         //订单创建后
         'ShopOrderCreate' => [ 'addon\shop\app\listener\order\ShopOrderCreate' ],
         //订单创建时 优惠抵扣减免业务
-        'ShopOrderDidcountCreate' => [
-            'addon\shop\app\listener\point_exchange\ShopOrderDidcountCreate'   //积分商城兑换
+        'ShopOrderDiscountCreate' => [
+            'addon\shop\app\listener\point_exchange\ShopOrderDiscountCreate'   //积分商城兑换
         ],
         //订单创建后
         'AfterShopOrderCreate' => [
-            'addon\shop\app\listener\order\AfterShopOrderCreate' ,
+            'addon\shop\app\listener\order\AfterShopOrderCreate',
             'addon\shop\app\listener\point_exchange\AfterShopOrderCreate',   //积分商城业务
         ],
         //订单支付后
@@ -76,24 +76,24 @@ return [
         //导出数据类型
         'ExportDataType' => [
             //订单列表导出
-            'addon\shop\app\listener\order\ShopOrderExportTypeListener',
+            'addon\shop\app\listener\order_export\ShopOrderExportTypeListener',
             //订单项导出
-            'addon\shop\app\listener\order\ShopOrderGoodsExportTypeListener',
+            'addon\shop\app\listener\order_export\ShopOrderGoodsExportTypeListener',
             //退款维权导出
-            'addon\shop\app\listener\refund\ShopOrderRefundExportTypeListener',
+            'addon\shop\app\listener\refund_export\ShopOrderRefundExportTypeListener',
             //发票列表导出
-            'addon\shop\app\listener\order\ShopInvoiceExportTypeListener',
+            'addon\shop\app\listener\order_export\ShopInvoiceExportTypeListener',
         ],
         //导出数据源
         'ExportData' => [
             //订单列表导出
-            'addon\shop\app\listener\order\ShopOrderExportDataListener',
+            'addon\shop\app\listener\order_export\ShopOrderExportDataListener',
             //订单项导出
-            'addon\shop\app\listener\order\ShopOrderGoodsExportDataListener',
+            'addon\shop\app\listener\order_export\ShopOrderGoodsExportDataListener',
             //退款维权导出
-            'addon\shop\app\listener\refund\ShopOrderRefundExportDataListener',
+            'addon\shop\app\listener\refund_export\ShopOrderRefundExportDataListener',
             //发票列表导出
-            'addon\shop\app\listener\order\ShopInvoiceExportDataListener',
+            'addon\shop\app\listener\order_export\ShopInvoiceExportDataListener',
         ],
         //商城统计执行
         'StatExecute' => [ 'addon\shop\app\listener\stat\StatExecuteListener' ],
@@ -115,6 +115,10 @@ return [
         //通过支付信息获取手机端订单详情路径
         'WapOrderDetailPath' => [
             'addon\shop\app\listener\order\WapOrderDetailPathListener',
+        ],
+
+        'PrinterContent' => [
+            'addon\shop\app\listener\printer\PrinterContentListener'
         ],
     ],
     'subscribe' => [

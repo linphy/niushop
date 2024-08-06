@@ -39,7 +39,7 @@ class ShopPoster
                 ];
                 $return_data = [
                     'nickname' => '会员昵称',
-                    'headimg' => 'static/resource/images/default_headimg.jpg',
+                    'headimg' => 'static/resource/images/default_headimg.png',
                     'goods_name' => '商品名称',
                     'goods_price' => '￥369.00',
                     'goods_market_price' => '￥3690.00',
@@ -63,9 +63,9 @@ class ShopPoster
             if ($goods->isEmpty()) return [];
 
             $goods_name = $goods[ 'goods_name' ] . $sku[ 'sku_name' ];
-            if (mb_strlen($goods_name, 'UTF-8') > 14) {
-                $goods_name = mb_substr($goods_name, 0, 14, 'UTF-8') . '...';
-            }
+//            if (mb_strlen($goods_name, 'UTF-8') > 14) {
+//                $goods_name = mb_substr($goods_name, 0, 14, 'UTF-8') . '...';
+//            }
 
 //            $service_ids = $goods['service_ids'];
 //            if(!empty($service_ids)){
@@ -99,7 +99,7 @@ class ShopPoster
 
                 if (!empty($member_info)) {
                     if (empty($member_info[ 'headimg' ])) {
-                        $member_info[ 'headimg' ] = 'static/resource/images/default_headimg.jpg';
+                        $member_info[ 'headimg' ] = 'static/resource/images/default_headimg.png';
                     }
                 }
             }
@@ -138,7 +138,7 @@ class ShopPoster
                 ];
                 $return_data = [
                     'nickname' => '会员昵称',
-                    'headimg' => 'static/resource/images/default_headimg.jpg',
+                    'headimg' => 'static/resource/images/default_headimg.png',
                     'goods_name' => '商品名称',
                     'goods_price' => '积分100+￥369.00',
                     'goods_img' => 'addon/shop/goods_template.png',
@@ -155,9 +155,9 @@ class ShopPoster
             $exchange_info = ( new Exchange() )->withSearch([ 'ids' ], [ 'ids' => $id ])->findOrEmpty();
             if ($exchange_info->isEmpty()) return [];
             $goods_name = $exchange_info[ 'names' ];
-            if (mb_strlen($goods_name, 'UTF-8') > 14) {
-                $goods_name = mb_substr($goods_name, 0, 14, 'UTF-8') . '...';
-            }
+//            if (mb_strlen($goods_name, 'UTF-8') > 14) {
+//                $goods_name = mb_substr($goods_name, 0, 14, 'UTF-8') . '...';
+//            }
             $sku_img = explode(',', $exchange_info[ 'image' ])[ 0 ];
             if (empty($sku_img)) {
                 $sku_img = 'addon/shop/goods_template.png';
@@ -176,11 +176,11 @@ class ShopPoster
 
                 if (!empty($member_info)) {
                     if (empty($member_info[ 'headimg' ])) {
-                        $member_info[ 'headimg' ] = 'static/resource/images/default_headimg.jpg';
+                        $member_info[ 'headimg' ] = 'static/resource/images/default_headimg.png';
                     }
                 }
             }
-            $price = $exchange_info[ 'price' ]<=0 ? '' : '+￥' . $exchange_info[ 'price' ];
+            $price = $exchange_info[ 'price' ] <= 0 ? '' : '+￥' . $exchange_info[ 'price' ];
             $return_data = [
                 'goods_name' => $goods_name,
                 'goods_price' => "积分:" . $exchange_info[ 'point' ] . $price,

@@ -87,7 +87,7 @@ class GoodsSku extends BaseModel
      */
     public function searchSkuNameAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("sku_name", "like", "%" . $value . "%");
         }
     }
@@ -99,7 +99,7 @@ class GoodsSku extends BaseModel
      */
     public function searchSkuNoAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("sku_no", "like", "%" . $value . "%");
         }
     }

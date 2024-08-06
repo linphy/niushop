@@ -80,5 +80,15 @@
   "adjustMoneyDiscountMoney": "优惠金额",
   "adjustMoneyLabel": "调整金额",
   "adjustMoneyTotal": "总计",
-  "point":"积分"
+  "point": "积分",
+  "electronicSheetPrintTitle": "打印电子面单",
+  "electronicSheetTemplate": "面单模板",
+  "electronicSheetTemplatePlaceholder": "请选择面单模板",
+  "electronicSheetPrintResult": "打印结果",
+  "deliveryPackageNo": "包裹编号",
+  "printStatus": "状态",
+  "printResultCode": "状态码",
+  "printRemark": "备注",
+  "electronicSheetPrintOperation": "打印面单",
+  "printTicket": "打印小票"
 }

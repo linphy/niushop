@@ -56,8 +56,8 @@
                 </el-form-item>
             </el-form>
 
-            <el-dialog v-model="memberPriceDialog" :title="t('editMemberPrice')" width="600px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
-                <el-form :model="formData" label-width="120px" class="page-form">
+            <el-dialog v-model="memberPriceDialog" :title="t('editMemberPrice')" width="400px" :close-on-press-escape="false" :destroy-on-close="true" :close-on-click-modal="false">
+                <el-form :model="formData" label-width="80px" class="page-form">
                     <el-form-item :label="t('memberPrice')"  prop="member_price">
                         <el-input v-model.trim="memberPrice" :placeholder="t('memberPricePlaceholder')" maxlength="8" clearable  @keyup="filterDigit($event)" />
                     </el-form-item>

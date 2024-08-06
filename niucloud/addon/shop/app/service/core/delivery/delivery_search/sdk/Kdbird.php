@@ -6,21 +6,28 @@ namespace addon\shop\app\service\core\delivery\delivery_search\sdk;
 class Kdbird
 {
     private $EBusinessID; // 授权key
-    private $AppKey; // 快递100分配的公司编码
-    private $url;
+    private $AppKey; // 快递鸟分配的公司编码
     private $is_pay;
+
+    private $traces_url = 'https://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx'; // 实时查询物流轨迹信息
 
     public function __construct($config)
     {
         $this->EBusinessID = $config[ "kdniao_id" ];
         $this->AppKey = $config[ "kdniao_app_key" ];
-        $this->url = 'https://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx';
         $this->is_pay = $config[ "kdniao_is_pay" ];
     }
 
+    /**
+     * 物流跟踪
+     * @param $shipper_code
+     * @param $logistic_code
+     * @param $mobile
+     * @return array
+     */
     public function orderTracesSubByJson($shipper_code, $logistic_code, $mobile)
     {
-        $request_array = array (
+        $request_array = array(
             'ShipperCode' => $shipper_code,
             'LogisticCode' => $logistic_code,
             'CustomerName' => substr($mobile, 7, 10)
@@ -28,17 +35,17 @@ class Kdbird
 
         $requestData = json_encode($request_array);
 
-        $datas = array (
+        $data = array(
             'EBusinessID' => $this->EBusinessID,
             'RequestType' => '1002',
             'RequestData' => urlencode($requestData),
             'DataType' => '2',
         );
 
-        if ($this->is_pay == 2) $datas[ 'RequestType' ] = 8001;
+        if ($this->is_pay == 2) $data[ 'RequestType' ] = 8001;
 
-        $datas[ 'DataSign' ] = $this->encrypt($requestData, $this->AppKey);
-        $result = $this->sendPost($this->url, $datas);
+        $data[ 'DataSign' ] = $this->encrypt($requestData, $this->AppKey);
+        $result = $this->sendPost($this->traces_url, $data);
         //根据公司业务处理返回的信息......
         $result = json_decode($result, true);
         $res = [];
@@ -70,9 +77,9 @@ class Kdbird
 
     /**
      * 电商Sign签名生成
-     * @param data 内容
-     * @param appkey Appkey
-     * @return DataSign签名
+     * @param string $data 内容
+     * @param $appkey
+     * @return string DataSign签名
      */
     public function encrypt($data, $appkey)
     {
@@ -80,16 +87,16 @@ class Kdbird
     }
 
     /**
-     *  post提交数据
+     * post提交数据
      * @param string $url 请求Url
-     * @param array $datas 提交的数据
-     * @return url响应返回的html
+     * @param array $data 提交的数据
+     * @return false|string
      */
-    public function sendPost($url, $datas)
+    public function sendPost($url, $data)
     {
-        $postdata = http_build_query($datas);
-        $options = array (
-            'http' => array (
+        $postdata = http_build_query($data);
+        $options = array(
+            'http' => array(
                 'method' => 'POST',
                 'header' => 'Content-type:application/x-www-form-urlencoded',
                 'content' => $postdata,
@@ -103,7 +110,8 @@ class Kdbird
 
     /**
      * 物流跟踪状态
-     * @param $state
+     * @param $status
+     * @return mixed|string
      */
     public function getStatusName($status)
     {

@@ -6,7 +6,7 @@
 					<view class="rounded-[8rpx] overflow-hidden">
 						<u--image width="180rpx" height="180rpx" :src="img(detail.sku_image)" model="aspectFill">
 							<template #error>
-								<u-icon name="photo" color="#999" size="50"></u-icon>
+                                <image class="w-[180rpx] h-[180rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 							</template>
 						</u--image>
 					</view>
@@ -17,8 +17,8 @@
 								<text class="text-[28rpx] font-bold price-font mr-[4rpx]">￥</text>
 								<text class="text-[42rpx] font-bold price-font">{{ parseFloat(goodsPrice(detail)).toFixed(2).split('.')[0] }}</text>
 								<text class="text-[28rpx] font-bold price-font">.{{ parseFloat(goodsPrice(detail)).toFixed(2).split('.')[1] }}</text>
-								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType() == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
-								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType() == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
+								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(detail) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
+								<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(detail) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
 							</view>
 							<view class="text-[24rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{ detail.stock }}{{ goodsDetail.goods.unit }}</view>
 						</view>
@@ -32,7 +32,7 @@
 						<view class="text-[26rpx] leading-[36rpx] mb-[24rpx]">{{ item.spec_name }}</view>
 						<view class="flex flex-wrap">
 							<view
-								class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[56rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
+								class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[52rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
 								:class="{'!border-[var(--primary-color)] text-[var(--primary-color)] !bg-[var(--primary-color-light)]': subItem.selected}"
 								v-for="(subItem, subIndex) in item.values" :key="subIndex" @click="change(subItem, index)">
 								{{ subItem.name }}
@@ -46,30 +46,30 @@
 							v-model="buyNum" :min="0" :max="detail.stock" integer :step="1" input-width="98rpx"
 							input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 0 }"></text>
+								<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 0 }"></text>
 							</template>
 							<template #input>
-								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
+								<text class="text-[#303133] text-[24rpx] mx-[10rpx] min-w-[56rpx] h-[38rpx] leading-[40rpx] text-center border-[1rpx] border-solid border-[#ddd] rounded-[4rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
+								<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
 							</template>
 						</u-number-box>
 						<u-number-box v-else v-model="buyNum" :min="1" :max="detail.stock" integer :step="1" input-width="98rpx" input-height="54rpx">
 							<template #minus>
-								<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+								<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 							</template>
 							<template #input>
-								<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
+								<text class="text-[#303133] text-[24rpx] mx-[10rpx] min-w-[56rpx] h-[38rpx] leading-[40rpx] text-center border-[1rpx] border-solid border-[#ddd] rounded-[4rpx]">{{ buyNum }}</text>
 							</template>
 							<template #plus>
-								<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
+								<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === detail.stock }"></text>
 							</template>
 						</u-number-box>
 
 					</view>
 				</scroll-view>
-				<button v-if="detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="save">确定</button>
+				<button v-if="detail.stock > 0" class="!h-[72rpx] primary-btn-bg leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="save">确定</button>
 				<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
 			</view>
 		</u-popup>
@@ -83,16 +83,15 @@ import { getGoodsSku } from '@/addon/shop/api/goods';
 import useCartStore from '@/addon/shop/stores/cart'
 
 const cartStore = useCartStore();
-
 const cartList = computed(() => cartStore.cartList)
 
-let goodsSkuPop = ref(false);
-let currSpec = ref({
+const goodsSkuPop = ref(false);
+const currSpec = ref({
 	skuId: "",
 	name: []
 })
-let info = ref({})//获取原始数据
-let detail:any = ref({})//展示数据
+const info = ref({})//获取原始数据
+const detail:any = ref({})//展示数据
 const buyNum = ref(1)
 
 const getGoodsSkuFn = (sku_id: any) => {
@@ -188,73 +187,80 @@ const getSkuId = () => {
 }
 
 const save = () => {
-	//删除商品
-	if (buyNum.value == 0) {
-		// 购物车减少数量
-		cartStore.reduce({
-			id: detail.value.cart_id || '',
-			goods_id: detail.value.goods_id,
-			sale_price: detail.value.sale_price,
-			sku_id: detail.value.sku_id
-		});
-	} else {
+    //删除商品
+    if (buyNum.value == 0) {
+        // 购物车减少数量
+        cartStore.reduce({
+            id: detail.value.cart_id || '',
+            goods_id: detail.value.goods_id,
+            sale_price: detail.value.sale_price,
+            sku_id: detail.value.sku_id
+        });
+    } else {
 
         let price = 0
 
-        if(goodsDetail.value.goods.is_discount){
+        if (goodsDetail.value.goods.is_discount && detail.value.sale_price != detail.value.price) {
             price = detail.value.sale_price ? detail.value.sale_price : detail.value.price // 折扣价
-        }else if(goodsDetail.value.goods.member_discount && getToken()){
+        } else if (goodsDetail.value.goods.member_discount && getToken() && detail.value.member_price != detail.value.price) {
             price = detail.value.member_price ? detail.value.member_price : detail.value.price // 会员价
-        }else{
+        } else {
             price = detail.value.price
         }
 
-		// 购物车添加数量
-		cartStore.increase({
-			id: detail.value.cart_id || '',
-			goods_id: detail.value.goods_id,
-			sku_id: detail.value.sku_id,
-			stock: detail.value.stock,
-			sale_price: price,
-			num: buyNum.value,
-		}, 0, () => {
-			uni.showToast({
-				title: '加入购物车成功',
-				icon: 'none'
-			});
-		});
-	}
-	goodsSkuPop.value = false
+        // 购物车添加数量
+        cartStore.increase({
+            id: detail.value.cart_id || '',
+            goods_id: detail.value.goods_id,
+            sku_id: detail.value.sku_id,
+            stock: detail.value.stock,
+            sale_price: price,
+            num: buyNum.value,
+        }, 0, () => {
+            uni.showToast({
+                title: '加入购物车成功',
+                icon: 'none'
+            });
+        });
+    }
+    goodsSkuPop.value = false
 
 }
 
 // 商品价格
-let goodsPrice = (data:any) =>{
-	let price = "0.00";
-	if(goodsDetail.value.goods.is_discount){
-		price = data.sale_price ? data.sale_price : data.price // 折扣价
-	}else if(goodsDetail.value.goods.member_discount && getToken()){
-		price = data.member_price ? data.member_price : data.price // 会员价
-	}else{
-		price = data.price
-	}
-	return price;
+const goodsPrice = (data:any) => {
+    let price = "0.00";
+    if (goodsDetail.value.goods.is_discount && data.sale_price != data.price) {
+        price = data.sale_price ? data.sale_price : data.price // 折扣价
+    } else if (goodsDetail.value.goods.member_discount && getToken() && data.member_price != data.price) {
+        price = data.member_price ? data.member_price : data.price // 会员价
+    } else {
+        price = data.price
+    }
+    return price;
 }
 
 // 价格类型 
-let priceType = () =>{
-	let type = "";
-	if(goodsDetail.value.goods.is_discount){
-		type = 'discount_price'// 折扣
-	}else if(goodsDetail.value.goods.member_discount && getToken()){
-		type = 'member_price' // 会员价
-	}else{ 
-		type = ""
-	}
-	return type;
+const priceType = (data:any) => {
+    let type = "";
+    if (goodsDetail.value.goods.is_discount && data.sale_price != data.price) {
+        type = 'discount_price'// 折扣
+    } else if (goodsDetail.value.goods.member_discount && getToken() && data.member_price != data.price) {
+        type = 'member_price' // 会员价
+    } else {
+        type = ""
+    }
+    return type;
 }
 
 defineExpose({
 	open
 })
 </script>
+
+<style lang="scss" scoped>
+	::v-deep .u-number-box .u-number-box__slot{
+		display: flex;
+		align-items: center;
+	}
+</style>

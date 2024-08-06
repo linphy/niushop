@@ -40,7 +40,7 @@
 				</view>
 			</scroll-view>
 			<view class="p-[30rpx]">
-				<u-button type="primary" text="确认" shape="circle" @click="confirm"></u-button>
+                <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="confirm">确认</button>
 			</view>
 		</view>
     </u-popup>
@@ -88,8 +88,8 @@
 
     const tabs = computed(() => {
         return [
-            { name: `可用优惠券（${couponList.value.length}）`, key: 'normal' },
-            { name: `不可用优惠券（${disabledCouponList.value.length}）`, key: 'disabled' }
+            { name: `可用优惠券(${couponList.value.length})`, key: 'normal' },
+            { name: `不可用优惠券(${disabledCouponList.value.length})`, key: 'disabled' }
         ]
     })
 
@@ -124,7 +124,7 @@
 
     defineExpose({
     	open,
-        couponList: couponList
+        couponList
     })
 </script>
 

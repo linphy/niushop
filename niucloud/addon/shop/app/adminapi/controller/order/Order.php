@@ -11,8 +11,10 @@
 
 namespace addon\shop\app\adminapi\controller\order;
 
+use addon\shop\app\dict\order\OrderBatchDeliveryDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
+use addon\shop\app\service\admin\order\OrderBatchDeliveryService;
 use addon\shop\app\service\admin\order\OrderFinishService;
 use addon\shop\app\service\admin\order\OrderService;
 use addon\shop\app\service\admin\order\OrderCloseService;
@@ -31,16 +33,17 @@ class Order extends BaseAdminController
     public function lists()
     {
         $data = $this->request->params([
-            ['search_type', ''],
-            ['search_name', ''],
-            ['status', ''],
-            ['pay_type', ''],
-            ['order_from', ''],
-            ['create_time', []],
-            ['pay_time', []],
-            ['activity_type', ''],
+            [ 'search_type', '' ],
+            [ 'search_name', '' ],
+            [ 'status', '' ],
+            [ 'pay_type', '' ],
+            [ 'order_from', '' ],
+            [ 'create_time', [] ],
+            [ 'pay_time', [] ],
+            [ 'activity_type', '' ],
+            [ 'keyword', '' ],
         ]);
-        return success((new OrderService())->getPage($data));
+        return success(( new OrderService() )->getPage($data));
     }
 
     /**
@@ -50,7 +53,7 @@ class Order extends BaseAdminController
      */
     public function detail(int $id)
     {
-        return success((new OrderService())->getDetail($id));
+        return success(( new OrderService() )->getDetail($id));
     }
 
     /**
@@ -78,7 +81,7 @@ class Order extends BaseAdminController
      */
     public function orderClose($id)
     {
-        return success((new OrderCloseService())->close($id));
+        return success(( new OrderCloseService() )->close($id));
     }
 
     /**
@@ -88,7 +91,7 @@ class Order extends BaseAdminController
      */
     public function orderFinish($id)
     {
-        (new OrderFinishService())->finish($id);
+        ( new OrderFinishService() )->finish($id);
         return success();
     }
 
@@ -100,15 +103,15 @@ class Order extends BaseAdminController
     public function orderDelivery()
     {
         $data = $this->request->params([
-            ['order_id', 0],
-            ['order_goods_ids', []],
-            ['delivery_type', ''],
-            ['express_company_id', ''],
-            ['express_number', ''],
-            ['local_deliver_id', 0],//配送员
-            ['remark', ''],//配送员
+            [ 'order_id', 0 ],
+            [ 'order_goods_ids', [] ],
+            [ 'delivery_type', '' ],
+            [ 'express_company_id', '' ],
+            [ 'express_number', '' ],
+            [ 'local_deliver_id', 0 ],//配送员
+            [ 'remark', '' ],//配送员
         ]);
-        return success("DELIVERY_SUCCESS", (new OrderDeliveryService())->delivery($data));
+        return success("DELIVERY_SUCCESS", ( new OrderDeliveryService() )->delivery($data));
     }
 
     /**
@@ -117,9 +120,9 @@ class Order extends BaseAdminController
     public function getDeliveryType()
     {
         $data = $this->request->params([
-            ['delivery_type', ''],
+            [ 'delivery_type', '' ],
         ]);
-        return success(OrderDeliveryDict::getChildType($data['delivery_type']));
+        return success(OrderDeliveryDict::getChildType($data[ 'delivery_type' ]));
     }
 
     /**
@@ -129,10 +132,10 @@ class Order extends BaseAdminController
     public function setShopRemark()
     {
         $data = $this->request->params([
-            ['order_id', ''],
-            ['shop_remark', ''],
+            [ 'order_id', '' ],
+            [ 'shop_remark', '' ],
         ]);
-        (new OrderService())->shopRemark($data);
+        ( new OrderService() )->shopRemark($data);
         return success("SUCCESS");
     }
 
@@ -143,10 +146,22 @@ class Order extends BaseAdminController
     public function getOrderPackage()
     {
         $data = $this->request->params([
-            ['id', ''],
-            ['mobile', ''],
+            [ 'id', '' ],
+            [ 'mobile', '' ],
         ]);
-        return success(data: (new OrderDeliveryService())->getDeliveryPackage($data));
+        return success(data: ( new OrderDeliveryService() )->getDeliveryPackage($data));
+    }
+
+    /**
+     * 订单包裹列表
+     * @return Response
+     */
+    public function getDeliveryPackageList()
+    {
+        $data = $this->request->params([
+            [ 'order_id', '' ],
+        ]);
+        return success(( new OrderDeliveryService() )->getDeliveryPackageList($data));
     }
 
     /**
@@ -166,7 +181,6 @@ class Order extends BaseAdminController
         return success(ChannelDict::getType());
     }
 
-
     /**
      * 订单改价
      * @return void
@@ -174,11 +188,11 @@ class Order extends BaseAdminController
     public function editPrice()
     {
         $data = $this->request->params([
-            ['order_id', 0],
-            ['delivery_money', 0],
-            ['order_goods_data', []],
+            [ 'order_id', 0 ],
+            [ 'delivery_money', 0 ],
+            [ 'order_goods_data', [] ],
         ]);
-        return success(data: (new OrderService())->editPrice($data));
+        return success(data: ( new OrderService() )->editPrice($data));
     }
 
     /**
@@ -187,21 +201,21 @@ class Order extends BaseAdminController
     public function editDelivery()
     {
         $data = $this->request->params([
-            ['order_id', 0],
-            ['delivery_type', ''],
-            ['take_store_id', 0],
-            ['taker_name', ''],
-            ['taker_mobile', ''],
-            ['taker_province', 0],
-            ['taker_city', 0],
-            ['taker_district', 0],
-            ['taker_address', ''],
-            ['taker_full_address', ''],
-            ['taker_longitude', ''],
-            ['taker_latitude', ''],
-            ['taker_store_id', 0],
+            [ 'order_id', 0 ],
+            [ 'delivery_type', '' ],
+            [ 'take_store_id', 0 ],
+            [ 'taker_name', '' ],
+            [ 'taker_mobile', '' ],
+            [ 'taker_province', 0 ],
+            [ 'taker_city', 0 ],
+            [ 'taker_district', 0 ],
+            [ 'taker_address', '' ],
+            [ 'taker_full_address', '' ],
+            [ 'taker_longitude', '' ],
+            [ 'taker_latitude', '' ],
+            [ 'taker_store_id', 0 ],
         ]);
-        return success("SUCCESS", (new OrderService())->editDelivery($data));
+        return success("SUCCESS", ( new OrderService() )->editDelivery($data));
     }
 
     /**
@@ -210,20 +224,77 @@ class Order extends BaseAdminController
     public function editDeliveryData()
     {
         $data = $this->request->params([
-            ['order_id', 0],
-            ['delivery_type', ''],
-            ['take_store_id', 0],
-            ['taker_name', ''],
-            ['taker_mobile', ''],
-            ['taker_province', 0],
-            ['taker_city', 0],
-            ['taker_district', 0],
-            ['taker_address', ''],
-            ['taker_full_address', ''],
-            ['taker_longitude', ''],
-            ['taker_latitude', ''],
-            ['taker_store_id', 0],
+            [ 'order_id', 0 ],
+            [ 'delivery_type', '' ],
+            [ 'take_store_id', 0 ],
+            [ 'taker_name', '' ],
+            [ 'taker_mobile', '' ],
+            [ 'taker_province', 0 ],
+            [ 'taker_city', 0 ],
+            [ 'taker_district', 0 ],
+            [ 'taker_address', '' ],
+            [ 'taker_full_address', '' ],
+            [ 'taker_longitude', '' ],
+            [ 'taker_latitude', '' ],
+            [ 'taker_store_id', 0 ],
         ]);
-        return success(data: (new OrderService())->getEditDeliveryData($data));
+        return success(data: ( new OrderService() )->getEditDeliveryData($data));
     }
+
+    /**
+     *获取订单批量操作记录
+     * @return Response
+     */
+    public function getOrderBatchDeliveryPage()
+    {
+        $data = $this->request->params([
+            [ 'status', '' ],
+            [ 'type', '' ],
+            [ 'main_id', '' ],
+            [ 'create_time', [] ],
+        ]);
+        return success(( new OrderBatchDeliveryService() )->getPage($data));
+    }
+
+    /**
+     * 记录详情
+     * @param $id
+     * @return Response
+     * @throws \think\db\exception\DbException
+     */
+    public function getOrderBatchDeliveryInfo($id)
+    {
+        return success(( new OrderBatchDeliveryService() )->getInfo($id));
+    }
+
+    /**
+     * 发布导入批量操作
+     * @return Response
+     */
+    public function addBatchOrderDelivery()
+    {
+        $data = $this->request->params([
+            [ 'data', [] ],//['path' => '', 'type' => 'order/order_goods']
+        ]);
+        return success(data:( new OrderBatchDeliveryService() )->addBatchOrderDelivery($data));
+    }
+
+    /**
+     * 获取操作类型
+     * @return Response
+     */
+    public function getBatchType()
+    {
+        return success(data:OrderBatchDeliveryDict::getType());
+    }
+
+    /**
+     * 获取批量状态
+     * @return Response
+     */
+    public function getBatchStatus()
+    {
+        return success(data:OrderBatchDeliveryDict::getStatus());
+    }
+
 }

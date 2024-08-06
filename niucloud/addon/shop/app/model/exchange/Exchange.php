@@ -54,8 +54,8 @@ class Exchange extends BaseModel
      */
     public function searchNamesAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("names", 'like', '%' . $value . '%');
+        if ($value != '') {
+            $query->where("names", 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

@@ -29,7 +29,6 @@ class CoreOrderLogService extends BaseCoreService
         $this->model = new OrderLog();
     }
 
-
     /**
      * 订单日志
      * @param array $data

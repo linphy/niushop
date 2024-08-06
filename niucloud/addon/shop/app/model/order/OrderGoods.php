@@ -16,6 +16,7 @@ use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderGoodsDict;
 use addon\shop\app\model\goods\Goods;
 use app\dict\sys\FileDict;
+use app\model\member\Member;
 use core\base\BaseModel;
 use Exception;
 use think\model\relation\HasOne;
@@ -75,6 +76,15 @@ class OrderGoods extends BaseModel
     public function orderMain()
     {
         return $this->hasOne(Order::class, 'order_id', 'order_id');
+    }
+
+    /**
+     * 会员
+     * @return HasOne
+     */
+    public function member()
+    {
+        return $this->hasOne(Member::class, 'member_id', 'member_id');
     }
 
     /**

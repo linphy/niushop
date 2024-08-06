@@ -34,17 +34,23 @@
 					<el-table-column prop="company_name" :label="t('companyName')" min-width="120"/>
 					<el-table-column prop="logo" :label="t('logo')" min-width="120">
 						<template #default="{ row }">
-							<img v-if="row.logo" class="w-[50px] h-[50px]" :src="img(row.logo)"/>
+							<div class="w-[50px] h-[50px] flex items-center justify-center">
+                                <img v-if="row.logo" class="max-w-[100%] max-h-[100%]" :src="img(row.logo)"/>
+                            </div>
 						</template>
 					</el-table-column>
 					<el-table-column prop="url" :label="t('url')" min-width="120"/>
 					<el-table-column prop="express_no" :label="t('expressNo')" min-width="120"/>
-					<el-table-column prop="create_time" :label="t('createTime')" min-width="120"/>
-
+					<el-table-column prop="express_no_electronic_sheet" :label="t('expressNoElectronicSheet')" min-width="120"/>
+					<el-table-column :label="t('electronicSheetSwitchName')" min-width="120">
+                        <template #default="{ row }">
+                            <span>{{row.electronic_sheet_switch == 1 ? '支持' : '不支持'}}</span>
+						</template>
+					</el-table-column>
 					<el-table-column :label="t('operation')" fixed="right" align="right" min-width="120">
 						<template #default="{ row }">
 							<el-button type="primary" link @click="editEvent(row)">{{ t('edit') }}</el-button>
-							<el-button type="danger" link @click="deleteEvent(row.company_id)">{{ t('delete') }}
+							<el-button type="primary" link @click="deleteEvent(row.company_id)">{{ t('delete') }}
 							</el-button>
 						</template>
 					</el-table-column>
@@ -54,8 +60,6 @@
 					<el-pagination v-model:current-page="companyTable.page" v-model:page-size="companyTable.limit"   layout="total, sizes, prev, pager, next, jumper" :total="companyTable.total"   @size-change="loadCompanyList()" @current-change="loadCompanyList"/>
 				</div>
 			</div>
-
-			<company-edit ref="editCompanyDialog" @complete="loadCompanyList"></company-edit>
 		</el-card>
 	</div>
 </template>
@@ -63,10 +67,9 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getCompanyList, deleteCompany } from '@/addon/shop/api/delivery'
+import { getCompanyPageList, deleteCompany } from '@/addon/shop/api/delivery'
 import { img } from '@/utils/common'
 import { ElMessageBox, FormInstance } from 'element-plus'
-import CompanyEdit from '@/addon/shop/views/delivery/components/company-edit.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -97,7 +100,7 @@ const loadCompanyList = (page: number = 1) => {
     companyTable.loading = true
     companyTable.page = page
 
-    getCompanyList({
+    getCompanyPageList({
         page: companyTable.page,
         limit: companyTable.limit,
         ...companyTable.searchParam
@@ -111,14 +114,11 @@ const loadCompanyList = (page: number = 1) => {
 }
 loadCompanyList()
 
-const editCompanyDialog: Record<string, any> | null = ref(null)
-
 /**
  * 添加物流公司
  */
 const addEvent = () => {
-    editCompanyDialog.value.setFormData()
-    editCompanyDialog.value.showDialog = true
+    router.push('/shop/order/delivery/company_add')
 }
 
 /**
@@ -126,8 +126,7 @@ const addEvent = () => {
  * @param data
  */
 const editEvent = (data: any) => {
-    editCompanyDialog.value.setFormData(data)
-    editCompanyDialog.value.showDialog = true
+    router.push('/shop/order/delivery/company_edit?company_id=' + data.company_id)
 }
 
 /**
@@ -156,13 +155,4 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-	/* 多行超出隐藏 */
-	.multi-hidden {
-		word-break: break-all;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
 </style>

@@ -19,13 +19,13 @@
 <!--							<el-radio :label="2" size="large">{{ t('kd100') }}</el-radio>-->
 						</el-radio-group>
 						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 1">
-							{{ t('promptTips1-1') }}<el-button class="button-size" type="primary" link @click="kdnEvent('https://www.kdniao.com')">https://www.kdniao.com</el-button>
+							{{ t('promptTips1-1') }}<el-button class="button-size" type="primary" link @click="openEvent('https://www.kdniao.com')">https://www.kdniao.com</el-button>
 						</p>
 						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 1">
 							{{ t('promptTips1-2') }}
 						</p>
 <!--						<p class="text-[12px] text-[#b2b2b2]" v-if="formData.interface_type == 2">-->
-<!--							{{ t('promptTips2') }}<el-button class="button-size" type="primary" link @click="kdnEvent('https://www.kuaidi100.com')">https://www.kuaidi100.com</el-button>-->
+<!--							{{ t('promptTips2') }}<el-button class="button-size" type="primary" link @click="openEvent('https://www.kuaidi100.com')">https://www.kuaidi100.com</el-button>-->
 <!--						</p>-->
 					</div>
 				</el-form-item>
@@ -109,7 +109,7 @@ const formData = reactive<formDataType|any>({
     kd100_customer: ''
 })
 
-const setFormData = async (id: number = 0) => {
+const setFormData = async () => {
     const data = await (await getDeliverySearch()).data
     Object.keys(formData).forEach((key: string) => {
         if (data[key] != undefined) formData[key] = data[key]
@@ -119,7 +119,7 @@ const setFormData = async (id: number = 0) => {
 }
 setFormData()
 
-const kdnEvent = (url:any) => {
+const openEvent = (url:any) => {
     window.open(url, '_blank')
 }
 
@@ -151,10 +151,6 @@ const save = async (formEl: FormInstance | undefined) => {
 
 <style lang="scss" scoped>
 .input-item {
-	margin-bottom: 10px !important
-}
-
-.warm-prompt {
 	margin-bottom: 10px !important
 }
 

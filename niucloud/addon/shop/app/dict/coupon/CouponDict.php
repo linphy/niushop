@@ -20,19 +20,21 @@ class CouponDict
 
     const USER = 1;
     const GRANT = 2;
+
     /**
      * 优惠券类型
      * @param $status
      * @return array|mixed|string
      */
-    public static function getType($type = ''){
+    public static function getType($type = '')
+    {
         $list = [
             self::ALL => get_lang('dict_shop_coupon.all'),
             self::CATEGORY => get_lang('dict_shop_coupon.category'),
             self::GOODS => get_lang('dict_shop_coupon.goods'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
 
     /**
@@ -40,13 +42,14 @@ class CouponDict
      * @param $status
      * @return array|mixed|string
      */
-    public static function getReceiveType($type = ''){
+    public static function getReceiveType($type = '')
+    {
         $list = [
             self::USER => get_lang('dict_shop_coupon.user'),
             self::GRANT => get_lang('dict_shop_coupon.grant'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
 
 
@@ -58,12 +61,14 @@ class CouponDict
     const EXPIRE = 2;
     //已失效
     const INVALID = 3;
+
     /**
      * 优惠券活动状态
      * @param $status
      * @return array|mixed|string
      */
-    public static function getStatus($status = ''){
+    public static function getStatus($status = '')
+    {
         $list = [
             self::WAIT_START => get_lang('dict_shop_coupon.wait_start'),
             self::NORMAL => get_lang('dict_shop_coupon.normal'),
@@ -71,6 +76,6 @@ class CouponDict
             self::INVALID => get_lang('dict_shop_coupon.invalid'),
         ];
         if ($status == '') return $list;
-        return $list[$status] ?? '';
+        return $list[ $status ] ?? '';
     }
 }

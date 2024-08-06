@@ -13,7 +13,6 @@ namespace addon\shop\app\service\admin\order;
 
 use addon\shop\app\dict\order\InvoiceDict;
 use addon\shop\app\model\order\Invoice;
-use app\service\admin\sys\ExportService;
 use core\base\BaseAdminService;
 use core\exception\CommonException;
 
@@ -33,13 +32,13 @@ class InvoiceService extends BaseAdminService
     public function getPage(array $where)
     {
         $order = 'id desc';
-        $search_model = $this->model->withSearch([ "is_invoice", "header_type", "header_name", "create_time", "invoice_time" ], $where)->where([ [ 'status', '=', InvoiceDict::OPEN ] ])->append([ 'header_type_name', 'type_name' ])->field('*')->order($order);
+        $search_model = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ "is_invoice", "header_type", "header_name", "create_time", "invoice_time" ], $where)->where([ [ 'status', '=', InvoiceDict::OPEN ] ])->append([ 'header_type_name', 'type_name' ])->field('*')->order($order);
         return $this->pageQuery($search_model);
     }
 
     public function getInfo(int $id)
     {
-        $detail = $this->model->where([ [ 'id', '=', $id ], [ 'status', '=', InvoiceDict::OPEN  ] ])->field('*')->append([ 'header_type_name', 'type_name' ])->findOrEmpty()->toArray();
+        $detail = $this->model->where([ [ 'id', '=', $id ], [ 'status', '=', InvoiceDict::OPEN ] ])->field('*')->append([ 'header_type_name', 'type_name' ])->findOrEmpty()->toArray();
         return $detail;
     }
 

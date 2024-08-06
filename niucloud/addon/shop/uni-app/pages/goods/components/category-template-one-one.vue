@@ -3,8 +3,8 @@
 		<view class="mescroll-box bg-[#F4F6F8]" :class="{ 'cart': config.cart.control && config.cart.event === 'cart', 'detail': !(config.cart.control && config.cart.event === 'cart') }" v-if="tabsData.length">
 			<mescroll-body ref="mescrollRef" :down="{ use: false }" @init="mescrollInit" @up="getListFn">
 				<view v-if="config.search.control" class="search-box z-10 bg-[#fff] fixed top-0 left-0 right-0 h-[106rpx] box-border">
-					<input class="search-ipt pl-[20rpx] text-[24rpx]" :class="{'pr-[96rpx]':searchName,'pr-[60rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
-					<view class="flex items-center h-[70rpx] absolute right-[48rpx] top-[18rpx]  z-2">
+					<input class="search-ipt pl-[32rpx] text-[24rpx]" :class="{'pr-[106rpx]':searchName,'pr-[32rpx]':!searchName}" type="text" v-model="searchName" :placeholder="config.search.title"  @confirm="searchNameFn">
+					<view class="flex items-center h-[70rpx] absolute right-[56rpx] top-[18rpx]  z-2">
 						<u-icon v-if="searchName" name="close-circle-fill" color="#A5A6A6" size="28rpx" @click="searchName=''"></u-icon>
 						<view class="h-[70rpx] w-[40rpx] text-center leading-[70rpx]" @click.stop="searchNameFn"><text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx]"></text></view>	
 					</view>
@@ -43,7 +43,7 @@
 							<view class="mr-[8rpx]">
 								<u--image width="168rpx" height="168rpx" radius="12rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
 									<template #error>
-										<u-icon name="photo" color="#999" size="50"></u-icon>
+										<image class="rounded-[12rpx] overflow-hidden w-[168rpx] h-[168rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 									</template>
 								</u--image>
 							</view>
@@ -59,7 +59,6 @@
 										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'member_price'" :src="img('addon/shop/VIP.png')" mode="heightFix" />
 										<image class="h-[24rpx] ml-[6rpx]" v-if="priceType(item) == 'discount_price'" :src="img('addon/shop/discount.png')" mode="heightFix" />
 									</view>
-
 									<view
 										v-if="
 										(item.goods_type == 'real' || (item.goods_type == 'virtual' && item.virtual_receive_type != 'verify')) &&
@@ -73,7 +72,7 @@
 											:id="'itemCart' + index"
 											@click.stop="addCartBtn(item,cartList['goods_' + item.goods_id]['sku_' + item.goodsSku.sku_id],'itemCart' + index)"></text>
 									</view>
-									<template v-else>
+									<template v-else-if="(item.goods_type == 'virtual' && config.cart.event !== 'cart') || item.goods_type == 'real'">
 										<view v-if="config.cart.control && config.cart.style === 'style-1'" class="h-[44rpx] relative">
 											<view :id="'itemCart' + index" class="text-[#fff] bg-color h-[44rpx] text-[24rpx] px-[10px] leading-[44rpx] rounded-[22rpx]" @click.stop="itemCart(item, 'itemCart' + index)">
 												{{ config.cart.text }}
@@ -122,7 +121,7 @@
 						</view>
 
 					</template>
-					<view class="mx-[24rpx] bg-[#fff] w-[536rpx] rounded-[12rpx] flex items-center justify-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!list.length && !loading && listLoading">
+					<view class="mx-[24rpx]  w-[536rpx] rounded-[12rpx] flex items-center justify-center" :class="{'noData1':config.search.control,'noData2':!(config.search.control)}" v-if="!list.length && !loading && listLoading">
 						<mescroll-empty :option="{tip : '暂无商品'}"></mescroll-empty>
 					</view>
 				</view>
@@ -149,7 +148,7 @@
 					</text>
 				</view>
 				<button
-					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full bg-color remove-border"
+					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full primary-btn-bg remove-border"
 					shape="circle" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
@@ -176,7 +175,7 @@
 					</text>
 				</view>
 				<button
-					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full bg-color remove-border"
+					class="w-[180rpx] h-[66rpx] text-[28rpx] leading-[66rpx] !text-[#fff] m-0 rounded-full primary-btn-bg remove-border"
 					shape="circle" @click="settlement">去结算</button>
 			</view>
 			<!--  #endif -->
@@ -192,6 +191,8 @@
 		<u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
 		
 		<tabbar />
+		<!-- 强制绑定手机号 -->
+		<bind-mobile ref="bindMobileRef" />
 	</view>
 </template>
 
@@ -204,6 +205,7 @@ import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue'
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
 import addCartPopup from './add-cart-popup.vue'
+import bindMobile from '@/components/bind-mobile/bind-mobile.vue';
 import { onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 import { useLogin } from '@/hooks/useLogin'
 import useMemberStore from '@/stores/member'
@@ -233,11 +235,11 @@ const prop = defineProps({
 })
 let config = prop.config
 let categoryId = prop.categoryId;
-let list = ref<Array<Object>>([]);
-let searchName = ref("");
-let loading = ref<boolean>(true);//页面加载动画
-let listLoading = ref<boolean>(false);//列表加载动画
-let cartData = ref<Array<any>>([])
+const list = ref<Array<Object>>([]);
+const searchName = ref("");
+const loading = ref<boolean>(true);//页面加载动画
+const listLoading = ref<boolean>(false);//列表加载动画
+const cartData = ref<Array<any>>([])
 const instance = getCurrentInstance(); // 获取组件实例
 cartData.value = uni.getStorageSync('shopCart') || []
 interface acceptingDataStructure {
@@ -268,7 +270,6 @@ const getListFn = (mescroll: mescrollStructure) => {
 		end_price: '', // 价格结束区间
 		order: 'price', // 排序方式（综合：空，销量：sale_num，价格：price）
 		sort: 'desc' // 升序：asc，降序：desc
-
 	}).then((res: any) => {
 		let newArr = res.data.data
 		//设置列表数据
@@ -300,17 +301,17 @@ const animationElStatus = ref('')
 const animationAddRepeatFlag = ref<Boolean>(false)
 const cartRepeatFlag = ref<Boolean>(false)
 const animationAddCart = (row: any, id: any) => {
-	if(animationAddRepeatFlag.value||cartRepeatFlag.value) return false
+	if (animationAddRepeatFlag.value || cartRepeatFlag.value) return false
 	animationAddRepeatFlag.value = true
 	cartRepeatFlag.value = true
 
-	let obj:any = {
-        goods_id: row.goodsSku.goods_id,
-        sku_id: row.goodsSku.sku_id,
-        sale_price: goodsPrice(row),
-        stock: row.goodsSku.stock
+	let obj: any = {
+		goods_id: row.goodsSku.goods_id,
+		sku_id: row.goodsSku.sku_id,
+		sale_price: goodsPrice(row),
+		stock: row.goodsSku.stock
 	};
-	if(row.id){
+	if (row.id) {
 		obj.num = row.num;
 		obj.id = row.id;
 	}
@@ -318,44 +319,44 @@ const animationAddCart = (row: any, id: any) => {
 		cartRepeatFlag.value = false
 	});
 	// #ifdef  MP-WEIXIN
-		setTimeout(() => {
-			uni.createSelectorQuery().in(instance).select('#animation-end').boundingClientRect((res:any) => {
-				uni.createSelectorQuery().in(instance).select('#' + id).boundingClientRect((position:any) => {
-					animationElStatus.value = `top: ${position.top}px; left: ${position.left}px;`
-					setTimeout(() => {
-						animationElStatus.value = `top: ${res.top+res.height/2-position.height/2}px; left: ${res.left+res.width/2-position.width/2}px; transition: all 0.8s; transform: rotate(-720deg);`
-					}, 20);
+	setTimeout(() => {
+		uni.createSelectorQuery().in(instance).select('#animation-end').boundingClientRect((res: any) => {
+			uni.createSelectorQuery().in(instance).select('#' + id).boundingClientRect((position: any) => {
+				animationElStatus.value = `top: ${ position.top }px; left: ${ position.left }px;`
+				setTimeout(() => {
+					animationElStatus.value = `top: ${ res.top + res.height / 2 - position.height / 2 }px; left: ${ res.left + res.width / 2 - position.width / 2 }px; transition: all 0.8s; transform: rotate(-720deg);`
+				}, 20);
 
-					setTimeout(() => {
-						animationElStatus.value = ''
-						animationAddRepeatFlag.value = false
-					}, 1020);
-
-				}).exec()
+				setTimeout(() => {
+					animationElStatus.value = ''
+					animationAddRepeatFlag.value = false
+				}, 1020);
 
 			}).exec()
-		},100)
+
+		}).exec()
+	}, 100)
 	// #endif
 	// #ifdef  H5
-		setTimeout(() => {
-			const animationEnd:any = window.document.getElementById('animation-end');
-			const animationEndLeft = animationEnd.getBoundingClientRect().left;
-			const animationEndTop = animationEnd.getBoundingClientRect().top;
-			
-			const itemCart:any = window.document.getElementById(id);
-			const itemCartLift = itemCart.getBoundingClientRect().left;
-			const itemCartTop = itemCart.getBoundingClientRect().top;
-			animationElStatus.value = `top: ${itemCartTop}px; left: ${itemCartLift}px;`
+	setTimeout(() => {
+		const animationEnd: any = window.document.getElementById('animation-end');
+		const animationEndLeft = animationEnd.getBoundingClientRect().left;
+		const animationEndTop = animationEnd.getBoundingClientRect().top;
 
-			setTimeout(() => {
-				animationElStatus.value = `top: ${animationEndTop+animationEnd.offsetHeight/2-itemCart.offsetHeight/2}px; left: ${animationEndLeft+animationEnd.offsetWidth/2-itemCart.offsetHeight/2}px; transition: all 0.8s; transform: rotate(-720deg);`
-			}, 20);
-			setTimeout(() => {
-				animationElStatus.value = ''
-				animationAddRepeatFlag.value = false
-			}, 1020);
-			
-		}, 100);
+		const itemCart: any = window.document.getElementById(id);
+		const itemCartLift = itemCart.getBoundingClientRect().left;
+		const itemCartTop = itemCart.getBoundingClientRect().top;
+		animationElStatus.value = `top: ${ itemCartTop }px; left: ${ itemCartLift }px;`
+
+		setTimeout(() => {
+			animationElStatus.value = `top: ${ animationEndTop + animationEnd.offsetHeight / 2 - itemCart.offsetHeight / 2 }px; left: ${ animationEndLeft + animationEnd.offsetWidth / 2 - itemCart.offsetHeight / 2 }px; transition: all 0.8s; transform: rotate(-720deg);`
+		}, 20);
+		setTimeout(() => {
+			animationElStatus.value = ''
+			animationAddRepeatFlag.value = false
+		}, 1020);
+
+	}, 100);
 	// #endif
 }
 
@@ -409,8 +410,11 @@ const searchNameFn = () => {
 	if(searchName.value) redirect({ url: '/addon/shop/pages/goods/list', param: { goods_name: searchName.value } })
 }
 
+//强制绑定手机号
+const bindMobileRef = ref(null)
+
 //点击商品购物车按钮
-let cartRef = ref()
+const cartRef = ref()
 const itemCart = (row: any, id: any) => {
     // 虚拟商品，并且需要核销，禁止加入购物车
     if(row.goods_type == 'virtual' && row.virtual_receive_type == 'verify'){
@@ -425,6 +429,11 @@ const itemCart = (row: any, id: any) => {
 		useLogin().setLoginBack({ url: '/addon/shop/pages/goods/category' })
 		return false
 	}
+	// 绑定手机号
+	if(uni.getStorageSync('isbindmobile')){
+        bindMobileRef.value.open()
+        return false
+    }
 	if (row.goodsSku.sku_spec_format) {
 		cartRef.value.open(row.goodsSku.sku_id)
 	} else {
@@ -475,6 +484,11 @@ const toCart = () => {
  * 结算
  */
 const settlement = () => {
+	// 绑定手机号
+	if(uni.getStorageSync('isbindmobile')){
+        bindMobileRef.value.open()
+        return false
+    }
 	if (!totalNum.value) {
 		uni.showToast({ title: '还没有选择商品', icon: 'none' })
 		return
@@ -498,29 +512,29 @@ const settlement = () => {
 }
 
 // 价格类型 
-let priceType = (data:any) =>{
+const priceType = (data:any) =>{
 	let type = "";
-	if(data.is_discount){
-		type = 'discount_price'// 折扣
-	}else if(data.member_discount && getToken()){
-		type = 'member_price' // 会员价
-	}else{ 
-		type = ""
-	}
-	return type;
+    if(data.is_discount && data.goodsSku.sale_price != data.goodsSku.price){
+        type = 'discount_price'// 折扣
+    }else if(data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
+        type = 'member_price' // 会员价
+    }else{
+        type = ""
+    }
+    return type;
 }
 
 // 商品价格
-let goodsPrice = (data:any) =>{
+const goodsPrice = (data:any) =>{
 	let price = "0.00";
-	if(data.is_discount){
-		price = data.goodsSku.sale_price?data.goodsSku.sale_price:data.goodsSku.price // 折扣价
-	}else if(data.member_discount && getToken()){
-		price = data.goodsSku.member_price?data.goodsSku.member_price:data.goodsSku.price // 会员价
-	}else{
-		price = data.goodsSku.price
-	}
-	return price;
+    if (data.is_discount && data.goodsSku.sale_price != data.goodsSku.price) {
+        price = data.goodsSku.sale_price ? data.goodsSku.sale_price : data.goodsSku.price // 折扣价
+    } else if (data.member_discount && getToken() && data.goodsSku.member_price != data.goodsSku.price) {
+        price = data.goodsSku.member_price ? data.goodsSku.member_price : data.goodsSku.price // 会员价
+    } else {
+        price = data.goodsSku.price
+    }
+    return price;
 }
 </script>
 
@@ -578,10 +592,6 @@ let goodsPrice = (data:any) =>{
 	transform: rotate(180deg);
 }
 
-.font-scale {
-	transform: scale(0.75);
-}
-
 .text-color {
 	color: var(--primary-color);
 }
@@ -597,14 +607,13 @@ let goodsPrice = (data:any) =>{
 }
 
 .search-box .search-ipt {
-	height: 66rpx;
+	height: 64rpx;
 	background-color: #F6F8F8;
 	padding-left: 20rpx;
 	border-radius: 33rpx;
 }
 
 .search-box .search-ipt .input-placeholder {
-	padding-left: 10rpx;
 	color: #A5A6A6;
 }
 

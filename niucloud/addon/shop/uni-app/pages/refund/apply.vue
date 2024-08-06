@@ -3,12 +3,12 @@
         <swiper :indicator-dots="false" :autoplay="false" :disable-touch="true" :current="step" class="h-screen" :duration="300" v-if="detail">
             <swiper-item>
                 <scroll-view scroll-y="true" class="bg-page h-screen">
-                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                    <view class="my-[24rpx] sidebar-marign px-[24rpx] rounded-md bg-white">
                         <view class="flex py-[30rpx] border-0 !border-b !border-[#f5f5f5] border-solid">
                             <view class="w-[120rpx] h-[120rpx] flex items-center justify-center">
                             	<u--image radius="10rpx" width="120rpx" height="120rpx" :src="img(orderDetail.sku_image)" model="aspectFill">
                             	    <template #error>
-                            	        <u-icon name="photo" color="#999" size="50"></u-icon>
+                            	        <image class="w-[120rpx] h-[120rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
                             	    </template>
                             	</u--image>
                             </view>
@@ -21,7 +21,7 @@
                         </view>
                     </view>
 
-                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                    <view class="my-[24rpx] sidebar-marign px-[24rpx] rounded-md bg-white">
                         <view class="py-[24rpx] flex items-center" @click="selectRefundType(1)">
                             <view class="flex-1">
                                 <view class="text-sm">仅退款</view>
@@ -42,7 +42,7 @@
             </swiper-item>
             <swiper-item>
                 <scroll-view scroll-y="true" class="bg-page h-screen">
-                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                    <view class="my-[24rpx] sidebar-marign px-[24rpx] rounded-md bg-white">
                         <view class="py-[24rpx] flex justify-between items-center">
                             <view class="text-sm">退款原因</view>
                             <view class="flex items-center" @click="refundCausePopup = true">
@@ -53,7 +53,7 @@
                             </view>
                         </view>
                     </view>
-                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                    <view class="my-[24rpx] sidebar-marign px-[24rpx] rounded-md bg-white">
                         <view class="py-[24rpx] flex items-center">
                             <view class="text-sm">退款金额</view>
                             <view class="flex-1 text-right">
@@ -68,7 +68,7 @@
                             </view>
                         </view>
                     </view>
-                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                    <view class="my-[24rpx] sidebar-marign px-[24rpx] rounded-md bg-white">
                         <view class="py-[24rpx]">
                             <view class="text-sm">上传凭证<text class="text-xs text-gray-subtitle ml-[10rpx]">选填</text></view>
                             <view class="p-[20rpx] bg-[#f5f5f5] rounded mt-[20rpx]">
@@ -76,7 +76,7 @@
                             </view>
                         </view>
                     </view>
-                    <view class="m-[24rpx] px-[24rpx] rounded-md bg-white">
+                    <view class="my-[24rpx] sidebar-marign px-[24rpx] rounded-md bg-white">
                         <view class="py-[24rpx]">
                             <view class="text-sm">补充描述<text class="text-xs text-gray-subtitle ml-[10rpx]">选填</text></view>
                             <view class="p-[20rpx] bg-[#f5f5f5] rounded mt-[20rpx] h-[200rpx]">
@@ -84,23 +84,20 @@
                             </view>
                         </view>
                     </view>
-                    <view class="mt-[40rpx] m-[24rpx]">
-                        <u-button type="primary" shape="circle" text="提交" @click="save" :loading="operateLoading"></u-button>
+                    <view class="mt-[40rpx] my-[24rpx] sidebar-marign">
+                        <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" :loading="operateLoading" @click="save">提交</button>
                     </view>
 
                     <!-- 退款原因 -->
-                    <u-popup :show="refundCausePopup" @close="refundCausePopup = false">
+                    <u-popup :show="refundCausePopup" @close="refundCausePopup = false" :closeable="true">
                         <view class="px-[30rpx] pb-[30rpx]" @touchmove.prevent.stop>
-                            <view class="flex items-center h-[90rpx] justify-between">
-                                <text>退款原因</text>
-                                <text class="nc-iconfont nc-icon-guanbiV6xx" @click="refundCausePopup = false"></text>
-                            </view>
+							<view class="text-center p-[30rpx]">退款原因</view>
                             <scroll-view scroll-y="true" class="h-[450rpx] mt-[20rpx]">
-                                <u-radio-group v-model="currReasonName" placement="column">
-                                    <u-radio activeColor="var(--primary-color)" :customStyle="{marginBottom: '8px'}" v-for="(item, index) in reason" :key="index" :label="item" :name="item"></u-radio>
+                                <u-radio-group v-model="currReasonName" placement="column" iconPlacement="right">
+                                    <u-radio activeColor="var(--primary-color)" :customStyle="{marginBottom: '30rpx'}" v-for="(item, index) in reason" :key="index" :label="item" :name="item"></u-radio>
                                 </u-radio-group>
                             </scroll-view>
-                            <u-button type="primary" text="确定" class="mt-[40rpx]" shape="circle" @click="refundCausePopupFn"></u-button>
+                            <button class="mt-[40rpx] bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="refundCausePopupFn">确定</button>
                         </view>
                     </u-popup>
                 </scroll-view>
@@ -123,7 +120,7 @@
 	const orderDetail = ref({})
     const orderGoodsId = ref(0)
     const step = ref(0)
-	let refundCausePopup = ref(false)
+	const refundCausePopup = ref(false)
     const formData = ref({
         order_id: detail.value?.order_id,
         order_goods_id: orderGoodsId.value,
@@ -133,14 +130,14 @@
         remark: '',
         voucher: []
     })
-    let refundMoney = ref<any>({})
+    const refundMoney = ref<any>({})
     const reason = ref<string[]>([])
     const currReasonName = ref('')
 
     getRefundReason().then(({ data }) => {
         reason.value = data
 		if(reason.value && reason.value.length) currReasonName.value = reason.value[0];
-    }).catch()
+    })
 
     onLoad((data) => {
         orderGoodsId.value = data.order_goods_id || 0
@@ -154,22 +151,20 @@
 				}
 			})
             formData.value.apply_money = moneyFormat(refundMoney.value.refund_money)
-        }).catch(() => {
         })
+
         // 获取可退款金额
         getRefundMoney({order_goods_id: data.order_goods_id}).then(res =>{
             refundMoney.value = res.data
         })
     })
 
- 
-
     const inputWidth = computed((value) => {
-        return function () {
+        return function (value) {
             if (value == '' || value == 0) {
                 return '70rpx';
             } else {
-                return String(value).length * 9 + 'rpx';
+                return String(value).length * 18 + 'rpx';
             }
         };
     })
@@ -194,7 +189,6 @@
                 if (formData.value.voucher.length < 9 ) {
                     formData.value.voucher.push(res.data.url)
                 }
-            }).catch(() => {
             })
         })
     }
@@ -249,13 +243,13 @@
 		formData.value.reason = currReasonName.value;
 		refundCausePopup.value = false;
 	}
+
     const handleInput = (event:any) =>{
        if(Number(event.detail.value) > Number(refundMoney.value.refund_money)){
             uni.showToast({
 				title: '退款金额不能大于可退款总额',
 				icon: 'none'
 			});
-			formData.value.apply_money = moneyFormat(refundMoney.value.refund_money);
        }
     }
 </script>

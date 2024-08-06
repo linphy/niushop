@@ -51,7 +51,7 @@ class Order extends BaseModel
     ];
 
     // 设置json类型字段
-    protected $json = ['has_goods_types'];
+    protected $json = [ 'has_goods_types' ];
 
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
@@ -102,7 +102,7 @@ class Order extends BaseModel
 
     /**
      * 包裹
-     * @return HasOne
+     * @return hasMany
      */
     public function orderDelivery()
     {
@@ -135,9 +135,9 @@ class Order extends BaseModel
      */
     public function getOrderFromNameAttr($value, $data)
     {
-        if (empty($data['order_from']))
+        if (empty($data[ 'order_from' ]))
             return '';
-        return ChannelDict::getType()[$data['order_from']] ?? '';
+        return ChannelDict::getType()[ $data[ 'order_from' ] ] ?? '';
     }
 
     /**
@@ -148,7 +148,7 @@ class Order extends BaseModel
      */
     public function getOrderTypeNameAttr($value, $data)
     {
-        if (empty($data['order_type']))
+        if (empty($data[ 'order_type' ]))
             return '';
 //        return OrderDict::getType()[$data['order_type']] ?? '';
     }
@@ -161,9 +161,9 @@ class Order extends BaseModel
      */
     public function getStatusNameAttr($value, $data)
     {
-        if (empty($data['status']))
+        if (empty($data[ 'status' ]))
             return '';
-        return OrderDict::getStatus()[$data['status']] ?? '';
+        return OrderDict::getStatus()[ $data[ 'status' ] ] ?? '';
     }
 
     /**
@@ -174,9 +174,9 @@ class Order extends BaseModel
      */
     public function getDeliveryTypeNameAttr($value, $data)
     {
-        if (empty($data['delivery_type']))
+        if (empty($data[ 'delivery_type' ]))
             return '';
-        return OrderDeliveryDict::getType()[$data['delivery_type']] ?? '';
+        return OrderDeliveryDict::getType()[ $data[ 'delivery_type' ] ] ?? '';
     }
 
     /**
@@ -186,7 +186,7 @@ class Order extends BaseModel
      */
     public function searchOrderNoAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where("order_no", "like", "%$value%");
         }
     }
@@ -225,8 +225,8 @@ class Order extends BaseModel
      */
     public function searchJoinStatusAttr($query, $value, $data)
     {
-        if ($data['status']) {
-            $query->where("order.status", $data['status']);
+        if ($data[ 'status' ]) {
+            $query->where("order.status", $data[ 'status' ]);
         }
     }
 
@@ -238,14 +238,14 @@ class Order extends BaseModel
      */
     public function searchPayTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('pay_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['pay_time', '>=', $start_time]]);
+            $query->where([ [ 'pay_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['pay_time', '<=', $end_time]]);
+            $query->where([ [ 'pay_time', '<=', $end_time ] ]);
         }
     }
 
@@ -257,17 +257,16 @@ class Order extends BaseModel
      */
     public function searchJoinPayTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($data['pay_time'][0]) ? 0 : strtotime($data['pay_time'][0]);
-        $end_time = empty($data['pay_time'][1]) ? 0 : strtotime($data['pay_time'][1]);
+        $start_time = empty($data[ 'pay_time' ][ 0 ]) ? 0 : strtotime($data[ 'pay_time' ][ 0 ]);
+        $end_time = empty($data[ 'pay_time' ][ 1 ]) ? 0 : strtotime($data[ 'pay_time' ][ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('order.pay_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['order.pay_time', '>=', $start_time]]);
+            $query->where([ [ 'order.pay_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['order.pay_time', '<=', $end_time]]);
+            $query->where([ [ 'order.pay_time', '<=', $end_time ] ]);
         }
     }
-
 
     /**
      * 创建时间搜索器
@@ -277,14 +276,14 @@ class Order extends BaseModel
      */
     public function searchCreateTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('order.create_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['order.create_time', '>=', $start_time]]);
+            $query->where([ [ 'order.create_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['order.create_time', '<=', $end_time]]);
+            $query->where([ [ 'order.create_time', '<=', $end_time ] ]);
         }
     }
 
@@ -295,8 +294,8 @@ class Order extends BaseModel
      */
     public function searchSearchTypeAttr($query, $value, $data)
     {
-        if ($value && $data['search_name']) {
-            $search_name = $data['search_name'];
+        if ($value && isset($data[ 'search_name' ]) && $data[ 'search_name' ] != '') {
+            $search_name = $this->handelSpecialCharacter($data[ 'search_name' ]);
             if ($value == 'order_no') $query->where("order_no", "like", "%$search_name%");
             if ($value == 'out_trade_no') $query->where("order.out_trade_no", "like", "%$search_name%");
         }
@@ -311,6 +310,18 @@ class Order extends BaseModel
     {
         if ($value) {
             $query->where("order_from", $value);
+        }
+    }
+
+    /**
+     * 搜索器:收货人|收货人手机号
+     * @param $value
+     * @param $data
+     */
+    public function searchKeywordAttr($query, $value, $data)
+    {
+        if ($value != '') {
+            $query->whereLike("taker_name|taker_mobile", "%" . $this->handelSpecialCharacter($value) . "%");
         }
     }
 }

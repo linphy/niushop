@@ -1,13 +1,9 @@
 <template>
 	<div class="main-container">
-		<div class="detail-head">
-			<div class="left" @click="router.push({ path: '/shop/order/index' })">
-				<span class="iconfont iconxiangzuojiantou !text-xs"></span>
-				<span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-			</div>
-			<span class="adorn">|</span>
-			<span class="right">{{ pageName }}</span>
-		</div>
+        <el-card class="card !border-none mb-[15px]" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="router.push({ path: '/shop/order/index' })" />
+        </el-card>
+        
 		<el-form :model="formData" label-width="100px" ref="formRef" class="page-form" v-loading="loading" label-position="left">
 			<el-card class="box-card !border-none relative" shadow="never" v-if="formData">
 				<h3 class="panel-title">{{ t('orderInfo') }}</h3>
@@ -77,6 +73,8 @@
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="close" v-if="formData.status == 1">{{ t('close') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="orderAdjustMoney" v-if="formData.status == 1">{{ t('editPrice') }}</span>
 						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="finish" v-if="formData.status == 3">{{ t('finish') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="openElectronicSheetPrintDialog" v-if="formData.delivery_type == 'express' && formData.status == 3">{{ t('electronicSheetPrintTitle') }}</span>
+						<span class="text-[14px] px-[15px] py-[5px] ml-[30px] text-[#5c96fc] bg-[#ebf3ff] cursor-pointer" @click="printTicketEvent" v-if="formData.delivery_type == 'virtual' && (formData.status == 2 || formData.status == 3 || formData.status == 5)">{{ t('printTicket') }}</span>
 						<div class="flex" v-if="formData.order_delivery">
 							<template v-for="(item, index) in formData.order_delivery" :key="index">
 								<span v-if="item.delivery_type == 'express' && item.sub_delivery_type == 'express'"
@@ -177,7 +175,8 @@
 								{{ items.main_type_name }}{{ items.main_name }}
 							</div>
 							<div class="leading-[1] ml-[20px] text-[14px] mt-[15px]">
-								{{ items.type_name }}
+								<span>{{ items.type_name }}</span>
+								<span class="ml-[10px]">{{items.content}}</span>
 							</div>
 						</div>
 					</div>
@@ -187,10 +186,11 @@
 				<el-empty :description="t('orderInfoEmpty')" />
 			</el-card>
 		</el-form>
-		<adjust-money ref="orderAdjustMoneyActionDialog" @complete="setFormData(orderId)"/>
-		<delivery-action ref="deliveryActionDialog" @complete="setFormData(orderId)"></delivery-action>
-		<order-notes ref="orderNotesDialog" @complete="setFormData(orderId)"></order-notes>
-		<delivery-package ref="packageDialog"></delivery-package>
+		<adjust-money ref="orderAdjustMoneyActionDialog" @complete="setFormData(orderId)" />
+		<delivery-action ref="deliveryActionDialog" @complete="setFormData(orderId)" />
+		<order-notes ref="orderNotesDialog" @complete="setFormData(orderId)" />
+		<delivery-package ref="packageDialog" />
+		<electronic-sheet-print ref="electronicSheetPrintDialog" @complete="loadOrderList" />
 	</div>
 </template>
 
@@ -198,13 +198,16 @@
 import { ref } from 'vue'
 import { t } from '@/lang'
 import { getOrderDetail, orderClose, orderFinish } from '@/addon/shop/api/order'
+import { printTicket } from '@/app/api/printer'
 import DeliveryAction from '@/addon/shop/views/order/components/delivery-action.vue'
 import OrderNotes from '@/addon/shop/views/order/components/order-notes.vue'
 import deliveryPackage from '@/addon/shop/views/order/components/delivery-package.vue'
 import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
+import electronicSheetPrint from '@/addon/shop/views/order/components/electronic-sheet-print.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { img } from '@/utils/common'
 import { ElMessageBox } from 'element-plus'
+import { cloneDeep } from 'lodash-es'
 
 const route = useRoute()
 const router = useRouter()
@@ -287,6 +290,43 @@ const packageEvent = (id: number, mobile: number) => {
     packageDialog.value.showDialog = true
 }
 
+// 打印电子面单
+const electronicSheetPrintDialog: Record<string, any> | null = ref(null)
+
+const openElectronicSheetPrintDialog = () => {
+    let data = {
+        print_type: 'single'
+    };
+
+    Object.assign(data, cloneDeep(formData.value))
+    electronicSheetPrintDialog.value.setFormData(data)
+    electronicSheetPrintDialog.value.showDialog = true
+}
+
+const repeat = ref(false)
+
+/**
+ * 打印小票
+ */
+const printTicketEvent = () => {
+    if (!formData.value.order_id) return;
+
+    if (repeat.value) return
+    repeat.value = true
+
+    printTicket({
+        type: 'shopGoodsOrder', // 小票模板类型
+        trigger: 'manual', // 触发时机：手动触发
+        // 业务参数，根据自身业务传值
+        business: {
+            order_id: formData.value.order_id
+        }
+    }).then((res: any) => {
+        repeat.value = false
+    }).catch(() => {
+        repeat.value = false
+    })
+}
 </script>
 
 <style lang="scss" scoped>

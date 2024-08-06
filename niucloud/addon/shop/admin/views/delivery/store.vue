@@ -126,10 +126,6 @@ const router = useRouter()
  * 添加自提门店
  */
 const addEvent = () => {
-    // const url = router.resolve({
-    //     path: '/shop/order/delivery/store/edit'
-    // })
-    // window.open(url.href)
     router.push('/shop/order/delivery/store/edit')
 }
 
@@ -167,13 +163,4 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-/* 多行超出隐藏 */
-.multi-hidden {
-    word-break: break-all;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
 </style>

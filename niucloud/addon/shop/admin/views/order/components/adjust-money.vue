@@ -25,7 +25,7 @@
                             <div>
                                 <span>{{ t('adjustMoneyLabel') }}</span>
                                 <el-tooltip effect="dark" content="负数表示下调金额，正数表示上调金额" placement="top">
-                                    <text class="nc-iconfont nc-icon-bangzhuV6xx ml-[5px]" id="iconfont"></text>
+                                    <text class="nc-iconfont nc-icon-bangzhuV6xx ml-[5px] text-[12px]"></text>
                                 </el-tooltip>
                             </div>
                         </template>
@@ -162,9 +162,5 @@ defineExpose({
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
-}
-#iconfont {
-    font-size: 12px;
-    margin-left: 5px;
 }
 </style>

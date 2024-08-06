@@ -67,7 +67,7 @@ class OrderRefund extends BaseModel
 
     /**
      * 关联退款日志表
-     * @return void
+     * @return \think\model\relation\HasMany
      */
     public function refundLog()
     {
@@ -124,8 +124,8 @@ class OrderRefund extends BaseModel
      */
     public function searchOrderRefundNoAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("order_refund_no", "like", "%$value%");
+        if ($value != '') {
+            $query->where("order_refund_no", "like", "%" . $this->handelSpecialCharacter($value) . "%");
         }
     }
 

@@ -3,7 +3,7 @@
 return [
     'shop_goods' => [
         'title' => get_lang('dict_diy_poster.shop_goods_component_type_basic'),
-        'support' => [ 'fenxiao_goods' ], // 支持的插件
+        'support' => [ 'fenxiao_goods', 'shop_point_goods' ], // 支持的插件
         'list' => [
             'GoodsImage' => [
                 'title' => "商品图片",
@@ -15,10 +15,10 @@ return [
                 'relate' => 'goods_img', // 关联字段，空为不处理
                 'value' => '',
                 'template' => [
-                    "width" => 200, // 宽度
-                    'height' => 200, // 高度
-                    'minWidth' => 30, // 最小宽度
-                    'minHeight' => 30, // 最小高度
+                    "width" => 400, // 宽度
+                    'height' => 400, // 高度
+                    'minWidth' => 60, // 最小宽度
+                    'minHeight' => 60, // 最小高度
                 ],
             ],
             'GoodsName' => [
@@ -29,7 +29,12 @@ return [
                 'uses' => 1,
                 'sort' => 10007,
                 'relate' => 'goods_name', // 关联字段，空为不处理
-                'value' => ''
+                'value' => '',
+                'template' => [
+                    "width" => 164, // 宽度
+                    'height' => 55, // 高度
+                ]
+
             ],
             'GoodsPrice' => [
                 'title' => "销售价",
@@ -42,6 +47,8 @@ return [
                 'value' => '',
                 'template' => [
                     "fontFamily" => 'static/font/price.ttf', // 字体
+                    'width' => 151, // 宽度
+                    'height' => 49, // 高度
                 ],
             ],
             'GoodsMarketPrice' => [
@@ -55,6 +62,8 @@ return [
                 'value' => '',
                 'template' => [
                     "fontFamily" => 'static/font/price.ttf', // 字体
+                    'width' => 170, // 宽度
+                    'height' => 48, // 高度
                 ],
             ]
         ]

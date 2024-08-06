@@ -7,9 +7,9 @@ return [
         'desc' => '订单交易成功后按订单交易金额发放成长值',
         'component' => '/src/addon/shop/views/member/components/growth-rule-buygoods.vue',
         'calculate' => function(array $config, array $data) {
-            $order_money = $data['order_money'] ?? 0;
+            $order_money = $data[ 'order_money' ] ?? 0;
             if ($order_money <= 0) return 0;
-            return (int)round($order_money / $config['money'] * $config['growth']);
+            return (int) round($order_money / $config[ 'money' ] * $config[ 'growth' ]);
         },
         'content' => [
             'admin' => function($config) {

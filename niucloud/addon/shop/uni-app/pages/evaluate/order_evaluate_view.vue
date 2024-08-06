@@ -1,6 +1,6 @@
 <template>
      <view class="bg-[#f8f8f8] min-h-screen" :style="themeColor()">
-		 <mescroll-body ref="mescrollRef" top="90rpx" @init="mescrollInit" @down="downCallback" @up="getShopOrderFn">
+		 <mescroll-body ref="mescrollRef" top="90rpx" @init="mescrollInit" :down="{ use: false }" @up="getShopOrderFn">
 			<view class="px-[24rpx] py-[20rpx]" v-if="info.length">
                <template v-for="(item, index)  in info" :key="index">
                     <view class="bg-white py-[20rpx] px-[24rpx] mb-[20rpx] rounded-[16rpx]">
@@ -106,14 +106,15 @@
                                 </u--image>
                             </view>
                         </template>
-                        <view v-if="item.explain_first !=''" class="text-[26rpx] !text-[#666] mt-[20rpx] pt-[20rpx] border-0 border-t-[2rpx] border-solid border-[#ebebec] w-[100%] overflow-clip leading-[1.2]">
-                            <text class=" text-[var(--primary-color)]">商家回复：</text>{{ item.explain_first }}
+                        <view v-if="item.explain_first !=''" class="text-[26rpx] !text-[#666] mt-[20rpx] pt-[20rpx] border-0 border-t-[2rpx] border-solid border-[#ebebec] w-[100%] overflow-clip leading-[1.2] break-all">
+                            <text class="text-[var(--primary-color)]">商家回复：</text>
+							<text>{{ item.explain_first }}</text>
                         </view>
                     </view>
                </template>
 			</view>
-			<view class="h-[100vh] w-[100vw] px-[30rpx] pt-[20rpx] box-border">
-				<view class=" bg-[#fff] rounded-[16rpx] flex items-center justify-center noData" v-if="!info.length && !loading">
+			<view class="h-[100vh] w-[100vw] px-[30rpx] pt-[20rpx] box-border" v-if="!info.length && !loading">
+				<view class=" bg-[#fff] rounded-[16rpx] flex items-center justify-center noData">
 					<mescroll-empty :option="{tip : '暂无评价'}"></mescroll-empty>
 				</view>
 			</view>

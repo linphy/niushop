@@ -112,7 +112,7 @@ class Invoice extends BaseModel
      */
     public function searchHeaderNameAttr(Query $query, $value, $data)
     {
-        if (!empty($value)) $query->where([ [ 'header_name', 'like', "%$value%" ] ]);
+        if ($value != '') $query->where([ [ 'header_name', 'like', "%" . $this->handelSpecialCharacter($value) . "%" ] ]);
     }
 
     /**

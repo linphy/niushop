@@ -31,7 +31,7 @@
 
                     <el-table-column prop="sort" :label="t('sort')" min-width="120" sortable="custom">
                         <template #default="{ row }">
-                            <el-input v-model="row.sort" class="!w-[100px]" maxlength="10" @input="sortInputListener($event, row)" />
+                            <el-input v-model="row.sort" class="!w-[100px]" maxlength="8" @blur="sortInputListener(row.sort, row)" />
                         </template>
                     </el-table-column>
 
@@ -88,7 +88,7 @@ const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title;
 
-let goodsAttrTable = reactive({
+const goodsAttrTable = reactive({
     page: 1,
     limit: 10,
     total: 0,
@@ -231,12 +231,15 @@ const deleteEvent = (id: number) => {
 
 // 修改排序号
 const sortInputListener = debounce((sort, row) => {
-    if (isNaN(sort) || !/^\d{0,10}$/.test(sort)) {
+    if (isNaN(sort) || !/^\d{0,8}$/.test(sort)) {
         ElMessage({
             type: 'warning',
-            message: `${t('sortTips')}`
+            message: `${ t('sortTips') }`
         })
         return
+    }
+    if (sort > 99999999) {
+        row.sort = 99999999
     }
     modifyAttrSort({
         attr_id: row.attr_id,

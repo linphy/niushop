@@ -35,7 +35,7 @@
                 <el-table-column prop="price" :label="t('price')" min-width="120" />
                 <el-table-column prop="stock" :label="t('stock')" min-width="120">
                     <template #default="{ row }">
-                        <el-input v-model="row.stock" clearable placeholder="0" maxlength="10" :disabled="activeGoodsCount > 0" />
+                        <el-input v-model="row.stock" clearable placeholder="0" maxlength="8" :disabled="activeGoodsCount > 0" />
                     </template>
                 </el-table-column>
 
@@ -81,14 +81,6 @@ const goodsTable = reactive<goodsTableType>({
 const batchOperation: any = reactive({
     value: '' // 输入值
 })
-
-const setBatchField = (value: string, regexp: string) => {
-    batchOperation.value = ''
-}
-
-const clearBatch = () => {
-    batchOperation.value = ''
-}
 
 const saveBatch = () => {
     if (batchOperation.value.length == 0) {

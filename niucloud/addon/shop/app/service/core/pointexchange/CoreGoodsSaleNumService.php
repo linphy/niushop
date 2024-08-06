@@ -13,7 +13,6 @@ namespace addon\shop\app\service\core\pointexchange;
 
 use addon\shop\app\model\exchange\Exchange;
 use core\base\BaseCoreService;
-use think\facade\Db;
 
 
 /**

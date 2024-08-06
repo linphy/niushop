@@ -42,7 +42,7 @@ return [
         'invalid' => '已失效',
     ],
     'dict_shop_member_coupon' => [
-        'wait_use' => '未使用',
+        'wait_use' => '待使用',
         'used' => '已使用',
         'expire' => '已过期',
         'invalid' => '已失效',
@@ -193,5 +193,20 @@ return [
         'account_point_exchange_refund' => '兑换订单维权',
         'account_point_consume_reward' => '下单奖励'
     ],
+
+    'dict_shop_delivery_electronic_sheet' => [
+        'cash_payment' => '现付',
+        'freight_collect' => '到付',
+        'monthly_statement' => '月结'
+    ],
+
+    'dict_shop_batch_delivery_status' => [
+        'processing' => '处理中',
+        'finish' => '已完成',
+        'fail' => '任务失败'
+    ],
+    'dict_shop_batch_delivery_type' => [
+        'delivery' => '批量导入发货',
+    ]
 
 ];

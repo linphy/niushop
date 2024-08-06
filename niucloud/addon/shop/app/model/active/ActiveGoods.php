@@ -38,9 +38,10 @@ class ActiveGoods extends BaseModel
     protected $type = [
 
     ];
+
     /**
      * 商品项
-     * @return \think\model\relation\HasMany
+     * @return \think\model\relation\HasOne
      */
     public function goods()
     {

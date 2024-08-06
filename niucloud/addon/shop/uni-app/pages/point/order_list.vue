@@ -8,7 +8,7 @@
 			</scroll-view>
 		</view>
 
-		<mescroll-body ref="mescrollRef" top="90rpx" @init="mescrollInit" @down="downCallback" @up="getShopOrderFn">
+		<mescroll-body ref="mescrollRef" top="90rpx" @init="mescrollInit" :down="{ use: false }" @up="getShopOrderFn">
 			<view class="mx-[30rpx] mt-[20rpx]" v-if="list.length">
 				<template v-for="(item, index) in list" :key="index">
 					<view class="mb-[20rpx] bg-[#fff] p-[20rpx] rounded-[16rpx]">
@@ -21,7 +21,7 @@
 								<view class="w-[150rpx] h-[150rpx]">
 									<u--image class="rounded-[10rpx] overflow-hidden" width="150rpx" height="150rpx" :src="img(subitem.goods_image_thumb_small ? subitem.goods_image_thumb_small : '')" model="aspectFill">
 										<template #error>
-											<u-icon name="photo" color="#999" size="50"></u-icon>
+											<image class="rounded-[10rpx] overflow-hidden w-[150rpx] h-[150rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 										</template>
 									</u--image>
 								</view>
@@ -94,7 +94,7 @@
 					</view>
 				</template>
 			</view>
-			<view class="mx-[30rpx] mt-[20rpx] bg-[#fff] rounded-[16rpx] flex items-center justify-center noData" v-if="!list.length && loading">
+			<view class="mx-[30rpx] mt-[20rpx] rounded-[16rpx] flex items-center justify-center noData" v-if="!list.length && loading">
 				<mescroll-empty :option="{tip : '暂无订单'}"></mescroll-empty>
 			</view>
 		</mescroll-body>
@@ -115,15 +115,15 @@ import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 import useConfigStore from "@/stores/config";
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
-let list = ref<Array<Object>>([]);
-let loading = ref<boolean>(false);
-let statusLoading = ref<boolean>(false);
-let orderState = ref('')
-let orderStateList = ref([]);
+const list = ref<Array<Object>>([]);
+const loading = ref<boolean>(false);
+const statusLoading = ref<boolean>(false);
+const orderState = ref('')
+const orderStateList = ref([]);
 const evaluateConfig = ref("")
 
-let mch_id = ref('')
-let isTradeManaged = ref(false)
+const mch_id = ref('')
+const isTradeManaged = ref(false)
 
 onLoad((option) => {
 	orderState.value = option.status || "";
@@ -244,7 +244,7 @@ const finish = (item: any) => {
 
     // #ifdef MP-WEIXIN
     // 检测微信小程序是否已开通发货信息管理服务
-    if (item.pay.type == 'wechatpay' && isTradeManaged.value && wx.openBusinessView) {
+    if (item.pay && item.pay.type == 'wechatpay' && isTradeManaged.value && wx.openBusinessView) {
         wx.openBusinessView({
             businessType: 'weappOrderConfirm',
             extraData: {
@@ -290,10 +290,6 @@ const finish = (item: any) => {
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
-}
-
-.font-scale {
-	transform: scale(0.75);
 }
 
 .text-color {

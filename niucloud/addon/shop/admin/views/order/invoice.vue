@@ -37,22 +37,22 @@
                     <template #empty>
                         <span>{{ !invoiceManagementTableData.loading ? t('emptyData') : '' }}</span>
                     </template>
-                    <el-table-column prop="header_name" :label="t('headerName')" min-width="100" align="left" />
+                    <el-table-column prop="header_name" :label="t('headerName')" min-width="100"  />
                     <el-table-column prop="header_type_name" :label="t('headerTypeName')" min-width="120" />
                     <el-table-column prop="tax_number" :label="t('taxNumber')" min-width="180" />
                     <el-table-column prop="name" :label="t('name')" min-width="120" />
                     <el-table-column prop="money" :label="t('money')" min-width="120" align="right" />
-                    <el-table-column :label="t('createTime')" min-width="180" align="center">
+                    <el-table-column :label="t('createTime')" min-width="180">
                         <template #default="{ row }">
                             {{ row.create_time || '' }}
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('invoiceTime')" min-width="180" align="center">
+                    <el-table-column :label="t('invoiceTime')" min-width="180">
                         <template #default="{ row }">
                             {{ row.invoice_time || '' }}
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('isInvoice')" min-width="120" align="center">
+                    <el-table-column :label="t('isInvoice')" min-width="120">
                         <template #default="{ row }">
                             {{ row.is_invoice === 1 ? t('hasInvoice') : t('noInvoice') }}
                         </template>

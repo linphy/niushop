@@ -18,7 +18,7 @@ use think\facade\Route;
 /**
  * 商城系统
  */
-Route::group('shop', function () {
+Route::group('shop', function() {
 
     /***************************************************** 商品 ****************************************************/
 
@@ -46,16 +46,22 @@ Route::group('shop', function () {
     /***************************************************** 评价 ****************************************************/
     // 获取 评价设置
     Route::get('goods/evaluate/config', 'addon\shop\app\api\controller\Config@evaluate');
+
     // 获取 评价列表
     Route::get('goods/evaluate', 'addon\shop\app\api\controller\goods\Evaluate@pages');
+
     // 获取 评价列表
     Route::get('goods/evaluate/list', 'addon\shop\app\api\controller\goods\Evaluate@lists');
+
     // 获取 评价数量
     Route::get('goods/evaluate/count', 'addon\shop\app\api\controller\goods\Evaluate@count');
+
     // 获取 评价详情（评价）
     Route::get('goods/evaluate/:id', 'addon\shop\app\api\controller\goods\Evaluate@info');
+
     // 添加 商品评价
     Route::post('goods/evaluate', 'addon\shop\app\api\controller\goods\Evaluate@add');
+
     // 评价 （订单页）
     Route::get('order/evaluate/:id', 'addon\shop\app\api\controller\goods\Evaluate@getEvaluate');
 
@@ -73,36 +79,46 @@ Route::group('shop', function () {
     Route::get('coupon/qrcode/:id', 'addon\shop\app\api\controller\marketing\Coupon@qrcode');
 
     Route::get('config/invoice', 'addon\shop\app\api\controller\Config@invoice');
+    //优惠券类型
+    Route::get('coupon_type', 'addon\shop\app\api\controller\marketing\Coupon@getCouponType');
 
     /***************************************************** 限时折扣 ****************************************************/
+
     //轮播图配置
     Route::get('discount/config', 'addon\shop\app\api\controller\marketing\Discount@config');
+
     // 限时折扣商品列表
     Route::get('discount/goods', 'addon\shop\app\api\controller\marketing\Discount@goods');
+
     // 限时折扣列表
     Route::get('discount', 'addon\shop\app\api\controller\marketing\Discount@lists');
 
     /*****************************************************  积分商城 ****************************************************/
+
     //积分商城列表
     Route::get('exchange', 'addon\shop\app\api\controller\exchange\Exchange@lists');
+
     //积分商城商品详情
     Route::get('exchange/goods/:id', 'addon\shop\app\api\controller\exchange\Exchange@detail');
+
     //获取商品列表供组件调用
     Route::get('exchange/components', 'addon\shop\app\api\controller\exchange\Exchange@components');
+
     //获取用户当前积分数供组件调用
     Route::get('exchange/point', 'addon\shop\app\api\controller\exchange\Exchange@getPointInfo');
+
     //积分商城订单计算
     Route::get('exchange_order/calculate', 'addon\shop\app\api\controller\exchange\OrderCreate@calculate');
+
     //积分商城订单创建
     Route::post('exchange_order/create', 'addon\shop\app\api\controller\exchange\OrderCreate@create');
-
 
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class)//false表示不验证登录
     ->middleware(ApiLog::class);
 
 
-Route::group('shop', function () {
+Route::group('shop', function() {
 
     /***************************************************** 购物车 ****************************************************/
 
@@ -126,7 +142,9 @@ Route::group('shop', function () {
 
     // 购物车数量
     Route::get('cart/sum', 'addon\shop\app\api\controller\cart\Cart@sum');
+
     /***************************************************** 订单 ****************************************************/
+
     //列表
     Route::get('order', 'addon\shop\app\api\controller\order\Order@lists');
 
@@ -144,58 +162,82 @@ Route::group('shop', function () {
 
     //创建订单
     Route::post('order_create/create', 'addon\shop\app\api\controller\order\OrderCreate@create');
+
     //计算
     Route::get('order_create/calculate', 'addon\shop\app\api\controller\order\OrderCreate@calculate');
+
     //查询优惠券
     Route::get('order_create/coupon', 'addon\shop\app\api\controller\order\OrderCreate@getCoupon');
+
     // 查询自提点
     Route::get('order_create/store', 'addon\shop\app\api\controller\order\OrderCreate@getStore');
 
     //获取订单确认数据
     Route::get('confirm', 'addon\shop\app\api\controller\order\OrderCreate@confirm');
+
     // 订单关闭
     Route::put('order/close/:id', 'addon\shop\app\api\controller\order\Order@orderClose');
+
     // 订单完成
     Route::put('order/finish/:id', 'addon\shop\app\api\controller\order\Order@orderFinish');
+
     //物流跟踪
     Route::get('order/logistics', 'addon\shop\app\api\controller\order\Order@getPackage');
+
     //添加优惠券
     Route::post('coupon', 'addon\shop\app\api\controller\marketing\Coupon@receive');
+
     //优惠券列表
     Route::get('member/coupon', 'addon\shop\app\api\controller\marketing\Coupon@memberCouponlists');
+
     //优惠券数量
     Route::get('member/coupon/count', 'addon\shop\app\api\controller\marketing\Coupon@memberCouponCount');
+
+    //优惠券状态数量
+    Route::get('member/coupon/status_count', 'addon\shop\app\api\controller\marketing\Coupon@memberCouponStatusCount');
+
     //商品收藏列表
     Route::get('goods/collect', 'addon\shop\app\api\controller\goods\GoodsCollect@getMemberGoodsCollectList');
+
     //商品添加收藏
     Route::post('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@addGoodsCollect');
+
     //商品取消收藏
     Route::delete('goods/collect/:goods_id', 'addon\shop\app\api\controller\goods\GoodsCollect@cancelGoodsCollect');
 
     //订单维权 列表
     Route::get('order/refund', 'addon\shop\app\api\controller\refund\Refund@lists');
-    //订单维权 详
+
+    //订单维权 列表
     Route::get('order/refund/:order_refund_no', 'addon\shop\app\api\controller\refund\Refund@detail');
 
     // 查询订单项可退款信息
     Route::get('refund/refund_data', 'addon\shop\app\api\controller\refund\Refund@getRefundData');
+
     // 查询订单项退款信息
     Route::get('refund/refund_data_by_no', 'addon\shop\app\api\controller\refund\Refund@getRefundDataByOrderRefundNo');
 
     // 申请维权
     Route::post('refund/apply', 'addon\shop\app\api\controller\refund\Refund@apply');
+
     // 修改退款申请
     Route::put('refund/:order_refund_no', 'addon\shop\app\api\controller\refund\Refund@edit');
+
     // 维权退货
     Route::post('refund/delivery/:order_refund_no', 'addon\shop\app\api\controller\refund\Refund@delivery');
+
     // 修改维权退货信息
     Route::put('refund/delivery/:order_refund_no', 'addon\shop\app\api\controller\refund\Refund@editDelivery');
+
     // 取消维权
     Route::put('refund/close/:order_refund_no', 'addon\shop\app\api\controller\refund\Refund@close');
+
     // 退款原因
     Route::get('refund/reason', 'addon\shop\app\api\controller\refund\Refund@getRefundReason');
+
     // 退款方式
     Route::get('order/refund/type', 'addon\shop\app\api\controller\refund\Refund@getRefundType');
+
 })->middleware(ApiChannel::class)
     ->middleware(ApiCheckToken::class, true)//表示验证登录
     ->middleware(ApiLog::class);

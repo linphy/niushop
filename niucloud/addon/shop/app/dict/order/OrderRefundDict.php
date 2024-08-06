@@ -123,7 +123,6 @@ class OrderRefundDict
             get_lang('dict_shop_order_refund_reason.other'),//其他
         ];
     }//关闭退款
-    //todo
 
     /**
      * 退款操作类型

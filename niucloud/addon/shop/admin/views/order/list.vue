@@ -16,6 +16,9 @@
 						</el-select>
 						<el-input class="input-item ml-3" v-model.trim="orderTable.searchParam.search_name" />
 					</el-form-item>
+					<el-form-item :label="t('memberInfo')" prop='keyword'>
+						<el-input class="w-[200px]" v-model.trim="orderTable.searchParam.keyword"  :placeholder="t('memberInfoPlaceholder')"/>
+					</el-form-item>
 					<el-form-item :label="t('payType')" prop='pay_type'>
 						<el-select v-model="orderTable.searchParam.pay_type" clearable class="input-item">
 							<el-option v-for="(item, index) in payTypeData" :key="index" :label="item.name" :value="item.key"></el-option>
@@ -52,7 +55,11 @@
 				<el-tab-pane :label="t('closed')" name="-1"></el-tab-pane>
 			</el-tabs>
 			<div>
-				<el-table :data="orderTable.data" size="large" class="table-top" @select-all="selectAllCheck">
+				<!-- todo 后续完善，增加批量发货，再修改判断逻辑 -->
+				<div class="mb-[10px] flex items-center" v-if="activeName == 3">
+					<el-button @click="batchPrintElectronicSheet" size="small" v-if="activeName == 3">{{ t('batchPrintElectronicSheet') }}</el-button>
+				</div>
+				<el-table :data="orderTable.data" size="large" class="table-top" @select-all="selectAllCheck" >
 					<el-table-column type="selection" width="40" />
 					<el-table-column :label="t('orderGoods')" min-width="200" />
 					<el-table-column :label="t('goodsPriceNumber')" min-width="120" />
@@ -76,13 +83,15 @@
 									</div>
 									<div>
 										<!-- <el-button type="primary" link>{{ t('offlinePayment') }}</el-button> -->
+										<el-button type="primary" link @click="printTicketEvent(item)" v-if="item.isSupportPrintTicket">{{ t('printTicket') }}</el-button>
+										<el-button type="primary" link @click="openElectronicSheetPrintDialog(item)" v-if="item.isSupportElectronicSheet">{{ t('electronicSheetPrintTitle') }}</el-button>
 										<el-button type="primary" link @click="detailEvent(item)">{{ t('info') }}</el-button>
 										<el-button type="primary" link @click="setNotes(item)">{{ t('notes') }}</el-button>
 									</div>
 								</div>
 
-								<el-table :data="(item as any).order_goods" size="large" :show-header="false" :span-method="arraySpanMethod" ref="multipleTable">
-									<el-table-column type="selection" width="40" />
+								<el-table :data="item.order_goods" size="large" :show-header="false" :span-method="arraySpanMethod" ref="multipleTable" @select="handleSelectChange">
+									<el-table-column type="selection" width="40" :selectable="selectable" />
 									<el-table-column align="left" min-width="200">
 										<template #default="{ row }">
 											<div class="flex cursor-pointer">
@@ -92,7 +101,7 @@
 												</div>
 												<div class="flex flex-col">
 													<p class="multi-hidden text-[14px]">{{ row.goods_name }}</p>
-													<span class="text-[12px] text-[#999]">{{ row.sku_name }}</span>
+													<span class="text-[12px] text-[#999] truncate">{{ row.sku_name }}</span>
 												</div>
 											</div>
 										</template>
@@ -170,85 +179,123 @@
 				</div>
 			</div>
 		</el-card>
-		<adjust-money ref="orderAdjustMoneyActionDialog" @complete="loadOrderList"/>
-		<delivery-action ref="deliveryActionDialog" @complete="loadOrderList"></delivery-action>
-		<order-notes ref="orderNotesDialog" @complete="loadOrderList"></order-notes>
+
+		<adjust-money ref="orderAdjustMoneyActionDialog" @complete="loadOrderList" />
+		<delivery-action ref="deliveryActionDialog" @complete="loadOrderList" />
+		<order-notes ref="orderNotesDialog" @complete="loadOrderList" />
 		<order-export-select ref="selectExportDialog" @complete="exportEvent" />
 		<export-sure ref="exportSureDialog" :show="flag" :type="export_type" :searchParam="orderTable.searchParam" @close="handleClose" />
         <order-edit-address ref="orderEditAddressDialog" @complete="loadOrderList"/>
+		<electronic-sheet-print ref="electronicSheetPrintDialog" @complete="electronicSheetPrintComplete" />
 	</div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { t } from '@/lang'
-import { getOrderList, getOrderStatus, orderClose, orderFinish, getOrderPayType, getOrderFrom, getOrderEditAddress } from '@/addon/shop/api/order'
+import { getOrderList, getOrderStatus, orderClose, orderFinish, getOrderPayType, getOrderFrom } from '@/addon/shop/api/order'
+import { printTicket } from '@/app/api/printer'
 import DeliveryAction from '@/addon/shop/views/order/components/delivery-action.vue'
 import OrderNotes from '@/addon/shop/views/order/components/order-notes.vue'
 import OrderExportSelect from '@/addon/shop/views/order/components/order-export-select.vue'
 import orderEditAddress from '@/addon/shop/views/order/components/order-edit-address.vue'
 import AdjustMoney from '@/addon/shop/views/order/components/adjust-money.vue'
+import electronicSheetPrint from '@/addon/shop/views/order/components/electronic-sheet-print.vue'
 import { img } from '@/utils/common'
-import { ElMessageBox, FormInstance } from 'element-plus'
+import { ElMessage,ElMessageBox, FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
+import { cloneDeep } from 'lodash-es'
 
 const route = useRoute()
 const router = useRouter()
 const pageName = route.meta.title
-const activeName = ref('')
+const activeName:any = ref(route.query.status || '')
 
 const statusData = ref([])
 const payTypeData = ref<any[]>([])
 const orderFromData = ref([])
+
 const setFormData = async () => {
-	statusData.value = await (await getOrderStatus()).data
-	payTypeData.value = await (await getOrderPayType()).data
-	orderFromData.value = await (await getOrderFrom()).data
+    statusData.value = await (await getOrderStatus()).data
+    payTypeData.value = await (await getOrderPayType()).data
+    orderFromData.value = await (await getOrderFrom()).data
 }
 setFormData()
 
+const multipleSelection: any = reactive({}) // 选中数据
 const multipleTable: Record<string, any> | null = ref(null)
 const isSelectAll = ref(false)
 const selectAllCheck = () => {
-	if (isSelectAll.value == false) {
-		isSelectAll.value = true
-		for (const i in orderTable.data) {
-			for (const j in orderTable.data[i].order_goods) {
-				multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
-			}
-		}
-	} else {
-		isSelectAll.value = false
-		for (const v in orderTable.data) {
-			for (const k in orderTable.data[v].order_goods) {
-				multipleTable.value[v].clearSelection()
-			}
-		}
-	}
+    if (!isSelectAll.value) {
+        isSelectAll.value = true
+        for (const i in orderTable.data) {
+            let isAdd = false;
+            for (const j in orderTable.data[i].order_goods) {
+                // 存在一个没有退款的订单项就设为选中状态
+                if (orderTable.data[i].order_goods[j].status == 1) {
+                    multipleTable.value[i].toggleRowSelection(orderTable.data[i].order_goods[j], true)
+                    isAdd = true;
+                }
+            }
+            if (isAdd) {
+                multipleSelection['order_' + orderTable.data[i].order_id] = cloneDeep(orderTable.data[i]);
+            }
+        }
+    } else {
+        isSelectAll.value = false
+        for (const v in orderTable.data) {
+            multipleTable.value[v].clearSelection()
+            delete multipleSelection['order_' + orderTable.data[v].order_id];
+        }
+    }
+
 }
-interface OrderTable {
-	page: number
-	limit: number
-	total: number
-	loading: boolean
-	data: any[]
-	searchParam: any
+
+// 监听表格复选框
+const handleSelectChange = (selection: any, row: any)=> {
+
+    // 是否选中
+    let isSelected = false
+    let item: any = null;
+
+    for (let i = 0; i < orderTable.data.length; i++) {
+        if (orderTable.data[i].order_id == row.order_id) {
+            item = orderTable.data[i];
+            break;
+        }
+    }
+
+    for (let i = 0; i < selection.length; i++) {
+        if (selection[i].order_id == row.order_id) {
+            isSelected = true;
+            break
+        }
+    }
+
+    if (isSelected) {
+        multipleSelection['order_' + row.order_id] = item
+    } else {
+        // 未选中，删除当前商品
+        delete multipleSelection['order_' + row.order_id]
+    }
 }
-const orderTable = reactive<OrderTable>({
-	page: 1,
-	limit: 10,
-	total: 0,
-	loading: true,
-	data: [],
-	searchParam: {
-		search_type: 'order_no',
-		search_name: '',
-		pay_type: '',
-		order_from: '',
-		status: '',
-		create_time: [],
-		pay_time: []
-	}
+
+const orderTable:any = reactive({
+    page: 1,
+    limit: 10,
+    total: 0,
+    loading: true,
+    data: [],
+    searchParam: {
+        search_type: 'order_no',
+        search_name: '',
+        keyword: '',
+        pay_type: '',
+        order_from: '',
+        status: route.query.status || '',
+        create_time: [],
+        pay_time: []
+    }
 })
 
 const searchFormRef = ref<FormInstance>()
@@ -257,57 +304,75 @@ const searchFormRef = ref<FormInstance>()
  * 获取订单列表
  */
 const loadOrderList = (page: number = 1) => {
-	orderTable.loading = true
-	orderTable.page = page
+    orderTable.loading = true
+    orderTable.page = page
 
-	getOrderList({
-		page: orderTable.page,
-		limit: orderTable.limit,
-		...orderTable.searchParam
-	}).then(res => {
-		orderTable.loading = false
-		orderTable.data = res.data.data.map((el: any) => {
-			el.order_goods.forEach((v: any) => {
-				v.rowNum = el.order_goods.length
-			})
-			return el
-		})
-		orderTable.total = res.data.total
-	}).catch(() => {
-		orderTable.loading = false
-	})
+    getOrderList({
+        page: orderTable.page,
+        limit: orderTable.limit,
+        ...orderTable.searchParam
+    }).then(res => {
+        orderTable.loading = false;
+        orderTable.data = res.data.data.map((el: any) => {
+            el.isSupportElectronicSheet = false; // 是否支持打印电子面单
+            el.isSupportPrintTicket = false; // 是否支持打印小票
+
+            // 只有待发货、待收货，物流配送的情况下才能打印电子面单
+            if (el.delivery_type == 'express' && el.status == 3) {
+                el.isSupportElectronicSheet = true;
+            }
+
+            //  待发货、待收货、已完成状态下可以打印小票
+            if (el.delivery_type != 'virtual' &&  (el.status == 2 || el.status == 3 || el.status == 5)) {
+                el.isSupportPrintTicket = true;
+            }
+            el.order_goods.forEach((v: any) => {
+                v.rowNum = el.order_goods.length
+            });
+            return el
+        });
+
+        orderTable.total = res.data.total
+    }).catch(() => {
+        orderTable.loading = false
+    })
 }
-loadOrderList()
+
+loadOrderList();
 
 const handleClick = (event: any) => {
-	orderTable.searchParam.status = event
-	loadOrderList()
+    orderTable.searchParam.status = event;
+    isSelectAll.value = false;
+    for(let key in multipleSelection){
+	    delete multipleSelection[key];
+    }
+    loadOrderList()
 }
 
 // 合并表格行
 const arraySpanMethod = ({
-	row,
-	column,
-	rowIndex,
-	columnIndex
-}) => {
-	if (rowIndex === 0) {
-		if (columnIndex === 0) {
-			return [row.rowNum, 1]
-		} else if (columnIndex > 3) {
-			return [row.rowNum, 1]
-		} else {
-			return [1, 1]
-		}
-	} else {
-		if (columnIndex === 0) {
-			return [0, 0]
-		} else if (columnIndex > 3) {
-			return [0, 0]
-		} else {
-			return [1, 1]
-		}
-	}
+    row,
+    column,
+    rowIndex,
+    columnIndex
+}:any) => {
+    if (rowIndex === 0) {
+        if (columnIndex === 0) {
+            return [row.rowNum, 1]
+        } else if (columnIndex > 3) {
+            return [row.rowNum, 1]
+        } else {
+            return [1, 1]
+        }
+    } else {
+        if (columnIndex === 0) {
+            return [0, 0]
+        } else if (columnIndex > 3) {
+            return [0, 0]
+        } else {
+            return [1, 1]
+        }
+    }
 }
 
 /**
@@ -316,12 +381,12 @@ const arraySpanMethod = ({
 const exportSureDialog = ref(null)
 const export_type = ref('')
 const flag = ref(false)
-const handleClose = (val) => {
-	flag.value = val
+const handleClose = (val:any) => {
+    flag.value = val
 }
 const exportEvent = (data: any) => {
-	export_type.value = data
-	flag.value = true
+    export_type.value = data
+    flag.value = true
 }
 
 const selectExportDialog: Record<string, any> | null = ref(null)
@@ -330,34 +395,34 @@ const selectExportDialog: Record<string, any> | null = ref(null)
  * 订单导出类型选择
  */
 const exportSelectEvent = () => {
-	selectExportDialog.value.showDialog = true
+    selectExportDialog.value.showDialog = true
 }
 
 // 订单详情
 const detailEvent = (data: any) => {
-	router.push('/shop/order/detail?order_id=' + data.order_id)
+    router.push('/shop/order/detail?order_id=' + data.order_id)
 }
 
 const memberEvent = (id: number) => {
-	const routeUrl = router.resolve({
-		path: '/member/detail',
-		query: { id }
-	})
-	window.open(routeUrl.href, '_blank')
+    const routeUrl = router.resolve({
+        path: '/member/detail',
+        query: { id }
+    })
+    window.open(routeUrl.href, '_blank')
 }
 
 const close = (data: any) => {
-	ElMessageBox.confirm(t('orderCloseTips'), t('warning'),
-		{
-			confirmButtonText: t('confirm'),
-			cancelButtonText: t('cancel'),
-			type: 'warning'
-		}
-	).then(() => {
-		orderClose(data.order_id).then(() => {
-			loadOrderList()
-		})
-	})
+    ElMessageBox.confirm(t('orderCloseTips'), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        orderClose(data.order_id).then(() => {
+            loadOrderList()
+        })
+    })
 }
 
 // 订单调整价格
@@ -372,8 +437,8 @@ const deliveryActionDialog: Record<string, any> | null = ref(null)
  * 发货
  */
 const delivery = (data: any) => {
-	deliveryActionDialog.value.setFormData(data)
-	deliveryActionDialog.value.showDialog = true
+    deliveryActionDialog.value.setFormData(data)
+    deliveryActionDialog.value.showDialog = true
 }
 
 const orderNotesDialog: Record<string, any> | null = ref(null)
@@ -381,28 +446,29 @@ const orderNotesDialog: Record<string, any> | null = ref(null)
  * 设置备注
  */
 const setNotes = (data: any) => {
-	orderNotesDialog.value.setFormData(data)
-	orderNotesDialog.value.showDialog = true
+    orderNotesDialog.value.setFormData(data)
+    orderNotesDialog.value.showDialog = true
 }
+
 // 订单完成
 const finish = (data: any) => {
-	ElMessageBox.confirm(t('orderFinishTips'), t('warning'),
-		{
-			confirmButtonText: t('confirm'),
-			cancelButtonText: t('cancel'),
-			type: 'warning'
-		}
-	).then(() => {
-		orderFinish(data.order_id).then(() => {
-			loadOrderList()
-		})
-	})
+    ElMessageBox.confirm(t('orderFinishTips'), t('warning'),
+        {
+            confirmButtonText: t('confirm'),
+            cancelButtonText: t('cancel'),
+            type: 'warning'
+        }
+    ).then(() => {
+        orderFinish(data.order_id).then(() => {
+            loadOrderList()
+        })
+    })
 }
 
 const resetForm = (formEl: FormInstance | undefined) => {
-	if (!formEl) return
-	formEl.resetFields()
-	loadOrderList()
+    if (!formEl) return
+    formEl.resetFields()
+    loadOrderList()
 }
 
 /**
@@ -410,8 +476,94 @@ const resetForm = (formEl: FormInstance | undefined) => {
  */
 const orderEditAddressDialog :Record<string, any> | null = ref(null)
 const orderEditAddressFn = async (data:any) =>{
-	orderEditAddressDialog.value.showDialog = true
-	orderEditAddressDialog.value.setFormData(data)
+    orderEditAddressDialog.value.showDialog = true
+    orderEditAddressDialog.value.setFormData(data)
+}
+
+// 打印电子面单
+const electronicSheetPrintDialog: Record<string, any> | null = ref(null)
+
+// 单个订单打印电子面单
+const openElectronicSheetPrintDialog = (data: any) => {
+    let formData = cloneDeep(data)
+    formData.print_type = 'single';
+    electronicSheetPrintDialog.value.setFormData(formData)
+    electronicSheetPrintDialog.value.showDialog = true
+}
+
+const selectable = (row:any, index:number) => {
+    // if((activeName.value == 2 || activeName.value == 3) && row.status != 1) {
+    //     return false;
+    // }
+    return true
+}
+
+// 批量打印电子面单
+const batchPrintElectronicSheet = () => {
+
+    let noSupportCount = 0;
+    let order_ids = [];
+    for (let key in multipleSelection) {
+        if (multipleSelection[key].isSupportElectronicSheet) {
+            order_ids.push(multipleSelection[key].order_id);
+        } else {
+            noSupportCount++;
+        }
+    }
+
+    if (noSupportCount && order_ids.length == 0) {
+        ElMessage({
+            type: 'warning',
+            message: `${ t('notSupportPrintElectronicSheetTips') }`
+        })
+        return
+    }
+
+    if (order_ids.length == 0) {
+        ElMessage({
+            type: 'warning',
+            message: `${ t('batchEmptySelectedOrderTips') }`
+        })
+        return
+    }
+
+    electronicSheetPrintDialog.value.setFormData({
+        order_id: order_ids.toString(),
+        print_type: 'multiple'
+    })
+    electronicSheetPrintDialog.value.showDialog = true
+}
+
+// 电子面单完成事件
+const electronicSheetPrintComplete = () => {
+    isSelectAll.value = false;
+    for (const v in orderTable.data) {
+        multipleTable.value[v].clearSelection()
+        delete multipleSelection['order_' + orderTable.data[v].order_id];
+    }
+}
+
+const repeat = ref(false)
+
+/**
+ * 打印小票
+ */
+const printTicketEvent = (data: any) => {
+    if (repeat.value) return
+    repeat.value = true
+
+    printTicket({
+        type: 'shopGoodsOrder', // 小票模板类型
+        trigger: 'manual', // 触发时机：手动触发
+        // 业务参数，根据自身业务传值
+        business: {
+            order_id: data.order_id
+        }
+    }).then((res: any) => {
+        repeat.value = false
+    }).catch(() => {
+        repeat.value = false
+    })
 }
 </script>
 

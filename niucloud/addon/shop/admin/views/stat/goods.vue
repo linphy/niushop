@@ -141,7 +141,7 @@
     
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, nextTick, } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import type { TabsPaneContext} from 'element-plus'
 import * as echarts from 'echarts'
 
@@ -207,7 +207,6 @@ const initIncomeChart = () => {
   }
 };
 
-
 onMounted(() => {
   initIncomeChart();
 });
@@ -226,6 +225,7 @@ onMounted(() => {
 }
 .tab-index :deep(.el-tabs__item){
     line-height: 34px;
+    height: 34px !important;
 }
 .tab-index :deep(.el-tabs__nav){
     border: 1px solid #D2D2D2;

@@ -27,20 +27,17 @@ class Kd100DeliverySearch extends BaseDeliverySearch
     protected function initialize(array $config = [])
     {
         parent::initialize($config);
-        $this->app_key = $config['app_key'] ?? '';
-        $this->secret_key = $config['secret_key'] ?? '';
-        $this->sign = $config['sign'] ?? '';
+        $this->app_key = $config[ 'app_key' ] ?? '';
+        $this->secret_key = $config[ 'secret_key' ] ?? '';
+        $this->sign = $config[ 'sign' ] ?? '';
     }
 
 
     /**
-     * 发送短信
-     * @param string $mobile
-     * @param string $template_id
      * @param array $data
-     * @return array
+     * @return mixed|void
      */
-    public function search(string $mobile, string $template_id, array $data = [])
+    public function search(array $data = [])
     {
         //查询数据
     }

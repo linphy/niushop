@@ -22,10 +22,11 @@ return [
                     "topStatusBar" => [
                         'isShow' => false,
                         'bgColor' => "#ffffff",
-                        'isTransparent' => false,
-                        'style' => 'style-6',
-                        'styleName' => '风格6',
+                        'rollBgColor' => "#ffffff",
+                        'style' => 'style-1',
+                        'styleName' => '风格1',
                         'textColor' => "#333333",
+                        'rollTextColor' => "#333333",
                         'textAlign' => 'center',
                         'inputPlaceholder' => '请输入搜索关键词',
                         'imgUrl' => '',
@@ -462,8 +463,8 @@ return [
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 0,
-                        "bottomRounded" => 0,
+                        "topRounded" => 6,
+                        "bottomRounded" => 6,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
                         "bottomElementRounded" => 0,
@@ -1411,10 +1412,11 @@ return [
                     "topStatusBar" => [
                         'isShow' => true,
                         'bgColor' => "#ffffff",
-                        'isTransparent' => false,
+                        'rollBgColor' => "#ffffff",
                         'style' => 'style-1',
                         'styleName' => '风格1',
                         'textColor' => "#333333",
+                        'rollTextColor' => "#333333",
                         'textAlign' => 'center',
                         'inputPlaceholder' => '请输入搜索关键词',
                         'imgUrl' => '',
@@ -1493,7 +1495,7 @@ return [
                         "margin" => [
                             "top" => -45,
                             "bottom" => 10,
-                            "both" => 15
+                            "both" => 10
                         ],
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -1532,7 +1534,7 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 5,
-                            "both" => 15
+                            "both" => 10
                         ],
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -1559,7 +1561,7 @@ return [
                         "margin" => [
                             "top" => 5,
                             "bottom" => 5,
-                            "both" => 15
+                            "both" => 10
                         ],
                         "list" => [
                             [
@@ -1583,16 +1585,12 @@ return [
                         "imageHeight" => 90
                     ],
                     [
-                        "path" => "edit-horz-blank",
+                        "path" => "edit-text",
                         "uses" => 0,
-                        "id" => "5itd5jmo3xk0",
-                        "componentName" => "HorzBlank",
-                        "componentTitle" => "辅助空白",
-                        "ignore" => [
-                            "pageBgColor",
-                            "componentBgUrl"
-                        ],
-                        "height" => 10,
+                        "id" => "68gnubbygqg0",
+                        "componentName" => "Text",
+                        "componentTitle" => "标题",
+                        "ignore" => [],
                         "textColor" => "#303133",
                         "componentStartBgColor" => "rgba(255, 255, 255, 1)",
                         "componentEndBgColor" => "",
@@ -1604,34 +1602,7 @@ return [
                         "margin" => [
                             "top" => 5,
                             "bottom" => 0,
-                            "both" => 15
-                        ],
-                        "pageStartBgColor" => "",
-                        "pageEndBgColor" => "",
-                        "pageGradientAngle" => "to bottom",
-                        "componentBgUrl" => "",
-                        "componentBgAlpha" => 2,
-                        "componentGradientAngle" => "to bottom"
-                    ],
-                    [
-                        "path" => "edit-text",
-                        "uses" => 0,
-                        "id" => "68gnubbygqg0",
-                        "componentName" => "Text",
-                        "componentTitle" => "标题",
-                        "ignore" => [],
-                        "textColor" => "#303133",
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "",
-                        "topRounded" => 0,
-                        "bottomRounded" => 0,
-                        "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
-                        "margin" => [
-                            "top" => 0,
-                            "bottom" => 0,
-                            "both" => 15
+                            "both" => 10
                         ],
                         "fontSize" => 16,
                         "fontWeight" => "normal",
@@ -1684,7 +1655,7 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 15
+                            "both" => 10
                         ],
                         "pageStartBgColor" => "",
                         "pageEndBgColor" => "",
@@ -1838,8 +1809,8 @@ return [
                                 "imgWidth" => 88,
                                 "imgHeight" => 88,
                                 "link" => [
-                                    "name" => "MEMBER_MY_SIGN_IN",
-                                    "parent" => "MEMBER_VERIFY_INDEX",
+                                    "name" => "MEMBER_VERIFY_INDEX",
+                                    "parent" => "MEMBER_LINK",
                                     "title" => "核销台",
                                     'url' => '/app/pages/verify/index',
                                     "action" => ""
@@ -1897,7 +1868,11 @@ return [
                                 "imgWidth" => 88,
                                 "imgHeight" => 88,
                                 "link" => [
-                                    "name" => ""
+                                    "name" => "MEMBER_CONTACT",
+                                    "parent" => "MEMBER_LINK",
+                                    "title" => "客服",
+                                    "url" => "/app/pages/member/contact",
+                                    "action" => ""
                                 ],
                                 "label" => [
                                     "control" => false,
@@ -1934,10 +1909,11 @@ return [
                     "topStatusBar" => [
                         'isShow' => false,
                         'bgColor' => "#ffffff",
-                        'isTransparent' => false,
-                        'style' => 'style-6',
-                        'styleName' => '风格6',
+                        'rollBgColor' => "#ffffff",
+                        'style' => 'style-1',
+                        'styleName' => '风格1',
                         'textColor' => "#333333",
+                        'rollTextColor' => "#333333",
                         'textAlign' => 'center',
                         'inputPlaceholder' => '请输入搜索关键词',
                         'imgUrl' => '',
@@ -2112,7 +2088,7 @@ return [
                         "margin" => [
                             "top" => -40,
                             "bottom" => 0,
-                            "both" => 15
+                            "both" => 10
                         ]
                     ],
                     [
@@ -2132,10 +2108,10 @@ return [
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentStartBgColor" => "",
+                        "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
-                        "topRounded" => 8,
+                        "topRounded" => 0,
                         "bottomRounded" => 0,
                         "elementBgColor" => "",
                         "topElementRounded" => 0,
@@ -2143,7 +2119,7 @@ return [
                         "margin" => [
                             "top" => 10,
                             "bottom" => 0,
-                            "both" => 15
+                            "both" => 10
                         ]
                     ],
                     [
@@ -2189,8 +2165,8 @@ return [
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentStartBgColor" => "",
+                        "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -2200,7 +2176,7 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 15
+                            "both" => 10
                         ]
                     ],
                     [
@@ -2209,7 +2185,7 @@ return [
                         "componentTitle" => "辅助空白",
                         "path" => "edit-horz-blank",
                         "uses" => 0,
-                        "height" => 15,
+                        "height" => 10,
                         "ignore" => [
                             "pageBgColor",
                             "componentBgUrl"
@@ -2220,8 +2196,8 @@ return [
                         "pageGradientAngle" => "to bottom",
                         "componentBgUrl" => "",
                         "componentBgAlpha" => 2,
-                        "componentStartBgColor" => "rgba(255, 255, 255, 1)",
-                        "componentEndBgColor" => "rgba(255, 255, 255, 1)",
+                        "componentStartBgColor" => "",
+                        "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
                         "bottomRounded" => 0,
@@ -2231,7 +2207,7 @@ return [
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 15
+                            "both" => 0
                         ]
                     ],
                     [
@@ -2273,14 +2249,14 @@ return [
                         "componentEndBgColor" => "",
                         "componentGradientAngle" => "to bottom",
                         "topRounded" => 0,
-                        "bottomRounded" => 8,
+                        "bottomRounded" => 0,
                         "elementBgColor" => "",
-                        "topElementRounded" => 0,
-                        "bottomElementRounded" => 0,
+                        "topElementRounded" => 8,
+                        "bottomElementRounded" => 8,
                         "margin" => [
                             "top" => 0,
                             "bottom" => 0,
-                            "both" => 15
+                            "both" => 10
                         ]
                     ]
                 ]

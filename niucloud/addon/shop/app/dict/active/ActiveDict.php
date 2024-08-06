@@ -39,7 +39,8 @@ class ActiveDict
      * @param $status
      * @return array|mixed|string
      */
-    public static function getStatus($status = ''){
+    public static function getStatus($status = '')
+    {
         $list = [
             self::NOT_ACTIVE => get_lang('dict_shop_active_status.not_active'),
             self::ACTIVE => get_lang('dict_shop_active_status.active'),
@@ -47,7 +48,7 @@ class ActiveDict
             self::CLOSE => get_lang('dict_shop_active_status.close'),
         ];
         if ($status == '') return $list;
-        return $list[$status] ?? '';
+        return $list[ $status ] ?? '';
     }
 
     /**
@@ -55,12 +56,13 @@ class ActiveDict
      * @param $type
      * @return array|mixed|string
      */
-    public static function getClass($type = ''){
+    public static function getClass($type = '')
+    {
         $list = [
             self::DISCOUNT => get_lang('dict_shop_active_class.discount'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
 
     /**
@@ -68,14 +70,15 @@ class ActiveDict
      * @param $type
      * @return array|mixed|string
      */
-    public static function getType($type = ''){
+    public static function getType($type = '')
+    {
         $list = [
             self::MEMBER => get_lang('dict_shop_active_type.member'),
             self::GOODS => get_lang('dict_shop_active_type.goods'),
             self::SHOP => get_lang('dict_shop_active_type.shop'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
 
     /**
@@ -83,19 +86,15 @@ class ActiveDict
      * @param $type
      * @return array|mixed|string
      */
-    public static function getGoodsType($type = ''){
+    public static function getGoodsType($type = '')
+    {
         $list = [
             self::GOODS_SINGLE => get_lang('dict_shop_active_goods_type.single'),
             self::GOODS_INDEPENDENT => get_lang('dict_shop_active_goods_type.independent'),
             self::GOODS_SHOP => get_lang('dict_shop_active_goods_type.shop'),
         ];
         if ($type == '') return $list;
-        return $list[$type] ?? '';
+        return $list[ $type ] ?? '';
     }
-
-
-
-
-
 
 }

@@ -1,13 +1,9 @@
 <template>
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="router.push(`/shop/goods/attr`)">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right">{{ pageName }}</span>
-        </div>
+        <el-card class="card !border-none mb-[15px]" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="router.push(`/shop/goods/attr`)" />
+        </el-card>
+        
         <el-card class="box-card !border-none" shadow="never">
 
             <!-- 商品参数基础信息 -->
@@ -148,10 +144,10 @@
             </el-form>
 
             <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="showDialogByAttrValue = false">{{ t('cancel') }}</el-button>
-                <el-button type="primary" :loading="loadingByAttrValue" @click="confirmAttrValue(formAttrValueRef)">{{ t('confirm') }}</el-button>
-            </span>
+                <span class="dialog-footer">
+                    <el-button @click="showDialogByAttrValue = false">{{ t('cancel') }}</el-button>
+                    <el-button type="primary" :loading="loadingByAttrValue" @click="confirmAttrValue(formAttrValueRef)">{{ t('confirm') }}</el-button>
+                </span>
             </template>
         </el-dialog>
 
@@ -179,7 +175,7 @@ const attrInfo:any = reactive({})
 
 const maxLength = ref(30) // 参数值最大数量控制
 
-let goodsAttrTable = reactive({
+const goodsAttrTable = reactive({
     loading: true,
     data: []
 })

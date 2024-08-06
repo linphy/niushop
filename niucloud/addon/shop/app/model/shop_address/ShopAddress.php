@@ -40,8 +40,8 @@ class ShopAddress extends BaseModel
      */
     public function searchMobileAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("mobile", "like", "%$value%");
+        if ($value != '') {
+            $query->where("mobile", "like", "%" . $this->handelSpecialCharacter($value) . "%");
         }
     }
 
@@ -52,8 +52,8 @@ class ShopAddress extends BaseModel
      */
     public function searchFullAddressAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("full_address", "like", "%$value%");
+        if ($value != '') {
+            $query->where("full_address", "like", "%" . $this->handelSpecialCharacter($value) . "%");
         }
     }
 

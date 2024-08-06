@@ -27,8 +27,9 @@ class StatService extends BaseAdminService
      * @param string $end_date
      * @return array
      */
-    public function getStat(string $start_date = '', string $end_date = '') {
-        return (new CoreStatService())->getStat($start_date, $end_date);
+    public function getStat(string $start_date = '', string $end_date = '')
+    {
+        return ( new CoreStatService() )->getStat($start_date, $end_date);
     }
 
     /**
@@ -37,8 +38,9 @@ class StatService extends BaseAdminService
      * @param string $end_date
      * @return array|null
      */
-    public function getStatData(string $start_date, string $end_date) {
-        return (new CoreStatService())->getStatData($start_date, $end_date);
+    public function getStatData(string $start_date, string $end_date)
+    {
+        return ( new CoreStatService() )->getStatData($start_date, $end_date);
     }
 
     /**
@@ -47,7 +49,8 @@ class StatService extends BaseAdminService
      * @param string $end_date
      * @return array|null
      */
-    public function getHourStatData(string $date) {
-        return (new CoreStatService())->getHourStatData($date);
+    public function getHourStatData(string $date)
+    {
+        return ( new CoreStatService() )->getHourStatData($date);
     }
 }

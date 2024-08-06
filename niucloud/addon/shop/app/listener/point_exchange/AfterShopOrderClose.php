@@ -24,7 +24,7 @@ class AfterShopOrderClose
         Log::write('订单AfterShopOrderClose' . json_encode($data));
         try {
             $order_data = $data['order_data'];
-            if (isset($data['order_data']) && $data['order_data']['activity_type'] == 'exchange') {
+            if (isset($data['order_data']) && !empty($data[ 'order_data' ][ 'activity_type' ])  && $data['order_data']['activity_type'] == 'exchange') {
                 $order_goods_where = array(
                     ['order_id', '=', $order_data['order_id']]
                 );

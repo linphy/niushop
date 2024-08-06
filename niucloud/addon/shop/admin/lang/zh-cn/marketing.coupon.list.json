@@ -16,7 +16,7 @@
     "threshold": "使用门槛",
     "reduction": "满减券",
     "noThreshold": "无门槛券",
-    "couponDeleteTips": "确定要删除该优惠券吗？",
+    "couponDeleteTips": "确定要删除该优惠券吗？若会员已领取将变为失效",
     "couponColseTips": "确定要关闭该优惠券吗？关闭后将不可领取",
     "validType": "有效期",
     "statusName":"状态",

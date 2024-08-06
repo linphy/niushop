@@ -30,19 +30,18 @@ class ActiveEnd extends BaseJob
         Log::write('活动自动关闭');
         try {
 
-            $ids = (new Active())->where([
-                ['active_status', '=', ActiveDict::ACTIVE],
-                ['end_time', '<', time()]
+            $ids = ( new Active() )->where([
+                [ 'active_status', '=', ActiveDict::ACTIVE ],
+                [ 'end_time', '<', time() ]
             ])->column('active_id');
 
-
-            foreach($ids as $k => $v){
-                (new CoreActiveService())->end($v);
+            foreach ($ids as $k => $v) {
+                ( new CoreActiveService() )->end($v);
             }
 
             return true;
         } catch (\Exception $e) {
-            Log::write('活动自动关闭error'.$e->getMessage().$e->getFile().$e->getLine());
+            Log::write('活动自动关闭error' . $e->getMessage() . $e->getFile() . $e->getLine());
             return false;
         }
     }

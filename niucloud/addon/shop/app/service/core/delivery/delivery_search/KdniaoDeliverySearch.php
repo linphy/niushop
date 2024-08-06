@@ -36,9 +36,9 @@ class KdniaoDeliverySearch extends BaseDeliverySearch
      */
     public function search(array $data = [])
     {
-        $kdniao_sdk = (new Kdbird($this->logistic_config));
+        $kdniao_sdk = ( new Kdbird($this->logistic_config) );
 
-        $data = $kdniao_sdk->orderTracesSubByJson($data['express_no'], $data['logistic_no'], $data['mobile']);
+        $data = $kdniao_sdk->orderTracesSubByJson($data[ 'express_no' ], $data[ 'logistic_no' ], $data[ 'mobile' ]);
         return $data;
     }
 }

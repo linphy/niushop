@@ -1,7 +1,7 @@
 <template>
     <el-dialog v-model="invoiceDialog" :title="t('invoice')" width="420px">
         <div>
-            <el-form :model="makeInvoice" ref="makeInvoiceFormRef" :rules="formRules" label-width="80px" label-position="left" >
+            <el-form :model="makeInvoice" ref="makeInvoiceFormRef" :rules="formRules" label-width="80px" label-position="right" >
                 <el-form-item :label="t('invoiceNumber')" prop="invoice_number">
                     <el-input v-model.trim="makeInvoice.invoice_number" maxlength="30"/>
                 </el-form-item>

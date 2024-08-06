@@ -1,13 +1,8 @@
 <template>
 	<div class="main-container">
-		<div class="detail-head">
-			<div class="left" @click="back()">
-				<span class="iconfont iconxiangzuojiantou !text-xs"></span>
-				<span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-			</div>
-			<span class="adorn">|</span>
-			<span class="right">{{ pageName }}</span>
-		</div>
+        <el-card class="card !border-none mb-[15px]" shadow="never">
+            <el-page-header :content="pageName" :icon="ArrowLeft" @back="back" />
+        </el-card>
 		<el-card class="box-card !border-none" shadow="never" v-loading="loading">
 			<el-form :model="formData" label-width="90px" ref="formRef" :rules="formRules" class="page-form">
 				<el-form-item :label="t('addressType')" prop="address_type">

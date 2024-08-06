@@ -2,20 +2,24 @@
     <view :style="themeColor()">
         <view class="bg-[#f8f8f8] min-h-screen overflow-hidden" v-if="!loading">
             <view class="pb-[200rpx]" v-if="type != 'logistics'">
-                <view v-if="detail.status_name" class="flex justify-between items-center pl-[40rpx] pr-[50rpx] bg-linear h-[170rpx]">
-                    <view class="text-[36rpx] font-500 leading-[42rpx] text-[#fff]">{{ detail.status_name }}</view>
-                    <view>
-                        <image v-if="['1','2','4','6','7'].indexOf(detail.status) != -1" class="w-[110rpx] h-[110rpx]" :src="img('addon/shop/detail/payment.png')" />
-                        <image v-if="['8'].indexOf(detail.status) != -1" class="w-[110rpx] h-[110rpx]" :src="img('addon/shop/detail/complete.png')" />
-                        <image v-if="['3','5','-1'].indexOf(detail.status) != -1" class="w-[110rpx] h-[110rpx]" :src="img('addon/shop/detail/close.png')" />
+                <view class="bg-linear">
+                    <!-- #ifdef MP-WEIXIN -->
+                    <top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()" />
+                    <!-- #endif -->
+                    <view v-if="detail.status_name" class="flex justify-between items-center pl-[40rpx] pr-[50rpx]  h-[170rpx]">
+                        <view class="text-[36rpx] font-500 leading-[42rpx] text-[#fff]">{{ detail.status_name }}</view>
+                        <view>
+                            <image v-if="['1','2','4','6','7'].indexOf(detail.status) != -1" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/payment.png')" mode="aspectFit"/>
+                            <image v-if="['8'].indexOf(detail.status) != -1" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/complete.png')" mode="aspectFit" />
+                            <image v-if="['3','5','-1'].indexOf(detail.status) != -1" class="w-[180rpx] h-[140rpx]" :src="img('addon/shop/detail/close.png')" mode="aspectFit" />
+                        </view>
                     </view>
                 </view>
-
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] rounded-[16rpx] flex justify-between flex-wrap mt-[20rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] rounded-[16rpx] flex justify-between flex-wrap mt-[20rpx]">
                     <view class="w-[150rpx] h-[150rpx] flex-2" @click="goodsEvent(detail.order_goods.goods_id)">
                         <u--image class="rounded-[10rpx] overflow-hidden" width="150rpx" height="150rpx" :src="img(detail.order_goods.goods_image_thumb_small ? detail.order_goods.goods_image_thumb_small : '')" model="aspectFill">
                             <template #error>
-                                <u-icon name="photo" color="#999" size="50"></u-icon>
+                                <image class="w-[150rpx] h-[150rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
                             </template>
                         </u--image>
                     </view>
@@ -36,8 +40,16 @@
                         </view>
                     </view>
                 </view>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[20rpx] rounded-[16rpx]">
-                    <view class="flex justify-between text-[28rpx] leading-[32rpx] ">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] mt-[20rpx] rounded-[16rpx]">
+					<view class="flex justify-between text-[28rpx] leading-[32rpx] ">
+					    <view>{{t('refundMoney')}}</view>
+						<view class="price-font">
+							<text class="text-[24rpx]">￥</text>
+							<text class="text-[32rpx] font-500">{{ parseFloat(detail.apply_money).toFixed(2).split('.')[0] }}</text>
+							<text class="text-[24rpx] font-500">.{{ parseFloat(detail.apply_money).toFixed(2).split('.')[1] }}</text>
+						</view>
+					</view>
+                    <view class="flex justify-between text-[28rpx] leading-[32rpx] mt-[30rpx]">
                         <view>{{t('refundType')}}</view>
                         <view>{{ detail.refund_type_name }}</view>
                     </view>
@@ -63,7 +75,7 @@
                     </view>
                 </view>
 
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] mt-[20rpx] rounded-[16rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] mt-[20rpx] rounded-[16rpx]">
                     <view class="flex justify-between text-[28rpx] leading-[32rpx]">
                         <view>{{t('record')}}</view>
                         <view class="flex items-center" @click="redirect({url: '/addon/shop/pages/refund/log', param: { order_refund_no: orderRefundNo }})">
@@ -73,11 +85,27 @@
                     </view>
                 </view>
 
-                <view class="flex tab-bar justify-end items-center bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[100rpx] px-1 flex-wrap">
-                    <view class="flex w-[70rpx] flex-col justify-center items-center" @click="redirect({ url: '/addon/shop/pages/index', mode: 'reLaunch' })">
-                        <text class="iconfont iconshouye text-[32rpx]"></text>
-                        <!-- <text class="text-xs mt-1">{{t('index')}}</text> -->
-                    </view>
+                <view class="flex tab-bar justify-between items-center bg-[#fff] fixed left-0 right-0 bottom-0 min-h-[100rpx] px-1 flex-wrap">
+                    <view class="flex">
+						<view class="flex w-[70rpx] mr-[20rpx] flex-col justify-center items-center" @click="redirect({ url: '/addon/shop/pages/index', mode: 'reLaunch' })">
+						    <view class="nc-iconfont nc-icon-shouyeV6xx text-[36rpx]"></view>
+						    <text class="text-[20rpx] mt-[10rpx]">{{t('index')}}</text>
+						</view>
+						<!-- #ifdef MP-WEIXIN -->
+						<view>
+							<nc-contact
+									:send-message-title="sendMessageTitle"
+									:send-message-path="sendMessagePath"
+									:send-message-img="sendMessageImg">
+								<view class="flex flex-col justify-center items-center">
+									<text class="nc-iconfont nc-icon-kefuV6xx-1 text-[36rpx]"></text>
+									<text class="text-[20rpx] mt-[10rpx]">客服</text>
+								</view>
+							</nc-contact>
+						</view>
+						<!-- #endif -->
+					</view>
+					
                     <view class="flex justify-end mr-[30rpx]">
                         <view class="text-[26rpx] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx] text-[#303133]" @click="refundBtnFn('cancel')" v-if="['6','7','8','-1'].indexOf(detail.status) == -1">{{t('refundApply')}}</view>
                         <view v-if="['3'].indexOf(detail.status) != -1" class="text-[24rpx] text-[#303133] leading-[52rpx] px-[23rpx] border-[2rpx] border-solid border-[#999] rounded-full ml-[20rpx]" @click.stop="refundBtnFn('edit')" >编辑退款信息</view>
@@ -87,11 +115,11 @@
                 </view>
             </view>
             <view  v-else>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] rounded-[16rpx] flex justify-between flex-wrap mt-[20rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] rounded-[16rpx] flex justify-between flex-wrap mt-[20rpx]">
                     <view class="w-[150rpx] h-[150rpx] flex-2" @click="goodsEvent(detail.order_goods.goods_id)">
                         <u--image class="rounded-[10rpx] overflow-hidden" width="150rpx" height="150rpx" :src="img(detail.order_goods.sku_image ? detail.order_goods.sku_image : '')" model="aspectFill">
                             <template #error>
-                                <u-icon name="photo" color="#999" size="50"></u-icon>
+                                <image class="w-[150rpx] h-[150rpx] rounded-[10rpx] overflow-hidden" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
                             </template>
                         </u--image>
                     </view>
@@ -112,7 +140,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] rounded-[16rpx] mt-[20rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] rounded-[16rpx] mt-[20rpx]">
                     <view class="flex justify-between text-[28rpx] leading-[32rpx] ">
                         <view>联系人</view>
                         <view>{{ detail.refund_address.contact_name }}</view>
@@ -126,7 +154,7 @@
                         <view class="w-[460rpx] text-sm text-right" v-if="detail.refund_address">{{ detail.refund_address.full_address || '--' }}</view>
                     </view>
                 </view>
-                <view class="bg-[#fff] mx-[30rpx] p-[20rpx] rounded-[16rpx] mt-[20rpx]">
+                <view class="bg-[#fff] sidebar-marign p-[20rpx] rounded-[16rpx] mt-[20rpx]">
                     <u--form labelPosition="left" :model="formData" :rules="rules" ref="deliveryForm" labelWidth="140rpx" :labelStyle="{'fontSize': '28rpx'}">
                         <u-form-item label="物流公司" prop="express_company" borderBottom="true" ref="item1">
                             <u--input pl border="none" v-model="formData.express_company" placeholder="请输入物流公司" placeholderClass="text-sm" fontSize="28rpx"></u--input>
@@ -139,8 +167,8 @@
                         </u-form-item>
                     </u--form>
                 </view>
-                <view class="mx-[30rpx]">
-                    <u-button class="mt-[20rpx]" text="提交" type="primary" shape="circle" @click="deliverySave"></u-button>
+                <view class="sidebar-marign">
+                    <button class="mt-[20rpx] bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="deliverySave">提交</button>
                 </view>
             </view>
             <logistics-tracking ref="materialRef"></logistics-tracking>
@@ -151,7 +179,7 @@
 
         <!-- #ifdef MP-WEIXIN -->
         <!-- 小程序隐私协议 -->
-        <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+        <wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
         <!-- #endif -->
     </view>
 </template>
@@ -161,14 +189,24 @@ import { ref, reactive, computed } from 'vue';
 import { onLoad } from '@dcloudio/uni-app'
 import { t } from '@/locale'
 import { img, redirect, copy } from '@/utils/common';
+import { topTabar } from '@/utils/topTabbar'
 import { getRefundDetail, refundDelivery, editRefundDelivery, closeRefund } from '@/addon/shop/api/refund';
 import logisticsTracking from '@/addon/shop/pages/order/components/logistics-tracking/logistics-tracking.vue'
+
+/********* 自定义头部 - start ***********/
+const topTabarObj = topTabar()
+let topTabbarData = topTabarObj.setTopTabbarParam({title:'退款详情'})
+/********* 自定义头部 - end ***********/
 
 let detail = ref<Object>({});
 let loading = ref<boolean>(true);
 let orderRefundNo = ref('');
 let type = ref('');
 let isEditDelivery = ref(false);
+
+const sendMessageTitle = ref('')
+const sendMessagePath = ref('')
+const sendMessageImg = ref('')
 // 物流信息
 const formData = ref({
 	express_number: '',
@@ -192,7 +230,7 @@ const rules = {
 	}
 }
 
-onLoad((option) => {
+onLoad((option: any) => {
 	orderRefundNo.value = option.order_refund_no;
 	type.value = option.type;
 	isEditDelivery.value = option.is_edit_delivery;
@@ -200,9 +238,9 @@ onLoad((option) => {
 	refundDetailFn(orderRefundNo.value);
 });
 
-const refundDetailFn = (refundNo) => {
+const refundDetailFn = (refundNo: any) => {
 	loading.value = true;
-	getRefundDetail(refundNo).then((res) => {
+	getRefundDetail(refundNo).then((res: any) => {
 		detail.value = res.data;
 		// 赋值物流信息
 		if(isEditDelivery.value && detail.value.delivery){
@@ -210,6 +248,9 @@ const refundDetailFn = (refundNo) => {
 			formData.value.express_company = detail.value.delivery.express_company
 			formData.value.remark = detail.value.delivery.remark
 		}
+		
+		sendMessageTitle.value = detail.value.order_goods.goods_name
+		sendMessageImg.value = img(detail.value.order_goods.goods_image_thumb_small || '')
 		loading.value = false;
 	}).catch(() => {
 		loading.value = false;
@@ -226,7 +267,7 @@ const goodsEvent = (id: number) => {
 }
 
 // 提交物流信息
-let deliveryForm = ref()
+const deliveryForm = ref()
 const deliverySave = ()=>{
 	deliveryForm.value.validate().then(res => {
 		let obj = {delivery: formData.value,order_refund_no: detail.value.order_refund_no}
@@ -254,7 +295,7 @@ const refundBtnFn = (type:any) => {
 }
 
 // 撤销维权
-let cancelRefundShow = ref(false);
+const cancelRefundShow = ref(false);
 let currRefundOn = "";
 
 const refundConfirm = ()=>{
@@ -280,9 +321,6 @@ const refundCancel = ()=>{
 	-webkit-box-orient: vertical;
 }
 
-.text-color {
-	color: $u-primary;
-}
 .bg-linear {
 	background: linear-gradient( 94deg, #E73835 15%, #FE8448 87%);
 }

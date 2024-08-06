@@ -11,11 +11,8 @@
 
 namespace addon\shop\app\service\core\order;
 
-use addon\shop\app\dict\goods\GoodsDict;
 use addon\shop\app\dict\order\OrderDeliveryDict;
 use addon\shop\app\dict\order\OrderDict;
-use addon\shop\app\dict\order\OrderLogDict;
-use addon\shop\app\model\goods\Goods;
 use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderGoods;
 use core\base\BaseCoreService;
@@ -40,7 +37,7 @@ class CoreOrderPayService extends BaseCoreService
      */
     public function pay(array $data)
     {
-        $order_id = $data['trade_id'];
+        $order_id = $data[ 'trade_id' ];
         $where = [
             [
                 'order_id', '=', $order_id
@@ -51,8 +48,8 @@ class CoreOrderPayService extends BaseCoreService
             throw new CommonException('SHOP_ORDER_NOT_FOUND');//订单不存在
 
         //todo 状态判断
-        if (!in_array($order['status'], [OrderDict::WAIT_PAY, OrderDict::CLOSE])) throw new CommonException('SHOP_ORDER_IS_PAY_FINISH');//订单支付
-        $out_trade_no = $data['out_trade_no'] ?? '';
+        if (!in_array($order[ 'status' ], [ OrderDict::WAIT_PAY, OrderDict::CLOSE ])) throw new CommonException('SHOP_ORDER_IS_PAY_FINISH');//订单支付
+        $out_trade_no = $data[ 'out_trade_no' ] ?? '';
         //订单状态变成已支付
         $order_data = array(
             'status' => OrderDict::WAIT_DELIVERY,
@@ -64,10 +61,10 @@ class CoreOrderPayService extends BaseCoreService
         $this->model->where($where)->update($order_data);
 
         //订单到达待发货状态
-        $this->orderGoodsPay(['order_id' => $order_id]);
+        $this->orderGoodsPay([ 'order_id' => $order_id ]);
 
-        $data['order_data'] = $order->toArray();
-        $data['order_id'] = $order_id;
+        $data[ 'order_data' ] = $order->toArray();
+        $data[ 'order_id' ] = $order_id;
 
 //        event('AfterShopOrderPay', $data);
         //订单支付操作
@@ -85,15 +82,15 @@ class CoreOrderPayService extends BaseCoreService
      */
     public function orderGoodsPay($data)
     {
-        $order_id = $data['order_id'];
+        $order_id = $data[ 'order_id' ];
         $update_data = [
             'delivery_status' => OrderDeliveryDict::WAIT_DELIVERY,
             'is_enable_refund' => 1
         ];
         $where = [
-            ['order_id', '=', $order_id]
+            [ 'order_id', '=', $order_id ]
         ];
-        (new OrderGoods())->where($where)->update($update_data);
+        ( new OrderGoods() )->where($where)->update($update_data);
         return true;
     }
 
@@ -103,7 +100,8 @@ class CoreOrderPayService extends BaseCoreService
      * @param $data
      * @return void
      */
-    public function toDelivery($data){
+    public function toDelivery($data)
+    {
         //todo 根据订单项类判断各个商品的配送操作
 
     }

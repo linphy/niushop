@@ -63,7 +63,13 @@ class CouponService extends BaseApiService
         }
         $field = 'id,title,start_time,end_time,remain_count,receive_count,limit_count,status,price,min_condition_money,type
         ,receive_type,valid_type,length,valid_start_time,valid_end_time,sort';
-        $order = 'id desc';
+
+        // 参数过滤
+        if (!empty($data[ 'order' ]) && in_array($data[ 'order' ], [ 'create_time', 'price' ])) {
+            $order = $data[ 'order' ] . ' ' . $data[ 'sort' ];
+        } else {
+            $order = 'id desc';
+        }
 
         $where[] = [ 'status', '=', CouponDict::NORMAL ];
         $where[] = [ 'receive_type', '=', CouponDict::USER ];
@@ -126,10 +132,17 @@ class CouponService extends BaseApiService
                 ->order($order)
                 ->append([ 'coupon_price', 'coupon_min_price', 'receive_type_name', 'type_name' ]);
         } else {
+            $type_where = [];
+            if (!empty($data[ 'type' ])) {
+                $type_where = [
+                    [ 'type', '=', $data[ 'type' ] ]
+                ];
+            }
 
             $search_model = $this->model
                 ->field($field)
                 ->where($where)
+                ->where($type_where)
                 ->where($time_where)
                 ->order($order)
                 ->append([ 'coupon_price', 'coupon_min_price', 'receive_type_name', 'type_name' ]);
@@ -317,6 +330,12 @@ class CouponService extends BaseApiService
         if (!empty($data[ 'status' ])) {
             $where[] = [ 'status', '=', $data[ 'status' ] ];
         }
+        if (in_array($data[ 'type' ], [CouponDict::ALL, CouponDict::CATEGORY, CouponDict::GOODS])) {
+            $where[] = [ 'type', '=', $data[ 'type' ] ];
+        }
+//        elseif ($data[ 'type' ] == -1){
+//            $where[] = [ 'expire_time', '>', time() + 86400 * 3 ];
+//        }
         $where[] = [ 'member_id', '=', $this->member_id ];
         $coupon_member_model = new CouponMember();
         $search_model = $coupon_member_model
@@ -325,6 +344,27 @@ class CouponService extends BaseApiService
             ->append([ 'coupon_price', 'coupon_min_price', 'receive_type_name', 'type_name' ]);
         $list = $this->pageQuery($search_model);
         return $list;
+    }
+
+    /**
+     * 会员优惠券按状态查询数量
+     * @param $data
+     * @return mixed
+     */
+    public function getCouponCountByStatus()
+    {
+        $count_list = [];
+        $status_array = array_keys(CouponMemberDict::getStatus());
+        foreach ($status_array as $v) {
+            $coupon_member_model = new CouponMember();
+            $count = $coupon_member_model->where([[ 'member_id', '=', $this->member_id ], [ 'status', '=', $v]])->count();
+            $count_list[] = [
+                'status' => $v,
+                'status_name' => CouponMemberDict::getStatus($v),
+                'count' => $count
+            ];
+        }
+        return $count_list;
     }
 
     /**
@@ -360,6 +400,26 @@ class CouponService extends BaseApiService
             }
         }
         return $type;
+    }
+
+    /**
+     * 获取优惠券类型
+     * @return array
+     */
+    public function getCouponType()
+    {
+//        $list[] = [
+//            'label' => '快过期',
+//            'value' => '-1'
+//        ];
+        $type = CouponDict::getType();
+        foreach ($type as $k => $v) {
+            $list[] = [
+                'label' => $v,
+                'value' => $k,
+            ];
+        }
+        return $list;
     }
 
     /**

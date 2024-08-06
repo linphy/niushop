@@ -13,17 +13,17 @@ namespace addon\shop\app\service\api\marketing\pointexchange;
 
 
 use addon\shop\app\model\exchange\Exchange;
+use addon\shop\app\service\api\goods\GoodsService;
 use core\base\BaseApiService;
 use app\model\member\Member;
 use app\model\member\MemberAccountLog;
 use app\dict\member\MemberAccountTypeDict;
-use think\facade\Db;
 
 
 /**
  * 积分商城服务层
- * Class StoreService
- * @package addon\shop\app\service\admin\delivery
+ * Class ExchangeService
+ * @package addon\shop\app\service\api\marketing\pointexchange
  */
 class ExchangeService extends BaseApiService
 {
@@ -33,9 +33,8 @@ class ExchangeService extends BaseApiService
         $this->model = new Exchange();
     }
 
-
     /**
-     * 获取积分商城列表   ok
+     * 获取积分商城列表
      * @param array $where
      * @return array
      */
@@ -55,7 +54,7 @@ class ExchangeService extends BaseApiService
 
     /**
      * 获取积分商城详情
-     * @param int $active_id
+     * @param int $id
      * @return array
      */
     public function getDetail(int $id)
@@ -64,7 +63,7 @@ class ExchangeService extends BaseApiService
         $field = 'total_exchange_num,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
         $info = $this->model->where([ [ 'id', '=', $id ] ])->append([ 'type_name', 'goods_cover_thumb_big', 'goods_cover_thumb_small', 'goods_cover_thumb_mid', 'goods_image_thumb_small', 'goods_image_thumb_mid', 'goods_image_thumb_big' ])->field($field)->findOrEmpty()->toArray();
         if (!empty($info)) {
-            $goods_info = ( new  \addon\shop\app\service\api\goods\GoodsService )->getDetail([ 'goods_id' => $info[ 'product_detail' ][ 0 ][ 'goods_id' ], 'sku_id' => $info[ 'product_detail' ][ 0 ][ 'sku_id' ] ]);
+            $goods_info = ( new  GoodsService() )->getDetail([ 'goods_id' => $info[ 'product_detail' ][ 0 ][ 'goods_id' ], 'sku_id' => $info[ 'product_detail' ][ 0 ][ 'sku_id' ] ]);
 
             $goods_info[ 'goods' ][ 'goods_desc' ] = $info[ 'content' ];
             $goods_info[ 'sale_num' ] = $info[ 'total_exchange_num' ];
@@ -102,26 +101,17 @@ class ExchangeService extends BaseApiService
         return $goods_info ?? [];
     }
 
-
     /**
      * 获取积分商城详情
-     * @param int $active_id
-     * @return array
+     * @param $where
+     * @return mixed
      */
     public function getInfo($where)
     {
         $field = 'stock,total_exchange_num,id,type,names,title,image,status,product_detail,point,price,limit_num,content,sort,total_point_num,total_price_num,total_order_num,total_member_num,update_time,create_time';
-        $info = $this->model->where([])->withSearch([ 'names', 'status', 'create_time', 'product_detail', 'sku_id', 'goods_id' ], $where)->append([ 'type_name' ])->field($field)->findOrEmpty()->toArray();
+        $info = $this->model->where([ [ 'id', '>', 0 ] ])->withSearch([ 'names', 'status', 'create_time', 'product_detail', 'sku_id', 'goods_id' ], $where)->append([ 'type_name' ])->field($field)->findOrEmpty()->toArray();
         return $info;
     }
-
-
-
-
-
-
-
-
 
     /**********************************************************组件调用***************************************************************************************/
 
@@ -146,7 +136,6 @@ class ExchangeService extends BaseApiService
 
     /**
      * 获取组件调用 会员当前积分数+今日积分数
-     * @param array $where
      * @return array
      */
     public function getPointInfo()
@@ -161,6 +150,5 @@ class ExchangeService extends BaseApiService
         $point_data[ 'today_point' ] = $today_point;
         return $point_data;
     }
-
 
 }

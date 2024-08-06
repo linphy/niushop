@@ -1,14 +1,9 @@
 <template>
     <div class="main-container">
-        <div class="detail-head">
-            <div class="left" @click="back()">
-                <span class="iconfont iconxiangzuojiantou !text-xs"></span>
-                <span class="ml-[1px]">{{ t('returnToPreviousPage') }}</span>
-            </div>
-            <span class="adorn">|</span>
-            <span class="right" v-if="id">{{ t('updateStore') }}</span>
-            <span class="right" v-else>{{ t('addStore') }}</span>
-        </div>
+        <el-card class="card !border-none mb-[15px]" shadow="never">
+            <el-page-header :content="id ? t('updateStore') : t('addStore')" :icon="ArrowLeft" @back="back" />
+        </el-card>
+        
         <el-card class="box-card !border-none" shadow="never">
             <el-form :model="formData" label-width="140px" ref="formRef" :rules="formRules" class="page-form">
                 <el-form-item :label="t('storeName')" prop="store_name">
@@ -183,12 +178,12 @@ const areaList = reactive<AreaList>({
     city: [],
     district: []
 })
-const checkAreatress = () => {
+const checkAreaTressFn = () => {
     getAreatree(1).then(res => {
         areaList.province = res.data
     })
 }
-checkAreatress()
+checkAreaTressFn()
 const checkCity = (arr:AnyObject) => {
     if (Object.keys(arr).length == 0) {
         arr.id = formData.province_id

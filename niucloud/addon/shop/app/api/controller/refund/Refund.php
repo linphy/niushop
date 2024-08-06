@@ -26,9 +26,9 @@ class Refund extends BaseApiController
     public function lists()
     {
         $data = $this->request->params([
-            ['status', ''],
+            [ 'status', '' ],
         ]);
-        return success((new RefundService())->getPage($data));
+        return success(( new RefundService() )->getPage($data));
     }
 
     /**
@@ -38,7 +38,7 @@ class Refund extends BaseApiController
      */
     public function detail(string $order_refund_no)
     {
-        return success((new RefundService())->getDetail($order_refund_no));
+        return success(( new RefundService() )->getDetail($order_refund_no));
     }
 
     /**
@@ -48,15 +48,15 @@ class Refund extends BaseApiController
     public function apply()
     {
         $data = $this->request->params([
-            ['order_id', 0],
-            ['order_goods_id', 0],
-            ['refund_type', ''],
-            ['apply_money', 0],
-            ['reason', ''],
-            ['remark', ''],
-            ['voucher', ''],
+            [ 'order_id', 0 ],
+            [ 'order_goods_id', 0 ],
+            [ 'refund_type', '' ],
+            [ 'apply_money', 0 ],
+            [ 'reason', '' ],
+            [ 'remark', '' ],
+            [ 'voucher', '' ],
         ]);
-        (new RefundActionService())->apply($data);
+        ( new RefundActionService() )->apply($data);
         return success();
     }
 
@@ -64,17 +64,17 @@ class Refund extends BaseApiController
      * 修改退款
      * @return Response
      */
-    public function edit(string|int $order_refund_no)
+    public function edit($order_refund_no)
     {
         $data = $this->request->params([
-            ['refund_type', ''],
-            ['apply_money', 0],
-            ['reason', ''],
-            ['remark', ''],
-            ['voucher', ''],
+            [ 'refund_type', '' ],
+            [ 'apply_money', 0 ],
+            [ 'reason', '' ],
+            [ 'remark', '' ],
+            [ 'voucher', '' ],
         ]);
-        $data['order_refund_no'] = $order_refund_no;
-        (new RefundActionService())->edit($data);
+        $data[ 'order_refund_no' ] = $order_refund_no;
+        ( new RefundActionService() )->edit($data);
         return success();
     }
 
@@ -82,17 +82,17 @@ class Refund extends BaseApiController
      * 关闭退款
      * @return Response
      */
-    public function close(string|int $order_refund_no)
+    public function close($order_refund_no)
     {
         $data = $this->request->params([
-            ['refund_type', ''],
-            ['apply_money', 0],
-            ['reason', ''],
-            ['remark', ''],
-            ['voucher', ''],
+            [ 'refund_type', '' ],
+            [ 'apply_money', 0 ],
+            [ 'reason', '' ],
+            [ 'remark', '' ],
+            [ 'voucher', '' ],
         ]);
-        $data['order_refund_no'] = $order_refund_no;
-        (new RefundActionService())->close($data);
+        $data[ 'order_refund_no' ] = $order_refund_no;
+        ( new RefundActionService() )->close($data);
         return success();
     }
 
@@ -100,13 +100,13 @@ class Refund extends BaseApiController
      * 买家退货
      * @return Response
      */
-    public function delivery(string|int $order_refund_no)
+    public function delivery($order_refund_no)
     {
         $data = $this->request->params([
-            ['delivery', []],//{"express_number": 11, "express_company":4545, "remark":''}
+            [ 'delivery', [] ],//{"express_number": 11, "express_company":4545, "remark":''}
         ]);
-        $data['order_refund_no'] = $order_refund_no;
-        (new RefundActionService())->delivery($data);
+        $data[ 'order_refund_no' ] = $order_refund_no;
+        ( new RefundActionService() )->delivery($data);
         return success();
     }
 
@@ -114,13 +114,13 @@ class Refund extends BaseApiController
      * 修改买家退货
      * @return Response
      */
-    public function editDelivery(string|int $order_refund_no)
+    public function editDelivery($order_refund_no)
     {
         $data = $this->request->params([
-            ['delivery', []],//{"express_number": 11, "express_company":4545, "remark":''}
+            [ 'delivery', [] ],//{"express_number": 11, "express_company":4545, "remark":''}
         ]);
-        $data['order_refund_no'] = $order_refund_no;
-        (new RefundActionService())->editDelivery($data);
+        $data[ 'order_refund_no' ] = $order_refund_no;
+        ( new RefundActionService() )->editDelivery($data);
         return success();
     }
 
@@ -128,8 +128,9 @@ class Refund extends BaseApiController
      * 退款原因
      * @return Response
      */
-    public function getRefundReason() {
-        return success((new RefundActionService())->getRefundReason());
+    public function getRefundReason()
+    {
+        return success(( new RefundActionService() )->getRefundReason());
     }
 
     /**
@@ -145,22 +146,24 @@ class Refund extends BaseApiController
      * 获取可退款信息
      * @return void
      */
-    public function getRefundData(){
+    public function getRefundData()
+    {
         $data = $this->request->params([
-            ['order_goods_id', 0],
+            [ 'order_goods_id', 0 ],
         ]);
-        return success(data:(new RefundActionService())->getRefundData($data));
+        return success(data:( new RefundActionService() )->getRefundData($data));
     }
 
     /**
      * 退款编辑可退款信息
      * @return Response
      */
-    public function getRefundDataByOrderRefundNo(){
+    public function getRefundDataByOrderRefundNo()
+    {
         $data = $this->request->params([
-            ['order_refund_no', ''],
+            [ 'order_refund_no', '' ],
         ]);
-        return success(data:(new RefundActionService())->getRefundDataByOrderRefundNo($data));
+        return success(data:( new RefundActionService() )->getRefundDataByOrderRefundNo($data));
     }
 }
 

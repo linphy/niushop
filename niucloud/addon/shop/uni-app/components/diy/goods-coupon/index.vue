@@ -109,18 +109,18 @@
 		}
 	)
 
-    const toLink = (url)=>{
+    const toLink = (url: any)=>{
         if (diyStore.mode == 'decorate') return;
-        redirect({ url: url})
+        redirect({ url })
     }
 
-    const couponList = ref([])
+    const couponList: any = ref([])
     const getShopCouponListFn = () => {
         let data: object = {
             num: diyComponent.value.source == 'all' ? diyComponent.value.num : '',
             coupon_ids: diyComponent.value.source == 'custom' ? diyComponent.value.couponIds : '',
         };
-        getShopCouponComponents(data).then((res) => {
+        getShopCouponComponents(data).then((res: any) => {
             couponList.value = res.data
             skeleton.loading = false;
         }).catch(() => {
@@ -141,10 +141,9 @@
                 price: 100,
                 min_condition_money: 0,
             };
-            couponList.value.push(obj);
-            couponList.value.push(obj);
-            couponList.value.push(obj);
-            couponList.value.push(obj);
+            for (let i = 0; i < 4; i++) {
+                couponList.value.push(obj);
+            }
         } else {
             getShopCouponListFn();
         }

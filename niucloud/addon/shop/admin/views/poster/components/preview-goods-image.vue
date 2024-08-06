@@ -1,5 +1,5 @@
 <template>
-	<div class="pointer-events-none max-w-[360px]" :style="componentStyle">
+	<div class="pointer-events-none max-w-[720px]" :style="componentStyle">
 		<img src="@/addon/shop/assets/goods_default.png" class="w-full h-full" />
 	</div>
 </template>

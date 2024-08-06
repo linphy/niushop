@@ -118,7 +118,7 @@
                 <span class="text-lg font-extrabold">{{t('agentMatters')}}</span>
             </template>
             <el-row>
-                <el-col :span="4">
+                <el-col :span="4" class="cursor-pointer" @click="router.push({ path: '/shop/order/index', query: {status: 1}})">
                     <div class="ml-[10px]">
                         <el-statistic :value="statOrder.wait_pay_order">
                             <template #title>
@@ -134,35 +134,35 @@
                         </el-statistic>
                     </div>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="4" class="cursor-pointer" @click="router.push({ path: '/shop/order/index', query: {status: 2}})">
                     <el-statistic :value="statOrder.wait_delivery_order">
                         <template #title>
                             <div style="display: inline-flex; align-items: center">{{t('waitDeliveryOrder')}}</div>
                         </template>
                     </el-statistic>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="4" class="cursor-pointer" @click="router.push({ path: '/shop/order/index', query: {status: 3}})">
                     <el-statistic :value="statOrder.wait_take_order">
                         <template #title>
                             <div style="display: inline-flex; align-items: center">{{t('waitTakeOrder')}}</div>
                         </template>
                     </el-statistic>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="4" class="cursor-pointer" @click="router.push({ path: '/shop/order/refund'})">
                     <el-statistic :value="statOrder.refund_order">
                         <template #title>
                             <div style="display: inline-flex; align-items: center">退款订单</div>
                         </template>
                     </el-statistic>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="4" class="cursor-pointer" @click="router.push({ path: '/shop/goods/list'})">
                     <el-statistic :value="statGoods.sale_goods_num">
                         <template #title>
                             <div style="display: inline-flex; align-items: center">{{t('saleGoodsNum')}}</div>
                         </template>
                     </el-statistic>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="4" class="cursor-pointer" @click="router.push({ path: '/shop/goods/list', query: {status: 0}})">
                     <el-statistic :value="statGoods.warehouse_goods_num">
                         <template #title>
                             <div style="display: inline-flex; align-items: center">{{t('warehouseGoodsNum')}}</div>
@@ -208,7 +208,9 @@ import {
     getShopGoodsStat
 } from '@/addon/shop/api/shop'
 import * as echarts from 'echarts'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const visitStat = ref<any>(null)
 const hourStat = ref<any>(null)
 
@@ -253,7 +255,12 @@ const statOrder = ref<statOrderType|any>([])
 const statGoods = ref<statGoodsType|any>([])
 
 const getStatInfoFn = async () => {
-    statTotal.value = await (await getShopCountList()).data
+    let statTotalData = await (await getShopCountList()).data
+    for( let i in statTotalData){
+        statTotalData[i] = Number(statTotalData[i])
+
+    }
+    statTotal.value = statTotalData
     statToday.value = await (await getShopTodayCountList()).data
     statYesterday.value = await (await getShopYesterdayCountList()).data
     statOrder.value = await (await getShopOrderStat()).data

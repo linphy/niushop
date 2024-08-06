@@ -26,14 +26,14 @@
 				</view>
 			</scroll-view>
 			<view class="p-[30rpx]">
-				<u-button type="primary" text="确认" shape="circle" @click="confirm"></u-button>
+                <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="confirm">确认</button>
 			</view>
 		</view>
     </u-popup>
 
 	<!-- #ifdef MP-WEIXIN -->
 	<!-- 小程序隐私协议 -->
-	<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+	<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 	<!-- #endif -->
 </template>
 

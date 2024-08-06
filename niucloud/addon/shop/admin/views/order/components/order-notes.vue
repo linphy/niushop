@@ -37,9 +37,6 @@ const formRef = ref<FormInstance>()
 // 表单验证规则
 const formRules = computed(() => {
     return {
-        company_name: [
-            { required: true, message: t('companyNamePlaceholder'), trigger: 'blur' }
-        ]
     }
 })
 

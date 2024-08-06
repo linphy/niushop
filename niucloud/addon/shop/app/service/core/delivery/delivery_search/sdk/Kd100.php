@@ -24,7 +24,7 @@ class Kd100
             'phone' => $mobile               // 手机号
         ];
 
-        $post_data = array ();
+        $post_data = array();
         $post_data[ 'customer' ] = $this->customer;
         $post_data[ 'param' ] = json_encode($param, JSON_UNESCAPED_UNICODE);
         $sign = md5($post_data[ 'param' ] . $this->key . $post_data[ 'customer' ]);

@@ -32,7 +32,7 @@
                     </view>
                </template>
           </view>
-          <u-tabbar :fixed="true" :placeholder="true" :safeAreaInsetBottom="true">
+          <u-tabbar :fixed="true" :placeholder="true" :safeAreaInsetBottom="true" zIndex="9999">
                <view class="flex items-center px-[30rpx] py-[10rpx] box-border  justify-between w-[100%]">
                     <view class="flex items-center" @click="selectCheck">
                          <text class="iconfont text-color text-[34rpx] mr-[12rpx]" :class="{'iconxuanze1 text-[var(--primary-color)]' : is_anonymous === '1' ,'nc-iconfont nc-icon-yuanquanV6xx':is_anonymous !== '1'}"></text>
@@ -44,7 +44,7 @@
           <u-loading-page bg-color="rgb(248,248,248)" :loading="loading" loadingText="" fontSize="16" color="#303133"></u-loading-page>
 		  <!-- #ifdef MP-WEIXIN -->
 		  <!-- 小程序隐私协议 -->
-		  <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		  <wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		  <!-- #endif -->
      </view>
 </template>

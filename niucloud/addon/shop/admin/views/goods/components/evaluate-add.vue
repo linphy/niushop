@@ -8,11 +8,11 @@
                 <upload-image v-model="formData.member_head" />
             </el-form-item>
             <el-form-item :label="t('memberName')" prop="member_name">
-                <el-input v-model.trim="formData.member_name" clearable :placeholder="t('memberNamePlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.member_name" clearable maxlength="20" show-word-limit :placeholder="t('memberNamePlaceholder')" class="input-width" />
             </el-form-item>
             <el-form-item :label="t('createTime')" prop="create_time">
                 <div class="input-width">
-                    <el-date-picker clearable v-model="formData.create_time" type="datetime" :placeholder="t('createTimePlaceholder')" value-format="YYYY-MM-DD HH:mm:ss" />
+                    <el-date-picker clearable :disabled-date="disabledDateFn" v-model="formData.create_time" type="datetime" :placeholder="t('createTimePlaceholder')" value-format="YYYY-MM-DD HH:mm:ss" />
                 </div>
             </el-form-item>
 
@@ -26,11 +26,11 @@
                 <el-rate  v-model="formData.scores" />
             </el-form-item>
             <el-form-item :label="t('content')" prop="content">
-                <el-input v-model.trim="formData.content" type="textarea" rows="4" clearable :placeholder="t('contentPlaceholder')" class="input-width" />
+                <el-input v-model.trim="formData.content"  maxlength="200" show-word-limit type="textarea" rows="4" clearable :placeholder="t('contentPlaceholder')" class="input-width" />
             </el-form-item>
 
             <el-form-item :label="t('images')">
-                <upload-image v-model="formData.image_arr" :limit="5" />
+                <upload-image v-model="formData.image_arr" :limit="9" />
             </el-form-item>
 
         </el-form>
@@ -54,6 +54,10 @@ import { addEvaluate } from '@/addon/shop/api/goods'
 
 const showDialog = ref(false)
 const loading = ref(false)
+
+const disabledDateFn = (date)=>{
+    return date.getTime() > Date.now()
+}
 
 /**
  * 表单数据

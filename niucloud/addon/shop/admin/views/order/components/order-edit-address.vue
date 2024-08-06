@@ -17,15 +17,15 @@
                         <el-input v-model.trim="formData.taker_mobile" clearable :placeholder="t('ContactInformationPlaceholder')" class="input-width" maxlength="15" />
                     </el-form-item>
                     <el-form-item :label="t('address')" prop="address_area">
-                        <el-select v-model="formData.taker_province" value-key="id" clearable class="w-[150px]"  ref="provinceRef" :placeholder="t('province')">
+                        <el-select v-model="formData.taker_province" value-key="id" clearable class="w-[150px]"  ref="provinceRef" :placeholder="t('province')" @change="addressChange">
                             <el-option :label="t('province')"  :value="0"/>
                             <el-option v-for="(item, index) in areaList.province" :key="index" :label="item.name"  :value="item.id"/>
                         </el-select>
-                        <el-select v-model="formData.taker_city" value-key="id" clearable class="w-[150px] ml-3" ref="cityRef" :placeholder="t('city')">
+                        <el-select v-model="formData.taker_city" value-key="id" clearable class="w-[150px] ml-3" ref="cityRef" :placeholder="t('city')" @change="addressChange">
                             <el-option :label="t('city')"  :value="0"/>
                             <el-option v-for="(item, index) in areaList.city " :key="index" :label="item.name"  :value="item.id"/>
                         </el-select>
-                        <el-select v-model="formData.taker_district" value-key="id" clearable class="w-[150px] mt-[20px]"  ref="districtRef" :placeholder="t('area')">
+                        <el-select v-model="formData.taker_district" value-key="id" clearable class="w-[150px] mt-[20px]"  ref="districtRef" :placeholder="t('area')" @change="addressChange">
                             <el-option :label="t('area')" :value="0"/>
                             <el-option v-for="(item, index) in areaList.district " :key="index" :label="item.name"  :value="item.id" />
                         </el-select>
@@ -62,15 +62,13 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { t } from '@/lang'
-import { FormInstance, ElMessage } from 'element-plus'
+import { FormInstance } from 'element-plus'
 import { getCompanyList, getShopDeliveryList } from '@/addon/shop/api/delivery'
 import { getOrderEditAddress, orderEditAddress, getDeliveryList } from '@/addon/shop/api/order'
 import { getIsTradeManaged } from '@/app/api/weapp'
 import { createMarker, latLngToAddress, addressToLatLng } from '@/utils/qqmap'
 import { getMap, getAreaListByPid, getAreaByCode } from '@/app/api/sys'
 import { debounce, deepClone } from '@/utils/common'
-import { addShopAddress, editShopAddress } from '@/addon/shop/api/shop_address'
-import { useRoute } from 'vue-router'
 
 const showDialog = ref(false)
 const loading = ref(false)
@@ -86,7 +84,7 @@ const isTradeManaged = ref(false)
 const deliveryList = ref([])
 
 getCompanyList({}).then((data) => {
-    companyData.value = data.data.data
+    companyData.value = data.data
 })
 
 getIsTradeManaged().then(res => {
@@ -176,9 +174,14 @@ const ContactInformation = (rule: any, value: any, callback: any) => {
 
 const emit = defineEmits(['complete'])
 
-const selectStore = (data) => {
+const selectStore = (data:any) => {
     formData.take_store_id = data
 }
+
+const addressChange=()=>{
+    formData.taker_address = ''
+}
+
 /**
  * 确认
  * @param formEl
@@ -225,7 +228,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
     })
 }
 
-const getAddressInfoFn = (data) => {
+const getAddressInfoFn = (data:any) => {
     getOrderEditAddress(data).then((res) => {
         for (const i in formData) {
             if (res.data[i]) {

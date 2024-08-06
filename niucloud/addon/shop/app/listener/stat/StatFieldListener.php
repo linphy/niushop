@@ -4,7 +4,7 @@ declare (strict_types = 1);
 namespace addon\shop\app\listener\stat;
 
 /**
- *统计字段定义
+ * 统计字段定义
  */
 class StatFieldListener
 {

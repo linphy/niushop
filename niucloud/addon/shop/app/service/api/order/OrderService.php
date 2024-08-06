@@ -21,6 +21,7 @@ use addon\shop\app\model\order\Order;
 use addon\shop\app\model\order\OrderDelivery;
 use addon\shop\app\model\order\OrderRefund;
 use addon\shop\app\service\core\order\CoreOrderCloseService;
+use addon\shop\app\service\core\order\CoreOrderConfigService;
 use addon\shop\app\service\core\order\CoreOrderFinishService;
 use addon\shop\app\service\core\order\CoreOrderService;
 use app\dict\common\ChannelDict;
@@ -58,7 +59,16 @@ class OrderService extends BaseApiService
             ->with(
                 [
                     'order_goods' => function($query) {
-                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund')->append([ 'goods_image_thumb_small' ]);
+                        $query->field('extend,order_goods_id, order_id, member_id, goods_id, sku_id, goods_name, sku_name, goods_image, sku_image, price, num, goods_money, is_enable_refund, delivery_id')
+                            ->with([
+                                'order_delivery' => function($query) {
+                                    $query->field('id, express_company_id, express_number')->with('company');
+                                }
+                            ])
+                            ->append([ 'goods_image_thumb_small' ]);
+                    },
+                    'store' => function($query) {
+                        $query->field('store_id, store_name, store_mobile');
                     }
                 ]
             )->order($order)->append([ 'order_from_name', 'order_type_name', 'status_name', 'delivery_type_name' ]);
@@ -66,7 +76,11 @@ class OrderService extends BaseApiService
         $list = $this->pageQuery($search_model, function($item, $key) use ($order_status_list) {
             $item[ 'order_status_data' ] = $order_status_list[ $item[ 'status' ] ] ?? [];
         });
+        $config = (new CoreOrderConfigService())->getConfig();
+        $close_length = $config['close_order_info']['close_length'];
         foreach ($list[ 'data' ] as $k => $v) {
+            $list[ 'data' ][ $k ]['now_time'] = time();
+            $list[ 'data' ][ $k ]['expire_time'] = strtotime($v['create_time']) + 60 * $close_length;
             if ($v[ 'out_trade_no' ]) {
                 $list[ 'data' ][ $k ][ 'pay' ] = ( new Pay() )->where([ [ 'out_trade_no', '=', $v[ 'out_trade_no' ] ] ])
                     ->field('type, pay_time')->append([ 'type_name' ])
@@ -165,6 +179,12 @@ class OrderService extends BaseApiService
             } catch (\Exception $e) {
                 $info[ 'is_trade_managed' ] = false;
             }
+
+            $config = (new CoreOrderConfigService())->getConfig();
+            $close_length = $config['close_order_info']['close_length'];
+
+            $info['now_time'] = time();
+            $info['expire_time'] = strtotime($info['create_time']) + 60 * $close_length;
 
         }
         return $info;

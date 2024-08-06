@@ -79,10 +79,7 @@ const pageName = route.meta.title
 const tableRef = useTemplateRefsList<HTMLElement>()
 const categoryTable = reactive({
     loading: true,
-    data: [],
-    searchParam: {
-        category_name: ''
-    }
+    data: []
 })
 
 onMounted(() => {
@@ -96,9 +93,7 @@ onMounted(() => {
 const activeRows = ref<any[]>([])
 // 拖拽排序
 const rowDrop = () => {
-    const tbody = tableRef.value.$el.querySelector(
-        '.el-table__body-wrapper tbody'
-    )
+    const tbody = tableRef.value.$el.querySelector('.el-table__body-wrapper tbody')
     Sortable.create(tbody, {
         handle: '.vues-rank',
         animation: 300,
@@ -115,38 +110,33 @@ const rowDrop = () => {
         onEnd: e => {
             const oldRow = activeRows.value[e.oldIndex] // 移动的那个元素
             const newRow = activeRows.value[e.newIndex] // 新的元素
+
             if (e.oldIndex === e.newIndex || oldRow.pid !== newRow.pid) return false
+
             const index = activeRows.value.indexOf(oldRow)
+
             if (index < 0) return false
-            //   activeRows.value.splice(index, 1)
-            //   activeRows.value.splice(index + changeIndex, 0, oldRow)
+
             const currRow = activeRows.value.splice(e.oldIndex, 1)[0]
             activeRows.value.splice(e.newIndex, 0, currRow)
             const pid = newRow.pid
-            const currentRows = activeRows.value
-                .filter(c => c.pid === pid)
-                ?.map((item, index) => {
-                    if (item.level === 1 && item.category_id === currRow.category_id) {
-                        categoryTable.data = categoryTable.data.filter(c => c.category_id !== currRow.category_id)
-                        categoryTable.data.splice(index, 0, currRow)
-                    }
-                    if (item.level === 2 && item.category_id === currRow.category_id) {
-                        const treeIndex = categoryTable.data.findIndex(el => el.category_id === item.pid)
-                        const obj = cloneDeep(categoryTable.data[treeIndex].child_list.filter(c => c.category_id !== currRow.category_id))
-                        categoryTable.data[treeIndex].child_list = []
-                        categoryTable.data[treeIndex].child_list.push(...obj)
-                        categoryTable.data[treeIndex].child_list.splice(index, 0, currRow)
-                        // obj.child_list//.splice(index,0,currRow)
-                    }
-                    return {
-                        category_id: item.category_id, // 当前行的唯一标识
-                        sort: 9999 - index
-                    }
-                })
-            // 请求接口排序，根据后端要求填写参数
-            // nextTick(() => {
-                // rowDrop()
-            // })
+            const currentRows = activeRows.value.filter(c => c.pid === pid)?.map((item, index) => {
+                if (item.level === 1 && item.category_id === currRow.category_id) {
+                    categoryTable.data = categoryTable.data.filter(c => c.category_id !== currRow.category_id)
+                    categoryTable.data.splice(index, 0, currRow)
+                }
+                if (item.level === 2 && item.category_id === currRow.category_id) {
+                    const treeIndex = categoryTable.data.findIndex(el => el.category_id === item.pid)
+                    const obj = cloneDeep(categoryTable.data[treeIndex].child_list.filter(c => c.category_id !== currRow.category_id))
+                    categoryTable.data[treeIndex].child_list = []
+                    categoryTable.data[treeIndex].child_list.push(...obj)
+                    categoryTable.data[treeIndex].child_list.splice(index, 0, currRow)
+                }
+                return {
+                    category_id: item.category_id, // 当前行的唯一标识
+                    sort: 9999 - index
+                }
+            })
             updateCategoryFn({ category_sort_array: currentRows })
         }
     })
@@ -178,9 +168,7 @@ const treeToTile = (treeData:any, childKey = 'child_list') => {
 const loadCategoryList = () => {
     categoryTable.loading = true
 
-    getCategoryTree({
-        ...categoryTable.searchParam
-    }).then(res => {
+    getCategoryTree().then(res => {
         categoryTable.loading = false
         categoryTable.data = res.data
     }).catch(() => {
@@ -188,16 +176,7 @@ const loadCategoryList = () => {
     })
 }
 const updateCategoryFn = (params: any) => {
-    updateCategory(params).then(res => {
-        // getCategoryTree({
-        //     page: categoryTable.page,
-        //     limit: categoryTable.limit,
-        //     ...categoryTable.searchParam
-        // }).then(res => {
-        //     categoryTable.data = res.data.data
-        //     categoryTable.total = res.data.total
-        // })
-    })
+    updateCategory(params).then(res => {})
 }
 
 const showClick = (row: any) => {

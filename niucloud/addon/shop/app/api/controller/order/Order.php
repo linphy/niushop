@@ -88,7 +88,6 @@ class Order extends BaseApiController
 
     /**
      * 订单设置
-     * @param $id
      * @return Response
      */
     public function getConfig()

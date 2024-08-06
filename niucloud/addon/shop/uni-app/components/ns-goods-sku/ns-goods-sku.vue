@@ -8,7 +8,7 @@
 						<view class="rounded-[8rpx] overflow-hidden">
 							<u--image width="180rpx" height="180rpx" :src="img(goodsDetail.detail.sku_image)" @click="imgListPreview(goodsDetail.detail.sku_image)" model="aspectFill">
 								<template #error>
-									<u-icon name="photo" color="#999" size="50"></u-icon>
+									<image class="w-[180rpx] h-[180rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
 								</template>
 							</u--image>
 						</view>
@@ -21,7 +21,7 @@
 								</view>
 								<view class="text-[24rpx] leading-[32rpx] text-[#303133] mt-[12rpx]">库存{{goodsDetail.detail.stock}}{{ goodsDetail.goods.unit }}</view>
 							</view>
-							<view class="w-[100%] mt-auto"  style="max-height: calc(204rpx - 98rpx); overflow: hidden; box-sizing:border-box"  v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
+							<view class="w-[100%] mt-auto"  style="max-height: calc(204rpx - 98rpx); overflow: hidden; box-sizing:border-box" v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
 								<text class="text-[24rpx] leading-[30rpx] text-[#666] flex items-center h-[60rpx] mt-[10rpx]">已选规格：{{goodsDetail.detail.sku_spec_format}}</text>
 							</view>
 	<!-- 						<view v-if="goodsDetail.goodsSpec && goodsDetail.goodsSpec.length">
@@ -33,7 +33,7 @@
 						<view :class="{'mt-[36rpx]': 0 != index }" v-for="(item,index) in goodsDetail.goodsSpec" :key="index">
 							<view class="text-[26rpx] leading-[36rpx] mb-[24rpx]">{{item.spec_name}}</view>
 							<view class="flex flex-wrap">
-								<view class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[56rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
+								<view class="box-border bg-[#f2f2f2] text-[24rpx] px-[44rpx] text-center h-[56rpx] leading-[52rpx] mr-[20rpx] mb-[20rpx] border-1 border-solid rounded-[50rpx] border-[#f2f2f2]"
 								 :class="{'!border-[var(--primary-color)] text-[var(--primary-color)] !bg-[var(--primary-color-light)]': subItem.selected}"
 								v-for="(subItem,subIndex) in item.values" :key="subIndex"
 								@click="change(subItem, index)">
@@ -43,28 +43,30 @@
 						</view>
 						<view class="flex justify-between items-center mt-[30rpx]">
 							<view class="text-[26rpx]">购买数量</view>
-							<u-number-box :min="1" :max="goodsDetail.stock" integer :step="1" input-width="98rpx" v-model="buyNum" input-height="54rpx">
+							<u-number-box :min="1" :max="goodsDetail.stock" integer :step="1" input-width="68rpx" v-model="buyNum" input-height="52rpx">
 								<template #minus>
-									<text class="text-[44rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
+									<text class="text-[34rpx] nc-iconfont nc-icon-jianV6xx" :class="{ '!text-[#c8c9cc]': buyNum === 1 }"></text>
 								</template>
 								<template #input>
-									<text class="number-input text-[#303133] text-center bg-[#f2f2f2] w-[82rpx] fext-[23rpx] mx-[16rpx]">{{ buyNum }}</text>
+									<text class="text-[#303133] text-[24rpx] mx-[10rpx] min-w-[56rpx] h-[38rpx] leading-[40rpx] text-center border-[1rpx] border-solid border-[#ddd] rounded-[4rpx]">{{ buyNum }}</text>
 								</template>
 								<template #plus>
-									<text class="text-[44rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
+									<text class="text-[34rpx] nc-iconfont nc-icon-jiahaoV6xx" :class="{ '!text-[#c8c9cc]': buyNum === goodsDetail.stock }"></text>
 								</template>
 							</u-number-box>
 						</view>
 					</scroll-view>
-					<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx]" type="primary" @click="confirm">确定</button>
+					<button v-if="goodsDetail.detail.stock > 0" class="!h-[72rpx] leading-[72rpx] text-[26rpx] rounded-[50rpx] primary-btn-bg" type="primary" @click="confirm">确定</button>
 					<button v-else class="!h-[72rpx] leading-[72rpx] text-[26rpx] text-[#fff] bg-[#ccc] rounded-[50rpx]">已售罄</button>
 				</view>
 			</u-popup>
 		</u-overlay>
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		<!-- #endif -->
+		 <!-- 强制绑定手机号 -->
+		<bind-mobile ref="bindMobileRef" /> 
 	</view>
 </template>
 
@@ -74,29 +76,30 @@
 	import useCartStore from '@/addon/shop/stores/cart'
 	import { useLogin } from '@/hooks/useLogin'
 	import useMemberStore from '@/stores/member'
+	import bindMobile from '@/components/bind-mobile/bind-mobile.vue';
 
 	const props = defineProps(['goodsDetail']);
-	let goodsSkuPop = ref(false);
-	let callback:any = ref(null);
-	let currSpec = ref({
+	const goodsSkuPop = ref(false);
+	const callback:any = ref(null);
+	const currSpec = ref({
 		skuId: "",
 		name: []
 	})
-	let openType = ref("");
-	let buyNum = ref(1)
+	const openType = ref("");
+	const buyNum = ref(1)
 	
 	// 商品价格
-	let goodsPrice = computed(() =>{
-		let price = "0.00";
-		if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount){
-			price = goodsDetail.value.sale_price // 折扣价
-		}else if(Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken()){
-			price = goodsDetail.value.member_price // 会员价
-		}else{
-			price = goodsDetail.value.price
-		}
-		return price;
-	})
+	const goodsPrice = computed(() => {
+        let price = "0.00";
+        if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.is_discount && goodsDetail.value.sale_price != goodsDetail.value.price) {
+            price = goodsDetail.value.sale_price // 折扣价
+        } else if (Object.keys(goodsDetail.value).length && Object.keys(goodsDetail.value.goods).length && goodsDetail.value.goods.member_discount && getToken() && goodsDetail.value.member_price != goodsDetail.value.price) {
+            price = goodsDetail.value.member_price // 会员价
+        } else {
+            price = goodsDetail.value.price
+        }
+        return price;
+    })
 
 	// 会员信息
 	const memberStore = useMemberStore()
@@ -171,7 +174,8 @@
 			}
 		})
 	}
-
+	//强制绑定手机号
+	const bindMobileRef = ref(null)
 	//提交
 	const confirm = ()=>{
 		// 检测是否登录
@@ -179,7 +183,11 @@
 			useLogin().setLoginBack({ url: '/addon/shop/pages/goods/detail', param: {sku_id: goodsDetail.value.sku_id} })
 			return false
 		}
-
+		// 绑定手机号
+		if(uni.getStorageSync('isbindmobile')){
+			bindMobileRef.value.open()
+			return false
+		}
         // 加入购物车
 		if(openType.value == 'join_cart'){
 			let num = 0;
@@ -243,4 +251,9 @@
 	})
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	::v-deep .u-number-box .u-number-box__slot{
+		display: flex;
+		align-items: center;
+	}
+</style>

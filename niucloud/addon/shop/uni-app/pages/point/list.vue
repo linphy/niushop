@@ -1,10 +1,10 @@
 <template>
 	<view class="bg-gray-100 min-h-[100vh]" :style="themeColor()">
 		<view class="fixed left-0 right-0 top-0 product-warp bg-[#fff] px-[30rpx] z-10">
-			<view class="h-[88rpx] box-border py-[14rpx] flex items-center justify-between">
-				<view class="flex-1 flex items-center h-[60rpx] bg-[#F6F8F8] rounded-[33rpx] pl-[32rpx] pr-[20rpx]">
+			<view class="py-[14rpx] flex items-center justify-between">
+				<view class="flex-1 flex items-center h-[64rpx] bg-[#F6F8F8] rounded-[33rpx] px-[32rpx]">
 					<u-input class="flex-1" maxlength="50" v-model="goods_name" @confirm="searchTypeFn('total_order_num')" placeholder="请搜索您想要的商品" placeholderClass="text-[#a5a6a6] text-[26rpx]" fontSize="26rpx"  clearable border="none"></u-input>
-					<text class="nc-iconfont nc-icon-sousuoV6xx text-[30rpx] ml-[18rpx] !text-[#999]" @click="searchTypeFn('total_order_num')"></text>
+					<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[32rpx] ml-[18rpx] !text-[#999]" @click="searchTypeFn('total_order_num')"></text>
 				</view>
 				<!-- <view :class="['nc-iconfont  text-[44rpx]', listType ? 'nc-icon-yingyongzhongxinV6xx' : 'nc-icon-yingyongliebiaoV6xx']" @click="listIconBtn"></view> -->
 			</view>
@@ -15,7 +15,7 @@
 						<text class="mr-[4rpx]">销量</text>
 						<text v-if="(sale_num != 'asc') && ( sale_num != 'desc')" class="text-[30rpx] text-[#666] nc-iconfont nc-icon-shangxiaxuanzeV6xx"></text>
 						<text v-else-if="sale_num == 'asc'" class="text-[18rpx] w-[30rpx] h-[30rpx] flex items-center justify-center text-[#666] nc-iconfont font-bold nc-icon-shangV6xx-1 font-bold"></text>
-						<text  v-else-if="sale_num == 'desc'" class="text-[18rpx] w-[30rpx] h-[30rpx] flex items-center justify-center text-[#666] font-bold nc-iconfont nc-icon-xiaV6xx"></text>
+						<text v-else-if="sale_num == 'desc'" class="text-[18rpx] w-[30rpx] h-[30rpx] flex items-center justify-center text-[#666] font-bold nc-iconfont nc-icon-xiaV6xx"></text>
 					</view>
 					<view class="flex items-center" :class="{'text-[#303133]': searchType == 'price' }" @click="searchTypeFn('price')">
 						<text class=" mr-[4rpx]">价格</text>
@@ -27,33 +27,32 @@
 			</view>
 		</view>
 
-		<mescroll-body ref="mescrollRef" top="160rpx" bottom="50px" @init="mescrollInit" @down="downCallback" @up="getAllAppListFn">
-			<view v-if="goodsList.length" class="px-[30rpx] flex justify-between flex-wrap">
+		<mescroll-body ref="mescrollRef" top="160rpx" bottom="50px" @init="mescrollInit" :down="{ use: false }" @up="getAllAppListFn">
+			<view v-if="goodsList.length" class="sidebar-marign flex justify-between flex-wrap">
 				<template v-for="(item, index) in goodsList">
-					
-						<view class="w-[334rpx] flex flex-col bg-[#fff] box-border rounded-[16rpx] overflow-hidden mt-[20rpx]" @click="toDetail(item.id)">
-							<u--image width="334rpx" height="334rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
-								<template #error>
-									<u-icon name="photo" color="#999" size="50"></u-icon>
-								</template>
-							</u--image>
-							<view class="px-[16rpx] flex-1 pt-[10rpx] pb-[20rpx] flex flex-col justify-between">
-                                <view class="text-[#333] leading-[40rpx] text-[28rpx] multi-hidden">{{item.names}}</view>
-                                <view class="text-[24rpx] font-400 leading-[34rpx] mt-[10rpx] text-[#999]">已兑{{item.total_exchange_num}}人</view>
-                                <view class="flex justify-between flex-wrap items-center mt-[16rpx]" >
-                                    <view class="flex">
-                                        <image class="h-[28rpx]" :src="img('addon/shop/exchange/point-icon.png')" mode="heightFix" />
-                                        <text class="text-[var(--price-text-color)] price-font text-[32rpx] ml-[2rpx]">{{ item.point  }}</text>
-                                        <text class="text-[#333] font-400 text-[24rpx] mt-[7rpx]" v-if="item.price&&item.price>0">+</text>
-                                        <text class="text-[var(--price-text-color)] font-400 text-[22rpx] mt-[10rpx]" v-if="item.price&&item.price>0">￥{{ parseFloat(item.price).toFixed(2)  }}</text>
-                                    </view>
-                                    <view class="w-[80rpx] h-[46rpx] text-[28rpx] leading-[46rpx] !text-[#fff] m-0 rounded-full !bg-[var(--primary-color)] font-400 remove-border text-center" shape="circle">兑换</view>
+					<view class="goods-item-style-two flex flex-col bg-[#fff] box-border rounded-[16rpx] overflow-hidden mt-[20rpx]" @click="toDetail(item.id)">
+						<u--image width="100%" height="350rpx" :src="img(item.goods_cover_thumb_mid ? item.goods_cover_thumb_mid : '')" model="aspectFill">
+							<template #error>
+								<image class="w-[100%] h-[350rpx]" :src="img('static/resource/images/diy/shop_default.jpg')" mode="aspectFill"></image>
+							</template>
+						</u--image>
+						<view class="px-[16rpx] flex-1 pt-[10rpx] pb-[20rpx] flex flex-col justify-between">
+                            <view class="text-[#333] leading-[40rpx] text-[28rpx] multi-hidden">{{item.names}}</view>
+                            <view class="text-[24rpx] font-400 leading-[34rpx] mt-[10rpx] text-[#999]">已兑{{item.total_exchange_num}}人</view>
+                            <view class="flex justify-between flex-wrap items-center mt-[16rpx]" >
+                                <view class="flex items-baseline">
+                                    <image class="h-[28rpx] self-center" :src="img('addon/shop/exchange/point-icon.png')" mode="heightFix" />
+                                    <text class="text-[var(--price-text-color)] price-font text-[32rpx] ml-[2rpx]">{{ item.point  }}</text>
+                                    <text class="text-[#333] font-400 text-[24rpx]" v-if="item.price&&item.price>0">+</text>
+                                    <text class="text-[var(--price-text-color)] font-400 text-[22rpx]" v-if="item.price&&item.price>0">￥{{ parseFloat(item.price).toFixed(2)  }}</text>
                                 </view>
+                                <view class="w-[80rpx] h-[46rpx] text-[28rpx] leading-[46rpx] !text-[#fff] m-0 rounded-full !bg-[var(--primary-color)] font-400 remove-border text-center" shape="circle">兑换</view>
                             </view>
-						</view>
+                        </view>
+					</view>
 				</template>
 			</view>
-			<view class="mx-[30rpx] mt-[20rpx] bg-[#fff] rounded-[16rpx] noData flex items-center justify-center" v-if="!goodsList.length && loading">
+			<view class="mx-[30rpx] mt-[20rpx]  rounded-[16rpx] noData flex items-center justify-center" v-if="!goodsList.length && loading">
 				<mescroll-empty :option="{tip : '暂无商品'}"></mescroll-empty>
 			</view>
 		</mescroll-body>
@@ -70,19 +69,19 @@ import { getExchangeGoodsList } from '@/addon/shop/api/point';
 import MescrollBody from '@/components/mescroll/mescroll-body/mescroll-body.vue';
 import MescrollEmpty from '@/components/mescroll/mescroll-empty/mescroll-empty.vue';
 import useMescroll from '@/components/mescroll/hooks/useMescroll.js';
-import { onLoad,onShow, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
+import { onShow, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 
-let goodsList = ref<Array<any>>([]);
-let coupon_id = ref<number | string>('');
-let currGoodsCategory = ref<number | string>('');
-let mescrollRef = ref(null);
-let loading = ref<boolean>(false);
-let goods_name = ref("");
-let price = ref("");
-let sale_num = ref("");
-let searchType = ref('total_order_num');
+const goodsList = ref<Array<any>>([]);
+const coupon_id = ref<number | string>('');
+const currGoodsCategory = ref<number | string>('');
+const mescrollRef = ref(null);
+const loading = ref<boolean>(false);
+const goods_name = ref("");
+const price = ref("");
+const sale_num = ref("");
+const searchType = ref('total_order_num');
 interface mescrollStructure {
 	num: number,
 	size: number,
@@ -199,4 +198,7 @@ onMounted(() => {
 	height: calc(100vh - 200rpx - 50px - constant(safe-area-inset-bottom));
 	height: calc(100vh - 200rpx - 50px - env(safe-area-inset-bottom));
  }
+.goods-item-style-two{
+	width: calc(50% - 10rpx);
+}
 </style>
