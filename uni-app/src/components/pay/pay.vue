@@ -25,7 +25,7 @@
 				</view>
 			</scroll-view>
 			<view class="p-[30rpx]">
-				<u-button type="primary" :loading="loading" :text="t('pay.confirmPay')" shape="circle" @click="confirmPay"></u-button>
+                <button class="primary-btn-bg h-[80rpx] rounded-[50rpx] leading-[80rpx] text-[28rpx] text-[#fff]" hover-class="none" :loading="loading" @click="confirmPay">{{t('pay.confirmPay')}}</button>
 			</view>
 		</view>
 	</u-popup>

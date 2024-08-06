@@ -40,9 +40,9 @@
 
 					<template v-for="(item, index) in diyComponent.list">
 
-						<view class="graphic-nav-item" :class="[diyComponent.mode]" :key="item.id" v-if="swiperCondition(index,numItem)" :style="{ width: 100 / diyComponent.rowCount + '%' }">
+						<view :class="[diyComponent.mode]" :key="item.id" v-if="swiperCondition(index,numItem)" :style="{ width: 100 / diyComponent.rowCount + '%' }">
 
-							<view @click="diyStore.toRedirect(item.link)" class="flex flex-col items-center box-border py-2">
+							<view @click="diyStore.toRedirect(item.link)" class="graphic-nav-item flex flex-col items-center box-border py-2">
 
 								<view class="graphic-img relative flex items-center justify-center w-10 h-10"
 									v-if="diyComponent.mode != 'text'"
@@ -72,6 +72,45 @@
 					</template>
 				</swiper-item>
 			</swiper>
+			
+			<scroll-view v-else-if="diyComponent.layout == 'horizontal' && diyComponent.pageCount == 2 && diyComponent.showStyle == 'singleSlide'" :scroll-x="diyComponent.showStyle == 'singleSlide'" :class="['graphic-nav','graphic-nav-' + diyComponent.showStyle]" class="py-[10rpx]">
+				<!-- #ifdef MP -->
+				<view class="uni-scroll-view-content">
+				<!-- #endif -->
+					<view :style="horizontalSingleSlideStyle" class="flex">
+						<view class="graphic-nav-wrap flex flex-wrap" :style="horizontalSingleSlideBoxStyle(numIndex)" v-for="(numItem, numIndex) in Math.ceil(diyComponent.list.length / (diyComponent.pageCount * diyComponent.rowCount))">
+							<template v-for="(item, index) in diyComponent.list">
+						
+								<view v-if="swiperCondition(index,numItem)" @click="diyStore.toRedirect(item.link)" :style="horizontalSingleSlideItemStyle(numIndex)" class="graphic-nav-item flex flex-col items-center box-border py-2">
+									<view class="graphic-img relative flex items-center justify-center w-10 h-10"
+										v-if="diyComponent.mode != 'text'"
+										:style="{ width: diyComponent.imageSize * 2 + 'rpx', height: diyComponent.imageSize * 2 + 'rpx' }">
+										<image v-if="item.imageUrl" :src="img(item.imageUrl)" mode="aspectFill"
+											:style="{ maxWidth: diyComponent.imageSize * 2 + 'rpx', maxHeight: diyComponent.imageSize * 2 + 'rpx', borderRadius: diyComponent.aroundRadius * 2 + 'rpx' }"/>
+										<image v-else :src="img('static/resource/images/diy/figure.png')" mode="aspectFill"
+											   :style="{ maxWidth: diyComponent.imageSize * 2 + 'rpx', maxHeight: diyComponent.imageSize * 2 + 'rpx', borderRadius: diyComponent.aroundRadius * 2 + 'rpx' }"/>
+										<text
+											:class="['tag absolute -top-[10rpx] -right-[24rpx] text-white rounded-[24rpx] rounded-bl-none transform scale-80 py-1 px-2 text-xs']"
+											v-if="item.label.control"
+											:style="{ color: item.label.textColor, backgroundImage: 'linear-gradient(' + item.label.bgColorStart + ',' + item.label.bgColorEnd + ')' }">
+											{{ item.label.text }}
+										</text>
+									</view>
+									<text v-if="diyComponent.mode != 'img'"
+										class="graphic-text w-full text-center truncate leading-normal"
+										:class="{ 'pt-1.5' : diyComponent.mode != 'text' }"
+										:style="{ fontSize: diyComponent.font.size * 2 + 'rpx', fontWeight: diyComponent.font.weight, color: diyComponent.font.color }">
+										{{ item.title }}
+									</text>
+								</view>
+							</template>
+						</view>
+					</view>
+				<!-- #ifdef MP -->
+				</view>
+				<!-- #endif -->
+			
+			</scroll-view>
 
 			<scroll-view v-else :scroll-x="diyComponent.showStyle == 'singleSlide'" :class="['graphic-nav','graphic-nav-' + diyComponent.showStyle]" class=" py-[10rpx]">
 				<!-- #ifdef MP -->
@@ -170,6 +209,48 @@
 
         return style;
     });
+	
+	// 多行，单行滑动样式
+	const horizontalSingleSlideStyle = computed(()=>{
+		let style = {width: ""};
+		let widthStr = 100 / diyComponent.value.rowCount; // 表示每项宽度
+		let itemLen = (parseInt(diyComponent.value.list.length / (diyComponent.value.rowCount*2))*diyComponent.value.rowCount) + (diyComponent.value.list.length%(diyComponent.value.rowCount*2)); // 表示展示几列
+		let marginLen = diyComponent.value.margin.both*4
+		style.width = `calc(${widthStr * itemLen}vw - ${marginLen}rpx)`;
+		return style;
+	})
+	
+	const horizontalSingleSlideBoxStyle = (index: any)=>{
+		let style = {width: ""};
+		let widthStr = 100 / diyComponent.value.rowCount; // 表示每项宽度
+		let marginLen = diyComponent.value.margin.both * 4 / diyComponent.value.rowCount;
+		if(parseInt(diyComponent.value.list.length / (diyComponent.value.rowCount*2)) >= (index+1)){
+			style.width = `calc(${widthStr * diyComponent.value.rowCount}vw - ${marginLen*diyComponent.value.rowCount}rpx)`;
+		}else{
+			let len = diyComponent.value.list.length%(diyComponent.value.rowCount*2);
+			if(len > diyComponent.value.rowCount){ // 满足了一行，但没有满足于一页
+				style.width = `calc(${widthStr * diyComponent.value.rowCount}vw - ${marginLen*diyComponent.value.rowCount}rpx)`;
+			}else{
+				style.width = `calc(${widthStr * len}vw - ${marginLen * len}rpx)`; // 未满足了一行
+			}
+		}
+		return style;
+	}
+
+	const horizontalSingleSlideItemStyle = (index: any)=>{
+		let style = {width: ""};
+		if(parseInt(diyComponent.value.list.length / (diyComponent.value.rowCount*2)) >= (index+1)){
+			style.width = `${100 / diyComponent.value.rowCount}%`;
+		}else{
+			let len = diyComponent.value.list.length%(diyComponent.value.rowCount*2);
+			if(len > diyComponent.value.rowCount){ // 满足了一行，但没有满足于一页
+				style.width = `${100 / diyComponent.value.rowCount}%`;
+			}else{
+				style.width = `${100 / len}%`; // 未满足了一行
+			}
+		}
+		return style;
+	}
 
 	watch(
 		() => props.pullDownRefreshCount,
@@ -187,14 +268,8 @@
 	const swiperCondition = (index, numItem) => {
 		let count = diyComponent.value.pageCount * diyComponent.value.rowCount;
 		let result = true;
-
-		// #ifdef MP-WEIXIN
-		result = index >= [(numItem) * (count)] && index < [(numItem + 1) * (count)];
-		// #endif
-
-		// #ifdef H5
+		
 		result = index >= [(numItem - 1) * (count)] && index < [numItem * (count)];
-		// #endif
 
 		return result;
 	}
@@ -206,7 +281,11 @@
             var height = 0;
             const query = uni.createSelectorQuery().in(instance);
             query.select('.graphic-nav-item').boundingClientRect((data: any) => {
-                height = data.height * diyComponent.value.pageCount;
+				let len = 1;
+				if(diyComponent.value.pageCount == 2){
+					len = (diyComponent.value.list.length / diyComponent.value.rowCount) > 1 ? 2 : 1 ;
+				}
+                height = data.height * len;
                 swiperHeight.value = (height * 2) + 'rpx';
             }).exec();
         }

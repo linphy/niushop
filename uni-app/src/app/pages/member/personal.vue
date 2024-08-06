@@ -2,14 +2,14 @@
     <view class="w-full h-screen bg-page personal-wrap" v-if="info" :style="themeColor()">
         <view class="flex flex-col items-center pt-[30rpx]">
             <!-- #ifdef MP-WEIXIN -->
-            <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar" :plain="true" class="border-0">
-                <u-avatar :src="img(info.headimg)" size="60" leftIcon="none"></u-avatar>
+            <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar" :plain="true" class="border-0" @click="checkWxPrivacy">
+                <u-avatar :src="img(info.headimg)" :default-url="img('static/resource/images/default_headimg.png')" size="60" leftIcon="none"></u-avatar>
                 <view class="text-primary text-sm mt-[10rpx]">{{ t('updateHeadimg') }}</view>
             </button>
             <!-- #endif -->
             <!-- #ifndef MP-WEIXIN -->
             <u-upload @afterRead="afterRead" :maxCount="1">
-                <u-avatar :src="img(info.headimg)" size="60" leftIcon="none"></u-avatar>
+                <u-avatar :src="img(info.headimg)" :default-url="img('static/resource/images/default_headimg.png')" size="60" leftIcon="none"></u-avatar>
                 <view class="text-primary text-sm mt-[10rpx]">{{ t('updateHeadimg') }}</view>
             </u-upload>
             <!-- #endif -->
@@ -23,23 +23,23 @@
                     <template #value>
                         <view v-if="info.mobile" class="mr-[10rpx]">{{ mobileConceal(info.mobile) }}</view>
                         <view v-else @click="redirect({ url: '/app/pages/auth/bind' })">
-                            <u-button type="primary" :plain="true" :text="t('bindMobile')" shape="circle" size="mini"></u-button>
+                            <button class="bg-transparent w-[132rpx] p-[0] rounded-[100rpx] text-[var(--primary-color)] !border-[2rpx] !border-solid border-[var(--primary-color)] text-[20rpx] h-[44rpx] leading-[40rpx]">{{t('bindMobile')}}</button>
                         </view>
                     </template>
                 </u-cell>
-                <u-cell :title="t('birthday')" :is-link="true" :value="info.birthday || t('unknown')" @click="birthdayPicker = true"></u-cell>
+                <u-cell :title="t('birthday')" :is-link="true" :value="formatDate(info.birthday) || t('unknown')" @click="birthdayPicker = true"></u-cell>
             </u-cell-group>
         </view>
 
         <u-modal :show="updateNickname.modal" :closeOnClickOverlay="true" @close="updateNickname.modal = false"
             :show-cancel-button="true"
-            @cancel="updateNickname.modal = false" :title="t('updateNickname')">
+            @cancel="updateNickname.modal = false" :title="t('updateNickname')" confirmColor="var(--primary-color)">
             <view class="w-full mt-[20rpx] border-0 border-b border-gray-300 border-solid py-[20rpx]">
                 <input type="nickname" v-model="updateNickname.value" :placeholder="t('nicknamePlaceholder')" @blur="bindNickname">
             </view>
             <template #confirmButton>
                 <view class="mt-[10rpx]">
-                    <u-button type="primary" :text="t('confirm')" shape="circle" @click="updateNicknameConfirm"></u-button>
+                    <button class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="updateNicknameConfirm">{{t('confirm')}}</button>
                 </view>
             </template>
         </u-modal>
@@ -52,11 +52,15 @@
             :maxDate="new Date().valueOf()" :minDate="0"
             :cancel-text="t('cancel')" @cancel="birthdayPicker = false" @confirm="updateBirthday"></u-datetime-picker>
 
+        <!-- #ifdef MP-WEIXIN -->
+        <!-- 小程序隐私协议 -->
+        <wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
+        <!-- #endif -->
     </view>
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, reactive, watch } from 'vue'
+    import { ref, computed, reactive } from 'vue'
     import { t } from '@/locale'
     import useMemberStore from '@/stores/member'
     import { img, redirect,mobileConceal } from '@/utils/common'
@@ -66,6 +70,14 @@
     const memberStore = useMemberStore()
     const info = computed(() => memberStore.info)
 
+
+    const wxPrivacyPopupRef:any = ref(null)
+
+    // 检测是否同意隐私协议
+    const checkWxPrivacy = ()=>{
+        wxPrivacyPopupRef.value.proactive();
+    }
+
     /**
      * 修改昵称
      */
@@ -73,9 +85,11 @@
         modal: false,
         value: info.nickname || ''
     })
+
     const bindNickname = (e) => {
         updateNickname.value = e.detail.value
     }
+
     const updateNicknameConfirm = () => {
         if (uni.$u.test.isEmpty(updateNickname.value)) { uni.showToast({ title: t('nicknamePlaceholder'), icon: 'none' }); return }
 
@@ -155,13 +169,22 @@
             birthdayPicker.value = false
         })
     }
+	const formatDate=(date:any)=>{
+		return date ?  uni.$u.date(new Date(date), 'yyyy-mm-dd') : ''
+	}
 </script>
 
 <style lang="scss" scoped>
     page {
         background: var(--page-bg-color);
     }
-
+	:deep(.u-upload__wrap ){
+		>view{
+			justify-content: center;
+			align-items: center;
+		}
+		
+	}
     :deep(.u-cell-group__wrapper) {
         .u-cell__body {
             padding-left: 0;

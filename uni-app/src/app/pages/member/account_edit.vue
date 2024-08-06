@@ -1,27 +1,27 @@
 <template>
     <view :style="themeColor()">
         <scroll-view scroll-y="true" class="w-screen h-screen bg-page">
-            <view class="h-[30rpx]"></view>
-            <view class="p-[30rpx] bg-white mx-[32rpx] rounded">
+            <view class="h-[20rpx]"></view>
+            <view class="p-[30rpx] bg-white sidebar-marign rounded">
                 <block v-if="formData.account_type == 'bank'">
                     <view class="text-center text-base font-bold mt-[50rpx]">{{ t('addBankCard') }}</view>
                     <view class="text-center text-sm mt-[10rpx]">{{ t('addBankCardTips') }}</view>
 
                     <view class="mt-[50rpx]">
-                        <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
+                        <u-form labelPosition="left" :model="formData" :label-style="{'font-size':'28rpx'}" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('bankRealname')" prop="realname" :border-bottom="true">
-                                    <u-input v-model.trim="formData.realname" maxlength="30" border="none" clearable :placeholder="t('bankRealnamePlaceholder')"/>
+                                    <u-input v-model.trim="formData.realname" fontSize="28rpx" maxlength="30" border="none" clearable :placeholder="t('bankRealnamePlaceholder')"/>
                                 </u-form-item>
                             </view>
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('bankName')" prop="bank_name" :border-bottom="true">
-                                    <u-input v-model.trim="formData.bank_name" maxlength="30" border="none" clearable :placeholder="t('bankNamePlaceholder')"/>
+                                    <u-input v-model.trim="formData.bank_name" fontSize="28rpx" maxlength="30" border="none" clearable :placeholder="t('bankNamePlaceholder')"/>
                                 </u-form-item>
                             </view>
                             <view class="mt-[10rpx]">
                                 <u-form-item :label="t('bankAccountNo')" prop="account_no" :border-bottom="true">
-                                    <u-input v-model.trim="formData.account_no" maxlength="30" border="none" clearable :placeholder="t('bankAccountNoPlaceholder')"/>
+                                    <u-input v-model.trim="formData.account_no" fontSize="28rpx" maxlength="30" border="none" clearable :placeholder="t('bankAccountNoPlaceholder')"/>
                                 </u-form-item>
                             </view>
                         </u-form>
@@ -49,12 +49,12 @@
                 </block>
 
                 <view class="mt-[100rpx]">
-                    <u-button :text="t('save')" type="primary" shape="circle" :loading="loading" @click="handleSave"></u-button>
+                    <button :loading="loading" class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="handleSave">{{t('save')}}</button>
                 </view>
             </view>
         </scroll-view>
 
-        <u-modal :show="deleteConfirm" :content="t('deleteConfirm')" :confirmText="t('confirm')" :cancelText="t('cancel')" :showCancelButton="true" @confirm="handleDelete" @cancel="deleteConfirm = false"></u-modal>
+        <u-modal :show="deleteConfirm" :content="t('deleteConfirm')" :confirmText="t('confirm')" :cancelText="t('cancel')" :showCancelButton="true" @confirm="handleDelete" @cancel="deleteConfirm = false" confirmColor="var(--primary-color)"></u-modal>
     </view>
 </template>
 
@@ -100,13 +100,13 @@
         }
     })
 
-    onLoad((data) => {
+    onLoad((data: any) => {
         data.type && (formData.account_type = data.type)
         data.mode && (mode.value = data.mode)
         if (data.id) {
             formData.account_id = data.id
 
-            getCashoutAccountInfo({ account_id: data.id }).then((res : responseResult) => {
+            getCashoutAccountInfo({ account_id: data.id }).then((res : any) => {
                 if (res.data) {
                     Object.keys(formData).forEach((key : string) => {
                         if (res.data[key] != undefined) formData[key] = res.data[key]

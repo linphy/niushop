@@ -7,7 +7,7 @@
 			<!-- #endif -->
 			<view v-if="info" class="flex ml-[32rpx] mr-[52rpx]  items-center relative">
 				<!-- 唤起获取微信 -->
-				<u-avatar :src="img(info.headimg)" size="55" leftIcon="none" @click="clickAvatar"></u-avatar>
+				<u-avatar :src="img(info.headimg)" size="55" leftIcon="none" :default-url="img('static/resource/images/default_headimg.png')" @click="clickAvatar"></u-avatar>
 				<view class="ml-[22rpx]">
 					<view class="text-[#222222] flex pr-[50rpx] flex-wrap items-center">
 						<view class="text-[#222222] truncate max-w-[320rpx] font-bold text-lg mr-[16rpx]" :style="{ color : diyComponent.textColor }">{{ info.nickname }}</view>
@@ -21,7 +21,7 @@
 				</view>
 			</view>
 			<view v-else class="flex ml-[32rpx] mr-[52rpx]  items-center relative" @click="toLogin">
-				<u-avatar src="" size="55"></u-avatar>
+				<u-avatar src="" size="55" :default-url="img('static/resource/images/default_headimg.png')" />
 				<view class="ml-[22rpx]">
 					<view class="text-[#222222] font-bold text-lg" :style="{ color : diyComponent.textColor }">
 						{{ t('login') }}/{{ t('register') }}
@@ -58,6 +58,11 @@
 		<!-- #ifdef MP-WEIXIN -->
 		<information-filling ref="infoFill"></information-filling>
 		<!-- #endif -->
+
+		<!-- #ifdef MP-WEIXIN -->
+		<!-- 小程序隐私协议 -->
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -69,9 +74,11 @@
 	import { t } from '@/locale'
 	import { wechatSync } from '@/app/api/system'
 	import useDiyStore from '@/app/stores/diy'
+	import useConfigStore from '@/stores/config'
 
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount','global']);
 
+	const configStore = useConfigStore()
 	const diyStore = useDiyStore();
 
 	const diyComponent = computed(() => {
@@ -144,7 +151,21 @@
 	})
 
 	const toLogin = () => {
-		useLogin().setLoginBack({ url: '/app/pages/member/index' })
+		if(configStore.login.is_username || configStore.login.is_mobile || configStore.login.is_bind_mobile){
+			useLogin().setLoginBack({ url: '/app/pages/member/index' })
+		}else if(configStore.login.is_auth_register){  // 判断是否开启第三方自动注册登录
+           // 第三方平台自动登录
+                // #ifdef MP
+                useLogin().getAuthCode()
+                // #endif
+                // #ifdef H5
+                if (isWeixinBrowser()) {
+                    useLogin().getAuthCode('snsapi_userinfo')
+                }
+                // #endif
+		}else{
+			uni.showToast({ title: '商家未开启注册方式', icon: 'none' })
+		}
 	}
 
 	const infoFill = ref(false)

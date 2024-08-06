@@ -9,7 +9,7 @@
     import { img, isWeixinBrowser } from '@/utils/common'
     import { onLoad } from '@dcloudio/uni-app'
 
-    onLoad((data : AnyObject) => {
+    onLoad((data : any) => {
         if (!isWeixinBrowser() && data.alipay) {
             uni.setStorageSync('paymenting', { trade_type: data.trade_type, trade_id: data.trade_id })
             location.href = data.alipay

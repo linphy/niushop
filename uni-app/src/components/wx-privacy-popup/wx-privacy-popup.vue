@@ -23,7 +23,7 @@
 
     const agree = ref(false)
     const showPop = ref(false)
-    const privacyAuthorization = ref(null)
+    const privacyAuthorization: any = ref(null)
 
     const privacyResolves = new Set()
     const closeOtherPagePopUpHooks = new Set()
@@ -33,9 +33,9 @@
     const emits = defineEmits(['agree','disagree'])
 
     // 监听何时需要提示用户阅读隐私政策
-    const init = ()=>{
+    const init = ()=> {
         if (wx.onNeedPrivacyAuthorization) {
-            wx.onNeedPrivacyAuthorization((resolve) => {
+            wx.onNeedPrivacyAuthorization((resolve: any) => {
                 if (typeof privacyAuthorization.value === 'function') {
                     privacyAuthorization.value(resolve)
                 }
@@ -45,7 +45,7 @@
 
     //初始化监听程序
     const curPageShow = ()=> {
-        privacyAuthorization.value = resolve => {
+        privacyAuthorization.value = (resolve: any) => {
             privacyResolves.add(resolve)
             //打开弹窗
             popUp()
@@ -56,7 +56,7 @@
     }
 
     onMounted(()=>{
-        //查询微信侧记录的用户是否有待同意的隐私政策信息
+        // 查询微信侧记录的用户是否有待同意的隐私政策信息
         try {
             wx.getPrivacySetting({
                 success(res:any) {
@@ -72,7 +72,7 @@
         }
     });
 
-    //打开隐私协议
+    // 打开隐私协议
     const openPrivacyContract = ()=> {
         wx.openPrivacyContract({
             success(res) {
@@ -95,15 +95,15 @@
 
     // 不同意
     const handleDisagree = ()=> {
-        privacyResolves.forEach(resolve => {
+        privacyResolves.forEach((resolve: any) => {
             resolve({
                 event: 'disagree',
             })
         })
         privacyResolves.clear()
-        //关闭弹窗
+        // 关闭弹窗
         disPopUp()
-        //退出小程序
+        // 退出小程序
         uni.showModal({
             content: '未同意隐私协议，无法使用相关功能',
             confirmColor: useConfigStore().themeColor['--primary-color'],
@@ -115,7 +115,7 @@
 
     // 同意并继续
     const handleAgree = ()=> {
-        privacyResolves.forEach(resolve => {
+        privacyResolves.forEach((resolve: any) => {
             resolve({
                 event: 'agree',
                 buttonId: 'agree-btn'
@@ -127,24 +127,25 @@
         emits('agree')
     }
 
-    //打开弹窗
+    // 打开弹窗
     const popUp = ()=> {
         if (showPop.value === false) {
             showPop.value = true
         }
     }
 
-    //关闭弹窗
+    // 关闭弹窗
     const disPopUp = ()=> {
         if (showPop.value === true) {
             showPop.value = false
         }
     }
 
+    // 主动打开协议弹出框（如果已经同意，则不会弹出）
     const proactive =()=> {
         if (wx.getPrivacySetting) {
             wx.getPrivacySetting({
-                success: (res) => {
+                success: (res: any) => {
                     if (res.needAuthorization) {
                         popUp()
                         // 额外逻辑：当前页面的隐私弹窗弹起的时候，关掉其他页面的隐私弹窗
@@ -158,6 +159,10 @@
             emits('agree')
         }
     }
+
+    defineExpose({
+	    proactive
+    })
 </script>
 
 <style lang="scss" scoped>

@@ -13,7 +13,7 @@
                 <u-button type="primary" :text="payInfo.status == 2 ? t('complete') : t('close')" :plain="true" @click="complete"></u-button>
             </view>
         </view>
-        <u-modal :show="loading" :showCancelButton="true" :confirmText="t('pay.completePay')" :cancelText="t('pay.incompletePay')" @cancel="complete">
+        <u-modal :show="loading" :showCancelButton="true" :confirmText="t('pay.completePay')" :cancelText="t('pay.incompletePay')" @cancel="complete" confirmColor="var(--primary-color)">
             <view class="py-[20rpx]">
                 <u-loading-icon :text="t('pay.getting')" textSize="16" mode="circle" :vertical="true"></u-loading-icon>
             </view>
@@ -61,8 +61,6 @@
                     title: payInfo.value.status == 2 ? t('pay.paySuccess') : t('pay.payFail')
                 })
             }
-        }).catch(() => {
-
         })
     }
 

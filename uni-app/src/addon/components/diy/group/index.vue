@@ -1,11 +1,11 @@
 <template>
     <view class="diy-group" id="componentList">
-		<top-tabbar :scrollTop="topTabbarScrollBool" v-if="data.global && Object.keys(data.global).length && data.global.topStatusBar && data.global.topStatusBar.isShow" ref="topTabbarRef" :data="data.global" />
-        <view v-for="(component, index) in data.value" :key="component.id" @click="diyStore.changeCurrentIndex(index, component)" :class="getComponentClass(index,component)" :style="component.pageStyle">
+        <top-tabbar v-if="data.global && Object.keys(data.global).length && data.global.topStatusBar && data.global.topStatusBar.isShow" :scrollBool="diyGroup.componentsScrollBool.TopTabbar"  ref="topTabbarRef" :data="data.global" />
+        <view v-for="(component, index) in data.value" :key="component.id" @click="diyStore.changeCurrentIndex(index, component)" :class="diyGroup.getComponentClass(index,component)" :style="component.pageStyle">
             <view class="relative" :style="{ marginTop : component.margin.top < 0 ? (component.margin.top * 2) + 'rpx' : '0' }">
 
                 <!-- 装修模式下，设置负上边距后超出的内容，禁止选中设置 -->
-                <view v-if="isShowPlaceHolder(index,component)" class="absolute w-full z-1" :style="{ height : (component.margin.top * 2 * -1) + 'rpx' }" @click.stop="placeholderEvent"></view>
+                <view v-if="diyGroup.isShowPlaceHolder(index,component)" class="absolute w-full z-1" :style="{ height : (component.margin.top * 2 * -1) + 'rpx' }" @click.stop="diyGroup.placeholderEvent"></view>
 
                 <template v-if="component.componentName == 'GraphicNav'">
                     <diy-graphic-nav :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount" />
@@ -47,180 +47,47 @@
                     <diy-float-btn :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount"/>
                 </template>
                 <template v-if="component.componentName == 'CarouselSearch'">
-                    <diy-carousel-search ref="carouselSearchRef" :scrollTop="carouselSearchScrollBool" :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount" />
+                    <diy-carousel-search :scrollBool="diyGroup.componentsScrollBool.CarouselSearch" :component="component" :global="data.global" :index="index" :pullDownRefreshCount="props.pullDownRefreshCount" />
                 </template>
             </view>
         </view>
         <template v-if="diyStore.mode == '' && data.global.bottomTabBarSwitch">
             <view class="pt-[20rpx]"></view>
-            <tabbar :addon="tabbarAddonName" />
+            <tabbar />
         </template>
     </view>
 </template>
 <script lang="ts" setup>
-   import topTabbar from '@/components/top-tabbar/top-tabbar.vue'
+    import topTabbar from '@/components/top-tabbar/top-tabbar.vue'
 
-   import useDiyStore from '@/app/stores/diy';
-   import { ref, onMounted, nextTick, computed, watch  } from 'vue';
-   import { useRouter } from 'vue-router';
-   import { getLocation } from '@/utils/common';
-   import Sortable from 'sortablejs';
-   import { range } from 'lodash-es';
-   import { onPageScroll } from '@dcloudio/uni-app'
-   import useConfigStore from '@/stores/config'
+    import { useDiyGroup } from './useDiyGroup'
+    import useDiyStore from '@/app/stores/diy';
+    import { ref } from 'vue';
 
-   const props = defineProps(['data','pullDownRefreshCount']);
-   const diyStore = useDiyStore();
-   const router = useRouter();
-   const data = computed(()=>{
-		if (diyStore.mode == 'decorate') {
-		   return diyStore;
-		} else {
-		   return props.data;
-		}
-   })
-   
-   let carouselSearchRef = ref(null)
-   let carouselSearchScrollValue = 0
-   let topTabbarRef = ref(null)
-   let topTabbarScrollValue = 0
-   
-   // 兼容轮播搜索组件-切换分类时，导致个人中心白屏 - start
-   // #ifdef H5
-	watch(() => router.currentRoute.value, (newRoute) => {
-		if(newRoute.path != "/addon/shop/pages/index"){
-			diyStore.topFixedStatus = 'home'
-		}
-	});
+    const props = defineProps(['data', 'pullDownRefreshCount']);
 
-	// #endif
+    const topTabbarRef = ref(null);
+    const diyStore = useDiyStore();
+    const diyGroup = useDiyGroup({
+        ...props,
+        getFormRef() {
+            return {
+                topTabbarRef: topTabbarRef.value
+            }
+        }
+    });
 
-	// #ifdef MP
-	wx.onAppRoute(function(res) {
-		if(res.path != "addon/shop/pages/index"){
-			diyStore.topFixedStatus = 'home'
-		}
-	});
-	// #endif
-	// 兼容轮播搜索组件-切换分类时，导致个人中心白屏 - end
+    const data = ref(diyGroup.data)
 
-   const tabbarAddonName = computed(() => {
-       return useConfigStore().addon;
-   })
+    // 监听页面加载完成
+    diyGroup.onMounted()
 
-   const positionFixed = ref(['fixed', 'top_fixed','right_fixed','bottom_fixed','left_fixed']);
+    // 监听滚动事件
+    diyGroup.onPageScroll()
 
-   const getComponentClass = (index:any,component:any) => {
-       let obj: any = {
-           relative: true,
-           selected: diyStore.currentIndex == index,
-           decorate: diyStore.mode == 'decorate'
-       }
-       obj['top-fixed-' + diyStore.topFixedStatus] = true;
-
-       if (component.position && positionFixed.value.indexOf(component.position) != -1) {
-           //  找出置顶组件，设置禁止拖动
-           obj['ignore-draggable-element'] = true;
-       } else {
-           obj['draggable-element'] = true;
-       }
-       return obj;
-   }
-	
-   onMounted(() => {
-       // #ifdef H5
-       if (diyStore.mode == 'decorate') {
-           var el = document.getElementById('componentList');
-           const sortable = Sortable.create(el, {
-               draggable: '.draggable-element',
-               animation: 200,
-               // 结束拖拽
-               onEnd: event => {
-                   let temp = diyStore.value[event.oldIndex!];
-                   diyStore.value.splice(event.oldIndex!, 1);
-                   diyStore.value.splice(event.newIndex!, 0, temp);
-
-                   nextTick(() => {
-                       sortable.sort(range(diyStore.value.length).map(value => {
-                           return value.toString();
-                       }));
-
-                       diyStore.postMessage(event.newIndex, diyStore.value[event.newIndex]);
-                   });
-               }
-           });
-       }
-       // #endif
-
-       nextTick(() => {
-           setTimeout(() => {
-               if (data.value.global && data.value.global.topStatusBar && data.value.global.topStatusBar.style == 'style-4') {
-                   // 第一次获取经纬度
-                   getLocation()
-               }
-			   // 获取轮播搜索的滚动值
-			   carouselSearchScrollValue = carouselSearchRef.value ? carouselSearchRef.value[0].scrollValue : 0;
-			   // 获取top-tabbar的滚动值
-			   topTabbarScrollValue = topTabbarRef.value ? topTabbarRef.value.scrollValue : 0;
-           }, 500)
-       });
-  
-   });
-
-   // 是否显示占位区域，用于禁止选中负上边距的内容
-   const isShowPlaceHolder = (index: any, component: any) => {
-       // #ifdef H5
-       if (diyStore.mode == 'decorate') {
-           let el: any = document.getElementById('componentList');
-           if (el && el.children.length && el.children[index]) {
-               let height = el.children[index].offsetHeight;
-               let top = 0;
-               if (component.margin.top < 0) {
-                   top = component.margin.top * 2 * -1;
-                   // 若负上边距大于组件的高度，则允许选中进行装修
-                   if (top > height) {
-                       return false;
-                   }
-               }
-           }
-           return true;
-       }
-       // #endif
-       return false;
-   }
-
-   // 空函数，禁止选中
-   const placeholderEvent = ()=>{}
-
-   // 页面onShow调用时，也会触发改方法
-   const refresh = ()=>{
-	   nextTick(()=>{
-			topTabbarRef.value?.refresh();
-	   })
-   }
-
-   // 当页面滚动值超出轮播搜索滚动值时，carouselSearchScrollBool会变成true,触发相对应变化
-   let carouselSearchScrollBool = ref(false)
-   // 当页面滚动值超出轮播搜索滚动值时，top-tabbar会变成true,触发相对应变化
-   let topTabbarScrollBool = ref(false)
-   onPageScroll((e)=>{
-	   // 轮播搜索
-		if(e.scrollTop > carouselSearchScrollValue){
-			carouselSearchScrollBool.value = true
-		}else{
-			carouselSearchScrollBool.value = false
-		}
-		// top-tabbar
-		if(e.scrollTop > topTabbarScrollValue){
-			topTabbarScrollBool.value = true
-		}else{
-			topTabbarScrollBool.value = false
-		}
-   })
-
-   defineExpose({
-		refresh
-   })
+    defineExpose({
+        refresh: diyGroup.refresh
+    })
 </script>
 <style lang="scss" scoped>
    @import './index.scss';

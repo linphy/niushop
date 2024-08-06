@@ -218,6 +218,12 @@
 			"needLogin": true
 		},
 		{
+			"path": "app/pages/member/contact",
+			"style": {
+				"navigationBarTitleText": "%pages.member.contact%"
+			}
+		},
+		{
 			"path": "app/pages/pay/browser",
 			"style": {
 				"navigationBarTitleText": "%pages.pay.browser%"

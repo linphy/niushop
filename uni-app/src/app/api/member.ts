@@ -10,7 +10,12 @@ export function getMemberInfo() {
 export function getPointList(data : AnyObject) {
 	return request.get('member/account/point', data)
 }
-
+/**
+ * 获取积分来源用途
+ */
+export function getPointType(account_type : string) {
+	return request.get(`member/account/fromtype/${account_type}`)
+}
 /**
  * 获取不可提现余额流水
  */

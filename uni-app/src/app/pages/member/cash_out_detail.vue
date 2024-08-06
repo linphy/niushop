@@ -56,9 +56,9 @@ import { t } from '@/locale'
 import { redirect, img } from '@/utils/common';
 import { getCashOutDetail } from '@/app/api/member';
 
-let cashOutInfo = ref({});
-let loading = ref<boolean>(true);
-onLoad((option) => {
+const cashOutInfo = ref({});
+const loading = ref<boolean>(true);
+onLoad((option: any) => {
 	let id = option.id || "";
 	getCashoutAccountListFn(id)
 })

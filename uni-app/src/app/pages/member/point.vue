@@ -4,7 +4,7 @@
 		<view class="w-full bg-[#F6F6F6]">
 			<view class="pb-[210rpx] relative" :style="headerStyle">
 				<!-- #ifdef MP-WEIXIN -->
-					<top-tabbar :data="param" titleColor="#fff" class="top-header"/>
+					<top-tabbar :data="param" :scrollBool="topTabarObj.getScrollBool()" class="top-header"/>
 				<!-- #endif -->
 				<view class="text-[70rpx] leading-[98rpx] text-[#fff] pl-[60rpx] font-600 pt-[77rpx]">{{pointInfo.point||0}}</view>
 				<view class="flex items-center pl-[60rpx]">
@@ -12,16 +12,16 @@
 					<view class="text-[26rpx] leading-[36rpx] text-[#fff] ml-[10rpx]">我的积分</view>
 				</view>
 				<view class="flex items-center absolute right-0 px-[14rpx] bg-color rounded-l-[35rpx]  text-[#fff] text-[24rpx] h-[50rpx] z-10" :style="{top: topStyle}" @click="toLink('/app/pages/member/point_detail')">
-				     <text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[28rpx] text-[#fff] mr-[4rpx]"></text>
+				     <text class="nc-iconfont nc-icon-jifenduihuanV6xx1 text-[28rpx] text-[#fff] mr-[10rpx]"></text>
 				    <text class="text-[24rpx]">积分明细</text>
 				</view>
 			</view>
-			<view class="mx-[30rpx] flex flex-col mt-[-178rpx] relative">
+			<view class="sidebar-marign flex flex-col mt-[-178rpx] relative">
 				<view class="w-[322rpx] h-[80rpx] leading-[80rpx] text-[26rpx] text-[#333] font-bold box-border pl-[30rpx]" 
 				:style="{backgroundImage: 'url(' + img('static/resource/images/member/point/top_bg.png') + ') ',backgroundSize: '100% 100%',backgroundRepeat: 'no-repeat'}">
 					积分详情
 				</view>
-				<view class="flex items-center w-[690rpx] px-[30rpx] rounded-[16rpx] !rounded-tl-none bg-[#fff] h-[173rpx] box-border">
+				<view class="flex items-center px-[30rpx] rounded-[16rpx] !rounded-tl-none bg-[#fff] h-[173rpx] box-border">
 					<view class="w-[196rpx] flex-shrink-0 text-center">
 						<view class="text-[#333] text-[42rpx] leading-[59rpx] font-bold">{{pointInfo.point_get||0}}</view>
 						<view class="mt-[8rpx] text-[#666] text-[26rpx] leading-[36rpx] font-400">累计积分</view>
@@ -39,7 +39,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="mt-[20rpx] mx-[30rpx] p-[30rpx] pb-[70rpx] box-border rounded-[16rpx] bg-[#fff]">
+		<view class="mt-[20rpx] sidebar-marign p-[30rpx] pb-[70rpx] box-border rounded-[16rpx] bg-[#fff]">
 			<view class="text-[32rpx] leading-[45rpx] font-bold">热门活动</view>
 			<view class="mt-[50rpx] flex justify-between">
 				<view class="w-[200rpx] h-[253rpx] box-border pt-[69rpx] relative text-center" 
@@ -116,18 +116,15 @@
 import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { t } from '@/locale'
-import { redirect, img } from '@/utils/common';
+import { redirect, img,pxToRpx } from '@/utils/common';
 import { getMemberAccountPointcount,getTaskPoint } from '@/app/api/member';
+import { topTabar } from '@/utils/topTabbar'
 
-let param = ref({
-	title:'我的积分',
-	topStatusBar: {
-		style: 'style-1',
-        isTransparent: true,
-		bgColor: 'transparent',
-		textColor: '#fff'
-	}
-})
+/********* 自定义头部 - start ***********/
+const topTabarObj = topTabar()
+let param = topTabarObj.setTopTabbarParam({title:'我的积分'})
+/********* 自定义头部 - end ***********/
+
 // 获取系统状态栏的高度
 let menuButtonInfo:any = {};
 // 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
@@ -148,11 +145,7 @@ const topStyle = computed(() => {
 	style = Object.keys(menuButtonInfo).length?(pxToRpx(Number(menuButtonInfo.height)) + pxToRpx(menuButtonInfo.top) +  38) + 'rpx;':'38rpx'
 	return style
 })
-// px转rpx
-	const pxToRpx=(px)=> {
-	  const screenWidth = uni.getSystemInfoSync().screenWidth
-	  return (750 * Number.parseInt(px)) / screenWidth
-	}
+
 //个人积分信息
 const pointInfo = ref({});
 //积分任务

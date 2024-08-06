@@ -1,18 +1,18 @@
 <template>
     <view :style="themeColor()">
-		<scroll-view scroll-y="true" class="w-screen h-screen bg-page" v-if="!pageLoading && config.is_open == 1">
-			<view class="px-[30rpx] pt-[20rpx]">
-				<view class="p-[20rpx] bg-white rounded-[16rpx]">
+		<scroll-view :scroll-y="true" class="w-screen h-screen bg-page" v-if="!pageLoading && config.is_open == 1">
+			<view class="sidebar-marign pt-[20rpx]">
+				<view class="card-template">
 					<view class="font-500 text-[32rpx] text-[#333] leading-[44rpx]">{{t('cashOutMoneyTip')}}</view>
-					<view class="flex pt-[30rpx] pb-[8rpx] items-center border-0 border-b-[2rpx] border-solid border-gray-200">
-						<text class="text-[54rpx] font-bold leading-[76rpx] ">{{ t('currency') }}</text>
-						<input type="digit" class="h-[76rpx] leading-[76rpx] pl-[10rpx] flex-1 font-bold text-[54rpx] bg-[#fff]" v-model="applyData.apply_money" maxlength="7" :placeholder="applyData.apply_money?'':(t('minWithdrawal') + t('currency') + moneyFormat(config.min))" placeholder-class="apply-price"  :adjust-position="false"/>
+					<view class="flex pt-[30rpx] pb-[8rpx] items-center border-0 border-b-[2rpx] border-solid border-[#F1F2F5]">
+						<text class="text-[54rpx] font-500 leading-[76rpx] ">{{ t('currency') }}</text>
+						<input type="digit" class="h-[76rpx] leading-[76rpx] pl-[10rpx] flex-1 font-bold text-[54rpx] bg-[#fff]" v-model="applyData.apply_money" maxlength="7" :placeholder="applyData.apply_money?'':(t('minWithdrawal') + t('currency') + moneyFormat(config.min))" placeholder-class="apply-price" :adjust-position="false"/>
 						<image @click="clearMoney" v-if="applyData.apply_money"
 							:src="img('static/resource/images/member/apply_withdrawal/close.png')" class="w-[40rpx] h-[40rpx]"
 							mode="widthFix" />
 					</view>
-					<view class="pt-[18rpx] flex items-center justify-between mb-[20rpx]">
-						<view class="text-[26rpx] text-[#666] leading-[36rpx]">
+					<view class="pt-[20rpx] flex items-center justify-between">
+						<view class="text-[26rpx] text-[#626779] leading-[36rpx]">
                             <text>{{t('money')}}：{{ t('currency') }}{{ moneyFormat(cashOutMoney) }}</text>
                             <text>，{{t('commissionTo')}}{{ config.rate + '%' }}</text>
                         </view>
@@ -20,10 +20,10 @@
 					</view>
 				</view>
 
-				<view class="px-[20rpx] pt-[20rpx] pb-[30rpx] bg-white mt-[20rpx] rounded-[16rpx]">
-                    <view class="font-500 text-[32rpx] text-[#333] leading-[44rpx] mb-[20rpx]">到账方式</view>
+				<view class="mt-[20rpx] card-template">
+                    <view class="font-500 text-[32rpx] text-[#333] leading-[44rpx] mb-[30rpx]">到账方式</view>
 					<!-- 提现到微信 -->
-					<view class="p-[20rpx] mb-[20rpx] flex items-center rounded-[16rpx] border-[2rpx] border-solid border-[#eee]" v-if="config.transfer_type.includes('wechatpay') && memberStore.info && (memberStore.info.wx_openid || memberStore.info.weapp_openid)"  @click="applyData.transfer_type = 'wechatpay'" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'wechatpay'}">
+					<view class="p-[20rpx] mb-[20rpx] flex items-center rounded-[16rpx] border-[1rpx] border-solid border-[#eee]" v-if="config.transfer_type.includes('wechatpay') && memberStore.info && (memberStore.info.wx_openid || memberStore.info.weapp_openid)"  @click="applyData.transfer_type = 'wechatpay'" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'wechatpay'}">
 						<view>
                             <image class="h-[60rpx] w-[60rpx]" :src="img('static/resource/images/member/apply_withdrawal/wechat.png')" mode="widthFix" />
                         </view>
@@ -34,7 +34,7 @@
 					</view>
 
 					<!-- 提现到支付宝 -->
-					<view class="p-[20rpx] mb-[20rpx] flex items-center rounded-[16rpx] border-[2rpx] border-solid border-[#eee]"  v-if="config.transfer_type.includes('alipay')" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'alipay' && alipayAccountInfo}" >
+					<view class="p-[20rpx] mb-[20rpx] flex items-center rounded-[16rpx] border-[1rpx] border-solid border-[#eee]"  v-if="config.transfer_type.includes('alipay')" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'alipay' && alipayAccountInfo}" >
 						<view  @click="transferAlipay" >
                             <image class="h-[60rpx] w-[60rpx] align-middle" :src="img('static/resource/images/member/apply_withdrawal/alipay-icon.png')" mode="widthFix" />
                         </view>
@@ -55,7 +55,7 @@
 					</view>
 
 					<!-- 提现到银行卡 -->
-					<view class="p-[20rpx] flex items-center rounded-[16rpx] border-[2rpx] border-solid border-[#eee]" v-if="config.transfer_type.includes('bank')" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'bank' && bankAccountInfo}">
+					<view class="p-[20rpx] flex items-center rounded-[16rpx] border-[1rpx] border-solid border-[#eee]" v-if="config.transfer_type.includes('bank')" :class="{'border-[#089C98] bg-[#F6FFFF]': applyData.transfer_type == 'bank' && bankAccountInfo}">
 						<view @click="transferBank" >
                             <image class="h-[42rpx] w-[60rpx] align-middle" :src="img('static/resource/images/member/apply_withdrawal/bank-icon.png')" mode="widthFix" />
 						</view>
@@ -72,23 +72,23 @@
 							</view>
 						</view>
 						<view class="flex items-center">
-							<u-button :plain="true" :text="t('toAdd')" type="primary" shape="circle" :custom-style="{height: '56rpx'}" v-if="!bankAccountInfo && !bankLoading" @click="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })"></u-button>
-							<text  v-else class="nc-iconfont nc-icon-youV6xx text-[40rpx] text-[#999] p-[10rpx]" @click.stop="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })"></text>
+							<button hover-class="none" class="h-[54rpx] leading-[50rpx] rounded-full p-[0] w-[100rpx] text-[var(--primary-color)] bg-transparent border-[2rpx] border-solid border-[var(--primary-color)] text-[28rpx]" v-if="!bankAccountInfo && !bankLoading" @click="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })">{{t('toAdd')}}</button>
+							<text v-else class="nc-iconfont nc-icon-youV6xx text-[40rpx] text-[#999] p-[10rpx]" @click.stop="redirect({ url: '/app/pages/member/account', param: { type: 'bank', mode: 'select' }, mode: 'redirectTo' })"></text>
 						</view>
 					</view>
 				</view>
-				<view class="mt-[100rpx]">
-					<u-button type="primary" shape="circle" :text="t('cashOutNow')" class="mb-[40rpx]" :disabled="applyData.apply_money == '' || applyData.apply_money == 0" :loading="loading" @click="cashOut" :customStyle="{background: 'linear-gradient( 94deg, #FB7939 0%, #FE120E 99%), #EF000C',fontSize:'32rpx'}"></u-button>
-				</view>
-
-				<view class="mt-[40rpx] text-center text-[26rpx] text-primary" @click.stop="redirect({ url: '/app/pages/member/cash_out'})">
-					{{t('cashOutList')}}
+				
+				<view class="fixed bottom-[60rpx] left-0 right-0 px-[30rpx]">
+					<button class="mt-[100rpx] h-[80rpx] !text-[#fff] leading-[80rpx] primary-btn-bg rounded-[50rpx] text-[32rpx]" :disabled="applyData.apply_money == '' || applyData.apply_money == 0" :loading="loading" @click="cashOut">{{t('cashOutNow')}}</button>
+					<view class="mt-[20rpx] text-center text-[26rpx] text-primary" @click.stop="redirect({ url: '/app/pages/member/cash_out'})">
+						{{t('cashOutList')}}
+					</view>
 				</view>
 			</view>
 		</scroll-view>
-		<block v-if="config.is_open == 0 && !pageLoading">
-			<u-empty :text="t('isOpenApply')" :icon="img('static/resource/images/empty.png')"/>
-		</block>
+		<view class="h-[100vh] w-[100vw] flex justify-center items-center" v-if="config.is_open == 0 && !pageLoading">
+			<u-empty :text="t('isOpenApply')" width="320rpx" height="244rpx" :icon="img('static/resource/images/empty.png')"/>
+		</view>
 		<u-loading-page :loading="pageLoading" bg-color="#e8e8e8" loading-text=""></u-loading-page>
     </view>
 </template>
@@ -156,7 +156,18 @@
                 title: t('abnormalOperation'),
                 icon: 'none',
                 success() {
-                    setTimeout(() => { uni.navigateBack({ delta: 1}) }, 1500)
+                    setTimeout(() => { 
+                        if(getCurrentPages().length > 1){
+                            uni.navigateBack({
+                                delta: 1
+                            });
+                        }else{
+                            redirect({
+                                url: '/app/pages/member/index',
+                                mode: 'reLaunch'
+                            });
+                        }
+                    }, 1500)
                 }
             })
             return
@@ -301,7 +312,7 @@
 
 <style lang="scss" scoped>
 :deep(.apply-price){
-    color:#999;
+    color: #8288A2;
     font-size: 26rpx;
     font-weight: normal;
     line-height: 76rpx;

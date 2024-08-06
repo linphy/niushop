@@ -1,7 +1,7 @@
 <template>
-    <view :class="{'text-primary': sendSms.canGetCode.value, 'text-gray-300': !sendSms.canGetCode.value}" @click="handleSend">{{ sendSms.tips.value }}</view>
+    <view class="text-[26rpx]"  :class="{'text-primary': sendSms.canGetCode.value, 'text-gray-300': !sendSms.canGetCode.value}" @click="handleSend">{{ sendSms.tips.value }}</view>
     <u-code :seconds="sendSms.seconds" :change-text="sendSms.changeText" ref="smsRef" @change="sendSms.codeChange"></u-code>
-    <u-modal :show="show" :title="t('captchaTitle')" :confirm-text="t('confirm')" :cancel-text="t('cancel')" :show-cancel-button="true" @cancel="show = false" @confirm="handleConfirm">
+    <u-modal :show="show" :title="t('captchaTitle')" :confirm-text="t('confirm')" :cancel-text="t('cancel')" :show-cancel-button="true" @cancel="show = false" @confirm="handleConfirm" confirmColor="var(--primary-color)">
         <view class="flex mt-[20rpx]">
             <u-input :placeholder="t('captchaPlaceholder')" border="surround" v-model="formData.captcha_code"></u-input>
             <image :src="captcha.image.value" class="h-[76rpx] ml-[20rpx]" mode="heightFix" @click="captcha.refresh()"></image>
@@ -38,7 +38,7 @@ const smsRef = ref(null)
 const sendSms = useSendSms(smsRef)
 const show = ref(false)
 
-const formData = reactive<requestMobileParam>({
+const formData:any = reactive({
     mobile: '',
     captcha_code: '',
     captcha_key: '',

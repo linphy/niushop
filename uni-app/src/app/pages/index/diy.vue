@@ -23,7 +23,7 @@
 
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		<!-- #endif -->
 
 	</view>
@@ -51,6 +51,9 @@
         setShare(share);
         diyGroupRef.value?.refresh();
     });
+	
+	// 监听页面卸载
+	diy.onUnload();
 
     // 监听下拉刷新事件
     diy.onPullDownRefresh()

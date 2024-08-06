@@ -1,5 +1,5 @@
 <template>
-    <view class="w-screen h-screen flex flex-col" :style="themeColor()" v-show="type">
+    <view class="w-screen h-screen flex flex-col" :style="themeColor()" >
         <view class="flex-1">
             <!-- #ifdef H5 -->
             <view class="h-[100rpx]"></view>
@@ -18,31 +18,31 @@
                     <view v-show="type == 'username'">
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="username" :border-bottom="true">
-                                <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
+                                <u-input v-model="formData.username" border="none" clearable :placeholder="t('usernamePlaceholder')" class="!bg-transparent" :disabled="real_name_input" fontSize="26rpx" placeholderClass="!text-[#8288A2]"/>
                             </u-form-item>
                         </view>
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="password" :border-bottom="true">
-                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
+                                <u-input v-model="formData.password" border="none" type="password" clearable :placeholder="t('passwordPlaceholder')" class="!bg-transparent" :disabled="real_name_input" fontSize="26rpx" placeholderClass="!text-[#8288A2]"/>
                             </u-form-item>
                         </view>
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="confirm_password" :border-bottom="true">
-                                <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
+                                <u-input v-model="formData.confirm_password" border="none" type="password" clearable :placeholder="t('confirmPasswordPlaceholder')" class="!bg-transparent" :disabled="real_name_input" fontSize="26rpx" placeholderClass="!text-[#8288A2]"/>
                             </u-form-item>
                         </view>
                     </view>
                     <view v-show="type == 'mobile' || configStore.login.is_bind_mobile">
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="mobile" :border-bottom="true">
-                                <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')" class="!bg-transparent" :disabled="real_name_input"/>
+                                <u-input v-model="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')" class="!bg-transparent" :disabled="real_name_input" fontSize="26rpx" placeholderClass="!text-[#8288A2]"/>
                             </u-form-item>
                         </view>
                         <view class="mt-[30rpx]">
-                            <u-form-item label="" prop="code" :border-bottom="true">
-                                <u-input v-model="formData.mobile_code" border="none" clearable :placeholder="t('codePlaceholder')" class="!bg-transparent" :disabled="real_name_input">
+                            <u-form-item label="" prop="mobile_code" :border-bottom="true">
+                                <u-input v-model="formData.mobile_code" border="none" clearable :placeholder="t('codePlaceholder')" class="!bg-transparent" :disabled="real_name_input" fontSize="26rpx" placeholderClass="!text-[#8288A2]">
                                     <template #suffix>
-                                        <sms-code :mobile="formData.mobile" type="register" v-model="formData.mobile_key"></sms-code>
+                                        <sms-code v-show="type" :mobile="formData.mobile" type="register" v-model="formData.mobile_key"></sms-code>
                                     </template>
                                 </u-input>
                             </u-form-item>
@@ -51,7 +51,7 @@
                     <view v-show="type == 'username'">
                         <view class="mt-[30rpx]">
                             <u-form-item label="" prop="captcha_code" :border-bottom="true">
-                                <u-input v-model="formData.captcha_code" border="none" clearable :placeholder="t('captchaPlaceholder')" class="!bg-transparent" :disabled="real_name_input">
+                                <u-input v-model="formData.captcha_code" border="none" clearable :placeholder="t('captchaPlaceholder')" class="!bg-transparent" :disabled="real_name_input" fontSize="26rpx" placeholderClass="!text-[#8288A2]">
                                     <template #suffix>
                                         <image :src="captcha.image.value" class="h-[48rpx] w-[60rpx] ml-[20rpx]" mode="heightFix" @click="captcha.refresh()"></image>
                                     </template>
@@ -59,12 +59,11 @@
                             </u-form-item>
                         </view>
                     </view>
-                    <view class="flex text-xs justify-between mt-[20rpx] text-gray-400">
+                    <view class="flex text-xs justify-between mt-[20rpx] text-[#8288A2]">
                         <view @click="redirect({ url: '/app/pages/auth/login' })">{{ t('haveAccount') }}，<text class="text-primary">{{ t('toLogin') }}</text></view>
                     </view>
                     <view class="mt-[80rpx]">
-                        <u-button type="primary" :text="t('register')" :loading="loading" :loadingText="t('registering')" @click="handleRegister">
-                        </u-button>
+                        <button hover-class="none" class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" :loading="loading" :loadingText="t('registering')" @click="handleRegister">{{t('register')}}</button>
                     </view>
                 </u-form>
             </view>
@@ -91,7 +90,8 @@
     import { useLogin } from '@/hooks/useLogin'
     import { useCaptcha } from '@/hooks/useCaptcha'
     import { t } from '@/locale'
-    import { redirect } from '@/utils/common'
+    import { redirect, getToken } from '@/utils/common'
+    import { onLoad } from '@dcloudio/uni-app';
 
     const formData = reactive({
         username: '',
@@ -104,7 +104,7 @@
         captcha_code: ''
     })
 
-	let real_name_input = ref(true);
+	const real_name_input = ref(true);
 	onMounted(() => {
 		// 防止浏览器自动填充
 		setTimeout(()=>{
@@ -112,17 +112,26 @@
 		},800)
 	});
 
-    if (!uni.getStorageSync('autoLoginLock')) {
-        uni.getStorageSync('openid') && (Object.assign(formData, {openid: uni.getStorageSync('openid')}))
-        uni.getStorageSync('pid') && (Object.assign(formData, {pid: uni.getStorageSync('pid')}))
-    }
-    uni.getStorageSync('unionid') && (Object.assign(formData, { unionid: uni.getStorageSync('unionid') }))
+    const memberStore = useMemberStore()
+    const configStore = useConfigStore()
+
+    onLoad(async() =>{
+        await configStore.getLoginConfig()
+        if (!uni.getStorageSync('autoLoginLock')) {
+            uni.getStorageSync('openid') && (Object.assign(formData, {openid: uni.getStorageSync('openid')}))
+            uni.getStorageSync('pid') && (Object.assign(formData, {pid: uni.getStorageSync('pid')}))
+        }
+        uni.getStorageSync('unionid') && (Object.assign(formData, { unionid: uni.getStorageSync('unionid') }))
+        if(!getToken() && !configStore.login.is_username && !configStore.login.is_mobile && !configStore.login.is_bind_mobile){
+            uni.showToast({ title: '商家未开启普通账号登录注册', icon: 'none' })
+            setTimeout(() => {
+                redirect({ url: '/app/pages/index/index', mode: 'reLaunch' })
+            }, 100)
+        }
+    })
 
     const captcha = useCaptcha(formData)
     captcha.refresh()
-
-    const memberStore = useMemberStore()
-    const configStore = useConfigStore()
 
     const loading = ref(false)
 

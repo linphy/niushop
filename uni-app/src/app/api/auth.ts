@@ -61,6 +61,9 @@ export function wechatUser(data : AnyObject) {
  * 微信公众号授权信息登录（openid）
  */
 export function wechatUserLogin(data : AnyObject) {
+    if(uni.getStorageSync('pid')){
+        data.pid = uni.getStorageSync('pid');
+    }
     return request.post('wechat/userlogin', data, { showErrorMessage: true })
 }
 
@@ -68,16 +71,34 @@ export function wechatUserLogin(data : AnyObject) {
  * 微信公众号授权登录
  */
 export function wechatLogin(data : AnyObject) {
+    if(uni.getStorageSync('pid')){
+        data.pid = uni.getStorageSync('pid');
+    }
     return request.post('wechat/login', data, { showErrorMessage: false })
+}
+/**
+ * 微信公众号号修改openid
+ */
+export function updateWechatOpenid(data : AnyObject) {
+    return request.put('wechat/update_openid', data, { showErrorMessage: false })
 }
 
 /**
  * 微信小程序授权登录
  */
 export function weappLogin(data : AnyObject) {
+    if(uni.getStorageSync('pid')){
+        data.pid = uni.getStorageSync('pid');
+    }
     return request.post('weapp/login', data, { showErrorMessage: false })
 }
 
+/**
+ * 微信小程序修改openid
+ */
+export function updateWeappOpenid(data : AnyObject) {
+    return request.put('weapp/update_openid', data, { showErrorMessage: false })
+}
 /**
  * 绑定手机号
  */

@@ -4,16 +4,16 @@ import pagesJson from '@/pages.json'
  * 获取需要登录的页面
  */
 export function getNeedLoginPages() {
-    const pages = []
+    const pages: any = []
     // 获取主包中需要登录的页面
     pagesJson.pages.forEach(item => {
-        if (item.needLogin) pages.push(`/${item.path}`)
+        if (item.needLogin) pages.push(`/${ item.path }`)
     })
     // 获取分包中需要登录的页面
     if (pagesJson.subPackages) {
         pagesJson.subPackages.forEach(subPackages => {
             subPackages.pages.forEach(item => {
-                if (item.needLogin) pages.push(`/${subPackages.root}/${item.path}`)
+                if (item.needLogin) pages.push(`/${ subPackages.root }/${ item.path }`)
             })
         })
     }
@@ -24,21 +24,21 @@ export function getNeedLoginPages() {
  * 获取所有页面
  */
 export function getAppPages() {
-    const pages = []
+    const pages: any = []
     // 获取主包中需要登录的页面
     pagesJson.pages.forEach(item => {
-        pages.push(`/${item.path}`)
+        pages.push(`/${ item.path }`)
     })
     return pages
 }
 
 export function getSubPackagesPages() {
-    const pages = []
+    const pages: any = []
     // 获取分包中需要登录的页面
     if (pagesJson.subPackages) {
         pagesJson.subPackages.forEach(subPackages => {
             subPackages.pages.forEach(item => {
-                pages.push(`/${subPackages.root}/${item.path}`)
+                pages.push(`/${ subPackages.root }/${ item.path }`)
             })
         })
     }
@@ -49,7 +49,9 @@ export function getSubPackagesPages() {
  * 获取tabbar
  */
 export function getTabbarPages() {
-    return pagesJson.tabBar.list.map(item => { return `/${item.pagePath}` })
+    return pagesJson.tabBar.list.map(item => {
+        return `/${ item.pagePath }`
+    })
 }
 
 /**

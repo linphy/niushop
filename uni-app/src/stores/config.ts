@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { getConfig } from '@/app/api/auth'
 import { getTabbarList } from '@/app/api/diy'
-import { cloneDeep } from 'lodash-es'
 
 interface loginConfig {
     is_username: number | boolean,
@@ -20,10 +19,10 @@ interface tabbarConfig {
 
 interface Config {
     login: loginConfig,
-    tabbarList:any,
+    tabbarList: any,
     tabbar: tabbarConfig | null,
     addon: String,
-    themeColor:any
+    themeColor: any
 }
 
 const useConfigStore = defineStore('config', {
@@ -36,10 +35,10 @@ const useConfigStore = defineStore('config', {
                 is_bind_mobile: 0,
                 agreement_show: 0
             },
-            tabbarList:{},
+            tabbarList: {},
             tabbar: null,
             addon: '',
-            themeColor:''
+            themeColor: ''
         }
     },
     actions: {
@@ -54,9 +53,9 @@ const useConfigStore = defineStore('config', {
             })
         },
         async getTabbarConfig() {
-            await getTabbarList({}).then((res:any)=>{
+            await getTabbarList({}).then((res: any) => {
                 this.tabbarList = res.data;
-            }).catch(()=>{
+            }).catch(() => {
             })
         },
         // 获取主色调
@@ -68,7 +67,7 @@ const useConfigStore = defineStore('config', {
             if (this.themeColor) {
                 let style = '';
                 for (let k in this.themeColor) {
-                    style += `${k}:${this.themeColor[k]};`;
+                    style += `${ k }:${ this.themeColor[k] };`;
                 }
                 return style;
             }

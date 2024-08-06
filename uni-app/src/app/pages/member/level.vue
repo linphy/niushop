@@ -3,21 +3,17 @@
 		<u-loading-page :loading="loading && memberInfo" loadingText="" bg-color="#f7f7f7"></u-loading-page>
 		<view v-if="!loading && memberInfo && list && list.length" class=" min-h-[100vh] overflow-hidden flex flex-col" :style="{backgroundColor: currLevelInfo.level_style.bg_color }">
 			<!-- #ifdef MP -->
-			<top-tabbar :data="topTabbarData" titleColor="#fff"/>
+			<top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()"/>
 			<!-- #endif -->
 			<view>
 				<view class="pt-[40rpx] mb-[20rpx]">
 					<!-- 轮播图 -->
 					<view class="relative">
-						<swiper class="swiper ns-indicator-dots relative" :style="{ height: '300rpx' }" @change="swiperChange" :current = "swiperIndex"
-							previous-margin="48rpx" next-margin="48rpx">
+						<swiper class="swiper ns-indicator-dots relative" :style="{ height: '300rpx' }" @change="swiperChange" :current = "swiperIndex" previous-margin="48rpx" next-margin="48rpx">
 							<swiper-item class="swiper-item" v-for="(item,index) in list" :key="item.id">
 								<view class="h-[300rpx] relative">
-									<view v-if="memberInfo.member_level == item.level_id && swiperIndex == index" class="text-[24rpx] absolute top-0 left-0 z-10 h-[66rpx] !bg-contain w-[150rpx] flex pt-[12rpx] pl-[16rpx] leadinig-[34rpx] box-border" :style="{ background: 'url(' + img(currLevelInfo.level_tag) + ') no-repeat',color: currLevelInfo.level_style.level_color}">
+									<view v-if="memberInfo.member_level == item.level_id && swiperIndex == index" class="text-[24rpx] absolute top-0 left-0 z-10 h-[66rpx] !bg-contain w-[150rpx] flex pt-[12rpx] pl-[16rpx]  box-border" :style="{ background: 'url(' + img(currLevelInfo.level_tag) + ') no-repeat',color: currLevelInfo.level_style.level_color}">
 										当前等级
-									</view>
-									<view v-else-if="Number(memberInfo.growth) < Number(currLevelInfo.growth) && swiperIndex == index" class="text-[24rpx] absolute top-0 left-0 z-10 h-[66rpx] !bg-contain w-[150rpx] text-[#999] flex pt-[12rpx] pl-[16rpx] leadinig-[34rpx] box-border" :style="{ background: 'url(' + img('static/resource/images/member/level/not_reach.png') + ') no-repeat'}" >
-										未达标
 									</view>
 									<view class="absolute top-0 left-0 right-0 bottom-0 z-20 px-[30rpx] pt-[76rpx] box-border" :class="{'px-[50rpx]': swiperIndex != index}">
 										<view class="flex items-center leading-[50rpx] mb-[70rpx]">
@@ -26,7 +22,7 @@
 										</view>
 										<view class="flex items-center" :style="{color: currLevelInfo.level_style.level_color}">
 											<view class="text-[28rpx] font-bold leading-[38rpx]">{{ memberInfo.growth }}</view>
-											<view class="text-[24rpx] leading-[34rpx]">/{{list[index].growth}}成长值</view>
+											<view class="text-[24rpx] leading-[34rpx] font-500">/{{list[index].growth}}成长值</view>
 										</view>
 										<view class="flex justify-between items-center mt-[10rpx]">
 											<view class="flex flex-col flex-1">
@@ -60,14 +56,14 @@
 						</scroll-view>
 					</view>
 				</view>
-				<view class="flex mx-[30rpx]  px-[38rpx] pt-[30rpx]  pb-[46rpx]  items-center flex-col level_benefits" v-if="currLevelInfo.benefits_arr && currLevelInfo.benefits_arr.length" :style="{ backgroundImage: 'url(' + img(currLevelInfo.member_bg) + ')'}">
+				<view class="flex mx-[30rpx] pt-[30rpx]  pb-[46rpx]  items-center flex-col level_benefits" v-if="currLevelInfo.benefits_arr && currLevelInfo.benefits_arr.length" :style="{ backgroundImage: 'url(' + img(currLevelInfo.member_bg) + ')'}">
 					<view class="flex items-center justify-center">
 						<text class="text-[#fff] text-[32rpx] font-bold leading-[44rpx]">会员权益</text>
 					</view>
 					<view class="flex flex-wrap w-[690rpx] mt-[40rpx] justify-between">
 						<view class="flex flex-col w-[25%] items-center" v-for="(item,index) in currLevelInfo.benefits_arr" :key="index">
 							<image class="h-[100rpx] w-[100rpx]" :src="img(item.icon)" mode="heightFix" />
-							<text class="text-[rgba(255,255,255,0.9)] mt-[10rpx] text-[24rpx]">{{item.title}}</text>
+							<text class="text-[rgba(255,255,255,0.9)] mt-[10rpx] text-[24rpx] leading-[34rpx]">{{item.title}}</text>
 						</view>
 					</view>
 				</view>
@@ -77,7 +73,7 @@
 				<!-- 升级礼包 -->
 				<view v-if="currLevelInfo.gifts_arr && currLevelInfo.gifts_arr.length">
 					<view class="pt-[10rpx] pb-[30rpx] flex items-center">
-						<text class="text-[32rpx] text-[#3A3945] font-bold leading-[44rpx]">升级礼包</text>
+						<text class="text-[32rpx] text-[#333] font-bold leading-[44rpx]">升级礼包</text>
 					</view>
 					<view class="flex flex-wrap">
 						<view  v-for="(item,index) in currLevelInfo.gifts_arr" :key="index" class="mb-[20rpx]"  :class="{'mr-[20rpx]': (index+1) % 3 != 0}">
@@ -106,34 +102,33 @@
 				</view>
 			</view>
 		</view>
-		<u-empty v-if="!loading && (!list || !list.length)" :icon="img('static/resource/images/empty.png')" text="暂无会员等级" />
+		<view v-if="!loading && (!list || !list.length)" class="h-[100vh] w-full flex items-center justify-center">
+			<u-empty :icon="img('static/resource/images/empty.png')" text="暂无会员等级" />
+		</view>
+		
 	</view>
 </template>
 
 <script setup lang="ts">
 	import { ref, reactive, computed } from 'vue'
-	import { onLoad, onShow } from '@dcloudio/uni-app'
+	import { onShow } from '@dcloudio/uni-app'
 	import { getMemberLevel, getTaskGrowth } from '@/app/api/member';
 	import { img,redirect, deepClone, getToken } from '@/utils/common';
     import useMemberStore from '@/stores/member'
+    import { topTabar } from '@/utils/topTabbar'
 
 	const memberStore = useMemberStore()
 	
-	let loading = ref(false)
-	let list = ref([]) // 会员等级
-	let upgradeSkills = ref([]) // 升级技巧
+	const loading = ref(false)
+	const list = ref([]) // 会员等级
+	const upgradeSkills = ref([]) // 升级技巧
 	const swiperIndex = ref(0); //当前滑块的索引
 	const levelIndex = ref(0); //当前等级的索引
-	// 自定义头部
-	let topTabbarData = ref({
-		title: '会员等级',
-		topStatusBar: {
-            isTransparent: true,
-			style: 'style-1',
-			bgColor: 'transparent',
-		    textColor: '#fff'
-		}
-	})
+    
+    /********* 自定义头部 - start ***********/
+    const topTabarObj = topTabar()
+    let topTabbarData = topTabarObj.setTopTabbarParam({title:'会员等级'})
+    /********* 自定义头部 - end ***********/
 	
 	onShow(() => {
 		// 判断是否已登录
@@ -149,7 +144,7 @@
 	})
 	
 	// 进度条值
-	let progress = (index:any) => {
+	const progress = (index:any) => {
 		let indent = index;
 		let num = 100
 		if(list.value[indent] && list.value[indent].growth) {
@@ -159,7 +154,7 @@
 	}
 
 	// 所需的成长值
-	let upgradeGrowth = (index:any) => {
+	const upgradeGrowth = (index:any) => {
 		let indent = index;
 		let num = 0;
 		if(list.value[indent] && list.value[indent].growth) {
@@ -228,8 +223,8 @@
 	};
 	
 	// 当前的会员等级信息
-	let currLevelInfo = ref<any>({});
-	let infoStructureFn = (index:number)=>{
+	const currLevelInfo = ref<any>({});
+	const infoStructureFn = (index:number)=>{
 		let data:any = deepClone(list.value[index]);
 		// 会员权益
 		if(data && data.level_benefits){

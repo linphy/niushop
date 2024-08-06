@@ -1,16 +1,15 @@
 <template>
-	<!-- diyStore.mode !='decorate' && topStatusBarData topStatusBarData.style == 'style-5 为了兼容风格五 -->
-	<view class="ns-navbar-wrap" v-if="diyStore.mode !='decorate' && topStatusBarData || diyStore.mode =='decorate' && topStatusBarData && topStatusBarData.style == 'style-5' " :class="topStatusBarData.style">
-		<view class="u-navbar" :style="{ backgroundColor: bgColor}">
+	<view class="ns-navbar-wrap" v-if="diyStore.mode !='decorate' && topStatusBarData" :class="topStatusBarData.style">
+		<view class="u-navbar" :class="{'fixed': props.scrollBool != -1, 'absolute': props.scrollBool == -1}" :style="{ backgroundColor: bgColor}">
 			<view class="navbar-inner" :style="{ width: '100%', height: placeholderHeight + 'px' }">
 				<view v-if="topStatusBarData.style == 'style-1'" class="content-wrap" :class="[topStatusBarData.textAlign]" :style="navbarInnerStyle">
-					<view v-if="isBack && isBackShow" class="back-wrap text-[26px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: topStatusBarData.textColor || titleColor }" @tap="goBack"></view>
+					<view v-if="isBack && isBackShow" class="back-wrap -ml-[16rpx] text-[27px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: titleTextColor }" @tap="goBack"></view>
 					<view class="title-wrap" :style="styleOneFontSize">
 						{{ data.title }}
 					</view>
 				</view>
 				<view v-if="topStatusBarData.style == 'style-2'" class="content-wrap"  :style="navbarInnerStyle" @click="diyStore.toRedirect(topStatusBarData.link)">
-					<view v-if="isBack && isBackShow" class="back-wrap text-[26px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: topStatusBarData.textColor || titleColor }" @tap="goBack"></view>
+					<view v-if="isBack && isBackShow" class="back-wrap -ml-[16rpx] text-[27px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: titleTextColor }" @tap="goBack"></view>
 					<view class="title-wrap" :style="{ color: topStatusBarData.textColor }">
 						<view>
 							<image :src="img(topStatusBarData.imgUrl)" mode="heightFix"></image>
@@ -20,7 +19,7 @@
 				</view>
 	
 				<view v-if="topStatusBarData.style == 'style-3'" :style="navbarInnerStyle" class="content-wrap">
-					<view v-if="isBack && isBackShow" class="back-wrap text-[26px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: topStatusBarData.textColor || titleColor }" @tap="goBack"></view>
+					<view v-if="isBack && isBackShow" class="back-wrap -ml-[16rpx] text-[27px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: titleTextColor }" @tap="goBack"></view>
 					<view class="title-wrap" @click="diyStore.toRedirect(topStatusBarData.link)">
 						<image :src="img(topStatusBarData.imgUrl)" mode="heightFix"></image>
 					</view>
@@ -32,33 +31,32 @@
 				</view>
 	 
 				<view v-if="topStatusBarData.style == 'style-4'" :style="navbarInnerStyle" class="content-wrap">
-					<view v-if="isBack && isBackShow" class="back-wrap text-[26px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: topStatusBarData.textColor || titleColor }" @tap="goBack"></view>
+					<view v-if="isBack && isBackShow" class="back-wrap -ml-[16rpx] text-[27px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: titleTextColor }" @tap="goBack"></view>
 					<text class="nc-iconfont nc-icon-dizhiguanliV6xx text-[28rpx]" :style="{ color: topStatusBarData.textColor }"></text>
 					<view class="title-wrap"  @click="reposition()" :style="{ color: topStatusBarData.textColor }">{{ currentPosition }}</view>
 					<text class="nc-iconfont nc-icon-youV6xx text-[26rpx]" @click="reposition()" :style="{ color: topStatusBarData.textColor }"></text>
 				</view>
-				<!-- #ifdef MP-WEIXIN -->
-				<view v-if="topStatusBarData.style == 'style-5'" class="content-wrap" :style="navbarInnerStyle">
-					<view v-if="isBack && isBackShow" class="back-wrap text-[26px] nc-iconfont nc-icon-zuoV6xx" :style="{ color: topStatusBarData.textColor || titleColor }" @tap="goBack"></view>
-				</view>
-				<!-- #endif -->
 			</view>
 		</view>
-		
-		<!-- 风格5，填充 -->
-		<view v-if="topStatusBarData.style == 'style-5'" :style="style5Height"></view>
 	
 		<!-- 解决fixed定位后导航栏塌陷的问题 -->
 		<view class="u-navbar-placeholder" :style="{ width: '100%', paddingTop: placeholderHeight + 'px' }"></view>
 		
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		<!-- #endif -->
 	</view>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch, onMounted, getCurrentInstance, nextTick } from 'vue';
+import { img, getLocation, locationStorage } from '@/utils/common';
+import { getAddressByLatlng } from '@/app/api/system';
+import useSystemStore from '@/stores/system';
+import useDiyStore from '@/app/stores/diy';
+import manifestJson from '@/manifest.json'
+
 // 获取系统状态栏的高度
 let systemInfo = uni.getSystemInfoSync();
 let platform = systemInfo.platform;
@@ -68,15 +66,8 @@ let menuButtonInfo = {};
 menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 // #endif
 
-import { ref, computed, watch, onMounted, getCurrentInstance, nextTick } from 'vue';
-import { img, getLocation, locationStorage } from '@/utils/common';
-import { getAddressByLatlng } from '@/app/api/system';
-import useSystemStore from '@/stores/system';
-import useDiyStore from '@/app/stores/diy';
-import manifestJson from '@/manifest.json'
 const diyStore = useDiyStore();
 
-// param是一个对象{arrowLink => 箭头链接，isShowArrow => 箭头是否显示，tabbarBg => 背景颜色}
 const props = defineProps({
     data: {
         type: Object,
@@ -92,9 +83,9 @@ const props = defineProps({
     	type: Function,
     	default: null
     },
-    scrollTop: {
+    scrollBool: {
     	type: [String, Number],
-    	default: '0'
+    	default: -1
     },
     // 是否显示导航栏左边返回图标和辅助文字
     isBack: {
@@ -148,31 +139,49 @@ const styleOneFontSize = computed(() => {
 	} else if (platform === 'android') {
 	  // 安卓(Android)设备
 		style += 'font-size: 36rpx;';
+		style += 'font-weight: 500;';
 	}
 	// #endif
-	style += `color: ${topStatusBarData.value.textColor};`;
+	style += `color: ${titleTextColor.value};`;
 	if(topStatusBarData.value.style == 'style-1'){
 		style += `text-align: ${topStatusBarData.value.textAlign};`;
 	}
 	return style;
 })
 
-const bgColor  = computed(() => {
-	var color = '';
-	if (topStatusBarData.value.isTransparent) {
-		// 顶部透明
-		color = 'transparent';
-		if (props.scrollTop) {
-			color = topStatusBarData.value.bgColor;
-		} else {
-			color = 'transparent';
-		}
+const titleTextColor = computed(()=>{
+	let color = '';
+	if (props.scrollBool == 1) {
+		color = topStatusBarData.value.rollTextColor;
 	} else {
-		color = '#fff';
+		color = topStatusBarData.value.textColor;
 	}
-	
 	return color;
 })
+
+const bgColor  = computed(() => {
+	let color = '';
+	if (props.scrollBool == 1) {
+		color = topStatusBarData.value.rollBgColor;
+	} else {
+		color = topStatusBarData.value.bgColor;
+	}
+	return color;
+})
+
+/******************************* 存储滚动值-start ***********************/ 
+// 键名和组件名一致即可
+let componentsScrollVal = uni.getStorageSync('componentsScrollValGroup')
+if(componentsScrollVal){
+	componentsScrollVal.TopTabbar = 0
+	uni.setStorageSync('componentsScrollValGroup', componentsScrollVal);
+}else{
+	let obj = {
+		TopTabbar: 0
+	}
+	uni.setStorageSync('componentsScrollValGroup', obj);
+}
+/******************************* 存储滚动值-end ***********************/ 
 
 /******************************* 返回按钮-start ***********************/ 
 let isBackShow = ref(false);
@@ -309,29 +318,6 @@ const getQueryVariable = (variable:any)=> {
 }
 /******************************* 定位-end ***********************/ 
 
-/******************************* 风格五-start ***********************/ 
-let style5Height = ref('')
-watch(() => topStatusBarData.value.style, (nval, oval)=> {
-	if(topStatusBarData.value.style == 'style-5'){
-		style5Height.value = '';
-        if(data.value.imgWidth && data.value.imgHeight) {
-            let sysWidth = systemInfo.windowWidth
-            let sysHeight = sysWidth / data.value.imgWidth * data.value.imgHeight
-            style5Height.value += `width:100%;`
-            // #ifdef H5
-            sysHeight = sysHeight - 88; //使用图片高度减去88
-            style5Height.value += `padding-top:${ sysHeight }px;`
-            style5Height.value += `height:0;` //h5需要去掉兼容微信胶囊的高度
-            // #endif
-            // #ifdef MP
-            sysHeight = sysHeight - menuButtonInfo.top - menuButtonInfo.height - 5; //图片高度减去兼容小程序头部的高度[胶囊高度、padding-bottom、padding-top]
-            style5Height.value += `padding-top:${ sysHeight }px;`
-            // #endif
-        }
-	}
-},{immediate: true, deep:true})
-/******************************* 风格五-end ***********************/ 
-
 onMounted(() => {
 	navbarPlaceholderHeight();
 	if (pages.length > 1) {
@@ -349,10 +335,8 @@ const refresh = ()=>{
     }
 }
 
-// 表示该组件,需要判断滚动超出1时,需要做相对应反应
 defineExpose({
-	refresh,
-	scrollValue: 1
+	refresh
 })
 </script>
 
@@ -368,7 +352,6 @@ defineExpose({
 .u-navbar {
 	width: 100%;
 	transition: background 0.3s;
-	position: fixed;
 	left: 0;
 	right: 0;
 	top: 0;
@@ -511,6 +494,7 @@ defineExpose({
 				margin: 0 10rpx;
 				max-width: 360rpx;
 				font-size: 27rpx;
+				line-height: normal;
 			}
 
 			.nearby-store-name {

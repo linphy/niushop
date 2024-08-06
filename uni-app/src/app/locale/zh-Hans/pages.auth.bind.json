@@ -6,5 +6,6 @@
     "pleaceAgree": "请勾选已阅读并同意",
     "mobilePlaceholder": "请输入手机号",
     "codePlaceholder": "请输入验证码",
-    "weixinUserAuth": "微信用户一键绑定"
+    "weixinUserAuth": "一键绑定",
+    "mobileQuickLogin": "手机号快捷登录"
 }

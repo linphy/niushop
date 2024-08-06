@@ -167,7 +167,7 @@
 				uni.createSelectorQuery().in(instance).select('#item0'+diyComponent.value.id).boundingClientRect((data:any) => {
 					itemStyle3.value = `margin-right:${(res.width - data.width*4)/3}px;`
 				}).exec()
-			}).exec()	
+			}).exec()
 		// #endif
 		// #ifdef  H5
 			itemStyle3.value= 'margin-right:14rpx;'
@@ -182,7 +182,7 @@
 					itemStyle4.value = `margin-right:${(res.width - data.width*4)/3}px;`
 
 				}).exec()
-			}).exec()	
+			}).exec()
 		// #endif
 		// #ifdef  H5
 			itemStyle4.value= 'margin-right:14rpx;'

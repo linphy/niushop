@@ -4,11 +4,11 @@ import { getWeappTemplateId } from '@/app/api/system'
  * 小程序订阅消息
  */
 export const useSubscribeMessage = () => {
-    const request = (keys: string)=> {
+    const request = (keys: string) => {
         // #ifdef MP-WEIXIN
         const method = getWeappTemplateId
         // #endif
-        
+
         // #ifdef MP
         method(keys).then(({ data }) => {
             uni.requestSubscribeMessage({
@@ -23,7 +23,7 @@ export const useSubscribeMessage = () => {
         }).catch()
         // #endif
     }
-    
+
     return {
         request
     }

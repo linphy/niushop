@@ -1,6 +1,6 @@
 <template>
 	<view class="member-record-list" :style="themeColor()">
-		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="getCashOutListFn">
+		<mescroll-body ref="mescrollRef" @init="mescrollInit" :down="{ use: false }" @up="getCashOutListFn">
 			<view v-for="(item,index) in cashOutList" :key="item.id" class="member-record-item" @click="toDetailFn(item)">
 				<view class="name">{{item.transfer_type_name}}</view>
 				<view class="desc">{{t('applyTime')}}: {{item.create_time}}</view>
@@ -8,9 +8,7 @@
 				<view class="money" :class="item.apply_money > 0 ? 'text-active' : ''">
 					{{ item.apply_money > 0 ? '+' + item.apply_money : item.apply_money }}
 				</view>
-				<view class="state">
-					{{ item.status_name }}
-				</view>
+				<view class="state">{{ item.status_name }}</view>
 			</view>
 			<mescroll-empty v-if="!cashOutList.length && loading" :option="{tip : t('emptyTip')}"></mescroll-empty>
 		</mescroll-body>
@@ -29,9 +27,9 @@ import { onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 
 const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom);
 
-let cashOutList = ref<Array<any>>([]);
-let mescrollRef = ref(null);
-let loading = ref<boolean>(false);
+const cashOutList = ref<Array<any>>([]);
+const mescrollRef = ref(null);
+const loading = ref<boolean>(false);
 let account_type = uni.getStorageSync('cashOutAccountType')
 const currentStatusDesc = (status) =>{
 	switch(status){
@@ -47,12 +45,12 @@ const currentStatusDesc = (status) =>{
 }
 
 const getCashOutListFn = (mescroll)=>{
-	let data = ref({});
+	let data:any = {}
 	loading.value = false;
-	data.value.page = mescroll.num;
-	data.value.page_size = mescroll.size;
-	data.value.account_type = account_type;
-	getCashOutList(data.value).then((res) => {
+	data.page = mescroll.num;
+	data.page_size = mescroll.size;
+	data.account_type = account_type;
+	getCashOutList(data).then((res) => {
 		let newArr = res.data.data;
 		mescroll.endSuccess(newArr.length);
 		//设置列表数据

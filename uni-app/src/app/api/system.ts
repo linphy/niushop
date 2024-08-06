@@ -11,7 +11,7 @@ export function getCaptcha() {
  * 获取微信公众号授权码
  */
 export function getWechatAuthCode(data: AnyObject) {
-    return request.get('wechat/codeurl', data, {showErrorMessage: false})
+    return request.get('wechat/codeurl', data, {showErrorMessage: false })
 }
 
 /**
@@ -114,13 +114,6 @@ export function getAreaByCode(code: number | string) {
  */
 export function getAddressByLatlng(params: Record<string, any>) {
     return request.get(`area/address_by_latlng`, params, {showErrorMessage: true})
-}
-
-/**
- * 获取手机端首页列表
- */
-export function getWapIndexList(data: AnyObject) {
-    return request.get('wap_index', data)
 }
 
 /**

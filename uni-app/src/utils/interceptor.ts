@@ -1,6 +1,6 @@
 import { language } from '@/locale'
 import { checkNeedLogin } from '@/utils/auth'
-import { redirect, getToken, isWeixinBrowser } from '@/utils/common'
+import { getToken } from '@/utils/common'
 import { memberLog } from '@/app/api/auth'
 import useConfigStore from "@/stores/config";
 import { useShare } from '@/hooks/useShare'
@@ -81,7 +81,7 @@ const setAddonName = async (path: string) => {
     // 设置插件应用的主色调，排除系统
     if (route != 'app') {
         try {
-            const theme = await import(`../addon/${route}/utils/theme.json`)
+            const theme = await import(`../addon/${ route }/utils/theme.json`)
             configStore.themeColor = theme.default
             uni.setStorageSync('current_theme_color', JSON.stringify(theme.default));
         } catch (e) {
@@ -89,6 +89,7 @@ const setAddonName = async (path: string) => {
         }
 
     }
+
 }
 
 // 加载分享

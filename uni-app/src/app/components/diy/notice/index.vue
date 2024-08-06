@@ -14,10 +14,10 @@
                 <view class="flex-1 flex overflow-hidden horizontal-body" :id="'horizontal-body-'+diyComponent.id" :class="{'items-center':diyComponent.scrollWay == 'upDown'}">
                     <!-- 横向滚动 -->
                     <view class="horizontal-wrap" :style="marqueeStyle" v-if="diyComponent.scrollWay == 'horizontal'">
-						<view class="marquee marquee-one" id="marquee-one" >
+						<view class="marquee marquee-one" id="marquee-one">
 							<view class="item flex-shrink-0 !leading-[40rpx] h-[40rpx]" :class="{'ml-[80rpx]':index}" v-for="(item, index) in diyComponent.list" :key="index" @click="toRedirect(item)" :style="{ color: diyComponent.textColor, fontSize: diyComponent.fontSize * 2 + 'rpx',  fontWeight: diyComponent.fontWeight }">{{ item.text }}</view>
 						</view>
-						<view class="marquee">
+						<view class="marquee" v-if="marqueeBodyWidth < (marqueeOneWidth-30)">
 							<view class="item flex-shrink-0 !leading-[40rpx] h-[40rpx]" :class="{'ml-[80rpx]':index}" v-for="(item, index) in diyComponent.list" :key="index" @click="toRedirect(item)" :style="{ color: diyComponent.textColor, fontSize: diyComponent.fontSize * 2 + 'rpx',  fontWeight: diyComponent.fontWeight }">{{ item.text }}</view>
 						</view>
                     </view>
@@ -117,14 +117,11 @@ watch(
 )
 
 const marqueeBodyWidth = ref(0); // 容器宽度
+const marqueeOneWidth = ref(0); // 内容宽度
 const marqueeStyle = ref(''); // 横向滚动样式
 const time = ref(0); // 滚动完成时间
 const delayTime = ref(800); // 动画延迟时间
-// px转rpx
-const pxToRpx=(px)=> {
-  const screenWidth = uni.getSystemInfoSync().screenWidth
-  return (750 * Number.parseInt(px)) / screenWidth
-}
+
 // 绑定横向滚动事件
 const bindCrossSlipEvent = ()=> {
     if (diyComponent.value.scrollWay == 'horizontal') {
@@ -135,9 +132,9 @@ const bindCrossSlipEvent = ()=> {
                     marqueeBodyWidth.value = res.width;
                     const query = uni.createSelectorQuery().in(instance);
                     query.select('#horizontal-body-' + diyComponent.value.id + ' .marquee-one').boundingClientRect((data: any) => {
-                        const width = data.width
-                        time.value = Math.ceil(width * 14);
-                        if (marqueeBodyWidth.value > width) {
+                        marqueeOneWidth.value = data.width
+                        time.value = Math.ceil(marqueeOneWidth.value * 14);
+                        if (marqueeBodyWidth.value > (marqueeOneWidth.value-30)) {
                             marqueeStyle.value = `animation: none;`;
                         } else {
                             marqueeStyle.value = `
@@ -152,9 +149,9 @@ const bindCrossSlipEvent = ()=> {
                 let marqueeOne = window.document.getElementById('marquee-one');
                 if(documentObj && marqueeOne) {
                     marqueeBodyWidth.value = documentObj.offsetWidth;
-                    const width = marqueeOne.offsetWidth;
-                    time.value = Math.ceil(width * 14);
-                    if (marqueeBodyWidth.value > width) {
+                    marqueeOneWidth.value = marqueeOne.offsetWidth;
+                    time.value = Math.ceil(marqueeOneWidth.value * 14);
+                    if (marqueeBodyWidth.value > (marqueeOneWidth.value-30)) {
                         marqueeStyle.value = `animation: none;`;
                     } else {
                         marqueeStyle.value = `
@@ -199,12 +196,11 @@ const refresh = ()=> {
 
 const toRedirect = (data: {}) => {
     if (diyStore.mode == 'decorate') return false;
-
     if (diyComponent.value.showType == 'popup') {
         noticeShow.value = true;
         noticeContent.value = data.text;
     } else {
-        diyStore.toRedirect(data);
+        diyStore.toRedirect(data.link);
     }
 }
 </script>
@@ -276,8 +272,7 @@ const toRedirect = (data: {}) => {
         align-items: center;
         height: 100%;
         white-space: nowrap;
-        padding-right: 60rpx;
-		
+		padding-right: 30px;
 		
 		// -webkit-perspective: 1000;
 	 //   -moz-perspective: 1000;

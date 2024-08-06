@@ -4,9 +4,10 @@
     --primary-color-disabled: #9acafc;
     --primary-color-light: #ecf5ff;
     --page-bg-color: #f7f7f7;
+	--sidebar-m: 20rpx;
+	--rounded-angle: 16rpx;
 }
-
-// 字体设置
+// 价格字体设置
 @font-face {
     font-family: 'myFont';
     /* #ifdef MP */
@@ -16,10 +17,10 @@
     src: url('@/styles/custom.ttf') format('truetype');
     /* #endif */
 }
-
 .price-font{
     font-family: 'myFont','-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Segoe UI', 'Arial', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei','sans-serif';
-}
+} 
+
 // 全局基础样式
 uni-page-body {
 	line-height: 1.8;
@@ -41,6 +42,72 @@ button:after,uni-button:after {
 button[type='primary'],uni-button[type='primary']{
 	background-color: var(--primary-color) !important;
 }
+
+// 提交按钮背景颜色
+.primary-btn-bg{
+	background: linear-gradient( 94deg, #FB7939 0%, #FE120E 99%), #EF000C;
+}
+// 侧边栏宽度
+.sidebar-marign{
+	margin-left: var(--sidebar-m) !important;
+	margin-right: var(--sidebar-m) !important;
+}
+// 圆角
+.rounded-angle{
+	border-radius: var(--rounded-angle);
+}
+// 卡片模块
+.card-template{
+	padding: 30rpx;
+	border-radius: var(--rounded-angle);
+	background-color: #fff;
+	box-sizing: border-box;
+}
+
+// 适用于左边tab切换，右边是日期；参考页面如：我的佣金、销售奖励
+.tab-style-1{
+	@apply box-border flex items-center justify-between;
+	padding: 0 var(--sidebar-m) 20rpx;
+	.tab-left{
+		@apply flex whitespace-nowrap;
+		.tab-left-item{
+			@apply font-400;
+			margin-left: 0;
+			margin-right: 40rpx;
+			color: #626779;
+			line-height: 40rpx;
+			font-size: 28rpx;
+			&.class-select{
+				position: relative;
+				font-weight: 500;
+				color: var(--primary-color);
+				&::before {
+					content: "";
+					position: absolute;
+					bottom: -14rpx;
+					height: 6rpx;
+					border-radius: 100rpx;
+					background-color: var(--primary-color);
+					width: 40rpx;
+					left: 50%;
+					transform: translateX(-50%);
+				}
+			}
+		}
+	}
+	.tab-right{
+		@apply flex items-center;
+		.tab-right-date{
+			font-size: 28rpx !important;
+			color: #333;
+			margin-right: 10rpx;
+		}
+		.tab-right-icon{
+			font-size: 30rpx !important;
+		}
+	}
+}
+
 
 /* 单行超出隐藏 */
 .using-hidden {
@@ -105,3 +172,14 @@ button[type='primary'],uni-button[type='primary']{
 	color: #999;
 }
 /****************** u-cell-end *********************/
+
+/******************** u-toolbar__wrapper__confirm start **********************/
+.u-toolbar__wrapper__confirm{
+	color: var(--primary-color) !important;
+}
+/******************** u-toolbar__wrapper__confirm end **********************/
+/******************** 物流 state **********************/
+.u-steps-item__line.u-steps-item__line--column{
+	height:100% !important;
+}
+/******************** 物流 state **********************/

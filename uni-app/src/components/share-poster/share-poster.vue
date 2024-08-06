@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { img, copy } from '@/utils/common';
 import { getPoster } from '@/app/api/system'
 
@@ -155,17 +155,17 @@ const saveGoodsPoster = () => {
 						});
 					},
 					fail: (err) => {
-						if(err.errno == 104){
-						    let msg = '用户未授权隐私权限，将图像保存到相册失败';
-						    uni.showToast({title: msg, icon: 'none'})
-						}else if (err.errMsg == "saveImageToPhotosAlbum:fail auth deny" ||
+						if (err.errno == 104) {
+							let msg = '用户未授权隐私权限，将图像保存到相册失败';
+							uni.showToast({ title: msg, icon: 'none' })
+						} else if (err.errMsg == "saveImageToPhotosAlbum:fail auth deny" ||
 								err.errMsg == "saveImageToPhotosAlbum:fail:auth denied") {
-								show.value = true; 
-						}else if(err.errMsg == "saveImageToPhotosAlbum:fail cancel"){
+							show.value = true;
+						} else if (err.errMsg == "saveImageToPhotosAlbum:fail cancel") {
 							let msg = '用户取消将图片保存到相册';
-							uni.showToast({title: msg, icon: 'none'})
-						}else{
-							uni.showToast({title: err.errMsg, icon: 'none'})
+							uni.showToast({ title: msg, icon: 'none' })
+						} else {
+							uni.showToast({ title: err.errMsg, icon: 'none' })
 						}
 					}
 				});

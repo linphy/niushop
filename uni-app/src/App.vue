@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
     import { launchInterceptor } from '@/utils/interceptor'
-    import { getToken, isWeixinBrowser } from '@/utils/common'
+    import { getToken, isWeixinBrowser, currRoute } from '@/utils/common'
     import useMemberStore from '@/stores/member'
     import useConfigStore from '@/stores/config'
     import useSystemStore from '@/stores/system'
@@ -48,18 +48,48 @@
         wechatInit()
         // #endif
 
+        // #ifdef MP
+        const updateManager = uni.getUpdateManager();
+        updateManager.onCheckForUpdate(function(res) {
+            // 请求完新版本信息的回调
+        });
+
+        updateManager.onUpdateReady(function(res) {
+            uni.showModal({
+                title: '更新提示',
+                content: '新版本已经准备好，是否重启应用？',
+                success(res) {
+                    if (res.confirm) {
+                        // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                        updateManager.applyUpdate();
+                    }
+                }
+            });
+        });
+
+        updateManager.onUpdateFailed(function(res) {
+            // 新的版本下载失败
+        });
+        // #endif
+
         const configStore = useConfigStore()
         await configStore.getTabbarConfig()
         await configStore.getLoginConfig()
 
         useSystemStore().getMapFn()
         useSystemStore().getSiteInfoFn()
-		useMemberStore().getMemberLevel()
+        useMemberStore().getMemberLevel()
         try {
             // 隐藏tabbar
             uni.hideTabBar()
         } catch (e) {
 
+        }
+
+        // 判断在登录注册页面账号锁定后不进行请求三方登录注册
+        let url = currRoute()
+        if ((url == 'app/pages/auth/login' || url == 'app/pages/auth/register') && (configStore.login.is_username || configStore.login.is_mobile || configStore.login.is_bind_mobile)) {
+            return false
         }
 
         // 判断是否已登录
@@ -70,27 +100,54 @@
             setTimeout(() => {
                 if (!uni.getStorageSync('openid')) {
                     const memberInfo = useMemberStore().info
+                    const login = useLogin()
                     // #ifdef MP-WEIXIN
-                    memberInfo && memberInfo.weapp_openid && uni.setStorageSync('openid', memberInfo.weapp_openid)
+                    if (memberInfo && memberInfo.weapp_openid) {
+                        uni.setStorageSync('openid', memberInfo.weapp_openid)
+                    } else {
+                        login.getAuthCode('', true)
+                    }
                     // #endif
                     // #ifdef H5
-                    isWeixinBrowser() && memberInfo && memberInfo.wx_openid && uni.setStorageSync('openid', memberInfo.wx_openid)
+                    if (isWeixinBrowser()) {
+                        if (memberInfo && memberInfo.wx_openid) {
+                            uni.setStorageSync('openid', memberInfo.wx_openid)
+                        } else {
+                            data.query.code ? login.updateOpenid(data.query.code) : login.getAuthCode('snsapi_userinfo')
+                        }
+                    }
                     // #endif
+                }
+                // 开启强制绑定手机号
+                if (uni.getStorageSync('isbindmobile')) {
+                    uni.removeStorageSync('isbindmobile');
+                }
+                if (configStore.login.is_bind_mobile && !memberStore.info.mobile) {
+                    // 强制绑定手机号
+                    uni.setStorageSync('isbindmobile', true)
                 }
             }, 1000)
         }
-
         if (!getToken()) {
-            const login = useLogin()
-            // 第三方平台自动登录
+            // todo 退出后不进行自动登录
             // #ifdef MP
-            login.getAuthCode()
-            // #endif
-            // #ifdef H5
-            if (isWeixinBrowser()) {
-                data.query.code ? login.authLogin(data.query.code) : login.getAuthCode('snsapi_userinfo')
+            if(uni.getStorageSync('autoLoginLock')){
+                return false
             }
             // #endif
+            // 判断是否开启第三方自动注册登录
+            if (configStore.login.is_auth_register) {
+                const login = useLogin()
+                // 第三方平台自动登录
+                // #ifdef MP
+                login.getAuthCode()
+                // #endif
+                // #ifdef H5
+                if (isWeixinBrowser()) {
+                    data.query.code ? login.authLogin(data.query.code) : login.getAuthCode('snsapi_userinfo')
+                }
+                // #endif
+            }
         }
     })
 
@@ -102,7 +159,7 @@
 </script>
 
 <style>
-	uni-page-head {
-		display: none !important;
-	}
+    uni-page-head {
+        display: none !important;
+    }
 </style>

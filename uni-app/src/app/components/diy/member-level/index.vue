@@ -25,22 +25,25 @@
 		</view>
 		<view v-if="diyComponent.style == 'style-3'" class="rounded-[16rpx] style-bg-3 p-[30rpx]">
 			<view class="flex items-center justify-between style-border-3 mb-[22rpx] pb-[22rpx]">
-				<view class="flex flex-col">
-					<view class="flex items-center">
-						<view class="flex justify-end leading-[30rpx] box-border text-[#fff] pr-[10rpx] text-[26rpx] w-[120rpx] h-[30rpx] bg-contain bg-no-repeat" :style="{'backgroundImage': 'url('+img('static/resource/images/diy/member/VIP.png')+')'}">
-							VIP.{{currIndex}}
+				<view class="flex flex-col flex-1">
+					<view class="flex items-center justify-between">
+						<view class="flex items-center">
+							<view class="flex justify-end leading-[30rpx] box-border text-[#fff] pr-[10rpx] text-[26rpx] w-[120rpx] h-[30rpx] bg-contain bg-no-repeat" :style="{'backgroundImage': 'url('+img('static/resource/images/diy/member/VIP.png')+')'}">
+								VIP.{{currIndex}}
+							</view>
+							<text class="text-[#733F02] ml-[8rpx] text-[30rpx] font-bold max-w-[380rpx] truncate">{{info.member_level_name}}</text>
 						</view>
-						<text class="text-[#733F02] ml-[8rpx] text-[30rpx] font-bold max-w-[380rpx] truncate">{{info.member_level_name}}</text>
+						<view class="flex items-center" @click="toLink('/app/pages/member/level')">
+							<view class="flex items-center">
+								<image :src="img('static/resource/images/diy/member/rule.png')" mode="aspectFit" class="w-[20rpx] h-[20rpx]" />
+								<text class="text-[18rpx] text-[#733F02] ml-[6rpx] leading-[24rpx]">规则</text>
+							</view>
+							<view class="ml-[6rpx] text-[#733F02] !text-[26rpx] nc-iconfont nc-icon-youV6xx"></view>
+						</view>
 					</view>
 					<text class="text-[28rpx] text-[#794200] mt-[16rpx]">购物或邀请好友可以提升等级</text>
 				</view>
-				<view class="flex items-center" @click="toLink('/app/pages/member/level')">
-					<view class="flex flex-col items-center justify-center">
-						<image :src="img('static/resource/images/diy/member/rule.png')" mode="aspectFit" class="w-[26rpx] h-[26rpx]" />
-						<text class="text-[24rpx] text-[#733F02] mt-[10rpx]">规则</text>
-					</view>
-					<view class="ml-[10rpx] text-[#733F02] !text-[26rpx] nc-iconfont nc-icon-youV6xx"></view>
-				</view>
+	
 			</view>
 			<view class="flex items-center justify-between">
 				<view class="flex flex-col flex-1">

@@ -69,7 +69,9 @@
             padding-left: 0;
             padding-right: 0;
         }
-
+		.u-cell__value{
+			line-height: 1;
+		}
         .u-cell {
             &:last-child .u-line {
                 display: none;

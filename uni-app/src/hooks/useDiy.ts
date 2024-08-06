@@ -1,7 +1,7 @@
-import {ref, reactive, computed} from 'vue';
-import {onLoad, onShow, onPullDownRefresh, onPageScroll} from '@dcloudio/uni-app';
-import {img, handleOnloadParams} from '@/utils/common';
-import {getDiyInfo} from '@/app/api/diy';
+import { ref, reactive, computed } from 'vue';
+import { onLoad, onShow, onPullDownRefresh, onPageScroll, onUnload } from '@dcloudio/uni-app';
+import { img, handleOnloadParams } from '@/utils/common';
+import { getDiyInfo } from '@/app/api/diy';
 import useDiyStore from '@/app/stores/diy';
 
 export function useDiy(params: any = {}) {
@@ -33,31 +33,25 @@ export function useDiy(params: any = {}) {
             return diyData;
         }
     })
-	
+
     const isShowTopTabbar = ref(false);
 
     const pageStyle = () => {
         var style = '';
         if (data.value.global.pageStartBgColor) {
-            if (data.value.global.pageStartBgColor && data.value.global.pageEndBgColor) style += `background:linear-gradient(${data.value.global.pageGradientAngle},${data.value.global.pageStartBgColor},${data.value.global.pageEndBgColor});`;
+            if (data.value.global.pageStartBgColor && data.value.global.pageEndBgColor) style += `background:linear-gradient(${ data.value.global.pageGradientAngle },${ data.value.global.pageStartBgColor },${ data.value.global.pageEndBgColor });`;
             else style += 'background-color:' + data.value.global.pageStartBgColor + ';';
         }
 
         style += 'min-height:calc(100vh - 50px);';
         if (data.value.global.bgUrl) {
-            style += `background-image:url('${img(data.value.global.bgUrl)}');`;
+            style += `background-image:url('${ img(data.value.global.bgUrl) }');`;
         }
 
         if (data.value.global.bgHeightScale) {
-            style += `background-size: 100% ${data.value.global.bgHeightScale}%;`;
+            style += `background-size: 100% ${ data.value.global.bgHeightScale }%;`;
         }
-		
-		// #ifdef H5
-		// 导航栏风格五 - 兼容
-		if(data.value.global && data.value.global.topStatusBar && data.value.global.topStatusBar.style == "style-5"){
-			style += `background-position-y: -176rpx;`;
-		}
-		// #endif
+
         return style;
     };
 
@@ -106,7 +100,7 @@ export function useDiy(params: any = {}) {
                         diyData.value.forEach((item: any, index) => {
                             item.pageStyle = '';
                             if (item.pageStartBgColor) {
-                                if (item.pageStartBgColor && item.pageEndBgColor) item.pageStyle += `background:linear-gradient(${item.pageGradientAngle},${item.pageStartBgColor},${item.pageEndBgColor});`;
+                                if (item.pageStartBgColor && item.pageEndBgColor) item.pageStyle += `background:linear-gradient(${ item.pageGradientAngle },${ item.pageStartBgColor },${ item.pageEndBgColor });`;
                                 else item.pageStyle += 'background-color:' + item.pageStartBgColor + ';';
                             }
 
@@ -141,6 +135,14 @@ export function useDiy(params: any = {}) {
         })
     }
 
+    // 监听页面卸载
+    const onUnloadLifeCycle = () => {
+        onUnload(() => {
+            // 兼容轮播搜索组件-切换分类时，导致个人中心白屏
+            diyStore.topFixedStatus = 'home'
+        })
+    }
+
     // 监听下拉刷新事件
     const onPullDownRefreshLifeCycle = () => {
         onPullDownRefresh(() => {
@@ -166,6 +168,7 @@ export function useDiy(params: any = {}) {
         pageStyle,
         onLoad: onLoadLifeCycle,
         onShow: onShowLifeCycle,
+        onUnload: onUnloadLifeCycle,
         onPullDownRefresh: onPullDownRefreshLifeCycle,
         onPageScroll: onPageScrollLifeCycle,
     }

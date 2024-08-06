@@ -73,7 +73,6 @@
                 data.city && (selected.city = data.city)
                 data.district && (selected.district = data.district)
             })
-            .catch()
         }
     },{
 		immediate:true

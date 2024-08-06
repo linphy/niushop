@@ -7,7 +7,7 @@ const loginBack = useLogin()
 /**
  * 检测是否需要登录
  */
-export function checkNeedLogin(route: AnyObject){
+export function checkNeedLogin(route: AnyObject) {
     const pages = getNeedLoginPages()
 
     if (pages.includes(route.path) && !getToken()) {

@@ -1,29 +1,29 @@
 <template>
-    <view class="px-[30rpx] pt-[10rpx]" :style="themeColor()">
-        <u-form labelPosition="left" :model="formData" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
+    <view class="sidebar-marign pt-[10rpx]" :style="themeColor()">
+        <u-form labelPosition="left" :model="formData" :label-style="{'font-size':'28rpx'}" labelWidth="200rpx" errorType='toast' :rules="rules" ref="formRef">
             <view class="">
                 <u-form-item :label="t('name')" prop="name" :border-bottom="true">
-                    <u-input  fontSize="30rpx" v-model.trim="formData.name" border="none" clearable maxlength="25" :placeholder="t('namePlaceholder')"/>
+                    <u-input  fontSize="28rpx" v-model.trim="formData.name" border="none" clearable maxlength="25" :placeholder="t('namePlaceholder')"/>
                 </u-form-item>
             </view>
             <view class="mt-[10rpx]">
                 <u-form-item :label="t('mobile')" prop="mobile" :border-bottom="true">
-                    <u-input  fontSize="30rpx" v-model.trim="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
+                    <u-input  fontSize="28rpx" v-model.trim="formData.mobile" border="none" clearable :placeholder="t('mobilePlaceholder')"/>
                 </u-form-item>
             </view>
             <view class="mt-[10rpx]">
                 <u-form-item :label="t('selectArea')" prop="area" :border-bottom="true" >
                     <view class="flex w-full items-center" v-if="addressType == 'address' && isSelectMap != 1" @click="selectArea">
-						<view v-if="!formData.area" class="text-gray-placeholder text-[30rpx] flex-1">{{ t('selectAreaPlaceholder') }}</view>
-						<view v-else class="text-[30rpx] flex-1">{{ formData.area }}</view>
+						<view v-if="!formData.area" class="text-gray-placeholder text-[28rpx] flex-1">{{ t('selectAreaPlaceholder') }}</view>
+						<view v-else class="text-[28rpx] flex-1">{{ formData.area }}</view>
 						<view @click.stop="chooseLocation" class="flex items-center">
 							<text class="nc-iconfont nc-icon-dizhiguanliV6xx mr-[4rpx] text-[32rpx] text-[#e93323]"></text>
 							<text class="text-[24rpx] whitespace-nowrap">定位</text>
 						</view>
 					</view>
 					<view v-else class="flex justify-between items-center flex-1" @click="chooseLocation">
-					    <view  class="text-[30rpx] text-[#303133]" v-if="formData.area || formData.address_name">{{formData.area || formData.address_name}}</view>
-						<view  class="text-[#c3c4d5] text-[30rpx]" v-else>{{t('selectAddressPlaceholder')}}</view>
+					    <view  class="text-[28rpx] text-[#303133]" v-if="formData.area || formData.address_name">{{formData.area || formData.address_name}}</view>
+						<view  class="text-[#c3c4d5] text-[28rpx]" v-else>{{t('selectAddressPlaceholder')}}</view>
 						<view class="flex items-center">
 							<text class="nc-iconfont nc-icon-dizhiguanliV6xx text-[32rpx] mr-[4rpx] text-[#e93323]"></text>
 							<text class="text-[24rpx] whitespace-nowrap">定位</text>
@@ -33,7 +33,7 @@
             </view>
             <view class="mt-[10rpx]">
                 <u-form-item :label="t('address')" prop="address" :border-bottom="true">
-                    <u-input fontSize="30rpx" v-model.trim="formData.address" border="none" clearable maxlength="120" :placeholder="t('addressPlaceholder')"/>
+                    <u-input fontSize="28rpx" v-model.trim="formData.address" border="none" clearable maxlength="120" :placeholder="t('addressPlaceholder')"/>
                 </u-form-item>
             </view>
             <view class="mt-[10rpx]">
@@ -42,13 +42,13 @@
                 </u-form-item>
             </view>
             <view class="mt-[40rpx]">
-                <u-button type="primary" shape="circle" :text="t('save')" @click="save" :disabled="btnDisabled" :loading="operateLoading"></u-button>
+                <button hover-class="none" class="!bg-[var(--primary-color)] !text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" :class="{'opacity-50': btnDisabled}" @click="save" :disabled="btnDisabled" :loading="operateLoading">{{t('save')}}</button>
             </view>
         </u-form>
         <area-select ref="areaRef" @complete="areaSelectComplete" :area-id="formData.district_id"/>
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 小程序隐私协议 -->
-		<wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+		<wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
 		<!-- #endif -->
     </view>
 
@@ -82,23 +82,21 @@
     const formRef = ref(null)
     const source = ref('')
     const btnDisabled = ref(false)
-	let isSelectAddress = ref(false)
-	let addressType = ref('address');
-	let isSelectMap = ref(2) // 值为1，该地址需要有经纬度，反之不需要
+	const isSelectAddress = ref(false)
+	const addressType = ref('address');
+	const isSelectMap = ref(2) // 值为1，该地址需要有经纬度，反之不需要
     
-    onLoad((data) => {
+    onLoad((data: any) => {
 		isSelectMap.value = data.isSelectMap || '';
 		const selectAddress = uni.getStorageSync('selectAddressCallback')
         if (data.id) {
-            getAddressInfo(data.id)
-                .then(res => {
+            getAddressInfo(data.id).then(res => {
                     res.data && Object.assign(formData.value, res.data)
 					// 兼容待支付页面编辑地址
 					if(selectAddress){
 						addressType.value = selectAddress.delivery == 'express' ? 'address' : 'locationAddress';
 					}
                 })
-                .catch()
 			
         }else if (data.name) {
             if (uni.getStorageSync('addressInfo')) {
@@ -198,8 +196,7 @@
 				btnDisabled.value = false
 				return false;
 			}
-			
-			
+
             save(formData.value).then((res) => {
                 operateLoading.value = false
                 setTimeout(() => {
@@ -273,8 +270,7 @@
 	    window.location.href = 'https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=' + encodeURIComponent(backurl) + '&key=' + manifestJson.h5.sdkConfigs.maps.qqmap.key + '&referer=myapp';
 	    // #endif
 	}
-	
-	
+
 	//获取详细地址
 	const getAddress = (latlng:any)=> {
 	    getAddressByLatlng({latlng}).then((res: any) => {
@@ -310,4 +306,6 @@
 	}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	
+</style>

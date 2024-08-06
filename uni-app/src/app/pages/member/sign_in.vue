@@ -4,111 +4,115 @@
             <view v-if="info.is_use">
                 <view class="sigin-header">
                 <!-- #ifdef MP-WEIXIN -->
-                    <view class="flex items-center absolute right-0 px-[14rpx] bg-color rounded-l-[35rpx]  text-[#fff] text-[24rpx] h-[50rpx] z-10" :style="{top: topStyle}"  @click="signPopup = true">
-                         <text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[28rpx] text-[#fff] mr-[4rpx]"></text>
+                    <view class="flex items-center absolute right-0 px-[14rpx] bg-color rounded-l-[35rpx]  text-[#fff] text-[24rpx] h-[40rpx] z-10" :style="{top: topStyle}"  @click="signPopup = true">
+                         <text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[28rpx] text-[#fff] mr-[6rpx]"></text>
                         <text class="text-[24rpx]">签到规则</text>
 					</view>
                     <view  :style="{height: headStyle, backgroundImage: 'url(' + img('static/resource/images/app/sigin_uniapp.png') + ')',backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat'}">
-                        <top-tabbar :data="topTabbarData" titleColor="#fff" class="top-header" />
+                        <top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()" class="top-header" />
                     </view>
                     <!-- #endif -->
                     <!-- #ifdef H5 -->
-                    <view v-if="info.rule_explain" class="flex items-center absolute top-[38rpx] right-0 px-[14rpx] bg-color rounded-l-[35rpx]  text-[#fff] text-[24rpx] h-[50rpx] z-10" @click="signPopup = true">
-                        <text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[28rpx] text-[#fff] mr-[4rpx]"></text>
+                    <view v-if="info.rule_explain" class="flex items-center absolute top-[44rpx] right-0 px-[14rpx] bg-color rounded-l-[35rpx]  text-[#fff] text-[24rpx] h-[40rpx] z-10" @click="signPopup = true">
+                        <text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[28rpx] text-[#fff] mr-[6rpx]"></text>
                         <text class="text-[24rpx]">签到规则</text>
 					</view>
                     <view  class="h-[382rpx]" :style="{ backgroundImage: 'url(' + img('static/resource/images/app/sigin_h5.png') + ')',backgroundSize: '100%', backgroundRepeat: 'no-repeat'}">
-                        <top-tabbar :data="topTabbarData" class="top-header" />
                     </view>
                     <!-- #endif -->
                 </view>
                 <view>
-                    <view class="mx-[30rpx] bg-[#fff] rounded-[16rpx] -mt-[85rpx]">
-                        <view class="px-[30rpx]">
-                            <view class="pt-[32rpx] mb-[40rpx] flex justify-between items-center" v-if="flag" >
+                    <view class="sidebar-marign bg-[#fff] rounded-[16rpx] -mt-[85rpx]">
+                        <view class="card-template">
+                            <view class=" mb-[30rpx] flex justify-between items-center" v-if="flag">
                                 <view class="flex items-center">
-                                    <text class="iconfont iconshangyibu text-[#999] text-[24rpx]"  @click="changeMonth('prev')"></text>
-                                    <view class="mx-[30rpx] font-bold text-[32rpx] text-[#333] leading-[38rpx]">{{ state.curYear }}年{{ state.curMonth+1 }}月</view>
-                                    <text class="iconfont iconxiayibu1 text-[#999] text-[24rpx]"  @click="changeMonth('next')"></text>
+                                    <text class="iconfont iconshangyibu text-[#333] text-[24rpx]"  @click="changeMonth('prev')"></text>
+                                    <view class="mx-[30rpx] font-bold text-[32rpx] text-[#333] leading-[45rpx]">{{ state.curYear }}年{{ state.curMonth+1 }}月</view>
+                                    <text class="iconfont iconxiayibu1 text-[#333] text-[24rpx]"  @click="changeMonth('next')"></text>
                                 </view>
                                 <view class="flex items-center">
-                                    <text class="nc-iconfont nc-icon-shangV6xx-1 text-[#666] text-[30rpx] transform scale-80" @click="handleChange"></text>
+                                    <text class="nc-iconfont nc-icon-shangV6xx-1 text-[#626779] text-[26rpx]" @click="handleChange"></text>
                                 </view>
                             </view>
-                            <view class="pt-[32rpx] mb-[40rpx] flex justify-between items-center" v-else>
+                            <view class="mb-[30rpx] flex justify-between items-center" v-else>
                                 <view class="flex items-center">
-                                    <view class="font-bold text-[32rpx] text-[#333] leading-[38rpx]">已连续签到<text class="text-[#EF000C] mx-[4rpx]">{{ info.days }}</text>天</view>
+                                    <view class="font-500 text-[32rpx] text-[#333] leading-[45rpx]">已连续签到<text class="text-[#EF000C] mx-[4rpx]">{{ info.days }}</text>天</view>
                                 </view>
-                                <text class="nc-iconfont nc-icon-xiaV6xx text-[#666] text-[30rpx] transform scale-80" v-if="!flag" @click="flag = !flag"></text>
+                                <text class="nc-iconfont nc-icon-xiaV6xx text-[#626779] text-[26rpx]" v-if="!flag" @click="flag = !flag"></text>
                             </view>
-                            <view class="relative z-9 pb-[30rpx] bg-[#fff] rounded-[18rpx]">
+                            <view class="relative z-9 bg-[#fff] rounded-[18rpx]">
                                 <view>
-                                    <view class="flex items-center justify-between text-[#666] text-[26rpx] mb-[14rpx]">
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周一</text>
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周二</text>
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周三</text>
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周四</text>
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周五</text>
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周六</text>
-                                        <text class="w-[14.2%] leading-[30rpx] text-center">周日</text>
+                                    <view class="flex items-center justify-between text-[#626779] text-[24rpx] mb-[16rpx]">
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周一</text>
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周二</text>
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周三</text>
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周四</text>
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周五</text>
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周六</text>
+                                        <text class="w-[14.28%] leading-[36rpx] text-center">周日</text>
                                     </view>
                                     <view class="flex flex-wrap items-center justify-start" v-if="!flag">
                                         <block v-for="(item,index) in state.weekCount" :key="index">
-                                            <view  class="w-[14.2%] flex flex-col justify-center items-center">
-                                                <view v-if="filteredDate(item)" class="w-[74rpx] h-[92rpx] bg-[#F2F2F2] text-[#666] border-box py-[10rpx] rounded-[8rpx] flex flex-col  items-center" :class="{'sigin-bg !text-[#fff]': isVerDate(item),'bg-[#FDFDFD] border-[1rpx] border-[#E0E0E0] border-solid !text-[#999]': !isVerDate(item) && item < state.curDate && (state.curMonth + 1) == (new Date().getMonth() + 1) ,'mb-[10rpx]':isCurrentDate(item),'mb-[20rpx]':!isCurrentDate(item)   }" @click="getDayPackFn(item)">
-                                                    <text class="text-[24rpx] leading-[34rpx] mb-[6rpx]">{{ filteredDate(item) }}</text>
-                                                    <view v-if="filteredDate(item)">
+                                            <view  class="w-[14.28%] flex flex-col justify-center items-center">
+                                                <view v-if="filteredDate(item)" class="w-[74rpx] h-[92rpx] bg-[#F1F2F5] text-[#626779] box-border py-[10rpx] rounded-[8rpx] flex flex-col  items-center" :class="{'sigin-bg !text-[#fff]': isVerDate(item),'!bg-[#F6FAFF] border-[1rpx] border-[#F0F4FA] border-solid': !isVerDate(item) && item < state.curDate && (state.curMonth + 1) == (new Date().getMonth() + 1) ,'mb-[20rpx]':isCurrentDate(item),'mb-[30rpx]':!isCurrentDate(item)}" @click="getDayPackFn(item)">
+                                                    <text class="text-[24rpx] leading-[28rpx] mb-[6rpx]">{{ filteredDate(item) }}</text>
+                                                    <view v-if="filteredDate(item)" class="flex items-center justufy-center">
                                                         <image  v-if="isPackDate(item)" :src="img('static/resource/images/app/package.png')" class="w-[40rpx] h-[40rpx]"></image>
                                                         <image v-else-if="isVerDate(item)" :src="img('static/resource/images/app/hassigin.png')" class="w-[34rpx] h-[34rpx]"></image>
-                                                        <image  v-else :src="img('static/resource/images/app/nosigin.png')" class="w-[34rpx] h-[34rpx]"></image>
+                                                        <template  v-else>
+                                                            <image v-if="!isVerDate(item) && item < state.curDate && (state.curMonth + 1) == (new Date().getMonth() + 1)" :src="img('static/resource/images/app/nosigin.png')" class="w-[34rpx] h-[34rpx]"></image>
+                                                            <image  v-else :src="img('static/resource/images/app/nosigin1.png')" class="w-[34rpx] h-[34rpx]"></image>
+                                                        </template>
                                                     </view>
                                                 </view>
                                                 <view class="w-[10rpx] h-[10rpx] rounded-[50%] bg-[#FF5527]" v-if="isCurrentDate(item)"></view>
-                                            </view>   
+                                            </view>
                                         </block>
                                     </view>
                                     <view class="flex flex-wrap items-center justify-start" v-else>
                                         <block v-for="(item,index) in state.dataCount" >
-                                            <view  class="w-[14.2%] flex flex-col justify-center items-center mb-[10rpx]">
-                                                <view v-if="filteredDate(item)" class="w-[74rpx] h-[92rpx] bg-[#F2F2F2] text-[#666] border-box py-[10rpx] rounded-[8rpx] flex flex-col  items-center" :class="{'sigin-bg !text-[#fff]': isVerDate(item) && active ,'bg-[#FDFDFD] border-[1rpx] border-[#E0E0E0] border-solid !text-[#999]': !isVerDate(item) && item < state.curDate && (state.curMonth + 1) == (new Date().getMonth() + 1) && state.curYear == new Date().getFullYear() ,'mb-[10rpx]':isCurrentDate(item),'mb-[20rpx]':!isCurrentDate(item)}" @click="getDayPackFn(item)">
-                                                    <text class="text-[24rpx] leading-[34rpx] mb-[6rpx]">{{ filteredDate(item) }}</text>
-                                                    <view v-if="filteredDate(item)">
+                                            <view  class="w-[14.28%] flex flex-col justify-center items-center mb-[30rpx]">
+                                                <view v-if="filteredDate(item)" class="w-[74rpx] h-[92rpx] bg-[#F6FAFF] text-[#626779] box-border py-[10rpx] rounded-[8rpx] flex flex-col  items-center" :class="{'sigin-bg !text-[#fff]': isVerDate(item) && active ,'!bg-[#FDFDFD] border-[1rpx] border-[#F0F4FA] border-solid': !isVerDate(item) && item < state.curDate && (state.curMonth + 1) == (new Date().getMonth() + 1) && state.curYear == new Date().getFullYear() ,'mb-[20rpx]':isCurrentDate(item),'mb-[30rpx]':!isCurrentDate(item)}" @click="getDayPackFn(item)">
+                                                    <text class="text-[24rpx] leading-[28rpx] mb-[6rpx]">{{ filteredDate(item) }}</text>
+                                                    <view v-if="filteredDate(item)" class="flex items-center justufy-center">
                                                         <image  v-if="isPackDate(item)" :src="img('static/resource/images/app/package.png')" class="w-[40rpx] h-[40rpx]"></image>
                                                         <image v-else-if="isVerDate(item) && active " :src="img('static/resource/images/app/hassigin.png')" class="w-[34rpx] h-[34rpx]"></image>
-                                                        <image  v-else :src="img('static/resource/images/app/nosigin.png')" class="w-[34rpx] h-[34rpx]"></image>
+                                                        <template v-else>
+                                                            <image  v-if="!isVerDate(item) && item < state.curDate && (state.curMonth + 1) == (new Date().getMonth() + 1)" :src="img('static/resource/images/app/nosigin.png')" class="w-[34rpx] h-[34rpx]"></image>
+                                                            <image  v-else :src="img('static/resource/images/app/nosigin1.png')" class="w-[34rpx] h-[34rpx]"></image>
+                                                        </template>
+
                                                     </view>
                                                 </view>
                                                 <view class="w-[10rpx] h-[10rpx] rounded-[50%] bg-[#FF5527]" v-if="isCurrentDate(item)"></view>
-                                            </view>   
+                                            </view>
                                         </block>
                                     </view>
-                                    <view class="mt-[50rpx] mx-[20rpx] flex justify-center"  v-if="state.curMonth + 1 == (new Date().getMonth() + 1) && state.curYear == new Date().getFullYear() ">
-                                        <button v-if="!info.is_sign" class="rounded-[40rpx] !bg-transparent" :style="{width:'470rpx',height:'80rpx',border:'none', color:'#fff', fontSize:'28rpx',lineHeight:'76rpx',backgroundImage: `url(${img('static/resource/images/app/button_bg2.png')})`,backgroundSize: '100%', backgroundRepeat: 'no-repeat'}" shape="circle" @click="setSignFn">
-											<text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[30rpx] text-[#fff] mr-[8rpx]"></text>
+                                    <view class="mt-[40rpx] flex justify-center"  v-if="state.curMonth + 1 == (new Date().getMonth() + 1) && state.curYear == new Date().getFullYear() ">
+                                        <button v-if="!info.is_sign" class="rounded-[40rpx] !bg-transparent" :style="{width:'490rpx',height:'88rpx',border:'none', color:'#fff', fontSize:'32rpx',lineHeight:'84rpx',backgroundImage: `url(${img('static/resource/images/app/button_bg2.png')})`,backgroundSize: '100%', backgroundRepeat: 'no-repeat'}" shape="circle" @click="setSignFn">
+											<text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[32rpx] text-[#fff] mr-[8rpx]"></text>
 											<text>立即签到</text>
 										</button>
-										<button v-else class="rounded-[40rpx] !bg-transparent" :style="{width:'470rpx',height:'80rpx',border:'none',color:'#fff', fontSize:'28rpx',lineHeight:'76rpx',backgroundImage: `url(${img('static/resource/images/app/button_bg1.png')})`,backgroundSize: '100%', backgroundRepeat: 'no-repeat'}" shape="circle">
-											<text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[30rpx] text-[#fff] mr-[8rpx]"></text>
+										<button v-else class="rounded-[40rpx] !bg-transparent" :style="{width:'490rpx',height:'88rpx',border:'none',color:'#fff', fontSize:'32rpx',lineHeight:'84rpx',backgroundImage: `url(${img('static/resource/images/app/button_bg1.png')})`,backgroundSize: '100%', backgroundRepeat: 'no-repeat'}" shape="circle">
+											<text class="nc-iconfont nc-icon-meiriqiandaoV6xx text-[32rpx] text-[#fff] mr-[8rpx]"></text>
 											<text>已签到</text>
 										</button>
                                     </view>
-                                    <!-- <view class="mx-[20rpx] flex items-baseline justify-between mt-[16rpx]">
-                                        <text class="text-[26rpx] text-[#FF9000] leading-[30rpx]">查看签到记录</text>
-                                    </view> -->
                                 </view>
                             </view>
                         </view>
                     </view>
-                    <view class="mt-[20rpx] mb-[30rpx]  mx-[30rpx] p-[30rpx] bg-[#fff] rounded-[16rpx]">
+
+                    <view class="mt-[20rpx] mb-[30rpx] sidebar-marign card-template" v-if="info && info.continue_award && Object.keys(info.continue_award).length">
                         <view class="mb-[30rpx] flex items-center">
-                            <view class="font-bold text-[32rpx] text-[#333] leading-[38rpx]">签到奖励</view>
+                            <view class="font-500 text-[32rpx] text-[#333] leading-[44rpx]">签到奖励</view>
                             <!-- <view class="text-[#666] text-[26rpx] leading-[30rpx]">
                                 <text>签到记录</text>
                                 <image :src="img('static/resource/images/app/more.png')" class="w-[12rpx] h-[18rpx] ml-[8rpx]"></image>
                             </view> -->
                         </view>
                         <view>
-                            <view v-for="(item,index) in info.continue_award" :key="index" class="flex items-center  mt-[40rpx] border-box">
+                            <view v-for="(item,index) in info.continue_award" :key="index" class="flex items-center border-box" :class="{'mt-[40rpx]':index}">
                                 <view class="w-[90rpx] h-[90rpx] rounded-[50%] bg-[#E7F6FF] flex items-center justify-center  flex-shrink-0" v-if="(index + 1) % 4 == 1">
                                     <image :src="img('static/resource/images/app/icon_02.png')" class="w-[40rpx] h-[40rpx]"></image>
                                 </view>
@@ -122,26 +126,28 @@
                                     <image :src="img('static/resource/images/app/icon_05.png')" class="w-[40rpx] h-[40rpx]"></image>
                                 </view>
                                 <view class="flex-1 mx-[20rpx]">
-                                    <view class="font-500 text-[28rpx] text-[#333] leading-[33rpx] mb-[10rpx]">连续签到{{item.continue_sign}}天</view>
+                                    <view class="font-400 text-[28rpx] text-[#333] leading-[38rpx] mb-[8rpx]">连续签到{{item.continue_sign}}天</view>
                                     <view class="flex flex-wrap" v-if="item.gift">
-                                        <view  class="flex  mb-[10rpx] ">
+                                        <view  class="flex">
                                             <image :src="img(item.gift.total.icon)" class="w-[30rpx] h-[30rpx] flex-shrink-0"></image>
-                                            <view class="text-[24rpx] ml-[6rpx] text-[#FF9000] leading-[30rpx] max-w-[330rpx]">{{item.gift.total.text}}</view>
+                                            <view class="text-[24rpx] ml-[8rpx] text-[#FF9000] leading-[34rpx] max-w-[330rpx]">{{item.gift.total.text}}</view>
                                          </view>
                                     </view>
                                 </view>
                                 <view class="flex-shrink-0">
-                                    <view v-if="Number(info.days) < Number(item.continue_sign) " class="px-[28rpx] py-[8rpx] bg-[#FFECE9] rounded-[40rpx] font-500 text-[24rpx] text-[rgba(239,0,12,.8)] leading-[34rpx]">待完成</view>
-                                    <view v-else class="px-[28rpx] py-[8rpx]  rounded-[40rpx] font-500 text-[24rpx] text-[#fff] leading-[34rpx]" style="background:linear-gradient( 90deg, #FB7939 0%, #FE120E 100%) ;">已完成</view>
+                                    <view v-if="Number(info.days) < Number(item.continue_sign) " class="w-[130rpx] h-[56rpx] text-center bg-[#FFECE9] rounded-[28rpx] font-400 text-[26rpx] text-[#FF343E] leading-[56rpx]">待完成</view>
+                                    <view v-else class="w-[130rpx] h-[56rpx] text-center  rounded-[28rpx] font-400 text-[26rpx] text-[#fff] leading-[56rpx]" style="background:linear-gradient( 90deg, #FB7939 0%, #FE120E 100%) ;">已完成</view>
                                 </view>
                             </view>
                         </view>
-                    </view>   
+                    </view>
                 </view>
             </view>
-            <view class="min-h-screen flex flex-col justify-center bg-[#fff]" v-else>
-                <image class="rounded-[8rpx] overflow-hidden mx-auto w-[320rpx] h-[184rpx]" :src="img('static/resource/images/system/empty.png')" model="aspectFill" />
-                <view class="text-[#999] text-[26rpx] font-400 mt-[26rpx] text-center leading-[30rpx]">签到未开启</view>
+            <view class="h-[100vh] w-[100vw] flex justify-center items-center" v-else>
+                <!-- #ifdef MP-WEIXIN -->
+                <top-tabbar :data="topTabbarData" :scrollBool="topTabarObj.getScrollBool()" class="top-header"/>
+                <!-- #endif -->
+                <u-empty text="签到未开启" width="347rpx" height="265rpx" :icon="img('static/resource/images/system/empty.png')"/>
             </view>
             <!-- 签到规则-->
             <u-popup :show="signPopup" :round="16" mode="bottom" :closeable="true" @close="signPopup = false">
@@ -153,35 +159,35 @@
                         </block>
                     </scroll-view>
                     <view>
-                        <u-button text="知道了" :customStyle="{height:'66rpx',color:'#fff', fontSize:'28rpx',lineHeight:'66rpx',background: 'linear-gradient( 90deg, #fc7035 0%, #EF000C 100%)',border:'none'}" shape="circle" @click="signPopup = false"></u-button>
+                        <button class="primary-btn-bg h-[66rpx] text-[#fff] text-[28rpx] border-[0] leading-[66rpx] rounded-[50rpx]" shape="circle" @click="signPopup = false">知道了</button>
                     </view>
-                </view> 
+                </view>
             </u-popup>
             <!-- 签到奖励 -->
             <u-popup :show="awardShow" class="award-popup" :customStyle="{backgroundColor:'transparent'}" @close="awardShow = false"  mode="center" :round="5" :safeAreaInsetBottom="false" >
-                <view  class="w-[550rpx]"  v-if="Object.values(signAward).length">
+                <view  class="w-[550rpx] -mt-[124rpx]"  v-if="Object.values(signAward).length">
                     <view class="flex justify-center">
-                        <image :src="img('static/resource/images/app/award.png')" class="w-[484rpx] h-[480rpx]"></image>
+                        <image :src="img('static/resource/images/app/award.png')" class="w-[484rpx] h-[480rpx] z-10"  mode="aspectFill"></image>
                     </view>
-                    <view class="-mt-[265rpx] bg-award rounded-[30rpx] pt-[100rpx] pb-[48rpx] mb-[50rpx] raleative z-10">
+                    <view class="-mt-[265rpx] bg-award rounded-[30rpx] pt-[100rpx] pb-[40rpx] mb-[50rpx] relative">
                         <view class="px-[32rpx]">
-                            <view class="text-[48rpx] text-[#EF000C] font-bold leading-[56rpx] mb-[4rpx] text-center">{{ signAward.title }}</view>
-                            <view class="text-[24rpx] text-[#F05F66] leading-[28rpx] text-center mb-[60rpx]">{{ signAward.info }}</view>
-                            <view class="px-[68rpx] mb-[54rpx]">
+                            <view class="text-[48rpx] text-[#EF000C] font-bold leading-[68rpx] mb-[6rpx] text-center">{{ signAward.title }}</view>
+                            <view class="text-[24rpx] text-[#F05F66] leading-[34rpx] text-center mb-[60rpx]" v-if="signAward.info">{{ signAward.info }}</view>
+                            <view class="px-[68rpx] mb-[80rpx]">
                                 <block v-for="(item,index) in signAward.awards">
                                     <template v-if="item.content" v-for="(subItem,subIndex) in item.content">
-                                        <view class="flex items-center mb-[30rpx]" > 
+                                        <view class="flex items-center mb-[30rpx]" >
                                             <image :src="img(subItem.icon)" class="w-[42rpx] h-[42rpx]"></image>
-                                            <view class="ml-[20rpx] text-[28rpx] text-[#333] leading-[32rpx]">{{subItem.text }}</view>
+                                            <view class="ml-[20rpx] text-[28rpx] text-[#333] leading-[38rpx]">{{subItem.text }}</view>
                                         </view>
                                     </template>
                                 </block>
                             </view>
-                            <view class="flex justify-center">
-								<view class="w-[380rpx] h-[80rpx] bg-gradient-to-r from-[#FB7939] to-[#FE120E] rounded-[50rpx] text-[#ffffff] text-center leading-[80rpx] text-[30rpx]"  @click="awardShow = false">我知道了</view>
+                            <view class="flex justify-center relative z-30">
+								<view class="w-[370rpx] h-[88rpx] primary-btn-bg rounded-[50rpx] text-[#ffffff] text-center leading-[88rpx] text-[32rpx]"  @click="awardShow = false">我知道了</view>
                             </view>
                         </view>
-                    </view> 
+                    </view>
                     <view class="flex justify-center">
                         <text class="nc-iconfont nc-icon-cuohaoV6xx text-[#fff] text-[60rpx]" @click="awardShow = false"></text>
                     </view>
@@ -189,26 +195,28 @@
             </u-popup>
             <!-- 查看当日或连续签到奖励 -->
             <u-popup :show="packShow" class="award-popup" :customStyle="{backgroundColor:'transparent'}" @close="packShow = false"  mode="center" :round="5" :safeAreaInsetBottom="false">
-                <view class="w-[550rpx]" v-if="Object.values(packInfo).length">
+                <view class="w-[550rpx] -mt-[124rpx]" v-if="Object.values(packInfo).length">
                     <view class="flex justify-center">
-                        <image :src="img('static/resource/images/app/award.png')" class="w-[484rpx] h-[480rpx]"></image>
+                        <image :src="img('static/resource/images/app/award.png')" class="w-[484rpx] h-[480rpx] z-10" mode="aspectFill"></image>
                     </view>
-                    <view class="-mt-[265rpx] bg-award rounded-[30rpx] pt-[100rpx] pb-[48rpx] mb-[50rpx] raleative z-10">
+                    <view class="-mt-[265rpx] bg-award rounded-[30rpx] pt-[100rpx] pb-[40rpx] mb-[50rpx] relative">
                         <view class="px-[32rpx]">
-                            <view class="text-[48rpx] text-[#EF000C] font-bold leading-[56rpx] mb-[4rpx] text-center opacity-60">签到奖励</view>
-                            <view class="text-[24rpx] text-[#F05F66] opacity-60 leading-[28rpx] text-center mb-[60rpx]">您将获得以下奖励</view>
-                            <view class="px-[68rpx] mb-[54rpx]">
-                                <block v-for="(item,index) in packInfo">
+                            <view class="text-[48rpx] text-[#333] font-bold leading-[68rpx] mb-[6rpx] text-center relative z-20">
+                                {{ packInfo.title }}
+                            </view>
+                            <view class="text-[24rpx] text-[#F05F66] leading-[34rpx] text-center mb-[60rpx]">{{  packInfo.info }}</view>
+                            <view class="px-[68rpx] mb-[80rpx]">
+                                <block v-for="(item,index) in packInfo.awards">
                                     <template v-if="item.content">
-                                        <view class="flex items-center mb-[32rpx]" v-for="(subItem,subIndex)  in item.content" :key="subIndex"> 
+                                        <view class="flex items-center mb-[32rpx]" v-for="(subItem,subIndex)  in item.content" :key="subIndex">
                                             <image :src="img(subItem.icon)" class="w-[42rpx] h-[42rpx]"></image>
-                                            <view class="ml-[20rpx] text-[28rpx] text-[#333] leading-[32rpx]">{{ subItem.text  }}</view>
+                                            <view class="ml-[20rpx] text-[28rpx] text-[#333] leading-[38rpx]">{{ subItem.text  }}</view>
                                         </view>
                                     </template>
                                 </block>
                             </view>
-                            <view class="flex justify-center">
-								<view class="w-[380rpx] h-[80rpx] bg-gradient-to-r from-[#FB7939] to-[#FE120E] rounded-[50rpx] text-[#ffffff] text-center leading-[80rpx] text-[30rpx]"  @click="packShow = false">我知道了</view>
+                            <view class="flex justify-center  relative z-30">
+								<view class="w-[370rpx] h-[88rpx] border-[4rpx] border-[#EF000C] border-solid rounded-[50rpx] text-[#EF000C] text-center leading-[88rpx] text-[32rpx] font-500 box-border"  @click="packShow = false">我知道了</view>
                             </view>
                         </view>
                     </view>
@@ -224,12 +232,13 @@
 
 <script setup lang="ts">
 import { reactive, ref, toRefs, toRaw, computed } from 'vue'
-import { redirect, img } from '@/utils/common'
+import { redirect, img,pxToRpx } from '@/utils/common'
 import { onLoad } from '@dcloudio/uni-app'
 import { getSignInfo,getSignConfig, setSign,getDayPack } from '@/app/api/member'
 import useMemberStore from '@/stores/member'
+import { topTabar } from '@/utils/topTabbar'
 
-let state = reactive({
+const state = reactive({
     dataCount:[], //当月所有天数
     weekCount:[], //如果签到周期是7天
     curYear:0, // 当前年
@@ -239,21 +248,21 @@ let state = reactive({
     signInList:[], // 签到列表
     packList:[] //每个小周期内的礼包
 })
-let week = reactive({
+const week = reactive({
     weekDay:0, //当前天
     week:0 //当前星期
 })
 const loading = ref(false)
-let flag = ref(false)
-let info = ref({}) //签到配置
-let signPopup = ref(false)//签到规则弹框
-let signAward = ref({}) //当日签到奖励
-let awardShow = ref(false) // 每日签到弹框
-let packShow =  ref(false) //查看每天礼包
-let packInfo = ref({}) //礼包奖励
-let active = ref(false)
-let currentYear=null
-let currentMonth=null
+const flag = ref(false)
+const info = ref({}) //签到配置
+const signPopup = ref(false)//签到规则弹框
+const signAward = ref({}) //当日签到奖励
+const awardShow = ref(false) // 每日签到弹框
+const packShow =  ref(false) //查看每天礼包
+const packInfo = ref({}) //礼包奖励
+const active = ref(false)
+let currentYear: any = null
+let currentMonth: any = null
 onLoad(() =>{
     let date=new Date()
     state.curYear=date.getFullYear()
@@ -277,6 +286,9 @@ const getSignConfigFn = () =>{
     loading.value = true
     getSignConfig().then((res:any) =>{
         info.value = res.data
+        if(!info.value.is_use){
+            topTabbarData = topTabarObj.setTopTabbarParam({title:'我的签到',topStatusBar:{textColor:'#333',bgColor:'#fff'}})
+        }
         loading.value = false
     })
 }
@@ -287,9 +299,12 @@ const getSignInfoFn =  (data:any) =>{
         state.signInList = []
         state.packList = []
         state.packList = res.data.period
-        state.signInList = res.data.days.map((el:any) =>{
-            return Number(el)
-        })
+        if(res.data.length){
+            state.signInList = res.data.days.map((el:any) =>{
+                return Number(el)
+            })
+        }
+        
         active.value = true
     })
 }
@@ -364,6 +379,16 @@ const setSignFn = () =>{
     setSign().then(res =>{
         if(Object.values(res.data).length){
             signAward.value = res.data
+			// 如果没有奖励内容则不展示描述信息
+			let isShowInfo = 0
+			Object.values(signAward.value.awards).forEach((item,index)=>{
+				if(!item.content){
+					isShowInfo++;
+				}
+			})
+			if(isShowInfo == Object.values(signAward.value.awards).length){
+				signAward.value.info = "";
+			}
             getSignInfoFn({year:state.curYear,month:state.curMonth+1})
             getSignConfigFn()
             memberStore.getMemberInfo()
@@ -373,7 +398,7 @@ const setSignFn = () =>{
 }
 
 // 查看每日礼包
-let curPickDay = ref(null)
+const curPickDay = ref(null)
 const getDayPackFn = (date:number) =>{
     let {curYear,curMonth}=toRefs(state)
     let itemDate=`${curYear.value}-${(curMonth.value+1) < 10 ? '0' + (curMonth.value+1) : (curMonth.value+1)}-${date < 10 ? '0'+date : date}`
@@ -431,36 +456,19 @@ let menuButtonInfo = {};
 // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
 menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 // #endif
-let topTabbarData = ref({
-	title:'我的签到',
-	topStatusBar: {
-		style: 'style-1',
-        isTransparent: true,
-		bgColor: 'transparent',
-		textColor: '#fff'
-	}
-})
+/********* 自定义头部 - start ***********/
+const topTabarObj = topTabar()
+let topTabbarData = topTabarObj.setTopTabbarParam({title:'我的签到'})
+/********* 自定义头部 - end ***********/
 
 const headStyle = computed(() => {
-	let style = ''
-	style = pxToRpx(Number(menuButtonInfo.height) + menuButtonInfo.top + 8)+  382 + 'rpx;'
+	let style = pxToRpx(Number(menuButtonInfo.height) + menuButtonInfo.top + 8)+  382 + 'rpx;'
 	return style
 })
 const topStyle = computed(() => {
-	let style = ''
-	style = pxToRpx(Number(menuButtonInfo.height) + menuButtonInfo.top + 8)+38 + 'rpx;'
+	let style = pxToRpx(Number(menuButtonInfo.height) + menuButtonInfo.top + 8)+38 + 'rpx;'
 	return style
 })
-// rpx转px
-const rpxToPx=(rpx:any)=>{
-	const screenWidth = uni.getSystemInfoSync().screenwidth
-	return(screenWidth*Number.parseInt(rpx))/750
-}
-// px转rpx
-const pxToRpx=(px:any)=>{
-	const screenWidth =uni.getSystemInfoSync().screenWidth
-	return(750*Number.parseInt(px))/screenWidth
-}
 </script>
 
 <style lang="scss" scoped>

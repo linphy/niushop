@@ -89,25 +89,25 @@ export default {
 }
 
 .mescroll-empty .empty-icon {
-	width: 320rpx;
-	height: 320rpx;
+	width: 348rpx;
+	height: 348rpx;
 }
 
 .mescroll-empty .empty-tip {
-	margin-top: 20rpx;
 	font-size: 24rpx;
 	color: gray;
 }
 
 .mescroll-empty .empty-btn {
-	display: inline-block;
 	margin-top: 40rpx;
-	min-width: 200rpx;
-	padding: 18rpx;
+	display: inline-block;
+	min-width: 220rpx;
+	height: 66rpx;
+	line-height: 66rpx;
 	font-size: 28rpx;
-	border: 1rpx solid #e04b28;
+	border: 1rpx solid #EF000C;
 	border-radius: 60rpx;
-	color: #e04b28;
+	color: #EF000C;
 }
 
 .mescroll-empty .empty-btn:active {

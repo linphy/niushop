@@ -2,7 +2,7 @@
     <view v-if="!loading" :style="themeColor()">
         <scroll-view scroll-y="true">
             <u-swipe-action>
-                <view class="p-[30rpx]">
+                <view class="py-[30rpx] sidebar-marign">
                     <u-swipe-action-item :options="addressOptions" @click="swipeClick(key)" v-for="(item, key) in addressList">
                         <view class="border-0 !border-b !border-[#f5f5f5] border-solid pb-[30rpx] flex items-center">
                             <view class="flex-1 line-feed" @click="selectAddress(item)">
@@ -23,7 +23,7 @@
             </u-swipe-action>
             <u-tabbar :fixed="true" :safeAreaInsetBottom="true" :border="false" zIndex="99">
                 <view class="p-[24rpx] pt-0 w-full">
-                    <u-button type="primary" shape="circle" :text="t('createAddress')" @click="addAddress"></u-button>
+                    <button hover-class="none" class="bg-[var(--primary-color)] text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" @click="addAddress">{{t('createAddress')}}</button>
                 </view>
             </u-tabbar>
         </scroll-view>
@@ -45,7 +45,7 @@
     const type = ref('')
     const source = ref('')
 
-    onLoad((data) => {
+    onLoad((data: any) => {
         type.value = data.type || ''
         source.value = data.source || ''
         if (data.type) current.value = data.type == 'address' ? 0 : 1

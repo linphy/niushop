@@ -1,47 +1,47 @@
 <template>
     <view :style="themeColor()" class="bg-[#f8f8f8] min-h-[100vh] overflow-hidden">
         <block v-if="!loading">
-			<view class="mt-[30rpx] mx-[30rpx]">
-				<view class="py-[10rpx] px-[20rpx] flex flex-col rounded-[16rpx] bg-white">
-					<view class="flex h-[180rpx]" :class="{'mb-[20rpx]': verifyInfo.value.list.length-1 != index}" v-for="(item,index) in verifyInfo.value.list" :key="index">
-						<image class="w-[120rpx] h-[120rpx] mt-[30rpx] rounded-[8rpx]" mode="aspectFit" v-if="item.cover" :src="img(item.cover)"></image>
-						<image class="w-[120rpx] h-[120rpx] mt-[30rpx] rounded-[8rpx]" mode="aspectFit" v-else :src="img('addon/tourism/tourism/member/hotel.png')"></image>
-						<view class="flex flex-col flex-1 ml-[20rpx] mt-36rpx">
-							<view class="leading-[39rpx] text-[28rpx] max-w-[432rpx] multi-hidden">{{item.name}}</view>
-							<view class="self-end text-[28rpx]">x1</view>
+			<view class="pt-[20rpx] sidebar-marign">
+				<view class="flex flex-col card-template">
+					<view class="flex" :class="{'mb-[20rpx]': verifyInfo.value.list.length-1 != index}" v-for="(item,index) in verifyInfo.value.list" :key="index">
+						<image class="w-[150rpx] h-[150rpx] rounded-[8rpx]" mode="aspectFill" v-if="item.cover" :src="img(item.cover)"></image>
+						<image class="w-[150rpx] h-[150rpx] rounded-[8rpx]" mode="aspectFill" v-else :src="img('addon/tourism/tourism/member/hotel.png')"></image>
+						<view class="flex flex-col flex-1 ml-[20rpx] py-[4rpx]">
+							<view class="leading-[1.3] text-[28rpx] multi-hidden">{{item.name}}</view>
+							<view class="self-end text-[#626779] text-[26rpx] mt-[20rpx]">x1</view>
 						</view>
 					</view>
 				</view>
 				
-				<view class="flex flex-col bg-[#fff]  p-[20rpx] rounded-[16rpx] mt-[20rpx]">
-					<view class="text-[28rpx] text-[#333333] font-bold leading-[39rpx] h-[39rpx]">核销信息</view>
-					<view class="flex justify-between items-center mt-[30rpx] h-[39rpx]">
-						<text class="text-[28rpx] text-[#333]">核销类型</text>
-						<view class="text-[28rpx] text-[#333]">{{verifyInfo.type_name}}</view>
+				<view class="flex flex-col card-template mt-[20rpx]">
+					<view class="text-[32rpx] text-[#333333] font-500 leading-[1.2] mb-[30rpx]">核销信息</view>
+					<view class="flex justify-between h-[36rpx] items-center">
+						<text class="text-[26rpx] text-[#626779]">核销类型</text>
+						<view class="text-[26rpx] text-[#333]">{{verifyInfo.type_name}}</view>
 					</view>
-					<view class="flex justify-between items-center mt-[20rpx] h-[39rpx]">
-						<text class="text-[28rpx] text-[#333]">核销状态</text>
-						<view class="text-[28rpx] text-[#333]">已核销</view>
+					<view class="flex justify-between h-[36rpx] items-center mt-[20rpx]">
+						<text class="text-[26rpx] text-[#626779]">核销状态</text>
+						<view class="text-[26rpx] text-[#333]">已核销</view>
 					</view>
-					<view class="flex justify-between items-center mt-[20rpx] h-[39rpx]">
-						<text class="text-[28rpx]">核销时间</text>
-						<view class="text-[#333333] text-[28rpx]">{{verifyInfo.create_time}}</view>
+					<view class="flex justify-between h-[36rpx] items-center mt-[20rpx]">
+						<text class="text-[26rpx] text-[#626779]">核销时间</text>
+						<view class="text-[#333333] text-[26rpx]">{{verifyInfo.create_time}}</view>
 					</view>
-					<view class="flex justify-between items-center mt-[20rpx] h-[39rpx]">
-						<text class="text-[28rpx]">核销人员</text>
-						<view class="text-[#333333] text-[28rpx]">{{verifyInfo.member ? verifyInfo.member.nickname : '--'}}</view>
+					<view class="flex justify-between h-[36rpx] items-center mt-[20rpx]">
+						<text class="text-[26rpx] text-[#626779]">核销人员</text>
+						<view class="text-[#333333] text-[26rpx]">{{verifyInfo.member ? verifyInfo.member.nickname : '--'}}</view>
 					</view>
-					<view class="flex items-center justify-between mt-[20rpx]" v-for="(item,index) in verifyInfo.value.content.fixed">
-						<text class="text-[28rpx] text-[#333]">{{item.title}}</text>
-						<view class="text-[28rpx] text-[#333]">{{item.value}}</view>
+					<view class="flex items-center h-[36rpx] justify-between mt-[20rpx]" v-for="(item,index) in verifyInfo.value.content.fixed">
+						<text class="text-[26rpx] text-[#626779]">{{item.title}}</text>
+						<view class="text-[26rpx] text-[#333]">{{item.value}}</view>
 					</view>
 				</view>
 				
-				<view v-for="(item,index) in verifyInfo.value.content.diy" :key="index" class="text-[#838383] bg-white p-[20rpx] rounded-[16rpx] mt-[20rpx]">
-					<view class="text-[28rpx] text-[#333333] font-bold leading-[39rpx] h-[39rpx]">{{item.title}}</view>
-					<view class="flex items-center justify-between h-[39rpx] mt-[20rpx]" v-for="(subItem,subIndex) in item.list" :key="subIndex" :class="{'mt-30rpx' : subIndex == '0'}">
-						<text class="text-[28rpx] text-[#333]">{{subItem.title}}</text>
-						<view class="text-[28rpx] text-[#333]">{{subItem.value}}</view>
+				<view v-for="(item,index) in verifyInfo.value.content.diy" :key="index" class="card-template mt-[20rpx]">
+					<view class="text-[32rpx] text-[#333333] font-500 leading-[1.2] mb-[30rpx]">{{item.title}}</view>
+					<view class="flex items-center h-[36rpx] justify-between mt-[20rpx]" v-for="(subItem,subIndex) in item.list" :key="subIndex" :class="{'mt-30rpx' : subIndex == '0'}">
+						<text class="text-[26rpx] text-[#626779]">{{subItem.title}}</text>
+						<view class="text-[26rpx] text-[#333]">{{subItem.value}}</view>
 					</view>
 				</view>
 			</view>
@@ -59,9 +59,9 @@
     import { t } from '@/locale'
 
     const loading = ref(true)
-	let code = ref('');
-    onLoad((option)=> {
-		if (option.code) code.value = option.code;
+	const code = ref('');
+    onLoad((option:any)=> {
+	    if (option.code) code.value = option.code;
     })
 	
 	onShow(() => {
@@ -70,12 +70,11 @@
 		}
 	})
 	
-	let verifyInfo = ref({})
+	const verifyInfo = ref({})
 	const getVerifyDetailFn = ()=>{
 		loading.value = true;
 		getVerifyDetail(code.value).then((res:any) =>{
 			verifyInfo.value = res.data;
-			console.log("verifyInfo.value",verifyInfo.value);
 			loading.value = false;
 		})
 	}

@@ -1,8 +1,8 @@
 <template>
     <view class="w-screen h-screen bg-page" :style="themeColor()">
-        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="getCashoutAccountListFn">
-			<view class="h-[20rpx]"></view>
-			<u-swipe-action-item :options="accountOptions" @click="swipeClick(index)" v-for="(item, index) in accountList" :key="index" class="mx-[32rpx] my-[20rpx]">
+        <mescroll-body ref="mescrollRef" @init="mescrollInit" :down="{ use: false }" @up="getCashoutAccountListFn">
+			<view class="h-[10rpx]"></view>
+			<u-swipe-action-item :options="accountOptions" @click="swipeClick(index)" v-for="(item, index) in accountList" :key="index" class="sidebar-marign my-[20rpx]">
 				<view class="p-[30rpx] bg-white rounded flex justify-between" >
 					<view class="flex">
 						<view class="w-[100rpx] h-[100rpx] flex items-center justify-center mr-[10rpx]" @click="handleClick(item)">
@@ -21,7 +21,7 @@
 					<text class="flex items-center nc-iconfont nc-icon-xiugaiV6xx shrink-0 text-[32rpx] p-[20rpx] pr-0" @click="editAccount(item)"></text>
 				</view>
 			</u-swipe-action-item>
-			<view class="p-[30rpx] bg-white mx-[32rpx] my-[20rpx] rounded flex" @click="redirect({ url: '/app/pages/member/account_edit', param: { type: accountType, mode } })">
+			<view class="p-[30rpx] bg-white sidebar-marign my-[20rpx] rounded flex" @click="redirect({ url: '/app/pages/member/account_edit', param: { type: accountType, mode } })">
 				<u-icon name="plus" color="#333" size="16"></u-icon>
 				<text class="text-sm ml-[10rpx] flex-1">{{ accountType == 'bank' ? t('addBankCard') : t('addAlipayAccount') }}</text>
 				<u-icon name="arrow-right" color="#333" size="14"></u-icon>
@@ -46,7 +46,7 @@
     const mescrollRef = ref(null)
     const mode = ref('get')
 
-    onLoad((data) => {
+    onLoad((data: any) => {
         data.type && (accountType.value = data.type)
         data.mode && (mode.value = data.mode)
     })

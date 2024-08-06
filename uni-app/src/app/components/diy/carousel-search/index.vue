@@ -6,14 +6,13 @@
 				<view v-else class="w-full h-full bg-[#ccc]"></view>
 				<view class="bg-img-box" :style="bgImgBoxStyle"></view>
 			</view>
-			
-			<view class="fixed-wrap" :class="[ diyStore.mode != 'decorate' ? diyComponent.positionWay : '' ]" :style="fixedStyle">
+			<view class="fixed-wrap" :style="fixedStyle">
 				<view class="diy-search-wrap relative z-10" @click="diyStore.toRedirect(diyComponent.search.link)" :style="navbarInnerStyle">
 					<view class="img-wrap" v-if="diyComponent.search.logo">
 						<image :src="img(diyComponent.search.logo)" mode="aspectFit"/>
 					</view>
-					<view class="search-content">
-						<input type="text" class="uni-input" placeholder-style="color:#fff" placeholder-class="!text-[#fff] text-[24rpx] leading-[68rpx]" :placeholder="isShowSearchPlaceholder ? diyComponent.search.text : ''" disabled="true"/>
+					<view class="search-content" @click="diyStore.toRedirect(diyComponent.search.link)">
+						<text class="input-content text-[#fff] text-[24rpx] leading-[68rpx]">{{isShowSearchPlaceholder ? diyComponent.search.text : ''}}</text>
 						<text class="nc-iconfont nc-icon-sousuo-duanV6xx1"></text>
 
 						<swiper class="swiper-wrap" :interval="diyComponent.search.hotWord.interval * 1000" autoplay="true" vertical="true" circular="true" v-if="!isShowSearchPlaceholder">
@@ -47,7 +46,7 @@
 			
 			<!-- 解决fixed定位后导航栏塌陷的问题 -->
 			<template v-if="diyStore.mode != 'decorate'">
-				<view v-if="diyComponent.positionWay == 'fixed'" class="u-navbar-placeholder" :style="{ width: '100%', paddingTop: moduleHeight }"></view>
+				<view v-if="diyComponent.positionWay == 'fixed' && props.scrollBool != -1" class="u-navbar-placeholder" :style="{ width: '100%', paddingTop: moduleHeight }"></view>
 			</template>
 			
 			<!-- 轮播图 -->
@@ -118,8 +117,7 @@
     import { getDiyInfo } from '@/app/api/diy';
 
 	const instance = getCurrentInstance();
-	const props = defineProps(['component', 'index', 'pullDownRefreshCount', 'global','scrollTop']);
-	
+	const props = defineProps(['component', 'index', 'pullDownRefreshCount', 'global', 'scrollBool']);
 	const diyStore = useDiyStore();
 
 	const diyComponent = computed(() => {
@@ -172,7 +170,12 @@
             style += 'top:' + diyStore.topTabarHeight + 'px;';
         }
         // #endif
+		
         if(diyComponent.value.positionWay == 'fixed') {
+			if (props.scrollBool != -1) {
+				style += 'position: fixed;z-index: 10;left: 0;right: 0;';
+			}
+			
             // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
 			menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 			if(props.global.topStatusBar.isShow) {
@@ -181,7 +184,7 @@
             // #endif
 			
 			fixedStyleBg.value = false;
-            if (props.scrollTop) {
+            if (props.scrollBool == 1) {
 				let str = diyComponent.value.fixedBgColor;
 				let arr = str.split(',');
 				let num = diyComponent.value.fixedBgColor ? parseInt(arr[arr.length-1]) : 0;
@@ -200,12 +203,12 @@
 	    let color = '';
         if(flag){
             color = diyComponent.value.tab.selectColor;
-            if(diyComponent.value.positionWay == 'fixed' && props.scrollTop) {
+            if(diyComponent.value.positionWay == 'fixed' && props.scrollBool == 1) {
                 color = diyComponent.value.tab.fixedSelectColor;
             }
         }else{
             color = diyComponent.value.tab.noColor;
-            if(diyComponent.value.positionWay == 'fixed' && props.scrollTop) {
+            if(diyComponent.value.positionWay == 'fixed' && props.scrollBool == 1) {
                 color = diyComponent.value.tab.fixedNoColor;
             }
         }
@@ -288,9 +291,9 @@
         }
     }
 
-    let tabAllPopup = ref(false);
+    const tabAllPopup = ref(false);
     let menuButtonInfo:any = {};
-    let navbarInnerStyle = ref('')
+    const navbarInnerStyle = ref('')
 
     onMounted(() => {
         refresh();
@@ -397,10 +400,19 @@
 	isShowDots.value = false;
 	// #endif
 	
-	// 表示轮播搜素组件,需要判断滚动超出20时,需要做相对应反应
-	defineExpose({
-	    scrollValue: 20
-	})
+	/******************************* 存储滚动值-start ***********************/
+	// 键名和组件名一致即可
+	let componentsScrollVal = uni.getStorageSync('componentsScrollValGroup')
+	if(componentsScrollVal && (typeof componentsScrollVal == "object")){
+		componentsScrollVal.CarouselSearch = 20
+		uni.setStorageSync('componentsScrollValGroup', componentsScrollVal);
+	}else{
+		let obj = {
+			CarouselSearch: 20
+		}
+		uni.setStorageSync('componentsScrollValGroup', obj);
+	}
+	/******************************* 存储滚动值-end ***********************/ 
 
 </script>
 
@@ -463,12 +475,12 @@
 		.search-content {
 			display: flex;
 			align-items: center;
-			padding: 0 40rpx;
+			padding: 0 32rpx;
 			border-radius: 50rpx;
 			background-color: rgba(255,255,255,.2);
 			flex: 1;
 			position: relative;
-			input, .uni-input {
+			.input-content, .uni-input {
 				box-sizing: border-box;
 				display: block;
 				height: 64rpx;

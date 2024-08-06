@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { getSiteInfo, getMap } from '@/app/api/system'
-import { redirect } from '@/utils/common'
 
 interface System {
     site: AnyObject | null,

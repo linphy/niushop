@@ -2,6 +2,8 @@ import { getTabbarPages } from './pages'
 import useDiyStore from '@/app/stores/diy'
 import useMemberStore from '@/stores/member'
 import useSystemStore from '@/stores/system'
+import useConfigStore from '@/stores/config'
+import { getNeedLoginPages } from '@/utils/pages'
 
 /**
 * 跳转页面
@@ -11,6 +13,14 @@ export const redirect = (redirect : redirectOptions) => {
 	if (useDiyStore().mode == 'decorate') return
 
 	let { url, mode, param, success, fail, complete } = redirect
+	
+	const config = useConfigStore()
+	// 如果未开启普通账号登录注册,不展示登录注册页面
+	if(!getToken() && getNeedLoginPages().indexOf(url) != -1 && !config.login.is_username && !config.login.is_mobile && !config.login.is_bind_mobile){
+		uni.showToast({ title: '商家未开启普通账号登录注册', icon: 'none' })
+		return
+	}
+
 	mode = mode || 'navigateTo'
 	const tabBar = getTabbarPages()
 	tabBar.includes(url) && (mode = 'switchTab')
@@ -442,3 +452,8 @@ const isArray = (value: any) => {
     return Object.prototype.toString.call(value) === '[object Array]'
 }
 
+// px转rpx
+export function pxToRpx(px: any) {
+    const screenWidth = uni.getSystemInfoSync().screenWidth;
+    return (750 * Number.parseInt(px)) / screenWidth;
+}

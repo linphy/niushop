@@ -36,7 +36,7 @@
                         </u-form-item>
                     </view>
                     <view class="mt-[40rpx]">
-                        <u-button type="primary" shape="circle" :text="t('save')" @click="save" :disabled="btnDisabled" :loading="operateLoading"></u-button>
+                        <button class="!bg-[var(--primary-color)] !text-[#fff] h-[80rpx] leading-[80rpx] rounded-[100rpx] text-[28rpx]" :class="{'opacity-50': btnDisabled}"  @click="save" :disabled="btnDisabled" :loading="operateLoading">{{t('save')}}</button>
                     </view>
                 </u-form>
             </view>
@@ -44,7 +44,7 @@
 
         <!-- #ifdef MP-WEIXIN -->
         <!-- 小程序隐私协议 -->
-        <wx-privacy-popup ref="wxPrivacyPopup"></wx-privacy-popup>
+        <wx-privacy-popup ref="wxPrivacyPopupRef"></wx-privacy-popup>
         <!-- #endif -->
     </view>
 </template>
@@ -79,15 +79,15 @@
         type: 'location_address'
     })
 
-    onLoad((option) => {
+    onLoad((option:any) => {
         if (option.id) {
-            getAddressInfo(option.id).then(({data}) => {
+            getAddressInfo(option.id).then(({ data }) => {
                 if (data) {
                     Object.assign(formData.value, data)
                     formData.value.area = formData.value.full_address.replace(formData.value.address, '').replace(formData.value.address_name, '')
                 }
             }).catch()
-        }else if (option.name) {
+        } else if (option.name) {
             if (uni.getStorageSync('addressInfo')) {
                 Object.assign(formData.value, uni.getStorageSync('addressInfo'))
             }

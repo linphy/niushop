@@ -8,17 +8,25 @@
 <script setup lang="ts">
 	import { onLoad } from '@dcloudio/uni-app';
 	import { ref } from 'vue';
+	import { redirect } from '@/utils/common';
 
 	const src = ref('')
 
 	onLoad((option : any) => {
-		src.value = decodeURIComponent(option.src);
+		src.value = option.src ? decodeURIComponent(option.src) : '';
 	})
 
 	const navigateBack = () => {
-		uni.navigateBack({
-			delta: 1
-		});
+		if(getCurrentPages().length > 1){
+            uni.navigateBack({
+                delta: 1
+            });
+        }else{
+            redirect({
+                url: '/app/pages/index/index',
+                mode: 'reLaunch'
+            });
+        }
 	}
 </script>
 
