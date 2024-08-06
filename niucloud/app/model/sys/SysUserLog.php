@@ -61,7 +61,7 @@ class SysUserLog extends BaseModel
      */
     public function searchUsernameAttr(Query $query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->whereLike('username', '%' . $value . '%');
         }
     }
@@ -87,7 +87,7 @@ class SysUserLog extends BaseModel
      */
     public function searchUrlAttr(Query $query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->whereLike('url', '%' . $value . '%');
         }
     }
@@ -100,7 +100,7 @@ class SysUserLog extends BaseModel
      */
     public function searchIpAttr(Query $query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->whereLike('ip', '%' . $value . '%');
         }
     }

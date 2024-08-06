@@ -12,7 +12,6 @@
 namespace app\service\core\niucloud;
 
 use app\dict\sys\ConfigKeyDict;
-use app\service\admin\niucloud\NiucloudService;
 use app\service\core\sys\CoreConfigService;
 use core\util\niucloud\BaseNiucloudClient;
 use core\util\niucloud\http\Response;

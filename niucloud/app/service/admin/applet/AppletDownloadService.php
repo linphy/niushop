@@ -24,7 +24,6 @@ class AppletDownloadService extends BaseAdminService
     public function __construct()
     {
         parent::__construct();
-
     }
 
 

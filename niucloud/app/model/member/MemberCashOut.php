@@ -157,7 +157,7 @@ class MemberCashOut extends BaseModel
      */
     public function searchCashOutNoAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where('cash_out_no', $value);
         }
     }

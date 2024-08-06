@@ -70,7 +70,7 @@ class SysExport extends BaseModel
     public function searchExportKeyAttr(Query $query, $value, $data)
     {
         if ($value) {
-            $query->whereLike('export_key', '%' . $value . '%');
+            $query->where('export_key', $value);
         }
     }
 

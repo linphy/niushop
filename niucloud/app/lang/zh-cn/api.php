@@ -91,7 +91,7 @@ return [
     'USER_NOT_EXIST' => '用户不存在',
     'NO_SITE_USER_ROLE' => '用户不存在关联权限',
     'ADMIN_NOT_ALLOW_EDIT_ROLE' => '超级管理员不允许改动权限',
-    'USERNAME_REPEAT' => '用户名重复',
+    'USERNAME_REPEAT' => '账号重复',
     'SITE_USER_EXIST' => '该用户已存在',
 
     //角色管理
@@ -110,7 +110,7 @@ return [
     'OSS_FILE_URL_NOT_EXIST' => '远程资源文件地址不能为空',
     'BASE_IMAGE_FILE_NOT_EXIST' => 'base图片资源不能为空',
     'UPLOAD_TYPE_NOT_SUPPORT' => '不支持的上传类型',
-    'FILE_ERROE' => '无效的资源',
+    'FILE_ERROR' => '无效的资源',
     'UPLOAD_STORAGE_TYPE_ALL_CLOSE' => '至少要有一个启用的存储方式',
     'STORAGE_NOT_HAS_HTTP_OR_HTTPS' => '空间域名请补全http://或https://',
 
@@ -137,6 +137,7 @@ return [
     'ACCOUNT_OR_PASSWORD_ERROR' => '账号或密码错误',
     'MEMBER_LOCK' => '账号被锁定',
     'MEMBER_NOT_EXIST' => '账号不存在',
+    'MEMBER_OPENID_EXIST' => 'openid已存在',
     'MEMBER_LOGOUT' => '账号退出',
     'MEMBER_TYPE_NOT_EXIST' => '账户类型不存在',
     'MEMBER_IS_EXIST' => '账号已存在',
@@ -204,7 +205,7 @@ return [
     'PAY_SUCCESS' => '当前支付已完成',
     'PAY_IS_REMOVE' => '当前支付已取消',
     'PAYMENT_METHOD_NOT_EXIST' => '你选择的支付方式未启用',
-    'PAYMENT_METHOD_NOT_SCENE'=> '你选择的支付方式不适用于当前场景',
+    'PAYMENT_METHOD_NOT_SCENE' => '你选择的支付方式不适用于当前场景',
     'TREAT_PAYMENT_IS_OPEN' => '只有待支付时可以关闭',
     'TRANFER_STATUS_NOT_IN_WAIT_TANSFER' => '当前转账未处于待转账状态',
     'TRANSFER_ORDER_INVALID' => '无效的转账单据',
@@ -277,7 +278,9 @@ return [
     'CONTINUE_SIGN' => '连签',
     'DAYS' => '天！',
     'SIGN_SUCCESS' => '签到成功',
+    'SIGN_AWARD' => '签到奖励',
     'GET_AWARD' => '恭喜您获得以下奖励',
+    'WILL_GET_AWARD' => '您将获得以下奖励',
 
     //导出相关
     'EXPORT_SUCCESS' => '导出成功',
@@ -290,5 +293,7 @@ return [
     'WECHAT_OPLATFORM_NOT_EXIST' => '未配置微信开放平台',
     'WEAPP_EXIST' => '该小程序已经授权给其他站点',
     'WECHAT_EXIST' => '该公众号已经授权给其他站点',
-    'PLEASE_ADD_FIRST_SITE_GROUP' => '请先添加站点套餐'
+    'PLEASE_ADD_FIRST_SITE_GROUP' => '请先添加站点套餐',
+
+    'PRINTER_NOT_EXIST' => '打印机不存在'
 ];

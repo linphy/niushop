@@ -30,10 +30,12 @@
     .pop-link-wrap .link-text:nth-child(2) a{
         color: var(--base-color);
     }
-    
-    .pop-link-wrap button{
+    .pop-link-wrap .link-btn{
         margin-top: 40px;
-        width: 250px;
+    }
+
+    .pop-link-wrap button{
+        width: 160px;
         height: 40px;
         background: var(--base-color);
         color: #fff !important;
@@ -97,6 +99,11 @@
 <script>
     ControlContent(4);
     const visitFn = (type)=>{
+        let tips = window.localStorage.getItem('pageToLinkTips')
+        if(tips){
+            pageToLink(type)
+            return false
+        }
         layer.open({
             type: 1, // page 层类型
             area: ['400px', '230px'],
@@ -108,20 +115,30 @@
                 <div class="pop-link-wrap">
                     <p class="link-text">首次运行，请配置伪静态，才能正常使用。</p>
                     <p class="link-text">伪静态如何配置请<a href="https://www.kancloud.cn/niushop/niucloud-admin-app/3199831" class="other-links-text" target="_blank">参考手册</a></p>
-                    <button onclick="pageToLink('${type}')" class="layui-btn visit-btn layui-border">确定</button>
+                    <p class="link-btn">
+                        <button onclick="pageToLink('${type}')" class="layui-btn visit-btn layui-border">确定</button>
+                        <button onclick="pageToLink('${type}', ${true})" class="layui-btn visit-btn layui-border">已配置,不需要在提示</button>
+                    </p>
                 </div>
             `
         });
     }
 
     // 页面跳转
-    function pageToLink(type){
-        if(type == 'admin')
+    function pageToLink(type,flag = false){
+        if(flag){
+           window.localStorage.setItem('pageToLinkTips', true) 
+        }
+        if(type == 'admin'){
+            layer.closeAll()
             window.open('{$root_url}/admin/login')
-        else if(type == 'web')
+        }else if(type == 'web'){
+            layer.closeAll()
             window.open('{$root_url}/web/')
-        else if(type == 'wap')
+        }else if(type == 'wap'){
+            layer.closeAll()
             window.open('{$root_url}/wap/')
+        }
     }
 </script>
 {/block}

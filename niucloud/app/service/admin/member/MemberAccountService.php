@@ -42,8 +42,8 @@ class MemberAccountService extends BaseAdminService
 
         $field = 'member_account_log.id, member_account_log.member_id, member_account_log.account_type, member_account_log.account_data,member_account_log.account_sum, member_account_log.from_type, member_account_log.related_id, member_account_log.create_time, member_account_log.memo';
         $member_where = [];
-        if (!empty($where[ 'keywords' ])) {
-            $member_where[] = [ "member.member_no|member.nickname|member.mobile", 'like', '%' . $where[ 'keywords' ] . '%' ];
+        if (isset($where[ 'keywords' ]) && $where[ 'keywords' ] != '') {
+            $member_where[] = [ "member.member_no|member.nickname|member.mobile", 'like', '%' . $this->model->handelSpecialCharacter($where[ 'keywords' ]) . '%' ];
         }
         $search_model = $this->model->withSearch([ 'join_member_id' => 'member_id', 'account_type', 'from_type', 'join_create_time' => 'create_time' ], $where)
             ->withJoin(

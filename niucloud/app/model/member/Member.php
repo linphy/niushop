@@ -62,7 +62,7 @@ class Member extends BaseModel
     protected $defaultSoftDelete = 0;
 
     // 设置json类型字段
-    protected $json = ['member_label'];
+    protected $json = [ 'member_label' ];
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
 
@@ -74,9 +74,9 @@ class Member extends BaseModel
      */
     public function getStatusNameAttr($value, $data)
     {
-        if (empty($data['status']))
+        if (empty($data[ 'status' ]))
             return '';
-        return MemberDict::getStatus()[$data['status']] ?? '';
+        return MemberDict::getStatus()[ $data[ 'status' ] ] ?? '';
     }
 
     /**
@@ -87,9 +87,9 @@ class Member extends BaseModel
      */
     public function getRegisterChannelNameAttr($value, $data)
     {
-        if (empty($data['register_channel']))
+        if (empty($data[ 'register_channel' ]))
             return '';
-        return MemberRegisterChannelDict::getType()[$data['register_channel']] ?? '';
+        return MemberRegisterChannelDict::getType()[ $data[ 'register_channel' ] ] ?? '';
     }
 
     /**
@@ -100,9 +100,9 @@ class Member extends BaseModel
      */
     public function getRegisterTypeNameAttr($value, $data)
     {
-        if (empty($data['register_type']))
+        if (empty($data[ 'register_type' ]))
             return '';
-        return MemberRegisterTypeDict::getType()[$data['register_type']] ?? '';
+        return MemberRegisterTypeDict::getType()[ $data[ 'register_type' ] ] ?? '';
     }
 
     /**
@@ -113,9 +113,9 @@ class Member extends BaseModel
      */
     public function getLoginChannelNameAttr($value, $data)
     {
-        if (empty($data['login_channel']))
+        if (empty($data[ 'login_channel' ]))
             return '';
-        return ChannelDict::getType()[$data['login_channel']] ?? '';
+        return ChannelDict::getType()[ $data[ 'login_channel' ] ] ?? '';
     }
 
     /**
@@ -126,9 +126,9 @@ class Member extends BaseModel
      */
     public function getLoginTypeNameAttr($value, $data)
     {
-        if (empty($data['login_type']))
+        if (empty($data[ 'login_type' ]))
             return '';
-        return MemberLoginTypeDict::getType()[$data['login_type']] ?? '';
+        return MemberLoginTypeDict::getType()[ $data[ 'login_type' ] ] ?? '';
     }
 
     /**
@@ -139,9 +139,9 @@ class Member extends BaseModel
      */
     public function getSexNameAttr($value, $data)
     {
-        if (empty($data['sex']))
+        if (empty($data[ 'sex' ]))
             return '';
-        return CommonDict::getSexType()[$data['sex']] ?? '';
+        return CommonDict::getSexType()[ $data[ 'sex' ] ] ?? '';
     }
 
     /**
@@ -161,8 +161,8 @@ class Member extends BaseModel
      */
     public function searchKeywordAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where('member_no|username|nickname|mobile', 'like', '%' . $value . '%');
+        if ($value != '') {
+            $query->where('member_no|username|nickname|mobile', 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 
@@ -217,7 +217,7 @@ class Member extends BaseModel
     public function searchMemberLevelAttr(Query $query, $value, $data)
     {
         if ($value) {
-            $query->where('member_level', '=',  $value);
+            $query->where('member_level', '=', $value);
         }
     }
 
@@ -229,14 +229,14 @@ class Member extends BaseModel
      */
     public function searchCreateTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('create_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['create_time', '>=', $start_time]]);
+            $query->where([ [ 'create_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['create_time', '<=', $end_time]]);
+            $query->where([ [ 'create_time', '<=', $end_time ] ]);
         }
     }
 
@@ -248,22 +248,24 @@ class Member extends BaseModel
      */
     public function searchJoinCreateTimeAttr(Query $query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('member.create_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['member.create_time', '>=', $start_time]]);
+            $query->where([ [ 'member.create_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['member.create_time', '<=', $end_time]]);
+            $query->where([ [ 'member.create_time', '<=', $end_time ] ]);
         }
     }
 
-    public function memberLevelData() {
+    public function memberLevelData()
+    {
         return $this->hasOne(MemberLevel::class, 'level_id', 'member_level');
     }
 
-    public function memberLevelNameBind() {
-        return $this->hasOne(MemberLevel::class, 'level_id', 'member_level')->bind(['member_level_name' => 'level_name']);
+    public function memberLevelNameBind()
+    {
+        return $this->hasOne(MemberLevel::class, 'level_id', 'member_level')->bind([ 'member_level_name' => 'level_name' ]);
     }
 }

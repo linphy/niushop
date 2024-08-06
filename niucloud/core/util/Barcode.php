@@ -1,20 +1,24 @@
 <?php
+
 namespace core\util;
 
-require_once('barcode/class/BCGFontFile.php');
-require_once('barcode/class/BCGColor.php');
-require_once('barcode/class/BCGDrawing.php');
-require_once('barcode/class/BCGcode128.barcode.php');
-class Barcode{
+require_once( 'barcode/class/BCGFontFile.php' );
+require_once( 'barcode/class/BCGColor.php' );
+require_once( 'barcode/class/BCGDrawing.php' );
+require_once( 'barcode/class/BCGcode128.barcode.php' );
+
+class Barcode
+{
     public $size; //字体大小
-    private $color_black; 
+    private $color_black;
     private $color_white;
     private $font;
     public $drawException = null;
     public $fontPath;
     public $content;
-    
-    public function __construct($size,$content){
+
+    public function __construct($size, $content)
+    {
         $this->color_black = new \BCGColor(0, 0, 0);
         $this->color_white = new \BCGColor(255, 255, 255);
         $this->size = $size;
@@ -22,9 +26,10 @@ class Barcode{
         $this->font = new \BCGFontFile($this->fontPath, $this->size);
         $this->content = $content;
     }
-    
+
     //生成条形码
-    public function generateBarcode($path='', $scale = 2){
+    public function generateBarcode($path = '', $scale = 2)
+    {
         try {
             $code = new \BCGcode128();
             $code->setScale($scale);
@@ -33,15 +38,15 @@ class Barcode{
             $code->setBackgroundColor($this->color_white); // 空白间隙颜色
             $code->setFont($this->font); //
             $code->parse($this->content); // 条形码需要的数据内容
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             $this->drawException = $exception;
         }
 
-        if($path == ''){
+        if ($path == '') {
             $path = 'upload/barcode';//条形码存放路径
         }
-        
-        if (! is_dir($path)) {
+
+        if (!is_dir($path)) {
             $mode = intval('0777', 8);
             mkdir($path, $mode, true);
             chmod($path, $mode);
@@ -50,10 +55,10 @@ class Barcode{
         if (file_exists($path)) {
             unlink($path);
         }
-        
+
         //根据以上条件绘制条形码
         $drawing = new \BCGDrawing('', $this->color_white);
-        if($this->drawException) {
+        if ($this->drawException) {
             $drawing->drawException($this->drawException);
         } else {
             $drawing->setBarcode($code);
@@ -65,4 +70,5 @@ class Barcode{
         return $path;
     }
 }
+
 ?>

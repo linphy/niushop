@@ -77,7 +77,7 @@ class Addon extends BaseModel
      */
     public function searchTitleAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->whereLike('title', '%' . $value . '%');
         }
     }

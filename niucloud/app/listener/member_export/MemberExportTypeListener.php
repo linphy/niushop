@@ -9,7 +9,7 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\listener\member;
+namespace app\listener\member_export;
 
 /**
  * 会员导出数据类型查询

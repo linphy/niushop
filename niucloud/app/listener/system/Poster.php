@@ -38,7 +38,7 @@ class Poster
 
         $headimg = $member_info[ 'headimg' ];
         if (empty($headimg)) {
-            $headimg = 'static/resource/images/default_headimg.jpg';
+            $headimg = 'static/resource/images/default_headimg.png';
         }
         $return_data = [
             'nickname' => $nickname,

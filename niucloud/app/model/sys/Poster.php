@@ -66,8 +66,8 @@ class Poster extends BaseModel
      */
     public function searchNameAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("name", 'like', '%' . $value . '%');
+        if ($value != '') {
+            $query->where("name", 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

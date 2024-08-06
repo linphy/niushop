@@ -71,7 +71,7 @@ class MemberSignService extends BaseApiService
         if (!$sign_config['is_use']) throw new CommonException('SIGN_NOT_USE');
         if (empty($sign_config['sign_period']) || empty($sign_config['day_award'])) throw new CommonException('SIGN_NOT_SET');
         $sign_period = $sign_config['sign_period'];//签到周期
-        $today = $this->model->where([ ['member_id', '=', $this->member_id]])->whereDay('create_time')->findOrEmpty()->toArray();
+        $today = $this->model->where([['member_id', '=', $this->member_id]])->whereDay('create_time')->findOrEmpty()->toArray();
         if (!empty($today)) throw new CommonException('SIGNED_TODAY');
         Db::startTrans();
 
@@ -133,7 +133,7 @@ class MemberSignService extends BaseApiService
                             $continue_data['continue_tag'] = $value['continue_tag'];//连签奖励标识
                             if ($value['receive_limit'] == 2) {//receive_limit (1.不限制 2.每人限领 receive_num 次)
                                 //周期开始时间
-                                $period_start_time = $this->model->where([ ['member_id', '=', $this->member_id], ['days', '=', 1], ['start_time', '>', 0]])->order('sign_id desc')->field('start_time')->limit(1)->value('start_time');
+                                $period_start_time = $this->model->where([['member_id', '=', $this->member_id], ['days', '=', 1], ['start_time', '>', 0]])->order('sign_id desc')->field('start_time')->limit(1)->value('start_time');
                                 //周期结束时间
                                 $period_end_time = strtotime("+$sign_period day", $period_start_time);
                                 //查询领取次数
@@ -193,7 +193,7 @@ class MemberSignService extends BaseApiService
         $data = [];
         $info = $this->getSign();
         if ($info['is_use'] == 1) {//判断签到是否开启
-            $model_result = $this->model->field('create_time')->where([ ['member_id', '=', $this->member_id]])->whereMonth('create_time', $year . '-' . sprintf("%02d", $month))->select();
+            $model_result = $this->model->field('create_time')->where([['member_id', '=', $this->member_id]])->whereMonth('create_time', $year . '-' . sprintf("%02d", $month))->select();
             $days = [];
             foreach ($model_result as $key => $value) {
                 $day = date('d', strtotime($value['create_time']));
@@ -207,7 +207,7 @@ class MemberSignService extends BaseApiService
                 //获取连签奖励最大天数
                 $max_continue_sign = max($continue_signs);
                 //周期开始时间
-                $period_start_time = $this->model->where([ ['member_id', '=', $this->member_id], ['days', '=', 1], ['start_time', '>', 0]])->order('sign_id desc')->field('start_time')->limit(1)->value('start_time');
+                $period_start_time = $this->model->where([['member_id', '=', $this->member_id], ['days', '=', 1], ['start_time', '>', 0]])->order('sign_id desc')->field('start_time')->limit(1)->value('start_time');
                 if (!empty($period_start_time)) {
                     //周期结束时间
                     $period_end_time = strtotime("+$sign_period day", $period_start_time);
@@ -253,6 +253,7 @@ class MemberSignService extends BaseApiService
     public function getDayAward(int $year, int $month, int $day)
     {
         $max_continue_sign = 1;//连签奖励最大天数
+        $continue_sign_day = 0;//连签奖励天数
 
         $time = $year.'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day);
         $info = $this->getSign();
@@ -273,25 +274,29 @@ class MemberSignService extends BaseApiService
         $award = [];//当日奖励
         //判断查询日期是否在签到周期内
         if (in_array($time, $days_array)) {
+            $counter = 0;//计数器
             foreach ($days_array as $key => $value) {
+                $counter++;
                 if ($value == $time) {
+
+                    $continue_sign_day = $counter;
                     $award['day_award'] = $info['day_award'];
 
                     if (!empty($info['continue_award'])) {
-                        $day = $key + 1;
+                        $days = $key + 1;
                         foreach ($info['continue_award'] as $k => $v) {
                             $gift = $v;
                             unset($gift['continue_sign'], $gift['continue_tag'], $gift['receive_limit'], $gift['receive_num']);
                             if ($v['receive_limit'] == 1) {//不限制次数奖励添加
                                 $period_num = intdiv($sign_period, $max_continue_sign);//周期内可循环轮次
                                 for ($i = 0; $i < $period_num; $i++) {
-                                    if ($max_continue_sign * $i + $v['continue_sign'] == $day) {
+                                    if ($max_continue_sign * $i + $v['continue_sign'] == $days) {
                                         $award['continue_award'] = $gift;
                                     }
                                 }
                             } else {//限制次数奖励添加
                                 for ($i = 0; $i < $v['receive_num']; $i++) {
-                                    if ($max_continue_sign * $i + $v['continue_sign'] == $day) {
+                                    if ($max_continue_sign * $i + $v['continue_sign'] == $days) {
                                         $award['continue_award'] = $gift;
                                     }
                                 }
@@ -300,9 +305,18 @@ class MemberSignService extends BaseApiService
                     }
 
                 }
+                if (!empty($info['continue_award'])) {
+                    if ($counter % $max_continue_sign == 0) {
+                        $counter = 0;
+                    }
+                } else {
+                    if ($counter % $sign_period == 0) {
+                        $counter = 0;
+                    }
+                }
             }
         } else {
-            $day_result = $this->model->field('create_time')->where([ ['member_id', '=', $this->member_id]])->whereDay('create_time', $time)->findOrEmpty()->toArray();
+            $day_result = $this->model->field('create_time')->where([['member_id', '=', $this->member_id]])->whereDay('create_time', $time)->findOrEmpty()->toArray();
             if (!empty($day_result)) {
                 $award['day_award'] = $day_result['day_award'];
                 $continue_award = $day_result['continue_award'];
@@ -313,7 +327,19 @@ class MemberSignService extends BaseApiService
             }
         }
         $awards_total = $this->getTotalAward($award);
-        return $awards_total;
+        $continue_text = $continue_sign_day > 0 ? get_lang('CONTINUE_SIGN').$continue_sign_day.get_lang('DAYS') : '';
+        $result['title'] = get_lang('SIGN_AWARD');
+        $result['info'] = $continue_text.get_lang('WILL_GET_AWARD');
+        $result['awards'] = $awards_total;
+        if ($awards_total) {
+            return $result;
+        } else {
+            return [
+                'title' => '',
+                'info' => '',
+                'awards' => [],
+            ];
+        }
     }
 
     /**
@@ -336,12 +362,6 @@ class MemberSignService extends BaseApiService
 
         $is_use_coupon_day = false;
         $is_use_coupon_continue = false;
-
-//        foreach ($awards['day_award'] as $key => $value) {
-//            if ($value['is_use'] == 1) {
-//                $awards['day_award'][$key] = $value;
-//            }
-//        }
 
         if (!empty($awards['day_award']['point'])) {
             if ($awards['day_award']['point']['is_use'] == 1) {
@@ -413,8 +433,8 @@ class MemberSignService extends BaseApiService
     public function getSignConfig()
     {
         $info = $this->getSign();
-        $today = $this->model->where([ ['member_id', '=', $this->member_id]])->whereDay('create_time')->findOrEmpty()->toArray();
-        $yesterday = $this->model->where([ ['member_id', '=', $this->member_id]])->whereDay('create_time', 'yesterday')->findOrEmpty()->toArray();
+        $today = $this->model->where([['member_id', '=', $this->member_id]])->whereDay('create_time')->findOrEmpty()->toArray();
+        $yesterday = $this->model->where([['member_id', '=', $this->member_id]])->whereDay('create_time', 'yesterday')->findOrEmpty()->toArray();
         if (!empty($info['day_award'])) {
             $day_award = (new CoreMemberService())->getGiftContent($info['day_award'],'member_sign');
             $info['day_award'] = $day_award;

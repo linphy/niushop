@@ -11,7 +11,9 @@
 
 namespace app\api\controller\login;
 
+use app\dict\member\MemberLoginTypeDict;
 use app\service\api\captcha\CaptchaService;
+use app\service\api\login\ConfigService;
 use app\service\api\login\LoginService;
 use core\base\BaseController;
 use Exception;
@@ -25,20 +27,20 @@ class Login extends BaseController
      */
     public function login()
     {
-
         $data = $this->request->params([
-            ['username', ''],
-            ['password', ''],
+            [ 'username', '' ],
+            [ 'password', '' ],
         ]);
+        //校验登录注册配置
+        ( new ConfigService() )->checkLoginConfig(MemberLoginTypeDict::USERNAME);
         //参数验证
         //验证码验证
-        $result = (new LoginService())->account($data['username'], $data['password']);
+        $result = ( new LoginService() )->account($data[ 'username' ], $data[ 'password' ]);
         if (!$result) {
             //账号密码错误, 重置验证码
             return fail('ACCOUNT_OR_PASSWORD_ERROR');
         }
         return success($result);
-
     }
 
     /**
@@ -47,7 +49,7 @@ class Login extends BaseController
      */
     public function logout()
     {
-        (new LoginService)->logout();
+        ( new LoginService )->logout();
         return success('MEMBER_LOGOUT');
     }
 
@@ -57,7 +59,7 @@ class Login extends BaseController
      */
     public function captcha()
     {
-        return success((new CaptchaService())->create());
+        return success(( new CaptchaService() )->create());
     }
 
     /**
@@ -69,9 +71,9 @@ class Login extends BaseController
     public function sendMobileCode($type)
     {
         $data = $this->request->params([
-            ['mobile', ''],
+            [ 'mobile', '' ],
         ]);
-        return success((new LoginService())->sendMobileCode($data['mobile'], $type));
+        return success(( new LoginService() )->sendMobileCode($data[ 'mobile' ], $type));
     }
 
     /**
@@ -81,9 +83,11 @@ class Login extends BaseController
     public function mobile()
     {
         $data = $this->request->params([
-            ['mobile', ''],
+            [ 'mobile', '' ],
         ]);
-        return success((new LoginService())->mobile($data['mobile']));
+        //校验登录注册配置
+        ( new ConfigService() )->checkLoginConfig(MemberLoginTypeDict::MOBILE);
+        return success(( new LoginService() )->mobile($data[ 'mobile' ]));
     }
 
     /**
@@ -93,12 +97,12 @@ class Login extends BaseController
     public function resetPassword()
     {
         $data = $this->request->params([
-            ['mobile', ''],
-            ['password', '']
+            [ 'mobile', '' ],
+            [ 'password', '' ]
         ]);
         //参数验证
         $this->validate($data, 'app\validate\member\Member.reset_password');
-        (new LoginService())->resetPassword($data['mobile'], $data['password']);
+        ( new LoginService() )->resetPassword($data[ 'mobile' ], $data[ 'password' ]);
         return success('PASSWORD_RESET_SUCCESS');
     }
 }

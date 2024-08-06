@@ -143,7 +143,7 @@ class SysNoticeSmsLog extends BaseModel
      */
     public function searchMobileAttr($query, $value)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where('mobile', $value);
         }
     }

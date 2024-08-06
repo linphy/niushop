@@ -14,6 +14,7 @@ namespace app\model\member;
 use app\dict\member\MemberAccountChangeTypeDict;
 use app\dict\member\MemberAccountTypeDict;
 use core\base\BaseModel;
+use think\db\Query;
 use think\model\relation\HasOne;
 
 /**
@@ -122,6 +123,19 @@ class MemberAccountLog extends BaseModel
     {
         if ($value) {
             $query->where('member_id', $value);
+        }
+    }
+
+    /**
+     * 关键词搜索
+     * @param $query
+     * @param $value
+     * @param $data
+     */
+    public function searchKeywordAttr(Query $query, $value, $data)
+    {
+        if ($value != '') {
+            $query->whereLike('memo', '%'.$value.'%');
         }
     }
 

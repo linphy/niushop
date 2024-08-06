@@ -114,7 +114,14 @@ class LinkDict
                         'url' => '/app/pages/verify/index',
                         'is_share' => 1,
                         'action' => ''
-                    ]
+                    ],
+                    [
+                        'name' => 'MEMBER_CONTACT',
+                        'title' => get_lang('dict_diy.member_contact'),
+                        'url' => '/app/pages/member/contact',
+                        'is_share' => 1,
+                        'action' => ''
+                    ],
                 ]
             ],
             'DIY_PAGE' => [

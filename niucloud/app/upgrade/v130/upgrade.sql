@@ -99,10 +99,6 @@ ALTER TABLE `diy_page` CHANGE COLUMN `title` `title` VARCHAR(255) NOT NULL DEFAU
 
 ALTER TABLE `diy_page` ADD COLUMN `page_title` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '页面名称（用于后台展示）';
 
-ALTER TABLE `weapp_version` ADD COLUMN `from_type` VARCHAR(255) NOT NULL DEFAULT 'cloud_build';
-
-ALTER TABLE `weapp_version` ADD COLUMN `auditid` VARCHAR(255) NOT NULL DEFAULT '';
-
 ALTER TABLE `member_address` DROP COLUMN `type`;
 
 UPDATE `diy_page` SET `page_title`=`title` WHERE `page_title`='';

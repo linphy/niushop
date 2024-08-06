@@ -13,7 +13,6 @@ namespace app\api\controller\wechat;
 
 use app\service\api\wechat\WechatAuthService;
 use core\base\BaseController;
-use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -27,38 +26,41 @@ class Wechat extends BaseController
      * 获取跳转获取code
      * @return Response
      */
-    public function getCodeUrl(){
+    public function getCodeUrl()
+    {
         $data = $this->request->params([
-            ['url', ''],
-            ['scopes', '']
+            [ 'url', '' ],
+            [ 'scopes', '' ]
         ]);
         $wechat_auth_service = new WechatAuthService();
-        return success($wechat_auth_service->authorization($data['url'], $data['scopes']));
+        return success($wechat_auth_service->authorization($data[ 'url' ], $data[ 'scopes' ]));
     }
 
     /**
      * code获取微信信息
      * @return Response
      */
-    public function getWechatUser(){
+    public function getWechatUser()
+    {
         $data = $this->request->params([
-            ['code', ''],
+            [ 'code', '' ],
         ]);
         $wechat_auth_service = new WechatAuthService();
-        $data = $wechat_auth_service->userFromCode($data['code']);
-        return success(['data'=> json_encode($data)]);
+        $data = $wechat_auth_service->userFromCode($data[ 'code' ]);
+        return success([ 'data' => json_encode($data) ]);
     }
 
     /**
      * 授权信息登录
      * @return Response
      */
-    public function wechatLogin(){
+    public function wechatLogin()
+    {
         $data = $this->request->params([
-            ['data', ''],
+            [ 'data', '' ],
         ]);
         $wechat_auth_service = new WechatAuthService();
-        [$avatar, $nickname, $openid, $unionid] = json_decode($data['data'], true);
+        [ $avatar, $nickname, $openid, $unionid ] = json_decode($data[ 'data' ], true);
         return success($wechat_auth_service->login($openid, $nickname, $avatar, $unionid));
     }
 
@@ -69,63 +71,78 @@ class Wechat extends BaseController
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function login(){
+    public function login()
+    {
         $data = $this->request->params([
-            ['code', ''],
+            [ 'code', '' ],
         ]);
         $wechat_auth_service = new WechatAuthService();
-        return success($wechat_auth_service->loginByCode($data['code']));
+        return success($wechat_auth_service->loginByCode($data[ 'code' ]));
     }
 
     /**
      * 注册
      * @return Response
      */
-    public function register(){
+    public function register()
+    {
         $data = $this->request->params([
-            ['openid', ''],
-            ['unionid', ''],
-            ['mobile', ''],
+            [ 'openid', '' ],
+            [ 'unionid', '' ],
+            [ 'mobile', '' ],
         ]);
         //参数验证
         $this->validate($data, [
             'mobile' => 'mobile'
         ]);
         $wechat_auth_service = new WechatAuthService();
-        return success($wechat_auth_service->register($data['openid'], $data['mobile'], wx_unionid: $data['unionid']));
+        return success($wechat_auth_service->register($data[ 'openid' ], $data[ 'mobile' ], wx_unionid: $data[ 'unionid' ]));
     }
 
     /**
      * 同步
      * @return Response
      */
-    public function sync(){
+    public function sync()
+    {
         $data = $this->request->params([
-            ['code', ''],
+            [ 'code', '' ],
         ]);
         $wechat_auth_service = new WechatAuthService();
-        return success($wechat_auth_service->sync($data['code']));
+        return success($wechat_auth_service->sync($data[ 'code' ]));
     }
 
     /**
      * 获取jssdk config
      * @return Response
      */
-    public function jssdkConfig(){
+    public function jssdkConfig()
+    {
         $data = $this->request->params([
-            ['url', ''],
+            [ 'url', '' ],
         ]);
         $wechat_auth_service = new WechatAuthService();
-        return success($wechat_auth_service->jssdkConfig($data['url']));
+        return success($wechat_auth_service->jssdkConfig($data[ 'url' ]));
     }
 
     /**
      * 扫码登录
      * @return Response
      */
-    public function scanLogin(){
+    public function scanLogin()
+    {
         $wechat_auth_service = new WechatAuthService();
         return success($wechat_auth_service->scanLogin());
+    }
 
+    /**
+     * 更新openid
+     * @return Response
+     */
+    public function updateOpenid()
+    {
+        $data = $this->request->params([ [ 'code', '' ] ]);
+        $wechat_auth_service = new WechatAuthService();
+        return success($wechat_auth_service->updateOpenid($data[ 'code' ]));
     }
 }

@@ -44,7 +44,7 @@ class GenerateTable extends BaseModel
      */
     public function searchTableNameAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where('table_name', 'like', '%' . $value . '%');
         }
     }
@@ -57,7 +57,7 @@ class GenerateTable extends BaseModel
      */
     public function searchTableContentAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where('table_content', 'like', '%' . $value . '%');
         }
     }
@@ -70,7 +70,7 @@ class GenerateTable extends BaseModel
      */
     public function searchAddonNameAttr($query, $value, $data)
     {
-        if ($value) {
+        if ($value != '') {
             if($value == 2)
             {
                 $query->where('addon_name','=','');

@@ -8,23 +8,30 @@
 // +----------------------------------------------------------------------
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
+namespace core\printer;
 
-namespace app\listener\system;
 
-/**
- * 站点首页加载事件
- * Class AppInit
- * @package app\listener\system
- */
-class SiteIndexListener
+class KdniaoPrinter extends BasePrinter
 {
-    public function handle()
+
+    protected $config;
+
+    /**
+     * @param array $config
+     * @return void
+     */
+    protected function initialize(array $config = [])
     {
-        return [
-            [
-                "name" => get_lang("dict_site_index.system"),
-                "view_path" => "index/site_index"
-            ]
-        ];
+        parent::initialize($config);
+        $this->config = $config;
+    }
+
+    /**
+     * 打印小票
+     * @param array $data
+     * @return mixed|void
+     */
+    public function printTicket(array $data)
+    {
     }
 }

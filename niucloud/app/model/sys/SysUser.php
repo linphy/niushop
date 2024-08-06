@@ -14,7 +14,6 @@ namespace app\model\sys;
 use app\dict\sys\UserDict;
 use core\base\BaseModel;
 use think\model\concern\SoftDelete;
-use think\model\relation\HasMany;
 
 /**
  * 系统用户模型
@@ -47,16 +46,15 @@ class SysUser extends BaseModel
     protected $deleteTime = 'delete_time';
 
     // 设置json类型字段
-    protected $json = ['role_ids'];
+    protected $json = [ 'role_ids' ];
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
+
     /**
      * 定义软删除字段的默认值
      * @var int
      */
     protected $defaultSoftDelete = 0;
-
-
 
     /**
      * 状态字段转化
@@ -66,13 +64,14 @@ class SysUser extends BaseModel
      */
     public function getStatusNameAttr($value, $data)
     {
-        if (empty($data['status'])) return '';
-        return UserDict::getStatus()[$data['status']] ?? '';
+        if (empty($data[ 'status' ])) return '';
+        return UserDict::getStatus()[ $data[ 'status' ] ] ?? '';
     }
+
 
     public function getCreateTimeAttr($value, $data)
     {
-        return $data['create_time'] ? get_date_by_time($data['create_time']) : '';
+        return $data[ 'create_time' ] ? get_date_by_time($data[ 'create_time' ]) : '';
     }
 
     /**
@@ -82,8 +81,8 @@ class SysUser extends BaseModel
      */
     public function searchUsernameAttr($query, $value)
     {
-        if ($value) {
-            $query->whereLike('username', '%' . $value . '%');
+        if ($value != '') {
+            $query->whereLike('username', '%' . $this->handelSpecialCharacter($value) . '%');
         }
 
     }
@@ -95,22 +94,8 @@ class SysUser extends BaseModel
      */
     public function searchRealnameAttr($query, $value)
     {
-        if ($value) {
+        if ($value != '') {
             $query->whereLike('real_name', '%' . $value . '%');
-        }
-
-    }
-
-    /**
-     * 角色组筛选
-     * @param $query
-     * @param $value
-     * @return void
-     */
-    public function searchRoleIdsAttr($query, $value)
-    {
-        if ($value) {
-            $query->whereLike('role_ids', '%' . $value . '%');
         }
 
     }
@@ -125,17 +110,6 @@ class SysUser extends BaseModel
     }
 
     /**
-     * 状态搜索器
-     * @param $query
-     * @param $value
-     */
-    public function searchStatusAttr($query, $value)
-    {
-        $query->where('status', $value);
-    }
-
-
-    /**
      * 创建时间搜索器
      * @param $query
      * @param $value
@@ -143,16 +117,33 @@ class SysUser extends BaseModel
      */
     public function searchCreateTimeAttr($query, $value, $data)
     {
-        $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
-        $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
         if ($start_time > 0 && $end_time > 0) {
             $query->whereBetweenTime('sys_user.create_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['sys_user.create_time', '>=', $start_time]]);
+            $query->where([ [ 'sys_user.create_time', '>=', $start_time ] ]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['sys_user.create_time', '<=', $end_time]]);
+            $query->where([ [ 'sys_user.create_time', '<=', $end_time ] ]);
         }
     }
 
-
+    /**
+     * 创建时间搜索器
+     * @param $query
+     * @param $value
+     * @param $data
+     */
+    public function searchLastTimeAttr($query, $value, $data)
+    {
+        $start_time = empty($value[ 0 ]) ? 0 : strtotime($value[ 0 ]);
+        $end_time = empty($value[ 1 ]) ? 0 : strtotime($value[ 1 ]);
+        if ($start_time > 0 && $end_time > 0) {
+            $query->whereBetweenTime('sys_user.last_time', $start_time, $end_time);
+        } else if ($start_time > 0 && $end_time == 0) {
+            $query->where([ [ 'sys_user.last_time', '>=', $start_time ] ]);
+        } else if ($start_time == 0 && $end_time > 0) {
+            $query->where([ [ 'sys_user.last_time', '<=', $end_time ] ]);
+        }
+    }
 }

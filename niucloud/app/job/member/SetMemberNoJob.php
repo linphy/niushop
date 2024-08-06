@@ -9,22 +9,19 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\listener\system;
+namespace app\job\member;
+
+use app\service\core\member\CoreMemberService;
+use core\base\BaseJob;
 
 /**
- * 平台首页加载事件
- * Class AdminIndexListenerIndex
- * @package app\listener\system
+ * 队列设置会员会员码
  */
-class AdminIndexListener
+class SetMemberNoJob extends BaseJob
 {
-    public function handle()
+    public function doJob($member_id)
     {
-        return [
-            [
-                "name" => get_lang("dict_admin_index.system"),
-                "view_path" => "index/index"
-            ]
-        ];
+        CoreMemberService::setMemberNo($member_id);
+        return true;
     }
 }

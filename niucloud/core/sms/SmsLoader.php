@@ -13,11 +13,11 @@ namespace core\sms;
 
 use core\loader\Loader;
 
+
 /**
- * @see SmsLoader
- * @package think\facade
- * @mixin BaseSms
- * @method  string|null send(string $mobile, string $template_id, array $data) 发送短信
+ * Class SmsLoader
+ * @package core\sms
+ * @method  string|null send( string $mobile, string $template_id, array $data ) 发送短信
  */
 class SmsLoader extends Loader
 {

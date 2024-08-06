@@ -29,9 +29,9 @@ class Aliyun extends BaseSms
     protected function initialize(array $config = [])
     {
         parent::initialize($config);
-        $this->app_key = $config['app_key'] ?? '';
-        $this->secret_key = $config['secret_key'] ?? '';
-        $this->sign = $config['sign'] ?? '';
+        $this->app_key = $config[ 'app_key' ] ?? '';
+        $this->secret_key = $config[ 'secret_key' ] ?? '';
+        $this->sign = $config[ 'sign' ] ?? '';
     }
 
 
@@ -66,17 +66,17 @@ class Aliyun extends BaseSms
                 ->request();
 
             $res = $result->toArray();
-            if (isset($res['Code']) && $res['Code'] == 'OK') {
+            if (isset($res[ 'Code' ]) && $res[ 'Code' ] == 'OK') {
                 return $res;
             }
-            $message = $res['Message'] ?? $res;
+            $message = $res[ 'Message' ] ?? $res;
             throw new NoticeException($message);
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             throw new NoticeException($e->getMessage());
         }
     }
 
-    public function modify(string $sign = null, string $mobile, string $code)
+    public function modify(string $sign, string $mobile, string $code)
     {
     }
 

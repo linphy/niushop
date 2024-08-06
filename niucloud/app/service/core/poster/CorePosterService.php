@@ -41,16 +41,6 @@ class CorePosterService extends BaseCoreService
     }
 
     /**
-     * 删除自定义海报
-     * @param $condition
-     * @return bool
-     */
-    public function del($condition)
-    {
-        return ( new Poster() )->where($condition)->delete();
-    }
-
-    /**
      * 海报类型
      * @param string $type
      * @return array
@@ -139,10 +129,11 @@ class CorePosterService extends BaseCoreService
             $dir = 'upload/poster';
             $temp1 = md5(json_encode($poster));
             $temp2 = md5(json_encode($poster_data));
-            $file_path = 'poster' . $temp1 . '_' . $temp2 .'_'.$channel. '.png';
+            $file_path = 'poster' . $temp1 . '_' . $temp2 . '_' . $channel . '.png';
             $path = $dir . '/' . $file_path;
 
             //判断当前海报是否存在,存在直接返回地址,不存在的话则创建
+
             if (is_file($path)) {
                 return $path;
             } else {
@@ -174,7 +165,7 @@ class CorePosterService extends BaseCoreService
         if ($poster[ 'global' ][ 'bgType' ] == 'url') {
             if (!empty($poster[ 'global' ][ 'bgUrl' ]) && str_contains($poster[ 'global' ][ 'bgUrl' ], 'http://') || str_contains($poster[ 'global' ][ 'bgUrl' ], 'https://')) {
                 //判断是否是是远程图片,远程图片需要本地化
-                $temp_dir = 'file/image/' . date('Ym') . '/' . date('d');
+                $temp_dir = 'file/' . 'image' . '/' . date('Ym') . '/' . date('d');
                 try {
                     $poster[ 'global' ][ 'bgUrl' ] = $core_upload_service->image($poster[ 'global' ][ 'bgUrl' ], $temp_dir, FileDict::LOCAL)[ 'url' ] ?? '';
                 } catch (\Exception $e) {
@@ -195,7 +186,7 @@ class CorePosterService extends BaseCoreService
                     } else if ($v[ 'type' ] == 'image') {//校验图片文件是否是远程文件
                         if (str_contains($v[ 'value' ], 'http://') || str_contains($v[ 'value' ], 'https://')) {
                             //判断是否是是远程图片,远程图片需要本地化
-                            $temp_dir = 'file/image/' . date('Ym') . '/' . date('d');
+                            $temp_dir = 'file/' . 'image' . '/' . date('Ym') . '/' . date('d');
                             try {
                                 $v[ 'value' ] = $core_upload_service->image($v[ 'value' ], $temp_dir, FileDict::LOCAL)[ 'url' ] ?? '';
                             } catch (\Exception $e) {

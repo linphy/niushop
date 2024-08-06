@@ -62,8 +62,8 @@ class MemberLabel extends BaseModel
      */
     public function searchLabelNameAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where('label_name', 'like', '%' . $value . '%');
+        if ($value != '') {
+            $query->where('label_name', 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

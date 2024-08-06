@@ -12,6 +12,7 @@
 namespace app\validate\member;
 
 use core\base\BaseValidate;
+
 /**
  * 会员收货地址验证器
  * Class Address
@@ -20,26 +21,26 @@ use core\base\BaseValidate;
 class Address extends BaseValidate
 {
 
-       protected $rule = [
-            'name' => 'require',
-            'mobile' => 'require',
-            'province_id' => 'require',
-            'city_id' => 'require',
-            'district_id' => 'require',
-            'address' => 'require',
-            'full_address' => 'require',
-        ];
+    protected $rule = [
+        'name' => 'require',
+        'mobile' => 'require',
+        'province_id' => 'require',
+        'city_id' => 'require',
+        'district_id' => 'require',
+        'address' => 'require',
+        'full_address' => 'require',
+    ];
 
-       protected $message = [
-            'name.require' => ['common_validate.require', ['name']],
-            'mobile.require' => ['common_validate.require', ['mobile']],
-            'address.require' => ['common_validate.require', ['address']],
-            'full_address.require' => ['common_validate.require', ['full_address']],
-        ];
+    protected $message = [
+        'name.require' => [ 'common_validate.require', [ 'name' ] ],
+        'mobile.require' => [ 'common_validate.require', [ 'mobile' ] ],
+        'address.require' => [ 'common_validate.require', [ 'address' ] ],
+        'full_address.require' => [ 'common_validate.require', [ 'full_address' ] ],
+    ];
 
-       protected $scene = [
-            "add" => ['name', 'mobile', 'address', 'full_address', 'lng', 'lat'],
-            "edit" => ['name', 'mobile', 'address', 'full_address', 'lng', 'lat']
-        ];
+    protected $scene = [
+        "add" => [ 'name', 'mobile', 'address', 'full_address', 'lng', 'lat' ],
+        "edit" => [ 'name', 'mobile', 'address', 'full_address', 'lng', 'lat' ]
+    ];
 
 }

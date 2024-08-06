@@ -78,12 +78,9 @@ class UserService extends BaseAdminService
         if (!empty($user?->userrole)) {
             $user->userrole->appendData(['role_array' => $this->getRoleByUserRoleIds($user->role_ids ?? [])]);
         }
+
         return $user->append(['status_name'])->toArray();
     }
-
-
-
-
 
     /**
      * 添加用户（添加用户，不添加站点）
@@ -140,7 +137,6 @@ class UserService extends BaseAdminService
         }
         $this->edit($uid, $data);
         return true;
-
     }
 
 
@@ -277,6 +273,21 @@ class UserService extends BaseAdminService
      */
     public function getUserInfoByUsername(string $username){
         return (new SysUser())->where([['username', '=',$username]])->findOrEmpty();
+    }
+
+    /**
+     * 获取全部用户列表（用于平台整体用户管理）
+     * @param array $where
+     * @return array
+     */
+    public function getUserAll(array $where)
+    {
+        $field = 'uid, username, head_img';
+        return (new SysUser())->withSearch(['username', 'realname', 'create_time'], $where)
+            ->field($field)
+            ->order('uid desc')
+            ->select()
+            ->toArray();
     }
 
     /**

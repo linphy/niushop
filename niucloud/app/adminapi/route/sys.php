@@ -86,24 +86,6 @@ Route::group('sys', function() {
     //地图设置
     Route::get('config/map', 'sys.Config/getMap');
 
-    //首页加载设置
-    Route::put('config/site_index', 'sys.Config/setSiteIndex');
-    //获取首页加载
-    Route::get('config/site_index', 'sys.Config/getSiteIndexList');
-
-    //平台首页加载设置
-    Route::put('config/admin_index', 'sys.Config/setAdminIndex');
-    //获取平台首页加载
-    Route::get('config/admin_index', 'sys.Config/getAdminIndexList');
-
-    // 获取手机端首页加载
-    Route::get('config/wap_index', 'sys.Config/getWapIndexList');
-
-    //快捷菜单设置
-    Route::put('config/shortcut_menu', 'sys.Config/setShortcutMenu');
-    //获取快捷菜单
-    Route::get('config/shortcut_menu', 'sys.Config/getShortcutMenu');
-
     //登录注册设置
     Route::get('config/login', 'login.Config/getConfig');
     //登录注册设置
@@ -274,6 +256,63 @@ Route::group('sys', function() {
     /***************************************************** 获取布局 ****************************************************/
     Route::get('layout', 'sys.System/layout');
     Route::put('layout', 'sys.System/setLayout');
+
+    /***************************************************** 小票打印管理 ****************************************************/
+
+    // 小票打印机分页列表
+    Route::get('printer', 'sys.Printer/pages');
+
+    // 小票打印机列表
+    Route::get('printer/list', 'sys.Printer/lists');
+
+    // 小票打印机详情
+    Route::get('printer/:id', 'sys.Printer/info');
+
+    // 添加小票打印机
+    Route::post('printer', 'sys.Printer/add');
+
+    // 编辑小票打印机
+    Route::put('printer/:id', 'sys.Printer/edit');
+
+    // 修改小票打印机状态
+    Route::put('printer/status', 'sys.Printer/modifyStatus');
+
+    // 删除小票打印机
+    Route::delete('printer/:id', 'sys.Printer/del');
+
+    // 小票打印模板分页列表
+    Route::get('printer/template', 'sys.Printer/templatePageLists');
+
+    // 小票打印模板列表
+    Route::get('printer/template/list', 'sys.Printer/templateLists');
+
+    // 小票打印模板详情
+    Route::get('printer/template/:id', 'sys.Printer/templateInfo');
+
+    // 添加小票打印模板
+    Route::post('printer/template', 'sys.Printer/templateAdd');
+
+    // 编辑小票打印模板
+    Route::put('printer/template/:id', 'sys.Printer/templateEdit');
+
+    // 删除小票打印模板
+    Route::delete('printer/template/:id', 'sys.Printer/templateDel');
+
+    // 获取小票打印模板类型
+    Route::get('printer/type', 'sys.Printer/getType');
+
+    // 获取小票打印机设备品牌
+    Route::get('printer/brand', 'sys.Printer/getBrand');
+
+    // 刷新易联云打印机token
+    Route::put('printer/refreshtoken/:id', 'sys.Printer/refreshToken');
+
+    // 测试易联云打印
+    Route::put('printer/testprint/:id', 'sys.Printer/testPrint');
+
+    // 打印小票内容
+    Route::post('printer/printticket', 'sys.Printer/printTicket');
+
 })->middleware([
     AdminCheckToken::class,
     AdminCheckRole::class,

@@ -65,17 +65,25 @@ $system = [
                 'application/x-zip-compressed'
             ],
             'size' => 2097152
+        ],
+        'excel' => [
+            'ext' => ['xls', 'xlsx'],
+            'mime' => [
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ],
+            'size' => 10485760
         ]
     ],
     'thumb' => [
         'thumb_type' => [
             'big' => [
-                'width' => 800,
-                'height' => 800,
+                'width' => 1200,
+                'height' => 1200,
             ],
             'mid' => [
-                'width' => 400,
-                'height' => 400,
+                'width' => 800,
+                'height' => 800,
             ],
             'small' => [
                 'width' => 200,

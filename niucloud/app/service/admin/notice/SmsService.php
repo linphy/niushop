@@ -115,7 +115,7 @@ class SmsService extends BaseAdminService
         {
             $config['default'] = $sms_type;
         }else{
-            $config['default'] = '';
+            $config['default'] = $config['default'] == $sms_type ? '' : $config['default'];
         }
         foreach ($sms_type_list[$sms_type]['params'] as $k_param => $v_param)
         {

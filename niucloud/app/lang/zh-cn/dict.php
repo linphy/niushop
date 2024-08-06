@@ -38,18 +38,6 @@ return [
         'status_off' => '停用'
     ],
     // 站点
-    'dict_site' => [
-        //站点类型
-        'type_cms' => 'cms',
-        'status_on' => '正常',
-        'status_experience' => '体验期',
-        'status_expire' => '已到期',
-        'status_close' => '已停止',
-        'pay' => '支付',
-        'refund' => '退款',
-        'transfer' => '转账',
-    ],
-    // 站点
     'dict_site_index' => [
         //站点类型
         'system' => '框架首页',
@@ -232,6 +220,7 @@ return [
         'member_my_level' => '会员等级',
         'member_my_sign_in' => '我的签到',
         'member_verify_index' => '核销台',
+        'member_contact' => '客服',
 
         'diy_page' => '自定义页面',
         'diy_link' => '自定义链接',
@@ -239,7 +228,7 @@ return [
         'diy_make_phone_call' => '拨打电话'
     ],
     // 自定义海报
-    'dict_diy_poster'=>[
+    'dict_diy_poster' => [
         'component_type_basic' => '基础组件',
     ],
     //短信相关
@@ -379,4 +368,8 @@ return [
         'status_not_sign' => '未签到',
         'status_signed' => '已签到'
     ],
+    // 打印机品牌
+    'dict_printer' => [
+        'yilianyun' => '易联云打印机'
+    ]
 ];

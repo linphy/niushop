@@ -69,11 +69,15 @@ class CoreScheduleService extends BaseCoreService
         $template_list = array_column($this->getTemplateList(), null, 'key');
         return $this->pageQuery($search_model, function ($item, $key) use($template_list){
             $item['crontab_content'] = $this->getCrontabContent($item['time']);
-            foreach($template_list[$item['key']] as $k => $v){
-                if($k != 'time'){
-                    $item->$k = $v;
+            $temp = $template_list[$item['key']] ?? [];
+            if(!empty($temp)){
+                foreach($template_list[$item['key']] as $k => $v){
+                    if($k != 'time'){
+                        $item->$k = $v;
+                    }
                 }
             }
+
         });
     }
 

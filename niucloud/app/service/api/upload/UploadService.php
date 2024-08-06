@@ -36,7 +36,7 @@ class UploadService extends BaseApiService
      */
     public function image($file)
     {
-        $dir = $this->root_path.'/image/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path . '/' . 'image' . '/' . date('Ym') . '/' . date('d');
         $core_upload_service = new CoreUploadService();
         return $core_upload_service->image($file, $dir, $this->cate_id);
     }
@@ -49,7 +49,7 @@ class UploadService extends BaseApiService
      */
     public function video($file)
     {
-        $dir = $this->root_path.'/video/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path . '/' . 'video' . '/' . date('Ym') . '/' . date('d');
         $core_upload_service = new CoreUploadService();
         return $core_upload_service->video($file, $dir, $this->cate_id);
     }
@@ -63,9 +63,9 @@ class UploadService extends BaseApiService
      */
     public function document($file, string $type = '')
     {
-        if(!in_array($type, FileDict::getSceneType()))
+        if (!in_array($type, FileDict::getSceneType()))
             throw new UploadFileException('UPLOAD_TYPE_ERROR');
-        $dir = $this->root_path.'/document/'.date('Ym').'/'.date('d');
+        $dir = $this->root_path . '/document/' . $type . '/' . date('Ym') . '/' . date('d');
         $core_upload_service = new CoreUploadService();
         return $core_upload_service->document($file, $type, $dir, StorageDict::LOCAL);
     }

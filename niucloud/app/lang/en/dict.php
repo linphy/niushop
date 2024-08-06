@@ -35,14 +35,6 @@ return [
         'status_on' => 'on',
         'status_off' => 'off'
     ],
-    // 站点
-    'dict_site' => [
-        //站点类型
-        'type_cms' => 'cms',
-        'status_on' => 'on',
-        'status_experience' => 'experience',
-        'status_expire' => 'expire'
-    ],
     'dict_notice' => [
         'type_sms' => 'sms',
         'type_wechat' => 'wechat',

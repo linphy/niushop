@@ -109,6 +109,7 @@ class CoreWeappDeliveryService extends BaseCoreService
 
             return $result;
         } catch (\Exception $e) {
+            Log::write('uploadShippingInfo，报错：' . $e->getMessage() . "，File：" . $e->getFile() . "，line：" . $e->getLine());
             return $e->getMessage() . "，File：" . $e->getFile() . "，line：" . $e->getLine();
         }
     }
@@ -166,12 +167,13 @@ class CoreWeappDeliveryService extends BaseCoreService
      * 1、如设置为空路径或小程序中不存在的路径，将仍然跳转平台默认的确认收货页面，不会进入你的小程序。
      * 2、平台会在路径后面增加支付单的 transaction_id、merchant_id、merchant_trade_no 作为query参数，如果存在二级商户号则还会再增加 sub_merchant_id 参数,开发者可以在小程序中通过onLaunch等方式获取。
      * 3、如你需要在path中携带自定义的query参数，请注意与上面的参数进行区分
+     * @param int $type
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function setMsgJumpPath()
+    public function setMsgJumpPath($type)
     {
-        $config_data = $this->getConfig();
+        $config_data = $this->getConfig($type);
         if (true || empty($config_data) || ( !empty($config_data[ 'value' ]) && empty($config_data[ 'value' ][ 'path' ]) )) {
             try {
                 $path = 'app/pages/weapp/order_shipping';
@@ -181,7 +183,7 @@ class CoreWeappDeliveryService extends BaseCoreService
                     $data = [
                         'path' => $path
                     ];
-                    $this->setConfig($data);
+                    $this->setConfig($type, $data);
                 }
 
                 return $result;
@@ -239,24 +241,26 @@ class CoreWeappDeliveryService extends BaseCoreService
 
     /**
      * 获取配置信息
+     * @param string $type
      * @return array
      */
-    public function getConfig()
+    public function getConfig($type)
     {
         $config_service = new CoreConfigService();
-        $res = $config_service->getConfig('WEAPP_ORDER_SHIPPING_CONFIG');
+        $res = $config_service->getConfig('WEAPP_ORDER_SHIPPING_CONFIG_' . $type);
         return $res;
     }
 
     /**
      * 设置配置
+     * @param string $type
      * @param array $value
      * @return SysConfig|bool|Model
      */
-    public function setConfig(array $value)
+    public function setConfig($type, array $value)
     {
         $config_service = new CoreConfigService();
-        $res = $config_service->setConfig('WEAPP_ORDER_SHIPPING_CONFIG', $value);
+        $res = $config_service->setConfig('WEAPP_ORDER_SHIPPING_CONFIG_' . $type, $value);
         return $res;
     }
 

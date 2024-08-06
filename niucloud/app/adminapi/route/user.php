@@ -19,6 +19,8 @@ use think\facade\Route;
 Route::group('user', function () {
     /***************************************************** 用户 ****************************************************/
     Route::get('', 'user.User/lists');
+    //全部用户列表
+    Route::get('user_all', 'user.User/getUserAll');
     //用户详情
     Route::get(':uid', 'user.User/info');
     //用户新增

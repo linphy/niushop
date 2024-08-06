@@ -30,11 +30,11 @@ return [
         'limit_between' => 'limit必须是正整数并且不能超过120',
     ],
     'validate_user' => [
-        'username_require' => '用户名必须填写',
-        'username_unique' => '用户名必须是惟一的',
-        'username_max' => '用户名最多不能超过15个字符',
+        'username_require' => '账号必须填写',
+        'username_unique' => '账号必须是唯一的',
+        'username_max' => '账号最多不能超过15个字符',
         'real_name_require' => '实际姓名必须填写',
-        'password_require' => '用户密码必须填写',
+        'password_require' => '账号密码必须填写',
     ],
     //站点
     'validate_site' => [

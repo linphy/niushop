@@ -21,6 +21,7 @@ use Workerman\Worker;
 class Workerman extends Command
 {
     use WorkerCommand;
+
     public function configure()
     {
         // 指令配置
@@ -30,8 +31,6 @@ class Workerman extends Command
             ->setDescription('Workerman，高性能PHP应用容器');
     }
 
-
-
     /**
      * 执行任务
      * @return void
@@ -40,48 +39,47 @@ class Workerman extends Command
     {
         $this->resetCli($input, $output);
         //计划任务
-        Worker::$pidFile = runtime_path() .'workerman_schedule.pid';
+        Worker::$pidFile = runtime_path() . 'workerman_schedule.pid';
         $worker = new Worker();
         $worker->name = 'schedule_work';
         $worker->count = 1;
 
         // 设置时区，避免运行结果与预期不一致
         date_default_timezone_set('PRC');
-        $worker->onWorkerStart = function () use($output){
-            $output->writeln('['.date('Y-m-d H:i:s').']'." Schedule Starting...");
+        $worker->onWorkerStart = function() use ($output) {
+            $output->writeln('[' . date('Y-m-d H:i:s') . ']' . " Schedule Starting...");
 //            // 每分钟的第1秒执行.用于计划任务是否仍在执行
-            new Crontab('*/10 * * * * *', function(){
-                $file = root_path('runtime').'.schedule';
+            new Crontab('*/10 * * * * *', function() {
+                $file = root_path('runtime') . '.schedule';
                 file_put_contents($file, time());
             });
             $core_schedule_service = new CoreScheduleService();
             //查询所有的计划任务
-            $task_list = $core_schedule_service->getList(['status' => ScheduleDict::ON]);
+            $task_list = $core_schedule_service->getList([ 'status' => ScheduleDict::ON ]);
 
             foreach ($task_list as $item) {
                 //获取定时任务时间字符串
-                new Crontab($this->getCrontab($item['time']), function () use ($core_schedule_service, $item, $output) {
-                    if(!empty($item['class'])){
+                new Crontab($this->getCrontab($item[ 'time' ]), function() use ($core_schedule_service, $item, $output) {
+                    if (!empty($item[ 'class' ])) {
                         $core_schedule_service->execute($item, $output);
                     }
                 });
             }
-            $output->writeln('['.date('Y-m-d H:i:s').']'." Schedule Started.");
+            $output->writeln('[' . date('Y-m-d H:i:s') . ']' . " Schedule Started.");
         };
 
         //消息队列
-        Worker::$pidFile = runtime_path() .'workerman_queue.pid';
-        Worker::$logFile = runtime_path().'workerman.log';
+        Worker::$pidFile = runtime_path() . 'workerman_queue.pid';
+        Worker::$logFile = runtime_path() . 'workerman.log';
         $worker = new Worker();
         $worker->name = 'queue_work';
 //        $worker->count = 3;
 
-        $worker->onWorkerStart = function () use($output){
-            $output->writeln('['.date('Y-m-d H:i:s').']'." Queue Starting...");
+        $worker->onWorkerStart = function() use ($output) {
+            $output->writeln('[' . date('Y-m-d H:i:s') . ']' . " Queue Starting...");
             // 定时，每10秒一次
-            Timer::add(30, function()use($output)
-            {
-                (new SysSchedule())->select();
+            Timer::add(30, function() use ($output) {
+                ( new SysSchedule() )->select();
             });
             $redis_option = [
                 'connect_timeout' => 10,
@@ -89,33 +87,33 @@ class Workerman extends Command
                 'retry_seconds' => 5,
                 'prefix' => md5(root_path())
             ];
-            if(!empty(env('redis.redis_password'))){
-                $redis_option['auth'] = env('redis.redis_password');
+            if (!empty(env('redis.redis_password'))) {
+                $redis_option[ 'auth' ] = env('redis.redis_password');
             }
-            $redis_option['db'] = env('redis.select');
-            $client = new Client('redis://'.env('redis.redis_hostname').':'.env('redis.port'), $redis_option);
+            $redis_option[ 'db' ] = env('redis.select');
+            $client = new Client('redis://' . env('redis.redis_hostname') . ':' . env('redis.port'), $redis_option);
             $queue_list = $this->getAllQueue();
 
-            foreach ($queue_list as $queue_class_name){
+            foreach ($queue_list as $queue_class_name) {
                 $queue_class_name = str_replace('.php', '', $queue_class_name);
                 // 订阅
-                $client->subscribe($queue_class_name, function($data) use($queue_class_name, $output){
-                    $output->writeln('[queue]['.date('Y-m-d H:i:s').']'." Processing:" . $queue_class_name);
-                    try{
-                        $class_name = '\\' .$queue_class_name;
+                $client->subscribe($queue_class_name, function($data) use ($queue_class_name, $output) {
+                    $output->writeln('[queue][' . date('Y-m-d H:i:s') . ']' . " Processing:" . $queue_class_name);
+                    try {
+                        $class_name = '\\' . $queue_class_name;
                         $class = new  $class_name();
                         $class->fire($data);
                     } catch (\Throwable $e) {
-                        Log::write(date('Y-m-d H:i:s').',队列有错误:'.$queue_class_name.'_'.$e->getMessage().'_'.$e->getFile().'_'.$e->getLine());
+                        Log::write(date('Y-m-d H:i:s') . ',队列有错误:' . $queue_class_name . '_' . $e->getMessage() . '_' . $e->getFile() . '_' . $e->getLine());
                     }
-                    $output->writeln('[queue]['.date('Y-m-d H:i:s').']'." Processed:" . $queue_class_name);
+                    $output->writeln('[queue][' . date('Y-m-d H:i:s') . ']' . " Processed:" . $queue_class_name);
                 });
             }
             // 消费失败触发的回调(可选)
-            $client->onConsumeFailure(function (\Throwable $exception, $package) use($output){
-                $output->writeln('[queue]队列 ' . $package['queue'] . " 消费失败,".$exception->getMessage());
+            $client->onConsumeFailure(function(\Throwable $exception, $package) use ($output) {
+                $output->writeln('[queue]队列 ' . $package[ 'queue' ] . " 消费失败," . $exception->getMessage());
             });
-            $output->writeln('['.date('Y-m-d H:i:s').']'." Queue Started.");
+            $output->writeln('[' . date('Y-m-d H:i:s') . ']' . " Queue Started.");
         };
         Worker::runAll();
     }
@@ -133,14 +131,14 @@ class Workerman extends Command
      * @param $data
      * @return string
      */
-    protected function getCrontab($data): string
+    protected function getCrontab($data) : string
     {
-        $sec = $data['sec'] ?? '*';
-        $min = $data['min'] ?? '*';
-        $hour = $data['hour'] ?? '*';
-        $day = $data['day'] ?? '*';
-        $week = $data['week'] ?? '*';
-        $type = $data['type'] ?? '';
+        $sec = $data[ 'sec' ] ?? '*';
+        $min = $data[ 'min' ] ?? '*';
+        $hour = $data[ 'hour' ] ?? '*';
+        $day = $data[ 'day' ] ?? '*';
+        $week = $data[ 'week' ] ?? '*';
+        $type = $data[ 'type' ] ?? '';
         switch ($type) {
             case 'sec':// 每隔几秒
                 $crontab = '*/' . $sec . ' * * * * *';
@@ -155,10 +153,10 @@ class Workerman extends Command
                 $crontab = '0 ' . $min . ' ' . $hour . ' */' . $day . ' * *';
                 break;
             case 'week':// 每周一次,周几具体时间执行
-                $crontab = '0 ' .$min . ' ' . $hour . ' * * ' . $week;
+                $crontab = '0 ' . $min . ' ' . $hour . ' * * ' . $week;
                 break;
             case 'month':// 每月一次,某日具体时间执行
-                $crontab = '0 ' .$min . ' ' . $hour . ' ' . $day . ' * *';
+                $crontab = '0 ' . $min . ' ' . $hour . ' ' . $day . ' * *';
                 break;
         }
         return $crontab ?? '0 */1 * * * *';
@@ -168,26 +166,27 @@ class Workerman extends Command
      * 捕获所有队列任务
      * @return array
      */
-    public function getAllQueue(){
+    public function getAllQueue()
+    {
         $class_list = [];
         $system_dir = root_path() . 'app' . DIRECTORY_SEPARATOR . 'job';
         $addon_dir = root_path() . 'addon' . DIRECTORY_SEPARATOR;
-        if(is_dir($system_dir)){
+        if (is_dir($system_dir)) {
             search_dir($system_dir, $app_data, root_path());
             $class_list = array_merge($class_list, $app_data);
         }
 
-        $addons = (new CoreAddonService())->getInstallAddonList();
+        $addons = ( new CoreAddonService() )->getInstallAddonList();
         foreach ($addons as $v) {
 
-            $addon_path = $addon_dir .$v['key']. DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR. 'job';
+            $addon_path = $addon_dir . $v[ 'key' ] . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'job';
             if (is_dir($addon_path)) {
                 search_dir($addon_path, $addon_data, root_path());
                 $class_list = array_merge($class_list, $addon_data);
             }
         }
 
-        foreach($class_list as &$v){
+        foreach ($class_list as &$v) {
             $v = str_replace('.php', '', $v);
             $v = str_replace('/', '\\', $v);
         }

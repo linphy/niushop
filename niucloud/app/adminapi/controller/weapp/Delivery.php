@@ -13,7 +13,6 @@ namespace app\adminapi\controller\weapp;
 
 use app\service\admin\weapp\WeappDeliveryService;
 use core\base\BaseAdminController;
-use think\Response;
 
 /**
  * 小程序发货信息管理服务

@@ -47,17 +47,9 @@ $system_event = [
         ],
         //协议类型加载
         'AgreementType' => [],
-        //站点首页加载
-        'SiteIndex' => [
-            'app\listener\system\SiteIndexListener'
-        ],
         // 站点端布局
         'SiteLayout' => [
             'app\listener\system\SiteLayout'
-        ],
-        //平台首页加载
-        'AdminIndex' => [
-            'app\listener\system\AdminIndexListener'
         ],
         'BottomNavigation' => [
             'app\listener\system\BottomNavigationListener'
@@ -88,12 +80,12 @@ $system_event = [
         //导出数据类型
         'ExportDataType' => [
             //会员导出
-            'app\listener\member\MemberExportTypeListener',
+            'app\listener\member_export\MemberExportTypeListener',
         ],
         //导出数据源
         'ExportData' => [
             //会员导出
-            'app\listener\member\MemberExportDataListener',
+            'app\listener\member_export\MemberExportDataListener',
         ],
         //统计执行
         'StatExecute' => [],

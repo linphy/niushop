@@ -35,4 +35,14 @@ class BaseModel extends Model
         $table_name = str_replace($tablePrefix, '', $table_info['Name']);
         return Db::name($table_name)->getFields();
     }
+
+    /**
+     * 处理搜索条件特殊字符（%、_）
+     * @param $value
+     */
+    public function handelSpecialCharacter($value)
+    {
+        $value = str_replace('%', '\%', str_replace('_', '\_', $value));
+        return $value;
+    }
 }

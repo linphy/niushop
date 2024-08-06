@@ -9,26 +9,31 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-use app\adminapi\middleware\AdminCheckRole;
-use app\adminapi\middleware\AdminCheckToken;
-use app\adminapi\middleware\AdminLog;
-use think\facade\Route;
+namespace core\printer;
 
+use core\loader\Storage;
 
 /**
- * 站点相关（平台0）
+ * Class BasePrinter
+ * @package core\printer
  */
-Route::group('stat', function () {
+abstract class BasePrinter extends Storage
+{
+    /**
+     * 初始化
+     * @param array $config
+     * @return void
+     */
+    protected function initialize(array $config = [])
+    {
 
-    /***************************************************** 统计 ****************************************************/
-    //控制台
-    Route::get('index', 'stat.Stat/index');
-    //站点控制台
-    Route::get('siteindex', 'stat.SiteStat/index');
+    }
 
+    /**
+     * 打印小票
+     * @param array $data
+     * @return mixed
+     */
+    abstract protected function printTicket(array $data);
 
-})->middleware([
-    AdminCheckToken::class,
-    AdminCheckRole::class,
-    AdminLog::class
-]);
+}

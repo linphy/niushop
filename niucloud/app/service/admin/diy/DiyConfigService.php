@@ -34,10 +34,10 @@ class DiyConfigService extends BaseAdminService
     {
         $list = ( new CoreDiyConfigService() )->getBottomList($params);
 
-        $apps = (new CoreAddonService())->getList([ ['type', '=', 'app'] ]);
+        $apps = ( new CoreAddonService() )->getList([ [ 'type', '=', 'app' ] ]);
 
         // 单应用，排除 系统 底部导航设置
-        if (count($apps) == 1) {
+        if (count($list) > 1 && count($apps) == 1) {
             foreach ($list as $k => $v) {
                 if ($v[ 'key' ] = 'app') {
                     unset($list[ $k ]);

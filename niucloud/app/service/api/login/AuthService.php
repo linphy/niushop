@@ -36,13 +36,15 @@ class AuthService extends BaseApiService
         $this->model = new Member();
     }
 
-    public function checkMember(Request $request){
+    public function checkMember(Request $request)
+    {
         //如果登录信息非法就报错
-        if($this->member_id > 0){
+        if ($this->member_id > 0) {
             $member_service = new MemberService();
-            $member_info = $member_service->findMemberInfo(['member_id' => $this->member_id]);
-            if($member_info->isEmpty())
+            $member_info = $member_service->findMemberInfo([ 'member_id' => $this->member_id ]);
+            if ($member_info->isEmpty()) {
                 throw new AuthException('MEMBER_NOT_EXIST', 401);
+            }
         }
         return true;
     }
@@ -52,16 +54,17 @@ class AuthService extends BaseApiService
      * @param Request $request
      * @return void
      */
-    public function checkChannel(Request $request) {
+    public function checkChannel(Request $request)
+    {
         $channel = $request->getChannel();
 
         switch ($channel) {
             case ChannelDict::H5:
-                $is_open = (int)(new CoreH5Service())->getH5()['is_open'];
+                $is_open = (int) ( new CoreH5Service() )->getH5()[ 'is_open' ];
                 if (!$is_open) throw new AuthException('SITE_CLOSE_NOT_ALLOW', 402);
                 break;
             case ChannelDict::PC:
-                $is_open = (int)(new CorePcService())->getPc()['is_open'];
+                $is_open = (int) ( new CorePcService() )->getPc()[ 'is_open' ];
                 if (!$is_open) throw new AuthException('SITE_CLOSE_NOT_ALLOW', 402);
                 break;
         }
@@ -73,28 +76,29 @@ class AuthService extends BaseApiService
      * @param string $mobile_code
      * @return true
      */
-        public function bindMobile(string $mobile, string $mobile_code){
+    public function bindMobile(string $mobile, string $mobile_code)
+    {
 
-        if(empty($mobile)){
-            $result = (new CoreWeappAuthService())->getUserPhoneNumber($mobile_code);
-            if(empty($result)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
+        if (empty($mobile)) {
+            $result = ( new CoreWeappAuthService() )->getUserPhoneNumber($mobile_code);
+            if (empty($result)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
             if ($result[ 'errcode' ] != 0) throw new ApiException($result[ 'errmsg' ]);
-            $phone_info = $result['phone_info'];
-            $mobile = $phone_info['purePhoneNumber'];
-            if(empty($mobile)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
-        }else{
+            $phone_info = $result[ 'phone_info' ];
+            $mobile = $phone_info[ 'purePhoneNumber' ];
+            if (empty($mobile)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
+        } else {
             //todo  校验手机号验证码
-            (new LoginService())->checkMobileCode($mobile);
+            ( new LoginService() )->checkMobileCode($mobile);
         }
         $member_service = new MemberService();
-        $member = $member_service->findMemberInfo(['member_id' => $this->member_id]);
-        if($member->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');
+        $member = $member_service->findMemberInfo([ 'member_id' => $this->member_id ]);
+        if ($member->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');
 
-        $o_mobile = $member['mobile'];//原始手机号
-        if(!empty($o_mobile) && $o_mobile == $mobile) throw new AuthException('MOBILE_NOT_CHANGE');
+        $o_mobile = $member[ 'mobile' ];//原始手机号
+        if (!empty($o_mobile) && $o_mobile == $mobile) throw new AuthException('MOBILE_NOT_CHANGE');
 
-        $mobile_member = $member_service->findMemberInfo(['mobile' => $mobile]);
-        if(!$mobile_member->isEmpty()) throw new AuthException('MOBILE_IS_EXIST');
+        $mobile_member = $member_service->findMemberInfo([ 'mobile' => $mobile ]);
+        if (!$mobile_member->isEmpty()) throw new AuthException('MOBILE_IS_EXIST');
 
 //        if(empty($mobile)) throw new AuthException('MOBILE_NEEDED');//必须填写
         $member->save([

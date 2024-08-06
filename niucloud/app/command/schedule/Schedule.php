@@ -16,6 +16,7 @@ use Workerman\Worker;
 class Schedule extends Command
 {
     use WorkerCommand;
+
     public function configure()
     {
         // 指令配置
@@ -25,8 +26,6 @@ class Schedule extends Command
             ->setDescription('定时任务，类似linux的crontab。支持秒级别定时。');
     }
 
-
-
     /**
      * 执行任务
      * @return void
@@ -34,27 +33,27 @@ class Schedule extends Command
     protected function execute(Input $input, Output $output)
     {
         $this->resetCli($input, $output);
-        Worker::$pidFile = runtime_path() .'workerman_schedule.pid';
+        Worker::$pidFile = runtime_path() . 'workerman_schedule.pid';
         $worker = new Worker();
         $worker->name = 'schedule_work';
         $worker->count = 1;
-        $output->writeln('['.date('Y-m-d H:i:s').']'." Schedule Starting...");
+        $output->writeln('[' . date('Y-m-d H:i:s') . ']' . " Schedule Starting...");
         // 设置时区，避免运行结果与预期不一致
         date_default_timezone_set('PRC');
-        $worker->onWorkerStart = function () use($output){
+        $worker->onWorkerStart = function() use ($output) {
 //            // 每分钟的第1秒执行.用于计划任务是否仍在执行
-            new Crontab('*/10 * * * * *', function(){
-                $file = root_path('runtime').'.schedule';
+            new Crontab('*/10 * * * * *', function() {
+                $file = root_path('runtime') . '.schedule';
                 file_put_contents($file, time());
             });
             $core_schedule_service = new CoreScheduleService();
             //查询所有的计划任务
-            $task_list = $core_schedule_service->getList(['status' => ScheduleDict::ON]);
-            $output->writeln('['.date('Y-m-d H:i:s').']'." Schedule Started.");
+            $task_list = $core_schedule_service->getList([ 'status' => ScheduleDict::ON ]);
+            $output->writeln('[' . date('Y-m-d H:i:s') . ']' . " Schedule Started.");
             foreach ($task_list as $item) {
                 //获取定时任务时间字符串
-                new Crontab($this->getCrontab($item['time']), function () use ($core_schedule_service, $item, $output) {
-                    if(!empty($item['class'])){
+                new Crontab($this->getCrontab($item[ 'time' ]), function() use ($core_schedule_service, $item, $output) {
+                    if (!empty($item[ 'class' ])) {
                         $core_schedule_service->execute($item, $output);
                     }
 
@@ -77,14 +76,14 @@ class Schedule extends Command
      * @param $data
      * @return string
      */
-    protected function getCrontab($data): string
+    protected function getCrontab($data) : string
     {
-        $sec = $data['sec'] ?? '*';
-        $min = $data['min'] ?? '*';
-        $hour = $data['hour'] ?? '*';
-        $day = $data['day'] ?? '*';
-        $week = $data['week'] ?? '*';
-        $type = $data['type'] ?? '';
+        $sec = $data[ 'sec' ] ?? '*';
+        $min = $data[ 'min' ] ?? '*';
+        $hour = $data[ 'hour' ] ?? '*';
+        $day = $data[ 'day' ] ?? '*';
+        $week = $data[ 'week' ] ?? '*';
+        $type = $data[ 'type' ] ?? '';
         switch ($type) {
             case 'sec':// 每隔几秒
                 $crontab = '*/' . $sec . ' * * * * *';
@@ -99,10 +98,10 @@ class Schedule extends Command
                 $crontab = '0 ' . $min . ' ' . $hour . ' */' . $day . ' * *';
                 break;
             case 'week':// 每周一次,周几具体时间执行
-                $crontab = '0 ' .$min . ' ' . $hour . ' * * ' . $week;
+                $crontab = '0 ' . $min . ' ' . $hour . ' * * ' . $week;
                 break;
             case 'month':// 每月一次,某日具体时间执行
-                $crontab = '0 ' .$min . ' ' . $hour . ' ' . $day . ' * *';
+                $crontab = '0 ' . $min . ' ' . $hour . ' ' . $day . ' * *';
                 break;
         }
         return $crontab ?? '0 */1 * * * *';

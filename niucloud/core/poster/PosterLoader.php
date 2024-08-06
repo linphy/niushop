@@ -12,7 +12,6 @@
 namespace core\poster;
 
 use core\loader\Loader;
-use core\sms\BaseSms;
 
 /**
  * @see PosterLoader

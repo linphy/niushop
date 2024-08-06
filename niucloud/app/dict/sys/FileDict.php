@@ -30,6 +30,8 @@ class FileDict
     public const MID = 'mid';//小程序上传
     public const SMALL = 'small';
 
+    public const EXCEL = 'excel';//excel导入
+
     /**
      * 附件类型
      * @return array
@@ -68,6 +70,7 @@ class FileDict
             self::IMAGE,//图片上传
             self::VIDEO,//视频上传
             self::APPLET,//小程序包上传
+            self::EXCEL,//excel导入
         ];
     }
 

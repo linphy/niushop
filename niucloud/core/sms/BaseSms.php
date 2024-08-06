@@ -42,7 +42,7 @@ abstract class BaseSms extends Storage
      * 编辑签名
      * @return mixed
      */
-    abstract public function modify(string $sign = null, string $mobile, string $code);
+    abstract public function modify(string $sign, string $mobile, string $code);
 
     /**
      * 短信模板

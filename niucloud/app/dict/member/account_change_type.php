@@ -112,6 +112,8 @@ return [
             'inc' => 1,
             //是否减少
             'dec' => 0,
+            //是否累增
+            'is_change_get' => 0,
         ],
         //会员升级礼包
         'level_upgrade' => [
@@ -160,6 +162,8 @@ return [
             'inc' => 0,
             //是否减少
             'dec' => 1,
+            //是否累增
+            'is_change_get' => 0,
         ],
     ],
     //会员佣金
@@ -182,6 +186,8 @@ return [
             'inc' => 0,
             //是否减少
             'dec' => 1,
+            //是否累增
+            'is_change_get' => 0,
         ],
     ]
 ];

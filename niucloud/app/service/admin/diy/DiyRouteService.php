@@ -50,7 +50,7 @@ class DiyRouteService extends BaseAdminService
                     if (!empty($cv[ 'url' ])) {
                         $is_add = true;
 
-                        if (!empty($where[ 'title' ]) && !str_contains($cv[ 'title' ], $where[ 'title' ])) {
+                        if (isset($where[ 'title' ]) && $where[ 'title' ] !='' && !str_contains($cv[ 'title' ], $where[ 'title' ])) {
                             $is_add = false;
                         }
 

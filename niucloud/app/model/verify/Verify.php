@@ -54,8 +54,21 @@ class Verify extends BaseModel
      */
     public function searchCodeAttr(Query $query, $value, $data)
     {
-        if ($value) {
-            $query->whereLike('code', '%'.$value.'%');
+        if ($value != '') {
+            $query->whereLike('code', '%' . $this->handelSpecialCharacter($value) . '%');
+        }
+    }
+
+    /**
+     * 关键词搜索
+     * @param $query
+     * @param $value
+     * @param $data
+     */
+    public function searchKeywordAttr(Query $query, $value, $data)
+    {
+        if ($value != '') {
+            $query->whereLike('code|body', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

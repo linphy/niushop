@@ -48,7 +48,6 @@ class Weapp extends BaseApiController
         return success($weapp_auth_service->register($data[ 'openid' ], $data[ 'mobile' ], $data[ 'mobile_code' ], $data[ 'unionid' ]));
     }
 
-
     public function subscribeMessage()
     {
         $data = $this->request->params([ [ 'keys', '' ] ]);
@@ -68,7 +67,6 @@ class Weapp extends BaseApiController
             if ($result) {
                 return success([ 'is_trade_managed' => true ]);
             }
-
         } catch (\Exception $e) {
         }
         return success([ 'is_trade_managed' => false ]);
@@ -86,7 +84,17 @@ class Weapp extends BaseApiController
         $wechat_template_service = new WeappDeliveryService();
         $result = $wechat_template_service->getMsgJumpPath($data[ 'out_trade_no' ]);
         return success([ 'path' => $result ]);
+    }
 
+    /**
+     * 更新openid
+     * @return Response
+     */
+    public function updateOpenid()
+    {
+        $data = $this->request->params([ [ 'code', '' ] ]);
+        $weapp_auth_service = new WeappAuthService();
+        return success($weapp_auth_service->updateOpenid($data[ 'code' ]));
     }
 
 }

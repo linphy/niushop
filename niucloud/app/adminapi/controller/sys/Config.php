@@ -135,46 +135,6 @@ class Config extends BaseAdminController
     }
 
     /**
-     * 获取站点首页列表（如果正在使用is_use = 1）
-     */
-    public function getSiteIndexList()
-    {
-        return success((new ConfigService())->getSiteIndexList());
-    }
-
-    /**
-     * 首页配置
-     */
-    public function setSiteIndex()
-    {
-        $data = $this->request->params([
-            ['view_path', ''],
-        ]);
-        (new ConfigService())->setSiteIndexConfig($data);
-        return success();
-    }
-
-    /**
-     * 获取站点首页列表（如果正在使用is_use = 1）
-     */
-    public function getAdminIndexList()
-    {
-        return success((new ConfigService())->getAdminIndexList());
-    }
-
-    /**
-     * 首页配置
-     */
-    public function setAdminIndex()
-    {
-        $data = $this->request->params([
-            ['view_path', ''],
-        ]);
-        (new ConfigService())->setAdminIndexConfig($data);
-        return success();
-    }
-
-    /**
      * 获取手机端首页列表
      */
     public function getWapIndexList()
@@ -184,26 +144,6 @@ class Config extends BaseAdminController
             [ 'key', '' ] // 多个查询，逗号隔开
         ]);
         return success(( new ConfigService() )->getWapIndexList($data));
-    }
-
-    /**
-     * 设置快捷菜单
-     */
-    public function setShortcutMenu()
-    {
-        $data = $this->request->params([
-            ['menu', []],
-        ]);
-        (new ConfigService())->setShortcutMenu($data['menu']);
-        return success();
-    }
-
-    /**
-     * 获取站点快捷菜单
-     */
-    public function getShortcutMenu()
-    {
-        return success(data: (new ConfigService())->getShortcutMenu());
     }
 
     /**

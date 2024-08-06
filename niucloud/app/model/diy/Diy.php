@@ -174,8 +174,8 @@ class Diy extends BaseModel
      */
     public function searchTitleAttr($query, $value, $data)
     {
-        if ($value) {
-            $query->where("title|page_title", 'like', '%' . $value . '%');
+        if ($value != '') {
+            $query->where("title|page_title", 'like', '%' . $this->handelSpecialCharacter($value) . '%');
         }
     }
 

@@ -42,12 +42,13 @@ class CoreWechatMediaService extends BaseCoreService
             'media' => File::fromPath($data['file_path'])
         ];
         if ($data['type'] == WechatMediaDict::VIDEO) {
-            $field['json'] = [
-                'description' => [
-                    'title' => time(),
-                    'introduction' => time()
-                ]
-            ];
+//            $field['json'] = [
+//                'description' => [
+//                    'title' => time(),
+//                    'introduction' => time()
+//                ]
+//            ];
+            $field['description'] = json_encode(['title' => time(), 'introduction' => time()]);
         }
         $options = Form::create($field)->toArray();
         $add_res =  CoreWechatService::appApiClient()->post("/cgi-bin/material/add_material?type={$data['type']}", $options);

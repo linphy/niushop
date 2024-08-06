@@ -13,7 +13,6 @@ namespace app\adminapi\controller\weapp;
 
 use app\service\admin\weapp\WeappVersionService;
 use core\base\BaseAdminController;
-use Exception;
 use think\Response;
 
 /**

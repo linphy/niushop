@@ -53,7 +53,7 @@ class CorePayEventService extends BaseCoreService
     {
         $this->channel = $channel;
         $this->type = $type;
-        $this->config = (new CorePayChannelService())->getConfigByChannelAndType($this->channel, $this->type);
+        $this->config = ( new CorePayChannelService() )->getConfigByChannelAndType($this->channel, $this->type);
         return $this;
     }
 
@@ -65,8 +65,8 @@ class CorePayEventService extends BaseCoreService
      */
     public function app(string $action = 'query')
     {
-        $notify_url = (string)url("/api/pay/notify/$this->channel/$this->type/$action", [], '', true);//异步回调通知地址
-        $this->config['notify_url'] = $notify_url;
+        $notify_url = (string) url("/api/pay/notify/$this->channel/$this->type/$action", [], '', true);//异步回调通知地址
+        $this->config[ 'notify_url' ] = $notify_url;
         return new PayLoader($this->type, $this->config);
     }
 
@@ -87,8 +87,8 @@ class CorePayEventService extends BaseCoreService
     {
         $pay_fun = '';
 
-        if(mb_strlen($body, 'UTF-8') > 15){
-            $body = mb_substr($body, 0, 15, 'UTF-8').'...';
+        if (mb_strlen($body, 'UTF-8') > 15) {
+            $body = mb_substr($body, 0, 15, 'UTF-8') . '...';
         }
         $params = array(
             'out_trade_no' => $out_trade_no,
@@ -103,7 +103,7 @@ class CorePayEventService extends BaseCoreService
         );
         switch ($this->type) {
             case PayDict::WECHATPAY:
-                $params['money'] = (int)bcmul($params['money'], 100);
+                $params[ 'money' ] = (int) bcmul($params[ 'money' ], 100);
                 switch ($this->channel) {
                     case ChannelDict::H5://h5
                         $pay_fun = 'wap';
@@ -169,7 +169,7 @@ class CorePayEventService extends BaseCoreService
         $transfer_type = TransferDict::getPayTypeByTransfer($this->type);
         switch ($transfer_type) {
             case PayDict::WECHATPAY:
-                $money *= 100;
+                $money = (int) bcmul($money, 100);
                 break;
             case PayDict::ALIPAY:
                 break;
@@ -213,8 +213,8 @@ class CorePayEventService extends BaseCoreService
     public function refund(string $out_trade_no, float $money, float $total, string $refund_no, $voucher = '')
     {
         if ($this->type == PayDict::WECHATPAY) {
-            $money *= 100;
-            $total *= 100;
+            $money = (int) bcmul($money, 100);
+            $total = (int) bcmul($total, 100);
         }
         return $this->app('refund')->refund([
             'out_trade_no' => $out_trade_no,
@@ -247,7 +247,7 @@ class CorePayEventService extends BaseCoreService
      */
     public function getOrder(string $out_trade_no)
     {
-        return $this->app()->getOrder(['out_trade_no' => $out_trade_no]);
+        return $this->app()->getOrder([ 'out_trade_no' => $out_trade_no ]);
     }
 
     /**

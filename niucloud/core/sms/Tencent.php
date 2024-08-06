@@ -40,10 +40,10 @@ class Tencent extends BaseSms
     protected function initialize(array $config = [])
     {
         parent::initialize($config);
-        $this->secret_id = $config['secret_id'] ?? '';
-        $this->secret_key = $config['secret_key'] ?? '';
-        $this->sign = $config['sign'] ?? '';
-        $this->app_id = $config['app_id'] ?? '';
+        $this->secret_id = $config[ 'secret_id' ] ?? '';
+        $this->secret_key = $config[ 'secret_key' ] ?? '';
+        $this->sign = $config[ 'sign' ] ?? '';
+        $this->app_id = $config[ 'app_id' ] ?? '';
     }
 
 
@@ -63,7 +63,7 @@ class Tencent extends BaseSms
 
             $client = new SmsClient($cred, 'ap-guangzhou', $clientProfile);
             $params = [
-                'PhoneNumberSet' => ['+86' . $mobile],
+                'PhoneNumberSet' => [ '+86' . $mobile ],
                 'TemplateID' => $template_id,
                 'Sign' => $this->sign,
                 'TemplateParamSet' => $data,
@@ -72,19 +72,19 @@ class Tencent extends BaseSms
             $req = new SendSmsRequest();
             $req->fromJsonString(json_encode($params, JSON_THROW_ON_ERROR));
             $resp = json_decode($client->SendSms($req)->toJsonString(), true, 512, JSON_THROW_ON_ERROR);
-            if (isset($resp['SendStatusSet']) && $resp['SendStatusSet'][0]['Code'] == 'Ok') {
+            if (isset($resp[ 'SendStatusSet' ]) && $resp[ 'SendStatusSet' ][ 0 ][ 'Code' ] == 'Ok') {
                 return $resp;
             } else {
-                $message = $res['SendStatusSet'][0]['Message'] ?? json_encode($resp, JSON_THROW_ON_ERROR);
+                $message = $res[ 'SendStatusSet' ][ 0 ][ 'Message' ] ?? json_encode($resp, JSON_THROW_ON_ERROR);
                 throw new CommonException($message);
             }
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             throw new NoticeException($e->getMessage());
         }
     }
 
 
-    public function modify(string $sign = null, string $mobile, string $code)
+    public function modify(string $sign, string $mobile, string $code)
     {
     }
 

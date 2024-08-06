@@ -37,6 +37,10 @@ class ComponentDict
                         'sort' => 10000,
                         'relate' => '', // 关联字段，空为不处理// 组件属性
                         'value' => '文本内容',
+                        'template' => [
+                            "width" => 165, // 宽度
+                            'height' => 53 // 高度
+                        ]
                     ],
                     'Image' => [
                         'title' => "图片",
@@ -68,10 +72,11 @@ class ComponentDict
                         'relate' => 'headimg', // 关联字段，空为不处理
                         'value' => '',
                         'template' => [
-                            "width" => 50, // 宽度
-                            'height' => 50, // 高度
-                            'minWidth' => 30, // 最小宽度
-                            'minHeight' => 30, // 最小高度
+                            "width" => 100, // 宽度
+                            'height' => 100, // 高度
+                            'minWidth' => 60, // 最小宽度
+                            'minHeight' => 60, // 最小高度
+                            'shape' => 'circle'
                         ],
                     ],
                     'NickName' => [
@@ -84,10 +89,10 @@ class ComponentDict
                         'relate' => 'nickname', // 关联字段，空为不处理
                         'value' => '',
                         'template' => [
-                            "width" => 50, // 宽度
-                            'height' => 50, // 高度
-                            'minWidth' => 30, // 最小宽度
-                            'minHeight' => 30, // 最小高度
+                            "width" => 164, // 宽度
+                            'height' => 55, // 高度
+                            'minWidth' => 120, // 最小宽度
+                            'minHeight' => 50, // 最小高度
                         ],
                     ],
                     'Draw' => [
@@ -100,10 +105,10 @@ class ComponentDict
                         'relate' => '', // 关联字段，空为不处理
                         'value' => '',
                         'template' => [
-                            "width" => 100, // 宽度
-                            'height' => 100, // 高度
-                            'minWidth' => 30, // 最小宽度
-                            'minHeight' => 30, // 最小高度
+                            "width" => 200, // 宽度
+                            'height' => 200, // 高度
+                            'minWidth' => 60, // 最小宽度
+                            'minHeight' => 60, // 最小高度
                             'drawType' => 'Polygon',
                             'bgColor' => '#eeeeee',
                             'points' => [], // [x,y]：左上，右上，右下，左下

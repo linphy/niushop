@@ -12,6 +12,7 @@
 namespace app\service\api\login;
 
 use app\dict\member\MemberLoginTypeDict;
+use app\dict\member\MemberRegisterTypeDict;
 use app\dict\sys\AppTypeDict;
 use app\dict\sys\SmsDict;
 use app\model\member\Member;
@@ -30,8 +31,8 @@ use Throwable;
 
 /**
  * 登录服务层
- * Class BaseService
- * @package app\service
+ * Class LoginService
+ * @package app\service\api\login
  */
 class LoginService extends BaseApiService
 {
@@ -76,9 +77,9 @@ class LoginService extends BaseApiService
         return [
             'token' => $token_info['token'],
             'expires_time' => $token_info['params']['exp'],
+            'mobile' => $member_info->mobile
         ];
     }
-
 
     /**
      * 账号登录
@@ -95,7 +96,6 @@ class LoginService extends BaseApiService
         return $this->login($member_info, MemberLoginTypeDict::USERNAME);
     }
 
-
     /**
      * 手机号登录
      * @param string $mobile
@@ -107,11 +107,21 @@ class LoginService extends BaseApiService
         //登录注册配置
         $config = (new MemberConfigService())->getLoginConfig();
         $is_mobile = $config['is_mobile'];
-        if($is_mobile != 1) throw new AuthException('MOBILE_LOGIN_UNOPENED');
+        $is_bind_mobile = $config[ 'is_bind_mobile' ];
+        if ($is_mobile != 1 && $is_bind_mobile != 1) throw new AuthException('MOBILE_LOGIN_UNOPENED');
         $member_service = new MemberService();
         $member_info = $member_service->findMemberInfo(['mobile' => $mobile]);
-        if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
-
+        if ($member_info->isEmpty()) {
+            //开启强制绑定手机号，登录会自动注册并绑定手机号
+            if ($is_bind_mobile == 1) {
+                $data = array (
+                    'mobile' => $mobile,
+                );
+                return (new RegisterService())->register($mobile, $data, MemberRegisterTypeDict::MOBILE, false);
+            } else {
+                throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
+            }
+        }
         return $this->login($member_info, MemberLoginTypeDict::MOBILE);
     }
 
@@ -146,7 +156,6 @@ class LoginService extends BaseApiService
         TokenAuth::clearToken($member_id, AppTypeDict::API, $token);
         return true;
     }
-
 
     /**
      * 解析token
@@ -235,8 +244,6 @@ class LoginService extends BaseApiService
      * @return true
      */
     public function bingOpenid($member){
-        $config = (new MemberConfigService())->getLoginConfig();
-        $is_auth_register = $config['is_auth_register'];
         $open_id = $this->request->param('openid');
         if(!empty($open_id)){
             Log::write('channel_1'.$this->channel);

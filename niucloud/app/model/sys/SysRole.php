@@ -34,20 +34,13 @@ class SysRole extends BaseModel
      */
     protected $name = 'sys_role';
     // 设置json类型字段
-    protected $json = ['rules','addon_keys'];
+    protected $json = [ 'rules', 'addon_keys' ];
     // 设置JSON数据返回数组
     protected $jsonAssoc = true;
 
-    /**
-     * 角色状态
-     * @param $value
-     * @param $data
-     * @return string
-     */
     public function getStatusNameAttr($value, $data)
     {
-        return RoleStatusDict::getStatus()[$data['status']] ?? '';
+        return RoleStatusDict::getStatus()[ $data[ 'status' ] ] ?? '';
     }
-
 
 }

@@ -25,26 +25,12 @@ class Auth extends BaseAdminController
     public function authMenuList()
     {
         $data = $this->request->params([
-            ['status', 1],
-            ['is_tree', 1],
-            ['is_button', 1]
+            [ 'status', 1 ],
+            [ 'is_tree', 1 ],
+            [ 'is_button', 1 ]
         ]);
-        return success((new AuthService())->getAuthMenuList($data['status'], $data['is_tree'], $data['is_button']));
+        return success(( new AuthService() )->getAuthMenuList($data[ 'status' ], $data[ 'is_tree' ], $data[ 'is_button' ]));
     }
-
-    /**
-     * 获取授权应用
-     * @return void
-     */
-    public function getAuthAddonList(){
-        $data = $this->request->params([
-            ['type', ''],
-            ['title', ''],
-            ['support_app','']
-        ]);
-        return success((new AuthService())->getAuthAddonList($data));
-    }
-
 
     /**
      * 获取登录用户信息
@@ -52,7 +38,7 @@ class Auth extends BaseAdminController
      */
     public function get()
     {
-        return success((new AuthService())->getAuthInfo());
+        return success(( new AuthService() )->getAuthInfo());
     }
 
     /**
@@ -63,11 +49,11 @@ class Auth extends BaseAdminController
     public function modify($field)
     {
         $data = $this->request->params([
-            ['value', ''],
-            ['field', $field]
+            [ 'value', '' ],
+            [ 'field', $field ]
         ]);
 //        $this->validate($data, 'app\validate\sys\User.modify');
-        (new AuthService())->modifyAuth($field, $data['value']);
+        ( new AuthService() )->modifyAuth($field, $data[ 'value' ]);
         return success('MODIFY_SUCCESS');
     }
 
@@ -77,23 +63,12 @@ class Auth extends BaseAdminController
     public function edit()
     {
         $data = $this->request->params([
-            ['real_name', ''],
-            ['head_img', ''],
-            ['password', ''],
-            ['original_password', '']
+            [ 'real_name', '' ],
+            [ 'head_img', '' ],
+            [ 'password', '' ],
+            [ 'original_password', '' ]
         ]);
-        (new AuthService())->editAuth($data);
+        ( new AuthService() )->editAuth($data);
         return success('MODIFY_SUCCESS');
-    }
-
-    /**
-     * 授权应用加星
-     */
-    public function setStar(){
-        $data = $this->request->params([
-            ['key', ''],
-        ]);
-        (new AuthService())->setAddonStat($data['key']);
-        return success('SUCCESS');
     }
 }

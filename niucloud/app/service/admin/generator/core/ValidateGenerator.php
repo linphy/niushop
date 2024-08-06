@@ -307,6 +307,7 @@ class ValidateGenerator extends BaseGenerator
         $dir .= $this->moduleName . '/';
         return $dir;
     }
+
     /**
      * 生成的文件名
      * @return string
@@ -315,6 +316,5 @@ class ValidateGenerator extends BaseGenerator
     {
         return $this->getUCaseClassName() . '.php';
     }
-
 
 }

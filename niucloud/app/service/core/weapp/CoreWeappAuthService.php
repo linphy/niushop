@@ -11,7 +11,6 @@
 
 namespace app\service\core\weapp;
 
-use app\service\core\wxoplatform\CoreOplatformService;
 use core\base\BaseCoreService;
 use EasyWeChat\Kernel\Exceptions\DecryptException;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
@@ -23,7 +22,6 @@ use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
  */
 class CoreWeappAuthService extends BaseCoreService
 {
-
 
     /**
      * 网页授权
@@ -39,13 +37,8 @@ class CoreWeappAuthService extends BaseCoreService
      */
     public function session(?string $code)
     {
-        $config = (new CoreWeappConfigService())->getWeappConfig();
-        if ($config['is_authorization']) {
-            return CoreOplatformService::codeToSession($code);
-        } else {
-            $utils = CoreWeappService::app()->getUtils();
-            return $utils->codeToSession($code);
-        }
+        $utils = CoreWeappService::app()->getUtils();
+        return $utils->codeToSession($code);
     }
 
     /**
@@ -57,23 +50,24 @@ class CoreWeappAuthService extends BaseCoreService
      * @throws DecryptException
      * @throws InvalidArgumentException
      */
-    public function decryptData(string $session, string $iv, string $encrypted_data){
-
+    public function decryptData(string $session, string $iv, string $encrypted_data)
+    {
         $utils = CoreWeappService::app()->getUtils();
         return $utils->decryptSession($session, $iv, $encrypted_data);
     }
 
     /**
-     * v
+     * 获取用户手机号
      * @param string $code
      * @return \EasyWeChat\Kernel\HttpClient\Response|\Symfony\Contracts\HttpClient\ResponseInterface
      * @throws InvalidArgumentException
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function getUserPhoneNumber(string $code){
+    public function getUserPhoneNumber(string $code)
+    {
         $api = CoreWeappService::appApiClient();
         return $api->postJson('wxa/business/getuserphonenumber', [
-            'code' => (string)$code
+            'code' => (string) $code
         ]);
     }
 }

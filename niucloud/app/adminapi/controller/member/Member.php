@@ -15,7 +15,6 @@ use app\dict\member\MemberDict;
 use app\dict\member\MemberRegisterChannelDict;
 use app\dict\member\MemberRegisterTypeDict;
 use app\service\admin\member\MemberService;
-use app\service\core\sys\CoreExportService;
 use core\base\BaseAdminController;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;

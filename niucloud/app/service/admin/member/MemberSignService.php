@@ -36,9 +36,9 @@ class MemberSignService extends BaseAdminService
     public function getPage(array $where = [])
     {
         $member_where = [];
-        if(!empty($where['keywords']))
+        if(isset($where['keywords']) && $where['keywords'] != '')
         {
-            $member_where = [['member.member_no|member.nickname|member.mobile', 'like', '%'.$where['keywords'].'%']];
+            $member_where = [['member.member_no|member.nickname|member.mobile', 'like', '%' . $this->model->handelSpecialCharacter($where['keywords']) . '%']];
         }
         $field = 'sign_id, member_sign.member_id, days, day_award, continue_award, continue_tag, member_sign.create_time, is_sign';
         $search_model = $this->model->withSearch(['create_time'],$where)->where($member_where)->withJoin(["member" => ['member_no', 'mobile', 'nickname', 'headimg']])->field($field)->append(['is_sign_name'])->order('member_sign.create_time desc');

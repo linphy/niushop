@@ -15,9 +15,6 @@ use app\service\api\login\AuthService;
 use app\service\api\member\MemberLogService;
 use app\service\api\member\MemberService;
 use core\base\BaseApiController;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\Response;
 
 class Member extends BaseApiController

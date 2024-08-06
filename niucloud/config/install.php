@@ -73,7 +73,7 @@ return [
     // 站点名称
     'admin_site_name' => 'NIUCLOUD ADMIN',
     // admin 端登录页默认图
-    'admin_login_bg' => 'install/img/niucloud_login_index_left.jpg',
+    'admin_login_bg' => 'install/img/niushop_login_index_left.jpg',
     // admin 端默认logo
     'admin_logo' => 'install/img/logo.jpg'
 ];

@@ -12,7 +12,6 @@
 namespace app\service\admin\sys;
 
 use app\dict\sys\RoleStatusDict;
-use app\model\sys\SysMenu;
 use app\model\sys\SysRole;
 use app\model\sys\SysUser;
 use core\base\BaseAdminService;
@@ -44,8 +43,8 @@ class RoleService extends BaseAdminService
     public function getPage(array $data)
     {
         $where = [];
-        if(!empty($data['role_name'])) {
-            $where[] = ['role_name', 'like', "%".$data['role_name']."%"];
+        if(isset($data['role_name']) && $data['role_name'] !== '') {
+            $where[] = ['role_name', 'like', "%".$this->model->handelSpecialCharacter($data['role_name'])."%"];
         }
         $field = 'role_id,role_name,status,create_time';
         $search_model = $this->model->where($where)->field($field)->order('create_time desc')->append(['status_name']);

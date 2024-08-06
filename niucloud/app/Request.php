@@ -57,7 +57,7 @@ class Request extends \think\Request
         $filter_rule = [
             "/<(\\/?)(script|i?frame|style|html|body|title|link|metaf|alert|font|object|\\?|\\%)([^>]*?)>/isU",
             "/(<[^>]*)on[a-zA-Z]+\s*=([^>]*>)/isU",
-            "/select|join|where|drop|like|modify|rename|insert|update|table|database|alter|truncate|\'|\/\*|\.\.\/|\.\/|union|into|load_file|outfile/is"
+            "/\\b(select|join|where|drop|like|modify|rename|insert|update|table|database|alter|truncate|\'|\/\*|\.\.\/|\.\/|union|into|load_file|outfile)\\b/is"
         ];
         return preg_replace($filter_rule, '', $param);
     }

@@ -13,11 +13,11 @@ namespace app\service\api\login;
 
 use app\dict\member\MemberLoginTypeDict;
 use app\dict\member\MemberRegisterTypeDict;
+use app\job\member\SetMemberNoJob;
 use app\model\member\Member;
 use app\service\api\captcha\CaptchaService;
 use app\service\api\member\MemberConfigService;
 use app\service\api\member\MemberService;
-use app\service\core\member\CoreMemberService;
 use core\base\BaseApiService;
 use core\exception\AuthException;
 use think\db\exception\DataNotFoundException;
@@ -78,10 +78,10 @@ class RegisterService extends BaseApiService
             $member_id = ( new MemberService() )->add($data);
             $data[ 'member_id' ] = $member_id;
             event('MemberRegister', $data);
-            CoreMemberService::setMemberNo($member_id);
+            SetMemberNoJob::dispatch([ 'member_id' => $member_id ]);
         }
         $member_info = $member_service->findMemberInfo([ 'member_id' => $member_id ]);
-        if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号已存在
+        if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
         return ( new LoginService() )->login($member_info, $type);
     }
 
@@ -95,7 +95,7 @@ class RegisterService extends BaseApiService
         $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $username = '';
         for ($i = 0; $i < 2; $i++) {
-            $username .= $chars[ random_int(0, (strlen($chars) - 1)) ];
+            $username .= $chars[ random_int(0, ( strlen($chars) - 1 )) ];
         }
 
         return $microtime . strtoupper(base_convert(time() - 1420070400, 10, 36)) . $username;
@@ -124,7 +124,7 @@ class RegisterService extends BaseApiService
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在
 
         $password_hash = create_password($password);
-        $data = array (
+        $data = array(
             'username' => $username,
             'password' => $password_hash,
         );
@@ -141,13 +141,14 @@ class RegisterService extends BaseApiService
         //登录注册配置
         $config = ( new MemberConfigService() )->getLoginConfig();
         $is_mobile = $config[ 'is_mobile' ];
+        $is_bind_mobile = $config[ 'is_bind_mobile' ];
         //未开启账号密码登录注册
-        if ($is_mobile != 1) throw new AuthException('MEMBER_USERNAME_LOGIN_NOT_OPEN');
+        if ($is_mobile != 1 && $is_bind_mobile != 1) throw new AuthException('MOBILE_LOGIN_UNOPENED');
         $member_service = new MemberService();
         $member_info = $member_service->findMemberInfo([ 'mobile' => $mobile ]);
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在
 
-        $data = array (
+        $data = array(
             'mobile' => $mobile,
         );
         return $this->register($mobile, $data, MemberRegisterTypeDict::MOBILE);
@@ -184,13 +185,16 @@ class RegisterService extends BaseApiService
             MemberLoginTypeDict::WECHAT => 'wx_openid',
             MemberLoginTypeDict::WEAPP => 'weapp_openid',
         };
-        if ($type == MemberLoginTypeDict::MOBILE || $is_bind_mobile == 1) {
-            if (empty($mobile)) throw new AuthException('MOBILE_NEEDED');//必须填写
-            //todo  校验手机号验证码
-            if ($is_verify) {
-                ( new LoginService() )->checkMobileCode($mobile);
+        if ($type == MemberLoginTypeDict::MOBILE || $type == MemberLoginTypeDict::WEAPP || $is_bind_mobile == 1) {
+            //增加判断，否则公众号第三方注册会提示手机号必须填写
+            if ($type == MemberLoginTypeDict::MOBILE || ( $type == MemberLoginTypeDict::USERNAME && $is_bind_mobile == 1 )) {
+                if (empty($mobile)) throw new AuthException('MOBILE_NEEDED');//必须填写
+                //todo  校验手机号验证码
+                if ($is_verify) {
+                    ( new LoginService() )->checkMobileCode($mobile);
+                }
             }
-            if ($is_bind_mobile == 1) {
+            if (!empty($mobile)) {
                 $member_service = new MemberService();
                 $member = $member_service->findMemberInfo([ 'mobile' => $mobile ]);
                 if (!$member->isEmpty()) {
@@ -205,11 +209,10 @@ class RegisterService extends BaseApiService
                         return $member->member_id;
                     }
                 }
+                $data[ 'mobile' ] = $mobile;
             }
-            $data[ 'mobile' ] = $mobile;
         }
         return $data;
     }
-
 
 }

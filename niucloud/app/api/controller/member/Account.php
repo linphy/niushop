@@ -33,10 +33,12 @@ class Account extends BaseApiController
     public function point(): Response
     {
         $data = $this->request->params([
-            ['from_type', '']
+            ['from_type', ''],
+            ['amount_type', 'all'],//全部all 收入income 支出disburse
+            ['create_time', []],
         ]);
         $data['account_type'] = MemberAccountTypeDict::POINT;
-        return success((new MemberAccountService())->getPage($data));
+        return success((new MemberAccountService())->getPointPage($data));
     }
 
     /**
@@ -59,9 +61,11 @@ class Account extends BaseApiController
     public function balanceList(): Response
     {
         $data = $this->request->params([
-            ['from_type', '']
+            ['from_type', ''],
+            ['trade_type', ''],
+            ['create_time', []]
         ]);
-        return success((new MemberAccountService())->getPages($data));
+        return success((new MemberAccountService())->getBalancePage($data));
     }
 
     /**
@@ -98,9 +102,11 @@ class Account extends BaseApiController
     public function commission(): Response
     {
         $data = $this->request->params([
+            ['keyword', ''],
             ['from_type', ''],
             ['account_data_gt', ''],
             ['account_data_lt', ''],
+            ['create_time', []],
         ]);
         $data['account_type'] = MemberAccountTypeDict::COMMISSION;
         return success((new MemberAccountService())->getPage($data));

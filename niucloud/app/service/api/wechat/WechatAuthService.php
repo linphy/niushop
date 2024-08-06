@@ -25,7 +25,6 @@ use app\service\core\wechat\CoreWechatServeService;
 use core\base\BaseApiService;
 use core\exception\ApiException;
 use core\exception\AuthException;
-use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -56,7 +55,7 @@ class WechatAuthService extends BaseApiService
     public function authorization(string $url = '', string $scopes = 'snsapi_base')
     {
         //todo  业务落地
-        return ['url' => $this->core_wechat_serve_service->authorization($url, $scopes)];
+        return [ 'url' => $this->core_wechat_serve_service->authorization($url, $scopes) ];
     }
 
     /**
@@ -70,18 +69,18 @@ class WechatAuthService extends BaseApiService
         if (empty($userinfo)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
         $token_response = $userinfo->getTokenResponse();
         if (empty($token_response)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
-        $scope = $token_response['scope'];
+        $scope = $token_response[ 'scope' ];
         if ($scope == 'snsapi_base') {//静默授权
-            $openid = $token_response['openid'] ?? '';
+            $openid = $token_response[ 'openid' ] ?? '';
         } else {
             $openid = $userinfo->getId();//对应微信的 openid
             $nickname = $userinfo->getNickname();//对应微信的 nickname
             $avatar = $userinfo->getAvatar();//对应微信的 头像地址
         }
-        $unionid = $userinfo->getRaw()['unionid'] ?? '';
+        $unionid = $userinfo->getRaw()[ 'unionid' ] ?? '';
         if (empty($openid)) throw new ApiException('WECHAT_EMPOWER_NOT_EXIST');
         //todo 这儿还可能会获取用户昵称 头像  性别 ....用以更新会员信息
-        return [$avatar ?? '', $nickname ?? '', $openid, $unionid];
+        return [ $avatar ?? '', $nickname ?? '', $openid, $unionid ];
         //todo  业务落地
     }
 
@@ -93,8 +92,9 @@ class WechatAuthService extends BaseApiService
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function loginByCode(string $code){
-        [$avatar, $nickname, $openid, $unionid] = $this->userFromCode($code);
+    public function loginByCode(string $code)
+    {
+        [ $avatar, $nickname, $openid, $unionid ] = $this->userFromCode($code);
         return $this->login($openid, $nickname, $avatar, $unionid);
     }
 
@@ -112,21 +112,21 @@ class WechatAuthService extends BaseApiService
     {
 
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
+        $member_info = $member_service->findMemberInfo([ 'wx_openid' => $openid ]);
         if ($member_info->isEmpty() && !empty($unionid)) {
-            $member_info = $member_service->findMemberInfo(['wx_unionid' => $unionid]);
+            $member_info = $member_service->findMemberInfo([ 'wx_unionid' => $unionid ]);
             if (!$member_info->isEmpty()) {
                 $member_info->wx_openid = $openid;
             }
         }
         if ($member_info->isEmpty()) {
-            $config = (new MemberConfigService())->getLoginConfig();
-            $is_bind_mobile = $config['is_bind_mobile'];
-            $is_auth_register = $config['is_auth_register'];
-            if ($is_bind_mobile == 0 && $is_auth_register == 1) {
+            $config = ( new MemberConfigService() )->getLoginConfig();
+            $is_auth_register = $config[ 'is_auth_register' ];
+            // 去掉强制绑定手机号判断，否则开启强制绑定的情况下公众号第三方注册无法注册
+            if ($is_auth_register == 1) {
                 return $this->register($openid, '', $nickname, $avatar, $unionid);
             } else {
-                return ['avatar' => $avatar, 'nickname' => $nickname, 'openid' => $openid, 'unionid' => $unionid];
+                return [ 'avatar' => $avatar, 'nickname' => $nickname, 'openid' => $openid, 'unionid' => $unionid ];
             }
         } else {
             //可能会更新用户和粉丝表
@@ -142,15 +142,15 @@ class WechatAuthService extends BaseApiService
      */
     public function sync(string $code)
     {
-        [$avatar, $nickname, $openid] = $this->userFromCode($code);
+        [ $avatar, $nickname, $openid ] = $this->userFromCode($code);
         //更新粉丝
         $core_wechat_fans_service = new CoreWechatFansService();
         //这儿或许可以异步
-        $core_wechat_fans_service->edit($openid, ['avatar' => $avatar, 'nickname' => $nickname]);
+        $core_wechat_fans_service->edit($openid, [ 'avatar' => $avatar, 'nickname' => $nickname ]);
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
+        $member_info = $member_service->findMemberInfo([ 'wx_openid' => $openid ]);
         if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
-        $member_service->editByFind($member_info, ['headimg' => $avatar, 'nickname' => $nickname]);
+        $member_service->editByFind($member_info, [ 'headimg' => $avatar, 'nickname' => $nickname ]);
         return true;
     }
 
@@ -160,6 +160,7 @@ class WechatAuthService extends BaseApiService
      * @param string $mobile
      * @param string $nickname
      * @param string $avatar
+     * @param string $wx_unionid
      * @return array
      * @throws DataNotFoundException
      * @throws DbException
@@ -168,10 +169,10 @@ class WechatAuthService extends BaseApiService
     public function register(string $openid, string $mobile = '', string $nickname = '', string $avatar = '', string $wx_unionid = '')
     {
         $member_service = new MemberService();
-        $member_info = $member_service->findMemberInfo(['wx_openid' => $openid]);
+        $member_info = $member_service->findMemberInfo([ 'wx_openid' => $openid ]);
         if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
         if (!empty($wx_unionid)) {
-            $member_info = $member_service->findMemberInfo(['wx_unionid' => $wx_unionid]);
+            $member_info = $member_service->findMemberInfo([ 'wx_unionid' => $wx_unionid ]);
             if (!$member_info->isEmpty()) throw new AuthException('MEMBER_IS_EXIST');//账号已存在, 不能在注册
         }
         $register_service = new RegisterService();
@@ -190,13 +191,20 @@ class WechatAuthService extends BaseApiService
     /**
      * 获取jssdkconfig
      * @param string $url
-     * @return array|string
+     * @return mixed[]
+     * @throws \EasyWeChat\Kernel\Exceptions\HttpException
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function jssdkConfig(string $url = '')
     {
         return $this->core_wechat_serve_service->jssdkConfig($url);
     }
-
 
     /**
      * 扫码登录
@@ -207,11 +215,29 @@ class WechatAuthService extends BaseApiService
         $data = array(
             'channel' => $this->channel,
         );
-        $key = (new  CoreScanService())->scan(ScanDict::WECHAT_LOGIN, $data, 300);
-        $url = $this->core_wechat_serve_service->scan($key, 300)['url'] ?? '';
+        $key = ( new  CoreScanService() )->scan(ScanDict::WECHAT_LOGIN, $data, 300);
+        $url = $this->core_wechat_serve_service->scan($key, 300)[ 'url' ] ?? '';
         return [
             'url' => $url,
             'key' => $key
         ];
+    }
+
+    /**
+     * 更新openid（用于账号密码或手机号注册时未正常获取到openid时再次获取）
+     * @param string $code
+     * @return true
+     */
+    public function updateOpenid(string $code)
+    {
+        [ $avatar, $nickname, $openid, $unionid ] = $this->userFromCode($code);
+        $member_service = new MemberService();
+        $member = $member_service->findMemberInfo([ 'wx_openid' => $openid ]);
+        if (!$member->isEmpty()) throw new AuthException('MEMBER_OPENID_EXIST');//openid已存在
+
+        $member_info = $member_service->findMemberInfo([ 'member_id' => $this->member_id ]);
+        if ($member_info->isEmpty()) throw new AuthException('MEMBER_NOT_EXIST');//账号不存在
+        $member_service->editByFind($member_info, [ 'wx_openid' => $openid ]);
+        return true;
     }
 }

@@ -62,7 +62,7 @@ class PagesDict
             "margin" => [
                 "top" => 10,
                 "bottom" => 10,
-                "both" => 16
+                "both" => 10
             ],
             "ignore" => [],
             "list" => []
@@ -152,10 +152,11 @@ class PagesDict
                             'topStatusBar' => [
                                 'isShow' => true,
                                 'bgColor' => "#ffffff",
-                                'isTransparent' => false,
+                                'rollBgColor' => "#ffffff",
                                 'style' => 'style-1',
                                 'styleName' => '风格1',
                                 'textColor' => "#333333",
+                                'rollTextColor' => "#333333",
                                 'textAlign' => 'center',
                                 'inputPlaceholder' => '请输入搜索关键词',
                                 'imgUrl' => '',
@@ -217,16 +218,17 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 0,
-                                    "both" => 12
+                                    "both" => 10
                                 ]
                             ],
-                            'topStatusBar' => [
+                            "topStatusBar" => [
                                 'isShow' => true,
                                 'bgColor' => "#ffffff",
-                                'isTransparent' => false,
+                                'rollBgColor' => "#ffffff",
                                 'style' => 'style-1',
                                 'styleName' => '风格1',
                                 'textColor' => "#333333",
+                                'rollTextColor' => "#333333",
                                 'textAlign' => 'center',
                                 'inputPlaceholder' => '请输入搜索关键词',
                                 'imgUrl' => '',
@@ -269,7 +271,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 12,
                                     "bottom" => 6,
-                                    "both" => 16
+                                    "both" => 10
                                 ],
                                 "style" => "style-1",
                                 "styleName" => "风格1",
@@ -306,7 +308,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 6,
                                     "bottom" => 0,
-                                    "both" => 16
+                                    "both" => 10
                                 ]
                             ],
                             [
@@ -359,7 +361,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 0,
-                                    "both" => 16
+                                    "both" => 10
                                 ]
                             ],
                             [
@@ -400,7 +402,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 6,
-                                    "both" => 16
+                                    "both" => 10
                                 ],
                                 "ignore" => [],
                                 "list" => [
@@ -467,7 +469,11 @@ class PagesDict
                                     [
                                         "title" => "联系客服",
                                         "link" => [
-                                            "name" => ""
+                                            "name" => "MEMBER_CONTACT",
+                                            "parent" => "MEMBER_LINK",
+                                            "title" => "客服",
+                                            "url" => "/app/pages/member/contact",
+                                            "action" => ""
                                         ],
                                         "imageUrl" => "static/resource/images/diy/horz_m_service.png",
                                         "label" => [
@@ -570,7 +576,11 @@ class PagesDict
                                     [
                                         "title" => "联系客服",
                                         "link" => [
-                                            "name" => ""
+                                            "name" => "MEMBER_CONTACT",
+                                            "parent" => "MEMBER_LINK",
+                                            "title" => "客服",
+                                            "url" => "/app/pages/member/contact",
+                                            "action" => ""
                                         ],
                                         "imageUrl" => "static/resource/images/diy/vert_m_service.png",
                                         "label" => [
@@ -618,7 +628,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 6,
                                     "bottom" => 12,
-                                    "both" => 16
+                                    "both" => 10
                                 ]
                             ]
                         ]
@@ -660,7 +670,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 0,
-                                    "both" => 12
+                                    "both" => 10
                                 ]
                             ],
                             'topStatusBar' => [
@@ -749,7 +759,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 0,
-                                    "both" => 16
+                                    "both" => 10
                                 ]
                             ],
                             [
@@ -802,7 +812,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 0,
-                                    "both" => 16
+                                    "both" => 10
                                 ]
                             ],
                             [
@@ -843,7 +853,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 0,
                                     "bottom" => 6,
-                                    "both" => 16
+                                    "both" => 10
                                 ],
                                 "ignore" => [],
                                 "list" => [
@@ -910,7 +920,11 @@ class PagesDict
                                     [
                                         "title" => "联系客服",
                                         "link" => [
-                                            "name" => ""
+                                            "name" => "MEMBER_CONTACT",
+                                            "parent" => "MEMBER_LINK",
+                                            "title" => "客服",
+                                            "url" => "/app/pages/member/contact",
+                                            "action" => ""
                                         ],
                                         "imageUrl" => "static/resource/images/diy/horz_m_service.png",
                                         "label" => [
@@ -1013,7 +1027,11 @@ class PagesDict
                                     [
                                         "title" => "联系客服",
                                         "link" => [
-                                            "name" => ""
+                                            "name" => "MEMBER_CONTACT",
+                                            "parent" => "MEMBER_LINK",
+                                            "title" => "客服",
+                                            "url" => "/app/pages/member/contact",
+                                            "action" => ""
                                         ],
                                         "imageUrl" => "static/resource/images/diy/vert_m_service.png",
                                         "label" => [
@@ -1061,7 +1079,7 @@ class PagesDict
                                 "margin" => [
                                     "top" => 6,
                                     "bottom" => 12,
-                                    "both" => 16
+                                    "both" => 10
                                 ]
                             ]
 

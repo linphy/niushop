@@ -112,7 +112,7 @@ class SysNoticeLog extends BaseModel
      */
     public function searchReceiverAttr($query, $value)
     {
-        if ($value) {
+        if ($value != '') {
             $query->where('receiver', $value);
         }
     }

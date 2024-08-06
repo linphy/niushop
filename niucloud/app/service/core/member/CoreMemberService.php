@@ -109,10 +109,10 @@ class CoreMemberService extends BaseCoreService
      * @throws ModelNotFoundException
      */
     public static function createMemberNo() {
-        $no = (new self())->getMemberNoConfig();
-        $no += 1;
         $config = (new CoreMemberConfigService())->getMemberConfig();
 
+        $no = (new self())->getMemberNoConfig();
+        $no += 1;
         $member_no = $config['prefix'] . ( strlen($config['prefix']) > $config['length'] ? $no : str_pad($no, ($config['length'] - strlen($config['prefix'])), "0", STR_PAD_LEFT) );
 
         $member = (new Member())->where([ ['member_no', '=', $member_no] ])->findOrEmpty();
@@ -135,10 +135,10 @@ class CoreMemberService extends BaseCoreService
      * @throws ModelNotFoundException
      */
     public static function setMemberNo(int $member_id) {
-        $no = (new self())->getMemberNoConfig();
-        $no += 1;
         $config = (new CoreMemberConfigService())->getMemberConfig();
 
+        $no = (new self())->getMemberNoConfig();
+        $no += 1;
         $member_no = $config['prefix'] . ( strlen($config['prefix']) > $config['length'] ? $no : str_pad($no, ($config['length'] - strlen($config['prefix'])), "0", STR_PAD_LEFT) );
 
         $member = (new Member())->where([ ['member_no', '=', $member_no] ])->findOrEmpty();
@@ -268,7 +268,7 @@ class CoreMemberService extends BaseCoreService
 
         foreach ($gifts as $k => $item) {
             $gifts[$k]['content'] = null;
-            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || empty($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
                 continue;
             } else {
                 $content = $dict[$k]['content'][$scene];
@@ -292,7 +292,7 @@ class CoreMemberService extends BaseCoreService
 
         foreach ($benefits as $k => $item) {
             $benefits[$k]['content'] = null;
-            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || empty($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
                 continue;
             } else {
                 $content = $dict[$k]['content'][$scene];
@@ -316,7 +316,7 @@ class CoreMemberService extends BaseCoreService
 
         foreach ($config as $k => $item) {
             $config[$k]['content'] = null;
-            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || empty($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
                 continue;
             } else {
                 $content = $dict[$k]['content'][$scene];
@@ -340,7 +340,7 @@ class CoreMemberService extends BaseCoreService
 
         foreach ($config as $k => $item) {
             $config[$k]['content'] = null;
-            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || empty($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
                 continue;
             } else {
                 $content = $dict[$k]['content'][$scene];
@@ -364,7 +364,7 @@ class CoreMemberService extends BaseCoreService
 
         foreach ($config as $k => $item) {
             $config[$k]['content'] = null;
-            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
+            if (!isset($item['is_use']) || !$item['is_use'] || !isset($dict[$k]['content']) || empty($dict[$k]['content']) || !isset($dict[$k]['content'][$scene])) {
                 continue;
             } else {
                 $content = $dict[$k]['content'][$scene];

@@ -9,27 +9,31 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\dict\site;
+namespace core\printer;
 
-class SiteDict
+use core\loader\Loader;
+
+/**
+ * Class PrinterLoader
+ * @package core\printer
+ */
+class PrinterLoader extends Loader
 {
-    public const EXPIRE = 2;//过期
-
-    public const ON = 1;//正常
-    public const CLOSE = 3;//停止
-
 
     /**
-     * 站点状态
-     * @return array
+     * 空间名
+     * @var string
      */
-    public static function getStatus()
-    {
-        return [
-            self::ON => get_lang('dict_site.status_on'),//正常
-            self::EXPIRE => get_lang('dict_site.status_expire'),//过期
-            self::CLOSE => get_lang('dict_site.status_close'),//停止
-        ];
-    }
+    protected $namespace = '\\core\\printer\\';
 
+    protected $config_name = 'printer';
+
+    /**
+     * 默认驱动
+     * @return mixed
+     */
+    protected function getDefault()
+    {
+        return 'kdbird';
+    }
 }

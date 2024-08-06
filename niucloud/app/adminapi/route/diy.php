@@ -54,7 +54,7 @@ Route::group('diy', function() {
     Route::get('link', 'diy.Diy/getLink');
 
     // 设为使用
-    Route::put('use', 'diy.Diy/setUse');
+    Route::put('use/:id', 'diy.Diy/setUse');
 
     // 获取页面模板
     Route::get('template', 'diy.Diy/getTemplate');

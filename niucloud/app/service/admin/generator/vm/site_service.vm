@@ -38,7 +38,7 @@ class {UCASE_NAME}Service extends BaseAdminService
         $field = '{FIELDS}';
         $order = '{ORDER}';
 
-         $search_model = {SEARCH_MODEL};
+        $search_model = {SEARCH_MODEL}
         $list = $this->pageQuery($search_model);
         return $list;
     }
@@ -52,7 +52,7 @@ class {UCASE_NAME}Service extends BaseAdminService
     {
         $field = '{FIELDS}';
 
-        $info = {INFO_SEARCH_MODEL};
+        $info = {INFO_SEARCH_MODEL}
         return $info;
     }
 

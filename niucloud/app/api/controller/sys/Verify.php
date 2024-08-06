@@ -11,7 +11,6 @@
 
 namespace app\api\controller\sys;
 
-use app\service\api\scan\ScanService;
 use app\service\api\verify\VerifyService;
 use core\base\BaseApiController;
 use think\Response;
@@ -64,6 +63,7 @@ class Verify extends BaseApiController
             ['relate_tag', 0],
             ['type', ''],
             ['code', ''],
+            ['keyword', ''],
             ['create_time', []]
         ]);
         return success(data:(new VerifyService())->getRecordsPageByVerifier($data));

@@ -190,7 +190,7 @@ class Poster extends BaseAdminController
             ] ], // 数据参数
             [ 'channel', 'h5' ]
         ]);
-        return success(data: poster($this->request->siteId(), ...$data));
+        return success(data: poster(...$data));
     }
 
 }

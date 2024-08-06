@@ -11,12 +11,8 @@
 
 namespace app\service\core\diy;
 
-use app\dict\sys\ConfigKeyDict;
 use app\model\diy\Diy;
-use app\model\sys\SysConfig;
-use app\service\core\sys\CoreConfigService;
 use core\base\BaseCoreService;
-use think\Model;
 
 /**
  * 自定义页面相关

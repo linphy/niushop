@@ -30,14 +30,15 @@ class CoreMemberConfigService extends BaseCoreService
      * 获取注册与登录设置
      * @return array
      */
-    public function getLoginConfig(){
-        $info = (new CoreConfigService())->getConfig('LOGIN')['value'] ?? [];
+    public function getLoginConfig()
+    {
+        $info = ( new CoreConfigService() )->getConfig('LOGIN')[ 'value' ] ?? [];
         return [
-            'is_username' => $info['is_username'] ?? 1,//是否用户名密码登录
-            'is_mobile' => $info['is_mobile'] ?? 0,//是否手机验证码登录
-            'is_auth_register' => $info['is_auth_register'] ?? 1,//是否第三方自动注册
-            'is_bind_mobile'            => $info['is_bind_mobile'] ?? 0,//是否强制绑定手机
-            'agreement_show' => $info['agreement_show'] ?? 0 // 政策协议是否展示
+            'is_username' => $info[ 'is_username' ] ?? 1,//是否用户名密码登录
+            'is_mobile' => $info[ 'is_mobile' ] ?? 0,//是否手机验证码登录
+            'is_auth_register' => $info[ 'is_auth_register' ] ?? 1,//是否第三方自动注册
+            'is_bind_mobile' => $info[ 'is_bind_mobile' ] ?? 0,//是否强制绑定手机
+            'agreement_show' => $info[ 'agreement_show' ] ?? 0 // 政策协议是否展示
         ];
     }
 
@@ -46,15 +47,16 @@ class CoreMemberConfigService extends BaseCoreService
      * @param array $data
      * @return true
      */
-    public function setLoginConfig(array $data){
+    public function setLoginConfig(array $data)
+    {
         $config = [
-            'is_username' => $data['is_username'] ?? 1,//是否用户名密码登录
-            'is_mobile' => $data['is_mobile'] ?? 0,//是否手机验证码登录
-            'is_auth_register' => $data['is_auth_register'] ?? 1,//是否第三方自动注册
-            'is_bind_mobile'            => $data['is_bind_mobile'] ?? 0,//是否强制绑定手机
-            'agreement_show' => $data['agreement_show'] ?? 0 // 政策协议是否展示
+            'is_username' => $data[ 'is_username' ] ?? 1,//是否用户名密码登录
+            'is_mobile' => $data[ 'is_mobile' ] ?? 0,//是否手机验证码登录
+            'is_auth_register' => $data[ 'is_auth_register' ] ?? 1,//是否第三方自动注册
+            'is_bind_mobile' => $data[ 'is_bind_mobile' ] ?? 0,//是否强制绑定手机
+            'agreement_show' => $data[ 'agreement_show' ] ?? 0 // 政策协议是否展示
         ];
-        (new CoreConfigService())->setConfig('LOGIN', $config);
+        ( new CoreConfigService() )->setConfig('LOGIN', $config);
         return true;
     }
 
@@ -62,11 +64,12 @@ class CoreMemberConfigService extends BaseCoreService
      * 获取会员设置
      * @return array
      */
-    public function getMemberConfig(){
-        $info = (new CoreConfigService())->getConfig('MEMBER')['value'] ?? [];
+    public function getMemberConfig()
+    {
+        $info = ( new CoreConfigService() )->getConfig('MEMBER')[ 'value' ] ?? [];
         return [
-            'prefix' => $info['prefix'] ?? '',// 会员编码前缀
-            'length' => $info['length'] ?? 4, // 会员编码长度
+            'prefix' => $info[ 'prefix' ] ?? '',// 会员编码前缀
+            'length' => $info[ 'length' ] ?? 4, // 会员编码长度
         ];
     }
 
@@ -75,12 +78,13 @@ class CoreMemberConfigService extends BaseCoreService
      * @param array $data
      * @return true
      */
-    public function setMemberConfig(array $data){
+    public function setMemberConfig(array $data)
+    {
         $config = [
-            'prefix' => $data['prefix'] ?? '',// 会员编码前缀
-            'length' => $data['length'] ?? 4,// 会员编码长度
+            'prefix' => $data[ 'prefix' ] ?? '',// 会员编码前缀
+            'length' => $data[ 'length' ] ?? 4,// 会员编码长度
         ];
-        (new CoreConfigService())->setConfig('MEMBER', $config);
+        ( new CoreConfigService() )->setConfig('MEMBER', $config);
         return true;
     }
 
@@ -88,8 +92,9 @@ class CoreMemberConfigService extends BaseCoreService
      * 获取成长值规则配置
      * @return array
      */
-    public function getGrowthRuleConfig(){
-        return (new CoreConfigService())->getConfigValue('GROWTH_RULE');
+    public function getGrowthRuleConfig()
+    {
+        return ( new CoreConfigService() )->getConfigValue('GROWTH_RULE');
     }
 
     /**
@@ -97,8 +102,9 @@ class CoreMemberConfigService extends BaseCoreService
      * @param array $data
      * @return true
      */
-    public function setGrowthRuleConfig(array $data){
-        (new CoreConfigService())->setConfig('GROWTH_RULE', $data);
+    public function setGrowthRuleConfig(array $data)
+    {
+        ( new CoreConfigService() )->setConfig('GROWTH_RULE', $data);
         return true;
     }
 
@@ -106,8 +112,9 @@ class CoreMemberConfigService extends BaseCoreService
      * 获取积分规则配置
      * @return array
      */
-    public function getPointRuleConfig(){
-        return (new CoreConfigService())->getConfigValue('POINT_RULE');
+    public function getPointRuleConfig()
+    {
+        return ( new CoreConfigService() )->getConfigValue('POINT_RULE');
     }
 
     /**
@@ -115,8 +122,9 @@ class CoreMemberConfigService extends BaseCoreService
      * @param array $data
      * @return true
      */
-    public function setPointRuleConfig(array $data){
-        (new CoreConfigService())->setConfig('POINT_RULE', $data);
+    public function setPointRuleConfig(array $data)
+    {
+        ( new CoreConfigService() )->setConfig('POINT_RULE', $data);
         return true;
     }
 
@@ -124,16 +132,17 @@ class CoreMemberConfigService extends BaseCoreService
      * 获取会员提现设置
      * @return array
      */
-    public function getCashOutConfig(){
-        $config = (new CoreConfigService())->getConfig(ConfigKeyDict::MEMBER_CASH_OUT)['value'] ?? [];
+    public function getCashOutConfig()
+    {
+        $config = ( new CoreConfigService() )->getConfig(ConfigKeyDict::MEMBER_CASH_OUT)[ 'value' ] ?? [];
         return [
-            'is_open' => $config['is_open'] ?? '0',//是否启用提现
-            'transfer_type' => $config['transfer_type'] ?? [],//提现方式
-            'min' => $config['min'] ?? '0',//最低提现金额
+            'is_open' => $config[ 'is_open' ] ?? '0',//是否启用提现
+            'transfer_type' => $config[ 'transfer_type' ] ?? [],//提现方式
+            'min' => $config[ 'min' ] ?? '0',//最低提现金额
 //            'max'            => '0',//最高提现金额
-            'rate'        => $config['rate'] ?? '0',//手续费比率
-            'is_auto_verify' => $config['is_auto_verify'] ?? '0',  //是否自动审核
-            'is_auto_transfer' => $config['is_auto_transfer'] ?? '0',  //是否自动转账
+            'rate' => $config[ 'rate' ] ?? '0',//手续费比率
+            'is_auto_verify' => $config[ 'is_auto_verify' ] ?? '0',  //是否自动审核
+            'is_auto_transfer' => $config[ 'is_auto_transfer' ] ?? '0',  //是否自动转账
         ];
     }
 
@@ -142,20 +151,21 @@ class CoreMemberConfigService extends BaseCoreService
      * @param array $data
      * @return true
      */
-    public function setCashOutConfig(array $data){
+    public function setCashOutConfig(array $data)
+    {
         //校验转账方式是否合法
         $transfer_type_list = array_keys(TransferDict::getTransferType());
-        if(array_diff(array_diff($data['transfer_type'], $transfer_type_list), $transfer_type_list)) throw new CommonException('TRANSFER_TYPE_NOT_EXIST');
+        if (array_diff(array_diff($data[ 'transfer_type' ], $transfer_type_list), $transfer_type_list)) throw new CommonException('TRANSFER_TYPE_NOT_EXIST');
         $config = [
-            'is_open' => $data['is_open'],//是否启用提现
-            'transfer_type' => $data['transfer_type'] ?? [],//提现方式
-            'min' => $data['min'] ?? '',//最低提现金额
-            'is_auto_verify' => $data['is_auto_verify'] ?? 0,  //是否自动审核
-            'is_auto_transfer' => $data['is_auto_transfer'] ?? 0,  //是否自动转账
+            'is_open' => $data[ 'is_open' ],//是否启用提现
+            'transfer_type' => $data[ 'transfer_type' ] ?? [],//提现方式
+            'min' => $data[ 'min' ] ?? '',//最低提现金额
+            'is_auto_verify' => $data[ 'is_auto_verify' ] ?? 0,  //是否自动审核
+            'is_auto_transfer' => $data[ 'is_auto_transfer' ] ?? 0,  //是否自动转账
 //            'max'            => $data['max'] ?? '',//最高提现金额
-            'rate'        => $data['rate'] ?? '',//手续费比率
+            'rate' => $data[ 'rate' ] ?? '',//手续费比率
         ];
-        (new CoreConfigService())->setConfig(ConfigKeyDict::MEMBER_CASH_OUT, $config);
+        ( new CoreConfigService() )->setConfig(ConfigKeyDict::MEMBER_CASH_OUT, $config);
         return true;
     }
 

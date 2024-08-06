@@ -36,7 +36,7 @@ class AddonDict
 
     // 插件关键字黑名单
     const ADDON_KEY_BLACK_LIST = [
-        'addon', 'aliapp', 'app', 'applet', 'auht', 'channel', 'dict', 'diy', 'generator', 'home', 'member', 'niucloud',
+        'addon', 'aliapp', 'app', 'applet', 'auth', 'channel', 'dict', 'diy', 'generator', 'home', 'member', 'niucloud',
         'notice', 'pay', 'site', 'sys', 'upload', 'home', 'user', 'weapp', 'wechat'
     ];
 

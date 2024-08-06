@@ -28,7 +28,7 @@ return [
     'DOWNLOAD_FAIL' => 'download fail',
     'SET_SUCCESS' => 'set success',
     'AGREEMENT_TYPE_NOT_EXIST' => 'agreement type is not exit',
-    'FIELD_NOT_FOUND' => 'cloumn is not exit',
+    'FIELD_NOT_FOUND' => 'column is not exit',
     'REFRESH_SUCCESS' => 'refresh success',
     'CAPTCHA_ERROR' => 'captcha fail',
 

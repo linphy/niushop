@@ -38,7 +38,7 @@ class Index extends BaseInstall
             $host = ( empty($_SERVER[ 'REMOTE_ADDR' ]) ? $_SERVER[ 'REMOTE_HOST' ] : $_SERVER[ 'REMOTE_ADDR' ] );
             $name = $_SERVER[ 'SERVER_NAME' ];
 
-            $verison = !(version_compare(PHP_VERSION, '8.0.0') == -1);
+            $verison = !( version_compare(PHP_VERSION, '8.0.0') == -1 );
             //pdo
             $pdo = extension_loaded('pdo') && extension_loaded('pdo_mysql');
             $system_variables[] = [ "name" => "pdo", "need" => "开启", "status" => $pdo ];
@@ -71,9 +71,9 @@ class Index extends BaseInstall
                 [ "path" => $project_path . DIRECTORY_SEPARATOR . 'web', "path_name" => "web/", "name" => "web端源码目录" ],
                 [ "path" => $root_path . DIRECTORY_SEPARATOR . ".env", "path_name" => "niucloud/.env", "name" => "env" ],
                 [ "path" => $root_path . DIRECTORY_SEPARATOR . ".example.env", "path_name" => "niucloud/.example_env", "name" => "env" ],
-                [ "path" => $root_path . DIRECTORY_SEPARATOR . 'runtime'.DIRECTORY_SEPARATOR, "path_name" => "niucloud/runtime", "name" => "runtime" ],
-                [ "path" => $root_path . DIRECTORY_SEPARATOR . 'public'.DIRECTORY_SEPARATOR.'upload'.DIRECTORY_SEPARATOR, "path_name" => "niucloud/public/upload", "name" => "upload" ],
-                [ "path" => $root_path . DIRECTORY_SEPARATOR . 'app'.DIRECTORY_SEPARATOR.'install'.DIRECTORY_SEPARATOR, "path_name" => "niucloud/app/install", "name" => "安装目录" ]
+                [ "path" => $root_path . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR, "path_name" => "niucloud/runtime", "name" => "runtime" ],
+                [ "path" => $root_path . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR, "path_name" => "niucloud/public/upload", "name" => "upload" ],
+                [ "path" => $root_path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'install' . DIRECTORY_SEPARATOR, "path_name" => "niucloud/app/install", "name" => "安装目录" ]
             ];
             //目录 可读 可写检测
             $is_dir = true;
@@ -109,10 +109,11 @@ class Index extends BaseInstall
         }
     }
 
-    public function build() {
+    public function build()
+    {
         $install_user = Cache::get('install_user');
-        $token = (new LoginService())->login($install_user['username'], $install_user['password']);
-        $this->assign('token', $token['token']);
+        $token = ( new LoginService() )->login($install_user[ 'username' ], $install_user[ 'password' ]);
+        $this->assign('token', $token[ 'token' ]);
         return $this->fetch('index/step-4');
     }
 
@@ -169,16 +170,24 @@ class Index extends BaseInstall
                     ];
 
                 } else {
-                    if (@mysqli_select_db($conn, $dbname)) {
-                        $result = [
-                            "status" => 2,
-                            "message" => "数据库存在，系统将覆盖数据库"
-                        ];
-                    } else {
+                    try {
+                        if (@mysqli_select_db($conn, $dbname)) {
+                            $result = [
+                                "status" => 2,
+                                "message" => "数据库存在，系统将覆盖数据库"
+                            ];
+                        } else {
+                            $result = [
+                                "status" => 1,
+                                "message" => "数据库不存在,系统将自动创建"
+                            ];
+                        }
+                    } catch (Exception $e) {
                         $result = [
                             "status" => 1,
                             "message" => "数据库不存在,系统将自动创建"
                         ];
+                        return fail($result);
                     }
                 }
                 @mysqli_close($conn);
@@ -191,7 +200,7 @@ class Index extends BaseInstall
             }
 
             return success($result);
-        } catch ( Exception $e) {
+        } catch (Exception $e) {
             $result = [
                 "status" => -1,
                 "message" => $e->getMessage()
@@ -219,7 +228,7 @@ class Index extends BaseInstall
             $sqls = explode("\n", trim($sql));
             $sqls = array_filter($sqls);
             foreach ($sqls as $query) {
-                $str1 = $query[0] ?? '';
+                $str1 = $query[ 0 ] ?? '';
                 if ($str1 != '#' && $str1 != '-')
                     $sql_query[ $num ] .= $query;
             }
@@ -272,9 +281,9 @@ class Index extends BaseInstall
             }
 
             Cache::set('install_status', 1);//成功
-            Cache::set('install_user', ['username' => $username, 'password' => $password]);
+            Cache::set('install_user', [ 'username' => $username, 'password' => $password ]);
             return success();
-        } catch ( Exception $e) {
+        } catch (Exception $e) {
             $this->setSuccessLog([ '安装失败' . $e->getMessage(), 'error' ]);
             return fail('安装失败' . $e->getMessage());
         }
@@ -304,7 +313,7 @@ class Index extends BaseInstall
                 return fail('菜单初始化失败');
             }
             //初始化计划任务
-            $res = ( new CoreScheduleInstallService())->installSystemSchedule();
+            $res = ( new CoreScheduleInstallService() )->installSystemSchedule();
             if (!$res) {
                 $this->setSuccessLog([ '计划任务初始化失败', 'error' ]);
                 return fail('计划任务初始化失败');
@@ -333,7 +342,7 @@ class Index extends BaseInstall
 
             Cache::set('install_status', 2);//成功
             return success();
-        } catch ( Exception $e) {
+        } catch (Exception $e) {
             $this->setSuccessLog([ '安装失败' . $e->getMessage(), 'error' ]);
             return fail('安装失败' . $e->getMessage());
         }
@@ -343,7 +352,8 @@ class Index extends BaseInstall
      * 安装插件
      * @return true
      */
-    public function installAddon() {
+    public function installAddon()
+    {
         $root_path = str_replace("\\", DIRECTORY_SEPARATOR, dirname(__FILE__, 4));
         $root_path = str_replace("../", DIRECTORY_SEPARATOR, $root_path);
         $addon_path = $root_path . DIRECTORY_SEPARATOR . 'addon';
@@ -351,9 +361,9 @@ class Index extends BaseInstall
         $files = get_files_by_dir($addon_path);
         if (!empty($files)) {
             foreach ($files as $path) {
-                $data = (new CoreAddonService())->getAddonConfig($path);
-                if (isset($data['key'])) {
-                    $install_service = (new CoreAddonInstallService($data['key']));
+                $data = ( new CoreAddonService() )->getAddonConfig($path);
+                if (isset($data[ 'key' ])) {
+                    $install_service = ( new CoreAddonInstallService($data[ 'key' ]) );
                     $install_service->installCheck();
                     $install_service->install();
                 }
@@ -434,7 +444,7 @@ class Index extends BaseInstall
                     $sql_item = $this->str_replace_first($table_name, $new_table_name, $sql);
                     @mysqli_query($conn, $sql_item);
                     if ($is_write) $this->setSuccessLog([ '创建表' . $table_name, 'success' ]);
-                } catch ( Exception $e) {
+                } catch (Exception $e) {
                     $this->setSuccessLog([ $e->getMessage(), 'error' ]);
                     return fail('数据库解析失败' . $e->getMessage());
                 }
@@ -506,7 +516,7 @@ class Index extends BaseInstall
         if ($data[ 1 ] == 'error') {
             Cache::set('install_status', -1);
         }
-        $time = @(int)microtime(true);
+        $time = @(int) microtime(true);
         $data[] = date('Y-m-d H:i:s', $time);
         $install_data = Cache::get('install_data') ?? [];
         $install_data[] = $data;

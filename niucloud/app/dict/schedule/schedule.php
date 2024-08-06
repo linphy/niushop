@@ -12,28 +12,5 @@ return [
         'class' => '',
         'function' => ''
     ],
-    [
-        'key' => 'site_expire_close',
-        'name' => '站点到期自动关闭',
-        'desc' => '',
-        'time' => [
-            'type' => 'day',
-            'day' => 1,
-            'hour' => 1,
-            'min' => 1
-        ],
-        'class' => 'app\job\schedule\SiteExpireClose',
-        'function' => ''
-    ],
-    [
-        'key' => 'site_stat',
-        'name' => '站点统计',
-        'desc' => '',
-        'time' => [
-            'type' => 'hour',
-            'hour' => 1,
-        ],
-        'class' => 'app\job\schedule\SiteStatJob',
-        'function' => ''
-    ]
 ];
+

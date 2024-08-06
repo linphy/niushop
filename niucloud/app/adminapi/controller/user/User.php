@@ -50,6 +50,17 @@ class User extends BaseAdminController
         return success((new UserService())->getInfo($uid));
     }
 
+    public function getUserAll()
+    {
+        $data = $this->request->params([
+            ['username', ''],
+            ['realname', ''],
+            ['create_time', []],
+        ]);
+        $list = (new UserService())->getUserAll($data);
+        return success($list);
+    }
+
     /**
      * 新增用户
      * @return Response
