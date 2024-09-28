@@ -40,12 +40,12 @@ class CoreWechatMessageService extends BaseCoreService
         switch ($message['MsgType']) {
             case WechatDict::MESSAGE_TYPE_EVENT:
                 return $this->event($message);
-                return '收到事件消息';
+//                return '收到事件消息';
                 break;
             case WechatDict::MESSAGE_TYPE_TEXT:
                 //调用文本回复
                 return $this->text($message);
-                return '收到文字消息';
+//                return '收到文字消息';
                 break;
             case WechatDict::MESSAGE_TYPE_IMAGE:
                 return '收到图片消息';

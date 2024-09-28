@@ -34,10 +34,13 @@ class CoreSysConfigService extends BaseCoreService
     {
         $wap_domain = !empty(env("system.wap_domain")) ? preg_replace('#/$#', '', env("system.wap_domain")) : request()->domain();
         $web_domain = !empty(env("system.web_domain")) ? preg_replace('#/$#', '', env("system.web_domain")) : request()->domain();
+        $service_domain = request()->domain();
 
-        return  [
+        return [
+            'wap_domain' => $wap_domain,
             'wap_url' => $wap_domain . "/wap",
-            'web_url' => $web_domain . "/web"
+            'web_url' => $web_domain . "/web",
+            'service_domain' => $service_domain
         ];
     }
 

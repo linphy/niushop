@@ -12,6 +12,7 @@
 namespace app\service\core\wechat;
 
 use core\base\BaseCoreService;
+use core\exception\CommonException;
 use EasyWeChat\Kernel\Exceptions\BadRequestException;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
@@ -47,8 +48,12 @@ class CoreWechatServeService extends BaseCoreService
      */
     public function userFromCode(string $code)
     {
-        $oauth = CoreWechatService::app()->getOauth();
-        return $oauth->userFromCode($code);
+        try {
+            $oauth = CoreWechatService::app()->getOauth();
+            return $oauth->userFromCode($code);
+        } catch (\Exception $e) {
+            throw new CommonException($e->getCode());
+        }
     }
 
     public function getUser($user)

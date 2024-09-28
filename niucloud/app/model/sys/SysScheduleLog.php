@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | Niucloud-admin 企业快速开发的多应用管理平台
+// | Niucloud-admin 企业快速开发的saas管理平台
 // +----------------------------------------------------------------------
 // | 官方网址：https://www.niucloud.com
 // +----------------------------------------------------------------------
@@ -11,14 +11,14 @@
 
 namespace app\model\sys;
 
-use app\dict\schedule\ScheduleDict;
+use app\dict\schedule\ScheduleLogDict;
 use core\base\BaseModel;
 use think\db\Query;
 
 /**
- * 定时任务模型
+ * 计划任务执行记录模型
  */
-class SysSchedule extends BaseModel
+class SysScheduleLog extends BaseModel
 {
 
     /**
@@ -31,19 +31,11 @@ class SysSchedule extends BaseModel
      * 模型名称
      * @var string
      */
-    protected $name = 'sys_schedule';
+    protected $name = 'sys_schedule_log';
 
     protected $type = [
-        'last_time' => 'timestamp',
-        'next_time' => 'timestamp',
-        'update_time' => 'timestamp',
+        'execute_time' => 'timestamp',
     ];
-
-    // 设置json类型字段
-    protected $json = ['time'];
-    // 设置JSON数据返回数组
-    protected $jsonAssoc = true;
-
 
     /**
      * 启用状态
@@ -54,7 +46,20 @@ class SysSchedule extends BaseModel
     public function getStatusNameAttr($value, $data)
     {
         if (empty($data['status'])) return '';
-        return ScheduleDict::getStatus()[$data['status']] ?? '';
+        return ScheduleLogDict::getStatus()[$data['status']] ?? '';
+    }
+
+    /**
+     * 任务id搜索器
+     * @param Query $query
+     * @param $value
+     * @param $data
+     */
+    public function searchScheduleIdAttr(Query $query, $value, $data)
+    {
+        if ($value) {
+            $query->where('schedule_id', $value);
+        }
     }
 
     /**
@@ -91,16 +96,16 @@ class SysSchedule extends BaseModel
      * @param $value
      * @param $data
      */
-    public function searchLastTimeAttr($query, $value, $data)
+    public function searchExecuteTimeAttr($query, $value, $data)
     {
         $start_time = empty($value[0]) ? 0 : strtotime($value[0]);
         $end_time = empty($value[1]) ? 0 : strtotime($value[1]);
         if ($start_time > 0 && $end_time > 0) {
-            $query->whereBetweenTime('last_time', $start_time, $end_time);
+            $query->whereBetweenTime('execute_time', $start_time, $end_time);
         } else if ($start_time > 0 && $end_time == 0) {
-            $query->where([['last_time', '>=', $start_time]]);
+            $query->where([['execute_time', '>=', $start_time]]);
         } else if ($start_time == 0 && $end_time > 0) {
-            $query->where([['last_time', '<=', $end_time]]);
+            $query->where([['execute_time', '<=', $end_time]]);
         }
     }
 

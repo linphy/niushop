@@ -9,18 +9,24 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\listener\pay;
+namespace app\dict\schedule;
 
-use app\service\core\pay\CoreAccountService;
-
-/**
- * 退款成功事件
- */
-class RefundSuccessListener
+class ScheduleLogDict
 {
-    public function handle(array $refund_info)
+
+    public const SUCCESS = 'success';//执行成功
+    public const ERROR = 'error';//执行失败
+
+    /**
+     * 任务执行状态
+     * @return array
+     */
+    public static function getStatus()
     {
-        //添加账单记录
-        (new CoreAccountService())->addRefundLog($refund_info['refund_no']);
+        return [
+            self::SUCCESS => get_lang('dict_schedule_log.success'),//执行成功
+            self::ERROR => get_lang('dict_schedule_log.error'),//执行失败
+        ];
     }
+
 }

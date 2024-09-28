@@ -9,18 +9,31 @@
 // | Author: Niucloud Team
 // +----------------------------------------------------------------------
 
-namespace app\listener\pay;
+namespace app\adminapi\controller\sys;
 
-use app\service\core\pay\CoreAccountService;
+use app\service\admin\schedule\ScheduleLogService;
+use core\base\BaseAdminController;
+use think\Response;
 
 /**
- * 退款成功事件
+ * 计划任务执行记录
  */
-class RefundSuccessListener
+class ScheduleLog extends BaseAdminController
 {
-    public function handle(array $refund_info)
+    /**
+     * 任务执行记录列表
+     * @return Response
+     */
+    public function lists()
     {
-        //添加账单记录
-        (new CoreAccountService())->addRefundLog($refund_info['refund_no']);
+        $data = $this->request->params([
+            ['schedule_id', ''],
+            ['key', ''],
+            ['status', 'all'],
+            ['execute_time', []]
+        ]);
+        return success(data: (new ScheduleLogService())->getPage($data));
+
     }
+
 }

@@ -24,8 +24,8 @@ use core\exception\AuthException;
 
 /**
  * 登录服务层
- * Class BaseService
- * @package app\service
+ * Class AuthService
+ * @package app\service\api\login
  */
 class AuthService extends BaseApiService
 {
@@ -74,7 +74,7 @@ class AuthService extends BaseApiService
      * 绑定手机号
      * @param string $mobile
      * @param string $mobile_code
-     * @return true
+     * @return array
      */
     public function bindMobile(string $mobile, string $mobile_code)
     {
@@ -104,8 +104,9 @@ class AuthService extends BaseApiService
         $member->save([
             'mobile' => $mobile
         ]);
-        return true;
+        return [
+            'mobile' => $mobile
+        ];
     }
-
 
 }

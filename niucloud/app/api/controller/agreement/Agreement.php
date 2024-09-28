@@ -16,7 +16,7 @@ use core\base\BaseApiController;
 
 /**
  * 协议控制器
- * Class Article
+ * Class Agreement
  * @package app\api\controller\agreement
  */
 class Agreement extends BaseApiController

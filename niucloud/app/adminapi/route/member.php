@@ -46,6 +46,14 @@ Route::group('member', function() {
     Route::get('status/list', 'member.Member/getStatusList');
     //会员设置状态
     Route::put('setstatus/:status', 'member.Member/setStatus');
+    // 获取会员权益字典
+    Route::get('dict/benefits', 'member.Member/getMemberBenefitsDict');
+    // 获取会员礼包字典
+    Route::get('dict/gift', 'member.Member/getMemberGiftDict');
+    // 获取成长值规则字典
+    Route::get('dict/growth_rule', 'member.Member/getGrowthRuleDict');
+    // 获取积分规则字典
+    Route::get('dict/point_rule', 'member.Member/getPointRuleDict');
     /***************************************************** 会员标签 ****************************************************/
     //会员标签列表
     Route::get('label', 'member.MemberLabel/lists');
@@ -101,6 +109,10 @@ Route::group('member', function() {
     Route::get('config/point_rule', 'member.Config/getPointRuleConfig');
     //设置积分规则
     Route::post('config/point_rule', 'member.Config/setPointRuleConfig');
+    //获取注册与登录设置
+    Route::get('config/member', 'member.Config/getMemberConfig');
+    //更新注册与登录设置
+    Route::post('config/member', 'member.Config/setMemberConfig');
     /***************************************************** 会员体现**************************************************/
     //会员提现列表
     Route::get('cash_out', 'member.CashOut/lists');
@@ -116,18 +128,6 @@ Route::group('member', function() {
     Route::get('cash_out/status', 'member.CashOut/getStatusList');
     //提现统计信息
     Route::get('cash_out/stat', 'member.CashOut/stat');
-    //获取注册与登录设置
-    Route::get('config/member', 'member.Config/getMemberConfig');
-    //更新注册与登录设置
-    Route::post('config/member', 'member.Config/setMemberConfig');
-    // 获取会员权益字典
-    Route::get('dict/benefits', 'member.Member/getMemberBenefitsDict');
-    // 获取会员礼包字典
-    Route::get('dict/gift', 'member.Member/getMemberGiftDict');
-    // 获取成长值规则字典
-    Route::get('dict/growth_rule', 'member.Member/getGrowthRuleDict');
-    // 获取积分规则字典
-    Route::get('dict/point_rule', 'member.Member/getPointRuleDict');
     /***************************************************** 会员等级 ****************************************************/
     //会员等级分页列表
     Route::get('level', 'member.MemberLevel/pages');

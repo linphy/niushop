@@ -58,7 +58,6 @@ $system_event = [
         'NoticeData' => [
             'app\listener\notice_template\VerifyCode',//手机验证码
             'app\listener\notice_template\MemberVerifySuccess',
-            'app\listener\notice_template\RechargeSuccess',
         ],
         //全场景消息发送
         'Notice' => [
@@ -93,7 +92,7 @@ $system_event = [
         'StatField' => [],
 
         // 获取海报数据
-        'GetPosterData' => ['app\listener\system\Poster'],
+        'GetPosterData' => [ 'app\listener\system\Poster' ]
     ],
     'subscribe' => [
     ],

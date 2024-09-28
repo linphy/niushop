@@ -186,6 +186,12 @@ Route::group('sys', function() {
     Route::get('schedule/template', 'sys.Schedule/template');
     //任务时间间隔
     Route::get('schedule/datetype', 'sys.Schedule/getDateType');
+    //执行一次任务
+    Route::put('schedule/do/:id', 'sys.Schedule/doSchedule');
+
+    //任务执行记录列表
+    Route::get('schedule/log/list', 'sys.ScheduleLog/lists');
+
     /***************************************************** 应用管理 ****************************************************/
     Route::get('applist', 'sys.App/getAppList');
 
