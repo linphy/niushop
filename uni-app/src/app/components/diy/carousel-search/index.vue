@@ -11,9 +11,9 @@
 					<view class="img-wrap" v-if="diyComponent.search.logo">
 						<image :src="img(diyComponent.search.logo)" mode="aspectFit"/>
 					</view>
-					<view class="search-content" @click="diyStore.toRedirect(diyComponent.search.link)">
+					<view class="search-content" @click.stop="diyStore.toRedirect(diyComponent.search.link)">
 						<text class="input-content text-[#fff] text-[24rpx] leading-[68rpx]">{{isShowSearchPlaceholder ? diyComponent.search.text : ''}}</text>
-						<text class="nc-iconfont nc-icon-sousuo-duanV6xx1"></text>
+						<text class="nc-iconfont nc-icon-sousuo-duanV6xx1 text-[28rpx] text-[#fff]"></text>
 
 						<swiper class="swiper-wrap" :interval="diyComponent.search.hotWord.interval * 1000" autoplay="true" vertical="true" circular="true" v-if="!isShowSearchPlaceholder">
 							<swiper-item class="swiper-item" v-for="(item) in diyComponent.search.hotWord.list" :key="item.id">
@@ -35,7 +35,7 @@
 							<view class="line" :style="{'background-color': getTabColor(index == currTabIndex)}" v-if="index == currTabIndex"></view>
 						</view>
 					</scroll-view>
-					<view v-if="diyComponent.tab.list.length" class="absolute tab-btn nc-iconfont nc-icon-yingyongliebiaoV6xx" @click="tabAllPopup = true"></view>
+					<view v-if="diyComponent.tab.list.length" class="absolute tab-btn iconfont icona-yingyongliebiaoV6xx-32" @click="tabAllPopup = true"></view>
 				</view>
                 
 				<view class="bg-img" v-if="fixedStyleBg">
@@ -46,7 +46,7 @@
 			
 			<!-- 解决fixed定位后导航栏塌陷的问题 -->
 			<template v-if="diyStore.mode != 'decorate'">
-				<view v-if="diyComponent.positionWay == 'fixed' && props.scrollBool != -1" class="u-navbar-placeholder" :style="{ width: '100%', paddingTop: moduleHeight }"></view>
+				<view v-if="diyComponent.positionWay == 'fixed' && props.scrollBool != undefined && props.scrollBool != -1" class="u-navbar-placeholder" :style="{ width: '100%', paddingTop: moduleHeight }"></view>
 			</template>
 			
 			<!-- 轮播图 -->
@@ -57,7 +57,7 @@
 						'swiper-right': diyComponent.swiper.indicatorAlign == 'right',
 						'ns-indicator-dots': diyComponent.swiper.indicatorStyle == 'style-2'
 					}"
-					:previous-margin="swiperStyle2 ? 0 : '36rpx'" :next-margin="swiperStyle2 ? 0 : '36rpx'"
+					:previous-margin="swiperStyle2 ? 0 : '26rpx'" :next-margin="swiperStyle2 ? 0 : '26rpx'"
 				    :interval="diyComponent.swiper.interval * 1000" :indicator-dots="isShowDots"
 				    :indicator-color="diyComponent.swiper.indicatorColor" :indicator-active-color="diyComponent.swiper.indicatorActiveColor">
 					<swiper-item class="swiper-item" v-for="(item,index) in diyComponent.swiper.list" :key="item.id" :style="swiperWarpCss">
@@ -119,7 +119,6 @@
 	const instance = getCurrentInstance();
 	const props = defineProps(['component', 'index', 'pullDownRefreshCount', 'global', 'scrollBool']);
 	const diyStore = useDiyStore();
-
 	const diyComponent = computed(() => {
 		if (diyStore.mode == 'decorate') {
 			return diyStore.value[props.index];
@@ -149,7 +148,6 @@
 	)
 
     const moduleHeight:any = ref('')
-
     const setModuleLocation = ()=> {
         nextTick(() => {
 			setTimeout(()=>{
@@ -158,7 +156,7 @@
 					moduleHeight.value = (data.height || 0) + 'px';
 				}).exec();
 			})
-        })
+        }) 
     }
 
     const fixedStyleBg = ref(false);
@@ -172,7 +170,7 @@
         // #endif
 		
         if(diyComponent.value.positionWay == 'fixed') {
-			if (props.scrollBool != -1) {
+			if (props.scrollBool != undefined && props.scrollBool != -1) {
 				style += 'position: fixed;z-index: 10;left: 0;right: 0;';
 			}
 			
@@ -185,12 +183,12 @@
 			
 			fixedStyleBg.value = false;
             if (props.scrollBool == 1) {
-				let str = diyComponent.value.fixedBgColor;
+				let str = diyComponent.value.fixedBgColor || "";
 				let arr = str.split(',');
-				let num = diyComponent.value.fixedBgColor ? parseInt(arr[arr.length-1]) : 0;
-				if(!diyComponent.value.fixedBgColor || num == 0 ){
+				let num = diyComponent.value.fixedBgColor ? parseInt(arr[arr.length - 1]) : 0;
+				if (!diyComponent.value.fixedBgColor || num == 0) {
 					fixedStyleBg.value = true;
-				}else{
+				} else {
 					fixedStyleBg.value = false;
 					style += 'background-color:' + diyComponent.value.fixedBgColor + ';';
 				}
@@ -245,8 +243,7 @@
 
 	// 轮播样式二
 	const swiperStyle2 = computed(()=>{
-		var style = false;
-		style = diyComponent.value.swiper.swiperStyle == 'style-2' ? true : false;
+		var style = diyComponent.value.swiper.swiperStyle == 'style-2' ? true : false;
 		return style;
 	})
 
@@ -292,9 +289,16 @@
     }
 
     const tabAllPopup = ref(false);
-    let menuButtonInfo:any = {};
+    let menuButtonInfo: any = {};
     const navbarInnerStyle = ref('')
-
+	// 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
+	// #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
+		menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+		// 导航栏内部盒子的样式
+		// 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
+		// 如果是各家小程序，导航栏内部的宽度需要减少右边胶囊的宽度
+		navbarInnerStyle.value += 'padding-top:' + menuButtonInfo.top + 'px;';
+	// #endif
     onMounted(() => {
         refresh();
         // 装修模式下刷新
@@ -312,14 +316,13 @@
         // 如果是小程序，获取右上角胶囊的尺寸信息，避免导航栏右侧内容与胶囊重叠(支付宝小程序非本API，尚未兼容)
         // #ifdef MP-WEIXIN || MP-BAIDU || MP-TOUTIAO || MP-QQ
 	    if(diyComponent.value.positionWay == 'fixed') {
-            menuButtonInfo = uni.getMenuButtonBoundingClientRect();
-            // 导航栏内部盒子的样式
-            // 导航栏宽度，如果在小程序下，导航栏宽度为胶囊的左边到屏幕左边的距离
-            // 如果是各家小程序，导航栏内部的宽度需要减少右边胶囊的宽度
 			if(props.global.topStatusBar.isShow == false) {
+				navbarInnerStyle.value = ''
 				let rightButtonWidth = menuButtonInfo.width ? menuButtonInfo.width * 2 + 'rpx' : '70rpx';
 				navbarInnerStyle.value += 'padding-right:calc(' + rightButtonWidth + ' + 30rpx);';
 				navbarInnerStyle.value += 'padding-top:' + menuButtonInfo.top + 'px;';
+			}else if(props.global.topStatusBar){
+				navbarInnerStyle.value = ''
 			}
 			
         }
@@ -328,7 +331,8 @@
     });
 	
 	const refresh = ()=> {
-        setModuleLocation();
+		setModuleLocation();
+		
 		changeData({ source : 'home' },-1)
         diyComponent.value.swiper.list.forEach((item : any) => {
             if (item.imageUrl == '') {
@@ -367,7 +371,7 @@
                 diyPageData.global.bottomTabBarSwitch = false; // 子页面不需要展示底部导航
                 diyPageData.value = sources.value;
 
-                diyPageData.value.forEach((item, index) => {
+                diyPageData.value.forEach((item: any, index) => {
                     item.pageStyle = '';
                     if(item.pageStartBgColor) {
                         if (item.pageStartBgColor && item.pageEndBgColor) item.pageStyle += `background:linear-gradient(${item.pageGradientAngle},${item.pageStartBgColor},${item.pageEndBgColor});`;
@@ -465,7 +469,7 @@
 			justify-content: center;
 			width: 140rpx;
 			height: 60rpx;
-			margin-right: 20rpx;
+			margin-right: 30rpx;
 			image{
 				width: 100%;
 				height:100%;
@@ -483,8 +487,8 @@
 			.input-content, .uni-input {
 				box-sizing: border-box;
 				display: block;
-				height: 64rpx;
-				line-height: 68rpx;
+				height: 60rpx;
+				line-height: 64rpx;
 				width: 100%;
 				padding-right: 20rpx;
 				color: #fff;
@@ -523,27 +527,27 @@
 			width: auto;
 			position: relative;
 			padding: 0 20rpx;
-		
+			height:54rpx;
 			.name {
 				font-size: 28rpx;
 				color: #333;
 				line-height: 38rpx;
-				margin-bottom: 10rpx;
+				margin-bottom: 15rpx;
 			}
 		
 			&.active {
 				position: relative;
 				.name {
-					font-size: 32rpx;
+					font-size: 28rpx;
 					line-height: 38rpx;
-					font-weight: bold;
+					font-weight: 700;
 				}
 				.line{
 					position: absolute;
-					bottom: 0;
+					bottom: 0rpx;
 					width: 34rpx;
 					height: 4rpx;
-					border-radius: 29%;
+					border-radius: 2rpx;
 					left: 50%;
 					transform: translateX(-50%);
 				}
@@ -559,11 +563,11 @@
 			&::after{
 				content: "";
 				position: absolute;
-				top: 6rpx;
-				bottom: -2rpx;
+				top: 2rpx;
+				bottom: -4rpx;
 				left: -14rpx;
-				width: 4rpx;
-				background: linear-gradient( 180deg, #FFFFFF 16%, rgba(255,255,255,0) 92%);
+				width: 2rpx;
+				background: linear-gradient( 180deg, #FFFFFF 16%, rgba(255,255,255,0) 86%);
 			}
 			/* #endif */
 			/* #ifdef MP-WEIXIN */
@@ -588,7 +592,7 @@
 		background-color: var(--primary-color-light);
 	}
 	.swiper-animation{
-		transform: scale(0.94, 0.94);
+		transform: scale(0.96, 0.96);
 		transition-duration: 0.3s;
 		transition-timing-function: ease;
 	}
